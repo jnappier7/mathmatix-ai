@@ -1,0 +1,134 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "AP Calculus BC",
+  "unit": 2,
+  "title": "Unit 2 Checkpoint: Derivatives — Definition & Basic Rules",
+  "weeks": "6",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing the derivative definition (limit of difference quotient), basic differentiation rules (power, constant, sum/difference, trig, exp, ln), derivative interpretation as slope and rate, and derivative estimation from graphs and tables.",
+  "skillsCovered": ["derivative-definition", "derivative-interpretation", "basic-differentiation-rules", "derivatives-from-graphs-tables"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "derivative-definition", "reteachFocus": "f'(x) = lim_{h→0} [f(x+h)−f(x)]/h; expand, simplify, cancel h, then evaluate limit; alternate form f'(a) = lim_{x→a} [f(x)−f(a)]/(x−a)", "resources": ["derivatives_basics_module.json - scaffold phases 1-3"] },
+    { "skillId": "basic-differentiation-rules", "reteachFocus": "Power rule nxⁿ⁻¹, rewrite radicals/fractions as fractional/negative exponents first; d/dx[sin]=cos, d/dx[cos]=−sin, d/dx[eˣ]=eˣ, d/dx[ln x]=1/x", "resources": ["derivatives_basics_module.json - scaffold phases 4-6"] },
+    { "skillId": "derivative-interpretation", "reteachFocus": "f'(a) = slope of tangent at x=a = instantaneous rate of change; tangent line: y−f(a) = f'(a)(x−a); units of f' = units of f / units of x", "resources": ["derivatives_basics_module.json - scaffold phases 4-6"] },
+    { "skillId": "derivatives-from-graphs-tables", "reteachFocus": "Symmetric difference quotient [f(a+h)−f(a−h)]/(2h); not differentiable at corners, cusps, vertical tangents, discontinuities; differentiable ⇒ continuous (not converse)", "resources": ["derivatives_basics_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu2-1",
+      "question": "Use the limit definition to find f'(x) if f(x) = 3x² − 5x.",
+      "answer": "f'(x) = lim_{h→0} [3(x+h)²−5(x+h)−(3x²−5x)]/h = lim_{h→0} [3x²+6xh+3h²−5x−5h−3x²+5x]/h = lim_{h→0} [6xh+3h²−5h]/h = lim_{h→0} (6x+3h−5) = 6x−5.",
+      "skill": "derivative-definition",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu2-2",
+      "question": "Use the alternate form of the derivative to find f'(4) if f(x) = √(2x + 1).",
+      "answer": "f'(4) = lim_{x→4} [√(2x+1)−√9]/(x−4) = lim_{x→4} [√(2x+1)−3]/(x−4). Multiply by conjugate: (2x+1−9)/[(x−4)(√(2x+1)+3)] = (2x−8)/[(x−4)(√(2x+1)+3)] = 2(x−4)/[(x−4)(√(2x+1)+3)] = 2/(√(2x+1)+3). At x=4: 2/(3+3) = 1/3.",
+      "skill": "derivative-definition",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu2-3",
+      "question": "Differentiate: f(x) = 4x⁵ − 3x³ + 7x − 2",
+      "answer": "f'(x) = 20x⁴ − 9x² + 7.",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu2-4",
+      "question": "Differentiate: g(x) = 6/x² − 4√x + eˣ",
+      "answer": "Rewrite: g(x) = 6x⁻² − 4x^(1/2) + eˣ. g'(x) = −12x⁻³ − 2x^(−1/2) + eˣ = −12/x³ − 2/√x + eˣ.",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu2-5",
+      "question": "Differentiate: h(x) = 3sin(x) − 2cos(x) + 5ln(x)",
+      "answer": "h'(x) = 3cos(x) + 2sin(x) + 5/x.",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu2-6",
+      "question": "Find the equation of the tangent line to f(x) = x³ − 2x at x = 2.",
+      "answer": "f(2) = 8−4 = 4. f'(x) = 3x²−2, so f'(2) = 12−2 = 10. Tangent: y−4 = 10(x−2) → y = 10x−16.",
+      "skill": "derivative-interpretation",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu2-7",
+      "question": "A particle moves along a line with position s(t) = t³ − 6t² + 9t + 1 (in meters, t in seconds). Find the velocity and acceleration at t = 2. Is the particle speeding up or slowing down at t = 2?",
+      "answer": "v(t) = s'(t) = 3t²−12t+9. v(2) = 12−24+9 = −3 m/s. a(t) = v'(t) = 6t−12. a(2) = 12−12 = 0 m/s². Since a(2)=0, the particle is neither speeding up nor slowing down at that instant.",
+      "skill": "derivative-interpretation",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu2-8",
+      "question": "Given the table:\n| x | 1.0 | 1.5 | 2.0 | 2.5 | 3.0 |\n|---|---|---|---|---|---|\n| f(x) | 4.2 | 5.1 | 6.5 | 8.3 | 10.7 |\nEstimate f'(2.0) using the symmetric difference quotient.",
+      "answer": "f'(2.0) ≈ [f(2.5)−f(1.5)]/(2.5−1.5) = (8.3−5.1)/1.0 = 3.2.",
+      "skill": "derivatives-from-graphs-tables",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu2-9",
+      "question": "At which of the following is f NOT differentiable? (i) A corner (ii) A cusp (iii) A removable discontinuity (iv) A vertical tangent. Explain why for each.",
+      "answer": "f is NOT differentiable at ALL four. (i) Corner: left and right derivatives are different (limit DNE). (ii) Cusp: slopes approach +∞ from one side and −∞ from the other. (iii) Removable discontinuity: f is not continuous, and differentiability requires continuity. (iv) Vertical tangent: slope is undefined (±∞).",
+      "skill": "derivatives-from-graphs-tables",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbu2-10",
+      "question": "ANALYSIS: The function f is differentiable. Given: f(3) = 7, f'(3) = −2.\n(a) Write the equation of the tangent line to f at x = 3.\n(b) Use the tangent line to approximate f(3.1).\n(c) If f''(3) > 0, is your approximation in (b) an overestimate or underestimate? Justify.",
+      "answer": "(a) y − 7 = −2(x − 3) → y = −2x + 13. (b) f(3.1) ≈ −2(3.1) + 13 = −6.2 + 13 = 6.8. (c) Underestimate. Since f''(3) > 0, f is concave up near x = 3. The tangent line lies below a concave-up curve, so the linear approximation underestimates the true value.",
+      "skill": "derivative-interpretation",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu2-spiral-1",
+      "question": "SPIRAL (Limits): Evaluate lim_{x→−1} (x² + 3x + 2)/(x + 1)",
+      "answer": "Factor: (x+1)(x+2)/(x+1) = x+2. lim_{x→−1} (x+2) = 1.",
+      "skill": "limits-algebraic",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    },
+    {
+      "id": "cbu2-spiral-2",
+      "question": "SPIRAL (Prereqs): Evaluate without a calculator: cos(3π/4) + sin(π/6)",
+      "answer": "cos(3π/4) = −√2/2. sin(π/6) = 1/2. Sum = −√2/2 + 1/2 = (1−√2)/2.",
+      "skill": "trig-essentials",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 0"
+    }
+  ],
+  "answerKeys": {
+    "cbu2-1": "6x−5.",
+    "cbu2-2": "1/3.",
+    "cbu2-3": "20x⁴−9x²+7.",
+    "cbu2-4": "−12/x³ − 2/√x + eˣ.",
+    "cbu2-5": "3cos x + 2sin x + 5/x.",
+    "cbu2-6": "y = 10x − 16.",
+    "cbu2-7": "v(2)=−3, a(2)=0; neither speeding up nor slowing down.",
+    "cbu2-8": "3.2.",
+    "cbu2-9": "Not differentiable at all four.",
+    "cbu2-10": "(a) y=−2x+13. (b) 6.8. (c) Underestimate (concave up).",
+    "cbu2-spiral-1": "1.",
+    "cbu2-spiral-2": "(1−√2)/2."
+  }
+}

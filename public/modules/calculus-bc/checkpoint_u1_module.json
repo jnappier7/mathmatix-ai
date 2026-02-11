@@ -1,0 +1,135 @@
+{
+  "moduleId": "checkpoint_u1",
+  "course": "AP Calculus BC",
+  "unit": 1,
+  "title": "Unit 1 Checkpoint: Limits & Continuity",
+  "weeks": "4",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing limit evaluation (algebraic, graphical, tabular), one-sided and infinite limits, limits at infinity, continuity conditions, and IVT justification. Includes AP-style FRQ justification problems.",
+  "skillsCovered": ["limits-graphical-numerical", "limits-algebraic", "one-sided-infinite-limits", "limits-at-infinity", "continuity-ivt", "squeeze-theorem"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "limits-algebraic", "reteachFocus": "Direct substitution first; if 0/0 → factor, rationalize, or multiply by conjugate; common denominator for complex fractions", "resources": ["limits_continuity_module.json - scaffold phases 1-3"] },
+    { "skillId": "one-sided-infinite-limits", "reteachFocus": "One-sided: check left/right separately from piecewise or graph; infinite: sign of numerator / approaching-zero denominator determines ±∞", "resources": ["limits_continuity_module.json - scaffold phases 4-6"] },
+    { "skillId": "limits-at-infinity", "reteachFocus": "Compare degrees: top<bottom→0, equal→ratio of leading coefficients, top>bottom→±∞", "resources": ["limits_continuity_module.json - scaffold phases 4-6"] },
+    { "skillId": "continuity-ivt", "reteachFocus": "Three conditions (f(a) exists, limit exists, they're equal); IVT requires: continuous on [a,b], k between f(a) and f(b), conclude ∃c", "resources": ["limits_continuity_module.json - scaffold phases 7-9"] },
+    { "skillId": "squeeze-theorem", "reteachFocus": "Bound the oscillating factor (−1≤sin/cos≤1), multiply by the vanishing factor, both bounds → same limit", "resources": ["limits_continuity_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu1-1",
+      "question": "Evaluate: lim_{x→4} (x² − 16)/(x − 4)",
+      "answer": "Factor: (x−4)(x+4)/(x−4) = x+4. lim_{x→4} (x+4) = 8.",
+      "skill": "limits-algebraic",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu1-2",
+      "question": "Evaluate: lim_{x→0} (√(9 + x) − 3)/x",
+      "answer": "Multiply by conjugate: [(√(9+x)−3)(√(9+x)+3)] / [x(√(9+x)+3)] = (9+x−9)/[x(√(9+x)+3)] = x/[x(√(9+x)+3)] = 1/(√(9+x)+3). At x=0: 1/(3+3) = 1/6.",
+      "skill": "limits-algebraic",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu1-3",
+      "question": "Evaluate: lim_{x→2} (1/x − 1/2)/(x − 2)",
+      "answer": "Combine numerator: (2−x)/(2x). So limit = (2−x)/(2x) ÷ (x−2) = (2−x)/[2x(x−2)] = −(x−2)/[2x(x−2)] = −1/(2x). At x=2: −1/4.",
+      "skill": "limits-algebraic",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu1-4",
+      "question": "Evaluate: lim_{x→3⁻} (x + 1)/(x − 3)",
+      "answer": "As x→3⁻: numerator → 4 (positive). Denominator → 0⁻ (negative, approaching from left). Positive/negative → −∞.",
+      "skill": "one-sided-infinite-limits",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu1-5",
+      "question": "Evaluate: lim_{x→∞} (4x³ − 2x + 7)/(6x³ + 5x² − 1)",
+      "answer": "Degrees equal (both 3). Limit = ratio of leading coefficients = 4/6 = 2/3.",
+      "skill": "limits-at-infinity",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu1-6",
+      "question": "Evaluate: lim_{x→∞} (3x² + 1)/(x³ − 5)",
+      "answer": "Degree top (2) < degree bottom (3). Limit = 0.",
+      "skill": "limits-at-infinity",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu1-7",
+      "question": "Let f(x) = { (x² − 1)/(x − 1) if x ≠ 1; 3 if x = 1 }. Is f continuous at x = 1? Justify using the three conditions.",
+      "answer": "(1) f(1) = 3 ✓. (2) lim_{x→1} (x²−1)/(x−1) = lim (x+1) = 2, limit exists ✓. (3) f(1) = 3 ≠ 2 = lim_{x→1} f(x) ✗. Not continuous — removable discontinuity. f(1) should be 2.",
+      "skill": "continuity-ivt",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu1-8",
+      "question": "Let f(x) = x³ − 4x + 1. Show that f has a zero on the interval [1, 2]. Name the theorem and state its hypotheses.",
+      "answer": "f(1) = 1−4+1 = −2. f(2) = 8−8+1 = 1. Since f is a polynomial (continuous everywhere), and f(1) = −2 < 0 < 1 = f(2), by the Intermediate Value Theorem there exists c in (1, 2) such that f(c) = 0.",
+      "skill": "continuity-ivt",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu1-9",
+      "question": "Evaluate: lim_{x→0} x²cos(1/x)",
+      "answer": "Since −1 ≤ cos(1/x) ≤ 1, multiply by x²: −x² ≤ x²cos(1/x) ≤ x². Both −x² and x² → 0 as x → 0. By the Squeeze Theorem, lim_{x→0} x²cos(1/x) = 0.",
+      "skill": "squeeze-theorem",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu1-10",
+      "question": "ANALYSIS: A function g is continuous on [0, 5]. The table gives selected values:\n| x | 0 | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|---|\n| g(x) | 3 | 5 | 4 | 1 | −2 | 0 |\n\n(a) Must there be a value c in (0, 5) where g(c) = 2? Justify.\n(b) Must there be a value c in (0, 5) where g(c) = 6? Explain.\n(c) Estimate g'(2) using the symmetric difference quotient.",
+      "answer": "(a) Yes. g(3)=1 and g(1)=5. Since g is continuous on [1,3] and 1 < 2 < 5, by IVT there exists c in (1,3) with g(c)=2. (b) Not necessarily. The maximum value shown is 5. While g could reach 6, IVT cannot guarantee it because 6 is not between any pair of values on a subinterval where g is known. (c) g'(2) ≈ [g(3)−g(1)]/(3−1) = (1−5)/2 = −2.",
+      "skill": "continuity-ivt",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu1-spiral-1",
+      "question": "SPIRAL (Prereqs): Factor completely: x³ + 8",
+      "answer": "(x + 2)(x² − 2x + 4). Sum of cubes: a³+b³ = (a+b)(a²−ab+b²), a=x, b=2.",
+      "skill": "algebra-cleanup",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 0"
+    },
+    {
+      "id": "cbu1-spiral-2",
+      "question": "SPIRAL (Prereqs): Evaluate without a calculator: sin(11π/6) + cos(π/4)",
+      "answer": "sin(11π/6) = −1/2. cos(π/4) = √2/2. Sum = −1/2 + √2/2 = (√2−1)/2.",
+      "skill": "trig-essentials",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 0"
+    }
+  ],
+  "answerKeys": {
+    "cbu1-1": "8.",
+    "cbu1-2": "1/6.",
+    "cbu1-3": "−1/4.",
+    "cbu1-4": "−∞.",
+    "cbu1-5": "2/3.",
+    "cbu1-6": "0.",
+    "cbu1-7": "Not continuous (removable). f(1)=3≠2=limit.",
+    "cbu1-8": "IVT: f(1)=−2, f(2)=1, polynomial continuous, 0 between −2 and 1.",
+    "cbu1-9": "0 (Squeeze Theorem).",
+    "cbu1-10": "(a) Yes, IVT on [1,3]. (b) Not guaranteed. (c) g'(2)≈−2.",
+    "cbu1-spiral-1": "(x+2)(x²−2x+4).",
+    "cbu1-spiral-2": "(√2−1)/2."
+  }
+}
