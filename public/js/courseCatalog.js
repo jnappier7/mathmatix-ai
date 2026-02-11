@@ -440,7 +440,7 @@ class CourseManager {
             });
             const data = await res.json();
             if (data.success) {
-                this.renderCatalog(data.catalog);
+                this.renderCatalog(data.catalog, data.recommended);
             }
         } catch (err) {
             console.error('[CourseManager] Failed to load catalog:', err);
@@ -453,7 +453,7 @@ class CourseManager {
         if (modal) modal.style.display = 'none';
     }
 
-    renderCatalog(catalog) {
+    renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
 
@@ -467,34 +467,51 @@ class CourseManager {
             return;
         }
 
+        // Difficulty badge colors
+        const diffColors = {
+            'Beginner': { bg: '#ecfdf5', text: '#16a34a' },
+            'Intermediate': { bg: '#eff6ff', text: '#2563eb' },
+            'Advanced': { bg: '#faf5ff', text: '#7c3aed' },
+            'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
+        };
+
         catalog.forEach(course => {
             const card = document.createElement('div');
-            card.style.cssText = 'border:1px solid #e2e8f0; border-radius:12px; padding:16px; display:flex; align-items:center; gap:14px; transition:box-shadow 0.15s;';
+            const isRecommended = course.courseId === recommended;
+            card.style.cssText = `border:1px solid ${isRecommended ? '#667eea' : '#e2e8f0'}; border-radius:12px; padding:16px; display:flex; gap:14px; transition:box-shadow 0.15s; position:relative;${isRecommended ? ' background: #f8f7ff;' : ''}`;
             card.onmouseover = () => { card.style.boxShadow = '0 4px 12px rgba(102,126,234,0.15)'; };
             card.onmouseout = () => { card.style.boxShadow = 'none'; };
 
             const isEnrolled = enrolled.has(course.courseId);
+            const diff = diffColors[course.difficulty] || { bg: '#f1f5f9', text: '#64748b' };
 
             card.innerHTML = `
-                <div style="min-width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; color:white; font-size:18px;">
-                    <i class="fas fa-graduation-cap"></i>
+                ${isRecommended ? '<div style="position:absolute; top:-8px; right:12px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700;">RECOMMENDED</div>' : ''}
+                <div style="min-width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; font-size:22px;">
+                    ${course.icon || '📚'}
                 </div>
                 <div style="flex:1; min-width:0;">
-                    <div style="font-weight:700; font-size:15px; color:#333;">${this.escapeHtml(course.title)}</div>
-                    <div style="font-size:12px; color:#888; margin-top:2px;">
-                        ${course.moduleCount} modules${course.gradeBand ? ' · ' + course.gradeBand : ''}${course.apWeight ? ' · AP' : ''}
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span style="font-weight:700; font-size:15px; color:#333;">${this.escapeHtml(course.title)}</span>
+                        ${course.difficulty ? `<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:${diff.bg}; color:${diff.text};">${course.difficulty}</span>` : ''}
+                        ${course.apWeight ? '<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#faf5ff; color:#7c3aed;">AP</span>' : ''}
                     </div>
-                    ${course.description ? `<div style="font-size:12px; color:#666; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${this.escapeHtml(course.description)}</div>` : ''}
+                    ${course.tagline ? `<div style="font-size:13px; color:#555; margin-top:4px; line-height:1.4;">${this.escapeHtml(course.tagline)}</div>` : ''}
+                    <div style="font-size:11px; color:#aaa; margin-top:4px;">
+                        ${course.moduleCount} modules${course.prerequisites.length > 0 ? ' · Prereq: ' + course.prerequisites.join(', ') : ''}
+                    </div>
                 </div>
-                <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
-                    style="padding:8px 16px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
-                    ${isEnrolled
-                        ? 'background:#f0f0f0; color:#888; cursor:default;'
-                        : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
-                    }"
-                    ${isEnrolled ? 'disabled' : ''}>
-                    ${isEnrolled ? 'Enrolled' : 'Enroll'}
-                </button>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px;">
+                    <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
+                        style="padding:8px 18px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
+                        ${isEnrolled
+                            ? 'background:#f0f0f0; color:#888; cursor:default;'
+                            : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
+                        }"
+                        ${isEnrolled ? 'disabled' : ''}>
+                        ${isEnrolled ? '<i class="fas fa-check" style="margin-right:4px;"></i>Enrolled' : 'Enroll'}
+                    </button>
+                </div>
             `;
 
             // Wire up enroll button

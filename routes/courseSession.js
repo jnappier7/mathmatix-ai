@@ -14,6 +14,29 @@ const User = require('../models/user');
    GET /api/course-sessions/catalog
    List all available pathway-based courses from disk
    ============================================================ */
+// Catalog enrichment: difficulty levels, taglines, icons
+const CATALOG_META = {
+  'kindergarten':        { difficulty: 'Beginner', tagline: 'Build number sense through counting, shapes, and patterns', icon: '🧮' },
+  'grade-1':             { difficulty: 'Beginner', tagline: 'Addition, subtraction, and early problem-solving', icon: '🔢' },
+  'grade-2':             { difficulty: 'Beginner', tagline: 'Place value, measurement, and two-digit operations', icon: '📏' },
+  'grade-3':             { difficulty: 'Beginner', tagline: 'Multiplication, fractions, and area concepts', icon: '✖️' },
+  'grade-4':             { difficulty: 'Beginner', tagline: 'Multi-digit operations, decimals, and geometry basics', icon: '📐' },
+  'grade-5':             { difficulty: 'Beginner', tagline: 'Fraction mastery, volume, and coordinate planes', icon: '📊' },
+  'grade-6':             { difficulty: 'Intermediate', tagline: 'Ratios, expressions, and the bridge to algebra', icon: '⚖️' },
+  'grade-7':             { difficulty: 'Intermediate', tagline: 'Proportions, integers, and probability', icon: '🎲' },
+  'grade-8':             { difficulty: 'Intermediate', tagline: 'Linear equations, functions, and Pythagorean theorem', icon: '📈' },
+  'ready-for-algebra-1': { difficulty: 'Intermediate', tagline: 'Strengthen foundations before your first algebra course', icon: '🔧' },
+  'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
+  'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
+  'algebra-2':           { difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '📉' },
+  'precalculus':         { difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '🌊' },
+  'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
+  'calculus-1':          { difficulty: 'Advanced', tagline: 'Limits, derivatives, and the foundations of calculus', icon: '♾️' },
+  'calculus-2':          { difficulty: 'Advanced', tagline: 'Integration techniques, series, and polar coordinates', icon: '∫' },
+  'calculus-3':          { difficulty: 'Advanced', tagline: 'Multivariable calculus and vector analysis', icon: '🌐' },
+  'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT math question type', icon: '🎯' }
+};
+
 router.get('/catalog', async (req, res) => {
   try {
     const resourcesDir = path.join(__dirname, '../public/resources');
@@ -24,13 +47,18 @@ router.get('/catalog', async (req, res) => {
       try {
         const raw = fs.readFileSync(path.join(resourcesDir, file), 'utf8');
         const pathway = JSON.parse(raw);
+        const cid = pathway.courseId || file.replace('-pathway.json', '');
+        const meta = CATALOG_META[cid] || {};
 
         catalog.push({
-          courseId: pathway.courseId || file.replace('-pathway.json', ''),
+          courseId: cid,
           pathwayId: file.replace('.json', ''),
-          title: pathway.courseName || pathway.title || pathway.courseId,
+          title: pathway.courseName || pathway.title || cid,
           track: pathway.track || '',
           description: pathway.overview || pathway.description || '',
+          tagline: meta.tagline || '',
+          difficulty: meta.difficulty || '',
+          icon: meta.icon || '📚',
           prerequisites: pathway.prerequisites || [],
           moduleCount: (pathway.modules || []).length,
           gradeBand: pathway.gradeBand || '',
@@ -54,7 +82,17 @@ router.get('/catalog', async (req, res) => {
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
 
-    res.json({ success: true, catalog });
+    // Personalized recommendation based on user's grade
+    let recommended = null;
+    if (req.user && req.user.gradeLevel) {
+      const grade = req.user.gradeLevel.toLowerCase().replace(/\s+/g, '-');
+      const idx = order.indexOf(grade);
+      if (idx >= 0 && idx < order.length - 1) {
+        recommended = order[idx + 1]; // Suggest the next course
+      }
+    }
+
+    res.json({ success: true, catalog, recommended });
   } catch (err) {
     console.error('[CourseSession] Error loading catalog:', err);
     res.status(500).json({ success: false, message: 'Failed to load course catalog' });
