@@ -1,0 +1,116 @@
+{
+  "moduleId": "checkpoint_u8",
+  "course": "AP Calculus BC",
+  "unit": 8,
+  "title": "Unit 8 Checkpoint: Applications of Integration",
+  "weeks": "24",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing area between curves, volume by disk/washer and cross-sections, average value, and motion/accumulation applications.",
+  "skillsCovered": ["area-between-curves", "volume-disk-washer", "volume-cross-sections", "average-value", "motion-accumulation"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "area-between-curves", "reteachFocus": "∫[top−bottom]dx or ∫[right−left]dy; find intersection points; sometimes need to switch variable", "resources": ["integration_applications_module.json - scaffold phases 1-3"] },
+    { "skillId": "volume-disk-washer", "reteachFocus": "Disk: π∫R²dx (no hole); Washer: π∫(R²−r²)dx; R=dist from axis to outer, r=dist to inner; choose dx or dy based on axis", "resources": ["integration_applications_module.json - scaffold phases 4-6"] },
+    { "skillId": "volume-cross-sections", "reteachFocus": "V=∫A(x)dx; A depends on cross-section shape (square, semicircle, equilateral Δ); base length from curves", "resources": ["integration_applications_module.json - scaffold phases 4-6"] },
+    { "skillId": "average-value", "reteachFocus": "f_avg = (1/(b−a))∫ₐᵇf(x)dx; displacement=∫v dt, distance=∫|v|dt, net change=∫rate dt", "resources": ["integration_applications_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu8-1",
+      "question": "Find the area of the region bounded by y = x² and y = 4.",
+      "answer": "Intersections: x²=4 → x=±2. A = ∫_{−2}^{2} (4−x²)dx = [4x−x³/3]_{−2}^{2} = (8−8/3)−(−8+8/3) = (16/3)−(−16/3) = 32/3.",
+      "skill": "area-between-curves",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu8-2",
+      "question": "Find the area between y = x and y = x² on [0, 1].",
+      "answer": "On [0,1]: x ≥ x² (top=x, bottom=x²). A = ∫₀¹(x−x²)dx = [x²/2−x³/3]₀¹ = 1/2−1/3 = 1/6.",
+      "skill": "area-between-curves",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu8-3",
+      "question": "Find the volume of the solid obtained by revolving y = √x about the x-axis from x = 0 to x = 4.",
+      "answer": "Disk method: V = π∫₀⁴(√x)²dx = π∫₀⁴x dx = π[x²/2]₀⁴ = π(8) = 8π.",
+      "skill": "volume-disk-washer",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu8-4",
+      "question": "Find the volume of the solid obtained by revolving the region between y = x² and y = √x about the x-axis.",
+      "answer": "Intersections: x²=√x → x⁴=x → x(x³−1)=0 → x=0,1. On [0,1]: √x > x² (outer=√x, inner=x²). Washer: V = π∫₀¹[(√x)²−(x²)²]dx = π∫₀¹(x−x⁴)dx = π[x²/2−x⁵/5]₀¹ = π(1/2−1/5) = 3π/10.",
+      "skill": "volume-disk-washer",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu8-5",
+      "question": "A solid has its base in the region bounded by y = x and y = x² (for 0 ≤ x ≤ 1). Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+      "answer": "Side length s(x) = x − x². A(x) = s² = (x−x²)². V = ∫₀¹(x−x²)²dx = ∫₀¹(x²−2x³+x⁴)dx = [x³/3−x⁴/2+x⁵/5]₀¹ = 1/3−1/2+1/5 = 10/30−15/30+6/30 = 1/30.",
+      "skill": "volume-cross-sections",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu8-6",
+      "question": "Find the average value of f(x) = cos(x) on [0, π/2].",
+      "answer": "f_avg = (1/(π/2))∫₀^{π/2}cos(x)dx = (2/π)[sin(x)]₀^{π/2} = (2/π)(1−0) = 2/π.",
+      "skill": "average-value",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu8-7",
+      "question": "A particle has velocity v(t) = t² − 4t + 3 m/s. Find (a) the displacement and (b) the total distance traveled on [0, 4].",
+      "answer": "(a) Displacement = ∫₀⁴(t²−4t+3)dt = [t³/3−2t²+3t]₀⁴ = 64/3−32+12 = 64/3−20 = 4/3. (b) v(t)=(t−1)(t−3)=0 at t=1,3. v>0 on [0,1), v<0 on (1,3), v>0 on (3,4]. ∫₀¹=1/3−2+3=4/3. ∫₁³=(9−18+9)−(1/3−2+3)=0−4/3=−4/3. ∫₃⁴=(64/3−32+12)−(9−18+9)=4/3−0=4/3. Distance = 4/3+4/3+4/3 = 4.",
+      "skill": "motion-accumulation",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu8-8",
+      "question": "ANALYSIS: Water flows into a tank at rate R(t) = 10 + 2sin(t) gallons/min and drains at rate D(t) = 6 gallons/min. At t = 0, the tank contains 50 gallons. (a) Write an expression for the amount of water at time t. (b) Is the amount increasing or decreasing at t = π? (c) Find the amount at t = 2π.",
+      "answer": "(a) W(t) = 50 + ∫₀ᵗ[R(s)−D(s)]ds = 50 + ∫₀ᵗ(4+2sin(s))ds = 50 + [4s−2cos(s)]₀ᵗ = 50 + 4t−2cos(t)+2 = 52 + 4t − 2cos(t). (b) W'(t)=4+2sin(t). At t=π: W'(π)=4+2(0)=4>0 → increasing. (c) W(2π)=52+8π−2cos(2π)=52+8π−2=50+8π≈75.1 gallons.",
+      "skill": "motion-accumulation",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu8-spiral-1",
+      "question": "SPIRAL (Separation of Variables): Solve dy/dx = 2xy with y(0) = 3.",
+      "answer": "dy/y = 2x dx → ln|y| = x² + C → y = Ae^(x²). y(0)=3: A=3. y = 3e^(x²).",
+      "skill": "separation-of-variables",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 7"
+    },
+    {
+      "id": "cbu8-spiral-2",
+      "question": "SPIRAL (Integration by Parts): Evaluate ∫ ln(x) dx.",
+      "answer": "u=ln(x), dv=dx. du=1/x dx, v=x. ∫ln(x)dx = xln(x) − ∫x·(1/x)dx = xln(x) − x + C.",
+      "skill": "integration-by-parts",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    }
+  ],
+  "answerKeys": {
+    "cbu8-1": "32/3.",
+    "cbu8-2": "1/6.",
+    "cbu8-3": "8π.",
+    "cbu8-4": "3π/10.",
+    "cbu8-5": "1/30.",
+    "cbu8-6": "2/π.",
+    "cbu8-7": "(a) 4/3. (b) 4.",
+    "cbu8-8": "W(t)=52+4t−2cos(t). W'(π)=4>0. W(2π)=50+8π.",
+    "cbu8-spiral-1": "y=3e^(x²).",
+    "cbu8-spiral-2": "xln(x)−x+C."
+  }
+}
