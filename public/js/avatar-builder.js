@@ -53,6 +53,7 @@ class AvatarBuilder {
 
         const pageMap = {
             'pick-tutor': '/pick-tutor.html',
+            'pick-avatar': '/pick-avatar.html',
             'settings': '/settings.html',
             'index': '/index.html',
             'chat': '/chat.html'
@@ -64,6 +65,7 @@ class AvatarBuilder {
     getRedirectUrl() {
         const pageMap = {
             'pick-tutor': '/pick-tutor.html',
+            'pick-avatar': '/pick-avatar.html',
             'settings': '/settings.html',
             'index': '/index.html',
             'chat': '/chat.html'
@@ -413,10 +415,10 @@ class AvatarBuilder {
 
             this.showToast(`Avatar saved to slot ${slotNum}!`, 'success');
 
-            // Redirect back to pick-tutor with flag to auto-select custom avatar
+            // Redirect back to pick-avatar with flag to auto-select custom avatar
             setTimeout(() => {
-                if (this.fromPage === 'pick-tutor') {
-                    window.location.href = '/pick-tutor.html?avatar=custom';
+                if (this.fromPage === 'pick-avatar') {
+                    window.location.href = '/pick-avatar.html?avatar=custom';
                 } else {
                     window.location.href = this.getRedirectUrl();
                 }

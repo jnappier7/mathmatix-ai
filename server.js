@@ -327,7 +327,8 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -362,7 +363,8 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -505,7 +507,7 @@ app.post('/api/user/switch-role', isAuthenticated, async (req, res) => {
 
         // Determine redirect for the new active role
         const dashboardMap = {
-            student: user.selectedTutorId ? '/chat.html' : '/pick-tutor.html',
+            student: !user.selectedTutorId ? '/pick-tutor.html' : !user.selectedAvatarId ? '/pick-avatar.html' : '/chat.html',
             teacher: '/teacher-dashboard.html',
             admin: '/admin-dashboard.html',
             parent: '/parent-dashboard.html'
@@ -653,6 +655,7 @@ app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public",
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
+app.get("/pick-avatar.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-avatar.html")));
 app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
 
