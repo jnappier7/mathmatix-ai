@@ -1,0 +1,273 @@
+{
+  "moduleId": "linear_equations",
+  "course": "8th Grade Mathematics",
+  "unit": 2,
+  "title": "Linear Equations & Inequalities",
+  "weeks": "6-9",
+  "estimatedDuration": 50,
+  "description": "Master multi-step linear equations — distribute, combine like terms, handle variables on both sides — and learn to recognize when an equation has no solution or infinitely many solutions. Extend the same reasoning to inequalities and real-world word problems.",
+  "skills": ["multi-step-equations", "variables-both-sides", "special-cases", "linear-inequalities", "equation-word-problems"],
+  "standardsAlignment": ["8.EE.7", "8.EE.7a", "8.EE.7b"],
+  "goals": [
+    "Solve multi-step linear equations by distributing and combining like terms.",
+    "Solve equations with variables on both sides and identify special cases (no solution, infinitely many solutions).",
+    "Solve linear inequalities, including flipping the sign when multiplying or dividing by a negative.",
+    "Translate real-world situations into equations and inequalities and interpret solutions in context."
+  ],
+  "instructionalStrategy": [
+    "Ground every equation type in a concrete 'balance' analogy — whatever you do to one side, you must do to the other.",
+    "Teach special cases by COMPARISON: after simplifying, if variables cancel and you get a true statement → infinite solutions; false statement → no solution.",
+    "Inequality sign-flip rule: demonstrate with concrete numbers first (if 2 < 5, then −2 > −5) before stating the abstract rule.",
+    "Word problems come LAST, after mechanical fluency is solid. Translate in small bites: identify the unknown, write the relationship, solve, interpret."
+  ],
+  "aiFlexLevel": 0.6,
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Multi-Step Equations: Distribute, Combine, Solve",
+      "skill": "multi-step-equations",
+      "content": "Multi-step equations require more than one operation to isolate the variable. The strategy is always the same:\n\n**Step 1: Distribute** — clear parentheses using the distributive property: a(b + c) = ab + ac.\n**Step 2: Combine like terms** — simplify each side of the equation separately.\n**Step 3: Isolate the variable** — use inverse operations (undo add/subtract, then undo multiply/divide).\n**Step 4: Check** — substitute back into the ORIGINAL equation.\n\nCommon traps:\n• Forgetting to distribute to EVERY term inside the parentheses.\n• Sign errors when distributing a negative: −2(x − 3) = −2x + 6, NOT −2x − 6.\n• Skipping the check — one substitution catches most errors.",
+      "keyPoints": [
+        "Distribute first: clear all parentheses",
+        "Combine like terms on each side",
+        "Use inverse operations to isolate the variable",
+        "Always check by substituting back into the original equation",
+        "Watch signs when distributing negatives: −a(b − c) = −ab + ac"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Multi-Step Equations: Worked Examples",
+      "skill": "multi-step-equations",
+      "examples": [
+        {
+          "problem": "Solve: 3(x − 2) + 4 = 16",
+          "solution": "Step 1: Distribute: 3x − 6 + 4 = 16.\nStep 2: Combine like terms: 3x − 2 = 16.\nStep 3: Add 2: 3x = 18.\nStep 4: Divide by 3: x = 6.\nCheck: 3(6 − 2) + 4 = 3(4) + 4 = 12 + 4 = 16 ✓\nAnswer: x = 6."
+        },
+        {
+          "problem": "Solve: 2(4x + 1) − 3x = 17",
+          "solution": "Step 1: Distribute: 8x + 2 − 3x = 17.\nStep 2: Combine like terms: 5x + 2 = 17.\nStep 3: Subtract 2: 5x = 15.\nStep 4: Divide by 5: x = 3.\nCheck: 2(4(3) + 1) − 3(3) = 2(13) − 9 = 26 − 9 = 17 ✓\nAnswer: x = 3."
+        },
+        {
+          "problem": "Solve: (x + 5)/2 = 7",
+          "solution": "Step 1: Multiply both sides by 2: x + 5 = 14.\nStep 2: Subtract 5: x = 9.\nCheck: (9 + 5)/2 = 14/2 = 7 ✓\nAnswer: x = 9."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Variables on Both Sides & Special Cases",
+      "skill": "variables-both-sides",
+      "content": "When variables appear on BOTH sides of the equation, you need to move all variable terms to one side first.\n\n**Strategy:** Subtract the smaller variable term from both sides, then solve as usual.\n\n**Special Cases — what happens when the variables cancel:**\n• If you get a TRUE statement like 0 = 0 or 5 = 5 → **infinitely many solutions**. The equation is an identity — every number works.\n• If you get a FALSE statement like 0 = 3 or −4 = 7 → **no solution**. The equation is a contradiction — no number works.\n\n**How to recognize them early:**\n• Same coefficient on x, same constant → infinite solutions.\n• Same coefficient on x, different constant → no solution.",
+      "keyPoints": [
+        "Move all variable terms to one side by adding or subtracting",
+        "Variables cancel + true statement = infinitely many solutions",
+        "Variables cancel + false statement = no solution",
+        "Same x-coefficient, same constant → identity (infinite solutions)",
+        "Same x-coefficient, different constants → contradiction (no solution)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Variables on Both Sides & Special Cases: Worked Examples",
+      "skill": "variables-both-sides",
+      "examples": [
+        {
+          "problem": "Solve: 5x + 3 = 2x + 18",
+          "solution": "Step 1: Subtract 2x from both sides: 3x + 3 = 18.\nStep 2: Subtract 3: 3x = 15.\nStep 3: Divide by 3: x = 5.\nCheck: 5(5) + 3 = 28 and 2(5) + 18 = 28 ✓\nAnswer: x = 5."
+        },
+        {
+          "problem": "Solve: 3(x − 4) = 3x − 12",
+          "solution": "Step 1: Distribute: 3x − 12 = 3x − 12.\nStep 2: Subtract 3x from both sides: −12 = −12.\nThis is a TRUE statement → infinitely many solutions.\nEvery value of x works. The equation is an identity."
+        },
+        {
+          "problem": "Solve: 2(x + 1) = 2x + 5",
+          "solution": "Step 1: Distribute: 2x + 2 = 2x + 5.\nStep 2: Subtract 2x from both sides: 2 = 5.\nThis is a FALSE statement → no solution.\nNo value of x can make 2 equal 5."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Linear Inequalities & Word Problems",
+      "skill": "linear-inequalities",
+      "content": "Solving inequalities works exactly like solving equations with ONE critical difference:\n\n**When you multiply or divide both sides by a NEGATIVE number, FLIP the inequality sign.**\n\nWhy? Because multiplying by a negative reverses the number line: if 2 < 5, then −2 > −5.\n\n**Symbols:** < (less than), > (greater than), ≤ (less than or equal to), ≥ (greater than or equal to).\n\n**Word problems — translation guide:**\n• 'at least' → ≥\n• 'at most' → ≤\n• 'more than' → >\n• 'fewer than' / 'less than' → <\n\n**Process:** (1) Define the variable. (2) Write the inequality. (3) Solve. (4) Interpret — does the answer make sense in context? (e.g., you can't work negative hours).",
+      "keyPoints": [
+        "Solve inequalities like equations, but flip the sign when multiplying/dividing by a negative",
+        "Flip reason: multiplying by a negative reverses order on the number line",
+        "'At least' = ≥, 'at most' = ≤, 'more than' = >, 'fewer than' = <",
+        "Always interpret the solution in context for word problems",
+        "Check that the answer makes sense (no negative quantities for real-world scenarios)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Inequalities & Word Problems: Worked Examples",
+      "skill": "linear-inequalities",
+      "examples": [
+        {
+          "problem": "Solve: 3x − 7 > 8",
+          "solution": "Step 1: Add 7 to both sides: 3x > 15.\nStep 2: Divide by 3: x > 5.\nNo sign flip needed (divided by positive 3).\nAnswer: x > 5."
+        },
+        {
+          "problem": "Solve: −2x + 4 ≤ 10",
+          "solution": "Step 1: Subtract 4 from both sides: −2x ≤ 6.\nStep 2: Divide by −2 and FLIP the sign: x ≥ −3.\nAnswer: x ≥ −3.\n\nCheck with x = 0 (which is ≥ −3): −2(0) + 4 = 4 ≤ 10 ✓"
+        },
+        {
+          "problem": "Maria has $45. She earns $12 per hour babysitting. How many full hours must she work to have at least $100?",
+          "solution": "Let h = hours worked.\n45 + 12h ≥ 100.\n12h ≥ 55.\nh ≥ 55/12 ≈ 4.58.\nSince she can only work whole hours, h ≥ 5.\nAnswer: Maria must work at least 5 hours."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Multi-Step Equations Practice",
+      "skill": "multi-step-equations",
+      "problems": [
+        {
+          "id": "le-wp1",
+          "question": "Solve: 4(x − 3) + 2 = 22",
+          "answer": "Distribute: 4x − 12 + 2 = 22. Combine: 4x − 10 = 22. Add 10: 4x = 32. Divide by 4: x = 8. Check: 4(8 − 3) + 2 = 4(5) + 2 = 22 ✓",
+          "hints": ["Distribute the 4 first.", "Combine −12 and +2 on the left side.", "Then use inverse operations to isolate x."]
+        },
+        {
+          "id": "le-wp2",
+          "question": "Solve: −2(3x + 5) + x = 5",
+          "answer": "Distribute: −6x − 10 + x = 5. Combine: −5x − 10 = 5. Add 10: −5x = 15. Divide by −5: x = −3. Check: −2(3(−3) + 5) + (−3) = −2(−4) − 3 = 8 − 3 = 5 ✓",
+          "hints": ["Distribute −2 to BOTH terms: 3x and 5.", "Don't forget the sign: −2 × 5 = −10.", "After combining like terms, isolate x."]
+        },
+        {
+          "id": "le-wp3",
+          "question": "Solve: (2x − 6)/3 = 4",
+          "answer": "Multiply both sides by 3: 2x − 6 = 12. Add 6: 2x = 18. Divide by 2: x = 9. Check: (2(9) − 6)/3 = 12/3 = 4 ✓",
+          "hints": ["Clear the fraction by multiplying both sides by 3.", "Then solve the 2-step equation."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Variables on Both Sides & Special Cases Practice",
+      "skill": "variables-both-sides",
+      "problems": [
+        {
+          "id": "le-wp4",
+          "question": "Solve: 7x − 3 = 4x + 9",
+          "answer": "Subtract 4x: 3x − 3 = 9. Add 3: 3x = 12. Divide by 3: x = 4. Check: 7(4) − 3 = 25 and 4(4) + 9 = 25 ✓",
+          "hints": ["Move the variable terms to one side by subtracting 4x.", "Then solve as a two-step equation."]
+        },
+        {
+          "id": "le-wp5",
+          "question": "Solve: 5(x + 2) = 5x + 10",
+          "answer": "Distribute: 5x + 10 = 5x + 10. Subtract 5x: 10 = 10. TRUE → infinitely many solutions.",
+          "hints": ["Distribute on the left side.", "What happens when you try to get all x-terms on one side?", "A true statement like 10 = 10 means the equation is always true."]
+        },
+        {
+          "id": "le-wp6",
+          "question": "Solve: 6x − (2x + 8) = 4x + 1",
+          "answer": "Distribute the negative: 6x − 2x − 8 = 4x + 1. Combine: 4x − 8 = 4x + 1. Subtract 4x: −8 = 1. FALSE → no solution.",
+          "hints": ["Distribute the negative sign to both terms in the parentheses.", "Combine like terms on the left side.", "What happens when the variable terms cancel?"]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Inequalities & Word Problems Practice",
+      "skill": "linear-inequalities",
+      "problems": [
+        {
+          "id": "le-wp7",
+          "question": "Solve: 5x + 2 < −13",
+          "answer": "Subtract 2: 5x < −15. Divide by 5: x < −3.",
+          "hints": ["Isolate the variable term first by subtracting 2.", "Divide by 5 — since 5 is positive, the inequality sign stays the same."]
+        },
+        {
+          "id": "le-wp8",
+          "question": "Solve: −4x + 7 ≥ 19",
+          "answer": "Subtract 7: −4x ≥ 12. Divide by −4 and FLIP: x ≤ −3.",
+          "hints": ["Subtract 7 from both sides.", "When you divide by −4, what happens to the inequality sign?"]
+        },
+        {
+          "id": "le-wp9",
+          "question": "A phone plan costs $25/month plus $0.10 per text message. Write and solve an inequality for spending at most $40/month.",
+          "answer": "25 + 0.10t ≤ 40. Subtract 25: 0.10t ≤ 15. Divide by 0.10: t ≤ 150. At most 150 text messages.",
+          "hints": ["'At most $40' means ≤ 40.", "The total cost is the base fee plus the per-text charge.", "Solve for t the same way you'd solve an equation."]
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Linear Equations & Inequalities Mixed Practice",
+      "skill": "multi-step-equations",
+      "problems": [
+        {
+          "id": "le-yp1",
+          "question": "Solve: 5(2x − 1) − 3x = 23",
+          "answer": "Distribute: 10x − 5 − 3x = 23. Combine: 7x − 5 = 23. Add 5: 7x = 28. Divide by 7: x = 4. Check: 5(2(4) − 1) − 3(4) = 5(7) − 12 = 35 − 12 = 23 ✓",
+          "skill": "multi-step-equations",
+          "hints": ["Distribute the 5 first, then combine like terms."]
+        },
+        {
+          "id": "le-yp2",
+          "question": "Solve: 8x − 3 = 3x + 22",
+          "answer": "Subtract 3x: 5x − 3 = 22. Add 3: 5x = 25. Divide by 5: x = 5. Check: 8(5) − 3 = 37 and 3(5) + 22 = 37 ✓",
+          "skill": "variables-both-sides",
+          "hints": ["Move x-terms to one side first."]
+        },
+        {
+          "id": "le-yp3",
+          "question": "Solve: 4(x − 1) = 4x + 7",
+          "answer": "Distribute: 4x − 4 = 4x + 7. Subtract 4x: −4 = 7. FALSE → no solution.",
+          "skill": "special-cases",
+          "hints": ["After distributing, try to collect x-terms on one side."]
+        },
+        {
+          "id": "le-yp4",
+          "question": "Solve: −3x + 8 > 20",
+          "answer": "Subtract 8: −3x > 12. Divide by −3 and FLIP: x < −4.",
+          "skill": "linear-inequalities",
+          "hints": ["Remember to flip the inequality when dividing by a negative."]
+        },
+        {
+          "id": "le-yp5",
+          "question": "Solve: 6(x + 3) − 2x = 4x + 18",
+          "answer": "Distribute: 6x + 18 − 2x = 4x + 18. Combine: 4x + 18 = 4x + 18. Subtract 4x: 18 = 18. TRUE → infinitely many solutions.",
+          "skill": "special-cases",
+          "hints": ["Simplify both sides completely before comparing."]
+        },
+        {
+          "id": "le-yp6",
+          "question": "A gym charges a $50 sign-up fee and $30 per month. How many months can you stay if your budget is at most $260?",
+          "answer": "50 + 30m ≤ 260. 30m ≤ 210. m ≤ 7. At most 7 months.",
+          "skill": "equation-word-problems",
+          "hints": ["'At most $260' means the total cost must be ≤ 260."]
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "le-wp1": "x = 8",
+    "le-wp2": "x = −3",
+    "le-wp3": "x = 9",
+    "le-wp4": "x = 4",
+    "le-wp5": "Infinitely many solutions",
+    "le-wp6": "No solution",
+    "le-wp7": "x < −3",
+    "le-wp8": "x ≤ −3",
+    "le-wp9": "t ≤ 150 texts",
+    "le-yp1": "x = 4",
+    "le-yp2": "x = 5",
+    "le-yp3": "No solution",
+    "le-yp4": "x < −4",
+    "le-yp5": "Infinitely many solutions",
+    "le-yp6": "m ≤ 7 months"
+  }
+}
