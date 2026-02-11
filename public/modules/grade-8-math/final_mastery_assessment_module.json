@@ -1,0 +1,187 @@
+{
+  "moduleId": "final_mastery_assessment",
+  "course": "8th Grade Mathematics",
+  "title": "8th Grade Math Final Mastery Assessment",
+  "weeks": "36",
+  "estimatedDuration": 45,
+  "type": "assessment",
+  "isFinal": true,
+  "description": "Comprehensive final assessment covering all Common Core 8th grade math standards: 8.NS (Number System), 8.EE (Expressions & Equations), 8.F (Functions), 8.G (Geometry), and 8.SP (Statistics & Probability). Tests both procedural fluency and conceptual understanding with explanation/justification requirements.",
+  "skillsCovered": [
+    "rational-irrational", "exponent-rules", "scientific-notation",
+    "multi-step-equations", "variables-both-sides", "special-cases", "linear-inequalities",
+    "slope-rate-of-change", "write-linear-equations", "compare-linear-models",
+    "function-definition", "identify-functions", "compare-functions",
+    "systems-graphing", "systems-substitution",
+    "transformations", "angle-relationships", "pythagorean-theorem", "distance-coordinate",
+    "volume-cylinders", "volume-cones", "volume-spheres", "volume-scaling",
+    "scatter-plots", "line-of-best-fit", "two-way-tables", "correlation-causation"
+  ],
+  "passThreshold": 70,
+  "assessmentProblems": [
+    {
+      "id": "g8f-1",
+      "question": "Classify as rational or irrational: (a) √36  (b) √15  (c) 0.121212…  (d) 3π",
+      "answer": "(a) Rational: √36 = 6. (b) Irrational: 15 is not a perfect square. (c) Rational: repeating decimal = 12/99 = 4/33. (d) Irrational: a rational times an irrational is irrational.",
+      "skill": "rational-irrational",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-2",
+      "question": "Simplify with positive exponents: (2³ · 2⁻⁵) / 2⁻⁴",
+      "answer": "Numerator: 2³⁺⁽⁻⁵⁾ = 2⁻². Then 2⁻²/2⁻⁴ = 2⁻²⁻⁽⁻⁴⁾ = 2² = 4.",
+      "skill": "exponent-rules",
+      "difficulty": 4,
+      "points": 4
+    },
+    {
+      "id": "g8f-3",
+      "question": "A virus is approximately 3 × 10⁻⁷ meters wide. A human hair is approximately 7.5 × 10⁻⁵ meters wide. How many times wider is the hair than the virus?",
+      "answer": "(7.5 × 10⁻⁵) / (3 × 10⁻⁷) = 2.5 × 10² = 250. The hair is 250 times wider.",
+      "skill": "scientific-notation",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "g8f-4",
+      "question": "Solve: 5(2x − 1) − 3 = 4x + 10",
+      "answer": "10x − 5 − 3 = 4x + 10. 10x − 8 = 4x + 10. 6x = 18. x = 3. Check: 5(6−1)−3 = 25−3 = 22. 4(3)+10 = 22 ✓",
+      "skill": "multi-step-equations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8f-5",
+      "question": "Determine whether the equation has one solution, no solution, or infinitely many solutions: 3(x + 4) = 3x + 12",
+      "answer": "3x + 12 = 3x + 12. Subtract 3x: 12 = 12. TRUE → infinitely many solutions.",
+      "skill": "special-cases",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-6",
+      "question": "Solve and graph: 2 − 5x ≥ 17",
+      "answer": "−5x ≥ 15. Divide by −5 (FLIP): x ≤ −3. Graph: closed circle at −3, shade left.",
+      "skill": "linear-inequalities",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-7",
+      "question": "A table shows: x: 0, 3, 6, 9 and y: −4, 2, 8, 14. (a) Find the slope. (b) Write the equation. (c) What is y when x = 15?",
+      "answer": "(a) m = (2−(−4))/(3−0) = 6/3 = 2. (b) b = −4 (when x=0). y = 2x − 4. (c) y = 2(15)−4 = 26.",
+      "skill": "write-linear-equations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8f-8",
+      "question": "Function A: y = −3x + 10. Function B: a table shows x: 1, 2, 3, 4 and y: 1, 4, 7, 10. (a) Which has a greater rate of change? (b) At what x-value are they equal?",
+      "answer": "(a) A: rate = −3 (decreasing). B: rate = (4−1)/(2−1) = 3 (increasing). B has greater rate of change (3 > −3 in absolute value, and B is positive). (b) B: y = 3x − 2. Set equal: −3x+10 = 3x−2. 12 = 6x. x = 2. Both give y = 4.",
+      "skill": "compare-functions",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8f-9",
+      "question": "Does the set {(1,3), (2,5), (1,7), (3,9)} represent a function? Explain.",
+      "answer": "No. The input x=1 produces two different outputs (3 and 7). A function requires each input to have exactly one output.",
+      "skill": "identify-functions",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8f-10",
+      "question": "Solve the system:\n  y = x + 5\n  3x + y = 17",
+      "answer": "Substitute: 3x + (x+5) = 17. 4x + 5 = 17. 4x = 12. x = 3. y = 3+5 = 8. Solution: (3, 8). Check: 8=3+5 ✓, 3(3)+8=17 ✓",
+      "skill": "systems-substitution",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8f-11",
+      "question": "A point P(4, −2) is reflected over the y-axis, then translated 3 units up. What are the final coordinates?",
+      "answer": "Reflect over y-axis: (4,−2) → (−4,−2). Translate up 3: (−4,−2+3) = (−4, 1).",
+      "skill": "transformations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-12",
+      "question": "Two parallel lines are cut by a transversal. Angle 1 = 3x + 10 and its alternate interior angle is 5x − 20. Find x and the angle measure.",
+      "answer": "Alternate interior angles are equal: 3x + 10 = 5x − 20. 30 = 2x. x = 15. Angle = 3(15)+10 = 55°.",
+      "skill": "angle-relationships",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "g8f-13",
+      "question": "A TV screen is 48 inches wide and 36 inches tall. What is the length of the diagonal (the 'screen size')?",
+      "answer": "d² = 48² + 36² = 2304 + 1296 = 3600. d = √3600 = 60 inches.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-14",
+      "question": "Find the volume of a cone with diameter 12 cm and height 15 cm. Express in terms of π.",
+      "answer": "r = 6 cm. V = (1/3)π(6²)(15) = (1/3)π(36)(15) = (1/3)(540π) = 180π cm³.",
+      "skill": "volume-cones",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-15",
+      "question": "A sphere has volume 500π/3 cm³. Find the radius.",
+      "answer": "(4/3)πr³ = 500π/3. Divide by π: (4/3)r³ = 500/3. Multiply by 3/4: r³ = 500/4 = 125. r = ∛125 = 5 cm.",
+      "skill": "volume-spheres",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "g8f-16",
+      "question": "A line of best fit for data on hours of exercise (x) and resting heart rate (y) is y = −2x + 80. (a) Interpret the slope. (b) Interpret the y-intercept. (c) Predict the resting heart rate for someone who exercises 6 hours per week.",
+      "answer": "(a) Slope = −2: for each additional hour of weekly exercise, resting heart rate decreases by 2 bpm. (b) Intercept = 80: someone who doesn't exercise is predicted to have a resting heart rate of 80 bpm. (c) y = −2(6)+80 = 68 bpm.",
+      "skill": "interpret-slope-intercept",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8f-17",
+      "question": "A researcher finds that students who eat breakfast have higher test scores. Can the researcher conclude that eating breakfast causes higher test scores? Explain.",
+      "answer": "Not necessarily — correlation does not imply causation. Possible lurking variables: students who eat breakfast may also get more sleep, have more stable home environments, or have parents who prioritize education. These factors could be the real cause of higher scores.",
+      "skill": "correlation-causation",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "g8f-18",
+      "question": "MULTI-STEP: A water tank is a cylinder with radius 4 ft and height 10 ft. Water fills it at a rate of 2 cubic feet per minute. (a) Find the volume of the tank in terms of π. (b) Using π ≈ 3.14, about how many minutes to fill the tank completely?",
+      "answer": "(a) V = π(4²)(10) = 160π ft³. (b) 160π ≈ 160(3.14) = 502.4 ft³. Time = 502.4/2 = 251.2 minutes ≈ 251 minutes (about 4 hours 11 minutes).",
+      "skill": "volume-word-problems",
+      "difficulty": 4,
+      "points": 8
+    }
+  ],
+  "answerKeys": {
+    "g8f-1": "(a)R (b)I (c)R (d)I",
+    "g8f-2": "4",
+    "g8f-3": "250 times wider",
+    "g8f-4": "x = 3",
+    "g8f-5": "Infinitely many solutions",
+    "g8f-6": "x ≤ −3",
+    "g8f-7": "y=2x−4. y=26 at x=15.",
+    "g8f-8": "B greater rate. Equal at x=2, y=4.",
+    "g8f-9": "Not a function (x=1→3 and 7).",
+    "g8f-10": "(3, 8)",
+    "g8f-11": "(−4, 1)",
+    "g8f-12": "x=15, angle=55°",
+    "g8f-13": "60 inches",
+    "g8f-14": "180π cm³",
+    "g8f-15": "r = 5 cm",
+    "g8f-16": "Slope=−2 bpm/hour. Intercept=80. Predict: 68 bpm.",
+    "g8f-17": "Not necessarily. Lurking variables possible.",
+    "g8f-18": "160π≈502.4 ft³. ≈251 minutes."
+  }
+}

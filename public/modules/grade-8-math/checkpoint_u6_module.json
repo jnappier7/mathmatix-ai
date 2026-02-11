@@ -1,0 +1,123 @@
+{
+  "moduleId": "checkpoint_u6",
+  "course": "8th Grade Mathematics",
+  "unit": 6,
+  "title": "Unit 6 Checkpoint: Geometry & Transformations",
+  "weeks": "24",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing transformations on the coordinate plane, congruence and similarity through transformations, angle relationships with parallel lines and transversals, Pythagorean theorem applications, and coordinate distance.",
+  "skillsCovered": ["transformations", "congruence-similarity", "angle-relationships", "pythagorean-theorem", "distance-coordinate"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "transformations", "reteachFocus": "Translation: (x+a, y+b). Reflection over x-axis: (x,−y); over y-axis: (−x,y). Rotation 90° CCW: (−y,x); 180°: (−x,−y). Dilation: (kx, ky).", "resources": ["geometry_transformations_module.json - scaffold phases 1-3"] },
+    { "skillId": "angle-relationships", "reteachFocus": "Parallel + transversal: corresponding=equal, alternate interior=equal, co-interior=supplementary (sum 180°). NAME the relationship in justification.", "resources": ["geometry_transformations_module.json - scaffold phases 4-6"] },
+    { "skillId": "pythagorean-theorem", "reteachFocus": "a²+b²=c² where c is HYPOTENUSE (longest side, opposite right angle). Draw first, label, THEN solve. Coordinate distance = Pythagorean in disguise.", "resources": ["geometry_transformations_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "g8u6-1",
+      "question": "Triangle ABC has vertices A(1,2), B(4,2), C(4,6). Apply the translation (x−3, y+1). What are the new coordinates?",
+      "answer": "A'(1−3, 2+1) = A'(−2, 3). B'(4−3, 2+1) = B'(1, 3). C'(4−3, 6+1) = C'(1, 7).",
+      "skill": "transformations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u6-2",
+      "question": "Reflect the point P(3, −5) over the x-axis and then over the y-axis. What are the final coordinates?",
+      "answer": "Reflect over x-axis: (3, −5) → (3, 5). Reflect over y-axis: (3, 5) → (−3, 5). Final: (−3, 5). (Note: this is equivalent to a 180° rotation.)",
+      "skill": "transformations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-3",
+      "question": "A triangle with vertices (2, 4), (6, 4), (6, 10) is dilated by scale factor 1/2 from the origin. Find the new vertices. Is the image congruent or similar to the original?",
+      "answer": "New vertices: (1, 2), (3, 2), (3, 5). Similar but NOT congruent — dilation changes size. Scale factor 1/2 means the image is half the size.",
+      "skill": "congruence-similarity",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-4",
+      "question": "Two parallel lines are cut by a transversal. One angle formed is 65°. Find the measures of all eight angles.",
+      "answer": "At the first intersection: 65°, 115°, 65°, 115° (vertical angles equal, adjacent supplementary). At the second intersection: same pattern → 65°, 115°, 65°, 115° (corresponding angles equal with parallel lines). All eight: four angles of 65° and four of 115°.",
+      "skill": "angle-relationships",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-5",
+      "question": "In the figure, lines m and n are parallel. A transversal creates an angle of 72° at line m. Name one angle at line n that equals 72° and one that equals 108°. State the angle relationship for each.",
+      "answer": "Equals 72°: the corresponding angle (same position at line n) — corresponding angles are equal when lines are parallel. Equals 108°: the co-interior (same-side interior) angle — co-interior angles are supplementary (72° + 108° = 180°).",
+      "skill": "angle-relationships",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8u6-6",
+      "question": "A right triangle has legs of length 5 cm and 12 cm. Find the hypotenuse.",
+      "answer": "c² = 5² + 12² = 25 + 144 = 169. c = √169 = 13 cm.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u6-7",
+      "question": "A ladder leans against a wall. The base is 6 feet from the wall and the ladder is 10 feet long. How high up the wall does the ladder reach?",
+      "answer": "a² + 6² = 10². a² + 36 = 100. a² = 64. a = 8 feet.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-8",
+      "question": "Find the distance between points A(1, 2) and B(7, 10).",
+      "answer": "d = √((7−1)² + (10−2)²) = √(36 + 64) = √100 = 10.",
+      "skill": "distance-coordinate",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-9",
+      "question": "A rectangular garden is 8 meters by 15 meters. What is the length of the diagonal path across it?",
+      "answer": "d² = 8² + 15² = 64 + 225 = 289. d = √289 = 17 meters.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u6-10",
+      "question": "ANALYSIS: A triangle has sides of length 7, 24, and 25. Is it a right triangle? Justify using the Pythagorean theorem.",
+      "answer": "Check: 7² + 24² = 49 + 576 = 625. 25² = 625. Since a² + b² = c², this IS a right triangle (by the converse of the Pythagorean theorem).",
+      "skill": "pythagorean-theorem",
+      "difficulty": 4,
+      "points": 8
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "g8u6-spiral-1",
+      "question": "SPIRAL: Solve the system by substitution: y = x + 3 and 2x + y = 12.",
+      "answer": "2x + (x+3) = 12. 3x + 3 = 12. 3x = 9. x = 3. y = 3+3 = 6. Solution: (3, 6).",
+      "skill": "systems-substitution",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral from Unit 5"
+    }
+  ],
+  "answerKeys": {
+    "g8u6-1": "A'(−2,3), B'(1,3), C'(1,7)",
+    "g8u6-2": "(−3, 5)",
+    "g8u6-3": "(1,2),(3,2),(3,5). Similar, not congruent.",
+    "g8u6-4": "Four 65° and four 115°.",
+    "g8u6-5": "Corresponding=72°. Co-interior=108°.",
+    "g8u6-6": "c = 13 cm",
+    "g8u6-7": "8 feet",
+    "g8u6-8": "d = 10",
+    "g8u6-9": "d = 17 meters",
+    "g8u6-10": "Yes, right triangle (7²+24²=25²).",
+    "g8u6-spiral-1": "(3, 6)"
+  }
+}

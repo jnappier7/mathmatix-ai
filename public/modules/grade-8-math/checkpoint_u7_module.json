@@ -1,0 +1,124 @@
+{
+  "moduleId": "checkpoint_u7",
+  "course": "8th Grade Mathematics",
+  "unit": 7,
+  "title": "Unit 7 Checkpoint: Volume & Similarity Applications",
+  "weeks": "28",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing volume of cylinders, cones, and spheres, volume scaling, and real-world volume applications.",
+  "skillsCovered": ["volume-cylinders", "volume-cones", "volume-spheres", "volume-scaling", "volume-word-problems"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "volume-cylinders", "reteachFocus": "V = πr²h. r is radius (half of diameter). Connect to prism: area of base × height.", "resources": ["volume_similarity_module.json - scaffold phases 1-3"] },
+    { "skillId": "volume-cones", "reteachFocus": "V = (1/3)πr²h — one-third of the cylinder with same base and height. 3 cones fill 1 cylinder.", "resources": ["volume_similarity_module.json - scaffold phases 4-6"] },
+    { "skillId": "volume-spheres", "reteachFocus": "V = (4/3)πr³. Only needs radius. Common error: using diameter instead of radius.", "resources": ["volume_similarity_module.json - scaffold phases 4-6"] },
+    { "skillId": "volume-scaling", "reteachFocus": "Scale factor k: new volume = k³ × old volume. Double all dimensions → 2³ = 8× volume. Triple → 27× volume.", "resources": ["volume_similarity_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "g8u7-1",
+      "question": "Find the volume of a cylinder with radius 5 cm and height 10 cm. Give your answer in terms of π.",
+      "answer": "V = πr²h = π(5²)(10) = π(25)(10) = 250π cm³.",
+      "skill": "volume-cylinders",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u7-2",
+      "question": "A cylindrical water tank has diameter 8 feet and height 12 feet. How many cubic feet of water can it hold? Use π ≈ 3.14.",
+      "answer": "r = 8/2 = 4 ft. V = π(4²)(12) = π(16)(12) = 192π ≈ 192(3.14) = 602.88 ft³.",
+      "skill": "volume-cylinders",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u7-3",
+      "question": "Find the volume of a cone with radius 3 cm and height 8 cm. Give your answer in terms of π.",
+      "answer": "V = (1/3)πr²h = (1/3)π(9)(8) = (1/3)(72π) = 24π cm³.",
+      "skill": "volume-cones",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u7-4",
+      "question": "A cone and a cylinder have the same radius (6 cm) and the same height (10 cm). How many times does the cone's volume fit into the cylinder?",
+      "answer": "V_cyl = π(36)(10) = 360π. V_cone = (1/3)(360π) = 120π. The cone fits exactly 3 times. (The cone is always 1/3 of the cylinder with same base and height.)",
+      "skill": "volume-cones",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u7-5",
+      "question": "Find the volume of a sphere with radius 6 cm. Give your answer in terms of π.",
+      "answer": "V = (4/3)πr³ = (4/3)π(216) = 288π cm³.",
+      "skill": "volume-spheres",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u7-6",
+      "question": "A basketball has a diameter of 24 cm. Find its volume. Use π ≈ 3.14.",
+      "answer": "r = 12 cm. V = (4/3)π(12³) = (4/3)π(1728) = 2304π ≈ 2304(3.14) ≈ 7234.6 cm³.",
+      "skill": "volume-spheres",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u7-7",
+      "question": "A cylinder has radius 4 cm and height 9 cm. If all dimensions are doubled, what is the new volume? How does it compare to the original?",
+      "answer": "Original: V = π(16)(9) = 144π. Doubled: r=8, h=18. V = π(64)(18) = 1152π. Ratio: 1152π / 144π = 8. The volume is 8 times larger (2³ = 8).",
+      "skill": "volume-scaling",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8u7-8",
+      "question": "A sphere has volume 36π cm³. If the radius is tripled, what is the new volume?",
+      "answer": "Scale factor 3: new volume = 3³ × 36π = 27 × 36π = 972π cm³.",
+      "skill": "volume-scaling",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8u7-9",
+      "question": "An ice cream cone (cone shape) has radius 3 cm and height 12 cm. A hemispherical scoop of ice cream with radius 3 cm sits on top. What is the total volume? Express in terms of π.",
+      "answer": "Cone: (1/3)π(9)(12) = 36π. Hemisphere: (1/2)(4/3)π(27) = (2/3)(27π) = 18π. Total: 36π + 18π = 54π cm³.",
+      "skill": "volume-word-problems",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "g8u7-10",
+      "question": "ANALYSIS: Explain in your own words why doubling the radius of a sphere makes the volume 8 times larger, not 2 times larger.",
+      "answer": "The volume formula uses r³ (radius cubed). When you double r, you're cubing 2r: (2r)³ = 8r³. The exponent 3 means the factor of 2 gets multiplied three times: 2 × 2 × 2 = 8. Volume is a three-dimensional measurement, so scaling one dimension by k scales the volume by k³.",
+      "skill": "volume-scaling",
+      "difficulty": 4,
+      "points": 6
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "g8u7-spiral-1",
+      "question": "SPIRAL: Find the distance between (−2, 3) and (4, −5).",
+      "answer": "d = √((4−(−2))² + (−5−3)²) = √(36 + 64) = √100 = 10.",
+      "skill": "distance-coordinate",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral from Unit 6"
+    }
+  ],
+  "answerKeys": {
+    "g8u7-1": "250π cm³",
+    "g8u7-2": "≈ 602.88 ft³",
+    "g8u7-3": "24π cm³",
+    "g8u7-4": "3 times",
+    "g8u7-5": "288π cm³",
+    "g8u7-6": "≈ 7234.6 cm³",
+    "g8u7-7": "1152π (8× original)",
+    "g8u7-8": "972π cm³",
+    "g8u7-9": "54π cm³",
+    "g8u7-10": "V uses r³, so doubling r gives 2³=8× volume.",
+    "g8u7-spiral-1": "10"
+  }
+}
