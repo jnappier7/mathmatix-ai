@@ -47,7 +47,13 @@ router.post('/', async (req, res) => {
     const releaseLock = await acquireCourseLock(userId);
 
     try {
-        const { message, responseTime } = req.body;
+        const { message, responseTime, isGreeting } = req.body;
+
+        // ── Greeting mode: silent course intro ──────────────
+        if (isGreeting) {
+            releaseLock();
+            return handleCourseGreeting(req, res, userId);
+        }
 
         // ── Validate input ──────────────────────────────────
         if (!message || typeof message !== 'string' || message.trim() === '') {
@@ -440,5 +446,156 @@ router.post('/', async (req, res) => {
         releaseLock();
     }
 });
+
+// ============================================================
+//  Course Greeting — silent first message
+//  The AI greets the student with full course/module context.
+//  No user message is saved — it looks like the tutor initiated.
+// ============================================================
+async function handleCourseGreeting(req, res, userId) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        if (!user.activeCourseSessionId) {
+            return res.status(400).json({ message: 'No active course session.' });
+        }
+
+        const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+        if (!courseSession || courseSession.status !== 'active') {
+            return res.status(400).json({ message: 'Course session not found or inactive.' });
+        }
+
+        // Load pathway + module
+        const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
+        if (!fs.existsSync(pathwayFile)) {
+            return res.status(500).json({ message: `Course pathway not found: ${courseSession.courseId}` });
+        }
+        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+        const currentPathwayModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+
+        let moduleData = { title: currentPathwayModule?.title || courseSession.currentModuleId, skills: currentPathwayModule?.skills || [] };
+        if (currentPathwayModule?.moduleFile) {
+            const moduleFile = path.join(__dirname, '../public/modules', courseSession.courseId, currentPathwayModule.moduleFile);
+            if (fs.existsSync(moduleFile)) {
+                moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+            }
+        }
+
+        // Load or create conversation
+        let conversation;
+        if (courseSession.conversationId) {
+            conversation = await Conversation.findById(courseSession.conversationId);
+        }
+        if (!conversation) {
+            conversation = new Conversation({
+                userId: user._id,
+                conversationName: courseSession.courseName,
+                topic: courseSession.courseName,
+                topicEmoji: '📚',
+                conversationType: 'topic'
+            });
+            await conversation.save();
+            courseSession.conversationId = conversation._id;
+            await courseSession.save();
+        }
+        if (!conversation.isActive) {
+            conversation.isActive = true;
+        }
+
+        // Build course prompt
+        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+            ? user.selectedTutorId : 'default';
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+        const systemPrompt = generateCoursePrompt({
+            user, tutor: currentTutor,
+            course: {
+                courseId: courseSession.courseId,
+                courseName: courseSession.courseName,
+                currentModuleId: courseSession.currentModuleId,
+                overallProgress: courseSession.overallProgress,
+                modules: courseSession.modules
+            },
+            module: moduleData, pathway
+        });
+
+        // Determine if this is a fresh start or a return
+        const hasHistory = conversation.messages && conversation.messages.length > 0;
+        const completedModules = (courseSession.modules || []).filter(m => m.status === 'completed').length;
+
+        let ghostMessage;
+        if (!hasHistory && completedModules === 0) {
+            // Brand new course — first time ever
+            ghostMessage = `Hi, I'm ${user.firstName}. I just enrolled in ${courseSession.courseName}. ` +
+                `I'm in ${user.gradeLevel || 'school'} and ready to start.`;
+        } else if (hasHistory) {
+            // Returning to an ongoing course
+            ghostMessage = `Hi, I'm ${user.firstName}. I'm coming back to continue ${courseSession.courseName}. ` +
+                `I'm on module: ${moduleData.title || courseSession.currentModuleId}. ` +
+                `My overall progress is ${courseSession.overallProgress || 0}%.`;
+        } else {
+            // Has completed some modules but new conversation
+            ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing ${courseSession.courseName}. ` +
+                `I've completed ${completedModules} module${completedModules !== 1 ? 's' : ''} ` +
+                `and I'm now on: ${moduleData.title || courseSession.currentModuleId}.`;
+        }
+
+        const greetingInstruction = `The student just entered their course session. They haven't typed anything yet — YOU are initiating. ` +
+            `The context below is invisible to them. Greet them naturally, reference the course/module, and either: ` +
+            `(a) if new, welcome them and preview what they'll learn in this module, or ` +
+            `(b) if returning, welcome them back and remind them where they left off. ` +
+            `Keep it to 2-3 sentences. Be warm but jump into course content quickly. ` +
+            `End with a question or prompt that kicks off the first scaffold element.`;
+
+        const messagesForAI = [
+            { role: 'system', content: systemPrompt },
+            { role: 'system', content: greetingInstruction },
+            { role: 'user', content: ghostMessage }
+        ];
+
+        console.log(`📚 [CourseGreeting] ${user.firstName} → ${courseSession.courseName} / ${courseSession.currentModuleId}`);
+
+        // Call AI
+        const aiStartTime = Date.now();
+        const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 250 });
+        const greetingText = completion.choices[0]?.message?.content?.trim() || `Welcome to ${courseSession.courseName}! Let's get started.`;
+
+        // Track AI time
+        const aiSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+        User.findByIdAndUpdate(userId, {
+            $inc: { weeklyAISeconds: aiSeconds, totalAISeconds: aiSeconds }
+        }).catch(err => console.error('[CourseGreeting] AI time tracking error:', err));
+
+        // Save ONLY the AI response (no user message — this is a silent greeting)
+        conversation.messages.push({
+            role: 'assistant',
+            content: greetingText,
+            timestamp: new Date()
+        });
+        conversation.currentTopic = courseSession.courseName;
+        conversation.lastActivity = new Date();
+        await conversation.save();
+
+        res.json({
+            text: greetingText,
+            voiceId: currentTutor.voiceId,
+            isGreeting: true,
+            courseContext: {
+                courseId: courseSession.courseId,
+                courseName: courseSession.courseName,
+                currentModuleId: courseSession.currentModuleId,
+                overallProgress: courseSession.overallProgress
+            }
+        });
+
+    } catch (error) {
+        console.error('[CourseGreeting] Error:', error);
+        res.status(500).json({
+            text: 'Welcome! Let\'s get started with your course.',
+            isGreeting: true
+        });
+    }
+}
 
 module.exports = router;

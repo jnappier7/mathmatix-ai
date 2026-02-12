@@ -652,7 +652,7 @@ class CourseManager {
             // Switch sidebar to the course conversation
             if (session.conversationId && window.sidebar) {
                 await window.sidebar.loadSessions();
-                window.sidebar.switchSession(session.conversationId);
+                await window.sidebar.switchSession(session.conversationId);
             }
 
             // Show progress bar
@@ -661,8 +661,41 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
+            // Fire silent course greeting — AI introduces the course/module
+            this.sendCourseGreeting();
+
         } catch (err) {
             console.error('[CourseManager] Failed to activate course:', err);
+        }
+    }
+
+    // --------------------------------------------------
+    // Silent Course Greeting
+    // Calls /api/course-chat with isGreeting flag so the AI
+    // greets the student with full course/module context.
+    // No user message is shown — it appears tutor-initiated.
+    // --------------------------------------------------
+    async sendCourseGreeting() {
+        try {
+            // Show thinking indicator while greeting loads
+            if (window.showThinkingIndicator) window.showThinkingIndicator(true);
+
+            const res = await csrfFetch('/api/course-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isGreeting: true }),
+                credentials: 'include'
+            });
+
+            if (window.showThinkingIndicator) window.showThinkingIndicator(false);
+
+            const data = await res.json();
+            if (data.text && window.appendMessage) {
+                window.appendMessage(data.text, 'ai');
+            }
+        } catch (err) {
+            if (window.showThinkingIndicator) window.showThinkingIndicator(false);
+            console.error('[CourseManager] Course greeting failed:', err);
         }
     }
 

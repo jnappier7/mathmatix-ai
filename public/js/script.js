@@ -4378,8 +4378,13 @@ What would you like to work on first?`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 100);
         } else {
-            // No messages yet - show welcome message
-            if (conversation.conversationType === 'topic') {
+            // No messages yet — trigger a course greeting if in course mode,
+            // otherwise show a generic welcome
+            const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
+            if (isInCourse) {
+                // Let the course greeting handler provide a context-aware welcome
+                window.courseManager.sendCourseGreeting();
+            } else if (conversation.conversationType === 'topic') {
                 appendMessage(
                     `Welcome to your ${conversation.topic || 'topic'} session! 📚\n\n` +
                     `I'm here to help you learn and practice. What would you like to work on?`,
