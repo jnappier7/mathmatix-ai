@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="240" viewBox="0 0 400 240">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="50%" stop-color="#0F1F35"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+    <linearGradient id="tealGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12B3B3"/>
+      <stop offset="100%" stop-color="#0E8F8F"/>
+    </linearGradient>
+    <linearGradient id="pinkGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF3B7F"/>
+      <stop offset="100%" stop-color="#FF6B9D"/>
+    </linearGradient>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#12B3B3" stroke-width="0.15" opacity="0.25"/>
+    </pattern>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="120%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="240" fill="url(#bg)"/>
+  <rect width="400" height="240" fill="url(#grid)"/>
+
+  <!-- Decorative glowing orbs -->
+  <circle cx="50" cy="200" r="60" fill="#12B3B3" opacity="0.04"/>
+  <circle cx="350" cy="40" r="80" fill="#FF3B7F" opacity="0.03"/>
+  <circle cx="200" cy="120" r="100" fill="#12B3B3" opacity="0.02"/>
+
+  <!-- Floating math symbols (subtle background) -->
+  <g opacity="0.12" fill="#12B3B3">
+    <text x="15" y="30" font-family="Georgia, serif" font-size="14" font-style="italic">f(x)</text>
+    <text x="355" y="225" font-family="Georgia, serif" font-size="12">dy/dx</text>
+    <text x="340" y="80" font-family="Georgia, serif" font-size="16">&#960;</text>
+    <text x="30" y="175" font-family="Georgia, serif" font-size="13">&#8721;</text>
+    <text x="365" y="155" font-family="Georgia, serif" font-size="11">&#8734;</text>
+    <text x="60" y="95" font-family="Georgia, serif" font-size="10">&#916;</text>
+    <text x="310" y="28" font-family="Georgia, serif" font-size="11">&#952;</text>
+  </g>
+
+  <!-- ===== CHAT CONVERSATION AREA ===== -->
+  <g transform="translate(20, 42)">
+
+    <!-- Student bubble (right-aligned, pink) -->
+    <g filter="url(#shadow)">
+      <rect x="155" y="0" width="145" height="32" rx="12" ry="12" fill="url(#pinkGlow)" opacity="0.9"/>
+      <polygon points="288,26 300,36 284,32" fill="#FF3B7F" opacity="0.9"/>
+      <text x="170" y="15" font-family="Inter, sans-serif" font-size="8.5" fill="#fff" font-weight="500">How do I solve</text>
+      <text x="170" y="26" font-family="Inter, sans-serif" font-size="8.5" fill="#fff" font-weight="500">x&#178; &#8722; 5x + 6 = 0 ?</text>
+    </g>
+
+    <!-- Student avatar -->
+    <circle cx="310" cy="14" r="11" fill="#FF3B7F" opacity="0.7"/>
+    <text x="310" y="18" font-family="Inter, sans-serif" font-size="10" fill="#fff" text-anchor="middle" font-weight="600">S</text>
+
+    <!-- AI bubble (left-aligned, teal) -->
+    <g filter="url(#shadow)" transform="translate(0, 42)">
+      <!-- AI avatar -->
+      <circle cx="15" cy="24" r="11" fill="#12B3B3" opacity="0.8"/>
+      <!-- Glasses icon in avatar -->
+      <g transform="translate(7, 20)" stroke="#fff" stroke-width="1" fill="none" opacity="0.9">
+        <circle cx="4" cy="4" r="3"/>
+        <circle cx="12" cy="4" r="3"/>
+        <line x1="7" y1="4" x2="9" y2="4"/>
+      </g>
+
+      <rect x="32" y="0" width="195" height="58" rx="12" ry="12" fill="url(#tealGlow)" opacity="0.9"/>
+      <polygon points="38,40 26,50 42,44" fill="#12B3B3" opacity="0.9"/>
+
+      <text x="44" y="14" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Great question! Let's factor it.</text>
+      <text x="44" y="25" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Find two numbers that multiply</text>
+      <text x="44" y="36" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">to 6 and add to &#8722;5...</text>
+      <text x="44" y="50" font-family="Inter, sans-serif" font-size="9" fill="#fff" font-weight="700">(x&#8722;2)(x&#8722;3) = 0  &#8594;  x = 2, 3</text>
+    </g>
+
+    <!-- Student follow-up bubble -->
+    <g filter="url(#shadow)" transform="translate(0, 110)">
+      <rect x="175" y="0" width="125" height="26" rx="10" ry="10" fill="url(#pinkGlow)" opacity="0.85"/>
+      <polygon points="288,20 300,28 284,24" fill="#FF3B7F" opacity="0.85"/>
+      <text x="188" y="17" font-family="Inter, sans-serif" font-size="8" fill="#fff" font-weight="500">Oh! That makes sense!</text>
+    </g>
+
+  </g>
+
+  <!-- ===== BRAND AREA (bottom) ===== -->
+
+  <!-- Divider line -->
+  <line x1="30" y1="195" x2="370" y2="195" stroke="#12B3B3" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Logo text -->
+  <g transform="translate(200, 215)" text-anchor="middle">
+    <text x="-18" y="0" font-family="Inter, sans-serif" font-size="18" font-weight="800" letter-spacing="3" fill="#FFFFFF">MATHMATIX</text>
+    <text x="77" y="0" font-family="Inter, sans-serif" font-size="18" font-weight="800" letter-spacing="2" fill="#FF3B7F">AI</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="200" y="234" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#5B9E9E" font-weight="400" letter-spacing="1.5" opacity="0.8">UNLOCK THE PATTERN. LEARN FOR LIFE.</text>
+
+  <!-- Subtle teal bottom accent line -->
+  <rect x="0" y="238" width="400" height="2" fill="url(#tealGlow)" opacity="0.6"/>
+
+</svg>
