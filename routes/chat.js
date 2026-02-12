@@ -1528,13 +1528,20 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);
 
         // Prepare IEP accommodation features for frontend
-        const iepFeatures = user.iepPlan?.accommodations ? {
-            autoReadAloud: user.iepPlan.accommodations.audioReadAloud || false,
-            showCalculator: user.iepPlan.accommodations.calculatorAllowed || false,
-            useHighContrast: user.iepPlan.accommodations.largePrintHighContrast || false,
-            extendedTimeMultiplier: user.iepPlan.accommodations.extendedTime ? 1.5 : 1.0,
-            mathAnxietySupport: user.iepPlan.accommodations.mathAnxietySupport || false,
-            chunkedAssignments: user.iepPlan.accommodations.chunkedAssignments || false
+        const accom = user.iepPlan?.accommodations;
+        const iepFeatures = accom ? {
+            autoReadAloud: accom.audioReadAloud || false,
+            showCalculator: accom.calculatorAllowed || false,
+            useHighContrast: accom.largePrintHighContrast || false,
+            extendedTimeMultiplier: accom.extendedTime ? 1.5 : 1.0,
+            mathAnxietySupport: accom.mathAnxietySupport || false,
+            chunkedAssignments: accom.chunkedAssignments || false,
+            reducedDistraction: accom.reducedDistraction || false,
+            breaksAsNeeded: accom.breaksAsNeeded || false,
+            digitalMultiplicationChart: accom.digitalMultiplicationChart || false,
+            customAccommodations: accom.custom || [],
+            readingLevel: user.iepPlan.readingLevel || null,
+            preferredScaffolds: user.iepPlan.preferredScaffolds || []
         } : null;
 
         const responseData = {

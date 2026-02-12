@@ -1,0 +1,519 @@
+/* =============================================================
+   IEP Accommodation Styles
+   Active accommodations from student's IEP are applied via
+   body classes set by applyIepAccommodations() in script.js
+   ============================================================= */
+
+/* -----------------------------------------------------------
+   REDUCED DISTRACTION MODE
+   Hides leaderboard, quests, challenges, badges, XP animations,
+   and non-essential sidebar content. Keeps the learning focused.
+   ----------------------------------------------------------- */
+.iep-reduced-distraction .leaderboard-toggle,
+.iep-reduced-distraction #sidebar-leaderboard,
+.iep-reduced-distraction .quest-toggle,
+.iep-reduced-distraction #sidebar-quests,
+.iep-reduced-distraction #daily-quests-container,
+.iep-reduced-distraction #weekly-challenges-container,
+.iep-reduced-distraction #left-drawer-toggle,
+.iep-reduced-distraction #left-drawer,
+.iep-reduced-distraction #drawer-leaderboard-table,
+.iep-reduced-distraction #drawer-daily-quests-container,
+.iep-reduced-distraction #drawer-weekly-challenges-container,
+.iep-reduced-distraction .xp-notification,
+.iep-reduced-distraction .badge-celebration,
+.iep-reduced-distraction #confetti-canvas {
+    display: none !important;
+}
+
+/* Keep sidebar slim — only sessions and tools */
+.iep-reduced-distraction #app-sidebar {
+    max-width: 220px;
+}
+
+/* Softer focus indicator */
+.iep-reduced-distraction .sidebar-progress {
+    opacity: 0.6;
+}
+
+/* Remove distracting hover effects */
+.iep-reduced-distraction .sidebar-tool-btn:hover {
+    transform: none;
+}
+
+/* -----------------------------------------------------------
+   HIGH CONTRAST MODE
+   Larger text, stronger borders, more contrast.
+   Applied when largePrintHighContrast accommodation is active.
+   ----------------------------------------------------------- */
+.iep-high-contrast {
+    --clr-text: #000000;
+    --clr-text-dim: #333333;
+    --clr-border: #000000;
+    --clr-bg: #ffffff;
+    font-size: 118%;
+}
+
+.iep-high-contrast .message {
+    font-size: 1.1em;
+    line-height: 1.7;
+    border: 2px solid var(--clr-border);
+}
+
+.iep-high-contrast .message.ai {
+    background: #fffff0;
+}
+
+.iep-high-contrast button,
+.iep-high-contrast .btn {
+    font-size: 1.05em;
+    font-weight: 600;
+    border-width: 2px;
+    min-height: 48px;
+}
+
+.iep-high-contrast #user-input {
+    font-size: 1.15em;
+    line-height: 1.6;
+    border-width: 2px;
+}
+
+/* -----------------------------------------------------------
+   MATH ANXIETY SUPPORT
+   Gentler animations, calmer colors, softer transitions.
+   No sudden movements or startling effects.
+   ----------------------------------------------------------- */
+.iep-anxiety-support .xp-notification {
+    animation-duration: 600ms;
+}
+
+/* Disable confetti bursts and celebration shakes */
+.iep-anxiety-support .badge-celebration,
+.iep-anxiety-support #confetti-canvas {
+    display: none !important;
+}
+
+/* Gentler thinking indicator */
+.iep-anxiety-support #thinking-indicator {
+    animation-duration: 2s;
+}
+
+/* -----------------------------------------------------------
+   CALCULATOR ALWAYS VISIBLE
+   For calculatorAllowed accommodation — makes the calculator
+   button prominent and easy to find.
+   ----------------------------------------------------------- */
+.iep-always-visible {
+    background: linear-gradient(135deg, var(--clr-primary-teal), #0d9494) !important;
+    color: white !important;
+    border-radius: var(--radius-base);
+    font-weight: 600;
+    order: -1;
+    box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.3);
+}
+
+/* -----------------------------------------------------------
+   BREAK BUTTON
+   Persistent "Take a Break" button for breaksAsNeeded.
+   Positioned in bottom-left, always accessible.
+   ----------------------------------------------------------- */
+.iep-break-btn {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    z-index: 8999;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.15));
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.iep-break-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.iep-break-btn:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* -----------------------------------------------------------
+   BREAK OVERLAY
+   Full-screen calming overlay with activity options.
+   ----------------------------------------------------------- */
+.iep-break-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    background: rgba(15, 15, 35, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: iep-fade-in 0.3s ease;
+}
+
+@keyframes iep-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.iep-break-card {
+    background: #1e1e3a;
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 440px;
+    width: 92%;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.iep-break-card h2 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.iep-break-card > p {
+    color: #aaa;
+    margin: 0 0 24px;
+}
+
+.iep-break-activities {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.iep-break-activity {
+    background: #2a2a4a;
+    border: 1px solid #444;
+    border-radius: 14px;
+    padding: 16px 12px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 100px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.iep-break-activity:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.iep-break-activity i {
+    font-size: 24px;
+    color: #667eea;
+}
+
+.iep-break-activity span {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.iep-break-activity small {
+    color: #888;
+    font-size: 11px;
+}
+
+/* Breathing exercise circle */
+.iep-break-exercise {
+    margin: 20px 0;
+}
+
+.iep-breathing-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.15);
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 4s ease-in-out, background-color 4s ease-in-out;
+}
+
+.iep-breathing-circle.inhale {
+    transform: scale(1.5);
+    background: rgba(102, 126, 234, 0.3);
+}
+
+.iep-breathing-circle.hold {
+    transform: scale(1.5);
+    background: rgba(118, 75, 162, 0.3);
+}
+
+.iep-breathing-circle.exhale {
+    transform: scale(1);
+    background: rgba(102, 126, 234, 0.15);
+}
+
+.iep-breathing-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #667eea;
+}
+
+.iep-breathing-instruction {
+    color: #ccc;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.iep-stretch-steps p,
+.iep-grounding p {
+    color: #ccc;
+    font-size: 15px;
+    line-height: 2;
+    text-align: left;
+    padding-left: 20px;
+}
+
+.iep-grounding p strong {
+    color: #667eea;
+    font-size: 20px;
+}
+
+.iep-break-done-btn {
+    background: linear-gradient(135deg, #16C86D, #12a65a);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+    margin-top: 8px;
+}
+
+.iep-break-done-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------
+   MULTIPLICATION CHART
+   Floating, draggable reference chart for digitalMultiplicationChart.
+   ----------------------------------------------------------- */
+.iep-mult-chart-btn {
+    position: fixed;
+    bottom: 16px;
+    left: 180px;
+    z-index: 8999;
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.15));
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* If no break button, position chart button at left:16px */
+body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
+    /* default position — overridden by JS if break button exists */
+}
+
+.iep-mult-chart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+}
+
+.iep-mult-chart {
+    position: fixed;
+    bottom: 60px;
+    left: 16px;
+    z-index: 9001;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    overflow: auto;
+    animation: iep-fade-in 0.2s ease;
+}
+
+.iep-mult-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-radius: 14px 14px 0 0;
+}
+
+.iep-mult-chart-header h3 {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.iep-mult-chart-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #999;
+    padding: 0 4px;
+}
+
+.iep-mult-table {
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.iep-mult-table th,
+.iep-mult-table td {
+    width: 34px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.iep-mult-table th {
+    background: #f0f4ff;
+    font-weight: 700;
+    color: #555;
+    position: sticky;
+}
+
+.iep-mult-table thead th {
+    top: 0;
+    background: #e8ecf8;
+}
+
+.iep-mult-table tbody th {
+    left: 0;
+    background: #e8ecf8;
+}
+
+.iep-mult-table td {
+    color: #333;
+}
+
+.iep-mult-table td:hover {
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+}
+
+/* Dark mode overrides for IEP elements */
+.dark-mode .iep-mult-chart {
+    background: #1e1e3a;
+}
+
+.dark-mode .iep-mult-chart-header {
+    background: #1e1e3a;
+    border-color: #333;
+}
+
+.dark-mode .iep-mult-chart-header h3 {
+    color: #eee;
+}
+
+.dark-mode .iep-mult-table th {
+    background: #2a2a4a;
+    color: #ccc;
+}
+
+.dark-mode .iep-mult-table thead th {
+    background: #2a2a4a;
+}
+
+.dark-mode .iep-mult-table tbody th {
+    background: #2a2a4a;
+}
+
+.dark-mode .iep-mult-table td {
+    border-color: #333;
+    color: #ddd;
+}
+
+.dark-mode .iep-high-contrast .message.ai {
+    background: #1a1a30;
+}
+
+/* -----------------------------------------------------------
+   RESPONSIVE — Mobile adjustments for IEP elements
+   ----------------------------------------------------------- */
+@media (max-width: 600px) {
+    .iep-break-btn {
+        bottom: 70px;
+        left: 10px;
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
+    .iep-mult-chart-btn {
+        bottom: 70px;
+        left: auto;
+        right: 10px;
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
+    .iep-break-activities {
+        flex-direction: column;
+    }
+
+    .iep-break-activity {
+        flex-direction: row;
+        min-width: auto;
+    }
+
+    .iep-mult-chart {
+        left: 4px;
+        right: 4px;
+        bottom: 120px;
+    }
+
+    .iep-mult-table {
+        font-size: 11px;
+    }
+
+    .iep-mult-table th,
+    .iep-mult-table td {
+        width: 26px;
+        height: 24px;
+    }
+}
+
+/* Reduced motion — respect system + IEP anxiety support */
+@media (prefers-reduced-motion: reduce) {
+    .iep-breathing-circle {
+        transition-duration: 0.01ms !important;
+    }
+    .iep-break-overlay {
+        animation-duration: 0.01ms !important;
+    }
+}

@@ -223,6 +223,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if(addIepGoalBtn) addIepGoalBtn.addEventListener('click', () => addIepGoalToUI());
 
+    // --- IEP Template Chip Handlers ---
+    document.querySelectorAll('.iep-template-chip').forEach(chip => {
+        chip.addEventListener('click', async () => {
+            const templateId = chip.dataset.template;
+            const studentId = currentIepStudentIdInput.value;
+            if (!studentId) return;
+
+            // Confirm merge vs. replace
+            const currentHasAccommodations = Object.values(iepAccommodations).some(el => el && el.checked);
+            if (currentHasAccommodations) {
+                const merge = confirm(`Apply "${chip.textContent}" template?\n\nClick OK to merge with existing accommodations, or Cancel to skip.`);
+                if (!merge) return;
+            }
+
+            try {
+                const res = await csrfFetch(`/api/iep-templates/apply/accommodations/${studentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateId, merge: true })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                const result = await res.json();
+
+                // Reload the IEP data into the form
+                const iepRes = await csrfFetch(`/api/teacher/students/${studentId}/iep`);
+                if (iepRes.ok) {
+                    const iepData = await iepRes.json();
+                    loadIepData(iepData);
+                }
+
+                // Visual feedback on the chip
+                chip.classList.add('iep-template-applied');
+                setTimeout(() => chip.classList.remove('iep-template-applied'), 2000);
+            } catch (err) {
+                console.error('[IEP Template] Error applying template:', err);
+                alert('Failed to apply template. Please try again.');
+            }
+        });
+    });
+
     if(saveIepBtn) saveIepBtn.addEventListener('click', async () => {
         const studentId = currentIepStudentIdInput.value;
         if (!studentId) return alert("No student selected.");

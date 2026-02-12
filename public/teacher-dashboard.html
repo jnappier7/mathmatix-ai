@@ -2498,6 +2498,133 @@
       accent-color: #27ae60;
     }
 
+    /* --- IEP Template Bar --- */
+    .iep-template-bar {
+      background: #f0f7ff;
+      border: 1px solid #d0e3ff;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .iep-template-label {
+      margin: 0 0 10px;
+      font-size: 0.85em;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .iep-template-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .iep-template-chip {
+      background: #fff;
+      border: 1px solid #c0d0e0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #444;
+    }
+
+    .iep-template-chip:hover {
+      background: #27ae60;
+      color: #fff;
+      border-color: #27ae60;
+      transform: translateY(-1px);
+    }
+
+    .iep-template-chip.iep-template-applied {
+      background: #27ae60;
+      color: #fff;
+      border-color: #27ae60;
+    }
+
+    /* --- IEP Accommodation Categories --- */
+    .iep-accom-category {
+      margin-bottom: 16px;
+    }
+
+    .iep-category-heading {
+      font-size: 0.82em;
+      color: #27ae60;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e8f5e9;
+    }
+
+    .iep-accom-category .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85em;
+      padding: 7px 10px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .iep-accom-category .checkbox-group label:hover {
+      background: #e8f5e9;
+    }
+
+    .iep-accom-category .checkbox-group input[type="checkbox"] {
+      accent-color: #27ae60;
+    }
+
+    /* --- IEP Readability Section --- */
+    .iep-readability-section {
+      margin: 16px 0;
+    }
+
+    .iep-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .iep-field label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85em;
+      margin-bottom: 4px;
+    }
+
+    .iep-field input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .iep-field-hint {
+      display: block;
+      font-size: 0.75em;
+      color: #888;
+      margin-top: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .iep-field-row {
+        grid-template-columns: 1fr;
+      }
+      .iep-template-chips {
+        gap: 6px;
+      }
+      .iep-template-chip {
+        font-size: 0.75em;
+        padding: 5px 10px;
+      }
+    }
+
     @media (max-width: 768px) {
       .profile-stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -3296,27 +3423,74 @@
         <h2>IEP Details for <span id="iep-student-name"></span></h2>
         <input type="hidden" id="current-iep-student-id">
 
+        <!-- Quick-Start Template Bar -->
+        <div class="iep-template-bar">
+          <p class="iep-template-label">Quick-start from a template:</p>
+          <div class="iep-template-chips">
+            <button class="iep-template-chip" data-template="dyscalculia" title="Math-specific learning disability support">Dyscalculia</button>
+            <button class="iep-template-chip" data-template="dyslexia" title="Reading-based support for word problems">Dyslexia</button>
+            <button class="iep-template-chip" data-template="adhd" title="Attention and focus support">ADHD</button>
+            <button class="iep-template-chip" data-template="math-anxiety" title="Social-emotional math support">Math Anxiety</button>
+            <button class="iep-template-chip" data-template="processing-speed" title="Cognitive processing support">Processing Speed</button>
+            <button class="iep-template-chip" data-template="autism-spectrum" title="Developmental support">Autism Spectrum</button>
+            <button class="iep-template-chip" data-template="visual-impairment" title="Physical/visual support">Visual Impairment</button>
+            <button class="iep-template-chip" data-template="esl-ell" title="Language learner support">ESL / ELL</button>
+            <button class="iep-template-chip" data-template="comprehensive" title="Full support package">Comprehensive</button>
+          </div>
+        </div>
+
         <h3>Accommodations</h3>
-        <div class="checkbox-group">
-          <label><input type="checkbox" id="extendedTime" /> Extended Time</label>
-          <label><input type="checkbox" id="reducedDistraction" /> Reduced Distraction</label>
-          <label><input type="checkbox" id="calculatorAllowed" /> Calculator Allowed</label>
-          <label><input type="checkbox" id="audioReadAloud" /> Audio Read-Aloud</label>
-          <label><input type="checkbox" id="chunkedAssignments" /> Chunked Assignments</label>
-          <label><input type="checkbox" id="breaksAsNeeded" /> Breaks as Needed</label>
-          <label><input type="checkbox" id="digitalMultiplicationChart" /> Digital Multiplication Chart</label>
-          <label><input type="checkbox" id="largePrintHighContrast" /> Large Print / High Contrast</label>
-          <label><input type="checkbox" id="mathAnxietySupport" /> Math Anxiety Support</label>
+
+        <div class="iep-accom-category">
+          <h4 class="iep-category-heading">Time &amp; Pacing</h4>
+          <div class="checkbox-group">
+            <label><input type="checkbox" id="extendedTime" /> Extended Time (1.5x on timed activities)</label>
+            <label><input type="checkbox" id="chunkedAssignments" /> Chunked Assignments (3-5 problems at a time)</label>
+            <label><input type="checkbox" id="breaksAsNeeded" /> Breaks as Needed (persistent break button)</label>
+          </div>
+        </div>
+
+        <div class="iep-accom-category">
+          <h4 class="iep-category-heading">Accessibility &amp; Presentation</h4>
+          <div class="checkbox-group">
+            <label><input type="checkbox" id="audioReadAloud" /> Audio Read-Aloud (auto TTS on problems)</label>
+            <label><input type="checkbox" id="largePrintHighContrast" /> Large Print / High Contrast</label>
+            <label><input type="checkbox" id="reducedDistraction" /> Reduced Distraction (hides leaderboard, quests, badges)</label>
+          </div>
+        </div>
+
+        <div class="iep-accom-category">
+          <h4 class="iep-category-heading">Math Tools &amp; Supports</h4>
+          <div class="checkbox-group">
+            <label><input type="checkbox" id="calculatorAllowed" /> Calculator Always Available</label>
+            <label><input type="checkbox" id="digitalMultiplicationChart" /> Digital Multiplication Chart</label>
+          </div>
+        </div>
+
+        <div class="iep-accom-category">
+          <h4 class="iep-category-heading">Social-Emotional</h4>
+          <div class="checkbox-group">
+            <label><input type="checkbox" id="mathAnxietySupport" /> Math Anxiety Support (gentler feedback, encouragement)</label>
+          </div>
         </div>
 
         <label for="customAccommodations">Custom Accommodations (one per line):</label>
-        <textarea id="customAccommodations" rows="3" placeholder="Enter any additional accommodations..."></textarea>
+        <textarea id="customAccommodations" rows="3" placeholder="e.g., Preferential seating, visual schedule, check-ins every 10 min..."></textarea>
 
-        <label for="readingLevel">Reading Level (Lexile or Grade Level):</label>
-        <input type="number" id="readingLevel" placeholder="e.g., 900 (Lexile) or 6 (Grade Level)" />
-
-        <label for="preferredScaffolds">Preferred Scaffolds (comma-separated):</label>
-        <input type="text" id="preferredScaffolds" placeholder="e.g., hints, examples, graphic organizers" />
+        <div class="iep-readability-section">
+          <div class="iep-field-row">
+            <div class="iep-field">
+              <label for="readingLevel">Reading Level:</label>
+              <input type="number" id="readingLevel" placeholder="e.g., 4 (grade) or 650 (Lexile)" />
+              <small class="iep-field-hint">Grade level (1-12) or Lexile (100-1600). AI will adjust vocabulary.</small>
+            </div>
+            <div class="iep-field">
+              <label for="preferredScaffolds">Preferred Scaffolds:</label>
+              <input type="text" id="preferredScaffolds" placeholder="e.g., hints, examples, graphic organizers" />
+              <small class="iep-field-hint">Comma-separated. AI will prioritize these when student struggles.</small>
+            </div>
+          </div>
+        </div>
 
         <h3>IEP Goals (SMART Goals)</h3>
         <ul id="iep-goals-list"></ul>

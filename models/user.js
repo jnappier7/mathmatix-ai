@@ -36,7 +36,9 @@ const iepAccommodationsSchema = new Schema({
 
 const iepPlanSchema = new Schema({
   accommodations: { type: iepAccommodationsSchema, default: () => ({}) },
-  goals:          { type: [iepGoalSchema],        default: [] }
+  goals:          { type: [iepGoalSchema],        default: [] },
+  readingLevel:      { type: Number, default: null },         // Lexile or grade-level equivalent
+  preferredScaffolds:{ type: [String], default: [] }          // e.g. ['hints', 'examples', 'graphic organizers']
 }, { _id: false });
 
 /* ---------- CONVERSATION / XP ---------- */
