@@ -718,11 +718,16 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     report.earnedBadges = earnedBadges;
     report.badgeCount = earnedBadges.length;
 
-    // Mark assessment as completed
+    // Mark assessment as completed (top-level fields persisted by Mongoose)
     const now = new Date();
     user.assessmentCompleted = true;
     user.assessmentDate = now;
     user.initialPlacement = gradeLevelResult.gradeLevel;
+
+    // Mirror into learningProfile for routes that read from nested path
+    user.learningProfile.assessmentCompleted = true;
+    user.learningProfile.assessmentDate = now;
+    user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;
 
     // Update mathCourse to match assessed level so the tutor loads the right pathway
     // (Without this, mathCourse stays at whatever was set at signup/enrollment,
@@ -1245,6 +1250,12 @@ router.post('/reset', isAuthenticated, async (req, res) => {
     student.assessmentDate = null;
     student.assessmentExpiresAt = null;
     student.nextGrowthCheckDue = null;
+    // Mirror reset into learningProfile
+    if (student.learningProfile) {
+      student.learningProfile.assessmentCompleted = false;
+      student.learningProfile.assessmentDate = null;
+      student.learningProfile.initialPlacement = null;
+    }
     // Keep assessmentHistory for historical tracking
 
     await student.save();
