@@ -2799,7 +2799,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     payload.responseTime = responseTime;
                 }
 
-                response = await csrfFetch("/api/chat", {
+                // Route to dedicated course chat when in an active course session
+                const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
+                const chatEndpoint = isInCourse ? '/api/course-chat' : '/api/chat';
+
+                response = await csrfFetch(chatEndpoint, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
