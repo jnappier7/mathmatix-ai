@@ -128,6 +128,7 @@ const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email ca
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
+const courseChatRoutes = require('./routes/courseChat');  // Dedicated course chat (independent from main chat)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -394,6 +395,7 @@ app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generatio
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
 app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes); // Pathway-based course sessions (self-paced)
+app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes); // Dedicated course chat (usage-gated)
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
