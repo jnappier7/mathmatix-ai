@@ -1,0 +1,444 @@
+// routes/courseChat.js
+// Dedicated chat endpoint for structured course sessions.
+// Completely independent from the main /api/chat pipeline.
+// Course context is REQUIRED — if it can't load, the request fails loudly.
+
+const express = require('express');
+const router = express.Router();
+const fs = require('fs');
+const path = require('path');
+
+const User = require('../models/user');
+const Conversation = require('../models/conversation');
+const CourseSession = require('../models/courseSession');
+const { generateCoursePrompt } = require('../utils/coursePrompt');
+const { callLLM, callLLMStream } = require('../utils/llmGateway');
+const { sendSafetyConcernAlert } = require('../utils/emailService');
+const TUTOR_CONFIG = require('../utils/tutorConfig');
+const BRAND_CONFIG = require('../utils/brand');
+const { calculateXpBoostFactor } = require('../utils/promptCompressor');
+const { detectTopic } = require('../utils/activitySummarizer');
+const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+
+const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+const MAX_HISTORY_LENGTH = 40;
+
+// Per-user lock to prevent concurrent course-chat processing
+const courseChatLocks = new Map();
+function acquireCourseLock(userId) {
+    const key = userId.toString();
+    if (!courseChatLocks.has(key)) {
+        courseChatLocks.set(key, Promise.resolve());
+    }
+    let release;
+    const newLock = new Promise(resolve => { release = resolve; });
+    const prev = courseChatLocks.get(key);
+    courseChatLocks.set(key, newLock);
+    return prev.then(() => release);
+}
+setInterval(() => { if (courseChatLocks.size > 500) courseChatLocks.clear(); }, 10 * 60 * 1000);
+
+// ============================================================
+//  POST /api/course-chat
+//  Dedicated course chat — course context is REQUIRED
+// ============================================================
+router.post('/', async (req, res) => {
+    const userId = req.user._id;
+    const releaseLock = await acquireCourseLock(userId);
+
+    try {
+        const { message, responseTime } = req.body;
+
+        // ── Validate input ──────────────────────────────────
+        if (!message || typeof message !== 'string' || message.trim() === '') {
+            return res.status(400).json({ message: 'Message content is required.' });
+        }
+        const messageText = message.trim().substring(0, 2000);
+
+        // ── Load user ───────────────────────────────────────
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        // ── Load course session (REQUIRED) ──────────────────
+        if (!user.activeCourseSessionId) {
+            return res.status(400).json({ message: 'No active course session. Please enroll or activate a course first.' });
+        }
+
+        const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+        if (!courseSession || courseSession.status !== 'active') {
+            return res.status(400).json({ message: 'Course session not found or inactive.' });
+        }
+
+        // ── Load pathway (REQUIRED) ─────────────────────────
+        const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
+        if (!fs.existsSync(pathwayFile)) {
+            return res.status(500).json({ message: `Course pathway not found: ${courseSession.courseId}` });
+        }
+        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+
+        // ── Load current module (REQUIRED) ──────────────────
+        const currentPathwayModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+        if (!currentPathwayModule) {
+            return res.status(500).json({ message: `Module ${courseSession.currentModuleId} not found in pathway.` });
+        }
+
+        let moduleData = { title: currentPathwayModule.title, skills: currentPathwayModule.skills || [] };
+        if (currentPathwayModule.moduleFile) {
+            const moduleFile = path.join(__dirname, '../public/modules', courseSession.courseId, currentPathwayModule.moduleFile);
+            if (fs.existsSync(moduleFile)) {
+                moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+            }
+        }
+
+        // ── Load or create course conversation ──────────────
+        let conversation;
+        if (courseSession.conversationId) {
+            conversation = await Conversation.findById(courseSession.conversationId);
+        }
+        if (!conversation) {
+            // Create a fresh conversation for this course
+            conversation = new Conversation({
+                userId: user._id,
+                conversationName: courseSession.courseName,
+                topic: courseSession.courseName,
+                topicEmoji: '📚',
+                conversationType: 'topic'
+            });
+            await conversation.save();
+            courseSession.conversationId = conversation._id;
+            await courseSession.save();
+        }
+        // Always ensure it's active
+        if (!conversation.isActive) {
+            conversation.isActive = true;
+        }
+
+        // ── Save user message ───────────────────────────────
+        conversation.messages.push({
+            role: 'user',
+            content: messageText,
+            timestamp: new Date(),
+            responseTime: responseTime || null
+        });
+
+        // ── Build message history for AI ────────────────────
+        const recentMessages = conversation.messages.slice(-MAX_HISTORY_LENGTH);
+        const formattedMessages = recentMessages.map(msg => ({
+            role: msg.role,
+            content: msg.content
+        }));
+
+        // ── Build system prompt ─────────────────────────────
+        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+            ? user.selectedTutorId : 'default';
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+        const systemPrompt = generateCoursePrompt({
+            user,
+            tutor: currentTutor,
+            course: {
+                courseId: courseSession.courseId,
+                courseName: courseSession.courseName,
+                currentModuleId: courseSession.currentModuleId,
+                overallProgress: courseSession.overallProgress,
+                modules: courseSession.modules
+            },
+            module: moduleData,
+            pathway,
+            teacherAISettings: null, // Can be enriched later
+            fluencyContext: null     // Can be enriched later
+        });
+
+        const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
+
+        console.log(`📚 [CourseChat] ${user.firstName} → ${courseSession.courseName} / ${courseSession.currentModuleId}`);
+
+        // ── Call AI ─────────────────────────────────────────
+        const useStreaming = req.query.stream === 'true';
+        let aiResponseText = '';
+        const aiStartTime = Date.now();
+        let clientDisconnected = false;
+
+        if (useStreaming) {
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.flushHeaders();
+            req.on('close', () => { clientDisconnected = true; });
+
+            try {
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
+                let buffer = '';
+                const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
+
+                for await (const chunk of stream) {
+                    if (clientDisconnected) break;
+                    let content = '';
+                    if (isClaudeModel) {
+                        if (chunk.type === 'content_block_delta' && chunk.delta?.text) content = chunk.delta.text;
+                    } else {
+                        content = chunk.choices[0]?.delta?.content || '';
+                    }
+                    if (content) {
+                        buffer += content;
+                        res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);
+                    }
+                }
+                aiResponseText = buffer.trim() || "I'm not sure how to respond.";
+            } catch (streamErr) {
+                console.error('[CourseChat] Stream failed, falling back:', streamErr.message);
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
+                aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+                res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
+            }
+        } else {
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
+            aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+        }
+
+        // ── Answer-key safety filter ────────────────────────
+        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+        if (answerKeyCheck.wasFiltered) {
+            aiResponseText = answerKeyCheck.text;
+            if (useStreaming && !clientDisconnected) {
+                try { res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`); } catch (e) {}
+            }
+        }
+
+        // ── Parse structured tags from AI response ──────────
+
+        // XP Ladder
+        const xpLadder = BRAND_CONFIG.xpLadder;
+        const xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
+
+        // Tier 3: Core Behavior XP
+        const coreBehaviorMatch = aiResponseText.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
+        if (coreBehaviorMatch) {
+            const rawAmount = parseInt(coreBehaviorMatch[1], 10);
+            const behavior = coreBehaviorMatch[2].trim();
+            const xpBoostInfo = calculateXpBoostFactor(user.level);
+            const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
+            xpBreakdown.tier3 = Math.min(Math.round(rawAmount * xpBoostInfo.factor), maxAllowed);
+            xpBreakdown.tier3Behavior = behavior;
+            aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
+        }
+
+        // Safety concern
+        const safetyConcernMatch = aiResponseText.match(/<SAFETY_CONCERN>([^<]+)<\/SAFETY_CONCERN>/);
+        if (safetyConcernMatch) {
+            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName}) - ${safetyConcernMatch[1]}`);
+            aiResponseText = aiResponseText.replace(safetyConcernMatch[0], '').trim();
+            sendSafetyConcernAlert(
+                { userId: userId.toString(), firstName: user.firstName, lastName: user.lastName, username: user.username, gradeLevel: user.gradeLevel },
+                safetyConcernMatch[1], messageText
+            ).catch(err => console.error('Safety alert email failed:', err));
+        }
+
+        // Skill mastery
+        const skillMasteredMatch = aiResponseText.match(/<SKILL_MASTERED:([^>]+)>/);
+        if (skillMasteredMatch) {
+            const skillId = skillMasteredMatch[1].trim();
+            user.skillMastery = user.skillMastery || new Map();
+            const existing = user.skillMastery.get(skillId) || {};
+            const pillars = existing.pillars || {
+                accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
+                independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3 },
+                transfer: { contextsAttempted: [], contextsRequired: 3 },
+                retention: { retentionChecks: [], failed: false }
+            };
+            pillars.accuracy.correct += 1;
+            pillars.accuracy.total += 1;
+            pillars.accuracy.percentage = pillars.accuracy.correct / pillars.accuracy.total;
+
+            const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
+            const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
+                : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
+            const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
+            const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
+
+            const meetsAll = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3
+                && pillars.independence.hintsUsed <= pillars.independence.hintThreshold
+                && pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
+
+            const newStatus = meetsAll ? 'mastered' : pillars.accuracy.total >= 2 ? 'practicing' : 'learning';
+
+            user.skillMastery.set(skillId, { ...existing, status: newStatus, pillars, masteryScore, lastPracticed: new Date() });
+            user.markModified('skillMastery');
+            aiResponseText = aiResponseText.replace(skillMasteredMatch[0], '').trim();
+            console.log(`📈 [CourseChat] Skill ${skillId}: ${newStatus} (${masteryScore}%)`);
+        }
+
+        // Problem result tracking
+        const problemResultMatch = aiResponseText.match(/<PROBLEM_RESULT:(correct|incorrect|skipped)>/i);
+        let problemAnswered = false;
+        let wasCorrect = false;
+
+        if (problemResultMatch) {
+            const result = problemResultMatch[1].toLowerCase();
+            problemAnswered = true;
+            wasCorrect = result === 'correct';
+            aiResponseText = aiResponseText.replace(problemResultMatch[0], '').trim();
+            console.log(`📊 [CourseChat] Problem: ${result}`);
+        } else {
+            // Keyword fallback for backward compat
+            const userMsg = messageText.trim();
+            const looksLikeAnswer = userMsg.length < 100 && (/^-?\d+/.test(userMsg) || /^[a-z]\s*=/i.test(userMsg) || userMsg.split(' ').length <= 10);
+            if (looksLikeAnswer) {
+                const lower = aiResponseText.toLowerCase();
+                if (/correct|exactly|great job|perfect|well done/.test(lower)) {
+                    problemAnswered = true; wasCorrect = true;
+                } else if (/not quite|try again|almost|incorrect|not exactly/.test(lower)) {
+                    problemAnswered = true; wasCorrect = false;
+                }
+            }
+        }
+
+        if (problemAnswered) {
+            conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
+            if (wasCorrect) conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
+        }
+
+        // ── Save AI response to conversation ────────────────
+        conversation.messages.push({
+            role: 'assistant',
+            content: aiResponseText,
+            timestamp: new Date()
+        });
+        conversation.currentTopic = courseSession.courseName;
+        conversation.lastActivity = new Date();
+
+        // Clean invalid messages before save
+        if (Array.isArray(conversation.messages)) {
+            conversation.messages = conversation.messages.filter(msg =>
+                msg.content && typeof msg.content === 'string' && msg.content.trim() !== ''
+            );
+        }
+        await conversation.save();
+
+        // ── XP calculation ──────────────────────────────────
+        xpBreakdown.tier1 = xpLadder.tier1.amount;
+
+        if (wasCorrect && xpBreakdown.tier2 === 0) {
+            const recent = conversation.messages.slice(-6);
+            const usedHint = recent.some(m => m.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(m.content));
+            xpBreakdown.tier2 = usedHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
+            xpBreakdown.tier2Type = usedHint ? 'correct' : 'clean';
+        }
+
+        xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
+
+        // Course boost: always 1.5x in course mode
+        const courseBoost = 1.5;
+        xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
+        xpBreakdown.courseBoost = courseBoost;
+
+        user.xp = (user.xp || 0) + xpBreakdown.total;
+
+        // XP analytics
+        if (!user.xpLadderStats) user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
+        user.xpLadderStats.lifetimeTier1 += xpBreakdown.tier1;
+        user.xpLadderStats.lifetimeTier2 += xpBreakdown.tier2;
+        user.xpLadderStats.lifetimeTier3 += xpBreakdown.tier3;
+        if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
+            const eb = user.xpLadderStats.tier3Behaviors.find(b => b.behavior === xpBreakdown.tier3Behavior);
+            if (eb) { eb.count += 1; eb.lastEarned = new Date(); }
+            else { user.xpLadderStats.tier3Behaviors.push({ behavior: xpBreakdown.tier3Behavior, count: 1, lastEarned: new Date() }); }
+        }
+        user.markModified('xpLadderStats');
+
+        // Level check
+        let leveledUp = false;
+        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
+            user.level += 1;
+            leveledUp = true;
+        }
+
+        const { getTutorsToUnlock } = require('../utils/unlockTutors');
+        const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+        if (tutorsJustUnlocked.length > 0) {
+            user.unlockedItems.push(...tutorsJustUnlocked);
+            user.markModified('unlockedItems');
+        }
+
+        // AI time tracking
+        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+        user.weeklyAISeconds = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
+        user.totalAISeconds = (user.totalAISeconds || 0) + aiProcessingSeconds;
+
+        await user.save();
+
+        // ── Build response ──────────────────────────────────
+        const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+        const xpInLevel = Math.max(0, user.xp - xpForLevelStart);
+
+        const iepFeatures = user.iepPlan?.accommodations ? {
+            autoReadAloud: user.iepPlan.accommodations.audioReadAloud || false,
+            showCalculator: user.iepPlan.accommodations.calculatorAllowed || false,
+            useHighContrast: user.iepPlan.accommodations.largePrintHighContrast || false,
+            extendedTimeMultiplier: user.iepPlan.accommodations.extendedTime ? 1.5 : 1.0,
+            mathAnxietySupport: user.iepPlan.accommodations.mathAnxietySupport || false,
+            chunkedAssignments: user.iepPlan.accommodations.chunkedAssignments || false
+        } : null;
+
+        const responseData = {
+            text: aiResponseText,
+            userXp: xpInLevel,
+            userLevel: user.level,
+            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+            voiceId: currentTutor.voiceId,
+            newlyUnlockedTutors: tutorsJustUnlocked,
+            iepFeatures,
+            problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
+            sessionStats: {
+                problemsAttempted: conversation.problemsAttempted || 0,
+                problemsCorrect: conversation.problemsCorrect || 0
+            },
+            xpLadder: {
+                tier1: xpBreakdown.tier1,
+                tier2: xpBreakdown.tier2,
+                tier2Type: xpBreakdown.tier2Type,
+                tier3: xpBreakdown.tier3,
+                tier3Behavior: xpBreakdown.tier3Behavior,
+                total: xpBreakdown.total,
+                leveledUp
+            },
+            aiTimeUsed: aiProcessingSeconds,
+            freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
+                ? Math.max(0, (20 * 60) - (user.weeklyAISeconds || 0))
+                : null,
+            // Course-specific fields
+            courseContext: {
+                courseId: courseSession.courseId,
+                courseName: courseSession.courseName,
+                currentModuleId: courseSession.currentModuleId,
+                overallProgress: courseSession.overallProgress
+            }
+        };
+
+        if (useStreaming) {
+            if (!clientDisconnected) {
+                try {
+                    res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
+                    res.end();
+                } catch (e) {}
+            }
+        } else {
+            res.json(responseData);
+        }
+
+    } catch (error) {
+        console.error('[CourseChat] Error:', error);
+        if (res.headersSent) {
+            try {
+                res.write(`data: ${JSON.stringify({ type: 'error', message: 'Something went wrong.' })}\n\n`);
+                res.end();
+            } catch (e) {}
+        } else {
+            res.status(500).json({ message: 'An internal server error occurred.' });
+        }
+    } finally {
+        releaseLock();
+    }
+});
+
+module.exports = router;
