@@ -237,8 +237,10 @@ router.post('/:id/activate', async (req, res) => {
       activeCourseSessionId: session._id
     });
 
-    // Switch conversation to the course's conversation
+    // Switch conversation to the course's conversation and ensure it's active
     if (session.conversationId) {
+      const Conversation = require('../models/conversation');
+      await Conversation.findByIdAndUpdate(session.conversationId, { isActive: true });
       await User.findByIdAndUpdate(req.user._id, {
         activeConversationId: session.conversationId
       });
