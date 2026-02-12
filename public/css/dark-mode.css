@@ -398,6 +398,23 @@
     border-color: var(--clr-primary-teal);
 }
 
+/* Session item text elements */
+[data-theme="dark"] .session-name {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .session-preview {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .session-time {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .session-stats {
+    color: var(--clr-primary-teal);
+}
+
 /* Mobile drawers in dark mode */
 [data-theme="dark"] .mobile-drawer {
     background: #0D151D;
