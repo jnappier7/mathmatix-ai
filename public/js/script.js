@@ -583,6 +583,67 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Show IEP goal progress updates to the student
+    function handleIepGoalUpdates(goalUpdates) {
+        if (!goalUpdates || goalUpdates.length === 0) return;
+
+        goalUpdates.forEach((update, i) => {
+            setTimeout(() => {
+                showIepGoalNotification(update);
+            }, i * 1200); // Stagger if multiple goals updated
+        });
+    }
+
+    function showIepGoalNotification(update) {
+        const notification = document.createElement('div');
+        notification.className = 'iep-goal-notification';
+
+        if (update.completed) {
+            notification.innerHTML = `
+                <div class="iep-goal-notif-icon completed"><i class="fas fa-star"></i></div>
+                <div class="iep-goal-notif-text">
+                    <strong>Goal Complete!</strong>
+                    <span>${escapeHtml(update.description)}</span>
+                </div>
+            `;
+            notification.classList.add('completed');
+        } else {
+            notification.innerHTML = `
+                <div class="iep-goal-notif-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="iep-goal-notif-text">
+                    <strong>+${update.change}% Goal Progress</strong>
+                    <span>${escapeHtml(update.description)}</span>
+                    <div class="iep-goal-notif-bar">
+                        <div class="iep-goal-notif-fill" style="width:${update.newProgress}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        requestAnimationFrame(() => notification.classList.add('visible'));
+
+        // Auto-dismiss
+        setTimeout(() => {
+            notification.classList.remove('visible');
+            setTimeout(() => notification.remove(), 400);
+        }, 4000);
+
+        // Click to dismiss
+        notification.addEventListener('click', () => {
+            notification.classList.remove('visible');
+            setTimeout(() => notification.remove(), 400);
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Inject a persistent "Take a Break" button for breaksAsNeeded accommodation
     function injectBreakButton() {
         if (document.getElementById('iep-break-btn')) return;
@@ -3081,6 +3142,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Apply IEP accommodations to this response
             handleIepResponseFeatures(data.iepFeatures);
+
+            // Show IEP goal progress notifications to student
+            handleIepGoalUpdates(data.iepGoalUpdates);
 
             // Initialize inline visuals after message is in DOM
             if (hasInlineVisuals && window.inlineChatVisuals) {

@@ -508,6 +508,141 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
     }
 }
 
+/* -----------------------------------------------------------
+   IEP GOAL PROGRESS NOTIFICATION
+   Slide-in notification when AI tracks progress on a student's
+   IEP goal during a tutoring session.
+   ----------------------------------------------------------- */
+.iep-goal-notification {
+    position: fixed;
+    top: 16px;
+    right: -360px;
+    z-index: 9500;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 320px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    border-left: 4px solid #1976d2;
+    cursor: pointer;
+    transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s;
+    opacity: 0;
+}
+
+.iep-goal-notification.visible {
+    right: 16px;
+    opacity: 1;
+}
+
+.iep-goal-notification.completed {
+    border-left-color: #27ae60;
+    background: linear-gradient(135deg, #f0fff4, #fff);
+}
+
+.iep-goal-notif-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e3f2fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #1976d2;
+    font-size: 16px;
+}
+
+.iep-goal-notif-icon.completed {
+    background: #e8f5e9;
+    color: #27ae60;
+}
+
+.iep-goal-notif-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.iep-goal-notif-text strong {
+    font-size: 0.9em;
+    color: #2c3e50;
+}
+
+.iep-goal-notif-text span {
+    font-size: 0.78em;
+    color: #7f8c8d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.iep-goal-notif-bar {
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+.iep-goal-notif-fill {
+    height: 100%;
+    background: #1976d2;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+}
+
+.iep-goal-notification.completed .iep-goal-notif-fill {
+    background: #27ae60;
+}
+
+/* Dark mode */
+.dark-mode .iep-goal-notification {
+    background: #1e1e3a;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.dark-mode .iep-goal-notif-text strong {
+    color: #eee;
+}
+
+.dark-mode .iep-goal-notif-text span {
+    color: #aaa;
+}
+
+.dark-mode .iep-goal-notif-bar {
+    background: #333;
+}
+
+/* Anxiety support: no sudden slide-ins, just fade */
+.iep-anxiety-support .iep-goal-notification {
+    right: 16px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.iep-anxiety-support .iep-goal-notification.visible {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .iep-goal-notification {
+        top: auto;
+        bottom: -100px;
+        right: 8px;
+        left: 8px;
+        max-width: none;
+    }
+    .iep-goal-notification.visible {
+        bottom: 70px;
+        right: 8px;
+    }
+}
+
 /* Reduced motion — respect system + IEP anxiety support */
 @media (prefers-reduced-motion: reduce) {
     .iep-breathing-circle {

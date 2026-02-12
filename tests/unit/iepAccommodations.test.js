@@ -529,4 +529,227 @@ describe('IEP Goal Progress Tag Parsing', () => {
         expect(cleanedText).not.toContain('<');
         expect(cleanedText).not.toContain('>');
     });
+
+    test('handles index-based goal references', () => {
+        const text = '<IEP_GOAL_PROGRESS:0,+10>';
+        const { updates } = parseGoalProgressTags(text);
+        expect(updates).toHaveLength(1);
+        expect(updates[0].goalDescription).toBe('0');
+        expect(updates[0].progressIncrement).toBe(10);
+    });
+});
+
+
+// =======================================================================
+// Goal Progress Application — simulates the full update pipeline
+// =======================================================================
+describe('IEP Goal Progress Application Logic', () => {
+
+    // Simulates the updated multi-tag parsing + goal matching from chat.js
+    function applyGoalProgressTags(aiText, iepPlan) {
+        const updates = [];
+        if (!iepPlan || !iepPlan.goals) return { updates, cleanedText: aiText };
+
+        const regex = /<IEP_GOAL_PROGRESS:([^,]+),([+-]\d+)>/g;
+        let cleanedText = aiText;
+        let match;
+
+        while ((match = regex.exec(aiText)) !== null) {
+            const goalIdentifier = match[1].trim();
+            const progressChange = parseInt(match[2], 10);
+
+            let targetGoal = null;
+            let goalIndex = -1;
+
+            const goalIndexNum = parseInt(goalIdentifier, 10);
+            if (!isNaN(goalIndexNum) && goalIndexNum >= 0 && goalIndexNum < iepPlan.goals.length) {
+                targetGoal = iepPlan.goals[goalIndexNum];
+                goalIndex = goalIndexNum;
+            } else {
+                for (let i = 0; i < iepPlan.goals.length; i++) {
+                    if (iepPlan.goals[i].description &&
+                        iepPlan.goals[i].description.toLowerCase().includes(goalIdentifier.toLowerCase())) {
+                        targetGoal = iepPlan.goals[i];
+                        goalIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (targetGoal && targetGoal.status === 'active') {
+                const oldProgress = targetGoal.currentProgress || 0;
+                const newProgress = Math.max(0, Math.min(100, oldProgress + progressChange));
+                targetGoal.currentProgress = newProgress;
+
+                if (!targetGoal.history) targetGoal.history = [];
+                targetGoal.history.push({
+                    date: new Date(),
+                    field: 'currentProgress',
+                    from: oldProgress,
+                    to: newProgress
+                });
+
+                updates.push({
+                    goalIndex,
+                    description: targetGoal.description,
+                    oldProgress,
+                    newProgress,
+                    change: progressChange,
+                    completed: newProgress >= 100
+                });
+
+                if (newProgress >= 100) {
+                    targetGoal.status = 'completed';
+                }
+            }
+
+            cleanedText = cleanedText.replace(match[0], '');
+        }
+
+        return { updates, cleanedText: cleanedText.trim() };
+    }
+
+    test('updates goal progress by description match', () => {
+        const iep = {
+            goals: [
+                { description: 'Solve multi-step equations', currentProgress: 40, status: 'active', history: [] }
+            ]
+        };
+
+        const text = 'Good work! <IEP_GOAL_PROGRESS:multi-step equations,+10>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(1);
+        expect(updates[0].oldProgress).toBe(40);
+        expect(updates[0].newProgress).toBe(50);
+        expect(updates[0].change).toBe(10);
+        expect(iep.goals[0].currentProgress).toBe(50);
+    });
+
+    test('updates goal progress by index', () => {
+        const iep = {
+            goals: [
+                { description: 'First goal', currentProgress: 20, status: 'active', history: [] },
+                { description: 'Second goal', currentProgress: 60, status: 'active', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:1,+15>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(1);
+        expect(updates[0].goalIndex).toBe(1);
+        expect(updates[0].newProgress).toBe(75);
+        expect(iep.goals[1].currentProgress).toBe(75);
+    });
+
+    test('caps progress at 100% and marks goal completed', () => {
+        const iep = {
+            goals: [
+                { description: 'Almost done goal', currentProgress: 95, status: 'active', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Almost done,+10>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(1);
+        expect(updates[0].newProgress).toBe(100);
+        expect(updates[0].completed).toBe(true);
+        expect(iep.goals[0].status).toBe('completed');
+    });
+
+    test('does not update completed goals', () => {
+        const iep = {
+            goals: [
+                { description: 'Done goal', currentProgress: 100, status: 'completed', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Done goal,+5>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(0);
+        expect(iep.goals[0].currentProgress).toBe(100);
+    });
+
+    test('does not update on-hold goals', () => {
+        const iep = {
+            goals: [
+                { description: 'Paused goal', currentProgress: 30, status: 'on-hold', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Paused,+5>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(0);
+    });
+
+    test('handles multiple goals updated in one response', () => {
+        const iep = {
+            goals: [
+                { description: 'Addition fluency', currentProgress: 50, status: 'active', history: [] },
+                { description: 'Word problem comprehension', currentProgress: 25, status: 'active', history: [] }
+            ]
+        };
+
+        const text = 'Great session! <IEP_GOAL_PROGRESS:Addition fluency,+5> <IEP_GOAL_PROGRESS:Word problem,+10>';
+        const { updates, cleanedText } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(2);
+        expect(updates[0].newProgress).toBe(55);
+        expect(updates[1].newProgress).toBe(35);
+        expect(cleanedText).toBe('Great session!');
+    });
+
+    test('records history entries with timestamps', () => {
+        const iep = {
+            goals: [
+                { description: 'Test goal', currentProgress: 0, status: 'active', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Test goal,+20>';
+        applyGoalProgressTags(text, iep);
+
+        expect(iep.goals[0].history).toHaveLength(1);
+        expect(iep.goals[0].history[0].field).toBe('currentProgress');
+        expect(iep.goals[0].history[0].from).toBe(0);
+        expect(iep.goals[0].history[0].to).toBe(20);
+        expect(iep.goals[0].history[0].date).toBeInstanceOf(Date);
+    });
+
+    test('ignores tags when no matching goal found', () => {
+        const iep = {
+            goals: [
+                { description: 'Specific goal', currentProgress: 50, status: 'active', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Nonexistent goal,+5>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(0);
+        expect(iep.goals[0].currentProgress).toBe(50);
+    });
+
+    test('floors progress at 0% for negative changes', () => {
+        const iep = {
+            goals: [
+                { description: 'Declining goal', currentProgress: 3, status: 'active', history: [] }
+            ]
+        };
+
+        const text = '<IEP_GOAL_PROGRESS:Declining,-10>';
+        const { updates } = applyGoalProgressTags(text, iep);
+
+        expect(updates).toHaveLength(1);
+        expect(updates[0].newProgress).toBe(0);
+    });
+
+    test('returns empty updates when no iepPlan', () => {
+        const { updates } = applyGoalProgressTags('text', null);
+        expect(updates).toHaveLength(0);
+    });
 });

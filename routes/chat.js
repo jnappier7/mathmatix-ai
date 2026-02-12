@@ -1074,62 +1074,79 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`💡 Learning insight for ${user.firstName}: ${insight}`);
         }
 
-        // IEP GOAL PROGRESS TRACKING: Parse AI IEP goal progress tags
+        // IEP GOAL PROGRESS TRACKING: Parse ALL AI IEP goal progress tags
         // Format: <IEP_GOAL_PROGRESS:goal-description,+5> or <IEP_GOAL_PROGRESS:0,+5> (using index)
-        const iepGoalProgressMatch = aiResponseText.match(/<IEP_GOAL_PROGRESS:([^,]+),([+-]\d+)>/);
-        if (iepGoalProgressMatch && user.iepPlan && user.iepPlan.goals) {
-            const goalIdentifier = iepGoalProgressMatch[1].trim();
-            const progressChange = parseInt(iepGoalProgressMatch[2], 10);
+        const iepGoalUpdates = [];
+        if (user.iepPlan && user.iepPlan.goals) {
+            const iepGoalProgressRegex = /<IEP_GOAL_PROGRESS:([^,]+),([+-]\d+)>/g;
+            let iepMatch;
+            while ((iepMatch = iepGoalProgressRegex.exec(aiResponseText)) !== null) {
+                const goalIdentifier = iepMatch[1].trim();
+                const progressChange = parseInt(iepMatch[2], 10);
 
-            // Find the goal by description (partial match) or by index
-            let targetGoal = null;
-            let goalIndex = -1;
+                // Find the goal by description (partial match) or by index
+                let targetGoal = null;
+                let goalIndex = -1;
 
-            // Try to find by index first (if it's a number)
-            const goalIndexNum = parseInt(goalIdentifier, 10);
-            if (!isNaN(goalIndexNum) && goalIndexNum >= 0 && goalIndexNum < user.iepPlan.goals.length) {
-                targetGoal = user.iepPlan.goals[goalIndexNum];
-                goalIndex = goalIndexNum;
-            } else {
-                // Find by description (partial match, case insensitive)
-                for (let i = 0; i < user.iepPlan.goals.length; i++) {
-                    const goal = user.iepPlan.goals[i];
-                    if (goal.description && goal.description.toLowerCase().includes(goalIdentifier.toLowerCase())) {
-                        targetGoal = goal;
-                        goalIndex = i;
-                        break;
+                // Try to find by index first (if it's a number)
+                const goalIndexNum = parseInt(goalIdentifier, 10);
+                if (!isNaN(goalIndexNum) && goalIndexNum >= 0 && goalIndexNum < user.iepPlan.goals.length) {
+                    targetGoal = user.iepPlan.goals[goalIndexNum];
+                    goalIndex = goalIndexNum;
+                } else {
+                    // Find by description (partial match, case insensitive)
+                    for (let i = 0; i < user.iepPlan.goals.length; i++) {
+                        const goal = user.iepPlan.goals[i];
+                        if (goal.description && goal.description.toLowerCase().includes(goalIdentifier.toLowerCase())) {
+                            targetGoal = goal;
+                            goalIndex = i;
+                            break;
+                        }
                     }
                 }
+
+                if (targetGoal && targetGoal.status === 'active') {
+                    // Update progress
+                    const oldProgress = targetGoal.currentProgress || 0;
+                    const newProgress = Math.max(0, Math.min(100, oldProgress + progressChange));
+                    targetGoal.currentProgress = newProgress;
+
+                    // Add to history
+                    if (!targetGoal.history) {
+                        targetGoal.history = [];
+                    }
+                    targetGoal.history.push({
+                        date: new Date(),
+                        editorId: userId,
+                        field: 'currentProgress',
+                        from: oldProgress,
+                        to: newProgress
+                    });
+
+                    // Track for frontend notification
+                    iepGoalUpdates.push({
+                        goalIndex,
+                        description: targetGoal.description,
+                        oldProgress,
+                        newProgress,
+                        change: progressChange,
+                        completed: newProgress >= 100
+                    });
+
+                    // Check if goal is completed
+                    if (newProgress >= 100 && targetGoal.status === 'active') {
+                        targetGoal.status = 'completed';
+                        console.log(`🎯 IEP Goal COMPLETED for ${user.firstName}: ${targetGoal.description}`);
+                    }
+
+                    console.log(`📊 IEP Goal progress updated for ${user.firstName}: "${targetGoal.description}" ${oldProgress}% → ${newProgress}% (${progressChange > 0 ? '+' : ''}${progressChange}%)`);
+                }
+
+                aiResponseText = aiResponseText.replace(iepMatch[0], '').trim();
             }
 
-            if (targetGoal && targetGoal.status === 'active') {
-                // Update progress
-                const oldProgress = targetGoal.currentProgress || 0;
-                const newProgress = Math.max(0, Math.min(100, oldProgress + progressChange));
-                targetGoal.currentProgress = newProgress;
-
-                // Add to history
-                if (!targetGoal.history) {
-                    targetGoal.history = [];
-                }
-                targetGoal.history.push({
-                    date: new Date(),
-                    editorId: userId,
-                    field: 'currentProgress',
-                    from: oldProgress,
-                    to: newProgress
-                });
-
-                // Check if goal is completed
-                if (newProgress >= 100 && targetGoal.status === 'active') {
-                    targetGoal.status = 'completed';
-                    console.log(`🎯 IEP Goal COMPLETED for ${user.firstName}: ${targetGoal.description}`);
-                }
-
+            if (iepGoalUpdates.length > 0) {
                 user.markModified('iepPlan');
-                aiResponseText = aiResponseText.replace(iepGoalProgressMatch[0], '').trim();
-
-                console.log(`📊 IEP Goal progress updated for ${user.firstName}: "${targetGoal.description}" ${oldProgress}% → ${newProgress}% (${progressChange > 0 ? '+' : ''}${progressChange}%)`);
             }
         }
 
@@ -1555,6 +1572,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             visualCommands: visualCommands,
             boardContext: boardContext,
             iepFeatures: iepFeatures,
+            iepGoalUpdates: iepGoalUpdates.length > 0 ? iepGoalUpdates : null,
             problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
             sessionStats: {
                 problemsAttempted: activeConversation.problemsAttempted || 0,
