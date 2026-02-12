@@ -2624,4 +2624,4 @@ You are discussing **${childProfile.firstName || 'A child'}**.
   return prompt;
 }
 
-module.exports = { generateSystemPrompt };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt };
