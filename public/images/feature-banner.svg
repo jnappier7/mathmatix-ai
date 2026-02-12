@@ -77,17 +77,17 @@
       <rect x="32" y="0" width="195" height="58" rx="12" ry="12" fill="url(#tealGlow)" opacity="0.9"/>
       <polygon points="38,40 26,50 42,44" fill="#12B3B3" opacity="0.9"/>
 
-      <text x="44" y="14" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Great question! Let's factor it.</text>
-      <text x="44" y="25" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Find two numbers that multiply</text>
-      <text x="44" y="36" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">to 6 and add to &#8722;5...</text>
-      <text x="44" y="50" font-family="Inter, sans-serif" font-size="9" fill="#fff" font-weight="700">(x&#8722;2)(x&#8722;3) = 0  &#8594;  x = 2, 3</text>
+      <text x="44" y="14" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Great question! Let's think about it.</text>
+      <text x="44" y="25" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">Can you find two numbers that</text>
+      <text x="44" y="36" font-family="Inter, sans-serif" font-size="8" fill="#E6F7F7" font-weight="500">multiply to 6 and add to &#8722;5?</text>
+      <text x="44" y="50" font-family="Inter, sans-serif" font-size="9" fill="#fff" font-weight="700">Hint: Try some factor pairs of 6...</text>
     </g>
 
     <!-- Student follow-up bubble -->
     <g filter="url(#shadow)" transform="translate(0, 110)">
       <rect x="175" y="0" width="125" height="26" rx="10" ry="10" fill="url(#pinkGlow)" opacity="0.85"/>
       <polygon points="288,20 300,28 284,24" fill="#FF3B7F" opacity="0.85"/>
-      <text x="188" y="17" font-family="Inter, sans-serif" font-size="8" fill="#fff" font-weight="500">Oh! That makes sense!</text>
+      <text x="183" y="17" font-family="Inter, sans-serif" font-size="8" fill="#fff" font-weight="500">Oh wait... &#8722;2 and &#8722;3!</text>
     </g>
 
   </g>
