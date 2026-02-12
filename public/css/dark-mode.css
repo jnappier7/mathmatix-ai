@@ -340,6 +340,12 @@
     accent-color: var(--clr-primary-teal);
 }
 
+/* Logo - invert for visibility, hue-rotate to preserve red accent */
+[data-theme="dark"] .main-logo-hero,
+[data-theme="dark"] .main-logo {
+    filter: invert(1) hue-rotate(180deg);
+}
+
 /* Landing header glass effect in dark mode */
 [data-theme="dark"] .landing-header {
     background: rgba(15, 26, 36, 0.92);
