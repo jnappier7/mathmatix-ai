@@ -15,6 +15,7 @@
   min-height: 450px;
   max-height: 90vh;
   background: #ffffff;
+  color: #333;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
               0 0 40px rgba(102, 126, 234, 0.2);

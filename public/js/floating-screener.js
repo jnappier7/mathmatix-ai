@@ -201,21 +201,16 @@ class FloatingScreener {
   open() {
     // Determine what mode we're in
     if (this.growthCheckDue) {
-      // Growth Check mode
+      // Growth Check mode (quarterly)
       this.isGrowthCheck = true;
       this.showInstructions('growth-check');
-    } else if (this.assessmentCompleted && !this.assessmentExpired) {
-      // Already completed, not expired - ask if they want to retake
-      if (confirm('You have already completed your Starting Point assessment. Would you like to retake it?')) {
-        this.isGrowthCheck = false;
-        this.showInstructions('starting-point');
-      } else {
-        return;
-      }
-    } else {
-      // New assessment or expired - Starting Point mode
+    } else if (!this.assessmentCompleted || this.assessmentExpired) {
+      // New assessment (first time) or expired (annual renewal)
       this.isGrowthCheck = false;
       this.showInstructions('starting-point');
+    } else {
+      // Assessment completed, not expired, no growth check due — block access
+      return;
     }
 
     this.container.classList.add('active');
