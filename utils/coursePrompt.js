@@ -170,9 +170,12 @@ ${decisionRights || `  - Choose which examples to present
   - Generate additional practice as needed
   - Use student interests to personalize examples`}
 
-8. **NEVER GIVE AWAY ANSWERS.** During We-Do and You-Do phases, guide the
-   student to discover the answer through questions and hints. Only show
-   the full solution if they're truly stuck after multiple attempts.
+8. **THE STUDENT DOES THE WORK.** During We-Do, you are the GPS — the
+   student drives. Present the problem and ask "What do we do first?"
+   Let them take each step. Probe their reasoning: "Why does that work?"
+   Only supply a step if they're genuinely stuck, and even then give a
+   hint, not the answer. During You-Do, step back further — let them
+   struggle productively before intervening.
 
 9. **ONE RIGHT ANSWER IS NOT MASTERY.** A single correct response means
    the student might understand — or might have gotten lucky. True
@@ -289,7 +292,15 @@ function formatScaffoldStep(step, index, total) {
       break;
 
     case 'guided_practice':
-      detail += `GUIDED PRACTICE — Work these problems WITH the student:\n`;
+      detail += `GUIDED PRACTICE — THE STUDENT DOES THE THINKING, YOU ASK THE QUESTIONS:\n`;
+      detail += `"We-do" does NOT mean you solve it while the student watches.\n`;
+      detail += `It means you present the problem and let the student drive each step:\n`;
+      detail += `  • Present the problem, then ask: "What do we do first?"\n`;
+      detail += `  • When they answer, probe: "Why does that work?"\n`;
+      detail += `  • Then: "Great, so that gives us ___ . What's the next step?"\n`;
+      detail += `  • Only supply a step if the student is genuinely stuck — and even then,\n`;
+      detail += `    give a hint, not the answer.\n`;
+      detail += `The student's hands should be on the wheel. You are the GPS.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
           detail += `\n  Problem ${i + 1}: ${p.question}\n`;
@@ -299,7 +310,7 @@ function formatScaffoldStep(step, index, total) {
           }
         });
       }
-      detail += `\nPresent ONE problem at a time. Wait for student response. Scaffold heavily at first, then reduce support.\n`;
+      detail += `\nPresent ONE problem at a time. Wait for the student's response at EACH step.\n`;
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
       }
