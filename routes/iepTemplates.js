@@ -233,7 +233,7 @@ router.post('/apply/accommodations/:studentId', isTeacher, async (req, res) => {
 
         res.json({
             success: true,
-            message: `Applied "${template.name}" template to ${student.firstName}'s IEP`,
+            message: `Applied "${template?.name || templateId}" template to ${student.firstName}'s IEP`,
             accommodations: newAccommodations
         });
     } catch (error) {
@@ -297,7 +297,7 @@ router.post('/apply/goals/:studentId', isTeacher, async (req, res) => {
 
         res.json({
             success: true,
-            message: `Added ${addedCount} goals from "${template.name}" template to ${student.firstName}'s IEP`,
+            message: `Added ${addedCount} goals from "${template?.name || templateId}" template to ${student.firstName}'s IEP`,
             goals: newGoals,
             addedCount
         });
@@ -340,22 +340,25 @@ router.get('/recommended/:studentId', isTeacher, async (req, res) => {
         // Recommend accommodations based on learning profile
         if (student.learningProfile) {
             if (student.learningProfile.mathAnxietyLevel >= 7) {
-                recommendations.accommodations.push(getAccommodationTemplate('math-anxiety'));
+                const t = getAccommodationTemplate('math-anxiety');
+                if (t) recommendations.accommodations.push(t);
             }
             if (student.learningProfile.frustrationTolerance === 'low') {
-                recommendations.accommodations.push(getAccommodationTemplate('adhd'));
+                const t = getAccommodationTemplate('adhd');
+                if (t) recommendations.accommodations.push(t);
             }
         }
 
         // Recommend goals based on grade level
         if (student.gradeLevel) {
             const gradeGoals = getGoalTemplatesByGrade(student.gradeLevel);
-            recommendations.goals = gradeGoals.slice(0, 3); // Top 3 recommendations
+            recommendations.goals = (gradeGoals || []).slice(0, 3); // Top 3 recommendations
         }
 
         // Always include minimal accommodations as a fallback
         if (recommendations.accommodations.length === 0) {
-            recommendations.accommodations.push(getAccommodationTemplate('minimal'));
+            const t = getAccommodationTemplate('minimal');
+            if (t) recommendations.accommodations.push(t);
         }
 
         res.json({
