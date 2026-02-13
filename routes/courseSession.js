@@ -213,10 +213,12 @@ router.post('/enroll', async (req, res) => {
     });
     await session.save();
 
-    // Set as active course session on user AND switch to the course conversation
+    // Set as active course session on user
+    // NOTE: We do NOT set activeConversationId here — course chat uses
+    // courseSession.conversationId directly via /api/course-chat.
+    // Setting it here would contaminate main chat when the user exits.
     await User.findByIdAndUpdate(req.user._id, {
-      activeCourseSessionId: session._id,
-      activeConversationId: conversation._id
+      activeCourseSessionId: session._id
     });
 
     // Build welcome data for the client splash screen
@@ -284,8 +286,11 @@ router.post('/:id/activate', async (req, res) => {
    ============================================================ */
 router.post('/deactivate', async (req, res) => {
   try {
+    // Clear both IDs so main chat starts a fresh conversation
+    // instead of loading the stale course conversation
     await User.findByIdAndUpdate(req.user._id, {
-      activeCourseSessionId: null
+      activeCourseSessionId: null,
+      activeConversationId: null
     });
 
     res.json({ success: true, message: 'Returned to general tutoring' });
