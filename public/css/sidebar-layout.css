@@ -882,7 +882,7 @@ input.session-search-input:focus {
     font-size: 18px;
 }
 
-/* Footer - Full width across entire viewport */
+/* Footer - Full width across entire viewport (desktop only) */
 footer {
     position: fixed;
     bottom: 0;
@@ -896,9 +896,9 @@ footer {
     z-index: 1005;
 }
 
-/* Ensure chat container has space for footer */
+/* Ensure chat container has space for footer (desktop) */
 #chat-container {
-    margin-bottom: 52px !important;
+    margin-bottom: 52px;
     gap: 0 !important;
     padding-bottom: 0 !important;
 }
@@ -906,9 +906,9 @@ footer {
 /* Input container needs to be above footer */
 #input-container {
     position: relative;
-    z-index: 1003 !important;
+    z-index: 1003;
     background: var(--clr-bg-light, #fff);
-    padding-bottom: 4px !important;
+    padding-bottom: 4px;
 }
 
 /* Mobile Responsive */
