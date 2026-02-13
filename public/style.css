@@ -1382,6 +1382,19 @@ a:hover {
   background: var(--clr-bg-light);
 }
 
+.chat-disclaimer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--clr-text-dim);
+  margin: var(--space-1) 0 var(--space-2);
+  line-height: 1.4;
+}
+
+.chat-disclaimer i {
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
 /* Toolbar Above Message Box */
 .input-toolbar {
   display: flex;
