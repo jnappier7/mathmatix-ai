@@ -1156,6 +1156,47 @@ body.is-mobile #sidebar-toggle {
     body.landing-page-body #input-container {
         z-index: 100 !important;
     }
+
+    /* Compact the inline toolbar row (overrides inline styles) */
+    #input-container > div[style*="display: flex"] {
+        padding: 2px 8px !important;
+        gap: 6px !important;
+    }
+
+    /* Compact toolbar buttons */
+    .input-toolbar-compact {
+        gap: 2px !important;
+    }
+
+    .input-toolbar-compact .btn-sm {
+        padding: 4px 8px !important;
+        min-height: 32px !important;
+        min-width: 32px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Prevent send button from being full width on mobile */
+    #send-button.send-button-fullwidth {
+        width: 100%;
+        min-height: 40px !important;
+        padding: 8px 16px !important;
+        font-size: 0.95rem !important;
+        border-radius: 20px;
+    }
+
+    /* Text input: compact */
+    #user-input {
+        min-height: 38px !important;
+        padding: 8px 14px !important;
+        margin-bottom: 4px !important;
+        border-radius: 20px;
+        font-size: 16px;
+    }
+
+    /* Hide the session stats bar on mobile */
+    .session-stats-bar {
+        display: none !important;
+    }
 }
 
 /* --- 17. IEP ELEMENTS MOBILE SAFETY ---
