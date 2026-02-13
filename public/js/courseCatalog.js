@@ -154,7 +154,7 @@ class CourseManager {
                 <div class="course-sidebar-row">
                     <div class="course-sidebar-icon">${s.status === 'paused' ? '⏸' : '📘'}</div>
                     <div class="course-sidebar-body">
-                        <div class="course-sidebar-name">${this.escapeHtml(s.courseName)}</div>
+                        <div class="course-sidebar-name">${this.escapeHtml(this.formatCourseName(s.courseName))}</div>
                         <div class="course-sidebar-module">${s.status === 'paused' ? 'Paused' : modLabel}</div>
                         <div class="course-sidebar-progress-track">
                             <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
@@ -700,7 +700,7 @@ class CourseManager {
             // Switch sidebar to the course conversation
             if (session.conversationId && window.sidebar) {
                 await window.sidebar.loadSessions();
-                window.sidebar.switchSession(session.conversationId);
+                await window.sidebar.switchSession(session.conversationId);
             }
 
             // Show progress bar
@@ -709,8 +709,41 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
+            // Fire silent course greeting — AI introduces the course/module
+            this.sendCourseGreeting();
+
         } catch (err) {
             console.error('[CourseManager] Failed to activate course:', err);
+        }
+    }
+
+    // --------------------------------------------------
+    // Silent Course Greeting
+    // Calls /api/course-chat with isGreeting flag so the AI
+    // greets the student with full course/module context.
+    // No user message is shown — it appears tutor-initiated.
+    // --------------------------------------------------
+    async sendCourseGreeting() {
+        try {
+            // Show thinking indicator while greeting loads
+            if (window.showThinkingIndicator) window.showThinkingIndicator(true);
+
+            const res = await csrfFetch('/api/course-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isGreeting: true }),
+                credentials: 'include'
+            });
+
+            if (window.showThinkingIndicator) window.showThinkingIndicator(false);
+
+            const data = await res.json();
+            if (data.text && window.appendMessage) {
+                window.appendMessage(data.text, 'ai');
+            }
+        } catch (err) {
+            if (window.showThinkingIndicator) window.showThinkingIndicator(false);
+            console.error('[CourseManager] Course greeting failed:', err);
         }
     }
 
@@ -738,13 +771,13 @@ class CourseManager {
     }
 
     // --------------------------------------------------
-    // Drop Course (unenroll — pauses the course session)
+    // Drop Course (remove from My Courses via X button)
     // --------------------------------------------------
     async dropCourse(sessionId) {
         const session = this.courseSessions.find(s => s._id === sessionId);
-        const name = session?.courseName || 'this course';
+        const name = this.formatCourseName(session?.courseName || 'this course');
 
-        if (!confirm(`Drop "${name}"?\n\nYour progress will be saved and you can re-enroll later.`)) {
+        if (!confirm(`Leave "${name}"?\n\nYour progress will be saved and you can re-enroll later.`)) {
             return;
         }
 
@@ -756,7 +789,7 @@ class CourseManager {
 
             const data = await res.json();
             if (!data.success) {
-                alert(data.message || 'Failed to drop course');
+                this.showToast(data.message || 'Failed to leave course');
                 return;
             }
 
@@ -771,10 +804,10 @@ class CourseManager {
             // Refresh sidebar courses
             await this.loadMySessions();
 
-            this.showToast(`Dropped ${name}`);
+            this.showToast(`Left "${name}"`);
         } catch (err) {
             console.error('[CourseManager] Failed to drop course:', err);
-            alert('Something went wrong. Please try again.');
+            this.showToast('Something went wrong');
         }
     }
 
@@ -881,6 +914,15 @@ class CourseManager {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /** Turn slug-style names like "ap-calculus-ab" into "AP Calculus AB" */
+    formatCourseName(name) {
+        if (!name) return '';
+        // Already looks like a proper name (contains spaces and no hyphens between words)
+        if (/[A-Z]/.test(name) && name.includes(' ')) return name;
+        const UPPER = new Set(['ap', 'ab', 'bc', 'act', 'sat']);
+        return name.split('-').map(w => UPPER.has(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
     showToast(message) {

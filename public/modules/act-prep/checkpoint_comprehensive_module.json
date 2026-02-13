@@ -1,0 +1,246 @@
+{
+  "moduleId": "checkpoint_comprehensive",
+  "course": "ACT Math Prep",
+  "unit": 7,
+  "title": "Checkpoint: Comprehensive Review",
+  "weeks": "9",
+  "estimatedDuration": 45,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Full-breadth assessment spanning ALL ACT reporting categories: Number & Quantity, Algebra, Functions, Geometry, Statistics & Probability, Integrating Essential Skills, and Modeling. Simulates the difficulty spread of a real ACT math section.",
+
+  "skillsCovered": [
+    "act-real-complex-numbers",
+    "act-linear-equations",
+    "act-quadratic-equations",
+    "act-function-notation-evaluation",
+    "act-quadratic-functions",
+    "act-angles-lines-triangles",
+    "act-coordinate-geometry",
+    "act-center-spread",
+    "act-probability",
+    "act-multi-step-rate-proportion",
+    "act-model-interpretation"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest areas. At this stage, remediation should emphasize strategy selection alongside content review.",
+    "clusters": [
+      {
+        "skillId": "act-real-complex-numbers",
+        "reteachFocus": "PEMDAS precision, fraction arithmetic, complex number operations"
+      },
+      {
+        "skillId": "act-linear-equations",
+        "reteachFocus": "Multi-step equations, absolute value, inequality sign flip"
+      },
+      {
+        "skillId": "act-quadratic-equations",
+        "reteachFocus": "Factoring, quadratic formula, discriminant for solution count"
+      },
+      {
+        "skillId": "act-function-notation-evaluation",
+        "reteachFocus": "Composite functions, inverse functions, domain restrictions"
+      },
+      {
+        "skillId": "act-quadratic-functions",
+        "reteachFocus": "Vertex formula, direction of opening, max/min problems"
+      },
+      {
+        "skillId": "act-angles-lines-triangles",
+        "reteachFocus": "Special right triangles, Pythagorean triples, transversal angles"
+      },
+      {
+        "skillId": "act-coordinate-geometry",
+        "reteachFocus": "Distance, midpoint, circle equations, completing the square"
+      },
+      {
+        "skillId": "act-center-spread",
+        "reteachFocus": "Weighted averages, effect of outliers, SD comparison"
+      },
+      {
+        "skillId": "act-probability",
+        "reteachFocus": "Complementary probability, conditional from two-way tables"
+      },
+      {
+        "skillId": "act-multi-step-rate-proportion",
+        "reteachFocus": "Rate × time problems, combined work, mixture problems"
+      },
+      {
+        "skillId": "act-model-interpretation",
+        "reteachFocus": "Choosing model type, interpreting slope/intercept in context"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cc-1",
+      "question": "What is the value of 2³ + 3² − 4(2)?\n(A) 7  (B) 9  (C) 11  (D) 13  (E) 17",
+      "answer": "(B) 9. 8 + 9 − 8 = 9.",
+      "skill": "act-real-complex-numbers",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cc-2",
+      "question": "Solve: 7x − 3 = 4x + 12\n(A) 3  (B) 5  (C) 7  (D) 9  (E) 15",
+      "answer": "(B) 5. 3x = 15 → x = 5.",
+      "skill": "act-linear-equations",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cc-3",
+      "question": "The median of {2, 5, 8, 11, 14, 17, 20} is:\n(A) 8  (B) 10  (C) 11  (D) 14  (E) 17",
+      "answer": "(C) 11. 7 values, median is the 4th: 11.",
+      "skill": "act-center-spread",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cc-4",
+      "question": "What is the slope of the line passing through (−2, 5) and (4, −7)?\n(A) −2  (B) −1  (C) 1/2  (D) 2  (E) −1/2",
+      "answer": "(A) −2. m = (−7−5)/(4−(−2)) = −12/6 = −2.",
+      "skill": "act-coordinate-geometry",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-5",
+      "question": "Factor: x² − 9x + 20\n(A) (x−4)(x−5)  (B) (x+4)(x+5)  (C) (x−4)(x+5)  (D) (x+4)(x−5)  (E) (x−2)(x−10)",
+      "answer": "(A) (x−4)(x−5). Numbers that multiply to 20 and add to −9: −4 and −5.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-6",
+      "question": "If f(x) = x² − 4x + 3, what is f(5)?\n(A) 3  (B) 8  (C) 13  (D) 18  (E) 48",
+      "answer": "(B) 8. f(5) = 25 − 20 + 3 = 8.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-7",
+      "question": "The legs of a right triangle are 8 and 15. What is the hypotenuse?\n(A) 13  (B) 17  (C) 19  (D) 23  (E) √289",
+      "answer": "(B) 17. 64 + 225 = 289. √289 = 17. (8-15-17 triple!)",
+      "skill": "act-angles-lines-triangles",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-8",
+      "question": "A bag has 6 red, 4 blue, and 2 green marbles. What is the probability of NOT drawing green?\n(A) 1/6  (B) 1/3  (C) 2/3  (D) 5/6  (E) 11/12",
+      "answer": "(D) 5/6. P(not green) = 1 − 2/12 = 10/12 = 5/6.",
+      "skill": "act-probability",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-9",
+      "question": "A car travels 180 miles in 3 hours. At this rate, how far will it travel in 5 hours?\n(A) 240  (B) 270  (C) 300  (D) 360  (E) 540",
+      "answer": "(C) 300. Rate = 60 mph. Distance = 60 × 5 = 300.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cc-10",
+      "question": "What is the vertex of y = −3(x + 2)² − 1?\n(A) (2, −1)  (B) (−2, −1)  (C) (2, 1)  (D) (−2, 1)  (E) (−3, −1)",
+      "answer": "(B) (−2, −1). Vertex form: (h, k) = (−2, −1).",
+      "skill": "act-quadratic-functions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cc-11",
+      "question": "The equation y = 500(0.85)^t models the value of a computer. What does 0.85 represent?\n(A) The initial value  (B) The value after 1 year  (C) A 15% annual decrease  (D) An 85% annual increase  (E) The depreciation amount",
+      "answer": "(C) A 15% annual decrease. The multiplier 0.85 = 1 − 0.15, meaning 15% loss per year.",
+      "skill": "act-model-interpretation",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cc-12",
+      "question": "If f(x) = 2x + 1 and g(x) = x² − 3, what is g(f(2))?\n(A) 1  (B) 7  (C) 14  (D) 22  (E) 25",
+      "answer": "(D) 22. f(2) = 5. g(5) = 25 − 3 = 22.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cc-13",
+      "question": "A store discounts an item 20%, then applies an additional 10% discount on the reduced price. What is the total percent discount?\n(A) 28%  (B) 30%  (C) 32%  (D) 70%  (E) 72%",
+      "answer": "(A) 28%. Multiplier: 0.80 × 0.90 = 0.72 → 28% off.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cc-14",
+      "question": "What is the distance from the origin to (−7, 24)?\n(A) 17  (B) 25  (C) 31  (D) √625  (E) Both B and D",
+      "answer": "(E) Both B and D. d = √(49 + 576) = √625 = 25. (7-24-25 triple!)",
+      "skill": "act-coordinate-geometry",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cc-15",
+      "question": "The quadratic 2x² − kx + 18 = 0 has exactly one solution. What is a possible value of k?\n(A) 6  (B) 8  (C) 10  (D) 12  (E) 18",
+      "answer": "(D) 12. Discriminant = 0: k² − 4(2)(18) = 0 → k² = 144 → k = ±12.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cc-16",
+      "question": "A class of 20 students has a mean score of 75. Five more students join, each scoring 90. What is the new class mean?\n(A) 78  (B) 79  (C) 80  (D) 82.5  (E) 85",
+      "answer": "(A) 78. Old total: 20 × 75 = 1500. New students: 5 × 90 = 450. New mean: 1950/25 = 78.",
+      "skill": "act-center-spread",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cc-17",
+      "question": "A projectile's height is modeled by h = −4.9t² + 29.4t + 2. At what time does it reach maximum height?\n(A) 2 sec  (B) 3 sec  (C) 4 sec  (D) 5 sec  (E) 6 sec",
+      "answer": "(B) 3 sec. t = −b/(2a) = −29.4/(2(−4.9)) = −29.4/(−9.8) = 3.",
+      "skill": "act-model-interpretation",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cc-18",
+      "question": "In a 30-60-90 triangle, the side opposite the 60° angle is 6√3. What is the hypotenuse?\n(A) 6  (B) 6√2  (C) 12  (D) 12√3  (E) 18",
+      "answer": "(C) 12. In 30-60-90: x : x√3 : 2x. The side opposite 60° = x√3 = 6√3, so x = 6. Hypotenuse = 2x = 12.",
+      "skill": "act-angles-lines-triangles",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "cc-1": "9",
+    "cc-2": "5",
+    "cc-3": "11",
+    "cc-4": "−2",
+    "cc-5": "(x−4)(x−5)",
+    "cc-6": "8",
+    "cc-7": "17",
+    "cc-8": "5/6",
+    "cc-9": "300",
+    "cc-10": "(−2, −1)",
+    "cc-11": "15% annual decrease",
+    "cc-12": "22",
+    "cc-13": "28%",
+    "cc-14": "25",
+    "cc-15": "12",
+    "cc-16": "78",
+    "cc-17": "3 sec",
+    "cc-18": "12"
+  }
+}

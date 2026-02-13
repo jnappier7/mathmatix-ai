@@ -46,6 +46,26 @@
     max-height: 500px;
 }
 
+#course-sessions-list {
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+}
+
+#course-sessions-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+#course-sessions-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+#course-sessions-list::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
 /* Browse Courses button */
 #browse-courses-btn {
     width: 100%;
@@ -360,6 +380,18 @@
 [data-theme="dark"] #course-exit-btn:hover {
     background: #475569 !important;
     color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] #course-sessions-list {
+    scrollbar-color: #475569 transparent;
+}
+
+[data-theme="dark"] #course-sessions-list::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+[data-theme="dark"] #course-sessions-list::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
 }
 
 [data-theme="dark"] #course-catalog-modal .modal-content {

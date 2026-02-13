@@ -1,0 +1,353 @@
+{
+  "moduleId": "geometry",
+  "course": "ACT Math Prep",
+  "unit": 4,
+  "title": "Geometry",
+  "weeks": "5-6",
+  "estimatedDuration": 35,
+  "description": "Covers 12-15% of the ACT. Master angles, lines, triangles (including Pythagorean theorem and special right triangles), polygons, circles, area/volume/surface area, coordinate geometry, right triangle trig, and congruence/similarity. The ACT provides NO formula sheet — memorization is essential.",
+
+  "skills": [
+    "act-angles-lines-triangles",
+    "act-polygons-circles",
+    "act-area-volume-surface-area",
+    "act-coordinate-geometry",
+    "act-right-triangle-trig",
+    "act-congruence-similarity"
+  ],
+
+  "standardsAlignment": ["ACT G 301-305", "ACT G 401-405", "ACT G 501-505", "ACT G 601-605", "ACT G 701-705"],
+
+  "goals": [
+    "Apply angle relationships: complementary, supplementary, vertical, transversal",
+    "Solve triangle problems using angle sum, Pythagorean theorem, and special triangles",
+    "Recognize special right triangles hidden inside other shapes (equilateral + altitude, square + diagonal, hexagons)",
+    "Calculate area, perimeter, circumference, and volume using memorized formulas",
+    "Apply distance, midpoint, and circle equations in the coordinate plane",
+    "Use SOH-CAH-TOA to solve right triangle problems",
+    "Apply similarity ratios and scale factor relationships"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
+    "AI uses scaffold array as scope and worked-example bank",
+    "Formula memorization drills integrated into every section",
+    "Emphasis on diagram drawing and labeling as a problem-solving tool",
+    "Special right triangles and Pythagorean triples highlighted as high-frequency ACT content",
+    "Dedicated 'Spot the Special Triangle' section teaches recognition of hidden 30-60-90 and 45-45-90 patterns in equilateral triangles, squares, hexagons, and rhombuses"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Angles, Lines & Triangles",
+      "skill": "act-angles-lines-triangles",
+      "content": "Geometry accounts for 12-15% of the ACT, and angle/triangle questions are the foundation. The ACT loves parallel lines with transversals, triangle angle sums, and exterior angle problems.",
+      "keyPoints": [
+        "Complementary angles sum to 90°. Supplementary angles sum to 180°.",
+        "Vertical angles are equal (formed by two intersecting lines).",
+        "Parallel lines + transversal: corresponding angles equal, alternate interior angles equal, co-interior angles sum to 180°.",
+        "Triangle angle sum: all three angles add to 180°.",
+        "Exterior angle theorem: exterior angle = sum of the two non-adjacent interior angles.",
+        "Triangle inequality: any side must be less than the sum of the other two.",
+        "Pythagorean theorem: a² + b² = c² (right triangles only, c is hypotenuse).",
+        "Common Pythagorean triples: 3-4-5, 5-12-13, 8-15-17, 7-24-25 (and their multiples).",
+        "Special right triangles: 45-45-90 → x : x : x√2. 30-60-90 → x : x√3 : 2x."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Angles & Triangles — Worked Examples",
+      "skill": "act-angles-lines-triangles",
+      "examples": [
+        {
+          "problem": "Two parallel lines are cut by a transversal. One of the angles formed is 65°. What is the measure of its co-interior (same-side interior) angle?\n(A) 25°  (B) 65°  (C) 90°  (D) 115°  (E) 125°",
+          "solution": "Co-interior angles are supplementary (sum to 180°).\n180° − 65° = 115°\nAnswer: (D) 115°"
+        },
+        {
+          "problem": "In a right triangle, the legs are 6 and 8. What is the hypotenuse?\n(A) 10  (B) 12  (C) 14  (D) √100  (E) Both A and D",
+          "solution": "Recognize the 3-4-5 triple scaled by 2: 6-8-10.\nOr calculate: c² = 6² + 8² = 36 + 64 = 100 → c = 10.\nAnswer: (E) Both A and D (10 = √100).\n\nACT Tip: Always check for Pythagorean triples before calculating."
+        },
+        {
+          "problem": "One leg of a 30-60-90 triangle is 5 (the shortest leg). What is the hypotenuse?\n(A) 5√2  (B) 5√3  (C) 10  (D) 10√3  (E) 15",
+          "solution": "In a 30-60-90 triangle: x : x√3 : 2x.\nShortest leg (opposite 30°) = x = 5.\nHypotenuse = 2x = 10.\nAnswer: (C) 10\n\nThe longer leg = 5√3 ≈ 8.66."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Recognizing Special Right Triangles in Disguise",
+      "skill": "act-angles-lines-triangles",
+      "content": "The ACT rarely TELLS you it's a special right triangle. Instead, it hides them inside other shapes. Learning to SPOT these patterns instantly saves huge time and avoids messy calculations.",
+      "keyPoints": [
+        "EQUILATERAL TRIANGLE + ALTITUDE = 30-60-90. Cutting an equilateral triangle in half creates two 30-60-90 triangles. If the equilateral has side s, the altitude = (s√3)/2.",
+        "SQUARE + DIAGONAL = 45-45-90. A square's diagonal creates two 45-45-90 triangles. If side = s, diagonal = s√2.",
+        "REGULAR HEXAGON = SIX EQUILATERAL TRIANGLES. Drawing diagonals from center creates equilateral triangles, which means 30-60-90 patterns everywhere.",
+        "ISOSCELES RIGHT TRIANGLE = 45-45-90. Whenever you see 'isosceles right triangle,' immediately apply the x : x : x√2 ratio.",
+        "60° OR 120° ANGLES in a problem often signal 30-60-90 hiding nearby (120° = supplement of 60°).",
+        "RECOGNITION TRIGGERS: Look for these numbers/phrases: 'equilateral,' 'isosceles right,' '45°,' '30°,' '60°,' side ratios involving √2 or √3, or leg ratios of 1:√3.",
+        "PYTHAGOREAN TRIPLE SPOTTING: If two sides are from a known triple family (3-4-5, 5-12-13, 8-15-17, 7-24-25), the third side follows immediately — no calculation needed."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Recognizing Special Right Triangles — Worked Examples",
+      "skill": "act-angles-lines-triangles",
+      "examples": [
+        {
+          "problem": "An equilateral triangle has side length 8. What is the area of the triangle?\n(A) 16  (B) 16√3  (C) 32  (D) 32√3  (E) 64",
+          "solution": "RECOGNIZE: equilateral triangle → drop an altitude → two 30-60-90 triangles.\nThe altitude splits the base: half-base = 4.\n30-60-90 ratio: 4 : 4√3 : 8 → altitude = 4√3.\nArea = (1/2)(8)(4√3) = 16√3.\nAnswer: (B) 16√3\n\nWithout recognition, you'd need the Pythagorean theorem: h² + 4² = 8² → h² = 48 → h = 4√3. Same answer, but slower."
+        },
+        {
+          "problem": "A square has a diagonal of length 10. What is the area of the square?\n(A) 25  (B) 50  (C) 25√2  (D) 100  (E) 100√2",
+          "solution": "RECOGNIZE: square + diagonal = 45-45-90 triangle.\nDiagonal = s√2 = 10, so side s = 10/√2 = 5√2.\nArea = s² = (5√2)² = 50.\nAnswer: (B) 50\n\nShortcut: Area of square = (diagonal²)/2 = 100/2 = 50."
+        },
+        {
+          "problem": "A rhombus has side length 10 and one angle of 60°. What is the length of the shorter diagonal?\n(A) 5  (B) 5√3  (C) 10  (D) 10√3  (E) 20",
+          "solution": "RECOGNIZE: The 60° angle inside a rhombus creates a triangle with the diagonal. The diagonal bisects the 60° angle → 30° angle. This forms a 30-60-90 triangle.\nIn the 30-60-90: hypotenuse = side = 10, short leg (half of shorter diagonal) = 5.\nShorter diagonal = 2 × 5 = 10.\nAnswer: (C) 10\n\nThe 60° angle was the trigger: it signals 30-60-90."
+        },
+        {
+          "problem": "A ladder 26 feet long leans against a wall. The foot of the ladder is 10 feet from the base of the wall. How high up the wall does the ladder reach?\n(A) 16  (B) 20  (C) 24  (D) 25  (E) √576",
+          "solution": "RECOGNIZE PYTHAGOREAN TRIPLE: 10 and 26... is this a scaled triple?\n5-12-13 × 2 = 10-24-26. Yes!\nHeight = 24 feet.\nAnswer: (C) 24\n\nWithout recognition: h² + 10² = 26² → h² = 676 − 100 = 576 → h = 24. Correct but slower."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Spot the Special Triangle — Practice",
+      "skill": "act-angles-lines-triangles",
+      "problems": [
+        {
+          "problem": "A regular hexagon has side length 6. What is the distance from the center to a vertex?\n(A) 3  (B) 3√3  (C) 6  (D) 6√3  (E) 12",
+          "hints": ["A regular hexagon is made of 6 equilateral triangles radiating from the center", "Each equilateral triangle has all sides equal to the hexagon's side length"],
+          "answer": "(C) 6. A regular hexagon = 6 equilateral triangles. Each triangle has side = 6, so center-to-vertex = 6."
+        },
+        {
+          "problem": "An isosceles right triangle has a hypotenuse of 14. What is the length of each leg?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14/√2  (E) Both A and D",
+          "hints": ["Isosceles right = 45-45-90. Ratio: x : x : x√2", "x√2 = 14 → x = 14/√2 = 14√2/2 = 7√2. Wait — check carefully!"],
+          "answer": "(B) 7√2. x√2 = 14 → x = 14/√2 = 7√2. Note: (D) 14/√2 = 7√2, so (B) and (D) are equal. But as written, (B) 7√2 is the simplified form."
+        },
+        {
+          "problem": "The altitude of an equilateral triangle is 9√3. What is the side length?\n(A) 9  (B) 12  (C) 15  (D) 18  (E) 9√2",
+          "hints": ["Equilateral + altitude = 30-60-90. Altitude = longer leg = x√3", "x√3 = 9√3 → x = 9. But x is HALF the side, so side = 2x"],
+          "answer": "(D) 18. altitude = (s/2)√3 = 9√3 → s/2 = 9 → s = 18."
+        },
+        {
+          "problem": "A right triangle has legs 15 and 36. What is the hypotenuse?\n(A) 37  (B) 39  (C) 40  (D) 41  (E) 51",
+          "hints": ["Check triple families: 3-4-5 → ×? 5-12-13 → ×? Try: 15 = 5×3, 36 = 12×3", "5-12-13 scaled by 3 = 15-36-39"],
+          "answer": "(B) 39. Recognize: 5-12-13 triple × 3 = 15-36-39. No calculation needed!"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Polygons, Circles, Area & Volume",
+      "skill": "act-polygons-circles",
+      "content": "These are the formulas you MUST have memorized for the ACT. There is no formula sheet provided. Circle and area/volume questions appear on every single ACT.",
+      "keyPoints": [
+        "Interior angle sum of n-gon: (n−2) × 180°. Each angle of regular n-gon: (n−2) × 180° / n.",
+        "Circle: circumference = 2πr = πd. Area = πr².",
+        "Arc length = (central angle / 360°) × 2πr.",
+        "Sector area = (central angle / 360°) × πr².",
+        "Triangle: A = (1/2)bh. Rectangle: A = lw. Parallelogram: A = bh.",
+        "Trapezoid: A = (1/2)(b₁ + b₂)h.",
+        "Rectangular prism: V = lwh. Cylinder: V = πr²h.",
+        "Cone: V = (1/3)πr²h. Sphere: V = (4/3)πr³. SA = 4πr².",
+        "Pyramid: V = (1/3)Bh where B = base area."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Polygons, Circles & Area/Volume — Worked Examples",
+      "skill": "act-area-volume-surface-area",
+      "examples": [
+        {
+          "problem": "What is the area of a circle with diameter 10?\n(A) 10π  (B) 20π  (C) 25π  (D) 50π  (E) 100π",
+          "solution": "Diameter = 10, so radius = 5.\nA = πr² = π(5²) = 25π\nAnswer: (C) 25π\n\nTrap: (E) 100π uses the diameter instead of the radius."
+        },
+        {
+          "problem": "A sector of a circle with radius 12 has a central angle of 60°. What is the arc length?\n(A) 2π  (B) 4π  (C) 12π  (D) 24π  (E) 72π",
+          "solution": "Arc length = (60/360) × 2π(12) = (1/6) × 24π = 4π\nAnswer: (B) 4π"
+        },
+        {
+          "problem": "A cylinder has radius 3 and height 8. What is its volume?\n(A) 24π  (B) 48π  (C) 72π  (D) 192π  (E) 216π",
+          "solution": "V = πr²h = π(3²)(8) = π(9)(8) = 72π\nAnswer: (C) 72π"
+        },
+        {
+          "problem": "What is the sum of the interior angles of a hexagon?\n(A) 360°  (B) 540°  (C) 720°  (D) 900°  (E) 1080°",
+          "solution": "n = 6. Sum = (n−2) × 180° = (4)(180°) = 720°.\nAnswer: (C) 720°"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Angles, Triangles, Circles & Area Practice",
+      "skills": ["act-angles-lines-triangles", "act-polygons-circles", "act-area-volume-surface-area"],
+      "problems": [
+        {
+          "problem": "The angles of a triangle are in the ratio 2:3:4. What is the measure of the largest angle?\n(A) 40°  (B) 60°  (C) 70°  (D) 80°  (E) 90°",
+          "hints": ["2x + 3x + 4x = 180°", "9x = 180° → x = 20°. Largest = 4(20°) = 80°"],
+          "answer": "(D) 80°. 9x = 180° → x = 20°. Angles: 40°, 60°, 80°."
+        },
+        {
+          "problem": "An isosceles right triangle has legs of length 7. What is the hypotenuse?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14  (E) 49",
+          "hints": ["Isosceles right = 45-45-90 triangle", "Hypotenuse = leg × √2"],
+          "answer": "(B) 7√2. 45-45-90 ratio: x : x : x√2. Hypotenuse = 7√2."
+        },
+        {
+          "problem": "A pizza with diameter 16 inches is cut into 8 equal slices. What is the area of one slice?\n(A) 2π  (B) 4π  (C) 8π  (D) 16π  (E) 32π",
+          "hints": ["Radius = 8. Total area = π(8²) = 64π", "One slice = 64π / 8 = 8π"],
+          "answer": "(C) 8π. Area = πr² = 64π. One of 8 slices = 64π/8 = 8π."
+        },
+        {
+          "problem": "A cone has radius 6 and height 10. What is its volume?\n(A) 60π  (B) 120π  (C) 180π  (D) 360π  (E) 600π",
+          "hints": ["V = (1/3)πr²h", "(1/3)π(36)(10) = 120π"],
+          "answer": "(B) 120π. V = (1/3)π(6²)(10) = (1/3)(360π) = 120π."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Coordinate Geometry & Right Triangle Trig",
+      "skill": "act-coordinate-geometry",
+      "content": "Coordinate geometry bridges algebra and geometry. The ACT tests distance, midpoint, slope, and circle equations in the coordinate plane. Right triangle trig (SOH-CAH-TOA) is also heavily tested.",
+      "keyPoints": [
+        "Distance: d = √[(x₂−x₁)² + (y₂−y₁)²]",
+        "Midpoint: M = ((x₁+x₂)/2, (y₁+y₂)/2)",
+        "Circle: (x−h)² + (y−k)² = r². Center (h,k), radius r.",
+        "To convert general form to standard: complete the square for x and y.",
+        "SOH-CAH-TOA for right triangles: sin = opp/hyp, cos = adj/hyp, tan = opp/adj.",
+        "Pythagorean triples appear in coordinate geometry: distance between (0,0) and (3,4) is 5.",
+        "Similar triangles: corresponding sides proportional, corresponding angles equal."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Coordinate Geometry & Trig — Worked Examples",
+      "skill": "act-right-triangle-trig",
+      "examples": [
+        {
+          "problem": "What is the distance between (−1, 3) and (5, −5)?\n(A) 6  (B) 8  (C) 10  (D) 14  (E) √52",
+          "solution": "d = √[(5−(−1))² + (−5−3)²]\n= √[6² + (−8)²]\n= √[36 + 64] = √100 = 10\nAnswer: (C) 10\n\nRecognize: 6-8-10 is a 3-4-5 triple × 2."
+        },
+        {
+          "problem": "What are the center and radius of the circle x² + y² − 6x + 4y − 12 = 0?\n(A) Center (3, −2), r = 5  (B) Center (−3, 2), r = 5  (C) Center (3, −2), r = 25  (D) Center (6, −4), r = 12  (E) Center (3, −2), r = √12",
+          "solution": "Complete the square:\n(x² − 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4\n(x − 3)² + (y + 2)² = 25\nCenter: (3, −2), radius = √25 = 5\nAnswer: (A) Center (3, −2), r = 5"
+        },
+        {
+          "problem": "A 20-foot ladder leans against a wall making a 65° angle with the ground. How high up the wall does the ladder reach?\n(A) 20 sin 65°  (B) 20 cos 65°  (C) 20 tan 65°  (D) 20/sin 65°  (E) 20/cos 65°",
+          "solution": "The ladder is the hypotenuse (20 ft). The wall height is opposite the 65° angle.\nsin 65° = opposite/hypotenuse = height/20\nheight = 20 sin 65°\nAnswer: (A) 20 sin 65°\n\nACT Tip: Draw the triangle and label the sides relative to the given angle."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Coordinate Geometry, Trig & Similarity Practice",
+      "skills": ["act-coordinate-geometry", "act-right-triangle-trig", "act-congruence-similarity"],
+      "problems": [
+        {
+          "problem": "What is the midpoint of the segment from (2, −3) to (8, 7)?\n(A) (5, 2)  (B) (3, 5)  (C) (10, 4)  (D) (6, 4)  (E) (5, 5)",
+          "hints": ["Midpoint = ((2+8)/2, (−3+7)/2)", "= (10/2, 4/2) = (5, 2)"],
+          "answer": "(A) (5, 2). M = ((2+8)/2, (−3+7)/2) = (5, 2)."
+        },
+        {
+          "problem": "A tree casts a 15-foot shadow when the angle of elevation of the sun is 40°. How tall is the tree?\n(A) 15 sin 40°  (B) 15 cos 40°  (C) 15 tan 40°  (D) 15/tan 40°  (E) 15/sin 40°",
+          "hints": ["The shadow is adjacent to the 40° angle", "The tree height is opposite. tan 40° = height/15"],
+          "answer": "(C) 15 tan 40°. tan 40° = height/15 → height = 15 tan 40°."
+        },
+        {
+          "problem": "Two similar triangles have corresponding sides in the ratio 3:5. If the smaller triangle has area 27 cm², what is the area of the larger?\n(A) 45  (B) 75  (C) 108  (D) 135  (E) 225",
+          "hints": ["Area scales by the square of the linear scale factor", "Scale factor = 5/3, so area ratio = (5/3)² = 25/9"],
+          "answer": "(B) 75. Area ratio = (5/3)² = 25/9. Larger area = 27 × 25/9 = 75 cm²."
+        },
+        {
+          "problem": "A circle has equation (x + 1)² + (y − 4)² = 36. What is the diameter?\n(A) 6  (B) 12  (C) 18  (D) 36  (E) 72",
+          "hints": ["r² = 36, so r = 6", "Diameter = 2r = 12"],
+          "answer": "(B) 12. r² = 36 → r = 6. Diameter = 2(6) = 12."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Geometry — ACT-Style Practice Set",
+      "skills": ["act-angles-lines-triangles", "act-polygons-circles", "act-area-volume-surface-area", "act-coordinate-geometry", "act-right-triangle-trig", "act-congruence-similarity"],
+      "problems": [
+        {
+          "problem": "An exterior angle of a triangle is 130°. If one of the non-adjacent interior angles is 50°, what is the other non-adjacent interior angle?\n(A) 50°  (B) 60°  (C) 70°  (D) 80°  (E) 130°",
+          "answer": "(D) 80°. Exterior angle = sum of remote interior angles. 130° = 50° + x → x = 80°."
+        },
+        {
+          "problem": "The legs of a right triangle are 9 and 12. What is the length of the hypotenuse?\n(A) 13  (B) 15  (C) 16  (D) 21  (E) √225",
+          "answer": "(B) 15. 9² + 12² = 81 + 144 = 225. √225 = 15. (3-4-5 triple × 3). Also (E) = 15."
+        },
+        {
+          "problem": "Each interior angle of a regular polygon is 144°. How many sides does the polygon have?\n(A) 8  (B) 9  (C) 10  (D) 12  (E) 15",
+          "answer": "(C) 10. Each angle = (n−2)·180/n = 144. Multiply: 180n − 360 = 144n → 36n = 360 → n = 10."
+        },
+        {
+          "problem": "A circular garden has circumference 62.8 feet (use π ≈ 3.14). What is its area, to the nearest square foot?\n(A) 100  (B) 200  (C) 314  (D) 400  (E) 628",
+          "answer": "(C) 314. C = 2πr → 62.8 = 2(3.14)r → r = 10. A = πr² = 3.14(100) = 314."
+        },
+        {
+          "problem": "A sphere has radius 3. What is its volume?\n(A) 12π  (B) 27π  (C) 36π  (D) 108π  (E) 113.1",
+          "answer": "(C) 36π. V = (4/3)πr³ = (4/3)π(27) = 36π."
+        },
+        {
+          "problem": "What is the distance from the origin to the point (−5, 12)?\n(A) 7  (B) 11  (C) 13  (D) 17  (E) √119",
+          "answer": "(C) 13. d = √(25 + 144) = √169 = 13. (5-12-13 triple!)"
+        },
+        {
+          "problem": "In a right triangle, the hypotenuse is 10 and one leg is 6. What is sin of the angle opposite the leg of length 6?\n(A) 3/5  (B) 3/4  (C) 4/5  (D) 5/3  (E) 6/10",
+          "answer": "(A) 3/5. sin = opp/hyp = 6/10 = 3/5. (Also (E) is 6/10 = 3/5, same answer.)"
+        },
+        {
+          "problem": "Two similar rectangles have widths of 4 cm and 10 cm. If the smaller rectangle has a perimeter of 20 cm, what is the perimeter of the larger?\n(A) 30  (B) 40  (C) 50  (D) 80  (E) 125",
+          "answer": "(C) 50. Scale factor = 10/4 = 5/2. Perimeter scales linearly: 20 × 5/2 = 50."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "co-interior": "115°",
+    "right-triangle-68": "10",
+    "30-60-90": "10",
+    "circle-area-d10": "25π",
+    "arc-length": "4π",
+    "cylinder-vol": "72π",
+    "hexagon-angles": "720°",
+    "angle-ratio": "80°",
+    "isosceles-right": "7√2",
+    "pizza-slice": "8π",
+    "cone-volume": "120π",
+    "distance-formula": "10",
+    "circle-standard-form": "(3, −2), r = 5",
+    "ladder-trig": "20 sin 65°",
+    "midpoint": "(5, 2)",
+    "tree-shadow": "15 tan 40°",
+    "similar-area": "75",
+    "circle-diameter": "12",
+    "exterior-angle": "80°",
+    "hypotenuse-912": "15",
+    "regular-polygon": "10",
+    "circular-garden": "314",
+    "sphere-volume": "36π",
+    "origin-distance": "13",
+    "sin-ratio": "3/5",
+    "similar-perimeter": "50"
+  }
+}

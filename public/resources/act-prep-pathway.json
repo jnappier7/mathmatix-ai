@@ -1,0 +1,289 @@
+{
+  "courseId": "act-prep",
+  "track": "ACT Math Prep",
+  "overview": "Comprehensive preparation for the ACT Mathematics section aligned to the official ACT reporting categories. Covers all tested content from Number & Quantity through Statistics & Probability, with dedicated modules for Integrating Essential Skills and strategic test-taking.",
+  "prerequisites": ["algebra-1"],
+  "naturalProgression": [
+    "Build fluency with number properties, ratios, and basic operations",
+    "Strengthen algebra skills including equations, expressions, and inequalities",
+    "Master function analysis: linear, quadratic, polynomial, exponential",
+    "Develop geometry reasoning for coordinate and plane geometry",
+    "Apply statistics and probability to data interpretation",
+    "Integrate essential skills across multi-step real-world problems",
+    "Practice test strategies, pacing, and full-length timed exams"
+  ],
+
+  "examAlignment": {
+    "exam": "ACT Mathematics",
+    "totalQuestions": 60,
+    "totalTime": "60 minutes",
+    "format": "Multiple choice (5 options per question)",
+    "calculator": "Permitted for entire section (no CAS or built-in algebra)",
+    "scoringRange": "1-36 (scaled)",
+    "reportingCategories": {
+      "preparingForHigherMath": {
+        "percentage": "57-60%",
+        "subcategories": {
+          "numberAndQuantity": "7-10%",
+          "algebra": "12-15%",
+          "functions": "12-15%",
+          "geometry": "12-15%",
+          "statisticsAndProbability": "8-12%"
+        }
+      },
+      "integratingEssentialSkills": {
+        "percentage": "40-43%",
+        "description": "Multi-step problems requiring synthesis of skills across domains"
+      },
+      "modeling": {
+        "percentage": "~25%",
+        "description": "Cross-cutting: producing, interpreting, analyzing, and improving models"
+      }
+    }
+  },
+
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release with ACT strategy integration",
+    "description": "The AI tutor leads instruction using the gradual release model (I Do / We Do / You Do), weaving in ACT-specific strategies at each step. Every concept is taught with test-day application in mind.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Introduce the math concept with a direct connection to how it appears on the ACT. Use clear definitions, visual cues, and ACT-format framing.",
+        "studentRole": "Engage with the concept, connect to prior knowledge, identify what looks familiar vs. new"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2-3 worked examples that mirror actual ACT question styles. Show full solution AND efficient shortcuts.",
+        "studentRole": "Follow the reasoning, note where shortcuts save time, ask clarifying questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Present scaffolded problems. Give hints only when the student is stuck. Reinforce both math reasoning and strategy choices.",
+        "studentRole": "Attempt each problem, explain reasoning, accept hints when needed"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Assign independent practice that mixes difficulty levels (easy → medium → hard) reflecting ACT question progression. Time awareness encouraged.",
+        "studentRole": "Solve independently under mild time pressure, self-assess, flag uncertainties"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Deliver a short quiz (5-8 questions) in ACT format. Analyze performance and recommend next steps.",
+        "studentRole": "Complete the quiz under timed conditions, review mistakes, commit corrections to memory"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present based on observed gaps",
+      "Adjust difficulty in real-time based on student performance",
+      "Suggest ACT-specific strategies (backsolving, picking numbers, estimation) when relevant",
+      "Decide when to move forward vs. revisit a skill",
+      "Recommend timed drills when a student has conceptual mastery but needs speed"
+    ]
+  },
+
+  "modules": [
+    {
+      "moduleId": "number_quantity",
+      "unit": 1,
+      "title": "Number & Quantity",
+      "preview": "Real/complex numbers, number properties, ratios, matrices, and vectors — 7-10% of the ACT",
+      "moduleFile": "/modules/act-prep/number_quantity_module.json",
+      "actCategory": "Preparing for Higher Math",
+      "actPercentage": "7-10%",
+      "skills": [
+        "act-real-complex-numbers",
+        "act-exponents-roots",
+        "act-ratios-proportions-percents",
+        "act-matrices-vectors"
+      ],
+      "essentialQuestions": [
+        "How do I work efficiently with fractions, decimals, and percents under time pressure?",
+        "When should I use estimation vs. exact calculation?"
+      ]
+    },
+    {
+      "moduleId": "algebra",
+      "unit": 2,
+      "title": "Algebra",
+      "preview": "Expressions, equations, inequalities, and systems — 12-15% of the ACT",
+      "moduleFile": "/modules/act-prep/algebra_module.json",
+      "actCategory": "Preparing for Higher Math",
+      "actPercentage": "12-15%",
+      "skills": [
+        "act-linear-equations",
+        "act-systems-of-equations",
+        "act-quadratic-equations",
+        "act-polynomial-expressions",
+        "act-radical-rational-expressions"
+      ],
+      "essentialQuestions": [
+        "What's the fastest way to solve this equation — algebra, backsolving, or picking numbers?",
+        "How do I translate word problems into solvable equations?"
+      ]
+    },
+    {
+      "moduleId": "functions",
+      "unit": 3,
+      "title": "Functions",
+      "preview": "Function notation, analysis, transformations, and modeling — 12-15% of the ACT",
+      "moduleFile": "/modules/act-prep/functions_module.json",
+      "actCategory": "Preparing for Higher Math",
+      "actPercentage": "12-15%",
+      "skills": [
+        "act-function-notation-evaluation",
+        "act-linear-functions",
+        "act-quadratic-functions",
+        "act-polynomial-exponential-log",
+        "act-trig-functions",
+        "act-function-transformations"
+      ],
+      "essentialQuestions": [
+        "How do I quickly identify a function's behavior from its equation or graph?",
+        "What does each transformation do, and how do I spot them on the ACT?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_higher_math_1",
+      "unit": 3,
+      "title": "Checkpoint: Higher Math Part 1 (N&Q, Algebra, Functions)",
+      "preview": "Assessment covering Number & Quantity, Algebra, and Functions",
+      "moduleFile": "/modules/act-prep/checkpoint_hm1_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "act-real-complex-numbers", "act-exponents-roots", "act-ratios-proportions-percents",
+        "act-linear-equations", "act-systems-of-equations", "act-quadratic-equations",
+        "act-function-notation-evaluation", "act-linear-functions", "act-quadratic-functions"
+      ]
+    },
+    {
+      "moduleId": "geometry",
+      "unit": 4,
+      "title": "Geometry",
+      "preview": "Plane geometry, coordinate geometry, congruence, similarity, trig — 12-15% of the ACT",
+      "moduleFile": "/modules/act-prep/geometry_module.json",
+      "actCategory": "Preparing for Higher Math",
+      "actPercentage": "12-15%",
+      "skills": [
+        "act-angles-lines-triangles",
+        "act-polygons-circles",
+        "act-area-volume-surface-area",
+        "act-coordinate-geometry",
+        "act-right-triangle-trig",
+        "act-congruence-similarity"
+      ],
+      "essentialQuestions": [
+        "What formulas do I need memorized vs. which can I derive?",
+        "How do I set up trig ratios quickly for right triangle problems?"
+      ]
+    },
+    {
+      "moduleId": "statistics_probability",
+      "unit": 5,
+      "title": "Statistics & Probability",
+      "preview": "Data analysis, center/spread, probability, counting — 8-12% of the ACT",
+      "moduleFile": "/modules/act-prep/statistics_probability_module.json",
+      "actCategory": "Preparing for Higher Math",
+      "actPercentage": "8-12%",
+      "skills": [
+        "act-center-spread",
+        "act-data-representations",
+        "act-two-way-tables",
+        "act-probability",
+        "act-counting-techniques"
+      ],
+      "essentialQuestions": [
+        "How do I read graphs and tables quickly and accurately?",
+        "When do I need to calculate probability vs. estimate it?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_higher_math_2",
+      "unit": 5,
+      "title": "Checkpoint: Higher Math Part 2 (Geometry, Stats & Prob)",
+      "preview": "Assessment covering Geometry and Statistics & Probability",
+      "moduleFile": "/modules/act-prep/checkpoint_hm2_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "act-angles-lines-triangles", "act-polygons-circles", "act-area-volume-surface-area",
+        "act-coordinate-geometry", "act-right-triangle-trig",
+        "act-center-spread", "act-data-representations", "act-probability"
+      ]
+    },
+    {
+      "moduleId": "integrating_essential_skills",
+      "unit": 6,
+      "title": "Integrating Essential Skills",
+      "preview": "Multi-step problems synthesizing arithmetic, algebra, geometry, and data — 40-43% of the ACT",
+      "moduleFile": "/modules/act-prep/integrating_essential_skills_module.json",
+      "actCategory": "Integrating Essential Skills",
+      "actPercentage": "40-43%",
+      "skills": [
+        "act-multi-step-rate-proportion",
+        "act-area-perimeter-composite",
+        "act-algebraic-reasoning-context",
+        "act-percent-applications",
+        "act-measurement-unit-conversion"
+      ],
+      "essentialQuestions": [
+        "How do I break a multi-step problem into manageable pieces?",
+        "What connects these 'basic' skills to harder problems?"
+      ]
+    },
+    {
+      "moduleId": "test_strategies_modeling",
+      "unit": 7,
+      "title": "Test Strategies & Modeling",
+      "preview": "ACT-specific strategies, pacing, and cross-cutting modeling skills (~25% overlap)",
+      "moduleFile": "/modules/act-prep/test_strategies_modeling_module.json",
+      "actCategory": "Modeling (cross-cutting)",
+      "actPercentage": "~25%",
+      "skills": [
+        "act-backsolving",
+        "act-picking-numbers",
+        "act-estimation-elimination",
+        "act-pacing-strategy",
+        "act-model-interpretation"
+      ],
+      "essentialQuestions": [
+        "When is it faster to use a strategy than to do the algebra?",
+        "How do I manage my 60 minutes across 60 questions?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_comprehensive",
+      "unit": 7,
+      "title": "Checkpoint: Comprehensive Review",
+      "preview": "Full-breadth assessment across all ACT reporting categories",
+      "moduleFile": "/modules/act-prep/checkpoint_comprehensive_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "act-real-complex-numbers", "act-linear-equations", "act-quadratic-equations",
+        "act-function-notation-evaluation", "act-quadratic-functions",
+        "act-angles-lines-triangles", "act-coordinate-geometry",
+        "act-center-spread", "act-probability",
+        "act-multi-step-rate-proportion", "act-model-interpretation"
+      ]
+    },
+    {
+      "moduleId": "practice_test_final",
+      "unit": 8,
+      "title": "Full Practice Test & Final Exam",
+      "preview": "Timed 60-question practice test simulating real ACT conditions, plus final assessment",
+      "moduleFile": "/modules/act-prep/practice_test_final_module.json",
+      "isFinal": true,
+      "skills": [
+        "act-real-complex-numbers", "act-exponents-roots", "act-ratios-proportions-percents",
+        "act-linear-equations", "act-systems-of-equations", "act-quadratic-equations",
+        "act-function-notation-evaluation", "act-linear-functions", "act-quadratic-functions",
+        "act-polynomial-exponential-log", "act-trig-functions",
+        "act-angles-lines-triangles", "act-polygons-circles", "act-area-volume-surface-area",
+        "act-coordinate-geometry", "act-right-triangle-trig",
+        "act-center-spread", "act-data-representations", "act-probability",
+        "act-multi-step-rate-proportion", "act-algebraic-reasoning-context",
+        "act-backsolving", "act-estimation-elimination", "act-model-interpretation"
+      ]
+    }
+  ],
+
+  "aiGuidanceNotes": "For ACT prep, balance content mastery with strategic efficiency. Many students know the math but lose points to pacing or careless errors. Every lesson should reinforce both the concept AND the fastest way to apply it under test conditions. The ACT is predictable — drill the patterns, not just the theory."
+}

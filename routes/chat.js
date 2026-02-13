@@ -419,9 +419,35 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 }
             }
 
-            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
-            user.activeConversationId = activeConversation._id;
-            await user.save();
+            // If user has an active course session, reactivate that course's conversation
+            // instead of creating a brand new one (prevents losing course context)
+            let reusedCourseConversation = false;
+            if (user.activeCourseSessionId) {
+                try {
+                    const CourseSession = require('../models/courseSession');
+                    const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+                    if (courseSession && courseSession.conversationId) {
+                        const courseConv = await Conversation.findById(courseSession.conversationId);
+                        if (courseConv) {
+                            courseConv.isActive = true;
+                            await courseConv.save();
+                            activeConversation = courseConv;
+                            user.activeConversationId = courseConv._id;
+                            await user.save();
+                            reusedCourseConversation = true;
+                            console.log(`📚 [Course] Reactivated course conversation ${courseConv._id} for ${courseSession.courseName}`);
+                        }
+                    }
+                } catch (courseConvErr) {
+                    console.warn('[Course] Could not reactivate course conversation:', courseConvErr.message);
+                }
+            }
+
+            if (!reusedCourseConversation) {
+                activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+                user.activeConversationId = activeConversation._id;
+                await user.save();
+            }
         }
 
         // CRITICAL FIX: Validate user message before saving
@@ -692,6 +718,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             essentialQuestions: courseCtx.currentModule?.essentialQuestions || [],
                             aiInstructionModel: courseCtx.pathway.aiInstructionModel || null
                         };
+                        console.log(`📚 [Course] Loaded context for ${courseSession.courseName} — module: ${courseSession.currentModuleId}`);
                     }
                 }
             } catch (courseErr) {
