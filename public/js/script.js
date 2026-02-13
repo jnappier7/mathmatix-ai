@@ -2875,6 +2875,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Render interactive graph tool if AI requested one
+            if (data.graphTool && window.GraphTool) {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const graphContainer = document.createElement('div');
+                    graphContainer.className = 'graph-tool-container';
+                    latestMessage.appendChild(graphContainer);
+
+                    new GraphTool(graphContainer, {
+                        ...data.graphTool,
+                        onSubmit: (result) => {
+                            // Send student's graph as a chat message
+                            const msg = `[Graph Response] I plotted points (${result.points[0].x}, ${result.points[0].y}) and (${result.points[1].x}, ${result.points[1].y}). ` +
+                                `Slope: ${result.slope != null ? result.slope : 'undefined'}. ` +
+                                `Y-intercept: ${result.yIntercept != null ? result.yIntercept : 'N/A'}. ` +
+                                `My line: ${result.equation}`;
+                            // Insert into chat input and auto-send
+                            const chatInput = document.getElementById('chat-input');
+                            if (chatInput) {
+                                chatInput.value = msg;
+                                const sendBtn = document.querySelector('.send-button') || document.getElementById('send-button');
+                                if (sendBtn) sendBtn.click();
+                            }
+                        }
+                    });
+
+                    // Scroll to show the graph
+                    const chatBox = document.getElementById('chat-box');
+                    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            }
+
             // Notify whiteboard-chat layout manager
             if (window.whiteboardChatLayout) {
                 document.dispatchEvent(new CustomEvent('newAIMessage', { detail: { message: aiText } }));

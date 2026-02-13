@@ -292,6 +292,25 @@ router.post('/', async (req, res) => {
             }
         }
 
+        // Interactive graph tool: parse <GRAPH_TOOL type="plot-line" slope="2" intercept="3">
+        let graphToolConfig = null;
+        const graphToolMatch = aiResponseText.match(/<GRAPH_TOOL\s+([^>]+)>/i);
+        if (graphToolMatch) {
+            const attrs = {};
+            graphToolMatch[1].replace(/(\w+)\s*=\s*"([^"]*)"/g, (_, k, v) => { attrs[k] = v; });
+            graphToolConfig = {
+                type: attrs.type || 'plot-line',
+                expectedSlope: attrs.slope != null ? parseFloat(attrs.slope) : null,
+                expectedIntercept: attrs.intercept != null ? parseFloat(attrs.intercept) : null,
+                xMin: attrs.xMin ? parseInt(attrs.xMin) : -10,
+                xMax: attrs.xMax ? parseInt(attrs.xMax) : 10,
+                yMin: attrs.yMin ? parseInt(attrs.yMin) : -10,
+                yMax: attrs.yMax ? parseInt(attrs.yMax) : 10
+            };
+            aiResponseText = aiResponseText.replace(graphToolMatch[0], '').trim();
+            console.log(`📐 [CourseChat] Graph tool: ${graphToolConfig.type}`);
+        }
+
         if (problemAnswered) {
             conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
             if (wasCorrect) conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
@@ -405,6 +424,8 @@ router.post('/', async (req, res) => {
             freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
                 ? Math.max(0, (20 * 60) - (user.weeklyAISeconds || 0))
                 : null,
+            // Interactive tools
+            graphTool: graphToolConfig,
             // Course-specific fields
             courseContext: {
                 courseId: courseSession.courseId,
