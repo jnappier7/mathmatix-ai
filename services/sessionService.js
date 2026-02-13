@@ -218,12 +218,15 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
           activeConversation.currentTopic = detectTopic(activeConversation.messages);
         }
 
-        // IMPROVED: Use stored stats if available (more accurate than recalculating)
-        // Only recalculate if stats are missing (old conversations)
+        // Use stored incremental stats if available (more accurate).
+        // Only attempt recalculation from messages if stats are missing AND
+        // the fallback actually finds something. Don't overwrite with 0s.
         if (!activeConversation.problemsAttempted || activeConversation.problemsAttempted === 0) {
           const stats = calculateProblemStats(activeConversation.messages);
-          activeConversation.problemsAttempted = stats.attempted;
-          activeConversation.problemsCorrect = stats.correct;
+          if (stats.attempted > 0) {
+            activeConversation.problemsAttempted = stats.attempted;
+            activeConversation.problemsCorrect = stats.correct;
+          }
         }
 
         // Detect if struggling
@@ -374,11 +377,13 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
           session.currentTopic = detectTopic(session.messages);
         }
 
-        // Use stored stats or recalculate
+        // Use stored stats or recalculate, but only if fallback finds real data
         if (!session.problemsAttempted || session.problemsAttempted === 0) {
           const stats = calculateProblemStats(session.messages);
-          session.problemsAttempted = stats.attempted;
-          session.problemsCorrect = stats.correct;
+          if (stats.attempted > 0) {
+            session.problemsAttempted = stats.attempted;
+            session.problemsCorrect = stats.correct;
+          }
         }
 
         // Generate AI summary
@@ -388,8 +393,8 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
           session.summary = aiSummary;
         } catch (summaryError) {
           // Fallback summary if AI fails
-          session.summary = `${studentName} worked on ${session.currentTopic || 'mathematics'} for ${session.activeMinutes || 0} minutes. ` +
-            `${session.problemsAttempted > 0 ? `Attempted ${session.problemsAttempted} problems with ${session.problemsCorrect || 0} correct.` : 'Session ended due to inactivity.'}`;
+          session.summary = `${studentName} worked on ${session.currentTopic || 'mathematics'} for ${session.activeMinutes || 0} minutes.` +
+            (session.problemsAttempted > 0 ? ` Attempted ${session.problemsAttempted} problems with ${session.problemsCorrect || 0} correct.` : '');
         }
 
         // Save summary but keep conversation active (visible in sidebar)

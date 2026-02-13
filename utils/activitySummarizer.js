@@ -27,24 +27,28 @@ async function generateLiveSummary(conversation, studentName) {
         const accuracy = problemsAttempted > 0 ?
             Math.round((problemsCorrect / problemsAttempted) * 100) : 0;
 
+        // Build stats section only if we have actual tracked data
+        const statsSection = problemsAttempted > 0
+            ? `- Problems attempted: ${problemsAttempted}\n- Problems correct: ${problemsCorrect} (${accuracy}% accuracy)`
+            : '- Problem statistics not yet tracked for this session';
+
         // Create a prompt for the summarizer with accurate stats
         const summaryPrompt = `You are analyzing a math tutoring session for a teacher dashboard. Generate a CONCISE summary (max 2 sentences) focusing on:
 - Current topic/concept
-- Progress indicators (use the exact stats provided)
+${problemsAttempted > 0 ? '- Progress indicators (use the exact stats provided)' : '- What the student is working on'}
 - Struggle points if any
 
 Session Stats:
 - Topic: ${topic}
-- Problems attempted: ${problemsAttempted}
-- Problems correct: ${problemsCorrect} (${accuracy}% accuracy)
+${statsSection}
 ${strugglingWith ? `- Currently struggling with: ${strugglingWith}` : ''}
 
 Recent conversation:
 ${recentMessages.map(m => `${m.role}: ${m.content}`).join('\n')}
 
 Format: "[Student] is working on [topic]. [Progress/struggle summary]"
-Example: "Sarah is solving linear equations (2x+3=7). Completed 3/5 problems correctly, struggling with negative coefficients."
-
+${problemsAttempted > 0 ? 'Example: "Sarah is solving linear equations (2x+3=7). Completed 3/5 problems correctly, struggling with negative coefficients."' : 'Example: "Sarah is exploring linear equations, working through examples of solving for x."'}
+${problemsAttempted === 0 ? 'IMPORTANT: Do NOT mention "0 problems" or "0% accuracy". Focus on topics and learning activities instead.' : ''}
 Summary:`;
 
         const response = await callLLM('gpt-4o-mini', [
@@ -258,23 +262,31 @@ async function generateSessionSummary(conversation, studentName) {
         const accuracy = stats.attempted > 0 ?
             Math.round((stats.correct / stats.attempted) * 100) : 0;
 
+        // Build problem stats section only when we have actual tracked data.
+        // When problemsAttempted is 0, it likely means tracking didn't fire
+        // (AI didn't emit tags and keyword fallback didn't match) rather than
+        // the student truly attempting 0 problems. Omit to avoid false reports.
+        const problemStatsSection = stats.attempted > 0
+            ? `- Problems attempted: ${stats.attempted}\n- Problems correct: ${stats.correct} (${accuracy}% accuracy)`
+            : '- Problem statistics were not tracked for this session';
+
         // Regular session summary for non-assessment sessions
         const summaryPrompt = `Summarize this math tutoring session in 2-3 sentences for a teacher. Focus on:
 - Main topic covered
-- Number of problems attempted and success rate
+${stats.attempted > 0 ? '- Number of problems attempted and success rate' : '- What the student worked on and discussed'}
 - Any concepts the student mastered or struggled with
 
 Session details:
 - Student: ${studentName}
 - Topic: ${topic}
-- Problems attempted: ${stats.attempted}
-- Problems correct: ${stats.correct} (${accuracy}% accuracy)
+${problemStatsSection}
 - Duration: ${conversation.activeMinutes} minutes
 ${conversation.strugglingWith ? `- Struggled with: ${conversation.strugglingWith}` : ''}
 
 Recent conversation (last 15 messages):
 ${messages.slice(-15).map(m => `${m.role}: ${m.content}`).join('\n')}
 
+${stats.attempted === 0 ? 'IMPORTANT: Do NOT mention "0 problems attempted" or "0% accuracy" in the summary. Problem tracking data is unavailable for this session. Focus on topics discussed and learning activities instead.' : ''}
 Generate a concise teacher summary:`;
 
         const response = await callLLM('gpt-4o-mini', [
@@ -285,8 +297,11 @@ Generate a concise teacher summary:`;
             max_tokens: 150
         });
 
-        return response.choices[0]?.message?.content?.trim() ||
-            `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes. Attempted ${stats.attempted} problems with ${stats.correct} correct (${accuracy}% accuracy).`;
+        const fallbackSummary = stats.attempted > 0
+            ? `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes. Attempted ${stats.attempted} problems with ${stats.correct} correct (${accuracy}% accuracy).`
+            : `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes.`;
+
+        return response.choices[0]?.message?.content?.trim() || fallbackSummary;
     } catch (error) {
         console.error('Error generating session summary:', error);
         return `Session completed - ${conversation.activeMinutes} minutes of active learning`;
