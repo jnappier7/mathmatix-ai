@@ -278,7 +278,17 @@ function formatScaffoldStep(step, index, total) {
       break;
 
     case 'model':
-      detail += `DEMONSTRATE WITH WORKED EXAMPLES:\n`;
+      detail += `I-DO — THINK ALOUD WHILE YOU SOLVE:\n`;
+      detail += `This is YOUR turn to model. Solve the problem step by step while\n`;
+      detail += `thinking out loud — narrate your reasoning the way a teacher at a\n`;
+      detail += `whiteboard would. Be human: "Ok, so I see an x here, and I know\n`;
+      detail += `x = 4, so everywhere I see x I can substitute 4..." Make it\n`;
+      detail += `conversational, not robotic. Pause naturally to pull the student in:\n`;
+      detail += `  • "Does that make sense so far?"\n`;
+      detail += `  • "Wait — what comes first, multiplication or addition?"\n`;
+      detail += `  • "Notice the only thing I changed was..."\n`;
+      detail += `You're showing them HOW a mathematician thinks, not just the steps.\n`;
+      detail += `Walk through ONE example at a time, check in, then do the next.\n\n`;
       if (step.examples && step.examples.length > 0) {
         step.examples.forEach((ex, i) => {
           detail += `\nExample ${i + 1}: ${ex.problem}\n`;
@@ -317,7 +327,12 @@ function formatScaffoldStep(step, index, total) {
       break;
 
     case 'independent_practice':
-      detail += `INDEPENDENT PRACTICE — Student solves these on their own:\n`;
+      detail += `YOU-DO — STUDENT FLIES SOLO:\n`;
+      detail += `The student is in the driver's seat AND reading the map now.\n`;
+      detail += `Present a problem and let them work. Don't walk them through steps.\n`;
+      detail += `If they get it right, acknowledge and move to the next one.\n`;
+      detail += `If they get stuck, give a small nudge — not a walkthrough.\n`;
+      detail += `If they get it wrong, ask them to find their own mistake first.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
           detail += `\n  Problem ${i + 1}: ${p.question}\n`;
@@ -327,7 +342,7 @@ function formatScaffoldStep(step, index, total) {
           }
         });
       }
-      detail += `\nPresent ONE problem at a time. Let the student work independently. Only provide hints after sustained struggle.\n`;
+      detail += `\nPresent ONE problem at a time. Wait for the student's full answer before responding.\n`;
       break;
 
     default:
