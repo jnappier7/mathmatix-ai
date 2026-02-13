@@ -195,7 +195,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       username,
       email: pendingProfile.email,
       [pendingProfile.provider === 'google' ? 'googleId' : pendingProfile.provider === 'microsoft' ? 'microsoftId' : 'cleverId']: pendingProfile.providerId,
-      role: 'student',
+      role: pendingProfile.role || 'student',
       firstName: pendingProfile.firstName,
       lastName: pendingProfile.lastName,
       needsProfileCompletion: pendingProfile.needsFix,
@@ -218,6 +218,17 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       console.log(`LOG: Student ${newUser.username} enrolled via code ${enrollmentCodeDoc.code}`);
     } catch (enrollError) {
       console.error('ERROR: Failed to record enrollment:', enrollError);
+    }
+
+    // Trigger Clever roster sync for new Clever users (non-blocking)
+    if (pendingProfile.provider === 'clever' && pendingProfile.accessToken) {
+      try {
+        const { syncOnLogin } = require('../services/cleverSync');
+        const syncResult = await syncOnLogin(pendingProfile.accessToken, newUser);
+        console.log(`LOG: Post-enrollment Clever sync for ${newUser.username}: sections=${syncResult.stats.sectionsProcessed}`);
+      } catch (syncErr) {
+        console.error('WARN: Post-enrollment Clever sync failed (non-fatal):', syncErr.message);
+      }
     }
 
     // Clear pending profile from session

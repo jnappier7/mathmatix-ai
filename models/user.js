@@ -551,6 +551,7 @@ const userSchema = new Schema({
 
   /* Tutor selection */
   teacherId:        { type: Schema.Types.ObjectId, ref: 'User' },
+  schoolLicenseId:  { type: Schema.Types.ObjectId, ref: 'SchoolLicense', default: null },  // Set when teacher's school has an active license
   selectedTutorId:  { type: String, trim: true },
 
   /* Avatar selection (creature avatars like Blooket) */

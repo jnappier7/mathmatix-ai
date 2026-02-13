@@ -126,6 +126,8 @@ const impersonationRoutes = require('./routes/impersonation');  // User imperson
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
+const schoolLicenseRoutes = require('./routes/schoolLicense');  // School/district license management
+const cleverSyncRoutes = require('./routes/cleverSync');  // Clever roster & section sync
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
 const courseChatRoutes = require('./routes/courseChat');  // Dedicated course chat (independent from main chat)
@@ -498,6 +500,10 @@ app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for 
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
 app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-to-student announcements (IM style)
 app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
+app.use('/api/school-licenses', isAuthenticated, isAdmin, schoolLicenseRoutes); // School/district license management
+// Clever webhook (public — Clever sends events directly, no user auth; must be BEFORE admin-gated mount)
+app.post('/api/clever-sync/webhook', cleverSyncRoutes);
+app.use('/api/clever-sync', isAuthenticated, isAdmin, cleverSyncRoutes); // Clever roster & section sync (admin only)
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
 
