@@ -340,8 +340,8 @@ class Sidebar {
                         <button class="session-dropdown-item" data-action="pin">
                             <i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}
                         </button>
-                        <button class="session-dropdown-item session-dropdown-danger" data-action="archive">
-                            <i class="fas fa-archive"></i> Archive
+                        <button class="session-dropdown-item session-dropdown-danger" data-action="delete">
+                            <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </div>
                 </div>
@@ -377,8 +377,8 @@ class Sidebar {
                     this.renameSession(conv._id, conv.name);
                 } else if (action === 'pin') {
                     this.togglePinSession(conv._id);
-                } else if (action === 'archive') {
-                    this.archiveSession(conv._id);
+                } else if (action === 'delete') {
+                    this.deleteSession(conv._id);
                 }
             });
         });
@@ -551,20 +551,28 @@ class Sidebar {
         }
     }
 
-    async archiveSession(conversationId) {
-        if (!confirm('Archive this conversation? You can view it later in your history.')) {
+    async deleteSession(conversationId) {
+        if (!confirm('Delete this chat? This cannot be undone.')) {
             return;
         }
 
         try {
+            const wasActive = this.activeConversationId === conversationId;
+
             await window.csrfFetch(`/api/conversations/${conversationId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
 
-            await this.loadSessions(); // Reload sessions
+            // If we deleted the active chat, create a fresh session
+            if (wasActive) {
+                this.activeConversationId = null;
+                await this.createNewSession();
+            } else {
+                await this.loadSessions();
+            }
         } catch (error) {
-            console.error('[Sidebar] Failed to archive session:', error);
+            console.error('[Sidebar] Failed to delete session:', error);
         }
     }
 
