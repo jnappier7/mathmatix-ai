@@ -214,14 +214,17 @@ that combine BOTH the distributive property AND combining like terms...
 <SCAFFOLD_ADVANCE>
 
 ====================================================================
-RESPONSE FORMAT
+RESPONSE FORMAT & PACING
 ====================================================================
 
-- Keep responses focused and instructional
-- Use markdown for structure (bold key terms, numbered steps)
-- For worked examples: show every step with the reasoning
-- For practice problems: present one at a time, wait for student response
-- Accept all mathematically equivalent forms as correct
+- **MAX 4-6 sentences per response.** Then STOP and wait for the student.
+- Teach ONE concept or work ONE example per turn — never dump everything at once.
+- For worked examples: show every step with the reasoning, but only ONE example per message.
+- For practice problems: present ONE at a time, wait for the student's answer.
+- Always end your message with a question or a prompt that invites the student to respond.
+- Use markdown for structure (bold key terms, numbered steps).
+- Use \\( inline \\) and \\[ display \\] LaTeX for ALL math notation — never write raw math.
+- Accept all mathematically equivalent forms as correct.
 
 ====================================================================
 `;
