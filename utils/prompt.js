@@ -382,26 +382,6 @@ function buildCourseProgressionContext(mathCourse, firstName) {
 
   // Map course names to pathway file names
   const courseToPathwayMap = {
-    // Elementary grades
-    'kindergarten': 'kindergarten-pathway.json',
-    'grade 1': 'grade-1-pathway.json',
-    'grade 2': 'grade-2-pathway.json',
-    'grade 3': 'grade-3-pathway.json',
-    'grade 4': 'grade-4-pathway.json',
-    'grade 5': 'grade-5-pathway.json',
-    'grade 6': 'grade-6-pathway.json',
-    'grade 7': 'grade-7-pathway.json',
-    'grade 8': 'grade-8-pathway.json',
-    '1st grade': 'grade-1-pathway.json',
-    '2nd grade': 'grade-2-pathway.json',
-    '3rd grade': 'grade-3-pathway.json',
-    '4th grade': 'grade-4-pathway.json',
-    '5th grade': 'grade-5-pathway.json',
-    '6th grade': 'grade-6-pathway.json',
-    '7th grade': 'grade-7-pathway.json',
-    '8th grade': 'grade-8-pathway.json',
-    // High school courses
-    'pre-algebra': 'ready-for-algebra-1-pathway.json',
     'algebra 1': 'algebra-1-pathway.json',
     'algebra i': 'algebra-1-pathway.json',
     'geometry': 'geometry-pathway.json',
@@ -410,23 +390,10 @@ function buildCourseProgressionContext(mathCourse, firstName) {
     'precalculus': 'precalculus-pathway.json',
     'pre-calculus': 'precalculus-pathway.json',
     'trigonometry': 'precalculus-pathway.json',
-    // College courses
-    'calculus': 'calculus-1-pathway.json',
-    'calculus 1': 'calculus-1-pathway.json',
-    'calculus i': 'calculus-1-pathway.json',
-    'calc 1': 'calculus-1-pathway.json',
-    'ap calculus ab': 'calculus-1-pathway.json',
-    'calculus 2': 'calculus-2-pathway.json',
-    'calculus ii': 'calculus-2-pathway.json',
-    'calc 2': 'calculus-2-pathway.json',
-    'ap calculus bc': 'calculus-2-pathway.json',
-    'calculus 3': 'calculus-3-pathway.json',
-    'calculus iii': 'calculus-3-pathway.json',
-    'calc 3': 'calculus-3-pathway.json',
-    'multivariable calculus': 'calculus-3-pathway.json',
-    // Test prep
-    'act prep': 'act-prep-pathway.json',
-    'act math': 'act-prep-pathway.json'
+    'ap calculus ab': 'ap-calculus-ab-pathway.json',
+    'ap calculus bc': 'calculus-bc-pathway.json',
+    'calculus': 'ap-calculus-ab-pathway.json',
+    'calc': 'ap-calculus-ab-pathway.json'
   };
 
   const normalizedCourse = mathCourse.toLowerCase().trim();

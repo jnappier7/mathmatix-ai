@@ -16,25 +16,12 @@ const User = require('../models/user');
    ============================================================ */
 // Catalog enrichment: difficulty levels, taglines, icons
 const CATALOG_META = {
-  'kindergarten':        { difficulty: 'Beginner', tagline: 'Build number sense through counting, shapes, and patterns', icon: '🧮' },
-  'grade-1':             { difficulty: 'Beginner', tagline: 'Addition, subtraction, and early problem-solving', icon: '🔢' },
-  'grade-2':             { difficulty: 'Beginner', tagline: 'Place value, measurement, and two-digit operations', icon: '📏' },
-  'grade-3':             { difficulty: 'Beginner', tagline: 'Multiplication, fractions, and area concepts', icon: '✖️' },
-  'grade-4':             { difficulty: 'Beginner', tagline: 'Multi-digit operations, decimals, and geometry basics', icon: '📐' },
-  'grade-5':             { difficulty: 'Beginner', tagline: 'Fraction mastery, volume, and coordinate planes', icon: '📊' },
-  'grade-6':             { difficulty: 'Intermediate', tagline: 'Ratios, expressions, and the bridge to algebra', icon: '⚖️' },
-  'grade-7':             { difficulty: 'Intermediate', tagline: 'Proportions, integers, and probability', icon: '🎲' },
-  'grade-8':             { difficulty: 'Intermediate', tagline: 'Linear equations, functions, and Pythagorean theorem', icon: '📈' },
-  'ready-for-algebra-1': { difficulty: 'Intermediate', tagline: 'Strengthen foundations before your first algebra course', icon: '🔧' },
   'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
   'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
   'algebra-2':           { difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '📉' },
   'precalculus':         { difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '🌊' },
   'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
-  'calculus-1':          { difficulty: 'Advanced', tagline: 'Limits, derivatives, and the foundations of calculus', icon: '♾️' },
-  'calculus-2':          { difficulty: 'Advanced', tagline: 'Integration techniques, series, and polar coordinates', icon: '∫' },
-  'calculus-3':          { difficulty: 'Advanced', tagline: 'Multivariable calculus and vector analysis', icon: '🌐' },
-  'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT math question type', icon: '🎯' }
+  'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' }
 };
 
 router.get('/catalog', async (req, res) => {
@@ -53,7 +40,7 @@ router.get('/catalog', async (req, res) => {
         catalog.push({
           courseId: cid,
           pathwayId: file.replace('.json', ''),
-          title: pathway.courseName || pathway.track || pathway.title || cid,
+          title: pathway.track || pathway.courseName || pathway.title || cid,
           track: pathway.track || '',
           description: pathway.overview || pathway.description || '',
           tagline: meta.tagline || '',
@@ -71,10 +58,8 @@ router.get('/catalog', async (req, res) => {
 
     // Sort roughly by difficulty (K first, Calc last)
     const order = [
-      'kindergarten', 'grade-1', 'grade-2', 'grade-3', 'grade-4', 'grade-5',
-      'grade-6', 'grade-7', 'grade-8', 'ready-for-algebra-1',
       'algebra-1', 'geometry', 'algebra-2', 'precalculus',
-      'ap-calculus-ab', 'calculus-1', 'calculus-2', 'calculus-3', 'act-prep'
+      'ap-calculus-ab', 'calculus-bc'
     ];
     catalog.sort((a, b) => {
       const ai = order.indexOf(a.courseId);
@@ -128,14 +113,53 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'courseId is required' });
     }
 
-    // Check for existing active/paused session in this course
+    // Check for existing session in this course (active OR paused)
     const existing = await CourseSession.findOne({
       userId: req.user._id,
       courseId,
       status: { $in: ['active', 'paused'] }
     });
-    if (existing) {
+
+    if (existing && existing.status === 'active') {
       return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
+    }
+
+    // Resume a paused (dropped) session — restore progress instead of starting over
+    if (existing && existing.status === 'paused') {
+      existing.status = 'active';
+      await existing.save();
+
+      await User.findByIdAndUpdate(req.user._id, {
+        activeCourseSessionId: existing._id,
+        activeConversationId: existing.conversationId
+      });
+
+      // Load pathway for welcome data
+      const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
+      const pathway = fs.existsSync(pathwayFile)
+        ? JSON.parse(fs.readFileSync(pathwayFile, 'utf8'))
+        : { modules: [], overview: '' };
+      const pathwayModules = pathway.modules || [];
+
+      const welcomeData = {
+        courseName: existing.courseName,
+        overview: pathway.overview || '',
+        moduleCount: pathwayModules.length,
+        units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
+        prerequisites: pathway.prerequisites || [],
+        firstModuleTitle: pathwayModules[0]?.title || 'Getting Started'
+      };
+
+      console.log(`📚 [CourseSession] ${req.user.firstName} resumed ${existing.courseName} (${existing.overallProgress}% progress preserved)`);
+
+      return res.json({
+        success: true,
+        message: `Welcome back to ${existing.courseName}! Your progress (${existing.overallProgress}%) has been restored.`,
+        session: existing,
+        conversationId: existing.conversationId,
+        welcomeData,
+        resumed: true
+      });
     }
 
     // Cap concurrent enrollments at 2
@@ -167,10 +191,10 @@ router.post('/enroll', async (req, res) => {
     // Create a dedicated conversation for this course
     const conversation = new Conversation({
       userId: req.user._id,
-      conversationName: pathway.courseName || pathway.track || courseId,
-      topic: pathway.courseName || pathway.track || courseId,
+      conversationName: pathway.track || pathway.courseName || courseId,
+      topic: pathway.track || pathway.courseName || courseId,
       topicEmoji: '📚',
-      conversationType: 'topic'
+      conversationType: 'course'
     });
     await conversation.save();
 
@@ -178,7 +202,7 @@ router.post('/enroll', async (req, res) => {
     const session = new CourseSession({
       userId: req.user._id,
       courseId,
-      courseName: pathway.courseName || pathway.track || pathway.title || courseId,
+      courseName: pathway.track || pathway.courseName || pathway.title || courseId,
       pathwayId: `${courseId}-pathway`,
       currentModuleId: modules[0]?.moduleId || null,
       modules,
@@ -189,9 +213,10 @@ router.post('/enroll', async (req, res) => {
     });
     await session.save();
 
-    // Set as active course session on user
+    // Set as active course session on user AND switch to the course conversation
     await User.findByIdAndUpdate(req.user._id, {
-      activeCourseSessionId: session._id
+      activeCourseSessionId: session._id,
+      activeConversationId: conversation._id
     });
 
     // Build welcome data for the client splash screen

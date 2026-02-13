@@ -1,0 +1,731 @@
+{
+  "courseId": "calculus-bc",
+  "track": "AP Calculus BC",
+  "overview": "A 36-week AP Calculus BC course aligned to the College Board CED (2020). Covers all AB topics plus parametric/polar/vector-valued functions and infinite sequences & series. Built on an 11-unit scope and sequence (Units 0–10) with two heavyweight units (Integration 17–20%, Series 17–18%) receiving proportionally more instructional time. Every unit integrates calculator-active and no-calculator practice, FRQ-style justification writing, and graphical/tabular interpretation. Spiral review threads run through every checkpoint.",
+  "prerequisites": ["precalculus"],
+  "naturalProgression": [
+    "Begin with Prereq Patch (Unit 0) to diagnose and repair algebra, trig, and function gaps that derail calculus learning",
+    "Establish the concept of limits and continuity (Unit 1) as the foundation for the derivative",
+    "Define the derivative through the difference quotient and build basic differentiation rules (Unit 2)",
+    "Extend differentiation to composite, implicit, and inverse functions via chain rule (Unit 3)",
+    "Apply differentiation to real-world contexts: related rates, motion, linearization, L'Hôpital (Unit 4)",
+    "Analyze functions using first/second derivative tests, concavity, EVT/MVT, and optimization (Unit 5)",
+    "Build the integral from Riemann sums through FTC Parts 1 & 2, antiderivatives, and accumulation functions (Unit 6 — heavyweight)",
+    "Solve differential equations via separation of variables and slope fields (Unit 7)",
+    "Apply integration to area, volume (disk/washer/cross-section), average value, and motion (Unit 8)",
+    "Extend to parametric, polar, and vector-valued functions with derivatives and integrals (Unit 9 — BC-exclusive)",
+    "Master infinite sequences and series, convergence tests, Taylor/Maclaurin polynomials, and error bounds (Unit 10 — heavyweight, BC-exclusive)",
+    "Synthesize all skills through comprehensive AP exam-format review and final assessment (Final Review)"
+  ],
+  "spiralReviewThreads": [
+    "Algebraic fluency — factoring, simplification, sign tracking, and domain awareness maintained through every checkpoint",
+    "Derivative fluency — basic through advanced differentiation rules revisited in integration and series contexts",
+    "Graphical/tabular interpretation — connecting algebraic forms to visual features in every unit (AP exam-critical)",
+    "Justification writing — FRQ-style reasoning practiced weekly: 'because f' changes sign' not just 'the function has a max'",
+    "Calculator competence — calculator-active and no-calculator skills explicitly practiced; students learn when to use and when not to use technology",
+    "Connections across representations — numerical, graphical, algebraic, and verbal representations linked throughout"
+  ],
+  "apExamInfo": {
+    "examName": "AP Calculus BC",
+    "examDuration": "3 hours 15 minutes",
+    "sections": [
+      { "name": "Section I Part A", "type": "Multiple Choice (No Calculator)", "questions": 30, "time": "60 minutes" },
+      { "name": "Section I Part B", "type": "Multiple Choice (Calculator)", "questions": 15, "time": "45 minutes" },
+      { "name": "Section II Part A", "type": "Free Response (Calculator)", "questions": 2, "time": "30 minutes" },
+      { "name": "Section II Part B", "type": "Free Response (No Calculator)", "questions": 4, "time": "60 minutes" }
+    ],
+    "scoring": "Each section (MC and FRQ) is 50% of the total score. BC subscore includes an AB subscore."
+  },
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do / We Do / You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery.",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "concept-check",
+        "aiRole": "Quick comprehension check before moving to practice. If gaps detected, the AI re-teaches before proceeding.",
+        "studentRole": "Explain understanding in own words, answer concept questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guided practice with adaptive scaffolding. Scaffolding decreases as the student demonstrates understanding.",
+        "studentRole": "Attempt problems with AI support, explain reasoning"
+      },
+      {
+        "phase": "check-in",
+        "aiRole": "Emotional and confidence assessment. Adjusts pacing and tone based on student engagement.",
+        "studentRole": "Reflect on confidence and comfort level"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Independent practice. Minimal hints—only if the student is stuck.",
+        "studentRole": "Solve problems independently, self-monitor"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Formal assessment for skill mastery using 4-Pillar criteria (accuracy, independence, transfer, retention).",
+        "studentRole": "Demonstrate mastery through independent problem-solving"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present (module provides reference problems, AI may generate its own)",
+      "Adjust difficulty in real-time based on student performance",
+      "Skip or extend phases based on student readiness",
+      "Re-order skills within a module if pedagogically appropriate",
+      "Generate additional practice or enrichment as needed",
+      "Use student interests and learning profile to personalize examples",
+      "Decide when to advance to the next skill or re-teach",
+      "Select teaching strategies (visual, algebraic, numerical, verbal) based on student profile",
+      "Adjust tone and pacing based on emotional signals and anxiety level"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "prereq_patch",
+      "unit": 0,
+      "title": "Prerequisite Patch",
+      "preview": "Diagnose and repair algebra, trig, and function gaps before calculus content",
+      "moduleFile": "/modules/calculus-bc/prereq_patch_module.json",
+      "skills": ["function-fluency", "algebra-cleanup", "trig-essentials", "graph-literacy"],
+      "essentialQuestions": [
+        "Which prerequisite skills are secure and which need targeted repair?",
+        "How does function fluency (composition, inverses, transformations) directly support calculus?",
+        "Why does algebra/trig carelessness sabotage calculus performance?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "function-fluency",
+          "title": "Function Fluency",
+          "order": 1,
+          "concepts": ["Composition f(g(x)) and g(f(x))", "Inverse functions algebraically and graphically", "Transformations: shifts, stretches, reflections", "Domain and range of composed/inverse functions"],
+          "teachingNotes": "Diagnostic-first: assess before reteaching. Skip secure skills. Composition and inverses are used constantly in chain rule and integration."
+        },
+        {
+          "lessonId": "algebra-cleanup",
+          "title": "Algebra Cleanup",
+          "order": 2,
+          "concepts": ["Factoring: GCF, trinomials, difference of squares, sum/difference of cubes", "Rational expressions: simplify, multiply, divide, complex fractions", "Exponent rules and radical-exponent conversion", "Logarithm rules: product, quotient, power, change of base"],
+          "teachingNotes": "These are the algebra errors that kill calculus students. Short, frequent drills with immediate feedback."
+        },
+        {
+          "lessonId": "trig-essentials",
+          "title": "Trig Essentials",
+          "order": 3,
+          "concepts": ["Unit circle: exact values at standard angles", "Radian measure and conversion", "Basic identities: Pythagorean, reciprocal, quotient", "Graphs of sin, cos, tan and their key features"],
+          "teachingNotes": "Unit circle values must be automatic—no calculator. These feed directly into derivatives of trig functions."
+        },
+        {
+          "lessonId": "graph-literacy",
+          "title": "Graph Literacy",
+          "order": 4,
+          "concepts": ["Identify intercepts, asymptotes, end behavior from graphs", "Read and interpret piecewise functions", "Connect algebraic representations to graphical features", "Estimate values from tables"],
+          "teachingNotes": "AP Calc is heavily graphical/tabular. Students must read graphs as fluently as equations."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u0",
+      "unit": 0,
+      "title": "Unit 0 Diagnostic Checkpoint",
+      "preview": "Assess readiness for AP Calculus BC content",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u0_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "limits_continuity",
+      "unit": 1,
+      "title": "Limits & Continuity",
+      "preview": "Evaluate limits graphically, numerically, and algebraically; analyze continuity and apply IVT",
+      "moduleFile": "/modules/calculus-bc/limits_continuity_module.json",
+      "skills": ["limits-graphical-numerical", "limits-algebraic", "one-sided-infinite-limits", "limits-at-infinity", "continuity-ivt", "squeeze-theorem"],
+      "essentialQuestions": [
+        "What does it mean for a function to approach a value, and how is that different from reaching it?",
+        "How do we evaluate limits when direct substitution fails?",
+        "What does continuity guarantee, and what does IVT let us conclude?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "limits-intro",
+          "title": "Limits from Graphs, Tables, and Algebra",
+          "order": 1,
+          "concepts": ["Intuitive notion of a limit", "Estimating limits from graphs and tables", "Direct substitution", "Algebraic techniques: factoring, rationalizing, common denominators"],
+          "teachingNotes": "Start graphical/numerical before algebra. The concept must precede the computation."
+        },
+        {
+          "lessonId": "one-sided-infinite",
+          "title": "One-Sided Limits, Infinite Limits, Limits at Infinity",
+          "order": 2,
+          "concepts": ["Left-hand and right-hand limits", "When a limit does not exist (DNE)", "Infinite limits and vertical asymptotes", "Limits at infinity and horizontal asymptotes", "End behavior of rational functions"],
+          "keyFormulas": ["If degree top < degree bottom → limit = 0", "If degrees equal → limit = ratio of leading coefficients", "If degree top > degree bottom → limit is ±∞"]
+        },
+        {
+          "lessonId": "continuity-ivt",
+          "title": "Continuity and Intermediate Value Theorem",
+          "order": 3,
+          "concepts": ["Three conditions for continuity at a point", "Types of discontinuity: removable, jump, infinite", "Continuity on an interval", "IVT: if f is continuous on [a,b] and k is between f(a) and f(b), then f(c)=k for some c in (a,b)"],
+          "teachingNotes": "IVT requires JUSTIFICATION on the AP exam: name the theorem, state continuity, state the value is between f(a) and f(b)."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u1",
+      "unit": 1,
+      "title": "Unit 1 Checkpoint: Limits & Continuity",
+      "preview": "Assess limit evaluation, continuity analysis, and IVT justification",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u1_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "derivatives_basics",
+      "unit": 2,
+      "title": "Derivatives: Definition & Basic Rules",
+      "preview": "Define the derivative via difference quotient; apply power, constant, sum/difference rules",
+      "moduleFile": "/modules/calculus-bc/derivatives_basics_module.json",
+      "skills": ["derivative-definition", "derivative-interpretation", "basic-differentiation-rules", "derivatives-from-graphs-tables"],
+      "essentialQuestions": [
+        "What does the derivative measure, and how does the difference quotient define it?",
+        "How do basic differentiation rules let us bypass the limit definition?",
+        "What does the derivative look like on a graph, and what does it tell us from a table?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "derivative-definition",
+          "title": "The Derivative: Difference Quotient & Limit Definition",
+          "order": 1,
+          "concepts": ["Average rate of change (secant line)", "Instantaneous rate of change (tangent line)", "Limit definition: f'(x) = lim[h→0] (f(x+h)−f(x))/h", "Alternate form: f'(a) = lim[x→a] (f(x)−f(a))/(x−a)"],
+          "keyFormulas": ["f'(x) = lim_{h→0} [f(x+h) − f(x)] / h"],
+          "teachingNotes": "Students must be able to USE the definition, not just recite it. AP frequently tests this."
+        },
+        {
+          "lessonId": "basic-rules",
+          "title": "Basic Differentiation Rules",
+          "order": 2,
+          "concepts": ["Power rule: d/dx[xⁿ] = nxⁿ⁻¹", "Constant rule: d/dx[c] = 0", "Constant multiple rule: d/dx[cf(x)] = cf'(x)", "Sum/difference rule", "Derivatives of sin x, cos x, eˣ, ln x"],
+          "keyFormulas": ["d/dx[xⁿ] = nxⁿ⁻¹", "d/dx[sin x] = cos x", "d/dx[cos x] = −sin x", "d/dx[eˣ] = eˣ", "d/dx[ln x] = 1/x"]
+        },
+        {
+          "lessonId": "derivatives-graphs-tables",
+          "title": "Derivatives from Graphs and Tables",
+          "order": 3,
+          "concepts": ["Estimate f'(a) from a graph (tangent line slope)", "Estimate f'(a) from a table (symmetric difference quotient)", "Differentiability implies continuity (not converse)", "Points where f is not differentiable: corners, cusps, vertical tangents, discontinuities"],
+          "teachingNotes": "AP tests derivative interpretation as much as computation. Practice reading derivative info from graphs and tables."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u2",
+      "unit": 2,
+      "title": "Unit 2 Checkpoint: Derivatives Basics",
+      "preview": "Assess derivative definition, basic rules, and graphical/tabular interpretation",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u2_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "advanced_derivatives",
+      "unit": 3,
+      "title": "Composite, Implicit, Inverse Derivatives",
+      "preview": "Apply product/quotient/chain rules; implicit differentiation; derivatives of inverse and inverse trig functions",
+      "moduleFile": "/modules/calculus-bc/advanced_derivatives_module.json",
+      "skills": ["product-quotient-rules", "chain-rule", "implicit-differentiation", "inverse-function-derivatives"],
+      "essentialQuestions": [
+        "Why do composite functions require the chain rule, and how does it connect to composition?",
+        "How does implicit differentiation handle equations where y isn't isolated?",
+        "What is the relationship between the derivative of a function and the derivative of its inverse?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "product-quotient",
+          "title": "Product and Quotient Rules",
+          "order": 1,
+          "concepts": ["Product rule: (fg)' = f'g + fg'", "Quotient rule: (f/g)' = (f'g − fg')/g²", "When to use which rule", "Combining with basic rules"],
+          "keyFormulas": ["(fg)' = f'g + fg'", "(f/g)' = (f'g − fg') / g²"]
+        },
+        {
+          "lessonId": "chain-rule",
+          "title": "The Chain Rule",
+          "order": 2,
+          "concepts": ["Chain rule: d/dx[f(g(x))] = f'(g(x))·g'(x)", "Identifying outer and inner functions", "Chain rule with trig, exponential, logarithmic functions", "Multiple chain rule applications (nested compositions)"],
+          "keyFormulas": ["d/dx[f(g(x))] = f'(g(x)) · g'(x)"],
+          "teachingNotes": "This is the single most important differentiation technique. Master it thoroughly."
+        },
+        {
+          "lessonId": "implicit-diff",
+          "title": "Implicit Differentiation",
+          "order": 3,
+          "concepts": ["When and why to use implicit differentiation", "Differentiating both sides with respect to x", "Solving for dy/dx", "Finding second derivative implicitly", "Implicit on AP: typically finding slope at a point or horizontal/vertical tangent lines"],
+          "teachingNotes": "Students must remember: every time you differentiate a y-term, multiply by dy/dx."
+        },
+        {
+          "lessonId": "inverse-derivatives",
+          "title": "Derivatives of Inverse Functions",
+          "order": 4,
+          "concepts": ["If g = f⁻¹, then g'(x) = 1/f'(g(x))", "Derivatives of inverse trig: arcsin, arccos, arctan", "Applying to tables and graphs where f is given"],
+          "keyFormulas": ["d/dx[arcsin x] = 1/√(1−x²)", "d/dx[arccos x] = −1/√(1−x²)", "d/dx[arctan x] = 1/(1+x²)"],
+          "teachingNotes": "AP loves table problems: given f and f', find (f⁻¹)'(a). The formula is (f⁻¹)'(a) = 1/f'(f⁻¹(a))."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u3",
+      "unit": 3,
+      "title": "Unit 3 Checkpoint: Advanced Derivatives",
+      "preview": "Assess product/quotient/chain rules, implicit differentiation, and inverse derivatives",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u3_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "contextual_differentiation",
+      "unit": 4,
+      "title": "Contextual Applications of Differentiation",
+      "preview": "Related rates, motion, linearization, and L'Hôpital's Rule in real-world contexts",
+      "moduleFile": "/modules/calculus-bc/contextual_differentiation_module.json",
+      "skills": ["related-rates", "motion-problems", "linearization-differentials", "lhopitals-rule"],
+      "essentialQuestions": [
+        "How do we translate a word problem into a calculus equation using related rates?",
+        "What is the relationship between position, velocity, and acceleration?",
+        "When and why does L'Hôpital's Rule apply, and what are its limitations?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "related-rates",
+          "title": "Related Rates",
+          "order": 1,
+          "concepts": ["Setting up: identify variables, draw diagram, write equation", "Implicit differentiation with respect to time", "Common setups: Pythagorean, volume, similar triangles, trig", "Units and interpretation of the answer"],
+          "teachingNotes": "Diagram + label + units is the framework. Students who skip the setup make errors."
+        },
+        {
+          "lessonId": "motion",
+          "title": "Straight-Line Motion",
+          "order": 2,
+          "concepts": ["Position s(t), velocity v(t) = s'(t), acceleration a(t) = v'(t) = s''(t)", "Speed = |v(t)|", "Speeding up: v and a have same sign. Slowing down: opposite signs", "Displacement vs total distance"],
+          "keyFormulas": ["v(t) = s'(t)", "a(t) = v'(t)", "speed = |v(t)|"]
+        },
+        {
+          "lessonId": "linearization",
+          "title": "Linearization and Differentials",
+          "order": 3,
+          "concepts": ["Linear approximation: L(x) = f(a) + f'(a)(x − a)", "Differentials: dy = f'(x)dx", "Using linearization to estimate function values", "Error in approximation"],
+          "keyFormulas": ["L(x) = f(a) + f'(a)(x − a)"]
+        },
+        {
+          "lessonId": "lhopitals-rule",
+          "title": "L'Hôpital's Rule",
+          "order": 4,
+          "concepts": ["Indeterminate forms: 0/0 and ∞/∞", "L'Hôpital: lim f/g = lim f'/g' when indeterminate", "Must verify indeterminate form each time", "Other indeterminate forms: 0·∞, ∞−∞, 0⁰, 1^∞, ∞⁰ (rewrite first)"],
+          "keyFormulas": ["If lim f(x)/g(x) = 0/0 or ∞/∞, then lim f(x)/g(x) = lim f'(x)/g'(x)"],
+          "teachingNotes": "Students must VERIFY the indeterminate form before applying. AP deducts for skipping this step."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u4",
+      "unit": 4,
+      "title": "Unit 4 Checkpoint: Contextual Differentiation",
+      "preview": "Assess related rates, motion, linearization, and L'Hôpital's Rule",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u4_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "function_analysis",
+      "unit": 5,
+      "title": "Analyzing Functions with Derivatives",
+      "preview": "First/second derivative tests, curve sketching, EVT/MVT, optimization",
+      "moduleFile": "/modules/calculus-bc/function_analysis_module.json",
+      "skills": ["increasing-decreasing-extrema", "concavity-inflection", "curve-sketching", "evt-mvt", "optimization"],
+      "essentialQuestions": [
+        "How does the first derivative tell us where a function increases, decreases, and has extrema?",
+        "What additional information does the second derivative provide about the shape of a graph?",
+        "How do EVT and MVT guarantee existence of specific values, and why does that matter?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "first-derivative-test",
+          "title": "Increasing/Decreasing & Extrema",
+          "order": 1,
+          "concepts": ["Critical points: f'(x) = 0 or f'(x) DNE", "First derivative test: sign change analysis", "Local maxima and minima", "Increasing where f' > 0, decreasing where f' < 0"],
+          "teachingNotes": "Students must JUSTIFY with sign changes, not just state the answer. AP requires reasoning."
+        },
+        {
+          "lessonId": "second-derivative-test",
+          "title": "Concavity & Inflection Points",
+          "order": 2,
+          "concepts": ["Concave up: f'' > 0, concave down: f'' < 0", "Inflection points: f'' changes sign", "Second derivative test for local extrema", "Connecting f, f', f'' graphs"],
+          "teachingNotes": "The f/f'/f'' connection is THE most tested relationship on the AP exam."
+        },
+        {
+          "lessonId": "curve-sketching",
+          "title": "Curve Sketching from Derivative Information",
+          "order": 3,
+          "concepts": ["Sketch f given f' or f'' graph", "Identify all key features from derivative analysis", "Combine first and second derivative information"],
+          "teachingNotes": "This is where all the pieces come together. Practice with graphs of f' → features of f."
+        },
+        {
+          "lessonId": "evt-mvt",
+          "title": "Extreme Value Theorem & Mean Value Theorem",
+          "order": 4,
+          "concepts": ["EVT: continuous function on [a,b] must have absolute max and min", "Candidates test: evaluate f at critical points and endpoints", "MVT: if f is continuous on [a,b] and differentiable on (a,b), there exists c where f'(c) = [f(b)−f(a)]/(b−a)", "Geometric meaning: some tangent is parallel to the secant"],
+          "keyFormulas": ["MVT: f'(c) = [f(b) − f(a)] / (b − a)"],
+          "teachingNotes": "MVT is tested every year. Students must state hypotheses (continuous, differentiable) in their justification."
+        },
+        {
+          "lessonId": "optimization",
+          "title": "Optimization",
+          "order": 5,
+          "concepts": ["Setting up: identify quantity to optimize, write as function of one variable", "Constraint equation to reduce variables", "Find critical points, test with first or second derivative", "Verify absolute max/min on closed interval or justify with FDT/SDT on open"],
+          "teachingNotes": "Setup is harder than the calculus. Practice translating geometry and word problems into optimization."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u5",
+      "unit": 5,
+      "title": "Unit 5 Checkpoint: Function Analysis",
+      "preview": "Assess derivative analysis, curve sketching, MVT/EVT, and optimization",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u5_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "integration_accumulation",
+      "unit": 6,
+      "title": "Integration & Accumulation of Change",
+      "preview": "Riemann sums, definite integrals, FTC Parts 1 & 2, antiderivatives, accumulation functions",
+      "moduleFile": "/modules/calculus-bc/integration_accumulation_module.json",
+      "skills": ["riemann-sums", "definite-integral-properties", "ftc-part1", "ftc-part2", "antiderivatives", "u-substitution", "integration-by-parts", "partial-fractions", "improper-integrals", "accumulation-functions"],
+      "essentialQuestions": [
+        "How do Riemann sums approximate the area under a curve, and what happens as n → ∞?",
+        "What are the two parts of the Fundamental Theorem, and how do they connect differentiation and integration?",
+        "How does an accumulation function represent the net change of a quantity over time?",
+        "What additional integration techniques (by parts, partial fractions) does BC require beyond AB?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "riemann-sums",
+          "title": "Riemann Sums & Approximation",
+          "order": 1,
+          "concepts": ["Left, right, midpoint Riemann sums", "Sigma notation representation", "Trapezoidal approximation", "Over/underestimates based on function behavior"],
+          "teachingNotes": "Connect to area visually first. Over/under estimates based on increasing/decreasing and concavity."
+        },
+        {
+          "lessonId": "definite-integral-ftc",
+          "title": "Definite Integrals & Fundamental Theorem of Calculus",
+          "order": 2,
+          "concepts": ["Definite integral as limit of Riemann sums", "FTC Part 1: d/dx[∫ₐˣ f(t)dt] = f(x)", "FTC Part 1 with chain rule: d/dx[∫ₐ^g(x) f(t)dt] = f(g(x))·g'(x)", "FTC Part 2: ∫ₐᵇ f(x)dx = F(b) − F(a)", "Properties of definite integrals"],
+          "keyFormulas": ["d/dx[∫ₐˣ f(t)dt] = f(x)", "∫ₐᵇ f(x)dx = F(b) − F(a)"]
+        },
+        {
+          "lessonId": "antiderivatives-u-sub",
+          "title": "Antiderivatives & u-Substitution",
+          "order": 3,
+          "concepts": ["Basic antiderivative rules (reverse of derivative rules)", "u-substitution technique", "Definite integrals with u-sub (change bounds or back-substitute)", "Recognizing common forms"],
+          "keyFormulas": ["∫xⁿdx = xⁿ⁺¹/(n+1) + C (n≠-1)", "∫cos x dx = sin x + C", "∫eˣdx = eˣ + C", "∫1/x dx = ln|x| + C"]
+        },
+        {
+          "lessonId": "integration-by-parts",
+          "title": "Integration by Parts (BC)",
+          "order": 4,
+          "concepts": ["Formula: ∫u dv = uv − ∫v du", "LIATE selection strategy", "Repeated integration by parts (tabular method)", "Definite integrals by parts"],
+          "keyFormulas": ["∫u dv = uv − ∫v du"],
+          "teachingNotes": "BC-exclusive technique. LIATE (Log, Inverse trig, Algebraic, Trig, Exponential) guides u selection."
+        },
+        {
+          "lessonId": "partial-fractions",
+          "title": "Partial Fraction Decomposition (BC)",
+          "order": 5,
+          "concepts": ["Decomposing rational expressions with linear (non-repeating) factors", "Setting up partial fractions", "Integrating each term separately", "Recognizing when partial fractions is the right technique"],
+          "teachingNotes": "BC only tests non-repeating linear factors. Keep it focused."
+        },
+        {
+          "lessonId": "improper-integrals",
+          "title": "Improper Integrals (BC)",
+          "order": 6,
+          "concepts": ["Type I: infinite limits of integration", "Type II: integrand has a discontinuity", "Convergent vs divergent", "Evaluating with limits"],
+          "teachingNotes": "BC-exclusive. Students must write the limit notation—can't just 'plug in infinity.'"
+        },
+        {
+          "lessonId": "accumulation-functions",
+          "title": "Accumulation Functions",
+          "order": 7,
+          "concepts": ["g(x) = ∫ₐˣ f(t)dt as an accumulation function", "Interpreting g, g', g'' from graph of f", "Net change: ∫ₐᵇ f'(x)dx = f(b) − f(a)", "Applications: displacement, total distance, total quantity"],
+          "teachingNotes": "This is the conceptual heart of integration. AP loves 'given the graph of f, describe g.'"
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u6",
+      "unit": 6,
+      "title": "Unit 6 Checkpoint: Integration & Accumulation",
+      "preview": "Assess Riemann sums, FTC, antiderivatives, advanced techniques (by parts, partial fractions, improper), and accumulation",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u6_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "differential_equations",
+      "unit": 7,
+      "title": "Differential Equations",
+      "preview": "Slope fields, separation of variables, exponential growth/decay models",
+      "moduleFile": "/modules/calculus-bc/differential_equations_module.json",
+      "skills": ["slope-fields", "separation-of-variables", "particular-solutions", "exponential-models", "euler-method", "logistic-growth"],
+      "essentialQuestions": [
+        "What does a slope field tell us about solutions to a differential equation without actually solving it?",
+        "How does separation of variables transform a differential equation into an integration problem?",
+        "How do exponential and logistic growth models arise from differential equations?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "slope-fields",
+          "title": "Slope Fields",
+          "order": 1,
+          "concepts": ["Constructing slope fields from dy/dx expressions", "Matching slope fields to differential equations", "Sketching solution curves through given initial conditions"],
+          "teachingNotes": "Purely visual/conceptual. Students must match equations to fields and sketch solutions."
+        },
+        {
+          "lessonId": "separation-of-variables",
+          "title": "Separation of Variables",
+          "order": 2,
+          "concepts": ["Identifying separable DEs", "Separating: g(y)dy = f(x)dx", "Integrating both sides", "General solution (with +C) vs particular solution (use initial condition)"],
+          "teachingNotes": "The +C goes on one side only. Use initial condition to find particular solution."
+        },
+        {
+          "lessonId": "exponential-logistic",
+          "title": "Exponential Growth/Decay & Logistic Growth (BC)",
+          "order": 3,
+          "concepts": ["dy/dt = ky → y = Ce^(kt)", "Growth (k > 0) vs decay (k < 0)", "Half-life and doubling time", "Logistic: dy/dt = ky(1 − y/L), carrying capacity L", "Logistic solution shape and fastest growth at L/2"],
+          "keyFormulas": ["dy/dt = ky → y = Ce^(kt)", "dy/dt = ky(1 − y/L) → logistic growth"],
+          "teachingNotes": "Logistic is BC-exclusive. Students must recognize the form and know the carrying capacity and inflection point."
+        },
+        {
+          "lessonId": "euler-method",
+          "title": "Euler's Method (BC)",
+          "order": 4,
+          "concepts": ["Numerical approximation of solutions to DEs", "y_new = y_old + (dy/dx)·Δx", "Step-by-step computation with given step size", "Understanding approximation error"],
+          "keyFormulas": ["y_{n+1} = y_n + f(x_n, y_n) · Δx"],
+          "teachingNotes": "BC-exclusive. Straightforward computation, but students must be systematic."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u7",
+      "unit": 7,
+      "title": "Unit 7 Checkpoint: Differential Equations",
+      "preview": "Assess slope fields, separation of variables, exponential/logistic models, and Euler's method",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u7_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "integration_applications",
+      "unit": 8,
+      "title": "Applications of Integration",
+      "preview": "Area between curves, volume by disk/washer and cross-sections, average value, motion applications",
+      "moduleFile": "/modules/calculus-bc/integration_applications_module.json",
+      "skills": ["area-between-curves", "volume-disk-washer", "volume-cross-sections", "average-value", "motion-accumulation"],
+      "essentialQuestions": [
+        "How does the integral compute area between curves, and why does the order of subtraction matter?",
+        "What geometric principle underlies disk/washer and cross-section volume methods?",
+        "What does the average value of a function mean, and how is it computed?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "area-between-curves",
+          "title": "Area Between Curves",
+          "order": 1,
+          "concepts": ["∫[top − bottom]dx or ∫[right − left]dy", "Finding intersection points", "Switching integration variable when curves are functions of y", "Multiple regions"],
+          "keyFormulas": ["A = ∫ₐᵇ [f(x) − g(x)] dx"]
+        },
+        {
+          "lessonId": "volume-revolution",
+          "title": "Volume: Disk & Washer Methods",
+          "order": 2,
+          "concepts": ["Disk: V = π∫[R(x)]²dx (solid, no hole)", "Washer: V = π∫([R(x)]² − [r(x)]²)dx (hole in middle)", "Revolving around x-axis, y-axis, and other lines", "Choosing dx vs dy based on axis of revolution"],
+          "keyFormulas": ["V = π∫ₐᵇ [R(x)]² dx", "V = π∫ₐᵇ ([R(x)]² − [r(x)]²) dx"]
+        },
+        {
+          "lessonId": "volume-cross-sections",
+          "title": "Volume by Cross-Sections",
+          "order": 3,
+          "concepts": ["V = ∫A(x)dx where A(x) is cross-section area", "Common shapes: squares, semicircles, equilateral triangles, isosceles right triangles", "Base defined by region between curves"],
+          "keyFormulas": ["V = ∫ₐᵇ A(x) dx"]
+        },
+        {
+          "lessonId": "average-value-motion",
+          "title": "Average Value & Motion/Accumulation Applications",
+          "order": 4,
+          "concepts": ["Average value: f_avg = (1/(b−a))∫ₐᵇ f(x)dx", "Displacement: ∫ₐᵇ v(t)dt", "Total distance: ∫ₐᵇ |v(t)|dt", "Net change: ∫ₐᵇ R'(t)dt = R(b) − R(a)"],
+          "keyFormulas": ["f_avg = 1/(b−a) ∫ₐᵇ f(x) dx", "displacement = ∫ₐᵇ v(t) dt", "total distance = ∫ₐᵇ |v(t)| dt"]
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u8",
+      "unit": 8,
+      "title": "Unit 8 Checkpoint: Applications of Integration",
+      "preview": "Assess area, volume, average value, and motion/accumulation applications",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u8_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "parametric_polar_vectors",
+      "unit": 9,
+      "title": "Parametric, Polar, Vector-Valued Functions",
+      "preview": "Derivatives and integrals for parametric, polar, and vector-valued functions (BC-exclusive)",
+      "moduleFile": "/modules/calculus-bc/parametric_polar_vectors_module.json",
+      "skills": ["parametric-derivatives", "parametric-arc-length", "polar-graphing-area", "vector-valued-functions"],
+      "essentialQuestions": [
+        "How do parametric equations represent motion, and how does dy/dx arise from dx/dt and dy/dt?",
+        "How does polar area differ from Cartesian area, and why does the formula use r²?",
+        "How do vector-valued functions generalize motion in the plane?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "parametric-equations",
+          "title": "Parametric Equations: Derivatives & Arc Length",
+          "order": 1,
+          "concepts": ["Parametric curves: x(t), y(t)", "dy/dx = (dy/dt)/(dx/dt)", "Second derivative d²y/dx² for parametric", "Speed: √((dx/dt)² + (dy/dt)²)", "Arc length: ∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt"],
+          "keyFormulas": ["dy/dx = (dy/dt)/(dx/dt)", "speed = √((dx/dt)² + (dy/dt)²)", "arc length = ∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt"]
+        },
+        {
+          "lessonId": "polar-coordinates",
+          "title": "Polar Coordinates: Graphing, Slopes & Area",
+          "order": 2,
+          "concepts": ["Polar-rectangular conversions: x = r cos θ, y = r sin θ", "Common polar curves: circles, limaçons, roses, cardioids", "Slope of polar curve: dy/dx = (r'sinθ + rcosθ)/(r'cosθ − rsinθ)", "Area: A = (1/2)∫ r² dθ", "Area between two polar curves"],
+          "keyFormulas": ["A = (1/2) ∫_α^β r² dθ", "x = r cos θ, y = r sin θ"]
+        },
+        {
+          "lessonId": "vector-valued",
+          "title": "Vector-Valued Functions",
+          "order": 3,
+          "concepts": ["r(t) = ⟨x(t), y(t)⟩", "Velocity: v(t) = r'(t) = ⟨x'(t), y'(t)⟩", "Acceleration: a(t) = v'(t) = ⟨x''(t), y''(t)⟩", "Speed: |v(t)| = √((x'(t))² + (y'(t))²)", "Distance traveled: ∫ₐᵇ |v(t)| dt", "Position from velocity: r(t) = r(a) + ∫ₐᵗ v(s) ds"],
+          "keyFormulas": ["v(t) = ⟨x'(t), y'(t)⟩", "|v(t)| = √((x')² + (y')²)", "distance = ∫ₐᵇ |v(t)| dt"]
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u9",
+      "unit": 9,
+      "title": "Unit 9 Checkpoint: Parametric, Polar, Vector-Valued",
+      "preview": "Assess parametric derivatives, polar area, and vector-valued motion (BC-exclusive)",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u9_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "sequences_series",
+      "unit": 10,
+      "title": "Infinite Sequences & Series",
+      "preview": "Convergence tests, geometric/p-series, alternating series, Taylor/Maclaurin polynomials and error bounds (BC-exclusive)",
+      "moduleFile": "/modules/calculus-bc/sequences_series_module.json",
+      "skills": ["sequences-convergence", "series-geometric-p", "convergence-tests", "alternating-series-error", "taylor-maclaurin-polynomials", "taylor-series-known", "power-series-interval", "lagrange-error-bound"],
+      "essentialQuestions": [
+        "How do we determine whether an infinite series converges or diverges?",
+        "How do Taylor and Maclaurin polynomials approximate functions, and how accurate is the approximation?",
+        "What is the interval of convergence for a power series, and why does it matter?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "sequences-series-intro",
+          "title": "Sequences, Series, and Convergence Basics",
+          "order": 1,
+          "concepts": ["Sequences: explicit and recursive definitions", "Convergent vs divergent sequences", "Series as partial sums", "nth-term test for divergence (necessary condition)", "Geometric series: converges when |r| < 1, sum = a/(1−r)"],
+          "keyFormulas": ["Geometric series sum = a/(1 − r) when |r| < 1"],
+          "teachingNotes": "The nth-term test only proves DIVERGENCE, never convergence. Common student error."
+        },
+        {
+          "lessonId": "convergence-tests",
+          "title": "Convergence Tests",
+          "order": 2,
+          "concepts": ["p-series: converges for p > 1", "Integral test", "Direct comparison test", "Limit comparison test", "Ratio test (most useful for factorials and exponentials)"],
+          "keyFormulas": ["p-series: Σ1/nᵖ converges iff p > 1", "Ratio test: L = lim |a_{n+1}/a_n|; converges if L < 1, diverges if L > 1"],
+          "teachingNotes": "Build a decision tree: look at the series → choose the right test. Ratio test is the go-to for factorials."
+        },
+        {
+          "lessonId": "alternating-series",
+          "title": "Alternating Series & Error Bounds",
+          "order": 3,
+          "concepts": ["Alternating series test: |aₙ| decreasing to 0 → converges", "Alternating series error bound: |error| ≤ |first omitted term|", "Absolute vs conditional convergence"],
+          "keyFormulas": ["Alternating series error: |S − Sₙ| ≤ |a_{n+1}|"],
+          "teachingNotes": "The error bound is the simplest and most frequently tested on the AP exam."
+        },
+        {
+          "lessonId": "taylor-maclaurin",
+          "title": "Taylor & Maclaurin Polynomials",
+          "order": 4,
+          "concepts": ["Taylor polynomial of degree n centered at x = a", "Maclaurin polynomial (Taylor centered at 0)", "Building polynomials term by term", "Known Maclaurin series: eˣ, sin x, cos x, 1/(1−x)", "Finding new series from known series (substitution, differentiation, integration)"],
+          "keyFormulas": ["Pₙ(x) = Σ_{k=0}^{n} f⁽ᵏ⁾(a)(x−a)ᵏ/k!", "eˣ = Σ xⁿ/n!", "sin x = Σ (-1)ⁿx²ⁿ⁺¹/(2n+1)!", "cos x = Σ (-1)ⁿx²ⁿ/(2n)!", "1/(1−x) = Σ xⁿ"],
+          "teachingNotes": "Students must MEMORIZE the four known series. Everything else is built from them."
+        },
+        {
+          "lessonId": "power-series-convergence",
+          "title": "Power Series & Interval of Convergence",
+          "order": 5,
+          "concepts": ["Power series: Σ cₙ(x−a)ⁿ", "Radius of convergence R (use ratio test)", "Interval of convergence: check endpoints separately", "Differentiation and integration of power series term by term"],
+          "teachingNotes": "Ratio test gives R. Then test EACH endpoint individually—they may behave differently."
+        },
+        {
+          "lessonId": "lagrange-error",
+          "title": "Lagrange Error Bound",
+          "order": 6,
+          "concepts": ["Lagrange error: |f(x) − Pₙ(x)| ≤ M|x−a|ⁿ⁺¹/(n+1)!", "Finding M (max of |f⁽ⁿ⁺¹⁾| on the interval)", "Using error bound to determine number of terms needed"],
+          "keyFormulas": ["|Rₙ(x)| ≤ M|x − a|^{n+1} / (n+1)!"],
+          "teachingNotes": "Lagrange is the hardest error bound but appears regularly. Practice finding M on specific intervals."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u10",
+      "unit": 10,
+      "title": "Unit 10 Checkpoint: Sequences & Series",
+      "preview": "Assess convergence tests, Taylor/Maclaurin series, power series, and error bounds (BC-exclusive)",
+      "moduleFile": "/modules/calculus-bc/checkpoint_u10_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "final_review_exam",
+      "unit": 11,
+      "title": "Final Review & Exam Readiness",
+      "preview": "Comprehensive AP exam-format review with MC sets, FRQ practice, and error analysis",
+      "moduleFile": "/modules/calculus-bc/final_review_exam_module.json",
+      "skills": ["ap-mc-no-calculator", "ap-mc-calculator", "ap-frq-calculator", "ap-frq-no-calculator"],
+      "essentialQuestions": [
+        "Which content areas are strongest, and which need targeted review?",
+        "Can I complete FRQs with full justification under time pressure?",
+        "Am I making careless errors, or are there genuine conceptual gaps?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "mc-practice",
+          "title": "Multiple Choice Practice Sets",
+          "order": 1,
+          "concepts": ["No-calculator MC strategies", "Calculator-active MC strategies", "Time management: ~2 min per MC question", "Common distractors and trap answers"]
+        },
+        {
+          "lessonId": "frq-practice",
+          "title": "Free Response Practice",
+          "order": 2,
+          "concepts": ["FRQ scoring rubrics and point allocation", "Justification language and presentation", "Calculator FRQ: setup and compute", "No-calculator FRQ: show all work"],
+          "teachingNotes": "FRQs award points for setup, computation, and justification separately. Students can earn partial credit."
+        },
+        {
+          "lessonId": "error-analysis",
+          "title": "Error Analysis & Targeted Review",
+          "order": 3,
+          "concepts": ["Categorizing errors: conceptual vs computational vs notational", "Building personal error logs", "Targeted remediation by topic", "Test-taking strategies and time management"]
+        }
+      ]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "title": "AP Calculus BC Final Mastery Assessment",
+      "preview": "Comprehensive assessment covering all AP Calculus BC content in exam format",
+      "moduleFile": "/modules/calculus-bc/final_mastery_assessment_module.json",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 const passport            = require("passport");
 const GoogleStrategy      = require("passport-google-oauth20").Strategy;
 const MicrosoftStrategy   = require("passport-microsoft").Strategy;
+const OAuth2Strategy      = require("passport-oauth2");
 const LocalStrategy       = require("passport-local").Strategy;
 const User                = require("../models/user");
 const bcrypt              = require("bcryptjs");
@@ -227,5 +228,129 @@ passport.use(
     }
   )
 );
+
+/* ----------------------------  CLEVER STRATEGY ----------------------------- */
+if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
+  const cleverStrategy = new OAuth2Strategy(
+    {
+      authorizationURL: "https://clever.com/oauth/authorize",
+      tokenURL:         "https://clever.com/oauth/tokens",
+      clientID:         process.env.CLEVER_CLIENT_ID,
+      clientSecret:     process.env.CLEVER_CLIENT_SECRET,
+      callbackURL:
+        process.env.CLEVER_CALLBACK_URL ||
+        `http://localhost:${process.env.PORT || 3000}/auth/clever/callback`,
+    },
+    async (accessToken, refreshToken, params, profile, done) => {
+      try {
+        // Clever doesn't populate profile via passport-oauth2 by default.
+        // We fetch user info from the /me endpoint using the access token.
+        const https = require("https");
+
+        const meData = await new Promise((resolve, reject) => {
+          const req = https.get(
+            "https://api.clever.com/v3.0/me",
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+            (res) => {
+              let body = "";
+              res.on("data", (chunk) => (body += chunk));
+              res.on("end", () => {
+                try { resolve(JSON.parse(body)); }
+                catch (e) { reject(e); }
+              });
+            }
+          );
+          req.on("error", reject);
+        });
+
+        const cleverType = meData.type;   // 'student', 'teacher', 'district_admin', 'school_admin'
+        const cleverId   = meData.data?.id;
+
+        if (!cleverId) {
+          return done(null, false, { message: "Could not retrieve Clever user ID." });
+        }
+
+        // Fetch full user data from the type-specific endpoint
+        const userData = await new Promise((resolve, reject) => {
+          const req = https.get(
+            `https://api.clever.com/v3.0/${cleverType}s/${cleverId}`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+            (res) => {
+              let body = "";
+              res.on("data", (chunk) => (body += chunk));
+              res.on("end", () => {
+                try { resolve(JSON.parse(body)); }
+                catch (e) { reject(e); }
+              });
+            }
+          );
+          req.on("error", reject);
+        });
+
+        const userInfo = userData.data || {};
+        const userEmail   = userInfo.email || null;
+        const firstName   = userInfo.name?.first  || "NoFirst";
+        const lastName    = userInfo.name?.last   || "NoLast";
+        const displayName = `${firstName} ${lastName}`.trim();
+
+        // Map Clever user type to Mathmatix role
+        let mappedRole = "student";
+        if (cleverType === "teacher") mappedRole = "teacher";
+        // district_admin / school_admin → admin (or teacher, depending on your preference)
+
+        /* ---------- 1. Existing user by Clever ID --------------------- */
+        let existingUser = await User.findOne({ cleverId });
+        if (existingUser) {
+          return done(null, existingUser);
+        }
+
+        /* ---------- 2. Existing user by email ------------------------ */
+        if (userEmail) {
+          existingUser = await User.findOne({ email: userEmail });
+          if (existingUser) {
+            if (!existingUser.cleverId) {
+              existingUser.cleverId = cleverId;
+              if (!existingUser.firstName || existingUser.firstName === "NoFirst") {
+                existingUser.firstName = firstName;
+              }
+              if (!existingUser.lastName || existingUser.lastName === "NoLast") {
+                existingUser.lastName = lastName;
+              }
+              await existingUser.save();
+            }
+            return done(null, existingUser);
+          }
+        }
+
+        /* ---------- 3. Brand-new user - Require enrollment code ------ */
+        const needsFix = firstName === "NoFirst" || lastName === "NoLast";
+
+        const pendingOAuthProfile = {
+          provider:    "clever",
+          providerId:  cleverId,
+          email:       userEmail,
+          displayName,
+          firstName,
+          lastName,
+          needsFix,
+          role:        mappedRole,
+          avatar:      null
+        };
+
+        return done(null, {
+          isPendingEnrollment: true,
+          pendingProfile: pendingOAuthProfile
+        });
+      } catch (err) {
+        console.error("ERROR: CleverStrategy error:", err);
+        return done(err, null);
+      }
+    }
+  );
+
+  cleverStrategy.name = "clever";
+  passport.use(cleverStrategy);
+  console.log("LOG: Clever SSO strategy registered");
+}
 
 module.exports = passport;

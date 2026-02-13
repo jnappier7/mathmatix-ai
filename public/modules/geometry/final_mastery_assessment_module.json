@@ -3,7 +3,8 @@
   "course": "Geometry",
   "quarter": 4,
   "title": "Final Mastery Assessment: HS Geometry",
-  "estimatedDuration": 45,
+  "weeks": "28",
+  "estimatedDuration": 50,
   "type": "assessment",
   "description": "Comprehensive end-of-course assessment covering all four quarters of HS Geometry: Foundations & Angles, Triangles, Congruence, Right Triangles, Polygons, Circles, Similarity, 3D Geometry, and Coordinate Geometry.",
   "skillsCovered": [
@@ -19,18 +20,21 @@
   ],
   "passThreshold": 70,
   "remediationResources": [
-    {"skillId": "parallel-lines-transversals", "moduleId": "foundations_angles"},
-    {"skillId": "triangle-angle-sum", "moduleId": "triangles_basics"},
-    {"skillId": "triangle-congruence-sss-sas-asa", "moduleId": "congruence"},
-    {"skillId": "pythagorean-theorem", "moduleId": "right_triangles"},
-    {"skillId": "special-right-triangles", "moduleId": "right_triangles"},
-    {"skillId": "quadrilateral-properties", "moduleId": "polygons_quadrilaterals"},
-    {"skillId": "arc-length", "moduleId": "circles"},
-    {"skillId": "inscribed-angles", "moduleId": "circles"},
-    {"skillId": "similarity-ratios", "moduleId": "similarity"},
-    {"skillId": "volume-prisms-cylinders", "moduleId": "3d_geometry"},
-    {"skillId": "coordinate-geometry-distance-midpoint", "moduleId": "coordinate_geometry"},
-    {"skillId": "equation-of-circle", "moduleId": "coordinate_geometry"}
+    { "skillId": "parallel-lines-transversals", "reteachFocus": "Alternate interior, alternate exterior, corresponding, co-interior (same-side) angle pairs; setting equal or supplementary based on type", "resources": ["foundations_angles_module.json - scaffold phases 7-9"] },
+    { "skillId": "triangle-angle-sum", "reteachFocus": "Interior sum 180°, exterior angle = sum of remote interior, working backwards from angle expressions", "resources": ["triangles_basics_module.json - scaffold phases 1-3"] },
+    { "skillId": "triangle-congruence-sss-sas-asa", "reteachFocus": "SSS (3 sides), SAS (2 sides + included angle), ASA (2 angles + included side); identify the shared/reflexive elements", "resources": ["congruence_module.json - scaffold phases 1-6"] },
+    { "skillId": "pythagorean-theorem", "reteachFocus": "a²+b²=c², identify the hypotenuse (longest, opposite right angle), recognize common triples: 3-4-5, 5-12-13, 8-15-17, 7-24-25", "resources": ["right_triangles_module.json - scaffold phases 1-3"] },
+    { "skillId": "special-right-triangles", "reteachFocus": "45-45-90: legs equal, hyp=leg√2. 30-60-90: short:long:hyp = x:x√3:2x. Always identify which side you know first", "resources": ["right_triangles_module.json - scaffold phases 4-6"] },
+    { "skillId": "trigonometric-ratios-intro", "reteachFocus": "SOH-CAH-TOA: sin=opp/hyp, cos=adj/hyp, tan=opp/adj. Draw triangle, label sides relative to the angle", "resources": ["right_triangles_module.json - scaffold phases 7-9"] },
+    { "skillId": "quadrilateral-properties", "reteachFocus": "Parallelogram hierarchy: opp sides/angles ≅, consec supplementary, diags bisect. Rectangle: diags ≅. Rhombus: diags ⊥ and bisect angles", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 4-6"] },
+    { "skillId": "arc-length", "reteachFocus": "Arc = (θ/360)×2πr, fraction of circumference; working backwards to find θ or r", "resources": ["circles_module.json - scaffold phases 4-6"] },
+    { "skillId": "inscribed-angles", "reteachFocus": "Inscribed = half central, semicircle→90°, inscribed quad opposite angles supplementary", "resources": ["circles_module.json - scaffold phases 7-9"] },
+    { "skillId": "similarity-ratios", "reteachFocus": "Corresponding sides proportional, scale factor k, area ratio = k², AA~/SSS~/SAS~ theorems", "resources": ["similarity_module.json - scaffold phases 1-6"] },
+    { "skillId": "geometric-mean", "reteachFocus": "GM = √(a×b), altitude rule: h²=p×q, leg rule: leg²=(adjacent seg)(hyp)", "resources": ["similarity_module.json - scaffold phases 7-9"] },
+    { "skillId": "volume-prisms-cylinders", "reteachFocus": "V=Bh, identify base shape first; cylinder V=πr²h; always check units", "resources": ["3d_geometry_module.json - scaffold phases 1-3"] },
+    { "skillId": "volume-pyramids-cones-spheres", "reteachFocus": "V=(1/3)Bh for pyramids/cones, V=(4/3)πr³ for spheres; 1/3 relationship with prism/cylinder", "resources": ["3d_geometry_module.json - scaffold phases 4-6"] },
+    { "skillId": "coordinate-geometry-distance-midpoint", "reteachFocus": "d=√[(x₂-x₁)²+(y₂-y₁)²] (Pythagorean in disguise), M=((x₁+x₂)/2,(y₁+y₂)/2)", "resources": ["coordinate_geometry_module.json - scaffold phases 1-3"] },
+    { "skillId": "equation-of-circle", "reteachFocus": "(x-h)²+(y-k)²=r², signs opposite center, r² not r on right side", "resources": ["coordinate_geometry_module.json - scaffold phases 4-6"] }
   ],
   "assessmentSections": [
     {
@@ -40,7 +44,7 @@
         {
           "id": "final-1",
           "question": "Two parallel lines are cut by a transversal. Alternate interior angles measure (3x + 12)° and (5x - 8)°. Find x and both angle measures.",
-          "answer": "x = 10; both angles = 42°",
+          "answer": "Alternate interior angles are congruent: 3x+12 = 5x-8 → 20 = 2x → x = 10. Both angles = 3(10)+12 = 42°. Check: 5(10)-8 = 42° ✓.",
           "skill": "parallel-lines-transversals",
           "difficulty": 4,
           "points": 8
@@ -48,15 +52,15 @@
         {
           "id": "final-2",
           "question": "A triangle has angles (2x + 5)°, (3x - 10)°, and (x + 35)°. Find all three angles and classify the triangle.",
-          "answer": "x = 25; angles 55°, 65°, 60°; acute triangle",
+          "answer": "(2x+5)+(3x-10)+(x+35) = 180 → 6x+30 = 180 → x = 25. Angles: 55°, 65°, 60°. All < 90° → acute triangle. Check: 55+65+60 = 180° ✓.",
           "skill": "triangle-angle-sum",
           "difficulty": 4,
           "points": 8
         },
         {
           "id": "final-3",
-          "question": "Can sides of length 7, 11, and 19 form a triangle?",
-          "answer": "no (7 + 11 = 18 < 19)",
+          "question": "Can sides of length 7, 11, and 19 form a triangle? Justify.",
+          "answer": "Triangle inequality: the two shorter sides must sum to more than the longest. 7 + 11 = 18 < 19. No, these cannot form a triangle.",
           "skill": "triangle-inequalities",
           "difficulty": 3,
           "points": 4
@@ -70,7 +74,7 @@
         {
           "id": "final-4",
           "question": "Given: AB ≅ DE, ∠A ≅ ∠D, AC ≅ DF. Name the congruence postulate and write the congruence statement.",
-          "answer": "SAS; △ABC ≅ △DEF",
+          "answer": "Two sides and the included angle between them are congruent → SAS. △ABC ≅ △DEF.",
           "skill": "triangle-congruence-sss-sas-asa",
           "difficulty": 4,
           "points": 6
@@ -78,7 +82,7 @@
         {
           "id": "final-5",
           "question": "A right triangle has legs of 9 and 40. Find the hypotenuse.",
-          "answer": "41",
+          "answer": "c² = 9² + 40² = 81 + 1600 = 1681. c = √1681 = 41. (9-40-41 is a Pythagorean triple.)",
           "skill": "pythagorean-theorem",
           "difficulty": 3,
           "points": 6
@@ -86,7 +90,7 @@
         {
           "id": "final-6",
           "question": "In a 30-60-90 triangle, the hypotenuse is 16. Find the short leg and the long leg.",
-          "answer": "short leg = 8, long leg = 8√3",
+          "answer": "In a 30-60-90: short = hyp/2 = 16/2 = 8. Long = short × √3 = 8√3. Verify: 8² + (8√3)² = 64 + 192 = 256 = 16² ✓.",
           "skill": "special-right-triangles",
           "difficulty": 4,
           "points": 6
@@ -94,7 +98,7 @@
         {
           "id": "final-7",
           "question": "In a right triangle, sin(θ) = 12/13. Find cos(θ) and tan(θ).",
-          "answer": "cos(θ) = 5/13, tan(θ) = 12/5",
+          "answer": "sin = opp/hyp = 12/13 → opp = 12, hyp = 13. Adjacent = √(13²-12²) = √(169-144) = √25 = 5. cos(θ) = adj/hyp = 5/13. tan(θ) = opp/adj = 12/5. (5-12-13 triple.)",
           "skill": "trigonometric-ratios-intro",
           "difficulty": 5,
           "points": 7
@@ -108,15 +112,15 @@
         {
           "id": "final-8",
           "question": "Find each interior angle of a regular 15-sided polygon.",
-          "answer": "156°",
+          "answer": "Interior angle = (n-2)×180°/n = (15-2)×180°/15 = 13×180°/15 = 2340°/15 = 156°.",
           "skill": "polygon-angle-sum",
           "difficulty": 3,
           "points": 5
         },
         {
           "id": "final-9",
-          "question": "In parallelogram ABCD, the diagonals intersect at E. AE = 3x + 2 and CE = 5x - 6. Find AE.",
-          "answer": "14",
+          "question": "In parallelogram ABCD, the diagonals intersect at E. AE = 3x + 2 and CE = 5x - 6. Find x and AE.",
+          "answer": "Diagonals bisect each other: AE = CE → 3x+2 = 5x-6 → 8 = 2x → x = 4. AE = 3(4)+2 = 14. Check: CE = 5(4)-6 = 14 ✓.",
           "skill": "quadrilateral-properties",
           "difficulty": 4,
           "points": 6
@@ -124,7 +128,7 @@
         {
           "id": "final-10",
           "question": "A circle has radius 10. Find the arc length for a central angle of 108°.",
-          "answer": "6π (≈ 18.85)",
+          "answer": "Arc = (108/360)×2π(10) = (3/10)(20π) = 6π ≈ 18.85.",
           "skill": "arc-length",
           "difficulty": 4,
           "points": 6
@@ -132,7 +136,7 @@
         {
           "id": "final-11",
           "question": "An inscribed angle intercepts an arc of 124°. Find the inscribed angle measure.",
-          "answer": "62°",
+          "answer": "Inscribed angle = intercepted arc / 2 = 124° / 2 = 62°.",
           "skill": "inscribed-angles",
           "difficulty": 3,
           "points": 4
@@ -140,7 +144,7 @@
         {
           "id": "final-12",
           "question": "Find the area of a sector with central angle 90° and radius 6.",
-          "answer": "9π (≈ 28.27)",
+          "answer": "Sector = (90/360)×π(6²) = (1/4)(36π) = 9π ≈ 28.27.",
           "skill": "sector-area",
           "difficulty": 4,
           "points": 4
@@ -154,7 +158,7 @@
         {
           "id": "final-13",
           "question": "△ABC ~ △DEF with scale factor 2:5. If AB = 8, find DE.",
-          "answer": "20",
+          "answer": "AB/DE = 2/5 → 8/DE = 2/5 → DE = 8 × 5/2 = 20.",
           "skill": "similarity-ratios",
           "difficulty": 3,
           "points": 5
@@ -162,7 +166,7 @@
         {
           "id": "final-14",
           "question": "Find the geometric mean of 6 and 24.",
-          "answer": "12",
+          "answer": "Geometric mean = √(6 × 24) = √144 = 12.",
           "skill": "geometric-mean",
           "difficulty": 3,
           "points": 5
@@ -170,7 +174,7 @@
         {
           "id": "final-15",
           "question": "A cone has radius 5 and height 12. Find the volume in terms of π.",
-          "answer": "100π",
+          "answer": "V = (1/3)πr²h = (1/3)π(25)(12) = (1/3)(300π) = 100π.",
           "skill": "volume-pyramids-cones-spheres",
           "difficulty": 4,
           "points": 5
@@ -178,7 +182,7 @@
         {
           "id": "final-16",
           "question": "A sphere has radius 9. Find the surface area in terms of π.",
-          "answer": "324π",
+          "answer": "SA = 4πr² = 4π(81) = 324π.",
           "skill": "surface-area-pyramids-cones-spheres",
           "difficulty": 3,
           "points": 5
@@ -186,7 +190,7 @@
         {
           "id": "final-17",
           "question": "Find the distance between (-2, 5) and (4, -3).",
-          "answer": "10",
+          "answer": "d = √[(4-(-2))² + (-3-5)²] = √[36 + 64] = √100 = 10. (6-8-10 triple, i.e. 2× the 3-4-5.)",
           "skill": "coordinate-geometry-distance-midpoint",
           "difficulty": 3,
           "points": 5
@@ -194,32 +198,41 @@
         {
           "id": "final-18",
           "question": "Write the equation of a circle with center (2, -3) and passing through the point (6, 0).",
-          "answer": "(x - 2)² + (y + 3)² = 25",
+          "answer": "r² = (6-2)² + (0-(-3))² = 16 + 9 = 25. Equation: (x-2)² + (y+3)² = 25. Verify: (6-2)²+(0+3)²=16+9=25 ✓.",
           "skill": "equation-of-circle",
           "difficulty": 5,
           "points": 5
+        },
+        {
+          "id": "final-19",
+          "question": "ANALYSIS: A right triangle has vertices at A(0, 0), B(8, 0), and C(0, 6). (a) Find the lengths of all three sides. (b) Find the area. (c) Find the coordinates of the midpoint of the hypotenuse. (d) Show that the midpoint of the hypotenuse is equidistant from all three vertices.",
+          "answer": "(a) AB = 8, AC = 6, BC = √(64+36) = √100 = 10. (b) Area = (1/2)(8)(6) = 24 sq units. (c) Midpoint of BC: M = ((8+0)/2, (0+6)/2) = (4, 3). (d) MA = √(16+9) = 5. MB = √(16+9) = 5. MC = √(16+9) = 5. All equal to 5 (half the hypotenuse), confirming the midpoint of the hypotenuse of a right triangle is equidistant from all three vertices.",
+          "skill": "coordinate-proofs",
+          "difficulty": 6,
+          "points": 15
         }
       ]
     }
   ],
   "answerKeys": {
-    "final-1": "x = 10; both angles = 42°",
-    "final-2": "x = 25; angles 55°, 65°, 60°; acute",
-    "final-3": "no",
-    "final-4": "SAS; △ABC ≅ △DEF",
-    "final-5": "41",
-    "final-6": "short leg = 8, long leg = 8√3",
-    "final-7": "cos(θ) = 5/13, tan(θ) = 12/5",
-    "final-8": "156°",
-    "final-9": "14",
-    "final-10": "6π",
-    "final-11": "62°",
-    "final-12": "9π",
-    "final-13": "20",
-    "final-14": "12",
-    "final-15": "100π",
-    "final-16": "324π",
-    "final-17": "10",
-    "final-18": "(x - 2)² + (y + 3)² = 25"
+    "final-1": "x=10; both angles=42°.",
+    "final-2": "x=25; angles 55°, 65°, 60°; acute triangle.",
+    "final-3": "No (7+11=18<19).",
+    "final-4": "SAS; △ABC≅△DEF.",
+    "final-5": "41 (9-40-41 triple).",
+    "final-6": "Short=8, long=8√3.",
+    "final-7": "cos(θ)=5/13, tan(θ)=12/5.",
+    "final-8": "156°.",
+    "final-9": "x=4, AE=14.",
+    "final-10": "6π.",
+    "final-11": "62°.",
+    "final-12": "9π.",
+    "final-13": "DE=20.",
+    "final-14": "12.",
+    "final-15": "100π.",
+    "final-16": "324π.",
+    "final-17": "10 (6-8-10 triple).",
+    "final-18": "(x-2)²+(y+3)²=25.",
+    "final-19": "AB=8, AC=6, BC=10; area=24; M=(4,3); MA=MB=MC=5."
   }
 }

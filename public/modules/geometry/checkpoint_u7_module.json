@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u7",
+  "course": "Geometry",
+  "unit": 7,
+  "quarter": 4,
+  "title": "Unit 7 Checkpoint: Similarity",
+  "weeks": "21",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of similarity ratios, triangle similarity theorems (AA, SSS~, SAS~), proportion applications, and geometric mean in right triangles.",
+  "skillsCovered": [
+    "similarity-ratios",
+    "similar-triangle-theorems",
+    "similarity-proofs",
+    "geometric-mean"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "similarity-ratios", "reteachFocus": "Scale factor, setting up proportions consistently (small/large or large/small), cross-multiplication", "resources": ["similarity_module.json - scaffold phases 4-6"] },
+    { "skillId": "similar-triangle-theorems", "reteachFocus": "AA (2 angles), SSS~ (all 3 ratios equal), SAS~ (2 proportional sides + included angle), order of correspondence", "resources": ["similarity_module.json - scaffold phases 1-3"] },
+    { "skillId": "similarity-proofs", "reteachFocus": "Shadow/indirect measurement, map scales, identifying which theorem applies", "resources": ["similarity_module.json - scaffold phases 4-6"] },
+    { "skillId": "geometric-mean", "reteachFocus": "√(ab), altitude rule (alt²=seg1×seg2), leg rule (leg²=adj seg×hyp)", "resources": ["similarity_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu7-1",
+      "question": "Two triangles have angles 40°, 65°, and 75°, and 75°, 40°, and 65° respectively. Are they similar? By what theorem?",
+      "answer": "Yes, by AA Similarity (two pairs of congruent angles: 40°=40° and 65°=65°).",
+      "skill": "similar-triangle-theorems",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu7-2",
+      "question": "Triangle 1 has sides 5, 10, 15. Triangle 2 has sides 3, 6, 9. Are they similar? If so, state the theorem and scale factor.",
+      "answer": "Check ratios: 5/3, 10/6=5/3, 15/9=5/3. All equal → SSS~ with scale factor 5:3.",
+      "skill": "similar-triangle-theorems",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu7-3",
+      "question": "△ABC ~ △DEF with scale factor 3:7. If AB = 12 and BC = 18, find DE and EF.",
+      "answer": "DE = 12 × 7/3 = 28. EF = 18 × 7/3 = 42. Verify: 12/28 = 3/7 ✓, 18/42 = 3/7 ✓.",
+      "skill": "similarity-ratios",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu7-4",
+      "question": "A 5-foot person casts a 4-foot shadow. A building casts a 48-foot shadow at the same time. How tall is the building?",
+      "answer": "5/4 = x/48. Cross multiply: 4x = 240 → x = 60 feet.",
+      "skill": "similarity-proofs",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu7-5",
+      "question": "Two similar polygons have a scale factor of 3:8. If the perimeter of the smaller polygon is 36, find the perimeter of the larger.",
+      "answer": "Perimeters are in the same ratio as sides: 36 × 8/3 = 96.",
+      "skill": "similarity-ratios",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu7-6",
+      "question": "Find the geometric mean of 7 and 28.",
+      "answer": "Geometric mean = √(7 × 28) = √196 = 14.",
+      "skill": "geometric-mean",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu7-7",
+      "question": "In a right triangle, an altitude from the right angle to the hypotenuse divides it into segments of 5 and 20. Find the altitude.",
+      "answer": "altitude = √(5 × 20) = √100 = 10.",
+      "skill": "geometric-mean",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu7-8",
+      "question": "Using the same triangle (hypotenuse segments 5 and 20, hypotenuse = 25), find both legs.",
+      "answer": "Shorter leg: leg² = 5 × 25 = 125 → leg = √125 = 5√5 ≈ 11.18. Longer leg: leg² = 20 × 25 = 500 → leg = √500 = 10√5 ≈ 22.36. Verify: (5√5)² + (10√5)² = 125 + 500 = 625 = 25² ✓.",
+      "skill": "geometric-mean",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "gcu7-9",
+      "question": "In △PQR and △STU: PQ = 10, ST = 15, PR = 8, SU = 12, and ∠P = ∠S = 50°. Are the triangles similar? Name the theorem.",
+      "answer": "PQ/ST = 10/15 = 2/3. PR/SU = 8/12 = 2/3. Included angle ∠P = ∠S = 50°. → SAS~ with scale factor 2:3.",
+      "skill": "similar-triangle-theorems",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu7-10",
+      "question": "ANALYSIS: Two similar triangles have areas in a ratio of 9:25. (a) What is the ratio of their corresponding sides? (b) If a side of the smaller triangle is 12, find the corresponding side of the larger. (c) What is the ratio of their perimeters?",
+      "answer": "(a) Area ratio = (side ratio)², so side ratio = √(9/25) = 3/5. (b) Side = 12 × 5/3 = 20. (c) Perimeter ratio = side ratio = 3:5.",
+      "skill": "similarity-ratios",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu7-spiral-1",
+      "question": "SPIRAL (Arc Length): A circle has radius 18 and a central angle of 100°. Find the arc length.",
+      "answer": "Arc = (100/360) × 2π(18) = (5/18)(36π) = 10π ≈ 31.42.",
+      "skill": "arc-length",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    },
+    {
+      "id": "gcu7-spiral-2",
+      "question": "SPIRAL (Quadrilaterals): In parallelogram ABCD, ∠A = (3x + 20)° and ∠B = (5x - 8)°. Find x and all four angles.",
+      "answer": "(3x+20)+(5x-8)=180 → 8x+12=180 → 8x=168 → x=21. ∠A=∠C=83°, ∠B=∠D=97°. Check: 83+97+83+97=360° ✓.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 5"
+    }
+  ],
+  "answerKeys": {
+    "gcu7-1": "AA Similarity.",
+    "gcu7-2": "SSS~, scale factor 5:3.",
+    "gcu7-3": "DE=28, EF=42.",
+    "gcu7-4": "60 feet.",
+    "gcu7-5": "96.",
+    "gcu7-6": "14.",
+    "gcu7-7": "10.",
+    "gcu7-8": "Short=5√5, long=10√5.",
+    "gcu7-9": "SAS~ scale 2:3.",
+    "gcu7-10": "Side ratio 3:5, side=20, perim ratio 3:5.",
+    "gcu7-spiral-1": "10π.",
+    "gcu7-spiral-2": "x=21. ∠A=∠C=83°, ∠B=∠D=97°."
+  }
+}

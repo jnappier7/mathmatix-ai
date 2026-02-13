@@ -28,6 +28,7 @@ const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit 
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext } = require('../utils/coursePrompt');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -702,30 +703,20 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const CourseSession = require('../models/courseSession');
                 const courseSession = await CourseSession.findById(user.activeCourseSessionId);
                 if (courseSession && courseSession.status === 'active') {
-                    const fs = require('fs');
-                    const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
-                    if (fs.existsSync(pathwayFile)) {
-                        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
-                        const currentModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
-                        const moduleFile = currentModule?.moduleFile
-                            ? path.join(__dirname, '../public/modules', courseSession.courseId, currentModule.moduleFile)
-                            : null;
-                        let scaffoldData = null;
-                        if (moduleFile && fs.existsSync(moduleFile)) {
-                            scaffoldData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
-                        }
+                    const courseCtx = loadCourseContext(courseSession);
+                    if (courseCtx) {
                         conversationContextForPrompt = conversationContextForPrompt || {};
                         conversationContextForPrompt.courseSession = {
                             courseId: courseSession.courseId,
                             courseName: courseSession.courseName,
                             currentModuleId: courseSession.currentModuleId,
-                            currentModuleTitle: currentModule?.title || courseSession.currentModuleId,
+                            currentModuleTitle: courseCtx.currentModule?.title || courseSession.currentModuleId,
                             overallProgress: courseSession.overallProgress,
                             modules: courseSession.modules,
-                            scaffold: scaffoldData?.scaffold || null,
-                            skills: scaffoldData?.skills || currentModule?.skills || [],
-                            essentialQuestions: currentModule?.essentialQuestions || [],
-                            aiInstructionModel: pathway.aiInstructionModel || null
+                            scaffold: courseCtx.scaffoldData?.scaffold || null,
+                            skills: courseCtx.scaffoldData?.skills || courseCtx.currentModule?.skills || [],
+                            essentialQuestions: courseCtx.currentModule?.essentialQuestions || [],
+                            aiInstructionModel: courseCtx.pathway.aiInstructionModel || null
                         };
                         console.log(`📚 [Course] Loaded context for ${courseSession.courseName} — module: ${courseSession.currentModuleId}`);
                     }
@@ -741,7 +732,27 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Build grading context (only include if there are recent results)
         const gradingContext = recentGradingResults && recentGradingResults.length > 0 ? recentGradingResults : null;
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+        // Use dedicated course prompt when in course mode, generic prompt otherwise
+        let systemPrompt;
+        if (conversationContextForPrompt?.courseSession && !masteryContext) {
+            // COURSE MODE: Use the dedicated instructor-led prompt
+            const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
+            const courseCtx = courseSessionDoc ? loadCourseContext(courseSessionDoc) : null;
+            if (courseCtx) {
+                systemPrompt = buildCourseSystemPrompt({
+                    userProfile: studentProfileForPrompt,
+                    tutorProfile: currentTutor,
+                    courseSession: courseSessionDoc,
+                    pathway: courseCtx.pathway,
+                    scaffoldData: courseCtx.scaffoldData,
+                    currentModule: courseCtx.currentModule
+                });
+            } else {
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+            }
+        } else {
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+        }
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
@@ -1267,6 +1278,123 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         await activeConversation.save();
 
+        // ========== COURSE SCAFFOLD PROGRESSION ENGINE ==========
+        // Parse AI signal tags and advance course progress server-side.
+        // Tags: <SCAFFOLD_ADVANCE>, <MODULE_COMPLETE>
+        let courseProgressUpdate = null;
+        if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
+            try {
+                const CourseSessionModel = require('../models/courseSession');
+                const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
+                const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
+
+                // Strip signal tags from the response text (student should not see them)
+                if (hasScaffoldAdvance || hasModuleComplete) {
+                    aiResponseText = aiResponseText
+                        .replace(/<SCAFFOLD_ADVANCE>/gi, '')
+                        .replace(/<MODULE_COMPLETE>/gi, '')
+                        .trim();
+                    // In streaming mode, tags were already sent — send replacement to overwrite
+                    if (useStreaming && !clientDisconnected) {
+                        try {
+                            res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
+                        } catch (e) { /* client may have disconnected */ }
+                    }
+                }
+
+                if (hasScaffoldAdvance || hasModuleComplete) {
+                    const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
+                    if (csDoc && csDoc.status === 'active') {
+                        const courseCtx = loadCourseContext(csDoc);
+                        const totalSteps = courseCtx?.scaffoldData?.scaffold?.length || 1;
+                        const currentIdx = csDoc.currentScaffoldIndex || 0;
+                        const mod = csDoc.modules.find(m => m.moduleId === csDoc.currentModuleId);
+
+                        if (hasModuleComplete && mod) {
+                            // MODULE COMPLETE: mark done, unlock next, reset scaffold
+                            mod.status = 'completed';
+                            mod.scaffoldProgress = 100;
+                            mod.completedAt = new Date();
+
+                            // Unlock and advance to next module
+                            const modIdx = csDoc.modules.findIndex(m => m.moduleId === csDoc.currentModuleId);
+                            if (modIdx >= 0 && modIdx < csDoc.modules.length - 1) {
+                                const nextMod = csDoc.modules[modIdx + 1];
+                                if (nextMod.status === 'locked') nextMod.status = 'available';
+                                nextMod.startedAt = new Date();
+                                csDoc.currentModuleId = nextMod.moduleId;
+                            }
+                            csDoc.currentScaffoldIndex = 0;
+
+                            // Recalculate overall progress
+                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
+                            csDoc.overallProgress = Math.round((doneCount / csDoc.modules.length) * 100);
+
+                            // Check for full course completion
+                            if (doneCount === csDoc.modules.length) {
+                                csDoc.status = 'completed';
+                                csDoc.completedAt = new Date();
+                            }
+
+                            csDoc.markModified('modules');
+                            await csDoc.save();
+
+                            // Award XP for module completion (fire-and-forget)
+                            const moduleXP = 150;
+                            try {
+                                const userService = require('../services/userService');
+                                await userService.awardXP(user._id, moduleXP, `Module complete: ${mod.moduleId}`);
+                            } catch (xpErr) {
+                                await User.findByIdAndUpdate(user._id, {
+                                    $inc: { xp: moduleXP },
+                                    $push: { xpHistory: { date: new Date(), amount: moduleXP, reason: `Module complete: ${mod.moduleId}` } }
+                                });
+                            }
+
+                            console.log(`🎓 [Course] ${user.firstName} completed module ${mod.moduleId} — progress: ${csDoc.overallProgress}%`);
+
+                            courseProgressUpdate = {
+                                event: 'module_complete',
+                                moduleId: mod.moduleId,
+                                overallProgress: csDoc.overallProgress,
+                                nextModuleId: csDoc.currentModuleId,
+                                xpAwarded: moduleXP,
+                                courseComplete: csDoc.status === 'completed'
+                            };
+
+                        } else if (hasScaffoldAdvance && mod) {
+                            // SCAFFOLD ADVANCE: move to next step in the current module
+                            const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
+                            csDoc.currentScaffoldIndex = newIdx;
+
+                            // Update module scaffoldProgress as percentage
+                            mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
+                            if (mod.status === 'available') {
+                                mod.status = 'in_progress';
+                                mod.startedAt = mod.startedAt || new Date();
+                            }
+
+                            csDoc.markModified('modules');
+                            await csDoc.save();
+
+                            const nextStep = courseCtx?.scaffoldData?.scaffold?.[newIdx];
+                            console.log(`📈 [Course] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
+
+                            courseProgressUpdate = {
+                                event: 'scaffold_advance',
+                                scaffoldIndex: newIdx,
+                                scaffoldTotal: totalSteps,
+                                scaffoldProgress: mod.scaffoldProgress,
+                                stepTitle: nextStep?.title || null
+                            };
+                        }
+                    }
+                }
+            } catch (courseProgressErr) {
+                console.error('[Course] Scaffold progression error:', courseProgressErr.message);
+            }
+        }
+
         // Smart auto-naming: Update session name if it's still generic
         // Fire-and-forget to not block the response
         const { smartAutoName } = require('../services/chatService');
@@ -1466,7 +1594,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             aiTimeUsed: aiProcessingSeconds,
             freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
                 ? Math.max(0, (20 * 60) - updatedWeeklyAI)
-                : null
+                : null,
+            // Course progress update (if student is in a course and progress changed)
+            courseProgress: courseProgressUpdate || null
         };
 
         if (useStreaming) {
@@ -2060,20 +2190,78 @@ async function handleGreetingRequest(req, res, userId) {
 
         // Build messages for AI - the ghost message is the "user" message
         // but we add a system instruction to respond as if initiating
-        const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
 
-        // Check if we should offer Starting Point in this greeting (only once, ever)
-        const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
+        // Check if user is in an active course session
+        let courseContext = null;
+        let isCourseGreeting = false;
+        if (user.activeCourseSessionId) {
+            try {
+                const CourseSession = require('../models/courseSession');
+                const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+                if (courseSession && courseSession.status === 'active') {
+                    const ctx = loadCourseContext(courseSession);
+                    if (ctx) {
+                        courseContext = { courseSession, ...ctx };
+                        isCourseGreeting = true;
 
-        let greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+                        // Switch to the course's conversation so the greeting lands there
+                        if (courseSession.conversationId) {
+                            const courseConv = await Conversation.findById(courseSession.conversationId);
+                            if (courseConv) {
+                                activeConversation = courseConv;
+                                if (user.activeConversationId?.toString() !== courseConv._id.toString()) {
+                                    user.activeConversationId = courseConv._id;
+                                    await user.save();
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (courseErr) {
+                console.warn('[Greeting] Could not load course context:', courseErr.message);
+            }
+        }
 
-        // Add Starting Point offer (only on first session, never again)
-        if (shouldOfferStartingPoint) {
-            greetingInstruction += `
+        let systemPrompt;
+        let greetingInstruction;
+        let maxTokens = 150;
+
+        if (isCourseGreeting && courseContext) {
+            // COURSE MODE: Use dedicated course prompt
+            systemPrompt = buildCourseSystemPrompt({
+                userProfile: user.toObject(),
+                tutorProfile: currentTutor,
+                courseSession: courseContext.courseSession,
+                pathway: courseContext.pathway,
+                scaffoldData: courseContext.scaffoldData,
+                currentModule: courseContext.currentModule
+            });
+            greetingInstruction = buildCourseGreetingInstruction({
+                userProfile: user.toObject(),
+                courseSession: courseContext.courseSession,
+                pathway: courseContext.pathway,
+                scaffoldData: courseContext.scaffoldData,
+                currentModule: courseContext.currentModule
+            });
+            maxTokens = 800; // Course greetings include teaching content
+            console.log(`[Greeting] Course mode: ${courseContext.courseSession.courseName}, module: ${courseContext.courseSession.currentModuleId}`);
+        } else {
+            // GENERAL TUTORING MODE: Original greeting behavior
+            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+
+            // Check if we should offer Starting Point in this greeting (only once, ever)
+            const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
+
+            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+
+            // Add Starting Point offer (only on first session, never again)
+            if (shouldOfferStartingPoint) {
+                greetingInstruction += `
 
 IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left - it's a quick quiz to figure out where you're at so I can help you better. No rush though!"
 
 Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready.`;
+            }
         }
 
         const messagesForAI = [
@@ -2097,7 +2285,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             res.flushHeaders();
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
                 let fullResponse = '';
 
                 for await (const chunk of stream) {
@@ -2127,7 +2315,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 await activeConversation.save();
 
                 // Mark Starting Point as offered (only do this once, ever)
-                if (shouldOfferStartingPoint) {
+                if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
                     await User.findByIdAndUpdate(userId, {
                         startingPointOffered: true,
                         startingPointOfferedAt: new Date()
@@ -2151,7 +2339,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
 
         } else {
             // NON-STREAMING MODE
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
             const greetingText = completion.choices[0].message.content.trim();
 
             // Track AI processing time
@@ -2170,7 +2358,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             await activeConversation.save();
 
             // Mark Starting Point as offered (only do this once, ever)
-            if (shouldOfferStartingPoint) {
+            if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
                 await User.findByIdAndUpdate(userId, {
                     startingPointOffered: true,
                     startingPointOfferedAt: new Date()

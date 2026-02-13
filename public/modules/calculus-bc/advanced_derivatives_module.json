@@ -1,0 +1,288 @@
+{
+  "moduleId": "advanced_derivatives",
+  "course": "AP Calculus BC",
+  "unit": 3,
+  "title": "Composite, Implicit, Inverse Derivatives",
+  "weeks": "7-8",
+  "estimatedDuration": 50,
+  "description": "Extend differentiation beyond basic rules. The product and quotient rules handle multiplied/divided functions, the chain rule handles compositions, implicit differentiation handles curves not solvable for y, and inverse-function derivatives connect a function's rate of change to its inverse's. These four techniques—combined with basic rules from Unit 2—give you the tools to differentiate any function the AP exam throws at you.",
+  "skills": ["product-quotient-rules", "chain-rule", "implicit-differentiation", "inverse-function-derivatives"],
+  "standardsAlignment": ["CED 2.8", "CED 2.9", "CED 3.1", "CED 3.2", "CED 3.3", "CED 3.4", "CED 3.5"],
+  "goals": [
+    "Apply the product rule and quotient rule to differentiate products and quotients of functions",
+    "Use the chain rule to differentiate composite functions, including nested compositions",
+    "Perform implicit differentiation to find dy/dx for implicitly defined curves",
+    "Compute derivatives of inverse functions using the inverse-function derivative formula and derivatives of inverse trig functions"
+  ],
+  "instructionalStrategy": [
+    "Build product/quotient rules first — students need these before chain rule examples that involve products inside compositions.",
+    "Chain rule is the single most important technique. Drill the outer/inner identification until it's automatic.",
+    "Implicit differentiation is the chain rule in disguise — every y-term gets dy/dx because y is a function of x.",
+    "Inverse-function derivatives tie back to composition from Unit 0. Make the connection to (f⁻¹)'(a) = 1/f'(f⁻¹(a)) explicit."
+  ],
+  "aiFlexLevel": "medium",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "product-quotient-rules",
+      "title": "Product & Quotient Rules: Differentiating Combinations",
+      "text": "**Why New Rules?**\n\nThe derivative of a product is NOT the product of the derivatives. Try it: d/dx[x · x] should give d/dx[x²] = 2x, but (d/dx[x])(d/dx[x]) = 1 · 1 = 1. Wrong!\n\n**Product Rule:**\nIf h(x) = f(x)g(x), then:\nh'(x) = f'(x)g(x) + f(x)g'(x)\n\nThink: \"derivative of the first times the second, plus the first times the derivative of the second.\"\n\n**Quotient Rule:**\nIf h(x) = f(x)/g(x), then:\nh'(x) = [f'(x)g(x) − f(x)g'(x)] / [g(x)]²\n\nMnemonic: \"lo d-hi minus hi d-lo, over lo-lo\" (lo = denominator, hi = numerator).\n\n**When to use which:**\n• Two functions multiplied → product rule\n• One function divided by another → quotient rule\n• Always simplify first if possible — sometimes you can avoid these rules entirely by canceling or rewriting.",
+      "initialPrompt": "Use the product rule to verify: d/dx[x · x] = 2x. Does the product rule fix the mistake we showed above?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "product-quotient-rules",
+      "title": "I-Do: Product & Quotient Rules",
+      "examples": [
+        {
+          "problem": "Find d/dx[x² sin x].",
+          "solution": "**Identify:** This is a product of f(x) = x² and g(x) = sin x.\n\n**Apply product rule:** f'g + fg'\n• f'(x) = 2x\n• g'(x) = cos x\n\nd/dx[x² sin x] = 2x · sin x + x² · cos x\n\n**= 2x sin x + x² cos x**\n\nOptionally factor: = x(2 sin x + x cos x)"
+        },
+        {
+          "problem": "Find d/dx[(3x + 1)/(x² + 1)].",
+          "solution": "**Identify:** This is a quotient. f(x) = 3x + 1, g(x) = x² + 1.\n\n**Apply quotient rule:** (f'g − fg')/g²\n• f'(x) = 3\n• g'(x) = 2x\n\nd/dx = [3(x² + 1) − (3x + 1)(2x)] / (x² + 1)²\n= [3x² + 3 − 6x² − 2x] / (x² + 1)²\n\n**= (−3x² − 2x + 3) / (x² + 1)²**"
+        },
+        {
+          "problem": "Find d/dx[eˣ cos x].",
+          "solution": "**Identify:** Product of f(x) = eˣ and g(x) = cos x.\n\n**Apply product rule:** f'g + fg'\n• f'(x) = eˣ\n• g'(x) = −sin x\n\nd/dx[eˣ cos x] = eˣ · cos x + eˣ · (−sin x)\n\n**= eˣ(cos x − sin x)**\n\n**AP note:** Products involving eˣ and trig functions appear frequently. The eˣ always factors out."
+        }
+      ],
+      "initialPrompt": "In example 2, what would happen if you accidentally swapped the order in the quotient rule numerator (wrote fg' − f'g instead of f'g − fg')? What kind of error does that produce?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "product-quotient-rules",
+      "title": "We-Do: Product & Quotient Rules",
+      "problems": [
+        {
+          "id": "ad-wp1",
+          "question": "Find d/dx[x³ ln x].",
+          "answer": "3x² ln x + x² = x²(3 ln x + 1)",
+          "hints": [
+            "Product rule: f = x³, g = ln x. So f' = 3x², g' = 1/x.",
+            "f'g + fg' = 3x² ln x + x³ · (1/x) = 3x² ln x + x² = x²(3 ln x + 1)."
+          ]
+        },
+        {
+          "id": "ad-wp2",
+          "question": "Find d/dx[(x² − 1)/(x² + 1)].",
+          "answer": "4x/(x² + 1)²",
+          "hints": [
+            "Quotient rule: f = x²−1, g = x²+1, f' = 2x, g' = 2x.",
+            "(f'g − fg')/g² = [2x(x²+1) − (x²−1)(2x)] / (x²+1)² = [2x³+2x − 2x³+2x] / (x²+1)² = 4x/(x²+1)²."
+          ]
+        },
+        {
+          "id": "ad-wp3",
+          "question": "Find d/dx[sin x · cos x].",
+          "answer": "cos²x − sin²x = cos(2x)",
+          "hints": [
+            "Product rule: f = sin x, g = cos x, f' = cos x, g' = −sin x.",
+            "f'g + fg' = cos x · cos x + sin x · (−sin x) = cos²x − sin²x = cos(2x)."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, identify f and g in the product f(x)g(x), then find f' and g' before applying the rule."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "chain-rule",
+      "title": "The Chain Rule: Differentiating Compositions",
+      "text": "**The Big Idea:**\n\nThe chain rule handles composite functions — functions inside functions. It connects directly to composition from Unit 0.\n\n**The Chain Rule:**\nIf h(x) = f(g(x)), then:\nh'(x) = f'(g(x)) · g'(x)\n\n**In words:** Derivative of the outer (evaluated at the inner) times the derivative of the inner.\n\n**How to identify outer and inner:**\n• sin(x³): outer = sin(□), inner = x³\n• (2x + 1)⁵: outer = (□)⁵, inner = 2x + 1\n• e^(sin x): outer = e^(□), inner = sin x\n• ln(x² + 1): outer = ln(□), inner = x² + 1\n\n**Nested chains:** For f(g(h(x))), apply the chain rule layer by layer:\nf'(g(h(x))) · g'(h(x)) · h'(x)\n\n**This is the most important differentiation technique.** Nearly every derivative on the AP exam involves the chain rule somewhere.",
+      "initialPrompt": "Identify the outer and inner functions in each: (a) √(3x + 7), (b) sin²(x), (c) e^(x²). What would g'(x) be for each?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "chain-rule",
+      "title": "I-Do: The Chain Rule",
+      "examples": [
+        {
+          "problem": "Find d/dx[(3x² + 5)⁴].",
+          "solution": "**Identify:** outer = (□)⁴, inner = 3x² + 5.\n\n**Apply chain rule:** derivative of outer, evaluated at inner, times derivative of inner.\n\nd/dx = 4(3x² + 5)³ · d/dx[3x² + 5]\n= 4(3x² + 5)³ · 6x\n\n**= 24x(3x² + 5)³**"
+        },
+        {
+          "problem": "Find d/dx[sin(x³)].",
+          "solution": "**Identify:** outer = sin(□), inner = x³.\n\n**Chain rule:**\nd/dx = cos(x³) · d/dx[x³]\n= cos(x³) · 3x²\n\n**= 3x² cos(x³)**\n\n**Common error:** Students write cos(3x²) — that's wrong. The cosine is evaluated at the INNER function x³, not its derivative."
+        },
+        {
+          "problem": "Find d/dx[cos²(3x)]. (Nested composition — three layers.)",
+          "solution": "**Identify the layers:**\n• Outermost: (□)² — squaring\n• Middle: cos(□) — cosine\n• Innermost: 3x — linear\n\n**Rewrite:** cos²(3x) = [cos(3x)]²\n\n**Apply chain rule layer by layer:**\nd/dx = 2[cos(3x)]¹ · d/dx[cos(3x)]\n= 2 cos(3x) · [−sin(3x)] · d/dx[3x]\n= 2 cos(3x) · (−sin(3x)) · 3\n\n**= −6 cos(3x) sin(3x)**\n\nUsing the double-angle identity sin(2θ) = 2 sin θ cos θ:\n= **−3 sin(6x)**"
+        }
+      ],
+      "initialPrompt": "In example 3, we had three layers. How many factors appear in the final derivative? Does the number of factors always match the number of layers?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "chain-rule",
+      "title": "We-Do: The Chain Rule",
+      "problems": [
+        {
+          "id": "ad-wp4",
+          "question": "Find d/dx[ln(x² + 1)].",
+          "answer": "2x/(x² + 1)",
+          "hints": [
+            "Outer: ln(□), inner: x² + 1. Derivative of ln(□) is 1/(□).",
+            "d/dx = [1/(x² + 1)] · 2x = 2x/(x² + 1)."
+          ]
+        },
+        {
+          "id": "ad-wp5",
+          "question": "Find d/dx[(2x − 1)⁵].",
+          "answer": "10(2x − 1)⁴",
+          "hints": [
+            "Outer: (□)⁵, inner: 2x − 1.",
+            "d/dx = 5(2x − 1)⁴ · 2 = 10(2x − 1)⁴."
+          ]
+        },
+        {
+          "id": "ad-wp6",
+          "question": "Find d/dx[e^(3x²)].",
+          "answer": "6xe^(3x²)",
+          "hints": [
+            "Outer: e^(□), inner: 3x². Derivative of e^(□) is e^(□).",
+            "d/dx = e^(3x²) · 6x = 6xe^(3x²)."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what is the outer function and what is the inner function? What is the derivative of ln(□)?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "implicit-differentiation",
+      "title": "Implicit Differentiation & Inverse Function Derivatives",
+      "text": "**Implicit Differentiation — When y Isn't Isolated:**\n\nSome curves (circles, ellipses, the folium of Descartes) can't be written as y = f(x). For these, differentiate both sides with respect to x, treating y as a function of x.\n\n**Key rule:** Every time you differentiate a term involving y, attach dy/dx (by the chain rule — y is the inner function).\n\nExample setup: x² + y² = 25\n→ 2x + 2y(dy/dx) = 0\n→ dy/dx = −x/y\n\n**Inverse Function Derivatives:**\n\nIf g = f⁻¹, then:\ng'(a) = 1 / f'(g(a))\n\nEquivalently: (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\n**Inverse Trig Derivatives (memorize):**\n• d/dx[arcsin x] = 1/√(1 − x²)\n• d/dx[arccos x] = −1/√(1 − x²)\n• d/dx[arctan x] = 1/(1 + x²)\n\nThese combine with the chain rule: d/dx[arctan(3x)] = [1/(1 + 9x²)] · 3 = 3/(1 + 9x²).",
+      "initialPrompt": "For x² + y² = 25, why does differentiating y² give 2y(dy/dx) instead of just 2y? What rule is at work?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "implicit-differentiation",
+      "title": "I-Do: Implicit Differentiation & Inverse Derivatives",
+      "examples": [
+        {
+          "problem": "Find dy/dx for the circle x² + y² = 25. Then find the slope at (3, 4).",
+          "solution": "**Differentiate both sides with respect to x:**\n2x + 2y(dy/dx) = 0\n\n**Solve for dy/dx:**\n2y(dy/dx) = −2x\ndy/dx = −x/y\n\n**At (3, 4):**\ndy/dx = −3/4\n\n**Verify:** (3, 4) is on the circle: 9 + 16 = 25 ✓\nThe tangent line at (3, 4) has slope −3/4, which makes geometric sense — it's perpendicular to the radius from (0, 0) to (3, 4) (slope 4/3), and (−3/4)(4/3) = −1 ✓"
+        },
+        {
+          "problem": "Find dy/dx for the folium of Descartes: x³ + y³ = 6xy.",
+          "solution": "**Differentiate both sides:**\n3x² + 3y²(dy/dx) = 6y + 6x(dy/dx)\n\n**Note:** The right side uses the product rule on 6xy: d/dx[6xy] = 6y + 6x(dy/dx).\n\n**Collect dy/dx terms on one side:**\n3y²(dy/dx) − 6x(dy/dx) = 6y − 3x²\n(3y² − 6x)(dy/dx) = 6y − 3x²\n\n**Solve:**\ndy/dx = (6y − 3x²)/(3y² − 6x)\n\n**Simplify (factor 3):**\n**dy/dx = (2y − x²)/(y² − 2x)**"
+        },
+        {
+          "problem": "Given: f(1) = 4, f'(1) = 5, f(4) = 1. Find (f⁻¹)'(4).",
+          "solution": "**Formula:** (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\nWe need (f⁻¹)'(4).\n\n**Step 1 — Find f⁻¹(4):**\nSince f(1) = 4, we know f⁻¹(4) = 1.\n\n**Step 2 — Apply the formula:**\n(f⁻¹)'(4) = 1 / f'(f⁻¹(4)) = 1 / f'(1) = **1/5**\n\n**This exact pattern — table of f values and f' values, find (f⁻¹)' — appears on nearly every AP Calculus exam.**"
+        }
+      ],
+      "initialPrompt": "In example 2, why did differentiating 6xy require the product rule? What are the two 'factors' being multiplied?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "implicit-differentiation",
+      "title": "We-Do: Implicit Differentiation & Inverse Derivatives",
+      "problems": [
+        {
+          "id": "ad-wp7",
+          "question": "Find dy/dx for x²y + y³ = 10.",
+          "answer": "dy/dx = −2xy/(x² + 3y²)",
+          "hints": [
+            "Differentiate: d/dx[x²y] needs the product rule: 2xy + x²(dy/dx). Then d/dx[y³] = 3y²(dy/dx). Right side: 0.",
+            "2xy + x²(dy/dx) + 3y²(dy/dx) = 0. Factor: (x² + 3y²)(dy/dx) = −2xy. So dy/dx = −2xy/(x² + 3y²)."
+          ]
+        },
+        {
+          "id": "ad-wp8",
+          "question": "Find the slope of the tangent to x² + xy + y² = 7 at the point (1, 2).",
+          "answer": "−4/5",
+          "hints": [
+            "Differentiate: 2x + [y + x(dy/dx)] + 2y(dy/dx) = 0. Collect dy/dx terms: (x + 2y)(dy/dx) = −2x − y.",
+            "dy/dx = −(2x + y)/(x + 2y). At (1, 2): dy/dx = −(2 + 2)/(1 + 4) = −4/5."
+          ]
+        },
+        {
+          "id": "ad-wp9",
+          "question": "Given g is the inverse of f, with f(3) = 7 and f'(3) = −2. Find g'(7).",
+          "answer": "−1/2",
+          "hints": [
+            "Use g'(a) = 1/f'(g(a)). We need g'(7). Since f(3) = 7, g(7) = 3.",
+            "g'(7) = 1/f'(g(7)) = 1/f'(3) = 1/(−2) = −1/2."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, d/dx[x²y] requires the product rule because x² and y are both functions of x. What are the two pieces?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Advanced Derivatives Mixed Practice",
+      "problems": [
+        {
+          "id": "ad-yp1",
+          "question": "Find d/dx[x² eˣ].",
+          "answer": "eˣ(x² + 2x) or xeˣ(x + 2)",
+          "skill": "product-quotient-rules",
+          "hints": ["Product rule: f = x², g = eˣ. f'g + fg' = 2xeˣ + x²eˣ = eˣ(2x + x²)."]
+        },
+        {
+          "id": "ad-yp2",
+          "question": "Find d/dx[tan(5x)].",
+          "answer": "5 sec²(5x)",
+          "skill": "chain-rule",
+          "hints": ["Outer: tan(□), inner: 5x. d/dx[tan(□)] = sec²(□). Chain rule: sec²(5x) · 5 = 5 sec²(5x)."]
+        },
+        {
+          "id": "ad-yp3",
+          "question": "Find d/dx[ln(sin x)].",
+          "answer": "cot x",
+          "skill": "chain-rule",
+          "hints": ["Outer: ln(□), inner: sin x. d/dx = (1/sin x) · cos x = cos x/sin x = cot x."]
+        },
+        {
+          "id": "ad-yp4",
+          "question": "Find dy/dx for y² + xy = 6.",
+          "answer": "dy/dx = −y/(2y + x)",
+          "skill": "implicit-differentiation",
+          "hints": ["Differentiate: 2y(dy/dx) + [y + x(dy/dx)] = 0. Collect: (2y + x)(dy/dx) = −y. So dy/dx = −y/(2y + x)."]
+        },
+        {
+          "id": "ad-yp5",
+          "question": "Find d/dx[arctan(3x)].",
+          "answer": "3/(1 + 9x²)",
+          "skill": "inverse-function-derivatives",
+          "hints": ["d/dx[arctan(□)] = 1/(1 + □²). Chain rule: [1/(1 + (3x)²)] · 3 = 3/(1 + 9x²)."]
+        },
+        {
+          "id": "ad-yp6",
+          "question": "Given: f(2) = 5, f'(2) = 3, f(5) = 2. Find (f⁻¹)'(5).",
+          "answer": "1/3",
+          "skill": "inverse-function-derivatives",
+          "hints": ["Since f(2) = 5, f⁻¹(5) = 2. So (f⁻¹)'(5) = 1/f'(f⁻¹(5)) = 1/f'(2) = 1/3."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "ad-wp1": "3x² ln x + x² = x²(3 ln x + 1).",
+    "ad-wp2": "4x/(x² + 1)².",
+    "ad-wp3": "cos²x − sin²x = cos(2x).",
+    "ad-wp4": "2x/(x² + 1).",
+    "ad-wp5": "10(2x − 1)⁴.",
+    "ad-wp6": "6xe^(3x²).",
+    "ad-wp7": "−2xy/(x² + 3y²).",
+    "ad-wp8": "−4/5.",
+    "ad-wp9": "−1/2.",
+    "ad-yp1": "eˣ(x² + 2x).",
+    "ad-yp2": "5 sec²(5x).",
+    "ad-yp3": "cot x.",
+    "ad-yp4": "−y/(2y + x).",
+    "ad-yp5": "3/(1 + 9x²).",
+    "ad-yp6": "1/3."
+  }
+}

@@ -76,16 +76,36 @@ class TI30XSMultiView {
         this.cursorPos += text.length;
     }
 
+    insertPrefix(text) {
+        if (this.waitingForOperand) {
+            this.currentInput = '';
+            this.cursorPos = 0;
+            this.waitingForOperand = false;
+        }
+        this.insertAtCursor(text);
+        this.updateDisplay();
+    }
+
     deleteAtCursor() {
         if (this.cursorPos <= 0) return;
         const before = this.currentInput.substring(0, this.cursorPos);
         let len = 1;
-        if (before.endsWith('▸n/d◂')) len = 5;
-        else if (before.endsWith('nCr')) len = 3;
-        else if (before.endsWith('nPr')) len = 3;
-        else if (before.endsWith('Ans')) len = 3;
-        else if (before.endsWith('ⁿ√')) len = 2;
-        else if (before.endsWith('(-')) len = 2;
+        // Check function name tokens (longest first)
+        const fnTokens = ['atanh(', 'asinh(', 'acosh(', 'asin(', 'acos(', 'atan(', 'sinh(', 'cosh(', 'tanh(', 'sin(', 'cos(', 'tan(', 'log(', 'abs(', 'ln('];
+        for (const token of fnTokens) {
+            if (before.endsWith(token)) { len = token.length; break; }
+        }
+        if (len === 1) {
+            if (before.endsWith('10^(')) len = 4;
+            else if (before.endsWith('e^(')) len = 3;
+            else if (before.endsWith('▸n/d◂')) len = 5;
+            else if (before.endsWith('nCr')) len = 3;
+            else if (before.endsWith('nPr')) len = 3;
+            else if (before.endsWith('Ans')) len = 3;
+            else if (before.endsWith('ⁿ√')) len = 2;
+            else if (before.endsWith('√(')) len = 2;
+            else if (before.endsWith('(-')) len = 2;
+        }
         this.currentInput = this.currentInput.slice(0, this.cursorPos - len) + this.currentInput.slice(this.cursorPos);
         this.cursorPos -= len;
     }
@@ -94,12 +114,21 @@ class TI30XSMultiView {
         if (this.cursorPos <= 0) return;
         const before = this.currentInput.substring(0, this.cursorPos);
         let len = 1;
-        if (before.endsWith('▸n/d◂')) len = 5;
-        else if (before.endsWith('nCr')) len = 3;
-        else if (before.endsWith('nPr')) len = 3;
-        else if (before.endsWith('Ans')) len = 3;
-        else if (before.endsWith('ⁿ√')) len = 2;
-        else if (before.endsWith('(-')) len = 2;
+        const fnTokens = ['atanh(', 'asinh(', 'acosh(', 'asin(', 'acos(', 'atan(', 'sinh(', 'cosh(', 'tanh(', 'sin(', 'cos(', 'tan(', 'log(', 'abs(', 'ln('];
+        for (const token of fnTokens) {
+            if (before.endsWith(token)) { len = token.length; break; }
+        }
+        if (len === 1) {
+            if (before.endsWith('10^(')) len = 4;
+            else if (before.endsWith('e^(')) len = 3;
+            else if (before.endsWith('▸n/d◂')) len = 5;
+            else if (before.endsWith('nCr')) len = 3;
+            else if (before.endsWith('nPr')) len = 3;
+            else if (before.endsWith('Ans')) len = 3;
+            else if (before.endsWith('ⁿ√')) len = 2;
+            else if (before.endsWith('√(')) len = 2;
+            else if (before.endsWith('(-')) len = 2;
+        }
         this.cursorPos = Math.max(0, this.cursorPos - len);
     }
 
@@ -107,12 +136,21 @@ class TI30XSMultiView {
         if (this.cursorPos >= this.currentInput.length) return;
         const after = this.currentInput.substring(this.cursorPos);
         let len = 1;
-        if (after.startsWith('▸n/d◂')) len = 5;
-        else if (after.startsWith('nCr')) len = 3;
-        else if (after.startsWith('nPr')) len = 3;
-        else if (after.startsWith('Ans')) len = 3;
-        else if (after.startsWith('ⁿ√')) len = 2;
-        else if (after.startsWith('(-')) len = 2;
+        const fnTokens = ['atanh(', 'asinh(', 'acosh(', 'asin(', 'acos(', 'atan(', 'sinh(', 'cosh(', 'tanh(', 'sin(', 'cos(', 'tan(', 'log(', 'abs(', 'ln('];
+        for (const token of fnTokens) {
+            if (after.startsWith(token)) { len = token.length; break; }
+        }
+        if (len === 1) {
+            if (after.startsWith('10^(')) len = 4;
+            else if (after.startsWith('e^(')) len = 3;
+            else if (after.startsWith('▸n/d◂')) len = 5;
+            else if (after.startsWith('nCr')) len = 3;
+            else if (after.startsWith('nPr')) len = 3;
+            else if (after.startsWith('Ans')) len = 3;
+            else if (after.startsWith('ⁿ√')) len = 2;
+            else if (after.startsWith('√(')) len = 2;
+            else if (after.startsWith('(-')) len = 2;
+        }
         this.cursorPos = Math.min(this.currentInput.length, this.cursorPos + len);
     }
 
@@ -214,14 +252,16 @@ class TI30XSMultiView {
         if (this.tableMode === 'expr') {
             const tableInserts = {
                 'pi': 'π', 'power': '^', 'square': 'x²', 'sqrt': '√(',
-                'lparen': '(', 'rparen': ')', 'decimal': '.', 'negative': '(-'
+                'lparen': '(', 'rparen': ')', 'decimal': '.', 'negative': '(-',
+                'log': 'log(', 'ln': 'ln(', 'abs': 'abs(',
+                'sin': 'sin(', 'cos': 'cos(', 'tan': 'tan(',
+                'asin': 'asin(', 'acos': 'acos(', 'atan': 'atan(',
+                'pow10': '10^(', 'exp': 'e^('
             };
             if (fn === 'negative') {
                 this.tableExpression += '(-';
             } else if (tableInserts[fn]) {
                 this.tableExpression += tableInserts[fn];
-            } else if (fn === 'sin' || fn === 'cos' || fn === 'tan') {
-                this.tableExpression += fn + '(';
             }
             this.renderTableSetup();
             return;
@@ -244,18 +284,48 @@ class TI30XSMultiView {
         }
 
         switch(fn) {
-            case 'sin': this.applyTrigFunction(this.hypMode ? 'sinh' : 'sin'); break;
-            case 'cos': this.applyTrigFunction(this.hypMode ? 'cosh' : 'cos'); break;
-            case 'tan': this.applyTrigFunction(this.hypMode ? 'tanh' : 'tan'); break;
-            case 'asin': this.applyTrigFunction(this.hypMode ? 'asinh' : 'asin'); break;
-            case 'acos': this.applyTrigFunction(this.hypMode ? 'acosh' : 'acos'); break;
-            case 'atan': this.applyTrigFunction(this.hypMode ? 'atanh' : 'atan'); break;
-            case 'log': this.applyFunction('log10'); break;
-            case 'pow10': this.applyFunction('pow10'); break;
-            case 'ln': this.applyFunction('ln'); break;
-            case 'exp': this.applyFunction('exp'); break;
+            case 'sin': {
+                const name = this.hypMode ? 'sinh(' : 'sin(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'cos': {
+                const name = this.hypMode ? 'cosh(' : 'cos(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'tan': {
+                const name = this.hypMode ? 'tanh(' : 'tan(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'asin': {
+                const name = this.hypMode ? 'asinh(' : 'asin(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'acos': {
+                const name = this.hypMode ? 'acosh(' : 'acos(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'atan': {
+                const name = this.hypMode ? 'atanh(' : 'atan(';
+                this.insertPrefix(name);
+                this.hypMode = false; this.hypIndicator.textContent = '';
+                break;
+            }
+            case 'log': this.insertPrefix('log('); break;
+            case 'pow10': this.insertPrefix('10^('); break;
+            case 'ln': this.insertPrefix('ln('); break;
+            case 'exp': this.insertPrefix('e^('); break;
             case 'square': this.applyFunction('square'); break;
-            case 'sqrt': this.applyFunction('sqrt'); break;
+            case 'sqrt': this.insertPrefix('√('); break;
             case 'power':
                 if (this.waitingForOperand) {
                     this.currentInput = 'Ans^';
@@ -322,7 +392,7 @@ class TI30XSMultiView {
                 this.insertAtCursor(',');
                 this.updateDisplay(); break;
             case 'polar': this.applyFunction('dms'); break;
-            case 'abs': this.applyFunction('abs'); break;
+            case 'abs': this.insertPrefix('abs('); break;
             case 'ans':
                 if (this.waitingForOperand) { this.currentInput = ''; this.cursorPos = 0; this.waitingForOperand = false; }
                 this.insertAtCursor('Ans');
@@ -633,6 +703,7 @@ class TI30XSMultiView {
     // ==================== TRIG FUNCTIONS ====================
 
     applyTrigFunction(fn) {
+        // Legacy support — trig is now prefix-based via safeEval
         const value = this.getCurrentValue();
         if (value === null) return;
         let result;
@@ -680,29 +751,11 @@ class TI30XSMultiView {
         if (value === null) return;
         let result;
         switch(fn) {
-            case 'log10':
-                if (value <= 0) { this.showError('DOMAIN'); return; }
-                result = Math.log10(value); break;
-            case 'ln':
-                if (value <= 0) { this.showError('DOMAIN'); return; }
-                result = Math.log(value); break;
-            case 'pow10':
-                result = Math.pow(10, value);
-                if (!isFinite(result)) { this.showError('OVERFLOW'); return; }
-                break;
-            case 'exp':
-                result = Math.exp(value);
-                if (!isFinite(result)) { this.showError('OVERFLOW'); return; }
-                break;
-            case 'abs': result = Math.abs(value); break;
             case 'factorial':
                 if (value < 0 || !Number.isInteger(value)) { this.showError('DOMAIN'); return; }
                 if (value > 170) { this.showError('OVERFLOW'); return; }
                 result = this.factorial(value); break;
             case 'percent': result = value / 100; break;
-            case 'sqrt':
-                if (value < 0) { this.showError('DOMAIN'); return; }
-                result = Math.sqrt(value); break;
             case 'square': result = value * value; break;
             case 'reciprocal':
                 if (value === 0) { this.showError('DIVIDE BY 0'); return; }
@@ -953,10 +1006,22 @@ class TI30XSMultiView {
                     .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**')
                     .replace(/x²/g, `(${x})*(${x})`);
 
-                // Handle trig in table expressions
-                expr = expr.replace(/sin\(/g, 'Math.sin(')
+                // Handle functions in table expressions
+                expr = expr.replace(/atanh\(/g, 'Math.atanh(')
+                           .replace(/asinh\(/g, 'Math.asinh(')
+                           .replace(/acosh\(/g, 'Math.acosh(')
+                           .replace(/asin\(/g, 'Math.asin(')
+                           .replace(/acos\(/g, 'Math.acos(')
+                           .replace(/atan\(/g, 'Math.atan(')
+                           .replace(/sinh\(/g, 'Math.sinh(')
+                           .replace(/cosh\(/g, 'Math.cosh(')
+                           .replace(/tanh\(/g, 'Math.tanh(')
+                           .replace(/sin\(/g, 'Math.sin(')
                            .replace(/cos\(/g, 'Math.cos(')
                            .replace(/tan\(/g, 'Math.tan(')
+                           .replace(/log\(/g, 'Math.log10(')
+                           .replace(/ln\(/g, 'Math.log(')
+                           .replace(/abs\(/g, 'Math.abs(')
                            .replace(/√\(/g, 'Math.sqrt(');
 
                 // Implicit multiplication
@@ -1172,16 +1237,25 @@ class TI30XSMultiView {
             expr = expr.replace(/(\d+\.?\d*)nPr(\d+\.?\d*)/g, (_, n, r) =>
                 this.permutation(parseFloat(n), parseFloat(r)));
 
-            // Roots
-            expr = expr.replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)')
-                       .replace(/√(\d+\.?\d*)/g, 'Math.sqrt($1)');
+            // Nth roots (before √ conversion)
             expr = expr.replace(/(\d+\.?\d*)ⁿ√\(([^)]+)\)/g, 'Math.pow($2,1/$1)')
                        .replace(/(\d+\.?\d*)ⁿ√(\d+\.?\d*)/g, 'Math.pow($2,1/$1)');
 
+            // √ symbol → sqrt function (safeEval defines it)
+            expr = expr.replace(/√(\d+\.?\d*)/g, 'sqrt($1)');
+            expr = expr.replace(/√/g, 'sqrt');
+
             // Implicit multiplication
-            expr = expr.replace(/(\d)\(/g, '$1*(')
-                       .replace(/\)(\d)/g, ')*$1')
-                       .replace(/\)\(/g, ')*(');
+            const fnPat = '(?:atanh|asinh|acosh|asin|acos|atan|sinh|cosh|tanh|sin|cos|tan|log|ln|abs|sqrt)';
+            expr = expr.replace(/(\d)\(/g, '$1*(');
+            expr = expr.replace(/\)(\d)/g, ')*$1');
+            expr = expr.replace(/\)\(/g, ')*(');
+            // Number before function name: 2sin(30) → 2*sin(30)
+            expr = expr.replace(new RegExp('(\\d)(' + fnPat + '\\()', 'g'), '$1*$2');
+            // ) before function name: )sin(30) → )*sin(30)
+            expr = expr.replace(new RegExp('\\)(' + fnPat + '\\()', 'g'), ')*$1');
+            // π result before function or paren (already replaced with number)
+            // e before ( for implicit mult: handled by (\d)\( above since e is not a digit
 
             const result = this.safeEval(expr);
 
@@ -1266,10 +1340,40 @@ class TI30XSMultiView {
     }
 
     safeEval(expression) {
-        const stripped = expression.replace(/Math\.(pow|sqrt|PI|sin|cos|tan|log|exp|abs|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh|log10)/g, '').replace(/\s/g, '');
+        // Strip allowed tokens for safety check
+        const stripped = expression
+            .replace(/Math\.(pow|sqrt|PI|E|sin|cos|tan|log|log10|exp|abs|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh)/g, '')
+            .replace(/\b(atanh|asinh|acosh|asin|acos|atan|sinh|cosh|tanh|sin|cos|tan|log|ln|abs|sqrt|e)\b/g, '')
+            .replace(/\s/g, '');
         if (/[a-df-oq-zA-DF-OQ-Z_$]/.test(stripped)) throw new Error('Invalid');
-        try { return new Function('return ' + expression)(); }
-        catch (e) { throw new Error('Invalid'); }
+
+        const isDeg = this.angleMode === 'DEG';
+        try {
+            return new Function('isDeg', `
+                const _r = isDeg ? Math.PI/180 : 1;
+                const _d = isDeg ? 180/Math.PI : 1;
+                const sin = (v) => Math.sin(v * _r);
+                const cos = (v) => Math.cos(v * _r);
+                const tan = (v) => Math.tan(v * _r);
+                const asin = (v) => Math.asin(v) * _d;
+                const acos = (v) => Math.acos(v) * _d;
+                const atan = (v) => Math.atan(v) * _d;
+                const sinh = (v) => Math.sinh(v);
+                const cosh = (v) => Math.cosh(v);
+                const tanh = (v) => Math.tanh(v);
+                const asinh = (v) => Math.asinh(v);
+                const acosh = (v) => Math.acosh(v);
+                const atanh = (v) => Math.atanh(v);
+                const log = (v) => Math.log10(v);
+                const ln = (v) => Math.log(v);
+                const abs = (v) => Math.abs(v);
+                const sqrt = (v) => Math.sqrt(v);
+                const e = Math.E;
+                return ${expression};
+            `)(isDeg);
+        } catch (err) {
+            throw new Error('Invalid');
+        }
     }
 
     // ==================== MATHPRINT RENDERING ====================
@@ -1277,6 +1381,10 @@ class TI30XSMultiView {
     renderMathPrint(text) {
         if (!text) return '';
         let html = this.escapeHtml(text);
+
+        // Function name styling
+        html = html.replace(/\b(atanh|asinh|acosh|asin|acos|atan|sinh|cosh|tanh|sin|cos|tan|log|ln|abs)\(/g,
+            '<span class="mp-fn">$1</span>(');
 
         // Ans styling
         html = html.replace(/Ans/g, '<span class="mp-ans">Ans</span>');
@@ -1513,7 +1621,7 @@ class TI30XSMultiView {
 
     handlePaste(text) {
         // Clean pasted text to only include valid calculator characters
-        const cleaned = text.replace(/[^0-9+\-*/().^πeE,]/g, '')
+        const cleaned = text.replace(/[^0-9a-z+\-*/().^πeE,√]/gi, '')
             .replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−');
         if (!cleaned) return;
 

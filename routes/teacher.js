@@ -10,6 +10,7 @@ const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats 
 const { cleanupStaleSessions } = require('../services/sessionService');
 
 const ScreenerSession = require('../models/screenerSession');
+const EnrollmentCode = require('../models/enrollmentCode');
 
 // Fetches students assigned to the logged-in teacher
 router.get('/students', isTeacher, async (req, res) => {
@@ -888,6 +889,109 @@ router.get('/students/:studentId/placement-results', isTeacher, async (req, res)
   } catch (error) {
     console.error('Error fetching placement results:', error);
     res.status(500).json({ message: 'Error fetching placement results' });
+  }
+});
+
+// ==============================
+// CLASS MANAGEMENT
+// ==============================
+
+// GET /api/teacher/classes — list all classes (enrollment codes) owned by this teacher
+router.get('/classes', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+
+    const codes = await EnrollmentCode.find({ teacherId })
+      .select('code className description gradeLevel mathCourse isActive expiresAt maxUses useCount enrolledStudents createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // For each class, compute enrolled count and active student count
+    const studentIds = codes.flatMap(c => c.enrolledStudents.map(e => e.studentId));
+    const students = studentIds.length > 0
+      ? await User.find({ _id: { $in: studentIds } })
+          .select('_id lastLogin')
+          .lean()
+      : [];
+
+    const loginMap = {};
+    for (const s of students) {
+      loginMap[s._id.toString()] = s.lastLogin;
+    }
+
+    const now = new Date();
+    const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+    const classes = codes.map(c => ({
+      _id: c._id,
+      code: c.code,
+      className: c.className,
+      description: c.description,
+      gradeLevel: c.gradeLevel,
+      mathCourse: c.mathCourse,
+      isActive: c.isActive,
+      expiresAt: c.expiresAt,
+      maxUses: c.maxUses,
+      createdAt: c.createdAt,
+      studentCount: c.enrolledStudents.length,
+      activeCount: c.enrolledStudents.filter(e => {
+        const ll = loginMap[e.studentId?.toString()];
+        return ll && new Date(ll) > sevenDaysAgo;
+      }).length
+    }));
+
+    res.json({ success: true, classes });
+  } catch (err) {
+    console.error('Error fetching teacher classes:', err);
+    res.status(500).json({ message: 'Server error fetching classes.' });
+  }
+});
+
+// GET /api/teacher/classes/:codeId/students — list students in a specific class
+router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const { codeId } = req.params;
+
+    const code = await EnrollmentCode.findOne({ _id: codeId, teacherId }).lean();
+    if (!code) {
+      return res.status(404).json({ message: 'Class not found or not owned by you.' });
+    }
+
+    const studentIds = code.enrolledStudents.map(e => e.studentId);
+    const students = await User.find({ _id: { $in: studentIds } })
+      .select('firstName lastName username gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes currentStreak')
+      .lean();
+
+    // Merge enrollment info
+    const enrollMap = {};
+    for (const e of code.enrolledStudents) {
+      enrollMap[e.studentId?.toString()] = {
+        enrolledAt: e.enrolledAt,
+        enrollmentMethod: e.enrollmentMethod
+      };
+    }
+
+    const enriched = students.map(s => ({
+      ...s,
+      enrolledAt: enrollMap[s._id.toString()]?.enrolledAt,
+      enrollmentMethod: enrollMap[s._id.toString()]?.enrollmentMethod
+    }));
+
+    res.json({
+      success: true,
+      class: {
+        _id: code._id,
+        code: code.code,
+        className: code.className,
+        gradeLevel: code.gradeLevel,
+        mathCourse: code.mathCourse
+      },
+      students: enriched
+    });
+  } catch (err) {
+    console.error('Error fetching class students:', err);
+    res.status(500).json({ message: 'Server error fetching class students.' });
   }
 });
 

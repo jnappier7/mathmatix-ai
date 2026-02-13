@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u9",
+  "course": "Geometry",
+  "unit": 9,
+  "quarter": 4,
+  "title": "Unit 9 Checkpoint: Coordinate Geometry",
+  "weeks": "27",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of the distance and midpoint formulas, equations of circles in standard form, parallel and perpendicular slopes, and coordinate proofs.",
+  "skillsCovered": [
+    "coordinate-geometry-distance-midpoint",
+    "coordinate-proofs",
+    "equation-of-circle",
+    "parallel-perpendicular-slopes"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "coordinate-geometry-distance-midpoint", "reteachFocus": "d=√[(x₂-x₁)²+(y₂-y₁)²], M=((x₁+x₂)/2,(y₁+y₂)/2), working backwards from midpoint", "resources": ["coordinate_geometry_module.json - scaffold phases 1-3"] },
+    { "skillId": "equation-of-circle", "reteachFocus": "(x-h)²+(y-k)²=r², signs opposite center coords, r² not r on right side, completing the square", "resources": ["coordinate_geometry_module.json - scaffold phases 4-6"] },
+    { "skillId": "parallel-perpendicular-slopes", "reteachFocus": "Parallel: m₁=m₂, perpendicular: m₁×m₂=-1 (negative reciprocals)", "resources": ["coordinate_geometry_module.json - scaffold phases 4-6"] },
+    { "skillId": "coordinate-proofs", "reteachFocus": "Use distance for congruent sides, slope for parallel/perpendicular, midpoint for bisection", "resources": ["coordinate_geometry_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu9-1",
+      "question": "Find the distance between (1, -3) and (9, 12).",
+      "answer": "d = √[(9-1)²+(12-(-3))²] = √[64+225] = √289 = 17. (8-15-17 triple.)",
+      "skill": "coordinate-geometry-distance-midpoint",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu9-2",
+      "question": "Find the midpoint of (-8, 5) and (6, -3).",
+      "answer": "M = ((-8+6)/2, (5+(-3))/2) = (-2/2, 2/2) = (-1, 1).",
+      "skill": "coordinate-geometry-distance-midpoint",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu9-3",
+      "question": "The midpoint of AB is M(4, -2). If A = (1, 3), find B.",
+      "answer": "4 = (1+x)/2 → x = 7. -2 = (3+y)/2 → y = -7. B = (7, -7).",
+      "skill": "coordinate-geometry-distance-midpoint",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu9-4",
+      "question": "Write the equation of a circle with center (5, -3) and radius 9.",
+      "answer": "(x-5)² + (y+3)² = 81.",
+      "skill": "equation-of-circle",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu9-5",
+      "question": "A circle has endpoints of a diameter at (-2, 3) and (6, -1). Find the center, radius, and equation.",
+      "answer": "Center = ((-2+6)/2, (3+(-1))/2) = (2, 1). Radius = √[(6-2)²+(-1-1)²] = √[16+4] = √20 = 2√5. Equation: (x-2)²+(y-1)²=20.",
+      "skill": "equation-of-circle",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu9-6",
+      "question": "Line A has slope 4/3. Line B is perpendicular to A. Line C is parallel to A. Find the slopes of B and C.",
+      "answer": "Perpendicular: slope B = -3/4 (negative reciprocal). Parallel: slope C = 4/3 (same slope).",
+      "skill": "parallel-perpendicular-slopes",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu9-7",
+      "question": "Line P passes through (2, 5) and (6, 3). Line Q passes through (1, -1) and (5, -3). Are the lines parallel, perpendicular, or neither?",
+      "answer": "Slope P = (3-5)/(6-2) = -2/4 = -1/2. Slope Q = (-3-(-1))/(5-1) = -2/4 = -1/2. Equal slopes → parallel.",
+      "skill": "parallel-perpendicular-slopes",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu9-8",
+      "question": "Show that triangle with vertices A(0, 0), B(5, 0), and C(2, 4) is isosceles by finding all side lengths.",
+      "answer": "AB = √(25+0) = 5. BC = √(9+16) = √25 = 5. AC = √(4+16) = √20 = 2√5. AB = BC = 5, so the triangle is isosceles.",
+      "skill": "coordinate-proofs",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "gcu9-9",
+      "question": "Determine if point (1, 7) lies on the circle (x - 4)² + (y - 3)² = 25.",
+      "answer": "(1-4)² + (7-3)² = (-3)² + (4)² = 9 + 16 = 25. Since 25 = 25, yes, the point lies on the circle.",
+      "skill": "equation-of-circle",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu9-10",
+      "question": "ANALYSIS: Quadrilateral ABCD has vertices A(0, 0), B(6, 0), C(8, 4), D(2, 4). (a) Find the slope of each side. (b) Prove ABCD is a parallelogram. (c) Is it a rectangle? Explain.",
+      "answer": "(a) Slope AB=(0-0)/(6-0)=0. Slope DC=(4-4)/(8-2)=0. Slope AD=(4-0)/(2-0)=2. Slope BC=(4-0)/(8-6)=2. (b) AB∥DC (both slope 0) and AD∥BC (both slope 2) → parallelogram. (c) Check if adjacent sides perpendicular: slope AB=0, slope AD=2. Product=0×2=0≠-1 → NOT perpendicular → NOT a rectangle.",
+      "skill": "coordinate-proofs",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu9-spiral-1",
+      "question": "SPIRAL (Volume): A cone has radius 10 and height 12. Find the volume in terms of π.",
+      "answer": "V = (1/3)π(100)(12) = (1/3)(1200π) = 400π.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 8"
+    },
+    {
+      "id": "gcu9-spiral-2",
+      "question": "SPIRAL (Geometric Mean): Find the geometric mean of 9 and 16.",
+      "answer": "√(9 × 16) = √144 = 12.",
+      "skill": "geometric-mean",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 7"
+    }
+  ],
+  "answerKeys": {
+    "gcu9-1": "17 (8-15-17 triple).",
+    "gcu9-2": "(-1, 1).",
+    "gcu9-3": "B=(7, -7).",
+    "gcu9-4": "(x-5)²+(y+3)²=81.",
+    "gcu9-5": "Center (2,1), r=2√5, eq: (x-2)²+(y-1)²=20.",
+    "gcu9-6": "B=-3/4, C=4/3.",
+    "gcu9-7": "Parallel (both slope -1/2).",
+    "gcu9-8": "AB=BC=5, isosceles.",
+    "gcu9-9": "Yes (9+16=25).",
+    "gcu9-10": "Parallelogram (AB∥DC, AD∥BC). Not rectangle (adjacent not ⊥).",
+    "gcu9-spiral-1": "400π.",
+    "gcu9-spiral-2": "12."
+  }
+}

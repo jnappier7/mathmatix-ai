@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
+const sharp = require('sharp');
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter } = require('../middleware/promptInjection');
 const User = require('../models/user');
@@ -96,8 +97,16 @@ router.post('/',
             } else {
                 // Images: Use GPT-4o-mini vision directly (fast, native)
                 console.log(`[chatWithFile] Using Vision API for: ${file.originalname}`);
-                // Read file from disk
-                const fileBuffer = fsSync.readFileSync(file.path);
+                // Read file from disk and strip EXIF metadata (GPS coords, device info)
+                let fileBuffer = fsSync.readFileSync(file.path);
+                try {
+                    fileBuffer = await sharp(fileBuffer)
+                        .rotate()
+                        .withMetadata({})
+                        .toBuffer();
+                } catch (stripErr) {
+                    console.warn('[chatWithFile] EXIF strip failed:', stripErr.message);
+                }
                 const base64 = fileBuffer.toString('base64');
                 const dataUrl = `data:${file.mimetype};base64,${base64}`;
 

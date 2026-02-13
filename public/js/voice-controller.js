@@ -585,6 +585,17 @@ class VoiceController {
 
                 if (!response.ok) {
                     const errorData = await response.json();
+                    // COMPLIANCE: Under-13 users blocked from ElevenLabs voice chat.
+                    // Show a clear message and stop the voice session.
+                    if (response.status === 403 && errorData.useWebSpeech) {
+                        console.warn('🔇 [Voice] Under-13 user blocked from ElevenLabs. Stopping voice chat.');
+                        this.updateUI('idle');
+                        this.stopListening();
+                        if (window.showToast) {
+                            window.showToast('Voice chat is not available for your account. Please use text chat instead.', 'info');
+                        }
+                        return;
+                    }
                     console.error('❌ [Voice] Server error:', errorData);
                     console.error('❌ [Voice] Error message:', errorData.message);
                     console.error('❌ [Voice] Error details:', errorData.details);

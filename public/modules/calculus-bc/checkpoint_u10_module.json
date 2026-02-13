@@ -1,0 +1,147 @@
+{
+  "moduleId": "checkpoint_u10",
+  "course": "AP Calculus BC",
+  "unit": 10,
+  "title": "Unit 10 Checkpoint: Infinite Sequences & Series",
+  "weeks": "34",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing convergence of sequences/series, convergence tests (nth-term, geometric, p-series, comparison, ratio, alternating), Taylor/Maclaurin polynomials, power series interval of convergence, and Lagrange error bound. BC-exclusive, 17–18% of AP exam weight.",
+  "skillsCovered": ["sequences-convergence", "series-geometric-p", "convergence-tests", "alternating-series-error", "taylor-maclaurin-polynomials", "taylor-series-known", "power-series-interval", "lagrange-error-bound"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "sequences-convergence", "reteachFocus": "Sequence converges if limit exists and is finite; use L'Hôpital, squeeze, or algebraic techniques; nth-term test: if lim aₙ≠0 → series DIVERGES (converse FALSE)", "resources": ["sequences_series_module.json - scaffold phases 1-3"] },
+    { "skillId": "series-geometric-p", "reteachFocus": "Geometric: Σarⁿ converges iff |r|<1, sum=a/(1−r); p-series: Σ1/nᵖ converges iff p>1; telescoping: partial fractions then collapse", "resources": ["sequences_series_module.json - scaffold phases 1-3"] },
+    { "skillId": "convergence-tests", "reteachFocus": "Decision tree: factorials/exponentials→ratio test; compare to known series→comparison/limit comparison; integral test for monotone decreasing; ratio test inconclusive when L=1", "resources": ["sequences_series_module.json - scaffold phases 4-6"] },
+    { "skillId": "alternating-series-error", "reteachFocus": "AST: (−1)ⁿbₙ converges if bₙ↓0; error bound |S−Sₙ|≤|a_{n+1}|=b_{n+1}; absolute conv: Σ|aₙ| converges; conditional: Σaₙ converges but Σ|aₙ| diverges", "resources": ["sequences_series_module.json - scaffold phases 4-6"] },
+    { "skillId": "taylor-maclaurin-polynomials", "reteachFocus": "Pₙ(x)=Σf⁽ᵏ⁾(a)(x−a)ᵏ/k!; compute derivatives at center; Maclaurin=Taylor at a=0; general term pattern", "resources": ["sequences_series_module.json - scaffold phases 7-9"] },
+    { "skillId": "taylor-series-known", "reteachFocus": "MEMORIZE: eˣ=Σxⁿ/n!, sinx=Σ(−1)ⁿx²ⁿ⁺¹/(2n+1)!, cosx=Σ(−1)ⁿx²ⁿ/(2n)!, 1/(1−x)=Σxⁿ; build new series by substitution, differentiation, integration", "resources": ["sequences_series_module.json - scaffold phases 7-9"] },
+    { "skillId": "power-series-interval", "reteachFocus": "Ratio test to find R; interval (a−R,a+R); CHECK EACH ENDPOINT separately (may converge at one, diverge at other); term-by-term differentiation/integration preserves R (not necessarily endpoints)", "resources": ["sequences_series_module.json - scaffold phases 7-9"] },
+    { "skillId": "lagrange-error-bound", "reteachFocus": "|Rₙ(x)|≤M|x−a|ⁿ⁺¹/(n+1)! where M=max|f⁽ⁿ⁺¹⁾| on interval; find M then plug in; for alternating series use ASET instead if applicable", "resources": ["sequences_series_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu10-1",
+      "question": "Determine whether each series converges or diverges: (a) Σ_{n=1}^∞ n/(2n+1), (b) Σ_{n=1}^∞ 3(1/4)ⁿ, (c) Σ_{n=1}^∞ 1/n³.",
+      "answer": "(a) lim n/(2n+1) = 1/2 ≠ 0 → diverges by nth-term test. (b) Geometric with r = 1/4, |r| < 1 → converges. Sum = 3(1/4)/(1−1/4) = (3/4)/(3/4) = 1. (c) p-series with p = 3 > 1 → converges.",
+      "skill": "series-geometric-p",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu10-2",
+      "question": "Find the sum of the telescoping series Σ_{n=1}^∞ [1/n − 1/(n+1)].",
+      "answer": "Partial sum: Sₙ = (1−1/2)+(1/2−1/3)+⋯+(1/n−1/(n+1)) = 1 − 1/(n+1). As n→∞: S = lim(1−1/(n+1)) = 1.",
+      "skill": "series-geometric-p",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu10-3",
+      "question": "Determine convergence: Σ_{n=1}^∞ n²/3ⁿ.",
+      "answer": "Ratio test: a_{n+1}/aₙ = [(n+1)²/3ⁿ⁺¹]·[3ⁿ/n²] = (n+1)²/(3n²). L = lim (n+1)²/(3n²) = 1/3 < 1 → converges.",
+      "skill": "convergence-tests",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu10-4",
+      "question": "Determine convergence: Σ_{n=2}^∞ 1/(n·ln(n)).",
+      "answer": "Integral test: ∫₂^∞ 1/(x·ln(x)) dx. Let u = ln(x), du = 1/x dx. ∫ = ∫_{ln2}^∞ 1/u du = [ln|u|]_{ln2}^∞ = ∞. Diverges.",
+      "skill": "convergence-tests",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cbu10-5",
+      "question": "Does Σ_{n=1}^∞ (−1)ⁿ⁺¹/n converge absolutely, conditionally, or diverge?",
+      "answer": "Alternating series: bₙ = 1/n, which is decreasing and bₙ → 0 → converges by AST. But Σ|aₙ| = Σ1/n = harmonic series → diverges. Therefore, conditionally convergent.",
+      "skill": "alternating-series-error",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu10-6",
+      "question": "Use the alternating series error bound to estimate Σ_{n=0}^∞ (−1)ⁿ/(2n+1)! using the first 3 nonzero terms, and give a bound on the error.",
+      "answer": "S₂ = 1/1! − 1/3! + 1/5! = 1 − 1/6 + 1/120 = 120/120 − 20/120 + 1/120 = 101/120. Error ≤ |first omitted term| = 1/7! = 1/5040 ≈ 0.000198. (Note: this is the Maclaurin series for sin(1), so S ≈ 101/120 ≈ 0.8417, and sin(1) ≈ 0.8415.)",
+      "skill": "alternating-series-error",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu10-7",
+      "question": "Find the first four nonzero terms of the Maclaurin series for f(x) = eˣ·sin(x).",
+      "answer": "eˣ = 1 + x + x²/2 + x³/6 + x⁴/24 + ⋯ and sin(x) = x − x³/6 + x⁵/120 − ⋯. Multiply using Cauchy product (coeff of xⁿ = Σ_{k=0}^{n} [eˣ coeff of xᵏ]·[sinx coeff of xⁿ⁻ᵏ]): x¹: (1)(1) = 1. x²: (1)(1) = 1. x³: (1/2)(1)+(1)(−1/6) = 1/2−1/6 = 1/3. x⁴: (1/6)(1)+(1)(−1/6) = 1/6−1/6 = 0 (vanishes). x⁵: (1/24)(1)+(1/2)(−1/6)+(1)(1/120) = 1/24−1/12+1/120 = 5/120−10/120+1/120 = −1/30. First four nonzero terms: x + x² + x³/3 − x⁵/30.",
+      "skill": "taylor-maclaurin-polynomials",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "cbu10-8",
+      "question": "Find the Maclaurin series for f(x) = x²·cos(x) through the x⁶ term.",
+      "answer": "cos(x) = 1 − x²/2 + x⁴/24 − x⁶/720 + ⋯. Multiply by x²: x²·cos(x) = x² − x⁴/2 + x⁶/24 − ⋯. Through x⁶: x² − x⁴/2 + x⁶/24.",
+      "skill": "taylor-series-known",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu10-9",
+      "question": "Find the interval of convergence for Σ_{n=1}^∞ (x−3)ⁿ/(n·2ⁿ).",
+      "answer": "Ratio test: |a_{n+1}/aₙ| = |x−3|ⁿ⁺¹/((n+1)·2ⁿ⁺¹) · (n·2ⁿ)/|x−3|ⁿ = (n/(n+1))·|x−3|/2. L = |x−3|/2. Converges when |x−3|/2 < 1 → |x−3| < 2 → 1 < x < 5. R = 2. Check x=1: Σ(−1)ⁿ/n = alternating harmonic → converges (conditionally). Check x=5: Σ1/n = harmonic → diverges. Interval: [1, 5).",
+      "skill": "power-series-interval",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu10-10",
+      "question": "Use the third-degree Taylor polynomial for eˣ centered at a = 0 to approximate e^(0.5). Then use the Lagrange error bound to find a bound on the error.",
+      "answer": "P₃(x) = 1 + x + x²/2 + x³/6. P₃(0.5) = 1 + 0.5 + 0.125 + 0.0208̄ = 1 + 0.5 + 0.125 + 1/48 = 79/48 ≈ 1.6458. Error: |R₃(0.5)| ≤ M·|0.5|⁴/4! where M = max|f⁽⁴⁾(c)| for c ∈ [0, 0.5]. f⁽⁴⁾(x) = eˣ, max on [0, 0.5] is e^(0.5) < 2. So |R₃| ≤ 2·(0.5)⁴/24 = 2·(1/16)/24 = 1/192 ≈ 0.0052. (Actual: e^(0.5) ≈ 1.6487, error ≈ 0.0029 < 0.0052 ✓.)",
+      "skill": "lagrange-error-bound",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu10-11",
+      "question": "ANALYSIS: The function f has derivatives of all orders, and the Maclaurin series for f is Σ_{n=0}^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1). (a) Identify f(x). (b) Find the radius of convergence. (c) Use the first three nonzero terms to approximate f(1/2) and bound the error.",
+      "answer": "(a) This is the Maclaurin series for arctan(x): arctan(x) = Σ_{n=0}^∞ (−1)ⁿx²ⁿ⁺¹/(2n+1) = x − x³/3 + x⁵/5 − ⋯. (b) Ratio test: |a_{n+1}/aₙ| = |x|²ⁿ⁺³/(2n+3) · (2n+1)/|x|²ⁿ⁺¹ = (2n+1)/(2n+3)·x². L = x². Converges when x² < 1 → |x| < 1, so R = 1. (c) f(1/2) ≈ 1/2 − (1/2)³/3 + (1/2)⁵/5 = 1/2 − 1/24 + 1/160 = 60/120 − 5/120 + 3/4·1/120. Let me compute: 1/2 = 240/480, 1/24 = 20/480, 1/160 = 3/480. Sum = 223/480 ≈ 0.4646. This is alternating and |terms| decrease, so error ≤ |first omitted| = (1/2)⁷/7 = 1/896 ≈ 0.00112. (Actual: arctan(1/2) ≈ 0.4636.)",
+      "skill": "taylor-series-known",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu10-spiral-1",
+      "question": "SPIRAL (Polar Area): Find the area enclosed by the cardioid r = 1 + cos(θ).",
+      "answer": "A = (1/2)∫₀^{2π}(1+cosθ)²dθ = (1/2)∫₀^{2π}(1+2cosθ+cos²θ)dθ. Using cos²θ=(1+cos2θ)/2: = (1/2)∫₀^{2π}(3/2+2cosθ+cos2θ/2)dθ = (1/2)[3θ/2+2sinθ+sin2θ/4]₀^{2π} = (1/2)(3π) = 3π/2.",
+      "skill": "polar-graphing-area",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review from Unit 9"
+    },
+    {
+      "id": "cbu10-spiral-2",
+      "question": "SPIRAL (Washer Method): Find the volume when the region bounded by y = x² and y = 2x is revolved about the x-axis.",
+      "answer": "Intersections: x²=2x → x(x−2)=0 → x=0,2. On [0,2]: 2x≥x² (outer=2x, inner=x²). V = π∫₀²[(2x)²−(x²)²]dx = π∫₀²(4x²−x⁴)dx = π[4x³/3−x⁵/5]₀² = π(32/3−32/5) = π(160/15−96/15) = 64π/15.",
+      "skill": "volume-disk-washer",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 8"
+    }
+  ],
+  "answerKeys": {
+    "cbu10-1": "(a) Diverges. (b) Converges, sum=1. (c) Converges (p=3>1).",
+    "cbu10-2": "Sum = 1.",
+    "cbu10-3": "Converges (ratio test, L=1/3).",
+    "cbu10-4": "Diverges (integral test).",
+    "cbu10-5": "Conditionally convergent.",
+    "cbu10-6": "S₂=101/120≈0.8417, error≤1/5040.",
+    "cbu10-7": "x+x²+x³/3−x⁵/30.",
+    "cbu10-8": "x²−x⁴/2+x⁶/24.",
+    "cbu10-9": "Interval: [1,5). R=2.",
+    "cbu10-10": "P₃(0.5)=79/48≈1.6458. Error≤1/192≈0.0052.",
+    "cbu10-11": "(a) arctan(x). (b) R=1. (c) ≈223/480, error≤1/896.",
+    "cbu10-spiral-1": "3π/2.",
+    "cbu10-spiral-2": "64π/15."
+  }
+}

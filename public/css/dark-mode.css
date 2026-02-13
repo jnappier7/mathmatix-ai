@@ -340,6 +340,12 @@
     accent-color: var(--clr-primary-teal);
 }
 
+/* Logo - invert for visibility, hue-rotate to preserve red accent */
+[data-theme="dark"] .main-logo-hero,
+[data-theme="dark"] .main-logo {
+    filter: invert(1) hue-rotate(180deg);
+}
+
 /* Landing header glass effect in dark mode */
 [data-theme="dark"] .landing-header {
     background: rgba(15, 26, 36, 0.92);
@@ -390,6 +396,23 @@
 [data-theme="dark"] .session-item.active {
     background: rgba(20, 200, 200, 0.08);
     border-color: var(--clr-primary-teal);
+}
+
+/* Session item text elements */
+[data-theme="dark"] .session-name {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .session-preview {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .session-time {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .session-stats {
+    color: var(--clr-primary-teal);
 }
 
 /* Mobile drawers in dark mode */

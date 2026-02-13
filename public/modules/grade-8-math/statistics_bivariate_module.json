@@ -1,0 +1,274 @@
+{
+  "moduleId": "statistics_bivariate",
+  "course": "8th Grade Mathematics",
+  "unit": 8,
+  "title": "Statistics: Scatter Plots & Bivariate Data",
+  "weeks": "29-33",
+  "estimatedDuration": 50,
+  "description": "Investigate patterns in two-variable data using scatter plots, lines of best fit, and two-way frequency tables. Students learn to describe associations (form, direction, strength), draw and write equations for trend lines, interpret slope and y-intercept in context, construct and analyze two-way tables for categorical data, and critically distinguish correlation from causation. All data sets use engaging, relatable contexts: study habits vs. grades, temperature vs. sales, height vs. shoe size, and more.",
+  "skills": ["scatter-plots", "line-of-best-fit", "interpret-slope-intercept", "two-way-tables", "correlation-causation"],
+  "standardsAlignment": ["8.SP.1", "8.SP.2", "8.SP.3", "8.SP.4"],
+  "goals": [
+    "Construct scatter plots and describe patterns: form (linear/nonlinear), direction (positive/negative), strength (strong/weak), and outliers.",
+    "Draw a line of best fit through a scatter plot, write its equation, and use it to make predictions.",
+    "Interpret the slope and y-intercept of a trend line in the context of the data.",
+    "Construct and interpret two-way frequency tables for categorical data and identify associations.",
+    "Distinguish between correlation and causation and identify confounding variables."
+  ],
+  "instructionalStrategy": [
+    "Start with data students care about — study time vs. grades, screen time vs. sleep, temperature vs. ice cream sales. Engagement drives understanding.",
+    "Build scatter plots by hand first so students internalize the coordinate-pair-as-data-point concept. Only then use technology.",
+    "Line of best fit: emphasize that it's an ESTIMATE. The line doesn't go through every point — it captures the overall trend. Show that different students might draw slightly different lines, and that's okay.",
+    "Correlation vs. causation is the capstone idea: use dramatic examples (firefighters/fires, ice cream/drowning) to burn in the lesson that correlation ≠ causation."
+  ],
+  "aiFlexLevel": 0.6,
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Scatter Plots: Reading Two-Variable Data",
+      "skill": "scatter-plots",
+      "content": "A scatter plot displays two-variable (bivariate) data as points on a coordinate plane. Each point represents one observation: the x-value is one variable, the y-value is the other.\n\n**Describing a scatter plot — four things to look for:**\n\n1. **Form:** Is the pattern linear (points cluster around a line) or nonlinear (points follow a curve)?\n2. **Direction:** Positive association (as x increases, y increases — points go up-right). Negative association (as x increases, y decreases — points go down-right). No association (no clear pattern).\n3. **Strength:** Strong (points are tightly clustered around the trend) or weak (points are widely spread).\n4. **Outliers:** Any points that don't fit the overall pattern. An outlier may be a data error or a genuinely unusual observation.\n\n**Real-world example:** Plot study hours (x) vs. test score (y) for 20 students. You'd likely see a positive, linear, moderately strong association — more study time tends to mean higher scores, but not perfectly.",
+      "keyPoints": [
+        "Each point on a scatter plot represents one (x, y) data pair",
+        "Form: linear (straight trend) vs. nonlinear (curved trend)",
+        "Direction: positive (up-right), negative (down-right), or no association",
+        "Strength: strong (tight cluster) vs. weak (spread out)",
+        "Outliers: points far from the general pattern — always investigate"
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Line of Best Fit: Modeling Trends",
+      "skill": "line-of-best-fit",
+      "content": "When a scatter plot shows a linear association, we draw a line of best fit (trend line) to model the relationship.\n\n**How to draw it:**\n1. Look at the overall direction of the data.\n2. Draw a straight line that follows the trend — roughly equal numbers of points above and below.\n3. The line does NOT need to pass through any actual data points (though it might).\n\n**Writing the equation:**\n1. Pick two points ON the line (not necessarily data points — points on the line itself).\n2. Calculate slope: m = (y₂ − y₁)/(x₂ − x₁).\n3. Use point-slope or plug into y = mx + b to find b.\n\n**Making predictions:**\n- Interpolation: predicting within the range of your data. More reliable.\n- Extrapolation: predicting outside the range. Less reliable — the trend may not continue.\n\n**Interpreting slope and y-intercept:**\n- Slope: 'For each additional unit of x, y changes by m units.'\n- Y-intercept: 'When x = 0, the predicted y is b.' (May or may not make sense in context.)",
+      "keyPoints": [
+        "A line of best fit captures the overall linear trend in a scatter plot",
+        "Draw the line with roughly equal points above and below",
+        "Use two points ON the line to write its equation in y = mx + b form",
+        "Slope tells the rate of change in context; y-intercept is the starting value",
+        "Interpolation (within data range) is more reliable than extrapolation (outside)"
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Two-Way Tables & Correlation vs. Causation",
+      "skill": "two-way-tables",
+      "content": "**Two-Way Frequency Tables:** When both variables are categorical (not numerical), we use a two-way table instead of a scatter plot.\n\nThe table shows counts for every combination of the two categories. Row and column totals help us calculate relative frequencies (percentages).\n\n**Finding associations:**\nCompare conditional relative frequencies. Example: If 75% of boys like dogs but only 58% of girls do, there's an association between gender and dog preference.\n\n**Correlation vs. Causation — CRITICAL DISTINCTION:**\n- **Correlation:** Two variables are associated — they change together. (Observable in data.)\n- **Causation:** One variable CAUSES the other to change. (Much harder to prove.)\n\n**Correlation does NOT imply causation!**\nExample: Ice cream sales and drowning incidents both increase in summer. Correlation? Yes. Does ice cream cause drowning? No! The confounding variable is hot weather — it causes BOTH.\n\n**Confounding variable:** A hidden third variable that influences both variables, creating a misleading association.",
+      "keyPoints": [
+        "Two-way tables organize categorical data into rows and columns with totals",
+        "Compare conditional relative frequencies to identify associations",
+        "Correlation = two variables change together; causation = one causes the other",
+        "Correlation does NOT imply causation — always look for confounding variables",
+        "Confounding variable: a hidden factor that affects both measured variables"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Describing Scatter Plots: Worked Examples",
+      "skill": "scatter-plots",
+      "examples": [
+        {
+          "problem": "A teacher collected data on study hours and test scores:\nStudy hours: 1, 2, 3, 4, 5, 6\nTest scores: 55, 60, 72, 78, 85, 90\n\nDescribe the association.",
+          "solution": "Plot the points: (1,55), (2,60), (3,72), (4,78), (5,85), (6,90).\n\nForm: Linear — the points roughly follow a straight line.\nDirection: Positive — as study hours increase, test scores increase.\nStrength: Strong — the points are tightly clustered around a linear trend.\nOutliers: None apparent.\n\nConclusion: There is a strong, positive, linear association between study hours and test scores."
+        },
+        {
+          "problem": "Data on car age vs. value:\nAge (years): 1, 2, 3, 5, 7, 10\nValue ($1000s): 28, 24, 21, 16, 11, 5\n\nDescribe the association.",
+          "solution": "Plot the points: (1,28), (2,24), (3,21), (5,16), (7,11), (10,5).\n\nForm: Linear (approximately).\nDirection: Negative — as age increases, value decreases.\nStrength: Strong — points follow the downward trend closely.\nOutliers: None.\n\nConclusion: Strong, negative, linear association. Cars lose value as they age (depreciation)."
+        },
+        {
+          "problem": "Data on height vs. shoe size:\nHeight (in): 60, 62, 64, 65, 66, 68, 70, 64\nShoe size: 7, 8, 8.5, 9, 9.5, 10, 11, 13\n\nDescribe the association. Identify any outliers.",
+          "solution": "Plot the points. Most follow an upward trend, but (64, 13) stands out — height 64 inches with shoe size 13 is unusually large for that height.\n\nForm: Linear (ignoring the outlier).\nDirection: Positive — taller people tend to have larger shoe sizes.\nStrength: Moderate to strong (would be strong without the outlier).\nOutlier: (64, 13) — shoe size 13 at 64 inches tall is far above the trend.\n\nThe outlier could be a data entry error (maybe the shoe size is actually 8, not 13) or a genuine unusual observation."
+        }
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Line of Best Fit: Worked Examples",
+      "skill": "line-of-best-fit",
+      "examples": [
+        {
+          "problem": "Using the study hours vs. test score data, draw a line of best fit and write its equation.\nData: (1,55), (2,60), (3,72), (4,78), (5,85), (6,90)",
+          "solution": "Draw a line through the data. Two points on the line (choosing representative points): (1, 55) and (6, 90).\n\nSlope: m = (90 − 55)/(6 − 1) = 35/5 = 7.\nY-intercept: 55 = 7(1) + b → b = 48.\nEquation: y = 7x + 48.\n\nInterpretation:\n- Slope: Each additional hour of studying is associated with a 7-point increase in test score.\n- Y-intercept: A student who studies 0 hours would score about 48 (just an estimate).\n\nPredict for 8 hours: y = 7(8) + 48 = 104. But 100 is the max score — this is extrapolation beyond the data range, so interpret cautiously."
+        },
+        {
+          "problem": "Temperature (°F) vs. lemonade stand sales:\nTemp: 60, 65, 70, 75, 80, 85\nSales ($): 100, 130, 175, 210, 250, 280\n\nWrite the equation of the line of best fit using (60, 100) and (80, 250).",
+          "solution": "Slope: m = (250 − 100)/(80 − 60) = 150/20 = 7.5.\nY-intercept: 100 = 7.5(60) + b → 100 = 450 + b → b = −350.\nEquation: y = 7.5x − 350.\n\nInterpretation:\n- Slope: Each 1°F increase in temperature is associated with $7.50 more in sales.\n- Y-intercept: At 0°F, the model predicts −$350 (nonsensical — don't extrapolate that far!).\n\nPredict at 90°F: y = 7.5(90) − 350 = 675 − 350 = $325."
+        },
+        {
+          "problem": "Data on shoe size vs. math test score:\nShoe size: 6, 7, 8, 9, 10, 11\nMath score: 82, 75, 91, 68, 85, 78\n\nShould we draw a line of best fit?",
+          "solution": "Plot the points: (6,82), (7,75), (8,91), (9,68), (10,85), (11,78).\n\nThe points are scattered randomly — no clear linear pattern. Scores go up, down, up, down with no consistent direction.\n\nConclusion: There is NO association between shoe size and math score. A line of best fit would not be meaningful here.\n\nThis makes sense: shoe size has no logical connection to math ability. Any apparent pattern would be coincidence."
+        }
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Two-Way Tables & Correlation vs. Causation: Worked Examples",
+      "skill": "two-way-tables",
+      "examples": [
+        {
+          "problem": "A survey of 120 students asked about pet preference:\n\n| | Likes Dogs | Doesn't Like Dogs | Total |\n|---|---|---|---|\n| Boys | 45 | 15 | 60 |\n| Girls | 35 | 25 | 60 |\n| Total | 80 | 40 | 120 |\n\nIs there an association between gender and liking dogs?",
+          "solution": "Calculate conditional relative frequencies:\nBoys who like dogs: 45/60 = 75%.\nGirls who like dogs: 35/60 ≈ 58.3%.\n\nCompare: 75% vs. 58.3%. Boys are more likely to like dogs than girls in this sample.\n\nConclusion: There IS an association between gender and liking dogs — boys show a stronger preference for dogs.\n\nNote: This doesn't prove gender CAUSES the difference. Other factors could be involved."
+        },
+        {
+          "problem": "Research shows that as ice cream sales increase, drowning incidents also increase. Does ice cream cause drowning?",
+          "solution": "Correlation: Yes — ice cream sales and drowning rates are positively correlated. They increase together.\n\nCausation: Absolutely NOT. Eating ice cream does not cause drowning.\n\nConfounding variable: TEMPERATURE (hot weather). In summer, it's hot → people buy more ice cream AND people swim more → more drownings.\n\nBoth variables are driven by the same hidden cause. Removing the confounding variable would eliminate the apparent relationship.\n\nLesson: Correlation does NOT imply causation. Always ask: 'Could a third variable explain BOTH?'"
+        },
+        {
+          "problem": "A survey of 130 students on phone ownership:\n\n| | Has Phone | No Phone | Total |\n|---|---|---|---|\n| Grade 7 | 42 | 18 | 60 |\n| Grade 8 | 56 | 14 | 70 |\n| Total | 98 | 32 | 130 |\n\nIs there an association between grade and phone ownership?",
+          "solution": "Conditional relative frequencies:\nGrade 7 with phone: 42/60 = 70%.\nGrade 8 with phone: 56/70 = 80%.\n\nCompare: 80% vs. 70%. Grade 8 students are more likely to have phones.\n\nAssociation: Yes, there appears to be an association between being in 8th grade and phone ownership. This makes intuitive sense — older students are more likely to have phones.\n\nNote: The percentages are fairly close (70% vs. 80%), so the association is moderate, not overwhelming."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Scatter Plot Description Practice",
+      "skill": "scatter-plots",
+      "problems": [
+        {
+          "id": "sb-wp1",
+          "question": "Data on hours of sleep vs. alertness score (1-10 scale):\nSleep: 4, 5, 6, 7, 8, 9\nAlertness: 3, 4, 5.5, 7, 8, 9\n\nDescribe the association (form, direction, strength).",
+          "answer": "Form: Linear. Direction: Positive (more sleep → higher alertness). Strength: Strong (points closely follow an upward line). No outliers.",
+          "hints": ["Do the points follow a line or a curve? Does alertness go up or down as sleep increases?", "How tightly do the points cluster around the trend? Tight = strong."]
+        },
+        {
+          "id": "sb-wp2",
+          "question": "Data on daily screen time vs. GPA:\nScreen time (hrs): 1, 2, 3, 4, 5, 6\nGPA: 3.8, 3.5, 3.2, 2.8, 2.5, 2.0\n\nDescribe the association.",
+          "answer": "Form: Linear. Direction: Negative (more screen time → lower GPA). Strength: Strong (points closely follow a downward trend). No outliers.",
+          "hints": ["As screen time increases from 1 to 6 hours, what happens to GPA?", "The consistent decrease with tight clustering indicates strong, negative, linear."]
+        },
+        {
+          "id": "sb-wp3",
+          "question": "Data on study hours vs. quiz score:\nStudy hours: 2, 3, 4, 5, 6, 3\nQuiz score: 60, 70, 75, 85, 92, 40\n\nIdentify the outlier and describe the association ignoring it.",
+          "answer": "The point (3, 40) is the outlier — a student who studied 3 hours but scored only 40, far below the trend. Ignoring it, the remaining data shows a strong, positive, linear association.",
+          "hints": ["Most points follow an upward trend. Which point breaks the pattern?", "The student with 3 hours and score 40 is far below the other student with 3 hours (score 70)."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Line of Best Fit Practice",
+      "skill": "line-of-best-fit",
+      "problems": [
+        {
+          "id": "sb-wp4",
+          "question": "Height (in) vs. weight (lb) data:\nHeight: 60, 63, 65, 68, 70, 72\nWeight: 110, 125, 135, 150, 165, 175\n\nUsing the points (60, 110) and (70, 160) on the line of best fit, write the equation. Predict the weight of a 66-inch person.",
+          "answer": "Slope: (160 − 110)/(70 − 60) = 50/10 = 5. Y-intercept: 110 = 5(60) + b → b = −190. Equation: y = 5x − 190. Predict at x = 66: y = 5(66) − 190 = 330 − 190 = 140 lb.",
+          "hints": ["Slope = rise/run = (160 − 110)/(70 − 60).", "Plug one point into y = mx + b to find b. Then predict by plugging x = 66."]
+        },
+        {
+          "id": "sb-wp5",
+          "question": "Lemonade stand data — Temperature (°F) vs. cups sold:\nTemp: 70, 75, 80, 85, 90\nCups: 10, 20, 30, 40, 50\n\nUsing points (70, 10) and (90, 50), write the equation. Predict sales at 95°F.",
+          "answer": "Slope: (50 − 10)/(90 − 70) = 40/20 = 2. Y-intercept: 10 = 2(70) + b → b = −130. Equation: y = 2x − 130. Predict at 95°F: y = 2(95) − 130 = 190 − 130 = 60 cups.",
+          "hints": ["Slope = (50 − 10)/(90 − 70). Then use one point to find b.", "Prediction at 95°F is slight extrapolation — just one step beyond the data."]
+        },
+        {
+          "id": "sb-wp6",
+          "question": "A scatter plot models absences (x) vs. final grade (y). The line of best fit is y = −3x + 95. Interpret the slope and y-intercept in context.",
+          "answer": "Slope (−3): Each additional absence is associated with a 3-point decrease in final grade. Y-intercept (95): A student with 0 absences has a predicted final grade of 95.",
+          "hints": ["The slope tells you how much y changes for each 1-unit increase in x.", "The y-intercept is the predicted value when x = 0 (zero absences)."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Two-Way Tables & Correlation Practice",
+      "skill": "two-way-tables",
+      "problems": [
+        {
+          "id": "sb-wp7",
+          "question": "A survey of 130 middle schoolers on food preference:\n\n| | Prefer Pizza | Prefer Tacos | Total |\n|---|---|---|---|\n| 7th Grade | 35 | 25 | 60 |\n| 8th Grade | 30 | 40 | 70 |\n| Total | 65 | 65 | 130 |\n\nIs there an association between grade level and food preference?",
+          "answer": "7th graders who prefer pizza: 35/60 ≈ 58.3%. 8th graders who prefer pizza: 30/70 ≈ 42.9%. Yes, there is an association — 7th graders are more likely to prefer pizza while 8th graders are more likely to prefer tacos.",
+          "hints": ["Calculate the percent who prefer pizza for each grade separately.", "If the percentages are different, there is an association."]
+        },
+        {
+          "id": "sb-wp8",
+          "question": "A study claims: 'Students who eat breakfast score higher on tests.' Is this evidence of correlation or causation? Explain.",
+          "answer": "This is correlation, not necessarily causation. Confounding variables could explain both: students who eat breakfast may come from homes with more structure, better sleep habits, more parental support — any of these could cause higher test scores independent of breakfast itself.",
+          "hints": ["Does eating breakfast directly CAUSE higher scores, or could something else explain both?", "Think about confounding variables — what third factors could affect both breakfast eating and test scores?"]
+        },
+        {
+          "id": "sb-wp9",
+          "question": "Survey of 100 students on sports participation and honor roll:\n\n| | Sports Team | No Sports | Total |\n|---|---|---|---|\n| Honor Roll | 28 | 22 | 50 |\n| Not Honor Roll | 32 | 18 | 50 |\n| Total | 60 | 40 | 100 |\n\nIs there an association between playing sports and being on the honor roll?",
+          "answer": "Sports members on honor roll: 28/60 ≈ 46.7%. Non-sports on honor roll: 22/40 = 55%. Non-sports students are slightly more likely to be on honor roll (55% vs. 46.7%). There is a weak association — non-athletes are somewhat more likely to make honor roll.",
+          "hints": ["Compute the honor roll percentage for each group separately.", "Compare 28/60 to 22/40. Which group has a higher honor roll rate?"]
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Bivariate Data: Independent Practice",
+      "skill": "scatter-plots",
+      "problems": [
+        {
+          "id": "sb-yp1",
+          "question": "Data on hours worked at a part-time job vs. money earned:\nHours: 2, 4, 6, 8, 10\nMoney ($): 20, 42, 58, 82, 98\n\nDescribe the association (form, direction, strength).",
+          "answer": "Form: Linear. Direction: Positive (more hours → more money). Strength: Strong (points closely follow an upward line).",
+          "skill": "scatter-plots",
+          "hints": ["Plot the points and look for a pattern. Does money go up as hours increase?"]
+        },
+        {
+          "id": "sb-yp2",
+          "question": "Data on daily high temperature vs. hot chocolate cups sold:\nTemp (°F): 30, 40, 50, 60, 70, 80\nCups: 55, 43, 35, 20, 12, 5\n\nDescribe the association.",
+          "answer": "Form: Linear. Direction: Negative (warmer weather → fewer cups sold). Strength: Strong (consistent downward trend).",
+          "skill": "scatter-plots",
+          "hints": ["As temperature increases, what happens to hot chocolate sales?"]
+        },
+        {
+          "id": "sb-yp3",
+          "question": "A line of best fit for study time (x, in hours) and exam score (y) is y = 5x + 60. Predict the exam score for a student who studies 7 hours.",
+          "answer": "y = 5(7) + 60 = 35 + 60 = 95. Predicted exam score: 95.",
+          "skill": "line-of-best-fit",
+          "hints": ["Substitute x = 7 into the equation y = 5x + 60."]
+        },
+        {
+          "id": "sb-yp4",
+          "question": "A line of best fit relating absences (x) to final grade (y) is y = −2.5x + 100. Interpret the slope and y-intercept in context.",
+          "answer": "Slope (−2.5): Each additional absence is associated with a 2.5-point decrease in final grade. Y-intercept (100): A student with 0 absences has a predicted grade of 100.",
+          "skill": "interpret-slope-intercept",
+          "hints": ["What does the slope −2.5 tell you about the relationship between absences and grades?"]
+        },
+        {
+          "id": "sb-yp5",
+          "question": "Survey of 110 students on how they get to school:\n\n| | Walk | Bus | Total |\n|---|---|---|---|\n| 7th Grade | 20 | 30 | 50 |\n| 8th Grade | 35 | 25 | 60 |\n| Total | 55 | 55 | 110 |\n\nIs there an association between grade level and how students get to school?",
+          "answer": "7th graders who walk: 20/50 = 40%. 8th graders who walk: 35/60 ≈ 58.3%. Yes, there is an association — 8th graders are more likely to walk to school (58.3% vs. 40%).",
+          "skill": "two-way-tables",
+          "hints": ["Compute the walking percentage for each grade and compare."]
+        },
+        {
+          "id": "sb-yp6",
+          "question": "Someone claims: 'Cities with more firefighters have more fires. Therefore, firefighters cause fires.' Is this reasoning correct? Explain the flaw.",
+          "answer": "This reasoning is incorrect. There is a correlation between number of firefighters and number of fires, but the relationship is NOT causal. The confounding variable is city size — larger cities have both more firefighters (because they need more) AND more fires (because there are more buildings). City size drives both variables.",
+          "skill": "correlation-causation",
+          "hints": ["Is there a third variable that could explain why both firefighters and fires are high in the same cities?"]
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "sb-wp1": "Linear, positive, strong",
+    "sb-wp2": "Linear, negative, strong",
+    "sb-wp3": "(3, 40) is the outlier",
+    "sb-wp4": "y = 5x − 190; predicted weight at 66 in = 140 lb",
+    "sb-wp5": "y = 2x − 130; predicted sales at 95°F = 60 cups",
+    "sb-wp6": "Slope: −3 points per absence; y-intercept: 95 (grade with 0 absences)",
+    "sb-wp7": "7th: ≈ 58.3% prefer pizza; 8th: ≈ 42.9%; association exists",
+    "sb-wp8": "Correlation, not causation (confounding variables)",
+    "sb-wp9": "Sports: ≈ 46.7% honor roll; No sports: 55%; weak association favoring non-sports",
+    "sb-yp1": "Linear, positive, strong",
+    "sb-yp2": "Linear, negative, strong",
+    "sb-yp3": "95",
+    "sb-yp4": "Slope: −2.5 points per absence; y-intercept: 100",
+    "sb-yp5": "Yes; 8th graders walk more (58.3% vs. 40%)",
+    "sb-yp6": "Correlation, not causation; city size is the confounding variable"
+  }
+}

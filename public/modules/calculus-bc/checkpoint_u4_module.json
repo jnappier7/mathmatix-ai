@@ -1,0 +1,134 @@
+{
+  "moduleId": "checkpoint_u4",
+  "course": "AP Calculus BC",
+  "unit": 4,
+  "title": "Unit 4 Checkpoint: Contextual Applications of Differentiation",
+  "weeks": "10",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing related rates, straight-line motion, linearization/differentials, and L'Hôpital's Rule. Emphasis on setup, diagram, units, and justification.",
+  "skillsCovered": ["related-rates", "motion-problems", "linearization-differentials", "lhopitals-rule"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "related-rates", "reteachFocus": "Draw diagram, label variables, write equation relating variables, differentiate implicitly w.r.t. time, substitute known values AFTER differentiating", "resources": ["contextual_differentiation_module.json - scaffold phases 1-3"] },
+    { "skillId": "motion-problems", "reteachFocus": "v=s', a=v'=s''; speed=|v|; speeding up when v and a same sign; displacement=∫v dt, distance=∫|v| dt", "resources": ["contextual_differentiation_module.json - scaffold phases 4-6"] },
+    { "skillId": "linearization-differentials", "reteachFocus": "L(x)=f(a)+f'(a)(x−a); tangent line approximation; concave up→underestimate, concave down→overestimate", "resources": ["contextual_differentiation_module.json - scaffold phases 7-9"] },
+    { "skillId": "lhopitals-rule", "reteachFocus": "ONLY for 0/0 or ∞/∞ forms; verify indeterminate FIRST; differentiate top and bottom separately (not quotient rule)", "resources": ["contextual_differentiation_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu4-1",
+      "question": "A 10-ft ladder leans against a wall. The bottom slides away at 2 ft/s. How fast is the top sliding down when the bottom is 6 ft from the wall?",
+      "answer": "Let x = dist from wall, y = height. x²+y²=100. When x=6: y=√(100-36)=8. Differentiate: 2x(dx/dt)+2y(dy/dt)=0. Substitute: 2(6)(2)+2(8)(dy/dt)=0 → 24+16(dy/dt)=0 → dy/dt = −3/2 ft/s. The top slides down at 3/2 ft/s.",
+      "skill": "related-rates",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu4-2",
+      "question": "A spherical balloon is inflated at a rate of 100π cm³/s. How fast is the radius increasing when r = 5 cm?",
+      "answer": "V = (4/3)πr³. dV/dt = 4πr²(dr/dt). 100π = 4π(25)(dr/dt) → 100π = 100π(dr/dt) → dr/dt = 1 cm/s.",
+      "skill": "related-rates",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu4-3",
+      "question": "A particle moves along a line with velocity v(t) = t² − 5t + 4 (m/s). (a) When is the particle at rest? (b) When is it moving left? (c) Find the total distance traveled on [0, 5].",
+      "answer": "(a) v(t)=0: t²−5t+4=(t−1)(t−4)=0 → t=1, t=4. (b) v(t)<0 on (1,4) (sign analysis). (c) Distance = ∫₀¹|v|dt + ∫₁⁴|v|dt + ∫₄⁵|v|dt. ∫₀¹(t²−5t+4)dt = [t³/3−5t²/2+4t]₀¹ = 1/3−5/2+4 = 11/6. ∫₁⁴(−(t²−5t+4))dt = −[t³/3−5t²/2+4t]₁⁴ = −[(64/3−40+16)−(1/3−5/2+4)] = −[(64/3−24)−(11/6)] = −[−8/3−11/6] = −[−27/6] = 9/2. ∫₄⁵(t²−5t+4)dt = [t³/3−5t²/2+4t]₄⁵ = (125/3−125/2+20)−(64/3−40+16) = (125/3−125/2+20)−(64/3−24) = 61/3−125/2+44 = 122/6−375/6+264/6 = 11/6. Total = 11/6+9/2+11/6 = 11/6+27/6+11/6 = 49/6.",
+      "skill": "motion-problems",
+      "difficulty": 6,
+      "points": 14
+    },
+    {
+      "id": "cbu4-4",
+      "question": "Use linearization of f(x) = √x at a = 25 to approximate √26.",
+      "answer": "f(25) = 5. f'(x) = 1/(2√x), f'(25) = 1/10. L(x) = 5 + (1/10)(x−25). L(26) = 5 + 1/10 = 5.1. Actual: √26 ≈ 5.0990. Since f''(x)=−1/(4x^(3/2))<0, f is concave down → overestimate.",
+      "skill": "linearization-differentials",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu4-5",
+      "question": "Evaluate using L'Hôpital's Rule: lim_{x→0} (eˣ − 1)/sin(x)",
+      "answer": "Check: at x=0, e⁰−1=0 and sin(0)=0 → 0/0 form ✓. Apply L'Hôpital: lim_{x→0} eˣ/cos(x) = e⁰/cos(0) = 1/1 = 1.",
+      "skill": "lhopitals-rule",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu4-6",
+      "question": "Evaluate using L'Hôpital's Rule: lim_{x→∞} x²/eˣ",
+      "answer": "At x→∞: x²→∞ and eˣ→∞ → ∞/∞ form ✓. Apply L'Hôpital: lim 2x/eˣ. Still ∞/∞. Apply again: lim 2/eˣ = 0. (eˣ dominates any polynomial.)",
+      "skill": "lhopitals-rule",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu4-7",
+      "question": "Evaluate: lim_{x→0} (sin(3x))/(5x)",
+      "answer": "0/0 form. L'Hôpital: lim_{x→0} 3cos(3x)/5 = 3(1)/5 = 3/5. (Or: lim (sin(3x)/(3x))·(3/5) = 1·(3/5) = 3/5.)",
+      "skill": "lhopitals-rule",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu4-8",
+      "question": "A particle has position s(t) = sin(t) + cos(t) for t ≥ 0. Find all times in [0, 2π] when the particle is at rest and determine whether it's speeding up at t = π.",
+      "answer": "v(t) = cos(t) − sin(t). At rest: cos(t) = sin(t) → tan(t) = 1 → t = π/4, 5π/4. a(t) = −sin(t) − cos(t). At t=π: v(π) = −1−0 = −1, a(π) = 0−(−1) = 1. v<0 and a>0 → opposite signs → slowing down.",
+      "skill": "motion-problems",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu4-9",
+      "question": "ANALYSIS: Two cars leave an intersection. Car A travels north at 40 mph. Car B travels east at 30 mph. How fast is the distance between them increasing after 2 hours?",
+      "answer": "After 2 hrs: A is 80 mi north, B is 60 mi east. Distance d = √(x²+y²). At t=2: d = √(3600+6400) = √10000 = 100 mi. Differentiate: 2d(dd/dt) = 2x(dx/dt)+2y(dy/dt) → dd/dt = [x(dx/dt)+y(dy/dt)]/d = [60(30)+80(40)]/100 = [1800+3200]/100 = 5000/100 = 50 mph.",
+      "skill": "related-rates",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu4-10",
+      "question": "Evaluate: lim_{x→0} (1 − cos x)/x²",
+      "answer": "0/0 form. L'Hôpital: lim sin(x)/(2x). Still 0/0. L'Hôpital again: lim cos(x)/2 = 1/2.",
+      "skill": "lhopitals-rule",
+      "difficulty": 4,
+      "points": 8
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu4-spiral-1",
+      "question": "SPIRAL (Chain Rule): Differentiate f(x) = sin(x³).",
+      "answer": "f'(x) = cos(x³)·3x² = 3x²cos(x³).",
+      "skill": "chain-rule",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    },
+    {
+      "id": "cbu4-spiral-2",
+      "question": "SPIRAL (Limits): Evaluate lim_{x→0} (√(x+16) − 4)/x using conjugate.",
+      "answer": "Conjugate: (x+16−16)/[x(√(x+16)+4)] = x/[x(√(x+16)+4)] = 1/(√(x+16)+4). At x=0: 1/(4+4) = 1/8.",
+      "skill": "limits-algebraic",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    }
+  ],
+  "answerKeys": {
+    "cbu4-1": "dy/dt = −3/2 ft/s.",
+    "cbu4-2": "dr/dt = 1 cm/s.",
+    "cbu4-3": "(a) t=1,4. (b) (1,4). (c) 49/6.",
+    "cbu4-4": "≈5.1 (overestimate).",
+    "cbu4-5": "1.",
+    "cbu4-6": "0.",
+    "cbu4-7": "3/5.",
+    "cbu4-8": "At rest: t=π/4, 5π/4. Slowing down at t=π.",
+    "cbu4-9": "50 mph.",
+    "cbu4-10": "1/2.",
+    "cbu4-spiral-1": "3x²cos(x³).",
+    "cbu4-spiral-2": "1/8."
+  }
+}

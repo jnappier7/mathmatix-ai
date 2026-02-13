@@ -1,0 +1,112 @@
+{
+  "moduleId": "checkpoint_u0",
+  "course": "AP Calculus BC",
+  "unit": 0,
+  "title": "Unit 0 Diagnostic Checkpoint: Prerequisite Patch",
+  "weeks": "2",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Diagnostic checkpoint assessing prerequisite readiness for AP Calculus BC: function composition/inverses, factoring, exponent/log rules, trig fundamentals, and graph interpretation. Identifies specific gaps for targeted repair.",
+  "skillsCovered": ["function-fluency", "algebra-cleanup", "trig-essentials", "graph-literacy"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "function-fluency", "reteachFocus": "Composition f(g(x)) — identify outer/inner; inverse functions — swap and solve; (f⁻¹)'(a) = 1/f'(f⁻¹(a))", "resources": ["prereq_patch_module.json - scaffold phases 1-3"] },
+    { "skillId": "algebra-cleanup", "reteachFocus": "GCF-first factoring, difference/sum of cubes, rewrite as negative/fractional exponents for power rule, log rules for solving", "resources": ["prereq_patch_module.json - scaffold phases 4-6"] },
+    { "skillId": "trig-essentials", "reteachFocus": "Unit circle values from memory (no calculator), reference angles by quadrant, Pythagorean identities, solve trig equations on [0,2π)", "resources": ["prereq_patch_module.json - scaffold phases 7-9"] },
+    { "skillId": "graph-literacy", "reteachFocus": "VA/HA from factoring, symmetric difference quotient for f'(a) from tables, piecewise continuity check, hole vs asymptote", "resources": ["prereq_patch_module.json - scaffold phases 10-12"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu0-1",
+      "question": "Given f(x) = x² + 1 and g(x) = 3x − 2, find f(g(x)) and simplify.",
+      "answer": "f(g(x)) = (3x−2)² + 1 = 9x² − 12x + 4 + 1 = 9x² − 12x + 5.",
+      "skill": "function-fluency",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu0-2",
+      "question": "Find the inverse of f(x) = (5x + 2)/(x − 3). State any restrictions.",
+      "answer": "Swap: x = (5y+2)/(y−3) → x(y−3) = 5y+2 → xy−3x = 5y+2 → xy−5y = 3x+2 → y(x−5) = 3x+2 → f⁻¹(x) = (3x+2)/(x−5), x ≠ 5.",
+      "skill": "function-fluency",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cbu0-3",
+      "question": "Factor completely: 3x⁴ − 48",
+      "answer": "3(x⁴ − 16) = 3(x² − 4)(x² + 4) = 3(x − 2)(x + 2)(x² + 4).",
+      "skill": "algebra-cleanup",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbu0-4",
+      "question": "Rewrite in power-rule form and differentiate: f(x) = 5/x² − 3/√x + 2x",
+      "answer": "f(x) = 5x⁻² − 3x^(−1/2) + 2x. f'(x) = −10x⁻³ + (3/2)x^(−3/2) + 2 = −10/x³ + 3/(2x^(3/2)) + 2.",
+      "skill": "algebra-cleanup",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu0-5",
+      "question": "Solve: 2ln(x) − ln(x − 3) = ln(4)",
+      "answer": "ln(x²) − ln(x−3) = ln(4) → ln(x²/(x−3)) = ln(4) → x²/(x−3) = 4 → x² = 4x−12 → x²−4x+12 = 0. Discriminant = 16−48 = −32 < 0. No real solution.",
+      "skill": "algebra-cleanup",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu0-6",
+      "question": "Evaluate without a calculator: sin(5π/6) + cos(7π/4) − tan(π/3)",
+      "answer": "sin(5π/6) = 1/2. cos(7π/4) = √2/2. tan(π/3) = √3. Sum = 1/2 + √2/2 − √3.",
+      "skill": "trig-essentials",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu0-7",
+      "question": "Solve on [0, 2π): 2cos²x − cosx − 1 = 0",
+      "answer": "Factor: (2cosx + 1)(cosx − 1) = 0. cosx = −1/2 → x = 2π/3, 4π/3. cosx = 1 → x = 0. Solutions: x = 0, 2π/3, 4π/3.",
+      "skill": "trig-essentials",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu0-8",
+      "question": "Find all asymptotes and any holes of f(x) = (x² − 4x + 3)/(x² − 1).",
+      "answer": "Factor: (x−1)(x−3)/[(x−1)(x+1)]. Cancel (x−1) → hole at x = 1: y = (1−3)/(1+1) = −1, hole at (1,−1). Reduced: (x−3)/(x+1). VA: x = −1. HA: y = 1 (equal degrees).",
+      "skill": "graph-literacy",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu0-9",
+      "question": "Given: f(0) = 2, f(1) = 5, f(2) = 11, f(3) = 14, f(4) = 13. Use the symmetric difference quotient to estimate f'(2).",
+      "answer": "f'(2) ≈ [f(3) − f(1)]/(3 − 1) = (14 − 5)/2 = 9/2 = 4.5.",
+      "skill": "graph-literacy",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu0-10",
+      "question": "ANALYSIS: A function g is defined by g(x) = { 2x + 1 if x < 2; ax − 3 if x ≥ 2 }. Find the value of a that makes g continuous at x = 2. Justify your answer.",
+      "answer": "For continuity: lim_{x→2⁻} g(x) = lim_{x→2⁺} g(x) = g(2). Left: 2(2)+1 = 5. Right and value: a(2)−3 = 2a−3. Set equal: 2a−3 = 5 → 2a = 8 → a = 4. Justified: with a = 4, both one-sided limits equal 5 = g(2), so g is continuous at x = 2.",
+      "skill": "graph-literacy",
+      "difficulty": 5,
+      "points": 12
+    }
+  ],
+  "answerKeys": {
+    "cbu0-1": "9x²−12x+5.",
+    "cbu0-2": "f⁻¹(x) = (3x+2)/(x−5), x ≠ 5.",
+    "cbu0-3": "3(x−2)(x+2)(x²+4).",
+    "cbu0-4": "f'(x) = −10x⁻³ + (3/2)x^(−3/2) + 2.",
+    "cbu0-5": "No real solution (discriminant < 0).",
+    "cbu0-6": "1/2 + √2/2 − √3.",
+    "cbu0-7": "x = 0, 2π/3, 4π/3.",
+    "cbu0-8": "Hole (1,−1). VA: x=−1. HA: y=1.",
+    "cbu0-9": "9/2 = 4.5.",
+    "cbu0-10": "a = 4."
+  }
+}

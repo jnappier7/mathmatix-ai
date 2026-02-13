@@ -1,0 +1,134 @@
+{
+  "moduleId": "checkpoint_u9",
+  "course": "AP Calculus BC",
+  "unit": 9,
+  "title": "Unit 9 Checkpoint: Parametric, Polar, Vector-Valued Functions",
+  "weeks": "28",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing parametric derivatives, parametric arc length/speed, polar area, polar slopes, and vector-valued motion. BC-exclusive content worth 11–12% of the AP exam.",
+  "skillsCovered": ["parametric-derivatives", "parametric-arc-length", "polar-graphing-area", "vector-valued-functions"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "parametric-derivatives", "reteachFocus": "dy/dx = (dy/dt)/(dx/dt); do NOT treat as fraction cancel—each is a rate; d²y/dx² = (d/dt[dy/dx])/(dx/dt); eliminate parameter when possible to verify", "resources": ["parametric_polar_vectors_module.json - scaffold phases 1-3"] },
+    { "skillId": "parametric-arc-length", "reteachFocus": "Speed = √((dx/dt)² + (dy/dt)²); arc length = ∫ speed dt; distance traveled = same integral; speed is ALWAYS nonneg", "resources": ["parametric_polar_vectors_module.json - scaffold phases 1-3"] },
+    { "skillId": "polar-graphing-area", "reteachFocus": "A = (1/2)∫ r² dθ; for area between two curves: (1/2)∫(R²−r²)dθ; find intersection angles; slope: dy/dx = (r'sinθ+rcosθ)/(r'cosθ−rsinθ)", "resources": ["parametric_polar_vectors_module.json - scaffold phases 4-6"] },
+    { "skillId": "vector-valued-functions", "reteachFocus": "v(t)=⟨x'(t),y'(t)⟩, speed=|v(t)|, accel=v'(t); position from velocity: r(t)=r(a)+∫ₐᵗv(s)ds; distance=∫|v|dt", "resources": ["parametric_polar_vectors_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu9-1",
+      "question": "A curve is defined by x(t) = t² + 1, y(t) = t³ − 3t. Find dy/dx at t = 2.",
+      "answer": "dx/dt = 2t, dy/dt = 3t² − 3. dy/dx = (3t²−3)/(2t). At t=2: dy/dx = (12−3)/4 = 9/4.",
+      "skill": "parametric-derivatives",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu9-2",
+      "question": "For the parametric curve x(t) = cos(t), y(t) = sin(t), find d²y/dx² at t = π/4.",
+      "answer": "dx/dt = −sin(t), dy/dt = cos(t). dy/dx = cos(t)/(−sin(t)) = −cot(t). d/dt[dy/dx] = d/dt[−cot(t)] = csc²(t). d²y/dx² = csc²(t)/(−sin(t)) = −csc³(t). At t = π/4: csc(π/4) = √2, so d²y/dx² = −(√2)³ = −2√2.",
+      "skill": "parametric-derivatives",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu9-3",
+      "question": "Find the arc length of the curve x(t) = 3t, y(t) = 4t for 0 ≤ t ≤ 5.",
+      "answer": "dx/dt = 3, dy/dt = 4. Speed = √(9+16) = 5. Arc length = ∫₀⁵ 5 dt = 25.",
+      "skill": "parametric-arc-length",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbu9-4",
+      "question": "A particle moves with x(t) = eᵗ, y(t) = e⁻ᵗ. Find the speed at t = 0 and set up (but do not evaluate) the integral for arc length from t = 0 to t = 1.",
+      "answer": "dx/dt = eᵗ, dy/dt = −e⁻ᵗ. Speed = √(e²ᵗ + e⁻²ᵗ). At t=0: speed = √(1+1) = √2. Arc length = ∫₀¹ √(e²ᵗ + e⁻²ᵗ) dt.",
+      "skill": "parametric-arc-length",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu9-5",
+      "question": "Find the area enclosed by one petal of the rose r = cos(2θ).",
+      "answer": "One petal: cos(2θ) ≥ 0, so for the right petal use θ from −π/4 to π/4. A = (1/2)∫_{−π/4}^{π/4} cos²(2θ) dθ. Using cos²(2θ) = (1+cos(4θ))/2: A = (1/4)∫_{−π/4}^{π/4}(1+cos(4θ))dθ = (1/4)[θ + sin(4θ)/4]_{−π/4}^{π/4} = (1/4)[(π/4+0)−(−π/4+0)] = (1/4)(π/2) = π/8.",
+      "skill": "polar-graphing-area",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu9-6",
+      "question": "Find the area inside r = 2 and outside r = 2(1 − cos θ) (a cardioid).",
+      "answer": "Intersections: 2 = 2(1−cosθ) → cosθ = 0 → θ = π/2, 3π/2. The circle r = 2 is outside the cardioid r = 2(1−cosθ) for θ ∈ (−π/2, π/2) (check: at θ=0, circle=2 > cardioid=0). By symmetry about the polar axis, A = 2·(1/2)∫₀^{π/2}[4 − 4(1−cosθ)²]dθ = ∫₀^{π/2}[4−4+8cosθ−4cos²θ]dθ = ∫₀^{π/2}[8cosθ−2−2cos(2θ)]dθ = [8sinθ−2θ−sin(2θ)]₀^{π/2} = (8−π−0)−0 = 8−π.",
+      "skill": "polar-graphing-area",
+      "difficulty": 6,
+      "points": 14
+    },
+    {
+      "id": "cbu9-7",
+      "question": "A particle moves in the plane with position vector r(t) = ⟨t² − 1, 2t + 3⟩. Find the velocity, acceleration, and speed at t = 1.",
+      "answer": "v(t) = ⟨2t, 2⟩. a(t) = ⟨2, 0⟩. At t=1: v(1) = ⟨2, 2⟩, a(1) = ⟨2, 0⟩. Speed = |v(1)| = √(4+4) = 2√2.",
+      "skill": "vector-valued-functions",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu9-8",
+      "question": "A particle has velocity v(t) = ⟨3, 2t⟩ and position r(0) = ⟨1, −2⟩. Find r(t) and the position at t = 3.",
+      "answer": "r(t) = r(0) + ∫₀ᵗ v(s) ds = ⟨1, −2⟩ + ⟨3t, t²⟩ = ⟨1+3t, −2+t²⟩. r(3) = ⟨10, 7⟩.",
+      "skill": "vector-valued-functions",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu9-9",
+      "question": "Find the total distance traveled by a particle with velocity v(t) = ⟨cos(t), sin(t)⟩ from t = 0 to t = 2π.",
+      "answer": "Speed = |v(t)| = √(cos²t + sin²t) = 1. Distance = ∫₀^{2π} 1 dt = 2π.",
+      "skill": "vector-valued-functions",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu9-10",
+      "question": "ANALYSIS: A particle moves with x(t) = t − sin(t) and y(t) = 1 − cos(t) for 0 ≤ t ≤ 2π. (a) Find dy/dx at t = π/2. (b) Find the point(s) where the tangent line is horizontal. (c) Find the speed at t = π.",
+      "answer": "(a) dx/dt = 1−cos(t), dy/dt = sin(t). dy/dx = sin(t)/(1−cos(t)). At t=π/2: dy/dx = 1/(1−0) = 1. (b) Horizontal tangent: dy/dt = 0 → sin(t) = 0 → t = 0, π, 2π. Check dx/dt ≠ 0: at t=π, dx/dt=1−(−1)=2≠0 ✓. At t=0 and t=2π, dx/dt=1−1=0 (cusp, not horizontal tangent). So horizontal tangent only at t=π, point: (π−0, 1−(−1)) = (π, 2). (c) Speed at t=π: √((1−cos π)² + sin²π) = √((1+1)² + 0) = √4 = 2.",
+      "skill": "parametric-derivatives",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu9-spiral-1",
+      "question": "SPIRAL (Integration by Parts): Evaluate ∫ x·cos(x) dx.",
+      "answer": "u = x, dv = cos(x)dx. du = dx, v = sin(x). ∫x·cos(x)dx = x·sin(x) − ∫sin(x)dx = x·sin(x) + cos(x) + C.",
+      "skill": "integration-by-parts",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    },
+    {
+      "id": "cbu9-spiral-2",
+      "question": "SPIRAL (Optimization): A rectangular box with no top has volume 32 ft³. Find the dimensions that minimize the surface area if the base is a square.",
+      "answer": "Let x = side of base, h = height. V = x²h = 32 → h = 32/x². S = x² + 4xh = x² + 128/x. S'(x) = 2x − 128/x² = 0 → 2x³ = 128 → x³ = 64 → x = 4. h = 32/16 = 2. S''(x) = 2 + 256/x³ > 0 → min ✓. Dimensions: 4 ft × 4 ft × 2 ft.",
+      "skill": "optimization",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review from Unit 5"
+    }
+  ],
+  "answerKeys": {
+    "cbu9-1": "dy/dx = 9/4 at t = 2.",
+    "cbu9-2": "d²y/dx² = −2√2 at t = π/4.",
+    "cbu9-3": "Arc length = 25.",
+    "cbu9-4": "Speed = √2 at t=0. Arc length = ∫₀¹ √(e²ᵗ+e⁻²ᵗ) dt.",
+    "cbu9-5": "Area = π/8.",
+    "cbu9-6": "Area = 8−π.",
+    "cbu9-7": "v(1)=⟨2,2⟩, a(1)=⟨2,0⟩, speed=2√2.",
+    "cbu9-8": "r(t)=⟨1+3t, −2+t²⟩. r(3)=⟨10,7⟩.",
+    "cbu9-9": "Distance = 2π.",
+    "cbu9-10": "(a) dy/dx=1 at t=π/2. (b) Horizontal at (π,2). (c) Speed=2 at t=π.",
+    "cbu9-spiral-1": "xsin(x)+cos(x)+C.",
+    "cbu9-spiral-2": "4ft × 4ft × 2ft."
+  }
+}

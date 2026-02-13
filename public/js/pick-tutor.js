@@ -1,14 +1,11 @@
-// public/js/pick-tutor.js  –  FULL FILE (paste-ready)
+// public/js/pick-tutor.js  –  Tutor selection only (avatar selection is on pick-avatar.html)
 document.addEventListener('DOMContentLoaded', () => {
   let allTutors    = [];
-  let allAvatars   = [];
   let currentUser  = null;
   const tutorSelectionGrid = document.getElementById('tutor-selection-grid');
-  const avatarSelectionGrid = document.getElementById('avatar-selection-grid');
   const playVoiceBtn       = document.getElementById('play-voice-btn');
   const completeSelectionBtn = document.getElementById('complete-selection-btn');
   let selectedTutorId      = null;
-  let selectedAvatarId     = null;
 
   /* -------- INITIAL DATA LOAD -------- */
   async function fetchData() {
@@ -42,34 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(key => key !== 'default')
         .map(key => ({ id: key, ...tutorsData[key] }));
 
-      const avatarsData = window.AVATAR_CONFIG;
-      allAvatars = Object.keys(avatarsData)
-        .filter(key => key !== 'default')
-        .map(key => ({ id: key, ...avatarsData[key] }));
-
       renderTutors();
-      renderAvatars();
-
-      // Check if returning from avatar builder - auto-select the latest custom avatar
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('avatar') === 'custom' && currentUser.avatarGallery?.length > 0) {
-        // Select the most recently created avatar (last in gallery)
-        const latestIndex = currentUser.avatarGallery.length - 1;
-        setTimeout(() => {
-          const latestAvatarCard = document.querySelector(`.avatar-card[data-avatar-id="gallery-${latestIndex}"]`);
-          if (latestAvatarCard) {
-            latestAvatarCard.classList.add('selected');
-            selectedAvatarId = `gallery-${latestIndex}`;
-            checkBothSelected();
-          }
-        }, 100);
-        // Clean up the URL
-        window.history.replaceState({}, '', '/pick-tutor.html');
-      }
     } catch (err) {
       console.error('Error fetching initial data:', err);
       tutorSelectionGrid.innerHTML = `<p>Error loading tutors. Please refresh.</p>`;
-      avatarSelectionGrid.innerHTML = `<p>Error loading avatars. Please refresh.</p>`;
     }
   }
 
@@ -106,79 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function renderAvatars() {
-    if (!avatarSelectionGrid || !currentUser) return;
-    avatarSelectionGrid.innerHTML = '';
-
-    // Add "Create Custom Avatar" card first
-    const galleryCount = (currentUser.avatarGallery || []).length;
-    const customCard = document.createElement('div');
-    customCard.classList.add('avatar-card', 'unlocked', 'create-custom');
-    customCard.dataset.avatarId = 'custom';
-    customCard.innerHTML = `
-      <div class="avatar-card-image">
-        <i class="fas fa-magic"></i>
-      </div>
-      <h4 class="avatar-card-name">Create Your Own!</h4>
-      <p class="avatar-card-description">${galleryCount < 3 ? `${3 - galleryCount} slots left` : 'Replace oldest'}</p>`;
-    avatarSelectionGrid.appendChild(customCard);
-
-    // Show all avatars from the gallery (up to 3)
-    if (currentUser.avatarGallery && currentUser.avatarGallery.length > 0) {
-      currentUser.avatarGallery.forEach((avatar, index) => {
-        const galleryCard = document.createElement('div');
-        galleryCard.classList.add('avatar-card', 'unlocked');
-        galleryCard.dataset.avatarId = `gallery-${index}`;
-        galleryCard.dataset.galleryIndex = index;
-        galleryCard.innerHTML = `
-          <div class="avatar-card-image">
-            <img src="${avatar.dicebearUrl}" alt="${avatar.name}" loading="lazy">
-          </div>
-          <h4 class="avatar-card-name">${avatar.name}</h4>
-          <p class="avatar-card-description">Custom creation</p>
-          <span class="avatar-rarity rarity-legendary">custom</span>`;
-        avatarSelectionGrid.appendChild(galleryCard);
-      });
-    }
-
-    allAvatars.forEach(avatar => {
-      const isUnlocked = avatar.unlocked || (currentUser.level >= (avatar.unlockLevel || 0));
-      const card = document.createElement('div');
-      card.classList.add('avatar-card', isUnlocked ? 'unlocked' : 'locked');
-      card.dataset.avatarId = avatar.id;
-
-      if (isUnlocked) {
-        card.innerHTML = `
-          <div class="avatar-card-image">
-            <img src="/images/avatars/${avatar.image}" alt="${avatar.name}" loading="lazy" onerror="this.src='/images/avatars/default.png'">
-          </div>
-          <h4 class="avatar-card-name">${avatar.name}</h4>
-          <p class="avatar-card-description">${avatar.description}</p>
-          ${avatar.rarity ? `<span class="avatar-rarity rarity-${avatar.rarity}">${avatar.rarity}</span>` : ''}`;
-      } else {
-        const unlockLabel = avatar.unlockLevel
-          ? `Unlocks at Level ${avatar.unlockLevel}`
-          : 'Keep playing to unlock!';
-        card.innerHTML = `
-          <div class="avatar-card-image locked-image">
-            <img src="/images/avatars/${avatar.image}" alt="Locked Avatar" loading="lazy" style="filter: brightness(0) opacity(0.3);" onerror="this.src='/images/avatars/default.png'">
-            <div class="lock-overlay"><i class="fas fa-lock fa-2x"></i></div>
-          </div>
-          <h4 class="avatar-card-name">?????</h4>
-          <p class="avatar-card-description"><i class="fas fa-lock"></i> ${unlockLabel}</p>`;
-      }
-      avatarSelectionGrid.appendChild(card);
-    });
-  }
-
   /* -------- INTERACTION HANDLERS -------- */
-  function checkBothSelected() {
-    if (selectedTutorId && selectedAvatarId) {
-      completeSelectionBtn.disabled = false;
-      completeSelectionBtn.innerHTML = '<i class="fas fa-rocket"></i> Let\'s Go!';
-    }
-  }
-
   tutorSelectionGrid.addEventListener('click', e => {
     const card = e.target.closest('.tutor-card');
     if (!card || card.classList.contains('locked')) return;
@@ -187,28 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
     card.classList.add('selected');
     selectedTutorId = card.dataset.tutorId;
     playVoiceBtn.disabled = false;
-    checkBothSelected();
-  });
-
-  avatarSelectionGrid.addEventListener('click', e => {
-    const card = e.target.closest('.avatar-card');
-    if (!card || card.classList.contains('locked')) return;
-
-    // If clicking "Create Custom Avatar", redirect to avatar builder
-    if (card.dataset.avatarId === 'custom') {
-      // Pass tutor selection if one is already made, so we can skip back here
-      let url = '/avatar-builder.html?from=pick-tutor';
-      if (selectedTutorId) {
-        url += `&tutor=${selectedTutorId}`;
-      }
-      window.location.href = url;
-      return;
-    }
-
-    document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedAvatarId = card.dataset.avatarId;
-    checkBothSelected();
+    completeSelectionBtn.disabled = false;
+    completeSelectionBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Next: Choose Your Avatar';
   });
 
   playVoiceBtn.addEventListener('click', async () => {
@@ -244,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   completeSelectionBtn.addEventListener('click', async () => {
-    if (!selectedTutorId || !selectedAvatarId) return;
+    if (!selectedTutorId) return;
 
     completeSelectionBtn.disabled = true;
     completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
@@ -252,11 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await csrfFetch('/api/user/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedTutorId, selectedAvatarId }),
+        body: JSON.stringify({ selectedTutorId }),
         credentials: 'include'
       });
       if (!res.ok) throw new Error(await res.text());
-      window.location.href = '/chat.html';
+      window.location.href = '/pick-avatar.html';
     } catch (err) {
       console.error(err);
       completeSelectionBtn.disabled = false;

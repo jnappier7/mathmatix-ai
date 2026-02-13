@@ -1,0 +1,289 @@
+{
+  "moduleId": "function_analysis",
+  "course": "AP Calculus BC",
+  "unit": 5,
+  "title": "Analyzing Functions with Derivatives",
+  "weeks": "11-14",
+  "estimatedDuration": 50,
+  "description": "This is where everything comes together. The first derivative tells us where a function increases, decreases, and has local extrema. The second derivative reveals concavity and inflection points. Combine both to sketch accurate graphs from derivative information alone. EVT guarantees absolute extrema on closed intervals; MVT connects average and instantaneous rates of change. Optimization applies all of these tools to solve real-world maximization and minimization problems. The f/f'/f'' relationship is the single most tested concept on the AP exam.",
+  "skills": ["increasing-decreasing-extrema", "concavity-inflection", "curve-sketching", "evt-mvt", "optimization"],
+  "standardsAlignment": ["CED 5.1", "CED 5.2", "CED 5.3", "CED 5.4", "CED 5.5", "CED 5.6", "CED 5.7", "CED 5.8", "CED 5.9", "CED 5.10", "CED 5.11", "CED 5.12"],
+  "goals": [
+    "Use the first derivative test to determine intervals of increase/decrease and classify local extrema",
+    "Use the second derivative to determine concavity, locate inflection points, and classify extrema via the second derivative test",
+    "Sketch the graph of f from information about f' and f'', connecting all three levels of analysis",
+    "Apply the Extreme Value Theorem and Mean Value Theorem with proper justification",
+    "Set up and solve optimization problems by reducing to a single-variable calculus problem"
+  ],
+  "instructionalStrategy": [
+    "Build from first derivative analysis to second derivative analysis — never skip the sign chart step.",
+    "The f/f'/f'' connection must be drilled from all directions: given f sketch f', given f' describe f, given f'' describe concavity of f.",
+    "MVT requires JUSTIFICATION on the AP exam: state hypotheses (continuous on [a,b], differentiable on (a,b)), state the conclusion.",
+    "Optimization setup is harder than the calculus. Spend time on translating word problems into equations before differentiating."
+  ],
+  "aiFlexLevel": "medium",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "increasing-decreasing-extrema",
+      "title": "First & Second Derivative Analysis",
+      "text": "**First Derivative Test (FDT):**\n\nThe sign of f'(x) tells us whether f is going up or down:\n• f'(x) > 0 on an interval → f is **increasing** there\n• f'(x) < 0 on an interval → f is **decreasing** there\n\n**Critical points:** where f'(x) = 0 or f'(x) does not exist (and f is defined).\n\n**Classifying critical points with FDT:**\n• f' changes from + to − → **local maximum**\n• f' changes from − to + → **local minimum**\n• f' does NOT change sign → **neither** (e.g., x³ at x = 0)\n\n**Second Derivative Test (SDT):**\n\nThe sign of f''(x) tells us the shape (concavity) of f:\n• f''(x) > 0 → **concave up** (cup shape, opens upward)\n• f''(x) < 0 → **concave down** (cap shape, opens downward)\n• **Inflection point:** where f'' changes sign (concavity switches)\n\n**SDT for extrema:** At a critical point c where f'(c) = 0:\n• f''(c) > 0 → **local minimum** (concave up = cup = catches a min)\n• f''(c) < 0 → **local maximum** (concave down = cap = holds a max)\n• f''(c) = 0 → **inconclusive** (use FDT instead)",
+      "initialPrompt": "If f'(2) = 0 and f''(2) = −5, what can you conclude about x = 2? Is it a max, min, or neither? Which test tells you?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "increasing-decreasing-extrema",
+      "title": "I-Do: First & Second Derivative Analysis",
+      "examples": [
+        {
+          "problem": "f(x) = x³ − 3x² − 9x + 5. Find intervals of increase/decrease and local extrema using FDT.",
+          "solution": "**Step 1 — Find f'(x):**\nf'(x) = 3x² − 6x − 9 = 3(x² − 2x − 3) = 3(x − 3)(x + 1)\n\n**Step 2 — Critical points:** f' = 0 at x = −1 and x = 3.\n\n**Step 3 — Sign chart for f':**\n\n| Interval | Test value | f'(x) sign | f behavior |\n|---|---|---|---|\n| x < −1 | x = −2 | 3(−5)(−3) = + | Increasing |\n| −1 < x < 3 | x = 0 | 3(−3)(1) = − | Decreasing |\n| x > 3 | x = 4 | 3(1)(5) = + | Increasing |\n\n**Step 4 — Classify:**\n• At x = −1: f' changes + to − → **local max**\n  f(−1) = −1 − 3 + 9 + 5 = **10**\n• At x = 3: f' changes − to + → **local min**\n  f(3) = 27 − 27 − 27 + 5 = **−22**\n\n**Local max: (−1, 10). Local min: (3, −22).**"
+        },
+        {
+          "problem": "f(x) = x⁴ − 4x³ + 6. Find intervals of concavity and inflection points.",
+          "solution": "**Step 1 — Find f''(x):**\nf'(x) = 4x³ − 12x²\nf''(x) = 12x² − 24x = 12x(x − 2)\n\n**Step 2 — f'' = 0 at x = 0 and x = 2.**\n\n**Step 3 — Sign chart for f'':**\n\n| Interval | Test value | f''(x) sign | Concavity |\n|---|---|---|---|\n| x < 0 | x = −1 | 12(−1)(−3) = + | Concave up |\n| 0 < x < 2 | x = 1 | 12(1)(−1) = − | Concave down |\n| x > 2 | x = 3 | 12(3)(1) = + | Concave up |\n\n**Step 4 — Inflection points (f'' changes sign at both):**\n• f(0) = 6 → inflection at **(0, 6)**\n• f(2) = 16 − 32 + 6 = −10 → inflection at **(2, −10)**"
+        },
+        {
+          "problem": "f(x) = x³ − 6x² + 9x + 1. Use SDT to classify critical points.",
+          "solution": "**Step 1 — Critical points:**\nf'(x) = 3x² − 12x + 9 = 3(x² − 4x + 3) = 3(x − 1)(x − 3)\nf' = 0 at x = 1 and x = 3.\n\n**Step 2 — Second derivative:**\nf''(x) = 6x − 12\n\n**Step 3 — Apply SDT:**\n• f''(1) = 6 − 12 = −6 < 0 → **local maximum** at x = 1\n  f(1) = 1 − 6 + 9 + 1 = **5**\n• f''(3) = 18 − 12 = 6 > 0 → **local minimum** at x = 3\n  f(3) = 27 − 54 + 27 + 1 = **1**\n\n**Local max: (1, 5). Local min: (3, 1).**\n\n**When to use FDT vs SDT:** SDT is faster when f'' is easy to compute. But if f''(c) = 0, SDT is inconclusive and you must fall back to FDT."
+        }
+      ],
+      "initialPrompt": "In example 1, why do we test points in each interval rather than just plugging in the critical points? What does the sign between critical points tell us?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "increasing-decreasing-extrema",
+      "title": "We-Do: First & Second Derivative Analysis",
+      "problems": [
+        {
+          "id": "fa-wp1",
+          "question": "f(x) = 2x³ + 3x² − 12x. Find critical points and classify using FDT.",
+          "answer": "Local max at x = −2, f(−2) = 20. Local min at x = 1, f(1) = −7.",
+          "hints": [
+            "f'(x) = 6x² + 6x − 12 = 6(x² + x − 2) = 6(x + 2)(x − 1). CP: x = −2, x = 1.",
+            "Sign chart: f' > 0 for x < −2, f' < 0 for −2 < x < 1, f' > 0 for x > 1. So local max at x = −2: f(−2) = −16 + 12 + 24 = 20. Local min at x = 1: f(1) = 2 + 3 − 12 = −7."
+          ]
+        },
+        {
+          "id": "fa-wp2",
+          "question": "f(x) = x⁴ − 8x² + 16. Find intervals of concavity.",
+          "answer": "Concave up on (−∞, −2√3/3) ∪ (2√3/3, ∞). Concave down on (−2√3/3, 2√3/3).",
+          "hints": [
+            "f'(x) = 4x³ − 16x. f''(x) = 12x² − 16. Set f'' = 0: 12x² = 16, x² = 4/3, x = ±2/√3 = ±2√3/3.",
+            "f'' > 0 for |x| > 2√3/3 → concave up. f'' < 0 for |x| < 2√3/3 → concave down."
+          ]
+        },
+        {
+          "id": "fa-wp3",
+          "question": "g(x) = xe^(−x). Find and classify all critical points using SDT.",
+          "answer": "Local maximum at x = 1, g(1) = 1/e.",
+          "hints": [
+            "Product rule: g'(x) = e^(−x) + x(−e^(−x)) = e^(−x)(1 − x). g' = 0 when x = 1.",
+            "g''(x) = −e^(−x)(1 − x) + e^(−x)(−1) = e^(−x)(x − 2). g''(1) = e^(−1)(−1) < 0 → local max at x = 1. g(1) = 1/e."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, find f'(x) and factor it completely. Setting each factor to zero gives the critical points."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "curve-sketching",
+      "title": "Curve Sketching & the EVT/MVT Theorems",
+      "text": "**Curve Sketching from Derivative Information:**\n\nOn the AP exam, you'll often be given the graph of f' (not f!) and asked to describe f.\n\n**Reading f from f':**\n• f' > 0 → f increasing\n• f' < 0 → f decreasing\n• f' = 0 and changes sign → f has local extremum\n• f' increasing → f concave up (because f'' > 0)\n• f' decreasing → f concave down (because f'' < 0)\n• f' has a local extremum → f has an inflection point\n\n**Extreme Value Theorem (EVT):**\nIf f is continuous on [a, b], then f attains an absolute maximum and an absolute minimum on [a, b].\n\n**Candidates test:** Evaluate f at critical points in (a, b) AND at the endpoints a and b. The largest value is the absolute max; the smallest is the absolute min.\n\n**Mean Value Theorem (MVT):**\nIf f is continuous on [a, b] and differentiable on (a, b), then there exists c in (a, b) such that:\nf'(c) = [f(b) − f(a)] / (b − a)\n\n**Geometric meaning:** There's a tangent line parallel to the secant line connecting (a, f(a)) and (b, f(b)).\n\n**AP requirement:** When applying MVT, you MUST state that f is continuous on [a, b] and differentiable on (a, b).",
+      "initialPrompt": "If the graph of f' is a downward-opening parabola that crosses the x-axis at x = 1 and x = 5, describe the behavior of f. Where is f increasing? Decreasing? Where are the extrema?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "curve-sketching",
+      "title": "I-Do: Curve Sketching & EVT/MVT",
+      "examples": [
+        {
+          "problem": "Given f'(x) = (x + 2)(x − 1)², describe the graph of f.",
+          "solution": "**Step 1 — Zeros of f':** x = −2 and x = 1.\n\n**Step 2 — Sign chart for f':**\n\n| Interval | Test value | f'(x) | f behavior |\n|---|---|---|---|\n| x < −2 | x = −3 | (−1)(16) = − | Decreasing |\n| −2 < x < 1 | x = 0 | (2)(1) = + | Increasing |\n| x > 1 | x = 2 | (4)(1) = + | Increasing |\n\n**Step 3 — Classify critical points:**\n• At x = −2: f' changes − to + → **local minimum**\n• At x = 1: f' does NOT change sign (+ to +) → **no extremum**\n\n**Step 4 — Concavity (from f' behavior):**\nSince f' goes from decreasing to increasing near x = 1 (f' has a local min at x = 1), **f has an inflection point at x = 1**.\n\n**Summary:** f decreases on (−∞, −2), has local min at x = −2, increases on (−2, ∞), with an inflection point at x = 1."
+        },
+        {
+          "problem": "f(x) = x³ − x on [0, 2]. Verify MVT hypotheses and find all values of c.",
+          "solution": "**Step 1 — Verify hypotheses:**\nf(x) = x³ − x is a polynomial → continuous on [0, 2] ✓ and differentiable on (0, 2) ✓.\n\n**Step 2 — Compute the average rate of change:**\nf(0) = 0, f(2) = 8 − 2 = 6\n[f(2) − f(0)] / (2 − 0) = 6/2 = 3\n\n**Step 3 — Find c where f'(c) = 3:**\nf'(x) = 3x² − 1\n3x² − 1 = 3\n3x² = 4\nx² = 4/3\nx = 2√3/3 ≈ 1.155\n\n**Step 4 — Verify c ∈ (0, 2):**\n2√3/3 ≈ 1.155 ∈ (0, 2) ✓\n\n**c = 2√3/3.** At this point, the tangent line has the same slope (3) as the secant line from (0, 0) to (2, 6)."
+        },
+        {
+          "problem": "f(x) = x³ − 12x + 1 on [−3, 4]. Find absolute maximum and minimum (EVT).",
+          "solution": "**Step 1 — f is continuous on [−3, 4] → EVT applies.**\n\n**Step 2 — Find critical points:**\nf'(x) = 3x² − 12 = 3(x² − 4) = 3(x − 2)(x + 2)\nf' = 0 at x = −2 and x = 2 (both in [−3, 4]).\n\n**Step 3 — Candidates test:**\n\n| x | f(x) | |\n|---|---|---|\n| −3 | (−27) − (−36) + 1 = **10** | Endpoint |\n| −2 | (−8) − (−24) + 1 = **17** | Critical |\n| 2 | 8 − 24 + 1 = **−15** | Critical |\n| 4 | 64 − 48 + 1 = **17** | Endpoint |\n\n**Absolute maximum = 17** at x = −2 and x = 4.\n**Absolute minimum = −15** at x = 2."
+        }
+      ],
+      "initialPrompt": "In example 1, x = 1 is a zero of f' but f has no extremum there. What feature does f have at x = 1 instead, and how can you tell from the sign chart?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "curve-sketching",
+      "title": "We-Do: Curve Sketching & EVT/MVT",
+      "problems": [
+        {
+          "id": "fa-wp4",
+          "question": "f(x) = 3x⁴ − 4x³. Find all critical points, intervals of increase/decrease, and local extrema.",
+          "answer": "f'(x) = 12x²(x − 1). CP: x = 0, x = 1. Decreasing on (−∞, 1), increasing on (1, ∞). Local min at (1, −1). No extremum at x = 0.",
+          "hints": [
+            "f'(x) = 12x³ − 12x² = 12x²(x − 1). CP at x = 0, x = 1. Sign chart: f' < 0 for x < 0 (test x = −1: 12(1)(−2) = −), f' < 0 for 0 < x < 1 (test x = 0.5: 12(0.25)(−0.5) = −), f' > 0 for x > 1.",
+            "At x = 0: no sign change → no extremum. At x = 1: − to + → local min. f(1) = 3 − 4 = −1."
+          ]
+        },
+        {
+          "id": "fa-wp5",
+          "question": "Verify MVT for f(x) = √x on [1, 9]. Find c.",
+          "answer": "c = 4",
+          "hints": [
+            "f continuous on [1, 9], differentiable on (1, 9). Average rate: (3 − 1)/(9 − 1) = 2/8 = 1/4.",
+            "f'(x) = 1/(2√x) = 1/4. So 2√x = 4, √x = 2, x = 4. c = 4 ∈ (1, 9) ✓."
+          ]
+        },
+        {
+          "id": "fa-wp6",
+          "question": "f'(x) = (x − 1)(x − 5) on [0, 6]. Find where f is increasing, decreasing, concave up, and concave down. Locate all local extrema and inflection points.",
+          "answer": "Increasing on (−∞, 1) ∪ (5, ∞). Decreasing on (1, 5). Local max at x = 1. Local min at x = 5. Concave down on (−∞, 3). Concave up on (3, ∞). Inflection point at x = 3.",
+          "hints": [
+            "f'(x) = x² − 6x + 5. Sign: positive for x < 1 and x > 5, negative for 1 < x < 5. Local max at x = 1 (+ to −), local min at x = 5 (− to +).",
+            "f''(x) = 2x − 6 = 0 at x = 3. f'' < 0 for x < 3 (concave down), f'' > 0 for x > 3 (concave up). Inflection point at x = 3."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, factor f'(x) completely. Remember that a repeated factor like x² means f' touches zero but may not change sign."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "optimization",
+      "title": "Optimization: Maximizing and Minimizing in the Real World",
+      "text": "**Optimization Framework:**\n\n1. **Read carefully.** Identify what quantity to maximize or minimize.\n2. **Draw a diagram** and label variables.\n3. **Write the objective function** — the quantity you're optimizing, in terms of your variables.\n4. **Write the constraint equation** — the relationship that limits the variables (e.g., fixed perimeter, fixed volume).\n5. **Reduce to one variable** using the constraint.\n6. **Find critical points** (set derivative = 0), check they're in the valid domain.\n7. **Verify max/min** using:\n   • Second derivative test, OR\n   • First derivative test, OR\n   • Closed interval → candidates test (endpoints + critical points)\n8. **Answer the question asked** (with units!).\n\n**Common Types:**\n• **Fencing/enclosure:** fixed perimeter, maximize area\n• **Box/container:** minimize material for fixed volume (or maximize volume for fixed material)\n• **Distance:** minimize distance from a point to a curve\n• **Revenue/profit:** maximize R(x) = x · p(x)\n\n**The setup is harder than the calculus.** Once you have a single-variable function to optimize, the derivative work is usually straightforward.",
+      "initialPrompt": "A farmer has 200 ft of fencing to make a rectangular pen along a river (no fence needed on the river side). What are the variables, what is the constraint, and what do we want to maximize?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "optimization",
+      "title": "I-Do: Optimization",
+      "examples": [
+        {
+          "problem": "A farmer has 200 ft of fencing to enclose a rectangular area along a river (no fence needed along the river). Find the dimensions that maximize the area.",
+          "solution": "**Setup:**\nLet x = side perpendicular to the river, y = side parallel to the river.\n\n**Constraint:** 2x + y = 200 (fencing for two widths and one length).\nSolve for y: y = 200 − 2x.\n\n**Objective:** A = xy = x(200 − 2x) = 200x − 2x²\n\n**Domain:** x > 0 and y > 0 → x > 0 and 200 − 2x > 0 → 0 < x < 100.\n\n**Optimize:**\nA'(x) = 200 − 4x = 0 → x = 50\ny = 200 − 100 = 100\n\n**Verify:** A''(x) = −4 < 0 → confirmed maximum.\n\n**Maximum area = 50 × 100 = 5000 ft².**\n\nDimensions: 50 ft × 100 ft (width × length along river)."
+        },
+        {
+          "problem": "Cut equal squares from the corners of a 12\" × 12\" sheet and fold up to make an open box. Find the cut size that maximizes volume.",
+          "solution": "**Setup:**\nCut squares of side x from each corner. Fold up to form a box:\n• Length = 12 − 2x, Width = 12 − 2x, Height = x\n\n**Objective:** V = x(12 − 2x)² = x(144 − 48x + 4x²) = 4x³ − 48x² + 144x\n\n**Domain:** 0 < x < 6 (so dimensions remain positive).\n\n**Optimize:**\nV'(x) = 12x² − 96x + 144 = 12(x² − 8x + 12) = 12(x − 2)(x − 6)\nV' = 0 at x = 2 and x = 6.\n\nSince x = 6 is the domain boundary (V = 0 there), x = 2 is our critical point.\n\n**Verify:** V''(x) = 24x − 96. V''(2) = 48 − 96 = −48 < 0 → confirmed maximum.\n\n**V(2) = 2(8)(8) = 128 in³.**\n\nCut 2-inch squares for maximum volume of 128 cubic inches."
+        },
+        {
+          "problem": "Find two positive numbers whose sum is 30 and whose product is maximum.",
+          "solution": "**Setup:**\nLet x and y be the two numbers.\nConstraint: x + y = 30 → y = 30 − x.\nObjective: P = xy = x(30 − x) = 30x − x².\n\n**Domain:** 0 < x < 30.\n\n**Optimize:**\nP'(x) = 30 − 2x = 0 → x = 15\ny = 30 − 15 = 15\n\n**Verify:** P''(x) = −2 < 0 → confirmed maximum.\n\n**Maximum product = 15 × 15 = 225.**\n\n**Key insight:** Equal numbers give the maximum product for a fixed sum. This is a consequence of the AM-GM inequality."
+        }
+      ],
+      "initialPrompt": "In example 1, why do we only need three sides of fencing? How does the river constraint change the problem compared to fencing all four sides?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "optimization",
+      "title": "We-Do: Optimization",
+      "problems": [
+        {
+          "id": "fa-wp7",
+          "question": "A box with a square base and open top must have volume 32 ft³. Find the dimensions that minimize the surface area (material used).",
+          "answer": "Base: 4 ft × 4 ft, height: 2 ft. Minimum surface area = 48 ft².",
+          "hints": [
+            "Let x = side of square base, h = height. V = x²h = 32, so h = 32/x². Surface area: S = x² + 4xh = x² + 4x(32/x²) = x² + 128/x.",
+            "S'(x) = 2x − 128/x² = 0. Multiply by x²: 2x³ = 128, x³ = 64, x = 4. h = 32/16 = 2. S = 16 + 32 = 48 ft². S''(4) = 2 + 256/64 = 6 > 0 → min ✓."
+          ]
+        },
+        {
+          "id": "fa-wp8",
+          "question": "Find the point on the parabola y = x² that is closest to the point (0, 1).",
+          "answer": "(√2/2, 1/2) and (−√2/2, 1/2). Minimum distance = √(3/4) = √3/2.",
+          "hints": [
+            "Minimize D² = x² + (x² − 1)² = x² + x⁴ − 2x² + 1 = x⁴ − x² + 1. Let f(x) = x⁴ − x² + 1.",
+            "f'(x) = 4x³ − 2x = 2x(2x² − 1) = 0. x = 0 or x = ±√(1/2) = ±√2/2. f(0) = 1, f(√2/2) = 1/4 − 1/2 + 1 = 3/4. Min D² = 3/4 at x = ±√2/2, y = 1/2."
+          ]
+        },
+        {
+          "id": "fa-wp9",
+          "question": "A rectangle is inscribed under the parabola y = 12 − x² with its base on the x-axis. Find the maximum area.",
+          "answer": "Maximum area = 32 (at x = 2, rectangle is 4 wide by 8 tall).",
+          "hints": [
+            "By symmetry, corners at (±x, 0) and (±x, 12 − x²). Width = 2x, height = 12 − x². A = 2x(12 − x²) = 24x − 2x³.",
+            "A'(x) = 24 − 6x² = 0. x² = 4, x = 2. A(2) = 2(2)(12 − 4) = 4(8) = 32. A''(x) = −12x, A''(2) = −24 < 0 → max ✓."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, write the volume constraint x²h = 32 and use it to eliminate h from the surface area formula."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Function Analysis Mixed Practice",
+      "problems": [
+        {
+          "id": "fa-yp1",
+          "question": "f(x) = x³ − 12x + 2. Find local extrema using FDT.",
+          "answer": "Local max at (−2, 18). Local min at (2, −14).",
+          "skill": "increasing-decreasing-extrema",
+          "hints": ["f'(x) = 3x² − 12 = 3(x − 2)(x + 2). CP: x = −2, x = 2. f' > 0 for x < −2, f' < 0 for −2 < x < 2, f' > 0 for x > 2. Local max at x = −2: f(−2) = −8 + 24 + 2 = 18. Local min at x = 2: f(2) = 8 − 24 + 2 = −14."]
+        },
+        {
+          "id": "fa-yp2",
+          "question": "f(x) = x⁴ − 4x³. Find all inflection points.",
+          "answer": "Inflection points at (0, 0) and (2, −16).",
+          "skill": "concavity-inflection",
+          "hints": ["f'(x) = 4x³ − 12x². f''(x) = 12x² − 24x = 12x(x − 2). f'' = 0 at x = 0, x = 2. f'' changes sign at both → IP. f(0) = 0, f(2) = 16 − 32 = −16."]
+        },
+        {
+          "id": "fa-yp3",
+          "question": "Verify MVT for f(x) = x² + 2x on [1, 3] and find c.",
+          "answer": "c = 2",
+          "skill": "evt-mvt",
+          "hints": ["f continuous and differentiable (polynomial). f(1) = 3, f(3) = 15. Average rate = (15 − 3)/(3 − 1) = 6. f'(x) = 2x + 2 = 6 → x = 2. c = 2 ∈ (1, 3) ✓."]
+        },
+        {
+          "id": "fa-yp4",
+          "question": "f(x) = 2x³ − 3x² − 36x + 10 on [−3, 5]. Find absolute maximum and minimum.",
+          "answer": "Absolute max = 54 at x = −2. Absolute min = −71 at x = 3.",
+          "skill": "evt-mvt",
+          "hints": ["f'(x) = 6x² − 6x − 36 = 6(x − 3)(x + 2). CP: x = −2, x = 3. f(−3) = 37, f(−2) = 54, f(3) = −71, f(5) = 5. Max = 54, min = −71."]
+        },
+        {
+          "id": "fa-yp5",
+          "question": "Given f'(x) = x²(x − 4). Find where f has a local max, local min, and inflection points.",
+          "answer": "No local max. Local min at x = 4. Inflection points at x = 0 and x = 8/3.",
+          "skill": "curve-sketching",
+          "hints": ["f' = 0 at x = 0 and x = 4. Sign: f' < 0 for x < 0, f' < 0 for 0 < x < 4, f' > 0 for x > 4. No sign change at x = 0 (no extremum). − to + at x = 4 → local min. f''(x) = 3x² − 8x = x(3x − 8). f'' = 0 at x = 0, x = 8/3. Both are sign changes → inflection points."]
+        },
+        {
+          "id": "fa-yp6",
+          "question": "A rectangle has perimeter 40. Find the dimensions that maximize the area.",
+          "answer": "10 × 10 (square). Maximum area = 100.",
+          "skill": "optimization",
+          "hints": ["2l + 2w = 40 → w = 20 − l. A = l(20 − l) = 20l − l². A' = 20 − 2l = 0 → l = 10. w = 10. A = 100. A'' = −2 < 0 → max."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "fa-wp1": "Local max at (−2, 20). Local min at (1, −7).",
+    "fa-wp2": "CU on (−∞, −2√3/3) ∪ (2√3/3, ∞). CD on (−2√3/3, 2√3/3).",
+    "fa-wp3": "Local max at (1, 1/e).",
+    "fa-wp4": "Decreasing on (−∞, 1). Increasing on (1, ∞). Local min at (1, −1). No extremum at x = 0.",
+    "fa-wp5": "c = 4.",
+    "fa-wp6": "Increasing on (−∞, 1) ∪ (5, ∞). Decreasing on (1, 5). Local max at x = 1, local min at x = 5. IP at x = 3.",
+    "fa-wp7": "4 × 4 × 2. Surface area = 48 ft².",
+    "fa-wp8": "(±√2/2, 1/2). Distance = √3/2.",
+    "fa-wp9": "32 (rectangle 4 × 8).",
+    "fa-yp1": "Local max (−2, 18). Local min (2, −14).",
+    "fa-yp2": "(0, 0) and (2, −16).",
+    "fa-yp3": "c = 2.",
+    "fa-yp4": "Max = 54 at x = −2. Min = −71 at x = 3.",
+    "fa-yp5": "No local max. Local min at x = 4. IP at x = 0 and x = 8/3.",
+    "fa-yp6": "10 × 10, area = 100."
+  }
+}

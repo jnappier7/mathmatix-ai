@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meet Your Math Tutors! | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/css/avatar-builder.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
 <body class="landing-page-body">
@@ -33,20 +32,10 @@
       </div>
     </section>
 
-    <!-- AVATAR SELECTION -->
-    <section class="selection-section" style="margin-top: 4rem;">
-      <h2 class="section-title">Choose Your Avatar.</h2>
-      <p class="subtitle">Pick a cool creature to represent you! Unlock more as you level up! 🎮</p>
-
-      <div id="avatar-selection-grid" class="avatar-selection-grid">
-        <p style="text-align: center; color: var(--clr-text-dim);">Loading avatars...</p>
-      </div>
-    </section>
-
-    <!-- COMBINED ACTION BUTTON -->
+    <!-- NEXT BUTTON -->
     <div class="tutor-actions-bar" style="margin-top: 3rem;">
       <button id="complete-selection-btn" class="btn btn-select btn-large" disabled>
-        <i class="fas fa-rocket"></i> Let's Go!
+        <i class="fas fa-arrow-right"></i> Next: Choose Your Avatar
       </button>
     </div>
   </main>
@@ -58,7 +47,6 @@
 
   <script src="/js/logout.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/avatar-config-data.js"></script>
   <script type="module" src="/js/pick-tutor.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>

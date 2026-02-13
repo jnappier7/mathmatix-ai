@@ -130,28 +130,38 @@ class CourseManager {
             return;
         }
 
+        // Check which conversation is currently active
+        const currentConvId = window.currentConversationId || window.sidebar?.activeConversationId;
+
         this.courseSessions.forEach(s => {
             const item = document.createElement('div');
-            item.className = 'course-sidebar-item';
+            const isActive = s.conversationId === currentConvId && s.status === 'active';
+            item.className = 'course-sidebar-item' + (isActive ? ' active' : '') + (s.status === 'paused' ? ' paused' : '');
             item.dataset.sessionId = s._id;
 
-            const statusIcon = s.status === 'paused' ? 'fa-pause-circle' : 'fa-book-open';
-            const statusColor = s.status === 'paused' ? '#aaa' : '#667eea';
+            const pct = s.overallProgress || 0;
+            const moduleDone = (s.modules || []).filter(m => m.status === 'completed').length;
+            const moduleTotal = (s.modules || []).length;
+
+            // Format current module name from slug: "mod-linear-equations" → "Linear Equations"
+            const currentMod = s.currentModuleId || '';
+            const modLabel = currentMod
+                .replace(/^mod-/, '')
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, c => c.toUpperCase());
 
             item.innerHTML = `
-                <div class="course-sidebar-row" style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
-                     onmouseover="this.style.background='#f0f0ff'; this.querySelector('.course-drop-btn').style.opacity='1';"
-                     onmouseout="this.style.background='transparent'; this.querySelector('.course-drop-btn').style.opacity='0';">
-                    <i class="fas ${statusIcon}" style="color:${statusColor}; font-size:14px;"></i>
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            ${this.escapeHtml(this.formatCourseName(s.courseName))}
+                <div class="course-sidebar-row">
+                    <div class="course-sidebar-icon">${s.status === 'paused' ? '⏸' : '📘'}</div>
+                    <div class="course-sidebar-body">
+                        <div class="course-sidebar-name">${this.escapeHtml(this.formatCourseName(s.courseName))}</div>
+                        <div class="course-sidebar-module">${s.status === 'paused' ? 'Paused' : modLabel}</div>
+                        <div class="course-sidebar-progress-track">
+                            <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
                         </div>
-                        <div style="font-size:11px; color:#888;">${s.overallProgress || 0}% complete</div>
+                        <div class="course-sidebar-stats">${moduleDone}/${moduleTotal} modules &middot; ${pct}%</div>
                     </div>
-                    <button class="course-drop-btn" title="Leave course"
-                            style="opacity:0; background:none; border:none; cursor:pointer; color:#ccc; font-size:13px; padding:2px 4px; transition:opacity 0.15s, color 0.15s;"
-                            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">
+                    <button class="course-drop-x" title="Drop course" aria-label="Drop course">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -159,14 +169,14 @@ class CourseManager {
 
             // Click row → activate course
             item.querySelector('.course-sidebar-row').addEventListener('click', (e) => {
-                if (e.target.closest('.course-drop-btn')) return; // don't activate when clicking X
+                if (e.target.closest('.course-drop-x')) return;
                 this.activateCourse(s._id);
             });
 
             // Click X → drop course
-            item.querySelector('.course-drop-btn').addEventListener('click', (e) => {
+            item.querySelector('.course-drop-x').addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.dropCourse(s._id, s.courseName);
+                this.dropCourse(s._id);
             });
 
             list.appendChild(item);
@@ -478,6 +488,27 @@ class CourseManager {
 
             list.appendChild(el);
         });
+
+        // Drop Course button at the bottom of the module list
+        const dropRow = document.createElement('div');
+        dropRow.style.cssText = 'padding:12px 4px 4px; border-top:1px solid #f0f0f0; margin-top:8px; text-align:center;';
+        dropRow.innerHTML = `
+            <button class="course-drop-btn" style="
+                background:none; border:1px solid #e2e8f0; border-radius:8px;
+                color:#999; font-size:12px; padding:6px 16px; cursor:pointer;
+                transition:all 0.15s;
+            " onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444';"
+               onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#999';">
+                <i class="fas fa-sign-out-alt" style="margin-right:4px;"></i>Drop Course
+            </button>
+        `;
+        dropRow.querySelector('.course-drop-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.activeCourseSessionId) {
+                this.dropCourse(this.activeCourseSessionId);
+            }
+        });
+        list.appendChild(dropRow);
     }
 
     // --------------------------------------------------
@@ -487,7 +518,7 @@ class CourseManager {
         const modal = document.getElementById('course-catalog-modal');
         if (!modal) return;
 
-        modal.style.display = 'flex';
+        modal.classList.add('is-visible');
 
         const grid = document.getElementById('catalog-grid');
         if (grid) grid.innerHTML = '<div style="text-align:center; padding:40px; color:#aaa;">Loading courses...</div>';
@@ -509,7 +540,7 @@ class CourseManager {
 
     closeCatalog() {
         const modal = document.getElementById('course-catalog-modal');
-        if (modal) modal.style.display = 'none';
+        if (modal) modal.classList.remove('is-visible');
     }
 
     renderCatalog(catalog, recommended) {
@@ -634,9 +665,9 @@ class CourseManager {
             // Hide nudge if showing
             this.hideNudge();
 
-            // Show welcome splash in the chat
+            // Show welcome splash in the chat (with course tips for first-time, resume for returning)
             if (data.welcomeData) {
-                this.showWelcomeSplash(data.welcomeData);
+                this.showWelcomeSplash(data.welcomeData, data.resumed || false);
             } else {
                 this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
             }
@@ -742,9 +773,13 @@ class CourseManager {
     // --------------------------------------------------
     // Drop Course (remove from My Courses via X button)
     // --------------------------------------------------
-    async dropCourse(sessionId, courseName) {
-        const displayName = this.formatCourseName(courseName);
-        if (!confirm(`Leave "${displayName}"? You can re-enroll later from the course catalog.`)) return;
+    async dropCourse(sessionId) {
+        const session = this.courseSessions.find(s => s._id === sessionId);
+        const name = this.formatCourseName(session?.courseName || 'this course');
+
+        if (!confirm(`Leave "${name}"?\n\nYour progress will be saved and you can re-enroll later.`)) {
+            return;
+        }
 
         try {
             const res = await csrfFetch(`/api/course-sessions/${sessionId}/drop`, {
@@ -758,18 +793,18 @@ class CourseManager {
                 return;
             }
 
-            // Remove from local list and re-render sidebar
-            this.courseSessions = this.courseSessions.filter(s => s._id !== sessionId);
-            this.renderSidebarCourses();
-
-            // If this was the active course, clear progress bar
+            // If this was the active course, hide the progress bar
             if (this.activeCourseSessionId === sessionId) {
                 const wrapper = document.getElementById('course-progress-wrapper');
                 if (wrapper) wrapper.style.display = 'none';
                 this.activeCourseSessionId = null;
+                this.closeProgressDropdown();
             }
 
-            this.showToast(`Left "${displayName}"`);
+            // Refresh sidebar courses
+            await this.loadMySessions();
+
+            this.showToast(`Left "${name}"`);
         } catch (err) {
             console.error('[CourseManager] Failed to drop course:', err);
             this.showToast('Something went wrong');
@@ -795,7 +830,7 @@ class CourseManager {
     // --------------------------------------------------
     // Welcome splash (shown in chat after enrollment)
     // --------------------------------------------------
-    showWelcomeSplash(welcome) {
+    showWelcomeSplash(welcome, isResume = false) {
         const chatBox = document.getElementById('chat-messages-container');
         if (!chatBox) return;
 
@@ -815,10 +850,42 @@ class CourseManager {
             </div>`
         ).join('');
 
+        // Course mini-tour tips (shown below the learning path for first-time enrollees)
+        const courseTipsHtml = isResume ? '' : `
+            <div class="course-tips" style="margin-top:16px; border-top:1px solid #f0f0f0; padding-top:14px;">
+                <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#667eea; letter-spacing:0.05em; margin-bottom:10px;">
+                    <i class="fas fa-lightbulb" style="margin-right:4px;"></i> How Courses Work
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">1</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">Your tutor leads the lesson</div>
+                            <div style="font-size:12px; color:#777;">No need to pick a topic &mdash; your AI tutor teaches concepts, walks through examples, then gives you practice problems.</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">2</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">Progress bar tracks your journey</div>
+                            <div style="font-size:12px; color:#777;">The bar at the top shows your current module and step. Click it to see all modules and your overall progress.</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">3</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">You advance by showing mastery</div>
+                            <div style="font-size:12px; color:#777;">Solve practice problems correctly and your tutor will move you to the next step automatically. No rushing &mdash; go at your own pace.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
         splash.innerHTML = `
             <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 24px; color: white; text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🎓</div>
-                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">Welcome to ${this.escapeHtml(welcome.courseName)}</h2>
+                <div style="font-size: 36px; margin-bottom: 8px;">${isResume ? '👋' : '🎓'}</div>
+                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">${isResume ? 'Welcome Back!' : 'Welcome to'} ${this.escapeHtml(welcome.courseName)}</h2>
                 <p style="margin: 0; opacity: 0.9; font-size: 13px;">${welcome.moduleCount} modules · Self-paced · AI-guided</p>
             </div>
             <div style="padding: 20px; background: white;">
@@ -826,11 +893,12 @@ class CourseManager {
                 <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 8px;">Your Learning Path</div>
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
+                ${courseTipsHtml}
                 <button onclick="this.closest('.course-welcome-splash').remove()" style="
                     margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
                     background: linear-gradient(135deg, #667eea, #764ba2); color: white;
                     font-weight: 700; font-size: 14px; cursor: pointer;
-                "><i class="fas fa-play" style="margin-right: 6px;"></i>Start ${this.escapeHtml(welcome.firstModuleTitle)}</button>
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>${isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`}</button>
             </div>
         `;
 

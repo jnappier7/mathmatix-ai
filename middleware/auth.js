@@ -48,6 +48,8 @@ function ensureNotAuthenticated(req, res, next) {
             redirectUrl = '/parent-dashboard.html';
         } else if (req.user.role === 'student' && !req.user.selectedTutorId) {
             redirectUrl = '/pick-tutor.html';
+        } else if (req.user.role === 'student' && !req.user.selectedAvatarId) {
+            redirectUrl = '/pick-avatar.html';
         }
         return res.redirect(redirectUrl);
     }

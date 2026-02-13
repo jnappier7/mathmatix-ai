@@ -1,0 +1,124 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "8th Grade Mathematics",
+  "unit": 2,
+  "title": "Unit 2 Checkpoint: Linear Equations & One-Variable Reasoning",
+  "weeks": "9",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing multi-step equations (including variables on both sides), special cases (no solution / infinitely many), inequalities, and word problem translation.",
+  "skillsCovered": ["multi-step-equations", "variables-both-sides", "special-cases", "linear-inequalities", "equation-word-problems"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "multi-step-equations", "reteachFocus": "Distribute FIRST, combine like terms on SAME side, then isolate. Show every step — skipping causes errors. Always check by substitution.", "resources": ["linear_equations_module.json - scaffold phases 1-2"] },
+    { "skillId": "variables-both-sides", "reteachFocus": "Move all variable terms to one side (choose to avoid negatives); move constants to the other; solve. Check in the ORIGINAL equation.", "resources": ["linear_equations_module.json - scaffold phases 3-4"] },
+    { "skillId": "special-cases", "reteachFocus": "If variables cancel and you get a TRUE statement (5=5): infinitely many solutions. If FALSE (5=3): no solution.", "resources": ["linear_equations_module.json - scaffold phases 3-4"] },
+    { "skillId": "linear-inequalities", "reteachFocus": "Same as equations EXCEPT: flip the inequality when multiplying/dividing by a NEGATIVE. Graph on number line (open vs closed circle).", "resources": ["linear_equations_module.json - scaffold phases 5-6"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "g8u2-1",
+      "question": "Solve: 3(x − 4) + 2 = 17",
+      "answer": "3x − 12 + 2 = 17. 3x − 10 = 17. 3x = 27. x = 9. Check: 3(9−4)+2 = 3(5)+2 = 17 ✓",
+      "skill": "multi-step-equations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u2-2",
+      "question": "Solve: −2(x + 5) = 3x + 10",
+      "answer": "−2x − 10 = 3x + 10. −2x − 3x = 10 + 10. −5x = 20. x = −4. Check: −2(−4+5) = −2(1) = −2. 3(−4)+10 = −12+10 = −2 ✓",
+      "skill": "variables-both-sides",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8u2-3",
+      "question": "Solve: 5x + 3 = 5(x + 1)",
+      "answer": "5x + 3 = 5x + 5. Subtract 5x: 3 = 5. This is FALSE → no solution.",
+      "skill": "special-cases",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "g8u2-4",
+      "question": "Solve: 2(3x − 1) = 6x − 2",
+      "answer": "6x − 2 = 6x − 2. Subtract 6x: −2 = −2. TRUE → infinitely many solutions (all real numbers).",
+      "skill": "special-cases",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "g8u2-5",
+      "question": "Solve: 4x − 7 = 2x + 9",
+      "answer": "4x − 2x = 9 + 7. 2x = 16. x = 8. Check: 4(8)−7=25, 2(8)+9=25 ✓",
+      "skill": "variables-both-sides",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u2-6",
+      "question": "Solve and graph: −3x + 1 > 10",
+      "answer": "−3x > 9. Divide by −3 (FLIP!): x < −3. Graph: open circle at −3, shade left.",
+      "skill": "linear-inequalities",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u2-7",
+      "question": "Solve: 2x − 5 ≤ 3x + 2",
+      "answer": "2x − 3x ≤ 2 + 5. −x ≤ 7. Divide by −1 (FLIP!): x ≥ −7.",
+      "skill": "linear-inequalities",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u2-8",
+      "question": "A phone plan charges $25 per month plus $0.10 per text. Another plan charges $15 per month plus $0.20 per text. Write an equation to find how many texts make the plans cost the same. Solve it.",
+      "answer": "25 + 0.10t = 15 + 0.20t. 25 − 15 = 0.20t − 0.10t. 10 = 0.10t. t = 100. At 100 texts, both plans cost the same ($35).",
+      "skill": "equation-word-problems",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "g8u2-9",
+      "question": "Maria has $120 and saves $15 per week. How many weeks until she has at least $300? Write and solve an inequality.",
+      "answer": "120 + 15w ≥ 300. 15w ≥ 180. w ≥ 12. Maria needs at least 12 weeks.",
+      "skill": "equation-word-problems",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u2-10",
+      "question": "ANALYSIS: A student solved 3(x−2) = 12 as follows:\n   3x − 2 = 12\n   3x = 14\n   x = 14/3\nIdentify the error and find the correct answer.",
+      "answer": "The student forgot to distribute the 3 to both terms: 3(x−2) = 3x − 6, NOT 3x − 2. Correct: 3x − 6 = 12. 3x = 18. x = 6. Check: 3(6−2) = 3(4) = 12 ✓",
+      "skill": "multi-step-equations",
+      "difficulty": 4,
+      "points": 8
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "g8u2-spiral-1",
+      "question": "SPIRAL: Simplify (3⁴ · 3²) / 3⁵ and write as a single power of 3.",
+      "answer": "3⁴⁺² / 3⁵ = 3⁶ / 3⁵ = 3¹ = 3.",
+      "skill": "exponent-rules",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral from Unit 1"
+    }
+  ],
+  "answerKeys": {
+    "g8u2-1": "x = 9",
+    "g8u2-2": "x = −4",
+    "g8u2-3": "No solution",
+    "g8u2-4": "Infinitely many solutions",
+    "g8u2-5": "x = 8",
+    "g8u2-6": "x < −3",
+    "g8u2-7": "x ≥ −7",
+    "g8u2-8": "t = 100 texts",
+    "g8u2-9": "w ≥ 12 weeks",
+    "g8u2-10": "Error: didn't distribute 3 to −2. Correct: x = 6.",
+    "g8u2-spiral-1": "3"
+  }
+}

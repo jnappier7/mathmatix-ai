@@ -90,10 +90,153 @@
     transform: translateY(0);
 }
 
-/* Course sidebar item */
+/* ===================== Course Sidebar Items ===================== */
+
 .course-sidebar-item {
-    border-radius: 8px;
-    transition: background 0.15s ease;
+    border-radius: 10px;
+    border-left: 3px solid #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.03));
+    margin-bottom: 6px;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.course-sidebar-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.10), rgba(118, 75, 162, 0.06));
+    box-shadow: 0 1px 4px rgba(102, 126, 234, 0.12);
+}
+
+.course-sidebar-item.active {
+    border-left-color: #764ba2;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08));
+    box-shadow: 0 1px 6px rgba(118, 75, 162, 0.15);
+}
+
+.course-sidebar-item.paused {
+    border-left-color: #ccc;
+    background: rgba(0, 0, 0, 0.02);
+    opacity: 0.7;
+}
+
+.course-sidebar-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 8px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.course-sidebar-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.course-sidebar-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.course-sidebar-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--clr-text, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.course-sidebar-module {
+    font-size: 11px;
+    color: #667eea;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-sidebar-item.paused .course-sidebar-module {
+    color: #999;
+    font-style: italic;
+}
+
+/* Mini progress bar */
+.course-sidebar-progress-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(102, 126, 234, 0.12);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.course-sidebar-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.4s ease;
+}
+
+.course-sidebar-item.paused .course-sidebar-progress-fill {
+    background: #ccc;
+}
+
+.course-sidebar-stats {
+    font-size: 10px;
+    color: #999;
+    margin-top: 1px;
+}
+
+/* Drop X button */
+.course-drop-x {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 11px;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.course-sidebar-item:hover .course-drop-x {
+    opacity: 1;
+}
+
+.course-drop-x:hover {
+    color: #ef4444;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .course-sidebar-item {
+    border-left-color: #8b9cf7;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.05));
+}
+
+[data-theme="dark"] .course-sidebar-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.16), rgba(118, 75, 162, 0.10));
+}
+
+[data-theme="dark"] .course-sidebar-item.active {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.12));
+}
+
+[data-theme="dark"] .course-sidebar-name {
+    color: #e8eaed;
+}
+
+[data-theme="dark"] .course-sidebar-module {
+    color: #8b9cf7;
+}
+
+[data-theme="dark"] .course-sidebar-progress-track {
+    background: rgba(102, 126, 234, 0.20);
 }
 
 /* ----- Catalog Modal ----- */

@@ -1,5 +1,6 @@
 // routes/speak.js
 // MODIFIED: Updated to support streaming audio from ElevenLabs for a responsive hands-free experience.
+// COMPLIANCE: ElevenLabs blocked for under-13 users — returns useWebSpeech flag for browser TTS fallback.
 
 const express = require("express");
 const axios = require("axios");
@@ -13,6 +14,20 @@ router.post("/", async (req, res) => {
   const voiceToUse = voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback voice
 
   if (!text) return res.status(400).send("Missing text to speak.");
+
+  // COMPLIANCE: ElevenLabs terms prohibit use by children under 13.
+  // Under-13 users must use browser-native WebSpeech API instead.
+  if (req.user && req.user.dateOfBirth) {
+      const age = (Date.now() - new Date(req.user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+      if (age < 13) {
+          return res.status(403).json({
+              error: 'Text-to-speech unavailable',
+              message: 'This feature uses a third-party service that requires users to be 13 or older.',
+              useWebSpeech: true  // Frontend flag: use browser SpeechSynthesis API
+          });
+      }
+  }
+
   if (!ELEVENLABS_API_KEY) {
       console.error("ERROR: ElevenLabs API Key is not set.");
       return res.status(500).send("Text-to-speech service not configured.");

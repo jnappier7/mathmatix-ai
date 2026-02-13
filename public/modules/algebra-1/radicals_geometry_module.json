@@ -1,0 +1,262 @@
+{
+  "moduleId": "radicals_geometry",
+  "course": "Algebra 1",
+  "unit": 10,
+  "quarter": 4,
+  "title": "Radicals & Geometry Connections",
+  "weeks": "28-30",
+  "estimatedDuration": 45,
+  "description": "Simplify radical expressions using the product property of square roots, perform operations with radicals including addition, subtraction, and multiplication, apply the Pythagorean theorem to find missing sides of right triangles and solve real-world problems, use the distance formula to find the distance between two points on the coordinate plane, and apply the midpoint formula to find the center of a line segment. Students connect radical simplification skills to geometric applications, seeing how algebra and geometry work together through right triangle relationships and coordinate geometry.",
+  "skills": ["simplifying-radicals", "operations-with-radicals", "pythagorean-theorem", "distance-formula"],
+  "standardsAlignment": ["N-RN.2", "N-RN.3", "8.G.7", "G-GPE.4"],
+  "goals": [
+    "Simplify radical expressions by identifying perfect square factors and applying the product property of square roots, expressing results in simplest radical form (e.g., simplify √72 as 6√2)",
+    "Perform addition, subtraction, and multiplication of radical expressions by simplifying each radical first and then combining like radicals (e.g., 3√18 + 2√8 = 13√2)",
+    "Apply the Pythagorean theorem a² + b² = c² to find missing side lengths of right triangles, identify Pythagorean triples, and solve real-world problems involving right triangles",
+    "Use the distance formula d = √((x₂ − x₁)² + (y₂ − y₁)²) to calculate the distance between two points on the coordinate plane, recognizing it as an application of the Pythagorean theorem",
+    "Apply the midpoint formula M = ((x₁ + x₂)/2, (y₁ + y₂)/2) to find the midpoint of a line segment and connect coordinate geometry concepts to algebraic reasoning"
+  ],
+  "instructionalStrategy": [
+    "Begin with concrete square-root explorations — ask students to list perfect squares from 1 to 225 and find their square roots — so that simplifying radicals feels like factoring out something familiar rather than following an abstract rule.",
+    "Teach the product property √(ab) = √a · √b through side-by-side numerical verification: compute √(4·9) = √36 = 6 and √4 · √9 = 2 · 3 = 6, then repeat with several examples so students trust the property before applying it to simplify expressions like √72.",
+    "Connect the Pythagorean theorem to physical experiences — measuring actual right triangles in the classroom, drawing diagonals on grid paper — so that a² + b² = c² is not just a formula but a spatial relationship students can see and verify.",
+    "Derive the distance formula visually by drawing a right triangle between two coordinate points, labeling the horizontal and vertical legs, and showing that the distance is the hypotenuse — making the connection between the Pythagorean theorem and coordinate geometry explicit.",
+    "Use a problem-type progression for each skill: start with clean integer answers (perfect squares, Pythagorean triples), then move to simplified radical answers (√50 = 5√2), and finally to decimal approximations for real-world contexts, so students build confidence before facing messy numbers."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "simplifying-radicals",
+      "title": "Introduction to Radicals and Simplifying Square Roots",
+      "text": "A **radical expression** contains a root symbol (√). The most common radical is the **square root**.\n\n**Square root definition:** √a is the non-negative number whose square is a. That is, if √a = b, then b² = a and b ≥ 0.\n\n**Perfect squares** are numbers whose square roots are whole numbers:\n√1 = 1, √4 = 2, √9 = 3, √16 = 4, √25 = 5, √36 = 6, √49 = 7, √64 = 8, √81 = 9, √100 = 10, √121 = 11, √144 = 12, √169 = 13, √196 = 14, √225 = 15.\n\n**Product Property of Square Roots:** For a ≥ 0 and b ≥ 0:\n**√(ab) = √a · √b**\n\nThis property lets us simplify radicals by factoring out perfect squares:\n1. Find the **largest perfect square factor** of the number under the radical.\n2. Rewrite the radical as a product of two square roots.\n3. Simplify the perfect square root.\n\n**Example:** √72 = √(36 · 2) = √36 · √2 = 6√2\n\n**Variables under radicals:** For variables with even exponents, use √(x²) = |x| (or simply x when x ≥ 0):\n√(x⁴) = x², √(x⁶) = x³, √(25x²) = 5x (assuming x ≥ 0).\n\n**Adding and subtracting radicals:** You can only combine radicals with the **same radicand** (the expression under the radical sign). These are called **like radicals**, similar to like terms:\n3√5 + 7√5 = 10√5 (same radicand √5)\n4√2 − √2 = 3√2 (same radicand √2)\n3√2 + 4√3 cannot be combined (different radicands)",
+      "initialPrompt": "What is the largest perfect square that divides evenly into 50? Once you find it, how would you use the product property to simplify √50?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "simplifying-radicals",
+      "title": "I-Do: Simplifying Radical Expressions",
+      "examples": [
+        {
+          "problem": "Simplify √72.",
+          "solution": "**Step 1: Find the largest perfect square factor of 72.**\nList factors of 72: 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72.\nPerfect square factors: 1, 4, 9, 36.\nLargest perfect square factor: **36**.\n\n**Step 2: Rewrite using the product property.**\n√72 = √(36 · 2)\n\n**Step 3: Apply the product property √(ab) = √a · √b.**\n√(36 · 2) = √36 · √2\n\n**Step 4: Simplify the perfect square root.**\n√36 · √2 = **6√2**\n\n**Verify:** (6√2)² = 36 · 2 = 72 ✓\n\n**Why choose 36 and not 4 or 9?** Using the largest perfect square factor gives the simplest answer in one step. If we used 4: √72 = √(4·18) = 2√18, but √18 can still be simplified (√18 = √(9·2) = 3√2), so we would get 2·3√2 = 6√2 — the same answer, but in more steps.",
+          "tip": "Always look for the LARGEST perfect square factor. It saves steps. If you are unsure, start dividing by perfect squares: is 72 divisible by 4? Yes (72 = 4·18). By 9? Yes (72 = 9·8). By 16? No. By 25? No. By 36? Yes (72 = 36·2). Use 36."
+        },
+        {
+          "problem": "Simplify √(50x²), assuming x ≥ 0.",
+          "solution": "**Step 1: Factor the number and the variable separately.**\n50 = 25 · 2 (25 is the largest perfect square factor of 50)\nx² is already a perfect square.\n\n**Step 2: Rewrite.**\n√(50x²) = √(25 · 2 · x²)\n\n**Step 3: Apply the product property.**\n√(25 · 2 · x²) = √25 · √2 · √(x²)\n\n**Step 4: Simplify each part.**\n√25 = 5\n√(x²) = x (since x ≥ 0)\n\n**Result:** 5 · x · √2 = **5x√2**\n\n**Verify:** (5x√2)² = 25x² · 2 = 50x² ✓\n\n**Key insight:** When simplifying radicals with variables, separate the coefficient (number) and the variable parts. Simplify each independently, then combine.",
+          "tip": "For variables under a radical, pair up the exponents: √(x²) = x, √(x⁴) = x², √(x⁶) = x³. An odd exponent leaves one factor inside: √(x³) = √(x²·x) = x√x."
+        },
+        {
+          "problem": "Simplify 3√18 + 2√8.",
+          "solution": "**Step 1: Simplify each radical individually first.**\n√18 = √(9 · 2) = √9 · √2 = 3√2\n√8 = √(4 · 2) = √4 · √2 = 2√2\n\n**Step 2: Substitute back into the expression.**\n3√18 + 2√8 = 3(3√2) + 2(2√2)\n= 9√2 + 4√2\n\n**Step 3: Combine like radicals (same radicand √2).**\n9√2 + 4√2 = **(9 + 4)√2 = 13√2**\n\n**Verify the approach:** The key is that √18 and √8, while looking different, both simplify to multiples of √2. Once simplified, they become like radicals and can be combined — just like combining like terms 9x + 4x = 13x.\n\n**Common mistake:** Students sometimes try to add √18 + √8 = √26. This is WRONG. You cannot add radicands. √18 + √8 ≠ √26. You must simplify each radical first, then combine if they have the same radicand.",
+          "tip": "Think of radicals like variables: 9√2 + 4√2 = 13√2, just like 9x + 4x = 13x. You can only combine terms with the SAME radical part."
+        }
+      ],
+      "initialPrompt": "In the first example, we found that 36 was the largest perfect square factor of 72. What are the perfect square factors of 48? What is the largest one, and how would you use it to simplify √48?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "simplifying-radicals",
+      "title": "We-Do: Simplifying Radicals and Radical Operations",
+      "problems": [
+        {
+          "id": "rg-wp1",
+          "question": "Simplify √98.",
+          "answer": "98 = 49 · 2. √98 = √(49 · 2) = √49 · √2 = 7√2. Verify: (7√2)² = 49 · 2 = 98 ✓.",
+          "hints": [
+            "Find the largest perfect square factor of 98. Is 98 divisible by 4? 98/4 = 24.5 — no. By 9? 98/9 ≈ 10.9 — no. By 25? 98/25 = 3.92 — no. By 49? 98/49 = 2 — yes!",
+            "Rewrite: √98 = √(49 · 2). Apply the product property: √49 · √2.",
+            "√49 = 7. Final answer: 7√2. Check: 7² · 2 = 49 · 2 = 98 ✓."
+          ]
+        },
+        {
+          "id": "rg-wp2",
+          "question": "Simplify √(75y⁴), assuming y ≥ 0.",
+          "answer": "75 = 25 · 3. y⁴ = (y²)². √(75y⁴) = √(25 · 3 · y⁴) = √25 · √3 · √(y⁴) = 5 · √3 · y² = 5y²√3.",
+          "hints": [
+            "Factor the number: 75 = 25 · 3 (25 is the largest perfect square factor). Factor the variable: y⁴ is a perfect square since y⁴ = (y²)².",
+            "Apply the product property: √(25 · 3 · y⁴) = √25 · √3 · √(y⁴).",
+            "Simplify: √25 = 5, √(y⁴) = y². Combine: 5y²√3."
+          ]
+        },
+        {
+          "id": "rg-wp3",
+          "question": "Simplify 5√12 − 2√27.",
+          "answer": "√12 = √(4·3) = 2√3. √27 = √(9·3) = 3√3. So 5√12 − 2√27 = 5(2√3) − 2(3√3) = 10√3 − 6√3 = 4√3.",
+          "hints": [
+            "Simplify each radical first: √12 = √(4·3) = 2√3 and √27 = √(9·3) = 3√3.",
+            "Substitute: 5(2√3) − 2(3√3) = 10√3 − 6√3.",
+            "Combine like radicals: 10√3 − 6√3 = 4√3. Both terms have radicand √3, so they can be combined."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's simplify these radicals together. For the first problem, you need to find the largest perfect square that divides 98. Start by testing perfect squares: is 98 divisible by 4? By 9? By 25? By 49?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "pythagorean-theorem",
+      "title": "The Pythagorean Theorem",
+      "text": "The **Pythagorean theorem** describes the relationship between the three sides of a **right triangle**:\n\n**a² + b² = c²**\n\nwhere:\n- **a** and **b** are the lengths of the two **legs** (the sides that form the right angle)\n- **c** is the length of the **hypotenuse** (the side opposite the right angle — always the longest side)\n\n**Using the theorem:**\n- **Finding the hypotenuse:** If you know both legs, c = √(a² + b²)\n- **Finding a leg:** If you know the hypotenuse and one leg, a = √(c² − b²)\n\n**Pythagorean Triples** are sets of three whole numbers that satisfy a² + b² = c². Memorizing common triples saves time:\n- **3, 4, 5** (and multiples: 6-8-10, 9-12-15, 12-16-20)\n- **5, 12, 13** (and multiples: 10-24-26)\n- **8, 15, 17**\n- **7, 24, 25**\n\n**How to verify a triple:** Check that a² + b² = c². For 5-12-13: 25 + 144 = 169 = 13² ✓\n\n**Real-world applications:**\n- Finding the diagonal of a rectangle\n- Determining if a corner is a right angle (builders use 3-4-5)\n- Calculating the height a ladder reaches on a wall\n- Finding straight-line distances\n\n**Important:** The Pythagorean theorem ONLY works for **right triangles**. Always verify that the triangle has a 90° angle before applying it.",
+      "initialPrompt": "A right triangle has legs of length 6 and 8. Before calculating, can you predict the hypotenuse? Hint: think about multiples of a common Pythagorean triple."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "pythagorean-theorem",
+      "title": "I-Do: Applying the Pythagorean Theorem",
+      "examples": [
+        {
+          "problem": "Find the hypotenuse of a right triangle with legs of length 5 and 12.",
+          "solution": "**Step 1: Identify the known values.**\nLeg a = 5, Leg b = 12, Hypotenuse c = ?\n\n**Step 2: Apply the Pythagorean theorem.**\na² + b² = c²\n5² + 12² = c²\n25 + 144 = c²\n169 = c²\n\n**Step 3: Solve for c.**\nc = √169 = **13**\n\n**Step 4: Verify.**\n5² + 12² = 25 + 144 = 169 = 13² ✓\n\n**Note:** 5-12-13 is a well-known Pythagorean triple. Recognizing it saves calculation time. Multiples also work: a 10-24-26 triangle is just the 5-12-13 triple scaled by 2.",
+          "tip": "Always assign c to the hypotenuse (the longest side, opposite the right angle). The legs can be labeled a or b in either order — the formula is symmetric in a and b."
+        },
+        {
+          "problem": "Find the missing leg of a right triangle with hypotenuse 10 and one leg 6.",
+          "solution": "**Step 1: Identify the known values.**\nHypotenuse c = 10, Leg a = 6, Leg b = ?\n\n**Step 2: Apply the Pythagorean theorem and solve for b.**\na² + b² = c²\n6² + b² = 10²\n36 + b² = 100\nb² = 100 − 36\nb² = 64\n\n**Step 3: Solve for b.**\nb = √64 = **8**\n\n**Step 4: Verify.**\n6² + 8² = 36 + 64 = 100 = 10² ✓\n\n**Note:** This is the 3-4-5 triple scaled by 2: 6-8-10. If you recognized this pattern, you could have found b = 8 immediately.\n\n**Key difference from finding the hypotenuse:** When finding a leg, you **subtract** (c² − a²) instead of adding. A common error is adding when you should subtract.",
+          "tip": "When solving for a leg, isolate the unknown: b² = c² − a². You subtract because the hypotenuse is always the largest side. If your answer for a leg is larger than the hypotenuse, you made an error — go back and check."
+        },
+        {
+          "problem": "A 15-foot ladder leans against a wall. The base of the ladder is 9 feet from the wall. How high up the wall does the ladder reach?",
+          "solution": "**Step 1: Draw and label the right triangle.**\nThe ladder, wall, and ground form a right triangle:\n- Hypotenuse = ladder = 15 ft (the longest side, slanting from ground to wall)\n- One leg = distance from wall to base of ladder = 9 ft (horizontal, along the ground)\n- Other leg = height on the wall = ? (vertical, what we want to find)\n\n**Step 2: Apply the Pythagorean theorem.**\na² + b² = c²\n9² + h² = 15²\n81 + h² = 225\nh² = 225 − 81\nh² = 144\n\n**Step 3: Solve for h.**\nh = √144 = **12 ft**\n\n**Step 4: Verify.**\n9² + 12² = 81 + 144 = 225 = 15² ✓\n\n**Step 5: Interpret.**\nThe ladder reaches **12 feet** up the wall. This is a 9-12-15 triangle, which is the 3-4-5 triple scaled by 3 (9 = 3·3, 12 = 4·3, 15 = 5·3).\n\n**Real-world note:** Ladder safety guidelines recommend that the base should be about 1 foot away from the wall for every 4 feet of ladder height, so a 15-foot ladder at 9 feet from the base would actually be too far away for safe use.",
+          "tip": "In word problems, always identify which measurement is the hypotenuse. The hypotenuse is always the longest side and is opposite the right angle. For a ladder against a wall, the ladder itself is the hypotenuse."
+        }
+      ],
+      "initialPrompt": "In the first example, we found that a triangle with legs 5 and 12 has a hypotenuse of 13. If we doubled all the sides to get legs of 10 and 24, what would the hypotenuse be? Does the Pythagorean theorem still hold?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "pythagorean-theorem",
+      "title": "We-Do: Pythagorean Theorem Applications",
+      "problems": [
+        {
+          "id": "rg-wp4",
+          "question": "Find the hypotenuse of a right triangle with legs of length 7 and 24.",
+          "answer": "a² + b² = c². 7² + 24² = c². 49 + 576 = c². 625 = c². c = √625 = 25. The hypotenuse is 25. This is the Pythagorean triple 7-24-25. Verify: 49 + 576 = 625 = 25² ✓.",
+          "hints": [
+            "Apply a² + b² = c² with a = 7 and b = 24.",
+            "7² = 49, 24² = 576. Add: 49 + 576 = 625.",
+            "c = √625 = 25. This is the Pythagorean triple 7-24-25. Verify: 49 + 576 = 625 ✓."
+          ]
+        },
+        {
+          "id": "rg-wp5",
+          "question": "A right triangle has a hypotenuse of 17 and one leg of 15. Find the other leg.",
+          "answer": "a² + b² = c². 15² + b² = 17². 225 + b² = 289. b² = 289 − 225 = 64. b = √64 = 8. The missing leg is 8. This is the Pythagorean triple 8-15-17. Verify: 225 + 64 = 289 = 17² ✓.",
+          "hints": [
+            "We know c = 17 (hypotenuse) and a = 15 (one leg). Solve for b: b² = c² − a².",
+            "17² = 289, 15² = 225. Subtract: b² = 289 − 225 = 64.",
+            "b = √64 = 8. The missing leg is 8. Triple check: 8² + 15² = 64 + 225 = 289 = 17² ✓."
+          ]
+        },
+        {
+          "id": "rg-wp6",
+          "question": "A rectangular garden is 16 feet long and 12 feet wide. A gardener wants to run a diagonal path from one corner to the opposite corner. How long will the path be?",
+          "answer": "The diagonal of a rectangle forms a right triangle with the length and width as legs. a = 16, b = 12, c = ? 16² + 12² = c². 256 + 144 = c². 400 = c². c = √400 = 20 feet. The diagonal path is 20 feet long. This is the 3-4-5 triple scaled by 4 (12 = 3·4, 16 = 4·4, 20 = 5·4). Verify: 256 + 144 = 400 = 20² ✓.",
+          "hints": [
+            "A rectangle's diagonal creates a right triangle. The length (16) and width (12) are the legs; the diagonal is the hypotenuse.",
+            "Apply: 16² + 12² = c². 256 + 144 = 400. c = √400.",
+            "c = 20 feet. Recognize the pattern: 12-16-20 is a multiple of the 3-4-5 triple (multiply each by 4)."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice the Pythagorean theorem together! For the first problem, you have a right triangle with legs 7 and 24. Which formula do you use — a² + b² = c² solving for c, or c² − a² = b²? Set up the equation first."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "distance-formula",
+      "title": "The Distance Formula and Midpoint Formula",
+      "text": "The **distance formula** calculates the straight-line distance between two points on the coordinate plane:\n\n**d = √((x₂ − x₁)² + (y₂ − y₁)²)**\n\n**Where does it come from?** It is a direct application of the Pythagorean theorem:\n- Given two points (x₁, y₁) and (x₂, y₂), draw a right triangle where:\n  - The horizontal leg has length |x₂ − x₁|\n  - The vertical leg has length |y₂ − y₁|\n  - The hypotenuse is the distance d between the two points\n- By the Pythagorean theorem: d² = (x₂ − x₁)² + (y₂ − y₁)², so d = √((x₂ − x₁)² + (y₂ − y₁)²).\n\n**The Midpoint Formula** finds the exact center of a line segment between two points:\n\n**M = ((x₁ + x₂)/2, (y₁ + y₂)/2)**\n\nThe midpoint is simply the **average** of the x-coordinates and the **average** of the y-coordinates. Think of it as finding the point that is exactly halfway in the horizontal direction and halfway in the vertical direction.\n\n**Key connections:**\n- The distance formula is the Pythagorean theorem in coordinate form.\n- The midpoint formula averages coordinates to find the center.\n- Both formulas work for any two points on the coordinate plane, regardless of which quadrants they are in.\n- Negative differences are squared, so the order of the points does not matter for distance: d(A, B) = d(B, A).",
+      "initialPrompt": "Plot the points (1, 2) and (4, 6) in your mind. If you drew a right triangle connecting them, what would the horizontal leg length be? The vertical leg length? How does this connect to the Pythagorean theorem?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "distance-formula",
+      "title": "I-Do: Distance Formula and Midpoint Formula",
+      "examples": [
+        {
+          "problem": "Find the distance between the points (1, 2) and (4, 6).",
+          "solution": "**Step 1: Identify the coordinates.**\n(x₁, y₁) = (1, 2) and (x₂, y₂) = (4, 6)\n\n**Step 2: Apply the distance formula.**\nd = √((x₂ − x₁)² + (y₂ − y₁)²)\nd = √((4 − 1)² + (6 − 2)²)\nd = √(3² + 4²)\nd = √(9 + 16)\nd = √25\nd = **5**\n\n**Step 3: Verify using the Pythagorean theorem.**\nThe horizontal distance is |4 − 1| = 3 and the vertical distance is |6 − 2| = 4. We have a 3-4-5 right triangle, so the distance is 5 ✓.\n\n**Note:** This example produces a whole number because 3-4-5 is a Pythagorean triple. Many distance problems will result in radical answers that you would simplify using the skills from earlier in this unit.",
+          "tip": "The distance formula is just the Pythagorean theorem with coordinates plugged in. If it helps, draw the right triangle: horizontal leg = difference in x-values, vertical leg = difference in y-values, hypotenuse = distance."
+        },
+        {
+          "problem": "Find the midpoint of the segment connecting (-3, 7) and (5, 1).",
+          "solution": "**Step 1: Identify the coordinates.**\n(x₁, y₁) = (-3, 7) and (x₂, y₂) = (5, 1)\n\n**Step 2: Apply the midpoint formula.**\nM = ((x₁ + x₂)/2, (y₁ + y₂)/2)\nM = ((-3 + 5)/2, (7 + 1)/2)\nM = (2/2, 8/2)\nM = **(1, 4)**\n\n**Step 3: Verify.**\nThe midpoint should be equidistant from both endpoints.\nDistance from (-3, 7) to (1, 4): √((1-(-3))² + (4-7)²) = √(16 + 9) = √25 = 5\nDistance from (1, 4) to (5, 1): √((5-1)² + (1-4)²) = √(16 + 9) = √25 = 5\nBoth distances are 5, confirming (1, 4) is the midpoint ✓.\n\n**Interpretation:** The midpoint (1, 4) is the exact center of the line segment. It is the point that divides the segment into two equal halves.",
+          "tip": "The midpoint formula is just averaging: average the x's, average the y's. Think of it as 'finding the middle' of each coordinate separately."
+        }
+      ],
+      "initialPrompt": "In the distance example, we got a 3-4-5 triangle. What if the two points were (0, 0) and (1, 1)? What would the horizontal and vertical legs be? What would the distance be? Would the answer be a whole number or a radical?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice — Radicals and Geometry",
+      "problems": [
+        {
+          "id": "rg-yp1",
+          "question": "Simplify √200.",
+          "answer": "200 = 100 · 2. √200 = √(100 · 2) = √100 · √2 = 10√2. Verify: (10√2)² = 100 · 2 = 200 ✓.",
+          "skill": "simplifying-radicals",
+          "hints": ["Find the largest perfect square factor of 200. Test: 200 ÷ 100 = 2. So 200 = 100 · 2. Apply the product property: √200 = √100 · √2 = 10√2."]
+        },
+        {
+          "id": "rg-yp2",
+          "question": "Simplify 4√45 + 3√20.",
+          "answer": "√45 = √(9·5) = 3√5. √20 = √(4·5) = 2√5. So 4√45 + 3√20 = 4(3√5) + 3(2√5) = 12√5 + 6√5 = 18√5.",
+          "skill": "operations-with-radicals",
+          "hints": ["Simplify each radical first: √45 = √(9·5) = 3√5 and √20 = √(4·5) = 2√5. Then substitute and combine like radicals with the same radicand √5."]
+        },
+        {
+          "id": "rg-yp3",
+          "question": "A right triangle has legs of length 9 and 40. Find the hypotenuse.",
+          "answer": "a² + b² = c². 9² + 40² = c². 81 + 1600 = c². 1681 = c². c = √1681 = 41. The hypotenuse is 41. This is the Pythagorean triple 9-40-41. Verify: 81 + 1600 = 1681 = 41² ✓.",
+          "skill": "pythagorean-theorem",
+          "hints": ["Apply a² + b² = c² with a = 9 and b = 40. Calculate 81 + 1600 = 1681. Then c = √1681. Hint: 41² = 1681."]
+        },
+        {
+          "id": "rg-yp4",
+          "question": "A ship sails 8 miles east and then 15 miles north. How far is the ship from its starting point in a straight line?",
+          "answer": "The path forms a right triangle: east = 8 mi (horizontal leg), north = 15 mi (vertical leg), straight-line distance = hypotenuse. 8² + 15² = d². 64 + 225 = 289. d = √289 = 17 miles. The ship is 17 miles from its starting point. This uses the Pythagorean triple 8-15-17.",
+          "skill": "pythagorean-theorem",
+          "hints": ["East and north form a right angle. The straight-line distance is the hypotenuse. Apply: 8² + 15² = d². Calculate 64 + 225 = 289, then d = √289 = 17 miles."]
+        },
+        {
+          "id": "rg-yp5",
+          "question": "Find the distance between the points (-2, 3) and (4, -5).",
+          "answer": "d = √((4 − (-2))² + (-5 − 3)²) = √(6² + (-8)²) = √(36 + 64) = √100 = 10. The distance is 10 units.",
+          "skill": "distance-formula",
+          "hints": ["Plug into the distance formula: d = √((x₂ − x₁)² + (y₂ − y₁)²). x₂ − x₁ = 4 − (-2) = 6. y₂ − y₁ = -5 − 3 = -8. Then d = √(36 + 64) = √100 = 10."]
+        },
+        {
+          "id": "rg-yp6",
+          "question": "Find the midpoint and the distance between the points (2, -1) and (8, 7).",
+          "answer": "Midpoint: M = ((2+8)/2, (-1+7)/2) = (10/2, 6/2) = (5, 3). Distance: d = √((8−2)² + (7−(-1))²) = √(6² + 8²) = √(36 + 64) = √100 = 10. The midpoint is (5, 3) and the distance is 10 units.",
+          "skill": "distance-formula",
+          "hints": ["For the midpoint, average the x-coordinates and average the y-coordinates: ((2+8)/2, (-1+7)/2). For the distance, use d = √((8−2)² + (7−(-1))²) = √(36 + 64)."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "rg-wp1": "7√2. Factor: 98 = 49·2. √98 = √49·√2 = 7√2.",
+    "rg-wp2": "5y²√3. Factor: 75 = 25·3, y⁴ = (y²)². √(75y⁴) = 5y²√3.",
+    "rg-wp3": "4√3. Simplify: 5(2√3) − 2(3√3) = 10√3 − 6√3 = 4√3.",
+    "rg-wp4": "25. Pythagorean triple 7-24-25. 49 + 576 = 625 = 25².",
+    "rg-wp5": "8. Pythagorean triple 8-15-17. b² = 289 − 225 = 64, b = 8.",
+    "rg-wp6": "20 feet. Diagonal of 12×16 rectangle. 144 + 256 = 400, √400 = 20. Triple: 3-4-5 scaled by 4.",
+    "rg-yp1": "10√2. Factor: 200 = 100·2. √200 = 10√2.",
+    "rg-yp2": "18√5. Simplify: 4(3√5) + 3(2√5) = 12√5 + 6√5 = 18√5.",
+    "rg-yp3": "41. Pythagorean triple 9-40-41. 81 + 1600 = 1681 = 41².",
+    "rg-yp4": "17 miles. Right triangle: 8² + 15² = 289, √289 = 17. Triple: 8-15-17.",
+    "rg-yp5": "10 units. d = √(36 + 64) = √100 = 10.",
+    "rg-yp6": "Midpoint: (5, 3). Distance: 10 units. d = √(36 + 64) = √100 = 10."
+  }
+}

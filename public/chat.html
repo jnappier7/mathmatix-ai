@@ -144,6 +144,9 @@
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
       </button>
       <!-- Primary actions (always visible) -->
+      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+      </button>
       <button id="open-settings-modal-btn" class="btn btn-tertiary icon-only" title="Settings" aria-label="Settings">
         <i class="fas fa-cog"></i>
       </button>
@@ -1437,7 +1440,7 @@
   <div id="tour-modal" class="modal-overlay tour-overlay">
     <div class="modal-content tour-content">
       <div class="tour-progress">
-        <span id="tour-step-indicator">Step <span id="tour-current-step">1</span> of <span id="tour-total-steps">5</span></span>
+        <span id="tour-step-indicator">Step <span id="tour-current-step">1</span> of <span id="tour-total-steps">4</span></span>
         <div class="tour-progress-bar">
           <div id="tour-progress-fill" class="tour-progress-fill"></div>
         </div>
@@ -1465,7 +1468,7 @@
   </div>
 
   <!-- Course Catalog Modal -->
-  <div id="course-catalog-modal" class="modal-overlay" style="display: none;">
+  <div id="course-catalog-modal" class="modal-overlay">
     <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
       <button class="modal-close-button" id="close-catalog-modal-btn">&times;</button>
       <div style="padding: 24px;">
@@ -1707,6 +1710,22 @@
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
   <script src="/js/file-upload.js"></script>
+  <script src="/js/theme-toggle.js"></script>
+  <script>
+    // Wire up the dark mode toggle button in the header
+    (function() {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (!btn || !window.ThemeToggle) return;
+      function updateIcon() {
+        const dark = ThemeToggle.getTheme() === 'dark';
+        btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      }
+      btn.addEventListener('click', () => { ThemeToggle.toggle(); updateIcon(); });
+      document.addEventListener('themechange', updateIcon);
+      updateIcon();
+    })();
+  </script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>
   <script src="/js/show-your-work.js"></script>

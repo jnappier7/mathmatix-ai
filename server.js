@@ -129,6 +129,9 @@ const billingRoutes = require('./routes/billing');  // Stripe subscription billi
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
 const courseChatRoutes = require('./routes/courseChat');  // Dedicated course chat (independent from main chat)
+const waitlistRoutes = require('./routes/waitlist');  // Pre-launch email waitlist
+const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA/COPPA data deletion & export
+const consentRoutes = require('./routes/consent');  // Privacy consent management (COPPA/FERPA)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -221,7 +224,9 @@ app.use(helmet({
         "https://api.openai.com", // OpenAI API
         "https://api.mathpix.com", // Mathpix OCR
         "https://api.elevenlabs.io", // ElevenLabs TTS
-        "https://cdn.jsdelivr.net" // CDN resources and source maps
+        "https://cdn.jsdelivr.net", // CDN resources and source maps
+        "https://clever.com", // Clever SSO
+        "https://api.clever.com" // Clever API
       ],
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
@@ -284,8 +289,16 @@ app.use(logger.requestLogger);
 
 
 // --- 7. DATABASE CONNECTION ---
+const { startRetentionSchedule } = require('./utils/dataRetention');
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => logger.info("✅ Connected to MongoDB", { database: 'MongoDB' }))
+  .then(() => {
+    logger.info("✅ Connected to MongoDB", { database: 'MongoDB' });
+    // Start data retention sweep (daily cleanup of expired data)
+    if (process.env.NODE_ENV !== 'test') {
+      startRetentionSchedule();
+    }
+  })
   .catch(err => {
     logger.error("❌ MongoDB connection error", err);
     process.exit(1); // Exit if database connection fails
@@ -328,7 +341,8 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -363,13 +377,76 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
     })(req, res, next);
 });
 
+
+// --- Clever SSO Routes (conditional - only if Clever credentials are configured) ---
+// NOTE: Library SSO requires session invalidation on shared devices.
+// When a new Clever login arrives, any previous session is destroyed first.
+if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
+    app.get('/auth/clever', authLimiter, (req, res, next) => {
+        // Shared device support: destroy any existing session before starting Clever auth
+        if (req.isAuthenticated()) {
+            req.logout((err) => {
+                if (err) console.error('WARN: Error clearing previous session for Clever SSO:', err);
+                req.session.regenerate((err) => {
+                    if (err) console.error('WARN: Error regenerating session for Clever SSO:', err);
+                    passport.authenticate('clever')(req, res, next);
+                });
+            });
+        } else {
+            passport.authenticate('clever')(req, res, next);
+        }
+    });
+
+    app.get('/auth/clever/callback', authLimiter, (req, res, next) => {
+        passport.authenticate('clever', (err, user, info) => {
+            if (err) { return next(err); }
+            if (!user) {
+                const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
+                return res.redirect(`/login.html?error=${errorMessage}`);
+            }
+
+            // Check if this is a new user requiring enrollment code
+            if (user.isPendingEnrollment) {
+                // Shared device: regenerate session before storing pending profile
+                req.session.regenerate((err) => {
+                    if (err) { return next(err); }
+                    req.session.pendingOAuthProfile = user.pendingProfile;
+                    console.log('LOG: New Clever SSO user requires enrollment code');
+                    return res.redirect('/oauth-enrollment.html');
+                });
+                return;
+            }
+
+            // Shared device: regenerate session before logging in the new user
+            req.session.regenerate((err) => {
+                if (err) { return next(err); }
+                req.logIn(user, async (err) => {
+                    if (err) { return next(err); }
+                    try {
+                        await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+                    } catch (updateErr) {
+                        console.error("ERROR: Failed to update lastLogin:", updateErr);
+                    }
+                    if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                    if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                    if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                    const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                    res.redirect(dashboardMap[user.role] || '/login.html');
+                });
+            });
+        })(req, res, next);
+    });
+
+    logger.info('✅ Clever SSO routes registered');
+}
 
 // API Routes
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
@@ -378,6 +455,8 @@ app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)
+app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes); // FERPA/COPPA data deletion & export
+app.use('/api/consent', isAuthenticated, consentRoutes); // Privacy consent management (COPPA/FERPA)
 app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes); // Usage-gated for free tier
 app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-based conversations & assessment
 app.use('/api/speak', isAuthenticated, speakRoutes);
@@ -421,6 +500,9 @@ app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-
 app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
+
+// Pre-launch waitlist (public — no auth required)
+app.use('/api/waitlist', waitlistRoutes);
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
@@ -507,7 +589,7 @@ app.post('/api/user/switch-role', isAuthenticated, async (req, res) => {
 
         // Determine redirect for the new active role
         const dashboardMap = {
-            student: user.selectedTutorId ? '/chat.html' : '/pick-tutor.html',
+            student: !user.selectedTutorId ? '/pick-tutor.html' : !user.selectedAvatarId ? '/pick-avatar.html' : '/chat.html',
             teacher: '/teacher-dashboard.html',
             admin: '/admin-dashboard.html',
             parent: '/parent-dashboard.html'
@@ -655,6 +737,7 @@ app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public",
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
+app.get("/pick-avatar.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-avatar.html")));
 app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
 

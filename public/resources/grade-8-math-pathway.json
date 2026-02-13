@@ -1,0 +1,531 @@
+{
+  "courseId": "grade-8-math",
+  "track": "8th Grade Mathematics",
+  "overview": "A 36-week Common Core-aligned 8th grade math course covering the Number System (8.NS), Expressions & Equations (8.EE), Functions (8.F), Geometry (8.G), and Statistics & Probability (8.SP). This is the make-or-break year before high school: students master slope, linear equations, function thinking, the Pythagorean theorem, and data interpretation. Every unit builds algebraic reasoning and justification skills that directly prepare students for Algebra 1.",
+  "prerequisites": ["grade-7-math"],
+  "naturalProgression": [
+    "Boot Camp (Unit 0) diagnoses and repairs integer operations, fraction/decimal fluency, basic equations, and coordinate plane skills",
+    "Number System & Exponents (Unit 1) extends understanding to irrational numbers and builds fluency with integer exponents and scientific notation",
+    "Linear Equations (Unit 2) develops multi-step equation solving with variables on both sides, special cases, and inequalities",
+    "Graphing Linear Relationships (Unit 3) connects slope as rate of change to tables, graphs, and real-world contexts",
+    "Functions (Unit 4) formalizes the input-output relationship and introduces function comparison across representations",
+    "Systems of Linear Equations (Unit 5) applies graphing and substitution to solve real-world comparison problems",
+    "Geometry & Transformations (Unit 6) connects rigid motions to congruence, dilations to similarity, and introduces the Pythagorean theorem",
+    "Volume & Similarity Applications (Unit 7) applies volume formulas for cylinders, cones, and spheres with scaling connections",
+    "Statistics & Bivariate Data (Unit 8) builds data literacy through scatter plots, lines of best fit, two-way tables, and correlation vs causation",
+    "End-of-year spiral review and cumulative mastery assessment (Unit 9)"
+  ],
+  "spiralReviewThreads": [
+    "Slope & rate of change — tables, graphs, contexts: the single most important 8th grade skill",
+    "Solving equations cleanly — distribute correctly, combine like terms, check work every time",
+    "Function thinking — input → output, rules, comparison across representations",
+    "Pythagorean theorem — setup matters more than arithmetic; word problems require diagram first",
+    "Data interpretation — don't just plot, explain what it means in context"
+  ],
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do / We Do / You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery.",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guide the student through problems collaboratively. Provide hints and scaffolding as needed, but let the student do the thinking.",
+        "studentRole": "Attempt problems with support, explain reasoning, ask for help when stuck"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Monitor independent practice. Only intervene if the student is stuck or making systematic errors.",
+        "studentRole": "Solve problems independently, self-check, explain strategies"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "boot_camp",
+      "unit": 0,
+      "title": "Start-of-Year Boot Camp",
+      "preview": "Diagnose and repair integer operations, fraction/decimal fluency, basic equations, and coordinate plane skills",
+      "moduleFile": "/modules/grade-8-math/boot_camp_module.json",
+      "skills": ["integer-operations", "fraction-decimal-fluency", "basic-equations", "coordinate-plane-basics"],
+      "essentialQuestions": [
+        "Can I add, subtract, multiply, and divide integers without sign errors?",
+        "Am I fluent with fractions and decimals in all four operations?",
+        "Can I solve 1-step and 2-step equations and check my answer?",
+        "Can I plot and read ordered pairs on a coordinate plane?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "integer-ops",
+          "title": "Integer Operations Review",
+          "order": 1,
+          "concepts": ["Adding/subtracting integers (number line model)", "Multiplying/dividing integers (sign rules)", "Order of operations with integers", "Common sign errors and how to avoid them"],
+          "teachingNotes": "This is the #1 source of errors all year. If students can't handle signs, every equation and expression will suffer."
+        },
+        {
+          "lessonId": "fraction-decimal-review",
+          "title": "Fraction & Decimal Fluency",
+          "order": 2,
+          "concepts": ["Fraction operations (add, subtract, multiply, divide)", "Converting between fractions, decimals, and percents", "Decimal operations", "Fraction/decimal equivalents students should know by heart"],
+          "teachingNotes": "Focus on the operations that come up most in 8th grade: multiplying/dividing fractions and converting between forms."
+        },
+        {
+          "lessonId": "basic-equations-review",
+          "title": "Solving 1-Step and 2-Step Equations",
+          "order": 3,
+          "concepts": ["Inverse operations", "1-step equations (all operations)", "2-step equations", "Checking solutions by substitution"],
+          "teachingNotes": "Reinforce the balance model. Students should check EVERY answer by plugging back in."
+        },
+        {
+          "lessonId": "coordinate-plane-review",
+          "title": "Coordinate Plane Basics",
+          "order": 4,
+          "concepts": ["Quadrants and axes", "Plotting ordered pairs (all four quadrants)", "Reading coordinates from a graph", "Exponent rules preview (product rule, power rule)"],
+          "teachingNotes": "Quick preview of exponent rules to prime students for Unit 1. Don't go deep — just build familiarity."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u0",
+      "unit": 0,
+      "title": "Unit 0 Checkpoint: Boot Camp Diagnostic",
+      "preview": "Diagnostic assessment of prerequisite skills with targeted intervention",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u0_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "number_system_exponents",
+      "unit": 1,
+      "title": "Number System & Exponents",
+      "preview": "Rational vs irrational numbers, integer exponent rules, and scientific notation",
+      "moduleFile": "/modules/grade-8-math/number_system_exponents_module.json",
+      "skills": ["rational-irrational", "real-number-ordering", "exponent-rules", "scientific-notation"],
+      "essentialQuestions": [
+        "How do we know whether a number is rational or irrational?",
+        "Why do the exponent rules work, and how do they simplify computation?",
+        "How does scientific notation make very large or very small numbers manageable?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "rational-irrational",
+          "title": "Rational vs Irrational Numbers",
+          "order": 1,
+          "concepts": ["Rational numbers as fractions a/b (b≠0)", "Terminating vs repeating decimals", "Irrational numbers: √2, π — non-terminating, non-repeating", "Approximating irrational numbers on the number line", "The real number system hierarchy"],
+          "teachingNotes": "Students must be able to JUSTIFY whether a number is rational or irrational — not just identify. Writing prompt is key."
+        },
+        {
+          "lessonId": "exponent-rules",
+          "title": "Integer Exponent Rules",
+          "order": 2,
+          "concepts": ["Product rule: aᵐ·aⁿ = aᵐ⁺ⁿ", "Quotient rule: aᵐ/aⁿ = aᵐ⁻ⁿ", "Power of a power: (aᵐ)ⁿ = aᵐⁿ", "Zero exponent: a⁰ = 1", "Negative exponents: a⁻ⁿ = 1/aⁿ"],
+          "keyFormulas": ["aᵐ·aⁿ = aᵐ⁺ⁿ", "aᵐ/aⁿ = aᵐ⁻ⁿ", "(aᵐ)ⁿ = aᵐⁿ", "a⁰ = 1", "a⁻ⁿ = 1/aⁿ"],
+          "teachingNotes": "Build rules from PATTERNS, not memorization. Show 2³, 2², 2¹, 2⁰, 2⁻¹ and ask 'what's the pattern?'"
+        },
+        {
+          "lessonId": "scientific-notation",
+          "title": "Scientific Notation",
+          "order": 3,
+          "concepts": ["Standard form ↔ scientific notation conversion", "Comparing numbers in scientific notation", "Operations with scientific notation (multiply, divide)", "Real-world contexts: distances in space, microscopic measurements"],
+          "teachingNotes": "Always ground in real contexts — 'How far is the sun?' 'How big is a red blood cell?'"
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u1",
+      "unit": 1,
+      "title": "Unit 1 Checkpoint: Number System & Exponents",
+      "preview": "Assess rational/irrational classification, exponent rules, and scientific notation operations",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u1_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "linear_equations",
+      "unit": 2,
+      "title": "Linear Equations & One-Variable Reasoning",
+      "preview": "Multi-step linear equations with variables on both sides, special cases, and inequalities",
+      "moduleFile": "/modules/grade-8-math/linear_equations_module.json",
+      "skills": ["multi-step-equations", "variables-both-sides", "special-cases", "linear-inequalities", "equation-word-problems"],
+      "essentialQuestions": [
+        "How do I solve equations with variables on BOTH sides?",
+        "What does it mean when an equation has no solution or infinitely many solutions?",
+        "How do I translate a word problem into an equation or inequality?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "multi-step-equations",
+          "title": "Multi-Step Equations",
+          "order": 1,
+          "concepts": ["Distribute before combining", "Combine like terms on the same side", "Solve with inverse operations", "Check by substitution — every time"],
+          "teachingNotes": "The #1 error is distributing a negative incorrectly. Make students write out every step."
+        },
+        {
+          "lessonId": "variables-both-sides",
+          "title": "Variables on Both Sides",
+          "order": 2,
+          "concepts": ["Move variables to one side", "Choose which side strategically (avoid negatives)", "Simplify and solve", "Check the solution"],
+          "teachingNotes": "Teach students to move variables to the side that keeps the coefficient positive when possible."
+        },
+        {
+          "lessonId": "special-cases",
+          "title": "No Solution & Infinitely Many Solutions",
+          "order": 3,
+          "concepts": ["Identity equations (all real numbers): same expression on both sides", "Contradiction equations (no solution): false statement like 5 = 3", "Recognizing special cases before solving completely"],
+          "teachingNotes": "Students struggle with 'how can an equation have NO answer?' Use physical analogies — if 2 apples = 3 apples, something's wrong."
+        },
+        {
+          "lessonId": "inequalities-and-word-problems",
+          "title": "Inequalities & Word Problems",
+          "order": 4,
+          "concepts": ["Solving linear inequalities", "Flip the inequality when multiplying/dividing by negative", "Graphing solutions on a number line", "Translating word problems to equations and inequalities"],
+          "teachingNotes": "Word problems are where students prove they understand what variables MEAN, not just how to push symbols."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u2",
+      "unit": 2,
+      "title": "Unit 2 Checkpoint: Linear Equations",
+      "preview": "Assess multi-step equations, special cases, inequalities, and word problem translation",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u2_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "graphing_linear",
+      "unit": 3,
+      "title": "Graphing Linear Relationships",
+      "preview": "Slope as rate of change, y = mx + b from tables/graphs/contexts, comparing linear models",
+      "moduleFile": "/modules/grade-8-math/graphing_linear_module.json",
+      "skills": ["slope-rate-of-change", "slope-from-representations", "y-intercept-context", "write-linear-equations", "compare-linear-models"],
+      "essentialQuestions": [
+        "What is slope, and why does it describe rate of change?",
+        "How do I write a linear equation from a graph, table, or real-world situation?",
+        "How do I compare two linear relationships to determine which is changing faster?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "slope-intro",
+          "title": "Slope as Rate of Change",
+          "order": 1,
+          "concepts": ["Rise over run (visual)", "Slope from two points: m = (y₂-y₁)/(x₂-x₁)", "Positive, negative, zero, undefined slopes", "Slope in real-world contexts (speed, cost per item, etc.)"],
+          "keyFormulas": ["m = (y₂ − y₁)/(x₂ − x₁) = rise/run"],
+          "teachingNotes": "Slope is THE most important concept in 8th grade. Spend time here. Use real contexts: 'You earn $12/hour — what's the slope?'"
+        },
+        {
+          "lessonId": "slope-from-representations",
+          "title": "Finding Slope from Graphs, Points, and Tables",
+          "order": 2,
+          "concepts": ["Slope from a graph (count rise/run)", "Slope from two points (formula)", "Slope from a table (change in y / change in x)", "Identifying slope in different formats"],
+          "teachingNotes": "Practice finding slope in ALL representations. Students should be able to switch between them fluently."
+        },
+        {
+          "lessonId": "slope-intercept-form",
+          "title": "Writing Linear Equations: y = mx + b",
+          "order": 3,
+          "concepts": ["Slope-intercept form: y = mx + b", "y-intercept: where the line crosses the y-axis (b = starting value)", "Writing equations from slope and y-intercept", "Writing equations from two points", "Writing equations from a graph or table"],
+          "teachingNotes": "Always connect b to context: 'b is what you start with BEFORE x changes anything.'"
+        },
+        {
+          "lessonId": "comparing-linear",
+          "title": "Comparing Linear Models",
+          "order": 4,
+          "concepts": ["Compare slopes to determine which is changing faster", "Compare y-intercepts to determine starting values", "Compare from different representations (one given as graph, one as table)", "Intersection meaning: 'when do they become equal?'"],
+          "teachingNotes": "This directly sets up systems of equations in Unit 5."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u3",
+      "unit": 3,
+      "title": "Unit 3 Checkpoint: Graphing Linear Relationships",
+      "preview": "Performance task: model, graph, interpret, and compare linear relationships",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u3_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "functions",
+      "unit": 4,
+      "title": "Functions",
+      "preview": "Function concept, identifying functions, comparing across representations, building function models",
+      "moduleFile": "/modules/grade-8-math/functions_module.json",
+      "skills": ["function-definition", "identify-functions", "compare-functions", "function-modeling"],
+      "essentialQuestions": [
+        "What makes a relationship a function?",
+        "How do I determine whether a table, graph, or set of ordered pairs represents a function?",
+        "How can I compare two functions given in different representations?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "function-concept",
+          "title": "What is a Function?",
+          "order": 1,
+          "concepts": ["Input/output relationship", "Every input has exactly ONE output", "Function notation f(x) (intro level)", "Functions as machines, mappings, or rules"],
+          "teachingNotes": "The vending machine analogy works great: one button → one item. If one button gave you random items, that's NOT a function."
+        },
+        {
+          "lessonId": "identifying-functions",
+          "title": "Identifying Functions from Representations",
+          "order": 2,
+          "concepts": ["Vertical line test (graphs)", "Tables: check for repeated x-values with different y-values", "Mapping diagrams", "Sets of ordered pairs"],
+          "teachingNotes": "Students often think 'same y-value for different x' is not a function — clarify that's fine. It's repeated x with DIFFERENT y that fails."
+        },
+        {
+          "lessonId": "comparing-functions",
+          "title": "Comparing Functions Across Representations",
+          "order": 3,
+          "concepts": ["Compare rate of change (slope)", "Compare initial values (y-intercept)", "One function given as equation, another as table/graph", "Which function is 'better' in context?"],
+          "teachingNotes": "Heavy emphasis on mixed-representation comparison — this is a common assessment item."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u4",
+      "unit": 4,
+      "title": "Unit 4 Checkpoint: Functions",
+      "preview": "Assess function identification, comparison, and modeling",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u4_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "systems_equations",
+      "unit": 5,
+      "title": "Systems of Linear Equations",
+      "preview": "Solve systems by graphing and substitution, interpret solutions, special cases",
+      "moduleFile": "/modules/grade-8-math/systems_equations_module.json",
+      "skills": ["systems-graphing", "systems-substitution", "systems-interpretation", "systems-special-cases"],
+      "essentialQuestions": [
+        "What does the solution to a system of equations represent?",
+        "When is graphing vs substitution the better strategy?",
+        "What does it mean when two lines never intersect or always overlap?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "systems-graphing",
+          "title": "Solving Systems by Graphing",
+          "order": 1,
+          "concepts": ["System = two equations, two unknowns", "Solution = intersection point", "Graph both lines and find the intersection", "Verify by substituting into both equations"],
+          "teachingNotes": "Start with the 'two plans, two prices' context — when is Plan A cheaper? Students graph both to find the crossover."
+        },
+        {
+          "lessonId": "systems-substitution",
+          "title": "Solving Systems by Substitution",
+          "order": 2,
+          "concepts": ["Isolate one variable", "Substitute into the other equation", "Solve and back-substitute", "Algebraic efficiency vs graphing"],
+          "teachingNotes": "At 8th grade level, keep substitution straightforward. Save elimination for Algebra 1."
+        },
+        {
+          "lessonId": "systems-context-special",
+          "title": "Interpreting Solutions & Special Cases",
+          "order": 3,
+          "concepts": ["Interpreting the solution in real-world context", "No solution: parallel lines (same slope, different intercepts)", "Infinitely many solutions: same line", "Recognizing special cases algebraically"],
+          "teachingNotes": "Parallel lines = 'the two plans never cost the same.' Same line = 'the two plans are identical.'"
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u5",
+      "unit": 5,
+      "title": "Unit 5 Checkpoint: Systems of Linear Equations",
+      "preview": "Assess systems solving by graphing and substitution with application tasks",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u5_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "geometry_transformations",
+      "unit": 6,
+      "title": "Geometry & Transformations",
+      "preview": "Rigid motions, congruence/similarity through transformations, angle relationships, Pythagorean theorem",
+      "moduleFile": "/modules/grade-8-math/geometry_transformations_module.json",
+      "skills": ["transformations", "congruence-similarity", "angle-relationships", "pythagorean-theorem", "distance-coordinate"],
+      "essentialQuestions": [
+        "How do transformations show that two figures are congruent or similar?",
+        "How do parallel lines and transversals create predictable angle relationships?",
+        "Why does the Pythagorean theorem work, and how do I apply it to real problems?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "transformations",
+          "title": "Transformations: Translations, Reflections, Rotations, Dilations",
+          "order": 1,
+          "concepts": ["Translation: slide (x+a, y+b)", "Reflection: flip over a line (x-axis, y-axis, y=x)", "Rotation: turn around a point (90°, 180°, 270°)", "Dilation: scale from a center point (scale factor)"],
+          "teachingNotes": "Use coordinate rules so students see the algebra behind the geometry."
+        },
+        {
+          "lessonId": "congruence-similarity",
+          "title": "Congruence & Similarity Through Transformations",
+          "order": 2,
+          "concepts": ["Congruent: same shape AND size (rigid motions preserve both)", "Similar: same shape, different size (dilation changes size)", "Sequence of transformations", "Identifying congruent/similar figures"],
+          "teachingNotes": "Key insight: congruence = rigid motions only; similarity = rigid motions + dilation."
+        },
+        {
+          "lessonId": "angle-relationships",
+          "title": "Angle Relationships in Parallel Lines",
+          "order": 3,
+          "concepts": ["Parallel lines cut by a transversal", "Corresponding angles (equal)", "Alternate interior/exterior angles (equal)", "Co-interior (same-side interior) angles (supplementary)", "Using angle relationships to find unknown angles"],
+          "teachingNotes": "Students should be able to NAME the relationship and JUSTIFY why angles are equal or supplementary."
+        },
+        {
+          "lessonId": "pythagorean-theorem",
+          "title": "The Pythagorean Theorem",
+          "order": 4,
+          "concepts": ["a² + b² = c² (c is the hypotenuse)", "Finding a missing side", "Pythagorean theorem in word problems", "Distance on the coordinate plane as Pythagorean in disguise", "Converse: if a²+b²=c², then it's a right triangle"],
+          "keyFormulas": ["a² + b² = c²", "d = √((x₂−x₁)² + (y₂−y₁)²)"],
+          "teachingNotes": "Draw the triangle FIRST, label the sides, THEN set up the equation. Setup matters more than arithmetic."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u6",
+      "unit": 6,
+      "title": "Unit 6 Checkpoint: Geometry & Transformations",
+      "preview": "Assess transformations, congruence/similarity, angle relationships, and Pythagorean theorem",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u6_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "volume_similarity",
+      "unit": 7,
+      "title": "Volume & Similarity Applications",
+      "preview": "Volume of cylinders, cones, spheres, and how scaling affects volume",
+      "moduleFile": "/modules/grade-8-math/volume_similarity_module.json",
+      "skills": ["volume-cylinders", "volume-cones", "volume-spheres", "volume-scaling", "volume-word-problems"],
+      "essentialQuestions": [
+        "How are the volume formulas for cylinders, cones, and spheres related?",
+        "What happens to volume when you double (or triple) the dimensions?",
+        "How do I choose the right formula and set up a real-world volume problem?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "volume-cylinders",
+          "title": "Volume of Cylinders",
+          "order": 1,
+          "concepts": ["V = πr²h (base area × height)", "Identifying radius and height", "Real-world cylinder problems (cans, pipes, tanks)"],
+          "keyFormulas": ["V_cylinder = πr²h"],
+          "teachingNotes": "Connect to prisms: cylinder = circular prism. Same idea: area of base × height."
+        },
+        {
+          "lessonId": "volume-cones-spheres",
+          "title": "Volume of Cones and Spheres",
+          "order": 2,
+          "concepts": ["V_cone = (1/3)πr²h (one-third of the cylinder)", "V_sphere = (4/3)πr³", "Comparing cone, cylinder, sphere volumes", "Real-world problems (ice cream cones, basketballs, funnels)"],
+          "keyFormulas": ["V_cone = (1/3)πr²h", "V_sphere = (4/3)πr³"],
+          "teachingNotes": "Demonstrate the 1/3 relationship: it takes 3 cones to fill a cylinder with the same base and height."
+        },
+        {
+          "lessonId": "volume-scaling",
+          "title": "Volume Scaling & Comparisons",
+          "order": 3,
+          "concepts": ["Scale factor k: new volume = k³ × original volume", "Why doubling dimensions multiplies volume by 8", "Composite figure volumes", "Volume comparison problems"],
+          "teachingNotes": "The k³ scaling rule is counterintuitive — use concrete examples. 'If you double the radius of a balloon, you need 8× the air.'"
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u7",
+      "unit": 7,
+      "title": "Unit 7 Checkpoint: Volume & Similarity Applications",
+      "preview": "Assess volume calculations, scaling, and real-world volume applications",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u7_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "statistics_bivariate",
+      "unit": 8,
+      "title": "Statistics & Bivariate Data",
+      "preview": "Scatter plots, lines of best fit, two-way tables, and correlation vs causation",
+      "moduleFile": "/modules/grade-8-math/statistics_bivariate_module.json",
+      "skills": ["scatter-plots", "line-of-best-fit", "interpret-slope-intercept", "two-way-tables", "correlation-causation"],
+      "essentialQuestions": [
+        "How does a scatter plot reveal the relationship between two variables?",
+        "What does the line of best fit tell us, and what do its slope and intercept mean in context?",
+        "Why doesn't correlation prove causation?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "scatter-plots",
+          "title": "Scatter Plots: Form, Direction, Strength",
+          "order": 1,
+          "concepts": ["Creating scatter plots from data", "Describing association: positive, negative, no association", "Describing form: linear vs non-linear", "Describing strength: strong, moderate, weak", "Identifying outliers"],
+          "teachingNotes": "Always describe using THREE words: form, direction, strength. 'This shows a strong, positive, linear association.'"
+        },
+        {
+          "lessonId": "line-of-best-fit",
+          "title": "Line of Best Fit",
+          "order": 2,
+          "concepts": ["Drawing an informal line of best fit", "Writing the equation of the line", "Using the line to make predictions (interpolation vs extrapolation)", "Residuals: how far off is the prediction?"],
+          "teachingNotes": "At 8th grade, the line of best fit is drawn by eye — formal regression comes later. Focus on interpretation."
+        },
+        {
+          "lessonId": "interpret-data",
+          "title": "Interpreting Slope & Intercept in Data Contexts",
+          "order": 3,
+          "concepts": ["Slope meaning: 'For every 1 unit increase in x, y increases/decreases by m'", "Intercept meaning: 'When x is 0, y is b' (does it make sense in context?)", "Making predictions and assessing reasonableness"],
+          "teachingNotes": "Tie directly to slope work from Unit 3. This is the PAYOFF for all that slope practice."
+        },
+        {
+          "lessonId": "two-way-tables-correlation",
+          "title": "Two-Way Tables & Correlation vs Causation",
+          "order": 4,
+          "concepts": ["Reading and creating two-way tables", "Joint, marginal, and conditional relative frequencies", "Identifying associations in categorical data", "Correlation ≠ causation (examples and counterexamples)"],
+          "teachingNotes": "Use funny/memorable examples for correlation vs causation: 'Ice cream sales and drownings both go up in summer — does ice cream cause drowning?'"
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u8",
+      "unit": 8,
+      "title": "Unit 8 Checkpoint: Statistics & Bivariate Data",
+      "preview": "Assess scatter plot interpretation, line of best fit, two-way tables, and data reasoning",
+      "moduleFile": "/modules/grade-8-math/checkpoint_u8_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "final_review",
+      "unit": 9,
+      "title": "End-of-Year Spiral Review & Mastery",
+      "preview": "Mixed review by standard cluster, targeted reteach, and cumulative assessment preparation",
+      "moduleFile": "/modules/grade-8-math/final_review_module.json",
+      "skills": ["spiral-number-system", "spiral-equations-functions", "spiral-geometry", "spiral-statistics"],
+      "essentialQuestions": [
+        "Which standard clusters are my strongest, and which need targeted review?",
+        "Can I apply multiple skills together to solve complex, multi-step problems?",
+        "Am I ready for Algebra 1?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "review-ns-ee",
+          "title": "Review: Number System & Equations",
+          "order": 1,
+          "concepts": ["Rational/irrational numbers", "Exponent rules and scientific notation", "Multi-step equations and inequalities", "Systems of equations"]
+        },
+        {
+          "lessonId": "review-functions-graphing",
+          "title": "Review: Functions & Linear Relationships",
+          "order": 2,
+          "concepts": ["Slope and rate of change", "y = mx + b from all representations", "Function identification and comparison", "Comparing linear models"]
+        },
+        {
+          "lessonId": "review-geometry-stats",
+          "title": "Review: Geometry & Statistics",
+          "order": 3,
+          "concepts": ["Transformations and congruence/similarity", "Pythagorean theorem", "Volume formulas", "Scatter plots and data interpretation"]
+        }
+      ]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "title": "8th Grade Math Final Mastery Assessment",
+      "preview": "Comprehensive assessment covering all Common Core 8th grade math standards",
+      "moduleFile": "/modules/grade-8-math/final_mastery_assessment_module.json",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ]
+}

@@ -35,22 +35,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         return age;
     }
 
-    // Check if under 13 and show/hide parent consent section
+    // Teen consent section elements
+    const teenConsentSection = document.getElementById('teenConsentSection');
+    const teenParentEmailInput = document.getElementById('teenParentEmail');
+    const sendParentConsentBtn = document.getElementById('sendParentConsentBtn');
+    const teenParentInviteCodeInput = document.getElementById('teenParentInviteCode');
+    const teenLinkParentBtn = document.getElementById('teenLinkParentBtn');
+    const teenConsentMessage = document.getElementById('teenConsentMessage');
+
+    // Check age bracket and show appropriate consent section
     function checkAgeAndShowConsent() {
         if (!dobInput || !dobInput.value || !currentUser || currentUser.role !== 'student') {
             if (parentConsentSection) parentConsentSection.style.display = 'none';
+            if (teenConsentSection) teenConsentSection.style.display = 'none';
             return;
         }
 
         const age = calculateAge(dobInput.value);
+
         if (age < 13 && !currentUser.hasParentalConsent) {
-            parentConsentSection.style.display = 'block';
+            // Under-13: Full parent invite code required (COPPA)
+            if (parentConsentSection) parentConsentSection.style.display = 'block';
+            if (teenConsentSection) teenConsentSection.style.display = 'none';
+        } else if (age >= 13 && age < 18 && !currentUser.hasParentalConsent) {
+            // 13-17: Parent email verification or invite code (OpenAI/ElevenLabs terms)
+            if (parentConsentSection) parentConsentSection.style.display = 'none';
+            if (teenConsentSection) teenConsentSection.style.display = 'block';
         } else {
-            parentConsentSection.style.display = 'none';
+            // 18+ or already has consent
+            if (parentConsentSection) parentConsentSection.style.display = 'none';
+            if (teenConsentSection) teenConsentSection.style.display = 'none';
         }
     }
 
-    // Handle linking to parent
+    // Handle under-13 linking to parent (existing flow)
     async function linkToParent() {
         const code = parentInviteCodeInput.value.trim();
         if (!code) {
@@ -91,12 +109,125 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Handle 13-17 parent email consent request
+    async function sendTeenParentConsent() {
+        const email = teenParentEmailInput ? teenParentEmailInput.value.trim() : '';
+        if (!email) {
+            if (teenConsentMessage) {
+                teenConsentMessage.textContent = 'Please enter your parent\'s email address.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+            return;
+        }
+
+        if (sendParentConsentBtn) {
+            sendParentConsentBtn.disabled = true;
+            sendParentConsentBtn.textContent = 'Sending...';
+        }
+        if (teenConsentMessage) teenConsentMessage.textContent = '';
+
+        try {
+            const res = await csrfFetch('/api/consent/request-parent-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentEmail: email })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                if (teenConsentMessage) {
+                    teenConsentMessage.textContent = 'Verification email sent! Your parent will receive an email to confirm your account. You can complete your profile now.';
+                    teenConsentMessage.style.color = '#28a745';
+                }
+                // Allow profile completion — consent is pending but 13+ can proceed
+                currentUser.hasParentalConsent = true;
+                if (teenConsentSection) teenConsentSection.style.display = 'none';
+            } else {
+                if (teenConsentMessage) {
+                    teenConsentMessage.textContent = data.message || 'Failed to send email. Try again.';
+                    teenConsentMessage.style.color = '#dc3545';
+                }
+            }
+        } catch (error) {
+            console.error('Teen consent email error:', error);
+            if (teenConsentMessage) {
+                teenConsentMessage.textContent = 'Network error. Please try again.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+        } finally {
+            if (sendParentConsentBtn) {
+                sendParentConsentBtn.disabled = false;
+                sendParentConsentBtn.textContent = 'Send Verification Email';
+            }
+        }
+    }
+
+    // Handle 13-17 linking to parent via invite code
+    async function teenLinkToParent() {
+        const code = teenParentInviteCodeInput ? teenParentInviteCodeInput.value.trim() : '';
+        if (!code) {
+            if (teenConsentMessage) {
+                teenConsentMessage.textContent = 'Please enter your parent\'s invite code.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+            return;
+        }
+
+        if (teenLinkParentBtn) {
+            teenLinkParentBtn.disabled = true;
+            teenLinkParentBtn.textContent = 'Linking...';
+        }
+        if (teenConsentMessage) teenConsentMessage.textContent = '';
+
+        try {
+            const res = await csrfFetch('/api/student/link-to-parent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentInviteCode: code })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                if (teenConsentMessage) {
+                    teenConsentMessage.textContent = data.message + ' You can now complete your profile.';
+                    teenConsentMessage.style.color = '#28a745';
+                }
+                currentUser.hasParentalConsent = true;
+                if (teenConsentSection) teenConsentSection.style.display = 'none';
+            } else {
+                if (teenConsentMessage) {
+                    teenConsentMessage.textContent = data.message || 'Failed to link. Check your code.';
+                    teenConsentMessage.style.color = '#dc3545';
+                }
+            }
+        } catch (error) {
+            console.error('Teen link to parent error:', error);
+            if (teenConsentMessage) {
+                teenConsentMessage.textContent = 'Network error. Please try again.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+        } finally {
+            if (teenLinkParentBtn) {
+                teenLinkParentBtn.disabled = false;
+                teenLinkParentBtn.textContent = 'Link to Parent';
+            }
+        }
+    }
+
     // Add event listeners
     if (dobInput) {
         dobInput.addEventListener('change', checkAgeAndShowConsent);
     }
     if (linkParentBtn) {
         linkParentBtn.addEventListener('click', linkToParent);
+    }
+    if (sendParentConsentBtn) {
+        sendParentConsentBtn.addEventListener('click', sendTeenParentConsent);
+    }
+    if (teenLinkParentBtn) {
+        teenLinkParentBtn.addEventListener('click', teenLinkToParent);
     }
 
     async function fetchCurrentUser() {
@@ -201,11 +332,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     age--;
                 }
 
-                // COPPA compliance: Under 13 requires parental consent
+                // COPPA compliance: Under 13 requires parental consent (invite code)
                 if (age < 13 && !currentUser.hasParentalConsent) {
                     alert('Students under 13 require parental consent. Please enter your parent\'s invite code above to continue.');
-                    parentConsentSection.style.display = 'block';
-                    parentInviteCodeInput.focus();
+                    if (parentConsentSection) parentConsentSection.style.display = 'block';
+                    if (parentInviteCodeInput) parentInviteCodeInput.focus();
+                    return;
+                }
+
+                // AI provider terms: 13-17 requires parental consent (email or invite code)
+                if (age >= 13 && age < 18 && !currentUser.hasParentalConsent) {
+                    alert('Students under 18 need a parent or guardian\'s permission. Please provide your parent\'s email or invite code above.');
+                    if (teenConsentSection) teenConsentSection.style.display = 'block';
+                    if (teenParentEmailInput) teenParentEmailInput.focus();
                     return;
                 }
 

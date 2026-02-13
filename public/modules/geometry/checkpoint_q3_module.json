@@ -3,23 +3,29 @@
   "course": "Geometry",
   "quarter": 3,
   "title": "Q3 Checkpoint: Polygons & Circles",
-  "estimatedDuration": 25,
+  "weeks": "18",
+  "estimatedDuration": 35,
   "type": "assessment",
-  "description": "Cumulative assessment covering polygon angle sums, properties of parallelograms, rectangles, rhombi, squares, trapezoids, circle fundamentals, arc length, sector area, inscribed angles, and circle theorems.",
+  "description": "Cumulative quarterly assessment covering Units 5-6: polygon angle sums, properties of parallelograms, rectangles, rhombi, squares, trapezoids, circle fundamentals, arc length, sector area, inscribed angles, and circle theorems.",
   "skillsCovered": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties", "circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
   "passThreshold": 70,
   "remediationResources": [
-    {"skillId": "polygon-angle-sum", "moduleId": "polygons_quadrilaterals"},
-    {"skillId": "quadrilateral-properties", "moduleId": "polygons_quadrilaterals"},
-    {"skillId": "circle-basics", "moduleId": "circles"},
-    {"skillId": "arc-length", "moduleId": "circles"},
-    {"skillId": "inscribed-angles", "moduleId": "circles"}
+    { "skillId": "polygon-angle-sum", "reteachFocus": "(n-2)×180° for interior sum, 360°/n for each exterior, working backwards from angle", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 1-3"] },
+    { "skillId": "quadrilateral-properties", "reteachFocus": "Parallelogram hierarchy, opposite sides/angles congruent, consecutive supplementary, diagonal properties for each type", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 4-6"] },
+    { "skillId": "parallelogram-proofs", "reteachFocus": "SAS/ASA + CPCTC with shared diagonals, proving sides/angles congruent from parallelogram properties", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 4-6"] },
+    { "skillId": "trapezoid-properties", "reteachFocus": "Midsegment = (b₁+b₂)/2, isosceles base angles congruent, kite properties", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 7-9"] },
+    { "skillId": "circle-basics", "reteachFocus": "C=2πr=πd, A=πr², vocabulary (radius, diameter, chord, secant, tangent, arc)", "resources": ["circles_module.json - scaffold phases 1-3"] },
+    { "skillId": "circle-area", "reteachFocus": "A=πr² (uses r²), working backwards from A to find r", "resources": ["circles_module.json - scaffold phases 1-3"] },
+    { "skillId": "arc-length", "reteachFocus": "Arc = (θ/360)×2πr, fraction of circumference", "resources": ["circles_module.json - scaffold phases 4-6"] },
+    { "skillId": "sector-area", "reteachFocus": "Sector = (θ/360)×πr², fraction of total area", "resources": ["circles_module.json - scaffold phases 4-6"] },
+    { "skillId": "inscribed-angles", "reteachFocus": "Inscribed = half central, semicircle corollary (90°), inscribed quad opposite supplementary", "resources": ["circles_module.json - scaffold phases 7-9"] },
+    { "skillId": "circle-theorems", "reteachFocus": "Tangent⊥radius, tangent-chord angle = half intercepted arc", "resources": ["circles_module.json - scaffold phases 7-9"] }
   ],
   "assessmentProblems": [
     {
       "id": "q3-1",
       "question": "Find the sum of interior angles of a nonagon (9 sides).",
-      "answer": "1260°",
+      "answer": "(9-2) × 180° = 7 × 180° = 1260°.",
       "skill": "polygon-angle-sum",
       "difficulty": 2,
       "points": 5
@@ -27,23 +33,23 @@
     {
       "id": "q3-2",
       "question": "Each interior angle of a regular polygon is 135°. How many sides does it have?",
-      "answer": "8",
+      "answer": "Exterior = 180° - 135° = 45°. n = 360° / 45° = 8 sides (a regular octagon).",
       "skill": "polygon-angle-sum",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "q3-3",
-      "question": "In parallelogram JKLM, JK = 4x + 3 and LM = 6x - 11. Find JK.",
-      "answer": "31",
+      "question": "In parallelogram JKLM, JK = 4x + 3 and LM = 6x - 11. Find x and JK.",
+      "answer": "Opposite sides congruent: 4x+3=6x-11 → 14=2x → x=7. JK=LM=4(7)+3=31.",
       "skill": "quadrilateral-properties",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "q3-4",
-      "question": "The diagonals of a rhombus are 16 and 30. Find the perimeter of the rhombus.",
-      "answer": "68",
+      "question": "The diagonals of a rhombus are 16 and 30. Find the side length and perimeter.",
+      "answer": "Half-diagonals: 8 and 15. Side = √(8²+15²) = √(64+225) = √289 = 17. Perimeter = 4 × 17 = 68.",
       "skill": "quadrilateral-properties",
       "difficulty": 5,
       "points": 10
@@ -51,15 +57,15 @@
     {
       "id": "q3-5",
       "question": "A trapezoid has parallel sides of 9 cm and 15 cm. Find the length of the midsegment.",
-      "answer": "12 cm",
+      "answer": "Midsegment = (9+15)/2 = 24/2 = 12 cm.",
       "skill": "trapezoid-properties",
       "difficulty": 3,
       "points": 5
     },
     {
       "id": "q3-6",
-      "question": "A circle has radius 11 m. Find the circumference in terms of π.",
-      "answer": "22π m",
+      "question": "A circle has radius 11 m. Find the circumference and area in terms of π.",
+      "answer": "C = 2π(11) = 22π m. A = π(11²) = 121π m².",
       "skill": "circle-basics",
       "difficulty": 2,
       "points": 5
@@ -67,7 +73,7 @@
     {
       "id": "q3-7",
       "question": "Find the area of a circle with diameter 18 inches. Leave your answer in terms of π.",
-      "answer": "81π in²",
+      "answer": "Radius = 9. A = π(9²) = 81π in².",
       "skill": "circle-area",
       "difficulty": 3,
       "points": 10
@@ -75,7 +81,7 @@
     {
       "id": "q3-8",
       "question": "A circle has radius 12 cm. Find the arc length for a central angle of 150°.",
-      "answer": "10π cm",
+      "answer": "Arc = (150/360) × 2π(12) = (5/12)(24π) = 10π ≈ 31.42 cm.",
       "skill": "arc-length",
       "difficulty": 4,
       "points": 10
@@ -83,7 +89,7 @@
     {
       "id": "q3-9",
       "question": "An inscribed angle measures 48°. Find the measure of its intercepted arc.",
-      "answer": "96°",
+      "answer": "Intercepted arc = 2 × inscribed angle = 2 × 48° = 96°.",
       "skill": "inscribed-angles",
       "difficulty": 3,
       "points": 10
@@ -91,7 +97,7 @@
     {
       "id": "q3-10",
       "question": "A sector has a central angle of 60° and the circle has radius 9. Find the sector area in terms of π.",
-      "answer": "13.5π (or 27π/2)",
+      "answer": "Sector = (60/360) × π(9²) = (1/6)(81π) = 81π/6 = 27π/2 = 13.5π.",
       "skill": "sector-area",
       "difficulty": 4,
       "points": 15
@@ -99,23 +105,45 @@
     {
       "id": "q3-11",
       "question": "Quadrilateral ABCD is inscribed in a circle. If ∠B = 110°, find ∠D.",
-      "answer": "70°",
+      "answer": "Opposite supplementary: ∠B + ∠D = 180° → ∠D = 180° - 110° = 70°.",
       "skill": "inscribed-angles",
       "difficulty": 4,
       "points": 10
     }
   ],
+  "spiralReview": [
+    {
+      "id": "q3-spiral-1",
+      "question": "SPIRAL (Congruence): Given ∠A ≅ ∠D, AC ≅ DF, and ∠C ≅ ∠F. Name the congruence postulate that proves △ABC ≅ △DEF.",
+      "answer": "ASA (two angles and the included side between them).",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    },
+    {
+      "id": "q3-spiral-2",
+      "question": "SPIRAL (Special Right Triangles): In a 45-45-90 triangle, the hypotenuse is 10. Find each leg.",
+      "answer": "Leg = 10/√2 = 10√2/2 = 5√2 ≈ 7.07. Verify: (5√2)²+(5√2)²=50+50=100=10² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    }
+  ],
   "answerKeys": {
-    "q3-1": "1260°",
-    "q3-2": "8",
-    "q3-3": "31",
-    "q3-4": "68",
-    "q3-5": "12 cm",
-    "q3-6": "22π m",
-    "q3-7": "81π in²",
-    "q3-8": "10π cm",
-    "q3-9": "96°",
-    "q3-10": "13.5π",
-    "q3-11": "70°"
+    "q3-1": "1260°.",
+    "q3-2": "8 sides (octagon).",
+    "q3-3": "x=7, JK=31.",
+    "q3-4": "Side=17, perimeter=68.",
+    "q3-5": "12 cm.",
+    "q3-6": "C=22π m, A=121π m².",
+    "q3-7": "81π in².",
+    "q3-8": "10π cm.",
+    "q3-9": "96°.",
+    "q3-10": "27π/2 (13.5π).",
+    "q3-11": "70°.",
+    "q3-spiral-1": "ASA.",
+    "q3-spiral-2": "5√2 each."
   }
 }

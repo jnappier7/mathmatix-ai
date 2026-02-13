@@ -23,79 +23,9 @@
  */
 const PATHWAYS = [
   {
-    pathwayId: 'kindergarten-pathway',
-    name: 'Kindergarten',
-    thetaRange: [-3.0, -2.0],
-    gradeBand: 'preK',
-    description: 'Counting, number recognition, basic shapes'
-  },
-  {
-    pathwayId: 'grade-1-pathway',
-    name: 'Grade 1',
-    thetaRange: [-2.0, -1.5],
-    gradeBand: 'K-5',
-    description: 'Addition and subtraction within 20'
-  },
-  {
-    pathwayId: 'grade-2-pathway',
-    name: 'Grade 2',
-    thetaRange: [-1.5, -1.0],
-    gradeBand: 'K-5',
-    description: 'Addition and subtraction within 100, intro to multiplication'
-  },
-  {
-    pathwayId: 'grade-3-pathway',
-    name: 'Grade 3',
-    thetaRange: [-1.0, -0.5],
-    gradeBand: 'K-5',
-    description: 'Multiplication, division, fractions introduction'
-  },
-  {
-    pathwayId: 'grade-4-pathway',
-    name: 'Grade 4',
-    thetaRange: [-0.5, -0.2],
-    gradeBand: 'K-5',
-    description: 'Multi-digit operations, fraction equivalence'
-  },
-  {
-    pathwayId: 'grade-5-pathway',
-    name: 'Grade 5',
-    thetaRange: [-0.2, 0.1],
-    gradeBand: 'K-5',
-    description: 'Fraction operations, decimals, volume'
-  },
-  {
-    pathwayId: 'grade-6-pathway',
-    name: 'Grade 6',
-    thetaRange: [0.1, 0.4],
-    gradeBand: '5-8',
-    description: 'Ratios, rates, expressions, integers'
-  },
-  {
-    pathwayId: 'grade-7-pathway',
-    name: 'Grade 7',
-    thetaRange: [0.4, 0.7],
-    gradeBand: '5-8',
-    description: 'Proportions, equations, geometry'
-  },
-  {
-    pathwayId: 'grade-8-pathway',
-    name: 'Grade 8',
-    thetaRange: [0.7, 1.0],
-    gradeBand: '5-8',
-    description: 'Linear equations, functions, Pythagorean theorem'
-  },
-  {
-    pathwayId: 'ready-for-algebra-1-pathway',
-    name: 'Ready for Algebra 1',
-    thetaRange: [0.8, 1.2],
-    gradeBand: '8-12',
-    description: 'Bridge to high school algebra'
-  },
-  {
     pathwayId: 'algebra-1-pathway',
     name: 'Algebra 1',
-    thetaRange: [1.0, 1.4],
+    thetaRange: [-3.0, 1.4],
     gradeBand: '8-12',
     description: 'Solving equations, linear functions, systems'
   },
@@ -121,13 +51,6 @@ const PATHWAYS = [
     description: 'Functions, trigonometry, sequences'
   },
   {
-    pathwayId: 'calculus-1-pathway',
-    name: 'Calculus 1',
-    thetaRange: [2.0, 2.5],
-    gradeBand: 'Calculus',
-    description: 'Limits, derivatives, integrals'
-  },
-  {
     pathwayId: 'ap-calculus-ab-pathway',
     name: 'AP Calculus AB',
     thetaRange: [2.0, 2.5],
@@ -135,18 +58,11 @@ const PATHWAYS = [
     description: 'AP-aligned: limits, derivatives, integrals, differential equations'
   },
   {
-    pathwayId: 'calculus-2-pathway',
-    name: 'Calculus 2',
-    thetaRange: [2.3, 2.7],
+    pathwayId: 'calculus-bc-pathway',
+    name: 'AP Calculus BC',
+    thetaRange: [2.3, 3.0],
     gradeBand: 'Calculus',
-    description: 'Integration techniques, series'
-  },
-  {
-    pathwayId: 'calculus-3-pathway',
-    name: 'Calculus 3',
-    thetaRange: [2.5, 3.0],
-    gradeBand: 'Calc 3',
-    description: 'Multivariable calculus, vectors'
+    description: 'Full BC curriculum: series, parametrics, polar, vectors'
   }
 ];
 
@@ -188,8 +104,8 @@ function thetaToPathway(theta) {
 
   // Fallback (shouldn't happen)
   return {
-    pathwayId: 'grade-6-pathway',
-    name: 'Grade 6',
+    pathwayId: 'algebra-1-pathway',
+    name: 'Algebra 1',
     assignedTheta: theta,
     confidence: 'fallback'
   };

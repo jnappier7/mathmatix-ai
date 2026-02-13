@@ -3,24 +3,27 @@
   "course": "Geometry",
   "quarter": 2,
   "title": "Q2 Checkpoint: Congruence & Right Triangles",
-  "estimatedDuration": 25,
+  "weeks": "12",
+  "estimatedDuration": 35,
   "type": "assessment",
-  "description": "Cumulative assessment covering triangle congruence postulates (SSS, SAS, ASA, AAS, HL), CPCTC, congruence proofs, Pythagorean Theorem and its converse, special right triangles, and introductory trig ratios.",
+  "description": "Cumulative quarterly assessment covering Units 3-4: triangle congruence postulates (SSS, SAS, ASA, AAS, HL), CPCTC, congruence proofs, Pythagorean Theorem and its converse, special right triangles (45-45-90 and 30-60-90), and introductory trig ratios with real-world applications.",
   "skillsCovered": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs", "pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
   "passThreshold": 70,
   "remediationResources": [
-    {"skillId": "triangle-congruence-sss-sas-asa", "moduleId": "congruence"},
-    {"skillId": "triangle-congruence-aas-hl", "moduleId": "congruence"},
-    {"skillId": "cpctc", "moduleId": "congruence"},
-    {"skillId": "pythagorean-theorem", "moduleId": "right_triangles"},
-    {"skillId": "special-right-triangles", "moduleId": "right_triangles"},
-    {"skillId": "trigonometric-ratios-intro", "moduleId": "right_triangles"}
+    { "skillId": "triangle-congruence-sss-sas-asa", "reteachFocus": "SSS (3 sides), SAS (2 sides + included angle), ASA (2 angles + included side); 'included' means between the other two parts", "resources": ["congruence_module.json - scaffold phases 1-3"] },
+    { "skillId": "triangle-congruence-aas-hl", "reteachFocus": "AAS (2 angles + non-included side), HL (right triangle hypotenuse + leg only), SSA fails (ambiguous case)", "resources": ["congruence_module.json - scaffold phases 4-6"] },
+    { "skillId": "cpctc", "reteachFocus": "Used AFTER proving congruence, not before; correspondence from congruence statement order", "resources": ["congruence_module.json - scaffold phases 7-8"] },
+    { "skillId": "congruence-proofs", "reteachFocus": "Two-column format, common reasons (reflexive, midpoint, vertical angles, bisector), proof flow", "resources": ["congruence_module.json - scaffold phases 8-9"] },
+    { "skillId": "pythagorean-theorem", "reteachFocus": "a²+b²=c², identify hypotenuse first (longest, opposite right angle), recognize common triples and multiples", "resources": ["right_triangles_module.json - scaffold phases 1-3"] },
+    { "skillId": "pythagorean-converse", "reteachFocus": "Compare a²+b² to c²: equal→right, greater→acute, less→obtuse; always test with c as longest side", "resources": ["right_triangles_module.json - scaffold phases 1-3"] },
+    { "skillId": "special-right-triangles", "reteachFocus": "45-45-90 ratio 1:1:√2, 30-60-90 ratio 1:√3:2, work from any given side to find others", "resources": ["right_triangles_module.json - scaffold phases 4-6"] },
+    { "skillId": "trigonometric-ratios-intro", "reteachFocus": "SOH-CAH-TOA, opposite/adjacent change with reference angle, angle of elevation/depression setups", "resources": ["right_triangles_module.json - scaffold phases 7-9"] }
   ],
   "assessmentProblems": [
     {
       "id": "q2-1",
       "question": "Two triangles have three pairs of congruent sides. Name the congruence postulate.",
-      "answer": "SSS",
+      "answer": "SSS (Side-Side-Side).",
       "skill": "triangle-congruence-sss-sas-asa",
       "difficulty": 2,
       "points": 5
@@ -28,23 +31,23 @@
     {
       "id": "q2-2",
       "question": "In two right triangles, the hypotenuses are congruent and one pair of legs is congruent. Name the congruence theorem.",
-      "answer": "HL",
+      "answer": "HL (Hypotenuse-Leg). Only works for right triangles.",
       "skill": "triangle-congruence-aas-hl",
       "difficulty": 3,
       "points": 5
     },
     {
       "id": "q2-3",
-      "question": "Explain why SSA is NOT a valid method for proving triangle congruence.",
-      "answer": "SSA (two sides and a non-included angle) can produce two different triangles—the ambiguous case. The third side can 'swing' to two positions, creating different triangles with the same given information.",
-      "skill": "triangle-congruence-sss-sas-asa",
+      "question": "Explain why SSA is NOT a valid method for proving triangle congruence. Give a specific example.",
+      "answer": "SSA (two sides and a non-included angle) can produce two different triangles—the ambiguous case. For example, with sides 5 and 8 and an angle of 30° opposite the side of 5, the longer side can 'swing' to two positions, creating two non-congruent triangles with the same SSA information.",
+      "skill": "triangle-congruence-aas-hl",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "q2-4",
-      "question": "△ABC ≅ △XYZ by SAS. If AB = 14 and ∠A = 50°, find XY and ∠X.",
-      "answer": "XY = 14, ∠X = 50°",
+      "question": "△ABC ≅ △XYZ by SAS. If AB = 14, ∠A = 50°, and BC = 9, find XY, ∠X, and YZ.",
+      "answer": "A↔X, B↔Y, C↔Z (by correspondence). XY = AB = 14, ∠X = ∠A = 50°, YZ = BC = 9.",
       "skill": "cpctc",
       "difficulty": 3,
       "points": 10
@@ -52,15 +55,15 @@
     {
       "id": "q2-5",
       "question": "A right triangle has legs of 8 and 15. Find the hypotenuse.",
-      "answer": "17",
+      "answer": "8² + 15² = 64 + 225 = 289. c = √289 = 17. (8-15-17 is a Pythagorean triple.)",
       "skill": "pythagorean-theorem",
       "difficulty": 3,
       "points": 10
     },
     {
       "id": "q2-6",
-      "question": "A triangle has sides 7, 24, and 25. Determine if it is a right triangle.",
-      "answer": "yes (7² + 24² = 49 + 576 = 625 = 25²)",
+      "question": "A triangle has sides 7, 24, and 25. Determine if it is a right triangle and explain.",
+      "answer": "7² + 24² = 49 + 576 = 625 = 25². Since a²+b² = c², it IS a right triangle. (7-24-25 is a Pythagorean triple.)",
       "skill": "pythagorean-converse",
       "difficulty": 4,
       "points": 10
@@ -68,46 +71,68 @@
     {
       "id": "q2-7",
       "question": "In a 45-45-90 triangle, the hypotenuse measures 18. Find the length of each leg.",
-      "answer": "9√2",
+      "answer": "Leg = hypotenuse / √2 = 18/√2 = 18√2/2 = 9√2 ≈ 12.73. Verify: (9√2)² + (9√2)² = 162 + 162 = 324 = 18² ✓.",
       "skill": "special-right-triangles",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "q2-8",
-      "question": "In a 30-60-90 triangle, the side opposite the 60° angle is 5√3. Find the hypotenuse.",
-      "answer": "10",
+      "question": "In a 30-60-90 triangle, the side opposite the 60° angle is 5√3. Find the short leg and hypotenuse.",
+      "answer": "Long leg = short × √3, so short leg = 5√3/√3 = 5. Hypotenuse = 2 × 5 = 10. Verify: 5² + (5√3)² = 25 + 75 = 100 = 10² ✓.",
       "skill": "special-right-triangles",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "q2-9",
-      "question": "In a right triangle, the side opposite angle θ is 7 and the hypotenuse is 25. Find sin(θ) and cos(θ).",
-      "answer": "sin(θ) = 7/25, cos(θ) = 24/25",
+      "question": "In a right triangle, the side opposite angle θ is 7 and the hypotenuse is 25. Find sin(θ), cos(θ), and the adjacent side.",
+      "answer": "sin(θ) = opp/hyp = 7/25. Adjacent = √(25²-7²) = √(625-49) = √576 = 24. cos(θ) = adj/hyp = 24/25. Verify: (7/25)² + (24/25)² = 49/625 + 576/625 = 625/625 = 1 ✓.",
       "skill": "trigonometric-ratios-intro",
       "difficulty": 5,
       "points": 15
     },
     {
       "id": "q2-10",
-      "question": "A surveyor stands 100 feet from the base of a building and measures the angle of elevation to the top as 40°. How tall is the building? (Round to the nearest foot. tan 40° ≈ 0.839)",
-      "answer": "84 feet",
+      "question": "A surveyor stands 100 feet from the base of a building and measures the angle of elevation to the top as 40°. How tall is the building? Round to the nearest foot. (tan 40° ≈ 0.8391)",
+      "answer": "tan(40°) = height/100. Height = 100 × tan(40°) ≈ 100 × 0.8391 ≈ 84 feet. We use tangent because we have the adjacent side (100 ft) and need the opposite side (height).",
       "skill": "trigonometric-ratios-intro",
       "difficulty": 6,
       "points": 15
     }
   ],
+  "spiralReview": [
+    {
+      "id": "q2-spiral-1",
+      "question": "SPIRAL (Triangle Inequality): Can sides of length 5, 9, and 15 form a triangle? Explain.",
+      "answer": "No. 5 + 9 = 14, and 14 < 15. The sum of the two shortest sides does not exceed the longest, so these cannot form a triangle.",
+      "skill": "triangle-inequalities",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 2"
+    },
+    {
+      "id": "q2-spiral-2",
+      "question": "SPIRAL (Angle Pairs): Two supplementary angles measure (4x + 5)° and (6x + 15)°. Find x and both angle measures.",
+      "answer": "(4x+5)+(6x+15)=180 → 10x+20=180 → 10x=160 → x=16. Angles: 4(16)+5=69° and 6(16)+15=111°. Check: 69+111=180 ✓.",
+      "skill": "angle-pair-relationships",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    }
+  ],
   "answerKeys": {
-    "q2-1": "SSS",
-    "q2-2": "HL",
-    "q2-3": "SSA can produce two different triangles (ambiguous case)",
-    "q2-4": "XY = 14, ∠X = 50°",
-    "q2-5": "17",
-    "q2-6": "yes",
-    "q2-7": "9√2",
-    "q2-8": "10",
-    "q2-9": "sin(θ) = 7/25, cos(θ) = 24/25",
-    "q2-10": "84 feet"
+    "q2-1": "SSS.",
+    "q2-2": "HL.",
+    "q2-3": "SSA invalid — ambiguous case (two possible triangles).",
+    "q2-4": "XY=14, ∠X=50°, YZ=9.",
+    "q2-5": "17 (8-15-17 triple).",
+    "q2-6": "Yes, right triangle (7²+24²=25²).",
+    "q2-7": "9√2 each.",
+    "q2-8": "Short=5, hyp=10.",
+    "q2-9": "sin=7/25, cos=24/25, adj=24.",
+    "q2-10": "≈84 ft.",
+    "q2-spiral-1": "No (5+9=14<15).",
+    "q2-spiral-2": "x=16. Angles: 69° and 111°."
   }
 }

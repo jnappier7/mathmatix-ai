@@ -68,6 +68,61 @@ const studentToParentLinkCodeSchema = new Schema({
   parentLinked: { type: Boolean, default: false }
 }, { _id: false });
 
+/* ---------- PRIVACY CONSENT TRACKING ---------- */
+const consentRecordSchema = new Schema({
+  // What type of consent was given
+  consentType: {
+    type: String,
+    enum: [
+      'parent_individual',   // Parent gave consent for their child (COPPA individual)
+      'school_official',     // School/district consented via DPA (COPPA school exception)
+      'student_self',        // Student 13+ consented for themselves
+      'parent_revoked',      // Parent revoked consent
+      'school_revoked'       // School/district contract ended
+    ],
+    required: true
+  },
+
+  // Who granted the consent
+  grantedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  grantedByRole: { type: String, enum: ['parent', 'admin', 'teacher', 'student', 'system'] },
+  grantedByName: { type: String, trim: true },
+
+  // School/district context (for school_official consent)
+  schoolName: { type: String, trim: true },
+  districtName: { type: String, trim: true },
+  dpaReferenceId: { type: String, trim: true },  // Reference to signed DPA document
+
+  // Timestamps
+  grantedAt: { type: Date, default: Date.now },
+  expiresAt: { type: Date },                     // DPA expiration date
+  revokedAt: { type: Date },
+
+  // What was consented to
+  scope: [{
+    type: String,
+    enum: [
+      'data_collection',        // Basic data collection for service
+      'ai_processing',          // Sending data to AI providers
+      'progress_tracking',      // Skill mastery and assessment tracking
+      'teacher_visibility',     // Teacher can view student data
+      'parent_visibility',      // Parent can view student data
+      'iep_data_processing'     // Processing IEP/accommodation data
+    ]
+  }],
+
+  // Verification method
+  verificationMethod: {
+    type: String,
+    enum: ['email_link', 'enrollment_code', 'dpa_signature', 'age_self_certification', 'admin_override'],
+    default: 'email_link'
+  },
+
+  // IP and metadata for audit
+  ipAddress: { type: String },
+  userAgent: { type: String }
+}, { _id: true });
+
 /* ---------- USER PREFERENCES ---------- */
 const userPreferencesSchema = new Schema({
   handsFreeModeEnabled: { type: Boolean, default: false },
@@ -442,6 +497,7 @@ const userSchema = new Schema({
   passwordHash: { type: String },                       // populated only for local-strategy users
   googleId:     { type: String, unique: true, sparse: true },
   microsoftId:  { type: String, unique: true, sparse: true },
+  cleverId:     { type: String, unique: true, sparse: true },
 
   /* Password Reset */
   resetPasswordToken:   { type: String },
@@ -464,6 +520,30 @@ const userSchema = new Schema({
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
   dateOfBirth: { type: Date },                           // For COPPA compliance (under 13 requires parental consent)
   hasParentalConsent: { type: Boolean, default: false }, // True when linked to a parent account (required for under 13)
+
+  /* Privacy Consent (FERPA/COPPA compliance) */
+  privacyConsent: {
+    // Current consent status
+    status: {
+      type: String,
+      enum: ['pending', 'active', 'revoked', 'expired'],
+      default: 'pending'
+    },
+    // How consent was obtained
+    consentPathway: {
+      type: String,
+      enum: ['individual_parent', 'school_dpa', 'self_13_plus', 'none'],
+      default: 'none'
+    },
+    // Full consent history (append-only audit trail)
+    history: { type: [consentRecordSchema], default: [] },
+    // Most recent active consent record reference
+    activeConsentDate: { type: Date },
+    // School/district info (if consented via DPA)
+    schoolId: { type: String, trim: true },
+    districtId: { type: String, trim: true }
+  },
+
   tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational', 'chill', 'Chill'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
   preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic', 'Somali', 'French', 'German'], default: 'English' }, // Student's preferred language for tutoring

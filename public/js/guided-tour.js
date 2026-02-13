@@ -289,14 +289,11 @@ class GuidedTour {
         const step = this.steps[index];
         const element = document.querySelector(step.element);
 
-        if (!element) {
-            console.warn(`[GuidedTour] Element not found: ${step.element}`);
-            // Skip to next step
-            if (index < this.steps.length - 1) {
-                this.showStep(index + 1);
-            } else {
-                this.complete();
-            }
+        // Element not found or not visible (e.g. inside collapsed sidebar)
+        if (!element || (element.offsetParent === null && getComputedStyle(element).position !== 'fixed')) {
+            console.warn(`[GuidedTour] Element not found or hidden: ${step.element}`);
+            // Skip this step only — don't chain-complete the entire tour
+            this._skipStep(index);
             return;
         }
 
@@ -328,6 +325,30 @@ class GuidedTour {
                 step.action(element, this);
             }
         }, 300);
+    }
+
+    // Skip a missing/hidden step without chain-completing the tour.
+    // Finds the next visible step forward; if none, tries backward; if none at all, completes.
+    _skipStep(fromIndex) {
+        // Try forward
+        for (let i = fromIndex + 1; i < this.steps.length; i++) {
+            const el = document.querySelector(this.steps[i].element);
+            if (el && (el.offsetParent !== null || getComputedStyle(el).position === 'fixed')) {
+                this.showStep(i);
+                return;
+            }
+        }
+        // Try backward (wrap around to earlier steps we haven't shown)
+        for (let i = fromIndex - 1; i >= 0; i--) {
+            if (i === this.currentStep) continue; // don't re-show current
+            const el = document.querySelector(this.steps[i].element);
+            if (el && (el.offsetParent !== null || getComputedStyle(el).position === 'fixed')) {
+                this.showStep(i);
+                return;
+            }
+        }
+        // No visible steps at all — complete
+        this.complete();
     }
 
     // Update the spotlight cutout
@@ -475,7 +496,7 @@ class GuidedTour {
         }
     }
 
-    // Go to next step
+    // Go to next step (skips hidden elements automatically)
     next() {
         if (this.currentStep < this.steps.length - 1) {
             this.showStep(this.currentStep + 1);
@@ -484,10 +505,15 @@ class GuidedTour {
         }
     }
 
-    // Go to previous step
+    // Go to previous step (skips hidden elements automatically)
     prev() {
-        if (this.currentStep > 0) {
-            this.showStep(this.currentStep - 1);
+        // Find the nearest previous visible step
+        for (let i = this.currentStep - 1; i >= 0; i--) {
+            const el = document.querySelector(this.steps[i].element);
+            if (el && (el.offsetParent !== null || getComputedStyle(el).position === 'fixed')) {
+                this.showStep(i);
+                return;
+            }
         }
     }
 

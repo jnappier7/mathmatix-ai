@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Your Avatar! | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/avatar-builder.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container"> <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" /> </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary">Logout</button>
+    </nav>
+  </header>
+
+  <main class="pick-tutor-main" style="min-height: calc(100vh - 140px); overflow-y: auto; padding-bottom: 3rem;">
+    <!-- AVATAR SELECTION -->
+    <section class="selection-section">
+      <h1 class="section-title">Choose Your Avatar.</h1>
+      <p class="subtitle">Pick a cool creature to represent you! Unlock more as you level up!</p>
+
+      <div id="avatar-selection-grid" class="avatar-selection-grid">
+        <p style="text-align: center; color: var(--clr-text-dim);">Loading avatars...</p>
+      </div>
+    </section>
+
+    <!-- ACTION BUTTON -->
+    <div class="tutor-actions-bar" style="margin-top: 3rem;">
+      <button id="complete-selection-btn" class="btn btn-select btn-large" disabled>
+        <i class="fas fa-rocket"></i> Let's Go!
+      </button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
+  </footer>
+
+  <script src="/js/logout.js"></script>
+  <script src="/js/csrf.js"></script>
+  <script src="/js/avatar-config-data.js"></script>
+  <script type="module" src="/js/pick-avatar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
@@ -190,8 +191,17 @@ router.post('/',
 
         console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName}`);
 
-        // Read file and convert to base64 data URL for vision API
-        const fileBuffer = fs.readFileSync(file.path);
+        // Read file and strip EXIF metadata before sending to AI provider.
+        // Phone cameras embed GPS coordinates — this prevents student location data from leaving our server.
+        let fileBuffer = fs.readFileSync(file.path);
+        try {
+            fileBuffer = await sharp(fileBuffer)
+                .rotate()          // Auto-rotate based on EXIF orientation before stripping
+                .withMetadata({})  // Strip all EXIF/IPTC/XMP metadata
+                .toBuffer();
+        } catch (stripError) {
+            console.warn('[gradeWork] EXIF strip failed, continuing with original:', stripError.message);
+        }
         const base64Image = fileBuffer.toString('base64');
         const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
 
