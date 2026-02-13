@@ -1,0 +1,245 @@
+/* ============================================================
+   GraphTool — Interactive coordinate grid for plotting lines
+   ============================================================ */
+
+.graph-tool-wrapper {
+  margin: 12px 0;
+  padding: 16px;
+  background: #fafbfc;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.graph-tool-svg {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  cursor: crosshair;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* ── Grid lines ─────────────────────────────────────────── */
+.grid-line {
+  stroke: #e8e8e8;
+  stroke-width: 0.5;
+}
+.grid-major {
+  stroke: #d0d0d0;
+  stroke-width: 0.8;
+}
+
+/* ── Axes ───────────────────────────────────────────────── */
+.axis-line {
+  stroke: #333;
+  stroke-width: 1.5;
+}
+.axis-tick {
+  stroke: #333;
+  stroke-width: 1;
+}
+.axis-label {
+  fill: #555;
+  font-size: 10px;
+  font-family: -apple-system, sans-serif;
+  text-anchor: middle;
+  user-select: none;
+}
+
+/* ── Crosshair (hover snap indicator) ───────────────────── */
+.crosshair-line {
+  stroke: #00bfa5;
+  stroke-width: 0.5;
+  stroke-dasharray: 4 4;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.crosshair-dot {
+  fill: #00bfa5;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Student's plotted points ───────────────────────────── */
+.graph-point {
+  fill: #1a73e8;
+  stroke: #fff;
+  stroke-width: 2;
+  cursor: default;
+  transition: r 0.15s ease;
+}
+.graph-point:hover {
+  r: 8;
+}
+
+.point-label {
+  fill: #1a73e8;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: -apple-system, sans-serif;
+  user-select: none;
+}
+
+/* ── Line through points ────────────────────────────────── */
+.graph-line {
+  stroke: #1a73e8;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* ── Rise / Run visualization ───────────────────────────── */
+.rr-line {
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+.rr-run {
+  stroke: #e65100;
+}
+.rr-rise {
+  stroke: #2e7d32;
+}
+.rr-label {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: -apple-system, sans-serif;
+  user-select: none;
+}
+.rr-run-label {
+  fill: #e65100;
+}
+.rr-rise-label {
+  fill: #2e7d32;
+}
+
+/* ── Info display ───────────────────────────────────────── */
+.graph-tool-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  min-height: 24px;
+}
+.graph-tool-hint {
+  color: #888;
+  font-style: italic;
+}
+.graph-tool-result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.graph-tool-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+.graph-tool-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+.graph-tool-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.graph-tool-submit {
+  background: linear-gradient(135deg, #00bfa5, #00897b);
+  color: #fff;
+}
+.graph-tool-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #00897b, #00695c);
+}
+.graph-tool-clear {
+  background: #f0f0f0;
+  color: #555;
+}
+.graph-tool-clear:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+/* ── Submitted state ────────────────────────────────────── */
+.graph-tool-submitted .graph-tool-svg {
+  opacity: 0.85;
+  cursor: default;
+}
+.graph-tool-submitted .graph-tool-info {
+  padding: 8px 12px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  border-left: 3px solid #2e7d32;
+}
+
+/* ── Dark mode ──────────────────────────────────────────── */
+body.dark-mode .graph-tool-wrapper {
+  background: #1e1e2e;
+  border-color: #3a3a4a;
+}
+body.dark-mode .graph-tool-svg {
+  background: #252535;
+  border-color: #3a3a4a;
+}
+body.dark-mode .grid-line {
+  stroke: #333345;
+}
+body.dark-mode .grid-major {
+  stroke: #404055;
+}
+body.dark-mode .axis-line {
+  stroke: #ccc;
+}
+body.dark-mode .axis-tick {
+  stroke: #ccc;
+}
+body.dark-mode .axis-label {
+  fill: #aaa;
+}
+body.dark-mode .graph-tool-info {
+  color: #ddd;
+}
+body.dark-mode .graph-tool-hint {
+  color: #888;
+}
+body.dark-mode .graph-tool-clear {
+  background: #333;
+  color: #ccc;
+}
+body.dark-mode .graph-tool-clear:hover:not(:disabled) {
+  background: #444;
+}
+body.dark-mode .graph-tool-submitted .graph-tool-info {
+  background: #1b3a2a;
+  border-left-color: #4caf50;
+}
+body.dark-mode .point-label {
+  fill: #64b5f6;
+}
+body.dark-mode .graph-point {
+  fill: #64b5f6;
+}
+body.dark-mode .graph-line {
+  stroke: #64b5f6;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .graph-tool-wrapper {
+    padding: 10px;
+  }
+  .graph-tool-info {
+    font-size: 12px;
+  }
+  .graph-tool-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+}

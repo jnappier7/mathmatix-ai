@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="/css/floating-screener.css" />
   <link rel="stylesheet" href="/css/show-your-work.css" />
   <link rel="stylesheet" href="/css/courseCatalog.css" />
+  <link rel="stylesheet" href="/css/graphTool.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -469,9 +470,17 @@
       </div>
       <p class="palette-tip">Tip: Type _ for subscript (a_n), ^ for superscript (x^2)</p>
       <div class="inline-math-field-container">
-        <label>Edit equation:</label>
-        <math-field id="inline-math-editor" class="inline-math-field"></math-field>
-        <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
+        <label>Equation lines:</label>
+        <div id="math-lines-container">
+          <div class="math-line-row">
+            <math-field class="inline-math-field math-line-field"></math-field>
+            <button class="math-line-remove" title="Remove line" style="display:none;">&times;</button>
+          </div>
+        </div>
+        <div class="math-line-actions">
+          <button id="add-math-line" class="btn btn-tertiary btn-sm" title="Add another line">+ Add Line</button>
+          <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
+        </div>
       </div>
     </div>
 
@@ -1689,6 +1698,7 @@
   <script src="/js/floating-screener.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/courseCatalog.js"></script>
+  <script src="/js/graphTool.js"></script>
   <script src="/js/diagram-display.js"></script>
   <script src="/js/inlineChatVisuals.js"></script>
   <script src="/js/engagement-widgets.js"></script>
