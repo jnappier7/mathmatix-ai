@@ -292,12 +292,17 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // Interactive graph tool: parse <GRAPH_TOOL type="plot-line" slope="2" intercept="3">
+        // Interactive graph tool detection
+        // Strategy: 1) Exact tag match  2) Keyword fallback if AI forgot the tag
         let graphToolConfig = null;
-        const graphToolMatch = aiResponseText.match(/<GRAPH_TOOL\s+([^>]+)>/i);
+
+        // 1. Check for explicit <GRAPH_TOOL> tag (with or without attributes)
+        const graphToolMatch = aiResponseText.match(/<GRAPH_TOOL(?:\s+([^>]*))?\s*>/i);
         if (graphToolMatch) {
             const attrs = {};
-            graphToolMatch[1].replace(/(\w+)\s*=\s*"([^"]*)"/g, (_, k, v) => { attrs[k] = v; });
+            if (graphToolMatch[1]) {
+                graphToolMatch[1].replace(/(\w+)\s*=\s*"([^"]*)"/g, (_, k, v) => { attrs[k] = v; });
+            }
             graphToolConfig = {
                 type: attrs.type || 'plot-line',
                 expectedSlope: attrs.slope != null ? parseFloat(attrs.slope) : null,
@@ -308,7 +313,35 @@ router.post('/', async (req, res) => {
                 yMax: attrs.yMax ? parseInt(attrs.yMax) : 10
             };
             aiResponseText = aiResponseText.replace(graphToolMatch[0], '').trim();
-            console.log(`📐 [CourseChat] Graph tool: ${graphToolConfig.type}`);
+            console.log(`📐 [CourseChat] Graph tool (tag): ${graphToolConfig.type}`);
+        }
+
+        // 2. Keyword fallback — AI described the graph but forgot the tag
+        if (!graphToolConfig) {
+            const lower = aiResponseText.toLowerCase();
+            const mentionsGraphing = /\b(plot|graph)\b.*\b(line|point|grid)\b/i.test(lower)
+                || /\b(interactive grid|coordinate grid|coordinate plane)\b/i.test(lower);
+            const currentSkills = (moduleData.skills || []).join(' ').toLowerCase();
+            const isGraphModule = /graph|slope|intercept|linear|coordinate/.test(currentSkills);
+
+            if (mentionsGraphing && isGraphModule) {
+                // Try to extract slope/intercept from the AI's response text
+                // Look for patterns like y = 2x + 3, slope of 2, intercept of 3
+                let slope = null, intercept = null;
+                const eqMatch = aiResponseText.match(/y\s*=\s*(-?\d*\.?\d*)\s*x\s*([+-]\s*\d+\.?\d*)?/i);
+                if (eqMatch) {
+                    slope = eqMatch[1] === '' || eqMatch[1] === '-' ? (eqMatch[1] === '-' ? -1 : 1) : parseFloat(eqMatch[1]);
+                    intercept = eqMatch[2] ? parseFloat(eqMatch[2].replace(/\s/g, '')) : 0;
+                }
+
+                graphToolConfig = {
+                    type: 'plot-line',
+                    expectedSlope: slope,
+                    expectedIntercept: intercept,
+                    xMin: -10, xMax: 10, yMin: -10, yMax: 10
+                };
+                console.log(`📐 [CourseChat] Graph tool (keyword fallback): slope=${slope}, intercept=${intercept}`);
+            }
         }
 
         if (problemAnswered) {
