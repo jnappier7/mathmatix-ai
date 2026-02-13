@@ -145,7 +145,7 @@ class CourseManager {
                     <i class="fas ${statusIcon}" style="color:${statusColor}; font-size:14px;"></i>
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            ${this.escapeHtml(s.courseName)}
+                            ${this.escapeHtml(this.formatCourseName(s.courseName))}
                         </div>
                         <div style="font-size:11px; color:#888;">${s.overallProgress || 0}% complete</div>
                     </div>
@@ -743,7 +743,8 @@ class CourseManager {
     // Drop Course (remove from My Courses via X button)
     // --------------------------------------------------
     async dropCourse(sessionId, courseName) {
-        if (!confirm(`Leave "${courseName}"? You can re-enroll later from the course catalog.`)) return;
+        const displayName = this.formatCourseName(courseName);
+        if (!confirm(`Leave "${displayName}"? You can re-enroll later from the course catalog.`)) return;
 
         try {
             const res = await csrfFetch(`/api/course-sessions/${sessionId}/drop`, {
@@ -768,7 +769,7 @@ class CourseManager {
                 this.activeCourseSessionId = null;
             }
 
-            this.showToast(`Left "${courseName}"`);
+            this.showToast(`Left "${displayName}"`);
         } catch (err) {
             console.error('[CourseManager] Failed to drop course:', err);
             this.showToast('Something went wrong');
@@ -845,6 +846,15 @@ class CourseManager {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    /** Turn slug-style names like "ap-calculus-ab" into "AP Calculus AB" */
+    formatCourseName(name) {
+        if (!name) return '';
+        // Already looks like a proper name (contains spaces and no hyphens between words)
+        if (/[A-Z]/.test(name) && name.includes(' ')) return name;
+        const UPPER = new Set(['ap', 'ab', 'bc', 'act', 'sat']);
+        return name.split('-').map(w => UPPER.has(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
     showToast(message) {
