@@ -377,13 +377,14 @@ router.post('/', async (req, res) => {
         const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
         const xpInLevel = Math.max(0, user.xp - xpForLevelStart);
 
-        const iepFeatures = user.iepPlan?.accommodations ? {
-            autoReadAloud: user.iepPlan.accommodations.audioReadAloud || false,
-            showCalculator: user.iepPlan.accommodations.calculatorAllowed || false,
-            useHighContrast: user.iepPlan.accommodations.largePrintHighContrast || false,
-            extendedTimeMultiplier: user.iepPlan.accommodations.extendedTime ? 1.5 : 1.0,
-            mathAnxietySupport: user.iepPlan.accommodations.mathAnxietySupport || false,
-            chunkedAssignments: user.iepPlan.accommodations.chunkedAssignments || false
+        const accom = user.iepPlan?.accommodations;
+        const iepFeatures = accom ? {
+            autoReadAloud: accom.audioReadAloud || false,
+            showCalculator: accom.calculatorAllowed || false,
+            useHighContrast: accom.largePrintHighContrast || false,
+            extendedTimeMultiplier: accom.extendedTime ? 1.5 : 1.0,
+            mathAnxietySupport: accom.mathAnxietySupport || false,
+            chunkedAssignments: accom.chunkedAssignments || false
         } : null;
 
         const responseData = {

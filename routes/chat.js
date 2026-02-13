@@ -1584,8 +1584,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             breaksAsNeeded: accom.breaksAsNeeded || false,
             digitalMultiplicationChart: accom.digitalMultiplicationChart || false,
             customAccommodations: accom.custom || [],
-            readingLevel: user.iepPlan.readingLevel || null,
-            preferredScaffolds: user.iepPlan.preferredScaffolds || []
+            readingLevel: user.iepPlan?.readingLevel || null,
+            preferredScaffolds: user.iepPlan?.preferredScaffolds || []
         } : null;
 
         const responseData = {
