@@ -75,14 +75,20 @@ input, textarea, select, .math-field {
         gap: 2px;
     }
 
-    /* Show logo on mobile but make it smaller */
+    /* Show logo on mobile but make it compact */
     .header-logo-container {
         display: flex !important;
-        flex-shrink: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        align-items: center;
+        overflow: hidden;
     }
 
     .header-logo-container .main-logo-hero {
         max-height: 28px;
+        width: auto;
+        max-width: 120px;
+        object-fit: contain;
     }
 
     /* Compact nav with scrollable icons */
@@ -130,7 +136,8 @@ input, textarea, select, .math-field {
     /* Hide less important header buttons on mobile */
     #open-resources-modal-btn,
     #restart-audio-btn,
-    #pause-audio-btn {
+    #pause-audio-btn,
+    #open-settings-modal-btn {
         display: none !important;
     }
 
@@ -144,7 +151,8 @@ input, textarea, select, .math-field {
         display: none !important;
     }
 
-    /* Enhanced Mobile Drawer Toggle Buttons */
+    /* Enhanced Mobile Drawer Toggle Buttons
+       !important on display overrides .desktop-hide { display: block !important } */
     .drawer-toggle-btn {
         min-width: 44px;
         min-height: 40px;
@@ -152,7 +160,7 @@ input, textarea, select, .math-field {
         border-radius: 10px;
         transition: all 150ms ease;
         flex-shrink: 0;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         background: transparent;
@@ -211,23 +219,10 @@ input, textarea, select, .math-field {
         font-size: calc(16px * var(--chat-font-scale, 1));
     }
 
-    /* Subtle logo watermark */
+    /* Remove logo watermark on mobile — it creates a positioned element that
+       can interfere with scroll and touch, and wastes rendering resources */
     #chat-messages-container::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-image: url('/images/mathmatix-ai-logo.png');
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 55%;
-        max-width: 240px;
-        height: 200px;
-        opacity: 0.03;
-        z-index: 0;
-        pointer-events: none;
+        display: none;
     }
 
     /* Message bubbles: touch-friendly, readable */
@@ -1097,5 +1092,102 @@ body.is-mobile #sidebar-toggle {
     :focus-visible {
         outline: 2px solid var(--clr-primary-teal, #12B3B3);
         outline-offset: 2px;
+    }
+}
+
+/* --- 16. MOBILE LAYOUT OVERRIDES (CRITICAL) ---
+   These rules MUST load after sidebar-layout.css to win the cascade.
+   They fix footer overlap, header height mismatch, and chat container sizing.
+   ------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    /* Hide footer on mobile chat — saves ~50px of precious screen space.
+       Copyright info is not critical for the chat experience. */
+    body.landing-page-body footer {
+        display: none !important;
+    }
+
+    /* Remove the desktop-only footer margin from the chat container */
+    body.landing-page-body #chat-container {
+        margin-bottom: 0 !important;
+    }
+
+    /* Fix header height variable to match actual mobile header (48px not 60px) */
+    :root {
+        --header-height: 48px;
+    }
+
+    /* Ensure the app wrapper fills the viewport correctly */
+    #app-layout-wrapper {
+        height: calc(100vh - 48px);
+        height: calc(100dvh - 48px); /* Dynamic viewport height for mobile browsers */
+        overflow: hidden;
+        padding: 0;
+    }
+
+    /* Chat container must fill all available height */
+    #chat-container {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    /* Chat messages scroll area fills remaining space */
+    #chat-messages-container {
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Input container sits firmly at the bottom */
+    #input-container {
+        flex-shrink: 0 !important;
+        position: relative;
+        z-index: 100;
+        background: var(--clr-bg-light, #fff);
+        border-top: 1px solid var(--clr-border, #e2e8f0);
+        padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
+    }
+
+    /* Prevent sidebar-layout.css from adding unwanted z-index to input */
+    body.landing-page-body #input-container {
+        z-index: 100 !important;
+    }
+}
+
+/* --- 17. IEP ELEMENTS MOBILE SAFETY ---
+   Prevent IEP fixed-position buttons from covering chat input.
+   ----------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    /* Move IEP break button above the input area */
+    .iep-break-btn {
+        bottom: 80px;
+        left: 10px;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    /* Move multiplication chart button to the right to not overlap break btn */
+    .iep-mult-chart-btn {
+        bottom: 80px;
+        right: 10px;
+        left: auto;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    /* IEP goal notifications at bottom of mobile screen */
+    .iep-goal-notification {
+        right: 8px;
+        left: 8px;
+        max-width: none;
+    }
+
+    .iep-goal-notification.visible {
+        bottom: 80px;
     }
 }
