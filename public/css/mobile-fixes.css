@@ -52,12 +52,14 @@ input, textarea, select, .math-field {
         display: none !important;
     }
 
-    /* Streamlined header: Glass-morphism, compact, sticky */
+    /* Streamlined header: Glass-morphism, compact, sticky
+       !important on height/flex-wrap overrides style.css @media(max-width:600px) rules
+       that set height:auto, min-height:60px, flex-wrap:wrap */
     .landing-header {
-        min-height: 48px;
-        height: 48px;
-        padding: 4px 8px;
-        display: flex;
+        min-height: 48px !important;
+        height: 48px !important;
+        padding: 4px 8px !important;
+        display: flex !important;
         align-items: center;
         justify-content: space-between;
         position: sticky;
@@ -70,9 +72,10 @@ input, textarea, select, .math-field {
         -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         width: 100%;
-        overflow: visible;
+        overflow: hidden;
         box-shadow: none;
         gap: 2px;
+        flex-wrap: nowrap !important;
     }
 
     /* Show logo on mobile but make it compact */
@@ -91,12 +94,14 @@ input, textarea, select, .math-field {
         object-fit: contain;
     }
 
-    /* Compact nav with scrollable icons */
+    /* Compact nav with scrollable icons
+       !important overrides style.css @media(max-width:600px) rules that set
+       flex-wrap:wrap, width:100%, justify-content:center */
     .landing-nav {
         gap: 1px;
-        display: flex;
+        display: flex !important;
         align-items: center;
-        flex-wrap: nowrap;
+        flex-wrap: nowrap !important;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
@@ -104,16 +109,19 @@ input, textarea, select, .math-field {
         -ms-overflow-style: none;
         flex-shrink: 1;
         min-width: 0;
+        width: auto !important;
+        justify-content: flex-end !important;
     }
     .landing-nav::-webkit-scrollbar { display: none; }
 
-    /* Compact nav buttons */
+    /* Compact nav buttons — constrained to fit header */
     .landing-nav button,
     .landing-nav .btn {
-        padding: 6px 8px;
+        padding: 6px 8px !important;
         font-size: 0.95rem;
-        min-width: 40px;
-        min-height: 40px;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        max-height: 40px;
         border-radius: 8px;
         flex-shrink: 0;
         background: transparent;
@@ -131,6 +139,14 @@ input, textarea, select, .math-field {
     .landing-nav button i,
     .landing-nav .btn i {
         font-size: 1.15rem;
+    }
+
+    /* Override Section 15 accessibility min-height for header buttons
+       (44px min-height overflows the 48px header with padding) */
+    .landing-header button,
+    .landing-header .btn,
+    .landing-header .drawer-toggle-btn {
+        min-height: 36px !important;
     }
 
     /* Hide less important header buttons on mobile */
@@ -154,9 +170,10 @@ input, textarea, select, .math-field {
     /* Enhanced Mobile Drawer Toggle Buttons
        !important on display overrides .desktop-hide { display: block !important } */
     .drawer-toggle-btn {
-        min-width: 44px;
-        min-height: 40px;
-        padding: 6px 10px;
+        min-width: 36px;
+        min-height: 36px;
+        max-height: 40px;
+        padding: 6px 8px !important;
         border-radius: 10px;
         transition: all 150ms ease;
         flex-shrink: 0;
@@ -180,25 +197,24 @@ input, textarea, select, .math-field {
 /* --- 3. MOBILE CHAT LAYOUT --- */
 
 @media (max-width: 768px) {
-    /* Main layout adjustments */
+    /* Main layout adjustments — height & flex set in Section 16 */
     #app-layout-wrapper {
         position: relative;
         z-index: 1;
-        padding-top: 0;
-        margin-top: 0;
+        margin: 0;
     }
 
     #app-layout-wrapper.sidebar-layout {
-        padding-top: 0;
+        margin-left: 0 !important;
+        max-width: 100vw !important;
     }
 
     /* Chat container with proper header offset */
     #chat-container {
         position: relative;
         z-index: 1;
-        margin-top: 0;
-        margin-bottom: 0 !important;
-        padding-top: 4px;
+        margin: 0 !important;
+        padding: 0 !important;
         border-radius: 0;
         box-shadow: none;
         border: none;
@@ -1117,21 +1133,27 @@ body.is-mobile #sidebar-toggle {
         --header-height: 48px;
     }
 
-    /* Ensure the app wrapper fills the viewport correctly */
+    /* App wrapper: flex column so chat-container can use flex:1 instead of height:100%.
+       This is more reliable than height:100% which can fail when the parent's
+       height comes from a calc() expression. */
     #app-layout-wrapper {
-        height: calc(100vh - 48px);
-        height: calc(100dvh - 48px); /* Dynamic viewport height for mobile browsers */
-        overflow: hidden;
-        padding: 0;
+        height: calc(100vh - 48px) !important;
+        height: calc(100dvh - 48px) !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    /* Chat container must fill all available height */
+    /* Chat container fills remaining space via flex, not height:100% */
     #chat-container {
-        height: 100% !important;
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         border-radius: 0;
         box-shadow: none;
+        margin-bottom: 0 !important;
     }
 
     /* Chat messages scroll area fills remaining space */
@@ -1142,19 +1164,14 @@ body.is-mobile #sidebar-toggle {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Input container sits firmly at the bottom */
+    /* Input container sits firmly at the bottom — never collapses, never grows */
     #input-container {
-        flex-shrink: 0 !important;
-        position: relative;
-        z-index: 100;
+        flex: 0 0 auto !important;
+        position: relative !important;
+        z-index: 100 !important;
         background: var(--clr-bg-light, #fff);
         border-top: 1px solid var(--clr-border, #e2e8f0);
         padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
-    }
-
-    /* Prevent sidebar-layout.css from adding unwanted z-index to input */
-    body.landing-page-body #input-container {
-        z-index: 100 !important;
     }
 
     /* Compact the inline toolbar row (overrides inline styles) */
