@@ -312,8 +312,8 @@ function getWeeklyReportTemplate(parent, studentData) {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
 
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; color: white;">
-          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">${problemsCompleted}</div>
-          <div style="font-size: 14px; opacity: 0.9;">Problems Solved</div>
+          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">${problemsCompleted > 0 ? problemsCompleted : '—'}</div>
+          <div style="font-size: 14px; opacity: 0.9;">${problemsCompleted > 0 ? 'Problems Solved' : 'Problems Solved (tracking in progress)'}</div>
         </div>
 
         <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; padding: 20px; color: white;">

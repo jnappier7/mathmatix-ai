@@ -148,18 +148,29 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             console.error('Background cleanup failed:', err);
         });
 
-        // Fetch active conversation first (for live stats and to include in recent sessions)
+        // Determine if there is a truly active session.
+        // isActive stays true for sidebar visibility even after logout, so we
+        // also check that lastActivity is recent (within the last 30 minutes).
+        const ACTIVE_SESSION_THRESHOLD = 30 * 60 * 1000; // 30 minutes
+        const activeThreshold = new Date(Date.now() - ACTIVE_SESSION_THRESHOLD);
+
         const activeConversation = await Conversation.findOne({
             userId: childId,
-            isActive: true
+            isActive: true,
+            lastActivity: { $gte: activeThreshold }
         }).select('currentTopic problemsAttempted problemsCorrect strugglingWith alerts lastActivity liveSummary startDate activeMinutes').lean();
 
-        // Fetch recent COMPLETED conversation summaries
-        const completedSessions = await Conversation.find({
+        // Fetch recent sessions that have summaries (regardless of isActive flag,
+        // since isActive controls sidebar archiving, not session completion).
+        // Exclude the truly-active session if one exists.
+        const completedFilter = {
             userId: childId,
-            isActive: false,
             summary: { $exists: true, $ne: null, $ne: '' }
-        })
+        };
+        if (activeConversation) {
+            completedFilter._id = { $ne: activeConversation._id };
+        }
+        const completedSessions = await Conversation.find(completedFilter)
             .sort({ lastActivity: -1 })
             .limit(6)  // Limit to 6 since active session might be added
             .select('summary lastActivity activeMinutes startDate problemsAttempted problemsCorrect currentTopic');
