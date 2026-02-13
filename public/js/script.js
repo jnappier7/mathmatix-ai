@@ -2545,7 +2545,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let parent = node.parentElement;
                 let insideMathContainer = false;
                 while (parent && parent !== element) {
-                    if (parent.classList && parent.classList.contains('math-container')) {
+                    if (parent.classList && (parent.classList.contains('math-container') || parent.classList.contains('math-block-container'))) {
                         insideMathContainer = true;
                         break;
                     }
@@ -2555,10 +2555,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!insideMathContainer) {
                     result += node.textContent;
                 }
-            } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('math-container')) {
-                const latex = node.getAttribute('data-latex');
-                if (latex) {
-                    result += `\\(${latex}\\)`;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Multi-line math block: each .math-block-line becomes its own line
+                if (node.classList.contains('math-block-container')) {
+                    const lines = node.querySelectorAll('.math-block-line');
+                    lines.forEach((line, i) => {
+                        const latex = line.getAttribute('data-latex');
+                        if (latex) {
+                            if (i > 0) result += '\n';
+                            result += `\\(${latex}\\)`;
+                        }
+                    });
+                    // Skip the entire subtree (walker won't descend into already-handled children,
+                    // but child text nodes might still appear — handled by insideMathContainer check)
+                } else if (node.classList.contains('math-container') && !node.classList.contains('math-block-line')) {
+                    const latex = node.getAttribute('data-latex');
+                    if (latex) {
+                        result += `\\(${latex}\\)`;
+                    }
                 }
             }
         }
@@ -3908,20 +3922,84 @@ What would you like to work on first?`;
         });
     }
 
-    // Inline Equation Palette (MS Word-like)
+    // Inline Equation Palette (MS Word-like) — Multi-line support
     const inlineEquationPalette = document.getElementById('inline-equation-palette');
-    const inlineMathEditor = document.getElementById('inline-math-editor');
+    const mathLinesContainer = document.getElementById('math-lines-container');
+    const addMathLineBtn = document.getElementById('add-math-line');
     const insertInlineEqBtn = document.getElementById('insert-inline-equation');
     const closeInlinePaletteBtn = document.getElementById('close-inline-palette');
+
+    // Helper: get all math-field elements in the multi-line container
+    function getMathLineFields() {
+        if (!mathLinesContainer) return [];
+        return Array.from(mathLinesContainer.querySelectorAll('.math-line-field'));
+    }
+
+    // Helper: get the currently focused math-field (or the last one)
+    function getActiveMathField() {
+        const fields = getMathLineFields();
+        const focused = fields.find(f => f === document.activeElement || f.contains(document.activeElement));
+        return focused || fields[fields.length - 1] || null;
+    }
+
+    // Helper: update remove-button visibility (hide if only 1 line)
+    function updateRemoveButtons() {
+        if (!mathLinesContainer) return;
+        const rows = mathLinesContainer.querySelectorAll('.math-line-row');
+        rows.forEach(row => {
+            const btn = row.querySelector('.math-line-remove');
+            if (btn) btn.style.display = rows.length > 1 ? '' : 'none';
+        });
+    }
+
+    // Add a new math line
+    function addMathLine() {
+        if (!mathLinesContainer) return;
+        const row = document.createElement('div');
+        row.className = 'math-line-row';
+        row.innerHTML = `<math-field class="inline-math-field math-line-field"></math-field>` +
+                         `<button class="math-line-remove" title="Remove line">&times;</button>`;
+        row.querySelector('.math-line-remove').addEventListener('click', () => {
+            row.remove();
+            updateRemoveButtons();
+            // Focus the last remaining field
+            const fields = getMathLineFields();
+            if (fields.length) fields[fields.length - 1].focus();
+        });
+        mathLinesContainer.appendChild(row);
+        updateRemoveButtons();
+        // Focus the new field
+        const newField = row.querySelector('.math-line-field');
+        if (newField) setTimeout(() => newField.focus(), 50);
+    }
+
+    // Wire up "Add Line" button
+    if (addMathLineBtn) {
+        addMathLineBtn.addEventListener('click', addMathLine);
+    }
+
+    // Wire up the initial remove button (for the first row)
+    if (mathLinesContainer) {
+        const firstRemove = mathLinesContainer.querySelector('.math-line-remove');
+        if (firstRemove) {
+            firstRemove.addEventListener('click', () => {
+                const rows = mathLinesContainer.querySelectorAll('.math-line-row');
+                if (rows.length > 1) {
+                    firstRemove.closest('.math-line-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+        }
+    }
 
     // Toggle inline palette instead of modal
     if (openEquationBtn && inlineEquationPalette) {
         openEquationBtn.addEventListener('click', () => {
             const isVisible = inlineEquationPalette.style.display === 'block';
             inlineEquationPalette.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible && inlineMathEditor) {
-                // Focus the math editor when opening
-                setTimeout(() => inlineMathEditor.focus(), 100);
+            if (!isVisible) {
+                const field = getActiveMathField();
+                if (field) setTimeout(() => field.focus(), 100);
             }
         });
     }
@@ -3937,50 +4015,49 @@ What would you like to work on first?`;
     document.querySelectorAll('.symbol-btn, .script-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const latex = btn.getAttribute('data-latex');
-            if (inlineMathEditor && latex) {
-                inlineMathEditor.executeCommand(['insert', latex]);
-                inlineMathEditor.focus();
+            const activeField = getActiveMathField();
+            if (activeField && latex) {
+                activeField.executeCommand(['insert', latex]);
+                activeField.focus();
             }
         });
     });
 
-    // Insert equation into chat input
-    if (insertInlineEqBtn && inlineMathEditor && userInput) {
+    // Insert equation(s) into chat input — supports multiple lines
+    if (insertInlineEqBtn && userInput) {
         insertInlineEqBtn.addEventListener('click', () => {
-            const latex = inlineMathEditor.value;
-            if (latex) {
-                // Create a container for the rendered math
-                const mathContainer = document.createElement('span');
-                mathContainer.className = 'math-container';
-                mathContainer.setAttribute('data-latex', latex);
-                mathContainer.textContent = `\\(${latex}\\)`;
+            const fields = getMathLineFields();
+            const lines = fields.map(f => f.value).filter(v => v && v.trim());
+            if (lines.length === 0) return;
 
-                // Insert at cursor position or at the end
-                const selection = window.getSelection();
-                if (selection.rangeCount > 0 && userInput.contains(selection.anchorNode)) {
-                    const range = selection.getRangeAt(0);
-                    range.deleteContents();
-                    range.insertNode(mathContainer);
-                    // Add a space after
-                    const space = document.createTextNode(' ');
-                    range.insertNode(space);
-                    // Move cursor after the space
-                    range.setStartAfter(space);
-                    range.setEndAfter(space);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                } else {
-                    userInput.appendChild(mathContainer);
-                    userInput.appendChild(document.createTextNode(' '));
-                }
+            // Build a multi-line math block
+            const block = document.createElement('div');
+            block.className = 'math-block-container';
 
-                // Render the math using MathJax
-                renderMathInElement(mathContainer);
+            lines.forEach((latex, i) => {
+                const line = document.createElement('div');
+                line.className = 'math-container math-block-line';
+                line.setAttribute('data-latex', latex);
+                line.textContent = `\\(${latex}\\)`;
+                block.appendChild(line);
+            });
 
-                inlineMathEditor.value = ''; // Clear the editor
-                inlineEquationPalette.style.display = 'none';
-                userInput.focus();
+            // Append block to chat input
+            userInput.appendChild(block);
+            userInput.appendChild(document.createTextNode(' '));
+
+            // Render all math in the block
+            renderMathInElement(block);
+
+            // Clear all fields and reset to single line
+            fields.forEach(f => { f.value = ''; });
+            while (mathLinesContainer && mathLinesContainer.children.length > 1) {
+                mathLinesContainer.removeChild(mathLinesContainer.lastChild);
             }
+            updateRemoveButtons();
+
+            inlineEquationPalette.style.display = 'none';
+            userInput.focus();
         });
     }
 
