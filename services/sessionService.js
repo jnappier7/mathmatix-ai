@@ -5,6 +5,7 @@
 const logger = require('../utils/logger').child({ service: 'session-service' });
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const CourseSession = require('../models/courseSession');
 const {
   generateSessionSummary: generateAISummary,
   detectTopic,
@@ -259,6 +260,69 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
         activeConversation.summary = `Session completed - ${activeConversation.activeMinutes || 0} minutes`;
         activeConversation.lastActivity = new Date();
         await activeConversation.save();
+      }
+    }
+
+    // Also generate summary for active course conversation (if any).
+    // Course conversations are tracked separately via CourseSession, so
+    // the block above (which only handles activeConversationId) misses them.
+    if (user.activeCourseSessionId) {
+      try {
+        const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+        if (courseSession && courseSession.conversationId) {
+          // Skip if this is the same conversation we already summarized above
+          const alreadySummarized = activeConversation &&
+            activeConversation._id.toString() === courseSession.conversationId.toString();
+
+          if (!alreadySummarized) {
+            const courseConversation = await Conversation.findOne({
+              _id: courseSession.conversationId,
+              isActive: true
+            });
+
+            if (courseConversation && courseConversation.messages.length > 0 && !courseConversation.summary) {
+              try {
+                if (!courseConversation.currentTopic) {
+                  courseConversation.currentTopic = courseSession.courseName || detectTopic(courseConversation.messages);
+                }
+
+                if (!courseConversation.problemsAttempted || courseConversation.problemsAttempted === 0) {
+                  const stats = calculateProblemStats(courseConversation.messages);
+                  if (stats.attempted > 0) {
+                    courseConversation.problemsAttempted = stats.attempted;
+                    courseConversation.problemsCorrect = stats.correct;
+                  }
+                }
+
+                const struggleInfo = detectStruggle(courseConversation.messages.slice(-10));
+                if (struggleInfo.isStruggling) {
+                  courseConversation.strugglingWith = struggleInfo.strugglingWith;
+                }
+
+                const studentName = `${user.firstName} ${user.lastName}`;
+                const aiSummary = await generateAISummary(courseConversation, studentName);
+                courseConversation.summary = aiSummary;
+                courseConversation.lastActivity = new Date();
+                await courseConversation.save();
+
+                logger.info('Course conversation summary generated', {
+                  conversationId: courseConversation._id,
+                  courseSessionId: courseSession._id,
+                  userId,
+                  courseName: courseSession.courseName,
+                  summary: aiSummary.substring(0, 100)
+                });
+              } catch (error) {
+                logger.error('Failed to generate course conversation summary', { userId, error });
+                courseConversation.summary = `Course session completed - ${courseSession.courseName}`;
+                courseConversation.lastActivity = new Date();
+                await courseConversation.save();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        logger.error('Failed to process course session for summary', { userId, error });
       }
     }
 
