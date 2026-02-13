@@ -160,8 +160,9 @@ ${phases || `  • concept-intro: Introduce the big idea with real-world connect
   • mastery-check: Formal assessment of skill mastery`}
 
 6. **ADVANCE THROUGH THE SCAFFOLD** as the student demonstrates understanding.
-   When a step is complete, flow into the next one naturally — the way
-   a teacher at a whiteboard would. No announcements, no asking permission.
+   The student never sees phase labels — no "Now we're in guided practice"
+   or "Time for independent work." It's just a natural lesson that flows.
+   The shift from you modeling to them trying should feel seamless.
 
 7. **ADAPT IN REAL TIME.** You have full authority to:
 ${decisionRights || `  - Choose which examples to present
@@ -328,6 +329,11 @@ function formatScaffoldStep(step, index, total) {
 
     case 'independent_practice':
       detail += `YOU-DO — STUDENT FLIES SOLO:\n`;
+      detail += `Bridge into this naturally. Something like: "Ok, for this next one\n`;
+      detail += `I want you to try to get your own answer on paper first. Then I'll\n`;
+      detail += `show my work and you can see if you really have it. If you're\n`;
+      detail += `feeling like a 3, get your answer without me. If you're a 1 or 2,\n`;
+      detail += `we've got some work to do."\n\n`;
       detail += `The student is in the driver's seat AND reading the map now.\n`;
       detail += `Present a problem and let them work. Don't walk them through steps.\n`;
       detail += `If they get it right, acknowledge and move to the next one.\n`;
