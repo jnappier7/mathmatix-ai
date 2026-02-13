@@ -128,11 +128,11 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'courseId is required' });
     }
 
-    // Check for existing active session in this course
+    // Check for existing active/paused session in this course
     const existing = await CourseSession.findOne({
       userId: req.user._id,
       courseId,
-      status: 'active'
+      status: { $in: ['active', 'paused'] }
     });
     if (existing) {
       return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
@@ -142,7 +142,7 @@ router.post('/enroll', async (req, res) => {
     const MAX_CONCURRENT_COURSES = 2;
     const activeCount = await CourseSession.countDocuments({
       userId: req.user._id,
-      status: 'active'
+      status: { $in: ['active', 'paused'] }
     });
     if (activeCount >= MAX_CONCURRENT_COURSES) {
       return res.status(400).json({
@@ -437,13 +437,13 @@ router.post('/:id/drop', async (req, res) => {
     const session = await CourseSession.findOne({
       _id: req.params.id,
       userId: req.user._id,
-      status: 'active'
+      status: { $in: ['active', 'paused'] }
     });
     if (!session) {
-      return res.status(404).json({ success: false, message: 'Active course session not found' });
+      return res.status(404).json({ success: false, message: 'Course session not found' });
     }
 
-    session.status = 'paused';
+    session.status = 'dropped';
     await session.save();
 
     // Clear active if this was the active one
@@ -453,7 +453,7 @@ router.post('/:id/drop', async (req, res) => {
       await user.save();
     }
 
-    res.json({ success: true, message: 'Course paused' });
+    res.json({ success: true, message: 'Course dropped' });
   } catch (err) {
     console.error('[CourseSession] Error dropping:', err);
     res.status(500).json({ success: false, message: 'Failed to drop course' });

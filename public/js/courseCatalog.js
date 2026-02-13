@@ -139,8 +139,9 @@ class CourseManager {
             const statusColor = s.status === 'paused' ? '#aaa' : '#667eea';
 
             item.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
-                     onmouseover="this.style.background='#f0f0ff'" onmouseout="this.style.background='transparent'">
+                <div class="course-sidebar-row" style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
+                     onmouseover="this.style.background='#f0f0ff'; this.querySelector('.course-drop-btn').style.opacity='1';"
+                     onmouseout="this.style.background='transparent'; this.querySelector('.course-drop-btn').style.opacity='0';">
                     <i class="fas ${statusIcon}" style="color:${statusColor}; font-size:14px;"></i>
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -148,10 +149,26 @@ class CourseManager {
                         </div>
                         <div style="font-size:11px; color:#888;">${s.overallProgress || 0}% complete</div>
                     </div>
+                    <button class="course-drop-btn" title="Leave course"
+                            style="opacity:0; background:none; border:none; cursor:pointer; color:#ccc; font-size:13px; padding:2px 4px; transition:opacity 0.15s, color 0.15s;"
+                            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             `;
 
-            item.addEventListener('click', () => this.activateCourse(s._id));
+            // Click row → activate course
+            item.querySelector('.course-sidebar-row').addEventListener('click', (e) => {
+                if (e.target.closest('.course-drop-btn')) return; // don't activate when clicking X
+                this.activateCourse(s._id);
+            });
+
+            // Click X → drop course
+            item.querySelector('.course-drop-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.dropCourse(s._id, s.courseName);
+            });
+
             list.appendChild(item);
         });
     }
@@ -719,6 +736,42 @@ class CourseManager {
             this.showToast('Returned to general tutoring');
         } catch (err) {
             console.error('[CourseManager] Failed to exit course:', err);
+        }
+    }
+
+    // --------------------------------------------------
+    // Drop Course (remove from My Courses via X button)
+    // --------------------------------------------------
+    async dropCourse(sessionId, courseName) {
+        if (!confirm(`Leave "${courseName}"? You can re-enroll later from the course catalog.`)) return;
+
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/drop`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+            if (!data.success) {
+                this.showToast(data.message || 'Failed to leave course');
+                return;
+            }
+
+            // Remove from local list and re-render sidebar
+            this.courseSessions = this.courseSessions.filter(s => s._id !== sessionId);
+            this.renderSidebarCourses();
+
+            // If this was the active course, clear progress bar
+            if (this.activeCourseSessionId === sessionId) {
+                const wrapper = document.getElementById('course-progress-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+                this.activeCourseSessionId = null;
+            }
+
+            this.showToast(`Left "${courseName}"`);
+        } catch (err) {
+            console.error('[CourseManager] Failed to drop course:', err);
+            this.showToast('Something went wrong');
         }
     }
 

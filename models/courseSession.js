@@ -46,7 +46,7 @@ const courseSessionSchema = new Schema({
   // Status
   status: {
     type: String,
-    enum: ['active', 'paused', 'completed'],
+    enum: ['active', 'paused', 'completed', 'dropped'],
     default: 'active'
   },
 
