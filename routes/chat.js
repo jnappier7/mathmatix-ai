@@ -1781,15 +1781,18 @@ function generateParentTeacherPrompt(child, recentSessions, curriculumContext, p
                 const date = session.lastActivity ? new Date(session.lastActivity).toLocaleDateString() : 'Recent';
                 const duration = session.activeMinutes ? `${session.activeMinutes} min` : '';
                 const topic = session.currentTopic && session.currentTopic !== 'mathematics' ? session.currentTopic : '';
-                const accuracy = session.problemsAttempted > 0
-                    ? `${session.problemsCorrect || 0}/${session.problemsAttempted} correct (${Math.round((session.problemsCorrect || 0) / session.problemsAttempted * 100)}%)`
-                    : 'No problems attempted';
+                // Only include performance line when we have actual tracked data.
+                // When problemsAttempted is 0 it means tracking didn't capture data,
+                // NOT that the student didn't try. Omit to prevent false conclusions.
+                const performanceLine = session.problemsAttempted > 0
+                    ? `- Performance: ${session.problemsCorrect || 0}/${session.problemsAttempted} correct (${Math.round((session.problemsCorrect || 0) / session.problemsAttempted * 100)}%)`
+                    : '';
                 const struggle = session.strugglingWith || '';
                 const summary = session.summary || '';
 
                 return `SESSION ${idx + 1} (${date}${duration ? ', ' + duration : ''}):
 ${topic ? `- Topic: ${topic}` : ''}
-- Performance: ${accuracy}
+${performanceLine}
 ${struggle ? `- Struggled with: ${struggle}` : ''}
 ${summary ? `- Summary: ${summary}` : ''}`;
             }).join('\n\n');
@@ -1843,6 +1846,7 @@ CRITICAL RULES:
 4. If the parent asks about something not in the data, say you'd need to check or that you haven't covered that topic yet
 5. Reference SPECIFIC sessions, dates, accuracy rates, and summaries from the data above
 6. If there's no session data, be honest: "${childName} and I haven't had many sessions yet"
+7. NEVER interpret missing problem statistics as a lack of effort, motivation, or engagement. If a session has no Performance line, it means our tracking system didn't capture the data — the student was still learning and working. Do NOT suggest the student is unmotivated, disengaged, or needs intervention based on missing stats.
 
 SPECIAL REQUESTS:
 - If parent asks to "teach me" or "explain the concept": Teach them the math topic from the SESSION DATA at a beginner level. Use simple examples, step-by-step explanations, and relatable analogies. Make it practical so they can help their child.
