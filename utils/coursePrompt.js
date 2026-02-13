@@ -235,30 +235,22 @@ the final scaffold step (usually a mastery-check) is complete.
 **3. <PROBLEM_RESULT:correct|incorrect|skipped>**
 Emit when evaluating a student's answer to a practice problem.
 
-**4. <GRAPH_TOOL type="plot-line" slope="2" intercept="3">**
+**4. <GRAPH_TOOL>**
 Emit this tag to give the student an INTERACTIVE coordinate grid where
-they can plot a line by clicking two points. The student will see the
-grid, click their y-intercept, then click a second point. The tool
-shows rise/run as they work and draws the line through their points.
-When they submit, their plotted points and equation are sent back to
-you as a "[Graph Response]" message for you to evaluate.
+they can plot a line by clicking two points. The student sees the grid,
+clicks their y-intercept, then clicks a second point. The tool shows
+rise/run as they work. When they submit, their plotted points and
+equation are sent back to you as a "[Graph Response]" message.
 
-WHEN TO USE: During We-Do or You-Do phases when teaching graphing,
-slope-intercept form, or linear equations. You must TEACH the concepts
-first (what slope means, what the y-intercept is, how to plot from
-an equation) before giving them the tool. The tool is for practice,
-not a substitute for instruction.
+WHEN TO USE: When you want the student to PRACTICE graphing a line.
+Teach the concepts first, then emit <GRAPH_TOOL> to let them try.
+The server will automatically detect the equation from your message.
 
-Attributes:
-  type="plot-line" (currently the only type)
-  slope="2"       (expected slope — for your reference when evaluating)
-  intercept="3"   (expected y-intercept — for your reference)
-
-Example: After teaching slope-intercept form, you might say:
-"Ok, let's see if you can graph this one. Plot the line \\( y = 2x + 3 \\)
-on the grid below. Start by finding your y-intercept, then use the
-slope to find your second point."
-<GRAPH_TOOL type="plot-line" slope="2" intercept="3">
+Example:
+"Ok, let's see if you can graph this one. Plot \\( y = 2x + 3 \\).
+Start by finding your y-intercept, then use the slope to find a
+second point."
+<GRAPH_TOOL>
 
 ====================================================================
 RESPONSE FORMAT & PACING
