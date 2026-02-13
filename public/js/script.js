@@ -3962,15 +3962,35 @@ What would you like to work on first?`;
         row.querySelector('.math-line-remove').addEventListener('click', () => {
             row.remove();
             updateRemoveButtons();
-            // Focus the last remaining field
             const fields = getMathLineFields();
             if (fields.length) fields[fields.length - 1].focus();
         });
+        // Shift+Enter on this field adds another line
+        const field = row.querySelector('.math-line-field');
+        if (field) {
+            field.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    addMathLine();
+                }
+            });
+        }
         mathLinesContainer.appendChild(row);
         updateRemoveButtons();
-        // Focus the new field
-        const newField = row.querySelector('.math-line-field');
-        if (newField) setTimeout(() => newField.focus(), 50);
+        if (field) setTimeout(() => field.focus(), 50);
+    }
+
+    // Wire up Shift+Enter on the initial math-field
+    if (mathLinesContainer) {
+        const firstField = mathLinesContainer.querySelector('.math-line-field');
+        if (firstField) {
+            firstField.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    addMathLine();
+                }
+            });
+        }
     }
 
     // Wire up "Add Line" button
