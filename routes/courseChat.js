@@ -11,7 +11,7 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
-const { generateCoursePrompt } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, loadCourseContext } = require('../utils/coursePrompt');
 const { callLLM, callLLMStream } = require('../utils/llmGateway');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -139,20 +139,13 @@ router.post('/', async (req, res) => {
             ? user.selectedTutorId : 'default';
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
 
-        const systemPrompt = generateCoursePrompt({
-            user,
-            tutor: currentTutor,
-            course: {
-                courseId: courseSession.courseId,
-                courseName: courseSession.courseName,
-                currentModuleId: courseSession.currentModuleId,
-                overallProgress: courseSession.overallProgress,
-                modules: courseSession.modules
-            },
-            module: moduleData,
+        const systemPrompt = buildCourseSystemPrompt({
+            userProfile: user,
+            tutorProfile: currentTutor,
+            courseSession,
             pathway,
-            teacherAISettings: null, // Can be enriched later
-            fluencyContext: null     // Can be enriched later
+            scaffoldData: moduleData,
+            currentModule: currentPathwayModule
         });
 
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
@@ -509,16 +502,13 @@ async function handleCourseGreeting(req, res, userId) {
             ? user.selectedTutorId : 'default';
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
 
-        const systemPrompt = generateCoursePrompt({
-            user, tutor: currentTutor,
-            course: {
-                courseId: courseSession.courseId,
-                courseName: courseSession.courseName,
-                currentModuleId: courseSession.currentModuleId,
-                overallProgress: courseSession.overallProgress,
-                modules: courseSession.modules
-            },
-            module: moduleData, pathway
+        const systemPrompt = buildCourseSystemPrompt({
+            userProfile: user,
+            tutorProfile: currentTutor,
+            courseSession,
+            pathway,
+            scaffoldData: moduleData,
+            currentModule: currentPathwayModule
         });
 
         // Determine if this is a fresh start or a return
