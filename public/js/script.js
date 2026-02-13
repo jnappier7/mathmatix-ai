@@ -3965,13 +3965,14 @@ What would you like to work on first?`;
             const fields = getMathLineFields();
             if (fields.length) fields[fields.length - 1].focus();
         });
-        // Shift+Enter on this field adds another line
+        // Enter = insert, Shift+Enter = add line
         const field = row.querySelector('.math-line-field');
         if (field) {
             field.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.shiftKey) {
+                if (e.key === 'Enter') {
                     e.preventDefault();
-                    addMathLine();
+                    if (e.shiftKey) { addMathLine(); }
+                    else if (insertInlineEqBtn) { insertInlineEqBtn.click(); }
                 }
             });
         }
@@ -3980,14 +3981,15 @@ What would you like to work on first?`;
         if (field) setTimeout(() => field.focus(), 50);
     }
 
-    // Wire up Shift+Enter on the initial math-field
+    // Wire up Enter/Shift+Enter on the initial math-field
     if (mathLinesContainer) {
         const firstField = mathLinesContainer.querySelector('.math-line-field');
         if (firstField) {
             firstField.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.shiftKey) {
+                if (e.key === 'Enter') {
                     e.preventDefault();
-                    addMathLine();
+                    if (e.shiftKey) { addMathLine(); }
+                    else if (insertInlineEqBtn) { insertInlineEqBtn.click(); }
                 }
             });
         }
