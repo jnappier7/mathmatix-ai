@@ -42,7 +42,9 @@ const iepAccommodationsSchema = new Schema({ //
 // Sub-schema for IEP Plan (combining goals and accommodations)
 const iepPlanSchema = new Schema({ //
     accommodations: { type: iepAccommodationsSchema, default: () => ({}) }, //
-    goals: { type: [iepGoalSchema], default: [] } //
+    goals: { type: [iepGoalSchema], default: [] }, //
+    readingLevel:      { type: Number, default: null }, //
+    preferredScaffolds:{ type: [String], default: [] } //
 }, { _id: false }); //
 
 

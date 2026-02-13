@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // Build IEP goals display
+        // Build IEP goals display with progress timeline
         let goalsHTML = '';
         if (progress.iepPlan && progress.iepPlan.goals && progress.iepPlan.goals.length > 0) {
             goalsHTML = `
@@ -274,21 +274,60 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <strong><i class="fas fa-bullseye"></i> IEP Goals:</strong>
                     <div style="margin-top: 8px;">
                         ${progress.iepPlan.goals.map(goal => {
-                            const statusColor = goal.status === 'completed' ? 'green' :
-                                              goal.status === 'on-hold' ? 'orange' : 'blue';
+                            const statusColor = goal.status === 'completed' ? '#27ae60' :
+                                              goal.status === 'on-hold' ? '#f57c00' : '#1976d2';
                             const progressPercent = goal.currentProgress || 0;
+
+                            // Calculate trend from history
+                            const progressHistory = (goal.history || []).filter(h => h.field === 'currentProgress');
+                            const recentUpdates = progressHistory.filter(h => {
+                                const d = new Date(h.date);
+                                const twoWeeksAgo = new Date();
+                                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+                                return d >= twoWeeksAgo;
+                            });
+                            const recentGain = recentUpdates.reduce((sum, h) => sum + ((h.to || 0) - (h.from || 0)), 0);
+
+                            let trendIcon = '';
+                            let trendText = '';
+                            if (recentUpdates.length > 0) {
+                                if (recentGain > 0) {
+                                    trendIcon = '<i class="fas fa-arrow-up" style="color:#27ae60;"></i>';
+                                    trendText = `+${recentGain}% in the last 2 weeks (${recentUpdates.length} update${recentUpdates.length !== 1 ? 's' : ''})`;
+                                } else {
+                                    trendIcon = '<i class="fas fa-minus" style="color:#f57c00;"></i>';
+                                    trendText = `No change in the last 2 weeks`;
+                                }
+                            } else if (progressHistory.length > 0) {
+                                trendText = `${progressHistory.length} total AI-tracked update${progressHistory.length !== 1 ? 's' : ''}`;
+                            } else {
+                                trendText = 'AI tracking will begin as your child works on this skill';
+                            }
+
+                            // Days remaining
+                            let deadlineNote = '';
+                            if (goal.targetDate && goal.status === 'active') {
+                                const daysLeft = Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24));
+                                if (daysLeft < 0) deadlineNote = `<span style="color:#e74c3c;font-weight:600;">${Math.abs(daysLeft)} days past target</span>`;
+                                else if (daysLeft <= 14) deadlineNote = `<span style="color:#f57c00;">${daysLeft} days remaining</span>`;
+                            }
+
                             return `
-                                <div style="margin-bottom: 12px; padding: 10px; background: #f9f9f9; border-left: 4px solid ${statusColor}; border-radius: 4px;">
+                                <div style="margin-bottom: 12px; padding: 12px; background: #f9f9f9; border-left: 4px solid ${statusColor}; border-radius: 6px;">
                                     <div style="font-weight: 600; margin-bottom: 4px;">${goal.description}</div>
-                                    <div style="font-size: 0.85em; color: #666;">
-                                        <span>Status: <strong>${goal.status}</strong></span> |
+                                    <div style="font-size: 0.85em; color: #666; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                                        <span style="text-transform:capitalize;">Status: <strong style="color:${statusColor};">${goal.status}</strong></span>
                                         <span>Progress: <strong>${progressPercent}%</strong></span>
-                                        ${goal.targetDate ? ` | Target: <strong>${new Date(goal.targetDate).toLocaleDateString()}</strong>` : ''}
+                                        ${goal.targetDate ? `<span>Target: <strong>${new Date(goal.targetDate).toLocaleDateString()}</strong></span>` : ''}
+                                        ${deadlineNote}
                                     </div>
-                                    ${goal.measurementMethod ? `<div style="font-size: 0.8em; color: #888; margin-top: 4px;">Measured by: ${goal.measurementMethod}</div>` : ''}
-                                    <div class="progress-bar" style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 6px; overflow: hidden;">
-                                        <div style="width: ${progressPercent}%; height: 100%; background: ${statusColor}; transition: width 0.3s;"></div>
+                                    <div class="progress-bar" style="width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; margin-top: 8px; overflow: hidden;">
+                                        <div style="width: ${progressPercent}%; height: 100%; background: ${statusColor}; transition: width 0.5s; border-radius: 4px;"></div>
                                     </div>
+                                    <div style="font-size: 0.8em; color: #888; margin-top: 6px; display:flex; align-items:center; gap:4px;">
+                                        ${trendIcon} ${trendText}
+                                    </div>
+                                    ${goal.measurementMethod ? `<div style="font-size: 0.75em; color: #aaa; margin-top: 3px;">Measured by: ${goal.measurementMethod}</div>` : ''}
                                 </div>
                             `;
                         }).join('')}

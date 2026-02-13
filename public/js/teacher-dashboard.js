@@ -223,6 +223,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if(addIepGoalBtn) addIepGoalBtn.addEventListener('click', () => addIepGoalToUI());
 
+    // --- IEP Template Chip Handlers ---
+    document.querySelectorAll('.iep-template-chip').forEach(chip => {
+        chip.addEventListener('click', async () => {
+            const templateId = chip.dataset.template;
+            const studentId = currentIepStudentIdInput.value;
+            if (!studentId) return;
+
+            // Confirm merge vs. replace
+            const currentHasAccommodations = Object.values(iepAccommodations).some(el => el && el.checked);
+            if (currentHasAccommodations) {
+                const merge = confirm(`Apply "${chip.textContent}" template?\n\nClick OK to merge with existing accommodations, or Cancel to skip.`);
+                if (!merge) return;
+            }
+
+            try {
+                const res = await csrfFetch(`/api/iep-templates/apply/accommodations/${studentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateId, merge: true })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                const result = await res.json();
+
+                // Reload the IEP data into the form
+                const iepRes = await csrfFetch(`/api/teacher/students/${studentId}/iep`);
+                if (iepRes.ok) {
+                    const iepData = await iepRes.json();
+                    loadIepData(iepData);
+                }
+
+                // Visual feedback on the chip
+                chip.classList.add('iep-template-applied');
+                setTimeout(() => chip.classList.remove('iep-template-applied'), 2000);
+            } catch (err) {
+                console.error('[IEP Template] Error applying template:', err);
+                alert('Failed to apply template. Please try again.');
+            }
+        });
+    });
+
     if(saveIepBtn) saveIepBtn.addEventListener('click', async () => {
         const studentId = currentIepStudentIdInput.value;
         if (!studentId) return alert("No student selected.");
@@ -711,23 +751,37 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             html += '</div>';
 
-            // Goals
+            // Goals with progress timeline
             if (goals.length > 0) {
                 html += '<div class="profile-iep-section">';
                 html += '<h5><i class="fas fa-bullseye" style="color:#27ae60;"></i> IEP Goals</h5>';
-                goals.forEach(goal => {
+                goals.forEach((goal, gIdx) => {
                     const statusColor = goal.status === 'completed' ? '#27ae60' : goal.status === 'on-hold' ? '#f57c00' : '#1976d2';
+                    const progress = goal.currentProgress || 0;
+                    const targetDateStr = goal.targetDate ? new Date(goal.targetDate).toLocaleDateString() : null;
+
+                    // Days remaining / overdue
+                    let timelineNote = '';
+                    if (goal.targetDate && goal.status === 'active') {
+                        const daysLeft = Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24));
+                        if (daysLeft < 0) timelineNote = `<span style="color:#e74c3c;font-weight:600;">${Math.abs(daysLeft)} days overdue</span>`;
+                        else if (daysLeft <= 14) timelineNote = `<span style="color:#f57c00;font-weight:600;">${daysLeft} days left</span>`;
+                        else timelineNote = `<span style="color:#7f8c8d;">${daysLeft} days left</span>`;
+                    }
+
                     html += `
-                        <div style="background:#f8f9fa;border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid ${statusColor};">
-                            <div style="font-size:0.85em;color:#2c3e50;margin-bottom:4px;">${escapeHtml(goal.description || '')}</div>
-                            <div style="display:flex;gap:12px;font-size:0.75em;color:#7f8c8d;flex-wrap:wrap;">
-                                <span><strong>Progress:</strong> ${goal.currentProgress || 0}%</span>
-                                <span><strong>Status:</strong> ${goal.status || 'active'}</span>
-                                ${goal.targetDate ? `<span><strong>Target:</strong> ${new Date(goal.targetDate).toLocaleDateString()}</span>` : ''}
+                        <div style="background:#f8f9fa;border-radius:8px;padding:12px;margin-bottom:10px;border-left:3px solid ${statusColor};">
+                            <div style="font-size:0.85em;color:#2c3e50;margin-bottom:4px;font-weight:600;">${escapeHtml(goal.description || '')}</div>
+                            <div style="display:flex;gap:12px;font-size:0.75em;color:#7f8c8d;flex-wrap:wrap;align-items:center;">
+                                <span><strong>Progress:</strong> ${progress}%</span>
+                                <span style="text-transform:capitalize;"><strong>Status:</strong> <span style="color:${statusColor};">${goal.status || 'active'}</span></span>
+                                ${targetDateStr ? `<span><strong>Target:</strong> ${targetDateStr}</span>` : ''}
+                                ${timelineNote}
                             </div>
-                            <div style="margin-top:6px;height:4px;background:#e9ecef;border-radius:2px;overflow:hidden;">
-                                <div style="height:100%;width:${Math.min(goal.currentProgress || 0, 100)}%;background:${statusColor};border-radius:2px;"></div>
+                            <div style="margin-top:6px;height:6px;background:#e9ecef;border-radius:3px;overflow:hidden;">
+                                <div style="height:100%;width:${Math.min(progress, 100)}%;background:${statusColor};border-radius:3px;transition:width 0.5s;"></div>
                             </div>
+                            <div id="goal-timeline-${gIdx}" class="iep-goal-timeline" style="margin-top:8px;"></div>
                         </div>
                     `;
                 });
@@ -744,6 +798,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
 
             iepContent.innerHTML = html;
+
+            // Fetch and render goal progress timelines
+            if (goals.length > 0) {
+                try {
+                    const historyRes = await fetch(`/api/teacher/students/${studentId}/iep/goal-history`);
+                    if (historyRes.ok) {
+                        const historyData = await historyRes.json();
+                        renderGoalTimelines(historyData.goals);
+                    }
+                } catch (err) {
+                    console.error('[IEP] Failed to load goal history:', err);
+                }
+            }
 
             // Wire up edit button
             const editBtn = document.getElementById('profile-edit-iep-btn');
@@ -762,6 +829,69 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error loading IEP:', error);
             iepContent.innerHTML = '<p style="color:#e74c3c;">Error loading IEP data.</p>';
         }
+    }
+
+    function renderGoalTimelines(goalsWithHistory) {
+        goalsWithHistory.forEach((goal, idx) => {
+            const container = document.getElementById(`goal-timeline-${idx}`);
+            if (!container) return;
+
+            const timeline = goal.timeline || [];
+            if (timeline.length === 0) {
+                container.innerHTML = '<span style="font-size:0.72em;color:#bbb;font-style:italic;">No AI-tracked progress yet</span>';
+                return;
+            }
+
+            // Build a mini sparkline of progress changes
+            const points = timeline.map(t => ({
+                date: new Date(t.date),
+                progress: t.to,
+                change: t.change
+            }));
+
+            // Add origin point at 0% if first entry isn't 0
+            if (points.length > 0 && points[0].progress > points[0].change) {
+                points.unshift({
+                    date: new Date(points[0].date.getTime() - 86400000),
+                    progress: points[0].progress - points[0].change,
+                    change: 0
+                });
+            }
+
+            const maxProgress = Math.max(...points.map(p => p.progress), 10);
+            const width = 220;
+            const height = 40;
+
+            // SVG sparkline
+            const xStep = points.length > 1 ? width / (points.length - 1) : width;
+            const svgPoints = points.map((p, i) => {
+                const x = points.length > 1 ? i * xStep : width / 2;
+                const y = height - (p.progress / maxProgress) * (height - 4);
+                return `${x},${y}`;
+            }).join(' ');
+
+            const lastPoint = points[points.length - 1];
+            const firstDate = points[0].date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const lastDate = lastPoint.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const totalUpdates = timeline.length;
+
+            container.innerHTML = `
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <svg width="${width}" height="${height}" style="flex-shrink:0;">
+                        <polyline points="${svgPoints}" fill="none" stroke="#27ae60" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+                        ${points.map((p, i) => {
+                            const x = points.length > 1 ? i * xStep : width / 2;
+                            const y = height - (p.progress / maxProgress) * (height - 4);
+                            return `<circle cx="${x}" cy="${y}" r="2.5" fill="#27ae60" />`;
+                        }).join('')}
+                    </svg>
+                    <div style="font-size:0.7em;color:#7f8c8d;line-height:1.4;">
+                        <div>${totalUpdates} update${totalUpdates !== 1 ? 's' : ''}</div>
+                        <div>${firstDate} – ${lastDate}</div>
+                    </div>
+                </div>
+            `;
+        });
     }
 
     async function handleViewAsStudent(event) {

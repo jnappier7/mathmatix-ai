@@ -261,6 +261,25 @@ function buildIepAccommodationsPrompt(iepPlan, firstName) {
     prompt += '\n';
   }
 
+  // Reading level adjustment
+  if (iepPlan.readingLevel) {
+    const rl = iepPlan.readingLevel;
+    const isLexile = rl > 20; // Lexile scores are typically 100-1600; grade levels are 1-12
+    prompt += `✓ **Reading Level Adjustment:**\n`;
+    prompt += `  - ${firstName}'s reading level is ${isLexile ? `${rl}L (Lexile)` : `Grade ${rl}`}\n`;
+    prompt += `  - Adjust ALL word problem text and explanations to this reading level\n`;
+    prompt += `  - Use shorter sentences, simpler vocabulary, and concrete examples\n`;
+    prompt += `  - Avoid multi-clause sentences and abstract language above this level\n`;
+    prompt += `  - When math vocabulary is necessary, define it in context\n\n`;
+  }
+
+  // Preferred scaffolds
+  if (iepPlan.preferredScaffolds && iepPlan.preferredScaffolds.length > 0) {
+    prompt += `✓ **Preferred Scaffolding Strategies:**\n`;
+    prompt += `  - ${firstName} responds best to these support types: ${iepPlan.preferredScaffolds.join(', ')}\n`;
+    prompt += `  - Prioritize these scaffolds when ${firstName} struggles\n\n`;
+  }
+
   if (activeAccommodations.length > 0) {
     prompt += `**COMPLIANCE REMINDER:**\n`;
     prompt += `These accommodations are LEGALLY REQUIRED under ${firstName}'s IEP. Failure to implement them properly is a violation of federal law (IDEA). Always prioritize these accommodations in your teaching approach.\n\n`;

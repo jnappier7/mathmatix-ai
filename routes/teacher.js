@@ -74,6 +74,51 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
   }
 });
 
+// Fetches a student's IEP goal progress history (timeline data)
+router.get('/students/:studentId/iep/goal-history', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+
+    const student = await User.findOne({
+      _id: studentId,
+      role: 'student',
+      teacherId: teacherId
+    }, 'firstName lastName iepPlan').lean();
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
+    }
+
+    const goals = (student.iepPlan?.goals || []).map(goal => ({
+      _id: goal._id,
+      description: goal.description,
+      currentProgress: goal.currentProgress || 0,
+      status: goal.status || 'active',
+      targetDate: goal.targetDate,
+      measurementMethod: goal.measurementMethod,
+      // Filter history to only progress changes (not manual edits) and sort chronologically
+      timeline: (goal.history || [])
+        .filter(h => h.field === 'currentProgress')
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .map(h => ({
+          date: h.date,
+          from: h.from,
+          to: h.to,
+          change: (h.to || 0) - (h.from || 0)
+        }))
+    }));
+
+    res.json({
+      studentName: `${student.firstName} ${student.lastName}`,
+      goals
+    });
+  } catch (err) {
+    console.error('Error fetching IEP goal history:', err);
+    res.status(500).json({ message: 'Server error fetching goal history.' });
+  }
+});
+
 // Get a specific assigned student's conversation history (Teacher only)
 router.get('/students/:studentId/conversations', isTeacher, async (req, res) => {
   const { studentId } = req.params;
