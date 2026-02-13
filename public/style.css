@@ -3409,15 +3409,15 @@ form label, .password-label-row label {
         align-items: center;
     }
 
-    /* Hide text in nav buttons on mobile, keep icons */
+    /* Compact nav buttons on mobile */
     .landing-nav .btn {
-        padding: 8px 10px;
-        min-width: 40px;
-        font-size: 1rem;
+        padding: 6px 8px;
+        min-width: 36px;
+        font-size: 0.9rem;
     }
     .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
     }
     .hero-tagline {
         font-size: 1.8em;
@@ -3529,23 +3529,28 @@ form label, .password-label-row label {
 
     /* Compact toolbar on mobile */
     .input-toolbar {
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+    }
+
+    /* Compact toolbar row */
+    .input-toolbar-compact {
+        gap: 4px !important;
     }
 
     /* Auto-expanding textarea */
     #user-input {
-        min-height: 44px !important;  /* Force minimum height */
-        max-height: 120px;
+        min-height: 40px !important;
+        max-height: 100px;
         font-size: 16px; /* Prevents iOS zoom */
-        padding: 12px;
-        border-radius: 12px;
+        padding: 8px 12px;
+        border-radius: 20px;
         resize: none;
         overflow-y: auto;
         line-height: 1.4;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        display: block !important; /* Ensure it's always visible */
+        border: 1.5px solid rgba(0, 0, 0, 0.12);
+        display: block !important;
         width: 100%;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
     }
 
 
@@ -3557,12 +3562,12 @@ form label, .password-label-row label {
         overflow: hidden !important;
     }
 
-    /* Send button more prominent - LARGER */
+    /* Send button: compact on mobile */
     #send-button {
-        padding: 16px 24px;
-        font-size: 1.15rem;
-        min-height: 52px;
-        border-radius: 12px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        min-height: 40px;
+        border-radius: 20px;
         font-weight: 600;
     }
 
