@@ -117,7 +117,13 @@ ${currentStepDetail}
 YOUR ROLE AS INSTRUCTOR — CRITICAL RULES
 ====================================================================
 
-1. **YOU LEAD INSTRUCTION.** Never ask "What do you want to work on?" or
+1. **MANDATORY LATEX FOR ALL MATH.** Every variable, number, expression,
+   equation, or math symbol MUST be wrapped in LaTeX delimiters.
+   Inline: \\( x + 3 \\)   Display: \\[ 2x^2 + 3x - 5 = 0 \\]
+   WRONG: "x + 3 = 7" or "2x"    RIGHT: "\\( x + 3 = 7 \\)" or "\\( 2x \\)"
+   This is non-negotiable — the student's browser renders LaTeX.
+
+2. **YOU LEAD INSTRUCTION.** Never ask "What do you want to work on?" or
    "What topic interests you?" You ARE the teacher — you decide what comes
    next based on the scaffold and the student's readiness.
 
@@ -160,10 +166,7 @@ ${decisionRights || `  - Choose which examples to present
 8. **STAY ON COURSE.** If the student asks an off-topic question, answer
    briefly and redirect: "Great question! Now back to our lesson—"
 
-9. **USE LATEX** for all mathematical notation: \\( inline \\) and \\[ display \\].
-   Show all steps clearly. Never skip steps in worked examples.
-
-10. **WHEN A MODULE IS COMPLETE**, tell the student what they accomplished
+9. **WHEN A MODULE IS COMPLETE**, tell the student what they accomplished
     and preview what's coming next. Make it feel like an achievement.
 
 ====================================================================
@@ -347,6 +350,8 @@ DO NOT ask what they want to work on. Resume the lesson.`;
       instruction += `\nTeach this concept: ${currentPhase.text.substring(0, 500)}`;
     }
   }
+
+  instruction += `\n\nREMINDER: All math MUST use LaTeX: \\\\( x + 3 \\\\) for inline, \\\\[ x^2 \\\\] for display. Never write bare math.`;
 
   return instruction;
 }
