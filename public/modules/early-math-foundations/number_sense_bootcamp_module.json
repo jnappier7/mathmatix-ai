@@ -1,0 +1,519 @@
+{
+  "moduleId": "number_sense_bootcamp",
+  "course": "Early Math Foundations",
+  "unit": 0,
+  "title": "Number Sense Boot Camp",
+  "weeks": "1-2",
+  "estimatedDuration": 30,
+  "description": "Build the rock-solid number sense that everything else depends on. This boot camp targets five foundational skills for grades 3-5 students: understanding place value through millions and thousandths, rounding and estimation, comparing and ordering numbers, addition and subtraction fact fluency, and recognizing number patterns. Every concept is anchored in real-world contexts kids care about — money, animals, sports, snacks, and games. Diagnostic-first: assess before reteaching, skip what is solid, strengthen what is shaky.",
+  "skills": [
+    "emf-place-value",
+    "emf-rounding-estimation",
+    "emf-compare-order",
+    "emf-add-sub-facts",
+    "emf-number-patterns"
+  ],
+  "standardsAlignment": [
+    "2.OA.B.2",
+    "3.NBT.A.1",
+    "3.NBT.A.2",
+    "3.OA.D.9",
+    "4.NBT.A.1",
+    "4.NBT.A.2",
+    "4.NBT.A.3",
+    "4.NBT.B.4",
+    "4.OA.C.5",
+    "5.NBT.A.1",
+    "5.NBT.A.3",
+    "5.NBT.A.4"
+  ],
+  "goals": [
+    "Identify the place and value of any digit in numbers through the millions and decimals through the thousandths, and write numbers in standard, word, and expanded form",
+    "Round whole numbers and decimals to any specified place and use estimation to check whether answers to addition, subtraction, and multiplication are reasonable",
+    "Compare pairs of whole numbers or decimals using the symbols <, >, and = and order sets of numbers from least to greatest or greatest to least",
+    "Recall addition and subtraction facts through 20 automatically, use make-10 and fact-family strategies, and apply mental math to solve problems quickly",
+    "Identify, describe, and extend number patterns including skip counting, odd/even classification, and rule-based sequences"
+  ],
+  "instructionalStrategy": [
+    "Diagnostic-first: open each skill with a quick probe. If the student gets it right and explains their thinking, move to practice. If they hesitate or make errors, drop into the full explanation-model-guided cycle. Never waste time reteaching what is already solid.",
+    "Every problem must be grounded in a context that an 8- to 11-year-old finds relatable — money they might spend, animals they think are cool, sports they play, snacks they eat, or games they know. Abstract drill without context loses this age group fast.",
+    "Place value and comparison errors often come from not lining up digits correctly. Always encourage students to stack numbers vertically and align decimal points before comparing or computing. Use the phrase 'line it up' as a consistent refrain.",
+    "For addition and subtraction fact fluency, frame speed as a fun challenge rather than a stressful test. Use language like 'let us see if your brain can fire this one off' and celebrate quick recalls. Never shame slow recall — redirect to strategies like make-10 or counting on.",
+    "Pattern work is the gateway to algebraic thinking. Push students to state the rule in words ('add 4 each time' or 'multiply by 3') before they extend a sequence. A student who can articulate a rule owns the concept; a student who just writes the next number may be guessing."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "skill": "emf-place-value",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Every digit in a number has a job, and that job depends on WHERE the digit sits. This is called place value. Think of it like seats on a bus: the same person sitting in the front row versus the back row is in a completely different spot. The digit 5 in 500 means five hundred, but the same digit 5 in 50 means just fifty, and in 0.05 it means five hundredths.\n\nTo the LEFT of the decimal point, the places get bigger by ten each step: ones, tens, hundreds, thousands, ten-thousands, hundred-thousands, millions. To the RIGHT of the decimal point, the places get smaller by ten each step: tenths, hundredths, thousandths.\n\nYou can write any number three ways:\n- Standard form: 4,052,007\n- Word form: four million, fifty-two thousand, seven\n- Expanded form: 4,000,000 + 50,000 + 2,000 + 7\n\nZero is a PLACEHOLDER. In 4,052,007, the zeros are holding the hundred-thousands place, the hundreds place, and the tens place. Without them, the other digits would slide into the wrong seats and the number would mean something completely different.",
+      "keyPoints": [
+        "Each place is 10 times the place to its right: ones, tens, hundreds, thousands, ten-thousands, hundred-thousands, millions going left; tenths, hundredths, thousandths going right of the decimal",
+        "A digit's value equals the digit multiplied by its place value: the 3 in 2,300 is worth 3 x 100 = 300, not just 3",
+        "Standard form is the regular number (4,052,007), word form writes it in words, and expanded form shows each digit's value added together",
+        "Zero is a placeholder that keeps every other digit in its correct position — without the zero in 305, you would have 35, a completely different number",
+        "Decimals extend place value to the right: 0.1 is one tenth, 0.01 is one hundredth, 0.001 is one thousandth"
+      ]
+    },
+    {
+      "skill": "emf-place-value",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Write 3,070,400 in word form and expanded form. Explain what each zero is doing.",
+          "solution": "Word form: three million, seventy thousand, four hundred.\n\nExpanded form: 3,000,000 + 70,000 + 400.\n\nNow let's look at the zeros:\n- The 0 in the hundred-thousands place: there are zero hundred-thousands, so nothing is written for that place in the expanded form.\n- The 0 in the thousands place: zero thousands.\n- The 0 in the tens place and the 0 in the ones place: zero tens and zero ones.\n\nAll four zeros are placeholders. They keep the 3 in the millions place, the 7 in the ten-thousands place, and the 4 in the hundreds place. Without them the number would collapse to 3,74 which makes no sense."
+        },
+        {
+          "problem": "Write 0.206 in expanded form and word form. What is the value of each digit?",
+          "solution": "Word form: two hundred six thousandths.\n\nExpanded form: 0.2 + 0.006.\n\nDigit values:\n- 0 in the ones place = 0\n- 2 in the tenths place = 2 x 0.1 = 0.2\n- 0 in the hundredths place = 0 (placeholder!)\n- 6 in the thousandths place = 6 x 0.001 = 0.006\n\nNotice the zero in the hundredths place. It is a placeholder — without it, 0.26 would mean twenty-six hundredths, which is way bigger than two hundred six thousandths. That little zero matters a lot!"
+        },
+        {
+          "problem": "A wildlife sanctuary has 1,205,038 acres of protected land. What is the value of the digit 5? What is the value of the digit 2?",
+          "solution": "Step 1: Find where each digit sits.\n  1, 2 0 5, 0 3 8\n  Millions: 1\n  Hundred-thousands: 2\n  Ten-thousands: 0\n  Thousands: 5\n  Hundreds: 0\n  Tens: 3\n  Ones: 8\n\nStep 2: The 5 is in the thousands place, so its value is 5 x 1,000 = 5,000.\nThe 2 is in the hundred-thousands place, so its value is 2 x 100,000 = 200,000.\n\nThe 2 is worth 200,000 — that is 40 times more than the 5, even though 5 is a bigger digit. Position beats size!"
+        }
+      ]
+    },
+    {
+      "skill": "emf-place-value",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "nsb-1",
+          "prompt": "A popular video game has been downloaded 2,040,650 times. Write this number in word form. What does the zero in the hundred-thousands place mean? What does the zero in the hundreds place mean?",
+          "hints": [
+            "Break the number into groups of three from the right: 2,040,650. The groups are 2 (millions), 040 (thousands), 650 (ones).",
+            "Word form: two million, forty thousand, six hundred fifty. Each zero is a placeholder — the zero in the hundred-thousands place means there are no hundred-thousands, and the zero in the hundreds place... wait, there IS no zero in the hundreds place. Let me re-read: 2,040,650 has digits 2-0-4-0-6-5-0. The zero in the ones place means there are no ones."
+          ],
+          "answer": "Word form: two million, forty thousand, six hundred fifty. The zero in the hundred-thousands place means there are no hundred-thousands. The zero in the ones place means there are no ones. Both zeros are placeholders keeping the other digits in their correct positions."
+        },
+        {
+          "id": "nsb-2",
+          "prompt": "Write 0.075 in expanded form. What is the value of the 7? Why is the zero important?",
+          "hints": [
+            "The digits after the decimal point are: 0 tenths, 7 hundredths, 5 thousandths.",
+            "Expanded form: 0.07 + 0.005. The 7 is in the hundredths place, so its value is 7 x 0.01 = 0.07. The zero in the tenths place is a placeholder — without it, the 7 would jump to the tenths place and the number would be 0.75, which is ten times bigger!"
+          ],
+          "answer": "Expanded form: 0.07 + 0.005. The value of the 7 is 0.07 (seven hundredths). The zero holds the tenths place — without it, the number would be 0.75 instead of 0.075."
+        },
+        {
+          "id": "nsb-3",
+          "prompt": "The distance between two cities is 308.04 miles. Write this in expanded form. Name the place of every digit.",
+          "hints": [
+            "Break it into parts: 300 + 8 + 0.04. The 3 is in the hundreds place, the 0 is a placeholder in the tens place, the 8 is in the ones place.",
+            "After the decimal: 0 is a placeholder in the tenths place, 4 is in the hundredths place. Expanded form: 300 + 8 + 0.04."
+          ],
+          "answer": "Expanded form: 300 + 8 + 0.04. Digits: 3 = hundreds (value 300), 0 = tens (placeholder, value 0), 8 = ones (value 8), 0 = tenths (placeholder, value 0), 4 = hundredths (value 0.04)."
+        }
+      ]
+    },
+    {
+      "skill": "emf-place-value",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "nsb-4",
+          "prompt": "Write 5,008,320 in word form and expanded form.",
+          "answer": "Word form: five million, eight thousand, three hundred twenty. Expanded form: 5,000,000 + 8,000 + 300 + 20."
+        },
+        {
+          "id": "nsb-5",
+          "prompt": "Write this number in standard form: thirty-four and six hundred nine thousandths.",
+          "answer": "34.609"
+        },
+        {
+          "id": "nsb-6",
+          "prompt": "In the number 7,040.506, name the place and value of each zero.",
+          "answer": "First zero (hundreds place): value 0, placeholder keeping the 7 in thousands. Second zero (ones place): value 0, placeholder keeping the 4 in tens. Third zero (hundredths place): value 0, placeholder keeping the 6 in thousandths."
+        }
+      ]
+    },
+    {
+      "skill": "emf-rounding-estimation",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Rounding means finding the nearest 'friendly' number — the nearest ten, hundred, thousand, or any other place you choose. Why bother? Because rounding lets you ESTIMATE, and estimating lets you check whether your exact answer even makes sense.\n\nHere is the rounding rule, and it works for ANY place:\n1. Find the digit in the place you are rounding to. That is your 'target digit.'\n2. Look at the digit ONE PLACE TO THE RIGHT of your target. That is the 'decider.'\n3. If the decider is 5 or more, round your target digit UP by one. If the decider is 4 or less, keep your target digit the same.\n4. Replace all digits to the RIGHT of the target with zeros (for whole numbers) or drop them (for decimals).\n\nEstimation uses rounding to get a quick, approximate answer. Before you work out a long addition or multiplication problem, round the numbers first and compute a quick estimate. Then do the exact math. If your exact answer is far away from your estimate, something probably went wrong.\n\nThink of estimation as your 'does this make sense?' alarm. If you multiply 48 x 21 and get 10,008, your estimate of 50 x 20 = 1,000 tells you the exact answer should be near 1,000, not 10,000. Alarm goes off!",
+      "keyPoints": [
+        "To round, look at the digit one place to the right of the target: 5 or more rounds up, 4 or less stays the same",
+        "When rounding whole numbers, replace digits after the target with zeros. When rounding decimals, simply drop the digits after the target place.",
+        "Estimation means rounding the numbers BEFORE you compute, to get a quick approximate answer",
+        "Always estimate before you calculate — if your exact answer is far from the estimate, go back and check your work",
+        "Estimation works for sums (round each addend), differences (round each number), and products (round each factor) — it is your built-in error detector"
+      ]
+    },
+    {
+      "skill": "emf-rounding-estimation",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Round 4,738 to the nearest hundred.",
+          "solution": "Step 1: The target digit is 7 (in the hundreds place).\nStep 2: The decider is 3 (one place to the right, in the tens place).\nStep 3: Since 3 is less than 5, keep the 7. Replace tens and ones with zeros.\nAnswer: 4,700.\n\nQuick check: 4,738 is between 4,700 and 4,800. Is it closer to 4,700 or 4,800? Since 38 is less than 50, it is closer to 4,700. That matches!"
+        },
+        {
+          "problem": "Estimate 487 + 325 by rounding each number to the nearest hundred. Then find the exact sum and compare.",
+          "solution": "Step 1: Round 487 to the nearest hundred. Decider is 8 (tens digit), which is 5 or more. Round up: 500.\nStep 2: Round 325 to the nearest hundred. Decider is 2 (tens digit), which is less than 5. Keep: 300.\nStep 3: Estimated sum: 500 + 300 = 800.\nStep 4: Exact sum: 487 + 325 = 812.\nStep 5: Compare: our estimate of 800 is close to the exact answer of 812. Makes sense!"
+        },
+        {
+          "problem": "A snack pack costs $3.87. You buy 4 of them. Estimate the total by rounding, then find the exact total.",
+          "solution": "Step 1: Round $3.87 to the nearest dollar. Decider is 8 (tenths), so round up: $4.00.\nStep 2: Estimate: $4.00 x 4 = $16.00.\nStep 3: Exact: $3.87 x 4. Compute: $3.87 x 4 = $15.48.\nStep 4: Our estimate of $16.00 is close to $15.48. Reasonable! If you got something like $154.80, the estimate would tell you a decimal point went wrong."
+        }
+      ]
+    },
+    {
+      "skill": "emf-rounding-estimation",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "nsb-7",
+          "prompt": "Round 56,842 to the nearest thousand. Then round to the nearest ten-thousand.",
+          "hints": [
+            "Nearest thousand: the target digit is 6 (thousands place). The decider is 8 (hundreds place). Since 8 >= 5, round up: 6 becomes 7. Answer: 57,000.",
+            "Nearest ten-thousand: the target digit is 5 (ten-thousands place). The decider is 6 (thousands place). Since 6 >= 5, round up: 5 becomes 6. Answer: 60,000."
+          ],
+          "answer": "Nearest thousand: 57,000. Nearest ten-thousand: 60,000."
+        },
+        {
+          "id": "nsb-8",
+          "prompt": "You buy a book for $8.75 and a granola bar for $3.49. Estimate the total by rounding each price to the nearest dollar. Then find the exact total. Was your estimate close?",
+          "hints": [
+            "Round $8.75: decider is 7 (tenths), so round up to $9. Round $3.49: decider is 4 (tenths), so keep at $3.",
+            "Estimate: $9 + $3 = $12. Exact: $8.75 + $3.49 = $12.24. The estimate of $12 is very close to $12.24!"
+          ],
+          "answer": "Estimate: $9 + $3 = $12. Exact total: $12.24. The estimate was close — only 24 cents off."
+        },
+        {
+          "id": "nsb-9",
+          "prompt": "A student says 42 x 19 = 4,998. Use estimation to check whether this is reasonable.",
+          "hints": [
+            "Round 42 to 40 and 19 to 20. Estimate: 40 x 20 = 800.",
+            "The exact answer should be near 800, but the student got 4,998 — that is way too big! The student likely made an error. (The correct answer is 798.)"
+          ],
+          "answer": "Estimate: 40 x 20 = 800. The student's answer of 4,998 is way too large — it is not reasonable. The correct exact answer is 798."
+        }
+      ]
+    },
+    {
+      "skill": "emf-rounding-estimation",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "nsb-10",
+          "prompt": "Round 3.0572 to the nearest tenth, nearest hundredth, and nearest thousandth.",
+          "answer": "Nearest tenth: 3.1 (decider is 5, round up). Nearest hundredth: 3.06 (decider is 7, round up). Nearest thousandth: 3.057 (decider is 2, keep)."
+        },
+        {
+          "id": "nsb-11",
+          "prompt": "A school has 1,247 students and 389 ride the bus. Estimate how many do NOT ride the bus by rounding each number to the nearest hundred first.",
+          "answer": "Round 1,247 to 1,200 and 389 to 400. Estimate: 1,200 - 400 = 800 students. (Exact: 1,247 - 389 = 858.)"
+        },
+        {
+          "id": "nsb-12",
+          "prompt": "Estimate 28 x 31 by rounding each factor to the nearest ten. Then find the exact answer. How close was your estimate?",
+          "answer": "Estimate: 30 x 30 = 900. Exact: 28 x 31 = 868. The estimate of 900 is 32 off from 868 — pretty close and definitely in the right ballpark."
+        }
+      ]
+    },
+    {
+      "skill": "emf-compare-order",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Comparing numbers means figuring out which one is bigger, which one is smaller, or whether they are equal. We use three symbols:\n- < means 'less than' (the smaller number goes on the left)\n- > means 'greater than' (the bigger number goes on the left)\n- = means 'equal to'\n\nA helpful trick: the < and > symbols are like a hungry alligator's mouth — the mouth always opens toward the BIGGER number. So 35 < 53 because the mouth opens toward 53, the bigger number.\n\nTo compare whole numbers:\n1. If they have a different number of digits, the one with MORE digits is greater (1,200 > 998).\n2. If they have the same number of digits, compare digit by digit from LEFT to RIGHT. The first place where the digits differ tells you which number is greater.\n\nTo compare decimals:\n1. Line up the decimal points.\n2. Add trailing zeros so both numbers have the same number of decimal places.\n3. Compare digit by digit from left to right, just like whole numbers.\n\nWatch out: 0.6 and 0.60 are EQUAL — the trailing zero does not change the value. But 0.6 and 0.06 are NOT equal — 0.6 is ten times bigger because the 6 is in the tenths place versus the hundredths place.",
+      "keyPoints": [
+        "The symbol < means less than, > means greater than, and = means equal to — the open side of < or > always faces the bigger number",
+        "For whole numbers with the same number of digits, compare digit by digit from left to right — the first different digit determines which is greater",
+        "For decimals, line up the decimal points and pad with trailing zeros before comparing: 0.5 becomes 0.50 when comparing to 0.47",
+        "Trailing zeros after the last nonzero decimal digit do not change the value: 3.50 = 3.5, but 3.05 is NOT equal to 3.5",
+        "To order a set of numbers from least to greatest, compare pairs and arrange them — or use a number line to visualize positions"
+      ]
+    },
+    {
+      "skill": "emf-compare-order",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Compare 45,209 and 45,290 using < or >.",
+          "solution": "Both numbers have 5 digits, so compare left to right:\n- Ten-thousands: 4 vs 4. Same.\n- Thousands: 5 vs 5. Same.\n- Hundreds: 2 vs 2. Same.\n- Tens: 0 vs 9. Different! 0 < 9.\n\nSince the first difference is in the tens place and 0 < 9, the first number is smaller.\nAnswer: 45,209 < 45,290."
+        },
+        {
+          "problem": "Compare 0.6 and 0.58. Which is greater?",
+          "solution": "Step 1: Line up the decimal points and pad with zeros.\n  0.60\n  0.58\nStep 2: Compare digit by digit.\n- Ones: 0 vs 0. Same.\n- Tenths: 6 vs 5. Different! 6 > 5.\n\nWe can stop here — the tenths place already tells us.\nAnswer: 0.6 > 0.58.\n\nCareful! A student might think 0.58 is bigger because 58 is bigger than 6. That is wrong — you must compare place by place, not the digits as whole numbers."
+        },
+        {
+          "problem": "Order from least to greatest: 3.5, 3.05, 3.50, 3.055.",
+          "solution": "Step 1: Pad all to three decimal places:\n  3.500\n  3.050\n  3.500\n  3.055\n\nStep 2: Compare. The ones are all 3, so look at tenths:\n- 3.050 has 0 tenths\n- 3.055 has 0 tenths\n- 3.500 has 5 tenths\n- 3.500 has 5 tenths\n\nSo the two 'point-zero-something' numbers are smaller. Between 3.050 and 3.055, compare hundredths: 5 vs 5, then thousandths: 0 vs 5. So 3.050 < 3.055.\n\n3.500 and 3.500 are equal (3.5 = 3.50).\n\nAnswer: 3.05, 3.055, 3.5, 3.50 (or equivalently 3.05, 3.055, 3.5 = 3.50)."
+        }
+      ]
+    },
+    {
+      "skill": "emf-compare-order",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "nsb-13",
+          "prompt": "Your team scored 12,540 points in an online game and the other team scored 12,450 points. Use < or > to compare the two scores. Which team won?",
+          "hints": [
+            "Both numbers have 5 digits. Compare left to right: 1=1, 2=2, 5 vs 4 — the first difference is in the hundreds place.",
+            "5 > 4, so 12,540 > 12,450. Your team scored more — you won!"
+          ],
+          "answer": "12,540 > 12,450. Your team won because its hundreds digit (5) is greater than the other team's hundreds digit (4)."
+        },
+        {
+          "id": "nsb-14",
+          "prompt": "At a track meet, three runners had these 100-meter times: 11.08 seconds, 11.8 seconds, and 11.008 seconds. Order them from fastest (shortest time) to slowest (longest time).",
+          "hints": [
+            "Pad to three decimal places: 11.080, 11.800, 11.008. Now compare the tenths: 0, 8, and 0.",
+            "11.800 has the biggest tenths digit (8), so it is the slowest. Between 11.080 and 11.008, the tenths are both 0, so check hundredths: 8 vs 0. 11.008 < 11.080. Fastest to slowest: 11.008, 11.08, 11.8."
+          ],
+          "answer": "Fastest to slowest: 11.008 s, 11.08 s, 11.8 s. The shortest time is the fastest."
+        },
+        {
+          "id": "nsb-15",
+          "prompt": "Fill in with <, >, or =:\n(a) 700,300 ___ 700,030\n(b) 0.40 ___ 0.4\n(c) 2.105 ___ 2.15",
+          "hints": [
+            "(a) Same digits until the hundreds vs tens: 700,300 has 3 in hundreds, 700,030 has 0 in hundreds. 3 > 0, so 700,300 > 700,030.",
+            "(b) 0.40 and 0.4 — the trailing zero does not change the value: 0.40 = 0.4. (c) Pad: 2.105 vs 2.150. Tenths: 1=1. Hundredths: 0 vs 5. 0 < 5, so 2.105 < 2.15."
+          ],
+          "answer": "(a) 700,300 > 700,030. (b) 0.40 = 0.4. (c) 2.105 < 2.15."
+        }
+      ]
+    },
+    {
+      "skill": "emf-compare-order",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "nsb-16",
+          "prompt": "Order from least to greatest: 405,320 ; 450,320 ; 405,230 ; 450,302.",
+          "answer": "405,230 ; 405,320 ; 450,302 ; 450,320. (The 405-thousands are smaller. Among those, 230 < 320. Among the 450-thousands, 302 < 320.)"
+        },
+        {
+          "id": "nsb-17",
+          "prompt": "Four friends measured how far they could throw a ball: Sam 15.2 m, Alex 15.02 m, Jordan 15.20 m, Pat 15.002 m. Rank them from greatest distance to least distance.",
+          "answer": "Sam (15.2 m) = Jordan (15.20 m) are tied for first, then Alex (15.02 m), then Pat (15.002 m). Note: 15.2 and 15.20 are the same distance."
+        },
+        {
+          "id": "nsb-18",
+          "prompt": "Write a number that has a 5 in the tens place, is greater than 4,852, and is less than 4,960.",
+          "answer": "Any number from 4,853 to 4,959 that has a 5 in the tens place. Examples: 4,853; 4,950; 4,857; 4,955. (The 5 is already in the tens place in numbers like 4,85_ and 4,95_.)"
+        }
+      ]
+    },
+    {
+      "skill": "emf-add-sub-facts",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Addition and subtraction facts through 20 are the building blocks of ALL the math you will ever do. The faster you can recall them, the more brain space you free up for harder thinking. The goal is AUTOMATIC — you see 8 + 7 and 15 pops into your head without counting on fingers.\n\nHere are two powerful strategies:\n\nMAKE-10 STRATEGY: To add two numbers, break one of them apart so that part of it combines with the other number to make 10. Then add what is left.\nExample: 8 + 7. Think: 8 needs 2 more to make 10. Break the 7 into 2 and 5. Now: 8 + 2 = 10, and 10 + 5 = 15.\n\nFACT FAMILIES: Every group of three numbers that are connected by addition and subtraction forms a fact family of four related equations.\nFor 6, 9, and 15:\n- 6 + 9 = 15\n- 9 + 6 = 15\n- 15 - 9 = 6\n- 15 - 6 = 9\n\nKnowing the whole family means that if you know one fact, you automatically know three more. If you forget 15 - 9, just think: 9 + what = 15? That is 6!",
+      "keyPoints": [
+        "The make-10 strategy breaks one addend apart so you can first make a group of 10, then add the leftover: 9 + 4 = 9 + 1 + 3 = 10 + 3 = 13",
+        "A fact family is a set of four related equations using the same three numbers: two addition facts and two subtraction facts",
+        "Subtraction and addition are opposites (inverses): if 7 + 8 = 15, then 15 - 8 = 7 and 15 - 7 = 8",
+        "Counting on is another strategy for small additions: for 9 + 3, start at 9 and count three more: 10, 11, 12",
+        "Doubles are easy anchors: 7 + 7 = 14, so 7 + 8 is just one more: 15. These are called doubles-plus-one facts."
+      ]
+    },
+    {
+      "skill": "emf-add-sub-facts",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Use the make-10 strategy to find 8 + 7.",
+          "solution": "Step 1: Pick the number closer to 10. That is 8.\nStep 2: How much does 8 need to reach 10? It needs 2.\nStep 3: Break the 7 into 2 and 5.\nStep 4: 8 + 2 = 10. Now add the leftover: 10 + 5 = 15.\nAnswer: 8 + 7 = 15.\n\nYou could also think of it from the 7's side: 7 needs 3 to make 10. Break the 8 into 3 and 5. Then 7 + 3 = 10, 10 + 5 = 15. Same answer!"
+        },
+        {
+          "problem": "Write the complete fact family for 6, 9, and 15.",
+          "solution": "The three numbers are 6, 9, and 15. The two smaller numbers add up to the largest:\n  6 + 9 = 15\n  9 + 6 = 15\nNow flip to subtraction — start with the largest number:\n  15 - 9 = 6\n  15 - 6 = 9\n\nThat is 4 facts in the family. If you ever forget one, use another to figure it out!"
+        },
+        {
+          "problem": "Use mental math to solve 13 - 7.",
+          "solution": "Strategy 1 (Think addition): 7 + ? = 13. Think: 7 + 3 = 10, then 10 + 3 = 13. So 7 + 6 = 13, which means 13 - 7 = 6.\n\nStrategy 2 (Subtract in parts): 13 - 3 = 10 (get to 10 first), then 10 - 4 = 6 (subtract the remaining 4). So 13 - 7 = 6.\n\nBoth strategies give 6. Use whichever one clicks faster in your brain!"
+        }
+      ]
+    },
+    {
+      "skill": "emf-add-sub-facts",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "nsb-19",
+          "prompt": "Use the make-10 strategy to solve 9 + 6. Show your thinking step by step.",
+          "hints": [
+            "9 is very close to 10 — it only needs 1 more.",
+            "Break the 6 into 1 and 5. Now: 9 + 1 = 10, and 10 + 5 = 15."
+          ],
+          "answer": "9 + 1 = 10, then 10 + 5 = 15. So 9 + 6 = 15."
+        },
+        {
+          "id": "nsb-20",
+          "prompt": "Write the complete fact family for the numbers 8, 5, and 13. How many equations are in the family?",
+          "hints": [
+            "Start with addition: 8 + 5 = 13 and 5 + 8 = 13.",
+            "Now subtraction: 13 - 8 = 5 and 13 - 5 = 8. That is 4 equations total."
+          ],
+          "answer": "8 + 5 = 13, 5 + 8 = 13, 13 - 8 = 5, 13 - 5 = 8. There are 4 equations in the fact family."
+        },
+        {
+          "id": "nsb-21",
+          "prompt": "In a video game you collect 14 coins. You spend 8 coins on a power-up. How many coins are left? Write the subtraction fact AND the related addition fact.",
+          "hints": [
+            "Subtraction: 14 - 8 = ? Think: 8 + ? = 14. 8 + 6 = 14.",
+            "So 14 - 8 = 6 coins left. The related addition fact is 8 + 6 = 14."
+          ],
+          "answer": "14 - 8 = 6 coins left. Related addition fact: 8 + 6 = 14."
+        }
+      ]
+    },
+    {
+      "skill": "emf-add-sub-facts",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "nsb-22",
+          "prompt": "Solve using any mental math strategy you like:\n(a) 7 + 8\n(b) 15 - 9\n(c) 6 + 7",
+          "answer": "(a) 15 (make-10: 7+3=10, 10+5=15, or doubles-plus-one: 7+7=14, 14+1=15). (b) 6 (think addition: 9+6=15). (c) 13 (make-10: 6+4=10, 10+3=13, or doubles-plus-one: 6+6=12, 12+1=13)."
+        },
+        {
+          "id": "nsb-23",
+          "prompt": "Write the fact family for 7, 9, and 16. How many facts are in the family?",
+          "answer": "7 + 9 = 16, 9 + 7 = 16, 16 - 7 = 9, 16 - 9 = 7. There are 4 facts."
+        },
+        {
+          "id": "nsb-24",
+          "prompt": "You need 20 trading cards to complete a set. You already have 13. Write an equation to find how many more you need, and solve it.",
+          "answer": "13 + ? = 20, or 20 - 13 = 7. You need 7 more trading cards."
+        }
+      ]
+    },
+    {
+      "skill": "emf-number-patterns",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Patterns are everywhere in math, and learning to spot them is like getting a superpower. A number pattern is a list of numbers that follows a RULE. Once you figure out the rule, you can predict the next number, the 10th number, or even the 100th number without writing them all out.\n\nSKIP COUNTING is the simplest pattern: you add the same number each time. Counting by 5s (5, 10, 15, 20, 25...) or by 3s (3, 6, 9, 12, 15...) are skip-counting patterns.\n\nODD AND EVEN numbers follow a pattern too:\n- Even numbers end in 0, 2, 4, 6, or 8. They can be split into two equal groups with nothing left over.\n- Odd numbers end in 1, 3, 5, 7, or 9. When you try to split them into two equal groups, there is always one left over.\n\nSome patterns use ADDITION (add the same amount each time), some use SUBTRACTION (subtract the same amount), and some use MULTIPLICATION (multiply by the same number). The key is to look at how each number changes to the NEXT number and describe that change in words — that description is your RULE.\n\nFinding the rule is the most important step. Once you have the rule, extending the pattern is easy.",
+      "keyPoints": [
+        "A number pattern follows a rule that tells you how to get from one number to the next",
+        "Skip counting adds the same number each time: counting by 4s gives 4, 8, 12, 16, 20...",
+        "Even numbers end in 0, 2, 4, 6, or 8. Odd numbers end in 1, 3, 5, 7, or 9. You only need to check the ones digit.",
+        "To find a pattern's rule, look at the DIFFERENCE (or ratio) between consecutive numbers — ask 'what did I do to get from this number to the next?'",
+        "Once you know the rule, you can extend the pattern forward, backward, or jump to any position without listing every number"
+      ]
+    },
+    {
+      "skill": "emf-number-patterns",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Find the next three numbers: 5, 10, 15, 20, __, __, __. What is the rule?",
+          "solution": "Step 1: Look at the differences. 10 - 5 = 5. 15 - 10 = 5. 20 - 15 = 5. The difference is always 5.\nStep 2: The rule is 'add 5 each time' (or 'skip count by 5').\nStep 3: Continue: 20 + 5 = 25, 25 + 5 = 30, 30 + 5 = 35.\nAnswer: 25, 30, 35. Rule: add 5."
+        },
+        {
+          "problem": "Is 2,347 odd or even? How about 9,999,990?",
+          "solution": "Step 1: Only the ones digit matters.\n- 2,347: the ones digit is 7. Since 7 is odd, the whole number 2,347 is ODD.\n- 9,999,990: the ones digit is 0. Since 0 is even, the whole number 9,999,990 is EVEN.\n\nIt does not matter how big the number is — just check the last digit!"
+        },
+        {
+          "problem": "Find the rule and the next two numbers: 2, 6, 18, 54, __, __.",
+          "solution": "Step 1: Check differences. 6 - 2 = 4, 18 - 6 = 12, 54 - 18 = 36. The differences are NOT the same, so this is not an 'add' pattern.\nStep 2: Check ratios. 6 / 2 = 3. 18 / 6 = 3. 54 / 18 = 3. The ratio IS the same!\nStep 3: The rule is 'multiply by 3 each time.'\nStep 4: Continue: 54 x 3 = 162, 162 x 3 = 486.\nAnswer: 162, 486. Rule: multiply by 3."
+        }
+      ]
+    },
+    {
+      "skill": "emf-number-patterns",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "nsb-25",
+          "prompt": "The pattern is: 3, 7, 11, 15, 19, __. What is the rule? What are the next two numbers?",
+          "hints": [
+            "Find the difference between neighbors: 7-3=4, 11-7=4, 15-11=4, 19-15=4. The rule is 'add 4 each time.'",
+            "Next numbers: 19 + 4 = 23, 23 + 4 = 27."
+          ],
+          "answer": "Rule: add 4. Next two numbers: 23, 27."
+        },
+        {
+          "id": "nsb-26",
+          "prompt": "Sort these numbers into odd and even: 44, 107, 2,356, 891, 1,000. What quick trick tells you which group each number belongs to?",
+          "hints": [
+            "Look at ONLY the ones digit of each number: 44 ends in 4 (even), 107 ends in 7 (odd), 2,356 ends in 6 (even), 891 ends in 1 (odd), 1,000 ends in 0 (even).",
+            "Even: 44, 2,356, 1,000. Odd: 107, 891. The trick is: just check the last digit!"
+          ],
+          "answer": "Even: 44, 2,356, 1,000. Odd: 107, 891. Quick trick: check only the ones (last) digit — if it is 0, 2, 4, 6, or 8, the number is even."
+        },
+        {
+          "id": "nsb-27",
+          "prompt": "A frog hops along a number line landing on: 4, 12, 20, 28, __. What is the rule? Where does it land on its 7th hop? (The first number is hop 1.)",
+          "hints": [
+            "Differences: 12-4=8, 20-12=8, 28-20=8. The rule is 'add 8 each time.'",
+            "Continue: hop 5 = 36, hop 6 = 44, hop 7 = 52."
+          ],
+          "answer": "Rule: add 8. Hop 5: 36, hop 6: 44, hop 7: 52. The frog lands on 52 on its 7th hop."
+        }
+      ]
+    },
+    {
+      "skill": "emf-number-patterns",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "nsb-28",
+          "prompt": "Find the rule and the next three numbers: 96, 88, 80, 72, __, __, __.",
+          "answer": "Rule: subtract 8 each time. Next three numbers: 64, 56, 48."
+        },
+        {
+          "id": "nsb-29",
+          "prompt": "A pattern starts at 5 and the rule is 'multiply by 2.' Write the first 6 numbers. Are they all even, all odd, or a mix? Explain.",
+          "answer": "5, 10, 20, 40, 80, 160. The first number (5) is odd, but every number after that is even because multiplying any even number by 2 gives an even number, and 5 x 2 = 10 which is even. So it is a mix: one odd, then all even."
+        },
+        {
+          "id": "nsb-30",
+          "prompt": "Look at this pattern: 100, 91, 82, 73, __. What is the rule? What are the next three numbers? What will the 8th number in the pattern be?",
+          "answer": "Rule: subtract 9 each time. Next three: 64, 55, 46. The 8th number: start at 100 and subtract 9 seven times. 100, 91, 82, 73, 64, 55, 46, 37. The 8th number is 37."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "nsb-1": "Word form: two million, forty thousand, six hundred fifty. The zero in the hundred-thousands place means there are no hundred-thousands. The zero in the ones place is a placeholder keeping digits in their correct positions.",
+    "nsb-2": "Expanded form: 0.07 + 0.005. The value of the 7 is 0.07 (seven hundredths). The zero holds the tenths place.",
+    "nsb-3": "Expanded form: 300 + 8 + 0.04. Digits: 3=hundreds, 0=tens (placeholder), 8=ones, 0=tenths (placeholder), 4=hundredths.",
+    "nsb-4": "Word form: five million, eight thousand, three hundred twenty. Expanded form: 5,000,000 + 8,000 + 300 + 20.",
+    "nsb-5": "34.609",
+    "nsb-6": "First zero (hundreds place): placeholder. Second zero (ones place): placeholder. Third zero (hundredths place): placeholder.",
+    "nsb-7": "Nearest thousand: 57,000. Nearest ten-thousand: 60,000.",
+    "nsb-8": "Estimate: $9 + $3 = $12. Exact: $12.24. The estimate was only 24 cents off.",
+    "nsb-9": "Estimate: 40 x 20 = 800. Student's answer of 4,998 is not reasonable. Correct answer: 798.",
+    "nsb-10": "Nearest tenth: 3.1. Nearest hundredth: 3.06. Nearest thousandth: 3.057.",
+    "nsb-11": "Estimate: 1,200 - 400 = 800 students. Exact: 858.",
+    "nsb-12": "Estimate: 30 x 30 = 900. Exact: 868. Estimate was 32 off.",
+    "nsb-13": "12,540 > 12,450. Your team won.",
+    "nsb-14": "Fastest to slowest: 11.008 s, 11.08 s, 11.8 s.",
+    "nsb-15": "(a) 700,300 > 700,030. (b) 0.40 = 0.4. (c) 2.105 < 2.15.",
+    "nsb-16": "405,230; 405,320; 450,302; 450,320.",
+    "nsb-17": "Sam (15.2 m) = Jordan (15.20 m) tied for first, then Alex (15.02 m), then Pat (15.002 m).",
+    "nsb-18": "Any valid number such as 4,853 or 4,955 — must have 5 in tens place and be between 4,852 and 4,960.",
+    "nsb-19": "9 + 1 = 10, 10 + 5 = 15. So 9 + 6 = 15.",
+    "nsb-20": "8 + 5 = 13, 5 + 8 = 13, 13 - 8 = 5, 13 - 5 = 8. Four equations.",
+    "nsb-21": "14 - 8 = 6 coins left. Related addition fact: 8 + 6 = 14.",
+    "nsb-22": "(a) 15, (b) 6, (c) 13.",
+    "nsb-23": "7 + 9 = 16, 9 + 7 = 16, 16 - 7 = 9, 16 - 9 = 7. Four facts.",
+    "nsb-24": "20 - 13 = 7. You need 7 more trading cards.",
+    "nsb-25": "Rule: add 4. Next two: 23, 27.",
+    "nsb-26": "Even: 44, 2,356, 1,000. Odd: 107, 891. Check the ones digit.",
+    "nsb-27": "Rule: add 8. Hop 7 lands on 52.",
+    "nsb-28": "Rule: subtract 8. Next three: 64, 56, 48.",
+    "nsb-29": "5, 10, 20, 40, 80, 160. Mix: first number is odd, the rest are even.",
+    "nsb-30": "Rule: subtract 9. Next three: 64, 55, 46. The 8th number is 37."
+  }
+}

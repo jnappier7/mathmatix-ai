@@ -25,7 +25,8 @@ const CATALOG_META = {
   'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
   'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' },
   'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '🎯' },
-  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' }
+  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' },
+  'early-math-foundations': { difficulty: 'Foundational', tagline: 'Whole numbers, fractions, decimals, and geometry for grades 3–5', icon: '🧱' }
 };
 
 router.get('/catalog', async (req, res) => {
