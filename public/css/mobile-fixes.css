@@ -58,7 +58,7 @@ input, textarea, select, .math-field {
     .landing-header {
         min-height: 48px !important;
         height: 48px !important;
-        padding: 4px 8px !important;
+        padding: 4px 12px !important;
         display: flex !important;
         align-items: center;
         justify-content: space-between;
@@ -67,14 +67,14 @@ input, textarea, select, .math-field {
         left: 0;
         right: 0;
         z-index: 1100;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         width: 100%;
         overflow: hidden;
-        box-shadow: none;
-        gap: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        gap: 4px;
         flex-wrap: nowrap !important;
     }
 
@@ -117,28 +117,29 @@ input, textarea, select, .math-field {
     /* Compact nav buttons — constrained to fit header */
     .landing-nav button,
     .landing-nav .btn {
-        padding: 6px 8px !important;
+        padding: 6px 10px !important;
         font-size: 0.95rem;
         min-width: 36px !important;
         min-height: 36px !important;
         max-height: 40px;
-        border-radius: 8px;
+        border-radius: 10px;
         flex-shrink: 0;
         background: transparent;
         box-shadow: none;
         color: var(--clr-text-dim);
-        transition: all 150ms ease;
+        transition: color 150ms ease, background 150ms ease, transform 100ms ease;
     }
 
     .landing-nav button:active,
     .landing-nav .btn:active {
-        background: rgba(var(--clr-primary-teal-rgb), 0.08);
-        transform: scale(0.92);
+        background: rgba(var(--clr-primary-teal-rgb), 0.1);
+        color: var(--clr-primary-teal);
+        transform: scale(0.90);
     }
 
     .landing-nav button i,
     .landing-nav .btn i {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
     }
 
     /* Override Section 15 accessibility min-height for header buttons
@@ -220,16 +221,16 @@ input, textarea, select, .math-field {
         border: none;
     }
 
-    /* Chat messages with subtle branding watermark */
+    /* Chat messages — clean, airy background */
     #chat-messages-container {
-        padding: 10px 12px;
+        padding: 12px 14px;
         padding-bottom: 16px;
-        gap: 6px;
+        gap: 4px;
         position: relative;
         z-index: 1;
         border-radius: 0;
         border: none;
-        border-top: 1px solid var(--clr-border, #e2e8f0);
+        border-top: none;
         background: var(--clr-bg-subtle, #f8fafb);
         /* Base font that scales with pinch-to-zoom */
         font-size: calc(16px * var(--chat-font-scale, 1));
@@ -241,18 +242,19 @@ input, textarea, select, .math-field {
         display: none;
     }
 
-    /* Message bubbles: touch-friendly, readable */
+    /* Message bubbles: touch-friendly, readable, modern */
     .message {
-        max-width: 90%;
+        max-width: 88%;
         padding: 10px 14px;
-        margin-bottom: 2px;
+        margin-bottom: 1px;
         font-size: inherit;
         line-height: 1.55;
-        border-radius: 16px;
+        border-radius: 18px;
+        word-break: break-word;
     }
 
     .message-container {
-        margin-bottom: 4px;
+        margin-bottom: 6px;
     }
 
     .message.user,
@@ -260,6 +262,7 @@ input, textarea, select, .math-field {
         margin-left: auto;
         margin-right: 4px;
         border-bottom-right-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
     }
 
     .message.ai,
@@ -268,7 +271,8 @@ input, textarea, select, .math-field {
         margin-left: 4px;
         border-bottom-left-radius: 6px;
         background: var(--clr-bg-light, #ffffff);
-        border: 1px solid var(--clr-border, #e2e8f0);
+        border: 1px solid var(--clr-border-light, #f1f5f9);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     /* Compact avatars */
@@ -281,78 +285,86 @@ input, textarea, select, .math-field {
         width: 28px;
         height: 28px;
         border-radius: 50%;
+        object-fit: cover;
     }
 
     /* Timestamps */
     .message-timestamp {
         font-size: 0.65rem;
-        color: #999;
-        margin-top: 2px;
+        color: var(--clr-text-dim, #999);
+        margin-top: 3px;
+        opacity: 0.8;
     }
 
     /* Thinking indicator */
     #thinking-indicator {
         padding: 8px 14px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        color: var(--clr-text-dim, #888);
     }
 }
 
 /* --- 4. MOBILE INPUT AREA --- */
 
 @media (max-width: 768px) {
-    /* Input container */
+    /* Input container — clean, lifted appearance */
     #input-container {
         position: relative;
         z-index: 100;
-        padding: 6px 8px;
-        padding-bottom: max(env(safe-area-inset-bottom, 6px), 6px);
+        padding: 8px 12px;
+        padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px);
         background: var(--clr-bg-light, #fff);
-        border-top: 1px solid var(--clr-border, #e2e8f0);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.03);
     }
 
     /* User input: prevent iOS zoom (16px min), comfortable padding */
     #user-input {
         font-size: 16px;
-        padding: 10px 14px;
+        padding: 10px 16px;
         min-height: 44px;
         border-radius: 22px;
         background: var(--clr-bg-subtle, #f8fafb);
-        border: 1.5px solid var(--clr-border, #e2e8f0);
+        border: 1.5px solid var(--clr-border-light, #e8ecf0);
         line-height: 1.5;
         resize: none;
+        transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
     }
 
     #user-input:focus {
         background: var(--clr-bg-light, #fff);
         border-color: var(--clr-primary-teal, #12B3B3);
-        box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
+        box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.08);
     }
 
     #user-input::placeholder {
-        color: #999;
-        opacity: 1;
+        color: var(--clr-text-dim, #999);
+        opacity: 0.7;
     }
 
     /* Send button: prominent, tappable */
     #send-button {
         min-height: 44px;
         min-width: 48px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
         padding: 10px 20px;
         border-radius: 22px;
-        margin-top: 4px;
+        margin-top: 6px;
+        letter-spacing: 0.01em;
+        transition: transform 100ms ease, opacity 150ms ease;
     }
 
     #send-button:active {
-        transform: scale(0.93);
+        transform: scale(0.96);
+        opacity: 0.9;
     }
 
     /* Scrollable toolbar with fade edges */
     .input-toolbar {
         display: flex;
-        gap: 4px;
-        padding: 6px 8px;
+        gap: 6px;
+        padding: 4px 4px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         position: relative;
@@ -364,26 +376,27 @@ input, textarea, select, .math-field {
     .input-toolbar::-webkit-scrollbar { display: none; }
 
     .input-toolbar button {
-        min-width: 44px;
-        min-height: 44px;
+        min-width: 40px;
+        min-height: 40px;
         flex-shrink: 0;
-        padding: 10px;
-        font-size: 1.1rem;
-        border-radius: 10px;
+        padding: 8px;
+        font-size: 1rem;
+        border-radius: 12px;
         background: var(--clr-bg-subtle, #f8fafb);
         border: 1px solid var(--clr-border-light, #f1f5f9);
         color: var(--clr-text-dim, #5B6876);
+        transition: color 150ms ease, background 150ms ease, transform 100ms ease;
     }
 
     .input-toolbar button:active {
-        background: rgba(var(--clr-primary-teal-rgb), 0.08);
+        background: rgba(var(--clr-primary-teal-rgb), 0.1);
         border-color: var(--clr-primary-teal);
         color: var(--clr-primary-teal);
-        transform: scale(0.93);
+        transform: scale(0.92);
     }
 
     .input-toolbar button i {
-        font-size: 1.15rem;
+        font-size: 1.05rem;
     }
 }
 
@@ -565,7 +578,7 @@ input, textarea, select, .math-field {
     width: 85%;
     max-width: 340px;
     background: #ffffff;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
     z-index: 2000;
     transform: translateX(-100%);
     transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -597,18 +610,19 @@ input, textarea, select, .math-field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    background: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3) 0%, #0E9494 100%);
+    padding: 18px 20px;
+    background: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3) 0%, #0da3a3 100%);
     color: white;
     flex-shrink: 0;
-    padding-top: max(env(safe-area-inset-top, 16px), 16px);
+    padding-top: max(env(safe-area-inset-top, 18px), 18px);
 }
 
 .drawer-header h3 {
     margin: 0;
-    font-size: 1.15rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: white;
+    letter-spacing: -0.01em;
 }
 
 .drawer-close-btn {
@@ -789,9 +803,9 @@ input, textarea, select, .math-field {
 .drawer-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     z-index: 1999;
     opacity: 0;
     visibility: hidden;
@@ -1170,7 +1184,8 @@ body.is-mobile #sidebar-toggle {
         position: relative !important;
         z-index: 100 !important;
         background: var(--clr-bg-light, #fff);
-        border-top: 1px solid var(--clr-border, #e2e8f0);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.03);
         padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
     }
 
@@ -1192,27 +1207,41 @@ body.is-mobile #sidebar-toggle {
         font-size: 0.85rem !important;
     }
 
-    /* Prevent send button from being full width on mobile */
+    /* Send button: full width, polished */
     #send-button.send-button-fullwidth {
         width: 100%;
-        min-height: 40px !important;
-        padding: 8px 16px !important;
-        font-size: 0.95rem !important;
-        border-radius: 20px;
+        min-height: 42px !important;
+        padding: 10px 16px !important;
+        font-size: 0.9rem !important;
+        font-weight: 600;
+        border-radius: 22px;
+        letter-spacing: 0.02em;
     }
 
-    /* Text input: compact */
+    /* Text input: compact, clean */
     #user-input {
-        min-height: 38px !important;
-        padding: 8px 14px !important;
+        min-height: 42px !important;
+        padding: 10px 16px !important;
         margin-bottom: 4px !important;
-        border-radius: 20px;
+        border-radius: 22px;
         font-size: 16px;
     }
 
     /* Hide the session stats bar on mobile */
     .session-stats-bar {
         display: none !important;
+    }
+
+    /* Chat disclaimer: subtle, compact on mobile */
+    .chat-disclaimer {
+        font-size: 0.68rem;
+        margin: 2px 0 4px;
+        padding: 0 4px;
+        opacity: 0.65;
+    }
+
+    .chat-disclaimer i {
+        font-size: 0.6rem;
     }
 }
 

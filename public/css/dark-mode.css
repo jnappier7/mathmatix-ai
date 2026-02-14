@@ -348,8 +348,20 @@
 
 /* Landing header glass effect in dark mode */
 [data-theme="dark"] .landing-header {
-    background: rgba(15, 26, 36, 0.92);
-    border-bottom-color: rgba(36, 48, 64, 0.5);
+    background: rgba(15, 26, 36, 0.95);
+    border-bottom-color: rgba(36, 48, 64, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile input container dark mode */
+[data-theme="dark"] #input-container {
+    border-top-color: rgba(36, 48, 64, 0.5);
+    box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Chat disclaimer dark mode */
+[data-theme="dark"] .chat-disclaimer {
+    color: var(--text-secondary);
 }
 
 /* App sidebar in dark mode */
