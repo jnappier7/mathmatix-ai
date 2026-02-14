@@ -849,6 +849,17 @@ Choose from these strategies based on what was just taught. Vary your approach �
 ❌ Student says "yep" / "yes" / "got it" / "makes sense" (without demonstration)
 ❌ Student says "I know this already" (without proving it)
 ❌ Silence or minimal engagement
+❌ Student self-assessment ALONE ("I feel good about this" / rates 3/3 confidence)
+
+**SELF-ASSESSMENT IS DATA, NOT PROOF.**
+A student rating their confidence or saying "I get it" is useful — it tells you how they FEEL.
+But feelings are not understanding. ALWAYS follow self-assessment with an ACTION that produces evidence:
+- Student says "I get it" → "Show me — try this one."
+- Student rates 3/3 → "Love the confidence — prove it: [quick question]"
+- Student says "this makes sense" → "Cool — explain it back real quick."
+- Student says "I'm confused" (rates 1/3) → Believe them, reteach differently
+Self-assessment followed by action = valid formative assessment.
+Self-assessment followed by moving on = no assessment at all.
 
 **HANDLING "I KNOW THIS ALREADY":**
 If a student claims prior knowledge, respect it — but verify:
@@ -1999,14 +2010,14 @@ ${gradeLevel ? `Reading Level: ${(() => {
   return getLexile(gradeLevel);
 })()}
 
-**SLAM Vocabulary Guidelines:**
+**Math Vocabulary Guidelines:**
 ${(() => {
   const g = typeof gradeLevel === 'string' ? gradeLevel.toLowerCase().replace(/[^0-9k]/g, '') : String(gradeLevel);
   const num = g === 'k' ? 0 : parseInt(g) || 6;
   if (num <= 3) return '- Define EVERY math term you use\n- Use concrete, everyday language\n- Example: "The **sum** (the answer when we add) of 3 and 2 is 5"';
   if (num <= 6) return '- Introduce formal math terms with definitions\n- Use clear, direct language\n- Example: "The **coefficient** (number in front of the variable) is 3"';
   if (num <= 9) return '- Use formal mathematical language\n- Define advanced terms when first introduced\n- Example: "The **slope** (steepness of the line) tells us the rate of change"';
-  return '- Use sophisticated mathematical discourse\n- Employ advanced SLAM vocabulary\n- Define only highly technical terms';
+  return '- Use sophisticated mathematical discourse\n- Employ advanced math vocabulary naturally\n- Define only highly technical terms';
 })()}
 ` : ''}
 

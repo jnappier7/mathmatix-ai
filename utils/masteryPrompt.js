@@ -26,13 +26,13 @@ function getLexileGuidance(gradeLevel) {
   const lexileMap = {
     'k': { range: 'BR-300L', complexity: 'very simple', sentenceLength: 'very short (5-8 words)', vocab: 'concrete, everyday words only' },
     '1': { range: '200-400L', complexity: 'simple', sentenceLength: 'short (6-10 words)', vocab: 'basic math terms with definitions' },
-    '2': { range: '300-500L', complexity: 'simple', sentenceLength: 'short (8-12 words)', vocab: 'introduce SLAM terms with examples' },
-    '3': { range: '500-700L', complexity: 'moderate', sentenceLength: 'moderate (10-14 words)', vocab: 'common SLAM terms with context' },
-    '4': { range: '600-800L', complexity: 'moderate', sentenceLength: 'moderate (12-16 words)', vocab: 'grade-level SLAM terms' },
-    '5': { range: '700-900L', complexity: 'moderate', sentenceLength: 'moderate (12-16 words)', vocab: 'expanded SLAM vocabulary' },
+    '2': { range: '300-500L', complexity: 'simple', sentenceLength: 'short (8-12 words)', vocab: 'introduce math terms with examples' },
+    '3': { range: '500-700L', complexity: 'moderate', sentenceLength: 'moderate (10-14 words)', vocab: 'common math terms with context' },
+    '4': { range: '600-800L', complexity: 'moderate', sentenceLength: 'moderate (12-16 words)', vocab: 'grade-level math terms' },
+    '5': { range: '700-900L', complexity: 'moderate', sentenceLength: 'moderate (12-16 words)', vocab: 'expanded math vocabulary' },
     '6': { range: '800-1000L', complexity: 'approaching complex', sentenceLength: 'moderate-complex (14-18 words)', vocab: 'formal math language with scaffolding' },
     '7': { range: '900-1050L', complexity: 'complex', sentenceLength: 'complex (16-20 words)', vocab: 'formal mathematical terminology' },
-    '8': { range: '950-1100L', complexity: 'complex', sentenceLength: 'complex (16-20 words)', vocab: 'advanced SLAM vocabulary' },
+    '8': { range: '950-1100L', complexity: 'complex', sentenceLength: 'complex (16-20 words)', vocab: 'advanced math vocabulary' },
     '9': { range: '1000-1150L', complexity: 'advanced', sentenceLength: 'advanced (18-22 words)', vocab: 'sophisticated mathematical language' },
     '10': { range: '1050-1200L', complexity: 'advanced', sentenceLength: 'advanced (18-22 words)', vocab: 'college-prep mathematical discourse' },
     '11': { range: '1100-1300L', complexity: 'very advanced', sentenceLength: 'very advanced (20+ words)', vocab: 'formal academic mathematical language' },
@@ -90,7 +90,7 @@ You are currently in a LOCKED, FOCUSED badge-earning session. This overrides all
    - **Lexile Range:** ${lexileGuidance.range}
    - **Sentence Complexity:** ${lexileGuidance.complexity}
    - **Target Sentence Length:** ${lexileGuidance.sentenceLength}
-   - **SLAM Vocabulary Level:** ${lexileGuidance.vocab}
+   - **Math Vocabulary Level:** ${lexileGuidance.vocab}
 
    **CHUNKING RULES (NON-NEGOTIABLE):**
    - 🚨 **MAXIMUM 2-3 SENTENCES PER MESSAGE** 🚨
@@ -107,8 +107,8 @@ You are currently in a LOCKED, FOCUSED badge-earning session. This overrides all
    - Teaching is a CONVERSATION, not a lecture
    - If student doesn't respond, prompt them: "Still with me?" or "Questions so far?"
 
-   **SLAM VOCABULARY HIGHLIGHTING:**
-   - When introducing a mathematical term (SLAM vocabulary), DEFINE it immediately
+   **MATH VOCABULARY HIGHLIGHTING:**
+   - When introducing a mathematical term (math vocabulary), DEFINE it immediately
    - Use simple language to explain complex terms
    - Example: "The **coefficient** (the number in front of the variable) is 5"
    - Example: "We need to find the **product** (the answer when we multiply) of 3 and 4"
@@ -126,12 +126,12 @@ ${gradeLevel >= 4 && gradeLevel <= 6 ? `   - Use clear, direct language
    - Use transitional phrases: "first", "next", "then", "finally"
    - Example: "First, we identify the like terms. Next, we combine them."` : ''}
 ${gradeLevel >= 7 && gradeLevel <= 9 ? `   - Use formal mathematical language
-   - Expect understanding of basic SLAM vocabulary
+   - Expect understanding of basic math vocabulary
    - Connect concepts with reasoning
    - Use conditional language: "if...then", "because", "therefore"
    - Example: "If the coefficient is negative, then we're moving in the opposite direction."` : ''}
 ${gradeLevel >= 10 ? `   - Use sophisticated mathematical discourse
-   - Employ advanced SLAM vocabulary
+   - Employ advanced math vocabulary
    - Discuss abstract concepts
    - Use logical connectors: "consequently", "thus", "given that"
    - Example: "Given that the function is linear, we can deduce the rate of change is constant."` : ''}
