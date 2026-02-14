@@ -217,17 +217,12 @@ class Sidebar {
 
             const data = await response.json();
 
-            // Restore active conversation ID from server
+            // Track active conversation for sidebar highlighting only.
+            // We no longer auto-restore sessions on page load — new logins
+            // always start in general chat. Users resume via sidebar click.
             if (data.activeConversationId && !this.activeConversationId) {
                 this.activeConversationId = data.activeConversationId;
-                console.log('[Sidebar] Restored active conversation:', this.activeConversationId);
-
-                // Store pending session data for script.js to load when ready
-                // This avoids race condition where updateChatForSession may not exist yet
-                window.pendingActiveSession = {
-                    conversationId: data.activeConversationId,
-                    conversation: data.conversations.find(c => c._id === data.activeConversationId)
-                };
+                console.log('[Sidebar] Noted active conversation:', this.activeConversationId);
             }
 
             this.renderSessions(data.conversations);

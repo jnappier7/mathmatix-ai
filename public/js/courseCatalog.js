@@ -653,7 +653,7 @@ class CourseManager {
             // Switch to the new course conversation
             if (data.conversationId && window.sidebar) {
                 await window.sidebar.loadSessions();
-                window.sidebar.switchSession(data.conversationId);
+                await window.sidebar.switchSession(data.conversationId);
             }
 
             // Show the progress bar
@@ -671,6 +671,9 @@ class CourseManager {
             } else {
                 this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
             }
+
+            // Fire course greeting — AI introduces the first module
+            this.sendCourseGreeting();
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
