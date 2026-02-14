@@ -1,0 +1,111 @@
+{
+  "moduleId": "area_models_partial_products",
+  "course": "Parent Guide: 3–5 Math",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Area Models & Partial Products for Multiplication",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "If your child draws rectangles instead of stacking numbers for multiplication, this module is for you. Area models and partial products break multiplication into visible, understandable pieces. This module explains exactly how these methods work, shows them side-by-side with the traditional algorithm, and explains why your child's teacher is building understanding before speed.",
+  "skills": ["area-model-multiplication", "partial-products"],
+  "standardsAlignment": ["3.OA.5", "3.OA.7", "4.NBT.5", "5.NBT.5"],
+  "goals": [
+    "Understand what an area model is and how it connects to multiplication",
+    "Use partial products to multiply multi-digit numbers",
+    "See the direct connection between partial products and the traditional algorithm",
+    "Know when the standard algorithm is typically introduced and how to support both methods"
+  ],
+  "instructionalStrategy": [
+    "This is THE most common 'new math' complaint from parents of 3rd–5th graders. Lead with empathy.",
+    "The key revelation: the traditional algorithm does the SAME partial products—it just hides them in compressed notation.",
+    "Use color coding to show how each section of the area model maps to each step of the traditional algorithm.",
+    "End with the timeline: partial products in 3rd–4th grade → standard algorithm in 5th grade. Parents need to know the destination."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "area-model-multiplication",
+      "title": "Why Is My Child Drawing Boxes?",
+      "text": "You remember multiplication looking like this:\n```\n    24\n  × 13\n  ----\n    72    (24 × 3)\n  240     (24 × 10)\n  ----\n  312\n```\n\nYour child's multiplication might look like this:\n```\n           20        4\n       ┌────────┬────────┐\n  10   │  200   │   40   │\n       ├────────┼────────┤\n   3   │   60   │   12   │\n       └────────┴────────┘\n\n200 + 40 + 60 + 12 = 312\n```\n\nSame answer. Very different process. And if you're thinking 'that looks like MORE work, not less'—you're right that it has more visible steps. But those visible steps are the point.\n\nThe area model makes every single partial product **visible**. Your child can SEE that 24 × 13 is really (20 × 10) + (4 × 10) + (20 × 3) + (4 × 3). The traditional algorithm does the same math but compresses it into a format that's efficient for adults who already understand it—and opaque for children who don't.\n\nThe area model is the training ground. The standard algorithm is the destination. Your child's teacher is building the road between them.",
+      "initialPrompt": "Look at both methods above. Can you spot where the 72 in the traditional method comes from in the area model? (Hint: 60 + 12 = 72.)"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "area-model-multiplication",
+      "title": "I-Do: Area Model Step by Step",
+      "examples": [
+        {
+          "problem": "Solve 36 × 24 using an area model.",
+          "solution": "**Step 1:** Break each number into tens and ones:\n36 = 30 + 6\n24 = 20 + 4\n\n**Step 2:** Draw the rectangle with sections:\n```\n           30        6\n       ┌────────┬────────┐\n  20   │  600   │  120   │\n       ├────────┼────────┤\n   4   │  120   │   24   │\n       └────────┴────────┘\n```\n\n**Step 3:** Fill in each section:\n- 30 × 20 = 600\n- 6 × 20 = 120\n- 30 × 4 = 120\n- 6 × 4 = 24\n\n**Step 4:** Add all sections:\n600 + 120 + 120 + 24 = **864**\n\nSo 36 × 24 = 864.",
+          "tip": "Each box in the area model is one partial product. Your child multiplies simpler numbers (like 30 × 20) and adds them up. No carrying, no 'remember to add a zero.' The place value is built right in."
+        },
+        {
+          "problem": "Now the SAME problem with the traditional algorithm, mapped to the area model.",
+          "solution": "**Traditional:**\n```\n     36\n   × 24\n   ----\n    144    ← This is 36 × 4 (the bottom row of the area model: 120 + 24)\n   720     ← This is 36 × 20 (the top row: 600 + 120)\n   ----\n   864\n```\n\n**The connection:**\n- Traditional '144' = Area model's 120 + 24 (the '× 4' row)\n- Traditional '720' = Area model's 600 + 120 (the '× 20' row)\n- Both get 864\n\n**The difference:** The traditional algorithm compresses the partial products. The area model shows them. Your child is learning what those compressed steps MEAN before learning the shortcut.",
+          "tip": "This is the 'aha' moment for most parents. The standard algorithm isn't different math—it's the same math written in shorthand. The area model is the longhand version."
+        },
+        {
+          "problem": "Partial products (without the box): Solve 45 × 23.",
+          "solution": "**Partial Products Method:**\n45 × 23\n\n= (40 × 20) + (40 × 3) + (5 × 20) + (5 × 3)\n= 800 + 120 + 100 + 15\n= **1,035**\n\nSome children write it vertically:\n```\n   45 × 23\n   -------\n   800    (40 × 20)\n   120    (40 × 3)\n   100    (5 × 20)\n    15    (5 × 3)\n   -------\n  1,035\n```\n\nThis is the area model without the box—each partial product is listed and added. It bridges from the visual area model to the compressed standard algorithm.",
+          "tip": "Partial products make the distributive property visible: a(b + c) = ab + ac. Your child is learning algebra without knowing it!"
+        }
+      ],
+      "initialPrompt": "Try this: solve 28 × 15 using an area model (break into 20+8 and 10+5). Then check with the traditional algorithm. Do you get the same answer?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "partial-products",
+      "title": "Why Not Just Teach the Standard Algorithm?",
+      "text": "This is the question on every parent's mind. Here's the honest answer:\n\n**The standard algorithm IS taught.** Common Core standards explicitly require fluency with the standard algorithm for multiplication by the end of 5th grade. Your child WILL learn to multiply the way you learned.\n\n**But the standard algorithm is introduced later because:**\n\n**1. Understanding before speed.** Research shows that children who learn algorithms without understanding often can't tell when they've made an error. A child who uses partial products knows that 36 × 24 should be around 'about 30 × 25 = 750' and will catch a mistake. A child who only memorizes steps might not.\n\n**2. Place value is everything.** In the traditional algorithm, when you 'add a zero' on the second line, do you know WHY? It's because you're multiplying by the tens digit, so the result is in the tens place. Area models make this explicit. Children who understand place value make fewer errors and transition to the algorithm more smoothly.\n\n**3. It prevents 'math zombies.'** Dr. Jo Boaler (Stanford) coined this term for students who can execute procedures but can't explain what they mean. These students hit a wall when math requires reasoning (usually around Algebra 1).\n\n**4. It IS the math.** The distributive property (the rule behind partial products) is one of the most important ideas in all of mathematics. Your child is learning it now through multiplication. They'll use it in algebra, calculus, and beyond.\n\n**The timeline in most schools:**\n- 3rd grade: Conceptual strategies (arrays, repeated addition)\n- 4th grade: Area models and partial products\n- 5th grade: Standard algorithm (built on the understanding developed in 3rd–4th grade)\n\nBy 5th grade, your child will multiply the way you do—but they'll also understand WHY it works.",
+      "initialPrompt": "Does knowing the timeline help? The standard algorithm is the destination, not the starting point. Area models and partial products are the road that gets there with understanding intact."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "area-model-multiplication",
+      "title": "Try It: Area Model Practice",
+      "problems": [
+        {
+          "id": "am-p1",
+          "question": "Solve 32 × 14 using an area model.",
+          "answer": "Break into (30+2) × (10+4). Area model: 30×10=300, 2×10=20, 30×4=120, 2×4=8. Total: 300+20+120+8 = 448.",
+          "hints": [
+            "Break 32 into 30 + 2, and 14 into 10 + 4.",
+            "Four partial products: 30×10, 2×10, 30×4, 2×4. Add them all up."
+          ]
+        },
+        {
+          "id": "am-p2",
+          "question": "Your child's homework shows: 23 × 15 = 200 + 30 + 100 + 15 = 345. Is this correct, and can you identify each partial product?",
+          "answer": "Yes! 20×10=200, 3×10=30, 20×5=100, 3×5=15. Total: 345. Each number comes from multiplying one part of 23 by one part of 15.",
+          "hints": [
+            "Break it down: 23 = 20 + 3, and 15 = 10 + 5.",
+            "200 is 20×10, 30 is 3×10, 100 is 20×5, 15 is 3×5. All correct!"
+          ]
+        },
+        {
+          "id": "am-p3",
+          "question": "In the traditional algorithm for 36 × 24, the second line is '720' (with the zero). Where does that zero come from, in terms of the area model?",
+          "answer": "The '720' is 36 × 20 (multiplying by the TENS digit). The zero appears because you're multiplying by 20, not 2. In the area model, this is the top row: 30×20=600 and 6×20=120, which add to 720.",
+          "hints": [
+            "In the traditional algorithm, the second line multiplies by the tens digit (2 in the tens place = 20).",
+            "In the area model, the top row shows 30×20 + 6×20 = 600 + 120 = 720. The 'zero' is the place value made visible."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice! These problems will help you see the connection between area models and the traditional algorithm."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "area-model-multiplication",
+      "title": "Supporting Multiplication at Home",
+      "text": "**When your child's homework uses area models or partial products:**\n\n**Do:**\n- Ask 'Can you show me how you break the numbers apart?'\n- Celebrate the partial products: 'So 30 × 20 = 600—that makes sense because 3 × 2 = 6, and then the zeros!'\n- Check their addition of partial products—that's where most errors occur\n- If they get stuck, help them SET UP the model but let them fill in the products\n\n**Don't:**\n- Say 'Let me show you the REAL way to do this'\n- Do the problem using the traditional algorithm 'to check' (this sends the message that the area model isn't valid)\n- Skip the model and just give the answer\n- Rush them toward the standard algorithm before their teacher introduces it\n\n**If your child WANTS to learn the traditional algorithm:**\nThat's fine! There's nothing wrong with learning it early. But encourage them to also show their work using the method their teacher expects. They can know both.\n\n**Key phrase to remember:**\n'The area model and the standard algorithm do the same math—one shows all the steps, and one compresses them. You're learning to see the steps first so the shortcut makes sense later.'\n\n**Quick home activity:**\nPick a multiplication problem and solve it THREE ways: area model, partial products list, and traditional algorithm. Compare all three. This builds deep understanding of what multiplication really IS.",
+      "initialPrompt": "Try the three-way comparison tonight with your child using a problem like 25 × 12. It's a great bonding activity and builds understanding for both of you!"
+    }
+  ]
+}

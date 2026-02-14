@@ -1,0 +1,111 @@
+{
+  "moduleId": "fractions_visual_models",
+  "course": "Parent Guide: 3–5 Math",
+  "unit": 3,
+  "quarter": 1,
+  "title": "Fractions with Visual Models",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Fractions are where many students (and parents!) hit a wall. Today's approach uses fraction bars, number lines, and area models to build understanding BEFORE introducing rules like 'find a common denominator' or 'flip and multiply.' This module shows you exactly how these visual approaches work and why they produce students who truly understand fractions—not just follow procedures.",
+  "skills": ["visual-fractions", "fraction-operations-visual"],
+  "standardsAlignment": ["3.NF.1", "3.NF.2", "3.NF.3", "4.NF.1", "4.NF.2", "4.NF.3", "5.NF.1", "5.NF.4"],
+  "goals": [
+    "Understand how fraction bars, number lines, and area models represent fractions",
+    "See how visual models lead naturally to the procedural rules you remember",
+    "Compare 'visual first' with 'rules first' and understand the benefits",
+    "Help your child with fractions using models and questions, not just rules"
+  ],
+  "instructionalStrategy": [
+    "Fractions are the #1 topic where parents jump to rules ('just find a common denominator'). Show how the visual IS the common denominator, just concrete.",
+    "Use fraction bars for comparison and addition, number lines for understanding magnitude, area models for multiplication.",
+    "The CRA progression (Concrete → Representational → Abstract) is the framework teachers use. Teach parents this term.",
+    "Always end with: 'The rules you remember ARE the end goal. The visuals are how we get there with understanding.'"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "visual-fractions",
+      "title": "Why Pictures Before Rules?",
+      "text": "Quick quiz: Is 3/8 or 5/12 larger?\n\nIf you immediately started finding a common denominator (24ths: 9/24 vs 10/24, so 5/12 is larger)—congratulations, you know the rule.\n\nBut do you UNDERSTAND why 5/12 is larger? Could you explain it to a 9-year-old without using the rule?\n\nThis is the gap today's math education is trying to close. Your child learns to **see** fractions before learning to **compute** with them:\n\n**Fraction Bars:**\n```\n3/8: ███░░░░░  (3 of 8 equal parts shaded)\n5/12: █████░░░░░░░  (5 of 12 equal parts shaded)\n```\n\n**Number Line:**\n```\n0─────3/8──────5/12──────1/2────────1\n```\n\nWith the visual, your child can SEE that 5/12 is a bit closer to 1/2 than 3/8 is. The understanding comes first, and the common denominator procedure comes later as a faster way to confirm what they already understand.\n\nThis is the **CRA progression** that guides modern math teaching:\n- **C**oncrete: Physical fraction tiles, paper folding\n- **R**epresentational: Drawings, fraction bars, number lines\n- **A**bstract: Rules and procedures (common denominators, etc.)\n\nYour child's teacher is moving through C → R → A. Parents who learned only 'A' are understandably confused when they see 'C' and 'R' on homework.",
+      "initialPrompt": "Think honestly: when you use fraction rules (like finding a common denominator), do you understand WHY the rule works, or do you just know HOW to do it? There's no wrong answer—most of us learned the 'how' without the 'why.'"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "visual-fractions",
+      "title": "I-Do: Adding Fractions with Visual Models",
+      "examples": [
+        {
+          "problem": "Add 1/3 + 1/4 using fraction bars.",
+          "solution": "**Step 1:** Draw 1/3 and 1/4:\n```\n1/3: ████████░░░░░░░░  (1 of 3 equal sections)\n1/4: ██████░░░░░░░░░░  (1 of 4 equal sections)\n```\n\n**Step 2:** The pieces are different sizes! We need EQUAL pieces. Divide each bar into 12ths (the common multiple of 3 and 4):\n```\n1/3 = 4/12: ████░░░░░░░░  (4 of 12 sections)\n1/4 = 3/12: ███░░░░░░░░░  (3 of 12 sections)\n```\n\n**Step 3:** Now add the same-sized pieces:\n4/12 + 3/12 = 7/12\n```\n7/12: ███████░░░░░  (7 of 12 sections)\n```\n\n**What just happened?** Your child found a common denominator (12) by making the pieces the SAME SIZE visually. The rule 'find a common denominator' is the abstract version of 'make the pieces equal so you can count them.'",
+          "tip": "Notice: the visual model IS finding a common denominator—it just shows the physical reason WHY we need one. The pieces must be the same size before we can add them."
+        },
+        {
+          "problem": "Compare: the rules-only approach vs. the visual approach for 1/3 + 1/4.",
+          "solution": "**Rules-only approach (how you might have learned it):**\nStep 1: Find LCD of 3 and 4 → 12\nStep 2: Convert: 1/3 = 4/12, 1/4 = 3/12\nStep 3: Add numerators: 4 + 3 = 7\nStep 4: Answer: 7/12\n\n**Visual approach (how your child learns first):**\nStep 1: Draw the fractions\nStep 2: Notice pieces are different sizes\nStep 3: Subdivide until pieces match (this IS finding the LCD)\nStep 4: Count the shaded pieces: 7/12\n\n**Same math, same answer.** The visual approach just makes each step physically meaningful instead of procedurally memorized.\n\n**Key insight for parents:** When you 'find the LCD,' you're doing what the visual shows—making equal-sized pieces. You just learned to do it abstractly. Your child is learning the meaning first, then the shortcut.",
+          "tip": "The visual isn't a detour around the rules—it's the road TO the rules. Once your child understands WHY common denominators matter, the procedure becomes meaningful and memorable."
+        },
+        {
+          "problem": "Multiply 2/3 × 3/4 using an area model.",
+          "solution": "**Area Model for Fraction Multiplication:**\n\nDraw a square. Divide it into 3 rows and 4 columns (giving 12 equal parts).\n\nShade 2 of the 3 rows (for 2/3): 8 out of 12 squares\nShade 3 of the 4 columns (for 3/4): 9 out of 12 squares\n\nThe OVERLAP (doubly-shaded region) is the answer:\n2 rows × 3 columns = 6 squares out of 12 total = **6/12 = 1/2**\n\nSo 2/3 × 3/4 = 6/12 = 1/2.\n\n**Compare to the rule:** 'Multiply numerators, multiply denominators: (2×3)/(3×4) = 6/12 = 1/2.' Same answer—but the area model shows WHY we multiply the numerators and denominators.",
+          "tip": "The area model for fraction multiplication is beautiful—it visually proves the rule. The overlap of the two fractions IS the product. Many parents have an 'aha' moment here."
+        }
+      ],
+      "initialPrompt": "Try adding 1/2 + 1/3 using the fraction bar approach. What common size do the pieces need to be? (Hint: what's the first number both 2 and 3 divide into?)"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "fraction-operations-visual",
+      "title": "Why Visual Fractions Prevent 'Fraction Phobia'",
+      "text": "Fractions are the #1 mathematical topic that derails students. Research from the National Mathematics Advisory Panel found that **fraction knowledge in 5th grade is the strongest predictor of high school math success**—more than whole number skills, more than IQ.\n\nHere's why visual approaches matter:\n\n**1. They prevent nonsense answers.** A student who has seen fractions on number lines will never believe that 1/3 + 1/4 = 2/7 (a common error from adding numerators and denominators). They know 1/3 is about 0.33 and 1/4 is about 0.25, so the answer should be about 0.58, which is 7/12.\n\n**2. They build fraction sense.** Just as number bonds build 'number sense' for whole numbers, visual fractions build 'fraction sense'—an intuitive feel for how big fractions are and how they relate to each other.\n\n**3. They make operations meaningful.** Why do we 'flip and multiply' for division? Because dividing by 1/2 is the same as asking 'how many halves fit in this number?' The visual makes it obvious: 3 ÷ 1/2 = 6 because six halves fit in 3 wholes.\n\n**4. They connect fractions to decimals and percents.** On a number line, 1/2, 0.5, and 50% are the SAME POINT. Children who see fractions on number lines make this connection naturally.\n\n**The payoff:** Students who learn fractions visually in elementary school are significantly less likely to struggle with algebra, where fractions appear EVERYWHERE (rational expressions, slope, probability).",
+      "initialPrompt": "Here's the key research finding: fraction understanding in 5th grade predicts high school math success better than any other factor. The visual work your child is doing now is building that foundation."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "visual-fractions",
+      "title": "Try It: Visual Fraction Practice",
+      "problems": [
+        {
+          "id": "vf-p1",
+          "question": "Using fraction bars, show that 2/3 > 1/2.",
+          "answer": "Draw two bars of equal length. Divide one into 3 parts and shade 2 (= 2/3). Divide the other into 2 parts and shade 1 (= 1/2). The 2/3 bar has more shaded area. Equivalently: 2/3 = 4/6 and 1/2 = 3/6, so 4/6 > 3/6.",
+          "hints": [
+            "Draw both fractions as bars of the same total length.",
+            "Visually, 2/3 covers more of the bar than 1/2 does."
+          ]
+        },
+        {
+          "id": "vf-p2",
+          "question": "Your child says 1/3 + 1/3 = 2/6. How would you respond using a visual model?",
+          "answer": "Draw a fraction bar divided into 3 parts. Shade 1 part (1/3). Then shade another part (1/3). You've now shaded 2 out of 3 parts = 2/3, not 2/6. The denominator (size of pieces) doesn't change when you add the same-sized pieces.",
+          "hints": [
+            "The error is adding the denominators: 1/3 + 1/3 ≠ 2/6.",
+            "Draw it: 1 shaded third plus 1 more shaded third = 2 shaded thirds = 2/3."
+          ]
+        },
+        {
+          "id": "vf-p3",
+          "question": "Why does 3 ÷ 1/2 = 6? Use a visual model to explain.",
+          "answer": "Draw 3 whole bars. Divide each into halves. Count the halves: 2 + 2 + 2 = 6 halves. So 3 ÷ 1/2 = 6. The question is 'how many halves fit in 3 wholes?' and the answer is 6.",
+          "hints": [
+            "Division asks 'how many groups of [divisor] fit in [dividend]?'",
+            "How many halves fit in 3 wholes? Draw 3 rectangles, cut each in half, count the pieces: 6."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice seeing fractions. Remember: the visual IS the math, not just a picture of the math."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "visual-fractions",
+      "title": "Supporting Fractions at Home",
+      "text": "**The golden rule for fraction homework:**\nIf your child is stuck, reach for a picture before reaching for a rule.\n\n**Practical activities:**\n- **Pizza/pie fractions:** Cut a pizza into different numbers of slices and compare sizes. 'Is 1/6 or 1/8 of the pizza bigger?' (Counterintuitive: more slices = smaller pieces!)\n- **Measuring cups:** Cooking is fraction central. 'We need 3/4 cup but I only have a 1/4 cup. How many times do I fill it?'\n- **Folding paper:** Fold a paper in half, then in thirds. Open it up—you've made sixths! This is finding a common denominator with your hands.\n\n**When your child is frustrated with fractions:**\n- Acknowledge it: 'Fractions are the hardest part of math for many people. It's okay to struggle.'\n- Go back to visuals: Draw it, fold it, cut it\n- Connect to things they know: money (quarters = 1/4 of a dollar), time (15 minutes = 1/4 of an hour)\n\n**When your child wants to skip the visual and use the rule:**\nIf their teacher requires the visual, support that: 'Your teacher wants to see your thinking, not just the answer. The picture IS the thinking.'\n\nIf they've moved past visuals in class, let them use the rule—but occasionally ask 'Can you draw why that works?' to keep the understanding alive.\n\n**The phrase to remember:**\n'The rule is a shortcut for the picture. If you understand the picture, the rule makes sense. If you only know the rule, you're stuck when the rule gets complicated.'",
+      "initialPrompt": "What fraction scenarios happen naturally in your house? Cooking, sharing food, telling time, measuring for projects—all of these are fraction practice in disguise."
+    }
+  ]
+}

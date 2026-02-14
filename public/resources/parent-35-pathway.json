@@ -1,0 +1,204 @@
+{
+  "courseId": "parent-math-35",
+  "track": "Parent Guide: 3–5 Math",
+  "audience": "parent",
+  "courseType": "mini-course",
+  "overview": "A mini-course for parents of 3rd through 5th graders. As multiplication, division, and fractions take center stage, the methods your child learns may look nothing like what you remember. Area models replace long multiplication, partial products break big problems into manageable pieces, and fraction operations use visual models before rules. This course demystifies these approaches so you can help with confidence—not confusion.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Begin with area models and partial products for multiplication—the methods that replace the traditional algorithm your child's teacher may delay until 5th grade (Unit 1)",
+    "Explore division strategies including partial quotients and the 'big 7' method that build understanding before the standard long division algorithm (Unit 2)",
+    "Understand the visual fraction revolution: fraction bars, number lines, and area models that make 'common denominator' rules actually make sense (Unit 3)",
+    "Decode the word problem strategies—tape diagrams, strip models, and multi-step problem solving—that are the hallmark of modern elementary math (Unit 4)"
+  ],
+  "aiInstructionModel": {
+    "approach": "Parent-focused conversational learning",
+    "description": "The AI teaches parents as adult learners using a conversational, reassuring tone. Each lesson explains WHAT the method is, HOW it works with step-by-step examples, and WHY modern math teaches it this way. Side-by-side comparisons with traditional algorithms are used throughout. The AI validates parents' existing knowledge while showing them the reasoning behind newer approaches.",
+    "phases": [
+      {
+        "phase": "context-setting",
+        "aiRole": "Set the scene: what grade this typically appears, what it looks like on homework, and why it feels unfamiliar. Acknowledge the parent's perspective.",
+        "parentRole": "Recall how you learned this and identify what seems different"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2–3 worked examples showing the new method step by step, with the traditional method alongside for comparison.",
+        "parentRole": "Follow along, notice how the new method breaks the problem into smaller pieces"
+      },
+      {
+        "phase": "why-it-works",
+        "aiRole": "Explain the math reasoning and research behind the method—what understanding it builds that the shortcut alone doesn't.",
+        "parentRole": "See how the method connects to concepts your child will need in middle school"
+      },
+      {
+        "phase": "try-it",
+        "aiRole": "Give parents practice problems using the new method. Celebrate effort and provide clear feedback.",
+        "parentRole": "Practice the method yourself so you can recognize it on homework"
+      },
+      {
+        "phase": "homework-tips",
+        "aiRole": "Concrete tips: what your child's teacher expects, how to help without teaching the 'old way' that might conflict, and when both methods are acceptable.",
+        "parentRole": "Build a homework support toolkit for this topic"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust depth based on parent's comfort with math",
+      "Provide additional worked examples when the parent needs more practice",
+      "Skip ahead if the parent already understands a concept",
+      "Generate problems that match what the parent's child might bring home",
+      "Use empathetic, encouraging tone throughout",
+      "Show connections to the traditional methods parents already know"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "area_models_partial_products",
+      "unit": 1,
+      "quarter": 1,
+      "title": "Area Models & Partial Products for Multiplication",
+      "preview": "Understand why your child draws boxes instead of stacking numbers—and how area models and partial products actually build stronger multiplication skills",
+      "moduleFile": "/modules/parent-35/area_models_partial_products_module.json",
+      "skills": ["area-model-multiplication", "partial-products"],
+      "essentialQuestions": [
+        "Why isn't my child learning the traditional multiplication algorithm?",
+        "What is an area model and how does it connect to multiplication?",
+        "How do partial products prepare my child for algebra?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "area-model-multiplication",
+          "title": "Area Models for Multiplication",
+          "order": 1,
+          "concepts": ["Breaking numbers into tens and ones and drawing a rectangle", "24 × 13 as a rectangle with four sections", "Why visual multiplication builds place value understanding"],
+          "teachingNotes": "Start with single-digit × double-digit before going to double × double. Show how each section of the rectangle is a partial product."
+        },
+        {
+          "lessonId": "partial-products-method",
+          "title": "Partial Products—The Method Behind the Boxes",
+          "order": 2,
+          "concepts": ["Writing out each partial product: 24 × 13 = (20×10) + (20×3) + (4×10) + (4×3)", "Side-by-side with traditional algorithm—same math, different organization", "Why seeing the place value prevents common errors"],
+          "teachingNotes": "The 'aha' moment is when parents see that the traditional algorithm does the same partial products—it just hides them."
+        },
+        {
+          "lessonId": "traditional-algorithm-connection",
+          "title": "Connecting to the Standard Algorithm",
+          "order": 3,
+          "concepts": ["How partial products are a stepping stone TO the traditional algorithm", "When the standard algorithm is introduced (typically 5th grade per Common Core)", "How to support both methods at home"],
+          "teachingNotes": "Reassure parents: the standard algorithm IS still taught—just later, after understanding is built."
+        }
+      ]
+    },
+    {
+      "moduleId": "division_strategies",
+      "unit": 2,
+      "quarter": 1,
+      "title": "Division Strategies: Partial Quotients & Beyond",
+      "preview": "Decode the 'new' division methods—partial quotients, rectangular arrays, and repeated subtraction—that build real division understanding before the long division algorithm",
+      "moduleFile": "/modules/parent-35/division_strategies_module.json",
+      "skills": ["partial-quotients-division", "division-strategies"],
+      "essentialQuestions": [
+        "Why isn't my child doing 'regular' long division?",
+        "What are partial quotients and how do they work?",
+        "When will my child learn the standard long division algorithm?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "partial-quotients",
+          "title": "Partial Quotients Division",
+          "order": 1,
+          "concepts": ["Subtracting 'friendly' chunks instead of one digit at a time", "Example: 256 ÷ 8 by subtracting 8×10, 8×10, 8×10, 8×2", "Why this method builds estimation and number sense"],
+          "teachingNotes": "Walk through the scaffold notation step by step. Show how different chunk choices all lead to the correct answer."
+        },
+        {
+          "lessonId": "long-division-comparison",
+          "title": "Traditional Long Division vs. Partial Quotients",
+          "order": 2,
+          "concepts": ["Side-by-side comparison of the same problem both ways", "What each step actually means in terms of place value", "Why partial quotients lets kids 'see' the division happening"],
+          "teachingNotes": "The traditional DMSB (divide-multiply-subtract-bring down) algorithm is efficient but opaque. Show the same problem both ways."
+        },
+        {
+          "lessonId": "supporting-division-at-home",
+          "title": "Supporting Division at Home",
+          "order": 3,
+          "concepts": ["When the standard algorithm is typically introduced", "Real-world division practice (sharing, grouping, portioning)", "How to help without undermining the classroom method"],
+          "teachingNotes": "Give parents specific language: 'What strategy did your teacher show you?' before jumping in with their own method."
+        }
+      ]
+    },
+    {
+      "moduleId": "fractions_visual_models",
+      "unit": 3,
+      "quarter": 1,
+      "title": "Fractions with Visual Models",
+      "preview": "See why your child uses fraction bars, number lines, and area models before learning 'flip and multiply'—and how visual fractions build the deep understanding that prevents fraction phobia in middle school",
+      "moduleFile": "/modules/parent-35/fractions_visual_models_module.json",
+      "skills": ["visual-fractions", "fraction-operations-visual"],
+      "essentialQuestions": [
+        "Why does my child draw pictures instead of just finding common denominators?",
+        "How do fraction bars and number lines actually help?",
+        "When will my child learn the 'normal' fraction rules?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "fraction-bars-area-models",
+          "title": "Fraction Bars & Area Models",
+          "order": 1,
+          "concepts": ["Using fraction bars to compare, add, and subtract fractions", "Why 1/3 + 1/4 requires a visual before the rule", "Area models for fraction multiplication"],
+          "teachingNotes": "Parents often say 'just find a common denominator'—show how the visual IS finding a common denominator, just concretely."
+        },
+        {
+          "lessonId": "fractions-on-number-lines",
+          "title": "Fractions on the Number Line",
+          "order": 2,
+          "concepts": ["Placing fractions on a number line to understand magnitude", "Why 3/4 > 2/3 is obvious on a number line but confusing with rules alone", "Equivalent fractions as the same point on the number line"],
+          "teachingNotes": "The number line is THE model that bridges fractions to decimals to negative numbers—show parents the long game."
+        },
+        {
+          "lessonId": "from-visuals-to-procedures",
+          "title": "From Visuals to Procedures—The Full Journey",
+          "order": 3,
+          "concepts": ["How the visual models lead naturally to the procedural rules", "The CRA progression: Concrete → Representational → Abstract", "How to tell if your child is ready to drop the visual and use the shortcut"],
+          "teachingNotes": "Help parents see that the procedures ARE still the end goal—visuals are the on-ramp, not a detour."
+        }
+      ]
+    },
+    {
+      "moduleId": "word_problems_tape_diagrams",
+      "unit": 4,
+      "quarter": 1,
+      "title": "Word Problems & Tape Diagrams",
+      "preview": "Learn the tape diagram and strip model strategies that turn confusing word problems into solvable visual puzzles—the approach that has transformed math education worldwide",
+      "moduleFile": "/modules/parent-35/word_problems_tape_diagrams_module.json",
+      "skills": ["tape-diagrams", "multi-step-word-problems"],
+      "essentialQuestions": [
+        "What is a tape diagram and why does my child have to draw one for every word problem?",
+        "How do tape diagrams help with multi-step problems?",
+        "How can I help my child with word problems without just giving them the answer?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "tape-diagram-basics",
+          "title": "Tape Diagrams—The Universal Problem-Solving Tool",
+          "order": 1,
+          "concepts": ["What a tape diagram is and where it comes from (Singapore/Japan)", "Addition/subtraction tape diagrams for comparison and part-whole problems", "Multiplication/division tape diagrams for equal groups"],
+          "teachingNotes": "Show the same word problem solved with 'guess and check' vs tape diagram—the visual wins for understanding."
+        },
+        {
+          "lessonId": "multi-step-problems",
+          "title": "Multi-Step Word Problems with Models",
+          "order": 2,
+          "concepts": ["Breaking a complex problem into visual steps", "Using tape diagrams for two-step and three-step problems", "Why 'draw a picture' is a strategy, not a waste of time"],
+          "teachingNotes": "Use real homework-style problems. Parents need to see these in the context their child actually faces."
+        },
+        {
+          "lessonId": "guiding-without-telling",
+          "title": "Guiding Without Telling—Homework Help That Helps",
+          "order": 3,
+          "concepts": ["Questions to ask instead of answers to give", "The 'What do you know? What do you need to find?' framework", "When to step in and when to let your child struggle productively"],
+          "teachingNotes": "This is the most immediately actionable lesson—give parents a script they can use tonight."
+        }
+      ]
+    }
+  ],
+  "aiGuidanceNotes": "Parents of 3rd–5th graders are often the MOST frustrated because this is where the methods diverge most visibly from what they remember. The traditional algorithms (stacking multiplication, long division) are deeply ingrained from their own schooling, and seeing their child use unfamiliar methods can feel alarming. Always lead with empathy: 'The way you learned is correct—your child is learning a method that builds the same skills with more understanding built in.' Area models and partial products are the #1 source of parent confusion—spend extra time there. For fractions, validate that 'find a common denominator' is still the end goal, and show how visuals are the path to that rule, not a replacement for it."
+}

@@ -1,0 +1,102 @@
+{
+  "moduleId": "division_strategies",
+  "course": "Parent Guide: 3–5 Math",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Division Strategies: Partial Quotients & Beyond",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Long division was one of the most dreaded topics in traditional math class—remember 'divide, multiply, subtract, bring down'? Today's classrooms introduce partial quotients first, a method that builds understanding of what division actually means before introducing the standard algorithm. This module shows you how partial quotients work and why they produce more confident dividers.",
+  "skills": ["partial-quotients-division", "division-strategies"],
+  "standardsAlignment": ["3.OA.2", "3.OA.3", "4.NBT.6", "5.NBT.6"],
+  "goals": [
+    "Understand partial quotients division and solve problems using it",
+    "Compare partial quotients to the standard long division algorithm",
+    "Explain why partial quotients builds estimation skills and number sense",
+    "Support your child's division learning at home"
+  ],
+  "instructionalStrategy": [
+    "Long division is the topic where parents are MOST likely to insist on the traditional method. Address this tension directly.",
+    "Partial quotients is intuitive once you see it—it's basically 'how many groups can I take out at a time?'",
+    "Show that inefficient chunk choices still lead to the correct answer—this is a FEATURE, not a bug.",
+    "The standard algorithm IS still taught (typically late 4th or 5th grade). Make the timeline clear."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "partial-quotients-division",
+      "title": "Division Doesn't Look Like It Used To",
+      "text": "You probably learned long division with the 'division house' and the mantra **DMSB: Divide, Multiply, Subtract, Bring down**:\n\n```\n       32\n    ┌─────\n 8  │ 256\n    - 24↓\n    ----\n      16\n    - 16\n    ----\n       0\n```\n\nYour child might be learning **partial quotients**, which looks like this:\n\n```\n 8 ) 256\n   - 80    (8 × 10)\n   ----\n    176\n   - 80    (8 × 10)\n   ----\n     96\n   - 80    (8 × 10)\n   ----\n     16\n   - 16    (8 × 2)\n   ----\n      0\n           10 + 10 + 10 + 2 = 32\n```\n\nIt looks longer, messier, and less efficient. So why teach it?\n\nBecause partial quotients lets your child divide using numbers they're **comfortable with**. Instead of figuring out 'How many times does 8 go into 25?' (which requires trial-and-error), they can subtract friendly chunks: 'I know 8 × 10 = 80, so let me take out 80 at a time.'\n\nThe method is flexible. A more efficient child might take out 8 × 30 = 240 in one step. A less confident child might take out 8 × 10 = 80 three times. Both get 32. Both are correct.",
+      "initialPrompt": "Look at the partial quotients example above. Notice how the child subtracted 80 three times and then 16 once. Can you see a more efficient way to do it? (Hint: what's 8 × 30?)"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "partial-quotients-division",
+      "title": "I-Do: Partial Quotients Step by Step",
+      "examples": [
+        {
+          "problem": "Solve 432 ÷ 6 using partial quotients.",
+          "solution": "```\n 6 ) 432\n   - 420    (6 × 70)\n   -----\n      12\n   -  12    (6 × 2)\n   -----\n       0\n            70 + 2 = 72\n```\n\nSo 432 ÷ 6 = **72**\n\n**The thinking:** 'I know 6 × 70 = 420. That's close to 432! Subtract: 432 - 420 = 12. And 6 × 2 = 12. Done! Total: 70 + 2 = 72.'",
+          "tip": "A child might instead start with 6 × 50 = 300, then 6 × 20 = 120, then 6 × 2 = 12. They'd get 50 + 20 + 2 = 72. Same answer, different chunks. BOTH are correct."
+        },
+        {
+          "problem": "Same problem with traditional long division, side by side.",
+          "solution": "**Traditional:**\n```\n       72\n    ┌─────\n 6  │ 432\n    - 42↓\n    ----\n      12\n    - 12\n    ----\n       0\n```\n\n**Key difference:** In the traditional method, your child must figure out 'How many 6s in 43?' (answer: 7). This requires trial-and-error or strong multiplication recall.\n\nIn partial quotients, your child can use ANY multiple they know: 6×10=60, 6×50=300, 6×70=420. They build toward the answer using facts they're comfortable with.\n\n**Same math. Different on-ramp.** The traditional algorithm is the express lane. Partial quotients is the local road with more stops—but you can get on at any exit.",
+          "tip": "The traditional algorithm requires knowing 'how many times does 6 go into 43?' immediately. Partial quotients lets the child work with friendlier multiples and build up."
+        },
+        {
+          "problem": "Solve 547 ÷ 8 using partial quotients (this one has a remainder).",
+          "solution": "```\n 8 ) 547\n   - 400    (8 × 50)\n   -----\n     147\n   -  80    (8 × 10)\n   -----\n      67\n   -  64    (8 × 8)\n   -----\n       3    ← remainder\n\n            50 + 10 + 8 = 68 R3\n```\n\nSo 547 ÷ 8 = **68 remainder 3**\n\nCheck: 68 × 8 + 3 = 544 + 3 = 547 ✓",
+          "tip": "Remainders work the same way in both methods. When you can't subtract any more multiples of 8, whatever is left is the remainder."
+        }
+      ],
+      "initialPrompt": "Try partial quotients for 354 ÷ 6. Start by thinking: what's the biggest friendly multiple of 6 that's less than 354? (6 × 50 = 300 is a good starting point.)"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "partial-quotients-division",
+      "title": "Why Partial Quotients Before the Standard Algorithm",
+      "text": "**1. It builds estimation skills.** Choosing chunks requires estimating: 'Is 6 × 50 enough? Too much? About right?' This estimation skill is critical for real-world math and for checking answers.\n\n**2. It uses multiplication facts flexibly.** Instead of needing to know 'exactly how many 8s in 547,' your child can use facts they already know (8 × 50, 8 × 10) and build up. This reduces anxiety and increases access.\n\n**3. It shows what division IS.** Division is repeated subtraction of equal groups. When your child subtracts 8 × 50, then 8 × 10, they're literally taking groups of 8 out of 547. The standard algorithm hides this process.\n\n**4. Multiple paths = same answer.** Different children might choose different chunks, and ALL of them get the right answer. This teaches that math is flexible and creative—not a rigid set of steps to memorize.\n\n**5. It prevents the 'bring down' mystery.** In the traditional algorithm, 'bring down the next digit' is a step most children do without understanding why. Partial quotients avoids this entirely because you always work with the whole remaining number.\n\n**The honest timeline:**\n- 3rd grade: Division as equal groups and arrays\n- 4th grade: Partial quotients and area model for division\n- 5th grade: Standard long division algorithm\n- 6th grade and beyond: Expected fluency with the standard algorithm\n\nYour child will learn the standard algorithm. Partial quotients ensures they understand it when they do.",
+      "initialPrompt": "Here's a thought experiment: When you divide in your head (like splitting a $86 bill among 4 people), do you actually do long division? Or do you think 'Well, 80 ÷ 4 = 20, and 6 ÷ 4 = 1.50, so it's $21.50'? That IS partial quotients—and it's how most adults actually divide."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "partial-quotients-division",
+      "title": "Try It: Partial Quotients Practice",
+      "problems": [
+        {
+          "id": "pq-p1",
+          "question": "Solve 378 ÷ 9 using partial quotients.",
+          "answer": "9 × 40 = 360. 378 - 360 = 18. 9 × 2 = 18. Total: 40 + 2 = 42. So 378 ÷ 9 = 42.",
+          "hints": [
+            "Start with a friendly multiple: 9 × 40 = 360.",
+            "378 - 360 = 18. Now 9 × 2 = 18. Total quotient: 40 + 2 = 42."
+          ]
+        },
+        {
+          "id": "pq-p2",
+          "question": "Two children solve 456 ÷ 6 differently. Child A subtracts 6×50=300, then 6×20=120, then 6×6=36. Child B subtracts 6×70=420, then 6×6=36. Both get 76. Which child is 'right'?",
+          "answer": "Both are right! Child B was more efficient (fewer steps), but Child A's approach is equally valid. This flexibility is a feature of partial quotients, not a bug.",
+          "hints": [
+            "Check both: 50+20+6=76 ✓ and 70+6=76 ✓. Same answer!",
+            "Efficiency will improve with practice. Child A will naturally start taking bigger chunks as they gain confidence."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice partial quotients. Remember: there's no 'wrong' chunk size—just more or fewer steps."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "partial-quotients-division",
+      "title": "Supporting Division at Home",
+      "text": "**The most important thing you can say:**\n'Show me how your teacher does it.'\n\nThis simple phrase:\n- Respects the classroom method\n- Lets your child be the expert (boosting confidence)\n- Helps YOU learn the method so you can support it\n\n**If your child is frustrated with partial quotients:**\n- Help them identify friendly multiples: 'What's an easy one? What's [divisor] × 10? What about × 100?'\n- Encourage bigger chunks over time: 'Last time you took out 10 at a time. Can you try taking out 20 this time?'\n- Celebrate progress in efficiency: 'Wow, you solved that in only 3 steps this time!'\n\n**If your child asks you to show them 'your way':**\nIt's okay to show them the traditional algorithm as a 'different method,' but always follow up with: 'Your teacher wants you to use partial quotients right now because it builds your understanding. You'll learn this method soon too.'\n\n**Real-world division practice:**\n- Sharing: 'We have 48 grapes for 4 people. How many each?'\n- Grouping: '36 kids need to form teams of 6. How many teams?'\n- Money: 'This pack of 8 markers costs $12. How much per marker?'\n\nEvery time you share, group, or split something equally, you're doing division. Point it out!",
+      "initialPrompt": "What division scenarios come up naturally in your household? Those are free math practice opportunities!"
+    }
+  ]
+}

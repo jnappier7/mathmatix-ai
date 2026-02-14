@@ -1,0 +1,111 @@
+{
+  "moduleId": "counting_strategies",
+  "course": "Parent Guide: K–2 Math",
+  "unit": 3,
+  "quarter": 1,
+  "title": "Counting On, Counting Back & Mental Math",
+  "weeks": "1",
+  "estimatedDuration": 20,
+  "description": "Your child has moved past counting from 1 every time—and that's a good thing. 'Counting on' (starting from the larger number) and 'counting back' are strategies that build efficiency and mental math skills. This module explains these strategies, the natural progression from concrete counting to fluent math facts, and how to support your child through each stage without rushing.",
+  "skills": ["counting-on", "counting-back", "mental-math-strategies"],
+  "standardsAlignment": ["K.CC.2", "K.OA.5", "1.OA.5", "1.OA.6", "2.OA.2"],
+  "goals": [
+    "Understand counting on and counting back as deliberate strategies (not shortcuts)",
+    "Recognize the natural progression: counting all → counting on → derived facts → known facts",
+    "Know when finger use is appropriate and when to encourage mental strategies",
+    "Support your child's mental math development with patience and purposeful activities"
+  ],
+  "instructionalStrategy": [
+    "Many parents worry when their child 'still uses fingers.' Address this head-on with research showing fingers are a valid mathematical tool through age 7–8.",
+    "The counting-on strategy often confuses parents who think their child should 'just know' addition facts by now. Explain the developmental progression.",
+    "Think-addition for subtraction (turning 12 - 4 into 4 + ? = 12) is a powerful strategy parents rarely learned. Highlight it.",
+    "Use the staircase metaphor: each strategy is a step up, and you can't skip steps without risking wobbly foundations."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "counting-on",
+      "title": "What Is Counting On?",
+      "text": "When your child solves 8 + 3, they might say: 'Eight... nine, ten, eleven!' and hold up 3 fingers as they count. This is called **counting on**—starting from the larger number and counting forward.\n\nYou might think: 'Why don't they just know that 8 + 3 = 11?' Here's the thing—counting on IS the stage that leads to 'just knowing.' It's not a failure to memorize; it's the natural next step after 'counting all' (starting from 1 and counting every single object).\n\n**The progression:**\n1. **Counting all (K):** To solve 3 + 5, count out 3 objects, then 5 objects, then count ALL of them: 1, 2, 3, 4, 5, 6, 7, 8.\n2. **Counting on (K–1):** To solve 3 + 5, start at 5 (the bigger number) and count: 6, 7, 8. Much more efficient!\n3. **Derived facts (1–2):** 'I know 5 + 5 = 10, so 5 + 3 must be 2 less: 8.' Using facts you know to figure out facts you don't.\n4. **Known facts (2+):** 'I just know 5 + 3 = 8.' Automatic recall.\n\nYour child needs to spend time at each stage. Rushing to stage 4 without the foundation of stages 1–3 leads to fragile, easily-forgotten facts.",
+      "initialPrompt": "Where do you think your child is on this progression? Most K–1 students are at stage 2 (counting on), and that's exactly where they should be."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "counting-on",
+      "title": "I-Do: Counting On and Think-Addition",
+      "examples": [
+        {
+          "problem": "Solve 4 + 7 using counting on.",
+          "solution": "**Strategy:** Start from the LARGER number (7) and count on 4:\n'Seven... eight, nine, ten, eleven!'\n\nAnswer: **11**\n\nNotice the child starts from 7, not 4—they've learned the **commutative property** (4 + 7 = 7 + 4) even if they don't know the name yet. Starting from the bigger number means fewer counts.",
+          "tip": "If your child starts from the smaller number (4... 5, 6, 7, 8, 9, 10, 11), they'll get the right answer but work harder. Gently suggest: 'What if you started from the bigger number?'"
+        },
+        {
+          "problem": "Solve 13 - 4 using counting back.",
+          "solution": "**Counting back:** Start at 13 and count backward 4:\n'Thirteen... twelve, eleven, ten, nine!'\n\nAnswer: **9**\n\nCounting back works well when subtracting small numbers (1, 2, or 3). For bigger subtractions, the next strategy is better.",
+          "tip": "Counting back gets tricky with bigger numbers. If your child struggles with 15 - 7 by counting back, that's normal—it's time for the 'think-addition' strategy."
+        },
+        {
+          "problem": "Solve 12 - 5 using 'think-addition' (a subtraction strategy that surprises many parents).",
+          "solution": "**Think-addition:** Instead of 12 - 5 = ?, think 5 + ? = 12.\n\n'Five plus WHAT equals twelve?'\n5, 6, 7, 8, 9, 10, 11, 12 — that's 7 more!\n\nOr even better: 'I know 5 + 5 = 10, and 10 + 2 = 12, so 5 + 7 = 12.'\n\nAnswer: 12 - 5 = **7**\n\n**Why think-addition?** It turns every subtraction problem into an addition problem. Since children typically learn addition facts first, this leverages what they already know.",
+          "tip": "Think-addition is one of the most powerful strategies in early math—and most parents never learned it. It reframes subtraction as 'finding the missing part,' which connects directly to number bonds."
+        }
+      ],
+      "initialPrompt": "Try think-addition yourself: Solve 14 - 6 by thinking '6 + ? = 14.' Can you see how this is easier than counting backward from 14?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "mental-math-strategies",
+      "title": "The Fingers Debate—And What Research Says",
+      "text": "Let's address the elephant in the room: **Should my child still be using fingers?**\n\n**Short answer:** Probably yes, and that's fine.\n\n**Longer answer:** Research from Stanford's math education labs shows that finger representation is connected to math ability well into adulthood. Brain imaging studies show that even when adults solve math problems mentally, the brain region associated with fingers lights up.\n\nHere's the developmental reality:\n- **K–1st grade:** Fingers are a completely normal, healthy tool. Most children use them.\n- **2nd grade:** Children should be REDUCING finger use as derived facts and known facts take over.\n- **3rd grade and beyond:** Most basic facts should be automatic, with fingers used occasionally for harder computations.\n\n**What helps the transition:**\n- Lots of number bond practice (Unit 1)\n- Ten frame work (Unit 2)\n- Games that build speed naturally (card games, dice games)\n- TIME—fluency develops over months, not days\n\n**What DOESN'T help:**\n- Telling your child 'put your fingers down'\n- Timed tests before facts are solid (creates anxiety)\n- Flash cards as the ONLY practice tool\n\nThe goal is for counting on to gradually be replaced by 'just knowing'—but the knowing has to be built on understanding, not pressure.",
+      "initialPrompt": "Does this change how you think about your child's finger use? The key takeaway: fingers are a bridge, not a crutch, and your child will cross that bridge in their own time."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "counting-on",
+      "title": "Try It: Strategy Practice",
+      "problems": [
+        {
+          "id": "cs-p1",
+          "question": "Solve 6 + 8 using counting on. Which number do you start from?",
+          "answer": "Start from 8 (the larger number) and count on 6: 9, 10, 11, 12, 13, 14. Answer: 14.",
+          "hints": [
+            "Always start from the LARGER number to make it more efficient.",
+            "Starting at 8, count 6 more: 9, 10, 11, 12, 13, 14."
+          ]
+        },
+        {
+          "id": "cs-p2",
+          "question": "Solve 15 - 8 using think-addition: 8 + ? = 15.",
+          "answer": "8 + 7 = 15, so 15 - 8 = 7. You might think: 8 + 2 = 10, 10 + 5 = 15, so 2 + 5 = 7.",
+          "hints": [
+            "Think: 8 + ? = 15. You can use making ten: 8 + 2 = 10, then 10 + ? = 15, so ? = 5. Total added: 2 + 5 = 7.",
+            "So 15 - 8 = 7."
+          ]
+        },
+        {
+          "id": "cs-p3",
+          "question": "Your child is in 1st grade and still counts on their fingers for 7 + 5. Should you be concerned?",
+          "answer": "No! Using fingers in 1st grade is developmentally appropriate. The key is whether they are counting ON (starting from 7) rather than counting ALL (starting from 1). Counting on with fingers is a healthy intermediate step toward mental fluency.",
+          "hints": [
+            "Check: are they starting from 7, or from 1? If from 7, they're using counting on—a solid strategy.",
+            "Fingers in 1st grade are normal and healthy. The research is clear: don't rush this."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice these strategies and scenarios."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "mental-math-strategies",
+      "title": "Building Mental Math at Home",
+      "text": "**Games that build fluency naturally (no worksheet required):**\n\n**1. Card game: Make 10.** Remove face cards. Lay out 10 cards face up. Find pairs that make 10. Replace them and keep going. Fast, fun, and practices number bonds to 10.\n\n**2. Dice addition.** Roll two dice and add. Start with regular dice, then upgrade to 10-sided dice. The physical dots support counting-on.\n\n**3. 'How many more?' in daily life.** 'You have 6 crackers and your brother has 9. How many more does he have?' (This IS subtraction using think-addition!)\n\n**4. Mental math challenges at dinner.** 'What's 8 + 5? How did you figure it out?' The HOW matters more than the WHAT.\n\n**5. Fact family practice.** Pick a number bond (like 8, 5, 13). Ask: 'What are all the equations you can make?' (8 + 5 = 13, 5 + 8 = 13, 13 - 5 = 8, 13 - 8 = 5)\n\n**Key mindset shifts:**\n- Celebrate STRATEGIES, not just answers: 'How did you figure that out?' is the most powerful question you can ask\n- Let your child be 'slow' now so they can be fast AND flexible later\n- If your child gets the right answer with a different strategy than you expected, that's a WIN",
+      "initialPrompt": "The single best thing you can do at home: ask 'How did you figure that out?' every time your child gives a math answer. That one question builds mathematical thinking."
+    }
+  ]
+}

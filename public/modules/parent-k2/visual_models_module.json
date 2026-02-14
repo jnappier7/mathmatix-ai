@@ -1,0 +1,116 @@
+{
+  "moduleId": "visual_models",
+  "course": "Parent Guide: K–2 Math",
+  "unit": 4,
+  "quarter": 1,
+  "title": "Visual Models: Bar Models, Part-Whole & Number Lines",
+  "weeks": "1",
+  "estimatedDuration": 20,
+  "description": "Your child's homework might feature diagrams you don't recognize—bar models (tape diagrams), part-whole boxes, and open number lines. These visual tools, borrowed from the world's highest-performing math education systems, give children a concrete way to understand operations before they memorize procedures. This module teaches you to read and use each model so you can confidently support your child.",
+  "skills": ["bar-models", "part-whole-diagrams", "number-lines"],
+  "standardsAlignment": ["1.OA.1", "1.OA.2", "2.OA.1", "2.NBT.5", "2.NBT.7"],
+  "goals": [
+    "Identify and read bar models, part-whole diagrams, and open number lines",
+    "Understand how each model represents addition, subtraction, and comparison",
+    "Know where these models come from and why they're used",
+    "Help your child draw models for word problems without doing the work for them"
+  ],
+  "instructionalStrategy": [
+    "Parents often see these diagrams as 'extra steps'—reframe them as 'thinking tools' that prevent errors on word problems.",
+    "Bar models originated in Singapore's math curriculum, which consistently ranks #1 globally. That context helps parents trust the approach.",
+    "Open number lines are the most versatile tool—show how they work for addition, subtraction, and even money/time problems.",
+    "The key parent skill is guiding WITHOUT drawing the model for the child. Teach parents to ask: 'What do you know? What are you trying to find?'"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "bar-models",
+      "title": "The Diagrams on Your Child's Homework",
+      "text": "If your child brings home math that looks like this, you're not alone in feeling confused:\n\n**Bar Model (Tape Diagram):**\n```\n┌──────────────────────┐\n│         15           │\n├──────────┬───────────┤\n│    8     │     ?     │\n└──────────┴───────────┘\n```\n'Sam has 15 stickers. He gives 8 to his friend. How many does he have left?'\n\n**Part-Whole Box:**\n```\n     ┌─────┐\n     │  ?  │\n     ├──┬──┤\n     │ 6│ 9│\n     └──┴──┘\n```\n'Maria picked 6 red apples and 9 green apples. How many total?'\n\n**Open Number Line:**\n```\n  ├────+30────┤──+4──┤\n  47          77     81\n```\n'47 + 34 = ?'\n\nThese are **visual models**—tools that help children SEE the math before they compute. They come from countries like Singapore, Japan, and the Netherlands, whose students consistently outperform American students in math.\n\nThe key idea: **drawing a picture isn't extra work—it's the thinking.**",
+      "initialPrompt": "Have you seen any of these models on your child's homework? Which one looked most unfamiliar to you?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "bar-models",
+      "title": "I-Do: Bar Models and Part-Whole in Action",
+      "examples": [
+        {
+          "problem": "'Tony has 12 toy cars. He has 5 more cars than Ava. How many cars does Ava have?'",
+          "solution": "**Bar Model:**\n```\nTony: ┌──────────────────────────┐\n      │           12             │\n      └──────────────────────────┘\nAva:  ┌────────────────────┐\n      │         ?          │\n      └────────────────────┘\n      ├── Ava's amount ────┤── 5 ─┤\n```\n\nThe bar shows that Tony's 12 equals Ava's amount PLUS 5 more.\n12 - 5 = 7. Ava has **7** cars.\n\n**Without the model:** Many children (and adults!) see 'more' and automatically ADD: 12 + 5 = 17. Wrong! The bar model makes the relationship visible and prevents this common error.",
+          "tip": "Comparison problems ('more than,' 'less than,' 'how many fewer') are the #1 type where bar models shine. The visual makes the relationship clear."
+        },
+        {
+          "problem": "'There are 24 students in a class. 10 are wearing sneakers, 8 are wearing sandals, and the rest are wearing boots. How many are wearing boots?'",
+          "solution": "**Part-Whole Bar Model:**\n```\n┌──────────────────────────────────┐\n│               24                 │\n├──────────┬─────────┬─────────────┤\n│    10    │    8    │      ?      │\n│ sneakers │ sandals │    boots    │\n└──────────┴─────────┴─────────────┘\n```\n\nThe whole is 24. Two parts are known: 10 + 8 = 18.\n24 - 18 = 6. **6 students** are wearing boots.\n\nThis is a multi-step problem, but the bar model organizes it visually so the child can SEE all the parts.",
+          "tip": "For multi-step word problems, the bar model is a planning tool—it shows what you know and what you need to find before you start computing."
+        }
+      ],
+      "initialPrompt": "Try drawing a bar model for this problem: 'Ella has 14 marbles. She has 6 fewer marbles than Jake. How many marbles does Jake have?' Be careful with 'fewer'!"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "number-lines",
+      "title": "I-Do: Open Number Lines",
+      "examples": [
+        {
+          "problem": "Solve 47 + 36 using an open number line.",
+          "solution": "**Open Number Line:**\n```\n  ├────+30────────┤──+6──┤\n  47              77     83\n```\n\n**Steps:**\n1. Start at 47\n2. Jump +30 (the tens from 36) → land on 77\n3. Jump +6 (the ones from 36) → land on 83\n\nSo 47 + 36 = **83**\n\n**Why this works:** The number line breaks addition into friendly jumps. Adding 30 first (the tens) keeps the mental math manageable, then adding 6 (the ones) finishes it off. This is the same place-value thinking behind the traditional algorithm—just visual.",
+          "tip": "Children might make different jumps: +30 then +6, or +3 then +33, or even +40 then -4. All are valid strategies! The number line shows their thinking process."
+        },
+        {
+          "problem": "Solve 83 - 47 using an open number line (counting up).",
+          "solution": "**Open Number Line (counting UP from 47 to 83):**\n```\n  ├──+3──┤────+30────────┤──+3──┤\n  47     50              80     83\n```\n\n**Steps:**\n1. Start at 47, jump +3 to reach 50\n2. Jump +30 to reach 80\n3. Jump +3 to reach 83\n4. Total jumps: 3 + 30 + 3 = **36**\n\nSo 83 - 47 = **36**\n\n**This blows parents' minds:** Instead of borrowing and regrouping, the child counts UP from the smaller number to the larger one. The total distance IS the answer. This is subtraction as 'finding the difference'—and it's incredibly powerful for mental math.",
+          "tip": "This 'counting up' strategy for subtraction avoids the confusion of borrowing entirely. It's especially useful for problems where borrowing is needed (like 83 - 47 where you'd need to borrow from the 8)."
+        }
+      ],
+      "initialPrompt": "Try the counting-up subtraction strategy on a number line for 72 - 38. Start at 38 and jump to 72. What jumps did you make?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "bar-models",
+      "title": "Why Visual Models Work",
+      "text": "**The research is clear:** Countries that use visual models (Singapore, Japan, Netherlands) consistently outperform the US in international math assessments—by significant margins.\n\n**Here's why:**\n\n**1. They make the invisible visible.** Word problems require children to figure out the STRUCTURE of the problem (is it combining? comparing? grouping?) before they can choose an operation. Bar models make the structure visible.\n\n**2. They prevent the 'keyword' trap.** Many children learn to look for keywords ('more' means add, 'left' means subtract). This breaks down quickly with problems like 'Sam has 5 MORE than Ava.' (It's actually subtraction to find Ava's amount!) Bar models focus on relationships, not keywords.\n\n**3. They scale.** The same bar model your child draws in 1st grade for '8 + ? = 15' becomes the model they use in 5th grade for fraction word problems and in middle school for algebraic equations. ONE tool, many years of use.\n\n**4. They build confidence.** Children who draw a model before computing make fewer errors and feel less anxious about word problems. The model gives them a plan.",
+      "initialPrompt": "Think about a word problem that tripped you up as a kid. Would a bar model have helped you 'see' what was going on?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "bar-models",
+      "title": "Try It: Visual Model Practice",
+      "problems": [
+        {
+          "id": "vm-p1",
+          "question": "Draw a bar model for: 'A library has 42 fiction books and 28 non-fiction books. How many books does it have in all?'",
+          "answer": "Part-part-whole bar: the two parts are 42 (fiction) and 28 (non-fiction), the whole is unknown. 42 + 28 = 70 books.",
+          "hints": [
+            "This is a combining/part-whole problem. You know both parts and need the whole.",
+            "Draw one bar with 42 and 28 as sections, and the total (?) above."
+          ]
+        },
+        {
+          "id": "vm-p2",
+          "question": "Your child's teacher asks them to draw a model before solving EVERY word problem. Your child says 'I already know the answer—why do I have to draw?' What would you say?",
+          "answer": "You might say: 'Drawing helps you PROVE your answer is right. And when problems get harder next year, the model will help you figure out problems that are too tricky to do in your head.' Validate their confidence while explaining the long-term value.",
+          "hints": [
+            "Don't dismiss their frustration—it's real. But explain that the model is like training wheels that become a superpower.",
+            "You could also say: 'Your teacher wants to see HOW you think, not just your answer. The drawing shows your thinking.'"
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice using visual models and handling common homework scenarios."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "bar-models",
+      "title": "Guiding Visual Models at Home",
+      "text": "**The #1 homework help strategy for word problems:**\n\nWhen your child is stuck on a word problem, DON'T solve it for them. Instead, ask these three questions:\n\n1. **'What do you know?'** (Identify the given information)\n2. **'What are you trying to find?'** (Identify the question)\n3. **'Can you draw something to show what's happening?'** (Encourage a model)\n\nThis question sequence works for EVERY word problem from 1st grade through high school.\n\n**Common parent mistakes to avoid:**\n- Drawing the model FOR your child (let them struggle—productive struggle builds understanding)\n- Saying 'you don't need to draw that' (their teacher requires it for good reason)\n- Teaching your child to look for keywords instead of drawing models (keywords fail; models don't)\n\n**If your child's model is 'wrong' but leads to the right answer:**\nThat's usually fine! There's more than one way to model a problem. Ask them to explain their drawing. If they can justify it, celebrate the thinking.\n\n**If your child's model is wrong and leads to a wrong answer:**\nGo back to question 1: 'What do you know?' Often the error is in reading the problem, not in the math. The model will reveal where the misunderstanding is.\n\n**You've completed the K–2 Parent Guide!** You now understand number bonds, ten frames, counting strategies, and visual models. These four tools are the foundation of everything your child will learn in elementary math. With this knowledge, you can confidently read their homework, support their strategies, and celebrate their mathematical thinking.",
+      "initialPrompt": "Congratulations on finishing the K–2 Parent Guide! What's the one strategy or concept that surprised you the most? That's often the one that will help your child the most."
+    }
+  ]
+}

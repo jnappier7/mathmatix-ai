@@ -1,0 +1,116 @@
+{
+  "moduleId": "geometry_statistics_prep",
+  "course": "Parent Guide: 6–8 Math",
+  "unit": 4,
+  "quarter": 1,
+  "title": "Geometry Transformations & Data in Middle School",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Middle school geometry looks different from what you remember: transformations (slides, flips, turns) are now central, and statistics goes far beyond mean-median-mode. This module explains why your child spends so much time on transformations, what the new data displays mean, and how all of this connects to the high school math ahead.",
+  "skills": ["transformations", "coordinate-plane-geometry", "statistical-thinking"],
+  "standardsAlignment": ["8.G.1", "8.G.2", "8.G.3", "8.G.4", "6.SP.1", "6.SP.2", "6.SP.3", "6.SP.4", "6.SP.5"],
+  "goals": [
+    "Understand why transformations are now central to geometry (not just an afterthought)",
+    "Recognize the new data displays: box plots, dot plots, histograms",
+    "See how these topics connect to high school geometry, algebra, and data science",
+    "Stay engaged with your middle schooler's math as they grow more independent"
+  ],
+  "instructionalStrategy": [
+    "Most parents remember geometry as 'proofs about triangles.' Explain the transformation-based shift briefly.",
+    "Box plots are unfamiliar to many parents—spend extra time on them.",
+    "The 'big picture' lesson at the end should empower parents by showing them the full K–12 trajectory.",
+    "End the entire 6–8 course on an empowering, forward-looking note."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "transformations",
+      "title": "Why So Much Time on Transformations?",
+      "text": "If you remember middle school geometry, it was probably about angle relationships, area formulas, and maybe some basic proofs. Transformations—slides, flips, and turns—were a minor topic, if covered at all.\n\nIn today's curriculum, transformations are **central**. Your child might spend weeks on translations (slides), reflections (flips), rotations (turns), and dilations (scaling). Why?\n\n**The big shift:** Common Core restructured geometry around transformations because they provide a unified framework for understanding congruence and similarity:\n\n- **Congruent shapes** = One shape can be mapped onto another using translations, reflections, and/or rotations (no scaling)\n- **Similar shapes** = One shape can be mapped onto another using translations, reflections, rotations, AND a dilation (scaling)\n\nThis is actually how professional mathematicians define congruence and similarity. The old approach ('same shape and size' / 'same shape, different size') was informal. The transformation approach is precise.\n\n**On the coordinate plane, transformations become rules:**\n- Translation: (x, y) → (x + a, y + b) — shift by (a, b)\n- Reflection over y-axis: (x, y) → (-x, y) — flip the x\n- Reflection over x-axis: (x, y) → (x, -y) — flip the y\n- Rotation 90° counterclockwise: (x, y) → (-y, x)\n- Dilation from origin by factor k: (x, y) → (kx, ky)\n\nThese coordinate rules connect geometry to algebra—a connection your child will use extensively in high school.",
+      "initialPrompt": "Were transformations a big part of your math education? For most parents, they were barely covered. The shift to transformation-based geometry is one of the biggest changes in modern math standards."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "transformations",
+      "title": "I-Do: Transformations on the Coordinate Plane",
+      "examples": [
+        {
+          "problem": "Translate triangle ABC with vertices A(1,2), B(4,2), C(1,5) by 3 units right and 2 units down.",
+          "solution": "**Rule:** (x, y) → (x + 3, y - 2)\n\n- A(1, 2) → A'(4, 0)\n- B(4, 2) → B'(7, 0)\n- C(1, 5) → C'(4, 3)\n\nEvery point moves the SAME amount: 3 right (+3 to x) and 2 down (-2 to y). The shape and size stay exactly the same—just the location changes.\n\n**Why this matters:** Translation is the simplest transformation, and it introduces the idea that geometry can be expressed with algebra (coordinate rules). This connection is foundational for high school.",
+          "tip": "Translations are the easiest to understand: everything slides in the same direction. It's like dragging an image on a screen."
+        },
+        {
+          "problem": "Reflect point P(3, -2) over the x-axis, then over the y-axis.",
+          "solution": "**Reflection over x-axis:** (x, y) → (x, -y)\nP(3, -2) → P'(3, 2)\n\n**Reflection over y-axis:** (x, y) → (-x, y)\nP'(3, 2) → P''(-3, 2)\n\n**Net result:** (3, -2) → (-3, 2)\n\nInteresting fact: reflecting over BOTH axes is the same as rotating 180° around the origin! This is the kind of connection transformation geometry reveals.",
+          "tip": "Reflections flip one coordinate's sign. Over the x-axis: flip y. Over the y-axis: flip x. Over both: flip both (= 180° rotation)."
+        }
+      ],
+      "initialPrompt": "Try this: if a point is at (5, -3), where does it go after reflecting over the y-axis? Just flip the sign of the x-coordinate."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "statistical-thinking",
+      "title": "I-Do: Box Plots and Modern Data Displays",
+      "examples": [
+        {
+          "problem": "Your child brings home a homework problem with a box plot. What does it show?",
+          "solution": "**A box plot (box-and-whisker plot) shows 5 key values:**\n\n```\n         ┌──────────────┐\n    ├────┤              ├──────────┤\n         └──────────────┘\n    │    │       │              │  │\n   Min  Q1    Median          Q3  Max\n   (20) (35)   (50)          (70) (90)\n```\n\n- **Minimum:** Smallest value (20)\n- **Q1 (25th percentile):** 25% of data is below this (35)\n- **Median (50th percentile):** Middle value (50)\n- **Q3 (75th percentile):** 75% of data is below this (70)\n- **Maximum:** Largest value (90)\n\n**The box** (Q1 to Q3) contains the **middle 50%** of the data.\n**The whiskers** extend to the min and max.\n\n**Why it's useful:** A box plot shows the SPREAD and CENTER of data at a glance. You can instantly see if data is skewed (one whisker much longer), how spread out it is (wide or narrow box), and where the middle falls.\n\n**You probably didn't learn this because:** Box plots weren't common in K–12 until the statistics standards were strengthened. Now they're central to data literacy.",
+          "tip": "The most important thing a box plot shows is how SPREAD OUT the data is, not just the average. This is a big shift from just calculating mean-median-mode."
+        },
+        {
+          "problem": "What is MAD (Mean Absolute Deviation) and why is my child learning it?",
+          "solution": "**MAD (Mean Absolute Deviation):**\nA measure of how spread out data is—how far, on average, each data point is from the mean.\n\n**Example:** Scores of 70, 80, 90, 80, 80 (mean = 80)\n\nDistances from mean: |70-80|=10, |80-80|=0, |90-80|=10, |80-80|=0, |80-80|=0\n\nMAD = (10 + 0 + 10 + 0 + 0) / 5 = **4**\n\nThis means scores are, on average, 4 points away from the mean.\n\n**Why it matters:** Mean alone doesn't tell the whole story. A class with scores of 75, 78, 80, 82, 85 and a class with scores of 50, 60, 80, 100, 110 both have a mean of 80—but the second class is much more spread out. MAD quantifies that difference.\n\n**In your life:** MAD is a simpler version of standard deviation (which you might remember from college stats). It prepares students for more advanced statistics in high school.",
+          "tip": "MAD answers the question: 'How consistent is this data?' Low MAD = consistent. High MAD = spread out. This is increasingly important in a data-driven world."
+        }
+      ],
+      "initialPrompt": "Had you seen a box plot before this lesson? They're now one of the most common data displays in middle school—and in the real world (financial reports, scientific research, sports analytics)."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "statistical-thinking",
+      "title": "The Big Picture—How It All Connects to High School",
+      "text": "Let's zoom out and see how everything your child has learned connects to what's ahead:\n\n**Proportional Reasoning (6th–7th) → Algebra (8th–9th)**\n- Unit rates → Slope of a line\n- Ratio tables → Tables of values for functions\n- Proportional relationships → Linear equations (y = kx)\n- Double number lines → The coordinate plane\n\n**Algebra Tiles & Equations (6th–8th) → Algebra 1 (8th–9th)**\n- Balance model → Solving multi-step equations\n- Zero pairs → Operations with polynomials\n- Visual factoring → Factoring quadratics\n\n**Integer Operations (6th–7th) → All Higher Math**\n- Number line reasoning → Graphing functions\n- Sign rules → Working with negative coefficients\n- Absolute value → Distance formulas\n\n**Transformations (8th) → Geometry (9th–10th)**\n- Coordinate transformations → Geometric proofs\n- Congruence via transformations → Triangle congruence theorems\n- Similarity via dilations → Similar figures and trigonometry\n\n**Statistics (6th–8th) → Statistics & Data Science**\n- Box plots, histograms → AP Statistics\n- MAD → Standard deviation\n- Correlation → Regression analysis\n\n**The bottom line:** Everything your child is learning in middle school is a deliberate preparation for high school and beyond. The methods might look different from what you remember, but they're building a stronger, deeper, more connected mathematical foundation.\n\n**Your child is on a good path.** And now that you understand what they're learning and why, you can walk alongside them with confidence.",
+      "initialPrompt": "Seeing these connections, does it change how you feel about the 'new' methods your child is learning? Each topic is a building block for something bigger."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "transformations",
+      "title": "Try It: Review and Reflection",
+      "problems": [
+        {
+          "id": "gs-p1",
+          "question": "A triangle has vertices at (2,1), (5,1), and (2,4). After reflecting over the y-axis, what are the new vertices?",
+          "answer": "Reflection over y-axis: (x,y) → (-x,y). New vertices: (-2,1), (-5,1), (-2,4).",
+          "hints": [
+            "Reflection over the y-axis flips the x-coordinate's sign.",
+            "(2,1)→(-2,1), (5,1)→(-5,1), (2,4)→(-2,4)."
+          ]
+        },
+        {
+          "id": "gs-p2",
+          "question": "A box plot shows: Min=45, Q1=60, Median=72, Q3=85, Max=98. What percentage of the data falls between 60 and 85?",
+          "answer": "50% of the data falls between Q1 (60) and Q3 (85). This is the 'box' part of the box plot—the interquartile range (IQR).",
+          "hints": [
+            "Q1 is the 25th percentile and Q3 is the 75th percentile.",
+            "The data between them represents 75% - 25% = 50% of all values."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's review the key concepts from this unit."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "statistical-thinking",
+      "title": "Staying Involved as Your Child Grows Up",
+      "text": "**Middle school is a transition—for your child AND for you as a math helper.**\n\nYour role is shifting from 'sit beside them and work through problems' to 'create an environment where math feels safe and interesting.' Here's how:\n\n**1. Show curiosity, not expertise.** 'That box plot is cool—what does it tell you about the data?' works better than 'Let me explain box plots.'\n\n**2. Connect math to their interests.**\n- Sports fan? Stats are EVERYWHERE (batting averages, player efficiency ratings)\n- Gamer? Probability, strategy optimization, coordinate systems\n- Artist? Transformations, symmetry, geometric design\n- Social media? Data privacy, algorithm basics, statistics of virality\n\n**3. Normalize struggle.** 'I found math hard sometimes too, especially when it was new. That's how brains grow.' This is more helpful than 'You should find this easy.'\n\n**4. Know when to call for backup.** If your child is consistently struggling, talk to their teacher. Ask: 'What specific skills should we focus on?' and 'Are there resources you recommend for home?'\n\n**5. Celebrate the journey, not just grades.** 'I noticed you spent 30 minutes on that problem set without giving up—that's real persistence' matters more than 'You got an A.'\n\n**You've completed all three Parent Math Guides!** Whether your child is in Kindergarten or 8th grade, you now understand the key methods, the reasoning behind them, and how to support your child with confidence. The math may look different from what you remember—but it's building toward the same goals: understanding, fluency, and mathematical confidence.\n\nThank you for investing in your child's math education. That investment—your time, your curiosity, your willingness to learn alongside them—matters more than any teaching method ever could.",
+      "initialPrompt": "You've completed the 6–8 Parent Guide and the entire Parent Math Course series. What's the one thing you'll do differently at homework time this week?"
+    }
+  ]
+}

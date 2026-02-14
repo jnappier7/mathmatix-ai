@@ -189,6 +189,20 @@ const courseSchema = new Schema({
     type: String,
     enum: ['K-5', '5-8', '8-12', 'Calculus', 'Calc 3']
   },
+  audience: {
+    type: String,
+    enum: ['student', 'parent'],
+    default: 'student'
+    // student: Traditional courses for learners
+    // parent: Mini-courses helping parents understand modern math methods
+  },
+  courseType: {
+    type: String,
+    enum: ['full-course', 'mini-course'],
+    default: 'full-course'
+    // full-course: Standard multi-unit course (semester/year)
+    // mini-course: Short focused course (a few lessons per unit)
+  },
 
   // Course structure
   units: [courseUnitSchema],
@@ -240,6 +254,7 @@ const courseSchema = new Schema({
 courseSchema.index({ courseId: 1 });
 courseSchema.index({ subject: 1, isActive: 1 });
 courseSchema.index({ isPublished: 1, isActive: 1 });
+courseSchema.index({ audience: 1, isPublished: 1, isActive: 1 });
 
 /* ---------- INSTANCE METHODS ---------- */
 
@@ -300,9 +315,10 @@ courseSchema.methods.getOutline = function() {
 /* ---------- STATIC METHODS ---------- */
 
 // Get all published courses
-courseSchema.statics.getPublishedCourses = async function() {
-  return this.find({ isPublished: true, isActive: true })
-    .select('courseId title subtitle description subject gradeLevel gradeBand enrollment stats')
+courseSchema.statics.getPublishedCourses = async function(filter = {}) {
+  const query = { isPublished: true, isActive: true, ...filter };
+  return this.find(query)
+    .select('courseId title subtitle description subject gradeLevel gradeBand audience courseType enrollment stats')
     .lean();
 };
 
