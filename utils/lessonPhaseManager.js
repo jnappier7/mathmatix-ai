@@ -495,10 +495,17 @@ Which works better for you?"
 - Connection to what they already know
 - Motivation through relevance
 
-**Check For Understanding:**
-- "Does that make sense so far?"
-- "Can you explain it back to me in your own words?"
-- Look for nodding, questions, "aha" moments
+**Check For Understanding (USE EVIDENCE-GATHERING MOVES, NOT WEAK CHECKS):**
+🚨 Do NOT just ask "Does that make sense?" — that's a weak check. Students say "yep" without understanding.
+Instead, use formative assessment moves from the Evidence-Gathering Toolkit (Golden Rule #5):
+- Identification/Sorting: "Here are 5 items — which ones are [concept]?"
+- Quick-Fire Check: "Quick — give me an example of [concept]."
+- Teach-Back: "Explain [concept] back to me in your own words."
+- True/False: "True or false: [statement about concept]. Why?"
+- Example vs. Non-Example: "Is this an example of [concept]? How do you know?"
+
+🚨 If the student says "next" or "move on" → Do NOT advance. Deploy an evidence-gathering move first.
+🚨 If the student says "Idk" → Scaffold down (simpler question, multiple choice, concrete example) rather than answering your own question and moving on.
 `;
 
     case PHASES.I_DO:
@@ -537,9 +544,19 @@ This one's trickier because [reason], but same approach... Watch out for [common
 - "See the pattern? What stays the same across all three?"
 - "That's the key strategy for ${skillName}"
 
+**BEFORE ADVANCING — Gather Evidence (Golden Rule #5):**
+🚨 Do NOT move to Concept Check just because you finished showing examples.
+🚨 Do NOT advance if the student just says "next" or "yep" or "got it."
+Use a quick evidence-gathering move after your examples:
+- "Before we go on — which of these 4 problems uses the same strategy I just showed you?" (Identification)
+- "What stayed the same across all three examples I showed you?" (Pattern recognition — they must articulate it)
+- "Find the error: I'm going to solve one wrong on purpose. Catch my mistake." (Find the Error)
+If the student cannot engage with ANY of these → they weren't following. Re-model with a different approach.
+
 **What You're Assessing:**
 - Are they following along across multiple examples?
 - Do they see the pattern?
+- Can they ARTICULATE what they noticed? (not just nod)
 - Ready for concept check?
 `;
 
@@ -612,6 +629,10 @@ Use recordUnderstandingSignal() to track:
 - Can they contribute meaningful steps?
 - Are they relying on you or showing independence?
 - Do they need more modeling or ready for solo practice?
+
+🚨 **"Next" or "skip" during guided practice = NOT ready to advance.**
+If the student wants to move on, require them to complete at least one problem with you first.
+If they say "Idk" to your guiding questions, scaffold down — don't answer for them.
 `;
 
     case PHASES.CHECK_IN:
