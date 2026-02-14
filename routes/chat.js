@@ -35,6 +35,7 @@ const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -829,6 +830,36 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 try {
                     res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
                 } catch (e) { /* client may have disconnected */ }
+            }
+        }
+
+        // IEP READING LEVEL ENFORCEMENT: Score response and re-prompt if too complex
+        const iepReadingLevel = user.iepPlan?.readingLevel;
+        if (iepReadingLevel) {
+            const readCheck = checkReadingLevel(aiResponseText, iepReadingLevel);
+            if (!readCheck.passes) {
+                console.log(`📖 [IEP] Reading level violation for ${user.firstName}: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade} (+${readCheck.margin.toFixed(1)} over). Re-prompting for simplification.`);
+                try {
+                    const simplifyInstruction = buildSimplificationPrompt(aiResponseText, readCheck.targetGrade, user.firstName || 'the student');
+                    const simplifyMessages = [
+                        { role: 'system', content: simplifyInstruction }
+                    ];
+                    const simplified = await callLLM(PRIMARY_CHAT_MODEL, simplifyMessages, { temperature: 0.3, max_tokens: 1500 });
+                    const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                    if (simplifiedText && simplifiedText.length > 20) {
+                        aiResponseText = simplifiedText;
+                        // For streaming: send a replacement so frontend uses the simplified version
+                        if (useStreaming && !clientDisconnected) {
+                            try {
+                                res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
+                            } catch (e) { /* client may have disconnected */ }
+                        }
+                        console.log(`📖 [IEP] Simplified response for ${user.firstName} (target: Grade ${readCheck.targetGrade})`);
+                    }
+                } catch (simplifyErr) {
+                    console.error(`📖 [IEP] Simplification re-prompt failed:`, simplifyErr.message);
+                    // Fall through with original response rather than breaking the chat
+                }
             }
         }
 
