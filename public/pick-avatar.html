@@ -6,6 +6,7 @@
   <title>Choose Your Avatar! | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/avatar-builder.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
 <body class="landing-page-body">
@@ -17,6 +18,24 @@
   </header>
 
   <main class="pick-tutor-main" style="min-height: calc(100vh - 140px); overflow-y: auto; padding-bottom: 3rem;">
+    <!-- Onboarding Stepper -->
+    <div class="onboarding-stepper" style="margin-top: 2rem;">
+      <div class="stepper-step completed">
+        <div class="stepper-circle"></div>
+        <span class="stepper-label">Profile</span>
+      </div>
+      <div class="stepper-connector completed"></div>
+      <div class="stepper-step completed">
+        <div class="stepper-circle"></div>
+        <span class="stepper-label">Tutor</span>
+      </div>
+      <div class="stepper-connector completed"></div>
+      <div class="stepper-step active">
+        <div class="stepper-circle">3</div>
+        <span class="stepper-label">Avatar</span>
+      </div>
+    </div>
+
     <!-- AVATAR SELECTION -->
     <section class="selection-section">
       <h1 class="section-title">Choose Your Avatar.</h1>
@@ -44,6 +63,7 @@
   <script src="/js/csrf.js"></script>
   <script src="/js/avatar-config-data.js"></script>
   <script type="module" src="/js/pick-avatar.js"></script>
+  <script src="/js/ux-enhancements.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
