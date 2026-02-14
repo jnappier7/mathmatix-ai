@@ -858,6 +858,296 @@
     </footer>
   </div>
 
+  <!-- Mobile Bottom Nav (visible < 968px) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" data-mobile-tab="children">
+      <i class="fas fa-child"></i>
+      <span>Children</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="actions">
+      <i class="fas fa-user-plus"></i>
+      <span>Add Child</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="settings">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="email">
+      <i class="fas fa-envelope"></i>
+      <span>Reports</span>
+    </button>
+  </nav>
+
+  <!-- Mobile Add Child Drawer -->
+  <div class="mobile-drawer" id="mobile-actions-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-user-plus" style="color: #3498db;"></i> Add Child</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-actions-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-key" style="color: #3498db;"></i> Generate Invite Code</div>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;">Create a code for your child to link their account to yours.</p>
+        <button id="mobile-generate-code-btn" class="btn btn-primary main-action-btn" style="width: 100%;">
+          <i class="fas fa-user-plus"></i> Generate Invite Code
+        </button>
+        <div id="mobile-invite-code-output" style="display:none; margin-top: 12px; text-align: center; padding: 15px; background: #ebf5fb; border-radius: 8px; border: 2px solid #3498db;">
+          <p style="font-size: 0.85em; font-weight: 600; color: #4a5568; margin-bottom: 8px;">Share this code with your child:</p>
+          <div id="mobile-generated-code-value" style="background: #d6eaf8; color: #21618c; font-weight: bold; font-size: 1.3em; padding: 12px; border-radius: 8px; border: 2px solid #3498db; user-select: all;"></div>
+          <p style="font-size: 0.75em; color: #999; margin-top: 8px;">Expires: <span id="mobile-code-expires-at"></span></p>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-link" style="color: #3498db;"></i> Link Existing Student</div>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;">Enter your child's link code to connect their account.</p>
+        <form id="mobile-link-student-form">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <input type="text" id="mobile-studentLinkCode" placeholder="Enter 6-character code" required style="width: 100%;">
+          </div>
+          <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;">
+            <i class="fas fa-link"></i> Link Student
+          </button>
+          <div id="mobile-link-student-message" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Settings Drawer -->
+  <div class="mobile-drawer" id="mobile-settings-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-cog" style="color: #3498db;"></i> Settings</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-settings-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <form id="mobile-parent-settings-form">
+        <div class="drawer-section">
+          <div class="drawer-section-title"><i class="fas fa-calendar-alt" style="color: #3498db;"></i> Report Frequency</div>
+          <select id="mobile-reportFrequency" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">How often you receive progress reports</p>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title"><i class="fas fa-chart-line" style="color: #3498db;"></i> Dashboard View</div>
+          <select id="mobile-goalViewPreference" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="progress">Progress Overview</option>
+            <option value="gaps">Learning Gaps</option>
+            <option value="goals">IEP Goals</option>
+          </select>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">What you see first when viewing child progress</p>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title"><i class="fas fa-comments" style="color: #3498db;"></i> Communication Tone</div>
+          <select id="mobile-parentTone" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="">Standard (default)</option>
+            <option value="detailed">Detailed & Technical</option>
+            <option value="simple">Simple & Concise</option>
+            <option value="encouraging">Encouraging & Positive</option>
+          </select>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">How the AI communicates with you</p>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title"><i class="fas fa-language" style="color: #3498db;"></i> Language</div>
+          <input type="text" id="mobile-parentLanguage" placeholder="English" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">Preferred language for reports</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;">
+          <i class="fas fa-save"></i> Save Settings
+        </button>
+        <div id="mobile-settings-save-message" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Email Reports Drawer -->
+  <div class="mobile-drawer" id="mobile-email-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-envelope" style="color: #3498db;"></i> Email Reports</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-email-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;">
+          Get weekly progress reports delivered to your inbox.
+        </p>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-test-email-btn">
+            <i class="fas fa-paper-plane" style="color: #3498db;"></i>
+            Send Test Email
+          </button>
+          <button class="mobile-action-btn" id="mobile-weekly-report-btn">
+            <i class="fas fa-chart-line" style="color: #3498db;"></i>
+            Weekly Report Now
+          </button>
+        </div>
+        <div id="mobile-email-status-message" style="margin-top: 12px; font-size: 0.85em; text-align: center;"></div>
+        <p style="font-size: 0.75em; color: #999; margin-top: 16px; text-align: center;">
+          <i class="fas fa-info-circle"></i> Email must be configured in server settings
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Parent theme color for mobile nav active state */
+    .mobile-nav-btn.active { color: #3498db; }
+    .mobile-action-btn:hover { background: #ebf5fb; border-color: #3498db; }
+  </style>
+
+  <script>
+    // ============================================
+    // PARENT MOBILE NAV INITIALIZATION
+    // ============================================
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+        const drawers = {
+          actions: document.getElementById('mobile-actions-drawer'),
+          settings: document.getElementById('mobile-settings-drawer'),
+          email: document.getElementById('mobile-email-drawer')
+        };
+
+        // Close all drawers
+        function closeAllDrawers() {
+          Object.values(drawers).forEach(d => { if (d) d.classList.remove('open'); });
+        }
+
+        // Mobile nav tab clicks
+        mobileNavBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tab = btn.dataset.mobileTab;
+            mobileNavBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            closeAllDrawers();
+
+            if (tab === 'children') {
+              // Scroll to top / main content — already visible
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (tab === 'actions') {
+              if (drawers.actions) drawers.actions.classList.add('open');
+            } else if (tab === 'settings') {
+              // Sync desktop form values to mobile form
+              syncSettingsToMobile();
+              if (drawers.settings) drawers.settings.classList.add('open');
+            } else if (tab === 'email') {
+              if (drawers.email) drawers.email.classList.add('open');
+            }
+          });
+        });
+
+        // Close drawer buttons
+        document.querySelectorAll('[data-close-drawer]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const drawerId = btn.dataset.closeDrawer;
+            const drawer = document.getElementById(drawerId);
+            if (drawer) drawer.classList.remove('open');
+            // Re-activate Children tab
+            mobileNavBtns.forEach(b => b.classList.remove('active'));
+            mobileNavBtns[0]?.classList.add('active');
+          });
+        });
+
+        // Sync settings from desktop form to mobile form
+        function syncSettingsToMobile() {
+          const fields = ['reportFrequency', 'goalViewPreference', 'parentTone', 'parentLanguage'];
+          fields.forEach(field => {
+            const desktop = document.getElementById(field);
+            const mobile = document.getElementById('mobile-' + field);
+            if (desktop && mobile) mobile.value = desktop.value;
+          });
+        }
+
+        // Sync settings from mobile form to desktop and submit
+        const mobileSettingsForm = document.getElementById('mobile-parent-settings-form');
+        if (mobileSettingsForm) {
+          mobileSettingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fields = ['reportFrequency', 'goalViewPreference', 'parentTone', 'parentLanguage'];
+            fields.forEach(field => {
+              const desktop = document.getElementById(field);
+              const mobile = document.getElementById('mobile-' + field);
+              if (desktop && mobile) desktop.value = mobile.value;
+            });
+            // Trigger the desktop form submit
+            const desktopForm = document.getElementById('parent-settings-form');
+            if (desktopForm) {
+              desktopForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+              const msg = document.getElementById('mobile-settings-save-message');
+              if (msg) { msg.textContent = 'Settings saved!'; msg.style.color = '#27ae60'; setTimeout(() => msg.textContent = '', 3000); }
+            }
+          });
+        }
+
+        // Mobile generate invite code — trigger the desktop button
+        document.getElementById('mobile-generate-code-btn')?.addEventListener('click', function() {
+          const desktopBtn = document.getElementById('generate-code-btn');
+          if (desktopBtn) desktopBtn.click();
+          // Poll for the generated code to appear in the desktop UI
+          setTimeout(function syncCode() {
+            const desktopOutput = document.getElementById('invite-code-output');
+            const mobileOutput = document.getElementById('mobile-invite-code-output');
+            const desktopCode = document.getElementById('generated-code-value');
+            const mobileCode = document.getElementById('mobile-generated-code-value');
+            const desktopExpiry = document.getElementById('code-expires-at');
+            const mobileExpiry = document.getElementById('mobile-code-expires-at');
+            if (desktopOutput && desktopOutput.style.display !== 'none' && desktopCode && mobileCode) {
+              mobileCode.textContent = desktopCode.textContent;
+              if (desktopExpiry && mobileExpiry) mobileExpiry.textContent = desktopExpiry.textContent;
+              if (mobileOutput) mobileOutput.style.display = 'block';
+            } else {
+              setTimeout(syncCode, 300);
+            }
+          }, 300);
+        });
+
+        // Mobile link student form — trigger desktop form
+        document.getElementById('mobile-link-student-form')?.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const mobileInput = document.getElementById('mobile-studentLinkCode');
+          const desktopInput = document.getElementById('studentLinkCode');
+          if (mobileInput && desktopInput) {
+            desktopInput.value = mobileInput.value;
+            const desktopForm = document.getElementById('link-student-form');
+            if (desktopForm) desktopForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            // Show feedback
+            setTimeout(function() {
+              const desktopMsg = document.getElementById('link-student-message');
+              const mobileMsg = document.getElementById('mobile-link-student-message');
+              if (desktopMsg && mobileMsg) mobileMsg.innerHTML = desktopMsg.innerHTML;
+            }, 1000);
+          }
+        });
+
+        // Mobile email buttons — trigger desktop buttons
+        document.getElementById('mobile-test-email-btn')?.addEventListener('click', function() {
+          document.getElementById('test-email-btn')?.click();
+          setTimeout(function() {
+            const desktopMsg = document.getElementById('email-status-message');
+            const mobileMsg = document.getElementById('mobile-email-status-message');
+            if (desktopMsg && mobileMsg) mobileMsg.innerHTML = desktopMsg.innerHTML;
+          }, 1500);
+        });
+        document.getElementById('mobile-weekly-report-btn')?.addEventListener('click', function() {
+          document.getElementById('send-weekly-report-btn')?.click();
+          setTimeout(function() {
+            const desktopMsg = document.getElementById('email-status-message');
+            const mobileMsg = document.getElementById('mobile-email-status-message');
+            if (desktopMsg && mobileMsg) mobileMsg.innerHTML = desktopMsg.innerHTML;
+          }, 1500);
+        });
+      });
+    })();
+  </script>
+
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>

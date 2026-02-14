@@ -1701,6 +1701,264 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     </div>
   </div>
 
+  <!-- Mobile Bottom Nav (visible < 968px) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" data-mobile-tab="users">
+      <i class="fas fa-users"></i>
+      <span>Users</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="actions">
+      <i class="fas fa-bolt"></i>
+      <span>Actions</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="reports">
+      <i class="fas fa-chart-bar"></i>
+      <span>Reports</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobile-tab="status">
+      <i class="fas fa-server"></i>
+      <span>Status</span>
+    </button>
+  </nav>
+
+  <!-- Mobile Actions Drawer (right sidebar content) -->
+  <div class="mobile-drawer" id="mobile-actions-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-bolt" style="color: #e74c3c;"></i> Quick Actions</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-actions-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-chalkboard-teacher" style="color: #e74c3c;"></i> User & Roster Setup</div>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-create-user">
+            <i class="fas fa-user-plus" style="color: #e74c3c;"></i>
+            Create User
+          </button>
+          <button class="mobile-action-btn" id="mobile-link-parent">
+            <i class="fas fa-link" style="color: #e67e22;"></i>
+            Link Parent
+          </button>
+          <button class="mobile-action-btn" id="mobile-class-code">
+            <i class="fas fa-key" style="color: #f39c12;"></i>
+            Class Code
+          </button>
+          <button class="mobile-action-btn" id="mobile-import-roster">
+            <i class="fas fa-file-csv" style="color: #27ae60;"></i>
+            Import Roster
+          </button>
+          <button class="mobile-action-btn" id="mobile-manage-classes">
+            <i class="fas fa-users-cog" style="color: #3498db;"></i>
+            Manage Classes
+          </button>
+          <button class="mobile-action-btn" id="mobile-view-summaries">
+            <i class="fas fa-list-alt" style="color: #8e44ad;"></i>
+            User Summaries
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-envelope" style="color: #e74c3c;"></i> Bulk Email</div>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-compose-email">
+            <i class="fas fa-paper-plane" style="color: #e74c3c;"></i>
+            Compose Email
+          </button>
+          <button class="mobile-action-btn" id="mobile-email-history">
+            <i class="fas fa-history" style="color: #e67e22;"></i>
+            Email History
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Reports Drawer -->
+  <div class="mobile-drawer" id="mobile-reports-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-chart-bar" style="color: #e74c3c;"></i> Reports & Analytics</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-reports-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-chart-line" style="color: #e74c3c;"></i> Quick Reports</div>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-usage-report">
+            <i class="fas fa-chart-bar" style="color: #e74c3c;"></i>
+            Usage Report
+          </button>
+          <button class="mobile-action-btn" id="mobile-live-activity">
+            <i class="fas fa-broadcast-tower" style="color: #27ae60;"></i>
+            Live Activity
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-star" style="color: #f39c12;"></i> Alpha Testing Feedback</div>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-survey-analytics">
+            <i class="fas fa-chart-line" style="color: #f39c12;"></i>
+            Survey Analytics
+          </button>
+        </div>
+        <div style="margin-top: 12px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">
+          <div style="margin-bottom: 5px;"><strong>Total Responses:</strong> <span class="mobile-stat-totalSurveyResponses">-</span></div>
+          <div style="margin-bottom: 5px;"><strong>Avg Rating:</strong> <span class="mobile-stat-avgRating">-</span> / 5</div>
+          <div><strong>Tour Completion:</strong> <span class="mobile-stat-tourCompletionRate">-</span>%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Status Drawer (left sidebar content) -->
+  <div class="mobile-drawer" id="mobile-status-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-server" style="color: #e74c3c;"></i> System Status</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-status-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-heartbeat" style="color: #27ae60;"></i> System Health</div>
+        <div style="background: #f8f9fa; border-radius: 10px; padding: 16px;">
+          <p style="margin-bottom: 8px;"><strong>Database:</strong> <span id="mobile-dbStatus" class="status-online">Online</span></p>
+          <p style="margin-bottom: 8px;"><strong>AI Service:</strong> <span id="mobile-aiStatus" class="status-online">Operational</span></p>
+          <p><strong>Last Sync:</strong> <span id="mobile-lastSyncTime">Just now</span></p>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-trophy" style="color: #f39c12;"></i> Top Students</div>
+        <div id="mobile-leaderboard-content" style="background: #f8f9fa; border-radius: 10px; padding: 12px;">
+          <p style="color: #999; text-align: center;">Loading leaderboard...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Admin theme color for mobile nav active state */
+    .mobile-nav-btn.active { color: #e74c3c; }
+    .mobile-action-btn:hover { background: #fdf2f0; border-color: #e74c3c; }
+  </style>
+
+  <script>
+    // ============================================
+    // ADMIN MOBILE NAV INITIALIZATION
+    // ============================================
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+        const drawers = {
+          actions: document.getElementById('mobile-actions-drawer'),
+          reports: document.getElementById('mobile-reports-drawer'),
+          status: document.getElementById('mobile-status-drawer')
+        };
+
+        function closeAllDrawers() {
+          Object.values(drawers).forEach(d => { if (d) d.classList.remove('open'); });
+        }
+
+        // Mobile nav tab clicks
+        mobileNavBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tab = btn.dataset.mobileTab;
+            mobileNavBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            closeAllDrawers();
+
+            if (tab === 'users') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (tab === 'actions') {
+              if (drawers.actions) drawers.actions.classList.add('open');
+            } else if (tab === 'reports') {
+              syncStatusToMobile();
+              if (drawers.reports) drawers.reports.classList.add('open');
+            } else if (tab === 'status') {
+              syncStatusToMobile();
+              if (drawers.status) drawers.status.classList.add('open');
+            }
+          });
+        });
+
+        // Close drawer buttons
+        document.querySelectorAll('[data-close-drawer]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const drawerId = btn.dataset.closeDrawer;
+            const drawer = document.getElementById(drawerId);
+            if (drawer) drawer.classList.remove('open');
+            mobileNavBtns.forEach(b => b.classList.remove('active'));
+            mobileNavBtns[0]?.classList.add('active');
+          });
+        });
+
+        // Sync status info from desktop sidebar to mobile drawer
+        function syncStatusToMobile() {
+          // System status
+          const fields = [['dbStatus', 'mobile-dbStatus'], ['aiStatus', 'mobile-aiStatus'], ['lastSyncTime', 'mobile-lastSyncTime']];
+          fields.forEach(([src, dest]) => {
+            const s = document.getElementById(src);
+            const d = document.getElementById(dest);
+            if (s && d) { d.textContent = s.textContent; d.className = s.className; }
+          });
+
+          // Leaderboard
+          const leaderboard = document.getElementById('leaderboardTable');
+          const mobileLeaderboard = document.getElementById('mobile-leaderboard-content');
+          if (leaderboard && mobileLeaderboard) {
+            const rows = leaderboard.querySelectorAll('tbody tr');
+            if (rows.length > 0 && !rows[0].querySelector('td[colspan]')) {
+              let html = '';
+              rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                  html += '<div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee;">';
+                  html += '<span style="font-weight: 600;">#' + cells[0].textContent + ' ' + cells[1].textContent + '</span>';
+                  html += '<span style="color: #666;">Lv.' + cells[2].textContent + ' · ' + cells[3].textContent + ' XP</span>';
+                  html += '</div>';
+                }
+              });
+              mobileLeaderboard.innerHTML = html || '<p style="color: #999; text-align: center;">No data</p>';
+            }
+          }
+
+          // Survey stats
+          const statFields = ['totalSurveyResponses', 'avgRating', 'tourCompletionRate'];
+          statFields.forEach(field => {
+            const src = document.getElementById(field);
+            const dests = document.querySelectorAll('.mobile-stat-' + field);
+            if (src) dests.forEach(d => d.textContent = src.textContent);
+          });
+        }
+
+        // Action button wiring — trigger the corresponding desktop buttons
+        const actionMap = {
+          'mobile-create-user': 'openTeacherSetupBtn',
+          'mobile-link-parent': 'openLinkParentBtn',
+          'mobile-class-code': 'openEnrollmentCodeBtn',
+          'mobile-import-roster': 'openRosterImportBtn',
+          'mobile-manage-classes': 'openManageClassesBtn',
+          'mobile-view-summaries': 'openSummariesBtn',
+          'mobile-usage-report': 'openUsageReportBtn',
+          'mobile-live-activity': 'openLiveActivityBtn',
+          'mobile-survey-analytics': 'openSurveyResponsesBtn',
+          'mobile-compose-email': 'openBulkEmailBtn',
+          'mobile-email-history': 'viewEmailCampaignsBtn'
+        };
+
+        Object.entries(actionMap).forEach(([mobileId, desktopId]) => {
+          document.getElementById(mobileId)?.addEventListener('click', () => {
+            document.getElementById(desktopId)?.click();
+            closeAllDrawers();
+            mobileNavBtns.forEach(b => b.classList.remove('active'));
+            mobileNavBtns[0]?.classList.add('active');
+          });
+        });
+      });
+    })();
+  </script>
+
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
