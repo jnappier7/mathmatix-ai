@@ -1,0 +1,436 @@
+{
+  "moduleId": "decimals",
+  "course": "Early Math Foundations",
+  "unit": 6,
+  "title": "Decimals",
+  "weeks": "16-18",
+  "estimatedDuration": 35,
+  "description": "Decimals are fractions in disguise — just written in base-10. Students learn decimal place value through thousandths, compare and order decimals by annexing zeros and aligning place values, add and subtract decimals using the standard algorithm with decimal alignment, and build the fraction-decimal connection so they can move between forms fluently. Money is the anchor context throughout.",
+
+  "skills": [
+    "emf-decimal-place-value",
+    "emf-compare-order-decimals",
+    "emf-add-subtract-decimals",
+    "emf-decimals-fractions-connection"
+  ],
+
+  "standardsAlignment": ["4.NF.C.6", "4.NF.C.7", "5.NBT.A.1", "5.NBT.A.3", "5.NBT.A.3b", "5.NBT.B.7"],
+
+  "goals": [
+    "Read, write, and identify the value of each digit in a decimal through thousandths using place-value charts and expanded form",
+    "Compare and order decimals through thousandths by annexing zeros and aligning place values",
+    "Add and subtract decimals through hundredths using the standard algorithm with correct decimal-point alignment",
+    "Convert between fractions (denominators of 10, 100, and 1000) and decimals, and recognize common equivalents like 1/2 = 0.5 and 1/4 = 0.25"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do, with money as the anchor context in every phase",
+    "AI uses scaffold array as scope and worked-example bank; encourages effort with age-appropriate praise",
+    "Place-value charts, number lines, and base-10 block visuals are referenced to build conceptual understanding before procedural fluency",
+    "Frequent real-world money scenarios keep problems concrete and relatable for ages 8-11"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Decimal Place Value — Tenths, Hundredths & Thousandths",
+      "skill": "emf-decimal-place-value",
+      "content": "You already know place value for whole numbers — ones, tens, hundreds. Decimals extend that pattern to the RIGHT of the decimal point, getting ten times smaller each step. Think of money: a dollar is 1 whole, a dime is one-tenth of a dollar, and a penny is one-hundredth of a dollar. The decimal point is just a tiny dot that separates the whole-number part from the fractional part.",
+      "keyPoints": [
+        "The first place after the decimal point is TENTHS (1/10). One dime = $0.1 = one-tenth of a dollar.",
+        "The second place is HUNDREDTHS (1/100). One penny = $0.01 = one-hundredth of a dollar.",
+        "The third place is THOUSANDTHS (1/1000). One mill = $0.001 = one-thousandth of a dollar (used in gas prices!).",
+        "Each digit's VALUE = digit × its place value. In 3.547: the 5 is worth 5 × 1/10 = 5/10 = 0.5.",
+        "Expanded form: 3.547 = 3 + 0.5 + 0.04 + 0.007 (three and five tenths, four hundredths, seven thousandths).",
+        "Reading decimals: say the whole part, then 'and' for the decimal point, then read the decimal digits as a whole number followed by the smallest place name. 3.547 → 'three and five hundred forty-seven thousandths'."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Decimal Place Value — Worked Examples",
+      "skill": "emf-decimal-place-value",
+      "examples": [
+        {
+          "problem": "Maya has $4.62 in her piggy bank. What is the value of the digit 6 in 4.62?",
+          "solution": "Look at where the 6 sits:\n  4 . 6 2\n  ↑   ↑ ↑\n  ones tenths hundredths\n\nThe 6 is in the TENTHS place.\nIts value = 6 × 0.1 = 0.6\nThat's like 6 dimes — 60 cents!\nAnswer: The 6 has a value of 0.6 (six tenths)."
+        },
+        {
+          "problem": "Write 2.308 in expanded form.",
+          "solution": "Break each digit into its place value:\n  2 is in the ones place → 2\n  3 is in the tenths place → 0.3\n  0 is in the hundredths place → 0.00 (zero hundredths — we can skip it!)\n  8 is in the thousandths place → 0.008\n\n2.308 = 2 + 0.3 + 0.008\nAnswer: 2 + 0.3 + 0.008"
+        },
+        {
+          "problem": "A gallon of gas costs $3.459. How do you read this number aloud, and what place is the 9 in?",
+          "solution": "Count the decimal places:\n  3 . 4  5  9\n  ↑   ↑  ↑  ↑\n  ones tenths hundredths thousandths\n\nThe 9 is in the THOUSANDTHS place.\nRead it aloud: 'three and four hundred fifty-nine thousandths.'\nFun fact: gas stations use thousandths (called 'mills') to set their prices!\nAnswer: The 9 is in the thousandths place. Read as 'three and four hundred fifty-nine thousandths.'"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Decimal Place Value — Practice Together",
+      "skill": "emf-decimal-place-value",
+      "problems": [
+        {
+          "id": "dec-1",
+          "problem": "Jayden earns $7.35 for doing chores. What is the value of the digit 3 in 7.35?",
+          "hints": [
+            "First, figure out which place the 3 is in — count from the decimal point: first place is tenths, second is hundredths.",
+            "The 3 is in the tenths place, so its value = 3 × 0.1. Think: how many dimes is that?"
+          ],
+          "answer": "The 3 is in the tenths place. Its value is 0.3 (three tenths), which is like 3 dimes or 30 cents."
+        },
+        {
+          "id": "dec-2",
+          "problem": "Write 5.029 in expanded form.",
+          "hints": [
+            "Take it digit by digit: 5 is ones, 0 is tenths, 2 is hundredths, 9 is thousandths.",
+            "You can skip any place that has a 0 because 0 times anything is 0."
+          ],
+          "answer": "5.029 = 5 + 0.02 + 0.009. The tenths digit is 0, so we skip it."
+        },
+        {
+          "id": "dec-3",
+          "problem": "In the number 0.764, which digit is in the hundredths place, and what is its value?",
+          "hints": [
+            "The hundredths place is the SECOND digit after the decimal point.",
+            "Count: 7 is tenths, 6 is hundredths, 4 is thousandths."
+          ],
+          "answer": "The digit 6 is in the hundredths place. Its value is 0.06 (six hundredths)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Decimal Place Value — Show What You Know",
+      "skill": "emf-decimal-place-value",
+      "problems": [
+        {
+          "id": "dec-4",
+          "problem": "A pencil costs $0.89. What is the value of the digit 8? What is the value of the digit 9?",
+          "answer": "The 8 is in the tenths place — its value is 0.8 (8 dimes = 80 cents). The 9 is in the hundredths place — its value is 0.09 (9 pennies = 9 cents)."
+        },
+        {
+          "id": "dec-5",
+          "problem": "Write the expanded form of 12.406.",
+          "answer": "12.406 = 10 + 2 + 0.4 + 0.006. The hundredths digit is 0, so we skip it."
+        },
+        {
+          "id": "dec-6",
+          "problem": "A race time is recorded as 9.173 seconds. Read this number aloud and name the place value of each digit after the decimal point.",
+          "answer": "Nine and one hundred seventy-three thousandths. The 1 is in the tenths place (0.1), the 7 is in the hundredths place (0.07), and the 3 is in the thousandths place (0.003)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Comparing & Ordering Decimals",
+      "skill": "emf-compare-order-decimals",
+      "content": "Comparing decimals can be tricky — 0.8 and 0.53 look close, but 0.8 is actually much bigger! The secret is to annex zeros so both numbers have the same number of decimal places, then compare digit by digit from left to right, just like you compare whole numbers. Think of it like making sure both dollar amounts have the same number of digits: $0.80 vs. $0.53 — now it's easy to see which is more money!",
+      "keyPoints": [
+        "ANNEX ZEROS: adding a zero to the end of a decimal does NOT change its value. 0.8 = 0.80 = 0.800.",
+        "LINE UP the decimal points so that tenths are above tenths, hundredths above hundredths.",
+        "Compare digit by digit from LEFT to RIGHT. The first place where the digits differ tells you which number is bigger.",
+        "On a number line, the decimal farther to the right is greater.",
+        "Use >, <, or = to show the comparison. Remember: the 'hungry alligator' always opens toward the bigger number!",
+        "To ORDER decimals, first annex zeros so all have the same number of places, then sort from least to greatest or greatest to least."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Comparing & Ordering Decimals — Worked Examples",
+      "skill": "emf-compare-order-decimals",
+      "examples": [
+        {
+          "problem": "Compare 0.6 and 0.47. Which is greater?",
+          "solution": "Step 1 — Annex a zero: 0.6 = 0.60\nStep 2 — Line up and compare:\n  0.60\n  0.47\n  ↑ tenths: 6 > 4 → STOP! We already know.\n\n0.60 > 0.47, so 0.6 > 0.47.\nMoney check: 60 cents vs. 47 cents — 60 cents is more!\nAnswer: 0.6 > 0.47"
+        },
+        {
+          "problem": "Order these decimals from least to greatest: 0.305, 0.3, 0.35",
+          "solution": "Step 1 — Annex zeros so all have 3 decimal places:\n  0.305 → 0.305\n  0.3   → 0.300\n  0.35  → 0.350\n\nStep 2 — Compare digit by digit:\n  Tenths: all are 3 — tie!\n  Hundredths: 0 vs. 0 vs. 5 → 0.300 and 0.305 are both less than 0.350\n  Thousandths (for the two with 0 hundredths): 0 vs. 5 → 0.300 < 0.305\n\nOrder: 0.300 < 0.305 < 0.350\nAnswer: 0.3, 0.305, 0.35"
+        },
+        {
+          "problem": "Liam has $2.50 and Ava has $2.05. Who has more money?",
+          "solution": "Line up the decimal points:\n  2.50\n  2.05\n  ↑ ones: 2 = 2 — tie\n  ↑ tenths: 5 > 0 → STOP!\n\n2.50 > 2.05\nLiam has more money — he has two dollars and fifty cents, while Ava has two dollars and five cents.\nAnswer: Liam has more money. $2.50 > $2.05."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Comparing & Ordering Decimals — Practice Together",
+      "skill": "emf-compare-order-decimals",
+      "problems": [
+        {
+          "id": "dec-7",
+          "problem": "Compare 0.72 and 0.7. Use >, <, or =.",
+          "hints": [
+            "Annex a zero to 0.7 to make it 0.70. Now both numbers have two decimal places.",
+            "Compare tenths: both are 7. Compare hundredths: 2 vs. 0."
+          ],
+          "answer": "0.72 > 0.7. After annexing a zero: 0.72 vs. 0.70. Tenths are the same (7 = 7), but 2 hundredths > 0 hundredths."
+        },
+        {
+          "id": "dec-8",
+          "problem": "Order from least to greatest: 1.5, 1.05, 1.55, 1.505",
+          "hints": [
+            "Annex zeros so all have 3 decimal places: 1.500, 1.050, 1.550, 1.505.",
+            "Compare the tenths first: 0 is smallest, then all the 5s. For the three with 5 in tenths, compare hundredths."
+          ],
+          "answer": "1.05, 1.5, 1.505, 1.55. With annexed zeros: 1.050 < 1.500 < 1.505 < 1.550."
+        },
+        {
+          "id": "dec-9",
+          "problem": "Rosa found a coin jar with $0.90 and another with $0.09. She says they're the same amount because they both have a 9 and a 0. Is she correct? Explain.",
+          "hints": [
+            "Look at WHERE the 9 is in each number. What place is it in?",
+            "In $0.90, the 9 is in the tenths place (9 dimes). In $0.09, the 9 is in the hundredths place (9 pennies)."
+          ],
+          "answer": "Rosa is NOT correct. $0.90 = 90 cents (9 dimes) and $0.09 = 9 cents (9 pennies). The 9 is in different place-value positions, so the amounts are very different. $0.90 > $0.09."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Comparing & Ordering Decimals — Show What You Know",
+      "skill": "emf-compare-order-decimals",
+      "problems": [
+        {
+          "id": "dec-10",
+          "problem": "Compare 3.40 and 3.4. Use >, <, or =.",
+          "answer": "3.40 = 3.4. Annexing a zero to 3.4 gives 3.40. They are the same value — both equal three and four tenths."
+        },
+        {
+          "id": "dec-11",
+          "problem": "Order from greatest to least: 0.08, 0.8, 0.088, 0.808",
+          "answer": "0.808, 0.8, 0.088, 0.08. With annexed zeros: 0.808 > 0.800 > 0.088 > 0.080."
+        },
+        {
+          "id": "dec-12",
+          "problem": "Carlos scored 9.75 in a gymnastics event and Mia scored 9.8. Who got the higher score?",
+          "answer": "Mia got the higher score. Annex a zero: 9.80 vs. 9.75. Tenths: 8 > 7, so 9.80 > 9.75."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Adding & Subtracting Decimals",
+      "skill": "emf-add-subtract-decimals",
+      "content": "Adding and subtracting decimals works just like adding and subtracting whole numbers — with ONE important rule: LINE UP THE DECIMAL POINTS, not the last digits! When you add $3.50 + $12.75 at a store, you line up the dollars under dollars, dimes under dimes, and pennies under pennies. That's decimal alignment! Annex zeros when one number has fewer decimal places so every column is filled, then add or subtract as usual and bring the decimal straight down into your answer.",
+      "keyPoints": [
+        "GOLDEN RULE: Line up the decimal points vertically, NOT the last digits. This is the #1 mistake students make!",
+        "Annex zeros so both numbers have the same number of decimal places. Example: 5.3 + 2.17 → write 5.30 + 2.17.",
+        "Add or subtract column by column from right to left, just like whole numbers.",
+        "Regroup (carry or borrow) across the decimal point the same way you do with whole numbers.",
+        "Bring the decimal point STRAIGHT DOWN into the answer — it stays in the same column.",
+        "Check with money: does your answer make sense as a dollar amount? If $5.30 + $2.17 = $7.47, that sounds right!"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Adding & Subtracting Decimals — Worked Examples",
+      "skill": "emf-add-subtract-decimals",
+      "examples": [
+        {
+          "problem": "Kayla buys a notebook for $3.49 and a pen for $1.25. How much does she spend in all?",
+          "solution": "Step 1 — Line up the decimal points:\n    3.49\n  + 1.25\n  -----\n\nStep 2 — Add right to left:\n  Hundredths: 9 + 5 = 14. Write 4, carry 1.\n  Tenths: 4 + 2 + 1(carry) = 7. Write 7.\n  Ones: 3 + 1 = 4. Write 4.\n\nStep 3 — Bring the decimal straight down:\n    3.49\n  + 1.25\n  -----\n    4.74\n\nKayla spends $4.74.\nAnswer: $4.74"
+        },
+        {
+          "problem": "Subtract: 8.3 − 4.56",
+          "solution": "Step 1 — Annex a zero: 8.3 → 8.30\nStep 2 — Line up:\n    8.30\n  − 4.56\n  -----\n\nStep 3 — Subtract right to left:\n  Hundredths: 0 − 6? Can't! Borrow from tenths: 10 − 6 = 4.\n  Tenths: 2 (after borrowing) − 5? Can't! Borrow from ones: 12 − 5 = 7.\n  Ones: 7 (after borrowing) − 4 = 3.\n\n    8.30\n  − 4.56\n  -----\n    3.74\n\nMoney check: $8.30 − $4.56 = $3.74. Makes sense!\nAnswer: 3.74"
+        },
+        {
+          "problem": "Find the sum: 12.5 + 0.375 + 3",
+          "solution": "Step 1 — Annex zeros so all have 3 decimal places:\n  12.500\n   0.375\n   3.000\n\nStep 2 — Line up and add:\n  12.500\n   0.375\n+  3.000\n-------\n  15.875\n\nThousandths: 0 + 5 + 0 = 5\nHundredths: 0 + 7 + 0 = 7\nTenths: 5 + 3 + 0 = 8\nOnes: 2 + 0 + 3 = 5\nTens: 1 + 0 + 0 = 1\n\nAnswer: 15.875"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Adding & Subtracting Decimals — Practice Together",
+      "skill": "emf-add-subtract-decimals",
+      "problems": [
+        {
+          "id": "dec-13",
+          "problem": "At the bake sale, a cupcake costs $2.75 and a cookie costs $1.50. What is the total cost?",
+          "hints": [
+            "Line up the decimal points: 2.75 + 1.50. Both already have two decimal places — great, no annexing needed!",
+            "Add right to left: hundredths 5 + 0 = 5, tenths 7 + 5 = 12 (write 2, carry 1), ones 2 + 1 + 1 = 4."
+          ],
+          "answer": "$4.25. 2.75 + 1.50 = 4.25. The cupcake and cookie together cost $4.25."
+        },
+        {
+          "id": "dec-14",
+          "problem": "Ethan had $10.00 and spent $6.83 on a book. How much money does he have left?",
+          "hints": [
+            "Set it up as 10.00 − 6.83. Line up the decimal points.",
+            "You'll need to borrow: 0 − 3 in hundredths means borrow from tenths, but tenths is also 0, so borrow from ones first."
+          ],
+          "answer": "$3.17. 10.00 − 6.83 = 3.17. Ethan has $3.17 left."
+        },
+        {
+          "id": "dec-15",
+          "problem": "Add: 0.6 + 2.35 + 4.128",
+          "hints": [
+            "First, annex zeros so all have 3 decimal places: 0.600 + 2.350 + 4.128.",
+            "Line up the decimal points and add column by column from right to left."
+          ],
+          "answer": "7.078. With annexed zeros: 0.600 + 2.350 + 4.128 = 7.078."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Adding & Subtracting Decimals — Show What You Know",
+      "skill": "emf-add-subtract-decimals",
+      "problems": [
+        {
+          "id": "dec-16",
+          "problem": "Sophia has $5.00. She buys a drink for $1.89 and a snack for $2.36. How much money does she have left?",
+          "answer": "$0.75. First add the costs: $1.89 + $2.36 = $4.25. Then subtract: $5.00 − $4.25 = $0.75. Sophia has 75 cents left."
+        },
+        {
+          "id": "dec-17",
+          "problem": "Subtract: 15.2 − 8.475",
+          "answer": "6.725. Annex zeros: 15.200 − 8.475 = 6.725. Remember to borrow when a top digit is smaller than the bottom digit."
+        },
+        {
+          "id": "dec-18",
+          "problem": "Two runners' times in a race are 12.09 seconds and 11.8 seconds. What is the difference between their times?",
+          "answer": "0.29 seconds. Annex a zero to 11.8 → 11.80. Then 12.09 − 11.80 = 0.29 seconds."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The Fraction-Decimal Connection",
+      "skill": "emf-decimals-fractions-connection",
+      "content": "Here's a cool secret: every decimal IS a fraction, and many fractions can be written as decimals! When you write $0.75, you're really saying 75 out of 100, or 75/100. Decimals and fractions are just two different ways to write the same number. Learning to switch between them makes you a more flexible problem-solver — like being able to speak two languages!",
+      "keyPoints": [
+        "Decimal → Fraction: read the decimal using place value, then write it. 0.75 = 'seventy-five hundredths' = 75/100. Then simplify: 75/100 = 3/4.",
+        "Fraction → Decimal: if the denominator is 10, 100, or 1000, just write the numerator in the right place. 7/10 = 0.7, 23/100 = 0.23, 9/1000 = 0.009.",
+        "For other fractions, divide the numerator by the denominator. 3/4 = 3 ÷ 4 = 0.75.",
+        "Common equivalents to memorize: 1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75, 1/5 = 0.2, 1/10 = 0.1.",
+        "Money connection: a quarter ($0.25) is 1/4 of a dollar, a half-dollar ($0.50) is 1/2 of a dollar, three quarters ($0.75) is 3/4 of a dollar.",
+        "To simplify a fraction, divide numerator and denominator by their greatest common factor (GCF). 75/100 → GCF is 25 → 3/4."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Fraction-Decimal Connection — Worked Examples",
+      "skill": "emf-decimals-fractions-connection",
+      "examples": [
+        {
+          "problem": "Convert 0.45 to a fraction in simplest form.",
+          "solution": "Step 1 — Read the decimal: 0.45 = 'forty-five hundredths' = 45/100.\nStep 2 — Simplify: Find the GCF of 45 and 100.\n  Factors of 45: 1, 3, 5, 9, 15, 45\n  Factors of 100: 1, 2, 4, 5, 10, 20, 25, 50, 100\n  GCF = 5\nStep 3 — Divide: 45 ÷ 5 = 9, 100 ÷ 5 = 20.\n\n0.45 = 45/100 = 9/20\nAnswer: 9/20"
+        },
+        {
+          "problem": "Write 3/4 as a decimal. Then explain using money.",
+          "solution": "Method 1 — Division: 3 ÷ 4 = 0.75\n  4 goes into 3.00:\n  4 × 7 = 28 → 30 − 28 = 2, bring down 0 → 20\n  4 × 5 = 20 → 20 − 20 = 0. Done!\n\nMethod 2 — Money: 3/4 of a dollar = 3 quarters = 75 cents = $0.75.\n\nAnswer: 3/4 = 0.75"
+        },
+        {
+          "problem": "A recipe calls for 0.5 cups of sugar and 2/10 cups of vanilla. Which is more?",
+          "solution": "Convert both to the same form:\n  0.5 = 5/10 (or stay as 0.5)\n  2/10 = 0.2\n\nNow compare: 0.5 vs. 0.2 → 0.5 > 0.2.\nMoney way: 0.5 is like 50 cents, 0.2 is like 20 cents. 50 > 20!\n\n0.5 cups of sugar is more than 2/10 cups of vanilla.\nAnswer: 0.5 cups (sugar) is more. 0.5 = 5/10 > 2/10."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Fraction-Decimal Connection — Practice Together",
+      "skill": "emf-decimals-fractions-connection",
+      "problems": [
+        {
+          "id": "dec-19",
+          "problem": "Convert 0.8 to a fraction in simplest form.",
+          "hints": [
+            "0.8 = 'eight tenths' = 8/10. Now simplify by finding the GCF of 8 and 10.",
+            "GCF of 8 and 10 is 2. Divide both by 2."
+          ],
+          "answer": "0.8 = 8/10 = 4/5. The GCF of 8 and 10 is 2, so 8 ÷ 2 = 4 and 10 ÷ 2 = 5."
+        },
+        {
+          "id": "dec-20",
+          "problem": "Write 1/4 as a decimal. Use the money connection to check your answer.",
+          "hints": [
+            "Divide: 1 ÷ 4. Or think: how many quarters make a dollar?",
+            "1 quarter = $0.25. So 1/4 = 0.25."
+          ],
+          "answer": "1/4 = 0.25. One quarter is $0.25, which is one-fourth of a dollar. You can verify: 1 ÷ 4 = 0.25."
+        },
+        {
+          "id": "dec-21",
+          "problem": "Marcus ate 0.75 of a pizza. Bella ate 7/10 of an identical pizza. Who ate more?",
+          "hints": [
+            "Convert both to the same form. Either make 0.75 into a fraction, or 7/10 into a decimal.",
+            "7/10 = 0.70 = 0.7. Now compare 0.75 and 0.70."
+          ],
+          "answer": "Marcus ate more. 0.75 > 0.70 (which is 7/10). In money terms, 75 cents is more than 70 cents."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Fraction-Decimal Connection — Show What You Know",
+      "skill": "emf-decimals-fractions-connection",
+      "problems": [
+        {
+          "id": "dec-22",
+          "problem": "Convert 0.125 to a fraction in simplest form.",
+          "answer": "0.125 = 125/1000 = 1/8. Divide numerator and denominator by 125 (the GCF). Check: 1 ÷ 8 = 0.125."
+        },
+        {
+          "id": "dec-23",
+          "problem": "Write each fraction as a decimal: 1/2, 1/5, 3/10.",
+          "answer": "1/2 = 0.5, 1/5 = 0.2, 3/10 = 0.3. Money check: 1/2 dollar = 50 cents, 1/5 dollar = 20 cents, 3/10 dollar = 30 cents."
+        },
+        {
+          "id": "dec-24",
+          "problem": "Emma saves 3/4 of her allowance. Jake saves 0.6 of his allowance. If they both get the same allowance, who saves more?",
+          "answer": "Emma saves more. 3/4 = 0.75, and 0.75 > 0.6. In money terms, if the allowance is $1.00, Emma saves $0.75 and Jake saves $0.60."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "dec-1": "0.3 (three tenths, or 3 dimes)",
+    "dec-2": "5 + 0.02 + 0.009",
+    "dec-3": "6; value is 0.06",
+    "dec-4": "8 → 0.8 (80 cents); 9 → 0.09 (9 cents)",
+    "dec-5": "10 + 2 + 0.4 + 0.006",
+    "dec-6": "nine and one hundred seventy-three thousandths; 1→tenths, 7→hundredths, 3→thousandths",
+    "dec-7": "0.72 > 0.7",
+    "dec-8": "1.05, 1.5, 1.505, 1.55",
+    "dec-9": "$0.90 > $0.09; the 9 is in different place-value positions",
+    "dec-10": "3.40 = 3.4",
+    "dec-11": "0.808, 0.8, 0.088, 0.08",
+    "dec-12": "Mia; 9.80 > 9.75",
+    "dec-13": "$4.25",
+    "dec-14": "$3.17",
+    "dec-15": "7.078",
+    "dec-16": "$0.75",
+    "dec-17": "6.725",
+    "dec-18": "0.29 seconds",
+    "dec-19": "4/5",
+    "dec-20": "0.25",
+    "dec-21": "Marcus; 0.75 > 0.70",
+    "dec-22": "1/8",
+    "dec-23": "1/2 = 0.5, 1/5 = 0.2, 3/10 = 0.3",
+    "dec-24": "Emma; 3/4 = 0.75 > 0.6"
+  }
+}

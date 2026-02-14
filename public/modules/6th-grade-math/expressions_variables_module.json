@@ -1,0 +1,523 @@
+{
+  "moduleId": "expressions_variables",
+  "course": "6th Grade Math",
+  "unit": 3,
+  "title": "Expressions and Variables",
+  "weeks": "11-14",
+  "estimatedDuration": 40,
+  "description": "The bridge from arithmetic to algebra. Students learn to write expressions from words and words from expressions, evaluate expressions by substitution with order of operations, combine like terms using the distributive and other properties, identify the parts of expressions (terms, coefficients, constants), and use formulas for area and volume. This is where variables stop being scary and start being useful.",
+
+  "skills": [
+    "g6-write-expressions",
+    "g6-evaluate-expressions",
+    "g6-combine-like-terms",
+    "g6-parts-of-expressions",
+    "g6-formulas-area-volume"
+  ],
+
+  "standardsAlignment": [
+    "6.EE.A.1",
+    "6.EE.A.2",
+    "6.EE.A.2a",
+    "6.EE.A.2b",
+    "6.EE.A.2c",
+    "6.EE.A.3",
+    "6.EE.A.4",
+    "6.EE.B.6"
+  ],
+
+  "goals": [
+    "Translate verbal phrases into algebraic expressions and interpret algebraic expressions in words",
+    "Evaluate algebraic expressions by substituting given values and applying order of operations (PEMDAS)",
+    "Combine like terms and apply the distributive property to simplify expressions",
+    "Identify and name the parts of an expression: terms, coefficients, constants, and factors",
+    "Apply area and volume formulas by substituting values and solving for a missing dimension"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release for every skill: concept-intro → I Do → We Do → You Do",
+    "AI uses the scaffold array as its scope and worked-example bank",
+    "Use real-world, age-appropriate contexts (shopping, sports, crafts, gaming, pets) to make abstract expressions tangible",
+    "Explicitly connect arithmetic thinking to algebraic thinking — show how expressions generalize repeated calculations",
+    "Encourage students to read expressions aloud in words to build fluency translating in both directions"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Writing Expressions from Words (and Words from Expressions)",
+      "skill": "g6-write-expressions",
+      "content": "In math you have been writing number sentences like 3 + 5 = 8 for years. Now we level up: instead of always knowing the number, we use a letter — called a variable — to stand for a number we do not know yet. An algebraic expression is a math phrase that can include numbers, variables, and operations but no equal sign.",
+      "keyPoints": [
+        "A variable is a letter (like n, x, or d) that represents an unknown or changing number",
+        "Key vocabulary: 'sum' means +, 'difference' means −, 'product' means ×, 'quotient' means ÷",
+        "'More than' and 'less than' flip the order: '5 more than n' is written n + 5, not 5 + n (though both are equal)",
+        "We usually skip the × sign with variables: 3 × n is written as 3n",
+        "'Twice' means × 2, 'triple' means × 3, 'half of' means ÷ 2 or ½ ×"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Writing Expressions — Worked Examples",
+      "skill": "g6-write-expressions",
+      "examples": [
+        {
+          "problem": "Translate into an algebraic expression: 'Seven more than a number n.'",
+          "solution": "The phrase 'more than' tells us to add.\n'Seven more than a number n' means: start with n and add 7.\nExpression: n + 7"
+        },
+        {
+          "problem": "Translate into an algebraic expression: 'The product of 4 and y, decreased by 9.'",
+          "solution": "Break it into parts:\n1) 'The product of 4 and y' → 4y (multiply 4 times y)\n2) 'Decreased by 9' → subtract 9\nPut them together: 4y − 9"
+        },
+        {
+          "problem": "Write the expression 2x + 5 in words.",
+          "solution": "Read each piece:\n• 2x means '2 times x' or 'twice x'\n• + 5 means 'plus 5' or '5 more'\nIn words: 'Five more than twice a number x'\nAlso acceptable: 'The sum of two times x and five'"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Writing Expressions — Practice Together",
+      "skill": "g6-write-expressions",
+      "problems": [
+        {
+          "id": "ev-1",
+          "prompt": "A movie ticket costs d dollars. You buy 3 tickets and a $5 bucket of popcorn. Write an expression for the total cost.",
+          "hints": [
+            "What operation do you use when you buy more than one of the same item?",
+            "Multiply the price per ticket by 3, then add the popcorn cost"
+          ],
+          "answer": "3d + 5"
+        },
+        {
+          "id": "ev-2",
+          "prompt": "Maya has some stickers. She gives 8 away. Write an expression using s for the number of stickers she started with.",
+          "hints": [
+            "Giving away means she ends up with fewer stickers",
+            "What operation makes a number smaller?"
+          ],
+          "answer": "s − 8"
+        },
+        {
+          "id": "ev-3",
+          "prompt": "Write the expression n/4 + 3 in words.",
+          "hints": [
+            "The fraction bar means division — read the division part first",
+            "Then describe adding 3"
+          ],
+          "answer": "Three more than a number n divided by 4 (or: the quotient of n and 4, plus 3)"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Writing Expressions — Your Turn",
+      "skill": "g6-write-expressions",
+      "problems": [
+        {
+          "id": "ev-4",
+          "prompt": "You and your friends split the cost of a $24 pizza equally among f friends. Write an expression for the cost per person.",
+          "answer": "24/f"
+        },
+        {
+          "id": "ev-5",
+          "prompt": "A baker makes b brownies each morning and puts them into boxes of 6. Write an expression for the number of full boxes.",
+          "answer": "b/6"
+        },
+        {
+          "id": "ev-6",
+          "prompt": "Write the expression 5(x − 2) in words.",
+          "answer": "Five times the difference of x and 2 (or: the product of 5 and the quantity x minus 2)"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Evaluating Expressions with Substitution",
+      "skill": "g6-evaluate-expressions",
+      "content": "Once you can write an expression, the next step is figuring out what it equals for a specific value. Evaluating an expression means replacing the variable with a given number and then calculating the result using order of operations.",
+      "keyPoints": [
+        "Substitute means replacing the variable with a specific number — write the number in parentheses to avoid mistakes",
+        "Always follow PEMDAS after substituting: Parentheses → Exponents → Multiply/Divide (left to right) → Add/Subtract (left to right)",
+        "When a variable appears more than once, replace every copy with the same value",
+        "Two-variable expressions: substitute each variable with its own given value",
+        "Implied multiplication: 3n means 3 × n, so if n = 4, write 3(4) = 12"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Evaluating Expressions — Worked Examples",
+      "skill": "g6-evaluate-expressions",
+      "examples": [
+        {
+          "problem": "Evaluate 3x + 7 when x = 5.",
+          "solution": "Substitute 5 for x:\n3(5) + 7\nMultiply first: 15 + 7\nAdd: 22\nAnswer: 22"
+        },
+        {
+          "problem": "Evaluate 2a² − b when a = 3 and b = 4.",
+          "solution": "Substitute a = 3 and b = 4:\n2(3)² − (4)\nExponent first: 2(9) − 4\nMultiply: 18 − 4\nSubtract: 14\nAnswer: 14"
+        },
+        {
+          "problem": "Evaluate (n + 8) ÷ 2 when n = 6.",
+          "solution": "Substitute 6 for n:\n(6 + 8) ÷ 2\nParentheses first: 14 ÷ 2\nDivide: 7\nAnswer: 7"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Evaluating Expressions — Practice Together",
+      "skill": "g6-evaluate-expressions",
+      "problems": [
+        {
+          "id": "ev-7",
+          "prompt": "Evaluate 4m − 3 when m = 6.",
+          "hints": [
+            "Replace m with 6: 4(6) − 3",
+            "Multiply first: 4 × 6 = 24, then subtract 3"
+          ],
+          "answer": "21"
+        },
+        {
+          "id": "ev-8",
+          "prompt": "Evaluate x² + 2x when x = 5.",
+          "hints": [
+            "Substitute: (5)² + 2(5)",
+            "Exponent first: 25 + 2(5), then multiply: 25 + 10"
+          ],
+          "answer": "35"
+        },
+        {
+          "id": "ev-9",
+          "prompt": "Evaluate 3a + 2b when a = 4 and b = 7.",
+          "hints": [
+            "Replace a with 4 and b with 7: 3(4) + 2(7)",
+            "Multiply each part: 12 + 14"
+          ],
+          "answer": "26"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Evaluating Expressions — Your Turn",
+      "skill": "g6-evaluate-expressions",
+      "problems": [
+        {
+          "id": "ev-10",
+          "prompt": "Evaluate 7 + n³ when n = 2.",
+          "answer": "15"
+        },
+        {
+          "id": "ev-11",
+          "prompt": "Evaluate (y + 3)(y − 1) when y = 5.",
+          "answer": "32"
+        },
+        {
+          "id": "ev-12",
+          "prompt": "A phone plan costs $12 per month plus $0.05 per text message. The expression is 12 + 0.05t. Find the total cost for 200 texts.",
+          "answer": "$22"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Combining Like Terms and the Distributive Property",
+      "skill": "g6-combine-like-terms",
+      "content": "Expressions can often be made simpler. Combining like terms means adding or subtracting terms that have exactly the same variable part, so 5x + 3x becomes 8x. The distributive property lets you remove parentheses by multiplying. Together these tools let you take a messy-looking expression and clean it up.",
+      "keyPoints": [
+        "Like terms have exactly the same variable raised to the same power: 3x and 7x are like terms, but 3x and 3x² are NOT",
+        "To combine like terms, add or subtract the coefficients and keep the variable part the same",
+        "Distributive property: a(b + c) = ab + ac — multiply the outside number by each term inside the parentheses",
+        "Commutative property lets you rearrange: a + b = b + a and a × b = b × a",
+        "Associative property lets you regroup: (a + b) + c = a + (b + c)",
+        "Constants (plain numbers with no variable) are like terms with each other"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Combining Like Terms — Worked Examples",
+      "skill": "g6-combine-like-terms",
+      "examples": [
+        {
+          "problem": "Simplify: 5x + 3 + 2x − 1",
+          "solution": "Group like terms:\nVariable terms: 5x + 2x = 7x\nConstant terms: 3 − 1 = 2\nSimplified: 7x + 2"
+        },
+        {
+          "problem": "Expand and simplify: 3(x + 4) + 2x",
+          "solution": "Step 1 — Distribute the 3:\n3 · x + 3 · 4 = 3x + 12\nStep 2 — Rewrite the expression:\n3x + 12 + 2x\nStep 3 — Combine like terms:\n(3x + 2x) + 12 = 5x + 12"
+        },
+        {
+          "problem": "Simplify: 4a + 7b − 2a + 3b",
+          "solution": "Group by variable:\na-terms: 4a − 2a = 2a\nb-terms: 7b + 3b = 10b\nSimplified: 2a + 10b\n(You cannot combine 2a and 10b because they have different variables.)"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Combining Like Terms — Practice Together",
+      "skill": "g6-combine-like-terms",
+      "problems": [
+        {
+          "id": "ev-13",
+          "prompt": "Simplify: 6n + 4 + 3n − 2",
+          "hints": [
+            "Group the n-terms together and the constant terms together",
+            "6n + 3n = 9n and 4 − 2 = 2"
+          ],
+          "answer": "9n + 2"
+        },
+        {
+          "id": "ev-14",
+          "prompt": "Expand and simplify: 2(x + 5) + 3x",
+          "hints": [
+            "Use the distributive property on 2(x + 5) first",
+            "2 · x + 2 · 5 = 2x + 10, then combine 2x + 3x"
+          ],
+          "answer": "5x + 10"
+        },
+        {
+          "id": "ev-15",
+          "prompt": "Simplify: 8y − 3 + y + 7 − 4y",
+          "hints": [
+            "Collect all y-terms: 8y + y − 4y",
+            "Collect constants: −3 + 7"
+          ],
+          "answer": "5y + 4"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Combining Like Terms — Your Turn",
+      "skill": "g6-combine-like-terms",
+      "problems": [
+        {
+          "id": "ev-16",
+          "prompt": "Simplify: 3a + 2b + 5a − b",
+          "answer": "8a + b"
+        },
+        {
+          "id": "ev-17",
+          "prompt": "Expand and simplify: 4(2m − 3) + 5",
+          "answer": "8m − 7"
+        },
+        {
+          "id": "ev-18",
+          "prompt": "Simplify: 10 + 2(x + 3) − x",
+          "answer": "x + 16"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Parts of an Expression",
+      "skill": "g6-parts-of-expressions",
+      "content": "Before you can work with expressions confidently, you need to know the names of their parts — like knowing the names of ingredients before you follow a recipe. Every algebraic expression is built from terms, and every term has pieces you can identify.",
+      "keyPoints": [
+        "A term is a part of an expression separated by addition or subtraction signs: in 4x + 7, the terms are 4x and 7",
+        "A coefficient is the number multiplied by the variable: in 9m, the coefficient is 9 (a plain variable like y has a coefficient of 1)",
+        "A constant is a term with no variable — just a number: in 3n + 8, the constant is 8",
+        "A factor is one of the quantities being multiplied: in 6xy, the factors are 6, x, and y",
+        "In the expression 4x² + 7x − 5, there are three terms (4x², 7x, −5), two coefficients (4 and 7), and one constant (−5)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Parts of an Expression — Worked Examples",
+      "skill": "g6-parts-of-expressions",
+      "examples": [
+        {
+          "problem": "Identify all parts of the expression 6n + 3.",
+          "solution": "Terms: 6n and 3 (separated by the + sign)\nCoefficient: 6 (the number in front of n)\nConstant: 3 (a term with no variable)\nFactors of the first term: 6 and n"
+        },
+        {
+          "problem": "Identify all parts of the expression 2x² − 5x + 8.",
+          "solution": "Terms: 2x², −5x, and 8 (three terms total)\nCoefficients: 2 (on x²) and −5 (on x) — the negative sign stays with the coefficient\nConstant: 8\nFactors of the first term: 2, x, and x (or 2 and x²)"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Parts of an Expression — Practice Together",
+      "skill": "g6-parts-of-expressions",
+      "problems": [
+        {
+          "id": "ev-19",
+          "prompt": "For the expression 9m − 4 + 2m, answer: (a) How many terms are there? (b) What are the coefficients? (c) What is the constant?",
+          "hints": [
+            "Terms are separated by + and − signs",
+            "The coefficient is the number in front of the variable; the constant is the term with no variable"
+          ],
+          "answer": "(a) 3 terms: 9m, −4, and 2m. (b) Coefficients: 9 and 2. (c) Constant: −4."
+        },
+        {
+          "id": "ev-20",
+          "prompt": "For the expression 3(x + 2): (a) What are the two factors being multiplied? (b) Expand it and then name the terms, coefficient, and constant.",
+          "hints": [
+            "Factors are the things being multiplied — look for what is on each side of the implied multiplication",
+            "Use the distributive property to expand: 3 · x + 3 · 2"
+          ],
+          "answer": "(a) Factors: 3 and (x + 2). (b) Expanded: 3x + 6. Terms: 3x and 6. Coefficient: 3. Constant: 6."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Parts of an Expression — Your Turn",
+      "skill": "g6-parts-of-expressions",
+      "problems": [
+        {
+          "id": "ev-21",
+          "prompt": "For 7y² + y − 10, name: (a) the terms, (b) all coefficients, (c) the constant.",
+          "answer": "(a) Terms: 7y², y, and −10. (b) Coefficients: 7 and 1. (c) Constant: −10."
+        },
+        {
+          "id": "ev-22",
+          "prompt": "For 5a + 3b, answer: (a) How many terms? (b) What are the coefficients? (c) Is there a constant? (d) What are the factors of the first term?",
+          "answer": "(a) 2 terms. (b) Coefficients: 5 and 3. (c) No constant. (d) Factors of 5a: 5 and a."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Formulas for Area and Volume",
+      "skill": "g6-formulas-area-volume",
+      "content": "Formulas are expressions that describe a real-world relationship. When you know the formula for area or volume, you can substitute measurements and find the answer — or work backward to find a missing measurement. This is algebra in action.",
+      "keyPoints": [
+        "Area of a rectangle: A = lw (length times width); answer is in square units (cm², ft², etc.)",
+        "Area of a triangle: A = ½bh (one-half times base times height)",
+        "Volume of a rectangular prism (box shape): V = lwh (length times width times height); answer is in cubic units (in³, m³, etc.)",
+        "To find a missing dimension: substitute what you know into the formula, then solve for the unknown",
+        "Always include the correct units in your answer — square units for area, cubic units for volume"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Area and Volume Formulas — Worked Examples",
+      "skill": "g6-formulas-area-volume",
+      "examples": [
+        {
+          "problem": "Find the area of a rectangle with length 8 cm and width 5 cm.",
+          "solution": "Formula: A = lw\nSubstitute: A = (8)(5)\nCalculate: A = 40\nAnswer: 40 cm²"
+        },
+        {
+          "problem": "Find the area of a triangle with base 12 in and height 7 in.",
+          "solution": "Formula: A = ½bh\nSubstitute: A = ½(12)(7)\nCalculate: A = ½ × 84 = 42\nAnswer: 42 in²"
+        },
+        {
+          "problem": "A storage box is 4 ft long, 3 ft wide, and 2 ft tall. Find the volume.",
+          "solution": "Formula: V = lwh\nSubstitute: V = (4)(3)(2)\nCalculate: V = 24\nAnswer: 24 ft³"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Area and Volume — Practice Together",
+      "skill": "g6-formulas-area-volume",
+      "problems": [
+        {
+          "id": "ev-23",
+          "prompt": "Your tablet screen is a rectangle that is 10 inches long and 7 inches wide. What is the area of the screen?",
+          "hints": [
+            "Use A = lw for a rectangle",
+            "A = 10 × 7"
+          ],
+          "answer": "70 square inches"
+        },
+        {
+          "id": "ev-24",
+          "prompt": "A triangular pennant flag has a base of 10 inches and a height of 14 inches. What is its area?",
+          "hints": [
+            "Use A = ½bh for a triangle",
+            "A = ½ × 10 × 14 = ½ × 140"
+          ],
+          "answer": "70 square inches"
+        },
+        {
+          "id": "ev-25",
+          "prompt": "A fish tank is 20 inches long, 10 inches wide, and 12 inches tall. What is its volume?",
+          "hints": [
+            "Use V = lwh for a rectangular prism",
+            "V = 20 × 10 × 12"
+          ],
+          "answer": "2,400 cubic inches"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Area and Volume — Your Turn",
+      "skill": "g6-formulas-area-volume",
+      "problems": [
+        {
+          "id": "ev-26",
+          "prompt": "A rectangular garden has an area of 54 square feet and a width of 6 feet. What is the length?",
+          "answer": "9 feet"
+        },
+        {
+          "id": "ev-27",
+          "prompt": "A triangular sail has an area of 30 square feet and a base of 10 feet. What is the height?",
+          "answer": "6 feet"
+        },
+        {
+          "id": "ev-28",
+          "prompt": "A shoebox has a volume of 1,320 cubic centimeters. It is 22 cm long and 12 cm wide. How tall is it?",
+          "answer": "5 cm"
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "ev-1": "3d + 5",
+    "ev-2": "s − 8",
+    "ev-3": "Three more than a number n divided by 4",
+    "ev-4": "24/f",
+    "ev-5": "b/6",
+    "ev-6": "Five times the difference of x and 2",
+    "ev-7": "21",
+    "ev-8": "35",
+    "ev-9": "26",
+    "ev-10": "15",
+    "ev-11": "32",
+    "ev-12": "$22",
+    "ev-13": "9n + 2",
+    "ev-14": "5x + 10",
+    "ev-15": "5y + 4",
+    "ev-16": "8a + b",
+    "ev-17": "8m − 7",
+    "ev-18": "x + 16",
+    "ev-19": "3 terms (9m, −4, 2m); coefficients 9 and 2; constant −4",
+    "ev-20": "Factors: 3 and (x + 2); expanded 3x + 6; coefficient 3; constant 6",
+    "ev-21": "Terms: 7y², y, −10; coefficients 7 and 1; constant −10",
+    "ev-22": "2 terms; coefficients 5 and 3; no constant; factors of 5a are 5 and a",
+    "ev-23": "70 square inches",
+    "ev-24": "70 square inches",
+    "ev-25": "2,400 cubic inches",
+    "ev-26": "9 feet",
+    "ev-27": "6 feet",
+    "ev-28": "5 cm"
+  }
+}

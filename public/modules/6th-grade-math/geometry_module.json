@@ -1,0 +1,504 @@
+{
+  "moduleId": "geometry",
+  "course": "6th Grade Math",
+  "unit": 5,
+  "title": "Geometry: Area, Surface Area, Volume",
+  "weeks": "18-22",
+  "estimatedDuration": 45,
+  "description": "From flat shapes to 3D thinking. Students build area formulas from rectangles — proving that a parallelogram is a rearranged rectangle and a triangle is half of one. They decompose composite figures, unfold prisms into nets to find surface area, and calculate volume of rectangular prisms with fractional edge lengths. Every concept connects to real contexts: flooring, wrapping paper, storage, and packaging.",
+
+  "skills": [
+    "g6-area-triangles-parallelograms",
+    "g6-area-composite-figures",
+    "g6-nets-surface-area",
+    "g6-volume-rectangular-prisms",
+    "g6-geometry-applications"
+  ],
+
+  "standardsAlignment": ["6.G.A.1", "6.G.A.2", "6.G.A.4"],
+
+  "goals": [
+    "Derive and apply the area formulas for parallelograms (A = bh) and triangles (A = 1/2 bh) by relating them to rectangles",
+    "Decompose composite figures into rectangles and triangles to find total area",
+    "Represent 3D figures using nets and calculate surface area as the sum of all face areas",
+    "Calculate the volume of rectangular prisms including those with fractional edge lengths using V = lwh",
+    "Select the appropriate measurement (area, surface area, or volume) for real-world problems and solve multi-step applications"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro -> I Do -> We Do -> You Do for each skill",
+    "Anchor every formula in a physical derivation — cut a parallelogram and rearrange it into a rectangle, fold a triangle to show it is half the rectangle",
+    "Use real-world contexts (flooring, wrapping gifts, filling boxes) so students see geometry as practical, not abstract",
+    "Emphasize that HEIGHT must be perpendicular to the base — draw the right-angle mark every time to build the habit",
+    "When working with fractional edge lengths in volume, connect back to fraction multiplication so students see unit consistency"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g6-area-triangles-parallelograms",
+      "title": "Area of Parallelograms and Triangles",
+      "content": "Every area formula in this unit grows out of the rectangle. A rectangle's area is length times width — that is our starting point. A parallelogram is a rectangle in disguise: if you slice off the slanted triangle on one end and slide it to the other end, you get a rectangle with the same base and height. So the area of a parallelogram is A = base x height. A triangle is exactly half of a parallelogram. Take any triangle, make a copy, flip it, and attach it — you get a parallelogram. Since the triangle is half, its area is A = 1/2 x base x height. The most important rule: the HEIGHT is always PERPENDICULAR to the base. It is NOT a slanted side. Look for the right-angle mark.",
+      "keyPoints": [
+        "Area of a rectangle: A = length x width. This is the foundation for all other area formulas.",
+        "A parallelogram can be rearranged into a rectangle with the same base and height, so A = bh.",
+        "A triangle is exactly half of a parallelogram with the same base and height, so A = 1/2 bh.",
+        "HEIGHT must be perpendicular (at a right angle) to the base — it is NOT the slant side.",
+        "Any side of a triangle or parallelogram can be chosen as the base, but the height must correspond to that base.",
+        "Always include units squared (e.g., cm², ft², m²) because area measures two-dimensional space."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g6-area-triangles-parallelograms",
+      "title": "Area of Parallelograms and Triangles — Worked Examples",
+      "examples": [
+        {
+          "problem": "A parallelogram has a base of 12 cm and a height of 7 cm. One of its slanted sides is 9 cm. What is the area?",
+          "solution": "The slanted side (9 cm) is NOT the height — it is a distractor. The height is the perpendicular distance between the base and the top, which is 7 cm.\nA = bh\nA = 12 x 7\nA = 84 cm²\n\nKey reminder: always use the perpendicular height, never the slant side."
+        },
+        {
+          "problem": "A triangular garden has a base of 10 feet and a height of 6 feet. How much mulch is needed to cover the garden (in square feet)?",
+          "solution": "This is a real-world area problem — we need the area of the triangle.\nA = 1/2 bh\nA = 1/2 x 10 x 6\nA = 1/2 x 60\nA = 30 ft²\n\nYou need 30 square feet of mulch."
+        },
+        {
+          "problem": "A parallelogram-shaped parking space has an area of 108 ft² and a base of 18 ft. What is the height?",
+          "solution": "We know A = bh. Substitute and solve for h.\n108 = 18 x h\nh = 108 / 18\nh = 6 ft\n\nThe perpendicular height of the parking space is 6 feet."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "g6-area-triangles-parallelograms",
+      "title": "Area of Parallelograms and Triangles — Guided Practice",
+      "problems": [
+        {
+          "id": "geo-1",
+          "prompt": "A parallelogram-shaped floor tile has a base of 8 inches and a height of 5 inches. What is the area of one tile?",
+          "hints": [
+            "Use the parallelogram area formula: A = base x height.",
+            "A = 8 x 5 = 40 square inches."
+          ],
+          "answer": "40 in²"
+        },
+        {
+          "id": "geo-2",
+          "prompt": "A triangle has a base of 14 cm and a height of 9 cm. Find the area.",
+          "hints": [
+            "Use the triangle formula: A = 1/2 x base x height.",
+            "A = 1/2 x 14 x 9 = 1/2 x 126 = 63 cm²."
+          ],
+          "answer": "63 cm²"
+        },
+        {
+          "id": "geo-3",
+          "prompt": "A triangular sail has an area of 54 ft² and a base of 12 ft. What is the height of the sail?",
+          "hints": [
+            "Start with A = 1/2 bh and substitute what you know: 54 = 1/2 x 12 x h.",
+            "Simplify: 54 = 6h, so h = 54 / 6 = 9 ft."
+          ],
+          "answer": "9 ft"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "g6-area-triangles-parallelograms",
+      "title": "Area of Parallelograms and Triangles — Independent Practice",
+      "problems": [
+        {
+          "id": "geo-4",
+          "prompt": "A parallelogram has a base of 15 m and a height of 8 m. Its slanted side is 10 m. What is its area?",
+          "answer": "120 m²"
+        },
+        {
+          "id": "geo-5",
+          "prompt": "A triangular flower bed has a base of 7.5 feet and a height of 4 feet. How many square feet of soil do you need to fill it?",
+          "answer": "15 ft²"
+        },
+        {
+          "id": "geo-6",
+          "prompt": "A parallelogram has an area of 91 cm² and a height of 7 cm. What is the length of its base?",
+          "answer": "13 cm"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g6-area-composite-figures",
+      "title": "Area of Composite Figures",
+      "content": "A composite figure is a shape made up of two or more simpler shapes combined. To find its area, you have two strategies. Strategy 1 — Decompose (break apart): split the figure into rectangles and triangles, find each area, then ADD them together. Strategy 2 — Surround and subtract: draw a big rectangle around the whole figure, find its area, then SUBTRACT the parts that are not included. Both strategies give the same answer. Choose whichever is easier for the shape you see. Always label your sub-shapes and keep track of which dimensions belong to which piece.",
+      "keyPoints": [
+        "A composite figure is made of two or more basic shapes (rectangles, triangles, etc.) joined together.",
+        "Strategy 1 — Decompose: break the figure into non-overlapping rectangles and triangles, find each area, and add them up.",
+        "Strategy 2 — Surround and subtract: enclose the figure in a large rectangle, find its area, and subtract the missing pieces.",
+        "Label each sub-shape with its own dimensions before calculating — this prevents mixing up measurements.",
+        "Check that your sub-shapes account for the ENTIRE figure with no overlaps and no gaps."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g6-area-composite-figures",
+      "title": "Area of Composite Figures — Worked Examples",
+      "examples": [
+        {
+          "problem": "An L-shaped room has the following measurements: the full length is 12 ft, the full width is 10 ft, and the cutout in the upper-right corner is 4 ft wide and 5 ft tall. What is the floor area?",
+          "solution": "Strategy: Surround and subtract.\nFull rectangle area: 12 x 10 = 120 ft²\nCutout rectangle area: 4 x 5 = 20 ft²\nComposite area: 120 - 20 = 100 ft²\n\nAlternatively, decompose into two rectangles:\nBottom rectangle: 12 x 5 = 60 ft²\nLeft rectangle: (12 - 4) x 5 = 8 x 5 = 40 ft²\nTotal: 60 + 40 = 100 ft²\n\nBoth strategies give 100 ft²."
+        },
+        {
+          "problem": "A park is shaped like a rectangle with a triangular section attached to one end. The rectangle is 20 m by 8 m. The triangle has a base of 8 m and a height of 5 m. What is the total area of the park?",
+          "solution": "Decompose into two shapes.\nRectangle area: 20 x 8 = 160 m²\nTriangle area: 1/2 x 8 x 5 = 20 m²\nTotal area: 160 + 20 = 180 m²"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "g6-area-composite-figures",
+      "title": "Area of Composite Figures — Guided Practice",
+      "problems": [
+        {
+          "id": "geo-7",
+          "prompt": "A T-shaped stage is formed by two rectangles. The top bar is 14 ft long and 3 ft wide. The vertical stem is 4 ft wide and 8 ft long. What is the total area of the stage?",
+          "hints": [
+            "Break the T into two non-overlapping rectangles: the top bar and the stem.",
+            "Top bar: 14 x 3 = 42 ft². Stem: 4 x 8 = 32 ft². Total = 42 + 32 = 74 ft²."
+          ],
+          "answer": "74 ft²"
+        },
+        {
+          "id": "geo-8",
+          "prompt": "A rectangular yard is 30 m by 20 m. A rectangular swimming pool that is 10 m by 6 m is built inside it. What is the area of the remaining grass?",
+          "hints": [
+            "This is a subtract problem: total yard minus pool.",
+            "Yard: 30 x 20 = 600 m². Pool: 10 x 6 = 60 m². Grass = 600 - 60 = 540 m²."
+          ],
+          "answer": "540 m²"
+        },
+        {
+          "id": "geo-9",
+          "prompt": "A pennant (flag) is shaped like a rectangle topped with a triangle. The rectangle is 6 in. wide and 10 in. tall. The triangle sits on top with a base of 6 in. and a height of 4 in. What is the total area of the pennant?",
+          "hints": [
+            "Find each area separately: rectangle area = 6 x 10 and triangle area = 1/2 x 6 x 4.",
+            "Rectangle = 60 in². Triangle = 12 in². Total = 60 + 12 = 72 in²."
+          ],
+          "answer": "72 in²"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "g6-area-composite-figures",
+      "title": "Area of Composite Figures — Independent Practice",
+      "problems": [
+        {
+          "id": "geo-10",
+          "prompt": "An L-shaped kitchen floor has a full length of 15 ft, a full width of 9 ft, and a 6 ft by 4 ft cutout in one corner. What is the floor area?",
+          "answer": "111 ft²"
+        },
+        {
+          "id": "geo-11",
+          "prompt": "A sign is shaped like a rectangle (18 in. by 12 in.) with a right triangle attached to the right side. The triangle has legs of 12 in. and 5 in. What is the total area of the sign?",
+          "answer": "246 in²"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g6-nets-surface-area",
+      "title": "Nets and Surface Area",
+      "content": "A net is what you get when you unfold a 3D shape and lay it completely flat. Every face of the solid becomes a 2D shape in the net, and you can see ALL the faces at once. Surface area is the total area of every face added together — it tells you how much material you would need to cover or wrap the solid. For a rectangular prism (box), the net shows six rectangles: a top and bottom, a front and back, and two sides. The formula is SA = 2lw + 2lh + 2wh, where l = length, w = width, and h = height. For a triangular prism, the net shows two triangles (the bases) and three rectangles (the lateral faces). Add up all five faces.",
+      "keyPoints": [
+        "A net is an unfolded version of a 3D shape — every face laid flat with no overlaps.",
+        "Surface area (SA) = the sum of the areas of ALL faces of a 3D figure.",
+        "Rectangular prism net: 6 rectangles arranged in a cross-like pattern (3 pairs of congruent faces).",
+        "Rectangular prism formula: SA = 2lw + 2lh + 2wh (two of each pair).",
+        "Triangular prism net: 2 congruent triangles + 3 rectangles. Add all five areas.",
+        "Surface area is measured in square units (cm², ft², m²) because it covers a 2D surface."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g6-nets-surface-area",
+      "title": "Nets and Surface Area — Worked Examples",
+      "examples": [
+        {
+          "problem": "A gift box is 10 inches long, 6 inches wide, and 4 inches tall. How much wrapping paper do you need to cover the entire box (ignoring overlap)?",
+          "solution": "This is a surface area problem — we need to cover every face.\nSA = 2lw + 2lh + 2wh\nSA = 2(10)(6) + 2(10)(4) + 2(6)(4)\nSA = 120 + 80 + 48\nSA = 248 in²\n\nYou need 248 square inches of wrapping paper.\n\nFace breakdown: top/bottom = 60 each, front/back = 40 each, sides = 24 each."
+        },
+        {
+          "problem": "A triangular prism has triangular bases that are right triangles with legs 3 cm and 4 cm (hypotenuse 5 cm). The prism is 10 cm long. What is the surface area?",
+          "solution": "The net has 5 faces: 2 triangles + 3 rectangles.\nEach triangle: A = 1/2 x 3 x 4 = 6 cm²\nTwo triangles: 2 x 6 = 12 cm²\n\nThree rectangles (each side of the triangle x the length of the prism):\nRectangle 1: 3 x 10 = 30 cm²\nRectangle 2: 4 x 10 = 40 cm²\nRectangle 3: 5 x 10 = 50 cm²\n\nTotal SA = 12 + 30 + 40 + 50 = 132 cm²"
+        },
+        {
+          "problem": "A cube has an edge length of 5 m. What is its surface area?",
+          "solution": "A cube has 6 identical square faces.\nArea of one face: 5 x 5 = 25 m²\nSA = 6 x 25 = 150 m²\n\nUsing the rectangular prism formula (l = w = h = 5):\nSA = 2(5)(5) + 2(5)(5) + 2(5)(5) = 50 + 50 + 50 = 150 m². Same answer!"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "g6-nets-surface-area",
+      "title": "Nets and Surface Area — Guided Practice",
+      "problems": [
+        {
+          "id": "geo-12",
+          "prompt": "A cereal box is 12 inches tall, 8 inches wide, and 3 inches deep. How much cardboard is needed to make the box?",
+          "hints": [
+            "This is a surface area problem. Use SA = 2lw + 2lh + 2wh with l=8, w=3, h=12.",
+            "SA = 2(8)(3) + 2(8)(12) + 2(3)(12) = 48 + 192 + 72 = 312 in²."
+          ],
+          "answer": "312 in²"
+        },
+        {
+          "id": "geo-13",
+          "prompt": "A cube-shaped jewelry box has edges of 4 cm. Mia wants to cover it with decorative paper. How much paper does she need?",
+          "hints": [
+            "A cube has 6 identical square faces. Find the area of one face first.",
+            "One face = 4 x 4 = 16 cm². Total SA = 6 x 16 = 96 cm²."
+          ],
+          "answer": "96 cm²"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "g6-nets-surface-area",
+      "title": "Nets and Surface Area — Independent Practice",
+      "problems": [
+        {
+          "id": "geo-14",
+          "prompt": "A rectangular storage container is 2 ft long, 1.5 ft wide, and 1 ft tall. What is the total surface area?",
+          "answer": "13 ft²"
+        },
+        {
+          "id": "geo-15",
+          "prompt": "Marcus is painting all 6 faces of a wooden box that is 20 in. long, 14 in. wide, and 10 in. tall. One can of paint covers 400 in². How many cans does he need?",
+          "answer": "4 cans (SA = 1,240 in², and 1,240 / 400 = 3.1, so he needs 4 cans)"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g6-volume-rectangular-prisms",
+      "title": "Volume of Rectangular Prisms",
+      "content": "Volume measures how much space a 3D figure takes up — it answers the question 'How much can this container hold?' For a rectangular prism, volume equals length times width times height: V = lwh. You can also think of it as V = (area of the base) x height, since the base is a rectangle with area lw and you are stacking that base h layers tall. When edge lengths are fractions, the same formula works — just multiply the fractions. You can also pack the prism with fractional unit cubes (like 1/2-inch cubes) to visualize the volume. Volume is always in cubic units (in.³, ft³, cm³) because it measures three-dimensional space.",
+      "keyPoints": [
+        "Volume measures the amount of space inside a 3D figure, in cubic units.",
+        "Rectangular prism: V = lwh, or equivalently V = (area of base) x height.",
+        "When edges are fractions, multiply the fractions: V = l x w x h still works.",
+        "Packing with unit cubes: the number of unit cubes that fit inside equals the volume.",
+        "With fractional edges, you can use smaller cubes (e.g., 1/2-unit cubes) to fill the prism exactly.",
+        "Always write cubic units: in.³, ft³, cm³, m³."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g6-volume-rectangular-prisms",
+      "title": "Volume of Rectangular Prisms — Worked Examples",
+      "examples": [
+        {
+          "problem": "A shipping box is 2 ft long, 1.5 ft wide, and 1 ft tall. What is its volume?",
+          "solution": "V = lwh\nV = 2 x 1.5 x 1\nV = 3 ft³\n\nThe box can hold 3 cubic feet of material."
+        },
+        {
+          "problem": "A rectangular prism has edges of 3/4 in., 2/3 in., and 1/2 in. What is the volume?",
+          "solution": "V = lwh\nV = 3/4 x 2/3 x 1/2\n\nMultiply numerators: 3 x 2 x 1 = 6\nMultiply denominators: 4 x 3 x 2 = 24\nV = 6/24 = 1/4 in.³\n\nThe volume is 1/4 cubic inch."
+        },
+        {
+          "problem": "A sandbox is 6 ft long, 4 ft wide, and 1 1/2 ft deep. How many cubic feet of sand are needed to fill it?",
+          "solution": "Convert the mixed number: 1 1/2 = 3/2 ft.\nV = 6 x 4 x 3/2\nV = 24 x 3/2\nV = 72/2\nV = 36 ft³\n\nYou need 36 cubic feet of sand."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "g6-volume-rectangular-prisms",
+      "title": "Volume of Rectangular Prisms — Guided Practice",
+      "problems": [
+        {
+          "id": "geo-16",
+          "prompt": "A fish tank is 24 inches long, 12 inches wide, and 16 inches tall. What is the volume of the tank in cubic inches?",
+          "hints": [
+            "Use V = lwh. Substitute l = 24, w = 12, h = 16.",
+            "V = 24 x 12 x 16 = 24 x 192 = 4,608 in.³"
+          ],
+          "answer": "4,608 in.³"
+        },
+        {
+          "id": "geo-17",
+          "prompt": "A small rectangular prism has a length of 1 1/2 cm, a width of 2/3 cm, and a height of 4 cm. What is the volume?",
+          "hints": [
+            "Convert the mixed number: 1 1/2 = 3/2. Then multiply: V = 3/2 x 2/3 x 4.",
+            "3/2 x 2/3 = 6/6 = 1. Then 1 x 4 = 4 cm³."
+          ],
+          "answer": "4 cm³"
+        },
+        {
+          "id": "geo-18",
+          "prompt": "A packing crate has a volume of 60 ft³. Its length is 5 ft and its width is 4 ft. What is its height?",
+          "hints": [
+            "Use V = lwh and solve for h: 60 = 5 x 4 x h.",
+            "60 = 20h, so h = 60 / 20 = 3 ft."
+          ],
+          "answer": "3 ft"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "g6-volume-rectangular-prisms",
+      "title": "Volume of Rectangular Prisms — Independent Practice",
+      "problems": [
+        {
+          "id": "geo-19",
+          "prompt": "A toolbox is 18 in. long, 8 in. wide, and 9 in. tall. What is its volume?",
+          "answer": "1,296 in.³"
+        },
+        {
+          "id": "geo-20",
+          "prompt": "A rectangular planter box is 3 1/2 ft long, 1 ft wide, and 2/3 ft deep. How many cubic feet of soil does it hold?",
+          "answer": "7/3 ft³ (or 2 1/3 ft³)"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g6-geometry-applications",
+      "title": "Geometry Applications: Choosing Area, Surface Area, or Volume",
+      "content": "Real-world geometry problems do not tell you which formula to use — you have to decide. Ask yourself: Am I covering a flat surface? That is AREA (painting a wall, laying tile, mowing a lawn). Am I wrapping or covering the outside of a 3D object? That is SURFACE AREA (wrapping a gift, painting a box, covering a tent). Am I filling the inside of a 3D object? That is VOLUME (filling a pool, packing a box, pouring concrete). Many real problems are multi-step: first calculate a measurement, then use it to find a cost, amount of material, or number of items needed. Always check your units and whether the answer makes sense in context.",
+      "keyPoints": [
+        "AREA: covering a flat surface — painting a wall, tiling a floor, covering a garden bed.",
+        "SURFACE AREA: wrapping or coating the outside of a 3D object — wrapping paper, painting a box, fabric for a tent.",
+        "VOLUME: filling the inside of a 3D container — water in a pool, sand in a sandbox, soil in a planter.",
+        "Multi-step problems: calculate the measurement first, then multiply by a rate (cost per square foot, price per cubic yard, etc.).",
+        "Always label your answer with the correct units: square units for area/SA, cubic units for volume."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g6-geometry-applications",
+      "title": "Geometry Applications — Worked Examples",
+      "examples": [
+        {
+          "problem": "A bedroom floor is shaped like a rectangle (12 ft by 10 ft) with a rectangular closet alcove (3 ft by 4 ft) attached. New flooring costs $4.50 per square foot. What is the total cost to floor the room and closet?",
+          "solution": "Step 1: Find the total area (composite figure).\nBedroom: 12 x 10 = 120 ft²\nCloset: 3 x 4 = 12 ft²\nTotal area: 120 + 12 = 132 ft²\n\nStep 2: Calculate cost.\nCost = 132 x $4.50 = $594.00\n\nThis is a multi-step problem: area first, then cost."
+        },
+        {
+          "problem": "Elena is wrapping a shoe box that is 14 in. long, 8 in. wide, and 5 in. tall. Wrapping paper costs $0.02 per square inch. How much will the paper cost?",
+          "solution": "Step 1: This is a SURFACE AREA problem (wrapping the outside).\nSA = 2lw + 2lh + 2wh\nSA = 2(14)(8) + 2(14)(5) + 2(8)(5)\nSA = 224 + 140 + 80\nSA = 444 in²\n\nStep 2: Calculate cost.\nCost = 444 x $0.02 = $8.88"
+        },
+        {
+          "problem": "A rectangular planter is 4 ft long, 2 ft wide, and 1.5 ft deep. Potting soil costs $3.00 per cubic foot. How much will it cost to fill the planter?",
+          "solution": "Step 1: This is a VOLUME problem (filling the inside).\nV = lwh = 4 x 2 x 1.5 = 12 ft³\n\nStep 2: Calculate cost.\nCost = 12 x $3.00 = $36.00"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "g6-geometry-applications",
+      "title": "Geometry Applications — Guided Practice",
+      "problems": [
+        {
+          "id": "geo-21",
+          "prompt": "A company ships products in boxes that are 16 in. long, 10 in. wide, and 8 in. tall. They need to cover each box with a branded label on all 6 sides. How many square inches of label material are needed per box?",
+          "hints": [
+            "Covering all 6 sides = surface area. Use SA = 2lw + 2lh + 2wh.",
+            "SA = 2(16)(10) + 2(16)(8) + 2(10)(8) = 320 + 256 + 160 = 736 in²."
+          ],
+          "answer": "736 in²"
+        },
+        {
+          "id": "geo-22",
+          "prompt": "A community garden plot is shaped like a parallelogram with a base of 18 ft and a height of 10 ft. Fertilizer costs $0.75 per square foot. How much will it cost to fertilize the entire plot?",
+          "hints": [
+            "First find the area: A = bh = 18 x 10 = 180 ft².",
+            "Then multiply by cost: 180 x $0.75 = $135.00."
+          ],
+          "answer": "$135.00"
+        },
+        {
+          "id": "geo-23",
+          "prompt": "A cooler is 2 ft long, 1 ft wide, and 1.5 ft tall. How many cubic feet of ice can it hold? If ice costs $2.50 per cubic foot, how much does it cost to fill the cooler?",
+          "hints": [
+            "Volume first: V = 2 x 1 x 1.5 = 3 ft³.",
+            "Cost: 3 x $2.50 = $7.50."
+          ],
+          "answer": "3 ft³; $7.50"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "g6-geometry-applications",
+      "title": "Geometry Applications — Independent Practice",
+      "problems": [
+        {
+          "id": "geo-24",
+          "prompt": "A triangular patio has a base of 16 ft and a height of 9 ft. Paving stones cost $6.00 per square foot. What is the total cost to pave the patio?",
+          "answer": "$432.00"
+        },
+        {
+          "id": "geo-25",
+          "prompt": "Jamal is building a wooden storage chest that is 3 ft long, 2 ft wide, and 2 ft tall. He needs to buy wood for all 6 faces. Wood costs $1.20 per square foot. What is the total cost of the wood?",
+          "answer": "$38.40 (SA = 32 ft², cost = 32 x $1.20)"
+        },
+        {
+          "id": "geo-26",
+          "prompt": "A raised garden bed is 8 ft long, 4 ft wide, and 3/4 ft deep. Soil costs $5.00 per cubic foot. How much will it cost to fill the bed?",
+          "answer": "$120.00 (V = 24 ft³, cost = 24 x $5.00)"
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "geo-1": "40 in²",
+    "geo-2": "63 cm²",
+    "geo-3": "9 ft",
+    "geo-4": "120 m²",
+    "geo-5": "15 ft²",
+    "geo-6": "13 cm",
+    "geo-7": "74 ft²",
+    "geo-8": "540 m²",
+    "geo-9": "72 in²",
+    "geo-10": "111 ft²",
+    "geo-11": "246 in²",
+    "geo-12": "312 in²",
+    "geo-13": "96 cm²",
+    "geo-14": "13 ft²",
+    "geo-15": "4 cans (SA = 1,240 in²)",
+    "geo-16": "4,608 in.³",
+    "geo-17": "4 cm³",
+    "geo-18": "3 ft",
+    "geo-19": "1,296 in.³",
+    "geo-20": "7/3 ft³ (or 2 1/3 ft³)",
+    "geo-21": "736 in²",
+    "geo-22": "$135.00",
+    "geo-23": "3 ft³; $7.50",
+    "geo-24": "$432.00",
+    "geo-25": "$38.40",
+    "geo-26": "$120.00"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "moduleId": "checkpoint_bootcamp",
+  "course": "6th Grade Math",
+  "unit": 0,
+  "title": "Checkpoint: Boot Camp Diagnostic",
+  "weeks": "2",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": true,
+  "description": "Diagnostic assessment to identify 5th-grade gaps in place value/decimals, fraction operations, integer basics, multiplication/division fluency, and expression writing. Results determine which students need targeted intervention before Unit 1.",
+  "skillsCovered": [
+    "g6-place-value-decimals",
+    "g6-fraction-ops-review",
+    "g6-integer-basics",
+    "g6-mult-div-fluency",
+    "g6-expression-writing-intro"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest 5th-grade skill areas. These gaps will cascade into every subsequent unit if not addressed now.",
+    "clusters": [
+      {
+        "skillId": "g6-place-value-decimals",
+        "reteachFocus": "Place value names through thousandths, comparing decimals by aligning place values, adding/subtracting with decimal alignment"
+      },
+      {
+        "skillId": "g6-fraction-ops-review",
+        "reteachFocus": "Finding LCD for unlike fractions, multiply straight across and simplify, divide by multiplying by the reciprocal, mixed number operations"
+      },
+      {
+        "skillId": "g6-integer-basics",
+        "reteachFocus": "Placing negatives on the number line, comparing integers (farther right = greater, −3 > −5), identifying opposites"
+      },
+      {
+        "skillId": "g6-mult-div-fluency",
+        "reteachFocus": "Basic fact gaps (6×7, 8×9), standard algorithm for multi-digit multiplication and long division, estimating before computing"
+      },
+      {
+        "skillId": "g6-expression-writing-intro",
+        "reteachFocus": "Matching operation words (sum→add, difference→subtract, product→multiply, quotient→divide), order matters for subtraction/division, simple variable usage"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cbd-1",
+      "question": "What is the value of the digit 7 in the number 3.274?",
+      "answer": "The 7 is in the hundredths place, so its value is 7/100, or 0.07.",
+      "skill": "g6-place-value-decimals",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-2",
+      "question": "Order these decimals from least to greatest: 0.52, 0.509, 0.6",
+      "answer": "Align the place values: 0.520, 0.509, 0.600. Compare hundredths and thousandths: 0.509 < 0.520 < 0.600. Order: 0.509, 0.52, 0.6.",
+      "skill": "g6-place-value-decimals",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbd-3",
+      "question": "Evaluate: 12.08 − 4.735",
+      "answer": "Align decimals and add a trailing zero: 12.080 − 4.735. Subtract column by column, borrowing as needed: 12.080 − 4.735 = 7.345.",
+      "skill": "g6-place-value-decimals",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbd-4",
+      "question": "Evaluate: 1/4 + 2/4",
+      "answer": "The denominators already match. Add the numerators: 1/4 + 2/4 = 3/4.",
+      "skill": "g6-fraction-ops-review",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-5",
+      "question": "Evaluate: 2/3 + 1/6",
+      "answer": "LCD = 6. Rewrite 2/3 as 4/6. Then 4/6 + 1/6 = 5/6.",
+      "skill": "g6-fraction-ops-review",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbd-6",
+      "question": "Evaluate: 3/5 × 2/7",
+      "answer": "Multiply numerators and denominators straight across: (3 × 2)/(5 × 7) = 6/35. The fraction is already in simplest form.",
+      "skill": "g6-fraction-ops-review",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbd-7",
+      "question": "Place these integers on a number line and identify which is greatest: −2, 4, −6",
+      "answer": "On a number line, −6 is farthest left, −2 is in the middle, and 4 is farthest right. The greatest integer is 4 because it is farthest to the right.",
+      "skill": "g6-integer-basics",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-8",
+      "question": "Which is greater, −3 or −8? Explain how you know.",
+      "answer": "−3 is greater than −8. On the number line, −3 is farther to the right than −8, so −3 > −8.",
+      "skill": "g6-integer-basics",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbd-9",
+      "question": "What is the opposite of −15? Then order these from least to greatest: 7, −9, 0, −3",
+      "answer": "The opposite of −15 is 15 (same distance from zero, other side). Ordering: −9 < −3 < 0 < 7.",
+      "skill": "g6-integer-basics",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbd-10",
+      "question": "Evaluate: 8 × 9",
+      "answer": "8 × 9 = 72.",
+      "skill": "g6-mult-div-fluency",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-11",
+      "question": "Evaluate: 234 × 16",
+      "answer": "Use the standard algorithm: 234 × 6 = 1,404 and 234 × 10 = 2,340. Add the partial products: 1,404 + 2,340 = 3,744.",
+      "skill": "g6-mult-div-fluency",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbd-12",
+      "question": "Evaluate: 1,512 ÷ 24",
+      "answer": "Use long division. 24 × 6 = 144, so 24 goes into 151 six times with remainder 7. Bring down 2 to get 72. 24 × 3 = 72 exactly. Answer: 63.",
+      "skill": "g6-mult-div-fluency",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbd-13",
+      "question": "Write a numerical expression for: 'the sum of 12 and 5'",
+      "answer": "Sum means addition: 12 + 5.",
+      "skill": "g6-expression-writing-intro",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-14",
+      "question": "Write an expression for: 'the product of 8 and the difference of a number n and 3'",
+      "answer": "Difference of n and 3 is (n − 3). Product of 8 and that result is 8(n − 3) or 8 × (n − 3).",
+      "skill": "g6-expression-writing-intro",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cbd-15",
+      "question": "A movie ticket costs d dollars. Write an expression for the total cost of 4 tickets plus a $6 popcorn bucket. Then find the total if d = 9.",
+      "answer": "Expression: 4d + 6. Substitute d = 9: 4(9) + 6 = 36 + 6 = 42. The total cost is $42.",
+      "skill": "g6-expression-writing-intro",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "cbd-1": "0.07",
+    "cbd-2": "0.509, 0.52, 0.6",
+    "cbd-3": "7.345",
+    "cbd-4": "3/4",
+    "cbd-5": "5/6",
+    "cbd-6": "6/35",
+    "cbd-7": "4",
+    "cbd-8": "−3",
+    "cbd-9": "opposite: 15; order: −9, −3, 0, 7",
+    "cbd-10": "72",
+    "cbd-11": "3,744",
+    "cbd-12": "63",
+    "cbd-13": "12 + 5",
+    "cbd-14": "8(n − 3)",
+    "cbd-15": "4d + 6; $42 when d = 9"
+  }
+}

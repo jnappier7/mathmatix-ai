@@ -1,0 +1,157 @@
+{
+  "moduleId": "checkpoint_bootcamp",
+  "course": "Early Math Foundations",
+  "unit": 0,
+  "title": "Checkpoint: Number Sense Diagnostic",
+  "weeks": "2",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "diagnosticMode": true,
+  "description": "Diagnostic assessment to identify gaps in place value, rounding, comparing numbers, basic addition/subtraction facts, and number patterns. Results determine which foundational skills need targeted intervention.",
+  "skillsCovered": [
+    "emf-place-value",
+    "emf-rounding-estimation",
+    "emf-compare-order",
+    "emf-add-sub-facts",
+    "emf-number-patterns"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students below threshold get focused reteaching on their weakest number sense skills before moving to multi-digit operations.",
+    "clusters": [
+      {
+        "skillId": "emf-place-value",
+        "reteachFocus": "Place value names, expanded form, zero as placeholder, value of each digit"
+      },
+      {
+        "skillId": "emf-rounding-estimation",
+        "reteachFocus": "Identify rounding place, look at digit to the right, 5-or-more rounds up"
+      },
+      {
+        "skillId": "emf-compare-order",
+        "reteachFocus": "Compare digit by digit from left, use < > = correctly, order sets"
+      },
+      {
+        "skillId": "emf-add-sub-facts",
+        "reteachFocus": "Facts through 20, make-10 strategy, fact families connecting addition and subtraction"
+      },
+      {
+        "skillId": "emf-number-patterns",
+        "reteachFocus": "Skip counting by 2s/3s/5s/10s, odd/even, identify and extend the rule"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cbd-1",
+      "question": "In the number 4,631, what is the value of the digit 6?",
+      "answer": "The 6 is in the hundreds place, so its value is 600.",
+      "skill": "emf-place-value",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-2",
+      "question": "Write the number 2,507 in expanded form.",
+      "answer": "Break apart each digit by its place value: 2,507 = 2,000 + 500 + 0 + 7. The zero in the tens place means there are no tens.",
+      "skill": "emf-place-value",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbd-3",
+      "question": "A school library has 3,048 books. What does the 0 in this number tell you?",
+      "answer": "The 0 is in the hundreds place. It means there are zero hundreds. The 0 acts as a placeholder so the 3 stays in the thousands place.",
+      "skill": "emf-place-value",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbd-4",
+      "question": "Round 463 to the nearest hundred.",
+      "answer": "Look at the tens digit: 6. Since 6 is 5 or more, round up. 463 rounds to 500.",
+      "skill": "emf-rounding-estimation",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-5",
+      "question": "A farmer harvested 1,847 apples. He tells his friend he picked 'about 2,000 apples.' Is his estimate reasonable? Explain.",
+      "answer": "Yes. Rounding 1,847 to the nearest thousand: the hundreds digit is 8, which is 5 or more, so round up. 1,847 rounds to 2,000. His estimate is reasonable.",
+      "skill": "emf-rounding-estimation",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cbd-6",
+      "question": "Fill in the blank with <, >, or =: 589 ___ 598",
+      "answer": "Compare digit by digit from the left. The hundreds digits are both 5. The tens digits are 8 and 9. Since 8 < 9, we know 589 < 598.",
+      "skill": "emf-compare-order",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-7",
+      "question": "Order these numbers from least to greatest: 3,210 ; 3,102 ; 3,012 ; 3,201",
+      "answer": "All start with 3 in the thousands place. Compare the hundreds digits: 0, 1, 2, 2. So 3,012 is smallest, then 3,102. For 3,210 and 3,201, compare tens: 1 < 0 is false, so 3,201 < 3,210. Order: 3,012, 3,102, 3,201, 3,210.",
+      "skill": "emf-compare-order",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cbd-8",
+      "question": "Solve: 8 + 7 = ?",
+      "answer": "Use the make-10 strategy: 8 + 2 = 10, and 7 − 2 = 5, so 10 + 5 = 15. Therefore 8 + 7 = 15.",
+      "skill": "emf-add-sub-facts",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-9",
+      "question": "Solve: 16 − 9 = ?",
+      "answer": "Think of the related addition fact: 9 + ? = 16. Since 9 + 7 = 16, we know 16 − 9 = 7.",
+      "skill": "emf-add-sub-facts",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-10",
+      "question": "Maya had 14 stickers. She gave 6 to her brother and then found 5 more in her desk. How many stickers does Maya have now?",
+      "answer": "Start with 14. Subtract the 6 she gave away: 14 − 6 = 8. Add the 5 she found: 8 + 5 = 13. Maya has 13 stickers.",
+      "skill": "emf-add-sub-facts",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbd-11",
+      "question": "What are the next three numbers in this pattern? 5, 10, 15, 20, ___, ___, ___",
+      "answer": "The pattern is skip counting by 5. Each number is 5 more than the one before it. The next three numbers are 25, 30, 35.",
+      "skill": "emf-number-patterns",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbd-12",
+      "question": "Look at this pattern: 2, 6, 18, 54, ___. What is the rule, and what comes next?",
+      "answer": "Each number is multiplied by 3 to get the next number: 2 × 3 = 6, 6 × 3 = 18, 18 × 3 = 54. The rule is 'multiply by 3.' The next number is 54 × 3 = 162.",
+      "skill": "emf-number-patterns",
+      "difficulty": 3,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cbd-1": "600",
+    "cbd-2": "2,000 + 500 + 0 + 7",
+    "cbd-3": "zero hundreds; placeholder",
+    "cbd-4": "500",
+    "cbd-5": "yes, 1,847 rounds to 2,000",
+    "cbd-6": "<",
+    "cbd-7": "3,012, 3,102, 3,201, 3,210",
+    "cbd-8": "15",
+    "cbd-9": "7",
+    "cbd-10": "13",
+    "cbd-11": "25, 30, 35",
+    "cbd-12": "multiply by 3; 162"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "moduleId": "checkpoint_q3",
+  "course": "6th Grade Math",
+  "unit": 6,
+  "title": "Checkpoint: Quarter 3 — Geometry and Statistics",
+  "weeks": "26",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Quarter 3 assessment covering geometry (area of triangles/parallelograms, composite figures, nets/surface area, volume, applications) and statistics (statistical questions, data displays, measures of center/variability, comparing distributions). Two very different skill sets — spatial reasoning and data analysis.",
+  "skillsCovered": [
+    "g6-area-triangles-parallelograms",
+    "g6-area-composite-figures",
+    "g6-nets-surface-area",
+    "g6-volume-rectangular-prisms",
+    "g6-geometry-applications",
+    "g6-statistical-questions",
+    "g6-data-displays",
+    "g6-measures-center-variability",
+    "g6-compare-distributions"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Geometry and statistics gaps are less likely to cascade than number sense gaps, but both domains appear on standardized assessments and in the cumulative final. Address weaknesses before Q4.",
+    "clusters": [
+      {
+        "skillId": "g6-area-triangles-parallelograms",
+        "reteachFocus": "Height is perpendicular to base (not the slant side), A=bh for parallelograms, A=½bh for triangles, derive from rectangles"
+      },
+      {
+        "skillId": "g6-area-composite-figures",
+        "reteachFocus": "Decompose into rectangles+triangles, add parts or subtract holes, label all dimensions before computing"
+      },
+      {
+        "skillId": "g6-nets-surface-area",
+        "reteachFocus": "Identify all faces of a prism, 3 pairs for rectangular prism, SA=2lw+2lh+2wh, don't miss top/bottom"
+      },
+      {
+        "skillId": "g6-volume-rectangular-prisms",
+        "reteachFocus": "V=lwh including fractional edges, cubic units, distinguish from surface area"
+      },
+      {
+        "skillId": "g6-data-displays",
+        "reteachFocus": "Reading dot plots, histograms (bins/frequency), box plots (five-number summary), choosing appropriate display"
+      },
+      {
+        "skillId": "g6-measures-center-variability",
+        "reteachFocus": "Mean=sum÷count, median=middle when ordered, range=max-min, IQR=Q3-Q1, when to use mean vs median"
+      },
+      {
+        "skillId": "g6-compare-distributions",
+        "reteachFocus": "Shape (symmetric/skewed), compare centers and spreads, claim+evidence format with specific numbers"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq3-1",
+      "question": "A triangular garden bed has a base of 8 feet and a height of 5 feet. What is the area of the garden bed?",
+      "answer": "Use the triangle area formula: A = ½ × b × h = ½ × 8 × 5 = ½ × 40 = 20 square feet.",
+      "skill": "g6-area-triangles-parallelograms",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq3-2",
+      "question": "A parallelogram-shaped classroom bulletin board has a base of 6.5 feet, a height of 3 feet, and a slant side of 3.4 feet. What is the area of the bulletin board?",
+      "answer": "Use the parallelogram area formula with the perpendicular height (not the slant side): A = b × h = 6.5 × 3 = 19.5 square feet. The slant side of 3.4 feet is not used because area requires the perpendicular height.",
+      "skill": "g6-area-triangles-parallelograms",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq3-3",
+      "question": "An L-shaped room is made of two rectangles. The larger section is 14 feet long and 10 feet wide. The smaller section extends 6 feet further and is 4 feet wide. What is the total floor area of the room?",
+      "answer": "Decompose into two rectangles. Larger rectangle: 14 × 10 = 140 sq ft. Smaller rectangle: 6 × 4 = 24 sq ft. Total area: 140 + 24 = 164 square feet.",
+      "skill": "g6-area-composite-figures",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq3-4",
+      "question": "A rectangular piece of fabric is 12 inches long and 8 inches wide. A triangle is cut from one corner with a base of 4 inches and a height of 6 inches. What is the area of the remaining fabric?",
+      "answer": "Start with the full rectangle: 12 × 8 = 96 sq in. Find the triangle area: ½ × 4 × 6 = 12 sq in. Subtract the cutout: 96 − 12 = 84 square inches.",
+      "skill": "g6-area-composite-figures",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq3-5",
+      "question": "A cereal box is 11 inches tall, 8 inches wide, and 3 inches deep. What is the total surface area of the box?",
+      "answer": "A rectangular prism has 3 pairs of faces. Front/back: 2 × (11 × 8) = 176 sq in. Left/right sides: 2 × (11 × 3) = 66 sq in. Top/bottom: 2 × (8 × 3) = 48 sq in. Total surface area: 176 + 66 + 48 = 290 square inches.",
+      "skill": "g6-nets-surface-area",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq3-6",
+      "question": "A fish tank is shaped like a rectangular prism. It is 2 feet long, 1 foot wide, and 1.5 feet tall. What is the volume of the tank in cubic feet?",
+      "answer": "Use V = l × w × h = 2 × 1 × 1.5 = 3 cubic feet.",
+      "skill": "g6-volume-rectangular-prisms",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq3-7",
+      "question": "A storage bin is 4½ feet long, 2⅓ feet wide, and 3 feet tall. What is the volume of the bin?",
+      "answer": "Convert to improper fractions: 4½ = 9/2, 2⅓ = 7/3. Multiply: V = 9/2 × 7/3 × 3 = (9 × 7 × 3) / (2 × 3) = 189/6 = 31½ cubic feet, or 31.5 cubic feet.",
+      "skill": "g6-volume-rectangular-prisms",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq3-8",
+      "question": "Marcus is wrapping a gift box that is 14 inches long, 10 inches wide, and 5 inches tall. Wrapping paper costs $0.02 per square inch. How much will the wrapping paper cost to cover the entire box with no overlap?",
+      "answer": "Find the surface area: 2(14 × 10) + 2(14 × 5) + 2(10 × 5) = 280 + 140 + 100 = 520 square inches. Multiply by cost per square inch: 520 × $0.02 = $10.40.",
+      "skill": "g6-geometry-applications",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cq3-9",
+      "question": "Which of these is a statistical question? (A) How many days are in February this year? (B) What are the ages of students in the school band? (C) What time does the library open on Saturday? (D) How many pages are in this textbook? Explain your choice.",
+      "answer": "Choice (B) is a statistical question. It expects variability in the answers — different students in the band are different ages — so you would need to collect data and describe the distribution. The other choices each have a single, fixed answer with no variability.",
+      "skill": "g6-statistical-questions",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq3-10",
+      "question": "A dot plot shows the number of goals scored by 15 soccer players this season: 0 (two dots), 1 (three dots), 2 (four dots), 3 (three dots), 4 (two dots), 5 (one dot). How many players were surveyed, and what is the most common number of goals scored?",
+      "answer": "Count all dots: 2 + 3 + 4 + 3 + 2 + 1 = 15 players surveyed. The value with the most dots is 2 goals (four dots), so the mode is 2 goals.",
+      "skill": "g6-data-displays",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq3-11",
+      "question": "Ms. Garcia's class recorded daily high temperatures (°F) for two weeks: 68, 72, 71, 75, 74, 70, 69, 73, 76, 72. Find the mean and median temperature.",
+      "answer": "Mean: Add all values: 68 + 72 + 71 + 75 + 74 + 70 + 69 + 73 + 76 + 72 = 720. Divide by 10: 720 ÷ 10 = 72°F. Median: Order the data: 68, 69, 70, 71, 72, 72, 73, 74, 75, 76. With 10 values, the median is the average of the 5th and 6th values: (72 + 72) ÷ 2 = 72°F. The mean and median are both 72°F.",
+      "skill": "g6-measures-center-variability",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq3-12",
+      "question": "Seven students tracked how many minutes they spent reading last night: 15, 20, 25, 30, 35, 40, 60. Find the range and the interquartile range (IQR). Which measure better describes the typical spread? Explain.",
+      "answer": "Range: 60 − 15 = 45 minutes. For IQR: The median (4th value) is 30. Lower half: 15, 20, 25 → Q1 = 20. Upper half: 35, 40, 60 → Q3 = 40. IQR = Q3 − Q1 = 40 − 20 = 20 minutes. The IQR better describes the typical spread because the range is stretched by the outlier (60 minutes), while the IQR focuses on the middle 50% of the data.",
+      "skill": "g6-measures-center-variability",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq3-13",
+      "question": "The basketball team tracked points scored in 8 games: Team A scored a mean of 54 points with a range of 12. Team B scored a mean of 48 points with a range of 30. Which team performed better overall, and which team was more consistent? Use specific numbers to support your answer.",
+      "answer": "Team A performed better overall because their mean score (54 points) is higher than Team B's mean (48 points), meaning they scored about 6 more points per game on average. Team A was also more consistent because their range (12 points) is much smaller than Team B's range (30 points), meaning Team A's scores varied less from game to game.",
+      "skill": "g6-compare-distributions",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq3-14",
+      "question": "Two classes took the same science quiz (scored out of 20). Class 1: median = 16, mean = 15, IQR = 4. Class 2: median = 14, mean = 13.5, IQR = 8. Compare the two distributions using center and variability. Which class would you say performed better, and why?",
+      "answer": "Class 1 performed better overall. Their center is higher (median 16 vs. 14, mean 15 vs. 13.5), meaning the typical student in Class 1 scored about 2 points higher. Class 1 also has less variability (IQR of 4 vs. 8), meaning their scores were more clustered together. Class 2's wider IQR of 8 indicates greater spread — some students did well but others scored much lower. Class 1 had both higher typical scores and more consistent performance.",
+      "skill": "g6-compare-distributions",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "cq3-1": "20 square feet",
+    "cq3-2": "19.5 square feet",
+    "cq3-3": "164 square feet",
+    "cq3-4": "84 square inches",
+    "cq3-5": "290 square inches",
+    "cq3-6": "3 cubic feet",
+    "cq3-7": "31.5 cubic feet",
+    "cq3-8": "$10.40",
+    "cq3-9": "B — expects variability in answers",
+    "cq3-10": "15 players; mode is 2 goals",
+    "cq3-11": "mean = 72°F; median = 72°F",
+    "cq3-12": "range = 45 min; IQR = 20 min; IQR better describes spread",
+    "cq3-13": "Team A better overall (mean 54 vs 48); Team A more consistent (range 12 vs 30)",
+    "cq3-14": "Class 1 performed better (higher center, less variability)"
+  }
+}

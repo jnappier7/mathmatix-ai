@@ -1,0 +1,375 @@
+{
+  "courseId": "early-math-foundations",
+  "track": "Early Math Foundations (Grades 3–5)",
+  "overview": "A foundational course targeting the essential Grades 3–5 skills that every student must own before middle school succeeds. Covers whole number operations (addition through long division), fraction concepts and operations, decimal fluency, basic geometry and measurement, data interpretation, and early algebraic thinking. Designed for students with elementary gaps — whether they're preparing for 6th grade, catching up mid-year, or building confidence. Diagnostic-first: find what's broken, fix it, prove it's fixed.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Diagnose number sense gaps: place value, rounding, estimation, basic fact fluency",
+    "Lock in multi-digit addition and subtraction with regrouping",
+    "Build multiplication fluency through 12×12 and multi-digit multiplication",
+    "Master division facts and long division with interpreting remainders",
+    "Understand fractions as parts, equivalence, and comparison",
+    "Add, subtract, and multiply fractions with unlike denominators",
+    "Read, compare, and compute with decimals; connect to fractions",
+    "Calculate perimeter, area, angles, and classify shapes",
+    "Interpret graphs, extend patterns, and use unknowns",
+    "Prove readiness for 6th-grade math with cumulative mastery"
+  ],
+
+  "standardsAlignment": {
+    "framework": "Common Core State Standards — Grades 3–5",
+    "domains": {
+      "3.OA": "Operations and Algebraic Thinking — multiply/divide, patterns, unknowns",
+      "3.NF": "Number and Operations — Fractions — fraction concepts",
+      "3.MD": "Measurement and Data — area, perimeter, time, graphs",
+      "4.NBT": "Number and Operations in Base Ten — multi-digit operations, place value",
+      "4.NF": "Number and Operations — Fractions — equivalence, comparison, operations",
+      "4.MD": "Measurement and Data — conversions, angles, area, perimeter",
+      "5.NBT": "Number and Operations in Base Ten — decimals, powers of 10",
+      "5.NF": "Number and Operations — Fractions — add, subtract, multiply, divide fractions",
+      "5.MD": "Measurement and Data — volume, conversions",
+      "5.G": "Geometry — coordinate plane basics, shape classification"
+    }
+  },
+
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release with concrete-pictorial-abstract progression",
+    "description": "The AI tutor leads instruction using the CPA model — every concept starts with something you can touch or see (manipulatives, drawings, real objects), moves to pictures and diagrams (bar models, area models, number lines), then formalizes to numbers and symbols. This course serves students who may have math anxiety or gaps from earlier grades, so pacing is patient, success is celebrated, and mistakes are treated as information, not failure.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Introduce the concept with a concrete, hands-on context. Use familiar objects (pizza slices, money, blocks, sports). Activate whatever the student DOES know before building new knowledge.",
+        "studentRole": "Connect to personal experience, identify what they already know, engage with the scenario"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2-3 examples step by step. Use pictures and diagrams alongside numbers. Narrate the WHY behind each step, not just the how. Keep language simple and direct.",
+        "studentRole": "Follow along, watch the steps, notice the pattern, ask questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Present guided problems with scaffolding. Ask one question at a time. Give hints that redirect thinking rather than revealing the answer. Celebrate correct steps, not just final answers.",
+        "studentRole": "Try each step, explain thinking out loud, accept feedback, try again if needed"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Assign independent practice at the right difficulty level. Include a mix of computation and word problems. Require showing work.",
+        "studentRole": "Solve independently, show work, check answers, build confidence"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Short check: 3-5 problems. Assess both accuracy and strategy. If fluent, advance. If not, reteach the specific gap before moving on.",
+        "studentRole": "Complete the check, demonstrate understanding"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust difficulty dynamically — if a student can't do 3-digit subtraction, drop back to 2-digit before proceeding",
+      "Use age-appropriate contexts: younger students (8-10) respond to games, animals, food, sports, school scenarios",
+      "Be patient with fact fluency — some students need repeated practice with multiplication tables, and that's OK",
+      "Use visual models (number lines, area models, fraction strips) until the student demonstrates they're ready for abstract",
+      "Celebrate small wins — 'You got that right! You just divided a 3-digit number' builds math identity",
+      "Never say 'this is easy' — what's easy for one student is terrifying for another"
+    ]
+  },
+
+  "modules": [
+    {
+      "moduleId": "number_sense_bootcamp",
+      "unit": 0,
+      "title": "Number Sense Boot Camp",
+      "preview": "Place value, rounding, estimation, compare/order whole numbers, addition/subtraction facts, and number patterns",
+      "moduleFile": "/modules/early-math-foundations/number_sense_bootcamp_module.json",
+      "weeks": "1-2",
+      "skills": [
+        "emf-place-value",
+        "emf-rounding-estimation",
+        "emf-compare-order",
+        "emf-add-sub-facts",
+        "emf-number-patterns"
+      ],
+      "essentialQuestions": [
+        "What does each digit in a number actually mean?",
+        "How do I know if my answer is even close to right before I finish computing?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_bootcamp",
+      "unit": 0,
+      "title": "Checkpoint: Number Sense Diagnostic",
+      "preview": "Diagnostic assessment of place value, rounding, comparing, basic facts, and pattern recognition",
+      "moduleFile": "/modules/early-math-foundations/checkpoint_bootcamp_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "emf-place-value",
+        "emf-rounding-estimation",
+        "emf-compare-order",
+        "emf-add-sub-facts",
+        "emf-number-patterns"
+      ]
+    },
+    {
+      "moduleId": "addition_subtraction",
+      "unit": 1,
+      "title": "Multi-Digit Addition & Subtraction",
+      "preview": "Standard algorithms with regrouping, borrowing across zeros, word problems, and mental math strategies",
+      "moduleFile": "/modules/early-math-foundations/addition_subtraction_module.json",
+      "weeks": "3-4",
+      "skills": [
+        "emf-multi-digit-addition",
+        "emf-multi-digit-subtraction",
+        "emf-add-sub-word-problems",
+        "emf-mental-math-strategies"
+      ],
+      "essentialQuestions": [
+        "Why do I regroup when a column adds up to more than 9?",
+        "How do I borrow across zeros — and why does it work?"
+      ]
+    },
+    {
+      "moduleId": "multiplication",
+      "unit": 2,
+      "title": "Multiplication Mastery",
+      "preview": "Multiplication facts through 12×12, properties, multi-digit multiplication, word problems, and factors/multiples",
+      "moduleFile": "/modules/early-math-foundations/multiplication_module.json",
+      "weeks": "5-7",
+      "skills": [
+        "emf-multiplication-facts",
+        "emf-multiplication-properties",
+        "emf-multi-digit-multiplication",
+        "emf-multiply-word-problems",
+        "emf-factors-multiples"
+      ],
+      "essentialQuestions": [
+        "Do I know my multiplication facts well enough that I don't have to think about them?",
+        "What's the difference between a factor and a multiple?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "unit": 2,
+      "title": "Checkpoint: Quarter 1 — Operations Fluency",
+      "preview": "Assessment covering addition, subtraction, multiplication, word problems, and factors/multiples",
+      "moduleFile": "/modules/early-math-foundations/checkpoint_q1_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "emf-multi-digit-addition",
+        "emf-multi-digit-subtraction",
+        "emf-add-sub-word-problems",
+        "emf-mental-math-strategies",
+        "emf-multiplication-facts",
+        "emf-multiplication-properties",
+        "emf-multi-digit-multiplication",
+        "emf-multiply-word-problems",
+        "emf-factors-multiples"
+      ]
+    },
+    {
+      "moduleId": "division",
+      "unit": 3,
+      "title": "Division Mastery",
+      "preview": "Division facts, long division with 1-2 digit divisors, interpreting remainders, and division word problems",
+      "moduleFile": "/modules/early-math-foundations/division_module.json",
+      "weeks": "8-9",
+      "skills": [
+        "emf-division-facts",
+        "emf-long-division",
+        "emf-interpreting-remainders",
+        "emf-divide-word-problems"
+      ],
+      "essentialQuestions": [
+        "How does knowing my multiplication facts make division faster?",
+        "What do I do with the remainder — and how do I decide?"
+      ]
+    },
+    {
+      "moduleId": "fraction_concepts",
+      "unit": 4,
+      "title": "Fraction Concepts",
+      "preview": "What fractions mean, equivalent fractions, comparing and ordering, mixed numbers, and fractions of a whole number",
+      "moduleFile": "/modules/early-math-foundations/fraction_concepts_module.json",
+      "weeks": "10-12",
+      "skills": [
+        "emf-fraction-concepts",
+        "emf-equivalent-fractions",
+        "emf-compare-order-fractions",
+        "emf-mixed-numbers-improper",
+        "emf-fractions-of-whole"
+      ],
+      "essentialQuestions": [
+        "What does a fraction actually represent — and why are there two numbers?",
+        "How can 1/2 and 3/6 be the same amount?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "unit": 4,
+      "title": "Checkpoint: Quarter 2 — Division and Fraction Concepts",
+      "preview": "Assessment covering division fluency, interpreting remainders, fraction understanding, equivalence, and comparison",
+      "moduleFile": "/modules/early-math-foundations/checkpoint_q2_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "emf-division-facts",
+        "emf-long-division",
+        "emf-interpreting-remainders",
+        "emf-divide-word-problems",
+        "emf-fraction-concepts",
+        "emf-equivalent-fractions",
+        "emf-compare-order-fractions",
+        "emf-mixed-numbers-improper",
+        "emf-fractions-of-whole"
+      ]
+    },
+    {
+      "moduleId": "fraction_operations",
+      "unit": 5,
+      "title": "Fraction Operations",
+      "preview": "Add and subtract fractions with like and unlike denominators, multiply fractions, mixed number operations",
+      "moduleFile": "/modules/early-math-foundations/fraction_operations_module.json",
+      "weeks": "13-15",
+      "skills": [
+        "emf-add-fractions-like",
+        "emf-subtract-fractions-like",
+        "emf-add-subtract-unlike",
+        "emf-multiply-fractions"
+      ],
+      "essentialQuestions": [
+        "Why do I need a common denominator to add fractions but not to multiply them?",
+        "What does it mean to multiply 1/2 × 1/3 — and why is the answer smaller?"
+      ]
+    },
+    {
+      "moduleId": "decimals",
+      "unit": 6,
+      "title": "Decimals",
+      "preview": "Decimal place value, comparing decimals, adding and subtracting decimals, and the fraction-decimal connection",
+      "moduleFile": "/modules/early-math-foundations/decimals_module.json",
+      "weeks": "16-18",
+      "skills": [
+        "emf-decimal-place-value",
+        "emf-compare-order-decimals",
+        "emf-add-subtract-decimals",
+        "emf-decimals-fractions-connection"
+      ],
+      "essentialQuestions": [
+        "Why is 0.5 the same as 1/2 — and how do I switch between them?",
+        "Where do I put the decimal point, and why does it matter so much?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "unit": 6,
+      "title": "Checkpoint: Quarter 3 — Fraction Operations and Decimals",
+      "preview": "Assessment covering fraction addition/subtraction/multiplication and decimal fluency",
+      "moduleFile": "/modules/early-math-foundations/checkpoint_q3_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "emf-add-fractions-like",
+        "emf-subtract-fractions-like",
+        "emf-add-subtract-unlike",
+        "emf-multiply-fractions",
+        "emf-decimal-place-value",
+        "emf-compare-order-decimals",
+        "emf-add-subtract-decimals",
+        "emf-decimals-fractions-connection"
+      ]
+    },
+    {
+      "moduleId": "geometry_measurement",
+      "unit": 7,
+      "title": "Geometry & Measurement",
+      "preview": "Perimeter, area of rectangles, angle basics, shape classification, and measurement unit conversions",
+      "moduleFile": "/modules/early-math-foundations/geometry_measurement_module.json",
+      "weeks": "19-21",
+      "skills": [
+        "emf-perimeter",
+        "emf-area-rectangles",
+        "emf-angles-basics",
+        "emf-shapes-properties",
+        "emf-measurement-units"
+      ],
+      "essentialQuestions": [
+        "What's the difference between the distance around a shape and the space inside it?",
+        "How do I know if an angle is a right angle without a protractor?"
+      ]
+    },
+    {
+      "moduleId": "data_patterns",
+      "unit": 8,
+      "title": "Data & Patterns",
+      "preview": "Read and create bar graphs and line plots, interpret data, extend patterns, input/output tables, and intro to unknowns",
+      "moduleFile": "/modules/early-math-foundations/data_patterns_module.json",
+      "weeks": "22-24",
+      "skills": [
+        "emf-data-graphs",
+        "emf-data-interpretation",
+        "emf-patterns-rules",
+        "emf-unknowns-intro"
+      ],
+      "essentialQuestions": [
+        "What story does this graph tell — and what questions can I answer from it?",
+        "If I see a pattern, can I predict what comes next?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q4",
+      "unit": 8,
+      "title": "Checkpoint: Quarter 4 — Geometry, Data, and Cumulative",
+      "preview": "Assessment covering geometry, measurement, data interpretation, patterns, and cumulative skills from all units",
+      "moduleFile": "/modules/early-math-foundations/checkpoint_q4_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "emf-perimeter",
+        "emf-area-rectangles",
+        "emf-angles-basics",
+        "emf-shapes-properties",
+        "emf-measurement-units",
+        "emf-data-graphs",
+        "emf-data-interpretation",
+        "emf-patterns-rules",
+        "emf-unknowns-intro"
+      ]
+    },
+    {
+      "moduleId": "final_review",
+      "unit": 9,
+      "title": "Final: Ready for 6th Grade",
+      "preview": "Cumulative assessment proving readiness for middle school: operations, fractions, decimals, geometry, and problem solving",
+      "moduleFile": "/modules/early-math-foundations/final_review_module.json",
+      "isFinal": true,
+      "skills": [
+        "emf-multi-digit-addition",
+        "emf-multi-digit-subtraction",
+        "emf-multiplication-facts",
+        "emf-multi-digit-multiplication",
+        "emf-long-division",
+        "emf-fraction-concepts",
+        "emf-equivalent-fractions",
+        "emf-compare-order-fractions",
+        "emf-add-subtract-unlike",
+        "emf-multiply-fractions",
+        "emf-decimal-place-value",
+        "emf-add-subtract-decimals",
+        "emf-decimals-fractions-connection",
+        "emf-perimeter",
+        "emf-area-rectangles",
+        "emf-patterns-rules",
+        "emf-unknowns-intro"
+      ]
+    }
+  ],
+
+  "spiralStrategy": {
+    "dailyWarmup": "2 fact fluency problems (multiplication/division) + 1 review from a prior unit, 5 minutes",
+    "weeklyQuiz": "8-10 minute quiz mixing current and prior skills, emphasis on fact fluency",
+    "everyUnit": "One word problem requiring prior-unit skills woven into the new content",
+    "nonNegotiableThreads": [
+      "Multiplication and division fact fluency (the engine for everything)",
+      "Fraction understanding (not just procedures — what does 3/4 MEAN?)",
+      "Place value fluency (decimals and whole numbers)",
+      "Word problem comprehension (read, identify, set up, solve, check)",
+      "Estimation habit (predict before computing, check reasonableness after)"
+    ]
+  },
+
+  "aiGuidanceNotes": "This course serves students who may be behind, anxious, or both. Every interaction should build math confidence alongside math skill. Never assume a student 'should' know something — if they don't, teach it without judgment. Use the CPA model rigorously: concrete objects first (blocks, coins, food), then pictures/diagrams, then symbols. Fact fluency (especially multiplication) is the single biggest lever — students who don't know their facts will struggle with fractions, division, and everything that follows. Be patient, be encouraging, and celebrate progress."
+}

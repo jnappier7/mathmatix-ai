@@ -1,0 +1,199 @@
+{
+  "moduleId": "checkpoint_q3",
+  "course": "Early Math Foundations",
+  "unit": 6,
+  "title": "Checkpoint: Quarter 3 \u2014 Fraction Operations and Decimals",
+  "weeks": "18",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering fraction addition/subtraction/multiplication and decimal fluency. Tests mastery of Units 5-6.",
+  "skillsCovered": [
+    "emf-add-fractions-like",
+    "emf-subtract-fractions-like",
+    "emf-add-subtract-unlike",
+    "emf-multiply-fractions",
+    "emf-decimal-place-value",
+    "emf-compare-order-decimals",
+    "emf-add-subtract-decimals",
+    "emf-decimals-fractions-connection"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Fraction and decimal fluency are gateway skills for ratios, percentages, and algebra. Address gaps now before Units 7-8 build on them.",
+    "clusters": [
+      {
+        "skillId": "emf-add-fractions-like",
+        "reteachFocus": "Same denominator means same-size pieces \u2014 just count pieces (add numerators), keep denominator, simplify if possible"
+      },
+      {
+        "skillId": "emf-subtract-fractions-like",
+        "reteachFocus": "Subtract numerators only, denominator stays, use fraction strips or number lines to visualize taking away pieces"
+      },
+      {
+        "skillId": "emf-add-subtract-unlike",
+        "reteachFocus": "Find the LCD first, rewrite each fraction as an equivalent fraction with the LCD, then add or subtract numerators"
+      },
+      {
+        "skillId": "emf-multiply-fractions",
+        "reteachFocus": "Multiply numerator \u00d7 numerator and denominator \u00d7 denominator, simplify, use area models to show 'fraction of a fraction'"
+      },
+      {
+        "skillId": "emf-decimal-place-value",
+        "reteachFocus": "Tenths are one place right of the decimal, hundredths two places; use base-ten blocks or hundredths grids to build number sense"
+      },
+      {
+        "skillId": "emf-compare-order-decimals",
+        "reteachFocus": "Line up decimal points, compare digit by digit from left to right, annex zeros so all numbers have the same number of decimal places"
+      },
+      {
+        "skillId": "emf-add-subtract-decimals",
+        "reteachFocus": "Line up decimal points vertically, annex zeros to match place values, regroup the same way as whole numbers"
+      },
+      {
+        "skillId": "emf-decimals-fractions-connection",
+        "reteachFocus": "0.5 = 5/10 = 1/2, use place value to convert (tenths, hundredths), divide numerator by denominator to go fraction \u2192 decimal"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq3-1",
+      "question": "What is 2/5 + 1/5?",
+      "answer": "2/5 + 1/5 = 3/5. When the denominators are the same, add the numerators: 2 + 1 = 3. Keep the denominator 5.",
+      "skill": "emf-add-fractions-like",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq3-2",
+      "question": "Maria ate 3/8 of a pizza for lunch and 2/8 of the same pizza for a snack. What fraction of the pizza did she eat in all?",
+      "answer": "3/8 + 2/8 = 5/8. Same denominator, so add numerators: 3 + 2 = 5. Maria ate 5/8 of the pizza.",
+      "skill": "emf-add-fractions-like",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-3",
+      "question": "What is 5/6 \u2212 2/6? Simplify your answer if possible.",
+      "answer": "5/6 \u2212 2/6 = 3/6. Subtract numerators: 5 \u2212 2 = 3. The fraction 3/6 simplifies to 1/2 (divide numerator and denominator by 3).",
+      "skill": "emf-subtract-fractions-like",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq3-4",
+      "question": "A ribbon is 7/10 of a yard long. Sophie cuts off 3/10 of a yard. How much ribbon is left?",
+      "answer": "7/10 \u2212 3/10 = 4/10 = 2/5 of a yard. Subtract numerators: 7 \u2212 3 = 4. Simplify 4/10 by dividing both by 2 to get 2/5.",
+      "skill": "emf-subtract-fractions-like",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-5",
+      "question": "Find the sum: 1/3 + 1/4.",
+      "answer": "Find the least common denominator of 3 and 4, which is 12. Rewrite: 1/3 = 4/12, 1/4 = 3/12. Add: 4/12 + 3/12 = 7/12.",
+      "skill": "emf-add-subtract-unlike",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-6",
+      "question": "Jake ran 3/4 of a mile on Monday and 2/3 of a mile on Tuesday. How far did he run in all? Show your work.",
+      "answer": "Find the LCD of 4 and 3, which is 12. Rewrite: 3/4 = 9/12, 2/3 = 8/12. Add: 9/12 + 8/12 = 17/12 = 1 5/12 miles. Jake ran 1 5/12 miles in all.",
+      "skill": "emf-add-subtract-unlike",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq3-7",
+      "question": "Find the product: 2/3 \u00d7 3/4.",
+      "answer": "Multiply numerators: 2 \u00d7 3 = 6. Multiply denominators: 3 \u00d7 4 = 12. The product is 6/12, which simplifies to 1/2.",
+      "skill": "emf-multiply-fractions",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-8",
+      "question": "A recipe calls for 3/4 cup of sugar. If you want to make only 2/3 of the recipe, how much sugar do you need?",
+      "answer": "Multiply: 3/4 \u00d7 2/3 = (3 \u00d7 2) / (4 \u00d7 3) = 6/12 = 1/2. You need 1/2 cup of sugar.",
+      "skill": "emf-multiply-fractions",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq3-9",
+      "question": "In the number 4.62, what is the value of the digit 6? What is the value of the digit 2?",
+      "answer": "The digit 6 is in the tenths place, so its value is 6 tenths (0.6). The digit 2 is in the hundredths place, so its value is 2 hundredths (0.02).",
+      "skill": "emf-decimal-place-value",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq3-10",
+      "question": "Write the number 'seven and thirty-five hundredths' as a decimal. Then name the place value of each digit after the decimal point.",
+      "answer": "7.35. The 3 is in the tenths place (3 tenths = 0.3). The 5 is in the hundredths place (5 hundredths = 0.05).",
+      "skill": "emf-decimal-place-value",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-11",
+      "question": "Put these numbers in order from least to greatest: 0.45, 0.5, 0.405, 0.54.",
+      "answer": "Annex zeros so all numbers have three decimal places: 0.450, 0.500, 0.405, 0.540. Compare digit by digit: 0.405 < 0.450 < 0.500 < 0.540. Order from least to greatest: 0.405, 0.45, 0.5, 0.54.",
+      "skill": "emf-compare-order-decimals",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-12",
+      "question": "Find the sum: 3.75 + 2.8.",
+      "answer": "Line up the decimal points. Write 2.8 as 2.80 so both numbers have two decimal places. Add: 3.75 + 2.80 = 6.55.",
+      "skill": "emf-add-subtract-decimals",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-13",
+      "question": "Emma had $10.00. She bought a notebook for $3.49 and a pen for $1.75. How much money does she have left?",
+      "answer": "First add the purchases: $3.49 + $1.75 = $5.24. Then subtract from $10.00: $10.00 \u2212 $5.24 = $4.76. Emma has $4.76 left.",
+      "skill": "emf-add-subtract-decimals",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq3-14",
+      "question": "Write 3/4 as a decimal. Then write 0.6 as a fraction in simplest form.",
+      "answer": "3/4 as a decimal: divide 3 \u00f7 4 = 0.75. 0.6 as a fraction: 0.6 = 6/10. Simplify by dividing numerator and denominator by 2: 6/10 = 3/5.",
+      "skill": "emf-decimals-fractions-connection",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq3-15",
+      "question": "Liam says that 0.25 is greater than 1/3 because 25 is a big number. Is Liam correct? Use what you know about decimals and fractions to explain your answer.",
+      "answer": "Liam is incorrect. Convert both to the same form: 0.25 = 25/100 = 1/4. Compare 1/4 and 1/3: since 1/4 = 0.25 and 1/3 \u2248 0.333, we see that 0.25 < 0.333, so 1/4 < 1/3. Liam\u2019s mistake was looking at the digits (25) instead of the actual value of the decimal.",
+      "skill": "emf-decimals-fractions-connection",
+      "difficulty": 3,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cq3-1": "3/5",
+    "cq3-2": "5/8 of the pizza",
+    "cq3-3": "1/2",
+    "cq3-4": "2/5 of a yard",
+    "cq3-5": "7/12",
+    "cq3-6": "1 5/12 miles",
+    "cq3-7": "1/2",
+    "cq3-8": "1/2 cup of sugar",
+    "cq3-9": "6 is 0.6 (tenths); 2 is 0.02 (hundredths)",
+    "cq3-10": "7.35; 3 is in tenths, 5 is in hundredths",
+    "cq3-11": "0.405, 0.45, 0.5, 0.54",
+    "cq3-12": "6.55",
+    "cq3-13": "$4.76",
+    "cq3-14": "3/4 = 0.75; 0.6 = 3/5",
+    "cq3-15": "No \u2014 0.25 = 1/4, which is less than 1/3 (\u2248 0.333)"
+  }
+}

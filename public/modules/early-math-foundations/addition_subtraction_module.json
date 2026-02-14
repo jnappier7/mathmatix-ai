@@ -1,0 +1,499 @@
+{
+  "moduleId": "addition_subtraction",
+  "course": "Early Math Foundations",
+  "unit": 1,
+  "title": "Multi-Digit Addition & Subtraction",
+  "weeks": "3-4",
+  "estimatedDuration": 35,
+  "description": "Master the standard algorithms for adding and subtracting numbers up to five digits, including regrouping (carrying) and borrowing across zeros. Build confidence with real-world word problems that require choosing the correct operation, and discover powerful mental math strategies like breaking apart numbers, using compatible numbers, and compensation.",
+
+  "skills": [
+    "emf-multi-digit-addition",
+    "emf-multi-digit-subtraction",
+    "emf-add-sub-word-problems",
+    "emf-mental-math-strategies"
+  ],
+
+  "standardsAlignment": ["3.NBT.A.2", "4.NBT.B.4", "3.OA.D.8", "4.OA.A.3"],
+
+  "goals": [
+    "Add multi-digit whole numbers (up to five digits) using the standard algorithm with regrouping",
+    "Subtract multi-digit whole numbers using the standard algorithm, including borrowing across zeros",
+    "Solve one- and two-step word problems by identifying whether to add or subtract and explaining the reasoning",
+    "Apply mental math strategies (compatible numbers, break apart, compensation, counting up) to compute efficiently without pencil and paper"
+  ],
+
+  "instructionalStrategy": [
+    "Use place-value charts and base-ten block visuals so students see WHY regrouping works—ten ones become one ten, ten tens become one hundred—before drilling the algorithm.",
+    "Teach borrowing across zeros with a 'neighbor knocking' story: when a column has nothing to lend, it borrows from the next neighbor over, and each neighbor adjusts. Walk through 3,004 − 1,567 step by step.",
+    "For word problems, train students to highlight action words (joined, gave away, how many more) and sketch a bar model or number line before writing an equation. This prevents 'keyword hunting' mistakes.",
+    "Introduce mental math strategies as superpowers—each one has a name and a best-use situation. Let students choose their favorite strategy and explain why it works, building number sense alongside procedural fluency."
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-multi-digit-addition",
+      "title": "Multi-Digit Addition with Regrouping",
+      "text": "When we add large numbers, we line them up by **place value** — ones under ones, tens under tens, hundreds under hundreds, and so on. Then we add each column starting from the **right** (the ones place) and move left.\n\nSometimes a column adds up to 10 or more. When that happens, we **regroup** (also called carrying). We write the ones digit of the sum in that column and carry the tens digit to the next column on the left.\n\nFor example, in 47 + 36:\n- Ones column: 7 + 6 = 13. Write 3 in the ones place and carry 1 to the tens column.\n- Tens column: 4 + 3 + 1 (carried) = 8.\n- Answer: **83**\n\nThis same idea works for numbers with three, four, or even five digits. You might need to regroup in several columns — that's completely fine! Just take it one column at a time.",
+      "keyPoints": [
+        "Always line up digits by place value before adding",
+        "Start adding from the rightmost column (ones place) and work left",
+        "When a column totals 10 or more, write the ones digit and carry the tens digit to the next column",
+        "You can regroup in multiple columns — just track each carry carefully",
+        "Check your work by estimating: round each number and see if your answer is close"
+      ],
+      "initialPrompt": "Have you ever added two numbers and gotten a digit bigger than 9 in one column? That's where regrouping comes in! Let's see how it works with bigger numbers."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-multi-digit-addition",
+      "title": "I-Do: Multi-Digit Addition Worked Examples",
+      "examples": [
+        {
+          "problem": "Add 2,748 + 1,685.",
+          "solution": "Line up by place value:\n    2,748\n  + 1,685\n  ------\nOnes: 8 + 5 = 13. Write 3, carry 1.\nTens: 4 + 8 + 1 = 13. Write 3, carry 1.\nHundreds: 7 + 6 + 1 = 14. Write 4, carry 1.\nThousands: 2 + 1 + 1 = 4.\n\nAnswer: **4,433**\n\nCheck by estimating: 2,700 + 1,700 = 4,400. Our answer 4,433 is very close — looks right!",
+          "tip": "Notice we had to regroup in three columns in a row. That happens sometimes! Just stay patient and track each carry."
+        },
+        {
+          "problem": "Add 36,509 + 47,823.",
+          "solution": "Line up by place value:\n   36,509\n + 47,823\n -------\nOnes: 9 + 3 = 12. Write 2, carry 1.\nTens: 0 + 2 + 1 = 3. Write 3.\nHundreds: 5 + 8 = 13. Write 3, carry 1.\nThousands: 6 + 7 + 1 = 14. Write 4, carry 1.\nTen-thousands: 3 + 4 + 1 = 8.\n\nAnswer: **84,332**\n\nCheck by estimating: 37,000 + 48,000 = 85,000. Our answer 84,332 is close — great!",
+          "tip": "With five-digit numbers, there are more columns, but the process is exactly the same. One column at a time!"
+        },
+        {
+          "problem": "A school collected 1,295 cans of food in November and 2,847 cans in December. How many cans did they collect in total?",
+          "solution": "We need to add 1,295 + 2,847.\n   1,295\n + 2,847\n ------\nOnes: 5 + 7 = 12. Write 2, carry 1.\nTens: 9 + 4 + 1 = 14. Write 4, carry 1.\nHundreds: 2 + 8 + 1 = 11. Write 1, carry 1.\nThousands: 1 + 2 + 1 = 4.\n\nAnswer: **4,142 cans**",
+          "tip": "Even when a problem is a word problem, the addition steps are the same. Find the numbers, line them up, and add column by column."
+        }
+      ],
+      "initialPrompt": "Watch how I work through each column carefully and carry when I need to. After each example, I'll check my answer with an estimate."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-multi-digit-addition",
+      "title": "We-Do: Multi-Digit Addition Practice",
+      "problems": [
+        {
+          "id": "as-1",
+          "question": "Add 3,576 + 4,859.",
+          "answer": "8,435",
+          "hints": [
+            "Start with the ones column: 6 + 9 = 15. Write 5 and carry 1.",
+            "Tens: 7 + 5 + 1 = 13. Write 3 and carry 1. Hundreds: 5 + 8 + 1 = 14. Write 4 and carry 1.",
+            "Thousands: 3 + 4 + 1 = 8. The answer is 8,435."
+          ]
+        },
+        {
+          "id": "as-2",
+          "question": "Add 15,908 + 27,394.",
+          "answer": "43,302",
+          "hints": [
+            "Line up the digits by place value. Start at the ones: 8 + 4 = 12. Write 2, carry 1.",
+            "Tens: 0 + 9 + 1 = 10. Write 0, carry 1. Hundreds: 9 + 3 + 1 = 13. Write 3, carry 1.",
+            "Thousands: 5 + 7 + 1 = 13. Write 3, carry 1. Ten-thousands: 1 + 2 + 1 = 4. The answer is 43,302."
+          ]
+        },
+        {
+          "id": "as-3",
+          "question": "A library had 4,672 books. They received a donation of 3,589 more books. How many books does the library have now?",
+          "answer": "8,261",
+          "hints": [
+            "This is an addition problem — the library is gaining books. Add 4,672 + 3,589.",
+            "Ones: 2 + 9 = 11. Write 1, carry 1. Tens: 7 + 8 + 1 = 16. Write 6, carry 1.",
+            "Hundreds: 6 + 5 + 1 = 12. Write 2, carry 1. Thousands: 4 + 3 + 1 = 8. The answer is 8,261 books."
+          ]
+        }
+      ],
+      "initialPrompt": "Now it's your turn — but I'll be right here to help! Try the first one. Start at the ones column and tell me what you get."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-multi-digit-addition",
+      "title": "You-Do: Multi-Digit Addition",
+      "problems": [
+        {
+          "id": "as-4",
+          "question": "Add 6,483 + 2,759.",
+          "answer": "9,242",
+          "skill": "emf-multi-digit-addition",
+          "hints": ["Start at the ones column and regroup when a column totals 10 or more."]
+        },
+        {
+          "id": "as-5",
+          "question": "Add 28,647 + 53,978.",
+          "answer": "82,625",
+          "skill": "emf-multi-digit-addition",
+          "hints": ["Line up by place value. You will need to regroup in several columns — take it one at a time."]
+        },
+        {
+          "id": "as-6",
+          "question": "During a read-a-thon, third graders read 2,485 pages and fourth graders read 3,768 pages. How many pages did they read altogether?",
+          "answer": "6,253",
+          "skill": "emf-multi-digit-addition",
+          "hints": ["'Altogether' signals addition. Add 2,485 + 3,768 using the standard algorithm."]
+        }
+      ],
+      "attemptsRequired": 2
+    },
+
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-multi-digit-subtraction",
+      "title": "Multi-Digit Subtraction with Borrowing",
+      "text": "Subtraction with large numbers follows the same column-by-column approach as addition, but instead of carrying, we sometimes need to **borrow** (also called regrouping).\n\nWhen the top digit in a column is smaller than the bottom digit, we can't subtract. So we borrow 1 from the column to the left. That 1 is actually worth 10 in the current column.\n\nFor example, in 52 − 37:\n- Ones: 2 − 7? We can't! Borrow 1 ten from the 5 (making it 4). Now the ones column is 12 − 7 = 5.\n- Tens: 4 − 3 = 1.\n- Answer: **15**\n\n**Borrowing across zeros** is the trickiest part. In a number like 3,004, the hundreds and tens places are both 0, so there's nothing to borrow from right away. You have to go all the way to the thousands place and work back. Think of it like knocking on your neighbor's door — if they don't have anything, you keep going until you find someone who does!",
+      "keyPoints": [
+        "Subtract column by column from right to left, just like addition",
+        "When the top digit is smaller than the bottom digit, borrow 1 from the next column to the left",
+        "Borrowing turns a 0 into 10, but you must first borrow from a non-zero column to the left",
+        "For borrowing across zeros: go left until you find a non-zero digit, reduce it by 1, and let each zero become 9 except the last one which becomes 10",
+        "Always check your answer by adding: if 3,004 − 1,567 = 1,437, then 1,437 + 1,567 should equal 3,004"
+      ],
+      "initialPrompt": "Borrowing can feel tricky at first, especially across zeros. But once you see the pattern, it clicks! Let me show you exactly how it works."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-multi-digit-subtraction",
+      "title": "I-Do: Multi-Digit Subtraction Worked Examples",
+      "examples": [
+        {
+          "problem": "Subtract 5,432 − 2,876.",
+          "solution": "Line up by place value:\n   5,432\n − 2,876\n ------\nOnes: 2 − 6? Can't do it. Borrow from tens: the 3 becomes 2, and the ones become 12. 12 − 6 = 6.\nTens: 2 − 7? Can't do it. Borrow from hundreds: the 4 becomes 3, and the tens become 12. 12 − 7 = 5.\nHundreds: 3 − 8? Can't do it. Borrow from thousands: the 5 becomes 4, and the hundreds become 13. 13 − 8 = 5.\nThousands: 4 − 2 = 2.\n\nAnswer: **2,556**\n\nCheck: 2,556 + 2,876 = 5,432 ✓",
+          "tip": "We had to borrow three times in a row! That's okay. Just work one column at a time."
+        },
+        {
+          "problem": "Subtract 3,004 − 1,567.",
+          "solution": "This one has zeros, so let's be extra careful.\n   3,004\n − 1,567\n ------\nOnes: 4 − 7? Can't do it. Borrow from tens — but tens is 0!\nTens is 0, hundreds is 0 too. Go to thousands: borrow 1 from 3 (becomes 2). That 1 thousand = 10 hundreds. Give 1 hundred to tens (hundreds becomes 9, tens becomes 10). Now borrow 1 ten for ones (tens becomes 9, ones becomes 14).\n\nNow subtract:\nOnes: 14 − 7 = 7\nTens: 9 − 6 = 3\nHundreds: 9 − 5 = 4\nThousands: 2 − 1 = 1\n\nAnswer: **1,437**\n\nCheck: 1,437 + 1,567 = 3,004 ✓",
+          "tip": "Borrowing across zeros: the key is that each 0 becomes 9 as the borrow passes through, and the last one gets the extra 10."
+        },
+        {
+          "problem": "Subtract 40,000 − 18,263.",
+          "solution": "All those zeros! Let's borrow carefully.\n   40,000\n − 18,263\n -------\nBorrow from the 4 in ten-thousands (becomes 3). That gives us:\n3  9  9  9  10  (across the top)\n\nNow subtract each column:\nOnes: 10 − 3 = 7\nTens: 9 − 6 = 3\nHundreds: 9 − 2 = 7\nThousands: 9 − 8 = 1\nTen-thousands: 3 − 1 = 2\n\nAnswer: **21,737**\n\nCheck: 21,737 + 18,263 = 40,000 ✓",
+          "tip": "When borrowing across many zeros, the 4 drops to 3, and every 0 becomes 9 except the ones place which becomes 10. Try to see the pattern!"
+        }
+      ],
+      "initialPrompt": "Watch how I handle each problem — especially when there are zeros. I'll show you the 'neighbor knocking' trick for borrowing across zeros."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-multi-digit-subtraction",
+      "title": "We-Do: Multi-Digit Subtraction Practice",
+      "problems": [
+        {
+          "id": "as-7",
+          "question": "Subtract 7,215 − 3,648.",
+          "answer": "3,567",
+          "hints": [
+            "Ones: 5 − 8? Can't do it. Borrow from the tens: the 1 becomes 0, ones become 15. 15 − 8 = 7.",
+            "Tens: 0 − 4? Can't do it. Borrow from hundreds: the 2 becomes 1, tens become 10. 10 − 4 = 6.",
+            "Hundreds: 1 − 6? Can't do it. Borrow from thousands: the 7 becomes 6, hundreds become 11. 11 − 6 = 5. Thousands: 6 − 3 = 3. Answer: 3,567."
+          ]
+        },
+        {
+          "id": "as-8",
+          "question": "Subtract 5,003 − 2,478.",
+          "answer": "2,525",
+          "hints": [
+            "Ones: 3 − 8? Can't do it. You need to borrow, but tens is 0 and hundreds is 0. Go to the thousands place.",
+            "Borrow from 5 (becomes 4). That gives hundreds = 9, tens = 9, ones = 13. Now subtract each column.",
+            "Ones: 13 − 8 = 5. Tens: 9 − 7 = 2. Hundreds: 9 − 4 = 5. Thousands: 4 − 2 = 2. Answer: 2,525."
+          ]
+        },
+        {
+          "id": "as-9",
+          "question": "A town has a population of 12,504. If 6,738 people live on the north side, how many live on the south side?",
+          "answer": "5,766",
+          "hints": [
+            "Subtract 12,504 − 6,738 to find the south side population.",
+            "Ones: 4 − 8? Borrow. There's a 0 in tens, so borrow from hundreds: 5 becomes 4, tens becomes 10, then borrow from tens for ones: tens becomes 9, ones becomes 14. 14 − 8 = 6.",
+            "Tens: 9 − 3 = 6. Hundreds: 4 − 7? Borrow from thousands: 2 becomes 1, hundreds becomes 14. 14 − 7 = 7. Thousands: 1 − 6? Borrow from ten-thousands: 1 becomes 0, thousands becomes 11. 11 − 6 = 5. Answer: 5,766."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's tackle subtraction together! Try the first one — start at the ones column and let me know if you need to borrow."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-multi-digit-subtraction",
+      "title": "You-Do: Multi-Digit Subtraction",
+      "problems": [
+        {
+          "id": "as-10",
+          "question": "Subtract 8,402 − 3,675.",
+          "answer": "4,727",
+          "skill": "emf-multi-digit-subtraction",
+          "hints": ["Watch out for the 0 in the tens place — you'll need to borrow from the hundreds first."]
+        },
+        {
+          "id": "as-11",
+          "question": "Subtract 20,000 − 13,456.",
+          "answer": "6,544",
+          "skill": "emf-multi-digit-subtraction",
+          "hints": ["Lots of zeros! Borrow from the 2 in ten-thousands: it becomes 1, and the zeros become 9, 9, 9, 10."]
+        },
+        {
+          "id": "as-12",
+          "question": "A baker made 4,000 cookies for a festival. By the end of the day, 2,863 cookies had been sold. How many cookies were left?",
+          "answer": "1,137",
+          "skill": "emf-multi-digit-subtraction",
+          "hints": ["Subtract 4,000 − 2,863. Borrow across the three zeros: 4 becomes 3, and the zeros become 9, 9, 10."]
+        }
+      ],
+      "attemptsRequired": 2
+    },
+
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-add-sub-word-problems",
+      "title": "Addition & Subtraction Word Problems",
+      "text": "Word problems tell a story with numbers. Your job is to figure out **what's happening** in the story so you can choose the right operation.\n\nThere are three main types of addition and subtraction word problems:\n\n**Joining (putting together)** — Two amounts are combined. Use addition.\n- \"Marcus had 245 stickers. He got 178 more. How many does he have now?\"\n\n**Separating (taking apart)** — An amount is removed. Use subtraction.\n- \"A store had 1,300 bottles of water. They sold 587. How many are left?\"\n\n**Comparing (finding the difference)** — Two amounts are compared. Use subtraction.\n- \"Team A scored 2,450 points. Team B scored 1,875 points. How many more points did Team A score?\"\n\nSometimes a problem has **two steps** — you might need to add first, then subtract (or the other way around). Read carefully and tackle one step at a time.\n\n**Pro tip:** Before you calculate, draw a quick bar model or number line to picture what's happening. It helps you make sure you chose the right operation!",
+      "keyPoints": [
+        "Joining/combining problems → addition",
+        "Separating/taking away problems → subtraction",
+        "Comparing/finding the difference → subtraction",
+        "Two-step problems require two operations — solve one part first, then use that answer in the next step",
+        "Underline or highlight the question the problem is asking before you start calculating"
+      ],
+      "initialPrompt": "Word problems are like little puzzles! The key is figuring out whether the story is about putting things together, taking things apart, or comparing. Let's practice spotting the clues."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-add-sub-word-problems",
+      "title": "I-Do: Word Problem Worked Examples",
+      "examples": [
+        {
+          "problem": "A pet shelter had 1,245 animals at the start of the year. During the year, 876 animals were adopted and 394 new animals arrived. How many animals are at the shelter now?",
+          "solution": "This is a **two-step** problem.\n\nStep 1 — Animals adopted means separating (subtract):\n1,245 − 876 = 369 animals remaining.\n\nStep 2 — New animals arrived means joining (add):\n369 + 394 = 763 animals.\n\nAnswer: **763 animals** are at the shelter now.\n\nCheck: Does this make sense? We started with 1,245, lost 876, and gained 394. We lost more than we gained, so the answer should be less than 1,245. 763 < 1,245 ✓",
+          "tip": "In two-step problems, handle one event at a time in the order they happen."
+        },
+        {
+          "problem": "Mia's family drove 2,350 miles on a road trip. Jayden's family drove 1,784 miles on their road trip. How many more miles did Mia's family drive?",
+          "solution": "This is a **comparing** problem — we need the difference.\n\nSubtract: 2,350 − 1,784\nOnes: 0 − 4? Borrow. 10 − 4 = 6.\nTens: 4 − 8? Borrow. 14 − 8 = 6. (Hundreds dropped from 3 to 2.)\nHundreds: 2 − 7? Borrow. 12 − 7 = 5. (Thousands dropped from 2 to 1.)\nThousands: 1 − 1 = 0.\n\nAnswer: Mia's family drove **566 more miles**.",
+          "tip": "Words like 'how many more,' 'how much farther,' and 'what is the difference' all signal subtraction for comparing."
+        },
+        {
+          "problem": "A school cafeteria served 1,128 lunches on Monday and 1,347 lunches on Tuesday. On Wednesday, they served 205 fewer lunches than Monday and Tuesday combined. How many lunches were served on Wednesday?",
+          "solution": "Step 1 — Find Monday + Tuesday combined (joining):\n1,128 + 1,347 = 2,475 lunches.\n\nStep 2 — Wednesday was 205 fewer (separating):\n2,475 − 205 = 2,270 lunches.\n\nAnswer: **2,270 lunches** were served on Wednesday.",
+          "tip": "The word 'fewer' can be a clue for subtraction. 'Combined' is a clue for addition. One problem can have both!"
+        }
+      ],
+      "initialPrompt": "Let me show you how to break down word problems step by step. I always start by asking: is this a joining, separating, or comparing situation?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-add-sub-word-problems",
+      "title": "We-Do: Word Problem Practice",
+      "problems": [
+        {
+          "id": "as-13",
+          "question": "A toy store had 3,250 action figures in stock. They sold 1,487 during the holiday sale. How many action figures are left?",
+          "answer": "1,763",
+          "hints": [
+            "What's happening in the story? Action figures are being sold — that's separating. Use subtraction.",
+            "Subtract 3,250 − 1,487. You'll need to borrow in the ones, tens, and hundreds columns.",
+            "Ones: 10 − 7 = 3. Tens: 14 − 8 = 6. Hundreds: 1 − 4? Borrow: 11 − 4 = 7. Thousands: 2 − 1 = 1. Answer: 1,763."
+          ]
+        },
+        {
+          "id": "as-14",
+          "question": "An aquarium has 2,145 freshwater fish and 1,968 saltwater fish. How many fish does the aquarium have in total?",
+          "answer": "4,113",
+          "hints": [
+            "'In total' means we're combining two groups. Use addition: 2,145 + 1,968.",
+            "Ones: 5 + 8 = 13. Write 3, carry 1. Tens: 4 + 6 + 1 = 11. Write 1, carry 1.",
+            "Hundreds: 1 + 9 + 1 = 11. Write 1, carry 1. Thousands: 2 + 1 + 1 = 4. Answer: 4,113 fish."
+          ]
+        },
+        {
+          "id": "as-15",
+          "question": "Carlos collected 1,350 baseball cards. His older sister collected 2,108 cards. Carlos then received 475 cards as a birthday gift. How many fewer cards does Carlos have than his sister now?",
+          "answer": "283",
+          "hints": [
+            "This is a two-step problem. First, find Carlos's new total: 1,350 + 475.",
+            "1,350 + 475 = 1,825 cards for Carlos.",
+            "Now compare: 'How many fewer' means subtract. 2,108 − 1,825 = 283 fewer cards."
+          ]
+        }
+      ],
+      "initialPrompt": "Time for word problems! Read each one carefully and think — is this joining, separating, or comparing? Tell me what operation you'd use before you start calculating."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-add-sub-word-problems",
+      "title": "You-Do: Word Problems",
+      "problems": [
+        {
+          "id": "as-16",
+          "question": "A movie theater sold 4,206 tickets on Saturday and 3,578 tickets on Sunday. How many tickets were sold over the weekend?",
+          "answer": "7,784",
+          "skill": "emf-add-sub-word-problems",
+          "hints": ["'Over the weekend' means combine both days. Add 4,206 + 3,578."]
+        },
+        {
+          "id": "as-17",
+          "question": "There are 5,000 seats in a concert arena. If 3,247 seats are already filled, how many seats are still empty?",
+          "answer": "1,753",
+          "skill": "emf-add-sub-word-problems",
+          "hints": ["Subtract 5,000 − 3,247. You'll need to borrow across three zeros."]
+        },
+        {
+          "id": "as-18",
+          "question": "A school fundraiser collected $2,385 in the first week and $1,946 in the second week. The school's goal was $5,000. How much more money do they still need to raise?",
+          "answer": "$669",
+          "skill": "emf-add-sub-word-problems",
+          "hints": ["Two steps: first add the two weeks ($2,385 + $1,946 = $4,331), then subtract from the goal ($5,000 − $4,331)."]
+        }
+      ],
+      "attemptsRequired": 2
+    },
+
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-mental-math-strategies",
+      "title": "Mental Math Strategies",
+      "text": "Did you know you don't always need to write out the standard algorithm? There are clever shortcuts that let you do math **in your head**. Here are four powerful strategies:\n\n**1. Compatible Numbers** — Look for pairs that add up to nice round numbers.\n- 37 + 63 = 100 (they're compatible!)\n- To add 48 + 35 + 52, notice 48 + 52 = 100, so the answer is 100 + 35 = 135.\n\n**2. Break Apart (Expanded Form)** — Split numbers into place values and add each part.\n- 346 + 230: Think 300 + 200 = 500, 40 + 30 = 70, 6 + 0 = 6. Total: 576.\n\n**3. Compensation** — Round one number to make it easier, then adjust.\n- 299 + 456: Think 300 + 456 = 756, then subtract 1 because you added 1 extra. Answer: 755.\n- 503 − 198: Think 503 − 200 = 303, then add 2 back because you subtracted 2 too many. Answer: 305.\n\n**4. Counting Up (for subtraction)** — Instead of subtracting, count up from the smaller number.\n- 1,000 − 683: Count up from 683. 683 → 700 (that's 17), 700 → 1,000 (that's 300). Total: 317.\n\nEach strategy is like a superpower — the trick is knowing when to use which one!",
+      "keyPoints": [
+        "Compatible numbers: look for pairs that make 10, 100, or 1,000",
+        "Break apart: split numbers by place value and add each part separately",
+        "Compensation: round to a nearby friendly number, calculate, then adjust for the rounding",
+        "Counting up: for subtraction, count forward from the smaller number to the larger number",
+        "Choose the strategy that fits the numbers — there's no single 'best' strategy for every problem"
+      ],
+      "initialPrompt": "Mental math strategies are like having a toolbox — each tool works best in different situations. Let's see which strategy you'd reach for first!"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-mental-math-strategies",
+      "title": "I-Do: Mental Math Worked Examples",
+      "examples": [
+        {
+          "problem": "Use a mental math strategy to add 397 + 248.",
+          "solution": "**Compensation strategy** works great here because 397 is close to 400.\n\nRound 397 up by 3 to get 400.\n400 + 248 = 648.\nNow subtract the 3 we added: 648 − 3 = **645**.\n\nMuch easier than regrouping in your head!",
+          "tip": "Compensation works best when a number is close to a round number (like 99, 198, 397, 502)."
+        },
+        {
+          "problem": "Use a mental math strategy to subtract 800 − 537.",
+          "solution": "**Counting up** strategy works nicely here.\n\nStart at 537 and count up to 800:\n537 → 540 = 3\n540 → 600 = 60\n600 → 800 = 200\n\nAdd the jumps: 3 + 60 + 200 = **263**.\n\nYou can also check: 537 + 263 = 800 ✓",
+          "tip": "Counting up is great for subtraction when the numbers feel awkward to borrow from."
+        },
+        {
+          "problem": "Use a mental math strategy to add 125 + 340 + 75 + 60.",
+          "solution": "**Compatible numbers** strategy — look for pairs that make round numbers.\n\n125 + 75 = 200 (they're compatible!)\n340 + 60 = 400 (compatible!)\n\nNow add the round results: 200 + 400 = **600**.\n\nSo much faster than adding left to right!",
+          "tip": "Before adding a string of numbers, scan for compatible pairs first. Look for numbers that make 100, 500, or 1,000."
+        }
+      ],
+      "initialPrompt": "Watch how I pick the best strategy for each problem. I'll explain why I chose it and how it makes the math easier."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-mental-math-strategies",
+      "title": "We-Do: Mental Math Practice",
+      "problems": [
+        {
+          "id": "as-19",
+          "question": "Use mental math to add 598 + 345. Which strategy would you use, and what's the answer?",
+          "answer": "943 (compensation: 600 + 345 = 945, then subtract 2 → 943)",
+          "hints": [
+            "598 is really close to a friendly round number. What round number is it near?",
+            "Use compensation: round 598 up by 2 to get 600. Now add 600 + 345 = 945.",
+            "Since you added 2 extra, subtract 2: 945 − 2 = 943."
+          ]
+        },
+        {
+          "id": "as-20",
+          "question": "Use mental math to subtract 1,000 − 638. Try the counting up strategy.",
+          "answer": "362 (count up: 638 → 640 is 2, 640 → 700 is 60, 700 → 1,000 is 300; total = 362)",
+          "hints": [
+            "Start at 638 and make jumps to reach 1,000. First, what's the nearest tens number above 638?",
+            "638 → 640 = 2. Then 640 → 700 = 60. Then 700 → 1,000 = 300.",
+            "Add the jumps: 2 + 60 + 300 = 362."
+          ]
+        },
+        {
+          "id": "as-21",
+          "question": "Use mental math to add 450 + 275 + 50 + 25. Look for compatible numbers!",
+          "answer": "800 (compatible pairs: 450 + 50 = 500 and 275 + 25 = 300; 500 + 300 = 800)",
+          "hints": [
+            "Scan the numbers. Do any pairs add up to a nice round number?",
+            "450 + 50 = 500 and 275 + 25 = 300. Those are compatible pairs!",
+            "Now add the round results: 500 + 300 = 800."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice choosing the right strategy! For each problem, first tell me which strategy you'd pick, then solve it."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-mental-math-strategies",
+      "title": "You-Do: Mental Math Challenges",
+      "problems": [
+        {
+          "id": "as-22",
+          "question": "Use mental math to add 199 + 467. Name the strategy you used.",
+          "answer": "666 (compensation: 200 + 467 = 667, subtract 1 → 666)",
+          "skill": "emf-mental-math-strategies",
+          "hints": ["199 is very close to 200. Try the compensation strategy."]
+        },
+        {
+          "id": "as-23",
+          "question": "Use mental math to subtract 500 − 276. Name the strategy you used.",
+          "answer": "224 (counting up: 276 → 280 is 4, 280 → 300 is 20, 300 → 500 is 200; total = 224)",
+          "skill": "emf-mental-math-strategies",
+          "hints": ["Try counting up from 276 to 500 in easy jumps."]
+        },
+        {
+          "id": "as-24",
+          "question": "At a bake sale, one table sold 375 treats, a second table sold 250 treats, a third table sold 125 treats, and a fourth table sold 50 treats. Use mental math to find the total. Name your strategy.",
+          "answer": "800 (compatible numbers: 375 + 125 = 500 and 250 + 50 = 300; 500 + 300 = 800)",
+          "skill": "emf-mental-math-strategies",
+          "hints": ["Look for compatible pairs among the four numbers. Which pairs add up to round numbers?"]
+        }
+      ],
+      "attemptsRequired": 2
+    }
+  ],
+
+  "answerKeys": {
+    "as-1": "8,435",
+    "as-2": "43,302",
+    "as-3": "8,261",
+    "as-4": "9,242",
+    "as-5": "82,625",
+    "as-6": "6,253",
+    "as-7": "3,567",
+    "as-8": "2,525",
+    "as-9": "5,766",
+    "as-10": "4,727",
+    "as-11": "6,544",
+    "as-12": "1,137",
+    "as-13": "1,763",
+    "as-14": "4,113",
+    "as-15": "283",
+    "as-16": "7,784",
+    "as-17": "1,753",
+    "as-18": "$669",
+    "as-19": "943",
+    "as-20": "362",
+    "as-21": "800",
+    "as-22": "666",
+    "as-23": "224",
+    "as-24": "800"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "moduleId": "checkpoint_q1",
+  "course": "Early Math Foundations",
+  "unit": 2,
+  "title": "Checkpoint: Quarter 1 \u2014 Operations Fluency",
+  "weeks": "7",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Quarter 1 assessment covering multi-digit addition/subtraction with regrouping, word problems, mental math, multiplication facts, properties, multi-digit multiplication, multiplication word problems, and factors/multiples.",
+  "skillsCovered": [
+    "emf-multi-digit-addition",
+    "emf-multi-digit-subtraction",
+    "emf-add-sub-word-problems",
+    "emf-mental-math-strategies",
+    "emf-multiplication-facts",
+    "emf-multiplication-properties",
+    "emf-multi-digit-multiplication",
+    "emf-multiply-word-problems",
+    "emf-factors-multiples"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Operations fluency is the engine for everything ahead \u2014 fractions, division, and decimals all depend on it.",
+    "clusters": [
+      {
+        "skillId": "emf-multi-digit-subtraction",
+        "reteachFocus": "Borrowing across zeros, checking by adding back"
+      },
+      {
+        "skillId": "emf-multiplication-facts",
+        "reteachFocus": "Target the hard facts (6\u00d77, 6\u00d78, 7\u00d78, 8\u00d79), daily timed practice"
+      },
+      {
+        "skillId": "emf-multi-digit-multiplication",
+        "reteachFocus": "Area model then standard algorithm, estimate first, align partial products"
+      },
+      {
+        "skillId": "emf-multiply-word-problems",
+        "reteachFocus": "Equal groups vs comparison, bar models, 'times as many' distinction"
+      },
+      {
+        "skillId": "emf-factors-multiples",
+        "reteachFocus": "Factor pairs by systematic listing, multiples by skip counting, prime vs composite"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq1-1",
+      "question": "Find the sum: 2,847 + 1,365.",
+      "answer": "2,847 + 1,365 = 4,212. Ones: 7 + 5 = 12, write 2 carry 1. Tens: 4 + 6 + 1 = 11, write 1 carry 1. Hundreds: 8 + 3 + 1 = 12, write 2 carry 1. Thousands: 2 + 1 + 1 = 4.",
+      "skill": "emf-multi-digit-addition",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-2",
+      "question": "Find the difference: 5,231 - 2,418.",
+      "answer": "5,231 - 2,418 = 2,813. Ones: 1 < 8, borrow from tens (11 - 8 = 3). Tens: 2 - 1 = 1. Hundreds: 2 < 4, borrow from thousands (12 - 4 = 8). Thousands: 4 - 2 = 2. Check: 2,813 + 2,418 = 5,231.",
+      "skill": "emf-multi-digit-subtraction",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-3",
+      "question": "Find the difference: 4,003 - 1,567.",
+      "answer": "4,003 - 1,567 = 2,436. Borrowing across zeros: regroup 4,003 as 3,9,9,13. Ones: 13 - 7 = 6. Tens: 9 - 6 = 3. Hundreds: 9 - 5 = 4. Thousands: 3 - 1 = 2. Check: 2,436 + 1,567 = 4,003.",
+      "skill": "emf-multi-digit-subtraction",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-4",
+      "question": "A school collected 1,284 cans in October and 976 cans in November. How many cans did the school collect in all?",
+      "answer": "Addition: 1,284 + 976 = 2,260 cans. The word 'in all' signals combining both amounts.",
+      "skill": "emf-add-sub-word-problems",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-5",
+      "question": "Use a mental math strategy to find 298 + 465. Show your thinking.",
+      "answer": "Compensation strategy: 298 is close to 300. Compute 300 + 465 = 765, then subtract the 2 that was added: 765 - 2 = 763.",
+      "skill": "emf-mental-math-strategies",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-6",
+      "question": "What is 6 \u00d7 8?",
+      "answer": "6 \u00d7 8 = 48. Strategy: 6 \u00d7 8 = (5 \u00d7 8) + (1 \u00d7 8) = 40 + 8 = 48.",
+      "skill": "emf-multiplication-facts",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq1-7",
+      "question": "What is 7 \u00d7 9?",
+      "answer": "7 \u00d7 9 = 63. Strategy: 7 \u00d7 9 = 7 \u00d7 10 - 7 \u00d7 1 = 70 - 7 = 63.",
+      "skill": "emf-multiplication-facts",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-8",
+      "question": "Which property does this equation show: 4 \u00d7 (3 \u00d7 5) = (4 \u00d7 3) \u00d7 5? Name the property and explain why both sides are equal.",
+      "answer": "Associative Property of Multiplication. Changing the grouping of the factors does not change the product. Left side: 4 \u00d7 15 = 60. Right side: 12 \u00d7 5 = 60. Both equal 60.",
+      "skill": "emf-multiplication-properties",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-9",
+      "question": "Find the product: 36 \u00d7 7.",
+      "answer": "36 \u00d7 7 = 252. Ones: 6 \u00d7 7 = 42, write 2 carry 4. Tens: 3 \u00d7 7 = 21, plus 4 = 25. Product = 252.",
+      "skill": "emf-multi-digit-multiplication",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-10",
+      "question": "Find the product: 58 \u00d7 34.",
+      "answer": "58 \u00d7 34 = 1,972. Partial products: 58 \u00d7 4 = 232, 58 \u00d7 30 = 1,740. Sum: 232 + 1,740 = 1,972. Estimate check: 60 \u00d7 34 = 2,040, so 1,972 is reasonable.",
+      "skill": "emf-multi-digit-multiplication",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq1-11",
+      "question": "A baker packs 24 muffins in each box. She fills 15 boxes for a catering order. How many muffins did she pack in all?",
+      "answer": "Equal groups: 24 muffins per box \u00d7 15 boxes = 360 muffins. 24 \u00d7 15: partial products 24 \u00d7 5 = 120, 24 \u00d7 10 = 240, total = 360.",
+      "skill": "emf-multiply-word-problems",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-12",
+      "question": "List all the factor pairs of 36.",
+      "answer": "Factor pairs: 1 \u00d7 36, 2 \u00d7 18, 3 \u00d7 12, 4 \u00d7 9, 6 \u00d7 6. All factors of 36: 1, 2, 3, 4, 6, 9, 12, 18, 36 (9 factors total).",
+      "skill": "emf-factors-multiples",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-13",
+      "question": "Marcus had 1,500 trading cards. He gave 238 to his brother and 175 to his friend. How many cards does Marcus have now?",
+      "answer": "Two-step subtraction: 1,500 - 238 = 1,262, then 1,262 - 175 = 1,087 cards remaining. Total given away: 238 + 175 = 413. Check: 1,500 - 413 = 1,087.",
+      "skill": "emf-add-sub-word-problems",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq1-14",
+      "question": "Is 42 a multiple of 6? Is 5 a factor of 42? Explain both answers.",
+      "answer": "42 \u00f7 6 = 7 with no remainder, so yes, 42 is a multiple of 6. 42 \u00f7 5 = 8 remainder 2, so no, 5 is not a factor of 42 (it does not divide evenly).",
+      "skill": "emf-factors-multiples",
+      "difficulty": 2,
+      "points": 4
+    }
+  ],
+  "answerKeys": {
+    "cq1-1": "4,212",
+    "cq1-2": "2,813",
+    "cq1-3": "2,436",
+    "cq1-4": "2,260 cans",
+    "cq1-5": "763",
+    "cq1-6": "48",
+    "cq1-7": "63",
+    "cq1-8": "Associative Property of Multiplication; both sides equal 60.",
+    "cq1-9": "252",
+    "cq1-10": "1,972",
+    "cq1-11": "360 muffins",
+    "cq1-12": "1\u00d736, 2\u00d718, 3\u00d712, 4\u00d79, 6\u00d76",
+    "cq1-13": "1,087 cards",
+    "cq1-14": "Yes, 42 is a multiple of 6 (42\u00f76=7). No, 5 is not a factor of 42 (42\u00f75=8 R2)."
+  }
+}

@@ -1,0 +1,549 @@
+{
+  "moduleId": "fraction_concepts",
+  "course": "Early Math Foundations",
+  "unit": 4,
+  "title": "Fraction Concepts",
+  "weeks": "10-12",
+  "estimatedDuration": 40,
+  "description": "What fractions actually mean — before any operations. Students build understanding of fractions as parts of a whole, parts of a set, and points on a number line. They generate equivalent fractions, compare and order fractions using benchmarks and common denominators, convert between mixed numbers and improper fractions, and calculate fractions of a whole number. This conceptual foundation must be rock-solid before fraction operations.",
+
+  "skills": [
+    "emf-fraction-concepts",
+    "emf-equivalent-fractions",
+    "emf-compare-order-fractions",
+    "emf-mixed-numbers-improper",
+    "emf-fractions-of-whole"
+  ],
+
+  "standardsAlignment": [
+    "3.NF.A.1",
+    "3.NF.A.2",
+    "3.NF.A.3",
+    "3.NF.A.3d",
+    "4.NF.A.1",
+    "4.NF.A.2",
+    "4.NF.B.3b",
+    "4.NF.B.3c",
+    "4.NF.B.4",
+    "5.NF.B.4"
+  ],
+
+  "goals": [
+    "Identify and write fractions as parts of a whole, parts of a set, and locations on a number line",
+    "Generate equivalent fractions by multiplying or dividing the numerator and denominator by the same number, and simplify fractions to lowest terms",
+    "Compare and order fractions using same-denominator, same-numerator, benchmark, and common-denominator strategies",
+    "Convert fluently between mixed numbers and improper fractions in both directions",
+    "Calculate a fraction of a whole number using the divide-then-multiply method"
+  ],
+
+  "instructionalStrategy": [
+    "Concrete-first approach: every concept starts with a visual or hands-on scenario (pizza slices, chocolate bars, animal groups) before moving to abstract notation",
+    "Gradual release: explanation (concept-intro) → model (I Do) → guided practice (We Do) → independent practice (You Do)",
+    "AI uses patient, encouraging language suited for ages 8-11; celebrates effort and normalizes mistakes as part of learning",
+    "Benchmark fractions (0, 1/2, 1) serve as anchor points throughout comparison and ordering tasks",
+    "Students should demonstrate understanding with physical or drawn models before relying solely on numeric procedures"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "What Is a Fraction?",
+      "skill": "emf-fraction-concepts",
+      "content": "A fraction is a way of showing a part of something. When you cut a pizza into equal slices and eat some of them, the fraction tells you exactly how much you ate. The bottom number (denominator) tells you how many equal parts there are in total. The top number (numerator) tells you how many of those parts you are talking about. Fractions can describe parts of one whole thing, parts of a group of things, or a specific spot on a number line.",
+      "keyPoints": [
+        "The denominator (bottom number) tells how many EQUAL parts the whole is divided into",
+        "The numerator (top number) tells how many of those parts we are counting",
+        "Parts of a whole: a pizza cut into 4 equal slices — each slice is 1/4 of the pizza",
+        "Parts of a set: if 3 out of 8 puppies are brown, then 3/8 of the puppies are brown",
+        "Number line: fractions live between whole numbers — 3/4 is the point three-fourths of the way from 0 to 1",
+        "The parts MUST be equal size for the fraction to be correct"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Understanding Fractions — Worked Examples",
+      "skill": "emf-fraction-concepts",
+      "examples": [
+        {
+          "problem": "A pizza is cut into 8 equal slices. You eat 3 slices. What fraction of the pizza did you eat?",
+          "solution": "The pizza is divided into 8 equal parts, so the denominator is 8.\nYou ate 3 of those parts, so the numerator is 3.\nYou ate 3/8 of the pizza.\n\nPicture it: the whole pizza has 8 slices. 3 are on your plate, and 5/8 is still in the box."
+        },
+        {
+          "problem": "There are 12 puppies at the pet store. 5 of them are golden retrievers. What fraction of the puppies are golden retrievers?",
+          "solution": "This is a fraction of a SET (a group of things).\nThe whole set has 12 puppies, so the denominator is 12.\n5 of them are golden retrievers, so the numerator is 5.\nThe fraction is 5/12.\n\nNotice: we are not cutting one thing into pieces — we are looking at part of a group."
+        },
+        {
+          "problem": "Mark a point at 3/4 on a number line from 0 to 1.",
+          "solution": "Step 1: The denominator is 4, so divide the space from 0 to 1 into 4 equal sections.\nStep 2: Starting at 0, count over 3 sections to the right.\nStep 3: That landing point is 3/4.\n\n0---|---|---|---|1\n   1/4 2/4 3/4\n\n3/4 is past the halfway mark (2/4 = 1/2) but not all the way to 1."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Fraction Concepts — Guided Practice",
+      "skill": "emf-fraction-concepts",
+      "problems": [
+        {
+          "id": "fc-1",
+          "problem": "A chocolate bar is divided into 6 equal pieces. You break off 2 pieces. What fraction of the chocolate bar did you take?",
+          "hints": [
+            "How many equal pieces is the bar divided into? That number goes on the bottom (denominator).",
+            "How many pieces did you take? That number goes on the top (numerator)."
+          ],
+          "answer": "2/6. The bar has 6 equal pieces (denominator = 6) and you took 2 (numerator = 2), so the fraction is 2/6."
+        },
+        {
+          "id": "fc-2",
+          "problem": "A farmer has 10 animals: 7 are chickens and 3 are goats. What fraction of the animals are goats?",
+          "hints": [
+            "What is the total number of animals? That is your denominator.",
+            "How many of those animals are goats? That is your numerator."
+          ],
+          "answer": "3/10. There are 10 animals in the whole group (denominator = 10), and 3 of them are goats (numerator = 3)."
+        },
+        {
+          "id": "fc-3",
+          "problem": "A number line goes from 0 to 1 and is divided into 5 equal parts. A dot is placed on the second mark. What fraction does the dot represent?",
+          "hints": [
+            "The line is split into 5 equal parts, so each mark represents one-fifth.",
+            "Count the marks starting from 0: the first mark is 1/5, the second mark is 2/5."
+          ],
+          "answer": "2/5. The number line is divided into 5 equal parts, and the dot is at the 2nd mark, which is 2/5."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Fraction Concepts — Independent Practice",
+      "skill": "emf-fraction-concepts",
+      "problems": [
+        {
+          "id": "fc-4",
+          "problem": "A pie is cut into 8 equal slices. Your family eats 5 slices. What fraction of the pie was eaten? What fraction is left?",
+          "answer": "5/8 was eaten. 3/8 is left. (5 + 3 = 8, which accounts for the whole pie.)"
+        },
+        {
+          "id": "fc-5",
+          "problem": "There are 15 marbles in a bag: 4 are red, 6 are blue, and 5 are green. What fraction of the marbles are blue?",
+          "answer": "6/15. There are 15 marbles total and 6 are blue, so the fraction is 6/15."
+        },
+        {
+          "id": "fc-6",
+          "problem": "A number line goes from 0 to 1 and is divided into 8 equal parts. A dot is placed on the 5th mark. Write the fraction for the dot. Is it closer to 1/2 or to 1?",
+          "answer": "The dot is at 5/8. Since 1/2 = 4/8, the dot is just one eighth past halfway. Since 1 = 8/8, the dot is three eighths away from 1. So 5/8 is closer to 1/2."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Equivalent Fractions — Same Amount, Different Name",
+      "skill": "emf-equivalent-fractions",
+      "content": "Equivalent fractions look different but represent exactly the same amount. Think of a chocolate bar: if you cut it into 2 equal pieces and take 1, you have 1/2. If you cut that same bar into 4 equal pieces and take 2, you have 2/4 — but you still have exactly the same amount of chocolate! The secret: when you multiply (or divide) the top and bottom of a fraction by the SAME number, the value does not change.",
+      "keyPoints": [
+        "Equivalent fractions name the same amount: 1/2 = 2/4 = 3/6 = 4/8",
+        "Multiply the numerator AND denominator by the same number to make an equivalent fraction: 2/3 = (2x4)/(3x4) = 8/12",
+        "Divide the numerator AND denominator by the same number to simplify: 6/8 = (6÷2)/(8÷2) = 3/4",
+        "Fraction strips or fraction walls help you SEE that 1/2 lines up exactly with 2/4, 3/6, etc.",
+        "A fraction is in simplest form (lowest terms) when the numerator and denominator share no common factor other than 1",
+        "Simplifying does NOT change the value — it just gives the fraction its shortest name"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Equivalent Fractions — Worked Examples",
+      "skill": "emf-equivalent-fractions",
+      "examples": [
+        {
+          "problem": "Show that 1/2, 2/4, and 3/6 are all equivalent.",
+          "solution": "Start with 1/2.\nMultiply top and bottom by 2: (1x2)/(2x2) = 2/4.\nMultiply top and bottom by 3: (1x3)/(2x3) = 3/6.\n\nAll three fractions equal the same amount. If you had a fraction wall, the bar for 1/2 would be exactly as long as the bar for 2/4 and the bar for 3/6."
+        },
+        {
+          "problem": "Write a fraction equivalent to 2/3 that has a denominator of 12.",
+          "solution": "We need to get from denominator 3 to denominator 12.\n3 x ? = 12 → 3 x 4 = 12.\nWhatever we do to the bottom, we must do to the top.\n2 x 4 = 8.\nSo 2/3 = 8/12.\n\nCheck: both represent the same portion — two-thirds of the whole."
+        },
+        {
+          "problem": "Simplify 6/8 to its lowest terms.",
+          "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Equivalent Fractions — Guided Practice",
+      "skill": "emf-equivalent-fractions",
+      "problems": [
+        {
+          "id": "fc-7",
+          "problem": "Write a fraction equivalent to 3/4 that has a denominator of 20.",
+          "hints": [
+            "Ask: 4 times what equals 20? That is 4 x 5 = 20.",
+            "Multiply the numerator by the same number: 3 x 5."
+          ],
+          "answer": "15/20. Since 4 x 5 = 20, multiply the numerator by 5 as well: 3 x 5 = 15. So 3/4 = 15/20."
+        },
+        {
+          "id": "fc-8",
+          "problem": "Simplify 10/15 to lowest terms.",
+          "hints": [
+            "What number divides evenly into both 10 and 15? Try 5.",
+            "Divide both the numerator and denominator by 5."
+          ],
+          "answer": "2/3. Both 10 and 15 are divisible by 5: 10 ÷ 5 = 2, 15 ÷ 5 = 3. So 10/15 = 2/3."
+        },
+        {
+          "id": "fc-9",
+          "problem": "Are 2/5 and 4/10 equivalent fractions? Explain how you know.",
+          "hints": [
+            "Try multiplying the top and bottom of 2/5 by 2.",
+            "If you get 4/10, they are equivalent."
+          ],
+          "answer": "Yes, they are equivalent. 2/5 = (2x2)/(5x2) = 4/10. Multiplying top and bottom by 2 turns 2/5 into 4/10, so they name the same amount."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Equivalent Fractions — Independent Practice",
+      "skill": "emf-equivalent-fractions",
+      "problems": [
+        {
+          "id": "fc-10",
+          "problem": "Write a fraction equivalent to 5/6 that has a denominator of 18.",
+          "answer": "15/18. Since 6 x 3 = 18, multiply the numerator by 3 as well: 5 x 3 = 15. So 5/6 = 15/18."
+        },
+        {
+          "id": "fc-11",
+          "problem": "Simplify 12/16 to lowest terms.",
+          "answer": "3/4. The greatest common factor of 12 and 16 is 4. 12 ÷ 4 = 3, 16 ÷ 4 = 4. So 12/16 = 3/4."
+        },
+        {
+          "id": "fc-12",
+          "problem": "Find the missing number: 3/7 = ?/21.",
+          "answer": "9. Since 7 x 3 = 21, multiply the numerator by 3: 3 x 3 = 9. So 3/7 = 9/21."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Comparing and Ordering Fractions",
+      "skill": "emf-compare-order-fractions",
+      "content": "Not all fractions are easy to compare at a glance. Is 3/5 bigger or smaller than 2/3? There are several strategies you can use, depending on what the fractions look like. When the denominators are the same, just compare the numerators. When the numerators are the same, the fraction with the smaller denominator is actually the bigger piece. You can also use benchmark fractions like 0, 1/2, and 1 to estimate. And when none of those shortcuts work, you can rewrite both fractions with a common denominator.",
+      "keyPoints": [
+        "Same denominator: just compare numerators — 5/8 > 3/8 because 5 parts is more than 3 parts of the same size",
+        "Same numerator: the fraction with the SMALLER denominator is LARGER — 2/3 > 2/5 because thirds are bigger pieces than fifths",
+        "Benchmark strategy: compare each fraction to 1/2 — if one is less than 1/2 and the other is more, you know which is bigger",
+        "Common denominator: rewrite both fractions with the same bottom number, then compare numerators",
+        "To find a common denominator, use the least common multiple (LCM) of the two denominators",
+        "Ordering three or more fractions: use any combination of these strategies, then line them up from least to greatest (or greatest to least)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Comparing Fractions — Worked Examples",
+      "skill": "emf-compare-order-fractions",
+      "examples": [
+        {
+          "problem": "Compare 3/8 and 5/8. Which is greater?",
+          "solution": "Both fractions have the same denominator (8), so the pieces are the same size.\nJust compare the numerators: 5 > 3.\nSo 5/8 > 3/8.\n\nThink of it as pizza slices: 5 slices out of 8 is more pizza than 3 slices out of 8."
+        },
+        {
+          "problem": "Compare 2/5 and 2/7. Which is greater?",
+          "solution": "Both fractions have the same numerator (2), so we are taking the same NUMBER of pieces.\nThe question is: which pieces are bigger?\nFifths (the whole cut into 5) are bigger than sevenths (the whole cut into 7).\nSmaller denominator = bigger pieces.\nSo 2/5 > 2/7.\n\nPicture two chocolate bars the same size: one cut into 5 pieces, one cut into 7. The pieces in the 5-piece bar are clearly bigger."
+        },
+        {
+          "problem": "Order these fractions from least to greatest: 1/3, 3/4, 1/2.",
+          "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Comparing and Ordering Fractions — Guided Practice",
+      "skill": "emf-compare-order-fractions",
+      "problems": [
+        {
+          "id": "fc-13",
+          "problem": "Compare 4/9 and 7/9. Use < , > , or = .",
+          "hints": [
+            "The denominators are the same (both 9). So the pieces are the same size.",
+            "Just compare the numerators: which is bigger, 4 or 7?"
+          ],
+          "answer": "4/9 < 7/9. Same denominator, so compare numerators: 4 < 7."
+        },
+        {
+          "id": "fc-14",
+          "problem": "Compare 3/4 and 5/6. Which fraction is greater?",
+          "hints": [
+            "The denominators are different, so find a common denominator. The LCM of 4 and 6 is 12.",
+            "Rewrite both fractions with denominator 12: 3/4 = 9/12, 5/6 = 10/12. Now compare the numerators."
+          ],
+          "answer": "5/6 > 3/4. With common denominator 12: 3/4 = 9/12 and 5/6 = 10/12. Since 10 > 9, we get 5/6 > 3/4."
+        },
+        {
+          "id": "fc-15",
+          "problem": "Order these fractions from least to greatest: 2/3, 1/4, 5/6.",
+          "hints": [
+            "Try the benchmark strategy first: which of these are less than 1/2, and which are more?",
+            "1/4 < 1/2. Both 2/3 and 5/6 are greater than 1/2. To compare 2/3 and 5/6, use a common denominator of 6: 2/3 = 4/6."
+          ],
+          "answer": "1/4, 2/3, 5/6. 1/4 is below 1/2, so it is the smallest. Comparing 2/3 and 5/6 with denominator 6: 2/3 = 4/6, and 4/6 < 5/6. So the order is 1/4 < 2/3 < 5/6."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Comparing and Ordering Fractions — Independent Practice",
+      "skill": "emf-compare-order-fractions",
+      "problems": [
+        {
+          "id": "fc-16",
+          "problem": "Compare 5/12 and 1/2. Use < , > , or = .",
+          "answer": "5/12 < 1/2. Rewrite 1/2 as 6/12. Since 5/12 < 6/12, we get 5/12 < 1/2."
+        },
+        {
+          "id": "fc-17",
+          "problem": "Compare 3/5 and 2/3. Which fraction is greater?",
+          "answer": "2/3 > 3/5. Common denominator is 15: 3/5 = 9/15, 2/3 = 10/15. Since 10 > 9, we get 2/3 > 3/5."
+        },
+        {
+          "id": "fc-18",
+          "problem": "Order from least to greatest: 3/8, 1/2, 2/5.",
+          "answer": "3/8, 2/5, 1/2. Common denominator 40: 3/8 = 15/40, 2/5 = 16/40, 1/2 = 20/40. Since 15 < 16 < 20, the order is 3/8 < 2/5 < 1/2."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Mixed Numbers and Improper Fractions",
+      "skill": "emf-mixed-numbers-improper",
+      "content": "Sometimes a fraction represents MORE than one whole. If you eat 5 slices of a pizza that was cut into 4 slices, you ate 5/4 — that is more than one whole pizza! A fraction like 5/4, where the numerator is bigger than the denominator, is called an improper fraction. We can also write this as a mixed number: 1 1/4 (one whole pizza plus one extra slice). Both forms mean exactly the same amount, and you need to be able to switch back and forth between them.",
+      "keyPoints": [
+        "Improper fraction: the numerator is greater than or equal to the denominator (e.g., 7/3, 11/4)",
+        "Mixed number: a whole number and a fraction together (e.g., 2 1/3, 2 3/4)",
+        "Mixed number → improper fraction: multiply the whole number by the denominator, add the numerator, keep the same denominator. Example: 2 1/3 → (2 x 3 + 1)/3 = 7/3",
+        "Improper fraction → mixed number: divide the numerator by the denominator. The quotient is the whole number, the remainder is the new numerator. Example: 11/4 → 11 ÷ 4 = 2 remainder 3 → 2 3/4",
+        "On a number line, mixed numbers live between whole numbers: 1 2/5 is between 1 and 2, specifically two-fifths of the way past 1",
+        "Neither form is 'better' — improper fractions are easier for calculations, mixed numbers are easier to picture"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Mixed Numbers and Improper Fractions — Worked Examples",
+      "skill": "emf-mixed-numbers-improper",
+      "examples": [
+        {
+          "problem": "Convert the mixed number 2 3/4 to an improper fraction.",
+          "solution": "Step 1: Multiply the whole number by the denominator: 2 x 4 = 8.\nStep 2: Add the numerator: 8 + 3 = 11.\nStep 3: Keep the same denominator: 4.\nSo 2 3/4 = 11/4.\n\nWhy this works: 2 wholes = 8/4, plus 3/4 more = 11/4 total."
+        },
+        {
+          "problem": "Convert the improper fraction 17/5 to a mixed number.",
+          "solution": "Step 1: Divide 17 by 5: 17 ÷ 5 = 3 remainder 2.\nStep 2: The quotient (3) becomes the whole number.\nStep 3: The remainder (2) becomes the new numerator, over the same denominator (5).\nSo 17/5 = 3 2/5.\n\nCheck: 3 x 5 + 2 = 17. It works!"
+        },
+        {
+          "problem": "Place 1 2/3 on a number line.",
+          "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Mixed Numbers and Improper Fractions — Guided Practice",
+      "skill": "emf-mixed-numbers-improper",
+      "problems": [
+        {
+          "id": "fc-19",
+          "problem": "Convert the mixed number 3 1/2 to an improper fraction.",
+          "hints": [
+            "Multiply the whole number (3) by the denominator (2): 3 x 2 = 6.",
+            "Add the numerator: 6 + 1 = 7. Put that over the denominator: 7/2."
+          ],
+          "answer": "7/2. Whole x denominator + numerator = 3 x 2 + 1 = 7. Keep denominator 2. So 3 1/2 = 7/2."
+        },
+        {
+          "id": "fc-20",
+          "problem": "Convert the improper fraction 11/4 to a mixed number.",
+          "hints": [
+            "Divide 11 by 4. How many times does 4 go into 11?",
+            "4 goes into 11 two times (4 x 2 = 8) with 3 left over. The mixed number is 2 and something over 4."
+          ],
+          "answer": "2 3/4. 11 ÷ 4 = 2 remainder 3. So 11/4 = 2 3/4."
+        },
+        {
+          "id": "fc-21",
+          "problem": "Convert the mixed number 4 2/5 to an improper fraction.",
+          "hints": [
+            "Multiply the whole number (4) by the denominator (5): 4 x 5 = 20.",
+            "Add the numerator: 20 + 2 = 22. Put that over 5."
+          ],
+          "answer": "22/5. Whole x denominator + numerator = 4 x 5 + 2 = 22. So 4 2/5 = 22/5."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Mixed Numbers and Improper Fractions — Independent Practice",
+      "skill": "emf-mixed-numbers-improper",
+      "problems": [
+        {
+          "id": "fc-22",
+          "problem": "Convert the improper fraction 23/6 to a mixed number.",
+          "answer": "3 5/6. 23 ÷ 6 = 3 remainder 5. So 23/6 = 3 5/6."
+        },
+        {
+          "id": "fc-23",
+          "problem": "Convert the mixed number 5 3/8 to an improper fraction.",
+          "answer": "43/8. 5 x 8 + 3 = 40 + 3 = 43. So 5 3/8 = 43/8."
+        },
+        {
+          "id": "fc-24",
+          "problem": "Convert the improper fraction 19/3 to a mixed number.",
+          "answer": "6 1/3. 19 ÷ 3 = 6 remainder 1. So 19/3 = 6 1/3."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Finding a Fraction of a Whole Number",
+      "skill": "emf-fractions-of-whole",
+      "content": "What is 1/3 of 24 gummy bears? When we see the word 'of' with a fraction, it means we need to find a part of a total. The method is simple: divide the whole number by the denominator first, then multiply by the numerator. Think of it as sharing equally into groups (the denominator tells you how many groups), then counting how many groups you want (the numerator). This skill shows up everywhere — splitting snacks, calculating distances, figuring out how much of something you get.",
+      "keyPoints": [
+        "'Of' means multiply: 1/3 of 24 means 1/3 x 24",
+        "Divide-then-multiply method: divide the whole number by the denominator, then multiply by the numerator",
+        "Example: 1/3 of 24 → 24 ÷ 3 = 8, then 8 x 1 = 8. So 1/3 of 24 = 8",
+        "Example: 3/4 of 20 → 20 ÷ 4 = 5, then 5 x 3 = 15. So 3/4 of 20 = 15",
+        "This works because dividing by the denominator gives you one part, and multiplying by the numerator gives you the number of parts you need",
+        "Tip: it is often easier to divide first (to get a smaller number) and multiply second"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Fractions of a Whole Number — Worked Examples",
+      "skill": "emf-fractions-of-whole",
+      "examples": [
+        {
+          "problem": "What is 1/3 of 24?",
+          "solution": "We need to find 1/3 of 24.\nStep 1: Divide 24 by the denominator (3): 24 ÷ 3 = 8.\nStep 2: Multiply by the numerator (1): 8 x 1 = 8.\nSo 1/3 of 24 = 8.\n\nPicture it: 24 gummy bears split into 3 equal groups. Each group has 8 gummy bears. One group (1/3) = 8."
+        },
+        {
+          "problem": "What is 3/4 of 20?",
+          "solution": "Step 1: Divide 20 by the denominator (4): 20 ÷ 4 = 5.\nStep 2: Multiply by the numerator (3): 5 x 3 = 15.\nSo 3/4 of 20 = 15.\n\nPicture it: 20 stickers split into 4 equal groups of 5. You want 3 of those groups: 5 + 5 + 5 = 15 stickers."
+        },
+        {
+          "problem": "A baker made 30 cookies. She gave 2/5 of them to her neighbor. How many cookies did the neighbor get?",
+          "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Fractions of a Whole Number — Guided Practice",
+      "skill": "emf-fractions-of-whole",
+      "problems": [
+        {
+          "id": "fc-25",
+          "problem": "What is 1/4 of 32?",
+          "hints": [
+            "Divide 32 by the denominator (4). How many groups of 4 are in 32?",
+            "32 ÷ 4 = 8. Now multiply by the numerator (1): 8 x 1 = ?"
+          ],
+          "answer": "8. 32 ÷ 4 = 8, then 8 x 1 = 8. So 1/4 of 32 = 8."
+        },
+        {
+          "id": "fc-26",
+          "problem": "A box has 18 crayons. You use 2/3 of them for your art project. How many crayons did you use?",
+          "hints": [
+            "Find 2/3 of 18. First divide 18 by 3.",
+            "18 ÷ 3 = 6. That is one-third. Now multiply by 2 to get two-thirds."
+          ],
+          "answer": "12 crayons. 18 ÷ 3 = 6, then 6 x 2 = 12. So 2/3 of 18 = 12."
+        },
+        {
+          "id": "fc-27",
+          "problem": "What is 3/5 of 25?",
+          "hints": [
+            "Divide 25 by the denominator (5) to find one-fifth.",
+            "25 ÷ 5 = 5. Now multiply by 3 to get three-fifths."
+          ],
+          "answer": "15. 25 ÷ 5 = 5, then 5 x 3 = 15. So 3/5 of 25 = 15."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Fractions of a Whole Number — Independent Practice",
+      "skill": "emf-fractions-of-whole",
+      "problems": [
+        {
+          "id": "fc-28",
+          "problem": "There are 24 students in a class. 5/6 of them passed the spelling test. How many students passed?",
+          "answer": "20 students. 24 ÷ 6 = 4, then 4 x 5 = 20. So 5/6 of 24 = 20."
+        },
+        {
+          "id": "fc-29",
+          "problem": "A dog walker walks 40 dogs each week. 3/8 of the dogs are small breeds. How many small dogs does she walk?",
+          "answer": "15 dogs. 40 ÷ 8 = 5, then 5 x 3 = 15. So 3/8 of 40 = 15."
+        },
+        {
+          "id": "fc-30",
+          "problem": "A farm has 35 animals. 2/7 of them are horses. How many horses are on the farm?",
+          "answer": "10 horses. 35 ÷ 7 = 5, then 5 x 2 = 10. So 2/7 of 35 = 10."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "fc-1": "2/6",
+    "fc-2": "3/10",
+    "fc-3": "2/5",
+    "fc-4": "5/8 eaten, 3/8 left",
+    "fc-5": "6/15",
+    "fc-6": "5/8, closer to 1/2",
+    "fc-7": "15/20",
+    "fc-8": "2/3",
+    "fc-9": "Yes, equivalent",
+    "fc-10": "15/18",
+    "fc-11": "3/4",
+    "fc-12": "9",
+    "fc-13": "4/9 < 7/9",
+    "fc-14": "5/6 > 3/4",
+    "fc-15": "1/4, 2/3, 5/6",
+    "fc-16": "5/12 < 1/2",
+    "fc-17": "2/3 > 3/5",
+    "fc-18": "3/8, 2/5, 1/2",
+    "fc-19": "7/2",
+    "fc-20": "2 3/4",
+    "fc-21": "22/5",
+    "fc-22": "3 5/6",
+    "fc-23": "43/8",
+    "fc-24": "6 1/3",
+    "fc-25": "8",
+    "fc-26": "12",
+    "fc-27": "15",
+    "fc-28": "20",
+    "fc-29": "15",
+    "fc-30": "10"
+  }
+}

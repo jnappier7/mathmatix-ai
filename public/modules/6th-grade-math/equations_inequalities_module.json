@@ -1,0 +1,408 @@
+{
+  "moduleId": "equations_inequalities",
+  "course": "6th Grade Math",
+  "unit": 4,
+  "title": "Equations and Inequalities",
+  "weeks": "15-17",
+  "estimatedDuration": 35,
+  "description": "Where algebra gets real. Students solve one-step and two-step equations using inverse operations, get a conceptual introduction to variables on both sides, write and solve inequalities with number line graphs, and build equations from word problems. The balance scale model is the central metaphor — whatever you do to one side, you must do to the other.",
+  "skills": ["g6-one-two-step-equations", "g6-variables-both-sides", "g6-inequalities", "g6-word-problem-equations"],
+  "standardsAlignment": ["6.EE.B.5", "6.EE.B.6", "6.EE.B.7", "6.EE.B.8"],
+  "goals": [
+    "Solve one-step and two-step equations using inverse operations and verify every solution by substitution",
+    "Understand the concept of variables appearing on both sides of an equation and solve simple cases by collecting variable terms",
+    "Write and solve inequalities using inequality symbols, and represent solutions on a number line with open or closed circles",
+    "Translate real-world situations into equations and inequalities, solve them, and interpret the answer in context",
+    "Use the balance scale model to explain and justify each step when solving an equation"
+  ],
+  "instructionalStrategy": [
+    "Balance scale model is the central metaphor: whatever you do to one side, you must do to the other — reinforce this language in every skill",
+    "Gradual release for each skill: concept-intro → I Do → We Do → You Do",
+    "AI uses scaffold array as scope and worked-example bank",
+    "Emphasize checking by substitution after every solve — build the verification habit early",
+    "All word problems use relatable contexts for 11-12 year olds: money, sports, school, food"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "One-Step and Two-Step Equations",
+      "skill": "g6-one-two-step-equations",
+      "content": "An equation is like a balance scale — both sides must be equal. To solve for the variable, we use inverse (opposite) operations to get the variable alone on one side. The golden rule: whatever you do to one side, you must do to the other side to keep the scale balanced.",
+      "keyPoints": [
+        "An equation says two expressions are equal — picture a balanced scale with the equal sign as the fulcrum",
+        "Inverse operations undo each other: addition ↔ subtraction, multiplication ↔ division",
+        "One-step equations need just one inverse operation (e.g., x + 5 = 12 → subtract 5 from both sides → x = 7)",
+        "Two-step equations need two inverse operations — always undo addition or subtraction FIRST, then undo multiplication or division",
+        "After solving, ALWAYS check your answer by substituting it back into the original equation to make sure both sides are equal",
+        "The goal is to isolate the variable: get it alone on one side so you have variable = number"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "One-Step and Two-Step Equations — Worked Examples",
+      "skill": "g6-one-two-step-equations",
+      "examples": [
+        {
+          "problem": "Solve: x + 8 = 15",
+          "solution": "We need to get x alone. Since 8 is being added to x, we use the inverse — subtract 8 from both sides.\nx + 8 − 8 = 15 − 8\nx = 7\nCheck: 7 + 8 = 15 ✓ The scale balances."
+        },
+        {
+          "problem": "Solve: 3n = 24",
+          "solution": "3n means 3 times n. The inverse of multiplying by 3 is dividing by 3. Divide both sides by 3.\n3n ÷ 3 = 24 ÷ 3\nn = 8\nCheck: 3(8) = 24 ✓"
+        },
+        {
+          "problem": "Solve: 2x + 5 = 17",
+          "solution": "This is a two-step equation. Step 1: Undo the addition — subtract 5 from both sides.\n2x + 5 − 5 = 17 − 5\n2x = 12\nStep 2: Undo the multiplication — divide both sides by 2.\n2x ÷ 2 = 12 ÷ 2\nx = 6\nCheck: 2(6) + 5 = 12 + 5 = 17 ✓"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "One-Step and Two-Step Equations — Guided Practice",
+      "skill": "g6-one-two-step-equations",
+      "problems": [
+        {
+          "id": "ei-1",
+          "prompt": "Solve: y − 9 = 14",
+          "hints": [
+            "What operation is being done to y? Subtraction of 9.",
+            "The inverse of subtraction is addition. Add 9 to both sides."
+          ],
+          "answer": "y = 23. Add 9 to both sides: y − 9 + 9 = 14 + 9, so y = 23. Check: 23 − 9 = 14 ✓"
+        },
+        {
+          "id": "ei-2",
+          "prompt": "Solve: m/4 = 7",
+          "hints": [
+            "m/4 means m divided by 4.",
+            "The inverse of dividing by 4 is multiplying by 4. Multiply both sides by 4."
+          ],
+          "answer": "m = 28. Multiply both sides by 4: (m/4) × 4 = 7 × 4, so m = 28. Check: 28/4 = 7 ✓"
+        },
+        {
+          "id": "ei-3",
+          "prompt": "Solve: 4x − 3 = 25",
+          "hints": [
+            "Two steps: first undo the subtraction by adding 3 to both sides.",
+            "You should get 4x = 28. Now undo the multiplication by dividing both sides by 4."
+          ],
+          "answer": "x = 7. Step 1: 4x − 3 + 3 = 25 + 3 → 4x = 28. Step 2: 4x ÷ 4 = 28 ÷ 4 → x = 7. Check: 4(7) − 3 = 28 − 3 = 25 ✓"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "One-Step and Two-Step Equations — Independent Practice",
+      "skill": "g6-one-two-step-equations",
+      "problems": [
+        {
+          "id": "ei-4",
+          "prompt": "Solve: n + 12 = 30",
+          "answer": "n = 18"
+        },
+        {
+          "id": "ei-5",
+          "prompt": "Solve: 5w = 45",
+          "answer": "w = 9"
+        },
+        {
+          "id": "ei-6",
+          "prompt": "Solve: 3p + 7 = 28",
+          "answer": "p = 7"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Variables on Both Sides — Introduction",
+      "skill": "g6-variables-both-sides",
+      "content": "Sometimes the variable shows up on both sides of the equation. Picture the balance scale with boxes on each side — you need to move all the boxes (variable terms) to one side so you can figure out what one box weighs. The strategy: subtract the smaller variable term from both sides to collect all the variables together, then solve the resulting two-step equation.",
+      "keyPoints": [
+        "When variables appear on both sides, move all variable terms to one side by subtracting the smaller variable term from both sides",
+        "Example approach: in 3x + 2 = x + 10, subtract x from both sides to get 2x + 2 = 10, then solve as a two-step equation",
+        "After collecting variables on one side, you have a regular two-step equation — solve as usual",
+        "Always check your answer by substituting into BOTH sides of the original equation and confirming they are equal",
+        "This is a preview skill for 6th grade — you will work with more complex versions in 7th grade and beyond"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Variables on Both Sides — Worked Examples",
+      "skill": "g6-variables-both-sides",
+      "examples": [
+        {
+          "problem": "Solve: 3x + 2 = x + 10",
+          "solution": "Variables are on both sides. Subtract x from both sides to collect all x terms on the left.\n3x + 2 − x = x + 10 − x\n2x + 2 = 10\nNow it is a two-step equation. Subtract 2 from both sides.\n2x = 8\nDivide both sides by 2.\nx = 4\nCheck: Left side: 3(4) + 2 = 14. Right side: 4 + 10 = 14. Both sides equal 14 ✓"
+        },
+        {
+          "problem": "Solve: 5n − 3 = 2n + 9",
+          "solution": "Subtract 2n from both sides to collect variable terms on the left.\n5n − 3 − 2n = 2n + 9 − 2n\n3n − 3 = 9\nAdd 3 to both sides.\n3n = 12\nDivide both sides by 3.\nn = 4\nCheck: Left side: 5(4) − 3 = 17. Right side: 2(4) + 9 = 17. Both sides equal 17 ✓"
+        },
+        {
+          "problem": "Solve: 4x + 6 = x + 21",
+          "solution": "Subtract x from both sides.\n4x + 6 − x = x + 21 − x\n3x + 6 = 21\nSubtract 6 from both sides.\n3x = 15\nDivide both sides by 3.\nx = 5\nCheck: Left side: 4(5) + 6 = 26. Right side: 5 + 21 = 26. Both sides equal 26 ✓"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Variables on Both Sides — Guided Practice",
+      "skill": "g6-variables-both-sides",
+      "problems": [
+        {
+          "id": "ei-7",
+          "prompt": "Solve: 4x + 1 = 2x + 9",
+          "hints": [
+            "Subtract 2x from both sides to get all the x terms on one side: 2x + 1 = 9.",
+            "Now subtract 1 from both sides to get 2x = 8, then divide both sides by 2."
+          ],
+          "answer": "x = 4. Subtract 2x: 2x + 1 = 9. Subtract 1: 2x = 8. Divide by 2: x = 4. Check: 4(4) + 1 = 17, 2(4) + 9 = 17 ✓"
+        },
+        {
+          "id": "ei-8",
+          "prompt": "Solve: 6m − 5 = 3m + 10",
+          "hints": [
+            "Subtract 3m from both sides: 3m − 5 = 10.",
+            "Add 5 to both sides: 3m = 15. Then divide both sides by 3."
+          ],
+          "answer": "m = 5. Subtract 3m: 3m − 5 = 10. Add 5: 3m = 15. Divide by 3: m = 5. Check: 6(5) − 5 = 25, 3(5) + 10 = 25 ✓"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Variables on Both Sides — Independent Practice",
+      "skill": "g6-variables-both-sides",
+      "problems": [
+        {
+          "id": "ei-9",
+          "prompt": "Solve: 5x + 3 = 2x + 15",
+          "answer": "x = 4"
+        },
+        {
+          "id": "ei-10",
+          "prompt": "Solve: 7y − 4 = 3y + 16",
+          "answer": "y = 5"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Inequalities",
+      "skill": "g6-inequalities",
+      "content": "An inequality is like an equation, but instead of saying two sides are equal, it says one side is greater or less than the other. Inequalities have infinitely many solutions — for example, x > 5 means x could be 6, 7, 100, or even 5.01. We show all these solutions at once by graphing on a number line.",
+      "keyPoints": [
+        "Four inequality symbols: < (less than), > (greater than), ≤ (less than or equal to), ≥ (greater than or equal to)",
+        "Solve inequalities the same way you solve equations — use inverse operations on both sides",
+        "Inequalities have infinitely many solutions, not just one answer",
+        "Number line graphs: use an OPEN circle for < or > (the endpoint is NOT included) and a CLOSED (filled) circle for ≤ or ≥ (the endpoint IS included)",
+        "Shade the number line in the direction of the solutions: right for > or ≥, left for < or ≤",
+        "Key phrases in context: 'at least' means ≥, 'no more than' means ≤, 'fewer than' means <, 'more than' means >"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Inequalities — Worked Examples",
+      "skill": "g6-inequalities",
+      "examples": [
+        {
+          "problem": "Solve x + 3 > 10 and describe how to graph the solution on a number line.",
+          "solution": "Subtract 3 from both sides:\nx + 3 − 3 > 10 − 3\nx > 7\nGraph: Draw a number line. Place an OPEN circle at 7 (because 7 itself is NOT a solution — the symbol is >, not ≥). Shade everything to the RIGHT of 7.\nThis means x can be any number greater than 7, such as 8, 10, or 7.5."
+        },
+        {
+          "problem": "Solve 2n ≤ 16 and describe how to graph the solution.",
+          "solution": "Divide both sides by 2:\n2n ÷ 2 ≤ 16 ÷ 2\nn ≤ 8\nGraph: Draw a number line. Place a CLOSED (filled) circle at 8 (because 8 IS included — the symbol is ≤, meaning 'less than or equal to'). Shade everything to the LEFT of 8.\nThis means n can be 8, 7, 0, −3, or any number that is 8 or less."
+        },
+        {
+          "problem": "Ella must practice piano at least 30 minutes each day. Write an inequality for the number of minutes m she practices, and describe the graph.",
+          "solution": "The phrase 'at least 30' means 30 or more, so we use ≥.\nm ≥ 30\nGraph: CLOSED circle at 30 (30 is included because she can practice exactly 30 minutes), shade to the RIGHT.\nAny value of m that is 30 or greater makes this inequality true."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Inequalities — Guided Practice",
+      "skill": "g6-inequalities",
+      "problems": [
+        {
+          "id": "ei-11",
+          "prompt": "Solve: x + 5 > 12. Then state whether the graph uses an open or closed circle and which direction to shade.",
+          "hints": [
+            "Use the inverse of adding 5 — subtract 5 from both sides.",
+            "Is the symbol > or ≥? That tells you open or closed circle."
+          ],
+          "answer": "x > 7. Open circle at 7, shade to the right. Subtract 5 from both sides: x > 7. The > symbol means 7 is NOT included, so use an open circle."
+        },
+        {
+          "id": "ei-12",
+          "prompt": "Solve: 3n ≤ 18. Describe the number line graph.",
+          "hints": [
+            "Divide both sides by 3.",
+            "The ≤ symbol means the endpoint IS included — what kind of circle is that?"
+          ],
+          "answer": "n ≤ 6. Closed circle at 6, shade to the left. Divide both sides by 3: n ≤ 6. The ≤ means 6 is included, so use a closed (filled) circle."
+        },
+        {
+          "id": "ei-13",
+          "prompt": "A roller coaster requires riders to be at least 48 inches tall. Write an inequality for the height h (in inches) of a person who can ride.",
+          "hints": [
+            "What does 'at least' mean? It means 'that much or more.'",
+            "Which inequality symbol means 'greater than or equal to'?"
+          ],
+          "answer": "h ≥ 48. 'At least 48 inches' means 48 or taller, which translates to h ≥ 48. Closed circle at 48, shade to the right."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Inequalities — Independent Practice",
+      "skill": "g6-inequalities",
+      "problems": [
+        {
+          "id": "ei-14",
+          "prompt": "Solve: y − 6 < 9. State the type of circle and shading direction for the graph.",
+          "answer": "y < 15. Open circle at 15, shade to the left."
+        },
+        {
+          "id": "ei-15",
+          "prompt": "Solve: 4k ≥ 28. State the type of circle and shading direction for the graph.",
+          "answer": "k ≥ 7. Closed circle at 7, shade to the right."
+        },
+        {
+          "id": "ei-16",
+          "prompt": "A school bus can hold no more than 48 students. There are already 31 students on the bus. Write and solve an inequality for the number of additional students s who can board.",
+          "answer": "31 + s ≤ 48, so s ≤ 17. No more than 17 additional students can board."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Word Problem Equations",
+      "skill": "g6-word-problem-equations",
+      "content": "Real-world problems rarely hand you an equation — you have to build it yourself. The process has four steps: (1) define a variable for the unknown, (2) translate the words into an equation or inequality using math operations, (3) solve, and (4) interpret your answer back in context. Always re-read the problem at the end to make sure your answer actually makes sense.",
+      "keyPoints": [
+        "Step 1 — Define the variable: pick a letter and write what it represents (e.g., let t = number of tickets)",
+        "Step 2 — Translate: turn key phrases into math ('total' often means addition or equals, 'each' or 'per' often means multiplication, 'left over' often means subtraction)",
+        "Step 3 — Solve the equation or inequality using inverse operations",
+        "Step 4 — Interpret: answer the question in a complete sentence and check that the answer makes sense in context",
+        "Common translation patterns: 'is' → =, 'more than' → +, 'less than' → −, 'times' → ×, 'per' → ×, 'split equally' → ÷"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Word Problem Equations — Worked Examples",
+      "skill": "g6-word-problem-equations",
+      "examples": [
+        {
+          "problem": "Maya earns $6 per hour babysitting. She wants to buy a video game that costs $42. How many hours does she need to work?",
+          "solution": "Step 1 — Variable: Let h = number of hours Maya works.\nStep 2 — Equation: She earns $6 per hour, so total earnings = 6h. She needs $42.\n6h = 42\nStep 3 — Solve: Divide both sides by 6.\nh = 7\nStep 4 — Interpret: Maya needs to work 7 hours.\nCheck: 6 × 7 = $42 ✓"
+        },
+        {
+          "problem": "A basketball team scored 58 points in a game. The star player scored 22 points and the remaining points were split equally among 4 other players. How many points did each of the other players score?",
+          "solution": "Step 1 — Variable: Let p = points scored by each of the other 4 players.\nStep 2 — Equation: Star player's points + other players' points = total.\n22 + 4p = 58\nStep 3 — Solve: Subtract 22 from both sides.\n4p = 36\nDivide both sides by 4.\np = 9\nStep 4 — Interpret: Each of the other 4 players scored 9 points.\nCheck: 22 + 4(9) = 22 + 36 = 58 ✓"
+        },
+        {
+          "problem": "A cell phone plan costs $15 per month plus $0.10 per text message. Last month the bill was $23. How many text messages were sent?",
+          "solution": "Step 1 — Variable: Let t = number of text messages.\nStep 2 — Equation: Monthly cost + text cost = total bill.\n15 + 0.10t = 23\nStep 3 — Solve: Subtract 15 from both sides.\n0.10t = 8\nDivide both sides by 0.10.\nt = 80\nStep 4 — Interpret: 80 text messages were sent.\nCheck: 15 + 0.10(80) = 15 + 8 = 23 ✓"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Word Problem Equations — Guided Practice",
+      "skill": "g6-word-problem-equations",
+      "problems": [
+        {
+          "id": "ei-17",
+          "prompt": "Maya has $45 and wants to buy notebooks that cost $5 each. She also needs to buy a $10 binder. How many notebooks can she buy? Write and solve an equation.",
+          "hints": [
+            "Let n = the number of notebooks. The total cost is the binder plus the notebooks: 10 + 5n.",
+            "Set the total cost equal to the money she has: 10 + 5n = 45. Now solve for n."
+          ],
+          "answer": "n = 7 notebooks. Equation: 10 + 5n = 45. Subtract 10: 5n = 35. Divide by 5: n = 7. Check: 10 + 5(7) = 10 + 35 = 45 ✓"
+        },
+        {
+          "id": "ei-18",
+          "prompt": "A soccer team scored 3 times as many goals in the second half as in the first half. They scored 12 goals total. How many goals did they score in the first half?",
+          "hints": [
+            "Let g = goals in the first half. Then the second half goals = 3g.",
+            "First half + second half = total: g + 3g = 12. Combine like terms and solve."
+          ],
+          "answer": "g = 3 goals in the first half (and 9 in the second half). Equation: g + 3g = 12 → 4g = 12 → g = 3. Check: 3 + 3(3) = 3 + 9 = 12 ✓"
+        },
+        {
+          "id": "ei-19",
+          "prompt": "Tyler is 4 years older than his sister. The sum of their ages is 22. How old is each person?",
+          "hints": [
+            "Let s = the sister's age. Then Tyler's age = s + 4.",
+            "Their ages add up to 22: s + (s + 4) = 22. Combine like terms and solve."
+          ],
+          "answer": "Sister is 9 years old, Tyler is 13 years old. Equation: s + (s + 4) = 22 → 2s + 4 = 22 → 2s = 18 → s = 9. Tyler = 9 + 4 = 13. Check: 9 + 13 = 22 ✓"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Word Problem Equations — Independent Practice",
+      "skill": "g6-word-problem-equations",
+      "problems": [
+        {
+          "id": "ei-20",
+          "prompt": "A pizza shop charges $8 for a large pizza plus $1.50 for each topping. Jasmine paid $14. How many toppings did she get? Define a variable, write an equation, and solve.",
+          "answer": "4 toppings. Let t = number of toppings. 8 + 1.50t = 14 → 1.50t = 6 → t = 4."
+        },
+        {
+          "id": "ei-21",
+          "prompt": "Marcus and his 3 friends split the cost of a $52 gift equally. Marcus also paid $6 for gift wrapping. How much did Marcus pay in total? Define a variable, write an equation, and solve.",
+          "answer": "Marcus paid $19. Each person's share = 52 ÷ 4 = $13. Marcus's total: 13 + 6 = $19."
+        },
+        {
+          "id": "ei-22",
+          "prompt": "A school club needs to raise at least $200 for a field trip. They have already raised $65 and plan to sell cookies for $3 each. How many cookies do they need to sell? Write and solve an inequality.",
+          "answer": "At least 45 cookies. Let c = number of cookies. 65 + 3c ≥ 200 → 3c ≥ 135 → c ≥ 45."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "ei-1": "y = 23",
+    "ei-2": "m = 28",
+    "ei-3": "x = 7",
+    "ei-4": "n = 18",
+    "ei-5": "w = 9",
+    "ei-6": "p = 7",
+    "ei-7": "x = 4",
+    "ei-8": "m = 5",
+    "ei-9": "x = 4",
+    "ei-10": "y = 5",
+    "ei-11": "x > 7 (open circle at 7, shade right)",
+    "ei-12": "n ≤ 6 (closed circle at 6, shade left)",
+    "ei-13": "h ≥ 48",
+    "ei-14": "y < 15 (open circle at 15, shade left)",
+    "ei-15": "k ≥ 7 (closed circle at 7, shade right)",
+    "ei-16": "s ≤ 17",
+    "ei-17": "n = 7 notebooks",
+    "ei-18": "g = 3 goals in the first half",
+    "ei-19": "Sister = 9, Tyler = 13",
+    "ei-20": "t = 4 toppings",
+    "ei-21": "Marcus paid $19 total",
+    "ei-22": "c ≥ 45 cookies"
+  }
+}
