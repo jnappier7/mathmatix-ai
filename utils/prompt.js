@@ -265,12 +265,19 @@ function buildIepAccommodationsPrompt(iepPlan, firstName) {
   if (iepPlan.readingLevel) {
     const rl = iepPlan.readingLevel;
     const isLexile = rl > 20; // Lexile scores are typically 100-1600; grade levels are 1-12
-    prompt += `✓ **Reading Level Adjustment:**\n`;
-    prompt += `  - ${firstName}'s reading level is ${isLexile ? `${rl}L (Lexile)` : `Grade ${rl}`}\n`;
-    prompt += `  - Adjust ALL word problem text and explanations to this reading level\n`;
-    prompt += `  - Use shorter sentences, simpler vocabulary, and concrete examples\n`;
-    prompt += `  - Avoid multi-clause sentences and abstract language above this level\n`;
-    prompt += `  - When math vocabulary is necessary, define it in context\n\n`;
+    const { lexileToGrade } = require('./readability');
+    const targetGrade = isLexile ? lexileToGrade(rl) : rl;
+    const maxSentenceWords = targetGrade <= 3 ? 8 : targetGrade <= 5 ? 12 : 15;
+    prompt += `✓ **Reading Level Adjustment (ENFORCED — responses are automatically scored):**\n`;
+    prompt += `  - ${firstName}'s reading level is ${isLexile ? `${rl}L (Lexile) ≈ Grade ${targetGrade}` : `Grade ${rl}`}\n`;
+    prompt += `  - Target: Grade ${targetGrade} readability or below\n`;
+    prompt += `  - MAXIMUM sentence length: ${maxSentenceWords} words per sentence\n`;
+    prompt += `  - Use only common, everyday vocabulary a Grade ${targetGrade} student would know\n`;
+    prompt += `  - Replace multi-syllable words with simpler ones (e.g., "figure out" not "determine")\n`;
+    prompt += `  - Break compound sentences into separate short sentences\n`;
+    prompt += `  - When math vocabulary is necessary, define it immediately in parentheses\n`;
+    prompt += `  - Avoid abstract language — use concrete, visual examples\n`;
+    prompt += `  - NOTE: Your response WILL be automatically scored for readability. If it exceeds Grade ${targetGrade + 2}, it will be rewritten.\n\n`;
   }
 
   // Preferred scaffolds

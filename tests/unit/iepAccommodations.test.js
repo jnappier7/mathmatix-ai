@@ -168,7 +168,8 @@ describe('IEP Accommodation Prompt Builder', () => {
         const result = buildIepAccommodationsPrompt(iep, 'Maya');
         expect(result).toContain('Reading Level Adjustment');
         expect(result).toContain('Grade 4');
-        expect(result).toContain('shorter sentences');
+        expect(result).toContain('MAXIMUM sentence length');
+        expect(result).toContain('automatically scored');
     });
 
     test('readingLevel: includes Lexile adjustment for large values', () => {
