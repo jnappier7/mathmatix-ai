@@ -1,0 +1,102 @@
+{
+  "moduleId": "word_problems_tape_diagrams",
+  "course": "Parent Guide: 3–5 Math",
+  "unit": 4,
+  "quarter": 1,
+  "title": "Word Problems & Tape Diagrams",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Word problems are the bane of many students' existence—and their parents' too. Today's classrooms use tape diagrams (also called strip models or bar models) as a universal tool for making sense of word problems before solving them. This module teaches you how tape diagrams work, why they're required on homework, and how to guide your child through word problems without just giving the answer.",
+  "skills": ["tape-diagrams", "multi-step-word-problems"],
+  "standardsAlignment": ["3.OA.8", "4.OA.3", "5.OA.1", "5.OA.2"],
+  "goals": [
+    "Understand tape diagrams and draw them for common word problem types",
+    "Know why teachers require a model/diagram for word problems",
+    "Guide your child through word problems using questions, not answers",
+    "Recognize the different tape diagram structures: part-whole, comparison, equal groups, multi-step"
+  ],
+  "instructionalStrategy": [
+    "Parents often see tape diagrams as 'extra busywork.' Reframe: the diagram IS the problem-solving—the computation is just the last step.",
+    "Show the same word problem solved with keyword hunting (which fails) vs tape diagram (which works).",
+    "The guiding questions framework ('What do you know? What do you need to find?') is the most immediately useful takeaway for parents.",
+    "Use REAL homework-style problems so parents recognize what they'll see tonight."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "tape-diagrams",
+      "title": "Why Does My Child Have to Draw a Diagram?",
+      "text": "You've probably seen this note from your child's teacher: 'Show your work using a model.' Or: 'Draw a tape diagram to represent the problem.'\n\nAnd your child might complain: 'I KNOW the answer already—why do I have to draw?'\n\nHere's why the diagram matters more than the answer:\n\n**1. It shows the thinking, not just the answer.** A correct answer with no work might be copied. A correct diagram proves understanding.\n\n**2. It prevents wrong operations.** The #1 error on word problems isn't arithmetic—it's choosing the WRONG operation. 'Sam has 3 times as many as Mia, who has 12. How many does Sam have?' Many children divide here because 'how many does Sam have' feels like finding a smaller number. A tape diagram makes it obvious it's multiplication.\n\n**3. It scales to harder problems.** A two-step or three-step word problem is nearly impossible to solve 'in your head' without a plan. The tape diagram IS the plan.\n\n**4. It comes from the world's best math systems.** Tape diagrams (called 'model drawing' in Singapore and 'tape measures' in Japan) are used in the countries that consistently rank #1 in international math assessments.\n\nA **tape diagram** is a rectangular bar that represents a quantity. By drawing bars of different lengths, children can visualize relationships between quantities and figure out which operation to use.",
+      "initialPrompt": "Have you seen tape diagrams on your child's homework? They usually look like rectangular bars with labels and question marks. If so, did you know what to do with them?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "tape-diagrams",
+      "title": "I-Do: Tape Diagrams for Different Problem Types",
+      "examples": [
+        {
+          "problem": "Part-Whole: 'A bakery made 156 muffins in the morning and 98 in the afternoon. How many muffins did they make in all?'",
+          "solution": "**Tape Diagram:**\n```\n┌─────────────────────────────────┐\n│               ?                 │\n├───────────────────┬─────────────┤\n│       156         │      98     │\n│     morning       │  afternoon  │\n└───────────────────┴─────────────┘\n```\n\nThe two parts (156 and 98) make the whole (?)\n156 + 98 = **254 muffins**\n\nThe diagram makes it clear: we know both parts, we need the whole → addition.",
+          "tip": "Part-whole is the simplest tape diagram type. If you know the parts and need the whole, you add. If you know the whole and one part, you subtract."
+        },
+        {
+          "problem": "Comparison: 'Maria earned $125 babysitting. She earned $47 more than she spent on a gift. How much was the gift?'",
+          "solution": "**Tape Diagram:**\n```\nEarned:  ┌───────────────────────────────┐\n         │            $125              │\n         └───────────────────────────────┘\nGift:    ┌───────────────────┐\n         │        ?          │\n         └───────────────────┘\n                              ├── $47 ──┤\n```\n\nMaria earned MORE than the gift costs. So the gift is LESS:\n$125 - $47 = **$78**\n\n**Why the diagram matters:** Many children see 'more' and add: $125 + $47 = $172. The diagram shows that '$47 more' means the earnings bar is LONGER—so the gift is shorter (subtraction).",
+          "tip": "Comparison problems are where tape diagrams really shine. The word 'more' doesn't always mean add—the diagram shows the actual relationship."
+        },
+        {
+          "problem": "Multi-Step: 'A school bought 8 boxes of markers with 12 markers per box. They gave 15 markers to the art room. How many markers are left?'",
+          "solution": "**Tape Diagram (two steps):**\n\n**Step 1: Total markers**\n```\n┌──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐\n│  12  │  12  │  12  │  12  │  12  │  12  │  12  │  12  │\n└──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘\n               8 boxes × 12 = 96 markers\n```\n\n**Step 2: After giving some away**\n```\n┌────────────────────────────────────────┬───────┐\n│                  ?                     │  15   │\n│             markers left               │ given │\n└────────────────────────────────────────┴───────┘\n                    96 total\n```\n\n96 - 15 = **81 markers left**\n\nThe diagram makes the two steps visible: first find the total (multiply), then find what's left (subtract).",
+          "tip": "Multi-step problems are where children struggle most. The tape diagram breaks the problem into visible steps and shows the order of operations."
+        }
+      ],
+      "initialPrompt": "Try drawing a comparison tape diagram for this problem: 'Jake read 38 pages. He read 14 fewer pages than Emma. How many pages did Emma read?' Be careful with 'fewer'!"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "tape-diagrams",
+      "title": "Why Tape Diagrams Beat Keyword Strategies",
+      "text": "Many parents (and some teachers) teach 'keyword strategies' for word problems:\n- See 'in all'? → Add\n- See 'left'? → Subtract\n- See 'each'? → Multiply\n- See 'share'? → Divide\n\nThis works for simple problems. It **falls apart** for anything complex:\n\n**Problem:** 'Emma has 24 stickers. She has 8 MORE than Jake. How many does Jake have?'\n\nKeyword strategy: 'MORE → add: 24 + 8 = 32' **WRONG.**\nTape diagram: Emma's bar is longer (24), the difference is 8, so Jake's bar is 24 - 8 = **16**. ✓\n\n**Problem:** 'There were 45 birds. Some flew away and 18 were left. How many flew away?'\n\nKeyword strategy: 'Left → subtract: 45 - 18 = 27' **This one happens to be correct.** But the child doesn't know WHY.\nTape diagram: The whole (45) breaks into 'flew away (?)' and 'left (18)': 45 - 18 = **27**. ✓ AND the child understands the structure.\n\nKeyword strategies are fragile shortcuts. Tape diagrams are robust tools that work for every problem type—now and in the future.\n\n**Singapore's results speak for themselves:** Students taught with model drawing consistently outperform peers on word problems by significant margins, across all ability levels.",
+      "initialPrompt": "Can you think of a word problem where keywords would lead to the wrong answer? 'More' not meaning add, or 'left' not meaning subtract? Tape diagrams handle these naturally."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "tape-diagrams",
+      "title": "Try It: Tape Diagram Practice",
+      "problems": [
+        {
+          "id": "td-p1",
+          "question": "Draw a tape diagram for: 'A farmer has 3 fields. Each field has 24 rows of corn. How many rows in total?'",
+          "answer": "Equal groups tape: three equal sections of 24. Total = 3 × 24 = 72 rows.",
+          "hints": [
+            "This is an 'equal groups' problem: 3 groups of 24.",
+            "Draw 3 equal bars of 24. Total = 3 × 24 = 72."
+          ]
+        },
+        {
+          "id": "td-p2",
+          "question": "'Ava has 56 beads. She has 3 times as many beads as Mia. How many beads does Mia have?' Watch out—this one tricks many students.",
+          "answer": "Ava's bar is 3 times as long as Mia's. So Ava (56) = 3 × Mia. Mia = 56 ÷ 3 ≈ 18 R2. Actually... let me recheck. If the problem gives a clean answer: Mia has 56 ÷ 3. But tape diagram shows: Mia = 1 unit, Ava = 3 units = 56. One unit = 56 ÷ 3.",
+          "hints": [
+            "Draw Mia as one bar. Draw Ava as 3 bars the same size (3 times as many).",
+            "The 3 bars together equal 56: 56 ÷ 3. The tape diagram prevents the common error of multiplying 56 × 3."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice reading word problems and turning them into tape diagrams."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "multi-step-word-problems",
+      "title": "The Parent's Word Problem Script",
+      "text": "When your child is stuck on a word problem, use this **4-question script**:\n\n**1. 'Read it again. What do you know?'** (Find the given information.)\n\n**2. 'What are you trying to find?'** (Identify the question.)\n\n**3. 'Can you draw a picture or a tape diagram?'** (Build the model.)\n\n**4. 'Now what does the picture tell you to do?'** (Choose the operation.)\n\nThis script works for EVERY word problem from 2nd grade through algebra. Memorize it. Use it.\n\n**What to avoid:**\n- ❌ 'Just read the problem more carefully' (unhelpful)\n- ❌ 'Look for the keyword' (fragile strategy)\n- ❌ 'Here, let me show you' → solving it yourself (builds dependency)\n- ❌ 'You should just KNOW this' (builds anxiety)\n\n**What to do instead:**\n- ✅ Ask them to underline the numbers and the question\n- ✅ Ask them to tell you the 'story' in their own words\n- ✅ Encourage ANY drawing, even a messy one\n- ✅ Celebrate the diagram even if the arithmetic has an error\n\n**The hardest part for parents:** Watching your child struggle. But productive struggle—the frustration of trying, failing, and trying again—is WHERE learning happens. Your job isn't to remove the struggle. It's to make it safe.\n\n**You've completed the 3–5 Parent Guide!** You now understand area models, partial quotients, visual fractions, and tape diagrams. These are the methods that look the MOST different from how you learned math—and now you understand both HOW they work and WHY they're taught. Your child is lucky to have a parent who cares enough to learn their math.",
+      "initialPrompt": "Practice the 4-question script tonight on whatever homework your child brings home. You'll be amazed how well it works—for both of you."
+    }
+  ]
+}

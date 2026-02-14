@@ -1,0 +1,111 @@
+{
+  "moduleId": "ten_frames_making_ten",
+  "course": "Parent Guide: K–2 Math",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Ten Frames & Making Ten",
+  "weeks": "1",
+  "estimatedDuration": 20,
+  "description": "Ten frames are one of the most important tools in early math education. This simple 2×5 grid helps children 'see' numbers, build relationships to 5 and 10, and develop the 'making ten' strategy that replaces carrying with genuine place value understanding. If your child's homework features grids with dots, this module explains everything you need to know.",
+  "skills": ["ten-frames", "making-ten-strategy"],
+  "standardsAlignment": ["K.OA.4", "1.OA.6", "1.NBT.4", "2.OA.2"],
+  "goals": [
+    "Recognize ten frames and understand how your child uses them",
+    "Use the 'making ten' strategy to add numbers that cross 10",
+    "Explain why making ten builds stronger place value understanding than traditional carrying",
+    "Support ten frame activities at home"
+  ],
+  "instructionalStrategy": [
+    "Draw actual ten frames throughout—parents need to SEE the tool, not just read about it.",
+    "The 'making ten' strategy is the single biggest source of 'new math' confusion for K–2 parents. Devote extra time to the side-by-side with carrying.",
+    "Show how ten frames connect to the number bonds from Unit 1—making ten IS a number bond to 10.",
+    "Use the eggs-in-a-carton analogy (a carton of 10 with some empty spaces) to make ten frames tangible."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "ten-frames",
+      "title": "What Is a Ten Frame?",
+      "text": "A **ten frame** is a simple 2-row, 5-column grid—10 spaces total:\n\n```\n┌───┬───┬───┬───┬───┐\n│   │   │   │   │   │\n├───┼───┼───┼───┼───┤\n│   │   │   │   │   │\n└───┴───┴───┴───┴───┘\n```\n\nChildren place dots, counters, or stickers in the spaces to represent numbers. Here's what the number 7 looks like:\n\n```\n┌───┬───┬───┬───┬───┐\n│ ● │ ● │ ● │ ● │ ● │\n├───┼───┼───┼───┼───┤\n│ ● │ ● │   │   │   │\n└───┴───┴───┴───┴───┘\n```\n\nThe top row is full (5), plus 2 more on the bottom = 7. Notice something powerful: you can INSTANTLY see that 7 is '5 and 2 more' and also that it's '3 away from 10' (three empty spaces).\n\nThis is called **subitizing**—recognizing a quantity without counting one by one. You already do this with dice (you see ⚄ and know it's 5 without counting dots). Ten frames extend that ability to numbers up to 10 and beyond.",
+      "initialPrompt": "Look at the ten frame showing 7 above. Without counting, can you tell how many spaces are empty? That instant recognition is exactly what your child is building."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "making-ten-strategy",
+      "title": "I-Do: The Making Ten Strategy",
+      "examples": [
+        {
+          "problem": "Solve 8 + 5 using the 'making ten' strategy.",
+          "solution": "**Step 1:** Start with 8 in the ten frame:\n```\n┌───┬───┬───┬───┬───┐\n│ ● │ ● │ ● │ ● │ ● │\n├───┼───┼───┼───┼───┤\n│ ● │ ● │ ● │   │   │\n└───┴───┴───┴───┴───┘\n```\nThere are 2 empty spaces.\n\n**Step 2:** Take 2 from the 5 to fill the ten frame:\n5 = **2** + 3\n```\n┌───┬───┬───┬───┬───┐\n│ ● │ ● │ ● │ ● │ ● │\n├───┼───┼───┼───┼───┤\n│ ● │ ● │ ● │ ● │ ● │\n└───┴───┴───┴───┴───┘\n```\nNow the frame is full = **10**\n\n**Step 3:** Add the remaining 3:\n10 + 3 = **13**\n\nSo 8 + 5 = 13.",
+          "tip": "The child thinks: '8 needs 2 more to make 10. I can take 2 from the 5, leaving 3. So it's 10 + 3 = 13.' This uses the number bonds from Unit 1!"
+        },
+        {
+          "problem": "Now here's the SAME problem using traditional carrying. Compare the two approaches.",
+          "solution": "**Traditional method:**\n```\n  8\n+ 5\n---\n 13\n```\n'8 plus 5 is 13. Write 3, carry the 1.'\n\n**Making ten method:**\n8 + 5\n= 8 + 2 + 3\n= 10 + 3\n= 13\n\n**What's different?** Both get 13. But the traditional method requires memorizing 8 + 5 = 13 as a fact. The making ten method BUILDS that fact from understanding. Your child knows WHY 8 + 5 = 13—because 8 + 2 = 10, and there are 3 left over.\n\nEven better: this same strategy works for 28 + 5, 48 + 5, and 108 + 5. The 'carrying' method requires relearning for bigger numbers. Making ten just scales up.",
+          "tip": "This is why teachers teach making ten first—it's not replacing the traditional method, it's building the understanding that makes the traditional method make sense."
+        },
+        {
+          "problem": "Use making ten to solve 7 + 6.",
+          "solution": "**Think:** 7 needs **3** more to make 10.\nDecompose 6 into **3** + 3.\n\n7 + 3 = 10\n10 + 3 = **13**\n\nSo 7 + 6 = 13.\n\nNotice: the key step is knowing the number bond for 10 (7 + 3 = 10) and then decomposing the second number (6 = 3 + 3). Two skills from Unit 1 working together!",
+          "tip": "Every making ten problem follows the same pattern: (1) How many more to get to 10? (2) Break the other number. (3) Add what's left to 10."
+        }
+      ],
+      "initialPrompt": "Try this yourself: Use the making ten strategy to solve 9 + 4. First ask: what does 9 need to make 10?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "making-ten-strategy",
+      "title": "Why Making Ten Is Worth the Extra Steps",
+      "text": "Here's what making ten actually builds:\n\n**1. Place value understanding.** When your child regroups around 10, they're learning that 13 means '1 ten and 3 ones.' This is the SAME concept behind carrying—but your child understands the WHY, not just the procedure.\n\n**2. Mental math for life.** Adults who are good at mental math? They make ten intuitively. When you mentally calculate 48 + 7, you probably think '48 + 2 = 50, plus 5 = 55.' That IS making ten (or making fifty). You're just so practiced you don't notice the steps anymore.\n\n**3. Multi-digit addition.** In 2nd and 3rd grade, your child will add numbers like 47 + 36. The traditional algorithm says 'add the ones, carry the 1.' Making ten gives them the understanding of WHY you carry—because 7 + 6 = 13, which is 1 ten and 3 ones, and that extra ten goes in the tens column.\n\n**4. Research-backed.** Studies from Singapore, Japan, and the Netherlands—countries that consistently outperform the US in math—all use making ten as a foundational strategy in early grades.",
+      "initialPrompt": "Think about your own mental math. When you calculate a tip or split a bill, do you naturally round to friendly numbers? That's the adult version of making ten!"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "making-ten-strategy",
+      "title": "Try It: Making Ten Practice",
+      "problems": [
+        {
+          "id": "mt-p1",
+          "question": "Use making ten to solve 6 + 7.",
+          "answer": "6 needs 4 to make 10. Break 7 into 4 + 3. So 6 + 4 = 10, then 10 + 3 = 13.",
+          "hints": [
+            "First: how many more does 6 need to get to 10? (4 more)",
+            "Now decompose 7 into 4 and something: 7 = 4 + 3. So 6 + 4 + 3 = 10 + 3 = 13."
+          ]
+        },
+        {
+          "id": "mt-p2",
+          "question": "Your child shows you this work: 9 + 7 = 9 + 1 + 6 = 10 + 6 = 16. Is this correct? What would you say?",
+          "answer": "Yes, it's correct and shows excellent making-ten strategy! You could say: 'I see you made ten first—smart strategy! How did you know to break the 7 into 1 and 6?'",
+          "hints": [
+            "Check: 9 + 1 = 10 ✓, and 10 + 6 = 16 ✓, and 1 + 6 = 7 ✓",
+            "This is a perfect example of making ten. Praise the strategy, not just the answer."
+          ]
+        },
+        {
+          "id": "mt-p3",
+          "question": "How does making ten help explain why 27 + 8 = 35?",
+          "answer": "27 needs 3 more to make 30 (the next 'ten'). Break 8 into 3 + 5. So 27 + 3 = 30, then 30 + 5 = 35. Same strategy, bigger numbers!",
+          "hints": [
+            "Making ten works with any 'friendly number.' For 27, the friendly number is 30.",
+            "27 + 3 = 30. Then 8 - 3 = 5 left over. 30 + 5 = 35."
+          ]
+        }
+      ],
+      "initialPrompt": "Your turn! Try these using the making ten strategy."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "ten-frames",
+      "title": "Ten Frame Activities for Home",
+      "text": "**Hands-on activities (5 minutes each):**\n\n**1. Egg carton ten frame.** Cut a dozen egg carton down to 10 cups (2 rows of 5). Use beans, buttons, or cereal as counters. 'Show me 6!' 'Now add 3 more—how many?'\n\n**2. Ten frame flash.** Draw a ten frame with dots, show it for 2 seconds, then cover it. 'How many did you see?' This builds subitizing—the ability to see quantity without counting.\n\n**3. Making ten with cards.** Deal two cards (Ace=1 through 9). 'Can you make 10 with these two cards? What's left over?' If the cards are 7 and 5: you need 3 from the 5 to make 10 with the 7, leaving 2. Total: 12.\n\n**4. Daily math talk.** 'We need 10 napkins for dinner. I put out 6. How many more do I need?' This is a real-world ten frame problem!\n\n**The golden rule of homework help:**\nAsk: 'What strategy did your teacher show you?' BEFORE explaining anything. Then follow their lead. If your child uses making ten, let them. If they use a different strategy that's correct, let them. The goal is understanding, and there's more than one path.",
+      "initialPrompt": "Which of these activities feels most natural for your family? Even 5 minutes of ten frame play at home can reinforce what's happening in the classroom."
+    }
+  ]
+}

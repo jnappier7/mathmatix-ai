@@ -1,0 +1,122 @@
+{
+  "moduleId": "integers_rational_numbers",
+  "course": "Parent Guide: 6–8 Math",
+  "unit": 3,
+  "quarter": 1,
+  "title": "Integers & Rational Numbers—Beyond the Rules",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "You probably learned integer rules by rote: 'two negatives make a positive,' 'a negative times a negative is a positive.' But WHY? Today's students learn integer operations through number lines, chip models, and pattern reasoning that actually EXPLAIN these rules. This module demystifies the methods and shows you the reasoning behind the rules you memorized.",
+  "skills": ["integer-operations", "number-line-integers", "chip-model"],
+  "standardsAlignment": ["6.NS.5", "6.NS.6", "6.NS.7", "7.NS.1", "7.NS.2", "7.NS.3"],
+  "goals": [
+    "Understand integer operations using number line and chip models",
+    "Explain WHY the sign rules work (not just state them)",
+    "See how visual models build understanding that memorized rules can't",
+    "Support your child's integer learning with patience for the 'longer' approach"
+  ],
+  "instructionalStrategy": [
+    "Integer sign rules are the most commonly memorized-without-understanding topic in math. This module gives parents the 'why.'",
+    "The chip model (zero pairs) is the most powerful tool for integer addition and subtraction.",
+    "The pattern approach for why negative × negative = positive is the most convincing explanation.",
+    "Connect to real-world contexts: temperature, debt, elevation, sea level."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "integer-operations",
+      "title": "Do You Know WHY the Rules Work?",
+      "text": "Quick check: Can you explain WHY each of these rules is true?\n\n1. **A negative plus a negative is a negative:** -3 + (-5) = -8 ✓\n2. **Subtracting a negative is the same as adding:** 7 - (-3) = 10 ✓\n3. **A negative times a positive is negative:** -4 × 3 = -12 ✓\n4. **A negative times a negative is positive:** -2 × (-5) = 10 ✓\n\nIf you can state the rules but not explain WHY they work—you're in good company. Most adults learned integer rules by memorization. They can DO the operations but can't explain the reasoning.\n\nYour child's teacher is changing that. Instead of starting with rules, they start with **models**:\n- **Number lines** for addition and subtraction\n- **Chip models** (zero pairs) for understanding signs\n- **Pattern reasoning** for multiplication rules\n\nThe rules are still the end goal. But now your child will know what they mean, not just how to apply them.",
+      "initialPrompt": "Be honest: can you explain WHY subtracting -3 is the same as adding 3? If not, you're about to learn something even most math-comfortable adults can't articulate."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "number-line-integers",
+      "title": "I-Do: Integers on the Number Line",
+      "examples": [
+        {
+          "problem": "Solve 3 + (-5) using a number line.",
+          "solution": "**Number Line:**\n```\n  -3  -2  -1   0   1   2   3   4\n   │              ◄───────── start at 3\n   ◄──────────────┘ move 5 to the LEFT (adding negative)\n  -2\n```\n\n**Steps:**\n1. Start at 3\n2. Adding a negative number = move LEFT on the number line\n3. Move 5 steps left: 3 → 2 → 1 → 0 → -1 → **-2**\n\n3 + (-5) = **-2**\n\n**Why left?** Positive numbers go right (getting bigger), negative numbers go left (getting smaller). Adding -5 means moving in the negative direction—5 steps to the left.",
+          "tip": "Adding a positive = move right. Adding a negative = move left. This is consistent and visual. No rules to memorize—just direction."
+        },
+        {
+          "problem": "Solve 4 - (-3) using a number line. (This is the one that confuses everyone!)",
+          "solution": "**Number Line:**\n```\n   0   1   2   3   4   5   6   7\n                   start at 4 ──────►\n                                  land at 7\n```\n\n**The reasoning:** Subtracting means 'go the OPPOSITE direction.'\n- Subtracting a positive = move left (normal subtraction)\n- Subtracting a NEGATIVE = move RIGHT (opposite of left)\n\nSo 4 - (-3):\n1. Start at 4\n2. Subtracting negative = move RIGHT\n3. Move 3 steps right: 4 → 5 → 6 → **7**\n\n4 - (-3) = **7** (which equals 4 + 3)\n\n**The 'aha' moment:** Subtracting a negative and adding a positive are the SAME MOVE on the number line—both go right. That's WHY 'subtracting a negative is adding.' It's not just a rule—it's a physical direction.",
+          "tip": "This is the single most confusing integer operation for students AND parents. The number line makes it physical: subtracting means 'reverse direction,' and reversing a leftward move means going right."
+        },
+        {
+          "problem": "Solve -3 + (-4) using the chip model.",
+          "solution": "**Chip Model:**\n🔴🔴🔴 represents -3 (three red/negative chips)\n🔴🔴🔴🔴 represents -4 (four red/negative chips)\n\nCombine them all:\n🔴🔴🔴🔴🔴🔴🔴 = **-7**\n\nAll negative chips → result is negative.\n\n**Compare:** -3 + (-4) = -7. Rule: 'Add the absolute values, keep the sign.' But the chips SHOW why: putting negative chips together gives you more negative chips.",
+          "tip": "When all chips are the same color (all positive or all negative), just count them. The sign stays the same."
+        }
+      ],
+      "initialPrompt": "Try this on the number line: -2 - (-6). Start at -2, and remember subtracting a negative means 'reverse direction' (move right). Where do you land?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "chip-model",
+      "title": "I-Do: Why Negative × Negative = Positive",
+      "examples": [
+        {
+          "problem": "Use pattern reasoning to show that (-1) × (-3) = +3.",
+          "solution": "**The Pattern Approach:**\n\nStart with facts you know and look for the pattern:\n\n```\n  3 × (-3) = -9\n  2 × (-3) = -6\n  1 × (-3) = -3\n  0 × (-3) =  0\n```\n\nEach time the first number decreases by 1, the answer **increases by 3**.\n\nContinue the pattern:\n```\n -1 × (-3) = +3    (increased by 3 from 0)\n -2 × (-3) = +6    (increased by 3 from +3)\n -3 × (-3) = +9    (increased by 3 from +6)\n```\n\n**The pattern REQUIRES that negative × negative = positive.** It's not an arbitrary rule—it's the only answer that keeps the pattern consistent.\n\nThis is how your child's teacher introduces it: not as a rule to memorize, but as a pattern that MUST be true for mathematics to be consistent.",
+          "tip": "This pattern approach is the most convincing explanation for most people. The rule isn't arbitrary—it's the only option that keeps number patterns working."
+        },
+        {
+          "problem": "Real-world analogy: Why does 'removing a debt' increase your wealth?",
+          "solution": "**The Money Analogy:**\n\nPositive = earning money, Negative = owing money\n\n- **Positive × Positive:** Earning $5/day for 3 days = +$15 ✓\n- **Negative × Positive:** Owing $5/day for 3 days = -$15 ✓\n- **Positive × Negative:** Earning $5/day for 3 days AGO (going back in time—you HAD $15 less 3 days ago) = -$15 ✓\n- **Negative × Negative:** Removing a $5/day debt for 3 days = you're $15 RICHER = +$15 ✓\n\nRemoving something negative (a debt) is a positive event. That's the real-world reason.\n\n**Limitation:** Real-world analogies break down with larger examples or non-integer values. The pattern approach is mathematically rigorous. The real-world analogy is an intuition builder.",
+          "tip": "Your child's teacher likely uses BOTH the pattern approach and real-world analogies. They reinforce each other."
+        }
+      ],
+      "initialPrompt": "Does the pattern approach convince you that negative × negative MUST be positive? Many parents tell me it's the first time anyone actually explained WHY."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "integer-operations",
+      "title": "Try It: Integer Practice",
+      "problems": [
+        {
+          "id": "int-p1",
+          "question": "Use the number line to solve -4 + 7.",
+          "answer": "Start at -4, move 7 steps RIGHT (adding positive): -4, -3, -2, -1, 0, 1, 2, 3. Answer: 3.",
+          "hints": [
+            "Start at -4 on the number line. Adding 7 means move 7 to the right.",
+            "Count: -3, -2, -1, 0, 1, 2, 3. You land at +3."
+          ]
+        },
+        {
+          "id": "int-p2",
+          "question": "Explain to a child WHY 5 - (-2) = 7 using a physical model.",
+          "answer": "Using chips: start with 5 yellow chips (positive). You need to 'subtract' 2 red chips (negatives), but there are no reds to remove! So add 2 zero pairs (each = 1 yellow + 1 red). Now remove the 2 reds. You're left with 7 yellows = +7.",
+          "hints": [
+            "With chips, subtracting -2 means 'removing 2 red chips.' But you have none!",
+            "Add 2 zero pairs (2 yellow + 2 red). Now remove the 2 reds. You went from 5 yellows to 7 yellows."
+          ]
+        },
+        {
+          "id": "int-p3",
+          "question": "Continue the pattern: 4×(-2) = -8, 3×(-2) = -6, 2×(-2) = -4, 1×(-2) = -2, 0×(-2) = 0, -1×(-2) = ?",
+          "answer": "-1 × (-2) = +2. The pattern increases by 2 each time (from -8 to -6 to -4 to -2 to 0 to... +2).",
+          "hints": [
+            "Each step, the first number decreases by 1, and the answer increases by 2.",
+            "After 0, the next value is 0 + 2 = +2. So -1 × (-2) = +2."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice integer reasoning using models and patterns."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "integer-operations",
+      "title": "Supporting Integer Learning at Home",
+      "text": "**Real-world integer contexts to use at home:**\n\n- **Temperature:** 'It's -5°F and dropping 3 more degrees. What's the temperature?' (-5 + (-3) = -8°F)\n- **Money/debt:** 'You owe $12 and earn $8. What's your balance?' (-12 + 8 = -$4)\n- **Elevation:** 'A submarine is 200 feet below sea level and rises 75 feet. What's the new depth?' (-200 + 75 = -125 feet)\n- **Football:** 'The team lost 5 yards, then gained 8 yards. Net change?' (-5 + 8 = +3 yards)\n\n**Common misconceptions to watch for:**\n- 'Two negatives always make a positive' → Only for MULTIPLICATION and DIVISION, NOT addition. -3 + (-5) = -8, not +8.\n- '-3²' vs '(-3)²' → These are different! -3² = -(3²) = -9, but (-3)² = (-3)(-3) = 9. This trips up even adults.\n\n**The sign rules your child will eventually memorize:**\n- Same signs → positive product: (+)(+) = +, (-)(-)= +\n- Different signs → negative product: (+)(-) = -, (-)(+) = -\n\nBut they'll memorize them AFTER understanding WHY through patterns and models. Let that process happen in the teacher's sequence.\n\n**Your role:** Be the real-world context provider. Every time temperature, money, elevation, or game scores come up, you're practicing integers. Point it out casually: 'Hey, that's integer math!'",
+      "initialPrompt": "Integers are everywhere in daily life. Start pointing them out to your child—temperature changes, sports yardage, bank accounts. Making math relevant is the best thing you can do."
+    }
+  ]
+}

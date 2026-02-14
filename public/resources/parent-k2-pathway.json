@@ -1,0 +1,204 @@
+{
+  "courseId": "parent-math-k2",
+  "track": "Parent Guide: K–2 Math",
+  "audience": "parent",
+  "courseType": "mini-course",
+  "overview": "A mini-course designed for parents of Kindergarten through 2nd grade students. Today's early math classrooms emphasize number sense and flexible thinking over rote memorization. This course walks you through the strategies your child is learning—number bonds, ten frames, making ten, counting on, and more—so you can understand the 'what,' 'how,' and 'why' behind each method and confidently support homework time at home.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Start with number bonds and decomposing numbers—the foundation of how modern K–2 math builds number sense (Unit 1)",
+    "Explore ten frames and the 'making ten' strategy that replaces traditional carrying with deep place value understanding (Unit 2)",
+    "Learn the counting-on and counting-back strategies that build mental math fluency without finger-counting dependency (Unit 3)",
+    "Understand how visual models—bar models, part-whole diagrams, and number lines—give kids a concrete bridge to abstract math (Unit 4)"
+  ],
+  "aiInstructionModel": {
+    "approach": "Parent-focused conversational learning",
+    "description": "The AI teaches parents as adult learners using a conversational, reassuring tone. Each lesson explains WHAT the method is, HOW it works with step-by-step examples, and WHY modern math teaches it this way (the research and reasoning). The AI uses side-by-side comparisons with traditional methods parents remember, validates that the traditional way still 'works,' and shows how the new approach builds deeper understanding. Parents are encouraged to try example problems themselves.",
+    "phases": [
+      {
+        "phase": "context-setting",
+        "aiRole": "Explain what this method is, when your child encounters it, and why it might look unfamiliar. Acknowledge the parent's frustration without being dismissive.",
+        "parentRole": "Reflect on how you learned this topic and what feels different about the new approach"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2–3 worked examples showing the method step by step. Use visual diagrams (ten frames, number bond circles, bar models) and show the traditional method alongside for comparison.",
+        "parentRole": "Follow along, notice the differences from how you learned it"
+      },
+      {
+        "phase": "why-it-works",
+        "aiRole": "Explain the pedagogical reasoning—what research shows about number sense, conceptual understanding, and how this method prepares children for more advanced math.",
+        "parentRole": "Connect the reasoning to what you observe in your child's learning"
+      },
+      {
+        "phase": "try-it",
+        "aiRole": "Give parents a few practice problems to try using the method themselves. Provide supportive feedback.",
+        "parentRole": "Practice the method to build comfort and confidence helping your child"
+      },
+      {
+        "phase": "homework-tips",
+        "aiRole": "Provide specific, actionable tips for supporting your child at home—what to say, what not to say, and how to encourage without confusing.",
+        "parentRole": "Note strategies to use during homework time"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust explanations based on parent's prior math comfort level",
+      "Provide additional traditional-vs-modern comparisons when helpful",
+      "Skip or expand sections based on parent engagement",
+      "Generate additional practice examples as needed",
+      "Use empathetic, non-judgmental tone throughout",
+      "Reference specific textbook or worksheet formats parents might see"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "number_bonds_decomposing",
+      "unit": 1,
+      "quarter": 1,
+      "title": "Number Bonds & Decomposing Numbers",
+      "preview": "Understand how your child breaks numbers apart and puts them back together—and why this builds stronger number sense than memorization alone",
+      "moduleFile": "/modules/parent-k2/number_bonds_decomposing_module.json",
+      "skills": ["number-bonds", "decomposing-numbers"],
+      "essentialQuestions": [
+        "What are number bonds and why does my child draw circles and lines instead of just adding?",
+        "How does decomposing numbers help with harder math later on?",
+        "How can I practice number bonds at home without it feeling like extra homework?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "what-are-number-bonds",
+          "title": "What Are Number Bonds?",
+          "order": 1,
+          "concepts": ["Part-part-whole relationships", "Number bond diagrams (circle and branch notation)", "How this replaces 'just memorize the facts'"],
+          "teachingNotes": "Start by validating that flash cards still have a place, but number bonds build the WHY behind the facts."
+        },
+        {
+          "lessonId": "decomposing-in-action",
+          "title": "Decomposing Numbers in Action",
+          "order": 2,
+          "concepts": ["Breaking apart numbers multiple ways (7 = 3+4 = 5+2 = 6+1)", "Why flexibility matters more than speed at this age", "Games and activities for home practice"],
+          "teachingNotes": "Show parents that 'there are many ways to make 7' is the whole point—it builds flexible thinking."
+        },
+        {
+          "lessonId": "helping-at-home-bonds",
+          "title": "Supporting Number Bonds at Home",
+          "order": 3,
+          "concepts": ["What to say when your child uses an unfamiliar method", "Kitchen math and everyday decomposing", "When to correct vs when to let them explore"],
+          "teachingNotes": "The most important lesson—practical homework help strategies parents can use tonight."
+        }
+      ]
+    },
+    {
+      "moduleId": "ten_frames_making_ten",
+      "unit": 2,
+      "quarter": 1,
+      "title": "Ten Frames & Making Ten",
+      "preview": "Learn why your child's classroom is obsessed with the number 10—and how ten frames and 'making ten' build the foundation for addition, subtraction, and place value",
+      "moduleFile": "/modules/parent-k2/ten_frames_making_ten_module.json",
+      "skills": ["ten-frames", "making-ten-strategy"],
+      "essentialQuestions": [
+        "What is a ten frame and why does my child use it instead of just counting?",
+        "How does 'making ten' work, and why is it better than carrying?",
+        "How does this connect to place value and bigger numbers later?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "ten-frames-explained",
+          "title": "Ten Frames Explained",
+          "order": 1,
+          "concepts": ["The 2x5 grid and how children use it", "Subitizing—seeing quantity without counting one by one", "Ten frames for addition and subtraction"],
+          "teachingNotes": "Show the ten frame visual and explain subitizing—parents often don't know this term but recognize the concept from dice."
+        },
+        {
+          "lessonId": "making-ten-strategy",
+          "title": "The Making Ten Strategy",
+          "order": 2,
+          "concepts": ["8 + 5 becomes 8 + 2 + 3 = 10 + 3 = 13", "Why regrouping around 10 is more powerful than memorizing 8+5=13", "Side-by-side: traditional carrying vs making ten"],
+          "teachingNotes": "This is THE strategy that most confuses parents. Spend extra time on the side-by-side comparison."
+        },
+        {
+          "lessonId": "from-ten-to-place-value",
+          "title": "From Ten to Place Value",
+          "order": 3,
+          "concepts": ["How making ten connects to understanding tens and ones", "Why this pays off in 2nd and 3rd grade with multi-digit addition", "Practice activities using ten frames at home"],
+          "teachingNotes": "Help parents see the long game—making ten now means easier regrouping in multi-digit addition later."
+        }
+      ]
+    },
+    {
+      "moduleId": "counting_strategies",
+      "unit": 3,
+      "quarter": 1,
+      "title": "Counting On, Counting Back & Mental Math",
+      "preview": "Discover why your child counts forward from a number instead of starting at 1 every time—and how these strategies build the mental math skills that last a lifetime",
+      "moduleFile": "/modules/parent-k2/counting_strategies_module.json",
+      "skills": ["counting-on", "counting-back", "mental-math-strategies"],
+      "essentialQuestions": [
+        "What does 'counting on' mean and why doesn't my child just count from 1?",
+        "How do counting-on and counting-back lead to subtraction fluency?",
+        "When should my child stop using fingers and start 'just knowing' facts?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "counting-on-explained",
+          "title": "Counting On—Starting from What You Know",
+          "order": 1,
+          "concepts": ["Why starting from the larger number is a strategy, not laziness", "Counting on for addition: 8 + 3 means start at 8, count 9, 10, 11", "Connection to the commutative property (kids learn it before they name it)"],
+          "teachingNotes": "Address the common worry: 'My child doesn't count from 1—is that ok?' Yes, it's a sign of growth."
+        },
+        {
+          "lessonId": "counting-back-subtraction",
+          "title": "Counting Back & Subtraction Strategies",
+          "order": 2,
+          "concepts": ["Counting back for subtraction: 12 - 3 means start at 12, count 11, 10, 9", "Think-addition for subtraction: 12 - 3 = ? becomes 3 + ? = 12", "Why both strategies matter for different situations"],
+          "teachingNotes": "Think-addition is the one that really surprises parents—show how it leverages known addition facts."
+        },
+        {
+          "lessonId": "fingers-to-fluency",
+          "title": "From Fingers to Fluency—The Progression",
+          "order": 3,
+          "concepts": ["The natural progression: counting all → counting on → derived facts → known facts", "Why rushing past fingers can backfire", "How to tell if your child is progressing normally"],
+          "teachingNotes": "Reassure parents that fingers are a valid tool at this age—the research is clear on not rushing."
+        }
+      ]
+    },
+    {
+      "moduleId": "visual_models",
+      "unit": 4,
+      "quarter": 1,
+      "title": "Visual Models: Bar Models, Part-Whole & Number Lines",
+      "preview": "Learn to read the diagrams your child brings home—bar models, tape diagrams, part-whole boxes, and open number lines—and see how they make word problems less scary",
+      "moduleFile": "/modules/parent-k2/visual_models_module.json",
+      "skills": ["bar-models", "part-whole-diagrams", "number-lines"],
+      "essentialQuestions": [
+        "What are all these diagrams my child is drawing, and why can't they just write a number sentence?",
+        "How do bar models and tape diagrams help with word problems?",
+        "How can I help my child draw these models without doing the work for them?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "bar-models-tape-diagrams",
+          "title": "Bar Models & Tape Diagrams",
+          "order": 1,
+          "concepts": ["How bar models represent addition, subtraction, and comparison problems visually", "The Singapore math connection—where this comes from", "Reading and drawing simple bar models"],
+          "teachingNotes": "Many parents recognize these as 'Singapore math'—that's a good hook."
+        },
+        {
+          "lessonId": "part-whole-diagrams",
+          "title": "Part-Whole Thinking",
+          "order": 2,
+          "concepts": ["Part-whole boxes and how they connect to number bonds", "Using part-whole to choose an operation (add or subtract?)", "Why drawing before computing prevents careless errors"],
+          "teachingNotes": "Connect back to number bonds from Unit 1—this is the visual version of the same concept."
+        },
+        {
+          "lessonId": "open-number-lines",
+          "title": "Open Number Lines",
+          "order": 3,
+          "concepts": ["What an open number line is (no pre-marked intervals)", "How children use jumps of 10 and jumps of 1 to add and subtract", "Why this builds mental math AND prepares for understanding negative numbers later"],
+          "teachingNotes": "Show how jumping by 10s on a number line is essentially the same as regrouping—just visual."
+        }
+      ]
+    }
+  ],
+  "aiGuidanceNotes": "This is a parent-facing course, not a student course. The tone should be warm, empathetic, and non-condescending. Many parents feel frustrated or even embarrassed that they don't understand their child's math homework—acknowledge that feeling and normalize it. Always validate that the 'old way' works too, while explaining why the 'new way' builds deeper understanding. Use plenty of visual examples and side-by-side comparisons. Avoid education jargon unless you define it. The goal is confidence: parents should finish each lesson feeling equipped to help their child tonight."
+}

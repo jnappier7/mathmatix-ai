@@ -1,0 +1,204 @@
+{
+  "courseId": "parent-math-68",
+  "track": "Parent Guide: 6–8 Math",
+  "audience": "parent",
+  "courseType": "mini-course",
+  "overview": "A mini-course for parents of 6th through 8th graders. Middle school math introduces powerful visual and conceptual tools—ratio tables, double number lines, algebra tiles, and integer chips—that may look completely foreign. Meanwhile, your child is learning to think algebraically, reason proportionally, and work with negative numbers in ways that go far beyond 'just follow the rules.' This course helps you understand and support these methods.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Start with ratios and proportional reasoning—ratio tables, double number lines, and unit rates that replace cross-multiplication with real understanding (Unit 1)",
+    "Explore how algebra tiles and visual balance models make solving equations concrete before it becomes abstract (Unit 2)",
+    "Understand the integer and rational number strategies—number lines, chip models, and real-world contexts—that replace 'two negatives make a positive' with genuine comprehension (Unit 3)",
+    "Decode the geometry and statistics tools—transformations, the coordinate plane, and data displays—that prepare your child for high school math (Unit 4)"
+  ],
+  "aiInstructionModel": {
+    "approach": "Parent-focused conversational learning",
+    "description": "The AI teaches parents as adult learners, acknowledging that middle school math can feel like a foreign language even for math-comfortable parents. Each lesson covers WHAT the method is, HOW it works with worked examples, and WHY it builds deeper mathematical thinking than memorized procedures. The AI provides side-by-side comparisons with traditional approaches and gives parents specific strategies for supporting their tween/teen.",
+    "phases": [
+      {
+        "phase": "context-setting",
+        "aiRole": "Explain when and how your child encounters this topic, what it looks like on their homework or tests, and why the approach has changed since you were in school.",
+        "parentRole": "Reflect on your own middle school math experience and what feels different now"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2–3 worked examples showing the modern method, with the traditional method side by side. Use visual models throughout.",
+        "parentRole": "Follow along and notice how the visual approach makes the reasoning visible"
+      },
+      {
+        "phase": "why-it-works",
+        "aiRole": "Explain the mathematical reasoning and research—why this method builds understanding that transfers to algebra and beyond.",
+        "parentRole": "Connect the reasoning to your child's broader math trajectory"
+      },
+      {
+        "phase": "try-it",
+        "aiRole": "Provide practice problems for parents to try using the new method.",
+        "parentRole": "Build confidence by working through problems yourself"
+      },
+      {
+        "phase": "homework-tips",
+        "aiRole": "Specific tips for supporting a middle schooler—respecting their growing independence while staying available. How to help without hovering.",
+        "parentRole": "Develop an approach that supports without micromanaging"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust complexity based on parent's math background",
+      "Provide more or fewer worked examples as needed",
+      "Skip concepts the parent already grasps",
+      "Generate problems that mirror typical middle school homework",
+      "Balance respect for teen independence with practical help strategies",
+      "Connect concepts to high school math to show the 'big picture'"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "ratios_proportional_reasoning",
+      "unit": 1,
+      "quarter": 1,
+      "title": "Ratios, Rates & Proportional Reasoning",
+      "preview": "Learn why your child uses ratio tables and double number lines instead of cross-multiplying—and how proportional reasoning is the backbone of middle school math",
+      "moduleFile": "/modules/parent-68/ratios_proportional_reasoning_module.json",
+      "skills": ["ratio-tables", "double-number-lines", "unit-rates", "proportional-relationships"],
+      "essentialQuestions": [
+        "Why doesn't my child just cross-multiply to solve proportions?",
+        "What are ratio tables and double number lines, and how do they work?",
+        "How does proportional reasoning connect to algebra?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "ratio-tables",
+          "title": "Ratio Tables—Organized Proportional Thinking",
+          "order": 1,
+          "concepts": ["Building ratio tables by multiplying or dividing both quantities", "Using ratio tables to solve 'how many?' and 'how much?' problems", "Why this builds proportional reasoning that cross-multiply shortcuts skip over"],
+          "teachingNotes": "Parents know cross-multiplication as THE way to solve proportions. Show how ratio tables build the understanding that makes cross-multiplication make sense."
+        },
+        {
+          "lessonId": "double-number-lines",
+          "title": "Double Number Lines for Ratios",
+          "order": 2,
+          "concepts": ["Two parallel number lines showing corresponding ratio values", "Solving percent, rate, and scaling problems visually", "Connection to the coordinate plane and linear relationships"],
+          "teachingNotes": "Double number lines look strange to parents. Show how they make 'If 3 apples cost $2, how much do 12 cost?' visual and intuitive."
+        },
+        {
+          "lessonId": "from-ratios-to-algebra",
+          "title": "From Proportions to Algebra—The Big Picture",
+          "order": 3,
+          "concepts": ["How proportional relationships become y = kx in algebra", "Unit rates as slope—the connection most parents never saw", "Why deep ratio understanding prevents algebra struggles"],
+          "teachingNotes": "This is the payoff lesson—show parents that ratio work IS pre-algebra, not a detour from it."
+        }
+      ]
+    },
+    {
+      "moduleId": "algebra_tiles_visual_equations",
+      "unit": 2,
+      "quarter": 1,
+      "title": "Algebra Tiles & Visual Equation Solving",
+      "preview": "Understand why your child uses colored tiles and balance beams to solve equations—and how these visual tools make abstract algebra concrete and accessible",
+      "moduleFile": "/modules/parent-68/algebra_tiles_visual_equations_module.json",
+      "skills": ["algebra-tiles", "visual-equation-solving", "balance-model"],
+      "essentialQuestions": [
+        "What are algebra tiles and why does my child use them instead of just solving equations?",
+        "How does the balance model help students understand equation solving?",
+        "When will my child stop using tiles and solve equations 'normally'?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "algebra-tiles-intro",
+          "title": "Algebra Tiles—Making Variables Visible",
+          "order": 1,
+          "concepts": ["Small squares = 1, rectangles = x, large squares = x²", "Representing expressions like 2x + 3 with tiles", "Zero pairs: one positive and one negative cancel out"],
+          "teachingNotes": "Most parents have never seen algebra tiles. Start from scratch—show the tiles and let parents manipulate them mentally."
+        },
+        {
+          "lessonId": "balance-model-equations",
+          "title": "The Balance Model for Equations",
+          "order": 2,
+          "concepts": ["An equation is a balanced scale", "Whatever you do to one side, you must do to the other", "Solving 2x + 3 = 11 with tiles on a balance—removing the same from both sides"],
+          "teachingNotes": "The balance model makes 'do the same to both sides' physically intuitive rather than an arbitrary rule."
+        },
+        {
+          "lessonId": "tiles-to-abstract",
+          "title": "From Tiles to Symbols—The Transition",
+          "order": 3,
+          "concepts": ["How tile work translates to written algebraic steps", "The CRA framework: Concrete → Representational → Abstract", "When to expect your child to work without manipulatives"],
+          "teachingNotes": "Reassure parents: the goal IS abstract equation solving. Tiles are scaffolding, and they come down when understanding is solid."
+        }
+      ]
+    },
+    {
+      "moduleId": "integers_rational_numbers",
+      "unit": 3,
+      "quarter": 1,
+      "title": "Integers & Rational Numbers—Beyond the Rules",
+      "preview": "Discover why 'a negative times a negative is a positive' gets a full explanation now—and how number lines, chip models, and real-world contexts build genuine understanding of negative numbers",
+      "moduleFile": "/modules/parent-68/integers_rational_numbers_module.json",
+      "skills": ["integer-operations", "number-line-integers", "chip-model"],
+      "essentialQuestions": [
+        "Why does my child use chips and number lines for negative numbers instead of just memorizing the sign rules?",
+        "How do these models actually explain why negative × negative = positive?",
+        "When will the rules 'click' and my child won't need the models anymore?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "number-line-integers",
+          "title": "Integers on the Number Line",
+          "order": 1,
+          "concepts": ["Adding as moving right, subtracting as moving left", "Subtracting a negative = moving right (the 'double negative' explained)", "Why the number line makes absolute value intuitive"],
+          "teachingNotes": "Parents remember 'two negatives make a positive'—show them why with the number line before stating the rule."
+        },
+        {
+          "lessonId": "chip-model",
+          "title": "The Chip Model—Red and Yellow Make Zero",
+          "order": 2,
+          "concepts": ["Yellow chips = positive, red chips = negative", "Zero pairs: 1 yellow + 1 red = 0", "Adding and subtracting integers by adding/removing chips", "Why 'take away -3' means 'add 3 zero pairs and remove 3 reds'"],
+          "teachingNotes": "This is the model that finally explains WHY subtracting a negative is the same as adding. Walk through it slowly."
+        },
+        {
+          "lessonId": "integer-multiplication-explained",
+          "title": "Why Negative × Negative = Positive (Really!)",
+          "order": 3,
+          "concepts": ["Pattern-based reasoning: 3×(-2), 2×(-2), 1×(-2), 0×(-2), (-1)×(-2)…", "The 'owing money' analogy and its limitations", "How your child's teacher builds from understanding, not memorization"],
+          "teachingNotes": "This is THE question parents ask most about integers. The pattern approach is the most convincing—walk through it step by step."
+        }
+      ]
+    },
+    {
+      "moduleId": "geometry_statistics_prep",
+      "unit": 4,
+      "quarter": 1,
+      "title": "Geometry Transformations & Data in Middle School",
+      "preview": "Learn how transformations, the coordinate plane, and statistical thinking prepare your child for high school—and why 'slide, flip, turn' has become a rigorous mathematical framework",
+      "moduleFile": "/modules/parent-68/geometry_statistics_prep_module.json",
+      "skills": ["transformations", "coordinate-plane-geometry", "statistical-thinking"],
+      "essentialQuestions": [
+        "Why does my child spend so much time on transformations and the coordinate plane?",
+        "How is statistics in middle school different from what I learned?",
+        "How does this prepare my child for high school geometry and algebra?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "transformations-coordinate-plane",
+          "title": "Transformations on the Coordinate Plane",
+          "order": 1,
+          "concepts": ["Translations, reflections, rotations, and dilations as precise operations", "Coordinate rules: (x,y) → (x+a, y+b) for translation, (-x,y) for reflection over y-axis", "Why this is now central to geometry (it defines congruence and similarity)"],
+          "teachingNotes": "Parents remember transformations as an afterthought. Explain that Common Core restructured geometry around transformations—it's now foundational."
+        },
+        {
+          "lessonId": "data-statistics-modern",
+          "title": "Data & Statistics—Beyond Mean, Median, Mode",
+          "order": 2,
+          "concepts": ["Box plots, dot plots, and histograms—the displays your child uses", "Measures of variability: MAD (mean absolute deviation) and IQR", "Why comparing data distributions matters more than just calculating averages"],
+          "teachingNotes": "Most parents only know mean-median-mode. Show them what a box plot tells you and why it's powerful."
+        },
+        {
+          "lessonId": "big-picture-high-school",
+          "title": "The Big Picture—How This All Connects to High School",
+          "order": 3,
+          "concepts": ["Proportional reasoning → linear algebra", "Transformations → geometric proofs and congruence", "Statistical thinking → data literacy in every subject", "How to stay involved as your child becomes more independent"],
+          "teachingNotes": "End the entire course on an empowering note—parents now understand the trajectory and can support their child's journey."
+        }
+      ]
+    }
+  ],
+  "aiGuidanceNotes": "Middle school parents face a double challenge: the math methods are unfamiliar AND their child is becoming more independent (and possibly resistant to help). Acknowledge both realities. For ratios, the biggest shift is from cross-multiplication as a trick to proportional reasoning as a way of thinking. For algebra, reassure parents that tiles and balance models are temporary scaffolds—the abstract equation solving they remember IS still the goal. For integers, the pattern approach to explaining why negative × negative = positive is the most powerful tool. Throughout, help parents understand that their role is shifting from 'do the homework with them' to 'ask good questions and show interest.' Give specific conversation starters they can use with their middle schooler."
+}

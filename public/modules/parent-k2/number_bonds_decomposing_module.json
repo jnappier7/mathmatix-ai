@@ -1,0 +1,112 @@
+{
+  "moduleId": "number_bonds_decomposing",
+  "course": "Parent Guide: K–2 Math",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Number Bonds & Decomposing Numbers",
+  "weeks": "1",
+  "estimatedDuration": 20,
+  "description": "Number bonds are the building blocks of modern early math. Instead of memorizing that 7 + 3 = 10, your child learns that 10 can be broken into 7 and 3 (or 6 and 4, or 5 and 5). This flexibility with numbers is called 'number sense,' and research shows it's the strongest predictor of later math success. This module explains what number bonds are, how they work, and why they matter.",
+  "skills": ["number-bonds", "decomposing-numbers"],
+  "standardsAlignment": ["K.OA.3", "K.OA.4", "1.OA.6", "2.OA.2"],
+  "goals": [
+    "Understand what number bonds are and recognize them on your child's homework",
+    "Decompose numbers to 10 using the number bond model",
+    "Explain WHY decomposing builds stronger math skills than memorization alone",
+    "Practice 3 home activities that reinforce number bonds naturally"
+  ],
+  "instructionalStrategy": [
+    "Begin by showing a typical piece of K–1 homework with number bonds so parents see exactly what prompted their confusion.",
+    "Use the part-part-whole circle diagram throughout—it's the most common format in classrooms.",
+    "Always show the traditional 'flash card' approach alongside the number bond approach so parents can see both have value.",
+    "Emphasize that number bonds don't replace memorization—they give the memorized facts MEANING.",
+    "End with immediately usable home activities: dominoes, dice games, 'how many ways can we make 8?' at dinner."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "number-bonds",
+      "title": "What Are Number Bonds?",
+      "text": "If you've looked at your child's math homework and seen circles connected by lines with numbers in them, you've seen **number bonds**. They look something like this:\n\n```\n      (10)\n      / \\\n    (7)  (3)\n```\n\nThe big circle (or box) at the top is the **whole**. The two circles at the bottom are the **parts**. Together, the parts make the whole: 7 + 3 = 10.\n\nThis might seem like a complicated way to show something simple. But here's the key insight: your child isn't just learning that 7 + 3 = 10. They're learning that **10 can be broken into 7 and 3**. And also into 6 and 4. And 5 and 5. And 8 and 2.\n\nThis is called **decomposing**—breaking a number into parts. It's the foundation of everything your child will do in math from addition all the way through algebra.",
+      "initialPrompt": "Think about how you learned addition facts as a child. Was it mostly through flash cards and repetition? That approach works—but number bonds add something flash cards can't: understanding of WHY 7 + 3 = 10. Can you think of all the ways to make 10 using two numbers?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "number-bonds",
+      "title": "I-Do: Reading and Creating Number Bonds",
+      "examples": [
+        {
+          "problem": "Your child's homework shows a number bond with 8 at the top and 5 on one side. What goes in the missing circle?",
+          "solution": "The whole is 8, one part is 5.\n8 - 5 = 3, so the missing part is **3**.\n\n```\n      (8)\n      / \\\n    (5)  (3)\n```\n\nYour child might solve this by counting up from 5 to 8, by 'just knowing,' or by using objects. All of these are valid!",
+          "tip": "Notice how this one diagram practices BOTH addition (5 + 3 = 8) and subtraction (8 - 5 = 3). That's the power of number bonds—they show the relationship between the operations."
+        },
+        {
+          "problem": "Find ALL the number bonds for 6.",
+          "solution": "Here are all the ways to decompose 6:\n\n0 + 6 = 6\n1 + 5 = 6\n2 + 4 = 6\n3 + 3 = 6\n4 + 2 = 6\n5 + 1 = 6\n6 + 0 = 6\n\nYour child's teacher might show this as a 'number bond family' or a list of all the ways to make 6.",
+          "tip": "When your child can fluently list all the bonds for numbers up to 10, they have a powerful foundation. This is the 'number sense' teachers talk about."
+        },
+        {
+          "problem": "Traditional approach vs. number bond approach: What's different?",
+          "solution": "**Traditional (flash card) approach:**\n7 + 3 = 10 (memorize this fact)\n\n**Number bond approach:**\n10 can be decomposed as:\n- 7 and 3 ✓\n- 6 and 4 ✓\n- 5 and 5 ✓\n- 8 and 2 ✓\n- 9 and 1 ✓\n- 10 and 0 ✓\n\nThe flash card gives you ONE fact. The number bond gives you the WHOLE FAMILY of facts and the understanding of how numbers relate.",
+          "tip": "Both approaches are valid! Flash cards build speed. Number bonds build understanding. The best approach uses both—and today's classrooms lean toward understanding first, then speed."
+        }
+      ],
+      "initialPrompt": "Try this: without counting on your fingers, how many ways can you decompose the number 9 into two parts? See if you can find all of them."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "decomposing-numbers",
+      "title": "Why Decomposing Numbers Matters",
+      "text": "You might be thinking: 'This seems like a lot of work for simple addition.' Here's why it matters:\n\n**1. It builds flexibility.** When your child faces 8 + 7 later, they can think: 'I know 8 + 2 = 10, so 8 + 7 = 8 + 2 + 5 = 10 + 5 = 15.' That's the **making ten** strategy—and it comes directly from number bond practice.\n\n**2. It prepares for subtraction.** If your child knows that 10 breaks into 7 and 3, then 10 - 7 = 3 is automatic. They don't need a separate set of subtraction facts.\n\n**3. It prevents math anxiety.** Children who understand WHY math works are less likely to panic when they forget a fact. They have strategies to figure it out.\n\n**4. It scales to bigger numbers.** Decomposing 47 into 40 + 7 (place value!) uses the same thinking. So does decomposing 3/4 into 1/4 + 1/4 + 1/4 (fractions!). The skill grows with your child.\n\nResearch from the National Council of Teachers of Mathematics (NCTM) consistently shows that students who develop number sense through decomposing outperform peers who rely on memorization alone—especially when math gets more complex in later grades.",
+      "initialPrompt": "Can you see how knowing all the bonds for 10 would help a child solve 8 + 5 without memorizing it? (Hint: decompose the 5 into 2 + 3, then use the 8 + 2 = 10 bond.)"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "number-bonds",
+      "title": "Try It: Number Bond Practice",
+      "problems": [
+        {
+          "id": "nb-p1",
+          "question": "Fill in the missing number bond: The whole is 9, one part is 4. What is the other part?",
+          "answer": "5",
+          "hints": [
+            "Think: 4 + ? = 9",
+            "You can count up from 4 to 9, or subtract: 9 - 4 = 5."
+          ]
+        },
+        {
+          "id": "nb-p2",
+          "question": "Your child writes 8 = 3 + 5. Is this correct? How would you respond?",
+          "answer": "Yes, it's correct! 3 + 5 = 8. A supportive response: 'Great job! Can you find another way to make 8?'",
+          "hints": [
+            "Check: does 3 + 5 equal 8?",
+            "The key is to validate and then encourage finding MORE ways—that's the point of number bonds."
+          ]
+        },
+        {
+          "id": "nb-p3",
+          "question": "How would decomposing help a child solve 9 + 6?",
+          "answer": "Decompose 6 into 1 + 5. Then 9 + 1 = 10, and 10 + 5 = 15. This is the 'making ten' strategy built from number bonds!",
+          "hints": [
+            "Think: what does 9 need to get to 10? Just 1 more.",
+            "So break the 6 into 1 + 5. Now you have 9 + 1 + 5 = 10 + 5 = 15."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice! Try these problems using number bonds."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "number-bonds",
+      "title": "Supporting Number Bonds at Home",
+      "text": "Here are **5 things you can do tonight**:\n\n**1. Play 'How Many Ways?'** Pick a number (start with 5 or 6 for younger kids, 10 for older). Ask: 'How many ways can we break this number into two parts?' Make it a game—who can find more?\n\n**2. Use everyday objects.** 'We have 8 strawberries. If you eat 3, how many are left?' You just practiced a number bond!\n\n**3. Play with dominoes.** Each domino is a number bond! The two sides are the parts, and the total dots are the whole.\n\n**4. Don't say 'that's wrong—here's how I learned it.'** Instead try: 'Show me how your teacher does it' or 'Can you teach me that way?' This validates their learning and builds their confidence.\n\n**5. Celebrate flexibility.** When your child finds multiple ways to decompose a number, praise the thinking: 'Wow, you found FOUR ways to make 7—that's awesome number sense!'\n\n**What NOT to do:**\n- Don't insist they solve it your way (even if yours is faster)\n- Don't skip the diagram and just give the answer\n- Don't rush them to 'just know it'—understanding takes time, and it's time well spent",
+      "initialPrompt": "Which of these activities could you try with your child this week? Even one will make a difference!"
+    }
+  ]
+}

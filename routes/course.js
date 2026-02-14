@@ -9,10 +9,21 @@ const User = require('../models/user');
 /* ============================================================
    GET /api/courses
    List all published courses (for course catalog/browsing)
+   Query params:
+     ?audience=parent   — filter to parent mini-courses only
+     ?audience=student   — filter to student courses only
+     ?courseType=mini-course — filter by course type
    ============================================================ */
 router.get('/', async (req, res) => {
   try {
-    const courses = await Course.getPublishedCourses();
+    const filter = {};
+    if (req.query.audience && ['student', 'parent'].includes(req.query.audience)) {
+      filter.audience = req.query.audience;
+    }
+    if (req.query.courseType && ['full-course', 'mini-course'].includes(req.query.courseType)) {
+      filter.courseType = req.query.courseType;
+    }
+    const courses = await Course.getPublishedCourses(filter);
     res.json({ success: true, courses });
   } catch (err) {
     console.error('Error fetching courses:', err);

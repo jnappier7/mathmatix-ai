@@ -737,11 +737,115 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // ============================================
+    // PARENT LEARNING CENTER - Mini-Courses
+    // ============================================
+
+    async function loadParentCourses() {
+        const container = document.getElementById('parent-courses-list');
+        const mobileContainer = document.getElementById('mobile-parent-courses-list');
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/courses?audience=parent', { credentials: 'include' });
+            if (!res.ok) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center">No courses available yet.</p>';
+                if (mobileContainer) mobileContainer.innerHTML = container.innerHTML;
+                return;
+            }
+            const data = await res.json();
+            const courses = data.courses || [];
+
+            if (courses.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center">Parent courses coming soon!</p>';
+                if (mobileContainer) mobileContainer.innerHTML = container.innerHTML;
+                return;
+            }
+
+            const html = courses.map(course => {
+                const gradeBand = course.gradeBand || '';
+                const unitCount = course.units ? course.units.length : 0;
+                const subtitle = course.subtitle || course.description || '';
+                const truncatedDesc = subtitle.length > 100 ? subtitle.substring(0, 100) + '...' : subtitle;
+
+                return `
+                    <div class="parent-course-card" data-course-id="${course.courseId}">
+                        <div class="parent-course-card-title">
+                            <i class="fas fa-book-reader"></i>
+                            ${course.title}
+                        </div>
+                        <div class="parent-course-card-desc">${truncatedDesc}</div>
+                        <div class="parent-course-card-meta">
+                            ${gradeBand ? `<span class="parent-course-badge badge-grade">${gradeBand}</span>` : ''}
+                            <span class="parent-course-badge badge-units">Mini-Course</span>
+                        </div>
+                        <button class="parent-course-enroll-btn" onclick="enrollParentCourse('${course.courseId}', this)">
+                            <i class="fas fa-play-circle"></i> Start Course
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+            if (mobileContainer) mobileContainer.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading parent courses:', error);
+            container.innerHTML = '<p class="text-sm text-gray-500 text-center">Could not load courses.</p>';
+            if (mobileContainer) mobileContainer.innerHTML = container.innerHTML;
+        }
+    }
+
+    // Enroll in a parent course
+    window.enrollParentCourse = async function(courseId, btnElement) {
+        try {
+            btnElement.disabled = true;
+            btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
+
+            const res = await fetch(`/api/courses/${courseId}/enroll`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                btnElement.innerHTML = '<i class="fas fa-check-circle"></i> Enrolled!';
+                btnElement.classList.add('enrolled');
+                // Redirect to the course after a brief delay
+                setTimeout(() => {
+                    window.location.href = `/course.html?courseId=${courseId}`;
+                }, 800);
+            } else {
+                if (data.message && data.message.includes('Already enrolled')) {
+                    btnElement.innerHTML = '<i class="fas fa-arrow-right"></i> Continue Course';
+                    btnElement.classList.add('enrolled');
+                    btnElement.disabled = false;
+                    btnElement.onclick = () => { window.location.href = `/course.html?courseId=${courseId}`; };
+                } else {
+                    btnElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Error'}`;
+                    btnElement.disabled = false;
+                    setTimeout(() => {
+                        btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
+                    }, 3000);
+                }
+            }
+        } catch (error) {
+            console.error('Error enrolling in course:', error);
+            btnElement.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+            btnElement.disabled = false;
+            setTimeout(() => {
+                btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
+            }, 3000);
+        }
+    };
+
     // Initial load (logout button handled by /js/logout.js)
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();
         loadParentSettings();
+        loadParentCourses();
     }
 
     // ============================================

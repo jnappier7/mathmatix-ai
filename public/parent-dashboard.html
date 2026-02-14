@@ -565,6 +565,108 @@
       }
     }
 
+    /* ============================================
+       PARENT COURSE CARDS
+       ============================================ */
+
+    .parent-course-card {
+      background: linear-gradient(135deg, #ebf5fb 0%, #fef9e7 100%);
+      border-left: 4px solid #f39c12;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .parent-course-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.2);
+      border-left-color: #e67e22;
+    }
+
+    .parent-course-card-title {
+      font-size: 0.95em;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .parent-course-card-title i {
+      color: #f39c12;
+    }
+
+    .parent-course-card-desc {
+      font-size: 0.8em;
+      color: #666;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .parent-course-card-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .parent-course-badge {
+      font-size: 0.7em;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    .badge-grade {
+      background: #d6eaf8;
+      color: #21618c;
+    }
+
+    .badge-units {
+      background: #d5f5e3;
+      color: #1e8449;
+    }
+
+    .badge-enrolled {
+      background: #f39c12;
+      color: white;
+    }
+
+    .parent-course-enroll-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 2px solid #f39c12;
+      background: white;
+      color: #e67e22;
+      font-weight: 600;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .parent-course-enroll-btn:hover {
+      background: #f39c12;
+      color: white;
+    }
+
+    .parent-course-enroll-btn.enrolled {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+      border-color: #27ae60;
+    }
+
+    #parent-learning-center .dashboard-panel-header span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* Legacy styles for existing JS */
     .text-sm { font-size: 0.875rem; }
     .font-semibold { font-weight: 600; }
@@ -660,6 +762,18 @@
             </button>
             <div id="link-student-message" class="mt-2 text-sm text-center"></div>
           </form>
+        </div>
+
+        <div class="dashboard-panel" id="parent-learning-center">
+          <div class="dashboard-panel-header">
+            <span><i class="fas fa-graduation-cap"></i> Parent Learning Center</span>
+          </div>
+          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;">
+            Mini-courses to help you understand today's math methods and support your child at home.
+          </p>
+          <div id="parent-courses-list">
+            <p class="text-sm text-gray-500 text-center" id="loading-parent-courses">Loading courses...</p>
+          </div>
         </div>
       </aside>
 
@@ -868,6 +982,10 @@
       <i class="fas fa-user-plus"></i>
       <span>Add Child</span>
     </button>
+    <button class="mobile-nav-btn" data-mobile-tab="learn">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Learn</span>
+    </button>
     <button class="mobile-nav-btn" data-mobile-tab="settings">
       <i class="fas fa-cog"></i>
       <span>Settings</span>
@@ -997,6 +1115,24 @@
     </div>
   </div>
 
+  <!-- Mobile Learn Drawer -->
+  <div class="mobile-drawer" id="mobile-learn-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-graduation-cap" style="color: #f39c12;"></i> Parent Learning Center</h3>
+      <button class="drawer-close-btn" data-close-drawer="mobile-learn-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;">
+          Mini-courses to help you understand today's math methods and support your child at home.
+        </p>
+        <div id="mobile-parent-courses-list">
+          <p class="text-sm text-gray-500 text-center">Loading courses...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <style>
     /* Parent theme color for mobile nav active state */
     .mobile-nav-btn.active { color: #3498db; }
@@ -1012,6 +1148,7 @@
         const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
         const drawers = {
           actions: document.getElementById('mobile-actions-drawer'),
+          learn: document.getElementById('mobile-learn-drawer'),
           settings: document.getElementById('mobile-settings-drawer'),
           email: document.getElementById('mobile-email-drawer')
         };
@@ -1034,6 +1171,8 @@
               window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if (tab === 'actions') {
               if (drawers.actions) drawers.actions.classList.add('open');
+            } else if (tab === 'learn') {
+              if (drawers.learn) drawers.learn.classList.add('open');
             } else if (tab === 'settings') {
               // Sync desktop form values to mobile form
               syncSettingsToMobile();

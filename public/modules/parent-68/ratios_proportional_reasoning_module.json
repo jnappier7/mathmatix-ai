@@ -1,0 +1,97 @@
+{
+  "moduleId": "ratios_proportional_reasoning",
+  "course": "Parent Guide: 6–8 Math",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Ratios, Rates & Proportional Reasoning",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Cross-multiplication was the tool you probably used for every proportion problem. Today's students learn ratio tables and double number lines first—tools that build proportional REASONING, not just proportional solving. This module shows you how these tools work, why they develop deeper understanding, and how they connect directly to the algebra your child will see in high school.",
+  "skills": ["ratio-tables", "double-number-lines", "unit-rates", "proportional-relationships"],
+  "standardsAlignment": ["6.RP.1", "6.RP.2", "6.RP.3", "7.RP.1", "7.RP.2", "7.RP.3"],
+  "goals": [
+    "Build and use ratio tables to solve proportion problems",
+    "Understand double number lines and how they represent proportional relationships",
+    "See the connection between proportional reasoning and algebra (y = kx)",
+    "Support your middle schooler's proportional reasoning at home"
+  ],
+  "instructionalStrategy": [
+    "Cross-multiplication is deeply ingrained in parents. Show how ratio tables do the same thing but with understanding.",
+    "Double number lines are unfamiliar to most parents—take extra time to introduce them.",
+    "The connection to algebra (unit rate = slope, proportional relationship = y = kx) is the payoff that helps parents see the long game.",
+    "Middle schoolers value independence—frame homework help as 'asking good questions' not 'solving together.'"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "ratio-tables",
+      "title": "Beyond Cross-Multiplication",
+      "text": "When you see a proportion like 'If 3 apples cost $2, how much do 12 apples cost?', you probably set up:\n\n3/2 = 12/x → 3x = 24 → x = $8\n\nQuick, efficient, and it works. But your child might solve it like this:\n\n**Ratio Table:**\n```\nApples │ Cost\n───────┼──────\n   3   │  $2\n   6   │  $4    (×2)\n  12   │  $8    (×2)\n```\n\nOr they might use a **double number line:**\n```\nApples:  0────3────6────9────12\n         │    │    │    │    │\nCost:    0──$2──$4──$6──$8\n```\n\nBoth methods give $8. But there's a crucial difference: cross-multiplication is a TRICK that happens to work. Ratio tables and double number lines show WHY the relationship holds—because doubling the apples doubles the cost. Every. Single. Time.\n\nThis proportional reasoning—understanding that the relationship scales consistently—is the most important mathematical idea your child will learn in middle school. It's the foundation of algebra, geometry, statistics, and even science.",
+      "initialPrompt": "Try the ratio table approach: If a car travels 150 miles in 3 hours, how far does it travel in 5 hours? Build the table by finding the rate (miles per hour) first."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "ratio-tables",
+      "title": "I-Do: Ratio Tables and Double Number Lines",
+      "examples": [
+        {
+          "problem": "A recipe uses 2 cups of flour for every 3 cups of sugar. How much flour is needed for 9 cups of sugar?",
+          "solution": "**Ratio Table:**\n```\nFlour  │ Sugar\n───────┼──────\n  2    │   3\n  4    │   6    (×2)\n  6    │   9    (×3, or ×1.5 from 6)\n```\n\nAnswer: **6 cups of flour**\n\n**Cross-multiplication version:**\n2/3 = x/9 → 3x = 18 → x = 6\n\n**Same answer, but the ratio table shows the THINKING:** We can see that tripling the sugar (3→9) means tripling the flour (2→6). Or we can scale up step by step. The ratio table makes the proportional relationship visible.\n\n**Bonus insight:** The unit rate (flour per cup of sugar) is 2/3. This means for every 1 cup of sugar, you need 2/3 cup of flour. In algebra, this becomes the equation: flour = (2/3) × sugar. That fraction 2/3? It's the **slope** of the line.",
+          "tip": "Ratio tables let children use multiplication facts they know. They can multiply both values by 2, by 3, by 10—whatever is easiest. Then add rows together or extend the pattern."
+        },
+        {
+          "problem": "40% of the 7th graders play a sport. There are 180 seventh graders. How many play a sport? (Using a double number line)",
+          "solution": "**Double Number Line:**\n```\nPercent:  0%────10%────20%────30%────40%────50%──...──100%\n          │      │      │      │      │      │         │\nStudents: 0─────18─────36─────54─────72─────90──...──180\n```\n\n**Steps:**\n1. 100% = 180 students\n2. 10% = 180 ÷ 10 = 18 students\n3. 40% = 18 × 4 = **72 students**\n\nThe double number line shows the percent and the count TOGETHER. Your child can find any percent by scaling from 10% or 50% or any convenient benchmark.\n\n**Compare to the formula approach:**\n40% × 180 = 0.40 × 180 = 72 ✓\n\nSame answer, but the double number line builds the understanding of what 'percent' MEANS—it's a proportion relative to the whole.",
+          "tip": "The '10% trick' (find 10% by dividing by 10, then multiply) is one of the most useful real-world math skills. Double number lines make it visible."
+        }
+      ],
+      "initialPrompt": "Try this with a ratio table: If 5 oranges cost $3, how much do 20 oranges cost? Can you also find the cost per orange (the unit rate)?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "proportional-relationships",
+      "title": "From Ratios to Algebra—The Connection Most Parents Never Saw",
+      "text": "Here's the payoff that makes all the ratio work worthwhile:\n\n**In 6th–7th grade, your child learns:**\n'If you earn $12 per hour, your total pay = $12 × hours worked.'\n\n```\nHours │ Pay\n──────┼─────\n  1   │ $12\n  2   │ $24\n  3   │ $36\n  5   │ $60\n```\n\nThe unit rate is $12/hour.\n\n**In 8th grade algebra, this becomes:**\ny = 12x\n\nwhere y = pay, x = hours, and 12 is the **slope** (rate of change).\n\n**The connection:**\n- **Unit rate** (6th grade) = **slope** (8th grade) = **constant of proportionality** (7th grade)\n- **Ratio table** (6th grade) = **table of values** (8th grade)\n- **Double number line** (6th grade) = **coordinate plane** (8th grade)\n\nYour child is learning ALGEBRA right now—they just don't know it yet. Every ratio table is a table of values for a linear function. Every unit rate is a slope. Every proportional relationship is the equation y = kx.\n\nStudents who deeply understand proportional reasoning transition smoothly to algebra. Students who only know cross-multiplication hit a wall because they never built the conceptual foundation.\n\nThis is why your child's teacher spends so much time on ratios and proportions. It's not 'easy math that should be covered quickly.' It's the most important bridge between arithmetic and algebra.",
+      "initialPrompt": "Does this connection surprise you? Unit rate = slope is one of the most important insights in all of math education. Your child is building toward it right now."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "ratio-tables",
+      "title": "Try It: Ratio and Proportion Practice",
+      "problems": [
+        {
+          "id": "rp-p1",
+          "question": "A car uses 3 gallons of gas for every 84 miles. How far can it go on 10 gallons? Use a ratio table.",
+          "answer": "Unit rate: 84 ÷ 3 = 28 miles per gallon. For 10 gallons: 28 × 10 = 280 miles. Or build the table: 3→84, 6→168, 9→252, 1→28, 10→280.",
+          "hints": [
+            "Find the unit rate first: 84 miles ÷ 3 gallons = 28 miles per gallon.",
+            "Then multiply: 28 × 10 = 280 miles."
+          ]
+        },
+        {
+          "id": "rp-p2",
+          "question": "Your child solves '15% of 60' using a double number line and gets 9. They say they don't need to learn the formula (0.15 × 60). Are they right?",
+          "answer": "They're right that the double number line works: 10% of 60 = 6, 5% = 3, so 15% = 6 + 3 = 9. The formula is faster, but understanding WHY 15% of 60 = 9 matters more at this stage. Both skills will come together.",
+          "hints": [
+            "Check: 10% of 60 = 6, 5% of 60 = 3, so 15% = 9. ✓",
+            "The formula (0.15 × 60 = 9) is the abstract shortcut. The double number line builds understanding. Both are valuable."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice proportional reasoning—the most important skill in middle school math."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "ratio-tables",
+      "title": "Supporting Your Middle Schooler's Math",
+      "text": "**Middle school math help is different from elementary.**\n\nYour child is developing independence and may resist help. Here's how to stay involved without hovering:\n\n**1. Ask, don't tell.** Instead of 'Here's how to do it,' try: 'Walk me through what you've tried so far.'\n\n**2. Show interest, not expertise.** 'I've never seen a double number line before—can you teach me how it works?' This puts your child in the teacher role, which deepens their understanding.\n\n**3. Connect math to their world.** Ratios are everywhere:\n- Sports stats: 'Steph Curry made 42 out of 100 three-pointers. What's his percentage?'\n- Shopping: 'Which is a better deal: 6 for $5 or 10 for $8?'\n- Recipes: 'We need to double this recipe. How much of each ingredient?'\n- Speed: 'We drove 120 miles in 2 hours. What was our speed?'\n\n**4. Don't dismiss the 'new' methods.** If your child says 'My teacher wants us to use a ratio table,' don't reply with 'Just cross-multiply.' Instead: 'Show me the ratio table way.'\n\n**5. Know when to step back.** If your child says 'I've got it,' trust them. Check in later: 'How did that problem set go?' Middle schoolers need autonomy.\n\n**If YOU want to learn cross-multiplication to help your child later:**\nCross-multiplication IS taught in late 7th or 8th grade. By then, your child will have the proportional reasoning foundation to understand WHY it works, not just HOW to do it.",
+      "initialPrompt": "What ratio or proportion scenarios come up in your family's daily life? Sports, cooking, shopping, and driving are all rich with proportional reasoning."
+    }
+  ]
+}

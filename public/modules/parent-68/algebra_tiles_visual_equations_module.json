@@ -1,0 +1,106 @@
+{
+  "moduleId": "algebra_tiles_visual_equations",
+  "course": "Parent Guide: 6–8 Math",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Algebra Tiles & Visual Equation Solving",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "When you learned to solve equations, you probably just 'did the same thing to both sides.' Your child might be using colored tiles and balance beams to do the same thing—but visually. Algebra tiles make the abstract concrete: variables become rectangles, constants become small squares, and solving an equation means physically removing tiles from both sides until the variable is alone. This module shows you how it works and why it's powerful.",
+  "skills": ["algebra-tiles", "visual-equation-solving", "balance-model"],
+  "standardsAlignment": ["6.EE.5", "6.EE.7", "7.EE.1", "7.EE.4", "8.EE.7"],
+  "goals": [
+    "Understand algebra tiles: what the pieces represent and how they work",
+    "Solve equations using the balance model with algebra tiles",
+    "See how tile work translates to written algebraic steps",
+    "Know when to expect your child to transition from tiles to abstract equation solving"
+  ],
+  "instructionalStrategy": [
+    "Most parents have never seen algebra tiles. Start from absolute scratch.",
+    "The zero pair concept (positive + negative = 0) is the most important idea to teach.",
+    "Show the same equation solved with tiles AND with traditional algebra steps, side by side.",
+    "Reassure parents: tiles are scaffolding. The standard algebraic approach IS the end goal."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "algebra-tiles",
+      "title": "What Are Algebra Tiles?",
+      "text": "Algebra tiles are physical (or virtual) manipulatives used to represent algebraic expressions and equations. Here's what they look like:\n\n**The pieces:**\n- 🟩 Small green square = **+1** (one positive unit)\n- 🟥 Small red square = **-1** (one negative unit)\n- 🟦 Blue rectangle = **+x** (one positive variable)\n- 🟧 Orange rectangle = **-x** (one negative variable)\n- (Some sets also have large squares for x², but let's start with the basics)\n\n**Key concept: Zero Pairs**\nA green square (+1) and a red square (-1) placed together make a **zero pair**: they cancel out.\n\n+1 + (-1) = 0\n\nSimilarly, a blue rectangle (+x) and an orange rectangle (-x) cancel out:\n\n+x + (-x) = 0\n\n**Why this matters:** Solving an equation is basically creating and removing zero pairs until the variable is alone. The tiles make this physical.\n\n**Example: The expression 2x + 3**\n```\n🟦🟦 🟩🟩🟩\n```\nTwo blue rectangles (2x) and three green squares (+3).\n\nYour child can touch, move, and rearrange these pieces. The abstract becomes concrete.",
+      "initialPrompt": "The zero pair concept is the key to everything: +1 and -1 cancel, +x and -x cancel. It's the physical version of 'add the opposite.' Have you seen your child use any kind of tiles or manipulatives in math?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "balance-model",
+      "title": "I-Do: Solving Equations with the Balance Model",
+      "examples": [
+        {
+          "problem": "Solve 2x + 3 = 9 using algebra tiles on a balance.",
+          "solution": "**Set up the balance:**\n```\n    Left side         │       Right side\n  🟦🟦 🟩🟩🟩        │      🟩🟩🟩🟩🟩🟩🟩🟩🟩\n  (2x + 3)           │           (9)\n```\n\n**Step 1:** Remove 3 green squares from BOTH sides (subtract 3):\n```\n    Left side         │       Right side\n  🟦🟦                │      🟩🟩🟩🟩🟩🟩\n  (2x)                │           (6)\n```\n\n**Step 2:** Split both sides into 2 equal groups (divide by 2):\n```\n    Left side         │       Right side\n  🟦                  │      🟩🟩🟩\n  (x)                 │       (3)\n```\n\n**Answer: x = 3**\n\n**In traditional algebra notation:**\n2x + 3 = 9\n2x = 6      (subtract 3 from both sides)\nx = 3        (divide both sides by 2)",
+          "tip": "Every physical action with tiles corresponds to an algebraic step. Removing tiles from both sides = subtracting. Splitting into groups = dividing. The tiles make the 'rules' feel like common sense."
+        },
+        {
+          "problem": "Solve 3x - 2 = x + 6 using algebra tiles.",
+          "solution": "**Set up:**\n```\n    Left side           │       Right side\n  🟦🟦🟦 🟥🟥          │      🟦 🟩🟩🟩🟩🟩🟩\n  (3x - 2)             │       (x + 6)\n```\n\n**Step 1:** Remove 1 blue rectangle (x) from both sides:\n```\n    Left side           │       Right side\n  🟦🟦 🟥🟥            │      🟩🟩🟩🟩🟩🟩\n  (2x - 2)             │         (6)\n```\n\n**Step 2:** Add 2 green squares to both sides (to cancel the -2):\n```\n    Left side           │       Right side\n  🟦🟦 🟥🟥🟩🟩        │      🟩🟩🟩🟩🟩🟩🟩🟩\n```\nThe 🟥🟥🟩🟩 form zero pairs and cancel:\n```\n    Left side           │       Right side\n  🟦🟦                  │      🟩🟩🟩🟩🟩🟩🟩🟩\n  (2x)                  │         (8)\n```\n\n**Step 3:** Split into 2 groups:\n```\n  🟦 = 🟩🟩🟩🟩         x = 4\n```\n\n**Answer: x = 4**\n\n**In algebra:** 3x - 2 = x + 6 → 2x - 2 = 6 → 2x = 8 → x = 4",
+          "tip": "Adding tiles to both sides to create zero pairs is the physical version of 'adding the same value to both sides.' It feels natural with tiles—the balance must stay balanced."
+        }
+      ],
+      "initialPrompt": "Try this in your mind: to solve x + 5 = 12 with tiles, you have one blue rectangle and 5 green squares on the left, and 12 green squares on the right. What do you do to isolate the x?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "visual-equation-solving",
+      "title": "Why Tiles Before Symbols?",
+      "text": "**The problem with jumping straight to abstract equation solving:**\n\nWhen you learned 'subtract 3 from both sides,' you were told it as a RULE. But WHY does it work? Because an equation is a balance—what's on the left equals what's on the right. If you remove the same amount from both sides, the balance is maintained.\n\nTiles and the balance model make this reasoning VISIBLE. Children who work with tiles:\n\n**1. Understand WHY the steps work.** They don't just memorize 'do the same to both sides'—they SEE that removing tiles from one side without the other tips the balance.\n\n**2. Handle negative numbers naturally.** Zero pairs (🟩🟥 = 0) make operations with negatives intuitive. Adding -2 means adding 2 red squares. The physical action matches the mathematical operation.\n\n**3. Make fewer errors.** Students who can visualize the balance are less likely to make sign errors or do operations to only one side.\n\n**4. Transition more smoothly to abstract algebra.** When tiles are eventually removed, the steps feel like common sense rather than arbitrary rules.\n\n**The CRA framework again:**\n- **C**oncrete: Physical tiles (6th grade)\n- **R**epresentational: Drawings of tiles (6th–7th grade)\n- **A**bstract: Symbolic algebra (7th–8th grade)\n\nMost children work with physical or virtual tiles in 6th grade, transition to drawing representations in 7th, and work fully abstractly by 8th grade. The timeline varies by student.",
+      "initialPrompt": "Think about it: if someone had shown you a balance beam when you learned to solve equations, would it have made more sense? Most adults say yes—they just never got the chance."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "balance-model",
+      "title": "Try It: Equation Solving Practice",
+      "problems": [
+        {
+          "id": "at-p1",
+          "question": "Solve 4x + 1 = 13 using the balance model (describe the tile moves).",
+          "answer": "Remove 1 green square from both sides: 4x = 12. Split into 4 equal groups: x = 3.",
+          "hints": [
+            "Start: 4 blue rectangles and 1 green square on the left; 13 green squares on the right.",
+            "Remove 1 from each side → 4x = 12. Divide into 4 groups → x = 3."
+          ]
+        },
+        {
+          "id": "at-p2",
+          "question": "Your child solves 2x + 5 = 11 by first subtracting 5 from both sides, then dividing by 2. They get x = 3. Using tiles, can you verify this makes sense?",
+          "answer": "Start: 2 blue + 5 green = 11 green. Remove 5 green from each side: 2 blue = 6 green. Split into 2 groups: 1 blue = 3 green. So x = 3. ✓ The tiles confirm the algebra.",
+          "hints": [
+            "Set up tiles: left has 🟦🟦🟩🟩🟩🟩🟩, right has 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩",
+            "Remove 5 green from each side, then split the remaining into 2 equal groups."
+          ]
+        },
+        {
+          "id": "at-p3",
+          "question": "Why is the zero pair concept important for solving equations like x - 3 = 7?",
+          "answer": "To remove the -3 (red squares), you ADD +3 (green squares) to both sides. Each red-green pair cancels to zero. Left side: x - 3 + 3 = x + 0 = x. Right side: 7 + 3 = 10. So x = 10. Zero pairs explain WHY adding the opposite works.",
+          "hints": [
+            "You can't just 'take away' the -3 (red squares)—they're part of the expression.",
+            "Instead, add 3 green squares to BOTH sides. The reds and greens pair up to zero, leaving x alone."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's solve some equations with the balance model and connect the tile moves to algebraic steps."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "algebra-tiles",
+      "title": "Supporting Algebra at Home",
+      "text": "**Algebra in middle school is a big deal.** It's the gateway to high school math, and how your child feels about algebra now shapes their entire math trajectory.\n\n**How to help without algebra tiles at home:**\n- **Use the balance metaphor.** 'If the equation is like a balance scale, what would keep it balanced?' This one question replaces a dozen rules.\n- **Check with substitution.** When your child gets an answer (like x = 4), ask them to plug it back in: 'Does 2(4) + 3 = 11? Let's check!' This builds verification habits.\n- **Don't skip the model.** If their teacher requires drawing tiles or a balance, don't say 'just solve it with algebra.' The drawing IS the algebra in visual form.\n\n**Virtual algebra tiles (free):**\nMany school districts provide virtual algebra tile tools. Ask your child's teacher for the link. These let children (and parents!) drag and drop tiles on screen.\n\n**The independence factor:**\nMiddle schoolers want to do things THEMSELVES. The best thing you can do:\n1. Ask 'Do you want help or do you want to work through it?'\n2. If they want help: 'Show me what you've tried first.'\n3. If they're stuck: 'What does the equation look like as a balance?'\n4. If they're frustrated: 'Take a break and come back to it. Sometimes math needs time to click.'\n\n**What NOT to say:**\n- 'This is easy, just do the opposite to both sides' (it's not easy when you're learning it)\n- 'Why are you using tiles? Just solve it normally' (tiles ARE normal for this stage)\n- 'I never needed tiles and I turned out fine' (different tools for different times)",
+      "initialPrompt": "The balance metaphor is your Swiss Army knife for algebra help. Any equation question your child asks can start with: 'Think of it as a balance. What keeps it balanced?'"
+    }
+  ]
+}
