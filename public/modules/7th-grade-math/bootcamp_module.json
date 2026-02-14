@@ -1,0 +1,449 @@
+{
+  "moduleId": "bootcamp",
+  "course": "7th Grade Math",
+  "unit": 0,
+  "title": "Start-of-Year Boot Camp",
+  "weeks": "1-2",
+  "estimatedDuration": 30,
+  "description": "Fix the basics before they poison everything. This boot camp targets the five 6th-grade foundation skills that 7th graders MUST have on autopilot: integer operations, fraction/decimal fluency, simplifying expressions, solving one- and two-step equations, and coordinate plane basics. Diagnostic-first: assess before reteaching, skip what's solid, hammer what's shaky. Every gap left here will cascade into ratios, proportions, and linear relationships all year.",
+  "skills": [
+    "g7-integer-operations",
+    "g7-fraction-decimal-fluency",
+    "g7-simplify-expressions-basics",
+    "g7-one-two-step-equations",
+    "g7-coordinate-plane-basics"
+  ],
+  "standardsAlignment": [
+    "6.NS.A.1",
+    "6.NS.B.3",
+    "6.NS.C.5",
+    "6.NS.C.6",
+    "6.NS.C.7",
+    "6.EE.A.1",
+    "6.EE.A.2",
+    "6.EE.A.3",
+    "6.EE.A.4",
+    "6.EE.B.5",
+    "6.EE.B.7",
+    "7.NS.A.1",
+    "7.NS.A.2",
+    "7.NS.A.3",
+    "7.EE.A.1",
+    "7.EE.B.4"
+  ],
+  "goals": [
+    "Add, subtract, multiply, and divide integers fluently, including multi-step problems with mixed operations",
+    "Perform all four operations with fractions and decimals accurately, converting between forms as needed",
+    "Simplify algebraic expressions by combining like terms and applying the distributive property",
+    "Solve one-step and two-step equations and verify solutions by substitution",
+    "Plot and identify ordered pairs in all four quadrants; calculate distances on the coordinate plane"
+  ],
+  "instructionalStrategy": [
+    "This is NOT a reteach of 6th grade — it's a fast-paced diagnostic boot camp. Assess FIRST, then target gaps. Students who demonstrate fluency move quickly; students with gaps get focused mini-reteach.",
+    "Integer operations are the #1 skill that breaks 7th-grade math. If a student can't handle -3 - (-7) on autopilot, proportional reasoning and slope will be impossible. Diagnose and fix immediately.",
+    "Fraction/decimal fluency must be automatic — not calculator-dependent. Students who can't add fractions by hand will drown in 7.RP (ratios and proportional relationships).",
+    "Simplifying expressions is the bridge between arithmetic and algebra. Distributive property errors and like-term confusion must be caught NOW before inequalities and two-variable equations build on them.",
+    "Use real-world contexts (money, temperature, sports stats, cooking) to make abstract operations concrete. These students are 12-13 — keep it relevant.",
+    "Coordinate plane fluency sets up ALL graphing for the rest of the year. Quadrant signs, reflections, and distance must be solid before proportional graphs appear."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Integer Operations",
+      "skill": "g7-integer-operations",
+      "content": "Integers are positive and negative whole numbers (and zero). Every operation you do in 7th grade math — from solving equations to graphing lines — depends on getting these right EVERY TIME.",
+      "keyPoints": [
+        "Adding integers: same signs → add and keep the sign. Different signs → subtract and keep the sign of the larger absolute value. Example: -8 + 5 = -3 (8 > 5, so negative wins).",
+        "Subtracting integers: CHANGE to adding the opposite. Example: 4 - (-9) = 4 + 9 = 13. 'Keep-Change-Change' or 'Add the opposite' — pick a phrase and make it automatic.",
+        "Multiplying and dividing: same signs → positive result. Different signs → negative result. Example: (-6)(-4) = +24, but (-6)(4) = -24.",
+        "Order of operations (PEMDAS) still applies with negatives. Watch out: -3^2 = -9 (square first, then negate), but (-3)^2 = 9 (negate first, then square). Parentheses matter!",
+        "Zero facts: anything times 0 is 0. Division by 0 is undefined. 0 divided by anything is 0.",
+        "Real-world connection: temperature drops, debt vs. savings, yards lost in football — integers are everywhere."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Integer Operations — Worked Examples",
+      "skill": "g7-integer-operations",
+      "examples": [
+        {
+          "problem": "Simplify: -15 + 8 - (-3) + (-10)",
+          "solution": "Work left to right, applying the rules:\n-15 + 8 = -7 (different signs: 15 - 8 = 7, negative wins)\n-7 - (-3) = -7 + 3 = -4 (change subtraction to adding the opposite)\n-4 + (-10) = -14 (same signs: add and keep negative)\nAnswer: -14"
+        },
+        {
+          "problem": "A football team gains 8 yards, loses 12 yards, gains 5 yards, and then loses 3 yards. What is the team's net yardage?",
+          "solution": "Write as an integer expression: +8 + (-12) + 5 + (-3)\n8 + (-12) = -4\n-4 + 5 = 1\n1 + (-3) = -2\nThe team has a net loss of 2 yards. Answer: -2 yards"
+        },
+        {
+          "problem": "Evaluate: (-4)^2 - 3(-5) + (-18) / (-6)",
+          "solution": "Follow order of operations (exponents, then multiply/divide, then add/subtract):\nExponents: (-4)^2 = 16\nMultiply: 3(-5) = -15\nDivide: (-18)/(-6) = 3 (same signs → positive)\nNow combine: 16 - (-15) + 3 = 16 + 15 + 3 = 34\nAnswer: 34"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Fraction and Decimal Fluency",
+      "skill": "g7-fraction-decimal-fluency",
+      "content": "Fractions and decimals are two ways to write the same numbers. In 7th grade, you will use them constantly — in ratios, proportions, percents, and equations. If you have to reach for a calculator every time, you will fall behind.",
+      "keyPoints": [
+        "Adding/subtracting fractions: MUST have a common denominator. Find the LCD, rewrite each fraction, then add/subtract numerators. Example: 2/3 + 3/4 = 8/12 + 9/12 = 17/12 = 1 5/12.",
+        "Multiplying fractions: multiply straight across (numerator x numerator, denominator x denominator). Simplify first if possible. Example: (3/5)(10/9) = 30/45 = 2/3. Or cross-cancel first: 3 and 9 share 3, 5 and 10 share 5 → (1/1)(2/3) = 2/3.",
+        "Dividing fractions: multiply by the reciprocal (Keep-Change-Flip). Example: 3/4 / 2/5 = 3/4 x 5/2 = 15/8 = 1 7/8.",
+        "Decimal operations: line up decimal points for adding/subtracting. For multiplication, count total decimal places. For division, move the decimal to make the divisor a whole number.",
+        "Converting: fraction to decimal — divide numerator by denominator. Decimal to fraction — use place value (0.75 = 75/100 = 3/4). Know the key conversions: 1/2 = 0.5, 1/3 = 0.333..., 1/4 = 0.25, 1/5 = 0.2, 3/4 = 0.75.",
+        "Negative fractions: -2/3, 2/(-3), and -(2/3) are ALL the same value. The negative sign can sit in front, in the numerator, or in the denominator."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Fraction and Decimal Fluency — Worked Examples",
+      "skill": "g7-fraction-decimal-fluency",
+      "examples": [
+        {
+          "problem": "Compute: -2/3 + 5/6 - 1/4",
+          "solution": "Find the LCD of 3, 6, and 4: LCD = 12.\nRewrite: -2/3 = -8/12, 5/6 = 10/12, 1/4 = 3/12\nCombine: -8/12 + 10/12 - 3/12 = (-8 + 10 - 3)/12 = -1/12\nAnswer: -1/12"
+        },
+        {
+          "problem": "A recipe calls for 2 1/3 cups of flour. You want to make 1 1/2 times the recipe. How much flour do you need?",
+          "solution": "Convert to improper fractions: 2 1/3 = 7/3 and 1 1/2 = 3/2.\nMultiply: (7/3)(3/2) = 21/6 = 7/2 = 3 1/2.\nYou need 3 1/2 cups of flour. Answer: 3 1/2 cups"
+        },
+        {
+          "problem": "Compute: 4.08 - 7.5 + 2.375",
+          "solution": "Work left to right:\n4.08 - 7.5 = -(7.5 - 4.08) = -(3.42) = -3.42\n-3.42 + 2.375 = -(3.42 - 2.375) = -(1.045) = -1.045\nAnswer: -1.045"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Simplifying Expressions",
+      "skill": "g7-simplify-expressions-basics",
+      "content": "Simplifying expressions is the bridge between arithmetic and algebra. You are not solving anything yet — you are cleaning up an expression so it is as short and clear as possible.",
+      "keyPoints": [
+        "Like terms have the SAME variable raised to the SAME power. 3x and 7x are like terms. 3x and 3x^2 are NOT. 5 and -2 are like terms (both constants).",
+        "To combine like terms, add or subtract the coefficients and keep the variable. Example: 4x + (-9x) = -5x. Think: 4 + (-9) = -5, then attach the x.",
+        "Distributive property: a(b + c) = ab + ac. Works with negatives too: -2(3x - 5) = -6x + 10. The negative sign in front distributes to BOTH terms inside.",
+        "Common mistake: forgetting to distribute to the SECOND term. Example: 3(2x + 4) = 6x + 12, NOT 6x + 4.",
+        "After distributing, always combine like terms to finish simplifying. Example: 2(x + 3) + 5x = 2x + 6 + 5x = 7x + 6.",
+        "Coefficients of 1 are invisible: x means 1x. Coefficients of -1 are almost invisible: -x means -1x."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Simplifying Expressions — Worked Examples",
+      "skill": "g7-simplify-expressions-basics",
+      "examples": [
+        {
+          "problem": "Simplify: 6x - 3 + 2x + 8 - x",
+          "solution": "Group like terms:\nVariable terms: 6x + 2x - x = 6x + 2x + (-1x) = 7x\nConstant terms: -3 + 8 = 5\nAnswer: 7x + 5"
+        },
+        {
+          "problem": "Simplify: 4(2x - 3) - 5(x + 1)",
+          "solution": "Distribute each multiplier:\n4(2x - 3) = 8x - 12\n-5(x + 1) = -5x - 5\nNow combine: 8x - 12 + (-5x) + (-5)\nVariable: 8x - 5x = 3x\nConstants: -12 - 5 = -17\nAnswer: 3x - 17"
+        },
+        {
+          "problem": "Write an expression for the perimeter of a rectangle with length (3x + 1) and width (x - 4). Simplify.",
+          "solution": "Perimeter = 2(length) + 2(width)\nP = 2(3x + 1) + 2(x - 4)\nDistribute: P = 6x + 2 + 2x - 8\nCombine: P = 8x - 6\nAnswer: 8x - 6"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "One- and Two-Step Equations",
+      "skill": "g7-one-two-step-equations",
+      "content": "An equation says two things are EQUAL. Solving means finding the value of the variable that makes it true. The golden rule: whatever you do to one side, you MUST do to the other side.",
+      "keyPoints": [
+        "One-step equations use a single inverse operation. Addition ↔ subtraction. Multiplication ↔ division. Example: x + 7 = 12 → subtract 7 → x = 5.",
+        "Two-step equations: undo addition/subtraction FIRST, then undo multiplication/division. Example: 3x + 5 = 20 → subtract 5 → 3x = 15 → divide by 3 → x = 5. Think 'reverse PEMDAS.'",
+        "Equations with negatives: -4x = 28 → divide by -4 → x = -7. Dividing by a negative flips the sign.",
+        "Equations with fractions: (2/3)x = 10 → multiply both sides by the reciprocal 3/2 → x = 15. Or multiply both sides by the denominator: multiply by 3 → 2x = 30 → x = 15.",
+        "ALWAYS check your answer by substituting back into the original equation. If both sides are equal, you are correct.",
+        "Translating words to equations: 'five more than a number' → x + 5. 'Three times a number decreased by 7' → 3x - 7."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "One- and Two-Step Equations — Worked Examples",
+      "skill": "g7-one-two-step-equations",
+      "examples": [
+        {
+          "problem": "Solve: -2x + 9 = -5",
+          "solution": "Step 1: Subtract 9 from both sides.\n-2x + 9 - 9 = -5 - 9\n-2x = -14\nStep 2: Divide both sides by -2.\nx = -14 / -2 = 7\nCheck: -2(7) + 9 = -14 + 9 = -5. Correct!\nAnswer: x = 7"
+        },
+        {
+          "problem": "Maya earned $42 babysitting. She was paid $6 per hour plus a $12 tip. How many hours did she work? Write and solve an equation.",
+          "solution": "Let h = hours worked.\nEquation: 6h + 12 = 42\nStep 1: Subtract 12 from both sides.\n6h = 30\nStep 2: Divide both sides by 6.\nh = 5\nCheck: 6(5) + 12 = 30 + 12 = 42. Correct!\nMaya worked 5 hours. Answer: h = 5"
+        },
+        {
+          "problem": "Solve: x/4 - 3 = 2",
+          "solution": "Step 1: Add 3 to both sides.\nx/4 = 5\nStep 2: Multiply both sides by 4.\nx = 20\nCheck: 20/4 - 3 = 5 - 3 = 2. Correct!\nAnswer: x = 20"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Coordinate Plane Basics",
+      "skill": "g7-coordinate-plane-basics",
+      "content": "The coordinate plane is a grid formed by a horizontal x-axis and a vertical y-axis crossing at the origin (0, 0). Every point is described by an ordered pair (x, y) — x tells you left/right, y tells you up/down. You will use this ALL YEAR for graphing proportional relationships, equations, and data.",
+      "keyPoints": [
+        "Ordered pairs: (x, y). The x-coordinate (horizontal) always comes FIRST. Think: x comes before y in the alphabet.",
+        "Four quadrants: Q1 (+, +) upper right. Q2 (-, +) upper left. Q3 (-, -) lower left. Q4 (+, -) lower right. Numbered counterclockwise starting from upper right.",
+        "Points on the axes: (3, 0) is on the x-axis. (0, -5) is on the y-axis. The origin (0, 0) is on both.",
+        "Reflections: reflecting over the x-axis changes the sign of y. Reflecting over the y-axis changes the sign of x. Example: (3, -2) reflected over x-axis → (3, 2). Over y-axis → (-3, -2).",
+        "Distance between points sharing a coordinate: points (2, 5) and (2, -3) share x = 2 — distance = |5 - (-3)| = 8. Use absolute value of the difference.",
+        "Real-world connection: maps use coordinates, video game character positions use (x, y), and every graph you read in science class is a coordinate plane."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Coordinate Plane Basics — Worked Examples",
+      "skill": "g7-coordinate-plane-basics",
+      "examples": [
+        {
+          "problem": "Plot and identify the quadrant for each point: A(3, -5), B(-2, 4), C(-6, -1), D(0, 7).",
+          "solution": "A(3, -5): x positive, y negative → Quadrant IV.\nB(-2, 4): x negative, y positive → Quadrant II.\nC(-6, -1): x negative, y negative → Quadrant III.\nD(0, 7): x is 0, so this point is on the y-axis (not in any quadrant)."
+        },
+        {
+          "problem": "Point P is at (-4, 3). (a) Reflect P over the x-axis. (b) Reflect P over the y-axis. (c) What is the distance between P and its reflection over the x-axis?",
+          "solution": "(a) Reflecting over x-axis changes the sign of y: (-4, 3) → (-4, -3).\n(b) Reflecting over y-axis changes the sign of x: (-4, 3) → (4, 3).\n(c) P is at (-4, 3) and its reflection is at (-4, -3). Same x-coordinate, so distance = |3 - (-3)| = |6| = 6 units."
+        },
+        {
+          "problem": "A rectangular park has corners at (1, 2), (1, 8), (5, 8), and (5, 2). What are the length and width of the park? What is its perimeter?",
+          "solution": "Length (horizontal): from x = 1 to x = 5 → |5 - 1| = 4 units.\nWidth (vertical): from y = 2 to y = 8 → |8 - 2| = 6 units.\nPerimeter = 2(4) + 2(6) = 8 + 12 = 20 units.\nAnswer: Length = 4, Width = 6, Perimeter = 20 units"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Boot Camp Guided Practice — Integers, Fractions, and Expressions",
+      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics"],
+      "problems": [
+        {
+          "problem": "At 6 AM the temperature was -8 degrees F. By noon it rose 15 degrees, and by midnight it dropped 22 degrees from the noon temperature. What was the midnight temperature?",
+          "hints": [
+            "Start at -8. Rising 15 degrees means ADD 15.",
+            "Noon temp: -8 + 15 = 7 degrees F.",
+            "Dropping 22 degrees means SUBTRACT 22: 7 - 22 = -15 degrees F."
+          ],
+          "answer": "-15 degrees F"
+        },
+        {
+          "problem": "Simplify: (-3)(5) + (-4)^2 - 12 / (-3)",
+          "hints": [
+            "Follow order of operations: exponents and multiply/divide before adding.",
+            "(-3)(5) = -15. (-4)^2 = 16. 12/(-3) = -4.",
+            "Combine: -15 + 16 - (-4) = -15 + 16 + 4 = 5."
+          ],
+          "answer": "5"
+        },
+        {
+          "problem": "A water tank is 3/4 full. After using 2/5 of the water in the tank, what fraction of the FULL tank remains?",
+          "hints": [
+            "You are using 2/5 OF the 3/4 that is in the tank. 'Of' means multiply.",
+            "Water used: (2/5)(3/4) = 6/20 = 3/10 of the full tank.",
+            "Water remaining: 3/4 - 3/10. LCD is 20: 15/20 - 6/20 = 9/20."
+          ],
+          "answer": "9/20"
+        },
+        {
+          "problem": "Compute: 3.5 - (-2.75) + 0.8",
+          "hints": [
+            "Subtracting a negative: 3.5 - (-2.75) = 3.5 + 2.75.",
+            "3.5 + 2.75 = 6.25.",
+            "6.25 + 0.8 = 7.05."
+          ],
+          "answer": "7.05"
+        },
+        {
+          "problem": "Simplify: 3(2x - 4) + 5x - 2(x + 6)",
+          "hints": [
+            "Distribute 3: 6x - 12. Distribute -2: -2x - 12.",
+            "Combine all terms: 6x - 12 + 5x - 2x - 12.",
+            "Variable terms: 6x + 5x - 2x = 9x. Constants: -12 - 12 = -24. Answer: 9x - 24."
+          ],
+          "answer": "9x - 24"
+        },
+        {
+          "problem": "Write and simplify an expression: Carlos buys x packs of baseball cards at $3 each and 4 binders at $5 each. He uses a $7 coupon. Write an expression for his total cost.",
+          "hints": [
+            "Cards cost: 3x. Binders cost: 4(5) = 20.",
+            "Total before coupon: 3x + 20. Subtract coupon: 3x + 20 - 7.",
+            "Simplify: 3x + 13."
+          ],
+          "answer": "3x + 13"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Boot Camp Guided Practice — Equations and Coordinate Plane",
+      "skills": ["g7-one-two-step-equations", "g7-coordinate-plane-basics"],
+      "problems": [
+        {
+          "problem": "Solve and check: 5x - 8 = 22",
+          "hints": [
+            "Add 8 to both sides: 5x = 30.",
+            "Divide both sides by 5: x = 6.",
+            "Check: 5(6) - 8 = 30 - 8 = 22. Correct!"
+          ],
+          "answer": "x = 6"
+        },
+        {
+          "problem": "Solve: -3x + 4 = -11",
+          "hints": [
+            "Subtract 4 from both sides: -3x = -15.",
+            "Divide both sides by -3: x = 5.",
+            "Check: -3(5) + 4 = -15 + 4 = -11. Correct!"
+          ],
+          "answer": "x = 5"
+        },
+        {
+          "problem": "Solve: x/3 + 7 = 2",
+          "hints": [
+            "Subtract 7 from both sides: x/3 = -5.",
+            "Multiply both sides by 3: x = -15.",
+            "Check: -15/3 + 7 = -5 + 7 = 2. Correct!"
+          ],
+          "answer": "x = -15"
+        },
+        {
+          "problem": "A gym charges a $25 registration fee plus $10 per month. Jada has paid $85 total. How many months has she been a member? Write and solve an equation.",
+          "hints": [
+            "Let m = number of months. Equation: 10m + 25 = 85.",
+            "Subtract 25: 10m = 60.",
+            "Divide by 10: m = 6. Jada has been a member for 6 months."
+          ],
+          "answer": "m = 6"
+        },
+        {
+          "problem": "Point M is at (5, -3). (a) What quadrant is M in? (b) Reflect M over the y-axis and name the new point. (c) Find the distance between M and the point (5, 4).",
+          "hints": [
+            "(a) x is positive, y is negative → Quadrant IV.",
+            "(b) Reflect over y-axis: change sign of x → (-5, -3).",
+            "(c) Both points share x = 5. Distance = |-3 - 4| = |-7| = 7 units."
+          ],
+          "answer": "(a) Quadrant IV, (b) (-5, -3), (c) 7 units"
+        },
+        {
+          "problem": "A triangle has vertices at A(-3, 1), B(4, 1), and C(4, -5). Find the lengths of sides AB and BC.",
+          "hints": [
+            "A and B share y = 1. AB = |(-3) - 4| = |-7| = 7 units.",
+            "B and C share x = 4. BC = |1 - (-5)| = |6| = 6 units.",
+            "These sides are horizontal and vertical — absolute value of the coordinate difference."
+          ],
+          "answer": "AB = 7 units, BC = 6 units"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Boot Camp Mastery Practice",
+      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics", "g7-one-two-step-equations", "g7-coordinate-plane-basics"],
+      "problems": [
+        {
+          "problem": "Simplify: -6 + (-4) - (-10) + 3 - 8",
+          "answer": "-5"
+        },
+        {
+          "problem": "Evaluate: (-2)^3 + 5(-3) - (-18)/6",
+          "answer": "-20"
+        },
+        {
+          "problem": "A diver is 40 feet below sea level and ascends 18 feet, then descends 9 feet. Write an integer expression and find the diver's final position.",
+          "answer": "-40 + 18 + (-9) = -31 feet (31 feet below sea level)"
+        },
+        {
+          "problem": "Compute: 5/6 - 1/4 + 2/3",
+          "answer": "5/4 or 1 1/4"
+        },
+        {
+          "problem": "Mia has 2 1/4 pounds of trail mix. She gives 3/8 of a pound to each of 4 friends. How much trail mix does she have left?",
+          "answer": "2 1/4 - 4(3/8) = 9/4 - 12/8 = 9/4 - 3/2 = 9/4 - 6/4 = 3/4 pound"
+        },
+        {
+          "problem": "Compute: 12.5 - 8.73 + (-3.2)",
+          "answer": "0.57"
+        },
+        {
+          "problem": "Simplify: 7x - 3 + 2x - 8 + x",
+          "answer": "10x - 11"
+        },
+        {
+          "problem": "Simplify: -2(4x - 5) + 3(x + 2)",
+          "answer": "-5x + 16"
+        },
+        {
+          "problem": "Simplify: 6 - 3(2x - 1) + 4x",
+          "answer": "-2x + 9"
+        },
+        {
+          "problem": "Solve: 4x + 7 = -9",
+          "answer": "x = -4"
+        },
+        {
+          "problem": "Solve: -x/5 + 3 = 7",
+          "answer": "x = -20"
+        },
+        {
+          "problem": "Marcus has $54 in his savings account. He saves $8 per week from his allowance. After how many weeks will he have $102? Write and solve an equation.",
+          "answer": "8w + 54 = 102 → 8w = 48 → w = 6 weeks"
+        },
+        {
+          "problem": "Name the quadrant or axis for each point: (a) (-7, 2), (b) (4, 0), (c) (1, -9), (d) (0, -3).",
+          "answer": "(a) Quadrant II, (b) x-axis, (c) Quadrant IV, (d) y-axis"
+        },
+        {
+          "problem": "Point P is at (-2, 6). Reflect P over the x-axis to get point Q. What are the coordinates of Q? What is the distance from P to Q?",
+          "answer": "Q = (-2, -6). Distance = |6 - (-6)| = 12 units"
+        },
+        {
+          "problem": "A rectangle has vertices at (-3, -1), (-3, 5), (4, 5), and (4, -1). What are the length and width? What is the area?",
+          "answer": "Length = |4 - (-3)| = 7 units, Width = |5 - (-1)| = 6 units, Area = 42 square units"
+        }
+      ],
+      "attemptsRequired": 10
+    }
+  ],
+  "answerKeys": {
+    "gp-temperature": "-15 degrees F",
+    "gp-order-of-ops": "5",
+    "gp-water-tank": "9/20",
+    "gp-decimal-ops": "7.05",
+    "gp-simplify-distribute": "9x - 24",
+    "gp-carlos-expression": "3x + 13",
+    "gp-solve-5x-minus-8": "x = 6",
+    "gp-solve-neg3x-plus-4": "x = 5",
+    "gp-solve-x-over-3": "x = -15",
+    "gp-gym-equation": "m = 6",
+    "gp-point-M-reflect": "(a) QIV, (b) (-5, -3), (c) 7 units",
+    "gp-triangle-sides": "AB = 7, BC = 6",
+    "ip-integer-add-sub": "-5",
+    "ip-integer-order-ops": "-20",
+    "ip-diver": "-31 feet",
+    "ip-fraction-add-sub": "5/4 or 1 1/4",
+    "ip-trail-mix": "3/4 pound",
+    "ip-decimal-ops": "0.57",
+    "ip-combine-like-terms": "10x - 11",
+    "ip-double-distribute": "-5x + 16",
+    "ip-distribute-combine": "-2x + 9",
+    "ip-solve-4x-plus-7": "x = -4",
+    "ip-solve-neg-x-over-5": "x = -20",
+    "ip-marcus-savings": "w = 6 weeks",
+    "ip-quadrant-id": "(a) QII, (b) x-axis, (c) QIV, (d) y-axis",
+    "ip-reflect-x-axis": "Q = (-2, -6), distance = 12",
+    "ip-rectangle-area": "length = 7, width = 6, area = 42 sq units"
+  }
+}

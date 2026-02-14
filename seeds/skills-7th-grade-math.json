@@ -1,0 +1,1406 @@
+[
+  {
+    "skillId": "g7-integer-operations",
+    "displayName": "Integer Operations",
+    "description": "Add, subtract, multiply, and divide integers fluently, including signed number rules",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 0,
+    "unit": "Boot Camp",
+    "prerequisites": [],
+    "enables": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals"],
+    "standardsAlignment": ["6.NS.5", "6.NS.6", "7.NS.1", "7.NS.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Adding integers using number line model",
+        "Subtracting integers by adding the opposite",
+        "Multiplying/dividing: same signs = positive, different signs = negative",
+        "Zero pairs and additive inverses"
+      ],
+      "commonMistakes": [
+        "Confusing subtraction of negatives: 5 - (-3) is NOT 5 - 3",
+        "Forgetting sign rules when multiplying two negatives",
+        "Treating -5 + 3 as -(5 + 3) instead of -5 + 3 = -2"
+      ],
+      "teachingTips": [
+        "Use number lines extensively before moving to rules",
+        "Have students verbalize the sign rule before computing",
+        "Spiral integer operations into every subsequent unit"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-fraction-decimal-fluency",
+    "displayName": "Fraction & Decimal Fluency",
+    "description": "Perform operations with fractions and decimals, including dividing fractions and converting between forms",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 0,
+    "unit": "Boot Camp",
+    "prerequisites": [],
+    "enables": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals", "g7-unit-rates"],
+    "standardsAlignment": ["6.NS.1", "6.NS.3", "7.NS.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Dividing fractions: multiply by the reciprocal (keep-change-flip)",
+        "Finding common denominators for adding/subtracting fractions",
+        "Converting between fractions, decimals, and percents",
+        "Mixed number operations"
+      ],
+      "commonMistakes": [
+        "Flipping the wrong fraction when dividing",
+        "Adding fractions by adding numerators AND denominators",
+        "Not simplifying final answers"
+      ],
+      "teachingTips": [
+        "Use fraction bars and area models before abstract rules",
+        "Connect fractions to division: 3/4 means 3 divided by 4",
+        "Practice converting between all three forms daily"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-simplify-expressions-basics",
+    "displayName": "Simplify Expressions (Basics)",
+    "description": "Combine like terms and use the distributive property to simplify algebraic expressions",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 0,
+    "unit": "Boot Camp",
+    "prerequisites": [],
+    "enables": ["g7-simplify-expressions", "g7-multi-step-equations"],
+    "standardsAlignment": ["6.EE.3", "6.EE.4", "7.EE.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Like terms: same variable and same exponent",
+        "Combining like terms by adding/subtracting coefficients",
+        "Distributive property: a(b + c) = ab + ac",
+        "Constants vs. variable terms"
+      ],
+      "commonMistakes": [
+        "Combining unlike terms: 3x + 2y ≠ 5xy",
+        "Forgetting to distribute to ALL terms inside parentheses",
+        "Dropping negative signs when distributing a negative"
+      ],
+      "teachingTips": [
+        "Color-code like terms to build visual identification",
+        "Practice distribution with negatives extensively",
+        "Use algebra tiles for tactile learners"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-one-two-step-equations",
+    "displayName": "One-Step & Two-Step Equations",
+    "description": "Solve simple one-step and two-step equations using inverse operations",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 0,
+    "unit": "Boot Camp",
+    "prerequisites": [],
+    "enables": ["g7-multi-step-equations", "g7-inequalities"],
+    "standardsAlignment": ["6.EE.5", "6.EE.7", "7.EE.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inverse operations: addition/subtraction, multiplication/division",
+        "Isolate the variable by undoing operations in reverse order",
+        "Check your solution by substituting back",
+        "Two-step equations: undo addition/subtraction first, then multiplication/division"
+      ],
+      "commonMistakes": [
+        "Performing different operations on each side of the equation",
+        "Forgetting to apply the operation to BOTH sides",
+        "In 2x + 3 = 11, dividing 11 by 2 first instead of subtracting 3"
+      ],
+      "teachingTips": [
+        "Use balance model: whatever you do to one side, do to the other",
+        "Always verify solutions by plugging back in",
+        "Build from one-step to two-step gradually"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-coordinate-plane-basics",
+    "displayName": "Coordinate Plane Basics",
+    "description": "Plot and identify points in all four quadrants, understand ordered pairs and axis labels",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 0,
+    "unit": "Boot Camp",
+    "prerequisites": [],
+    "enables": ["g7-graph-proportional", "g7-rational-word-problems"],
+    "standardsAlignment": ["6.NS.6", "6.NS.8"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ordered pairs (x, y): x is horizontal, y is vertical",
+        "Four quadrants and their sign patterns",
+        "Origin is (0, 0)",
+        "Reflections across axes"
+      ],
+      "commonMistakes": [
+        "Reversing x and y coordinates",
+        "Confusing which axis is which",
+        "Plotting in the wrong quadrant with negative coordinates"
+      ],
+      "teachingTips": [
+        "Use 'run before you jump' mnemonic: x first (horizontal), then y (vertical)",
+        "Practice plotting in all four quadrants, not just Quadrant I",
+        "Connect to real contexts: maps, game boards"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-add-subtract-rationals",
+    "displayName": "Add & Subtract Rational Numbers",
+    "description": "Add and subtract rational numbers including fractions, decimals, and mixed numbers with different signs",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Rational Numbers & Operations",
+    "prerequisites": ["g7-integer-operations", "g7-fraction-decimal-fluency"],
+    "enables": ["g7-rational-word-problems", "g7-multi-step-equations"],
+    "standardsAlignment": ["7.NS.1", "7.NS.1a", "7.NS.1b", "7.NS.1c", "7.NS.1d"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Adding rational numbers on a number line",
+        "Additive inverses: a + (-a) = 0",
+        "Subtracting = adding the opposite: a - b = a + (-b)",
+        "Finding common denominators for rational number addition"
+      ],
+      "commonMistakes": [
+        "Treating 3 - (-5) as 3 - 5 instead of 3 + 5",
+        "Losing track of signs with fractions: -1/3 + 2/3 = 1/3, not -3/3",
+        "Not converting to common denominators before adding"
+      ],
+      "teachingTips": [
+        "Number line is the go-to model: show direction for positive/negative",
+        "Practice 'keep-change-change' for subtraction problems",
+        "Emphasize that subtraction is always adding the opposite"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-multiply-divide-rationals",
+    "displayName": "Multiply & Divide Rational Numbers",
+    "description": "Multiply and divide rational numbers, apply sign rules, and convert between forms",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Rational Numbers & Operations",
+    "prerequisites": ["g7-integer-operations", "g7-fraction-decimal-fluency"],
+    "enables": ["g7-rational-word-problems", "g7-multi-step-equations", "g7-unit-rates"],
+    "standardsAlignment": ["7.NS.2", "7.NS.2a", "7.NS.2b", "7.NS.2c", "7.NS.2d"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same signs → positive product/quotient",
+        "Different signs → negative product/quotient",
+        "Multiplying fractions: multiply straight across",
+        "Dividing fractions: multiply by the reciprocal"
+      ],
+      "commonMistakes": [
+        "(-3)(-4) = -12 (forgetting negative times negative is positive)",
+        "Dividing fractions by flipping the wrong one",
+        "Not simplifying before multiplying (missing cross-cancellation)"
+      ],
+      "teachingTips": [
+        "Drill sign rules until automatic: same = positive, different = negative",
+        "Use patterns: 3 × 2 = 6, 3 × 1 = 3, 3 × 0 = 0, 3 × (-1) = -3...",
+        "Connect to repeated addition for why negative × negative = positive"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-rational-word-problems",
+    "displayName": "Rational Number Word Problems",
+    "description": "Solve real-world problems involving rational numbers: temperature, money, elevation, and distance",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Rational Numbers & Operations",
+    "prerequisites": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals"],
+    "enables": ["g7-multi-step-equations", "g7-equation-word-problems"],
+    "standardsAlignment": ["7.NS.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Temperature change: rising = positive, falling = negative",
+        "Money: deposits = positive, withdrawals = negative",
+        "Elevation: above sea level = positive, below = negative",
+        "Choosing the right operation for the context"
+      ],
+      "commonMistakes": [
+        "Mixing up which value is negative in context problems",
+        "Not reading carefully whether the problem asks for change or final value",
+        "Dropping negative signs in multi-step word problems"
+      ],
+      "teachingTips": [
+        "Have students identify positive/negative BEFORE computing",
+        "Use vertical number lines for elevation and temperature",
+        "Make students write the expression before solving"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-absolute-value",
+    "displayName": "Absolute Value as Distance",
+    "description": "Understand and use absolute value to represent distance from zero and between numbers",
+    "category": "number-system",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Rational Numbers & Operations",
+    "prerequisites": ["g7-integer-operations"],
+    "enables": ["g7-rational-word-problems"],
+    "standardsAlignment": ["7.NS.1", "7.NS.1c"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "|a| = distance from a to 0 on the number line",
+        "Absolute value is always non-negative",
+        "Distance between two numbers: |a - b|",
+        "Opposite numbers have the same absolute value: |-5| = |5| = 5"
+      ],
+      "commonMistakes": [
+        "Thinking absolute value means 'make it positive' (it means distance)",
+        "Computing |-3 + 5| as |-3| + |5| = 8 instead of |2| = 2",
+        "Confusing |a - b| with |a| - |b|"
+      ],
+      "teachingTips": [
+        "Always ground absolute value in the number line distance model",
+        "Use real-world distance contexts: 'How far apart are floors -2 and 3?'",
+        "Emphasize: evaluate INSIDE first, then take absolute value"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-verbal-to-algebraic",
+    "displayName": "Translate Verbal to Algebraic",
+    "description": "Convert word phrases and sentences into algebraic expressions and equations",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Expressions & Equations",
+    "prerequisites": ["g7-simplify-expressions-basics"],
+    "enables": ["g7-multi-step-equations", "g7-equation-word-problems"],
+    "standardsAlignment": ["7.EE.1", "7.EE.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Key words: sum/more/increased → addition, difference/less/decreased → subtraction",
+        "Product/times → multiplication, quotient/divided → division",
+        "'Is' or 'equals' → = sign",
+        "Choosing a variable and defining what it represents"
+      ],
+      "commonMistakes": [
+        "'5 less than x' is x - 5, NOT 5 - x",
+        "'Twice a number increased by 3' is 2x + 3, NOT 2(x + 3)",
+        "Not defining what the variable represents before writing the expression"
+      ],
+      "teachingTips": [
+        "Have students underline key words and circle numbers/unknowns",
+        "Practice translating BOTH directions: words → algebra AND algebra → words",
+        "'Less than' and 'subtracted from' reverse the order — drill this"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-simplify-expressions",
+    "displayName": "Simplify Expressions (Advanced)",
+    "description": "Use the distributive property and combine like terms to simplify complex expressions with rational coefficients",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Expressions & Equations",
+    "prerequisites": ["g7-simplify-expressions-basics", "g7-add-subtract-rationals"],
+    "enables": ["g7-multi-step-equations", "g7-evaluate-expressions"],
+    "standardsAlignment": ["7.EE.1", "7.EE.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Distribute with negative and fractional coefficients",
+        "Combine like terms with rational numbers",
+        "Factor common factors from expressions",
+        "Recognize equivalent expressions"
+      ],
+      "commonMistakes": [
+        "Not distributing the negative: -(2x - 3) = -2x + 3, NOT -2x - 3",
+        "Adding coefficients of unlike terms",
+        "Dropping terms when expressions get long"
+      ],
+      "teachingTips": [
+        "Build up from simple to complex: integers → fractions → negatives",
+        "Have students check equivalence by substituting a test value",
+        "Practice distributing negatives as a standalone skill"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-multi-step-equations",
+    "displayName": "Multi-Step Equations",
+    "description": "Solve multi-step equations involving distribution, combining like terms, and variables on both sides",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Expressions & Equations",
+    "prerequisites": ["g7-one-two-step-equations", "g7-simplify-expressions"],
+    "enables": ["g7-equation-word-problems", "g7-inequalities"],
+    "standardsAlignment": ["7.EE.3", "7.EE.4", "7.EE.4a"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Distribute first, then combine like terms",
+        "Move variables to one side, constants to the other",
+        "Equations with fractions: multiply through by the LCD",
+        "Check solutions by substituting back into the original equation"
+      ],
+      "commonMistakes": [
+        "Distributing but forgetting to combine like terms",
+        "Moving terms across the equals sign without changing the sign",
+        "Not distributing to ALL terms inside parentheses"
+      ],
+      "teachingTips": [
+        "Teach a consistent procedure: distribute → combine → move → solve → check",
+        "Color-code steps to track operations",
+        "Gradually introduce fractions and decimals in equations"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-inequalities",
+    "displayName": "Inequalities",
+    "description": "Solve, graph, and interpret inequalities including the sign-flip rule for negative multiplication/division",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 1,
+    "unit": "Expressions & Equations",
+    "prerequisites": ["g7-one-two-step-equations", "g7-multi-step-equations"],
+    "enables": ["g7-equation-word-problems"],
+    "standardsAlignment": ["7.EE.4", "7.EE.4b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inequality symbols: <, >, ≤, ≥ and their meanings",
+        "Solving inequalities: same process as equations",
+        "CRITICAL: flip the sign when multiplying or dividing by a NEGATIVE",
+        "Graphing on a number line: open vs. closed circles, shading direction"
+      ],
+      "commonMistakes": [
+        "Forgetting to flip the inequality when dividing by a negative",
+        "Using a closed circle when the inequality is strict (< or >)",
+        "Shading in the wrong direction on the number line"
+      ],
+      "teachingTips": [
+        "Demonstrate the flip rule with a concrete example: 2 < 6, multiply both by -1: -2 > -6",
+        "Have students test a value from their solution set to verify",
+        "Connect to real-world contexts: 'You need MORE than $50'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-unit-rates",
+    "displayName": "Unit Rates & Comparisons",
+    "description": "Calculate unit rates and use them to compare quantities and make decisions",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Ratios, Rates, and Proportions",
+    "prerequisites": ["g7-fraction-decimal-fluency", "g7-multiply-divide-rationals"],
+    "enables": ["g7-proportions", "g7-constant-of-proportionality"],
+    "standardsAlignment": ["7.RP.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Rate = ratio comparing two different units",
+        "Unit rate = rate with denominator of 1 ('per one')",
+        "Divide to find unit rate: 120 miles / 3 hours = 40 mph",
+        "Use unit rates to compare: which is the better deal?"
+      ],
+      "commonMistakes": [
+        "Dividing in the wrong order: price ÷ ounces, not ounces ÷ price",
+        "Not including units in the answer",
+        "Comparing rates with different units without converting"
+      ],
+      "teachingTips": [
+        "Always label units: 'dollars per ounce' not just a number",
+        "Use grocery store and speed contexts — students relate to these",
+        "Practice 'which is the better deal?' problems for engagement"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "application",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-proportions",
+    "displayName": "Proportions & Proportional Reasoning",
+    "description": "Set up and solve proportions using cross-multiplication and scaling strategies",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Ratios, Rates, and Proportions",
+    "prerequisites": ["g7-unit-rates", "g7-fraction-decimal-fluency"],
+    "enables": ["g7-scale-drawings", "g7-percent-applications", "g7-identify-proportional"],
+    "standardsAlignment": ["7.RP.2", "7.RP.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Proportion: two equal ratios (a/b = c/d)",
+        "Cross-multiply to solve: ad = bc",
+        "Scale factor: multiply both parts of a ratio by the same number",
+        "Verify proportionality by checking cross products"
+      ],
+      "commonMistakes": [
+        "Setting up ratios with mismatched units (miles/hours = gallons/minutes)",
+        "Cross-multiplying when NOT in a proportion setup",
+        "Forgetting to check if the proportion makes sense in context"
+      ],
+      "teachingTips": [
+        "Label both ratios clearly before cross-multiplying",
+        "Use tables to organize proportional reasoning",
+        "Build from simple scaling before introducing cross-multiplication"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-scale-drawings",
+    "displayName": "Scale Drawings & Maps",
+    "description": "Use scale factors to find actual and model dimensions from scale drawings and maps",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Ratios, Rates, and Proportions",
+    "prerequisites": ["g7-proportions"],
+    "enables": ["g7-surface-area", "g7-volume"],
+    "standardsAlignment": ["7.G.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Scale = ratio of drawing dimension to actual dimension",
+        "Set up proportions: drawing/actual = scale/1",
+        "Scale factor > 1 = enlargement, < 1 = reduction",
+        "Finding area with scale: area scales by the SQUARE of the scale factor"
+      ],
+      "commonMistakes": [
+        "Mixing up which dimension is the drawing vs. actual",
+        "Using the linear scale factor for area (should be squared)",
+        "Not converting units when the scale uses different units"
+      ],
+      "teachingTips": [
+        "Use actual classroom objects and have students create scale drawings",
+        "Maps are the most relatable context — use real map distances",
+        "Highlight that area scales by k² with a concrete example"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-percent-applications",
+    "displayName": "Percent Applications",
+    "description": "Solve real-world percent problems: discounts, tax, tips, markups, and commissions",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Ratios, Rates, and Proportions",
+    "prerequisites": ["g7-proportions", "g7-multiply-divide-rationals"],
+    "enables": ["g7-percent-change", "g7-equation-word-problems"],
+    "standardsAlignment": ["7.RP.3", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent = part/whole × 100",
+        "Discount: sale price = original × (1 - rate)",
+        "Tax/tip: total = original × (1 + rate)",
+        "Markup: selling price = cost × (1 + markup rate)"
+      ],
+      "commonMistakes": [
+        "Computing 20% off $50 as $50 - 20 = $30 (should be $50 × 0.20 = $10 off)",
+        "Adding tax to the discounted price in wrong order for multi-step problems",
+        "Confusing percent OF a number with percent change"
+      ],
+      "teachingTips": [
+        "Use the multiplier approach: 25% off = multiply by 0.75",
+        "Shopping contexts are highly engaging — use real prices",
+        "Practice: 'Is tax calculated on the original or sale price?'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-percent-change",
+    "displayName": "Percent Increase & Decrease",
+    "description": "Calculate and interpret percent increase and decrease in real-world contexts",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Ratios, Rates, and Proportions",
+    "prerequisites": ["g7-percent-applications"],
+    "enables": ["g7-equation-word-problems"],
+    "standardsAlignment": ["7.RP.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent change = (new - original) / original × 100",
+        "Positive result = increase, negative = decrease",
+        "The original value is ALWAYS the denominator",
+        "Successive percent changes: multiply the multipliers"
+      ],
+      "commonMistakes": [
+        "Using the new value as the denominator instead of the original",
+        "Thinking a 10% increase then 10% decrease gets back to the original (it doesn't)",
+        "Confusing absolute change with percent change"
+      ],
+      "teachingTips": [
+        "Use the formula AND the multiplier method — students should know both",
+        "The '10% up then 10% down' problem is eye-opening — lead with it",
+        "Connect to real data: population changes, price changes, scores"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-identify-proportional",
+    "displayName": "Identify Proportional Relationships",
+    "description": "Determine if a relationship is proportional from tables, graphs, and equations",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Proportional Relationships",
+    "prerequisites": ["g7-proportions", "g7-unit-rates"],
+    "enables": ["g7-constant-of-proportionality", "g7-proportional-equations"],
+    "standardsAlignment": ["7.RP.2", "7.RP.2a"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Table test: all y/x ratios are equal",
+        "Graph test: straight line through the origin",
+        "Equation test: form y = kx (no added constant)",
+        "Non-proportional: y = mx + b where b ≠ 0"
+      ],
+      "commonMistakes": [
+        "Thinking any straight line is proportional (must pass through origin)",
+        "Checking only one ratio in a table instead of all of them",
+        "Confusing y = 3x + 2 (NOT proportional) with y = 3x (proportional)"
+      ],
+      "teachingTips": [
+        "Use all three representations side by side: table, graph, equation",
+        "Start with obviously proportional and non-proportional examples",
+        "'Does it go through the origin?' is the quick check for graphs"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-constant-of-proportionality",
+    "displayName": "Constant of Proportionality",
+    "description": "Find and interpret the constant of proportionality (k) from tables, graphs, equations, and contexts",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Proportional Relationships",
+    "prerequisites": ["g7-identify-proportional", "g7-unit-rates"],
+    "enables": ["g7-proportional-equations", "g7-graph-proportional"],
+    "standardsAlignment": ["7.RP.2", "7.RP.2b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "k = y/x for any row in a proportional table",
+        "k is the unit rate in context",
+        "k is the slope of the line in the graph",
+        "k is the coefficient in y = kx"
+      ],
+      "commonMistakes": [
+        "Computing x/y instead of y/x",
+        "Not connecting k to the unit rate in the problem context",
+        "Thinking k must be a whole number"
+      ],
+      "teachingTips": [
+        "Connect k to unit rate explicitly: 'k = 3 means 3 dollars per pound'",
+        "Find k from every representation and show they match",
+        "Use contexts where k has clear meaning (speed, price per item)"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-proportional-equations",
+    "displayName": "Write Proportional Equations (y = kx)",
+    "description": "Write equations in the form y = kx to represent proportional relationships",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Proportional Relationships",
+    "prerequisites": ["g7-constant-of-proportionality"],
+    "enables": ["g7-graph-proportional", "g7-function-input-output"],
+    "standardsAlignment": ["7.RP.2", "7.RP.2c"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Find k from the context or data, then write y = kx",
+        "Use the equation to find unknown values",
+        "Interpret the equation in context",
+        "Connect to tables and graphs"
+      ],
+      "commonMistakes": [
+        "Writing y = x + k instead of y = kx",
+        "Not defining what x and y represent in context",
+        "Using k as an additive constant instead of a multiplier"
+      ],
+      "teachingTips": [
+        "Start from a table: find k, then write the equation",
+        "Have students predict values using their equation and verify",
+        "Compare to y = mx + b to preview slope-intercept form"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-graph-proportional",
+    "displayName": "Graph Proportional Relationships",
+    "description": "Graph proportional relationships and interpret points on the graph including (0,0) and the unit rate point",
+    "category": "ratios-proportional",
+    "course": "7th Grade Math",
+    "quarter": 2,
+    "unit": "Proportional Relationships",
+    "prerequisites": ["g7-coordinate-plane-basics", "g7-constant-of-proportionality"],
+    "enables": ["g7-function-input-output"],
+    "standardsAlignment": ["7.RP.2", "7.RP.2d"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Proportional graph: straight line through the origin",
+        "The point (1, k) represents the unit rate",
+        "Plot from a table: each (x, y) pair is a point",
+        "Slope of the line = constant of proportionality = unit rate"
+      ],
+      "commonMistakes": [
+        "Not starting the line at the origin",
+        "Plotting points correctly but not connecting with a straight line",
+        "Mixing up x and y when reading coordinates"
+      ],
+      "teachingTips": [
+        "Always start by plotting the origin and the unit rate point",
+        "Use graph paper — sloppy graphs lead to errors",
+        "Have students read coordinates FROM a graph as well as plot them"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-area-circumference",
+    "displayName": "Area & Circumference",
+    "description": "Calculate area and circumference of circles, and review area of triangles, parallelograms, and trapezoids",
+    "category": "geometry",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Geometry and Measurement",
+    "prerequisites": ["g7-multiply-divide-rationals"],
+    "enables": ["g7-composite-figures", "g7-surface-area", "g7-volume"],
+    "standardsAlignment": ["7.G.4", "7.G.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Circle area: A = πr²",
+        "Circumference: C = 2πr = πd",
+        "Triangle area: A = ½bh",
+        "Parallelogram: A = bh, Trapezoid: A = ½(b₁ + b₂)h"
+      ],
+      "commonMistakes": [
+        "Using diameter instead of radius in A = πr² (or vice versa for C = πd)",
+        "Forgetting to square the radius: πr² ≠ πr × 2",
+        "Confusing area and circumference (square units vs. linear units)"
+      ],
+      "teachingTips": [
+        "Use physical models: measure real circles with string",
+        "Emphasize units: area is always in square units, perimeter in linear units",
+        "Practice with both exact (leave π) and decimal answers"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-composite-figures",
+    "displayName": "Area of Composite Figures",
+    "description": "Find the area of complex shapes by decomposing into rectangles, triangles, and circles",
+    "category": "geometry",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Geometry and Measurement",
+    "prerequisites": ["g7-area-circumference"],
+    "enables": ["g7-surface-area"],
+    "standardsAlignment": ["7.G.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Decompose: break into rectangles, triangles, semicircles",
+        "Add areas of parts for shapes made of pieces",
+        "Subtract areas for shapes with holes or cutouts",
+        "Use given dimensions to find missing measurements"
+      ],
+      "commonMistakes": [
+        "Using the wrong height for triangles in composite figures",
+        "Adding when they should subtract (e.g., rectangle with semicircle removed)",
+        "Missing a piece of the composite shape"
+      ],
+      "teachingTips": [
+        "Draw dotted lines to show the decomposition visually",
+        "Label each sub-shape with its own dimensions",
+        "Practice both addition (L-shapes) and subtraction (holes) composites"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-surface-area",
+    "displayName": "Surface Area: Prisms & Pyramids",
+    "description": "Calculate surface area using nets and formulas for prisms and pyramids",
+    "category": "geometry",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Geometry and Measurement",
+    "prerequisites": ["g7-area-circumference", "g7-composite-figures"],
+    "enables": [],
+    "standardsAlignment": ["7.G.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Surface area = total area of all faces",
+        "Use nets to visualize and organize faces",
+        "Rectangular prism: SA = 2(lw + lh + wh)",
+        "Triangular prism: 2 triangular faces + 3 rectangular faces"
+      ],
+      "commonMistakes": [
+        "Forgetting a face (especially the base of a pyramid)",
+        "Confusing surface area with volume",
+        "Using slant height vs. perpendicular height incorrectly for pyramids"
+      ],
+      "teachingTips": [
+        "Build nets from paper — folding makes the concept click",
+        "Organize work in a table: Face | Shape | Area",
+        "Label 3D diagrams with ALL dimensions before calculating"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-volume",
+    "displayName": "Volume: Prisms & Cylinders",
+    "description": "Calculate volume of prisms and right cylinders using V = Bh",
+    "category": "geometry",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Geometry and Measurement",
+    "prerequisites": ["g7-area-circumference"],
+    "enables": [],
+    "standardsAlignment": ["7.G.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Volume = Base area × height: V = Bh",
+        "Rectangular prism: V = lwh",
+        "Triangular prism: V = (½bh_triangle) × H",
+        "Cylinder: V = πr²h"
+      ],
+      "commonMistakes": [
+        "Using diameter instead of radius for cylinders",
+        "Confusing height of the base triangle with height of the prism",
+        "Using perimeter instead of area for the base"
+      ],
+      "teachingTips": [
+        "The big idea: volume = (area of the base) stacked up the height",
+        "Use fill-and-pour activities to build volume intuition",
+        "Always identify which measurement is the height of the 3D shape"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-cross-sections",
+    "displayName": "Cross-Sections",
+    "description": "Describe and identify the shapes formed by slicing 3D figures with a plane",
+    "category": "geometry",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Geometry and Measurement",
+    "prerequisites": ["g7-surface-area", "g7-volume"],
+    "enables": [],
+    "standardsAlignment": ["7.G.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Cross-section = shape formed when a plane cuts through a solid",
+        "Slicing a rectangular prism: can produce rectangles, triangles, other shapes",
+        "Slicing a cylinder: circles (horizontal), rectangles (vertical), ellipses (diagonal)",
+        "Slicing a cone or pyramid: circles, triangles, or other shapes depending on angle"
+      ],
+      "commonMistakes": [
+        "Confusing the cross-section with a face of the solid",
+        "Not considering the angle of the cut",
+        "Assuming all cuts produce the same shape"
+      ],
+      "teachingTips": [
+        "Use play-dough or clay to physically slice shapes",
+        "Relate to real life: cutting a log, slicing a cucumber",
+        "This is more conceptual — emphasize visualization over computation"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "g7-populations-samples",
+    "displayName": "Populations vs. Samples",
+    "description": "Distinguish between populations and samples, understand why we sample, and recognize bias",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Statistics: Sampling and Inference",
+    "prerequisites": [],
+    "enables": ["g7-random-sampling", "g7-compare-data-sets"],
+    "standardsAlignment": ["7.SP.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Population: the entire group you want information about",
+        "Sample: a subset of the population you actually study",
+        "Why sample? Populations are often too large to study entirely",
+        "Representative sample: reflects the characteristics of the population"
+      ],
+      "commonMistakes": [
+        "Thinking you MUST survey everyone (census vs. sample)",
+        "Not recognizing biased samples (e.g., surveying only friends)",
+        "Confusing sample size with sample quality"
+      ],
+      "teachingTips": [
+        "Use school examples: surveying all 500 students vs. 50",
+        "Discuss real polls and surveys — how were they collected?",
+        "Introduce bias with obviously flawed examples first"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "g7-random-sampling",
+    "displayName": "Random Sampling",
+    "description": "Understand why random sampling produces representative results and identify sampling methods",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Statistics: Sampling and Inference",
+    "prerequisites": ["g7-populations-samples"],
+    "enables": ["g7-informal-inferences"],
+    "standardsAlignment": ["7.SP.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Random sample: every member of the population has an equal chance of being selected",
+        "Random sampling reduces bias",
+        "Larger random samples give more reliable estimates",
+        "Convenience samples and voluntary response samples are often biased"
+      ],
+      "commonMistakes": [
+        "Thinking 'random' means 'haphazard' — it means equal chance",
+        "Not recognizing convenience sampling as biased",
+        "Assuming a large biased sample is better than a small random one"
+      ],
+      "teachingTips": [
+        "Simulate: draw names from a hat vs. picking volunteers",
+        "Compare results from different sampling methods — show the bias",
+        "Connect to real examples: phone polls, online surveys, taste tests"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "g7-compare-data-sets",
+    "displayName": "Compare Data Sets",
+    "description": "Compare two groups using measures of center (mean, median) and variability (range, MAD, IQR)",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Statistics: Sampling and Inference",
+    "prerequisites": ["g7-populations-samples"],
+    "enables": ["g7-informal-inferences"],
+    "standardsAlignment": ["7.SP.3", "7.SP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Mean: add all values, divide by count",
+        "Median: middle value when data is ordered",
+        "Range: max - min (simple spread measure)",
+        "MAD (Mean Absolute Deviation): average distance from the mean"
+      ],
+      "commonMistakes": [
+        "Forgetting to order data before finding the median",
+        "Comparing means without considering variability",
+        "Not computing MAD correctly: must use absolute values"
+      ],
+      "teachingTips": [
+        "Use dot plots and box plots to visualize before computing",
+        "Compare with context: 'Class A scores higher ON AVERAGE, but Class B is more consistent'",
+        "Teach that center + spread together tell the full story"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-informal-inferences",
+    "displayName": "Draw Informal Inferences",
+    "description": "Use sample data to draw informal comparative inferences about two populations",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 3,
+    "unit": "Statistics: Sampling and Inference",
+    "prerequisites": ["g7-compare-data-sets", "g7-random-sampling"],
+    "enables": [],
+    "standardsAlignment": ["7.SP.2", "7.SP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inference: a conclusion drawn from evidence (not certainty)",
+        "Use measures of center and variability to support claims",
+        "Compare distributions visually using dot plots or box plots",
+        "Larger differences between groups + smaller variability = stronger inference"
+      ],
+      "commonMistakes": [
+        "Making absolute claims ('Group A IS better') instead of qualified ones ('evidence suggests')",
+        "Ignoring variability when drawing conclusions",
+        "Not referencing specific numbers to support their inference"
+      ],
+      "teachingTips": [
+        "Teach claim-evidence-reasoning framework for written responses",
+        "Use overlapping vs. non-overlapping distributions to show strength of evidence",
+        "Practice: 'What can we say? What CAN'T we say?'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "g7-simple-probability",
+    "displayName": "Probability of Simple Events",
+    "description": "Calculate the probability of simple events as a ratio of favorable to total outcomes",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Probability",
+    "prerequisites": ["g7-fraction-decimal-fluency"],
+    "enables": ["g7-experimental-theoretical", "g7-compound-events"],
+    "standardsAlignment": ["7.SP.5", "7.SP.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "P(event) = favorable outcomes / total outcomes",
+        "Probability ranges from 0 (impossible) to 1 (certain)",
+        "Express as fraction, decimal, or percent",
+        "Complement: P(not A) = 1 - P(A)"
+      ],
+      "commonMistakes": [
+        "Probability greater than 1 (impossible — check your ratio)",
+        "Not counting total outcomes correctly",
+        "Confusing 'favorable' with 'unfavorable' outcomes"
+      ],
+      "teachingTips": [
+        "Start with familiar objects: coins, dice, spinners, cards",
+        "Place probabilities on a 0-to-1 number line for intuition",
+        "Always list the sample space before computing"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-experimental-theoretical",
+    "displayName": "Experimental vs. Theoretical Probability",
+    "description": "Compare experimental results with theoretical predictions and understand the law of large numbers",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Probability",
+    "prerequisites": ["g7-simple-probability"],
+    "enables": ["g7-probability-simulations"],
+    "standardsAlignment": ["7.SP.5", "7.SP.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Theoretical probability: what SHOULD happen based on math",
+        "Experimental probability: what ACTUALLY happens in trials",
+        "Law of large numbers: more trials → closer to theoretical",
+        "Relative frequency: experimental probability from data"
+      ],
+      "commonMistakes": [
+        "Expecting experimental to match theoretical exactly in small samples",
+        "Thinking a coin 'is due' for heads after several tails (gambler's fallacy)",
+        "Not recognizing that experimental results vary from trial to trial"
+      ],
+      "teachingTips": [
+        "Run actual experiments: flip coins 10 times vs. 100 times",
+        "Track results on a class chart and watch convergence",
+        "Discuss: 'Is the die unfair, or did we just not roll enough?'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-compound-events",
+    "displayName": "Compound Events",
+    "description": "Find probabilities of compound events using organized lists, tables, and tree diagrams",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Probability",
+    "prerequisites": ["g7-simple-probability"],
+    "enables": ["g7-probability-simulations"],
+    "standardsAlignment": ["7.SP.8", "7.SP.8a", "7.SP.8b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Compound event: two or more simple events combined",
+        "Sample space: list ALL possible outcomes systematically",
+        "Organized list, table, or tree diagram to count outcomes",
+        "P(compound) = favorable compound outcomes / total compound outcomes"
+      ],
+      "commonMistakes": [
+        "Missing outcomes when listing (not being systematic)",
+        "Counting (red, blue) and (blue, red) as the same when order matters",
+        "Multiplying probabilities when they should be listing outcomes"
+      ],
+      "teachingTips": [
+        "Tree diagrams are the most visual — start there",
+        "For two events, a table (grid) is often fastest",
+        "Always count total outcomes FIRST, then favorable"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-probability-simulations",
+    "displayName": "Probability Simulations",
+    "description": "Design and use simulations (spinners, dice, random numbers) to estimate probabilities",
+    "category": "statistics-probability",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Probability",
+    "prerequisites": ["g7-experimental-theoretical", "g7-compound-events"],
+    "enables": [],
+    "standardsAlignment": ["7.SP.8", "7.SP.8c"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simulation: using a model to estimate real-world probabilities",
+        "Choose a device that matches the probability (coin for 50/50, die for 1/6)",
+        "Run many trials and record results",
+        "Use relative frequency from simulation as probability estimate"
+      ],
+      "commonMistakes": [
+        "Choosing a simulation device that doesn't match the scenario",
+        "Not running enough trials (too few = unreliable)",
+        "Confusing the simulation model with the real situation"
+      ],
+      "teachingTips": [
+        "Use real dice, coins, and spinners — hands-on is essential",
+        "Design a simulation for a real question: 'What's the chance of rain 3 days in a row?'",
+        "Compare simulation results to theoretical calculations when possible"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "g7-evaluate-expressions",
+    "displayName": "Evaluate Expressions with Substitution",
+    "description": "Substitute values into algebraic expressions and evaluate using order of operations",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Advanced Expressions & Intro to Functions",
+    "prerequisites": ["g7-simplify-expressions", "g7-multiply-divide-rationals"],
+    "enables": ["g7-function-input-output"],
+    "standardsAlignment": ["7.EE.1", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Replace the variable with the given value (use parentheses!)",
+        "Follow order of operations: PEMDAS/GEMS",
+        "Evaluate expressions with multiple variables",
+        "Handle negative substitutions carefully: (-3)² ≠ -3²"
+      ],
+      "commonMistakes": [
+        "Not using parentheses when substituting negatives: 2(-3)² vs. 2 × -3²",
+        "Applying operations in wrong order after substitution",
+        "Forgetting that x² when x = -3 means (-3)² = 9, not -(3²) = -9"
+      ],
+      "teachingTips": [
+        "Always write parentheses around the substituted value",
+        "Use the 'replace and rewrite' strategy: show each step",
+        "Build complexity gradually: positive → negative → fraction substitutions"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "g7-equation-word-problems",
+    "displayName": "Equation Word Problems",
+    "description": "Write and solve equations for real-world problems involving geometry, percent, and multi-step contexts",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Advanced Expressions & Intro to Functions",
+    "prerequisites": ["g7-multi-step-equations", "g7-verbal-to-algebraic", "g7-percent-applications"],
+    "enables": [],
+    "standardsAlignment": ["7.EE.3", "7.EE.4", "7.EE.4a"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Read → identify unknowns → define variables → write equation → solve → check",
+        "Geometry word problems: perimeter, area, angle relationships",
+        "Percent word problems: is/of = %/100 or equation approach",
+        "Multi-step problems: organize information before writing equations"
+      ],
+      "commonMistakes": [
+        "Jumping to computation without setting up an equation",
+        "Defining the variable incorrectly (what does x actually represent?)",
+        "Not checking if the answer makes sense in context"
+      ],
+      "teachingTips": [
+        "Require students to define variables in words before writing equations",
+        "Use the 'does my answer make sense?' check as a mandatory final step",
+        "Mix geometry and percent contexts to show equations work everywhere"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-function-input-output",
+    "displayName": "Function Input/Output (Intro)",
+    "description": "Understand functions as input/output rules, identify rules from tables, and evaluate functions",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Advanced Expressions & Intro to Functions",
+    "prerequisites": ["g7-evaluate-expressions", "g7-proportional-equations"],
+    "enables": ["g7-patterns-sequences"],
+    "standardsAlignment": ["7.EE.4", "8.F.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Function: a rule that assigns exactly one output to each input",
+        "Input → Rule → Output (function machine model)",
+        "Find the rule from a table: look for the pattern between x and y",
+        "Use the rule to find missing values"
+      ],
+      "commonMistakes": [
+        "Not checking ALL rows in a table — one pattern that works for two rows might not work for all",
+        "Writing additive rules when the pattern is multiplicative",
+        "Confusing functions with proportional relationships (not all functions are y = kx)"
+      ],
+      "teachingTips": [
+        "Use the 'function machine' metaphor: input goes in, rule happens, output comes out",
+        "Start with simple rules: y = 2x, y = x + 3, then build to y = 2x + 1",
+        "This is a PREVIEW of 8th grade — keep it intuitive, not overly formal"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "g7-patterns-sequences",
+    "displayName": "Patterns & Sequences",
+    "description": "Identify, extend, and write rules for arithmetic and geometric patterns and sequences",
+    "category": "expressions-equations",
+    "course": "7th Grade Math",
+    "quarter": 4,
+    "unit": "Advanced Expressions & Intro to Functions",
+    "prerequisites": ["g7-function-input-output"],
+    "enables": [],
+    "standardsAlignment": ["7.EE.4", "8.F.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Arithmetic sequence: add the same number each time (common difference)",
+        "Geometric sequence: multiply by the same number each time (common ratio)",
+        "Writing the rule: use the pattern to find the nth term",
+        "Connect to function tables: position (n) → value"
+      ],
+      "commonMistakes": [
+        "Confusing arithmetic (add) with geometric (multiply) patterns",
+        "Off-by-one errors when finding the nth term",
+        "Not checking the rule against ALL given terms"
+      ],
+      "teachingTips": [
+        "Use visual patterns (dot arrays, tile patterns) alongside number sequences",
+        "Ask: 'What changes each time? By how much?'",
+        "This bridges naturally to linear functions in 8th grade"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  }
+]

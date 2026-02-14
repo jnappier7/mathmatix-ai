@@ -1,0 +1,184 @@
+{
+  "moduleId": "checkpoint_bootcamp",
+  "course": "7th Grade Math",
+  "unit": 0,
+  "title": "Checkpoint: Boot Camp Diagnostic",
+  "weeks": "2",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "diagnosticMode": true,
+  "description": "Diagnostic assessment to identify skill gaps from 6th grade. Covers integer operations, fraction/decimal fluency, simplifying expressions, solving basic equations, and coordinate plane basics.",
+  "skillsCovered": [
+    "g7-integer-operations",
+    "g7-fraction-decimal-fluency",
+    "g7-simplify-expressions-basics",
+    "g7-one-two-step-equations",
+    "g7-coordinate-plane-basics"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest skill areas before moving to Unit 1. Boot camp gaps will cascade into every subsequent unit if not addressed.",
+    "clusters": [
+      {
+        "skillId": "g7-integer-operations",
+        "reteachFocus": "Adding and subtracting integers using the number line; sign rules for multiplication and division (same signs produce positive, different signs produce negative); applying order of operations when negatives are present"
+      },
+      {
+        "skillId": "g7-fraction-decimal-fluency",
+        "reteachFocus": "Finding the LCD for adding and subtracting fractions with unlike denominators; multiplying fractions straight across and simplifying; dividing fractions by multiplying by the reciprocal; converting between fractions and decimals"
+      },
+      {
+        "skillId": "g7-simplify-expressions-basics",
+        "reteachFocus": "Identifying like terms by matching variable parts; combining like terms by adding or subtracting their coefficients; applying the distributive property a(b + c) = ab + ac; multi-step simplification combining distribution and collecting like terms"
+      },
+      {
+        "skillId": "g7-one-two-step-equations",
+        "reteachFocus": "Using inverse operations to isolate the variable; two-step strategy: undo addition or subtraction first, then undo multiplication or division; checking solutions by substituting back into the original equation"
+      },
+      {
+        "skillId": "g7-coordinate-plane-basics",
+        "reteachFocus": "Identifying the four quadrants and their sign patterns (QI: +,+ QII: −,+ QIII: −,− QIV: +,−); plotting ordered pairs with x horizontal and y vertical; understanding reflections across axes and how they change coordinate signs"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "bc-1",
+      "question": "Evaluate: −4 + 9",
+      "answer": "−4 + 9 = 5. Start at −4 on the number line and move 9 units to the right.",
+      "skill": "g7-integer-operations",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "bc-2",
+      "question": "Evaluate: −3 × (−7)",
+      "answer": "−3 × (−7) = 21. Negative times negative equals positive.",
+      "skill": "g7-integer-operations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "bc-3",
+      "question": "Evaluate: (−8) + 5 × (−2)",
+      "answer": "Multiply first (order of operations): 5 × (−2) = −10. Then add: (−8) + (−10) = −18.",
+      "skill": "g7-integer-operations",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "bc-4",
+      "question": "Evaluate: 1/3 + 1/6",
+      "answer": "LCD = 6. Rewrite 1/3 as 2/6. Then 2/6 + 1/6 = 3/6 = 1/2.",
+      "skill": "g7-fraction-decimal-fluency",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "bc-5",
+      "question": "Evaluate: 5/6 − 1/4",
+      "answer": "LCD = 12. Rewrite: 10/12 − 3/12 = 7/12.",
+      "skill": "g7-fraction-decimal-fluency",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "bc-6",
+      "question": "Evaluate: (3/4) ÷ (1/2)",
+      "answer": "Divide by multiplying by the reciprocal: (3/4) × (2/1) = 6/4 = 3/2.",
+      "skill": "g7-fraction-decimal-fluency",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "bc-7",
+      "question": "Simplify: 3x + 5x",
+      "answer": "Combine like terms: 3x + 5x = 8x.",
+      "skill": "g7-simplify-expressions-basics",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "bc-8",
+      "question": "Expand and simplify: 4(x + 3)",
+      "answer": "Apply the distributive property: 4 · x + 4 · 3 = 4x + 12.",
+      "skill": "g7-simplify-expressions-basics",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "bc-9",
+      "question": "Expand and simplify: 2(3x − 1) + 4x",
+      "answer": "Distribute: 6x − 2 + 4x. Combine like terms: 10x − 2.",
+      "skill": "g7-simplify-expressions-basics",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "bc-10",
+      "question": "Solve for x: x + 5 = 12",
+      "answer": "x = 12 − 5 = 7. Check: 7 + 5 = 12 ✓",
+      "skill": "g7-one-two-step-equations",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "bc-11",
+      "question": "Solve for x: 2x − 3 = 7",
+      "answer": "2x = 7 + 3 = 10. x = 10 ÷ 2 = 5. Check: 2(5) − 3 = 10 − 3 = 7 ✓",
+      "skill": "g7-one-two-step-equations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "bc-12",
+      "question": "Solve for x: −3x + 4 = −8",
+      "answer": "−3x = −8 − 4 = −12. x = −12 ÷ (−3) = 4. Check: −3(4) + 4 = −12 + 4 = −8 ✓",
+      "skill": "g7-one-two-step-equations",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "bc-13",
+      "question": "In which quadrant is the point (3, −2)?",
+      "answer": "x is positive and y is negative, so the point is in Quadrant IV.",
+      "skill": "g7-coordinate-plane-basics",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "bc-14",
+      "question": "Name the quadrant for each point: A(−4, 5), B(2, −3), C(−1, −6)",
+      "answer": "A(−4, 5): x negative, y positive → Quadrant II. B(2, −3): x positive, y negative → Quadrant IV. C(−1, −6): both negative → Quadrant III.",
+      "skill": "g7-coordinate-plane-basics",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "bc-15",
+      "question": "Point P is located at (3, −4). If P is reflected across the x-axis, what are the coordinates of the new point?",
+      "answer": "Reflecting across the x-axis keeps x the same and flips the sign of y. New point: (3, 4).",
+      "skill": "g7-coordinate-plane-basics",
+      "difficulty": 3,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "bc-1": "5",
+    "bc-2": "21",
+    "bc-3": "−18",
+    "bc-4": "1/2",
+    "bc-5": "7/12",
+    "bc-6": "3/2",
+    "bc-7": "8x",
+    "bc-8": "4x + 12",
+    "bc-9": "10x − 2",
+    "bc-10": "x = 7",
+    "bc-11": "x = 5",
+    "bc-12": "x = 4",
+    "bc-13": "Quadrant IV",
+    "bc-14": "A: QII, B: QIV, C: QIII",
+    "bc-15": "(3, 4)"
+  }
+}

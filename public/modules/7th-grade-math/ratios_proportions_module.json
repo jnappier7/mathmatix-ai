@@ -1,0 +1,382 @@
+{
+  "moduleId": "ratios_proportions",
+  "course": "7th Grade Math",
+  "unit": 3,
+  "title": "Ratios, Rates, and Proportions",
+  "weeks": "11-14",
+  "estimatedDuration": 30,
+  "description": "Master the interconnected world of ratios, rates, and proportions. Start by computing and comparing unit rates, then set up and solve proportions in real-world contexts like cooking and shopping. Explore scale drawings and maps using proportional reasoning. Finish by applying percent concepts to discounts, tax, tips, markups, and percent change — including the surprising result when you increase and then decrease by the same percent.",
+  "skills": [
+    "g7-unit-rates",
+    "g7-proportions",
+    "g7-scale-drawings",
+    "g7-percent-applications",
+    "g7-percent-change"
+  ],
+  "standardsAlignment": ["7.RP.1", "7.RP.2", "7.RP.3", "7.G.1"],
+  "goals": [
+    "Compute unit rates and use them to compare two quantities (e.g., price per ounce, speed in miles per hour)",
+    "Set up and solve proportions using cross-multiplication and equivalent ratios",
+    "Use scale factors to find actual or drawing dimensions on maps and blueprints",
+    "Calculate discounts, sales tax, tips, and markups using percent reasoning",
+    "Find percent increase and percent decrease, and explain why a percent increase followed by the same percent decrease does not return to the original value"
+  ],
+  "instructionalStrategy": [
+    "Ground every concept in contexts 7th graders encounter daily — grocery shopping, cooking, road trips, and online purchases — so that ratios and percents feel like tools rather than abstract rules.",
+    "Teach unit rates as 'the great equalizer' for comparison: when two packages have different sizes and prices, the unit rate puts them on the same footing.",
+    "Use ratio tables and double number lines as visual scaffolds before moving to cross-multiplication, so students understand *why* the shortcut works.",
+    "For percent problems, always connect back to the fraction-decimal-percent triad and emphasize that 'percent' literally means 'per hundred.'",
+    "Conclude with the 10%-up-then-10%-down surprise to build conceptual understanding: the base changes after the first operation, so equal percent changes are NOT inverse operations."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-unit-rates",
+      "title": "Unit Rates and Rate Comparisons",
+      "content": "A **ratio** compares two quantities (e.g., 3 wins to 2 losses, written 3:2). A **rate** is a special ratio that compares two quantities with *different* units — like miles per hour or dollars per pound. A **unit rate** is a rate with a denominator of 1. It answers the question: 'How much of the first quantity for every ONE of the second?'\n\nTo find a unit rate, divide the numerator by the denominator. For example, if you earn $45 for 6 hours of work, the unit rate is $45 / 6 = $7.50 per hour.\n\nUnit rates let you make fair comparisons. If one store sells 5 apples for $4.00 and another sells 3 apples for $2.25, you cannot compare directly — the quantities are different. But compute the price per apple ($0.80 vs. $0.75) and the comparison is instant.",
+      "keyPoints": [
+        "A ratio compares two quantities; a rate compares quantities with different units",
+        "A unit rate has a denominator of 1 — divide to find it",
+        "Unit rates allow fair comparisons between options with different sizes or quantities",
+        "Common unit rates include price per item, miles per hour, and calories per serving"
+      ],
+      "initialPrompt": "Imagine you are at the store and you see two bags of trail mix: a 10-oz bag for $3.50 and a 14-oz bag for $4.20. How would you figure out which is the better deal?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-proportions",
+      "title": "Proportions and Proportional Reasoning",
+      "content": "A **proportion** is an equation stating that two ratios are equal: a/b = c/d. You can read it as 'a is to b as c is to d.' Proportions are the bridge between a known ratio and an unknown quantity.\n\nTo solve a proportion, use **cross-multiplication**: multiply the numerator of each fraction by the denominator of the other. If a/b = c/d, then a * d = b * c. Then solve the resulting one-step equation.\n\nFor example, if a recipe uses 2 cups of rice for 5 servings, and you need 8 servings, set up 2/5 = x/8. Cross-multiply: 5x = 16, so x = 16/5 = 3.2 cups of rice.\n\nProportional reasoning appears everywhere: scaling recipes, converting currencies, predicting outcomes from samples, and much more.",
+      "keyPoints": [
+        "A proportion states that two ratios are equal: a/b = c/d",
+        "Cross-multiplication turns a proportion into a simple equation: a * d = b * c",
+        "Always label your units to make sure the same type of quantity is in the same position on both sides",
+        "Check your answer by substituting back in — both ratios should simplify to the same value"
+      ],
+      "initialPrompt": "If you know a car uses 3 gallons of gas to drive 87 miles, how would you set up a proportion to find how many gallons it needs for a 145-mile trip?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-scale-drawings",
+      "title": "Scale Drawings and Maps",
+      "content": "A **scale drawing** is a proportional representation of a real object. The **scale** tells you the relationship between the drawing and reality — for example, '1 cm = 5 m' means every centimeter on the drawing represents 5 meters in real life.\n\nTo find an actual measurement from a scale drawing, multiply the drawing measurement by the scale factor. To find a drawing measurement from a real measurement, divide by the scale factor.\n\nMaps work the same way. If a map says '1 inch = 20 miles' and two cities are 3.5 inches apart on the map, the actual distance is 3.5 * 20 = 70 miles.\n\nYou can also set up a proportion: (drawing measurement)/(actual measurement) = (scale drawing unit)/(scale actual unit).",
+      "keyPoints": [
+        "A scale drawing is a proportional shrink or enlargement of the real object",
+        "The scale gives the ratio between the drawing and real-world measurements",
+        "Drawing to actual: multiply by the scale factor; actual to drawing: divide by the scale factor",
+        "Maps are scale drawings — use the legend (scale bar) to convert between map distance and real distance"
+      ],
+      "initialPrompt": "If a map's scale says 1 inch = 25 miles, and you measure 6 inches between your hometown and the beach, how far is the actual drive?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-percent-applications",
+      "title": "Percent Applications: Discounts, Tax, Tips, and Markups",
+      "content": "Percent means 'per hundred.' When you see 25%, think 25 out of 100, or 0.25 as a decimal.\n\n**Discount (markdown):** A store takes a percentage off the original price. Sale price = original price - discount amount. You can also multiply: sale price = original price * (1 - discount rate).\n\n**Sales tax:** The government adds a percentage on top of the purchase price. Total = price + tax = price * (1 + tax rate).\n\n**Tip:** You add a percentage of the bill as a gratuity. Tip amount = bill * tip rate.\n\n**Markup:** A store buys an item at a wholesale cost and increases the price before selling. Selling price = cost * (1 + markup rate).\n\nThe key pattern: to find a percent of a number, convert the percent to a decimal and multiply.",
+      "keyPoints": [
+        "Percent means 'per hundred' — convert to a decimal by dividing by 100",
+        "Discount subtracts from the price: sale price = original * (1 - rate)",
+        "Tax and tip add to the price: total = price * (1 + rate)",
+        "Markup increases the wholesale cost to set the retail price",
+        "Always identify the base (the original amount the percent is taken of)"
+      ],
+      "initialPrompt": "You see a sign that says '30% off all sneakers.' If a pair costs $60, walk me through how you would calculate the sale price."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-percent-change",
+      "title": "Percent Increase and Percent Decrease",
+      "content": "**Percent change** measures how much a quantity has grown or shrunk relative to its original value.\n\nThe formula is: percent change = (amount of change / original amount) * 100%.\n\n- If the new value is larger, it is a **percent increase**.\n- If the new value is smaller, it is a **percent decrease**.\n\nFor example, if a shirt's price goes from $40 to $50, the change is $10. Percent increase = (10 / 40) * 100% = 25%.\n\n**Important surprise:** A percent increase followed by the *same* percent decrease does NOT bring you back to the original number. Why? Because the base changes! A 10% increase on $100 gives $110. But a 10% decrease on $110 removes $11 (not $10), leaving $99. The two '10%' amounts are computed on different bases.",
+      "keyPoints": [
+        "Percent change = (amount of change / original amount) * 100%",
+        "Increase means the new value is greater; decrease means it is smaller",
+        "Always divide by the ORIGINAL value, not the new value",
+        "A percent increase then the same percent decrease does NOT return to the starting value because the base changes"
+      ],
+      "initialPrompt": "A new video game costs $50 at launch. A month later the price drops to $40. What is the percent decrease? How did you decide what number to divide by?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-unit-rates",
+      "title": "I-Do: Computing and Comparing Unit Rates",
+      "examples": [
+        {
+          "problem": "A 12-pack of juice boxes costs $8.40. What is the price per juice box?",
+          "solution": "Divide the total cost by the number of items:\n$8.40 / 12 = $0.70\n\nThe unit price is **$0.70 per juice box**.",
+          "tip": "Unit price = total price / number of items. This works for any 'per item' rate."
+        },
+        {
+          "problem": "Maya jogs 3/4 of a mile in 6 minutes. What is her speed in miles per hour?",
+          "solution": "First find the unit rate in miles per minute:\n(3/4) / 6 = 3/24 = 1/8 mile per minute\n\nConvert to miles per hour (multiply by 60):\n(1/8) * 60 = 60/8 = **7.5 miles per hour**",
+          "tip": "To convert 'per minute' to 'per hour,' multiply by 60 since there are 60 minutes in one hour."
+        },
+        {
+          "problem": "Store A sells 5 pounds of apples for $6.25. Store B sells 3 pounds for $3.45. Which store has the better deal?",
+          "solution": "Find each unit price:\nStore A: $6.25 / 5 = $1.25 per pound\nStore B: $3.45 / 3 = $1.15 per pound\n\n$1.15 < $1.25, so **Store B has the better deal**.",
+          "tip": "When comparing, compute the unit rate for each option, then pick the one with the lower price per unit (if you want the cheaper option)."
+        }
+      ],
+      "initialPrompt": "In the third example, what if Store A ran a 10% off sale? Would Store A then be cheaper per pound than Store B?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-proportions",
+      "title": "I-Do: Setting Up and Solving Proportions",
+      "examples": [
+        {
+          "problem": "A cookie recipe calls for 2 cups of flour for every 3 dozen cookies. How much flour do you need for 9 dozen cookies?",
+          "solution": "Set up the proportion with flour on top and dozens on the bottom:\n2/3 = x/9\n\nCross-multiply:\n3 * x = 2 * 9\n3x = 18\nx = 6\n\nYou need **6 cups of flour**.",
+          "tip": "Keep the same quantity in the same position on both sides. Here: flour/dozens = flour/dozens."
+        },
+        {
+          "problem": "If 5 notebooks cost $11.25, how much do 8 notebooks cost at the same rate?",
+          "solution": "Set up the proportion:\n5/11.25 = 8/x\n\nCross-multiply:\n5 * x = 11.25 * 8\n5x = 90\nx = 18\n\n8 notebooks cost **$18.00**.\n\nCheck: $11.25 / 5 = $2.25 per notebook. $2.25 * 8 = $18.00.",
+          "tip": "Always check by computing the unit rate and multiplying. If both methods give the same answer, you know you set up the proportion correctly."
+        }
+      ],
+      "initialPrompt": "Try this: a car travels 87 miles on 3 gallons of gas. Set up a proportion to find how many gallons it needs for a 145-mile trip."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-scale-drawings",
+      "title": "I-Do: Working with Scale Drawings and Maps",
+      "examples": [
+        {
+          "problem": "On a map, the scale is 1 inch = 15 miles. Two cities are 3.5 inches apart on the map. What is the actual distance?",
+          "solution": "Multiply the map distance by the scale factor:\n3.5 * 15 = 52.5\n\nThe actual distance is **52.5 miles**.",
+          "tip": "Map to reality: multiply by the number of real-world units per map unit."
+        },
+        {
+          "problem": "A bedroom is 12 feet by 10 feet. An architect draws it using a scale of 1 cm = 2 feet. What are the dimensions on the drawing?",
+          "solution": "Divide each real measurement by the scale factor:\nLength: 12 / 2 = 6 cm\nWidth: 10 / 2 = 5 cm\n\nThe drawing dimensions are **6 cm by 5 cm**.",
+          "tip": "Reality to drawing: divide by the number of real-world units per drawing unit."
+        },
+        {
+          "problem": "On a blueprint, a hallway measures 4.5 cm. The scale is 1 cm = 3 feet. What is the actual length of the hallway?",
+          "solution": "Set up a proportion:\n1/3 = 4.5/x\n\nCross-multiply:\n1 * x = 3 * 4.5\nx = 13.5\n\nThe hallway is **13.5 feet** long.",
+          "tip": "You can either multiply directly (4.5 * 3 = 13.5) or set up a proportion — both give the same result."
+        }
+      ],
+      "initialPrompt": "A park on a map measures 4 cm by 2.5 cm. If the scale is 1 cm = 50 meters, what are the actual dimensions of the park?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-percent-applications",
+      "title": "I-Do: Discounts, Tax, Tips, and Markups",
+      "examples": [
+        {
+          "problem": "A jacket originally costs $65 and is on sale for 20% off. What is the sale price?",
+          "solution": "Find the discount amount:\n0.20 * $65 = $13\n\nSubtract from the original price:\n$65 - $13 = $52\n\nThe sale price is **$52**.\n\nShortcut: $65 * 0.80 = $52 (paying 80% of the price).",
+          "tip": "If the discount is 20%, you pay 100% - 20% = 80%. Multiplying by 0.80 gives the sale price in one step."
+        },
+        {
+          "problem": "A family's dinner bill is $40. They want to leave a 15% tip. What is the total amount including the tip?",
+          "solution": "Find the tip:\n0.15 * $40 = $6\n\nAdd to the bill:\n$40 + $6 = $46\n\nThe total is **$46**.\n\nShortcut: $40 * 1.15 = $46.",
+          "tip": "A quick mental math trick for 15%: find 10% ($4), then find half of that for 5% ($2), and add them: $4 + $2 = $6."
+        },
+        {
+          "problem": "A store buys a backpack from a wholesaler for $18 and marks it up 50%. What is the selling price?",
+          "solution": "Find the markup amount:\n0.50 * $18 = $9\n\nAdd to the cost:\n$18 + $9 = $27\n\nThe selling price is **$27**.\n\nShortcut: $18 * 1.50 = $27.",
+          "tip": "Markup works just like tax and tip — you are adding a percent to the base amount."
+        }
+      ],
+      "initialPrompt": "You buy a book for $24 and there is 5% sales tax. Can you find the total price using both methods — first finding the tax amount and adding, then using the shortcut multiplier?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-percent-change",
+      "title": "I-Do: Percent Increase and Decrease",
+      "examples": [
+        {
+          "problem": "A video game's price drops from $60 to $45. What is the percent decrease?",
+          "solution": "Find the amount of change:\n$60 - $45 = $15\n\nDivide by the original:\n$15 / $60 = 0.25\n\nConvert to percent:\n0.25 * 100% = **25% decrease**\n\nCheck: $60 * 0.75 = $45.",
+          "tip": "Always divide by the ORIGINAL value — that is the base for percent change."
+        },
+        {
+          "problem": "A town's population grew from 8,000 to 9,200. What is the percent increase?",
+          "solution": "Find the amount of change:\n9,200 - 8,000 = 1,200\n\nDivide by the original:\n1,200 / 8,000 = 0.15\n\nConvert to percent:\n0.15 * 100% = **15% increase**\n\nCheck: 8,000 * 1.15 = 9,200.",
+          "tip": "For percent increase, the original is the smaller number. For percent decrease, the original is the larger number."
+        },
+        {
+          "problem": "A store raises the price of a $200 item by 10%. The next month, they reduce the new price by 10%. What is the final price? Is it back to $200?",
+          "solution": "Step 1 — 10% increase:\n$200 * 1.10 = $220\n\nStep 2 — 10% decrease (of the NEW price, $220):\n$220 * 0.90 = $198\n\nThe final price is **$198**, NOT $200.\n\nWhy? The 10% increase added $20 (10% of $200), but the 10% decrease removed $22 (10% of $220). The base changed, so the dollar amounts are different.",
+          "tip": "This is a classic trick question! A percent increase and the same percent decrease will always result in a value LESS than the original because the decrease is calculated on a larger base."
+        }
+      ],
+      "initialPrompt": "What if the store decreased the $200 item by 10% first, and then increased that result by 10%? Would the answer still be $198, or something different? Try it!"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings"],
+      "title": "We-Do: Rates, Proportions, and Scale Drawings",
+      "problems": [
+        {
+          "id": "rp-gp1",
+          "problem": "A car travels 195 miles using 6 gallons of gas. What is the car's fuel efficiency in miles per gallon?",
+          "hints": [
+            "Fuel efficiency is a unit rate: miles per ONE gallon.",
+            "Divide the total miles by the total gallons: 195 / 6.",
+            "195 / 6 = 32.5 miles per gallon."
+          ],
+          "answer": "32.5 miles per gallon"
+        },
+        {
+          "id": "rp-gp2",
+          "problem": "A recipe for pancakes calls for 3 eggs to make 24 pancakes. You want to make 40 pancakes. How many eggs do you need?",
+          "hints": [
+            "Set up a proportion with eggs on top and pancakes on the bottom: 3/24 = x/40.",
+            "Cross-multiply: 24x = 3 * 40 = 120.",
+            "Solve: x = 120 / 24 = 5 eggs."
+          ],
+          "answer": "5 eggs"
+        },
+        {
+          "id": "rp-gp3",
+          "problem": "On a hiking trail map, the scale is 1 inch = 20 miles. Two trailheads are 75 miles apart in real life. How far apart are they on the map?",
+          "hints": [
+            "You are going from actual distance to map distance, so divide by the scale factor.",
+            "75 miles / 20 miles per inch = 75 / 20.",
+            "75 / 20 = 3.75 inches on the map."
+          ],
+          "answer": "3.75 inches"
+        }
+      ],
+      "initialPrompt": "Let's work through these together! For the first problem, what two quantities are you comparing, and which one should be 'per one'?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skills": ["g7-percent-applications", "g7-percent-change"],
+      "title": "We-Do: Percent Applications and Percent Change",
+      "problems": [
+        {
+          "id": "rp-gp4",
+          "problem": "A skateboard costs $80 and is on sale for 25% off. After the discount, you also pay 5% sales tax on the sale price. What is the total cost?",
+          "hints": [
+            "First find the discount: 25% of $80 = 0.25 * 80 = $20. The sale price is $80 - $20 = $60.",
+            "Now apply the 5% tax to the sale price: 0.05 * $60 = $3.",
+            "Total cost: $60 + $3 = $63."
+          ],
+          "answer": "$63"
+        },
+        {
+          "id": "rp-gp5",
+          "problem": "Your math class had 28 students last year. This year it has 35 students. What is the percent increase in class size?",
+          "hints": [
+            "Find the change: 35 - 28 = 7 students.",
+            "Divide the change by the original: 7 / 28.",
+            "7 / 28 = 0.25 = 25% increase."
+          ],
+          "answer": "25% increase"
+        }
+      ],
+      "initialPrompt": "For the skateboard problem, what do you need to calculate first — the tax or the discount? Why does the order matter?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings", "g7-percent-applications", "g7-percent-change"],
+      "title": "You-Do: Independent Practice",
+      "problems": [
+        {
+          "id": "rp-ip1",
+          "problem": "A grocery store sells a 16-ounce box of cereal for $4.80 and a 24-ounce box for $6.00. Which box is the better deal per ounce, and what is its unit price?",
+          "answer": "The 24-oz box at $0.25 per ounce",
+          "skill": "g7-unit-rates",
+          "hints": [
+            "Find the unit price for each: $4.80 / 16 and $6.00 / 24.",
+            "16-oz box: $0.30 per ounce. 24-oz box: $0.25 per ounce. The 24-oz box is cheaper per ounce."
+          ]
+        },
+        {
+          "id": "rp-ip2",
+          "problem": "A printer prints 35 pages in 5 minutes. At that rate, how many minutes will it take to print 84 pages?",
+          "answer": "12 minutes",
+          "skill": "g7-proportions",
+          "hints": [
+            "Set up the proportion: 35/5 = 84/x.",
+            "Cross-multiply: 35x = 420, so x = 12."
+          ]
+        },
+        {
+          "id": "rp-ip3",
+          "problem": "A park is shown on a map with a scale of 1 cm = 50 meters. The park measures 7.5 cm by 4 cm on the map. What are the actual dimensions of the park in meters?",
+          "answer": "375 meters by 200 meters",
+          "skill": "g7-scale-drawings",
+          "hints": [
+            "Multiply each map measurement by the scale factor (50).",
+            "Length: 7.5 * 50 = 375 m. Width: 4 * 50 = 200 m."
+          ]
+        },
+        {
+          "id": "rp-ip4",
+          "problem": "You buy a pair of sneakers that costs $70 before tax. The sales tax rate is 8%. What is the total price you pay?",
+          "answer": "$75.60",
+          "skill": "g7-percent-applications",
+          "hints": [
+            "Find the tax: 0.08 * $70 = $5.60.",
+            "Add to the price: $70 + $5.60 = $75.60."
+          ]
+        },
+        {
+          "id": "rp-ip5",
+          "problem": "Your family's restaurant bill is $35. You want to leave an 18% tip. How much is the tip?",
+          "answer": "$6.30",
+          "skill": "g7-percent-applications",
+          "hints": [
+            "Convert 18% to a decimal: 0.18.",
+            "Multiply: 0.18 * $35 = $6.30."
+          ]
+        },
+        {
+          "id": "rp-ip6",
+          "problem": "A bicycle originally costs $240. It goes on sale and now costs $192. What is the percent decrease?",
+          "answer": "20% decrease",
+          "skill": "g7-percent-change",
+          "hints": [
+            "Find the change: $240 - $192 = $48.",
+            "Divide by the original: $48 / $240 = 0.20 = 20%."
+          ]
+        },
+        {
+          "id": "rp-ip7",
+          "problem": "A store raises the price of a $50 item by 10%, and then later reduces the new price by 10%. What is the final price? Explain why it is not $50.",
+          "answer": "$49.50",
+          "skill": "g7-percent-change",
+          "hints": [
+            "After a 10% increase: $50 * 1.10 = $55.",
+            "After a 10% decrease on $55: $55 * 0.90 = $49.50.",
+            "It is not $50 because the 10% decrease is taken on $55 (removing $5.50), not on the original $50 (which would remove $5)."
+          ]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "rp-gp1": "32.5 miles per gallon",
+    "rp-gp2": "5 eggs",
+    "rp-gp3": "3.75 inches",
+    "rp-gp4": "$63",
+    "rp-gp5": "25% increase",
+    "rp-ip1": "$0.25 per ounce (24-oz box)",
+    "rp-ip2": "12 minutes",
+    "rp-ip3": "375 m by 200 m",
+    "rp-ip4": "$75.60",
+    "rp-ip5": "$6.30",
+    "rp-ip6": "20% decrease",
+    "rp-ip7": "$49.50"
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "courseId": "7th-grade-math",
+  "track": "7th Grade Math",
+  "overview": "Full-year 7th grade mathematics course aligned to Common Core standards (7.NS, 7.EE, 7.RP, 7.G, 7.SP). Builds fluency with rational numbers, proportional reasoning, expressions and equations, geometry, statistics, and probability — the foundation for algebra readiness.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Shore up integer and fraction fluency in the Boot Camp",
+    "Build rational number operation skills with signed numbers and absolute value",
+    "Translate real-world situations into expressions and equations",
+    "Develop proportional reasoning through rates, percents, and scale",
+    "Identify and use proportional relationships in tables, graphs, and equations",
+    "Apply geometry formulas to area, surface area, and volume",
+    "Use data and probability to make predictions and draw conclusions",
+    "Bridge toward algebra with function thinking and pattern analysis"
+  ],
+
+  "standardsAlignment": {
+    "framework": "Common Core State Standards — Grade 7",
+    "domains": {
+      "7.NS": "The Number System — apply and extend operations with rational numbers",
+      "7.EE": "Expressions & Equations — use properties to generate equivalent expressions, solve problems",
+      "7.RP": "Ratios & Proportional Relationships — analyze proportional relationships",
+      "7.G": "Geometry — solve problems involving scale, area, surface area, and volume",
+      "7.SP": "Statistics & Probability — use sampling, compare populations, develop probability models"
+    }
+  },
+
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release for middle school learners",
+    "description": "The AI tutor leads instruction using the gradual release model (I Do / We Do / You Do), calibrated for 7th graders. Concepts are grounded in real-world contexts that matter to 12- and 13-year-olds. Emphasis on building number sense and confidence, not just procedures.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Introduce the concept with a real-world hook and clear definitions. Connect to what students already know from 6th grade.",
+        "studentRole": "Engage with the concept, ask questions, connect to prior knowledge"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2-3 worked examples with think-aloud reasoning. Show the 'why' behind each step, not just the 'how'.",
+        "studentRole": "Follow the reasoning, note patterns, ask clarifying questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Present scaffolded problems. Ask guiding questions instead of giving answers. Provide hints only when the student is genuinely stuck.",
+        "studentRole": "Attempt each problem, explain reasoning, accept guidance when needed"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Assign independent practice at mixed difficulty. Let the student struggle productively before intervening.",
+        "studentRole": "Solve independently, self-check, flag uncertainties"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Deliver a short skill check (5-8 questions). Analyze performance and recommend next steps or remediation.",
+        "studentRole": "Complete the check, review mistakes, demonstrate understanding"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present based on observed gaps",
+      "Adjust difficulty in real-time based on student performance",
+      "Loop back to i-do if the student struggles in we-do",
+      "Skip ahead if the student demonstrates quick mastery",
+      "Spiral in prior skills (integer ops, fractions) when errors surface"
+    ]
+  },
+
+  "modules": [
+    {
+      "moduleId": "bootcamp",
+      "unit": 0,
+      "title": "Start-of-Year Boot Camp",
+      "preview": "Fix the basics: integers, fractions, expressions, simple equations, and the coordinate plane",
+      "moduleFile": "/modules/7th-grade-math/bootcamp_module.json",
+      "weeks": "1-2",
+      "skills": [
+        "g7-integer-operations",
+        "g7-fraction-decimal-fluency",
+        "g7-simplify-expressions-basics",
+        "g7-one-two-step-equations",
+        "g7-coordinate-plane-basics"
+      ],
+      "essentialQuestions": [
+        "Can I add, subtract, multiply, and divide integers and fractions without hesitation?",
+        "Can I solve a basic equation and plot a point on the coordinate plane?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_bootcamp",
+      "unit": 0,
+      "title": "Checkpoint: Boot Camp Diagnostic",
+      "preview": "Diagnostic assessment to identify skill gaps from 6th grade",
+      "moduleFile": "/modules/7th-grade-math/checkpoint_bootcamp_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g7-integer-operations",
+        "g7-fraction-decimal-fluency",
+        "g7-simplify-expressions-basics",
+        "g7-one-two-step-equations",
+        "g7-coordinate-plane-basics"
+      ]
+    },
+    {
+      "moduleId": "rational_numbers",
+      "unit": 1,
+      "title": "Rational Numbers & Operations",
+      "preview": "Add, subtract, multiply, and divide rational numbers — master signed number fluency (7.NS)",
+      "moduleFile": "/modules/7th-grade-math/rational_numbers_module.json",
+      "weeks": "3-6",
+      "skills": [
+        "g7-add-subtract-rationals",
+        "g7-multiply-divide-rationals",
+        "g7-rational-word-problems",
+        "g7-absolute-value"
+      ],
+      "essentialQuestions": [
+        "Why does subtracting a negative give the same result as adding a positive?",
+        "How do I decide the sign of my answer when multiplying or dividing?"
+      ]
+    },
+    {
+      "moduleId": "expressions_equations",
+      "unit": 2,
+      "title": "Expressions & Equations",
+      "preview": "Translate, simplify, solve multi-step equations and inequalities (7.EE)",
+      "moduleFile": "/modules/7th-grade-math/expressions_equations_module.json",
+      "weeks": "7-10",
+      "skills": [
+        "g7-verbal-to-algebraic",
+        "g7-simplify-expressions",
+        "g7-multi-step-equations",
+        "g7-inequalities"
+      ],
+      "essentialQuestions": [
+        "How do I turn a word problem into an equation I can solve?",
+        "What changes when I solve an inequality vs. an equation?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "unit": 2,
+      "title": "Checkpoint: Quarter 1 (Rational Numbers + Expressions & Equations)",
+      "preview": "Assessment covering Units 1-2: rational number operations, expressions, equations, and inequalities",
+      "moduleFile": "/modules/7th-grade-math/checkpoint_q1_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g7-add-subtract-rationals",
+        "g7-multiply-divide-rationals",
+        "g7-absolute-value",
+        "g7-verbal-to-algebraic",
+        "g7-simplify-expressions",
+        "g7-multi-step-equations",
+        "g7-inequalities"
+      ]
+    },
+    {
+      "moduleId": "ratios_proportions",
+      "unit": 3,
+      "title": "Ratios, Rates, and Proportions",
+      "preview": "Unit rates, proportional reasoning, scale drawings, and percent applications (7.RP)",
+      "moduleFile": "/modules/7th-grade-math/ratios_proportions_module.json",
+      "weeks": "11-14",
+      "skills": [
+        "g7-unit-rates",
+        "g7-proportions",
+        "g7-scale-drawings",
+        "g7-percent-applications",
+        "g7-percent-change"
+      ],
+      "essentialQuestions": [
+        "How do I use a unit rate to compare two options?",
+        "How are discounts, tax, tips, and markups all just percent problems?"
+      ]
+    },
+    {
+      "moduleId": "proportional_relationships",
+      "unit": 4,
+      "title": "Proportional Relationships",
+      "preview": "Identify, graph, and write equations for proportional relationships — y = kx (7.RP)",
+      "moduleFile": "/modules/7th-grade-math/proportional_relationships_module.json",
+      "weeks": "15-17",
+      "skills": [
+        "g7-identify-proportional",
+        "g7-constant-of-proportionality",
+        "g7-proportional-equations",
+        "g7-graph-proportional"
+      ],
+      "essentialQuestions": [
+        "How do I tell if a relationship is proportional from a table, graph, or equation?",
+        "What does the constant of proportionality actually mean in context?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "unit": 4,
+      "title": "Checkpoint: Quarter 2 (Ratios, Proportions, and Proportional Relationships)",
+      "preview": "Assessment covering Units 3-4: rates, proportions, percents, and proportional relationships",
+      "moduleFile": "/modules/7th-grade-math/checkpoint_q2_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g7-unit-rates",
+        "g7-proportions",
+        "g7-scale-drawings",
+        "g7-percent-applications",
+        "g7-percent-change",
+        "g7-identify-proportional",
+        "g7-constant-of-proportionality",
+        "g7-proportional-equations"
+      ]
+    },
+    {
+      "moduleId": "geometry_measurement",
+      "unit": 5,
+      "title": "Geometry and Measurement",
+      "preview": "Area, circumference, surface area, volume, composite figures, and cross-sections (7.G)",
+      "moduleFile": "/modules/7th-grade-math/geometry_measurement_module.json",
+      "weeks": "18-22",
+      "skills": [
+        "g7-area-circumference",
+        "g7-composite-figures",
+        "g7-surface-area",
+        "g7-volume",
+        "g7-cross-sections"
+      ],
+      "essentialQuestions": [
+        "How do I break a composite figure into shapes I already know?",
+        "What is the difference between surface area and volume, and when do I use each?"
+      ]
+    },
+    {
+      "moduleId": "statistics_sampling",
+      "unit": 6,
+      "title": "Statistics: Sampling and Inference",
+      "preview": "Populations, samples, random sampling, comparing groups, and drawing conclusions from data (7.SP)",
+      "moduleFile": "/modules/7th-grade-math/statistics_sampling_module.json",
+      "weeks": "23-25",
+      "skills": [
+        "g7-populations-samples",
+        "g7-random-sampling",
+        "g7-compare-data-sets",
+        "g7-informal-inferences"
+      ],
+      "essentialQuestions": [
+        "Why does it matter HOW you collect a sample?",
+        "How do I use measures of center and variability to compare two groups?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "unit": 6,
+      "title": "Checkpoint: Quarter 3 (Geometry + Statistics)",
+      "preview": "Assessment covering Units 5-6: geometry, measurement, sampling, and data analysis",
+      "moduleFile": "/modules/7th-grade-math/checkpoint_q3_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g7-area-circumference",
+        "g7-composite-figures",
+        "g7-surface-area",
+        "g7-volume",
+        "g7-populations-samples",
+        "g7-compare-data-sets",
+        "g7-informal-inferences"
+      ]
+    },
+    {
+      "moduleId": "probability",
+      "unit": 7,
+      "title": "Probability",
+      "preview": "Simple and compound events, experimental vs. theoretical probability, simulations (7.SP)",
+      "moduleFile": "/modules/7th-grade-math/probability_module.json",
+      "weeks": "26-29",
+      "skills": [
+        "g7-simple-probability",
+        "g7-experimental-theoretical",
+        "g7-compound-events",
+        "g7-probability-simulations"
+      ],
+      "essentialQuestions": [
+        "What is the difference between what SHOULD happen and what DOES happen?",
+        "How do I organize outcomes for compound events so I don't miss any?"
+      ]
+    },
+    {
+      "moduleId": "advanced_expressions",
+      "unit": 8,
+      "title": "Advanced Expressions & Intro to Functions",
+      "preview": "Deeper equation work, function thinking, and patterns — bridge to 8th grade (7.EE + 8.F preview)",
+      "moduleFile": "/modules/7th-grade-math/advanced_expressions_module.json",
+      "weeks": "30-33",
+      "skills": [
+        "g7-evaluate-expressions",
+        "g7-equation-word-problems",
+        "g7-function-input-output",
+        "g7-patterns-sequences"
+      ],
+      "essentialQuestions": [
+        "How do I set up equations for geometry and percent word problems?",
+        "What makes a relationship a function, and how do I find the rule?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q4",
+      "unit": 8,
+      "title": "Checkpoint: Quarter 4 (Probability + Advanced Expressions & Functions)",
+      "preview": "Assessment covering Units 7-8: probability, expressions, equations, and function thinking",
+      "moduleFile": "/modules/7th-grade-math/checkpoint_q4_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g7-simple-probability",
+        "g7-compound-events",
+        "g7-evaluate-expressions",
+        "g7-equation-word-problems",
+        "g7-function-input-output",
+        "g7-patterns-sequences"
+      ]
+    },
+    {
+      "moduleId": "final_review",
+      "unit": 9,
+      "title": "End-of-Year Mastery Review & Final Exam",
+      "preview": "Cumulative assessment across all 7th grade domains: 7.NS, 7.EE, 7.RP, 7.G, 7.SP",
+      "moduleFile": "/modules/7th-grade-math/final_review_module.json",
+      "isFinal": true,
+      "skills": [
+        "g7-integer-operations",
+        "g7-add-subtract-rationals",
+        "g7-multiply-divide-rationals",
+        "g7-simplify-expressions",
+        "g7-multi-step-equations",
+        "g7-inequalities",
+        "g7-unit-rates",
+        "g7-proportions",
+        "g7-percent-applications",
+        "g7-percent-change",
+        "g7-identify-proportional",
+        "g7-constant-of-proportionality",
+        "g7-area-circumference",
+        "g7-surface-area",
+        "g7-volume",
+        "g7-compare-data-sets",
+        "g7-simple-probability",
+        "g7-compound-events",
+        "g7-equation-word-problems",
+        "g7-function-input-output"
+      ]
+    }
+  ],
+
+  "spiralStrategy": {
+    "dailyWarmup": "2 review problems + 1 current skill (5-7 min)",
+    "weeklyQuiz": "Mostly prior skills: signed numbers, proportions, equations (10-15 min)",
+    "monthlyCheck": "Mixed: proportional reasoning + integer ops + multi-step equations",
+    "nonNegotiableThreads": [
+      "Signed numbers fluency (especially subtracting negatives)",
+      "Proportional reasoning (unit rate, percent, scale)",
+      "Expression simplification (distribute + combine like terms)",
+      "Multi-step equation solving with context",
+      "Data reasoning (sampling, variability, probability)"
+    ]
+  },
+
+  "aiGuidanceNotes": "For 7th grade, signed number fluency is the make-or-break skill. Students who can't operate with negatives will struggle everywhere. Spiral integer operations into every unit. Proportional reasoning is the second pillar — it connects fractions, percents, rates, and scale into one big idea. When students see that connection, everything clicks."
+}

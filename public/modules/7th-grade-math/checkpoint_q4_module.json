@@ -1,0 +1,162 @@
+{
+  "moduleId": "checkpoint_q4",
+  "course": "7th Grade Math",
+  "unit": 8,
+  "title": "Checkpoint: Quarter 4 (Probability + Advanced Expressions & Functions)",
+  "weeks": "33",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Units 7-8: probability, compound events, evaluating expressions, equation word problems, function input/output, and patterns.",
+  "skillsCovered": [
+    "g7-simple-probability",
+    "g7-compound-events",
+    "g7-evaluate-expressions",
+    "g7-equation-word-problems",
+    "g7-function-input-output",
+    "g7-patterns-sequences"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest Quarter 4 skills. Remediation prioritizes conceptual gaps in probability reasoning and algebraic fluency.",
+    "clusters": [
+      {
+        "skillId": "g7-simple-probability",
+        "reteachFocus": "P(event) = favorable/total, complementary probability P(not A) = 1 − P(A), expressing probability as fractions/decimals/percents, impossible (0) vs. certain (1)"
+      },
+      {
+        "skillId": "g7-compound-events",
+        "reteachFocus": "Sample space listing and tree diagrams, counting principle (multiply branches), P(A and B) for independent events, organized outcome tables for two-event experiments"
+      },
+      {
+        "skillId": "g7-evaluate-expressions",
+        "reteachFocus": "Substitution with negative values (watch sign errors), order of operations with exponents, evaluating rational expressions, simplifying before substituting"
+      },
+      {
+        "skillId": "g7-equation-word-problems",
+        "reteachFocus": "Defining variables from context, translating 'more than / less than / times as many' into algebra, setting up and solving multi-step equations, verifying answers in the original context"
+      },
+      {
+        "skillId": "g7-function-input-output",
+        "reteachFocus": "Using a rule to compute outputs from inputs, working backwards from output to find input (inverse operations), completing function tables, recognizing linear function rules from tables"
+      },
+      {
+        "skillId": "g7-patterns-sequences",
+        "reteachFocus": "Identifying arithmetic sequences (constant difference), writing explicit rules (start + rate × step), finding the nth term, working backwards from a term value to find n"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "q4-1",
+      "question": "A bag contains 5 red marbles, 3 blue marbles, and 2 green marbles. You draw one marble at random. What is the probability of drawing a blue marble? Express your answer as a fraction.",
+      "answer": "Total marbles = 5 + 3 + 2 = 10. P(blue) = 3/10.",
+      "skill": "g7-simple-probability",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q4-2",
+      "question": "A standard deck has 52 cards. You draw one card at random. What is the probability of drawing a card that is NOT a face card (not a Jack, Queen, or King)? Express your answer as a fraction in simplest form.",
+      "answer": "Face cards: 4 Jacks + 4 Queens + 4 Kings = 12. Non-face cards: 52 − 12 = 40. P(not face) = 40/52 = 10/13.",
+      "skill": "g7-simple-probability",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q4-3",
+      "question": "You flip a fair coin and roll a standard 6-sided die. How many total outcomes are possible? What is the probability of getting heads AND a number greater than 4?",
+      "answer": "Total outcomes = 2 × 6 = 12. Favorable: heads AND (5 or 6) = 1 × 2 = 2 outcomes. P = 2/12 = 1/6.",
+      "skill": "g7-compound-events",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q4-4",
+      "question": "A spinner has 4 equal sections labeled 1, 2, 3, and 4. You spin it twice. What is the probability that the sum of the two spins is exactly 5? List all favorable outcomes.",
+      "answer": "Total outcomes = 4 × 4 = 16. Sums of 5: (1,4), (2,3), (3,2), (4,1) = 4 outcomes. P = 4/16 = 1/4.",
+      "skill": "g7-compound-events",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "q4-5",
+      "question": "Evaluate the expression 3x² − 2x + 7 when x = 4. Show each step.",
+      "answer": "3(4²) − 2(4) + 7 = 3(16) − 8 + 7 = 48 − 8 + 7 = 47.",
+      "skill": "g7-evaluate-expressions",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q4-6",
+      "question": "Evaluate the expression (a² − b²) ÷ (a + b) when a = 9 and b = 5. Show your work.",
+      "answer": "(9² − 5²) ÷ (9 + 5) = (81 − 25) ÷ 14 = 56 ÷ 14 = 4. (Note: a² − b² = (a+b)(a−b), so this simplifies to a − b = 9 − 5 = 4.)",
+      "skill": "g7-evaluate-expressions",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q4-7",
+      "question": "Maria has $45 and saves $8 each week. Her brother has $69 and spends $4 each week. After how many weeks will they have the same amount of money? How much will each person have?",
+      "answer": "Maria: 45 + 8w. Brother: 69 − 4w. Set equal: 45 + 8w = 69 − 4w. 12w = 24. w = 2 weeks. Amount: 45 + 8(2) = $61 each. Check: 69 − 4(2) = 69 − 8 = $61 ✓",
+      "skill": "g7-equation-word-problems",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q4-8",
+      "question": "A rectangular garden has a perimeter of 56 meters. The length is 4 meters more than twice the width. Find the length and width of the garden.",
+      "answer": "Let w = width. Length = 2w + 4. Perimeter: 2(2w + 4) + 2w = 56. 4w + 8 + 2w = 56. 6w + 8 = 56. 6w = 48. w = 8 m. Length = 2(8) + 4 = 20 m. Check: 2(20) + 2(8) = 40 + 16 = 56 ✓",
+      "skill": "g7-equation-word-problems",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "q4-9",
+      "question": "A function rule is y = 2x + 3. Find the output for each input: x = −2, x = 0, x = 1, and x = 5.",
+      "answer": "x = −2: y = 2(−2) + 3 = −4 + 3 = −1. x = 0: y = 2(0) + 3 = 3. x = 1: y = 2(1) + 3 = 5. x = 5: y = 2(5) + 3 = 13. Outputs: −1, 3, 5, 13.",
+      "skill": "g7-function-input-output",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q4-10",
+      "question": "A machine uses the rule: output = 3(input) − 7. If the output is 20, what was the input? Show your work.",
+      "answer": "3(input) − 7 = 20. 3(input) = 27. input = 9. Check: 3(9) − 7 = 27 − 7 = 20 ✓",
+      "skill": "g7-function-input-output",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q4-11",
+      "question": "Look at the sequence: 4, 11, 18, 25, 32, … What is the pattern rule? What is the 10th term?",
+      "answer": "Each term increases by 7. Rule: term = 7n − 3 (where n is the term number). Check: 7(1) − 3 = 4 ✓, 7(2) − 3 = 11 ✓. 10th term: 7(10) − 3 = 67.",
+      "skill": "g7-patterns-sequences",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q4-12",
+      "question": "A tile pattern grows: Figure 1 has 5 tiles, Figure 2 has 9 tiles, Figure 3 has 13 tiles, Figure 4 has 17 tiles. (a) How many tiles will Figure 7 have? (b) Which figure number will have exactly 41 tiles?",
+      "answer": "(a) Pattern increases by 4 each figure. Rule: tiles = 4n + 1. Figure 7: 4(7) + 1 = 29 tiles. Check: 4(1)+1=5 ✓, 4(2)+1=9 ✓. (b) 4n + 1 = 41. 4n = 40. n = 10. Figure 10 has 41 tiles.",
+      "skill": "g7-patterns-sequences",
+      "difficulty": 4,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "q4-1": "3/10",
+    "q4-2": "10/13",
+    "q4-3": "12 outcomes; P = 1/6",
+    "q4-4": "(1,4),(2,3),(3,2),(4,1); P = 1/4",
+    "q4-5": "47",
+    "q4-6": "4",
+    "q4-7": "2 weeks; $61 each",
+    "q4-8": "Width = 8 m, Length = 20 m",
+    "q4-9": "−1, 3, 5, 13",
+    "q4-10": "Input = 9",
+    "q4-11": "Rule: 7n − 3; 10th term = 67",
+    "q4-12": "(a) 29 tiles (b) Figure 10"
+  }
+}

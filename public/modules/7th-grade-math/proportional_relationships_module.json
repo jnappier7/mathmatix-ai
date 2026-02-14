@@ -1,0 +1,318 @@
+{
+  "moduleId": "proportional_relationships",
+  "course": "7th Grade Math",
+  "unit": 4,
+  "title": "Proportional Relationships",
+  "weeks": "15-17",
+  "estimatedDuration": 30,
+  "description": "Explore proportional relationships across tables, graphs, and equations. Learn to identify whether two quantities are proportional by checking for a constant ratio, find the constant of proportionality (unit rate), write equations in the form y = kx, and graph proportional relationships as straight lines through the origin. Real-world contexts like speed, pricing, recipes, and wages bring these ideas to life.",
+  "skills": ["g7-identify-proportional", "g7-constant-of-proportionality", "g7-proportional-equations", "g7-graph-proportional"],
+  "standardsAlignment": ["7.RP.2", "7.RP.2a", "7.RP.2b", "7.RP.2c", "7.RP.2d"],
+  "goals": [
+    "Determine whether two quantities are in a proportional relationship using tables, graphs, and equations",
+    "Identify the constant of proportionality (unit rate) in tables, graphs, equations, and verbal descriptions",
+    "Write equations of the form y = kx to represent proportional relationships",
+    "Graph proportional relationships and interpret the unit rate as the slope of the line through the origin",
+    "Move fluently between tables, graphs, and equations to represent and analyze proportional relationships"
+  ],
+  "instructionalStrategy": [
+    "Ground every lesson in familiar contexts—buying snacks, earning money, mixing recipes—so that the abstract idea of a 'constant ratio' feels natural and intuitive.",
+    "Start with tables: have students compute y divided by x for each row and notice whether the quotient stays the same. This builds the habit of checking for proportionality before jumping to equations.",
+    "Use side-by-side comparisons of proportional and non-proportional tables to sharpen the distinction—students need to see what proportionality is NOT.",
+    "When graphing, always start by plotting (0, 0) and ask: 'Does this situation make sense at zero?' This reinforces that proportional relationships must pass through the origin.",
+    "Connect the constant of proportionality k to the unit rate: 'How much per one?' is the question students should always be asking."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-identify-proportional",
+      "title": "Identifying Proportional Relationships",
+      "text": "Two quantities have a **proportional relationship** if they always have the same ratio. In other words, as one quantity changes, the other changes by the same factor every single time.\n\n**How to check using a table:** Divide y by x for every row. If you get the same number every time, the relationship is proportional.\n\n| Apples | Cost ($) |\n|--------|----------|\n| 2      | 1.00     |\n| 5      | 2.50     |\n| 8      | 4.00     |\n\n1.00 / 2 = 0.50, 2.50 / 5 = 0.50, 4.00 / 8 = 0.50. The ratio is always 0.50, so this IS proportional.\n\n**How to check using a graph:** If the points form a **straight line that passes through the origin (0, 0)**, the relationship is proportional. A straight line that does NOT go through the origin is linear but not proportional.\n\n**Key idea:** Proportional means every ratio y/x is equal. If even one ratio is different, the relationship is NOT proportional.",
+      "keyPoints": [
+        "Proportional relationships have a constant ratio y/x for every pair of values",
+        "In a table, divide y by x for each row — if all quotients are equal, it is proportional",
+        "On a graph, proportional relationships appear as a straight line through the origin (0, 0)",
+        "A straight line that does NOT pass through the origin is NOT proportional"
+      ],
+      "initialPrompt": "Think about buying pencils at a store where each pencil costs the same price. If 3 pencils cost $1.50, what would 6 pencils cost? What would 1 pencil cost? Does this seem like a proportional relationship?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-constant-of-proportionality",
+      "title": "The Constant of Proportionality",
+      "text": "When two quantities are proportional, the constant ratio y/x is called the **constant of proportionality**, often written as **k**.\n\nThe constant of proportionality is the same as the **unit rate** — it tells you 'how much y for every 1 unit of x.'\n\n**Example:** A baker uses 2.5 cups of flour per batch of cookies.\n\n| Batches | Cups of flour |\n|---------|---------------|\n| 2       | 5             |\n| 4       | 10            |\n| 6       | 15            |\n\n5 / 2 = 2.5, 10 / 4 = 2.5, 15 / 6 = 2.5. The constant of proportionality is **k = 2.5**. This means the baker needs 2.5 cups of flour for every 1 batch.\n\n**Finding k from a graph:** Pick any point (x, y) on the line (other than the origin) and compute k = y / x. Or read the y-value at x = 1 — that point (1, k) gives you the constant of proportionality directly.",
+      "keyPoints": [
+        "The constant of proportionality k equals y divided by x",
+        "k is the unit rate — it tells you how much y you get for 1 unit of x",
+        "k is the same no matter which (x, y) pair you use from the relationship",
+        "On a graph, the point (1, k) directly gives you the constant of proportionality"
+      ],
+      "initialPrompt": "If you earn $36 for 4 hours of work, what is the constant of proportionality? What does that number mean in this context?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-proportional-equations",
+      "title": "Writing Equations for Proportional Relationships",
+      "text": "Once you know the constant of proportionality k, you can write an equation that represents the entire proportional relationship:\n\n**y = kx**\n\nThis equation says: 'to find y, multiply x by k.'\n\n**Example:** A car travels at a constant speed of 60 miles per hour.\n- k = 60 (the unit rate is 60 miles per hour)\n- Equation: y = 60x, where x is the number of hours and y is the total miles\n- After 3 hours: y = 60(3) = 180 miles\n- After 5 hours: y = 60(5) = 300 miles\n\n**From a table to an equation:** Find k by dividing any y-value by its corresponding x-value. Then write y = kx.\n\n| Items | Cost ($) |\n|-------|----------|\n| 4     | 10       |\n| 7     | 17.50    |\n\nk = 10 / 4 = 2.50. Equation: **y = 2.5x**. Check: 2.5(7) = 17.50. It works!",
+      "keyPoints": [
+        "Every proportional relationship can be written as y = kx",
+        "Find k first (from a table, graph, or word problem), then plug it into y = kx",
+        "The equation lets you predict y for any value of x, even values not in the table",
+        "Always check your equation by substituting a known pair back in"
+      ],
+      "initialPrompt": "A store sells oranges at $1.25 each. Can you write an equation relating the total cost y to the number of oranges x? Use your equation to find the cost of 10 oranges."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "g7-graph-proportional",
+      "title": "Graphing Proportional Relationships",
+      "text": "To graph a proportional relationship, plot ordered pairs (x, y) from a table or equation on a coordinate plane.\n\n**Steps:**\n1. Always plot the origin **(0, 0)** first — every proportional relationship starts here.\n2. Plot additional points from your table or equation.\n3. Draw a straight line through the points.\n\n**Reading a graph:** If you see a straight line through the origin, you know the relationship is proportional. The steepness of the line tells you the constant of proportionality:\n- **Steeper line = larger k** (y grows faster for each unit of x)\n- **Flatter line = smaller k** (y grows more slowly)\n\n**Example:** Plotting y = 3x gives the points (0, 0), (1, 3), (2, 6), (3, 9). The line rises 3 units for every 1 unit to the right, so k = 3.\n\n**Comparing two lines:** If two proportional relationships are graphed on the same axes, the steeper line has the greater unit rate.",
+      "keyPoints": [
+        "Proportional relationships always graph as a straight line passing through (0, 0)",
+        "Plot at least three points to confirm the line is straight",
+        "The constant of proportionality k equals the steepness of the line (rise over run from the origin)",
+        "A steeper line means a greater unit rate; a flatter line means a smaller unit rate"
+      ],
+      "initialPrompt": "Imagine you graph the points (0, 0), (2, 8), and (5, 20). Do these points lie on a straight line through the origin? What is the constant of proportionality?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-identify-proportional",
+      "title": "I-Do: Identifying Proportional Relationships from Tables and Graphs",
+      "examples": [
+        {
+          "problem": "A grocery store sells bananas. Determine whether the relationship is proportional.\n\n| Pounds | Cost ($) |\n|--------|----------|\n| 2      | 1.20     |\n| 5      | 3.00     |\n| 8      | 4.80     |",
+          "solution": "Divide Cost by Pounds for each row:\n1.20 / 2 = 0.60\n3.00 / 5 = 0.60\n4.80 / 8 = 0.60\n\nAll three ratios equal 0.60, so this relationship **is proportional**. The unit rate is $0.60 per pound.",
+          "tip": "Always check EVERY row, not just the first one. It only takes one different ratio to make the relationship non-proportional."
+        },
+        {
+          "problem": "A student tracks how many pages they read over time. Is this proportional?\n\n| Hours | Pages read |\n|-------|------------|\n| 1     | 30         |\n| 2     | 55         |\n| 3     | 75         |",
+          "solution": "Divide Pages by Hours for each row:\n30 / 1 = 30\n55 / 2 = 27.5\n75 / 3 = 25\n\nThe ratios are 30, 27.5, and 25 — they are NOT all equal. This relationship is **not proportional**. The student reads at different speeds over time.",
+          "tip": "A relationship can look close to proportional but still not be proportional. The ratios must be exactly equal, not just approximately equal."
+        },
+        {
+          "problem": "A graph shows the points (0, 0), (2, 6), and (4, 12) connected by a straight line. Is this a proportional relationship?",
+          "solution": "Check two things:\n1. Does the line pass through the origin? Yes — (0, 0) is on the line.\n2. Is it a straight line? Yes.\n\nSince it is a straight line through the origin, this **is proportional**.\n\nWe can verify: 6 / 2 = 3 and 12 / 4 = 3. The ratios are equal.",
+          "tip": "For graphs, check two conditions: straight line AND passes through the origin. Both must be true."
+        }
+      ],
+      "initialPrompt": "In the second example, the student read 30 pages in the first hour but only 20 pages in the third hour. Why does a changing reading speed mean the relationship is not proportional?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-constant-of-proportionality",
+      "title": "I-Do: Finding the Constant of Proportionality",
+      "examples": [
+        {
+          "problem": "A recipe calls for a proportional amount of flour based on the number of batches. Find the constant of proportionality.\n\n| Batches | Cups of flour |\n|---------|---------------|\n| 2       | 5             |\n| 4       | 10            |\n| 6       | 15            |",
+          "solution": "Divide Cups of flour by Batches:\n5 / 2 = 2.5\n10 / 4 = 2.5\n15 / 6 = 2.5\n\nThe constant of proportionality is **k = 2.5**.\n\nThis means the recipe uses **2.5 cups of flour per batch**.",
+          "tip": "The constant of proportionality always answers the question: 'How much y for 1 unit of x?' Here it is 2.5 cups for 1 batch."
+        },
+        {
+          "problem": "A car uses gas at a constant rate. Find k and explain what it means.\n\n| Gallons of gas | Miles driven |\n|----------------|--------------|\n| 2              | 50           |\n| 5              | 125          |\n| 8              | 200          |",
+          "solution": "Divide Miles by Gallons:\n50 / 2 = 25\n125 / 5 = 25\n200 / 8 = 25\n\nThe constant of proportionality is **k = 25**.\n\nThis means the car gets **25 miles per gallon**.",
+          "tip": "Think about what units k has. Here it is miles per gallon — a rate you might see on a car's window sticker."
+        },
+        {
+          "problem": "On a graph, a proportional relationship passes through the points (0, 0) and (3, 13.50). What is the constant of proportionality?",
+          "solution": "Pick the non-origin point and divide:\nk = 13.50 / 3 = **4.50**\n\nThe constant of proportionality is 4.50. If this represents a price, it means $4.50 per item.",
+          "tip": "You only need one point (besides the origin) to find k. Just compute k = y / x."
+        }
+      ],
+      "initialPrompt": "In the car example, if you only knew that 5 gallons takes the car 125 miles, could you still find k? Why or why not?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-proportional-equations",
+      "title": "I-Do: Writing Equations y = kx",
+      "examples": [
+        {
+          "problem": "A worker earns $15 per hour. Write an equation relating total earnings y to hours worked x. How much does the worker earn in 6 hours?",
+          "solution": "The unit rate is $15 per hour, so k = 15.\n\nEquation: **y = 15x**\n\nFor 6 hours: y = 15(6) = **$90**\n\nThe worker earns $90 in 6 hours.",
+          "tip": "When the unit rate is given directly in the problem ('$15 per hour'), that IS your k value. Plug it straight into y = kx."
+        },
+        {
+          "problem": "Use the table to write an equation. Then predict how many cups of rice are needed for 10 servings.\n\n| Servings | Cups of rice |\n|----------|--------------|\n| 2        | 0.5          |\n| 4        | 1.0          |\n| 6        | 1.5          |",
+          "solution": "Find k by dividing Cups of rice by Servings:\n0.5 / 2 = 0.25\n1.0 / 4 = 0.25\n1.5 / 6 = 0.25\n\nk = 0.25, so the equation is: **y = 0.25x**\n\nFor 10 servings: y = 0.25(10) = **2.5 cups of rice**",
+          "tip": "After writing your equation, check it against a value from the table. Does y = 0.25(4) give 1.0? Yes! This confirms your equation is correct."
+        },
+        {
+          "problem": "A cyclist rides at a constant speed. The table shows distance over time. Write the equation and predict the distance after 45 minutes.\n\n| Time (min) | Distance (miles) |\n|------------|------------------|\n| 10         | 2.5              |\n| 20         | 5.0              |\n| 30         | 7.5              |",
+          "solution": "Find k:\n2.5 / 10 = 0.25\n5.0 / 20 = 0.25\n7.5 / 30 = 0.25\n\nk = 0.25, so the equation is: **y = 0.25x** (where x is minutes and y is miles)\n\nFor 45 minutes: y = 0.25(45) = **11.25 miles**",
+          "tip": "Pay attention to units. Here x is in minutes and y is in miles, so k = 0.25 miles per minute. If you wanted miles per hour, you would need to convert."
+        }
+      ],
+      "initialPrompt": "In the rice example, what does k = 0.25 mean in plain English? Try saying it as a sentence: 'For every 1 serving, you need...'"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "g7-graph-proportional",
+      "title": "I-Do: Graphing and Interpreting Proportional Relationships",
+      "examples": [
+        {
+          "problem": "A car travels at a constant speed. Graph the relationship and identify the constant of proportionality.\n\n| Time (hours) | Distance (miles) |\n|--------------|------------------|\n| 0            | 0                |\n| 1            | 40               |\n| 2            | 80               |\n| 3            | 120              |",
+          "solution": "Plot the points: (0, 0), (1, 40), (2, 80), (3, 120).\n\nAll four points lie on a straight line through the origin. This confirms it is a proportional relationship.\n\nThe constant of proportionality: k = 40 / 1 = **40**.\n\nThe car travels at **40 miles per hour**. On the graph, the point (1, 40) tells you the unit rate directly.",
+          "tip": "The point where x = 1 is special — the y-value at that point IS the constant of proportionality. Look for it on the graph!"
+        },
+        {
+          "problem": "A graph shows a straight line through the origin passing through the point (4, 14). Find the constant of proportionality and write the equation.",
+          "solution": "Since the line passes through the origin and is straight, this is proportional.\n\nk = 14 / 4 = **3.5**\n\nEquation: **y = 3.5x**\n\nWe can find other points: when x = 2, y = 3.5(2) = 7, so (2, 7) is also on the line.",
+          "tip": "From a graph, pick any clear point on the line to calculate k. Choosing a point with easy numbers makes the division simpler."
+        }
+      ],
+      "initialPrompt": "In the car example, the line goes up 40 units for every 1 unit to the right. If a second car traveled at 55 miles per hour, would its line be steeper or flatter? Why?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skills": ["g7-identify-proportional", "g7-constant-of-proportionality"],
+      "title": "We-Do: Identifying Proportional Relationships and Finding k",
+      "problems": [
+        {
+          "id": "pr-wp1",
+          "question": "A lemonade recipe calls for a fixed ratio of mix to water. Is this relationship proportional? If so, what is the constant of proportionality?\n\n| Cups of water | Cups of mix |\n|---------------|-------------|\n| 3             | 1           |\n| 6             | 2           |\n| 9             | 3           |\n| 15            | 5           |",
+          "answer": "Yes, it is proportional. k = 1/3 (one-third cup of mix per cup of water).",
+          "hints": [
+            "Divide Cups of mix by Cups of water for each row. What do you get?",
+            "1 / 3 = 0.333..., 2 / 6 = 0.333..., 3 / 9 = 0.333..., 5 / 15 = 0.333... All the same!",
+            "Since every ratio equals 1/3, the relationship is proportional with k = 1/3."
+          ]
+        },
+        {
+          "id": "pr-wp2",
+          "question": "Marcus reads at a steady pace. Is the relationship between minutes and pages proportional? If so, find k.\n\n| Minutes | Pages read |\n|---------|------------|\n| 10      | 8          |\n| 20      | 16         |\n| 35      | 28         |",
+          "answer": "Yes, it is proportional. k = 0.8 pages per minute.",
+          "hints": [
+            "Divide Pages by Minutes for each row.",
+            "8 / 10 = 0.8, 16 / 20 = 0.8, 28 / 35 = 0.8. All three ratios are equal.",
+            "The constant of proportionality is k = 0.8. Marcus reads 0.8 pages per minute (or 4 pages every 5 minutes)."
+          ]
+        },
+        {
+          "id": "pr-wp3",
+          "question": "A store has a sale on T-shirts. Is the pricing proportional? Explain your reasoning.\n\n| Shirts | Total cost ($) |\n|--------|----------------|\n| 1      | 12             |\n| 2      | 22             |\n| 3      | 30             |",
+          "answer": "No, it is not proportional. The ratios are 12, 11, and 10 — they are not all equal.",
+          "hints": [
+            "Divide Total cost by Shirts for each row: 12 / 1, 22 / 2, 30 / 3.",
+            "You get 12, 11, and 10. Are these all equal?",
+            "Since the ratios are different (12, 11, and 10), this is NOT a proportional relationship. The store might be offering a bulk discount."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through these together! For the first problem, start by computing the ratio of Cups of mix to Cups of water for each row. What do you get for the first row: 1 divided by 3?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skills": ["g7-proportional-equations", "g7-graph-proportional"],
+      "title": "We-Do: Writing Equations and Working with Graphs",
+      "problems": [
+        {
+          "id": "pr-wp4",
+          "question": "A car travels at a constant speed of 55 miles per hour. Write an equation relating distance y to time x. Then find how far the car travels in 4 hours.",
+          "answer": "y = 55x. In 4 hours the car travels 220 miles.",
+          "hints": [
+            "The speed is the unit rate. What is k?",
+            "k = 55, so the equation is y = 55x.",
+            "Substitute x = 4: y = 55(4) = 220 miles."
+          ]
+        },
+        {
+          "id": "pr-wp5",
+          "question": "A store sells notebooks. Use the table to write an equation and predict the cost of 12 notebooks.\n\n| Notebooks | Total cost ($) |\n|-----------|----------------|\n| 3         | 7.50           |\n| 5         | 12.50          |\n| 8         | 20.00          |",
+          "answer": "y = 2.5x. The cost of 12 notebooks is $30.00.",
+          "hints": [
+            "Find k by dividing Total cost by Notebooks: 7.50 / 3 = ?",
+            "k = 2.50. Check: 12.50 / 5 = 2.50 and 20.00 / 8 = 2.50. Consistent! Write the equation: y = 2.5x.",
+            "For 12 notebooks: y = 2.5(12) = 30. The cost is $30.00."
+          ]
+        },
+        {
+          "id": "pr-wp6",
+          "question": "A graph of a proportional relationship passes through the points (0, 0), (2, 7), (4, 14), and (6, 21). Find the constant of proportionality and write the equation.",
+          "answer": "k = 3.5 and the equation is y = 3.5x.",
+          "hints": [
+            "Pick any point besides the origin. Try (2, 7). Compute k = y / x.",
+            "k = 7 / 2 = 3.5. Verify with another point: 14 / 4 = 3.5 and 21 / 6 = 3.5. All match!",
+            "The equation is y = 3.5x."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, we know the car goes 55 miles every hour. That rate IS your constant of proportionality. Can you write the equation using y = kx?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skills": ["g7-identify-proportional", "g7-constant-of-proportionality", "g7-proportional-equations", "g7-graph-proportional"],
+      "title": "You-Do: Independent Practice",
+      "problems": [
+        {
+          "id": "pr-yp1",
+          "question": "Jada works at a bookstore and earns a fixed hourly wage. Is this relationship proportional? If so, find the constant of proportionality and explain what it means.\n\n| Hours worked | Pay ($) |\n|--------------|---------|\n| 3            | 27      |\n| 5            | 45      |\n| 8            | 72      |",
+          "answer": "Yes, it is proportional. k = 9. Jada earns $9 per hour.",
+          "skill": "g7-identify-proportional",
+          "hints": ["Divide Pay by Hours for each row: 27 / 3, 45 / 5, 72 / 8. Are they all equal?"]
+        },
+        {
+          "id": "pr-yp2",
+          "question": "An amusement park charges for rides. Is this relationship proportional? Explain how you know.\n\n| Rides | Total cost ($) |\n|-------|----------------|\n| 1     | 5              |\n| 3     | 11             |\n| 5     | 17             |",
+          "answer": "No, it is not proportional. The ratios are 5, 3.67, and 3.4 — they are not equal.",
+          "skill": "g7-identify-proportional",
+          "hints": ["Compute 5 / 1, 11 / 3, and 17 / 5. Do you get the same number each time?"]
+        },
+        {
+          "id": "pr-yp3",
+          "question": "A store sells trail mix for $4.50 per pound. Write an equation relating the total cost y to the number of pounds x. Then find the cost of 6 pounds.",
+          "answer": "y = 4.5x. The cost of 6 pounds is $27.",
+          "skill": "g7-proportional-equations",
+          "hints": ["The price per pound IS the constant of proportionality. Write y = kx with k = 4.50."]
+        },
+        {
+          "id": "pr-yp4",
+          "question": "A graph of a proportional relationship passes through the origin and the point (5, 30). Find the constant of proportionality, write the equation, and use it to find y when x = 9.",
+          "answer": "k = 6, equation is y = 6x, and y = 54 when x = 9.",
+          "skill": "g7-graph-proportional",
+          "hints": ["Compute k = 30 / 5. Then write y = kx and substitute x = 9."]
+        },
+        {
+          "id": "pr-yp5",
+          "question": "A recipe says that the amount of sugar is proportional to the amount of flour. Use the table to write an equation. Then predict how many cups of sugar are needed for 14 cups of flour.\n\n| Cups of flour | Cups of sugar |\n|---------------|---------------|\n| 2             | 0.5           |\n| 6             | 1.5           |\n| 10            | 2.5           |",
+          "answer": "y = 0.25x. For 14 cups of flour, you need 3.5 cups of sugar.",
+          "skill": "g7-proportional-equations",
+          "hints": ["Find k: 0.5 / 2 = 0.25. Write y = 0.25x. Then substitute x = 14."]
+        },
+        {
+          "id": "pr-yp6",
+          "question": "A runner tracks laps and total time. The data forms a straight line through the origin on a graph, passing through the points (2, 9), (4, 18), and (6, 27). Find the constant of proportionality, write the equation, and predict the total time for 10 laps.",
+          "answer": "k = 4.5, equation is y = 4.5x, and 10 laps take 45 minutes.",
+          "skill": "g7-graph-proportional",
+          "hints": ["Compute k = 9 / 2 = 4.5. Write y = 4.5x. Substitute x = 10 to find the time."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "pr-wp1": "Yes, proportional. k = 1/3 cup of mix per cup of water.",
+    "pr-wp2": "Yes, proportional. k = 0.8 pages per minute.",
+    "pr-wp3": "Not proportional. Ratios are 12, 11, and 10 (not equal).",
+    "pr-wp4": "y = 55x; distance in 4 hours is 220 miles.",
+    "pr-wp5": "y = 2.5x; cost of 12 notebooks is $30.00.",
+    "pr-wp6": "k = 3.5; equation is y = 3.5x.",
+    "pr-yp1": "Yes, proportional. k = 9 ($9 per hour).",
+    "pr-yp2": "Not proportional. Ratios are 5, 3.67, and 3.4 (not equal).",
+    "pr-yp3": "y = 4.5x; 6 pounds costs $27.",
+    "pr-yp4": "k = 6; y = 6x; when x = 9, y = 54.",
+    "pr-yp5": "y = 0.25x; 14 cups of flour needs 3.5 cups of sugar.",
+    "pr-yp6": "k = 4.5; y = 4.5x; 10 laps take 45 minutes."
+  }
+}

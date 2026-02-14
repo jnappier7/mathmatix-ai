@@ -1,0 +1,306 @@
+{
+  "moduleId": "expressions_equations",
+  "course": "7th Grade Math",
+  "unit": 2,
+  "title": "Expressions & Equations",
+  "weeks": "7-10",
+  "estimatedDuration": 30,
+  "description": "Students build core algebra skills for 7th grade. They learn to translate verbal phrases into algebraic expressions and equations, simplify expressions using the distributive property and combining like terms, solve multi-step equations including word problems requiring equation setup, and solve and graph inequalities with attention to the sign-flip rule when multiplying or dividing by a negative.",
+  "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions", "g7-multi-step-equations", "g7-inequalities"],
+  "standardsAlignment": ["7.EE.1", "7.EE.2", "7.EE.3", "7.EE.4"],
+  "goals": [
+    "Translate verbal phrases and sentences into algebraic expressions and equations.",
+    "Simplify algebraic expressions by applying the distributive property and combining like terms.",
+    "Solve multi-step equations, including those arising from word problems, and verify solutions.",
+    "Solve and graph inequalities on a number line, applying the sign-flip rule when multiplying or dividing by a negative number."
+  ],
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do",
+    "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
+    "Connect algebraic thinking to real-world situations familiar to 12-13 year olds (money, sports, shopping)",
+    "Emphasize checking solutions by substituting back into the original equation or inequality",
+    "Build from single-operation translations to compound expressions before moving to equations and inequalities"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Translating Verbal Phrases to Algebraic Expressions",
+      "skill": "g7-verbal-to-algebraic",
+      "content": "Algebra is a language. Just like you can translate English to Spanish, you can translate English words into math symbols. The key is learning which words match which operations. A variable (usually x or n) stands for 'a number' — the unknown value you are describing or solving for.",
+      "keyPoints": [
+        "Addition words: 'more than,' 'increased by,' 'sum of,' 'plus,' 'total'",
+        "Subtraction words: 'less than,' 'decreased by,' 'difference,' 'fewer than' — watch the order! 'five less than x' is x - 5, NOT 5 - x",
+        "Multiplication words: 'times,' 'product of,' 'twice' (means 2×), 'triple' (means 3×), 'of'",
+        "Division words: 'quotient of,' 'divided by,' 'ratio of,' 'per'",
+        "Grouping clue: 'the sum of a number and 6' inside 'twice the sum of...' means parentheses: 2(x + 6)",
+        "'Is,' 'equals,' 'is equal to,' and 'the result is' all translate to the = sign to form an equation"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Translating Verbal to Algebraic — Worked Examples",
+      "skill": "g7-verbal-to-algebraic",
+      "examples": [
+        {
+          "problem": "Write an algebraic expression: 'Five more than twice a number.'",
+          "solution": "Identify the operations: 'twice a number' means 2x, and 'five more than' means + 5. The expression is 2x + 5."
+        },
+        {
+          "problem": "Write an algebraic expression: 'The quotient of a number and three, decreased by seven.'",
+          "solution": "Break it into parts: 'the quotient of a number and three' means x / 3 (or x/3). 'Decreased by seven' means - 7. The expression is x/3 - 7."
+        },
+        {
+          "problem": "Write an equation: 'Three less than four times a number is twenty-one.'",
+          "solution": "'Four times a number' = 4x. 'Three less than' that = 4x - 3. 'Is twenty-one' means = 21. The equation is 4x - 3 = 21."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Simplifying Expressions: Distribute & Combine Like Terms",
+      "skill": "g7-simplify-expressions",
+      "content": "Simplifying means rewriting an expression in a shorter, equivalent form. The two main tools are the distributive property (removing parentheses) and combining like terms (merging terms with the same variable part).",
+      "keyPoints": [
+        "Distributive property: a(b + c) = ab + ac. Multiply the outside number by EVERY term inside the parentheses.",
+        "Watch negative signs: -2(3x - 1) means multiply both 3x and -1 by -2, giving -6x + 2.",
+        "Like terms have the same variable raised to the same power: 3x and 7x are like terms; 3x and 3x² are NOT.",
+        "Combine like terms by adding or subtracting their coefficients: 5x + 3x = 8x, 4x - 9x = -5x.",
+        "Constants (numbers with no variable) are like terms with each other: 7 + (-3) = 4.",
+        "Order of steps: distribute first, THEN combine like terms."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Simplifying Expressions — Worked Examples",
+      "skill": "g7-simplify-expressions",
+      "examples": [
+        {
+          "problem": "Simplify: 3(2x + 4) - 5x",
+          "solution": "Step 1 — Distribute: 3 · 2x + 3 · 4 - 5x = 6x + 12 - 5x. Step 2 — Combine like terms: 6x - 5x = x, and 12 stays. Final answer: x + 12."
+        },
+        {
+          "problem": "Simplify: -2(3x - 1) + 4x",
+          "solution": "Step 1 — Distribute the -2: (-2)(3x) + (-2)(-1) + 4x = -6x + 2 + 4x. Step 2 — Combine like terms: -6x + 4x = -2x. Final answer: -2x + 2."
+        },
+        {
+          "problem": "Simplify: 5(x + 3) + 2(x - 1)",
+          "solution": "Step 1 — Distribute both: 5x + 15 + 2x - 2. Step 2 — Combine like terms: 5x + 2x = 7x, and 15 - 2 = 13. Final answer: 7x + 13."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving Multi-Step Equations",
+      "skill": "g7-multi-step-equations",
+      "content": "An equation says two things are equal. Solving means finding the value of the variable that makes the equation true. Multi-step equations require more than one operation to isolate the variable — you may need to distribute, combine like terms, and then use inverse operations.",
+      "keyPoints": [
+        "Goal: get the variable ALONE on one side of the equation.",
+        "Step 1: Simplify each side separately (distribute, combine like terms).",
+        "Step 2: Use inverse operations to move terms. Add/subtract to move constants; multiply/divide to remove coefficients.",
+        "If the variable appears on BOTH sides, move all variable terms to one side first.",
+        "Word problems: identify what the variable represents, write the equation, solve, then answer in a complete sentence.",
+        "ALWAYS check your answer by substituting it back into the original equation."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Multi-Step Equations — Worked Examples",
+      "skill": "g7-multi-step-equations",
+      "examples": [
+        {
+          "problem": "Solve: 3x + 7 = 22",
+          "solution": "Subtract 7 from both sides: 3x = 15. Divide both sides by 3: x = 5. Check: 3(5) + 7 = 15 + 7 = 22. ✓"
+        },
+        {
+          "problem": "Solve: 2(x - 4) + 3 = 11",
+          "solution": "Distribute: 2x - 8 + 3 = 11. Combine like terms: 2x - 5 = 11. Add 5: 2x = 16. Divide by 2: x = 8. Check: 2(8 - 4) + 3 = 2(4) + 3 = 8 + 3 = 11. ✓"
+        },
+        {
+          "problem": "A phone plan charges $15 per month plus $0.10 per text message. Last month the total bill was $23. How many text messages were sent?",
+          "solution": "Let t = number of texts. Equation: 15 + 0.10t = 23. Subtract 15: 0.10t = 8. Divide by 0.10: t = 80. Check: 15 + 0.10(80) = 15 + 8 = 23. ✓ Answer: 80 text messages were sent."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving & Graphing Inequalities",
+      "skill": "g7-inequalities",
+      "content": "An inequality is like an equation, but instead of one exact answer, there is a whole range of solutions. You solve inequalities the same way you solve equations with one critical exception: when you multiply or divide both sides by a NEGATIVE number, you must FLIP the inequality sign.",
+      "keyPoints": [
+        "Inequality symbols: < (less than), > (greater than), ≤ (less than or equal to), ≥ (greater than or equal to).",
+        "Solve just like equations: use inverse operations to isolate the variable.",
+        "THE SIGN-FLIP RULE: when you multiply or divide both sides by a negative number, reverse the inequality direction. Example: -2x > 6 becomes x < -3.",
+        "Graphing on a number line: open circle (○) for < or > (value NOT included); closed circle (●) for ≤ or ≥ (value IS included).",
+        "Shade the arrow in the direction of the solution: left for less than, right for greater than.",
+        "Check your solution by testing a value from the shaded region in the original inequality."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Inequalities — Worked Examples",
+      "skill": "g7-inequalities",
+      "examples": [
+        {
+          "problem": "Solve and graph: 2x + 3 > 11",
+          "solution": "Subtract 3: 2x > 8. Divide by 2: x > 4. Graph: open circle at 4, shade right. Check: try x = 5: 2(5) + 3 = 13 > 11. ✓"
+        },
+        {
+          "problem": "Solve and graph: -3x + 6 ≤ 15",
+          "solution": "Subtract 6: -3x ≤ 9. Divide by -3 and FLIP the sign: x ≥ -3. Graph: closed circle at -3, shade right. Check: try x = 0: -3(0) + 6 = 6 ≤ 15. ✓ Boundary check: x = -3: -3(-3) + 6 = 9 + 6 = 15 ≤ 15. ✓"
+        },
+        {
+          "problem": "You have $50 to spend on T-shirts that cost $12 each. Write and solve an inequality to find the greatest number of shirts you can buy.",
+          "solution": "Let s = number of shirts. Inequality: 12s ≤ 50. Divide by 12: s ≤ 4.166... Since you can only buy whole shirts, s ≤ 4. You can buy at most 4 shirts. Check: 12(4) = 48 ≤ 50. ✓ And 12(5) = 60 > 50, confirming 5 is too many."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Translating & Simplifying Practice",
+      "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions"],
+      "problems": [
+        {
+          "id": "gp1",
+          "problem": "Write an algebraic expression for: 'Eight less than three times a number.'",
+          "hints": [
+            "'Three times a number' translates to 3x.",
+            "'Eight less than' means subtract 8 FROM the result.",
+            "Be careful with order: 'eight less than 3x' is 3x - 8, not 8 - 3x."
+          ],
+          "answer": "3x - 8"
+        },
+        {
+          "id": "gp2",
+          "problem": "Simplify: 4(2x - 3) + 5x",
+          "hints": [
+            "Distribute the 4: 4 · 2x and 4 · (-3).",
+            "After distributing: 8x - 12 + 5x.",
+            "Combine the x-terms: 8x + 5x."
+          ],
+          "answer": "13x - 12"
+        },
+        {
+          "id": "gp3",
+          "problem": "Simplify: -3(x + 4) + 2(3x - 1)",
+          "hints": [
+            "Distribute -3 into the first parentheses: -3x - 12.",
+            "Distribute 2 into the second parentheses: 6x - 2.",
+            "Combine all terms: -3x - 12 + 6x - 2. Group the x-terms and the constants."
+          ],
+          "answer": "3x - 14"
+        },
+        {
+          "id": "gp4",
+          "problem": "Write and simplify an expression for the perimeter of a triangle whose sides are (2x + 1), (x - 3), and (3x + 5).",
+          "hints": [
+            "Perimeter = sum of all three sides.",
+            "Add the expressions: (2x + 1) + (x - 3) + (3x + 5).",
+            "Combine like terms: 2x + x + 3x and 1 + (-3) + 5."
+          ],
+          "answer": "6x + 3"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Equations & Inequalities Practice",
+      "skills": ["g7-multi-step-equations", "g7-inequalities"],
+      "problems": [
+        {
+          "id": "gp5",
+          "problem": "Solve: 5x - 3 = 2x + 12",
+          "hints": [
+            "Variables on both sides! Subtract 2x from both sides first.",
+            "After subtracting 2x: 3x - 3 = 12.",
+            "Now add 3 to both sides, then divide."
+          ],
+          "answer": "x = 5. Check: 5(5) - 3 = 22 and 2(5) + 12 = 22. ✓"
+        },
+        {
+          "id": "gp6",
+          "problem": "Maria has $45 saved and earns $8 per hour babysitting. She needs at least $93 to buy a bicycle. Write and solve an inequality to find how many hours she must work.",
+          "hints": [
+            "Let h = hours worked. Total money = 45 + 8h.",
+            "She needs AT LEAST $93, so use ≥: 45 + 8h ≥ 93.",
+            "Subtract 45, then divide by 8."
+          ],
+          "answer": "45 + 8h ≥ 93 → 8h ≥ 48 → h ≥ 6. Maria must work at least 6 hours. Check: 45 + 8(6) = 93. ✓"
+        },
+        {
+          "id": "gp7",
+          "problem": "Solve and describe the graph: -4x + 2 > 18",
+          "hints": [
+            "Subtract 2 from both sides: -4x > 16.",
+            "Divide by -4 — remember to FLIP the inequality sign!",
+            "What kind of circle? What direction does the arrow point?"
+          ],
+          "answer": "x < -4. Graph: open circle at -4, shade left. Check: try x = -5: -4(-5) + 2 = 22 > 18. ✓"
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Expressions & Equations Mastery Practice",
+      "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions", "g7-multi-step-equations", "g7-inequalities"],
+      "problems": [
+        {
+          "id": "ip1",
+          "problem": "Write an algebraic expression for: 'Twice the sum of a number and six.'",
+          "answer": "2(x + 6)"
+        },
+        {
+          "id": "ip2",
+          "problem": "Simplify: 7(x - 2) - 3(2x + 1)",
+          "answer": "x - 17"
+        },
+        {
+          "id": "ip3",
+          "problem": "Solve: 4(x + 1) - 2 = 3x + 9",
+          "answer": "x = 7. Check: 4(7 + 1) - 2 = 32 - 2 = 30 and 3(7) + 9 = 30. ✓"
+        },
+        {
+          "id": "ip4",
+          "problem": "A rectangle's length is 5 cm more than its width. The perimeter is 46 cm. Write an equation and find the dimensions.",
+          "answer": "Let w = width. Length = w + 5. Perimeter: 2w + 2(w + 5) = 46 → 4w + 10 = 46 → 4w = 36 → w = 9. Width = 9 cm, length = 14 cm. Check: 2(9) + 2(14) = 18 + 28 = 46. ✓"
+        },
+        {
+          "id": "ip5",
+          "problem": "Solve and graph: -2x + 7 ≥ 13",
+          "answer": "x ≤ -3. Graph: closed circle at -3, shade left. Check: x = -3: -2(-3) + 7 = 13 ≥ 13. ✓"
+        },
+        {
+          "id": "ip6",
+          "problem": "A student needs at least a 90 average on four tests. The first three scores are 88, 94, and 85. Write and solve an inequality to find the minimum score needed on the fourth test.",
+          "answer": "(88 + 94 + 85 + t) / 4 ≥ 90 → 267 + t ≥ 360 → t ≥ 93. The student needs at least a 93. Check: (88 + 94 + 85 + 93) / 4 = 360 / 4 = 90. ✓"
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "gp1": "3x - 8",
+    "gp2": "13x - 12",
+    "gp3": "3x - 14",
+    "gp4": "6x + 3",
+    "gp5": "x = 5",
+    "gp6": "h ≥ 6",
+    "gp7": "x < -4",
+    "ip1": "2(x + 6)",
+    "ip2": "x - 17",
+    "ip3": "x = 7",
+    "ip4": "width = 9 cm, length = 14 cm",
+    "ip5": "x ≤ -3",
+    "ip6": "t ≥ 93"
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "moduleId": "checkpoint_q1",
+  "course": "7th Grade Math",
+  "unit": 2,
+  "title": "Checkpoint: Quarter 1 (Rational Numbers + Expressions & Equations)",
+  "weeks": "10",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Units 1-2: rational number operations, absolute value, expressions, multi-step equations, and inequalities.",
+
+  "skillsCovered": [
+    "g7-add-subtract-rationals",
+    "g7-multiply-divide-rationals",
+    "g7-absolute-value",
+    "g7-verbal-to-algebraic",
+    "g7-simplify-expressions",
+    "g7-multi-step-equations",
+    "g7-inequalities"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest skill clusters before proceeding to Quarter 2. Rational number fluency and equation solving are essential foundations.",
+    "clusters": [
+      {
+        "skillId": "g7-add-subtract-rationals",
+        "reteachFocus": "Finding common denominators, same-sign vs. different-sign rules, placing results on a number line"
+      },
+      {
+        "skillId": "g7-multiply-divide-rationals",
+        "reteachFocus": "Sign rules for products and quotients, keep-change-flip for division, simplifying before multiplying"
+      },
+      {
+        "skillId": "g7-absolute-value",
+        "reteachFocus": "Absolute value as distance from zero, evaluating nested absolute value expressions, real-world distance interpretations"
+      },
+      {
+        "skillId": "g7-verbal-to-algebraic",
+        "reteachFocus": "Key phrase translation (less than, more than, per, each), distinguishing expressions from equations, setting up from word problems"
+      },
+      {
+        "skillId": "g7-simplify-expressions",
+        "reteachFocus": "Distributive property with negatives, identifying and combining like terms, maintaining sign accuracy through multi-step simplification"
+      },
+      {
+        "skillId": "g7-multi-step-equations",
+        "reteachFocus": "Distributing first, collecting variable terms on one side, inverse operations in correct order, checking solutions by substitution"
+      },
+      {
+        "skillId": "g7-inequalities",
+        "reteachFocus": "Flipping the inequality sign when multiplying or dividing by a negative, open vs. closed circles on number lines, writing solution sets"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "q1-1",
+      "question": "Compute: -3/4 + 5/8. Write your answer as a fraction in simplest form.",
+      "answer": "-1/8. Find a common denominator of 8: -3/4 = -6/8. Then -6/8 + 5/8 = -1/8.",
+      "skill": "g7-add-subtract-rationals",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q1-2",
+      "question": "At 6 AM, the temperature in Duluth was -12.5\u00b0F. By noon, it had risen 18.7\u00b0F. What was the temperature at noon?",
+      "answer": "6.2\u00b0F. Compute -12.5 + 18.7. Since 18.7 has the larger absolute value and is positive, the result is positive: 18.7 - 12.5 = 6.2\u00b0F.",
+      "skill": "g7-add-subtract-rationals",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q1-3",
+      "question": "Compute: (-2/3) \u00d7 (9/4). Write your answer as a fraction or mixed number in simplest form.",
+      "answer": "-3/2 (or -1\u00bd). Multiply numerators: (-2)(9) = -18. Multiply denominators: (3)(4) = 12. Simplify -18/12 by dividing both by 6: -3/2.",
+      "skill": "g7-multiply-divide-rationals",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q1-4",
+      "question": "A swimming pool drains 3/4 of a gallon every 1/3 of a minute. At that rate, how many gallons does it drain per minute?",
+      "answer": "2\u00bc gallons per minute. Divide: (3/4) \u00f7 (1/3) = (3/4) \u00d7 (3/1) = 9/4 = 2\u00bc.",
+      "skill": "g7-multiply-divide-rationals",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q1-5",
+      "question": "Evaluate: |-17 - 8| + |3 - (-5)|.",
+      "answer": "33. First expression: |-17 - 8| = |-25| = 25. Second expression: |3 - (-5)| = |3 + 5| = |8| = 8. Sum: 25 + 8 = 33.",
+      "skill": "g7-absolute-value",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q1-6",
+      "question": "A submarine is at a depth of 32.5 feet below sea level (-32.5 ft). A helicopter hovers at 14.8 feet above sea level (+14.8 ft). What is the vertical distance between the submarine and the helicopter?",
+      "answer": "47.3 feet. Distance = |-32.5 - 14.8| = |-47.3| = 47.3 feet.",
+      "skill": "g7-absolute-value",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q1-7",
+      "question": "Translate the following phrase into an algebraic expression: \"Seven less than three times a number.\"",
+      "answer": "3n - 7 (or equivalently 3x - 7). 'Three times a number' is 3n. 'Seven less than' means subtract 7 from that quantity: 3n - 7.",
+      "skill": "g7-verbal-to-algebraic",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q1-8",
+      "question": "Maria has $45 in savings. She earns $12 per hour babysitting. Write and solve an equation to find how many hours she needs to work to have $141 total.",
+      "answer": "Equation: 45 + 12h = 141. Subtract 45 from both sides: 12h = 96. Divide both sides by 12: h = 8. Maria needs to work 8 hours.",
+      "skill": "g7-verbal-to-algebraic",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q1-9",
+      "question": "Simplify: 4(2x - 3) + 5x.",
+      "answer": "13x - 12. Distribute: 4(2x) - 4(3) + 5x = 8x - 12 + 5x. Combine like terms: (8x + 5x) - 12 = 13x - 12.",
+      "skill": "g7-simplify-expressions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q1-10",
+      "question": "Simplify completely: -3(4a - 2b) + 6(a + 3b) - 5a.",
+      "answer": "-11a + 24b. Distribute: -12a + 6b + 6a + 18b - 5a. Combine a-terms: (-12 + 6 - 5)a = -11a. Combine b-terms: (6 + 18)b = 24b. Result: -11a + 24b.",
+      "skill": "g7-simplify-expressions",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q1-11",
+      "question": "Solve for x: 5x - 3 = 2x + 12. Show your work.",
+      "answer": "x = 5. Subtract 2x from both sides: 3x - 3 = 12. Add 3 to both sides: 3x = 15. Divide by 3: x = 5. Check: 5(5) - 3 = 22 and 2(5) + 12 = 22. \u2713",
+      "skill": "g7-multi-step-equations",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q1-12",
+      "question": "Solve for m: 3(2m - 4) + 7 = 5(m + 1) - 2. Show your work.",
+      "answer": "m = 8. Distribute: 6m - 12 + 7 = 5m + 5 - 2. Simplify: 6m - 5 = 5m + 3. Subtract 5m: m - 5 = 3. Add 5: m = 8. Check: 3(16 - 4) + 7 = 3(12) + 7 = 43 and 5(9) - 2 = 43. \u2713",
+      "skill": "g7-multi-step-equations",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "q1-13",
+      "question": "Solve the inequality and describe the solution on a number line: -4x + 9 > 21.",
+      "answer": "x < -3. Subtract 9 from both sides: -4x > 12. Divide by -4 and flip the inequality: x < -3. On a number line: open circle at -3 with an arrow pointing to the left.",
+      "skill": "g7-inequalities",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q1-14",
+      "question": "A cell phone plan charges a flat fee of $28 per month plus $0.05 per text message. Your monthly budget allows you to spend at most $40. Write and solve an inequality to find the maximum number of text messages you can send.",
+      "answer": "Inequality: 28 + 0.05t \u2264 40. Subtract 28: 0.05t \u2264 12. Divide by 0.05: t \u2264 240. You can send at most 240 text messages.",
+      "skill": "g7-inequalities",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "q1-1": "-1/8",
+    "q1-2": "6.2\u00b0F",
+    "q1-3": "-3/2",
+    "q1-4": "9/4 or 2\u00bc",
+    "q1-5": "33",
+    "q1-6": "47.3 feet",
+    "q1-7": "3n - 7",
+    "q1-8": "h = 8",
+    "q1-9": "13x - 12",
+    "q1-10": "-11a + 24b",
+    "q1-11": "x = 5",
+    "q1-12": "m = 8",
+    "q1-13": "x < -3",
+    "q1-14": "t \u2264 240"
+  }
+}
