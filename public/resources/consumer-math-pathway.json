@@ -1,0 +1,320 @@
+{
+  "courseId": "consumer-math",
+  "track": "Consumer Math / Financial Literacy",
+  "overview": "A 9-week mini-course in real-world money math: paychecks, budgeting, percent applications, banking, credit, taxes, and investing. Every lesson uses actual numbers — not motivational posters. Students learn to read a pay stub, build a budget, compare loan options, and make evidence-based financial decisions.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Establish money vocabulary and read a real paycheck",
+    "Build a monthly budget with fixed, variable, and irregular expenses",
+    "Apply percent fluency to discounts, tax, tips, and unit pricing",
+    "Understand savings accounts, interest, and emergency funds",
+    "Analyze credit cards, loans, debt traps, and amortization",
+    "Compare job offers using take-home pay and benefits",
+    "Explore investing, compound growth, and long-term planning"
+  ],
+
+  "standardsAlignment": {
+    "framework": "Financial Literacy + Common Core Math Practice Standards",
+    "connections": {
+      "7.RP": "Ratios, rates, and percent applications",
+      "7.EE": "Expressions and equations for financial calculations",
+      "MP.1": "Make sense of problems and persevere in solving them",
+      "MP.2": "Reason abstractly and quantitatively",
+      "MP.4": "Model with mathematics",
+      "JumpStart": "Council for Economic Education National Standards for Financial Literacy"
+    }
+  },
+
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release with real-world financial contexts",
+    "description": "The AI tutor leads instruction using the gradual release model, grounded entirely in realistic financial scenarios. Every concept uses actual dollar amounts, real tax rates, and plausible life situations. The goal is financial decision-making, not just computation.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Introduce the financial concept with a concrete scenario. Define vocabulary in plain language. Connect to what students already know about money.",
+        "studentRole": "Engage with the scenario, identify key terms, connect to personal experience"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2-3 worked examples using realistic numbers. Show the math AND the reasoning behind the decision.",
+        "studentRole": "Follow the reasoning, note the steps, ask clarifying questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Present scaffolded problems with real-world framing. Ask guiding questions. Let the student drive the calculation and the decision.",
+        "studentRole": "Attempt each problem, explain reasoning, make and justify decisions"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Assign independent practice mixing computation with decision-making. Problems should require both math AND written justification.",
+        "studentRole": "Solve independently, compare options, explain choices with evidence"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Deliver a short assessment mixing computation and scenario-based reasoning. Evaluate both accuracy and quality of justification.",
+        "studentRole": "Complete the check, show work, defend decisions with numbers"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose realistic financial scenarios appropriate for the student's maturity level",
+      "Adjust complexity based on percent/decimal fluency observed",
+      "Spiral in prior skills (percent, budgeting) when relevant to new topics",
+      "Push for written justification, not just numerical answers",
+      "Flag common real-world traps (minimum payments, predatory lending) during instruction"
+    ]
+  },
+
+  "modules": [
+    {
+      "moduleId": "money_rules_baseline",
+      "unit": 0,
+      "title": "Course Launch: Money Rules Baseline",
+      "preview": "Income vocabulary, reading pay stubs, banking basics, and the wants-vs-needs reality check",
+      "moduleFile": "/modules/consumer-math/money_rules_baseline_module.json",
+      "weeks": "1",
+      "skills": [
+        "cm-income-vocabulary",
+        "cm-reading-pay-stubs",
+        "cm-banking-basics",
+        "cm-wants-vs-needs"
+      ],
+      "essentialQuestions": [
+        "Why is my take-home pay so much less than my salary?",
+        "What is the difference between a debit card and a credit card?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_baseline",
+      "unit": 0,
+      "title": "Checkpoint: Read a Paycheck",
+      "preview": "Read a pay stub and explain where the money went",
+      "moduleFile": "/modules/consumer-math/checkpoint_baseline_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-income-vocabulary",
+        "cm-reading-pay-stubs",
+        "cm-banking-basics",
+        "cm-wants-vs-needs"
+      ]
+    },
+    {
+      "moduleId": "budgeting_cash_flow",
+      "unit": 1,
+      "title": "Budgeting & Cash Flow",
+      "preview": "Budget categories, monthly cash-flow tables, irregular expenses, and budget trade-offs",
+      "moduleFile": "/modules/consumer-math/budgeting_cash_flow_module.json",
+      "weeks": "2-3",
+      "skills": [
+        "cm-budget-categories",
+        "cm-cash-flow-tables",
+        "cm-irregular-expenses",
+        "cm-budget-tradeoffs"
+      ],
+      "essentialQuestions": [
+        "How do I know if I can afford something — really afford it?",
+        "What happens when I forget about irregular expenses?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_budgeting",
+      "unit": 1,
+      "title": "Checkpoint: Build a Monthly Budget",
+      "preview": "Create a monthly budget from a given income and expense profile",
+      "moduleFile": "/modules/consumer-math/checkpoint_budgeting_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-budget-categories",
+        "cm-cash-flow-tables",
+        "cm-irregular-expenses",
+        "cm-budget-tradeoffs"
+      ]
+    },
+    {
+      "moduleId": "percent_discounts_sales",
+      "unit": 2,
+      "title": "Percent, Discounts, and Sales Math",
+      "preview": "The math behind deals: percent of a number, discounts, tax, tip, markup, and unit pricing",
+      "moduleFile": "/modules/consumer-math/percent_discounts_sales_module.json",
+      "weeks": "4",
+      "skills": [
+        "cm-percent-of-number",
+        "cm-discounts-coupons",
+        "cm-tax-tip-markup",
+        "cm-unit-price-comparisons"
+      ],
+      "essentialQuestions": [
+        "Is this deal actually good, or does it just look good?",
+        "How do I figure out the real total cost after tax and tip?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_sales_math",
+      "unit": 2,
+      "title": "Checkpoint: Shopping Cart Challenge",
+      "preview": "Find the best value, calculate total cost with tax, and justify your choices",
+      "moduleFile": "/modules/consumer-math/checkpoint_sales_math_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-percent-of-number",
+        "cm-discounts-coupons",
+        "cm-tax-tip-markup",
+        "cm-unit-price-comparisons"
+      ]
+    },
+    {
+      "moduleId": "banking_saving",
+      "unit": 3,
+      "title": "Banking, Saving, and Emergency Funds",
+      "preview": "Simple vs compound interest, savings accounts, APY, emergency funds, and opportunity cost",
+      "moduleFile": "/modules/consumer-math/banking_saving_module.json",
+      "weeks": "5",
+      "skills": [
+        "cm-simple-interest",
+        "cm-compound-interest",
+        "cm-emergency-fund",
+        "cm-opportunity-cost"
+      ],
+      "essentialQuestions": [
+        "What is the difference between simple and compound interest?",
+        "How long would it take me to save a 3-month emergency fund?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_banking",
+      "unit": 3,
+      "title": "Checkpoint: Savings Growth Analysis",
+      "preview": "Calculate savings growth and explain which savings option is better and why",
+      "moduleFile": "/modules/consumer-math/checkpoint_banking_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-simple-interest",
+        "cm-compound-interest",
+        "cm-emergency-fund",
+        "cm-opportunity-cost"
+      ]
+    },
+    {
+      "moduleId": "credit_loans_debt",
+      "unit": 4,
+      "title": "Credit, Loans, and Debt",
+      "preview": "Credit scores, credit card traps, loan math, amortization, and predatory lending red flags",
+      "moduleFile": "/modules/consumer-math/credit_loans_debt_module.json",
+      "weeks": "6-7",
+      "skills": [
+        "cm-credit-scores",
+        "cm-credit-card-math",
+        "cm-loan-basics",
+        "cm-amortization",
+        "cm-predatory-lending"
+      ],
+      "essentialQuestions": [
+        "Why does paying just the minimum on a credit card cost so much more?",
+        "How do I tell a reasonable loan from a predatory one?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_credit",
+      "unit": 4,
+      "title": "Checkpoint: Minimum Payment Disaster + Loan Comparison",
+      "preview": "Analyze the true cost of minimum payments and compare two loan offers",
+      "moduleFile": "/modules/consumer-math/checkpoint_credit_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-credit-card-math",
+        "cm-loan-basics",
+        "cm-amortization",
+        "cm-predatory-lending"
+      ]
+    },
+    {
+      "moduleId": "income_jobs_taxes",
+      "unit": 5,
+      "title": "Income, Jobs, and Taxes",
+      "preview": "Hourly vs salary vs commission, overtime, W-2 vs 1099, progressive tax, and benefits",
+      "moduleFile": "/modules/consumer-math/income_jobs_taxes_module.json",
+      "weeks": "8",
+      "skills": [
+        "cm-pay-structures",
+        "cm-overtime-timesheets",
+        "cm-tax-basics",
+        "cm-benefits-comparison"
+      ],
+      "essentialQuestions": [
+        "Which job offer is actually better when you factor in benefits?",
+        "Why does a $50,000 salary not mean $50,000 in my pocket?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_income",
+      "unit": 5,
+      "title": "Checkpoint: Compare Two Job Offers",
+      "preview": "Calculate take-home pay, compare benefits, and write a justified recommendation",
+      "moduleFile": "/modules/consumer-math/checkpoint_income_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "cm-pay-structures",
+        "cm-overtime-timesheets",
+        "cm-tax-basics",
+        "cm-benefits-comparison"
+      ]
+    },
+    {
+      "moduleId": "investing_planning",
+      "unit": 6,
+      "title": "Investing & Long-Term Planning",
+      "preview": "Why investing exists, stocks/bonds/index funds, retirement accounts, compound growth, and scam detection",
+      "moduleFile": "/modules/consumer-math/investing_planning_module.json",
+      "weeks": "9",
+      "skills": [
+        "cm-why-investing",
+        "cm-investment-types",
+        "cm-retirement-accounts",
+        "cm-compound-growth",
+        "cm-scam-detection"
+      ],
+      "essentialQuestions": [
+        "Why does starting to invest at 22 vs 32 make such a huge difference?",
+        "How do I spot a financial scam?"
+      ]
+    },
+    {
+      "moduleId": "final_life_plan",
+      "unit": 6,
+      "title": "Final: Life Plan Project",
+      "preview": "Build a complete financial plan: budget + savings + debt decision + investing strategy",
+      "moduleFile": "/modules/consumer-math/final_life_plan_module.json",
+      "isFinal": true,
+      "skills": [
+        "cm-income-vocabulary",
+        "cm-reading-pay-stubs",
+        "cm-budget-categories",
+        "cm-cash-flow-tables",
+        "cm-percent-of-number",
+        "cm-tax-tip-markup",
+        "cm-simple-interest",
+        "cm-compound-interest",
+        "cm-emergency-fund",
+        "cm-credit-card-math",
+        "cm-loan-basics",
+        "cm-pay-structures",
+        "cm-tax-basics",
+        "cm-compound-growth",
+        "cm-scam-detection"
+      ]
+    }
+  ],
+
+  "spiralStrategy": {
+    "weeklyWarmup": "1 percent problem + 1 budgeting/cash-flow question",
+    "everyUnit": "Interpret a table or graph + justify a decision in writing",
+    "ongoingHabit": "Estimate first, calculate second",
+    "nonNegotiableThreads": [
+      "Percent fluency (tax, tip, discount, interest)",
+      "Reading and building tables (budgets, payoff plans)",
+      "Comparing options using math (not vibes)",
+      "Explaining decisions clearly (short, evidence-based writing)"
+    ]
+  },
+
+  "aiGuidanceNotes": "This course is about decision-making, not just computation. Every problem should end with 'so what does this mean for you?' Students must learn to justify financial choices with numbers. Avoid abstract problems — use realistic dollar amounts, actual tax rates (estimate 22-25% for federal+state+FICA), and plausible life scenarios. When teaching credit and debt, be honest about traps without being preachy."
+}

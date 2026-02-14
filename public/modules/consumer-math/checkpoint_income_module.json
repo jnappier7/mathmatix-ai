@@ -1,0 +1,150 @@
+{
+  "moduleId": "checkpoint_income",
+  "course": "Consumer Math",
+  "unit": 5,
+  "title": "Checkpoint: Compare Two Job Offers",
+  "weeks": "8",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Unit 5 income, jobs, and tax skills. Students calculate gross pay across different pay structures, compute overtime pay from timesheets, estimate take-home pay after taxes, and compare total compensation across two job offers to make a justified recommendation.",
+  "skillsCovered": ["cm-pay-structures", "cm-overtime-timesheets", "cm-tax-basics", "cm-benefits-comparison"],
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Income and tax skills directly connect to the final life plan project. Students must demonstrate competency in calculating real take-home pay.",
+    "clusters": [
+      {
+        "skillId": "cm-pay-structures",
+        "reteachFocus": "Hourly = rate × hours, salary = annual ÷ pay periods, commission = base + (sales × rate), converting between hourly and annual for comparison"
+      },
+      {
+        "skillId": "cm-overtime-timesheets",
+        "reteachFocus": "OT rate = 1.5× regular rate, only hours OVER 40 get OT, reading a weekly timesheet, gross pay = (40 × rate) + (OT hours × 1.5 × rate)"
+      },
+      {
+        "skillId": "cm-tax-basics",
+        "reteachFocus": "W-2 vs 1099 tax differences, progressive tax concept (not all income at top rate), estimate 22-25% total for W-2, 1099 pays both sides of FICA (~15.3%)"
+      },
+      {
+        "skillId": "cm-benefits-comparison",
+        "reteachFocus": "Total compensation = salary + dollar value of benefits, quantifying health insurance, 401(k) match, and PTO in dollars"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cinc-1",
+      "question": "Keisha works at a retail store earning $19.50 per hour. Last week she worked 36 hours. What is her gross pay for the week?",
+      "answer": "$702.00. Gross pay = hourly rate × hours worked = $19.50 × 36 = $702.00. Gross pay is the total amount earned before any taxes or deductions are taken out.",
+      "skill": "cm-pay-structures",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cinc-2",
+      "question": "A job posting offers a salary of $48,360 per year for a standard 40-hour work week. What is the equivalent hourly rate? (Assume 52 weeks per year.)",
+      "answer": "$23.25 per hour. First find total working hours per year: 40 hours/week × 52 weeks = 2,080 hours. Then divide annual salary by total hours: $48,360 ÷ 2,080 = $23.25 per hour. Converting salary to hourly lets you compare jobs with different pay structures on equal footing.",
+      "skill": "cm-pay-structures",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cinc-3",
+      "question": "Darius works as a car salesperson. He earns a base pay of $2,200 per month plus 7% commission on all sales. In March, he sold $41,000 worth of vehicles. What was his total gross pay for March? How much did he earn per hour if he worked 168 hours that month?",
+      "answer": "$5,070.00 gross pay; $30.18 per hour. Commission = sales × commission rate = $41,000 × 0.07 = $2,870.00. Total gross pay = base + commission = $2,200 + $2,870 = $5,070.00. Hourly equivalent = $5,070.00 ÷ 168 = $30.18 per hour. Commission-based pay varies month to month depending on sales performance.",
+      "skill": "cm-pay-structures",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cinc-4",
+      "question": "Use the following weekly timesheet for Nia to answer the question.\n\nMon: 8.0 hrs | Tue: 7.5 hrs | Wed: 8.5 hrs | Thu: 8.0 hrs | Fri: 9.0 hrs | Sat: 4.0 hrs | Sun: 0 hrs\n\nHow many total hours did Nia work this week? How many of those hours are regular time and how many are overtime? (Overtime applies to all hours over 40 in one week.)",
+      "answer": "45.0 total hours: 40.0 regular + 5.0 overtime. Add all daily hours: 8.0 + 7.5 + 8.5 + 8.0 + 9.0 + 4.0 + 0 = 45.0 hours. Since overtime kicks in after 40 hours in a week, regular hours = 40.0 and overtime hours = 45.0 − 40.0 = 5.0 hours.",
+      "skill": "cm-overtime-timesheets",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cinc-5",
+      "question": "Nia from the previous problem earns $20.00 per hour. Using her 45 total hours (40 regular + 5 overtime), calculate her gross pay for the week. Remember: overtime is paid at 1.5 times the regular hourly rate.",
+      "answer": "$950.00. Step 1 — Regular pay: 40 hours × $20.00 = $800.00. Step 2 — Overtime rate: $20.00 × 1.5 = $30.00 per hour. Step 3 — Overtime pay: 5 hours × $30.00 = $150.00. Step 4 — Total gross pay: $800.00 + $150.00 = $950.00. Only the 5 hours beyond 40 are paid at the overtime rate; the first 40 hours are always at the regular rate.",
+      "skill": "cm-overtime-timesheets",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cinc-6",
+      "question": "Ethan earns $22.00 per hour. His manager offers him two options for next week:\n\nOption A: Work a standard 40-hour week.\nOption B: Work 48 hours (40 regular + 8 overtime at 1.5× rate).\n\nHow much MORE gross pay does Ethan earn by choosing Option B over Option A? What is his effective hourly rate for the entire 48-hour week under Option B? Round to the nearest cent.",
+      "answer": "$264.00 more; effective rate of $23.83/hour. Option A: 40 × $22.00 = $880.00. Option B: Regular pay = 40 × $22.00 = $880.00. OT rate = $22.00 × 1.5 = $33.00. OT pay = 8 × $33.00 = $264.00. Total = $880.00 + $264.00 = $1,144.00. Extra pay = $1,144.00 − $880.00 = $264.00. Effective hourly rate = $1,144.00 ÷ 48 = $23.83. The effective rate ($23.83) is higher than his regular rate ($22.00) because the OT hours pull the blended average up, but lower than the OT rate ($33.00) because most hours are still paid at the regular rate.",
+      "skill": "cm-overtime-timesheets",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cinc-7",
+      "question": "Amara earns $54,000 per year as a W-2 employee and is paid biweekly (26 pay periods per year). Using an estimated combined tax rate of 24% (federal income tax, state tax, and FICA), what is her approximate take-home pay per paycheck? Round to the nearest cent.",
+      "answer": "$1,578.46 per paycheck. Step 1 — Gross pay per period: $54,000 ÷ 26 = $2,076.92. Step 2 — Estimated taxes per period: $2,076.92 × 0.24 = $498.46. Step 3 — Take-home pay: $2,076.92 − $498.46 = $1,578.46. The 24% estimate covers federal income tax, state income tax, Social Security (6.2%), and Medicare (1.45%). Actual withholdings vary by state and filing status.",
+      "skill": "cm-tax-basics",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cinc-8",
+      "question": "Jaylen is offered the same marketing work as either:\n\n• W-2 employee at $55,000/year (employer pays half of FICA; estimated total tax burden 23%)\n• 1099 independent contractor at $62,000/year (must pay full self-employment tax; estimated total tax burden 35%)\n\nCalculate the annual take-home pay for each option. Which option nets Jaylen more money, and by how much?",
+      "answer": "W-2 nets $2,050 more per year. W-2 take-home: $55,000 × (1 − 0.23) = $55,000 × 0.77 = $42,350. 1099 take-home: $62,000 × (1 − 0.35) = $62,000 × 0.65 = $40,300. Difference: $42,350 − $40,300 = $2,050 in favor of the W-2. Even though the 1099 pays $7,000 more in gross income, the higher tax burden (35% vs 23%) wipes out that advantage and then some. As a 1099 contractor, Jaylen must pay both the employee AND employer portions of FICA (~15.3% total), plus he has no tax withholding so he must make quarterly estimated payments.",
+      "skill": "cm-tax-basics",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cinc-9",
+      "question": "Using the simplified federal tax brackets below, calculate the total federal income tax owed on $45,000 of taxable income.\n\n• 10% on the first $11,000\n• 12% on income from $11,001 to $44,725\n• 22% on income from $44,726 to $95,375\n\nWhat is the effective tax rate? Round to the nearest tenth of a percent. Explain why the effective rate is much lower than 22%.",
+      "answer": "$5,207.50 in federal tax; 11.6% effective rate. Bracket 1: $11,000 × 0.10 = $1,100.00. Bracket 2: ($44,725 − $11,000) = $33,725 × 0.12 = $4,047.00. Bracket 3: ($45,000 − $44,725) = $275 × 0.22 = $60.50. Total tax = $1,100.00 + $4,047.00 + $60.50 = $5,207.50. Effective rate = $5,207.50 ÷ $45,000 = 0.1157 = 11.6%. The effective rate is far below 22% because the U.S. uses a progressive (marginal) tax system — each bracket rate applies ONLY to the income within that range, not to all income. Only $275 of the $45,000 is taxed at 22%. Most of the income is taxed at 10% and 12%.",
+      "skill": "cm-tax-basics",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cinc-10",
+      "question": "Company A offers the following compensation package:\n\n• Salary: $52,000/year\n• Employer-paid health insurance worth $500/month\n• 4% 401(k) match (employer contributes 4% of your salary to your retirement account)\n\nCalculate the total annual compensation, including the dollar value of all employer-provided benefits.",
+      "answer": "$60,080 total annual compensation. Salary: $52,000. Health insurance value: $500 × 12 = $6,000/year. 401(k) match: $52,000 × 0.04 = $2,080/year. Total compensation = $52,000 + $6,000 + $2,080 = $60,080. The benefits add $8,080 in value beyond the salary — a 15.5% boost. The 401(k) match is essentially free money for retirement, and employer-paid health insurance saves you from paying $500/month out of pocket.",
+      "skill": "cm-benefits-comparison",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cinc-11",
+      "question": "Compare these two job offers:\n\nJob X: $58,000 salary. You pay $150/month for health insurance (employer covers the rest). No retirement match. 15 days PTO.\nJob Y: $50,000 salary. Employer pays 100% of health insurance (worth $500/month). 4% 401(k) match. 10 days PTO.\n\nFor each job, calculate the effective annual value: salary + employer-provided benefits − your out-of-pocket benefit costs. Which job has the higher total compensation value, and by how much?",
+      "answer": "Job Y is higher by $1,800. Job X: Salary $58,000. Out-of-pocket insurance = $150 × 12 = $1,800/year. No 401(k) match. Effective value = $58,000 − $1,800 + $0 = $56,200. Job Y: Salary $50,000. Employer health insurance = $500 × 12 = $6,000/year (you pay $0). 401(k) match = $50,000 × 0.04 = $2,000/year. Effective value = $50,000 + $6,000 + $2,000 = $58,000. Difference: $58,000 − $56,200 = $1,800 in favor of Job Y. Despite an $8,000 lower salary, Job Y delivers $1,800 more in total compensation because of stronger benefits. Job X does offer 5 extra PTO days, which has value but does not close the $1,800 gap in most calculations.",
+      "skill": "cm-benefits-comparison",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cinc-12",
+      "question": "You are advising a friend who received two job offers. Calculate the estimated monthly take-home pay and total annual compensation for each, then write a justified recommendation.\n\nOffer A — Marketing Coordinator (W-2 employee):\n• Salary: $48,000/year, paid monthly\n• Estimated total tax rate: 24%\n• Employer-paid health insurance worth $500/month\n• 4% 401(k) match\n• 10 days paid time off\n\nOffer B — Freelance Marketing Consultant (1099 contractor):\n• Expected annual income: $60,000, paid monthly\n• Estimated total tax rate: 34% (includes full self-employment tax)\n• Must buy own health insurance at $420/month\n• No employer retirement match\n• No paid time off\n\n(a) Calculate the monthly take-home pay for each offer after taxes and personal insurance costs.\n(b) Calculate the total annual compensation for Offer A (salary + employer benefits). For Offer B, calculate annual income minus your insurance costs.\n(c) Which offer would you recommend? Justify your answer using at least two factors beyond take-home pay.",
+      "answer": "(a) Monthly take-home: Offer A = $3,040; Offer B = $2,880. Offer A: Gross monthly = $48,000 ÷ 12 = $4,000. Taxes = $4,000 × 0.24 = $960. Take-home = $4,000 − $960 = $3,040. (Insurance is free, so no additional cost.) Offer B: Gross monthly = $60,000 ÷ 12 = $5,000. Taxes = $5,000 × 0.34 = $1,700. After-tax = $5,000 − $1,700 = $3,300. Insurance = $420. Take-home = $3,300 − $420 = $2,880. Offer A take-home is $160/month higher ($1,920/year more).\n\n(b) Total annual compensation: Offer A = $55,920; Offer B = $54,960. Offer A: Salary $48,000 + health insurance ($500 × 12 = $6,000) + 401(k) match ($48,000 × 0.04 = $1,920) = $55,920. Offer B: Income $60,000 − own insurance ($420 × 12 = $5,040) = $54,960. Offer A total compensation is $960 higher.\n\n(c) Recommended: Offer A. Justification: (1) Offer A provides $160 more per month in take-home pay despite a $12,000 lower gross income, because the W-2 tax rate is 10 percentage points lower. (2) The 4% 401(k) match adds $1,920/year in free retirement savings that Offer B does not provide. (3) 10 days of PTO means your friend gets paid while taking time off — a freelancer earning $0 on vacation days loses roughly $230 per day not worked. (4) As a W-2 employee, taxes are withheld automatically; a 1099 contractor must save for and file quarterly estimated tax payments or face penalties. Offer B may make sense for someone who values schedule flexibility and can deduct business expenses, but purely on compensation, Offer A wins.",
+      "skill": "cm-benefits-comparison",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "cinc-1": "$702.00",
+    "cinc-2": "$23.25 per hour",
+    "cinc-3": "$5,070.00 gross; $30.18/hour",
+    "cinc-4": "45.0 total hours (40 regular + 5 OT)",
+    "cinc-5": "$950.00",
+    "cinc-6": "$264.00 more; $23.83/hour effective rate",
+    "cinc-7": "$1,578.46 per paycheck",
+    "cinc-8": "W-2 nets $2,050 more per year",
+    "cinc-9": "$5,207.50 tax; 11.6% effective rate",
+    "cinc-10": "$60,080 total annual compensation",
+    "cinc-11": "Job Y by $1,800",
+    "cinc-12": "Offer A: $3,040/month take-home, $55,920 total comp; Offer B: $2,880/month take-home, $54,960 total comp; Recommend Offer A"
+  }
+}

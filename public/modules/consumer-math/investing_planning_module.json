@@ -1,0 +1,468 @@
+{
+  "moduleId": "investing_planning",
+  "course": "Consumer Math",
+  "unit": 6,
+  "title": "Investing & Long-Term Planning",
+  "weeks": "9",
+  "estimatedDuration": 35,
+  "description": "The payoff module. Everything students learned — budgeting, percent fluency, compound interest, opportunity cost — converges here. This module introduces why investing exists (inflation erodes cash), what the basic investment types are (stocks, bonds, index funds), how retirement accounts work (401k, Roth IRA), the power of compound growth over decades, and how to spot financial scams. The core lesson: time is the most powerful variable in investing, and starting early beats starting big.",
+
+  "skills": ["cm-why-investing", "cm-investment-types", "cm-retirement-accounts", "cm-compound-growth", "cm-scam-detection"],
+
+  "standardsAlignment": ["Financial Literacy Standard 5", "7.EE.3", "MP.2", "MP.4"],
+
+  "goals": [
+    "Explain why investing matters: inflation erodes purchasing power and savings accounts may not keep up",
+    "Describe the basic investment types (stocks, bonds, index funds) and the concept of diversification",
+    "Explain 401(k) and Roth IRA accounts at a high level and why employer match is free money",
+    "Calculate and compare compound growth scenarios to prove that starting early beats starting big",
+    "Identify common financial scam red flags: guaranteed returns, urgency, unsolicited offers"
+  ],
+
+  "instructionalStrategy": [
+    "Start with inflation: $100 today buys less than $100 ten years ago. Show specific examples with real prices.",
+    "Investment types: keep it conceptual. Stock = own a piece of a company. Bond = lend money. Index fund = bundle of many stocks (the whole pizza, not one slice). Students don't need to know HOW to buy yet.",
+    "Retirement accounts: high-level only. 401(k) = pre-tax bucket with employer match. Roth IRA = after-tax bucket, grows tax-free. The match calculation is the key: 4% of $50K = $2,000 free per year.",
+    "Compound growth is THE lesson: $200/month at 8% starting at age 22 vs age 32. Use the Rule of 72 (years to double = 72 / rate). Make it visual and concrete.",
+    "Scam detection: show real patterns (anonymized). The 'if it sounds too good to be true' test genuinely works. Teach the pause: never make a financial decision under pressure."
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Why Investing Matters: Inflation and the Erosion of Cash",
+      "skill": "cm-why-investing",
+      "content": "Here is the uncomfortable truth about cash: it loses value every year. Inflation means the prices of goods and services rise over time, so a dollar today buys less than a dollar ten years ago. A gallon of milk that cost $3.00 in 2014 costs closer to $4.25 in 2024. A savings account earning 1-2% interest per year cannot keep up with inflation averaging 2-4% per year. That means money sitting in a savings account is actually shrinking in purchasing power. Investing exists to solve this problem. Historically, diversified stock investments have returned roughly 7-10% per year over long periods, which outpaces inflation and allows your money to genuinely grow. The tradeoff is risk: investments can lose value in the short term, but over decades the trend has been upward. Understanding this tradeoff is the foundation of every financial decision you will make.",
+      "keyPoints": [
+        "Inflation averages roughly 2-4% per year in the U.S., meaning prices double approximately every 18-36 years",
+        "A savings account earning 1-2% per year does not keep pace with 3% inflation — your purchasing power quietly shrinks",
+        "The stock market has historically returned approximately 7-10% per year on average over long periods (decades), outpacing inflation",
+        "Investing is not gambling — it is the strategy for making your money grow faster than prices rise",
+        "Risk and reward are linked: higher potential returns come with higher short-term volatility, but time reduces risk significantly"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Inflation and Savings vs. Investing — Worked Examples",
+      "skill": "cm-why-investing",
+      "examples": [
+        {
+          "problem": "A savings account pays 1.5% annual interest. Inflation averages 3% per year. You deposit $10,000 and leave it for 10 years. What is the account balance after 10 years, and what is the real purchasing power of that balance?",
+          "solution": "Step 1: Calculate the account balance.\n$10,000 x (1.015)^10 = $10,000 x 1.1610 = $11,610.\n\nStep 2: Calculate what $10,000 worth of goods costs after 10 years of 3% inflation.\n$10,000 x (1.03)^10 = $10,000 x 1.3439 = $13,439.\n\nStep 3: Compare.\nYour balance is $11,610 but you need $13,439 to buy the same goods. You lost $1,829 in purchasing power. The savings account did not keep up with inflation."
+        },
+        {
+          "problem": "A movie ticket cost $9.00 in 2015. If prices rose at an average of 3.5% per year, what would the same ticket cost in 2025 (10 years later)?",
+          "solution": "Future price = $9.00 x (1.035)^10\n(1.035)^10 = 1.4106\n$9.00 x 1.4106 = $12.70.\n\nThe same movie ticket would cost about $12.70 ten years later. This is why holding cash 'under the mattress' means you can afford less over time."
+        },
+        {
+          "problem": "You invest $1,000 in a stock index fund that averages 8% per year. How much is it worth after 10 years? Compare this to keeping $1,000 in a 1.5% savings account for 10 years.",
+          "solution": "Index fund: $1,000 x (1.08)^10 = $1,000 x 2.1589 = $2,158.92.\nSavings account: $1,000 x (1.015)^10 = $1,000 x 1.1610 = $1,161.00.\n\nDifference: $2,158.92 - $1,161.00 = $997.92 more from investing.\n\nThe index fund more than doubled the original amount, while the savings account grew only 16%. Even after accounting for 3% inflation, the index fund preserved and grew real purchasing power."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Inflation and Purchasing Power — Practice",
+      "skills": ["cm-why-investing"],
+      "problems": [
+        {
+          "id": "ip-1",
+          "prompt": "A savings account pays 1.5% interest per year. Inflation averages 3% per year. You deposit $5,000. After one year, what is your account balance? What do goods that previously cost $5,000 now cost? Did your purchasing power increase or decrease, and by how much?",
+          "hints": [
+            "Interest earned: $5,000 x 0.015 = $75",
+            "Price increase: $5,000 x 0.03 = $150",
+            "Compare: you earned $75 but prices rose $150"
+          ],
+          "answer": "Account balance: $5,075. Cost of goods: $5,150. Purchasing power decreased by $75. You earned $75 in interest but prices rose by $150, so you are $75 behind in real terms."
+        },
+        {
+          "id": "ip-2",
+          "prompt": "A loaf of bread costs $3.50 today. If inflation averages 3% per year, what will the same loaf cost in 10 years? Round to the nearest cent. Use the formula: Future Price = Current Price x (1 + inflation rate)^years. (Hint: (1.03)^10 = 1.3439)",
+          "hints": [
+            "Plug in: $3.50 x (1.03)^10",
+            "Use the given value: (1.03)^10 = 1.3439",
+            "Multiply: $3.50 x 1.3439"
+          ],
+          "answer": "$4.70. Calculation: $3.50 x 1.3439 = $4.70. A loaf of bread that costs $3.50 today will cost about $4.70 in 10 years at 3% inflation."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Inflation and Investing — Apply It",
+      "skills": ["cm-why-investing"],
+      "problems": [
+        {
+          "id": "ip-3",
+          "prompt": "You have $1,000 to set aside for 20 years. Option A: savings account at 2% annual interest. Option B: stock index fund averaging 8% per year. Calculate the final value of each using A = P(1 + r)^t. How much more does Option B earn? (Hints: (1.02)^20 = 1.4859 and (1.08)^20 = 4.6610)",
+          "answer": "Option A: $1,000 x 1.4859 = $1,485.90. Option B: $1,000 x 4.6610 = $4,661.00. Option B earns approximately $3,175 more."
+        },
+        {
+          "id": "ip-4",
+          "prompt": "If inflation averages 3% per year and your investment earns 7% per year, what is your approximate real (inflation-adjusted) return? Use the approximation: real return = nominal return - inflation rate. Explain in one sentence why this number matters more than the 7%.",
+          "answer": "Approximately 4%. Real return = 7% - 3% = 4%. This matters more because it represents how much your actual purchasing power grows each year after accounting for rising prices."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Investment Types: Stocks, Bonds, and Index Funds",
+      "skill": "cm-investment-types",
+      "content": "There are three basic investment types you need to know at this stage. A stock is a share of ownership in a company — when you buy Apple stock, you own a tiny piece of Apple. If the company does well, your share becomes worth more. A bond is a loan you make to a company or government — they pay you back with interest over a set period. Bonds are generally lower risk but lower return. An index fund is a bundle of many stocks packaged together — instead of picking one company, you own a slice of hundreds of companies at once (like buying the whole pizza instead of one slice). The key concept tying these together is diversification: spreading your money across many investments so that if one fails, your whole portfolio does not collapse.",
+      "keyPoints": [
+        "Stock: you own a piece of a company. Higher potential returns but higher risk. A single stock can drop to zero if the company fails.",
+        "Bond: you lend money to a company or government. They pay you fixed interest (like a coupon). Lower risk, lower return. You get your principal back at maturity.",
+        "Index fund: a collection of hundreds of stocks that tracks an entire market (e.g., the S&P 500 holds the 500 largest U.S. companies). Low cost, built-in diversification.",
+        "Diversification means spreading investments across many assets so no single failure wipes you out — do not put all your eggs in one basket.",
+        "Historical average annual returns (approximate): savings account 1-2%, bonds 4-6%, S&P 500 index fund 7-10%. Higher return = higher short-term risk."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Investment Types — Worked Examples",
+      "skill": "cm-investment-types",
+      "examples": [
+        {
+          "problem": "You buy 10 shares of a company at $25 per share. One year later, the stock price is $32 per share. What is your total gain, and what is your percent return?",
+          "solution": "Step 1: Total cost = 10 shares x $25 = $250.\nStep 2: Total value after one year = 10 shares x $32 = $320.\nStep 3: Gain = $320 - $250 = $70.\nStep 4: Percent return = ($70 / $250) x 100 = 28%.\n\nYou gained $70, a 28% return. Note: individual stocks can also lose value — this example shows a good year, but the stock could have dropped to $18 just as easily."
+        },
+        {
+          "problem": "You buy a $1,000 bond that pays 5% annual interest for 10 years. How much interest do you earn each year, and what is the total amount you receive over the bond's full term (interest plus your original $1,000 back)?",
+          "solution": "Annual interest = $1,000 x 0.05 = $50 per year.\nTotal interest over 10 years = $50 x 10 = $500.\nAt the end of 10 years, you also get your original $1,000 back.\nTotal received = $1,000 + $500 = $1,500.\n\nBonds provide predictable, steady income. The tradeoff: $500 over 10 years is solid, but if you had invested in an index fund averaging 8%, that $1,000 would have grown to $2,159."
+        },
+        {
+          "problem": "Jaylen invests $2,000 in one company's stock. Maya invests $2,000 in an S&P 500 index fund (500 companies). The company Jaylen invested in goes bankrupt. How much does each person lose?",
+          "solution": "Jaylen: His single stock drops to $0. He loses $2,000 — his entire investment (100% loss).\n\nMaya: Her index fund holds 500 companies. One company going bankrupt affects roughly 1/500 of her portfolio. She loses approximately $4 (about 0.2% of her investment). The other 499 companies continue as normal.\n\nThis is the power of diversification. Maya's loss is negligible because her risk is spread across hundreds of companies."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Investment Types — Practice",
+      "skills": ["cm-investment-types"],
+      "problems": [
+        {
+          "id": "ip-5",
+          "prompt": "Match each investment type with its correct description.\n1. Stock\n2. Bond\n3. Index Fund\n\nA. You lend money to a company or government and receive fixed interest payments over a set period.\nB. You buy a share of ownership in a single company.\nC. You buy a bundle of many stocks that tracks an entire market, giving you built-in diversification.",
+          "hints": [
+            "A stock means you OWN a piece of a company — you are a part-owner",
+            "A bond is like being the bank — you lend money and earn interest"
+          ],
+          "answer": "1-B, 2-A, 3-C. Stock = ownership in a company (B). Bond = lending money for fixed interest (A). Index fund = a diversified bundle of stocks tracking the whole market (C)."
+        },
+        {
+          "id": "ip-6",
+          "prompt": "An S&P 500 index fund has historically returned about 10% per year on average. A corporate bond fund returns about 5% per year. A savings account pays 1.5% per year. If you invest $4,000 in each for 10 years, which will have the highest final value and which the lowest? You do not need to calculate exact amounts — just rank them and explain why the returns differ.",
+          "hints": [
+            "Higher annual return = higher final value over the same time period",
+            "Think about the risk-return tradeoff: why does the stock index fund pay more than a savings account?"
+          ],
+          "answer": "Highest: S&P 500 index fund (10%/year). Middle: Corporate bond fund (5%/year). Lowest: Savings account (1.5%/year). Returns differ because of risk: the index fund has the most short-term volatility (prices swing up and down), bonds have moderate risk, and savings accounts are virtually risk-free but grow the slowest. Higher risk is compensated with higher expected returns over time."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Investment Types — Apply It",
+      "skills": ["cm-investment-types"],
+      "problems": [
+        {
+          "id": "ip-7",
+          "prompt": "A bond pays 5% annual interest on a $1,000 investment. How much interest do you receive each year? How much total interest do you receive over the bond's 10-year term? What total amount do you get back when the bond matures (interest plus principal)?",
+          "answer": "$50 per year in interest. Over 10 years: $50 x 10 = $500 total interest. Total at maturity: $1,000 principal + $500 interest = $1,500."
+        },
+        {
+          "id": "ip-8",
+          "prompt": "Rank the following from LOWEST risk to HIGHEST risk and briefly explain each: (A) buying stock in one small tech startup, (B) putting money in an FDIC-insured savings account, (C) investing in an S&P 500 index fund.",
+          "answer": "B (savings account) then C (S&P 500 index fund) then A (single tech startup). Savings account is FDIC insured with virtually zero risk of losing money. S&P 500 index fund holds 500 companies so risk is spread out, though prices fluctuate in the short term. A single tech startup is highest risk because the company could succeed spectacularly or fail completely — all your money is concentrated in one bet."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Retirement Accounts: 401(k) and Roth IRA",
+      "skill": "cm-retirement-accounts",
+      "content": "Retirement accounts are special containers for your investments that come with tax advantages. The two most important ones to know are the 401(k) and the Roth IRA. A 401(k) is offered through your employer. You contribute money before taxes are taken out of your paycheck (pre-tax), which lowers your taxable income today. Many employers match your contributions up to a certain percentage — this is literally free money. You pay taxes later when you withdraw in retirement. A Roth IRA is an account you open yourself. You contribute money after you have already paid taxes on it (after-tax), but the account grows tax-free and all withdrawals in retirement are tax-free. Both have annual contribution limits. The single most important takeaway: if your employer offers a 401(k) match, contribute at least enough to get the full match. Not doing so is like turning down part of your salary.",
+      "keyPoints": [
+        "401(k): employer-sponsored, pre-tax contributions reduce your taxable income now, you pay taxes when you withdraw in retirement, many employers match contributions (free money)",
+        "Roth IRA: opened individually, after-tax contributions (you pay taxes now), all growth and withdrawals in retirement are completely tax-free",
+        "Employer match example: if your employer matches 100% of the first 4% of salary, contributing 4% of a $50,000 salary means you put in $2,000 and your employer adds $2,000 — that is an instant 100% return",
+        "Both accounts have annual contribution limits (these change periodically) — the key is to start contributing as early as possible regardless of the amount",
+        "Not contributing enough to get the full employer match is leaving free money on the table — always capture the full match first before considering other investment options"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Retirement Accounts — Worked Examples",
+      "skill": "cm-retirement-accounts",
+      "examples": [
+        {
+          "problem": "Tanya earns $50,000 per year. Her employer offers a 401(k) with a 100% match on the first 4% of her salary. Tanya contributes 4%. How much does Tanya contribute per year? How much does her employer add? What is the total annual contribution to her 401(k)?",
+          "solution": "Step 1: Tanya's contribution = 4% of $50,000 = 0.04 x $50,000 = $2,000.\nStep 2: Employer match = 100% of Tanya's $2,000 = $2,000.\nStep 3: Total = $2,000 + $2,000 = $4,000 per year.\n\nTanya effectively doubles her contribution instantly because of the employer match. Over 10 years, that is $20,000 in free employer money — before any investment growth."
+        },
+        {
+          "problem": "Tanya's coworker Derek contributes only 2% of his $50,000 salary instead of the full 4% the employer will match. How much employer match money is Derek missing out on each year?",
+          "solution": "Derek's contribution = 2% of $50,000 = $1,000.\nEmployer matches 100% of Derek's $1,000 = $1,000.\n\nIf Derek contributed 4%: $2,000 from Derek + $2,000 match = $4,000 total.\nAt 2%: $1,000 from Derek + $1,000 match = $2,000 total.\n\nDerek is missing $2,000 - $1,000 = $1,000 per year in employer match. That is $1,000 of free money he is leaving on the table every year. Over a 30-year career, that is $30,000 in lost match money alone — not even counting the investment growth on that money."
+        },
+        {
+          "problem": "Maria contributes $6,000 per year to a Roth IRA starting at age 25. Her investments grow at an average of 8% per year. Using the Rule of 72 (money doubles every 72/8 = 9 years), estimate how much her first year's $6,000 contribution will be worth at age 70 (45 years later).",
+          "solution": "At 8%, money doubles every 9 years.\n45 years / 9 years = 5 doublings.\n$6,000 x 2 x 2 x 2 x 2 x 2 = $6,000 x 32 = $192,000.\n\nHer first $6,000 contribution alone grows to approximately $192,000 — and since it is in a Roth IRA, she pays zero taxes when she withdraws it in retirement. Every dollar of that $192,000 is hers."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Retirement Accounts — Practice",
+      "skills": ["cm-retirement-accounts"],
+      "problems": [
+        {
+          "id": "ip-9",
+          "prompt": "Marcus earns $52,000 per year. His employer offers a 401(k) with a 100% match on the first 4% of salary. Marcus contributes 4% of his salary. How much does Marcus contribute per year? How much does his employer contribute? What is the total annual amount going into his 401(k)?",
+          "hints": [
+            "Calculate 4% of $52,000: multiply $52,000 x 0.04",
+            "A 100% match means the employer puts in the same dollar amount Marcus does (up to 4% of salary)"
+          ],
+          "answer": "Marcus contributes $2,080 (4% x $52,000). Employer matches 100% of that: $2,080. Total: $2,080 + $2,080 = $4,160 per year."
+        },
+        {
+          "id": "ip-10",
+          "prompt": "Priya earns $52,000 and decides to contribute only 2% to her 401(k), even though her employer matches 100% of the first 4%. How much employer match money is Priya leaving on the table each year compared to contributing the full 4%?",
+          "hints": [
+            "At 2%, Priya contributes $1,040 and receives $1,040 in employer match",
+            "At 4%, she would contribute $2,080 and receive $2,080 in employer match",
+            "Find the difference in the employer match amounts"
+          ],
+          "answer": "At 2%: employer match = $1,040. At 4%: employer match = $2,080. Priya is leaving $2,080 - $1,040 = $1,040 per year of free money on the table."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Retirement Accounts — Apply It",
+      "skills": ["cm-retirement-accounts"],
+      "problems": [
+        {
+          "id": "ip-11",
+          "prompt": "Explain one key difference between a 401(k) and a Roth IRA in terms of when you pay taxes. Then state one advantage of each account type.",
+          "answer": "Key difference: 401(k) contributions are pre-tax (you pay taxes when you withdraw in retirement), while Roth IRA contributions are after-tax (you pay taxes now, but all withdrawals in retirement are tax-free). 401(k) advantage: reduces your taxable income today and may include employer matching. Roth IRA advantage: all growth and withdrawals in retirement are completely tax-free."
+        },
+        {
+          "id": "ip-12",
+          "prompt": "A 22-year-old starts contributing $3,000 per year to a Roth IRA. Assuming 8% average annual growth, use the Rule of 72 to estimate how many times her first contribution doubles by age 67 (45 years). Approximately how much will that first $3,000 be worth? Remember: all Roth IRA withdrawals are tax-free.",
+          "answer": "At 8%, money doubles every 72 / 8 = 9 years. In 45 years: 45 / 9 = 5 doublings. $3,000 x 2^5 = $3,000 x 32 = $96,000. Her first $3,000 contribution alone would grow to approximately $96,000, all tax-free in a Roth IRA."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The Power of Compound Growth",
+      "skill": "cm-compound-growth",
+      "content": "Compound growth is the single most important concept in long-term investing. When your investment earns a return, that return gets added to your balance — and then the next year, you earn a return on the bigger balance. It is growth on top of growth, and over decades it produces staggering results. The Rule of 72 is a quick estimation tool: divide 72 by the annual interest rate to find how many years it takes for your money to double. At 8%, your money doubles every 9 years. The critical lesson of this section is that TIME matters more than the AMOUNT you invest. A person who invests $200 per month starting at age 22 will end up with far more money at retirement than someone who invests $400 per month starting at age 32 — even though the second person invests twice as much each month. Starting early gives compound growth more time to work, and that extra time is worth more than extra money.",
+      "keyPoints": [
+        "Compound growth: you earn returns on your returns. Each year's growth builds on the previous year's total, creating exponential (not linear) growth.",
+        "Rule of 72: years to double your money = 72 / annual interest rate. At 6% it takes 12 years. At 8% it takes 9 years. At 12% it takes 6 years.",
+        "Compound interest formula for a lump sum: A = P(1 + r)^t, where P = principal, r = annual rate, t = years, A = final amount.",
+        "$200/month invested at 8% average annual return from age 22 to 62 (40 years) grows to approximately $699,000. The same $200/month from age 32 to 62 (30 years) grows to only about $298,000. Ten extra years more than doubles the result.",
+        "Starting early beats starting big: $200/month for 40 years ($96,000 total invested) produces more than $400/month for 30 years ($144,000 total invested) at the same rate. Time is the most powerful variable.",
+        "The first doubling feels small ($5,000 becomes $10,000). But the fifth doubling is enormous ($80,000 becomes $160,000). Patience is required — the magic happens in the later decades."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Compound Growth — Worked Examples",
+      "skill": "cm-compound-growth",
+      "examples": [
+        {
+          "problem": "Use the Rule of 72 to estimate how long it takes $10,000 to double at (a) 4% per year, (b) 8% per year, and (c) 12% per year.",
+          "solution": "(a) 72 / 4 = 18 years to double. $10,000 becomes $20,000 in about 18 years.\n(b) 72 / 8 = 9 years to double. $10,000 becomes $20,000 in about 9 years.\n(c) 72 / 12 = 6 years to double. $10,000 becomes $20,000 in about 6 years.\n\nNotice: doubling the rate cuts the doubling time in half. At 12%, you double in 6 years and could potentially double 5 or more times in a 30-year investing horizon."
+        },
+        {
+          "problem": "Aiden invests a one-time lump sum of $5,000 in an index fund averaging 7% annual return. How much will he have after 30 years? Use A = P(1 + r)^t. (Given: (1.07)^30 = 7.6123)",
+          "solution": "A = $5,000 x (1.07)^30 = $5,000 x 7.6123 = $38,061.\n\nAiden's $5,000 grows to $38,061 — more than 7 times the original amount. He never added another dollar; compound growth did all the work. His $5,000 earned $33,061 in pure growth over 30 years."
+        },
+        {
+          "problem": "Compare two investors:\nPerson A: invests $200/month starting at age 22 for 40 years at 8% average annual return.\nPerson B: invests $400/month starting at age 32 for 30 years at the same 8% return.\n\nPerson A's final value: approximately $699,000 (total invested: $96,000).\nPerson B's final value: approximately $597,000 (total invested: $144,000).\n\nWho ends up with more? Who invested more total cash?",
+          "solution": "Person A ends up with approximately $102,000 MORE ($699,000 vs $597,000).\nPerson B invested $48,000 MORE total ($144,000 vs $96,000).\n\nPerson A invested half as much per month, invested $48,000 less overall, yet ended up with $102,000 more. The difference is 10 extra years of compound growth. Those first 10 years of Person A's investment had 40 years to compound and multiply. Person B can never recover that lost time, even by contributing double the monthly amount.\n\nThis is the most important lesson in investing: start early. Time beats amount."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Compound Growth — Practice",
+      "skills": ["cm-compound-growth"],
+      "problems": [
+        {
+          "id": "ip-13",
+          "prompt": "Use the Rule of 72 to estimate how long it takes an investment to double at each annual rate: (a) 6%, (b) 9%, (c) 3%.",
+          "hints": [
+            "Rule of 72: divide 72 by the annual interest rate",
+            "For 6%: 72 / 6 = ?"
+          ],
+          "answer": "(a) 72 / 6 = 12 years. (b) 72 / 9 = 8 years. (c) 72 / 3 = 24 years."
+        },
+        {
+          "id": "ip-14",
+          "prompt": "Sophie invests $5,000 in an index fund that averages 7% per year (compounded annually). Using A = P(1 + r)^t, how much will Sophie have after 30 years? Round to the nearest dollar. (Hint: (1.07)^30 = 7.6123)",
+          "hints": [
+            "Plug into the formula: A = $5,000 x (1.07)^30",
+            "You are given that (1.07)^30 = 7.6123 — multiply this by $5,000"
+          ],
+          "answer": "A = $5,000 x 7.6123 = $38,061. Sophie's $5,000 grows to $38,061 over 30 years."
+        },
+        {
+          "id": "ip-15",
+          "prompt": "Person A invests $200/month starting at age 22 for 40 years at 8% annual return. Total invested: $96,000. Final value: approximately $699,000.\n\nPerson B invests $400/month starting at age 32 for 30 years at 8% annual return. Total invested: $144,000. Final value: approximately $597,000.\n\nWho ends up with more money? Who invested more total cash? What does this prove about the power of starting early?",
+          "hints": [
+            "Compare final values: $699,000 vs $597,000",
+            "Compare total invested: $96,000 vs $144,000",
+            "Person A invested LESS money but started 10 years EARLIER"
+          ],
+          "answer": "Person A ends up with about $102,000 more ($699,000 vs $597,000) despite investing $48,000 less total ($96,000 vs $144,000). This proves that starting early is more powerful than investing larger amounts later. The 10 extra years of compounding are worth more than doubling the monthly contribution."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Compound Growth — Apply It",
+      "skills": ["cm-compound-growth"],
+      "problems": [
+        {
+          "id": "ip-16",
+          "prompt": "At current inflation of approximately 3% per year, use the Rule of 72 to estimate how many years it takes for prices to double. If a college semester currently costs $12,000, approximately what will it cost when prices have doubled?",
+          "answer": "72 / 3 = 24 years for prices to double. A $12,000 semester would cost approximately $24,000 in about 24 years."
+        },
+        {
+          "id": "ip-17",
+          "prompt": "Zara invests $10,000 at 8% compounded annually. Using A = P(1 + r)^t, calculate the value after 9 years. Then verify using the Rule of 72 that this is approximately double the original amount. (Hint: (1.08)^9 = 1.999)",
+          "answer": "A = $10,000 x (1.08)^9 = $10,000 x 1.999 = $19,990. The Rule of 72 predicts doubling at 72 / 8 = 9 years. $19,990 is almost exactly double $10,000, confirming the Rule of 72 works."
+        },
+        {
+          "id": "ip-18",
+          "prompt": "Two cousins each receive $3,000 at age 18. Cousin A invests it immediately at 8% annual return and leaves it for 45 years (until age 63). Cousin B spends the $3,000 and waits until age 28 to invest a new $3,000 at the same 8% rate for 35 years (until age 63). Calculate each cousin's final amount. How much did waiting 10 years cost Cousin B? (Hints: (1.08)^45 = 31.92 and (1.08)^35 = 14.79)",
+          "answer": "Cousin A: $3,000 x 31.92 = $95,760. Cousin B: $3,000 x 14.79 = $44,370. Waiting 10 years cost Cousin B: $95,760 - $44,370 = $51,390. The 10-year delay cut the final amount by more than half, even though both invested the same $3,000."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Spotting Financial Scams",
+      "skill": "cm-scam-detection",
+      "content": "Every year, millions of people lose money to financial scams and fraud. Scammers are skilled at creating urgency, promising impossible returns, and making offers that feel exclusive. The good news is that almost all scams share the same red flags, and once you learn to spot them, you can protect yourself and others. The core rule: if an investment sounds too good to be true, it is. No legitimate investment guarantees high returns with zero risk. Real investments involve real risk. The second rule: never make a financial decision under pressure. Scammers create artificial urgency because they know that if you take time to think, research, or ask a trusted adult, you will realize the offer is fake.",
+      "keyPoints": [
+        "Red flag 1 — Guaranteed high returns: no legitimate investment can guarantee returns. The stock market averages 7-10% per year over decades, and even that is not guaranteed. Any claim of 'guaranteed 20%+ returns' is almost certainly a scam.",
+        "Red flag 2 — Urgency and pressure: 'Act now or miss out!' and 'Limited spots available!' are tactics designed to stop you from thinking critically. Real investments do not disappear if you take a day to research them.",
+        "Red flag 3 — Unsolicited offers: if someone you do not know contacts you about an 'amazing investment opportunity,' be skeptical. Legitimate financial advisors do not cold-message strangers on social media.",
+        "Red flag 4 — Too-good-to-be-true claims: 'Make $5,000 a month with no work!' or 'Turn $100 into $10,000!' are designed to trigger greed and bypass rational thinking.",
+        "Red flag 5 — Recruitment-based models (pyramid/MLM schemes): if making money requires recruiting other people rather than selling a real product, it is likely a pyramid scheme that will eventually collapse, with people at the bottom losing everything."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Scam Detection — Worked Examples",
+      "skill": "cm-scam-detection",
+      "examples": [
+        {
+          "problem": "You receive this message: 'Hey! I found this amazing crypto platform that GUARANTEES 30% monthly returns. I have already made $15,000 in two weeks! You need to sign up NOW because spots are limited. Send me $500 to get started.' Identify the red flags.",
+          "solution": "Red flags identified:\n1. GUARANTEED returns — no legitimate investment guarantees anything, let alone 30% per MONTH (that would be 360% per year, which is absurd).\n2. Urgency/pressure — 'sign up NOW' and 'spots are limited' are designed to prevent you from thinking.\n3. Unsolicited offer — someone reaching out to recruit you into a money opportunity.\n4. Unrealistic profit claims — $15,000 in two weeks from a simple platform.\n5. Asking you to send money directly to a person — legitimate investments go through regulated brokerage accounts, not personal transfers.\n\nVerdict: This is almost certainly a scam. Do not send money."
+        },
+        {
+          "problem": "A coworker tells you: 'I joined this company where you invest $1,000 and recruit three friends who each invest $1,000. You earn a percentage from everyone below you. People at the top are making $20,000 a month!' What type of scheme is this and why is it unsustainable?",
+          "solution": "This is a pyramid scheme. Here is why it collapses:\n\nLevel 0: You (1 person)\nLevel 1: You recruit 3 people (3 people)\nLevel 2: Each recruits 3 more (9 people)\nLevel 3: 27 people\nLevel 4: 81 people\nLevel 5: 243 people\n...\nLevel 13: Over 1.5 million people needed\nLevel 15: Over 14 million people needed\n\nThe money 'earned' at the top comes entirely from people joining at the bottom. There is no real product or investment generating returns. Once recruitment slows (which is mathematically inevitable), the scheme collapses and everyone at the bottom — the vast majority of participants — loses their money."
+        },
+        {
+          "problem": "Which of these is a legitimate investment and which is a red flag?\n(A) A Vanguard index fund with average historical returns of 10% per year and a disclaimer that 'past performance does not guarantee future results.'\n(B) An Instagram ad promising 'Risk-free forex trading! Guaranteed $2,000 per week from a $300 starting balance!'",
+          "solution": "(A) LEGITIMATE. Why: Vanguard is an established, regulated investment firm. The 10% average return is historically accurate for the S&P 500. The disclaimer that past performance does not guarantee future results is a sign of honesty — it is actually required by law. This is transparent and realistic.\n\n(B) RED FLAG / SCAM. Why: 'Risk-free' is impossible — all investments carry risk. 'Guaranteed $2,000/week' from $300 would be a 667% weekly return, which is absurd. No legitimate investment can promise a specific weekly income. This is designed to attract people who want fast money.\n\nThe test: does it acknowledge risk and set realistic expectations (legitimate) or promise guaranteed easy money (scam)?"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Scam Detection — Practice",
+      "skills": ["cm-scam-detection"],
+      "problems": [
+        {
+          "id": "ip-19",
+          "prompt": "Read the following pitch: 'Join our exclusive investment group! We use a secret trading algorithm that GUARANTEES 25% returns every month. Our members are getting rich — but we only accept 50 new people this week. Wire $1,000 to this account to secure your spot. Do not tell anyone — this is a private, members-only opportunity.' Identify at least three red flags in this message.",
+          "hints": [
+            "Look for promises that are unrealistic — what is a normal annual return for even the best investors?",
+            "Why would a real investment require secrecy and urgency?"
+          ],
+          "answer": "Red flags: (1) Guaranteed 25% monthly returns — no investment can guarantee this; 25% per month would be 300% per year, which is unrealistic. (2) Artificial urgency — 'only 50 new people this week' pressures you to act fast without researching. (3) Secrecy — 'do not tell anyone' is a major red flag; legitimate investments do not require secrecy. (4) Wire transfer to an account — legitimate firms use regulated brokerage accounts, not wire transfers. (5) 'Secret algorithm' — vague claims with no verifiable details."
+        },
+        {
+          "id": "ip-20",
+          "prompt": "Your classmate says: 'My uncle says this company lets you invest $1,000 and recruit three friends who each invest $1,000. Then each of them recruits three more people. You earn a cut from everyone below you! People at the top make $20,000 a month.' What type of scheme does this sound like, and why is it mathematically unsustainable?",
+          "hints": [
+            "Think about the recruitment math: if each person recruits 3, how fast does the number grow? Level 1 = 3, Level 2 = 9, Level 3 = 27...",
+            "Where is the money coming from — real business profits or just from new recruits?"
+          ],
+          "answer": "This is a pyramid scheme. It is unsustainable because it requires exponential recruitment: Level 1 = 3, Level 2 = 9, Level 3 = 27, Level 4 = 81. By Level 13, you would need over 1.5 million new recruits. The money at the top comes entirely from new people joining at the bottom, not from any real product or investment. When recruitment inevitably slows, the scheme collapses and those at the bottom (the vast majority) lose their money."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Scam Detection — Apply It",
+      "skills": ["cm-scam-detection"],
+      "problems": [
+        {
+          "id": "ip-21",
+          "prompt": "For each scenario, decide: LEGITIMATE or RED FLAG.\n(A) A well-known brokerage firm offers an index fund with average historical returns of 10% per year and a disclaimer that past performance does not guarantee future results.\n(B) A social media ad promises 'Risk-free investment! Double your money in 30 days!'\n(C) Your employer offers to match your 401(k) contributions up to 5% of your salary.\n(D) A stranger emails you saying you have been selected for an exclusive investment opportunity and asks for your bank account number.",
+          "answer": "(A) LEGITIMATE — established firm, realistic returns, includes required risk disclaimer. (B) RED FLAG — 'risk-free' does not exist in investing, and doubling money in 30 days is an unrealistic promise. (C) LEGITIMATE — employer 401(k) matching is a standard, regulated workplace benefit. (D) RED FLAG — unsolicited contact from a stranger, claims of exclusivity, and requesting bank account information are classic scam indicators."
+        },
+        {
+          "id": "ip-22",
+          "prompt": "Your friend is excited about an investment and asks your advice: 'This guy on TikTok says if I invest $200 in his forex trading program, I can make $5,000 a month with just 15 minutes of work per day.' Write a brief response (2-3 sentences) explaining why your friend should be cautious, and name at least two specific red flags.",
+          "answer": "Your friend should be very cautious because this has multiple scam red flags. The promise of $5,000 per month from a $200 investment is an unrealistic return (2,500% monthly), and the claim of easy money from just 15 minutes a day is a classic too-good-to-be-true lure. Additional red flags: it is an unsolicited pitch from a social media stranger, and it promotes a paid program rather than providing legitimate financial education."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "ip-1": "Decreased by $75",
+    "ip-2": "$4.70",
+    "ip-3": "$3,175 more (Option A: $1,485.90, Option B: $4,661.00)",
+    "ip-4": "4%",
+    "ip-5": "1-B, 2-A, 3-C",
+    "ip-6": "Highest: S&P 500 index fund (10%), Middle: bond fund (5%), Lowest: savings account (1.5%); higher risk = higher return",
+    "ip-7": "$50 per year; $500 total interest; $1,500 total at maturity",
+    "ip-8": "B, C, A (lowest to highest risk)",
+    "ip-9": "$4,160 per year ($2,080 employee + $2,080 employer match)",
+    "ip-10": "$1,040 per year left on the table",
+    "ip-11": "401(k) is pre-tax now and taxed at withdrawal; Roth IRA is after-tax now and tax-free at withdrawal",
+    "ip-12": "5 doublings; approximately $96,000 (tax-free)",
+    "ip-13": "(a) 12 years, (b) 8 years, (c) 24 years",
+    "ip-14": "$38,061",
+    "ip-15": "Person A has ~$102,000 more despite investing $48,000 less; starting early beats investing more",
+    "ip-16": "24 years to double; $24,000",
+    "ip-17": "$19,990 (approximately double, confirming Rule of 72)",
+    "ip-18": "Cousin A: $95,760; Cousin B: $44,370; 10-year delay cost $51,390",
+    "ip-19": "At least 3 of: guaranteed returns, unrealistic rate, urgency/limited spots, secrecy requirement, wire transfer, vague secret algorithm",
+    "ip-20": "Pyramid scheme; exponential recruitment required; money comes from new recruits not real profits; collapses when recruitment slows",
+    "ip-21": "(A) Legitimate, (B) Red flag, (C) Legitimate, (D) Red flag",
+    "ip-22": "At least 2 of: unrealistic returns ($5K/month from $200), effortless income claim (15 min/day), unsolicited social media pitch, paid program upsell"
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "moduleId": "checkpoint_budgeting",
+  "course": "Consumer Math",
+  "unit": 1,
+  "title": "Checkpoint: Build a Monthly Budget",
+  "weeks": "3",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Unit 1 budgeting skills. Students must categorize expenses, build a cash-flow table, plan for irregular expenses with sinking funds, and make budget trade-off decisions with written justification.",
+
+  "skillsCovered": ["cm-budget-categories", "cm-cash-flow-tables", "cm-irregular-expenses", "cm-budget-tradeoffs"],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students below threshold get focused reteaching on budget mechanics before moving to percent applications. Budget skills are foundational for every remaining module.",
+    "clusters": [
+      {
+        "skillId": "cm-budget-categories",
+        "reteachFocus": "Fixed vs variable expenses, identifying all common categories, the 50/30/20 guideline"
+      },
+      {
+        "skillId": "cm-cash-flow-tables",
+        "reteachFocus": "Building a table with income at top, expenses below, calculating surplus/deficit, using NET income not gross"
+      },
+      {
+        "skillId": "cm-irregular-expenses",
+        "reteachFocus": "Identifying non-monthly expenses, calculating sinking fund amounts (annual cost / 12), distinguishing irregular from emergency"
+      },
+      {
+        "skillId": "cm-budget-tradeoffs",
+        "reteachFocus": "Prioritizing needs over wants, making sustainable cuts, justifying decisions with numbers not feelings"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cbud-1",
+      "question": "Jordan earns $2,800 per month (net income). Here are some of Jordan's monthly expenses:\n\n  Rent ................. $850\n  Groceries ............ $350\n  Car payment .......... $275\n  Dining out ........... $150\n  Utilities ............ $180\n\nClassify each expense as FIXED (same amount every month) or VARIABLE (amount changes month to month). Explain your reasoning for one expense that students commonly misclassify.",
+      "answer": "Fixed: Rent ($850), Car payment ($275). Variable: Groceries ($350), Dining out ($150), Utilities ($180). Commonly misclassified: Utilities appear fixed because they arrive every month, but the amount changes based on usage (heating in winter, cooling in summer), making them variable. A fixed expense is locked in by a contract or lease at the same dollar amount each billing cycle.",
+      "skill": "cm-budget-categories",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cbud-2",
+      "question": "The 50/30/20 guideline divides net income into Needs (50%), Wants (30%), and Savings (20%). Categorize each of Jordan's expenses as a NEED, WANT, or SAVINGS:\n\n  Rent ................. $850\n  Car payment .......... $275\n  Car insurance ........ $120\n  Groceries ............ $350\n  Utilities ............ $180\n  Phone ................ $65\n  Gas .................. $100\n  Streaming services ... $45\n  Gym membership ....... $40\n  Dining out ........... $150\n  Clothing ............. $75\n  Savings transfer ..... $200\n\nList the total dollar amount for each category.",
+      "answer": "Needs: Rent ($850) + Car payment ($275) + Car insurance ($120) + Groceries ($350) + Utilities ($180) + Phone ($65) + Gas ($100) = $1,940. Wants: Streaming services ($45) + Gym membership ($40) + Dining out ($150) + Clothing ($75) = $310. Savings: Savings transfer ($200) = $200. Totals — Needs: $1,940, Wants: $310, Savings: $200.",
+      "skill": "cm-budget-categories",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbud-3",
+      "question": "Using the 50/30/20 guideline and Jordan's $2,800 net income:\n\n(a) Calculate the recommended dollar amount for each category (Needs at 50%, Wants at 30%, Savings at 20%).\n(b) Using Jordan's actual spending (Needs = $1,940, Wants = $310, Savings = $200), calculate each category as a percentage of net income. Round to one decimal place.\n(c) Which categories are within the guideline and which are over or under? What specific adjustment would you recommend?",
+      "answer": "(a) Needs: $2,800 x 0.50 = $1,400. Wants: $2,800 x 0.30 = $840. Savings: $2,800 x 0.20 = $560. (b) Needs: $1,940 / $2,800 = 69.3%. Wants: $310 / $2,800 = 11.1%. Savings: $200 / $2,800 = 7.1%. (c) Needs (69.3%) are OVER the 50% guideline by $540. Wants (11.1%) are UNDER the 30% guideline. Savings (7.1%) are UNDER the 20% guideline by $360. Jordan's needs consume too large a share of income. The biggest lever is rent ($850 = 30.4% of income alone). Jordan could look for a less expensive apartment or take on a roommate. Alternatively, reducing transportation costs (car payment + insurance + gas = $495) by switching to public transit would free significant funds for savings.",
+      "skill": "cm-budget-categories",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbud-4",
+      "question": "Complete Jordan's monthly cash-flow table. Fill in every blank and calculate the surplus or deficit.\n\nINCOME\n  Net pay ...................... $2,800\n  Total Income ................. $______\n\nFIXED EXPENSES\n  Rent ......................... $850\n  Car payment .................. $275\n  Car insurance ................ $120\n  Phone ........................ $65\n  Total Fixed .................. $______\n\nVARIABLE EXPENSES\n  Groceries .................... $350\n  Utilities .................... $180\n  Gas .......................... $100\n  Dining out ................... $150\n  Streaming services ........... $45\n  Gym membership ............... $40\n  Clothing ..................... $75\n  Total Variable ............... $______\n\nSAVINGS\n  Savings transfer ............. $200\n  Total Savings ................ $______\n\nTOTAL EXPENSES ................. $______\nSURPLUS / (DEFICIT) ............ $______",
+      "answer": "Total Income = $2,800. Total Fixed = $850 + $275 + $120 + $65 = $1,310. Total Variable = $350 + $180 + $100 + $150 + $45 + $40 + $75 = $940. Total Savings = $200. Total Expenses = $1,310 + $940 + $200 = $2,450. Surplus = $2,800 - $2,450 = $350. Jordan has a $350 monthly surplus.",
+      "skill": "cm-cash-flow-tables",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cbud-5",
+      "question": "Jordan picks up extra shifts at work and earns an additional $400 in gross pay this month. Federal and state taxes withhold 25% of the extra gross pay. Jordan's existing monthly expenses remain at $2,450.\n\n(a) Calculate the additional net income from the extra shifts.\n(b) Calculate Jordan's total net income for the month.\n(c) Calculate the new monthly surplus.\n\nIMPORTANT: Use net income, not gross income, in your cash-flow calculation.",
+      "answer": "(a) Additional net income = $400 x (1 - 0.25) = $400 x 0.75 = $300. (b) Total net income = $2,800 + $300 = $3,100. (c) New surplus = $3,100 - $2,450 = $650. The key is using net (after-tax) income. A common mistake is adding the full $400 gross to income, which would overstate the surplus by $100.",
+      "skill": "cm-cash-flow-tables",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbud-6",
+      "question": "Jordan's employer reduces hours, dropping net income from $2,800 to $2,200 per month. Current total expenses are $2,450 (Fixed: $1,310, Variable: $940, Savings: $200).\n\n(a) Calculate the monthly deficit.\n(b) Build a revised cash-flow table that eliminates the deficit by adjusting ONLY variable expenses and/or savings. You may NOT change any fixed expenses. Show each adjusted line item, the new totals, and verify the budget balances to $0 or a small surplus.\n(c) Explain why you cannot simply cut fixed expenses to solve this problem.",
+      "answer": "(a) Deficit = $2,200 - $2,450 = -$250 (a $250 deficit). (b) Must cut $250 from variable expenses and/or savings. Example revised budget — Dining out: $150 to $50 (save $100). Clothing: $75 to $25 (save $50). Savings transfer: $200 to $100 (save $100). Total cuts = $100 + $50 + $100 = $250. New Variable total = $940 - $150 = $790. New Savings = $100. New Total Expenses = $1,310 + $790 + $100 = $2,200. Surplus = $0. (Any combination cutting $250 from variable/savings is acceptable.) (c) Fixed expenses like rent and car payment are locked in by contracts or leases. Jordan cannot reduce rent mid-lease or skip a car payment without penalty. These require longer-term changes like moving or refinancing.",
+      "skill": "cm-cash-flow-tables",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbud-7",
+      "question": "Jordan pays car registration once a year at $180. To avoid scrambling for money when the bill arrives, Jordan wants to save for it monthly using a sinking fund.\n\n(a) How much should Jordan set aside each month?\n(b) In one sentence, explain what a sinking fund is and why it is useful.",
+      "answer": "(a) $180 / 12 = $15 per month. (b) A sinking fund divides a known future expense into equal monthly contributions so the full amount is ready when the bill arrives, preventing a budget shock from a large one-time payment.",
+      "skill": "cm-irregular-expenses",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbud-8",
+      "question": "Jordan identifies four irregular expenses for the year:\n\n  Car registration ......... $180/year\n  Holiday gifts ............ $360/year\n  Dental visits (2/year) ... $110 each visit ($220 total/year)\n  Renter's insurance ....... $240/year (billed $120 every 6 months)\n\n(a) Calculate the monthly sinking fund contribution for EACH expense.\n(b) Calculate the total monthly sinking fund amount for all four expenses combined.\n(c) Where should this total come from in Jordan's current budget (surplus is $350/month)?",
+      "answer": "(a) Car registration: $180 / 12 = $15.00/month. Holiday gifts: $360 / 12 = $30.00/month. Dental visits: $220 / 12 = $18.33/month. Renter's insurance: $240 / 12 = $20.00/month. (b) Total = $15.00 + $30.00 + $18.33 + $20.00 = $83.33/month. (c) Jordan's $350 monthly surplus can absorb the $83.33 sinking fund total, leaving $266.67 remaining surplus. The sinking fund should be set aside in a separate savings account (or envelope) so it is not accidentally spent.",
+      "skill": "cm-irregular-expenses",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbud-9",
+      "question": "Jordan set up the holiday gift sinking fund ($30/month) starting in January but forgot to make contributions in March, April, and May. The holiday spending of $360 is planned for December.\n\n(a) How much has Jordan actually saved through the end of May? (List which months had contributions.)\n(b) Jordan catches the mistake in June. How many months remain from June through December? What adjusted monthly contribution is needed to reach $360 by December?\n(c) In 2-3 sentences, explain the difference between an irregular expense and an emergency expense. Give one example of each from everyday life.",
+      "answer": "(a) Contributions made in January and February only = 2 x $30 = $60 saved through end of May. (b) Months remaining: June, July, August, September, October, November, December = 7 months. Amount still needed: $360 - $60 = $300. Adjusted contribution: $300 / 7 = $42.86/month. (c) Irregular expenses are predictable costs that occur on a non-monthly schedule — you know they are coming and can calculate the exact amount (e.g., annual car registration, holiday gifts). Emergency expenses are unexpected events you cannot predict in timing or amount (e.g., a car breakdown, an emergency room visit). Sinking funds handle irregular expenses; an emergency fund handles emergencies.",
+      "skill": "cm-irregular-expenses",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbud-10",
+      "question": "Jordan wants to build a $3,000 emergency fund within 6 months.\n\n(a) How much must Jordan save per month to reach this goal?\n(b) Jordan's current monthly surplus is $350, which is not enough. Identify at least two specific expenses from Jordan's budget that could be reduced. For each, state the current amount, the reduced amount, and the dollar savings.\n(c) Show that the surplus plus your proposed cuts meet the monthly savings target. Write 2-3 sentences justifying why your chosen cuts are realistic and sustainable for 6 months.",
+      "answer": "(a) $3,000 / 6 = $500 per month needed. (b) Jordan needs $500 - $350 = $150 more per month. Example cuts: Dining out from $150 to $75 (save $75). Clothing from $75 to $0 (save $75). Total additional savings: $75 + $75 = $150. (c) $350 surplus + $150 in cuts = $500/month, meeting the target. These cuts are sustainable because dining out is discretionary — Jordan can meal-prep and eat at home more often while still allowing $75 for occasional restaurant meals. Clothing purchases can be paused entirely for 6 months since this is a short-term sacrifice with a clear end date. Any combination of variable-expense cuts totaling at least $150 is acceptable with valid justification.",
+      "skill": "cm-budget-tradeoffs",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbud-11",
+      "question": "Jordan is considering two options for reducing transportation costs:\n\nOption A — Keep the car:\n  Car payment ........... $275/month\n  Car insurance ......... $120/month\n  Gas ................... $100/month\n  Total ................. $495/month\n  Commute: 20 minutes each way\n\nOption B — Sell the car, use public transit:\n  Monthly bus pass ...... $85/month\n  Rideshare budget ...... $60/month\n  Total ................. $145/month\n  Commute: 55 minutes each way\n\n(a) Calculate the monthly dollar savings of Option B over Option A.\n(b) Calculate the additional commute time per month with Option B. Assume 22 workdays per month and a round trip each day.\n(c) Write 3-4 sentences recommending which option is better for Jordan. Your justification MUST reference at least two specific dollar amounts and the time trade-off.",
+      "answer": "(a) Monthly savings = $495 - $145 = $350/month. (b) Additional time per one-way trip = 55 - 20 = 35 minutes. Round-trip additional time per day = 70 minutes. Monthly additional time = 70 x 22 = 1,540 minutes = 25.7 hours/month. (c) Option B saves $350/month ($4,200/year), which would let Jordan fully fund the emergency fund and all sinking funds. However, it costs an extra 25.7 hours per month in commute time. If Jordan values that time at more than $13.62/hour ($350 / 25.7 hours), keeping the car may be worthwhile. For someone earning around $17-20/hour, losing 25.7 hours is a significant real cost. The best choice depends on whether Jordan can use transit time productively (reading, studying) or whether the lost time reduces quality of life. Accept any well-reasoned answer that references specific numbers from both options.",
+      "skill": "cm-budget-tradeoffs",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbud-12",
+      "question": "Jordan receives a job offer in a new city at $3,400/month net income (current: $2,800). The cost of living is higher. Here is the projected new monthly budget next to the current budget:\n\n                         Current    New City\n  Rent .................. $850       $1,100\n  Car payment ........... $275       $275\n  Car insurance ......... $120       $145\n  Groceries ............. $350       $420\n  Utilities ............. $180       $210\n  Phone ................. $65        $65\n  Gas ................... $100       $130\n  Streaming ............. $45        $45\n  Gym ................... $40        $55\n  Dining out ............ $150       $150\n  Clothing .............. $75        $75\n  Savings transfer ...... $200       $200\n\n(a) Calculate total new-city expenses and the new surplus or deficit.\n(b) Compare the new surplus to Jordan's current surplus of $350.\n(c) Write a recommendation (3-4 sentences) on whether Jordan should take the job. You must compare at least three specific expense categories by dollar amount and address whether the higher income truly improves Jordan's financial position.",
+      "answer": "(a) New total expenses: $1,100 + $275 + $145 + $420 + $210 + $65 + $130 + $45 + $55 + $150 + $75 + $200 = $2,870. New surplus = $3,400 - $2,870 = $530. (b) Current surplus: $350. New surplus: $530. Improvement: $180/month ($2,160/year). (c) Jordan should strongly consider taking the new job. Although rent jumps $250 (the biggest increase), groceries rise $70, and smaller increases hit insurance (+$25), utilities (+$30), gas (+$30), and gym (+$15) for a total cost-of-living increase of $420/month, the $600 net income increase more than offsets it, producing a $530 surplus versus the current $350 — a $180/month improvement. That extra $180 could accelerate the emergency fund or fully cover the $83.33/month in sinking funds with money to spare. One caution: higher-cost cities often carry hidden expenses (parking, tolls, higher service fees) that could erode the $180 gain, so Jordan should budget a small cushion before committing. Accept any well-reasoned answer that uses specific numbers from at least three categories.",
+      "skill": "cm-budget-tradeoffs",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "cbud-1": "Fixed: Rent ($850), Car payment ($275). Variable: Groceries ($350), Dining out ($150), Utilities ($180).",
+    "cbud-2": "Needs: $1,940. Wants: $310. Savings: $200.",
+    "cbud-3": "Needs 69.3% (over), Wants 11.1% (under), Savings 7.1% (under). Reduce needs — especially rent or transportation.",
+    "cbud-4": "Total Fixed $1,310, Total Variable $940, Total Savings $200, Total Expenses $2,450, Surplus $350.",
+    "cbud-5": "Additional net $300, total net income $3,100, new surplus $650.",
+    "cbud-6": "Deficit is $250. Cut $250 from variable/savings to balance at $2,200.",
+    "cbud-7": "$15/month sinking fund for car registration.",
+    "cbud-8": "$15 + $30 + $18.33 + $20 = $83.33/month total sinking fund.",
+    "cbud-9": "$60 saved (2 months). Adjusted contribution $42.86/month over 7 remaining months. Irregular = predictable; emergency = unexpected.",
+    "cbud-10": "$500/month needed. Cut $150 from variable expenses (e.g., dining out and clothing). $350 surplus + $150 cuts = $500.",
+    "cbud-11": "Option B saves $350/month but adds 25.7 hours/month commute. Trade-off valued at $13.62/hour.",
+    "cbud-12": "New expenses $2,870, new surplus $530 (vs current $350). Net improvement $180/month despite $420 higher costs."
+  }
+}

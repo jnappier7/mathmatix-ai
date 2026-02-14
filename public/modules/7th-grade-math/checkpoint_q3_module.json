@@ -1,0 +1,185 @@
+{
+  "moduleId": "checkpoint_q3",
+  "course": "7th Grade Math",
+  "unit": 6,
+  "title": "Checkpoint: Quarter 3 (Geometry + Statistics)",
+  "weeks": "25",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Units 5-6: area, circumference, composite figures, surface area, volume, populations/samples, comparing data sets, and informal inferences.",
+  "skillsCovered": [
+    "g7-area-circumference",
+    "g7-composite-figures",
+    "g7-surface-area",
+    "g7-volume",
+    "g7-populations-samples",
+    "g7-compare-data-sets",
+    "g7-informal-inferences"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on geometry formulas and statistical reasoning before moving to probability and advanced expressions.",
+    "clusters": [
+      {
+        "skillId": "g7-area-circumference",
+        "reteachFocus": "Review the formulas A = πr² and C = πd (or C = 2πr); practice distinguishing radius from diameter and substituting values correctly; reinforce using π ≈ 3.14 and squaring before multiplying"
+      },
+      {
+        "skillId": "g7-composite-figures",
+        "reteachFocus": "Break composite shapes into simpler rectangles or subtract removed rectangular regions; practice sketching decompositions, labeling all dimensions, and adding or subtracting partial areas to find the total"
+      },
+      {
+        "skillId": "g7-surface-area",
+        "reteachFocus": "Reinforce the surface area formula SA = 2(lw + lh + wh) for rectangular prisms; practice identifying all six faces, computing each pair of congruent face areas, and summing systematically"
+      },
+      {
+        "skillId": "g7-volume",
+        "reteachFocus": "Review V = πr²h for cylinders; emphasize squaring the radius before multiplying by height and π; connect volume to the concept of stacking circular base areas along the height"
+      },
+      {
+        "skillId": "g7-populations-samples",
+        "reteachFocus": "Distinguish between random, convenience, and voluntary response samples; identify sources of bias in survey designs; practice proposing improved sampling methods that better represent the target population"
+      },
+      {
+        "skillId": "g7-compare-data-sets",
+        "reteachFocus": "Practice computing mean, median, and mean absolute deviation (MAD) for data sets; use side-by-side calculations to describe differences in center and variability between two groups"
+      },
+      {
+        "skillId": "g7-informal-inferences",
+        "reteachFocus": "Use measures of center and variability to compare two populations; practice expressing inferences as supported claims with numerical evidence; assess whether differences in means are meaningful relative to the spread of the data"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "q3-1",
+      "question": "A circular table top has a radius of 5 cm. Find the area of the table top. Use π ≈ 3.14. Show your work.",
+      "answer": "A = πr² = 3.14 × 5² = 3.14 × 25 = 78.5. The area of the table top is 78.5 cm².",
+      "skill": "g7-area-circumference",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q3-2",
+      "question": "A circular garden has a diameter of 14 feet. Find the circumference of the garden. Use π ≈ 3.14. Show your work.",
+      "answer": "C = πd = 3.14 × 14 = 43.96. The circumference of the garden is 43.96 feet.",
+      "skill": "g7-area-circumference",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q3-3",
+      "question": "An L-shaped room is formed by a 10 ft by 8 ft rectangle with a 4 ft by 3 ft rectangular section removed from the top-right corner. Find the total area of the room. Show your work.",
+      "answer": "Full rectangle area: 10 × 8 = 80 ft². Removed section: 4 × 3 = 12 ft². L-shaped area: 80 − 12 = 68. The area of the room is 68 ft².",
+      "skill": "g7-composite-figures",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q3-4",
+      "question": "An L-shaped patio has overall dimensions of 9 cm wide and 7 cm tall. A 5 cm by 4 cm rectangle is cut out of the upper-right corner. Find the area of the patio. Show your work.",
+      "answer": "Full rectangle area: 9 × 7 = 63 cm². Removed section: 5 × 4 = 20 cm². L-shaped area: 63 − 20 = 43. The area of the patio is 43 cm².",
+      "skill": "g7-composite-figures",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "q3-5",
+      "question": "Find the surface area of a rectangular prism with a length of 8 cm, a width of 5 cm, and a height of 3 cm. Show your work.",
+      "answer": "SA = 2(lw + lh + wh) = 2(8×5 + 8×3 + 5×3) = 2(40 + 24 + 15) = 2(79) = 158. The surface area is 158 cm².",
+      "skill": "g7-surface-area",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q3-6",
+      "question": "A gift box is shaped like a rectangular prism with a length of 12 in, a width of 6 in, and a height of 4 in. How much wrapping paper is needed to cover the entire outside of the box with no overlap? Show your work.",
+      "answer": "SA = 2(lw + lh + wh) = 2(12×6 + 12×4 + 6×4) = 2(72 + 48 + 24) = 2(144) = 288. You need 288 in² of wrapping paper.",
+      "skill": "g7-surface-area",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q3-7",
+      "question": "Find the volume of a cylinder with a radius of 3 cm and a height of 10 cm. Use π ≈ 3.14. Show your work.",
+      "answer": "V = πr²h = 3.14 × 3² × 10 = 3.14 × 9 × 10 = 3.14 × 90 = 282.6. The volume is 282.6 cm³.",
+      "skill": "g7-volume",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q3-8",
+      "question": "A cylindrical water tank has a radius of 5 feet and a height of 8 feet. How many cubic feet of water can the tank hold? Use π ≈ 3.14. Show your work.",
+      "answer": "V = πr²h = 3.14 × 5² × 8 = 3.14 × 25 × 8 = 3.14 × 200 = 628. The tank can hold 628 ft³ of water.",
+      "skill": "g7-volume",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q3-9",
+      "question": "A school principal wants to find out what students think about the new lunch menu. She surveys the 30 students in the chess club. Is this sample likely to be representative of the entire student body? Explain why or why not, and describe a better sampling method.",
+      "answer": "This sample is not representative because it is a convenience sample limited to one club. Chess club members may not reflect the preferences of the whole student body. A better method would be to randomly select students from every grade level, for example by picking every 10th name from an alphabetical list of all students.",
+      "skill": "g7-populations-samples",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "q3-10",
+      "question": "A city council wants to learn how residents feel about building a new park. They mail a survey to every 20th household on the city address list. Is this a random sample, a convenience sample, or a voluntary response sample? Explain whether this method is likely to produce a representative sample of all residents.",
+      "answer": "This is a systematic random sample because households are selected at regular intervals from a complete list. It is likely to produce a representative sample because every household has a roughly equal chance of being selected, and the selection does not depend on who volunteers or who is easiest to reach.",
+      "skill": "g7-populations-samples",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q3-11",
+      "question": "Two students tracked the number of pages they read each day for 5 days.\nStudent A: 12, 18, 15, 21, 14\nStudent B: 25, 10, 30, 8, 27\nCalculate the mean and the mean absolute deviation (MAD) for each student. Show all of your work.",
+      "answer": "Student A mean: (12 + 18 + 15 + 21 + 14) ÷ 5 = 80 ÷ 5 = 16. Deviations from 16: |12−16| + |18−16| + |15−16| + |21−16| + |14−16| = 4 + 2 + 1 + 5 + 2 = 14. MAD A = 14 ÷ 5 = 2.8. Student B mean: (25 + 10 + 30 + 8 + 27) ÷ 5 = 100 ÷ 5 = 20. Deviations from 20: |25−20| + |10−20| + |30−20| + |8−20| + |27−20| = 5 + 10 + 10 + 12 + 7 = 44. MAD B = 44 ÷ 5 = 8.8. Student A has a mean of 16 pages with a MAD of 2.8; Student B has a mean of 20 pages with a MAD of 8.8.",
+      "skill": "g7-compare-data-sets",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q3-12",
+      "question": "The heights (in inches) of players on two basketball teams are:\nTeam X: 62, 65, 68, 64, 66\nTeam Y: 70, 72, 68, 74, 71\nFind the median height for each team. Which team tends to be taller? Use the medians to support your answer.",
+      "answer": "Team X sorted: 62, 64, 65, 66, 68. Median X = 65 inches. Team Y sorted: 68, 70, 71, 72, 74. Median Y = 71 inches. Team Y tends to be taller because its median height (71 in) is 6 inches greater than Team X's median height (65 in).",
+      "skill": "g7-compare-data-sets",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "q3-13",
+      "question": "Two random samples of test scores were collected from two different classes.\nClass A: 78, 82, 85, 80, 90\nClass B: 65, 72, 70, 68, 75\nCalculate the mean for each sample. Based on the means, make an informal inference about which class tends to perform better on tests. Explain your reasoning.",
+      "answer": "Class A mean: (78 + 82 + 85 + 80 + 90) ÷ 5 = 415 ÷ 5 = 83. Class B mean: (65 + 72 + 70 + 68 + 75) ÷ 5 = 350 ÷ 5 = 70. Class A appears to perform better. The sample mean of Class A (83) is 13 points higher than Class B (70), suggesting that the population of students in Class A tends to score higher on tests than the population of students in Class B.",
+      "skill": "g7-informal-inferences",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "q3-14",
+      "question": "A researcher measures the time (in seconds) it takes students from two schools to complete a puzzle.\nSchool M: 45, 52, 48, 50, 55\nSchool N: 38, 42, 35, 40, 45\nCalculate the mean and MAD for each school. Is the difference in puzzle-solving speed between the two schools meaningful? Use the difference in means relative to the MADs to explain your reasoning.",
+      "answer": "School M mean: (45 + 52 + 48 + 50 + 55) ÷ 5 = 250 ÷ 5 = 50. MAD M: |45−50| + |52−50| + |48−50| + |50−50| + |55−50| = 5 + 2 + 2 + 0 + 5 = 14; 14 ÷ 5 = 2.8. School N mean: (38 + 42 + 35 + 40 + 45) ÷ 5 = 200 ÷ 5 = 40. MAD N: |38−40| + |42−40| + |35−40| + |40−40| + |45−40| = 2 + 2 + 5 + 0 + 5 = 14; 14 ÷ 5 = 2.8. Difference in means: 50 − 40 = 10 seconds. Both MADs are 2.8. The difference (10) is about 3.6 times the MAD (2.8), which is well above 2 times the MAD. This means the difference is meaningful: School N students tend to solve the puzzle meaningfully faster than School M students.",
+      "skill": "g7-informal-inferences",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "q3-1": "78.5 cm²",
+    "q3-2": "43.96 feet",
+    "q3-3": "68 ft²",
+    "q3-4": "43 cm²",
+    "q3-5": "158 cm²",
+    "q3-6": "288 in²",
+    "q3-7": "282.6 cm³",
+    "q3-8": "628 ft³",
+    "q3-9": "Not representative; it is a biased convenience sample. A random sample from all grade levels would be better.",
+    "q3-10": "Systematic random sample; likely representative because every household has an equal chance of selection.",
+    "q3-11": "Student A: mean = 16, MAD = 2.8; Student B: mean = 20, MAD = 8.8",
+    "q3-12": "Team X median = 65 in; Team Y median = 71 in; Team Y tends to be taller.",
+    "q3-13": "Class A mean = 83; Class B mean = 70; Class A tends to perform better.",
+    "q3-14": "School M: mean = 50, MAD = 2.8; School N: mean = 40, MAD = 2.8; difference (10) is about 3.6 × MAD, so it is meaningful — School N is faster."
+  }
+}

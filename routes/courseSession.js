@@ -16,12 +16,15 @@ const User = require('../models/user');
    ============================================================ */
 // Catalog enrichment: difficulty levels, taglines, icons
 const CATALOG_META = {
+  '7th-grade-math':      { difficulty: 'Foundational', tagline: 'Rational numbers, proportions, geometry, and probability', icon: '7️⃣' },
   'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
   'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
   'algebra-2':           { difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '📉' },
   'precalculus':         { difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '🌊' },
   'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
-  'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' }
+  'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' },
+  'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '🎯' },
+  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' }
 };
 
 router.get('/catalog', async (req, res) => {

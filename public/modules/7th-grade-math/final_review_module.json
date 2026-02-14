@@ -1,0 +1,304 @@
+{
+  "moduleId": "final_review",
+  "course": "7th Grade Math",
+  "unit": 9,
+  "title": "End-of-Year Mastery Review & Final Exam",
+  "weeks": "34-36",
+  "estimatedDuration": 50,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Cumulative assessment across all 7th grade domains: 7.NS, 7.EE, 7.RP, 7.G, 7.SP. Tests mastery of the year's non-negotiable skill threads.",
+  "skillsCovered": [
+    "g7-integer-operations",
+    "g7-add-subtract-rationals",
+    "g7-multiply-divide-rationals",
+    "g7-simplify-expressions",
+    "g7-multi-step-equations",
+    "g7-inequalities",
+    "g7-unit-rates",
+    "g7-proportions",
+    "g7-percent-applications",
+    "g7-percent-change",
+    "g7-identify-proportional",
+    "g7-constant-of-proportionality",
+    "g7-area-circumference",
+    "g7-surface-area",
+    "g7-volume",
+    "g7-compare-data-sets",
+    "g7-simple-probability",
+    "g7-compound-events",
+    "g7-equation-word-problems",
+    "g7-function-input-output"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest skills across the entire 7th grade curriculum. Remediation prioritizes foundational gaps that would impede 8th grade readiness.",
+    "clusters": [
+      {
+        "skillId": "g7-integer-operations",
+        "reteachFocus": "Adding/subtracting integers via number line, multiplying/dividing sign rules (neg × neg = pos), order of operations with negatives, avoiding double-negative errors"
+      },
+      {
+        "skillId": "g7-add-subtract-rationals",
+        "reteachFocus": "Finding LCD for fraction addition/subtraction, converting mixed numbers, handling negative fractions, regrouping when subtracting mixed numbers"
+      },
+      {
+        "skillId": "g7-multiply-divide-rationals",
+        "reteachFocus": "Multiply numerators and denominators straight across, flip-and-multiply for division (KCF: keep-change-flip), sign rules for rational products/quotients, simplifying before multiplying"
+      },
+      {
+        "skillId": "g7-simplify-expressions",
+        "reteachFocus": "Distributive property with negatives, combining like terms (match variable AND exponent), distinguishing coefficients from constants, multi-step simplification"
+      },
+      {
+        "skillId": "g7-multi-step-equations",
+        "reteachFocus": "Distribute first then combine, inverse operations in correct order (undo add/subtract before multiply/divide), checking solutions by substitution, equations with variables on both sides"
+      },
+      {
+        "skillId": "g7-inequalities",
+        "reteachFocus": "Solving like equations BUT flip inequality when multiplying/dividing by a negative, graphing on number line (open vs. closed circle), writing solution in words"
+      },
+      {
+        "skillId": "g7-unit-rates",
+        "reteachFocus": "Dividing to find per-one rate, comparing unit rates to find better deal, units in numerator vs. denominator, rates from tables and word problems"
+      },
+      {
+        "skillId": "g7-proportions",
+        "reteachFocus": "Setting up equivalent ratios, cross-multiplication, checking proportionality, scale factor problems (maps, models, blueprints)"
+      },
+      {
+        "skillId": "g7-percent-applications",
+        "reteachFocus": "Part = percent × whole (decimal form), working backwards from part to find whole, tax/tip/discount calculations, successive percent operations"
+      },
+      {
+        "skillId": "g7-percent-change",
+        "reteachFocus": "Percent change = (|new − old| / old) × 100, identifying increase vs. decrease, common error of dividing by new instead of old"
+      },
+      {
+        "skillId": "g7-identify-proportional",
+        "reteachFocus": "Checking y/x ratios for consistency, proportional relationships pass through origin, distinguishing proportional from linear-but-not-proportional"
+      },
+      {
+        "skillId": "g7-constant-of-proportionality",
+        "reteachFocus": "k = y/x in y = kx, finding k from tables/graphs/equations, using k to predict new values, interpreting k in context (unit rate connection)"
+      },
+      {
+        "skillId": "g7-area-circumference",
+        "reteachFocus": "C = 2πr = πd, A = πr² (squared!), using radius vs. diameter correctly, working backwards from area or circumference to find radius"
+      },
+      {
+        "skillId": "g7-surface-area",
+        "reteachFocus": "SA of prisms: sum of all face areas, SA = 2(lw + lh + wh) for rectangular prisms, drawing nets to visualize faces, counting faces correctly for triangular prisms"
+      },
+      {
+        "skillId": "g7-volume",
+        "reteachFocus": "V = Bh (base area × height), finding base area for triangular/rectangular bases, cubic units, distinguishing volume from surface area"
+      },
+      {
+        "skillId": "g7-compare-data-sets",
+        "reteachFocus": "Mean as balance point, MAD as average distance from mean, comparing centers AND spreads, what larger/smaller MAD tells you about consistency"
+      },
+      {
+        "skillId": "g7-simple-probability",
+        "reteachFocus": "P(event) = favorable/total, complementary events P(not A) = 1 − P(A), probability as fraction/decimal/percent, 0 ≤ P ≤ 1"
+      },
+      {
+        "skillId": "g7-compound-events",
+        "reteachFocus": "Sample space with organized lists/tables/tree diagrams, counting principle (multiply), P(A and B) for independent events, even/odd product reasoning"
+      },
+      {
+        "skillId": "g7-equation-word-problems",
+        "reteachFocus": "Defining variables, translating English to algebra, solving and interpreting in context, checking answer makes sense in the original story"
+      },
+      {
+        "skillId": "g7-function-input-output",
+        "reteachFocus": "Applying function rules to compute outputs, reverse operations to find inputs, writing rules from input-output tables, recognizing linear patterns"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "final-1",
+      "question": "Evaluate: −8 + 3 × (−4) − (−6). Show each step using order of operations.",
+      "answer": "Multiply first: 3 × (−4) = −12. Then: −8 + (−12) − (−6) = −8 − 12 + 6 = −20 + 6 = −14.",
+      "skill": "g7-integer-operations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-2",
+      "question": "Compute: 3/4 − (−2/3) + 1/6. Express your answer as a fraction or mixed number in simplest form.",
+      "answer": "3/4 + 2/3 + 1/6. LCD = 12. 9/12 + 8/12 + 2/12 = 19/12 = 1 7/12.",
+      "skill": "g7-add-subtract-rationals",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-3",
+      "question": "Compute: (−2/5) × (3/4) ÷ (−1/2). Show your work and express the answer in simplest form.",
+      "answer": "Multiply: (−2/5)(3/4) = −6/20 = −3/10. Divide by −1/2 (flip and multiply): (−3/10) × (−2/1) = 6/10 = 3/5.",
+      "skill": "g7-multiply-divide-rationals",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-4",
+      "question": "Simplify the expression: 4(2x − 3) − 5(x + 1). Show each step.",
+      "answer": "Distribute: 8x − 12 − 5x − 5. Combine like terms: (8x − 5x) + (−12 − 5) = 3x − 17.",
+      "skill": "g7-simplify-expressions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-5",
+      "question": "Solve for x: 3(2x − 5) + 4 = 5x − 8. Show all steps and check your answer.",
+      "answer": "6x − 15 + 4 = 5x − 8. 6x − 11 = 5x − 8. 6x − 5x = −8 + 11. x = 3. Check: 3(6−5)+4 = 3+4 = 7. 5(3)−8 = 15−8 = 7 ✓",
+      "skill": "g7-multi-step-equations",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-6",
+      "question": "Solve the inequality: −3x + 7 > 19. Describe the solution in words.",
+      "answer": "−3x > 12. Divide by −3 and FLIP the inequality: x < −4. Solution: all values less than −4.",
+      "skill": "g7-inequalities",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-7",
+      "question": "A store sells 5 pounds of apples for $8.75. A different store sells 8 pounds of the same apples for $13.60. Which store has the better deal? Show the unit rates.",
+      "answer": "Store 1: $8.75 ÷ 5 = $1.75 per pound. Store 2: $13.60 ÷ 8 = $1.70 per pound. Store 2 is cheaper by $0.05 per pound.",
+      "skill": "g7-unit-rates",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-8",
+      "question": "On a map, 2 inches represents 35 miles. Two cities are 5.5 inches apart on the map. How far apart are the real cities?",
+      "answer": "Set up proportion: 2/35 = 5.5/x. Cross multiply: 2x = 35 × 5.5 = 192.5. x = 96.25 miles.",
+      "skill": "g7-proportions",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-9",
+      "question": "A jacket originally costs $85. It is on sale for 30% off. If sales tax is 8%, what is the total amount you pay? Show each calculation.",
+      "answer": "Discount: $85 × 0.30 = $25.50. Sale price: $85 − $25.50 = $59.50. Tax: $59.50 × 0.08 = $4.76. Total: $59.50 + $4.76 = $64.26.",
+      "skill": "g7-percent-applications",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-10",
+      "question": "A town's population grew from 12,000 to 13,800 over 5 years. What is the percent increase?",
+      "answer": "Change = 13,800 − 12,000 = 1,800. Percent change = (1,800 / 12,000) × 100 = 0.15 × 100 = 15% increase.",
+      "skill": "g7-percent-change",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-11",
+      "question": "A table shows: x = 2, 4, 6, 8 and y = 5, 10, 15, 22. Is this a proportional relationship? Explain how you know.",
+      "answer": "Check y/x ratios: 5/2 = 2.5, 10/4 = 2.5, 15/6 = 2.5, 22/8 = 2.75. NOT proportional because the ratio y/x is not constant (2.75 ≠ 2.5).",
+      "skill": "g7-identify-proportional",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-12",
+      "question": "A recipe uses 3 cups of flour for every 2 cups of sugar. The relationship is proportional. What is the constant of proportionality (flour per sugar)? How much flour is needed for 7 cups of sugar?",
+      "answer": "k = flour/sugar = 3/2 = 1.5. For 7 cups sugar: flour = 1.5 × 7 = 10.5 cups.",
+      "skill": "g7-constant-of-proportionality",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-13",
+      "question": "A circular garden has a diameter of 14 feet. Find the circumference and area. Use π ≈ 3.14 and round to the nearest hundredth.",
+      "answer": "Radius = 7 ft. Circumference = 2(3.14)(7) = 43.96 ft. Area = 3.14(7²) = 3.14(49) = 153.86 ft².",
+      "skill": "g7-area-circumference",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-14",
+      "question": "Find the surface area of a rectangular prism with length 10 cm, width 6 cm, and height 4 cm.",
+      "answer": "SA = 2(lw + lh + wh) = 2(10×6 + 10×4 + 6×4) = 2(60 + 40 + 24) = 2(124) = 248 cm².",
+      "skill": "g7-surface-area",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-15",
+      "question": "A triangular prism has a triangular base with base 8 cm and height 5 cm. The length of the prism is 12 cm. Find the volume.",
+      "answer": "Base area = (1/2)(8)(5) = 20 cm². Volume = base area × length = 20 × 12 = 240 cm³.",
+      "skill": "g7-volume",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-16",
+      "question": "Class A test scores: mean = 78, MAD = 6. Class B test scores: mean = 82, MAD = 3. Compare the two classes in terms of center and spread.",
+      "answer": "Class B has a higher mean (82 > 78), so on average Class B scored better. Class B has a smaller MAD (3 < 6), so its scores are more consistent and clustered closer to the mean. Class A's scores are more spread out.",
+      "skill": "g7-compare-data-sets",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "final-17",
+      "question": "A jar has 6 red, 8 blue, and 10 yellow marbles. You pick one at random. What is the probability of choosing a red or blue marble? Express as a fraction in simplest form.",
+      "answer": "Total = 6 + 8 + 10 = 24. P(red or blue) = (6 + 8)/24 = 14/24 = 7/12.",
+      "skill": "g7-simple-probability",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "final-18",
+      "question": "You roll two standard 6-sided dice. What is the probability that the product of the two numbers is even? Explain your reasoning.",
+      "answer": "Total outcomes = 6 × 6 = 36. A product is odd ONLY when both numbers are odd. Odd numbers per die: 1, 3, 5 (three choices). Odd-product outcomes = 3 × 3 = 9. Even-product outcomes = 36 − 9 = 27. P(even product) = 27/36 = 3/4.",
+      "skill": "g7-compound-events",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "final-19",
+      "question": "Three friends split a restaurant bill equally. After using a $15 coupon, each person paid $22. What was the original total bill before the coupon? Write and solve an equation.",
+      "answer": "Let b = original bill. After coupon: b − 15. Split 3 ways: (b − 15)/3 = 22. Multiply both sides by 3: b − 15 = 66. b = 81. The original bill was $81. Check: (81 − 15)/3 = 66/3 = 22 ✓",
+      "skill": "g7-equation-word-problems",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "final-20",
+      "question": "A function table shows: input: 1, 2, 3, 4, 5 and output: 3, 7, 11, 15, 19. (a) Write the function rule. (b) What is the output when the input is 20? (c) What input gives an output of 99?",
+      "answer": "(a) Outputs increase by 4 each time. Rule: output = 4(input) − 1. Check: 4(1)−1=3 ✓, 4(2)−1=7 ✓. (b) 4(20) − 1 = 79. (c) 4n − 1 = 99 → 4n = 100 → n = 25. Input = 25.",
+      "skill": "g7-function-input-output",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "final-1": "−14",
+    "final-2": "19/12 = 1 7/12",
+    "final-3": "3/5",
+    "final-4": "3x − 17",
+    "final-5": "x = 3",
+    "final-6": "x < −4",
+    "final-7": "Store 2 ($1.70/lb vs $1.75/lb)",
+    "final-8": "96.25 miles",
+    "final-9": "$64.26",
+    "final-10": "15% increase",
+    "final-11": "Not proportional (2.75 ≠ 2.5)",
+    "final-12": "k = 1.5; 10.5 cups flour",
+    "final-13": "C = 43.96 ft, A = 153.86 ft²",
+    "final-14": "248 cm²",
+    "final-15": "240 cm³",
+    "final-16": "B higher mean (82), more consistent (MAD=3)",
+    "final-17": "7/12",
+    "final-18": "27/36 = 3/4",
+    "final-19": "$81",
+    "final-20": "Rule: 4n−1; output=79; input=25"
+  }
+}

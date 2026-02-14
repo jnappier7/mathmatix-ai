@@ -1,0 +1,1083 @@
+[
+  {
+    "skillId": "cm-income-vocabulary",
+    "displayName": "Income Vocabulary",
+    "description": "Understand and use key income terms: gross vs net pay, salary vs hourly, withholdings, deductions",
+    "category": "income-basics",
+    "course": "Consumer Math",
+    "quarter": 0,
+    "unit": "Money Rules Baseline",
+    "prerequisites": [],
+    "enables": ["cm-reading-pay-stubs", "cm-pay-structures"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Gross pay: total earnings before anything is taken out",
+        "Net pay: what you actually take home (gross minus deductions)",
+        "Salary: fixed annual amount divided into pay periods",
+        "Hourly: paid per hour worked, varies with hours"
+      ],
+      "commonMistakes": [
+        "Thinking salary = take-home pay",
+        "Not realizing hourly workers can earn more than salaried workers depending on hours",
+        "Confusing deductions with expenses"
+      ],
+      "teachingTips": [
+        "Use a real-looking pay stub as the anchor document",
+        "Have students calculate the gap between gross and net — the shock factor teaches",
+        "Compare: $40,000 salary vs $20/hr — which pays more? (depends on hours)"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-reading-pay-stubs",
+    "displayName": "Reading Pay Stubs",
+    "description": "Read and interpret a pay stub: identify gross pay, taxes, withholdings, deductions, and net pay",
+    "category": "income-basics",
+    "course": "Consumer Math",
+    "quarter": 0,
+    "unit": "Money Rules Baseline",
+    "prerequisites": ["cm-income-vocabulary"],
+    "enables": ["cm-cash-flow-tables", "cm-tax-basics"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "MP.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Federal income tax, state income tax, FICA (Social Security + Medicare)",
+        "Pre-tax deductions: health insurance, 401(k) contributions",
+        "Post-tax deductions: Roth contributions, garnishments",
+        "Year-to-date (YTD) totals and what they tell you"
+      ],
+      "commonMistakes": [
+        "Not realizing how much taxes take — students are genuinely shocked",
+        "Confusing federal and state taxes",
+        "Not understanding that health insurance premiums come out of the paycheck"
+      ],
+      "teachingTips": [
+        "Walk through a sample pay stub line by line — no skipping",
+        "Have students calculate: what percentage of gross pay was taken?",
+        "Ask: if you got paid $1,000 gross, how much actually hits your bank?"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-banking-basics",
+    "displayName": "Banking Basics",
+    "description": "Understand checking vs savings accounts, debit vs credit cards, and basic banking operations",
+    "category": "income-basics",
+    "course": "Consumer Math",
+    "quarter": 0,
+    "unit": "Money Rules Baseline",
+    "prerequisites": [],
+    "enables": ["cm-simple-interest", "cm-credit-scores"],
+    "standardsAlignment": ["Financial Literacy Standard 3", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Checking account: for daily spending, debit card linked, earns little/no interest",
+        "Savings account: for storing money, earns interest, limited withdrawals",
+        "Debit card: spends YOUR money directly from checking",
+        "Credit card: spends BORROWED money that you must pay back with interest"
+      ],
+      "commonMistakes": [
+        "Thinking debit and credit cards are the same thing",
+        "Not understanding overdraft fees",
+        "Believing a credit card is 'free money'"
+      ],
+      "teachingTips": [
+        "Use the 'whose money is it?' test: debit = yours, credit = bank's",
+        "Show what a $35 overdraft fee looks like on a $5 purchase",
+        "Introduce the concept: credit cards are a tool, not a trap — IF used correctly"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-wants-vs-needs",
+    "displayName": "Wants vs Needs (With Numbers)",
+    "description": "Distinguish wants from needs using actual budget numbers, not abstract categories",
+    "category": "income-basics",
+    "course": "Consumer Math",
+    "quarter": 0,
+    "unit": "Money Rules Baseline",
+    "prerequisites": [],
+    "enables": ["cm-budget-categories", "cm-budget-tradeoffs"],
+    "standardsAlignment": ["Financial Literacy Standard 2", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Needs: housing, food, utilities, transportation, insurance — must-haves",
+        "Wants: entertainment, dining out, subscriptions, upgrades — nice-to-haves",
+        "The gray area: internet (need for school/work?), car vs bus, phone plan tier",
+        "Quantify wants: add up monthly subscriptions and 'small' purchases"
+      ],
+      "commonMistakes": [
+        "Labeling everything as a need",
+        "Not tracking small recurring costs (they add up fast)",
+        "Thinking wants are bad — they're fine IF the math works"
+      ],
+      "teachingTips": [
+        "Have students list their own monthly subscriptions and total them up",
+        "Use real numbers: $15/month × 12 = $180/year. Worth it?",
+        "Frame as trade-offs, not moral judgments: 'What would you give up for...?'"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-budget-categories",
+    "displayName": "Budget Categories",
+    "description": "Organize expenses into fixed vs variable categories and identify all budget line items",
+    "category": "budgeting",
+    "course": "Consumer Math",
+    "quarter": 1,
+    "unit": "Budgeting & Cash Flow",
+    "prerequisites": ["cm-wants-vs-needs", "cm-income-vocabulary"],
+    "enables": ["cm-cash-flow-tables", "cm-budget-tradeoffs"],
+    "standardsAlignment": ["Financial Literacy Standard 2", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Fixed expenses: same amount every month (rent, car payment, insurance)",
+        "Variable expenses: change month to month (groceries, gas, utilities)",
+        "Common categories: housing, transportation, food, utilities, insurance, personal, savings",
+        "The 50/30/20 guideline: 50% needs, 30% wants, 20% savings/debt"
+      ],
+      "commonMistakes": [
+        "Forgetting categories entirely (insurance, subscriptions, personal care)",
+        "Underestimating variable expenses",
+        "Not treating savings as a budget line item"
+      ],
+      "teachingTips": [
+        "Start with a complete list before assigning dollar amounts",
+        "Use real average costs for your region when possible",
+        "Savings is not 'leftover' — it's a planned expense"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-cash-flow-tables",
+    "displayName": "Monthly Cash-Flow Tables",
+    "description": "Build and interpret monthly cash-flow tables: total income minus total expenses equals surplus or deficit",
+    "category": "budgeting",
+    "course": "Consumer Math",
+    "quarter": 1,
+    "unit": "Budgeting & Cash Flow",
+    "prerequisites": ["cm-budget-categories", "cm-reading-pay-stubs"],
+    "enables": ["cm-irregular-expenses", "cm-budget-tradeoffs"],
+    "standardsAlignment": ["Financial Literacy Standard 2", "7.EE.3", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Cash flow = income - expenses",
+        "Positive cash flow (surplus): money left over after all expenses",
+        "Negative cash flow (deficit): spending more than earning",
+        "Organizing in a table: category | budgeted | actual | difference"
+      ],
+      "commonMistakes": [
+        "Forgetting to use NET income (not gross) as the starting point",
+        "Not tracking actual spending vs budgeted amounts",
+        "Treating a one-month surplus as permanent"
+      ],
+      "teachingTips": [
+        "Build a cash-flow table step by step — income at top, expenses below, bottom line at bottom",
+        "Use red/green coloring: surplus = green, deficit = red",
+        "Have students adjust the budget when it doesn't balance — that's the real skill"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-irregular-expenses",
+    "displayName": "Irregular Expenses & Sinking Funds",
+    "description": "Plan for non-monthly expenses using sinking funds: car repairs, gifts, annual subscriptions",
+    "category": "budgeting",
+    "course": "Consumer Math",
+    "quarter": 1,
+    "unit": "Budgeting & Cash Flow",
+    "prerequisites": ["cm-cash-flow-tables"],
+    "enables": ["cm-emergency-fund"],
+    "standardsAlignment": ["Financial Literacy Standard 2", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Irregular expenses: don't happen every month but WILL happen (car maintenance, holiday gifts, school supplies)",
+        "Sinking fund: set aside money each month for a future known expense",
+        "Calculation: annual cost ÷ 12 = monthly sinking fund amount",
+        "Examples: $600 car maintenance ÷ 12 = $50/month sinking fund"
+      ],
+      "commonMistakes": [
+        "Pretending irregular expenses won't happen",
+        "Treating every unexpected expense as an emergency (many are predictable)",
+        "Not adjusting the monthly budget to include sinking fund contributions"
+      ],
+      "teachingTips": [
+        "List common irregular expenses and have students estimate annual costs",
+        "Show: a $600 car repair is either a crisis or a $50/month plan",
+        "Connect to the emergency fund distinction: irregular ≠ emergency"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-budget-tradeoffs",
+    "displayName": "Budget Trade-offs & Scenarios",
+    "description": "Make budget decisions by comparing trade-offs: what to cut, what to keep, and why",
+    "category": "budgeting",
+    "course": "Consumer Math",
+    "quarter": 1,
+    "unit": "Budgeting & Cash Flow",
+    "prerequisites": ["cm-cash-flow-tables", "cm-wants-vs-needs"],
+    "enables": ["cm-opportunity-cost"],
+    "standardsAlignment": ["Financial Literacy Standard 2", "MP.1", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Trade-off: giving up one thing to get another",
+        "Budget adjustments: if income drops or expenses rise, something must change",
+        "Prioritization: needs first, then savings, then wants",
+        "Scenario analysis: 'what if rent goes up $200?' or 'what if you lose overtime?'"
+      ],
+      "commonMistakes": [
+        "Only cutting wants without looking at needs (sometimes you can reduce needs too — cheaper phone plan, roommate)",
+        "Making cuts that aren't sustainable long-term",
+        "Not considering the ripple effect of changes"
+      ],
+      "teachingTips": [
+        "Give students a budget that doesn't balance and have them fix it",
+        "Present 'what would you cut?' scenarios and require written justification",
+        "Compare two students' solutions — there's no single right answer, but the math must work"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-percent-of-number",
+    "displayName": "Percent of a Number & Percent Change",
+    "description": "Calculate percent of a number and percent increase/decrease in financial contexts",
+    "category": "percent-applications",
+    "course": "Consumer Math",
+    "quarter": 2,
+    "unit": "Percent, Discounts, and Sales Math",
+    "prerequisites": [],
+    "enables": ["cm-discounts-coupons", "cm-tax-tip-markup", "cm-simple-interest"],
+    "standardsAlignment": ["7.RP.3", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent of a number: multiply by the decimal form (25% of $80 = 0.25 × $80 = $20)",
+        "Percent increase: new = original × (1 + rate)",
+        "Percent decrease: new = original × (1 - rate)",
+        "Percent change formula: (new - original) / original × 100"
+      ],
+      "commonMistakes": [
+        "Calculating 20% of $50 as $50 - 20 = $30 instead of $50 × 0.20 = $10",
+        "Forgetting the base changes with successive percent changes",
+        "Dividing by the new value instead of the original when finding percent change"
+      ],
+      "teachingTips": [
+        "Multiplier method is fastest: 30% off = multiply by 0.70",
+        "Use money contexts exclusively — percent fluency IS financial literacy",
+        "The '10% up then 10% down' problem opens eyes"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-discounts-coupons",
+    "displayName": "Discounts, Coupons, and Stacking Deals",
+    "description": "Calculate savings from discounts and coupons, including stacked and sequential discounts",
+    "category": "percent-applications",
+    "course": "Consumer Math",
+    "quarter": 2,
+    "unit": "Percent, Discounts, and Sales Math",
+    "prerequisites": ["cm-percent-of-number"],
+    "enables": ["cm-unit-price-comparisons"],
+    "standardsAlignment": ["7.RP.3", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Single discount: sale price = original × (1 - discount rate)",
+        "Sequential discounts: apply one at a time (30% off then extra 10% off ≠ 40% off)",
+        "Coupon: fixed dollar amount off vs percentage off — which saves more depends on price",
+        "Always compare final prices, not just discount percentages"
+      ],
+      "commonMistakes": [
+        "Adding sequential discounts (20% + 10% ≠ 30%)",
+        "Assuming a higher percentage discount is always the better deal",
+        "Forgetting that the coupon might apply before or after the sale price"
+      ],
+      "teachingTips": [
+        "Show side-by-side: 30% off then 10% off vs. straight 40% off",
+        "Use real retail scenarios: '$5 off coupon' vs '15% off' on a $40 item",
+        "The key question: 'what do I actually pay?'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "application",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-tax-tip-markup",
+    "displayName": "Sales Tax, Tip, and Markup",
+    "description": "Calculate sales tax, restaurant tips, and retail markup/markdown on purchases",
+    "category": "percent-applications",
+    "course": "Consumer Math",
+    "quarter": 2,
+    "unit": "Percent, Discounts, and Sales Math",
+    "prerequisites": ["cm-percent-of-number"],
+    "enables": ["cm-budget-categories"],
+    "standardsAlignment": ["7.RP.3", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Sales tax: total = price × (1 + tax rate). Tax rates vary by state/city.",
+        "Tip: total = subtotal × (1 + tip rate). Standard: 15-20% of pre-tax subtotal.",
+        "Markup: selling price = cost × (1 + markup rate). How stores make profit.",
+        "Markdown: sale price = original × (1 - markdown rate)."
+      ],
+      "commonMistakes": [
+        "Calculating tip on the total after tax instead of the pre-tax subtotal",
+        "Forgetting that tax is added ON TOP of the price (not included)",
+        "Not realizing markup can be 100%+ (a $5 item selling for $12)"
+      ],
+      "teachingTips": [
+        "Teach the '10% trick' for quick mental tip estimates: find 10%, then adjust",
+        "Use real local tax rates for practice problems",
+        "Restaurant check math is the most immediately useful skill here"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-unit-price-comparisons",
+    "displayName": "Unit Price Comparisons",
+    "description": "Calculate unit prices and use them to identify the best value among different sizes and brands",
+    "category": "percent-applications",
+    "course": "Consumer Math",
+    "quarter": 2,
+    "unit": "Percent, Discounts, and Sales Math",
+    "prerequisites": ["cm-percent-of-number"],
+    "enables": [],
+    "standardsAlignment": ["7.RP.1", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Unit price = total price ÷ quantity (price per ounce, per item, per serving)",
+        "Lower unit price = better value (usually)",
+        "Bigger isn't always cheaper — always calculate, don't assume",
+        "Consider waste: the 5 lb bag is cheaper per pound, but will you use it all?"
+      ],
+      "commonMistakes": [
+        "Dividing quantity by price instead of price by quantity",
+        "Assuming the bigger package is always the better deal",
+        "Not comparing the same units (price per ounce vs price per pound)"
+      ],
+      "teachingTips": [
+        "Use real grocery store examples with actual prices",
+        "Have students find unit prices on items they actually buy",
+        "Add the waste factor: 'Is the bulk buy worth it if half goes bad?'"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "application",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-simple-interest",
+    "displayName": "Simple Interest",
+    "description": "Calculate simple interest using I = Prt and find total amount in savings or loan contexts",
+    "category": "banking-saving",
+    "course": "Consumer Math",
+    "quarter": 3,
+    "unit": "Banking, Saving, and Emergency Funds",
+    "prerequisites": ["cm-percent-of-number"],
+    "enables": ["cm-compound-interest", "cm-loan-basics"],
+    "standardsAlignment": ["7.RP.3", "7.EE.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simple interest formula: I = Prt (Principal × rate × time)",
+        "Total amount: A = P + I = P(1 + rt)",
+        "P = starting amount, r = annual rate as decimal, t = time in years",
+        "Works for both savings (you earn) and loans (you owe)"
+      ],
+      "commonMistakes": [
+        "Forgetting to convert percent to decimal (5% = 0.05, not 5)",
+        "Using months instead of years without converting (6 months = 0.5 years)",
+        "Confusing interest earned with total balance"
+      ],
+      "teachingTips": [
+        "Start with savings: 'you deposit $500 at 3% for 2 years' — friendly context",
+        "Then flip to loans: 'same formula, but now interest works AGAINST you'",
+        "Compare: $1,000 at 2% simple interest for 5 years — how much interest?"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-compound-interest",
+    "displayName": "Compound Interest",
+    "description": "Understand compound interest conceptually, calculate with A = P(1 + r/n)^(nt), and compare to simple interest",
+    "category": "banking-saving",
+    "course": "Consumer Math",
+    "quarter": 3,
+    "unit": "Banking, Saving, and Emergency Funds",
+    "prerequisites": ["cm-simple-interest"],
+    "enables": ["cm-compound-growth", "cm-credit-card-math"],
+    "standardsAlignment": ["7.EE.3", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Compound interest: earning interest ON your interest",
+        "Formula: A = P(1 + r/n)^(nt) where n = compounding frequency",
+        "More frequent compounding = slightly more growth",
+        "APY (Annual Percentage Yield): the effective annual rate after compounding"
+      ],
+      "commonMistakes": [
+        "Not understanding why compound > simple (it's interest on interest)",
+        "Confusing APR (stated rate) with APY (effective rate after compounding)",
+        "Using the formula wrong: forgetting to divide r by n AND multiply t by n"
+      ],
+      "teachingTips": [
+        "Start conceptual: '$100 at 10% — after year 1 you have $110, year 2 you earn 10% of $110 not $100'",
+        "Use a table to show year-by-year growth before introducing the formula",
+        "Compare simple vs compound side-by-side over 10, 20, 30 years — the gap is the lesson"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-emergency-fund",
+    "displayName": "Emergency Funds",
+    "description": "Calculate target emergency fund size (3-6 months of expenses) and plan how long it takes to build",
+    "category": "banking-saving",
+    "course": "Consumer Math",
+    "quarter": 3,
+    "unit": "Banking, Saving, and Emergency Funds",
+    "prerequisites": ["cm-cash-flow-tables"],
+    "enables": [],
+    "standardsAlignment": ["Financial Literacy Standard 3", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Emergency fund: savings set aside for unexpected events (job loss, medical, major repair)",
+        "Target: 3-6 months of essential expenses",
+        "Calculate: monthly essentials × target months = goal amount",
+        "Time to build: goal ÷ monthly savings contribution = months needed"
+      ],
+      "commonMistakes": [
+        "Using total income instead of essential expenses for the target",
+        "Not including irregular essentials in the monthly calculation",
+        "Getting discouraged by how long it takes — start with a $500 mini-goal"
+      ],
+      "teachingTips": [
+        "Use a specific profile: '$2,400/month essentials × 3 months = $7,200 target'",
+        "Show timeline: saving $200/month → 36 months to hit 3 months of expenses",
+        "Distinguish: sinking fund (for known future costs) vs emergency fund (for unknowns)"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-opportunity-cost",
+    "displayName": "Opportunity Cost",
+    "description": "Understand opportunity cost as the value of the next-best alternative you give up when making a financial choice",
+    "category": "banking-saving",
+    "course": "Consumer Math",
+    "quarter": 3,
+    "unit": "Banking, Saving, and Emergency Funds",
+    "prerequisites": ["cm-budget-tradeoffs"],
+    "enables": ["cm-why-investing"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Opportunity cost: what you give up when you choose option A over option B",
+        "Every dollar spent is a dollar that can't be saved or spent elsewhere",
+        "Opportunity cost of holding cash: inflation eats purchasing power over time",
+        "Time has opportunity cost too: working overtime vs free time"
+      ],
+      "commonMistakes": [
+        "Thinking opportunity cost only applies to money (it also applies to time)",
+        "Not quantifying the alternative — 'what would that $200 be worth invested?'",
+        "Ignoring opportunity cost when it's uncomfortable"
+      ],
+      "teachingTips": [
+        "Start simple: 'You have $50 — concert ticket or save it. What's the opportunity cost of each?'",
+        "Show the invested alternative: '$50/month in an index fund for 40 years = ?'",
+        "Keep it practical, not preachy — the goal is awareness, not guilt"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-credit-scores",
+    "displayName": "Credit Scores",
+    "description": "Understand what a credit score is, what factors affect it, and why it matters for loans and rates",
+    "category": "credit-debt",
+    "course": "Consumer Math",
+    "quarter": 4,
+    "unit": "Credit, Loans, and Debt",
+    "prerequisites": ["cm-banking-basics"],
+    "enables": ["cm-credit-card-math", "cm-loan-basics"],
+    "standardsAlignment": ["Financial Literacy Standard 4", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Credit score range: 300-850. Higher = better.",
+        "Five factors: payment history (35%), amounts owed (30%), length of history (15%), new credit (10%), credit mix (10%)",
+        "Good credit = lower interest rates on loans, better rental applications, sometimes cheaper insurance",
+        "Building credit: use a card, pay it off IN FULL every month"
+      ],
+      "commonMistakes": [
+        "Thinking you need to carry a balance to build credit (you don't)",
+        "Not realizing late payments stay on your record for 7 years",
+        "Opening many credit cards to 'build credit faster' (hurts in the short term)"
+      ],
+      "teachingTips": [
+        "Use the 'report card for borrowing' analogy",
+        "Show the rate difference: 4% vs 8% on a $20,000 car loan — how much more do you pay?",
+        "Emphasize: credit score is a TOOL, not a moral judgment"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-credit-card-math",
+    "displayName": "Credit Card Math",
+    "description": "Calculate credit card interest, understand minimum payments, and see the true cost of carrying a balance",
+    "category": "credit-debt",
+    "course": "Consumer Math",
+    "quarter": 4,
+    "unit": "Credit, Loans, and Debt",
+    "prerequisites": ["cm-compound-interest", "cm-credit-scores"],
+    "enables": ["cm-amortization"],
+    "standardsAlignment": ["Financial Literacy Standard 4", "7.EE.3", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "APR: annual percentage rate (typically 18-25% for credit cards)",
+        "Monthly interest: APR ÷ 12 applied to your balance",
+        "Minimum payment trap: paying minimum = mostly interest, barely touching principal",
+        "Example: $3,000 balance at 22% APR, minimum payment = 15+ years to pay off"
+      ],
+      "commonMistakes": [
+        "Thinking the minimum payment is a reasonable way to pay off debt",
+        "Not realizing how quickly interest compounds on credit card balances",
+        "Ignoring the APR when signing up for a card (they all look the same until you carry a balance)"
+      ],
+      "teachingTips": [
+        "The minimum payment horror story is the most powerful lesson in this course",
+        "Show a payoff table: $3,000 at 22% with $60 minimum → total paid is ~$7,000+",
+        "Compare: pay $60/month (minimum) vs $200/month — time and total cost difference"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-loan-basics",
+    "displayName": "Loan Basics",
+    "description": "Understand loan terms (principal, interest rate, term), calculate total cost, and compare loan options",
+    "category": "credit-debt",
+    "course": "Consumer Math",
+    "quarter": 4,
+    "unit": "Credit, Loans, and Debt",
+    "prerequisites": ["cm-simple-interest", "cm-credit-scores"],
+    "enables": ["cm-amortization"],
+    "standardsAlignment": ["Financial Literacy Standard 4", "7.EE.3", "MP.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Principal: the amount you borrow",
+        "Interest rate: the cost of borrowing (annual percentage)",
+        "Term: how long you have to pay it back (months or years)",
+        "Total cost of loan = monthly payment × number of payments. Compare this to principal.",
+        "Monthly payment: depends on principal, rate, and term"
+      ],
+      "commonMistakes": [
+        "Only comparing monthly payments without looking at total cost",
+        "Thinking a longer term is always better (lower monthly payment but way more total interest)",
+        "Not understanding that a lower rate saves far more than a lower monthly payment"
+      ],
+      "teachingTips": [
+        "Car loan comparison: same car, 3-year vs 6-year loan — show total cost difference",
+        "Use given monthly payment tables rather than deriving the formula",
+        "The question is always: 'what does this loan REALLY cost?'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-amortization",
+    "displayName": "Amortization Concept",
+    "description": "Understand how loan payments split between principal and interest over time (early = mostly interest)",
+    "category": "credit-debt",
+    "course": "Consumer Math",
+    "quarter": 4,
+    "unit": "Credit, Loans, and Debt",
+    "prerequisites": ["cm-loan-basics"],
+    "enables": [],
+    "standardsAlignment": ["Financial Literacy Standard 4", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Early payments: mostly interest, little principal",
+        "Late payments: mostly principal, little interest",
+        "Why: interest is calculated on remaining balance — larger balance = more interest",
+        "Extra payments early on save the most money over the life of the loan"
+      ],
+      "commonMistakes": [
+        "Thinking each payment reduces the balance by the full payment amount",
+        "Not understanding why extra payments early in a loan save so much",
+        "Confusing total payments with principal reduction"
+      ],
+      "teachingTips": [
+        "Show a 3-4 row amortization snippet: payment #1 vs payment #60 on a car loan",
+        "Visual: bar chart showing interest vs principal portions over time",
+        "The 'aha' moment: 'I paid $500 but only $150 went to my balance?!'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-predatory-lending",
+    "displayName": "Predatory Lending Warning Signs",
+    "description": "Identify red flags of predatory loans: payday loans, excessive fees, balloon payments, and high-pressure tactics",
+    "category": "credit-debt",
+    "course": "Consumer Math",
+    "quarter": 4,
+    "unit": "Credit, Loans, and Debt",
+    "prerequisites": ["cm-loan-basics"],
+    "enables": ["cm-scam-detection"],
+    "standardsAlignment": ["Financial Literacy Standard 4", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Payday loans: short-term, extremely high APR (often 400%+)",
+        "Red flags: 'guaranteed approval', no credit check, pressure to sign immediately",
+        "Balloon payments: low payments then a huge final payment",
+        "Predatory tactics: targeting people with low credit, hiding fees in fine print"
+      ],
+      "commonMistakes": [
+        "Thinking payday loans are a reasonable option for emergencies",
+        "Not reading the fine print / terms and conditions",
+        "Assuming all lenders are regulated and fair"
+      ],
+      "teachingTips": [
+        "Calculate the real cost: borrow $500 from a payday lender at 400% APR for 2 weeks",
+        "Compare: payday loan vs credit card vs personal loan — same amount, wildly different costs",
+        "Frame as 'how to protect yourself' not 'never borrow money'"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-pay-structures",
+    "displayName": "Pay Structures: Hourly, Salary, Commission",
+    "description": "Calculate gross pay for hourly, salaried, and commission-based jobs and compare across structures",
+    "category": "income-taxes",
+    "course": "Consumer Math",
+    "quarter": 5,
+    "unit": "Income, Jobs, and Taxes",
+    "prerequisites": ["cm-income-vocabulary"],
+    "enables": ["cm-overtime-timesheets", "cm-benefits-comparison"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "7.RP.1", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Hourly pay: gross = hourly rate × hours worked",
+        "Salary: gross = annual salary ÷ number of pay periods (26 biweekly, 24 semimonthly, 12 monthly)",
+        "Commission: base pay + (sales × commission rate)",
+        "Comparing: salary stability vs hourly flexibility vs commission earning potential"
+      ],
+      "commonMistakes": [
+        "Comparing annual salary to hourly rate without converting to the same basis",
+        "Forgetting that salaried workers don't earn overtime (usually)",
+        "Not considering that commission income varies month to month"
+      ],
+      "teachingTips": [
+        "Convert everything to the same basis for comparison: annual or hourly",
+        "$50,000/year ÷ 2,080 hours = ~$24.04/hour — is that more or less than $22/hour with overtime?",
+        "Present real job offer scenarios and have students decide"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-overtime-timesheets",
+    "displayName": "Overtime & Timesheets",
+    "description": "Calculate gross pay with overtime (time-and-a-half) and read/build timesheets",
+    "category": "income-taxes",
+    "course": "Consumer Math",
+    "quarter": 5,
+    "unit": "Income, Jobs, and Taxes",
+    "prerequisites": ["cm-pay-structures"],
+    "enables": [],
+    "standardsAlignment": ["Financial Literacy Standard 1", "7.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Overtime: hours over 40/week paid at 1.5× regular rate (time-and-a-half)",
+        "Gross pay with OT: (40 × rate) + (OT hours × rate × 1.5)",
+        "Timesheet: records hours worked per day/week",
+        "Some jobs: double-time on holidays, different OT rules"
+      ],
+      "commonMistakes": [
+        "Applying overtime rate to ALL hours instead of just the hours over 40",
+        "Forgetting that 1.5× means the rate, not $1.50 extra",
+        "Not reading the timesheet correctly (rounding errors, break deductions)"
+      ],
+      "teachingTips": [
+        "Use a weekly timesheet and have students total the hours first, then calculate pay",
+        "Show the pay difference: 45 hours vs 40 hours — overtime really adds up",
+        "Connect to real scenarios: 'Is working Saturday worth it?'"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "cm-tax-basics",
+    "displayName": "Tax Basics",
+    "description": "Understand W-2 vs 1099, progressive taxation concept, and estimate take-home pay after taxes",
+    "category": "income-taxes",
+    "course": "Consumer Math",
+    "quarter": 5,
+    "unit": "Income, Jobs, and Taxes",
+    "prerequisites": ["cm-reading-pay-stubs", "cm-percent-of-number"],
+    "enables": ["cm-benefits-comparison"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "7.RP.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "W-2 employee: employer withholds taxes, provides benefits, pays employer share of FICA",
+        "1099 contractor: no withholding, pays own taxes quarterly, pays BOTH sides of FICA (~15.3%)",
+        "Progressive tax: higher income → higher tax rate ON THE AMOUNT ABOVE each bracket",
+        "Effective tax rate: total tax ÷ total income (always less than your top bracket)"
+      ],
+      "commonMistakes": [
+        "Thinking all income is taxed at your highest bracket (the #1 tax misconception)",
+        "Not realizing 1099 workers pay roughly double the FICA tax of W-2 workers",
+        "Confusing marginal rate with effective rate"
+      ],
+      "teachingTips": [
+        "Use a visual: 'Fill the buckets' model for progressive tax brackets",
+        "Simple estimate: assume 22-25% total taxes (federal + state + FICA) for a W-2 worker",
+        "Compare: $60,000 W-2 job vs $60,000 1099 contract — what's the take-home difference?"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-benefits-comparison",
+    "displayName": "Benefits: Insurance, Retirement, Perks",
+    "description": "Understand and value employer benefits: health insurance premiums, 401(k) match, PTO, and total compensation",
+    "category": "income-taxes",
+    "course": "Consumer Math",
+    "quarter": 5,
+    "unit": "Income, Jobs, and Taxes",
+    "prerequisites": ["cm-pay-structures", "cm-tax-basics"],
+    "enables": ["cm-retirement-accounts"],
+    "standardsAlignment": ["Financial Literacy Standard 1", "MP.1", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Total compensation = salary + employer-paid benefits",
+        "Health insurance: employer covers part of premium, employee pays the rest (pre-tax)",
+        "401(k) match: employer matches a percentage of your contribution — free money",
+        "PTO (paid time off): vacation + sick days = paid days you don't work"
+      ],
+      "commonMistakes": [
+        "Only comparing base salary without considering benefits",
+        "Not taking a 401(k) match = leaving free money on the table",
+        "Undervaluing health insurance (a $6,000/year employer contribution is real money)"
+      ],
+      "teachingTips": [
+        "Job offer comparison: $55K with great benefits vs $62K with nothing — which is really more?",
+        "Quantify benefits in dollars: 'Your employer pays $500/month for your health insurance = $6,000/year'",
+        "The 401(k) match calculation: '4% match on $50K = $2,000/year free'"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-why-investing",
+    "displayName": "Why Investing Exists",
+    "description": "Understand why investing matters: inflation erodes purchasing power, and growth beats savings account rates",
+    "category": "investing",
+    "course": "Consumer Math",
+    "quarter": 6,
+    "unit": "Investing & Long-Term Planning",
+    "prerequisites": ["cm-opportunity-cost", "cm-compound-interest"],
+    "enables": ["cm-investment-types", "cm-compound-growth"],
+    "standardsAlignment": ["Financial Literacy Standard 5", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inflation: prices rise ~2-4% per year — your money buys less over time",
+        "Savings account rate (~0.5-5% APY) may not beat inflation in some periods",
+        "Investing: putting money into assets that grow faster than inflation (historically ~7-10%/year for stocks)",
+        "Risk vs reward: higher potential returns = higher risk of loss"
+      ],
+      "commonMistakes": [
+        "Thinking keeping cash in a savings account is 'safe' (inflation risk)",
+        "Expecting guaranteed returns from investing (it fluctuates)",
+        "Confusing investing with gambling"
+      ],
+      "teachingTips": [
+        "Show inflation impact: $100 today buys the same as ~$67 from 10 years ago",
+        "Savings account vs stock market over 30 years — the gap is enormous",
+        "Investing is NOT day-trading or meme stocks — frame it as long-term wealth building"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-investment-types",
+    "displayName": "Investment Types: Stocks, Bonds, Index Funds",
+    "description": "Understand basic investment types and the concept of diversification",
+    "category": "investing",
+    "course": "Consumer Math",
+    "quarter": 6,
+    "unit": "Investing & Long-Term Planning",
+    "prerequisites": ["cm-why-investing"],
+    "enables": ["cm-retirement-accounts"],
+    "standardsAlignment": ["Financial Literacy Standard 5", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Stock: owning a small piece of a company. Higher risk, higher potential return.",
+        "Bond: lending money to a company or government. Lower risk, lower return.",
+        "Index fund: a bundle of many stocks that tracks the whole market. Diversified by default.",
+        "Diversification: don't put all your eggs in one basket — spread across investments"
+      ],
+      "commonMistakes": [
+        "Thinking you need to pick individual stocks to invest",
+        "Not understanding that index funds give you instant diversification",
+        "Expecting investing to make you rich quickly (it's a decades-long game)"
+      ],
+      "teachingTips": [
+        "Pizza analogy: stock = one slice, index fund = the whole pizza (many companies)",
+        "Historical S&P 500 average: ~10%/year over long periods (but varies year to year)",
+        "Keep it conceptual — students don't need to know how to buy stocks yet"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-retirement-accounts",
+    "displayName": "Retirement Accounts: 401(k) & Roth IRA",
+    "description": "Understand the basics of 401(k) and Roth IRA accounts and why starting early matters",
+    "category": "investing",
+    "course": "Consumer Math",
+    "quarter": 6,
+    "unit": "Investing & Long-Term Planning",
+    "prerequisites": ["cm-investment-types", "cm-benefits-comparison"],
+    "enables": ["cm-compound-growth"],
+    "standardsAlignment": ["Financial Literacy Standard 5", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "401(k): employer-sponsored, contributions reduce taxable income NOW, taxed when withdrawn in retirement",
+        "Roth IRA: contributions made with after-tax money, grows tax-FREE, withdrawals tax-free in retirement",
+        "Employer match: if employer matches 4%, contribute at least 4% — it's 100% return on that money",
+        "Contribution limits exist (but students won't hit them for years)"
+      ],
+      "commonMistakes": [
+        "Not contributing enough to get the full employer match",
+        "Thinking retirement planning can wait until you're 40",
+        "Withdrawing from retirement accounts early (penalties + taxes)"
+      ],
+      "teachingTips": [
+        "Keep it high-level: 'pre-tax bucket' (401k) vs 'after-tax bucket' (Roth)",
+        "The match calculation: '4% of $50K = $2,000. Employer GIVES you $2,000. For free.'",
+        "Show the 'start at 22 vs start at 32' graph — that's the entire lesson"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "cm-compound-growth",
+    "displayName": "Compound Growth Over Time",
+    "description": "Calculate and visualize long-term compound growth to prove why starting early beats starting big",
+    "category": "investing",
+    "course": "Consumer Math",
+    "quarter": 6,
+    "unit": "Investing & Long-Term Planning",
+    "prerequisites": ["cm-compound-interest", "cm-why-investing"],
+    "enables": [],
+    "standardsAlignment": ["Financial Literacy Standard 5", "7.EE.3", "MP.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Rule of 72: years to double ≈ 72 ÷ annual return rate (at 8%, doubles every ~9 years)",
+        "Starting at 22 vs 32: 10 extra years of compounding makes a MASSIVE difference",
+        "Regular contributions: $200/month at 8% for 40 years → ~$700,000+",
+        "Time is the most powerful variable — more powerful than the amount you invest"
+      ],
+      "commonMistakes": [
+        "Thinking you need a lot of money to start investing (you don't — $50/month works)",
+        "Underestimating the power of time (the growth curve is exponential, not linear)",
+        "Panicking during market drops and selling (long-term strategy beats short-term reactions)"
+      ],
+      "teachingTips": [
+        "The side-by-side comparison: Person A invests $200/month from age 22-32 then stops vs Person B invests $200/month from age 32-62. A wins.",
+        "Use a compound growth calculator and let students experiment",
+        "This is the 'start early' proof — make it visual, make it concrete"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "cm-scam-detection",
+    "displayName": "Financial Scam Detection",
+    "description": "Identify common financial scam red flags: guaranteed returns, urgency tactics, unsolicited offers, and too-good-to-be-true promises",
+    "category": "investing",
+    "course": "Consumer Math",
+    "quarter": 6,
+    "unit": "Investing & Long-Term Planning",
+    "prerequisites": ["cm-predatory-lending"],
+    "enables": [],
+    "standardsAlignment": ["Financial Literacy Standard 4", "MP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Red flag #1: 'Guaranteed' high returns (no legitimate investment guarantees returns)",
+        "Red flag #2: Urgency and pressure ('Act NOW or miss out!')",
+        "Red flag #3: Unsolicited offers (someone you didn't ask is offering you money)",
+        "Red flag #4: 'Get rich quick' / MLM / crypto promises with no clear explanation of how"
+      ],
+      "commonMistakes": [
+        "Thinking scams only target old people (they target everyone, especially online)",
+        "Trusting something because it looks professional or a friend shared it",
+        "Not verifying credentials: is this person/company actually registered?"
+      ],
+      "teachingTips": [
+        "Show real scam examples (anonymized) — students learn from patterns",
+        "The 'if it sounds too good to be true' test is genuinely useful",
+        "Teach the pause: 'Never make a financial decision under pressure. Sleep on it.'"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  }
+]

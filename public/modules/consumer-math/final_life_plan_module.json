@@ -1,0 +1,214 @@
+{
+  "moduleId": "final_life_plan",
+  "course": "Consumer Math",
+  "unit": 6,
+  "title": "Final: Life Plan Project",
+  "weeks": "9",
+  "estimatedDuration": 45,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "The capstone assessment. Students build a complete financial plan for a realistic life scenario: choose a job, calculate take-home pay, create a monthly budget, plan savings and an emergency fund, make a credit/debt decision, and outline an investing strategy. Every answer must be justified with numbers. This is the proof that students can make evidence-based financial decisions.",
+  "skillsCovered": [
+    "cm-income-vocabulary",
+    "cm-reading-pay-stubs",
+    "cm-budget-categories",
+    "cm-cash-flow-tables",
+    "cm-percent-of-number",
+    "cm-tax-tip-markup",
+    "cm-simple-interest",
+    "cm-compound-interest",
+    "cm-emergency-fund",
+    "cm-credit-card-math",
+    "cm-loan-basics",
+    "cm-pay-structures",
+    "cm-tax-basics",
+    "cm-compound-growth",
+    "cm-scam-detection"
+  ],
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students below threshold receive focused reteaching on their weakest clusters. The final is cumulative — gaps may trace back to any unit. Prioritize the skills most critical for real-world decision-making.",
+    "clusters": [
+      {
+        "skillId": "cm-reading-pay-stubs",
+        "reteachFocus": "Reading each line of a pay stub, calculating net from gross, identifying all deductions"
+      },
+      {
+        "skillId": "cm-cash-flow-tables",
+        "reteachFocus": "Building a complete budget table, calculating surplus/deficit, adjusting when it doesn't balance"
+      },
+      {
+        "skillId": "cm-compound-interest",
+        "reteachFocus": "A = P(1+r/n)^(nt), comparing growth over long periods, simple vs compound difference"
+      },
+      {
+        "skillId": "cm-credit-card-math",
+        "reteachFocus": "Monthly interest calculation, minimum payment trap, total cost of carrying a balance"
+      },
+      {
+        "skillId": "cm-loan-basics",
+        "reteachFocus": "Total cost = payment times number of payments, comparing by total cost not monthly payment"
+      },
+      {
+        "skillId": "cm-tax-basics",
+        "reteachFocus": "Estimating take-home pay, W-2 vs 1099, progressive tax concept"
+      },
+      {
+        "skillId": "cm-compound-growth",
+        "reteachFocus": "Rule of 72, long-term growth projections, starting early vs starting big"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "flp-1",
+      "question": "Meet your scenario: You are 22 years old, just graduated from college, and have been offered a full-time job earning $48,000 per year as a W-2 employee. Your employer offers health insurance (employer pays $400/month toward your premium) and will match your 401(k) contributions up to 4% of your salary. Assume 26 biweekly pay periods per year.\n\n(a) What is your gross pay per biweekly pay period?\n(b) If you contribute 4% of your salary to your 401(k), how much does your employer add in matching funds per year?",
+      "answer": "(a) $1,846.15. Gross pay per biweekly period = $48,000 / 26 = $1,846.15. Gross pay is the total before any deductions.\n(b) $1,920. Employer match = 4% of $48,000 = $48,000 × 0.04 = $1,920 per year. This is free money from your employer that goes directly into your retirement account.",
+      "skill": "cm-income-vocabulary",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "flp-2",
+      "question": "Here is your first biweekly pay stub. Calculate the missing values.\n\nEmployee: You | Pay Period: 01/01 – 01/14 | Gross Pay: $1,846.15\nFederal Tax: $166.15 | State Tax: $73.85 | Social Security (6.2%): $114.46 | Medicare (1.45%): $26.77 | 401(k) Pre-Tax (4%): $73.85 | Health Insurance: $75.00\nNet Pay: ?\n\n(a) What is your net pay for this pay period?\n(b) What percentage of your gross pay went to all deductions combined? Round to the nearest whole percent.",
+      "answer": "(a) $1,316.07. Total deductions = $166.15 + $73.85 + $114.46 + $26.77 + $73.85 + $75.00 = $530.08. Net pay = $1,846.15 − $530.08 = $1,316.07.\n(b) 29%. Percentage = $530.08 / $1,846.15 = 0.2871 = 28.71%, which rounds to 29%. Nearly three out of every ten dollars of gross pay went to taxes, retirement, and insurance before you saw it.",
+      "skill": "cm-reading-pay-stubs",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "flp-3",
+      "question": "Your monthly take-home pay is approximately $2,850 (based on $1,316.07 biweekly × 26 / 12). You sit down to build your first real budget. Classify each expense below as a NEED or a WANT, then total each category.\n\nRent: $975 | Groceries: $300 | Car payment: $285 | Car insurance: $130 | Utilities (electric, water, internet): $155 | Phone: $65 | Renter's insurance: $25 | Student loan payment: $280 | Streaming services: $25 | Dining out: $120 | Gym membership: $35 | Clothing/personal: $60",
+      "answer": "Needs: Rent ($975) + Groceries ($300) + Car payment ($285) + Car insurance ($130) + Utilities ($155) + Phone ($65) + Renter's insurance ($25) + Student loan ($280) = $2,215.\nWants: Streaming ($25) + Dining out ($120) + Gym ($35) + Clothing/personal ($60) = $240.\nTotal expenses: $2,215 + $240 = $2,455. Monthly surplus: $2,850 − $2,455 = $395. Phone is categorized as a need because basic communication is essential for work and safety.",
+      "skill": "cm-budget-categories",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-4",
+      "question": "Organize your budget from Problem 3 into a monthly cash-flow table.\n\nIncome: Take-home pay $2,850\n\nFixed expenses (same every month): Rent $975 | Car payment $285 | Car insurance $130 | Phone $65 | Renter's insurance $25 | Student loan $280 | Streaming $25\n\nVariable expenses (can change month to month): Groceries $300 | Utilities $155 | Dining out $120 | Gym $35 | Clothing/personal $60\n\n(a) Calculate total fixed expenses, total variable expenses, and total expenses.\n(b) What is the monthly surplus or deficit?\n(c) Your landlord announces a $125/month rent increase starting next month. If you want to keep the same surplus, identify specific cuts to your variable expenses that total exactly $125 and show the new variable expense totals.",
+      "answer": "(a) Fixed expenses: $975 + $285 + $130 + $65 + $25 + $280 + $25 = $1,785. Variable expenses: $300 + $155 + $120 + $35 + $60 = $670. Total expenses: $1,785 + $670 = $2,455.\n(b) Surplus: $2,850 − $2,455 = $395.\n(c) Rent increases by $125, so new fixed = $1,910. To maintain $395 surplus, variable must drop from $670 to $545 — a cut of $125. Example: Reduce dining out from $120 to $40 (−$80) and reduce clothing/personal from $60 to $15 (−$45). Total cut = $80 + $45 = $125. Any combination that totals $125 from variable expenses is acceptable.",
+      "skill": "cm-cash-flow-tables",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-5",
+      "question": "You are furnishing your new apartment. A furniture store is running a 20%-off-everything sale this weekend. You select a couch priced at $875 and a dining table priced at $340.\n\n(a) What is the total discount amount?\n(b) What is the total sale price before tax?",
+      "answer": "(a) $243.00. Combined price = $875 + $340 = $1,215. Discount = $1,215 × 0.20 = $243.00.\n(b) $972.00. Sale price = $1,215 − $243 = $972.00. Alternatively, $1,215 × 0.80 = $972.00.",
+      "skill": "cm-percent-of-number",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-6",
+      "question": "You buy the furniture from Problem 5 at the sale price of $972.00. Sales tax in your area is 8.25%.\n\n(a) What is the total cost of the furniture including tax?\n(b) That evening you celebrate by going to dinner. Your pre-tax subtotal is $47.50. Sales tax is 8.25% and you leave an 18% tip on the pre-tax amount. What is the total cost of dinner?",
+      "answer": "(a) $1,052.19. Tax = $972.00 × 0.0825 = $80.19. Total = $972.00 + $80.19 = $1,052.19.\n(b) $59.97. Tax = $47.50 × 0.0825 = $3.92 (rounded from $3.91875). Tip = $47.50 × 0.18 = $8.55. Total = $47.50 + $3.92 + $8.55 = $59.97. Remember: tip is calculated on the pre-tax subtotal, not on the total after tax.",
+      "skill": "cm-tax-tip-markup",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-7",
+      "question": "You open a savings account at a local credit union that pays 2.5% simple annual interest. You deposit $1,000 from your first few paychecks as the starting seed for your emergency fund.\n\nHow much interest does the $1,000 earn after 6 months? Use the simple interest formula I = P × r × t.",
+      "answer": "$12.50. I = P × r × t = $1,000 × 0.025 × 0.5 = $12.50. Simple interest is calculated only on the original principal. After 6 months, the account balance is $1,000 + $12.50 = $1,012.50.",
+      "skill": "cm-simple-interest",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "flp-8",
+      "question": "You find an online high-yield savings account offering 4.5% annual interest compounded monthly. You transfer $2,000 into it as a lump sum. Use the compound interest formula A = P(1 + r/n)^(nt).\n\n(a) How much is the account worth after 3 years?\n(b) How much total interest did you earn?\n(c) If the same $2,000 had earned 4.5% simple interest for 3 years, how much less interest would you have earned compared to the compound account?",
+      "answer": "(a) $2,288.50. A = $2,000 × (1 + 0.045/12)^(12×3) = $2,000 × (1.00375)^36. (1.00375)^12 = 1.04594. (1.04594)^3 = 1.14425. A = $2,000 × 1.14425 = $2,288.50.\n(b) $288.50. Interest = $2,288.50 − $2,000 = $288.50.\n(c) $18.50 less. Simple interest = $2,000 × 0.045 × 3 = $270.00. Compound interest earned $288.50. Difference = $288.50 − $270.00 = $18.50. Over longer time periods, this gap grows dramatically.",
+      "skill": "cm-compound-interest",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-9",
+      "question": "Financial advisors recommend saving 3 to 6 months of essential expenses as an emergency fund. From your budget (Problem 3), your monthly needs total $2,215.\n\n(a) What is the dollar target for a 3-month emergency fund?\n(b) If you save your entire monthly surplus of $395 toward this goal, how many months will it take to reach the target? Round up to the next whole month.\n(c) Explain one reason why committing 100% of your surplus to savings could be risky.",
+      "answer": "(a) $6,645. Target = $2,215 × 3 = $6,645.\n(b) 17 months. $6,645 / $395 = 16.82, which rounds up to 17 months. Always round up because you cannot reach the target partway through a month.\n(c) Committing the entire surplus leaves zero buffer for unexpected variable expenses like a car repair, medical copay, or holiday gifts. A more realistic plan might save $300/month and keep $95 as a flex buffer, reaching the target in 23 months ($6,645 / $300 = 22.15, rounds to 23).",
+      "skill": "cm-emergency-fund",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-10",
+      "question": "Three months into your plan, your car needs an emergency $1,500 repair. You do not have enough saved yet, so you put it on a credit card with 22.99% APR.\n\n(a) What is the monthly interest rate? Round to three decimal places.\n(b) How much interest is charged in the first month on the $1,500 balance?\n(c) If you pay $75 that month, how much of that payment goes toward reducing the principal, and what is the remaining balance?\n(d) Explain in one or two sentences why making only minimum payments on a credit card is called a trap.",
+      "answer": "(a) 1.916%. Monthly rate = 22.99% / 12 = 1.916% per month.\n(b) $28.74. Interest = $1,500 × 0.01916 = $28.74.\n(c) Principal paid = $75.00 − $28.74 = $46.26. Remaining balance = $1,500 − $46.26 = $1,453.74. Only $46.26 of the $75 payment actually reduced what you owe.\n(d) With minimum payments, most of your money goes to interest and very little reduces the balance. The debt barely shrinks each month, causing you to pay hundreds of dollars in interest over many months on top of the original $1,500.",
+      "skill": "cm-credit-card-math",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-11",
+      "question": "You decide to buy a reliable used car for $16,000. The dealer presents two loan options:\n\nLoan A: 5.9% APR for 48 months — monthly payment of $376\nLoan B: 7.2% APR for 72 months — monthly payment of $274\n\n(a) Calculate the total amount paid over the life of each loan.\n(b) Calculate the total interest paid for each loan.\n(c) Which loan costs less overall, and by how much? Explain why the lower monthly payment is misleading.",
+      "answer": "(a) Loan A total: $376 × 48 = $18,048. Loan B total: $274 × 72 = $19,728.\n(b) Loan A interest: $18,048 − $16,000 = $2,048. Loan B interest: $19,728 − $16,000 = $3,728.\n(c) Loan A costs $1,680 less ($19,728 − $18,048 = $1,680). Loan B has a lower monthly payment ($274 vs $376), which feels more affordable, but you pay interest for 24 extra months. Always compare total cost, not just the monthly payment.",
+      "skill": "cm-loan-basics",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-12",
+      "question": "After a year on the job, a competing company offers you $53,000 per year — but with no employer health insurance and no 401(k) match. Your current job pays $48,000 with employer health insurance ($400/month employer contribution) and a 4% 401(k) match.\n\nCalculate the total annual compensation package for each job and determine which offer is actually worth more.",
+      "answer": "Current job: Salary $48,000 + Health insurance ($400 × 12 = $4,800) + 401(k) match (4% of $48,000 = $1,920) = $54,720 total compensation.\nCompeting offer: Salary $53,000 + $0 health + $0 match = $53,000 total compensation.\nCurrent job wins by $54,720 − $53,000 = $1,720 per year. The $53,000 salary looks higher on paper, but benefits make the current job the better deal. You would also need to buy your own health insurance, which could cost $300–$500/month out of pocket.",
+      "skill": "cm-pay-structures",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-13",
+      "question": "A friend quit their W-2 job to become a 1099 freelance contractor earning $55,000 per year. As a W-2 employee, your employer pays half of your FICA taxes — you only pay 7.65% of your salary. As a 1099 contractor, your friend must pay the full 15.3% self-employment tax.\n\n(a) How much do you pay in FICA taxes annually on your $48,000 W-2 salary?\n(b) How much does your friend pay in self-employment tax on $55,000?\n(c) After subtracting only the FICA or self-employment tax from each gross salary, who keeps more? Then explain why the comparison does not stop there.",
+      "answer": "(a) $3,672. FICA = $48,000 × 0.0765 = $3,672.\n(b) $8,415. Self-employment tax = $55,000 × 0.153 = $8,415.\n(c) After tax: You keep $48,000 − $3,672 = $44,328. Friend keeps $55,000 − $8,415 = $46,585. The friend keeps $2,257 more after FICA/SE tax alone. But the comparison does not stop there: your employer also contributes $4,800/year for health insurance and $1,920/year in 401(k) matching ($6,720 total). Your friend gets none of that and must buy their own health insurance. After accounting for benefits, your total package ($54,720) beats their $55,000 gross.",
+      "skill": "cm-tax-basics",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-14",
+      "question": "Your 401(k) receives $3,840 per year ($1,920 from you + $1,920 employer match on your $48,000 salary). Assume an average annual return of 8%.\n\n(a) Using the Rule of 72, estimate how many years it takes for invested money to double at 8%.\n(b) You start investing at age 22 and plan to retire at 62 — that is 40 years. Over that time, you and your employer contribute a combined $153,600 ($3,840 × 40). At 8% average annual return, a financial calculator projects the account will grow to approximately $995,000. What percentage of the final balance came from compound growth rather than contributions?\n(c) A coworker starts the exact same plan at age 32 — only 30 years of investing. With the same $3,840/year at 8%, their projected balance is approximately $435,000. How much less does your coworker end up with, and how much of that gap is lost compound growth versus simply contributing fewer years?",
+      "answer": "(a) 9 years. Rule of 72: 72 / 8 = 9 years to double.\n(b) About 85%. Total contributed = $153,600. Growth = $995,000 − $153,600 = $841,400. Percentage from growth = $841,400 / $995,000 = 0.846 = 84.6%, approximately 85%. Only 15% of the final balance came from money you and your employer actually deposited.\n(c) Your coworker has $560,000 less ($995,000 − $435,000). The coworker contributed $38,400 less over those 10 missing years ($3,840 × 10). But the total gap is $560,000 — so $560,000 − $38,400 = $521,600 of the gap is lost compound growth, not just missing contributions. Starting 10 years earlier is worth over half a million dollars.",
+      "skill": "cm-compound-growth",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "flp-15",
+      "question": "You see this ad on social media: \"GUARANTEED 25% monthly returns! Invest $5,000 today and earn $1,250 every month — completely risk-free! Our proprietary algorithm never loses. Limited spots available — act NOW before enrollment closes!\"\n\n(a) List at least three red flags that suggest this is a scam.\n(b) Calculate: If 25% monthly returns were real and compounded monthly, how much would $5,000 be worth after 12 months? Use the formula A = P(1 + r)^t with r = 0.25 and t = 12.\n(c) Explain why the result proves the claim is impossible.",
+      "answer": "(a) Red flags (any three): 1. 'Guaranteed' returns — no legitimate investment is guaranteed. 2. 'Risk-free' — all investments carry risk. 3. 25% monthly returns — absurdly high; the stock market averages roughly 8–10% per year. 4. 'Limited spots / act now' — high-pressure urgency prevents critical thinking. 5. 'Algorithm never loses' — no trading algorithm has a 100% win rate.\n(b) $72,760. A = $5,000 × (1.25)^12. (1.25)^4 = 2.4414. (1.25)^8 = 5.9605. (1.25)^12 = 5.9605 × 2.4414 = 14.552. A = $5,000 × 14.552 = $72,760.\n(c) A $5,000 investment turning into $72,760 in one year is a 1,355% annual return. The most successful investors in history average roughly 20% per year. This ad claims 70 times that. Returns this extreme are mathematically unsustainable and are almost certainly a Ponzi scheme or outright fraud.",
+      "skill": "cm-scam-detection",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "flp-16",
+      "question": "Your financial situation has changed since you started this plan. Update your monthly cash-flow table with these changes:\n\n- Car loan payment: $376/month (Loan A from Problem 11), replacing the original $285 car payment\n- New expense — Gas: $100/month\n- Credit card payment: $75/month for the car repair (Problem 10)\n- You cut dining out from $120 to $60/month\n- You canceled your gym membership, saving $35/month\n\nYour original monthly expenses were $2,455 on a take-home pay of $2,850.\n\n(a) What is the net change to your monthly expenses from all these adjustments?\n(b) What are your new total monthly expenses and new monthly surplus?\n(c) In Problem 9, you planned to save $395/month to build a $6,645 emergency fund in 17 months. At your new surplus, how many months will the emergency fund take instead?\n(d) Identify one more expense you could reduce. Show the new surplus and the updated emergency fund timeline.",
+      "answer": "(a) +$171. Car loan increase: $376 − $285 = +$91. Gas: +$100. Credit card: +$75. Dining out cut: $120 − $60 = −$60. Gym canceled: −$35. Net change: +$91 + $100 + $75 − $60 − $35 = +$171.\n(b) New total expenses: $2,455 + $171 = $2,626. New surplus: $2,850 − $2,626 = $224.\n(c) 30 months. $6,645 / $224 = 29.66, rounds up to 30 months (2.5 years). That is nearly double the original 17-month plan.\n(d) Example: Cancel streaming services ($25/month). New surplus = $224 + $25 = $249. New timeline: $6,645 / $249 = 26.69, rounds to 27 months. Any reasonable cut with correct recalculated surplus and timeline is acceptable.",
+      "skill": "cm-cash-flow-tables",
+      "difficulty": 5,
+      "points": 8
+    }
+  ],
+
+  "answerKeys": {
+    "flp-1": "$1,846.15 biweekly; $1,920/year employer match",
+    "flp-2": "Net pay $1,316.07; deductions 29% of gross",
+    "flp-3": "Needs $2,215; Wants $240; Surplus $395",
+    "flp-4": "Fixed $1,785; Variable $670; Surplus $395; cut $125 from variable after rent increase",
+    "flp-5": "Discount $243; sale price $972",
+    "flp-6": "Furniture total $1,052.19; Dinner total $59.97",
+    "flp-7": "$12.50 simple interest",
+    "flp-8": "$2,288.50 after 3 years; $288.50 compound interest; $18.50 more than simple",
+    "flp-9": "$6,645 target; 17 months at $395/month",
+    "flp-10": "1.916%/month; $28.74 first-month interest; $46.26 to principal; balance $1,453.74",
+    "flp-11": "Loan A total $18,048; Loan B total $19,728; Loan A saves $1,680",
+    "flp-12": "Current job $54,720 total comp; Competing $53,000; current wins by $1,720",
+    "flp-13": "Your FICA $3,672; Friend SE tax $8,415; friend keeps $2,257 more before benefits",
+    "flp-14": "9 years to double; ~85% from growth; coworker loses $560,000 by starting 10 years late",
+    "flp-15": "3+ red flags; $72,760 proves claim impossible (1,355% annual return)",
+    "flp-16": "Net change +$171; expenses $2,626; surplus $224; 30 months to emergency fund"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "moduleId": "checkpoint_banking",
+  "course": "Consumer Math",
+  "unit": 3,
+  "title": "Checkpoint: Savings Growth Analysis",
+  "weeks": "5",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Unit 3 banking and saving skills. Students calculate simple and compound interest, compare savings options, plan emergency funds, and analyze opportunity costs with real numbers.",
+
+  "skillsCovered": [
+    "cm-simple-interest",
+    "cm-compound-interest",
+    "cm-emergency-fund",
+    "cm-opportunity-cost"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Interest calculations are critical for the upcoming credit and loans module. Students below threshold must build fluency before proceeding to debt math.",
+    "clusters": [
+      {
+        "skillId": "cm-simple-interest",
+        "reteachFocus": "I = Prt formula, converting percent to decimal, converting months to years, distinguishing interest earned from total balance"
+      },
+      {
+        "skillId": "cm-compound-interest",
+        "reteachFocus": "A = P(1+r/n)^(nt), interest on interest concept, comparing compound to simple over multiple years, APY vs APR"
+      },
+      {
+        "skillId": "cm-emergency-fund",
+        "reteachFocus": "Target = monthly essentials x 3-6 months, time to build = goal / monthly contribution, using essential expenses not total income"
+      },
+      {
+        "skillId": "cm-opportunity-cost",
+        "reteachFocus": "Quantifying the alternative: what would that money be worth invested? Every spending choice has a hidden cost"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cbank-1",
+      "question": "Marcus deposits $1,200 into a savings account that earns 3% simple interest per year. How much interest does he earn after 2 years?",
+      "answer": "Using I = Prt: I = $1,200 x 0.03 x 2 = $72. Marcus earns $72 in interest over 2 years.",
+      "skill": "cm-simple-interest",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbank-2",
+      "question": "Priya puts $3,500 into a certificate of deposit (CD) that pays 4.5% simple interest per year. She leaves it for 3 years. What is the total amount she will have when the CD matures?",
+      "answer": "Using I = Prt: I = $3,500 x 0.045 x 3 = $472.50. Total amount = $3,500 + $472.50 = $3,972.50. Priya will have $3,972.50 when the CD matures.",
+      "skill": "cm-simple-interest",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbank-3",
+      "question": "DeShawn deposits $5,000 into a savings account earning 2.8% simple interest. He needs the account to reach $5,700 for a down payment. How many years will it take?",
+      "answer": "Interest needed: $5,700 - $5,000 = $700. Using I = Prt and solving for t: $700 = $5,000 x 0.028 x t. $700 = $140t. t = $700 / $140 = 5 years. It will take DeShawn 5 years to reach his goal.",
+      "skill": "cm-simple-interest",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbank-4",
+      "question": "Aisha deposits $2,000 into a savings account that earns 4% interest compounded quarterly. What is the balance after 3 years? Round to the nearest cent.",
+      "answer": "Using A = P(1 + r/n)^(nt): A = $2,000(1 + 0.04/4)^(4 x 3) = $2,000(1.01)^12. (1.01)^12 = 1.126825... A = $2,000 x 1.126825 = $2,253.65. Aisha's balance after 3 years is $2,253.65.",
+      "skill": "cm-compound-interest",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbank-5",
+      "question": "Two banks offer accounts for a $4,000 deposit over 5 years. Bank A pays 3.6% simple interest. Bank B pays 3.5% compounded monthly. Which bank gives more money at the end, and by how much? Round to the nearest cent.",
+      "answer": "Bank A (simple): I = $4,000 x 0.036 x 5 = $720. Total = $4,720.00. Bank B (compound): A = $4,000(1 + 0.035/12)^(12 x 5) = $4,000(1.002917)^60. (1.002917)^60 = 1.19115... A = $4,000 x 1.19115 = $4,764.60. Bank B gives more. Difference: $4,764.60 - $4,720.00 = $44.60. Bank B earns $44.60 more thanks to compound interest over 5 years.",
+      "skill": "cm-compound-interest",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cbank-6",
+      "question": "Tomoko invests $1,500 in an account compounded monthly at 5% APR. Her friend Ravi invests $1,500 in an account with 5% simple interest. After 10 years, how much more does Tomoko earn than Ravi? Round to the nearest cent.",
+      "answer": "Tomoko (compound monthly): A = $1,500(1 + 0.05/12)^(12 x 10) = $1,500(1.004167)^120. (1.004167)^120 = 1.647009... A = $1,500 x 1.647009 = $2,470.51. Ravi (simple): I = $1,500 x 0.05 x 10 = $750. Total = $2,250.00. Difference: $2,470.51 - $2,250.00 = $220.51. Tomoko earns $220.51 more than Ravi over 10 years, showing how compound interest accelerates growth over longer periods.",
+      "skill": "cm-compound-interest",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cbank-7",
+      "question": "Jordan's monthly essential expenses are: rent $850, utilities $120, groceries $340, transportation $95, and insurance $65. What is the target amount for a 3-month emergency fund?",
+      "answer": "Monthly essentials: $850 + $120 + $340 + $95 + $65 = $1,470. A 3-month emergency fund target: $1,470 x 3 = $4,410. Jordan needs $4,410 for a 3-month emergency fund.",
+      "skill": "cm-emergency-fund",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbank-8",
+      "question": "Kayla's essential monthly expenses total $2,100. She wants a 6-month emergency fund and can save $350 per month toward it. How many months will it take her to fully build her emergency fund?",
+      "answer": "Emergency fund target: $2,100 x 6 = $12,600. Time to build: $12,600 / $350 = 36 months. It will take Kayla 36 months (3 years) to build her full 6-month emergency fund.",
+      "skill": "cm-emergency-fund",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbank-9",
+      "question": "Miguel earns $3,200 per month. His essential expenses are $1,850 per month, and he spends another $600 on non-essentials. He wants a 4-month emergency fund based on essentials only. If he redirects all non-essential spending to savings, how many months does it take? If he saves only $400 per month instead, how many months does it take?",
+      "answer": "Emergency fund target (essentials only): $1,850 x 4 = $7,400. Scenario 1 (save all $600 non-essential): $7,400 / $600 = 12.33 months, so 13 months to fully fund it. Scenario 2 (save $400/month): $7,400 / $400 = 18.5 months, so 19 months to fully fund it. Redirecting all non-essential spending saves 6 months of time compared to the $400/month plan.",
+      "skill": "cm-emergency-fund",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbank-10",
+      "question": "Leah is deciding between buying a $60 pair of sneakers now or putting that $60 into a savings account earning 4% simple interest for 3 years. What is the opportunity cost of buying the sneakers?",
+      "answer": "If she invests instead: I = $60 x 0.04 x 3 = $7.20. The $60 would grow to $67.20. The opportunity cost of buying the sneakers is $7.20 in lost interest, meaning the sneakers really cost her $67.20 in total value given up.",
+      "skill": "cm-opportunity-cost",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cbank-11",
+      "question": "Carlos spends $120 per month eating out. If he cut this to $40 per month and invested the $80 difference each month at 5% simple annual interest, how much would he have after 2 years from contributions and interest combined?",
+      "answer": "Monthly savings: $120 - $40 = $80. Total contributions over 2 years: $80 x 24 = $1,920. For simple interest on regular contributions, each month's deposit earns interest for a different length of time. However, using the average balance method: the average amount in the account over 2 years is approximately $1,920 / 2 = $960. Interest on average balance: $960 x 0.05 x 2 = $96. Total after 2 years: $1,920 + $96 = $2,016. The opportunity cost of continuing to eat out at $120/month is approximately $2,016 Carlos could have saved and earned.",
+      "skill": "cm-opportunity-cost",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cbank-12",
+      "question": "Nadia is considering two options for her $3,000 tax refund: (A) Buy a new TV and gaming console for $3,000, or (B) Invest the $3,000 at 6% compounded annually for 5 years. What is the opportunity cost of choosing option A? What would the money be worth if she chose option B? Round to the nearest cent.",
+      "answer": "Option B value: A = $3,000(1 + 0.06)^5 = $3,000(1.06)^5. (1.06)^5 = 1.338226. A = $3,000 x 1.338226 = $4,014.68. If Nadia buys the TV and console, her opportunity cost is $4,014.68 - $3,000 = $1,014.68 in lost investment growth. The electronics cost her not just $3,000 today, but $4,014.68 in future value. This is the true cost of the purchase when accounting for what the money could have earned.",
+      "skill": "cm-opportunity-cost",
+      "difficulty": 4,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "cbank-1": "$72",
+    "cbank-2": "$3,972.50",
+    "cbank-3": "5 years",
+    "cbank-4": "$2,253.65",
+    "cbank-5": "Bank B by $44.60",
+    "cbank-6": "$220.51",
+    "cbank-7": "$4,410",
+    "cbank-8": "36 months",
+    "cbank-9": "13 months (all non-essential) or 19 months ($400/month)",
+    "cbank-10": "$7.20",
+    "cbank-11": "Approximately $2,016",
+    "cbank-12": "$1,014.68 opportunity cost ($4,014.68 future value)"
+  }
+}
