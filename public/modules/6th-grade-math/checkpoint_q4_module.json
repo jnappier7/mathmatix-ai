@@ -1,0 +1,200 @@
+{
+  "moduleId": "checkpoint_q4",
+  "course": "6th Grade Math",
+  "unit": 8,
+  "title": "Checkpoint: Quarter 4 \u2014 Integers, Applied Skills, and Cumulative",
+  "weeks": "33",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Quarter 4 assessment covering integers and the coordinate plane (positive/negative in context, comparing rationals, absolute value, graphing all four quadrants, coordinate distance) plus applied number sense (mixed problem solving, percent intro, unit conversions, multi-step reasoning). Includes cumulative questions from prior quarters to assess year-long retention.",
+  "skillsCovered": [
+    "g6-positive-negative-context",
+    "g6-compare-order-rationals",
+    "g6-absolute-value-opposites",
+    "g6-coordinate-plane-graphing",
+    "g6-distance-coordinate-plane",
+    "g6-mixed-problem-solving",
+    "g6-percent-intro",
+    "g6-unit-conversions",
+    "g6-multi-step-reasoning"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "This is the last checkpoint before the cumulative final. Students below threshold get intensive support on their weakest areas. Integer and percent skills are critical for 7th-grade success.",
+    "clusters": [
+      {
+        "skillId": "g6-positive-negative-context",
+        "reteachFocus": "Matching signs to context (gain/loss, above/below), zero as reference point, reading scenarios"
+      },
+      {
+        "skillId": "g6-compare-order-rationals",
+        "reteachFocus": "Number line placement, for negatives farther from zero = LESS, converting to same form before comparing"
+      },
+      {
+        "skillId": "g6-absolute-value-opposites",
+        "reteachFocus": "Absolute value = distance from zero (always non-negative), \u2212|5| vs |\u22125|, opposite = same distance other side"
+      },
+      {
+        "skillId": "g6-coordinate-plane-graphing",
+        "reteachFocus": "x first (horizontal) then y (vertical), quadrant sign patterns, plotting in all four quadrants"
+      },
+      {
+        "skillId": "g6-distance-coordinate-plane",
+        "reteachFocus": "Horizontal distance = |x\u2081\u2212x\u2082|, vertical distance = |y\u2081\u2212y\u2082|, reflections across axes"
+      },
+      {
+        "skillId": "g6-percent-intro",
+        "reteachFocus": "Percent = per 100, fraction\u2194decimal\u2194percent trio, find percent of a number (multiply by decimal form)"
+      },
+      {
+        "skillId": "g6-unit-conversions",
+        "reteachFocus": "Conversion as ratio, multiply for smaller\u2192larger count of units, divide for larger\u2192smaller, include units"
+      },
+      {
+        "skillId": "g6-multi-step-reasoning",
+        "reteachFocus": "Break complex problems into sub-steps, organize in tables/diagrams, combine multiple domains, justify in context"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq4-1",
+      "question": "A scuba diver starts at sea level (0 feet). She descends 35 feet below the surface, then rises 12 feet. Write each position as an integer and give her final depth.",
+      "answer": "Sea level = 0. Descending 35 feet = \u221235. Rising 12 feet: \u221235 + 12 = \u221223. Her final depth is \u221223 feet (23 feet below sea level).",
+      "skill": "g6-positive-negative-context",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq4-2",
+      "question": "Order these numbers from least to greatest: \u22122.5, 1/3, \u22123/4, 0.8, \u22121. Show your reasoning.",
+      "answer": "Convert to decimals for comparison: \u22122.5, 0.333..., \u22120.75, 0.8, \u22121. On a number line, farther left is less. Order: \u22122.5 < \u22121 < \u22123/4 < 1/3 < 0.8. In original form: \u22122.5, \u22121, \u22123/4, 1/3, 0.8.",
+      "skill": "g6-compare-order-rationals",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq4-3",
+      "question": "(a) Find |\u221214| and |14|. What do you notice? (b) Evaluate \u2212|7|. (c) A submarine is at \u2212250 feet and a drone is at 250 feet above sea level. Which is farther from sea level, or are they the same distance?",
+      "answer": "(a) |\u221214| = 14 and |14| = 14. Both are 14 units from zero; they are opposites with the same absolute value. (b) \u2212|7| = \u22127. The negative sign is outside the absolute value bars, so first |7| = 7, then apply the negative: \u22127. (c) |\u2212250| = 250 and |250| = 250. They are the same distance from sea level (250 units each).",
+      "skill": "g6-absolute-value-opposites",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq4-4",
+      "question": "Name the quadrant or axis where each point is located: A(3, \u22125), B(\u22122, 4), C(0, 7), D(\u22126, \u22121). Explain how the signs of the coordinates determine the quadrant.",
+      "answer": "A(3, \u22125): x positive, y negative \u2192 Quadrant IV. B(\u22122, 4): x negative, y positive \u2192 Quadrant II. C(0, 7): x is 0, so C is on the y-axis (not in any quadrant). D(\u22126, \u22121): both negative \u2192 Quadrant III. Rule: QI (+, +), QII (\u2212, +), QIII (\u2212, \u2212), QIV (+, \u2212).",
+      "skill": "g6-coordinate-plane-graphing",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-5",
+      "question": "On a town map, Maya's house is at (\u22123, 2), her school is at (4, 2), the library is at (\u22123, \u22125), and the park is at (4, \u22125). (a) What shape do these four points form? (b) Which two buildings share the same x-coordinate? (c) Which two buildings share the same y-coordinate as Maya's house?",
+      "answer": "(a) The four points form a rectangle. Opposite sides are equal and all angles are right angles. (b) Maya's house (\u22123, 2) and the library (\u22123, \u22125) share x-coordinate \u22123. The school (4, 2) and park (4, \u22125) share x-coordinate 4. (c) Maya's house (\u22123, 2) and the school (4, 2) share y-coordinate 2.",
+      "skill": "g6-coordinate-plane-graphing",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq4-6",
+      "question": "On a coordinate grid, a treasure chest is buried at (\u22124, 3) and a key is hidden at (\u22124, \u22126). (a) How far apart are they? (b) A second key is at (5, 3). How far is it from the treasure chest? Explain how you found each distance.",
+      "answer": "(a) Same x-coordinate (\u22124), so this is a vertical distance. |3 \u2212 (\u22126)| = |3 + 6| = 9 units. (b) Same y-coordinate (3), so this is a horizontal distance. |\u22124 \u2212 5| = |\u22129| = 9 units. When two points share one coordinate, use the absolute value of the difference of the other coordinate.",
+      "skill": "g6-distance-coordinate-plane",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq4-7",
+      "question": "Liam earns $8.50 per hour mowing lawns. Last Saturday he worked 4 hours in the morning and 2.5 hours in the afternoon. He spent $14.75 on lunch. How much money does he have left from the day's work?",
+      "answer": "Total hours: 4 + 2.5 = 6.5 hours. Total earnings: 6.5 \u00d7 $8.50 = $55.25. After lunch: $55.25 \u2212 $14.75 = $40.50. Liam has $40.50 left.",
+      "skill": "g6-mixed-problem-solving",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq4-8",
+      "question": "Express 3/5 as a percent. Then find 30% of 80.",
+      "answer": "3/5 = 3 \u00f7 5 = 0.60 = 60%. For 30% of 80: convert 30% to the decimal 0.30, then multiply: 0.30 \u00d7 80 = 24.",
+      "skill": "g6-percent-intro",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-9",
+      "question": "A pair of sneakers normally costs $65. The store is running a 20%-off sale. (a) How much is the discount? (b) What is the sale price? (c) What percent of the original price do you actually pay?",
+      "answer": "(a) Discount = 20% of $65 = 0.20 \u00d7 65 = $13.00. (b) Sale price = $65.00 \u2212 $13.00 = $52.00. (c) You pay 100% \u2212 20% = 80% of the original price.",
+      "skill": "g6-percent-intro",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq4-10",
+      "question": "A recipe for a school party calls for 2.5 gallons of fruit punch. The store only sells pint containers. If 1 gallon = 4 quarts and 1 quart = 2 pints, how many pint containers does the class need to buy?",
+      "answer": "Convert gallons to quarts: 2.5 \u00d7 4 = 10 quarts. Convert quarts to pints: 10 \u00d7 2 = 20 pints. The class needs to buy 20 pint containers.",
+      "skill": "g6-unit-conversions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq4-11",
+      "question": "Ava wants to buy 3 notebooks at $4.25 each and 2 packs of pens at $6.50 each. She has a $30 gift card. Does she have enough money? If so, how much is left over? If not, how much more does she need?",
+      "answer": "Notebooks: 3 \u00d7 $4.25 = $12.75. Pens: 2 \u00d7 $6.50 = $13.00. Total cost: $12.75 + $13.00 = $25.75. Compare to gift card: $30.00 \u2212 $25.75 = $4.25. Yes, she has enough with $4.25 left over.",
+      "skill": "g6-multi-step-reasoning",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq4-12",
+      "question": "A class of 28 students voted on a field trip destination. 3/7 of the class voted for the aquarium, 25% voted for the science museum, and the rest voted for the zoo. How many students voted for each destination?",
+      "answer": "Aquarium: 3/7 \u00d7 28 = 12 students. Science museum: 25% \u00d7 28 = 0.25 \u00d7 28 = 7 students. Zoo: 28 \u2212 12 \u2212 7 = 9 students. Total check: 12 + 7 + 9 = 28 \u2713.",
+      "skill": "g6-multi-step-reasoning",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cq4-13",
+      "question": "[Cumulative \u2014 Ratios + Integers] A hiking trail drops 180 feet in elevation over 6 miles. (a) What is the average change in elevation per mile? Express your answer as a signed number. (b) If the ratio of downhill miles to flat miles on this trail is 2 : 1, how many miles of the trail are flat?",
+      "answer": "(a) \u2212180 \u00f7 6 = \u221230 feet per mile. The negative sign shows the trail goes downhill. (b) Total parts: 2 + 1 = 3. Each part = 6 \u00f7 3 = 2 miles. Flat miles = 1 \u00d7 2 = 2 miles (downhill miles = 2 \u00d7 2 = 4 miles).",
+      "skill": "g6-mixed-problem-solving",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq4-14",
+      "question": "[Cumulative \u2014 Fractions + Percents] Jasmine is reading a 240-page book. She read 3/8 of the book on Monday and 25% of the book on Tuesday. (a) How many pages did she read each day? (b) What fraction of the book is left to read?",
+      "answer": "(a) Monday: 3/8 \u00d7 240 = 90 pages. Tuesday: 25% of 240 = 0.25 \u00d7 240 = 60 pages. (b) Total pages read: 90 + 60 = 150. Pages left: 240 \u2212 150 = 90. Fraction left: 90/240 = 3/8 of the book.",
+      "skill": "g6-percent-intro",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq4-15",
+      "question": "[Cumulative \u2014 Expressions + Coordinate Plane] The rule y = 2x + 1 describes a line on the coordinate plane. (a) Find y when x = \u22122. What point is this? (b) Find x when y = 5. What point is this? (c) In which quadrant is the point from part (a)?",
+      "answer": "(a) y = 2(\u22122) + 1 = \u22124 + 1 = \u22123. The point is (\u22122, \u22123). (b) 5 = 2x + 1 \u2192 4 = 2x \u2192 x = 2. The point is (2, 5). (c) (\u22122, \u22123): x is negative and y is negative, so the point is in Quadrant III.",
+      "skill": "g6-coordinate-plane-graphing",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+  "answerKeys": {
+    "cq4-1": "\u221223 feet",
+    "cq4-2": "\u22122.5, \u22121, \u22123/4, 1/3, 0.8",
+    "cq4-3": "(a) both 14 (b) \u22127 (c) same distance (250 units)",
+    "cq4-4": "A: QIV, B: QII, C: y-axis, D: QIII",
+    "cq4-5": "(a) rectangle (b) house & library (\u22123) and school & park (4) (c) house & school",
+    "cq4-6": "(a) 9 units (b) 9 units",
+    "cq4-7": "$40.50",
+    "cq4-8": "3/5 = 60%; 30% of 80 = 24",
+    "cq4-9": "(a) $13 (b) $52 (c) 80%",
+    "cq4-10": "20 pints",
+    "cq4-11": "Yes; $4.25 left over",
+    "cq4-12": "Aquarium 12, Museum 7, Zoo 9",
+    "cq4-13": "(a) \u221230 ft/mi (b) 2 flat miles",
+    "cq4-14": "(a) Mon 90 pages, Tue 60 pages (b) 3/8 left",
+    "cq4-15": "(a) (\u22122, \u22123) (b) (2, 5) (c) Quadrant III"
+  }
+}

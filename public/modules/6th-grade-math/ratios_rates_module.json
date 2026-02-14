@@ -1,0 +1,556 @@
+{
+  "moduleId": "ratios_rates",
+  "course": "6th Grade Math",
+  "unit": 2,
+  "title": "Ratios and Rates",
+  "weeks": "7-10",
+  "estimatedDuration": 40,
+  "description": "The biggest conceptual leap in 6th grade. Students move from additive thinking ('how much more?') to multiplicative thinking ('how many times?'). This unit builds ratio language, unit rate fluency, equivalent ratio tables, real-world ratio/rate problem solving, and measurement conversions — all grounded in contexts students care about: recipes, shopping, speed, and sports stats.",
+
+  "skills": [
+    "g6-ratio-language",
+    "g6-unit-rates",
+    "g6-equivalent-ratios",
+    "g6-ratio-problem-solving",
+    "g6-measurement-conversions"
+  ],
+
+  "standardsAlignment": [
+    "6.RP.A.1",
+    "6.RP.A.2",
+    "6.RP.A.3",
+    "6.RP.A.3a",
+    "6.RP.A.3b",
+    "6.RP.A.3d"
+  ],
+
+  "goals": [
+    "Use ratio language to describe relationships between two quantities and write ratios in all three forms (a:b, a to b, a/b)",
+    "Find and interpret unit rates to compare real-world options like prices, speeds, and per-game averages",
+    "Build and use equivalent ratio tables and double number lines to solve scaling problems",
+    "Apply ratio and rate reasoning with tables, diagrams, and scale factors to solve multi-step real-world problems",
+    "Convert measurement units within a system (customary and metric) using ratio reasoning"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do for each skill, building from ratio language through conversions",
+    "Anchor every ratio concept in concrete, familiar contexts (recipes, shopping, sports) before moving to abstract notation",
+    "Use ratio tables and tape diagrams as the primary visual models — avoid cross-multiplication until ratio reasoning is solid",
+    "Explicitly address the additive-to-multiplicative thinking shift by comparing 'how much more' vs 'how many times as much'",
+    "Build unit rate fluency through repeated comparison tasks before introducing formal conversion problems"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Ratio Language and Notation",
+      "skill": "g6-ratio-language",
+      "content": "A ratio compares two quantities by showing how much of one thing there is compared to another. Ratios are everywhere — in recipes, sports stats, and even your school supplies. The key idea: ratios describe a multiplicative relationship, not just a difference. Instead of asking 'how many more?' we ask 'for every ___ of this, how many of that?'",
+      "keyPoints": [
+        "A ratio can be written three ways: using a colon (3:2), with the word 'to' (3 to 2), or as a fraction (3/2)",
+        "Part-to-part ratios compare one part of a group to another part (boys to girls = 3:2)",
+        "Part-to-whole ratios compare one part to the total (boys to all students = 3:5)",
+        "Order matters! The ratio of dogs to cats (4:3) is different from cats to dogs (3:4)",
+        "Ratios describe a relationship, not specific amounts — a ratio of 2:3 could mean 4 and 6, or 20 and 30, or 200 and 300",
+        "To simplify a ratio, divide both numbers by their greatest common factor (GCF)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Ratio Language — Worked Examples",
+      "skill": "g6-ratio-language",
+      "examples": [
+        {
+          "problem": "A fruit bowl has 8 apples and 6 oranges. Write the ratio of apples to oranges in all three forms. Then write the ratio of oranges to total fruit.",
+          "solution": "Apples to oranges:\n• Colon form: 8:6 (simplifies to 4:3)\n• Word form: 8 to 6 (simplifies to 4 to 3)\n• Fraction form: 8/6 (simplifies to 4/3)\n\nOranges to total fruit:\nTotal fruit = 8 + 6 = 14\nOranges to total = 6:14 = 3:7\n\nNotice: 4:3 is part-to-part, and 3:7 is part-to-whole. They tell us different things!"
+        },
+        {
+          "problem": "A basketball player made 15 shots out of 20 attempts. Her teammate made 12 shots out of 16 attempts. Write each player's part-to-whole ratio of made shots to attempts in simplest form.",
+          "solution": "Player 1: 15 made out of 20 attempts → 15:20\nSimplify by dividing both by 5: 15:20 = 3:4\n\nPlayer 2: 12 made out of 16 attempts → 12:16\nSimplify by dividing both by 4: 12:16 = 3:4\n\nBoth players have the same ratio of 3:4! Even though Player 1 made more total shots, they were equally accurate."
+        },
+        {
+          "problem": "A class has a boy-to-girl ratio of 5:7. There are 36 students total. How many boys are there?",
+          "solution": "The ratio 5:7 means for every 5 boys, there are 7 girls.\nTotal parts = 5 + 7 = 12 parts\n\n36 students ÷ 12 parts = 3 students per part\n\nBoys = 5 parts × 3 = 15 boys\nGirls = 7 parts × 3 = 21 girls\n\nCheck: 15 + 21 = 36 and 15:21 = 5:7 ✓"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Ratio Language — Practice Together",
+      "skills": ["g6-ratio-language"],
+      "problems": [
+        {
+          "id": "rr-1",
+          "prompt": "A trail mix recipe uses 3 cups of granola, 2 cups of raisins, and 1 cup of chocolate chips. Write the ratio of raisins to granola in all three forms. Is this a part-to-part or part-to-whole ratio?",
+          "hints": [
+            "Raisins = 2 cups, Granola = 3 cups. Put raisins first since the question asks 'raisins to granola'",
+            "The three forms are: colon (a:b), word (a to b), and fraction (a/b)",
+            "Part-to-part compares one ingredient to another; part-to-whole compares one ingredient to the total mix"
+          ],
+          "answer": "2:3, 2 to 3, 2/3. This is a part-to-part ratio because it compares one part (raisins) to another part (granola), not to the total mix."
+        },
+        {
+          "id": "rr-2",
+          "prompt": "At a pizza party, there are 18 slices of pepperoni and 12 slices of cheese. Write the ratio of cheese to total slices in simplest form. What fraction of the pizza is cheese?",
+          "hints": [
+            "Total slices = 18 + 12 = 30",
+            "Cheese to total = 12:30. Find the GCF of 12 and 30 to simplify",
+            "The GCF of 12 and 30 is 6"
+          ],
+          "answer": "12:30 simplifies to 2:5. The fraction of pizza that is cheese is 2/5. This is a part-to-whole ratio."
+        },
+        {
+          "id": "rr-3",
+          "prompt": "Marcus says the ratio of cats to dogs at the shelter is 4:5, so there must be exactly 4 cats and 5 dogs. Is Marcus correct? Explain why or why not.",
+          "hints": [
+            "Think about what a ratio tells you — does it tell you exact amounts?",
+            "Could there be 8 cats and 10 dogs and still have a 4:5 ratio?"
+          ],
+          "answer": "Marcus is not correct. A ratio of 4:5 means for every 4 cats there are 5 dogs, but the actual numbers could be any equivalent amounts: 4 and 5, 8 and 10, 12 and 15, 40 and 50, etc. Ratios describe a relationship, not specific counts."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Ratio Language — On Your Own",
+      "skills": ["g6-ratio-language"],
+      "problems": [
+        {
+          "id": "rr-4",
+          "prompt": "A soccer team played 24 games. They won 14, lost 6, and tied 4. Write these ratios in simplest form: (a) wins to losses, (b) ties to total games, (c) losses to wins.",
+          "answer": "(a) wins to losses = 14:6 = 7:3. (b) ties to total = 4:24 = 1:6. (c) losses to wins = 6:14 = 3:7. Notice (a) and (c) are the same numbers in reverse order — order matters!"
+        },
+        {
+          "id": "rr-5",
+          "prompt": "A bag has red and blue marbles in a ratio of 3:5. If there are 40 marbles total, how many are red and how many are blue?",
+          "answer": "Total parts = 3 + 5 = 8. Each part = 40 / 8 = 5 marbles. Red = 3 x 5 = 15 marbles. Blue = 5 x 5 = 25 marbles. Check: 15 + 25 = 40 and 15:25 = 3:5."
+        },
+        {
+          "id": "rr-6",
+          "prompt": "In Ms. Rivera's class, the ratio of students who prefer basketball to soccer is 7:5. The ratio of students who prefer soccer to swimming is 5:3. What is the ratio of basketball to soccer to swimming fans?",
+          "answer": "Basketball:soccer = 7:5 and soccer:swimming = 5:3. Since soccer is 5 in both ratios, we can combine them directly: basketball:soccer:swimming = 7:5:3."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Understanding Unit Rates",
+      "skill": "g6-unit-rates",
+      "content": "A unit rate tells you 'how much for just one.' When you see prices like $2.50 per pound or speeds like 60 miles per hour, those are unit rates. The word 'per' is your clue — it means 'for each one.' Finding a unit rate is simple: divide to get a quantity for 1 unit. Unit rates let you compare different options on a level playing field.",
+      "keyPoints": [
+        "A rate is a ratio that compares two quantities with different units (miles and hours, dollars and pounds)",
+        "A unit rate has a denominator of 1 — it tells you the amount per ONE unit ($3 per pound, 55 miles per hour)",
+        "To find a unit rate, divide the numerator by the denominator: 150 miles / 3 hours = 50 miles per hour",
+        "Unit rates make comparison easy: $0.08/oz vs $0.06/oz instantly shows which is cheaper",
+        "Common unit rates: price per item, miles per hour (mph), points per game, calories per serving"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Unit Rates — Worked Examples",
+      "skill": "g6-unit-rates",
+      "examples": [
+        {
+          "problem": "A 12-pack of juice boxes costs $4.80. A 20-pack costs $7.00. Which is the better deal?",
+          "solution": "Find the unit rate (price per box) for each:\n\n12-pack: $4.80 / 12 = $0.40 per box\n20-pack: $7.00 / 20 = $0.35 per box\n\n$0.35 < $0.40, so the 20-pack is the better deal.\nYou save $0.05 per juice box by buying the larger pack."
+        },
+        {
+          "problem": "Layla ran 3/4 of a mile in 6 minutes. What is her speed in miles per minute? How long would it take her to run 1 full mile at that rate?",
+          "solution": "Unit rate = distance / time\n= (3/4) mile / 6 minutes\n= 3/4 x 1/6\n= 3/24 = 1/8 mile per minute\n\nTo run 1 mile at 1/8 mile per minute:\n1 / (1/8) = 1 x 8 = 8 minutes\n\nLayla's speed is 1/8 mile per minute, or equivalently, 8 minutes per mile."
+        },
+        {
+          "problem": "A recipe makes 24 cookies using 3 cups of flour. Another recipe makes 40 cookies using 5 cups of flour. Which recipe gives you more cookies per cup of flour?",
+          "solution": "Recipe 1: 24 cookies / 3 cups = 8 cookies per cup\nRecipe 2: 40 cookies / 5 cups = 8 cookies per cup\n\nBoth recipes yield the same rate: 8 cookies per cup of flour.\nThe recipes are equally efficient — the second just makes a bigger batch!"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Unit Rates — Practice Together",
+      "skills": ["g6-unit-rates"],
+      "problems": [
+        {
+          "id": "rr-7",
+          "prompt": "Brand A cereal: 18 oz for $3.60. Brand B cereal: 24 oz for $4.56. Find the unit price of each and determine which is the better buy.",
+          "hints": [
+            "Unit price = total price / number of ounces",
+            "Brand A: $3.60 / 18 oz. Brand B: $4.56 / 24 oz",
+            "The lower price per ounce is the better deal"
+          ],
+          "answer": "Brand A: $3.60 / 18 = $0.20 per oz. Brand B: $4.56 / 24 = $0.19 per oz. Brand B is the better buy at $0.19/oz compared to $0.20/oz."
+        },
+        {
+          "id": "rr-8",
+          "prompt": "A car travels 245 miles on 7 gallons of gas. A truck travels 180 miles on 9 gallons. Which vehicle gets better gas mileage (miles per gallon)?",
+          "hints": [
+            "Find miles per gallon for each: divide miles by gallons",
+            "Car: 245 / 7. Truck: 180 / 9"
+          ],
+          "answer": "Car: 245 / 7 = 35 miles per gallon. Truck: 180 / 9 = 20 miles per gallon. The car gets better gas mileage (35 mpg vs 20 mpg)."
+        },
+        {
+          "id": "rr-9",
+          "prompt": "Emma scored 84 points in her last 7 basketball games. Mia scored 70 points in her last 5 games. Who is averaging more points per game?",
+          "hints": [
+            "Points per game = total points / number of games",
+            "Emma: 84 / 7. Mia: 70 / 5"
+          ],
+          "answer": "Emma: 84 / 7 = 12 points per game. Mia: 70 / 5 = 14 points per game. Mia is averaging more points per game (14 vs 12)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Unit Rates — On Your Own",
+      "skills": ["g6-unit-rates"],
+      "problems": [
+        {
+          "id": "rr-10",
+          "prompt": "A 15 oz jar of peanut butter costs $3.75. A 28 oz jar costs $6.44. Which jar is the better buy? By how much per ounce?",
+          "answer": "15 oz jar: $3.75 / 15 = $0.25/oz. 28 oz jar: $6.44 / 28 = $0.23/oz. The 28 oz jar is the better buy, saving $0.02 per ounce."
+        },
+        {
+          "id": "rr-11",
+          "prompt": "A cyclist rides 52 miles in 4 hours. At that rate, how far will she ride in 6.5 hours?",
+          "answer": "Unit rate: 52 / 4 = 13 miles per hour. In 6.5 hours: 13 x 6.5 = 84.5 miles."
+        },
+        {
+          "id": "rr-12",
+          "prompt": "Tyler reads 42 pages in 1.5 hours. Nadia reads 65 pages in 2.5 hours. Who reads faster? How many pages would each read in 3 hours?",
+          "answer": "Tyler: 42 / 1.5 = 28 pages per hour. Nadia: 65 / 2.5 = 26 pages per hour. Tyler reads faster. In 3 hours: Tyler reads 28 x 3 = 84 pages, Nadia reads 26 x 3 = 78 pages."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Equivalent Ratios and Ratio Tables",
+      "skill": "g6-equivalent-ratios",
+      "content": "Two ratios are equivalent if you can multiply (or divide) both quantities by the same number to get from one to the other. Think of it like scaling a recipe up or down — the taste stays the same because the relationship between ingredients doesn't change. Ratio tables and double number lines are powerful tools for organizing and finding equivalent ratios.",
+      "keyPoints": [
+        "Equivalent ratios have the same value when simplified — 2:3, 4:6, 6:9, and 10:15 are all equivalent",
+        "To create an equivalent ratio, multiply or divide BOTH parts by the same nonzero number",
+        "A ratio table lists pairs of equivalent ratios in organized rows or columns — every row is the same ratio scaled",
+        "To find a missing value: figure out what multiplier connects the known values, then apply it to the unknown",
+        "A double number line places both quantities on parallel lines, making it visual to see how the quantities grow together",
+        "Testing equivalence: simplify both ratios to lowest terms, or cross-multiply to check if a/b = c/d (ad = bc)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Equivalent Ratios — Worked Examples",
+      "skill": "g6-equivalent-ratios",
+      "examples": [
+        {
+          "problem": "A smoothie recipe calls for 2 cups of strawberries for every 3 cups of yogurt. Complete the ratio table for bigger batches.\n\nStrawberries: 2, 4, ?, 10\nYogurt: 3, ?, 9, ?",
+          "solution": "The base ratio is 2:3.\n\nColumn 2: Strawberries went from 2 to 4 (x2), so Yogurt = 3 x 2 = 6\nColumn 3: Yogurt is 9. Since 3 x 3 = 9, Strawberries = 2 x 3 = 6\nColumn 4: Strawberries is 10. Since 2 x 5 = 10, Yogurt = 3 x 5 = 15\n\nStrawberries: 2, 4, 6, 10\nYogurt: 3, 6, 9, 15\n\nEvery column simplifies to 2:3."
+        },
+        {
+          "problem": "Are 12:16 and 9:12 equivalent ratios?",
+          "solution": "Method 1 — Simplify both:\n12:16 — divide both by 4 — 3:4\n9:12 — divide both by 3 — 3:4\nBoth simplify to 3:4, so YES, they are equivalent.\n\nMethod 2 — Cross-multiply:\n12 x 12 = 144\n16 x 9 = 144\n144 = 144, so they are equivalent."
+        },
+        {
+          "problem": "A paint mix uses blue and yellow in a 3:5 ratio. If you need 40 cups of paint total, how many cups of each color?",
+          "solution": "Total parts: 3 + 5 = 8 parts\nTotal paint: 40 cups\nValue of one part: 40 / 8 = 5 cups per part\n\nBlue: 3 parts x 5 cups = 15 cups\nYellow: 5 parts x 5 cups = 25 cups\n\nRatio table:\nBlue: 3, 15\nYellow: 5, 25\nTotal: 8, 40\n\nMultiplier: x5. Check: 15:25 = 3:5 and 15 + 25 = 40."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Equivalent Ratios — Practice Together",
+      "skills": ["g6-equivalent-ratios"],
+      "problems": [
+        {
+          "id": "rr-13",
+          "prompt": "A lemonade recipe uses 4 lemons for every 6 cups of water. Complete the ratio table:\nLemons: 4, 8, ?, 16\nWater: 6, ?, 15, ?",
+          "hints": [
+            "Find the multiplier for each column by comparing to the base ratio 4:6",
+            "Column 2: lemons doubled (4 to 8), so water doubles too",
+            "Column 3: water went from 6 to 15 — what do you multiply 6 by to get 15? (6 x 2.5 = 15)"
+          ],
+          "answer": "Column 2: x2, Water = 12. Column 3: x2.5, Lemons = 4 x 2.5 = 10. Column 4: x4, Water = 6 x 4 = 24. Lemons: 4, 8, 10, 16. Water: 6, 12, 15, 24."
+        },
+        {
+          "id": "rr-14",
+          "prompt": "Determine which of these ratios are equivalent to 6:10. (a) 3:5  (b) 12:18  (c) 15:25  (d) 9:15",
+          "hints": [
+            "Simplify 6:10 first — divide both by their GCF",
+            "6:10 simplifies to 3:5. Now simplify each option to see if it also equals 3:5",
+            "For (b): GCF of 12 and 18 is 6, so 12:18 = 2:3"
+          ],
+          "answer": "(a) 3:5 = 3:5, equivalent. (b) 12:18 = 2:3, not equivalent. (c) 15:25 = 3:5, equivalent. (d) 9:15 = 3:5, equivalent. Ratios (a), (c), and (d) are equivalent to 6:10."
+        },
+        {
+          "id": "rr-15",
+          "prompt": "To make orange paint, you mix red and yellow in a 2:5 ratio. You have 35 cups of yellow paint. How many cups of red do you need? How many cups of orange paint will you make in total?",
+          "hints": [
+            "Set up the ratio: Red:Yellow = 2:5. You know Yellow = 35",
+            "Find the multiplier: 5 x ? = 35",
+            "Apply the same multiplier to the red amount, then add for total"
+          ],
+          "answer": "Multiplier: 35 / 5 = 7. Red = 2 x 7 = 14 cups. Total orange paint = 14 + 35 = 49 cups."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Equivalent Ratios — On Your Own",
+      "skills": ["g6-equivalent-ratios"],
+      "problems": [
+        {
+          "id": "rr-16",
+          "prompt": "A school has a student-to-teacher ratio of 18:1. If there are 450 students, how many teachers are there?",
+          "answer": "Multiplier: 450 / 18 = 25. Teachers = 1 x 25 = 25 teachers."
+        },
+        {
+          "id": "rr-17",
+          "prompt": "A pancake recipe uses flour and milk in a 3:2 ratio. Write five equivalent ratios in a ratio table. If you need exactly 20 cups of milk, how much flour do you need?",
+          "answer": "Ratio table — Flour: 3, 6, 9, 12, 15. Milk: 2, 4, 6, 8, 10. For 20 cups of milk: multiplier = 20 / 2 = 10, so Flour = 3 x 10 = 30 cups."
+        },
+        {
+          "id": "rr-18",
+          "prompt": "At a school spirit day, the ratio of students wearing blue to students wearing gold is 5:3. If 120 students total are wearing blue or gold, how many are wearing each color?",
+          "answer": "Total parts = 5 + 3 = 8. Each part = 120 / 8 = 15 students. Blue = 5 x 15 = 75 students. Gold = 3 x 15 = 45 students. Check: 75 + 45 = 120 and 75:45 = 5:3."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving Real-World Ratio and Rate Problems",
+      "skill": "g6-ratio-problem-solving",
+      "content": "Now it's time to combine everything: ratio language, unit rates, and equivalent ratios to solve real-world problems. The key is choosing the right strategy for each situation. Sometimes a ratio table is fastest; other times a unit rate or scale factor works better. Strong problem-solvers are flexible — they pick the tool that fits.",
+      "keyPoints": [
+        "Step 1: Identify the ratio or rate in the problem and what you are solving for",
+        "Step 2: Choose a strategy — ratio table, unit rate, scale factor, or tape diagram",
+        "Ratio tables work well when you need to scale up or down by a whole number multiplier",
+        "Unit rates work best for comparison problems or when scaling by non-whole numbers",
+        "Tape diagrams (bar models) help when you know the total and need to find the parts",
+        "Always check: does your answer make sense in the real-world context?"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Ratio and Rate Problem Solving — Worked Examples",
+      "skill": "g6-ratio-problem-solving",
+      "examples": [
+        {
+          "problem": "A store sells 3 T-shirts for $24. At this rate, how much would 7 T-shirts cost?",
+          "solution": "Strategy: Find the unit rate, then multiply.\n\nUnit rate: $24 / 3 = $8 per T-shirt\nCost of 7 T-shirts: 7 x $8 = $56\n\nAlternate strategy — ratio table:\nShirts: 3, 1, 7\nCost: $24, $8, $56\n\nAnswer: 7 T-shirts cost $56."
+        },
+        {
+          "problem": "A trail mix recipe calls for nuts and dried fruit in a 4:3 ratio. Jamal wants to make 28 ounces of trail mix (just nuts and fruit). He also plans to add 6 extra ounces of chocolate chips on top. How many ounces of each ingredient does he need?",
+          "solution": "The 4:3 ratio applies to the base recipe (just nuts and fruit).\nBase mix total = 28 oz.\n\nTotal parts for base: 4 + 3 = 7 parts\nOne part = 28 / 7 = 4 oz\n\nNuts: 4 parts x 4 oz = 16 oz\nDried fruit: 3 parts x 4 oz = 12 oz\nChocolate: 6 oz (added separately)\n\nFinal amounts: 16 oz nuts, 12 oz dried fruit, 6 oz chocolate chips\nTotal trail mix: 16 + 12 + 6 = 34 oz\n\nCheck base ratio: 16:12 = 4:3."
+        },
+        {
+          "problem": "Two friends are driving to the same destination. Aiden drives 150 miles in 2.5 hours. Sofia drives 200 miles in 3 hours and 20 minutes. Who is driving faster?",
+          "solution": "Find each person's speed in miles per hour.\n\nAiden: 150 miles / 2.5 hours = 60 mph\n\nSofia: First convert 3 hours 20 min to hours.\n20 min = 20/60 = 1/3 hour, so total = 10/3 hours\n200 miles / (10/3) hours = 200 x 3/10 = 60 mph\n\nThey are driving at the same speed: 60 mph!\nEven though Sofia drove farther, she also drove longer."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Ratio and Rate Problem Solving — Practice Together",
+      "skills": ["g6-ratio-problem-solving"],
+      "problems": [
+        {
+          "id": "rr-19",
+          "prompt": "A movie theater sells popcorn in two sizes. A small holds 4 cups and costs $3.50. A large holds 10 cups and costs $7.50. Which size gives you more popcorn per dollar?",
+          "hints": [
+            "Find the unit rate for each: cups of popcorn per dollar",
+            "Small: 4 cups / $3.50. Large: 10 cups / $7.50",
+            "Higher cups-per-dollar means better value"
+          ],
+          "answer": "Small: 4 / 3.50 = about 1.14 cups per dollar. Large: 10 / 7.50 = about 1.33 cups per dollar. The large gives you more popcorn per dollar."
+        },
+        {
+          "id": "rr-20",
+          "prompt": "A map has a scale of 2 inches : 15 miles. Two cities are 9 inches apart on the map. What is the actual distance between the two cities?",
+          "hints": [
+            "Set up a ratio: 2 inches = 15 miles, 9 inches = ? miles",
+            "Find the unit rate: how many miles does 1 inch represent?",
+            "1 inch = 15 / 2 = 7.5 miles, then multiply by 9"
+          ],
+          "answer": "Unit rate: 15 / 2 = 7.5 miles per inch. Actual distance: 9 x 7.5 = 67.5 miles."
+        },
+        {
+          "id": "rr-21",
+          "prompt": "A soccer team's win-to-loss ratio is 5:2. They have played 28 games total with no ties. How many games have they won? How many more games have they won than lost?",
+          "hints": [
+            "Total parts = 5 + 2 = 7",
+            "Find the value of one part: 28 / 7",
+            "Wins = 5 parts, Losses = 2 parts, then subtract for the difference"
+          ],
+          "answer": "One part = 28 / 7 = 4 games. Wins = 5 x 4 = 20 games. Losses = 2 x 4 = 8 games. They won 20 - 8 = 12 more games than they lost."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Ratio and Rate Problem Solving — On Your Own",
+      "skills": ["g6-ratio-problem-solving"],
+      "problems": [
+        {
+          "id": "rr-22",
+          "prompt": "An art supply store sells colored pencils in packs. A 12-pack costs $4.20 and a 36-pack costs $10.80. Are the pencils the same price per pencil in both packs? If not, which is the better deal?",
+          "answer": "12-pack: $4.20 / 12 = $0.35 per pencil. 36-pack: $10.80 / 36 = $0.30 per pencil. They are NOT the same price. The 36-pack is the better deal, saving $0.05 per pencil."
+        },
+        {
+          "id": "rr-23",
+          "prompt": "A summer camp has counselors and campers in a ratio of 2:9. If there are 132 people at the camp total, how many counselors are there? If 4 counselors call in sick, what is the new ratio of counselors to campers?",
+          "answer": "Total parts = 2 + 9 = 11. One part = 132 / 11 = 12. Counselors = 2 x 12 = 24. Campers = 9 x 12 = 108. After 4 sick: 20 counselors to 108 campers = 20:108 = 5:27."
+        },
+        {
+          "id": "rr-24",
+          "prompt": "Priya can type 450 words in 10 minutes. She needs to type a 2,700-word report. How long will it take her? If she takes a 5-minute break every 30 minutes, what is the total time including breaks?",
+          "answer": "Unit rate: 450 / 10 = 45 words per minute. Time for 2,700 words: 2,700 / 45 = 60 minutes of typing. In 60 minutes she takes a break at the 30-minute mark (1 break). Total time = 60 + 5 = 65 minutes."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Measurement Conversions Using Ratio Reasoning",
+      "skill": "g6-measurement-conversions",
+      "content": "Converting between measurement units is really just working with equivalent ratios. When you know that 1 foot = 12 inches, you have a ratio of 1:12. Converting is simply scaling that ratio to find the equivalent amount. This connects everything you have learned about ratios to the measurement system.",
+      "keyPoints": [
+        "A conversion factor is a ratio that equals 1 (12 inches / 1 foot = 1 because 12 inches IS 1 foot)",
+        "To convert to a smaller unit, multiply (3 feet x 12 = 36 inches) — more of a smaller unit",
+        "To convert to a larger unit, divide (48 inches / 12 = 4 feet) — fewer of a larger unit",
+        "Common customary conversions: 1 ft = 12 in, 1 yd = 3 ft, 1 mi = 5,280 ft, 1 lb = 16 oz, 1 gal = 4 qt",
+        "Common metric conversions: 1 m = 100 cm, 1 km = 1,000 m, 1 L = 1,000 mL, 1 kg = 1,000 g",
+        "Use a ratio table to organize multi-step conversions: set up the known conversion, then scale to your amount"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Measurement Conversions — Worked Examples",
+      "skill": "g6-measurement-conversions",
+      "examples": [
+        {
+          "problem": "A doorway is 6 feet 8 inches tall. What is the height of the doorway in inches?",
+          "solution": "Conversion: 1 foot = 12 inches\n\nRatio table:\nFeet: 1, 6\nInches: 12, ?\n\n6 feet = 6 x 12 = 72 inches\nAdd the extra 8 inches: 72 + 8 = 80 inches\n\nThe doorway is 80 inches tall."
+        },
+        {
+          "problem": "A water bottle holds 750 mL. How many liters is that? If you drink 3 bottles per day, how many liters do you drink?",
+          "solution": "Conversion: 1,000 mL = 1 L\n\n750 mL / 1,000 = 0.75 L per bottle\n\n3 bottles per day: 0.75 x 3 = 2.25 L per day\n\nRatio table:\nBottles: 1, 3\nmL: 750, 2,250\nL: 0.75, 2.25\n\nYou drink 2.25 liters per day."
+        },
+        {
+          "problem": "A running track is 400 meters per lap. Deshawn ran 5 laps. How many kilometers did he run? How many meters short of 3 km is he?",
+          "solution": "Total meters: 400 x 5 = 2,000 m\n\nConversion: 1,000 m = 1 km\n2,000 m / 1,000 = 2 km\n\n3 km - 2 km = 1 km = 1,000 m short\n\nDeshawn ran 2 km and is 1,000 meters (1 km) short of 3 km."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Measurement Conversions — Practice Together",
+      "skills": ["g6-measurement-conversions"],
+      "problems": [
+        {
+          "id": "rr-25",
+          "prompt": "A recipe calls for 2.5 pounds of chicken. You only have a scale that measures in ounces. How many ounces of chicken do you need? (1 pound = 16 ounces)",
+          "hints": [
+            "Set up the conversion: 1 pound = 16 ounces",
+            "Multiply: 2.5 pounds x 16 ounces per pound",
+            "Think of it as 2 pounds + 0.5 pounds: (2 x 16) + (0.5 x 16)"
+          ],
+          "answer": "2.5 x 16 = 40 ounces. You need 40 ounces of chicken."
+        },
+        {
+          "id": "rr-26",
+          "prompt": "A fish tank holds 5 gallons of water. How many quarts is that? How many cups? (1 gallon = 4 quarts, 1 quart = 4 cups)",
+          "hints": [
+            "First convert gallons to quarts: 5 x 4",
+            "Then convert quarts to cups: multiply your quarts answer by 4",
+            "Use a ratio table to organize the chain of conversions"
+          ],
+          "answer": "5 gallons x 4 = 20 quarts. 20 quarts x 4 = 80 cups. The fish tank holds 20 quarts or 80 cups."
+        },
+        {
+          "id": "rr-27",
+          "prompt": "A track and field athlete threw a javelin 18.5 meters. Her goal is 2,000 centimeters. Did she reach her goal? By how much did she exceed or miss it? (1 m = 100 cm)",
+          "hints": [
+            "Convert 18.5 meters to centimeters: 1 m = 100 cm",
+            "18.5 x 100 = ?",
+            "Compare to 2,000 cm and find the difference"
+          ],
+          "answer": "18.5 m x 100 = 1,850 cm. Her goal was 2,000 cm. She missed by 2,000 - 1,850 = 150 cm (or 1.5 m)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Measurement Conversions — On Your Own",
+      "skills": ["g6-measurement-conversions"],
+      "problems": [
+        {
+          "id": "rr-28",
+          "prompt": "A hiker walked 2.5 miles. Her friend walked 4,000 yards. Who walked farther and by how much? (1 mile = 1,760 yards)",
+          "answer": "Hiker: 2.5 x 1,760 = 4,400 yards. Friend: 4,000 yards. The hiker walked farther by 4,400 - 4,000 = 400 yards."
+        },
+        {
+          "id": "rr-29",
+          "prompt": "A juice company ships boxes that each contain 24 bottles. Each bottle holds 500 mL. How many liters of juice are in one box? How many boxes are needed to ship 600 liters?",
+          "answer": "One box: 24 x 500 = 12,000 mL = 12 L. Boxes for 600 L: 600 / 12 = 50 boxes."
+        },
+        {
+          "id": "rr-30",
+          "prompt": "A football field is 100 yards long. A soccer field is 110 meters long. Which field is longer, and by how many feet? (1 yard = 3 feet, 1 meter = 3.28 feet)",
+          "answer": "Football: 100 x 3 = 300 feet. Soccer: 110 x 3.28 = 360.8 feet. The soccer field is longer by 360.8 - 300 = 60.8 feet."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "rr-1": "2:3, part-to-part",
+    "rr-2": "2:5, cheese is 2/5 of total",
+    "rr-3": "Incorrect — ratios describe a relationship, not exact counts",
+    "rr-4": "(a) 7:3, (b) 1:6, (c) 3:7",
+    "rr-5": "15 red, 25 blue",
+    "rr-6": "7:5:3",
+    "rr-7": "Brand B at $0.19/oz",
+    "rr-8": "Car at 35 mpg",
+    "rr-9": "Mia at 14 points per game",
+    "rr-10": "28 oz jar at $0.23/oz, saves $0.02/oz",
+    "rr-11": "84.5 miles",
+    "rr-12": "Tyler at 28 pages/hr; Tyler 84 pages, Nadia 78 pages in 3 hours",
+    "rr-13": "Lemons: 4, 8, 10, 16. Water: 6, 12, 15, 24",
+    "rr-14": "(a), (c), (d) are equivalent to 6:10",
+    "rr-15": "14 cups red, 49 cups total",
+    "rr-16": "25 teachers",
+    "rr-17": "30 cups flour for 20 cups milk",
+    "rr-18": "75 blue, 45 gold",
+    "rr-19": "Large popcorn at about 1.33 cups per dollar",
+    "rr-20": "67.5 miles",
+    "rr-21": "20 wins, 12 more wins than losses",
+    "rr-22": "36-pack at $0.30/pencil",
+    "rr-23": "24 counselors; new ratio 5:27",
+    "rr-24": "60 min typing, 65 min total with break",
+    "rr-25": "40 ounces",
+    "rr-26": "20 quarts, 80 cups",
+    "rr-27": "Missed by 150 cm",
+    "rr-28": "Hiker walked farther by 400 yards",
+    "rr-29": "12 L per box, 50 boxes needed",
+    "rr-30": "Soccer field is longer by 60.8 feet"
+  }
+}

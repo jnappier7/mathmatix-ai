@@ -1,0 +1,211 @@
+{
+  "moduleId": "checkpoint_q2",
+  "course": "6th Grade Math",
+  "unit": 4,
+  "title": "Checkpoint: Quarter 2 — Expressions and Equations",
+  "weeks": "17",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Quarter 2 assessment covering expressions/variables (writing, evaluating, combining like terms, parts of expressions, formulas) and equations/inequalities (one/two-step, variables both sides intro, inequalities, word problems). This is the algebra foundation checkpoint.",
+  "skillsCovered": [
+    "g6-write-expressions",
+    "g6-evaluate-expressions",
+    "g6-combine-like-terms",
+    "g6-parts-of-expressions",
+    "g6-formulas-area-volume",
+    "g6-one-two-step-equations",
+    "g6-variables-both-sides",
+    "g6-inequalities",
+    "g6-word-problem-equations"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Expression and equation fluency is essential for geometry applications and the applied number sense bridge in Q3-Q4. Address gaps before proceeding.",
+    "clusters": [
+      {
+        "skillId": "g6-write-expressions",
+        "reteachFocus": "Matching words to operations, order sensitivity for subtraction/division, using parentheses for grouping"
+      },
+      {
+        "skillId": "g6-evaluate-expressions",
+        "reteachFocus": "Substitution with parentheses, strict PEMDAS order, two-variable evaluation"
+      },
+      {
+        "skillId": "g6-combine-like-terms",
+        "reteachFocus": "Identifying like terms, adding/subtracting coefficients, distributive property a(b+c)=ab+ac"
+      },
+      {
+        "skillId": "g6-one-two-step-equations",
+        "reteachFocus": "Inverse operations, two-step order (undo add/sub first, then mult/div), checking by substitution"
+      },
+      {
+        "skillId": "g6-inequalities",
+        "reteachFocus": "Open vs closed circles, graphing on number line, writing from context (at least, no more than)"
+      },
+      {
+        "skillId": "g6-word-problem-equations",
+        "reteachFocus": "Define variable, translate context to equation, solve, interpret answer in context"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq2-1",
+      "skill": "g6-write-expressions",
+      "difficulty": 2,
+      "points": 3,
+      "question": "Write an algebraic expression for each phrase.\n(a) Eight more than three times a number n.\n(b) A number y divided by five, then decreased by four."
+    },
+    {
+      "id": "cq2-2",
+      "skill": "g6-evaluate-expressions",
+      "difficulty": 2,
+      "points": 3,
+      "question": "Evaluate the expression 4x + 7 when x = 5. Show each step."
+    },
+    {
+      "id": "cq2-3",
+      "skill": "g6-evaluate-expressions",
+      "difficulty": 3,
+      "points": 4,
+      "question": "Evaluate 3a\u00b2 - 2b + 10 when a = 4 and b = 3. Show each step and be careful with order of operations."
+    },
+    {
+      "id": "cq2-4",
+      "skill": "g6-combine-like-terms",
+      "difficulty": 3,
+      "points": 4,
+      "question": "Simplify by combining like terms. Show which terms you combined.\n(a) 6m + 4 - 2m + 9\n(b) 3x + 5y - x + 2y - 8"
+    },
+    {
+      "id": "cq2-5",
+      "skill": "g6-parts-of-expressions",
+      "difficulty": 2,
+      "points": 3,
+      "question": "Look at the expression 5x + 3y - 7. Identify each of the following:\n(a) How many terms does the expression have? Name them.\n(b) What are the coefficients?\n(c) What is the constant?"
+    },
+    {
+      "id": "cq2-6",
+      "skill": "g6-formulas-area-volume",
+      "difficulty": 3,
+      "points": 4,
+      "question": "A rectangular poster for the school talent show has a length of 12 inches and a width of 8.5 inches. Use the formula A = lw to find the area of the poster. Include correct units in your answer."
+    },
+    {
+      "id": "cq2-7",
+      "skill": "g6-formulas-area-volume",
+      "difficulty": 4,
+      "points": 5,
+      "question": "A shipping box is shaped like a rectangular prism with a length of 10 inches, a width of 6 inches, and a height of 4 inches. Use V = lwh to find the volume. Then find how many small cubes with 2-inch sides could fit inside the box."
+    },
+    {
+      "id": "cq2-8",
+      "skill": "g6-one-two-step-equations",
+      "difficulty": 2,
+      "points": 4,
+      "question": "Solve for x: 3x + 5 = 26. Show your work and check your answer by substituting back into the original equation."
+    },
+    {
+      "id": "cq2-9",
+      "skill": "g6-one-two-step-equations",
+      "difficulty": 3,
+      "points": 4,
+      "question": "Solve for y: y/4 - 3 = 9. Show each step and check your answer."
+    },
+    {
+      "id": "cq2-10",
+      "skill": "g6-variables-both-sides",
+      "difficulty": 4,
+      "points": 5,
+      "question": "Solve for x: 5x + 3 = 2x + 18. Show each step clearly, and verify your solution by checking both sides."
+    },
+    {
+      "id": "cq2-11",
+      "skill": "g6-inequalities",
+      "difficulty": 2,
+      "points": 3,
+      "question": "Solve the inequality x + 6 > 10. Then describe what the solution looks like on a number line (what kind of circle at which number, and which direction is shaded)."
+    },
+    {
+      "id": "cq2-12",
+      "skill": "g6-inequalities",
+      "difficulty": 3,
+      "points": 4,
+      "question": "Sofia has $45 to spend at the school book fair. Each book costs $7. Write and solve an inequality to find the greatest number of books she can buy. Explain your answer."
+    },
+    {
+      "id": "cq2-13",
+      "skill": "g6-word-problem-equations",
+      "difficulty": 3,
+      "points": 5,
+      "question": "Maya is saving money for a new skateboard that costs $78. She already has $30 and earns $8 for each dog she walks. Write and solve an equation to find how many dogs Maya needs to walk to have enough money for the skateboard. Define your variable."
+    },
+    {
+      "id": "cq2-14",
+      "skill": "g6-word-problem-equations",
+      "difficulty": 4,
+      "points": 6,
+      "question": "Two friends are collecting cans for a school recycling drive. Jayden collected 15 more cans than twice the number Kai collected. Together they collected 93 cans. Write and solve an equation to find how many cans each friend collected. Define your variable and check your answer."
+    }
+  ],
+  "answerKeys": {
+    "cq2-1": {
+      "answer": "(a) 3n + 8. (b) y/5 - 4 (or equivalently y \u00f7 5 - 4).",
+      "rubric": "Award 1.5 pts per part. For each: 1 pt for correct operation and structure, 0.5 pt for correct variable placement. Accept y/5 - 4 or (y/5) - 4 for part (b)."
+    },
+    "cq2-2": {
+      "answer": "Substitute x = 5: 4(5) + 7 = 20 + 7 = 27.",
+      "rubric": "Award 1 pt for correct substitution, 1 pt for computing 4(5) = 20, 1 pt for correct final answer of 27."
+    },
+    "cq2-3": {
+      "answer": "Substitute a = 4, b = 3: 3(4)\u00b2 - 2(3) + 10 = 3(16) - 6 + 10 = 48 - 6 + 10 = 52.",
+      "rubric": "Award 1 pt for squaring before multiplying (4\u00b2 = 16, not 12\u00b2 = 144), 1 pt for 3(16) = 48, 1 pt for -2(3) = -6, 1 pt for correct final answer of 52."
+    },
+    "cq2-4": {
+      "answer": "(a) 6m - 2m = 4m and 4 + 9 = 13, so simplified form is 4m + 13. (b) 3x - x = 2x, 5y + 2y = 7y, constant is -8, so simplified form is 2x + 7y - 8.",
+      "rubric": "Award 2 pts per part. For each: 1 pt for correctly identifying and combining like terms, 1 pt for correct simplified expression. Deduct 0.5 pt for sign errors."
+    },
+    "cq2-5": {
+      "answer": "(a) Three terms: 5x, 3y, and -7. (b) The coefficients are 5 (on x) and 3 (on y). (c) The constant is -7.",
+      "rubric": "Award 1 pt per part. For (a), student must list all three terms. For (b), accept 5 and 3. For (c), must include the negative sign."
+    },
+    "cq2-6": {
+      "answer": "A = lw = 12 \u00d7 8.5 = 102 square inches.",
+      "rubric": "Award 2 pts for correct substitution and multiplication, 2 pts for correct answer with units (square inches). Deduct 1 pt if units are missing or incorrect."
+    },
+    "cq2-7": {
+      "answer": "Volume of box: V = lwh = 10 \u00d7 6 \u00d7 4 = 240 cubic inches. Volume of small cube: 2 \u00d7 2 \u00d7 2 = 8 cubic inches. Number of cubes: 240 \u00f7 8 = 30 cubes.",
+      "rubric": "Award 2 pts for correct box volume (240 cubic inches), 1 pt for correct small cube volume (8 cubic inches), 2 pts for correct number of cubes (30). Accept alternative method of dividing each dimension (5 \u00d7 3 \u00d7 2 = 30)."
+    },
+    "cq2-8": {
+      "answer": "3x + 5 = 26. Subtract 5 from both sides: 3x = 21. Divide both sides by 3: x = 7. Check: 3(7) + 5 = 21 + 5 = 26 \u2713.",
+      "rubric": "Award 1 pt for subtracting 5, 1 pt for dividing by 3, 1 pt for x = 7, 1 pt for correct check."
+    },
+    "cq2-9": {
+      "answer": "y/4 - 3 = 9. Add 3 to both sides: y/4 = 12. Multiply both sides by 4: y = 48. Check: 48/4 - 3 = 12 - 3 = 9 \u2713.",
+      "rubric": "Award 1 pt for adding 3, 1 pt for multiplying by 4, 1 pt for y = 48, 1 pt for correct check."
+    },
+    "cq2-10": {
+      "answer": "5x + 3 = 2x + 18. Subtract 2x from both sides: 3x + 3 = 18. Subtract 3 from both sides: 3x = 15. Divide both sides by 3: x = 5. Check: Left side: 5(5) + 3 = 28. Right side: 2(5) + 18 = 28. Both sides equal 28 \u2713.",
+      "rubric": "Award 1 pt for collecting variable terms to one side, 1 pt for isolating the variable term, 1 pt for x = 5, 2 pts for verifying both sides equal 28."
+    },
+    "cq2-11": {
+      "answer": "x + 6 > 10. Subtract 6 from both sides: x > 4. On a number line: open circle at 4, shaded (arrow) to the right toward larger numbers.",
+      "rubric": "Award 1 pt for correct solving step, 1 pt for x > 4, 1 pt for describing open circle at 4 with shading to the right."
+    },
+    "cq2-12": {
+      "answer": "Let b = number of books. 7b \u2264 45. Divide both sides by 7: b \u2264 6.43. Since Sofia cannot buy part of a book, the greatest number of books she can buy is 6.",
+      "rubric": "Award 1 pt for defining the variable, 1 pt for correct inequality 7b \u2264 45, 1 pt for solving to get b \u2264 6.43, 1 pt for interpreting that the answer must be a whole number (6 books)."
+    },
+    "cq2-13": {
+      "answer": "Let d = number of dogs Maya walks. Equation: 30 + 8d = 78. Subtract 30: 8d = 48. Divide by 8: d = 6. Maya needs to walk 6 dogs.",
+      "rubric": "Award 1 pt for defining the variable, 1 pt for correct equation, 1 pt for each correct solving step (2 pts), 1 pt for stating the answer in context."
+    },
+    "cq2-14": {
+      "answer": "Let k = number of cans Kai collected. Then Jayden collected 2k + 15 cans. Equation: k + (2k + 15) = 93. Combine like terms: 3k + 15 = 93. Subtract 15: 3k = 78. Divide by 3: k = 26. Kai collected 26 cans. Jayden collected 2(26) + 15 = 52 + 15 = 67 cans. Check: 26 + 67 = 93 \u2713.",
+      "rubric": "Award 1 pt for defining the variable, 1 pt for expressing Jayden's cans in terms of k, 1 pt for correct equation, 1 pt for solving to get k = 26, 1 pt for finding Jayden = 67, 1 pt for checking that 26 + 67 = 93."
+    }
+  }
+}

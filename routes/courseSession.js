@@ -16,6 +16,7 @@ const User = require('../models/user');
    ============================================================ */
 // Catalog enrichment: difficulty levels, taglines, icons
 const CATALOG_META = {
+  '6th-grade-math':      { difficulty: 'Foundational', tagline: 'Fractions, ratios, expressions, geometry, and statistics', icon: '6️⃣' },
   '7th-grade-math':      { difficulty: 'Foundational', tagline: 'Rational numbers, proportions, geometry, and probability', icon: '7️⃣' },
   'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
   'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
