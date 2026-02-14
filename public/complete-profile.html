@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Complete Profile | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
 <body class="landing-page-body">
@@ -19,6 +20,24 @@
 
   <main class="login-page-wrapper" style="min-height: calc(100vh - 140px); overflow-y: auto;">
     <div class="profile-container" style="max-height: none; overflow: visible; margin: 2rem auto;">
+      <!-- Onboarding Stepper -->
+      <div class="onboarding-stepper">
+        <div class="stepper-step active">
+          <div class="stepper-circle">1</div>
+          <span class="stepper-label">Profile</span>
+        </div>
+        <div class="stepper-connector"></div>
+        <div class="stepper-step">
+          <div class="stepper-circle">2</div>
+          <span class="stepper-label">Tutor</span>
+        </div>
+        <div class="stepper-connector"></div>
+        <div class="stepper-step">
+          <div class="stepper-circle">3</div>
+          <span class="stepper-label">Avatar</span>
+        </div>
+      </div>
+
       <h1>Complete Your Profile</h1>
       <p class="subtitle">Just a few more details to personalize your experience.</p>
 
@@ -189,5 +208,6 @@
   <script src="/js/logout.js"></script>
   <script src="/js/csrf.js"></script>
   <script src="/js/complete-profile.js"></script>
+  <script src="/js/ux-enhancements.js"></script>
 </body>
 </html>
