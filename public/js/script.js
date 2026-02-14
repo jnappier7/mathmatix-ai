@@ -542,9 +542,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Large Print / High Contrast: force high-contrast theme
+        // IEP accommodation overrides dark mode — high contrast requires light bg + dark text
         if (accom.largePrintHighContrast) {
+            document.body.classList.remove('dark-mode');
             document.body.classList.add('iep-high-contrast');
-            console.log('[IEP] High contrast mode enabled');
+            console.log('[IEP] High contrast mode enabled (dark mode overridden)');
         }
 
         // Calculator Always Available: auto-show calculator button prominently
@@ -574,12 +576,30 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!iepFeatures) return;
 
         // Auto Read-Aloud: trigger TTS automatically on new AI messages
+        // Uses the same TTS path as hands-free mode (playAudio + generateSpeakableText)
         if (iepFeatures.autoReadAloud) {
             const messages = document.querySelectorAll('.message.ai');
             const latest = messages[messages.length - 1];
-            if (latest && typeof playAudioForMessage === 'function') {
-                setTimeout(() => playAudioForMessage(latest), 300);
+            if (latest && typeof playAudio === 'function' && typeof generateSpeakableText === 'function' && window.TUTOR_CONFIG) {
+                const tutor = window.TUTOR_CONFIG[currentUser?.selectedTutorId] || window.TUTOR_CONFIG['default'];
+                const playBtn = latest.querySelector('.play-audio-btn');
+                if (playBtn) {
+                    playBtn.disabled = true;
+                    playBtn.classList.add('is-loading');
+                }
+                const rawText = latest.querySelector('.message-content')?.textContent || latest.textContent || '';
+                const speakableText = generateSpeakableText(rawText);
+                if (speakableText) {
+                    setTimeout(() => playAudio(speakableText, tutor?.voiceId, latest.id), 300);
+                }
+            } else {
+                console.warn('[IEP] Audio read-aloud accommodation is active but TTS is unavailable');
             }
+        }
+
+        // Chunked Assignments: show check-in after every chunk of problems
+        if (iepFeatures.chunkedAssignments) {
+            handleChunkedAssignmentCheckIn();
         }
     }
 
@@ -635,6 +655,67 @@ document.addEventListener("DOMContentLoaded", () => {
         notification.addEventListener('click', () => {
             notification.classList.remove('visible');
             setTimeout(() => notification.remove(), 400);
+        });
+    }
+
+    // --- Chunked Assignments Enforcement ---
+    // Tracks problems attempted in the current chunk and shows a check-in
+    // overlay after every CHUNK_SIZE problems, giving students a structured
+    // pause point as required by the chunkedAssignments accommodation.
+    let iepChunkProblemCount = 0;
+    const IEP_CHUNK_SIZE = 4; // check in after every 4 problems (within the 3-5 range)
+
+    function handleChunkedAssignmentCheckIn() {
+        // Only count when a problem was just answered (problemResult present)
+        // We detect this by checking if the latest AI response follows a user answer
+        const messages = document.querySelectorAll('.message');
+        if (messages.length < 2) return;
+
+        // Look for the pattern: user message then AI message (problem answered)
+        const lastTwo = Array.from(messages).slice(-2);
+        if (lastTwo[0]?.classList.contains('user') && lastTwo[1]?.classList.contains('ai')) {
+            iepChunkProblemCount++;
+        }
+
+        if (iepChunkProblemCount >= IEP_CHUNK_SIZE) {
+            iepChunkProblemCount = 0;
+            showChunkedCheckIn();
+        }
+    }
+
+    function showChunkedCheckIn() {
+        if (document.getElementById('iep-chunk-checkin')) return;
+
+        const overlay = document.createElement('div');
+        overlay.id = 'iep-chunk-checkin';
+        overlay.className = 'iep-break-overlay';
+        overlay.innerHTML = `
+            <div class="iep-break-card">
+                <h2>Nice work on that set!</h2>
+                <p>You just finished ${IEP_CHUNK_SIZE} problems. How are you feeling?</p>
+                <div class="iep-break-activities">
+                    <button class="iep-break-activity" data-choice="continue">
+                        <i class="fas fa-arrow-right"></i>
+                        <span>Keep Going</span>
+                        <small>I'm ready!</small>
+                    </button>
+                    <button class="iep-break-activity" data-choice="break">
+                        <i class="fas fa-pause-circle"></i>
+                        <span>Take a Break</span>
+                        <small>I need a moment</small>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        overlay.querySelectorAll('.iep-break-activity').forEach(btn => {
+            btn.addEventListener('click', () => {
+                overlay.remove();
+                if (btn.dataset.choice === 'break') {
+                    showBreakOverlay();
+                }
+            });
         });
     }
 

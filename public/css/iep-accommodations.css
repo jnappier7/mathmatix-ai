@@ -459,8 +459,21 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
     color: #ddd;
 }
 
-.dark-mode .iep-high-contrast .message.ai {
-    background: #1a1a30;
+/* High contrast forces light mode — dark mode is removed when this
+   accommodation is active (see applyIepAccommodations in script.js).
+   If dark-mode somehow persists, high-contrast still wins. */
+.iep-high-contrast.dark-mode,
+.dark-mode .iep-high-contrast {
+    --clr-text: #000000;
+    --clr-text-dim: #333333;
+    --clr-border: #000000;
+    --clr-bg: #ffffff;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.iep-high-contrast .message.ai {
+    background: #fffff0;
 }
 
 /* -----------------------------------------------------------

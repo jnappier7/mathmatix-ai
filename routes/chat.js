@@ -1785,6 +1785,10 @@ ${summary ? `- Summary: ${summary}` : ''}`;
         if (accom.audioReadAloud) accommodations.push('Audio Read-Aloud');
         if (accom.chunkedAssignments) accommodations.push('Chunked Assignments');
         if (accom.mathAnxietySupport) accommodations.push('Math Anxiety Support');
+        if (accom.reducedDistraction) accommodations.push('Reduced Distraction');
+        if (accom.breaksAsNeeded) accommodations.push('Breaks As Needed');
+        if (accom.digitalMultiplicationChart) accommodations.push('Digital Multiplication Chart');
+        if (accom.largePrintHighContrast) accommodations.push('Large Print/High Contrast');
 
         if (accommodations.length > 0) {
             iepSection += `\nACCOMMODATIONS: ${accommodations.join(', ')}`;
