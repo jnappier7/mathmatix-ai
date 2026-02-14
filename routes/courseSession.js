@@ -264,13 +264,13 @@ router.post('/:id/activate', async (req, res) => {
       activeCourseSessionId: session._id
     });
 
-    // Switch conversation to the course's conversation and ensure it's active
+    // Ensure the course conversation is active (so messages can be saved)
+    // but do NOT set activeConversationId — course chat uses
+    // courseSession.conversationId directly, and we don't want the main
+    // chat greeting to land in a course conversation on next page load.
     if (session.conversationId) {
       const Conversation = require('../models/conversation');
       await Conversation.findByIdAndUpdate(session.conversationId, { isActive: true });
-      await User.findByIdAndUpdate(req.user._id, {
-        activeConversationId: session.conversationId
-      });
     }
 
     res.json({ success: true, session });

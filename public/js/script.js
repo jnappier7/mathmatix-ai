@@ -1549,32 +1549,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
-            // Check if there's a pending active session from sidebar
-            // This happens when user refreshes and has an active conversation
-            if (window.pendingActiveSession && window.pendingActiveSession.conversationId) {
-                console.log('[Chat] Loading pending active session:', window.pendingActiveSession.conversationId);
-                const { conversationId, conversation } = window.pendingActiveSession;
-                window.pendingActiveSession = null; // Clear it
-
-                try {
-                    const response = await csrfFetch(`/api/conversations/${conversationId}/switch`, {
-                        method: 'POST',
-                        credentials: 'include'
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.messages && data.messages.length > 0) {
-                            window.updateChatForSession(data.conversation, data.messages);
-                            console.log('[Chat] Restored', data.messages.length, 'messages from active session');
-                            return; // Skip welcome message - session restored
-                        }
-                    }
-                } catch (err) {
-                    console.error('[Chat] Failed to load pending session:', err);
-                    // Fall through to normal welcome
-                }
-            }
+            // New logins always start in general chat with a fresh session.
+            // Clear any pending session from sidebar — users can click sidebar
+            // to resume old conversations manually.
+            window.pendingActiveSession = null;
 
             // Check if session messages were already loaded from sidebar
             // Skip welcome message if we restored an existing session
@@ -4579,24 +4557,17 @@ What would you like to work on first?`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 100);
         } else {
-            // No messages yet — trigger a course greeting if in course mode,
-            // otherwise show a generic welcome
-            const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
-            if (isInCourse) {
-                // Let the course greeting handler provide a context-aware welcome
-                window.courseManager.sendCourseGreeting();
-            } else if (conversation.conversationType === 'topic') {
+            // No messages yet — show a static welcome placeholder.
+            // Course greetings are handled by the caller (activateCourse / enrollInCourse)
+            // so we do NOT send one here to avoid duplicate greetings.
+            if (conversation.conversationType === 'topic') {
                 appendMessage(
                     `Welcome to your ${conversation.topic || 'topic'} session! 📚\n\n` +
                     `I'm here to help you learn and practice. What would you like to work on?`,
                     'ai'
                 );
-            } else {
-                appendMessage(
-                    `Hey there! What would you like to work on? 😊`,
-                    'ai'
-                );
             }
+            // For course and general conversations, the caller handles the greeting
         }
 
         console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');

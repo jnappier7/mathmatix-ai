@@ -2050,16 +2050,12 @@ async function handleGreetingRequest(req, res, userId) {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
 
-        // Get or create conversation (same logic as main chat)
-        let activeConversation;
-        if (user.activeConversationId) {
-            activeConversation = await Conversation.findById(user.activeConversationId);
-        }
-        if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
-            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
-            user.activeConversationId = activeConversation._id;
-            await user.save();
-        }
+        // Always create a fresh conversation for greetings.
+        // This ensures new logins start a clean session instead of
+        // resuming stale or course-linked conversations.
+        const activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+        user.activeConversationId = activeConversation._id;
+        await user.save();
 
         // Gather context for the ghost message
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
