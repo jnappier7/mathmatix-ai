@@ -1,0 +1,150 @@
+{
+  "moduleId": "checkpoint_baseline",
+  "course": "Consumer Math",
+  "unit": 0,
+  "title": "Checkpoint: Read a Paycheck",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering all Unit 0 skills: income vocabulary, reading pay stubs, banking basics, and wants vs needs. Students must demonstrate they can read a pay stub, identify where the money went, distinguish checking from savings and debit from credit, and make needs-vs-wants decisions using actual numbers.",
+  "skillsCovered": ["cm-income-vocabulary", "cm-reading-pay-stubs", "cm-banking-basics", "cm-wants-vs-needs"],
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest skill areas before proceeding to budgeting. Money vocabulary gaps will compound in every future module.",
+    "clusters": [
+      {
+        "skillId": "cm-income-vocabulary",
+        "reteachFocus": "Gross vs net pay distinction, salary vs hourly conversion, identifying common paycheck deductions (federal tax, state tax, FICA, insurance)"
+      },
+      {
+        "skillId": "cm-reading-pay-stubs",
+        "reteachFocus": "Reading each line of a pay stub: gross pay, federal/state tax withholdings, FICA (Social Security + Medicare), pre-tax deductions, net pay calculation"
+      },
+      {
+        "skillId": "cm-banking-basics",
+        "reteachFocus": "Checking vs savings accounts (purpose, interest, access), debit card (your money) vs credit card (borrowed money), overdraft fees"
+      },
+      {
+        "skillId": "cm-wants-vs-needs",
+        "reteachFocus": "Categorizing expenses as needs vs wants with dollar amounts, identifying gray areas, totaling small recurring wants to see annual impact"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cb-1",
+      "question": "Marcus earns a salary of $52,000 per year. What is his gross pay per biweekly pay period? (Assume 26 pay periods per year.)",
+      "answer": "$2,000. Gross pay per biweekly period = $52,000 / 26 = $2,000. Gross pay means the total amount before any deductions are taken out.",
+      "skill": "cm-income-vocabulary",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cb-2",
+      "question": "Jasmine works part-time at a grocery store earning $14.50 per hour. Last week she worked 24 hours. Her paycheck showed $261.00 deposited into her bank account. What is the difference between her gross pay and her net pay for that week?",
+      "answer": "$87.00. Gross pay = $14.50 x 24 = $348.00. Net pay (take-home) = $261.00. Difference = $348.00 - $261.00 = $87.00. The $87.00 went to taxes and other deductions.",
+      "skill": "cm-income-vocabulary",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cb-3",
+      "question": "A job listing offers $18.75 per hour for 40 hours per week. Another listing offers a salary of $37,000 per year. Which job pays more annually, and by how much? (Assume 52 weeks per year.)",
+      "answer": "The hourly job pays more by $2,000. Hourly annual = $18.75 x 40 x 52 = $39,000. Salary = $37,000. Difference = $39,000 - $37,000 = $2,000.",
+      "skill": "cm-income-vocabulary",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cb-4",
+      "question": "Use the following pay stub to answer the question.\n\nEmployee: Tanya Rivera | Pay Period: 01/01 - 01/15 | Gross Pay: $2,000.00\nFederal Tax: $168.00 | State Tax: $74.00 | Social Security (6.2%): $124.00 | Medicare (1.45%): $29.00 | Health Insurance: $85.00\nNet Pay: ?\n\nWhat is Tanya's net pay for this pay period?",
+      "answer": "$1,520.00. Total deductions = $168.00 + $74.00 + $124.00 + $29.00 + $85.00 = $480.00. Net pay = $2,000.00 - $480.00 = $1,520.00.",
+      "skill": "cm-reading-pay-stubs",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cb-5",
+      "question": "Use the following pay stub to answer the question.\n\nEmployee: Derek Wilson | Pay Period: 03/01 - 03/15 | Gross Pay: $2,450.00\nFederal Tax: $215.00 | State Tax: $89.25 | Social Security (6.2%): $151.90 | Medicare (1.45%): $35.53 | 401(k) Pre-Tax: $122.50 | Health Insurance: $110.00\nNet Pay: $1,725.82\n\nDerek says FICA takes $151.90 from his check. Is he correct? Explain what FICA actually is and how much total FICA was deducted.",
+      "answer": "Derek is incorrect. FICA stands for the Federal Insurance Contributions Act and includes both Social Security AND Medicare. Total FICA = $151.90 + $35.53 = $187.43. Derek only counted the Social Security portion and forgot to include Medicare.",
+      "skill": "cm-reading-pay-stubs",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cb-6",
+      "question": "Use the following pay stub to answer the question.\n\nEmployee: Priya Sharma | Pay Period: 02/01 - 02/15 | Gross Pay: $2,166.67\nFederal Tax: $182.00 | State Tax: $78.40 | Social Security (6.2%): $134.33 | Medicare (1.45%): $31.42 | Health Insurance: $95.00 | Dental Insurance: $18.00\nNet Pay: $1,627.52\n\nWhat percentage of Priya's gross pay went to all deductions combined? Round to the nearest whole percent.",
+      "answer": "25%. Total deductions = $182.00 + $78.40 + $134.33 + $31.42 + $95.00 + $18.00 = $539.15. Percentage = ($539.15 / $2,166.67) x 100 = 24.88%, which rounds to 25%.",
+      "skill": "cm-reading-pay-stubs",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cb-7",
+      "question": "Maya has a checking account with a $540.00 balance and a savings account with $1,200.00. She needs to pay rent of $575.00 today. If she writes a check from her checking account without transferring money first, what happens and how much will it cost her if her bank charges a $35 overdraft fee?",
+      "answer": "Maya will overdraft her checking account. She has $540.00 but needs $575.00, which is $35.00 more than her balance. With the $35 overdraft fee, she will owe the bank a total of $70.00 ($35.00 shortfall + $35.00 fee), leaving her checking account at -$70.00. She should have transferred at least $35.00 from savings to checking first.",
+      "skill": "cm-banking-basics",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cb-8",
+      "question": "Explain the key difference between using a debit card and a credit card to buy a $65.00 pair of shoes. Where does the money come from in each case?",
+      "answer": "With a debit card, the $65.00 comes directly out of your bank account (your own money) immediately. With a credit card, the $65.00 is borrowed from the credit card company. You must pay the credit card company back later. If you do not pay the full balance by the due date, you will be charged interest on the $65.00.",
+      "skill": "cm-banking-basics",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cb-9",
+      "question": "Carlos has two bank accounts. Account A earns 0.01% interest per year and lets him withdraw money anytime with a debit card. Account B earns 4.25% APY but limits him to 6 withdrawals per month. Which account is checking and which is savings? If Carlos keeps $3,000 in Account B for one year, approximately how much interest does he earn?",
+      "answer": "Account A is checking (low interest, easy access with debit card). Account B is savings (higher interest rate, limited withdrawals). Interest earned on Account B = $3,000.00 x 0.0425 = $127.50 per year.",
+      "skill": "cm-banking-basics",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cb-10",
+      "question": "Label each item as a NEED or a WANT:\n(a) Monthly rent: $850\n(b) Spotify Premium subscription: $11.99/month\n(c) Groceries for the week: $95\n(d) New gaming headset: $79.99\n(e) Car insurance payment: $145/month",
+      "answer": "(a) NEED - shelter is required for survival. (b) WANT - music streaming is entertainment, not essential. (c) NEED - food is required for survival. (d) WANT - a gaming headset is entertainment/luxury. (e) NEED - car insurance is legally required and protects against financial loss.",
+      "skill": "cm-wants-vs-needs",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cb-11",
+      "question": "Alexis buys a $5.75 iced coffee every weekday morning before school. She says it is just a small daily treat. How much does she spend on iced coffee in one year? (Assume 52 weeks, 5 days per week.) Is this a need or a want?",
+      "answer": "$1,495.00 per year. Weekly cost = $5.75 x 5 = $28.75. Annual cost = $28.75 x 52 = $1,495.00. This is a WANT. Coffee is not essential, and even if she argues caffeine is necessary, she could make coffee at home for a fraction of the cost. Totaling small recurring wants reveals their true annual impact.",
+      "skill": "cm-wants-vs-needs",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cb-12",
+      "question": "Jordan takes home $2,400 per month. His monthly expenses are: rent $725, groceries $280, car payment $310, car insurance $135, phone bill $85, streaming services $32, eating out $190, gym membership $45, clothing $60. Separate his expenses into needs and wants, then find what percentage of his take-home pay goes to wants. Round to the nearest whole percent.",
+      "answer": "Needs: rent ($725) + groceries ($280) + car payment ($310) + car insurance ($135) + phone bill ($85) = $1,535. Wants: streaming ($32) + eating out ($190) + gym ($45) + clothing ($60) = $327. Percentage to wants = ($327 / $2,400) x 100 = 13.625%, which rounds to 14%. Note: phone bill is categorized as a need because basic communication is essential for work and safety.",
+      "skill": "cm-wants-vs-needs",
+      "difficulty": 3,
+      "points": 5
+    }
+  ],
+
+  "answerKeys": {
+    "cb-1": "$2,000",
+    "cb-2": "$87.00",
+    "cb-3": "Hourly job by $2,000",
+    "cb-4": "$1,520.00",
+    "cb-5": "$187.43 (Social Security + Medicare)",
+    "cb-6": "25%",
+    "cb-7": "Overdraft; checking goes to -$70.00",
+    "cb-8": "Debit = your money; Credit = borrowed money",
+    "cb-9": "A = checking, B = savings; $127.50 interest",
+    "cb-10": "N, W, N, W, N",
+    "cb-11": "$1,495 per year; want",
+    "cb-12": "14% of take-home pay goes to wants"
+  }
+}

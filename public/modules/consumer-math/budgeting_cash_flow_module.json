@@ -1,0 +1,387 @@
+{
+  "moduleId": "budgeting_cash_flow",
+  "course": "Consumer Math",
+  "unit": 1,
+  "title": "Budgeting & Cash Flow",
+  "weeks": "2-3",
+  "estimatedDuration": 35,
+  "description": "Learn to build and manage a personal budget using real-world income and expense figures. Classify expenses as fixed or variable, apply the 50/30/20 guideline, construct monthly cash-flow tables, plan sinking funds for irregular expenses, and make informed trade-off decisions when a budget needs adjusting.",
+
+  "skills": [
+    "cm-budget-categories",
+    "cm-cash-flow-tables",
+    "cm-irregular-expenses",
+    "cm-budget-tradeoffs"
+  ],
+
+  "standardsAlignment": [
+    "Financial Literacy Standard 2",
+    "7.EE.3",
+    "MP.1",
+    "MP.4"
+  ],
+
+  "goals": [
+    "Classify personal expenses as fixed or variable and organize them into needs, wants, and savings categories",
+    "Apply the 50/30/20 guideline to determine target spending amounts for a given net income",
+    "Build a monthly cash-flow table and calculate whether a budget produces a surplus or deficit",
+    "Create sinking-fund plans to prepare for irregular and annual expenses",
+    "Evaluate budget trade-offs and justify which expenses to cut, reduce, or keep"
+  ],
+
+  "instructionalStrategy": [
+    "Ground every concept in realistic dollar amounts and relatable scenarios — a young adult renting an apartment, paying for a car, buying groceries — so students see budgeting as personally relevant.",
+    "Use the 50/30/20 guideline as a starting framework, then show students how to adjust it when real-life numbers don't fit neatly into percentages.",
+    "Present cash-flow tables as simple subtraction problems (income minus expenses) so students who are anxious about 'finance' see they already have the math skills.",
+    "Require written justification on trade-off problems to build financial reasoning, not just arithmetic.",
+    "Scaffold from classification (labeling expenses) to computation (cash-flow tables) to analysis (trade-offs and sinking funds) so complexity increases gradually."
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "cm-budget-categories",
+      "title": "Fixed vs. Variable Expenses and the 50/30/20 Guideline",
+      "text": "A budget is a plan for how you'll spend your money each month. The first step is understanding what kinds of expenses you have.\n\n**Fixed expenses** stay the same amount every month. Examples: rent ($1,050/month), car payment ($275/month), car insurance ($150/month). You can predict these exactly.\n\n**Variable expenses** change from month to month. Examples: groceries ($250-$350), gas ($60-$100), electricity ($80-$160 depending on season). You estimate these based on past months.\n\n**The 50/30/20 Guideline** is a simple framework for dividing your after-tax (net) income:\n- **50% — Needs**: Housing, utilities, groceries, insurance, minimum debt payments, transportation\n- **30% — Wants**: Dining out, streaming, entertainment, hobbies, gym, shopping\n- **20% — Savings & Debt**: Emergency fund, retirement, extra debt payments, sinking funds\n\nFor someone earning $2,800/month net, that means:\n- Needs: up to $1,400\n- Wants: up to $840\n- Savings: at least $560\n\nThis is a guideline, not a rigid rule. In high-cost areas, needs might take 60%. The point is to be intentional about every dollar.",
+      "initialPrompt": "Think about expenses you or your family pay each month. Can you name two that are fixed (same amount every month) and two that are variable (change month to month)?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "cm-budget-categories",
+      "title": "Classifying Expenses and Applying 50/30/20 — Worked Examples",
+      "examples": [
+        {
+          "problem": "Classify each expense as fixed (F) or variable (V):\n(a) Rent: $1,050/month\n(b) Groceries: $280 this month\n(c) Car insurance: $150/month\n(d) Electric bill: $95 this month\n(e) Spotify subscription: $11.99/month",
+          "solution": "(a) Rent — Fixed. The lease sets the same amount every month.\n(b) Groceries — Variable. Spending changes based on what you buy.\n(c) Car insurance — Fixed. Premium is the same each billing cycle.\n(d) Electric bill — Variable. Usage changes with the season.\n(e) Spotify — Fixed. Subscription price is locked in.\n\nKey distinction: If the dollar amount is identical month after month, it's fixed. If it fluctuates, it's variable."
+        },
+        {
+          "problem": "Marcus earns $2,800/month after taxes. Using the 50/30/20 guideline, calculate his target amounts for needs, wants, and savings.",
+          "solution": "Needs (50%): $2,800 x 0.50 = $1,400\nWants (30%): $2,800 x 0.30 = $840\nSavings (20%): $2,800 x 0.20 = $560\n\nCheck: $1,400 + $840 + $560 = $2,800\n\nMarcus should aim to keep essential expenses at or below $1,400, discretionary spending at or below $840, and put at least $560 toward savings and debt repayment."
+        },
+        {
+          "problem": "Priya's monthly expenses are: rent $975, utilities $135, groceries $310, car payment $260, car insurance $140, gas $90, dining out $180, streaming services $30, gym $45, clothing $75, emergency fund $200, retirement contribution $150. Categorize each as a need, want, or savings, then check against 50/30/20 for her $3,200/month income.",
+          "solution": "Needs: rent ($975) + utilities ($135) + groceries ($310) + car payment ($260) + car insurance ($140) + gas ($90) = $1,910\nWants: dining out ($180) + streaming ($30) + gym ($45) + clothing ($75) = $330\nSavings: emergency fund ($200) + retirement ($150) = $350\n\n50/30/20 targets on $3,200:\n- Needs: $3,200 x 0.50 = $1,600. Actual $1,910 (59.7%) — over by $310\n- Wants: $3,200 x 0.30 = $960. Actual $330 (10.3%) — under by $630\n- Savings: $3,200 x 0.20 = $640. Actual $350 (10.9%) — under by $290\n\nPriya's needs are high relative to the guideline. She's underspending on wants but also under-saving. She might look for ways to reduce needs (cheaper housing, lower car payment) or accept that her cost of living requires a modified split."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "cm-budget-categories",
+      "title": "Classifying Expenses — Guided Practice",
+      "problems": [
+        {
+          "id": "bcf-1",
+          "question": "Classify each expense as fixed or variable:\n(a) Cell phone plan: $65/month\n(b) Gasoline: $85 this month\n(c) Renter's insurance: $25/month\n(d) Groceries: $320 this month\n(e) Netflix: $15.49/month\n(f) Electricity: $110 this month",
+          "hints": [
+            "Ask yourself: does the bill arrive for the exact same amount every month, or does it change?",
+            "Subscriptions with a set monthly price are fixed. Bills that depend on usage or consumption are variable."
+          ],
+          "answer": "(a) Fixed (b) Variable (c) Fixed (d) Variable (e) Fixed (f) Variable. Cell phone plan, renter's insurance, and Netflix are locked-in amounts. Gas, groceries, and electricity fluctuate based on usage."
+        },
+        {
+          "id": "bcf-2",
+          "question": "Deshawn earns $3,400/month net. Calculate his 50/30/20 target amounts. Then determine: if his needs total $1,850, is he within the guideline for needs?",
+          "hints": [
+            "Multiply $3,400 by 0.50, 0.30, and 0.20 to find each target.",
+            "Compare his actual needs ($1,850) to his needs target. Is $1,850 less than or greater than 50% of $3,400?"
+          ],
+          "answer": "Needs: $3,400 x 0.50 = $1,700. Wants: $3,400 x 0.30 = $1,020. Savings: $3,400 x 0.20 = $680. His needs of $1,850 exceed the $1,700 target by $150, so he is over the guideline for needs."
+        },
+        {
+          "id": "bcf-3",
+          "question": "Sort these expenses into needs, wants, and savings: rent ($1,200), groceries ($290), gym membership ($40), retirement savings ($250), streaming services ($28), car insurance ($155), dining out ($110), emergency fund ($150), electric bill ($105), new shoes ($60).",
+          "hints": [
+            "Needs are things you must pay to maintain basic living: housing, food at home, utilities, insurance, transportation.",
+            "Wants are things you enjoy but could live without: dining out, entertainment, non-essential shopping.",
+            "Savings includes money you set aside for future use: emergency fund, retirement, debt payoff."
+          ],
+          "answer": "Needs: rent ($1,200) + groceries ($290) + car insurance ($155) + electric bill ($105) = $1,750. Wants: gym ($40) + streaming ($28) + dining out ($110) + new shoes ($60) = $238. Savings: retirement ($250) + emergency fund ($150) = $400."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "cm-budget-categories",
+      "title": "Budget Categories — Independent Practice",
+      "problems": [
+        {
+          "id": "bcf-4",
+          "question": "Anika takes home $2,600/month. Her expenses are: rent $925, utilities $95, groceries $260, bus pass $55, phone $65, dining out $150, concert tickets $80, clothing $70, student loan payment $220, savings account $200, retirement $100. (a) Classify each expense as a need, want, or savings. (b) Total each category. (c) Calculate the 50/30/20 targets for $2,600 and state whether each category is over or under the guideline.",
+          "answer": "Needs: rent ($925) + utilities ($95) + groceries ($260) + bus pass ($55) + phone ($65) + student loan ($220) = $1,620. Wants: dining out ($150) + concerts ($80) + clothing ($70) = $300. Savings: savings account ($200) + retirement ($100) = $300. Targets — Needs: $1,300 (over by $320), Wants: $780 (under by $480), Savings: $520 (under by $220).",
+          "hints": ["Classify each expense first, then add up each group and compare to 50/30/20 targets on $2,600."]
+        },
+        {
+          "id": "bcf-5",
+          "question": "Two roommates split a $2,200 apartment. Roommate A earns $3,000/month net; Roommate B earns $2,400/month net. If they split rent equally at $1,100 each, what percentage of each person's income goes to rent? Which roommate is closer to the general recommendation that housing should be around 30% of income? Suggest a fairer income-proportional split.",
+          "answer": "Roommate A: $1,100 / $3,000 = 36.7%. Roommate B: $1,100 / $2,400 = 45.8%. Roommate A is closer to 30%. A fairer income-proportional split: total income = $5,400. A's share = ($3,000 / $5,400) x $2,200 = $1,222. B's share = ($2,400 / $5,400) x $2,200 = $978. This puts both roommates at approximately 40.7% of income toward rent — equal proportional burden.",
+          "hints": ["Divide each person's rent by their income to get a percentage. For a proportional split, each person pays (their income / total income) times the total rent."]
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "cm-cash-flow-tables",
+      "title": "Monthly Cash-Flow Tables",
+      "text": "A cash-flow table is a simple tool that tracks money in (income) minus money out (expenses) to show whether you have a surplus or deficit at the end of the month.\n\n**Structure:**\nINCOME\n  Paycheck (or paychecks)      $____\n  Side income (if any)         $____\n  Total Income                 $____\n\nEXPENSES\n  Rent                         $____\n  Utilities                    $____\n  Groceries                    $____\n  ... (all expense line items)\n  Total Expenses               $____\n\nNET CASH FLOW = Total Income - Total Expenses\n\n**Surplus**: Net cash flow is positive — you have money left over. This can go to savings, investments, or paying down debt faster.\n**Deficit**: Net cash flow is negative — you're spending more than you earn. This is unsustainable and requires either increasing income or cutting expenses.\n**Break-even**: Net cash flow is $0 — every dollar is accounted for, but nothing is left for unexpected costs.\n\nA healthy budget typically aims for a positive cash flow of at least 10-20% of income to cover savings goals and unexpected expenses.",
+      "initialPrompt": "If someone earns $2,800 per month and their total expenses add up to $2,650, what is their net cash flow? Is that a surplus or deficit?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "cm-cash-flow-tables",
+      "title": "Building Cash-Flow Tables — Worked Examples",
+      "examples": [
+        {
+          "problem": "Jordan earns $2,800/month after taxes. His monthly expenses are: rent $1,050, electricity $95, water $40, internet $60, groceries $310, car payment $275, car insurance $150, gas $80, phone $65, dining out $120, streaming $25, gym $40, emergency savings $200. Build a cash-flow table and find his net cash flow.",
+          "solution": "INCOME\n  Net paycheck:      $2,800\n  Total Income:      $2,800\n\nEXPENSES\n  Rent:              $1,050\n  Electricity:          $95\n  Water:                $40\n  Internet:             $60\n  Groceries:           $310\n  Car payment:         $275\n  Car insurance:       $150\n  Gas:                  $80\n  Phone:                $65\n  Dining out:          $120\n  Streaming:            $25\n  Gym:                  $40\n  Emergency savings:   $200\n  Total Expenses:    $2,510\n\nNET CASH FLOW = $2,800 - $2,510 = $290 surplus\n\nJordan has $290 left over each month. He could direct this toward retirement savings, a sinking fund, or paying extra on his car loan."
+        },
+        {
+          "problem": "Mia and her partner have combined income of $4,500/month. Their shared expenses: mortgage $1,450, property tax escrow $220, homeowner's insurance $110, utilities $185, groceries $420, car payment $310, car insurance (both cars) $240, gas (both cars) $160, phones (2 lines) $120, daycare $650, streaming $40, dining out $80, clothing $60, savings $200. Build the cash-flow table.",
+          "solution": "INCOME\n  Combined net pay:  $4,500\n  Total Income:      $4,500\n\nEXPENSES\n  Mortgage:          $1,450\n  Property tax:        $220\n  Insurance (home):    $110\n  Utilities:           $185\n  Groceries:           $420\n  Car payment:         $310\n  Car insurance:       $240\n  Gas:                 $160\n  Phones:              $120\n  Daycare:             $650\n  Streaming:            $40\n  Dining out:           $80\n  Clothing:             $60\n  Savings:             $200\n  Total Expenses:    $4,245\n\nNET CASH FLOW = $4,500 - $4,245 = $255 surplus\n\nWith only $255 remaining, they are in positive territory but just barely. A single unexpected car repair or medical bill could push them into deficit. Building an emergency fund through the $200/month savings line is critical."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "cm-cash-flow-tables",
+      "title": "Cash-Flow Tables — Guided Practice",
+      "problems": [
+        {
+          "id": "bcf-6",
+          "question": "Tanya earns $2,400/month net. Her expenses: rent $875, electricity $80, water/trash $35, internet $55, groceries $270, bus pass $65, phone $50, renter's insurance $20, dining out $90, streaming $28, gym $35, savings $150, student loan $180. Build a cash-flow table and determine her net cash flow.",
+          "hints": [
+            "List each expense with its amount and add them all up for total expenses.",
+            "Net cash flow = Total Income - Total Expenses. If the result is positive, it's a surplus."
+          ],
+          "answer": "Total Income: $2,400. Total Expenses: rent ($875) + electricity ($80) + water/trash ($35) + internet ($55) + groceries ($270) + bus pass ($65) + phone ($50) + renter's insurance ($20) + dining out ($90) + streaming ($28) + gym ($35) + savings ($150) + student loan ($180) = $1,933. Net Cash Flow: $2,400 - $1,933 = $467 surplus."
+        },
+        {
+          "id": "bcf-7",
+          "question": "Carlos brings home $3,100/month. His expenses this month: rent $1,100, utilities $145, groceries $340, car payment $285, car insurance $165, gas $110, phone $70, dining out $200, entertainment $95, clothing $120, credit card minimum $75, savings $200. (a) What is his net cash flow? (b) If he wants to increase savings to $400/month, how much does he need to cut from other expenses?",
+          "hints": [
+            "First build the table: add all expenses to find the total, then subtract from income.",
+            "For part (b): increasing savings by $200 means he needs $200 more. If his current cash flow is positive, he can use some of that surplus. If the surplus isn't enough, he'll need to cut elsewhere."
+          ],
+          "answer": "(a) Total Expenses: $1,100 + $145 + $340 + $285 + $165 + $110 + $70 + $200 + $95 + $120 + $75 + $200 = $2,905. Net Cash Flow: $3,100 - $2,905 = $195 surplus. (b) He wants $200 more in savings. Current surplus is $195, so he still needs to cut $200 - $195 = $5 from other expenses to break even. Realistically, cutting $50-$100 from dining out or entertainment would provide a comfortable cushion."
+        },
+        {
+          "id": "bcf-8",
+          "question": "Keisha's cash-flow table shows: Total Income $2,750, Total Expenses $2,920. (a) What is her net cash flow? (b) Is this sustainable long-term? (c) If she needs to eliminate the deficit without changing her income, how much must she reduce expenses by at minimum?",
+          "hints": [
+            "Subtract: income minus expenses. A negative result means deficit.",
+            "To break even, total expenses must equal total income. To create a surplus, expenses must be even lower."
+          ],
+          "answer": "(a) Net Cash Flow: $2,750 - $2,920 = -$170 (deficit). (b) No, a monthly deficit means spending more than earned, which leads to increasing debt over time. (c) She must cut at least $170 from expenses to break even. Cutting $200 or more would create a small surplus for savings."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "cm-cash-flow-tables",
+      "title": "Cash-Flow Tables — Independent Practice",
+      "problems": [
+        {
+          "id": "bcf-9",
+          "question": "Raj works two part-time jobs. Job 1 pays $1,600/month net and Job 2 pays $900/month net. His expenses: rent $725 (splits with a roommate), utilities $70, groceries $240, car insurance $130, gas $95, phone $55, student loan $210, dining out $85, gaming subscription $15, gym $30, savings $200. Build a complete cash-flow table with total income from both jobs and find his net cash flow.",
+          "answer": "Total Income: $1,600 + $900 = $2,500. Total Expenses: $725 + $70 + $240 + $130 + $95 + $55 + $210 + $85 + $15 + $30 + $200 = $1,855. Net Cash Flow: $2,500 - $1,855 = $645 surplus.",
+          "hints": ["Remember to combine both job incomes for total income before subtracting expenses."]
+        },
+        {
+          "id": "bcf-10",
+          "question": "Fill in the missing values (shown as '?') in Brianna's cash-flow table.\n\nINCOME\n  Net paycheck:       $3,200\n  Tutoring side job:      $?\n  Total Income:       $3,550\n\nEXPENSES\n  Rent:               $1,100\n  Utilities:            $140\n  Groceries:            $350\n  Car payment:            $?\n  Car insurance:        $160\n  Gas:                   $90\n  Phone:                 $70\n  Dining out:           $130\n  Gym:                   $45\n  Savings:              $300\n  Total Expenses:     $2,650\n\nNet Cash Flow:          $?",
+          "answer": "Tutoring income: $3,550 - $3,200 = $350. Known expenses (excluding car payment): $1,100 + $140 + $350 + $160 + $90 + $70 + $130 + $45 + $300 = $2,385. Car payment: $2,650 - $2,385 = $265. Net Cash Flow: $3,550 - $2,650 = $900 surplus.",
+          "hints": ["Subtract the known income from total income to find the side job amount. Subtract all known expenses from total expenses to find the car payment. Then subtract total expenses from total income for net cash flow."]
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "cm-irregular-expenses",
+      "title": "Sinking Funds for Irregular Expenses",
+      "text": "Not all expenses happen every month. Some come quarterly, annually, or unpredictably:\n\n- Car registration: $150/year\n- Holiday gifts: ~$500 in November/December\n- Car maintenance/repairs: ~$600-$1,200/year\n- Annual subscriptions: Amazon Prime $139/year, software $120/year\n- Back-to-school supplies: $200-$400 in August\n- Vacation: $1,500 once a year\n\nIf you don't plan for these, they hit your budget like emergencies — even though they're predictable.\n\nA **sinking fund** solves this. You divide the expected cost by the number of months until the expense is due and save that amount every month. When the expense arrives, the money is already waiting.\n\n**Formula:** Monthly sinking fund amount = Total expected cost / Number of months until expense\n\nExample: Holiday gifts of $600 in December. If you start saving in January, that's 12 months: $600 / 12 = $50/month. By December, you have $600 ready.\n\nSinking funds turn surprise expenses into planned line items in your budget. They prevent the cycle of going into debt for costs you could have predicted.",
+      "initialPrompt": "Can you think of an expense you or your family pays only once or twice a year? How much would you need to save each month to be ready for it?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "cm-irregular-expenses",
+      "title": "Sinking Fund Calculations — Worked Examples",
+      "examples": [
+        {
+          "problem": "Taylor has these non-monthly expenses:\n- Car registration: $180/year (due in March)\n- Car maintenance: $900/year (estimate)\n- Holiday gifts: $600 (November-December)\n- Amazon Prime: $139/year (due in July)\nCalculate the total monthly sinking fund contribution needed if she saves evenly over 12 months.",
+          "solution": "Monthly amount for each:\n  Car registration: $180 / 12 = $15.00/month\n  Car maintenance: $900 / 12 = $75.00/month\n  Holiday gifts: $600 / 12 = $50.00/month\n  Amazon Prime: $139 / 12 = $11.58/month\n\nTotal monthly sinking fund: $15.00 + $75.00 + $50.00 + $11.58 = $151.58/month\n\nBy budgeting $151.58 every month, Taylor avoids scrambling when any of these expenses hit. The car maintenance fund acts as a rolling reserve — she may not spend exactly $900, but having it set aside means a $400 brake job doesn't wreck her monthly budget."
+        },
+        {
+          "problem": "Sam just started a new job in September. He knows he'll need $720 for holiday gifts and travel by December. He has 4 months (September through December) to save. He also wants to save $240 for his car insurance premium due in February (6 months away). How much per month should he set aside for each sinking fund?",
+          "solution": "Holiday fund: $720 / 4 months = $180/month (September through December)\nCar insurance fund: $240 / 6 months = $40/month (September through February)\n\nTotal sinking fund per month: $180 + $40 = $220/month\n\nNote: The holiday fund requires a larger monthly amount because Sam is starting late. If he had started in January, it would be $720 / 12 = $60/month. Starting early gives you smaller, more manageable monthly amounts."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "cm-irregular-expenses",
+      "title": "Sinking Funds — Guided Practice",
+      "problems": [
+        {
+          "id": "bcf-11",
+          "question": "Maya has these annual or irregular expenses: renter's insurance $216/year, car repairs estimate $750/year, birthday gifts (for 5 people) $250/year, vet bills estimate $400/year. Calculate her monthly sinking fund for each, then find the total monthly contribution.",
+          "hints": [
+            "Divide each annual amount by 12 to get the monthly savings amount.",
+            "Add all four monthly amounts together for the total."
+          ],
+          "answer": "Renter's insurance: $216 / 12 = $18.00/month. Car repairs: $750 / 12 = $62.50/month. Birthday gifts: $250 / 12 = $20.83/month. Vet bills: $400 / 12 = $33.33/month. Total: $18.00 + $62.50 + $20.83 + $33.33 = $134.66/month."
+        },
+        {
+          "id": "bcf-12",
+          "question": "Derek pays his car insurance every 6 months at $540. He also has an annual gym membership renewal of $360 (due in May). It is currently January. (a) How much per month should he save for the next car insurance payment (due in July, 6 months away)? (b) How much per month for the gym renewal (due in May, 4 months away)? (c) What is his total monthly sinking fund for just these two expenses?",
+          "hints": [
+            "For each expense, divide the cost by the number of months until it's due.",
+            "Car insurance: $540 over 6 months. Gym: $360 over 4 months."
+          ],
+          "answer": "(a) Car insurance: $540 / 6 = $90/month. (b) Gym renewal: $360 / 4 = $90/month. (c) Total: $90 + $90 = $180/month."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "cm-irregular-expenses",
+      "title": "Irregular Expenses — Independent Practice",
+      "problems": [
+        {
+          "id": "bcf-13",
+          "question": "Lisa earns $2,800/month. Her regular monthly expenses total $2,350. She identifies these irregular expenses: car registration $195/year, holiday gifts $450/year, annual dentist visits $280/year, car tires replacement $500 (estimated every 2 years), back-to-school supplies for her child $320/year. (a) Calculate the monthly sinking fund for each. (b) What is the total monthly sinking fund? (c) After adding the sinking fund to her regular expenses, what is her remaining monthly cash flow?",
+          "answer": "(a) Car registration: $195 / 12 = $16.25. Holiday gifts: $450 / 12 = $37.50. Dentist: $280 / 12 = $23.33. Car tires: $500 / 24 = $20.83. School supplies: $320 / 12 = $26.67. (b) Total sinking fund: $16.25 + $37.50 + $23.33 + $20.83 + $26.67 = $124.58. (c) Remaining cash flow: $2,800 - $2,350 - $124.58 = $325.42 surplus.",
+          "hints": ["For the tires, since they are replaced every 2 years, divide by 24 months instead of 12."]
+        },
+        {
+          "id": "bcf-14",
+          "question": "Marcus has $325 per month available after covering all regular expenses. He wants to create sinking funds for: vacation $1,800/year, car maintenance $720/year, holiday gifts $540/year, and annual software subscriptions $180/year. (a) Calculate the total monthly sinking fund needed. (b) Can he cover all four sinking funds with his $325 surplus? (c) If not, which fund would you reduce and why? If yes, what should he do with the remaining surplus?",
+          "answer": "(a) Vacation: $1,800 / 12 = $150. Car maintenance: $720 / 12 = $60. Holiday gifts: $540 / 12 = $45. Software: $180 / 12 = $15. Total: $150 + $60 + $45 + $15 = $270. (b) Yes, $325 > $270. He can fund all four and has $325 - $270 = $55 remaining. (c) All sinking funds fit within his surplus. The extra $55 could go toward an emergency fund or be added to savings.",
+          "hints": ["Divide each annual cost by 12, then add the results and compare to $325."]
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "cm-budget-tradeoffs",
+      "title": "Budget Trade-Offs and Decision-Making",
+      "text": "When a budget shows a deficit — or when you want to save more — you need to make trade-offs. A trade-off means choosing to give up one thing to gain something else.\n\nNot all expenses are equal when it comes to cutting:\n\n**Hard to cut (needs):** Rent, utilities, insurance, minimum debt payments. These are contractual or essential. Reducing them usually requires a major life change like moving to a cheaper apartment or refinancing a loan.\n\n**Easier to cut (variable wants):** Dining out, entertainment, subscriptions, shopping. These can be reduced immediately with a change in behavior.\n\n**Reducible but not eliminable:** Groceries (you can switch to cheaper brands or meal plan, but you still need food), gas (you can combine trips but still need to get to work).\n\nWhen deciding what to cut, consider:\n1. **Impact**: How much will this save per month?\n2. **Difficulty**: How hard is it to actually follow through?\n3. **Duration**: Is this a temporary cut or a permanent change?\n4. **Quality of life**: Will this cut make you miserable, or is it barely noticeable?\n\nThe best budget cuts are high-impact and low-difficulty. Canceling a $15 streaming service you rarely watch saves $180/year with zero effort. Cutting groceries from $350 to $200 saves more ($1,800/year) but requires significant meal planning and discipline.",
+      "initialPrompt": "If you needed to cut $200 from your monthly spending, what is the first thing you would look at reducing? Why?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "cm-budget-tradeoffs",
+      "title": "Budget Trade-Off Analysis — Worked Examples",
+      "examples": [
+        {
+          "problem": "Aaliyah has a $170/month deficit. Her discretionary expenses are: dining out $220, streaming services $45 (3 subscriptions), gym $50, clothing $100, entertainment $80. She wants to eliminate the deficit while keeping at least one streaming service. Show two different plans that each eliminate the deficit, and explain the trade-offs.",
+          "solution": "Plan A — Cut dining and subscriptions:\n  Dining out: $220 -> $100 (saves $120)\n  Streaming: $45 -> $15 (keep 1 service, saves $30)\n  Clothing: $100 -> $75 (saves $25)\n  Total saved: $175 — eliminates the $170 deficit with $5 to spare.\n  Trade-off: Major reduction in eating out (about 1 meal out per week instead of 4-5). Loses 2 streaming services.\n\nPlan B — Spread cuts across all categories:\n  Dining out: $220 -> $180 (saves $40)\n  Streaming: $45 -> $30 (cut 1 service, saves $15)\n  Gym: $50 -> $25 (switch to cheaper gym or home workouts, saves $25)\n  Clothing: $100 -> $50 (saves $50)\n  Entertainment: $80 -> $40 (saves $40)\n  Total saved: $170 — exactly eliminates the deficit.\n  Trade-off: Smaller cuts everywhere feel less painful, but every category takes a hit.\n\nPlan A is simpler to execute (fewer changes). Plan B spreads the sacrifice but requires discipline in more areas."
+        },
+        {
+          "problem": "Dante has $2,800/month income and $2,800 in expenses (breaking even). He wants to save $300/month for an emergency fund. His current variable expenses: groceries $340, dining out $160, gas $100, entertainment $75, clothing $65, subscriptions $50, personal care $40. Identify $300 in cuts and justify each choice.",
+          "solution": "Recommended cuts:\n  Dining out: $160 -> $60 (saves $100)\n  Justification: Largest variable want. Cutting to $60 still allows about 2 restaurant meals per month.\n\n  Clothing: $65 -> $20 (saves $45)\n  Justification: Clothing purchases can be paused most months. Buy only when necessary.\n\n  Entertainment: $75 -> $30 (saves $45)\n  Justification: Switch to free or low-cost activities like parks, library events, and free community programs.\n\n  Subscriptions: $50 -> $15 (saves $35)\n  Justification: Audit all subscriptions. Keep one essential service, cancel the rest.\n\n  Groceries: $340 -> $265 (saves $75)\n  Justification: Meal plan, use store brands, reduce food waste. Groceries are a need, so cut less aggressively.\n\n  Total saved: $100 + $45 + $45 + $35 + $75 = $300\n\n  Not cut: Gas ($100) — needed for work commute. Personal care ($40) — already minimal.\n  Approach: Largest cuts come from wants. Groceries are reduced modestly since food is a need."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "cm-budget-tradeoffs",
+      "title": "Budget Trade-Offs — Guided Practice",
+      "problems": [
+        {
+          "id": "bcf-15",
+          "question": "Nina's budget shows a $95/month deficit. Her discretionary expenses: dining out $135, coffee shops $60, streaming services $40 (three services at $15, $14, and $11), gym $55, entertainment $70, personal shopping $50. Identify at least $95 in cuts. For each cut, explain why you chose it and what Nina gives up.",
+          "hints": [
+            "Start with the easiest cuts — expenses that have the least impact on daily life.",
+            "Coffee shops and multiple streaming services are common places to find savings without major lifestyle changes.",
+            "You don't have to eliminate a category entirely. Reducing is also a valid option."
+          ],
+          "answer": "Sample solution: Cut coffee shops from $60 to $20 (saves $40) — make coffee at home most days, allow one coffee shop visit per week. Cancel one streaming service at $14 (saves $14). Reduce dining out from $135 to $90 (saves $45). Total saved: $40 + $14 + $45 = $99, which exceeds the $95 deficit by $4. Nina gives up daily coffee shop visits and about one restaurant meal per month, but keeps her gym, entertainment, and two streaming services."
+        },
+        {
+          "id": "bcf-16",
+          "question": "Leo earns $2,600/month and wants to free up $400/month for extra student loan payments above his $180 minimum. His current budget: rent $950, utilities $110, groceries $320, car insurance $140, gas $85, phone $65, dining out $180, streaming $30, gym $45, entertainment $100, clothing $75, savings $150. His current cash flow is $2,600 - $2,250 = $350 surplus. (a) How much more does he need beyond his current surplus? (b) Propose cuts totaling that amount and justify each one.",
+          "hints": [
+            "He wants $400 for extra loan payments but only has $350 surplus. Find the gap.",
+            "Look at wants categories — dining, streaming, gym, entertainment, clothing — for the remaining amount."
+          ],
+          "answer": "(a) He needs $400 - $350 = $50 more per month. (b) Reduce dining out from $180 to $130 (saves $50). Justification: Cutting one dinner out per month is manageable and closes the gap exactly. Alternative approach: reduce entertainment from $100 to $50 instead, but dining out is typically easier to control week by week."
+        },
+        {
+          "id": "bcf-17",
+          "question": "Jayla earns $2,400/month. She has two options:\n\nOption A: Stay in current apartment (her share: $800/month rent), but cut dining out from $200 to $80 and cancel gym ($45).\n\nOption B: Move to a cheaper apartment (her share: $625/month rent), keep dining out at $200 and gym at $45, but pay a one-time moving cost of $900.\n\n(a) How much does each option save per month compared to her current spending?\n(b) How many months until Option B's total savings (minus the moving cost) exceed Option A's total savings?\n(c) Which would you recommend and why?",
+          "hints": [
+            "Option A monthly savings: reduction in dining + canceled gym. Option B monthly savings: reduction in rent only.",
+            "For part (b), set up the equation: months where Option B cumulative savings surpass Option A. B's total at month m = ($175 x m) - $900. A's total at month m = $165 x m.",
+            "Consider both financial and quality-of-life factors in your recommendation."
+          ],
+          "answer": "(a) Option A saves: ($200 - $80) + $45 = $120 + $45 = $165/month. Option B saves: $800 - $625 = $175/month. (b) After m months: Option A total = $165m. Option B total = $175m - $900. Set equal: $175m - $900 = $165m. Solving: $10m = $900, so m = 90 months. Option B overtakes Option A after 90 months (7.5 years). (c) Option A is better in the short and medium term — immediate savings with no upfront cost, and it takes 7.5 years for Option B to recoup the moving expense. Unless Jayla plans to stay in the cheaper apartment for many years, Option A is the more practical choice."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "cm-budget-tradeoffs",
+      "title": "Budget Trade-Offs — Independent Practice",
+      "problems": [
+        {
+          "id": "bcf-18",
+          "question": "Omar earns $3,100/month. His expenses: rent $1,150, utilities $130, groceries $380, car payment $290, car insurance $170, gas $100, phone $75, dining out $195, streaming $35, gym $50, entertainment $80, clothing $60, savings $200. He wants to increase savings to $500/month. (a) What is his current net cash flow? (b) How much additional money must he find? (c) Propose a plan to reach $500/month in savings. Justify each cut.",
+          "answer": "(a) Total expenses: $1,150 + $130 + $380 + $290 + $170 + $100 + $75 + $195 + $35 + $50 + $80 + $60 + $200 = $2,915. Net cash flow: $3,100 - $2,915 = $185 surplus. (b) He needs $300 more for savings ($500 - $200 = $300). Current surplus provides $185, so he needs to cut $300 - $185 = $115 from expenses. (c) Reduce dining out from $195 to $120 (saves $75) — still allows weekly meals out. Reduce entertainment from $80 to $40 (saves $40) — switch to free activities some weekends. Total cuts: $75 + $40 = $115. Combined with the $185 surplus, he now has $300 extra to bring savings to $500/month.",
+          "hints": ["Find total expenses first, then calculate current surplus, then determine how much more is needed beyond the surplus."]
+        },
+        {
+          "id": "bcf-19",
+          "question": "Sophie and her partner disagree about where to cut their budget. They have a $250/month deficit. Sophie wants to cancel cable ($95), stop dining out entirely (currently $260), and keep the gym memberships ($80 total). Her partner wants to keep cable and dining out but cancel both gyms, reduce groceries from $450 to $350, and cancel two subscriptions ($18 and $12). (a) Calculate total savings for each plan. (b) Does each plan eliminate the $250 deficit? (c) Write 2-3 sentences arguing for the plan you think is more realistic and sustainable.",
+          "answer": "(a) Sophie's plan: $95 (cable) + $260 (dining out) = $355 saved. Partner's plan: $80 (gyms) + $100 (groceries) + $18 + $12 = $210 saved. (b) Sophie's plan saves $355, which covers the $250 deficit with $105 to spare — yes. Partner's plan saves $210, which does not cover the $250 deficit — no, still $40 short. (c) Sophie's plan is the only one that fully eliminates the deficit. However, cutting dining out to $0 is extreme and hard to sustain long-term. A practical compromise: cancel cable ($95), reduce dining out to $100 ($160 saved), and cancel one subscription ($18). That totals $273 in savings, covers the deficit, and remains realistic for both partners.",
+          "hints": ["Calculate each plan's total savings separately, then compare each to the $250 deficit."]
+        },
+        {
+          "id": "bcf-20",
+          "question": "Nadia received a $200/month raise, bringing her income to $3,000/month. She currently has $0 in emergency savings and a $2,400 credit card balance (minimum payment $60/month, 22% APR). She is also contributing $0 to retirement. Here are three options for the extra $200:\n\nOption A: Put all $200 toward the credit card (total payment $260/month).\nOption B: Put all $200 into an emergency fund.\nOption C: Split it — $100 extra on the credit card, $50 emergency fund, $50 retirement.\n\n(a) At $260/month total payment, approximately how many months to pay off the $2,400 balance? (Ignore interest for this estimate.)\n(b) At $200/month into emergency savings, how many months to build a $1,000 starter fund?\n(c) Which option would you recommend? Provide at least two reasons for your choice.",
+          "answer": "(a) $2,400 / $260 = approximately 9.2 months, so about 10 months. (With only the $60 minimum: $2,400 / $60 = 40 months, and interest makes it far longer.) (b) $1,000 / $200 = 5 months. (c) Recommended: Option A. Reason 1: The credit card charges 22% APR — no savings account or typical investment earns close to that return, so paying off high-interest debt first gives the best financial outcome per dollar. Reason 2: Once the card is paid off in about 10 months, the full $260/month becomes available for emergency savings and retirement, accelerating both goals. A reasonable alternative case exists for Option C if Nadia has zero cushion against emergencies that would force more credit card debt.",
+          "hints": ["For part (a), simplified payoff = balance divided by monthly payment. For part (c), think about the 22% interest rate and whether any savings account earns that much."]
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "bcf-1": "(a) Fixed (b) Variable (c) Fixed (d) Variable (e) Fixed (f) Variable",
+    "bcf-2": "Needs: $1,700. Wants: $1,020. Savings: $680. Actual needs $1,850 exceed target by $150.",
+    "bcf-3": "Needs: $1,750. Wants: $238. Savings: $400.",
+    "bcf-4": "Needs: $1,620. Wants: $300. Savings: $300. Targets — Needs $1,300 (over $320), Wants $780 (under $480), Savings $520 (under $220).",
+    "bcf-5": "A: 36.7%, B: 45.8%. Proportional split: A pays $1,222, B pays $978 (both at ~40.7% of income).",
+    "bcf-6": "Total Expenses: $1,933. Net Cash Flow: $467 surplus.",
+    "bcf-7": "(a) Total Expenses: $2,905. Net Cash Flow: $195 surplus. (b) Needs to cut $5 from expenses ($200 additional savings - $195 surplus).",
+    "bcf-8": "(a) -$170 deficit. (b) Not sustainable. (c) Must cut at least $170.",
+    "bcf-9": "Total Income: $2,500. Total Expenses: $1,855. Net Cash Flow: $645 surplus.",
+    "bcf-10": "Tutoring: $350. Car payment: $265. Net Cash Flow: $900 surplus.",
+    "bcf-11": "Renters insurance: $18.00. Car repairs: $62.50. Gifts: $20.83. Vet: $33.33. Total: $134.66/month.",
+    "bcf-12": "(a) Car insurance: $90/month. (b) Gym: $90/month. (c) Total: $180/month.",
+    "bcf-13": "(a) $16.25, $37.50, $23.33, $20.83, $26.67. (b) Total: $124.58. (c) Remaining: $325.42 surplus.",
+    "bcf-14": "(a) Total: $270/month. (b) Yes, $325 > $270 with $55 remaining.",
+    "bcf-15": "Sample: coffee $60->$20 (save $40), cancel 1 stream (save $14), dining $135->$90 (save $45). Total: $99 covers $95 deficit.",
+    "bcf-16": "(a) Needs $50 more beyond $350 surplus. (b) Reduce dining out by $50.",
+    "bcf-17": "(a) A saves $165/month, B saves $175/month. (b) 90 months to break even. (c) Option A better short-term.",
+    "bcf-18": "(a) $185 surplus. (b) Must cut $115 more. (c) Dining -$75, entertainment -$40 = $115 in cuts.",
+    "bcf-19": "(a) Sophie: $355, Partner: $210. (b) Sophie's works, partner's is $40 short. (c) Sophie's eliminates deficit; compromise recommended.",
+    "bcf-20": "(a) ~10 months. (b) 5 months. (c) Option A — 22% APR makes debt payoff the highest-return use of money."
+  }
+}

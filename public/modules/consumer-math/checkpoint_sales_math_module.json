@@ -1,0 +1,157 @@
+{
+  "moduleId": "checkpoint_sales_math",
+  "course": "Consumer Math",
+  "unit": 2,
+  "title": "Checkpoint: Shopping Cart Challenge",
+  "weeks": "4",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering Unit 2 percent application skills. Students calculate discounts, compare stacked deals, compute total cost with tax and tip, and use unit pricing to find the best value. Every problem requires calculating the REAL cost.",
+
+  "skillsCovered": [
+    "cm-percent-of-number",
+    "cm-discounts-coupons",
+    "cm-tax-tip-markup",
+    "cm-unit-price-comparisons"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Percent fluency is foundational for banking, credit, and tax modules ahead. Students below threshold must build fluency before proceeding.",
+    "clusters": [
+      {
+        "skillId": "cm-percent-of-number",
+        "reteachFocus": "Multiplier method (30% off = \u00d70.70), percent increase/decrease, percent change formula"
+      },
+      {
+        "skillId": "cm-discounts-coupons",
+        "reteachFocus": "Sequential discounts applied one at a time (20% then 10% \u2260 30%), comparing dollar-off coupon vs percentage discount"
+      },
+      {
+        "skillId": "cm-tax-tip-markup",
+        "reteachFocus": "Sales tax added ON TOP (total = price \u00d7 (1 + rate)), tip on pre-tax subtotal, the 10% shortcut for mental math"
+      },
+      {
+        "skillId": "cm-unit-price-comparisons",
+        "reteachFocus": "Unit price = total price \u00f7 quantity, comparing same units, considering waste for bulk purchases"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "csm-1",
+      "question": "A jacket at Old Navy is priced at $85.00 and is on sale for 25% off. How much money do you save with the discount?",
+      "answer": "$21.25. Multiply: $85.00 \u00d7 0.25 = $21.25.",
+      "skill": "cm-percent-of-number",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "csm-2",
+      "question": "A store raised the price of a pair of wireless headphones from $60.00 to $72.00. What was the percent increase?",
+      "answer": "20%. Change = $72.00 \u2212 $60.00 = $12.00. Percent change = $12.00 \u00f7 $60.00 = 0.20 = 20%.",
+      "skill": "cm-percent-of-number",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "csm-3",
+      "question": "After a 35% off clearance sale, a pair of Nike sneakers costs $58.50. What was the original price before the discount?",
+      "answer": "$90.00. If 35% is removed, 65% remains. Original = $58.50 \u00f7 0.65 = $90.00.",
+      "skill": "cm-percent-of-number",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "csm-4",
+      "question": "A $120.00 backpack is marked 30% off. You also have a $10.00-off coupon that applies after the percent discount. What do you pay before tax?",
+      "answer": "$74.00. First apply 30% off: $120.00 \u00d7 0.70 = $84.00. Then subtract coupon: $84.00 \u2212 $10.00 = $74.00.",
+      "skill": "cm-discounts-coupons",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "csm-5",
+      "question": "A winter coat originally costs $140.00. The store is running a 20% off sale, and your loyalty card takes an extra 15% off the sale price. What do you pay before tax?",
+      "answer": "$95.20. First discount: $140.00 \u00d7 0.80 = $112.00. Second discount: $112.00 \u00d7 0.85 = $95.20. Note: 20% then 15% is NOT the same as 35% off.",
+      "skill": "cm-discounts-coupons",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "csm-6",
+      "question": "You are buying a $65.00 pair of jeans. You can use EITHER a $12.00-off coupon OR a 20%-off discount, but not both. Which option saves you more money, and how much more does it save?",
+      "answer": "The 20% discount saves $1.00 more. 20% of $65.00 = $65.00 \u00d7 0.20 = $13.00. The coupon saves $12.00. Difference: $13.00 \u2212 $12.00 = $1.00.",
+      "skill": "cm-discounts-coupons",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "csm-7",
+      "question": "You buy a $45.00 video game at a store in a state with 7.5% sales tax. What is the total cost including tax?",
+      "answer": "$48.38. Tax = $45.00 \u00d7 0.075 = $3.375, rounded to $3.38. Total = $45.00 + $3.38 = $48.38.",
+      "skill": "cm-tax-tip-markup",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "csm-8",
+      "question": "Your restaurant bill shows a pre-tax subtotal of $62.00. Sales tax is 8% and you want to leave an 18% tip on the pre-tax amount. What is your total including tax and tip?",
+      "answer": "$78.12. Tax = $62.00 \u00d7 0.08 = $4.96. Tip = $62.00 \u00d7 0.18 = $11.16. Total = $62.00 + $4.96 + $11.16 = $78.12.",
+      "skill": "cm-tax-tip-markup",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "csm-9",
+      "question": "A store buys phone cases wholesale for $8.00 each and applies a 150% markup to set the retail price. Customers then pay 7% sales tax on the retail price. What does a customer pay at checkout?",
+      "answer": "$21.40. Markup: $8.00 \u00d7 1.50 = $12.00 markup, so retail = $8.00 + $12.00 = $20.00. Tax: $20.00 \u00d7 0.07 = $1.40. Customer pays $20.00 + $1.40 = $21.40.",
+      "skill": "cm-tax-tip-markup",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "csm-10",
+      "question": "A 24-oz jar of pasta sauce costs $3.60 and a 32-oz jar of the same brand costs $4.48. Which jar is the better deal per ounce, and what is its unit price?",
+      "answer": "The 32-oz jar is the better deal at $0.14 per ounce. 24-oz jar: $3.60 \u00f7 24 = $0.15/oz. 32-oz jar: $4.48 \u00f7 32 = $0.14/oz.",
+      "skill": "cm-unit-price-comparisons",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "csm-11",
+      "question": "Paper towels come in three sizes at the grocery store: a 4-roll pack for $5.96, an 8-roll pack for $10.64, and a 12-roll pack for $16.20. Which pack has the lowest cost per roll?",
+      "answer": "The 8-roll pack at $1.33 per roll. 4-pack: $5.96 \u00f7 4 = $1.49/roll. 8-pack: $10.64 \u00f7 8 = $1.33/roll. 12-pack: $16.20 \u00f7 12 = $1.35/roll. Bigger is not always cheaper.",
+      "skill": "cm-unit-price-comparisons",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "csm-12",
+      "question": "You need exactly 3 pounds of ground beef for a recipe. Store A sells 1-lb packages at $5.49 each. Store B sells only a 5-lb family pack for $23.45. You have no way to use the leftover 2 lbs from the family pack. Which store gives you a better deal for the 3 lbs you actually need, and how much do you save?",
+      "answer": "Store A saves you $6.98. Store A: 3 \u00d7 $5.49 = $16.47 for exactly 3 lbs. Store B: $23.45 for 5 lbs (2 lbs wasted). You save $23.45 \u2212 $16.47 = $6.98 by buying at Store A.",
+      "skill": "cm-unit-price-comparisons",
+      "difficulty": 4,
+      "points": 5
+    }
+  ],
+
+  "answerKeys": {
+    "csm-1": "$21.25",
+    "csm-2": "20%",
+    "csm-3": "$90.00",
+    "csm-4": "$74.00",
+    "csm-5": "$95.20",
+    "csm-6": "20% discount saves $1.00 more",
+    "csm-7": "$48.38",
+    "csm-8": "$78.12",
+    "csm-9": "$21.40",
+    "csm-10": "32-oz jar at $0.14/oz",
+    "csm-11": "8-roll pack at $1.33/roll",
+    "csm-12": "Store A saves $6.98"
+  }
+}
