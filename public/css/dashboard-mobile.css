@@ -1,0 +1,515 @@
+/* ============================================
+   DASHBOARD MOBILE POLISH — MATHMATIX AI
+   Shared mobile improvements for Parent, Teacher, and Admin dashboards.
+   Link this AFTER the embedded <style> block in each dashboard page.
+   ============================================ */
+
+/* --- 1. GLOBAL TOUCH & INTERACTION --- */
+
+button,
+.btn,
+.tab-btn,
+.nav-btn,
+a {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+    touch-action: manipulation;
+}
+
+/* Prevent accidental zoom on double-tap */
+* { touch-action: manipulation; }
+
+/* Allow natural input behavior */
+input, textarea, select {
+    touch-action: auto;
+}
+
+/* --- 2. SAFE AREA INSETS (notched devices) --- */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* --- 3. HEADER REFINEMENTS (<=968px) --- */
+
+@media (max-width: 968px) {
+    .main-header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-header-content {
+        padding: 10px 16px;
+        gap: 12px;
+    }
+
+    /* Compact logo */
+    .logo-container {
+        width: 36px;
+        height: 36px;
+    }
+
+    .main-logo {
+        height: 36px;
+    }
+
+    .brand-name {
+        font-size: 1.15em;
+        letter-spacing: 0.5px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+    /* Hide mode indicator on mobile — role is obvious from the page */
+    .mode-indicator {
+        display: none;
+    }
+
+    /* Compact nav buttons */
+    .main-header-nav {
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 8px 14px;
+        font-size: 0.85em;
+        border-radius: 10px;
+        transition: transform 100ms ease, background 150ms ease;
+    }
+
+    .nav-btn:hover {
+        transform: none;
+    }
+
+    .nav-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header-content {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .logo-container {
+        width: 32px;
+        height: 32px;
+    }
+
+    .main-logo {
+        height: 32px;
+    }
+
+    .brand-name {
+        font-size: 1.05em;
+    }
+
+    .brand-section {
+        gap: 10px;
+    }
+
+    .nav-btn {
+        padding: 7px 12px;
+        font-size: 0.8em;
+        border-radius: 8px;
+    }
+
+    /* Hide logout text, show icon only */
+    .nav-btn .fa-sign-out-alt {
+        margin-right: 0;
+    }
+}
+
+/* --- 4. CONTENT AREA REFINEMENTS (<=968px) --- */
+
+@media (max-width: 968px) {
+    /* Single-column content with better padding */
+    .center-content {
+        padding: 16px;
+    }
+
+    /* Hide footer on mobile — saves space */
+    .main-footer {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .center-content {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .center-content {
+        padding: 8px;
+    }
+}
+
+/* --- 5. PANEL / CARD REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .dashboard-panel {
+        padding: 16px;
+        margin-bottom: 14px;
+        border-radius: 14px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        border-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .dashboard-panel-header {
+        font-size: 1em;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-panel {
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+}
+
+/* --- 6. BUTTON REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.9em;
+        border-radius: 10px;
+        min-height: 44px;
+        transition: transform 100ms ease, background 200ms ease;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .main-action-btn {
+        border-radius: 12px;
+        min-height: 46px;
+        font-size: 0.9em;
+    }
+}
+
+/* --- 7. FORM REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px 14px;
+        border-radius: 10px;
+        min-height: 44px;
+        border-width: 1.5px;
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-group label {
+        font-size: 0.85em;
+        margin-bottom: 6px;
+    }
+}
+
+/* --- 8. TABLE REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .table-scroll-container {
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .user-table th,
+    .user-table td {
+        padding: 10px 8px;
+        font-size: 0.85em;
+    }
+
+    .user-table th {
+        font-size: 0.75em;
+        letter-spacing: 0.3px;
+    }
+}
+
+/* --- 9. TAB REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        gap: 6px;
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+        border-bottom-width: 1px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        padding: 10px 16px;
+        font-size: 0.85em;
+        border-radius: 10px 10px 0 0;
+        min-height: 40px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 150ms ease, background 150ms ease;
+    }
+
+    .tab-btn:active {
+        transform: scale(0.97);
+    }
+}
+
+/* --- 10. MODAL REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 10px auto;
+        padding: 20px 16px;
+        border-radius: 16px;
+        max-height: 88vh;
+    }
+
+    .modal-close-button {
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        font-size: 1.2em;
+    }
+
+    .modal-section h3 {
+        font-size: 1.05em;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- 11. CHILD CARD REFINEMENTS (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    .child-card {
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+
+    .child-card:hover {
+        transform: none;
+    }
+
+    .child-card:active {
+        transform: scale(0.99);
+    }
+}
+
+/* --- 12. CHAT WIDGET REFINEMENTS (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    .parent-chat-widget {
+        padding: 16px !important;
+        border-width: 2px !important;
+        border-radius: 14px;
+    }
+
+    .chat-display-widget {
+        min-height: 200px;
+        max-height: 300px;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .chat-input-widget textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px;
+        border-radius: 10px;
+        min-height: 80px;
+    }
+
+    .helper-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+        border-radius: 18px;
+    }
+
+    .helper-btn:hover {
+        transform: none;
+    }
+
+    .helper-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* --- 13. RESOURCE CARD REFINEMENTS (Teacher Dashboard) --- */
+
+@media (max-width: 768px) {
+    .resource-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .resource-card:hover {
+        transform: none;
+    }
+
+    .resource-icon {
+        font-size: 36px;
+        width: 44px;
+    }
+
+    .resource-info h4 {
+        font-size: 1em;
+    }
+}
+
+/* --- 14. STAT CARD REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .stat-value,
+    .stat-number {
+        font-size: 1.3em;
+    }
+
+    .stat-label {
+        font-size: 0.78em;
+    }
+}
+
+/* --- 15. MOBILE BOTTOM NAV REFINEMENTS (Teacher Dashboard) --- */
+
+@media (max-width: 968px) {
+    .mobile-bottom-nav {
+        box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.06);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.97);
+    }
+
+    .mobile-nav-btn {
+        font-size: 0.6em;
+        padding: 8px 12px;
+        transition: color 150ms ease;
+        min-height: 44px;
+    }
+
+    .mobile-nav-btn i {
+        font-size: 1.5em;
+    }
+
+    .mobile-nav-btn:active {
+        transform: scale(0.92);
+    }
+}
+
+/* --- 16. MOBILE DRAWER REFINEMENTS (Teacher Dashboard) --- */
+
+@media (max-width: 968px) {
+    .mobile-alerts-drawer,
+    .mobile-actions-drawer {
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-actions-grid {
+        gap: 10px;
+    }
+
+    .mobile-action-btn {
+        border-radius: 12px;
+        min-height: 48px;
+        font-size: 0.9em;
+        transition: transform 100ms ease;
+    }
+
+    .mobile-action-btn:active {
+        transform: scale(0.97);
+    }
+}
+
+/* --- 17. ROLE SWITCHER --- */
+
+@media (max-width: 768px) {
+    .role-switcher-select {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 6px 8px;
+        border-radius: 8px;
+        min-height: 36px;
+    }
+}
+
+/* --- 18. INVITE CODE & LINK CODE (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    #invite-code-output {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    #invite-code-output .code-display {
+        font-size: 1.1em;
+        padding: 10px;
+        border-radius: 8px;
+    }
+}
+
+/* --- 19. PRINT — HIDE MOBILE-ONLY ELEMENTS --- */
+
+@media print {
+    .main-header,
+    .main-footer,
+    .mobile-bottom-nav,
+    .mobile-alerts-drawer,
+    .mobile-actions-drawer,
+    .modal-overlay {
+        display: none !important;
+    }
+}
