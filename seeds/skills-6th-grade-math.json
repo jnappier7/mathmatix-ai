@@ -128,7 +128,8 @@
       "baseFluencyTime": 15,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "negative-numbers-intro"
   },
   {
     "skillId": "g6-mult-div-fluency",
@@ -212,7 +213,8 @@
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "expressions-writing"
   },
   {
     "skillId": "g6-multi-digit-division",
@@ -299,7 +301,8 @@
       "baseFluencyTime": 90,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "decimals-operations"
   },
   {
     "skillId": "g6-fraction-add-subtract",
@@ -310,7 +313,8 @@
     "quarter": 1,
     "unit": "Number System",
     "prerequisites": [
-      "g6-fraction-ops-review"
+      "g6-fraction-ops-review",
+      "g6-gcf-lcm"
     ],
     "enables": [
       "g6-ratio-language",
@@ -389,7 +393,8 @@
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "dividing-fractions"
   },
   {
     "skillId": "g6-gcf-lcm",
@@ -443,7 +448,9 @@
     "quarter": 1,
     "unit": "Ratios & Rates",
     "prerequisites": [
-      "g6-fraction-ops-review"
+      "g6-fraction-ops-review",
+      "g6-fraction-add-subtract",
+      "g6-fraction-multiply-divide"
     ],
     "enables": [
       "g6-unit-rates",
@@ -470,12 +477,13 @@
         "Have students create ratios from classroom objects"
       ]
     },
-    "difficultyLevel": 1,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "conceptual",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "ratios-intro"
   },
   {
     "skillId": "g6-unit-rates",
@@ -515,12 +523,13 @@
         "Always require the unit label in the answer — 'per what?'"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "unit-rates"
   },
   {
     "skillId": "g6-equivalent-ratios",
@@ -558,7 +567,7 @@
         "Connect to fractions: equivalent ratios work like equivalent fractions"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
@@ -575,7 +584,8 @@
     "unit": "Ratios & Rates",
     "prerequisites": [
       "g6-unit-rates",
-      "g6-equivalent-ratios"
+      "g6-equivalent-ratios",
+      "g6-multi-digit-division"
     ],
     "enables": [
       "g6-percent-intro",
@@ -648,7 +658,7 @@
         "Focus on the conversions students will actually encounter (cooking, sports, building)"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
@@ -664,7 +674,8 @@
     "quarter": 2,
     "unit": "Expressions & Equations I",
     "prerequisites": [
-      "g6-expression-writing-intro"
+      "g6-expression-writing-intro",
+      "g6-gcf-lcm"
     ],
     "enables": [
       "g6-evaluate-expressions",
@@ -709,7 +720,8 @@
     "quarter": 2,
     "unit": "Expressions & Equations I",
     "prerequisites": [
-      "g6-write-expressions"
+      "g6-write-expressions",
+      "g6-expression-writing-intro"
     ],
     "enables": [
       "g6-one-two-step-equations",
@@ -752,7 +764,8 @@
     "quarter": 2,
     "unit": "Expressions & Equations I",
     "prerequisites": [
-      "g6-write-expressions"
+      "g6-write-expressions",
+      "g6-parts-of-expressions"
     ],
     "enables": [
       "g6-one-two-step-equations",
@@ -785,7 +798,8 @@
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "equivalent-expressions"
   },
   {
     "skillId": "g6-parts-of-expressions",
@@ -822,7 +836,7 @@
         "Connect to real-world: in 5x + 3, the 5 is the rate and 3 is the starting value"
       ]
     },
-    "difficultyLevel": 1,
+    "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "conceptual",
@@ -838,7 +852,8 @@
     "quarter": 2,
     "unit": "Expressions & Equations I",
     "prerequisites": [
-      "g6-evaluate-expressions"
+      "g6-evaluate-expressions",
+      "g6-fraction-multiply-divide"
     ],
     "enables": [
       "g6-area-triangles-parallelograms",
@@ -867,7 +882,7 @@
         "Connect to expressions: A = lw is just an expression with two variables"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 45,
       "fluencyType": "procedural",
@@ -884,7 +899,8 @@
     "unit": "Expressions & Equations II",
     "prerequisites": [
       "g6-evaluate-expressions",
-      "g6-combine-like-terms"
+      "g6-combine-like-terms",
+      "g6-write-expressions"
     ],
     "enables": [
       "g6-variables-both-sides",
@@ -912,12 +928,13 @@
         "Cover equations with fractions and decimals, not just whole numbers"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 45,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "solving-equations-6th"
   },
   {
     "skillId": "g6-variables-both-sides",
@@ -998,7 +1015,7 @@
         "Connect open/closed circles to 'included' (≤ ≥) vs 'not included' (< >)"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
@@ -1016,7 +1033,9 @@
     "prerequisites": [
       "g6-one-two-step-equations",
       "g6-inequalities",
-      "g6-write-expressions"
+      "g6-write-expressions",
+      "g6-fraction-add-subtract",
+      "g6-combine-like-terms"
     ],
     "enables": [
       "g6-mixed-problem-solving"
@@ -1087,7 +1106,7 @@
         "Grid paper helps students count square units to verify formulas"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
@@ -1134,7 +1153,8 @@
       "baseFluencyTime": 90,
       "fluencyType": "procedural",
       "toleranceFactor": 2.5
-    }
+    },
+    "quickRefSkillId": "area-composite-figures"
   },
   {
     "skillId": "g6-nets-surface-area",
@@ -1219,7 +1239,8 @@
       "baseFluencyTime": 45,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "volume-rectangular-prisms"
   },
   {
     "skillId": "g6-geometry-applications",
@@ -1232,7 +1253,9 @@
     "prerequisites": [
       "g6-area-composite-figures",
       "g6-nets-surface-area",
-      "g6-volume-rectangular-prisms"
+      "g6-volume-rectangular-prisms",
+      "g6-measurement-conversions",
+      "g6-area-triangles-parallelograms"
     ],
     "enables": [
       "g6-mixed-problem-solving"
@@ -1359,7 +1382,8 @@
     "quarter": 3,
     "unit": "Statistics & Data",
     "prerequisites": [
-      "g6-data-displays"
+      "g6-data-displays",
+      "g6-statistical-questions"
     ],
     "enables": [
       "g6-compare-distributions"
@@ -1392,7 +1416,8 @@
       "baseFluencyTime": 45,
       "fluencyType": "conceptual",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "statistics-mean-median"
   },
   {
     "skillId": "g6-compare-distributions",
@@ -1535,7 +1560,8 @@
     "quarter": 4,
     "unit": "Integers & Coordinate Plane",
     "prerequisites": [
-      "g6-positive-negative-context"
+      "g6-positive-negative-context",
+      "g6-integer-basics"
     ],
     "enables": [
       "g6-coordinate-plane-graphing",
@@ -1670,7 +1696,11 @@
     "prerequisites": [
       "g6-ratio-problem-solving",
       "g6-fraction-multiply-divide",
-      "g6-word-problem-equations"
+      "g6-word-problem-equations",
+      "g6-variables-both-sides",
+      "g6-geometry-applications",
+      "g6-compare-distributions",
+      "g6-distance-coordinate-plane"
     ],
     "enables": [
       "g6-multi-step-reasoning"
@@ -1716,7 +1746,10 @@
     "prerequisites": [
       "g6-ratio-language",
       "g6-equivalent-ratios",
-      "g6-decimal-division"
+      "g6-decimal-division",
+      "g6-place-value-decimals",
+      "g6-unit-rates",
+      "g6-ratio-problem-solving"
     ],
     "enables": [],
     "standardsAlignment": [
@@ -1740,12 +1773,13 @@
         "Connect to ratios: 30% = 30 out of 100 = 3 out of 10"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
       "toleranceFactor": 2
-    }
+    },
+    "quickRefSkillId": "percent-basics"
   },
   {
     "skillId": "g6-unit-conversions",

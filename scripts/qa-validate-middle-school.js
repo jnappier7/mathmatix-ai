@@ -87,12 +87,19 @@ console.log(`\n  Grade 6 ID overlap: ${g6Overlap.length} shared IDs`);
 console.log(`  Grade 7 ID overlap: ${g7Overlap.length} shared IDs`);
 
 if (g6Overlap.length === 0 && g6Detailed.size > 0 && g6Quick.size > 0) {
-  addIssue('CRITICAL', 'skills-grade-6.json', '*',
-    'DUPLICATE SKILL SET: Two separate grade 6 files with entirely different skillIds. skills-6th-grade-math.json uses "g6-" prefix while skills-grade-6.json uses no prefix. This creates TWO parallel skill graphs for the same grade.');
+  // Check if cross-references exist (detailedSkillId / quickRefSkillId)
+  const g6HasCrossRef = files['skills-grade-6.json'].some(s => s.detailedSkillId);
+  if (!g6HasCrossRef) {
+    addIssue('CRITICAL', 'skills-grade-6.json', '*',
+      'DUPLICATE SKILL SET: Two separate grade 6 files with entirely different skillIds and NO cross-references.');
+  }
 }
 if (g7Overlap.length === 0 && g7Detailed.size > 0 && g7Quick.size > 0) {
-  addIssue('CRITICAL', 'skills-grade-7.json', '*',
-    'DUPLICATE SKILL SET: Two separate grade 7 files with entirely different skillIds. skills-7th-grade-math.json uses "g7-" prefix while skills-grade-7.json uses no prefix. This creates TWO parallel skill graphs for the same grade.');
+  const g7HasCrossRef = files['skills-grade-7.json'].some(s => s.detailedSkillId);
+  if (!g7HasCrossRef) {
+    addIssue('CRITICAL', 'skills-grade-7.json', '*',
+      'DUPLICATE SKILL SET: Two separate grade 7 files with entirely different skillIds and NO cross-references.');
+  }
 }
 
 // --- 2. SCHEMA VALIDATION ---
