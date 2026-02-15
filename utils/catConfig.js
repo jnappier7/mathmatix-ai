@@ -44,7 +44,7 @@ const SESSION_DEFAULTS = {
 
   // HARD DIFFICULTY FLOOR - Never select skills too far below current level
   // Prevents calculus students from getting skip counting questions
-  maxDifficultyGapBelow: 2.0,  // Don't select skills more than 2 theta below current level
+  maxDifficultyGapBelow: 1.0,  // Don't select skills more than 1 theta below current level (tightened from 2.0 to prevent elementary skills becoming eligible after theta crash)
 };
 
 // ===========================================================================

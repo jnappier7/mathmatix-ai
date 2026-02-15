@@ -147,6 +147,16 @@ function estimateAbility(responses, options = {}) {
     theta = initialTheta;
   }
 
+  // PER-STEP THETA CHANGE LIMIT: Prevent wild swings from a single answer,
+  // especially early in the test when information is low.
+  // New theta cannot move more than +/-0.8 from previous theta in one step.
+  const maxThetaChangePerStep = 0.8;
+  if (Math.abs(theta - initialTheta) > maxThetaChangePerStep) {
+    const clampedTheta = initialTheta + Math.sign(theta - initialTheta) * maxThetaChangePerStep;
+    console.log(`[IRT MLE] Per-step cap: θ ${theta.toFixed(2)} clamped to ${clampedTheta.toFixed(2)} (max change ±${maxThetaChangePerStep} from ${initialTheta.toFixed(2)})`);
+    theta = clampedTheta;
+  }
+
   return {
     theta: Math.round(theta * 100) / 100,  // Round to 2 decimals
     standardError: Math.round(standardError * 100) / 100,
@@ -241,6 +251,16 @@ function estimateAbilityMAP(responses, options = {}) {
   if (isNaN(theta)) {
     console.warn('[IRT MAP] Theta calculation resulted in NaN, resetting to prior mean');
     theta = priorMean;
+  }
+
+  // PER-STEP THETA CHANGE LIMIT: Prevent wild swings from a single answer,
+  // especially early in the test when information is low.
+  // New theta cannot move more than +/-0.8 from previous theta in one step.
+  const maxThetaChangePerStep = 0.8;
+  if (Math.abs(theta - initialTheta) > maxThetaChangePerStep) {
+    const clampedTheta = initialTheta + Math.sign(theta - initialTheta) * maxThetaChangePerStep;
+    console.log(`[IRT MAP] Per-step cap: θ ${theta.toFixed(2)} clamped to ${clampedTheta.toFixed(2)} (max change ±${maxThetaChangePerStep} from ${initialTheta.toFixed(2)})`);
+    theta = clampedTheta;
   }
 
   return {
