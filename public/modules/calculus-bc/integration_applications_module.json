@@ -126,11 +126,25 @@
       "title": "We-Do: Volume Cross Sections — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for volume cross sections.",
-          "hint": "Apply the concepts of volume cross sections.",
-          "solution": "Step-by-step solution for volume cross sections."
+          "id": "iap-wp10",
+          "question": "A solid has its base bounded by y = \u221ax, y = 0, and x = 4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "answer": "8",
+          "hints": [
+            "Side length: s(x) = \u221ax. Area of square cross-section: A(x) = (\u221ax)\u00b2 = x.",
+            "V = \u222b\u2080\u2074 x dx = [x\u00b2/2]\u2080\u2074 = 16/2 = 8."
+          ]
+        },
+        {
+          "id": "iap-wp11",
+          "question": "A solid has its base bounded by y = 1 \u2212 x\u00b2 and y = 0. Cross-sections perpendicular to the x-axis are semicircles with diameter equal to the base width. Find the volume.",
+          "answer": "\u03c0/2 \u00b7 \u222b\u208b\u2081\u00b9 (1 \u2212 x\u00b2)\u00b2/4 dx = \u03c0(8/15)/2 = 4\u03c0/15",
+          "hints": [
+            "Diameter = 1 \u2212 x\u00b2, so radius = (1 \u2212 x\u00b2)/2. Area of semicircle: A = (\u03c0/2)r\u00b2 = (\u03c0/2)(1 \u2212 x\u00b2)\u00b2/4 = \u03c0(1 \u2212 x\u00b2)\u00b2/8.",
+            "V = \u222b\u208b\u2081\u00b9 \u03c0(1 \u2212 x\u00b2)\u00b2/8 dx = (\u03c0/4)\u222b\u2080\u00b9 (1 \u2212 2x\u00b2 + x\u2074) dx = (\u03c0/4)(1 \u2212 2/3 + 1/5) = (\u03c0/4)(8/15) = 2\u03c0/15."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, the cross-section at position x is a square with side length s(x) = \u221ax. What is the area A(x) of each square?",
       "lessonId": "volume-cross-sections"
     },
     {
@@ -208,11 +222,25 @@
       "title": "We-Do: Motion Accumulation — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for motion accumulation.",
-          "hint": "Apply the concepts of motion accumulation.",
-          "solution": "Step-by-step solution for motion accumulation."
+          "id": "iap-wp12",
+          "question": "A particle has velocity v(t) = t\u00b2 \u2212 4 on [0, 3]. Find the displacement and total distance traveled.",
+          "answer": "Displacement = 0. Total distance = 16/3.",
+          "hints": [
+            "Displacement: \u222b\u2080\u00b3 (t\u00b2 \u2212 4) dt = [t\u00b3/3 \u2212 4t]\u2080\u00b3 = (9 \u2212 12) \u2212 0 = \u22123. Wait: recalculate: 27/3 \u2212 12 = 9 \u2212 12 = \u22123.",
+            "v = 0 at t = 2. On [0,2]: v < 0. On [2,3]: v > 0. \u222b\u2080\u00b2(t\u00b2\u22124)dt = [8/3\u22128] = \u221216/3. \u222b\u2082\u00b3(t\u00b2\u22124)dt = [9\u221212]\u2212[8/3\u22128] = \u22123+16/3 = 7/3. Distance = 16/3 + 7/3 = 23/3. Displacement = \u221216/3 + 7/3 = \u22123."
+          ]
+        },
+        {
+          "id": "iap-wp13",
+          "question": "Given a(t) = 6t, v(0) = \u22123, and s(0) = 1, find the position function s(t) and evaluate s(2).",
+          "answer": "s(t) = t\u00b3 \u2212 3t + 1. s(2) = 3.",
+          "hints": [
+            "v(t) = \u222b 6t dt = 3t\u00b2 + C\u2081. v(0) = \u22123 \u2192 C\u2081 = \u22123. So v(t) = 3t\u00b2 \u2212 3.",
+            "s(t) = \u222b (3t\u00b2 \u2212 3) dt = t\u00b3 \u2212 3t + C\u2082. s(0) = 1 \u2192 C\u2082 = 1. So s(t) = t\u00b3 \u2212 3t + 1. s(2) = 8 \u2212 6 + 1 = 3."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, first find where v(t) = 0 to split the interval. Remember: total distance = \u222b|v(t)| dt, which requires splitting at direction changes.",
       "lessonId": "average-value-motion"
     },
     {
@@ -354,7 +382,11 @@
     "iap-yp3": "512/15.",
     "iap-yp4": "(e² − 1)/2.",
     "iap-yp5": "Displacement = 0. Total distance = 4.",
-    "iap-yp6": "200(1 − e⁻²) ≈ 172.93 liters."
+    "iap-yp6": "200(1 − e⁻²) ≈ 172.93 liters.",
+    "iap-wp10": "8.",
+    "iap-wp11": "2π/15.",
+    "iap-wp12": "Displacement = −3. Total distance = 23/3.",
+    "iap-wp13": "s(t) = t³ − 3t + 1. s(2) = 3."
   },
   "lessons": [
     {

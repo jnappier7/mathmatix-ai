@@ -58,11 +58,25 @@
       "title": "We-Do: Concavity Inflection — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for concavity inflection.",
-          "hint": "Apply the concepts of concavity inflection.",
-          "solution": "Step-by-step solution for concavity inflection."
+          "id": "fa-wp10",
+          "question": "f(x) = x\u00b3 \u2212 6x\u00b2 + 12x \u2212 4. Find all inflection points.",
+          "answer": "Inflection point at (2, 4).",
+          "hints": [
+            "f'(x) = 3x\u00b2 \u2212 12x + 12. f''(x) = 6x \u2212 12. Set f'' = 0: x = 2.",
+            "f'' changes sign at x = 2 (negative for x < 2, positive for x > 2). f(2) = 8 \u2212 24 + 24 \u2212 4 = 4. Inflection point at (2, 4)."
+          ]
+        },
+        {
+          "id": "fa-wp11",
+          "question": "Use the second derivative test to classify the critical points of g(x) = x\u2074 \u2212 4x\u00b3.",
+          "answer": "Local min at x = 3, g(3) = \u221227. SDT inconclusive at x = 0 (use FDT: no extremum).",
+          "hints": [
+            "g'(x) = 4x\u00b3 \u2212 12x\u00b2 = 4x\u00b2(x \u2212 3). CP: x = 0, x = 3. g''(x) = 12x\u00b2 \u2212 24x.",
+            "g''(0) = 0 \u2192 inconclusive. g''(3) = 108 \u2212 72 = 36 > 0 \u2192 local min. g(3) = 81 \u2212 108 = \u221227. At x = 0: FDT shows g' < 0 on both sides \u2192 no extremum."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, start by finding f''(x). Setting f'' = 0 finds possible inflection points \u2014 but you must verify f'' changes sign there.",
       "lessonId": "second-derivative-test"
     },
     {
@@ -72,11 +86,25 @@
       "title": "We-Do: Evt Mvt — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for evt mvt.",
-          "hint": "Apply the concepts of evt mvt.",
-          "solution": "Step-by-step solution for evt mvt."
+          "id": "fa-wp12",
+          "question": "f(x) = x\u00b3 \u2212 3x + 1 on [\u22122, 2]. Find the absolute maximum and minimum (EVT).",
+          "answer": "Absolute max = 3 at x = \u22121. Absolute min = \u22121 at x = 1.",
+          "hints": [
+            "f'(x) = 3x\u00b2 \u2212 3 = 3(x \u2212 1)(x + 1). CP: x = \u22121, x = 1 (both in [\u22122, 2]).",
+            "Candidates: f(\u22122) = \u22121, f(\u22121) = 3, f(1) = \u22121, f(2) = 3. Max = 3 at x = \u22121 and x = 2. Min = \u22121 at x = \u22122 and x = 1."
+          ]
+        },
+        {
+          "id": "fa-wp13",
+          "question": "Verify MVT for f(x) = ln x on [1, e]. Find the value of c.",
+          "answer": "c = e \u2212 1 \u2248 1.718",
+          "hints": [
+            "f continuous on [1, e], differentiable on (1, e). Average rate: [ln(e) \u2212 ln(1)]/(e \u2212 1) = 1/(e \u2212 1).",
+            "f'(x) = 1/x. Set 1/c = 1/(e \u2212 1): c = e \u2212 1 \u2248 1.718. Check: c \u2208 (1, e) \u2713."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, the EVT guarantees absolute extrema on a closed interval. Find critical points, then evaluate f at all critical points AND endpoints.",
       "lessonId": "evt-mvt"
     },
     {
@@ -354,7 +382,11 @@
     "fa-yp3": "c = 2.",
     "fa-yp4": "Max = 54 at x = −2. Min = −71 at x = 3.",
     "fa-yp5": "No local max. Local min at x = 4. IP at x = 0 and x = 8/3.",
-    "fa-yp6": "10 × 10, area = 100."
+    "fa-yp6": "10 × 10, area = 100.",
+    "fa-wp10": "Inflection point at (2, 4).",
+    "fa-wp11": "Local min at (3, −27). SDT inconclusive at x = 0 (no extremum by FDT).",
+    "fa-wp12": "Max = 3 at x = −1 and x = 2. Min = −1 at x = −2 and x = 1.",
+    "fa-wp13": "c = e − 1 ≈ 1.718."
   },
   "lessons": [
     {
