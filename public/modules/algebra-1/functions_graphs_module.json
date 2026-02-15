@@ -8,23 +8,30 @@
   "estimatedDuration": 45,
   "description": "Develop a deep understanding of functions and linear relationships by exploring the concept of a function (domain, range, vertical line test), calculating slope as a rate of change, graphing lines in slope-intercept form, writing linear equations from tables, graphs, and point-slope form, converting between equation forms, and analyzing parallel and perpendicular line relationships using slope.",
   "skills": [
-    "graphing-linear-equations-slope-intercept",
-    "writing-linear-equations-slope-intercept",
+    "understanding-functions",
     "slope-from-points",
-    "parallel-perpendicular-lines"
+    "graphing-linear-equations-slope-intercept",
+    "writing-linear-equations-point-slope",
+    "standard-form-equations",
+    "parallel-perpendicular-lines",
+    "graphing-linear-inequalities"
   ],
   "standardsAlignment": [
     "A-CED.2",
+    "F-IF.1",
+    "F-IF.2",
+    "F-IF.4",
     "F-IF.7a",
     "F-LE.2",
-    "F-IF.4"
+    "A-REI.12"
   ],
   "goals": [
     "Determine whether a relation is a function using the vertical line test, mapping diagrams, and input-output analysis, and identify domain and range",
     "Calculate slope from two points, a graph, or a table and interpret slope as a rate of change in real-world contexts",
     "Graph linear equations in slope-intercept form (y = mx + b) by identifying the y-intercept and using the slope to plot additional points",
     "Write linear equations in slope-intercept, point-slope, and standard form, and convert fluently between all three forms",
-    "Determine whether lines are parallel, perpendicular, or neither using their slopes, and write equations of lines parallel or perpendicular to a given line through a given point"
+    "Determine whether lines are parallel, perpendicular, or neither using their slopes, and write equations of lines parallel or perpendicular to a given line through a given point",
+    "Graph linear inequalities in two variables by drawing the boundary line and shading the correct half-plane"
   ],
   "instructionalStrategy": [
     "Use multiple representations throughout the unit — every linear relationship should be explored as a table, a graph, an equation, and a verbal description so students build flexible understanding.",
@@ -38,10 +45,91 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "graphing-linear-equations-slope-intercept",
+      "skill": "understanding-functions",
       "title": "What Is a Function? Domain, Range, and f(x) Notation",
       "content": "A **function** is a rule that assigns each input exactly one output. Think of a vending machine: you press one button (input) and get exactly one snack (output). If pressing the same button sometimes gave you chips and sometimes gave you pretzels, the machine would be broken — and the relation would NOT be a function.\n\nWe describe functions using several tools:\n- **Domain**: the set of all possible inputs (x-values)\n- **Range**: the set of all possible outputs (y-values)\n- **Vertical Line Test**: if any vertical line crosses a graph more than once, the graph is NOT a function (one input is producing two outputs)\n- **f(x) notation**: instead of writing y, we write f(x) — read 'f of x' — to emphasize that the output depends on the input. For example, if f(x) = 2x + 3, then f(4) = 2(4) + 3 = 11.\n\nEvery function can be represented as a set of ordered pairs, a mapping diagram, a table, a graph, or an equation.",
       "initialPrompt": "Consider these ordered pairs: {(1, 3), (2, 5), (3, 7), (2, 9)}. Is this a function? Why or why not? What is the domain?",
+      "lessonId": "relations-functions"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "understanding-functions",
+      "title": "I-Do: Identifying Functions and Evaluating f(x)",
+      "examples": [
+        {
+          "problem": "Determine whether each relation is a function: (a) {(1, 4), (2, 7), (3, 4), (4, 9)}  (b) {(5, 2), (3, 8), (5, 6)}",
+          "solution": "(a) Check: does any input repeat with a different output?\n- 1 → 4, 2 → 7, 3 → 4, 4 → 9\n- Every input (1, 2, 3, 4) appears exactly once.\n- **Yes, this IS a function.** (Notice that 1 and 3 both output 4 — that's fine. Two inputs CAN share an output. The rule is that one input cannot have two outputs.)\n\n(b) Check: does any input repeat?\n- 5 → 2 and 5 → 6. The input 5 gives two different outputs!\n- **No, this is NOT a function.** The vending machine is broken — pressing button 5 gives you two different snacks.",
+          "tip": "Two different inputs CAN give the same output (like two buttons both giving chips). The function rule only breaks when one input gives DIFFERENT outputs."
+        },
+        {
+          "problem": "Given f(x) = 3x - 5, find f(2), f(-1), and f(0).",
+          "solution": "Replace x with the input value each time:\n\nf(2) = 3(2) - 5 = 6 - 5 = **1**\nf(-1) = 3(-1) - 5 = -3 - 5 = **-8**\nf(0) = 3(0) - 5 = 0 - 5 = **-5**\n\nSo the ordered pairs are (2, 1), (-1, -8), and (0, -5).",
+          "tip": "f(x) notation just means 'plug in the value for x.' f(2) means 'what does the function give when x = 2?'"
+        }
+      ],
+      "initialPrompt": "In example (a), I said two inputs CAN share the same output. Can you think of a real-world example where that happens?",
+      "lessonId": "relations-functions"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "understanding-functions",
+      "title": "We-Do: Relations and Functions",
+      "problems": [
+        {
+          "id": "fg-L1-w1",
+          "question": "Determine whether the relation {(0, 5), (1, 8), (2, 11), (3, 14)} is a function. State the domain and range.",
+          "answer": "Yes, it is a function. Domain: {0, 1, 2, 3}. Range: {5, 8, 11, 14}.",
+          "hints": [
+            "Check: does any input (first number in each pair) appear more than once with a different output?",
+            "Each input 0, 1, 2, 3 appears exactly once, so it IS a function. Domain = {0, 1, 2, 3}, Range = {5, 8, 11, 14}."
+          ]
+        },
+        {
+          "id": "fg-L1-w2",
+          "question": "If g(x) = -2x + 7, find g(3) and g(-4).",
+          "answer": "g(3) = 1, g(-4) = 15",
+          "hints": [
+            "Replace x with 3: g(3) = -2(3) + 7 = -6 + 7 = 1.",
+            "Replace x with -4: g(-4) = -2(-4) + 7 = 8 + 7 = 15."
+          ]
+        },
+        {
+          "id": "fg-L1-w3",
+          "question": "A graph shows a circle centered at the origin. Does it pass the vertical line test? Is it a function?",
+          "answer": "No, a circle fails the vertical line test and is NOT a function.",
+          "hints": [
+            "Draw a vertical line through the circle — it crosses the circle at two points (top and bottom).",
+            "Since one x-value gives two y-values, the circle is NOT a function."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice together. For the first set of ordered pairs, check each input — does any x-value appear more than once?",
+      "lessonId": "relations-functions"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "understanding-functions",
+      "title": "You-Do: Relations and Functions",
+      "problems": [
+        {
+          "id": "fg-L1-y1",
+          "question": "Determine whether the relation {(2, 6), (4, 6), (6, 8), (4, 10)} is a function. Explain your reasoning.",
+          "answer": "No, it is not a function because the input 4 maps to both 6 and 10.",
+          "skill": "understanding-functions",
+          "hints": ["Check if any input repeats with a different output. Look at x = 4 carefully."]
+        },
+        {
+          "id": "fg-L1-y2",
+          "question": "If f(x) = x² - 3x + 1, find f(4) and f(-2).",
+          "answer": "f(4) = 5, f(-2) = 11",
+          "skill": "understanding-functions",
+          "hints": ["f(4) = (4)² - 3(4) + 1 = 16 - 12 + 1 = 5. f(-2) = (-2)² - 3(-2) + 1 = 4 + 6 + 1 = 11."]
+        }
+      ],
+      "attemptsRequired": 2,
       "lessonId": "relations-functions"
     },
     {
@@ -49,24 +137,109 @@
       "lessonPhase": "concept-intro",
       "skill": "slope-from-points",
       "title": "Slope as a Rate of Change",
-      "content": "The **slope** of a line measures how steep it is — it tells you how much the y-value changes for every 1-unit increase in x. We calculate slope as:\n\n**m = rise / run = (y2 - y1) / (x2 - x1)**\n\nSlope comes in four types:\n- **Positive slope**: line goes up from left to right (like climbing a hill)\n- **Negative slope**: line goes down from left to right (like going downhill)\n- **Zero slope**: horizontal line (flat road — no rise, y does not change)\n- **Undefined slope**: vertical line (a cliff — no run, x does not change, division by zero)\n\nIn real-world contexts, slope represents a **rate of change**. For example, if a plumber charges $50 per hour, the slope of the cost-vs-hours graph is 50 — for every additional hour, the cost rises by $50.\n\nTo visualize slope on a graph, draw a **slope triangle**: from one point on the line, count the vertical change (rise) and the horizontal change (run) to reach another point on the line.",
+      "content": "The **slope** of a line measures how steep it is — it tells you how much the y-value changes for every 1-unit increase in x. We calculate slope as:\n\n**m = rise / run = (y₂ - y₁) / (x₂ - x₁)**\n\nSlope comes in four types:\n- **Positive slope**: line goes up from left to right (like climbing a hill)\n- **Negative slope**: line goes down from left to right (like going downhill)\n- **Zero slope**: horizontal line (flat road — no rise, y does not change)\n- **Undefined slope**: vertical line (a cliff — no run, x does not change, division by zero)\n\nIn real-world contexts, slope represents a **rate of change**. For example, if a plumber charges $50 per hour, the slope of the cost-vs-hours graph is 50 — for every additional hour, the cost rises by $50.\n\nTo visualize slope on a graph, draw a **slope triangle**: from one point on the line, count the vertical change (rise) and the horizontal change (run) to reach another point on the line.",
       "initialPrompt": "If a line passes through (1, 2) and (4, 8), what is the rise? What is the run? What is the slope?",
-      "lessonId": "slope-intercept-form"
+      "lessonId": "slope"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "slope-from-points",
-      "title": "I-Do: Slope, Graphing, and Reading Equations",
+      "title": "I-Do: Finding and Interpreting Slope",
       "examples": [
         {
           "problem": "Find the slope of the line passing through the points (2, 3) and (5, 9).",
-          "solution": "Use the slope formula: m = (y2 - y1) / (x2 - x1)\n\nLabel the points: (x1, y1) = (2, 3) and (x2, y2) = (5, 9)\n\nm = (9 - 3) / (5 - 2) = 6 / 3 = **2**\n\nThis means for every 1 unit we move to the right, the line goes up 2 units. The slope is positive, so the line rises from left to right.",
-          "tip": "It doesn't matter which point you call (x1, y1) and which you call (x2, y2), as long as you are consistent — subtract in the same order on top and bottom."
+          "solution": "Use the slope formula: m = (y₂ - y₁) / (x₂ - x₁)\n\nLabel the points: (x₁, y₁) = (2, 3) and (x₂, y₂) = (5, 9)\n\nm = (9 - 3) / (5 - 2) = 6 / 3 = **2**\n\nThis means for every 1 unit we move to the right, the line goes up 2 units. The slope is positive, so the line rises from left to right.",
+          "tip": "It doesn't matter which point you call (x₁, y₁) and which you call (x₂, y₂), as long as you are consistent — subtract in the same order on top and bottom."
         },
         {
+          "problem": "A phone plan charges a $20 activation fee plus $0.10 per text message. What is the slope of the cost function? What does it mean in context?",
+          "solution": "The cost function is C = 0.10t + 20, where t = number of texts.\n\nThe slope is **0.10** (the coefficient of t).\n\nIn context: for every additional text message sent, the cost increases by **$0.10**. The slope IS the rate of change — the per-text price.\n\nThe $20 is the y-intercept (the cost when t = 0, before any texts are sent).",
+          "tip": "In word problems, the slope is the 'per unit' rate — cost per item, miles per hour, degrees per minute."
+        }
+      ],
+      "initialPrompt": "In the first example, we found a slope of 2. If I reversed the order and called (5, 9) my first point, would I get a different answer?",
+      "lessonId": "slope"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "slope-from-points",
+      "title": "We-Do: Slope Calculations",
+      "problems": [
+        {
+          "id": "fg-L2-w1",
+          "question": "Find the slope of the line passing through (-1, 4) and (3, -8).",
+          "answer": "-3",
+          "hints": [
+            "Use the slope formula: m = (y₂ - y₁) / (x₂ - x₁). Label your points first.",
+            "m = (-8 - 4) / (3 - (-1)) = -12 / 4 = -3."
+          ]
+        },
+        {
+          "id": "fg-L2-w2",
+          "question": "A line passes through (4, 7) and (4, -2). What is the slope?",
+          "answer": "Undefined",
+          "hints": [
+            "m = (-2 - 7) / (4 - 4) = -9 / 0.",
+            "Division by zero is undefined. When x doesn't change, the line is vertical and the slope is undefined."
+          ]
+        },
+        {
+          "id": "fg-L2-w3",
+          "question": "A car travels 150 miles in 3 hours. What is the rate of change (slope) in miles per hour?",
+          "answer": "50 miles per hour",
+          "hints": [
+            "Rate of change = rise/run = change in miles / change in hours.",
+            "m = 150 / 3 = 50. The car travels 50 miles for every 1 hour."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice finding slopes. For the first problem, which points are given and what formula will you use?",
+      "lessonId": "slope"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "slope-from-points",
+      "title": "You-Do: Slope",
+      "problems": [
+        {
+          "id": "fg-L2-y1",
+          "question": "Find the slope of the line passing through (4, -2) and (-1, 8).",
+          "answer": "-2",
+          "skill": "slope-from-points",
+          "hints": ["m = (8 - (-2)) / (-1 - 4) = 10 / (-5) = -2."]
+        },
+        {
+          "id": "fg-L2-y2",
+          "question": "A swimming pool is being filled. After 2 hours it has 300 gallons, and after 5 hours it has 750 gallons. What is the rate of change in gallons per hour?",
+          "answer": "150 gallons per hour",
+          "skill": "slope-from-points",
+          "hints": ["m = (750 - 300) / (5 - 2) = 450 / 3 = 150 gallons per hour."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "slope"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "title": "Slope-Intercept Form: y = mx + b",
+      "content": "The most common way to write a linear equation is **slope-intercept form**:\n\n**y = mx + b**\n\nwhere **m** is the slope and **b** is the y-intercept (the point where the line crosses the y-axis).\n\n**How to graph from y = mx + b:**\n1. Plot the y-intercept (0, b) — this is your starting point\n2. From that point, use the slope to find the next point: rise over run\n3. Plot the second point and draw a line through both\n\nFor example, y = 2x + 3 has slope 2 and y-intercept 3:\n- Start at (0, 3)\n- Slope = 2/1: go up 2, right 1 to reach (1, 5)\n- Draw the line through (0, 3) and (1, 5)\n\n**How to write the equation from a graph:**\n1. Find the y-intercept (where the line crosses the y-axis) — that's b\n2. Pick two clear points and calculate the slope — that's m\n3. Plug into y = mx + b\n\nThis form makes graphing fast because you can SEE the slope and starting point directly in the equation.",
+      "initialPrompt": "Look at the equation y = -3x + 5. Without graphing it, can you tell me: Is the line going uphill or downhill? Where does it cross the y-axis?",
+      "lessonId": "slope-intercept-form"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "title": "I-Do: Graphing in Slope-Intercept Form",
+      "examples": [
+        {
           "problem": "Graph the equation y = -2x + 5.",
-          "solution": "This equation is in **slope-intercept form** y = mx + b, where m = -2 and b = 5.\n\nStep 1: Plot the **y-intercept** (0, 5). This is where the line crosses the y-axis.\n\nStep 2: Use the slope m = -2, which means rise = -2 and run = 1. From (0, 5), move **down 2** and **right 1** to reach (1, 3).\n\nStep 3: Plot (1, 3) and repeat: from (1, 3), move down 2 and right 1 to reach (2, 1).\n\nStep 4: Draw a straight line through (0, 5), (1, 3), and (2, 1) with arrows on both ends.\n\nThe line falls from left to right because the slope is negative.",
+          "solution": "This equation is in slope-intercept form y = mx + b, where m = -2 and b = 5.\n\nStep 1: Plot the **y-intercept** (0, 5). This is where the line crosses the y-axis.\n\nStep 2: Use the slope m = -2, which means rise = -2 and run = 1. From (0, 5), move **down 2** and **right 1** to reach (1, 3).\n\nStep 3: Plot (1, 3) and repeat: from (1, 3), move down 2 and right 1 to reach (2, 1).\n\nStep 4: Draw a straight line through (0, 5), (1, 3), and (2, 1) with arrows on both ends.\n\nThe line falls from left to right because the slope is negative.",
           "tip": "A negative slope means 'down-right' or equivalently 'up-left.' Think of the slope as a fraction: -2/1 means down 2, right 1."
         },
         {
@@ -75,60 +248,17 @@
           "tip": "If one of the given points has x = 0, you already know the y-intercept — no extra algebra needed."
         }
       ],
-      "initialPrompt": "In the first example, we found a slope of 2. What does that number tell us about how the line looks on a graph?",
+      "initialPrompt": "In the first example, the slope is -2. If the slope were -1/2 instead, would the line be steeper or flatter?",
       "lessonId": "slope-intercept-form"
-    },
-    {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "skill": "writing-linear-equations-slope-intercept",
-      "title": "Point-Slope Form and Standard Form",
-      "content": "So far we have been working with **slope-intercept form**: y = mx + b. This is great when you know the slope and y-intercept, but what if you know the slope and a point that is NOT the y-intercept?\n\nThat is where **point-slope form** comes in:\n\n**y - y1 = m(x - x1)**\n\nThis says: starting from a known point (x1, y1), the change in y equals the slope times the change in x. It is built on the same idea as the slope formula, just rearranged.\n\nThere is one more form: **standard form**, written as **Ax + By = C**, where A, B, and C are integers and A is positive. Standard form is useful for finding x- and y-intercepts quickly.\n\nConverting between forms:\n- **Point-slope to slope-intercept**: distribute and solve for y.\n- **Slope-intercept to standard**: move the x-term to the left side.\n- **Standard to slope-intercept**: solve for y.\n\nAll three forms describe the same line — they are just different ways of presenting the same information.",
-      "initialPrompt": "If you know a line has slope 3 and passes through the point (2, 7), how would you plug that into the point-slope formula?",
-      "lessonId": "slope"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "writing-linear-equations-slope-intercept",
-      "title": "I-Do: Point-Slope Form, Converting Forms, and Intercepts",
-      "examples": [
-        {
-          "problem": "Write the equation of the line with slope 2 that passes through the point (3, 7). Give the answer in slope-intercept form.",
-          "solution": "Step 1: Start with point-slope form.\ny - y1 = m(x - x1)\ny - 7 = 2(x - 3)\n\nStep 2: Distribute the slope.\ny - 7 = 2x - 6\n\nStep 3: Solve for y (add 7 to both sides).\ny = 2x - 6 + 7\n**y = 2x + 1**\n\nCheck: Does (3, 7) satisfy y = 2x + 1? y = 2(3) + 1 = 7. Yes!",
-          "tip": "Point-slope form is your go-to when you know any point and the slope. Distribute and isolate y to convert to slope-intercept."
-        },
-        {
-          "problem": "Convert y = (3/4)x - 2 to standard form (Ax + By = C where A, B, C are integers and A > 0).",
-          "solution": "Step 1: Eliminate the fraction by multiplying every term by 4.\n4y = 3x - 8\n\nStep 2: Move the x-term to the left side (subtract 3x from both sides).\n-3x + 4y = -8\n\nStep 3: Multiply the entire equation by -1 so that A is positive.\n**3x - 4y = 8**\n\nCheck: Solve back for y: -4y = -3x + 8, so y = (3/4)x - 2. Matches the original!",
-          "tip": "To clear fractions, multiply every term by the denominator. To make A positive, multiply the entire equation by -1 if needed."
-        },
-        {
-          "problem": "Find the x-intercept and y-intercept of the line 4x + 3y = 24.",
-          "solution": "**x-intercept** (set y = 0):\n4x + 3(0) = 24\n4x = 24\nx = 6\nThe x-intercept is **(6, 0)**.\n\n**y-intercept** (set x = 0):\n4(0) + 3y = 24\n3y = 24\ny = 8\nThe y-intercept is **(0, 8)**.\n\nThese two intercepts are enough to graph the line: plot (6, 0) and (0, 8), then draw a line through them.",
-          "tip": "Standard form makes finding intercepts easy — just set one variable to zero and solve for the other."
-        }
-      ],
-      "initialPrompt": "In the first example, we started with point-slope form and converted to slope-intercept form. Why is it useful to have multiple forms for the same line?",
-      "lessonId": "slope"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skill": "slope-from-points",
-      "title": "We-Do: Slope, Graphing, and Writing Equations",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "title": "We-Do: Graphing and Writing in Slope-Intercept Form",
       "problems": [
         {
-          "id": "fg-wp1",
-          "question": "Find the slope of the line passing through (-1, 4) and (3, -8).",
-          "answer": "-3",
-          "hints": [
-            "Use the slope formula: m = (y2 - y1) / (x2 - x1). Label your points first.",
-            "m = (-8 - 4) / (3 - (-1)) = -12 / 4 = -3."
-          ]
-        },
-        {
-          "id": "fg-wp2",
+          "id": "fg-L3-w1",
           "question": "Graph y = (1/2)x + 3. Name the y-intercept and one other point on the line.",
           "answer": "y-intercept: (0, 3); another point: (2, 4)",
           "hints": [
@@ -137,7 +267,79 @@
           ]
         },
         {
-          "id": "fg-wp3",
+          "id": "fg-L3-w2",
+          "question": "A line passes through (1, 5) and (4, 14). Write the equation of the line in slope-intercept form.",
+          "answer": "y = 3x + 2",
+          "hints": [
+            "First find the slope: m = (14 - 5) / (4 - 1) = 9 / 3 = 3.",
+            "Use point-slope with (1, 5): y - 5 = 3(x - 1). Distribute: y - 5 = 3x - 3. Add 5: y = 3x + 2."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's graph together. For y = (1/2)x + 3, what is the y-intercept and where do you plot it?",
+      "lessonId": "slope-intercept-form"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "title": "You-Do: Slope-Intercept Form",
+      "problems": [
+        {
+          "id": "fg-L3-y1",
+          "question": "Graph y = 3x - 4. State the y-intercept and use the slope to identify a second point.",
+          "answer": "y-intercept: (0, -4); using slope 3 (up 3, right 1): second point (1, -1)",
+          "skill": "graphing-linear-equations-slope-intercept",
+          "hints": ["The y-intercept is (0, -4). The slope is 3 = 3/1, so from (0, -4) go up 3 and right 1 to reach (1, -1)."]
+        },
+        {
+          "id": "fg-L3-y2",
+          "question": "A line crosses the y-axis at -2 and passes through (3, 7). Write the equation in slope-intercept form.",
+          "answer": "y = 3x - 2",
+          "skill": "graphing-linear-equations-slope-intercept",
+          "hints": ["b = -2. Find slope: m = (7 - (-2)) / (3 - 0) = 9/3 = 3. Equation: y = 3x - 2."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "slope-intercept-form"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "writing-linear-equations-point-slope",
+      "title": "Point-Slope Form: y - y₁ = m(x - x₁)",
+      "content": "So far we have been working with **slope-intercept form**: y = mx + b. This is great when you know the slope and y-intercept, but what if you know the slope and a point that is NOT the y-intercept?\n\nThat is where **point-slope form** comes in:\n\n**y - y₁ = m(x - x₁)**\n\nThis says: starting from a known point (x₁, y₁), the change in y equals the slope times the change in x. It is built on the same idea as the slope formula, just rearranged.\n\n**When to use point-slope form:**\n- You know the slope and ANY point (not just the y-intercept)\n- You know two points (find slope first, then plug in either point)\n\n**Converting to slope-intercept form:**\n1. Distribute the m\n2. Add y₁ to both sides to isolate y\n\nExample: slope = 3, point = (2, 7)\n- Point-slope: y - 7 = 3(x - 2)\n- Distribute: y - 7 = 3x - 6\n- Add 7: y = 3x + 1",
+      "initialPrompt": "If you know a line has slope -2 and passes through the point (5, 1), how would you plug that into the point-slope formula?",
+      "lessonId": "point-slope-form"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "writing-linear-equations-point-slope",
+      "title": "I-Do: Using Point-Slope Form",
+      "examples": [
+        {
+          "problem": "Write the equation of the line with slope 2 that passes through the point (3, 7). Give the answer in slope-intercept form.",
+          "solution": "Step 1: Start with point-slope form.\ny - y₁ = m(x - x₁)\ny - 7 = 2(x - 3)\n\nStep 2: Distribute the slope.\ny - 7 = 2x - 6\n\nStep 3: Solve for y (add 7 to both sides).\ny = 2x - 6 + 7\n**y = 2x + 1**\n\nCheck: Does (3, 7) satisfy y = 2x + 1? y = 2(3) + 1 = 7. Yes!",
+          "tip": "Point-slope form is your go-to when you know any point and the slope. Distribute and isolate y to convert to slope-intercept."
+        },
+        {
+          "problem": "A line passes through (-2, 5) and (4, -7). Write the equation in slope-intercept form.",
+          "solution": "Step 1: Find the slope.\nm = (-7 - 5) / (4 - (-2)) = -12 / 6 = -2\n\nStep 2: Use point-slope form with either point. I'll use (-2, 5):\ny - 5 = -2(x - (-2))\ny - 5 = -2(x + 2)\n\nStep 3: Distribute.\ny - 5 = -2x - 4\n\nStep 4: Add 5 to both sides.\ny = -2x - 4 + 5\n**y = -2x + 1**\n\nCheck with (4, -7): y = -2(4) + 1 = -8 + 1 = -7. Correct!",
+          "tip": "When given two points, find the slope first with the slope formula, then use point-slope form with either point — you'll get the same equation."
+        }
+      ],
+      "initialPrompt": "In example 2, I used the point (-2, 5). Would I get a different equation if I used (4, -7) instead?",
+      "lessonId": "point-slope-form"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "writing-linear-equations-point-slope",
+      "title": "We-Do: Point-Slope Form",
+      "problems": [
+        {
+          "id": "fg-L4-w1",
           "question": "Write the equation of the line with slope -3 that passes through (2, 1). Give your answer in slope-intercept form.",
           "answer": "y = -3x + 7",
           "hints": [
@@ -146,7 +348,79 @@
           ]
         },
         {
-          "id": "fg-wp4",
+          "id": "fg-L4-w2",
+          "question": "A line passes through (3, -4) and (6, 5). Write the equation in slope-intercept form.",
+          "answer": "y = 3x - 13",
+          "hints": [
+            "Find slope: m = (5 - (-4)) / (6 - 3) = 9 / 3 = 3.",
+            "Point-slope with (3, -4): y - (-4) = 3(x - 3). That gives y + 4 = 3x - 9. Subtract 4: y = 3x - 13."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through these together. For the first one, what is the slope and what point will you plug into the point-slope formula?",
+      "lessonId": "point-slope-form"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "writing-linear-equations-point-slope",
+      "title": "You-Do: Point-Slope Form",
+      "problems": [
+        {
+          "id": "fg-L4-y1",
+          "question": "Write the equation of the line passing through (2, -3) with slope 4 in slope-intercept form.",
+          "answer": "y = 4x - 11",
+          "skill": "writing-linear-equations-point-slope",
+          "hints": ["Point-slope: y - (-3) = 4(x - 2) becomes y + 3 = 4x - 8. Subtract 3: y = 4x - 11."]
+        },
+        {
+          "id": "fg-L4-y2",
+          "question": "A line passes through (-2, 5) and (6, 1). Write the equation in slope-intercept form.",
+          "answer": "y = (-1/2)x + 4",
+          "skill": "writing-linear-equations-point-slope",
+          "hints": ["Find slope: m = (1 - 5) / (6 - (-2)) = -4 / 8 = -1/2. Use point-slope with (-2, 5): y - 5 = (-1/2)(x + 2). Simplify: y = (-1/2)x + 4."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "point-slope-form"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "standard-form-equations",
+      "title": "Standard Form: Ax + By = C",
+      "content": "The third way to write a linear equation is **standard form**:\n\n**Ax + By = C**\n\nwhere A, B, and C are integers, and A is positive.\n\nStandard form is especially useful for:\n- Finding **x- and y-intercepts** quickly (set one variable to zero)\n- Solving **systems of equations** by elimination\n- Working with equations that have integer coefficients\n\n**Finding intercepts from standard form:**\n- **x-intercept**: set y = 0 and solve for x — gives you the point (x, 0)\n- **y-intercept**: set x = 0 and solve for y — gives you the point (0, y)\n\n**Converting between forms:**\n- **Slope-intercept to Standard**: move the x-term to the left, clear fractions\n- **Standard to Slope-intercept**: solve for y (isolate y on one side)\n- **Point-slope to Standard**: distribute, then rearrange\n\nAll three forms — slope-intercept, point-slope, and standard — describe the same line. They are just different ways of presenting the same information, each useful in different situations.",
+      "initialPrompt": "Given the equation 3x + 2y = 12, how would you find the x-intercept? (Hint: what do you set to zero?)",
+      "lessonId": "standard-form"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "standard-form-equations",
+      "title": "I-Do: Standard Form, Intercepts, and Converting",
+      "examples": [
+        {
+          "problem": "Find the x-intercept and y-intercept of the line 4x + 3y = 24.",
+          "solution": "**x-intercept** (set y = 0):\n4x + 3(0) = 24\n4x = 24\nx = 6\nThe x-intercept is **(6, 0)**.\n\n**y-intercept** (set x = 0):\n4(0) + 3y = 24\n3y = 24\ny = 8\nThe y-intercept is **(0, 8)**.\n\nThese two intercepts are enough to graph the line: plot (6, 0) and (0, 8), then draw a line through them.",
+          "tip": "Standard form makes finding intercepts easy — just set one variable to zero and solve for the other."
+        },
+        {
+          "problem": "Convert y = (3/4)x - 2 to standard form (Ax + By = C where A, B, C are integers and A > 0).",
+          "solution": "Step 1: Eliminate the fraction by multiplying every term by 4.\n4y = 3x - 8\n\nStep 2: Move the x-term to the left side (subtract 3x from both sides).\n-3x + 4y = -8\n\nStep 3: Multiply the entire equation by -1 so that A is positive.\n**3x - 4y = 8**\n\nCheck: Solve back for y: -4y = -3x + 8, so y = (3/4)x - 2. Matches the original!",
+          "tip": "To clear fractions, multiply every term by the denominator. To make A positive, multiply the entire equation by -1 if needed."
+        }
+      ],
+      "initialPrompt": "In the first example, we found both intercepts from standard form. Why is standard form especially convenient for this?",
+      "lessonId": "standard-form"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "standard-form-equations",
+      "title": "We-Do: Standard Form and Conversions",
+      "problems": [
+        {
+          "id": "fg-L5-w1",
           "question": "Convert 2x + 5y = 20 to slope-intercept form. What is the slope and y-intercept?",
           "answer": "y = (-2/5)x + 4; slope = -2/5, y-intercept = 4",
           "hints": [
@@ -155,26 +429,79 @@
           ]
         },
         {
-          "id": "fg-wp5",
-          "question": "A line passes through (1, 5) and (4, 14). Write the equation of the line in slope-intercept form.",
-          "answer": "y = 3x + 2",
+          "id": "fg-L5-w2",
+          "question": "Find the x-intercept and y-intercept of 5x - 2y = 10.",
+          "answer": "x-intercept: (2, 0); y-intercept: (0, -5)",
           "hints": [
-            "First find the slope: m = (14 - 5) / (4 - 1) = 9 / 3 = 3.",
-            "Use point-slope form with (1, 5): y - 5 = 3(x - 1). Distribute: y - 5 = 3x - 3. Add 5: y = 3x + 2."
+            "x-intercept: set y = 0. 5x = 10, x = 2. The x-intercept is (2, 0).",
+            "y-intercept: set x = 0. -2y = 10, y = -5. The y-intercept is (0, -5)."
+          ]
+        },
+        {
+          "id": "fg-L5-w3",
+          "question": "Convert y = (-3/4)x + 6 to standard form (Ax + By = C, integers, A > 0).",
+          "answer": "3x + 4y = 24",
+          "hints": [
+            "Multiply every term by 4: 4y = -3x + 24.",
+            "Add 3x to both sides: 3x + 4y = 24. A = 3 is positive, so we're done."
           ]
         }
       ],
-      "initialPrompt": "Let's work through these together. For the first problem, which two points are given, and what formula will we use to find the slope?",
-      "lessonId": "slope-intercept-form"
+      "initialPrompt": "For the first problem, you need to get y by itself. What's the first step to isolate y in 2x + 5y = 20?",
+      "lessonId": "standard-form"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "standard-form-equations",
+      "title": "You-Do: Standard Form",
+      "problems": [
+        {
+          "id": "fg-L5-y1",
+          "question": "Find the x-intercept and y-intercept of 3x - 6y = 18.",
+          "answer": "x-intercept: (6, 0); y-intercept: (0, -3)",
+          "skill": "standard-form-equations",
+          "hints": ["Set y = 0: 3x = 18, x = 6. Set x = 0: -6y = 18, y = -3."]
+        },
+        {
+          "id": "fg-L5-y2",
+          "question": "Convert y = (2/3)x - 5 to standard form (Ax + By = C, integers, A > 0).",
+          "answer": "2x - 3y = 15",
+          "skill": "standard-form-equations",
+          "hints": ["Multiply by 3: 3y = 2x - 15. Rearrange: -2x + 3y = -15. Multiply by -1: 2x - 3y = 15."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "standard-form"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "parallel-perpendicular-lines",
       "title": "Parallel and Perpendicular Lines",
-      "content": "Two lines in a plane either intersect, are parallel, or are the same line. The slope tells us exactly which situation we have:\n\n**Parallel lines** have the **same slope** but different y-intercepts. They never intersect — think of railroad tracks running side by side forever.\n- Example: y = 3x + 1 and y = 3x - 5 are parallel because both have slope 3.\n\n**Perpendicular lines** have slopes that are **negative reciprocals** of each other. They intersect at a 90-degree angle — think of a street crossing a crosswalk.\n- If one line has slope m, the perpendicular line has slope **-1/m**.\n- Example: y = 2x + 1 and y = -1/2 x + 4 are perpendicular because 2 and -1/2 are negative reciprocals (their product is -1).\n\n**Quick check**: multiply the two slopes together.\n- If the product equals **-1**, the lines are perpendicular.\n- If the slopes are **equal**, the lines are parallel.\n- Otherwise, the lines are neither.\n\nSpecial cases: a horizontal line (slope 0) is perpendicular to a vertical line (undefined slope).",
+      "content": "Two lines in a plane either intersect, are parallel, or are the same line. The slope tells us exactly which situation we have:\n\n**Parallel lines** have the **same slope** but different y-intercepts. They never intersect — think of railroad tracks running side by side forever.\n- Example: y = 3x + 1 and y = 3x - 5 are parallel because both have slope 3.\n\n**Perpendicular lines** have slopes that are **negative reciprocals** of each other. They intersect at a 90-degree angle — think of a street crossing a crosswalk.\n- If one line has slope m, the perpendicular line has slope **-1/m**.\n- Example: y = 2x + 1 and y = (-1/2)x + 4 are perpendicular because 2 and -1/2 are negative reciprocals (their product is -1).\n\n**Quick check**: multiply the two slopes together.\n- If the product equals **-1**, the lines are perpendicular.\n- If the slopes are **equal**, the lines are parallel.\n- Otherwise, the lines are neither.\n\nSpecial cases: a horizontal line (slope 0) is perpendicular to a vertical line (undefined slope).",
       "initialPrompt": "Line A has slope 4. What slope would a parallel line have? What slope would a perpendicular line have?",
-      "lessonId": "point-slope-form"
+      "lessonId": "parallel-perpendicular"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "parallel-perpendicular-lines",
+      "title": "I-Do: Parallel and Perpendicular Lines",
+      "examples": [
+        {
+          "problem": "Write the equation of the line parallel to y = 3x + 1 that passes through the point (2, 4).",
+          "solution": "Step 1: Identify the slope. The given line has slope 3. Parallel lines have the same slope, so our new line also has slope **m = 3**.\n\nStep 2: Use point-slope form with (2, 4):\ny - 4 = 3(x - 2)\ny - 4 = 3x - 6\ny = 3x - 6 + 4\n**y = 3x - 2**\n\nCheck: The slope is 3 (same as the original — parallel). Does (2, 4) satisfy it? y = 3(2) - 2 = 4. Yes!",
+          "tip": "Parallel = same slope. Just find the slope of the given line and use it with your new point."
+        },
+        {
+          "problem": "Write the equation of the line perpendicular to y = 2x - 1 that passes through (4, 3).",
+          "solution": "Step 1: The given line has slope 2. The perpendicular slope is the **negative reciprocal**: flip it and change the sign — **m = -1/2**.\n\nStep 2: Use point-slope form with (4, 3):\ny - 3 = (-1/2)(x - 4)\ny - 3 = (-1/2)x + 2\ny = (-1/2)x + 2 + 3\n**y = (-1/2)x + 5**\n\nCheck: Slopes are 2 and -1/2. Product: 2 x (-1/2) = -1. Perpendicular!",
+          "tip": "Perpendicular = negative reciprocal. Flip the fraction AND change the sign. Then use point-slope form."
+        }
+      ],
+      "initialPrompt": "In the second example, we found the perpendicular slope by flipping 2 to 1/2 and changing the sign. What would the perpendicular slope be for a line with slope -3/4?",
+      "lessonId": "parallel-perpendicular"
     },
     {
       "type": "guided_practice",
@@ -183,162 +510,173 @@
       "title": "We-Do: Parallel and Perpendicular Lines",
       "problems": [
         {
-          "id": "fg-wp6",
-          "question": "Write the equation of the line parallel to y = 3x + 1 that passes through the point (2, 4). Give your answer in slope-intercept form.",
-          "answer": "y = 3x - 2",
-          "hints": [
-            "Parallel lines have the same slope. The given line has slope 3, so the new line also has slope 3.",
-            "Use point-slope form: y - 4 = 3(x - 2). Distribute: y - 4 = 3x - 6. Add 4: y = 3x - 2."
-          ]
-        },
-        {
-          "id": "fg-wp7",
-          "question": "Write the equation of the line perpendicular to y = 2x - 1 that passes through the point (4, 3). Give your answer in slope-intercept form.",
-          "answer": "y = (-1/2)x + 5",
-          "hints": [
-            "The given line has slope 2. The negative reciprocal of 2 is -1/2, so the perpendicular line has slope -1/2.",
-            "Use point-slope form: y - 3 = (-1/2)(x - 4). Distribute: y - 3 = (-1/2)x + 2. Add 3: y = (-1/2)x + 5."
-          ]
-        },
-        {
-          "id": "fg-wp8",
+          "id": "fg-L6-w1",
           "question": "Determine whether the lines y = (2/3)x + 5 and y = (-3/2)x - 1 are parallel, perpendicular, or neither. Explain your reasoning.",
           "answer": "Perpendicular",
           "hints": [
             "Compare the slopes: the first line has slope 2/3 and the second has slope -3/2.",
             "Multiply the slopes: (2/3) x (-3/2) = -6/6 = -1. Since the product is -1, the lines are perpendicular."
           ]
+        },
+        {
+          "id": "fg-L6-w2",
+          "question": "Write the equation of the line perpendicular to y = (1/4)x + 2 that passes through (8, -1). Give your answer in slope-intercept form.",
+          "answer": "y = -4x + 31",
+          "hints": [
+            "The given slope is 1/4. The negative reciprocal is -4.",
+            "Point-slope: y - (-1) = -4(x - 8). That gives y + 1 = -4x + 32. Subtract 1: y = -4x + 31."
+          ]
         }
       ],
-      "initialPrompt": "Let's practice parallel and perpendicular lines together. For the first problem, what do you know about the slope of a line parallel to y = 3x + 1?",
-      "lessonId": "point-slope-form"
+      "initialPrompt": "Let's start with the first problem. What are the slopes of the two lines, and what will you do to test if they're perpendicular?",
+      "lessonId": "parallel-perpendicular"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "You-Do: Independent Practice",
+      "skill": "parallel-perpendicular-lines",
+      "title": "You-Do: Parallel and Perpendicular Lines",
       "problems": [
         {
-          "id": "fg-yp1",
-          "question": "Find the slope of the line passing through (4, -2) and (-1, 8).",
-          "answer": "-2",
-          "skill": "slope-from-points",
-          "hints": [
-            "m = (8 - (-2)) / (-1 - 4) = 10 / (-5) = -2."
-          ]
-        },
-        {
-          "id": "fg-yp2",
-          "question": "Graph y = 3x - 4. State the y-intercept and use the slope to identify a second point.",
-          "answer": "y-intercept: (0, -4); using slope 3 (up 3, right 1): second point (1, -1)",
-          "skill": "graphing-linear-equations-slope-intercept",
-          "hints": [
-            "The y-intercept is (0, -4). The slope is 3 = 3/1, so from (0, -4) go up 3 and right 1 to reach (1, -1)."
-          ]
-        },
-        {
-          "id": "fg-yp3",
-          "question": "Write the equation of the line passing through (2, -3) with slope 4 in slope-intercept form.",
-          "answer": "y = 4x - 11",
-          "skill": "writing-linear-equations-slope-intercept",
-          "hints": [
-            "Point-slope: y - (-3) = 4(x - 2) becomes y + 3 = 4x - 8. Subtract 3: y = 4x - 11."
-          ]
-        },
-        {
-          "id": "fg-yp4",
-          "question": "A line passes through (-2, 5) and (6, 1). Write the equation of the line in slope-intercept form.",
-          "answer": "y = (-1/2)x + 4",
-          "skill": "slope-from-points",
-          "hints": [
-            "Find slope: m = (1 - 5) / (6 - (-2)) = -4 / 8 = -1/2. Use point-slope with (-2, 5): y - 5 = (-1/2)(x + 2). Simplify: y = (-1/2)x + 4."
-          ]
-        },
-        {
-          "id": "fg-yp5",
-          "question": "Convert y = (-3/4)x + 6 to standard form (Ax + By = C, integers, A > 0).",
-          "answer": "3x + 4y = 24",
-          "skill": "writing-linear-equations-slope-intercept",
-          "hints": [
-            "Multiply every term by 4: 4y = -3x + 24. Add 3x to both sides: 3x + 4y = 24."
-          ]
-        },
-        {
-          "id": "fg-yp6",
+          "id": "fg-L6-y1",
           "question": "Write the equation of the line parallel to y = -2x + 7 that passes through (1, 3).",
           "answer": "y = -2x + 5",
           "skill": "parallel-perpendicular-lines",
-          "hints": [
-            "Parallel means same slope: m = -2. Point-slope: y - 3 = -2(x - 1). Simplify: y - 3 = -2x + 2, so y = -2x + 5."
-          ]
+          "hints": ["Parallel means same slope: m = -2. Point-slope: y - 3 = -2(x - 1). Simplify: y - 3 = -2x + 2, so y = -2x + 5."]
         },
         {
-          "id": "fg-yp7",
+          "id": "fg-L6-y2",
           "question": "Write the equation of the line perpendicular to y = (1/3)x + 2 that passes through (6, -1).",
           "answer": "y = -3x + 17",
           "skill": "parallel-perpendicular-lines",
+          "hints": ["The given slope is 1/3. The negative reciprocal is -3. Point-slope: y - (-1) = -3(x - 6). Simplify: y + 1 = -3x + 18, so y = -3x + 17."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "parallel-perpendicular"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "graphing-linear-inequalities",
+      "title": "Graphing Linear Inequalities in Two Variables",
+      "content": "A **linear inequality** looks like a linear equation but uses <, >, ≤, or ≥ instead of =. Its graph is not a line but a **half-plane** — an entire region of the coordinate plane on one side of a boundary line.\n\n**How to graph a linear inequality:**\n\n1. **Draw the boundary line** (replace the inequality symbol with =).\n   - Use a **solid line** for ≤ or ≥ (the boundary IS included)\n   - Use a **dashed line** for < or > (the boundary is NOT included)\n\n2. **Choose a test point** NOT on the line (the origin (0, 0) is usually easiest).\n\n3. **Substitute the test point** into the original inequality.\n   - If the inequality is **TRUE**, shade the side containing the test point.\n   - If the inequality is **FALSE**, shade the OPPOSITE side.\n\nExample: Graph y > 2x - 1\n- Boundary line: y = 2x - 1 (draw it **dashed** because it's strict >)\n- Test (0, 0): 0 > 2(0) - 1 → 0 > -1 → **TRUE**\n- Shade the side containing (0, 0) — above the line.\n\nEvery point in the shaded region is a solution to the inequality.",
+      "initialPrompt": "For the inequality y ≤ x + 3, would you draw a solid or dashed boundary line? Why?",
+      "lessonId": "linear-inequalities-graphing"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "graphing-linear-inequalities",
+      "title": "I-Do: Graphing Linear Inequalities",
+      "examples": [
+        {
+          "problem": "Graph the inequality y ≤ -x + 4.",
+          "solution": "Step 1: Draw the boundary line y = -x + 4.\n- y-intercept: (0, 4). Slope: -1 (down 1, right 1).\n- Second point: (1, 3). Third point: (4, 0).\n- Use a **solid line** because the symbol is ≤ (points ON the line are included).\n\nStep 2: Pick a test point. Use (0, 0).\n- Substitute: 0 ≤ -(0) + 4 → 0 ≤ 4 → **TRUE**\n\nStep 3: Since (0, 0) makes the inequality TRUE, shade the side of the line that contains (0, 0) — the region **below and to the left** of the line.\n\nEvery point in the shaded region (including the line itself) is a solution.",
+          "tip": "Solid line = ≤ or ≥ (boundary included). Dashed line = < or > (boundary NOT included)."
+        },
+        {
+          "problem": "Graph the inequality 2x + 3y > 6.",
+          "solution": "Step 1: Draw the boundary line 2x + 3y = 6.\n- Find intercepts: x-intercept (set y = 0): 2x = 6, x = 3 → (3, 0)\n- y-intercept (set x = 0): 3y = 6, y = 2 → (0, 2)\n- Use a **dashed line** because the symbol is > (strict, boundary NOT included).\n\nStep 2: Test (0, 0).\n- 2(0) + 3(0) > 6 → 0 > 6 → **FALSE**\n\nStep 3: Since (0, 0) makes it FALSE, shade the **opposite** side — the region that does NOT contain the origin (above and to the right of the line).\n\nCheck with a point in the shaded region, say (3, 3): 2(3) + 3(3) = 15 > 6. TRUE!",
+          "tip": "When the test point gives FALSE, shade the opposite side. Always verify with a second point in your shaded region."
+        }
+      ],
+      "initialPrompt": "In the first example, we used (0, 0) as our test point. Can you think of a situation where (0, 0) would NOT be a good test point?",
+      "lessonId": "linear-inequalities-graphing"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "graphing-linear-inequalities",
+      "title": "We-Do: Graphing Inequalities",
+      "problems": [
+        {
+          "id": "fg-L7-w1",
+          "question": "Graph y > (1/2)x - 3. Is the boundary line solid or dashed? Which side do you shade?",
+          "answer": "Dashed line (strict >); shade above the line (the side containing the origin)",
           "hints": [
-            "The given slope is 1/3. The negative reciprocal is -3. Point-slope: y - (-1) = -3(x - 6). Simplify: y + 1 = -3x + 18, so y = -3x + 17."
+            "The symbol is > (strict), so draw a dashed boundary line y = (1/2)x - 3.",
+            "Test (0, 0): 0 > (1/2)(0) - 3 → 0 > -3 → TRUE. Shade the side containing (0, 0), which is above the line."
+          ]
+        },
+        {
+          "id": "fg-L7-w2",
+          "question": "Is the point (2, 5) a solution to the inequality 3x - y ≥ 1?",
+          "answer": "Yes, (2, 5) is a solution: 3(2) - 5 = 1, and 1 ≥ 1 is true.",
+          "hints": [
+            "Substitute x = 2 and y = 5 into 3x - y ≥ 1.",
+            "3(2) - 5 = 6 - 5 = 1. Is 1 ≥ 1? Yes! The point is on the boundary, and ≥ includes the boundary."
           ]
         }
       ],
-      "attemptsRequired": 3,
-      "skill": "graphing-linear-equations-slope-intercept",
-      "lessonId": "relations-functions"
+      "initialPrompt": "For y > (1/2)x - 3, what kind of line will you draw — solid or dashed? What does the > symbol tell you?",
+      "lessonId": "linear-inequalities-graphing"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "graphing-linear-inequalities",
+      "title": "You-Do: Linear Inequalities",
+      "problems": [
+        {
+          "id": "fg-L7-y1",
+          "question": "Graph y ≥ 2x - 1. State whether the boundary is solid or dashed, and which side you shade.",
+          "answer": "Solid line (≥ includes boundary); test (0,0): 0 ≥ -1 is TRUE, shade the side containing the origin (above the line).",
+          "skill": "graphing-linear-inequalities",
+          "hints": ["Boundary is solid (≥). Test (0,0): 0 ≥ 2(0) - 1 → 0 ≥ -1 → TRUE. Shade above."]
+        },
+        {
+          "id": "fg-L7-y2",
+          "question": "Determine whether the point (-1, 4) is a solution to the inequality x + 2y < 10.",
+          "answer": "Yes: (-1) + 2(4) = -1 + 8 = 7, and 7 < 10 is true.",
+          "skill": "graphing-linear-inequalities",
+          "hints": ["Substitute: (-1) + 2(4) = 7. Is 7 < 10? Yes, so (-1, 4) IS a solution."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "linear-inequalities-graphing"
     }
   ],
   "answerKeys": {
-    "fg-wp1": "m = -3",
-    "fg-wp2": "y-intercept (0, 3); second point (2, 4)",
-    "fg-wp3": "y = -3x + 7",
-    "fg-wp4": "y = (-2/5)x + 4; slope = -2/5, y-intercept = 4",
-    "fg-wp5": "y = 3x + 2",
-    "fg-wp6": "y = 3x - 2",
-    "fg-wp7": "y = (-1/2)x + 5",
-    "fg-wp8": "Perpendicular (slopes 2/3 and -3/2 multiply to -1)",
-    "fg-yp1": "m = -2",
-    "fg-yp2": "y-intercept (0, -4); second point (1, -1)",
-    "fg-yp3": "y = 4x - 11",
-    "fg-yp4": "y = (-1/2)x + 4",
-    "fg-yp5": "3x + 4y = 24",
-    "fg-yp6": "y = -2x + 5",
-    "fg-yp7": "y = -3x + 17"
+    "fg-L1-w1": "Yes, it is a function. Domain: {0, 1, 2, 3}. Range: {5, 8, 11, 14}.",
+    "fg-L1-w2": "g(3) = 1, g(-4) = 15",
+    "fg-L1-w3": "No, a circle fails the vertical line test and is NOT a function.",
+    "fg-L1-y1": "No — the input 4 maps to both 6 and 10.",
+    "fg-L1-y2": "f(4) = 5, f(-2) = 11",
+    "fg-L2-w1": "m = -3",
+    "fg-L2-w2": "Undefined (vertical line, division by zero)",
+    "fg-L2-w3": "50 miles per hour",
+    "fg-L2-y1": "m = -2",
+    "fg-L2-y2": "150 gallons per hour",
+    "fg-L3-w1": "y-intercept (0, 3); second point (2, 4)",
+    "fg-L3-w2": "y = 3x + 2",
+    "fg-L3-y1": "y-intercept (0, -4); second point (1, -1)",
+    "fg-L3-y2": "y = 3x - 2",
+    "fg-L4-w1": "y = -3x + 7",
+    "fg-L4-w2": "y = 3x - 13",
+    "fg-L4-y1": "y = 4x - 11",
+    "fg-L4-y2": "y = (-1/2)x + 4",
+    "fg-L5-w1": "y = (-2/5)x + 4; slope = -2/5, y-intercept = 4",
+    "fg-L5-w2": "x-intercept: (2, 0); y-intercept: (0, -5)",
+    "fg-L5-w3": "3x + 4y = 24",
+    "fg-L5-y1": "x-intercept: (6, 0); y-intercept: (0, -3)",
+    "fg-L5-y2": "2x - 3y = 15",
+    "fg-L6-w1": "Perpendicular (slopes 2/3 and -3/2 multiply to -1)",
+    "fg-L6-w2": "y = -4x + 31",
+    "fg-L6-y1": "y = -2x + 5",
+    "fg-L6-y2": "y = -3x + 17",
+    "fg-L7-w1": "Dashed line (strict >); shade above the line (side containing origin)",
+    "fg-L7-w2": "Yes — 3(2) - 5 = 1, and 1 ≥ 1 is true.",
+    "fg-L7-y1": "Solid line (≥); shade above the line (side containing origin)",
+    "fg-L7-y2": "Yes — (-1) + 2(4) = 7, and 7 < 10 is true."
   },
   "lessons": [
-    {
-      "lessonId": "relations-functions",
-      "title": "Relations and Functions",
-      "order": 1
-    },
-    {
-      "lessonId": "slope",
-      "title": "Understanding Slope",
-      "order": 2
-    },
-    {
-      "lessonId": "slope-intercept-form",
-      "title": "Slope-Intercept Form",
-      "order": 3
-    },
-    {
-      "lessonId": "point-slope-form",
-      "title": "Point-Slope Form",
-      "order": 4
-    },
-    {
-      "lessonId": "standard-form",
-      "title": "Standard Form and Intercepts",
-      "order": 5
-    },
-    {
-      "lessonId": "parallel-perpendicular",
-      "title": "Parallel and Perpendicular Lines",
-      "order": 6
-    },
-    {
-      "lessonId": "linear-inequalities-graphing",
-      "title": "Graphing Linear Inequalities in Two Variables",
-      "order": 7
-    }
+    { "lessonId": "relations-functions", "title": "Relations and Functions", "order": 1 },
+    { "lessonId": "slope", "title": "Understanding Slope", "order": 2 },
+    { "lessonId": "slope-intercept-form", "title": "Slope-Intercept Form", "order": 3 },
+    { "lessonId": "point-slope-form", "title": "Point-Slope Form", "order": 4 },
+    { "lessonId": "standard-form", "title": "Standard Form and Intercepts", "order": 5 },
+    { "lessonId": "parallel-perpendicular", "title": "Parallel and Perpendicular Lines", "order": 6 },
+    { "lessonId": "linear-inequalities-graphing", "title": "Graphing Linear Inequalities in Two Variables", "order": 7 }
   ]
 }
