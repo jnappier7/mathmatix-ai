@@ -71,60 +71,13 @@ input, textarea, select, .math-field {
         display: none !important;
     }
 
-    /* 40 px glass header — logo only, centred */
+    /* Header hidden on mobile — watermark handles branding,
+       bottom nav handles navigation. */
     .landing-header {
-        height: 40px !important;
-        min-height: 40px !important;
-        max-height: 40px !important;
-        padding: 0 16px !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        position: sticky;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1100;
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        width: 100%;
-        overflow: hidden;
-        box-shadow: none;
-        flex-wrap: nowrap !important;
-    }
-
-    /* Centred logo */
-    .header-logo-container {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-
-    .header-logo-container .main-logo-hero {
-        max-height: 22px;
-        width: auto;
-        max-width: 130px;
-        object-fit: contain;
-    }
-
-    /* ---- Hide ALL header chrome — bottom nav handles everything ---- */
-    .landing-nav {
         display: none !important;
     }
 
-    .landing-header .drawer-toggle-btn {
-        display: none !important;
-    }
-
-    /* Override Section 15 accessibility min-height inside header */
-    .landing-header button,
-    .landing-header .btn {
-        min-height: 32px !important;
-    }
+    /* All header children hidden via parent display:none */
 
     /* General hide helpers */
     .mobile-hide,
@@ -621,7 +574,7 @@ input, textarea, select, .math-field {
         transform: translate(-50%, -50%);
         z-index: 0;
         pointer-events: none;
-        opacity: 0.035;
+        opacity: 0.07;
         width: 180px;
         height: 180px;
         align-items: center;
@@ -639,7 +592,7 @@ input, textarea, select, .math-field {
 
     /* Dark mode: invert the watermark for subtle white-on-dark effect */
     [data-theme="dark"] #chat-watermark {
-        opacity: 0.04;
+        opacity: 0.08;
         filter: invert(1);
     }
 }
@@ -934,18 +887,9 @@ input, textarea, select, .math-field {
 
 /* --- 9. ORIENTATION HANDLING --- */
 
-/* Landscape mobile — squeeze both bars down for max chat space */
+/* Landscape mobile — squeeze bottom bar for max chat space */
 @media (max-height: 500px) and (orientation: landscape) {
-    .landing-header {
-        height: 32px !important;
-        min-height: 32px !important;
-        max-height: 32px !important;
-        padding: 0 6px !important;
-    }
-
-    body.landing-page-body .landing-header {
-        flex: 0 0 32px !important;
-    }
+    /* Header already hidden via Section 2 */
 
     /* Compact bottom nav in landscape */
     body.has-chat-nav .mobile-chat-nav {
@@ -1018,12 +962,12 @@ input, textarea, select, .math-field {
     }
 }
 
-/* Touch device overrides — match the 40px minimal header */
-body.is-touch-device .landing-header,
-body.is-mobile .landing-header {
-    min-height: 40px;
-    height: 40px;
-    padding: 0 16px;
+/* Touch device overrides — header hidden on mobile */
+@media (max-width: 768px) {
+    body.is-touch-device .landing-header,
+    body.is-mobile .landing-header {
+        display: none !important;
+    }
 }
 
 body.is-touch-device #sidebar-toggle,
@@ -1247,13 +1191,14 @@ body.is-mobile #sidebar-toggle {
         padding: 0 !important;
     }
 
-    /* Header: fixed-size flex child */
+    /* Header hidden — no flex space needed */
     body.landing-page-body .landing-header {
-        flex: 0 0 40px !important;
+        flex: 0 0 0px !important;
+        display: none !important;
     }
 
     :root {
-        --header-height: 40px;
+        --header-height: 0px;
     }
 
     /* App wrapper fills the space between header and bottom nav.
