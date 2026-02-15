@@ -52,11 +52,25 @@
       "title": "We-Do: Parametric Arc Length — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for parametric arc length.",
-          "hint": "Apply the concepts of parametric arc length.",
-          "solution": "Step-by-step solution for parametric arc length."
+          "id": "ppv-wp10",
+          "question": "Find the arc length of x = t\u00b2, y = t\u00b3 from t = 0 to t = 1.",
+          "answer": "(13\u221a13 \u2212 8)/27",
+          "hints": [
+            "dx/dt = 2t, dy/dt = 3t\u00b2. Speed = \u221a(4t\u00b2 + 9t\u2074) = t\u221a(4 + 9t\u00b2).",
+            "L = \u222b\u2080\u00b9 t\u221a(4 + 9t\u00b2) dt. Let u = 4 + 9t\u00b2, du = 18t dt. When t=0: u=4; t=1: u=13. L = (1/18)\u222b\u2084\u00b9\u00b3 \u221au du = (1/18)(2/3)[u^{3/2}]\u2084\u00b9\u00b3 = (1/27)(13\u221a13 \u2212 8)."
+          ]
+        },
+        {
+          "id": "ppv-wp11",
+          "question": "Find the arc length of x = 3t, y = 4t from t = 0 to t = 5.",
+          "answer": "25",
+          "hints": [
+            "dx/dt = 3, dy/dt = 4. Speed = \u221a(9 + 16) = \u221a25 = 5 (constant).",
+            "L = \u222b\u2080\u2075 5 dt = 25. This traces a straight line segment of length 25 (a 3-4-5 right triangle pattern scaled by t)."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, find dx/dt and dy/dt, then set up the arc length integral L = \u222b\u221a((dx/dt)\u00b2 + (dy/dt)\u00b2) dt.",
       "lessonId": "parametric-equations"
     },
     {
@@ -334,7 +348,9 @@
     "ppv-yp3": "Area of one petal = π/12.",
     "ppv-yp4": "t = √3 and t = −√3.",
     "ppv-yp5": "d²y/dx² = 2 (constant for all t).",
-    "ppv-yp6": "Slope = −1 at θ = π/6."
+    "ppv-yp6": "Slope = −1 at θ = π/6.",
+    "ppv-wp10": "(13√13 − 8)/27.",
+    "ppv-wp11": "25."
   },
   "lessons": [
     {

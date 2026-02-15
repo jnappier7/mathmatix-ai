@@ -187,11 +187,25 @@
       "title": "We-Do: Inverse Function Derivatives — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for inverse function derivatives.",
-          "hint": "Apply the concepts of inverse function derivatives.",
-          "solution": "Step-by-step solution for inverse function derivatives."
+          "id": "ad-wp10",
+          "question": "Find d/dx[arcsin(2x)].",
+          "answer": "2/\u221a(1 \u2212 4x\u00b2)",
+          "hints": [
+            "d/dx[arcsin(u)] = 1/\u221a(1 \u2212 u\u00b2) \u00b7 u'. Here u = 2x, so u' = 2.",
+            "d/dx[arcsin(2x)] = 2/\u221a(1 \u2212 (2x)\u00b2) = 2/\u221a(1 \u2212 4x\u00b2)."
+          ]
+        },
+        {
+          "id": "ad-wp11",
+          "question": "Given: f(2) = 5, f'(2) = 4, f(5) = 2. Find (f\u207b\u00b9)'(5).",
+          "answer": "1/4",
+          "hints": [
+            "Use (f\u207b\u00b9)'(a) = 1/f'(f\u207b\u00b9(a)). We need (f\u207b\u00b9)'(5). Since f(2) = 5, f\u207b\u00b9(5) = 2.",
+            "(f\u207b\u00b9)'(5) = 1/f'(f\u207b\u00b9(5)) = 1/f'(2) = 1/4."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, identify the chain rule setup: the outer function is arcsin(\u25a1) and the inner function is 2x. What is d/dx[arcsin(u)]?",
       "lessonId": "inverse-derivatives"
     },
     {
@@ -333,7 +347,9 @@
     "ad-yp3": "cot x.",
     "ad-yp4": "−y/(2y + x).",
     "ad-yp5": "3/(1 + 9x²).",
-    "ad-yp6": "1/3."
+    "ad-yp6": "1/3.",
+    "ad-wp10": "2/√(1 − 4x²).",
+    "ad-wp11": "1/4."
   },
   "lessons": [
     {

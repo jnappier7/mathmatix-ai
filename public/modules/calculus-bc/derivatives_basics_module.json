@@ -48,11 +48,25 @@
       "title": "We-Do: Derivative Interpretation — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for derivative interpretation.",
-          "hint": "Apply the concepts of derivative interpretation.",
-          "solution": "Step-by-step solution for derivative interpretation."
+          "id": "db-wp10",
+          "question": "A ball is thrown upward with position s(t) = \u221216t\u00b2 + 64t + 5 (feet). Find the velocity at t = 1 and interpret your answer.",
+          "answer": "v(1) = 32 ft/s. The ball is rising at 32 feet per second at t = 1.",
+          "hints": [
+            "Velocity = s'(t) = \u221232t + 64. Plug in t = 1: s'(1) = \u221232 + 64 = 32.",
+            "Since v(1) = 32 > 0, the ball is moving upward at 32 ft/s at time t = 1."
+          ]
+        },
+        {
+          "id": "db-wp11",
+          "question": "Find the equation of the tangent line to f(x) = \u221ax at x = 9.",
+          "answer": "y = (1/6)x + 3/2",
+          "hints": [
+            "f(9) = 3. f'(x) = 1/(2\u221ax), so f'(9) = 1/(2\u00b73) = 1/6.",
+            "Tangent: y \u2212 3 = (1/6)(x \u2212 9) \u2192 y = (1/6)x \u2212 3/2 + 3 = (1/6)x + 3/2."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, the velocity function is s'(t). Find it by differentiating s(t), then evaluate at t = 1. What does the sign of the velocity tell you?",
       "lessonId": "derivative-definition"
     },
     {
@@ -336,7 +350,9 @@
     "db-yp3": "f'(x) = −3sin(x) + 5e^x + 2/x² + sec²(x).",
     "db-yp4": "y = 3x − 2.",
     "db-yp5": "f'(5) ≈ −3/2.",
-    "db-yp6": "f'(1) = 2, f'(4) = −2, f'(2) DNE (corner)."
+    "db-yp6": "f'(1) = 2, f'(4) = −2, f'(2) DNE (corner).",
+    "db-wp10": "v(1) = 32 ft/s (ball rising).",
+    "db-wp11": "y = (1/6)x + 3/2."
   },
   "lessons": [
     {

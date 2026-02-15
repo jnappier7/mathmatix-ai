@@ -64,11 +64,25 @@
       "title": "We-Do: Accumulation Functions — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for accumulation functions.",
-          "hint": "Apply the concepts of accumulation functions.",
-          "solution": "Step-by-step solution for accumulation functions."
+          "id": "ia-wp10",
+          "question": "Let g(x) = \u222b\u2080\u02e3 (t\u00b2 \u2212 4) dt. Find g'(x), and determine where g has a local minimum.",
+          "answer": "g'(x) = x\u00b2 \u2212 4. Local minimum at x = 2.",
+          "hints": [
+            "By FTC Part 1: g'(x) = x\u00b2 \u2212 4. Set g' = 0: x\u00b2 = 4, x = \u00b12. Since domain starts at 0, consider x = 2.",
+            "g'(x) < 0 for 0 < x < 2, g'(x) > 0 for x > 2. Sign change \u2212 to + at x = 2 \u2192 local minimum."
+          ]
+        },
+        {
+          "id": "ia-wp11",
+          "question": "Find d/dx \u222b\u2080^{x\u00b3} cos(t) dt.",
+          "answer": "3x\u00b2 cos(x\u00b3)",
+          "hints": [
+            "FTC Part 1 with chain rule: d/dx \u222b\u2080^{u} f(t) dt = f(u) \u00b7 u'. Here u = x\u00b3, u' = 3x\u00b2, f(t) = cos(t).",
+            "So d/dx = cos(x\u00b3) \u00b7 3x\u00b2 = 3x\u00b2 cos(x\u00b3)."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, apply FTC Part 1 directly to find g'(x). Then analyze g' like any first-derivative problem \u2014 set g' = 0 and check sign changes.",
       "lessonId": "accumulation-functions"
     },
     {
@@ -78,11 +92,25 @@
       "title": "We-Do: Ftc Part1 — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for ftc part1.",
-          "hint": "Apply the concepts of ftc part1.",
-          "solution": "Step-by-step solution for ftc part1."
+          "id": "ia-wp12",
+          "question": "Find d/dx \u222b\u2081^{x\u00b2} \u221a(t + 1) dt.",
+          "answer": "2x\u221a(x\u00b2 + 1)",
+          "hints": [
+            "FTC Part 1 with chain rule: d/dx \u222b\u2081^{u(x)} f(t) dt = f(u(x)) \u00b7 u'(x). Here u = x\u00b2, so u' = 2x.",
+            "f(t) = \u221a(t + 1), so f(x\u00b2) = \u221a(x\u00b2 + 1). Answer: 2x\u221a(x\u00b2 + 1)."
+          ]
+        },
+        {
+          "id": "ia-wp13",
+          "question": "Evaluate \u222b\u2080\u00b2 (x\u00b3 \u2212 x) dx using FTC Part 2.",
+          "answer": "2",
+          "hints": [
+            "Antiderivative: F(x) = x\u2074/4 \u2212 x\u00b2/2.",
+            "F(2) \u2212 F(0) = (16/4 \u2212 4/2) \u2212 0 = 4 \u2212 2 = 2."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, the upper limit is x\u00b2 (not just x), so you need the chain rule extension of FTC Part 1. What is u(x) and u'(x)?",
       "lessonId": "definite-integral-ftc"
     },
     {
@@ -160,11 +188,25 @@
       "title": "We-Do: U Substitution — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for u substitution.",
-          "hint": "Apply the concepts of u substitution.",
-          "solution": "Step-by-step solution for u substitution."
+          "id": "ia-wp14",
+          "question": "Evaluate \u222b (3x\u00b2)/(x\u00b3 + 1)\u00b2 dx.",
+          "answer": "\u22121/(x\u00b3 + 1) + C",
+          "hints": [
+            "Let u = x\u00b3 + 1, du = 3x\u00b2 dx. The integral becomes \u222b 1/u\u00b2 du = \u222b u\u207b\u00b2 du.",
+            "\u222b u\u207b\u00b2 du = \u2212u\u207b\u00b9 + C = \u22121/(x\u00b3 + 1) + C."
+          ]
+        },
+        {
+          "id": "ia-wp15",
+          "question": "Evaluate \u222b\u2080\u00b9 x\u00b7e^{x\u00b2} dx.",
+          "answer": "(e \u2212 1)/2",
+          "hints": [
+            "Let u = x\u00b2, du = 2x dx, so x dx = du/2. When x = 0, u = 0; when x = 1, u = 1.",
+            "\u222b\u2080\u00b9 (1/2)e\u1d58 du = (1/2)[e\u1d58]\u2080\u00b9 = (1/2)(e \u2212 1) = (e \u2212 1)/2."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, look at the denominator (x\u00b3 + 1)\u00b2. What is the derivative of x\u00b3 + 1? Do you see it (or a constant multiple) in the numerator?",
       "lessonId": "antiderivatives-u-sub"
     },
     {
@@ -242,11 +284,25 @@
       "title": "We-Do: Improper Integrals — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for improper integrals.",
-          "hint": "Apply the concepts of improper integrals.",
-          "solution": "Step-by-step solution for improper integrals."
+          "id": "ia-wp16",
+          "question": "Determine whether \u222b\u2081^\u221e 1/x^(3/2) dx converges or diverges. If it converges, find its value.",
+          "answer": "Converges to 2",
+          "hints": [
+            "p-test: p = 3/2 > 1, so it converges. Compute: lim_{b\u2192\u221e} \u222b\u2081\u1d47 x^(\u22123/2) dx = lim_{b\u2192\u221e} [\u22122x^(\u22121/2)]\u2081\u1d47.",
+            "= lim_{b\u2192\u221e} (\u22122/\u221ab + 2) = 0 + 2 = 2."
+          ]
+        },
+        {
+          "id": "ia-wp17",
+          "question": "Determine whether \u222b\u2081^\u221e 1/\u221ax dx converges or diverges.",
+          "answer": "Diverges",
+          "hints": [
+            "p-test: p = 1/2 < 1, so it diverges. Verify: lim_{b\u2192\u221e} \u222b\u2081\u1d47 x^(\u22121/2) dx = lim_{b\u2192\u221e} [2\u221ax]\u2081\u1d47.",
+            "= lim_{b\u2192\u221e} (2\u221ab \u2212 2) = \u221e. The integral diverges."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, which p-test applies? Write 1/x^(3/2) = x^(\u22123/2) and recall: \u222b\u2081^\u221e 1/x\u1d56 dx converges when p > 1.",
       "lessonId": "improper-integrals"
     },
     {
@@ -256,11 +312,25 @@
       "title": "We-Do: Partial Fractions — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for partial fractions.",
-          "hint": "Apply the concepts of partial fractions.",
-          "solution": "Step-by-step solution for partial fractions."
+          "id": "ia-wp18",
+          "question": "Evaluate \u222b (4x + 3)/[(x + 1)(x \u2212 2)] dx using partial fractions.",
+          "answer": "(1/3) ln|x + 1| + (11/3) ln|x \u2212 2| + C",
+          "hints": [
+            "Decompose: (4x+3)/[(x+1)(x\u22122)] = A/(x+1) + B/(x\u22122). Multiply through: 4x+3 = A(x\u22122) + B(x+1). Set x = \u22121: \u22121 = \u22123A, A = 1/3. Set x = 2: 11 = 3B, B = 11/3.",
+            "\u222b [1/(3(x+1)) + 11/(3(x\u22122))] dx = (1/3) ln|x+1| + (11/3) ln|x\u22122| + C."
+          ]
+        },
+        {
+          "id": "ia-wp19",
+          "question": "Evaluate \u222b 1/[(x)(x + 1)] dx using partial fractions.",
+          "answer": "ln|x| \u2212 ln|x + 1| + C = ln|x/(x + 1)| + C",
+          "hints": [
+            "Decompose: 1/[x(x+1)] = A/x + B/(x+1). Multiply: 1 = A(x+1) + Bx. Set x = 0: A = 1. Set x = \u22121: B = \u22121.",
+            "\u222b [1/x \u2212 1/(x+1)] dx = ln|x| \u2212 ln|x+1| + C = ln|x/(x+1)| + C."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, factor the denominator (it's already factored), then set up A/(x+1) + B/(x\u22122). Use the cover-up method: plug in x = \u22121 and x = 2.",
       "lessonId": "partial-fractions"
     },
     {
@@ -402,7 +472,17 @@
     "ia-yp3": "6.",
     "ia-yp4": "eˣ(x² − 2x + 2) + C.",
     "ia-yp5": "−(1/3) ln|x − 1| + (7/3) ln|x + 2| + C.",
-    "ia-yp6": "Converges to 1."
+    "ia-yp6": "Converges to 1.",
+    "ia-wp10": "g'(x) = x² − 4. Local min at x = 2.",
+    "ia-wp11": "3x² cos(x³).",
+    "ia-wp12": "2x√(x² + 1).",
+    "ia-wp13": "2.",
+    "ia-wp14": "−1/(x³ + 1) + C.",
+    "ia-wp15": "(e − 1)/2.",
+    "ia-wp16": "Converges to 2.",
+    "ia-wp17": "Diverges.",
+    "ia-wp18": "(1/3) ln|x+1| + (11/3) ln|x−2| + C.",
+    "ia-wp19": "ln|x/(x+1)| + C."
   },
   "lessons": [
     {

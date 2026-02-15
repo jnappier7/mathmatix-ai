@@ -187,11 +187,25 @@
       "title": "We-Do: Lhopitals Rule — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for lhopitals rule.",
-          "hint": "Apply the concepts of lhopitals rule.",
-          "solution": "Step-by-step solution for lhopitals rule."
+          "id": "cd-wp10",
+          "question": "Evaluate: lim_{x\u21920} (e\u02e3 \u2212 1 \u2212 x)/x\u00b2.",
+          "answer": "1/2",
+          "hints": [
+            "Direct substitution: (1 \u2212 1 \u2212 0)/0 = 0/0 \u2192 indeterminate. Apply L'H\u00f4pital: lim (e\u02e3 \u2212 1)/(2x). Still 0/0.",
+            "Apply L'H\u00f4pital again: lim e\u02e3/2 = 1/2."
+          ]
+        },
+        {
+          "id": "cd-wp11",
+          "question": "Evaluate: lim_{x\u2192\u221e} x\u00b2/e\u02e3.",
+          "answer": "0",
+          "hints": [
+            "Form: \u221e/\u221e. Apply L'H\u00f4pital: lim 2x/e\u02e3. Still \u221e/\u221e.",
+            "Apply L'H\u00f4pital again: lim 2/e\u02e3 = 0. Exponentials always beat polynomials."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, try direct substitution first. What form do you get? Is it indeterminate? If so, what does L'H\u00f4pital's Rule say to do?",
       "lessonId": "lhopitals-rule"
     },
     {
@@ -333,7 +347,9 @@
     "cd-yp3": "241/120 ≈ 2.0083.",
     "cd-yp4": "1.",
     "cd-yp5": "4.",
-    "cd-yp6": "0."
+    "cd-yp6": "0.",
+    "cd-wp10": "1/2.",
+    "cd-wp11": "0."
   },
   "lessons": [
     {

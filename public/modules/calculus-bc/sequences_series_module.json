@@ -74,11 +74,25 @@
       "title": "We-Do: Alternating Series Error — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for alternating series error.",
-          "hint": "Apply the concepts of alternating series error.",
-          "solution": "Step-by-step solution for alternating series error."
+          "id": "ss-wp10",
+          "question": "Determine if \u03a3_{n=1}^\u221e (\u22121)^{n+1}/(2n \u2212 1) converges. If so, is the convergence absolute or conditional?",
+          "answer": "Conditionally convergent.",
+          "hints": [
+            "AST: b\u2099 = 1/(2n\u22121) is decreasing and lim b\u2099 = 0. Converges by AST.",
+            "Absolute check: \u03a31/(2n\u22121). Limit comparison with 1/n: lim [1/(2n\u22121)]/(1/n) = lim n/(2n\u22121) = 1/2 > 0. Since \u03a31/n diverges, so does \u03a31/(2n\u22121). Conditionally convergent."
+          ]
+        },
+        {
+          "id": "ss-wp11",
+          "question": "For \u03a3_{n=1}^\u221e (\u22121)^{n+1}/n\u2074, how many terms guarantee the error is less than 0.001?",
+          "answer": "5 terms",
+          "hints": [
+            "Alternating series error bound: |S \u2212 S\u2099| \u2264 b_{n+1} = 1/(n+1)\u2074. Need 1/(n+1)\u2074 < 0.001.",
+            "(n+1)\u2074 > 1000. Check: 5\u2074 = 625 < 1000, 6\u2074 = 1296 > 1000. So n+1 \u2265 6, meaning n \u2265 5."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, check the alternating series test conditions: is b\u2099 = 1/(2n\u22121) decreasing? Does lim b\u2099 = 0?",
       "lessonId": "alternating-series"
     },
     {
@@ -163,11 +177,25 @@
       "title": "We-Do: Lagrange Error Bound — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for lagrange error bound.",
-          "hint": "Apply the concepts of lagrange error bound.",
-          "solution": "Step-by-step solution for lagrange error bound."
+          "id": "ss-wp12",
+          "question": "Use the Lagrange error bound to find an upper bound for the error when approximating cos(0.5) using P\u2082(0.5) = 1 \u2212 (0.5)\u00b2/2 = 0.875.",
+          "answer": "|R\u2082(0.5)| \u2264 (0.5)\u00b3/3! = 1/48 \u2248 0.0208",
+          "hints": [
+            "For cos x, n = 2, x = 0.5, a = 0. We need M = max|f'''(c)| for c \u2208 [0, 0.5]. f'''(x) = sin x, so |f'''(c)| \u2264 1. Use M = 1.",
+            "|R\u2082(0.5)| \u2264 1 \u00b7 (0.5)\u00b3 / 3! = (1/8)/6 = 1/48 \u2248 0.0208. Actual cos(0.5) \u2248 0.8776, so actual error \u2248 0.003 \u2014 well within the bound."
+          ]
+        },
+        {
+          "id": "ss-wp13",
+          "question": "Find the smallest n such that P\u2099(0.2) approximates sin(0.2) with error less than 10\u207b\u2076 (using the Lagrange error bound).",
+          "answer": "n = 5 (use P\u2085)",
+          "hints": [
+            "For sin x: all derivatives are bounded by 1 (M = 1). |R\u2099(0.2)| \u2264 (0.2)^{n+1}/(n+1)!. Need this < 10\u207b\u2076.",
+            "Try n = 3: (0.2)\u2074/4! = 0.0016/24 \u2248 6.67 \u00d7 10\u207b\u2075 > 10\u207b\u2076. Try n = 5: (0.2)\u2076/6! = 6.4 \u00d7 10\u207b\u2075/720 \u2248 8.9 \u00d7 10\u207b\u2078 < 10\u207b\u2076. So n = 5."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, recall the Lagrange error formula: |R\u2099(x)| \u2264 M\u00b7|x \u2212 a|^{n+1}/(n+1)! where M bounds the (n+1)th derivative.",
       "lessonId": "lagrange-error"
     },
     {
@@ -177,11 +205,25 @@
       "title": "We-Do: Power Series Interval — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for power series interval.",
-          "hint": "Apply the concepts of power series interval.",
-          "solution": "Step-by-step solution for power series interval."
+          "id": "ss-wp14",
+          "question": "Find the radius and interval of convergence for \u03a3_{n=1}^\u221e x\u207f/n.",
+          "answer": "R = 1; interval = [\u22121, 1)",
+          "hints": [
+            "Ratio test: |a_{n+1}/a\u2099| = |x|n/(n+1) \u2192 |x|. Converges when |x| < 1, so R = 1.",
+            "At x = 1: \u03a31/n diverges (harmonic). At x = \u22121: \u03a3(\u22121)\u207f/n converges (alternating harmonic). Interval: [\u22121, 1)."
+          ]
+        },
+        {
+          "id": "ss-wp15",
+          "question": "Find the radius and interval of convergence for \u03a3_{n=0}^\u221e n! \u00b7 x\u207f.",
+          "answer": "R = 0; converges only at x = 0",
+          "hints": [
+            "Ratio test: |a_{n+1}/a\u2099| = (n+1)|x|. As n \u2192 \u221e, this \u2192 \u221e for any x \u2260 0.",
+            "The series diverges for all x \u2260 0. R = 0. The series converges only at x = 0 (where every term after the first is 0)."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, apply the ratio test to find the radius of convergence. Then check each endpoint separately \u2014 each is its own convergence problem.",
       "lessonId": "power-series-convergence"
     },
     {
@@ -375,7 +417,13 @@
     "ss-yp3": "Conditionally convergent.",
     "ss-yp4": "1 − x² + x⁴/2 − x⁶/6.",
     "ss-yp5": "R = 2; interval (1, 5).",
-    "ss-yp6": "n ≥ 6 (use P₆ so that 3/7! < 0.001)."
+    "ss-yp6": "n ≥ 6 (use P₆ so that 3/7! < 0.001).",
+    "ss-wp10": "Conditionally convergent.",
+    "ss-wp11": "5 terms.",
+    "ss-wp12": "|R₂(0.5)| ≤ 1/48 ≈ 0.0208.",
+    "ss-wp13": "n = 5 (use P₅).",
+    "ss-wp14": "R = 1; interval [−1, 1).",
+    "ss-wp15": "R = 0; converges only at x = 0."
   },
   "lessons": [
     {

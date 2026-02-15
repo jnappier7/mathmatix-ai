@@ -192,11 +192,25 @@
       "title": "We-Do: Logistic Growth — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for logistic growth.",
-          "hint": "Apply the concepts of logistic growth.",
-          "solution": "Step-by-step solution for logistic growth."
+          "id": "de-wp10",
+          "question": "A population follows dP/dt = 0.3P(1 \u2212 P/800), P(0) = 50. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
+          "answer": "Carrying capacity = 800. Fastest growth at P = 400. Maximum rate = 60.",
+          "hints": [
+            "Logistic model dP/dt = kP(1 \u2212 P/L). Identify: k = 0.3, L = 800.",
+            "Carrying capacity = L = 800. Fastest at P = L/2 = 400. Max rate = kL/4 = 0.3(800)/4 = 60."
+          ]
+        },
+        {
+          "id": "de-wp11",
+          "question": "For dP/dt = 2P(1 \u2212 P/100), what are the equilibrium solutions? Classify each as stable or unstable.",
+          "answer": "P = 0 (unstable) and P = 100 (stable).",
+          "hints": [
+            "Equilibrium: dP/dt = 0 when 2P(1 \u2212 P/100) = 0 \u2192 P = 0 or P = 100.",
+            "For 0 < P < 100: dP/dt > 0 (solutions increase toward 100). For P > 100: dP/dt < 0 (solutions decrease toward 100). So P = 0 is unstable, P = 100 is stable."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, identify k and L in the logistic model dP/dt = kP(1 \u2212 P/L). The carrying capacity is L, fastest growth occurs at P = L/2.",
       "lessonId": "exponential-logistic"
     },
     {
@@ -338,7 +352,9 @@
     "de-yp3": "y = 2x + 1.",
     "de-yp4": "y(1.5) ≈ 0.75.",
     "de-yp5": "Carrying capacity = 2000. Fastest at P = 1000. Maximum rate = 200.",
-    "de-yp6": "y = −ln(2 − eˣ)."
+    "de-yp6": "y = −ln(2 − eˣ).",
+    "de-wp10": "L = 800. Fastest at P = 400. Max rate = 60.",
+    "de-wp11": "P = 0 (unstable), P = 100 (stable)."
   },
   "lessons": [
     {

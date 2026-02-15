@@ -131,11 +131,25 @@
       "title": "We-Do: Limits At Infinity — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for limits at infinity.",
-          "hint": "Apply the concepts of limits at infinity.",
-          "solution": "Step-by-step solution for limits at infinity."
+          "id": "lc-wp10",
+          "question": "Evaluate: lim_{x\u2192\u221e} (5x\u00b2 \u2212 3x)/(2x\u00b2 + 1)",
+          "answer": "5/2",
+          "hints": [
+            "The degree of the numerator (2) equals the degree of the denominator (2). Use the ratio of leading coefficients.",
+            "Leading coefficient of numerator: 5. Leading coefficient of denominator: 2. Limit = 5/2. The horizontal asymptote is y = 5/2."
+          ]
+        },
+        {
+          "id": "lc-wp11",
+          "question": "Evaluate: lim_{x\u2192\u221e} (3x + 1)/\u221a(x\u00b2 + 4)",
+          "answer": "3",
+          "hints": [
+            "Divide numerator and denominator by x: (3 + 1/x)/\u221a(1 + 4/x\u00b2). As x \u2192 \u221e, 1/x \u2192 0 and 4/x\u00b2 \u2192 0.",
+            "Limit = 3/\u221a1 = 3. Note: for x \u2192 \u2212\u221e, \u221a(x\u00b2) = |x| = \u2212x, so the answer would be \u22123."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, what are the degrees of the numerator and denominator? When degrees are equal, what shortcut gives the limit at infinity?",
       "lessonId": "one-sided-infinite"
     },
     {
@@ -213,11 +227,25 @@
       "title": "We-Do: Squeeze Theorem — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for squeeze theorem.",
-          "hint": "Apply the concepts of squeeze theorem.",
-          "solution": "Step-by-step solution for squeeze theorem."
+          "id": "lc-wp12",
+          "question": "Use the Squeeze Theorem to evaluate: lim_{x\u21920} x\u00b2 cos(1/x).",
+          "answer": "0",
+          "hints": [
+            "Since \u22121 \u2264 cos(1/x) \u2264 1, multiply by x\u00b2: \u2212x\u00b2 \u2264 x\u00b2 cos(1/x) \u2264 x\u00b2.",
+            "Both \u2212x\u00b2 and x\u00b2 approach 0 as x \u2192 0. By the Squeeze Theorem, lim_{x\u21920} x\u00b2 cos(1/x) = 0."
+          ]
+        },
+        {
+          "id": "lc-wp13",
+          "question": "Use the Squeeze Theorem to evaluate: lim_{x\u2192\u221e} sin(x)/x.",
+          "answer": "0",
+          "hints": [
+            "Since \u22121 \u2264 sin(x) \u2264 1, divide by x (x > 0): \u22121/x \u2264 sin(x)/x \u2264 1/x.",
+            "Both \u22121/x and 1/x approach 0 as x \u2192 \u221e. By the Squeeze Theorem, lim_{x\u2192\u221e} sin(x)/x = 0."
+          ]
         }
       ],
+      "initialPrompt": "For the first problem, what bounds can you place on cos(1/x)? Once you have those bounds, multiply all three parts by x\u00b2.",
       "lessonId": "continuity-ivt"
     },
     {
@@ -359,7 +387,11 @@
     "lc-yp3": "1/2",
     "lc-yp4": "0",
     "lc-yp5": "k = 3",
-    "lc-yp6": "Solution exists on (0,2) by IVT: f(0)=−2, f(2)=e²−1≈6.39"
+    "lc-yp6": "Solution exists on (0,2) by IVT: f(0)=−2, f(2)=e²−1≈6.39",
+    "lc-wp10": "5/2.",
+    "lc-wp11": "3.",
+    "lc-wp12": "0 (Squeeze Theorem).",
+    "lc-wp13": "0 (Squeeze Theorem)."
   },
   "lessons": [
     {
