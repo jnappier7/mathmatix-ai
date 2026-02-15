@@ -5128,11 +5128,14 @@ body:not(.landing-page-body) {
 
 /* --- UI Overhaul Based on Design Notes --- */
 
-/* 1. Logo Prominence */
-.main-logo-hero {
-  transform: scale(1.5);
-  transform-origin: left center;
-  margin-left: 1rem;
+/* 1. Logo Prominence — desktop only; on mobile the logo is compact
+   and scale(1.5) causes clipping inside the overflow-hidden header. */
+@media (min-width: 769px) {
+  .main-logo-hero {
+    transform: scale(1.5);
+    transform-origin: left center;
+    margin-left: 1rem;
+  }
 }
 
 /* 2. Consistent Panel Titles */
