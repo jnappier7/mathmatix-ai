@@ -26,18 +26,18 @@
     "AP Calc AB 8.10"
   ],
   "goals": [
-    "Compute the average value of a function on an interval using f_avg = (1/(b-a))∫ₐᵇ f(x) dx and interpret it geometrically.",
+    "Compute the average value of a function on an interval using f_avg = (1/(b-a))\u222b\u2090\u1d47 f(x) dx and interpret it geometrically.",
     "Use integrals of velocity and acceleration to determine displacement, total distance traveled, and position functions.",
-    "Apply the net change theorem to interpret ∫ₐᵇ f'(x) dx as the accumulated change f(b) - f(a) in applied contexts.",
+    "Apply the net change theorem to interpret \u222b\u2090\u1d47 f'(x) dx as the accumulated change f(b) - f(a) in applied contexts.",
     "Set up and evaluate integrals for the area between two curves, including finding intersection points and integrating with respect to y when appropriate.",
     "Calculate volumes of solids with known cross-sections (squares, semicircles, equilateral triangles) perpendicular to an axis.",
     "Compute volumes of solids of revolution using the disk and washer methods, including revolution around non-axis lines."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
     "Build from single-integral applications (average value, net change) before multi-step geometric applications (area, volume)",
-    "Emphasize setup over computation — correctly identifying integrand, bounds, and orientation is the core AP skill",
+    "Emphasize setup over computation \u2014 correctly identifying integrand, bounds, and orientation is the core AP skill",
     "Weekly FRQ-style integration application set for AP exam preparation",
     "Spiral prior: antiderivative techniques from Units 6-7, Fundamental Theorem from Unit 6"
   ],
@@ -50,27 +50,27 @@
       "skill": "average-value-function",
       "content": "The average value of a continuous function on [a, b] generalizes the arithmetic average to continuous data. Instead of summing finitely many values and dividing by n, we integrate over the interval and divide by its length. The Mean Value Theorem for Integrals guarantees that the function actually attains its average value at least once.",
       "keyPoints": [
-        "Average value formula: f_avg = (1/(b-a)) ∫ₐᵇ f(x) dx",
+        "Average value formula: f_avg = (1/(b-a)) \u222b\u2090\u1d47 f(x) dx",
         "Geometric interpretation: f_avg is the height of the rectangle with base (b-a) whose area equals the area under f on [a, b]",
-        "MVT for Integrals: if f is continuous on [a, b], there exists c in (a, b) such that f(c) = f_avg = (1/(b-a)) ∫ₐᵇ f(x) dx",
+        "MVT for Integrals: if f is continuous on [a, b], there exists c in (a, b) such that f(c) = f_avg = (1/(b-a)) \u222b\u2090\u1d47 f(x) dx",
         "On the AP exam: always state the formula, show the integral setup, and interpret the result in context",
         "Units: f_avg has the same units as f(x). If f is in gallons/minute, the average value is in gallons/minute.",
-        "Common error: forgetting the 1/(b-a) factor — the integral alone gives total accumulated quantity, not the average"
+        "Common error: forgetting the 1/(b-a) factor \u2014 the integral alone gives total accumulated quantity, not the average"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Average Value of a Function — Worked Examples",
+      "title": "Average Value of a Function \u2014 Worked Examples",
       "skill": "average-value-function",
       "examples": [
         {
-          "problem": "Find the average value of f(x) = x² + 1 on [0, 3].",
-          "solution": "f_avg = (1/(3-0)) ∫₀³ (x² + 1) dx = (1/3)[x³/3 + x]₀³ = (1/3)[(27/3 + 3) - 0] = (1/3)(9 + 3) = (1/3)(12) = 4. The average value is 4. Geometrically, the rectangle with height 4 and base 3 has the same area (12) as the region under f on [0, 3]."
+          "problem": "Find the average value of f(x) = x\u00b2 + 1 on [0, 3].",
+          "solution": "f_avg = (1/(3-0)) \u222b\u2080\u00b3 (x\u00b2 + 1) dx = (1/3)[x\u00b3/3 + x]\u2080\u00b3 = (1/3)[(27/3 + 3) - 0] = (1/3)(9 + 3) = (1/3)(12) = 4. The average value is 4. Geometrically, the rectangle with height 4 and base 3 has the same area (12) as the region under f on [0, 3]."
         },
         {
-          "problem": "The temperature in a greenhouse is modeled by T(t) = 70 + 8sin(πt/12) degrees Fahrenheit, where t is hours after midnight. Find the average temperature from 6 AM to 6 PM (t = 6 to t = 18).",
-          "solution": "T_avg = (1/(18-6)) ∫₆¹⁸ [70 + 8sin(πt/12)] dt = (1/12)[70t - 8(12/π)cos(πt/12)]₆¹⁸ = (1/12)[70t - (96/π)cos(πt/12)]₆¹⁸. At t=18: 70(18) - (96/π)cos(3π/2) = 1260 - 0 = 1260. At t=6: 70(6) - (96/π)cos(π/2) = 420 - 0 = 420. T_avg = (1/12)(1260 - 420) = 840/12 = 70°F. The average temperature over the 12-hour daytime period is 70°F."
+          "problem": "The temperature in a greenhouse is modeled by T(t) = 70 + 8sin(\u03c0t/12) degrees Fahrenheit, where t is hours after midnight. Find the average temperature from 6 AM to 6 PM (t = 6 to t = 18).",
+          "solution": "T_avg = (1/(18-6)) \u222b\u2086\u00b9\u2078 [70 + 8sin(\u03c0t/12)] dt = (1/12)[70t - 8(12/\u03c0)cos(\u03c0t/12)]\u2086\u00b9\u2078 = (1/12)[70t - (96/\u03c0)cos(\u03c0t/12)]\u2086\u00b9\u2078. At t=18: 70(18) - (96/\u03c0)cos(3\u03c0/2) = 1260 - 0 = 1260. At t=6: 70(6) - (96/\u03c0)cos(\u03c0/2) = 420 - 0 = 420. T_avg = (1/12)(1260 - 420) = 840/12 = 70\u00b0F. The average temperature over the 12-hour daytime period is 70\u00b0F."
         }
       ]
     },
@@ -81,32 +81,32 @@
       "skill": "motion-via-integrals-net-change",
       "content": "Integration reverses differentiation, so integrating a rate of change recovers the net change in the original quantity. For motion: integrating velocity gives displacement, and integrating the absolute value of velocity gives total distance. The net change theorem unifies all rate-of-change-to-accumulated-change problems.",
       "keyPoints": [
-        "Displacement = ∫ₐᵇ v(t) dt (net change in position; can be positive, negative, or zero)",
-        "Total distance traveled = ∫ₐᵇ |v(t)| dt (always non-negative; accounts for direction changes)",
-        "To compute ∫|v(t)| dt: find where v(t) = 0 (direction changes), split the integral, negate on intervals where v < 0",
-        "Position from velocity: s(t) = s(a) + ∫ₐᵗ v(u) du",
-        "Net change theorem: ∫ₐᵇ f'(x) dx = f(b) - f(a). The integral of a rate gives the net accumulated change.",
-        "Context examples: ∫ rate of water flow = net change in volume; ∫ marginal cost = change in total cost",
+        "Displacement = \u222b\u2090\u1d47 v(t) dt (net change in position; can be positive, negative, or zero)",
+        "Total distance traveled = \u222b\u2090\u1d47 |v(t)| dt (always non-negative; accounts for direction changes)",
+        "To compute \u222b|v(t)| dt: find where v(t) = 0 (direction changes), split the integral, negate on intervals where v < 0",
+        "Position from velocity: s(t) = s(a) + \u222b\u2090\u1d57 v(u) du",
+        "Net change theorem: \u222b\u2090\u1d47 f'(x) dx = f(b) - f(a). The integral of a rate gives the net accumulated change.",
+        "Context examples: \u222b rate of water flow = net change in volume; \u222b marginal cost = change in total cost",
         "Speed = |v(t)|. A particle speeds up when v and a have the same sign; slows down when they have opposite signs."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Motion via Integrals & Net Change — Worked Examples",
+      "title": "Motion via Integrals & Net Change \u2014 Worked Examples",
       "skill": "motion-via-integrals-net-change",
       "examples": [
         {
-          "problem": "A particle moves along the x-axis with velocity v(t) = t² - 4t + 3 for 0 ≤ t ≤ 4. Find (a) the displacement and (b) the total distance traveled.",
-          "solution": "(a) Displacement = ∫₀⁴ (t² - 4t + 3) dt = [t³/3 - 2t² + 3t]₀⁴ = (64/3 - 32 + 12) - 0 = 64/3 - 20 = 4/3. (b) Find where v(t) = 0: t² - 4t + 3 = (t-1)(t-3) = 0 → t = 1, 3. Sign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4]. Total distance = ∫₀¹ (t²-4t+3) dt + ∫₁³ |t²-4t+3| dt + ∫₃⁴ (t²-4t+3) dt. ∫₀¹ = [1/3 - 2 + 3] = 4/3. ∫₁³ = [9-18+9] - [1/3-2+3] = 0 - 4/3 = -4/3 → |−4/3| = 4/3. ∫₃⁴ = [64/3-32+12] - [9-18+9] = 4/3 - 0 = 4/3. Total distance = 4/3 + 4/3 + 4/3 = 4."
+          "problem": "A particle moves along the x-axis with velocity v(t) = t\u00b2 - 4t + 3 for 0 \u2264 t \u2264 4. Find (a) the displacement and (b) the total distance traveled.",
+          "solution": "(a) Displacement = \u222b\u2080\u2074 (t\u00b2 - 4t + 3) dt = [t\u00b3/3 - 2t\u00b2 + 3t]\u2080\u2074 = (64/3 - 32 + 12) - 0 = 64/3 - 20 = 4/3. (b) Find where v(t) = 0: t\u00b2 - 4t + 3 = (t-1)(t-3) = 0 \u2192 t = 1, 3. Sign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4]. Total distance = \u222b\u2080\u00b9 (t\u00b2-4t+3) dt + \u222b\u2081\u00b3 |t\u00b2-4t+3| dt + \u222b\u2083\u2074 (t\u00b2-4t+3) dt. \u222b\u2080\u00b9 = [1/3 - 2 + 3] = 4/3. \u222b\u2081\u00b3 = [9-18+9] - [1/3-2+3] = 0 - 4/3 = -4/3 \u2192 |\u22124/3| = 4/3. \u222b\u2083\u2074 = [64/3-32+12] - [9-18+9] = 4/3 - 0 = 4/3. Total distance = 4/3 + 4/3 + 4/3 = 4."
         },
         {
-          "problem": "Water flows into a tank at a rate of R(t) = 200 - 4t² gallons per minute. At time t = 0, the tank holds 500 gallons. (a) How much water enters the tank during the first 5 minutes? (b) How much water is in the tank at t = 5?",
-          "solution": "(a) Net water in = ∫₀⁵ (200 - 4t²) dt = [200t - (4t³/3)]₀⁵ = 1000 - 500/3 = 3000/3 - 500/3 = 2500/3 ≈ 833.3 gallons. (b) Amount at t = 5: 500 + 2500/3 = 1500/3 + 2500/3 = 4000/3 ≈ 1333.3 gallons. By the net change theorem, the total amount equals the initial amount plus the integral of the rate."
+          "problem": "Water flows into a tank at a rate of R(t) = 200 - 4t\u00b2 gallons per minute. At time t = 0, the tank holds 500 gallons. (a) How much water enters the tank during the first 5 minutes? (b) How much water is in the tank at t = 5?",
+          "solution": "(a) Net water in = \u222b\u2080\u2075 (200 - 4t\u00b2) dt = [200t - (4t\u00b3/3)]\u2080\u2075 = 1000 - 500/3 = 3000/3 - 500/3 = 2500/3 \u2248 833.3 gallons. (b) Amount at t = 5: 500 + 2500/3 = 1500/3 + 2500/3 = 4000/3 \u2248 1333.3 gallons. By the net change theorem, the total amount equals the initial amount plus the integral of the rate."
         },
         {
-          "problem": "A particle's velocity is v(t) = 3cos(t) m/s and its position at t = 0 is s(0) = 2 m. Find the position at t = π and the total distance traveled on [0, π].",
-          "solution": "Position: s(π) = s(0) + ∫₀π 3cos(t) dt = 2 + [3sin(t)]₀π = 2 + (0 - 0) = 2 m. Displacement is 0 — the particle returns to its starting position. Total distance: v(t) = 3cos(t) = 0 at t = π/2. v > 0 on [0, π/2], v < 0 on [π/2, π]. Distance = ∫₀^(π/2) 3cos(t) dt + ∫_(π/2)^π |3cos(t)| dt = [3sin(t)]₀^(π/2) + [-3sin(t)]_(π/2)^π = 3 + 3 = 6 m."
+          "problem": "A particle's velocity is v(t) = 3cos(t) m/s and its position at t = 0 is s(0) = 2 m. Find the position at t = \u03c0 and the total distance traveled on [0, \u03c0].",
+          "solution": "Position: s(\u03c0) = s(0) + \u222b\u2080\u03c0 3cos(t) dt = 2 + [3sin(t)]\u2080\u03c0 = 2 + (0 - 0) = 2 m. Displacement is 0 \u2014 the particle returns to its starting position. Total distance: v(t) = 3cos(t) = 0 at t = \u03c0/2. v > 0 on [0, \u03c0/2], v < 0 on [\u03c0/2, \u03c0]. Distance = \u222b\u2080^(\u03c0/2) 3cos(t) dt + \u222b_(\u03c0/2)^\u03c0 |3cos(t)| dt = [3sin(t)]\u2080^(\u03c0/2) + [-3sin(t)]_(\u03c0/2)^\u03c0 = 3 + 3 = 6 m."
         }
       ]
     },
@@ -114,37 +114,33 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Average Value & Motion/Net Change Practice",
-      "skills": [
-        "average-value-function",
-        "motion-via-integrals-net-change"
-      ],
       "problems": [
         {
-          "problem": "Find the average value of f(x) = 6x - x² on [0, 6] and find all values c in (0, 6) where f(c) equals the average value.",
+          "problem": "Find the average value of f(x) = 6x - x\u00b2 on [0, 6] and find all values c in (0, 6) where f(c) equals the average value.",
           "hints": [
-            "Use f_avg = (1/(b-a)) ∫ₐᵇ f(x) dx with a=0, b=6",
-            "∫₀⁶ (6x - x²) dx = [3x² - x³/3]₀⁶ = 108 - 72 = 36",
-            "Set 6c - c² = f_avg and solve the quadratic"
+            "Use f_avg = (1/(b-a)) \u222b\u2090\u1d47 f(x) dx with a=0, b=6",
+            "\u222b\u2080\u2076 (6x - x\u00b2) dx = [3x\u00b2 - x\u00b3/3]\u2080\u2076 = 108 - 72 = 36",
+            "Set 6c - c\u00b2 = f_avg and solve the quadratic"
           ],
-          "answer": "f_avg = (1/6)(36) = 6. Solve 6c - c² = 6 → c² - 6c + 6 = 0 → c = (6 ± √12)/2 = 3 ± √3. Both values 3-√3 ≈ 1.27 and 3+√3 ≈ 4.73 are in (0, 6)."
+          "answer": "f_avg = (1/6)(36) = 6. Solve 6c - c\u00b2 = 6 \u2192 c\u00b2 - 6c + 6 = 0 \u2192 c = (6 \u00b1 \u221a12)/2 = 3 \u00b1 \u221a3. Both values 3-\u221a3 \u2248 1.27 and 3+\u221a3 \u2248 4.73 are in (0, 6)."
         },
         {
-          "problem": "A particle moves with velocity v(t) = t - 3 for 0 ≤ t ≤ 5. Find the displacement and total distance traveled.",
+          "problem": "A particle moves with velocity v(t) = t - 3 for 0 \u2264 t \u2264 5. Find the displacement and total distance traveled.",
           "hints": [
-            "Displacement = ∫₀⁵ (t - 3) dt",
+            "Displacement = \u222b\u2080\u2075 (t - 3) dt",
             "v(t) = 0 at t = 3. v < 0 on [0,3], v > 0 on [3,5]",
             "Split and take absolute values for total distance"
           ],
-          "answer": "Displacement = [t²/2 - 3t]₀⁵ = (25/2 - 15) - 0 = -5/2. Total distance: ∫₀³ |t-3| dt + ∫₃⁵ (t-3) dt = ∫₀³ (3-t) dt + ∫₃⁵ (t-3) dt = [3t - t²/2]₀³ + [t²/2 - 3t]₃⁵ = (9 - 9/2) + (25/2 - 15 - 9/2 + 9) = 9/2 + 2 = 13/2."
+          "answer": "Displacement = [t\u00b2/2 - 3t]\u2080\u2075 = (25/2 - 15) - 0 = -5/2. Total distance: \u222b\u2080\u00b3 |t-3| dt + \u222b\u2083\u2075 (t-3) dt = \u222b\u2080\u00b3 (3-t) dt + \u222b\u2083\u2075 (t-3) dt = [3t - t\u00b2/2]\u2080\u00b3 + [t\u00b2/2 - 3t]\u2083\u2075 = (9 - 9/2) + (25/2 - 15 - 9/2 + 9) = 9/2 + 2 = 13/2."
         },
         {
           "problem": "Oil leaks from a tanker at a rate of r(t) = 75e^(-0.03t) gallons per hour. How many gallons leak during the first 10 hours? What is the average rate of leakage over [0, 10]?",
           "hints": [
-            "Total leakage = ∫₀¹⁰ 75e^(-0.03t) dt",
-            "Antiderivative of 75e^(-0.03t) is 75·(-1/0.03)·e^(-0.03t) = -2500e^(-0.03t)",
-            "Average rate = (1/10) · total leakage"
+            "Total leakage = \u222b\u2080\u00b9\u2070 75e^(-0.03t) dt",
+            "Antiderivative of 75e^(-0.03t) is 75\u00b7(-1/0.03)\u00b7e^(-0.03t) = -2500e^(-0.03t)",
+            "Average rate = (1/10) \u00b7 total leakage"
           ],
-          "answer": "Total = [-2500e^(-0.03t)]₀¹⁰ = -2500e^(-0.3) + 2500 = 2500(1 - e^(-0.3)) ≈ 2500(1 - 0.7408) ≈ 648.0 gallons. Average rate = 648.0/10 ≈ 64.8 gallons/hour."
+          "answer": "Total = [-2500e^(-0.03t)]\u2080\u00b9\u2070 = -2500e^(-0.3) + 2500 = 2500(1 - e^(-0.3)) \u2248 2500(1 - 0.7408) \u2248 648.0 gallons. Average rate = 648.0/10 \u2248 64.8 gallons/hour."
         }
       ],
       "skill": "motion-via-integrals-net-change"
@@ -156,31 +152,31 @@
       "skill": "area-between-curves",
       "content": "The area between two curves extends the definite integral from 'area under a curve' to 'area between two boundaries.' The key principle: integrate (top function minus bottom function) with respect to x, or (right function minus left function) with respect to y. Correctly identifying the bounds and which curve is on top is the essential setup skill.",
       "keyPoints": [
-        "Area = ∫ₐᵇ [f(x) - g(x)] dx where f(x) ≥ g(x) on [a, b] (top minus bottom)",
+        "Area = \u222b\u2090\u1d47 [f(x) - g(x)] dx where f(x) \u2265 g(x) on [a, b] (top minus bottom)",
         "Finding bounds: set f(x) = g(x) to find intersection points. These are typically the limits of integration.",
         "If curves cross: split the integral at the crossing point. On each sub-interval, determine which is on top.",
-        "Integrating with respect to y: Area = ∫_c^d [R(y) - L(y)] dy where R is the right curve and L is the left curve",
+        "Integrating with respect to y: Area = \u222b_c^d [R(y) - L(y)] dy where R is the right curve and L is the left curve",
         "When to use dy: when the region is more naturally bounded by functions of y, or when horizontal slicing avoids splitting",
-        "Common AP error: setting up ∫(f - g) when g > f yields a negative answer. Always verify which curve is on top."
+        "Common AP error: setting up \u222b(f - g) when g > f yields a negative answer. Always verify which curve is on top."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Area Between Curves — Worked Examples",
+      "title": "Area Between Curves \u2014 Worked Examples",
       "skill": "area-between-curves",
       "examples": [
         {
-          "problem": "Find the area enclosed between y = x² and y = x + 2.",
-          "solution": "Find intersections: x² = x + 2 → x² - x - 2 = 0 → (x-2)(x+1) = 0 → x = -1, 2. On [-1, 2]: test x = 0: top = 0+2 = 2, bottom = 0. So (x+2) is on top. Area = ∫₋₁² [(x+2) - x²] dx = [x²/2 + 2x - x³/3]₋₁² = (2 + 4 - 8/3) - (1/2 - 2 + 1/3) = 10/3 - (-7/6) = 10/3 + 7/6 = 27/6 = 9/2."
+          "problem": "Find the area enclosed between y = x\u00b2 and y = x + 2.",
+          "solution": "Find intersections: x\u00b2 = x + 2 \u2192 x\u00b2 - x - 2 = 0 \u2192 (x-2)(x+1) = 0 \u2192 x = -1, 2. On [-1, 2]: test x = 0: top = 0+2 = 2, bottom = 0. So (x+2) is on top. Area = \u222b\u208b\u2081\u00b2 [(x+2) - x\u00b2] dx = [x\u00b2/2 + 2x - x\u00b3/3]\u208b\u2081\u00b2 = (2 + 4 - 8/3) - (1/2 - 2 + 1/3) = 10/3 - (-7/6) = 10/3 + 7/6 = 27/6 = 9/2."
         },
         {
-          "problem": "Find the area between x = y² and x = 2 - y² using integration with respect to y.",
-          "solution": "Find intersections: y² = 2 - y² → 2y² = 2 → y² = 1 → y = ±1. For -1 ≤ y ≤ 1, the right curve is x = 2 - y² and the left curve is x = y². Area = ∫₋₁¹ [(2 - y²) - y²] dy = ∫₋₁¹ (2 - 2y²) dy = [2y - 2y³/3]₋₁¹ = (2 - 2/3) - (-2 + 2/3) = 4/3 + 4/3 = 8/3."
+          "problem": "Find the area between x = y\u00b2 and x = 2 - y\u00b2 using integration with respect to y.",
+          "solution": "Find intersections: y\u00b2 = 2 - y\u00b2 \u2192 2y\u00b2 = 2 \u2192 y\u00b2 = 1 \u2192 y = \u00b11. For -1 \u2264 y \u2264 1, the right curve is x = 2 - y\u00b2 and the left curve is x = y\u00b2. Area = \u222b\u208b\u2081\u00b9 [(2 - y\u00b2) - y\u00b2] dy = \u222b\u208b\u2081\u00b9 (2 - 2y\u00b2) dy = [2y - 2y\u00b3/3]\u208b\u2081\u00b9 = (2 - 2/3) - (-2 + 2/3) = 4/3 + 4/3 = 8/3."
         },
         {
-          "problem": "Find the area between y = sin(x) and y = cos(x) on [0, π/2].",
-          "solution": "Find where they cross: sin(x) = cos(x) → tan(x) = 1 → x = π/4. On [0, π/4]: cos(x) ≥ sin(x). On [π/4, π/2]: sin(x) ≥ cos(x). Area = ∫₀^(π/4) [cos(x) - sin(x)] dx + ∫_(π/4)^(π/2) [sin(x) - cos(x)] dx = [sin(x) + cos(x)]₀^(π/4) + [-cos(x) - sin(x)]_(π/4)^(π/2) = (√2/2 + √2/2 - 0 - 1) + (-0 - 1 + √2/2 + √2/2) = (√2 - 1) + (√2 - 1) = 2√2 - 2."
+          "problem": "Find the area between y = sin(x) and y = cos(x) on [0, \u03c0/2].",
+          "solution": "Find where they cross: sin(x) = cos(x) \u2192 tan(x) = 1 \u2192 x = \u03c0/4. On [0, \u03c0/4]: cos(x) \u2265 sin(x). On [\u03c0/4, \u03c0/2]: sin(x) \u2265 cos(x). Area = \u222b\u2080^(\u03c0/4) [cos(x) - sin(x)] dx + \u222b_(\u03c0/4)^(\u03c0/2) [sin(x) - cos(x)] dx = [sin(x) + cos(x)]\u2080^(\u03c0/4) + [-cos(x) - sin(x)]_(\u03c0/4)^(\u03c0/2) = (\u221a2/2 + \u221a2/2 - 0 - 1) + (-0 - 1 + \u221a2/2 + \u221a2/2) = (\u221a2 - 1) + (\u221a2 - 1) = 2\u221a2 - 2."
         }
       ]
     },
@@ -191,10 +187,10 @@
       "skill": "volume-cross-sections",
       "content": "When a solid has a known cross-sectional shape perpendicular to an axis, its volume is found by integrating the cross-sectional area. The key is expressing the area A(x) (or A(y)) in terms of the integration variable, using the geometric formula for the given shape and identifying the dimension of each cross-section from the bounding curves.",
       "keyPoints": [
-        "General formula: V = ∫ₐᵇ A(x) dx, where A(x) is the area of the cross-section at position x",
-        "Square cross-sections: if the side length is s(x), then A(x) = [s(x)]²",
-        "Semicircular cross-sections: if the diameter is d(x), then A(x) = (π/2)(d(x)/2)² = πd(x)²/8",
-        "Equilateral triangle cross-sections: if the side is s(x), then A(x) = (√3/4)[s(x)]²",
+        "General formula: V = \u222b\u2090\u1d47 A(x) dx, where A(x) is the area of the cross-section at position x",
+        "Square cross-sections: if the side length is s(x), then A(x) = [s(x)]\u00b2",
+        "Semicircular cross-sections: if the diameter is d(x), then A(x) = (\u03c0/2)(d(x)/2)\u00b2 = \u03c0d(x)\u00b2/8",
+        "Equilateral triangle cross-sections: if the side is s(x), then A(x) = (\u221a3/4)[s(x)]\u00b2",
         "The side/diameter is typically the distance between two curves: s(x) = f(x) - g(x)",
         "Perpendicular to x-axis: integrate with respect to x. Perpendicular to y-axis: integrate with respect to y."
       ]
@@ -202,16 +198,16 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Volume by Cross-Sections — Worked Examples",
+      "title": "Volume by Cross-Sections \u2014 Worked Examples",
       "skill": "volume-cross-sections",
       "examples": [
         {
-          "problem": "A solid has a base bounded by y = √x and y = 0 from x = 0 to x = 4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
-          "solution": "The side of each square is s(x) = √x - 0 = √x. Area of cross-section: A(x) = (√x)² = x. Volume = ∫₀⁴ x dx = [x²/2]₀⁴ = 16/2 = 8."
+          "problem": "A solid has a base bounded by y = \u221ax and y = 0 from x = 0 to x = 4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "solution": "The side of each square is s(x) = \u221ax - 0 = \u221ax. Area of cross-section: A(x) = (\u221ax)\u00b2 = x. Volume = \u222b\u2080\u2074 x dx = [x\u00b2/2]\u2080\u2074 = 16/2 = 8."
         },
         {
-          "problem": "A solid has a base bounded by y = 1 - x² and y = 0 (the region above the x-axis). Cross-sections perpendicular to the x-axis are semicircles with diameter running from y = 0 to y = 1 - x². Find the volume.",
-          "solution": "Base region: 1 - x² ≥ 0 → -1 ≤ x ≤ 1. Diameter: d(x) = 1 - x². Radius: r(x) = (1-x²)/2. Area: A(x) = (1/2)π[(1-x²)/2]² = π(1-x²)²/8. Volume = (π/8) ∫₋₁¹ (1-x²)² dx. Expand: (1-x²)² = 1 - 2x² + x⁴. By symmetry: (π/8)·2 ∫₀¹ (1 - 2x² + x⁴) dx = (π/4)[x - 2x³/3 + x⁵/5]₀¹ = (π/4)(1 - 2/3 + 1/5) = (π/4)(8/15) = 2π/15."
+          "problem": "A solid has a base bounded by y = 1 - x\u00b2 and y = 0 (the region above the x-axis). Cross-sections perpendicular to the x-axis are semicircles with diameter running from y = 0 to y = 1 - x\u00b2. Find the volume.",
+          "solution": "Base region: 1 - x\u00b2 \u2265 0 \u2192 -1 \u2264 x \u2264 1. Diameter: d(x) = 1 - x\u00b2. Radius: r(x) = (1-x\u00b2)/2. Area: A(x) = (1/2)\u03c0[(1-x\u00b2)/2]\u00b2 = \u03c0(1-x\u00b2)\u00b2/8. Volume = (\u03c0/8) \u222b\u208b\u2081\u00b9 (1-x\u00b2)\u00b2 dx. Expand: (1-x\u00b2)\u00b2 = 1 - 2x\u00b2 + x\u2074. By symmetry: (\u03c0/8)\u00b72 \u222b\u2080\u00b9 (1 - 2x\u00b2 + x\u2074) dx = (\u03c0/4)[x - 2x\u00b3/3 + x\u2075/5]\u2080\u00b9 = (\u03c0/4)(1 - 2/3 + 1/5) = (\u03c0/4)(8/15) = 2\u03c0/15."
         }
       ]
     },
@@ -222,32 +218,32 @@
       "skill": "volume-disk-washer",
       "content": "When a region is revolved around an axis (or a line), the resulting solid of revolution has circular cross-sections. The disk method handles solids with no hole; the washer method handles solids with a hole (an inner boundary). The critical skill is correctly identifying the outer radius R and inner radius r relative to the axis of revolution.",
       "keyPoints": [
-        "Disk method (no hole): V = π ∫ₐᵇ [R(x)]² dx, where R(x) is the distance from the curve to the axis of revolution",
-        "Washer method (hole): V = π ∫ₐᵇ ([R(x)]² - [r(x)]²) dx, where R = outer radius, r = inner radius",
+        "Disk method (no hole): V = \u03c0 \u222b\u2090\u1d47 [R(x)]\u00b2 dx, where R(x) is the distance from the curve to the axis of revolution",
+        "Washer method (hole): V = \u03c0 \u222b\u2090\u1d47 ([R(x)]\u00b2 - [r(x)]\u00b2) dx, where R = outer radius, r = inner radius",
         "Revolving around x-axis: R and r are vertical distances (y-values or differences of y-values)",
         "Revolving around y-axis: rewrite as x = g(y) and integrate with respect to y, or use shell method (BC only for AP AB)",
         "Revolving around y = k (non-axis line): R(x) = |f(x) - k| for outer, r(x) = |g(x) - k| for inner",
         "Revolving around x = k: R(y) = |g(y) - k| for outer, r(y) = |h(y) - k| for inner; integrate dy",
-        "Common AP error: writing R² - r² as (R - r)². They are NOT the same. Always square each radius separately."
+        "Common AP error: writing R\u00b2 - r\u00b2 as (R - r)\u00b2. They are NOT the same. Always square each radius separately."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Volume by Disk & Washer — Worked Examples",
+      "title": "Volume by Disk & Washer \u2014 Worked Examples",
       "skill": "volume-disk-washer",
       "examples": [
         {
-          "problem": "Find the volume of the solid formed by revolving y = √x from x = 0 to x = 4 about the x-axis.",
-          "solution": "Disk method: R(x) = √x (distance from curve to x-axis). V = π ∫₀⁴ (√x)² dx = π ∫₀⁴ x dx = π[x²/2]₀⁴ = π(8) = 8π."
+          "problem": "Find the volume of the solid formed by revolving y = \u221ax from x = 0 to x = 4 about the x-axis.",
+          "solution": "Disk method: R(x) = \u221ax (distance from curve to x-axis). V = \u03c0 \u222b\u2080\u2074 (\u221ax)\u00b2 dx = \u03c0 \u222b\u2080\u2074 x dx = \u03c0[x\u00b2/2]\u2080\u2074 = \u03c0(8) = 8\u03c0."
         },
         {
-          "problem": "Find the volume of the solid formed by revolving the region between y = x² and y = √x about the x-axis.",
-          "solution": "Intersections: x² = √x → x⁴ = x → x(x³ - 1) = 0 → x = 0, 1. On [0,1]: √x ≥ x² (outer curve). Washer method: R(x) = √x, r(x) = x². V = π ∫₀¹ [(√x)² - (x²)²] dx = π ∫₀¹ (x - x⁴) dx = π[x²/2 - x⁵/5]₀¹ = π(1/2 - 1/5) = π(3/10) = 3π/10."
+          "problem": "Find the volume of the solid formed by revolving the region between y = x\u00b2 and y = \u221ax about the x-axis.",
+          "solution": "Intersections: x\u00b2 = \u221ax \u2192 x\u2074 = x \u2192 x(x\u00b3 - 1) = 0 \u2192 x = 0, 1. On [0,1]: \u221ax \u2265 x\u00b2 (outer curve). Washer method: R(x) = \u221ax, r(x) = x\u00b2. V = \u03c0 \u222b\u2080\u00b9 [(\u221ax)\u00b2 - (x\u00b2)\u00b2] dx = \u03c0 \u222b\u2080\u00b9 (x - x\u2074) dx = \u03c0[x\u00b2/2 - x\u2075/5]\u2080\u00b9 = \u03c0(1/2 - 1/5) = \u03c0(3/10) = 3\u03c0/10."
         },
         {
-          "problem": "Find the volume of the solid formed by revolving the region bounded by y = x and y = x² about the line y = 2.",
-          "solution": "Intersections: x = x² → x² - x = 0 → x(x-1) = 0 → x = 0, 1. On [0, 1]: x ≥ x² so y = x is on top (closer to y = 2 from below, but we measure from the axis). Since y = 2 is above both curves on [0, 1]: Outer radius R(x) = 2 - x² (distance from axis to farther curve from axis). Inner radius r(x) = 2 - x (distance from axis to closer curve to axis). V = π ∫₀¹ [(2 - x²)² - (2 - x)²] dx. Expand: (2-x²)² = 4 - 4x² + x⁴; (2-x)² = 4 - 4x + x². Difference: -4x² + x⁴ + 4x - x² = x⁴ - 5x² + 4x. V = π ∫₀¹ (x⁴ - 5x² + 4x) dx = π[x⁵/5 - 5x³/3 + 2x²]₀¹ = π(1/5 - 5/3 + 2) = π(3/15 - 25/15 + 30/15) = 8π/15."
+          "problem": "Find the volume of the solid formed by revolving the region bounded by y = x and y = x\u00b2 about the line y = 2.",
+          "solution": "Intersections: x = x\u00b2 \u2192 x\u00b2 - x = 0 \u2192 x(x-1) = 0 \u2192 x = 0, 1. On [0, 1]: x \u2265 x\u00b2 so y = x is on top (closer to y = 2 from below, but we measure from the axis). Since y = 2 is above both curves on [0, 1]: Outer radius R(x) = 2 - x\u00b2 (distance from axis to farther curve from axis). Inner radius r(x) = 2 - x (distance from axis to closer curve to axis). V = \u03c0 \u222b\u2080\u00b9 [(2 - x\u00b2)\u00b2 - (2 - x)\u00b2] dx. Expand: (2-x\u00b2)\u00b2 = 4 - 4x\u00b2 + x\u2074; (2-x)\u00b2 = 4 - 4x + x\u00b2. Difference: -4x\u00b2 + x\u2074 + 4x - x\u00b2 = x\u2074 - 5x\u00b2 + 4x. V = \u03c0 \u222b\u2080\u00b9 (x\u2074 - 5x\u00b2 + 4x) dx = \u03c0[x\u2075/5 - 5x\u00b3/3 + 2x\u00b2]\u2080\u00b9 = \u03c0(1/5 - 5/3 + 2) = \u03c0(3/15 - 25/15 + 30/15) = 8\u03c0/15."
         }
       ]
     },
@@ -255,47 +251,42 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Area & Volume Practice",
-      "skills": [
-        "area-between-curves",
-        "volume-cross-sections",
-        "volume-disk-washer"
-      ],
       "problems": [
         {
-          "problem": "Find the area enclosed by y = x³ - x and y = 3x. Sketch the region first.",
+          "problem": "Find the area enclosed by y = x\u00b3 - x and y = 3x. Sketch the region first.",
           "hints": [
-            "Set x³ - x = 3x → x³ - 4x = 0 → x(x² - 4) = 0 → x = -2, 0, 2",
-            "Test which is on top on each sub-interval: at x = 1, 3x = 3 > 1³ - 1 = 0",
+            "Set x\u00b3 - x = 3x \u2192 x\u00b3 - 4x = 0 \u2192 x(x\u00b2 - 4) = 0 \u2192 x = -2, 0, 2",
+            "Test which is on top on each sub-interval: at x = 1, 3x = 3 > 1\u00b3 - 1 = 0",
             "The curves cross at x = 0, so you need two integrals (or use symmetry)"
           ],
-          "answer": "On [-2, 0]: x³ - x ≥ 3x (test x = -1: -1+1 = 0 > -3). On [0, 2]: 3x ≥ x³ - x. By odd symmetry, both integrals are equal. Area = 2 ∫₀² [3x - (x³ - x)] dx = 2 ∫₀² (4x - x³) dx = 2[2x² - x⁴/4]₀² = 2(8 - 4) = 8."
+          "answer": "On [-2, 0]: x\u00b3 - x \u2265 3x (test x = -1: -1+1 = 0 > -3). On [0, 2]: 3x \u2265 x\u00b3 - x. By odd symmetry, both integrals are equal. Area = 2 \u222b\u2080\u00b2 [3x - (x\u00b3 - x)] dx = 2 \u222b\u2080\u00b2 (4x - x\u00b3) dx = 2[2x\u00b2 - x\u2074/4]\u2080\u00b2 = 2(8 - 4) = 8."
         },
         {
-          "problem": "A solid has a base bounded by the circle x² + y² = 9. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
+          "problem": "A solid has a base bounded by the circle x\u00b2 + y\u00b2 = 9. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
           "hints": [
-            "From the circle: y = ±√(9 - x²). Side length s(x) = 2√(9 - x²)",
-            "Equilateral triangle area: A = (√3/4)s²",
+            "From the circle: y = \u00b1\u221a(9 - x\u00b2). Side length s(x) = 2\u221a(9 - x\u00b2)",
+            "Equilateral triangle area: A = (\u221a3/4)s\u00b2",
             "Integrate from x = -3 to x = 3"
           ],
-          "answer": "s(x) = 2√(9-x²). A(x) = (√3/4)(2√(9-x²))² = (√3/4)·4(9-x²) = √3(9-x²). V = √3 ∫₋₃³ (9 - x²) dx = 2√3 ∫₀³ (9-x²) dx = 2√3 [9x - x³/3]₀³ = 2√3(27-9) = 36√3."
+          "answer": "s(x) = 2\u221a(9-x\u00b2). A(x) = (\u221a3/4)(2\u221a(9-x\u00b2))\u00b2 = (\u221a3/4)\u00b74(9-x\u00b2) = \u221a3(9-x\u00b2). V = \u221a3 \u222b\u208b\u2083\u00b3 (9 - x\u00b2) dx = 2\u221a3 \u222b\u2080\u00b3 (9-x\u00b2) dx = 2\u221a3 [9x - x\u00b3/3]\u2080\u00b3 = 2\u221a3(27-9) = 36\u221a3."
         },
         {
-          "problem": "Find the volume of the solid formed by revolving the region bounded by y = eˣ, y = 1, and x = ln 3 about the x-axis.",
+          "problem": "Find the volume of the solid formed by revolving the region bounded by y = e\u02e3, y = 1, and x = ln 3 about the x-axis.",
           "hints": [
-            "Sketch: eˣ ≥ 1 for x ≥ 0. Region from x = 0 to x = ln 3 between y = eˣ (top) and y = 1 (bottom)",
-            "Washer: R(x) = eˣ, r(x) = 1",
-            "∫ e²ˣ dx = e²ˣ/2"
+            "Sketch: e\u02e3 \u2265 1 for x \u2265 0. Region from x = 0 to x = ln 3 between y = e\u02e3 (top) and y = 1 (bottom)",
+            "Washer: R(x) = e\u02e3, r(x) = 1",
+            "\u222b e\u00b2\u02e3 dx = e\u00b2\u02e3/2"
           ],
-          "answer": "Bounds: eˣ = 1 at x = 0, and x = ln 3. V = π ∫₀^(ln3) [(eˣ)² - 1²] dx = π ∫₀^(ln3) (e²ˣ - 1) dx = π[e²ˣ/2 - x]₀^(ln3) = π[(e^(2ln3))/2 - ln 3 - 1/2 + 0] = π[(9/2) - ln 3 - 1/2] = π(4 - ln 3)."
+          "answer": "Bounds: e\u02e3 = 1 at x = 0, and x = ln 3. V = \u03c0 \u222b\u2080^(ln3) [(e\u02e3)\u00b2 - 1\u00b2] dx = \u03c0 \u222b\u2080^(ln3) (e\u00b2\u02e3 - 1) dx = \u03c0[e\u00b2\u02e3/2 - x]\u2080^(ln3) = \u03c0[(e^(2ln3))/2 - ln 3 - 1/2 + 0] = \u03c0[(9/2) - ln 3 - 1/2] = \u03c0(4 - ln 3)."
         },
         {
-          "problem": "Find the volume of the solid formed by revolving y = 4 - x² (for y ≥ 0) about the line y = -1.",
+          "problem": "Find the volume of the solid formed by revolving y = 4 - x\u00b2 (for y \u2265 0) about the line y = -1.",
           "hints": [
-            "4 - x² = 0 → x = ±2. Region from x = -2 to x = 2 above x-axis",
-            "Revolving around y = -1 (below the region). Outer radius = (4 - x²) - (-1) = 5 - x²",
+            "4 - x\u00b2 = 0 \u2192 x = \u00b12. Region from x = -2 to x = 2 above x-axis",
+            "Revolving around y = -1 (below the region). Outer radius = (4 - x\u00b2) - (-1) = 5 - x\u00b2",
             "Inner radius = 0 - (-1) = 1 (from x-axis to the line y = -1)"
           ],
-          "answer": "R(x) = 5 - x², r(x) = 1. V = π ∫₋₂² [(5-x²)² - 1] dx = π ∫₋₂² (25 - 10x² + x⁴ - 1) dx = π ∫₋₂² (24 - 10x² + x⁴) dx. By symmetry: 2π ∫₀² (24 - 10x² + x⁴) dx = 2π[24x - 10x³/3 + x⁵/5]₀² = 2π(48 - 80/3 + 32/5) = 2π(720/15 - 400/15 + 96/15) = 2π(416/15) = 832π/15."
+          "answer": "R(x) = 5 - x\u00b2, r(x) = 1. V = \u03c0 \u222b\u208b\u2082\u00b2 [(5-x\u00b2)\u00b2 - 1] dx = \u03c0 \u222b\u208b\u2082\u00b2 (25 - 10x\u00b2 + x\u2074 - 1) dx = \u03c0 \u222b\u208b\u2082\u00b2 (24 - 10x\u00b2 + x\u2074) dx. By symmetry: 2\u03c0 \u222b\u2080\u00b2 (24 - 10x\u00b2 + x\u2074) dx = 2\u03c0[24x - 10x\u00b3/3 + x\u2075/5]\u2080\u00b2 = 2\u03c0(48 - 80/3 + 32/5) = 2\u03c0(720/15 - 400/15 + 96/15) = 2\u03c0(416/15) = 832\u03c0/15."
         }
       ],
       "skill": "volume-disk-washer"
@@ -304,37 +295,30 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Applications of Integration Mastery Practice",
-      "skills": [
-        "average-value-function",
-        "motion-via-integrals-net-change",
-        "area-between-curves",
-        "volume-cross-sections",
-        "volume-disk-washer"
-      ],
       "problems": [
         {
-          "problem": "Find the average value of g(x) = sin(x) on [0, π]. Then find the value c in (0, π) guaranteed by the MVT for Integrals where g(c) = g_avg.",
-          "answer": "g_avg = (1/π) ∫₀π sin(x) dx = (1/π)[-cos(x)]₀π = (1/π)(1 + 1) = 2/π. Solve sin(c) = 2/π → c = arcsin(2/π) ≈ 0.690. Since 2/π ≈ 0.637 < 1, c exists in (0, π)."
+          "problem": "Find the average value of g(x) = sin(x) on [0, \u03c0]. Then find the value c in (0, \u03c0) guaranteed by the MVT for Integrals where g(c) = g_avg.",
+          "answer": "g_avg = (1/\u03c0) \u222b\u2080\u03c0 sin(x) dx = (1/\u03c0)[-cos(x)]\u2080\u03c0 = (1/\u03c0)(1 + 1) = 2/\u03c0. Solve sin(c) = 2/\u03c0 \u2192 c = arcsin(2/\u03c0) \u2248 0.690. Since 2/\u03c0 \u2248 0.637 < 1, c exists in (0, \u03c0)."
         },
         {
-          "problem": "A particle moves along a line with velocity v(t) = sin(πt) - 1/2 for 0 ≤ t ≤ 2. Find the displacement and the total distance traveled.",
-          "answer": "Displacement = ∫₀² [sin(πt) - 1/2] dt = [-cos(πt)/π - t/2]₀² = (-cos(2π)/π - 1) - (-cos(0)/π - 0) = (-1/π - 1) - (-1/π) = -1. Find v(t) = 0: sin(πt) = 1/2 → πt = π/6, 5π/6 → t = 1/6, 5/6. Sign: v > 0 on (1/6, 5/6), v < 0 on [0, 1/6] ∪ [5/6, 2]. Total distance = |∫₀^(1/6)| + |∫_(1/6)^(5/6)| + |∫_(5/6)^2|. ∫₀^(1/6) = [-cos(π/6)/π - 1/12] - [-1/π] = [-√3/(2π) - 1/12 + 1/π] = (2-√3)/(2π) - 1/12. ∫_(1/6)^(5/6) = [-cos(5π/6)/π - 5/12] - [-cos(π/6)/π - 1/12] = [√3/(2π) - 5/12] - [-√3/(2π) - 1/12] = √3/π - 1/3. ∫_(5/6)^2 = [-1/π - 1] - [√3/(2π) - 5/12] = -1/π - 1 - √3/(2π) + 5/12 = -(2+√3)/(2π) - 7/12. Total distance = |(2-√3)/(2π) - 1/12| + |√3/π - 1/3| + |(2+√3)/(2π) + 7/12| ≈ 0.0443 + 0.218 + 0.826 ≈ 1.088."
+          "problem": "A particle moves along a line with velocity v(t) = sin(\u03c0t) - 1/2 for 0 \u2264 t \u2264 2. Find the displacement and the total distance traveled.",
+          "answer": "Displacement = \u222b\u2080\u00b2 [sin(\u03c0t) - 1/2] dt = [-cos(\u03c0t)/\u03c0 - t/2]\u2080\u00b2 = (-cos(2\u03c0)/\u03c0 - 1) - (-cos(0)/\u03c0 - 0) = (-1/\u03c0 - 1) - (-1/\u03c0) = -1. Find v(t) = 0: sin(\u03c0t) = 1/2 \u2192 \u03c0t = \u03c0/6, 5\u03c0/6 \u2192 t = 1/6, 5/6. Sign: v > 0 on (1/6, 5/6), v < 0 on [0, 1/6] \u222a [5/6, 2]. Total distance = |\u222b\u2080^(1/6)| + |\u222b_(1/6)^(5/6)| + |\u222b_(5/6)^2|. \u222b\u2080^(1/6) = [-cos(\u03c0/6)/\u03c0 - 1/12] - [-1/\u03c0] = [-\u221a3/(2\u03c0) - 1/12 + 1/\u03c0] = (2-\u221a3)/(2\u03c0) - 1/12. \u222b_(1/6)^(5/6) = [-cos(5\u03c0/6)/\u03c0 - 5/12] - [-cos(\u03c0/6)/\u03c0 - 1/12] = [\u221a3/(2\u03c0) - 5/12] - [-\u221a3/(2\u03c0) - 1/12] = \u221a3/\u03c0 - 1/3. \u222b_(5/6)^2 = [-1/\u03c0 - 1] - [\u221a3/(2\u03c0) - 5/12] = -1/\u03c0 - 1 - \u221a3/(2\u03c0) + 5/12 = -(2+\u221a3)/(2\u03c0) - 7/12. Total distance = |(2-\u221a3)/(2\u03c0) - 1/12| + |\u221a3/\u03c0 - 1/3| + |(2+\u221a3)/(2\u03c0) + 7/12| \u2248 0.0443 + 0.218 + 0.826 \u2248 1.088."
         },
         {
-          "problem": "Find the area of the region enclosed by y = x² - 2x and y = -x² + 4.",
-          "answer": "Set x² - 2x = -x² + 4 → 2x² - 2x - 4 = 0 → x² - x - 2 = 0 → (x-2)(x+1) = 0 → x = -1, 2. On [-1, 2]: top is -x²+4, bottom is x²-2x (test x=0: 4 > 0). Area = ∫₋₁² [(-x²+4)-(x²-2x)] dx = ∫₋₁² (-2x²+2x+4) dx = [-2x³/3 + x² + 4x]₋₁² = (-16/3 + 4 + 8) - (2/3 + 1 - 4) = 20/3 - (-7/3) = 27/3 = 9."
+          "problem": "Find the area of the region enclosed by y = x\u00b2 - 2x and y = -x\u00b2 + 4.",
+          "answer": "Set x\u00b2 - 2x = -x\u00b2 + 4 \u2192 2x\u00b2 - 2x - 4 = 0 \u2192 x\u00b2 - x - 2 = 0 \u2192 (x-2)(x+1) = 0 \u2192 x = -1, 2. On [-1, 2]: top is -x\u00b2+4, bottom is x\u00b2-2x (test x=0: 4 > 0). Area = \u222b\u208b\u2081\u00b2 [(-x\u00b2+4)-(x\u00b2-2x)] dx = \u222b\u208b\u2081\u00b2 (-2x\u00b2+2x+4) dx = [-2x\u00b3/3 + x\u00b2 + 4x]\u208b\u2081\u00b2 = (-16/3 + 4 + 8) - (2/3 + 1 - 4) = 20/3 - (-7/3) = 27/3 = 9."
         },
         {
-          "problem": "A solid has a base bounded by y = x and y = x² (for 0 ≤ x ≤ 1). Cross-sections perpendicular to the x-axis are squares with sides running from y = x² to y = x. Find the volume.",
-          "answer": "Side length: s(x) = x - x². Area: A(x) = (x - x²)² = x² - 2x³ + x⁴. Volume = ∫₀¹ (x² - 2x³ + x⁴) dx = [x³/3 - x⁴/2 + x⁵/5]₀¹ = 1/3 - 1/2 + 1/5 = (10 - 15 + 6)/30 = 1/30."
+          "problem": "A solid has a base bounded by y = x and y = x\u00b2 (for 0 \u2264 x \u2264 1). Cross-sections perpendicular to the x-axis are squares with sides running from y = x\u00b2 to y = x. Find the volume.",
+          "answer": "Side length: s(x) = x - x\u00b2. Area: A(x) = (x - x\u00b2)\u00b2 = x\u00b2 - 2x\u00b3 + x\u2074. Volume = \u222b\u2080\u00b9 (x\u00b2 - 2x\u00b3 + x\u2074) dx = [x\u00b3/3 - x\u2074/2 + x\u2075/5]\u2080\u00b9 = 1/3 - 1/2 + 1/5 = (10 - 15 + 6)/30 = 1/30."
         },
         {
-          "problem": "Find the volume of the solid formed by revolving the region bounded by y = x² and y = 4 about (a) the x-axis, and (b) the line x = 3.",
-          "answer": "(a) Intersections: x² = 4 → x = ±2. Washer: R = 4, r = x². V = π ∫₋₂² (16 - x⁴) dx = 2π ∫₀² (16 - x⁴) dx = 2π[16x - x⁵/5]₀² = 2π(32 - 32/5) = 2π(128/5) = 256π/5. (b) Rewrite as x = √y (right half by symmetry, then double for both sides). Using washers with respect to y from y = 0 to y = 4: R(y) = 3 - (-√y) = 3 + √y, r(y) = 3 - √y. V = π ∫₀⁴ [(3+√y)² - (3-√y)²] dx. Expand: (3+√y)² - (3-√y)² = 12√y. V = π ∫₀⁴ 12√y dy = 12π[2y^(3/2)/3]₀⁴ = 12π(16/3) = 64π."
+          "problem": "Find the volume of the solid formed by revolving the region bounded by y = x\u00b2 and y = 4 about (a) the x-axis, and (b) the line x = 3.",
+          "answer": "(a) Intersections: x\u00b2 = 4 \u2192 x = \u00b12. Washer: R = 4, r = x\u00b2. V = \u03c0 \u222b\u208b\u2082\u00b2 (16 - x\u2074) dx = 2\u03c0 \u222b\u2080\u00b2 (16 - x\u2074) dx = 2\u03c0[16x - x\u2075/5]\u2080\u00b2 = 2\u03c0(32 - 32/5) = 2\u03c0(128/5) = 256\u03c0/5. (b) Rewrite as x = \u221ay (right half by symmetry, then double for both sides). Using washers with respect to y from y = 0 to y = 4: R(y) = 3 - (-\u221ay) = 3 + \u221ay, r(y) = 3 - \u221ay. V = \u03c0 \u222b\u2080\u2074 [(3+\u221ay)\u00b2 - (3-\u221ay)\u00b2] dx. Expand: (3+\u221ay)\u00b2 - (3-\u221ay)\u00b2 = 12\u221ay. V = \u03c0 \u222b\u2080\u2074 12\u221ay dy = 12\u03c0[2y^(3/2)/3]\u2080\u2074 = 12\u03c0(16/3) = 64\u03c0."
         },
         {
           "problem": "(FRQ-style) Water flows into a reservoir at a rate of R(t) = 100e^(-0.1t) cubic feet per hour and flows out at a constant rate of 40 cubic feet per hour. At t = 0, the reservoir holds 800 cubic feet. (a) Is the amount of water increasing or decreasing at t = 5? (b) Find the average rate of net inflow on [0, 10]. (c) At what time t does the reservoir reach its maximum volume? (d) What is the maximum volume?",
-          "answer": "(a) Net rate at t=5: R(5) - 40 = 100e^(-0.5) - 40 ≈ 60.65 - 40 = 20.65 > 0. Increasing. (b) Net inflow rate: R(t) - 40. Average = (1/10)∫₀¹⁰ (100e^(-0.1t) - 40) dt = (1/10)[-1000e^(-0.1t) - 40t]₀¹⁰ = (1/10)[(-1000e^(-1) - 400) - (-1000)] = (1/10)(600 - 1000e^(-1)) ≈ (1/10)(600 - 367.88) = 23.21 ft³/hr. (c) Max when R(t) = 40: 100e^(-0.1t) = 40 → e^(-0.1t) = 0.4 → -0.1t = ln(0.4) → t = -10ln(0.4) = 10ln(2.5) ≈ 9.16 hours. (d) V(t*) = 800 + ∫₀^(10ln2.5) (100e^(-0.1t) - 40) dt = 800 + [-1000e^(-0.1t) - 40t]₀^(10ln2.5) = 800 + (-1000(0.4) - 40·10ln2.5 + 1000) = 800 + (600 - 400 - 400ln2.5) = 800 + 200 - 400ln(2.5) ≈ 1000 - 366.5 ≈ 633.5. So maximum volume ≈ 1633.5 cubic feet. Wait, let me recompute: V = 800 + [-1000e^(-0.1t) - 40t] from 0 to t*. At t*: -1000(0.4) - 40(10ln2.5) = -400 - 400ln(2.5). At 0: -1000. Net: -400 - 400ln(2.5) + 1000 = 600 - 400ln(2.5) ≈ 600 - 366.5 = 233.5. V_max = 800 + 233.5 ≈ 1033.5 ft³."
+          "answer": "(a) Net rate at t=5: R(5) - 40 = 100e^(-0.5) - 40 \u2248 60.65 - 40 = 20.65 > 0. Increasing. (b) Net inflow rate: R(t) - 40. Average = (1/10)\u222b\u2080\u00b9\u2070 (100e^(-0.1t) - 40) dt = (1/10)[-1000e^(-0.1t) - 40t]\u2080\u00b9\u2070 = (1/10)[(-1000e^(-1) - 400) - (-1000)] = (1/10)(600 - 1000e^(-1)) \u2248 (1/10)(600 - 367.88) = 23.21 ft\u00b3/hr. (c) Max when R(t) = 40: 100e^(-0.1t) = 40 \u2192 e^(-0.1t) = 0.4 \u2192 -0.1t = ln(0.4) \u2192 t = -10ln(0.4) = 10ln(2.5) \u2248 9.16 hours. (d) V(t*) = 800 + \u222b\u2080^(10ln2.5) (100e^(-0.1t) - 40) dt = 800 + [-1000e^(-0.1t) - 40t]\u2080^(10ln2.5) = 800 + (-1000(0.4) - 40\u00b710ln2.5 + 1000) = 800 + (600 - 400 - 400ln2.5) = 800 + 200 - 400ln(2.5) \u2248 1000 - 366.5 \u2248 633.5. So maximum volume \u2248 1633.5 cubic feet. Wait, let me recompute: V = 800 + [-1000e^(-0.1t) - 40t] from 0 to t*. At t*: -1000(0.4) - 40(10ln2.5) = -400 - 400ln(2.5). At 0: -1000. Net: -400 - 400ln(2.5) + 1000 = 600 - 400ln(2.5) \u2248 600 - 366.5 = 233.5. V_max = 800 + 233.5 \u2248 1033.5 ft\u00b3."
         }
       ],
       "skill": "average-value-function"
@@ -342,30 +326,30 @@
   ],
   "answerKeys": {
     "avg-value-polynomial": "f_avg = 4. Rectangle height 4, base 3, area 12.",
-    "avg-value-trig-context": "T_avg = 70°F over the 12-hour period.",
+    "avg-value-trig-context": "T_avg = 70\u00b0F over the 12-hour period.",
     "motion-displacement-distance": "Displacement = 4/3. Total distance = 4.",
-    "net-change-water": "2500/3 ≈ 833.3 gallons enter. Tank holds 4000/3 ≈ 1333.3 gallons.",
-    "motion-trig-velocity": "s(π) = 2 m. Displacement = 0. Total distance = 6 m.",
-    "wp-avg-value-mvt": "f_avg = 6. c = 3 ± √3 (both in interval).",
+    "net-change-water": "2500/3 \u2248 833.3 gallons enter. Tank holds 4000/3 \u2248 1333.3 gallons.",
+    "motion-trig-velocity": "s(\u03c0) = 2 m. Displacement = 0. Total distance = 6 m.",
+    "wp-avg-value-mvt": "f_avg = 6. c = 3 \u00b1 \u221a3 (both in interval).",
     "wp-displacement-linear": "Displacement = -5/2. Total distance = 13/2.",
-    "wp-oil-leak": "≈ 648.0 gallons total. Average rate ≈ 64.8 gal/hr.",
+    "wp-oil-leak": "\u2248 648.0 gallons total. Average rate \u2248 64.8 gal/hr.",
     "area-parabola-line": "Area = 9/2.",
     "area-dy-integration": "Area = 8/3.",
-    "area-trig-curves": "Area = 2√2 - 2.",
+    "area-trig-curves": "Area = 2\u221a2 - 2.",
     "vol-cross-square-sqrt": "V = 8.",
-    "vol-cross-semicircle": "V = 2π/15.",
-    "disk-sqrt-x": "V = 8π.",
-    "washer-parabola-sqrt": "V = 3π/10.",
-    "washer-about-y=2": "V = 8π/15.",
+    "vol-cross-semicircle": "V = 2\u03c0/15.",
+    "disk-sqrt-x": "V = 8\u03c0.",
+    "washer-parabola-sqrt": "V = 3\u03c0/10.",
+    "washer-about-y=2": "V = 8\u03c0/15.",
     "wp-area-cubic": "Area = 8.",
-    "wp-vol-cross-equilateral": "V = 36√3.",
-    "wp-washer-exp": "V = π(4 - ln 3).",
-    "wp-washer-nonaxis": "V = 832π/15.",
-    "ip-avg-sin": "g_avg = 2/π. c = arcsin(2/π) ≈ 0.690.",
-    "ip-motion-trig": "Displacement = -1. Total distance ≈ 1.088.",
+    "wp-vol-cross-equilateral": "V = 36\u221a3.",
+    "wp-washer-exp": "V = \u03c0(4 - ln 3).",
+    "wp-washer-nonaxis": "V = 832\u03c0/15.",
+    "ip-avg-sin": "g_avg = 2/\u03c0. c = arcsin(2/\u03c0) \u2248 0.690.",
+    "ip-motion-trig": "Displacement = -1. Total distance \u2248 1.088.",
     "ip-area-parabolas": "Area = 9.",
     "ip-vol-cross-square": "V = 1/30.",
-    "ip-vol-two-axes": "(a) V = 256π/5. (b) V = 64π.",
-    "ip-frq-reservoir": "(a) Increasing (net rate ≈ 20.65). (b) Avg ≈ 23.21 ft³/hr. (c) t = 10ln(2.5) ≈ 9.16 hr. (d) V_max ≈ 1033.5 ft³."
+    "ip-vol-two-axes": "(a) V = 256\u03c0/5. (b) V = 64\u03c0.",
+    "ip-frq-reservoir": "(a) Increasing (net rate \u2248 20.65). (b) Avg \u2248 23.21 ft\u00b3/hr. (c) t = 10ln(2.5) \u2248 9.16 hr. (d) V_max \u2248 1033.5 ft\u00b3."
   }
 }

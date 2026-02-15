@@ -22,12 +22,12 @@
     "Perform arithmetic with integers, fractions, decimals, and mixed numbers quickly and accurately",
     "Apply all exponent rules and simplify radical expressions",
     "Solve ratio, proportion, and percent problems in one to two steps",
-    "Perform basic operations with complex numbers (i = √-1)",
-    "Add, subtract, and scalar-multiply 2×2 matrices",
+    "Perform basic operations with complex numbers (i = \u221a-1)",
+    "Add, subtract, and scalar-multiply 2\u00d72 matrices",
     "Use estimation to eliminate wrong answer choices"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
     "Every example mirrors actual ACT question format (5-choice multiple choice)",
     "Integrate estimation and backsolving strategies alongside content instruction",
@@ -40,32 +40,32 @@
       "lessonPhase": "concept-intro",
       "title": "Real Number Operations & Number Properties",
       "skill": "act-real-complex-numbers",
-      "content": "The ACT math section starts with straightforward number operation questions. These are designed to be quick wins — but only if your arithmetic is sharp. This section covers the building blocks: order of operations, fractions, decimals, and number properties.",
+      "content": "The ACT math section starts with straightforward number operation questions. These are designed to be quick wins \u2014 but only if your arithmetic is sharp. This section covers the building blocks: order of operations, fractions, decimals, and number properties.",
       "keyPoints": [
-        "PEMDAS: Parentheses → Exponents → Multiplication/Division (left to right) → Addition/Subtraction (left to right)",
+        "PEMDAS: Parentheses \u2192 Exponents \u2192 Multiplication/Division (left to right) \u2192 Addition/Subtraction (left to right)",
         "Fractions: to add/subtract, find common denominator. To multiply, multiply straight across. To divide, multiply by the reciprocal.",
-        "Converting: fraction → decimal: divide. Decimal → percent: multiply by 100. Percent → decimal: divide by 100.",
-        "Number properties: even + even = even, odd + odd = even, even × anything = even",
+        "Converting: fraction \u2192 decimal: divide. Decimal \u2192 percent: multiply by 100. Percent \u2192 decimal: divide by 100.",
+        "Number properties: even + even = even, odd + odd = even, even \u00d7 anything = even",
         "Absolute value: |x| gives the distance from 0, always non-negative"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Number Operations — Worked Examples",
+      "title": "Number Operations \u2014 Worked Examples",
       "skill": "act-real-complex-numbers",
       "examples": [
         {
-          "problem": "What is the value of 3 + 4 × 2² - 6 ÷ 3?\n(A) 15  (B) 17  (C) 19  (D) 21  (E) 26",
-          "solution": "Follow PEMDAS:\n1) Exponent: 2² = 4\n2) Multiply: 4 × 4 = 16\n3) Divide: 6 ÷ 3 = 2\n4) Add/Subtract left to right: 3 + 16 - 2 = 17\nAnswer: (B) 17"
+          "problem": "What is the value of 3 + 4 \u00d7 2\u00b2 - 6 \u00f7 3?\n(A) 15  (B) 17  (C) 19  (D) 21  (E) 26",
+          "solution": "Follow PEMDAS:\n1) Exponent: 2\u00b2 = 4\n2) Multiply: 4 \u00d7 4 = 16\n3) Divide: 6 \u00f7 3 = 2\n4) Add/Subtract left to right: 3 + 16 - 2 = 17\nAnswer: (B) 17"
         },
         {
           "problem": "Which of the following is equal to 2/3 + 3/4?\n(A) 5/7  (B) 5/12  (C) 17/12  (D) 6/7  (E) 11/12",
-          "solution": "Find common denominator (LCD = 12):\n2/3 = 8/12, 3/4 = 9/12\n8/12 + 9/12 = 17/12\nAnswer: (C) 17/12\n\nACT Tip: 5/7 is a common trap — students who add numerators and denominators separately get this wrong answer."
+          "solution": "Find common denominator (LCD = 12):\n2/3 = 8/12, 3/4 = 9/12\n8/12 + 9/12 = 17/12\nAnswer: (C) 17/12\n\nACT Tip: 5/7 is a common trap \u2014 students who add numerators and denominators separately get this wrong answer."
         },
         {
           "problem": "A shirt originally priced at $40 is on sale for 25% off. What is the sale price?\n(A) $10  (B) $15  (C) $25  (D) $30  (E) $35",
-          "solution": "Method 1 (calculate discount): 25% of $40 = 0.25 × 40 = $10. Sale price = $40 - $10 = $30.\nMethod 2 (multiplier): 100% - 25% = 75%. Sale price = 0.75 × $40 = $30.\nAnswer: (D) $30\n\nACT Tip: Method 2 is faster for successive discounts."
+          "solution": "Method 1 (calculate discount): 25% of $40 = 0.25 \u00d7 40 = $10. Sale price = $40 - $10 = $30.\nMethod 2 (multiplier): 100% - 25% = 75%. Sale price = 0.75 \u00d7 $40 = $30.\nAnswer: (D) $30\n\nACT Tip: Method 2 is faster for successive discounts."
         }
       ]
     },
@@ -76,33 +76,33 @@
       "skill": "act-exponents-roots",
       "content": "Exponent rules and radical simplification are tested throughout the ACT, not just in the early questions. Knowing these rules cold lets you simplify expressions quickly without second-guessing.",
       "keyPoints": [
-        "Product rule: x^a · x^b = x^(a+b)",
+        "Product rule: x^a \u00b7 x^b = x^(a+b)",
         "Quotient rule: x^a / x^b = x^(a-b)",
-        "Power rule: (x^a)^b = x^(a·b)",
+        "Power rule: (x^a)^b = x^(a\u00b7b)",
         "Negative exponent: x^(-n) = 1/x^n",
-        "Zero exponent: x^0 = 1 (for x ≠ 0)",
-        "Radicals: √(ab) = √a · √b. √(a/b) = √a / √b",
-        "Rationalizing: multiply by √b/√b to clear radical from denominator",
-        "Scientific notation: a × 10^n where 1 ≤ a < 10"
+        "Zero exponent: x^0 = 1 (for x \u2260 0)",
+        "Radicals: \u221a(ab) = \u221aa \u00b7 \u221ab. \u221a(a/b) = \u221aa / \u221ab",
+        "Rationalizing: multiply by \u221ab/\u221ab to clear radical from denominator",
+        "Scientific notation: a \u00d7 10^n where 1 \u2264 a < 10"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Exponents & Roots — Worked Examples",
+      "title": "Exponents & Roots \u2014 Worked Examples",
       "skill": "act-exponents-roots",
       "examples": [
         {
-          "problem": "Which of the following is equivalent to (2x³)² · x⁴?\n(A) 2x¹⁰  (B) 4x¹⁰  (C) 4x²⁴  (D) 2x²⁴  (E) 8x¹⁰",
-          "solution": "Step 1: Apply power rule to (2x³)² = 2² · (x³)² = 4x⁶\nStep 2: Multiply: 4x⁶ · x⁴ = 4x^(6+4) = 4x¹⁰\nAnswer: (B) 4x¹⁰\n\nCommon mistake: Forgetting to square the coefficient 2."
+          "problem": "Which of the following is equivalent to (2x\u00b3)\u00b2 \u00b7 x\u2074?\n(A) 2x\u00b9\u2070  (B) 4x\u00b9\u2070  (C) 4x\u00b2\u2074  (D) 2x\u00b2\u2074  (E) 8x\u00b9\u2070",
+          "solution": "Step 1: Apply power rule to (2x\u00b3)\u00b2 = 2\u00b2 \u00b7 (x\u00b3)\u00b2 = 4x\u2076\nStep 2: Multiply: 4x\u2076 \u00b7 x\u2074 = 4x^(6+4) = 4x\u00b9\u2070\nAnswer: (B) 4x\u00b9\u2070\n\nCommon mistake: Forgetting to square the coefficient 2."
         },
         {
-          "problem": "What is √72 in simplest radical form?\n(A) 6√2  (B) 3√8  (C) 8√3  (D) 2√18  (E) 36√2",
-          "solution": "Factor 72 looking for perfect squares: 72 = 36 × 2\n√72 = √(36 × 2) = √36 · √2 = 6√2\nAnswer: (A) 6√2\n\nACT Tip: Always look for the largest perfect square factor."
+          "problem": "What is \u221a72 in simplest radical form?\n(A) 6\u221a2  (B) 3\u221a8  (C) 8\u221a3  (D) 2\u221a18  (E) 36\u221a2",
+          "solution": "Factor 72 looking for perfect squares: 72 = 36 \u00d7 2\n\u221a72 = \u221a(36 \u00d7 2) = \u221a36 \u00b7 \u221a2 = 6\u221a2\nAnswer: (A) 6\u221a2\n\nACT Tip: Always look for the largest perfect square factor."
         },
         {
-          "problem": "The distance from the Sun to Mars is approximately 2.28 × 10⁸ km. The distance from the Sun to Earth is approximately 1.50 × 10⁸ km. How much farther from the Sun is Mars than Earth?\n(A) 0.78 × 10⁸  (B) 7.8 × 10⁷  (C) 7.8 × 10⁸  (D) 0.78 × 10⁷  (E) 78 × 10⁶",
-          "solution": "Same power of 10: subtract the coefficients.\n2.28 × 10⁸ - 1.50 × 10⁸ = 0.78 × 10⁸\nConvert to proper scientific notation: 7.8 × 10⁷\nNote: (A) 0.78 × 10⁸ and (B) 7.8 × 10⁷ are equal, but (B) is proper scientific notation.\nAnswer: (B) 7.8 × 10⁷"
+          "problem": "The distance from the Sun to Mars is approximately 2.28 \u00d7 10\u2078 km. The distance from the Sun to Earth is approximately 1.50 \u00d7 10\u2078 km. How much farther from the Sun is Mars than Earth?\n(A) 0.78 \u00d7 10\u2078  (B) 7.8 \u00d7 10\u2077  (C) 7.8 \u00d7 10\u2078  (D) 0.78 \u00d7 10\u2077  (E) 78 \u00d7 10\u2076",
+          "solution": "Same power of 10: subtract the coefficients.\n2.28 \u00d7 10\u2078 - 1.50 \u00d7 10\u2078 = 0.78 \u00d7 10\u2078\nConvert to proper scientific notation: 7.8 \u00d7 10\u2077\nNote: (A) 0.78 \u00d7 10\u2078 and (B) 7.8 \u00d7 10\u2077 are equal, but (B) is proper scientific notation.\nAnswer: (B) 7.8 \u00d7 10\u2077"
         }
       ]
     },
@@ -110,42 +110,38 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Number Operations & Exponents Practice",
-      "skills": [
-        "act-real-complex-numbers",
-        "act-exponents-roots"
-      ],
       "problems": [
         {
-          "problem": "What is the value of |−7| + |3 − 10|?\n(A) 0  (B) 4  (C) 10  (D) 14  (E) 20",
+          "problem": "What is the value of |\u22127| + |3 \u2212 10|?\n(A) 0  (B) 4  (C) 10  (D) 14  (E) 20",
           "hints": [
             "Calculate each absolute value separately",
-            "|−7| = 7 and |3 − 10| = |−7| = 7"
+            "|\u22127| = 7 and |3 \u2212 10| = |\u22127| = 7"
           ],
-          "answer": "(D) 14. |−7| = 7, |3 − 10| = |−7| = 7. Sum = 7 + 7 = 14."
+          "answer": "(D) 14. |\u22127| = 7, |3 \u2212 10| = |\u22127| = 7. Sum = 7 + 7 = 14."
         },
         {
-          "problem": "If x⁻² = 1/25, what is x?\n(A) −5 only  (B) 5 only  (C) ±5  (D) 1/5  (E) ±1/5",
+          "problem": "If x\u207b\u00b2 = 1/25, what is x?\n(A) \u22125 only  (B) 5 only  (C) \u00b15  (D) 1/5  (E) \u00b11/5",
           "hints": [
-            "x⁻² means 1/x²",
-            "So 1/x² = 1/25, which means x² = 25"
+            "x\u207b\u00b2 means 1/x\u00b2",
+            "So 1/x\u00b2 = 1/25, which means x\u00b2 = 25"
           ],
-          "answer": "(C) ±5. Since x⁻² = 1/x² = 1/25, we get x² = 25, so x = ±5."
+          "answer": "(C) \u00b15. Since x\u207b\u00b2 = 1/x\u00b2 = 1/25, we get x\u00b2 = 25, so x = \u00b15."
         },
         {
-          "problem": "Simplify: (3√5)²\n(A) 9√5  (B) 15  (C) 45  (D) 3√25  (E) 75",
+          "problem": "Simplify: (3\u221a5)\u00b2\n(A) 9\u221a5  (B) 15  (C) 45  (D) 3\u221a25  (E) 75",
           "hints": [
-            "Square each part: 3² and (√5)²",
-            "3² = 9 and (√5)² = 5"
+            "Square each part: 3\u00b2 and (\u221a5)\u00b2",
+            "3\u00b2 = 9 and (\u221a5)\u00b2 = 5"
           ],
-          "answer": "(C) 45. (3√5)² = 3² · (√5)² = 9 · 5 = 45."
+          "answer": "(C) 45. (3\u221a5)\u00b2 = 3\u00b2 \u00b7 (\u221a5)\u00b2 = 9 \u00b7 5 = 45."
         },
         {
           "problem": "A store marks up the wholesale price of a jacket by 60%, then offers a 25% discount. If the wholesale price is $50, what is the final selling price?\n(A) $50.00  (B) $55.00  (C) $57.50  (D) $60.00  (E) $67.50",
           "hints": [
-            "First calculate the marked-up price: $50 × 1.60",
-            "Then apply the discount: marked-up price × 0.75"
+            "First calculate the marked-up price: $50 \u00d7 1.60",
+            "Then apply the discount: marked-up price \u00d7 0.75"
           ],
-          "answer": "(D) $60.00. Markup: $50 × 1.60 = $80. Discount: $80 × 0.75 = $60."
+          "answer": "(D) $60.00. Markup: $50 \u00d7 1.60 = $80. Discount: $80 \u00d7 0.75 = $60."
         }
       ],
       "skill": "act-exponents-roots"
@@ -159,29 +155,29 @@
       "keyPoints": [
         "Ratio a:b means for every a of one, there are b of the other. Total parts = a + b.",
         "Proportion: a/b = c/d. Cross-multiply: ad = bc.",
-        "Percent of: x% of y = (x/100) · y",
-        "Percent change: (new − old)/old × 100%",
-        "Percent increase: new = old × (1 + r). Percent decrease: new = old × (1 − r).",
-        "Successive percents: multiply the multipliers. A 20% increase then a 10% decrease = 1.20 × 0.90 = 1.08 (8% net increase, NOT 10%)."
+        "Percent of: x% of y = (x/100) \u00b7 y",
+        "Percent change: (new \u2212 old)/old \u00d7 100%",
+        "Percent increase: new = old \u00d7 (1 + r). Percent decrease: new = old \u00d7 (1 \u2212 r).",
+        "Successive percents: multiply the multipliers. A 20% increase then a 10% decrease = 1.20 \u00d7 0.90 = 1.08 (8% net increase, NOT 10%)."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Ratios & Proportions — Worked Examples",
+      "title": "Ratios & Proportions \u2014 Worked Examples",
       "skill": "act-ratios-proportions-percents",
       "examples": [
         {
           "problem": "In a class of 30 students, the ratio of boys to girls is 2:3. How many girls are in the class?\n(A) 10  (B) 12  (C) 15  (D) 18  (E) 20",
-          "solution": "Total parts = 2 + 3 = 5.\nGirls = (3/5) × 30 = 18.\nAnswer: (D) 18\n\nAlternate check: Boys = (2/5) × 30 = 12. 12 + 18 = 30. ✓"
+          "solution": "Total parts = 2 + 3 = 5.\nGirls = (3/5) \u00d7 30 = 18.\nAnswer: (D) 18\n\nAlternate check: Boys = (2/5) \u00d7 30 = 12. 12 + 18 = 30. \u2713"
         },
         {
           "problem": "A population of bacteria increases from 800 to 1,200 in one hour. What is the percent increase?\n(A) 25%  (B) 33.3%  (C) 40%  (D) 50%  (E) 66.7%",
-          "solution": "Percent change = (new − old)/old × 100%\n= (1200 − 800)/800 × 100%\n= 400/800 × 100% = 50%\nAnswer: (D) 50%\n\nTrap: (E) 66.7% uses 1200 as the base — always divide by the ORIGINAL value."
+          "solution": "Percent change = (new \u2212 old)/old \u00d7 100%\n= (1200 \u2212 800)/800 \u00d7 100%\n= 400/800 \u00d7 100% = 50%\nAnswer: (D) 50%\n\nTrap: (E) 66.7% uses 1200 as the base \u2014 always divide by the ORIGINAL value."
         },
         {
           "problem": "If 3 workers can paint a fence in 12 hours, how long would it take 4 workers to paint the same fence (at the same rate)?\n(A) 8 hours  (B) 9 hours  (C) 10 hours  (D) 14 hours  (E) 16 hours",
-          "solution": "Workers × Time = constant (inverse proportion).\n3 × 12 = 36 worker-hours.\n4 × t = 36 → t = 9 hours.\nAnswer: (B) 9 hours"
+          "solution": "Workers \u00d7 Time = constant (inverse proportion).\n3 \u00d7 12 = 36 worker-hours.\n4 \u00d7 t = 36 \u2192 t = 9 hours.\nAnswer: (B) 9 hours"
         }
       ]
     },
@@ -190,34 +186,34 @@
       "lessonPhase": "concept-intro",
       "title": "Complex Numbers & Matrices",
       "skill": "act-real-complex-numbers",
-      "content": "Complex numbers and matrices appear infrequently on the ACT (0-2 questions), but they're straightforward points if you know the basics. Focus on the core operations — the ACT doesn't go deep here.",
+      "content": "Complex numbers and matrices appear infrequently on the ACT (0-2 questions), but they're straightforward points if you know the basics. Focus on the core operations \u2014 the ACT doesn't go deep here.",
       "keyPoints": [
-        "i = √(−1), i² = −1, i³ = −i, i⁴ = 1 (then the cycle repeats)",
+        "i = \u221a(\u22121), i\u00b2 = \u22121, i\u00b3 = \u2212i, i\u2074 = 1 (then the cycle repeats)",
         "To find i^n: divide n by 4, use the remainder to find the value",
         "Adding complex numbers: (a + bi) + (c + di) = (a+c) + (b+d)i",
-        "Multiplying: use FOIL and replace i² with −1",
+        "Multiplying: use FOIL and replace i\u00b2 with \u22121",
         "Matrix addition: add corresponding entries (same dimensions required)",
         "Scalar multiplication: multiply every entry by the scalar",
-        "2×2 determinant: |a b; c d| = ad − bc"
+        "2\u00d72 determinant: |a b; c d| = ad \u2212 bc"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Complex Numbers & Matrices — Worked Examples",
+      "title": "Complex Numbers & Matrices \u2014 Worked Examples",
       "skill": "act-matrices-vectors",
       "examples": [
         {
-          "problem": "What is the value of i⁴⁷?\n(A) 1  (B) i  (C) −1  (D) −i  (E) 47i",
-          "solution": "Divide exponent by 4: 47 ÷ 4 = 11 remainder 3.\nSo i⁴⁷ = i³ = −i.\nAnswer: (D) −i\n\nCycle: remainder 0→1, remainder 1→i, remainder 2→−1, remainder 3→−i"
+          "problem": "What is the value of i\u2074\u2077?\n(A) 1  (B) i  (C) \u22121  (D) \u2212i  (E) 47i",
+          "solution": "Divide exponent by 4: 47 \u00f7 4 = 11 remainder 3.\nSo i\u2074\u2077 = i\u00b3 = \u2212i.\nAnswer: (D) \u2212i\n\nCycle: remainder 0\u21921, remainder 1\u2192i, remainder 2\u2192\u22121, remainder 3\u2192\u2212i"
         },
         {
-          "problem": "What is (3 + 2i)(1 − 4i)?\n(A) 3 − 8i  (B) 11 − 10i  (C) −5 − 10i  (D) 11 + 10i  (E) 3 − 10i",
-          "solution": "FOIL: (3)(1) + (3)(−4i) + (2i)(1) + (2i)(−4i)\n= 3 − 12i + 2i − 8i²\n= 3 − 10i − 8(−1)\n= 3 − 10i + 8\n= 11 − 10i\nAnswer: (B) 11 − 10i"
+          "problem": "What is (3 + 2i)(1 \u2212 4i)?\n(A) 3 \u2212 8i  (B) 11 \u2212 10i  (C) \u22125 \u2212 10i  (D) 11 + 10i  (E) 3 \u2212 10i",
+          "solution": "FOIL: (3)(1) + (3)(\u22124i) + (2i)(1) + (2i)(\u22124i)\n= 3 \u2212 12i + 2i \u2212 8i\u00b2\n= 3 \u2212 10i \u2212 8(\u22121)\n= 3 \u2212 10i + 8\n= 11 \u2212 10i\nAnswer: (B) 11 \u2212 10i"
         },
         {
-          "problem": "If A = [2 −1; 3 4] and B = [1 5; −2 0], what is A + B?\n(A) [3 4; 1 4]  (B) [3 −6; 5 4]  (C) [2 −5; −6 0]  (D) [3 4; 5 4]  (E) [1 4; 1 4]",
-          "solution": "Add corresponding entries:\nRow 1: [2+1, −1+5] = [3, 4]\nRow 2: [3+(−2), 4+0] = [1, 4]\nA + B = [3 4; 1 4]\nAnswer: (A) [3 4; 1 4]"
+          "problem": "If A = [2 \u22121; 3 4] and B = [1 5; \u22122 0], what is A + B?\n(A) [3 4; 1 4]  (B) [3 \u22126; 5 4]  (C) [2 \u22125; \u22126 0]  (D) [3 4; 5 4]  (E) [1 4; 1 4]",
+          "solution": "Add corresponding entries:\nRow 1: [2+1, \u22121+5] = [3, 4]\nRow 2: [3+(\u22122), 4+0] = [1, 4]\nA + B = [3 4; 1 4]\nAnswer: (A) [3 4; 1 4]"
         }
       ]
     },
@@ -225,11 +221,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Ratios, Complex Numbers & Matrices Practice",
-      "skills": [
-        "act-ratios-proportions-percents",
-        "act-real-complex-numbers",
-        "act-matrices-vectors"
-      ],
       "problems": [
         {
           "problem": "A recipe calls for flour and sugar in a 5:2 ratio. If you use 3 cups of sugar, how many cups of flour do you need?\n(A) 1.2  (B) 6  (C) 7.5  (D) 10  (E) 15",
@@ -237,31 +228,31 @@
             "Set up the proportion: 5/2 = x/3",
             "Cross-multiply: 2x = 15"
           ],
-          "answer": "(C) 7.5. 5/2 = x/3 → x = 15/2 = 7.5 cups of flour."
+          "answer": "(C) 7.5. 5/2 = x/3 \u2192 x = 15/2 = 7.5 cups of flour."
         },
         {
           "problem": "The price of gas increased from $3.20 to $3.60 per gallon. What is the percent increase, to the nearest tenth?\n(A) 10.0%  (B) 11.1%  (C) 12.5%  (D) 14.3%  (E) 40.0%",
           "hints": [
-            "Use percent change formula: (new - old)/old × 100",
+            "Use percent change formula: (new - old)/old \u00d7 100",
             "Change = $0.40, original = $3.20"
           ],
-          "answer": "(C) 12.5%. Change = 3.60 - 3.20 = 0.40. Percent = 0.40/3.20 × 100 = 12.5%."
+          "answer": "(C) 12.5%. Change = 3.60 - 3.20 = 0.40. Percent = 0.40/3.20 \u00d7 100 = 12.5%."
         },
         {
-          "problem": "What is (2 − 3i)²?\n(A) 4 − 9i  (B) −5 − 12i  (C) 13 − 12i  (D) 4 + 9  (E) −5 + 12i",
+          "problem": "What is (2 \u2212 3i)\u00b2?\n(A) 4 \u2212 9i  (B) \u22125 \u2212 12i  (C) 13 \u2212 12i  (D) 4 + 9  (E) \u22125 + 12i",
           "hints": [
             "Expand using FOIL: (2-3i)(2-3i)",
-            "Remember i² = -1"
+            "Remember i\u00b2 = -1"
           ],
-          "answer": "(B) −5 − 12i. (2-3i)² = 4 - 12i + 9i² = 4 - 12i + 9(-1) = -5 - 12i."
+          "answer": "(B) \u22125 \u2212 12i. (2-3i)\u00b2 = 4 - 12i + 9i\u00b2 = 4 - 12i + 9(-1) = -5 - 12i."
         },
         {
-          "problem": "If M = [4 2; −1 3], what is 3M?\n(A) [12 6; −3 9]  (B) [7 5; 2 6]  (C) [12 2; −1 9]  (D) [4 6; −3 3]  (E) [12 6; −1 3]",
+          "problem": "If M = [4 2; \u22121 3], what is 3M?\n(A) [12 6; \u22123 9]  (B) [7 5; 2 6]  (C) [12 2; \u22121 9]  (D) [4 6; \u22123 3]  (E) [12 6; \u22121 3]",
           "hints": [
             "Multiply every entry by 3",
-            "3 × 4 = 12, 3 × 2 = 6, 3 × (−1) = −3, 3 × 3 = 9"
+            "3 \u00d7 4 = 12, 3 \u00d7 2 = 6, 3 \u00d7 (\u22121) = \u22123, 3 \u00d7 3 = 9"
           ],
-          "answer": "(A) [12 6; −3 9]. Multiply each entry by 3: [3·4, 3·2; 3·(−1), 3·3] = [12, 6; −3, 9]."
+          "answer": "(A) [12 6; \u22123 9]. Multiply each entry by 3: [3\u00b74, 3\u00b72; 3\u00b7(\u22121), 3\u00b73] = [12, 6; \u22123, 9]."
         }
       ],
       "skill": "act-matrices-vectors"
@@ -269,45 +260,39 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Number & Quantity — ACT-Style Practice Set",
-      "skills": [
-        "act-real-complex-numbers",
-        "act-exponents-roots",
-        "act-ratios-proportions-percents",
-        "act-matrices-vectors"
-      ],
+      "title": "Number & Quantity \u2014 ACT-Style Practice Set",
       "problems": [
         {
-          "problem": "What is the value of (−2)³ + (−3)²?\n(A) −17  (B) −1  (C) 1  (D) 5  (E) 17",
-          "answer": "(C) 1. (−2)³ = −8. (−3)² = 9. −8 + 9 = 1."
+          "problem": "What is the value of (\u22122)\u00b3 + (\u22123)\u00b2?\n(A) \u221217  (B) \u22121  (C) 1  (D) 5  (E) 17",
+          "answer": "(C) 1. (\u22122)\u00b3 = \u22128. (\u22123)\u00b2 = 9. \u22128 + 9 = 1."
         },
         {
-          "problem": "Simplify: √(50) + √(18)\n(A) √68  (B) 8√2  (C) 4√17  (D) 5√2 + 3√2  (E) 68",
-          "answer": "(B) 8√2. √50 = 5√2, √18 = 3√2. Sum = 5√2 + 3√2 = 8√2. Note: (D) is the same answer written differently."
+          "problem": "Simplify: \u221a(50) + \u221a(18)\n(A) \u221a68  (B) 8\u221a2  (C) 4\u221a17  (D) 5\u221a2 + 3\u221a2  (E) 68",
+          "answer": "(B) 8\u221a2. \u221a50 = 5\u221a2, \u221a18 = 3\u221a2. Sum = 5\u221a2 + 3\u221a2 = 8\u221a2. Note: (D) is the same answer written differently."
         },
         {
           "problem": "If 15 is 30% of x, what is x?\n(A) 4.5  (B) 20  (C) 45  (D) 50  (E) 200",
-          "answer": "(D) 50. 15 = 0.30 × x → x = 15/0.30 = 50."
+          "answer": "(D) 50. 15 = 0.30 \u00d7 x \u2192 x = 15/0.30 = 50."
         },
         {
           "problem": "A map has a scale of 1 inch : 25 miles. Two cities are 3.5 inches apart on the map. What is the actual distance between them?\n(A) 7.14 miles  (B) 28.5 miles  (C) 75 miles  (D) 87.5 miles  (E) 125 miles",
-          "answer": "(D) 87.5 miles. 3.5 × 25 = 87.5 miles."
+          "answer": "(D) 87.5 miles. 3.5 \u00d7 25 = 87.5 miles."
         },
         {
-          "problem": "What is i² + i⁴ + i⁶ + i⁸?\n(A) −4  (B) −2  (C) 0  (D) 2  (E) 4",
-          "answer": "(C) 0. i² = −1, i⁴ = 1, i⁶ = (i²)³ = (−1)³ = −1, i⁸ = (i⁴)² = 1. Sum = −1 + 1 + (−1) + 1 = 0."
+          "problem": "What is i\u00b2 + i\u2074 + i\u2076 + i\u2078?\n(A) \u22124  (B) \u22122  (C) 0  (D) 2  (E) 4",
+          "answer": "(C) 0. i\u00b2 = \u22121, i\u2074 = 1, i\u2076 = (i\u00b2)\u00b3 = (\u22121)\u00b3 = \u22121, i\u2078 = (i\u2074)\u00b2 = 1. Sum = \u22121 + 1 + (\u22121) + 1 = 0."
         },
         {
           "problem": "An item's price is increased by 20%, then increased again by 10%. What is the total percent increase from the original price?\n(A) 28%  (B) 30%  (C) 32%  (D) 33%  (E) 120%",
-          "answer": "(C) 32%. Multiply multipliers: 1.20 × 1.10 = 1.32 → 32% total increase."
+          "answer": "(C) 32%. Multiply multipliers: 1.20 \u00d7 1.10 = 1.32 \u2192 32% total increase."
         },
         {
-          "problem": "What is the determinant of the matrix [5 3; 2 −1]?\n(A) −11  (B) −8  (C) −1  (D) 1  (E) 11",
-          "answer": "(A) −11. det = (5)(−1) − (3)(2) = −5 − 6 = −11."
+          "problem": "What is the determinant of the matrix [5 3; 2 \u22121]?\n(A) \u221211  (B) \u22128  (C) \u22121  (D) 1  (E) 11",
+          "answer": "(A) \u221211. det = (5)(\u22121) \u2212 (3)(2) = \u22125 \u2212 6 = \u221211."
         },
         {
-          "problem": "Which expression is equivalent to x^(3/2)?\n(A) x√x  (B) (√x)³  (C) x · √x  (D) All of the above  (E) None of the above",
-          "answer": "(D) All of the above. x^(3/2) = x^1 · x^(1/2) = x√x = (√x)³ = x · √x. All equivalent."
+          "problem": "Which expression is equivalent to x^(3/2)?\n(A) x\u221ax  (B) (\u221ax)\u00b3  (C) x \u00b7 \u221ax  (D) All of the above  (E) None of the above",
+          "answer": "(D) All of the above. x^(3/2) = x^1 \u00b7 x^(1/2) = x\u221ax = (\u221ax)\u00b3 = x \u00b7 \u221ax. All equivalent."
         }
       ],
       "skill": "act-real-complex-numbers"
@@ -318,10 +303,10 @@
     "fractions-1": "17/12",
     "percent-discount": "$30",
     "exponent-rule-1": "4x^10",
-    "radical-simplify": "6√2",
-    "scientific-notation": "7.8 × 10^7",
+    "radical-simplify": "6\u221a2",
+    "scientific-notation": "7.8 \u00d7 10^7",
     "abs-value": "14",
-    "neg-exponent": "±5",
+    "neg-exponent": "\u00b15",
     "radical-square": "45",
     "markup-discount": "$60",
     "ratio-flour": "7.5",
@@ -329,7 +314,7 @@
     "complex-square": "-5 - 12i",
     "scalar-matrix": "[12 6; -3 9]",
     "neg-cubed-squared": "1",
-    "add-radicals": "8√2",
+    "add-radicals": "8\u221a2",
     "percent-of": "50",
     "map-scale": "87.5",
     "powers-of-i-sum": "0",

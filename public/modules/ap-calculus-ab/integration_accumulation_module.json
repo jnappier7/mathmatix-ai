@@ -120,11 +120,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Riemann Sums & FTC Practice",
-      "skills": [
-        "riemann-sums-approximation",
-        "ftc-part-1",
-        "ftc-part-2"
-      ],
       "problems": [
         {
           "problem": "Approximate the integral from 0 to 6 of f(x)dx using a midpoint Riemann sum with 3 equal subintervals, given f(x) = 2x + 3.",
@@ -271,10 +266,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Antiderivatives, u-Substitution & Properties Practice",
-      "skills": [
-        "antiderivatives-indefinite-integrals",
-        "integral-properties-techniques"
-      ],
       "problems": [
         {
           "problem": "Evaluate: integral of (6x^2 - 4/x + sec^2(x)) dx.",
@@ -316,14 +307,6 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Integration & Accumulation Mastery Practice",
-      "skills": [
-        "definite-integral-as-accumulation",
-        "riemann-sums-approximation",
-        "ftc-part-1",
-        "ftc-part-2",
-        "antiderivatives-indefinite-integrals",
-        "integral-properties-techniques"
-      ],
       "problems": [
         {
           "problem": "A particle moves along the x-axis with velocity v(t) = t^2 - 4t + 3 for 0 <= t <= 5. (a) Find the net displacement from t = 0 to t = 5. (b) Is the particle moving left or right at t = 1?",

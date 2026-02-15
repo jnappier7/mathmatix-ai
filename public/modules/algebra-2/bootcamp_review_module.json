@@ -5,7 +5,7 @@
   "title": "Boot Camp Review",
   "weeks": "1-2",
   "estimatedDuration": 55,
-  "description": "Sharpen the Algebra 1 essentials—exponent rules, factoring, and function basics—so you hit the ground running in Algebra 2.",
+  "description": "Sharpen the Algebra 1 essentials\u2014exponent rules, factoring, and function basics\u2014so you hit the ground running in Algebra 2.",
   "skills": [
     "solving-linear-equations",
     "compound-inequalities",
@@ -32,7 +32,7 @@
     "Graph linear functions and write equations in slope-intercept and point-slope form"
   ],
   "instructionalStrategy": [
-    "This is NOT a reteach of Algebra 1—it's a fast-paced diagnostic boot camp. The AI should assess FIRST, then target gaps. Students who demonstrate fluency should move quickly; students with gaps get focused mini-reteach.",
+    "This is NOT a reteach of Algebra 1\u2014it's a fast-paced diagnostic boot camp. The AI should assess FIRST, then target gaps. Students who demonstrate fluency should move quickly; students with gaps get focused mini-reteach.",
     "Factoring is the #1 Algebra 1 skill that decays over summer. Hit it hard and keep it alive all year with daily warm-ups.",
     "Function notation confusion (f(3) vs 3f, f(x+2) vs f(x)+2) must be cleared up NOW before composition and inverses build on it.",
     "Exponent rules are the foundation for radicals (Unit 6) and logarithms (Unit 5). Any gaps here will cascade. Diagnose and fix immediately.",
@@ -45,70 +45,90 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-linear-equations",
       "title": "Concept: Solving Linear Equations",
-      "initialPrompt": "Let's start with a quick pulse check. Solve: 3(2x - 5) = 4x + 7. If that feels automatic, great—we'll move fast. If not, no worries, that's exactly why we're here.",
-      "content": "**Welcome to Algebra 2!** Before we dive into new material, we need to make sure your Algebra 1 foundation is solid. Think of this as a tune-up, not a repeat.\n\nWe'll quickly assess five core skill areas:\n1. **Solving equations & inequalities** — the bread and butter\n2. **Function notation** — f(x) is your new best friend\n3. **Exponent rules & radicals** — powers and roots\n4. **Factoring** — the skill that never dies\n5. **Linear graphs & equations** — slope, intercepts, the works\n\nFor each area, we'll do a quick check. If you've got it, we move on. If there are gaps, we'll patch them fast."
+      "initialPrompt": "Let's start with a quick pulse check. Solve: 3(2x - 5) = 4x + 7. If that feels automatic, great\u2014we'll move fast. If not, no worries, that's exactly why we're here.",
+      "content": "**Welcome to Algebra 2!** Before we dive into new material, we need to make sure your Algebra 1 foundation is solid. Think of this as a tune-up, not a repeat.\n\nWe'll quickly assess five core skill areas:\n1. **Solving equations & inequalities** \u2014 the bread and butter\n2. **Function notation** \u2014 f(x) is your new best friend\n3. **Exponent rules & radicals** \u2014 powers and roots\n4. **Factoring** \u2014 the skill that never dies\n5. **Linear graphs & equations** \u2014 slope, intercepts, the works\n\nFor each area, we'll do a quick check. If you've got it, we move on. If there are gaps, we'll patch them fast."
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "solving-linear-equations",
-      "title": "I-Do: Solving Linear Equations — Worked Examples",
-      "problem": "Solve the compound inequality: -2 < 3x + 1 ≤ 10. Graph the solution on a number line.",
-      "explanation": "**Compound inequality** means two inequalities joined together. Solve both parts simultaneously:\n\n-2 < 3x + 1 ≤ 10\n\n**Subtract 1 from all three parts:**\n-3 < 3x ≤ 9\n\n**Divide all three parts by 3:**\n-1 < x ≤ 3\n\n**In interval notation:** (-1, 3]\n\n**On a number line:**\n• Open circle at -1 (not included, strict <)\n• Closed circle at 3 (included, ≤)\n• Shade between\n\n**Key reminders:**\n• 'AND' compounds: solution is the OVERLAP\n• 'OR' compounds: solution is the UNION\n• If you multiply/divide by a negative, FLIP both inequality signs",
-      "initialPrompt": "What would change if this were -2 < 3x + 1 OR 3x + 1 ≤ 10? How would the solution and graph differ?"
+      "title": "I-Do: Solving Linear Equations \u2014 Worked Examples",
+      "initialPrompt": "What would change if this were -2 < 3x + 1 OR 3x + 1 \u2264 10? How would the solution and graph differ?",
+      "examples": [
+        {
+          "problem": "Solve the compound inequality: -2 < 3x + 1 \u2264 10. Graph the solution on a number line.",
+          "solution": "**Compound inequality** means two inequalities joined together. Solve both parts simultaneously:\n\n-2 < 3x + 1 \u2264 10\n\n**Subtract 1 from all three parts:**\n-3 < 3x \u2264 9\n\n**Divide all three parts by 3:**\n-1 < x \u2264 3\n\n**In interval notation:** (-1, 3]\n\n**On a number line:**\n\u2022 Open circle at -1 (not included, strict <)\n\u2022 Closed circle at 3 (included, \u2264)\n\u2022 Shade between\n\n**Key reminders:**\n\u2022 'AND' compounds: solution is the OVERLAP\n\u2022 'OR' compounds: solution is the UNION\n\u2022 If you multiply/divide by a negative, FLIP both inequality signs"
+        }
+      ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "solving-linear-equations",
       "title": "I-Do: Multi-Step Equations & Special Cases",
-      "problem": "Classify each equation as one solution, no solution, or infinitely many, then solve.\n(a) 2(3x + 4) - 5 = 4x + 2(x + 1)\n(b) (2x + 1)/3 - (x - 2)/4 = 5/6\n(c) |3x - 7| = 11",
-      "explanation": "**(a) 2(3x + 4) - 5 = 4x + 2(x + 1):**\n6x + 8 - 5 = 4x + 2x + 2\n6x + 3 = 6x + 2\n3 = 2\n\nThis is a contradiction -- it is NEVER true.\n**No solution.** The lines are parallel (same slope, different intercepts).\n\n**(b) Clear fractions by multiplying by LCD = 12:**\n12 × (2x+1)/3 - 12 × (x-2)/4 = 12 × 5/6\n4(2x + 1) - 3(x - 2) = 10\n8x + 4 - 3x + 6 = 10\n5x + 10 = 10\n5x = 0\n**x = 0**\n\nCheck: (0+1)/3 - (0-2)/4 = 1/3 + 2/4 = 1/3 + 1/2 = 2/6 + 3/6 = 5/6 ✓\n\n**(c) |3x - 7| = 11:**\nAbsolute value = positive number produces TWO cases:\nCase 1: 3x - 7 = 11 → 3x = 18 → **x = 6**\nCase 2: 3x - 7 = -11 → 3x = -4 → **x = -4/3**\n\nCheck x = 6: |18 - 7| = |11| = 11 ✓\nCheck x = -4/3: |-4 - 7| = |-11| = 11 ✓",
-      "tip": "When simplifying leads to a statement with no variable (like 3 = 2 or 0 = 0), you have a special case. A false statement means no solution; a true statement means infinitely many solutions.",
-      "initialPrompt": "What happens if the equation is |3x - 7| = -5? Can an absolute value ever equal a negative number?"
+      "initialPrompt": "What happens if the equation is |3x - 7| = -5? Can an absolute value ever equal a negative number?",
+      "examples": [
+        {
+          "problem": "Classify each equation as one solution, no solution, or infinitely many, then solve.\n(a) 2(3x + 4) - 5 = 4x + 2(x + 1)\n(b) (2x + 1)/3 - (x - 2)/4 = 5/6\n(c) |3x - 7| = 11",
+          "solution": "**(a) 2(3x + 4) - 5 = 4x + 2(x + 1):**\n6x + 8 - 5 = 4x + 2x + 2\n6x + 3 = 6x + 2\n3 = 2\n\nThis is a contradiction -- it is NEVER true.\n**No solution.** The lines are parallel (same slope, different intercepts).\n\n**(b) Clear fractions by multiplying by LCD = 12:**\n12 \u00d7 (2x+1)/3 - 12 \u00d7 (x-2)/4 = 12 \u00d7 5/6\n4(2x + 1) - 3(x - 2) = 10\n8x + 4 - 3x + 6 = 10\n5x + 10 = 10\n5x = 0\n**x = 0**\n\nCheck: (0+1)/3 - (0-2)/4 = 1/3 + 2/4 = 1/3 + 1/2 = 2/6 + 3/6 = 5/6 \u2713\n\n**(c) |3x - 7| = 11:**\nAbsolute value = positive number produces TWO cases:\nCase 1: 3x - 7 = 11 \u2192 3x = 18 \u2192 **x = 6**\nCase 2: 3x - 7 = -11 \u2192 3x = -4 \u2192 **x = -4/3**\n\nCheck x = 6: |18 - 7| = |11| = 11 \u2713\nCheck x = -4/3: |-4 - 7| = |-11| = 11 \u2713",
+          "tip": "When simplifying leads to a statement with no variable (like 3 = 2 or 0 = 0), you have a special case. A false statement means no solution; a true statement means infinitely many solutions."
+        }
+      ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "function-basics",
-      "title": "I-Do: Function Notation — Evaluation, Domain, and Range",
-      "problem": "(a) Given g(x) = (x + 3)/(x - 2), find g(5), g(0), and the value of x where g(x) = 4.\n(b) Find the domain of h(x) = sqrt(2x - 6).\n(c) For f(x) = x² - 6x + 5, find the vertex, domain, and range.",
-      "explanation": "**(a) Evaluate g(x) = (x + 3)/(x - 2):**\ng(5) = (5 + 3)/(5 - 2) = 8/3\ng(0) = (0 + 3)/(0 - 2) = 3/(-2) = **-3/2**\n\nSolve g(x) = 4:\n(x + 3)/(x - 2) = 4\nx + 3 = 4(x - 2)\nx + 3 = 4x - 8\n11 = 3x\n**x = 11/3**\n\nCheck: g(11/3) = (11/3 + 3)/(11/3 - 2) = (20/3)/(5/3) = 20/5 = 4 ✓\n\n**(b) Domain of h(x) = sqrt(2x - 6):**\nThe expression under the square root must be ≥ 0:\n2x - 6 ≥ 0\n2x ≥ 6\nx ≥ 3\n\n**Domain: [3, ∞)**\n\n**(c) f(x) = x² - 6x + 5:**\nVertex: x = -b/(2a) = 6/2 = 3, f(3) = 9 - 18 + 5 = -4\n**Vertex: (3, -4)**\n\nSince a = 1 > 0, the parabola opens upward.\n**Domain: all real numbers, (-∞, ∞)**\n**Range: y ≥ -4, or [-4, ∞)**",
-      "tip": "Common domain restrictions: (1) denominators cannot be zero, (2) square roots require non-negative radicands, (3) logarithm arguments must be positive. Always check for these.",
-      "initialPrompt": "What is the domain of g(x) = (x + 3)/(x - 2)? Why is x = 2 excluded?"
+      "title": "I-Do: Function Notation \u2014 Evaluation, Domain, and Range",
+      "initialPrompt": "What is the domain of g(x) = (x + 3)/(x - 2)? Why is x = 2 excluded?",
+      "examples": [
+        {
+          "problem": "(a) Given g(x) = (x + 3)/(x - 2), find g(5), g(0), and the value of x where g(x) = 4.\n(b) Find the domain of h(x) = sqrt(2x - 6).\n(c) For f(x) = x\u00b2 - 6x + 5, find the vertex, domain, and range.",
+          "solution": "**(a) Evaluate g(x) = (x + 3)/(x - 2):**\ng(5) = (5 + 3)/(5 - 2) = 8/3\ng(0) = (0 + 3)/(0 - 2) = 3/(-2) = **-3/2**\n\nSolve g(x) = 4:\n(x + 3)/(x - 2) = 4\nx + 3 = 4(x - 2)\nx + 3 = 4x - 8\n11 = 3x\n**x = 11/3**\n\nCheck: g(11/3) = (11/3 + 3)/(11/3 - 2) = (20/3)/(5/3) = 20/5 = 4 \u2713\n\n**(b) Domain of h(x) = sqrt(2x - 6):**\nThe expression under the square root must be \u2265 0:\n2x - 6 \u2265 0\n2x \u2265 6\nx \u2265 3\n\n**Domain: [3, \u221e)**\n\n**(c) f(x) = x\u00b2 - 6x + 5:**\nVertex: x = -b/(2a) = 6/2 = 3, f(3) = 9 - 18 + 5 = -4\n**Vertex: (3, -4)**\n\nSince a = 1 > 0, the parabola opens upward.\n**Domain: all real numbers, (-\u221e, \u221e)**\n**Range: y \u2265 -4, or [-4, \u221e)**",
+          "tip": "Common domain restrictions: (1) denominators cannot be zero, (2) square roots require non-negative radicands, (3) logarithm arguments must be positive. Always check for these."
+        }
+      ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "exponent-rules-radicals",
       "title": "I-Do: Exponent Rules & Radical Simplification",
-      "problem": "(a) Simplify: (2x³y⁻²)⁴ · (x⁻¹y)³\n(b) Rewrite with rational exponents and simplify: ³√(x⁶y⁹) / √(x⁴)\n(c) Simplify: √(72) + 3√(50) - 2√(18)",
-      "explanation": "**(a) (2x³y⁻²)⁴ · (x⁻¹y)³:**\nApply power rule to each factor:\n= 2⁴ · x¹² · y⁻⁸ · x⁻³ · y³\n= 16 · x^(12-3) · y^(-8+3)\n= **16x⁹y⁻⁵ = 16x⁹/y⁵**\n\n**(b) ³√(x⁶y⁹) / √(x⁴):**\nRewrite with rational exponents:\n= (x⁶y⁹)^(1/3) / (x⁴)^(1/2)\n= x² · y³ / x²\n= **y³**\n\nCheck: (x⁶)^(1/3) = x², (y⁹)^(1/3) = y³, (x⁴)^(1/2) = x². Then x²y³/x² = y³.\n\n**(c) Simplify √(72) + 3√(50) - 2√(18):**\n√(72) = √(36·2) = 6√2\n√(50) = √(25·2) = 5√2\n√(18) = √(9·2) = 3√2\n\n= 6√2 + 3(5√2) - 2(3√2)\n= 6√2 + 15√2 - 6√2\n= **15√2**\n\nThe key step is simplifying each radical by extracting perfect square factors, then combining like radicals (same radicand).",
-      "tip": "Radicals and rational exponents are two notations for the same thing. Use whichever is more convenient: rational exponents are better for algebra (product/quotient rules apply directly), while radical form is better for the final answer.",
-      "initialPrompt": "Simplify (x^(2/3) · x^(1/2))^6 using exponent rules. Add the exponents first: 2/3 + 1/2 = ?"
+      "initialPrompt": "Simplify (x^(2/3) \u00b7 x^(1/2))^6 using exponent rules. Add the exponents first: 2/3 + 1/2 = ?",
+      "examples": [
+        {
+          "problem": "(a) Simplify: (2x\u00b3y\u207b\u00b2)\u2074 \u00b7 (x\u207b\u00b9y)\u00b3\n(b) Rewrite with rational exponents and simplify: \u00b3\u221a(x\u2076y\u2079) / \u221a(x\u2074)\n(c) Simplify: \u221a(72) + 3\u221a(50) - 2\u221a(18)",
+          "solution": "**(a) (2x\u00b3y\u207b\u00b2)\u2074 \u00b7 (x\u207b\u00b9y)\u00b3:**\nApply power rule to each factor:\n= 2\u2074 \u00b7 x\u00b9\u00b2 \u00b7 y\u207b\u2078 \u00b7 x\u207b\u00b3 \u00b7 y\u00b3\n= 16 \u00b7 x^(12-3) \u00b7 y^(-8+3)\n= **16x\u2079y\u207b\u2075 = 16x\u2079/y\u2075**\n\n**(b) \u00b3\u221a(x\u2076y\u2079) / \u221a(x\u2074):**\nRewrite with rational exponents:\n= (x\u2076y\u2079)^(1/3) / (x\u2074)^(1/2)\n= x\u00b2 \u00b7 y\u00b3 / x\u00b2\n= **y\u00b3**\n\nCheck: (x\u2076)^(1/3) = x\u00b2, (y\u2079)^(1/3) = y\u00b3, (x\u2074)^(1/2) = x\u00b2. Then x\u00b2y\u00b3/x\u00b2 = y\u00b3.\n\n**(c) Simplify \u221a(72) + 3\u221a(50) - 2\u221a(18):**\n\u221a(72) = \u221a(36\u00b72) = 6\u221a2\n\u221a(50) = \u221a(25\u00b72) = 5\u221a2\n\u221a(18) = \u221a(9\u00b72) = 3\u221a2\n\n= 6\u221a2 + 3(5\u221a2) - 2(3\u221a2)\n= 6\u221a2 + 15\u221a2 - 6\u221a2\n= **15\u221a2**\n\nThe key step is simplifying each radical by extracting perfect square factors, then combining like radicals (same radicand).",
+          "tip": "Radicals and rational exponents are two notations for the same thing. Use whichever is more convenient: rational exponents are better for algebra (product/quotient rules apply directly), while radical form is better for the final answer."
+        }
+      ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "graphing-lines",
       "title": "I-Do: Perpendicular Lines & Standard Form",
-      "problem": "(a) Write the equation of the line perpendicular to y = (2/3)x + 1 that passes through (4, -2).\n(b) Convert 3x - 5y = 15 to slope-intercept form. Identify slope, y-intercept, and x-intercept.",
-      "explanation": "**(a) Perpendicular line:**\nThe given line has slope m₁ = 2/3.\nPerpendicular slopes are negative reciprocals: m₂ = **-3/2**\n\nUsing point-slope form with (4, -2):\ny - (-2) = -3/2(x - 4)\ny + 2 = -3/2 · x + 6\ny = -3/2 · x + 4\n\n**Equation: y = -(3/2)x + 4**\n\nCheck: passes through (4, -2): -(3/2)(4) + 4 = -6 + 4 = -2 ✓\nSlope product: (2/3)(-3/2) = -1 ✓ (perpendicular confirmation)\n\n**(b) Convert 3x - 5y = 15:**\n-5y = -3x + 15\ny = (3/5)x - 3\n\n**Slope: 3/5**\n**y-intercept: (0, -3)** (set x = 0)\n**x-intercept: (5, 0)** (set y = 0: 3x = 15, x = 5)\n\nStandard form Ax + By = C is useful for quickly finding both intercepts: set x = 0 to get the y-intercept, set y = 0 to get the x-intercept.",
-      "tip": "Perpendicular lines have slopes that are negative reciprocals: m₁ × m₂ = -1. If one slope is 2/3, the perpendicular slope is -3/2. Parallel lines have equal slopes.",
-      "initialPrompt": "What is the slope of a line perpendicular to a horizontal line (slope = 0)? What about perpendicular to a vertical line (undefined slope)?"
+      "initialPrompt": "What is the slope of a line perpendicular to a horizontal line (slope = 0)? What about perpendicular to a vertical line (undefined slope)?",
+      "examples": [
+        {
+          "problem": "(a) Write the equation of the line perpendicular to y = (2/3)x + 1 that passes through (4, -2).\n(b) Convert 3x - 5y = 15 to slope-intercept form. Identify slope, y-intercept, and x-intercept.",
+          "solution": "**(a) Perpendicular line:**\nThe given line has slope m\u2081 = 2/3.\nPerpendicular slopes are negative reciprocals: m\u2082 = **-3/2**\n\nUsing point-slope form with (4, -2):\ny - (-2) = -3/2(x - 4)\ny + 2 = -3/2 \u00b7 x + 6\ny = -3/2 \u00b7 x + 4\n\n**Equation: y = -(3/2)x + 4**\n\nCheck: passes through (4, -2): -(3/2)(4) + 4 = -6 + 4 = -2 \u2713\nSlope product: (2/3)(-3/2) = -1 \u2713 (perpendicular confirmation)\n\n**(b) Convert 3x - 5y = 15:**\n-5y = -3x + 15\ny = (3/5)x - 3\n\n**Slope: 3/5**\n**y-intercept: (0, -3)** (set x = 0)\n**x-intercept: (5, 0)** (set y = 0: 3x = 15, x = 5)\n\nStandard form Ax + By = C is useful for quickly finding both intercepts: set x = 0 to get the y-intercept, set y = 0 to get the x-intercept.",
+          "tip": "Perpendicular lines have slopes that are negative reciprocals: m\u2081 \u00d7 m\u2082 = -1. If one slope is 2/3, the perpendicular slope is -3/2. Parallel lines have equal slopes."
+        }
+      ]
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "compound-inequalities",
-      "title": "We-Do: Compound Inequalities — Guided Practice",
+      "title": "We-Do: Compound Inequalities \u2014 Guided Practice",
       "problems": [
         {
           "question": "Solve: 5(x - 2) - 3(x + 1) = 2x - 13. Classify as one solution, no solution, or infinitely many.",
-          "answer": "0 = 0 → infinitely many solutions (identity)",
+          "answer": "0 = 0 \u2192 infinitely many solutions (identity)",
           "hints": [
             "5x - 10 - 3x - 3 = 2x - 13. Simplify: 2x - 13 = 2x - 13.",
-            "Both sides are identical. This is true for ALL x → infinitely many solutions."
+            "Both sides are identical. This is true for ALL x \u2192 infinitely many solutions."
           ]
         },
         {
@@ -116,15 +136,15 @@
           "answer": "x < -1 or x > 4",
           "hints": [
             "Absolute value > positive: split into two cases.",
-            "2x - 3 > 5 → x > 4, OR 2x - 3 < -5 → x < -1."
+            "2x - 3 > 5 \u2192 x > 4, OR 2x - 3 < -5 \u2192 x < -1."
           ]
         },
         {
-          "question": "Given f(x) = 3x² - 2x + 1, find f(-2) and f(a + 1).",
-          "answer": "f(-2) = 17; f(a+1) = 3a² + 4a + 2",
+          "question": "Given f(x) = 3x\u00b2 - 2x + 1, find f(-2) and f(a + 1).",
+          "answer": "f(-2) = 17; f(a+1) = 3a\u00b2 + 4a + 2",
           "hints": [
-            "f(-2) = 3(-2)² - 2(-2) + 1 = 12 + 4 + 1 = 17.",
-            "f(a+1) = 3(a+1)² - 2(a+1) + 1 = 3(a²+2a+1) - 2a - 2 + 1 = 3a² + 6a + 3 - 2a - 1 = 3a² + 4a + 2."
+            "f(-2) = 3(-2)\u00b2 - 2(-2) + 1 = 12 + 4 + 1 = 17.",
+            "f(a+1) = 3(a+1)\u00b2 - 2(a+1) + 1 = 3(a\u00b2+2a+1) - 2a - 2 + 1 = 3a\u00b2 + 6a + 3 - 2a - 1 = 3a\u00b2 + 4a + 2."
           ]
         }
       ],
@@ -135,63 +155,71 @@
       "lessonPhase": "concept-intro",
       "skill": "function-basics",
       "title": "Concept: Function Basics",
-      "initialPrompt": "Quick check: Simplify (2x³y⁻²)⁴. Apply the power rule to EACH factor inside.",
-      "content": "**Exponent Rules Refresh:**\n\n| Rule | Example |\n|------|--------|\n| Product: aᵐ · aⁿ = aᵐ⁺ⁿ | x³ · x⁵ = x⁸ |\n| Quotient: aᵐ/aⁿ = aᵐ⁻ⁿ | x⁷/x² = x⁵ |\n| Power: (aᵐ)ⁿ = aᵐⁿ | (x³)⁴ = x¹² |\n| Zero: a⁰ = 1 | 5⁰ = 1 |\n| Negative: a⁻ⁿ = 1/aⁿ | x⁻³ = 1/x³ |\n| Product Power: (ab)ⁿ = aⁿbⁿ | (2x)³ = 8x³ |\n\n**Radical Basics:**\n• √a = a^(1/2)\n• ⁿ√a = a^(1/n)\n• √(ab) = √a · √b (product property)\n• √(a/b) = √a/√b (quotient property)\n• √(a+b) ≠ √a + √b ← THE mistake"
+      "initialPrompt": "Quick check: Simplify (2x\u00b3y\u207b\u00b2)\u2074. Apply the power rule to EACH factor inside.",
+      "content": "**Exponent Rules Refresh:**\n\n| Rule | Example |\n|------|--------|\n| Product: a\u1d50 \u00b7 a\u207f = a\u1d50\u207a\u207f | x\u00b3 \u00b7 x\u2075 = x\u2078 |\n| Quotient: a\u1d50/a\u207f = a\u1d50\u207b\u207f | x\u2077/x\u00b2 = x\u2075 |\n| Power: (a\u1d50)\u207f = a\u1d50\u207f | (x\u00b3)\u2074 = x\u00b9\u00b2 |\n| Zero: a\u2070 = 1 | 5\u2070 = 1 |\n| Negative: a\u207b\u207f = 1/a\u207f | x\u207b\u00b3 = 1/x\u00b3 |\n| Product Power: (ab)\u207f = a\u207fb\u207f | (2x)\u00b3 = 8x\u00b3 |\n\n**Radical Basics:**\n\u2022 \u221aa = a^(1/2)\n\u2022 \u207f\u221aa = a^(1/n)\n\u2022 \u221a(ab) = \u221aa \u00b7 \u221ab (product property)\n\u2022 \u221a(a/b) = \u221aa/\u221ab (quotient property)\n\u2022 \u221a(a+b) \u2260 \u221aa + \u221ab \u2190 THE mistake"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "exponent-rules-radicals",
-      "title": "I-Do: Exponent Rules Radicals — Worked Examples",
-      "problem": "Factor completely: (a) 6x³ - 15x²  (b) x² - 7x + 12  (c) 4x² - 25  (d) 2x² + 5x - 3",
-      "explanation": "**Four factoring types you must have on autopilot:**\n\n**(a) GCF:** 6x³ - 15x² = **3x²(2x - 5)**\nAlways check GCF first!\n\n**(b) Simple trinomial (a = 1):** x² - 7x + 12\nFind two numbers that multiply to 12 and add to -7: (-3)(-4) = 12, (-3)+(-4) = -7\n= **(x - 3)(x - 4)**\n\n**(c) Difference of squares:** 4x² - 25 = (2x)² - 5²\n= **(2x + 5)(2x - 5)**\nRemember: a² - b² = (a+b)(a-b). Sum of squares does NOT factor over the reals.\n\n**(d) Trinomial with a ≠ 1:** 2x² + 5x - 3\nMultiply a·c = 2(-3) = -6. Find factors of -6 that add to 5: 6 and -1.\nRewrite: 2x² + 6x - x - 3 = 2x(x + 3) - 1(x + 3) = **(2x - 1)(x + 3)**",
-      "initialPrompt": "Which factoring method should you try FIRST, every single time? (Hint: it takes 5 seconds and sometimes makes everything else easier.)"
+      "title": "I-Do: Exponent Rules Radicals \u2014 Worked Examples",
+      "initialPrompt": "Which factoring method should you try FIRST, every single time? (Hint: it takes 5 seconds and sometimes makes everything else easier.)",
+      "examples": [
+        {
+          "problem": "Factor completely: (a) 6x\u00b3 - 15x\u00b2  (b) x\u00b2 - 7x + 12  (c) 4x\u00b2 - 25  (d) 2x\u00b2 + 5x - 3",
+          "solution": "**Four factoring types you must have on autopilot:**\n\n**(a) GCF:** 6x\u00b3 - 15x\u00b2 = **3x\u00b2(2x - 5)**\nAlways check GCF first!\n\n**(b) Simple trinomial (a = 1):** x\u00b2 - 7x + 12\nFind two numbers that multiply to 12 and add to -7: (-3)(-4) = 12, (-3)+(-4) = -7\n= **(x - 3)(x - 4)**\n\n**(c) Difference of squares:** 4x\u00b2 - 25 = (2x)\u00b2 - 5\u00b2\n= **(2x + 5)(2x - 5)**\nRemember: a\u00b2 - b\u00b2 = (a+b)(a-b). Sum of squares does NOT factor over the reals.\n\n**(d) Trinomial with a \u2260 1:** 2x\u00b2 + 5x - 3\nMultiply a\u00b7c = 2(-3) = -6. Find factors of -6 that add to 5: 6 and -1.\nRewrite: 2x\u00b2 + 6x - x - 3 = 2x(x + 3) - 1(x + 3) = **(2x - 1)(x + 3)**"
+        }
+      ]
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "exponent-rules-radicals",
-      "title": "We-Do: Exponent Rules Radicals — Guided Practice",
+      "title": "We-Do: Exponent Rules Radicals \u2014 Guided Practice",
       "problems": [
         {
-          "question": "Simplify: (3x⁻²y⁴)² / (9x³y⁻¹)",
-          "answer": "y⁹ / x⁷",
+          "question": "Simplify: (3x\u207b\u00b2y\u2074)\u00b2 / (9x\u00b3y\u207b\u00b9)",
+          "answer": "y\u2079 / x\u2077",
           "hints": [
-            "Numerator: 9x⁻⁴y⁸. Then divide: 9x⁻⁴y⁸ / (9x³y⁻¹) = x⁻⁷y⁹ = y⁹/x⁷."
+            "Numerator: 9x\u207b\u2074y\u2078. Then divide: 9x\u207b\u2074y\u2078 / (9x\u00b3y\u207b\u00b9) = x\u207b\u2077y\u2079 = y\u2079/x\u2077."
           ]
         },
         {
-          "question": "Factor completely: 3x³ - 12x² - 15x.",
+          "question": "Factor completely: 3x\u00b3 - 12x\u00b2 - 15x.",
           "answer": "3x(x - 5)(x + 1)",
           "hints": [
-            "GCF first: 3x(x² - 4x - 5). Then factor trinomial: 3x(x - 5)(x + 1)."
+            "GCF first: 3x(x\u00b2 - 4x - 5). Then factor trinomial: 3x(x - 5)(x + 1)."
           ]
         },
         {
-          "question": "Factor: x⁴ - 16.",
-          "answer": "(x² + 4)(x + 2)(x - 2)",
+          "question": "Factor: x\u2074 - 16.",
+          "answer": "(x\u00b2 + 4)(x + 2)(x - 2)",
           "hints": [
-            "Difference of squares: (x² + 4)(x² - 4). Factor x² - 4 again: (x² + 4)(x + 2)(x - 2).",
-            "x² + 4 does NOT factor further over the reals."
+            "Difference of squares: (x\u00b2 + 4)(x\u00b2 - 4). Factor x\u00b2 - 4 again: (x\u00b2 + 4)(x + 2)(x - 2).",
+            "x\u00b2 + 4 does NOT factor further over the reals."
           ]
         }
       ],
-      "initialPrompt": "For the exponent simplification, apply the power rule to the numerator first: what is (3x⁻²y⁴)²?"
+      "initialPrompt": "For the exponent simplification, apply the power rule to the numerator first: what is (3x\u207b\u00b2y\u2074)\u00b2?"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "factoring-review",
-      "title": "I-Do: Factoring Review — Worked Examples",
-      "problem": "Write the equation of the line through (3, -1) and (7, 5). Give the answer in slope-intercept form.",
-      "explanation": "**Step 1: Find slope.**\nm = (y₂ - y₁)/(x₂ - x₁) = (5 - (-1))/(7 - 3) = 6/4 = **3/2**\n\n**Step 2: Use point-slope form.**\ny - y₁ = m(x - x₁)\ny - (-1) = (3/2)(x - 3)\ny + 1 = (3/2)x - 9/2\n\n**Step 3: Convert to slope-intercept.**\ny = (3/2)x - 9/2 - 1\ny = (3/2)x - 11/2\n\n**Check:** Plug in (3, -1): (3/2)(3) - 11/2 = 9/2 - 11/2 = -2/2 = -1 ✓\nPlug in (7, 5): (3/2)(7) - 11/2 = 21/2 - 11/2 = 10/2 = 5 ✓",
-      "initialPrompt": "Could you also write this in standard form (Ax + By = C)? When might standard form be more useful than slope-intercept?"
+      "title": "I-Do: Factoring Review \u2014 Worked Examples",
+      "initialPrompt": "Could you also write this in standard form (Ax + By = C)? When might standard form be more useful than slope-intercept?",
+      "examples": [
+        {
+          "problem": "Write the equation of the line through (3, -1) and (7, 5). Give the answer in slope-intercept form.",
+          "solution": "**Step 1: Find slope.**\nm = (y\u2082 - y\u2081)/(x\u2082 - x\u2081) = (5 - (-1))/(7 - 3) = 6/4 = **3/2**\n\n**Step 2: Use point-slope form.**\ny - y\u2081 = m(x - x\u2081)\ny - (-1) = (3/2)(x - 3)\ny + 1 = (3/2)x - 9/2\n\n**Step 3: Convert to slope-intercept.**\ny = (3/2)x - 9/2 - 1\ny = (3/2)x - 11/2\n\n**Check:** Plug in (3, -1): (3/2)(3) - 11/2 = 9/2 - 11/2 = -2/2 = -1 \u2713\nPlug in (7, 5): (3/2)(7) - 11/2 = 21/2 - 11/2 = 10/2 = 5 \u2713"
+        }
+      ]
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "skill": "graphing-lines",
-      "title": "You-Do: Graphing Lines — Independent Practice",
+      "title": "You-Do: Graphing Lines \u2014 Independent Practice",
       "problems": [
         {
           "question": "Solve: 4(2x - 1) + 3 = 2(3x + 5) - 1.",
@@ -201,38 +229,38 @@
           ]
         },
         {
-          "question": "Solve: -3 ≤ 2x + 5 < 11.",
-          "answer": "-4 ≤ x < 3",
+          "question": "Solve: -3 \u2264 2x + 5 < 11.",
+          "answer": "-4 \u2264 x < 3",
           "hints": [
-            "Subtract 5: -8 ≤ 2x < 6. Divide by 2: -4 ≤ x < 3."
+            "Subtract 5: -8 \u2264 2x < 6. Divide by 2: -4 \u2264 x < 3."
           ]
         },
         {
-          "question": "If f(x) = x² - 4x + 3, find the domain and range. Where does f(x) = 0?",
-          "answer": "Domain: all reals. Range: y ≥ -1 (vertex at (2,-1)). f(x) = 0 at x = 1, 3.",
+          "question": "If f(x) = x\u00b2 - 4x + 3, find the domain and range. Where does f(x) = 0?",
+          "answer": "Domain: all reals. Range: y \u2265 -1 (vertex at (2,-1)). f(x) = 0 at x = 1, 3.",
           "hints": [
-            "Factor: (x-1)(x-3) = 0 → x = 1, 3. Vertex: x = -b/2a = 4/2 = 2, f(2) = 4-8+3 = -1."
+            "Factor: (x-1)(x-3) = 0 \u2192 x = 1, 3. Vertex: x = -b/2a = 4/2 = 2, f(2) = 4-8+3 = -1."
           ]
         },
         {
-          "question": "Simplify: (4x⁵y⁻³)³ / (8x⁻¹y²)²",
-          "answer": "x¹⁷ / y¹³",
+          "question": "Simplify: (4x\u2075y\u207b\u00b3)\u00b3 / (8x\u207b\u00b9y\u00b2)\u00b2",
+          "answer": "x\u00b9\u2077 / y\u00b9\u00b3",
           "hints": [
-            "Num: 64x¹⁵y⁻⁹. Den: 64x⁻²y⁴. Divide: x¹⁷y⁻¹³ = x¹⁷/y¹³."
+            "Num: 64x\u00b9\u2075y\u207b\u2079. Den: 64x\u207b\u00b2y\u2074. Divide: x\u00b9\u2077y\u207b\u00b9\u00b3 = x\u00b9\u2077/y\u00b9\u00b3."
           ]
         },
         {
-          "question": "Factor completely: 2x³ + 16.",
-          "answer": "2(x + 2)(x² - 2x + 4)",
+          "question": "Factor completely: 2x\u00b3 + 16.",
+          "answer": "2(x + 2)(x\u00b2 - 2x + 4)",
           "hints": [
-            "GCF: 2(x³ + 8). Sum of cubes: a³ + b³ = (a+b)(a²-ab+b²). So 2(x+2)(x²-2x+4)."
+            "GCF: 2(x\u00b3 + 8). Sum of cubes: a\u00b3 + b\u00b3 = (a+b)(a\u00b2-ab+b\u00b2). So 2(x+2)(x\u00b2-2x+4)."
           ]
         },
         {
           "question": "Write the equation of the line parallel to y = -2x + 5 that passes through (1, 4).",
           "answer": "y = -2x + 6",
           "hints": [
-            "Parallel → same slope m = -2. Point-slope: y - 4 = -2(x - 1). y = -2x + 6."
+            "Parallel \u2192 same slope m = -2. Point-slope: y - 4 = -2(x - 1). y = -2x + 6."
           ]
         }
       ],
@@ -241,31 +269,31 @@
   ],
   "answerKeys": {
     "3(2x-5)=4x+7": "x = 11",
-    "Compound: -2<3x+1≤10": "-1 < x ≤ 3",
+    "Compound: -2<3x+1\u226410": "-1 < x \u2264 3",
     "|2x-3|>5": "x < -1 or x > 4",
-    "f(-2) for 3x²-2x+1": "17",
-    "GCF: 6x³-15x²": "3x²(2x-5)",
-    "Trinomial: x²-7x+12": "(x-3)(x-4)",
-    "Diff of squares: 4x²-25": "(2x+5)(2x-5)",
-    "Trinomial a≠1: 2x²+5x-3": "(2x-1)(x+3)",
-    "(3x⁻²y⁴)²/(9x³y⁻¹)": "y⁹/x⁷",
-    "3x³-12x²-15x": "3x(x-5)(x+1)",
-    "x⁴-16": "(x²+4)(x+2)(x-2)",
+    "f(-2) for 3x\u00b2-2x+1": "17",
+    "GCF: 6x\u00b3-15x\u00b2": "3x\u00b2(2x-5)",
+    "Trinomial: x\u00b2-7x+12": "(x-3)(x-4)",
+    "Diff of squares: 4x\u00b2-25": "(2x+5)(2x-5)",
+    "Trinomial a\u22601: 2x\u00b2+5x-3": "(2x-1)(x+3)",
+    "(3x\u207b\u00b2y\u2074)\u00b2/(9x\u00b3y\u207b\u00b9)": "y\u2079/x\u2077",
+    "3x\u00b3-12x\u00b2-15x": "3x(x-5)(x+1)",
+    "x\u2074-16": "(x\u00b2+4)(x+2)(x-2)",
     "Line through (3,-1) and (7,5)": "y=(3/2)x-11/2",
     "4(2x-1)+3=2(3x+5)-1": "x=5",
-    "-3≤2x+5<11": "-4≤x<3",
-    "2x³+16": "2(x+2)(x²-2x+4)",
+    "-3\u22642x+5<11": "-4\u2264x<3",
+    "2x\u00b3+16": "2(x+2)(x\u00b2-2x+4)",
     "Parallel to y=-2x+5 through (1,4)": "y=-2x+6",
     "2(3x+4)-5=4x+2(x+1)": "No solution (contradiction)",
     "(2x+1)/3-(x-2)/4=5/6": "x = 0",
     "|3x-7|=11": "x = 6 or x = -4/3",
     "g(5) for (x+3)/(x-2)": "8/3",
     "g(x)=4 solve": "x = 11/3",
-    "domain sqrt(2x-6)": "[3, ∞)",
-    "vertex x²-6x+5": "(3, -4), range y≥-4",
-    "(2x³y⁻²)⁴·(x⁻¹y)³": "16x⁹/y⁵",
-    "cbrt(x⁶y⁹)/sqrt(x⁴)": "y³",
-    "√72+3√50-2√18": "15√2",
+    "domain sqrt(2x-6)": "[3, \u221e)",
+    "vertex x\u00b2-6x+5": "(3, -4), range y\u2265-4",
+    "(2x\u00b3y\u207b\u00b2)\u2074\u00b7(x\u207b\u00b9y)\u00b3": "16x\u2079/y\u2075",
+    "cbrt(x\u2076y\u2079)/sqrt(x\u2074)": "y\u00b3",
+    "\u221a72+3\u221a50-2\u221a18": "15\u221a2",
     "perp to y=(2/3)x+1 through (4,-2)": "y=-(3/2)x+4",
     "3x-5y=15 to slope-intercept": "y=(3/5)x-3"
   }

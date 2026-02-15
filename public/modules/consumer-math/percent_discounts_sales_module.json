@@ -5,7 +5,7 @@
   "title": "Percent, Discounts, and Sales Math",
   "weeks": "4",
   "estimatedDuration": 35,
-  "description": "The math behind deals — and the math stores hope you DON'T do. This module builds percent fluency through the lens of real shopping: discounts, stacked coupons, sales tax, restaurant tips, retail markup, and unit pricing. Students learn to calculate the ACTUAL cost of anything and decide whether a deal is genuinely good or just marketing.",
+  "description": "The math behind deals \u2014 and the math stores hope you DON'T do. This module builds percent fluency through the lens of real shopping: discounts, stacked coupons, sales tax, restaurant tips, retail markup, and unit pricing. Students learn to calculate the ACTUAL cost of anything and decide whether a deal is genuinely good or just marketing.",
   "skills": [
     "cm-percent-of-number",
     "cm-discounts-coupons",
@@ -25,11 +25,11 @@
     "Find and compare unit prices to identify the best value among products"
   ],
   "instructionalStrategy": [
-    "Percent fluency IS financial literacy — every problem in this module should use money.",
+    "Percent fluency IS financial literacy \u2014 every problem in this module should use money.",
     "The multiplier method (30% off = multiply by 0.70) is faster and more reliable than finding the discount then subtracting. Teach it as the default.",
     "Sequential discounts are the big trap: 20% off then 10% off is NOT 30% off. Show this with actual numbers and let the shock do the teaching.",
     "For tax and tip, use real local rates. Standard estimates: 6-10% sales tax, 15-20% tip on pre-tax subtotal.",
-    "Unit price problems should use real grocery store scenarios — different sizes, different brands, bulk vs single. Include the waste factor: the 5 lb bag is cheaper per pound but will you actually use 5 lbs?"
+    "Unit price problems should use real grocery store scenarios \u2014 different sizes, different brands, bulk vs single. Include the waste factor: the 5 lb bag is cheaper per pound but will you actually use 5 lbs?"
   ],
   "aiFlexLevel": "moderate",
   "scaffold": [
@@ -45,13 +45,13 @@
         "Multiplier method for increases: add the increase to 100%. 15% increase = multiply by 1.15.",
         "Percent change formula: (new - original) / original x 100%. Always divide by the ORIGINAL value.",
         "Percent decrease: if a $60 item drops to $45, change = (60 - 45) / 60 x 100 = 25% decrease.",
-        "Common trap: students divide by the new value instead of the original — this gives the wrong answer every time."
+        "Common trap: students divide by the new value instead of the original \u2014 this gives the wrong answer every time."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Percent of a Number — Worked Examples",
+      "title": "Percent of a Number \u2014 Worked Examples",
       "skill": "cm-percent-of-number",
       "examples": [
         {
@@ -60,21 +60,18 @@
         },
         {
           "problem": "A jacket was $60 last month. Now it's $45. What is the percent decrease?",
-          "solution": "Percent change = (original - new) / original x 100%\n= (60 - 45) / 60 x 100%\n= 15 / 60 x 100%\n= 25%\nThe jacket dropped 25%.\nCommon mistake: using 45 as the denominator gives 33.3% — wrong, because percent change is always relative to the ORIGINAL price."
+          "solution": "Percent change = (original - new) / original x 100%\n= (60 - 45) / 60 x 100%\n= 15 / 60 x 100%\n= 25%\nThe jacket dropped 25%.\nCommon mistake: using 45 as the denominator gives 33.3% \u2014 wrong, because percent change is always relative to the ORIGINAL price."
         },
         {
           "problem": "A gym membership was $45/month last year. This year it increased 15%. What's the new monthly price?",
-          "solution": "Using the multiplier: 100% + 15% = 115% = 1.15.\nNew price = 1.15 x $45 = $51.75.\nThe membership is now $51.75/month — that's $6.75 more per month, or $81 more per year."
+          "solution": "Using the multiplier: 100% + 15% = 115% = 1.15.\nNew price = 1.15 x $45 = $51.75.\nThe membership is now $51.75/month \u2014 that's $6.75 more per month, or $81 more per year."
         }
       ]
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Percent of a Number — Practice",
-      "skills": [
-        "cm-percent-of-number"
-      ],
+      "title": "Percent of a Number \u2014 Practice",
       "problems": [
         {
           "id": "pds-1",
@@ -112,10 +109,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Percent of a Number — You Try",
-      "skills": [
-        "cm-percent-of-number"
-      ],
+      "title": "Percent of a Number \u2014 You Try",
       "problems": [
         {
           "id": "pds-4",
@@ -140,19 +134,19 @@
       "lessonPhase": "concept-intro",
       "title": "Discounts, Coupons, and Stacked Savings",
       "skill": "cm-discounts-coupons",
-      "content": "Stores love to advertise multiple discounts: '30% off plus an extra 10% at checkout!' Most people hear '40% off.' It's not. Sequential discounts multiply — they don't add. Each discount applies to whatever the price is AFTER the previous discount, not the original. This section teaches you to calculate exactly what you'll pay and compare dollar-off coupons to percent-off deals.",
+      "content": "Stores love to advertise multiple discounts: '30% off plus an extra 10% at checkout!' Most people hear '40% off.' It's not. Sequential discounts multiply \u2014 they don't add. Each discount applies to whatever the price is AFTER the previous discount, not the original. This section teaches you to calculate exactly what you'll pay and compare dollar-off coupons to percent-off deals.",
       "keyPoints": [
         "Single discount: use the multiplier. 25% off = multiply by 0.75.",
-        "Sequential (stacked) discounts: multiply the multipliers. 30% off then 10% off = 0.70 x 0.90 = 0.63, which is 37% off — NOT 40%.",
+        "Sequential (stacked) discounts: multiply the multipliers. 30% off then 10% off = 0.70 x 0.90 = 0.63, which is 37% off \u2014 NOT 40%.",
         "Why stacking isn't adding: the second discount applies to the ALREADY-REDUCED price, so it's a percent of a smaller number.",
         "Dollar-off vs percent-off: which is better depends on the item price. $15 off a $90 item saves more than 15% off ($13.50), but less than 20% off ($18).",
-        "Always compute both options to compare — never assume the bigger-sounding number wins."
+        "Always compute both options to compare \u2014 never assume the bigger-sounding number wins."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Discounts and Coupons — Worked Examples",
+      "title": "Discounts and Coupons \u2014 Worked Examples",
       "skill": "cm-discounts-coupons",
       "examples": [
         {
@@ -172,10 +166,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Discounts and Coupons — Practice",
-      "skills": [
-        "cm-discounts-coupons"
-      ],
+      "title": "Discounts and Coupons \u2014 Practice",
       "problems": [
         {
           "id": "pds-7",
@@ -213,10 +204,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Discounts and Coupons — You Try",
-      "skills": [
-        "cm-discounts-coupons"
-      ],
+      "title": "Discounts and Coupons \u2014 You Try",
       "problems": [
         {
           "id": "pds-10",
@@ -231,7 +219,7 @@
         {
           "id": "pds-12",
           "question": "You're buying a $95 pair of boots. Coupon A: 30% off one item. Coupon B: $25 off any purchase over $75. Which coupon gives you the lower price?",
-          "answer": "Coupon A: 0.70 x $95 = $66.50. Coupon B: $95 - $25 = $70.00. Coupon A saves $28.50 vs $25.00. Use Coupon A — you save $3.50 more."
+          "answer": "Coupon A: 0.70 x $95 = $66.50. Coupon B: $95 - $25 = $70.00. Coupon A saves $28.50 vs $25.00. Use Coupon A \u2014 you save $3.50 more."
         }
       ],
       "skill": "cm-percent-of-number"
@@ -241,7 +229,7 @@
       "lessonPhase": "concept-intro",
       "title": "Sales Tax, Tips, and Retail Markup",
       "skill": "cm-tax-tip-markup",
-      "content": "Every time you buy something at a store or eat at a restaurant, the price on the tag or menu is NOT what you actually pay. Sales tax gets added at the register. At restaurants, you also add a tip. And the price you see already includes the store's markup over what they paid wholesale. Understanding these layers lets you predict real costs before you get to the register — and helps you understand why a $12 t-shirt at a store might have cost the store only $5.",
+      "content": "Every time you buy something at a store or eat at a restaurant, the price on the tag or menu is NOT what you actually pay. Sales tax gets added at the register. At restaurants, you also add a tip. And the price you see already includes the store's markup over what they paid wholesale. Understanding these layers lets you predict real costs before you get to the register \u2014 and helps you understand why a $12 t-shirt at a store might have cost the store only $5.",
       "keyPoints": [
         "Sales tax: total = price x (1 + tax rate). A $50 item with 8% tax: 50 x 1.08 = $54.00.",
         "Tax rates vary by state and city (typically 0% to 10.25% in the U.S.). Always use the local rate.",
@@ -254,7 +242,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Tax, Tip, and Markup — Worked Examples",
+      "title": "Tax, Tip, and Markup \u2014 Worked Examples",
       "skill": "cm-tax-tip-markup",
       "examples": [
         {
@@ -262,7 +250,7 @@
           "solution": "Tax amount = 0.08 x $42 = $3.36.\nTotal = $42 + $3.36 = $45.36.\nOr in one step: $42 x 1.08 = $45.36."
         },
         {
-          "problem": "Same dinner — $42 subtotal, 8% tax. You want to leave a 20% tip on the pre-tax amount. What is the total you pay including food, tax, and tip?",
+          "problem": "Same dinner \u2014 $42 subtotal, 8% tax. You want to leave a 20% tip on the pre-tax amount. What is the total you pay including food, tax, and tip?",
           "solution": "Subtotal: $42.00\nTax: 0.08 x $42 = $3.36\nTip: 0.20 x $42 = $8.40 (tip is on the PRE-TAX subtotal)\nTotal: $42.00 + $3.36 + $8.40 = $53.76.\nNote: if you tipped on the after-tax amount ($45.36 x 0.20 = $9.07), you'd overpay by $0.67. Not a huge deal, but it adds up."
         },
         {
@@ -274,10 +262,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Tax, Tip, and Markup — Practice",
-      "skills": [
-        "cm-tax-tip-markup"
-      ],
+      "title": "Tax, Tip, and Markup \u2014 Practice",
       "problems": [
         {
           "id": "pds-13",
@@ -315,10 +300,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Tax, Tip, and Markup — You Try",
-      "skills": [
-        "cm-tax-tip-markup"
-      ],
+      "title": "Tax, Tip, and Markup \u2014 You Try",
       "problems": [
         {
           "id": "pds-16",
@@ -343,11 +325,11 @@
       "lessonPhase": "concept-intro",
       "title": "Unit Price Comparisons",
       "skill": "cm-unit-price-comparisons",
-      "content": "The biggest package isn't always the best deal, and the cheapest brand isn't always the cheapest per ounce. Unit price — the cost per single unit of measurement (per ounce, per count, per pound) — is the only honest way to compare products of different sizes. Most grocery stores list it on the shelf tag in small print, but you should know how to calculate it yourself. And here's the real-world twist: the lowest unit price only wins if you'll actually USE everything you buy.",
+      "content": "The biggest package isn't always the best deal, and the cheapest brand isn't always the cheapest per ounce. Unit price \u2014 the cost per single unit of measurement (per ounce, per count, per pound) \u2014 is the only honest way to compare products of different sizes. Most grocery stores list it on the shelf tag in small print, but you should know how to calculate it yourself. And here's the real-world twist: the lowest unit price only wins if you'll actually USE everything you buy.",
       "keyPoints": [
         "Unit price = total price / quantity. A 16 oz jar for $3.84 has a unit price of $3.84 / 16 = $0.24 per ounce.",
         "To compare: calculate unit price for EACH option using the SAME unit, then compare.",
-        "Bigger isn't always better. A 5 lb bag at $1.25/lb beats a 2 lb bag at $1.45/lb on unit price — but only if you use all 5 lbs.",
+        "Bigger isn't always better. A 5 lb bag at $1.25/lb beats a 2 lb bag at $1.45/lb on unit price \u2014 but only if you use all 5 lbs.",
         "The waste factor: if perishable food spoils before you use it, your effective unit price is higher. Divide what you paid by what you ACTUALLY used.",
         "Store brands vs name brands: compare unit prices, not sticker prices. The name brand 12 oz at $3.60 ($0.30/oz) might lose to the store brand 16 oz at $3.84 ($0.24/oz).",
         "Watch for unit mismatches: one product priced per ounce vs another per pound (16 oz = 1 lb)."
@@ -356,7 +338,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Unit Price Comparisons — Worked Examples",
+      "title": "Unit Price Comparisons \u2014 Worked Examples",
       "skill": "cm-unit-price-comparisons",
       "examples": [
         {
@@ -365,7 +347,7 @@
         },
         {
           "problem": "Bottled water: 24-pack for $4.80 or 12-pack for $2.88. Which is the better value per bottle?",
-          "solution": "24-pack: $4.80 / 24 = $0.20 per bottle.\n12-pack: $2.88 / 12 = $0.24 per bottle.\nThe 24-pack saves $0.04 per bottle.\nBuying two 12-packs to get 24 bottles would cost $5.76 — that's $0.96 more than the 24-pack."
+          "solution": "24-pack: $4.80 / 24 = $0.20 per bottle.\n12-pack: $2.88 / 12 = $0.24 per bottle.\nThe 24-pack saves $0.04 per bottle.\nBuying two 12-packs to get 24 bottles would cost $5.76 \u2014 that's $0.96 more than the 24-pack."
         },
         {
           "problem": "Fresh strawberries: 1 lb container for $3.50 or 3 lb container for $8.40. Your family eats about 2 lbs per week before they go bad. Which is actually cheaper?",
@@ -376,10 +358,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Unit Price Comparisons — Practice",
-      "skills": [
-        "cm-unit-price-comparisons"
-      ],
+      "title": "Unit Price Comparisons \u2014 Practice",
       "problems": [
         {
           "id": "pds-19",
@@ -409,7 +388,7 @@
             "For the 2 lb bags, you'd need two bags (4 lbs) to get at least 3 lbs",
             "Compare: one 5 lb bag vs two 2 lb bags for total cost"
           ],
-          "answer": "5 lb bag: $6.25 / 5 = $1.25/lb. 2 lb bag: $2.90 / 2 = $1.45/lb. The 5 lb bag has a better unit price. But for exactly 3 lbs: one 5 lb bag = $6.25 (2 lbs wasted). Two 2 lb bags = $5.80 for 4 lbs (1 lb extra). Two 2 lb bags cost $0.45 less overall. However, rice doesn't spoil quickly — if you'll eventually use it, the 5 lb bag at $1.25/lb is the better long-term value."
+          "answer": "5 lb bag: $6.25 / 5 = $1.25/lb. 2 lb bag: $2.90 / 2 = $1.45/lb. The 5 lb bag has a better unit price. But for exactly 3 lbs: one 5 lb bag = $6.25 (2 lbs wasted). Two 2 lb bags = $5.80 for 4 lbs (1 lb extra). Two 2 lb bags cost $0.45 less overall. However, rice doesn't spoil quickly \u2014 if you'll eventually use it, the 5 lb bag at $1.25/lb is the better long-term value."
         }
       ],
       "skill": "cm-unit-price-comparisons"
@@ -417,10 +396,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Unit Price Comparisons — You Try",
-      "skills": [
-        "cm-unit-price-comparisons"
-      ],
+      "title": "Unit Price Comparisons \u2014 You Try",
       "problems": [
         {
           "id": "pds-22",

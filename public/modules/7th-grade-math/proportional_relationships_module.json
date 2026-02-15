@@ -27,9 +27,9 @@
     "Move fluently between tables, graphs, and equations to represent and analyze proportional relationships"
   ],
   "instructionalStrategy": [
-    "Ground every lesson in familiar contexts—buying snacks, earning money, mixing recipes—so that the abstract idea of a 'constant ratio' feels natural and intuitive.",
+    "Ground every lesson in familiar contexts\u2014buying snacks, earning money, mixing recipes\u2014so that the abstract idea of a 'constant ratio' feels natural and intuitive.",
     "Start with tables: have students compute y divided by x for each row and notice whether the quotient stays the same. This builds the habit of checking for proportionality before jumping to equations.",
-    "Use side-by-side comparisons of proportional and non-proportional tables to sharpen the distinction—students need to see what proportionality is NOT.",
+    "Use side-by-side comparisons of proportional and non-proportional tables to sharpen the distinction\u2014students need to see what proportionality is NOT.",
     "When graphing, always start by plotting (0, 0) and ask: 'Does this situation make sense at zero?' This reinforces that proportional relationships must pass through the origin.",
     "Connect the constant of proportionality k to the unit rate: 'How much per one?' is the question students should always be asking."
   ],
@@ -43,7 +43,7 @@
       "content": "Two quantities have a **proportional relationship** if they always have the same ratio. In other words, as one quantity changes, the other changes by the same factor every single time.\n\n**How to check using a table:** Divide y by x for every row. If you get the same number every time, the relationship is proportional.\n\n| Apples | Cost ($) |\n|--------|----------|\n| 2      | 1.00     |\n| 5      | 2.50     |\n| 8      | 4.00     |\n\n1.00 / 2 = 0.50, 2.50 / 5 = 0.50, 4.00 / 8 = 0.50. The ratio is always 0.50, so this IS proportional.\n\n**How to check using a graph:** If the points form a **straight line that passes through the origin (0, 0)**, the relationship is proportional. A straight line that does NOT go through the origin is linear but not proportional.\n\n**Key idea:** Proportional means every ratio y/x is equal. If even one ratio is different, the relationship is NOT proportional.",
       "keyPoints": [
         "Proportional relationships have a constant ratio y/x for every pair of values",
-        "In a table, divide y by x for each row — if all quotients are equal, it is proportional",
+        "In a table, divide y by x for each row \u2014 if all quotients are equal, it is proportional",
         "On a graph, proportional relationships appear as a straight line through the origin (0, 0)",
         "A straight line that does NOT pass through the origin is NOT proportional"
       ],
@@ -54,10 +54,10 @@
       "lessonPhase": "concept-intro",
       "skill": "g7-constant-of-proportionality",
       "title": "The Constant of Proportionality",
-      "content": "When two quantities are proportional, the constant ratio y/x is called the **constant of proportionality**, often written as **k**.\n\nThe constant of proportionality is the same as the **unit rate** — it tells you 'how much y for every 1 unit of x.'\n\n**Example:** A baker uses 2.5 cups of flour per batch of cookies.\n\n| Batches | Cups of flour |\n|---------|---------------|\n| 2       | 5             |\n| 4       | 10            |\n| 6       | 15            |\n\n5 / 2 = 2.5, 10 / 4 = 2.5, 15 / 6 = 2.5. The constant of proportionality is **k = 2.5**. This means the baker needs 2.5 cups of flour for every 1 batch.\n\n**Finding k from a graph:** Pick any point (x, y) on the line (other than the origin) and compute k = y / x. Or read the y-value at x = 1 — that point (1, k) gives you the constant of proportionality directly.",
+      "content": "When two quantities are proportional, the constant ratio y/x is called the **constant of proportionality**, often written as **k**.\n\nThe constant of proportionality is the same as the **unit rate** \u2014 it tells you 'how much y for every 1 unit of x.'\n\n**Example:** A baker uses 2.5 cups of flour per batch of cookies.\n\n| Batches | Cups of flour |\n|---------|---------------|\n| 2       | 5             |\n| 4       | 10            |\n| 6       | 15            |\n\n5 / 2 = 2.5, 10 / 4 = 2.5, 15 / 6 = 2.5. The constant of proportionality is **k = 2.5**. This means the baker needs 2.5 cups of flour for every 1 batch.\n\n**Finding k from a graph:** Pick any point (x, y) on the line (other than the origin) and compute k = y / x. Or read the y-value at x = 1 \u2014 that point (1, k) gives you the constant of proportionality directly.",
       "keyPoints": [
         "The constant of proportionality k equals y divided by x",
-        "k is the unit rate — it tells you how much y you get for 1 unit of x",
+        "k is the unit rate \u2014 it tells you how much y you get for 1 unit of x",
         "k is the same no matter which (x, y) pair you use from the relationship",
         "On a graph, the point (1, k) directly gives you the constant of proportionality"
       ],
@@ -82,7 +82,7 @@
       "lessonPhase": "concept-intro",
       "skill": "g7-graph-proportional",
       "title": "Graphing Proportional Relationships",
-      "content": "To graph a proportional relationship, plot ordered pairs (x, y) from a table or equation on a coordinate plane.\n\n**Steps:**\n1. Always plot the origin **(0, 0)** first — every proportional relationship starts here.\n2. Plot additional points from your table or equation.\n3. Draw a straight line through the points.\n\n**Reading a graph:** If you see a straight line through the origin, you know the relationship is proportional. The steepness of the line tells you the constant of proportionality:\n- **Steeper line = larger k** (y grows faster for each unit of x)\n- **Flatter line = smaller k** (y grows more slowly)\n\n**Example:** Plotting y = 3x gives the points (0, 0), (1, 3), (2, 6), (3, 9). The line rises 3 units for every 1 unit to the right, so k = 3.\n\n**Comparing two lines:** If two proportional relationships are graphed on the same axes, the steeper line has the greater unit rate.",
+      "content": "To graph a proportional relationship, plot ordered pairs (x, y) from a table or equation on a coordinate plane.\n\n**Steps:**\n1. Always plot the origin **(0, 0)** first \u2014 every proportional relationship starts here.\n2. Plot additional points from your table or equation.\n3. Draw a straight line through the points.\n\n**Reading a graph:** If you see a straight line through the origin, you know the relationship is proportional. The steepness of the line tells you the constant of proportionality:\n- **Steeper line = larger k** (y grows faster for each unit of x)\n- **Flatter line = smaller k** (y grows more slowly)\n\n**Example:** Plotting y = 3x gives the points (0, 0), (1, 3), (2, 6), (3, 9). The line rises 3 units for every 1 unit to the right, so k = 3.\n\n**Comparing two lines:** If two proportional relationships are graphed on the same axes, the steeper line has the greater unit rate.",
       "keyPoints": [
         "Proportional relationships always graph as a straight line passing through (0, 0)",
         "Plot at least three points to confirm the line is straight",
@@ -104,12 +104,12 @@
         },
         {
           "problem": "A student tracks how many pages they read over time. Is this proportional?\n\n| Hours | Pages read |\n|-------|------------|\n| 1     | 30         |\n| 2     | 55         |\n| 3     | 75         |",
-          "solution": "Divide Pages by Hours for each row:\n30 / 1 = 30\n55 / 2 = 27.5\n75 / 3 = 25\n\nThe ratios are 30, 27.5, and 25 — they are NOT all equal. This relationship is **not proportional**. The student reads at different speeds over time.",
+          "solution": "Divide Pages by Hours for each row:\n30 / 1 = 30\n55 / 2 = 27.5\n75 / 3 = 25\n\nThe ratios are 30, 27.5, and 25 \u2014 they are NOT all equal. This relationship is **not proportional**. The student reads at different speeds over time.",
           "tip": "A relationship can look close to proportional but still not be proportional. The ratios must be exactly equal, not just approximately equal."
         },
         {
           "problem": "A graph shows the points (0, 0), (2, 6), and (4, 12) connected by a straight line. Is this a proportional relationship?",
-          "solution": "Check two things:\n1. Does the line pass through the origin? Yes — (0, 0) is on the line.\n2. Is it a straight line? Yes.\n\nSince it is a straight line through the origin, this **is proportional**.\n\nWe can verify: 6 / 2 = 3 and 12 / 4 = 3. The ratios are equal.",
+          "solution": "Check two things:\n1. Does the line pass through the origin? Yes \u2014 (0, 0) is on the line.\n2. Is it a straight line? Yes.\n\nSince it is a straight line through the origin, this **is proportional**.\n\nWe can verify: 6 / 2 = 3 and 12 / 4 = 3. The ratios are equal.",
           "tip": "For graphs, check two conditions: straight line AND passes through the origin. Both must be true."
         }
       ],
@@ -129,7 +129,7 @@
         {
           "problem": "A car uses gas at a constant rate. Find k and explain what it means.\n\n| Gallons of gas | Miles driven |\n|----------------|--------------|\n| 2              | 50           |\n| 5              | 125          |\n| 8              | 200          |",
           "solution": "Divide Miles by Gallons:\n50 / 2 = 25\n125 / 5 = 25\n200 / 8 = 25\n\nThe constant of proportionality is **k = 25**.\n\nThis means the car gets **25 miles per gallon**.",
-          "tip": "Think about what units k has. Here it is miles per gallon — a rate you might see on a car's window sticker."
+          "tip": "Think about what units k has. Here it is miles per gallon \u2014 a rate you might see on a car's window sticker."
         },
         {
           "problem": "On a graph, a proportional relationship passes through the points (0, 0) and (3, 13.50). What is the constant of proportionality?",
@@ -172,7 +172,7 @@
         {
           "problem": "A car travels at a constant speed. Graph the relationship and identify the constant of proportionality.\n\n| Time (hours) | Distance (miles) |\n|--------------|------------------|\n| 0            | 0                |\n| 1            | 40               |\n| 2            | 80               |\n| 3            | 120              |",
           "solution": "Plot the points: (0, 0), (1, 40), (2, 80), (3, 120).\n\nAll four points lie on a straight line through the origin. This confirms it is a proportional relationship.\n\nThe constant of proportionality: k = 40 / 1 = **40**.\n\nThe car travels at **40 miles per hour**. On the graph, the point (1, 40) tells you the unit rate directly.",
-          "tip": "The point where x = 1 is special — the y-value at that point IS the constant of proportionality. Look for it on the graph!"
+          "tip": "The point where x = 1 is special \u2014 the y-value at that point IS the constant of proportionality. Look for it on the graph!"
         },
         {
           "problem": "A graph shows a straight line through the origin passing through the point (4, 14). Find the constant of proportionality and write the equation.",
@@ -185,10 +185,6 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": [
-        "g7-identify-proportional",
-        "g7-constant-of-proportionality"
-      ],
       "title": "We-Do: Identifying Proportional Relationships and Finding k",
       "problems": [
         {
@@ -214,7 +210,7 @@
         {
           "id": "pr-wp3",
           "question": "A store has a sale on T-shirts. Is the pricing proportional? Explain your reasoning.\n\n| Shirts | Total cost ($) |\n|--------|----------------|\n| 1      | 12             |\n| 2      | 22             |\n| 3      | 30             |",
-          "answer": "No, it is not proportional. The ratios are 12, 11, and 10 — they are not all equal.",
+          "answer": "No, it is not proportional. The ratios are 12, 11, and 10 \u2014 they are not all equal.",
           "hints": [
             "Divide Total cost by Shirts for each row: 12 / 1, 22 / 2, 30 / 3.",
             "You get 12, 11, and 10. Are these all equal?",
@@ -228,10 +224,6 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": [
-        "g7-proportional-equations",
-        "g7-graph-proportional"
-      ],
       "title": "We-Do: Writing Equations and Working with Graphs",
       "problems": [
         {
@@ -271,12 +263,6 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "skills": [
-        "g7-identify-proportional",
-        "g7-constant-of-proportionality",
-        "g7-proportional-equations",
-        "g7-graph-proportional"
-      ],
       "title": "You-Do: Independent Practice",
       "problems": [
         {
@@ -291,7 +277,7 @@
         {
           "id": "pr-yp2",
           "question": "An amusement park charges for rides. Is this relationship proportional? Explain how you know.\n\n| Rides | Total cost ($) |\n|-------|----------------|\n| 1     | 5              |\n| 3     | 11             |\n| 5     | 17             |",
-          "answer": "No, it is not proportional. The ratios are 5, 3.67, and 3.4 — they are not equal.",
+          "answer": "No, it is not proportional. The ratios are 5, 3.67, and 3.4 \u2014 they are not equal.",
           "skill": "g7-identify-proportional",
           "hints": [
             "Compute 5 / 1, 11 / 3, and 17 / 5. Do you get the same number each time?"

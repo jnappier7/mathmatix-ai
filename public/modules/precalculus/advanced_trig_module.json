@@ -27,12 +27,12 @@
     "Use double-angle and half-angle formulas to simplify expressions, verify identities, and solve equations.",
     "Apply the Law of Sines to solve oblique triangles including the ambiguous case (SSA).",
     "Apply the Law of Cosines to solve oblique triangles (SAS and SSS cases).",
-    "Calculate triangle area using A = ½ab·sin(C) and Heron's formula; apply to real-world problems."
+    "Calculate triangle area using A = \u00bdab\u00b7sin(C) and Heron's formula; apply to real-world problems."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Heavy emphasis on exact values — no decimal approximations unless context requires it",
+    "Heavy emphasis on exact values \u2014 no decimal approximations unless context requires it",
     "Spiral unit circle fluency and fundamental identities throughout"
   ],
   "aiFlexLevel": "moderate",
@@ -44,31 +44,31 @@
       "skill": "inverse-trig-functions",
       "content": "Inverse trig functions reverse the input-output of their parent functions on restricted domains. arcsin, arccos, arctan are the principal value branches.",
       "keyPoints": [
-        "y = arcsin(x) = sin⁻¹(x): domain [-1,1], range [-π/2, π/2]",
-        "y = arccos(x) = cos⁻¹(x): domain [-1,1], range [0, π]",
-        "y = arctan(x) = tan⁻¹(x): domain (-∞,∞), range (-π/2, π/2)",
-        "Composition: sin(sin⁻¹(x)) = x for x ∈ [-1,1]; sin⁻¹(sin(x)) = x only if x ∈ [-π/2, π/2]",
+        "y = arcsin(x) = sin\u207b\u00b9(x): domain [-1,1], range [-\u03c0/2, \u03c0/2]",
+        "y = arccos(x) = cos\u207b\u00b9(x): domain [-1,1], range [0, \u03c0]",
+        "y = arctan(x) = tan\u207b\u00b9(x): domain (-\u221e,\u221e), range (-\u03c0/2, \u03c0/2)",
+        "Composition: sin(sin\u207b\u00b9(x)) = x for x \u2208 [-1,1]; sin\u207b\u00b9(sin(x)) = x only if x \u2208 [-\u03c0/2, \u03c0/2]",
         "For compositions like sin(arccos(x)): draw a right triangle with the known ratio",
-        "Exact values: arcsin(1/2) = π/6, arccos(√2/2) = π/4, arctan(1) = π/4, etc."
+        "Exact values: arcsin(1/2) = \u03c0/6, arccos(\u221a2/2) = \u03c0/4, arctan(1) = \u03c0/4, etc."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Inverse Trig — Worked Examples",
+      "title": "Inverse Trig \u2014 Worked Examples",
       "skill": "inverse-trig-functions",
       "examples": [
         {
-          "problem": "Evaluate: (a) arcsin(-√3/2), (b) arccos(-1/2), (c) arctan(-1), (d) sin⁻¹(sin(5π/4)).",
-          "solution": "(a) arcsin(-√3/2): need angle in [-π/2, π/2] with sin = -√3/2 → -π/3. (b) arccos(-1/2): need angle in [0, π] with cos = -1/2 → 2π/3. (c) arctan(-1): need angle in (-π/2, π/2) with tan = -1 → -π/4. (d) sin(5π/4) = -√2/2. arcsin(-√2/2) = -π/4 (not 5π/4, since -π/4 ∈ [-π/2, π/2])."
+          "problem": "Evaluate: (a) arcsin(-\u221a3/2), (b) arccos(-1/2), (c) arctan(-1), (d) sin\u207b\u00b9(sin(5\u03c0/4)).",
+          "solution": "(a) arcsin(-\u221a3/2): need angle in [-\u03c0/2, \u03c0/2] with sin = -\u221a3/2 \u2192 -\u03c0/3. (b) arccos(-1/2): need angle in [0, \u03c0] with cos = -1/2 \u2192 2\u03c0/3. (c) arctan(-1): need angle in (-\u03c0/2, \u03c0/2) with tan = -1 \u2192 -\u03c0/4. (d) sin(5\u03c0/4) = -\u221a2/2. arcsin(-\u221a2/2) = -\u03c0/4 (not 5\u03c0/4, since -\u03c0/4 \u2208 [-\u03c0/2, \u03c0/2])."
         },
         {
           "problem": "Find the exact value of cos(arctan(3/4)).",
-          "solution": "Let θ = arctan(3/4), so tan θ = 3/4 with θ ∈ (-π/2, π/2). Draw right triangle: opposite = 3, adjacent = 4, hypotenuse = √(9+16) = 5. cos θ = adjacent/hypotenuse = 4/5."
+          "solution": "Let \u03b8 = arctan(3/4), so tan \u03b8 = 3/4 with \u03b8 \u2208 (-\u03c0/2, \u03c0/2). Draw right triangle: opposite = 3, adjacent = 4, hypotenuse = \u221a(9+16) = 5. cos \u03b8 = adjacent/hypotenuse = 4/5."
         },
         {
-          "problem": "Simplify: tan(arcsin(x)) for x ∈ (-1, 1).",
-          "solution": "Let θ = arcsin(x), so sin θ = x. Adjacent = √(1-x²) (from Pythagorean theorem). tan θ = opposite/adjacent = x/√(1-x²)."
+          "problem": "Simplify: tan(arcsin(x)) for x \u2208 (-1, 1).",
+          "solution": "Let \u03b8 = arcsin(x), so sin \u03b8 = x. Adjacent = \u221a(1-x\u00b2) (from Pythagorean theorem). tan \u03b8 = opposite/adjacent = x/\u221a(1-x\u00b2)."
         }
       ]
     },
@@ -79,26 +79,26 @@
       "skill": "sum-difference-identities",
       "content": "Sum and difference formulas allow evaluation of trig functions at angles that are sums or differences of known angles.",
       "keyPoints": [
-        "sin(A ± B) = sin A cos B ± cos A sin B",
-        "cos(A ± B) = cos A cos B ∓ sin A sin B (note: signs flip)",
-        "tan(A ± B) = (tan A ± tan B)/(1 ∓ tan A tan B)",
-        "Key combinations: π/12 = π/3 - π/4, 5π/12 = π/4 + π/6, 7π/12 = π/3 + π/4",
+        "sin(A \u00b1 B) = sin A cos B \u00b1 cos A sin B",
+        "cos(A \u00b1 B) = cos A cos B \u2213 sin A sin B (note: signs flip)",
+        "tan(A \u00b1 B) = (tan A \u00b1 tan B)/(1 \u2213 tan A tan B)",
+        "Key combinations: \u03c0/12 = \u03c0/3 - \u03c0/4, 5\u03c0/12 = \u03c0/4 + \u03c0/6, 7\u03c0/12 = \u03c0/3 + \u03c0/4",
         "Used for: exact value computation, identity verification, simplifying expressions"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Sum & Difference — Worked Examples",
+      "title": "Sum & Difference \u2014 Worked Examples",
       "skill": "sum-difference-identities",
       "examples": [
         {
-          "problem": "Find the exact value of sin(π/12).",
-          "solution": "π/12 = π/3 - π/4. sin(π/3 - π/4) = sin(π/3)cos(π/4) - cos(π/3)sin(π/4) = (√3/2)(√2/2) - (1/2)(√2/2) = √6/4 - √2/4 = (√6 - √2)/4."
+          "problem": "Find the exact value of sin(\u03c0/12).",
+          "solution": "\u03c0/12 = \u03c0/3 - \u03c0/4. sin(\u03c0/3 - \u03c0/4) = sin(\u03c0/3)cos(\u03c0/4) - cos(\u03c0/3)sin(\u03c0/4) = (\u221a3/2)(\u221a2/2) - (1/2)(\u221a2/2) = \u221a6/4 - \u221a2/4 = (\u221a6 - \u221a2)/4."
         },
         {
-          "problem": "Find the exact value of cos(75°).",
-          "solution": "75° = 45° + 30°. cos(45° + 30°) = cos45°cos30° - sin45°sin30° = (√2/2)(√3/2) - (√2/2)(1/2) = √6/4 - √2/4 = (√6 - √2)/4."
+          "problem": "Find the exact value of cos(75\u00b0).",
+          "solution": "75\u00b0 = 45\u00b0 + 30\u00b0. cos(45\u00b0 + 30\u00b0) = cos45\u00b0cos30\u00b0 - sin45\u00b0sin30\u00b0 = (\u221a2/2)(\u221a3/2) - (\u221a2/2)(1/2) = \u221a6/4 - \u221a2/4 = (\u221a6 - \u221a2)/4."
         },
         {
           "problem": "If sin A = 3/5 (A in Q1) and cos B = -5/13 (B in Q2), find sin(A + B).",
@@ -111,34 +111,34 @@
       "lessonPhase": "concept-intro",
       "title": "Double-Angle & Half-Angle Formulas",
       "skill": "double-half-angle-formulas",
-      "content": "Double-angle formulas express trig functions of 2θ in terms of θ. Half-angle formulas express trig functions of θ/2 in terms of θ. These are derived from sum formulas.",
+      "content": "Double-angle formulas express trig functions of 2\u03b8 in terms of \u03b8. Half-angle formulas express trig functions of \u03b8/2 in terms of \u03b8. These are derived from sum formulas.",
       "keyPoints": [
-        "sin(2θ) = 2·sin θ·cos θ",
-        "cos(2θ) = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ (three forms)",
-        "tan(2θ) = 2tan θ/(1 - tan²θ)",
-        "sin(θ/2) = ±√((1 - cos θ)/2), sign determined by quadrant of θ/2",
-        "cos(θ/2) = ±√((1 + cos θ)/2), sign determined by quadrant of θ/2",
-        "tan(θ/2) = sin θ/(1 + cos θ) = (1 - cos θ)/sin θ",
-        "Power-reducing: sin²θ = (1 - cos 2θ)/2, cos²θ = (1 + cos 2θ)/2"
+        "sin(2\u03b8) = 2\u00b7sin \u03b8\u00b7cos \u03b8",
+        "cos(2\u03b8) = cos\u00b2\u03b8 - sin\u00b2\u03b8 = 2cos\u00b2\u03b8 - 1 = 1 - 2sin\u00b2\u03b8 (three forms)",
+        "tan(2\u03b8) = 2tan \u03b8/(1 - tan\u00b2\u03b8)",
+        "sin(\u03b8/2) = \u00b1\u221a((1 - cos \u03b8)/2), sign determined by quadrant of \u03b8/2",
+        "cos(\u03b8/2) = \u00b1\u221a((1 + cos \u03b8)/2), sign determined by quadrant of \u03b8/2",
+        "tan(\u03b8/2) = sin \u03b8/(1 + cos \u03b8) = (1 - cos \u03b8)/sin \u03b8",
+        "Power-reducing: sin\u00b2\u03b8 = (1 - cos 2\u03b8)/2, cos\u00b2\u03b8 = (1 + cos 2\u03b8)/2"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Double & Half-Angle — Worked Examples",
+      "title": "Double & Half-Angle \u2014 Worked Examples",
       "skill": "double-half-angle-formulas",
       "examples": [
         {
-          "problem": "If cos θ = -3/5 and θ is in Q3, find sin(2θ), cos(2θ), and tan(2θ).",
-          "solution": "θ in Q3: sin θ = -4/5 (negative in Q3, from 3-4-5). sin(2θ) = 2(-4/5)(-3/5) = 24/25. cos(2θ) = 2(-3/5)² - 1 = 2(9/25) - 1 = 18/25 - 25/25 = -7/25. tan(2θ) = sin(2θ)/cos(2θ) = (24/25)/(-7/25) = -24/7."
+          "problem": "If cos \u03b8 = -3/5 and \u03b8 is in Q3, find sin(2\u03b8), cos(2\u03b8), and tan(2\u03b8).",
+          "solution": "\u03b8 in Q3: sin \u03b8 = -4/5 (negative in Q3, from 3-4-5). sin(2\u03b8) = 2(-4/5)(-3/5) = 24/25. cos(2\u03b8) = 2(-3/5)\u00b2 - 1 = 2(9/25) - 1 = 18/25 - 25/25 = -7/25. tan(2\u03b8) = sin(2\u03b8)/cos(2\u03b8) = (24/25)/(-7/25) = -24/7."
         },
         {
-          "problem": "Find the exact value of cos(π/8) using the half-angle formula.",
-          "solution": "π/8 = (π/4)/2. cos(π/8) = √((1 + cos(π/4))/2) = √((1 + √2/2)/2) = √((2 + √2)/4) = √(2 + √2)/2. (Positive since π/8 is in Q1.)"
+          "problem": "Find the exact value of cos(\u03c0/8) using the half-angle formula.",
+          "solution": "\u03c0/8 = (\u03c0/4)/2. cos(\u03c0/8) = \u221a((1 + cos(\u03c0/4))/2) = \u221a((1 + \u221a2/2)/2) = \u221a((2 + \u221a2)/4) = \u221a(2 + \u221a2)/2. (Positive since \u03c0/8 is in Q1.)"
         },
         {
-          "problem": "Verify: cos(2x) = (1 - tan²x)/(1 + tan²x).",
-          "solution": "RHS: (1 - tan²x)/(1 + tan²x) = (1 - sin²x/cos²x)/(1 + sin²x/cos²x) = ((cos²x - sin²x)/cos²x)/((cos²x + sin²x)/cos²x) = (cos²x - sin²x)/(cos²x + sin²x) = (cos²x - sin²x)/1 = cos(2x) = LHS. ✓"
+          "problem": "Verify: cos(2x) = (1 - tan\u00b2x)/(1 + tan\u00b2x).",
+          "solution": "RHS: (1 - tan\u00b2x)/(1 + tan\u00b2x) = (1 - sin\u00b2x/cos\u00b2x)/(1 + sin\u00b2x/cos\u00b2x) = ((cos\u00b2x - sin\u00b2x)/cos\u00b2x)/((cos\u00b2x + sin\u00b2x)/cos\u00b2x) = (cos\u00b2x - sin\u00b2x)/(cos\u00b2x + sin\u00b2x) = (cos\u00b2x - sin\u00b2x)/1 = cos(2x) = LHS. \u2713"
         }
       ]
     },
@@ -146,38 +146,33 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Advanced Identities Practice",
-      "skills": [
-        "inverse-trig-functions",
-        "sum-difference-identities",
-        "double-half-angle-formulas"
-      ],
       "problems": [
         {
           "problem": "Find the exact value of sin(arccos(5/13)).",
           "hints": [
-            "Let θ = arccos(5/13), so cos θ = 5/13",
-            "θ ∈ [0, π], so sin θ ≥ 0",
-            "sin θ = √(1 - 25/169) = √(144/169) = 12/13"
+            "Let \u03b8 = arccos(5/13), so cos \u03b8 = 5/13",
+            "\u03b8 \u2208 [0, \u03c0], so sin \u03b8 \u2265 0",
+            "sin \u03b8 = \u221a(1 - 25/169) = \u221a(144/169) = 12/13"
           ],
           "answer": "12/13."
         },
         {
-          "problem": "Find the exact value of tan(5π/12).",
+          "problem": "Find the exact value of tan(5\u03c0/12).",
           "hints": [
-            "5π/12 = π/4 + π/6",
-            "tan(A+B) = (tanA + tanB)/(1 - tanA·tanB)",
-            "tan(π/4) = 1, tan(π/6) = √3/3"
+            "5\u03c0/12 = \u03c0/4 + \u03c0/6",
+            "tan(A+B) = (tanA + tanB)/(1 - tanA\u00b7tanB)",
+            "tan(\u03c0/4) = 1, tan(\u03c0/6) = \u221a3/3"
           ],
-          "answer": "tan(5π/12) = (1 + √3/3)/(1 - 1·√3/3) = (3 + √3)/(3 - √3). Rationalize: multiply by (3+√3)/(3+√3) = (9 + 6√3 + 3)/(9 - 3) = (12 + 6√3)/6 = 2 + √3."
+          "answer": "tan(5\u03c0/12) = (1 + \u221a3/3)/(1 - 1\u00b7\u221a3/3) = (3 + \u221a3)/(3 - \u221a3). Rationalize: multiply by (3+\u221a3)/(3+\u221a3) = (9 + 6\u221a3 + 3)/(9 - 3) = (12 + 6\u221a3)/6 = 2 + \u221a3."
         },
         {
-          "problem": "If sin θ = 7/25 and θ is in Q2, find: (a) cos(2θ), (b) sin(θ/2).",
+          "problem": "If sin \u03b8 = 7/25 and \u03b8 is in Q2, find: (a) cos(2\u03b8), (b) sin(\u03b8/2).",
           "hints": [
-            "Q2: cos θ = -24/25",
-            "(a) cos(2θ) = 1 - 2sin²θ = 1 - 2(49/625)",
-            "(b) θ in Q2 means π/2 < θ < π, so π/4 < θ/2 < π/2 (Q1, positive)"
+            "Q2: cos \u03b8 = -24/25",
+            "(a) cos(2\u03b8) = 1 - 2sin\u00b2\u03b8 = 1 - 2(49/625)",
+            "(b) \u03b8 in Q2 means \u03c0/2 < \u03b8 < \u03c0, so \u03c0/4 < \u03b8/2 < \u03c0/2 (Q1, positive)"
           ],
-          "answer": "(a) cos(2θ) = 1 - 2(49/625) = 1 - 98/625 = 527/625. (b) sin(θ/2) = √((1 - cos θ)/2) = √((1 + 24/25)/2) = √(49/50) = 7/(5√2) = 7√2/10."
+          "answer": "(a) cos(2\u03b8) = 1 - 2(49/625) = 1 - 98/625 = 527/625. (b) sin(\u03b8/2) = \u221a((1 - cos \u03b8)/2) = \u221a((1 + 24/25)/2) = \u221a(49/50) = 7/(5\u221a2) = 7\u221a2/10."
         }
       ],
       "skill": "double-half-angle-formulas"
@@ -192,23 +187,23 @@
         "a/sin A = b/sin B = c/sin C (or equivalently, sin A/a = sin B/b = sin C/c)",
         "Use for: ASA (two angles + included side), AAS (two angles + non-included side)",
         "SSA (ambiguous case): given two sides and a non-included angle, there may be 0, 1, or 2 solutions",
-        "Ambiguous case analysis: if a < b·sin A → no triangle; if a = b·sin A → one right triangle; if b·sin A < a < b → two triangles; if a ≥ b → one triangle",
-        "When two triangles exist: B₁ and B₂ = π - B₁ are both valid"
+        "Ambiguous case analysis: if a < b\u00b7sin A \u2192 no triangle; if a = b\u00b7sin A \u2192 one right triangle; if b\u00b7sin A < a < b \u2192 two triangles; if a \u2265 b \u2192 one triangle",
+        "When two triangles exist: B\u2081 and B\u2082 = \u03c0 - B\u2081 are both valid"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Law of Sines — Worked Examples",
+      "title": "Law of Sines \u2014 Worked Examples",
       "skill": "law-of-sines",
       "examples": [
         {
-          "problem": "In triangle ABC, A = 40°, B = 75°, and a = 12. Find b and c.",
-          "solution": "C = 180° - 40° - 75° = 65°. Law of Sines: 12/sin40° = b/sin75° = c/sin65°. b = 12·sin75°/sin40° = 12(0.9659)/0.6428 ≈ 18.03. c = 12·sin65°/sin40° = 12(0.9063)/0.6428 ≈ 16.92."
+          "problem": "In triangle ABC, A = 40\u00b0, B = 75\u00b0, and a = 12. Find b and c.",
+          "solution": "C = 180\u00b0 - 40\u00b0 - 75\u00b0 = 65\u00b0. Law of Sines: 12/sin40\u00b0 = b/sin75\u00b0 = c/sin65\u00b0. b = 12\u00b7sin75\u00b0/sin40\u00b0 = 12(0.9659)/0.6428 \u2248 18.03. c = 12\u00b7sin65\u00b0/sin40\u00b0 = 12(0.9063)/0.6428 \u2248 16.92."
         },
         {
-          "problem": "SSA Ambiguous Case: In triangle ABC, a = 8, b = 12, A = 30°. Find all possible triangles.",
-          "solution": "sin B/b = sin A/a → sin B = b·sin A/a = 12·sin30°/8 = 12(0.5)/8 = 6/8 = 0.75. B = arcsin(0.75) ≈ 48.59° or B = 180° - 48.59° = 131.41°. Case 1: B ≈ 48.59°, C = 180° - 30° - 48.59° = 101.41°. c = 8·sin(101.41°)/sin(30°) ≈ 8(0.9803)/0.5 ≈ 15.68. Case 2: B ≈ 131.41°, C = 180° - 30° - 131.41° = 18.59°. c = 8·sin(18.59°)/sin(30°) ≈ 8(0.3187)/0.5 ≈ 5.10. Two triangles exist."
+          "problem": "SSA Ambiguous Case: In triangle ABC, a = 8, b = 12, A = 30\u00b0. Find all possible triangles.",
+          "solution": "sin B/b = sin A/a \u2192 sin B = b\u00b7sin A/a = 12\u00b7sin30\u00b0/8 = 12(0.5)/8 = 6/8 = 0.75. B = arcsin(0.75) \u2248 48.59\u00b0 or B = 180\u00b0 - 48.59\u00b0 = 131.41\u00b0. Case 1: B \u2248 48.59\u00b0, C = 180\u00b0 - 30\u00b0 - 48.59\u00b0 = 101.41\u00b0. c = 8\u00b7sin(101.41\u00b0)/sin(30\u00b0) \u2248 8(0.9803)/0.5 \u2248 15.68. Case 2: B \u2248 131.41\u00b0, C = 180\u00b0 - 30\u00b0 - 131.41\u00b0 = 18.59\u00b0. c = 8\u00b7sin(18.59\u00b0)/sin(30\u00b0) \u2248 8(0.3187)/0.5 \u2248 5.10. Two triangles exist."
         }
       ]
     },
@@ -219,30 +214,30 @@
       "skill": "law-of-cosines",
       "content": "The Law of Cosines generalizes the Pythagorean theorem to any triangle. It's used for SAS (two sides + included angle) and SSS (all three sides).",
       "keyPoints": [
-        "c² = a² + b² - 2ab·cos C (and cyclic permutations)",
-        "To find an angle: cos C = (a² + b² - c²)/(2ab)",
+        "c\u00b2 = a\u00b2 + b\u00b2 - 2ab\u00b7cos C (and cyclic permutations)",
+        "To find an angle: cos C = (a\u00b2 + b\u00b2 - c\u00b2)/(2ab)",
         "Use for: SAS (find the third side), SSS (find any angle)",
-        "When C = 90°, reduces to Pythagorean theorem: c² = a² + b²",
+        "When C = 90\u00b0, reduces to Pythagorean theorem: c\u00b2 = a\u00b2 + b\u00b2",
         "Strategy for SSS: find the largest angle first (opposite longest side) to avoid ambiguity"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Law of Cosines — Worked Examples",
+      "title": "Law of Cosines \u2014 Worked Examples",
       "skill": "law-of-cosines",
       "examples": [
         {
-          "problem": "In triangle ABC, a = 7, b = 10, C = 60°. Find c.",
-          "solution": "c² = a² + b² - 2ab·cos C = 49 + 100 - 2(7)(10)cos60° = 149 - 140(0.5) = 149 - 70 = 79. c = √79 ≈ 8.888."
+          "problem": "In triangle ABC, a = 7, b = 10, C = 60\u00b0. Find c.",
+          "solution": "c\u00b2 = a\u00b2 + b\u00b2 - 2ab\u00b7cos C = 49 + 100 - 2(7)(10)cos60\u00b0 = 149 - 140(0.5) = 149 - 70 = 79. c = \u221a79 \u2248 8.888."
         },
         {
           "problem": "In triangle ABC, a = 5, b = 8, c = 11. Find angle C.",
-          "solution": "cos C = (a² + b² - c²)/(2ab) = (25 + 64 - 121)/(2·5·8) = (89 - 121)/80 = -32/80 = -2/5 = -0.4. C = arccos(-0.4) ≈ 113.58°."
+          "solution": "cos C = (a\u00b2 + b\u00b2 - c\u00b2)/(2ab) = (25 + 64 - 121)/(2\u00b75\u00b78) = (89 - 121)/80 = -32/80 = -2/5 = -0.4. C = arccos(-0.4) \u2248 113.58\u00b0."
         },
         {
-          "problem": "Two boats leave a dock at the same time. One travels 12 km on bearing N30°E, the other travels 8 km on bearing S50°E. How far apart are they?",
-          "solution": "The angle between the paths at the dock: 30° + 90° + (90° - 50°) = 30° + 90° + 40°... Actually, bearings: N30°E is 30° from north (clockwise), S50°E is 130° from north. Angle between = 130° - 30° = 100°. Law of Cosines: d² = 12² + 8² - 2(12)(8)cos100° = 144 + 64 - 192cos100° = 208 - 192(-0.1736) = 208 + 33.33 = 241.33. d = √241.33 ≈ 15.54 km."
+          "problem": "Two boats leave a dock at the same time. One travels 12 km on bearing N30\u00b0E, the other travels 8 km on bearing S50\u00b0E. How far apart are they?",
+          "solution": "The angle between the paths at the dock: 30\u00b0 + 90\u00b0 + (90\u00b0 - 50\u00b0) = 30\u00b0 + 90\u00b0 + 40\u00b0... Actually, bearings: N30\u00b0E is 30\u00b0 from north (clockwise), S50\u00b0E is 130\u00b0 from north. Angle between = 130\u00b0 - 30\u00b0 = 100\u00b0. Law of Cosines: d\u00b2 = 12\u00b2 + 8\u00b2 - 2(12)(8)cos100\u00b0 = 144 + 64 - 192cos100\u00b0 = 208 - 192(-0.1736) = 208 + 33.33 = 241.33. d = \u221a241.33 \u2248 15.54 km."
         }
       ]
     },
@@ -250,37 +245,32 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Law of Sines/Cosines Practice",
-      "skills": [
-        "law-of-sines",
-        "law-of-cosines",
-        "triangle-area-applications"
-      ],
       "problems": [
         {
-          "problem": "In triangle ABC, A = 35°, B = 80°, b = 15. Find a and c.",
+          "problem": "In triangle ABC, A = 35\u00b0, B = 80\u00b0, b = 15. Find a and c.",
           "hints": [
-            "C = 180° - 35° - 80° = 65°",
-            "a/sinA = b/sinB → a = 15sin35°/sin80°",
-            "c = 15sin65°/sin80°"
+            "C = 180\u00b0 - 35\u00b0 - 80\u00b0 = 65\u00b0",
+            "a/sinA = b/sinB \u2192 a = 15sin35\u00b0/sin80\u00b0",
+            "c = 15sin65\u00b0/sin80\u00b0"
           ],
-          "answer": "C = 65°. a = 15sin35°/sin80° = 15(0.5736)/0.9848 ≈ 8.74. c = 15sin65°/sin80° = 15(0.9063)/0.9848 ≈ 13.80."
+          "answer": "C = 65\u00b0. a = 15sin35\u00b0/sin80\u00b0 = 15(0.5736)/0.9848 \u2248 8.74. c = 15sin65\u00b0/sin80\u00b0 = 15(0.9063)/0.9848 \u2248 13.80."
         },
         {
           "problem": "In triangle ABC, a = 6, b = 9, c = 12. Find the largest angle.",
           "hints": [
             "Largest angle is opposite longest side (c = 12)",
-            "cos C = (36 + 81 - 144)/(2·6·9)",
+            "cos C = (36 + 81 - 144)/(2\u00b76\u00b79)",
             "= -27/108 = -1/4"
           ],
-          "answer": "cos C = (36 + 81 - 144)/108 = -27/108 = -1/4. C = arccos(-1/4) ≈ 104.48°."
+          "answer": "cos C = (36 + 81 - 144)/108 = -27/108 = -1/4. C = arccos(-1/4) \u2248 104.48\u00b0."
         },
         {
-          "problem": "Find the area of triangle ABC where a = 10, b = 14, C = 48°.",
+          "problem": "Find the area of triangle ABC where a = 10, b = 14, C = 48\u00b0.",
           "hints": [
-            "Area = (1/2)ab·sinC",
-            "= (1/2)(10)(14)sin48°"
+            "Area = (1/2)ab\u00b7sinC",
+            "= (1/2)(10)(14)sin48\u00b0"
           ],
-          "answer": "Area = (1/2)(10)(14)sin48° = 70(0.7431) ≈ 52.02 square units."
+          "answer": "Area = (1/2)(10)(14)sin48\u00b0 = 70(0.7431) \u2248 52.02 square units."
         }
       ],
       "skill": "law-of-sines"
@@ -290,10 +280,10 @@
       "lessonPhase": "concept-intro",
       "title": "Triangle Area & Heron's Formula",
       "skill": "triangle-area-applications",
-      "content": "Triangle area can be computed from two sides and the included angle (SAS formula) or from three sides (Heron's formula). These extend beyond the basic ½bh formula.",
+      "content": "Triangle area can be computed from two sides and the included angle (SAS formula) or from three sides (Heron's formula). These extend beyond the basic \u00bdbh formula.",
       "keyPoints": [
-        "SAS area: A = (1/2)ab·sin C = (1/2)bc·sin A = (1/2)ac·sin B",
-        "Heron's formula: A = √(s(s-a)(s-b)(s-c)) where s = (a+b+c)/2",
+        "SAS area: A = (1/2)ab\u00b7sin C = (1/2)bc\u00b7sin A = (1/2)ac\u00b7sin B",
+        "Heron's formula: A = \u221a(s(s-a)(s-b)(s-c)) where s = (a+b+c)/2",
         "s is the semi-perimeter",
         "Applications: land surveying, navigation, engineering"
       ]
@@ -301,16 +291,16 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Triangle Area — Worked Examples",
+      "title": "Triangle Area \u2014 Worked Examples",
       "skill": "triangle-area-applications",
       "examples": [
         {
           "problem": "Find the area of a triangle with sides 7, 10, and 13.",
-          "solution": "Heron's formula: s = (7+10+13)/2 = 15. A = √(15·8·5·2) = √1200 = 20√3 ≈ 34.64 square units."
+          "solution": "Heron's formula: s = (7+10+13)/2 = 15. A = \u221a(15\u00b78\u00b75\u00b72) = \u221a1200 = 20\u221a3 \u2248 34.64 square units."
         },
         {
-          "problem": "A surveyor needs to find the area of a triangular plot of land. She measures two sides as 150 m and 200 m with an included angle of 72°. Find the area in square meters.",
-          "solution": "Area = (1/2)(150)(200)sin72° = 15000·sin72° = 15000(0.9511) ≈ 14,266.0 m²."
+          "problem": "A surveyor needs to find the area of a triangular plot of land. She measures two sides as 150 m and 200 m with an included angle of 72\u00b0. Find the area in square meters.",
+          "solution": "Area = (1/2)(150)(200)sin72\u00b0 = 15000\u00b7sin72\u00b0 = 15000(0.9511) \u2248 14,266.0 m\u00b2."
         }
       ]
     },
@@ -318,71 +308,63 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Advanced Trig Mastery Practice",
-      "skills": [
-        "inverse-trig-functions",
-        "sum-difference-identities",
-        "double-half-angle-formulas",
-        "law-of-sines",
-        "law-of-cosines",
-        "triangle-area-applications"
-      ],
       "problems": [
         {
           "problem": "Find the exact value of cos(arcsin(8/17)).",
-          "answer": "Let θ = arcsin(8/17). sin θ = 8/17, θ ∈ [-π/2, π/2] so cos θ ≥ 0. cos θ = √(1 - 64/289) = √(225/289) = 15/17."
+          "answer": "Let \u03b8 = arcsin(8/17). sin \u03b8 = 8/17, \u03b8 \u2208 [-\u03c0/2, \u03c0/2] so cos \u03b8 \u2265 0. cos \u03b8 = \u221a(1 - 64/289) = \u221a(225/289) = 15/17."
         },
         {
-          "problem": "Find the exact value of sin(15°).",
-          "answer": "sin(15°) = sin(45° - 30°) = sin45°cos30° - cos45°sin30° = (√2/2)(√3/2) - (√2/2)(1/2) = (√6 - √2)/4."
+          "problem": "Find the exact value of sin(15\u00b0).",
+          "answer": "sin(15\u00b0) = sin(45\u00b0 - 30\u00b0) = sin45\u00b0cos30\u00b0 - cos45\u00b0sin30\u00b0 = (\u221a2/2)(\u221a3/2) - (\u221a2/2)(1/2) = (\u221a6 - \u221a2)/4."
         },
         {
-          "problem": "If tan θ = 5/12 and θ is in Q3, find sin(2θ).",
-          "answer": "Q3: sin θ = -5/13, cos θ = -12/13 (from 5-12-13 triangle, both negative in Q3). sin(2θ) = 2sin θ cos θ = 2(-5/13)(-12/13) = 120/169."
+          "problem": "If tan \u03b8 = 5/12 and \u03b8 is in Q3, find sin(2\u03b8).",
+          "answer": "Q3: sin \u03b8 = -5/13, cos \u03b8 = -12/13 (from 5-12-13 triangle, both negative in Q3). sin(2\u03b8) = 2sin \u03b8 cos \u03b8 = 2(-5/13)(-12/13) = 120/169."
         },
         {
-          "problem": "In triangle PQR, P = 42°, Q = 73°, q = 18. Solve the triangle completely.",
-          "answer": "R = 180° - 42° - 73° = 65°. p = 18sin42°/sin73° = 18(0.6691)/0.9563 ≈ 12.59. r = 18sin65°/sin73° = 18(0.9063)/0.9563 ≈ 17.06."
+          "problem": "In triangle PQR, P = 42\u00b0, Q = 73\u00b0, q = 18. Solve the triangle completely.",
+          "answer": "R = 180\u00b0 - 42\u00b0 - 73\u00b0 = 65\u00b0. p = 18sin42\u00b0/sin73\u00b0 = 18(0.6691)/0.9563 \u2248 12.59. r = 18sin65\u00b0/sin73\u00b0 = 18(0.9063)/0.9563 \u2248 17.06."
         },
         {
-          "problem": "In triangle ABC, a = 14, c = 9, B = 110°. Find b.",
-          "answer": "b² = a² + c² - 2ac·cosB = 196 + 81 - 2(14)(9)cos110° = 277 - 252(-0.3420) = 277 + 86.18 = 363.18. b = √363.18 ≈ 19.06."
+          "problem": "In triangle ABC, a = 14, c = 9, B = 110\u00b0. Find b.",
+          "answer": "b\u00b2 = a\u00b2 + c\u00b2 - 2ac\u00b7cosB = 196 + 81 - 2(14)(9)cos110\u00b0 = 277 - 252(-0.3420) = 277 + 86.18 = 363.18. b = \u221a363.18 \u2248 19.06."
         },
         {
           "problem": "Find the area of a triangle with sides 8, 11, and 15 using Heron's formula.",
-          "answer": "s = (8 + 11 + 15)/2 = 17. A = √(17·9·6·2) = √1836 = √(4·459) = 2√459 = 2·3√51 = 6√51 ≈ 42.85 sq units."
+          "answer": "s = (8 + 11 + 15)/2 = 17. A = \u221a(17\u00b79\u00b76\u00b72) = \u221a1836 = \u221a(4\u00b7459) = 2\u221a459 = 2\u00b73\u221a51 = 6\u221a51 \u2248 42.85 sq units."
         }
       ],
       "skill": "inverse-trig-functions"
     }
   ],
   "answerKeys": {
-    "inv-evaluate": "(a)-π/3 (b)2π/3 (c)-π/4 (d)-π/4.",
+    "inv-evaluate": "(a)-\u03c0/3 (b)2\u03c0/3 (c)-\u03c0/4 (d)-\u03c0/4.",
     "inv-composition": "cos(arctan(3/4))=4/5.",
-    "inv-simplify": "tan(arcsin(x))=x/√(1-x²).",
-    "sd-sin-pi12": "(√6-√2)/4.",
-    "sd-cos-75": "(√6-√2)/4.",
+    "inv-simplify": "tan(arcsin(x))=x/\u221a(1-x\u00b2).",
+    "sd-sin-pi12": "(\u221a6-\u221a2)/4.",
+    "sd-cos-75": "(\u221a6-\u221a2)/4.",
     "sd-sin-sum": "sin(A+B)=33/65.",
-    "da-double": "sin(2θ)=24/25. cos(2θ)=-7/25. tan(2θ)=-24/7.",
-    "da-half-pi8": "cos(π/8)=√(2+√2)/2.",
-    "da-verify": "(1-tan²x)/(1+tan²x)=cos2x. ✓",
+    "da-double": "sin(2\u03b8)=24/25. cos(2\u03b8)=-7/25. tan(2\u03b8)=-24/7.",
+    "da-half-pi8": "cos(\u03c0/8)=\u221a(2+\u221a2)/2.",
+    "da-verify": "(1-tan\u00b2x)/(1+tan\u00b2x)=cos2x. \u2713",
     "wp-inv-comp": "sin(arccos(5/13))=12/13.",
-    "wp-tan-5pi12": "2+√3.",
-    "wp-double-half": "(a) cos(2θ)=527/625. (b) sin(θ/2)=7√2/10.",
-    "los-asa": "b≈18.03, c≈16.92.",
-    "los-ssa": "Two triangles. B≈48.59° or 131.41°.",
-    "loc-sas": "c=√79≈8.888.",
-    "loc-sss": "C=arccos(-0.4)≈113.58°.",
-    "loc-bearing": "d≈15.54km.",
-    "wp-los": "a≈8.74, c≈13.80.",
-    "wp-loc-angle": "C=arccos(-1/4)≈104.48°.",
-    "wp-sas-area": "Area≈52.02.",
-    "heron-basic": "A=20√3≈34.64.",
-    "heron-survey": "Area≈14,266 m².",
+    "wp-tan-5pi12": "2+\u221a3.",
+    "wp-double-half": "(a) cos(2\u03b8)=527/625. (b) sin(\u03b8/2)=7\u221a2/10.",
+    "los-asa": "b\u224818.03, c\u224816.92.",
+    "los-ssa": "Two triangles. B\u224848.59\u00b0 or 131.41\u00b0.",
+    "loc-sas": "c=\u221a79\u22488.888.",
+    "loc-sss": "C=arccos(-0.4)\u2248113.58\u00b0.",
+    "loc-bearing": "d\u224815.54km.",
+    "wp-los": "a\u22488.74, c\u224813.80.",
+    "wp-loc-angle": "C=arccos(-1/4)\u2248104.48\u00b0.",
+    "wp-sas-area": "Area\u224852.02.",
+    "heron-basic": "A=20\u221a3\u224834.64.",
+    "heron-survey": "Area\u224814,266 m\u00b2.",
     "ip-inv": "cos(arcsin(8/17))=15/17.",
-    "ip-sin15": "(√6-√2)/4.",
-    "ip-double": "sin(2θ)=120/169.",
-    "ip-los": "p≈12.59, r≈17.06.",
-    "ip-loc": "b≈19.06.",
-    "ip-heron": "A=6√51≈42.85."
+    "ip-sin15": "(\u221a6-\u221a2)/4.",
+    "ip-double": "sin(2\u03b8)=120/169.",
+    "ip-los": "p\u224812.59, r\u224817.06.",
+    "ip-loc": "b\u224819.06.",
+    "ip-heron": "A=6\u221a51\u224842.85."
   }
 }

@@ -36,9 +36,9 @@
     "Apply IVT to prove existence of solutions and use the Squeeze Theorem for special limits."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Start with intuitive/graphical limits before algebra — build understanding of WHAT a limit is before HOW to compute it",
+    "Start with intuitive/graphical limits before algebra \u2014 build understanding of WHAT a limit is before HOW to compute it",
     "Weekly FRQ-style limit question set for AP exam preparation",
     "Spiral prior: function behavior and rational function skills from Unit 0"
   ],
@@ -49,33 +49,33 @@
       "lessonPhase": "concept-intro",
       "title": "Limits from Graphs & Tables",
       "skill": "limits-graphical-numerical",
-      "content": "A limit describes what value f(x) APPROACHES as x gets close to a particular value. It's NOT about what happens AT that value — it's about what happens NEAR it. This distinction is the foundation of calculus.",
+      "content": "A limit describes what value f(x) APPROACHES as x gets close to a particular value. It's NOT about what happens AT that value \u2014 it's about what happens NEAR it. This distinction is the foundation of calculus.",
       "keyPoints": [
-        "lim(x→a) f(x) = L means f(x) gets arbitrarily close to L as x gets close to a (from both sides)",
+        "lim(x\u2192a) f(x) = L means f(x) gets arbitrarily close to L as x gets close to a (from both sides)",
         "The limit can exist even if f(a) is undefined or different from L",
         "From tables: make x values closer and closer to a; watch what f(x) approaches",
         "From graphs: trace along the curve toward x = a from both sides; if they approach the same y-value, that's the limit",
         "Limit DNE when: left and right limits disagree, function oscillates, or function grows without bound",
-        "One-sided limits: lim(x→a⁻) from the left, lim(x→a⁺) from the right. Two-sided limit exists iff both agree."
+        "One-sided limits: lim(x\u2192a\u207b) from the left, lim(x\u2192a\u207a) from the right. Two-sided limit exists iff both agree."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Limits from Graphs & Tables — Worked Examples",
+      "title": "Limits from Graphs & Tables \u2014 Worked Examples",
       "skill": "limits-graphical-numerical",
       "examples": [
         {
-          "problem": "From the table: x = 1.9, 1.99, 1.999, 2.001, 2.01, 2.1 with f(x) = 3.61, 3.9601, 3.996, 4.004, 4.0401, 4.41. Estimate lim(x→2) f(x). Note: f(2) = 5.",
-          "solution": "From left: f(x) → 4. From right: f(x) → 4. The limit is 4. Note that f(2) = 5 ≠ 4 — the limit and the function value are DIFFERENT. The limit is about approach, not arrival."
+          "problem": "From the table: x = 1.9, 1.99, 1.999, 2.001, 2.01, 2.1 with f(x) = 3.61, 3.9601, 3.996, 4.004, 4.0401, 4.41. Estimate lim(x\u21922) f(x). Note: f(2) = 5.",
+          "solution": "From left: f(x) \u2192 4. From right: f(x) \u2192 4. The limit is 4. Note that f(2) = 5 \u2260 4 \u2014 the limit and the function value are DIFFERENT. The limit is about approach, not arrival."
         },
         {
-          "problem": "A graph shows: f approaches 3 from the left of x=1, f approaches 5 from the right of x=1, and f(1) = 3. Find: (a) lim(x→1⁻) f(x), (b) lim(x→1⁺) f(x), (c) lim(x→1) f(x), (d) f(1).",
-          "solution": "(a) 3 (from left). (b) 5 (from right). (c) DNE — left and right limits disagree (3 ≠ 5). (d) f(1) = 3 (the actual function value, which equals the left-hand limit but the two-sided limit still DNE)."
+          "problem": "A graph shows: f approaches 3 from the left of x=1, f approaches 5 from the right of x=1, and f(1) = 3. Find: (a) lim(x\u21921\u207b) f(x), (b) lim(x\u21921\u207a) f(x), (c) lim(x\u21921) f(x), (d) f(1).",
+          "solution": "(a) 3 (from left). (b) 5 (from right). (c) DNE \u2014 left and right limits disagree (3 \u2260 5). (d) f(1) = 3 (the actual function value, which equals the left-hand limit but the two-sided limit still DNE)."
         },
         {
-          "problem": "From a graph: as x → 2, f(x) grows without bound (goes to +∞ from both sides). What is lim(x→2) f(x)?",
-          "solution": "The limit does not exist (DNE). We can write lim(x→2) f(x) = ∞ to describe the behavior, but technically the limit does not exist because it doesn't approach a finite number. The graph has a vertical asymptote at x = 2."
+          "problem": "From a graph: as x \u2192 2, f(x) grows without bound (goes to +\u221e from both sides). What is lim(x\u21922) f(x)?",
+          "solution": "The limit does not exist (DNE). We can write lim(x\u21922) f(x) = \u221e to describe the behavior, but technically the limit does not exist because it doesn't approach a finite number. The graph has a vertical asymptote at x = 2."
         }
       ]
     },
@@ -86,35 +86,35 @@
       "skill": "limits-algebraic-techniques",
       "content": "When you can't determine a limit from a graph or table, use algebra. The strategy: try direct substitution first. If it gives a real number, you're done. If it gives 0/0, that's a signal to do algebra (factor, rationalize, or simplify) and try again.",
       "keyPoints": [
-        "Direct substitution: if f is continuous at a, then lim(x→a) f(x) = f(a). Try this FIRST.",
+        "Direct substitution: if f is continuous at a, then lim(x\u2192a) f(x) = f(a). Try this FIRST.",
         "0/0 indeterminate form: NOT an answer. It means 'do more algebra.' Factor and cancel, or rationalize.",
         "Factoring: if numerator and denominator share (x-a), cancel it, then substitute.",
-        "Conjugate/rationalizing: multiply by conjugate when radicals are involved. (√a-√b)(√a+√b)=a-b.",
-        "Special trig limits: lim(x→0) sin(x)/x = 1, lim(x→0) (1-cos x)/x = 0. These must be memorized.",
-        "c/0 where c≠0: the limit is ±∞ (or DNE). This indicates a vertical asymptote — use sign analysis."
+        "Conjugate/rationalizing: multiply by conjugate when radicals are involved. (\u221aa-\u221ab)(\u221aa+\u221ab)=a-b.",
+        "Special trig limits: lim(x\u21920) sin(x)/x = 1, lim(x\u21920) (1-cos x)/x = 0. These must be memorized.",
+        "c/0 where c\u22600: the limit is \u00b1\u221e (or DNE). This indicates a vertical asymptote \u2014 use sign analysis."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Algebraic Limit Techniques — Worked Examples",
+      "title": "Algebraic Limit Techniques \u2014 Worked Examples",
       "skill": "limits-algebraic-techniques",
       "examples": [
         {
-          "problem": "Evaluate: lim(x→3) (x² - 9)/(x - 3).",
+          "problem": "Evaluate: lim(x\u21923) (x\u00b2 - 9)/(x - 3).",
           "solution": "Try substitution: (9-9)/(3-3) = 0/0. Indeterminate! Factor: (x-3)(x+3)/(x-3) = x+3. Now substitute: 3+3 = 6. The limit is 6."
         },
         {
-          "problem": "Evaluate: lim(x→4) (√x - 2)/(x - 4).",
-          "solution": "Substitution: (2-2)/(4-4) = 0/0. Rationalize: multiply by (√x+2)/(√x+2). Numerator: (√x-2)(√x+2) = x-4. So (x-4)/((x-4)(√x+2)) = 1/(√x+2). At x=4: 1/(2+2) = 1/4."
+          "problem": "Evaluate: lim(x\u21924) (\u221ax - 2)/(x - 4).",
+          "solution": "Substitution: (2-2)/(4-4) = 0/0. Rationalize: multiply by (\u221ax+2)/(\u221ax+2). Numerator: (\u221ax-2)(\u221ax+2) = x-4. So (x-4)/((x-4)(\u221ax+2)) = 1/(\u221ax+2). At x=4: 1/(2+2) = 1/4."
         },
         {
-          "problem": "Evaluate: lim(x→0) sin(5x)/(3x).",
-          "solution": "This looks like sin(u)/u. Rewrite: sin(5x)/(3x) = (5/3)·sin(5x)/(5x). As x→0, 5x→0, so sin(5x)/(5x)→1. Therefore the limit = 5/3·1 = 5/3."
+          "problem": "Evaluate: lim(x\u21920) sin(5x)/(3x).",
+          "solution": "This looks like sin(u)/u. Rewrite: sin(5x)/(3x) = (5/3)\u00b7sin(5x)/(5x). As x\u21920, 5x\u21920, so sin(5x)/(5x)\u21921. Therefore the limit = 5/3\u00b71 = 5/3."
         },
         {
-          "problem": "Evaluate: lim(x→-1) (x³ + 1)/(x² - 1).",
-          "solution": "Substitution: 0/0. Factor: (x+1)(x²-x+1)/((x+1)(x-1)) = (x²-x+1)/(x-1). At x=-1: (1+1+1)/(-1-1) = 3/(-2) = -3/2."
+          "problem": "Evaluate: lim(x\u2192-1) (x\u00b3 + 1)/(x\u00b2 - 1).",
+          "solution": "Substitution: 0/0. Factor: (x+1)(x\u00b2-x+1)/((x+1)(x-1)) = (x\u00b2-x+1)/(x-1). At x=-1: (1+1+1)/(-1-1) = 3/(-2) = -3/2."
         }
       ]
     },
@@ -122,13 +122,9 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Limits Practice: Graphical & Algebraic",
-      "skills": [
-        "limits-graphical-numerical",
-        "limits-algebraic-techniques"
-      ],
       "problems": [
         {
-          "problem": "Evaluate: lim(x→5) (x² - 3x - 10)/(x² - 25).",
+          "problem": "Evaluate: lim(x\u21925) (x\u00b2 - 3x - 10)/(x\u00b2 - 25).",
           "hints": [
             "Try substitution: 0/0",
             "Factor both: (x-5)(x+2) and (x-5)(x+5)",
@@ -137,30 +133,30 @@
           "answer": "Factor: (x-5)(x+2)/((x-5)(x+5)) = (x+2)/(x+5). At x=5: 7/10."
         },
         {
-          "problem": "Evaluate: lim(x→9) (3 - √x)/(9 - x).",
+          "problem": "Evaluate: lim(x\u21929) (3 - \u221ax)/(9 - x).",
           "hints": [
             "0/0 form. Rationalize or factor the denominator",
-            "9-x = (3-√x)(3+√x)",
-            "Cancel (3-√x)"
+            "9-x = (3-\u221ax)(3+\u221ax)",
+            "Cancel (3-\u221ax)"
           ],
-          "answer": "9-x = (3-√x)(3+√x). So (3-√x)/((3-√x)(3+√x)) = 1/(3+√x). At x=9: 1/6."
+          "answer": "9-x = (3-\u221ax)(3+\u221ax). So (3-\u221ax)/((3-\u221ax)(3+\u221ax)) = 1/(3+\u221ax). At x=9: 1/6."
         },
         {
-          "problem": "Evaluate: lim(x→0) tan(2x)/sin(3x).",
+          "problem": "Evaluate: lim(x\u21920) tan(2x)/sin(3x).",
           "hints": [
             "tan(2x) = sin(2x)/cos(2x)",
-            "Rewrite as [sin(2x)/(2x)]·[3x/sin(3x)]·(2x)/(3x·cos(2x))",
-            "Use sin(u)/u → 1"
+            "Rewrite as [sin(2x)/(2x)]\u00b7[3x/sin(3x)]\u00b7(2x)/(3x\u00b7cos(2x))",
+            "Use sin(u)/u \u2192 1"
           ],
-          "answer": "Rewrite: [sin(2x)/cos(2x)]/sin(3x) = sin(2x)/(cos(2x)·sin(3x)). Multiply by (2x·3x)/(2x·3x): [sin(2x)/(2x)]·[3x/sin(3x)]·2/(3cos(2x)). As x→0: 1·1·2/(3·1) = 2/3."
+          "answer": "Rewrite: [sin(2x)/cos(2x)]/sin(3x) = sin(2x)/(cos(2x)\u00b7sin(3x)). Multiply by (2x\u00b73x)/(2x\u00b73x): [sin(2x)/(2x)]\u00b7[3x/sin(3x)]\u00b72/(3cos(2x)). As x\u21920: 1\u00b71\u00b72/(3\u00b71) = 2/3."
         },
         {
-          "problem": "Given the table: t = 2.9, 2.99, 2.999, 3.001, 3.01, 3.1 and g(t) = 4.71, 4.9701, 4.997, 5.003, 5.0301, 5.31. Estimate lim(t→3) g(t). If g(3) = 7, is g continuous at t=3?",
+          "problem": "Given the table: t = 2.9, 2.99, 2.999, 3.001, 3.01, 3.1 and g(t) = 4.71, 4.9701, 4.997, 5.003, 5.0301, 5.31. Estimate lim(t\u21923) g(t). If g(3) = 7, is g continuous at t=3?",
           "hints": [
             "Watch what g(t) approaches from both sides",
             "Continuity requires limit = f(a)"
           ],
-          "answer": "From both sides, g(t) → 5. So lim(t→3) g(t) = 5. Since g(3) = 7 ≠ 5, g is NOT continuous at t=3 (removable discontinuity)."
+          "answer": "From both sides, g(t) \u2192 5. So lim(t\u21923) g(t) = 5. Since g(3) = 7 \u2260 5, g is NOT continuous at t=3 (removable discontinuity)."
         }
       ],
       "skill": "limits-algebraic-techniques"
@@ -172,31 +168,31 @@
       "skill": "one-sided-infinite-limits",
       "content": "One-sided limits examine behavior from only the left or right. Infinite limits describe what happens when a function grows without bound near a point, producing vertical asymptotes.",
       "keyPoints": [
-        "lim(x→a⁻) f(x): limit from the left (x approaches a from values less than a)",
-        "lim(x→a⁺) f(x): limit from the right (x approaches a from values greater than a)",
-        "Two-sided limit exists iff lim(x→a⁻) = lim(x→a⁺)",
-        "Infinite limits: lim(x→a) f(x) = ∞ or -∞. The function grows without bound. This means a VA at x=a.",
-        "To determine +∞ or -∞: use sign analysis. Check the sign of f(x) just left and just right of a.",
+        "lim(x\u2192a\u207b) f(x): limit from the left (x approaches a from values less than a)",
+        "lim(x\u2192a\u207a) f(x): limit from the right (x approaches a from values greater than a)",
+        "Two-sided limit exists iff lim(x\u2192a\u207b) = lim(x\u2192a\u207a)",
+        "Infinite limits: lim(x\u2192a) f(x) = \u221e or -\u221e. The function grows without bound. This means a VA at x=a.",
+        "To determine +\u221e or -\u221e: use sign analysis. Check the sign of f(x) just left and just right of a.",
         "Piecewise functions: use the appropriate piece for each one-sided limit."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "One-Sided & Infinite Limits — Worked Examples",
+      "title": "One-Sided & Infinite Limits \u2014 Worked Examples",
       "skill": "one-sided-infinite-limits",
       "examples": [
         {
-          "problem": "Evaluate: lim(x→0⁺) 1/x and lim(x→0⁻) 1/x.",
-          "solution": "From the right (x > 0): 1/x > 0 and grows without bound. lim(x→0⁺) 1/x = +∞. From the left (x < 0): 1/x < 0 and magnitude grows. lim(x→0⁻) 1/x = -∞. Since +∞ ≠ -∞, the two-sided limit DNE."
+          "problem": "Evaluate: lim(x\u21920\u207a) 1/x and lim(x\u21920\u207b) 1/x.",
+          "solution": "From the right (x > 0): 1/x > 0 and grows without bound. lim(x\u21920\u207a) 1/x = +\u221e. From the left (x < 0): 1/x < 0 and magnitude grows. lim(x\u21920\u207b) 1/x = -\u221e. Since +\u221e \u2260 -\u221e, the two-sided limit DNE."
         },
         {
-          "problem": "For f(x) = (x + 1)/(x - 2)², find lim(x→2) f(x).",
-          "solution": "At x=2: numerator = 3 (positive, nonzero). Denominator = 0⁺ (squared, always positive). So 3/0⁺ = +∞. From BOTH sides (x-2)² > 0, so lim(x→2⁻) = lim(x→2⁺) = +∞. We write lim(x→2) f(x) = +∞. VA at x=2."
+          "problem": "For f(x) = (x + 1)/(x - 2)\u00b2, find lim(x\u21922) f(x).",
+          "solution": "At x=2: numerator = 3 (positive, nonzero). Denominator = 0\u207a (squared, always positive). So 3/0\u207a = +\u221e. From BOTH sides (x-2)\u00b2 > 0, so lim(x\u21922\u207b) = lim(x\u21922\u207a) = +\u221e. We write lim(x\u21922) f(x) = +\u221e. VA at x=2."
         },
         {
-          "problem": "For f(x) = {3x - 1, x < 2; x² + 1, x > 2; 4, x = 2}, find all one-sided limits at x=2 and determine if the two-sided limit exists.",
-          "solution": "lim(x→2⁻): use 3x-1 → 3(2)-1 = 5. lim(x→2⁺): use x²+1 → 4+1 = 5. Both equal 5, so lim(x→2) f(x) = 5. Note: f(2) = 4 ≠ 5, so the limit exists but f is discontinuous at x=2."
+          "problem": "For f(x) = {3x - 1, x < 2; x\u00b2 + 1, x > 2; 4, x = 2}, find all one-sided limits at x=2 and determine if the two-sided limit exists.",
+          "solution": "lim(x\u21922\u207b): use 3x-1 \u2192 3(2)-1 = 5. lim(x\u21922\u207a): use x\u00b2+1 \u2192 4+1 = 5. Both equal 5, so lim(x\u21922) f(x) = 5. Note: f(2) = 4 \u2260 5, so the limit exists but f is discontinuous at x=2."
         }
       ]
     },
@@ -205,34 +201,34 @@
       "lessonPhase": "concept-intro",
       "title": "Limits at Infinity & Horizontal Asymptotes",
       "skill": "limits-at-infinity-asymptotes",
-      "content": "Limits at infinity describe end behavior — what happens to f(x) as x → ∞ or x → -∞. For rational functions, this is determined by comparing degrees of numerator and denominator.",
+      "content": "Limits at infinity describe end behavior \u2014 what happens to f(x) as x \u2192 \u221e or x \u2192 -\u221e. For rational functions, this is determined by comparing degrees of numerator and denominator.",
       "keyPoints": [
         "Same degree (n = m): lim = ratio of leading coefficients. This is the most commonly tested case.",
-        "Numerator degree higher (n > m): lim = ±∞ (no horizontal asymptote).",
+        "Numerator degree higher (n > m): lim = \u00b1\u221e (no horizontal asymptote).",
         "Denominator degree higher (n < m): lim = 0.",
         "Technique: divide every term by the highest power of x in the denominator.",
-        "Horizontal asymptote: y = L if lim(x→∞) f(x) = L or lim(x→-∞) f(x) = L.",
-        "Growth hierarchy: ln(x) grows slower than any xⁿ (n>0), which grows slower than any aˣ (a>1).",
+        "Horizontal asymptote: y = L if lim(x\u2192\u221e) f(x) = L or lim(x\u2192-\u221e) f(x) = L.",
+        "Growth hierarchy: ln(x) grows slower than any x\u207f (n>0), which grows slower than any a\u02e3 (a>1).",
         "For functions with radicals: multiply by conjugate or extract x from under the radical."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Limits at Infinity — Worked Examples",
+      "title": "Limits at Infinity \u2014 Worked Examples",
       "skill": "limits-at-infinity-asymptotes",
       "examples": [
         {
-          "problem": "Evaluate: lim(x→∞) (3x² - 5x + 1)/(7x² + 2x - 4).",
-          "solution": "Same degree (2). Ratio of leading coefficients: 3/7. That's it. (You can verify by dividing every term by x²: (3 - 5/x + 1/x²)/(7 + 2/x - 4/x²) → 3/7.)"
+          "problem": "Evaluate: lim(x\u2192\u221e) (3x\u00b2 - 5x + 1)/(7x\u00b2 + 2x - 4).",
+          "solution": "Same degree (2). Ratio of leading coefficients: 3/7. That's it. (You can verify by dividing every term by x\u00b2: (3 - 5/x + 1/x\u00b2)/(7 + 2/x - 4/x\u00b2) \u2192 3/7.)"
         },
         {
-          "problem": "Evaluate: lim(x→∞) (2x + 1)/(√(4x² + 3)).",
-          "solution": "Divide by x (positive since x→+∞): (2 + 1/x)/(√(4 + 3/x²)). As x→∞: (2+0)/√(4+0) = 2/2 = 1. HA: y=1."
+          "problem": "Evaluate: lim(x\u2192\u221e) (2x + 1)/(\u221a(4x\u00b2 + 3)).",
+          "solution": "Divide by x (positive since x\u2192+\u221e): (2 + 1/x)/(\u221a(4 + 3/x\u00b2)). As x\u2192\u221e: (2+0)/\u221a(4+0) = 2/2 = 1. HA: y=1."
         },
         {
-          "problem": "Evaluate: lim(x→-∞) (2x + 1)/(√(4x² + 3)).",
-          "solution": "For x→-∞, x is negative. √(x²) = |x| = -x. So divide: (2 + 1/x)/(√(4+3/x²)·(-x/x)) = (2+1/x)/(-√(4+3/x²)). As x→-∞: 2/(-2) = -1. HA from the left: y = -1."
+          "problem": "Evaluate: lim(x\u2192-\u221e) (2x + 1)/(\u221a(4x\u00b2 + 3)).",
+          "solution": "For x\u2192-\u221e, x is negative. \u221a(x\u00b2) = |x| = -x. So divide: (2 + 1/x)/(\u221a(4+3/x\u00b2)\u00b7(-x/x)) = (2+1/x)/(-\u221a(4+3/x\u00b2)). As x\u2192-\u221e: 2/(-2) = -1. HA from the left: y = -1."
         }
       ]
     },
@@ -240,31 +236,27 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "One-Sided, Infinite & Limits at Infinity Practice",
-      "skills": [
-        "one-sided-infinite-limits",
-        "limits-at-infinity-asymptotes"
-      ],
       "problems": [
         {
-          "problem": "Evaluate: lim(x→3⁺) (x - 5)/(x - 3) and lim(x→3⁻) (x - 5)/(x - 3).",
+          "problem": "Evaluate: lim(x\u21923\u207a) (x - 5)/(x - 3) and lim(x\u21923\u207b) (x - 5)/(x - 3).",
           "hints": [
-            "At x=3: numerator = -2. Denominator → 0.",
+            "At x=3: numerator = -2. Denominator \u2192 0.",
             "From right: x-3 > 0 (small positive). From left: x-3 < 0 (small negative).",
-            "-2/(0⁺) vs -2/(0⁻)"
+            "-2/(0\u207a) vs -2/(0\u207b)"
           ],
-          "answer": "lim(x→3⁺): -2/(0⁺) = -∞. lim(x→3⁻): -2/(0⁻) = +∞."
+          "answer": "lim(x\u21923\u207a): -2/(0\u207a) = -\u221e. lim(x\u21923\u207b): -2/(0\u207b) = +\u221e."
         },
         {
-          "problem": "Find all horizontal and vertical asymptotes of f(x) = (3x - 1)/(x² - 4).",
+          "problem": "Find all horizontal and vertical asymptotes of f(x) = (3x - 1)/(x\u00b2 - 4).",
           "hints": [
             "Factor denominator: (x-2)(x+2)",
             "HA: compare degrees (1 < 2)",
-            "VA: where denominator = 0 and numerator ≠ 0"
+            "VA: where denominator = 0 and numerator \u2260 0"
           ],
           "answer": "VA: x=2 and x=-2 (denominator zeros, numerator nonzero). HA: y=0 (degree numerator < degree denominator)."
         },
         {
-          "problem": "Evaluate: lim(x→∞) (5x³ - 2x)/(3x³ + x² - 7).",
+          "problem": "Evaluate: lim(x\u2192\u221e) (5x\u00b3 - 2x)/(3x\u00b3 + x\u00b2 - 7).",
           "hints": [
             "Same degree (3)",
             "Ratio of leading coefficients"
@@ -272,13 +264,13 @@
           "answer": "5/3."
         },
         {
-          "problem": "Evaluate: lim(x→∞) (√(9x² + 2) - 3x).",
+          "problem": "Evaluate: lim(x\u2192\u221e) (\u221a(9x\u00b2 + 2) - 3x).",
           "hints": [
-            "Multiply by conjugate (√(9x²+2)+3x)/(√(9x²+2)+3x)",
-            "Numerator: 9x²+2-9x² = 2",
-            "Denominator → 6x as x→∞"
+            "Multiply by conjugate (\u221a(9x\u00b2+2)+3x)/(\u221a(9x\u00b2+2)+3x)",
+            "Numerator: 9x\u00b2+2-9x\u00b2 = 2",
+            "Denominator \u2192 6x as x\u2192\u221e"
           ],
-          "answer": "Conjugate: 2/(√(9x²+2)+3x). As x→∞: √(9x²+2)≈3x, so denominator→6x→∞. Limit = 0."
+          "answer": "Conjugate: 2/(\u221a(9x\u00b2+2)+3x). As x\u2192\u221e: \u221a(9x\u00b2+2)\u22483x, so denominator\u21926x\u2192\u221e. Limit = 0."
         }
       ],
       "skill": "limits-at-infinity-asymptotes"
@@ -290,10 +282,10 @@
       "skill": "continuity-types",
       "content": "A function is continuous at a point if you can draw through it without lifting your pencil. Formally, three conditions must hold. Knowing the types of discontinuities helps classify what goes wrong.",
       "keyPoints": [
-        "Three conditions for continuity at x = a: (1) f(a) is defined, (2) lim(x→a) f(x) exists, (3) lim(x→a) f(x) = f(a)",
+        "Three conditions for continuity at x = a: (1) f(a) is defined, (2) lim(x\u2192a) f(x) exists, (3) lim(x\u2192a) f(x) = f(a)",
         "Removable discontinuity: limit exists but f(a) is wrong or undefined. Can be 'fixed' by redefining f(a).",
         "Jump discontinuity: left and right limits exist but aren't equal. Cannot be fixed.",
-        "Infinite discontinuity: limit is ±∞ (vertical asymptote). Cannot be fixed.",
+        "Infinite discontinuity: limit is \u00b1\u221e (vertical asymptote). Cannot be fixed.",
         "Continuous on [a, b]: continuous at every point in (a, b), plus continuous from the right at a and from the left at b.",
         "Standard continuous functions: polynomials (everywhere), rational (where defined), trig/exp/log (on their domains)."
       ]
@@ -301,20 +293,20 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Continuity — Worked Examples",
+      "title": "Continuity \u2014 Worked Examples",
       "skill": "continuity-types",
       "examples": [
         {
-          "problem": "Is f(x) = {x² - 1, x < 2; 2x + c, x ≥ 2} continuous at x = 2 for c = 1? If not, find the value of c that makes it continuous.",
-          "solution": "Check: lim(x→2⁻) = 2²-1 = 3. f(2) = 2(2)+1 = 5. lim(x→2⁺) = 2(2)+1 = 5. Left limit (3) ≠ right limit (5): jump discontinuity. For continuity: 2(2)+c = 3 → c = -1."
+          "problem": "Is f(x) = {x\u00b2 - 1, x < 2; 2x + c, x \u2265 2} continuous at x = 2 for c = 1? If not, find the value of c that makes it continuous.",
+          "solution": "Check: lim(x\u21922\u207b) = 2\u00b2-1 = 3. f(2) = 2(2)+1 = 5. lim(x\u21922\u207a) = 2(2)+1 = 5. Left limit (3) \u2260 right limit (5): jump discontinuity. For continuity: 2(2)+c = 3 \u2192 c = -1."
         },
         {
-          "problem": "Classify the discontinuity of f(x) = (x² - x - 6)/(x - 3) at x = 3.",
-          "solution": "f(3) is undefined (0/0). lim(x→3): factor (x-3)(x+2)/(x-3) = x+2 → 5. Limit exists (5) but f(3) is undefined. Removable discontinuity. Fix: define f(3) = 5."
+          "problem": "Classify the discontinuity of f(x) = (x\u00b2 - x - 6)/(x - 3) at x = 3.",
+          "solution": "f(3) is undefined (0/0). lim(x\u21923): factor (x-3)(x+2)/(x-3) = x+2 \u2192 5. Limit exists (5) but f(3) is undefined. Removable discontinuity. Fix: define f(3) = 5."
         },
         {
           "problem": "Where is f(x) = ln(x - 2) continuous?",
-          "solution": "ln requires positive argument: x - 2 > 0 → x > 2. f is continuous on (2, ∞). Not defined (hence not continuous) for x ≤ 2."
+          "solution": "ln requires positive argument: x - 2 > 0 \u2192 x > 2. f is continuous on (2, \u221e). Not defined (hence not continuous) for x \u2264 2."
         }
       ]
     },
@@ -323,24 +315,24 @@
       "lessonPhase": "concept-intro",
       "title": "Intermediate Value Theorem & Squeeze Theorem",
       "skill": "ivt-squeeze-theorem",
-      "content": "IVT says a continuous function can't skip values. Squeeze Theorem lets us find limits by trapping a function between two others. Both are tested on the AP exam — especially IVT on the FRQ.",
+      "content": "IVT says a continuous function can't skip values. Squeeze Theorem lets us find limits by trapping a function between two others. Both are tested on the AP exam \u2014 especially IVT on the FRQ.",
       "keyPoints": [
         "IVT: If f is continuous on [a, b] and k is between f(a) and f(b), then f(c) = k for some c in (a, b).",
         "IVT applications: proving a zero exists (if f(a) and f(b) have opposite signs and f is continuous).",
         "IVT on FRQ: ALWAYS state the hypothesis ('Since f is continuous on [a,b]...') and the conclusion.",
-        "Squeeze Theorem: if g(x) ≤ f(x) ≤ h(x) near a, and lim g(x) = lim h(x) = L, then lim f(x) = L.",
-        "Main application: lim(x→0) sin(x)/x = 1 (proved via squeeze with cos(x) ≤ sin(x)/x ≤ 1).",
-        "Related: lim(x→0) (1 - cos x)/x = 0. Derivable from sin(x)/x = 1."
+        "Squeeze Theorem: if g(x) \u2264 f(x) \u2264 h(x) near a, and lim g(x) = lim h(x) = L, then lim f(x) = L.",
+        "Main application: lim(x\u21920) sin(x)/x = 1 (proved via squeeze with cos(x) \u2264 sin(x)/x \u2264 1).",
+        "Related: lim(x\u21920) (1 - cos x)/x = 0. Derivable from sin(x)/x = 1."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "IVT & Squeeze Theorem — Worked Examples",
+      "title": "IVT & Squeeze Theorem \u2014 Worked Examples",
       "skill": "ivt-squeeze-theorem",
       "examples": [
         {
-          "problem": "Show that f(x) = x³ + x - 1 has a zero in [0, 1].",
+          "problem": "Show that f(x) = x\u00b3 + x - 1 has a zero in [0, 1].",
           "solution": "f(0) = 0+0-1 = -1 < 0. f(1) = 1+1-1 = 1 > 0. f is a polynomial, hence continuous on [0,1]. Since f(0) < 0 < f(1), by IVT there exists c in (0,1) such that f(c) = 0."
         },
         {
@@ -348,8 +340,8 @@
           "solution": "Yes. Since g is continuous on [2,8] and 7 is between g(8)=3 and g(2)=10, by IVT there exists c in (2,8) such that g(c) = 7."
         },
         {
-          "problem": "Given -x² ≤ x²·sin(1/x) ≤ x² for all x ≠ 0, find lim(x→0) x²·sin(1/x).",
-          "solution": "Since -1 ≤ sin(1/x) ≤ 1, multiply by x² (positive): -x² ≤ x²sin(1/x) ≤ x². lim(x→0) (-x²) = 0 and lim(x→0) x² = 0. By Squeeze Theorem: lim(x→0) x²sin(1/x) = 0."
+          "problem": "Given -x\u00b2 \u2264 x\u00b2\u00b7sin(1/x) \u2264 x\u00b2 for all x \u2260 0, find lim(x\u21920) x\u00b2\u00b7sin(1/x).",
+          "solution": "Since -1 \u2264 sin(1/x) \u2264 1, multiply by x\u00b2 (positive): -x\u00b2 \u2264 x\u00b2sin(1/x) \u2264 x\u00b2. lim(x\u21920) (-x\u00b2) = 0 and lim(x\u21920) x\u00b2 = 0. By Squeeze Theorem: lim(x\u21920) x\u00b2sin(1/x) = 0."
         }
       ]
     },
@@ -357,36 +349,32 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Continuity, IVT & Squeeze Practice",
-      "skills": [
-        "continuity-types",
-        "ivt-squeeze-theorem"
-      ],
       "problems": [
         {
-          "problem": "For f(x) = {(x²-4)/(x-2), x ≠ 2; k, x = 2}, find k that makes f continuous at x = 2.",
+          "problem": "For f(x) = {(x\u00b2-4)/(x-2), x \u2260 2; k, x = 2}, find k that makes f continuous at x = 2.",
           "hints": [
-            "Find lim(x→2) by factoring",
+            "Find lim(x\u21922) by factoring",
             "Set f(2) = k equal to the limit"
           ],
-          "answer": "lim(x→2) (x-2)(x+2)/(x-2) = x+2 → 4. Set k = 4. Then f(2) = lim = 4, so f is continuous."
+          "answer": "lim(x\u21922) (x-2)(x+2)/(x-2) = x+2 \u2192 4. Set k = 4. Then f(2) = lim = 4, so f is continuous."
         },
         {
-          "problem": "Show that eˣ = 3 - x has at least one solution.",
+          "problem": "Show that e\u02e3 = 3 - x has at least one solution.",
           "hints": [
-            "Let h(x) = eˣ - 3 + x",
+            "Let h(x) = e\u02e3 - 3 + x",
             "h is continuous (sum of continuous functions)",
             "Find h(0) and h(1) and check for sign change"
           ],
-          "answer": "h(x) = eˣ + x - 3. h(0) = 1+0-3 = -2 < 0. h(1) = e+1-3 ≈ 0.718 > 0. Since h is continuous on [0,1] and h(0)<0<h(1), by IVT there exists c in (0,1) where h(c) = 0, i.e., eᶜ = 3-c."
+          "answer": "h(x) = e\u02e3 + x - 3. h(0) = 1+0-3 = -2 < 0. h(1) = e+1-3 \u2248 0.718 > 0. Since h is continuous on [0,1] and h(0)<0<h(1), by IVT there exists c in (0,1) where h(c) = 0, i.e., e\u1d9c = 3-c."
         },
         {
-          "problem": "Evaluate: lim(x→0) (x·cos(1/x)).",
+          "problem": "Evaluate: lim(x\u21920) (x\u00b7cos(1/x)).",
           "hints": [
-            "-1 ≤ cos(1/x) ≤ 1",
-            "Multiply by |x|: -|x| ≤ x·cos(1/x) ≤ |x|",
+            "-1 \u2264 cos(1/x) \u2264 1",
+            "Multiply by |x|: -|x| \u2264 x\u00b7cos(1/x) \u2264 |x|",
             "Apply Squeeze Theorem"
           ],
-          "answer": "Since -|x| ≤ x·cos(1/x) ≤ |x| and lim(x→0)(-|x|) = lim(x→0)|x| = 0, by Squeeze: lim = 0."
+          "answer": "Since -|x| \u2264 x\u00b7cos(1/x) \u2264 |x| and lim(x\u21920)(-|x|) = lim(x\u21920)|x| = 0, by Squeeze: lim = 0."
         }
       ],
       "skill": "ivt-squeeze-theorem"
@@ -395,47 +383,39 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Limits & Continuity Mastery Practice",
-      "skills": [
-        "limits-graphical-numerical",
-        "limits-algebraic-techniques",
-        "one-sided-infinite-limits",
-        "limits-at-infinity-asymptotes",
-        "continuity-types",
-        "ivt-squeeze-theorem"
-      ],
       "problems": [
         {
-          "problem": "Evaluate: lim(x→-2) (x² + 5x + 6)/(x² + 3x + 2).",
+          "problem": "Evaluate: lim(x\u2192-2) (x\u00b2 + 5x + 6)/(x\u00b2 + 3x + 2).",
           "answer": "0/0. Factor: (x+2)(x+3)/((x+2)(x+1)) = (x+3)/(x+1). At x=-2: (-2+3)/(-2+1) = 1/(-1) = -1."
         },
         {
-          "problem": "Evaluate: lim(x→0) (1 - cos(2x))/(x·sin(x)).",
-          "answer": "Use identities: 1-cos(2x) = 2sin²(x). So 2sin²(x)/(x·sin(x)) = 2sin(x)/x. As x→0: 2·1 = 2."
+          "problem": "Evaluate: lim(x\u21920) (1 - cos(2x))/(x\u00b7sin(x)).",
+          "answer": "Use identities: 1-cos(2x) = 2sin\u00b2(x). So 2sin\u00b2(x)/(x\u00b7sin(x)) = 2sin(x)/x. As x\u21920: 2\u00b71 = 2."
         },
         {
-          "problem": "Find all asymptotes of f(x) = (x² + 1)/(x² - 4x + 3) and evaluate lim(x→1⁺) f(x).",
-          "answer": "Factor denominator: (x-1)(x-3). VA: x=1, x=3. HA: y=1 (same degree). At x=1: numerator=2>0. lim(x→1⁺): 2/((0⁺)(-2)) = 2/(0⁻) = -∞."
+          "problem": "Find all asymptotes of f(x) = (x\u00b2 + 1)/(x\u00b2 - 4x + 3) and evaluate lim(x\u21921\u207a) f(x).",
+          "answer": "Factor denominator: (x-1)(x-3). VA: x=1, x=3. HA: y=1 (same degree). At x=1: numerator=2>0. lim(x\u21921\u207a): 2/((0\u207a)(-2)) = 2/(0\u207b) = -\u221e."
         },
         {
-          "problem": "Evaluate: lim(x→∞) (x + sin x)/x.",
-          "answer": "= 1 + sin(x)/x. Since -1/x ≤ sin(x)/x ≤ 1/x and both → 0, by Squeeze: sin(x)/x → 0. Limit = 1."
+          "problem": "Evaluate: lim(x\u2192\u221e) (x + sin x)/x.",
+          "answer": "= 1 + sin(x)/x. Since -1/x \u2264 sin(x)/x \u2264 1/x and both \u2192 0, by Squeeze: sin(x)/x \u2192 0. Limit = 1."
         },
         {
-          "problem": "For f(x) = {ax + b, x < 1; x², 1 ≤ x ≤ 3; bx + a, x > 3}, find a and b so that f is continuous everywhere.",
-          "answer": "At x=1: lim left = a+b, f(1)=1. So a+b=1. At x=3: f(3)=9, lim right = 3b+a. So 3b+a=9. System: a+b=1, a+3b=9. Subtract: 2b=8 → b=4, a=-3."
+          "problem": "For f(x) = {ax + b, x < 1; x\u00b2, 1 \u2264 x \u2264 3; bx + a, x > 3}, find a and b so that f is continuous everywhere.",
+          "answer": "At x=1: lim left = a+b, f(1)=1. So a+b=1. At x=3: f(3)=9, lim right = 3b+a. So 3b+a=9. System: a+b=1, a+3b=9. Subtract: 2b=8 \u2192 b=4, a=-3."
         },
         {
-          "problem": "The temperature T(t) is continuous on [0, 10] with T(0)=45°F and T(10)=72°F. A student claims there must be a time when T(t)=60°F. Is this claim justified? Explain using a theorem.",
-          "answer": "Yes. Since T is continuous on [0,10] and 60 is between T(0)=45 and T(10)=72, by IVT there exists some c in (0,10) where T(c)=60°F."
+          "problem": "The temperature T(t) is continuous on [0, 10] with T(0)=45\u00b0F and T(10)=72\u00b0F. A student claims there must be a time when T(t)=60\u00b0F. Is this claim justified? Explain using a theorem.",
+          "answer": "Yes. Since T is continuous on [0,10] and 60 is between T(0)=45 and T(10)=72, by IVT there exists some c in (0,10) where T(c)=60\u00b0F."
         }
       ],
       "skill": "limits-graphical-numerical"
     }
   ],
   "answerKeys": {
-    "tables-limit": "lim = 4. f(2)=5 ≠ 4.",
+    "tables-limit": "lim = 4. f(2)=5 \u2260 4.",
     "graph-onesided": "(a)3 (b)5 (c)DNE (d)3.",
-    "graph-infinite": "lim = +∞ (DNE). VA at x=2.",
+    "graph-infinite": "lim = +\u221e (DNE). VA at x=2.",
     "alg-factor": "6.",
     "alg-conjugate": "1/4.",
     "alg-trig": "5/3.",
@@ -443,28 +423,28 @@
     "wp-alg-factor": "7/10.",
     "wp-alg-radical": "1/6.",
     "wp-alg-trigratio": "2/3.",
-    "wp-table-continuity": "lim=5. g(3)=7≠5. Not continuous.",
-    "onesided-1/x": "+∞ and -∞. DNE.",
-    "onesided-squared": "+∞ from both sides.",
-    "onesided-piecewise": "Both limits=5. lim=5. f(2)=4≠5.",
+    "wp-table-continuity": "lim=5. g(3)=7\u22605. Not continuous.",
+    "onesided-1/x": "+\u221e and -\u221e. DNE.",
+    "onesided-squared": "+\u221e from both sides.",
+    "onesided-piecewise": "Both limits=5. lim=5. f(2)=4\u22605.",
     "atinfinity-ratio": "3/7.",
-    "atinfinity-radical": "1 (x→+∞), -1 (x→-∞).",
-    "wp-sign-analysis": "lim(x→3⁺)=-∞. lim(x→3⁻)=+∞.",
+    "atinfinity-radical": "1 (x\u2192+\u221e), -1 (x\u2192-\u221e).",
+    "wp-sign-analysis": "lim(x\u21923\u207a)=-\u221e. lim(x\u21923\u207b)=+\u221e.",
     "wp-all-asymptotes": "VA: x=2,x=-2. HA: y=0.",
     "wp-same-degree": "5/3.",
     "wp-conjugate-infinity": "0.",
     "cont-piecewise-c": "c=-1 for continuity.",
     "cont-removable": "Removable at x=3. Fix f(3)=5.",
-    "cont-domain": "Continuous on (2,∞).",
+    "cont-domain": "Continuous on (2,\u221e).",
     "ivt-zero": "f(0)=-1<0, f(1)=1>0. By IVT, zero in (0,1).",
     "ivt-value": "Yes, by IVT. 7 between 3 and 10.",
     "squeeze-sin1x": "0.",
     "wp-cont-k": "k=4.",
-    "wp-ivt-exp": "h(0)=-2<0, h(1)≈0.718>0. IVT.",
+    "wp-ivt-exp": "h(0)=-2<0, h(1)\u22480.718>0. IVT.",
     "wp-squeeze-cos": "0.",
     "ip-factor": "-1.",
     "ip-trig-identity": "2.",
-    "ip-asymptotes-onesided": "VA x=1,3. HA y=1. lim(x→1⁺)=-∞.",
+    "ip-asymptotes-onesided": "VA x=1,3. HA y=1. lim(x\u21921\u207a)=-\u221e.",
     "ip-squeeze-sinx": "1.",
     "ip-piecewise-ab": "a=-3, b=4.",
     "ip-ivt-context": "Yes, by IVT. T continuous, 60 between 45 and 72."

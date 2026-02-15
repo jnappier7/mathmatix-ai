@@ -44,33 +44,33 @@
       "lessonPhase": "concept-intro",
       "title": "Vector Representation: Component Form, Magnitude, Direction",
       "skill": "vector-representation",
-      "content": "A vector has both magnitude and direction. It can be represented as a directed line segment or in component form ⟨a, b⟩.",
+      "content": "A vector has both magnitude and direction. It can be represented as a directed line segment or in component form \u27e8a, b\u27e9.",
       "keyPoints": [
-        "Component form: v = ⟨a, b⟩ = ⟨x₂-x₁, y₂-y₁⟩ from initial to terminal point.",
-        "Magnitude: ||v|| = √(a² + b²).",
-        "Direction angle θ: tan θ = b/a (adjust for quadrant).",
-        "Unit vector: v̂ = v/||v|| = ⟨a/||v||, b/||v||⟩.",
-        "Standard unit vectors: i = ⟨1, 0⟩, j = ⟨0, 1⟩. So v = ai + bj.",
-        "Zero vector ⟨0, 0⟩ has magnitude 0 and no defined direction."
+        "Component form: v = \u27e8a, b\u27e9 = \u27e8x\u2082-x\u2081, y\u2082-y\u2081\u27e9 from initial to terminal point.",
+        "Magnitude: ||v|| = \u221a(a\u00b2 + b\u00b2).",
+        "Direction angle \u03b8: tan \u03b8 = b/a (adjust for quadrant).",
+        "Unit vector: v\u0302 = v/||v|| = \u27e8a/||v||, b/||v||\u27e9.",
+        "Standard unit vectors: i = \u27e81, 0\u27e9, j = \u27e80, 1\u27e9. So v = ai + bj.",
+        "Zero vector \u27e80, 0\u27e9 has magnitude 0 and no defined direction."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Vector Representation — Worked Examples",
+      "title": "Vector Representation \u2014 Worked Examples",
       "skill": "vector-representation",
       "examples": [
         {
           "problem": "Find the component form, magnitude, and direction angle of the vector from P(2, -1) to Q(-3, 4).",
-          "solution": "v = ⟨-3-2, 4-(-1)⟩ = ⟨-5, 5⟩. Magnitude: ||v|| = √(25+25) = √50 = 5√2. Direction angle: tan θ = 5/(-5) = -1. Since v is in Q2: θ = 180° - 45° = 135°."
+          "solution": "v = \u27e8-3-2, 4-(-1)\u27e9 = \u27e8-5, 5\u27e9. Magnitude: ||v|| = \u221a(25+25) = \u221a50 = 5\u221a2. Direction angle: tan \u03b8 = 5/(-5) = -1. Since v is in Q2: \u03b8 = 180\u00b0 - 45\u00b0 = 135\u00b0."
         },
         {
-          "problem": "Find the unit vector in the direction of w = ⟨3, -4⟩.",
-          "solution": "||w|| = √(9+16) = 5. ŵ = ⟨3/5, -4/5⟩. Verify: ||ŵ|| = √(9/25+16/25) = √(25/25) = 1 ✓."
+          "problem": "Find the unit vector in the direction of w = \u27e83, -4\u27e9.",
+          "solution": "||w|| = \u221a(9+16) = 5. \u0175 = \u27e83/5, -4/5\u27e9. Verify: ||\u0175|| = \u221a(9/25+16/25) = \u221a(25/25) = 1 \u2713."
         },
         {
-          "problem": "Write the vector with magnitude 8 and direction angle 210° in component form.",
-          "solution": "v = 8⟨cos 210°, sin 210°⟩ = 8⟨-√3/2, -1/2⟩ = ⟨-4√3, -4⟩."
+          "problem": "Write the vector with magnitude 8 and direction angle 210\u00b0 in component form.",
+          "solution": "v = 8\u27e8cos 210\u00b0, sin 210\u00b0\u27e9 = 8\u27e8-\u221a3/2, -1/2\u27e9 = \u27e8-4\u221a3, -4\u27e9."
         }
       ]
     },
@@ -81,31 +81,31 @@
       "skill": "vector-operations",
       "content": "Vectors can be added, subtracted, and scaled. These operations follow the parallelogram rule geometrically and component-wise algebraically.",
       "keyPoints": [
-        "Addition: ⟨a₁, b₁⟩ + ⟨a₂, b₂⟩ = ⟨a₁+a₂, b₁+b₂⟩.",
-        "Subtraction: ⟨a₁, b₁⟩ - ⟨a₂, b₂⟩ = ⟨a₁-a₂, b₁-b₂⟩.",
-        "Scalar multiplication: k⟨a, b⟩ = ⟨ka, kb⟩. ||kv|| = |k| · ||v||.",
-        "Linear combination: c₁v₁ + c₂v₂.",
-        "Triangle inequality: ||u + v|| ≤ ||u|| + ||v||.",
+        "Addition: \u27e8a\u2081, b\u2081\u27e9 + \u27e8a\u2082, b\u2082\u27e9 = \u27e8a\u2081+a\u2082, b\u2081+b\u2082\u27e9.",
+        "Subtraction: \u27e8a\u2081, b\u2081\u27e9 - \u27e8a\u2082, b\u2082\u27e9 = \u27e8a\u2081-a\u2082, b\u2081-b\u2082\u27e9.",
+        "Scalar multiplication: k\u27e8a, b\u27e9 = \u27e8ka, kb\u27e9. ||kv|| = |k| \u00b7 ||v||.",
+        "Linear combination: c\u2081v\u2081 + c\u2082v\u2082.",
+        "Triangle inequality: ||u + v|| \u2264 ||u|| + ||v||.",
         "Geometric: tip-to-tail for addition; parallelogram rule for resultant."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Vector Operations — Worked Examples",
+      "title": "Vector Operations \u2014 Worked Examples",
       "skill": "vector-operations",
       "examples": [
         {
-          "problem": "Let u = ⟨4, -2⟩ and v = ⟨-1, 6⟩. Find: (a) u + v, (b) u - v, (c) 3u - 2v, (d) ||3u - 2v||.",
-          "solution": "(a) u+v = ⟨4+(-1), -2+6⟩ = ⟨3, 4⟩. (b) u-v = ⟨4-(-1), -2-6⟩ = ⟨5, -8⟩. (c) 3u-2v = ⟨12, -6⟩-⟨-2, 12⟩ = ⟨14, -18⟩. (d) ||3u-2v|| = √(196+324) = √520 = 2√130."
+          "problem": "Let u = \u27e84, -2\u27e9 and v = \u27e8-1, 6\u27e9. Find: (a) u + v, (b) u - v, (c) 3u - 2v, (d) ||3u - 2v||.",
+          "solution": "(a) u+v = \u27e84+(-1), -2+6\u27e9 = \u27e83, 4\u27e9. (b) u-v = \u27e84-(-1), -2-6\u27e9 = \u27e85, -8\u27e9. (c) 3u-2v = \u27e812, -6\u27e9-\u27e8-2, 12\u27e9 = \u27e814, -18\u27e9. (d) ||3u-2v|| = \u221a(196+324) = \u221a520 = 2\u221a130."
         },
         {
-          "problem": "Find a vector of magnitude 10 in the direction of v = ⟨3, 4⟩.",
-          "solution": "||v|| = 5. Unit vector: v̂ = ⟨3/5, 4/5⟩. Scaled: 10v̂ = ⟨6, 8⟩. Check: ||⟨6,8⟩|| = √(36+64) = 10 ✓."
+          "problem": "Find a vector of magnitude 10 in the direction of v = \u27e83, 4\u27e9.",
+          "solution": "||v|| = 5. Unit vector: v\u0302 = \u27e83/5, 4/5\u27e9. Scaled: 10v\u0302 = \u27e86, 8\u27e9. Check: ||\u27e86,8\u27e9|| = \u221a(36+64) = 10 \u2713."
         },
         {
-          "problem": "Express v = ⟨7, -3⟩ as a linear combination of u₁ = ⟨2, 1⟩ and u₂ = ⟨1, -1⟩.",
-          "solution": "Need c₁⟨2,1⟩ + c₂⟨1,-1⟩ = ⟨7,-3⟩. System: 2c₁+c₂=7 and c₁-c₂=-3. Add: 3c₁=4 → c₁=4/3. c₂=7-8/3=13/3. v = (4/3)u₁ + (13/3)u₂. Check: (4/3)⟨2,1⟩ + (13/3)⟨1,-1⟩ = ⟨8/3,4/3⟩+⟨13/3,-13/3⟩ = ⟨21/3,-9/3⟩ = ⟨7,-3⟩ ✓."
+          "problem": "Express v = \u27e87, -3\u27e9 as a linear combination of u\u2081 = \u27e82, 1\u27e9 and u\u2082 = \u27e81, -1\u27e9.",
+          "solution": "Need c\u2081\u27e82,1\u27e9 + c\u2082\u27e81,-1\u27e9 = \u27e87,-3\u27e9. System: 2c\u2081+c\u2082=7 and c\u2081-c\u2082=-3. Add: 3c\u2081=4 \u2192 c\u2081=4/3. c\u2082=7-8/3=13/3. v = (4/3)u\u2081 + (13/3)u\u2082. Check: (4/3)\u27e82,1\u27e9 + (13/3)\u27e81,-1\u27e9 = \u27e88/3,4/3\u27e9+\u27e813/3,-13/3\u27e9 = \u27e821/3,-9/3\u27e9 = \u27e87,-3\u27e9 \u2713."
         }
       ]
     },
@@ -114,36 +114,32 @@
       "lessonPhase": "concept-intro",
       "title": "The Dot Product",
       "skill": "dot-product",
-      "content": "The dot product is a scalar operation on two vectors that encodes angle information. u · v = ||u|| ||v|| cos θ.",
+      "content": "The dot product is a scalar operation on two vectors that encodes angle information. u \u00b7 v = ||u|| ||v|| cos \u03b8.",
       "keyPoints": [
-        "Algebraic: u · v = a₁a₂ + b₁b₂ (component-wise multiply and sum).",
-        "Geometric: u · v = ||u|| ||v|| cos θ where θ is the angle between them.",
-        "Angle formula: cos θ = (u · v)/(||u|| ||v||).",
-        "Orthogonal: u ⊥ v if and only if u · v = 0.",
-        "Properties: commutative, distributive, u · u = ||u||².",
-        "Sign: positive → acute angle, negative → obtuse angle, zero → right angle."
+        "Algebraic: u \u00b7 v = a\u2081a\u2082 + b\u2081b\u2082 (component-wise multiply and sum).",
+        "Geometric: u \u00b7 v = ||u|| ||v|| cos \u03b8 where \u03b8 is the angle between them.",
+        "Angle formula: cos \u03b8 = (u \u00b7 v)/(||u|| ||v||).",
+        "Orthogonal: u \u22a5 v if and only if u \u00b7 v = 0.",
+        "Properties: commutative, distributive, u \u00b7 u = ||u||\u00b2.",
+        "Sign: positive \u2192 acute angle, negative \u2192 obtuse angle, zero \u2192 right angle."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Dot Product & Projections — Worked Examples",
-      "skills": [
-        "dot-product",
-        "vector-projections"
-      ],
+      "title": "Dot Product & Projections \u2014 Worked Examples",
       "examples": [
         {
-          "problem": "Find the angle between u = ⟨3, 1⟩ and v = ⟨-2, 4⟩.",
-          "solution": "u·v = 3(-2)+1(4) = -6+4 = -2. ||u|| = √10. ||v|| = √20 = 2√5. cos θ = -2/(√10·2√5) = -2/(2√50) = -2/(10√2) = -1/(5√2) = -√2/10. θ = arccos(-√2/10) ≈ 98.13°."
+          "problem": "Find the angle between u = \u27e83, 1\u27e9 and v = \u27e8-2, 4\u27e9.",
+          "solution": "u\u00b7v = 3(-2)+1(4) = -6+4 = -2. ||u|| = \u221a10. ||v|| = \u221a20 = 2\u221a5. cos \u03b8 = -2/(\u221a10\u00b72\u221a5) = -2/(2\u221a50) = -2/(10\u221a2) = -1/(5\u221a2) = -\u221a2/10. \u03b8 = arccos(-\u221a2/10) \u2248 98.13\u00b0."
         },
         {
-          "problem": "Determine if u = ⟨6, -4⟩ and v = ⟨2, 3⟩ are orthogonal.",
-          "solution": "u·v = 6(2)+(-4)(3) = 12-12 = 0. Since u·v = 0, the vectors are orthogonal."
+          "problem": "Determine if u = \u27e86, -4\u27e9 and v = \u27e82, 3\u27e9 are orthogonal.",
+          "solution": "u\u00b7v = 6(2)+(-4)(3) = 12-12 = 0. Since u\u00b7v = 0, the vectors are orthogonal."
         },
         {
-          "problem": "Find the scalar projection and vector projection of v = ⟨4, 3⟩ onto u = ⟨2, 0⟩.",
-          "solution": "comp_u(v) = (v·u)/||u|| = (8+0)/2 = 4. proj_u(v) = ((v·u)/||u||²)u = (8/4)⟨2,0⟩ = 2⟨2,0⟩ = ⟨4,0⟩. The perpendicular component: v - proj_u(v) = ⟨4,3⟩-⟨4,0⟩ = ⟨0,3⟩."
+          "problem": "Find the scalar projection and vector projection of v = \u27e84, 3\u27e9 onto u = \u27e82, 0\u27e9.",
+          "solution": "comp_u(v) = (v\u00b7u)/||u|| = (8+0)/2 = 4. proj_u(v) = ((v\u00b7u)/||u||\u00b2)u = (8/4)\u27e82,0\u27e9 = 2\u27e82,0\u27e9 = \u27e84,0\u27e9. The perpendicular component: v - proj_u(v) = \u27e84,3\u27e9-\u27e84,0\u27e9 = \u27e80,3\u27e9."
         }
       ],
       "skill": "dot-product"
@@ -152,38 +148,32 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Vectors & Dot Product Practice",
-      "skills": [
-        "vector-representation",
-        "vector-operations",
-        "dot-product",
-        "vector-projections"
-      ],
       "problems": [
         {
-          "problem": "Find the unit vector in the direction of v = ⟨-5, 12⟩ and verify your answer.",
+          "problem": "Find the unit vector in the direction of v = \u27e8-5, 12\u27e9 and verify your answer.",
           "hints": [
-            "||v|| = √(25+144) = 13",
-            "v̂ = ⟨-5/13, 12/13⟩",
-            "Check: ||v̂|| = √(25/169+144/169) = 1"
+            "||v|| = \u221a(25+144) = 13",
+            "v\u0302 = \u27e8-5/13, 12/13\u27e9",
+            "Check: ||v\u0302|| = \u221a(25/169+144/169) = 1"
           ],
-          "answer": "v̂ = ⟨-5/13, 12/13⟩. ||v̂|| = √(25/169+144/169) = √(169/169) = 1 ✓."
+          "answer": "v\u0302 = \u27e8-5/13, 12/13\u27e9. ||v\u0302|| = \u221a(25/169+144/169) = \u221a(169/169) = 1 \u2713."
         },
         {
-          "problem": "Find the angle between a = ⟨1, √3⟩ and b = ⟨√3, -1⟩.",
+          "problem": "Find the angle between a = \u27e81, \u221a3\u27e9 and b = \u27e8\u221a3, -1\u27e9.",
           "hints": [
-            "a·b = √3-√3 = 0",
+            "a\u00b7b = \u221a3-\u221a3 = 0",
             "If dot product is 0, vectors are orthogonal"
           ],
-          "answer": "a·b = 1(√3)+√3(-1) = √3-√3 = 0. The vectors are orthogonal: θ = 90°."
+          "answer": "a\u00b7b = 1(\u221a3)+\u221a3(-1) = \u221a3-\u221a3 = 0. The vectors are orthogonal: \u03b8 = 90\u00b0."
         },
         {
-          "problem": "Find proj_u(v) where u = ⟨3, 4⟩ and v = ⟨7, 1⟩.",
+          "problem": "Find proj_u(v) where u = \u27e83, 4\u27e9 and v = \u27e87, 1\u27e9.",
           "hints": [
-            "v·u = 21+4 = 25",
-            "||u||² = 25",
-            "proj_u(v) = (25/25)⟨3,4⟩ = ⟨3,4⟩"
+            "v\u00b7u = 21+4 = 25",
+            "||u||\u00b2 = 25",
+            "proj_u(v) = (25/25)\u27e83,4\u27e9 = \u27e83,4\u27e9"
           ],
-          "answer": "v·u = 25. ||u||² = 25. proj_u(v) = (25/25)⟨3,4⟩ = ⟨3,4⟩. Perpendicular component: ⟨7,1⟩-⟨3,4⟩ = ⟨4,-3⟩."
+          "answer": "v\u00b7u = 25. ||u||\u00b2 = 25. proj_u(v) = (25/25)\u27e83,4\u27e9 = \u27e83,4\u27e9. Perpendicular component: \u27e87,1\u27e9-\u27e83,4\u27e9 = \u27e84,-3\u27e9."
         }
       ],
       "skill": "dot-product"
@@ -195,31 +185,31 @@
       "skill": "vector-applications",
       "content": "Vectors model physical quantities with magnitude and direction: forces, velocities, displacements. The dot product computes work.",
       "keyPoints": [
-        "Work: W = F · d = ||F|| ||d|| cos θ where θ is angle between force and displacement.",
+        "Work: W = F \u00b7 d = ||F|| ||d|| cos \u03b8 where \u03b8 is angle between force and displacement.",
         "Resultant force: sum of all force vectors. Equilibrium when resultant = zero vector.",
-        "Force resolution: decompose into horizontal and vertical components F = ⟨||F||cosθ, ||F||sinθ⟩.",
+        "Force resolution: decompose into horizontal and vertical components F = \u27e8||F||cos\u03b8, ||F||sin\u03b8\u27e9.",
         "Navigation: ground speed = airspeed vector + wind vector.",
-        "Bearing: measured clockwise from north. Convert: N θ° E → standard angle = 90° - θ.",
+        "Bearing: measured clockwise from north. Convert: N \u03b8\u00b0 E \u2192 standard angle = 90\u00b0 - \u03b8.",
         "Inclined plane: weight components parallel and perpendicular to slope."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Vector Applications — Worked Examples",
+      "title": "Vector Applications \u2014 Worked Examples",
       "skill": "vector-applications",
       "examples": [
         {
-          "problem": "A force of F = ⟨5, 8⟩ moves an object along displacement d = ⟨6, 2⟩. Find the work done.",
-          "solution": "W = F · d = 5(6) + 8(2) = 30 + 16 = 46 units of work."
+          "problem": "A force of F = \u27e85, 8\u27e9 moves an object along displacement d = \u27e86, 2\u27e9. Find the work done.",
+          "solution": "W = F \u00b7 d = 5(6) + 8(2) = 30 + 16 = 46 units of work."
         },
         {
-          "problem": "A plane flies at 500 mph on heading N 30° W. Wind blows at 60 mph from due east. Find the ground speed and actual bearing.",
-          "solution": "Heading N30°W: standard angle = 90°+30° = 120°. Plane vector: 500⟨cos120°, sin120°⟩ = 500⟨-1/2, √3/2⟩ = ⟨-250, 250√3⟩. Wind from east (blows west): w = ⟨-60, 0⟩. Ground vector: ⟨-250-60, 250√3⟩ = ⟨-310, 250√3⟩. Ground speed: √(310²+(250√3)²) = √(96100+187500) = √283600 ≈ 532.5 mph. Direction: tanθ = 250√3/(-310). θ in Q2: θ = 180° - arctan(250√3/310) ≈ 180° - 54.3° = 125.7° standard. Bearing: 90° - (125.7°-180°) = ... Bearing from north: 360° - (125.7°-90°) = 360°-35.7° = 324.3° or N 35.7° W."
+          "problem": "A plane flies at 500 mph on heading N 30\u00b0 W. Wind blows at 60 mph from due east. Find the ground speed and actual bearing.",
+          "solution": "Heading N30\u00b0W: standard angle = 90\u00b0+30\u00b0 = 120\u00b0. Plane vector: 500\u27e8cos120\u00b0, sin120\u00b0\u27e9 = 500\u27e8-1/2, \u221a3/2\u27e9 = \u27e8-250, 250\u221a3\u27e9. Wind from east (blows west): w = \u27e8-60, 0\u27e9. Ground vector: \u27e8-250-60, 250\u221a3\u27e9 = \u27e8-310, 250\u221a3\u27e9. Ground speed: \u221a(310\u00b2+(250\u221a3)\u00b2) = \u221a(96100+187500) = \u221a283600 \u2248 532.5 mph. Direction: tan\u03b8 = 250\u221a3/(-310). \u03b8 in Q2: \u03b8 = 180\u00b0 - arctan(250\u221a3/310) \u2248 180\u00b0 - 54.3\u00b0 = 125.7\u00b0 standard. Bearing: 90\u00b0 - (125.7\u00b0-180\u00b0) = ... Bearing from north: 360\u00b0 - (125.7\u00b0-90\u00b0) = 360\u00b0-35.7\u00b0 = 324.3\u00b0 or N 35.7\u00b0 W."
         },
         {
-          "problem": "A 200-lb crate sits on a ramp inclined at 25°. Find the force components parallel and perpendicular to the ramp.",
-          "solution": "Weight vector: 200 lb straight down. Parallel component (along ramp, pulling it down): F_∥ = 200 sin25° ≈ 200(0.4226) ≈ 84.5 lb. Perpendicular component (into ramp): F_⊥ = 200 cos25° ≈ 200(0.9063) ≈ 181.3 lb. Check: √(84.5²+181.3²) ≈ √(7140+32870) ≈ √40010 ≈ 200 ✓."
+          "problem": "A 200-lb crate sits on a ramp inclined at 25\u00b0. Find the force components parallel and perpendicular to the ramp.",
+          "solution": "Weight vector: 200 lb straight down. Parallel component (along ramp, pulling it down): F_\u2225 = 200 sin25\u00b0 \u2248 200(0.4226) \u2248 84.5 lb. Perpendicular component (into ramp): F_\u22a5 = 200 cos25\u00b0 \u2248 200(0.9063) \u2248 181.3 lb. Check: \u221a(84.5\u00b2+181.3\u00b2) \u2248 \u221a(7140+32870) \u2248 \u221a40010 \u2248 200 \u2713."
         }
       ]
     },
@@ -228,33 +218,33 @@
       "lessonPhase": "concept-intro",
       "title": "Complex Numbers in Polar (Trigonometric) Form",
       "skill": "complex-polar-form",
-      "content": "Complex numbers z = a + bi can be written in polar form z = r(cos θ + i sin θ) = r cis θ, connecting the complex plane to polar coordinates.",
+      "content": "Complex numbers z = a + bi can be written in polar form z = r(cos \u03b8 + i sin \u03b8) = r cis \u03b8, connecting the complex plane to polar coordinates.",
       "keyPoints": [
-        "Modulus: r = |z| = √(a² + b²). Argument: θ = arctan(b/a) adjusted for quadrant.",
-        "Polar form: z = r(cos θ + i sin θ) = r cis θ.",
-        "Multiplication: z₁z₂ = r₁r₂ cis(θ₁ + θ₂). Multiply moduli, add arguments.",
-        "Division: z₁/z₂ = (r₁/r₂) cis(θ₁ - θ₂). Divide moduli, subtract arguments.",
-        "DeMoivre's Theorem: zⁿ = rⁿ cis(nθ). Raise modulus to nth power, multiply argument by n.",
-        "nth roots: ⁿ√z = ⁿ√r cis((θ + 2kπ)/n), k = 0, 1, ..., n-1. Always n distinct roots, equally spaced."
+        "Modulus: r = |z| = \u221a(a\u00b2 + b\u00b2). Argument: \u03b8 = arctan(b/a) adjusted for quadrant.",
+        "Polar form: z = r(cos \u03b8 + i sin \u03b8) = r cis \u03b8.",
+        "Multiplication: z\u2081z\u2082 = r\u2081r\u2082 cis(\u03b8\u2081 + \u03b8\u2082). Multiply moduli, add arguments.",
+        "Division: z\u2081/z\u2082 = (r\u2081/r\u2082) cis(\u03b8\u2081 - \u03b8\u2082). Divide moduli, subtract arguments.",
+        "DeMoivre's Theorem: z\u207f = r\u207f cis(n\u03b8). Raise modulus to nth power, multiply argument by n.",
+        "nth roots: \u207f\u221az = \u207f\u221ar cis((\u03b8 + 2k\u03c0)/n), k = 0, 1, ..., n-1. Always n distinct roots, equally spaced."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Complex Numbers Polar Form — Worked Examples",
+      "title": "Complex Numbers Polar Form \u2014 Worked Examples",
       "skill": "complex-polar-form",
       "examples": [
         {
-          "problem": "Write z = -1 + √3 i in polar form and find z⁶ using DeMoivre's Theorem.",
-          "solution": "r = √(1+3) = 2. tan θ = √3/(-1); Q2 → θ = 2π/3 (120°). Polar: z = 2 cis(2π/3). z⁶ = 2⁶ cis(6·2π/3) = 64 cis(4π) = 64 cis(0) = 64. So z⁶ = 64."
+          "problem": "Write z = -1 + \u221a3 i in polar form and find z\u2076 using DeMoivre's Theorem.",
+          "solution": "r = \u221a(1+3) = 2. tan \u03b8 = \u221a3/(-1); Q2 \u2192 \u03b8 = 2\u03c0/3 (120\u00b0). Polar: z = 2 cis(2\u03c0/3). z\u2076 = 2\u2076 cis(6\u00b72\u03c0/3) = 64 cis(4\u03c0) = 64 cis(0) = 64. So z\u2076 = 64."
         },
         {
-          "problem": "Find the product z₁z₂ where z₁ = 3 cis(π/4) and z₂ = 2 cis(5π/6).",
-          "solution": "z₁z₂ = (3)(2) cis(π/4 + 5π/6) = 6 cis(3π/12 + 10π/12) = 6 cis(13π/12). In rectangular: 6(cos(13π/12) + i sin(13π/12)) = 6(-cos(π/12) - i sin(π/12)). Using cos(π/12) = (√6+√2)/4: = 6(-(√6+√2)/4 - i(√6-√2)/4) = (-3(√6+√2)/2) + i(-3(√6-√2)/2)."
+          "problem": "Find the product z\u2081z\u2082 where z\u2081 = 3 cis(\u03c0/4) and z\u2082 = 2 cis(5\u03c0/6).",
+          "solution": "z\u2081z\u2082 = (3)(2) cis(\u03c0/4 + 5\u03c0/6) = 6 cis(3\u03c0/12 + 10\u03c0/12) = 6 cis(13\u03c0/12). In rectangular: 6(cos(13\u03c0/12) + i sin(13\u03c0/12)) = 6(-cos(\u03c0/12) - i sin(\u03c0/12)). Using cos(\u03c0/12) = (\u221a6+\u221a2)/4: = 6(-(\u221a6+\u221a2)/4 - i(\u221a6-\u221a2)/4) = (-3(\u221a6+\u221a2)/2) + i(-3(\u221a6-\u221a2)/2)."
         },
         {
           "problem": "Find all cube roots of z = 8i.",
-          "solution": "Write in polar: 8i = 8 cis(π/2). Cube roots: ³√8 cis((π/2 + 2kπ)/3) = 2 cis((π/2 + 2kπ)/3). k=0: 2 cis(π/6) = 2(√3/2 + i/2) = √3 + i. k=1: 2 cis(π/6 + 2π/3) = 2 cis(5π/6) = 2(-√3/2 + i/2) = -√3 + i. k=2: 2 cis(π/6 + 4π/3) = 2 cis(3π/2) = 2(0 - i) = -2i. The three cube roots are √3+i, -√3+i, and -2i."
+          "solution": "Write in polar: 8i = 8 cis(\u03c0/2). Cube roots: \u00b3\u221a8 cis((\u03c0/2 + 2k\u03c0)/3) = 2 cis((\u03c0/2 + 2k\u03c0)/3). k=0: 2 cis(\u03c0/6) = 2(\u221a3/2 + i/2) = \u221a3 + i. k=1: 2 cis(\u03c0/6 + 2\u03c0/3) = 2 cis(5\u03c0/6) = 2(-\u221a3/2 + i/2) = -\u221a3 + i. k=2: 2 cis(\u03c0/6 + 4\u03c0/3) = 2 cis(3\u03c0/2) = 2(0 - i) = -2i. The three cube roots are \u221a3+i, -\u221a3+i, and -2i."
         }
       ]
     },
@@ -262,67 +252,59 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Vectors & Complex Numbers Mastery Practice",
-      "skills": [
-        "vector-representation",
-        "vector-operations",
-        "dot-product",
-        "vector-projections",
-        "vector-applications",
-        "complex-polar-form"
-      ],
       "problems": [
         {
-          "problem": "Find the magnitude, direction angle, and unit vector for v = ⟨-6, 8⟩.",
-          "answer": "||v|| = √(36+64) = 10. tanθ = 8/(-6) = -4/3. Q2: θ = 180° - arctan(4/3) ≈ 126.87°. Unit vector: ⟨-6/10, 8/10⟩ = ⟨-3/5, 4/5⟩."
+          "problem": "Find the magnitude, direction angle, and unit vector for v = \u27e8-6, 8\u27e9.",
+          "answer": "||v|| = \u221a(36+64) = 10. tan\u03b8 = 8/(-6) = -4/3. Q2: \u03b8 = 180\u00b0 - arctan(4/3) \u2248 126.87\u00b0. Unit vector: \u27e8-6/10, 8/10\u27e9 = \u27e8-3/5, 4/5\u27e9."
         },
         {
-          "problem": "Find the angle between u = ⟨2, -1⟩ and v = ⟨-3, 6⟩.",
-          "answer": "u·v = 2(-3)+(-1)(6) = -6-6 = -12. ||u||=√5, ||v||=√45=3√5. cosθ = -12/(√5·3√5) = -12/15 = -4/5. θ = arccos(-4/5) ≈ 143.13°."
+          "problem": "Find the angle between u = \u27e82, -1\u27e9 and v = \u27e8-3, 6\u27e9.",
+          "answer": "u\u00b7v = 2(-3)+(-1)(6) = -6-6 = -12. ||u||=\u221a5, ||v||=\u221a45=3\u221a5. cos\u03b8 = -12/(\u221a5\u00b73\u221a5) = -12/15 = -4/5. \u03b8 = arccos(-4/5) \u2248 143.13\u00b0."
         },
         {
-          "problem": "Find the vector projection of v = ⟨5, -1⟩ onto u = ⟨1, 3⟩ and the perpendicular component.",
-          "answer": "v·u = 5-3 = 2. ||u||² = 10. proj_u(v) = (2/10)⟨1,3⟩ = ⟨1/5, 3/5⟩. Perp: v-proj = ⟨5-1/5, -1-3/5⟩ = ⟨24/5, -8/5⟩."
+          "problem": "Find the vector projection of v = \u27e85, -1\u27e9 onto u = \u27e81, 3\u27e9 and the perpendicular component.",
+          "answer": "v\u00b7u = 5-3 = 2. ||u||\u00b2 = 10. proj_u(v) = (2/10)\u27e81,3\u27e9 = \u27e81/5, 3/5\u27e9. Perp: v-proj = \u27e85-1/5, -1-3/5\u27e9 = \u27e824/5, -8/5\u27e9."
         },
         {
-          "problem": "A force F = 40 lb acts at 60° to the direction of motion. Find the work done over a displacement of 12 feet.",
-          "answer": "W = ||F||·||d||·cosθ = 40(12)cos60° = 480(1/2) = 240 ft-lb."
+          "problem": "A force F = 40 lb acts at 60\u00b0 to the direction of motion. Find the work done over a displacement of 12 feet.",
+          "answer": "W = ||F||\u00b7||d||\u00b7cos\u03b8 = 40(12)cos60\u00b0 = 480(1/2) = 240 ft-lb."
         },
         {
-          "problem": "Write z = -2 - 2i in polar form. Then find z⁴.",
-          "answer": "r = √(4+4) = 2√2. tanθ = -2/(-2) = 1, Q3: θ = 5π/4. z = 2√2 cis(5π/4). z⁴ = (2√2)⁴ cis(4·5π/4) = 64 cis(5π) = 64 cis(π) = -64."
+          "problem": "Write z = -2 - 2i in polar form. Then find z\u2074.",
+          "answer": "r = \u221a(4+4) = 2\u221a2. tan\u03b8 = -2/(-2) = 1, Q3: \u03b8 = 5\u03c0/4. z = 2\u221a2 cis(5\u03c0/4). z\u2074 = (2\u221a2)\u2074 cis(4\u00b75\u03c0/4) = 64 cis(5\u03c0) = 64 cis(\u03c0) = -64."
         },
         {
           "problem": "Find all fourth roots of z = 16.",
-          "answer": "16 = 16 cis(0). Fourth roots: ⁴√16 cis((0+2kπ)/4) = 2 cis(kπ/2). k=0: 2cis(0) = 2. k=1: 2cis(π/2) = 2i. k=2: 2cis(π) = -2. k=3: 2cis(3π/2) = -2i. Roots: {2, 2i, -2, -2i}."
+          "answer": "16 = 16 cis(0). Fourth roots: \u2074\u221a16 cis((0+2k\u03c0)/4) = 2 cis(k\u03c0/2). k=0: 2cis(0) = 2. k=1: 2cis(\u03c0/2) = 2i. k=2: 2cis(\u03c0) = -2. k=3: 2cis(3\u03c0/2) = -2i. Roots: {2, 2i, -2, -2i}."
         }
       ],
       "skill": "vector-representation"
     }
   ],
   "answerKeys": {
-    "vec-repr-ex1": "v=⟨-5,5⟩, ||v||=5√2, θ=135°.",
-    "vec-repr-ex2": "ŵ=⟨3/5,-4/5⟩.",
-    "vec-repr-ex3": "v=⟨-4√3,-4⟩.",
-    "vec-ops-ex1": "u+v=⟨3,4⟩. u-v=⟨5,-8⟩. 3u-2v=⟨14,-18⟩. ||3u-2v||=2√130.",
-    "vec-ops-ex2": "10v̂=⟨6,8⟩.",
-    "vec-ops-ex3": "v=(4/3)u₁+(13/3)u₂.",
-    "dot-angle": "θ=arccos(-√2/10)≈98.13°.",
-    "dot-ortho": "u·v=0, orthogonal.",
-    "dot-proj": "comp_u(v)=4. proj_u(v)=⟨4,0⟩. perp=⟨0,3⟩.",
-    "wp-unit-vec": "v̂=⟨-5/13,12/13⟩.",
-    "wp-ortho-check": "a·b=0, θ=90°.",
-    "wp-projection": "proj_u(v)=⟨3,4⟩. perp=⟨4,-3⟩.",
+    "vec-repr-ex1": "v=\u27e8-5,5\u27e9, ||v||=5\u221a2, \u03b8=135\u00b0.",
+    "vec-repr-ex2": "\u0175=\u27e83/5,-4/5\u27e9.",
+    "vec-repr-ex3": "v=\u27e8-4\u221a3,-4\u27e9.",
+    "vec-ops-ex1": "u+v=\u27e83,4\u27e9. u-v=\u27e85,-8\u27e9. 3u-2v=\u27e814,-18\u27e9. ||3u-2v||=2\u221a130.",
+    "vec-ops-ex2": "10v\u0302=\u27e86,8\u27e9.",
+    "vec-ops-ex3": "v=(4/3)u\u2081+(13/3)u\u2082.",
+    "dot-angle": "\u03b8=arccos(-\u221a2/10)\u224898.13\u00b0.",
+    "dot-ortho": "u\u00b7v=0, orthogonal.",
+    "dot-proj": "comp_u(v)=4. proj_u(v)=\u27e84,0\u27e9. perp=\u27e80,3\u27e9.",
+    "wp-unit-vec": "v\u0302=\u27e8-5/13,12/13\u27e9.",
+    "wp-ortho-check": "a\u00b7b=0, \u03b8=90\u00b0.",
+    "wp-projection": "proj_u(v)=\u27e83,4\u27e9. perp=\u27e84,-3\u27e9.",
     "app-work": "W=46.",
-    "app-navigation": "Ground speed≈532.5 mph, bearing≈N35.7°W.",
-    "app-ramp": "F_∥≈84.5lb, F_⊥≈181.3lb.",
-    "complex-demoivre": "z=2cis(2π/3). z⁶=64.",
-    "complex-multiply": "z₁z₂=6cis(13π/12).",
-    "complex-roots": "Cube roots of 8i: √3+i, -√3+i, -2i.",
-    "ip-magnitude": "||v||=10, θ≈126.87°, v̂=⟨-3/5,4/5⟩.",
-    "ip-angle": "θ=arccos(-4/5)≈143.13°.",
-    "ip-proj": "proj_u(v)=⟨1/5,3/5⟩. perp=⟨24/5,-8/5⟩.",
+    "app-navigation": "Ground speed\u2248532.5 mph, bearing\u2248N35.7\u00b0W.",
+    "app-ramp": "F_\u2225\u224884.5lb, F_\u22a5\u2248181.3lb.",
+    "complex-demoivre": "z=2cis(2\u03c0/3). z\u2076=64.",
+    "complex-multiply": "z\u2081z\u2082=6cis(13\u03c0/12).",
+    "complex-roots": "Cube roots of 8i: \u221a3+i, -\u221a3+i, -2i.",
+    "ip-magnitude": "||v||=10, \u03b8\u2248126.87\u00b0, v\u0302=\u27e8-3/5,4/5\u27e9.",
+    "ip-angle": "\u03b8=arccos(-4/5)\u2248143.13\u00b0.",
+    "ip-proj": "proj_u(v)=\u27e81/5,3/5\u27e9. perp=\u27e824/5,-8/5\u27e9.",
     "ip-work": "W=240 ft-lb.",
-    "ip-demoivre": "z=2√2·cis(5π/4). z⁴=-64.",
+    "ip-demoivre": "z=2\u221a2\u00b7cis(5\u03c0/4). z\u2074=-64.",
     "ip-roots": "Fourth roots of 16: {2, 2i, -2, -2i}."
   }
 }

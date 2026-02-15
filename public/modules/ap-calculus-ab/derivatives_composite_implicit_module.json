@@ -31,7 +31,7 @@
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> concept-check -> We Do -> check-in -> You Do -> mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Emphasize the 'outer/inner' decomposition before writing any chain rule derivative — build conceptual understanding of composition",
+    "Emphasize the 'outer/inner' decomposition before writing any chain rule derivative \u2014 build conceptual understanding of composition",
     "Weekly AP-style mixed no-calculator problem sets integrating chain rule, implicit, and inverse techniques",
     "Spiral prior: basic differentiation rules and limit definition from Units 1-2"
   ],
@@ -42,7 +42,7 @@
       "lessonPhase": "concept-intro",
       "title": "The Chain Rule for Composite Functions",
       "skill": "chain-rule-composite",
-      "content": "Most functions you'll differentiate on the AP exam are compositions — a function inside another function. The chain rule says: differentiate the OUTER function (keeping the inner function unchanged), then multiply by the derivative of the INNER function. Think 'outside-in.'",
+      "content": "Most functions you'll differentiate on the AP exam are compositions \u2014 a function inside another function. The chain rule says: differentiate the OUTER function (keeping the inner function unchanged), then multiply by the derivative of the INNER function. Think 'outside-in.'",
       "keyPoints": [
         "Chain rule: d/dx[f(g(x))] = f'(g(x)) * g'(x). In words: (derivative of outer, evaluated at inner) times (derivative of inner).",
         "Step 1: Identify the outer function f and the inner function g(x). Ask: 'What is the LAST operation performed?'",
@@ -51,13 +51,13 @@
         "Trig compositions: d/dx[sin(3x^2)] = cos(3x^2) * 6x. Outer = sin, inner = 3x^2.",
         "Exponential compositions: d/dx[e^(5x)] = e^(5x) * 5. Outer = e^u, inner = 5x.",
         "Logarithmic compositions: d/dx[ln(x^2 + 1)] = 1/(x^2 + 1) * 2x = 2x/(x^2 + 1). Outer = ln(u), inner = x^2 + 1.",
-        "Nested chains: for three-layer compositions like sin(e^(2x)), apply the chain rule repeatedly — peel off one layer at a time."
+        "Nested chains: for three-layer compositions like sin(e^(2x)), apply the chain rule repeatedly \u2014 peel off one layer at a time."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Chain Rule — Worked Examples",
+      "title": "Chain Rule \u2014 Worked Examples",
       "skill": "chain-rule-composite",
       "examples": [
         {
@@ -79,20 +79,20 @@
       "lessonPhase": "concept-intro",
       "title": "Implicit Differentiation",
       "skill": "implicit-differentiation",
-      "content": "Not every curve can be written as y = f(x). Circles, ellipses, and other relations mix x and y together. Implicit differentiation lets you find dy/dx directly from the equation without solving for y. The key idea: differentiate BOTH sides with respect to x, treating y as a function of x — so every time you differentiate a y-term, attach a dy/dx via the chain rule.",
+      "content": "Not every curve can be written as y = f(x). Circles, ellipses, and other relations mix x and y together. Implicit differentiation lets you find dy/dx directly from the equation without solving for y. The key idea: differentiate BOTH sides with respect to x, treating y as a function of x \u2014 so every time you differentiate a y-term, attach a dy/dx via the chain rule.",
       "keyPoints": [
         "When to use: the equation has y mixed with x (e.g., x^2 + y^2 = 25) and you can't easily isolate y.",
         "Rule: differentiate every term with respect to x. For any term involving y, apply the chain rule: d/dx[y^n] = n*y^(n-1) * dy/dx.",
         "Product rule with xy terms: d/dx[xy] = x * dy/dx + y * 1 (product rule, then chain rule on y).",
         "After differentiating: collect all dy/dx terms on one side, factor out dy/dx, and solve.",
         "Circle example: x^2 + y^2 = r^2 gives 2x + 2y(dy/dx) = 0, so dy/dx = -x/y.",
-        "The result dy/dx will typically involve BOTH x and y — this is normal and expected for implicit derivatives."
+        "The result dy/dx will typically involve BOTH x and y \u2014 this is normal and expected for implicit derivatives."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Implicit Differentiation — Worked Examples",
+      "title": "Implicit Differentiation \u2014 Worked Examples",
       "skill": "implicit-differentiation",
       "examples": [
         {
@@ -113,15 +113,11 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Inverse Function Derivatives & Inverse Trig Derivatives",
-      "skills": [
-        "inverse-function-derivatives",
-        "inverse-trig-derivatives"
-      ],
       "content": "If f and f^{-1} are inverse functions, there is a clean relationship between their derivatives. This theorem lets you find the derivative of an inverse even when you cannot write a formula for f^{-1}. The inverse trig functions (arcsin, arccos, arctan) are special cases with formulas you should memorize.",
       "keyPoints": [
         "Inverse function derivative theorem: (f^{-1})'(a) = 1 / f'(f^{-1}(a)). In words: evaluate f' at the point whose output is a, then take the reciprocal.",
         "Intuition: if f doubles the rate of change, then f^{-1} halves it. The slopes are reciprocals at corresponding points.",
-        "To use the formula: (1) find f^{-1}(a) — the x-value where f(x) = a, (2) compute f'(x) at that x-value, (3) take the reciprocal.",
+        "To use the formula: (1) find f^{-1}(a) \u2014 the x-value where f(x) = a, (2) compute f'(x) at that x-value, (3) take the reciprocal.",
         "d/dx[arcsin(x)] = 1/sqrt(1 - x^2), for |x| < 1.",
         "d/dx[arccos(x)] = -1/sqrt(1 - x^2), for |x| < 1.",
         "d/dx[arctan(x)] = 1/(1 + x^2).",
@@ -132,11 +128,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Inverse Function & Inverse Trig Derivatives — Worked Examples",
-      "skills": [
-        "inverse-function-derivatives",
-        "inverse-trig-derivatives"
-      ],
+      "title": "Inverse Function & Inverse Trig Derivatives \u2014 Worked Examples",
       "examples": [
         {
           "problem": "Let f(x) = x^3 + x. Given that f(2) = 10, find (f^{-1})'(10).",
@@ -157,12 +149,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Chain Rule, Implicit & Inverse Derivatives Practice",
-      "skills": [
-        "chain-rule-composite",
-        "implicit-differentiation",
-        "inverse-function-derivatives",
-        "inverse-trig-derivatives"
-      ],
       "problems": [
         {
           "problem": "Find d/dx[e^(sin(x^2))].",
@@ -208,7 +194,7 @@
       "lessonPhase": "concept-intro",
       "title": "Higher-Order Derivatives",
       "skill": "higher-order-derivatives",
-      "content": "The second derivative is the derivative of the derivative. It measures the rate of change of the rate of change — in other words, how the slope itself is changing. Higher-order derivatives are essential for concavity analysis and have a direct physical interpretation: if position is s(t), then s'(t) is velocity and s''(t) is acceleration.",
+      "content": "The second derivative is the derivative of the derivative. It measures the rate of change of the rate of change \u2014 in other words, how the slope itself is changing. Higher-order derivatives are essential for concavity analysis and have a direct physical interpretation: if position is s(t), then s'(t) is velocity and s''(t) is acceleration.",
       "keyPoints": [
         "Notation: f''(x) or d^2y/dx^2 for the second derivative. f'''(x) or d^3y/dx^3 for the third. f^(n)(x) for the nth.",
         "To find the second derivative: differentiate f'(x) again using all the same rules (power, product, chain, etc.).",
@@ -221,16 +207,16 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Higher-Order Derivatives — Worked Examples",
+      "title": "Higher-Order Derivatives \u2014 Worked Examples",
       "skill": "higher-order-derivatives",
       "examples": [
         {
           "problem": "Find f''(x) for f(x) = x^4 - 3x^2 + 5x - 1.",
-          "solution": "f'(x) = 4x^3 - 6x + 5. f''(x) = 12x^2 - 6. The second derivative is a simple polynomial — straightforward power rule applied twice."
+          "solution": "f'(x) = 4x^3 - 6x + 5. f''(x) = 12x^2 - 6. The second derivative is a simple polynomial \u2014 straightforward power rule applied twice."
         },
         {
           "problem": "A particle moves along a line with position s(t) = t^3 - 6t^2 + 9t + 2 (meters, seconds). Find the velocity and acceleration at t = 2. Is the particle speeding up or slowing down at t = 2?",
-          "solution": "v(t) = s'(t) = 3t^2 - 12t + 9. a(t) = v'(t) = s''(t) = 6t - 12. At t = 2: v(2) = 12 - 24 + 9 = -3 m/s (moving left). a(2) = 12 - 12 = 0 m/s^2 (zero acceleration — instantaneous transition). Since a(2) = 0, the particle is neither speeding up nor slowing down at that instant."
+          "solution": "v(t) = s'(t) = 3t^2 - 12t + 9. a(t) = v'(t) = s''(t) = 6t - 12. At t = 2: v(2) = 12 - 24 + 9 = -3 m/s (moving left). a(2) = 12 - 12 = 0 m/s^2 (zero acceleration \u2014 instantaneous transition). Since a(2) = 0, the particle is neither speeding up nor slowing down at that instant."
         },
         {
           "problem": "Find d^2y/dx^2 for x^2 + y^2 = 25 using implicit differentiation.",
@@ -242,13 +228,6 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Composite, Implicit & Inverse Derivatives Mastery Practice",
-      "skills": [
-        "chain-rule-composite",
-        "implicit-differentiation",
-        "inverse-function-derivatives",
-        "inverse-trig-derivatives",
-        "higher-order-derivatives"
-      ],
       "problems": [
         {
           "problem": "No calculator. Find d/dx[cos^3(2x)] (i.e., d/dx[(cos(2x))^3]).",

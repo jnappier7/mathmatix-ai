@@ -5,7 +5,7 @@
   "title": "Ratios and Rates",
   "weeks": "7-10",
   "estimatedDuration": 40,
-  "description": "The biggest conceptual leap in 6th grade. Students move from additive thinking ('how much more?') to multiplicative thinking ('how many times?'). This unit builds ratio language, unit rate fluency, equivalent ratio tables, real-world ratio/rate problem solving, and measurement conversions — all grounded in contexts students care about: recipes, shopping, speed, and sports stats.",
+  "description": "The biggest conceptual leap in 6th grade. Students move from additive thinking ('how much more?') to multiplicative thinking ('how many times?'). This unit builds ratio language, unit rate fluency, equivalent ratio tables, real-world ratio/rate problem solving, and measurement conversions \u2014 all grounded in contexts students care about: recipes, shopping, speed, and sports stats.",
   "skills": [
     "g6-ratio-language",
     "g6-unit-rates",
@@ -29,9 +29,9 @@
     "Convert measurement units within a system (customary and metric) using ratio reasoning"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → We Do → You Do for each skill, building from ratio language through conversions",
+    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do for each skill, building from ratio language through conversions",
     "Anchor every ratio concept in concrete, familiar contexts (recipes, shopping, sports) before moving to abstract notation",
-    "Use ratio tables and tape diagrams as the primary visual models — avoid cross-multiplication until ratio reasoning is solid",
+    "Use ratio tables and tape diagrams as the primary visual models \u2014 avoid cross-multiplication until ratio reasoning is solid",
     "Explicitly address the additive-to-multiplicative thinking shift by comparing 'how much more' vs 'how many times as much'",
     "Build unit rate fluency through repeated comparison tasks before introducing formal conversion problems"
   ],
@@ -42,43 +42,40 @@
       "lessonPhase": "concept-intro",
       "title": "Ratio Language and Notation",
       "skill": "g6-ratio-language",
-      "content": "A ratio compares two quantities by showing how much of one thing there is compared to another. Ratios are everywhere — in recipes, sports stats, and even your school supplies. The key idea: ratios describe a multiplicative relationship, not just a difference. Instead of asking 'how many more?' we ask 'for every ___ of this, how many of that?'",
+      "content": "A ratio compares two quantities by showing how much of one thing there is compared to another. Ratios are everywhere \u2014 in recipes, sports stats, and even your school supplies. The key idea: ratios describe a multiplicative relationship, not just a difference. Instead of asking 'how many more?' we ask 'for every ___ of this, how many of that?'",
       "keyPoints": [
         "A ratio can be written three ways: using a colon (3:2), with the word 'to' (3 to 2), or as a fraction (3/2)",
         "Part-to-part ratios compare one part of a group to another part (boys to girls = 3:2)",
         "Part-to-whole ratios compare one part to the total (boys to all students = 3:5)",
         "Order matters! The ratio of dogs to cats (4:3) is different from cats to dogs (3:4)",
-        "Ratios describe a relationship, not specific amounts — a ratio of 2:3 could mean 4 and 6, or 20 and 30, or 200 and 300",
+        "Ratios describe a relationship, not specific amounts \u2014 a ratio of 2:3 could mean 4 and 6, or 20 and 30, or 200 and 300",
         "To simplify a ratio, divide both numbers by their greatest common factor (GCF)"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Ratio Language — Worked Examples",
+      "title": "Ratio Language \u2014 Worked Examples",
       "skill": "g6-ratio-language",
       "examples": [
         {
           "problem": "A fruit bowl has 8 apples and 6 oranges. Write the ratio of apples to oranges in all three forms. Then write the ratio of oranges to total fruit.",
-          "solution": "Apples to oranges:\n• Colon form: 8:6 (simplifies to 4:3)\n• Word form: 8 to 6 (simplifies to 4 to 3)\n• Fraction form: 8/6 (simplifies to 4/3)\n\nOranges to total fruit:\nTotal fruit = 8 + 6 = 14\nOranges to total = 6:14 = 3:7\n\nNotice: 4:3 is part-to-part, and 3:7 is part-to-whole. They tell us different things!"
+          "solution": "Apples to oranges:\n\u2022 Colon form: 8:6 (simplifies to 4:3)\n\u2022 Word form: 8 to 6 (simplifies to 4 to 3)\n\u2022 Fraction form: 8/6 (simplifies to 4/3)\n\nOranges to total fruit:\nTotal fruit = 8 + 6 = 14\nOranges to total = 6:14 = 3:7\n\nNotice: 4:3 is part-to-part, and 3:7 is part-to-whole. They tell us different things!"
         },
         {
           "problem": "A basketball player made 15 shots out of 20 attempts. Her teammate made 12 shots out of 16 attempts. Write each player's part-to-whole ratio of made shots to attempts in simplest form.",
-          "solution": "Player 1: 15 made out of 20 attempts → 15:20\nSimplify by dividing both by 5: 15:20 = 3:4\n\nPlayer 2: 12 made out of 16 attempts → 12:16\nSimplify by dividing both by 4: 12:16 = 3:4\n\nBoth players have the same ratio of 3:4! Even though Player 1 made more total shots, they were equally accurate."
+          "solution": "Player 1: 15 made out of 20 attempts \u2192 15:20\nSimplify by dividing both by 5: 15:20 = 3:4\n\nPlayer 2: 12 made out of 16 attempts \u2192 12:16\nSimplify by dividing both by 4: 12:16 = 3:4\n\nBoth players have the same ratio of 3:4! Even though Player 1 made more total shots, they were equally accurate."
         },
         {
           "problem": "A class has a boy-to-girl ratio of 5:7. There are 36 students total. How many boys are there?",
-          "solution": "The ratio 5:7 means for every 5 boys, there are 7 girls.\nTotal parts = 5 + 7 = 12 parts\n\n36 students ÷ 12 parts = 3 students per part\n\nBoys = 5 parts × 3 = 15 boys\nGirls = 7 parts × 3 = 21 girls\n\nCheck: 15 + 21 = 36 and 15:21 = 5:7 ✓"
+          "solution": "The ratio 5:7 means for every 5 boys, there are 7 girls.\nTotal parts = 5 + 7 = 12 parts\n\n36 students \u00f7 12 parts = 3 students per part\n\nBoys = 5 parts \u00d7 3 = 15 boys\nGirls = 7 parts \u00d7 3 = 21 girls\n\nCheck: 15 + 21 = 36 and 15:21 = 5:7 \u2713"
         }
       ]
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Ratio Language — Practice Together",
-      "skills": [
-        "g6-ratio-language"
-      ],
+      "title": "Ratio Language \u2014 Practice Together",
       "problems": [
         {
           "id": "rr-1",
@@ -104,7 +101,7 @@
           "id": "rr-3",
           "question": "Marcus says the ratio of cats to dogs at the shelter is 4:5, so there must be exactly 4 cats and 5 dogs. Is Marcus correct? Explain why or why not.",
           "hints": [
-            "Think about what a ratio tells you — does it tell you exact amounts?",
+            "Think about what a ratio tells you \u2014 does it tell you exact amounts?",
             "Could there be 8 cats and 10 dogs and still have a 4:5 ratio?"
           ],
           "answer": "Marcus is not correct. A ratio of 4:5 means for every 4 cats there are 5 dogs, but the actual numbers could be any equivalent amounts: 4 and 5, 8 and 10, 12 and 15, 40 and 50, etc. Ratios describe a relationship, not specific counts."
@@ -115,15 +112,12 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Ratio Language — On Your Own",
-      "skills": [
-        "g6-ratio-language"
-      ],
+      "title": "Ratio Language \u2014 On Your Own",
       "problems": [
         {
           "id": "rr-4",
           "question": "A soccer team played 24 games. They won 14, lost 6, and tied 4. Write these ratios in simplest form: (a) wins to losses, (b) ties to total games, (c) losses to wins.",
-          "answer": "(a) wins to losses = 14:6 = 7:3. (b) ties to total = 4:24 = 1:6. (c) losses to wins = 6:14 = 3:7. Notice (a) and (c) are the same numbers in reverse order — order matters!"
+          "answer": "(a) wins to losses = 14:6 = 7:3. (b) ties to total = 4:24 = 1:6. (c) losses to wins = 6:14 = 3:7. Notice (a) and (c) are the same numbers in reverse order \u2014 order matters!"
         },
         {
           "id": "rr-5",
@@ -143,10 +137,10 @@
       "lessonPhase": "concept-intro",
       "title": "Understanding Unit Rates",
       "skill": "g6-unit-rates",
-      "content": "A unit rate tells you 'how much for just one.' When you see prices like $2.50 per pound or speeds like 60 miles per hour, those are unit rates. The word 'per' is your clue — it means 'for each one.' Finding a unit rate is simple: divide to get a quantity for 1 unit. Unit rates let you compare different options on a level playing field.",
+      "content": "A unit rate tells you 'how much for just one.' When you see prices like $2.50 per pound or speeds like 60 miles per hour, those are unit rates. The word 'per' is your clue \u2014 it means 'for each one.' Finding a unit rate is simple: divide to get a quantity for 1 unit. Unit rates let you compare different options on a level playing field.",
       "keyPoints": [
         "A rate is a ratio that compares two quantities with different units (miles and hours, dollars and pounds)",
-        "A unit rate has a denominator of 1 — it tells you the amount per ONE unit ($3 per pound, 55 miles per hour)",
+        "A unit rate has a denominator of 1 \u2014 it tells you the amount per ONE unit ($3 per pound, 55 miles per hour)",
         "To find a unit rate, divide the numerator by the denominator: 150 miles / 3 hours = 50 miles per hour",
         "Unit rates make comparison easy: $0.08/oz vs $0.06/oz instantly shows which is cheaper",
         "Common unit rates: price per item, miles per hour (mph), points per game, calories per serving"
@@ -155,7 +149,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Unit Rates — Worked Examples",
+      "title": "Unit Rates \u2014 Worked Examples",
       "skill": "g6-unit-rates",
       "examples": [
         {
@@ -168,17 +162,14 @@
         },
         {
           "problem": "A recipe makes 24 cookies using 3 cups of flour. Another recipe makes 40 cookies using 5 cups of flour. Which recipe gives you more cookies per cup of flour?",
-          "solution": "Recipe 1: 24 cookies / 3 cups = 8 cookies per cup\nRecipe 2: 40 cookies / 5 cups = 8 cookies per cup\n\nBoth recipes yield the same rate: 8 cookies per cup of flour.\nThe recipes are equally efficient — the second just makes a bigger batch!"
+          "solution": "Recipe 1: 24 cookies / 3 cups = 8 cookies per cup\nRecipe 2: 40 cookies / 5 cups = 8 cookies per cup\n\nBoth recipes yield the same rate: 8 cookies per cup of flour.\nThe recipes are equally efficient \u2014 the second just makes a bigger batch!"
         }
       ]
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Unit Rates — Practice Together",
-      "skills": [
-        "g6-unit-rates"
-      ],
+      "title": "Unit Rates \u2014 Practice Together",
       "problems": [
         {
           "id": "rr-7",
@@ -214,10 +205,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Unit Rates — On Your Own",
-      "skills": [
-        "g6-unit-rates"
-      ],
+      "title": "Unit Rates \u2014 On Your Own",
       "problems": [
         {
           "id": "rr-10",
@@ -242,11 +230,11 @@
       "lessonPhase": "concept-intro",
       "title": "Equivalent Ratios and Ratio Tables",
       "skill": "g6-equivalent-ratios",
-      "content": "Two ratios are equivalent if you can multiply (or divide) both quantities by the same number to get from one to the other. Think of it like scaling a recipe up or down — the taste stays the same because the relationship between ingredients doesn't change. Ratio tables and double number lines are powerful tools for organizing and finding equivalent ratios.",
+      "content": "Two ratios are equivalent if you can multiply (or divide) both quantities by the same number to get from one to the other. Think of it like scaling a recipe up or down \u2014 the taste stays the same because the relationship between ingredients doesn't change. Ratio tables and double number lines are powerful tools for organizing and finding equivalent ratios.",
       "keyPoints": [
-        "Equivalent ratios have the same value when simplified — 2:3, 4:6, 6:9, and 10:15 are all equivalent",
+        "Equivalent ratios have the same value when simplified \u2014 2:3, 4:6, 6:9, and 10:15 are all equivalent",
         "To create an equivalent ratio, multiply or divide BOTH parts by the same nonzero number",
-        "A ratio table lists pairs of equivalent ratios in organized rows or columns — every row is the same ratio scaled",
+        "A ratio table lists pairs of equivalent ratios in organized rows or columns \u2014 every row is the same ratio scaled",
         "To find a missing value: figure out what multiplier connects the known values, then apply it to the unknown",
         "A double number line places both quantities on parallel lines, making it visual to see how the quantities grow together",
         "Testing equivalence: simplify both ratios to lowest terms, or cross-multiply to check if a/b = c/d (ad = bc)"
@@ -255,7 +243,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Equivalent Ratios — Worked Examples",
+      "title": "Equivalent Ratios \u2014 Worked Examples",
       "skill": "g6-equivalent-ratios",
       "examples": [
         {
@@ -264,7 +252,7 @@
         },
         {
           "problem": "Are 12:16 and 9:12 equivalent ratios?",
-          "solution": "Method 1 — Simplify both:\n12:16 — divide both by 4 — 3:4\n9:12 — divide both by 3 — 3:4\nBoth simplify to 3:4, so YES, they are equivalent.\n\nMethod 2 — Cross-multiply:\n12 x 12 = 144\n16 x 9 = 144\n144 = 144, so they are equivalent."
+          "solution": "Method 1 \u2014 Simplify both:\n12:16 \u2014 divide both by 4 \u2014 3:4\n9:12 \u2014 divide both by 3 \u2014 3:4\nBoth simplify to 3:4, so YES, they are equivalent.\n\nMethod 2 \u2014 Cross-multiply:\n12 x 12 = 144\n16 x 9 = 144\n144 = 144, so they are equivalent."
         },
         {
           "problem": "A paint mix uses blue and yellow in a 3:5 ratio. If you need 40 cups of paint total, how many cups of each color?",
@@ -275,10 +263,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Equivalent Ratios — Practice Together",
-      "skills": [
-        "g6-equivalent-ratios"
-      ],
+      "title": "Equivalent Ratios \u2014 Practice Together",
       "problems": [
         {
           "id": "rr-13",
@@ -286,7 +271,7 @@
           "hints": [
             "Find the multiplier for each column by comparing to the base ratio 4:6",
             "Column 2: lemons doubled (4 to 8), so water doubles too",
-            "Column 3: water went from 6 to 15 — what do you multiply 6 by to get 15? (6 x 2.5 = 15)"
+            "Column 3: water went from 6 to 15 \u2014 what do you multiply 6 by to get 15? (6 x 2.5 = 15)"
           ],
           "answer": "Column 2: x2, Water = 12. Column 3: x2.5, Lemons = 4 x 2.5 = 10. Column 4: x4, Water = 6 x 4 = 24. Lemons: 4, 8, 10, 16. Water: 6, 12, 15, 24."
         },
@@ -294,7 +279,7 @@
           "id": "rr-14",
           "question": "Determine which of these ratios are equivalent to 6:10. (a) 3:5  (b) 12:18  (c) 15:25  (d) 9:15",
           "hints": [
-            "Simplify 6:10 first — divide both by their GCF",
+            "Simplify 6:10 first \u2014 divide both by their GCF",
             "6:10 simplifies to 3:5. Now simplify each option to see if it also equals 3:5",
             "For (b): GCF of 12 and 18 is 6, so 12:18 = 2:3"
           ],
@@ -316,10 +301,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Equivalent Ratios — On Your Own",
-      "skills": [
-        "g6-equivalent-ratios"
-      ],
+      "title": "Equivalent Ratios \u2014 On Your Own",
       "problems": [
         {
           "id": "rr-16",
@@ -329,7 +311,7 @@
         {
           "id": "rr-17",
           "question": "A pancake recipe uses flour and milk in a 3:2 ratio. Write five equivalent ratios in a ratio table. If you need exactly 20 cups of milk, how much flour do you need?",
-          "answer": "Ratio table — Flour: 3, 6, 9, 12, 15. Milk: 2, 4, 6, 8, 10. For 20 cups of milk: multiplier = 20 / 2 = 10, so Flour = 3 x 10 = 30 cups."
+          "answer": "Ratio table \u2014 Flour: 3, 6, 9, 12, 15. Milk: 2, 4, 6, 8, 10. For 20 cups of milk: multiplier = 20 / 2 = 10, so Flour = 3 x 10 = 30 cups."
         },
         {
           "id": "rr-18",
@@ -344,10 +326,10 @@
       "lessonPhase": "concept-intro",
       "title": "Solving Real-World Ratio and Rate Problems",
       "skill": "g6-ratio-problem-solving",
-      "content": "Now it's time to combine everything: ratio language, unit rates, and equivalent ratios to solve real-world problems. The key is choosing the right strategy for each situation. Sometimes a ratio table is fastest; other times a unit rate or scale factor works better. Strong problem-solvers are flexible — they pick the tool that fits.",
+      "content": "Now it's time to combine everything: ratio language, unit rates, and equivalent ratios to solve real-world problems. The key is choosing the right strategy for each situation. Sometimes a ratio table is fastest; other times a unit rate or scale factor works better. Strong problem-solvers are flexible \u2014 they pick the tool that fits.",
       "keyPoints": [
         "Step 1: Identify the ratio or rate in the problem and what you are solving for",
-        "Step 2: Choose a strategy — ratio table, unit rate, scale factor, or tape diagram",
+        "Step 2: Choose a strategy \u2014 ratio table, unit rate, scale factor, or tape diagram",
         "Ratio tables work well when you need to scale up or down by a whole number multiplier",
         "Unit rates work best for comparison problems or when scaling by non-whole numbers",
         "Tape diagrams (bar models) help when you know the total and need to find the parts",
@@ -357,12 +339,12 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Ratio and Rate Problem Solving — Worked Examples",
+      "title": "Ratio and Rate Problem Solving \u2014 Worked Examples",
       "skill": "g6-ratio-problem-solving",
       "examples": [
         {
           "problem": "A store sells 3 T-shirts for $24. At this rate, how much would 7 T-shirts cost?",
-          "solution": "Strategy: Find the unit rate, then multiply.\n\nUnit rate: $24 / 3 = $8 per T-shirt\nCost of 7 T-shirts: 7 x $8 = $56\n\nAlternate strategy — ratio table:\nShirts: 3, 1, 7\nCost: $24, $8, $56\n\nAnswer: 7 T-shirts cost $56."
+          "solution": "Strategy: Find the unit rate, then multiply.\n\nUnit rate: $24 / 3 = $8 per T-shirt\nCost of 7 T-shirts: 7 x $8 = $56\n\nAlternate strategy \u2014 ratio table:\nShirts: 3, 1, 7\nCost: $24, $8, $56\n\nAnswer: 7 T-shirts cost $56."
         },
         {
           "problem": "A trail mix recipe calls for nuts and dried fruit in a 4:3 ratio. Jamal wants to make 28 ounces of trail mix (just nuts and fruit). He also plans to add 6 extra ounces of chocolate chips on top. How many ounces of each ingredient does he need?",
@@ -377,10 +359,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Ratio and Rate Problem Solving — Practice Together",
-      "skills": [
-        "g6-ratio-problem-solving"
-      ],
+      "title": "Ratio and Rate Problem Solving \u2014 Practice Together",
       "problems": [
         {
           "id": "rr-19",
@@ -418,10 +397,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Ratio and Rate Problem Solving — On Your Own",
-      "skills": [
-        "g6-ratio-problem-solving"
-      ],
+      "title": "Ratio and Rate Problem Solving \u2014 On Your Own",
       "problems": [
         {
           "id": "rr-22",
@@ -449,8 +425,8 @@
       "content": "Converting between measurement units is really just working with equivalent ratios. When you know that 1 foot = 12 inches, you have a ratio of 1:12. Converting is simply scaling that ratio to find the equivalent amount. This connects everything you have learned about ratios to the measurement system.",
       "keyPoints": [
         "A conversion factor is a ratio that equals 1 (12 inches / 1 foot = 1 because 12 inches IS 1 foot)",
-        "To convert to a smaller unit, multiply (3 feet x 12 = 36 inches) — more of a smaller unit",
-        "To convert to a larger unit, divide (48 inches / 12 = 4 feet) — fewer of a larger unit",
+        "To convert to a smaller unit, multiply (3 feet x 12 = 36 inches) \u2014 more of a smaller unit",
+        "To convert to a larger unit, divide (48 inches / 12 = 4 feet) \u2014 fewer of a larger unit",
         "Common customary conversions: 1 ft = 12 in, 1 yd = 3 ft, 1 mi = 5,280 ft, 1 lb = 16 oz, 1 gal = 4 qt",
         "Common metric conversions: 1 m = 100 cm, 1 km = 1,000 m, 1 L = 1,000 mL, 1 kg = 1,000 g",
         "Use a ratio table to organize multi-step conversions: set up the known conversion, then scale to your amount"
@@ -459,7 +435,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Measurement Conversions — Worked Examples",
+      "title": "Measurement Conversions \u2014 Worked Examples",
       "skill": "g6-measurement-conversions",
       "examples": [
         {
@@ -479,10 +455,7 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Measurement Conversions — Practice Together",
-      "skills": [
-        "g6-measurement-conversions"
-      ],
+      "title": "Measurement Conversions \u2014 Practice Together",
       "problems": [
         {
           "id": "rr-25",
@@ -520,10 +493,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Measurement Conversions — On Your Own",
-      "skills": [
-        "g6-measurement-conversions"
-      ],
+      "title": "Measurement Conversions \u2014 On Your Own",
       "problems": [
         {
           "id": "rr-28",
@@ -547,7 +517,7 @@
   "answerKeys": {
     "rr-1": "2:3, part-to-part",
     "rr-2": "2:5, cheese is 2/5 of total",
-    "rr-3": "Incorrect — ratios describe a relationship, not exact counts",
+    "rr-3": "Incorrect \u2014 ratios describe a relationship, not exact counts",
     "rr-4": "(a) 7:3, (b) 1:6, (c) 3:7",
     "rr-5": "15 red, 25 blue",
     "rr-6": "7:5:3",

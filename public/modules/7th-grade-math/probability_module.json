@@ -27,9 +27,9 @@
     "Design and describe simulations using coins, dice, or spinners to estimate probabilities"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → We Do → You Do",
+    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do",
     "AI uses scaffold array as scope and worked-example bank",
-    "Concrete contexts first — coins, dice, marbles, spinners, cards — before abstract notation",
+    "Concrete contexts first \u2014 coins, dice, marbles, spinners, cards \u2014 before abstract notation",
     "All probabilities expressed as simplified fractions to reinforce fraction fluency",
     "Tree diagrams described in text to build reasoning about compound event sample spaces",
     "Gambler's fallacy addressed directly to correct a common misconception about independent events"
@@ -63,7 +63,7 @@
         "Experimental probability usually does not exactly equal the theoretical probability, and that is normal.",
         "Law of large numbers: as you perform more and more trials, the experimental probability tends to get closer and closer to the theoretical probability.",
         "The gambler's fallacy is the mistaken belief that past results change future probabilities. For example, if a fair coin lands on heads 5 times in a row, the probability of tails on the next flip is still 1/2. The coin has no memory.",
-        "Each flip of a coin or roll of a die is an independent event — it is not affected by what happened before."
+        "Each flip of a coin or roll of a die is an independent event \u2014 it is not affected by what happened before."
       ]
     },
     {
@@ -71,15 +71,15 @@
       "lessonPhase": "concept-intro",
       "title": "Compound Events",
       "skill": "g7-compound-events",
-      "content": "A compound event involves two or more simple events happening together, like flipping a coin AND rolling a die. To find the probability, you first need to list every possible outcome — this complete list is called the sample space.",
+      "content": "A compound event involves two or more simple events happening together, like flipping a coin AND rolling a die. To find the probability, you first need to list every possible outcome \u2014 this complete list is called the sample space.",
       "keyPoints": [
         "The sample space is the set of all possible outcomes of an experiment.",
         "Three tools for finding a sample space: organized lists, tables, and tree diagrams.",
         "Organized list: write out every combination systematically (e.g., H1, H2, H3, H4, H5, H6, T1, T2, T3, T4, T5, T6).",
         "Table: set up rows for one event and columns for the other. Each cell is one outcome.",
         "Tree diagram: draw a branch for each outcome of the first event. From each branch, draw branches for every outcome of the second event. The total paths = total outcomes.",
-        "If event A has m outcomes and event B has n outcomes, the total number of outcomes in the sample space is m × n.",
-        "For independent events with replacement: P(A and B) = P(A) × P(B)."
+        "If event A has m outcomes and event B has n outcomes, the total number of outcomes in the sample space is m \u00d7 n.",
+        "For independent events with replacement: P(A and B) = P(A) \u00d7 P(B)."
       ]
     },
     {
@@ -87,7 +87,7 @@
       "lessonPhase": "concept-intro",
       "title": "Probability Simulations",
       "skill": "g7-probability-simulations",
-      "content": "Sometimes you cannot easily calculate a probability with math alone. In those cases, you can design a simulation — an experiment using random devices like coins, dice, or spinners to model a real-world situation.",
+      "content": "Sometimes you cannot easily calculate a probability with math alone. In those cases, you can design a simulation \u2014 an experiment using random devices like coins, dice, or spinners to model a real-world situation.",
       "keyPoints": [
         "A simulation uses a random device (coin, die, spinner, random number generator) to represent a real situation.",
         "Step 1: Choose a device whose probability matches the situation. For example, use a coin (1/2) for boy-or-girl, or a die (1/6 per face) for a 1-in-6 chance.",
@@ -101,7 +101,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Simple Probability — Worked Examples",
+      "title": "Simple Probability \u2014 Worked Examples",
       "skill": "g7-simple-probability",
       "examples": [
         {
@@ -110,67 +110,67 @@
         },
         {
           "problem": "A standard number cube (die) is rolled. What is the probability of rolling a number greater than 4?",
-          "solution": "The possible outcomes on a die are {1, 2, 3, 4, 5, 6} — that is 6 total.\nNumbers greater than 4 are {5, 6} — that is 2 favorable outcomes.\nP(greater than 4) = 2/6.\nSimplify: 2/6 = 1/3.\nThe probability of rolling a number greater than 4 is 1/3."
+          "solution": "The possible outcomes on a die are {1, 2, 3, 4, 5, 6} \u2014 that is 6 total.\nNumbers greater than 4 are {5, 6} \u2014 that is 2 favorable outcomes.\nP(greater than 4) = 2/6.\nSimplify: 2/6 = 1/3.\nThe probability of rolling a number greater than 4 is 1/3."
         },
         {
           "problem": "A spinner is divided into 8 equal sections numbered 1 through 8. What is the probability of landing on an odd number?",
-          "solution": "Total sections: 8.\nOdd numbers from 1 to 8 are {1, 3, 5, 7} — that is 4 favorable outcomes.\nP(odd) = 4/8.\nSimplify: 4/8 = 1/2.\nThe probability of landing on an odd number is 1/2."
+          "solution": "Total sections: 8.\nOdd numbers from 1 to 8 are {1, 3, 5, 7} \u2014 that is 4 favorable outcomes.\nP(odd) = 4/8.\nSimplify: 4/8 = 1/2.\nThe probability of landing on an odd number is 1/2."
         }
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Experimental vs. Theoretical Probability — Worked Examples",
+      "title": "Experimental vs. Theoretical Probability \u2014 Worked Examples",
       "skill": "g7-experimental-theoretical",
       "examples": [
         {
           "problem": "A coin is flipped 50 times and lands on heads 28 times. What is the experimental probability of landing on heads? How does it compare to the theoretical probability?",
-          "solution": "Experimental probability = times the event happened / total trials.\nP(heads) experimental = 28/50.\nSimplify: 28/50 = 14/25.\n\nTheoretical probability: a fair coin has 2 equally likely outcomes.\nP(heads) theoretical = 1/2.\n\n14/25 = 0.56 and 1/2 = 0.50 — they are close but not exactly equal. This is normal. With more flips, the experimental probability would tend to get closer to 1/2."
+          "solution": "Experimental probability = times the event happened / total trials.\nP(heads) experimental = 28/50.\nSimplify: 28/50 = 14/25.\n\nTheoretical probability: a fair coin has 2 equally likely outcomes.\nP(heads) theoretical = 1/2.\n\n14/25 = 0.56 and 1/2 = 0.50 \u2014 they are close but not exactly equal. This is normal. With more flips, the experimental probability would tend to get closer to 1/2."
         },
         {
           "problem": "A die is rolled 60 times. The number 3 appears 8 times. What is the experimental probability of rolling a 3? Compare it to the theoretical probability.",
-          "solution": "Experimental P(3) = 8/60.\nSimplify: 8/60 = 2/15.\n\nTheoretical P(3): a die has 6 equally likely outcomes, so P(3) = 1/6.\n\nCompare: 2/15 ≈ 0.133 and 1/6 ≈ 0.167. The experimental probability is a bit lower than the theoretical probability. With more rolls, the experimental result would tend to get closer to 1/6."
+          "solution": "Experimental P(3) = 8/60.\nSimplify: 8/60 = 2/15.\n\nTheoretical P(3): a die has 6 equally likely outcomes, so P(3) = 1/6.\n\nCompare: 2/15 \u2248 0.133 and 1/6 \u2248 0.167. The experimental probability is a bit lower than the theoretical probability. With more rolls, the experimental result would tend to get closer to 1/6."
         },
         {
           "problem": "A fair coin has landed on heads 5 times in a row. What is the probability that the next flip will be tails? Explain your reasoning.",
-          "solution": "The probability of tails on the next flip is 1/2.\n\nEach coin flip is independent — the coin has no memory of previous flips. The past 5 heads do not change what happens next.\n\nThe mistaken belief that tails is 'due' or 'overdue' after several heads is called the gambler's fallacy. No matter what happened before, a fair coin always has a 1/2 probability of landing on heads and a 1/2 probability of landing on tails."
+          "solution": "The probability of tails on the next flip is 1/2.\n\nEach coin flip is independent \u2014 the coin has no memory of previous flips. The past 5 heads do not change what happens next.\n\nThe mistaken belief that tails is 'due' or 'overdue' after several heads is called the gambler's fallacy. No matter what happened before, a fair coin always has a 1/2 probability of landing on heads and a 1/2 probability of landing on tails."
         }
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Compound Events — Worked Examples",
+      "title": "Compound Events \u2014 Worked Examples",
       "skill": "g7-compound-events",
       "examples": [
         {
           "problem": "A coin is flipped and a die is rolled. What is the probability of getting heads and a number less than 3?",
-          "solution": "Build a tree diagram:\n  Coin: H or T (2 branches)\n    From H: → 1, 2, 3, 4, 5, 6\n    From T: → 1, 2, 3, 4, 5, 6\n\nTotal outcomes: 2 × 6 = 12.\n\nFavorable outcomes (heads AND less than 3):\n  H-1, H-2 → 2 outcomes.\n\nP(heads and less than 3) = 2/12 = 1/6."
+          "solution": "Build a tree diagram:\n  Coin: H or T (2 branches)\n    From H: \u2192 1, 2, 3, 4, 5, 6\n    From T: \u2192 1, 2, 3, 4, 5, 6\n\nTotal outcomes: 2 \u00d7 6 = 12.\n\nFavorable outcomes (heads AND less than 3):\n  H-1, H-2 \u2192 2 outcomes.\n\nP(heads and less than 3) = 2/12 = 1/6."
         },
         {
           "problem": "Two standard dice are rolled. What is the probability that the sum is 9?",
-          "solution": "Total outcomes: 6 × 6 = 36.\n\nList all pairs that sum to 9:\n  (3, 6), (4, 5), (5, 4), (6, 3) → 4 outcomes.\n\nYou can verify using a table: write die 1 values across the top (1-6) and die 2 values down the side (1-6). Find every cell where the sum is 9.\n\nP(sum is 9) = 4/36 = 1/9."
+          "solution": "Total outcomes: 6 \u00d7 6 = 36.\n\nList all pairs that sum to 9:\n  (3, 6), (4, 5), (5, 4), (6, 3) \u2192 4 outcomes.\n\nYou can verify using a table: write die 1 values across the top (1-6) and die 2 values down the side (1-6). Find every cell where the sum is 9.\n\nP(sum is 9) = 4/36 = 1/9."
         },
         {
           "problem": "A bag contains 3 red marbles and 2 blue marbles. You draw one marble, put it back, then draw again. What is the probability of drawing a red marble both times?",
-          "solution": "Since you replace the marble, the two draws are independent.\n\nBuild a tree diagram:\n  First draw: R (3/5) or B (2/5)\n    From R: second draw → R (3/5) or B (2/5)\n    From B: second draw → R (3/5) or B (2/5)\n\nP(red first) = 3/5.\nP(red second) = 3/5 (the bag is the same because we replaced the first marble).\n\nP(red both times) = 3/5 × 3/5 = 9/25."
+          "solution": "Since you replace the marble, the two draws are independent.\n\nBuild a tree diagram:\n  First draw: R (3/5) or B (2/5)\n    From R: second draw \u2192 R (3/5) or B (2/5)\n    From B: second draw \u2192 R (3/5) or B (2/5)\n\nP(red first) = 3/5.\nP(red second) = 3/5 (the bag is the same because we replaced the first marble).\n\nP(red both times) = 3/5 \u00d7 3/5 = 9/25."
         }
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Probability Simulations — Worked Examples",
+      "title": "Probability Simulations \u2014 Worked Examples",
       "skill": "g7-probability-simulations",
       "examples": [
         {
           "problem": "Design a simulation to estimate the probability that a family with 3 children has all girls. Then state the theoretical probability.",
-          "solution": "Simulation design:\n  Device: a coin (heads = boy, tails = girl).\n  One trial: flip the coin 3 times (one flip per child).\n  Success: all 3 flips land on tails.\n  Repeat for at least 30 trials. Record how many trials result in all tails.\n  Experimental probability = number of successes / total trials.\n\nTheoretical probability:\n  Each child is equally likely to be a boy or girl, so P(girl) = 1/2.\n  P(all 3 girls) = 1/2 × 1/2 × 1/2 = 1/8.\n\nThe simulation results should approximate 1/8 as the number of trials increases."
+          "solution": "Simulation design:\n  Device: a coin (heads = boy, tails = girl).\n  One trial: flip the coin 3 times (one flip per child).\n  Success: all 3 flips land on tails.\n  Repeat for at least 30 trials. Record how many trials result in all tails.\n  Experimental probability = number of successes / total trials.\n\nTheoretical probability:\n  Each child is equally likely to be a boy or girl, so P(girl) = 1/2.\n  P(all 3 girls) = 1/2 \u00d7 1/2 \u00d7 1/2 = 1/8.\n\nThe simulation results should approximate 1/8 as the number of trials increases."
         },
         {
           "problem": "At a school carnival, you have a 1-in-6 chance of winning a prize each time you play a game. Design a simulation to estimate the probability of winning at least once if you play 3 times.",
-          "solution": "Simulation design:\n  Device: a standard die (rolling a 1 = win, rolling 2-6 = no win).\n  One trial: roll the die 3 times.\n  Success: at least one of the 3 rolls is a 1.\n  Repeat for at least 30 trials. Record how many trials have at least one 1.\n  Experimental probability = number of successes / total trials.\n\nTheoretical check:\n  P(no win on one play) = 5/6.\n  P(no win in 3 plays) = 5/6 × 5/6 × 5/6 = 125/216.\n  P(at least one win) = 1 − 125/216 = 91/216.\n\nThe simulation results should approximate 91/216 over many trials."
+          "solution": "Simulation design:\n  Device: a standard die (rolling a 1 = win, rolling 2-6 = no win).\n  One trial: roll the die 3 times.\n  Success: at least one of the 3 rolls is a 1.\n  Repeat for at least 30 trials. Record how many trials have at least one 1.\n  Experimental probability = number of successes / total trials.\n\nTheoretical check:\n  P(no win on one play) = 5/6.\n  P(no win in 3 plays) = 5/6 \u00d7 5/6 \u00d7 5/6 = 125/216.\n  P(at least one win) = 1 \u2212 125/216 = 91/216.\n\nThe simulation results should approximate 91/216 over many trials."
         }
       ]
     },
@@ -178,16 +178,12 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Simple & Experimental Probability Practice",
-      "skills": [
-        "g7-simple-probability",
-        "g7-experimental-theoretical"
-      ],
       "problems": [
         {
           "problem": "A bag contains 5 red marbles, 3 blue marbles, and 2 yellow marbles. What is the probability of NOT drawing a red marble?",
           "hints": [
             "First find the total number of marbles: 5 + 3 + 2.",
-            "Count how many marbles are NOT red (blue + yellow), or use P(not red) = 1 − P(red)."
+            "Count how many marbles are NOT red (blue + yellow), or use P(not red) = 1 \u2212 P(red)."
           ],
           "answer": "Total marbles = 10. Non-red marbles = 3 + 2 = 5. P(not red) = 5/10 = 1/2."
         },
@@ -215,10 +211,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Compound Events & Simulations Practice",
-      "skills": [
-        "g7-compound-events",
-        "g7-probability-simulations"
-      ],
       "problems": [
         {
           "problem": "Two coins are flipped. List all the outcomes in the sample space. Then find the probability of getting exactly one head.",
@@ -226,15 +218,15 @@
             "Use a tree diagram or organized list. First coin: H or T. For each, second coin: H or T.",
             "The sample space has 4 outcomes. Count the ones with exactly one H."
           ],
-          "answer": "Sample space: {HH, HT, TH, TT} — 4 outcomes. Outcomes with exactly one head: HT and TH — 2 outcomes. P(exactly one head) = 2/4 = 1/2."
+          "answer": "Sample space: {HH, HT, TH, TT} \u2014 4 outcomes. Outcomes with exactly one head: HT and TH \u2014 2 outcomes. P(exactly one head) = 2/4 = 1/2."
         },
         {
           "problem": "A spinner has 3 equal sections labeled red, blue, and green. You spin the spinner and flip a coin. What is the probability of landing on green and getting tails?",
           "hints": [
-            "Find the total number of outcomes: 3 spinner outcomes × 2 coin outcomes.",
+            "Find the total number of outcomes: 3 spinner outcomes \u00d7 2 coin outcomes.",
             "Only one combination out of all outcomes gives green AND tails."
           ],
-          "answer": "Total outcomes = 3 × 2 = 6. The 6 outcomes are: (red, H), (red, T), (blue, H), (blue, T), (green, H), (green, T). Favorable outcome: (green, T) — 1 outcome. P(green and tails) = 1/6."
+          "answer": "Total outcomes = 3 \u00d7 2 = 6. The 6 outcomes are: (red, H), (red, T), (blue, H), (blue, T), (green, H), (green, T). Favorable outcome: (green, T) \u2014 1 outcome. P(green and tails) = 1/6."
         },
         {
           "problem": "A basketball player makes about 1 out of every 3 free throws. Describe how you would use a standard die to simulate the probability of making exactly 2 out of 3 free throws.",
@@ -242,7 +234,7 @@
             "You need the die to have a 1/3 chance of representing a made shot. Which numbers on a 1-6 die give a 2/6 = 1/3 chance?",
             "One trial means rolling the die 3 times (one per free throw). Define what counts as a success for the trial."
           ],
-          "answer": "Let rolling a 1 or 2 represent a made free throw (probability 2/6 = 1/3) and rolling 3, 4, 5, or 6 represent a miss. One trial: roll the die 3 times. Success: exactly 2 of the 3 rolls show a 1 or 2. Repeat for many trials and calculate successes / total trials. Theoretical probability: C(3,2) × (1/3)^2 × (2/3)^1 = 3 × 1/9 × 2/3 = 6/27 = 2/9."
+          "answer": "Let rolling a 1 or 2 represent a made free throw (probability 2/6 = 1/3) and rolling 3, 4, 5, or 6 represent a miss. One trial: roll the die 3 times. Success: exactly 2 of the 3 rolls show a 1 or 2. Repeat for many trials and calculate successes / total trials. Theoretical probability: C(3,2) \u00d7 (1/3)^2 \u00d7 (2/3)^1 = 3 \u00d7 1/9 \u00d7 2/3 = 6/27 = 2/9."
         }
       ],
       "skill": "g7-compound-events"
@@ -250,13 +242,7 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Probability — Independent Practice",
-      "skills": [
-        "g7-simple-probability",
-        "g7-experimental-theoretical",
-        "g7-compound-events",
-        "g7-probability-simulations"
-      ],
+      "title": "Probability \u2014 Independent Practice",
       "problems": [
         {
           "problem": "A jar contains 6 green marbles, 4 orange marbles, and 2 white marbles. What is the probability of randomly drawing a green marble?",
@@ -268,15 +254,15 @@
         },
         {
           "problem": "A coin is flipped and a spinner with 4 equal sections numbered 1 through 4 is spun. What is the probability of getting tails and a number greater than 2?",
-          "answer": "Total outcomes = 2 × 4 = 8. Favorable outcomes (tails AND greater than 2): (T, 3) and (T, 4) — 2 outcomes. P(tails and greater than 2) = 2/8 = 1/4."
+          "answer": "Total outcomes = 2 \u00d7 4 = 8. Favorable outcomes (tails AND greater than 2): (T, 3) and (T, 4) \u2014 2 outcomes. P(tails and greater than 2) = 2/8 = 1/4."
         },
         {
           "problem": "Two standard dice are rolled. What is the probability that the sum of the two numbers is less than 5?",
-          "answer": "Total outcomes = 6 × 6 = 36. Pairs with sum less than 5: sum 2 → (1,1); sum 3 → (1,2), (2,1); sum 4 → (1,3), (2,2), (3,1). That is 1 + 2 + 3 = 6 favorable outcomes. P(sum less than 5) = 6/36 = 1/6."
+          "answer": "Total outcomes = 6 \u00d7 6 = 36. Pairs with sum less than 5: sum 2 \u2192 (1,1); sum 3 \u2192 (1,2), (2,1); sum 4 \u2192 (1,3), (2,2), (3,1). That is 1 + 2 + 3 = 6 favorable outcomes. P(sum less than 5) = 6/36 = 1/6."
         },
         {
           "problem": "A bag contains 4 red marbles and 3 blue marbles. You draw one marble, put it back in the bag, and draw again. What is the probability of drawing a blue marble both times?",
-          "answer": "P(blue first draw) = 3/7. P(blue second draw) = 3/7 (with replacement, the bag is the same). P(blue both times) = 3/7 × 3/7 = 9/49."
+          "answer": "P(blue first draw) = 3/7. P(blue second draw) = 3/7 (with replacement, the bag is the same). P(blue both times) = 3/7 \u00d7 3/7 = 9/49."
         },
         {
           "problem": "A cereal box contains 1 of 5 different toy figures, each equally likely. Describe how you would simulate finding the probability of getting the same figure in 2 consecutive boxes. Then state the theoretical probability.",

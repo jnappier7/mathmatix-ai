@@ -5,7 +5,7 @@
   "title": "Analytical Applications of Differentiation",
   "weeks": "18-23",
   "estimatedDuration": 30,
-  "description": "The thinking unit where students discover calculus isn't just a button. This is the biggest unit in AP Calculus AB (15-18% of the exam) and the one where derivative mechanics meet logical reasoning. Students apply the Mean Value Theorem and Extreme Value Theorem to justify behavior, use the first and second derivatives to analyze increasing/decreasing behavior, concavity, and extrema, sketch curves from derivative information alone, and solve real-world optimization problems. Every FRQ section tests these skills — students must not only compute but JUSTIFY with theorems and sign charts.",
+  "description": "The thinking unit where students discover calculus isn't just a button. This is the biggest unit in AP Calculus AB (15-18% of the exam) and the one where derivative mechanics meet logical reasoning. Students apply the Mean Value Theorem and Extreme Value Theorem to justify behavior, use the first and second derivatives to analyze increasing/decreasing behavior, concavity, and extrema, sketch curves from derivative information alone, and solve real-world optimization problems. Every FRQ section tests these skills \u2014 students must not only compute but JUSTIFY with theorems and sign charts.",
   "skills": [
     "mvt-evt-theorems",
     "increasing-decreasing-extrema",
@@ -30,14 +30,14 @@
     "Use the second derivative to determine concavity, locate inflection points, and classify extrema via the Second Derivative Test.",
     "Sketch the graph of f given information about f' and f'', and sketch f' or f'' given the graph of f.",
     "Set up and solve optimization problems by identifying objective and constraint, reducing to one variable, and verifying the result is a maximum or minimum.",
-    "Write complete, theorem-based justifications for all conclusions — the standard expected on AP free-response questions."
+    "Write complete, theorem-based justifications for all conclusions \u2014 the standard expected on AP free-response questions."
   ],
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> concept-check -> We Do -> check-in -> You Do -> mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Emphasize JUSTIFICATION at every step — students must cite theorems and explain reasoning, not just state answers",
+    "Emphasize JUSTIFICATION at every step \u2014 students must cite theorems and explain reasoning, not just state answers",
     "Build from local analysis (single derivative tests) to global synthesis (full curve sketching and optimization)",
-    "FRQ-style problems throughout — AP exam writes this unit heavily on both MC and FRQ",
+    "FRQ-style problems throughout \u2014 AP exam writes this unit heavily on both MC and FRQ",
     "Spiral prior: derivative computation from Units 2-4, continuity and differentiability from Unit 1"
   ],
   "aiFlexLevel": "moderate",
@@ -47,9 +47,9 @@
       "lessonPhase": "concept-intro",
       "title": "Extreme Value Theorem & Mean Value Theorem",
       "skill": "mvt-evt-theorems",
-      "content": "Two foundational existence theorems tie together continuity, differentiability, and function behavior. The Extreme Value Theorem guarantees that extreme values exist under the right conditions. The Mean Value Theorem connects average rate of change to instantaneous rate of change — it is arguably the most important theorem in differential calculus and appears on nearly every AP exam.",
+      "content": "Two foundational existence theorems tie together continuity, differentiability, and function behavior. The Extreme Value Theorem guarantees that extreme values exist under the right conditions. The Mean Value Theorem connects average rate of change to instantaneous rate of change \u2014 it is arguably the most important theorem in differential calculus and appears on nearly every AP exam.",
       "keyPoints": [
-        "Extreme Value Theorem (EVT): If f is continuous on a closed interval [a, b], then f attains an absolute maximum and an absolute minimum on [a, b]. The hypothesis is critical — continuous AND closed interval.",
+        "Extreme Value Theorem (EVT): If f is continuous on a closed interval [a, b], then f attains an absolute maximum and an absolute minimum on [a, b]. The hypothesis is critical \u2014 continuous AND closed interval.",
         "EVT does NOT say where the extrema occur. They could be at endpoints or at interior critical points.",
         "Mean Value Theorem (MVT): If f is continuous on [a, b] and differentiable on (a, b), then there exists at least one c in (a, b) such that f'(c) = [f(b) - f(a)] / (b - a).",
         "MVT interpretation: at some point, the instantaneous rate of change equals the average rate of change. The tangent line is parallel to the secant line.",
@@ -60,7 +60,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "MVT & EVT — Worked Examples",
+      "title": "MVT & EVT \u2014 Worked Examples",
       "skill": "mvt-evt-theorems",
       "examples": [
         {
@@ -73,7 +73,7 @@
         },
         {
           "problem": "Let f(x) = sin(x) on [0, 2pi]. (a) Does Rolle's Theorem apply? (b) If so, find all values of c. (c) A student claims EVT guarantees f has an absolute maximum of 1 and minimum of -1 on [0, 2pi]. Is this correct?",
-          "solution": "(a) f(0) = 0 and f(2pi) = 0, so f(a) = f(b). f is continuous on [0, 2pi] and differentiable on (0, 2pi). All hypotheses satisfied — Rolle's Theorem applies. (b) f'(x) = cos(x). Set cos(c) = 0: c = pi/2, 3pi/2. Both are in (0, 2pi). (c) Yes. Since f is continuous on the closed interval [0, 2pi], EVT guarantees f attains an absolute max and absolute min. Checking critical points and endpoints: f(0) = 0, f(pi/2) = 1, f(3pi/2) = -1, f(2pi) = 0. Absolute max = 1 at x = pi/2, absolute min = -1 at x = 3pi/2."
+          "solution": "(a) f(0) = 0 and f(2pi) = 0, so f(a) = f(b). f is continuous on [0, 2pi] and differentiable on (0, 2pi). All hypotheses satisfied \u2014 Rolle's Theorem applies. (b) f'(x) = cos(x). Set cos(c) = 0: c = pi/2, 3pi/2. Both are in (0, 2pi). (c) Yes. Since f is continuous on the closed interval [0, 2pi], EVT guarantees f attains an absolute max and absolute min. Checking critical points and endpoints: f(0) = 0, f(pi/2) = 1, f(3pi/2) = -1, f(2pi) = 0. Absolute max = 1 at x = pi/2, absolute min = -1 at x = 3pi/2."
         }
       ]
     },
@@ -95,7 +95,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Increasing/Decreasing & Extrema — Worked Examples",
+      "title": "Increasing/Decreasing & Extrema \u2014 Worked Examples",
       "skill": "increasing-decreasing-extrema",
       "examples": [
         {
@@ -104,7 +104,7 @@
         },
         {
           "problem": "Find the absolute maximum and minimum of f(x) = x^4 - 4x^3 + 4 on [-1, 4].",
-          "solution": "f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3). Critical points: f'(x) = 0 when x = 0 or x = 3. Both are in [-1, 4]. Candidates Test — evaluate f at critical points and endpoints: f(-1) = 1 + 4 + 4 = 9. f(0) = 4. f(3) = 81 - 108 + 4 = -23. f(4) = 256 - 256 + 4 = 4. Absolute maximum: 9 at x = -1. Absolute minimum: -23 at x = 3."
+          "solution": "f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3). Critical points: f'(x) = 0 when x = 0 or x = 3. Both are in [-1, 4]. Candidates Test \u2014 evaluate f at critical points and endpoints: f(-1) = 1 + 4 + 4 = 9. f(0) = 4. f(3) = 81 - 108 + 4 = -23. f(4) = 256 - 256 + 4 = 4. Absolute maximum: 9 at x = -1. Absolute minimum: -23 at x = 3."
         },
         {
           "problem": "The derivative of a function g is given by g'(x) = (x + 2)(x - 1)^2. Find the intervals where g is increasing/decreasing and classify all critical points.",
@@ -117,12 +117,12 @@
       "lessonPhase": "concept-intro",
       "title": "Concavity, Inflection Points & the Second Derivative Test",
       "skill": "concavity-inflection-points",
-      "content": "The second derivative reveals the shape of the curve — whether it bends upward or downward. Inflection points mark where the bending changes direction. The Second Derivative Test provides an alternative way to classify critical points.",
+      "content": "The second derivative reveals the shape of the curve \u2014 whether it bends upward or downward. Inflection points mark where the bending changes direction. The Second Derivative Test provides an alternative way to classify critical points.",
       "keyPoints": [
         "f''(x) > 0 means f is concave up (holds water, smile shape, tangent lines lie below the curve).",
         "f''(x) < 0 means f is concave down (spills water, frown shape, tangent lines lie above the curve).",
-        "Inflection point: a point where f'' changes sign (concavity actually changes). f'' = 0 is necessary but NOT sufficient — f'' must change sign.",
-        "Second Derivative Test: if f'(c) = 0 and f''(c) > 0, then f has a local minimum at c. If f'(c) = 0 and f''(c) < 0, then f has a local maximum at c. If f''(c) = 0, the test is INCONCLUSIVE — use the First Derivative Test instead.",
+        "Inflection point: a point where f'' changes sign (concavity actually changes). f'' = 0 is necessary but NOT sufficient \u2014 f'' must change sign.",
+        "Second Derivative Test: if f'(c) = 0 and f''(c) > 0, then f has a local minimum at c. If f'(c) = 0 and f''(c) < 0, then f has a local maximum at c. If f''(c) = 0, the test is INCONCLUSIVE \u2014 use the First Derivative Test instead.",
         "Concavity and rate of change: concave up means f' is increasing (the rate of change is speeding up). Concave down means f' is decreasing.",
         "Common mistake: f''(c) = 0 does NOT automatically mean c is an inflection point. Example: f(x) = x^4 at x = 0 has f''(0) = 0 but no inflection (concave up on both sides)."
       ]
@@ -130,7 +130,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Concavity & Inflection Points — Worked Examples",
+      "title": "Concavity & Inflection Points \u2014 Worked Examples",
       "skill": "concavity-inflection-points",
       "examples": [
         {
@@ -143,7 +143,7 @@
         },
         {
           "problem": "Determine whether x = 0 is an inflection point for: (a) f(x) = x^3, (b) g(x) = x^4.",
-          "solution": "(a) f''(x) = 6x. f''(0) = 0. Check sign change: f''(-1) = -6 < 0 and f''(1) = 6 > 0. f'' changes sign at x = 0. YES, x = 0 is an inflection point. (b) g''(x) = 12x^2. g''(0) = 0. Check sign change: g''(-1) = 12 > 0 and g''(1) = 12 > 0. g'' does NOT change sign. NO, x = 0 is NOT an inflection point — g is concave up on both sides. This is why f'' = 0 alone is not enough."
+          "solution": "(a) f''(x) = 6x. f''(0) = 0. Check sign change: f''(-1) = -6 < 0 and f''(1) = 6 > 0. f'' changes sign at x = 0. YES, x = 0 is an inflection point. (b) g''(x) = 12x^2. g''(0) = 0. Check sign change: g''(-1) = 12 > 0 and g''(1) = 12 > 0. g'' does NOT change sign. NO, x = 0 is NOT an inflection point \u2014 g is concave up on both sides. This is why f'' = 0 alone is not enough."
         }
       ]
     },
@@ -151,16 +151,11 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "MVT, Increasing/Decreasing & Concavity Practice",
-      "skills": [
-        "mvt-evt-theorems",
-        "increasing-decreasing-extrema",
-        "concavity-inflection-points"
-      ],
       "problems": [
         {
           "problem": "Let f(x) = x^2 - 4x + 3 on [1, 3]. Verify the hypotheses of the MVT, then find all values of c.",
           "hints": [
-            "f is a polynomial — what does that guarantee about continuity and differentiability?",
+            "f is a polynomial \u2014 what does that guarantee about continuity and differentiability?",
             "Compute [f(3) - f(1)] / (3 - 1)",
             "Set f'(c) equal to the average rate of change and solve"
           ],
@@ -170,7 +165,7 @@
           "problem": "Find the intervals of increase and decrease, and all local extrema for f(x) = xe^(-x).",
           "hints": [
             "Use the product rule: f'(x) = e^(-x) + x(-e^(-x)) = e^(-x)(1 - x)",
-            "e^(-x) is always positive — what determines the sign of f'?",
+            "e^(-x) is always positive \u2014 what determines the sign of f'?",
             "Evaluate f at the critical point"
           ],
           "answer": "f'(x) = e^(-x)(1 - x). Since e^(-x) > 0 always, the sign depends on (1 - x). f'(x) > 0 when x < 1 (increasing). f'(x) < 0 when x > 1 (decreasing). f' changes from + to - at x = 1: local maximum. f(1) = 1/e. Local max: (1, 1/e)."
@@ -191,7 +186,7 @@
             "When f(a) = f(b), which special case of MVT applies?",
             "State the theorem's hypotheses and check them"
           ],
-          "answer": "The student's conclusion is correct. Average rate = [h(5) - h(-3)] / (5 - (-3)) = 0/8 = 0. Since h is continuous on [-3, 5] and differentiable on (-3, 5), by the MVT there exists c in (-3, 5) with h'(c) = 0. More precisely, since h(-3) = h(5), this is Rolle's Theorem — the special case of MVT where f(a) = f(b)."
+          "answer": "The student's conclusion is correct. Average rate = [h(5) - h(-3)] / (5 - (-3)) = 0/8 = 0. Since h is continuous on [-3, 5] and differentiable on (-3, 5), by the MVT there exists c in (-3, 5) with h'(c) = 0. More precisely, since h(-3) = h(5), this is Rolle's Theorem \u2014 the special case of MVT where f(a) = f(b)."
         }
       ],
       "skill": "concavity-inflection-points"
@@ -201,7 +196,7 @@
       "lessonPhase": "concept-intro",
       "title": "Curve Sketching from Derivative Information",
       "skill": "curve-sketching-from-derivatives",
-      "content": "This is the synthesis skill — combining everything about f' and f'' to produce or analyze a complete graph. On the AP exam, students must read a graph of f' and deduce everything about f, or use derivative analysis to sketch f. This is the ultimate 'think, don't just compute' skill.",
+      "content": "This is the synthesis skill \u2014 combining everything about f' and f'' to produce or analyze a complete graph. On the AP exam, students must read a graph of f' and deduce everything about f, or use derivative analysis to sketch f. This is the ultimate 'think, don't just compute' skill.",
       "keyPoints": [
         "From f' graph to f: where f' > 0, f is increasing. Where f' < 0, f is decreasing. Where f' = 0 and changes sign, f has a local extremum.",
         "From f' graph to f'': where f' is increasing, f'' > 0 (f is concave up). Where f' is decreasing, f'' < 0 (f is concave down). Where f' has an extremum, f has an inflection point.",
@@ -214,7 +209,7 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Curve Sketching from Derivatives — Worked Examples",
+      "title": "Curve Sketching from Derivatives \u2014 Worked Examples",
       "skill": "curve-sketching-from-derivatives",
       "examples": [
         {
@@ -236,21 +231,21 @@
       "lessonPhase": "concept-intro",
       "title": "Optimization Problems",
       "skill": "optimization-problems",
-      "content": "Optimization is the crown jewel of Unit 5 — real-world problems where calculus finds the best possible answer. The challenge is translating words into equations, not the calculus itself. A systematic approach prevents the most common errors.",
+      "content": "Optimization is the crown jewel of Unit 5 \u2014 real-world problems where calculus finds the best possible answer. The challenge is translating words into equations, not the calculus itself. A systematic approach prevents the most common errors.",
       "keyPoints": [
         "Step 1: Draw a diagram and label all variables. Identify what quantity to MAXIMIZE or MINIMIZE (the objective function).",
         "Step 2: Write the objective function in terms of the variables. Identify the constraint equation.",
         "Step 3: Use the constraint to eliminate one variable so the objective is a function of ONE variable only.",
-        "Step 4: Find the domain (physical restrictions — lengths must be positive, etc.).",
+        "Step 4: Find the domain (physical restrictions \u2014 lengths must be positive, etc.).",
         "Step 5: Take the derivative, find critical points, and verify the result is a max or min using First/Second Derivative Test or Candidates Test on the closed domain.",
-        "Step 6: Answer the question that was asked. If it asks for dimensions, give dimensions — not just the critical point.",
+        "Step 6: Answer the question that was asked. If it asks for dimensions, give dimensions \u2014 not just the critical point.",
         "Classic problem types: fencing (maximize area with fixed perimeter), box (maximize volume with material constraint), distance (minimize distance to a point), cost (minimize materials)."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Optimization — Worked Examples",
+      "title": "Optimization \u2014 Worked Examples",
       "skill": "optimization-problems",
       "examples": [
         {
@@ -271,10 +266,6 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Curve Sketching & Optimization Practice",
-      "skills": [
-        "curve-sketching-from-derivatives",
-        "optimization-problems"
-      ],
       "problems": [
         {
           "problem": "The graph of f'(x) is a line passing through (-2, 0) and (4, 0) with f'(x) > 0 on (-2, 4) and f'(x) < 0 outside that interval. Determine all local extrema and inflection points of f.",
@@ -292,7 +283,7 @@
             "f'' > 0 then f'' < 0: what happens to the shape?",
             "What happens at x = 2?"
           ],
-          "answer": "f is always increasing (f' > 0). For x < 2: concave up (increasing at an increasing rate — like the left half of a hill). For x > 2: concave down (increasing at a decreasing rate — like approaching a plateau). At x = 2: inflection point where the curve changes from concave up to concave down. Shape: like the graph of ln(x) shifted — starts curving up, then bends to curve up more gradually."
+          "answer": "f is always increasing (f' > 0). For x < 2: concave up (increasing at an increasing rate \u2014 like the left half of a hill). For x > 2: concave down (increasing at a decreasing rate \u2014 like approaching a plateau). At x = 2: inflection point where the curve changes from concave up to concave down. Shape: like the graph of ln(x) shifted \u2014 starts curving up, then bends to curve up more gradually."
         },
         {
           "problem": "A rectangle is inscribed under the parabola y = 12 - x^2 with its base on the x-axis. Find the dimensions that maximize the area of the rectangle.",
@@ -310,7 +301,7 @@
             "Surface area: S = 2*pi*r^2 + 2*pi*r*h (two circles + lateral surface)",
             "Substitute h into S to get S(r), then differentiate"
           ],
-          "answer": "S(r) = 2*pi*r^2 + 2*pi*r*(500/(pi*r^2)) = 2*pi*r^2 + 1000/r. Domain: r > 0. S'(r) = 4*pi*r - 1000/r^2. Set S'(r) = 0: 4*pi*r = 1000/r^2 -> r^3 = 1000/(4*pi) = 250/pi -> r = (250/pi)^(1/3) ≈ 4.30 cm. h = 500/(pi*r^2) = 500/(pi*(250/pi)^(2/3)). Simplifying: h = 2r (the optimal can has height equal to diameter). S''(r) = 4*pi + 2000/r^3 > 0: confirmed minimum."
+          "answer": "S(r) = 2*pi*r^2 + 2*pi*r*(500/(pi*r^2)) = 2*pi*r^2 + 1000/r. Domain: r > 0. S'(r) = 4*pi*r - 1000/r^2. Set S'(r) = 0: 4*pi*r = 1000/r^2 -> r^3 = 1000/(4*pi) = 250/pi -> r = (250/pi)^(1/3) \u2248 4.30 cm. h = 500/(pi*r^2) = 500/(pi*(250/pi)^(2/3)). Simplifying: h = 2r (the optimal can has height equal to diameter). S''(r) = 4*pi + 2000/r^3 > 0: confirmed minimum."
         }
       ],
       "skill": "optimization-problems"
@@ -318,23 +309,15 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Analytical Applications of Differentiation — Mastery Practice",
-      "skills": [
-        "mvt-evt-theorems",
-        "increasing-decreasing-extrema",
-        "concavity-inflection-points",
-        "first-second-derivative-tests",
-        "curve-sketching-from-derivatives",
-        "optimization-problems"
-      ],
+      "title": "Analytical Applications of Differentiation \u2014 Mastery Practice",
       "problems": [
         {
           "problem": "Let f(x) = ln(x) on [1, e^2]. (a) Verify the MVT hypotheses. (b) Find the value of c guaranteed by the MVT. (c) Interpret the result geometrically.",
-          "answer": "f(x) = ln(x) is continuous on [1, e^2] and differentiable on (1, e^2). Average rate: [ln(e^2) - ln(1)] / (e^2 - 1) = 2 / (e^2 - 1). f'(x) = 1/x. Set 1/c = 2/(e^2 - 1): c = (e^2 - 1)/2 ≈ 3.195. Check: 1 < 3.195 < e^2 ≈ 7.389. Geometrically: the tangent line at x = c is parallel to the secant line connecting (1, 0) and (e^2, 2)."
+          "answer": "f(x) = ln(x) is continuous on [1, e^2] and differentiable on (1, e^2). Average rate: [ln(e^2) - ln(1)] / (e^2 - 1) = 2 / (e^2 - 1). f'(x) = 1/x. Set 1/c = 2/(e^2 - 1): c = (e^2 - 1)/2 \u2248 3.195. Check: 1 < 3.195 < e^2 \u2248 7.389. Geometrically: the tangent line at x = c is parallel to the secant line connecting (1, 0) and (e^2, 2)."
         },
         {
           "problem": "Find the absolute extrema of f(x) = x^(2/3)(x - 5) on [-1, 5]. Note: check differentiability carefully.",
-          "answer": "Expand: f(x) = x^(5/3) - 5x^(2/3). f'(x) = (5/3)x^(2/3) - (10/3)x^(-1/3) = (5/3)x^(-1/3)(x - 2) = 5(x - 2) / (3x^(1/3)). f'(x) = 0 when x = 2. f'(x) DNE when x = 0. Both are critical points in [-1, 5]. Candidates: f(-1) = (-1)^(2/3)(-6) = 1(-6) = -6. f(0) = 0. f(2) = 2^(2/3)(2 - 5) = 2^(2/3)(-3) = -3*cbrt(4) ≈ -4.76. f(5) = 5^(2/3)(0) = 0. Absolute max: 0 at x = 0 and x = 5. Absolute min: -6 at x = -1."
+          "answer": "Expand: f(x) = x^(5/3) - 5x^(2/3). f'(x) = (5/3)x^(2/3) - (10/3)x^(-1/3) = (5/3)x^(-1/3)(x - 2) = 5(x - 2) / (3x^(1/3)). f'(x) = 0 when x = 2. f'(x) DNE when x = 0. Both are critical points in [-1, 5]. Candidates: f(-1) = (-1)^(2/3)(-6) = 1(-6) = -6. f(0) = 0. f(2) = 2^(2/3)(2 - 5) = 2^(2/3)(-3) = -3*cbrt(4) \u2248 -4.76. f(5) = 5^(2/3)(0) = 0. Absolute max: 0 at x = 0 and x = 5. Absolute min: -6 at x = -1."
         },
         {
           "problem": "The function f is twice differentiable with f(3) = 2, f'(3) = 0, and f''(3) = -5. (a) Does f have a local max, local min, or neither at x = 3? Justify. (b) Is the graph of f concave up or concave down near x = 3? (c) Is the linear approximation of f at x = 3 an overestimate or underestimate for values near x = 3?",
@@ -346,11 +329,11 @@
         },
         {
           "problem": "A window is in the shape of a rectangle topped by a semicircle. The perimeter of the window is 20 feet. Find the dimensions that maximize the total area (rectangle plus semicircle).",
-          "answer": "Let w = width (also the diameter of the semicircle) and h = height of the rectangular part. Perimeter: w + 2h + (pi*w/2) = 20. So 2h = 20 - w - pi*w/2, giving h = 10 - w/2 - pi*w/4. Area: A = w*h + (1/2)*pi*(w/2)^2 = w*h + pi*w^2/8. Substitute h: A = w(10 - w/2 - pi*w/4) + pi*w^2/8 = 10w - w^2/2 - pi*w^2/4 + pi*w^2/8 = 10w - w^2/2 - pi*w^2/8. A'(w) = 10 - w - pi*w/4 = 10 - w(1 + pi/4). Set A'(w) = 0: w = 10/(1 + pi/4) = 40/(4 + pi). A''(w) = -(1 + pi/4) < 0: confirmed maximum. w = 40/(4 + pi) ≈ 5.60 ft. h = 10 - 20/(4 + pi) - 10*pi/(4 + pi) = (40 + 10*pi - 20 - 10*pi)/(4 + pi) = 20/(4 + pi) ≈ 2.80 ft. Note: h = w/2, so the rectangle is half as tall as it is wide."
+          "answer": "Let w = width (also the diameter of the semicircle) and h = height of the rectangular part. Perimeter: w + 2h + (pi*w/2) = 20. So 2h = 20 - w - pi*w/2, giving h = 10 - w/2 - pi*w/4. Area: A = w*h + (1/2)*pi*(w/2)^2 = w*h + pi*w^2/8. Substitute h: A = w(10 - w/2 - pi*w/4) + pi*w^2/8 = 10w - w^2/2 - pi*w^2/4 + pi*w^2/8 = 10w - w^2/2 - pi*w^2/8. A'(w) = 10 - w - pi*w/4 = 10 - w(1 + pi/4). Set A'(w) = 0: w = 10/(1 + pi/4) = 40/(4 + pi). A''(w) = -(1 + pi/4) < 0: confirmed maximum. w = 40/(4 + pi) \u2248 5.60 ft. h = 10 - 20/(4 + pi) - 10*pi/(4 + pi) = (40 + 10*pi - 20 - 10*pi)/(4 + pi) = 20/(4 + pi) \u2248 2.80 ft. Note: h = w/2, so the rectangle is half as tall as it is wide."
         },
         {
           "problem": "(FRQ-style) The table gives selected values of a twice-differentiable function g.\n\nx:    0    1    2    3    4    5\ng(x): 8    6    5    5    6    10\n\n(a) Estimate g'(2.5). Show your computation. (b) Does the MVT guarantee a value c in (0, 5) where g'(c) = 2/5? Explain. (c) Is there a value c in (0, 5) where g'(c) = 0? Justify using a theorem. (d) Based on the data, on what interval(s) is g likely concave up?",
-          "answer": "(a) g'(2.5) ≈ [g(3) - g(2)] / (3 - 2) = (5 - 5)/1 = 0. (b) Average rate on [0, 5]: [g(5) - g(0)]/(5 - 0) = (10 - 8)/5 = 2/5. Since g is continuous on [0, 5] and differentiable on (0, 5), by the MVT there exists c in (0, 5) with g'(c) = 2/5. YES. (c) On [0, 3]: g(0) = 8, g(3) = 5. Average rate = (5-8)/3 = -1 < 0. On [3, 5]: g(3) = 5, g(5) = 10. Average rate = (10-5)/2 = 5/2 > 0. By MVT, there exists c1 in (0, 3) with g'(c1) = -1 and c2 in (3, 5) with g'(c2) = 5/2. Since g' is continuous (g is twice differentiable) and g'(c1) < 0 < g'(c2), by IVT there exists c between c1 and c2 where g'(c) = 0. (d) Average rates: [0,1]: -2, [1,2]: -1, [2,3]: 0, [3,4]: 1, [4,5]: 4. The average rate of change is increasing throughout, suggesting g' is increasing, meaning g'' > 0. g appears concave up on approximately (1, 5) (the rate of decrease slows, stops, then the rate of increase accelerates)."
+          "answer": "(a) g'(2.5) \u2248 [g(3) - g(2)] / (3 - 2) = (5 - 5)/1 = 0. (b) Average rate on [0, 5]: [g(5) - g(0)]/(5 - 0) = (10 - 8)/5 = 2/5. Since g is continuous on [0, 5] and differentiable on (0, 5), by the MVT there exists c in (0, 5) with g'(c) = 2/5. YES. (c) On [0, 3]: g(0) = 8, g(3) = 5. Average rate = (5-8)/3 = -1 < 0. On [3, 5]: g(3) = 5, g(5) = 10. Average rate = (10-5)/2 = 5/2 > 0. By MVT, there exists c1 in (0, 3) with g'(c1) = -1 and c2 in (3, 5) with g'(c2) = 5/2. Since g' is continuous (g is twice differentiable) and g'(c1) < 0 < g'(c2), by IVT there exists c between c1 and c2 where g'(c) = 0. (d) Average rates: [0,1]: -2, [1,2]: -1, [2,3]: 0, [3,4]: 1, [4,5]: 4. The average rate of change is increasing throughout, suggesting g' is increasing, meaning g'' > 0. g appears concave up on approximately (1, 5) (the rate of decrease slows, stops, then the rate of increase accelerates)."
         }
       ],
       "skill": "mvt-evt-theorems"
@@ -376,12 +359,12 @@
     "wp-sketch-f-prime-line": "Local min at x = -2. Local max at x = 4. Inflection at x = 1.",
     "wp-sketch-concavity": "Always increasing. Concave up then concave down. Inflection at x = 2.",
     "wp-opt-rectangle-parabola": "Width 4, height 8, area 32.",
-    "wp-opt-cylinder": "r = (250/pi)^(1/3) ≈ 4.30 cm. h = 2r ≈ 8.60 cm.",
-    "ip-mvt-ln": "c = (e^2 - 1)/2 ≈ 3.195.",
+    "wp-opt-cylinder": "r = (250/pi)^(1/3) \u2248 4.30 cm. h = 2r \u2248 8.60 cm.",
+    "ip-mvt-ln": "c = (e^2 - 1)/2 \u2248 3.195.",
     "ip-abs-extrema-cusp": "Abs max 0 at x = 0 and x = 5. Abs min -6 at x = -1.",
     "ip-second-deriv-analysis": "Local max at x = 3. Concave down. Linear approx overestimates.",
     "ip-frq-f-prime-graph": "(a) Local max at x = 2. (b) Inflection at x = 0.5 and x = 3.5. (c) Inc and concave down on (0.5, 2).",
-    "ip-opt-window": "w = 40/(4+pi) ≈ 5.60 ft. h = 20/(4+pi) ≈ 2.80 ft.",
+    "ip-opt-window": "w = 40/(4+pi) \u2248 5.60 ft. h = 20/(4+pi) \u2248 2.80 ft.",
     "ip-frq-table": "(a) 0. (b) Yes, by MVT (avg rate = 2/5). (c) Yes, by MVT + IVT. (d) Approx (1, 5).",
     "opt-fencing": "50 ft by 100 ft. Max area 5000 sq ft.",
     "opt-box": "Cut 2-inch squares. Volume 128 cu in.",

@@ -5,7 +5,7 @@
   "title": "Derivatives: Definition & Basic Rules",
   "weeks": "7-10",
   "estimatedDuration": 20,
-  "description": "Students develop the formal definition of the derivative as the limit of the difference quotient, interpret the derivative as an instantaneous rate of change, and establish conditions for differentiability versus continuity. They then build a toolkit of basic differentiation rules — power, product, quotient, and sum/difference — along with common derivatives for trigonometric, exponential, and logarithmic functions. The unit closes with reading and estimating derivatives from graphs and tables, a skill heavily tested on the AP exam. Weekly rhythm includes AP-style FRQ derivative problems.",
+  "description": "Students develop the formal definition of the derivative as the limit of the difference quotient, interpret the derivative as an instantaneous rate of change, and establish conditions for differentiability versus continuity. They then build a toolkit of basic differentiation rules \u2014 power, product, quotient, and sum/difference \u2014 along with common derivatives for trigonometric, exponential, and logarithmic functions. The unit closes with reading and estimating derivatives from graphs and tables, a skill heavily tested on the AP exam. Weekly rhythm includes AP-style FRQ derivative problems.",
   "skills": [
     "derivative-definition-difference-quotient",
     "derivative-as-rate-of-change",
@@ -35,9 +35,9 @@
     "Estimate and interpret derivatives from graphs and tables of values."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Start with the geometric meaning (tangent line slope) before the formal limit definition — build intuition first",
+    "Start with the geometric meaning (tangent line slope) before the formal limit definition \u2014 build intuition first",
     "Weekly AP-style FRQ derivative problems for exam preparation",
     "Spiral prior: limit techniques and continuity from Unit 1 underpin the derivative definition"
   ],
@@ -48,11 +48,11 @@
       "lessonPhase": "concept-intro",
       "title": "The Derivative: Definition via Difference Quotient",
       "skill": "derivative-definition-difference-quotient",
-      "content": "The derivative of a function at a point is defined as the limit of the difference quotient. Geometrically, it is the slope of the tangent line at that point — the limit of secant line slopes as the two points merge. There are two standard forms, and students must be fluent with both.",
+      "content": "The derivative of a function at a point is defined as the limit of the difference quotient. Geometrically, it is the slope of the tangent line at that point \u2014 the limit of secant line slopes as the two points merge. There are two standard forms, and students must be fluent with both.",
       "keyPoints": [
-        "Difference quotient (h-form): f'(a) = lim(h→0) [f(a+h) - f(a)] / h. This is the PRIMARY definition on the AP exam.",
-        "Difference quotient (x-form): f'(a) = lim(x→a) [f(x) - f(a)] / (x - a). Equivalent form — often seen on MC questions.",
-        "General derivative function: f'(x) = lim(h→0) [f(x+h) - f(x)] / h. Produces a NEW function giving slope at any x.",
+        "Difference quotient (h-form): f'(a) = lim(h\u21920) [f(a+h) - f(a)] / h. This is the PRIMARY definition on the AP exam.",
+        "Difference quotient (x-form): f'(a) = lim(x\u2192a) [f(x) - f(a)] / (x - a). Equivalent form \u2014 often seen on MC questions.",
+        "General derivative function: f'(x) = lim(h\u21920) [f(x+h) - f(x)] / h. Produces a NEW function giving slope at any x.",
         "Geometric meaning: the derivative at x = a is the slope of the line tangent to y = f(x) at the point (a, f(a)).",
         "Tangent line equation: y - f(a) = f'(a)(x - a). Point-slope form using the derivative as slope.",
         "If the limit DNE, the derivative at that point does not exist (the function is not differentiable there)."
@@ -61,24 +61,24 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Derivative Definition — Worked Examples",
+      "title": "Derivative Definition \u2014 Worked Examples",
       "skill": "derivative-definition-difference-quotient",
       "examples": [
         {
-          "problem": "Use the limit definition (h-form) to find f'(x) for f(x) = x² + 3x.",
-          "solution": "f'(x) = lim(h→0) [(x+h)² + 3(x+h) - (x² + 3x)] / h = lim(h→0) [x² + 2xh + h² + 3x + 3h - x² - 3x] / h = lim(h→0) [2xh + h² + 3h] / h = lim(h→0) (2x + h + 3) = 2x + 3."
+          "problem": "Use the limit definition (h-form) to find f'(x) for f(x) = x\u00b2 + 3x.",
+          "solution": "f'(x) = lim(h\u21920) [(x+h)\u00b2 + 3(x+h) - (x\u00b2 + 3x)] / h = lim(h\u21920) [x\u00b2 + 2xh + h\u00b2 + 3x + 3h - x\u00b2 - 3x] / h = lim(h\u21920) [2xh + h\u00b2 + 3h] / h = lim(h\u21920) (2x + h + 3) = 2x + 3."
         },
         {
-          "problem": "Use the limit definition (x-form) to find f'(4) for f(x) = √x.",
-          "solution": "f'(4) = lim(x→4) [√x - √4] / (x - 4) = lim(x→4) (√x - 2) / (x - 4). Rationalize: multiply by (√x + 2)/(√x + 2): (x - 4) / [(x - 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4."
+          "problem": "Use the limit definition (x-form) to find f'(4) for f(x) = \u221ax.",
+          "solution": "f'(4) = lim(x\u21924) [\u221ax - \u221a4] / (x - 4) = lim(x\u21924) (\u221ax - 2) / (x - 4). Rationalize: multiply by (\u221ax + 2)/(\u221ax + 2): (x - 4) / [(x - 4)(\u221ax + 2)] = 1/(\u221ax + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4."
         },
         {
           "problem": "Find f'(x) using the definition for f(x) = 1/x, then write the equation of the tangent line at x = 2.",
-          "solution": "f'(x) = lim(h→0) [1/(x+h) - 1/x] / h = lim(h→0) [x - (x+h)] / [hx(x+h)] = lim(h→0) -h / [hx(x+h)] = lim(h→0) -1/[x(x+h)] = -1/x². At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1."
+          "solution": "f'(x) = lim(h\u21920) [1/(x+h) - 1/x] / h = lim(h\u21920) [x - (x+h)] / [hx(x+h)] = lim(h\u21920) -h / [hx(x+h)] = lim(h\u21920) -1/[x(x+h)] = -1/x\u00b2. At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1."
         },
         {
-          "problem": "The definition of the derivative of g at x = 5 is given as lim(h→0) [(5+h)³ - 125] / h. Identify the function g and find this limit.",
-          "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75."
+          "problem": "The definition of the derivative of g at x = 5 is given as lim(h\u21920) [(5+h)\u00b3 - 125] / h. Identify the function g and find this limit.",
+          "solution": "Compare with lim(h\u21920) [g(5+h) - g(5)] / h. So g(x) = x\u00b3 and g(5) = 125. We need g'(5). Using the definition: expand (5+h)\u00b3 = 125 + 75h + 15h\u00b2 + h\u00b3. So [125 + 75h + 15h\u00b2 + h\u00b3 - 125] / h = 75 + 15h + h\u00b2. As h\u21920: g'(5) = 75."
         }
       ]
     },
@@ -100,15 +100,15 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Derivative as Rate of Change — Worked Examples",
+      "title": "Derivative as Rate of Change \u2014 Worked Examples",
       "skill": "derivative-as-rate-of-change",
       "examples": [
         {
-          "problem": "A particle moves along the x-axis with position s(t) = t³ - 6t² + 9t + 2 (feet, seconds). Find the velocity at t = 1 and interpret.",
-          "solution": "v(t) = s'(t) = 3t² - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec — it is momentarily at rest (changing direction)."
+          "problem": "A particle moves along the x-axis with position s(t) = t\u00b3 - 6t\u00b2 + 9t + 2 (feet, seconds). Find the velocity at t = 1 and interpret.",
+          "solution": "v(t) = s'(t) = 3t\u00b2 - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec \u2014 it is momentarily at rest (changing direction)."
         },
         {
-          "problem": "The cost to produce x widgets is C(x) = 500 + 8x - 0.02x² dollars. Find and interpret C'(100).",
+          "problem": "The cost to produce x widgets is C(x) = 500 + 8x - 0.02x\u00b2 dollars. Find and interpret C'(100).",
           "solution": "C'(x) = 8 - 0.04x. C'(100) = 8 - 4 = 4. Interpretation: When 100 widgets are being produced, the cost is increasing at a rate of $4 per additional widget. This is the marginal cost of the 101st widget."
         },
         {
@@ -122,33 +122,33 @@
       "lessonPhase": "concept-intro",
       "title": "Differentiability vs. Continuity",
       "skill": "differentiability-vs-continuity",
-      "content": "Differentiability is a stronger condition than continuity. If f is differentiable at a, then f is continuous at a — but NOT vice versa. Knowing where and why derivatives fail to exist is a key AP skill.",
+      "content": "Differentiability is a stronger condition than continuity. If f is differentiable at a, then f is continuous at a \u2014 but NOT vice versa. Knowing where and why derivatives fail to exist is a key AP skill.",
       "keyPoints": [
-        "Theorem: Differentiable at a ⟹ Continuous at a. The converse is FALSE.",
+        "Theorem: Differentiable at a \u27f9 Continuous at a. The converse is FALSE.",
         "If f is NOT continuous at a, then f is NOT differentiable at a. (Contrapositive of the theorem.)",
         "Corner: left and right derivatives exist but are different. Example: f(x) = |x| at x = 0. Left derivative = -1, right derivative = +1.",
-        "Cusp: derivatives from both sides go to ±∞ in opposite directions. Example: f(x) = x^(2/3) at x = 0.",
-        "Vertical tangent: derivative goes to +∞ or -∞ from both sides (same sign). Example: f(x) = x^(1/3) at x = 0.",
+        "Cusp: derivatives from both sides go to \u00b1\u221e in opposite directions. Example: f(x) = x^(2/3) at x = 0.",
+        "Vertical tangent: derivative goes to +\u221e or -\u221e from both sides (same sign). Example: f(x) = x^(1/3) at x = 0.",
         "Discontinuity: any type (removable, jump, infinite) automatically means not differentiable at that point."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Differentiability vs. Continuity — Worked Examples",
+      "title": "Differentiability vs. Continuity \u2014 Worked Examples",
       "skill": "differentiability-vs-continuity",
       "examples": [
         {
           "problem": "Show that f(x) = |x - 3| is continuous but not differentiable at x = 3.",
-          "solution": "Continuity: lim(x→3) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x ≥ 3; -(x-3), x < 3}. Left derivative: lim(h→0⁻) [|3+h-3| - 0]/h = lim(h→0⁻) (-h)/h = -1. Right derivative: lim(h→0⁺) h/h = 1. Left ≠ right, so f'(3) DNE. Corner at x = 3."
+          "solution": "Continuity: lim(x\u21923) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x \u2265 3; -(x-3), x < 3}. Left derivative: lim(h\u21920\u207b) [|3+h-3| - 0]/h = lim(h\u21920\u207b) (-h)/h = -1. Right derivative: lim(h\u21920\u207a) h/h = 1. Left \u2260 right, so f'(3) DNE. Corner at x = 3."
         },
         {
           "problem": "Determine if f(x) = x^(2/3) is differentiable at x = 0.",
-          "solution": "f(0) = 0. f'(0) = lim(h→0) h^(2/3)/h = lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). From the right: 1/h^(1/3) → +∞. From the left: 1/(-|h|)^(1/3) → -∞. The one-sided limits are +∞ and -∞ (opposite signs) — this is a cusp. Not differentiable at x = 0."
+          "solution": "f(0) = 0. f'(0) = lim(h\u21920) h^(2/3)/h = lim(h\u21920) h^(-1/3) = lim(h\u21920) 1/h^(1/3). From the right: 1/h^(1/3) \u2192 +\u221e. From the left: 1/(-|h|)^(1/3) \u2192 -\u221e. The one-sided limits are +\u221e and -\u221e (opposite signs) \u2014 this is a cusp. Not differentiable at x = 0."
         },
         {
-          "problem": "For f(x) = {x², x ≤ 1; 2x - 1, x > 1}, determine if f is differentiable at x = 1.",
-          "solution": "Check continuity first: lim(x→1⁻) x² = 1. lim(x→1⁺) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x²) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1."
+          "problem": "For f(x) = {x\u00b2, x \u2264 1; 2x - 1, x > 1}, determine if f is differentiable at x = 1.",
+          "solution": "Check continuity first: lim(x\u21921\u207b) x\u00b2 = 1. lim(x\u21921\u207a) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x\u00b2) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1."
         },
         {
           "problem": "If g is differentiable at x = 5, what can you conclude about continuity? If g is continuous at x = 5, can you conclude differentiability?",
@@ -164,35 +164,35 @@
       "content": "Once the derivative is defined, we build shortcuts so we don't need the limit definition every time. The power rule, product rule, quotient rule, and sum/difference rules form the core toolkit for differentiation.",
       "keyPoints": [
         "Constant rule: d/dx[c] = 0. The derivative of any constant is zero.",
-        "Constant multiple rule: d/dx[c·f(x)] = c·f'(x). Constants pull out of derivatives.",
-        "Power rule: d/dx[xⁿ] = n·xⁿ⁻¹. Works for ALL real n — integers, fractions, negatives.",
-        "Sum/Difference rule: d/dx[f ± g] = f' ± g'. Differentiate term by term.",
-        "Product rule: d/dx[f·g] = f'·g + f·g'. Order: (derivative of first)(second) + (first)(derivative of second).",
-        "Quotient rule: d/dx[f/g] = [f'·g - f·g'] / g². Mnemonic: 'lo d-hi minus hi d-lo over lo-lo.'",
-        "Rewrite before differentiating: convert radicals and fractions to power form (e.g., √x = x^(1/2), 1/x² = x⁻²) to use the power rule instead of the quotient rule when possible."
+        "Constant multiple rule: d/dx[c\u00b7f(x)] = c\u00b7f'(x). Constants pull out of derivatives.",
+        "Power rule: d/dx[x\u207f] = n\u00b7x\u207f\u207b\u00b9. Works for ALL real n \u2014 integers, fractions, negatives.",
+        "Sum/Difference rule: d/dx[f \u00b1 g] = f' \u00b1 g'. Differentiate term by term.",
+        "Product rule: d/dx[f\u00b7g] = f'\u00b7g + f\u00b7g'. Order: (derivative of first)(second) + (first)(derivative of second).",
+        "Quotient rule: d/dx[f/g] = [f'\u00b7g - f\u00b7g'] / g\u00b2. Mnemonic: 'lo d-hi minus hi d-lo over lo-lo.'",
+        "Rewrite before differentiating: convert radicals and fractions to power form (e.g., \u221ax = x^(1/2), 1/x\u00b2 = x\u207b\u00b2) to use the power rule instead of the quotient rule when possible."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Basic Differentiation Rules — Worked Examples",
+      "title": "Basic Differentiation Rules \u2014 Worked Examples",
       "skill": "basic-differentiation-rules",
       "examples": [
         {
-          "problem": "Differentiate: f(x) = 4x⁵ - 3x³ + 7x - 2.",
-          "solution": "Apply power rule term by term: f'(x) = 4·5x⁴ - 3·3x² + 7·1 - 0 = 20x⁴ - 9x² + 7."
+          "problem": "Differentiate: f(x) = 4x\u2075 - 3x\u00b3 + 7x - 2.",
+          "solution": "Apply power rule term by term: f'(x) = 4\u00b75x\u2074 - 3\u00b73x\u00b2 + 7\u00b71 - 0 = 20x\u2074 - 9x\u00b2 + 7."
         },
         {
-          "problem": "Differentiate: g(x) = (3x² + 1)(x⁴ - 2x).",
-          "solution": "Product rule: g'(x) = (6x)(x⁴ - 2x) + (3x² + 1)(4x³ - 2). Expand: 6x⁵ - 12x² + 12x⁵ - 6x² + 4x³ - 2 = 18x⁵ + 4x³ - 18x² - 2. (Or expand first: 3x⁶ + x⁴ - 6x³ - 2x, then differentiate: 18x⁵ + 4x³ - 18x² - 2.)"
+          "problem": "Differentiate: g(x) = (3x\u00b2 + 1)(x\u2074 - 2x).",
+          "solution": "Product rule: g'(x) = (6x)(x\u2074 - 2x) + (3x\u00b2 + 1)(4x\u00b3 - 2). Expand: 6x\u2075 - 12x\u00b2 + 12x\u2075 - 6x\u00b2 + 4x\u00b3 - 2 = 18x\u2075 + 4x\u00b3 - 18x\u00b2 - 2. (Or expand first: 3x\u2076 + x\u2074 - 6x\u00b3 - 2x, then differentiate: 18x\u2075 + 4x\u00b3 - 18x\u00b2 - 2.)"
         },
         {
-          "problem": "Differentiate: h(x) = (2x + 5)/(x² - 1).",
-          "solution": "Quotient rule: h'(x) = [2(x² - 1) - (2x + 5)(2x)] / (x² - 1)². Numerator: 2x² - 2 - 4x² - 10x = -2x² - 10x - 2. So h'(x) = (-2x² - 10x - 2)/(x² - 1)² = -2(x² + 5x + 1)/(x² - 1)²."
+          "problem": "Differentiate: h(x) = (2x + 5)/(x\u00b2 - 1).",
+          "solution": "Quotient rule: h'(x) = [2(x\u00b2 - 1) - (2x + 5)(2x)] / (x\u00b2 - 1)\u00b2. Numerator: 2x\u00b2 - 2 - 4x\u00b2 - 10x = -2x\u00b2 - 10x - 2. So h'(x) = (-2x\u00b2 - 10x - 2)/(x\u00b2 - 1)\u00b2 = -2(x\u00b2 + 5x + 1)/(x\u00b2 - 1)\u00b2."
         },
         {
-          "problem": "Differentiate by rewriting first: f(x) = (3/x²) + 5√x - 4/∛x.",
-          "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3))."
+          "problem": "Differentiate by rewriting first: f(x) = (3/x\u00b2) + 5\u221ax - 4/\u221bx.",
+          "solution": "Rewrite: f(x) = 3x\u207b\u00b2 + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x\u207b\u00b3 + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x\u00b3 + 5/(2\u221ax) + 4/(3x^(4/3))."
         }
       ]
     },
@@ -204,35 +204,35 @@
       "content": "Beyond the power rule, certain function families have derivatives that must be memorized. These are used constantly in AP Calculus and form the building blocks for the chain rule in Unit 3.",
       "keyPoints": [
         "d/dx[sin x] = cos x. d/dx[cos x] = -sin x. (Note the negative on cosine!)",
-        "d/dx[tan x] = sec²x. d/dx[cot x] = -csc²x.",
-        "d/dx[sec x] = sec x · tan x. d/dx[csc x] = -csc x · cot x. (Cofunctions get the negative.)",
-        "d/dx[eˣ] = eˣ. The exponential function is its own derivative — the defining property of e.",
-        "d/dx[ln x] = 1/x (x > 0). d/dx[ln|x|] = 1/x (x ≠ 0).",
-        "d/dx[aˣ] = aˣ · ln a. d/dx[log_a(x)] = 1/(x · ln a).",
+        "d/dx[tan x] = sec\u00b2x. d/dx[cot x] = -csc\u00b2x.",
+        "d/dx[sec x] = sec x \u00b7 tan x. d/dx[csc x] = -csc x \u00b7 cot x. (Cofunctions get the negative.)",
+        "d/dx[e\u02e3] = e\u02e3. The exponential function is its own derivative \u2014 the defining property of e.",
+        "d/dx[ln x] = 1/x (x > 0). d/dx[ln|x|] = 1/x (x \u2260 0).",
+        "d/dx[a\u02e3] = a\u02e3 \u00b7 ln a. d/dx[log_a(x)] = 1/(x \u00b7 ln a).",
         "These combine with product/quotient rules immediately. Chain rule (Unit 3) extends them to compositions."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Common Derivatives — Worked Examples",
+      "title": "Common Derivatives \u2014 Worked Examples",
       "skill": "common-derivatives",
       "examples": [
         {
-          "problem": "Differentiate: f(x) = 3sin x - 2cos x + eˣ.",
-          "solution": "f'(x) = 3cos x - 2(-sin x) + eˣ = 3cos x + 2sin x + eˣ. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x."
+          "problem": "Differentiate: f(x) = 3sin x - 2cos x + e\u02e3.",
+          "solution": "f'(x) = 3cos x - 2(-sin x) + e\u02e3 = 3cos x + 2sin x + e\u02e3. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x."
         },
         {
-          "problem": "Differentiate: g(x) = x² · tan x.",
-          "solution": "Product rule: g'(x) = 2x · tan x + x² · sec²x. No further simplification needed unless a specific form is requested."
+          "problem": "Differentiate: g(x) = x\u00b2 \u00b7 tan x.",
+          "solution": "Product rule: g'(x) = 2x \u00b7 tan x + x\u00b2 \u00b7 sec\u00b2x. No further simplification needed unless a specific form is requested."
         },
         {
-          "problem": "Differentiate: h(x) = eˣ / (x + 1).",
-          "solution": "Quotient rule: h'(x) = [eˣ(x + 1) - eˣ(1)] / (x + 1)² = eˣ(x + 1 - 1) / (x + 1)² = x·eˣ / (x + 1)²."
+          "problem": "Differentiate: h(x) = e\u02e3 / (x + 1).",
+          "solution": "Quotient rule: h'(x) = [e\u02e3(x + 1) - e\u02e3(1)] / (x + 1)\u00b2 = e\u02e3(x + 1 - 1) / (x + 1)\u00b2 = x\u00b7e\u02e3 / (x + 1)\u00b2."
         },
         {
-          "problem": "Differentiate: y = 5·2ˣ + 4ln x - sec x.",
-          "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
+          "problem": "Differentiate: y = 5\u00b72\u02e3 + 4ln x - sec x.",
+          "solution": "y' = 5\u00b72\u02e3\u00b7ln 2 + 4/x - sec x \u00b7 tan x. Each term uses a memorized derivative: d/dx[a\u02e3] = a\u02e3 ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
         }
       ]
     },
@@ -240,43 +240,36 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Derivatives Practice: Definition, Rules & Common Functions",
-      "skills": [
-        "derivative-definition-difference-quotient",
-        "derivative-as-rate-of-change",
-        "differentiability-vs-continuity",
-        "basic-differentiation-rules",
-        "common-derivatives"
-      ],
       "problems": [
         {
-          "problem": "Use the limit definition to find f'(x) for f(x) = 3x² - x + 4.",
+          "problem": "Use the limit definition to find f'(x) for f(x) = 3x\u00b2 - x + 4.",
           "hints": [
-            "Compute f(x+h) = 3(x+h)² - (x+h) + 4",
-            "Expand: 3x² + 6xh + 3h² - x - h + 4",
+            "Compute f(x+h) = 3(x+h)\u00b2 - (x+h) + 4",
+            "Expand: 3x\u00b2 + 6xh + 3h\u00b2 - x - h + 4",
             "Subtract f(x), divide by h, take the limit"
           ],
-          "answer": "f(x+h) - f(x) = 6xh + 3h² - h. Divide by h: 6x + 3h - 1. As h→0: f'(x) = 6x - 1."
+          "answer": "f(x+h) - f(x) = 6xh + 3h\u00b2 - h. Divide by h: 6x + 3h - 1. As h\u21920: f'(x) = 6x - 1."
         },
         {
-          "problem": "For f(x) = {2x², x ≤ 1; 4x - 2, x > 1}, determine if f is differentiable at x = 1.",
+          "problem": "For f(x) = {2x\u00b2, x \u2264 1; 4x - 2, x > 1}, determine if f is differentiable at x = 1.",
           "hints": [
             "First check continuity: do both pieces give the same value at x = 1?",
             "Find the derivative of each piece at x = 1",
             "Compare left and right derivatives"
           ],
-          "answer": "Continuity: lim(x→1⁻) 2(1)² = 2. lim(x→1⁺) 4(1)-2 = 2. f(1) = 2. Continuous. Left derivative: d/dx(2x²) at x=1 = 4(1) = 4. Right derivative: d/dx(4x-2) = 4. Left = right = 4. Differentiable, f'(1) = 4."
+          "answer": "Continuity: lim(x\u21921\u207b) 2(1)\u00b2 = 2. lim(x\u21921\u207a) 4(1)-2 = 2. f(1) = 2. Continuous. Left derivative: d/dx(2x\u00b2) at x=1 = 4(1) = 4. Right derivative: d/dx(4x-2) = 4. Left = right = 4. Differentiable, f'(1) = 4."
         },
         {
-          "problem": "Differentiate: y = (x³ + 2x)/(sin x).",
+          "problem": "Differentiate: y = (x\u00b3 + 2x)/(sin x).",
           "hints": [
             "Use the quotient rule",
-            "d/dx[x³ + 2x] = 3x² + 2",
+            "d/dx[x\u00b3 + 2x] = 3x\u00b2 + 2",
             "d/dx[sin x] = cos x"
           ],
-          "answer": "Quotient rule: y' = [(3x² + 2)sin x - (x³ + 2x)cos x] / sin²x."
+          "answer": "Quotient rule: y' = [(3x\u00b2 + 2)sin x - (x\u00b3 + 2x)cos x] / sin\u00b2x."
         },
         {
-          "problem": "A company's revenue is R(t) = 120t - 3t² thousand dollars, where t is months after launch. Find and interpret R'(10).",
+          "problem": "A company's revenue is R(t) = 120t - 3t\u00b2 thousand dollars, where t is months after launch. Find and interpret R'(10).",
           "hints": [
             "Differentiate: R'(t) = 120 - 6t",
             "Evaluate at t = 10",
@@ -294,23 +287,23 @@
       "skill": "derivatives-from-graphs-tables",
       "content": "On the AP exam, students frequently need to estimate derivatives from data tables (using the difference quotient) and to read derivative values from graphs of f (slope of the curve). They also must connect the graph of f to the behavior of f'.",
       "keyPoints": [
-        "From a table: approximate f'(a) ≈ [f(a+h) - f(a-h)] / (2h) using the symmetric difference quotient (best approximation with equal spacing).",
-        "One-sided approximation: f'(a) ≈ [f(a+h) - f(a)] / h or [f(a) - f(a-h)] / h when data is only available on one side.",
+        "From a table: approximate f'(a) \u2248 [f(a+h) - f(a-h)] / (2h) using the symmetric difference quotient (best approximation with equal spacing).",
+        "One-sided approximation: f'(a) \u2248 [f(a+h) - f(a)] / h or [f(a) - f(a-h)] / h when data is only available on one side.",
         "From a graph of f: f'(a) = slope of the tangent line at x = a. Estimate visually by drawing the tangent and computing rise/run.",
         "f' > 0 where f is increasing. f' < 0 where f is decreasing. f' = 0 at local maxima/minima and horizontal tangents.",
         "f' is undefined at corners, cusps, vertical tangents, and discontinuities of f.",
-        "Steeper graph of f means |f'| is larger. Flat portions of f mean f' ≈ 0."
+        "Steeper graph of f means |f'| is larger. Flat portions of f mean f' \u2248 0."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Derivatives from Graphs & Tables — Worked Examples",
+      "title": "Derivatives from Graphs & Tables \u2014 Worked Examples",
       "skill": "derivatives-from-graphs-tables",
       "examples": [
         {
           "problem": "The table gives: t = 0, 2, 4, 6, 8 with f(t) = 10, 18, 24, 28, 30. Estimate f'(4).",
-          "solution": "Use the symmetric difference quotient: f'(4) ≈ [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point."
+          "solution": "Use the symmetric difference quotient: f'(4) \u2248 [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point."
         },
         {
           "problem": "From a graph of f, the tangent line at x = 3 appears to pass through (1, 2) and (5, 10). Estimate f'(3).",
@@ -318,7 +311,7 @@
         },
         {
           "problem": "A graph of f shows: f increases on (0, 2), has a horizontal tangent at x = 2, decreases on (2, 5), has a corner at x = 5, and increases on (5, 7). Describe f'.",
-          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
+          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent \u2014 local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
         }
       ]
     },
@@ -326,38 +319,30 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Derivatives: Definition & Basic Rules Mastery Practice",
-      "skills": [
-        "derivative-definition-difference-quotient",
-        "derivative-as-rate-of-change",
-        "differentiability-vs-continuity",
-        "basic-differentiation-rules",
-        "common-derivatives",
-        "derivatives-from-graphs-tables"
-      ],
       "problems": [
         {
           "problem": "Use the limit definition to find f'(x) for f(x) = 1/(2x + 1).",
-          "answer": "f'(x) = lim(h→0) [1/(2(x+h)+1) - 1/(2x+1)] / h. Common denominator: [(2x+1) - (2x+2h+1)] / [h(2x+2h+1)(2x+1)] = -2h / [h(2x+2h+1)(2x+1)] = -2/[(2x+2h+1)(2x+1)]. As h→0: f'(x) = -2/(2x+1)²."
+          "answer": "f'(x) = lim(h\u21920) [1/(2(x+h)+1) - 1/(2x+1)] / h. Common denominator: [(2x+1) - (2x+2h+1)] / [h(2x+2h+1)(2x+1)] = -2h / [h(2x+2h+1)(2x+1)] = -2/[(2x+2h+1)(2x+1)]. As h\u21920: f'(x) = -2/(2x+1)\u00b2."
         },
         {
-          "problem": "Differentiate: g(x) = x⁴·cos x + 3eˣ.",
-          "answer": "Product rule on first term: g'(x) = 4x³·cos x + x⁴·(-sin x) + 3eˣ = 4x³cos x - x⁴sin x + 3eˣ."
+          "problem": "Differentiate: g(x) = x\u2074\u00b7cos x + 3e\u02e3.",
+          "answer": "Product rule on first term: g'(x) = 4x\u00b3\u00b7cos x + x\u2074\u00b7(-sin x) + 3e\u02e3 = 4x\u00b3cos x - x\u2074sin x + 3e\u02e3."
         },
         {
-          "problem": "For f(x) = {x³, x ≤ 0; x², x > 0}, is f differentiable at x = 0? Justify completely.",
-          "answer": "Continuity: lim(x→0⁻) 0³ = 0, lim(x→0⁺) 0² = 0, f(0) = 0. Continuous. Left derivative: d/dx(x³) at 0 = 3(0)² = 0. Right derivative: d/dx(x²) at 0 = 2(0) = 0. Left = right = 0. Differentiable, f'(0) = 0."
+          "problem": "For f(x) = {x\u00b3, x \u2264 0; x\u00b2, x > 0}, is f differentiable at x = 0? Justify completely.",
+          "answer": "Continuity: lim(x\u21920\u207b) 0\u00b3 = 0, lim(x\u21920\u207a) 0\u00b2 = 0, f(0) = 0. Continuous. Left derivative: d/dx(x\u00b3) at 0 = 3(0)\u00b2 = 0. Right derivative: d/dx(x\u00b2) at 0 = 2(0) = 0. Left = right = 0. Differentiable, f'(0) = 0."
         },
         {
-          "problem": "Differentiate: y = (sin x + eˣ)/(x² + 1).",
-          "answer": "Quotient rule: y' = [(cos x + eˣ)(x² + 1) - (sin x + eˣ)(2x)] / (x² + 1)²."
+          "problem": "Differentiate: y = (sin x + e\u02e3)/(x\u00b2 + 1).",
+          "answer": "Quotient rule: y' = [(cos x + e\u02e3)(x\u00b2 + 1) - (sin x + e\u02e3)(2x)] / (x\u00b2 + 1)\u00b2."
         },
         {
           "problem": "The population of a city (thousands) is given in a table: t (years since 2000) = 0, 5, 10, 15, 20 with P(t) = 85, 102, 126, 143, 155. Estimate P'(10) and interpret in context.",
-          "answer": "P'(10) ≈ [P(15) - P(5)] / (15 - 5) = (143 - 102)/10 = 4.1 thousand people per year. At the year 2010, the city's population was increasing at approximately 4,100 people per year."
+          "answer": "P'(10) \u2248 [P(15) - P(5)] / (15 - 5) = (143 - 102)/10 = 4.1 thousand people per year. At the year 2010, the city's population was increasing at approximately 4,100 people per year."
         },
         {
-          "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
-          "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness — f'(0) ≈ 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
+          "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope \u2248 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope \u2248 -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
+          "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness \u2014 f'(0) \u2248 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) \u2248 -3 (slope of tangent at that point, given as \u2248 -3). (d) f'(4) does not exist (corner)."
         }
       ],
       "skill": "derivative-definition-difference-quotient"
@@ -366,35 +351,35 @@
   "answerKeys": {
     "def-polynomial": "f'(x) = 2x + 3.",
     "def-sqrt": "f'(4) = 1/4.",
-    "def-reciprocal": "f'(x) = -1/x². Tangent at x=2: y = -x/4 + 1.",
-    "def-identify-cube": "g(x) = x³. g'(5) = 75.",
+    "def-reciprocal": "f'(x) = -1/x\u00b2. Tangent at x=2: y = -x/4 + 1.",
+    "def-identify-cube": "g(x) = x\u00b3. g'(5) = 75.",
     "rate-velocity": "v(1) = 0 ft/sec. Momentarily at rest.",
     "rate-marginal-cost": "C'(100) = $4/widget. Marginal cost of 101st widget.",
     "rate-tank": "V'(3) = -8 gal/min. Decreasing at 8 gal/min.",
-    "diff-abs-value": "Continuous at x=3, corner → not differentiable.",
+    "diff-abs-value": "Continuous at x=3, corner \u2192 not differentiable.",
     "diff-cusp": "Cusp at x=0. Not differentiable.",
     "diff-piecewise-match": "Continuous and differentiable at x=1. f'(1) = 2.",
-    "diff-theorem": "Diff ⟹ Cont. Cont does NOT ⟹ Diff.",
-    "rule-polynomial": "20x⁴ - 9x² + 7.",
-    "rule-product": "18x⁵ + 4x³ - 18x² - 2.",
-    "rule-quotient": "(-2x² - 10x - 2)/(x² - 1)².",
-    "rule-rewrite": "-6/x³ + 5/(2√x) + 4/(3x^(4/3)).",
-    "common-trig-exp": "3cos x + 2sin x + eˣ.",
-    "common-product-tan": "2x·tan x + x²·sec²x.",
-    "common-quotient-exp": "x·eˣ/(x + 1)².",
-    "common-mixed": "5·2ˣ·ln 2 + 4/x - sec x·tan x.",
+    "diff-theorem": "Diff \u27f9 Cont. Cont does NOT \u27f9 Diff.",
+    "rule-polynomial": "20x\u2074 - 9x\u00b2 + 7.",
+    "rule-product": "18x\u2075 + 4x\u00b3 - 18x\u00b2 - 2.",
+    "rule-quotient": "(-2x\u00b2 - 10x - 2)/(x\u00b2 - 1)\u00b2.",
+    "rule-rewrite": "-6/x\u00b3 + 5/(2\u221ax) + 4/(3x^(4/3)).",
+    "common-trig-exp": "3cos x + 2sin x + e\u02e3.",
+    "common-product-tan": "2x\u00b7tan x + x\u00b2\u00b7sec\u00b2x.",
+    "common-quotient-exp": "x\u00b7e\u02e3/(x + 1)\u00b2.",
+    "common-mixed": "5\u00b72\u02e3\u00b7ln 2 + 4/x - sec x\u00b7tan x.",
     "wp-def-quadratic": "f'(x) = 6x - 1.",
     "wp-diff-piecewise": "Continuous and differentiable at x=1. f'(1) = 4.",
-    "wp-quotient-trig": "[(3x²+2)sin x - (x³+2x)cos x]/sin²x.",
+    "wp-quotient-trig": "[(3x\u00b2+2)sin x - (x\u00b3+2x)cos x]/sin\u00b2x.",
     "wp-rate-revenue": "R'(10) = 60. Revenue increasing at $60K/month.",
-    "graph-table-symm": "f'(4) ≈ 2.5.",
-    "graph-tangent-points": "f'(3) ≈ 2.",
+    "graph-table-symm": "f'(4) \u2248 2.5.",
+    "graph-tangent-points": "f'(3) \u2248 2.",
     "graph-describe-fprime": "f'>0 on (0,2), f'(2)=0, f'<0 on (2,5), f'(5) DNE, f'>0 on (5,7).",
-    "ip-def-rational": "f'(x) = -2/(2x+1)².",
-    "ip-product-trig-exp": "4x³cos x - x⁴sin x + 3eˣ.",
+    "ip-def-rational": "f'(x) = -2/(2x+1)\u00b2.",
+    "ip-product-trig-exp": "4x\u00b3cos x - x\u2074sin x + 3e\u02e3.",
     "ip-diff-piecewise": "Continuous and differentiable at x=0. f'(0) = 0.",
-    "ip-quotient-mixed": "[(cos x + eˣ)(x²+1) - (sin x + eˣ)(2x)]/(x²+1)².",
-    "ip-table-population": "P'(10) ≈ 4.1 thousand/year. Increasing at ~4,100 people/year in 2010.",
-    "ip-graph-reading": "(a) ≈2 (b) 0 (c) ≈-3 (d) DNE (corner)."
+    "ip-quotient-mixed": "[(cos x + e\u02e3)(x\u00b2+1) - (sin x + e\u02e3)(2x)]/(x\u00b2+1)\u00b2.",
+    "ip-table-population": "P'(10) \u2248 4.1 thousand/year. Increasing at ~4,100 people/year in 2010.",
+    "ip-graph-reading": "(a) \u22482 (b) 0 (c) \u2248-3 (d) DNE (corner)."
   }
 }

@@ -26,7 +26,7 @@
   ],
   "instructionalStrategy": [
     "Build on prior equation work by introducing multi-step scenarios with geometry formulas (perimeter, area) and percent contexts (discounts, markups, savings rates).",
-    "Use the 'function machine' model to make abstract function concepts concrete — feed a number in, the machine applies a rule, and a result comes out.",
+    "Use the 'function machine' model to make abstract function concepts concrete \u2014 feed a number in, the machine applies a rule, and a result comes out.",
     "Connect sequences to functions by showing how the position number (input) maps to the term value (output), bridging toward 8th-grade function standards.",
     "Provide frequent substitution-check moments so students build the habit of verifying their own answers.",
     "Introduce geometric sequences alongside arithmetic ones so students learn to distinguish between additive and multiplicative patterns early."
@@ -39,12 +39,12 @@
       "skill": "g7-evaluate-expressions",
       "title": "Evaluating Expressions with Substitution",
       "keyPoints": [
-        "Substitution means replacing a variable with a given number — always place the value inside parentheses to avoid errors.",
+        "Substitution means replacing a variable with a given number \u2014 always place the value inside parentheses to avoid errors.",
         "After substituting, follow the order of operations (PEMDAS) to simplify.",
-        "Expressions can have more than one variable — substitute each one carefully.",
+        "Expressions can have more than one variable \u2014 substitute each one carefully.",
         "Pay special attention when substituting negative numbers: (-3)^2 = 9, but -3^2 = -9. The parentheses matter!"
       ],
-      "content": "When you **evaluate** an expression, you replace every variable with its given value and then compute the result.\n\n**Step 1 — Substitute:** Write the expression and replace each variable with its value inside parentheses.\n**Step 2 — Simplify:** Use the order of operations (PEMDAS) to calculate.\n\nFor example, to evaluate 2x + 5 when x = 3:\n2(3) + 5 = 6 + 5 = **11**\n\nWith negative numbers, parentheses are critical. Evaluate x^2 when x = -4:\n(-4)^2 = (-4)(-4) = **16** (not -16!)\n\nWith two variables, substitute both. Evaluate 3a - 2b when a = 5 and b = -1:\n3(5) - 2(-1) = 15 - (-2) = 15 + 2 = **17**",
+      "content": "When you **evaluate** an expression, you replace every variable with its given value and then compute the result.\n\n**Step 1 \u2014 Substitute:** Write the expression and replace each variable with its value inside parentheses.\n**Step 2 \u2014 Simplify:** Use the order of operations (PEMDAS) to calculate.\n\nFor example, to evaluate 2x + 5 when x = 3:\n2(3) + 5 = 6 + 5 = **11**\n\nWith negative numbers, parentheses are critical. Evaluate x^2 when x = -4:\n(-4)^2 = (-4)(-4) = **16** (not -16!)\n\nWith two variables, substitute both. Evaluate 3a - 2b when a = 5 and b = -1:\n3(5) - 2(-1) = 15 - (-2) = 15 + 2 = **17**",
       "initialPrompt": "Let's start with a warm-up. Can you evaluate 4x - 3 when x = 5? Show your substitution step."
     },
     {
@@ -55,11 +55,11 @@
       "keyPoints": [
         "Identify the unknown quantity and assign it a variable.",
         "Translate each piece of information in the problem into an algebraic relationship.",
-        "For geometry contexts, use known formulas — perimeter is the sum of all sides, area of a rectangle is length times width.",
+        "For geometry contexts, use known formulas \u2014 perimeter is the sum of all sides, area of a rectangle is length times width.",
         "For percent problems, convert the percent to a decimal and set up a multiplication equation.",
         "Always check your answer by substituting back into the original problem to make sure it fits."
       ],
-      "content": "Word problems ask you to turn a real-world situation into an equation, then solve it.\n\n**Strategy:**\n1. Read the problem and identify what is unknown — that becomes your variable.\n2. Write expressions or equations using the information given.\n3. Solve the equation step by step.\n4. **Check** your answer in the context of the original problem.\n\n**Geometry example:** 'The perimeter of a rectangle is 30 cm. The length is 3 cm more than the width. Find the dimensions.'\n- Let w = width, so length = w + 3.\n- 2w + 2(w + 3) = 30 → 4w + 6 = 30 → 4w = 24 → w = 6. Length = 9.\n- Check: 2(6) + 2(9) = 12 + 18 = 30. It works!\n\n**Percent example:** 'A shirt costs $36 after a 10% discount. What was the original price?'\n- You pay 90% of the original: 0.90p = 36 → p = 40.\n- Check: $40 - 10% of $40 = $40 - $4 = $36. Correct!",
+      "content": "Word problems ask you to turn a real-world situation into an equation, then solve it.\n\n**Strategy:**\n1. Read the problem and identify what is unknown \u2014 that becomes your variable.\n2. Write expressions or equations using the information given.\n3. Solve the equation step by step.\n4. **Check** your answer in the context of the original problem.\n\n**Geometry example:** 'The perimeter of a rectangle is 30 cm. The length is 3 cm more than the width. Find the dimensions.'\n- Let w = width, so length = w + 3.\n- 2w + 2(w + 3) = 30 \u2192 4w + 6 = 30 \u2192 4w = 24 \u2192 w = 6. Length = 9.\n- Check: 2(6) + 2(9) = 12 + 18 = 30. It works!\n\n**Percent example:** 'A shirt costs $36 after a 10% discount. What was the original price?'\n- You pay 90% of the original: 0.90p = 36 \u2192 p = 40.\n- Check: $40 - 10% of $40 = $40 - $4 = $36. Correct!",
       "initialPrompt": "Here's a practice scenario: 'A book is on sale for $18 after a 25% discount. What was the original price?' What equation would you set up?"
     },
     {
@@ -71,10 +71,10 @@
         "A function is a rule that takes an input and produces exactly one output.",
         "Think of it as a 'function machine': feed a number in, the machine applies a rule, and a result comes out.",
         "Functions can be represented as tables, equations (like y = 2x + 1), or descriptions in words.",
-        "To discover the rule from a table, look for a constant change in outputs relative to inputs — this often reveals a multiply-then-add pattern.",
+        "To discover the rule from a table, look for a constant change in outputs relative to inputs \u2014 this often reveals a multiply-then-add pattern.",
         "Every input must produce exactly one output, but different inputs can produce the same output."
       ],
-      "content": "Imagine a machine with a slot on top and a chute at the bottom. You drop a number into the slot (the **input**), the machine does something to it, and a new number slides out the chute (the **output**). That machine is a **function**.\n\nA function rule might say 'multiply by 2, then add 1.' If you feed in 3, the machine computes 2(3) + 1 = **7**.\n\nWe often write function rules as equations: **y = 2x + 1**, where x is the input and y is the output.\n\n**Finding the rule from a table:**\n| Input (x) | 1 | 2 | 3 | 4 |\n| Output (y) | 5 | 8 | 11 | 14 |\n\nThe outputs go up by 3 each time the input goes up by 1. When x = 1, y = 5. Testing y = 3x + 2: 3(1) + 2 = 5, 3(2) + 2 = 8, 3(3) + 2 = 11, 3(4) + 2 = 14. All match — the rule is **y = 3x + 2**.\n\nThe key idea from 8th-grade math (a sneak preview!): a function gives you **exactly one output for each input**. No input can produce two different outputs.",
+      "content": "Imagine a machine with a slot on top and a chute at the bottom. You drop a number into the slot (the **input**), the machine does something to it, and a new number slides out the chute (the **output**). That machine is a **function**.\n\nA function rule might say 'multiply by 2, then add 1.' If you feed in 3, the machine computes 2(3) + 1 = **7**.\n\nWe often write function rules as equations: **y = 2x + 1**, where x is the input and y is the output.\n\n**Finding the rule from a table:**\n| Input (x) | 1 | 2 | 3 | 4 |\n| Output (y) | 5 | 8 | 11 | 14 |\n\nThe outputs go up by 3 each time the input goes up by 1. When x = 1, y = 5. Testing y = 3x + 2: 3(1) + 2 = 5, 3(2) + 2 = 8, 3(3) + 2 = 11, 3(4) + 2 = 14. All match \u2014 the rule is **y = 3x + 2**.\n\nThe key idea from 8th-grade math (a sneak preview!): a function gives you **exactly one output for each input**. No input can produce two different outputs.",
       "initialPrompt": "A function machine uses the rule 'multiply by 4, then subtract 1.' What is the output when the input is 6?"
     },
     {
@@ -84,12 +84,12 @@
       "title": "Patterns and Sequences",
       "keyPoints": [
         "A sequence is an ordered list of numbers that follow a rule or pattern.",
-        "An arithmetic sequence adds (or subtracts) the same value each time — this constant is called the 'common difference.'",
-        "A geometric sequence multiplies (or divides) by the same value each time — this constant is called the 'common ratio.'",
+        "An arithmetic sequence adds (or subtracts) the same value each time \u2014 this constant is called the 'common difference.'",
+        "A geometric sequence multiplies (or divides) by the same value each time \u2014 this constant is called the 'common ratio.'",
         "To identify the type: subtract consecutive terms to check for a common difference, or divide consecutive terms to check for a common ratio.",
         "To find any term of an arithmetic sequence: first term + (n - 1) * common difference."
       ],
-      "content": "A **sequence** is an ordered list of numbers that follows a pattern. Two important types:\n\n**Arithmetic sequences** — you add the same number each time.\nExample: 3, 7, 11, 15, 19, ... (add 4 each time, so the **common difference** is 4)\nTo find the next term: 19 + 4 = 23.\nTo find the 10th term: 3 + (10 - 1) x 4 = 3 + 36 = 39.\n\n**Geometric sequences** — you multiply by the same number each time.\nExample: 2, 6, 18, 54, ... (multiply by 3 each time, so the **common ratio** is 3)\nTo find the next term: 54 x 3 = 162.\n\n**How to tell them apart:**\n- Subtract consecutive terms. If the differences are constant → arithmetic.\n- Divide consecutive terms. If the ratios are constant → geometric.\n- If neither is constant → it may be a different type of pattern.\n\nThink of arithmetic sequences as connected to addition (linear growth) and geometric sequences as connected to multiplication (rapid growth).",
+      "content": "A **sequence** is an ordered list of numbers that follows a pattern. Two important types:\n\n**Arithmetic sequences** \u2014 you add the same number each time.\nExample: 3, 7, 11, 15, 19, ... (add 4 each time, so the **common difference** is 4)\nTo find the next term: 19 + 4 = 23.\nTo find the 10th term: 3 + (10 - 1) x 4 = 3 + 36 = 39.\n\n**Geometric sequences** \u2014 you multiply by the same number each time.\nExample: 2, 6, 18, 54, ... (multiply by 3 each time, so the **common ratio** is 3)\nTo find the next term: 54 x 3 = 162.\n\n**How to tell them apart:**\n- Subtract consecutive terms. If the differences are constant \u2192 arithmetic.\n- Divide consecutive terms. If the ratios are constant \u2192 geometric.\n- If neither is constant \u2192 it may be a different type of pattern.\n\nThink of arithmetic sequences as connected to addition (linear growth) and geometric sequences as connected to multiplication (rapid growth).",
       "initialPrompt": "Look at this sequence: 5, 10, 20, 40, ... Is it arithmetic or geometric? How do you know? What are the next two terms?"
     },
     {
@@ -121,15 +121,15 @@
       "examples": [
         {
           "problem": "The perimeter of a rectangle is 54 cm. The length is 3 cm more than the width. Find the dimensions.",
-          "solution": "Let w = width. Then length = w + 3.\nPerimeter formula: 2(length) + 2(width) = 54\n2(w + 3) + 2w = 54\n2w + 6 + 2w = 54\n4w + 6 = 54\n4w = 48\nw = 12\nLength = 12 + 3 = 15\n\n**The width is 12 cm and the length is 15 cm.**\nCheck: 2(15) + 2(12) = 30 + 24 = 54 ✓"
+          "solution": "Let w = width. Then length = w + 3.\nPerimeter formula: 2(length) + 2(width) = 54\n2(w + 3) + 2w = 54\n2w + 6 + 2w = 54\n4w + 6 = 54\n4w = 48\nw = 12\nLength = 12 + 3 = 15\n\n**The width is 12 cm and the length is 15 cm.**\nCheck: 2(15) + 2(12) = 30 + 24 = 54 \u2713"
         },
         {
           "problem": "A jacket is on sale for $45 after a 25% discount. What was the original price?",
-          "solution": "A 25% discount means you pay 75% of the original price.\nLet p = original price.\n0.75p = 45\np = 45 / 0.75\np = 60\n\n**The original price was $60.**\nCheck: $60 - 25% of $60 = $60 - $15 = $45 ✓"
+          "solution": "A 25% discount means you pay 75% of the original price.\nLet p = original price.\n0.75p = 45\np = 45 / 0.75\np = 60\n\n**The original price was $60.**\nCheck: $60 - 25% of $60 = $60 - $15 = $45 \u2713"
         },
         {
           "problem": "A triangle has a perimeter of 45 inches. The second side is twice the first side, and the third side is 5 inches shorter than the second side. Find each side.",
-          "solution": "Let x = first side.\nSecond side = 2x.\nThird side = 2x - 5.\n\nx + 2x + (2x - 5) = 45\n5x - 5 = 45\n5x = 50\nx = 10\n\nFirst side = 10, second side = 2(10) = 20, third side = 2(10) - 5 = 15.\n\n**The sides are 10 inches, 20 inches, and 15 inches.**\nCheck: 10 + 20 + 15 = 45 ✓"
+          "solution": "Let x = first side.\nSecond side = 2x.\nThird side = 2x - 5.\n\nx + 2x + (2x - 5) = 45\n5x - 5 = 45\n5x = 50\nx = 10\n\nFirst side = 10, second side = 2(10) = 20, third side = 2(10) - 5 = 15.\n\n**The sides are 10 inches, 20 inches, and 15 inches.**\nCheck: 10 + 20 + 15 = 45 \u2713"
         }
       ],
       "initialPrompt": "In the first example, why did we write 2(w + 3) + 2w = 54 instead of just w + 3 + w = 54? What does the perimeter formula tell us?"
@@ -142,15 +142,15 @@
       "examples": [
         {
           "problem": "A function machine uses the rule 'multiply by 3, then add 2.' Complete the table for inputs 1, 2, 3, 4, 5.",
-          "solution": "Apply the rule y = 3x + 2 to each input:\nInput 1 → 3(1) + 2 = 5\nInput 2 → 3(2) + 2 = 8\nInput 3 → 3(3) + 2 = 11\nInput 4 → 3(4) + 2 = 14\nInput 5 → 3(5) + 2 = 17\n\n**Rule as equation: y = 3x + 2**\nThe outputs increase by 3 each time the input increases by 1."
+          "solution": "Apply the rule y = 3x + 2 to each input:\nInput 1 \u2192 3(1) + 2 = 5\nInput 2 \u2192 3(2) + 2 = 8\nInput 3 \u2192 3(3) + 2 = 11\nInput 4 \u2192 3(4) + 2 = 14\nInput 5 \u2192 3(5) + 2 = 17\n\n**Rule as equation: y = 3x + 2**\nThe outputs increase by 3 each time the input increases by 1."
         },
         {
           "problem": "Find the function rule from this table:\n| Input (x) | 0 | 1 | 2 | 3 | 4 |\n| Output (y) | 1 | 4 | 7 | 10 | 13 |",
-          "solution": "Step 1 — Look at how outputs change: 4 - 1 = 3, 7 - 4 = 3, 10 - 7 = 3. The output increases by 3 for each increase of 1 in the input.\n\nStep 2 — When x = 0, y = 1. So the rule starts at 1 and adds 3 per input.\n\nStep 3 — Test y = 3x + 1:\n3(0) + 1 = 1 ✓\n3(1) + 1 = 4 ✓\n3(2) + 1 = 7 ✓\n3(3) + 1 = 10 ✓\n3(4) + 1 = 13 ✓\n\n**The rule is y = 3x + 1.**"
+          "solution": "Step 1 \u2014 Look at how outputs change: 4 - 1 = 3, 7 - 4 = 3, 10 - 7 = 3. The output increases by 3 for each increase of 1 in the input.\n\nStep 2 \u2014 When x = 0, y = 1. So the rule starts at 1 and adds 3 per input.\n\nStep 3 \u2014 Test y = 3x + 1:\n3(0) + 1 = 1 \u2713\n3(1) + 1 = 4 \u2713\n3(2) + 1 = 7 \u2713\n3(3) + 1 = 10 \u2713\n3(4) + 1 = 13 \u2713\n\n**The rule is y = 3x + 1.**"
         },
         {
           "problem": "A parking garage charges a flat fee of $5 plus $2 per hour. Write a function rule and find the cost for 1, 2, 3, and 4 hours.",
-          "solution": "The flat fee is $5 (the starting amount) and the rate is $2 per hour.\nLet h = number of hours and C = total cost.\n\n**Function rule: C = 2h + 5**\n\nh = 1: C = 2(1) + 5 = 7 → $7\nh = 2: C = 2(2) + 5 = 9 → $9\nh = 3: C = 2(3) + 5 = 11 → $11\nh = 4: C = 2(4) + 5 = 13 → $13\n\nNotice: the cost increases by $2 for each additional hour, matching the $2/hour rate."
+          "solution": "The flat fee is $5 (the starting amount) and the rate is $2 per hour.\nLet h = number of hours and C = total cost.\n\n**Function rule: C = 2h + 5**\n\nh = 1: C = 2(1) + 5 = 7 \u2192 $7\nh = 2: C = 2(2) + 5 = 9 \u2192 $9\nh = 3: C = 2(3) + 5 = 11 \u2192 $11\nh = 4: C = 2(4) + 5 = 13 \u2192 $13\n\nNotice: the cost increases by $2 for each additional hour, matching the $2/hour rate."
         }
       ],
       "initialPrompt": "In the second example, how did we figure out the '+1' part of the rule? What clue does the output at x = 0 give us?"
@@ -171,7 +171,7 @@
         },
         {
           "problem": "Is the sequence 10, 15, 21, 28, ... arithmetic, geometric, or neither?",
-          "solution": "Check differences: 15 - 10 = 5, 21 - 15 = 6, 28 - 21 = 7. Not constant → not arithmetic.\n\nCheck ratios: 15 / 10 = 1.5, 21 / 15 = 1.4. Not constant → not geometric.\n\n**This sequence is neither arithmetic nor geometric.**\n\nThe differences themselves (5, 6, 7) increase by 1 each time. This is a different kind of pattern — interesting to notice, but for now we focus on arithmetic and geometric sequences."
+          "solution": "Check differences: 15 - 10 = 5, 21 - 15 = 6, 28 - 21 = 7. Not constant \u2192 not arithmetic.\n\nCheck ratios: 15 / 10 = 1.5, 21 / 15 = 1.4. Not constant \u2192 not geometric.\n\n**This sequence is neither arithmetic nor geometric.**\n\nThe differences themselves (5, 6, 7) increase by 1 each time. This is a different kind of pattern \u2014 interesting to notice, but for now we focus on arithmetic and geometric sequences."
         }
       ],
       "initialPrompt": "In the first example, can you figure out what the 20th term of that sequence would be without listing all 20 terms? Think about using the formula: first term + (n - 1) x common difference."
@@ -179,10 +179,6 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": [
-        "g7-evaluate-expressions",
-        "g7-equation-word-problems"
-      ],
       "title": "We-Do: Expressions & Equation Word Problems",
       "problems": [
         {
@@ -222,10 +218,6 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": [
-        "g7-function-input-output",
-        "g7-patterns-sequences"
-      ],
       "title": "We-Do: Functions & Patterns",
       "problems": [
         {
@@ -243,7 +235,7 @@
           "problem": "Find the next three terms and identify whether the sequence is arithmetic or geometric: 4, 12, 36, 108, ...",
           "hints": [
             "Check the differences: 12 - 4 = 8, 36 - 12 = 24. The differences are not constant, so it is not arithmetic.",
-            "Check the ratios: 12 / 4 = 3, 36 / 12 = 3, 108 / 36 = 3. The ratio is constant — this is a geometric sequence!",
+            "Check the ratios: 12 / 4 = 3, 36 / 12 = 3, 108 / 36 = 3. The ratio is constant \u2014 this is a geometric sequence!",
             "Multiply each term by 3: 108 x 3 = 324, 324 x 3 = 972, 972 x 3 = 2916."
           ],
           "answer": "Geometric sequence with common ratio 3. The next three terms are 324, 972, 2916."
@@ -265,12 +257,6 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "skills": [
-        "g7-evaluate-expressions",
-        "g7-equation-word-problems",
-        "g7-function-input-output",
-        "g7-patterns-sequences"
-      ],
       "title": "You-Do: Independent Practice",
       "problems": [
         {
@@ -328,17 +314,17 @@
   ],
   "answerKeys": {
     "ae-gp1-1": "25 (4(-2)^2 - 2(-2) + 5 = 4(4) + 4 + 5 = 16 + 4 + 5 = 25)",
-    "ae-gp1-2": "Width = 13 feet, Length = 19 feet (4w + 12 = 64 → w = 13)",
-    "ae-gp1-3": "$40 (1.40c = 56 → c = 40)",
+    "ae-gp1-2": "Width = 13 feet, Length = 19 feet (4w + 12 = 64 \u2192 w = 13)",
+    "ae-gp1-3": "$40 (1.40c = 56 \u2192 c = 40)",
     "ae-gp2-1": "y = 4x + 1; when x = 8, y = 33; when x = 10, y = 41",
     "ae-gp2-2": "Geometric sequence (common ratio 3); next three terms: 324, 972, 2916",
     "ae-gp2-3": "52 (7 + 9 x 5 = 7 + 45 = 52)",
     "ae-ip1": "16 (5(4 + (-2)) - 3(-2) = 5(2) + 6 = 10 + 6 = 16)",
     "ae-ip2": "25 ((3(2) - 1)^2 = (6 - 1)^2 = 5^2 = 25)",
-    "ae-ip3": "First side = 9 in, second side = 18 in, third side = 15 in (x + 2x + x + 6 = 42 → 4x = 36 → x = 9)",
-    "ae-ip4": "$180 (0.15e = 27 → e = 180)",
+    "ae-ip3": "First side = 9 in, second side = 18 in, third side = 15 in (x + 2x + x + 6 = 42 \u2192 4x = 36 \u2192 x = 9)",
+    "ae-ip4": "$180 (0.15e = 27 \u2192 e = 180)",
     "ae-ip5": "y = 4x - 1 (outputs increase by 4; 4(1) - 1 = 3, 4(2) - 1 = 7, etc.)",
-    "ae-ip6": "x = 7 (17 = 2x + 3 → 14 = 2x → x = 7)",
+    "ae-ip6": "x = 7 (17 = 2x + 3 \u2192 14 = 2x \u2192 x = 7)",
     "ae-ip7": "73 (common difference = 5; 3 + (15 - 1)(5) = 3 + 70 = 73)",
     "ae-ip8": "405, 1215, 3645 (common ratio = 3; 135 x 3 = 405, 405 x 3 = 1215, 1215 x 3 = 3645)"
   }

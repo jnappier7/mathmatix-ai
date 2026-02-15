@@ -31,9 +31,9 @@
     "Identify and apply vertical/horizontal shifts, reflections, and stretches"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
+    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do \u2192 mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
-    "Heavy use of graph-reading skills — ACT functions questions are often graph-based",
+    "Heavy use of graph-reading skills \u2014 ACT functions questions are often graph-based",
     "Teach students to identify function type from equation form before calculating",
     "Connect transformations to parent functions visually"
   ],
@@ -49,29 +49,29 @@
         "f(x) means 'the output when the input is x.' f(3) means replace every x with 3.",
         "Domain: all valid inputs. Range: all possible outputs.",
         "Composite function: f(g(x)) means apply g first, then f to the result. Work inside out.",
-        "f(g(x)) ≠ g(f(x)) in general — order matters",
-        "Inverse function: f⁻¹(x) 'undoes' f. To find it: write y = f(x), swap x and y, solve for y.",
-        "f(f⁻¹(x)) = x and f⁻¹(f(x)) = x",
-        "Graphically: f⁻¹ is a reflection of f over the line y = x"
+        "f(g(x)) \u2260 g(f(x)) in general \u2014 order matters",
+        "Inverse function: f\u207b\u00b9(x) 'undoes' f. To find it: write y = f(x), swap x and y, solve for y.",
+        "f(f\u207b\u00b9(x)) = x and f\u207b\u00b9(f(x)) = x",
+        "Graphically: f\u207b\u00b9 is a reflection of f over the line y = x"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Function Notation — Worked Examples",
+      "title": "Function Notation \u2014 Worked Examples",
       "skill": "act-function-notation-evaluation",
       "examples": [
         {
-          "problem": "If f(x) = 2x² − 3x + 1, what is f(−2)?\n(A) 3  (B) 7  (C) 11  (D) 15  (E) 19",
-          "solution": "Substitute x = −2:\nf(−2) = 2(−2)² − 3(−2) + 1\n= 2(4) + 6 + 1\n= 8 + 6 + 1 = 15\nAnswer: (D) 15"
+          "problem": "If f(x) = 2x\u00b2 \u2212 3x + 1, what is f(\u22122)?\n(A) 3  (B) 7  (C) 11  (D) 15  (E) 19",
+          "solution": "Substitute x = \u22122:\nf(\u22122) = 2(\u22122)\u00b2 \u2212 3(\u22122) + 1\n= 2(4) + 6 + 1\n= 8 + 6 + 1 = 15\nAnswer: (D) 15"
         },
         {
-          "problem": "If f(x) = 3x + 1 and g(x) = x² − 2, what is f(g(2))?\n(A) 7  (B) 8  (C) 13  (D) 25  (E) 49",
-          "solution": "Work inside out:\nStep 1: g(2) = (2)² − 2 = 4 − 2 = 2\nStep 2: f(g(2)) = f(2) = 3(2) + 1 = 7\nAnswer: (A) 7\n\nCommon mistake: computing g(f(2)) instead. f(2) = 7, g(7) = 47 — wrong order!"
+          "problem": "If f(x) = 3x + 1 and g(x) = x\u00b2 \u2212 2, what is f(g(2))?\n(A) 7  (B) 8  (C) 13  (D) 25  (E) 49",
+          "solution": "Work inside out:\nStep 1: g(2) = (2)\u00b2 \u2212 2 = 4 \u2212 2 = 2\nStep 2: f(g(2)) = f(2) = 3(2) + 1 = 7\nAnswer: (A) 7\n\nCommon mistake: computing g(f(2)) instead. f(2) = 7, g(7) = 47 \u2014 wrong order!"
         },
         {
-          "problem": "If f(x) = (2x + 6)/4, what is f⁻¹(x)?\n(A) (4x − 6)/2  (B) 4/(2x + 6)  (C) 2x − 3  (D) (4x + 6)/2  (E) (x − 6)/2",
-          "solution": "Step 1: y = (2x + 6)/4\nStep 2: Swap x and y: x = (2y + 6)/4\nStep 3: Solve for y: 4x = 2y + 6 → 2y = 4x − 6 → y = (4x − 6)/2 = 2x − 3\nAnswer: (C) 2x − 3\n\nCheck: f(f⁻¹(x)) = f(2x−3) = (2(2x−3)+6)/4 = (4x−6+6)/4 = 4x/4 = x ✓"
+          "problem": "If f(x) = (2x + 6)/4, what is f\u207b\u00b9(x)?\n(A) (4x \u2212 6)/2  (B) 4/(2x + 6)  (C) 2x \u2212 3  (D) (4x + 6)/2  (E) (x \u2212 6)/2",
+          "solution": "Step 1: y = (2x + 6)/4\nStep 2: Swap x and y: x = (2y + 6)/4\nStep 3: Solve for y: 4x = 2y + 6 \u2192 2y = 4x \u2212 6 \u2192 y = (4x \u2212 6)/2 = 2x \u2212 3\nAnswer: (C) 2x \u2212 3\n\nCheck: f(f\u207b\u00b9(x)) = f(2x\u22123) = (2(2x\u22123)+6)/4 = (4x\u22126+6)/4 = 4x/4 = x \u2713"
         }
       ]
     },
@@ -82,32 +82,32 @@
       "skill": "act-linear-functions",
       "content": "Linear and quadratic functions are the two most tested function families on the ACT. Know their equations, graphs, and key features cold.",
       "keyPoints": [
-        "Linear: y = mx + b. Slope m = (y₂−y₁)/(x₂−x₁). y-intercept at (0, b).",
-        "Parallel lines: same slope. Perpendicular lines: slopes are negative reciprocals (m₁ · m₂ = −1).",
-        "Quadratic standard form: y = ax² + bx + c. Vertex: x = −b/(2a), then find y.",
-        "Quadratic vertex form: y = a(x−h)² + k. Vertex at (h, k) — read directly.",
+        "Linear: y = mx + b. Slope m = (y\u2082\u2212y\u2081)/(x\u2082\u2212x\u2081). y-intercept at (0, b).",
+        "Parallel lines: same slope. Perpendicular lines: slopes are negative reciprocals (m\u2081 \u00b7 m\u2082 = \u22121).",
+        "Quadratic standard form: y = ax\u00b2 + bx + c. Vertex: x = \u2212b/(2a), then find y.",
+        "Quadratic vertex form: y = a(x\u2212h)\u00b2 + k. Vertex at (h, k) \u2014 read directly.",
         "a > 0: parabola opens UP (minimum). a < 0: opens DOWN (maximum).",
-        "x-intercepts (zeros): set y = 0 and solve. y-intercept: set x = 0 → y = c.",
-        "Axis of symmetry: x = −b/(2a) or x = h"
+        "x-intercepts (zeros): set y = 0 and solve. y-intercept: set x = 0 \u2192 y = c.",
+        "Axis of symmetry: x = \u2212b/(2a) or x = h"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Linear & Quadratic Functions — Worked Examples",
+      "title": "Linear & Quadratic Functions \u2014 Worked Examples",
       "skill": "act-quadratic-functions",
       "examples": [
         {
-          "problem": "A line passes through (2, 5) and (6, 13). What is its equation in slope-intercept form?\n(A) y = 2x + 1  (B) y = 2x − 1  (C) y = 4x − 3  (D) y = (1/2)x + 4  (E) y = 8x − 11",
-          "solution": "Step 1: Slope = (13−5)/(6−2) = 8/4 = 2\nStep 2: Use point-slope with (2, 5): y − 5 = 2(x − 2) → y = 2x + 1\nAnswer: (A) y = 2x + 1\n\nQuick check: At x=6: y = 2(6)+1 = 13. ✓"
+          "problem": "A line passes through (2, 5) and (6, 13). What is its equation in slope-intercept form?\n(A) y = 2x + 1  (B) y = 2x \u2212 1  (C) y = 4x \u2212 3  (D) y = (1/2)x + 4  (E) y = 8x \u2212 11",
+          "solution": "Step 1: Slope = (13\u22125)/(6\u22122) = 8/4 = 2\nStep 2: Use point-slope with (2, 5): y \u2212 5 = 2(x \u2212 2) \u2192 y = 2x + 1\nAnswer: (A) y = 2x + 1\n\nQuick check: At x=6: y = 2(6)+1 = 13. \u2713"
         },
         {
-          "problem": "What is the vertex of the parabola y = −2x² + 12x − 7?\n(A) (3, 11)  (B) (−3, −61)  (C) (6, −7)  (D) (3, −7)  (E) (−3, 11)",
-          "solution": "x-coordinate: x = −b/(2a) = −12/(2·(−2)) = −12/(−4) = 3\ny-coordinate: y = −2(3)² + 12(3) − 7 = −18 + 36 − 7 = 11\nVertex: (3, 11)\nAnswer: (A) (3, 11)\n\nSince a = −2 < 0, this is a maximum. The maximum value of the function is 11."
+          "problem": "What is the vertex of the parabola y = \u22122x\u00b2 + 12x \u2212 7?\n(A) (3, 11)  (B) (\u22123, \u221261)  (C) (6, \u22127)  (D) (3, \u22127)  (E) (\u22123, 11)",
+          "solution": "x-coordinate: x = \u2212b/(2a) = \u221212/(2\u00b7(\u22122)) = \u221212/(\u22124) = 3\ny-coordinate: y = \u22122(3)\u00b2 + 12(3) \u2212 7 = \u221218 + 36 \u2212 7 = 11\nVertex: (3, 11)\nAnswer: (A) (3, 11)\n\nSince a = \u22122 < 0, this is a maximum. The maximum value of the function is 11."
         },
         {
-          "problem": "Line m has equation y = −3x + 5. Which of the following is perpendicular to line m?\n(A) y = −3x + 2  (B) y = 3x − 1  (C) y = (1/3)x + 4  (D) y = −(1/3)x + 7  (E) y = (1/3)x − 5",
-          "solution": "Line m has slope −3.\nPerpendicular slope = negative reciprocal = −(1/(−3)) = 1/3\nLook for slope 1/3: choices (C) and (E) both have slope 1/3.\nBoth are perpendicular. Check answer choices... both (C) and (E) work.\nAnswer: (C) y = (1/3)x + 4 (or (E) — ACT would only list one correct option)"
+          "problem": "Line m has equation y = \u22123x + 5. Which of the following is perpendicular to line m?\n(A) y = \u22123x + 2  (B) y = 3x \u2212 1  (C) y = (1/3)x + 4  (D) y = \u2212(1/3)x + 7  (E) y = (1/3)x \u2212 5",
+          "solution": "Line m has slope \u22123.\nPerpendicular slope = negative reciprocal = \u2212(1/(\u22123)) = 1/3\nLook for slope 1/3: choices (C) and (E) both have slope 1/3.\nBoth are perpendicular. Check answer choices... both (C) and (E) work.\nAnswer: (C) y = (1/3)x + 4 (or (E) \u2014 ACT would only list one correct option)"
         }
       ]
     },
@@ -115,14 +115,9 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Function Notation, Linear & Quadratic Practice",
-      "skills": [
-        "act-function-notation-evaluation",
-        "act-linear-functions",
-        "act-quadratic-functions"
-      ],
       "problems": [
         {
-          "problem": "If f(x) = x² + 1 and g(x) = 2x, what is g(f(3))?\n(A) 7  (B) 10  (C) 19  (D) 20  (E) 37",
+          "problem": "If f(x) = x\u00b2 + 1 and g(x) = 2x, what is g(f(3))?\n(A) 7  (B) 10  (C) 19  (D) 20  (E) 37",
           "hints": [
             "First find f(3) = 9 + 1 = 10",
             "Then g(10) = 2(10) = 20"
@@ -130,28 +125,28 @@
           "answer": "(D) 20. f(3) = 9 + 1 = 10. g(f(3)) = g(10) = 2(10) = 20."
         },
         {
-          "problem": "A line passes through (−1, 4) and is parallel to y = −2x + 7. What is the y-intercept?\n(A) 2  (B) 3  (C) 6  (D) 7  (E) 9",
+          "problem": "A line passes through (\u22121, 4) and is parallel to y = \u22122x + 7. What is the y-intercept?\n(A) 2  (B) 3  (C) 6  (D) 7  (E) 9",
           "hints": [
-            "Parallel means same slope: m = −2",
-            "Use point-slope: y − 4 = −2(x − (−1))"
+            "Parallel means same slope: m = \u22122",
+            "Use point-slope: y \u2212 4 = \u22122(x \u2212 (\u22121))"
           ],
-          "answer": "(A) 2. Slope = −2. y − 4 = −2(x + 1) → y = −2x − 2 + 4 → y = −2x + 2. y-intercept = 2."
+          "answer": "(A) 2. Slope = \u22122. y \u2212 4 = \u22122(x + 1) \u2192 y = \u22122x \u2212 2 + 4 \u2192 y = \u22122x + 2. y-intercept = 2."
         },
         {
-          "problem": "The function f(x) = x² − 6x + k has its minimum value at y = −4. What is k?\n(A) −4  (B) 1  (C) 5  (D) 9  (E) 13",
+          "problem": "The function f(x) = x\u00b2 \u2212 6x + k has its minimum value at y = \u22124. What is k?\n(A) \u22124  (B) 1  (C) 5  (D) 9  (E) 13",
           "hints": [
-            "Vertex x-coordinate: x = −(−6)/(2·1) = 3",
-            "Minimum value = f(3) = 9 − 18 + k = k − 9 = −4"
+            "Vertex x-coordinate: x = \u2212(\u22126)/(2\u00b71) = 3",
+            "Minimum value = f(3) = 9 \u2212 18 + k = k \u2212 9 = \u22124"
           ],
-          "answer": "(C) 5. Vertex at x = 3. f(3) = 9 − 18 + k = k − 9 = −4 → k = 5."
+          "answer": "(C) 5. Vertex at x = 3. f(3) = 9 \u2212 18 + k = k \u2212 9 = \u22124 \u2192 k = 5."
         },
         {
-          "problem": "If f(x) = 5x − 3, what is f⁻¹(12)?\n(A) 2  (B) 3  (C) 15  (D) 57  (E) 63",
+          "problem": "If f(x) = 5x \u2212 3, what is f\u207b\u00b9(12)?\n(A) 2  (B) 3  (C) 15  (D) 57  (E) 63",
           "hints": [
-            "Find f⁻¹(x): y = 5x − 3 → x = 5y − 3 → y = (x+3)/5",
-            "Then f⁻¹(12) = (12+3)/5 = 15/5 = 3"
+            "Find f\u207b\u00b9(x): y = 5x \u2212 3 \u2192 x = 5y \u2212 3 \u2192 y = (x+3)/5",
+            "Then f\u207b\u00b9(12) = (12+3)/5 = 15/5 = 3"
           ],
-          "answer": "(B) 3. f⁻¹(x) = (x+3)/5. f⁻¹(12) = 15/5 = 3."
+          "answer": "(B) 3. f\u207b\u00b9(x) = (x+3)/5. f\u207b\u00b9(12) = 15/5 = 3."
         }
       ],
       "skill": "act-quadratic-functions"
@@ -163,37 +158,37 @@
       "skill": "act-polynomial-exponential-log",
       "content": "These function families appear in the harder ACT questions (typically #35-60). Exponentials and logs are tested 1-3 times. Trig appears 4-7 times and is essential for scoring 28+.",
       "keyPoints": [
-        "Exponential growth: y = a · b^x where b > 1. Decay: 0 < b < 1.",
-        "Half-life/doubling: y = a · (1/2)^(t/h) or y = a · 2^(t/d)",
+        "Exponential growth: y = a \u00b7 b^x where b > 1. Decay: 0 < b < 1.",
+        "Half-life/doubling: y = a \u00b7 (1/2)^(t/h) or y = a \u00b7 2^(t/d)",
         "Logarithm definition: log_b(x) = y means b^y = x. Just converting between forms.",
-        "Common log: log(x) = log₁₀(x). Natural log: ln(x) = log_e(x).",
-        "SOH-CAH-TOA: sin θ = opp/hyp, cos θ = adj/hyp, tan θ = opp/adj",
-        "Key angles: sin 30° = 1/2, cos 30° = √3/2, sin 45° = cos 45° = √2/2, sin 60° = √3/2, cos 60° = 1/2",
-        "Pythagorean identity: sin²θ + cos²θ = 1",
-        "Trig graphs: y = A sin(Bx + C) + D. Amplitude = |A|, period = 2π/B"
+        "Common log: log(x) = log\u2081\u2080(x). Natural log: ln(x) = log_e(x).",
+        "SOH-CAH-TOA: sin \u03b8 = opp/hyp, cos \u03b8 = adj/hyp, tan \u03b8 = opp/adj",
+        "Key angles: sin 30\u00b0 = 1/2, cos 30\u00b0 = \u221a3/2, sin 45\u00b0 = cos 45\u00b0 = \u221a2/2, sin 60\u00b0 = \u221a3/2, cos 60\u00b0 = 1/2",
+        "Pythagorean identity: sin\u00b2\u03b8 + cos\u00b2\u03b8 = 1",
+        "Trig graphs: y = A sin(Bx + C) + D. Amplitude = |A|, period = 2\u03c0/B"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Exponential, Log & Trig — Worked Examples",
+      "title": "Exponential, Log & Trig \u2014 Worked Examples",
       "skill": "act-trig-functions",
       "examples": [
         {
           "problem": "A population doubles every 5 years. If the initial population is 1,000, what is the population after 15 years?\n(A) 3,000  (B) 4,000  (C) 6,000  (D) 8,000  (E) 16,000",
-          "solution": "Doubling model: P = 1000 · 2^(t/5)\nAt t = 15: P = 1000 · 2^(15/5) = 1000 · 2³ = 1000 · 8 = 8,000\nAnswer: (D) 8,000\n\nQuick think: 15 years = 3 doubling periods. 1000 → 2000 → 4000 → 8000."
+          "solution": "Doubling model: P = 1000 \u00b7 2^(t/5)\nAt t = 15: P = 1000 \u00b7 2^(15/5) = 1000 \u00b7 2\u00b3 = 1000 \u00b7 8 = 8,000\nAnswer: (D) 8,000\n\nQuick think: 15 years = 3 doubling periods. 1000 \u2192 2000 \u2192 4000 \u2192 8000."
         },
         {
-          "problem": "If log₃(x) = 4, what is x?\n(A) 12  (B) 27  (C) 64  (D) 81  (E) 243",
-          "solution": "Convert: log₃(x) = 4 means 3⁴ = x\n3⁴ = 81\nAnswer: (D) 81\n\nACT Tip: Most log questions are just 'convert between log and exponential form.'"
+          "problem": "If log\u2083(x) = 4, what is x?\n(A) 12  (B) 27  (C) 64  (D) 81  (E) 243",
+          "solution": "Convert: log\u2083(x) = 4 means 3\u2074 = x\n3\u2074 = 81\nAnswer: (D) 81\n\nACT Tip: Most log questions are just 'convert between log and exponential form.'"
         },
         {
           "problem": "In a right triangle, the side opposite angle A is 5 and the hypotenuse is 13. What is cos A?\n(A) 5/13  (B) 5/12  (C) 12/13  (D) 13/12  (E) 12/5",
-          "solution": "First find the adjacent side: a² + 5² = 13² → a² = 169 − 25 = 144 → a = 12\ncos A = adjacent/hypotenuse = 12/13\nAnswer: (C) 12/13\n\nNote: This is a 5-12-13 Pythagorean triple!"
+          "solution": "First find the adjacent side: a\u00b2 + 5\u00b2 = 13\u00b2 \u2192 a\u00b2 = 169 \u2212 25 = 144 \u2192 a = 12\ncos A = adjacent/hypotenuse = 12/13\nAnswer: (C) 12/13\n\nNote: This is a 5-12-13 Pythagorean triple!"
         },
         {
-          "problem": "What is the period of y = 3 sin(2x) + 1?\n(A) π  (B) 2π  (C) 3π  (D) 4π  (E) 6π",
-          "solution": "Period = 2π/B where B = 2.\nPeriod = 2π/2 = π\nAnswer: (A) π\n\nThe amplitude is 3 and the vertical shift is 1, but the question only asks for the period."
+          "problem": "What is the period of y = 3 sin(2x) + 1?\n(A) \u03c0  (B) 2\u03c0  (C) 3\u03c0  (D) 4\u03c0  (E) 6\u03c0",
+          "solution": "Period = 2\u03c0/B where B = 2.\nPeriod = 2\u03c0/2 = \u03c0\nAnswer: (A) \u03c0\n\nThe amplitude is 3 and the vertical shift is 1, but the question only asks for the period."
         }
       ]
     },
@@ -205,28 +200,28 @@
       "content": "Transformation questions ask you to identify how a graph has been shifted, reflected, or stretched. The key rule: changes INSIDE the function (to x) go opposite; changes OUTSIDE (to y) go as expected.",
       "keyPoints": [
         "f(x) + k: shift UP by k units",
-        "f(x) − k: shift DOWN by k units",
-        "f(x − h): shift RIGHT by h units (opposite of the sign!)",
+        "f(x) \u2212 k: shift DOWN by k units",
+        "f(x \u2212 h): shift RIGHT by h units (opposite of the sign!)",
         "f(x + h): shift LEFT by h units",
-        "−f(x): reflect over the x-axis (flip vertically)",
-        "f(−x): reflect over the y-axis (flip horizontally)",
-        "a · f(x): vertical stretch if |a| > 1, compress if 0 < |a| < 1",
+        "\u2212f(x): reflect over the x-axis (flip vertically)",
+        "f(\u2212x): reflect over the y-axis (flip horizontally)",
+        "a \u00b7 f(x): vertical stretch if |a| > 1, compress if 0 < |a| < 1",
         "Memory trick: 'Inside = opposite, Outside = same'"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Transformations — Worked Examples",
+      "title": "Transformations \u2014 Worked Examples",
       "skill": "act-function-transformations",
       "examples": [
         {
-          "problem": "The graph of y = f(x) is shown. Which equation represents the graph shifted 3 units right and 2 units down?\n(A) y = f(x + 3) − 2  (B) y = f(x − 3) − 2  (C) y = f(x − 3) + 2  (D) y = f(x + 3) + 2  (E) y = f(x − 2) − 3",
-          "solution": "Right 3: replace x with (x − 3) → f(x − 3)\nDown 2: subtract 2 → f(x − 3) − 2\nAnswer: (B) y = f(x − 3) − 2\n\nRemember: shifting RIGHT uses a MINUS inside the function."
+          "problem": "The graph of y = f(x) is shown. Which equation represents the graph shifted 3 units right and 2 units down?\n(A) y = f(x + 3) \u2212 2  (B) y = f(x \u2212 3) \u2212 2  (C) y = f(x \u2212 3) + 2  (D) y = f(x + 3) + 2  (E) y = f(x \u2212 2) \u2212 3",
+          "solution": "Right 3: replace x with (x \u2212 3) \u2192 f(x \u2212 3)\nDown 2: subtract 2 \u2192 f(x \u2212 3) \u2212 2\nAnswer: (B) y = f(x \u2212 3) \u2212 2\n\nRemember: shifting RIGHT uses a MINUS inside the function."
         },
         {
-          "problem": "If the graph of y = x² is reflected over the x-axis and shifted up 4 units, what is the new equation?\n(A) y = −x² + 4  (B) y = (−x)² + 4  (C) y = −(x + 4)²  (D) y = −x² − 4  (E) y = (x − 4)²",
-          "solution": "Start with y = x².\nReflect over x-axis: y = −x²\nShift up 4: y = −x² + 4\nAnswer: (A) y = −x² + 4\n\nThe vertex of the new parabola is at (0, 4) and it opens downward."
+          "problem": "If the graph of y = x\u00b2 is reflected over the x-axis and shifted up 4 units, what is the new equation?\n(A) y = \u2212x\u00b2 + 4  (B) y = (\u2212x)\u00b2 + 4  (C) y = \u2212(x + 4)\u00b2  (D) y = \u2212x\u00b2 \u2212 4  (E) y = (x \u2212 4)\u00b2",
+          "solution": "Start with y = x\u00b2.\nReflect over x-axis: y = \u2212x\u00b2\nShift up 4: y = \u2212x\u00b2 + 4\nAnswer: (A) y = \u2212x\u00b2 + 4\n\nThe vertex of the new parabola is at (0, 4) and it opens downward."
         }
       ]
     },
@@ -234,40 +229,35 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Advanced Functions & Transformations Practice",
-      "skills": [
-        "act-polynomial-exponential-log",
-        "act-trig-functions",
-        "act-function-transformations"
-      ],
       "problems": [
         {
           "problem": "A radioactive substance has a half-life of 10 years. If the initial amount is 200 grams, how much remains after 30 years?\n(A) 12.5 g  (B) 25 g  (C) 50 g  (D) 66.7 g  (E) 100 g",
           "hints": [
             "30 years = 3 half-lives",
-            "Each half-life cuts the amount in half: 200 → 100 → 50 → 25"
+            "Each half-life cuts the amount in half: 200 \u2192 100 \u2192 50 \u2192 25"
           ],
-          "answer": "(B) 25 g. 3 half-lives: 200/2³ = 200/8 = 25 g."
+          "answer": "(B) 25 g. 3 half-lives: 200/2\u00b3 = 200/8 = 25 g."
         },
         {
-          "problem": "Simplify: log₂(32)\n(A) 4  (B) 5  (C) 6  (D) 16  (E) 64",
+          "problem": "Simplify: log\u2082(32)\n(A) 4  (B) 5  (C) 6  (D) 16  (E) 64",
           "hints": [
             "Ask: 2 raised to what power equals 32?",
-            "2⁵ = 32"
+            "2\u2075 = 32"
           ],
-          "answer": "(B) 5. 2⁵ = 32, so log₂(32) = 5."
+          "answer": "(B) 5. 2\u2075 = 32, so log\u2082(32) = 5."
         },
         {
-          "problem": "In right triangle XYZ, angle X = 60° and the side adjacent to angle X is 7. What is the hypotenuse?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14  (E) 14√3",
+          "problem": "In right triangle XYZ, angle X = 60\u00b0 and the side adjacent to angle X is 7. What is the hypotenuse?\n(A) 7  (B) 7\u221a2  (C) 7\u221a3  (D) 14  (E) 14\u221a3",
           "hints": [
-            "cos 60° = adjacent/hypotenuse = 7/h",
-            "cos 60° = 1/2, so 1/2 = 7/h"
+            "cos 60\u00b0 = adjacent/hypotenuse = 7/h",
+            "cos 60\u00b0 = 1/2, so 1/2 = 7/h"
           ],
-          "answer": "(D) 14. cos 60° = 1/2 = 7/h → h = 14."
+          "answer": "(D) 14. cos 60\u00b0 = 1/2 = 7/h \u2192 h = 14."
         },
         {
-          "problem": "The graph of y = f(x) passes through (2, 5). Through what point does y = f(x − 4) + 3 pass?\n(A) (6, 8)  (B) (−2, 8)  (C) (6, 2)  (D) (−2, 2)  (E) (2, 8)",
+          "problem": "The graph of y = f(x) passes through (2, 5). Through what point does y = f(x \u2212 4) + 3 pass?\n(A) (6, 8)  (B) (\u22122, 8)  (C) (6, 2)  (D) (\u22122, 2)  (E) (2, 8)",
           "hints": [
-            "f(x−4) shifts RIGHT by 4: x-coordinate goes from 2 to 6",
+            "f(x\u22124) shifts RIGHT by 4: x-coordinate goes from 2 to 6",
             "+3 shifts UP by 3: y-coordinate goes from 5 to 8"
           ],
           "answer": "(A) (6, 8). Right 4: (2+4, 5) = (6, 5). Up 3: (6, 5+3) = (6, 8)."
@@ -278,47 +268,39 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Functions — ACT-Style Practice Set",
-      "skills": [
-        "act-function-notation-evaluation",
-        "act-linear-functions",
-        "act-quadratic-functions",
-        "act-polynomial-exponential-log",
-        "act-trig-functions",
-        "act-function-transformations"
-      ],
+      "title": "Functions \u2014 ACT-Style Practice Set",
       "problems": [
         {
-          "problem": "If f(x) = 3x − 7, what is f(f(3))?\n(A) −5  (B) −4  (C) 2  (D) −1  (E) 5",
-          "answer": "(D) −1. f(3) = 9−7 = 2. f(f(3)) = f(2) = 6−7 = −1."
+          "problem": "If f(x) = 3x \u2212 7, what is f(f(3))?\n(A) \u22125  (B) \u22124  (C) 2  (D) \u22121  (E) 5",
+          "answer": "(D) \u22121. f(3) = 9\u22127 = 2. f(f(3)) = f(2) = 6\u22127 = \u22121."
         },
         {
-          "problem": "What is the slope of the line passing through (−3, 8) and (5, −4)?\n(A) −3/2  (B) −2/3  (C) 2/3  (D) 3/2  (E) −1/2",
-          "answer": "(A) −3/2. Slope = (−4−8)/(5−(−3)) = −12/8 = −3/2."
+          "problem": "What is the slope of the line passing through (\u22123, 8) and (5, \u22124)?\n(A) \u22123/2  (B) \u22122/3  (C) 2/3  (D) 3/2  (E) \u22121/2",
+          "answer": "(A) \u22123/2. Slope = (\u22124\u22128)/(5\u2212(\u22123)) = \u221212/8 = \u22123/2."
         },
         {
-          "problem": "What is the maximum value of y = −x² + 8x − 12?\n(A) 2  (B) 4  (C) 8  (D) 12  (E) 20",
-          "answer": "(B) 4. Vertex at x = −8/(2·(−1)) = 4. y = −16 + 32 − 12 = 4."
+          "problem": "What is the maximum value of y = \u2212x\u00b2 + 8x \u2212 12?\n(A) 2  (B) 4  (C) 8  (D) 12  (E) 20",
+          "answer": "(B) 4. Vertex at x = \u22128/(2\u00b7(\u22121)) = 4. y = \u221216 + 32 \u2212 12 = 4."
         },
         {
-          "problem": "If f(x) = 2^x, what is f(5) − f(3)?\n(A) 4  (B) 8  (C) 16  (D) 24  (E) 32",
-          "answer": "(D) 24. f(5) = 32, f(3) = 8. 32 − 8 = 24."
+          "problem": "If f(x) = 2^x, what is f(5) \u2212 f(3)?\n(A) 4  (B) 8  (C) 16  (D) 24  (E) 32",
+          "answer": "(D) 24. f(5) = 32, f(3) = 8. 32 \u2212 8 = 24."
         },
         {
           "problem": "In a right triangle, sin A = 3/5. What is tan A?\n(A) 3/4  (B) 4/5  (C) 3/5  (D) 4/3  (E) 5/3",
-          "answer": "(A) 3/4. sin A = 3/5 (opp=3, hyp=5). Adjacent = √(25−9) = 4. tan A = 3/4."
+          "answer": "(A) 3/4. sin A = 3/5 (opp=3, hyp=5). Adjacent = \u221a(25\u22129) = 4. tan A = 3/4."
         },
         {
-          "problem": "The function g(x) = −2(x + 1)² + 5 is a transformation of f(x) = x². Which describes ALL transformations applied?\n(A) Left 1, up 5, reflected, stretched  (B) Right 1, up 5, reflected, stretched  (C) Left 1, down 5, stretched  (D) Right 1, up 5, compressed  (E) Left 1, up 5, reflected, compressed",
-          "answer": "(A) Left 1, up 5, reflected, stretched. The +1 inside shifts left 1. The +5 outside shifts up 5. The −2 reflects over x-axis and vertically stretches by factor 2."
+          "problem": "The function g(x) = \u22122(x + 1)\u00b2 + 5 is a transformation of f(x) = x\u00b2. Which describes ALL transformations applied?\n(A) Left 1, up 5, reflected, stretched  (B) Right 1, up 5, reflected, stretched  (C) Left 1, down 5, stretched  (D) Right 1, up 5, compressed  (E) Left 1, up 5, reflected, compressed",
+          "answer": "(A) Left 1, up 5, reflected, stretched. The +1 inside shifts left 1. The +5 outside shifts up 5. The \u22122 reflects over x-axis and vertically stretches by factor 2."
         },
         {
           "problem": "If log(x) = 3.5, what is x? (log means log base 10)\n(A) 35  (B) 350  (C) 3,162  (D) 5,000  (E) 10,000",
-          "answer": "(C) 3,162. x = 10^3.5 = 10³ · 10^0.5 = 1000√10 ≈ 1000(3.162) ≈ 3,162."
+          "answer": "(C) 3,162. x = 10^3.5 = 10\u00b3 \u00b7 10^0.5 = 1000\u221a10 \u2248 1000(3.162) \u2248 3,162."
         },
         {
-          "problem": "What is the amplitude and period of y = 4 cos(πx/2)?\n(A) Amplitude 4, period 4  (B) Amplitude 4, period π  (C) Amplitude 2, period 4  (D) Amplitude 4, period 2π  (E) Amplitude π, period 4",
-          "answer": "(A) Amplitude 4, period 4. Amplitude = |4| = 4. B = π/2, period = 2π/(π/2) = 4."
+          "problem": "What is the amplitude and period of y = 4 cos(\u03c0x/2)?\n(A) Amplitude 4, period 4  (B) Amplitude 4, period \u03c0  (C) Amplitude 2, period 4  (D) Amplitude 4, period 2\u03c0  (E) Amplitude \u03c0, period 4",
+          "answer": "(A) Amplitude 4, period 4. Amplitude = |4| = 4. B = \u03c0/2, period = 2\u03c0/(\u03c0/2) = 4."
         }
       ],
       "skill": "act-function-notation-evaluation"
@@ -327,22 +309,22 @@
   "answerKeys": {
     "function-eval": "15",
     "composite": "7",
-    "inverse": "2x − 3",
+    "inverse": "2x \u2212 3",
     "linear-equation": "y = 2x + 1",
     "vertex-parabola": "(3, 11)",
     "perpendicular": "y = (1/3)x + 4",
     "doubling": "8000",
     "log-convert": "81",
     "trig-cos": "12/13",
-    "period-sin": "π",
-    "transformation-shift": "f(x−3) − 2",
-    "reflection-shift": "−x² + 4",
+    "period-sin": "\u03c0",
+    "transformation-shift": "f(x\u22123) \u2212 2",
+    "reflection-shift": "\u2212x\u00b2 + 4",
     "half-life": "25",
     "log-simplify": "5",
     "trig-right-triangle": "14",
     "point-transform": "(6, 8)",
-    "double-composite": "−1",
-    "slope-two-points": "−3/2",
+    "double-composite": "\u22121",
+    "slope-two-points": "\u22123/2",
     "max-parabola": "4",
     "exponential-diff": "24",
     "trig-tan": "3/4",

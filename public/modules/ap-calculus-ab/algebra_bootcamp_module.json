@@ -5,7 +5,7 @@
   "title": "Don't Let Algebra Murder Calculus",
   "weeks": "1-2",
   "estimatedDuration": 10,
-  "description": "Targeted bootcamp to patch the specific precalculus skills that will immediately break limits and derivatives. NOT a full precalc review — only function behavior, rational functions, exponent/log rules, trig fluency, and graph reading. Diagnostic-first: assess before reteaching, skip what's solid, focus on what will stall calculus.",
+  "description": "Targeted bootcamp to patch the specific precalculus skills that will immediately break limits and derivatives. NOT a full precalc review \u2014 only function behavior, rational functions, exponent/log rules, trig fluency, and graph reading. Diagnostic-first: assess before reteaching, skip what's solid, focus on what will stall calculus.",
   "skills": [
     "function-behavior-review",
     "rational-functions-review",
@@ -22,10 +22,10 @@
   ],
   "instructionalStrategy": [
     "Diagnostic-first: assess each skill cluster before reteaching. Skip what's solid.",
-    "Gradual release: concept-intro → I Do → We Do → You Do, but move fast on review material",
+    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do, but move fast on review material",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Timed drills for trig values and exponent rules — these must be automatic, not slow-recalled",
-    "No new content — only repair what will break calculus"
+    "Timed drills for trig values and exponent rules \u2014 these must be automatic, not slow-recalled",
+    "No new content \u2014 only repair what will break calculus"
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -34,11 +34,11 @@
       "lessonPhase": "concept-intro",
       "title": "Function Behavior & Rational Functions",
       "skill": "function-behavior-review",
-      "content": "Calculus is built on understanding how functions behave — especially near special points and as x → ±∞. If students can't read end behavior, identify asymptotes, or evaluate piecewise functions, limits will be incomprehensible.",
+      "content": "Calculus is built on understanding how functions behave \u2014 especially near special points and as x \u2192 \u00b1\u221e. If students can't read end behavior, identify asymptotes, or evaluate piecewise functions, limits will be incomprehensible.",
       "keyPoints": [
-        "End behavior from leading term: f(x) = 3x⁴ - 2x + 1 → ∞ as x → ±∞ (even positive leading)",
+        "End behavior from leading term: f(x) = 3x\u2074 - 2x + 1 \u2192 \u221e as x \u2192 \u00b1\u221e (even positive leading)",
         "Rational functions: p(x)/q(x). Vertical asymptotes where q(x) = 0 (after cancellation). Horizontal asymptotes from degree comparison.",
-        "Holes vs. vertical asymptotes: common factor cancels → hole. Factor remains → VA.",
+        "Holes vs. vertical asymptotes: common factor cancels \u2192 hole. Factor remains \u2192 VA.",
         "Piecewise function evaluation: check which piece applies, then substitute. Boundary behavior matters for limits.",
         "Domain restrictions: division by zero, even roots of negatives, log of non-positives.",
         "Growth hierarchy: logarithmic < polynomial < exponential (critical for limits at infinity)"
@@ -47,20 +47,20 @@
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Function Behavior — Worked Examples",
+      "title": "Function Behavior \u2014 Worked Examples",
       "skill": "function-behavior-review",
       "examples": [
         {
-          "problem": "For f(x) = (x² - 4)/(x² - x - 2), find all asymptotes and holes. State end behavior.",
-          "solution": "Factor: (x-2)(x+2)/((x-2)(x+1)). Common factor (x-2) → hole at x=2. After cancellation: (x+2)/(x+1). VA: x=-1. HA: y=1 (same degree, ratio 1/1). Hole value: f(2) = (2+2)/(2+1) = 4/3. End behavior: f(x) → 1 as x → ±∞."
+          "problem": "For f(x) = (x\u00b2 - 4)/(x\u00b2 - x - 2), find all asymptotes and holes. State end behavior.",
+          "solution": "Factor: (x-2)(x+2)/((x-2)(x+1)). Common factor (x-2) \u2192 hole at x=2. After cancellation: (x+2)/(x+1). VA: x=-1. HA: y=1 (same degree, ratio 1/1). Hole value: f(2) = (2+2)/(2+1) = 4/3. End behavior: f(x) \u2192 1 as x \u2192 \u00b1\u221e."
         },
         {
-          "problem": "For the piecewise function f(x) = {x² + 1, x < 2; 3x - 1, x ≥ 2}, evaluate f(2), and describe behavior as x approaches 2 from each side.",
-          "solution": "f(2): use x ≥ 2 piece → f(2) = 3(2) - 1 = 5. From left (x < 2): x² + 1 → 2² + 1 = 5. From right (x ≥ 2): 3x - 1 → 3(2) - 1 = 5. Both sides → 5, and f(2) = 5. Function is continuous at x = 2."
+          "problem": "For the piecewise function f(x) = {x\u00b2 + 1, x < 2; 3x - 1, x \u2265 2}, evaluate f(2), and describe behavior as x approaches 2 from each side.",
+          "solution": "f(2): use x \u2265 2 piece \u2192 f(2) = 3(2) - 1 = 5. From left (x < 2): x\u00b2 + 1 \u2192 2\u00b2 + 1 = 5. From right (x \u2265 2): 3x - 1 \u2192 3(2) - 1 = 5. Both sides \u2192 5, and f(2) = 5. Function is continuous at x = 2."
         },
         {
-          "problem": "Rank the growth rates and predict limits at infinity: (a) lim(x→∞) ln(x)/x, (b) lim(x→∞) x²/eˣ, (c) lim(x→∞) (3x² + 1)/(5x² - 2).",
-          "solution": "(a) ln grows slower than x → 0. (b) x² grows slower than eˣ → 0. (c) Same degree: 3/5. Growth hierarchy: log < polynomial < exponential."
+          "problem": "Rank the growth rates and predict limits at infinity: (a) lim(x\u2192\u221e) ln(x)/x, (b) lim(x\u2192\u221e) x\u00b2/e\u02e3, (c) lim(x\u2192\u221e) (3x\u00b2 + 1)/(5x\u00b2 - 2).",
+          "solution": "(a) ln grows slower than x \u2192 0. (b) x\u00b2 grows slower than e\u02e3 \u2192 0. (c) Same degree: 3/5. Growth hierarchy: log < polynomial < exponential."
         }
       ]
     },
@@ -71,31 +71,31 @@
       "skill": "exponent-log-rules-review",
       "content": "Every differentiation and integration rule for exponential and logarithmic functions depends on instant recall of exponent and log properties. If these aren't automatic, chain rule and u-substitution will stall.",
       "keyPoints": [
-        "Exponent rules: aᵐ·aⁿ = aᵐ⁺ⁿ, aᵐ/aⁿ = aᵐ⁻ⁿ, (aᵐ)ⁿ = aᵐⁿ, a⁰ = 1, a⁻ⁿ = 1/aⁿ",
-        "Fractional exponents: a^(m/n) = ⁿ√(aᵐ). Critical for power rule: d/dx[√x] = d/dx[x^(1/2)]",
-        "Log rules: log(AB) = log A + log B, log(A/B) = log A - log B, log(Aⁿ) = n·log A",
+        "Exponent rules: a\u1d50\u00b7a\u207f = a\u1d50\u207a\u207f, a\u1d50/a\u207f = a\u1d50\u207b\u207f, (a\u1d50)\u207f = a\u1d50\u207f, a\u2070 = 1, a\u207b\u207f = 1/a\u207f",
+        "Fractional exponents: a^(m/n) = \u207f\u221a(a\u1d50). Critical for power rule: d/dx[\u221ax] = d/dx[x^(1/2)]",
+        "Log rules: log(AB) = log A + log B, log(A/B) = log A - log B, log(A\u207f) = n\u00b7log A",
         "Change of base: log_b(x) = ln(x)/ln(b)",
-        "Key identities: e^(ln x) = x, ln(eˣ) = x, b^(log_b x) = x",
-        "Rewriting for calculus: √x = x^(1/2), 1/x² = x⁻², ³√x = x^(1/3). Power rule requires this form."
+        "Key identities: e^(ln x) = x, ln(e\u02e3) = x, b^(log_b x) = x",
+        "Rewriting for calculus: \u221ax = x^(1/2), 1/x\u00b2 = x\u207b\u00b2, \u00b3\u221ax = x^(1/3). Power rule requires this form."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Exponent & Log Rules — Worked Examples",
+      "title": "Exponent & Log Rules \u2014 Worked Examples",
       "skill": "exponent-log-rules-review",
       "examples": [
         {
-          "problem": "Rewrite each in a form ready for the power rule: (a) 1/x³, (b) √(x⁵), (c) 1/√x, (d) x²·√x.",
-          "solution": "(a) x⁻³. (b) x^(5/2). (c) x^(-1/2). (d) x²·x^(1/2) = x^(5/2). Every radical and fraction must become xⁿ before differentiating."
+          "problem": "Rewrite each in a form ready for the power rule: (a) 1/x\u00b3, (b) \u221a(x\u2075), (c) 1/\u221ax, (d) x\u00b2\u00b7\u221ax.",
+          "solution": "(a) x\u207b\u00b3. (b) x^(5/2). (c) x^(-1/2). (d) x\u00b2\u00b7x^(1/2) = x^(5/2). Every radical and fraction must become x\u207f before differentiating."
         },
         {
-          "problem": "Simplify completely: (a) e^(2ln 3), (b) ln(e⁵ˣ) - ln(eˣ), (c) log₄(64).",
-          "solution": "(a) e^(ln 3²) = e^(ln 9) = 9. (b) 5x - x = 4x. (c) 4³ = 64, so log₄(64) = 3."
+          "problem": "Simplify completely: (a) e^(2ln 3), (b) ln(e\u2075\u02e3) - ln(e\u02e3), (c) log\u2084(64).",
+          "solution": "(a) e^(ln 3\u00b2) = e^(ln 9) = 9. (b) 5x - x = 4x. (c) 4\u00b3 = 64, so log\u2084(64) = 3."
         },
         {
-          "problem": "Condense into a single logarithm: 2·ln(x) + ln(x+1) - 3·ln(x-2).",
-          "solution": "ln(x²) + ln(x+1) - ln((x-2)³) = ln(x²(x+1)/(x-2)³)."
+          "problem": "Condense into a single logarithm: 2\u00b7ln(x) + ln(x+1) - 3\u00b7ln(x-2).",
+          "solution": "ln(x\u00b2) + ln(x+1) - ln((x-2)\u00b3) = ln(x\u00b2(x+1)/(x-2)\u00b3)."
         }
       ]
     },
@@ -104,34 +104,34 @@
       "lessonPhase": "concept-intro",
       "title": "Trig Fluency: Unit Circle & Identities",
       "skill": "trig-fluency-review",
-      "content": "Derivatives of trig functions, trig substitution, and trig limits all require instant recall of unit circle values and core identities. If sin(π/3) takes 10 seconds, calculus will be painful.",
+      "content": "Derivatives of trig functions, trig substitution, and trig limits all require instant recall of unit circle values and core identities. If sin(\u03c0/3) takes 10 seconds, calculus will be painful.",
       "keyPoints": [
-        "Unit circle must-know angles: 0, π/6, π/4, π/3, π/2, and their multiples in all quadrants",
+        "Unit circle must-know angles: 0, \u03c0/6, \u03c0/4, \u03c0/3, \u03c0/2, and their multiples in all quadrants",
         "ASTC rule: All Students Take Calculus (signs by quadrant)",
-        "Key values: sin(π/6)=1/2, sin(π/4)=√2/2, sin(π/3)=√3/2. Cosine is the reverse order.",
-        "Pythagorean identities: sin²θ + cos²θ = 1, 1 + tan²θ = sec²θ, 1 + cot²θ = csc²θ",
-        "Double-angle: sin(2θ) = 2sinθcosθ, cos(2θ) = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ",
-        "Critical for calculus: lim(x→0) sin(x)/x = 1 (needs trig fluency to understand)",
+        "Key values: sin(\u03c0/6)=1/2, sin(\u03c0/4)=\u221a2/2, sin(\u03c0/3)=\u221a3/2. Cosine is the reverse order.",
+        "Pythagorean identities: sin\u00b2\u03b8 + cos\u00b2\u03b8 = 1, 1 + tan\u00b2\u03b8 = sec\u00b2\u03b8, 1 + cot\u00b2\u03b8 = csc\u00b2\u03b8",
+        "Double-angle: sin(2\u03b8) = 2sin\u03b8cos\u03b8, cos(2\u03b8) = cos\u00b2\u03b8 - sin\u00b2\u03b8 = 2cos\u00b2\u03b8 - 1 = 1 - 2sin\u00b2\u03b8",
+        "Critical for calculus: lim(x\u21920) sin(x)/x = 1 (needs trig fluency to understand)",
         "Reciprocal functions: csc = 1/sin, sec = 1/cos, cot = 1/tan (derivatives of these are on the exam)"
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Trig Fluency — Worked Examples",
+      "title": "Trig Fluency \u2014 Worked Examples",
       "skill": "trig-fluency-review",
       "examples": [
         {
-          "problem": "Evaluate without a calculator: (a) sin(5π/6), (b) cos(7π/4), (c) tan(4π/3), (d) sec(π/3).",
-          "solution": "(a) Q2, ref π/6: sin = +1/2. (b) Q4, ref π/4: cos = +√2/2. (c) Q3, ref π/3: tan = +√3. (d) sec(π/3) = 1/cos(π/3) = 1/(1/2) = 2."
+          "problem": "Evaluate without a calculator: (a) sin(5\u03c0/6), (b) cos(7\u03c0/4), (c) tan(4\u03c0/3), (d) sec(\u03c0/3).",
+          "solution": "(a) Q2, ref \u03c0/6: sin = +1/2. (b) Q4, ref \u03c0/4: cos = +\u221a2/2. (c) Q3, ref \u03c0/3: tan = +\u221a3. (d) sec(\u03c0/3) = 1/cos(\u03c0/3) = 1/(1/2) = 2."
         },
         {
-          "problem": "Simplify using identities: (a) (1 - cos²x)/sin x, (b) sec²x - 1, (c) sin(2x)/sin(x).",
-          "solution": "(a) sin²x/sin x = sin x. (b) tan²x (Pythagorean identity). (c) 2sin(x)cos(x)/sin(x) = 2cos(x)."
+          "problem": "Simplify using identities: (a) (1 - cos\u00b2x)/sin x, (b) sec\u00b2x - 1, (c) sin(2x)/sin(x).",
+          "solution": "(a) sin\u00b2x/sin x = sin x. (b) tan\u00b2x (Pythagorean identity). (c) 2sin(x)cos(x)/sin(x) = 2cos(x)."
         },
         {
-          "problem": "Solve on [0, 2π): 2sin²x - sin x - 1 = 0.",
-          "solution": "Factor: (2sin x + 1)(sin x - 1) = 0. sin x = -1/2: x = 7π/6, 11π/6. sin x = 1: x = π/2. Solutions: {π/2, 7π/6, 11π/6}."
+          "problem": "Solve on [0, 2\u03c0): 2sin\u00b2x - sin x - 1 = 0.",
+          "solution": "Factor: (2sin x + 1)(sin x - 1) = 0. sin x = -1/2: x = 7\u03c0/6, 11\u03c0/6. sin x = 1: x = \u03c0/2. Solutions: {\u03c0/2, 7\u03c0/6, 11\u03c0/6}."
         }
       ]
     },
@@ -139,47 +139,42 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Function Behavior & Algebra Repair Practice",
-      "skills": [
-        "function-behavior-review",
-        "exponent-log-rules-review",
-        "trig-fluency-review"
-      ],
       "problems": [
         {
-          "problem": "For f(x) = (2x² + 3x - 5)/(x² - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
+          "problem": "For f(x) = (2x\u00b2 + 3x - 5)/(x\u00b2 - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
           "hints": [
             "Factor numerator and denominator",
             "Check for common factors",
             "Sign analysis near VAs"
           ],
-          "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
+          "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f\u2192+\u221e; from right, f\u2192-\u221e."
         },
         {
-          "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x² + 5√x - 1/∛x.",
+          "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x\u00b2 + 5\u221ax - 1/\u221bx.",
           "hints": [
-            "3/x² = 3x⁻²",
-            "5√x = 5x^(1/2)",
-            "1/∛x = x^(-1/3)"
+            "3/x\u00b2 = 3x\u207b\u00b2",
+            "5\u221ax = 5x^(1/2)",
+            "1/\u221bx = x^(-1/3)"
           ],
-          "answer": "f(x) = 3x⁻² + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
+          "answer": "f(x) = 3x\u207b\u00b2 + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x\u207b\u00b3 + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
         },
         {
-          "problem": "Evaluate all six trig functions at θ = 5π/4.",
+          "problem": "Evaluate all six trig functions at \u03b8 = 5\u03c0/4.",
           "hints": [
             "Q3: sin and cos both negative, tan positive",
-            "Reference angle is π/4",
-            "sin(π/4) = cos(π/4) = √2/2"
+            "Reference angle is \u03c0/4",
+            "sin(\u03c0/4) = cos(\u03c0/4) = \u221a2/2"
           ],
-          "answer": "sin(5π/4) = -√2/2. cos(5π/4) = -√2/2. tan(5π/4) = 1. csc = -√2. sec = -√2. cot = 1."
+          "answer": "sin(5\u03c0/4) = -\u221a2/2. cos(5\u03c0/4) = -\u221a2/2. tan(5\u03c0/4) = 1. csc = -\u221a2. sec = -\u221a2. cot = 1."
         },
         {
-          "problem": "Solve: ln(x²) - ln(x + 3) = ln(4). Check your answer.",
+          "problem": "Solve: ln(x\u00b2) - ln(x + 3) = ln(4). Check your answer.",
           "hints": [
             "Condense left side",
             "Convert to exponential form",
-            "Check domain: x + 3 > 0 and x ≠ 0"
+            "Check domain: x + 3 > 0 and x \u2260 0"
           ],
-          "answer": "ln(x²/(x+3)) = ln(4) → x²/(x+3) = 4 → x² = 4x + 12 → x² - 4x - 12 = 0 → (x-6)(x+2) = 0. x = 6 or x = -2. Check: x=6: ln(36)-ln(9)=ln(4) ✓. x=-2: ln(4)-ln(1)=ln(4) ✓. Both valid."
+          "answer": "ln(x\u00b2/(x+3)) = ln(4) \u2192 x\u00b2/(x+3) = 4 \u2192 x\u00b2 = 4x + 12 \u2192 x\u00b2 - 4x - 12 = 0 \u2192 (x-6)(x+2) = 0. x = 6 or x = -2. Check: x=6: ln(36)-ln(9)=ln(4) \u2713. x=-2: ln(4)-ln(1)=ln(4) \u2713. Both valid."
         }
       ],
       "skill": "trig-fluency-review"
@@ -195,23 +190,23 @@
         "Increasing/decreasing intervals: where the graph rises/falls. State as intervals of x.",
         "Rate of change vocabulary: 'the rate of change is increasing' means the SLOPE is getting steeper (concave up).",
         "Average rate of change = slope of secant line = [f(b)-f(a)]/(b-a). THIS becomes the derivative definition.",
-        "Contextual interpretation: 'f(t) represents gallons of water' → f'(t) = rate in gallons per minute. Units matter.",
+        "Contextual interpretation: 'f(t) represents gallons of water' \u2192 f'(t) = rate in gallons per minute. Units matter.",
         "Key features to identify: intercepts, max/min, inflection points (where concavity changes), symmetry."
       ]
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Graph Reading — Worked Examples",
+      "title": "Graph Reading \u2014 Worked Examples",
       "skill": "graph-reading-modeling",
       "examples": [
         {
           "problem": "A graph of f(x) is shown (parabola opening down with vertex at (3, 8), x-intercepts at x=1 and x=5). Describe: (a) domain and range, (b) intervals of increase/decrease, (c) average rate of change on [1, 4].",
-          "solution": "(a) Domain: (-∞, ∞). Range: (-∞, 8]. (b) Increasing on (-∞, 3), decreasing on (3, ∞). (c) f(1) = 0, f(4) = ? Symmetric to x=2 about vertex, so f(4) = f(2). Using vertex form: f(x) = -2(x-3)²+8: f(4) = -2(1)+8 = 6. Average rate: (6-0)/(4-1) = 2."
+          "solution": "(a) Domain: (-\u221e, \u221e). Range: (-\u221e, 8]. (b) Increasing on (-\u221e, 3), decreasing on (3, \u221e). (c) f(1) = 0, f(4) = ? Symmetric to x=2 about vertex, so f(4) = f(2). Using vertex form: f(x) = -2(x-3)\u00b2+8: f(4) = -2(1)+8 = 6. Average rate: (6-0)/(4-1) = 2."
         },
         {
-          "problem": "The temperature T(t) of coffee (in °F) is given by a graph that starts at 200, decreases rapidly, then levels off near 70. At t = 5 minutes, the tangent line appears to have slope -15. Interpret this value.",
-          "solution": "At t = 5 minutes, the coffee is cooling at a rate of 15°F per minute. The negative sign indicates temperature is decreasing. The leveling off near 70 means the rate of cooling is slowing down (the slope is becoming less negative), which suggests concave up behavior."
+          "problem": "The temperature T(t) of coffee (in \u00b0F) is given by a graph that starts at 200, decreases rapidly, then levels off near 70. At t = 5 minutes, the tangent line appears to have slope -15. Interpret this value.",
+          "solution": "At t = 5 minutes, the coffee is cooling at a rate of 15\u00b0F per minute. The negative sign indicates temperature is decreasing. The leveling off near 70 means the rate of cooling is slowing down (the slope is becoming less negative), which suggests concave up behavior."
         }
       ]
     },
@@ -219,32 +214,26 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Bootcamp Mastery Practice",
-      "skills": [
-        "function-behavior-review",
-        "exponent-log-rules-review",
-        "trig-fluency-review",
-        "graph-reading-modeling"
-      ],
       "problems": [
         {
-          "problem": "For g(x) = (x³ - 8)/(x² - 4), simplify, find all asymptotes and holes, and state end behavior.",
-          "answer": "Factor: (x-2)(x²+2x+4)/((x-2)(x+2)). Hole at x=2: g(2) = (4+4+4)/(4) = 3. Simplified: (x²+2x+4)/(x+2). VA: x = -2. No HA (degree numerator > denominator). Oblique asymptote: long division gives y = x. End behavior: g(x) → ±∞ as x → ±∞."
+          "problem": "For g(x) = (x\u00b3 - 8)/(x\u00b2 - 4), simplify, find all asymptotes and holes, and state end behavior.",
+          "answer": "Factor: (x-2)(x\u00b2+2x+4)/((x-2)(x+2)). Hole at x=2: g(2) = (4+4+4)/(4) = 3. Simplified: (x\u00b2+2x+4)/(x+2). VA: x = -2. No HA (degree numerator > denominator). Oblique asymptote: long division gives y = x. End behavior: g(x) \u2192 \u00b1\u221e as x \u2192 \u00b1\u221e."
         },
         {
-          "problem": "Simplify to a single value or expression: (a) e^(3ln2 - ln4), (b) ln(e²·e⁵)/ln(e³), (c) 8^(2/3)·27^(-1/3).",
-          "answer": "(a) e^(ln(8/4)) = e^(ln2) = 2. (b) ln(e⁷)/ln(e³) = 7/3. (c) (∛8)²·(1/∛27) = 4·(1/3) = 4/3."
+          "problem": "Simplify to a single value or expression: (a) e^(3ln2 - ln4), (b) ln(e\u00b2\u00b7e\u2075)/ln(e\u00b3), (c) 8^(2/3)\u00b727^(-1/3).",
+          "answer": "(a) e^(ln(8/4)) = e^(ln2) = 2. (b) ln(e\u2077)/ln(e\u00b3) = 7/3. (c) (\u221b8)\u00b2\u00b7(1/\u221b27) = 4\u00b7(1/3) = 4/3."
         },
         {
-          "problem": "Without a calculator, evaluate: (a) cos(11π/6), (b) sin(3π/4), (c) tan(-π/6), (d) csc(2π/3), (e) sin²(5π/4) + cos²(5π/4).",
-          "answer": "(a) √3/2. (b) √2/2. (c) -√3/3 (or -1/√3). (d) 2√3/3 (or 2/√3). (e) 1 (Pythagorean identity, always)."
+          "problem": "Without a calculator, evaluate: (a) cos(11\u03c0/6), (b) sin(3\u03c0/4), (c) tan(-\u03c0/6), (d) csc(2\u03c0/3), (e) sin\u00b2(5\u03c0/4) + cos\u00b2(5\u03c0/4).",
+          "answer": "(a) \u221a3/2. (b) \u221a2/2. (c) -\u221a3/3 (or -1/\u221a3). (d) 2\u221a3/3 (or 2/\u221a3). (e) 1 (Pythagorean identity, always)."
         },
         {
-          "problem": "The amount of a medication in the bloodstream (mg) is modeled by A(t) = 200·(0.85)ᵗ where t is hours. (a) What is the initial dose? (b) What percentage is eliminated per hour? (c) Estimate the average rate of change from t=0 to t=3. (d) Will A(t) ever reach 0?",
-          "answer": "(a) A(0) = 200 mg. (b) 15% eliminated per hour (decay factor 0.85). (c) A(3) = 200·(0.85)³ = 200·0.614125 = 122.825. Average rate = (122.825-200)/3 ≈ -25.7 mg/hr. (d) No — exponential decay approaches 0 but never reaches it (horizontal asymptote y=0)."
+          "problem": "The amount of a medication in the bloodstream (mg) is modeled by A(t) = 200\u00b7(0.85)\u1d57 where t is hours. (a) What is the initial dose? (b) What percentage is eliminated per hour? (c) Estimate the average rate of change from t=0 to t=3. (d) Will A(t) ever reach 0?",
+          "answer": "(a) A(0) = 200 mg. (b) 15% eliminated per hour (decay factor 0.85). (c) A(3) = 200\u00b7(0.85)\u00b3 = 200\u00b70.614125 = 122.825. Average rate = (122.825-200)/3 \u2248 -25.7 mg/hr. (d) No \u2014 exponential decay approaches 0 but never reaches it (horizontal asymptote y=0)."
         },
         {
-          "problem": "Verify the identity: (sin x + cos x)² = 1 + sin(2x).",
-          "answer": "LHS: sin²x + 2sin x cos x + cos²x = (sin²x + cos²x) + 2sin x cos x = 1 + 2sin x cos x. Since sin(2x) = 2sin x cos x, LHS = 1 + sin(2x) = RHS ✓."
+          "problem": "Verify the identity: (sin x + cos x)\u00b2 = 1 + sin(2x).",
+          "answer": "LHS: sin\u00b2x + 2sin x cos x + cos\u00b2x = (sin\u00b2x + cos\u00b2x) + 2sin x cos x = 1 + 2sin x cos x. Since sin(2x) = 2sin x cos x, LHS = 1 + sin(2x) = RHS \u2713."
         },
         {
           "problem": "The graph of f shows f(0)=2, f(2)=6, f(4)=6, f(6)=2. The graph increases on [0,2], is flat on [2,4], and decreases on [4,6]. (a) Find the average rate of change on [0,6]. (b) On which interval is the average rate of change greatest? (c) Describe what the graph of f' would look like.",
@@ -256,23 +245,23 @@
   ],
   "answerKeys": {
     "fn-rational": "Hole at x=2 (y=4/3). VA: x=-1. HA: y=2.",
-    "fn-piecewise": "f(2)=5. Both sides → 5. Continuous.",
+    "fn-piecewise": "f(2)=5. Both sides \u2192 5. Continuous.",
     "fn-growth": "(a) 0 (b) 0 (c) 3/5.",
-    "exp-rewrite": "(a) x⁻³ (b) x^(5/2) (c) x^(-1/2) (d) x^(5/2).",
+    "exp-rewrite": "(a) x\u207b\u00b3 (b) x^(5/2) (c) x^(-1/2) (d) x^(5/2).",
     "exp-simplify": "(a) 9 (b) 4x (c) 3.",
-    "log-condense": "ln(x²(x+1)/(x-2)³).",
-    "trig-evaluate": "(a) 1/2 (b) √2/2 (c) √3 (d) 2.",
-    "trig-simplify": "(a) sin x (b) tan²x (c) 2cos x.",
-    "trig-solve": "{π/2, 7π/6, 11π/6}.",
+    "log-condense": "ln(x\u00b2(x+1)/(x-2)\u00b3).",
+    "trig-evaluate": "(a) 1/2 (b) \u221a2/2 (c) \u221a3 (d) 2.",
+    "trig-simplify": "(a) sin x (b) tan\u00b2x (c) 2cos x.",
+    "trig-solve": "{\u03c0/2, 7\u03c0/6, 11\u03c0/6}.",
     "wp-rational": "Hole x=2 (y=7/2). VA x=-1. HA y=2.",
-    "wp-power-form": "3x⁻²+5x^(1/2)-x^(-1/3).",
-    "wp-trig-all-six": "sin=-√2/2, cos=-√2/2, tan=1, csc=-√2, sec=-√2, cot=1.",
+    "wp-power-form": "3x\u207b\u00b2+5x^(1/2)-x^(-1/3).",
+    "wp-trig-all-six": "sin=-\u221a2/2, cos=-\u221a2/2, tan=1, csc=-\u221a2, sec=-\u221a2, cot=1.",
     "wp-log-equation": "x=6 and x=-2 (both valid).",
     "ip-rational-cubic": "Hole x=2 (y=3). VA x=-2. Oblique y=x.",
     "ip-exp-simplify": "(a) 2 (b) 7/3 (c) 4/3.",
-    "ip-trig-values": "(a) √3/2 (b) √2/2 (c) -√3/3 (d) 2√3/3 (e) 1.",
-    "ip-medication": "(a) 200mg (b) 15%/hr (c) ≈-25.7 mg/hr (d) No.",
-    "ip-identity": "1+sin(2x) ✓.",
-    "ip-graph-reading": "(a) 0 (b) [0,2] rate=2 (c) positive→zero→negative."
+    "ip-trig-values": "(a) \u221a3/2 (b) \u221a2/2 (c) -\u221a3/3 (d) 2\u221a3/3 (e) 1.",
+    "ip-medication": "(a) 200mg (b) 15%/hr (c) \u2248-25.7 mg/hr (d) No.",
+    "ip-identity": "1+sin(2x) \u2713.",
+    "ip-graph-reading": "(a) 0 (b) [0,2] rate=2 (c) positive\u2192zero\u2192negative."
   }
 }
