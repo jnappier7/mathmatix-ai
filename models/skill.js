@@ -121,6 +121,14 @@ const skillSchema = new mongoose.Schema({
       'optimization',
       'series',
 
+      // Middle school course-specific categories
+      'boot-camp',
+      'ratios-rates',
+      'integers-coordinate',
+      'applied-number-sense',
+      'ratios-proportional',
+      'statistics-probability',
+
       // Catch-all
       'advanced'
     ]
@@ -135,9 +143,11 @@ const skillSchema = new mongoose.Schema({
 
   quarter: {
     type: Number,
-    min: 1,
+    min: 0,
     max: 4,
     required: false  // Optional for backward compatibility
+    // 0 = Boot Camp / prerequisite review skills
+    // 1-4 = Quarter-based curriculum progression
   },
 
   unit: {
@@ -197,11 +207,13 @@ const skillSchema = new mongoose.Schema({
     // Fluency type determines how time-sensitive this skill is
     fluencyType: {
       type: String,
-      enum: ['reflex', 'process', 'algorithm', 'conceptual'],
+      enum: ['reflex', 'process', 'algorithm', 'conceptual', 'procedural', 'application'],
       default: 'process',
       // reflex: Math facts, basic operations (3-10s) - Must be instant
       // process: One-step equations, simplification (10-30s) - Should be smooth
+      // procedural: Step-by-step procedures requiring methodical execution (15-45s)
       // algorithm: Multi-step procedures, quadratics (60-180s) - Methodical but efficient
+      // application: Real-world problem solving requiring strategy selection (25-60s)
       // conceptual: Explanation, reasoning (no strict time) - Understanding over speed
     },
 

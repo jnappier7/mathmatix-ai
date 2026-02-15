@@ -6,17 +6,41 @@
     "category": "boot-camp",
     "course": "6th Grade Math",
     "quarter": 0,
-    "unit": 0,
+    "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g6-decimal-division", "g6-percent-intro"],
-    "standardsAlignment": ["5.NBT.A.1", "5.NBT.A.3", "5.NBT.B.7"],
+    "enables": [
+      "g6-decimal-division",
+      "g6-percent-intro"
+    ],
+    "standardsAlignment": [
+      "5.NBT.A.1",
+      "5.NBT.A.3",
+      "5.NBT.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Place value names through thousandths", "Comparing decimals by aligning place values", "Rounding to a given place", "Adding/subtracting decimals with alignment"],
-      "commonMistakes": ["Thinking 0.12 > 0.9 because 12 > 9", "Forgetting to align decimal points when adding/subtracting", "Dropping trailing zeros when comparing (0.5 vs 0.50)"],
-      "teachingTips": ["Use money: $0.50 vs $0.05 makes place value real", "Grid models work well for decimal comparison", "Connect to measurement: meters and centimeters"]
+      "coreConcepts": [
+        "Place value names through thousandths",
+        "Comparing decimals by aligning place values",
+        "Rounding to a given place",
+        "Adding/subtracting decimals with alignment"
+      ],
+      "commonMistakes": [
+        "Thinking 0.12 > 0.9 because 12 > 9",
+        "Forgetting to align decimal points when adding/subtracting",
+        "Dropping trailing zeros when comparing (0.5 vs 0.50)"
+      ],
+      "teachingTips": [
+        "Use money: $0.50 vs $0.05 makes place value real",
+        "Grid models work well for decimal comparison",
+        "Connect to measurement: meters and centimeters"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "20 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-fraction-ops-review",
@@ -25,17 +49,43 @@
     "category": "boot-camp",
     "course": "6th Grade Math",
     "quarter": 0,
-    "unit": 0,
+    "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g6-fraction-add-subtract", "g6-fraction-multiply-divide", "g6-ratio-language"],
-    "standardsAlignment": ["5.NF.A.1", "5.NF.A.2", "5.NF.B.4", "5.NF.B.7"],
+    "enables": [
+      "g6-fraction-add-subtract",
+      "g6-fraction-multiply-divide",
+      "g6-ratio-language"
+    ],
+    "standardsAlignment": [
+      "5.NF.A.1",
+      "5.NF.A.2",
+      "5.NF.B.4",
+      "5.NF.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["LCD for adding/subtracting unlike fractions", "Multiplying fractions straight across and simplifying", "Dividing fractions by reciprocal", "Mixed number operations"],
-      "commonMistakes": ["Adding numerators AND denominators (1/3 + 1/4 ≠ 2/7)", "Forgetting to find LCD before adding unlike fractions", "Not converting mixed numbers to improper fractions before multiplying/dividing"],
-      "teachingTips": ["Use fraction strips and area models before going symbolic", "Cooking/recipe contexts make fraction operations tangible", "Always require simplification to lowest terms"]
+      "coreConcepts": [
+        "LCD for adding/subtracting unlike fractions",
+        "Multiplying fractions straight across and simplifying",
+        "Dividing fractions by reciprocal",
+        "Mixed number operations"
+      ],
+      "commonMistakes": [
+        "Adding numerators AND denominators (1/3 + 1/4 ≠ 2/7)",
+        "Forgetting to find LCD before adding unlike fractions",
+        "Not converting mixed numbers to improper fractions before multiplying/dividing"
+      ],
+      "teachingTips": [
+        "Use fraction strips and area models before going symbolic",
+        "Cooking/recipe contexts make fraction operations tangible",
+        "Always require simplification to lowest terms"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-integer-basics",
@@ -44,17 +94,41 @@
     "category": "boot-camp",
     "course": "6th Grade Math",
     "quarter": 0,
-    "unit": 0,
+    "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g6-positive-negative-context", "g6-absolute-value-opposites"],
-    "standardsAlignment": ["6.NS.C.5", "6.NS.C.6", "6.NS.C.7"],
+    "enables": [
+      "g6-positive-negative-context",
+      "g6-absolute-value-opposites"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.5",
+      "6.NS.C.6",
+      "6.NS.C.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Integers include positive, negative, and zero", "Number line extends left (negative) and right (positive)", "Comparing integers: farther right = greater", "Opposite of a number: same distance from zero, opposite side"],
-      "commonMistakes": ["Thinking -3 > -1 because 3 > 1", "Confusing 'bigger number' with 'greater value' for negatives", "Placing negatives on the wrong side of the number line"],
-      "teachingTips": ["Temperature is the best first context: -5°F is colder than -2°F", "Elevator model: below ground = negative floors", "Vertical number lines work well alongside horizontal ones"]
+      "coreConcepts": [
+        "Integers include positive, negative, and zero",
+        "Number line extends left (negative) and right (positive)",
+        "Comparing integers: farther right = greater",
+        "Opposite of a number: same distance from zero, opposite side"
+      ],
+      "commonMistakes": [
+        "Thinking -3 > -1 because 3 > 1",
+        "Confusing 'bigger number' with 'greater value' for negatives",
+        "Placing negatives on the wrong side of the number line"
+      ],
+      "teachingTips": [
+        "Temperature is the best first context: -5°F is colder than -2°F",
+        "Elevator model: below ground = negative floors",
+        "Vertical number lines work well alongside horizontal ones"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-mult-div-fluency",
@@ -63,17 +137,40 @@
     "category": "boot-camp",
     "course": "6th Grade Math",
     "quarter": 0,
-    "unit": 0,
+    "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g6-multi-digit-division", "g6-gcf-lcm"],
-    "standardsAlignment": ["5.NBT.B.5", "5.NBT.B.6"],
+    "enables": [
+      "g6-multi-digit-division",
+      "g6-gcf-lcm"
+    ],
+    "standardsAlignment": [
+      "5.NBT.B.5",
+      "5.NBT.B.6"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Multiplication facts through 12×12 on autopilot", "Standard algorithm for multi-digit multiplication", "Long division with multi-digit divisors", "Estimating quotients before dividing"],
-      "commonMistakes": ["Misaligned partial products in multiplication", "Skipping the estimation step in long division", "Fact gaps (6×7, 8×9) that slow everything down"],
-      "teachingTips": ["Diagnose fact gaps first — no fluency without facts", "Use area model for multiplication to build understanding alongside the algorithm", "Connect division to 'how many groups' and 'how many in each group'"]
+      "coreConcepts": [
+        "Multiplication facts through 12×12 on autopilot",
+        "Standard algorithm for multi-digit multiplication",
+        "Long division with multi-digit divisors",
+        "Estimating quotients before dividing"
+      ],
+      "commonMistakes": [
+        "Misaligned partial products in multiplication",
+        "Skipping the estimation step in long division",
+        "Fact gaps (6×7, 8×9) that slow everything down"
+      ],
+      "teachingTips": [
+        "Diagnose fact gaps first — no fluency without facts",
+        "Use area model for multiplication to build understanding alongside the algorithm",
+        "Connect division to 'how many groups' and 'how many in each group'"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 95, "targetSpeed": "3 seconds per basic fact, 60 seconds per multi-digit problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 32,
+      "fluencyType": "procedural",
+      "toleranceFactor": 1.5
+    }
   },
   {
     "skillId": "g6-expression-writing-intro",
@@ -82,19 +179,41 @@
     "category": "boot-camp",
     "course": "6th Grade Math",
     "quarter": 0,
-    "unit": 0,
+    "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g6-write-expressions", "g6-evaluate-expressions"],
-    "standardsAlignment": ["5.OA.A.2", "6.EE.A.2"],
+    "enables": [
+      "g6-write-expressions",
+      "g6-evaluate-expressions"
+    ],
+    "standardsAlignment": [
+      "5.OA.A.2",
+      "6.EE.A.2"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Key words: sum/total → add, difference → subtract, product → multiply, quotient → divide", "Order matters for subtraction and division", "Using parentheses to show grouping", "Simple variable usage: 'a number' → n"],
-      "commonMistakes": ["Reversing order: '5 less than x' written as 5 - x instead of x - 5", "Missing parentheses: 'twice the sum of 3 and x' = 2(3 + x), not 2·3 + x", "Thinking every word problem maps to addition"],
-      "teachingTips": ["Start with 'math to words' before 'words to math' — it's easier to describe what you see", "Use 'less than' vs 'minus' to highlight order sensitivity", "Build a reference chart of key phrases and their operations"]
+      "coreConcepts": [
+        "Key words: sum/total → add, difference → subtract, product → multiply, quotient → divide",
+        "Order matters for subtraction and division",
+        "Using parentheses to show grouping",
+        "Simple variable usage: 'a number' → n"
+      ],
+      "commonMistakes": [
+        "Reversing order: '5 less than x' written as 5 - x instead of x - 5",
+        "Missing parentheses: 'twice the sum of 3 and x' = 2(3 + x), not 2·3 + x",
+        "Thinking every word problem maps to addition"
+      ],
+      "teachingTips": [
+        "Start with 'math to words' before 'words to math' — it's easier to describe what you see",
+        "Use 'less than' vs 'minus' to highlight order sensitivity",
+        "Build a reference chart of key phrases and their operations"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per translation" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
-
   {
     "skillId": "g6-multi-digit-division",
     "displayName": "Multi-Digit Division",
@@ -102,17 +221,41 @@
     "category": "number-system",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 1,
-    "prerequisites": ["g6-mult-div-fluency"],
-    "enables": ["g6-decimal-division", "g6-ratio-problem-solving"],
-    "standardsAlignment": ["6.NS.B.2"],
+    "unit": "Number System",
+    "prerequisites": [
+      "g6-mult-div-fluency"
+    ],
+    "enables": [
+      "g6-decimal-division",
+      "g6-ratio-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.NS.B.2"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Standard long division algorithm", "Estimating quotients to check reasonableness", "Division with remainders expressed as fractions or decimals", "Interpreting remainders in context (round up, round down, remainder only)"],
-      "commonMistakes": ["Skipping place values in the quotient (forgetting to write 0)", "Not bringing down the next digit", "Interpreting remainders incorrectly in word problems"],
-      "teachingTips": ["Estimate first: 4,578 ÷ 23 ≈ 4,600 ÷ 23 ≈ 200", "Connect to real contexts: splitting items evenly, packaging, seating arrangements", "Practice with 2-digit divisors extensively before moving on"]
+      "coreConcepts": [
+        "Standard long division algorithm",
+        "Estimating quotients to check reasonableness",
+        "Division with remainders expressed as fractions or decimals",
+        "Interpreting remainders in context (round up, round down, remainder only)"
+      ],
+      "commonMistakes": [
+        "Skipping place values in the quotient (forgetting to write 0)",
+        "Not bringing down the next digit",
+        "Interpreting remainders incorrectly in word problems"
+      ],
+      "teachingTips": [
+        "Estimate first: 4,578 ÷ 23 ≈ 4,600 ÷ 23 ≈ 200",
+        "Connect to real contexts: splitting items evenly, packaging, seating arrangements",
+        "Practice with 2-digit divisors extensively before moving on"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "90 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-decimal-division",
@@ -121,17 +264,42 @@
     "category": "number-system",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 1,
-    "prerequisites": ["g6-place-value-decimals", "g6-multi-digit-division"],
-    "enables": ["g6-unit-rates", "g6-percent-intro"],
-    "standardsAlignment": ["6.NS.B.3"],
+    "unit": "Number System",
+    "prerequisites": [
+      "g6-place-value-decimals",
+      "g6-multi-digit-division"
+    ],
+    "enables": [
+      "g6-unit-rates",
+      "g6-percent-intro"
+    ],
+    "standardsAlignment": [
+      "6.NS.B.3"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Dividing a decimal by a whole number: place decimal in quotient directly above", "Dividing by a decimal: multiply both by power of 10 to make divisor whole", "Annexing zeros when needed", "Estimating to check reasonableness"],
-      "commonMistakes": ["Misplacing the decimal point in the quotient", "Forgetting to move BOTH decimal points when dividing by a decimal", "Not annexing zeros to continue dividing past the decimal point"],
-      "teachingTips": ["Money context: $12.75 ÷ 3 = how much per person", "Always estimate first to catch decimal placement errors", "Connect to unit rates: $5.40 for 4 pounds = $? per pound"]
+      "coreConcepts": [
+        "Dividing a decimal by a whole number: place decimal in quotient directly above",
+        "Dividing by a decimal: multiply both by power of 10 to make divisor whole",
+        "Annexing zeros when needed",
+        "Estimating to check reasonableness"
+      ],
+      "commonMistakes": [
+        "Misplacing the decimal point in the quotient",
+        "Forgetting to move BOTH decimal points when dividing by a decimal",
+        "Not annexing zeros to continue dividing past the decimal point"
+      ],
+      "teachingTips": [
+        "Money context: $12.75 ÷ 3 = how much per person",
+        "Always estimate first to catch decimal placement errors",
+        "Connect to unit rates: $5.40 for 4 pounds = $? per pound"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "90 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-fraction-add-subtract",
@@ -140,17 +308,43 @@
     "category": "number-system",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 1,
-    "prerequisites": ["g6-fraction-ops-review"],
-    "enables": ["g6-ratio-language", "g6-word-problem-equations"],
-    "standardsAlignment": ["6.NS.A.1", "5.NF.A.1"],
+    "unit": "Number System",
+    "prerequisites": [
+      "g6-fraction-ops-review"
+    ],
+    "enables": [
+      "g6-ratio-language",
+      "g6-word-problem-equations"
+    ],
+    "standardsAlignment": [
+      "6.NS.A.1",
+      "5.NF.A.1"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Finding the LCD (least common denominator)", "Rewriting fractions with the LCD", "Adding/subtracting numerators while keeping the common denominator", "Simplifying results and converting improper fractions to mixed numbers"],
-      "commonMistakes": ["Adding denominators: 1/3 + 1/4 ≠ 2/7", "Using a common denominator that isn't the LCD (works but creates bigger numbers)", "Not simplifying the final answer", "Borrowing errors with mixed numbers (3 1/4 - 1 3/4)"],
-      "teachingTips": ["Fraction strips for visualization, then transition to algorithm", "Use recipe doubling/halving for real-world practice", "Drill LCD-finding as a separate skill before combining with operations"]
+      "coreConcepts": [
+        "Finding the LCD (least common denominator)",
+        "Rewriting fractions with the LCD",
+        "Adding/subtracting numerators while keeping the common denominator",
+        "Simplifying results and converting improper fractions to mixed numbers"
+      ],
+      "commonMistakes": [
+        "Adding denominators: 1/3 + 1/4 ≠ 2/7",
+        "Using a common denominator that isn't the LCD (works but creates bigger numbers)",
+        "Not simplifying the final answer",
+        "Borrowing errors with mixed numbers (3 1/4 - 1 3/4)"
+      ],
+      "teachingTips": [
+        "Fraction strips for visualization, then transition to algorithm",
+        "Use recipe doubling/halving for real-world practice",
+        "Drill LCD-finding as a separate skill before combining with operations"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "45 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-fraction-multiply-divide",
@@ -159,17 +353,43 @@
     "category": "number-system",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 1,
-    "prerequisites": ["g6-fraction-ops-review"],
-    "enables": ["g6-ratio-language", "g6-formulas-area-volume"],
-    "standardsAlignment": ["6.NS.A.1", "5.NF.B.4", "5.NF.B.7"],
+    "unit": "Number System",
+    "prerequisites": [
+      "g6-fraction-ops-review"
+    ],
+    "enables": [
+      "g6-ratio-language",
+      "g6-formulas-area-volume"
+    ],
+    "standardsAlignment": [
+      "6.NS.A.1",
+      "5.NF.B.4",
+      "5.NF.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Multiply: multiply numerators, multiply denominators, simplify", "Cross-canceling before multiplying to keep numbers small", "Divide: multiply by the reciprocal (Keep-Change-Flip)", "Interpret fraction division: how many 1/3-cup servings in 2 cups?"],
-      "commonMistakes": ["Finding common denominators to multiply (not needed)", "Flipping the wrong fraction when dividing", "Not converting mixed numbers to improper fractions before operating"],
-      "teachingTips": ["Area models show WHY multiplying fractions gives a smaller result", "Division: 'how many groups of ___ fit in ___?' makes the operation concrete", "Always require context interpretation, not just computation"]
+      "coreConcepts": [
+        "Multiply: multiply numerators, multiply denominators, simplify",
+        "Cross-canceling before multiplying to keep numbers small",
+        "Divide: multiply by the reciprocal (Keep-Change-Flip)",
+        "Interpret fraction division: how many 1/3-cup servings in 2 cups?"
+      ],
+      "commonMistakes": [
+        "Finding common denominators to multiply (not needed)",
+        "Flipping the wrong fraction when dividing",
+        "Not converting mixed numbers to improper fractions before operating"
+      ],
+      "teachingTips": [
+        "Area models show WHY multiplying fractions gives a smaller result",
+        "Division: 'how many groups of ___ fit in ___?' makes the operation concrete",
+        "Always require context interpretation, not just computation"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "40 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-gcf-lcm",
@@ -178,19 +398,42 @@
     "category": "number-system",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 1,
-    "prerequisites": ["g6-mult-div-fluency"],
-    "enables": ["g6-fraction-add-subtract", "g6-write-expressions"],
-    "standardsAlignment": ["6.NS.B.4"],
+    "unit": "Number System",
+    "prerequisites": [
+      "g6-mult-div-fluency"
+    ],
+    "enables": [
+      "g6-fraction-add-subtract",
+      "g6-write-expressions"
+    ],
+    "standardsAlignment": [
+      "6.NS.B.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["GCF: largest number that divides evenly into both numbers", "LCM: smallest number that both numbers divide into evenly", "Listing method: list factors/multiples and find the greatest/least overlap", "Distributive property connection: GCF(a,b) lets you write a+b = GCF(a+b/GCF, ...)"],
-      "commonMistakes": ["Confusing GCF and LCM (GCF of 12 and 8 is 4, LCM is 24)", "Stopping at any common factor instead of the GREATEST", "Forgetting that 1 is always a common factor"],
-      "teachingTips": ["GCF = sharing/grouping contexts (splitting into equal groups, packaging)", "LCM = scheduling contexts (two buses that leave every 12 and 8 minutes)", "Venn diagram with prime factors works great for both"]
+      "coreConcepts": [
+        "GCF: largest number that divides evenly into both numbers",
+        "LCM: smallest number that both numbers divide into evenly",
+        "Listing method: list factors/multiples and find the greatest/least overlap",
+        "Distributive property connection: GCF(a,b) lets you write a+b = GCF(a+b/GCF, ...)"
+      ],
+      "commonMistakes": [
+        "Confusing GCF and LCM (GCF of 12 and 8 is 4, LCM is 24)",
+        "Stopping at any common factor instead of the GREATEST",
+        "Forgetting that 1 is always a common factor"
+      ],
+      "teachingTips": [
+        "GCF = sharing/grouping contexts (splitting into equal groups, packaging)",
+        "LCM = scheduling contexts (two buses that leave every 12 and 8 minutes)",
+        "Venn diagram with prime factors works great for both"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
-
   {
     "skillId": "g6-ratio-language",
     "displayName": "Ratio Language & Representations",
@@ -198,17 +441,41 @@
     "category": "ratios-rates",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 2,
-    "prerequisites": ["g6-fraction-ops-review"],
-    "enables": ["g6-unit-rates", "g6-equivalent-ratios"],
-    "standardsAlignment": ["6.RP.A.1"],
+    "unit": "Ratios & Rates",
+    "prerequisites": [
+      "g6-fraction-ops-review"
+    ],
+    "enables": [
+      "g6-unit-rates",
+      "g6-equivalent-ratios"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.1"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Three ways to write a ratio: 3:5, 3 to 5, 3/5", "Part-to-part (boys to girls) vs part-to-whole (boys to total)", "Order matters: 3:5 ≠ 5:3", "Ratios describe a relationship, not a specific amount"],
-      "commonMistakes": ["Confusing ratio with fraction (ratio 3:5 is not always 3/5 of something)", "Reversing the order of the ratio", "Forgetting to specify what each number represents"],
-      "teachingTips": ["Start with concrete: 'In this bag, there are 4 red and 6 blue marbles'", "Color-coding helps: write each quantity in a different color", "Have students create ratios from classroom objects"]
+      "coreConcepts": [
+        "Three ways to write a ratio: 3:5, 3 to 5, 3/5",
+        "Part-to-part (boys to girls) vs part-to-whole (boys to total)",
+        "Order matters: 3:5 ≠ 5:3",
+        "Ratios describe a relationship, not a specific amount"
+      ],
+      "commonMistakes": [
+        "Confusing ratio with fraction (ratio 3:5 is not always 3/5 of something)",
+        "Reversing the order of the ratio",
+        "Forgetting to specify what each number represents"
+      ],
+      "teachingTips": [
+        "Start with concrete: 'In this bag, there are 4 red and 6 blue marbles'",
+        "Color-coding helps: write each quantity in a different color",
+        "Have students create ratios from classroom objects"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "20 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-unit-rates",
@@ -217,17 +484,43 @@
     "category": "ratios-rates",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 2,
-    "prerequisites": ["g6-ratio-language", "g6-decimal-division"],
-    "enables": ["g6-ratio-problem-solving", "g6-percent-intro"],
-    "standardsAlignment": ["6.RP.A.2", "6.RP.A.3b"],
+    "unit": "Ratios & Rates",
+    "prerequisites": [
+      "g6-ratio-language",
+      "g6-decimal-division"
+    ],
+    "enables": [
+      "g6-ratio-problem-solving",
+      "g6-percent-intro"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.2",
+      "6.RP.A.3b"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Unit rate = amount per 1 unit (divide to find it)", "The word 'per' signals a unit rate", "Compare options by finding the unit rate for each", "Both rates in a ratio can produce useful unit rates"],
-      "commonMistakes": ["Dividing in the wrong direction (price ÷ items vs items ÷ price)", "Confusing 'per ounce' with 'per dollar'", "Not specifying units in the answer"],
-      "teachingTips": ["Grocery store unit pricing is the perfect real-world anchor", "Speed (mph) and pay rate ($/hour) are instantly relatable", "Always require the unit label in the answer — 'per what?'"]
+      "coreConcepts": [
+        "Unit rate = amount per 1 unit (divide to find it)",
+        "The word 'per' signals a unit rate",
+        "Compare options by finding the unit rate for each",
+        "Both rates in a ratio can produce useful unit rates"
+      ],
+      "commonMistakes": [
+        "Dividing in the wrong direction (price ÷ items vs items ÷ price)",
+        "Confusing 'per ounce' with 'per dollar'",
+        "Not specifying units in the answer"
+      ],
+      "teachingTips": [
+        "Grocery store unit pricing is the perfect real-world anchor",
+        "Speed (mph) and pay rate ($/hour) are instantly relatable",
+        "Always require the unit label in the answer — 'per what?'"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-equivalent-ratios",
@@ -236,17 +529,41 @@
     "category": "ratios-rates",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 2,
-    "prerequisites": ["g6-ratio-language"],
-    "enables": ["g6-ratio-problem-solving", "g6-percent-intro"],
-    "standardsAlignment": ["6.RP.A.3a"],
+    "unit": "Ratios & Rates",
+    "prerequisites": [
+      "g6-ratio-language"
+    ],
+    "enables": [
+      "g6-ratio-problem-solving",
+      "g6-percent-intro"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.3a"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Equivalent ratios: multiply or divide both quantities by the same number", "Ratio tables show the pattern of equivalent ratios", "Double number lines as a visual model", "Simplifying ratios (like simplifying fractions)"],
-      "commonMistakes": ["Adding the same number to both sides instead of multiplying", "Skipping rows in a ratio table and losing the pattern", "Not checking that the multiplier is consistent across the table"],
-      "teachingTips": ["Recipe scaling is the ideal context — double, triple, halve a recipe", "Ratio tables should always include at least 4 rows to show the pattern", "Connect to fractions: equivalent ratios work like equivalent fractions"]
+      "coreConcepts": [
+        "Equivalent ratios: multiply or divide both quantities by the same number",
+        "Ratio tables show the pattern of equivalent ratios",
+        "Double number lines as a visual model",
+        "Simplifying ratios (like simplifying fractions)"
+      ],
+      "commonMistakes": [
+        "Adding the same number to both sides instead of multiplying",
+        "Skipping rows in a ratio table and losing the pattern",
+        "Not checking that the multiplier is consistent across the table"
+      ],
+      "teachingTips": [
+        "Recipe scaling is the ideal context — double, triple, halve a recipe",
+        "Ratio tables should always include at least 4 rows to show the pattern",
+        "Connect to fractions: equivalent ratios work like equivalent fractions"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per ratio" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-ratio-problem-solving",
@@ -255,17 +572,44 @@
     "category": "ratios-rates",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 2,
-    "prerequisites": ["g6-unit-rates", "g6-equivalent-ratios"],
-    "enables": ["g6-percent-intro", "g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.RP.A.3", "6.RP.A.3b", "6.RP.A.3c"],
+    "unit": "Ratios & Rates",
+    "prerequisites": [
+      "g6-unit-rates",
+      "g6-equivalent-ratios"
+    ],
+    "enables": [
+      "g6-percent-intro",
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.3",
+      "6.RP.A.3b",
+      "6.RP.A.3c"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Identify the ratio relationship in a word problem", "Choose a strategy: ratio table, unit rate, or scale factor", "Check the answer against the original ratio", "Multi-step ratio problems (find the rate, then use it)"],
-      "commonMistakes": ["Setting up the ratio backwards", "Using additive reasoning instead of multiplicative", "Not reading the question — answering what they found, not what was asked"],
-      "teachingTips": ["Teach multiple strategies and let students choose", "Travel problems (distance/time), shopping problems (cost/quantity), mixing problems (concentrate/water)", "Require students to set up the ratio BEFORE computing"]
+      "coreConcepts": [
+        "Identify the ratio relationship in a word problem",
+        "Choose a strategy: ratio table, unit rate, or scale factor",
+        "Check the answer against the original ratio",
+        "Multi-step ratio problems (find the rate, then use it)"
+      ],
+      "commonMistakes": [
+        "Setting up the ratio backwards",
+        "Using additive reasoning instead of multiplicative",
+        "Not reading the question — answering what they found, not what was asked"
+      ],
+      "teachingTips": [
+        "Teach multiple strategies and let students choose",
+        "Travel problems (distance/time), shopping problems (cost/quantity), mixing problems (concentrate/water)",
+        "Require students to set up the ratio BEFORE computing"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "60 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
   },
   {
     "skillId": "g6-measurement-conversions",
@@ -274,19 +618,43 @@
     "category": "ratios-rates",
     "course": "6th Grade Math",
     "quarter": 1,
-    "unit": 2,
-    "prerequisites": ["g6-unit-rates", "g6-equivalent-ratios"],
-    "enables": ["g6-unit-conversions", "g6-geometry-applications"],
-    "standardsAlignment": ["6.RP.A.3d"],
+    "unit": "Ratios & Rates",
+    "prerequisites": [
+      "g6-unit-rates",
+      "g6-equivalent-ratios"
+    ],
+    "enables": [
+      "g6-unit-conversions",
+      "g6-geometry-applications"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.3d"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Conversion as a ratio: 1 foot = 12 inches → 1:12 ratio", "Multiply to go from larger to smaller units", "Divide to go from smaller to larger units", "Common conversions: inches/feet/yards, ounces/pounds, mL/L, cm/m/km"],
-      "commonMistakes": ["Multiplying when they should divide (or vice versa)", "Confusing metric and customary units", "Not knowing the basic conversion factors"],
-      "teachingTips": ["Frame as ratio problems: 'If 1 foot = 12 inches, then 3.5 feet = ?'", "Use ratio tables for conversions — same structure, new context", "Focus on the conversions students will actually encounter (cooking, sports, building)"]
+      "coreConcepts": [
+        "Conversion as a ratio: 1 foot = 12 inches → 1:12 ratio",
+        "Multiply to go from larger to smaller units",
+        "Divide to go from smaller to larger units",
+        "Common conversions: inches/feet/yards, ounces/pounds, mL/L, cm/m/km"
+      ],
+      "commonMistakes": [
+        "Multiplying when they should divide (or vice versa)",
+        "Confusing metric and customary units",
+        "Not knowing the basic conversion factors"
+      ],
+      "teachingTips": [
+        "Frame as ratio problems: 'If 1 foot = 12 inches, then 3.5 feet = ?'",
+        "Use ratio tables for conversions — same structure, new context",
+        "Focus on the conversions students will actually encounter (cooking, sports, building)"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per conversion" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
-
   {
     "skillId": "g6-write-expressions",
     "displayName": "Write Algebraic Expressions",
@@ -294,17 +662,43 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 3,
-    "prerequisites": ["g6-expression-writing-intro"],
-    "enables": ["g6-evaluate-expressions", "g6-one-two-step-equations"],
-    "standardsAlignment": ["6.EE.A.2a", "6.EE.A.2b", "6.EE.B.6"],
+    "unit": "Expressions & Equations I",
+    "prerequisites": [
+      "g6-expression-writing-intro"
+    ],
+    "enables": [
+      "g6-evaluate-expressions",
+      "g6-one-two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.A.2a",
+      "6.EE.A.2b",
+      "6.EE.B.6"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Variables represent unknown or changing quantities", "Match operations to context words (sum, difference, product, quotient, twice, each)", "Use parentheses to show grouping when needed", "Expressions can have multiple operations and variables"],
-      "commonMistakes": ["Reversing subtraction/division order: '8 less than n' → n - 8, NOT 8 - n", "Missing parentheses: 'double the sum of x and 3' → 2(x + 3), NOT 2x + 3", "Using the wrong operation for the context"],
-      "teachingTips": ["Practice both directions: words → expression AND expression → words", "Use student-generated scenarios for buy-in", "Create a 'key phrase' reference sheet and retire it once fluent"]
+      "coreConcepts": [
+        "Variables represent unknown or changing quantities",
+        "Match operations to context words (sum, difference, product, quotient, twice, each)",
+        "Use parentheses to show grouping when needed",
+        "Expressions can have multiple operations and variables"
+      ],
+      "commonMistakes": [
+        "Reversing subtraction/division order: '8 less than n' → n - 8, NOT 8 - n",
+        "Missing parentheses: 'double the sum of x and 3' → 2(x + 3), NOT 2x + 3",
+        "Using the wrong operation for the context"
+      ],
+      "teachingTips": [
+        "Practice both directions: words → expression AND expression → words",
+        "Use student-generated scenarios for buy-in",
+        "Create a 'key phrase' reference sheet and retire it once fluent"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per expression" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-evaluate-expressions",
@@ -313,17 +707,41 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 3,
-    "prerequisites": ["g6-write-expressions"],
-    "enables": ["g6-one-two-step-equations", "g6-formulas-area-volume"],
-    "standardsAlignment": ["6.EE.A.2c"],
+    "unit": "Expressions & Equations I",
+    "prerequisites": [
+      "g6-write-expressions"
+    ],
+    "enables": [
+      "g6-one-two-step-equations",
+      "g6-formulas-area-volume"
+    ],
+    "standardsAlignment": [
+      "6.EE.A.2c"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Replace each variable with its value (use parentheses around the substituted value)", "Apply order of operations (GEMS) strictly", "Evaluate expressions with one and two variables", "Check by substituting back if solving"],
-      "commonMistakes": ["Not using parentheses when substituting (especially negatives)", "Left-to-right errors with multiplication/division or addition/subtraction", "Forgetting that 2x means 2 × x, not 2 next to x"],
-      "teachingTips": ["Always write the substitution step: if x=3, write 2(3)+5, not just 11", "Use tables: 'Evaluate 3x + 1 for x = 0, 1, 2, 3, 4' to show patterns", "Connect to function machines: input → rule → output"]
+      "coreConcepts": [
+        "Replace each variable with its value (use parentheses around the substituted value)",
+        "Apply order of operations (GEMS) strictly",
+        "Evaluate expressions with one and two variables",
+        "Check by substituting back if solving"
+      ],
+      "commonMistakes": [
+        "Not using parentheses when substituting (especially negatives)",
+        "Left-to-right errors with multiplication/division or addition/subtraction",
+        "Forgetting that 2x means 2 × x, not 2 next to x"
+      ],
+      "teachingTips": [
+        "Always write the substitution step: if x=3, write 2(3)+5, not just 11",
+        "Use tables: 'Evaluate 3x + 1 for x = 0, 1, 2, 3, 4' to show patterns",
+        "Connect to function machines: input → rule → output"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "30 seconds per evaluation" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-combine-like-terms",
@@ -332,17 +750,42 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 3,
-    "prerequisites": ["g6-write-expressions"],
-    "enables": ["g6-one-two-step-equations", "g6-word-problem-equations"],
-    "standardsAlignment": ["6.EE.A.3", "6.EE.A.4"],
+    "unit": "Expressions & Equations I",
+    "prerequisites": [
+      "g6-write-expressions"
+    ],
+    "enables": [
+      "g6-one-two-step-equations",
+      "g6-word-problem-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.A.3",
+      "6.EE.A.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Like terms: same variable raised to the same power (3x and 5x are like; 3x and 3x² are not)", "Combine by adding/subtracting coefficients", "Distributive property: a(b + c) = ab + ac", "Commutative/associative properties to rearrange and group"],
-      "commonMistakes": ["Combining unlike terms: 3x + 5y ≠ 8xy", "Distributing only to the first term: 2(x + 3) ≠ 2x + 3", "Forgetting that x means 1x"],
-      "teachingTips": ["Algebra tiles make combining like terms visual and tangible", "Color-code like terms to help students identify them", "Practice distributive property with mental math first: 7 × 98 = 7(100-2) = 700-14 = 686"]
+      "coreConcepts": [
+        "Like terms: same variable raised to the same power (3x and 5x are like; 3x and 3x² are not)",
+        "Combine by adding/subtracting coefficients",
+        "Distributive property: a(b + c) = ab + ac",
+        "Commutative/associative properties to rearrange and group"
+      ],
+      "commonMistakes": [
+        "Combining unlike terms: 3x + 5y ≠ 8xy",
+        "Distributing only to the first term: 2(x + 3) ≠ 2x + 3",
+        "Forgetting that x means 1x"
+      ],
+      "teachingTips": [
+        "Algebra tiles make combining like terms visual and tangible",
+        "Color-code like terms to help students identify them",
+        "Practice distributive property with mental math first: 7 × 98 = 7(100-2) = 700-14 = 686"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "40 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-parts-of-expressions",
@@ -351,17 +794,40 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 3,
-    "prerequisites": ["g6-write-expressions"],
-    "enables": ["g6-combine-like-terms"],
-    "standardsAlignment": ["6.EE.A.2b"],
+    "unit": "Expressions & Equations I",
+    "prerequisites": [
+      "g6-write-expressions"
+    ],
+    "enables": [
+      "g6-combine-like-terms"
+    ],
+    "standardsAlignment": [
+      "6.EE.A.2b"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Term: a part of an expression separated by + or -", "Coefficient: the number multiplied by the variable", "Constant: a term with no variable", "Factor: numbers/variables multiplied together within a term"],
-      "commonMistakes": ["Confusing coefficient with constant", "Not recognizing that x has a coefficient of 1", "Miscounting terms when subtraction is involved (a - b has 2 terms, not 1)"],
-      "teachingTips": ["Label expressions like a diagram — circle terms, underline coefficients, box constants", "Use 'expression anatomy' as an activity", "Connect to real-world: in 5x + 3, the 5 is the rate and 3 is the starting value"]
+      "coreConcepts": [
+        "Term: a part of an expression separated by + or -",
+        "Coefficient: the number multiplied by the variable",
+        "Constant: a term with no variable",
+        "Factor: numbers/variables multiplied together within a term"
+      ],
+      "commonMistakes": [
+        "Confusing coefficient with constant",
+        "Not recognizing that x has a coefficient of 1",
+        "Miscounting terms when subtraction is involved (a - b has 2 terms, not 1)"
+      ],
+      "teachingTips": [
+        "Label expressions like a diagram — circle terms, underline coefficients, box constants",
+        "Use 'expression anatomy' as an activity",
+        "Connect to real-world: in 5x + 3, the 5 is the rate and 3 is the starting value"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "20 seconds per identification" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-formulas-area-volume",
@@ -370,19 +836,44 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 3,
-    "prerequisites": ["g6-evaluate-expressions"],
-    "enables": ["g6-area-triangles-parallelograms", "g6-volume-rectangular-prisms"],
-    "standardsAlignment": ["6.EE.A.2c", "6.G.A.1", "6.G.A.2"],
+    "unit": "Expressions & Equations I",
+    "prerequisites": [
+      "g6-evaluate-expressions"
+    ],
+    "enables": [
+      "g6-area-triangles-parallelograms",
+      "g6-volume-rectangular-prisms"
+    ],
+    "standardsAlignment": [
+      "6.EE.A.2c",
+      "6.G.A.1",
+      "6.G.A.2"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["A formula is an equation showing a relationship (A = lw, V = lwh)", "Substitution: replace variables with known values and compute", "Solving for a missing dimension: if A = 24 and l = 6, then w = ?", "Units: area in square units, volume in cubic units"],
-      "commonMistakes": ["Confusing area and perimeter formulas", "Forgetting to square the units for area", "Plugging values into the wrong variable"],
-      "teachingTips": ["Start with rectangles/rectangular prisms before triangles", "Use physical objects: area of a desk, volume of a shoebox", "Connect to expressions: A = lw is just an expression with two variables"]
+      "coreConcepts": [
+        "A formula is an equation showing a relationship (A = lw, V = lwh)",
+        "Substitution: replace variables with known values and compute",
+        "Solving for a missing dimension: if A = 24 and l = 6, then w = ?",
+        "Units: area in square units, volume in cubic units"
+      ],
+      "commonMistakes": [
+        "Confusing area and perimeter formulas",
+        "Forgetting to square the units for area",
+        "Plugging values into the wrong variable"
+      ],
+      "teachingTips": [
+        "Start with rectangles/rectangular prisms before triangles",
+        "Use physical objects: area of a desk, volume of a shoebox",
+        "Connect to expressions: A = lw is just an expression with two variables"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
-
   {
     "skillId": "g6-one-two-step-equations",
     "displayName": "One-Step & Two-Step Equations",
@@ -390,17 +881,43 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 4,
-    "prerequisites": ["g6-evaluate-expressions", "g6-combine-like-terms"],
-    "enables": ["g6-variables-both-sides", "g6-word-problem-equations"],
-    "standardsAlignment": ["6.EE.B.5", "6.EE.B.7"],
+    "unit": "Expressions & Equations II",
+    "prerequisites": [
+      "g6-evaluate-expressions",
+      "g6-combine-like-terms"
+    ],
+    "enables": [
+      "g6-variables-both-sides",
+      "g6-word-problem-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.B.5",
+      "6.EE.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Equation = a balance scale — whatever you do to one side, do to the other", "Inverse operations: addition ↔ subtraction, multiplication ↔ division", "Box the variable term: outside the box use opposites, inside the box divide it out", "Always check by substituting the answer back"],
-      "commonMistakes": ["Performing the same operation instead of the inverse", "In two-step equations, dividing before subtracting (order matters)", "Forgetting to check the solution"],
-      "teachingTips": ["Balance scale model is essential — physical or virtual", "Start with 'guess and check' to build intuition, then formalize with inverse operations", "Cover equations with fractions and decimals, not just whole numbers"]
+      "coreConcepts": [
+        "Equation = a balance scale — whatever you do to one side, do to the other",
+        "Inverse operations: addition ↔ subtraction, multiplication ↔ division",
+        "Box the variable term: outside the box use opposites, inside the box divide it out",
+        "Always check by substituting the answer back"
+      ],
+      "commonMistakes": [
+        "Performing the same operation instead of the inverse",
+        "In two-step equations, dividing before subtracting (order matters)",
+        "Forgetting to check the solution"
+      ],
+      "teachingTips": [
+        "Balance scale model is essential — physical or virtual",
+        "Start with 'guess and check' to build intuition, then formalize with inverse operations",
+        "Cover equations with fractions and decimals, not just whole numbers"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per equation" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-variables-both-sides",
@@ -409,17 +926,41 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 4,
-    "prerequisites": ["g6-one-two-step-equations"],
-    "enables": ["g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.EE.B.5", "6.EE.B.7"],
+    "unit": "Expressions & Equations II",
+    "prerequisites": [
+      "g6-one-two-step-equations"
+    ],
+    "enables": [
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.EE.B.5",
+      "6.EE.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["If both sides have the variable, collect to one side by subtracting", "Balance scale still applies — same operation on both sides", "Some equations have no solution or infinite solutions (conceptual only)", "This is a preview — full mastery comes in 7th grade"],
-      "commonMistakes": ["Subtracting the variable from the wrong side", "Not recognizing that 2x + 3 = 2x + 7 has no solution", "Trying to combine terms across the equals sign without moving them first"],
-      "teachingTips": ["Keep this light — only simple examples like 3x + 2 = x + 10", "Use the balance scale with x-tiles on both sides", "Frame as a 'sneak peek' of 7th-grade algebra to build confidence"]
+      "coreConcepts": [
+        "If both sides have the variable, collect to one side by subtracting",
+        "Balance scale still applies — same operation on both sides",
+        "Some equations have no solution or infinite solutions (conceptual only)",
+        "This is a preview — full mastery comes in 7th grade"
+      ],
+      "commonMistakes": [
+        "Subtracting the variable from the wrong side",
+        "Not recognizing that 2x + 3 = 2x + 7 has no solution",
+        "Trying to combine terms across the equals sign without moving them first"
+      ],
+      "teachingTips": [
+        "Keep this light — only simple examples like 3x + 2 = x + 10",
+        "Use the balance scale with x-tiles on both sides",
+        "Frame as a 'sneak peek' of 7th-grade algebra to build confidence"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 75, "targetSpeed": "60 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
   },
   {
     "skillId": "g6-inequalities",
@@ -428,17 +969,41 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 4,
-    "prerequisites": ["g6-one-two-step-equations"],
-    "enables": ["g6-word-problem-equations"],
-    "standardsAlignment": ["6.EE.B.5", "6.EE.B.8"],
+    "unit": "Expressions & Equations II",
+    "prerequisites": [
+      "g6-one-two-step-equations"
+    ],
+    "enables": [
+      "g6-word-problem-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.B.5",
+      "6.EE.B.8"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Inequality symbols: < > ≤ ≥ ≠", "An inequality has infinitely many solutions (unlike an equation)", "Graphing on a number line: open circle (< >) vs closed circle (≤ ≥)", "Writing inequalities from context: 'at least', 'no more than', 'fewer than'"],
-      "commonMistakes": ["Confusing < and > direction (alligator eats the bigger number)", "Using closed circle for strict inequalities or vice versa", "Thinking there's only one answer to an inequality"],
-      "teachingTips": ["Real-world constraints are great: 'You must be at least 48 inches tall' → h ≥ 48", "Have students generate 3 solutions and 3 non-solutions for each inequality", "Connect open/closed circles to 'included' (≤ ≥) vs 'not included' (< >)"]
+      "coreConcepts": [
+        "Inequality symbols: < > ≤ ≥ ≠",
+        "An inequality has infinitely many solutions (unlike an equation)",
+        "Graphing on a number line: open circle (< >) vs closed circle (≤ ≥)",
+        "Writing inequalities from context: 'at least', 'no more than', 'fewer than'"
+      ],
+      "commonMistakes": [
+        "Confusing < and > direction (alligator eats the bigger number)",
+        "Using closed circle for strict inequalities or vice versa",
+        "Thinking there's only one answer to an inequality"
+      ],
+      "teachingTips": [
+        "Real-world constraints are great: 'You must be at least 48 inches tall' → h ≥ 48",
+        "Have students generate 3 solutions and 3 non-solutions for each inequality",
+        "Connect open/closed circles to 'included' (≤ ≥) vs 'not included' (< >)"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-word-problem-equations",
@@ -447,19 +1012,45 @@
     "category": "expressions-equations",
     "course": "6th Grade Math",
     "quarter": 2,
-    "unit": 4,
-    "prerequisites": ["g6-one-two-step-equations", "g6-inequalities", "g6-write-expressions"],
-    "enables": ["g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.EE.B.6", "6.EE.B.7", "6.EE.B.8"],
+    "unit": "Expressions & Equations II",
+    "prerequisites": [
+      "g6-one-two-step-equations",
+      "g6-inequalities",
+      "g6-write-expressions"
+    ],
+    "enables": [
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.EE.B.6",
+      "6.EE.B.7",
+      "6.EE.B.8"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Read the problem, identify what's unknown (= the variable)", "Translate the relationship into an equation or inequality", "Solve and check — does the answer make sense in context?", "Some problems require two-step thinking"],
-      "commonMistakes": ["Jumping to computation without setting up the equation first", "Choosing the wrong operation from context clues", "Finding the mathematical answer but not interpreting it (remainder, rounding)"],
-      "teachingTips": ["Teach a structured approach: 1) Define variable, 2) Write equation, 3) Solve, 4) Check in context", "Use 'numberless word problems' to focus on structure before computation", "Mix in problems where students write their OWN word problem from a given equation"]
+      "coreConcepts": [
+        "Read the problem, identify what's unknown (= the variable)",
+        "Translate the relationship into an equation or inequality",
+        "Solve and check — does the answer make sense in context?",
+        "Some problems require two-step thinking"
+      ],
+      "commonMistakes": [
+        "Jumping to computation without setting up the equation first",
+        "Choosing the wrong operation from context clues",
+        "Finding the mathematical answer but not interpreting it (remainder, rounding)"
+      ],
+      "teachingTips": [
+        "Teach a structured approach: 1) Define variable, 2) Write equation, 3) Solve, 4) Check in context",
+        "Use 'numberless word problems' to focus on structure before computation",
+        "Mix in problems where students write their OWN word problem from a given equation"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "90 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "application",
+      "toleranceFactor": 2.5
+    }
   },
-
   {
     "skillId": "g6-area-triangles-parallelograms",
     "displayName": "Area of Triangles & Parallelograms",
@@ -467,17 +1058,41 @@
     "category": "geometry",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 5,
-    "prerequisites": ["g6-formulas-area-volume"],
-    "enables": ["g6-area-composite-figures", "g6-geometry-applications"],
-    "standardsAlignment": ["6.G.A.1"],
+    "unit": "Geometry",
+    "prerequisites": [
+      "g6-formulas-area-volume"
+    ],
+    "enables": [
+      "g6-area-composite-figures",
+      "g6-geometry-applications"
+    ],
+    "standardsAlignment": [
+      "6.G.A.1"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Parallelogram area = base × height (same as rectangle when you 'cut and slide')", "Triangle area = ½ × base × height (half of the parallelogram)", "Height is PERPENDICULAR to the base — not the slanted side", "Any side can be the base — the height changes accordingly"],
-      "commonMistakes": ["Using the slant height instead of the perpendicular height", "Forgetting the ½ in triangle area", "Confusing base with the longest side (base is whichever side you choose)"],
-      "teachingTips": ["Cut a parallelogram from paper, rearrange into a rectangle — they SEE it", "Two congruent triangles form a parallelogram — show this physically", "Grid paper helps students count square units to verify formulas"]
+      "coreConcepts": [
+        "Parallelogram area = base × height (same as rectangle when you 'cut and slide')",
+        "Triangle area = ½ × base × height (half of the parallelogram)",
+        "Height is PERPENDICULAR to the base — not the slanted side",
+        "Any side can be the base — the height changes accordingly"
+      ],
+      "commonMistakes": [
+        "Using the slant height instead of the perpendicular height",
+        "Forgetting the ½ in triangle area",
+        "Confusing base with the longest side (base is whichever side you choose)"
+      ],
+      "teachingTips": [
+        "Cut a parallelogram from paper, rearrange into a rectangle — they SEE it",
+        "Two congruent triangles form a parallelogram — show this physically",
+        "Grid paper helps students count square units to verify formulas"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-area-composite-figures",
@@ -486,17 +1101,40 @@
     "category": "geometry",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 5,
-    "prerequisites": ["g6-area-triangles-parallelograms"],
-    "enables": ["g6-geometry-applications"],
-    "standardsAlignment": ["6.G.A.1"],
+    "unit": "Geometry",
+    "prerequisites": [
+      "g6-area-triangles-parallelograms"
+    ],
+    "enables": [
+      "g6-geometry-applications"
+    ],
+    "standardsAlignment": [
+      "6.G.A.1"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Break complex shapes into simpler shapes (rectangles + triangles)", "Calculate each part separately, then add", "Sometimes it's easier to find a big shape and subtract a missing piece", "Label all dimensions before computing"],
-      "commonMistakes": ["Double-counting shared edges", "Missing a piece of the decomposition", "Using wrong dimensions for the sub-shapes"],
-      "teachingTips": ["Draw the decomposition lines ON the figure before computing anything", "Use real floor plans or room layouts as context", "Practice both 'add pieces' and 'subtract the hole' strategies"]
+      "coreConcepts": [
+        "Break complex shapes into simpler shapes (rectangles + triangles)",
+        "Calculate each part separately, then add",
+        "Sometimes it's easier to find a big shape and subtract a missing piece",
+        "Label all dimensions before computing"
+      ],
+      "commonMistakes": [
+        "Double-counting shared edges",
+        "Missing a piece of the decomposition",
+        "Using wrong dimensions for the sub-shapes"
+      ],
+      "teachingTips": [
+        "Draw the decomposition lines ON the figure before computing anything",
+        "Use real floor plans or room layouts as context",
+        "Practice both 'add pieces' and 'subtract the hole' strategies"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "90 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
   },
   {
     "skillId": "g6-nets-surface-area",
@@ -505,17 +1143,40 @@
     "category": "geometry",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 5,
-    "prerequisites": ["g6-area-triangles-parallelograms"],
-    "enables": ["g6-geometry-applications"],
-    "standardsAlignment": ["6.G.A.4"],
+    "unit": "Geometry",
+    "prerequisites": [
+      "g6-area-triangles-parallelograms"
+    ],
+    "enables": [
+      "g6-geometry-applications"
+    ],
+    "standardsAlignment": [
+      "6.G.A.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["A net is a 2D pattern that folds into a 3D shape", "Surface area = sum of all face areas", "Rectangular prism: 6 faces, 3 pairs of congruent rectangles", "SA = 2lw + 2lh + 2wh (or calculate each face individually)"],
-      "commonMistakes": ["Forgetting a face (especially the top or bottom)", "Counting a face twice or missing a pair", "Confusing surface area with volume"],
-      "teachingTips": ["Cut out nets and physically fold them — cereal boxes are perfect", "For rectangular prisms, color-code the 3 pairs of matching faces", "Connect to real-world: wrapping a gift = finding surface area"]
+      "coreConcepts": [
+        "A net is a 2D pattern that folds into a 3D shape",
+        "Surface area = sum of all face areas",
+        "Rectangular prism: 6 faces, 3 pairs of congruent rectangles",
+        "SA = 2lw + 2lh + 2wh (or calculate each face individually)"
+      ],
+      "commonMistakes": [
+        "Forgetting a face (especially the top or bottom)",
+        "Counting a face twice or missing a pair",
+        "Confusing surface area with volume"
+      ],
+      "teachingTips": [
+        "Cut out nets and physically fold them — cereal boxes are perfect",
+        "For rectangular prisms, color-code the 3 pairs of matching faces",
+        "Connect to real-world: wrapping a gift = finding surface area"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "90 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
   },
   {
     "skillId": "g6-volume-rectangular-prisms",
@@ -524,17 +1185,41 @@
     "category": "geometry",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 5,
-    "prerequisites": ["g6-formulas-area-volume", "g6-fraction-multiply-divide"],
-    "enables": ["g6-geometry-applications"],
-    "standardsAlignment": ["6.G.A.2"],
+    "unit": "Geometry",
+    "prerequisites": [
+      "g6-formulas-area-volume",
+      "g6-fraction-multiply-divide"
+    ],
+    "enables": [
+      "g6-geometry-applications"
+    ],
+    "standardsAlignment": [
+      "6.G.A.2"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Volume = length × width × height (how many unit cubes fit inside)", "Volume with fractions: same formula, requires fraction multiplication", "Pack with fractional unit cubes: 1/2-inch cubes can fill a box with half-inch dimensions", "Volume in cubic units (in³, cm³, ft³)"],
-      "commonMistakes": ["Confusing surface area and volume formulas", "Forgetting cubic units (writing ft² instead of ft³)", "Fraction multiplication errors when edges are fractional"],
-      "teachingTips": ["Build prisms from unit cubes first, then transition to formula", "For fractional edges: 'How many ½-inch cubes fit in a 2½ × 3 × 1½ box?'", "Real-world: aquariums, moving boxes, shipping containers"]
+      "coreConcepts": [
+        "Volume = length × width × height (how many unit cubes fit inside)",
+        "Volume with fractions: same formula, requires fraction multiplication",
+        "Pack with fractional unit cubes: 1/2-inch cubes can fill a box with half-inch dimensions",
+        "Volume in cubic units (in³, cm³, ft³)"
+      ],
+      "commonMistakes": [
+        "Confusing surface area and volume formulas",
+        "Forgetting cubic units (writing ft² instead of ft³)",
+        "Fraction multiplication errors when edges are fractional"
+      ],
+      "teachingTips": [
+        "Build prisms from unit cubes first, then transition to formula",
+        "For fractional edges: 'How many ½-inch cubes fit in a 2½ × 3 × 1½ box?'",
+        "Real-world: aquariums, moving boxes, shipping containers"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-geometry-applications",
@@ -543,19 +1228,45 @@
     "category": "geometry",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 5,
-    "prerequisites": ["g6-area-composite-figures", "g6-nets-surface-area", "g6-volume-rectangular-prisms"],
-    "enables": ["g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.G.A.1", "6.G.A.2", "6.G.A.4"],
+    "unit": "Geometry",
+    "prerequisites": [
+      "g6-area-composite-figures",
+      "g6-nets-surface-area",
+      "g6-volume-rectangular-prisms"
+    ],
+    "enables": [
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.G.A.1",
+      "6.G.A.2",
+      "6.G.A.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Choose the right measure: area for covering, surface area for wrapping, volume for filling", "Multi-step problems: find the area, THEN calculate cost per square foot", "Interpret results in context and use appropriate units", "Composite 3D problems (L-shaped rooms, buildings)"],
-      "commonMistakes": ["Choosing area when the problem asks for volume (or vice versa)", "Forgetting to convert units before multiplying", "Not answering the actual question (finding area but not the cost)"],
-      "teachingTips": ["Assign real projects: design a room, plan a garden, calculate paint needed", "Always end with 'So what does this number mean in the real world?'", "Mix area + volume in the same problem to force students to distinguish them"]
+      "coreConcepts": [
+        "Choose the right measure: area for covering, surface area for wrapping, volume for filling",
+        "Multi-step problems: find the area, THEN calculate cost per square foot",
+        "Interpret results in context and use appropriate units",
+        "Composite 3D problems (L-shaped rooms, buildings)"
+      ],
+      "commonMistakes": [
+        "Choosing area when the problem asks for volume (or vice versa)",
+        "Forgetting to convert units before multiplying",
+        "Not answering the actual question (finding area but not the cost)"
+      ],
+      "teachingTips": [
+        "Assign real projects: design a room, plan a garden, calculate paint needed",
+        "Always end with 'So what does this number mean in the real world?'",
+        "Mix area + volume in the same problem to force students to distinguish them"
+      ]
     },
     "difficultyLevel": 4,
-    "fluencyMetadata": { "targetAccuracy": 75, "targetSpeed": "120 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 120,
+      "fluencyType": "application",
+      "toleranceFactor": 3
+    }
   },
-
   {
     "skillId": "g6-statistical-questions",
     "displayName": "Statistical Questions",
@@ -563,17 +1274,39 @@
     "category": "statistics",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 6,
+    "unit": "Statistics & Data",
     "prerequisites": [],
-    "enables": ["g6-data-displays", "g6-measures-center-variability"],
-    "standardsAlignment": ["6.SP.A.1"],
+    "enables": [
+      "g6-data-displays",
+      "g6-measures-center-variability"
+    ],
+    "standardsAlignment": [
+      "6.SP.A.1"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["A statistical question anticipates variability in answers", "Non-statistical: 'How old am I?' Statistical: 'How old are the students in my class?'", "Statistical questions lead to data collection", "The variability IS the interesting part — not a problem to eliminate"],
-      "commonMistakes": ["Thinking any question with numbers is statistical", "Confusing a statistical question with a survey question", "Not recognizing that one-answer questions aren't statistical"],
-      "teachingTips": ["Have students sort questions into statistical vs non-statistical", "Generate both types from the same topic: 'How tall is the teacher?' vs 'How tall are 6th graders?'", "Connect to why we need graphs and measures — because the data varies"]
+      "coreConcepts": [
+        "A statistical question anticipates variability in answers",
+        "Non-statistical: 'How old am I?' Statistical: 'How old are the students in my class?'",
+        "Statistical questions lead to data collection",
+        "The variability IS the interesting part — not a problem to eliminate"
+      ],
+      "commonMistakes": [
+        "Thinking any question with numbers is statistical",
+        "Confusing a statistical question with a survey question",
+        "Not recognizing that one-answer questions aren't statistical"
+      ],
+      "teachingTips": [
+        "Have students sort questions into statistical vs non-statistical",
+        "Generate both types from the same topic: 'How tall is the teacher?' vs 'How tall are 6th graders?'",
+        "Connect to why we need graphs and measures — because the data varies"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per classification" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-data-displays",
@@ -582,17 +1315,40 @@
     "category": "statistics",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 6,
-    "prerequisites": ["g6-statistical-questions"],
-    "enables": ["g6-compare-distributions"],
-    "standardsAlignment": ["6.SP.B.4"],
+    "unit": "Statistics & Data",
+    "prerequisites": [
+      "g6-statistical-questions"
+    ],
+    "enables": [
+      "g6-compare-distributions"
+    ],
+    "standardsAlignment": [
+      "6.SP.B.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Dot plot: each data point represented by a dot on a number line", "Histogram: data grouped into intervals (bins), bar height = frequency", "Box plot: five-number summary (min, Q1, median, Q3, max)", "Each display shows different information — choice depends on the question"],
-      "commonMistakes": ["Gaps between histogram bars (there shouldn't be any for continuous data)", "Confusing histogram bars with bar graphs (histograms show intervals, bar graphs show categories)", "Not ordering data before creating a box plot"],
-      "teachingTips": ["Start with dot plots — most intuitive", "For box plots, build from the five-number summary step by step", "Use the same data set in all three displays to compare what each reveals"]
+      "coreConcepts": [
+        "Dot plot: each data point represented by a dot on a number line",
+        "Histogram: data grouped into intervals (bins), bar height = frequency",
+        "Box plot: five-number summary (min, Q1, median, Q3, max)",
+        "Each display shows different information — choice depends on the question"
+      ],
+      "commonMistakes": [
+        "Gaps between histogram bars (there shouldn't be any for continuous data)",
+        "Confusing histogram bars with bar graphs (histograms show intervals, bar graphs show categories)",
+        "Not ordering data before creating a box plot"
+      ],
+      "teachingTips": [
+        "Start with dot plots — most intuitive",
+        "For box plots, build from the five-number summary step by step",
+        "Use the same data set in all three displays to compare what each reveals"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "60 seconds per display interpretation" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-measures-center-variability",
@@ -601,17 +1357,42 @@
     "category": "statistics",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 6,
-    "prerequisites": ["g6-data-displays"],
-    "enables": ["g6-compare-distributions"],
-    "standardsAlignment": ["6.SP.A.3", "6.SP.B.5c", "6.SP.B.5d"],
+    "unit": "Statistics & Data",
+    "prerequisites": [
+      "g6-data-displays"
+    ],
+    "enables": [
+      "g6-compare-distributions"
+    ],
+    "standardsAlignment": [
+      "6.SP.A.3",
+      "6.SP.B.5c",
+      "6.SP.B.5d"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Mean: sum ÷ count (the 'fair share' value)", "Median: middle value when ordered (resistant to outliers)", "Range: max - min (simplest measure of spread)", "IQR: Q3 - Q1 (spread of the middle 50%, less affected by outliers)"],
-      "commonMistakes": ["Forgetting to order data before finding the median", "Not knowing what to do with an even number of data points (average the two middle)", "Confusing mean and median — especially when outliers are present"],
-      "teachingTips": ["Mean = 'leveling off' — if everyone shared equally, how much would each person get?", "Use salary data to show when median is better than mean (CEO outlier effect)", "Physical activity: students line up by height, find the median by eliminating from both ends"]
+      "coreConcepts": [
+        "Mean: sum ÷ count (the 'fair share' value)",
+        "Median: middle value when ordered (resistant to outliers)",
+        "Range: max - min (simplest measure of spread)",
+        "IQR: Q3 - Q1 (spread of the middle 50%, less affected by outliers)"
+      ],
+      "commonMistakes": [
+        "Forgetting to order data before finding the median",
+        "Not knowing what to do with an even number of data points (average the two middle)",
+        "Confusing mean and median — especially when outliers are present"
+      ],
+      "teachingTips": [
+        "Mean = 'leveling off' — if everyone shared equally, how much would each person get?",
+        "Use salary data to show when median is better than mean (CEO outlier effect)",
+        "Physical activity: students line up by height, find the median by eliminating from both ends"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per calculation" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-compare-distributions",
@@ -620,19 +1401,43 @@
     "category": "statistics",
     "course": "6th Grade Math",
     "quarter": 3,
-    "unit": 6,
-    "prerequisites": ["g6-data-displays", "g6-measures-center-variability"],
-    "enables": ["g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.SP.A.2", "6.SP.B.5"],
+    "unit": "Statistics & Data",
+    "prerequisites": [
+      "g6-data-displays",
+      "g6-measures-center-variability"
+    ],
+    "enables": [
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.SP.A.2",
+      "6.SP.B.5"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Shape: symmetric (balanced), skewed left/right (tail direction), clusters, gaps", "Compare centers: 'Class A's median is higher than Class B's'", "Compare spreads: 'Class A has a wider range, meaning more variability'", "Use evidence from graphs AND numbers to support claims"],
-      "commonMistakes": ["Describing only center without mentioning spread (or vice versa)", "Making claims without citing specific numbers as evidence", "Confusing skew direction (skewed right = tail goes right, NOT peak goes right)"],
-      "teachingTips": ["Always require a claim + evidence format: 'Class A did better because the median was 85 vs 78'", "Side-by-side box plots are the best tool for comparison", "Use sports data, test scores, or survey results for engaging contexts"]
+      "coreConcepts": [
+        "Shape: symmetric (balanced), skewed left/right (tail direction), clusters, gaps",
+        "Compare centers: 'Class A's median is higher than Class B's'",
+        "Compare spreads: 'Class A has a wider range, meaning more variability'",
+        "Use evidence from graphs AND numbers to support claims"
+      ],
+      "commonMistakes": [
+        "Describing only center without mentioning spread (or vice versa)",
+        "Making claims without citing specific numbers as evidence",
+        "Confusing skew direction (skewed right = tail goes right, NOT peak goes right)"
+      ],
+      "teachingTips": [
+        "Always require a claim + evidence format: 'Class A did better because the median was 85 vs 78'",
+        "Side-by-side box plots are the best tool for comparison",
+        "Use sports data, test scores, or survey results for engaging contexts"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "90 seconds per comparison" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
   },
-
   {
     "skillId": "g6-positive-negative-context",
     "displayName": "Positive & Negative Numbers in Context",
@@ -640,17 +1445,41 @@
     "category": "integers-coordinate",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 7,
-    "prerequisites": ["g6-integer-basics"],
-    "enables": ["g6-compare-order-rationals", "g6-absolute-value-opposites"],
-    "standardsAlignment": ["6.NS.C.5"],
+    "unit": "Integers & Coordinate Plane",
+    "prerequisites": [
+      "g6-integer-basics"
+    ],
+    "enables": [
+      "g6-compare-order-rationals",
+      "g6-absolute-value-opposites"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.5"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Positive = above/gain/deposit/rise; Negative = below/loss/withdrawal/drop", "Zero is the reference point (sea level, ground floor, no change)", "Context determines meaning: -$50 is a withdrawal or debt, +$50 is a deposit or credit", "Vertical and horizontal number lines both work for representing signed numbers"],
-      "commonMistakes": ["Forgetting that zero is neither positive nor negative", "Not connecting the sign to the context (just computing without interpreting)", "Assuming negative always means 'bad'"],
-      "teachingTips": ["Temperature is the most intuitive context for most students", "Bank account: deposits (+) and withdrawals (-) with a running balance", "Elevation: sea level = 0, mountains = positive, ocean floor = negative"]
+      "coreConcepts": [
+        "Positive = above/gain/deposit/rise; Negative = below/loss/withdrawal/drop",
+        "Zero is the reference point (sea level, ground floor, no change)",
+        "Context determines meaning: -$50 is a withdrawal or debt, +$50 is a deposit or credit",
+        "Vertical and horizontal number lines both work for representing signed numbers"
+      ],
+      "commonMistakes": [
+        "Forgetting that zero is neither positive nor negative",
+        "Not connecting the sign to the context (just computing without interpreting)",
+        "Assuming negative always means 'bad'"
+      ],
+      "teachingTips": [
+        "Temperature is the most intuitive context for most students",
+        "Bank account: deposits (+) and withdrawals (-) with a running balance",
+        "Elevation: sea level = 0, mountains = positive, ocean floor = negative"
+      ]
     },
     "difficultyLevel": 1,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-compare-order-rationals",
@@ -659,17 +1488,43 @@
     "category": "integers-coordinate",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 7,
-    "prerequisites": ["g6-positive-negative-context", "g6-place-value-decimals"],
-    "enables": ["g6-coordinate-plane-graphing"],
-    "standardsAlignment": ["6.NS.C.7", "6.NS.C.7a", "6.NS.C.7b"],
+    "unit": "Integers & Coordinate Plane",
+    "prerequisites": [
+      "g6-positive-negative-context",
+      "g6-place-value-decimals"
+    ],
+    "enables": [
+      "g6-coordinate-plane-graphing"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.7",
+      "6.NS.C.7a",
+      "6.NS.C.7b"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["On the number line: farther right = greater", "For negatives: farther from zero = LESS (more negative)", "Use < > = symbols correctly: -5 < -2 < 0 < 3", "Convert to the same form (all decimals or all fractions) to compare mixed types"],
-      "commonMistakes": ["Thinking -10 > -3 because 10 > 3", "Comparing a negative fraction to a positive decimal without converting", "Placing negatives on the wrong side of zero on the number line"],
-      "teachingTips": ["Number line is the essential tool — draw it every time", "Temperature context: 'Is -8°F colder or warmer than -3°F?'", "Practice ordering sets of 5-6 mixed rational numbers"]
+      "coreConcepts": [
+        "On the number line: farther right = greater",
+        "For negatives: farther from zero = LESS (more negative)",
+        "Use < > = symbols correctly: -5 < -2 < 0 < 3",
+        "Convert to the same form (all decimals or all fractions) to compare mixed types"
+      ],
+      "commonMistakes": [
+        "Thinking -10 > -3 because 10 > 3",
+        "Comparing a negative fraction to a positive decimal without converting",
+        "Placing negatives on the wrong side of zero on the number line"
+      ],
+      "teachingTips": [
+        "Number line is the essential tool — draw it every time",
+        "Temperature context: 'Is -8°F colder or warmer than -3°F?'",
+        "Practice ordering sets of 5-6 mixed rational numbers"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per comparison" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-absolute-value-opposites",
@@ -678,17 +1533,42 @@
     "category": "integers-coordinate",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 7,
-    "prerequisites": ["g6-positive-negative-context"],
-    "enables": ["g6-coordinate-plane-graphing", "g6-distance-coordinate-plane"],
-    "standardsAlignment": ["6.NS.C.7c", "6.NS.C.7d"],
+    "unit": "Integers & Coordinate Plane",
+    "prerequisites": [
+      "g6-positive-negative-context"
+    ],
+    "enables": [
+      "g6-coordinate-plane-graphing",
+      "g6-distance-coordinate-plane"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.7c",
+      "6.NS.C.7d"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Absolute value = distance from zero (always non-negative)", "|5| = 5 and |-5| = 5 (both are 5 units from zero)", "Opposite of a number: same distance, other side of zero", "Opposite of -3 is 3; opposite of 7 is -7"],
-      "commonMistakes": ["Thinking absolute value always 'makes it positive' (technically it measures distance)", "Confusing -|5| = -5 with |-5| = 5", "Not understanding that |0| = 0"],
-      "teachingTips": ["Walk a number line physically — steps from zero in either direction", "Real-world: 'How far from home?' doesn't care about direction", "Use contexts where only magnitude matters: 'How much did it change?' vs 'In which direction?'"]
+      "coreConcepts": [
+        "Absolute value = distance from zero (always non-negative)",
+        "|5| = 5 and |-5| = 5 (both are 5 units from zero)",
+        "Opposite of a number: same distance, other side of zero",
+        "Opposite of -3 is 3; opposite of 7 is -7"
+      ],
+      "commonMistakes": [
+        "Thinking absolute value always 'makes it positive' (technically it measures distance)",
+        "Confusing -|5| = -5 with |-5| = 5",
+        "Not understanding that |0| = 0"
+      ],
+      "teachingTips": [
+        "Walk a number line physically — steps from zero in either direction",
+        "Real-world: 'How far from home?' doesn't care about direction",
+        "Use contexts where only magnitude matters: 'How much did it change?' vs 'In which direction?'"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-coordinate-plane-graphing",
@@ -697,17 +1577,43 @@
     "category": "integers-coordinate",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 7,
-    "prerequisites": ["g6-compare-order-rationals", "g6-absolute-value-opposites"],
-    "enables": ["g6-distance-coordinate-plane"],
-    "standardsAlignment": ["6.NS.C.6", "6.NS.C.6b", "6.NS.C.6c"],
+    "unit": "Integers & Coordinate Plane",
+    "prerequisites": [
+      "g6-compare-order-rationals",
+      "g6-absolute-value-opposites"
+    ],
+    "enables": [
+      "g6-distance-coordinate-plane"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.6",
+      "6.NS.C.6b",
+      "6.NS.C.6c"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Ordered pair (x, y): x = horizontal position, y = vertical position", "Four quadrants: I (+,+), II (−,+), III (−,−), IV (+,−)", "Origin is (0, 0); axes are the dividing lines", "Plot by starting at origin: go right/left for x, then up/down for y"],
-      "commonMistakes": ["Reversing x and y in the ordered pair", "Going up/down first instead of right/left", "Plotting (3, -2) in the wrong quadrant"],
-      "teachingTips": ["'Over and up' mantra: x first (horizontal), y second (vertical)", "Quadrant sign patterns: memorize I=(+,+), then rotate counterclockwise", "Battleship is a great game for coordinate plane practice"]
+      "coreConcepts": [
+        "Ordered pair (x, y): x = horizontal position, y = vertical position",
+        "Four quadrants: I (+,+), II (−,+), III (−,−), IV (+,−)",
+        "Origin is (0, 0); axes are the dividing lines",
+        "Plot by starting at origin: go right/left for x, then up/down for y"
+      ],
+      "commonMistakes": [
+        "Reversing x and y in the ordered pair",
+        "Going up/down first instead of right/left",
+        "Plotting (3, -2) in the wrong quadrant"
+      ],
+      "teachingTips": [
+        "'Over and up' mantra: x first (horizontal), y second (vertical)",
+        "Quadrant sign patterns: memorize I=(+,+), then rotate counterclockwise",
+        "Battleship is a great game for coordinate plane practice"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per point" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-distance-coordinate-plane",
@@ -716,19 +1622,43 @@
     "category": "integers-coordinate",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 7,
-    "prerequisites": ["g6-coordinate-plane-graphing", "g6-absolute-value-opposites"],
-    "enables": ["g6-mixed-problem-solving"],
-    "standardsAlignment": ["6.NS.C.8", "6.G.A.3"],
+    "unit": "Integers & Coordinate Plane",
+    "prerequisites": [
+      "g6-coordinate-plane-graphing",
+      "g6-absolute-value-opposites"
+    ],
+    "enables": [
+      "g6-mixed-problem-solving"
+    ],
+    "standardsAlignment": [
+      "6.NS.C.8",
+      "6.G.A.3"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Horizontal distance: |x₁ - x₂| (same y-coordinate)", "Vertical distance: |y₁ - y₂| (same x-coordinate)", "Reflection across x-axis: (x, y) → (x, -y)", "Reflection across y-axis: (x, y) → (-x, y)"],
-      "commonMistakes": ["Subtracting coordinates in the wrong order and getting a negative distance", "Trying to find diagonal distances (not required at this level)", "Confusing which coordinate changes in reflection across x-axis vs y-axis"],
-      "teachingTips": ["Count grid squares first, then connect to the absolute value formula", "For reflections: fold paper across the axis to show symmetry", "Real-world: city blocks (taxicab distance), map coordinates"]
+      "coreConcepts": [
+        "Horizontal distance: |x₁ - x₂| (same y-coordinate)",
+        "Vertical distance: |y₁ - y₂| (same x-coordinate)",
+        "Reflection across x-axis: (x, y) → (x, -y)",
+        "Reflection across y-axis: (x, y) → (-x, y)"
+      ],
+      "commonMistakes": [
+        "Subtracting coordinates in the wrong order and getting a negative distance",
+        "Trying to find diagonal distances (not required at this level)",
+        "Confusing which coordinate changes in reflection across x-axis vs y-axis"
+      ],
+      "teachingTips": [
+        "Count grid squares first, then connect to the absolute value formula",
+        "For reflections: fold paper across the axis to show symmetry",
+        "Real-world: city blocks (taxicab distance), map coordinates"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2
+    }
   },
-
   {
     "skillId": "g6-mixed-problem-solving",
     "displayName": "Mixed Problem Solving",
@@ -736,17 +1666,44 @@
     "category": "applied-number-sense",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 8,
-    "prerequisites": ["g6-ratio-problem-solving", "g6-fraction-multiply-divide", "g6-word-problem-equations"],
-    "enables": ["g6-multi-step-reasoning"],
-    "standardsAlignment": ["6.NS.A.1", "6.RP.A.3", "6.EE.B.7"],
+    "unit": "Applied Number Sense",
+    "prerequisites": [
+      "g6-ratio-problem-solving",
+      "g6-fraction-multiply-divide",
+      "g6-word-problem-equations"
+    ],
+    "enables": [
+      "g6-multi-step-reasoning"
+    ],
+    "standardsAlignment": [
+      "6.NS.A.1",
+      "6.RP.A.3",
+      "6.EE.B.7"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Identify which skills a problem requires before starting", "Multi-step problems: break into smaller steps", "Check reasonableness at each step", "Connect different representations: ratio table → equation → solution"],
-      "commonMistakes": ["Solving only part of the problem", "Not identifying the right operation from context", "Carrying errors forward through multiple steps"],
-      "teachingTips": ["Use 'What do I know? What do I need to find? What's my plan?' framework", "Mix problem types so students practice identifying the skill needed", "Encourage estimation before exact computation"]
+      "coreConcepts": [
+        "Identify which skills a problem requires before starting",
+        "Multi-step problems: break into smaller steps",
+        "Check reasonableness at each step",
+        "Connect different representations: ratio table → equation → solution"
+      ],
+      "commonMistakes": [
+        "Solving only part of the problem",
+        "Not identifying the right operation from context",
+        "Carrying errors forward through multiple steps"
+      ],
+      "teachingTips": [
+        "Use 'What do I know? What do I need to find? What's my plan?' framework",
+        "Mix problem types so students practice identifying the skill needed",
+        "Encourage estimation before exact computation"
+      ]
     },
     "difficultyLevel": 4,
-    "fluencyMetadata": { "targetAccuracy": 75, "targetSpeed": "120 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 120,
+      "fluencyType": "application",
+      "toleranceFactor": 3
+    }
   },
   {
     "skillId": "g6-percent-intro",
@@ -755,17 +1712,40 @@
     "category": "applied-number-sense",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 8,
-    "prerequisites": ["g6-ratio-language", "g6-equivalent-ratios", "g6-decimal-division"],
+    "unit": "Applied Number Sense",
+    "prerequisites": [
+      "g6-ratio-language",
+      "g6-equivalent-ratios",
+      "g6-decimal-division"
+    ],
     "enables": [],
-    "standardsAlignment": ["6.RP.A.3c"],
+    "standardsAlignment": [
+      "6.RP.A.3c"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Percent means 'per 100': 25% = 25/100 = 0.25", "The trio: fraction ↔ decimal ↔ percent (master all three conversions)", "Finding percent of a number: 30% of 80 = 0.30 × 80 = 24", "Common benchmarks: 10%, 25%, 50%, 75%, 100%"],
-      "commonMistakes": ["Moving the decimal point the wrong direction when converting", "Confusing 'percent of' with 'percent increase/decrease' (6th grade is just 'percent of')", "Thinking 150% is impossible (it's not — it's 1.5 times)"],
-      "teachingTips": ["Start with the benchmarks: 50% is half, 25% is a quarter, 10% is easy division", "Bar models: shade parts of a 100-grid to visualize percents", "Connect to ratios: 30% = 30 out of 100 = 3 out of 10"]
+      "coreConcepts": [
+        "Percent means 'per 100': 25% = 25/100 = 0.25",
+        "The trio: fraction ↔ decimal ↔ percent (master all three conversions)",
+        "Finding percent of a number: 30% of 80 = 0.30 × 80 = 24",
+        "Common benchmarks: 10%, 25%, 50%, 75%, 100%"
+      ],
+      "commonMistakes": [
+        "Moving the decimal point the wrong direction when converting",
+        "Confusing 'percent of' with 'percent increase/decrease' (6th grade is just 'percent of')",
+        "Thinking 150% is impossible (it's not — it's 1.5 times)"
+      ],
+      "teachingTips": [
+        "Start with the benchmarks: 50% is half, 25% is a quarter, 10% is easy division",
+        "Bar models: shade parts of a 100-grid to visualize percents",
+        "Connect to ratios: 30% = 30 out of 100 = 3 out of 10"
+      ]
     },
     "difficultyLevel": 2,
-    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
   },
   {
     "skillId": "g6-unit-conversions",
@@ -774,17 +1754,41 @@
     "category": "applied-number-sense",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 8,
-    "prerequisites": ["g6-measurement-conversions", "g6-ratio-problem-solving"],
-    "enables": ["g6-multi-step-reasoning"],
-    "standardsAlignment": ["6.RP.A.3d"],
+    "unit": "Applied Number Sense",
+    "prerequisites": [
+      "g6-measurement-conversions",
+      "g6-ratio-problem-solving"
+    ],
+    "enables": [
+      "g6-multi-step-reasoning"
+    ],
+    "standardsAlignment": [
+      "6.RP.A.3d"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Conversion as ratio reasoning: set up as equivalent ratios", "Customary: inches/feet/yards/miles, ounces/pounds/tons, cups/pints/quarts/gallons", "Metric: mm/cm/m/km, mL/L, g/kg", "Multi-step conversions: convert through an intermediate unit"],
-      "commonMistakes": ["Multiplying when dividing is needed (larger unit → fewer of them)", "Mixing up customary and metric conversion factors", "Not including units in the answer"],
-      "teachingTips": ["Ratio tables make conversion systematic", "Focus on the conversions students encounter: cooking, distance, weight", "Use 'dimensional analysis' lite: write units and cancel"]
+      "coreConcepts": [
+        "Conversion as ratio reasoning: set up as equivalent ratios",
+        "Customary: inches/feet/yards/miles, ounces/pounds/tons, cups/pints/quarts/gallons",
+        "Metric: mm/cm/m/km, mL/L, g/kg",
+        "Multi-step conversions: convert through an intermediate unit"
+      ],
+      "commonMistakes": [
+        "Multiplying when dividing is needed (larger unit → fewer of them)",
+        "Mixing up customary and metric conversion factors",
+        "Not including units in the answer"
+      ],
+      "teachingTips": [
+        "Ratio tables make conversion systematic",
+        "Focus on the conversions students encounter: cooking, distance, weight",
+        "Use 'dimensional analysis' lite: write units and cancel"
+      ]
     },
     "difficultyLevel": 3,
-    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "45 seconds per conversion" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
   },
   {
     "skillId": "g6-multi-step-reasoning",
@@ -793,16 +1797,43 @@
     "category": "applied-number-sense",
     "course": "6th Grade Math",
     "quarter": 4,
-    "unit": 8,
-    "prerequisites": ["g6-mixed-problem-solving", "g6-percent-intro", "g6-unit-conversions"],
+    "unit": "Applied Number Sense",
+    "prerequisites": [
+      "g6-mixed-problem-solving",
+      "g6-percent-intro",
+      "g6-unit-conversions"
+    ],
     "enables": [],
-    "standardsAlignment": ["6.NS.A.1", "6.RP.A.3", "6.EE.B.7", "MP.1", "MP.4"],
+    "standardsAlignment": [
+      "6.NS.A.1",
+      "6.RP.A.3",
+      "6.EE.B.7",
+      "MP.1",
+      "MP.4"
+    ],
     "teachingGuidance": {
-      "coreConcepts": ["Read complex problems and identify the sub-questions", "Organize information in tables or diagrams before computing", "Use multiple tools: ratios, equations, measurement, geometry", "Justify the answer in context — 'So what does this mean?'"],
-      "commonMistakes": ["Getting overwhelmed by multi-step problems and giving up", "Not organizing the information before diving into computation", "Answering a sub-question but forgetting to answer the actual question"],
-      "teachingTips": ["Teach explicit problem decomposition: 'What's step 1? Step 2?'", "Use performance tasks: plan a party, design a garden, calculate a road trip", "This is the bridge to 7th-grade math — celebrate the complexity"]
+      "coreConcepts": [
+        "Read complex problems and identify the sub-questions",
+        "Organize information in tables or diagrams before computing",
+        "Use multiple tools: ratios, equations, measurement, geometry",
+        "Justify the answer in context — 'So what does this mean?'"
+      ],
+      "commonMistakes": [
+        "Getting overwhelmed by multi-step problems and giving up",
+        "Not organizing the information before diving into computation",
+        "Answering a sub-question but forgetting to answer the actual question"
+      ],
+      "teachingTips": [
+        "Teach explicit problem decomposition: 'What's step 1? Step 2?'",
+        "Use performance tasks: plan a party, design a garden, calculate a road trip",
+        "This is the bridge to 7th-grade math — celebrate the complexity"
+      ]
     },
     "difficultyLevel": 4,
-    "fluencyMetadata": { "targetAccuracy": 70, "targetSpeed": "180 seconds per problem" }
+    "fluencyMetadata": {
+      "baseFluencyTime": 180,
+      "fluencyType": "application",
+      "toleranceFactor": 3
+    }
   }
 ]
