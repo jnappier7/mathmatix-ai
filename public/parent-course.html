@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parent Learning Center — MathMatix</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true },
+            svg: { fontCache: 'global' }
+        };
+        window._lazyScripts = {};
+        window.loadScript = function(url) {
+            if (window._lazyScripts[url]) return window._lazyScripts[url];
+            window._lazyScripts[url] = new Promise((resolve, reject) => {
+                var s = document.createElement('script');
+                s.src = url; s.onload = resolve; s.onerror = reject;
+                document.head.appendChild(s);
+            });
+            return window._lazyScripts[url];
+        };
+        window.ensureMathJax = function() {
+            if (window.MathJax && window.MathJax.typesetPromise) return Promise.resolve();
+            return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
+        };
+    </script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #faf8f5;
+            color: #2d2d2d;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ========== Layout ========== */
+        .parent-course-layout {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ========== Sidebar ========== */
+        .pc-sidebar {
+            width: 300px;
+            background: #fff;
+            border-right: 1px solid #e8e4df;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .pc-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e8e4df;
+        }
+
+        .pc-sidebar-header h2 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #4a4a4a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pc-sidebar-header h2 i { color: #e67e22; }
+
+        .pc-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #888;
+            text-decoration: none;
+            margin-top: 8px;
+        }
+        .pc-back-link:hover { color: #e67e22; }
+
+        .pc-course-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-top: 12px;
+            line-height: 1.3;
+        }
+
+        .pc-course-desc {
+            font-size: 0.82em;
+            color: #777;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* Progress bar */
+        .pc-progress-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e8e4df;
+        }
+
+        .pc-progress-label {
+            font-size: 0.78em;
+            color: #999;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pc-progress-track {
+            height: 6px;
+            background: #ede9e3;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .pc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e67e22, #f39c12);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        /* Module list */
+        .pc-modules-section {
+            padding: 16px 20px;
+            flex: 1;
+        }
+
+        .pc-modules-label {
+            font-size: 0.78em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .pc-module-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: default;
+            transition: background 0.15s;
+        }
+
+        .pc-module-item.active { background: #fef5eb; }
+        .pc-module-item.completed .pc-module-icon { color: #27ae60; }
+        .pc-module-item.locked .pc-module-icon { color: #ccc; }
+        .pc-module-item.active .pc-module-icon { color: #e67e22; }
+
+        .pc-module-icon { font-size: 0.9em; margin-top: 2px; width: 18px; text-align: center; }
+        .pc-module-title { font-size: 0.85em; color: #4a4a4a; line-height: 1.3; }
+        .pc-module-item.locked .pc-module-title { color: #bbb; }
+
+        /* ========== Chat Area ========== */
+        .pc-chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Chat header */
+        .pc-chat-header {
+            padding: 14px 24px;
+            background: #fff;
+            border-bottom: 1px solid #e8e4df;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pc-chat-header-title {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #4a4a4a;
+        }
+
+        .pc-chat-header-subtitle {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        /* Messages */
+        .pc-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .pc-messages .message-container {
+            max-width: 720px;
+        }
+
+        .pc-messages .message-container.ai {
+            align-self: flex-start;
+        }
+
+        .pc-messages .message-container.user {
+            align-self: flex-end;
+        }
+
+        .pc-msg-bubble {
+            padding: 14px 18px;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 0.92em;
+            word-wrap: break-word;
+        }
+
+        .pc-msg-bubble.ai {
+            background: #fff;
+            border: 1px solid #e8e4df;
+            color: #2d2d2d;
+            border-bottom-left-radius: 4px;
+        }
+
+        .pc-msg-bubble.user {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .pc-msg-bubble p { margin-bottom: 8px; }
+        .pc-msg-bubble p:last-child { margin-bottom: 0; }
+        .pc-msg-bubble strong { font-weight: 600; }
+        .pc-msg-bubble ul, .pc-msg-bubble ol { margin: 8px 0; padding-left: 20px; }
+        .pc-msg-bubble li { margin-bottom: 4px; }
+
+        /* Thinking indicator */
+        .pc-thinking {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            color: #999;
+            font-style: italic;
+            font-size: 0.85em;
+        }
+
+        .pc-thinking.visible { display: flex; }
+
+        .pc-thinking .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #e67e22;
+            animation: parentDotPulse 1.4s ease-in-out infinite;
+        }
+        .pc-thinking .dot:nth-child(2) { animation-delay: 0.2s; }
+        .pc-thinking .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes parentDotPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Input area */
+        .pc-input-area {
+            padding: 16px 24px;
+            background: #fff;
+            border-top: 1px solid #e8e4df;
+        }
+
+        .pc-input-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .pc-input-field {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 10px 16px;
+            border: 1.5px solid #e0dbd5;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-family: inherit;
+            line-height: 1.4;
+            resize: none;
+            outline: none;
+            overflow-y: auto;
+            background: #faf8f5;
+            transition: border-color 0.2s;
+        }
+
+        .pc-input-field:focus { border-color: #e67e22; }
+
+        .pc-input-field:empty::before {
+            content: attr(data-placeholder);
+            color: #bbb;
+        }
+
+        .pc-send-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .pc-send-btn:hover { transform: scale(1.05); }
+        .pc-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Welcome state */
+        .pc-welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .pc-welcome i {
+            font-size: 3em;
+            color: #e67e22;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .pc-welcome h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 8px;
+        }
+
+        .pc-welcome p {
+            font-size: 0.9em;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        /* Module completion celebration */
+        .pc-celebration {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #fef5eb, #fff8f0);
+            border: 1px solid #f0d9b5;
+            border-radius: 16px;
+            margin: 12px 0;
+        }
+
+        .pc-celebration h4 {
+            color: #e67e22;
+            font-size: 1em;
+            margin-bottom: 4px;
+        }
+
+        .pc-celebration p {
+            font-size: 0.85em;
+            color: #777;
+        }
+
+        /* ========== Mobile ========== */
+        .pc-sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 200;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e67e22;
+            color: #fff;
+            border: none;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .pc-sidebar {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                bottom: 0;
+                z-index: 150;
+                transition: left 0.3s ease;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            }
+            .pc-sidebar.open { left: 0; }
+            .pc-sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+            .pc-sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.3);
+                z-index: 140;
+            }
+            .pc-sidebar-overlay.visible { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <div class="parent-course-layout">
+        <!-- Sidebar -->
+        <aside class="pc-sidebar" id="pc-sidebar">
+            <div class="pc-sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> Parent Learning</h2>
+                <a href="/parent-dashboard.html" class="pc-back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <div class="pc-course-title" id="pc-course-title">Loading...</div>
+                <div class="pc-course-desc" id="pc-course-desc"></div>
+            </div>
+
+            <div class="pc-progress-section">
+                <div class="pc-progress-label">
+                    <span>Your Progress</span>
+                    <span id="pc-progress-pct">0%</span>
+                </div>
+                <div class="pc-progress-track">
+                    <div class="pc-progress-fill" id="pc-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="pc-modules-section">
+                <div class="pc-modules-label">Topics</div>
+                <div id="pc-module-list"></div>
+            </div>
+        </aside>
+
+        <!-- Mobile sidebar overlay -->
+        <div class="pc-sidebar-overlay" id="pc-sidebar-overlay"></div>
+
+        <!-- Chat area -->
+        <main class="pc-chat-area">
+            <div class="pc-chat-header">
+                <div>
+                    <div class="pc-chat-header-title" id="pc-module-title">Loading...</div>
+                    <div class="pc-chat-header-subtitle" id="pc-module-subtitle"></div>
+                </div>
+                <a href="/parent-dashboard.html" style="color: #999; font-size: 0.85em; text-decoration: none;">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </div>
+
+            <div class="pc-messages" id="pc-messages">
+                <div class="pc-welcome" id="pc-welcome">
+                    <i class="fas fa-mug-hot"></i>
+                    <h3>Welcome to your mini-course</h3>
+                    <p>Loading your lesson...</p>
+                </div>
+            </div>
+
+            <div class="pc-thinking" id="pc-thinking">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span>Preparing your lesson...</span>
+            </div>
+
+            <div class="pc-input-area">
+                <div class="pc-input-row">
+                    <div class="pc-input-field"
+                         id="pc-input"
+                         contenteditable="true"
+                         data-placeholder="Ask a question or type a response..."
+                         role="textbox"></div>
+                    <button class="pc-send-btn" id="pc-send-btn" title="Send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile sidebar toggle -->
+    <button class="pc-sidebar-toggle" id="pc-sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script src="/js/csrf.js"></script>
+    <script src="/js/parent-course.js"></script>
+</body>
+</html>

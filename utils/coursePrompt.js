@@ -21,6 +21,11 @@ const path = require('path');
  * @returns {string} system prompt
  */
 function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
+  // Branch to parent-specific prompt when audience is 'parent'
+  if (pathway.audience === 'parent') {
+    return buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
+  }
+
   const firstName = userProfile.firstName || 'Student';
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Module';
@@ -609,30 +614,69 @@ function loadCourseContext(courseSession) {
 }
 
 /**
- * Calculate blended overallProgress that includes within-module scaffold progress.
- * Instead of only counting fully completed modules (which gives huge jumps),
- * this blends in the current module's scaffold progress for smooth, continuous progress.
- *
- * Example: 22 modules, 3 completed, current module at 60% scaffold progress:
- *   (3 + 0.60) / 22 * 100 = 16.4% (vs 13.6% with only completed modules)
+ * Build a parent-specific course system prompt.
+ * Parents are adult learners exploring how modern math is taught — they are NOT
+ * being graded, tested, or held to mastery standards. The tone is warm, empathetic,
+ * and adult-to-adult. The goal is understanding + confidence + practical homework help.
  */
-function calculateOverallProgress(modules) {
-  if (!modules || modules.length === 0) return 0;
-  const totalModules = modules.length;
+function buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
+  const firstName = userProfile.firstName || 'there';
+  const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
+  const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Topic';
+  const unit = currentModule?.unit || '';
+  const progress = courseSession.overallProgress || 0;
 
-  let progressSum = 0;
-  for (const mod of modules) {
-    if (mod.status === 'completed') {
-      progressSum += 1;
-    } else if (mod.status === 'in_progress' && mod.scaffoldProgress > 0) {
-      progressSum += (mod.scaffoldProgress / 100);
-    }
+  const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
+  const scaffold = scaffoldData?.scaffold || [];
+  const currentPhase = scaffold[scaffoldIndex] || scaffold[0] || null;
+
+  // Module map
+  const moduleMap = (courseSession.modules || []).map(m => {
+    const pw = (pathway.modules || []).find(pm => pm.moduleId === m.moduleId);
+    const label = pw?.title || m.moduleId;
+    const status = m.status === 'completed' ? '✓' : m.status === 'in_progress' ? '►' : m.status === 'available' ? '○' : '🔒';
+    return `  ${status} ${label}`;
+  }).join('\n');
+
+  // Current scaffold step
+  let currentStepDetail = '';
+  if (currentPhase) {
+    currentStepDetail = formatParentScaffoldStep(currentPhase, scaffoldIndex, scaffold.length);
   }
-  return Math.round((progressSum / totalModules) * 100);
+
+  // Scaffold outline
+  const scaffoldOutline = scaffold.map((s, i) => {
+    const marker = i === scaffoldIndex ? '▶' : i < scaffoldIndex ? '✓' : '○';
+    return `  ${marker} ${i + 1}. [${s.type}] ${s.title}`;
+  }).join('\n');
+
+  // Parent-specific AI model from pathway
+  const aiModel = pathway.aiInstructionModel || {};
+  const phases = (aiModel.phases || []).map(p => {
+    let line = `  • ${p.phase}: ${p.aiRole}`;
+    if (p.parentRole) line += `\n    Parent role: ${p.parentRole}`;
+    return line;
+  }).join('\n');
+  const decisionRights = (aiModel.aiDecisionRights || []).map(r => `  - ${r}`).join('\n');
+  const guidanceNotes = pathway.aiGuidanceNotes || '';
+
+  // Module data
+  const skills = (scaffoldData?.skills || currentModule?.skills || []).join(', ');
+  const strategies = (scaffoldData?.instructionalStrategy || []).map(s => `  - ${s}`).join('\n');
+  const goals = (scaffoldData?.goals || []).map(g => `  - ${g}`).join('\n');
+
+  // Tutor personality
+  const tutorName = tutorProfile?.name || 'MathMatix Guide';
+  const tutorPersonality = tutorProfile?.personality || '';
+
+  return `You are ${tutorName}, a friendly and knowledgeable guide helping a parent understand modern math teaching methods.
+${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
+
 }
 
 module.exports = {
   buildCourseSystemPrompt,
+  buildParentCourseSystemPrompt,
   buildCourseGreetingInstruction,
   loadCourseContext,
   calculateOverallProgress

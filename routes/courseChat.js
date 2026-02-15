@@ -81,6 +81,7 @@ router.post('/', async (req, res) => {
             return res.status(500).json({ message: `Course pathway not found: ${courseSession.courseId}` });
         }
         const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+        const isParentCourse = pathway.audience === 'parent';
 
         // ── Load current module (REQUIRED) ──────────────────
         const currentPathwayModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
@@ -292,12 +293,12 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // Interactive graph tool detection
+        // Interactive graph tool detection (student courses only — parents don't use interactive graphs)
         // Strategy: 1) Exact tag match  2) Keyword fallback if AI forgot the tag
         let graphToolConfig = null;
 
         // 1. Check for explicit <GRAPH_TOOL> tag (with or without attributes)
-        const graphToolMatch = aiResponseText.match(/<GRAPH_TOOL(?:\s+([^>]*))?\s*>/i);
+        const graphToolMatch = !isParentCourse && aiResponseText.match(/<GRAPH_TOOL(?:\s+([^>]*))?\s*>/i);
         if (graphToolMatch) {
             const attrs = {};
             if (graphToolMatch[1]) {
@@ -317,7 +318,7 @@ router.post('/', async (req, res) => {
         }
 
         // 2. Keyword fallback — AI described the graph but forgot the tag
-        if (!graphToolConfig) {
+        if (!graphToolConfig && !isParentCourse) {
             const lower = aiResponseText.toLowerCase();
             const mentionsGraphing = /\b(plot|graph)\b.*\b(line|point|grid)\b/i.test(lower)
                 || /\b(interactive grid|coordinate grid|coordinate plane)\b/i.test(lower);
@@ -493,110 +494,130 @@ router.post('/', async (req, res) => {
         }
         await conversation.save();
 
-        // ── XP calculation ──────────────────────────────────
-        xpBreakdown.tier1 = xpLadder.tier1.amount;
-
-        if (wasCorrect && xpBreakdown.tier2 === 0) {
-            const recent = conversation.messages.slice(-6);
-            const usedHint = recent.some(m => m.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(m.content));
-            xpBreakdown.tier2 = usedHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
-            xpBreakdown.tier2Type = usedHint ? 'correct' : 'clean';
-        }
-
-        xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
-
-        // Course boost: always 1.5x in course mode
-        const courseBoost = 1.5;
-        xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
-        xpBreakdown.courseBoost = courseBoost;
-
-        user.xp = (user.xp || 0) + xpBreakdown.total;
-
-        // XP analytics
-        if (!user.xpLadderStats) user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
-        user.xpLadderStats.lifetimeTier1 += xpBreakdown.tier1;
-        user.xpLadderStats.lifetimeTier2 += xpBreakdown.tier2;
-        user.xpLadderStats.lifetimeTier3 += xpBreakdown.tier3;
-        if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
-            const eb = user.xpLadderStats.tier3Behaviors.find(b => b.behavior === xpBreakdown.tier3Behavior);
-            if (eb) { eb.count += 1; eb.lastEarned = new Date(); }
-            else { user.xpLadderStats.tier3Behaviors.push({ behavior: xpBreakdown.tier3Behavior, count: 1, lastEarned: new Date() }); }
-        }
-        user.markModified('xpLadderStats');
-
-        // Level check
+        // ── XP calculation (student courses only) ─────────────
         let leveledUp = false;
-        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
-            user.level += 1;
-            leveledUp = true;
-        }
-
-        const { getTutorsToUnlock } = require('../utils/unlockTutors');
-        const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-        if (tutorsJustUnlocked.length > 0) {
-            user.unlockedItems.push(...tutorsJustUnlocked);
-            user.markModified('unlockedItems');
-        }
-
-        // AI time tracking
+        let tutorsJustUnlocked = [];
         const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+
+        if (!isParentCourse) {
+            xpBreakdown.tier1 = xpLadder.tier1.amount;
+
+            if (wasCorrect && xpBreakdown.tier2 === 0) {
+                const recent = conversation.messages.slice(-6);
+                const usedHint = recent.some(m => m.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(m.content));
+                xpBreakdown.tier2 = usedHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
+                xpBreakdown.tier2Type = usedHint ? 'correct' : 'clean';
+            }
+
+            xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
+
+            // Course boost: always 1.5x in course mode
+            const courseBoost = 1.5;
+            xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
+            xpBreakdown.courseBoost = courseBoost;
+
+            user.xp = (user.xp || 0) + xpBreakdown.total;
+
+            // XP analytics
+            if (!user.xpLadderStats) user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
+            user.xpLadderStats.lifetimeTier1 += xpBreakdown.tier1;
+            user.xpLadderStats.lifetimeTier2 += xpBreakdown.tier2;
+            user.xpLadderStats.lifetimeTier3 += xpBreakdown.tier3;
+            if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
+                const eb = user.xpLadderStats.tier3Behaviors.find(b => b.behavior === xpBreakdown.tier3Behavior);
+                if (eb) { eb.count += 1; eb.lastEarned = new Date(); }
+                else { user.xpLadderStats.tier3Behaviors.push({ behavior: xpBreakdown.tier3Behavior, count: 1, lastEarned: new Date() }); }
+            }
+            user.markModified('xpLadderStats');
+
+            // Level check
+            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
+                user.level += 1;
+                leveledUp = true;
+            }
+
+            const { getTutorsToUnlock } = require('../utils/unlockTutors');
+            tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+            if (tutorsJustUnlocked.length > 0) {
+                user.unlockedItems.push(...tutorsJustUnlocked);
+                user.markModified('unlockedItems');
+            }
+        }
+
+        // AI time tracking (both parent and student)
         user.weeklyAISeconds = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
         user.totalAISeconds = (user.totalAISeconds || 0) + aiProcessingSeconds;
 
         await user.save();
 
         // ── Build response ──────────────────────────────────
-        const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
-        const xpInLevel = Math.max(0, user.xp - xpForLevelStart);
+        let responseData;
 
-        const accom = user.iepPlan?.accommodations;
-        const iepFeatures = accom ? {
-            autoReadAloud: accom.audioReadAloud || false,
-            showCalculator: accom.calculatorAllowed || false,
-            useHighContrast: accom.largePrintHighContrast || false,
-            extendedTimeMultiplier: accom.extendedTime ? 1.5 : 1.0,
-            mathAnxietySupport: accom.mathAnxietySupport || false,
-            chunkedAssignments: accom.chunkedAssignments || false
-        } : null;
+        if (isParentCourse) {
+            // Parent response: clean, no gamification
+            responseData = {
+                text: aiResponseText,
+                voiceId: currentTutor.voiceId,
+                aiTimeUsed: aiProcessingSeconds,
+                courseContext: {
+                    courseId: courseSession.courseId,
+                    courseName: courseSession.courseName,
+                    currentModuleId: courseSession.currentModuleId,
+                    overallProgress: courseSession.overallProgress
+                }
+            };
+        } else {
+            // Student response: full gamification
+            const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+            const xpInLevel = Math.max(0, user.xp - xpForLevelStart);
 
-        const responseData = {
-            text: aiResponseText,
-            userXp: xpInLevel,
-            userLevel: user.level,
-            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
-            voiceId: currentTutor.voiceId,
-            newlyUnlockedTutors: tutorsJustUnlocked,
-            iepFeatures,
-            problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
-            sessionStats: {
-                problemsAttempted: conversation.problemsAttempted || 0,
-                problemsCorrect: conversation.problemsCorrect || 0
-            },
-            xpLadder: {
-                tier1: xpBreakdown.tier1,
-                tier2: xpBreakdown.tier2,
-                tier2Type: xpBreakdown.tier2Type,
-                tier3: xpBreakdown.tier3,
-                tier3Behavior: xpBreakdown.tier3Behavior,
-                total: xpBreakdown.total,
-                leveledUp
-            },
-            aiTimeUsed: aiProcessingSeconds,
-            freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
-                ? Math.max(0, (20 * 60) - (user.weeklyAISeconds || 0))
-                : null,
-            // Interactive tools
-            graphTool: graphToolConfig,
-            // Course progress update (scaffold advance, module complete)
-            courseProgress: courseProgressUpdate || null,
-            // Course context metadata
-            courseContext: {
-                courseId: courseSession.courseId,
-                courseName: courseSession.courseName,
-                currentModuleId: courseSession.currentModuleId,
-                overallProgress: courseSession.overallProgress
-            }
-        };
+            const accom = user.iepPlan?.accommodations;
+            const iepFeatures = accom ? {
+                autoReadAloud: accom.audioReadAloud || false,
+                showCalculator: accom.calculatorAllowed || false,
+                useHighContrast: accom.largePrintHighContrast || false,
+                extendedTimeMultiplier: accom.extendedTime ? 1.5 : 1.0,
+                mathAnxietySupport: accom.mathAnxietySupport || false,
+                chunkedAssignments: accom.chunkedAssignments || false
+            } : null;
+
+            responseData = {
+                text: aiResponseText,
+                userXp: xpInLevel,
+                userLevel: user.level,
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                voiceId: currentTutor.voiceId,
+                newlyUnlockedTutors: tutorsJustUnlocked,
+                iepFeatures,
+                problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
+                sessionStats: {
+                    problemsAttempted: conversation.problemsAttempted || 0,
+                    problemsCorrect: conversation.problemsCorrect || 0
+                },
+                xpLadder: {
+                    tier1: xpBreakdown.tier1,
+                    tier2: xpBreakdown.tier2,
+                    tier2Type: xpBreakdown.tier2Type,
+                    tier3: xpBreakdown.tier3,
+                    tier3Behavior: xpBreakdown.tier3Behavior,
+                    total: xpBreakdown.total,
+                    leveledUp
+                },
+                aiTimeUsed: aiProcessingSeconds,
+                freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
+                    ? Math.max(0, (20 * 60) - (user.weeklyAISeconds || 0))
+                    : null,
+                // Interactive tools
+                graphTool: graphToolConfig,
+                // Course-specific fields
+                courseContext: {
+                    courseId: courseSession.courseId,
+                    courseName: courseSession.courseName,
+                    currentModuleId: courseSession.currentModuleId,
+                    overallProgress: courseSession.overallProgress
+                }
+            };
+        }
 
         if (useStreaming) {
             if (!clientDisconnected) {
@@ -720,30 +741,60 @@ async function handleCourseGreeting(req, res, userId) {
         // Determine if this is a fresh start or a return
         const hasHistory = conversation.messages && conversation.messages.length > 0;
         const completedModules = (courseSession.modules || []).filter(m => m.status === 'completed').length;
+        const isParentCourse = pathway.audience === 'parent';
 
         let ghostMessage;
-        if (!hasHistory && completedModules === 0) {
-            // Brand new course — first time ever
-            ghostMessage = `Hi, I'm ${user.firstName}. I just enrolled in ${courseSession.courseName}. ` +
-                `I'm in ${user.gradeLevel || 'school'} and ready to start.`;
-        } else if (hasHistory) {
-            // Returning to an ongoing course
-            ghostMessage = `Hi, I'm ${user.firstName}. I'm coming back to continue ${courseSession.courseName}. ` +
-                `I'm on module: ${moduleData.title || courseSession.currentModuleId}. ` +
-                `My overall progress is ${courseSession.overallProgress || 0}%.`;
-        } else {
-            // Has completed some modules but new conversation
-            ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing ${courseSession.courseName}. ` +
-                `I've completed ${completedModules} module${completedModules !== 1 ? 's' : ''} ` +
-                `and I'm now on: ${moduleData.title || courseSession.currentModuleId}.`;
-        }
+        let greetingInstruction;
 
-        const greetingInstruction = `The student just entered their course session. They haven't typed anything yet — YOU are initiating. ` +
-            `The context below is invisible to them. Greet them naturally, reference the course/module, and either: ` +
-            `(a) if new, welcome them and preview what they'll learn in this module, or ` +
-            `(b) if returning, welcome them back and remind them where they left off. ` +
-            `Keep it to 2-3 sentences. Be warm but jump into course content quickly. ` +
-            `End with a question or prompt that kicks off the first scaffold element.`;
+        if (isParentCourse) {
+            // ── Parent-specific ghost messages and greeting instructions ──
+            if (!hasHistory && completedModules === 0) {
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm a parent and I just started ${courseSession.courseName}. ` +
+                    `I want to understand how my child is learning math so I can help at home.`;
+            } else if (hasHistory) {
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm back to continue ${courseSession.courseName}. ` +
+                    `I'm on the topic: ${moduleData.title || courseSession.currentModuleId}. ` +
+                    `I've completed ${courseSession.overallProgress || 0}% so far.`;
+            } else {
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing ${courseSession.courseName}. ` +
+                    `I've finished ${completedModules} topic${completedModules !== 1 ? 's' : ''} ` +
+                    `and I'm now on: ${moduleData.title || courseSession.currentModuleId}.`;
+            }
+
+            greetingInstruction = `A parent just opened their course. They haven't typed anything yet — YOU are initiating. ` +
+                `The context below is invisible to them. Greet them warmly as an adult, NOT as a student. ` +
+                ((!hasHistory && completedModules === 0)
+                    ? `This is their FIRST session. Welcome them to ${courseSession.courseName}. ` +
+                      `Acknowledge that modern math can look different from how they learned it — and that's OK. ` +
+                      `Preview what they'll learn in this first topic: "${moduleData.title}". ` +
+                      `Make them feel comfortable and excited to learn, not tested. `
+                    : `They're returning. Welcome them back briefly, remind them where they left off, ` +
+                      `and pick up naturally from the current topic. `) +
+                `Keep it to 3-4 sentences. Be warm, conversational, and adult-to-adult. ` +
+                `End with a casual question that starts the lesson — something like ` +
+                `"Have you ever seen this on your child's homework?" or "Ready to dive in?"`;
+        } else {
+            // ── Student ghost messages and greeting instructions ──
+            if (!hasHistory && completedModules === 0) {
+                ghostMessage = `Hi, I'm ${user.firstName}. I just enrolled in ${courseSession.courseName}. ` +
+                    `I'm in ${user.gradeLevel || 'school'} and ready to start.`;
+            } else if (hasHistory) {
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm coming back to continue ${courseSession.courseName}. ` +
+                    `I'm on module: ${moduleData.title || courseSession.currentModuleId}. ` +
+                    `My overall progress is ${courseSession.overallProgress || 0}%.`;
+            } else {
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing ${courseSession.courseName}. ` +
+                    `I've completed ${completedModules} module${completedModules !== 1 ? 's' : ''} ` +
+                    `and I'm now on: ${moduleData.title || courseSession.currentModuleId}.`;
+            }
+
+            greetingInstruction = `The student just entered their course session. They haven't typed anything yet — YOU are initiating. ` +
+                `The context below is invisible to them. Greet them naturally, reference the course/module, and either: ` +
+                `(a) if new, welcome them and preview what they'll learn in this module, or ` +
+                `(b) if returning, welcome them back and remind them where they left off. ` +
+                `Keep it to 2-3 sentences. Be warm but jump into course content quickly. ` +
+                `End with a question or prompt that kicks off the first scaffold element.`;
+        }
 
         const messagesForAI = [
             { role: 'system', content: systemPrompt },
