@@ -747,14 +747,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!container) return;
 
         try {
-            const res = await fetch('/api/courses?audience=parent', { credentials: 'include' });
-            if (!res.ok) {
-                container.innerHTML = '<p class="text-sm text-gray-500 text-center">No courses available yet.</p>';
-                if (mobileContainer) mobileContainer.innerHTML = container.innerHTML;
-                return;
-            }
-            const data = await res.json();
-            const courses = data.courses || [];
+            // Load catalog (parent courses from pathway files) and enrolled sessions in parallel
+            const [catalogRes, sessionsRes] = await Promise.all([
+                csrfFetch('/api/course-sessions/catalog?audience=parent', { credentials: 'include' }),
+                csrfFetch('/api/course-sessions', { credentials: 'include' })
+            ]);
+
+            const catalogData = catalogRes.ok ? await catalogRes.json() : { catalog: [] };
+            const sessionsData = sessionsRes.ok ? await sessionsRes.json() : { sessions: [] };
+            const courses = catalogData.catalog || [];
+            const sessions = sessionsData.sessions || [];
+
+            // Map enrolled sessions by courseId for quick lookup
+            const enrolledMap = {};
+            sessions.forEach(s => {
+                if (s.status === 'active' || s.status === 'paused') {
+                    enrolledMap[s.courseId] = s;
+                }
+            });
 
             if (courses.length === 0) {
                 container.innerHTML = '<p class="text-sm text-gray-500 text-center">Parent courses coming soon!</p>';
@@ -764,12 +774,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const html = courses.map(course => {
                 const gradeBand = course.gradeBand || '';
-                const unitCount = course.units ? course.units.length : 0;
-                const subtitle = course.subtitle || course.description || '';
-                const truncatedDesc = subtitle.length > 100 ? subtitle.substring(0, 100) + '...' : subtitle;
+                const desc = course.description || course.tagline || '';
+                const truncatedDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
+                const enrolled = enrolledMap[course.courseId];
+                const progress = enrolled ? (enrolled.overallProgress || 0) : 0;
+
+                let buttonHtml;
+                if (enrolled) {
+                    buttonHtml = `
+                        <div class="parent-course-progress-bar">
+                            <div class="parent-course-progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <button class="parent-course-enroll-btn enrolled" onclick="window.location.href='/parent-course.html?sessionId=${enrolled._id}&courseId=${course.courseId}'">
+                            <i class="fas fa-arrow-right"></i> Continue (${progress}%)
+                        </button>
+                    `;
+                } else {
+                    buttonHtml = `
+                        <button class="parent-course-enroll-btn" onclick="enrollParentCourse('${course.courseId}', this)">
+                            <i class="fas fa-play-circle"></i> Start Course
+                        </button>
+                    `;
+                }
 
                 return `
-                    <div class="parent-course-card" data-course-id="${course.courseId}">
+                    <div class="parent-course-card${enrolled ? ' enrolled' : ''}" data-course-id="${course.courseId}">
                         <div class="parent-course-card-title">
                             <i class="fas fa-book-reader"></i>
                             ${course.title}
@@ -777,11 +806,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="parent-course-card-desc">${truncatedDesc}</div>
                         <div class="parent-course-card-meta">
                             ${gradeBand ? `<span class="parent-course-badge badge-grade">${gradeBand}</span>` : ''}
-                            <span class="parent-course-badge badge-units">Mini-Course</span>
+                            <span class="parent-course-badge badge-units">${course.moduleCount || 4} topics</span>
                         </div>
-                        <button class="parent-course-enroll-btn" onclick="enrollParentCourse('${course.courseId}', this)">
-                            <i class="fas fa-play-circle"></i> Start Course
-                        </button>
+                        ${buttonHtml}
                     </div>
                 `;
             }).join('');
@@ -795,16 +822,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Enroll in a parent course
+    // Enroll in a parent course via the CourseSession system (pathway-based)
     window.enrollParentCourse = async function(courseId, btnElement) {
         try {
             btnElement.disabled = true;
             btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
 
-            const res = await fetch(`/api/courses/${courseId}/enroll`, {
+            const res = await csrfFetch('/api/course-sessions/enroll', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
+                credentials: 'include',
+                body: JSON.stringify({ courseId })
             });
 
             const data = await res.json();
@@ -812,16 +840,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (data.success) {
                 btnElement.innerHTML = '<i class="fas fa-check-circle"></i> Enrolled!';
                 btnElement.classList.add('enrolled');
-                // Redirect to the course after a brief delay
+                const sessionId = data.session?._id || '';
                 setTimeout(() => {
-                    window.location.href = `/course.html?courseId=${courseId}`;
+                    window.location.href = `/parent-course.html?sessionId=${sessionId}&courseId=${courseId}`;
                 }, 800);
             } else {
                 if (data.message && data.message.includes('Already enrolled')) {
                     btnElement.innerHTML = '<i class="fas fa-arrow-right"></i> Continue Course';
                     btnElement.classList.add('enrolled');
                     btnElement.disabled = false;
-                    btnElement.onclick = () => { window.location.href = `/course.html?courseId=${courseId}`; };
+                    btnElement.onclick = () => { window.location.href = `/parent-course.html?courseId=${courseId}`; };
                 } else {
                     btnElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Error'}`;
                     btnElement.disabled = false;
