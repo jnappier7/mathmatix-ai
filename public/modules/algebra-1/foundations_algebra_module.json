@@ -6,7 +6,7 @@
   "title": "Foundations of Algebra",
   "weeks": "1-2",
   "estimatedDuration": 45,
-  "description": "Build the foundational language of algebra by introducing variables, translating verbal phrases into algebraic expressions, mastering the order of operations (PEMDAS), exploring the commutative, associative, and distributive properties, and developing fluency with combining like terms and distributing over grouped expressions.",
+  "description": "Build the foundational language of algebra by introducing variables, translating verbal phrases into algebraic expressions, mastering the order of operations (GEMS), exploring the commutative, associative, and distributive properties, and developing fluency with combining like terms and distributing over grouped expressions.",
   "skills": [
     "variable-expressions",
     "order-of-operations",
@@ -22,14 +22,14 @@
   ],
   "goals": [
     "Define variables and translate verbal phrases into algebraic expressions",
-    "Apply the order of operations (PEMDAS) to evaluate numerical and algebraic expressions accurately",
+    "Apply the order of operations (GEMS) to evaluate numerical and algebraic expressions accurately",
     "Identify and apply the commutative, associative, and distributive properties of real numbers",
     "Combine like terms to simplify algebraic expressions",
     "Use the distributive property to expand and simplify expressions, including those with negative coefficients"
   ],
   "instructionalStrategy": [
     "Anchor abstract variable concepts in real-world contexts\u2014'x is the number of songs on your playlist' makes the idea of an unknown tangible.",
-    "Use PEMDAS mnemonics as a starting point but quickly transition to practice with nested grouping symbols to prevent the common mistake of treating multiplication and division (or addition and subtraction) as strictly left-to-right without equal precedence awareness.",
+    "Use GEMS mnemonics as a starting point but quickly transition to practice with nested grouping symbols to prevent the common mistake of treating multiplication and division (or addition and subtraction) as strictly left-to-right without equal precedence awareness.",
     "Color-code like terms on the board so students can visually see which terms may be combined and which may not (e.g., 3x in blue, 5x in blue, 4x\u00b2 in red).",
     "Present the distributive property as 'opening the door'\u2014everything inside the parentheses gets multiplied by what is outside, including signs.",
     "Build from concrete numerical examples (3 + 5 = 5 + 3) to algebraic generalizations (a + b = b + a) to reinforce that properties hold for all real numbers."
@@ -48,8 +48,8 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "order-of-operations",
-      "title": "Order of Operations (PEMDAS)",
-      "content": "When an expression contains more than one operation, we follow a specific order called **PEMDAS**:\n\n1. **P**arentheses (and other grouping symbols like brackets and fraction bars)\n2. **E**xponents\n3. **M**ultiplication and **D**ivision (left to right\u2014they are equal in priority)\n4. **A**ddition and **S**ubtraction (left to right\u2014they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols\u2014like brackets around parentheses [2 + (3 x 4)]\u2014always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
+      "title": "Order of Operations (GEMS)",
+      "content": "When an expression contains more than one operation, we follow a specific order called **GEMS**:\n\n1. **G**rouping (parentheses, brackets, and other grouping symbols like fraction bars)\n2. **E**xponents\n3. **M**ultiply and **D**ivide (left to right\u2014they are equal in priority)\n4. **S**ubtract and **A**dd (left to right\u2014they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols\u2014like brackets around parentheses [2 + (3 x 4)]\u2014always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
       "initialPrompt": "Try this: What is the value of 8 - 2 x 3 + 1? Be careful\u2014don't just go left to right!"
     },
     {

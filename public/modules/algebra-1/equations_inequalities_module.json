@@ -27,7 +27,7 @@
   ],
   "instructionalStrategy": [
     "Use the balance scale analogy: whatever you do to one side of the equation, you must do to the other side to keep it balanced.",
-    "Teach 'reverse PEMDAS' (undo addition/subtraction first, then multiplication/division) as the systematic approach to isolating the variable.",
+    "Teach equation-solving with the 'Box and Think Outside the Box' strategy: box the variable term (e.g., box [3x] in 3x + 7 = 22, which we read as '3 x's and 7 positive units'). Anything OUTSIDE the box — use opposites to make zero (add -7 to cancel the +7). Anything INSIDE the box — divide it out (3 is side by side with x, so divide). Emphasize 'Equations MUST always stay equal' — whatever you do to one side, you do to the other.",
     "Color-code each step of the solution process: highlight the operation performed in one color and the simplified result in another to make the logic visible.",
     "Introduce special cases (no solution and identity) through discovery\u2014let students encounter 0 = 5 or 0 = 0 and discuss what these results mean before defining the terms.",
     "Connect inequalities to equations by solving the related equation first, then using a test point to determine the direction of the inequality and reinforce the sign-flip rule with concrete numerical examples."
@@ -39,7 +39,7 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-one-step-equations",
       "title": "What Is an Equation?",
-      "content": "An **equation** is a mathematical statement that two expressions are equal, connected by the equals sign (=). Think of it like a balanced scale: the left side weighs the same as the right side. Our goal when solving an equation is to find the value of the variable that makes the statement true.\n\nWe solve equations using **inverse operations**\u2014operations that undo each other:\n- Addition and subtraction are inverses\n- Multiplication and division are inverses\n\nThe golden rule: **whatever you do to one side, you must do to the other side** to keep the equation balanced.\n\nFor a one-step equation like x + 7 = 15, you only need one inverse operation to isolate x. Since 7 is being added to x, subtract 7 from both sides: x = 15 - 7 = 8. Always **check** your answer by plugging it back in: 8 + 7 = 15 \u2713.",
+      "content": "An **equation** is a mathematical statement that two expressions are equal, connected by the equals sign (=). Think of it like a balanced scale: the left side weighs the same as the right side. Our goal when solving an equation is to find the value of the variable that makes the statement true.\n\nWe solve equations using **opposites** and **division**:\n- **Opposites make zero**: +7 and -7 are opposites, they cancel to zero\n- **Side by side, divide**: when a number is multiplied by the variable, divide it out\n\nThe golden rule: **Equations MUST always stay equal** \u2014 whatever you do to one side, you must do to the other side.\n\nFor a one-step equation like x + 7 = 15 (that's 'x and 7 positive units equals 15'), the +7 is outside with x. Opposites make zero: add -7 to both sides. x = 15 - 7 = 8. Always **check** your answer by plugging it back in: 8 + 7 = 15 \u2713.",
       "initialPrompt": "Imagine a balanced scale with x + 7 on the left and 15 on the right. What would you do to both sides to get x by itself?"
     },
     {
@@ -81,7 +81,7 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-multi-step-equations",
       "title": "Multi-Step Equations: Distribute First, Then Combine Like Terms",
-      "content": "Not all equations can be solved in one or two steps. **Multi-step equations** require you to simplify each side before isolating the variable. Here is the strategy:\n\n1. **Distribute** \u2014 If there are parentheses with a coefficient, apply the distributive property: a(b + c) = ab + ac.\n2. **Combine like terms** \u2014 Simplify each side by combining terms that have the same variable (or are both constants).\n3. **Use inverse operations** \u2014 Move variable terms to one side and constants to the other using reverse PEMDAS: undo addition/subtraction first, then undo multiplication/division.\n4. **Check** \u2014 Substitute your answer back into the original equation.\n\nFor example, in the equation 3(x + 4) - 2 = 19, you would first distribute the 3 to get 3x + 12 - 2 = 19, then combine like terms to get 3x + 10 = 19, then solve the resulting two-step equation.\n\nSometimes you will encounter **special cases**:\n- If the variables cancel and you get a **false statement** like 0 = 5, the equation has **no solution**.\n- If the variables cancel and you get a **true statement** like 0 = 0, the equation is an **identity** (every real number is a solution).",
+      "content": "Not all equations can be solved in one or two steps. **Multi-step equations** require you to simplify each side before isolating the variable. Here is the strategy:\n\n1. **Distribute** \u2014 If there are parentheses with a coefficient, apply the distributive property: a(b + c) = ab + ac.\n2. **Combine like terms** \u2014 Simplify each side by combining terms that have the same variable (or are both constants).\n3. **Box and isolate** \u2014 Box the variable term, then think outside the box. Anything outside the box \u2014 use opposites to make zero. Anything inside the box \u2014 divide it out. The equation MUST always stay equal.\n4. **Check** \u2014 Substitute your answer back into the original equation.\n\nFor example, in the equation 3(x + 4) - 2 = 19, you would first distribute the 3 to get 3x + 12 - 2 = 19, then combine like terms to get 3x + 10 = 19, then solve the resulting two-step equation.\n\nSometimes you will encounter **special cases**:\n- If the variables cancel and you get a **false statement** like 0 = 5, the equation has **no solution**.\n- If the variables cancel and you get a **true statement** like 0 = 0, the equation is an **identity** (every real number is a solution).",
       "initialPrompt": "What does the distributive property do? Why do we need to use it before we can combine like terms?"
     },
     {
@@ -130,7 +130,7 @@
           "answer": "x = 4",
           "hints": [
             "This is a two-step equation. What should you undo first \u2014 the addition of 5 or the multiplication by 2?",
-            "Use reverse PEMDAS: undo addition first. Subtract 5 from both sides to get 2x = 8.",
+            "Box the variable term: [2x] + 5 = 13. Think outside the box — deal with the +5 first. Opposites make zero: add -5 to both sides to get 2x = 8.",
             "Now divide both sides by 2: x = 4. Check: 2(4) + 5 = 8 + 5 = 13 \u2713."
           ]
         },

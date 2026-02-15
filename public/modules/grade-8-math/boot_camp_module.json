@@ -37,7 +37,7 @@
       "lessonPhase": "concept-intro",
       "title": "Integer Operations: The Foundation of Everything",
       "skill": "integer-operations",
-      "content": "Every equation, every expression, every graph in 8th grade involves integers. Sign errors are the #1 source of wrong answers all year.\n\n**Addition:** Same signs → add, keep sign. Different signs → subtract, keep sign of the bigger absolute value.\n**Subtraction:** Add the opposite. a − b = a + (−b). ALWAYS rewrite subtraction as adding the opposite.\n**Multiplication/Division:** Same signs → positive. Different signs → negative.\n**Order of operations:** PEMDAS still applies, but now with negative numbers in the mix.\n\n**8th-grade preview:** When you solve 3x − 7 = −22, you'll add 7, then divide by 3. If you mess up −22 + 7 = −15 (not −29), the whole answer is wrong.",
+      "content": "Every equation, every expression, every graph in 8th grade involves integers. Sign errors are the #1 source of wrong answers all year.\n\n**Addition:** Same signs → add, keep sign. Different signs → subtract, keep sign of the bigger absolute value.\n**Subtraction:** Add the opposite. a − b = a + (−b). ALWAYS rewrite subtraction as adding the opposite.\n**Multiplication/Division:** Same signs → positive. Different signs → negative.\n**Order of operations:** GEMS still applies, but now with negative numbers in the mix.\n\n**8th-grade preview:** When you solve 3x − 7 = −22, you'll add 7, then divide by 3. If you mess up −22 + 7 = −15 (not −29), the whole answer is wrong.",
       "keyPoints": [
         "Same signs → add magnitudes, keep sign: (−4) + (−3) = −7",
         "Different signs → subtract magnitudes, sign of larger: (−8) + 5 = −3",
@@ -105,10 +105,10 @@
       "lessonPhase": "concept-intro",
       "title": "Solving 1-Step and 2-Step Equations",
       "skill": "basic-equations",
-      "content": "Equations are the backbone of algebra. Every unit this year uses equation-solving. The key idea: whatever you do to one side, you MUST do to the other.\n\n**1-Step:** Use the inverse operation to isolate x. Addition ↔ subtraction. Multiplication ↔ division.\n**2-Step:** Undo addition/subtraction FIRST (peel off the outer layer), then undo multiplication/division.\n**Always check:** Substitute your answer back into the original equation.\n\n**Preview:** In Unit 2, you'll solve equations with variables on BOTH sides. These same inverse-operation skills are the foundation.",
+      "content": "Equations are the backbone of algebra. Every unit this year uses equation-solving. The key idea: whatever you do to one side, you MUST do to the other.\n\n**1-Step:** Use the inverse operation to isolate x. Addition ↔ subtraction. Multiplication ↔ division.\n**2-Step:** Box the variable term (like [3x] in 3x + 5 = 20). Anything OUTSIDE the box — use opposites to make zero. Anything INSIDE the box — divide it out.\n**Always check:** Substitute your answer back into the original equation.\n\n**Preview:** In Unit 2, you'll solve equations with variables on BOTH sides. These same inverse-operation skills are the foundation.",
       "keyPoints": [
         "Inverse operations: addition ↔ subtraction, multiplication ↔ division",
-        "2-step: undo add/subtract first, then multiply/divide",
+        "2-step: box the variable term, outside the box use opposites, inside the box divide",
         "Always check by substituting back into the original",
         "Show every step — skipping steps causes errors"
       ]

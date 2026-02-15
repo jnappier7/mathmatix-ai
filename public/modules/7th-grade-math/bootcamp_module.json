@@ -58,7 +58,7 @@
         "Adding integers: same signs \u2192 add and keep the sign. Different signs \u2192 subtract and keep the sign of the larger absolute value. Example: -8 + 5 = -3 (8 > 5, so negative wins).",
         "Subtracting integers: CHANGE to adding the opposite. Example: 4 - (-9) = 4 + 9 = 13. 'Keep-Change-Change' or 'Add the opposite' \u2014 pick a phrase and make it automatic.",
         "Multiplying and dividing: same signs \u2192 positive result. Different signs \u2192 negative result. Example: (-6)(-4) = +24, but (-6)(4) = -24.",
-        "Order of operations (PEMDAS) still applies with negatives. Watch out: -3^2 = -9 (square first, then negate), but (-3)^2 = 9 (negate first, then square). Parentheses matter!",
+        "Order of operations (GEMS) still applies with negatives. Watch out: -3^2 = -9 (square first, then negate), but (-3)^2 = 9 (negate first, then square). Parentheses matter!",
         "Zero facts: anything times 0 is 0. Division by 0 is undefined. 0 divided by anything is 0.",
         "Real-world connection: temperature drops, debt vs. savings, yards lost in football \u2014 integers are everywhere."
       ]
@@ -161,7 +161,7 @@
       "content": "An equation says two things are EQUAL. Solving means finding the value of the variable that makes it true. The golden rule: whatever you do to one side, you MUST do to the other side.",
       "keyPoints": [
         "One-step equations use a single inverse operation. Addition \u2194 subtraction. Multiplication \u2194 division. Example: x + 7 = 12 \u2192 subtract 7 \u2192 x = 5.",
-        "Two-step equations: undo addition/subtraction FIRST, then undo multiplication/division. Example: 3x + 5 = 20 \u2192 subtract 5 \u2192 3x = 15 \u2192 divide by 3 \u2192 x = 5. Think 'reverse PEMDAS.'",
+        "Two-step equations: Box the variable term [3x] in 3x + 5 = 20. Think outside the box \u2014 deal with +5 first. Opposites make zero: subtract 5 \u2192 3x = 15. Now 3 is inside the box with x \u2014 divide it out: x = 5.",
         "Equations with negatives: -4x = 28 \u2192 divide by -4 \u2192 x = -7. Dividing by a negative flips the sign.",
         "Equations with fractions: (2/3)x = 10 \u2192 multiply both sides by the reciprocal 3/2 \u2192 x = 15. Or multiply both sides by the denominator: multiply by 3 \u2192 2x = 30 \u2192 x = 15.",
         "ALWAYS check your answer by substituting back into the original equation. If both sides are equal, you are correct.",

@@ -11,7 +11,7 @@
     "enables": ["act-exponents-roots", "act-ratios-proportions-percents"],
     "standardsAlignment": ["ACT N 201-205", "ACT N 301-305"],
     "teachingGuidance": {
-      "coreConcepts": ["Order of operations (PEMDAS)", "Operations with fractions and mixed numbers", "Complex number arithmetic: i = sqrt(-1), i^2 = -1", "Powers of i cycle: i, -1, -i, 1"],
+      "coreConcepts": ["Order of operations (GEMS)", "Operations with fractions and mixed numbers", "Complex number arithmetic: i = sqrt(-1), i^2 = -1", "Powers of i cycle: i, -1, -i, 1"],
       "commonMistakes": ["Misapplying order of operations with nested parentheses", "Sign errors with negative fractions", "Forgetting i^2 = -1 when multiplying complex numbers"],
       "teachingTips": ["ACT places easy number-operation questions early — build confidence here", "Drill powers of i: divide exponent by 4 and use remainder", "Estimation eliminates 2-3 answer choices instantly"]
     },

@@ -30,7 +30,7 @@
       },
       {
         "skillId": "g6-evaluate-expressions",
-        "reteachFocus": "Substitution with parentheses, strict PEMDAS order, two-variable evaluation"
+        "reteachFocus": "Substitution with parentheses, strict GEMS order, two-variable evaluation"
       },
       {
         "skillId": "g6-combine-like-terms",

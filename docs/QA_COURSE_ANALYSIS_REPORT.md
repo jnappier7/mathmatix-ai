@@ -206,7 +206,7 @@ Only `algebra-1` and `geometry` include a `quarter` field. All other courses omi
 | 4. Mathematical Accuracy | **4** | All sampled solutions verified. Special cases (no solution, identity) handled correctly with clear explanations. |
 | 5. Standards Alignment | **4** | A-REI.1, A-REI.3 and other Algebra 1 CCSS standards. Full scope coverage from foundations through data analysis. |
 | 6. Scaffold & Assessment | **4** | 11 checkpoint modules. Progressive hints at 3 levels. `attemptsRequired` set to 3 for You-Do. Checkpoints have full remediation pathways with specific scaffold phase references. |
-| 7. Instructional Strategy | **4** | Highly specific: "Teach 'reverse PEMDAS' (undo addition/subtraction first, then multiplication/division)." Discovery-based learning for special cases: "let students encounter 0 = 5 or 0 = 0 and discuss what these results mean before defining the terms." |
+| 7. Instructional Strategy | **4** | Highly specific: "Box the variable term, think outside the box. Anything outside — use opposites to make zero. Anything inside — divide it out." Discovery-based learning for special cases: "let students encounter 0 = 5 or 0 = 0 and discuss what these results mean before defining the terms." |
 | 8. Prerequisite Coherence | **3** | No bootcamp/readiness module. Students coming from 8th grade may need prerequisite review. |
 
 **Total: 30/32 — EXEMPLARY**

@@ -40,11 +40,11 @@
       "title": "Evaluating Expressions with Substitution",
       "keyPoints": [
         "Substitution means replacing a variable with a given number \u2014 always place the value inside parentheses to avoid errors.",
-        "After substituting, follow the order of operations (PEMDAS) to simplify.",
+        "After substituting, follow the order of operations (GEMS) to simplify.",
         "Expressions can have more than one variable \u2014 substitute each one carefully.",
         "Pay special attention when substituting negative numbers: (-3)^2 = 9, but -3^2 = -9. The parentheses matter!"
       ],
-      "content": "When you **evaluate** an expression, you replace every variable with its given value and then compute the result.\n\n**Step 1 \u2014 Substitute:** Write the expression and replace each variable with its value inside parentheses.\n**Step 2 \u2014 Simplify:** Use the order of operations (PEMDAS) to calculate.\n\nFor example, to evaluate 2x + 5 when x = 3:\n2(3) + 5 = 6 + 5 = **11**\n\nWith negative numbers, parentheses are critical. Evaluate x^2 when x = -4:\n(-4)^2 = (-4)(-4) = **16** (not -16!)\n\nWith two variables, substitute both. Evaluate 3a - 2b when a = 5 and b = -1:\n3(5) - 2(-1) = 15 - (-2) = 15 + 2 = **17**",
+      "content": "When you **evaluate** an expression, you replace every variable with its given value and then compute the result.\n\n**Step 1 \u2014 Substitute:** Write the expression and replace each variable with its value inside parentheses.\n**Step 2 \u2014 Simplify:** Use the order of operations (GEMS) to calculate.\n\nFor example, to evaluate 2x + 5 when x = 3:\n2(3) + 5 = 6 + 5 = **11**\n\nWith negative numbers, parentheses are critical. Evaluate x^2 when x = -4:\n(-4)^2 = (-4)(-4) = **16** (not -16!)\n\nWith two variables, substitute both. Evaluate 3a - 2b when a = 5 and b = -1:\n3(5) - 2(-1) = 15 - (-2) = 15 + 2 = **17**",
       "initialPrompt": "Let's start with a warm-up. Can you evaluate 4x - 3 when x = 5? Show your substitution step."
     },
     {

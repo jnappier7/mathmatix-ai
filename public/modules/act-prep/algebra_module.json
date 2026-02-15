@@ -44,7 +44,7 @@
       "skill": "act-linear-equations",
       "content": "Linear equations and inequalities form the backbone of ACT algebra. These appear in questions 1-30 and are designed to be solved quickly. The key is recognizing equation type and choosing the fastest solution path.",
       "keyPoints": [
-        "Isolate the variable: undo operations in reverse order",
+        "Isolate the variable: box the variable term, use opposites for what's outside, divide for what's inside",
         "Equations with fractions: multiply every term by the LCD to clear fractions",
         "Inequalities: flip the sign when multiplying or dividing by a negative",
         "Absolute value equation |ax + b| = c: split into two cases: ax + b = c OR ax + b = \u2212c",

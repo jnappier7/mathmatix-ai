@@ -25,7 +25,7 @@
   ],
   "goals": [
     "Translate verbal phrases into algebraic expressions and interpret algebraic expressions in words",
-    "Evaluate algebraic expressions by substituting given values and applying order of operations (PEMDAS)",
+    "Evaluate algebraic expressions by substituting given values and applying order of operations (GEMS)",
     "Combine like terms and apply the distributive property to simplify expressions",
     "Identify and name the parts of an expression: terms, coefficients, constants, and factors",
     "Apply area and volume formulas by substituting values and solving for a missing dimension"
@@ -139,7 +139,7 @@
       "content": "Once you can write an expression, the next step is figuring out what it equals for a specific value. Evaluating an expression means replacing the variable with a given number and then calculating the result using order of operations.",
       "keyPoints": [
         "Substitute means replacing the variable with a specific number — write the number in parentheses to avoid mistakes",
-        "Always follow PEMDAS after substituting: Parentheses → Exponents → Multiply/Divide (left to right) → Add/Subtract (left to right)",
+        "Always follow GEMS after substituting: Grouping → Exponents → Multiply/Divide (left to right) → Add/Subtract (left to right)",
         "When a variable appears more than once, replace every copy with the same value",
         "Two-variable expressions: substitute each variable with its own given value",
         "Implied multiplication: 3n means 3 × n, so if n = 4, write 3(4) = 12"

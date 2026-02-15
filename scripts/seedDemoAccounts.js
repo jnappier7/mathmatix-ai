@@ -79,7 +79,7 @@ async function seedDemoAccounts() {
         scaffoldingLevel: 3,
         scaffoldingNote: 'Start at 3, increase to 4 for struggling learners.',
         vocabularyPreferences: {
-          orderOfOperations: 'PEMDAS',
+          orderOfOperations: 'GEMS',
           customVocabulary: [
             "Use 'rate of change' alongside 'slope'",
             "Say 'equal groups' not 'times' for multiplication intro"

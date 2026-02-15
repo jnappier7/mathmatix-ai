@@ -124,7 +124,7 @@ These are foundational skills for young learners. Missing these blocks early pro
 - `factoring-gcf` - Factor out GCF
 - `factoring-quadratics` - Factor quadratic expressions
 - `factoring-difference-squares` - Factor a²-b²
-- `order-of-operations` - Apply PEMDAS (NEW milestone)
+- `order-of-operations` - Apply GEMS (NEW milestone)
 - `evaluate-expressions` - Evaluate with substitution (NEW milestone)
 - `nested-operations` - Handle nested operations (NEW milestone)
 

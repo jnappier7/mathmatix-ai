@@ -442,8 +442,8 @@
     ],
     "teachingGuidance": {
       "coreConcepts": [
-        "Undo operations in reverse order (PEMDAS backwards)",
-        "Typically: undo addition/subtraction first, then multiplication/division",
+        "Box the variable term, think outside the box",
+        "Outside the box: use opposites to make zero; Inside the box: divide it out",
         "Maintain balance",
         "Can clear fractions/decimals first"
       ],
@@ -453,7 +453,7 @@
         "Not simplifying completely"
       ],
       "teachingTips": [
-        "Think: peel the onion",
+        "Box the variable term, outside = opposites, inside = divide",
         "Work systematically",
         "Always check your answer"
       ]
@@ -5154,8 +5154,8 @@
     ],
     "teachingGuidance": {
       "coreConcepts": [
-        "Undo operations in reverse order (like equations)",
-        "Undo addition/subtraction first, then multiply/divide",
+        "Same as equations: box the variable term, think outside the box",
+        "Outside the box: use opposites; Inside the box: divide it out",
         "Flip inequality if multiply/divide by negative",
         "Solution is still a range",
         "Graph and test solution"

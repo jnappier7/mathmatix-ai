@@ -24,7 +24,7 @@ Enhanced pattern structure with strategic additions:
 | Pattern | Tier | New Milestone | Description |
 |---------|------|---------------|-------------|
 | Structure | Tier 1 | Number Bonds | Build fluency with number relationships |
-| Structure | Tier 2 | Order of Operations | Apply PEMDAS/GEMDAS systematically |
+| Structure | Tier 2 | Order of Operations | Apply GEMS systematically |
 | Space | Tier 1 | Symmetry | Identify and create symmetric shapes |
 | Comparison | Tier 1 | Estimation | Estimate sums and check reasonableness |
 | Change | Tier 1 | Change Story Problems | Solve word problems with change scenarios |

@@ -311,9 +311,9 @@ const SKILL_HINT_TEMPLATES = {
             "Which operation should you undo first?"
         ],
         level2: [
-            "Work backwards - undo addition/subtraction before multiplication/division",
-            "Isolate the variable term first, then isolate the variable itself",
-            "Use inverse operations to simplify"
+            "Box the variable term — now think outside the box! Anything outside the box, use opposites to make zero.",
+            "Opposites make zero: cancel the constant by adding its opposite to both sides. The equation MUST stay equal!",
+            "Anything inside the box — divide it out. When the coefficient is side by side with the variable, divide both sides."
         ],
         level3: [
             "Subtract {constant} from both sides",
@@ -329,7 +329,7 @@ const SKILL_HINT_TEMPLATES = {
             "Do parentheses change the order?"
         ],
         level2: [
-            "Remember: PEMDAS - Parentheses, Exponents, Multiplication/Division, Addition/Subtraction",
+            "Remember: GEMS - Grouping, Exponents, Multiply/Divide, Subtract/Add",
             "Work from left to right for operations at the same level",
             "Evaluate inside parentheses first"
         ],

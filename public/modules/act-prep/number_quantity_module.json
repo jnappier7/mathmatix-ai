@@ -42,7 +42,7 @@
       "skill": "act-real-complex-numbers",
       "content": "The ACT math section starts with straightforward number operation questions. These are designed to be quick wins \u2014 but only if your arithmetic is sharp. This section covers the building blocks: order of operations, fractions, decimals, and number properties.",
       "keyPoints": [
-        "PEMDAS: Parentheses \u2192 Exponents \u2192 Multiplication/Division (left to right) \u2192 Addition/Subtraction (left to right)",
+        "GEMS: Grouping \u2192 Exponents \u2192 Multiply/Divide (left to right) \u2192 Subtract/Add (left to right)",
         "Fractions: to add/subtract, find common denominator. To multiply, multiply straight across. To divide, multiply by the reciprocal.",
         "Converting: fraction \u2192 decimal: divide. Decimal \u2192 percent: multiply by 100. Percent \u2192 decimal: divide by 100.",
         "Number properties: even + even = even, odd + odd = even, even \u00d7 anything = even",
@@ -57,7 +57,7 @@
       "examples": [
         {
           "problem": "What is the value of 3 + 4 \u00d7 2\u00b2 - 6 \u00f7 3?\n(A) 15  (B) 17  (C) 19  (D) 21  (E) 26",
-          "solution": "Follow PEMDAS:\n1) Exponent: 2\u00b2 = 4\n2) Multiply: 4 \u00d7 4 = 16\n3) Divide: 6 \u00f7 3 = 2\n4) Add/Subtract left to right: 3 + 16 - 2 = 17\nAnswer: (B) 17"
+          "solution": "Follow GEMS:\n1) Exponent: 2\u00b2 = 4\n2) Multiply: 4 \u00d7 4 = 16\n3) Divide: 6 \u00f7 3 = 2\n4) Add/Subtract left to right: 3 + 16 - 2 = 17\nAnswer: (B) 17"
         },
         {
           "problem": "Which of the following is equal to 2/3 + 3/4?\n(A) 5/7  (B) 5/12  (C) 17/12  (D) 6/7  (E) 11/12",

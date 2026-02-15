@@ -229,9 +229,9 @@
       "keyPoints": [
         "An expression uses numbers, variables, and operations but has NO equal sign. Example: 3x + 7.",
         "Translate words to math: 'sum of' = +, 'product of' = x, '5 less than n' = n - 5 (careful with order!).",
-        "Evaluate: substitute the given value and follow order of operations (PEMDAS/GEMDAS).",
+        "Evaluate: substitute the given value and follow order of operations (GEMS).",
         "An equation has an equal sign. Solve by using inverse operations to isolate the variable.",
-        "Two-step equations: undo addition/subtraction first, then multiplication/division. Example: 2x + 5 = 13 -> 2x = 8 -> x = 4.",
+        "Two-step equations: Box the variable term [2x] in 2x + 5 = 13. Outside the box: opposites make zero (subtract 5) -> 2x = 8. Inside the box: divide it out (divide by 2) -> x = 4.",
         "Inequality: same process as equations, but flip the symbol when multiplying or dividing by a negative. Graph on a number line (open circle for < or >, closed for <= or >=)."
       ]
     },
