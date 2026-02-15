@@ -17,6 +17,7 @@ const {
   calculateAssessmentResults
 } = require('../services/assessmentService');
 const Conversation = require('../models/conversation');
+const CourseSession = require('../models/courseSession');
 const User = require('../models/user');
 const logger = require('../utils/logger').child({ route: 'conversations' });
 
@@ -44,6 +45,199 @@ router.get('/', isAuthenticated, async (req, res) => {
   } catch (error) {
     logger.error('Failed to get conversations', { error });
     res.status(500).json({ message: 'Failed to load conversations' });
+  }
+});
+
+/**
+ * GET /api/conversations/returning-user-data
+ * Get combined data for the returning user welcome modal.
+ * Returns course sessions (with their recent conversations) and recent general sessions.
+ */
+router.get('/returning-user-data', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId)
+      .select('learningProfile assessmentCompleted activeConversationId activeCourseSessionId')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // A returning user has completed rapport building and assessment
+    const isReturningUser = !!(
+      user.learningProfile?.rapportBuildingComplete &&
+      user.assessmentCompleted
+    );
+
+    if (!isReturningUser) {
+      return res.json({ isReturningUser: false });
+    }
+
+    // Get course sessions (active or paused)
+    const courseSessions = await CourseSession.find({
+      userId,
+      status: { $in: ['active', 'paused'] }
+    }).sort({ updatedAt: -1 }).lean();
+
+    // Build course data with their associated conversations
+    const courses = [];
+    for (const cs of courseSessions) {
+      // Find the course conversation and any other conversations linked to this course
+      const courseConversations = await Conversation.find({
+        userId,
+        isActive: true,
+        $or: [
+          { _id: cs.conversationId },
+          { conversationType: 'course', topic: cs.courseName }
+        ]
+      })
+        .sort({ lastActivity: -1 })
+        .select('_id conversationName customName topic topicEmoji lastActivity messages conversationType')
+        .lean();
+
+      const formattedConversations = courseConversations.map(conv => {
+        const lastMsg = conv.messages?.length > 0
+          ? conv.messages[conv.messages.length - 1].content.substring(0, 80)
+          : null;
+        return {
+          _id: conv._id,
+          name: conv.customName || conv.conversationName || conv.topic || 'Course Chat',
+          lastMessage: lastMsg,
+          lastActivity: conv.lastActivity,
+          messageCount: conv.messages?.length || 0
+        };
+      });
+
+      // Format current module name
+      const modLabel = (cs.currentModuleId || '')
+        .replace(/^mod-/, '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+      courses.push({
+        courseSessionId: cs._id,
+        courseId: cs.courseId,
+        courseName: cs.courseName,
+        status: cs.status,
+        overallProgress: cs.overallProgress || 0,
+        currentModuleId: cs.currentModuleId,
+        currentScaffoldIndex: cs.currentScaffoldIndex || 0,
+        conversationId: cs.conversationId,
+        currentModuleLabel: modLabel,
+        conversations: formattedConversations
+      });
+    }
+
+    // Get recent general/topic sessions (not course conversations)
+    const recentSessions = await Conversation.find({
+      userId,
+      isActive: true,
+      conversationType: { $in: ['general', 'topic'] }
+    })
+      .sort({ lastActivity: -1 })
+      .limit(10)
+      .select('_id conversationName customName topic topicEmoji lastActivity messages conversationType')
+      .lean();
+
+    const formattedSessions = recentSessions
+      .filter(conv => conv.messages?.length > 0) // Only show sessions with messages
+      .map(conv => {
+        const lastMsg = conv.messages[conv.messages.length - 1].content.substring(0, 80);
+        return {
+          _id: conv._id,
+          name: conv.customName || conv.conversationName || conv.topic || 'General Chat',
+          topicEmoji: conv.topicEmoji || '💬',
+          lastMessage: lastMsg,
+          lastActivity: conv.lastActivity,
+          messageCount: conv.messages.length,
+          conversationType: conv.conversationType
+        };
+      });
+
+    res.json({
+      isReturningUser: true,
+      courses,
+      recentSessions: formattedSessions
+    });
+  } catch (error) {
+    logger.error('Failed to get returning user data', { error });
+    res.status(500).json({ message: 'Failed to load returning user data' });
+  }
+});
+
+/**
+ * POST /api/conversations/new-course-session
+ * Create a fresh conversation for an existing course session.
+ * The student picks up at their current lesson/scaffold step but in a clean chat.
+ */
+router.post('/new-course-session', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { courseSessionId } = req.body;
+
+    if (!courseSessionId) {
+      return res.status(400).json({ message: 'courseSessionId is required' });
+    }
+
+    const courseSession = await CourseSession.findOne({
+      _id: courseSessionId,
+      userId,
+      status: { $in: ['active', 'paused'] }
+    });
+
+    if (!courseSession) {
+      return res.status(404).json({ message: 'Course session not found' });
+    }
+
+    // Create a fresh conversation for this course
+    const newConversation = new Conversation({
+      userId,
+      conversationType: 'course',
+      conversationName: courseSession.courseName,
+      topic: courseSession.courseName,
+      messages: []
+    });
+    await newConversation.save();
+
+    // Update the course session to point to the new conversation
+    courseSession.conversationId = newConversation._id;
+    courseSession.status = 'active';
+    await courseSession.save();
+
+    // Set as user's active course session and conversation
+    const user = await User.findById(userId);
+    user.activeCourseSessionId = courseSession._id;
+    user.activeConversationId = newConversation._id;
+    await user.save();
+
+    logger.info('Created fresh course conversation', {
+      userId,
+      courseSessionId,
+      newConversationId: newConversation._id,
+      currentModuleId: courseSession.currentModuleId,
+      currentScaffoldIndex: courseSession.currentScaffoldIndex
+    });
+
+    res.json({
+      success: true,
+      conversation: {
+        _id: newConversation._id,
+        name: newConversation.conversationName,
+        conversationType: 'course'
+      },
+      courseSession: {
+        _id: courseSession._id,
+        courseId: courseSession.courseId,
+        courseName: courseSession.courseName,
+        currentModuleId: courseSession.currentModuleId,
+        currentScaffoldIndex: courseSession.currentScaffoldIndex,
+        overallProgress: courseSession.overallProgress
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to create new course session conversation', { error });
+    res.status(500).json({ message: 'Failed to create new session' });
   }
 });
 

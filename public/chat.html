@@ -33,6 +33,7 @@
   <link rel="stylesheet" href="/css/show-your-work.css" />
   <link rel="stylesheet" href="/css/courseCatalog.css" />
   <link rel="stylesheet" href="/css/graphTool.css" />
+  <link rel="stylesheet" href="/css/returning-user-modal.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -1398,6 +1399,44 @@
     <div class="resize-handle"></div>
   </div>
 
+  <!-- Returning User Welcome Modal -->
+  <div id="returning-user-modal" class="modal-overlay returning-user-overlay" style="display: none;">
+    <div class="modal-content returning-user-content">
+      <div class="returning-user-header">
+        <h2 id="returning-user-greeting"></h2>
+        <p class="returning-user-subtitle">Where do you want to pick up?</p>
+      </div>
+
+      <div id="returning-user-body" class="returning-user-body">
+        <!-- Course Sessions Section -->
+        <div id="returning-user-courses" style="display: none;">
+          <div class="returning-section-label">
+            <i class="fas fa-graduation-cap"></i> My Courses
+          </div>
+          <div id="returning-courses-list" class="returning-courses-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Recent Sessions Section -->
+        <div id="returning-user-sessions" style="display: none;">
+          <div class="returning-section-label">
+            <i class="fas fa-comments"></i> Recent Sessions
+          </div>
+          <div id="returning-sessions-list" class="returning-sessions-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <div class="returning-user-footer">
+        <button id="returning-new-general-btn" class="returning-action-btn returning-new-btn">
+          <i class="fas fa-plus-circle"></i> Start Fresh Session
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Tutor Unlock Celebration Screen -->
   <div id="tutor-unlock-screen" class="tutor-unlock-overlay" style="display: none;">
     <div class="tutor-unlock-content">
@@ -1700,6 +1739,7 @@
   <script src="/js/floating-screener.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/courseCatalog.js"></script>
+  <script src="/js/returningUserModal.js"></script>
   <script src="/js/graphTool.js"></script>
   <script src="/js/diagram-display.js"></script>
   <script src="/js/inlineChatVisuals.js"></script>
