@@ -8,8 +8,10 @@
   "description": "Master the definite integral from first principles through advanced techniques. Begin with Riemann sums and the concept of accumulation, then formalize with the Fundamental Theorem of Calculus (both parts). Build a toolkit of antidifferentiation methods: u-substitution for chain-rule reversal, integration by parts for products, partial fractions for rational functions, and improper integrals for unbounded domains or integrands. This heavyweight unit is the backbone of AP Calculus BC — nearly half of the exam's free-response questions require fluent integration skills.",
   "skills": [
     "riemann-sums",
+    "definite-integral-properties",
     "ftc-part1",
     "ftc-part2",
+    "antiderivatives",
     "u-substitution",
     "integration-by-parts",
     "partial-fractions",

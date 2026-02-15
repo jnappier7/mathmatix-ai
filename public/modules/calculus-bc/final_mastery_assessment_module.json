@@ -34,7 +34,7 @@
     "improper-integrals",
     "slope-fields",
     "separation-of-variables",
-    "eulers-method",
+    "euler-method",
     "logistic-growth",
     "area-between-curves",
     "volume-disk-washer",
@@ -152,7 +152,7 @@
       "id": "cbf-13",
       "question": "Use Euler's method with step size \u0394x = 0.5 to approximate y(1) given dy/dx = x + y and y(0) = 1.",
       "answer": "Step 1: x\u2080=0, y\u2080=1. dy/dx=0+1=1. y\u2081 = 1+1(0.5) = 1.5. Step 2: x\u2081=0.5, y\u2081=1.5. dy/dx=0.5+1.5=2. y\u2082 = 1.5+2(0.5) = 2.5. y(1) \u2248 2.5.",
-      "skill": "eulers-method",
+      "skill": "euler-method",
       "difficulty": 4,
       "points": 6
     },
