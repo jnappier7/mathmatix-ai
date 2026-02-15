@@ -1,0 +1,770 @@
+[
+  {
+    "skillId": "emf-place-value",
+    "displayName": "Place Value",
+    "description": "Understand place value through millions (whole numbers) and thousandths (decimals); read, write, and expand numbers in standard, word, and expanded form",
+    "category": "number-sense",
+    "course": "Early Math Foundations",
+    "quarter": 0,
+    "unit": 0,
+    "prerequisites": [],
+    "enables": ["emf-rounding-estimation", "emf-compare-order", "emf-multi-digit-addition", "emf-decimal-place-value"],
+    "standardsAlignment": ["3.NBT.A.1", "4.NBT.A.1", "4.NBT.A.2", "5.NBT.A.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["Each place is 10× the place to its right", "Standard form (456), word form (four hundred fifty-six), expanded form (400+50+6)", "Zero as a placeholder: 302 vs 320 vs 3,002", "Decimal places: tenths, hundredths, thousandths"],
+      "commonMistakes": ["Reading 1,023 as 'one thousand twenty-three' but writing 100023", "Confusing 'hundred' and 'hundreds place'", "Not understanding zero as placeholder in numbers like 4,005"],
+      "teachingTips": ["Use base-10 blocks and place value charts physically", "Money is the best decimal context: $1.25 = 1 dollar, 2 dimes, 5 pennies", "Build numbers with cards that stack (hundreds on bottom, tens in middle, ones on top)"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+  },
+  {
+    "skillId": "emf-rounding-estimation",
+    "displayName": "Rounding & Estimation",
+    "description": "Round whole numbers to any place; estimate sums, differences, and products to check reasonableness",
+    "category": "number-sense",
+    "course": "Early Math Foundations",
+    "quarter": 0,
+    "unit": 0,
+    "prerequisites": ["emf-place-value"],
+    "enables": ["emf-add-sub-word-problems", "emf-mental-math-strategies"],
+    "standardsAlignment": ["3.NBT.A.1", "4.NBT.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Identify the rounding place, look at the digit to its right", "5 or more rounds up, 4 or less rounds down", "Estimation: round FIRST, then compute to get a ballpark", "Use estimation to check if exact answers are reasonable"],
+      "commonMistakes": ["Rounding the wrong digit", "Changing digits to the LEFT of the rounding place", "Not using estimation to check work (computing blind)"],
+      "teachingTips": ["Number lines help visualize: is 347 closer to 300 or 400?", "Make estimation a HABIT: 'About how much?' before every computation", "Use shopping context: 'You have $20 — can you afford these 3 items?'"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+  },
+  {
+    "skillId": "emf-compare-order",
+    "displayName": "Compare & Order Numbers",
+    "description": "Compare whole numbers using < > =; order sets of numbers from least to greatest and greatest to least",
+    "category": "number-sense",
+    "course": "Early Math Foundations",
+    "quarter": 0,
+    "unit": 0,
+    "prerequisites": ["emf-place-value"],
+    "enables": ["emf-compare-order-fractions", "emf-compare-order-decimals"],
+    "standardsAlignment": ["3.NBT.A.1", "4.NBT.A.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Compare digit by digit from left (largest place) to right", "More digits usually means larger (for whole numbers)", "< means less than (opens toward the bigger number)", "Ordering: find the smallest, then the next smallest, etc."],
+      "commonMistakes": ["Mixing up < and > direction", "Comparing only the first digit without checking other places", "Struggling with numbers that have different digit counts"],
+      "teachingTips": ["Alligator/Pac-Man eats the bigger number: 45 > 32", "Write numbers vertically aligned by place value to compare", "Use real contexts: scores, prices, distances"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 95, "targetSpeed": "10 seconds per comparison" }
+  },
+  {
+    "skillId": "emf-add-sub-facts",
+    "displayName": "Addition & Subtraction Facts",
+    "description": "Fluency with basic addition and subtraction facts through 20; fact families; mental automaticity",
+    "category": "number-sense",
+    "course": "Early Math Foundations",
+    "quarter": 0,
+    "unit": 0,
+    "prerequisites": [],
+    "enables": ["emf-multi-digit-addition", "emf-multi-digit-subtraction"],
+    "standardsAlignment": ["2.OA.B.2", "3.NBT.A.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Addition facts through 9+9=18 on autopilot", "Subtraction as the inverse of addition: 8+5=13 → 13-5=8", "Fact families: 3, 7, 10 → 3+7=10, 7+3=10, 10-3=7, 10-7=3", "Make 10 strategy: 8+6 = 8+2+4 = 10+4 = 14"],
+      "commonMistakes": ["Counting on fingers past 2nd grade indicates a gap", "Not connecting addition and subtraction as inverse operations", "Slow recall slows down every multi-digit problem"],
+      "teachingTips": ["If a student counts on fingers, they need targeted fact practice — not shame", "Use timed fact quizzes (low-stakes) to build automaticity", "Ten frames and number bonds build conceptual foundation for facts"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 95, "targetSpeed": "3 seconds per fact" }
+  },
+  {
+    "skillId": "emf-number-patterns",
+    "displayName": "Number Patterns",
+    "description": "Identify, describe, and extend number patterns; skip counting; odd/even; intro to factors and multiples",
+    "category": "number-sense",
+    "course": "Early Math Foundations",
+    "quarter": 0,
+    "unit": 0,
+    "prerequisites": [],
+    "enables": ["emf-factors-multiples", "emf-patterns-rules"],
+    "standardsAlignment": ["3.OA.D.9", "4.OA.C.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["Skip counting by 2s, 3s, 5s, 10s, 25s, 100s", "Odd numbers end in 1,3,5,7,9; even numbers end in 0,2,4,6,8", "Identify the rule in a pattern (add 3, multiply by 2, subtract 5)", "Extend a pattern forward and backward"],
+      "commonMistakes": ["Confusing the pattern with one specific jump", "Not checking if the rule works for ALL terms (just the first two)", "Difficulty with decreasing patterns (subtract, divide)"],
+      "teachingTips": ["Hundred chart is essential — circle skip-counting patterns and SEE the visual", "Connect skip counting to multiplication: counting by 4s IS the 4× table", "Use physical patterns: clap-stomp-clap-stomp — what comes next?"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-multi-digit-addition",
+    "displayName": "Multi-Digit Addition",
+    "description": "Add multi-digit whole numbers using the standard algorithm with regrouping (carrying)",
+    "category": "addition-subtraction",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 1,
+    "prerequisites": ["emf-place-value", "emf-add-sub-facts"],
+    "enables": ["emf-add-sub-word-problems", "emf-add-subtract-decimals"],
+    "standardsAlignment": ["3.NBT.A.2", "4.NBT.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Line up by place value (ones under ones, tens under tens)", "Add column by column from right to left", "Regroup (carry) when a column sums to 10 or more", "Works for 2-digit through 5+ digit numbers"],
+      "commonMistakes": ["Not aligning place values", "Forgetting to carry the regrouped digit", "Writing the full two-digit sum in one column instead of carrying"],
+      "teachingTips": ["Use graph paper to keep columns straight", "Base-10 blocks: 10 ones become 1 ten, physically regroup", "Start with no regrouping, then 1 regroup, then multiple"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "30 seconds per problem" }
+  },
+  {
+    "skillId": "emf-multi-digit-subtraction",
+    "displayName": "Multi-Digit Subtraction",
+    "description": "Subtract multi-digit whole numbers using the standard algorithm with regrouping (borrowing), including borrowing across zeros",
+    "category": "addition-subtraction",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 1,
+    "prerequisites": ["emf-place-value", "emf-add-sub-facts"],
+    "enables": ["emf-add-sub-word-problems", "emf-add-subtract-decimals"],
+    "standardsAlignment": ["3.NBT.A.2", "4.NBT.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Subtract column by column from right to left", "If top digit < bottom digit, borrow from the next column left", "Borrowing across zeros: 3,004 - 1,567 requires chain borrowing", "Check by adding: answer + bottom number should equal top number"],
+      "commonMistakes": ["Subtracting the smaller digit from the larger regardless of position (52-37 → getting 25)", "Borrowing errors across zeros", "Not checking work by adding back"],
+      "teachingTips": ["Borrowing across zeros is THE hardest subtraction skill — practice it extensively", "Use 'adding up' method as alternative: 1,567 + ? = 3,004", "Money context: 'You had $50.00 and spent $23.47 — show the borrowing'"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "45 seconds per problem" }
+  },
+  {
+    "skillId": "emf-add-sub-word-problems",
+    "displayName": "Addition & Subtraction Word Problems",
+    "description": "Solve one-step and two-step word problems requiring addition and/or subtraction; choose the correct operation",
+    "category": "addition-subtraction",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 1,
+    "prerequisites": ["emf-multi-digit-addition", "emf-multi-digit-subtraction"],
+    "enables": ["emf-multiply-word-problems", "emf-divide-word-problems"],
+    "standardsAlignment": ["3.OA.D.8", "4.OA.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Read the problem, identify what you know and what you need to find", "Key contexts: joining (add), separating (subtract), comparing (usually subtract)", "Two-step problems require two operations — solve one step at a time", "Check: does the answer make sense in the story?"],
+      "commonMistakes": ["Always adding because 'word problems mean add'", "Not reading the question carefully (answering the wrong thing)", "Skipping the 'does it make sense?' check"],
+      "teachingTips": ["Ban the word 'keyword' — teach reading comprehension instead", "Draw bar models/tape diagrams to visualize the relationship", "Have students write their OWN word problems to build understanding"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "60 seconds per problem" }
+  },
+  {
+    "skillId": "emf-mental-math-strategies",
+    "displayName": "Mental Math Strategies",
+    "description": "Use compatible numbers, breaking apart, compensation, and other strategies to compute mentally",
+    "category": "addition-subtraction",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 1,
+    "prerequisites": ["emf-add-sub-facts", "emf-rounding-estimation"],
+    "enables": ["emf-multiply-word-problems"],
+    "standardsAlignment": ["3.NBT.A.2", "4.NBT.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Compatible numbers: 27 + 73 = 100 (they 'fit together')", "Break apart: 45 + 38 = 45 + 35 + 3 = 80 + 3 = 83", "Compensation: 99 + 47 = 100 + 47 - 1 = 146", "Counting up for subtraction: 83 - 47 → 47 + 3 = 50, 50 + 30 = 80, 80 + 3 = 83 → answer is 36"],
+      "commonMistakes": ["Trying to do the standard algorithm in their head (inefficient)", "Losing track of adjusted numbers in compensation", "Not recognizing when mental math is faster than pencil/paper"],
+      "teachingTips": ["Model your OWN mental math thinking out loud", "Games: 'Make 100' with cards, mental math races", "These strategies build number sense that supports ALL future math"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "20 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-multiplication-facts",
+    "displayName": "Multiplication Facts",
+    "description": "Recall multiplication facts through 12×12 with automaticity; understand multiplication as repeated addition and equal groups",
+    "category": "multiplication",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 2,
+    "prerequisites": ["emf-add-sub-facts", "emf-number-patterns"],
+    "enables": ["emf-multi-digit-multiplication", "emf-division-facts", "emf-factors-multiples"],
+    "standardsAlignment": ["3.OA.A.1", "3.OA.C.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Multiplication = equal groups (3 × 4 = 3 groups of 4 = 12)", "Also means array/area (3 rows × 4 columns = 12)", "Facts through 12×12 must be automatic — not counted, recalled", "Connection to skip counting: 7×3 is the 3rd number when counting by 7s"],
+      "commonMistakes": ["Confusing 3×4 (3 groups of 4) with 3+4", "Fact gaps at 6×7, 6×8, 7×8, 8×9 — these are the hardest", "Relying on skip counting for every fact (too slow for fluency)"],
+      "teachingTips": ["Learn in order: ×0, ×1, ×2, ×5, ×10, ×9 (tricks), ×3, ×4, ×6, ×7, ×8, ×11, ×12", "After the easy ones, only ~15 hard facts remain — target those", "Daily fact practice (flashcards, games, timed drills) until automatic"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 95, "targetSpeed": "3 seconds per fact" }
+  },
+  {
+    "skillId": "emf-multiplication-properties",
+    "displayName": "Multiplication Properties",
+    "description": "Understand and use commutative (a×b=b×a), associative ((a×b)×c=a×(b×c)), distributive (a×(b+c)=a×b+a×c), zero, and identity properties",
+    "category": "multiplication",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 2,
+    "prerequisites": ["emf-multiplication-facts"],
+    "enables": ["emf-multi-digit-multiplication"],
+    "standardsAlignment": ["3.OA.B.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["Commutative: 3×7 = 7×3 (cuts facts to memorize in half!)", "Associative: (2×3)×4 = 2×(3×4) — group however is easiest", "Distributive: 6×8 = 6×(5+3) = 6×5 + 6×3 = 30+18 = 48 — THE key property", "Zero property: anything × 0 = 0; Identity: anything × 1 = itself"],
+      "commonMistakes": ["Not using commutative to reduce memorization burden", "Distributing to only one term: 3×(4+5) = 3×4 + 5 (missing the 3×5)", "Confusing zero and identity properties"],
+      "teachingTips": ["Commutative: 'If you know 7×3=21, you ALREADY know 3×7=21 for free'", "Distributive: show with arrays — split a 6×8 array into 6×5 and 6×3", "Properties aren't rules to memorize — they're tools to make math EASIER"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per application" }
+  },
+  {
+    "skillId": "emf-multi-digit-multiplication",
+    "displayName": "Multi-Digit Multiplication",
+    "description": "Multiply multi-digit numbers using area model, partial products, and the standard algorithm",
+    "category": "multiplication",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 2,
+    "prerequisites": ["emf-multiplication-facts", "emf-multiplication-properties"],
+    "enables": ["emf-multiply-word-problems", "emf-area-rectangles"],
+    "standardsAlignment": ["4.NBT.B.5", "5.NBT.B.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["Area model: break each factor by place value, multiply each pair, add all parts", "Partial products: same idea written vertically", "Standard algorithm: compact version of partial products", "Estimate first to catch errors (23 × 47 ≈ 20 × 50 = 1,000)"],
+      "commonMistakes": ["Misaligned partial products (forgetting to shift left for tens place)", "Fact errors inside multi-digit problems cascade into wrong final answer", "Forgetting to add the carried digit"],
+      "teachingTips": ["Teach area model FIRST — it shows WHY the algorithm works", "Transition: area model → partial products → standard algorithm (same math, different format)", "Always estimate before computing to catch order-of-magnitude errors"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "60 seconds per problem" }
+  },
+  {
+    "skillId": "emf-multiply-word-problems",
+    "displayName": "Multiplication Word Problems",
+    "description": "Solve one-step and two-step word problems involving equal groups, arrays, area, and comparison multiplication",
+    "category": "multiplication",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 2,
+    "prerequisites": ["emf-multiplication-facts", "emf-multi-digit-multiplication"],
+    "enables": ["emf-divide-word-problems"],
+    "standardsAlignment": ["3.OA.A.3", "4.OA.A.2", "4.OA.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Equal groups: '5 bags with 8 apples each' → 5 × 8", "Array/area: '4 rows of 6 chairs' → 4 × 6", "Comparison: 'Sam has 3 times as many as Jo' → Sam = 3 × Jo's amount", "Two-step: may combine multiplication with addition or subtraction"],
+      "commonMistakes": ["Confusing 'times as many' with 'more than' (multiplicative vs additive)", "Not identifying which numbers to multiply (grabbing numbers randomly)", "In two-step problems, doing only the first step"],
+      "teachingTips": ["Draw a picture for EVERY word problem until students can do it mentally", "Bar models: comparison problems become obvious with bar diagrams", "'Times as many' is the hardest concept — use side-by-side bar models"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "60 seconds per problem" }
+  },
+  {
+    "skillId": "emf-factors-multiples",
+    "displayName": "Factors & Multiples",
+    "description": "Find factor pairs, identify prime and composite numbers, list multiples, and apply to real-world grouping problems",
+    "category": "multiplication",
+    "course": "Early Math Foundations",
+    "quarter": 1,
+    "unit": 2,
+    "prerequisites": ["emf-multiplication-facts"],
+    "enables": ["emf-equivalent-fractions", "emf-long-division"],
+    "standardsAlignment": ["4.OA.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Factor: a number that divides evenly into another (factors of 12: 1,2,3,4,6,12)", "Factor pairs: 1×12, 2×6, 3×4", "Multiple: the result of multiplying by a whole number (multiples of 3: 3,6,9,12,...)", "Prime: exactly 2 factors (itself and 1); Composite: more than 2 factors"],
+      "commonMistakes": ["Confusing factors and multiples", "Thinking 1 is prime (it's neither prime nor composite)", "Missing factor pairs (finding 1×12 and 2×6 but forgetting 3×4)"],
+      "teachingTips": ["Use arrays: factors of 12 = all the rectangles you can make with 12 tiles", "Sieve of Eratosthenes on a hundred chart for primes", "Real context: 'Can you arrange 24 chairs into equal rows? How many ways?'"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-division-facts",
+    "displayName": "Division Facts",
+    "description": "Recall division facts through 144÷12 using the relationship to multiplication; understand division as equal sharing and grouping",
+    "category": "division",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 3,
+    "prerequisites": ["emf-multiplication-facts"],
+    "enables": ["emf-long-division", "emf-divide-word-problems"],
+    "standardsAlignment": ["3.OA.A.2", "3.OA.C.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Division is the inverse of multiplication: 56÷8=7 because 7×8=56", "Two models: sharing (deal 12 cards to 3 people) and grouping (how many groups of 4 in 12?)", "Fact families: 6, 7, 42 → 6×7=42, 7×6=42, 42÷6=7, 42÷7=6", "Division by 1 gives the number itself; division by itself gives 1; cannot divide by 0"],
+      "commonMistakes": ["Not connecting division to multiplication (trying to divide from scratch)", "Confusing the dividend, divisor, and quotient", "Forgetting that division by 0 is undefined"],
+      "teachingTips": ["'Think multiplication': 48÷6 = ? means '6 times WHAT equals 48?'", "Use fact family triangles with the product on top", "If multiplication facts are weak, division facts will be impossible — fix multiplication first"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "5 seconds per fact" }
+  },
+  {
+    "skillId": "emf-long-division",
+    "displayName": "Long Division",
+    "description": "Divide multi-digit numbers by 1-digit and 2-digit divisors using the standard long division algorithm",
+    "category": "division",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 3,
+    "prerequisites": ["emf-division-facts", "emf-multi-digit-multiplication"],
+    "enables": ["emf-interpreting-remainders", "emf-divide-word-problems"],
+    "standardsAlignment": ["4.NBT.B.6", "5.NBT.B.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Divide-Multiply-Subtract-Bring Down (DMSB) cycle", "Estimate each quotient digit: 'How many times does 7 go into 23? About 3'", "Check each step: quotient digit × divisor should be ≤ current number", "Write 0 in quotient when divisor doesn't go into current number"],
+      "commonMistakes": ["Skipping the 0 in the quotient (845÷4: forgetting the 0 in 211 → writing 21 remainder 1)", "Subtracting incorrectly inside the division", "Not bringing down the next digit", "Dividing by a 2-digit number without estimating first"],
+      "teachingTips": ["Use the mnemonic: Does McDonald's Sell Burgers? (Divide, Multiply, Subtract, Bring down)", "Practice with 1-digit divisors until the cycle is automatic, THEN move to 2-digit", "Estimate before each step: 'About how many times does 23 go into 89?'"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "90 seconds per problem" }
+  },
+  {
+    "skillId": "emf-interpreting-remainders",
+    "displayName": "Interpreting Remainders",
+    "description": "Understand what a remainder means in context; decide whether to round up, round down, drop the remainder, or express it as a fraction/decimal",
+    "category": "division",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 3,
+    "prerequisites": ["emf-long-division"],
+    "enables": ["emf-divide-word-problems"],
+    "standardsAlignment": ["4.OA.A.3", "5.NBT.B.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Remainder as leftover: 13÷4 = 3 R1 → 3 groups of 4 with 1 left over", "Round UP: 'How many buses for 43 students if each holds 10?' → 5 buses (not 4.3)", "Drop remainder: 'How many full bags of 8 from 25 items?' → 3 bags", "Remainder as fraction: 13÷4 = 3¼ (the remainder IS the numerator, divisor IS denominator)"],
+      "commonMistakes": ["Always writing 'R' without thinking about what it means", "Rounding down when context requires rounding up (buses, containers)", "Not connecting remainder to fractions"],
+      "teachingTips": ["Use three different word problems with the SAME division but different remainder treatment", "This skill is about READING and THINKING, not just computing", "Have students explain WHY they handled the remainder the way they did"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "45 seconds per problem" }
+  },
+  {
+    "skillId": "emf-divide-word-problems",
+    "displayName": "Division Word Problems",
+    "description": "Solve one-step and multi-step word problems requiring division; choose the correct operation and interpret remainders in context",
+    "category": "division",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 3,
+    "prerequisites": ["emf-long-division", "emf-interpreting-remainders"],
+    "enables": ["emf-fraction-concepts"],
+    "standardsAlignment": ["3.OA.A.3", "4.OA.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Sharing equally: '48 stickers divided among 6 friends'", "Grouping: 'How many teams of 5 from 32 students?'", "Multi-step: may combine division with other operations", "Always check: Does this answer make sense in the story?"],
+      "commonMistakes": ["Not knowing whether to divide (trying addition or multiplication instead)", "Setting up division backwards (dividing the small number by the large)", "Forgetting to interpret the remainder in context"],
+      "teachingTips": ["Bar models: draw the total, divide into equal sections", "Connect to multiplication: 'If 5 teams × ? = 32, use division to find ?'", "Include problems where students choose between multiplication and division"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 75, "targetSpeed": "90 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-fraction-concepts",
+    "displayName": "Fraction Concepts",
+    "description": "Understand fractions as parts of a whole, parts of a set, and points on a number line; read and write fractions",
+    "category": "fractions-concepts",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 4,
+    "prerequisites": ["emf-division-facts"],
+    "enables": ["emf-equivalent-fractions", "emf-compare-order-fractions"],
+    "standardsAlignment": ["3.NF.A.1", "3.NF.A.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Numerator: how many parts you HAVE; Denominator: how many EQUAL parts the whole is divided into", "Parts of a whole: 3/4 of a pizza = 3 out of 4 equal slices", "Parts of a set: 3/4 of 8 items = 6 items", "Fractions on a number line: divide the interval from 0 to 1 into equal parts"],
+      "commonMistakes": ["Thinking 1/3 > 1/2 because 3 > 2 (bigger denominator = SMALLER pieces)", "Not making equal-sized parts (cutting a pizza into unequal slices)", "Thinking the denominator tells you how many are shaded (it tells total parts)"],
+      "teachingTips": ["Start with food: pizza, chocolate bars, pie — things that get divided equally", "Fraction strips are essential manipulatives — students need to hold and compare them", "Number lines build understanding that fractions are NUMBERS, not just pieces of pie"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "15 seconds per problem" }
+  },
+  {
+    "skillId": "emf-equivalent-fractions",
+    "displayName": "Equivalent Fractions",
+    "description": "Generate and recognize equivalent fractions by multiplying or dividing numerator and denominator by the same number",
+    "category": "fractions-concepts",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 4,
+    "prerequisites": ["emf-fraction-concepts", "emf-factors-multiples"],
+    "enables": ["emf-compare-order-fractions", "emf-add-subtract-unlike"],
+    "standardsAlignment": ["3.NF.A.3", "4.NF.A.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["Equivalent fractions name the same amount: 1/2 = 2/4 = 3/6 = 4/8", "Multiply top AND bottom by the same number to make equivalent", "Divide top AND bottom by the same number to simplify", "Visual proof: fraction strips or area models show the same shaded amount"],
+      "commonMistakes": ["Multiplying only the numerator or only the denominator", "Adding the same number to top and bottom (1/2 + 1/1 ≠ 2/3)", "Not simplifying to lowest terms"],
+      "teachingTips": ["Fraction wall: line up strips to SEE that 1/2 = 2/4 = 3/6", "Use the multiplication approach: 'What did I multiply the bottom by? Do the SAME to the top'", "Simplifying = finding GCF of numerator and denominator and dividing both"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per problem" }
+  },
+  {
+    "skillId": "emf-compare-order-fractions",
+    "displayName": "Compare & Order Fractions",
+    "description": "Compare fractions with same denominator, same numerator, and unlike denominators; use benchmarks (0, 1/2, 1) to reason about size",
+    "category": "fractions-concepts",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 4,
+    "prerequisites": ["emf-equivalent-fractions"],
+    "enables": ["emf-add-subtract-unlike"],
+    "standardsAlignment": ["3.NF.A.3d", "4.NF.A.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Same denominator: compare numerators (3/8 < 5/8)", "Same numerator: larger denominator = SMALLER fraction (2/3 > 2/5)", "Unlike: find common denominator OR use benchmarks", "Benchmarks: is it more or less than 1/2? Close to 0? Close to 1?"],
+      "commonMistakes": ["Comparing numerators when denominators are different", "Thinking bigger denominator always means bigger fraction", "Not finding a common denominator when needed"],
+      "teachingTips": ["Benchmark strategy: 3/8 < 1/2 and 5/9 > 1/2, so 3/8 < 5/9 — no common denominator needed", "Fraction strips: physically overlap to compare", "Always use the correct inequality symbol and require justification"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "30 seconds per comparison" }
+  },
+  {
+    "skillId": "emf-mixed-numbers-improper",
+    "displayName": "Mixed Numbers & Improper Fractions",
+    "description": "Convert between mixed numbers and improper fractions; place both on a number line",
+    "category": "fractions-concepts",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 4,
+    "prerequisites": ["emf-fraction-concepts"],
+    "enables": ["emf-add-fractions-like", "emf-subtract-fractions-like"],
+    "standardsAlignment": ["4.NF.B.3b", "4.NF.B.3c"],
+    "teachingGuidance": {
+      "coreConcepts": ["Mixed number: whole number + fraction (2 3/4)", "Improper fraction: numerator ≥ denominator (11/4)", "Mixed → improper: multiply whole × denominator + numerator (2 3/4 = 11/4)", "Improper → mixed: divide numerator by denominator (11÷4 = 2 R3 → 2 3/4)"],
+      "commonMistakes": ["In mixed → improper: adding instead of multiplying (2 3/4 → 5/4 instead of 11/4)", "Forgetting to keep the same denominator", "Not simplifying improper fractions when needed"],
+      "teachingTips": ["Use pizza: 2 3/4 pizzas = 2 whole pizzas + 3/4 of another = 8/4 + 3/4 = 11/4 slices", "Number line: mark whole numbers, then partition between them", "Both forms name the same amount — practice switching until automatic"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per conversion" }
+  },
+  {
+    "skillId": "emf-fractions-of-whole",
+    "displayName": "Fractions of a Whole Number",
+    "description": "Calculate a fraction of a whole number (1/3 of 24 = 8); understand as fraction × whole number",
+    "category": "fractions-concepts",
+    "course": "Early Math Foundations",
+    "quarter": 2,
+    "unit": 4,
+    "prerequisites": ["emf-fraction-concepts", "emf-division-facts"],
+    "enables": ["emf-multiply-fractions"],
+    "standardsAlignment": ["4.NF.B.4", "5.NF.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["'1/3 of 24' means divide 24 into 3 equal groups: 24÷3 = 8", "'2/3 of 24' means 2 of those groups: 2 × 8 = 16", "This IS fraction multiplication: 2/3 × 24 = (2×24)/3 = 48/3 = 16", "Strategy: divide by denominator first, then multiply by numerator"],
+      "commonMistakes": ["Multiplying by the denominator instead of dividing", "Getting confused when the division doesn't come out evenly at first", "Not connecting 'of' to multiplication"],
+      "teachingTips": ["'OF means MULTIPLY' is the key phrase for this skill", "Start with unit fractions: 1/4 of 20, 1/5 of 30, 1/3 of 12", "Real context: '3/4 of the 28 students passed — how many is that?'"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-add-fractions-like",
+    "displayName": "Add Fractions (Like Denominators)",
+    "description": "Add fractions and mixed numbers with the same denominator; simplify results",
+    "category": "fraction-operations",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 5,
+    "prerequisites": ["emf-fraction-concepts", "emf-mixed-numbers-improper"],
+    "enables": ["emf-add-subtract-unlike"],
+    "standardsAlignment": ["4.NF.B.3a", "4.NF.B.3c"],
+    "teachingGuidance": {
+      "coreConcepts": ["Same denominator: add numerators, keep denominator (2/5 + 1/5 = 3/5)", "Convert improper results to mixed numbers (5/4 + 3/4 = 8/4 = 2)", "Mixed numbers: add whole numbers separately, then fractions", "Simplify to lowest terms"],
+      "commonMistakes": ["Adding BOTH numerators AND denominators (2/5 + 1/5 ≠ 3/10)", "Not converting improper fraction results to mixed numbers", "Not simplifying the final answer"],
+      "teachingTips": ["Fraction strips: put 2/5 and 1/5 together — you can SEE it's 3/5, not 3/10", "Emphasize: denominator is the NAME of the piece — you don't change the name when adding", "Use same-flavored pizza: 2 slices of pepperoni + 1 slice of pepperoni = 3 slices of pepperoni"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "15 seconds per problem" }
+  },
+  {
+    "skillId": "emf-subtract-fractions-like",
+    "displayName": "Subtract Fractions (Like Denominators)",
+    "description": "Subtract fractions and mixed numbers with the same denominator; handle borrowing with mixed numbers",
+    "category": "fraction-operations",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 5,
+    "prerequisites": ["emf-add-fractions-like"],
+    "enables": ["emf-add-subtract-unlike"],
+    "standardsAlignment": ["4.NF.B.3a", "4.NF.B.3c"],
+    "teachingGuidance": {
+      "coreConcepts": ["Same denominator: subtract numerators, keep denominator (4/5 - 1/5 = 3/5)", "Mixed numbers: subtract whole parts, then fraction parts", "Borrowing: 3 1/4 - 1 3/4 → borrow 1 from the 3, making it 2 5/4 - 1 3/4 = 1 2/4", "Simplify to lowest terms"],
+      "commonMistakes": ["Subtracting both numerators AND denominators", "Not knowing how to borrow with mixed numbers", "Subtracting smaller from larger regardless of position"],
+      "teachingTips": ["Borrowing with fractions: 'I turn 1 whole into 4/4 and add it to my fraction part'", "Use fraction strips to show the subtraction physically", "Practice borrowing extensively — it's the same concept as whole number regrouping"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per problem" }
+  },
+  {
+    "skillId": "emf-add-subtract-unlike",
+    "displayName": "Add & Subtract Unlike Fractions",
+    "description": "Add and subtract fractions with unlike denominators by finding a common denominator; apply to mixed numbers",
+    "category": "fraction-operations",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 5,
+    "prerequisites": ["emf-add-fractions-like", "emf-subtract-fractions-like", "emf-equivalent-fractions"],
+    "enables": ["emf-multiply-fractions"],
+    "standardsAlignment": ["5.NF.A.1", "5.NF.A.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Unlike denominators: can't add directly (different-sized pieces)", "Find the LCD (least common denominator)", "Convert BOTH fractions to equivalent fractions with the LCD", "Then add/subtract numerators, keep the common denominator, simplify"],
+      "commonMistakes": ["Adding unlike fractions without finding a common denominator (1/3 + 1/4 ≠ 2/7)", "Finding a common denominator but forgetting to adjust the numerator", "Using a common denominator that isn't the LCD (works but creates big numbers)"],
+      "teachingTips": ["Use fraction strips to show WHY you need same-sized pieces to add", "Practice finding LCD as a separate skill before combining with fraction operations", "1/2 + 1/3: 'I can't add halves and thirds — I need to make them both sixths'"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "45 seconds per problem" }
+  },
+  {
+    "skillId": "emf-multiply-fractions",
+    "displayName": "Multiply Fractions",
+    "description": "Multiply fraction × fraction and fraction × whole number; understand why multiplying fractions gives a smaller result; simplify",
+    "category": "fraction-operations",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 5,
+    "prerequisites": ["emf-fractions-of-whole", "emf-equivalent-fractions"],
+    "enables": [],
+    "standardsAlignment": ["5.NF.B.4", "5.NF.B.5", "5.NF.B.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Multiply numerator × numerator, denominator × denominator", "Fraction × whole: write whole as fraction/1 (3 × 2/5 = 3/1 × 2/5 = 6/5)", "Cross-cancel before multiplying to keep numbers small", "Result is SMALLER than either factor (taking a fraction of a fraction)"],
+      "commonMistakes": ["Finding a common denominator to multiply (not needed!)", "Not simplifying the answer", "Thinking the product should be bigger (3 × 1/2 = 3/2, which is less than 3)"],
+      "teachingTips": ["Area model: draw a square, shade 1/2 one way, shade 1/3 the other — overlap = 1/6", "Show cross-canceling as a shortcut: it's dividing a numerator and denominator by the same factor BEFORE multiplying", "Real context: '1/2 of 3/4 of a pizza — what fraction is that?'"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "30 seconds per problem" }
+  },
+
+  {
+    "skillId": "emf-decimal-place-value",
+    "displayName": "Decimal Place Value",
+    "description": "Read, write, and understand decimals through thousandths; expanded form; identify the value of each digit",
+    "category": "decimals",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 6,
+    "prerequisites": ["emf-place-value"],
+    "enables": ["emf-compare-order-decimals", "emf-add-subtract-decimals", "emf-decimals-fractions-connection"],
+    "standardsAlignment": ["5.NBT.A.1", "5.NBT.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Decimal point separates whole number part from fraction part", "Places to the right: tenths (0.1), hundredths (0.01), thousandths (0.001)", "Each place is 10× the place to its right, 1/10 of the place to its left", "Expanded form: 3.45 = 3 + 0.4 + 0.05 = 3 + 4/10 + 5/100"],
+      "commonMistakes": ["Reading 0.25 as 'zero point twenty-five' instead of 'twenty-five hundredths'", "Thinking 0.12 > 0.9 because 12 > 9", "Not understanding that 0.5 = 0.50 = 0.500"],
+      "teachingTips": ["Money is the BEST context: $3.45 = 3 dollars, 4 dimes, 5 pennies", "Place value chart with columns extending right of the decimal", "Base-10 blocks: if the flat = 1, then the rod = 0.1 and the unit = 0.01"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "15 seconds per problem" }
+  },
+  {
+    "skillId": "emf-compare-order-decimals",
+    "displayName": "Compare & Order Decimals",
+    "description": "Compare decimals using < > =; order sets of decimals from least to greatest; annex zeros to compare",
+    "category": "decimals",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 6,
+    "prerequisites": ["emf-decimal-place-value"],
+    "enables": ["emf-add-subtract-decimals"],
+    "standardsAlignment": ["5.NBT.A.3b"],
+    "teachingGuidance": {
+      "coreConcepts": ["Line up the decimal points and compare digit by digit from left to right", "Annex zeros so both numbers have the same number of decimal places: 0.5 vs 0.47 → 0.50 vs 0.47", "Same strategy as whole number comparison, just extended past the decimal point", "Number line: place decimals between whole numbers to visualize order"],
+      "commonMistakes": ["Thinking more decimal digits means bigger number (0.125 vs 0.2)", "Not annexing zeros before comparing (0.5 vs 0.32 — thinking 32 > 5)", "Ignoring the decimal point entirely"],
+      "teachingTips": ["Annex zeros to 'make them the same length' before comparing", "Money: 'Is $0.50 more or less than $0.47?' — instantly clear", "Always use a number line to verify ordering"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "15 seconds per comparison" }
+  },
+  {
+    "skillId": "emf-add-subtract-decimals",
+    "displayName": "Add & Subtract Decimals",
+    "description": "Add and subtract decimals using the standard algorithm with decimal point alignment and regrouping",
+    "category": "decimals",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 6,
+    "prerequisites": ["emf-decimal-place-value", "emf-multi-digit-addition", "emf-multi-digit-subtraction"],
+    "enables": [],
+    "standardsAlignment": ["5.NBT.B.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Line up the decimal points (not the last digits)", "Annex zeros if needed to have the same number of decimal places", "Add/subtract using the same algorithm as whole numbers", "The decimal point in the answer goes directly below the decimal points above"],
+      "commonMistakes": ["Right-aligning instead of decimal-aligning (12.3 + 4.56 misaligned)", "Forgetting to annex zeros (3.5 - 1.27 without making it 3.50 - 1.27)", "Dropping the decimal point in the answer"],
+      "teachingTips": ["Graph paper: one digit per box, decimal point gets its own box", "Money: '$3.50 + $1.27' — students already line up dollar amounts correctly", "Estimate first: 3.5 + 1.27 ≈ 3.5 + 1.3 ≈ 4.8"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per problem" }
+  },
+  {
+    "skillId": "emf-decimals-fractions-connection",
+    "displayName": "Decimal-Fraction Connection",
+    "description": "Convert between decimals and fractions; know common equivalents (1/2=0.5, 1/4=0.25, 3/4=0.75); use both forms interchangeably",
+    "category": "decimals",
+    "course": "Early Math Foundations",
+    "quarter": 3,
+    "unit": 6,
+    "prerequisites": ["emf-decimal-place-value", "emf-equivalent-fractions"],
+    "enables": [],
+    "standardsAlignment": ["4.NF.C.6", "4.NF.C.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Decimal to fraction: 0.75 = 75/100 = 3/4 (simplify)", "Fraction to decimal: divide numerator by denominator (3÷4 = 0.75)", "Common equivalents to memorize: 1/2=0.5, 1/4=0.25, 3/4=0.75, 1/5=0.2, 1/10=0.1", "Decimals ARE fractions — just written in base-10 notation"],
+      "commonMistakes": ["Writing 1/3 as 0.3 instead of 0.333...", "Not simplifying the fraction after converting from decimal", "Thinking decimals and fractions are different types of numbers"],
+      "teachingTips": ["Build a reference chart: fraction | decimal | picture for the common equivalents", "Use the 'denominator of 10 or 100' strategy first (3/5 = 6/10 = 0.6)", "Money bridge: 1 quarter = $0.25 = 1/4 of a dollar"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "20 seconds per conversion" }
+  },
+
+  {
+    "skillId": "emf-perimeter",
+    "displayName": "Perimeter",
+    "description": "Calculate perimeter by adding all side lengths; find a missing side given the perimeter; apply to real-world contexts",
+    "category": "geometry-measurement",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 7,
+    "prerequisites": ["emf-multi-digit-addition"],
+    "enables": ["emf-area-rectangles"],
+    "standardsAlignment": ["3.MD.D.8", "4.MD.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Perimeter = distance around the outside of a shape", "Add ALL side lengths", "Rectangle shortcut: P = 2l + 2w (or P = 2(l+w))", "Find missing side: if P = 30 and three sides are 8, 8, 5, then missing side = 30-8-8-5 = 9"],
+      "commonMistakes": ["Confusing perimeter with area", "Forgetting to count all sides (especially on irregular shapes)", "Using multiplication for perimeter of a rectangle (that's area)"],
+      "teachingTips": ["Walk the perimeter of the classroom — it's the distance you walked", "String activity: lay string around a shape, then stretch it straight to measure", "Always label units (cm, ft, m) — perimeter is a length, not an area"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "20 seconds per problem" }
+  },
+  {
+    "skillId": "emf-area-rectangles",
+    "displayName": "Area of Rectangles",
+    "description": "Calculate area of rectangles and squares using A=l×w; count square units; find area of composite rectangular figures",
+    "category": "geometry-measurement",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 7,
+    "prerequisites": ["emf-multi-digit-multiplication"],
+    "enables": [],
+    "standardsAlignment": ["3.MD.C.5", "3.MD.C.6", "3.MD.C.7", "4.MD.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Area = space inside a flat shape, measured in square units", "Rectangle area: A = length × width", "Square: A = side × side (a special rectangle)", "Composite: break into rectangles, find each area, add together"],
+      "commonMistakes": ["Confusing area (square units) with perimeter (linear units)", "Writing ft instead of ft² for area", "Multiplying all dimensions instead of just length × width"],
+      "teachingTips": ["Tile a shape with square-inch tiles and COUNT — that's area", "Graph paper: draw rectangles and count squares to verify A = l × w", "Real world: 'How many square tiles do you need to cover this floor?'"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "20 seconds per problem" }
+  },
+  {
+    "skillId": "emf-angles-basics",
+    "displayName": "Angle Basics",
+    "description": "Identify right, acute, and obtuse angles; understand that a right angle is 90°; know that a full turn is 360°",
+    "category": "geometry-measurement",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 7,
+    "prerequisites": [],
+    "enables": ["emf-shapes-properties"],
+    "standardsAlignment": ["4.MD.C.5", "4.MD.C.6", "4.G.A.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["Angle = two rays meeting at a point (vertex)", "Right angle = 90° (corner of a book, door frame)", "Acute < 90° (sharp, narrow); Obtuse > 90° (wide, blunt)", "Straight angle = 180°; Full turn = 360°"],
+      "commonMistakes": ["Confusing acute and obtuse", "Thinking the LENGTH of the rays affects the angle size (it doesn't)", "Not recognizing right angles without the square symbol"],
+      "teachingTips": ["Use a corner of paper as a right angle tester — compare every angle to it", "Analog clock: 3:00 = right angle, 2:00 = acute, 4:00 = obtuse", "Bend your arm to make angles — body movement builds intuition"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 90, "targetSpeed": "10 seconds per classification" }
+  },
+  {
+    "skillId": "emf-shapes-properties",
+    "displayName": "Shape Properties",
+    "description": "Classify triangles (by sides and angles) and quadrilaterals (parallelogram, rectangle, square, rhombus, trapezoid); identify properties",
+    "category": "geometry-measurement",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 7,
+    "prerequisites": ["emf-angles-basics"],
+    "enables": [],
+    "standardsAlignment": ["3.G.A.1", "4.G.A.2", "5.G.B.3", "5.G.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Triangles by sides: equilateral (3 equal), isosceles (2 equal), scalene (0 equal)", "Triangles by angles: right, acute, obtuse", "Quadrilateral hierarchy: all rectangles are parallelograms, all squares are rectangles", "Properties: parallel sides, perpendicular sides, equal angles, equal sides"],
+      "commonMistakes": ["Thinking a square isn't a rectangle", "Not recognizing shapes in non-standard orientations (rotated or tilted)", "Confusing parallelogram and trapezoid"],
+      "teachingTips": ["Sort physical shapes into groups — argue about where they belong", "Use Venn diagrams for shape classification", "Always show shapes in multiple orientations — a triangle pointing down is still a triangle"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "15 seconds per classification" }
+  },
+  {
+    "skillId": "emf-measurement-units",
+    "displayName": "Measurement Units",
+    "description": "Convert between common units of length, weight, capacity, and time within the same system",
+    "category": "geometry-measurement",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 7,
+    "prerequisites": ["emf-multi-digit-multiplication", "emf-division-facts"],
+    "enables": [],
+    "standardsAlignment": ["3.MD.A.1", "4.MD.A.1", "5.MD.A.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["Length: 12 in = 1 ft, 3 ft = 1 yd, 100 cm = 1 m", "Weight: 16 oz = 1 lb, 1000 g = 1 kg", "Capacity: 2 cups = 1 pint, 2 pints = 1 quart, 4 quarts = 1 gallon", "Time: 60 sec = 1 min, 60 min = 1 hr, 24 hr = 1 day"],
+      "commonMistakes": ["Multiplying when dividing (or vice versa)", "Mixing up the conversion factors", "Forgetting that metric conversions are based on 10s"],
+      "teachingTips": ["Gallon Man: gallon body → 4 quart arms/legs → 2 pints each → 2 cups each", "For metric: 'King Henry Died By Drinking Chocolate Milk' (km, hm, dam, m, dm, cm, mm)", "Relate to life: 'How many minutes until lunch?' 'How many cups in this milk carton?'"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "30 seconds per conversion" }
+  },
+
+  {
+    "skillId": "emf-data-graphs",
+    "displayName": "Data & Graphs",
+    "description": "Read and create bar graphs, line plots, and pictographs; choose the right display for the data",
+    "category": "data-patterns",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 8,
+    "prerequisites": ["emf-multi-digit-addition"],
+    "enables": ["emf-data-interpretation"],
+    "standardsAlignment": ["3.MD.B.3", "4.MD.B.4", "5.MD.B.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Bar graph: bars show quantities for categories, compare by bar height", "Line plot: dots on a number line show frequency, good for measurement data", "Pictograph: pictures represent quantities, key tells how many each picture = ", "Title, labels, and scale are required for every graph"],
+      "commonMistakes": ["Not reading the scale/key (pictograph where each symbol = 5)", "Inconsistent bar widths or spacing", "No labels on axes"],
+      "teachingTips": ["Collect real data first (favorite ice cream, shoe sizes), THEN graph it", "Start reading graphs before creating them", "Compare the same data in different graph types — which tells the story better?"]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": { "targetAccuracy": 85, "targetSpeed": "30 seconds per question" }
+  },
+  {
+    "skillId": "emf-data-interpretation",
+    "displayName": "Data Interpretation",
+    "description": "Answer questions from graphs and tables; compare data; make predictions; draw conclusions",
+    "category": "data-patterns",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 8,
+    "prerequisites": ["emf-data-graphs"],
+    "enables": [],
+    "standardsAlignment": ["3.MD.B.3", "4.MD.B.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Read specific values: 'How many students chose pizza?'", "Compare: 'Which was the most popular? By how much?'", "Combine: 'How many students chose pizza OR tacos?'", "Predict/extend: 'If the pattern continues, what might happen next month?'"],
+      "commonMistakes": ["Reading the wrong bar or column", "Not using the scale (reading the end of the bar as the value even when scale is by 5s)", "Answering what they THINK instead of what the data shows"],
+      "teachingTips": ["Always require evidence: 'According to the graph...'", "Ask 'how do you know?' for every answer", "Include misleading graphs to build critical reading skills"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "30 seconds per question" }
+  },
+  {
+    "skillId": "emf-patterns-rules",
+    "displayName": "Patterns & Rules",
+    "description": "Identify, describe, extend, and create number patterns; find the rule for an input/output table; use patterns to solve problems",
+    "category": "data-patterns",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 8,
+    "prerequisites": ["emf-number-patterns", "emf-multiplication-facts"],
+    "enables": ["emf-unknowns-intro"],
+    "standardsAlignment": ["3.OA.D.9", "4.OA.C.5", "5.OA.B.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Find the rule: what operation turns input into output?", "Input/output tables: apply the rule to every input to get the output", "Growing patterns: the change between terms may be additive or multiplicative", "Generate two related patterns from a rule and compare them"],
+      "commonMistakes": ["Testing the rule on only one pair instead of all pairs", "Confusing additive and multiplicative patterns", "Not being able to describe the rule in words"],
+      "teachingTips": ["'Function machines': put a number in, apply the rule, get a number out", "Physical patterns with blocks/shapes before number patterns", "Have students CREATE their own input/output tables for a partner to solve"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "30 seconds per pattern" }
+  },
+  {
+    "skillId": "emf-unknowns-intro",
+    "displayName": "Unknowns Introduction",
+    "description": "Find the missing number in an equation; understand the equals sign as balance; use a letter for the unknown; intro to algebraic thinking",
+    "category": "data-patterns",
+    "course": "Early Math Foundations",
+    "quarter": 4,
+    "unit": 8,
+    "prerequisites": ["emf-patterns-rules", "emf-add-sub-facts", "emf-multiplication-facts"],
+    "enables": [],
+    "standardsAlignment": ["3.OA.A.4", "4.OA.A.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["The equals sign means 'the same as' (not 'the answer is')", "□ + 5 = 12 → what goes in the box? □ = 7", "Using letters: n + 5 = 12 → n = 7", "Balance: both sides of = must have the same value"],
+      "commonMistakes": ["Thinking = means 'write the answer here' (not understanding balance)", "Only knowing how to find unknowns at the end (3 + 4 = □ but not □ + 4 = 7 or 3 + □ = 7)", "Guessing randomly instead of using inverse operations"],
+      "teachingTips": ["Physical balance scale: put blocks on both sides to show equality", "Start with missing numbers: _ + 3 = 8, then introduce letters", "True/false equations build understanding: 'Is 4 + 5 = 9 + 1 true or false?'", "This is the BRIDGE to algebra — make it feel natural, not scary"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": { "targetAccuracy": 80, "targetSpeed": "20 seconds per problem" }
+  }
+]

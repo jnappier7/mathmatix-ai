@@ -8,15 +8,28 @@
   "type": "assessment",
   "diagnosticMode": false,
   "description": "Quiz + one FRQ-style DE question. Covers slope fields, separable differential equations, and exponential growth/decay models.",
-  "skillsCovered": ["slope-fields-solution-curves", "separable-differential-equations", "exponential-growth-decay-models"],
+  "skillsCovered": [
+    "slope-fields-solution-curves",
+    "separable-differential-equations",
+    "exponential-growth-decay-models"
+  ],
   "passThreshold": 70,
   "remediationStrategy": {
     "approach": "targeted-reteach",
     "description": "Students scoring below threshold receive focused reteaching before Unit 8 (Applications of Integration).",
     "clusters": [
-      {"skillId": "slope-fields-solution-curves", "reteachFocus": "Matching slope fields to DEs, drawing solution curves through initial conditions"},
-      {"skillId": "separable-differential-equations", "reteachFocus": "Separating variables, integrating both sides, solving for y, applying initial conditions"},
-      {"skillId": "exponential-growth-decay-models", "reteachFocus": "dy/dt = ky → y = y₀eᵏᵗ, finding k from data, half-life/doubling time"}
+      {
+        "skillId": "slope-fields-solution-curves",
+        "reteachFocus": "Matching slope fields to DEs, drawing solution curves through initial conditions"
+      },
+      {
+        "skillId": "separable-differential-equations",
+        "reteachFocus": "Separating variables, integrating both sides, solving for y, applying initial conditions"
+      },
+      {
+        "skillId": "exponential-growth-decay-models",
+        "reteachFocus": "dy/dt = ky \u2192 y = y\u2080e\u1d4f\u1d57, finding k from data, half-life/doubling time"
+      }
     ]
   },
   "assessmentProblems": [
@@ -39,15 +52,15 @@
     {
       "id": "cu7-3",
       "question": "Solve the DE: dy/dx = 2xy, y(0) = 3.",
-      "answer": "Separate: dy/y = 2x dx. Integrate: ln|y| = x² + C. y = Aeˣ². IC: y(0) = A·1 = 3 → A = 3. Solution: y = 3eˣ².",
+      "answer": "Separate: dy/y = 2x dx. Integrate: ln|y| = x\u00b2 + C. y = Ae\u02e3\u00b2. IC: y(0) = A\u00b71 = 3 \u2192 A = 3. Solution: y = 3e\u02e3\u00b2.",
       "skill": "separable-differential-equations",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cu7-4",
-      "question": "Solve: dy/dx = (1+y²)/(1+x²), y(0) = 1.",
-      "answer": "Separate: dy/(1+y²) = dx/(1+x²). Integrate: arctan(y) = arctan(x) + C. IC: arctan(1) = arctan(0) + C → π/4 = 0 + C → C = π/4. arctan(y) = arctan(x) + π/4. y = tan(arctan(x) + π/4).",
+      "question": "Solve: dy/dx = (1+y\u00b2)/(1+x\u00b2), y(0) = 1.",
+      "answer": "Separate: dy/(1+y\u00b2) = dx/(1+x\u00b2). Integrate: arctan(y) = arctan(x) + C. IC: arctan(1) = arctan(0) + C \u2192 \u03c0/4 = 0 + C \u2192 C = \u03c0/4. arctan(y) = arctan(x) + \u03c0/4. y = tan(arctan(x) + \u03c0/4).",
       "skill": "separable-differential-equations",
       "difficulty": 6,
       "points": 10
@@ -55,7 +68,7 @@
     {
       "id": "cu7-5",
       "question": "A population of bacteria grows at a rate proportional to its size. If there are 1000 at t=0 and 3000 at t=2 hours, (a) write the DE, (b) find the particular solution, (c) find the population at t=5.",
-      "answer": "(a) dP/dt = kP. (b) P = 1000eᵏᵗ. P(2) = 1000e²ᵏ = 3000 → e²ᵏ = 3 → 2k = ln3 → k = ln3/2. P(t) = 1000e^(t·ln3/2) = 1000·3^(t/2). (c) P(5) = 1000·3^(5/2) = 1000·9√3 ≈ 15,588.",
+      "answer": "(a) dP/dt = kP. (b) P = 1000e\u1d4f\u1d57. P(2) = 1000e\u00b2\u1d4f = 3000 \u2192 e\u00b2\u1d4f = 3 \u2192 2k = ln3 \u2192 k = ln3/2. P(t) = 1000e^(t\u00b7ln3/2) = 1000\u00b73^(t/2). (c) P(5) = 1000\u00b73^(5/2) = 1000\u00b79\u221a3 \u2248 15,588.",
       "skill": "exponential-growth-decay-models",
       "difficulty": 5,
       "points": 10
@@ -63,23 +76,23 @@
     {
       "id": "cu7-6",
       "question": "A radioactive substance has a half-life of 8 years. (a) Write the decay model. (b) What fraction remains after 20 years?",
-      "answer": "(a) A(t) = A₀·e⁻ᵏᵗ where k = ln2/8. Or A(t) = A₀·(1/2)^(t/8). (b) A(20)/A₀ = (1/2)^(20/8) = (1/2)^(5/2) = 1/(4√2) ≈ 0.177. About 17.7% remains.",
+      "answer": "(a) A(t) = A\u2080\u00b7e\u207b\u1d4f\u1d57 where k = ln2/8. Or A(t) = A\u2080\u00b7(1/2)^(t/8). (b) A(20)/A\u2080 = (1/2)^(20/8) = (1/2)^(5/2) = 1/(4\u221a2) \u2248 0.177. About 17.7% remains.",
       "skill": "exponential-growth-decay-models",
       "difficulty": 5,
       "points": 8
     },
     {
       "id": "cu7-frq",
-      "question": "(FRQ) Consider dy/dx = 2x/y with y > 0. (a) Sketch the slope field at the six points where x ∈ {-1, 0, 1} and y ∈ {1, 2}. (b) Find the particular solution passing through (1, 3). (c) What is the domain of this solution?",
-      "answer": "(a) Slopes: (-1,1):-2, (-1,2):-1, (0,1):0, (0,2):0, (1,1):2, (1,2):1. (b) y dy = 2x dx. y²/2 = x² + C. At (1,3): 9/2 = 1+C → C=7/2. y² = 2x²+7. y = √(2x²+7) (y>0). (c) 2x²+7 > 0 for all x, so domain is (-∞, ∞).",
+      "question": "(FRQ) Consider dy/dx = 2x/y with y > 0. (a) Sketch the slope field at the six points where x \u2208 {-1, 0, 1} and y \u2208 {1, 2}. (b) Find the particular solution passing through (1, 3). (c) What is the domain of this solution?",
+      "answer": "(a) Slopes: (-1,1):-2, (-1,2):-1, (0,1):0, (0,2):0, (1,1):2, (1,2):1. (b) y dy = 2x dx. y\u00b2/2 = x\u00b2 + C. At (1,3): 9/2 = 1+C \u2192 C=7/2. y\u00b2 = 2x\u00b2+7. y = \u221a(2x\u00b2+7) (y>0). (c) 2x\u00b2+7 > 0 for all x, so domain is (-\u221e, \u221e).",
       "skill": "separable-differential-equations",
       "difficulty": 6,
       "points": 12
     },
     {
       "id": "cu7-spiral",
-      "question": "SPIRAL: If f'(x) = 3x² - 4x and f(1) = 2, find f(x).",
-      "answer": "f(x) = x³ - 2x² + C. f(1) = 1-2+C = 2 → C = 3. f(x) = x³ - 2x² + 3.",
+      "question": "SPIRAL: If f'(x) = 3x\u00b2 - 4x and f(1) = 2, find f(x).",
+      "answer": "f(x) = x\u00b3 - 2x\u00b2 + C. f(1) = 1-2+C = 2 \u2192 C = 3. f(x) = x\u00b3 - 2x\u00b2 + 3.",
       "skill": "separable-differential-equations",
       "difficulty": 3,
       "points": 5
@@ -88,11 +101,11 @@
   "answerKeys": {
     "cu7-1": "(1,3):-2, (2,2):0, (0,0):0",
     "cu7-2": "Zero: y=0,2. Positive: 0<y<2. Equilibria: y=0, y=2.",
-    "cu7-3": "y = 3eˣ²",
-    "cu7-4": "y = tan(arctan(x)+π/4)",
-    "cu7-5": "P(t)=1000·3^(t/2). P(5)≈15,588.",
-    "cu7-6": "(1/2)^(5/2) ≈ 17.7%",
-    "cu7-frq": "y = √(2x²+7). Domain: all reals.",
-    "cu7-spiral": "f(x) = x³ - 2x² + 3"
+    "cu7-3": "y = 3e\u02e3\u00b2",
+    "cu7-4": "y = tan(arctan(x)+\u03c0/4)",
+    "cu7-5": "P(t)=1000\u00b73^(t/2). P(5)\u224815,588.",
+    "cu7-6": "(1/2)^(5/2) \u2248 17.7%",
+    "cu7-frq": "y = \u221a(2x\u00b2+7). Domain: all reals.",
+    "cu7-spiral": "f(x) = x\u00b3 - 2x\u00b2 + 3"
   }
 }

@@ -301,7 +301,28 @@ function selectSkill(availableSkills, session, targetDifficulty, options = {}) {
     return skillDifficulty >= difficultyFloor;
   });
 
-  console.log(`[SkillSelector] θ=${theta.toFixed(2)}, floor=${difficultyFloor.toFixed(2)}, ${eligibleSkills.length}/${availableSkills.length} skills eligible`);
+  // DOWNWARD INFERENCE / IMPLICIT MASTERY: Exclude skills that are far below
+  // the student's STARTING theta (grade-based priorMean), not the current (possibly
+  // crashed) theta. If a grade 11 student (priorMean ~1.5) has theta crash to 0.0,
+  // we still shouldn't test skills below -0.5 (priorMean - 2.0) because those are
+  // implicitly mastered based on the student's grade level.
+  const startingTheta = session.priorMean != null ? session.priorMean : theta;
+  const implicitMasteryFloor = startingTheta - 2.0;
+  const beforeImplicitFilter = eligibleSkills.length;
+
+  eligibleSkills = eligibleSkills.filter(skill => {
+    const skillDifficulty = skill.irtDifficulty ||
+                            templateDifficultyMap[skill.skillId] ||
+                            getCategoryDifficulty(skill.category) ||
+                            0;
+    return skillDifficulty >= implicitMasteryFloor;
+  });
+
+  if (beforeImplicitFilter !== eligibleSkills.length) {
+    console.log(`[SkillSelector] Implicit mastery: excluded ${beforeImplicitFilter - eligibleSkills.length} skills below starting θ floor ${implicitMasteryFloor.toFixed(2)} (priorMean=${startingTheta.toFixed(2)})`);
+  }
+
+  console.log(`[SkillSelector] θ=${theta.toFixed(2)}, floor=${difficultyFloor.toFixed(2)}, implicitFloor=${implicitMasteryFloor.toFixed(2)}, ${eligibleSkills.length}/${availableSkills.length} skills eligible`);
 
   // Score all eligible skills
   let candidates = eligibleSkills.map(skill => {

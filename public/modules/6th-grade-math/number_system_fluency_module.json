@@ -1,0 +1,554 @@
+{
+  "moduleId": "number_system_fluency",
+  "course": "6th Grade Math",
+  "unit": 1,
+  "title": "Number System and Fluency",
+  "weeks": "3-6",
+  "estimatedDuration": 40,
+  "description": "The core of 6th-grade computation. Multi-digit division using the standard algorithm, decimal division (including dividing by decimals), all four fraction operations at full fluency, and GCF/LCM with real-world applications. This unit is the engine that powers everything that follows — ratios, rates, and equations all depend on number fluency being automatic.",
+  "skills": [
+    "g6-multi-digit-division",
+    "g6-decimal-division",
+    "g6-fraction-add-subtract",
+    "g6-fraction-multiply-divide",
+    "g6-gcf-lcm"
+  ],
+  "standardsAlignment": [
+    "6.NS.A.1",
+    "6.NS.B.2",
+    "6.NS.B.3",
+    "6.NS.B.4"
+  ],
+  "goals": [
+    "Fluently divide multi-digit whole numbers using the standard algorithm, expressing remainders as fractions or decimals",
+    "Divide decimals by whole numbers and by decimals using place-value strategies and estimation",
+    "Add and subtract fractions and mixed numbers with unlike denominators by finding the LCD",
+    "Multiply and divide fractions and mixed numbers using cross-cancellation and Keep-Change-Flip",
+    "Find GCF and LCM using listing and prime factorization, and apply them to real-world grouping and scheduling problems"
+  ],
+  "instructionalStrategy": [
+    "Gradual release for each skill: concept-intro → I Do → We Do → You Do before moving to the next skill",
+    "AI uses scaffold array as scope and worked-example bank — problems are grade-appropriate and context-rich",
+    "Emphasize estimation before computation to build number sense and catch errors early",
+    "Use real-world contexts relatable to 11-12 year olds: food, sports, shopping, school events, crafts",
+    "Connect GCF/LCM to fraction operations so students see the unifying thread across the entire unit"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Multi-Digit Division — Standard Algorithm",
+      "skill": "g6-multi-digit-division",
+      "content": "When you divide a large number by a 2-digit (or larger) divisor, the standard long division algorithm keeps everything organized. The steps repeat in a cycle: Divide, Multiply, Subtract, Bring down. When the division doesn't come out evenly, the remainder can be written as a fraction (remainder over the divisor) or you can keep dividing to get a decimal.",
+      "keyPoints": [
+        "The four-step cycle: Divide → Multiply → Subtract → Bring down, then repeat",
+        "Estimate each partial quotient: ask 'how many times does the divisor fit into the current number?'",
+        "When there is a remainder, express it as a fraction (remainder/divisor) or continue dividing to get a decimal",
+        "Always check: quotient × divisor + remainder = dividend",
+        "For 2-digit divisors, use compatible numbers to estimate — for example, treat 23 as 20 or 25 to get a starting guess"
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Multi-Digit Division — Worked Examples",
+      "skill": "g6-multi-digit-division",
+      "examples": [
+        {
+          "problem": "Divide 7,854 ÷ 23. Express any remainder as a fraction.",
+          "solution": "Step 1: 23 into 78 → 3 (since 23 × 3 = 69). Write 3 above the 8. Subtract: 78 - 69 = 9.\nStep 2: Bring down 5 → 95. 23 into 95 → 4 (since 23 × 4 = 92). Write 4. Subtract: 95 - 92 = 3.\nStep 3: Bring down 4 → 34. 23 into 34 → 1 (since 23 × 1 = 23). Write 1. Subtract: 34 - 23 = 11.\nRemainder = 11.\nAnswer: 341 11/23\nCheck: 341 × 23 = 7,843. Then 7,843 + 11 = 7,854. ✓"
+        },
+        {
+          "problem": "A school has 1,368 students to split equally into 24 homerooms. How many students per homeroom?",
+          "solution": "Divide 1,368 ÷ 24.\n24 into 136 → 5 (24 × 5 = 120). Subtract: 136 - 120 = 16.\nBring down 8 → 168. 24 into 168 → 7 (24 × 7 = 168). Subtract: 168 - 168 = 0.\nAnswer: 57 students per homeroom.\nCheck: 57 × 24 = 1,368. ✓"
+        },
+        {
+          "problem": "Divide 9,126 ÷ 42. Express the remainder as a decimal rounded to the nearest hundredth.",
+          "solution": "42 into 91 → 2 (42 × 2 = 84). Subtract: 91 - 84 = 7.\nBring down 2 → 72. 42 into 72 → 1 (42 × 1 = 42). Subtract: 72 - 42 = 30.\nBring down 6 → 306. 42 into 306 → 7 (42 × 7 = 294). Subtract: 306 - 294 = 12.\nRemainder 12. As a fraction: 12/42 = 2/7 ≈ 0.29.\nAnswer: 217.29 (or exactly 217 2/7)\nCheck: 217 × 42 = 9,114. Then 9,114 + 12 = 9,126. ✓"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Multi-Digit Division — Guided Practice",
+      "skill": "g6-multi-digit-division",
+      "problems": [
+        {
+          "id": "nsf-1",
+          "question": "Divide 4,536 ÷ 18.",
+          "hints": [
+            "Start by asking: how many times does 18 go into 45?",
+            "18 × 2 = 36, so 18 goes into 45 two times with 45 - 36 = 9 left over. Bring down the 3 to get 93."
+          ],
+          "answer": "252. (18 into 45 → 2, remainder 9. Bring down 3 → 93. 18 into 93 → 5, remainder 3. Bring down 6 → 36. 18 into 36 → 2, remainder 0.) Check: 252 × 18 = 4,536. ✓"
+        },
+        {
+          "id": "nsf-2",
+          "question": "A factory produces 6,825 items in one day and packs them into boxes of 35. How many full boxes are there?",
+          "hints": [
+            "This is a division problem: 6,825 ÷ 35",
+            "35 into 68 → 1 (35 × 1 = 35). Subtract to get 33, then bring down the 2."
+          ],
+          "answer": "195 boxes. (6,825 ÷ 35 = 195 with no remainder.) Check: 195 × 35 = 6,825. ✓"
+        },
+        {
+          "id": "nsf-3",
+          "question": "Divide 8,291 ÷ 43. Express the remainder as a fraction in simplest form.",
+          "hints": [
+            "43 into 82 → 1 (43 × 1 = 43). Subtract to get 39, then bring down 9.",
+            "Continue the algorithm. Your final remainder goes over 43. Check whether the fraction simplifies."
+          ],
+          "answer": "192 35/43. (43 into 82 → 1 R39. Bring down 9 → 399. 43 into 399 → 9 R12. Bring down 1 → 121. 43 into 121 → 2 R35.) The fraction 35/43 is already in simplest form. Check: 192 × 43 + 35 = 8,256 + 35 = 8,291. ✓"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Multi-Digit Division — Independent Practice",
+      "skill": "g6-multi-digit-division",
+      "problems": [
+        {
+          "id": "nsf-4",
+          "question": "Divide 5,472 ÷ 16.",
+          "answer": "342"
+        },
+        {
+          "id": "nsf-5",
+          "question": "There are 7,380 seats in an arena arranged equally across 36 sections. How many seats are in each section?",
+          "answer": "205 seats per section"
+        },
+        {
+          "id": "nsf-6",
+          "question": "Divide 9,503 ÷ 27. Express the remainder as a fraction in simplest form.",
+          "answer": "351 26/27"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Decimal Division",
+      "skill": "g6-decimal-division",
+      "content": "Dividing with decimals builds directly on the long division you already know. The key move is making the divisor a whole number first. If you're dividing by a decimal, shift the decimal point in both the divisor and the dividend by the same number of places — this is the same as multiplying both by 10, 100, etc. Then divide normally and place the decimal point straight up into the quotient.",
+      "keyPoints": [
+        "Dividing a decimal by a whole number: place the decimal point in the quotient directly above where it sits in the dividend, then divide normally",
+        "Dividing by a decimal: multiply both the divisor and dividend by the same power of 10 to make the divisor a whole number, then divide",
+        "Add trailing zeros to the dividend if you need to keep dividing to avoid a remainder",
+        "Estimate first to check reasonableness — for example, 18.72 ÷ 4 should be close to 20 ÷ 4 = 5",
+        "Money problems are natural decimal division contexts — dollars and cents always involve two decimal places"
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Decimal Division — Worked Examples",
+      "skill": "g6-decimal-division",
+      "examples": [
+        {
+          "problem": "Divide 18.72 ÷ 4.",
+          "solution": "The divisor (4) is already a whole number, so place the decimal point in the quotient above the decimal in 18.72.\n4 into 18 → 4 (4 × 4 = 16). Subtract: 18 - 16 = 2.\nBring down 7 → 27. 4 into 27 → 6 (4 × 6 = 24). Subtract: 27 - 24 = 3.\nBring down 2 → 32. 4 into 32 → 8. Subtract: 32 - 32 = 0.\nAnswer: 4.68\nEstimate check: 20 ÷ 4 = 5, and 4.68 is close to 5. ✓"
+        },
+        {
+          "problem": "Divide 7.56 ÷ 0.12.",
+          "solution": "The divisor is 0.12 (a decimal). Multiply both by 100 to make the divisor a whole number:\n7.56 × 100 = 756, and 0.12 × 100 = 12.\nNow divide 756 ÷ 12.\n12 into 75 → 6 (12 × 6 = 72). Subtract: 75 - 72 = 3.\nBring down 6 → 36. 12 into 36 → 3. Subtract: 36 - 36 = 0.\nAnswer: 63\nEstimate check: 7.56 ÷ 0.12 is roughly 8 ÷ 0.1 = 80. Our answer of 63 is in the right ballpark. ✓"
+        },
+        {
+          "problem": "Three friends split a $47.85 dinner bill equally. How much does each person pay?",
+          "solution": "Divide 47.85 ÷ 3.\n3 into 4 → 1 (3 × 1 = 3). Subtract: 4 - 3 = 1.\nBring down 7 → 17. 3 into 17 → 5 (3 × 5 = 15). Subtract: 17 - 15 = 2.\nBring down 8 → 28. 3 into 28 → 9 (3 × 9 = 27). Subtract: 28 - 27 = 1.\nBring down 5 → 15. 3 into 15 → 5. Subtract: 15 - 15 = 0.\nAnswer: $15.95 each\nCheck: $15.95 × 3 = $47.85. ✓"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Decimal Division — Guided Practice",
+      "skill": "g6-decimal-division",
+      "problems": [
+        {
+          "id": "nsf-7",
+          "question": "Divide 25.92 ÷ 6.",
+          "hints": [
+            "The divisor is already a whole number. Place the decimal in the quotient above the decimal in 25.92.",
+            "6 into 25 → 4 (6 × 4 = 24). Subtract to get 1, then bring down 9 to get 19."
+          ],
+          "answer": "4.32. (6 into 25 → 4 R1. Bring down 9 → 19. 6 into 19 → 3 R1. Bring down 2 → 12. 6 into 12 → 2.) Check: 4.32 × 6 = 25.92. ✓"
+        },
+        {
+          "id": "nsf-8",
+          "question": "Divide 9.1 ÷ 0.35.",
+          "hints": [
+            "The divisor is a decimal. Multiply both numbers by 100 to clear it: 910 ÷ 35.",
+            "Now divide 910 ÷ 35 using long division."
+          ],
+          "answer": "26. (Multiply both by 100: 910 ÷ 35. 35 into 91 → 2 R21. Bring down 0 → 210. 35 into 210 → 6.) Check: 26 × 0.35 = 9.1. ✓"
+        },
+        {
+          "id": "nsf-9",
+          "question": "You buy 2.5 pounds of deli turkey for $18.75. What is the price per pound?",
+          "hints": [
+            "Divide the total cost by the weight: $18.75 ÷ 2.5",
+            "Multiply both by 10 to clear the decimal in the divisor: 187.5 ÷ 25"
+          ],
+          "answer": "$7.50 per pound. (Multiply both by 10: 187.5 ÷ 25 = 7.5.) Check: $7.50 × 2.5 = $18.75. ✓"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Decimal Division — Independent Practice",
+      "skill": "g6-decimal-division",
+      "problems": [
+        {
+          "id": "nsf-10",
+          "question": "Divide 43.68 ÷ 8.",
+          "answer": "5.46"
+        },
+        {
+          "id": "nsf-11",
+          "question": "Divide 15.6 ÷ 0.24.",
+          "answer": "65"
+        },
+        {
+          "id": "nsf-12",
+          "question": "A roll of ribbon is 13.5 meters long. You cut pieces that are each 0.75 meters. How many pieces can you cut?",
+          "answer": "18 pieces"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Adding and Subtracting Fractions with Unlike Denominators",
+      "skill": "g6-fraction-add-subtract",
+      "content": "You can only add or subtract fractions when they share the same denominator — the denominator tells you the size of the pieces, and you can only combine pieces of the same size. When the denominators are different, you rewrite both fractions using the LCD (least common denominator), then add or subtract the numerators. Mixed numbers can be handled by converting to improper fractions first, or by working with the whole-number and fraction parts separately.",
+      "keyPoints": [
+        "To add or subtract fractions you need a common denominator — use the LCD (least common denominator)",
+        "Find the LCD by listing multiples of each denominator or using prime factorization",
+        "Rewrite each fraction as an equivalent fraction with the LCD, then add or subtract only the numerators",
+        "Always simplify the result to lowest terms — divide numerator and denominator by their GCF",
+        "For mixed numbers: convert to improper fractions first, OR work with whole numbers and fractions separately (borrow from the whole number when subtracting if the fraction part isn't big enough)",
+        "Estimate first: 5/6 is close to 1, 3/8 is close to 1/2, so their sum should be near 1 1/2"
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Adding and Subtracting Fractions — Worked Examples",
+      "skill": "g6-fraction-add-subtract",
+      "examples": [
+        {
+          "problem": "Add: 2/3 + 3/5",
+          "solution": "Find the LCD of 3 and 5. Multiples of 3: 3, 6, 9, 12, 15. Multiples of 5: 5, 10, 15. LCD = 15.\nRewrite: 2/3 = 10/15, 3/5 = 9/15.\nAdd numerators: 10/15 + 9/15 = 19/15.\nConvert to mixed number: 19/15 = 1 4/15.\nAnswer: 1 4/15"
+        },
+        {
+          "problem": "Subtract: 5 1/4 - 2 2/3",
+          "solution": "Convert to improper fractions: 5 1/4 = 21/4, 2 2/3 = 8/3.\nFind LCD of 4 and 3: LCD = 12.\nRewrite: 21/4 = 63/12, 8/3 = 32/12.\nSubtract: 63/12 - 32/12 = 31/12.\nConvert: 31/12 = 2 7/12.\nAnswer: 2 7/12"
+        },
+        {
+          "problem": "A smoothie recipe calls for 3/4 cup of yogurt and 2/3 cup of juice. How much more yogurt than juice does the recipe use?",
+          "solution": "Subtract: 3/4 - 2/3.\nLCD of 4 and 3: LCD = 12.\nRewrite: 3/4 = 9/12, 2/3 = 8/12.\nSubtract: 9/12 - 8/12 = 1/12.\nAnswer: The recipe uses 1/12 cup more yogurt than juice."
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Adding and Subtracting Fractions — Guided Practice",
+      "skill": "g6-fraction-add-subtract",
+      "problems": [
+        {
+          "id": "nsf-13",
+          "question": "Add: 5/6 + 3/8",
+          "hints": [
+            "Find the LCD of 6 and 8. List multiples: 6, 12, 18, 24 … and 8, 16, 24 … The LCD is 24.",
+            "Rewrite: 5/6 = 20/24 and 3/8 = 9/24. Now add the numerators."
+          ],
+          "answer": "1 5/24. (20/24 + 9/24 = 29/24 = 1 5/24.)"
+        },
+        {
+          "id": "nsf-14",
+          "question": "Subtract: 4 1/3 - 1 5/6",
+          "hints": [
+            "Convert to improper fractions: 4 1/3 = 13/3 and 1 5/6 = 11/6.",
+            "LCD of 3 and 6 is 6. Rewrite 13/3 as 26/6, then subtract."
+          ],
+          "answer": "2 1/2. (26/6 - 11/6 = 15/6 = 2 3/6 = 2 1/2.)"
+        },
+        {
+          "id": "nsf-15",
+          "question": "Marcus ran 3 2/5 miles on Monday and 2 3/4 miles on Tuesday. How far did he run in total?",
+          "hints": [
+            "Add 3 2/5 + 2 3/4. Convert to improper fractions: 17/5 + 11/4.",
+            "LCD of 5 and 4 is 20. Rewrite as 68/20 + 55/20."
+          ],
+          "answer": "6 3/20 miles. (68/20 + 55/20 = 123/20 = 6 3/20.)"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Adding and Subtracting Fractions — Independent Practice",
+      "skill": "g6-fraction-add-subtract",
+      "problems": [
+        {
+          "id": "nsf-16",
+          "question": "Add: 7/10 + 4/15",
+          "answer": "29/30"
+        },
+        {
+          "id": "nsf-17",
+          "question": "Subtract: 6 1/2 - 3 7/8",
+          "answer": "2 5/8"
+        },
+        {
+          "id": "nsf-18",
+          "question": "A board is 8 1/3 feet long. You cut off a piece that is 3 5/6 feet. How long is the remaining piece?",
+          "answer": "4 1/2 feet"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Multiplying and Dividing Fractions",
+      "skill": "g6-fraction-multiply-divide",
+      "content": "Multiplying fractions is simpler than adding — no common denominator needed. Just multiply across: numerator × numerator, denominator × denominator. The trick to keeping numbers small is cross-cancellation: before multiplying, cancel any numerator with any denominator that share a common factor. For division, use Keep-Change-Flip: keep the first fraction, change the division sign to multiplication, and flip the second fraction. Then multiply as usual.",
+      "keyPoints": [
+        "Multiply fractions: multiply the numerators together, multiply the denominators together",
+        "Cross-cancel before multiplying — any numerator can simplify with any denominator if they share a common factor",
+        "Divide fractions with Keep-Change-Flip: keep the first fraction, change ÷ to ×, flip the second fraction (use its reciprocal)",
+        "Always convert mixed numbers to improper fractions before multiplying or dividing",
+        "The word 'of' means multiply — '2/3 of 24' means 2/3 × 24",
+        "Dividing by a fraction gives a larger result — 'how many 1/4s fit in 3?' is 3 ÷ 1/4 = 12"
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Multiplying and Dividing Fractions — Worked Examples",
+      "skill": "g6-fraction-multiply-divide",
+      "examples": [
+        {
+          "problem": "Multiply: 4/9 × 3/8",
+          "solution": "Before multiplying, cross-cancel:\n4 and 8 share a factor of 4 → simplify to 1/9 × 3/2.\n3 and 9 share a factor of 3 → simplify to 1/3 × 1/2.\nMultiply: 1 × 1 = 1 (numerator), 3 × 2 = 6 (denominator).\nAnswer: 1/6\nWithout canceling: 4 × 3 / 9 × 8 = 12/72 = 1/6. Same answer, but bigger numbers."
+        },
+        {
+          "problem": "Divide: 2 1/2 ÷ 3/4",
+          "solution": "Convert the mixed number: 2 1/2 = 5/2.\nKeep-Change-Flip: 5/2 ÷ 3/4 → 5/2 × 4/3.\nCross-cancel: 4 and 2 share a factor of 2 → 5/1 × 2/3.\nMultiply: 10/3 = 3 1/3.\nAnswer: 3 1/3\nInterpretation: there are 3 1/3 groups of 3/4 inside 2 1/2."
+        },
+        {
+          "problem": "A recipe serves 8 people and calls for 2/3 cup of oil. You want to make 3/4 of the recipe. How much oil do you need?",
+          "solution": "'3/4 of 2/3 cup' means multiply: 2/3 × 3/4.\nCross-cancel: the 3 in the numerator and the 3 in the denominator cancel to 1.\nResult: 2/1 × 1/4 = 2/4 = 1/2.\nAnswer: 1/2 cup of oil."
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Multiplying and Dividing Fractions — Guided Practice",
+      "skill": "g6-fraction-multiply-divide",
+      "problems": [
+        {
+          "id": "nsf-19",
+          "question": "Multiply: 5/6 × 9/10",
+          "hints": [
+            "Before multiplying, look for cross-cancellation. Can 5 (numerator) and 10 (denominator) be simplified?",
+            "5 and 10 share a factor of 5 (becomes 1 and 2). Then 9 and 6 share a factor of 3 (becomes 3 and 2). Now multiply 1/2 × 3/2."
+          ],
+          "answer": "3/4. (Cross-cancel: 5/10 → 1/2 and 9/6 → 3/2. Multiply: 1/2 × 3/2 = 3/4.)"
+        },
+        {
+          "id": "nsf-20",
+          "question": "Divide: 3 1/3 ÷ 5/6",
+          "hints": [
+            "Convert 3 1/3 to an improper fraction: 10/3.",
+            "Keep-Change-Flip: 10/3 × 6/5. Now cross-cancel before multiplying."
+          ],
+          "answer": "4. (10/3 × 6/5. Cross-cancel: 10 and 5 → 2 and 1, 6 and 3 → 2 and 1. Multiply: 2/1 × 2/1 = 4.)"
+        },
+        {
+          "id": "nsf-21",
+          "question": "A garden plot is 4/5 of an acre. You want to plant vegetables on 2/3 of the plot. How many acres will be planted with vegetables?",
+          "hints": [
+            "'2/3 of 4/5 acre' means multiply: 4/5 × 2/3.",
+            "No cross-cancellation is possible here. Multiply straight across."
+          ],
+          "answer": "8/15 of an acre. (4 × 2 = 8, 5 × 3 = 15. The fraction 8/15 is already in simplest form.)"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Multiplying and Dividing Fractions — Independent Practice",
+      "skill": "g6-fraction-multiply-divide",
+      "problems": [
+        {
+          "id": "nsf-22",
+          "question": "Multiply: 7/12 × 8/21",
+          "answer": "2/9"
+        },
+        {
+          "id": "nsf-23",
+          "question": "Divide: 4 1/5 ÷ 1 2/5",
+          "answer": "3"
+        },
+        {
+          "id": "nsf-24",
+          "question": "A ribbon is 5 1/4 yards long. How many pieces of 3/8 yard can you cut from it?",
+          "answer": "14 pieces"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Greatest Common Factor and Least Common Multiple",
+      "skill": "g6-gcf-lcm",
+      "content": "GCF (Greatest Common Factor) and LCM (Least Common Multiple) are tools that show up everywhere — simplifying fractions, finding common denominators, and solving real-world problems about grouping and scheduling. The GCF is the largest number that divides evenly into two or more numbers. The LCM is the smallest number that is a multiple of two or more numbers. You can find both by listing or by using prime factorization.",
+      "keyPoints": [
+        "GCF (Greatest Common Factor): the largest number that divides evenly into all given numbers",
+        "LCM (Least Common Multiple): the smallest number that is a multiple of all given numbers",
+        "Listing method for GCF: list all factors of each number, pick the greatest one they share",
+        "Listing method for LCM: list multiples of each number until you find the first match",
+        "Prime factorization method: break each number into primes. GCF = product of shared primes at the lowest power. LCM = product of all primes at the highest power.",
+        "Real-world: GCF solves 'split into equal groups with nothing left over' problems. LCM solves 'when will two repeating events line up again?' problems."
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "GCF and LCM — Worked Examples",
+      "skill": "g6-gcf-lcm",
+      "examples": [
+        {
+          "problem": "Find the GCF of 36 and 48.",
+          "solution": "Prime factorization:\n36 = 2 × 2 × 3 × 3 = 2² × 3²\n48 = 2 × 2 × 2 × 2 × 3 = 2⁴ × 3¹\nGCF = take shared primes at the lowest power:\n2² × 3¹ = 4 × 3 = 12.\nAnswer: GCF(36, 48) = 12\nCheck: 36 ÷ 12 = 3 ✓, 48 ÷ 12 = 4 ✓, and no number larger than 12 divides both."
+        },
+        {
+          "problem": "Find the LCM of 8 and 12.",
+          "solution": "Prime factorization:\n8 = 2 × 2 × 2 = 2³\n12 = 2 × 2 × 3 = 2² × 3¹\nLCM = take all primes at the highest power:\n2³ × 3¹ = 8 × 3 = 24.\nAnswer: LCM(8, 12) = 24\nCheck: 24 ÷ 8 = 3 ✓, 24 ÷ 12 = 2 ✓, and no number smaller than 24 is a multiple of both."
+        },
+        {
+          "problem": "You have 24 apples and 18 oranges. You want to make identical fruit baskets with no fruit left over. What is the greatest number of baskets you can make, and what goes in each?",
+          "solution": "This is a GCF problem — you're splitting into equal groups.\nGCF(24, 18): 24 = 2³ × 3, 18 = 2 × 3².\nGCF = 2¹ × 3¹ = 6.\nAnswer: 6 baskets. Each basket gets 24 ÷ 6 = 4 apples and 18 ÷ 6 = 3 oranges.\nCheck: 6 × 4 = 24 ✓, 6 × 3 = 18 ✓."
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "GCF and LCM — Guided Practice",
+      "skill": "g6-gcf-lcm",
+      "problems": [
+        {
+          "id": "nsf-25",
+          "question": "Find the GCF of 54 and 90.",
+          "hints": [
+            "Write the prime factorization of each: 54 = 2 × 3 × 3 × 3 = 2 × 3³, and 90 = 2 × 3 × 3 × 5 = 2 × 3² × 5.",
+            "The GCF uses only the primes they share (2 and 3) at the lowest power. What is 2¹ × 3²?"
+          ],
+          "answer": "18. (54 = 2 × 3³, 90 = 2 × 3² × 5. Shared primes at lowest powers: 2¹ × 3² = 2 × 9 = 18.) Check: 54 ÷ 18 = 3, 90 ÷ 18 = 5. ✓"
+        },
+        {
+          "id": "nsf-26",
+          "question": "Two buses leave the station at the same time. Bus A returns every 15 minutes and Bus B returns every 20 minutes. In how many minutes will they both be at the station again at the same time?",
+          "hints": [
+            "This is an LCM problem — you want the first time both schedules line up.",
+            "15 = 3 × 5, 20 = 2² × 5. Take all primes at their highest power."
+          ],
+          "answer": "60 minutes. (LCM: 2² × 3 × 5 = 4 × 3 × 5 = 60.) Check: 60 ÷ 15 = 4 trips, 60 ÷ 20 = 3 trips. ✓"
+        },
+        {
+          "id": "nsf-27",
+          "question": "You have 42 red beads and 56 blue beads. You want to make identical bracelets using all the beads with none left over. What is the greatest number of bracelets you can make, and how many of each color bead goes in each?",
+          "hints": [
+            "Find GCF(42, 56). Prime factorizations: 42 = 2 × 3 × 7, 56 = 2³ × 7.",
+            "Shared primes: 2¹ and 7¹. Multiply to find the GCF, then divide each bead count by the GCF."
+          ],
+          "answer": "14 bracelets (3 red and 4 blue each). GCF(42, 56) = 2 × 7 = 14. Each bracelet: 42 ÷ 14 = 3 red, 56 ÷ 14 = 4 blue. ✓"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "GCF and LCM — Independent Practice",
+      "skill": "g6-gcf-lcm",
+      "problems": [
+        {
+          "id": "nsf-28",
+          "question": "Find the LCM of 16 and 20.",
+          "answer": "80"
+        },
+        {
+          "id": "nsf-29",
+          "question": "A gym class has 32 boys and 24 girls. The teacher wants to split them into equal teams with the same number of boys and girls on each team, with no one left out. What is the greatest number of teams, and how many boys and girls are on each?",
+          "answer": "8 teams (4 boys and 3 girls each)"
+        },
+        {
+          "id": "nsf-30",
+          "question": "Hot dogs come in packs of 8. Buns come in packs of 6. What is the least number of hot dogs and buns you need to buy so you have exactly the same number of each with none left over?",
+          "answer": "24 of each (3 packs of hot dogs, 4 packs of buns)"
+        }
+      ],
+      "lessonId": "number_system_fluency"
+    }
+  ],
+  "answerKeys": {
+    "nsf-1": "252",
+    "nsf-2": "195",
+    "nsf-3": "192 35/43",
+    "nsf-4": "342",
+    "nsf-5": "205",
+    "nsf-6": "351 26/27",
+    "nsf-7": "4.32",
+    "nsf-8": "26",
+    "nsf-9": "7.50",
+    "nsf-10": "5.46",
+    "nsf-11": "65",
+    "nsf-12": "18",
+    "nsf-13": "1 5/24",
+    "nsf-14": "2 1/2",
+    "nsf-15": "6 3/20",
+    "nsf-16": "29/30",
+    "nsf-17": "2 5/8",
+    "nsf-18": "4 1/2",
+    "nsf-19": "3/4",
+    "nsf-20": "4",
+    "nsf-21": "8/15",
+    "nsf-22": "2/9",
+    "nsf-23": "3",
+    "nsf-24": "14",
+    "nsf-25": "18",
+    "nsf-26": "60",
+    "nsf-27": "14",
+    "nsf-28": "80",
+    "nsf-29": "8",
+    "nsf-30": "24"
+  }
+}

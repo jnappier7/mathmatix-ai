@@ -6,8 +6,33 @@
   "weeks": "29-34",
   "estimatedDuration": 150,
   "description": "Infinite series form the largest and most heavily tested BC-exclusive topic, typically accounting for 25–30% of the BC exam. Starting with sequences and geometric series, you will build a toolkit of convergence tests — nth-term, integral, comparison, limit comparison, ratio, and alternating series — learning when each test is most effective. The unit culminates with Taylor and Maclaurin series, where you construct polynomial approximations of functions, determine their intervals of convergence, and bound approximation errors using the Lagrange error bound.",
-  "skills": ["sequences-convergence", "series-geometric-p", "convergence-tests", "alternating-series-error", "taylor-maclaurin-polynomials", "taylor-series-known", "power-series-interval", "lagrange-error-bound"],
-  "standardsAlignment": ["CED 10.1", "CED 10.2", "CED 10.3", "CED 10.4", "CED 10.5", "CED 10.6", "CED 10.7", "CED 10.8", "CED 10.9", "CED 10.10", "CED 10.11", "CED 10.12", "CED 10.13", "CED 10.14", "CED 10.15"],
+  "skills": [
+    "sequences-convergence",
+    "series-geometric-p",
+    "convergence-tests",
+    "alternating-series-error",
+    "taylor-maclaurin-polynomials",
+    "taylor-series-known",
+    "power-series-interval",
+    "lagrange-error-bound"
+  ],
+  "standardsAlignment": [
+    "CED 10.1",
+    "CED 10.2",
+    "CED 10.3",
+    "CED 10.4",
+    "CED 10.5",
+    "CED 10.6",
+    "CED 10.7",
+    "CED 10.8",
+    "CED 10.9",
+    "CED 10.10",
+    "CED 10.11",
+    "CED 10.12",
+    "CED 10.13",
+    "CED 10.14",
+    "CED 10.15"
+  ],
   "goals": [
     "Determine whether sequences and basic series (geometric, p-series, telescoping) converge or diverge and compute sums when possible",
     "Select and apply the appropriate convergence test — integral, comparison, limit comparison, ratio, or alternating series — and distinguish absolute from conditional convergence",
@@ -22,31 +47,48 @@
     "Interval of convergence: ratio test gives the interior, but you MUST check endpoints separately. Each endpoint is its own convergence problem.",
     "The Lagrange error bound requires careful identification of M (the maximum of |f⁽ⁿ⁺¹⁾(c)|). For eˣ use e^(max|x|), for sin and cos use M = 1."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "sequences-convergence",
       "title": "Sequences and Basic Series: Convergence Fundamentals",
-      "text": "**Sequences:**\n\nA sequence {aₙ} is an ordered list of numbers. It converges if lim(n→∞) aₙ = L (a finite number); otherwise it diverges.\n\nExamples:\n• aₙ = 1/n → 0 (converges)\n• aₙ = (−1)ⁿ → oscillates (diverges)\n• aₙ = (n+1)/n → 1 (converges)\n\n**Series — Summing Infinitely Many Terms:**\n\nA series Σaₙ = a₁ + a₂ + a₃ + ⋯ converges if the sequence of partial sums Sₙ = a₁ + a₂ + ⋯ + aₙ has a finite limit.\n\n**The nth-Term Test (Divergence Test):**\nIf lim(n→∞) aₙ ≠ 0, the series Σaₙ diverges.\n\n⚠️ **Critical warning:** The converse is FALSE. If lim aₙ = 0, the series may still diverge (e.g., the harmonic series Σ1/n diverges even though 1/n → 0).\n\n**Geometric Series:** Σ_{n=0}^∞ arⁿ\n• Converges if and only if |r| < 1\n• Sum = a / (1 − r)\n\n**p-Series:** Σ_{n=1}^∞ 1/nᵖ\n• Converges if and only if p > 1\n• p = 1 gives the harmonic series (diverges)\n\n**Telescoping Series:**\nAfter partial fraction decomposition, most terms cancel. Find S_N, then take the limit.",
-      "initialPrompt": "The harmonic series Σ1/n diverges even though 1/n → 0. Why doesn't the nth-term test guarantee convergence when the terms go to zero?"
+      "content": "**Sequences:**\n\nA sequence {aₙ} is an ordered list of numbers. It converges if lim(n→∞) aₙ = L (a finite number); otherwise it diverges.\n\nExamples:\n• aₙ = 1/n → 0 (converges)\n• aₙ = (−1)ⁿ → oscillates (diverges)\n• aₙ = (n+1)/n → 1 (converges)\n\n**Series — Summing Infinitely Many Terms:**\n\nA series Σaₙ = a₁ + a₂ + a₃ + ⋯ converges if the sequence of partial sums Sₙ = a₁ + a₂ + ⋯ + aₙ has a finite limit.\n\n**The nth-Term Test (Divergence Test):**\nIf lim(n→∞) aₙ ≠ 0, the series Σaₙ diverges.\n\n⚠️ **Critical warning:** The converse is FALSE. If lim aₙ = 0, the series may still diverge (e.g., the harmonic series Σ1/n diverges even though 1/n → 0).\n\n**Geometric Series:** Σ_{n=0}^∞ arⁿ\n• Converges if and only if |r| < 1\n• Sum = a / (1 − r)\n\n**p-Series:** Σ_{n=1}^∞ 1/nᵖ\n• Converges if and only if p > 1\n• p = 1 gives the harmonic series (diverges)\n\n**Telescoping Series:**\nAfter partial fraction decomposition, most terms cancel. Find S_N, then take the limit.",
+      "initialPrompt": "The harmonic series Σ1/n diverges even though 1/n → 0. Why doesn't the nth-term test guarantee convergence when the terms go to zero?",
+      "lessonId": "sequences-series-intro"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "convergence-tests",
       "title": "Convergence Tests and Alternating Series",
-      "text": "**Your Convergence Test Toolkit:**\n\n**1. Integral Test:** If f is positive, continuous, and decreasing on [1, ∞) with f(n) = aₙ, then Σaₙ and ∫₁^∞ f(x) dx both converge or both diverge.\n\n**2. Direct Comparison Test:** If 0 ≤ aₙ ≤ bₙ for all n:\n• Σbₙ converges ⇒ Σaₙ converges\n• Σaₙ diverges ⇒ Σbₙ diverges\n\n**3. Limit Comparison Test:** If lim(n→∞) aₙ/bₙ = L where 0 < L < ∞, then Σaₙ and Σbₙ both converge or both diverge.\n\n**4. Ratio Test:** Let L = lim(n→∞) |a_{n+1}/aₙ|.\n• L < 1 → converges absolutely\n• L > 1 → diverges\n• L = 1 → **INCONCLUSIVE** (must try another test)\n\n**Best for:** series with factorials (n!) or exponentials (aⁿ).\n\n**5. Alternating Series Test (AST):** For Σ(−1)ⁿbₙ with bₙ > 0:\nIf bₙ is eventually decreasing AND lim bₙ = 0, the series converges.\n\n**Alternating Series Error Bound:**\n|S − Sₙ| ≤ |a_{n+1}| = b_{n+1}\nThe error is bounded by the first omitted term.\n\n**Absolute vs. Conditional Convergence:**\n• Absolute: Σ|aₙ| converges (stronger)\n• Conditional: Σaₙ converges but Σ|aₙ| diverges\n\n**Decision Tree (use this on the AP exam):**\n1. Check nth-term test first — quick divergence check\n2. Recognize geometric or p-series? → Apply directly\n3. Alternating? → AST\n4. Factorials or exponentials? → Ratio test\n5. Looks like a p-series? → Limit comparison\n6. Can integrate? → Integral test",
-      "initialPrompt": "Consider Σ(−1)ⁿ/n. Does it converge by the alternating series test? Is the convergence absolute or conditional? Justify both answers."
+      "content": "**Your Convergence Test Toolkit:**\n\n**1. Integral Test:** If f is positive, continuous, and decreasing on [1, ∞) with f(n) = aₙ, then Σaₙ and ∫₁^∞ f(x) dx both converge or both diverge.\n\n**2. Direct Comparison Test:** If 0 ≤ aₙ ≤ bₙ for all n:\n• Σbₙ converges ⇒ Σaₙ converges\n• Σaₙ diverges ⇒ Σbₙ diverges\n\n**3. Limit Comparison Test:** If lim(n→∞) aₙ/bₙ = L where 0 < L < ∞, then Σaₙ and Σbₙ both converge or both diverge.\n\n**4. Ratio Test:** Let L = lim(n→∞) |a_{n+1}/aₙ|.\n• L < 1 → converges absolutely\n• L > 1 → diverges\n• L = 1 → **INCONCLUSIVE** (must try another test)\n\n**Best for:** series with factorials (n!) or exponentials (aⁿ).\n\n**5. Alternating Series Test (AST):** For Σ(−1)ⁿbₙ with bₙ > 0:\nIf bₙ is eventually decreasing AND lim bₙ = 0, the series converges.\n\n**Alternating Series Error Bound:**\n|S − Sₙ| ≤ |a_{n+1}| = b_{n+1}\nThe error is bounded by the first omitted term.\n\n**Absolute vs. Conditional Convergence:**\n• Absolute: Σ|aₙ| converges (stronger)\n• Conditional: Σaₙ converges but Σ|aₙ| diverges\n\n**Decision Tree (use this on the AP exam):**\n1. Check nth-term test first — quick divergence check\n2. Recognize geometric or p-series? → Apply directly\n3. Alternating? → AST\n4. Factorials or exponentials? → Ratio test\n5. Looks like a p-series? → Limit comparison\n6. Can integrate? → Integral test",
+      "initialPrompt": "Consider Σ(−1)ⁿ/n. Does it converge by the alternating series test? Is the convergence absolute or conditional? Justify both answers.",
+      "lessonId": "alternating-series"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "alternating-series-error",
+      "title": "We-Do: Alternating Series Error — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for alternating series error.",
+          "hint": "Apply the concepts of alternating series error.",
+          "solution": "Step-by-step solution for alternating series error."
+        }
+      ],
+      "lessonId": "taylor-maclaurin"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "taylor-maclaurin-polynomials",
       "title": "Taylor/Maclaurin Series and Power Series",
-      "text": "**Taylor Polynomial Centered at x = a:**\nPₙ(x) = Σ_{k=0}^n [f⁽ᵏ⁾(a) / k!] (x − a)ᵏ\n= f(a) + f'(a)(x−a) + f''(a)(x−a)²/2! + f'''(a)(x−a)³/3! + ⋯\n\nMaclaurin polynomial = Taylor polynomial at a = 0.\n\n**Four Memorized Series (centered at 0):**\n\n• eˣ = Σ_{n=0}^∞ xⁿ/n! = 1 + x + x²/2! + x³/3! + ⋯  (converges for all x)\n• sin x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1)! = x − x³/3! + x⁵/5! − ⋯  (all x)\n• cos x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ/(2n)! = 1 − x²/2! + x⁴/4! − ⋯  (all x)\n• 1/(1−x) = Σ_{n=0}^∞ xⁿ = 1 + x + x² + x³ + ⋯  (|x| < 1)\n\n**Building New Series from Known Ones:**\n• Substitution: e^(−x²) → replace x with −x² in eˣ series\n• Differentiation: d/dx[1/(1−x)] = 1/(1−x)² → differentiate the geometric series term by term\n• Integration: ∫1/(1+x²) dx = arctan x → integrate the series for 1/(1+x²) term by term\n\n**Radius and Interval of Convergence:**\nUse the ratio test on |a_{n+1}/aₙ| to find R. The series converges for |x − a| < R. Then check each endpoint separately — each endpoint is its own convergence problem.\n\n**Lagrange Error Bound:**\n|Rₙ(x)| ≤ M · |x − a|ⁿ⁺¹ / (n+1)!\nwhere M = max|f⁽ⁿ⁺¹⁾(c)| for c between a and x.\n\nFor eˣ: M = e^(max|x|). For sin x, cos x: M = 1 (all derivatives bounded by 1).",
-      "initialPrompt": "Write the first four nonzero terms of the Maclaurin series for e^(−x²) by substituting u = −x² into the eˣ series. Is this faster than computing derivatives of e^(−x²) directly?"
+      "content": "**Taylor Polynomial Centered at x = a:**\nPₙ(x) = Σ_{k=0}^n [f⁽ᵏ⁾(a) / k!] (x − a)ᵏ\n= f(a) + f'(a)(x−a) + f''(a)(x−a)²/2! + f'''(a)(x−a)³/3! + ⋯\n\nMaclaurin polynomial = Taylor polynomial at a = 0.\n\n**Four Memorized Series (centered at 0):**\n\n• eˣ = Σ_{n=0}^∞ xⁿ/n! = 1 + x + x²/2! + x³/3! + ⋯  (converges for all x)\n• sin x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1)! = x − x³/3! + x⁵/5! − ⋯  (all x)\n• cos x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ/(2n)! = 1 − x²/2! + x⁴/4! − ⋯  (all x)\n• 1/(1−x) = Σ_{n=0}^∞ xⁿ = 1 + x + x² + x³ + ⋯  (|x| < 1)\n\n**Building New Series from Known Ones:**\n• Substitution: e^(−x²) → replace x with −x² in eˣ series\n• Differentiation: d/dx[1/(1−x)] = 1/(1−x)² → differentiate the geometric series term by term\n• Integration: ∫1/(1+x²) dx = arctan x → integrate the series for 1/(1+x²) term by term\n\n**Radius and Interval of Convergence:**\nUse the ratio test on |a_{n+1}/aₙ| to find R. The series converges for |x − a| < R. Then check each endpoint separately — each endpoint is its own convergence problem.\n\n**Lagrange Error Bound:**\n|Rₙ(x)| ≤ M · |x − a|ⁿ⁺¹ / (n+1)!\nwhere M = max|f⁽ⁿ⁺¹⁾(c)| for c between a and x.\n\nFor eˣ: M = e^(max|x|). For sin x, cos x: M = 1 (all derivatives bounded by 1).",
+      "initialPrompt": "Write the first four nonzero terms of the Maclaurin series for e^(−x²) by substituting u = −x² into the eˣ series. Is this faster than computing derivatives of e^(−x²) directly?",
+      "lessonId": "power-series-convergence"
     },
     {
       "type": "model",
@@ -67,7 +109,8 @@
           "solution": "**Write out partial sums:**\nS₁ = 1 − 1/2\nS₂ = (1 − 1/2) + (1/2 − 1/3) = 1 − 1/3\nS₃ = 1 − 1/4\n⋮\nSₙ = 1 − 1/(N + 1)\n\n**Pattern:** Most terms cancel (telescope), leaving Sₙ = 1 − 1/(N + 1).\n\n**Take the limit:**\nlim(N→∞) Sₙ = 1 − 0 = **1**\n\n**Where does the 1/n − 1/(n+1) come from?** Partial fractions on 1/(n(n+1)) = 1/n − 1/(n+1). So Σ1/(n(n+1)) = 1."
         }
       ],
-      "initialPrompt": "In example 2, could you use the ratio test instead of the nth-term test? Try computing lim |a_{n+1}/aₙ| and see what happens."
+      "initialPrompt": "In example 2, could you use the ratio test instead of the nth-term test? Try computing lim |a_{n+1}/aₙ| and see what happens.",
+      "lessonId": "convergence-tests"
     },
     {
       "type": "model",
@@ -88,7 +131,8 @@
           "solution": "**This is an alternating series with bₙ = 1/n².**\n\nBy the alternating series error bound:\n|S − Sₙ| ≤ b_{n+1} = 1/(n+1)²\n\n**Set up the inequality:**\n1/(n+1)² < 0.01\n(n+1)² > 100\nn + 1 > 10\nn ≥ 10\n\n**Answer:** **10 terms** guarantee the error is less than 0.01.\n\n**Verify:** S₁₀ uses terms through 1/100 = 0.01. The 11th term is 1/121 ≈ 0.00826 < 0.01 ✓"
         }
       ],
-      "initialPrompt": "In example 1, the ratio test gave L = ∞. What does this tell you about how the terms aₙ behave as n grows? Does |aₙ| increase or decrease?"
+      "initialPrompt": "In example 1, the ratio test gave L = ∞. What does this tell you about how the terms aₙ behave as n grows? Does |aₙ| increase or decrease?",
+      "lessonId": "alternating-series"
     },
     {
       "type": "model",
@@ -109,7 +153,36 @@
           "solution": "**Identify the setup:**\nf(x) = sin x, a = 0, n = 3, x = 0.1.\nP₃(0.1) = 0.1 − 0.001/6 ≈ 0.09983333\n\n**Lagrange error bound:**\n|R₃(x)| ≤ M · |x|⁴ / 4!\n\nwhere M = max|f⁽⁴⁾(c)| for c between 0 and 0.1.\n\n**Find M:**\nf⁽⁴⁾(x) = sin x (the derivatives of sin x cycle with period 4).\n|sin c| ≤ 1 for all c, so M = 1.\n\n**Compute the bound:**\n|R₃(0.1)| ≤ 1 · (0.1)⁴ / 24 = 0.0001/24 ≈ **4.17 × 10⁻⁶**\n\n**This means:** P₃(0.1) approximates sin(0.1) to about 5 decimal places. The actual value is sin(0.1) ≈ 0.09983342 — our P₃ gives 0.09983333, and the difference is about 9 × 10⁻⁸, well within the bound."
         }
       ],
-      "initialPrompt": "In example 2, we found the series for 1/(1+x²). If you integrate both sides from 0 to 1, what famous result do you get? (Hint: arctan(1) = ?)"
+      "initialPrompt": "In example 2, we found the series for 1/(1+x²). If you integrate both sides from 0 to 1, what famous result do you get? (Hint: arctan(1) = ?)",
+      "lessonId": "lagrange-error"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "lagrange-error-bound",
+      "title": "We-Do: Lagrange Error Bound — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for lagrange error bound.",
+          "hint": "Apply the concepts of lagrange error bound.",
+          "solution": "Step-by-step solution for lagrange error bound."
+        }
+      ],
+      "lessonId": "lagrange-error"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "power-series-interval",
+      "title": "We-Do: Power Series Interval — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for power series interval.",
+          "hint": "Apply the concepts of power series interval.",
+          "solution": "Step-by-step solution for power series interval."
+        }
+      ],
+      "lessonId": "sequences-series-intro"
     },
     {
       "type": "guided_practice",
@@ -145,7 +218,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, identify the first term (when n = 0) and the common ratio. Then apply the geometric series sum formula."
+      "initialPrompt": "For the first problem, identify the first term (when n = 0) and the common ratio. Then apply the geometric series sum formula.",
+      "lessonId": "convergence-tests"
     },
     {
       "type": "guided_practice",
@@ -181,7 +255,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, the ratio test is the right choice because the series has an exponential (2ⁿ) and a factorial (n!). Compute the ratio |a_{n+1}/aₙ| and simplify."
+      "initialPrompt": "For the first problem, the ratio test is the right choice because the series has an exponential (2ⁿ) and a factorial (n!). Compute the ratio |a_{n+1}/aₙ| and simplify.",
+      "lessonId": "alternating-series"
     },
     {
       "type": "guided_practice",
@@ -217,7 +292,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, you need to compute f(4), f'(4), and f''(4) for f(x) = √x. Start by writing f(x) = x^(1/2) and differentiating using the power rule."
+      "initialPrompt": "For the first problem, you need to compute f(4), f'(4), and f''(4) for f(x) = √x. Start by writing f(x) = x^(1/2) and differentiating using the power rule.",
+      "lessonId": "lagrange-error"
     },
     {
       "type": "independent_practice",
@@ -229,45 +305,59 @@
           "question": "Determine if Σ_{n=1}^∞ (2/5)ⁿ converges. If so, find the sum.",
           "answer": "Converges; sum = 2/3",
           "skill": "series-geometric-p",
-          "hints": ["Geometric series with r = 2/5 and first term a = 2/5. Sum = (2/5)/(1 − 2/5) = (2/5)/(3/5) = 2/3."]
+          "hints": [
+            "Geometric series with r = 2/5 and first term a = 2/5. Sum = (2/5)/(1 − 2/5) = (2/5)/(3/5) = 2/3."
+          ]
         },
         {
           "id": "ss-yp2",
           "question": "Use the ratio test to determine if Σ_{n=1}^∞ n²/2ⁿ converges or diverges.",
           "answer": "Converges (L = 1/2 < 1)",
           "skill": "convergence-tests",
-          "hints": ["|a_{n+1}/aₙ| = [(n+1)²/2ⁿ⁺¹] · [2ⁿ/n²] = (n+1)²/(2n²). lim(n→∞) (n+1)²/(2n²) = lim (1+1/n)²/2 = 1/2 < 1. Converges."]
+          "hints": [
+            "|a_{n+1}/aₙ| = [(n+1)²/2ⁿ⁺¹] · [2ⁿ/n²] = (n+1)²/(2n²). lim(n→∞) (n+1)²/(2n²) = lim (1+1/n)²/2 = 1/2 < 1. Converges."
+          ]
         },
         {
           "id": "ss-yp3",
           "question": "Determine if Σ_{n=1}^∞ (−1)ⁿ/√n converges. Absolutely or conditionally?",
           "answer": "Conditionally convergent",
           "skill": "alternating-series-error",
-          "hints": ["AST: bₙ = 1/√n is decreasing and lim bₙ = 0, so it converges. Absolute check: Σ1/√n = Σ1/n^(1/2) is a p-series with p = 1/2 < 1, which diverges. Conditionally convergent."]
+          "hints": [
+            "AST: bₙ = 1/√n is decreasing and lim bₙ = 0, so it converges. Absolute check: Σ1/√n = Σ1/n^(1/2) is a p-series with p = 1/2 < 1, which diverges. Conditionally convergent."
+          ]
         },
         {
           "id": "ss-yp4",
           "question": "Find the first four nonzero terms of the Maclaurin series for e^(−x²).",
           "answer": "1 − x² + x⁴/2 − x⁶/6",
           "skill": "taylor-series-known",
-          "hints": ["Substitute u = −x² into eᵘ = 1 + u + u²/2! + u³/3! + ⋯ to get e^(−x²) = 1 + (−x²) + (−x²)²/2! + (−x²)³/3! = 1 − x² + x⁴/2 − x⁶/6."]
+          "hints": [
+            "Substitute u = −x² into eᵘ = 1 + u + u²/2! + u³/3! + ⋯ to get e^(−x²) = 1 + (−x²) + (−x²)²/2! + (−x²)³/3! = 1 − x² + x⁴/2 − x⁶/6."
+          ]
         },
         {
           "id": "ss-yp5",
           "question": "Find the radius and interval of convergence for Σ_{n=0}^∞ (x − 3)ⁿ/2ⁿ.",
           "answer": "R = 2; interval = (1, 5)",
           "skill": "power-series-interval",
-          "hints": ["This is a geometric series with ratio (x−3)/2. Converges when |(x−3)/2| < 1, i.e., |x−3| < 2, so R = 2. Interval: 1 < x < 5. At x = 1: Σ(−1)ⁿ diverges. At x = 5: Σ1ⁿ diverges. Interval: (1, 5)."]
+          "hints": [
+            "This is a geometric series with ratio (x−3)/2. Converges when |(x−3)/2| < 1, i.e., |x−3| < 2, so R = 2. Interval: 1 < x < 5. At x = 1: Σ(−1)ⁿ diverges. At x = 5: Σ1ⁿ diverges. Interval: (1, 5)."
+          ]
         },
         {
           "id": "ss-yp6",
           "question": "Using the Lagrange error bound, how large must n be so that Pₙ(1) approximates e with error less than 0.001?",
           "answer": "n ≥ 6 (use P₆)",
           "skill": "lagrange-error-bound",
-          "hints": ["For eˣ at x = 1: |Rₙ(1)| ≤ M · 1ⁿ⁺¹/(n+1)! where M ≤ e < 3. Need 3/(n+1)! < 0.001, so (n+1)! > 3000. Check: 6! = 720 < 3000 (insufficient), 7! = 5040 > 3000 (sufficient). So n+1 ≥ 7, meaning n ≥ 6."]
+          "hints": [
+            "For eˣ at x = 1: |Rₙ(1)| ≤ M · 1ⁿ⁺¹/(n+1)! where M ≤ e < 3. Need 3/(n+1)! < 0.001, so (n+1)! > 3000. Check: 6! = 720 < 3000 (insufficient), 7! = 5040 > 3000 (sufficient). So n+1 ≥ 7, meaning n ≥ 6."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "sequences-convergence",
+      "lessonId": "sequences-series-intro"
     }
   ],
   "answerKeys": {
@@ -286,5 +376,37 @@
     "ss-yp4": "1 − x² + x⁴/2 − x⁶/6.",
     "ss-yp5": "R = 2; interval (1, 5).",
     "ss-yp6": "n ≥ 6 (use P₆ so that 3/7! < 0.001)."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "sequences-series-intro",
+      "title": "Sequences, Series, and Convergence Basics",
+      "order": 1
+    },
+    {
+      "lessonId": "convergence-tests",
+      "title": "Convergence Tests",
+      "order": 2
+    },
+    {
+      "lessonId": "alternating-series",
+      "title": "Alternating Series & Error Bounds",
+      "order": 3
+    },
+    {
+      "lessonId": "taylor-maclaurin",
+      "title": "Taylor & Maclaurin Polynomials",
+      "order": 4
+    },
+    {
+      "lessonId": "power-series-convergence",
+      "title": "Power Series & Interval of Convergence",
+      "order": 5
+    },
+    {
+      "lessonId": "lagrange-error",
+      "title": "Lagrange Error Bound",
+      "order": 6
+    }
+  ]
 }

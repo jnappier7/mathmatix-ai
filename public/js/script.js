@@ -3354,17 +3354,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.courseProgress && window.courseManager) {
                 const cp = data.courseProgress;
                 if (cp.event === 'scaffold_advance') {
-                    // Update the progress bar fill for the current module
+                    // Update the progress bar with blended overall progress
                     const fill = document.getElementById('course-progress-fill');
                     const pct = document.getElementById('course-progress-pct');
                     const mod = document.getElementById('course-progress-module');
-                    if (fill && cp.scaffoldProgress != null) {
-                        // Blend scaffold progress with overall: show scaffold within the current segment
-                        fill.style.width = `${cp.scaffoldProgress}%`;
+                    const progressValue = cp.overallProgress != null ? cp.overallProgress : cp.scaffoldProgress;
+                    if (fill && progressValue != null) {
+                        fill.style.width = `${progressValue}%`;
                     }
-                    if (pct && cp.scaffoldProgress != null) pct.textContent = `${cp.scaffoldProgress}%`;
+                    if (pct && progressValue != null) pct.textContent = `${progressValue}%`;
                     if (mod && cp.stepTitle) mod.textContent = cp.stepTitle;
-                    console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal}`);
+                    console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal} (overall: ${cp.overallProgress}%)`);
                 } else if (cp.event === 'module_complete') {
                     // Refresh the full progress display and trigger celebration
                     window.courseManager.loadMySessions();

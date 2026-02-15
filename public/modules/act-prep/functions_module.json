@@ -6,7 +6,6 @@
   "weeks": "3-4",
   "estimatedDuration": 30,
   "description": "Covers 12-15% of the ACT. Master function notation, evaluation, composition, inverses, linear and quadratic function analysis, exponential/logarithmic functions, basic trig, and transformations. Emphasis on reading function behavior from graphs and equations.",
-
   "skills": [
     "act-function-notation-evaluation",
     "act-linear-functions",
@@ -15,9 +14,14 @@
     "act-trig-functions",
     "act-function-transformations"
   ],
-
-  "standardsAlignment": ["ACT F 201-205", "ACT F 301-305", "ACT F 401-405", "ACT F 501-505", "ACT F 601-605", "ACT F 701-705"],
-
+  "standardsAlignment": [
+    "ACT F 201-205",
+    "ACT F 301-305",
+    "ACT F 401-405",
+    "ACT F 501-505",
+    "ACT F 601-605",
+    "ACT F 701-705"
+  ],
   "goals": [
     "Evaluate functions using f(x) notation including composites and inverses",
     "Analyze linear functions: slope, intercepts, parallel and perpendicular lines",
@@ -26,7 +30,6 @@
     "Apply SOH-CAH-TOA and recognize key trig values and identities",
     "Identify and apply vertical/horizontal shifts, reflections, and stretches"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -34,9 +37,7 @@
     "Teach students to identify function type from equation form before calculating",
     "Connect transformations to parent functions visually"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -52,7 +53,8 @@
         "Inverse function: f⁻¹(x) 'undoes' f. To find it: write y = f(x), swap x and y, solve for y.",
         "f(f⁻¹(x)) = x and f⁻¹(f(x)) = x",
         "Graphically: f⁻¹ is a reflection of f over the line y = x"
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "model",
@@ -72,7 +74,8 @@
           "problem": "If f(x) = (2x + 6)/4, what is f⁻¹(x)?\n(A) (4x − 6)/2  (B) 4/(2x + 6)  (C) 2x − 3  (D) (4x + 6)/2  (E) (x − 6)/2",
           "solution": "Step 1: y = (2x + 6)/4\nStep 2: Swap x and y: x = (2y + 6)/4\nStep 3: Solve for y: 4x = 2y + 6 → 2y = 4x − 6 → y = (4x − 6)/2 = 2x − 3\nAnswer: (C) 2x − 3\n\nCheck: f(f⁻¹(x)) = f(2x−3) = (2(2x−3)+6)/4 = (4x−6+6)/4 = 4x/4 = x ✓"
         }
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "explanation",
@@ -88,7 +91,8 @@
         "a > 0: parabola opens UP (minimum). a < 0: opens DOWN (maximum).",
         "x-intercepts (zeros): set y = 0 and solve. y-intercept: set x = 0 → y = c.",
         "Axis of symmetry: x = −b/(2a) or x = h"
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "model",
@@ -108,35 +112,49 @@
           "problem": "Line m has equation y = −3x + 5. Which of the following is perpendicular to line m?\n(A) y = −3x + 2  (B) y = 3x − 1  (C) y = (1/3)x + 4  (D) y = −(1/3)x + 7  (E) y = (1/3)x − 5",
           "solution": "Line m has slope −3.\nPerpendicular slope = negative reciprocal = −(1/(−3)) = 1/3\nLook for slope 1/3: choices (C) and (E) both have slope 1/3.\nBoth are perpendicular. Check answer choices... both (C) and (E) work.\nAnswer: (C) y = (1/3)x + 4 (or (E) — ACT would only list one correct option)"
         }
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Function Notation, Linear & Quadratic Practice",
-      "skills": ["act-function-notation-evaluation", "act-linear-functions", "act-quadratic-functions"],
       "problems": [
         {
           "problem": "If f(x) = x² + 1 and g(x) = 2x, what is g(f(3))?\n(A) 7  (B) 10  (C) 19  (D) 20  (E) 37",
-          "hints": ["First find f(3) = 9 + 1 = 10", "Then g(10) = 2(10) = 20"],
+          "hints": [
+            "First find f(3) = 9 + 1 = 10",
+            "Then g(10) = 2(10) = 20"
+          ],
           "answer": "(D) 20. f(3) = 9 + 1 = 10. g(f(3)) = g(10) = 2(10) = 20."
         },
         {
           "problem": "A line passes through (−1, 4) and is parallel to y = −2x + 7. What is the y-intercept?\n(A) 2  (B) 3  (C) 6  (D) 7  (E) 9",
-          "hints": ["Parallel means same slope: m = −2", "Use point-slope: y − 4 = −2(x − (−1))"],
+          "hints": [
+            "Parallel means same slope: m = −2",
+            "Use point-slope: y − 4 = −2(x − (−1))"
+          ],
           "answer": "(A) 2. Slope = −2. y − 4 = −2(x + 1) → y = −2x − 2 + 4 → y = −2x + 2. y-intercept = 2."
         },
         {
           "problem": "The function f(x) = x² − 6x + k has its minimum value at y = −4. What is k?\n(A) −4  (B) 1  (C) 5  (D) 9  (E) 13",
-          "hints": ["Vertex x-coordinate: x = −(−6)/(2·1) = 3", "Minimum value = f(3) = 9 − 18 + k = k − 9 = −4"],
+          "hints": [
+            "Vertex x-coordinate: x = −(−6)/(2·1) = 3",
+            "Minimum value = f(3) = 9 − 18 + k = k − 9 = −4"
+          ],
           "answer": "(C) 5. Vertex at x = 3. f(3) = 9 − 18 + k = k − 9 = −4 → k = 5."
         },
         {
           "problem": "If f(x) = 5x − 3, what is f⁻¹(12)?\n(A) 2  (B) 3  (C) 15  (D) 57  (E) 63",
-          "hints": ["Find f⁻¹(x): y = 5x − 3 → x = 5y − 3 → y = (x+3)/5", "Then f⁻¹(12) = (12+3)/5 = 15/5 = 3"],
+          "hints": [
+            "Find f⁻¹(x): y = 5x − 3 → x = 5y − 3 → y = (x+3)/5",
+            "Then f⁻¹(12) = (12+3)/5 = 15/5 = 3"
+          ],
           "answer": "(B) 3. f⁻¹(x) = (x+3)/5. f⁻¹(12) = 15/5 = 3."
         }
-      ]
+      ],
+      "skill": "act-quadratic-functions",
+      "lessonId": "functions"
     },
     {
       "type": "explanation",
@@ -153,7 +171,8 @@
         "Key angles: sin 30° = 1/2, cos 30° = √3/2, sin 45° = cos 45° = √2/2, sin 60° = √3/2, cos 60° = 1/2",
         "Pythagorean identity: sin²θ + cos²θ = 1",
         "Trig graphs: y = A sin(Bx + C) + D. Amplitude = |A|, period = 2π/B"
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "model",
@@ -177,7 +196,8 @@
           "problem": "What is the period of y = 3 sin(2x) + 1?\n(A) π  (B) 2π  (C) 3π  (D) 4π  (E) 6π",
           "solution": "Period = 2π/B where B = 2.\nPeriod = 2π/2 = π\nAnswer: (A) π\n\nThe amplitude is 3 and the vertical shift is 1, but the question only asks for the period."
         }
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "explanation",
@@ -194,7 +214,8 @@
         "f(−x): reflect over the y-axis (flip horizontally)",
         "a · f(x): vertical stretch if |a| > 1, compress if 0 < |a| < 1",
         "Memory trick: 'Inside = opposite, Outside = same'"
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "model",
@@ -210,41 +231,54 @@
           "problem": "If the graph of y = x² is reflected over the x-axis and shifted up 4 units, what is the new equation?\n(A) y = −x² + 4  (B) y = (−x)² + 4  (C) y = −(x + 4)²  (D) y = −x² − 4  (E) y = (x − 4)²",
           "solution": "Start with y = x².\nReflect over x-axis: y = −x²\nShift up 4: y = −x² + 4\nAnswer: (A) y = −x² + 4\n\nThe vertex of the new parabola is at (0, 4) and it opens downward."
         }
-      ]
+      ],
+      "lessonId": "functions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Advanced Functions & Transformations Practice",
-      "skills": ["act-polynomial-exponential-log", "act-trig-functions", "act-function-transformations"],
       "problems": [
         {
           "problem": "A radioactive substance has a half-life of 10 years. If the initial amount is 200 grams, how much remains after 30 years?\n(A) 12.5 g  (B) 25 g  (C) 50 g  (D) 66.7 g  (E) 100 g",
-          "hints": ["30 years = 3 half-lives", "Each half-life cuts the amount in half: 200 → 100 → 50 → 25"],
+          "hints": [
+            "30 years = 3 half-lives",
+            "Each half-life cuts the amount in half: 200 → 100 → 50 → 25"
+          ],
           "answer": "(B) 25 g. 3 half-lives: 200/2³ = 200/8 = 25 g."
         },
         {
           "problem": "Simplify: log₂(32)\n(A) 4  (B) 5  (C) 6  (D) 16  (E) 64",
-          "hints": ["Ask: 2 raised to what power equals 32?", "2⁵ = 32"],
+          "hints": [
+            "Ask: 2 raised to what power equals 32?",
+            "2⁵ = 32"
+          ],
           "answer": "(B) 5. 2⁵ = 32, so log₂(32) = 5."
         },
         {
           "problem": "In right triangle XYZ, angle X = 60° and the side adjacent to angle X is 7. What is the hypotenuse?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14  (E) 14√3",
-          "hints": ["cos 60° = adjacent/hypotenuse = 7/h", "cos 60° = 1/2, so 1/2 = 7/h"],
+          "hints": [
+            "cos 60° = adjacent/hypotenuse = 7/h",
+            "cos 60° = 1/2, so 1/2 = 7/h"
+          ],
           "answer": "(D) 14. cos 60° = 1/2 = 7/h → h = 14."
         },
         {
           "problem": "The graph of y = f(x) passes through (2, 5). Through what point does y = f(x − 4) + 3 pass?\n(A) (6, 8)  (B) (−2, 8)  (C) (6, 2)  (D) (−2, 2)  (E) (2, 8)",
-          "hints": ["f(x−4) shifts RIGHT by 4: x-coordinate goes from 2 to 6", "+3 shifts UP by 3: y-coordinate goes from 5 to 8"],
+          "hints": [
+            "f(x−4) shifts RIGHT by 4: x-coordinate goes from 2 to 6",
+            "+3 shifts UP by 3: y-coordinate goes from 5 to 8"
+          ],
           "answer": "(A) (6, 8). Right 4: (2+4, 5) = (6, 5). Up 3: (6, 5+3) = (6, 8)."
         }
-      ]
+      ],
+      "skill": "act-function-transformations",
+      "lessonId": "functions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Functions — ACT-Style Practice Set",
-      "skills": ["act-function-notation-evaluation", "act-linear-functions", "act-quadratic-functions", "act-polynomial-exponential-log", "act-trig-functions", "act-function-transformations"],
       "problems": [
         {
           "problem": "If f(x) = 3x − 7, what is f(f(3))?\n(A) −5  (B) −4  (C) 2  (D) −1  (E) 5",
@@ -278,10 +312,11 @@
           "problem": "What is the amplitude and period of y = 4 cos(πx/2)?\n(A) Amplitude 4, period 4  (B) Amplitude 4, period π  (C) Amplitude 2, period 4  (D) Amplitude 4, period 2π  (E) Amplitude π, period 4",
           "answer": "(A) Amplitude 4, period 4. Amplitude = |4| = 4. B = π/2, period = 2π/(π/2) = 4."
         }
-      ]
+      ],
+      "skill": "act-function-notation-evaluation",
+      "lessonId": "functions"
     }
   ],
-
   "answerKeys": {
     "function-eval": "15",
     "composite": "7",

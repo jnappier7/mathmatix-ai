@@ -1,0 +1,206 @@
+{
+  "moduleId": "checkpoint_q1",
+  "course": "6th Grade Math",
+  "unit": 2,
+  "title": "Checkpoint: Quarter 1 — Number System and Ratios",
+  "weeks": "10",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Quarter 1 assessment covering number system fluency (multi-digit division, decimal division, fraction operations, GCF/LCM) and ratios/rates (ratio language, unit rates, equivalent ratios, problem solving, measurement conversions). These two domains are the computational engine for the entire year.",
+
+  "skillsCovered": [
+    "g6-multi-digit-division",
+    "g6-decimal-division",
+    "g6-fraction-add-subtract",
+    "g6-fraction-multiply-divide",
+    "g6-gcf-lcm",
+    "g6-ratio-language",
+    "g6-unit-rates",
+    "g6-equivalent-ratios",
+    "g6-ratio-problem-solving",
+    "g6-measurement-conversions"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Number system and ratio fluency are foundational for Q2 expressions/equations. Students below threshold get focused reteaching before moving forward.",
+    "clusters": [
+      {
+        "skillId": "g6-multi-digit-division",
+        "reteachFocus": "Standard algorithm with 2-digit divisors, estimating quotients, interpreting remainders in context"
+      },
+      {
+        "skillId": "g6-decimal-division",
+        "reteachFocus": "Moving both decimals to make divisor whole, placing decimal in quotient, annexing zeros"
+      },
+      {
+        "skillId": "g6-fraction-add-subtract",
+        "reteachFocus": "Finding LCD, rewriting with common denominator, mixed number borrowing"
+      },
+      {
+        "skillId": "g6-fraction-multiply-divide",
+        "reteachFocus": "Multiply straight across with cross-canceling, Keep-Change-Flip for division, interpret in context"
+      },
+      {
+        "skillId": "g6-gcf-lcm",
+        "reteachFocus": "Listing method and prime factorization, GCF for grouping problems, LCM for scheduling problems"
+      },
+      {
+        "skillId": "g6-unit-rates",
+        "reteachFocus": "Dividing to find per-1 rate, comparing options by unit rate, labeling units"
+      },
+      {
+        "skillId": "g6-equivalent-ratios",
+        "reteachFocus": "Multiply/divide BOTH quantities by same factor, ratio tables, double number lines"
+      },
+      {
+        "skillId": "g6-ratio-problem-solving",
+        "reteachFocus": "Setting up the ratio from context, choosing strategy (table, unit rate, scale factor), checking reasonableness"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "cq1-1",
+      "question": "A school collected 4,368 canned goods during a food drive. The cans need to be packed equally into 24 boxes for delivery. How many cans go in each box?",
+      "answer": "182 cans per box. Divide 4,368 ÷ 24. Estimate: 4,800 ÷ 24 = 200, so the answer is near 200. Using the standard algorithm: 24 × 1 = 24 (hundreds place gives 1), bring down to get 196, 24 × 8 = 192, remainder 48, 24 × 2 = 48. So 4,368 ÷ 24 = 182.",
+      "skill": "g6-multi-digit-division",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-2",
+      "question": "A group of 5 friends splits a restaurant bill of $63.75 equally. How much does each person pay?",
+      "answer": "$12.75. Divide 63.75 ÷ 5. Move through each place: 6 ÷ 5 = 1 remainder 1, bring down 3 to get 13, 13 ÷ 5 = 2 remainder 3, bring down 7 to get 37, 37 ÷ 5 = 7 remainder 2, bring down 5 to get 25, 25 ÷ 5 = 5. Place the decimal directly above: $12.75.",
+      "skill": "g6-decimal-division",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-3",
+      "question": "Marcus practiced piano for 2 1/3 hours on Saturday and 1 3/4 hours on Sunday. How many total hours did he practice over the weekend? Write your answer as a mixed number in simplest form.",
+      "answer": "4 1/12 hours. Convert to improper fractions: 2 1/3 = 7/3 and 1 3/4 = 7/4. Find the LCD of 3 and 4, which is 12. Rewrite: 7/3 = 28/12 and 7/4 = 21/12. Add: 28/12 + 21/12 = 49/12 = 4 1/12.",
+      "skill": "g6-fraction-add-subtract",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-4",
+      "question": "A rope is 8 1/2 feet long. You cut off a piece that is 3 5/6 feet. How much rope is left? Write your answer as a mixed number in simplest form.",
+      "answer": "4 2/3 feet. Convert to improper fractions: 8 1/2 = 17/2 and 3 5/6 = 23/6. Find the LCD of 2 and 6, which is 6. Rewrite: 17/2 = 51/6. Subtract: 51/6 − 23/6 = 28/6 = 4 4/6 = 4 2/3.",
+      "skill": "g6-fraction-add-subtract",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-5",
+      "question": "A recipe calls for 3/4 cup of sugar. If you want to make 2/3 of the recipe, how much sugar do you need? Write your answer as a fraction in simplest form.",
+      "answer": "1/2 cup. Multiply: (3/4) × (2/3). Multiply numerators: 3 × 2 = 6. Multiply denominators: 4 × 3 = 12. Simplify: 6/12 = 1/2. (Or cross-cancel: the 3s cancel to give 1/1 × 2/4 = 2/4 = 1/2.)",
+      "skill": "g6-fraction-multiply-divide",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-6",
+      "question": "A craft project needs ribbon cut into pieces that are each 2/5 of a yard long. If you have 6 yards of ribbon, how many pieces can you cut?",
+      "answer": "15 pieces. Divide: 6 ÷ (2/5). Keep-Change-Flip: 6/1 × 5/2 = 30/2 = 15.",
+      "skill": "g6-fraction-multiply-divide",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-7",
+      "question": "Find the greatest common factor (GCF) and least common multiple (LCM) of 18 and 24.",
+      "answer": "GCF = 6, LCM = 72. Prime factorization: 18 = 2 × 3 × 3 and 24 = 2 × 2 × 2 × 3. GCF uses the shared primes at their lowest power: 2 × 3 = 6. LCM uses each prime at its highest power: 2³ × 3² = 8 × 9 = 72. Check: (18 × 24) ÷ 6 = 432 ÷ 6 = 72. ✓",
+      "skill": "g6-gcf-lcm",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-8",
+      "question": "A pet shelter has 15 dogs and 9 cats. Write the ratio of dogs to cats in three different ways and state what the ratio means in a complete sentence.",
+      "answer": "15 to 9, 15:9, and 15/9 (which simplifies to 5 to 3, 5:3, or 5/3). In a sentence: For every 5 dogs at the shelter, there are 3 cats. Simplify by dividing both quantities by the GCF of 3.",
+      "skill": "g6-ratio-language",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "cq1-9",
+      "question": "A 12-pack of juice boxes costs $4.80 and an 8-pack of the same juice costs $3.52. Which is the better deal? Show your work by finding the unit price of each option.",
+      "answer": "The 12-pack is the better deal. 12-pack unit price: $4.80 ÷ 12 = $0.40 per juice box. 8-pack unit price: $3.52 ÷ 8 = $0.44 per juice box. Since $0.40 < $0.44, the 12-pack costs less per juice box.",
+      "skill": "g6-unit-rates",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq1-10",
+      "question": "During a bike ride, Aisha traveled 13.5 miles in 1.5 hours. What was her speed in miles per hour?",
+      "answer": "9 miles per hour. Divide distance by time to find the unit rate: 13.5 ÷ 1.5 = 9 mph. (Multiply both by 10 to get 135 ÷ 15 = 9 if dividing decimals is tricky.)",
+      "skill": "g6-unit-rates",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq1-11",
+      "question": "A lemonade recipe uses 3 cups of water for every 2 lemons. Complete the ratio table to find how many cups of water you need for 10 lemons.\n\n| Lemons | 2  | 4  | 6  | 8  | 10 |\n|--------|----|----|----|----|----|\n| Water  | 3  | ?  | ?  | ?  | ?  |",
+      "answer": "Water: 3, 6, 9, 12, 15. The scale factor from 2 lemons to 10 lemons is ×5, so multiply water by the same factor: 3 × 5 = 15 cups of water. Filling in the table: each step multiplies both quantities by 2, 3, 4, and 5: 6, 9, 12, 15.",
+      "skill": "g6-equivalent-ratios",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq1-12",
+      "question": "At a school dance, the ratio of 6th graders to 7th graders is 5:3. If there are 45 sixth graders at the dance, how many 7th graders are there?",
+      "answer": "27 seventh graders. The ratio 5:3 means for every 5 sixth graders there are 3 seventh graders. Find the scale factor: 45 ÷ 5 = 9. Multiply both parts by 9: 5 × 9 = 45 sixth graders and 3 × 9 = 27 seventh graders.",
+      "skill": "g6-equivalent-ratios",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cq1-13",
+      "question": "A store sells trail mix for $6.50 per pound. Priya buys a bag that weighs 2.4 pounds. She also has a coupon that takes $3 off her total. How much does Priya pay?",
+      "answer": "$12.60. First find the cost before the coupon: $6.50 × 2.4 = $15.60. Then subtract the coupon: $15.60 − $3.00 = $12.60. The ratio $6.50 per pound is used as a rate to find the total cost, then the discount is applied.",
+      "skill": "g6-ratio-problem-solving",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq1-14",
+      "question": "On a map, 2 centimeters represent 35 miles. Two cities are 11.2 centimeters apart on the map. What is the actual distance between the two cities?",
+      "answer": "196 miles. Find the unit rate: 35 ÷ 2 = 17.5 miles per centimeter. Multiply: 17.5 × 11.2 = 196 miles. Alternatively, set up a proportion: 2/35 = 11.2/x, cross-multiply: 2x = 392, so x = 196 miles.",
+      "skill": "g6-ratio-problem-solving",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "cq1-15",
+      "question": "A fish tank holds 7.5 gallons of water. How many cups of water does it hold? (1 gallon = 16 cups)",
+      "answer": "120 cups. Multiply the number of gallons by the conversion factor: 7.5 × 16 = 120 cups. Since 1 gallon = 16 cups, multiply to convert from the larger unit (gallons) to the smaller unit (cups).",
+      "skill": "g6-measurement-conversions",
+      "difficulty": 2,
+      "points": 4
+    }
+  ],
+
+  "answerKeys": {
+    "cq1-1": "182 cans",
+    "cq1-2": "$12.75",
+    "cq1-3": "4 1/12 hours",
+    "cq1-4": "4 2/3 feet",
+    "cq1-5": "1/2 cup",
+    "cq1-6": "15 pieces",
+    "cq1-7": "GCF = 6, LCM = 72",
+    "cq1-8": "5:3",
+    "cq1-9": "12-pack at $0.40 per box",
+    "cq1-10": "9 miles per hour",
+    "cq1-11": "15 cups",
+    "cq1-12": "27 seventh graders",
+    "cq1-13": "$12.60",
+    "cq1-14": "196 miles",
+    "cq1-15": "120 cups"
+  }
+}

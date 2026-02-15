@@ -5,6 +5,7 @@
   "title": "Exponential & Logarithmic Functions",
   "weeks": "16-19",
   "estimatedDuration": 60,
+  "description": "Discover how exponential and logarithmic functions model growth, decay, and real-world phenomena from compound interest to earthquake intensity.",
   "skills": [
     "exponential-growth-decay",
     "compound-interest-modeling",
@@ -41,32 +42,99 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Exponential Functions** have the form f(x) = a * b^x where:\n- a = initial value (the y-intercept when x = 0)\n- b = base (growth factor if b > 1, decay factor if 0 < b < 1)\n- The graph always passes through (0, a) and has a horizontal asymptote at y = 0\n\n**Growth vs. Decay:**\n- **Growth (b > 1):** population increase, investment appreciation, inflation\n- **Decay (0 < b < 1):** radioactive decay, depreciation, cooling\n\n**Percent Change:**\n- Growth of r% per period: f(x) = a(1 + r)^x (e.g., 5% growth uses b = 1.05)\n- Decay of r% per period: f(x) = a(1 - r)^x (e.g., 12% depreciation uses b = 0.88)\n\n**Compound Interest:** A = P(1 + r/n)^(nt)\n- P = principal (initial investment)\n- r = annual interest rate (as a decimal)\n- n = number of compounding periods per year\n- t = time in years\n\n**Half-Life:** A = A_0(1/2)^(t/h)\n- A_0 = initial amount\n- h = half-life (time for half the substance to decay)\n- t = elapsed time",
-      "initialPrompt": "A car worth $20,000 depreciates 15% per year. Write the value function V(t). What is the car worth after 3 years? What is the decay factor, and why is it 0.85 and not 0.15?"
+      "skill": "exponential-growth-decay",
+      "title": "Concept: Exponential Growth Decay",
+      "initialPrompt": "A car worth $20,000 depreciates 15% per year. Write the value function V(t). What is the car worth after 3 years? What is the decay factor, and why is it 0.85 and not 0.15?",
+      "content": "**Exponential Functions** have the form f(x) = a * b^x where:\n- a = initial value (the y-intercept when x = 0)\n- b = base (growth factor if b > 1, decay factor if 0 < b < 1)\n- The graph always passes through (0, a) and has a horizontal asymptote at y = 0\n\n**Growth vs. Decay:**\n- **Growth (b > 1):** population increase, investment appreciation, inflation\n- **Decay (0 < b < 1):** radioactive decay, depreciation, cooling\n\n**Percent Change:**\n- Growth of r% per period: f(x) = a(1 + r)^x (e.g., 5% growth uses b = 1.05)\n- Decay of r% per period: f(x) = a(1 - r)^x (e.g., 12% depreciation uses b = 0.88)\n\n**Compound Interest:** A = P(1 + r/n)^(nt)\n- P = principal (initial investment)\n- r = annual interest rate (as a decimal)\n- n = number of compounding periods per year\n- t = time in years\n\n**Half-Life:** A = A_0(1/2)^(t/h)\n- A_0 = initial amount\n- h = half-life (time for half the substance to decay)\n- t = elapsed time",
+      "lessonId": "exponential-functions"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "A bacterial colony starts with 500 bacteria and triples every 4 hours. (a) Write a function P(t) for the population after t hours. (b) Find the population after 12 hours. (c) When will the colony reach 40,500 bacteria?\n\nThen: $1,000 is invested at 8% annual interest compounded semi-annually. Find the value after 10 years.",
-      "explanation": "**Bacteria Growth:**\n\n(a) The colony triples (factor of 3) every 4 hours, starting at 500:\nP(t) = 500 * 3^(t/4)\n\nWhy t/4? After 4 hours: P(4) = 500 * 3^(4/4) = 500 * 3 = 1500 (tripled once).\nAfter 8 hours: P(8) = 500 * 3^(8/4) = 500 * 9 = 4500 (tripled twice). Correct!\n\n(b) After 12 hours:\nP(12) = 500 * 3^(12/4) = 500 * 3^3 = 500 * 27 = **13,500 bacteria**\n\n(c) Set P(t) = 40,500 and solve:\n40,500 = 500 * 3^(t/4)\n81 = 3^(t/4)\n3^4 = 3^(t/4)\nt/4 = 4\n**t = 16 hours**\n\n**Compound Interest:**\n\nA = P(1 + r/n)^(nt) = 1000(1 + 0.08/2)^(2*10) = 1000(1.04)^20\n\n(1.04)^20 ~= 2.19112\n\nA ~= 1000 * 2.19112 = **$2,191.12**\n\nThe investment more than doubled in 10 years. Notice: n = 2 (semi-annual means twice per year), so the rate per period is 0.08/2 = 0.04.",
-      "initialPrompt": "For the bacteria problem, what would change if the colony doubled every 4 hours instead of tripling? Write that model and compare: which grows faster, and by how much after 12 hours?"
+      "skill": "exponential-growth-decay",
+      "title": "I-Do: Exponential Growth Decay — Worked Examples",
+      "initialPrompt": "For the bacteria problem, what would change if the colony doubled every 4 hours instead of tripling? Write that model and compare: which grows faster, and by how much after 12 hours?",
+      "examples": [
+        {
+          "problem": "A bacterial colony starts with 500 bacteria and triples every 4 hours. (a) Write a function P(t) for the population after t hours. (b) Find the population after 12 hours. (c) When will the colony reach 40,500 bacteria?\n\nThen: $1,000 is invested at 8% annual interest compounded semi-annually. Find the value after 10 years.",
+          "solution": "**Bacteria Growth:**\n\n(a) The colony triples (factor of 3) every 4 hours, starting at 500:\nP(t) = 500 * 3^(t/4)\n\nWhy t/4? After 4 hours: P(4) = 500 * 3^(4/4) = 500 * 3 = 1500 (tripled once).\nAfter 8 hours: P(8) = 500 * 3^(8/4) = 500 * 9 = 4500 (tripled twice). Correct!\n\n(b) After 12 hours:\nP(12) = 500 * 3^(12/4) = 500 * 3^3 = 500 * 27 = **13,500 bacteria**\n\n(c) Set P(t) = 40,500 and solve:\n40,500 = 500 * 3^(t/4)\n81 = 3^(t/4)\n3^4 = 3^(t/4)\nt/4 = 4\n**t = 16 hours**\n\n**Compound Interest:**\n\nA = P(1 + r/n)^(nt) = 1000(1 + 0.08/2)^(2*10) = 1000(1.04)^20\n\n(1.04)^20 ~= 2.19112\n\nA ~= 1000 * 2.19112 = **$2,191.12**\n\nThe investment more than doubled in 10 years. Notice: n = 2 (semi-annual means twice per year), so the rate per period is 0.08/2 = 0.04."
+        }
+      ],
+      "lessonId": "exponential-functions"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponential-growth-decay",
+      "title": "I-Do: Half-Life & Decay Models",
+      "initialPrompt": "What fraction of the original sample remains after exactly 3 half-lives? What about after 10 half-lives? Notice how quickly exponential decay shrinks things.",
+      "examples": [
+        {
+          "problem": "A 200-mg sample of a radioactive isotope has a half-life of 6 hours. (a) Write a decay function A(t). (b) How much remains after 15 hours? (c) When will fewer than 5 mg remain?",
+          "solution": "**(a) Decay function:**\nA_0 = 200 mg, half-life h = 6 hours.\nA(t) = 200(1/2)^(t/6)\n\nCheck: A(0) = 200 (correct). A(6) = 200(1/2) = 100 (halved). A(12) = 200(1/4) = 50 (halved again).\n\n**(b) After 15 hours:**\nA(15) = 200(1/2)^(15/6) = 200(1/2)^(2.5)\n(1/2)^(2.5) = (1/2)^2 * (1/2)^(0.5) = 0.25 * 0.7071 = 0.17678\nA(15) = 200 * 0.17678 ≈ **35.36 mg**\n\nNotice that 15 hours is 2.5 half-lives. The formula handles any value of t, not just whole multiples of the half-life.\n\n**(c) When A(t) < 5:**\n5 = 200(1/2)^(t/6)\n0.025 = (1/2)^(t/6)\n\nTake ln of both sides:\nln(0.025) = (t/6) * ln(1/2)\n-3.6889 = (t/6)(-0.6931)\nt/6 = 5.3219\n**t ≈ 31.93 hours**\n\nAfter about 32 hours (roughly 5.3 half-lives), fewer than 5 mg remain.",
+          "tip": "When the time is not a neat multiple of the half-life, you must use logarithms to solve. This is the bridge between exponential models and logarithmic solving techniques."
+        }
+      ],
+      "lessonId": "exponential-functions"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "compound-interest-modeling",
+      "title": "I-Do: Comparing Compounding Frequencies",
+      "initialPrompt": "How long would it take to double your money with continuous compounding at 6%? Set 2P = Pe^(0.06t) and solve for t. Compare to the Rule of 72 estimate.",
+      "examples": [
+        {
+          "problem": "$5,000 is invested at 6% annual interest. Find the value after 10 years if interest is compounded: (a) annually, (b) quarterly, (c) monthly, (d) continuously. Use A = Pe^(rt) for continuous compounding.",
+          "solution": "**Formula: A = P(1 + r/n)^(nt) and A = Pe^(rt) for continuous.**\nP = 5000, r = 0.06, t = 10.\n\n**(a) Annually (n = 1):**\nA = 5000(1.06)^10 ≈ 5000(1.79085) ≈ **$8,954.24**\n\n**(b) Quarterly (n = 4):**\nA = 5000(1.015)^40 ≈ 5000(1.81402) ≈ **$9,070.09**\n\n**(c) Monthly (n = 12):**\nA = 5000(1.005)^120 ≈ 5000(1.81940) ≈ **$9,096.98**\n\n**(d) Continuously:**\nA = 5000e^(0.6) ≈ 5000(1.82212) ≈ **$9,110.59**\n\n**Key insight:** More frequent compounding yields more money, but with diminishing returns. Annual to quarterly ($116 more) is much larger than monthly to continuous ($14 more). Continuous compounding is the theoretical upper limit.",
+          "tip": "The number e ≈ 2.718 was discovered through compound interest -- it is the limit of (1 + 1/n)^n as n approaches infinity."
+        }
+      ],
+      "lessonId": "intro-logarithms"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "compound-interest-modeling",
+      "title": "I-Do: Solving for Time and Rate",
+      "initialPrompt": "Use the Rule of 72 to estimate doubling time at 4%, 6%, and 12%. Then check with the exact formula.",
+      "examples": [
+        {
+          "problem": "(a) How long does it take $3,000 to grow to $10,000 at 5% compounded annually?\n(b) An investment doubles in 9 years with annual compounding. What is the interest rate?",
+          "solution": "**(a) Solving for time:**\n10000 = 3000(1.05)^t\n10/3 = (1.05)^t\n\nTake ln of both sides:\nln(10/3) = t * ln(1.05)\nt = ln(10/3)/ln(1.05) = 1.20397/0.04879 ≈ **24.68 years**\n\nIt takes about 24 years and 8 months.\n\n**(b) Solving for rate:**\n2P = P(1 + r)^9\n2 = (1 + r)^9\n(1 + r) = 2^(1/9) ≈ 1.08006\n**r ≈ 0.08 = 8.0%**\n\nCheck: (1.08)^9 ≈ 1.999 ≈ 2. Correct!",
+          "tip": "The Rule of 72 gives a quick estimate for doubling time: t ≈ 72/r (where r is in percent). Here 72/8 = 9 years, matching perfectly."
+        }
+      ],
+      "lessonId": "intro-logarithms"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Logarithms are the INVERSE of exponential functions.**\n\nThe fundamental definition:\n  log_b(x) = y  means  b^y = x\n\nIn words: 'log base b of x equals y' means 'b raised to the y power equals x.'\n\nThe logarithm ASKS A QUESTION: 'What exponent do I put on b to get x?'\n- log_2(8) = ? asks '2 to what power gives 8?' Answer: 3, because 2^3 = 8.\n- log_5(25) = ? asks '5 to what power gives 25?' Answer: 2, because 5^2 = 25.\n- log_3(1/9) = ? asks '3 to what power gives 1/9?' Answer: -2, because 3^(-2) = 1/9.\n\n**Special logarithms:**\n- log(x) = log_10(x) -- the common logarithm (base 10)\n- ln(x) = log_e(x) -- the natural logarithm (base e, where e ~= 2.718)\n\n**Inverse properties (these undo each other):**\n- log_b(b^x) = x  (log undoes the exponential)\n- b^(log_b(x)) = x  (exponential undoes the log)\n\n**Domain restriction:** log_b(x) is ONLY defined when x > 0. You cannot take the logarithm of zero or a negative number.",
-      "initialPrompt": "Evaluate log_4(64) by asking: '4 to what power gives 64?' Now try log_7(1) -- what exponent on 7 gives 1? Why does this work for ANY base?"
+      "skill": "compound-interest-modeling",
+      "title": "Concept: Compound Interest Modeling",
+      "initialPrompt": "Evaluate log_4(64) by asking: '4 to what power gives 64?' Now try log_7(1) -- what exponent on 7 gives 1? Why does this work for ANY base?",
+      "content": "**Logarithms are the INVERSE of exponential functions.**\n\nThe fundamental definition:\n  log_b(x) = y  means  b^y = x\n\nIn words: 'log base b of x equals y' means 'b raised to the y power equals x.'\n\nThe logarithm ASKS A QUESTION: 'What exponent do I put on b to get x?'\n- log_2(8) = ? asks '2 to what power gives 8?' Answer: 3, because 2^3 = 8.\n- log_5(25) = ? asks '5 to what power gives 25?' Answer: 2, because 5^2 = 25.\n- log_3(1/9) = ? asks '3 to what power gives 1/9?' Answer: -2, because 3^(-2) = 1/9.\n\n**Special logarithms:**\n- log(x) = log_10(x) -- the common logarithm (base 10)\n- ln(x) = log_e(x) -- the natural logarithm (base e, where e ~= 2.718)\n\n**Inverse properties (these undo each other):**\n- log_b(b^x) = x  (log undoes the exponential)\n- b^(log_b(x)) = x  (exponential undoes the log)\n\n**Domain restriction:** log_b(x) is ONLY defined when x > 0. You cannot take the logarithm of zero or a negative number.",
+      "lessonId": "intro-logarithms"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "(a) Convert 4^3 = 64 to logarithmic form.\n(b) Convert log_5(1/125) = -3 to exponential form.\n(c) Evaluate log_2(64).\n(d) Evaluate log_9(1/3).",
-      "explanation": "**Conversion uses the bridge: log_b(x) = y <-> b^y = x**\n\n(a) 4^3 = 64\nIdentify: base = 4, exponent = 3, result = 64\nLogarithmic form: **log_4(64) = 3**\n\n(b) log_5(1/125) = -3\nIdentify: base = 5, exponent = -3, result = 1/125\nExponential form: **5^(-3) = 1/125**\nCheck: 5^(-3) = 1/5^3 = 1/125. Correct!\n\n(c) log_2(64) = ?\nAsk: 2 to what power gives 64?\n2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16, 2^5 = 32, 2^6 = 64\n**log_2(64) = 6**\n\n(d) log_9(1/3) = ?\nAsk: 9 to what power gives 1/3?\nRewrite 9 as 3^2: (3^2)^x = 3^(-1)\n3^(2x) = 3^(-1)\n2x = -1\nx = -1/2\n**log_9(1/3) = -1/2**\n\nCheck: 9^(-1/2) = 1/sqrt(9) = 1/3. Correct!",
-      "initialPrompt": "Try evaluating log_8(4). Hint: rewrite both 8 and 4 as powers of 2, then set up the equation (2^3)^x = 2^2 and solve for x."
+      "skill": "logarithm-evaluation-conversion",
+      "title": "I-Do: Logarithm Evaluation Conversion — Worked Examples",
+      "initialPrompt": "Try evaluating log_8(4). Hint: rewrite both 8 and 4 as powers of 2, then set up the equation (2^3)^x = 2^2 and solve for x.",
+      "examples": [
+        {
+          "problem": "(a) Convert 4^3 = 64 to logarithmic form.\n(b) Convert log_5(1/125) = -3 to exponential form.\n(c) Evaluate log_2(64).\n(d) Evaluate log_9(1/3).",
+          "solution": "**Conversion uses the bridge: log_b(x) = y <-> b^y = x**\n\n(a) 4^3 = 64\nIdentify: base = 4, exponent = 3, result = 64\nLogarithmic form: **log_4(64) = 3**\n\n(b) log_5(1/125) = -3\nIdentify: base = 5, exponent = -3, result = 1/125\nExponential form: **5^(-3) = 1/125**\nCheck: 5^(-3) = 1/5^3 = 1/125. Correct!\n\n(c) log_2(64) = ?\nAsk: 2 to what power gives 64?\n2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16, 2^5 = 32, 2^6 = 64\n**log_2(64) = 6**\n\n(d) log_9(1/3) = ?\nAsk: 9 to what power gives 1/3?\nRewrite 9 as 3^2: (3^2)^x = 3^(-1)\n3^(2x) = 3^(-1)\n2x = -1\nx = -1/2\n**log_9(1/3) = -1/2**\n\nCheck: 9^(-1/2) = 1/sqrt(9) = 1/3. Correct!"
+        }
+      ],
+      "lessonId": "log-properties"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "logarithm-evaluation-conversion",
+      "title": "We-Do: Logarithm Evaluation Conversion — Guided Practice",
       "problems": [
         {
           "question": "Evaluate: log_6(216)",
@@ -95,24 +163,37 @@
           ]
         }
       ],
-      "initialPrompt": "For log_6(216), ask yourself: 6 raised to what power equals 216? Try building up: 6^1, 6^2, 6^3..."
+      "initialPrompt": "For log_6(216), ask yourself: 6 raised to what power equals 216? Try building up: 6^1, 6^2, 6^3...",
+      "lessonId": "log-properties"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Properties of Logarithms** (these mirror the exponent rules):\n\n1. **Product Rule:** log_b(MN) = log_b(M) + log_b(N)\n   Mirrors: b^m * b^n = b^(m+n)\n\n2. **Quotient Rule:** log_b(M/N) = log_b(M) - log_b(N)\n   Mirrors: b^m / b^n = b^(m-n)\n\n3. **Power Rule:** log_b(M^p) = p * log_b(M)\n   Mirrors: (b^m)^p = b^(mp)\n\n4. **Change of Base Formula:** log_b(x) = log(x) / log(b) = ln(x) / ln(b)\n   This lets you evaluate ANY logarithm on a calculator using log or ln.\n\n**CRITICAL WARNING:** These properties ONLY work with multiplication, division, and powers inside the log.\n\n   log(a + b) != log(a) + log(b)   <-- THIS IS WRONG\n   log(a - b) != log(a) - log(b)   <-- THIS IS WRONG\n\nLogs do NOT distribute over addition or subtraction. There is NO simplification rule for log(a + b). This is the single most common error students make with logarithms.",
-      "initialPrompt": "Using the product rule, expand log_2(8 * 16). Verify by computing each side: the left side is log_2(128) and the right side is log_2(8) + log_2(16). Do they match?"
+      "skill": "logarithm-properties",
+      "title": "Concept: Logarithm Properties",
+      "initialPrompt": "Using the product rule, expand log_2(8 * 16). Verify by computing each side: the left side is log_2(128) and the right side is log_2(8) + log_2(16). Do they match?",
+      "content": "**Properties of Logarithms** (these mirror the exponent rules):\n\n1. **Product Rule:** log_b(MN) = log_b(M) + log_b(N)\n   Mirrors: b^m * b^n = b^(m+n)\n\n2. **Quotient Rule:** log_b(M/N) = log_b(M) - log_b(N)\n   Mirrors: b^m / b^n = b^(m-n)\n\n3. **Power Rule:** log_b(M^p) = p * log_b(M)\n   Mirrors: (b^m)^p = b^(mp)\n\n4. **Change of Base Formula:** log_b(x) = log(x) / log(b) = ln(x) / ln(b)\n   This lets you evaluate ANY logarithm on a calculator using log or ln.\n\n**CRITICAL WARNING:** These properties ONLY work with multiplication, division, and powers inside the log.\n\n   log(a + b) != log(a) + log(b)   <-- THIS IS WRONG\n   log(a - b) != log(a) - log(b)   <-- THIS IS WRONG\n\nLogs do NOT distribute over addition or subtraction. There is NO simplification rule for log(a + b). This is the single most common error students make with logarithms.",
+      "lessonId": "solving-exp-log-equations"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "Expand: log_5(25x^3 / sqrt(z)).\nCondense: 4*log_2(a) - (1/3)*log_2(b) + log_2(c).",
-      "explanation": "**Expanding log_5(25x^3 / sqrt(z)):**\n\nStep 1 -- Quotient Rule:\n  log_5(25x^3) - log_5(sqrt(z))\n\nStep 2 -- Product Rule on the first term:\n  log_5(25) + log_5(x^3) - log_5(z^(1/2))\n\nStep 3 -- Evaluate log_5(25) and apply Power Rule:\n  2 + 3*log_5(x) - (1/2)*log_5(z)\n\nFinal answer: **2 + 3*log_5(x) - (1/2)*log_5(z)**\n\n---\n\n**Condensing 4*log_2(a) - (1/3)*log_2(b) + log_2(c):**\n\nStep 1 -- Power Rule (move coefficients inside as exponents):\n  log_2(a^4) - log_2(b^(1/3)) + log_2(c)\n\nStep 2 -- Product Rule (add the positive terms):\n  log_2(a^4 * c) - log_2(b^(1/3))\n\nStep 3 -- Quotient Rule:\n  log_2(a^4 * c / b^(1/3))\n\nFinal answer: **log_2(a^4 * c / cbrt(b))**\n\nNote: Expanding and condensing are inverse operations. Expanding breaks one log into many; condensing combines many logs into one.",
-      "initialPrompt": "Try expanding log_3(x^2 * y / 81) step by step. Remember that 81 = 3^4, so log_3(81) simplifies to a number."
+      "skill": "exponential-logarithmic-equations",
+      "title": "I-Do: Exponential Logarithmic Equations — Worked Examples",
+      "initialPrompt": "Try expanding log_3(x^2 * y / 81) step by step. Remember that 81 = 3^4, so log_3(81) simplifies to a number.",
+      "examples": [
+        {
+          "problem": "Expand: log_5(25x^3 / sqrt(z)).\nCondense: 4*log_2(a) - (1/3)*log_2(b) + log_2(c).",
+          "solution": "**Expanding log_5(25x^3 / sqrt(z)):**\n\nStep 1 -- Quotient Rule:\n  log_5(25x^3) - log_5(sqrt(z))\n\nStep 2 -- Product Rule on the first term:\n  log_5(25) + log_5(x^3) - log_5(z^(1/2))\n\nStep 3 -- Evaluate log_5(25) and apply Power Rule:\n  2 + 3*log_5(x) - (1/2)*log_5(z)\n\nFinal answer: **2 + 3*log_5(x) - (1/2)*log_5(z)**\n\n---\n\n**Condensing 4*log_2(a) - (1/3)*log_2(b) + log_2(c):**\n\nStep 1 -- Power Rule (move coefficients inside as exponents):\n  log_2(a^4) - log_2(b^(1/3)) + log_2(c)\n\nStep 2 -- Product Rule (add the positive terms):\n  log_2(a^4 * c) - log_2(b^(1/3))\n\nStep 3 -- Quotient Rule:\n  log_2(a^4 * c / b^(1/3))\n\nFinal answer: **log_2(a^4 * c / cbrt(b))**\n\nNote: Expanding and condensing are inverse operations. Expanding breaks one log into many; condensing combines many logs into one."
+        }
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "exponential-logarithmic-equations",
+      "title": "We-Do: Exponential Logarithmic Equations — Guided Practice",
       "problems": [
         {
           "question": "Expand: log_3(27x^2 / y^4)",
@@ -144,11 +225,14 @@
           ]
         }
       ],
-      "initialPrompt": "For the expansion problem, start with the Quotient Rule to split the fraction, then use the Product Rule on the numerator. What is log_3(27)?"
+      "initialPrompt": "For the expansion problem, start with the Quotient Rule to split the fraction, then use the Product Rule on the numerator. What is log_3(27)?",
+      "lessonId": "exponential-functions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "skill": "domain-analysis-logarithms",
+      "title": "You-Do: Domain Analysis Logarithms — Independent Practice",
       "problems": [
         {
           "question": "Evaluate: log_4(1/64)",
@@ -204,7 +288,8 @@
           ]
         }
       ],
-      "attemptsRequired": 4
+      "attemptsRequired": 4,
+      "lessonId": "intro-logarithms"
     }
   ],
   "answerKeys": {
@@ -231,5 +316,27 @@
     "log_9(1/3)": "-1/2",
     "expand log_5(25x^3/sqrt(z))": "2 + 3*log_5(x) - (1/2)*log_5(z)",
     "condense 4log_2(a)-(1/3)log_2(b)+log_2(c)": "log_2(a^4*c/cbrt(b))"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "exponential-functions",
+      "title": "Exponential Growth & Decay",
+      "order": 1
+    },
+    {
+      "lessonId": "intro-logarithms",
+      "title": "Introduction to Logarithms",
+      "order": 2
+    },
+    {
+      "lessonId": "log-properties",
+      "title": "Properties of Logarithms",
+      "order": 3
+    },
+    {
+      "lessonId": "solving-exp-log-equations",
+      "title": "Solving Exponential & Logarithmic Equations",
+      "order": 4
+    }
+  ]
 }

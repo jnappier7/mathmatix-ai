@@ -412,7 +412,7 @@ async function generateAvailableBadges(theta, user) {
     // ========== ORDER OF OPERATIONS ==========
     {
       badgeId: 'order-operations-bronze',
-      name: 'PEMDAS Beginner',
+      name: 'GEMS Beginner',
       domain: 'algebra',
       skillId: 'order-of-operations',
       skillName: 'Order of Operations',
@@ -436,7 +436,7 @@ async function generateAvailableBadges(theta, user) {
     },
     {
       badgeId: 'order-operations-gold',
-      name: 'PEMDAS Master',
+      name: 'GEMS Master',
       domain: 'algebra',
       skillId: 'order-of-operations',
       skillName: 'Order of Operations',

@@ -51,8 +51,8 @@
     "standardsAlignment": ["A-REI.3"],
     "teachingGuidance": {
       "coreConcepts": [
-        "Undo operations in reverse order (PEMDAS backwards)",
-        "Addition/subtraction first, then multiplication/division",
+        "Box the variable term, think outside the box — deal with constants first",
+        "Opposites make zero: cancel constants by adding their opposite to both sides",
         "Keep equation balanced at each step",
         "Simplify before solving when possible"
       ],
@@ -63,7 +63,7 @@
         "Not checking solutions"
       ],
       "teachingTips": [
-        "Teach SADMEP (reverse PEMDAS)",
+        "Teach 'Box it, think outside the box, opposites make zero, side by side gotta divide'",
         "Use color coding for different operations",
         "Show vertical format for tracking steps",
         "Real-world: phone plans, gym memberships"

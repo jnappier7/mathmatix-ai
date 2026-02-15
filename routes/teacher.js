@@ -590,7 +590,7 @@ router.get('/class-ai-settings', isTeacher, async (req, res) => {
       scaffoldingLevel: 3,
       scaffoldingNote: '',
       vocabularyPreferences: {
-        orderOfOperations: 'PEMDAS',
+        orderOfOperations: 'GEMS',
         customVocabulary: [],
         vocabularyNote: ''
       },

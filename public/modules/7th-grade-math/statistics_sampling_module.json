@@ -6,17 +6,24 @@
   "weeks": "23-25",
   "estimatedDuration": 30,
   "description": "Explore how to collect and analyze data using random samples to draw conclusions about larger populations. Learn to identify populations and samples, understand why random sampling produces reliable results, compare data sets using measures of center and variability (mean, median, range, MAD), and make informal inferences about two populations based on sample data.",
-
-  "skills": ["g7-populations-samples", "g7-random-sampling", "g7-compare-data-sets", "g7-informal-inferences"],
-  "standardsAlignment": ["7.SP.1", "7.SP.2", "7.SP.3", "7.SP.4"],
-
+  "skills": [
+    "g7-populations-samples",
+    "g7-random-sampling",
+    "g7-compare-data-sets",
+    "g7-informal-inferences"
+  ],
+  "standardsAlignment": [
+    "7.SP.1",
+    "7.SP.2",
+    "7.SP.3",
+    "7.SP.4"
+  ],
   "goals": [
     "Distinguish between a population and a sample and explain why sampling is necessary",
     "Understand that a random sample is likely to be representative and support valid inferences about a population",
     "Compare two data sets by computing and interpreting mean, median, range, and mean absolute deviation (MAD)",
     "Draw informal inferences about two populations based on measures of center and variability from random samples"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> We Do -> You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -24,9 +31,7 @@
     "Emphasis on computing and interpreting mean, median, range, and MAD — not just calculating but explaining what the numbers mean",
     "Inference questions require written justification comparing the difference in means to the variability within groups"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -41,7 +46,8 @@
         "The goal of sampling is to learn about the population without having to measure every single member.",
         "A good sample should be representative — it should reflect the characteristics of the whole population as closely as possible.",
         "Example: A farmer with 2,000 apple trees inspects 75 trees to check for disease. The population is all 2,000 trees; the sample is the 75 inspected."
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "explanation",
@@ -57,7 +63,8 @@
         "Common random sampling methods: assign each member a number and use a random number generator, or draw names from a hat.",
         "Larger random samples generally give more reliable results than smaller ones, but even a small random sample is better than a large biased one.",
         "A single random sample may not perfectly match the population — this natural variation is expected and is called sampling variability."
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "explanation",
@@ -73,7 +80,8 @@
         "To compute MAD: (1) find the mean, (2) find the absolute value of each data point minus the mean, (3) average those absolute values.",
         "When comparing two groups, look at BOTH center and variability — two groups can have the same mean but very different spreads.",
         "A group with a smaller MAD and range is more consistent; a group with a larger MAD and range has more variation."
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "explanation",
@@ -88,9 +96,9 @@
         "If the difference between the means is small compared to the MAD, the difference might just be due to sampling variability — you cannot confidently say the populations differ.",
         "Always reference specific numbers when stating an inference: mention the means, the difference, and the MADs.",
         "Example: If School A's sample mean is 78 (MAD 5) and School B's is 85 (MAD 4), the 7-point gap is larger than either MAD, so School B likely scores higher overall."
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
-
     {
       "type": "model",
       "lessonPhase": "i-do",
@@ -109,7 +117,8 @@
           "problem": "A veterinarian wants to estimate the average weight of golden retrievers in the United States. She records the weights of 120 golden retrievers that visit her clinic over a year. What is the population? What is the sample?",
           "solution": "Population: all golden retrievers in the United States.\nSample: the 120 golden retrievers that visited her clinic.\nNote: This sample could be biased because dogs that visit the vet may be sick (and possibly underweight) or may come from one geographic area. A truly representative sample would need dogs from many different locations and backgrounds."
         }
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "model",
@@ -129,7 +138,8 @@
           "problem": "A principal wants to survey 60 students from a school of 600 about whether they want a longer recess. She prints out an alphabetical list of all 600 students and selects every 10th name on the list. Is this a valid random sampling method? Why or why not?",
           "solution": "Yes, this is a valid random sampling method called systematic sampling. As long as the alphabetical list has no hidden pattern related to recess preferences (and it wouldn't — last names are unrelated to opinions about recess), every student has an equal chance of being selected.\n\nThe method produces 600 / 10 = 60 students, which is the desired sample size. This is a practical alternative to drawing names from a hat when the population list is long."
         }
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "model",
@@ -145,7 +155,8 @@
           "problem": "Two study groups took a practice quiz (scored out of 100).\n\nGroup X: 70, 75, 80, 85, 90\nGroup Y: 76, 78, 80, 82, 84\n\nCompute the mean, median, range, and MAD for each group. Which group was more consistent?",
           "solution": "Group X:\n  Mean = (70 + 75 + 80 + 85 + 90) / 5 = 400 / 5 = 80\n  Sorted: 70, 75, 80, 85, 90 -> Median = 80\n  Range = 90 - 70 = 20\n  MAD: |70-80| + |75-80| + |80-80| + |85-80| + |90-80| = 10 + 5 + 0 + 5 + 10 = 30\n  MAD = 30 / 5 = 6\n\nGroup Y:\n  Mean = (76 + 78 + 80 + 82 + 84) / 5 = 400 / 5 = 80\n  Sorted: 76, 78, 80, 82, 84 -> Median = 80\n  Range = 84 - 76 = 8\n  MAD: |76-80| + |78-80| + |80-80| + |82-80| + |84-80| = 4 + 2 + 0 + 2 + 4 = 12\n  MAD = 12 / 5 = 2.4\n\nComparison: Both groups have the same mean (80) and median (80), so their typical scores are identical. However, Group Y is much more consistent — their range (8 vs 20) and MAD (2.4 vs 6) are both smaller. Group X had a wider spread of scores from 70 to 90, while Group Y's scores were tightly clustered between 76 and 84."
         }
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "model",
@@ -165,14 +176,13 @@
           "problem": "A random sample of 25 runners from the track team had a mean mile time of 7.2 minutes with a MAD of 0.6 minutes. A random sample of 25 runners from the soccer team had a mean mile time of 8.0 minutes with a MAD of 0.8 minutes. What can you infer?",
           "solution": "Difference in means: 8.0 - 7.2 = 0.8 minutes.\nThe MADs are 0.6 and 0.8 minutes.\n\nThe 0.8-minute difference is comparable to the MADs. It is right at the boundary — the difference is about the same size as the variability within each group.\n\nInference: There is some evidence that track team runners tend to have faster mile times than soccer team runners, but the evidence is not overwhelming. The difference (0.8 min) is close to the typical variation within each team (0.6 to 0.8 min), so additional data would help strengthen this conclusion."
         }
-      ]
+      ],
+      "lessonId": "statistics_sampling"
     },
-
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Populations, Samples, and Random Sampling Practice",
-      "skills": ["g7-populations-samples", "g7-random-sampling"],
       "problems": [
         {
           "id": "gp1-pop-sample",
@@ -194,13 +204,14 @@
           ],
           "answer": "This is NOT a random sample. People at a grocery store on a Tuesday morning do not represent all 5,000 residents. People who work during the day, students in school, and residents who shop at other stores or on other days are excluded. The results could be biased — for example, retirees and stay-at-home parents might be over-represented, and their opinions about a park could differ from the broader population. A better method would be to randomly select 100 addresses from the town directory and mail or deliver surveys to those households."
         }
-      ]
+      ],
+      "skill": "g7-random-sampling",
+      "lessonId": "statistics_sampling"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Comparing Data Sets and Drawing Inferences",
-      "skills": ["g7-compare-data-sets", "g7-informal-inferences"],
       "problems": [
         {
           "id": "gp2-compare-teams",
@@ -223,14 +234,14 @@
           ],
           "answer": "The difference in means is 62 - 59 = 3 inches. Both MADs are relatively small (2.5 and 2 inches), meaning students within each school have heights that are fairly close to their school's average. The 3-inch difference between the schools is larger than either MAD, which suggests the difference is meaningful and not just due to random chance. Inference: Seventh graders at Lincoln Middle School are likely taller on average than seventh graders at Washington Middle School."
         }
-      ]
+      ],
+      "skill": "g7-random-sampling",
+      "lessonId": "statistics_sampling"
     },
-
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Statistics: Sampling and Inference — Practice Set",
-      "skills": ["g7-populations-samples", "g7-random-sampling", "g7-compare-data-sets", "g7-informal-inferences"],
       "problems": [
         {
           "id": "ip-pop-sample",
@@ -257,10 +268,11 @@
           "problem": "A random sample of 25 students from Riverside Middle School spent a mean of 45 minutes per night on homework with a MAD of 10 minutes. A random sample of 25 students from Hilltop Middle School spent a mean of 60 minutes per night with a MAD of 8 minutes. Draw an informal inference comparing the homework habits of students at these two schools. Justify your answer using the data.",
           "answer": "The difference in means is 60 - 45 = 15 minutes. The MADs are 10 minutes (Riverside) and 8 minutes (Hilltop), so the typical variation within each school is about 8 to 10 minutes. The 15-minute difference between the schools is larger than the variation within either school, which suggests the difference is real and not just due to sampling variability. Inference: Students at Hilltop Middle School likely spend more time on homework per night than students at Riverside Middle School."
         }
-      ]
+      ],
+      "skill": "g7-populations-samples",
+      "lessonId": "statistics_sampling"
     }
   ],
-
   "answerKeys": {
     "gp1-pop-sample": "Population: all 800 students. Sample: the 50 students surveyed.",
     "gp1-random-sampling": "Not a random sample. People at a grocery store on a Tuesday morning are not representative of all 5,000 residents.",

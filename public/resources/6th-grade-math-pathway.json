@@ -1,0 +1,374 @@
+{
+  "courseId": "6th-grade-math",
+  "track": "6th Grade Math",
+  "overview": "A 36-week Common Core 6th grade math course covering the full 6.NS / 6.RP / 6.EE / 6.G / 6.SP standards. Starts with a diagnostic boot camp to repair 5th-grade gaps, then builds through number system fluency, ratios and rates, expressions and equations, geometry, statistics, integers, and ends with an applied number sense bridge to pre-algebra. Every skill is spiraled all year so nothing vanishes.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Repair decimal, fraction, and integer foundations from 5th grade",
+    "Master multi-digit and decimal division plus all fraction operations",
+    "Build ratio language, unit rate reasoning, and equivalent ratio fluency",
+    "Write, evaluate, and simplify algebraic expressions using properties",
+    "Solve one-step and two-step equations and inequalities from context",
+    "Calculate area, surface area, and volume of 2D and 3D figures",
+    "Describe and compare data distributions using center and variability",
+    "Extend the number line to integers, graph in all four quadrants",
+    "Apply percent intro, mixed problem solving, and bridge to 7th-grade algebra"
+  ],
+
+  "standardsAlignment": {
+    "framework": "Common Core State Standards — Grade 6",
+    "domains": {
+      "6.NS": "The Number System — fluency with multi-digit/decimal operations, fraction operations, integers, coordinate plane",
+      "6.RP": "Ratios and Proportional Relationships — ratio concepts, unit rates, equivalent ratios, percent",
+      "6.EE": "Expressions and Equations — algebraic expressions, properties of operations, equations, inequalities",
+      "6.G": "Geometry — area, surface area, volume of polygons and prisms",
+      "6.SP": "Statistics and Probability — statistical questions, distributions, measures of center and variability"
+    }
+  },
+
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release with concrete-to-abstract progression",
+    "description": "The AI tutor leads instruction using the gradual release model, designed for 11-12 year olds transitioning from arithmetic to pre-algebra. Every concept starts with a concrete context (money, measurement, sports, cooking), moves to pictorial representations (number lines, area models, bar diagrams), then formalizes to abstract notation. The AI prioritizes fluency-building through spaced practice and catches misconceptions before they cascade.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Introduce the concept with a concrete, relatable context. Activate prior knowledge. Define vocabulary in plain language and connect to what students already know.",
+        "studentRole": "Engage with the scenario, recall prior skills, identify key vocabulary"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2-3 worked examples showing every step. Use visual models (number lines, area diagrams, tables) alongside symbolic work. Narrate the thinking, not just the doing.",
+        "studentRole": "Follow along, note each step, identify the pattern, ask clarifying questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Present scaffolded problems. Ask guiding questions. Let the student attempt each step before confirming. Catch errors immediately and redirect with a question, not a correction.",
+        "studentRole": "Attempt each problem step-by-step, explain reasoning, accept feedback"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Assign independent problems mixing computation with application. Include at least one word problem. Require students to show work and check answers.",
+        "studentRole": "Solve independently, show all work, verify answers, explain approach"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Short formative check: 3-5 problems targeting the skill. Assess fluency (speed + accuracy). Flag for reteach or advance.",
+        "studentRole": "Complete the check independently, demonstrate fluency"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust problem difficulty based on observed fluency — skip ahead if strong, drop back if shaky",
+      "Choose contexts appropriate for 11-12 year olds (money, sports, cooking, gaming, school scenarios)",
+      "Spiral in prior skills when relevant (fraction fluency in ratio work, integer rules in coordinate plane)",
+      "Use visual models (area models, bar diagrams, number lines) until students demonstrate they don't need them",
+      "Flag foundational gaps (multiplication facts, fraction basics) and address before proceeding"
+    ]
+  },
+
+  "modules": [
+    {
+      "moduleId": "bootcamp",
+      "unit": 0,
+      "title": "Start-of-Year Boot Camp",
+      "preview": "Place value, decimals, fraction review, integer basics, multiplication/division fluency, and expression writing",
+      "moduleFile": "/modules/6th-grade-math/bootcamp_module.json",
+      "weeks": "1-2",
+      "skills": [
+        "g6-place-value-decimals",
+        "g6-fraction-ops-review",
+        "g6-integer-basics",
+        "g6-mult-div-fluency",
+        "g6-expression-writing-intro"
+      ],
+      "essentialQuestions": [
+        "Which 5th-grade gaps will wreck my 6th-grade year if I don't fix them now?",
+        "Can I add fractions, divide decimals, and write simple expressions without hesitation?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_bootcamp",
+      "unit": 0,
+      "title": "Checkpoint: Boot Camp Diagnostic",
+      "preview": "Diagnostic assessment to identify 5th-grade gaps in decimals, fractions, integers, and basic expressions",
+      "moduleFile": "/modules/6th-grade-math/checkpoint_bootcamp_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g6-place-value-decimals",
+        "g6-fraction-ops-review",
+        "g6-integer-basics",
+        "g6-mult-div-fluency",
+        "g6-expression-writing-intro"
+      ]
+    },
+    {
+      "moduleId": "number_system_fluency",
+      "unit": 1,
+      "title": "Number System and Fluency",
+      "preview": "Multi-digit division, decimal division, fraction operations, GCF/LCM, and absolute value",
+      "moduleFile": "/modules/6th-grade-math/number_system_fluency_module.json",
+      "weeks": "3-6",
+      "skills": [
+        "g6-multi-digit-division",
+        "g6-decimal-division",
+        "g6-fraction-add-subtract",
+        "g6-fraction-multiply-divide",
+        "g6-gcf-lcm"
+      ],
+      "essentialQuestions": [
+        "Why does dividing by a fraction mean multiplying by the reciprocal?",
+        "When do I actually need the GCF or LCM in real life?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "unit": 2,
+      "title": "Checkpoint: Quarter 1 — Number System and Ratios",
+      "preview": "Assessment covering fraction/decimal division, GCF/LCM, ratio language, unit rates, and equivalent ratios",
+      "moduleFile": "/modules/6th-grade-math/checkpoint_q1_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g6-multi-digit-division",
+        "g6-decimal-division",
+        "g6-fraction-add-subtract",
+        "g6-fraction-multiply-divide",
+        "g6-gcf-lcm",
+        "g6-ratio-language",
+        "g6-unit-rates",
+        "g6-equivalent-ratios",
+        "g6-ratio-problem-solving",
+        "g6-measurement-conversions"
+      ]
+    },
+    {
+      "moduleId": "ratios_rates",
+      "unit": 2,
+      "title": "Ratios and Rates",
+      "preview": "Ratio language, unit rates, equivalent ratios, ratio/rate problem solving, and measurement conversions",
+      "moduleFile": "/modules/6th-grade-math/ratios_rates_module.json",
+      "weeks": "7-10",
+      "skills": [
+        "g6-ratio-language",
+        "g6-unit-rates",
+        "g6-equivalent-ratios",
+        "g6-ratio-problem-solving",
+        "g6-measurement-conversions"
+      ],
+      "essentialQuestions": [
+        "How do I know which quantity should be the 'per 1' in a unit rate?",
+        "When I double a recipe, am I using ratios even if I don't call them that?"
+      ]
+    },
+    {
+      "moduleId": "expressions_variables",
+      "unit": 3,
+      "title": "Expressions and Variables",
+      "preview": "Writing and evaluating expressions, combining like terms, distributive property, and parts of expressions",
+      "moduleFile": "/modules/6th-grade-math/expressions_variables_module.json",
+      "weeks": "11-14",
+      "skills": [
+        "g6-write-expressions",
+        "g6-evaluate-expressions",
+        "g6-combine-like-terms",
+        "g6-parts-of-expressions",
+        "g6-formulas-area-volume"
+      ],
+      "essentialQuestions": [
+        "Why do mathematicians use letters instead of just leaving blanks?",
+        "How does the distributive property make hard multiplication easier?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "unit": 4,
+      "title": "Checkpoint: Quarter 2 — Expressions and Equations",
+      "preview": "Assessment covering algebraic expressions, properties, equations, and inequalities",
+      "moduleFile": "/modules/6th-grade-math/checkpoint_q2_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g6-write-expressions",
+        "g6-evaluate-expressions",
+        "g6-combine-like-terms",
+        "g6-parts-of-expressions",
+        "g6-formulas-area-volume",
+        "g6-one-two-step-equations",
+        "g6-variables-both-sides",
+        "g6-inequalities",
+        "g6-word-problem-equations"
+      ]
+    },
+    {
+      "moduleId": "equations_inequalities",
+      "unit": 4,
+      "title": "Equations and Inequalities",
+      "preview": "Solve one-step and two-step equations, intro to variables on both sides, inequalities, and word problems",
+      "moduleFile": "/modules/6th-grade-math/equations_inequalities_module.json",
+      "weeks": "15-17",
+      "skills": [
+        "g6-one-two-step-equations",
+        "g6-variables-both-sides",
+        "g6-inequalities",
+        "g6-word-problem-equations"
+      ],
+      "essentialQuestions": [
+        "What does it mean to 'solve' an equation — and how do I check?",
+        "How is solving an inequality different from solving an equation?"
+      ]
+    },
+    {
+      "moduleId": "geometry",
+      "unit": 5,
+      "title": "Geometry: Area, Surface Area, Volume",
+      "preview": "Area of triangles and parallelograms, composite figures, nets, surface area, and volume of prisms",
+      "moduleFile": "/modules/6th-grade-math/geometry_module.json",
+      "weeks": "18-22",
+      "skills": [
+        "g6-area-triangles-parallelograms",
+        "g6-area-composite-figures",
+        "g6-nets-surface-area",
+        "g6-volume-rectangular-prisms",
+        "g6-geometry-applications"
+      ],
+      "essentialQuestions": [
+        "Why is the area of a triangle exactly half the area of the rectangle it came from?",
+        "What real-world problem requires me to know the surface area vs the volume?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "unit": 6,
+      "title": "Checkpoint: Quarter 3 — Geometry and Statistics",
+      "preview": "Assessment covering area, surface area, volume, data displays, and measures of center and variability",
+      "moduleFile": "/modules/6th-grade-math/checkpoint_q3_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g6-area-triangles-parallelograms",
+        "g6-area-composite-figures",
+        "g6-nets-surface-area",
+        "g6-volume-rectangular-prisms",
+        "g6-geometry-applications",
+        "g6-statistical-questions",
+        "g6-data-displays",
+        "g6-measures-center-variability",
+        "g6-compare-distributions"
+      ]
+    },
+    {
+      "moduleId": "statistics",
+      "unit": 6,
+      "title": "Statistics: Distributions and Summary Measures",
+      "preview": "Statistical questions, dot plots, histograms, box plots, mean, median, range, IQR, and comparing distributions",
+      "moduleFile": "/modules/6th-grade-math/statistics_module.json",
+      "weeks": "23-26",
+      "skills": [
+        "g6-statistical-questions",
+        "g6-data-displays",
+        "g6-measures-center-variability",
+        "g6-compare-distributions"
+      ],
+      "essentialQuestions": [
+        "What makes a question 'statistical' vs just a regular question?",
+        "When does the median tell a better story than the mean?"
+      ]
+    },
+    {
+      "moduleId": "integers_coordinate_plane",
+      "unit": 7,
+      "title": "Integers and Coordinate Plane",
+      "preview": "Positive/negative numbers in context, comparing rationals, absolute value, graphing in all four quadrants, and coordinate distance",
+      "moduleFile": "/modules/6th-grade-math/integers_coordinate_plane_module.json",
+      "weeks": "27-30",
+      "skills": [
+        "g6-positive-negative-context",
+        "g6-compare-order-rationals",
+        "g6-absolute-value-opposites",
+        "g6-coordinate-plane-graphing",
+        "g6-distance-coordinate-plane"
+      ],
+      "essentialQuestions": [
+        "Why does -5 feel colder than -2 even though 5 is bigger than 2?",
+        "How do the four quadrants help us organize information about the real world?"
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q4",
+      "unit": 8,
+      "title": "Checkpoint: Quarter 4 — Integers, Applied Skills, and Cumulative",
+      "preview": "Assessment covering integers, coordinate plane, percent, mixed problem solving, and cumulative review",
+      "moduleFile": "/modules/6th-grade-math/checkpoint_q4_module.json",
+      "isCheckpoint": true,
+      "skills": [
+        "g6-positive-negative-context",
+        "g6-compare-order-rationals",
+        "g6-absolute-value-opposites",
+        "g6-coordinate-plane-graphing",
+        "g6-distance-coordinate-plane",
+        "g6-mixed-problem-solving",
+        "g6-percent-intro",
+        "g6-unit-conversions",
+        "g6-multi-step-reasoning"
+      ]
+    },
+    {
+      "moduleId": "applied_number_sense",
+      "unit": 8,
+      "title": "Applied Number Sense + Algebra Bridge",
+      "preview": "Mixed problem solving with ratios, fractions, and equations; percent intro; unit conversions; multi-step real-world tasks",
+      "moduleFile": "/modules/6th-grade-math/applied_number_sense_module.json",
+      "weeks": "31-33",
+      "skills": [
+        "g6-mixed-problem-solving",
+        "g6-percent-intro",
+        "g6-unit-conversions",
+        "g6-multi-step-reasoning"
+      ],
+      "essentialQuestions": [
+        "How do ratios, fractions, and percent all connect to each other?",
+        "Am I ready for 7th-grade math — can I solve a multi-step problem start to finish?"
+      ]
+    },
+    {
+      "moduleId": "final_review",
+      "unit": 9,
+      "title": "End-of-Year Spiral + Mastery Review",
+      "preview": "Mixed review across 6.NS, 6.RP, 6.EE, 6.G, 6.SP — targeted reteach and cumulative assessment",
+      "moduleFile": "/modules/6th-grade-math/final_review_module.json",
+      "weeks": "34-36",
+      "isFinal": true,
+      "skills": [
+        "g6-multi-digit-division",
+        "g6-fraction-multiply-divide",
+        "g6-gcf-lcm",
+        "g6-ratio-language",
+        "g6-unit-rates",
+        "g6-equivalent-ratios",
+        "g6-write-expressions",
+        "g6-evaluate-expressions",
+        "g6-one-two-step-equations",
+        "g6-inequalities",
+        "g6-area-triangles-parallelograms",
+        "g6-nets-surface-area",
+        "g6-volume-rectangular-prisms",
+        "g6-data-displays",
+        "g6-measures-center-variability",
+        "g6-coordinate-plane-graphing",
+        "g6-percent-intro",
+        "g6-multi-step-reasoning"
+      ]
+    }
+  ],
+
+  "spiralStrategy": {
+    "dailyWarmup": "2 review problems (fraction/decimal/integer fluency) + 1 current-skill problem, 5-7 minutes",
+    "weeklyQuiz": "10-15 min quiz, mostly prior skills — fraction division, unit rates, simple equations",
+    "monthlyMixedCheck": "Fraction division + unit rates + simple equations mixed assessment",
+    "nonNegotiableThreads": [
+      "Fraction/decimal division fluency",
+      "Ratio and unit rate reasoning",
+      "Writing and evaluating expressions",
+      "Solving equations from word problems",
+      "Interpreting data displays and describing distributions"
+    ]
+  },
+
+  "aiGuidanceNotes": "This is the year where students transition from arithmetic to pre-algebra. Every gap from 5th grade will cascade. The boot camp exists to catch those gaps. Fraction fluency is the #1 predictor of 6th-grade success — if a student can't add fractions or divide decimals fluently, every subsequent unit will struggle. Use real-world contexts constantly (money, cooking, sports, gaming) to make abstract concepts stick for 11-12 year olds. When teaching expressions and equations, emphasize the REASONING behind inverse operations, not just procedural steps."
+}

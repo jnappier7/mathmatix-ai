@@ -6,8 +6,33 @@
   "weeks": "3-4",
   "estimatedDuration": 50,
   "description": "Develop the concept of a limit graphically, numerically, and algebraically. Master algebraic techniques for evaluating limits including direct substitution, factoring, and rationalizing. Analyze one-sided limits, infinite limits, and limits at infinity and connect them to asymptotic behavior. Define continuity using the three-condition test, classify types of discontinuity, and apply the Intermediate Value Theorem and the Squeeze Theorem.",
-  "skills": ["limits-graphical-numerical", "limits-algebraic", "one-sided-infinite-limits", "limits-at-infinity", "continuity-ivt", "squeeze-theorem"],
-  "standardsAlignment": ["CED 1.2", "CED 1.3", "CED 1.4", "CED 1.5", "CED 1.6", "CED 1.7", "CED 1.8", "CED 1.10", "CED 1.11", "CED 1.12", "CED 1.13", "CED 1.14", "CED 1.15", "CED 1.16", "LIM-1", "LIM-2", "FUN-2"],
+  "skills": [
+    "limits-graphical-numerical",
+    "limits-algebraic",
+    "one-sided-infinite-limits",
+    "limits-at-infinity",
+    "continuity-ivt",
+    "squeeze-theorem"
+  ],
+  "standardsAlignment": [
+    "CED 1.2",
+    "CED 1.3",
+    "CED 1.4",
+    "CED 1.5",
+    "CED 1.6",
+    "CED 1.7",
+    "CED 1.8",
+    "CED 1.10",
+    "CED 1.11",
+    "CED 1.12",
+    "CED 1.13",
+    "CED 1.14",
+    "CED 1.15",
+    "CED 1.16",
+    "LIM-1",
+    "LIM-2",
+    "FUN-2"
+  ],
   "goals": [
     "Evaluate limits from graphs, tables, and using algebraic techniques including factoring and rationalizing",
     "Determine one-sided limits, infinite limits, and limits at infinity, and connect them to asymptotic behavior",
@@ -27,8 +52,9 @@
       "lessonPhase": "concept-intro",
       "skill": "limits-graphical-numerical",
       "title": "Limits from Graphs, Tables, and Direct Substitution",
-      "text": "**The Big Idea:**\n\nA limit describes the value a function *approaches* as x approaches some value — even if the function never reaches that value.\n\n**Notation:** lim_{x→c} f(x) = L means \"as x gets arbitrarily close to c (from both sides), f(x) gets arbitrarily close to L.\"\n\n**Three Ways to Find a Limit:**\n\n**1. Graphically:** Trace the curve from the left and right toward x = c. If both sides approach the same y-value, that's the limit.\n\n**2. Numerically (tables):** Plug in values approaching c from both sides (e.g., 2.9, 2.99, 2.999 and 3.1, 3.01, 3.001). If both columns converge to the same value, that's the limit.\n\n**3. Algebraically (direct substitution):** If f is continuous at c, just plug in: lim_{x→c} f(x) = f(c). This works for polynomials, rationals (where defined), exponentials, logs, and trig functions at points in their domains.\n\n**When direct substitution gives 0/0:** This is an *indeterminate form* — NOT the answer. It means more work is needed: try factoring, rationalizing, or other algebraic manipulation.\n\n**Limit Laws (for limits that exist):**\n• lim [f(x) ± g(x)] = lim f(x) ± lim g(x)\n• lim [f(x) · g(x)] = lim f(x) · lim g(x)\n• lim [f(x)/g(x)] = lim f(x) / lim g(x), provided lim g(x) ≠ 0\n• lim [f(x)]ⁿ = [lim f(x)]ⁿ",
-      "initialPrompt": "Try direct substitution: lim_{x→3} (x² − 9)/(x − 3). What do you get? Why doesn't direct substitution work here, and what could you do instead?"
+      "content": "**The Big Idea:**\n\nA limit describes the value a function *approaches* as x approaches some value — even if the function never reaches that value.\n\n**Notation:** lim_{x→c} f(x) = L means \"as x gets arbitrarily close to c (from both sides), f(x) gets arbitrarily close to L.\"\n\n**Three Ways to Find a Limit:**\n\n**1. Graphically:** Trace the curve from the left and right toward x = c. If both sides approach the same y-value, that's the limit.\n\n**2. Numerically (tables):** Plug in values approaching c from both sides (e.g., 2.9, 2.99, 2.999 and 3.1, 3.01, 3.001). If both columns converge to the same value, that's the limit.\n\n**3. Algebraically (direct substitution):** If f is continuous at c, just plug in: lim_{x→c} f(x) = f(c). This works for polynomials, rationals (where defined), exponentials, logs, and trig functions at points in their domains.\n\n**When direct substitution gives 0/0:** This is an *indeterminate form* — NOT the answer. It means more work is needed: try factoring, rationalizing, or other algebraic manipulation.\n\n**Limit Laws (for limits that exist):**\n• lim [f(x) ± g(x)] = lim f(x) ± lim g(x)\n• lim [f(x) · g(x)] = lim f(x) · lim g(x)\n• lim [f(x)/g(x)] = lim f(x) / lim g(x), provided lim g(x) ≠ 0\n• lim [f(x)]ⁿ = [lim f(x)]ⁿ",
+      "initialPrompt": "Try direct substitution: lim_{x→3} (x² − 9)/(x − 3). What do you get? Why doesn't direct substitution work here, and what could you do instead?",
+      "lessonId": "limits-intro"
     },
     {
       "type": "model",
@@ -49,7 +75,8 @@
           "solution": "**Step 1 — Direct substitution:**\n(√(0+4) − 2)/0 = (2 − 2)/0 = 0/0 — indeterminate.\n\n**Step 2 — Multiply by the conjugate:**\n(√(x+4) − 2)/x · (√(x+4) + 2)/(√(x+4) + 2)\n\n**Numerator becomes a difference of squares:**\n= (x + 4 − 4) / [x(√(x+4) + 2)]\n= x / [x(√(x+4) + 2)]\n\n**Step 3 — Cancel x:**\n= 1 / (√(x+4) + 2), for x ≠ 0\n\n**Step 4 — Now substitute x = 0:**\n= 1 / (√(0+4) + 2) = 1 / (2 + 2) = **1/4**\n\n**lim_{x→0} (√(x + 4) − 2)/x = 1/4**\n\n**Pattern to remember:** When you see a radical minus a constant giving 0/0, multiply by the conjugate. This technique will reappear when deriving the derivative of √x from the definition."
         }
       ],
-      "initialPrompt": "In examples 2 and 3, why did direct substitution fail? What is the 0/0 form telling us about the function near that point?"
+      "initialPrompt": "In examples 2 and 3, why did direct substitution fail? What is the 0/0 form telling us about the function near that point?",
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "guided_practice",
@@ -85,15 +112,31 @@
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp1. What do you get when you try direct substitution? What kind of factoring should you try on x² + 5x + 4?"
+      "initialPrompt": "Start with lc-wp1. What do you get when you try direct substitution? What kind of factoring should you try on x² + 5x + 4?",
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "one-sided-infinite-limits",
       "title": "One-Sided Limits, Infinite Limits, and Limits at Infinity",
-      "text": "**One-Sided Limits:**\n\n• lim_{x→c⁻} f(x): the limit from the **left** (x approaches c through values less than c)\n• lim_{x→c⁺} f(x): the limit from the **right** (x approaches c through values greater than c)\n• The two-sided limit lim_{x→c} f(x) exists **if and only if** both one-sided limits exist and are equal.\n\n**Key application:** Piecewise functions often require checking one-sided limits at the breakpoints.\n\n**Infinite Limits (vertical asymptotes):**\n\n• lim_{x→c} f(x) = ±∞ means f(x) grows without bound near x = c.\n• This signals a **vertical asymptote** at x = c.\n• To determine the sign (+ or −∞), check the signs of the numerator and denominator as x → c from each side.\n• Important: lim = ∞ means the limit **does not exist** as a finite number, but we use ∞ to describe the behavior.\n\n**Limits at Infinity (horizontal asymptotes):**\n\nFor rational functions f(x) = p(x)/q(x):\n• If deg(p) < deg(q): lim_{x→±∞} f(x) = 0\n• If deg(p) = deg(q): lim_{x→±∞} f(x) = (leading coeff of p)/(leading coeff of q)\n• If deg(p) > deg(q): lim_{x→±∞} f(x) = ±∞ (no horizontal asymptote)\n\n**Shortcut:** Divide numerator and denominator by the highest power of x in the denominator.",
-      "initialPrompt": "Consider f(x) = 1/(x − 2). What happens as x → 2⁺? What happens as x → 2⁻? Why are the answers different?"
+      "content": "**One-Sided Limits:**\n\n• lim_{x→c⁻} f(x): the limit from the **left** (x approaches c through values less than c)\n• lim_{x→c⁺} f(x): the limit from the **right** (x approaches c through values greater than c)\n• The two-sided limit lim_{x→c} f(x) exists **if and only if** both one-sided limits exist and are equal.\n\n**Key application:** Piecewise functions often require checking one-sided limits at the breakpoints.\n\n**Infinite Limits (vertical asymptotes):**\n\n• lim_{x→c} f(x) = ±∞ means f(x) grows without bound near x = c.\n• This signals a **vertical asymptote** at x = c.\n• To determine the sign (+ or −∞), check the signs of the numerator and denominator as x → c from each side.\n• Important: lim = ∞ means the limit **does not exist** as a finite number, but we use ∞ to describe the behavior.\n\n**Limits at Infinity (horizontal asymptotes):**\n\nFor rational functions f(x) = p(x)/q(x):\n• If deg(p) < deg(q): lim_{x→±∞} f(x) = 0\n• If deg(p) = deg(q): lim_{x→±∞} f(x) = (leading coeff of p)/(leading coeff of q)\n• If deg(p) > deg(q): lim_{x→±∞} f(x) = ±∞ (no horizontal asymptote)\n\n**Shortcut:** Divide numerator and denominator by the highest power of x in the denominator.",
+      "initialPrompt": "Consider f(x) = 1/(x − 2). What happens as x → 2⁺? What happens as x → 2⁻? Why are the answers different?",
+      "lessonId": "continuity-ivt"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "limits-at-infinity",
+      "title": "We-Do: Limits At Infinity — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for limits at infinity.",
+          "hint": "Apply the concepts of limits at infinity.",
+          "solution": "Step-by-step solution for limits at infinity."
+        }
+      ],
+      "lessonId": "limits-intro"
     },
     {
       "type": "model",
@@ -114,7 +157,8 @@
           "solution": "**Method — Divide every term by x² (highest power in denominator):**\n\nlim_{x→∞} (3x²/x² + 1/x²) / (5x²/x² − 2/x²)\n= lim_{x→∞} (3 + 1/x²) / (5 − 2/x²)\n\nAs x → ∞: 1/x² → 0 and 2/x² → 0\n\n= (3 + 0)/(5 − 0) = **3/5**\n\n**lim_{x→∞} (3x² + 1)/(5x² − 2) = 3/5**\n\n**Shortcut (equal degrees):** When the degree of the numerator equals the degree of the denominator, the limit at infinity is the ratio of leading coefficients: 3/5.\n\nThe horizontal asymptote is y = 3/5."
         }
       ],
-      "initialPrompt": "In example 2, what is the critical difference between getting 0/0 (like in the previous lesson) and getting 3/0? How should your approach differ?"
+      "initialPrompt": "In example 2, what is the critical difference between getting 0/0 (like in the previous lesson) and getting 3/0? How should your approach differ?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
@@ -150,15 +194,31 @@
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp4. This is a piecewise function — which piece do you use for the left-hand limit, and which for the right-hand limit?"
+      "initialPrompt": "Start with lc-wp4. This is a piecewise function — which piece do you use for the left-hand limit, and which for the right-hand limit?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "continuity-ivt",
       "title": "Continuity, Types of Discontinuity, and the Intermediate Value Theorem",
-      "text": "**Definition of Continuity at a Point:**\n\nA function f is continuous at x = c if and only if ALL THREE conditions hold:\n1. f(c) is defined\n2. lim_{x→c} f(x) exists\n3. lim_{x→c} f(x) = f(c)\n\nIf any condition fails, f is **discontinuous** at c.\n\n**Types of Discontinuity:**\n• **Removable (hole):** The limit exists but either f(c) is undefined or f(c) ≠ limit. Can be \"fixed\" by redefining f(c).\n• **Jump:** The left and right limits both exist but are not equal. Cannot be fixed.\n• **Infinite (asymptote):** The function approaches ±∞. Cannot be fixed.\n\n**Continuity on an Interval:**\nf is continuous on [a, b] if it's continuous at every point in (a, b), continuous from the right at a, and continuous from the left at b.\n\n**Intermediate Value Theorem (IVT):**\nIf f is continuous on [a, b] and k is any value between f(a) and f(b), then there exists at least one c in (a, b) such that f(c) = k.\n\n**IVT Justification Template (AP Exam):**\n1. State that f is continuous on [a, b] (and why).\n2. Compute f(a) and f(b).\n3. Note that k is between f(a) and f(b).\n4. Conclude: by IVT, there exists c in (a, b) with f(c) = k.\n\n**Squeeze Theorem:**\nIf g(x) ≤ f(x) ≤ h(x) near x = c, and lim_{x→c} g(x) = lim_{x→c} h(x) = L, then lim_{x→c} f(x) = L.\n\nClassic example: lim_{x→0} x² sin(1/x) = 0 (squeezed between −x² and x²).",
-      "initialPrompt": "Consider f(x) = (x² − 1)/(x − 1) with f(1) = 5. Check the three conditions for continuity at x = 1. Which condition fails?"
+      "content": "**Definition of Continuity at a Point:**\n\nA function f is continuous at x = c if and only if ALL THREE conditions hold:\n1. f(c) is defined\n2. lim_{x→c} f(x) exists\n3. lim_{x→c} f(x) = f(c)\n\nIf any condition fails, f is **discontinuous** at c.\n\n**Types of Discontinuity:**\n• **Removable (hole):** The limit exists but either f(c) is undefined or f(c) ≠ limit. Can be \"fixed\" by redefining f(c).\n• **Jump:** The left and right limits both exist but are not equal. Cannot be fixed.\n• **Infinite (asymptote):** The function approaches ±∞. Cannot be fixed.\n\n**Continuity on an Interval:**\nf is continuous on [a, b] if it's continuous at every point in (a, b), continuous from the right at a, and continuous from the left at b.\n\n**Intermediate Value Theorem (IVT):**\nIf f is continuous on [a, b] and k is any value between f(a) and f(b), then there exists at least one c in (a, b) such that f(c) = k.\n\n**IVT Justification Template (AP Exam):**\n1. State that f is continuous on [a, b] (and why).\n2. Compute f(a) and f(b).\n3. Note that k is between f(a) and f(b).\n4. Conclude: by IVT, there exists c in (a, b) with f(c) = k.\n\n**Squeeze Theorem:**\nIf g(x) ≤ f(x) ≤ h(x) near x = c, and lim_{x→c} g(x) = lim_{x→c} h(x) = L, then lim_{x→c} f(x) = L.\n\nClassic example: lim_{x→0} x² sin(1/x) = 0 (squeezed between −x² and x²).",
+      "initialPrompt": "Consider f(x) = (x² − 1)/(x − 1) with f(1) = 5. Check the three conditions for continuity at x = 1. Which condition fails?",
+      "lessonId": "continuity-ivt"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "squeeze-theorem",
+      "title": "We-Do: Squeeze Theorem — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for squeeze theorem.",
+          "hint": "Apply the concepts of squeeze theorem.",
+          "solution": "Step-by-step solution for squeeze theorem."
+        }
+      ],
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "model",
@@ -179,7 +239,8 @@
           "solution": "**Step 1 — Verify the hypothesis of IVT:**\nf(x) = x³ − 4x + 1 is a polynomial, so it is continuous on [1, 2]. ✓\n\n**Step 2 — Compute endpoint values:**\nf(1) = 1 − 4 + 1 = **−2**\nf(2) = 8 − 8 + 1 = **1**\n\n**Step 3 — Identify the target value:**\nWe want f(c) = 0. Note that 0 is between f(1) = −2 and f(2) = 1.\n\n**Step 4 — Apply IVT:**\nSince f is continuous on [1, 2] and f(1) = −2 < 0 < 1 = f(2), the Intermediate Value Theorem guarantees there exists at least one value c in (1, 2) such that f(c) = 0.\n\n**AP Exam note:** This four-step IVT justification template is required for full credit. You must (1) state continuity, (2) show endpoint values, (3) show k is between them, (4) cite IVT by name."
         }
       ],
-      "initialPrompt": "In example 1, what type of discontinuity is this? What single change would make f continuous at x = 1?"
+      "initialPrompt": "In example 1, what type of discontinuity is this? What single change would make f continuous at x = 1?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
@@ -215,7 +276,8 @@
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp7. What are the three conditions you need to check? Begin with condition 1: is f(3) defined?"
+      "initialPrompt": "Start with lc-wp7. What are the three conditions you need to check? Begin with condition 1: is f(3) defined?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "independent_practice",
@@ -227,45 +289,59 @@
           "question": "Evaluate: lim_{x→−3} (x² − 9)/(x + 3)",
           "answer": "−6",
           "skill": "limits-algebraic",
-          "hints": ["Factor x² − 9 = (x − 3)(x + 3). Cancel (x + 3): lim_{x→−3} (x − 3) = −3 − 3 = −6."]
+          "hints": [
+            "Factor x² − 9 = (x − 3)(x + 3). Cancel (x + 3): lim_{x→−3} (x − 3) = −3 − 3 = −6."
+          ]
         },
         {
           "id": "lc-yp2",
           "question": "Evaluate: lim_{x→0} (√(x + 9) − 3)/x",
           "answer": "1/6",
           "skill": "limits-algebraic",
-          "hints": ["Multiply by the conjugate (√(x+9)+3)/(√(x+9)+3). Numerator becomes (x+9)−9 = x. Cancel x: 1/(√(x+9)+3). At x=0: 1/(3+3) = 1/6."]
+          "hints": [
+            "Multiply by the conjugate (√(x+9)+3)/(√(x+9)+3). Numerator becomes (x+9)−9 = x. Cancel x: 1/(√(x+9)+3). At x=0: 1/(3+3) = 1/6."
+          ]
         },
         {
           "id": "lc-yp3",
           "question": "Evaluate: lim_{x→∞} (2x² − 3x + 1)/(4x² + x − 5)",
           "answer": "1/2",
           "skill": "limits-at-infinity",
-          "hints": ["Equal degrees (both degree 2). Ratio of leading coefficients: 2/4 = 1/2. Horizontal asymptote y = 1/2."]
+          "hints": [
+            "Equal degrees (both degree 2). Ratio of leading coefficients: 2/4 = 1/2. Horizontal asymptote y = 1/2."
+          ]
         },
         {
           "id": "lc-yp4",
           "question": "Use the Squeeze Theorem to evaluate: lim_{x→0} x² sin(1/x)",
           "answer": "0",
           "skill": "squeeze-theorem",
-          "hints": ["Since −1 ≤ sin(1/x) ≤ 1, multiply by x²: −x² ≤ x² sin(1/x) ≤ x². Both −x² and x² → 0 as x→0. By the Squeeze Theorem, lim_{x→0} x² sin(1/x) = 0."]
+          "hints": [
+            "Since −1 ≤ sin(1/x) ≤ 1, multiply by x²: −x² ≤ x² sin(1/x) ≤ x². Both −x² and x² → 0 as x→0. By the Squeeze Theorem, lim_{x→0} x² sin(1/x) = 0."
+          ]
         },
         {
           "id": "lc-yp5",
           "question": "Find the value of k that makes f continuous at x = 1, where f(x) = { kx² if x ≤ 1; 4x − 1 if x > 1 }.",
           "answer": "k = 3",
           "skill": "continuity-ivt",
-          "hints": ["For continuity: lim_{x→1⁻} = k(1)² = k. f(1) = k. lim_{x→1⁺} = 4(1)−1 = 3. Set k = 3."]
+          "hints": [
+            "For continuity: lim_{x→1⁻} = k(1)² = k. f(1) = k. lim_{x→1⁺} = 4(1)−1 = 3. Set k = 3."
+          ]
         },
         {
           "id": "lc-yp6",
           "question": "Use the IVT to show that the equation eˣ = 3 − x has at least one solution on [0, 2]. (Hint: let f(x) = eˣ − 3 + x.)",
           "answer": "f(x) = eˣ + x − 3 is continuous on [0,2]. f(0) = 1+0−3 = −2 < 0. f(2) = e²+2−3 = e²−1 ≈ 6.39 > 0. Since f(0) < 0 < f(2), by IVT there exists c in (0,2) with f(c) = 0, i.e., eᶜ = 3 − c.",
           "skill": "continuity-ivt",
-          "hints": ["Let f(x) = eˣ + x − 3. This is continuous (sum of continuous functions). f(0) = 1+0−3 = −2. f(2) = e²+2−3 = e²−1 ≈ 6.39. Since −2 < 0 < 6.39, IVT guarantees a c in (0,2) with f(c) = 0."]
+          "hints": [
+            "Let f(x) = eˣ + x − 3. This is continuous (sum of continuous functions). f(0) = 1+0−3 = −2. f(2) = e²+2−3 = e²−1 ≈ 6.39. Since −2 < 0 < 6.39, IVT guarantees a c in (0,2) with f(c) = 0."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "limits-graphical-numerical",
+      "lessonId": "limits-intro"
     }
   ],
   "answerKeys": {
@@ -284,5 +360,22 @@
     "lc-yp4": "0",
     "lc-yp5": "k = 3",
     "lc-yp6": "Solution exists on (0,2) by IVT: f(0)=−2, f(2)=e²−1≈6.39"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "limits-intro",
+      "title": "Limits from Graphs, Tables, and Algebra",
+      "order": 1
+    },
+    {
+      "lessonId": "one-sided-infinite",
+      "title": "One-Sided Limits, Infinite Limits, Limits at Infinity",
+      "order": 2
+    },
+    {
+      "lessonId": "continuity-ivt",
+      "title": "Continuity and Intermediate Value Theorem",
+      "order": 3
+    }
+  ]
 }

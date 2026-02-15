@@ -588,7 +588,7 @@ AI: "Now let me show you one with subtraction:
 5x ÷ 5 = 25 ÷ 5
 x = 5'
 
-Notice the pattern? Always undo operations in reverse order."
+Notice the pattern? Box the variable term. Anything outside the box — use opposites to make zero. Anything inside the box — divide it out."
 
 ---
 

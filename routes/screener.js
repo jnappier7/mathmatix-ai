@@ -245,7 +245,8 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
       // Bound jumps to reasonable range to prevent wild swings
       // Allow theta to influence bounds, but don't jump to theta directly
-      const lowerBound = Math.min(session.theta - 1.0, lastDifficulty - 1.5);
+      // FIX: Use Math.max (conservative/higher bound) so a crashed theta can't drag difficulty down
+      const lowerBound = Math.max(session.theta - 1.0, lastDifficulty - 1.5);
       const upperBound = Math.max(session.theta + 1.0, lastDifficulty + 1.5);
       targetDifficulty = Math.max(lowerBound, Math.min(upperBound, targetDifficulty));
 

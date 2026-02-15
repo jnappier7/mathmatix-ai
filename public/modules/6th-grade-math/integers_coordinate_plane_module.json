@@ -1,0 +1,575 @@
+{
+  "moduleId": "integers_coordinate_plane",
+  "course": "6th Grade Math",
+  "unit": 7,
+  "title": "Integers and Coordinate Plane",
+  "weeks": "27-30",
+  "estimatedDuration": 40,
+  "description": "The number line expands and the coordinate plane opens up. Students use positive and negative numbers in real contexts (temperature, elevation, money, sea level), compare and order rational numbers including negatives, master absolute value as distance from zero, graph ordered pairs in all four quadrants, and calculate horizontal/vertical distances using absolute value. This unit sets up ALL graphing for 7th grade and beyond.",
+  "skills": [
+    "g6-positive-negative-context",
+    "g6-compare-order-rationals",
+    "g6-absolute-value-opposites",
+    "g6-coordinate-plane-graphing",
+    "g6-distance-coordinate-plane"
+  ],
+  "standardsAlignment": [
+    "6.NS.C.5",
+    "6.NS.C.6",
+    "6.NS.C.6b",
+    "6.NS.C.6c",
+    "6.NS.C.7",
+    "6.NS.C.7a",
+    "6.NS.C.7b",
+    "6.NS.C.7c",
+    "6.NS.C.7d",
+    "6.NS.C.8",
+    "6.G.A.3"
+  ],
+  "goals": [
+    "Interpret positive and negative numbers in real-world situations using zero as a meaningful reference point",
+    "Compare and order rational numbers (integers, fractions, decimals) on a number line using inequality symbols",
+    "Understand absolute value as distance from zero and identify opposites on the number line",
+    "Plot ordered pairs in all four quadrants of the coordinate plane",
+    "Calculate horizontal and vertical distances between points using absolute value"
+  ],
+  "instructionalStrategy": [
+    "Gradual release: concept-intro followed by I Do followed by We Do followed by You Do for each skill",
+    "Ground every concept in real-world contexts students already understand (temperature, money, elevation, maps)",
+    "Use the number line as the central visual representation and extend it left of zero before introducing the coordinate plane",
+    "Build from 1D (number line) to 2D (coordinate plane) so students see how x-axis and y-axis are just two number lines",
+    "Reinforce that absolute value and distance are always non-negative because this idea carries through the entire unit and into future graphing"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Positive and Negative Numbers in Real-World Contexts",
+      "skill": "g6-positive-negative-context",
+      "content": "Numbers do not stop at zero. In the real world we need numbers that go below zero all the time: temperatures drop below freezing, elevations go below sea level, and bank accounts can be overdrawn. Positive numbers represent increases, gains, or positions above a reference point. Negative numbers represent decreases, losses, or positions below a reference point. Zero is the reference point itself.",
+      "keyPoints": [
+        "Positive numbers represent gain, increase, above, deposit, or rise (e.g., +$50 deposit, +200 ft above sea level, +15 degrees above zero)",
+        "Negative numbers represent loss, decrease, below, withdrawal, or drop (e.g., -$30 withdrawal, -50 ft below sea level, -10 degrees below zero)",
+        "Zero is the reference point: 0 degrees is the freezing point on the Celsius scale, 0 ft is sea level, $0 means no money owed or earned",
+        "The same situation can be described with either sign depending on your perspective: losing $20 is -20 from your viewpoint but +20 from the store's viewpoint",
+        "On a number line, positive numbers are to the right of zero and negative numbers are to the left of zero"
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Positive and Negative Numbers Worked Examples",
+      "skill": "g6-positive-negative-context",
+      "examples": [
+        {
+          "problem": "At 6 AM the temperature was -8 degrees Fahrenheit. By noon it had risen 15 degrees. What was the temperature at noon? Represent the morning temperature and the change using positive and negative numbers.",
+          "solution": "The morning temperature is -8 because it is 8 degrees below zero.\nThe change is +15 because the temperature rose (increased).\nTemperature at noon: -8 + 15 = 7 degrees Fahrenheit.\nThe noon temperature is positive because the rise was large enough to pass zero and go above it."
+        },
+        {
+          "problem": "Marcus has $120 in his bank account. He writes a check for $75 and then deposits $40. Represent each transaction with a signed number and find the final balance.",
+          "solution": "Starting balance: $120 (positive, he has money).\nCheck written: -$75 (negative, money leaving the account).\nDeposit: +$40 (positive, money entering the account).\nFinal balance: $120 + (-$75) + $40 = $120 - $75 + $40 = $85.\nThe balance is positive, so Marcus still has money in the account."
+        },
+        {
+          "problem": "A submarine is at sea level (0 ft). It dives 200 feet, then rises 75 feet. What is its position relative to sea level?",
+          "solution": "Sea level is our reference: 0 ft.\nDiving 200 feet means going below sea level: -200 ft.\nRising 75 feet is a positive change: +75 ft.\nPosition: 0 + (-200) + 75 = -200 + 75 = -125 ft.\nThe submarine is 125 feet below sea level. We write this as -125 ft."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Positive and Negative Numbers Practice",
+      "skill": "g6-positive-negative-context",
+      "problems": [
+        {
+          "id": "icp-1",
+          "question": "The temperature at midnight was -3 degrees Celsius. By 8 AM it dropped another 7 degrees. Represent the midnight temperature and the change with signed numbers, then find the 8 AM temperature.",
+          "hints": [
+            "The midnight temperature is already negative: -3",
+            "A drop of 7 degrees is a decrease, so the change is -7",
+            "Add the change to the starting temperature: -3 + (-7)"
+          ],
+          "answer": "Midnight: -3 degrees C. Change: -7 degrees. Temperature at 8 AM: -3 + (-7) = -10 degrees Celsius. It is 10 degrees below zero."
+        },
+        {
+          "id": "icp-2",
+          "question": "Priya's savings account has a balance of $0. She deposits $65 on Monday and then withdraws $90 on Wednesday. Represent each transaction with a signed number and find her balance. Is the account overdrawn?",
+          "hints": [
+            "A deposit puts money in: +$65",
+            "A withdrawal takes money out: -$90",
+            "Add both to the starting balance of $0"
+          ],
+          "answer": "Deposit: +$65. Withdrawal: -$90. Balance: $0 + $65 + (-$90) = $65 - $90 = -$25. The balance is negative, so yes, the account is overdrawn by $25."
+        },
+        {
+          "id": "icp-3",
+          "question": "Death Valley, California has an elevation of -282 feet (below sea level). Mount Whitney, also in California, has an elevation of 14,505 feet. A hiker says the difference in elevation is about 14,787 feet. Explain why both a negative and a positive number are needed to describe these elevations.",
+          "hints": [
+            "Sea level is the reference point (zero)",
+            "Death Valley is below sea level so its elevation is negative",
+            "Mount Whitney is above sea level so its elevation is positive"
+          ],
+          "answer": "Death Valley is 282 feet below sea level, so it is represented as -282 ft. Mount Whitney is 14,505 feet above sea level, so it is +14,505 ft. Zero (sea level) is the reference point. The difference is 14,505 - (-282) = 14,505 + 282 = 14,787 feet. Without negative numbers we could not show that Death Valley is below the reference point."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Positive and Negative Numbers Independent Practice",
+      "skill": "g6-positive-negative-context",
+      "problems": [
+        {
+          "id": "icp-4",
+          "question": "A football team gains 8 yards on first down, loses 12 yards on second down, and gains 5 yards on third down. Represent each play with a signed number and find the team's net yardage over the three plays.",
+          "answer": "Plays: +8, -12, +5. Net yardage: 8 + (-12) + 5 = 8 - 12 + 5 = 1 yard gained."
+        },
+        {
+          "id": "icp-5",
+          "question": "At 5 PM the temperature in Anchorage was 2 degrees Fahrenheit. Overnight it dropped 19 degrees. What was the overnight low temperature? Use a signed number to represent the change.",
+          "answer": "Change: -19 degrees. Low temperature: 2 + (-19) = 2 - 19 = -17 degrees Fahrenheit. It was 17 degrees below zero."
+        },
+        {
+          "id": "icp-6",
+          "question": "A scuba diver is at -40 feet (below sea level). She ascends 25 feet, then descends 10 feet. Write a signed number for each movement and find her final depth.",
+          "answer": "Start: -40 ft. Ascend: +25 ft. Descend: -10 ft. Final depth: -40 + 25 + (-10) = -40 + 25 - 10 = -25 ft. She is 25 feet below sea level."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Comparing and Ordering Rational Numbers",
+      "skill": "g6-compare-order-rationals",
+      "content": "Once negative numbers enter the picture, comparing numbers requires more careful thinking. A number line is the best tool: numbers increase as you move right and decrease as you move left. This means every negative number is less than every positive number, and among negatives, the one closer to zero is actually greater.",
+      "keyPoints": [
+        "On a number line, farther right means greater and farther left means less",
+        "Every negative number is less than zero, and every positive number is greater than zero",
+        "For negative numbers: the closer to zero, the GREATER the number. Example: -2 > -7 because -2 is closer to zero",
+        "To compare fractions and decimals with different signs, convert to the same form (all decimals or all fractions) then place on the number line",
+        "Use inequality symbols: < (less than), > (greater than), = (equal to). The symbol always opens toward the larger number",
+        "To order a mixed set of rational numbers, place each one on a number line first, then read left to right for least to greatest"
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Comparing and Ordering Rational Numbers Worked Examples",
+      "skill": "g6-compare-order-rationals",
+      "examples": [
+        {
+          "problem": "Compare -5 and -2 using < or >.",
+          "solution": "On a number line, -5 is farther left than -2.\nFarther left means less.\nSo -5 < -2.\n\nThink of it this way: owing $5 puts you in a worse position than owing $2. So -5 is less than -2."
+        },
+        {
+          "problem": "Order from least to greatest: 1/2, -3/4, 0.6, -0.5, 0",
+          "solution": "Convert everything to decimals for easy comparison:\n1/2 = 0.5, -3/4 = -0.75, 0.6 = 0.6, -0.5 = -0.5, 0 = 0\n\nPlace on the number line:\n-0.75 ... -0.5 ... 0 ... 0.5 ... 0.6\n\nLeast to greatest: -3/4, -0.5, 0, 1/2, 0.6\n\nNotice -3/4 is less than -0.5 because -0.75 is farther from zero (farther left)."
+        },
+        {
+          "problem": "Insert < , > , or = : -2/3 ___ -5/6",
+          "solution": "Find a common denominator to compare: LCD = 6.\n-2/3 = -4/6\n-5/6 = -5/6\n\nCompare: -4/6 and -5/6.\nSince -4/6 is closer to zero than -5/6, it is greater.\n-4/6 > -5/6\n\nSo -2/3 > -5/6."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Comparing and Ordering Rational Numbers Practice",
+      "skill": "g6-compare-order-rationals",
+      "problems": [
+        {
+          "id": "icp-7",
+          "question": "Compare -8 and -3 using < or >. Explain your reasoning using a number line.",
+          "hints": [
+            "Which number is farther left on the number line?",
+            "-8 is farther from zero than -3",
+            "Farther left means less"
+          ],
+          "answer": "-8 < -3. On the number line, -8 is farther to the left than -3, so -8 is less than -3. Think of temperature: -8 degrees is colder (less) than -3 degrees."
+        },
+        {
+          "id": "icp-8",
+          "question": "Order from least to greatest: -1.5, 3/4, -2, 0.25, -1/4",
+          "hints": [
+            "Convert all to decimals: 3/4 = 0.75, -1/4 = -0.25",
+            "Place them on a number line: -2, -1.5, -0.25, 0.25, 0.75",
+            "Read left to right for least to greatest"
+          ],
+          "answer": "As decimals: -2, -1.5, -0.25, 0.25, 0.75. Least to greatest: -2, -1.5, -1/4, 0.25, 3/4."
+        },
+        {
+          "id": "icp-9",
+          "question": "Insert < , > , or = : -3/5 ___ -0.7",
+          "hints": [
+            "Convert -3/5 to a decimal: -3/5 = -0.6",
+            "Now compare -0.6 and -0.7",
+            "Which is closer to zero?"
+          ],
+          "answer": "-3/5 > -0.7. Since -3/5 = -0.6, and -0.6 is closer to zero than -0.7, we have -0.6 > -0.7, so -3/5 > -0.7."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Comparing and Ordering Rational Numbers Independent Practice",
+      "skill": "g6-compare-order-rationals",
+      "problems": [
+        {
+          "id": "icp-10",
+          "question": "Compare -14 and -6 using < or >.",
+          "answer": "-14 < -6. On the number line -14 is farther left, so it is less. Owing $14 is worse than owing $6."
+        },
+        {
+          "id": "icp-11",
+          "question": "Order from least to greatest: 2/3, -5/4, 0, -0.8, 1.5",
+          "answer": "As decimals: 2/3 is about 0.667, -5/4 = -1.25, 0 = 0, -0.8 = -0.8, 1.5 = 1.5. Least to greatest: -5/4, -0.8, 0, 2/3, 1.5."
+        },
+        {
+          "id": "icp-12",
+          "question": "Insert < , > , or = : -7/10 ___ -3/5",
+          "answer": "-7/10 < -3/5. Convert: -3/5 = -6/10. Since -7/10 is farther from zero than -6/10, it is less. -7/10 < -6/10, so -7/10 < -3/5."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Absolute Value and Opposites",
+      "skill": "g6-absolute-value-opposites",
+      "content": "Absolute value answers one simple question: how far is this number from zero? It does not care about direction, only distance. The absolute value of any number is never negative. Opposites are two numbers that sit the same distance from zero but on different sides of it. Together, absolute value and opposites help us understand the structure of the number line.",
+      "keyPoints": [
+        "Absolute value, written |x|, is the distance from x to zero on the number line. Distance is always non-negative.",
+        "|5| = 5 and |-5| = 5 because both 5 and -5 are exactly 5 units away from zero",
+        "|0| = 0 because zero is zero distance from itself",
+        "The opposite of a number is the number on the other side of zero at the same distance: the opposite of 4 is -4, the opposite of -7 is 7",
+        "A number and its opposite always add to zero: 4 + (-4) = 0"
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Absolute Value and Opposites Worked Examples",
+      "skill": "g6-absolute-value-opposites",
+      "examples": [
+        {
+          "problem": "Find each absolute value: |9|, |-13|, |0|, |-2.5|",
+          "solution": "|9| = 9 (9 is 9 units from zero)\n|-13| = 13 (13 units from zero, direction does not matter)\n|0| = 0 (zero is 0 units from itself)\n|-2.5| = 2.5 (2.5 units from zero)\n\nNotice every answer is non-negative. Absolute value strips away the sign and gives only the distance."
+        },
+        {
+          "problem": "The temperature on Monday was -6 degrees F and on Tuesday it was 4 degrees F. Which day's temperature was farther from zero? Use absolute value to justify your answer.",
+          "solution": "Find the absolute value of each temperature:\n|-6| = 6 and |4| = 4.\n\nSince 6 > 4, Monday's temperature was farther from zero.\nEven though -6 is a lower temperature, it is farther from the zero reference point. Absolute value measures this distance regardless of direction."
+        },
+        {
+          "problem": "Find the opposite of each number, then verify by adding the number and its opposite: 8, -3, -1/2",
+          "solution": "Opposite of 8 is -8. Check: 8 + (-8) = 0.\nOpposite of -3 is 3. Check: -3 + 3 = 0.\nOpposite of -1/2 is 1/2. Check: -1/2 + 1/2 = 0.\n\nEvery number plus its opposite equals zero. That is the defining property of opposites."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Absolute Value and Opposites Practice",
+      "skill": "g6-absolute-value-opposites",
+      "problems": [
+        {
+          "id": "icp-13",
+          "question": "Evaluate: |-17| + |3| - |(-4)|",
+          "hints": [
+            "Find each absolute value separately: |-17| = 17, |3| = 3, |(-4)| = 4",
+            "The extra parentheses inside |(-4)| do not change anything: the absolute value of -4 is still 4",
+            "Now compute: 17 + 3 - 4"
+          ],
+          "answer": "|-17| = 17, |3| = 3, |(-4)| = 4. So 17 + 3 - 4 = 16."
+        },
+        {
+          "id": "icp-14",
+          "question": "Two hikers check their elevations. Hiker A is at -150 feet (in a valley below sea level). Hiker B is at 120 feet above sea level. Which hiker is farther from sea level? Use absolute value to explain.",
+          "hints": [
+            "Sea level is zero, so find each hiker's distance from zero",
+            "|-150| = 150 and |120| = 120",
+            "Compare the absolute values"
+          ],
+          "answer": "|-150| = 150 and |120| = 120. Since 150 > 120, Hiker A is farther from sea level. Even though Hiker A is at a lower elevation, the absolute value (distance from zero) is greater."
+        },
+        {
+          "id": "icp-15",
+          "question": "Find the opposite of -9. Then find the absolute value of both -9 and its opposite. What do you notice?",
+          "hints": [
+            "The opposite of -9 is the number the same distance from zero on the other side",
+            "Opposite of -9 is 9",
+            "Find |-9| and |9|"
+          ],
+          "answer": "The opposite of -9 is 9. |-9| = 9 and |9| = 9. They are equal. A number and its opposite always have the same absolute value because they are the same distance from zero."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Absolute Value and Opposites Independent Practice",
+      "skill": "g6-absolute-value-opposites",
+      "problems": [
+        {
+          "id": "icp-16",
+          "question": "Evaluate: |(-25)| - |-10| + |7|",
+          "answer": "|(-25)| = 25, |-10| = 10, |7| = 7. So 25 - 10 + 7 = 22."
+        },
+        {
+          "id": "icp-17",
+          "question": "A bank account shows a balance of -$45 (overdrawn). What is the absolute value of this balance, and what does it tell you in this context?",
+          "answer": "|-45| = 45. The absolute value tells you the account is $45 away from a zero balance. In context it means the account holder owes the bank $45."
+        },
+        {
+          "id": "icp-18",
+          "question": "Find the opposite of 3/4. Then find the absolute value of both 3/4 and its opposite. Does the relationship you saw with integers also hold for fractions?",
+          "answer": "The opposite of 3/4 is -3/4. |3/4| = 3/4 and |-3/4| = 3/4. Yes, the relationship holds: a number and its opposite have the same absolute value regardless of whether they are integers or fractions."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Graphing on the Coordinate Plane",
+      "skill": "g6-coordinate-plane-graphing",
+      "content": "The coordinate plane is formed by two number lines that cross at zero: a horizontal number line (x-axis) and a vertical number line (y-axis). Their intersection is called the origin (0, 0). Every point on the plane is described by an ordered pair (x, y) where x tells you how far to go horizontally and y tells you how far to go vertically. With negative numbers on both axes, we now have four regions called quadrants.",
+      "keyPoints": [
+        "An ordered pair (x, y) gives directions from the origin: x = horizontal distance (right if positive, left if negative), y = vertical distance (up if positive, down if negative)",
+        "Quadrant I: x positive, y positive (+, +) is upper-right",
+        "Quadrant II: x negative, y positive (-, +) is upper-left",
+        "Quadrant III: x negative, y negative (-, -) is lower-left",
+        "Quadrant IV: x positive, y negative (+, -) is lower-right",
+        "Points on an axis are not in any quadrant: (3, 0) is on the x-axis, (0, -5) is on the y-axis"
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Graphing on the Coordinate Plane Worked Examples",
+      "skill": "g6-coordinate-plane-graphing",
+      "examples": [
+        {
+          "problem": "Plot the point (-3, 5) and name the quadrant it is in.",
+          "solution": "Start at the origin (0, 0).\nThe x-coordinate is -3: move 3 units LEFT.\nThe y-coordinate is 5: move 5 units UP.\nPlace the point.\n\nSince x is negative and y is positive, the point is in Quadrant II (upper-left)."
+        },
+        {
+          "problem": "Name the quadrant or axis for each point: A(4, -2), B(-1, -6), C(0, 3), D(7, 1).",
+          "solution": "A(4, -2): x positive, y negative means Quadrant IV.\nB(-1, -6): x negative, y negative means Quadrant III.\nC(0, 3): x is 0, so the point is on the y-axis (not in any quadrant).\nD(7, 1): x positive, y positive means Quadrant I."
+        },
+        {
+          "problem": "You are playing Battleship on a coordinate grid. Your opponent's ship is at position (2, -4). You call out your shot. Describe the path from the origin to that position.",
+          "solution": "From the origin (0, 0):\nStep 1: Move 2 units to the RIGHT (positive x-direction).\nStep 2: Move 4 units DOWN (negative y-direction).\nYou end up at (2, -4) in Quadrant IV.\n\nRemember: always move horizontally first (x), then vertically (y). Order matters in ordered pairs!"
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Graphing on the Coordinate Plane Practice",
+      "skill": "g6-coordinate-plane-graphing",
+      "problems": [
+        {
+          "id": "icp-19",
+          "question": "Name the quadrant for each point: (5, 3), (-2, 7), (-4, -1), (6, -8).",
+          "hints": [
+            "Check the signs of x and y for each point",
+            "(+, +) = Quadrant I, (-, +) = Quadrant II, (-, -) = Quadrant III, (+, -) = Quadrant IV",
+            "Go through each point one at a time"
+          ],
+          "answer": "(5, 3): Quadrant I (+, +). (-2, 7): Quadrant II (-, +). (-4, -1): Quadrant III (-, -). (6, -8): Quadrant IV (+, -)."
+        },
+        {
+          "id": "icp-20",
+          "question": "Describe the steps to plot (-5, -3) starting from the origin. What quadrant will the point be in?",
+          "hints": [
+            "Start at (0, 0)",
+            "The x-coordinate is -5: which direction is negative on the x-axis?",
+            "The y-coordinate is -3: which direction is negative on the y-axis?"
+          ],
+          "answer": "From the origin, move 5 units LEFT (negative x), then 3 units DOWN (negative y). The point is in Quadrant III because both coordinates are negative."
+        },
+        {
+          "id": "icp-21",
+          "question": "In a Battleship game on a coordinate grid, your ships are at (-3, 4), (1, -2), and (0, 5). Which ship is in Quadrant II? Which ship is on an axis instead of in a quadrant?",
+          "hints": [
+            "Quadrant II has negative x and positive y",
+            "A point is on an axis if either coordinate is 0",
+            "Check each ship's coordinates"
+          ],
+          "answer": "(-3, 4) is in Quadrant II because x is negative and y is positive. (0, 5) is on the y-axis because x = 0, so it is not in any quadrant. (1, -2) is in Quadrant IV."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Graphing on the Coordinate Plane Independent Practice",
+      "skill": "g6-coordinate-plane-graphing",
+      "problems": [
+        {
+          "id": "icp-22",
+          "question": "Name the quadrant or axis for each point: (-9, 2), (3, 0), (4, 7), (-1, -5).",
+          "answer": "(-9, 2): Quadrant II. (3, 0): on the x-axis. (4, 7): Quadrant I. (-1, -5): Quadrant III."
+        },
+        {
+          "id": "icp-23",
+          "question": "A treasure map uses a coordinate grid. The treasure is 6 units left of the origin and 2 units up. Write the ordered pair for the treasure's location and name the quadrant.",
+          "answer": "6 units left means x = -6 and 2 units up means y = 2. The ordered pair is (-6, 2), which is in Quadrant II."
+        },
+        {
+          "id": "icp-24",
+          "question": "In Battleship, your opponent calls out the shots (4, 3), (-4, 3), (-4, -3), and (4, -3). Each shot is in a different quadrant. List which quadrant each shot is in.",
+          "answer": "(4, 3): Quadrant I. (-4, 3): Quadrant II. (-4, -3): Quadrant III. (4, -3): Quadrant IV."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Distance on the Coordinate Plane",
+      "skill": "g6-distance-coordinate-plane",
+      "content": "When two points share the same x-coordinate (vertical line) or the same y-coordinate (horizontal line), you can find the distance between them using absolute value. This is because distance is always positive, and the difference between coordinates might be negative. Reflections across the axes are closely related: reflecting a point across an axis flips the sign of one coordinate, and the distance from the point to the axis equals the distance from the reflection to the axis.",
+      "keyPoints": [
+        "Horizontal distance (same y-coordinate): distance = |x1 - x2|. Example: distance from (2, 3) to (7, 3) is |2 - 7| = |-5| = 5",
+        "Vertical distance (same x-coordinate): distance = |y1 - y2|. Example: distance from (4, -1) to (4, 6) is |-1 - 6| = |-7| = 7",
+        "Absolute value ensures the distance is always positive regardless of the order you subtract",
+        "Reflecting across the x-axis: (x, y) becomes (x, -y). The y-coordinate flips sign.",
+        "Reflecting across the y-axis: (x, y) becomes (-x, y). The x-coordinate flips sign."
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Distance on the Coordinate Plane Worked Examples",
+      "skill": "g6-distance-coordinate-plane",
+      "examples": [
+        {
+          "problem": "Find the distance between the points (-3, 2) and (5, 2).",
+          "solution": "Both points have y-coordinate 2, so they are on the same horizontal line.\nUse the horizontal distance formula: |x1 - x2| = |-3 - 5| = |-8| = 8.\n\nYou could also compute |5 - (-3)| = |5 + 3| = |8| = 8. Same answer either way because of the absolute value."
+        },
+        {
+          "problem": "Find the distance between (4, -6) and (4, 3).",
+          "solution": "Both points have x-coordinate 4, so they are on the same vertical line.\nUse the vertical distance formula: |y1 - y2| = |-6 - 3| = |-9| = 9.\n\nThe points are 9 units apart. Notice one point is below the x-axis and the other is above it, but absolute value handles the sign for us."
+        },
+        {
+          "problem": "On a city map, a school is at (-2, 5) and a library is at (-2, -3). How far apart are they? The school is reflected across the x-axis to a new location. What are the coordinates of the reflection?",
+          "solution": "Distance: same x-coordinate (-2), so use vertical distance.\n|5 - (-3)| = |5 + 3| = |8| = 8 units apart.\n\nReflection of (-2, 5) across the x-axis: flip the y-coordinate.\n(-2, 5) becomes (-2, -5).\n\nThe school was 5 units above the x-axis and its reflection is 5 units below the x-axis."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Distance on the Coordinate Plane Practice",
+      "skill": "g6-distance-coordinate-plane",
+      "problems": [
+        {
+          "id": "icp-25",
+          "question": "Find the distance between (-7, 1) and (4, 1).",
+          "hints": [
+            "Check: do the points share the same x-coordinate or the same y-coordinate?",
+            "Both have y = 1, so this is a horizontal distance",
+            "Use |x1 - x2| = |-7 - 4|"
+          ],
+          "answer": "Same y-coordinate (1), so horizontal distance = |-7 - 4| = |-11| = 11 units."
+        },
+        {
+          "id": "icp-26",
+          "question": "A map shows a park at (3, -4) and a pool at (3, 5). How far apart are they? If the park is reflected across the x-axis, what are the new coordinates?",
+          "hints": [
+            "Same x-coordinate (3), so use vertical distance: |y1 - y2|",
+            "|-4 - 5| = |-9| = 9",
+            "Reflecting across the x-axis flips the sign of y"
+          ],
+          "answer": "Distance: |-4 - 5| = |-9| = 9 units. Reflection of (3, -4) across the x-axis: flip the y-coordinate to get (3, 4)."
+        },
+        {
+          "id": "icp-27",
+          "question": "Point A is at (-5, -2). Reflect A across the y-axis to get point B. What are B's coordinates? What is the horizontal distance between A and B?",
+          "hints": [
+            "Reflecting across the y-axis flips the sign of the x-coordinate",
+            "A is at (-5, -2), so B is at (5, -2)",
+            "Both have the same y-coordinate, so use |x1 - x2|"
+          ],
+          "answer": "B = (5, -2). Horizontal distance: |-5 - 5| = |-10| = 10 units. Point A is 5 units left of the y-axis and point B is 5 units right, so they are 10 units apart."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Distance on the Coordinate Plane Independent Practice",
+      "skill": "g6-distance-coordinate-plane",
+      "problems": [
+        {
+          "id": "icp-28",
+          "question": "Find the distance between (-6, -3) and (2, -3).",
+          "answer": "Same y-coordinate (-3), so horizontal distance = |-6 - 2| = |-8| = 8 units."
+        },
+        {
+          "id": "icp-29",
+          "question": "Reflect the point (7, -1) across the x-axis, then reflect the result across the y-axis. What are the final coordinates?",
+          "answer": "Start: (7, -1). Reflect across x-axis: flip y to get (7, 1). Reflect across y-axis: flip x to get (-7, 1). Final coordinates: (-7, 1)."
+        },
+        {
+          "id": "icp-30",
+          "question": "On a map, a fire station is at (-4, 6) and a hospital is at (-4, -5). How many units apart are they? A new clinic will be built at the reflection of the hospital across the x-axis. What are the clinic's coordinates and how far is it from the fire station?",
+          "answer": "Distance between fire station and hospital: |6 - (-5)| = |6 + 5| = 11 units. Reflection of (-4, -5) across x-axis: (-4, 5). Distance from clinic (-4, 5) to fire station (-4, 6): |5 - 6| = |-1| = 1 unit."
+        }
+      ],
+      "lessonId": "integers_coordinate_plane"
+    }
+  ],
+  "answerKeys": {
+    "icp-1": "-10 degrees Celsius",
+    "icp-2": "-$25 (overdrawn)",
+    "icp-3": "14,787 feet difference",
+    "icp-4": "1 yard gained",
+    "icp-5": "-17 degrees Fahrenheit",
+    "icp-6": "-25 feet (below sea level)",
+    "icp-7": "-8 < -3",
+    "icp-8": "-2, -1.5, -1/4, 0.25, 3/4",
+    "icp-9": "-3/5 > -0.7",
+    "icp-10": "-14 < -6",
+    "icp-11": "-5/4, -0.8, 0, 2/3, 1.5",
+    "icp-12": "-7/10 < -3/5",
+    "icp-13": "16",
+    "icp-14": "Hiker A (150 > 120)",
+    "icp-15": "|-9| = |9| = 9",
+    "icp-16": "22",
+    "icp-17": "$45 owed to bank",
+    "icp-18": "|3/4| = |-3/4| = 3/4",
+    "icp-19": "QI, QII, QIII, QIV",
+    "icp-20": "Quadrant III",
+    "icp-21": "(-3, 4) in QII; (0, 5) on y-axis",
+    "icp-22": "QII, x-axis, QI, QIII",
+    "icp-23": "(-6, 2) in Quadrant II",
+    "icp-24": "QI, QII, QIII, QIV",
+    "icp-25": "11 units",
+    "icp-26": "9 units; reflection (3, 4)",
+    "icp-27": "B = (5, -2); distance = 10 units",
+    "icp-28": "8 units",
+    "icp-29": "(-7, 1)",
+    "icp-30": "11 units; clinic at (-4, 5); 1 unit from fire station"
+  }
+}

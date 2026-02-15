@@ -12,7 +12,9 @@
     "ap-frq-calculator",
     "ap-frq-no-calculator"
   ],
-  "standardsAlignment": ["AP Calculus BC CED 2020 — All Learning Objectives"],
+  "standardsAlignment": [
+    "AP Calculus BC CED 2020 — All Learning Objectives"
+  ],
   "goals": [
     "Synthesize derivative and integral techniques across all function types.",
     "Apply convergence tests fluently and select Taylor/Maclaurin series for approximation.",
@@ -40,7 +42,8 @@
         "Differentiation rules: power, product, quotient, chain (including nested), implicit, inverse function (1/f'(f⁻¹(a))), inverse trig.",
         "Applications: related rates (always differentiate BEFORE substituting), motion (v=s', a=v', speed=|v|), linearization L(x)=f(a)+f'(a)(x−a).",
         "Function analysis: FDT/SDT, concavity, inflection points, EVT (check endpoints + critical), MVT (f'(c)=[f(b)−f(a)]/(b−a)), optimization."
-      ]
+      ],
+      "lessonId": "mc-practice"
     },
     {
       "type": "guided_practice",
@@ -52,21 +55,31 @@
           "id": "fr-wp1",
           "question": "Evaluate lim_{x→0} (tan(2x))/(3x). State the method used.",
           "answer": "0/0 form. L'Hôpital: lim 2sec²(2x)/3 = 2/3. (Or: lim (sin(2x)/(2x))·(2/(3cos(2x))) = 1·2/3 = 2/3.)",
-          "hints": ["Check the form first — is it 0/0 or ∞/∞?", "You could also rewrite tan as sin/cos and use the standard limit sin(u)/u → 1."]
+          "hints": [
+            "Check the form first — is it 0/0 or ∞/∞?",
+            "You could also rewrite tan as sin/cos and use the standard limit sin(u)/u → 1."
+          ]
         },
         {
           "id": "fr-wp2",
           "question": "Given f(x) = x·e^(−2x), find the absolute maximum on [0, ∞).",
           "answer": "f'(x) = e^(−2x) − 2xe^(−2x) = e^(−2x)(1−2x) = 0 → x = 1/2. f(0) = 0, f(1/2) = (1/2)e^(−1) = 1/(2e), f(x)→0 as x→∞. Abs max: 1/(2e) at x = 1/2.",
-          "hints": ["Use product rule for x·e^(−2x).", "Don't forget to check the behavior as x→∞."]
+          "hints": [
+            "Use product rule for x·e^(−2x).",
+            "Don't forget to check the behavior as x→∞."
+          ]
         },
         {
           "id": "fr-wp3",
           "question": "A 10-cm wire is cut into two pieces. One forms a square, the other an equilateral triangle. Where should the cut be to minimize total area?",
           "answer": "Let x = perimeter of square (0≤x≤10). Side of square = x/4, area = x²/16. Triangle perimeter = 10−x, side = (10−x)/3, area = (√3/4)·((10−x)/3)² = √3(10−x)²/36. Total A = x²/16 + √3(10−x)²/36. A'(x) = x/8 − √3(10−x)/18 = 0 → 18x = 8√3(10−x) → x(18+8√3) = 80√3 → x = 80√3/(18+8√3) = 40√3/(9+4√3). Rationalize: ·(9−4√3)/(9−4√3) = 40√3(9−4√3)/(81−48) = 40√3(9−4√3)/33 = (360√3−480)/33 ≈ (623.5−480)/33 ≈ 4.35 cm.",
-          "hints": ["Set up area as a function of one variable (the cut point).", "Differentiate and set equal to zero."]
+          "hints": [
+            "Set up area as a function of one variable (the cut point).",
+            "Differentiate and set equal to zero."
+          ]
         }
-      ]
+      ],
+      "lessonId": "mc-practice"
     },
     {
       "type": "explanation",
@@ -81,7 +94,8 @@
         "Techniques: u-substitution (change bounds for definite), integration by parts (∫udv=uv−∫vdu; LIATE priority), partial fractions (factor denominator, A/(x−r)+B/(x−s)), improper integrals (replace bound with limit).",
         "Differential equations: slope fields (match dy/dx to slopes), separation of variables (separate, integrate, +C, apply IC), Euler's method (y_{n+1}=yₙ+f(xₙ,yₙ)Δx), logistic (dP/dt=kP(1−P/L), max rate at P=L/2).",
         "Applications: area between curves (∫[top−bottom]dx), volume (disk π∫R²dx, washer π∫(R²−r²)dx, cross-section ∫A(x)dx), average value (1/(b−a))∫f(x)dx, motion (displacement=∫v dt, distance=∫|v|dt)."
-      ]
+      ],
+      "lessonId": "frq-practice"
     },
     {
       "type": "guided_practice",
@@ -93,21 +107,31 @@
           "id": "fr-wp4",
           "question": "Evaluate ∫₀² x√(4−x²) dx.",
           "answer": "u = 4−x², du = −2x dx → x dx = −du/2. Bounds: x=0→u=4, x=2→u=0. ∫ = ∫₄⁰ √u·(−du/2) = (1/2)∫₀⁴ u^{1/2} du = (1/2)·[2u^{3/2}/3]₀⁴ = (1/3)·8 = 8/3.",
-          "hints": ["Try u = 4−x² so that x dx matches part of du.", "Don't forget to change the bounds of integration."]
+          "hints": [
+            "Try u = 4−x² so that x dx matches part of du.",
+            "Don't forget to change the bounds of integration."
+          ]
         },
         {
           "id": "fr-wp5",
           "question": "Solve the IVP: dy/dx = 2xy², y(0) = 1.",
           "answer": "Separate: dy/y² = 2x dx. Integrate: −1/y = x² + C. y(0)=1: −1=C. So −1/y = x²−1 → y = 1/(1−x²). Domain: |x| < 1.",
-          "hints": ["Move y² to the left side and dx to the right.", "After integrating, use the initial condition to find C."]
+          "hints": [
+            "Move y² to the left side and dx to the right.",
+            "After integrating, use the initial condition to find C."
+          ]
         },
         {
           "id": "fr-wp6",
           "question": "The base of a solid is the region between y = sin(x) and the x-axis for 0 ≤ x ≤ π. Cross-sections perpendicular to the x-axis are semicircles. Set up and evaluate the volume.",
           "answer": "Diameter of semicircle = sin(x), so radius = sin(x)/2. A(x) = (1/2)π(sin(x)/2)² = πsin²(x)/8. V = ∫₀^π πsin²(x)/8 dx = (π/8)·∫₀^π (1−cos(2x))/2 dx = (π/16)[x−sin(2x)/2]₀^π = (π/16)(π) = π²/16.",
-          "hints": ["The diameter of each semicircle equals the distance between the curves.", "Use the half-angle identity for sin²(x)."]
+          "hints": [
+            "The diameter of each semicircle equals the distance between the curves.",
+            "Use the half-angle identity for sin²(x)."
+          ]
         }
-      ]
+      ],
+      "lessonId": "frq-practice"
     },
     {
       "type": "explanation",
@@ -125,7 +149,8 @@
         "Taylor/Maclaurin: Pₙ(x)=Σf⁽ᵏ⁾(a)(x−a)ᵏ/k!. MEMORIZE: eˣ=Σxⁿ/n!, sinx=Σ(−1)ⁿx²ⁿ⁺¹/(2n+1)!, cosx=Σ(−1)ⁿx²ⁿ/(2n)!, 1/(1−x)=Σxⁿ.",
         "Power series: ratio test for R, CHECK ENDPOINTS separately. Term-by-term diff/integration preserves R.",
         "Lagrange error: |Rₙ(x)|≤M|x−a|ⁿ⁺¹/(n+1)! where M=max|f⁽ⁿ⁺¹⁾| on interval."
-      ]
+      ],
+      "lessonId": "error-analysis"
     },
     {
       "type": "guided_practice",
@@ -137,21 +162,31 @@
           "id": "fr-wp7",
           "question": "Find the area enclosed by one loop of r = sin(2θ).",
           "answer": "One loop: θ from 0 to π/2. A = (1/2)∫₀^{π/2} sin²(2θ) dθ = (1/4)∫₀^{π/2}(1−cos(4θ))dθ = (1/4)[θ−sin(4θ)/4]₀^{π/2} = (1/4)(π/2−0) = π/8.",
-          "hints": ["Identify the bounds for one complete petal.", "Use the identity sin²(u) = (1−cos(2u))/2."]
+          "hints": [
+            "Identify the bounds for one complete petal.",
+            "Use the identity sin²(u) = (1−cos(2u))/2."
+          ]
         },
         {
           "id": "fr-wp8",
           "question": "Determine whether Σ_{n=1}^∞ n!/(nⁿ) converges or diverges.",
           "answer": "Ratio test: a_{n+1}/aₙ = (n+1)!/((n+1)^{n+1}) · nⁿ/n! = (n+1)·nⁿ/(n+1)^{n+1} = nⁿ/(n+1)ⁿ = (n/(n+1))ⁿ = (1/(1+1/n))ⁿ → 1/e < 1. Converges.",
-          "hints": ["The ratio test is the best tool when factorials are involved.", "Recognize (n/(n+1))ⁿ as a form that approaches 1/e."]
+          "hints": [
+            "The ratio test is the best tool when factorials are involved.",
+            "Recognize (n/(n+1))ⁿ as a form that approaches 1/e."
+          ]
         },
         {
           "id": "fr-wp9",
           "question": "Find the Maclaurin series for f(x) = ∫₀ˣ e^(−t²) dt through the x⁵ term.",
           "answer": "e^(−t²) = Σ(−t²)ⁿ/n! = 1 − t² + t⁴/2 − t⁶/6 + ⋯. Integrate term by term: ∫₀ˣ e^(−t²)dt = x − x³/3 + x⁵/10 − x⁷/42 + ⋯. Through x⁵: x − x³/3 + x⁵/10.",
-          "hints": ["Start with the known Maclaurin series for eᵘ, then substitute u = −t².", "Integrate term by term — power series can be integrated inside their interval of convergence."]
+          "hints": [
+            "Start with the known Maclaurin series for eᵘ, then substitute u = −t².",
+            "Integrate term by term — power series can be integrated inside their interval of convergence."
+          ]
         }
-      ]
+      ],
+      "lessonId": "error-analysis"
     },
     {
       "type": "model",
@@ -171,7 +206,8 @@
           "problem": "FRQ Practice: The Maclaurin series for f is f(x) = Σ_{n=0}^∞ (−1)ⁿx²ⁿ/(2n)! (this is cos(x)). (a) Write the first four nonzero terms. (b) Use these terms to approximate cos(0.5). (c) Show that the approximation in (b) differs from cos(0.5) by less than 1/720.",
           "solution": "(a) 1 − x²/2 + x⁴/24 − x⁶/720. (b) cos(0.5) ≈ 1 − 0.25/2 + 0.0625/24 − 0.015625/720 = 1 − 0.125 + 0.002604 − 0.0000217 ≈ 0.87758. (c) This is an alternating series with decreasing terms. Error ≤ |first omitted term| = (0.5)⁸/8! = 1/40320 · 1/256 = 1/10321920 ≈ 9.7×10⁻⁸. Since 1/10321920 < 1/720, the approximation differs by less than 1/720. ✓"
         }
-      ]
+      ],
+      "lessonId": "frq-practice"
     },
     {
       "type": "model",
@@ -191,7 +227,8 @@
           "problem": "MC: If dy/dx = y/x and y(1) = 2, then y(e) = ? (A) 2 (B) 2e (C) e² (D) 2/e",
           "solution": "Separate: dy/y = dx/x → ln|y| = ln|x| + C → y = Ax. y(1)=2: A=2. y = 2x. y(e) = 2e. Answer: (B)."
         }
-      ]
+      ],
+      "lessonId": "mc-practice"
     },
     {
       "type": "model",
@@ -211,7 +248,8 @@
           "problem": "MC (Calc): The length of the curve y = x³/² from x = 0 to x = 4 is closest to: (A) 5.0 (B) 7.6 (C) 9.1 (D) 10.5",
           "solution": "Arc length = ∫₀⁴√(1+(dy/dx)²)dx. dy/dx = (3/2)x^{1/2}. (dy/dx)² = (9/4)x. L = ∫₀⁴√(1+9x/4)dx. Let u=1+9x/4, du=9/4 dx. L = (4/9)∫₁^{10}√u du = (4/9)·(2/3)u^{3/2}|₁^{10} = (8/27)(10^{3/2}−1) = (8/27)(31.623−1) = (8/27)(30.623) ≈ 9.07. Answer: (C)."
         }
-      ]
+      ],
+      "lessonId": "frq-practice"
     },
     {
       "type": "independent_practice",
@@ -224,44 +262,61 @@
           "question": "Find the interval of convergence for Σ_{n=1}^∞ (−1)ⁿ(x+2)ⁿ/(n·3ⁿ).",
           "answer": "Ratio test: L = |x+2|/3. Converges when |x+2| < 3, i.e., −5 < x < 1. R=3. At x=−5: Σ(−1)ⁿ(−3)ⁿ/(n·3ⁿ) = Σ(−1)ⁿ(−1)ⁿ/n = Σ1/n → diverges (harmonic). At x=1: Σ(−1)ⁿ·3ⁿ/(n·3ⁿ) = Σ(−1)ⁿ/n → converges (alt harmonic). IOC: (−5, 1].",
           "skill": "power-series-interval",
-          "hints": ["Apply ratio test to find R, then check each endpoint separately."]
+          "hints": [
+            "Apply ratio test to find R, then check each endpoint separately."
+          ]
         },
         {
           "id": "fr-yp2",
           "question": "Evaluate ∫ x²/(x−1) dx.",
           "answer": "Long division: x²/(x−1) = x + 1 + 1/(x−1). ∫ = x²/2 + x + ln|x−1| + C.",
           "skill": "u-substitution",
-          "hints": ["When the degree of the numerator ≥ degree of denominator, do polynomial long division first."]
+          "hints": [
+            "When the degree of the numerator ≥ degree of denominator, do polynomial long division first."
+          ]
         },
         {
           "id": "fr-yp3",
           "question": "A particle moves with velocity v(t) = ⟨e^(−t), 2t−1⟩ and position r(0) = ⟨2, 0⟩. Find the position at t = 1 and the total distance traveled from t = 0 to t = 1.",
           "answer": "r(1) = ⟨2, 0⟩ + ∫₀¹⟨e^(−t), 2t−1⟩dt = ⟨2, 0⟩ + ⟨[−e^(−t)]₀¹, [t²−t]₀¹⟩ = ⟨2, 0⟩ + ⟨1−1/e, 0⟩ = ⟨3−1/e, 0⟩. Distance = ∫₀¹√(e^(−2t)+(2t−1)²)dt (requires calculator for numerical evaluation).",
           "skill": "vector-valued-functions",
-          "hints": ["Integrate each component of v(t) separately to find position.", "Distance traveled uses the speed integral — set it up even if you can't evaluate by hand."]
+          "hints": [
+            "Integrate each component of v(t) separately to find position.",
+            "Distance traveled uses the speed integral — set it up even if you can't evaluate by hand."
+          ]
         },
         {
           "id": "fr-yp4",
           "question": "Use the Lagrange error bound to determine the degree n of the Taylor polynomial for sin(x) centered at 0 needed to approximate sin(1) with error less than 0.001.",
           "answer": "sin(x) = Σ(−1)ᵏx^{2k+1}/(2k+1)!. This is alternating with decreasing terms at x=1. Error ≤ |first omitted term| = 1/(2n+3)!. Need 1/(2n+3)! < 0.001 → (2n+3)! > 1000. 7!=5040>1000. So 2n+3=7→n=2. P₅(x) = x−x³/6+x⁵/120 gives error < 1/5040 < 0.001. ✓",
           "skill": "lagrange-error-bound",
-          "hints": ["For alternating series, the error is bounded by the first omitted term.", "Find the smallest factorial that exceeds 1/0.001 = 1000."]
+          "hints": [
+            "For alternating series, the error is bounded by the first omitted term.",
+            "Find the smallest factorial that exceeds 1/0.001 = 1000."
+          ]
         },
         {
           "id": "fr-yp5",
           "question": "Find the area inside both r = sin(θ) and r = cos(θ).",
           "answer": "Intersection: sinθ = cosθ → tanθ = 1 → θ = π/4. For 0≤θ≤π/4: sinθ ≤ cosθ (inner = sinθ). For π/4≤θ≤π/2: cosθ ≤ sinθ (inner = cosθ). By symmetry: A = 2·(1/2)∫₀^{π/4}sin²θ dθ = ∫₀^{π/4}(1−cos2θ)/2 dθ = [θ/2−sin2θ/4]₀^{π/4} = π/8−1/4.",
           "skill": "polar-graphing-area",
-          "hints": ["Sketch both circles to identify the overlapping region.", "Use symmetry — the region is symmetric about θ = π/4."]
+          "hints": [
+            "Sketch both circles to identify the overlapping region.",
+            "Use symmetry — the region is symmetric about θ = π/4."
+          ]
         },
         {
           "id": "fr-yp6",
           "question": "FRQ-style: Let g(x) = ∫₀ˣ f(t) dt where f is the piecewise linear function defined by: f(t) = 2t for 0≤t≤2, f(t) = 4 for 2≤t≤5, f(t) = −2(t−5)+4 for 5≤t≤7. (a) Find g(2), g(5), g(7). (b) On what intervals is g concave up? (c) Find the absolute maximum of g on [0, 7].",
           "answer": "(a) g(2) = ∫₀² 2t dt = [t²]₀² = 4. g(5) = 4 + ∫₂⁵ 4 dt = 4 + 12 = 16. g(7) = 16 + ∫₅⁷(−2t+14)dt = 16 + [−t²+14t]₅⁷ = 16 + (−49+98−(−25+70)) = 16 + (49−45) = 20. (b) g''(x) = f'(x). f'(x) = 2 on (0,2), 0 on (2,5), −2 on (5,7). g concave up where f'>0: (0,2). (c) g'(x) = f(x) ≥ 0 on entire [0,7] (f goes from 0 up to 4, stays at 4, then decreases to 0 at t=7). So g is nondecreasing. Abs max at x=7: g(7) = 20.",
           "skill": "ftc-part1",
-          "hints": ["g'(x) = f(x) by FTC Part 1. g''(x) = f'(x).", "Compute g values by finding areas under f (trapezoids and rectangles)."]
+          "hints": [
+            "g'(x) = f(x) by FTC Part 1. g''(x) = f'(x).",
+            "Compute g values by finding areas under f (trapezoids and rectangles)."
+          ]
         }
-      ]
+      ],
+      "lessonId": "frq-practice"
     }
   ],
   "answerKeys": {
@@ -280,5 +335,22 @@
     "fr-yp4": "n=2 (P₅ suffices). Error < 1/5040.",
     "fr-yp5": "π/8 − 1/4.",
     "fr-yp6": "g(2)=4, g(5)=16, g(7)=20. CU on (0,2). Max=20 at x=7."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "mc-practice",
+      "title": "Multiple Choice Practice Sets",
+      "order": 1
+    },
+    {
+      "lessonId": "frq-practice",
+      "title": "Free Response Practice",
+      "order": 2
+    },
+    {
+      "lessonId": "error-analysis",
+      "title": "Error Analysis & Targeted Review",
+      "order": 3
+    }
+  ]
 }

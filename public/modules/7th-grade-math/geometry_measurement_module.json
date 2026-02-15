@@ -6,7 +6,6 @@
   "weeks": "18-22",
   "estimatedDuration": 30,
   "description": "Covers 7.G standards on geometry. Students review and extend circle area and circumference, find the area of composite figures, compute surface area of prisms and pyramids using nets and formulas, calculate volume of prisms and cylinders, and explore cross-sections of three-dimensional figures.",
-
   "skills": [
     "g7-area-circumference",
     "g7-composite-figures",
@@ -14,9 +13,11 @@
     "g7-volume",
     "g7-cross-sections"
   ],
-
-  "standardsAlignment": ["7.G.3", "7.G.4", "7.G.6"],
-
+  "standardsAlignment": [
+    "7.G.3",
+    "7.G.4",
+    "7.G.6"
+  ],
   "goals": [
     "Calculate the area and circumference of circles using A = πr² and C = 2πr (or C = πd)",
     "Find the area of composite figures by decomposing them into rectangles, triangles, and partial circles",
@@ -24,7 +25,6 @@
     "Calculate the volume of rectangular prisms and cylinders using V = Bh",
     "Identify and describe cross-sections formed when three-dimensional figures are sliced by a plane"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -32,9 +32,7 @@
     "Formulas introduced alongside visual reasoning — nets for surface area, base-times-height for volume",
     "Students encouraged to draw and label diagrams before computing"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -49,7 +47,8 @@
         "Use π ≈ 3.14 for calculations unless told otherwise. Exact answers can be left in terms of π.",
         "Common mistake: using the diameter instead of the radius in A = πr². If given a diameter, divide by 2 first.",
         "Units matter: circumference is measured in linear units (cm, ft), area in square units (cm², ft²)."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -64,7 +63,8 @@
         "If a shape has a piece removed (like a hole), SUBTRACT the missing area.",
         "Always draw the figure and label the dimensions of each part before calculating.",
         "Check that your sub-shapes account for the entire figure — no overlaps and no gaps."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -79,7 +79,8 @@
         "Pyramid: 1 base + triangular lateral faces. The number of lateral faces equals the number of sides on the base.",
         "For pyramids, slant height is the height of each triangular face, not the height of the pyramid itself.",
         "Surface area is always measured in square units (in², cm², m²)."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -94,7 +95,8 @@
         "Always identify the BASE first — it is the shape that is repeated (stacked) along the height.",
         "Volume is measured in cubic units (in³, cm³, ft³).",
         "1 cm³ = 1 mL, so volume in cubic centimeters tells you capacity in milliliters."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -109,9 +111,9 @@
         "Slicing a cylinder perpendicular to its base (straight down through the center) produces a rectangle.",
         "Slicing a pyramid parallel to its base produces a smaller version of the base shape.",
         "The orientation of the cut determines the shape of the cross-section — the same solid can produce different cross-sections."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
-
     {
       "type": "model",
       "lessonPhase": "i-do",
@@ -130,7 +132,8 @@
           "problem": "A sprinkler waters a circular area with a radius of 8 feet. What is the circumference of the watered region?",
           "solution": "Identify: radius r = 8 ft. We need the circumference.\nFormula: C = 2πr\nC = 2 × 3.14 × 8 = 50.24 ft\nThe circumference of the watered area is 50.24 feet."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -146,7 +149,8 @@
           "problem": "A decorative window is a rectangle 4 ft wide and 5 ft tall, topped with a semicircle that has the same width as the rectangle. Find the total area of the window.",
           "solution": "Step 1: Rectangle area = 4 × 5 = 20 sq ft\nStep 2: The semicircle has diameter 4 ft, so radius = 2 ft.\nSemicircle area = (1/2)πr² = (1/2)(3.14)(2²) = (1/2)(3.14)(4) = 6.28 sq ft\nStep 3: Total area = 20 + 6.28 = 26.28 sq ft\nThe total area of the window is 26.28 square feet."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -166,7 +170,8 @@
           "problem": "A square pyramid has a base with side length 6 cm and four triangular faces, each with a base of 6 cm and a slant height of 8 cm. Find the total surface area.",
           "solution": "Step 1: Base area = 6 × 6 = 36 sq cm\nStep 2: Area of one triangular face = (1/2)(base)(slant height) = (1/2)(6)(8) = 24 sq cm\nFour triangular faces = 4 × 24 = 96 sq cm\nStep 3: Total SA = 36 + 96 = 132 sq cm\nThe total surface area of the pyramid is 132 square centimeters."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -186,7 +191,8 @@
           "problem": "A triangular prism-shaped planter has a right-triangle base with legs 6 in and 8 in, and a length of 15 in. What is the volume?",
           "solution": "Step 1: Find the base area (right triangle).\nB = (1/2)(6)(8) = 24 sq in\nStep 2: Multiply by the height (length of the prism).\nV = Bh = 24 × 15 = 360 cubic inches\nThe planter holds 360 cubic inches of soil."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -202,14 +208,13 @@
           "problem": "A can of soup is shaped like a cylinder. Describe the cross-section if you slice it (a) horizontally, parallel to the circular base, and (b) vertically, straight down through the center.",
           "solution": "(a) Horizontal slice (parallel to base): the cross-section is a circle, the same shape and size as the base.\n(b) Vertical slice through the center (perpendicular to base): the cross-section is a rectangle whose width equals the diameter of the cylinder and whose height equals the height of the cylinder."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
-
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Circles, Composite Figures & Surface Area Practice",
-      "skills": ["g7-area-circumference", "g7-composite-figures", "g7-surface-area"],
       "problems": [
         {
           "id": "gp1-1",
@@ -238,13 +243,14 @@
           ],
           "answer": "SA = 2(140 + 70 + 50) = 2(260) = 520 sq in."
         }
-      ]
+      ],
+      "skill": "g7-composite-figures",
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Volume & Cross-Sections Practice",
-      "skills": ["g7-volume", "g7-cross-sections"],
       "problems": [
         {
           "id": "gp2-1",
@@ -273,14 +279,14 @@
           ],
           "answer": "The cross-section is a circle (smaller than the base)."
         }
-      ]
+      ],
+      "skill": "g7-volume",
+      "lessonId": "geometry_measurement"
     },
-
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Geometry and Measurement — Practice Set",
-      "skills": ["g7-area-circumference", "g7-composite-figures", "g7-surface-area", "g7-volume", "g7-cross-sections"],
       "problems": [
         {
           "id": "ip-1",
@@ -317,10 +323,11 @@
           "problem": "A square pyramid is sliced horizontally, parallel to its square base, halfway between the base and the apex. What shape is the cross-section?",
           "answer": "The cross-section is a square (smaller than the base)."
         }
-      ]
+      ],
+      "skill": "g7-area-circumference",
+      "lessonId": "geometry_measurement"
     }
   ],
-
   "answerKeys": {
     "gp1-1": "C = 43.96 ft; A = 153.86 sq ft",
     "gp1-2": "159.25 sq ft",

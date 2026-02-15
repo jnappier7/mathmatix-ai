@@ -1,0 +1,517 @@
+{
+  "moduleId": "final_review",
+  "course": "6th Grade Math",
+  "unit": 9,
+  "title": "End-of-Year Spiral + Mastery Review",
+  "weeks": "34-36",
+  "estimatedDuration": 45,
+  "description": "The final lap. Mixed review across every domain — 6.NS, 6.RP, 6.EE, 6.G, 6.SP — with targeted reteach opportunities and a cumulative capstone. This module isn't about new content; it's about proving fluency and readiness for 7th grade. Problems are intentionally mixed so students must identify which skill to use, not just apply the one they just learned.",
+  "skills": [
+    "g6-multi-digit-division",
+    "g6-fraction-multiply-divide",
+    "g6-gcf-lcm",
+    "g6-ratio-language",
+    "g6-unit-rates",
+    "g6-equivalent-ratios",
+    "g6-write-expressions",
+    "g6-evaluate-expressions",
+    "g6-one-two-step-equations",
+    "g6-inequalities",
+    "g6-area-triangles-parallelograms",
+    "g6-nets-surface-area",
+    "g6-volume-rectangular-prisms",
+    "g6-data-displays",
+    "g6-measures-center-variability",
+    "g6-coordinate-plane-graphing",
+    "g6-percent-intro",
+    "g6-multi-step-reasoning"
+  ],
+  "standardsAlignment": [
+    "6.NS.A.1",
+    "6.NS.B.2",
+    "6.NS.B.3",
+    "6.NS.B.4",
+    "6.RP.A.1",
+    "6.RP.A.2",
+    "6.RP.A.3",
+    "6.EE.A.2",
+    "6.EE.A.3",
+    "6.EE.B.5",
+    "6.EE.B.7",
+    "6.EE.B.8",
+    "6.G.A.1",
+    "6.G.A.2",
+    "6.G.A.4",
+    "6.SP.A.1",
+    "6.SP.B.4",
+    "6.SP.B.5"
+  ],
+  "goals": [
+    "Demonstrate fluency with multi-digit and fraction operations, including identifying when to use GCF/LCM in context.",
+    "Apply ratio reasoning, unit rates, and percent concepts to solve real-world problems without being told which strategy to use.",
+    "Write, evaluate, and solve expressions, equations, and inequalities across mixed problem types.",
+    "Calculate area, surface area, and volume for real-world figures, selecting the correct formula independently.",
+    "Interpret and create data displays, compute measures of center and variability, and plot points on the coordinate plane to support multi-step reasoning."
+  ],
+  "instructionalStrategy": [
+    "Problems are intentionally scrambled across domains — students must recognize which skill applies before solving.",
+    "Each domain block opens with a brief 'greatest hits' review, then moves quickly into mixed practice.",
+    "AI identifies weak spots from guided practice responses and can dynamically insert reteach micro-lessons.",
+    "Small-group reteach stations can be formed based on domain-level performance gaps (NS, RP, EE, G, SP).",
+    "The capstone independent practice sections use multi-step, real-world contexts that blend skills across domains."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Number System Review: Operations, Fractions & Factors",
+      "skill": "g6-multi-digit-division",
+      "content": "Quick review of the Number System domain: multi-digit division, multiplying and dividing fractions, and finding GCF and LCM.",
+      "keyPoints": [
+        "Multi-digit division: estimate first, then use the standard algorithm. Check by multiplying quotient by divisor and adding the remainder.",
+        "Multiplying fractions: multiply numerators, multiply denominators, simplify. Dividing fractions: multiply by the reciprocal (Keep-Change-Flip).",
+        "GCF: the greatest factor shared by two numbers. Use factor lists or prime factorization. GCF is useful for simplifying fractions and distributing.",
+        "LCM: the smallest multiple shared by two numbers. LCM is useful for finding common denominators and solving timing/scheduling problems.",
+        "Mixed numbers: convert to improper fractions before multiplying or dividing, then convert back if needed.",
+        "Always check: Does my answer make sense? Is it in simplest form?"
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Number System Review: Worked Examples",
+      "skill": "g6-fraction-multiply-divide",
+      "problems": [
+        {
+          "id": "fr-1",
+          "problem": "A bakery made 2,784 muffins and packs them into boxes of 16. How many full boxes can they fill?",
+          "answer": "2,784 / 16 = 174. The bakery can fill 174 full boxes. Check: 174 x 16 = 2,784."
+        },
+        {
+          "id": "fr-2",
+          "problem": "A recipe calls for 3/4 cup of sugar, but Deshawn is making 2/3 of the recipe. How much sugar does he need? Then find the GCF of 36 and 54.",
+          "answer": "Sugar: (3/4) x (2/3) = 6/12 = 1/2 cup. GCF of 36 and 54: Factors of 36 = 1, 2, 3, 4, 6, 9, 12, 18, 36. Factors of 54 = 1, 2, 3, 6, 9, 18, 27, 54. GCF = 18."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Number System Review: Guided Practice",
+      "skill": "g6-gcf-lcm",
+      "problems": [
+        {
+          "id": "fr-3",
+          "problem": "A warehouse has 4,368 water bottles to distribute equally among 24 stores. How many bottles does each store receive?",
+          "answer": "4,368 / 24 = 182 bottles per store."
+        },
+        {
+          "id": "fr-4",
+          "problem": "Maria has 5 1/3 yards of fabric. She uses 2 3/4 yards for a curtain. How much fabric is left? (Hint: you'll need an LCM to subtract.)",
+          "answer": "Convert: 5 1/3 = 16/3 and 2 3/4 = 11/4. LCM of 3 and 4 is 12. 16/3 = 64/12 and 11/4 = 33/12. 64/12 - 33/12 = 31/12 = 2 7/12 yards left."
+        },
+        {
+          "id": "fr-5",
+          "problem": "A gym teacher has 48 basketballs and 60 jump ropes. She wants to create identical activity kits with no supplies left over. What is the greatest number of kits she can make, and what goes in each?",
+          "answer": "GCF of 48 and 60 = 12. She can make 12 kits. Each kit: 48/12 = 4 basketballs and 60/12 = 5 jump ropes."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Number System Review: Independent Practice",
+      "skill": "g6-multi-digit-division",
+      "problems": [
+        {
+          "id": "fr-6",
+          "problem": "A school ordered 3,456 pencils. They come in packs of 12. How many packs did the school order?",
+          "answer": "3,456 / 12 = 288 packs."
+        },
+        {
+          "id": "fr-7",
+          "problem": "Jayla is training for a race. She runs 2 1/2 miles on Monday and 3 3/4 miles on Wednesday. She wants to run a total of 10 miles for the week. How many miles does she still need to run?",
+          "answer": "2 1/2 + 3 3/4 = 5/2 + 15/4 = 10/4 + 15/4 = 25/4 = 6 1/4 miles so far. 10 - 6 1/4 = 3 3/4 miles left."
+        },
+        {
+          "id": "fr-8",
+          "problem": "Hot dogs come in packs of 8. Buns come in packs of 6. What is the least number of each you must buy so you have equal numbers of hot dogs and buns with none left over?",
+          "answer": "LCM of 8 and 6 = 24. Buy 24/8 = 3 packs of hot dogs and 24/6 = 4 packs of buns. You'll have 24 of each."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Ratios & Percent Review: Ratios, Rates & Percent",
+      "skill": "g6-ratio-language",
+      "content": "Quick review of the Ratios & Proportional Relationships domain plus introductory percent concepts.",
+      "keyPoints": [
+        "A ratio compares two quantities: 'for every,' 'per,' 'to,' 'out of.' Written as a:b, a to b, or a/b.",
+        "A unit rate is a ratio with a denominator of 1. Example: $3.60 for 4 lb = $0.90 per lb.",
+        "Equivalent ratios form a proportion. Use a ratio table or multiply/divide both parts by the same number.",
+        "Percent means 'per 100.' 40% = 40/100 = 0.40. Convert between fractions, decimals, and percents fluently.",
+        "To find a percent of a number: convert percent to a decimal and multiply. 25% of 80 = 0.25 x 80 = 20.",
+        "Proportion strategy: set up two equivalent ratios and cross-multiply, or use the unit rate to scale."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Ratios & Percent Review: Worked Examples",
+      "skill": "g6-unit-rates",
+      "problems": [
+        {
+          "id": "fr-9",
+          "problem": "A store sells 5 notebooks for $8.75. What is the unit price? If Amara buys 12 notebooks, how much does she pay?",
+          "answer": "Unit price: $8.75 / 5 = $1.75 per notebook. 12 notebooks: 12 x $1.75 = $21.00."
+        },
+        {
+          "id": "fr-10",
+          "problem": "In a class of 30 students, 18 prefer basketball over soccer. What percent prefer basketball? What percent prefer soccer?",
+          "answer": "Basketball: 18/30 = 3/5 = 60%. Soccer: 30 - 18 = 12 students. 12/30 = 2/5 = 40%."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Ratios & Percent Review: Guided Practice",
+      "skill": "g6-equivalent-ratios",
+      "problems": [
+        {
+          "id": "fr-11",
+          "problem": "A fruit punch recipe uses 3 cups of juice for every 2 cups of sparkling water. If you want to make 30 cups of punch total, how many cups of juice and how many cups of sparkling water do you need?",
+          "answer": "Ratio is 3:2, so each 'batch' is 3 + 2 = 5 cups. 30 / 5 = 6 batches. Juice: 3 x 6 = 18 cups. Sparkling water: 2 x 6 = 12 cups."
+        },
+        {
+          "id": "fr-12",
+          "problem": "Brand A: 6 granola bars for $4.50. Brand B: 10 granola bars for $7.00. Which is the better deal?",
+          "answer": "Brand A unit price: $4.50 / 6 = $0.75 per bar. Brand B unit price: $7.00 / 10 = $0.70 per bar. Brand B is the better deal."
+        },
+        {
+          "id": "fr-13",
+          "problem": "A jacket that normally costs $60 is on sale for 15% off. What is the sale price?",
+          "answer": "Discount: 15% of $60 = 0.15 x 60 = $9. Sale price: $60 - $9 = $51."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Ratios & Percent Review: Independent Practice",
+      "skill": "g6-percent-intro",
+      "problems": [
+        {
+          "id": "fr-14",
+          "problem": "On a map, 2 inches represents 50 miles. Two cities are 7 inches apart on the map. What is the actual distance?",
+          "answer": "Unit rate: 50/2 = 25 miles per inch. Actual distance: 7 x 25 = 175 miles."
+        },
+        {
+          "id": "fr-15",
+          "problem": "A restaurant bill is $45. You want to leave a 20% tip. How much is the tip, and what is the total you pay?",
+          "answer": "Tip: 20% of $45 = 0.20 x 45 = $9. Total: $45 + $9 = $54."
+        },
+        {
+          "id": "fr-16",
+          "problem": "Marcus scored 42 out of 56 on a test. Priya scored 36 out of 45 on a different test. Who scored a higher percentage?",
+          "answer": "Marcus: 42/56 = 3/4 = 75%. Priya: 36/45 = 4/5 = 80%. Priya scored a higher percentage."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Expressions & Equations Review: Writing, Evaluating & Solving",
+      "skill": "g6-write-expressions",
+      "content": "Quick review of the Expressions & Equations domain: writing and evaluating expressions, solving one- and two-step equations, and graphing inequalities.",
+      "keyPoints": [
+        "An expression uses numbers, variables, and operations but has NO equal sign. Example: 3x + 7.",
+        "Translate words to math: 'sum of' = +, 'product of' = x, '5 less than n' = n - 5 (careful with order!).",
+        "Evaluate: substitute the given value and follow order of operations (GEMS).",
+        "An equation has an equal sign. Solve by using inverse operations to isolate the variable.",
+        "Two-step equations: Box the variable term [2x] in 2x + 5 = 13. Outside the box: opposites make zero (subtract 5) -> 2x = 8. Inside the box: divide it out (divide by 2) -> x = 4.",
+        "Inequality: same process as equations, but flip the symbol when multiplying or dividing by a negative. Graph on a number line (open circle for < or >, closed for <= or >=)."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Expressions & Equations Review: Worked Examples",
+      "skill": "g6-evaluate-expressions",
+      "problems": [
+        {
+          "id": "fr-17",
+          "problem": "Write an expression: 'Eight more than three times a number n.' Then evaluate it when n = 5.",
+          "answer": "Expression: 3n + 8. When n = 5: 3(5) + 8 = 15 + 8 = 23."
+        },
+        {
+          "id": "fr-18",
+          "problem": "Solve: 4x - 7 = 21. Then solve: x/3 + 5 > 9 and graph the solution.",
+          "answer": "Equation: 4x - 7 = 21 -> 4x = 28 -> x = 7. Inequality: x/3 + 5 > 9 -> x/3 > 4 -> x > 12. Graph: open circle at 12, arrow pointing right."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Expressions & Equations Review: Guided Practice",
+      "skill": "g6-one-two-step-equations",
+      "problems": [
+        {
+          "id": "fr-19",
+          "problem": "A cell phone plan costs $25 per month plus $0.10 per text message. Write an expression for the monthly cost with t text messages. If the bill was $37, how many texts were sent?",
+          "answer": "Expression: 25 + 0.10t. Equation: 25 + 0.10t = 37 -> 0.10t = 12 -> t = 120 text messages."
+        },
+        {
+          "id": "fr-20",
+          "problem": "Evaluate 2(a^2 - b) + 4c when a = 3, b = 5, and c = 2.",
+          "answer": "2(3^2 - 5) + 4(2) = 2(9 - 5) + 8 = 2(4) + 8 = 8 + 8 = 16."
+        },
+        {
+          "id": "fr-21",
+          "problem": "Solve and graph: 14 - 2x >= 8.",
+          "answer": "14 - 2x >= 8 -> -2x >= -6 -> x <= 3 (flip the symbol because we divided by -2). Graph: closed circle at 3, arrow pointing left."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Expressions & Equations Review: Independent Practice",
+      "skill": "g6-inequalities",
+      "problems": [
+        {
+          "id": "fr-22",
+          "problem": "A parking garage charges $3 for the first hour and $1.50 for each additional hour. Write an expression for the total cost of parking for h additional hours beyond the first. If Kenji paid $10.50, how many total hours did he park?",
+          "answer": "Expression: 3 + 1.50h. Equation: 3 + 1.50h = 10.50 -> 1.50h = 7.50 -> h = 5 additional hours. Total: 1 + 5 = 6 hours."
+        },
+        {
+          "id": "fr-23",
+          "problem": "Evaluate: (6^2 - 4 x 3) / (2 + 1)^2.",
+          "answer": "(36 - 12) / (3)^2 = 24 / 9 = 8/3."
+        },
+        {
+          "id": "fr-24",
+          "problem": "A student needs to save at least $200 for a school trip. She already has $65 and earns $15 per hour babysitting. Write and solve an inequality to find how many hours she must work.",
+          "answer": "65 + 15h >= 200 -> 15h >= 135 -> h >= 9. She must babysit at least 9 hours."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Geometry Review: Area, Surface Area & Volume",
+      "skill": "g6-area-triangles-parallelograms",
+      "content": "Quick review of the Geometry domain: area of triangles and parallelograms, surface area using nets, and volume of rectangular prisms.",
+      "keyPoints": [
+        "Area of a parallelogram: A = base x height. The height must be perpendicular to the base, not a slanted side.",
+        "Area of a triangle: A = (1/2) x base x height. Same rule — height is perpendicular to the chosen base.",
+        "Surface area: the total area of all faces. Use a net to see each face. Add up the area of every rectangle and/or triangle.",
+        "Volume of a rectangular prism: V = length x width x height, or V = base area x height. Works with fractional edges too.",
+        "For fractional edge lengths, multiply as fractions: V = (l)(w)(h). Can also pack with unit-fraction cubes and count.",
+        "Always include correct units: area in square units, volume in cubic units."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Geometry Review: Worked Examples",
+      "skill": "g6-nets-surface-area",
+      "problems": [
+        {
+          "id": "fr-25",
+          "problem": "A triangular garden has a base of 14 ft and a height of 9 ft. What is its area? A rectangular box is 10 in long, 6 in wide, and 4 in tall. What is its surface area?",
+          "answer": "Triangle area: A = (1/2)(14)(9) = 63 sq ft. Box surface area: 2(10 x 6) + 2(10 x 4) + 2(6 x 4) = 120 + 80 + 48 = 248 sq in."
+        },
+        {
+          "id": "fr-26",
+          "problem": "A fish tank is 2 1/2 ft long, 1 1/4 ft wide, and 1 1/2 ft tall. What is the volume of the tank?",
+          "answer": "V = (5/2)(5/4)(3/2) = 75/16 = 4 11/16 cubic feet."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Geometry Review: Guided Practice",
+      "skill": "g6-volume-rectangular-prisms",
+      "problems": [
+        {
+          "id": "fr-27",
+          "problem": "A parallelogram-shaped park has a base of 120 meters and a height of 75 meters. The city wants to cover it with grass seed that costs $0.05 per square meter. What is the total cost?",
+          "answer": "Area = 120 x 75 = 9,000 sq m. Cost = 9,000 x $0.05 = $450."
+        },
+        {
+          "id": "fr-28",
+          "problem": "A cereal box is 12 in tall, 8 in wide, and 3 in deep. How much cardboard is needed to make the box (surface area)? How much cereal can it hold (volume)?",
+          "answer": "SA = 2(12 x 8) + 2(12 x 3) + 2(8 x 3) = 192 + 72 + 48 = 312 sq in. Volume = 12 x 8 x 3 = 288 cubic in."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Geometry Review: Independent Practice",
+      "skill": "g6-area-triangles-parallelograms",
+      "problems": [
+        {
+          "id": "fr-29",
+          "problem": "A triangular sail has a base of 6 ft and a height of 11 ft. A second sail is a parallelogram with a base of 5 ft and a height of 7 ft. Which sail has the greater area, and by how much?",
+          "answer": "Triangle: A = (1/2)(6)(11) = 33 sq ft. Parallelogram: A = 5 x 7 = 35 sq ft. The parallelogram sail is larger by 35 - 33 = 2 sq ft."
+        },
+        {
+          "id": "fr-30",
+          "problem": "A gift box is shaped like a rectangular prism: 1 1/2 ft by 1 ft by 2/3 ft. What is the volume? If wrapping paper costs $1.20 per square foot, how much does it cost to wrap the box?",
+          "answer": "Volume = (3/2)(1)(2/3) = 1 cubic ft. SA = 2(3/2 x 1) + 2(3/2 x 2/3) + 2(1 x 2/3) = 3 + 2 + 4/3 = 5 + 4/3 = 19/3 sq ft. Cost = (19/3)(1.20) = 22.80/3 = $7.60."
+        },
+        {
+          "id": "fr-31",
+          "problem": "A storage container is 15 ft long, 8 ft wide, and 10 ft tall. A company needs to ship 1,500 cubic feet of material. Will one container be enough?",
+          "answer": "Volume = 15 x 8 x 10 = 1,200 cubic ft. 1,200 < 1,500, so one container is NOT enough."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Statistics & Coordinate Plane Review: Data, Center & Graphing",
+      "skill": "g6-data-displays",
+      "content": "Quick review of the Statistics domain and coordinate plane graphing: data displays, measures of center and variability, and plotting in all four quadrants.",
+      "keyPoints": [
+        "Statistical questions expect variability in the answers. 'How tall are 6th graders?' is statistical; 'How tall is Kai?' is not.",
+        "Data displays: dot plots show individual values, histograms show frequency in intervals, box plots show the five-number summary.",
+        "Mean = sum of all values / number of values. Median = middle value when data is ordered. Mode = most frequent value.",
+        "MAD (Mean Absolute Deviation): average distance each data point is from the mean. Measures spread.",
+        "Range = max - min. IQR = Q3 - Q1. IQR resists outliers better than range.",
+        "Coordinate plane: four quadrants. Ordered pairs (x, y). Negative x = left, negative y = down. Reflections across axes change the sign of one coordinate."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Statistics & Coordinate Plane Review: Worked Examples",
+      "skill": "g6-measures-center-variability",
+      "problems": [
+        {
+          "id": "fr-32",
+          "problem": "Test scores: 82, 91, 76, 88, 91, 70, 85. Find the mean, median, and mode. Then find the range.",
+          "answer": "Ordered: 70, 76, 82, 85, 88, 91, 91. Mean = (70+76+82+85+88+91+91)/7 = 583/7 = 83.3 (rounded). Median = 85 (4th value). Mode = 91. Range = 91 - 70 = 21."
+        },
+        {
+          "id": "fr-33",
+          "problem": "Plot these points on a coordinate plane: A(3, -2), B(-4, 5), C(-1, -3), D(0, 4). Which point is in Quadrant II? What is the reflection of A across the x-axis?",
+          "answer": "B(-4, 5) is in Quadrant II (negative x, positive y). Reflection of A(3, -2) across the x-axis changes the sign of the y-coordinate: A' = (3, 2)."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Statistics & Coordinate Plane Review: Guided Practice",
+      "skill": "g6-coordinate-plane-graphing",
+      "problems": [
+        {
+          "id": "fr-34",
+          "problem": "Two basketball players' points per game: Player A: 12, 15, 14, 13, 16. Player B: 8, 22, 10, 20, 10. Find the mean and MAD for each player. Who is more consistent?",
+          "answer": "Player A mean: (12+15+14+13+16)/5 = 70/5 = 14. Deviations: |12-14|+|15-14|+|14-14|+|13-14|+|16-14| = 2+1+0+1+2 = 6. MAD = 6/5 = 1.2. Player B mean: (8+22+10+20+10)/5 = 70/5 = 14. Deviations: |8-14|+|22-14|+|10-14|+|20-14|+|10-14| = 6+8+4+6+4 = 28. MAD = 28/5 = 5.6. Both average 14 points, but Player A (MAD = 1.2) is much more consistent."
+        },
+        {
+          "id": "fr-35",
+          "problem": "A treasure map shows clues at coordinates (-3, 4), (2, 4), (2, -1), and (-3, -1). Plot these points and connect them. What shape do they form? What is its area?",
+          "answer": "The four points form a rectangle. Length (horizontal): from x = -3 to x = 2 = 5 units. Width (vertical): from y = -1 to y = 4 = 5 units. It is actually a square. Area = 5 x 5 = 25 square units."
+        },
+        {
+          "id": "fr-36",
+          "problem": "A histogram shows hours of sleep for 20 students: 5-6 hrs (2 students), 6-7 hrs (5 students), 7-8 hrs (8 students), 8-9 hrs (4 students), 9-10 hrs (1 student). Which interval is the mode? Can you find the exact mean from a histogram?",
+          "answer": "The modal interval is 7-8 hours (highest frequency: 8 students). You cannot find the exact mean from a histogram because individual data values are not shown — only intervals. You can estimate the mean using midpoints: (5.5x2 + 6.5x5 + 7.5x8 + 8.5x4 + 9.5x1)/20 = (11+32.5+60+34+9.5)/20 = 147/20 = 7.35 hours (estimated)."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Statistics & Coordinate Plane Review: Independent Practice",
+      "skill": "g6-multi-step-reasoning",
+      "problems": [
+        {
+          "id": "fr-37",
+          "problem": "Six friends tracked how many books they read this year: 4, 7, 5, 12, 6, 5. Find the mean, median, and MAD. One friend says, 'The average doesn't represent our group well.' Do you agree? Explain.",
+          "answer": "Ordered: 4, 5, 5, 6, 7, 12. Mean = (4+5+5+6+7+12)/6 = 39/6 = 6.5. Median = (5+6)/2 = 5.5. MAD: deviations from mean |4-6.5|+|5-6.5|+|5-6.5|+|6-6.5|+|7-6.5|+|12-6.5| = 2.5+1.5+1.5+0.5+0.5+5.5 = 12. MAD = 12/6 = 2. The friend has a point — the value 12 is an outlier that pulls the mean up to 6.5, while most friends read 4-7 books. The median (5.5) may be more representative."
+        },
+        {
+          "id": "fr-38",
+          "problem": "A drone starts at (0, 0), flies to (-5, 3), then to (-5, -4), then back to (0, 0). Plot the path. What is the total distance traveled? (Use horizontal/vertical segments and the distance formula if needed.)",
+          "answer": "Leg 1: (0,0) to (-5,3). Distance = sqrt((-5)^2 + 3^2) = sqrt(25+9) = sqrt(34). Leg 2: (-5,3) to (-5,-4). Vertical segment, distance = |3-(-4)| = 7. Leg 3: (-5,-4) to (0,0). Distance = sqrt(5^2 + 4^2) = sqrt(25+16) = sqrt(41). Total = sqrt(34) + 7 + sqrt(41)."
+        },
+        {
+          "id": "fr-39",
+          "problem": "A survey asked 25 students how many hours they spend on homework per week. The five-number summary is: Min = 2, Q1 = 5, Median = 7, Q3 = 10, Max = 15. Draw a box plot. What is the IQR? A new student who does 20 hours per week joins. Would this change the IQR, the range, or both?",
+          "answer": "IQR = Q3 - Q1 = 10 - 5 = 5. Range = 15 - 2 = 13. Adding a student who does 20 hrs would change the Max to 20, so the new range = 20 - 2 = 18. The IQR likely stays the same or changes very little because IQR depends on the middle 50% and one extreme value does not usually affect Q1 or Q3 significantly. The range definitely changes; the IQR probably does not."
+        }
+      ],
+      "lessonId": "final_review"
+    }
+  ],
+  "answerKeys": {
+    "fr-1": "2,784 / 16 = 174 boxes.",
+    "fr-2": "Sugar: (3/4)(2/3) = 1/2 cup. GCF of 36 and 54 = 18.",
+    "fr-3": "4,368 / 24 = 182 bottles per store.",
+    "fr-4": "5 1/3 - 2 3/4 = 64/12 - 33/12 = 31/12 = 2 7/12 yards.",
+    "fr-5": "GCF = 12. 12 kits: 4 basketballs and 5 jump ropes each.",
+    "fr-6": "3,456 / 12 = 288 packs.",
+    "fr-7": "2 1/2 + 3 3/4 = 6 1/4. 10 - 6 1/4 = 3 3/4 miles left.",
+    "fr-8": "LCM of 8 and 6 = 24. Buy 3 packs of hot dogs and 4 packs of buns.",
+    "fr-9": "Unit price = $1.75. 12 notebooks = $21.00.",
+    "fr-10": "Basketball: 18/30 = 60%. Soccer: 12/30 = 40%.",
+    "fr-11": "18 cups juice and 12 cups sparkling water.",
+    "fr-12": "Brand A: $0.75/bar. Brand B: $0.70/bar. Brand B is the better deal.",
+    "fr-13": "15% of $60 = $9. Sale price = $51.",
+    "fr-14": "25 miles per inch. 7 x 25 = 175 miles.",
+    "fr-15": "Tip: $9. Total: $54.",
+    "fr-16": "Marcus: 75%. Priya: 80%. Priya scored higher.",
+    "fr-17": "Expression: 3n + 8. When n = 5: 23.",
+    "fr-18": "x = 7. Inequality: x > 12, open circle at 12 with arrow right.",
+    "fr-19": "Expression: 25 + 0.10t. t = 120 text messages.",
+    "fr-20": "2(9 - 5) + 8 = 8 + 8 = 16.",
+    "fr-21": "x <= 3. Closed circle at 3, arrow left.",
+    "fr-22": "Expression: 3 + 1.50h. h = 5 additional hours. Total: 6 hours.",
+    "fr-23": "(36 - 12) / 9 = 24/9 = 8/3.",
+    "fr-24": "65 + 15h >= 200. h >= 9 hours.",
+    "fr-25": "Triangle: 63 sq ft. Box SA: 248 sq in.",
+    "fr-26": "V = (5/2)(5/4)(3/2) = 75/16 = 4 11/16 cubic ft.",
+    "fr-27": "Area = 9,000 sq m. Cost = $450.",
+    "fr-28": "SA = 312 sq in. Volume = 288 cubic in.",
+    "fr-29": "Triangle: 33 sq ft. Parallelogram: 35 sq ft. Parallelogram is larger by 2 sq ft.",
+    "fr-30": "Volume = 1 cubic ft. SA = 19/3 sq ft. Wrapping cost = $7.60.",
+    "fr-31": "Volume = 1,200 cubic ft. Not enough for 1,500 cubic ft.",
+    "fr-32": "Mean = 83.3. Median = 85. Mode = 91. Range = 21.",
+    "fr-33": "B(-4,5) is in Quadrant II. Reflection of A(3,-2) across x-axis = (3,2).",
+    "fr-34": "Both mean 14. Player A MAD = 1.2. Player B MAD = 5.6. Player A is more consistent.",
+    "fr-35": "Square with side 5. Area = 25 square units.",
+    "fr-36": "Modal interval: 7-8 hrs. Estimated mean = 7.35 hrs. Cannot find exact mean from histogram.",
+    "fr-37": "Mean = 6.5. Median = 5.5. MAD = 2. The outlier (12) inflates the mean; median is more representative.",
+    "fr-38": "Total distance = sqrt(34) + 7 + sqrt(41).",
+    "fr-39": "IQR = 5. Range = 13. Adding 20-hr student changes range to 18; IQR likely stays the same."
+  }
+}

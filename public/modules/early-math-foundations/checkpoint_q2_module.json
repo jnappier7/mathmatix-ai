@@ -1,0 +1,204 @@
+{
+  "moduleId": "checkpoint_q2",
+  "course": "Early Math Foundations",
+  "unit": 4,
+  "title": "Checkpoint: Quarter 2 \u2014 Division and Fraction Concepts",
+  "weeks": "12",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering division fluency, interpreting remainders, fraction understanding, equivalence, and comparison. Tests mastery of Units 3-4.",
+  "skillsCovered": [
+    "emf-division-facts",
+    "emf-long-division",
+    "emf-interpreting-remainders",
+    "emf-divide-word-problems",
+    "emf-fraction-concepts",
+    "emf-equivalent-fractions",
+    "emf-compare-order-fractions",
+    "emf-mixed-numbers-improper",
+    "emf-fractions-of-whole"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Division and fraction fluency are essential building blocks for decimals, ratios, and all future math. Students scoring below threshold receive focused reteaching on the weakest clusters.",
+    "clusters": [
+      {
+        "skillId": "emf-division-facts",
+        "reteachFocus": "Relate each division fact to its multiplication partner (e.g., 72 \u00f7 8 = 9 because 9 \u00d7 8 = 72). Use fact-family triangles and timed drills on the harder facts (56\u00f77, 48\u00f76, 63\u00f79)."
+      },
+      {
+        "skillId": "emf-long-division",
+        "reteachFocus": "Reinforce the Divide-Multiply-Subtract-Bring Down cycle with single-digit divisors first, then build to multi-digit dividends. Stress estimating each partial quotient and checking with multiplication."
+      },
+      {
+        "skillId": "emf-interpreting-remainders",
+        "reteachFocus": "Practice deciding what to do with the remainder in context: drop it, round up, or express as a fraction. Use real-life scenarios (sharing items, filling containers) so students see that the same remainder can be handled differently depending on the question."
+      },
+      {
+        "skillId": "emf-divide-word-problems",
+        "reteachFocus": "Identify equal-group and measurement-division situations. Use bar models to represent total \u00f7 groups = size of each group versus total \u00f7 size = number of groups. Always check by multiplying back."
+      },
+      {
+        "skillId": "emf-fraction-concepts",
+        "reteachFocus": "Ground fractions in concrete models: folded paper strips, area models, and number lines. Emphasize that the denominator tells how many equal parts and the numerator tells how many parts are selected."
+      },
+      {
+        "skillId": "emf-equivalent-fractions",
+        "reteachFocus": "Use visual fraction strips and area models to show that multiplying numerator and denominator by the same number does not change the value. Practice both generating equivalents and simplifying."
+      },
+      {
+        "skillId": "emf-compare-order-fractions",
+        "reteachFocus": "Find a common denominator before comparing. Also build benchmark reasoning: Is the fraction more or less than 1/2? Close to 0 or close to 1? Use number-line placement to verify."
+      },
+      {
+        "skillId": "emf-mixed-numbers-improper",
+        "reteachFocus": "Connect mixed numbers to improper fractions with area models (e.g., 2 3/4 = 11/4 shown as two full circles plus three-quarters). Practice converting both directions and verify by converting back."
+      },
+      {
+        "skillId": "emf-fractions-of-whole",
+        "reteachFocus": "Model 'fraction of a number' as division then multiplication: 3/4 of 20 means divide 20 into 4 equal parts (5 each), then take 3 parts (15). Connect to multiplication: 3/4 \u00d7 20."
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq2-1",
+      "question": "What is 72 \u00f7 8?",
+      "answer": "72 \u00f7 8 = 9. Related multiplication fact: 9 \u00d7 8 = 72.",
+      "skill": "emf-division-facts",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq2-2",
+      "question": "Find the quotient: 54 \u00f7 6. Then use a related multiplication fact to check your answer.",
+      "answer": "54 \u00f7 6 = 9. Check: 9 \u00d7 6 = 54. The multiplication confirms the quotient is correct.",
+      "skill": "emf-division-facts",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-3",
+      "question": "Use long division to find 96 \u00f7 4. Show each step.",
+      "answer": "96 \u00f7 4 = 24. Step 1: 9 \u00f7 4 = 2 remainder 1. Write 2 above the tens place. Step 2: Bring down 6 to make 16. 16 \u00f7 4 = 4. Write 4 above the ones place. Quotient = 24. Check: 24 \u00d7 4 = 96.",
+      "skill": "emf-long-division",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-4",
+      "question": "Use long division to find 1,458 \u00f7 6. Show your work.",
+      "answer": "1,458 \u00f7 6 = 243. Step 1: 1 < 6, so look at 14. 14 \u00f7 6 = 2 remainder 2. Step 2: Bring down 5 to make 25. 25 \u00f7 6 = 4 remainder 1. Step 3: Bring down 8 to make 18. 18 \u00f7 6 = 3. Quotient = 243. Check: 243 \u00d7 6 = 1,458.",
+      "skill": "emf-long-division",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq2-5",
+      "question": "A teacher has 34 pencils to share equally among 5 students. How many pencils does each student get? How many are left over?",
+      "answer": "34 \u00f7 5 = 6 remainder 4. Each student gets 6 pencils and there are 4 pencils left over. Check: 6 \u00d7 5 = 30, and 30 + 4 = 34.",
+      "skill": "emf-interpreting-remainders",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-6",
+      "question": "A bakery has 145 cookies to pack into boxes that each hold 12 cookies. How many full boxes can they fill? Do they need an extra box for the leftover cookies?",
+      "answer": "145 \u00f7 12 = 12 remainder 1. They can fill 12 full boxes with 1 cookie left over. Yes, they need a 13th box for the remaining cookie, so 13 boxes in all are needed if every cookie must be packed. The remainder means we round up to the next whole box.",
+      "skill": "emf-interpreting-remainders",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq2-7",
+      "question": "A farmer has 216 apples to pack equally into 8 crates. How many apples go in each crate?",
+      "answer": "Equal sharing: 216 \u00f7 8 = 27. Each crate gets 27 apples. Check: 27 \u00d7 8 = 216.",
+      "skill": "emf-divide-word-problems",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-8",
+      "question": "A school is planning a field trip for 154 students. Each bus holds 36 students. How many buses does the school need? Explain your reasoning.",
+      "answer": "154 \u00f7 36 = 4 remainder 10. Four buses hold 4 \u00d7 36 = 144 students, leaving 10 students without a seat. The school must round up and order 5 buses so every student has a seat.",
+      "skill": "emf-divide-word-problems",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq2-9",
+      "question": "A rectangle is divided into 8 equal parts and 3 parts are shaded. What fraction of the rectangle is shaded? Name the numerator and the denominator.",
+      "answer": "3/8 of the rectangle is shaded. The numerator is 3 (the number of shaded parts). The denominator is 8 (the total number of equal parts).",
+      "skill": "emf-fraction-concepts",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq2-10",
+      "question": "Place the fraction 3/4 on a number line between 0 and 1. Explain how you decided where to put it.",
+      "answer": "Divide the segment from 0 to 1 into 4 equal parts. Each part is 1/4. Count 3 parts from 0: the marks are at 1/4, 2/4, and 3/4. Place 3/4 at the third mark. It is between 1/2 (which is 2/4) and 1, closer to 1.",
+      "skill": "emf-fraction-concepts",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-11",
+      "question": "Find a fraction equivalent to 2/3 that has a denominator of 12. Then find another equivalent fraction with a denominator of 18. Show your work.",
+      "answer": "For denominator 12: multiply numerator and denominator by 4. 2/3 = (2\u00d74)/(3\u00d74) = 8/12. For denominator 18: multiply numerator and denominator by 6. 2/3 = (2\u00d76)/(3\u00d76) = 12/18. Both 8/12 and 12/18 are equivalent to 2/3.",
+      "skill": "emf-equivalent-fractions",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-12",
+      "question": "Compare 3/5 and 2/3. Which fraction is greater? Show how you found a common denominator.",
+      "answer": "Common denominator of 5 and 3 is 15. Convert: 3/5 = 9/15 and 2/3 = 10/15. Since 10/15 > 9/15, we have 2/3 > 3/5.",
+      "skill": "emf-compare-order-fractions",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-13",
+      "question": "Convert the mixed number 3 2/5 to an improper fraction. Then convert the improper fraction 17/4 to a mixed number. Show your steps.",
+      "answer": "Mixed to improper: 3 2/5 = (3\u00d75 + 2)/5 = 17/5. Improper to mixed: 17 \u00f7 4 = 4 remainder 1, so 17/4 = 4 1/4.",
+      "skill": "emf-mixed-numbers-improper",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq2-14",
+      "question": "What is 1/4 of 20? Draw or explain how you found your answer.",
+      "answer": "Divide 20 into 4 equal groups: 20 \u00f7 4 = 5. So 1/4 of 20 = 5. You can picture 20 objects split into 4 rows of 5.",
+      "skill": "emf-fractions-of-whole",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq2-15",
+      "question": "Maria has read 2/3 of a 90-page book. How many pages has she read? How many pages does she have left?",
+      "answer": "Find 2/3 of 90: divide 90 by 3 to get 30, then multiply by 2 to get 60. Maria has read 60 pages. Pages left: 90 \u2212 60 = 30 pages.",
+      "skill": "emf-fractions-of-whole",
+      "difficulty": 3,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cq2-1": "9",
+    "cq2-2": "9 (check: 9 \u00d7 6 = 54)",
+    "cq2-3": "24",
+    "cq2-4": "243",
+    "cq2-5": "6 pencils each, 4 left over",
+    "cq2-6": "12 full boxes with 1 left over; 13 boxes needed total",
+    "cq2-7": "27 apples per crate",
+    "cq2-8": "5 buses (154 \u00f7 36 = 4 R10, must round up)",
+    "cq2-9": "3/8; numerator = 3, denominator = 8",
+    "cq2-10": "3/4 is placed at the third mark when 0\u20131 is divided into 4 equal parts",
+    "cq2-11": "8/12 and 12/18",
+    "cq2-12": "2/3 > 3/5 (10/15 > 9/15)",
+    "cq2-13": "3 2/5 = 17/5; 17/4 = 4 1/4",
+    "cq2-14": "5",
+    "cq2-15": "60 pages read, 30 pages left"
+  }
+}

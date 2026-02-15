@@ -5,8 +5,20 @@
   "title": "Sequences & Series",
   "weeks": "22-24",
   "estimatedDuration": 50,
-  "skills": ["arithmetic-sequences-series", "geometric-sequences-series", "recursive-explicit-formulas", "sigma-notation", "financial-applications"],
-  "standardsAlignment": ["F-BF.2", "F-LE.2", "A-SSE.4", "F-IF.3"],
+  "description": "Uncover the patterns behind arithmetic and geometric sequences, learn to sum series using sigma notation, and apply these ideas to real financial planning.",
+  "skills": [
+    "arithmetic-sequences-series",
+    "geometric-sequences-series",
+    "recursive-explicit-formulas",
+    "sigma-notation",
+    "financial-applications"
+  ],
+  "standardsAlignment": [
+    "F-BF.2",
+    "F-LE.2",
+    "A-SSE.4",
+    "F-IF.3"
+  ],
   "goals": [
     "Identify, generate, and find terms of arithmetic and geometric sequences",
     "Write both recursive and explicit formulas for sequences",
@@ -26,82 +38,205 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Arithmetic Sequences — Add the Same Amount:**\n\nCommon difference: d = a₂ - a₁\nExplicit formula: **aₙ = a₁ + (n - 1)d**\nRecursive formula: **a₁ = [value], aₙ = aₙ₋₁ + d**\n\n**Arithmetic Series (sum of first n terms):**\n**Sₙ = n(a₁ + aₙ)/2** = n/2 × (first + last)\nOr: **Sₙ = n/2 × (2a₁ + (n-1)d)**\n\n**Geometric Sequences — Multiply by the Same Amount:**\n\nCommon ratio: r = a₂/a₁\nExplicit formula: **aₙ = a₁ · r^(n-1)**\nRecursive formula: **a₁ = [value], aₙ = aₙ₋₁ · r**\n\n**Geometric Series:**\nFinite: **Sₙ = a₁(1 - rⁿ)/(1 - r)**, r ≠ 1\nInfinite (|r| < 1): **S∞ = a₁/(1 - r)**",
-      "initialPrompt": "The sequence 5, 8, 11, 14, ... is arithmetic with d = 3. Is the sequence 5, 10, 20, 40, ... arithmetic or geometric? What is the common ratio?"
+      "skill": "arithmetic-sequences-series",
+      "title": "Concept: Arithmetic Sequences Series",
+      "initialPrompt": "The sequence 5, 8, 11, 14, ... is arithmetic with d = 3. Is the sequence 5, 10, 20, 40, ... arithmetic or geometric? What is the common ratio?",
+      "content": "**Arithmetic Sequences — Add the Same Amount:**\n\nCommon difference: d = a₂ - a₁\nExplicit formula: **aₙ = a₁ + (n - 1)d**\nRecursive formula: **a₁ = [value], aₙ = aₙ₋₁ + d**\n\n**Arithmetic Series (sum of first n terms):**\n**Sₙ = n(a₁ + aₙ)/2** = n/2 × (first + last)\nOr: **Sₙ = n/2 × (2a₁ + (n-1)d)**\n\n**Geometric Sequences — Multiply by the Same Amount:**\n\nCommon ratio: r = a₂/a₁\nExplicit formula: **aₙ = a₁ · r^(n-1)**\nRecursive formula: **a₁ = [value], aₙ = aₙ₋₁ · r**\n\n**Geometric Series:**\nFinite: **Sₙ = a₁(1 - rⁿ)/(1 - r)**, r ≠ 1\nInfinite (|r| < 1): **S∞ = a₁/(1 - r)**",
+      "lessonId": "arithmetic-sequences"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "For the arithmetic sequence -4, 1, 6, 11, ...: (a) Write explicit and recursive formulas. (b) Find the 40th term. (c) Find the sum of the first 40 terms.",
-      "explanation": "**(a) Formulas:**\na₁ = -4, d = 5\n\nExplicit: **aₙ = -4 + (n-1)(5) = 5n - 9**\nRecursive: **a₁ = -4, aₙ = aₙ₋₁ + 5**\n\nCheck: a₂ = 5(2) - 9 = 1 ✓, a₃ = 5(3) - 9 = 6 ✓\n\n**(b) 40th term:**\na₄₀ = 5(40) - 9 = **191**\n\n**(c) Sum of first 40 terms:**\nS₄₀ = 40(-4 + 191)/2 = 40(187)/2 = 20(187) = **3740**\n\nThe sum formula is just: number of terms × average term.\nAverage of an arithmetic sequence = (first + last)/2.",
-      "initialPrompt": "Notice that the explicit formula aₙ = 5n - 9 looks like a linear function. What's the slope? What's the y-intercept? How does this connect to the sequence?"
+      "skill": "arithmetic-sequences-series",
+      "title": "I-Do: Arithmetic Sequences Series — Worked Examples",
+      "initialPrompt": "Notice that the explicit formula aₙ = 5n - 9 looks like a linear function. What's the slope? What's the y-intercept? How does this connect to the sequence?",
+      "examples": [
+        {
+          "problem": "For the arithmetic sequence -4, 1, 6, 11, ...: (a) Write explicit and recursive formulas. (b) Find the 40th term. (c) Find the sum of the first 40 terms.",
+          "solution": "**(a) Formulas:**\na₁ = -4, d = 5\n\nExplicit: **aₙ = -4 + (n-1)(5) = 5n - 9**\nRecursive: **a₁ = -4, aₙ = aₙ₋₁ + 5**\n\nCheck: a₂ = 5(2) - 9 = 1 ✓, a₃ = 5(3) - 9 = 6 ✓\n\n**(b) 40th term:**\na₄₀ = 5(40) - 9 = **191**\n\n**(c) Sum of first 40 terms:**\nS₄₀ = 40(-4 + 191)/2 = 40(187)/2 = 20(187) = **3740**\n\nThe sum formula is just: number of terms × average term.\nAverage of an arithmetic sequence = (first + last)/2."
+        }
+      ],
+      "lessonId": "arithmetic-sequences"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "For the geometric sequence 6, -18, 54, -162, ...: (a) Find the 7th term. (b) Find the sum of the first 7 terms.",
-      "explanation": "**(a) Identify:** a₁ = 6, r = -18/6 = -3\n\na₇ = 6 · (-3)^(7-1) = 6 · (-3)⁶ = 6 · 729 = **4374**\n\nNote: (-3)⁶ is positive because the exponent is even.\n\n**(b) Sum of first 7 terms:**\nS₇ = 6(1 - (-3)⁷)/(1 - (-3))\nS₇ = 6(1 - (-2187))/4\nS₇ = 6(2188)/4\nS₇ = 13128/4 = **3282**\n\nThe alternating signs (6, -18, 54, -162, ...) come from r being negative. Notice the partial sums bounce around but the individual terms grow rapidly in magnitude.",
-      "initialPrompt": "The terms alternate positive/negative because r = -3. What would happen if r = 3 instead? What if r = -1/3?"
+      "skill": "geometric-sequences-series",
+      "title": "I-Do: Geometric Sequences Series — Worked Examples",
+      "initialPrompt": "The terms alternate positive/negative because r = -3. What would happen if r = 3 instead? What if r = -1/3?",
+      "examples": [
+        {
+          "problem": "For the geometric sequence 6, -18, 54, -162, ...: (a) Find the 7th term. (b) Find the sum of the first 7 terms.",
+          "solution": "**(a) Identify:** a₁ = 6, r = -18/6 = -3\n\na₇ = 6 · (-3)^(7-1) = 6 · (-3)⁶ = 6 · 729 = **4374**\n\nNote: (-3)⁶ is positive because the exponent is even.\n\n**(b) Sum of first 7 terms:**\nS₇ = 6(1 - (-3)⁷)/(1 - (-3))\nS₇ = 6(1 - (-2187))/4\nS₇ = 6(2188)/4\nS₇ = 13128/4 = **3282**\n\nThe alternating signs (6, -18, 54, -162, ...) come from r being negative. Notice the partial sums bounce around but the individual terms grow rapidly in magnitude."
+        }
+      ],
+      "lessonId": "geometric-sequences"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "recursive-explicit-formulas",
+      "title": "I-Do: Converting Between Recursive and Explicit Formulas",
+      "initialPrompt": "What if you had the recursive formula a₁ = 3, aₙ = aₙ₋₁ + n? Is this arithmetic, geometric, or neither? Try computing a few terms to see the pattern.",
+      "examples": [
+        {
+          "problem": "(a) Given the recursive formula: a₁ = 7, aₙ = aₙ₋₁ - 3. Write the explicit formula. Find a₂₀.\n(b) Given the recursive formula: a₁ = 5, aₙ = 2aₙ₋₁. Write the explicit formula. Find a₁₀.\n(c) Given the explicit formula aₙ = 4n + 1. Write the recursive formula. What kind of sequence is this?",
+          "solution": "**(a) Arithmetic: a₁ = 7, d = -3.**\nExplicit: aₙ = a₁ + (n-1)d = 7 + (n-1)(-3) = 7 - 3n + 3 = **10 - 3n**\n\nCheck: a₁ = 10 - 3 = 7 ✓, a₂ = 10 - 6 = 4 ✓ (and 7 - 3 = 4 ✓)\n\na₂₀ = 10 - 3(20) = 10 - 60 = **-50**\n\n**(b) Geometric: a₁ = 5, r = 2.**\nExplicit: aₙ = a₁ · r^(n-1) = **5 · 2^(n-1)**\n\nCheck: a₁ = 5 · 2⁰ = 5 ✓, a₂ = 5 · 2¹ = 10 ✓ (and 5 × 2 = 10 ✓)\n\na₁₀ = 5 · 2⁹ = 5 · 512 = **2560**\n\n**(c) From explicit to recursive:**\naₙ = 4n + 1 is linear in n, so this is arithmetic.\nd = 4 (the coefficient of n = the common difference)\na₁ = 4(1) + 1 = 5\n\nRecursive: **a₁ = 5, aₙ = aₙ₋₁ + 4**\n\nCheck: a₂ = 5 + 4 = 9 and 4(2) + 1 = 9 ✓",
+          "tip": "Key connection: if the recursive formula adds a constant (aₙ = aₙ₋₁ + d), it is arithmetic and the explicit formula is linear. If it multiplies by a constant (aₙ = r · aₙ₋₁), it is geometric and the explicit formula is exponential."
+        }
+      ],
+      "lessonId": "sigma-notation-applications"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "sigma-notation",
+      "title": "I-Do: Sigma Notation — Expanding and Evaluating",
+      "initialPrompt": "Evaluate Σ from k=1 to 100 of k. This is the famous sum 1 + 2 + 3 + ... + 100. Can you use the arithmetic series formula to find the answer quickly?",
+      "examples": [
+        {
+          "problem": "(a) Expand and evaluate: Σ from k=1 to 5 of (2k + 3).\n(b) Write in sigma notation and evaluate: 4 + 8 + 16 + 32 + 64 + 128.\n(c) Evaluate: Σ from j=0 to 4 of 3(1/2)^j.",
+          "solution": "**(a) Expand Σ from k=1 to 5 of (2k + 3):**\nPlug in k = 1, 2, 3, 4, 5:\n(2(1)+3) + (2(2)+3) + (2(3)+3) + (2(4)+3) + (2(5)+3)\n= 5 + 7 + 9 + 11 + 13\n\nThis is arithmetic: a₁ = 5, a₅ = 13, n = 5.\nS₅ = 5(5 + 13)/2 = 5(18)/2 = **45**\n\n**(b) Write 4 + 8 + 16 + 32 + 64 + 128 in sigma notation:**\nThis is geometric: a₁ = 4, r = 2, 6 terms.\naₖ = 4 · 2^(k-1) = 2^(k+1)\n\n**Σ from k=1 to 6 of 4 · 2^(k-1)**\n\nEvaluate: S₆ = 4(1 - 2⁶)/(1 - 2) = 4(1 - 64)/(-1) = 4(63) = **252**\n\n**(c) Evaluate Σ from j=0 to 4 of 3(1/2)^j:**\nThis is geometric with a₁ = 3(1/2)⁰ = 3, r = 1/2, n = 5 terms (j = 0,1,2,3,4).\n\nS₅ = 3(1 - (1/2)⁵)/(1 - 1/2) = 3(1 - 1/32)/(1/2) = 3(31/32)/(1/2)\n= 3(31/32)(2) = 3(31/16) = **93/16 = 5.8125**\n\nNotice the index starts at j = 0 -- always count the total number of terms carefully!",
+          "tip": "Watch out for the starting index! When Σ starts at k=0 instead of k=1, you have one extra term. Count: from k=0 to k=4 is 5 terms, not 4."
+        }
+      ],
+      "lessonId": "sigma-notation-applications"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "geometric-sequences-series",
+      "title": "I-Do: Infinite Geometric Series — Convergence and Divergence",
+      "initialPrompt": "A ball is dropped from 10 meters and bounces to 60% of its previous height each time. What is the total distance the ball travels? (Hint: think about the distance going up AND coming down.)",
+      "examples": [
+        {
+          "problem": "Determine whether each infinite series converges or diverges. If it converges, find the sum.\n(a) 81 + 27 + 9 + 3 + ...\n(b) 5 + 10 + 20 + 40 + ...\n(c) 1 - 1/3 + 1/9 - 1/27 + ...",
+          "solution": "**(a) 81 + 27 + 9 + 3 + ...:**\na₁ = 81, r = 27/81 = 1/3\n|r| = 1/3 < 1, so it **converges**.\n\nS∞ = a₁/(1 - r) = 81/(1 - 1/3) = 81/(2/3) = 81 × 3/2 = **121.5** (or 243/2)\n\nRemarkable: infinitely many terms, but the sum is finite because the terms shrink fast enough.\n\n**(b) 5 + 10 + 20 + 40 + ...:**\na₁ = 5, r = 10/5 = 2\n|r| = 2 > 1, so it **diverges**.\n\nThe terms keep getting larger, so the partial sums grow without bound. There is no finite sum. The formula S∞ = a₁/(1-r) does NOT apply here.\n\n**(c) 1 - 1/3 + 1/9 - 1/27 + ...:**\na₁ = 1, r = (-1/3)/1 = -1/3\n|r| = 1/3 < 1, so it **converges** (even with alternating signs).\n\nS∞ = 1/(1 - (-1/3)) = 1/(1 + 1/3) = 1/(4/3) = **3/4**\n\nNegative ratios create alternating series. As long as |r| < 1, the series still converges because the terms shrink in absolute value.",
+          "tip": "The convergence test for infinite geometric series has exactly one condition: |r| < 1. The sign of r does not matter -- only its absolute value. Negative r creates alternating signs but does not prevent convergence."
+        }
+      ],
+      "lessonId": "geometric-sequences"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "financial-applications",
+      "title": "I-Do: Financial Applications — Annuity and Loan Payments",
+      "initialPrompt": "If you increased the monthly retirement deposit from $150 to $200, how much more would you have after 30 years? Is the difference proportional, or does compounding amplify it?",
+      "examples": [
+        {
+          "problem": "(a) You deposit $150 per month into a retirement account earning 7% annual interest compounded monthly for 30 years. Find the future value.\n(b) You take out a $200,000 mortgage at 6% annual interest compounded monthly for 30 years. What is the monthly payment?",
+          "solution": "**(a) Future value of an annuity (regular deposits):**\nPMT = $150, r = 0.07, n = 12, t = 30\nr/n = 0.07/12 ≈ 0.005833, nt = 360\n\nFV = PMT × [(1 + r/n)^(nt) - 1] / (r/n)\nFV = 150 × [(1.005833)^360 - 1] / 0.005833\n\n(1.005833)^360 ≈ 8.1165\nFV = 150 × (8.1165 - 1) / 0.005833\nFV = 150 × 7.1165 / 0.005833\nFV = 150 × 1220.0 ≈ **$183,001**\n\nYou deposited 150 × 360 = $54,000 total. The account grew to $183,001. That means $129,001 came from interest -- the power of compounding over long periods.\n\n**(b) Monthly payment on a loan (present value formula, solved for PMT):**\nPV = $200,000, r = 0.06, n = 12, t = 30\nr/n = 0.005, nt = 360\n\nPV = PMT × [1 - (1 + r/n)^(-nt)] / (r/n)\n200000 = PMT × [1 - (1.005)^(-360)] / 0.005\n\n(1.005)^(-360) ≈ 0.16604\n200000 = PMT × (1 - 0.16604) / 0.005\n200000 = PMT × 0.83396 / 0.005\n200000 = PMT × 166.792\n\nPMT = 200000 / 166.792 ≈ **$1,199.10 per month**\n\nOver 30 years you pay 1199.10 × 360 = $431,676. So the total interest paid is about $231,676 -- more than the original loan!",
+          "tip": "The annuity formula gives future value (how much you will have). The present value formula tells you what a stream of future payments is worth today. Solving PV for PMT gives the payment on a loan."
+        }
+      ],
+      "lessonId": "sigma-notation-applications"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "arithmetic-sequences-series",
+      "title": "I-Do: Arithmetic Series — Finding Unknown Terms",
+      "initialPrompt": "In a geometric sequence, a₂ = 6 and a₅ = 162. Can you find r? Hint: a₅/a₂ = r³.",
+      "examples": [
+        {
+          "problem": "(a) In an arithmetic sequence, a₃ = 14 and a₉ = 38. Find a₁, d, and the sum of the first 20 terms.\n(b) The sum of the first 15 terms of an arithmetic sequence is 450, and a₁ = 4. Find d.",
+          "solution": "**(a) Finding a₁ and d from two terms:**\nWe know a₃ = a₁ + 2d = 14 and a₉ = a₁ + 8d = 38.\n\nSubtract: (a₁ + 8d) - (a₁ + 2d) = 38 - 14\n6d = 24\n**d = 4**\n\nBack-substitute: a₁ + 2(4) = 14 → **a₁ = 6**\n\nSum of first 20 terms:\na₂₀ = 6 + 19(4) = 82\nS₂₀ = 20(6 + 82)/2 = 20(88)/2 = **880**\n\n**(b) Finding d from a sum:**\nS₁₅ = 15/2 × (2a₁ + 14d) = 450\n15/2 × (8 + 14d) = 450\n(8 + 14d) = 450 × 2/15 = 60\n14d = 52\n**d = 52/14 = 26/7**\n\nCheck: a₁₅ = 4 + 14(26/7) = 4 + 52 = 56\nS₁₅ = 15(4 + 56)/2 = 15(60)/2 = 450 ✓",
+          "tip": "When given two terms of an arithmetic sequence, subtract them to find d. The difference between aₘ and aₙ is always (m - n) × d."
+        }
+      ],
+      "lessonId": "arithmetic-sequences"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "recursive-explicit-formulas",
+      "title": "We-Do: Recursive Explicit Formulas — Guided Practice",
       "problems": [
         {
           "question": "Write in sigma notation: 2 + 5 + 8 + 11 + 14 + 17.",
           "answer": "Σ from k=1 to 6 of (3k - 1). Or equivalently: Σ from k=0 to 5 of (3k + 2).",
-          "hints": ["This is arithmetic: a₁ = 2, d = 3. The kth term is 2 + (k-1)(3) = 3k - 1.", "6 terms, so: Σ from k=1 to 6 of (3k - 1)."]
+          "hints": [
+            "This is arithmetic: a₁ = 2, d = 3. The kth term is 2 + (k-1)(3) = 3k - 1.",
+            "6 terms, so: Σ from k=1 to 6 of (3k - 1)."
+          ]
         },
         {
           "question": "Does the infinite series 24 + 12 + 6 + 3 + ... converge? If so, find the sum.",
           "answer": "Yes, converges. r = 1/2, |r| < 1. S∞ = 24/(1 - 1/2) = 48.",
-          "hints": ["r = 12/24 = 1/2. Since |1/2| < 1, it converges.", "S∞ = a₁/(1-r) = 24/(1/2) = 48."]
+          "hints": [
+            "r = 12/24 = 1/2. Since |1/2| < 1, it converges.",
+            "S∞ = a₁/(1-r) = 24/(1/2) = 48."
+          ]
         },
         {
           "question": "Express the repeating decimal 0.454545... as a fraction.",
           "answer": "5/11",
-          "hints": ["0.454545... = 45/100 + 45/10000 + ... Geometric with a₁ = 45/100, r = 1/100.", "S = (45/100)/(1 - 1/100) = (45/100)/(99/100) = 45/99 = 5/11."]
+          "hints": [
+            "0.454545... = 45/100 + 45/10000 + ... Geometric with a₁ = 45/100, r = 1/100.",
+            "S = (45/100)/(1 - 1/100) = (45/100)/(99/100) = 45/99 = 5/11."
+          ]
         }
       ],
-      "initialPrompt": "For the sigma notation problem, first identify: is this arithmetic or geometric? What is the first term and common difference/ratio?"
+      "initialPrompt": "For the sigma notation problem, first identify: is this arithmetic or geometric? What is the first term and common difference/ratio?",
+      "lessonId": "sigma-notation-applications"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Financial Applications of Sequences & Series:**\n\n**Simple interest:** Linear growth (arithmetic).\nA = P + Prt = P(1 + rt)\n\n**Compound interest:** Exponential growth (geometric).\nA = P(1 + r/n)^(nt)\n\n**Annuity (regular deposits):**\nFuture value of regular deposits of PMT:\nFV = PMT × [(1 + r/n)^(nt) - 1] / (r/n)\n\nThis is a geometric series! Each deposit grows at a different rate depending on when it was made.\n\n**Present value:** How much is a future stream of payments worth today?\nPV = PMT × [1 - (1 + r/n)^(-nt)] / (r/n)\n\nEvery loan payment, mortgage, and investment plan uses these formulas. The math of sequences IS the math of money.",
-      "initialPrompt": "If you deposit $100 per month into an account earning 6% annual interest compounded monthly, how much will you have after 10 years? (Use the annuity formula.)"
+      "skill": "sigma-notation",
+      "title": "Concept: Sigma Notation",
+      "initialPrompt": "If you deposit $100 per month into an account earning 6% annual interest compounded monthly, how much will you have after 10 years? (Use the annuity formula.)",
+      "content": "**Financial Applications of Sequences & Series:**\n\n**Simple interest:** Linear growth (arithmetic).\nA = P + Prt = P(1 + rt)\n\n**Compound interest:** Exponential growth (geometric).\nA = P(1 + r/n)^(nt)\n\n**Annuity (regular deposits):**\nFuture value of regular deposits of PMT:\nFV = PMT × [(1 + r/n)^(nt) - 1] / (r/n)\n\nThis is a geometric series! Each deposit grows at a different rate depending on when it was made.\n\n**Present value:** How much is a future stream of payments worth today?\nPV = PMT × [1 - (1 + r/n)^(-nt)] / (r/n)\n\nEvery loan payment, mortgage, and investment plan uses these formulas. The math of sequences IS the math of money.",
+      "lessonId": "sigma-notation-applications"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "skill": "financial-applications",
+      "title": "You-Do: Financial Applications — Independent Practice",
       "problems": [
         {
           "question": "Find the 15th term of the arithmetic sequence: 50, 43, 36, 29, ...",
           "answer": "-48",
-          "hints": ["d = -7. a₁₅ = 50 + (14)(-7) = 50 - 98 = -48."]
+          "hints": [
+            "d = -7. a₁₅ = 50 + (14)(-7) = 50 - 98 = -48."
+          ]
         },
         {
           "question": "Write explicit and recursive formulas for: 3, 12, 48, 192, ...",
           "answer": "Explicit: aₙ = 3 · 4^(n-1). Recursive: a₁ = 3, aₙ = 4aₙ₋₁.",
-          "hints": ["Geometric with r = 4."]
+          "hints": [
+            "Geometric with r = 4."
+          ]
         },
         {
           "question": "Evaluate: Σ from k=1 to 5 of 2(3)^(k-1).",
           "answer": "242",
-          "hints": ["This is a geometric series: a₁ = 2, r = 3, n = 5.", "S₅ = 2(1-3⁵)/(1-3) = 2(1-243)/(-2) = 2(242)/2 = 242."]
+          "hints": [
+            "This is a geometric series: a₁ = 2, r = 3, n = 5.",
+            "S₅ = 2(1-3⁵)/(1-3) = 2(1-243)/(-2) = 2(242)/2 = 242."
+          ]
         },
         {
           "question": "Find the sum of the infinite series: 100 + 80 + 64 + 51.2 + ...",
           "answer": "500",
-          "hints": ["r = 80/100 = 4/5. |r| < 1, converges.", "S∞ = 100/(1 - 4/5) = 100/(1/5) = 500."]
+          "hints": [
+            "r = 80/100 = 4/5. |r| < 1, converges.",
+            "S∞ = 100/(1 - 4/5) = 100/(1/5) = 500."
+          ]
         },
         {
           "question": "You deposit $200/month into an account earning 5% annual interest compounded monthly for 20 years. Find the future value.",
           "answer": "≈ $82,207.10",
-          "hints": ["r/n = 0.05/12, nt = 240.", "FV = 200 × [(1 + 0.05/12)^240 - 1] / (0.05/12)."]
+          "hints": [
+            "r/n = 0.05/12, nt = 240.",
+            "FV = 200 × [(1 + 0.05/12)^240 - 1] / (0.05/12)."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "lessonId": "sigma-notation-applications"
     }
   ],
   "answerKeys": {
@@ -117,6 +252,38 @@
     "Geometric 3,12,48... formulas": "aₙ=3·4^(n-1)",
     "Σ 2(3)^(k-1) k=1 to 5": "242",
     "Infinite 100+80+64+...": "500",
-    "Annuity $200/mo 5% 20yr": "≈$82,207"
-  }
+    "Annuity $200/mo 5% 20yr": "≈$82,207",
+    "recursive a1=7 d=-3 explicit": "aₙ = 10 - 3n",
+    "recursive a1=7 d=-3 a20": "-50",
+    "recursive a1=5 r=2 explicit": "aₙ = 5·2^(n-1)",
+    "recursive a1=5 r=2 a10": "2560",
+    "explicit 4n+1 to recursive": "a₁=5, aₙ=aₙ₋₁+4",
+    "sigma k=1 to 5 of 2k+3": "45",
+    "sigma 4+8+16+32+64+128": "252",
+    "sigma j=0 to 4 of 3(1/2)^j": "93/16",
+    "infinite 81+27+9+3+...": "243/2",
+    "infinite 5+10+20+40+...": "Diverges",
+    "infinite 1-1/3+1/9-1/27+...": "3/4",
+    "annuity $150/mo 7% 30yr FV": "≈$183,001",
+    "mortgage $200K 6% 30yr payment": "≈$1,199.10/month",
+    "arithmetic a3=14 a9=38 find a1,d": "a₁=6, d=4, S₂₀=880",
+    "arithmetic S15=450 a1=4 find d": "d=26/7"
+  },
+  "lessons": [
+    {
+      "lessonId": "arithmetic-sequences",
+      "title": "Arithmetic Sequences & Series",
+      "order": 1
+    },
+    {
+      "lessonId": "geometric-sequences",
+      "title": "Geometric Sequences & Series",
+      "order": 2
+    },
+    {
+      "lessonId": "sigma-notation-applications",
+      "title": "Sigma Notation & Financial Applications",
+      "order": 3
+    }
+  ]
 }

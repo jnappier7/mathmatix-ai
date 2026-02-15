@@ -1,0 +1,566 @@
+{
+  "moduleId": "geometry_measurement",
+  "course": "Early Math Foundations",
+  "unit": 7,
+  "title": "Geometry & Measurement",
+  "weeks": "19-21",
+  "estimatedDuration": 35,
+  "description": "Shapes, angles, and measuring the world. Students calculate perimeter by adding all sides, find area of rectangles and composite rectangular figures, classify angles as right/acute/obtuse, identify and classify triangles and quadrilaterals by their properties, and convert between common measurement units. Everything connects to real objects students can see and touch.",
+  "skills": [
+    "emf-perimeter",
+    "emf-area-rectangles",
+    "emf-angles-basics",
+    "emf-shapes-properties",
+    "emf-measurement-units"
+  ],
+  "standardsAlignment": [
+    "3.MD.C.5",
+    "3.MD.C.6",
+    "3.MD.C.7",
+    "3.MD.D.8",
+    "3.G.A.1",
+    "4.MD.A.1",
+    "4.MD.A.3",
+    "4.MD.C.5",
+    "4.MD.C.6",
+    "4.G.A.1",
+    "4.G.A.2",
+    "5.G.B.3",
+    "5.G.B.4",
+    "5.MD.A.1"
+  ],
+  "goals": [
+    "Calculate the perimeter of polygons by adding side lengths, use the shortcut P = 2l + 2w for rectangles, and find a missing side when the perimeter is known",
+    "Find the area of rectangles using A = l x w, count square units on a grid, and decompose L-shaped and other composite figures into non-overlapping rectangles to find total area",
+    "Classify angles as right (90 degrees), acute (less than 90 degrees), obtuse (greater than 90 degrees), straight (180 degrees), or full turn (360 degrees) using a paper-corner benchmark",
+    "Identify and classify triangles by their sides (equilateral, isosceles, scalene) and angles, and place quadrilaterals in a hierarchy (square, rectangle, parallelogram, rhombus, trapezoid)",
+    "Convert between common units of length, weight, and capacity within both customary and metric systems using multiplication and division"
+  ],
+  "instructionalStrategy": [
+    "Start every concept with a physical object students can hold or draw: use string to measure perimeter, cut grid paper to count area, fold paper corners to test angles.",
+    "Use the gradual-release scaffold: concept-intro with keyPoints, teacher-modeled worked examples, guided practice with hints, then independent practice where students work on their own.",
+    "Anchor problems in familiar real-world contexts — fencing a garden, tiling a bedroom floor, wrapping a gift, measuring ingredients — so students see geometry and measurement as useful, not abstract.",
+    "Emphasize precise vocabulary (perimeter vs. area, square units vs. linear units, equilateral vs. isosceles) and correct units in every answer to build mathematical communication skills.",
+    "For measurement conversions, always display the conversion fact first, then show the multiply-or-divide decision rule: going from a bigger unit to a smaller unit means multiply; smaller to bigger means divide."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-perimeter",
+      "title": "Perimeter — The Distance Around",
+      "content": "Perimeter is the total distance around the outside of a shape. Imagine an ant walking along every edge of a book — the path the ant takes is the perimeter. To find perimeter, add up the lengths of all the sides. For rectangles there is a handy shortcut: since opposite sides are equal, P = 2l + 2w (two lengths plus two widths). If you know the perimeter and one side of a rectangle, you can work backward to find the missing side.",
+      "keyPoints": [
+        "Perimeter = sum of all side lengths. Walk around the shape and add every side.",
+        "Rectangle shortcut: P = 2l + 2w (or P = 2(l + w) — same thing).",
+        "Square shortcut: P = 4s because all four sides are equal.",
+        "Finding a missing side: plug the known values into the formula and solve for the unknown.",
+        "Perimeter is measured in linear units (cm, ft, m) — NOT square units."
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-perimeter",
+      "title": "Perimeter — Worked Examples",
+      "examples": [
+        {
+          "problem": "A triangle has sides that measure 3 cm, 5 cm, and 7 cm. What is its perimeter?",
+          "solution": "Add all three sides:\n3 + 5 + 7 = 15 cm\nThe perimeter is 15 cm.",
+          "tip": "For any polygon, just count the sides and add them up — it works for triangles, pentagons, or any shape."
+        },
+        {
+          "problem": "Marcus wants to build a fence around his rectangular garden that is 8 ft long and 5 ft wide. How many feet of fencing does he need?",
+          "solution": "Use the rectangle shortcut:\nP = 2l + 2w\nP = 2(8) + 2(5)\nP = 16 + 10 = 26 ft\nMarcus needs 26 feet of fencing.",
+          "tip": "Draw the rectangle and label all four sides: 8, 5, 8, 5. Adding them gives the same answer — the formula is just faster."
+        },
+        {
+          "problem": "A rectangle has a perimeter of 30 m. Its length is 9 m. What is its width?",
+          "solution": "Start with the formula and plug in what you know:\nP = 2l + 2w\n30 = 2(9) + 2w\n30 = 18 + 2w\n30 - 18 = 2w\n12 = 2w\nw = 6 m\nThe width is 6 meters.",
+          "tip": "Think of it as: the two lengths use up 18 m of the 30 m total. That leaves 12 m shared by the two widths, so each width is 6 m."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-perimeter",
+      "title": "Perimeter — Guided Practice",
+      "problems": [
+        {
+          "id": "gm-1",
+          "question": "A quadrilateral has sides measuring 4 in, 6 in, 5 in, and 3 in. What is the perimeter?",
+          "hints": [
+            "Add all four side lengths together.",
+            "4 + 6 + 5 + 3 = ?"
+          ],
+          "answer": "18 in. Perimeter = 4 + 6 + 5 + 3 = 18 inches."
+        },
+        {
+          "id": "gm-2",
+          "question": "Layla's bedroom is a rectangle that measures 12 ft by 9 ft. She wants to put a decorative border strip along the top of every wall. How many feet of border strip does she need?",
+          "hints": [
+            "The border goes all the way around the room — that is the perimeter.",
+            "Use P = 2l + 2w. Length = 12 ft, width = 9 ft."
+          ],
+          "answer": "42 ft. P = 2(12) + 2(9) = 24 + 18 = 42 feet of border strip."
+        },
+        {
+          "id": "gm-3",
+          "question": "A square has a perimeter of 36 cm. What is the length of one side?",
+          "hints": [
+            "A square has 4 equal sides, so P = 4s.",
+            "Divide the perimeter by 4 to find one side: 36 / 4 = ?"
+          ],
+          "answer": "9 cm. Since P = 4s, each side = 36 / 4 = 9 cm."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-perimeter",
+      "title": "Perimeter — Independent Practice",
+      "problems": [
+        {
+          "id": "gm-4",
+          "question": "A pentagon (5-sided shape) has sides measuring 5 cm, 3 cm, 7 cm, 4 cm, and 6 cm. What is the perimeter?",
+          "hints": [
+            "Add all five side lengths: 5 + 3 + 7 + 4 + 6."
+          ],
+          "answer": "25 cm"
+        },
+        {
+          "id": "gm-5",
+          "question": "A soccer field is a rectangle that is 100 m long and 68 m wide. If a player jogs one full lap around the field, how far does she run?",
+          "hints": [
+            "One lap = perimeter. Use P = 2l + 2w."
+          ],
+          "answer": "336 m"
+        },
+        {
+          "id": "gm-6",
+          "question": "A rectangle has a perimeter of 46 ft. Its length is 15 ft. What is the width?",
+          "hints": [
+            "Plug into P = 2l + 2w and solve for w."
+          ],
+          "answer": "8 ft"
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-area-rectangles",
+      "title": "Area — Covering a Surface",
+      "content": "Area is the amount of space inside a flat shape. Think of it as how many square tiles you would need to cover a floor. For rectangles, the formula is A = l x w (length times width). A square is a special rectangle where l = w, so A = s x s = s squared. When a shape is not a simple rectangle — for example an L-shape — you can split it into two or more rectangles, find each area, and add them together. Always remember: area is measured in square units (sq cm, sq ft, sq m), which is different from perimeter's linear units.",
+      "keyPoints": [
+        "Area = the number of square units that fit inside a shape.",
+        "Rectangle: A = l x w. Square: A = s x s.",
+        "Composite shapes (like L-shapes): split into non-overlapping rectangles, find each area, then add.",
+        "Area uses SQUARE units (sq in, sq cm, sq ft). Perimeter uses LINEAR units (in, cm, ft).",
+        "Counting squares on grid paper is a great way to check your multiplication."
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-area-rectangles",
+      "title": "Area of Rectangles — Worked Examples",
+      "examples": [
+        {
+          "problem": "A book cover is 6 cm wide and 4 cm tall. What is its area?",
+          "solution": "A = l x w\nA = 6 x 4 = 24 sq cm\nThe book cover has an area of 24 square centimeters.",
+          "tip": "Picture 6 columns of 4 squares each. That is 24 squares total — exactly what the formula gives you."
+        },
+        {
+          "problem": "A square sticky note measures 5 inches on each side. What is its area?",
+          "solution": "A = s x s\nA = 5 x 5 = 25 sq in\nThe sticky note has an area of 25 square inches.",
+          "tip": "Even though a square is special, the rectangle formula still works: A = 5 x 5."
+        },
+        {
+          "problem": "An L-shaped room has the following measurements: the top part is 10 ft long and 4 ft wide, and the bottom part is 6 ft long and 8 ft wide. What is the total area?",
+          "solution": "Split the L-shape into two rectangles:\nRectangle 1 (top): A = 10 x 4 = 40 sq ft\nRectangle 2 (bottom): A = 6 x 8 = 48 sq ft\nTotal area = 40 + 48 = 88 sq ft",
+          "tip": "There is often more than one way to split a composite shape. Any way you split it, you should get the same total area."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-area-rectangles",
+      "title": "Area — Guided Practice",
+      "problems": [
+        {
+          "id": "gm-7",
+          "question": "A poster is 3 ft wide and 2 ft tall. What is the area of the poster?",
+          "hints": [
+            "Use A = l x w.",
+            "A = 3 x 2 = ?"
+          ],
+          "answer": "6 sq ft. A = 3 x 2 = 6 square feet."
+        },
+        {
+          "id": "gm-8",
+          "question": "An L-shaped garden can be split into two rectangles. The top rectangle is 8 m long and 3 m wide. The bottom rectangle is 5 m long and 4 m wide. What is the total area of the garden?",
+          "hints": [
+            "Find the area of each rectangle separately: top = 8 x 3, bottom = 5 x 4.",
+            "Add the two areas together to get the total."
+          ],
+          "answer": "44 sq m. Top: 8 x 3 = 24 sq m. Bottom: 5 x 4 = 20 sq m. Total: 24 + 20 = 44 sq m."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-area-rectangles",
+      "title": "Area — Independent Practice",
+      "problems": [
+        {
+          "id": "gm-9",
+          "question": "A bedroom floor measures 10 ft by 12 ft. How many square feet of carpet are needed to cover the entire floor?",
+          "hints": [
+            "Use A = l x w with length = 12 ft and width = 10 ft."
+          ],
+          "answer": "120 sq ft"
+        },
+        {
+          "id": "gm-10",
+          "question": "Mia is wrapping the top of a gift box that is 14 in long and 10 in wide. What is the area she needs to cover?",
+          "hints": [
+            "The top of the box is a rectangle. Use A = l x w."
+          ],
+          "answer": "140 sq in"
+        },
+        {
+          "id": "gm-11",
+          "question": "An L-shaped swimming pool can be split into two rectangles. The large section is 10 m long and 6 m wide. The small section is 3 m long and 4 m wide. What is the total area of the pool?",
+          "hints": [
+            "Find each rectangle's area, then add them together."
+          ],
+          "answer": "72 sq m"
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-angles-basics",
+      "title": "Angles — Turns and Corners",
+      "content": "An angle is formed where two lines or edges meet at a point. You can think of an angle as a turn — how far you rotate from one direction to another. The most important benchmark is the right angle, which is exactly 90 degrees and looks like the corner of a book or a piece of paper. Angles smaller than 90 degrees are called acute (they look pointy and sharp). Angles larger than 90 degrees but less than 180 degrees are called obtuse (they look wide and open). A straight angle is exactly 180 degrees — a flat line. A full turn all the way around is 360 degrees. You can always test an angle by holding the corner of a sheet of paper up to it: if it matches perfectly, it is a right angle; if the angle is smaller, it is acute; if the angle is bigger, it is obtuse.",
+      "keyPoints": [
+        "Right angle = exactly 90 degrees. It looks like the corner of a book or a square.",
+        "Acute angle = less than 90 degrees. It looks sharp and pointy (think: 'a-cute little angle').",
+        "Obtuse angle = more than 90 degrees but less than 180 degrees. It looks wide and open.",
+        "Straight angle = exactly 180 degrees. It forms a straight line.",
+        "Full turn = 360 degrees. Spinning all the way around in a circle.",
+        "Paper-corner test: hold a square corner against the angle to see if it is right, acute, or obtuse."
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-angles-basics",
+      "title": "Classifying Angles — Worked Examples",
+      "examples": [
+        {
+          "problem": "Look at the corner of your desk. What type of angle does it form, and how many degrees is it?",
+          "solution": "The corner of a desk forms a right angle.\nA right angle measures exactly 90 degrees.\nYou can check by placing a sheet of paper in the corner — the edges line up perfectly.",
+          "tip": "Most furniture corners (desks, books, doors when fully open against a wall) form right angles. They are everywhere!"
+        },
+        {
+          "problem": "A kite has a tip angle that measures 55 degrees. Classify this angle.",
+          "solution": "55 degrees is less than 90 degrees.\nSince it is less than 90 degrees, it is an acute angle.\nAcute angles look sharp and pointy — just like the tip of a kite.",
+          "tip": "The word 'acute' can remind you of 'a cute little angle' — small and sharp."
+        },
+        {
+          "problem": "A door is swung open so the angle between the door and the wall is 135 degrees. Classify this angle.",
+          "solution": "135 degrees is greater than 90 degrees but less than 180 degrees.\nThis makes it an obtuse angle.\nThe door is open wider than a square corner but is not flat against the opposite wall.",
+          "tip": "If you hold a paper corner against this angle, the angle goes beyond the paper corner — that tells you it is obtuse."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-angles-basics",
+      "title": "Angles — Guided Practice",
+      "problems": [
+        {
+          "id": "gm-12",
+          "question": "A wheelchair ramp makes a 25-degree angle with the ground. Is this angle acute, right, or obtuse?",
+          "hints": [
+            "Compare 25 degrees to 90 degrees. Is 25 less than, equal to, or greater than 90?",
+            "25 < 90, so this angle is smaller than a right angle."
+          ],
+          "answer": "Acute. 25 degrees is less than 90 degrees, so it is an acute angle."
+        },
+        {
+          "id": "gm-13",
+          "question": "Two roads meet at an angle that measures 110 degrees. Classify the angle. Is it bigger or smaller than a square corner?",
+          "hints": [
+            "Compare 110 degrees to 90 degrees.",
+            "110 > 90 and 110 < 180, so think about which category that fits."
+          ],
+          "answer": "Obtuse. 110 degrees is greater than 90 degrees (bigger than a square corner) but less than 180 degrees, so it is obtuse."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-angles-basics",
+      "title": "Angles — Independent Practice",
+      "problems": [
+        {
+          "id": "gm-14",
+          "question": "The hands of a clock at 6 o'clock form a straight line. What type of angle is this, and how many degrees does it measure?",
+          "hints": [
+            "When the hands point in exactly opposite directions, they form a straight line."
+          ],
+          "answer": "Straight angle, 180 degrees"
+        },
+        {
+          "id": "gm-15",
+          "question": "A slice of pizza has a tip angle of 72 degrees. Is this angle acute, right, or obtuse?",
+          "hints": [
+            "Compare 72 degrees to 90 degrees."
+          ],
+          "answer": "Acute. 72 degrees is less than 90 degrees."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-shapes-properties",
+      "title": "Triangles and Quadrilaterals — Know Your Shapes",
+      "content": "Shapes can be classified by their sides and angles. Triangles have three sides and can be grouped by side length: an equilateral triangle has all three sides equal, an isosceles triangle has exactly two sides equal, and a scalene triangle has no equal sides. Triangles can also be grouped by their angles: a right triangle has one 90-degree angle, an acute triangle has all angles less than 90 degrees, and an obtuse triangle has one angle greater than 90 degrees. Quadrilaterals have four sides and fit in a hierarchy: a square has four equal sides and four right angles; a rectangle has opposite sides equal and four right angles; a parallelogram has two pairs of parallel sides; a rhombus has four equal sides (like a tilted square); and a trapezoid has exactly one pair of parallel sides. Each shape inherits the properties of the shapes above it — every square is also a rectangle, and every rectangle is also a parallelogram.",
+      "keyPoints": [
+        "Triangles by sides: equilateral (3 equal sides), isosceles (2 equal sides), scalene (0 equal sides).",
+        "Triangles by angles: acute (all angles < 90 degrees), right (one angle = 90 degrees), obtuse (one angle > 90 degrees).",
+        "A triangle can be described by both side type and angle type (for example, an isosceles right triangle).",
+        "Quadrilateral hierarchy: square -> rectangle -> parallelogram. Also: rhombus -> parallelogram.",
+        "Trapezoid: exactly one pair of parallel sides.",
+        "Every square is a rectangle, but not every rectangle is a square."
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-shapes-properties",
+      "title": "Classifying Shapes — Worked Examples",
+      "examples": [
+        {
+          "problem": "A triangle has sides measuring 5 cm, 5 cm, and 5 cm. All three angles measure 60 degrees. Classify this triangle by its sides and by its angles.",
+          "solution": "By sides: all three sides are equal (5, 5, 5), so it is an equilateral triangle.\nBy angles: all three angles are 60 degrees, which is less than 90 degrees, so it is an acute triangle.\nFull classification: equilateral acute triangle.",
+          "tip": "Equilateral triangles are always acute — their angles are always 60 degrees each."
+        },
+        {
+          "problem": "A shape has 4 sides. Both pairs of opposite sides are parallel and equal in length. All four angles are 90 degrees, but the sides are not all the same length — two sides are 8 cm and two sides are 5 cm. What is this shape?",
+          "solution": "Four sides with opposite sides parallel and equal: that makes it a parallelogram.\nAll angles are 90 degrees: that narrows it to a rectangle.\nThe sides are not all equal (8 and 5), so it is NOT a square.\nThis shape is a rectangle.",
+          "tip": "Check the properties step by step. Start broad (parallelogram) and narrow down."
+        },
+        {
+          "problem": "A triangle has sides measuring 6 in, 6 in, and 9 in. One of its angles is 97 degrees. Classify this triangle by sides and by angles.",
+          "solution": "By sides: two sides are equal (6 and 6), so it is an isosceles triangle.\nBy angles: one angle is 97 degrees, which is greater than 90 degrees, so it is an obtuse triangle.\nFull classification: isosceles obtuse triangle.",
+          "tip": "A triangle can only have at most one obtuse angle or one right angle. The other two angles must be acute."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-shapes-properties",
+      "title": "Classifying Shapes — Guided Practice",
+      "problems": [
+        {
+          "id": "gm-16",
+          "question": "A triangle has sides measuring 7 in, 7 in, and 10 in. Two of its angles are 44 degrees each. Classify the triangle by its sides and by its angles.",
+          "hints": [
+            "Count how many sides are equal. Two sides are 7 in — what type of triangle has exactly two equal sides?",
+            "All three angles: 44, 44, and 180 - 44 - 44 = 92. Is that last angle acute, right, or obtuse?"
+          ],
+          "answer": "Isosceles obtuse triangle. Two equal sides makes it isosceles. The third angle is 92 degrees (obtuse), so it is an obtuse triangle."
+        },
+        {
+          "id": "gm-17",
+          "question": "A four-sided shape has two pairs of opposite sides that are parallel. The sides are all different lengths and the angles are not 90 degrees. What is the most specific name for this shape?",
+          "hints": [
+            "Two pairs of parallel sides — that rules out trapezoid (which has only one pair).",
+            "It is a parallelogram. Could it be a rectangle? Check the angles."
+          ],
+          "answer": "Parallelogram. It has two pairs of parallel sides, but since the angles are not 90 degrees it is not a rectangle, and since the sides are not all equal it is not a rhombus."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-shapes-properties",
+      "title": "Classifying Shapes — Independent Practice",
+      "problems": [
+        {
+          "id": "gm-18",
+          "question": "A triangle has sides measuring 3 cm, 4 cm, and 5 cm. One of its angles is exactly 90 degrees. Classify the triangle by its sides and by its angles.",
+          "hints": [
+            "No equal sides = scalene. One 90-degree angle = right."
+          ],
+          "answer": "Scalene right triangle"
+        },
+        {
+          "id": "gm-19",
+          "question": "A four-sided shape has exactly one pair of parallel sides. The other two sides are not parallel. What is this shape called?",
+          "hints": [
+            "Think about the quadrilateral hierarchy. Which shape has exactly one pair of parallel sides?"
+          ],
+          "answer": "Trapezoid"
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "emf-measurement-units",
+      "title": "Measurement Units — Length, Weight, and Capacity",
+      "content": "Measurement is all about choosing the right unit and converting between units when needed. For length, the customary system uses inches (in), feet (ft), and yards (yd), while the metric system uses centimeters (cm) and meters (m). For weight, the customary system uses ounces (oz) and pounds (lb), and the metric system uses grams (g) and kilograms (kg). For capacity (how much liquid something holds), the customary system uses cups, pints, quarts, and gallons. The key rule for converting: when you go from a bigger unit to a smaller unit, you multiply (there are more small pieces). When you go from a smaller unit to a bigger unit, you divide (you are grouping small pieces into bigger ones).",
+      "keyPoints": [
+        "Length: 1 ft = 12 in, 1 yd = 3 ft = 36 in, 1 m = 100 cm.",
+        "Weight: 1 lb = 16 oz, 1 kg = 1,000 g.",
+        "Capacity: 1 pint = 2 cups, 1 quart = 2 pints, 1 gallon = 4 quarts.",
+        "Time: 1 minute = 60 seconds, 1 hour = 60 minutes, 1 day = 24 hours.",
+        "Bigger unit to smaller unit = MULTIPLY (e.g., feet to inches: multiply by 12).",
+        "Smaller unit to bigger unit = DIVIDE (e.g., grams to kilograms: divide by 1,000)."
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "emf-measurement-units",
+      "title": "Measurement Conversions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Convert 5 feet to inches.",
+          "solution": "Conversion fact: 1 foot = 12 inches.\nWe are going from a bigger unit (feet) to a smaller unit (inches), so we MULTIPLY.\n5 x 12 = 60 inches.\n5 feet = 60 inches.",
+          "tip": "Think: there are more inches than feet in the same length, so the number must get bigger — multiply."
+        },
+        {
+          "problem": "A bag of flour weighs 3,000 grams. How many kilograms is that?",
+          "solution": "Conversion fact: 1 kg = 1,000 g.\nWe are going from a smaller unit (grams) to a bigger unit (kilograms), so we DIVIDE.\n3,000 / 1,000 = 3 kg.\n3,000 grams = 3 kilograms.",
+          "tip": "The metric system is based on powers of 10, so conversions usually involve multiplying or dividing by 10, 100, or 1,000."
+        },
+        {
+          "problem": "A punch recipe makes 12 quarts of punch. How many gallons is that?",
+          "solution": "Conversion fact: 1 gallon = 4 quarts.\nWe are going from a smaller unit (quarts) to a bigger unit (gallons), so we DIVIDE.\n12 / 4 = 3 gallons.\n12 quarts = 3 gallons.",
+          "tip": "To remember cups-pints-quarts-gallons, think: 2 cups = 1 pint, 2 pints = 1 quart, 4 quarts = 1 gallon."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "emf-measurement-units",
+      "title": "Measurement Conversions — Guided Practice",
+      "problems": [
+        {
+          "id": "gm-20",
+          "question": "Convert 2 yards to inches. (Hint: you may need two steps.)",
+          "hints": [
+            "First convert yards to feet: 1 yard = 3 feet, so 2 yards = 2 x 3 = 6 feet.",
+            "Then convert feet to inches: 1 foot = 12 inches, so 6 feet = 6 x 12 = 72 inches."
+          ],
+          "answer": "72 inches. 2 yards = 6 feet = 72 inches."
+        },
+        {
+          "id": "gm-21",
+          "question": "A recipe calls for 6 cups of water. How many pints is that?",
+          "hints": [
+            "Conversion fact: 1 pint = 2 cups.",
+            "Going from smaller (cups) to bigger (pints), so divide: 6 / 2 = ?"
+          ],
+          "answer": "3 pints. 6 cups / 2 = 3 pints."
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "emf-measurement-units",
+      "title": "Measurement Conversions — Independent Practice",
+      "problems": [
+        {
+          "id": "gm-22",
+          "question": "A puppy weighs 48 ounces. How many pounds is that?",
+          "hints": [
+            "1 pound = 16 ounces. Divide ounces by 16."
+          ],
+          "answer": "3 pounds"
+        },
+        {
+          "id": "gm-23",
+          "question": "A ribbon is 2 meters long. How many centimeters is that?",
+          "hints": [
+            "1 meter = 100 centimeters. Multiply."
+          ],
+          "answer": "200 cm"
+        },
+        {
+          "id": "gm-24",
+          "question": "A fish tank holds 3 gallons of water. How many quarts is that?",
+          "hints": [
+            "1 gallon = 4 quarts. Multiply."
+          ],
+          "answer": "12 quarts"
+        }
+      ],
+      "lessonId": "geometry_measurement"
+    }
+  ],
+  "answerKeys": {
+    "gm-1": "18 in",
+    "gm-2": "42 ft",
+    "gm-3": "9 cm",
+    "gm-4": "25 cm",
+    "gm-5": "336 m",
+    "gm-6": "8 ft",
+    "gm-7": "6 sq ft",
+    "gm-8": "44 sq m",
+    "gm-9": "120 sq ft",
+    "gm-10": "140 sq in",
+    "gm-11": "72 sq m",
+    "gm-12": "Acute",
+    "gm-13": "Obtuse",
+    "gm-14": "Straight angle, 180 degrees",
+    "gm-15": "Acute",
+    "gm-16": "Isosceles obtuse triangle",
+    "gm-17": "Parallelogram",
+    "gm-18": "Scalene right triangle",
+    "gm-19": "Trapezoid",
+    "gm-20": "72 inches",
+    "gm-21": "3 pints",
+    "gm-22": "3 pounds",
+    "gm-23": "200 cm",
+    "gm-24": "12 quarts"
+  }
+}

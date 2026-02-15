@@ -5,6 +5,7 @@
   "title": "Rational Expressions & Rational Functions",
   "weeks": "13-15",
   "estimatedDuration": 55,
+  "description": "Investigate functions built from ratios of polynomials, learning to simplify, solve, and graph rational expressions while navigating asymptotes and domain restrictions.",
   "skills": [
     "simplify-rational-expressions",
     "multiply-divide-rational-expressions",
@@ -43,19 +44,113 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "A **rational expression** is a ratio of two polynomials, p(x)/q(x), where q(x) ≠ 0.\n\n**Domain Restrictions:** Any x-value that makes a denominator zero is excluded from the domain. Always identify restrictions BEFORE simplifying.\n\n**Simplifying:** Factor the numerator and denominator completely, then cancel common FACTORS (not terms!).\nExample: (x² + 2x - 8)/(x² - 4) = (x+4)(x-2)/((x+2)(x-2)) = (x+4)/(x+2), where x ≠ 2 and x ≠ -2.\n\n**Operations on Rational Expressions:**\n• **Multiply:** Factor everything, cancel common factors across all numerators and denominators, then multiply straight across.\n• **Divide:** Flip the divisor (keep-change-flip), then multiply.\n• **Add/Subtract:** Factor all denominators → find the LCD → build equivalent fractions → combine numerators over the common denominator → simplify.\n\n**Complex Fractions:** A fraction that contains fractions in its numerator, denominator, or both. Strategy: find the LCD of ALL mini-fractions, then multiply the entire numerator and entire denominator by that LCD to clear all inner fractions at once.",
-      "initialPrompt": "What is the domain of (x + 1)/(x² - 9)? What values of x must be excluded, and why?"
+      "skill": "simplify-rational-expressions",
+      "title": "Concept: Simplify Rational Expressions",
+      "content": "A **rational expression** is a ratio of two polynomials, p(x)/q(x), where q(x) ≠ 0.\n\n**Domain Restrictions:** Any x-value that makes a denominator zero is excluded from the domain. Always identify restrictions BEFORE simplifying.\n\n**Simplifying:** Factor the numerator and denominator completely, then cancel common FACTORS (not terms!).\nExample: (x² + 2x - 8)/(x² - 4) = (x+4)(x-2)/((x+2)(x-2)) = (x+4)/(x+2), where x ≠ 2 and x ≠ -2.\n\n**Operations on Rational Expressions:**\n• **Multiply:** Factor everything, cancel common factors across all numerators and denominators, then multiply straight across.\n• **Divide:** Flip the divisor (keep-change-flip), then multiply.\n• **Add/Subtract:** Factor all denominators → find the LCD → build equivalent fractions → combine numerators over the common denominator → simplify.\n\n**Complex Fractions:** A fraction that contains fractions in its numerator, denominator, or both. Strategy: find the LCD of ALL mini-fractions, then multiply the entire numerator and entire denominator by that LCD to clear all inner fractions at once.",
+      "initialPrompt": "What is the domain of (x + 1)/(x² - 9)? What values of x must be excluded, and why?",
+      "lessonId": "simplifying-rational"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "Simplify (2x² + x - 6)/(x² + 3x + 2) and state all domain restrictions.",
-      "explanation": "**Step 1: Factor the numerator.**\n2x² + x - 6: find two numbers that multiply to 2·(-6) = -12 and add to 1.\nThose numbers are 4 and -3.\n2x² + 4x - 3x - 6 = 2x(x + 2) - 3(x + 2) = **(2x - 3)(x + 2)**\n\n**Step 2: Factor the denominator.**\nx² + 3x + 2 = **(x + 1)(x + 2)**\n\n**Step 3: State domain restrictions (BEFORE canceling).**\nDenominator = 0 when x = -1 or x = -2.\nRestrictions: **x ≠ -1 and x ≠ -2**\n\n**Step 4: Cancel common factors.**\n(2x - 3)(x + 2) / ((x + 1)(x + 2))\nThe factor (x + 2) appears in both numerator and denominator — cancel it.\n\n**Result: (2x - 3)/(x + 1), where x ≠ -2 and x ≠ -1**\n\nNote: x = -2 is a hole (the canceled factor), while x = -1 is a vertical asymptote (the remaining denominator factor).",
-      "initialPrompt": "Why must we write x ≠ -2 even though (x + 2) canceled? What would happen if we plugged x = -2 into the original expression?"
+      "skill": "simplify-rational-expressions",
+      "title": "I-Do: Simplify Rational Expressions — Worked Examples",
+      "initialPrompt": "Why must we write x ≠ -2 even though (x + 2) canceled? What would happen if we plugged x = -2 into the original expression?",
+      "examples": [
+        {
+          "problem": "Simplify (6x² - 7x - 3)/(2x² - 3x) and state all domain restrictions.",
+          "solution": "**Step 1: Factor the numerator.**\n6x² - 7x - 3: find two numbers that multiply to 6·(-3) = -18 and add to -7.\nThose numbers are -9 and 2.\n6x² - 9x + 2x - 3 = 3x(2x - 3) + 1(2x - 3) = **(3x + 1)(2x - 3)**\n\n**Step 2: Factor the denominator.**\n2x² - 3x = **x(2x - 3)**\n\n**Step 3: State domain restrictions BEFORE canceling.**\nx(2x - 3) = 0 when x = 0 or x = 3/2.\nRestrictions: **x ≠ 0 and x ≠ 3/2**\n\n**Step 4: Cancel the common factor (2x - 3).**\n(3x + 1)(2x - 3) / (x(2x - 3)) = **(3x + 1)/x**\n\n**Result: (3x + 1)/x, where x ≠ 0 and x ≠ 3/2**",
+          "tip": "Always factor out the GCF first — here the denominator has a common factor of x. Missing that GCF is one of the most frequent errors in simplifying rational expressions."
+        },
+        {
+          "problem": "Simplify (x² + 5x + 6)/(x² + 5x) and state all domain restrictions.",
+          "solution": "**Step 1: Factor the numerator.**\nx² + 5x + 6 = **(x + 2)(x + 3)**\n\n**Step 2: Factor the denominator.**\nx² + 5x = **x(x + 5)**\n\n**Step 3: State domain restrictions.**\nx(x + 5) = 0 when x = 0 or x = -5.\nRestrictions: **x ≠ 0 and x ≠ -5**\n\n**Step 4: Look for common factors.**\nNumerator factors: (x + 2)(x + 3)\nDenominator factors: x(x + 5)\nThere are NO common factors.\n\n**Result: (x + 2)(x + 3)/(x(x + 5)) — this expression does not simplify.**\n\nJust because the numerator and denominator look similar does not mean they share a factor. Cancel FACTORS, never TERMS.",
+          "tip": "This is a trap problem. Students often try to cancel the x² or the 5x — but those are TERMS, not FACTORS. You can only cancel a factor that divides the ENTIRE numerator and the ENTIRE denominator."
+        },
+        {
+          "problem": "Simplify (2x² + x - 6)/(x² + 3x + 2) and state all domain restrictions.",
+          "solution": "**Step 1: Factor the numerator.**\n2x² + x - 6: find two numbers that multiply to 2·(-6) = -12 and add to 1.\nThose numbers are 4 and -3.\n2x² + 4x - 3x - 6 = 2x(x + 2) - 3(x + 2) = **(2x - 3)(x + 2)**\n\n**Step 2: Factor the denominator.**\nx² + 3x + 2 = **(x + 1)(x + 2)**\n\n**Step 3: State domain restrictions (BEFORE canceling).**\nDenominator = 0 when x = -1 or x = -2.\nRestrictions: **x ≠ -1 and x ≠ -2**\n\n**Step 4: Cancel common factors.**\n(2x - 3)(x + 2) / ((x + 1)(x + 2))\nThe factor (x + 2) appears in both numerator and denominator — cancel it.\n\n**Result: (2x - 3)/(x + 1), where x ≠ -2 and x ≠ -1**\n\nNote: x = -2 is a hole (the canceled factor), while x = -1 is a vertical asymptote (the remaining denominator factor)."
+        }
+      ],
+      "lessonId": "simplifying-rational"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "multiply-divide-rational-expressions",
+      "title": "I-Do: Multiply & Divide Rational Expressions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Multiply and simplify: (x² - 9)/(x² + x - 2) · (x² - 1)/(x² + 6x + 9). State all domain restrictions.",
+          "solution": "**Step 1: Factor everything.**\nNumerator 1: x² - 9 = (x - 3)(x + 3)\nDenominator 1: x² + x - 2 = (x + 2)(x - 1)\nNumerator 2: x² - 1 = (x - 1)(x + 1)\nDenominator 2: x² + 6x + 9 = (x + 3)²\n\n**Step 2: State domain restrictions from ALL original denominators.**\n(x + 2)(x - 1) = 0 → x ≠ -2, x ≠ 1\n(x + 3)² = 0 → x ≠ -3\nRestrictions: **x ≠ -2, x ≠ 1, x ≠ -3**\n\n**Step 3: Write as one fraction and cancel common factors.**\n[(x - 3)(x + 3)(x - 1)(x + 1)] / [(x + 2)(x - 1)(x + 3)²]\nCancel (x - 1) and one (x + 3):\n= **(x - 3)(x + 1) / ((x + 2)(x + 3))**\n\n**Result: (x - 3)(x + 1)/((x + 2)(x + 3)), where x ≠ -2, x ≠ 1, x ≠ -3**",
+          "tip": "When multiplying rational expressions, factor EVERYTHING first, then cancel across all numerators and denominators at once. Never multiply out and then try to simplify — that creates much harder work."
+        },
+        {
+          "problem": "Divide and simplify: (x² - 4x)/(x² + 3x + 2) ÷ (x² - 16)/(x + 1). State all domain restrictions.",
+          "solution": "**Step 1: Keep-Change-Flip.** Rewrite the division as multiplication by the reciprocal.\n(x² - 4x)/(x² + 3x + 2) · (x + 1)/(x² - 16)\n\n**Step 2: Factor everything.**\nx² - 4x = x(x - 4)\nx² + 3x + 2 = (x + 1)(x + 2)\nx + 1 = (x + 1)\nx² - 16 = (x - 4)(x + 4)\n\n**Step 3: State domain restrictions from ALL original denominators.**\nFrom x² + 3x + 2 = 0: x ≠ -1, x ≠ -2\nFrom the original divisor's denominator x + 1 = 0: x ≠ -1 (already listed)\nThe divisor itself cannot be zero: x² - 16 = 0 gives x ≠ 4, x ≠ -4\nRestrictions: **x ≠ -1, x ≠ -2, x ≠ 4, x ≠ -4**\n\n**Step 4: Cancel common factors.**\n[x(x - 4)(x + 1)] / [(x + 1)(x + 2)(x - 4)(x + 4)]\nCancel (x - 4) and (x + 1):\n= **x/((x + 2)(x + 4))**\n\n**Result: x/((x + 2)(x + 4)), where x ≠ -1, x ≠ -2, x ≠ 4, x ≠ -4**",
+          "tip": "When dividing, the divisor (the expression you divide BY) also cannot equal zero. This can introduce additional domain restrictions beyond just the original denominators."
+        },
+        {
+          "problem": "Multiply and simplify: (4 - x²)/(x² + 5x + 6) · (x + 3)/(x + 2). State all domain restrictions.",
+          "solution": "**Step 1: Factor everything.**\n4 - x² = -(x² - 4) = -(x - 2)(x + 2)\nx² + 5x + 6 = (x + 2)(x + 3)\n\n**Step 2: State domain restrictions.**\n(x + 2)(x + 3) = 0 → x ≠ -2, x ≠ -3\n(x + 2) = 0 → x ≠ -2 (already listed)\nRestrictions: **x ≠ -2, x ≠ -3**\n\n**Step 3: Write as one fraction and cancel.**\n[-(x - 2)(x + 2)(x + 3)] / [(x + 2)(x + 3)(x + 2)]\nCancel one (x + 2) and (x + 3):\n= **-(x - 2)/(x + 2)** or equivalently **(2 - x)/(x + 2)**\n\n**Result: (2 - x)/(x + 2), where x ≠ -2 and x ≠ -3**",
+          "tip": "Watch for expressions like (4 - x²) which is a 'reversed' difference of squares. Factor as -(x² - 4) = -(x - 2)(x + 2). Recognizing the negative sign is critical to correct cancellation."
+        }
+      ],
+      "lessonId": "rational-operations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "add-subtract-rational-expressions",
+      "title": "I-Do: Add & Subtract Rational Expressions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Add: 3x/(x² - 4) + 2/(x + 2). Express as a single simplified fraction.",
+          "solution": "**Step 1: Factor all denominators.**\nx² - 4 = (x - 2)(x + 2)\nThe second denominator is already (x + 2).\n\n**Step 2: Find the LCD.**\nLCD = (x - 2)(x + 2)\n\n**Step 3: Build each fraction to the LCD.**\n3x/((x - 2)(x + 2)) already has the LCD.\n2/(x + 2) needs to be multiplied by (x - 2)/(x - 2):\n= 2(x - 2)/((x - 2)(x + 2))\n\n**Step 4: Combine numerators over the common denominator.**\n[3x + 2(x - 2)] / ((x - 2)(x + 2))\n= (3x + 2x - 4) / ((x - 2)(x + 2))\n= **(5x - 4)/((x - 2)(x + 2))**\n\n**Step 5: Check if the numerator factors and cancels.**\n5x - 4 does not share a factor with (x - 2) or (x + 2).\n\n**Result: (5x - 4)/((x - 2)(x + 2)), where x ≠ 2 and x ≠ -2**",
+          "tip": "Always factor denominators first to find the LCD efficiently. Here, recognizing x² - 4 = (x - 2)(x + 2) reveals that one denominator already appears inside the other — so the LCD is just the factored form of x² - 4."
+        },
+        {
+          "problem": "Subtract: x/(x - 5) - (x + 1)/(x² - 25). Express as a single simplified fraction.",
+          "solution": "**Step 1: Factor all denominators.**\nx - 5 is already factored.\nx² - 25 = (x - 5)(x + 5)\n\n**Step 2: Find the LCD.**\nLCD = (x - 5)(x + 5)\n\n**Step 3: Build each fraction to the LCD.**\nx/(x - 5) · (x + 5)/(x + 5) = x(x + 5)/((x - 5)(x + 5))\n(x + 1)/((x - 5)(x + 5)) already has the LCD.\n\n**Step 4: Combine numerators (careful with the subtraction sign!).**\n[x(x + 5) - (x + 1)] / ((x - 5)(x + 5))\n= (x² + 5x - x - 1) / ((x - 5)(x + 5))\n= **(x² + 4x - 1) / ((x - 5)(x + 5))**\n\n**Step 5: Check for cancellation.**\nThe discriminant of x² + 4x - 1 is 16 + 4 = 20, so its roots are irrational. No cancellation with (x - 5) or (x + 5).\n\n**Result: (x² + 4x - 1)/((x - 5)(x + 5)), where x ≠ 5 and x ≠ -5**",
+          "tip": "The most common error in subtraction is forgetting to distribute the negative sign to ALL terms in the second numerator. Always wrap the second numerator in parentheses before subtracting: x(x+5) - (x+1), not x(x+5) - x + 1."
+        },
+        {
+          "problem": "Add: 2/(x² + 3x + 2) + 3/(x² + 5x + 6). Express as a single simplified fraction.",
+          "solution": "**Step 1: Factor all denominators.**\nx² + 3x + 2 = (x + 1)(x + 2)\nx² + 5x + 6 = (x + 2)(x + 3)\n\n**Step 2: Find the LCD.**\nCommon factor: (x + 2). Remaining factors: (x + 1) and (x + 3).\nLCD = (x + 1)(x + 2)(x + 3)\n\n**Step 3: Build each fraction to the LCD.**\n2/((x + 1)(x + 2)) · (x + 3)/(x + 3) = 2(x + 3)/((x + 1)(x + 2)(x + 3))\n3/((x + 2)(x + 3)) · (x + 1)/(x + 1) = 3(x + 1)/((x + 1)(x + 2)(x + 3))\n\n**Step 4: Combine numerators.**\n[2(x + 3) + 3(x + 1)] / ((x + 1)(x + 2)(x + 3))\n= (2x + 6 + 3x + 3) / ((x + 1)(x + 2)(x + 3))\n= **(5x + 9)/((x + 1)(x + 2)(x + 3))**\n\n**Step 5: Check for cancellation.**\n5x + 9 = 0 when x = -9/5, which does not equal -1, -2, or -3. No cancellation.\n\n**Result: (5x + 9)/((x + 1)(x + 2)(x + 3)), where x ≠ -1, x ≠ -2, x ≠ -3**",
+          "tip": "When both denominators are trinomials, factoring them reveals shared factors that reduce the LCD. Without factoring, you might use a much larger (and unnecessary) common denominator."
+        }
+      ],
+      "lessonId": "rational-equations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "complex-fractions",
+      "title": "I-Do: Complex Fractions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Simplify the complex fraction: (1 + 2/x) / (1 - 4/x²).",
+          "solution": "**Step 1: Identify the LCD of all mini-fractions.**\nThe inner denominators are x and x². LCD = x².\n\n**Step 2: Multiply the entire numerator and entire denominator by x².**\nNumerator: x²·(1 + 2/x) = x² + 2x\nDenominator: x²·(1 - 4/x²) = x² - 4\n\n**Step 3: Factor and simplify.**\nNumerator: x² + 2x = x(x + 2)\nDenominator: x² - 4 = (x + 2)(x - 2)\n\nCancel (x + 2):\n= **x/(x - 2)**\n\n**Domain restrictions:** x ≠ 0 (from 2/x), x ≠ 2 and x ≠ -2 (from x² - 4 = 0).\n\n**Result: x/(x - 2), where x ≠ 0, x ≠ 2, x ≠ -2**",
+          "tip": "The LCD method (multiplying top and bottom by the LCD of all mini-fractions) is almost always faster than simplifying the numerator and denominator separately and then dividing."
+        },
+        {
+          "problem": "Simplify: (x/(x + 1) - 1) / (1/(x + 1)).",
+          "solution": "**Step 1: Identify the LCD of all mini-fractions.**\nInner denominators: (x + 1) and 1. LCD = (x + 1).\n\n**Step 2: Multiply the entire numerator and entire denominator by (x + 1).**\nNumerator: (x + 1)·[x/(x + 1) - 1] = x - (x + 1) = x - x - 1 = -1\nDenominator: (x + 1)·[1/(x + 1)] = 1\n\n**Step 3: Simplify.**\n-1/1 = **-1**\n\n**Domain restriction:** x ≠ -1 (from the original denominators).\n\n**Result: -1, where x ≠ -1**",
+          "tip": "A complex fraction can simplify to a constant! The key insight is that x/(x+1) - 1 = x/(x+1) - (x+1)/(x+1) = -1/(x+1), and dividing by 1/(x+1) yields -1."
+        },
+        {
+          "problem": "Simplify: (1/(x - 1) + 1/(x + 1)) / (1/(x² - 1)).",
+          "solution": "**Step 1: Note that x² - 1 = (x - 1)(x + 1). The LCD of all mini-fractions is (x - 1)(x + 1).**\n\n**Step 2: Multiply top and bottom by (x - 1)(x + 1).**\nNumerator: (x - 1)(x + 1)·[1/(x - 1) + 1/(x + 1)]\n= (x + 1) + (x - 1) = 2x\n\nDenominator: (x - 1)(x + 1)·[1/(x² - 1)]\n= (x - 1)(x + 1)·1/((x - 1)(x + 1)) = 1\n\n**Step 3: Simplify.**\n2x/1 = **2x**\n\n**Domain restrictions:** x ≠ 1 and x ≠ -1.\n\n**Result: 2x, where x ≠ 1 and x ≠ -1**",
+          "tip": "When the bottom of a complex fraction is itself a single fraction like 1/(x² - 1), dividing by it is the same as multiplying by its reciprocal (x² - 1). This is exactly what the LCD method accomplishes automatically."
+        }
+      ],
+      "lessonId": "rational-graphing"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "add-subtract-rational-expressions",
+      "title": "We-Do: Add Subtract Rational Expressions — Guided Practice",
       "problems": [
         {
           "question": "Simplify: (x² - 5x + 6)/(x² - 4). State all restrictions.",
@@ -88,30 +183,152 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start by factoring the numerator x² - 5x + 6. What two numbers multiply to 6 and add to -5?"
+      "initialPrompt": "For the first problem, start by factoring the numerator x² - 5x + 6. What two numbers multiply to 6 and add to -5?",
+      "lessonId": "rational-equations"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Rational Equations** are equations containing one or more rational expressions.\n\n**Solving Strategy:**\n1. Identify the LCD of ALL denominators in the equation.\n2. Multiply EVERY term on both sides by the LCD to clear all fractions.\n3. Solve the resulting polynomial equation.\n4. **CHECK for extraneous solutions:** substitute each candidate back into the original equation. If it makes ANY denominator equal to zero, REJECT it.\n\n**Why extraneous solutions appear:** When we multiply both sides by an expression containing the variable, we may multiply by zero for certain x-values. This can introduce false solutions that satisfied the cleared equation but not the original.\n\n**Example of extraneous behavior:**\nIf the equation has denominator (x - 5) and our solution is x = 5, then x = 5 is extraneous because it makes the original expression undefined.\n\n**Important:** An equation can have all its candidates turn out extraneous, making the answer 'no solution.' Always report this rather than forcing an answer.",
-      "initialPrompt": "Consider the equation 1/(x - 4) = 1/(x - 4). Is x = 4 a solution? Why or why not?"
+      "skill": "rational-equations",
+      "title": "Concept: Rational Equations & Extraneous Solutions",
+      "content": "**Rational Equations** are equations containing one or more rational expressions.\n\n**Solving Strategy:**\n1. Identify the LCD of ALL denominators in the equation.\n2. Multiply EVERY term on both sides by the LCD to clear all fractions.\n3. Solve the resulting polynomial equation.\n4. **CHECK for extraneous solutions:** substitute each candidate back into the original equation. If it makes ANY denominator equal to zero, REJECT it.\n\n**Why extraneous solutions appear:** When we multiply both sides by an expression containing the variable, we may multiply by zero for certain x-values. This can introduce false solutions that satisfied the cleared equation but not the original.\n\n**Example of extraneous behavior:**\nIf the equation has denominator (x - 5) and our solution is x = 5, then x = 5 is extraneous because it makes the original expression undefined.\n\n**Important:** An equation can have all its candidates turn out extraneous, making the answer 'no solution.' Always report this rather than forcing an answer.",
+      "initialPrompt": "Consider the equation 1/(x - 4) = 1/(x - 4). Is x = 4 a solution? Why or why not?",
+      "lessonId": "simplifying-rational"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "Solve: x/(x - 2) + 1 = 2/(x - 2). Check for extraneous solutions.",
-      "explanation": "**Step 1: Identify the LCD.**\nDenominators are (x - 2) and 1 (the middle term). LCD = (x - 2).\n\n**Step 2: Multiply every term by (x - 2).**\n(x - 2) · x/(x - 2) + (x - 2) · 1 = (x - 2) · 2/(x - 2)\nx + (x - 2) = 2\n\n**Step 3: Solve.**\nx + x - 2 = 2\n2x - 2 = 2\n2x = 4\nx = 2\n\n**Step 4: Check for extraneous solutions.**\nSubstitute x = 2 into the original equation:\nx/(x - 2) = 2/(2 - 2) = 2/0 → **UNDEFINED**\n\nx = 2 makes the denominator zero, so it is **extraneous**.\n\n**Answer: No solution.**\n\nThe algebraic steps produced x = 2, but that value breaks the original equation. This is a classic extraneous-solution scenario — the only candidate fails the check, so the equation has no solution.",
-      "initialPrompt": "What went wrong algebraically? At which step did we 'allow' x = 2 to sneak in as a false solution?"
+      "skill": "rational-equations",
+      "title": "I-Do: Rational Equations — Worked Examples",
+      "initialPrompt": "What went wrong algebraically? At which step did we 'allow' x = 2 to sneak in as a false solution?",
+      "examples": [
+        {
+          "problem": "Solve: 3/(x + 4) - 1/(x - 1) = 5/((x + 4)(x - 1)). Check for extraneous solutions.",
+          "solution": "**Step 1: Identify the LCD.**\nDenominators: (x + 4), (x - 1), and (x + 4)(x - 1). LCD = (x + 4)(x - 1).\n\n**Step 2: Multiply every term by (x + 4)(x - 1).**\n3(x - 1) - 1(x + 4) = 5\n\n**Step 3: Solve.**\n3x - 3 - x - 4 = 5\n2x - 7 = 5\n2x = 12\nx = 6\n\n**Step 4: Check for extraneous solutions.**\nx = 6: denominators become (6 + 4) = 10 and (6 - 1) = 5. Neither is zero.\nVerify: 3/10 - 1/5 = 3/10 - 2/10 = 1/10, and 5/(10·5) = 5/50 = 1/10.\n\n**Answer: x = 6**",
+          "tip": "Not every rational equation produces extraneous solutions. When the answer does not make any denominator zero, it is valid. Always check anyway — it only takes a moment."
+        },
+        {
+          "problem": "Solve: 5/(x² - x - 6) = 2/(x - 3) + 1/(x + 2). Check for extraneous solutions.",
+          "solution": "**Step 1: Factor the first denominator.**\nx² - x - 6 = (x - 3)(x + 2). So LCD = (x - 3)(x + 2).\n\n**Step 2: Multiply every term by (x - 3)(x + 2).**\n5 = 2(x + 2) + 1(x - 3)\n\n**Step 3: Solve.**\n5 = 2x + 4 + x - 3\n5 = 3x + 1\n4 = 3x\nx = 4/3\n\n**Step 4: Check for extraneous solutions.**\nx = 4/3: (4/3 - 3) = -5/3 and (4/3 + 2) = 10/3. Neither is zero. Valid!\n\n**Answer: x = 4/3**",
+          "tip": "Fractional solutions are perfectly valid. The key question is always: does the candidate make a denominator zero? If not, it is a genuine solution regardless of whether it is an integer or a fraction."
+        },
+        {
+          "problem": "Solve: x/(x - 2) + 1 = 2/(x - 2). Check for extraneous solutions.",
+          "solution": "**Step 1: Identify the LCD.**\nDenominators are (x - 2) and 1 (the middle term). LCD = (x - 2).\n\n**Step 2: Multiply every term by (x - 2).**\n(x - 2) · x/(x - 2) + (x - 2) · 1 = (x - 2) · 2/(x - 2)\nx + (x - 2) = 2\n\n**Step 3: Solve.**\nx + x - 2 = 2\n2x - 2 = 2\n2x = 4\nx = 2\n\n**Step 4: Check for extraneous solutions.**\nSubstitute x = 2 into the original equation:\nx/(x - 2) = 2/(2 - 2) = 2/0 → **UNDEFINED**\n\nx = 2 makes the denominator zero, so it is **extraneous**.\n\n**Answer: No solution.**\n\nThe algebraic steps produced x = 2, but that value breaks the original equation. This is a classic extraneous-solution scenario — the only candidate fails the check, so the equation has no solution."
+        }
+      ],
+      "lessonId": "simplifying-rational"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "extraneous-solutions",
+      "title": "I-Do: Extraneous Solutions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Solve: (x + 3)/(x - 1) = 4/(x - 1) + 2. Check for extraneous solutions.",
+          "solution": "**Step 1: Identify the LCD.** LCD = (x - 1).\n\n**Step 2: Multiply every term by (x - 1).**\n(x + 3) = 4 + 2(x - 1)\n\n**Step 3: Solve.**\nx + 3 = 4 + 2x - 2\nx + 3 = 2x + 2\n3 - 2 = 2x - x\nx = 1\n\n**Step 4: Check for extraneous solutions.**\nx = 1 makes (x - 1) = 0. The original equation has (x - 1) in a denominator, so x = 1 is **extraneous**.\n\n**Answer: No solution.**\n\nThis is another case where the only algebraic candidate fails the domain check.",
+          "tip": "Whenever the variable appears in only one distinct denominator expression (here x - 1), there is a higher chance the solution will be extraneous. Be especially vigilant in these cases."
+        },
+        {
+          "problem": "Solve: x/(x + 3) + 4/(x - 2) = (5x + 3)/((x + 3)(x - 2)). Check for extraneous solutions.",
+          "solution": "**Step 1: Identify the LCD.** LCD = (x + 3)(x - 2).\n\n**Step 2: Multiply every term by (x + 3)(x - 2).**\nx(x - 2) + 4(x + 3) = 5x + 3\n\n**Step 3: Expand and solve.**\nx² - 2x + 4x + 12 = 5x + 3\nx² + 2x + 12 = 5x + 3\nx² - 3x + 9 = 0\n\n**Step 4: Use the quadratic formula.**\nD = (-3)² - 4(1)(9) = 9 - 36 = -27\nD < 0 → no real solutions.\n\n**Answer: No real solution.**\n\nHere the equation has no solution not because of extraneous solutions, but because the quadratic that results from clearing denominators has no real roots. Both outcomes ('no solution from extraneous' and 'no solution from the algebra') are possible with rational equations.",
+          "tip": "'No real solution' can arise in two different ways for rational equations: (1) all candidates are extraneous, or (2) the polynomial equation after clearing denominators has no real roots. Both are valid 'no solution' outcomes."
+        },
+        {
+          "problem": "Solve: 2x/(x² - 4) + 1/(x + 2) = 1/(x - 2). Check for extraneous solutions.",
+          "solution": "**Step 1: Factor and find the LCD.**\nx² - 4 = (x + 2)(x - 2). LCD = (x + 2)(x - 2).\n\n**Step 2: Multiply every term by (x + 2)(x - 2).**\n2x + (x - 2) = (x + 2)\n\n**Step 3: Solve.**\n2x + x - 2 = x + 2\n3x - 2 = x + 2\n2x = 4\nx = 2\n\n**Step 4: Check for extraneous solutions.**\nx = 2 makes (x - 2) = 0. This appears in the original denominators, so x = 2 is **extraneous**.\n\n**Answer: No solution.**",
+          "tip": "When the LCD contains multiple variable factors, the candidate can be extraneous because of ANY of them. Here x = 2 zeroes out (x - 2), which appears in two of the three original denominators."
+        }
+      ],
+      "lessonId": "rational-graphing"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "vertical-horizontal-asymptotes",
+      "title": "I-Do: Vertical & Horizontal Asymptotes — Worked Examples",
+      "examples": [
+        {
+          "problem": "Find all asymptotes and intercepts of f(x) = (3x - 6)/(x² - x - 2).",
+          "solution": "**Step 1: Factor numerator and denominator.**\nNumerator: 3x - 6 = 3(x - 2)\nDenominator: x² - x - 2 = (x - 2)(x + 1)\n\n**Step 2: Identify holes (common factors).**\n(x - 2) cancels. Hole at x = 2.\nSimplified form: 3/(x + 1).\nHole y-coordinate: 3/(2 + 1) = 1. **Hole at (2, 1).**\n\n**Step 3: Vertical asymptote.**\nSet remaining denominator = 0: x + 1 = 0 → **VA: x = -1**\n\n**Step 4: Horizontal asymptote.**\nOriginal numerator degree (1) < denominator degree (2), so **HA: y = 0**.\n\n**Step 5: x-intercept.**\nSet simplified numerator = 0: 3 = 0 has no solution. **No x-intercept.**\n\n**Step 6: y-intercept.**\nf(0) = (3(0) - 6)/(0 - 0 - 2) = -6/(-2) = 3. **y-intercept: (0, 3).**",
+          "tip": "After canceling common factors, the simplified numerator is the constant 3 — it can never equal zero. This means the graph never crosses the x-axis."
+        },
+        {
+          "problem": "Find all asymptotes of f(x) = (5x² + 10x)/(2x² - 8).",
+          "solution": "**Step 1: Factor numerator and denominator.**\nNumerator: 5x² + 10x = 5x(x + 2)\nDenominator: 2x² - 8 = 2(x² - 4) = 2(x - 2)(x + 2)\n\n**Step 2: Identify holes.**\n(x + 2) cancels. Hole at x = -2.\nSimplified form: 5x/(2(x - 2)).\nHole y-coordinate: 5(-2)/(2(-2 - 2)) = -10/(-8) = 5/4. **Hole at (-2, 5/4).**\n\n**Step 3: Vertical asymptote.**\nRemaining denominator: 2(x - 2) = 0 → x = 2. **VA: x = 2.**\n\n**Step 4: Horizontal asymptote.**\nOriginal degrees are equal (both 2). HA = leading coefficient of numerator / leading coefficient of denominator = 5/2. **HA: y = 5/2.**",
+          "tip": "For the horizontal asymptote, always compare degrees of the ORIGINAL (unfactored) numerator and denominator, and use their LEADING coefficients. Here 5x²/2x² gives y = 5/2."
+        },
+        {
+          "problem": "Find all asymptotes of f(x) = (x² + 1)/(x - 3). Is there a slant asymptote?",
+          "solution": "**Step 1: Check for holes.**\nNumerator: x² + 1 does not factor over the reals (discriminant = -4 < 0).\nDenominator: (x - 3).\nNo common factors, so no holes.\n\n**Step 2: Vertical asymptote.**\nx - 3 = 0 → **VA: x = 3**\n\n**Step 3: Horizontal asymptote check.**\nDegree of numerator (2) > degree of denominator (1). **No horizontal asymptote.**\n\n**Step 4: Slant (oblique) asymptote.** Since numerator degree = denominator degree + 1, perform polynomial long division.\nx² + 1 divided by (x - 3):\nx² / x = x. Multiply: x(x - 3) = x² - 3x. Subtract: (x² + 1) - (x² - 3x) = 3x + 1.\n3x / x = 3. Multiply: 3(x - 3) = 3x - 9. Subtract: (3x + 1) - (3x - 9) = 10.\n\nSo f(x) = x + 3 + 10/(x - 3). **Slant asymptote: y = x + 3.**\n\nAs x → ±infinity, the remainder 10/(x - 3) → 0, and the graph approaches the line y = x + 3.",
+          "tip": "A slant asymptote occurs when the numerator degree is exactly one more than the denominator degree. Perform polynomial long division: the quotient (ignoring the remainder) is the slant asymptote."
+        }
+      ],
+      "lessonId": "rational-graphing"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "holes-in-rational-functions",
+      "title": "I-Do: Holes in Rational Functions — Worked Examples",
+      "examples": [
+        {
+          "problem": "For f(x) = (x² - 2x - 15)/(x² - 9), find all holes, vertical asymptotes, and the horizontal asymptote.",
+          "solution": "**Step 1: Factor completely.**\nNumerator: x² - 2x - 15 = (x - 5)(x + 3)\nDenominator: x² - 9 = (x - 3)(x + 3)\n\n**Step 2: Identify holes.**\nCommon factor: (x + 3). This cancels, creating a hole at x = -3.\nSimplified form: (x - 5)/(x - 3).\nHole y-coordinate: (-3 - 5)/(-3 - 3) = -8/(-6) = 4/3.\n**Hole at (-3, 4/3).**\n\n**Step 3: Vertical asymptote.**\nRemaining denominator: (x - 3) = 0 → **VA: x = 3.**\n\n**Step 4: Horizontal asymptote.**\nOriginal degrees are equal (both 2). HA = 1/1 = 1. **HA: y = 1.**",
+          "tip": "Holes and vertical asymptotes both come from denominator zeros, but they have very different graphical effects. A hole is an invisible 'missing point.' A vertical asymptote is a barrier with the function shooting to ±infinity."
+        },
+        {
+          "problem": "For f(x) = (x³ - 4x)/(x² - 4), find all features: holes, VAs, HA, and intercepts.",
+          "solution": "**Step 1: Factor completely.**\nNumerator: x³ - 4x = x(x² - 4) = x(x - 2)(x + 2)\nDenominator: x² - 4 = (x - 2)(x + 2)\n\n**Step 2: Identify holes.**\nCommon factors: (x - 2) and (x + 2) both cancel.\nHole at x = 2: simplified form is f(x) = x, so y = 2. **Hole at (2, 2).**\nHole at x = -2: y = -2. **Hole at (-2, -2).**\n\n**Step 3: Simplified form is f(x) = x** (with holes at x = 2 and x = -2).\n\n**Step 4: Vertical asymptotes.**\nNo factors remain in the denominator after canceling. **No vertical asymptotes.**\n\n**Step 5: Horizontal asymptote.**\nOriginal: degree 3 numerator, degree 2 denominator. Numerator degree > denominator degree. **No horizontal asymptote.**\n\n**Step 6: Intercepts.**\nx-intercept: x = 0, so **(0, 0)**. y-intercept: f(0) = 0, so **(0, 0)**.\n\nThe graph is the line y = x with two holes punched out at (2, 2) and (-2, -2).",
+          "tip": "A rational function can have MULTIPLE holes. Every common factor between numerator and denominator creates one. This function simplifies to a line — all asymptotic behavior has been 'canceled away.'"
+        },
+        {
+          "problem": "Determine whether x = 4 is a hole or a vertical asymptote of f(x) = (x² - 16)/(x² - 3x - 4).",
+          "solution": "**Step 1: Factor completely.**\nNumerator: x² - 16 = (x - 4)(x + 4)\nDenominator: x² - 3x - 4 = (x - 4)(x + 1)\n\n**Step 2: Check for the common factor at x = 4.**\n(x - 4) appears in BOTH numerator and denominator. It cancels.\nTherefore, **x = 4 is a hole** (removable discontinuity), not a vertical asymptote.\n\nSimplified form: (x + 4)/(x + 1).\nHole y-coordinate: (4 + 4)/(4 + 1) = 8/5.\n**Hole at (4, 8/5).**\n\nThe remaining denominator factor (x + 1) gives **VA: x = -1**.",
+          "tip": "If the factor causing the zero cancels, it is a hole. If the factor remains in the denominator after simplifying, it is a vertical asymptote. Factor first, then classify."
+        }
+      ],
+      "lessonId": "simplifying-rational"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "rational-function-graphing",
+      "title": "I-Do: Graphing Rational Functions — Worked Examples",
+      "examples": [
+        {
+          "problem": "Sketch the graph of f(x) = (2x)/(x² - 1). Identify all key features.",
+          "solution": "**Step 1: Factor.**\nNumerator: 2x\nDenominator: x² - 1 = (x - 1)(x + 1)\nNo common factors.\n\n**Step 2: Domain restrictions / Vertical asymptotes.**\n(x - 1)(x + 1) = 0 → x = 1 and x = -1. **VAs: x = 1 and x = -1.**\n\n**Step 3: Horizontal asymptote.**\nDegree of numerator (1) < degree of denominator (2). **HA: y = 0.**\n\n**Step 4: x-intercepts.** Set 2x = 0 → x = 0. **x-intercept: (0, 0).**\n\n**Step 5: y-intercept.** f(0) = 0/(0 - 1) = 0. **y-intercept: (0, 0).**\n\n**Step 6: Symmetry check.** f(-x) = 2(-x)/((-x)² - 1) = -2x/(x² - 1) = -f(x). The function is **odd** — symmetric about the origin.\n\n**Step 7: Sign analysis / test points.**\n- x < -1 (try x = -2): f(-2) = -4/(4-1) = -4/3 < 0\n- -1 < x < 0 (try x = -0.5): f(-0.5) = -1/(0.25-1) = -1/(-0.75) = 4/3 > 0\n- 0 < x < 1 (try x = 0.5): f(0.5) = 1/(0.25-1) = 1/(-0.75) = -4/3 < 0\n- x > 1 (try x = 2): f(2) = 4/(4-1) = 4/3 > 0\n\n**Sketch:** The graph passes through the origin, with vertical asymptotes at x = -1 and x = 1, approaching y = 0 as x → ±infinity. It has odd symmetry about the origin.",
+          "tip": "Checking symmetry (even/odd) can cut your work in half. If f(-x) = -f(x), the graph has odd symmetry about the origin — you only need to analyze one side and reflect."
+        },
+        {
+          "problem": "Sketch f(x) = (x + 1)/(x² - 2x - 3). Identify all key features including any holes.",
+          "solution": "**Step 1: Factor.**\nNumerator: (x + 1)\nDenominator: x² - 2x - 3 = (x - 3)(x + 1)\n\n**Step 2: Identify hole.**\nCommon factor (x + 1) cancels. Hole at x = -1.\nSimplified form: 1/(x - 3).\nHole y-coordinate: 1/(-1 - 3) = 1/(-4) = -1/4. **Hole at (-1, -1/4).**\n\n**Step 3: Vertical asymptote.**\nRemaining denominator: (x - 3) = 0. **VA: x = 3.**\n\n**Step 4: Horizontal asymptote.**\nOriginal: degree 1 / degree 2 → **HA: y = 0.**\n\n**Step 5: x-intercepts.**\nSimplified numerator is 1 (constant, never zero). **No x-intercepts.**\n\n**Step 6: y-intercept.**\nf(0) = (0 + 1)/(0 - 0 - 3) = 1/(-3) = -1/3. **y-intercept: (0, -1/3).**\n\n**Step 7: Behavior near asymptote.**\nAs x → 3 from the left, f(x) → -infinity. As x → 3 from the right, f(x) → +infinity.\n\n**Sketch:** The graph looks like y = 1/(x - 3) — a standard reciprocal function shifted right 3 — with a hole at (-1, -1/4). It never touches the x-axis.",
+          "tip": "After simplification, recognize the parent function. Here 1/(x - 3) is a horizontal shift of y = 1/x by 3 units right. Knowing the parent graph makes sketching much faster."
+        },
+        {
+          "problem": "Sketch f(x) = (2x² - 8)/(x² - 5x + 6). Identify all key features.",
+          "solution": "**Step 1: Factor.**\nNumerator: 2x² - 8 = 2(x² - 4) = 2(x - 2)(x + 2)\nDenominator: x² - 5x + 6 = (x - 2)(x - 3)\n\n**Step 2: Identify hole.**\nCommon factor (x - 2) cancels. Hole at x = 2.\nSimplified form: 2(x + 2)/(x - 3).\nHole y-coordinate: 2(2 + 2)/(2 - 3) = 2(4)/(-1) = -8. **Hole at (2, -8).**\n\n**Step 3: Vertical asymptote.**\nRemaining denominator: (x - 3) = 0. **VA: x = 3.**\n\n**Step 4: Horizontal asymptote.**\nOriginal degrees are equal (both 2). HA = 2/1 = 2. **HA: y = 2.**\n\n**Step 5: x-intercepts.**\nSet simplified numerator = 0: 2(x + 2) = 0 → x = -2. **x-intercept: (-2, 0).**\n\n**Step 6: y-intercept.**\nf(0) = 2(0 - 4)/(0 - 0 + 6) = -8/6 = -4/3. **y-intercept: (0, -4/3).**\n\n**Step 7: Test points near VA.**\nAs x → 3 from the left (try x = 2.9): 2(4.9)/(-0.1) = -98 → -infinity.\nAs x → 3 from the right (try x = 3.1): 2(5.1)/(0.1) = 102 → +infinity.\n\n**Sketch:** The graph crosses the x-axis at (-2, 0), passes through y-intercept (0, -4/3), has a hole at (2, -8) just before the vertical asymptote at x = 3, and levels off toward y = 2 as x → ±infinity.",
+          "tip": "Test points near the vertical asymptote reveal which direction the graph shoots. Try values slightly less than and slightly greater than the VA to determine whether f(x) → +infinity or -infinity on each side."
+        }
+      ],
+      "lessonId": "simplifying-rational"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Graphing Rational Functions** f(x) = p(x)/q(x):\n\n**Step-by-step analysis:**\n1. **Factor** numerator and denominator completely.\n2. **Holes (removable discontinuities):** Where a factor cancels from both top and bottom. To find the y-coordinate of the hole, substitute the x-value into the simplified function.\n3. **Vertical Asymptotes (VA):** Set the simplified denominator = 0. The graph approaches ±∞ near these x-values.\n4. **Horizontal Asymptote (HA):** Compare the degree of the numerator (n) to the degree of the denominator (d):\n   • n < d → HA: y = 0\n   • n = d → HA: y = (leading coefficient of numerator)/(leading coefficient of denominator)\n   • n > d → No HA (look for an oblique/slant asymptote)\n5. **x-intercepts:** Set the simplified numerator = 0.\n6. **y-intercept:** Evaluate f(0).\n\n**Transformations of y = 1/x:**\nf(x) = a/(x - h) + k shifts the parent function right h, up k, and stretches vertically by |a|. The VA becomes x = h and the HA becomes y = k.",
-      "initialPrompt": "For f(x) = (2x + 6)/(x² - 9), factor both top and bottom. Do you see a common factor? What does that tell you about the graph?"
+      "skill": "vertical-horizontal-asymptotes",
+      "title": "Concept: Graphing Rational Functions",
+      "content": "**Graphing Rational Functions** f(x) = p(x)/q(x):\n\n**Step-by-step analysis:**\n1. **Factor** numerator and denominator completely.\n2. **Holes (removable discontinuities):** Where a factor cancels from both top and bottom. To find the y-coordinate of the hole, substitute the x-value into the simplified function.\n3. **Vertical Asymptotes (VA):** Set the simplified denominator = 0. The graph approaches ±infinity near these x-values.\n4. **Horizontal Asymptote (HA):** Compare the degree of the numerator (n) to the degree of the denominator (d):\n   - n < d: HA: y = 0\n   - n = d: HA: y = (leading coefficient of numerator)/(leading coefficient of denominator)\n   - n > d: No HA (look for an oblique/slant asymptote)\n5. **x-intercepts:** Set the simplified numerator = 0.\n6. **y-intercept:** Evaluate f(0).\n\n**Transformations of y = 1/x:**\nf(x) = a/(x - h) + k shifts the parent function right h, up k, and stretches vertically by |a|. The VA becomes x = h and the HA becomes y = k.",
+      "initialPrompt": "For f(x) = (2x + 6)/(x² - 9), factor both top and bottom. Do you see a common factor? What does that tell you about the graph?",
+      "lessonId": "rational-graphing"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "vertical-horizontal-asymptotes",
+      "title": "We-Do: Vertical Horizontal Asymptotes — Guided Practice",
       "problems": [
         {
           "question": "Solve: 4/(x - 3) + x/(x + 3) = 24/(x² - 9). Check for extraneous solutions.",
@@ -146,11 +363,14 @@
           ]
         }
       ],
-      "initialPrompt": "For the equation problem, notice that x² - 9 factors as (x - 3)(x + 3). This means the LCD is already on the right side. What should you multiply each term by?"
+      "initialPrompt": "For the equation problem, notice that x² - 9 factors as (x - 3)(x + 3). This means the LCD is already on the right side. What should you multiply each term by?",
+      "lessonId": "rational-graphing"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "skill": "holes-in-rational-functions",
+      "title": "You-Do: Holes In Rational Functions — Independent Practice",
       "problems": [
         {
           "question": "Simplify: (3x² - 12)/(x² + 4x + 4). State all domain restrictions.",
@@ -211,15 +431,35 @@
           ]
         }
       ],
-      "attemptsRequired": 4
+      "attemptsRequired": 4,
+      "lessonId": "simplifying-rational"
     }
   ],
   "answerKeys": {
     "(2x²+x-6)/(x²+3x+2)": "(2x-3)/(x+1), x≠-2, x≠-1",
+    "(6x²-7x-3)/(2x²-3x)": "(3x+1)/x, x≠0, x≠3/2",
+    "(x²-9)/(x²+x-2)·(x²-1)/(x²+6x+9)": "(x-3)(x+1)/((x+2)(x+3)), x≠-2, x≠1, x≠-3",
+    "(x²-4x)/(x²+3x+2)÷(x²-16)/(x+1)": "x/((x+2)(x+4)), x≠-1, x≠-2, x≠4, x≠-4",
+    "3x/(x²-4)+2/(x+2)": "(5x-4)/((x-2)(x+2))",
+    "x/(x-5)-(x+1)/(x²-25)": "(x²+4x-1)/((x-5)(x+5))",
+    "2/(x²+3x+2)+3/(x²+5x+6)": "(5x+9)/((x+1)(x+2)(x+3))",
+    "(1+2/x)/(1-4/x²)": "x/(x-2), x≠0, x≠-2",
+    "(x/(x+1)-1)/(1/(x+1))": "-1, x≠-1",
+    "(1/(x-1)+1/(x+1))/(1/(x²-1))": "2x, x≠1, x≠-1",
     "(x²-5x+6)/(x²-4)": "(x-3)/(x+2), x≠2, x≠-2",
     "2/(x-3) + 5/(x+1)": "(7x-13)/((x-3)(x+1))",
     "(1/x-1/y)/(1/x+1/y)": "(y-x)/(y+x)",
     "x/(x-2)+1=2/(x-2)": "No solution (x=2 is extraneous)",
+    "3/(x+4)-1/(x-1)=5/((x+4)(x-1))": "x=6",
+    "5/(x²-x-6)=2/(x-3)+1/(x+2)": "x=4/3",
+    "(x+3)/(x-1)=4/(x-1)+2": "No solution (x=1 is extraneous)",
+    "2x/(x²-4)+1/(x+2)=1/(x-2)": "No solution (x=2 is extraneous)",
+    "f(x)=(3x-6)/(x²-x-2) features": "Hole (2,1), VA: x=-1, HA: y=0, y-int: (0,3)",
+    "f(x)=(5x²+10x)/(2x²-8) features": "Hole (-2,5/4), VA: x=2, HA: y=5/2",
+    "f(x)=(x²+1)/(x-3) features": "VA: x=3, slant asymptote: y=x+3",
+    "f(x)=(x²-2x-15)/(x²-9) features": "Hole (-3,4/3), VA: x=3, HA: y=1",
+    "f(x)=(x³-4x)/(x²-4) features": "Holes (2,2) and (-2,-2), no VA, no HA, simplified: y=x",
+    "f(x)=(x²-16)/(x²-3x-4) features": "Hole (4,8/5), VA: x=-1",
     "4/(x-3)+x/(x+3)=24/(x²-9)": "x=-4 (x=3 is extraneous)",
     "f(x)=(2x+1)/(x-3) features": "VA: x=3, HA: y=2, x-int: (-1/2,0), y-int: (0,-1/3)",
     "(x²-4)/(x²-x-2) features": "Hole at (2,4/3), VA: x=-1, HA: y=1",
@@ -229,5 +469,27 @@
     "2/(x+1)+1/(x-2)=3/((x+1)(x-2))": "No solution (x=2 is extraneous)",
     "f(x)=3x/(x²-4) features": "VA: x=2 and x=-2, HA: y=0, intercept: (0,0)",
     "(x²-x-6)/(x²-9) features": "Hole (3,5/6), VA: x=-3, HA: y=1, x-int: (-2,0), y-int: (0,2/3)"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "simplifying-rational",
+      "title": "Simplifying Rational Expressions",
+      "order": 1
+    },
+    {
+      "lessonId": "rational-operations",
+      "title": "Operations with Rational Expressions",
+      "order": 2
+    },
+    {
+      "lessonId": "rational-equations",
+      "title": "Solving Rational Equations",
+      "order": 3
+    },
+    {
+      "lessonId": "rational-graphing",
+      "title": "Graphing Rational Functions",
+      "order": 4
+    }
+  ]
 }

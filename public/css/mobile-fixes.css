@@ -44,6 +44,23 @@ input, textarea, select, .math-field {
     }
 }
 
+/* --- 1b. TOUR ELEMENTS — keep them out of the way on mobile --- */
+
+@media (max-width: 768px) {
+    /* The persistent tour help button (position:fixed via inline JS) overlaps
+       the chat input area on mobile.  Hide it so it doesn't block interactive
+       elements.  The initial tour prompt still appears for new users. */
+    .tour-help-btn {
+        display: none !important;
+    }
+
+    /* The one-time tour prompt popup is positioned fixed at bottom-right via
+       inline styles.  Push it above the input area so it doesn't overlap. */
+    #tour-prompt > div {
+        bottom: 80px !important;
+    }
+}
+
 /* --- 2. MOBILE HEADER (<=768px) --- */
 
 @media (max-width: 768px) {

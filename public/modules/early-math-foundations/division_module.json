@@ -1,0 +1,452 @@
+{
+  "moduleId": "division",
+  "course": "Early Math Foundations",
+  "unit": 3,
+  "title": "Division Mastery",
+  "weeks": "8-9",
+  "estimatedDuration": 35,
+  "description": "Division is multiplication's partner. Students connect division facts to multiplication through fact families, master the long division algorithm (DMSB: Divide-Multiply-Subtract-Bring down) with 1-digit and 2-digit divisors, learn to interpret remainders in context (round up, drop, or convert to fraction), and solve division word problems involving sharing and grouping.",
+  "skills": [
+    "emf-division-facts",
+    "emf-long-division",
+    "emf-interpreting-remainders",
+    "emf-divide-word-problems"
+  ],
+  "standardsAlignment": [
+    "3.OA.A.2",
+    "3.OA.A.3",
+    "3.OA.C.7",
+    "4.NBT.B.6",
+    "4.OA.A.3",
+    "5.NBT.B.6"
+  ],
+  "goals": [
+    "Recall division facts through 144 ÷ 12 fluently by connecting each fact to its multiplication partner",
+    "Execute the long division algorithm (DMSB) accurately with both 1-digit and 2-digit divisors, including quotients with zeros",
+    "Interpret remainders correctly based on the real-world context of a problem — round up, drop, or express as a fraction",
+    "Solve single-step and multi-step division word problems involving sharing and grouping, and check that answers are reasonable"
+  ],
+  "instructionalStrategy": [
+    "Gradual release for each skill: concept-intro → I Do → We Do → You Do, keeping pace patient and building on prior multiplication knowledge",
+    "Connect every division fact to multiplication ('think multiplication': 56 ÷ 8 = ? means 8 × ? = 56) so students build on what they already know",
+    "Use relatable, real-world scenarios (sharing snacks, field trips, packing boxes, splitting pizza) to make division meaningful and concrete",
+    "Encourage students to estimate before calculating and check answers by multiplying back — build the habit of asking 'Does my answer make sense?'"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Division Facts — Think Multiplication!",
+      "skill": "emf-division-facts",
+      "content": "Division is just multiplication flipped around. When you see 56 ÷ 8, you're really asking: '8 times WHAT equals 56?' If you know your multiplication facts, you already know your division facts — you just read them backward! Every set of multiplication and division facts forms a fact family, like a team of four related equations.",
+      "keyPoints": [
+        "Division means splitting into equal groups. 56 ÷ 8 asks: 'How many groups of 8 fit inside 56?' or '56 shared equally among 8 gives how many each?'",
+        "Think multiplication to divide: 56 ÷ 8 = ? → ask yourself '8 × ? = 56' → 8 × 7 = 56, so the answer is 7",
+        "A fact family links two multiplication facts and two division facts: 7 × 8 = 56, 8 × 7 = 56, 56 ÷ 7 = 8, 56 ÷ 8 = 7",
+        "You need division facts all the way through 144 ÷ 12 — that means knowing your times tables through 12 × 12",
+        "Any number divided by 1 equals itself (24 ÷ 1 = 24). Any number divided by itself equals 1 (24 ÷ 24 = 1). You can never divide by 0.",
+        "Tip: If a division fact feels hard, flip it into multiplication. The multiplication form is usually easier to recall."
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Division Facts — Worked Examples",
+      "skill": "emf-division-facts",
+      "examples": [
+        {
+          "problem": "What is 56 ÷ 8?",
+          "solution": "Think multiplication: 8 × ? = 56.\nI know 8 × 7 = 56.\nSo 56 ÷ 8 = 7.\n\nCheck: 7 × 8 = 56. ✓"
+        },
+        {
+          "problem": "What is 144 ÷ 12?",
+          "solution": "Think multiplication: 12 × ? = 144.\nI know 12 × 12 = 144.\nSo 144 ÷ 12 = 12.\n\nCheck: 12 × 12 = 144. ✓\n\nNotice: When a number is divided by one of its factors, the answer is always a whole number."
+        },
+        {
+          "problem": "Write the complete fact family for 6 × 9 = 54.",
+          "solution": "A fact family has four equations — two multiplication and two division:\n1) 6 × 9 = 54\n2) 9 × 6 = 54\n3) 54 ÷ 6 = 9\n4) 54 ÷ 9 = 6\n\nAll four facts use the same three numbers: 6, 9, and 54. Knowing any one of these means you know the other three!"
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Division Facts — Guided Practice",
+      "skill": "emf-division-facts",
+      "problems": [
+        {
+          "id": "div-1",
+          "problem": "What is 72 ÷ 9?",
+          "hints": [
+            "Think multiplication: 9 × ? = 72",
+            "Start from facts you know. 9 × 7 = 63 (too small). 9 × 8 = 72. That's it!"
+          ],
+          "answer": "72 ÷ 9 = 8. Because 9 × 8 = 72."
+        },
+        {
+          "id": "div-2",
+          "problem": "What is 108 ÷ 12?",
+          "hints": [
+            "Think multiplication: 12 × ? = 108",
+            "Try skip-counting by 12: 12, 24, 36, 48, 60, 72, 84, 96, 108. How many 12s is that?"
+          ],
+          "answer": "108 ÷ 12 = 9. Because 12 × 9 = 108."
+        },
+        {
+          "id": "div-3",
+          "problem": "Write the complete fact family for 7 × 11 = 77.",
+          "hints": [
+            "A fact family has four equations: two multiplication facts and two division facts.",
+            "Use the three numbers 7, 11, and 77 to write all four."
+          ],
+          "answer": "The fact family is: 7 × 11 = 77, 11 × 7 = 77, 77 ÷ 7 = 11, 77 ÷ 11 = 7."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Division Facts — Independent Practice",
+      "skill": "emf-division-facts",
+      "problems": [
+        {
+          "id": "div-4",
+          "problem": "What is 84 ÷ 7?",
+          "answer": "84 ÷ 7 = 12. Because 7 × 12 = 84."
+        },
+        {
+          "id": "div-5",
+          "problem": "What is 132 ÷ 11?",
+          "answer": "132 ÷ 11 = 12. Because 11 × 12 = 132."
+        },
+        {
+          "id": "div-6",
+          "problem": "If 9 × ___ = 63, then what is 63 ÷ 9?",
+          "answer": "9 × 7 = 63, so 63 ÷ 9 = 7. The multiplication fact and the division fact are partners."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Long Division — The DMSB Method",
+      "skill": "emf-long-division",
+      "content": "When numbers get bigger, we need a step-by-step method for dividing. That method is long division, and it follows four repeating steps: Divide, Multiply, Subtract, Bring down — DMSB. Some students remember it as 'Does McDonald's Serve Burgers?' You repeat the DMSB cycle until there are no more digits to bring down. This works for 1-digit divisors, 2-digit divisors, and beyond.",
+      "keyPoints": [
+        "D — Divide: How many times does the divisor go into the current number? Write that digit on top.",
+        "M — Multiply: Multiply the divisor by the digit you just wrote. Write the product below.",
+        "S — Subtract: Subtract to find what's left over.",
+        "B — Bring down: Bring down the next digit from the dividend and repeat DMSB.",
+        "Important: If the divisor doesn't go into the current number at all, write 0 on top and bring down the next digit. Don't skip the zero!",
+        "With 2-digit divisors, estimate each digit: 'About how many times does 23 go into 174?' Think: 23 × 7 = 161, 23 × 8 = 184 (too big), so it goes 7 times.",
+        "Always check your answer: quotient × divisor should equal the dividend."
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Long Division — Worked Examples",
+      "skill": "emf-long-division",
+      "examples": [
+        {
+          "problem": "Solve 468 ÷ 3 using long division.",
+          "solution": "Set up: 3 ) 468\n\nStep 1 — D: 3 goes into 4 one time. Write 1 on top.\nStep 2 — M: 1 × 3 = 3. Write 3 below the 4.\nStep 3 — S: 4 − 3 = 1.\nStep 4 — B: Bring down the 6. Now you have 16.\n\nStep 5 — D: 3 goes into 16 five times. Write 5 on top.\nStep 6 — M: 5 × 3 = 15. Write 15 below 16.\nStep 7 — S: 16 − 15 = 1.\nStep 8 — B: Bring down the 8. Now you have 18.\n\nStep 9 — D: 3 goes into 18 six times. Write 6 on top.\nStep 10 — M: 6 × 3 = 18. Write 18 below.\nStep 11 — S: 18 − 18 = 0. No remainder!\n\nAnswer: 468 ÷ 3 = 156.\nCheck: 156 × 3 = 468. ✓"
+        },
+        {
+          "problem": "Solve 2,408 ÷ 4 using long division. (Watch for a zero in the quotient!)",
+          "solution": "Set up: 4 ) 2408\n\nD: 4 goes into 24 six times. Write 6.\nM: 6 × 4 = 24.\nS: 24 − 24 = 0.\nB: Bring down the 0. Now you have 0.\n\nD: 4 goes into 0 zero times. Write 0 on top. Don't skip it!\nM: 0 × 4 = 0.\nS: 0 − 0 = 0.\nB: Bring down the 8. Now you have 8.\n\nD: 4 goes into 8 two times. Write 2.\nM: 2 × 4 = 8.\nS: 8 − 8 = 0.\n\nAnswer: 2,408 ÷ 4 = 602.\nCheck: 602 × 4 = 2,408. ✓\n\nKey lesson: That 0 in the middle of the quotient is important! Many students forget it and write 62 instead of 602."
+        },
+        {
+          "problem": "Solve 1,748 ÷ 23 using long division (2-digit divisor).",
+          "solution": "Set up: 23 ) 1748\n\nFirst, does 23 go into 1? No. Into 17? No (23 > 17). Into 174? Yes!\n\nD: Estimate — 23 × 7 = 161, 23 × 8 = 184 (too big). So 7.\nM: 7 × 23 = 161. Write 161 below 174.\nS: 174 − 161 = 13.\nB: Bring down the 8. Now you have 138.\n\nD: Estimate — 23 × 6 = 138. Exactly!\nM: 6 × 23 = 138. Write 138 below.\nS: 138 − 138 = 0.\n\nAnswer: 1,748 ÷ 23 = 76.\nCheck: 76 × 23 = 1,748. ✓\n\nWith 2-digit divisors, estimating each digit is the key skill. Round the divisor: think '23 is close to 20' to help guess."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Long Division — Guided Practice",
+      "skill": "emf-long-division",
+      "problems": [
+        {
+          "id": "div-7",
+          "problem": "Solve 756 ÷ 6 using long division.",
+          "hints": [
+            "Start with DMSB. How many times does 6 go into 7?",
+            "6 goes into 7 one time. 1 × 6 = 6. Subtract: 7 − 6 = 1. Bring down the 5 to make 15. Now how many times does 6 go into 15?"
+          ],
+          "answer": "756 ÷ 6 = 126. Steps: 6 into 7 = 1 (remainder 1), bring down 5 → 15, 6 into 15 = 2 (remainder 3), bring down 6 → 36, 6 into 36 = 6 (remainder 0). Check: 126 × 6 = 756."
+        },
+        {
+          "id": "div-8",
+          "problem": "Solve 3,045 ÷ 5 using long division. (Be careful — there's a zero in the quotient!)",
+          "hints": [
+            "5 goes into 30 six times. Subtract and bring down the 4. Does 5 go into 4?",
+            "5 does NOT go into 4, so write 0 on top and bring down the 5 to make 45."
+          ],
+          "answer": "3,045 ÷ 5 = 609. Steps: 5 into 30 = 6 (remainder 0), bring down 4 → 4, 5 into 4 = 0 (write the 0!), bring down 5 → 45, 5 into 45 = 9 (remainder 0). Check: 609 × 5 = 3,045."
+        },
+        {
+          "id": "div-9",
+          "problem": "Solve 1,536 ÷ 32 using long division (2-digit divisor).",
+          "hints": [
+            "32 doesn't go into 1 or 15, so start with 153. Estimate: 32 × 4 = 128, 32 × 5 = 160 (too big). So 32 goes into 153 four times.",
+            "After subtracting 128 from 153 you get 25. Bring down the 6 to make 256. Now estimate: 32 × 8 = 256."
+          ],
+          "answer": "1,536 ÷ 32 = 48. Steps: 32 into 153 = 4 (4 × 32 = 128, remainder 25), bring down 6 → 256, 32 into 256 = 8 (8 × 32 = 256, remainder 0). Check: 48 × 32 = 1,536."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Long Division — Independent Practice",
+      "skill": "emf-long-division",
+      "problems": [
+        {
+          "id": "div-10",
+          "problem": "Solve 846 ÷ 3 using long division. Show each DMSB step.",
+          "answer": "846 ÷ 3 = 282. Steps: 3 into 8 = 2 (remainder 2), bring down 4 → 24, 3 into 24 = 8 (remainder 0), bring down 6 → 6, 3 into 6 = 2 (remainder 0). Check: 282 × 3 = 846."
+        },
+        {
+          "id": "div-11",
+          "problem": "Solve 4,207 ÷ 7 using long division. Watch for a zero in the quotient!",
+          "answer": "4,207 ÷ 7 = 601. Steps: 7 into 42 = 6 (remainder 0), bring down 0 → 0, 7 into 0 = 0 (write the 0!), bring down 7 → 7, 7 into 7 = 1 (remainder 0). Check: 601 × 7 = 4,207."
+        },
+        {
+          "id": "div-12",
+          "problem": "Solve 2,088 ÷ 24 using long division (2-digit divisor).",
+          "answer": "2,088 ÷ 24 = 87. Steps: 24 into 20 = can't, look at 208. 24 × 8 = 192, 24 × 9 = 216 (too big). So 8. 208 − 192 = 16, bring down 8 → 168. 24 × 7 = 168. 168 − 168 = 0. Check: 87 × 24 = 2,088."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Interpreting Remainders — What Do I Do With the Leftovers?",
+      "skill": "emf-interpreting-remainders",
+      "content": "Sometimes when you divide, the numbers don't come out evenly — you get a remainder. The really important part isn't just finding the remainder. It's deciding what to DO with it. The story in the problem tells you how to handle the leftover. There are three main options, and the context of the problem determines which one to use.",
+      "keyPoints": [
+        "Round up the quotient: When you need ENOUGH of something to hold everyone or everything. Example: You need enough buses for ALL the students — even if the last bus isn't full, you still need it.",
+        "Drop the remainder (use only the quotient): When only complete groups count. Example: How many FULL bags can you make? The leftover items don't make a full bag, so they don't count.",
+        "Express the remainder as a fraction: When you're sharing something that CAN be split into pieces. Example: 3 friends share 7 cookies — each gets 2 whole cookies and 1/3 of the leftover cookie.",
+        "To write the remainder as a fraction: put the remainder over the divisor. For 7 ÷ 3 = 2 R1, each person gets 2 and 1/3.",
+        "Key question to ask yourself: 'Does the leftover part matter in this story? If so, how?'"
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Interpreting Remainders — Worked Examples",
+      "skill": "emf-interpreting-remainders",
+      "examples": [
+        {
+          "problem": "25 students are going on a field trip. Each bus holds 8 students. How many buses are needed?",
+          "solution": "Divide: 25 ÷ 8 = 3 remainder 1.\n\n3 buses would hold 24 students, but there are 25. That last 1 student still needs a seat!\n\nAction: Round UP to 4 buses.\n\nWhy? You can't leave a student behind. Even though the 4th bus won't be full, you still need it.\n\nAnswer: 4 buses."
+        },
+        {
+          "problem": "You have 25 stickers. You put 8 stickers in each gift bag. How many FULL gift bags can you make?",
+          "solution": "Divide: 25 ÷ 8 = 3 remainder 1.\n\nYou can fill 3 complete bags (3 × 8 = 24 stickers). The 1 leftover sticker isn't enough for another full bag.\n\nAction: DROP the remainder — use only the quotient.\n\nWhy? The question asks for full bags. One sticker doesn't fill a bag.\n\nAnswer: 3 full gift bags."
+        },
+        {
+          "problem": "3 friends share 7 cookies equally. How many cookies does each friend get?",
+          "solution": "Divide: 7 ÷ 3 = 2 remainder 1.\n\nEach friend gets 2 whole cookies (3 × 2 = 6 cookies used). There's 1 cookie left over. But you CAN split a cookie!\n\nAction: Write the remainder as a FRACTION. The 1 leftover cookie is split 3 ways, so each friend gets 1/3 more.\n\nEach friend gets 2 and 1/3 cookies.\n\nWhy? Cookies can be cut into pieces, so we share the leftover fairly.\n\nAnswer: 2 1/3 cookies each."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Interpreting Remainders — Guided Practice",
+      "skill": "emf-interpreting-remainders",
+      "problems": [
+        {
+          "id": "div-13",
+          "problem": "47 students are going on a trip. Each van holds 6 students. How many vans are needed?",
+          "hints": [
+            "First divide: 47 ÷ 6. What do you get?",
+            "47 ÷ 6 = 7 remainder 5. There are 5 students left without a seat. Can you leave them behind, or do you need another van?"
+          ],
+          "answer": "8 vans. 47 ÷ 6 = 7 R5. You need to round UP because every student needs a ride. 7 vans hold 42 students, but 5 more still need seats, so you need an 8th van."
+        },
+        {
+          "id": "div-14",
+          "problem": "A baker has 50 muffins. Each box holds 12 muffins. How many FULL boxes can the baker fill?",
+          "hints": [
+            "Divide: 50 ÷ 12. What's the quotient and remainder?",
+            "50 ÷ 12 = 4 remainder 2. The question asks for FULL boxes. Do 2 leftover muffins fill a box?"
+          ],
+          "answer": "4 full boxes. 50 ÷ 12 = 4 R2. Drop the remainder — 2 muffins aren't enough to fill another box. Only 4 boxes are completely full."
+        },
+        {
+          "id": "div-15",
+          "problem": "4 friends share 13 feet of ribbon equally. How much ribbon does each friend get?",
+          "hints": [
+            "Divide: 13 ÷ 4. What's the quotient and remainder?",
+            "13 ÷ 4 = 3 remainder 1. Can ribbon be cut into smaller pieces? Write the leftover as a fraction: remainder over divisor."
+          ],
+          "answer": "3 1/4 feet each. 13 ÷ 4 = 3 R1. Ribbon can be cut, so express the remainder as a fraction: 1/4. Each friend gets 3 and 1/4 feet of ribbon."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Interpreting Remainders — Independent Practice",
+      "skill": "emf-interpreting-remainders",
+      "problems": [
+        {
+          "id": "div-16",
+          "problem": "A teacher has 34 pencils. She puts 5 pencils in each cup. How many cups does she need so that ALL pencils are in a cup?",
+          "answer": "7 cups. 34 ÷ 5 = 6 R4. Round UP — the 4 leftover pencils still need a cup, so 7 cups are needed."
+        },
+        {
+          "id": "div-17",
+          "problem": "You have 29 photos. Each album page holds 4 photos. How many pages are completely filled?",
+          "answer": "7 pages. 29 ÷ 4 = 7 R1. Drop the remainder — 1 photo doesn't fill a page. Only 7 pages are completely full."
+        },
+        {
+          "id": "div-18",
+          "problem": "6 children share 20 granola bars equally. How many granola bars does each child get?",
+          "answer": "3 1/3 granola bars each. 20 ÷ 6 = 3 R2. Granola bars can be split, so express the remainder as a fraction: 2/6 = 1/3. Each child gets 3 and 1/3 granola bars."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Division Word Problems — Sharing, Grouping, and Multi-Step",
+      "skill": "emf-divide-word-problems",
+      "content": "Division shows up in word problems in two main ways. Sharing (also called partitioning) means splitting a total equally — like dealing cards. Grouping (also called measurement division) means making groups of a certain size — like packing boxes. Some problems need more than one step: you might add or subtract first, then divide. The key is reading carefully, choosing the right operation, and always checking if your answer makes sense.",
+      "keyPoints": [
+        "Sharing problems: 'I have 96 markers and 8 tables. How many markers per table?' → 96 ÷ 8. You know the total and the number of groups.",
+        "Grouping problems: 'I have 96 markers and want bags of 12. How many bags?' → 96 ÷ 12. You know the total and the size of each group.",
+        "Multi-step problems: Read the whole problem first. You may need to add, subtract, or multiply before you divide.",
+        "Clue words: 'equally,' 'each,' 'per,' 'shared,' 'split,' 'distributed,' and 'how many groups' often signal division.",
+        "Reasonableness check: After solving, ask 'Does my answer make sense?' Multiply back to verify: quotient × divisor should equal the dividend.",
+        "Not every problem with big numbers requires division — read carefully and choose the right operation."
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Division Word Problems — Worked Examples",
+      "skill": "emf-divide-word-problems",
+      "examples": [
+        {
+          "problem": "A school has 96 markers to share equally among 8 tables. How many markers does each table get?",
+          "solution": "Identify the type: SHARING — we know the total (96) and the number of groups (8 tables). We need to find how many in each group.\n\nDivide: 96 ÷ 8 = 12.\n\nEach table gets 12 markers.\n\nCheck: 12 × 8 = 96. ✓ That matches the total."
+        },
+        {
+          "problem": "A baker made 156 cookies. She puts 12 cookies in each box. How many boxes does she fill?",
+          "solution": "Identify the type: GROUPING — we know the total (156) and the group size (12 per box). We need to find the number of groups.\n\nDivide: 156 ÷ 12 = 13.\n\nShe fills 13 boxes.\n\nCheck: 13 × 12 = 156. ✓\n\nTip: For 156 ÷ 12, you can think '12 × 10 = 120, 12 × 3 = 36, and 120 + 36 = 156. So 10 + 3 = 13.'"
+        },
+        {
+          "problem": "Sam had 128 baseball cards. He gave 28 to his friend. He wants to put the rest in pages that hold 4 cards each. How many pages does he need?",
+          "solution": "This is a MULTI-STEP problem.\n\nStep 1 — Subtract first: 128 − 28 = 100 cards remaining.\nStep 2 — Then divide: 100 ÷ 4 = 25 pages.\n\nSam needs 25 pages.\n\nCheck: 25 × 4 = 100, and 100 + 28 = 128. ✓\n\nAlways read the whole problem before you start computing. If you just divided 128 ÷ 4, you'd get the wrong answer!"
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Division Word Problems — Guided Practice",
+      "skill": "emf-divide-word-problems",
+      "problems": [
+        {
+          "id": "div-19",
+          "problem": "A school ordered 252 juice boxes for 7 classes. Each class gets the same number. How many juice boxes does each class get?",
+          "hints": [
+            "Is this sharing or grouping? You know the total and the number of groups (classes).",
+            "Divide 252 by 7. Use long division or think: 7 × 30 = 210, 7 × 6 = 42, and 210 + 42 = 252."
+          ],
+          "answer": "36 juice boxes per class. 252 ÷ 7 = 36. This is a sharing problem — splitting the total equally among 7 classes. Check: 36 × 7 = 252."
+        },
+        {
+          "id": "div-20",
+          "problem": "A farmer collected 840 eggs. He packs them in cartons of 12. How many cartons does he fill?",
+          "hints": [
+            "Is this sharing or grouping? You know the total and the size of each group (12 per carton).",
+            "Divide 840 by 12. Think: 12 × 70 = 840."
+          ],
+          "answer": "70 cartons. 840 ÷ 12 = 70. This is a grouping problem — making groups of 12 from the total. Check: 70 × 12 = 840."
+        },
+        {
+          "id": "div-21",
+          "problem": "Maria earned $45 on Saturday and $63 on Sunday. She wants to split her total earnings equally over 9 weeks of savings. How much does she save per week?",
+          "hints": [
+            "This is a multi-step problem. What do you need to do BEFORE dividing?",
+            "First add: $45 + $63 = $108. Now divide $108 by 9 weeks."
+          ],
+          "answer": "$12 per week. Step 1: $45 + $63 = $108 total. Step 2: $108 ÷ 9 = $12 per week. Check: $12 × 9 = $108."
+        }
+      ],
+      "lessonId": "division"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Division Word Problems — Independent Practice",
+      "skill": "emf-divide-word-problems",
+      "problems": [
+        {
+          "id": "div-22",
+          "problem": "A library received 360 new books. They want to display them equally on 9 shelves. How many books go on each shelf?",
+          "answer": "40 books per shelf. 360 ÷ 9 = 40. Sharing problem — splitting equally among 9 shelves. Check: 40 × 9 = 360."
+        },
+        {
+          "id": "div-23",
+          "problem": "A factory produces 2,184 toy cars in a day. They pack 8 cars in each box. How many boxes do they fill?",
+          "answer": "273 boxes. 2,184 ÷ 8 = 273. Grouping problem — making groups of 8. Check: 273 × 8 = 2,184."
+        },
+        {
+          "id": "div-24",
+          "problem": "A class collected 145 cans in Week 1 and 175 cans in Week 2. They want to fill bags of 8 cans each for recycling. How many full bags can they fill?",
+          "answer": "40 full bags. Step 1: 145 + 175 = 320 total cans. Step 2: 320 ÷ 8 = 40 bags with no remainder. Check: 40 × 8 = 320."
+        }
+      ],
+      "lessonId": "division"
+    }
+  ],
+  "answerKeys": {
+    "div-1": "8",
+    "div-2": "9",
+    "div-3": "7 × 11 = 77, 11 × 7 = 77, 77 ÷ 7 = 11, 77 ÷ 11 = 7",
+    "div-4": "12",
+    "div-5": "12",
+    "div-6": "7",
+    "div-7": "126",
+    "div-8": "609",
+    "div-9": "48",
+    "div-10": "282",
+    "div-11": "601",
+    "div-12": "87",
+    "div-13": "8 vans (round up)",
+    "div-14": "4 full boxes (drop remainder)",
+    "div-15": "3 1/4 feet (remainder as fraction)",
+    "div-16": "7 cups (round up)",
+    "div-17": "7 pages (drop remainder)",
+    "div-18": "3 1/3 granola bars (remainder as fraction)",
+    "div-19": "36",
+    "div-20": "70",
+    "div-21": "$12",
+    "div-22": "40",
+    "div-23": "273",
+    "div-24": "40"
+  }
+}

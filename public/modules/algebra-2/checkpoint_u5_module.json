@@ -7,37 +7,133 @@
   "estimatedDuration": 30,
   "type": "assessment",
   "description": "Assessment covering logarithm evaluation and exponential-logarithmic conversion, properties of logarithms (expanding and condensing), solving exponential and logarithmic equations with domain checks, and real-world modeling with compound interest, half-life, and population growth.",
-  "skillsCovered": ["log-evaluation-conversion", "logarithmic-properties", "exponential-equations", "logarithmic-equations", "exponential-growth-decay-models"],
+  "skillsCovered": [
+    "logarithm-evaluation-conversion",
+    "logarithm-properties",
+    "exponential-logarithmic-equations",
+    "exponential-logarithmic-equations",
+    "exponential-growth-decay"
+  ],
   "passThreshold": 70,
   "remediationResources": [
-    {"skillId": "log-evaluation-conversion", "moduleId": "exponential_log_unit", "focusArea": "Evaluating logs and converting between exponential and logarithmic form"},
-    {"skillId": "logarithmic-properties", "moduleId": "exponential_log_unit", "focusArea": "Product, quotient, and power rules for expanding and condensing"},
-    {"skillId": "exponential-equations", "moduleId": "exponential_log_unit", "focusArea": "Solving exponential equations using common bases and logarithms"},
-    {"skillId": "logarithmic-equations", "moduleId": "exponential_log_unit", "focusArea": "Solving logarithmic equations and checking for extraneous solutions"},
-    {"skillId": "exponential-growth-decay-models", "moduleId": "exponential_log_unit", "focusArea": "Compound interest, half-life, and continuous growth models"}
+    {
+      "skillId": "logarithm-evaluation-conversion",
+      "moduleId": "exponential_log_unit",
+      "focusArea": "Evaluating logs and converting between exponential and logarithmic form"
+    },
+    {
+      "skillId": "logarithm-properties",
+      "moduleId": "exponential_log_unit",
+      "focusArea": "Product, quotient, and power rules for expanding and condensing"
+    },
+    {
+      "skillId": "exponential-logarithmic-equations",
+      "moduleId": "exponential_log_unit",
+      "focusArea": "Solving exponential equations using common bases and logarithms"
+    },
+    {
+      "skillId": "exponential-logarithmic-equations",
+      "moduleId": "exponential_log_unit",
+      "focusArea": "Solving logarithmic equations and checking for extraneous solutions"
+    },
+    {
+      "skillId": "exponential-growth-decay",
+      "moduleId": "exponential_log_unit",
+      "focusArea": "Compound interest, half-life, and continuous growth models"
+    }
   ],
   "assessmentProblems": [
-    {"id": "a2u5-1", "question": "Evaluate each logarithm: (a) log₂(32)  (b) log₅(1/125)  (c) ln(e³)", "answer": "(a) 5, because 2⁵ = 32. (b) -3, because 5⁻³ = 1/125. (c) 3, because ln(e³) = 3.", "skill": "log-evaluation-conversion", "difficulty": 3, "points": 8},
-    {"id": "a2u5-2", "question": "Convert between forms: (a) Rewrite log₇(343) = 3 in exponential form. (b) Rewrite 4⁻² = 1/16 in logarithmic form. (c) Evaluate log₉(1).", "answer": "(a) 7³ = 343. (b) log₄(1/16) = -2. (c) 0, because log₉(1) = 0 (any base raised to 0 equals 1).", "skill": "log-evaluation-conversion", "difficulty": 3, "points": 8},
-    {"id": "a2u5-3", "question": "Expand completely using properties of logarithms: log₃(x⁴y / z²).", "answer": "4log₃(x) + log₃(y) - 2log₃(z). Quotient rule first: log₃(x⁴y) - log₃(z²). Product rule: log₃(x⁴) + log₃(y) - log₃(z²). Power rule: 4log₃(x) + log₃(y) - 2log₃(z).", "skill": "logarithmic-properties", "difficulty": 4, "points": 8},
-    {"id": "a2u5-4", "question": "Condense into a single logarithm: 3ln(x) + (1/2)ln(y) - 4ln(z).", "answer": "ln(x³√y / z⁴). Power rule: ln(x³) + ln(y^(1/2)) - ln(z⁴). Product rule: ln(x³√y) - ln(z⁴). Quotient rule: ln(x³√y / z⁴).", "skill": "logarithmic-properties", "difficulty": 5, "points": 10},
-    {"id": "a2u5-5", "question": "Solve the exponential equation: 5^(2x - 1) = 125.", "answer": "x = 2. Rewrite 125 as 5³: 5^(2x - 1) = 5³. Set exponents equal: 2x - 1 = 3. Solve: 2x = 4, x = 2.", "skill": "exponential-equations", "difficulty": 4, "points": 10},
-    {"id": "a2u5-6", "question": "Solve and check for extraneous solutions: log₂(x + 3) + log₂(x - 1) = 5.", "answer": "x = 5. Combine: log₂((x + 3)(x - 1)) = 5. Convert: (x + 3)(x - 1) = 32. Expand: x² + 2x - 3 = 32. Simplify: x² + 2x - 35 = 0. Factor: (x + 7)(x - 5) = 0. x = -7 or x = 5. Domain check: log arguments must be positive, so x > 1. x = -7 is extraneous. Check x = 5: log₂(8) + log₂(4) = 3 + 2 = 5 ✓.", "skill": "logarithmic-equations", "difficulty": 6, "points": 10},
-    {"id": "a2u5-7", "question": "$5,000 is invested at 8% annual interest compounded quarterly. Using A = P(1 + r/n)^(nt), find the amount after 10 years. Round to the nearest cent.", "answer": "$11,040.20. A = 5000(1 + 0.08/4)^(4·10) = 5000(1.02)^40 ≈ 5000(2.20804) ≈ $11,040.20.", "skill": "exponential-growth-decay-models", "difficulty": 5, "points": 10},
-    {"id": "a2u5-8", "question": "A radioactive substance has a half-life of 12 years. If the initial amount is 200 grams: (a) Write a function A(t) for the amount remaining after t years. (b) How much remains after 36 years?", "answer": "(a) A(t) = 200(1/2)^(t/12). (b) A(36) = 200(1/2)^(36/12) = 200(1/2)³ = 200(1/8) = 25 grams.", "skill": "exponential-growth-decay-models", "difficulty": 5, "points": 12},
-    {"id": "a2u5-9", "question": "Solve: e^(2x) = 15. Give the exact answer and a decimal approximation rounded to three decimal places.", "answer": "Exact: x = ln(15)/2. Approximate: x ≈ 2.708/2 ≈ 1.354. Take ln of both sides: 2x = ln(15). Divide by 2: x = ln(15)/2 ≈ 1.354.", "skill": "exponential-equations", "difficulty": 5, "points": 10},
-    {"id": "a2u5-10", "question": "A town's population grows continuously according to P(t) = P₀e^(kt), where t is years after 2010. The population was 25,000 in 2010 and 32,000 in 2020. (a) Find the continuous growth rate k (exact and approximate). (b) Predict the population in 2030. (c) In what year will the population reach 50,000?", "answer": "(a) 32000 = 25000e^(10k). e^(10k) = 1.28. k = ln(1.28)/10 ≈ 0.02469. (b) P(20) = 25000e^(20k) = 25000(1.28)² = 25000(1.6384) = 40,960. (c) 50000 = 25000e^(kt). e^(kt) = 2. kt = ln(2). t = ln(2)/k = 10·ln(2)/ln(1.28) ≈ 28.1 years, so approximately the year 2038.", "skill": "exponential-growth-decay-models", "difficulty": 7, "points": 14}
+    {
+      "id": "a2u5-1",
+      "question": "Evaluate each logarithm: (a) log\u2082(32)  (b) log\u2085(1/125)  (c) ln(e\u00b3)",
+      "answer": "(a) 5, because 2\u2075 = 32. (b) -3, because 5\u207b\u00b3 = 1/125. (c) 3, because ln(e\u00b3) = 3.",
+      "skill": "logarithm-evaluation-conversion",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a2u5-2",
+      "question": "Convert between forms: (a) Rewrite log\u2087(343) = 3 in exponential form. (b) Rewrite 4\u207b\u00b2 = 1/16 in logarithmic form. (c) Evaluate log\u2089(1).",
+      "answer": "(a) 7\u00b3 = 343. (b) log\u2084(1/16) = -2. (c) 0, because log\u2089(1) = 0 (any base raised to 0 equals 1).",
+      "skill": "logarithm-evaluation-conversion",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a2u5-3",
+      "question": "Expand completely using properties of logarithms: log\u2083(x\u2074y / z\u00b2).",
+      "answer": "4log\u2083(x) + log\u2083(y) - 2log\u2083(z). Quotient rule first: log\u2083(x\u2074y) - log\u2083(z\u00b2). Product rule: log\u2083(x\u2074) + log\u2083(y) - log\u2083(z\u00b2). Power rule: 4log\u2083(x) + log\u2083(y) - 2log\u2083(z).",
+      "skill": "logarithm-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u5-4",
+      "question": "Condense into a single logarithm: 3ln(x) + (1/2)ln(y) - 4ln(z).",
+      "answer": "ln(x\u00b3\u221ay / z\u2074). Power rule: ln(x\u00b3) + ln(y^(1/2)) - ln(z\u2074). Product rule: ln(x\u00b3\u221ay) - ln(z\u2074). Quotient rule: ln(x\u00b3\u221ay / z\u2074).",
+      "skill": "logarithm-properties",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u5-5",
+      "question": "Solve the exponential equation: 5^(2x - 1) = 125.",
+      "answer": "x = 2. Rewrite 125 as 5\u00b3: 5^(2x - 1) = 5\u00b3. Set exponents equal: 2x - 1 = 3. Solve: 2x = 4, x = 2.",
+      "skill": "exponential-logarithmic-equations",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a2u5-6",
+      "question": "Solve and check for extraneous solutions: log\u2082(x + 3) + log\u2082(x - 1) = 5.",
+      "answer": "x = 5. Combine: log\u2082((x + 3)(x - 1)) = 5. Convert: (x + 3)(x - 1) = 32. Expand: x\u00b2 + 2x - 3 = 32. Simplify: x\u00b2 + 2x - 35 = 0. Factor: (x + 7)(x - 5) = 0. x = -7 or x = 5. Domain check: log arguments must be positive, so x > 1. x = -7 is extraneous. Check x = 5: log\u2082(8) + log\u2082(4) = 3 + 2 = 5 \u2713.",
+      "skill": "exponential-logarithmic-equations",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "a2u5-7",
+      "question": "$5,000 is invested at 8% annual interest compounded quarterly. Using A = P(1 + r/n)^(nt), find the amount after 10 years. Round to the nearest cent.",
+      "answer": "$11,040.20. A = 5000(1 + 0.08/4)^(4\u00b710) = 5000(1.02)^40 \u2248 5000(2.20804) \u2248 $11,040.20.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u5-8",
+      "question": "A radioactive substance has a half-life of 12 years. If the initial amount is 200 grams: (a) Write a function A(t) for the amount remaining after t years. (b) How much remains after 36 years?",
+      "answer": "(a) A(t) = 200(1/2)^(t/12). (b) A(36) = 200(1/2)^(36/12) = 200(1/2)\u00b3 = 200(1/8) = 25 grams.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a2u5-9",
+      "question": "Solve: e^(2x) = 15. Give the exact answer and a decimal approximation rounded to three decimal places.",
+      "answer": "Exact: x = ln(15)/2. Approximate: x \u2248 2.708/2 \u2248 1.354. Take ln of both sides: 2x = ln(15). Divide by 2: x = ln(15)/2 \u2248 1.354.",
+      "skill": "exponential-logarithmic-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u5-10",
+      "question": "A town's population grows continuously according to P(t) = P\u2080e^(kt), where t is years after 2010. The population was 25,000 in 2010 and 32,000 in 2020. (a) Find the continuous growth rate k (exact and approximate). (b) Predict the population in 2030. (c) In what year will the population reach 50,000?",
+      "answer": "(a) 32000 = 25000e^(10k). e^(10k) = 1.28. k = ln(1.28)/10 \u2248 0.02469. (b) P(20) = 25000e^(20k) = 25000(1.28)\u00b2 = 25000(1.6384) = 40,960. (c) 50000 = 25000e^(kt). e^(kt) = 2. kt = ln(2). t = ln(2)/k = 10\u00b7ln(2)/ln(1.28) \u2248 28.1 years, so approximately the year 2038.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 7,
+      "points": 14
+    }
   ],
   "answerKeys": {
     "a2u5-1": "5, -3, 3",
-    "a2u5-2": "7³=343, log₄(1/16)=-2, 0",
-    "a2u5-3": "4log₃(x)+log₃(y)-2log₃(z)",
-    "a2u5-4": "ln(x³√y/z⁴)",
+    "a2u5-2": "7\u00b3=343, log\u2084(1/16)=-2, 0",
+    "a2u5-3": "4log\u2083(x)+log\u2083(y)-2log\u2083(z)",
+    "a2u5-4": "ln(x\u00b3\u221ay/z\u2074)",
     "a2u5-5": "x=2",
     "a2u5-6": "x=5 (x=-7 extraneous)",
     "a2u5-7": "$11,040.20",
     "a2u5-8": "A(t)=200(1/2)^(t/12), 25 grams",
-    "a2u5-9": "x=ln(15)/2≈1.354",
-    "a2u5-10": "k=ln(1.28)/10≈0.02469, P(2030)=40960, year 2038"
+    "a2u5-9": "x=ln(15)/2\u22481.354",
+    "a2u5-10": "k=ln(1.28)/10\u22480.02469, P(2030)=40960, year 2038"
   }
 }

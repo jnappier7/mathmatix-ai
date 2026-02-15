@@ -1,0 +1,490 @@
+{
+  "moduleId": "final_review",
+  "course": "Early Math Foundations",
+  "unit": 9,
+  "title": "Final: Ready for 6th Grade",
+  "weeks": "25-26",
+  "estimatedDuration": 45,
+  "description": "The proof that a student is ready for middle school math. Mixed review across all domains: whole number operations, fractions, decimals, geometry, measurement, data, and patterns. Problems are intentionally mixed so students must identify which skill to use. This is about confidence as much as competence.",
+  "skills": [
+    "emf-multi-digit-addition",
+    "emf-multi-digit-subtraction",
+    "emf-multiplication-facts",
+    "emf-multi-digit-multiplication",
+    "emf-long-division",
+    "emf-fraction-concepts",
+    "emf-equivalent-fractions",
+    "emf-compare-order-fractions",
+    "emf-add-subtract-unlike",
+    "emf-multiply-fractions",
+    "emf-decimal-place-value",
+    "emf-add-subtract-decimals",
+    "emf-decimals-fractions-connection",
+    "emf-perimeter",
+    "emf-area-rectangles",
+    "emf-patterns-rules",
+    "emf-unknowns-intro"
+  ],
+  "standardsAlignment": [
+    "3.OA",
+    "3.NBT",
+    "3.NF",
+    "3.MD",
+    "4.NBT",
+    "4.NF",
+    "4.MD",
+    "5.NBT",
+    "5.NF",
+    "5.MD"
+  ],
+  "goals": [
+    "Demonstrate fluency with multi-digit addition, subtraction, multiplication, and long division across computation and word problems.",
+    "Show understanding of fraction concepts including equivalence, comparison, and operations with unlike denominators and multiplication.",
+    "Apply decimal place value, addition and subtraction, and fraction-decimal conversions confidently.",
+    "Calculate perimeter and area of rectangles and composite figures in real-world contexts.",
+    "Identify, extend, and apply patterns and rules, and solve problems with unknowns using logical reasoning."
+  ],
+  "instructionalStrategy": [
+    "Problems are intentionally scrambled across all domains — students must recognize which skill applies before solving.",
+    "Each domain block opens with a quick 'greatest hits' review of key ideas, then moves into mixed practice.",
+    "Focus on building confidence: use familiar, age-appropriate contexts and celebrate how much the student has learned this year.",
+    "AI identifies weak spots from guided practice responses and can dynamically insert reteach for any skill that is not solid yet.",
+    "The final independent practice sections ask students to explain their thinking, proving they understand the 'why' and not just the 'how.'"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Whole Number Operations Review",
+      "skill": "emf-multi-digit-addition",
+      "content": "Quick review of everything you have learned about whole number operations: addition, subtraction, multiplication, and division. These are the building blocks for all the math that comes next.",
+      "keyPoints": [
+        "Addition: line up the place values and add column by column from right to left. Regroup (carry) when a column adds up to 10 or more.",
+        "Subtraction: line up the place values. Borrow (regroup) when the top digit is smaller than the bottom digit. Borrowing across zeros means going to the next column over.",
+        "Multiplication facts: know your times tables through 12 x 12 — they are the engine for everything else in math.",
+        "Multi-digit multiplication: use partial products or the standard algorithm. Always estimate first so you know if your answer makes sense.",
+        "Long division: Divide, Multiply, Subtract, Bring down. Repeat until you are done. Check your answer by multiplying the quotient by the divisor and adding the remainder.",
+        "Always ask yourself: Does my answer make sense? Is it close to my estimate?"
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Whole Number Operations Review: Worked Examples",
+      "skill": "emf-multi-digit-multiplication",
+      "problems": [
+        {
+          "id": "fr-1",
+          "problem": "A school is ordering supplies. They need 1,247 pencils and 1,856 erasers. How many supplies in total? Then find the difference between the two amounts.",
+          "answer": "Total: 1,247 + 1,856 = 3,103 supplies. Difference: 1,856 - 1,247 = 609. There are 609 more erasers than pencils."
+        },
+        {
+          "id": "fr-2",
+          "problem": "A farmer plants 36 rows of corn with 48 plants in each row. How many corn plants in total? If the farmer divides the corn equally among 8 trucks, how many plants go on each truck?",
+          "answer": "Total plants: 36 x 48 = 1,728 corn plants. Per truck: 1,728 / 8 = 216 plants per truck. Check: 216 x 8 = 1,728."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Whole Number Operations Review: Guided Practice",
+      "skill": "emf-long-division",
+      "problems": [
+        {
+          "id": "fr-3",
+          "problem": "The 4th grade collected 2,305 cans for a food drive. The 5th grade collected 1,878 cans. How many cans did they collect altogether? How many more cans did the 4th grade collect? (Hint: this is two steps — one addition and one subtraction.)",
+          "answer": "Altogether: 2,305 + 1,878 = 4,183 cans. Difference: 2,305 - 1,878 = 427 more cans for the 4th grade."
+        },
+        {
+          "id": "fr-4",
+          "problem": "A bookstore has 24 shelves. Each shelf holds 35 books. How many books can the bookstore hold in total?",
+          "answer": "24 x 35 = 840 books. (Check: 24 x 30 = 720, 24 x 5 = 120, 720 + 120 = 840.)"
+        },
+        {
+          "id": "fr-5",
+          "problem": "A candy factory made 2,592 gummy bears. They pack them into bags of 12. How many bags can they fill?",
+          "answer": "2,592 / 12 = 216 bags. Check: 216 x 12 = 2,592."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Whole Number Operations Review: Independent Practice",
+      "skill": "emf-multi-digit-subtraction",
+      "problems": [
+        {
+          "id": "fr-6",
+          "problem": "A movie theater sold 4,012 tickets on Saturday and 3,648 tickets on Sunday. How many tickets were sold that weekend? How many more were sold on Saturday?",
+          "answer": "Total: 4,012 + 3,648 = 7,660 tickets. Difference: 4,012 - 3,648 = 364 more tickets on Saturday."
+        },
+        {
+          "id": "fr-7",
+          "problem": "There are 52 weeks in a year. If a library gets 15 new books every week, how many new books does the library get in one year?",
+          "answer": "52 x 15 = 780 new books per year."
+        },
+        {
+          "id": "fr-8",
+          "problem": "A school has 1,575 students split equally into 25 classrooms. How many students are in each classroom? Show how you would check your answer.",
+          "answer": "1,575 / 25 = 63 students per classroom. Check: 63 x 25 = 1,575."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Fractions Review",
+      "skill": "emf-fraction-concepts",
+      "content": "Quick review of fractions — from understanding what they mean all the way to adding, subtracting, and multiplying them. Fractions show up everywhere: recipes, measurements, sharing, and more.",
+      "keyPoints": [
+        "A fraction has a numerator (how many parts you have) and a denominator (how many equal parts make the whole). Example: 3/4 means 3 out of 4 equal pieces.",
+        "Equivalent fractions: multiply or divide the numerator and denominator by the same number. 1/2 = 2/4 = 3/6 = 4/8.",
+        "Comparing fractions: find a common denominator, then compare the numerators. Or use benchmark fractions like 0, 1/2, and 1.",
+        "Adding and subtracting with unlike denominators: find the least common denominator (LCD), rewrite each fraction, then add or subtract the numerators.",
+        "Multiplying fractions: multiply numerator times numerator and denominator times denominator. Simplify the result. When both fractions are less than 1, the answer is smaller than either fraction.",
+        "Always simplify your answer and convert improper fractions to mixed numbers when it makes sense."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Fractions Review: Worked Examples",
+      "skill": "emf-equivalent-fractions",
+      "problems": [
+        {
+          "id": "fr-9",
+          "problem": "Are 3/4 and 9/12 equivalent? Prove it. Then compare 5/8 and 2/3 — which is greater?",
+          "answer": "3/4 x 3/3 = 9/12. Yes, they are equivalent. To compare 5/8 and 2/3: LCD = 24. 5/8 = 15/24. 2/3 = 16/24. Since 16/24 > 15/24, 2/3 is greater."
+        },
+        {
+          "id": "fr-10",
+          "problem": "A recipe needs 2/3 cup of flour and 1/4 cup of sugar. How much flour and sugar combined? Then find 3/5 x 2/3.",
+          "answer": "2/3 + 1/4: LCD = 12. 2/3 = 8/12, 1/4 = 3/12. 8/12 + 3/12 = 11/12 cup combined. Multiplication: 3/5 x 2/3 = 6/15 = 2/5."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Fractions Review: Guided Practice",
+      "skill": "emf-add-subtract-unlike",
+      "problems": [
+        {
+          "id": "fr-11",
+          "problem": "Write two fractions that are equivalent to 2/5. Then put these in order from least to greatest: 1/3, 3/8, 1/4. (Hint: find a common denominator for all three.)",
+          "answer": "2/5 = 4/10 = 6/15. To order: LCD of 3, 8, and 4 is 24. 1/3 = 8/24, 3/8 = 9/24, 1/4 = 6/24. Least to greatest: 1/4, 1/3, 3/8."
+        },
+        {
+          "id": "fr-12",
+          "problem": "Maya ate 3/8 of a pizza. Her brother ate 1/4 of the same pizza. How much pizza did they eat together? How much is left?",
+          "answer": "3/8 + 1/4: LCD = 8. 1/4 = 2/8. 3/8 + 2/8 = 5/8 of the pizza eaten. Left over: 1 - 5/8 = 3/8 of the pizza."
+        },
+        {
+          "id": "fr-13",
+          "problem": "A small garden is 3/4 of a meter long and 2/5 of a meter wide. What is the area of the garden? (Remember: area = length x width.)",
+          "answer": "3/4 x 2/5 = 6/20 = 3/10 square meters."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Fractions Review: Independent Practice",
+      "skill": "emf-multiply-fractions",
+      "problems": [
+        {
+          "id": "fr-14",
+          "problem": "Put these fractions in order from greatest to least: 7/10, 2/3, 3/4.",
+          "answer": "LCD = 60. 7/10 = 42/60, 2/3 = 40/60, 3/4 = 45/60. Greatest to least: 3/4, 7/10, 2/3."
+        },
+        {
+          "id": "fr-15",
+          "problem": "Jordan ran 5/6 of a mile on Monday. On Tuesday he ran 1/3 of a mile less than Monday. How far did he run on Tuesday? How far did he run in total for both days?",
+          "answer": "Tuesday: 5/6 - 1/3 = 5/6 - 2/6 = 3/6 = 1/2 mile. Total: 5/6 + 1/2 = 5/6 + 3/6 = 8/6 = 1 2/6 = 1 1/3 miles."
+        },
+        {
+          "id": "fr-16",
+          "problem": "A painter uses 2/3 of a can of paint for each full wall. She only needs to paint 3/4 of a wall. How much paint does she need? If she has 5/6 of a can left, does she have enough?",
+          "answer": "Paint needed: 2/3 x 3/4 = 6/12 = 1/2 can. She has 5/6 of a can. 1/2 = 3/6 and 5/6 > 3/6, so yes, she has enough paint."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Decimals Review",
+      "skill": "emf-decimal-place-value",
+      "content": "Quick review of decimals — place value, comparing, adding, subtracting, and how decimals connect to fractions. Money is decimals in action!",
+      "keyPoints": [
+        "Decimal place value: tenths (0.1), hundredths (0.01), thousandths (0.001). Each place is 10 times smaller than the one to its left.",
+        "Comparing decimals: line up the decimal points and compare digit by digit from left to right. Add trailing zeros if needed — 0.5 is the same as 0.50.",
+        "Adding and subtracting decimals: line up the decimal points, then add or subtract just like whole numbers. Bring the decimal point straight down into your answer.",
+        "Fraction-decimal connection: 1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75, 1/5 = 0.2, 1/10 = 0.1. To convert any fraction: divide numerator by denominator.",
+        "Always estimate first! $3.75 + $2.49 is about $4 + $2.50 = $6.50. Use this to check your answer.",
+        "Money is decimals: dollars and cents follow the same place value rules. The decimal point separates dollars from cents."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Decimals Review: Worked Examples",
+      "skill": "emf-add-subtract-decimals",
+      "problems": [
+        {
+          "id": "fr-17",
+          "problem": "What is the value of the 7 in 3.072? Then arrange these from least to greatest: 0.45, 0.405, 0.5.",
+          "answer": "The 7 is in the hundredths place, so its value is 0.07. To order: write them with equal decimal places — 0.405, 0.450, 0.500. Least to greatest: 0.405, 0.45, 0.5."
+        },
+        {
+          "id": "fr-18",
+          "problem": "Aiden bought a notebook for $3.49 and a pen for $1.75. How much did he spend? If he paid with a $10 bill, how much change did he get? Then convert 3/4 to a decimal.",
+          "answer": "Spent: $3.49 + $1.75 = $5.24. Change: $10.00 - $5.24 = $4.76. 3/4 = 3 divided by 4 = 0.75."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Decimals Review: Guided Practice",
+      "skill": "emf-decimals-fractions-connection",
+      "problems": [
+        {
+          "id": "fr-19",
+          "problem": "A piece of ribbon is 2.8 meters long. Another piece is 1.35 meters long. What is the total length? How much longer is the first piece? (Hint: line up the decimal points — write 2.8 as 2.80.)",
+          "answer": "Total: 2.80 + 1.35 = 4.15 meters. Difference: 2.80 - 1.35 = 1.45 meters longer."
+        },
+        {
+          "id": "fr-20",
+          "problem": "Convert these fractions to decimals: 1/2, 3/5, 7/10. Then convert 0.6 to a fraction in simplest form.",
+          "answer": "1/2 = 0.5, 3/5 = 0.6, 7/10 = 0.7. Converting back: 0.6 = 6/10 = 3/5."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Decimals Review: Independent Practice",
+      "skill": "emf-decimal-place-value",
+      "problems": [
+        {
+          "id": "fr-21",
+          "problem": "A runner finished a race in 12.08 seconds. Another runner finished in 12.3 seconds. Who was faster? By how much?",
+          "answer": "12.08 < 12.30, so the first runner was faster. Difference: 12.30 - 12.08 = 0.22 seconds faster."
+        },
+        {
+          "id": "fr-22",
+          "problem": "Lily has $20.00. She buys a book for $7.95 and a snack for $2.30. How much money does she have left?",
+          "answer": "Total spent: $7.95 + $2.30 = $10.25. Money left: $20.00 - $10.25 = $9.75."
+        },
+        {
+          "id": "fr-23",
+          "problem": "A recipe calls for 0.75 cups of milk. Is that more or less than 2/3 of a cup? Convert both to the same form to prove your answer.",
+          "answer": "0.75 = 3/4. Compare 3/4 and 2/3: LCD = 12. 3/4 = 9/12, 2/3 = 8/12. Since 9/12 > 8/12, 0.75 cups (3/4) is more than 2/3 cup."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Geometry & Measurement Review",
+      "skill": "emf-perimeter",
+      "content": "Quick review of perimeter and area — the distance around a shape and the space inside it. These are two of the most useful math skills in everyday life.",
+      "keyPoints": [
+        "Perimeter is the distance around a shape. Add up all the side lengths. For a rectangle: P = 2 x length + 2 x width.",
+        "Area is the space inside a shape. For a rectangle: A = length x width. Area is measured in square units (sq ft, sq m, sq in).",
+        "Do not mix them up! Perimeter is a distance (measured in regular units like feet). Area is a space (measured in square units like square feet).",
+        "For compound shapes (like an L-shape), break them into rectangles, find each area separately, then add them together.",
+        "Always include units in your answer. A fence needs perimeter (how far around). Carpet needs area (how much space to cover).",
+        "Sketch the shape and label the sides before computing — it helps you see what you are solving for."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Geometry & Measurement Review: Worked Examples",
+      "skill": "emf-area-rectangles",
+      "problems": [
+        {
+          "id": "fr-24",
+          "problem": "A basketball court is 84 feet long and 50 feet wide. What is the perimeter? What is the area?",
+          "answer": "Perimeter: 2(84) + 2(50) = 168 + 100 = 268 feet. Area: 84 x 50 = 4,200 square feet."
+        },
+        {
+          "id": "fr-25",
+          "problem": "A garden has an L-shape. The bottom rectangle is 10 m by 4 m. The top rectangle is 6 m by 3 m. What is the total area?",
+          "answer": "Bottom rectangle: 10 x 4 = 40 sq m. Top rectangle: 6 x 3 = 18 sq m. Total area: 40 + 18 = 58 square meters."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Geometry & Measurement Review: Guided Practice",
+      "skill": "emf-perimeter",
+      "problems": [
+        {
+          "id": "fr-26",
+          "problem": "A rectangular swimming pool is 25 meters long and 10 meters wide. A tile border goes around the outside edge. How many meters of tile are needed for the border? (Hint: the border goes all the way around — that is the perimeter.)",
+          "answer": "Perimeter: P = 2(25) + 2(10) = 50 + 20 = 70 meters of tile."
+        },
+        {
+          "id": "fr-27",
+          "problem": "Emma's bedroom is 12 feet long and 9 feet wide. She wants to buy carpet that costs $2 per square foot. How much will the carpet cost?",
+          "answer": "Area: 12 x 9 = 108 square feet. Cost: 108 x $2 = $216."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Geometry & Measurement Review: Independent Practice",
+      "skill": "emf-area-rectangles",
+      "problems": [
+        {
+          "id": "fr-28",
+          "problem": "A rectangular playground is 45 meters long and 30 meters wide. A fence costs $8 per meter. How much does it cost to fence the entire playground?",
+          "answer": "Perimeter: 2(45) + 2(30) = 90 + 60 = 150 meters. Cost: 150 x $8 = $1,200."
+        },
+        {
+          "id": "fr-29",
+          "problem": "A poster is 18 inches long and 12 inches wide. A frame around it is 24 inches long and 16 inches wide. How much wall space does the frame take up? How much of the frame area is NOT covered by the poster?",
+          "answer": "Frame area: 24 x 16 = 384 square inches. Poster area: 18 x 12 = 216 square inches. Uncovered frame area: 384 - 216 = 168 square inches."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Patterns & Algebra Review",
+      "skill": "emf-patterns-rules",
+      "content": "Quick review of patterns, rules, and unknowns. This is where math starts to feel like detective work — spotting rules, predicting what comes next, and figuring out mystery numbers.",
+      "keyPoints": [
+        "A pattern is a sequence that follows a rule. Look for what changes each step: adding, subtracting, multiplying, or another operation.",
+        "Input/output tables show a rule applied to every input. If the rule is 'multiply by 3, then add 1,' then input 4 gives output 13.",
+        "An unknown is a missing number in an equation. Use a letter (like n) or a box. Example: n + 7 = 15 means 'what number plus 7 equals 15?'",
+        "To find an unknown: use inverse (opposite) operations. Addition undoes subtraction. Multiplication undoes division.",
+        "Always check your answer by plugging it back in: if n = 8, does 8 + 7 = 15? Yes!",
+        "Patterns and unknowns are the very beginning of algebra — and algebra is the gateway to all the math you will do in middle school and beyond."
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Patterns & Algebra Review: Worked Examples",
+      "skill": "emf-unknowns-intro",
+      "problems": [
+        {
+          "id": "fr-30",
+          "problem": "Find the rule and the next two numbers: 5, 11, 17, 23, __, __. Then complete the input/output table. Rule: multiply by 4, subtract 2. Inputs: 3, 5, 8.",
+          "answer": "Pattern rule: add 6 each time. Next two: 29, 35. Table: Input 3 gives 4(3) - 2 = 10. Input 5 gives 4(5) - 2 = 18. Input 8 gives 4(8) - 2 = 30."
+        },
+        {
+          "id": "fr-31",
+          "problem": "Solve for the unknown: n x 6 = 72. Then solve: 45 - ? = 28.",
+          "answer": "n x 6 = 72, so n = 72 / 6 = 12. Check: 12 x 6 = 72. For 45 - ? = 28: ? = 45 - 28 = 17. Check: 45 - 17 = 28."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Patterns & Algebra Review: Guided Practice",
+      "skill": "emf-patterns-rules",
+      "problems": [
+        {
+          "id": "fr-32",
+          "problem": "What is the rule for this input/output table? Input: 2, 5, 10. Output: 7, 16, 31. (Hint: try multiplying the input first, then see if you need to add or subtract something.)",
+          "answer": "Rule: multiply by 3, then add 1. Check: 2 x 3 + 1 = 7. 5 x 3 + 1 = 16. 10 x 3 + 1 = 31."
+        },
+        {
+          "id": "fr-33",
+          "problem": "Solve for the unknown: n + 24 = 61. Then solve: 4 x ? = 148.",
+          "answer": "n + 24 = 61, so n = 61 - 24 = 37. Check: 37 + 24 = 61. For 4 x ? = 148: ? = 148 / 4 = 37. Check: 4 x 37 = 148."
+        }
+      ],
+      "lessonId": "final_review"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Patterns & Algebra Review: Independent Practice",
+      "skill": "emf-unknowns-intro",
+      "problems": [
+        {
+          "id": "fr-34",
+          "problem": "A sequence goes: 3, 6, 12, 24, __. What is the rule? What are the next two numbers?",
+          "answer": "Rule: multiply by 2 (double each time). Next two numbers: 48, 96."
+        },
+        {
+          "id": "fr-35",
+          "problem": "There are n students in a class. Each student gets 4 crackers. The teacher also puts out 10 extra crackers. The total number of crackers is 90. Write an equation and solve for n.",
+          "answer": "Equation: 4 x n + 10 = 90. Subtract 10: 4 x n = 80. Divide by 4: n = 20 students. Check: 4 x 20 + 10 = 80 + 10 = 90."
+        },
+        {
+          "id": "fr-36",
+          "problem": "A pattern of tiles starts with 4 tiles at step 1. Each step adds 3 more tiles. How many tiles are at step 5? Can you write a rule that gives the number of tiles for any step number s?",
+          "answer": "Step 1: 4, Step 2: 7, Step 3: 10, Step 4: 13, Step 5: 16 tiles. Rule: tiles = 3 x s + 1. Check step 5: 3 x 5 + 1 = 16."
+        }
+      ],
+      "lessonId": "final_review"
+    }
+  ],
+  "answerKeys": {
+    "fr-1": "1,247 + 1,856 = 3,103 supplies. 1,856 - 1,247 = 609 more erasers.",
+    "fr-2": "36 x 48 = 1,728 plants. 1,728 / 8 = 216 plants per truck.",
+    "fr-3": "2,305 + 1,878 = 4,183 cans total. 2,305 - 1,878 = 427 more for 4th grade.",
+    "fr-4": "24 x 35 = 840 books.",
+    "fr-5": "2,592 / 12 = 216 bags.",
+    "fr-6": "4,012 + 3,648 = 7,660 tickets. 4,012 - 3,648 = 364 more on Saturday.",
+    "fr-7": "52 x 15 = 780 new books per year.",
+    "fr-8": "1,575 / 25 = 63 students per classroom.",
+    "fr-9": "3/4 x 3/3 = 9/12, so yes they are equivalent. LCD = 24: 5/8 = 15/24, 2/3 = 16/24. 2/3 is greater.",
+    "fr-10": "2/3 + 1/4 = 8/12 + 3/12 = 11/12 cup. 3/5 x 2/3 = 6/15 = 2/5.",
+    "fr-11": "2/5 = 4/10 = 6/15. Order: 1/4, 1/3, 3/8.",
+    "fr-12": "3/8 + 1/4 = 5/8 eaten. 1 - 5/8 = 3/8 left.",
+    "fr-13": "3/4 x 2/5 = 6/20 = 3/10 square meters.",
+    "fr-14": "Greatest to least: 3/4, 7/10, 2/3.",
+    "fr-15": "Tuesday: 5/6 - 1/3 = 1/2 mile. Total: 5/6 + 1/2 = 1 1/3 miles.",
+    "fr-16": "2/3 x 3/4 = 1/2 can needed. 5/6 > 1/2, so yes she has enough.",
+    "fr-17": "The 7 is worth 0.07 (hundredths). Order: 0.405, 0.45, 0.5.",
+    "fr-18": "$3.49 + $1.75 = $5.24. Change: $10.00 - $5.24 = $4.76. 3/4 = 0.75.",
+    "fr-19": "2.80 + 1.35 = 4.15 meters. 2.80 - 1.35 = 1.45 meters longer.",
+    "fr-20": "1/2 = 0.5, 3/5 = 0.6, 7/10 = 0.7. 0.6 = 6/10 = 3/5.",
+    "fr-21": "12.08 < 12.30, first runner was faster by 0.22 seconds.",
+    "fr-22": "$7.95 + $2.30 = $10.25. $20.00 - $10.25 = $9.75 left.",
+    "fr-23": "0.75 = 3/4 = 9/12. 2/3 = 8/12. 0.75 cups is more than 2/3 cup.",
+    "fr-24": "Perimeter: 268 feet. Area: 4,200 square feet.",
+    "fr-25": "Bottom: 40 sq m. Top: 18 sq m. Total: 58 square meters.",
+    "fr-26": "Perimeter = 2(25) + 2(10) = 70 meters of tile.",
+    "fr-27": "Area = 108 sq ft. Cost = 108 x $2 = $216.",
+    "fr-28": "Perimeter = 150 meters. Cost = 150 x $8 = $1,200.",
+    "fr-29": "Frame: 384 sq in. Poster: 216 sq in. Uncovered: 168 square inches.",
+    "fr-30": "Pattern: +6. Next two: 29, 35. Table outputs: 10, 18, 30.",
+    "fr-31": "n = 72 / 6 = 12. ? = 45 - 28 = 17.",
+    "fr-32": "Rule: multiply by 3, then add 1. Outputs: 7, 16, 31.",
+    "fr-33": "n = 61 - 24 = 37. ? = 148 / 4 = 37.",
+    "fr-34": "Rule: multiply by 2. Next two: 48, 96.",
+    "fr-35": "4n + 10 = 90. 4n = 80. n = 20 students.",
+    "fr-36": "Step 5: 16 tiles. Rule: tiles = 3 x s + 1."
+  }
+}

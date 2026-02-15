@@ -54,9 +54,9 @@ const BADGE_CATALOG = {
     { badgeId: 'proportions-silver', name: 'Proportion Solver', tier: 'silver', requiredAccuracy: 0.85, requiredTheta: 0.5 }
   ],
   'order-of-operations': [
-    { badgeId: 'order-operations-bronze', name: 'PEMDAS Beginner', tier: 'bronze', requiredAccuracy: 0.80, requiredTheta: -1.0 },
+    { badgeId: 'order-operations-bronze', name: 'GEMS Beginner', tier: 'bronze', requiredAccuracy: 0.80, requiredTheta: -1.0 },
     { badgeId: 'order-operations-silver', name: 'Order Expert', tier: 'silver', requiredAccuracy: 0.85, requiredTheta: 0.0 },
-    { badgeId: 'order-operations-gold', name: 'PEMDAS Master', tier: 'gold', requiredAccuracy: 0.90, requiredTheta: 1.0 }
+    { badgeId: 'order-operations-gold', name: 'GEMS Master', tier: 'gold', requiredAccuracy: 0.90, requiredTheta: 1.0 }
   ]
 };
 

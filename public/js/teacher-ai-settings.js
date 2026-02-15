@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="setting-group">
                             <label>Order of Operations</label>
                             <select id="order-of-operations">
-                                <option value="PEMDAS" ${currentSettings.vocabularyPreferences?.orderOfOperations === 'PEMDAS' ? 'selected' : ''}>PEMDAS (Parentheses, Exponents...)</option>
                                 <option value="GEMS" ${currentSettings.vocabularyPreferences?.orderOfOperations === 'GEMS' ? 'selected' : ''}>GEMS (Grouping, Exponents, Multiply/Divide, Subtract/Add)</option>
+                                <option value="PEMDAS" ${currentSettings.vocabularyPreferences?.orderOfOperations === 'PEMDAS' ? 'selected' : ''}>PEMDAS (Parentheses, Exponents...)</option>
                                 <option value="BODMAS" ${currentSettings.vocabularyPreferences?.orderOfOperations === 'BODMAS' ? 'selected' : ''}>BODMAS (Brackets, Orders...)</option>
                                 <option value="BEDMAS" ${currentSettings.vocabularyPreferences?.orderOfOperations === 'BEDMAS' ? 'selected' : ''}>BEDMAS (Brackets, Exponents...)</option>
                             </select>

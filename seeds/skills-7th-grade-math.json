@@ -121,9 +121,9 @@
     "teachingGuidance": {
       "coreConcepts": [
         "Inverse operations: addition/subtraction, multiplication/division",
-        "Isolate the variable by undoing operations in reverse order",
-        "Check your solution by substituting back",
-        "Two-step equations: undo addition/subtraction first, then multiplication/division"
+        "Box the variable term, think outside the box",
+        "Outside the box: use opposites to make zero; Inside the box: divide it out",
+        "Check your solution by substituting back"
       ],
       "commonMistakes": [
         "Performing different operations on each side of the equation",
@@ -1273,7 +1273,7 @@
     "teachingGuidance": {
       "coreConcepts": [
         "Replace the variable with the given value (use parentheses!)",
-        "Follow order of operations: PEMDAS/GEMS",
+        "Follow order of operations: GEMS",
         "Evaluate expressions with multiple variables",
         "Handle negative substitutions carefully: (-3)² ≠ -3²"
       ],

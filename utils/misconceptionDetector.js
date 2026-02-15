@@ -26,7 +26,7 @@ const MISCONCEPTION_LIBRARY = {
             id: 'wrong-operation-order',
             name: 'Incorrect Operation Order',
             description: 'Student performs operations in wrong sequence (e.g., divides before subtracting)',
-            fix: 'Remind: Undo operations in reverse order - addition/subtraction before multiplication/division',
+            fix: 'Remind: Box the variable term and think outside the box. Anything outside the box — use opposites to make zero. Anything inside the box — divide it out. Equations MUST always stay equal!',
             testQuestion: 'Try this one with the correct order: 2x + 5 = 13'
         },
         {
@@ -66,15 +66,15 @@ const MISCONCEPTION_LIBRARY = {
         {
             id: 'left-to-right-error',
             name: 'Strict Left-to-Right',
-            description: 'Student works left-to-right ignoring PEMDAS: 2 + 3 × 4 = 20',
-            fix: 'PEMDAS: Multiplication comes before addition. 2 + 3 × 4 = 2 + 12 = 14',
-            testQuestion: 'Use PEMDAS: 5 + 2 × 3'
+            description: 'Student works left-to-right ignoring GEMS: 2 + 3 × 4 = 20',
+            fix: 'GEMS: Multiplication comes before addition. 2 + 3 × 4 = 2 + 12 = 14',
+            testQuestion: 'Use GEMS: 5 + 2 × 3'
         },
         {
             id: 'parentheses-ignored',
             name: 'Ignoring Parentheses',
             description: 'Student ignores parentheses',
-            fix: 'Parentheses are FIRST in PEMDAS. Always solve what\'s inside parentheses before anything else.',
+            fix: 'Grouping symbols are FIRST in GEMS. Always solve what\'s inside parentheses before anything else.',
             testQuestion: 'Parentheses first: (2 + 3) × 4'
         }
     ],

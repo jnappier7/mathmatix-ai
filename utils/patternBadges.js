@@ -571,7 +571,7 @@ const PATTERN_BADGES = {
           {
             milestoneId: 'order-of-operations',
             name: 'Order of Operations',
-            description: 'Apply PEMDAS/GEMDAS to evaluate expressions',
+            description: 'Apply GEMS to evaluate expressions',
             skillIds: ['order-of-operations', 'evaluate-expressions', 'nested-operations', 'numerical-expressions-exponents'],
             requiredAccuracy: 0.85,
             requiredProblems: 12

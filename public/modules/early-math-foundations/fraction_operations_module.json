@@ -1,0 +1,449 @@
+{
+  "moduleId": "fraction_operations",
+  "course": "Early Math Foundations",
+  "unit": 5,
+  "title": "Fraction Operations",
+  "weeks": "13-15",
+  "estimatedDuration": 40,
+  "description": "Now that students understand what fractions mean, they learn to compute with them. Starting with like denominators (easy wins), then building to unlike denominators (the big skill), and finally multiplying fractions. Each operation is grounded in visual models before moving to algorithms.",
+  "skills": [
+    "emf-add-fractions-like",
+    "emf-subtract-fractions-like",
+    "emf-add-subtract-unlike",
+    "emf-multiply-fractions"
+  ],
+  "standardsAlignment": [
+    "4.NF.B.3a",
+    "4.NF.B.3c",
+    "5.NF.A.1",
+    "5.NF.A.2",
+    "5.NF.B.4",
+    "5.NF.B.5",
+    "5.NF.B.6"
+  ],
+  "goals": [
+    "Add and subtract fractions with the same denominator, including mixed numbers, and simplify the result",
+    "Find the least common denominator and use it to add and subtract fractions with unlike denominators",
+    "Multiply fractions and whole numbers using both the algorithm and area-model reasoning",
+    "Solve real-world problems involving fraction operations using visual models and number sense"
+  ],
+  "instructionalStrategy": [
+    "Concrete-first: every operation begins with a food or recipe visual (pizza slices, measuring cups, chocolate bars) before introducing the algorithm",
+    "Like denominators come first to build confidence — students see immediate success before tackling the harder LCD skill",
+    "Encourage estimation before computing ('Is the answer more or less than 1?') to build number sense alongside procedural fluency",
+    "Mistakes are learning moments: common errors (adding denominators, forgetting to simplify) are addressed explicitly in worked examples"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Adding Fractions with Like Denominators",
+      "skill": "emf-add-fractions-like",
+      "content": "When two fractions have the same denominator, adding them is as easy as counting slices! The denominator tells you what size the pieces are, and the numerator tells you how many pieces you have. Since the pieces are already the same size, you just add the number of pieces and keep the size the same.",
+      "keyPoints": [
+        "Same denominator means the pieces are the same size — just add the numerators and keep the denominator",
+        "Example picture: 2 slices of a pizza cut into 5 + 1 more slice = 3 out of 5 slices → 2/5 + 1/5 = 3/5",
+        "If the numerator becomes equal to or larger than the denominator, you have a whole (or more): 5/8 + 6/8 = 11/8 = 1 3/8",
+        "With mixed numbers: add the whole-number parts, then add the fraction parts. Regroup if the fraction part is improper.",
+        "Always check: can you simplify? Divide numerator and denominator by their greatest common factor (GCF)"
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Adding Like-Denominator Fractions — Worked Examples",
+      "skill": "emf-add-fractions-like",
+      "examples": [
+        {
+          "id": "fo-1",
+          "problem": "A recipe needs 2/5 cup of sugar for the batter and 1/5 cup of sugar for the frosting. How much sugar do you need in all?",
+          "solution": "Both fractions have a denominator of 5, so the pieces are the same size (fifths of a cup).\nAdd the numerators: 2 + 1 = 3.\nKeep the denominator: 5.\n2/5 + 1/5 = 3/5 cup of sugar.\n\nPicture it: imagine a measuring cup marked in fifths. You pour in 2 fifths, then 1 more fifth. You can see 3 out of 5 sections are filled."
+        },
+        {
+          "id": "fo-2",
+          "problem": "You eat 3/8 of a pizza, and your friend eats 5/8 of the same pizza. How much pizza did you eat together?",
+          "solution": "Same denominator (eighths), so add the numerators: 3 + 5 = 8.\n3/8 + 5/8 = 8/8 = 1 whole pizza.\n\nThat makes sense! You ate some and your friend ate the rest — together you ate the entire pizza. When the numerator equals the denominator, you have exactly 1 whole."
+        },
+        {
+          "id": "fo-3",
+          "problem": "Mom uses 1 2/6 cups of flour for pancakes in the morning and 2 5/6 cups of flour for banana bread in the afternoon. How much flour did she use altogether?",
+          "solution": "Step 1 — Add the whole numbers: 1 + 2 = 3.\nStep 2 — Add the fractions: 2/6 + 5/6 = 7/6.\nStep 3 — 7/6 is more than 1 whole (since 7 > 6). Regroup: 7/6 = 1 1/6.\nStep 4 — Combine: 3 + 1 1/6 = 4 1/6 cups of flour.\n\nTip: Whenever the fraction part adds up to more than 1, trade it in for an extra whole and a leftover fraction."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Adding Like-Denominator Fractions — Your Turn (With Help)",
+      "skill": "emf-add-fractions-like",
+      "problems": [
+        {
+          "id": "fo-4",
+          "problem": "You pour 1/4 cup of milk into a bowl, then add another 2/4 cup. How much milk is in the bowl?",
+          "hints": [
+            "Both fractions are fourths — the denominator stays 4",
+            "Add the numerators: 1 + 2 = ?"
+          ],
+          "answer": "1/4 + 2/4 = 3/4 cup of milk."
+        },
+        {
+          "id": "fo-5",
+          "problem": "A smoothie recipe uses 2 3/10 cups of strawberries and 1 9/10 cups of blueberries. How many cups of fruit is that in total?",
+          "hints": [
+            "Add the whole numbers first: 2 + 1 = 3",
+            "Add the fractions: 3/10 + 9/10 = 12/10 — that is more than 1 whole, so regroup",
+            "12/10 = 1 2/10. Now simplify 2/10 by dividing numerator and denominator by 2"
+          ],
+          "answer": "2 3/10 + 1 9/10 = 3 + 12/10 = 3 + 1 2/10 = 4 2/10 = 4 1/5 cups of fruit."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Adding Like-Denominator Fractions — On Your Own",
+      "skill": "emf-add-fractions-like",
+      "problems": [
+        {
+          "id": "fo-6",
+          "problem": "A trail mix recipe calls for 4/7 cup of almonds and 2/7 cup of cashews. How many cups of nuts altogether?",
+          "answer": "4/7 + 2/7 = 6/7 cup of nuts."
+        },
+        {
+          "id": "fo-7",
+          "problem": "You need 3 5/8 cups of oats for granola bars and 2 7/8 cups of oats for cookies. How many cups of oats do you need in total?",
+          "answer": "3 5/8 + 2 7/8 = 5 + 12/8 = 5 + 1 4/8 = 6 4/8 = 6 1/2 cups of oats."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Subtracting Fractions with Like Denominators",
+      "skill": "emf-subtract-fractions-like",
+      "content": "Subtracting fractions with like denominators works just like adding — except you take pieces away instead of putting them together. The tricky part comes with mixed numbers: sometimes the fraction you are subtracting is bigger than the fraction you have, so you need to borrow from the whole number, just like borrowing in regular subtraction.",
+      "keyPoints": [
+        "Same denominator: subtract the numerators and keep the denominator. Example: 5/6 − 2/6 = 3/6 = 1/2",
+        "Always simplify your answer — divide numerator and denominator by their GCF",
+        "Mixed-number borrowing: if the fraction part being subtracted is larger, borrow 1 whole and convert it to a fraction. Example: 3 1/4 becomes 2 5/4",
+        "Check your work: add the answer back to what was subtracted — you should get the original amount",
+        "Real-world cue: 'How much is left?' or 'How much more?' signals subtraction"
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Subtracting Like-Denominator Fractions — Worked Examples",
+      "skill": "emf-subtract-fractions-like",
+      "examples": [
+        {
+          "id": "fo-8",
+          "problem": "You had 5/6 of a pie and served 2/6 to your neighbor. How much pie do you have left?",
+          "solution": "Same denominator (sixths). Subtract the numerators: 5 − 2 = 3.\n5/6 − 2/6 = 3/6.\nSimplify: 3 and 6 share a factor of 3. Divide both by 3: 3/6 = 1/2.\nYou have 1/2 of the pie left.\n\nPicture a pie cut into 6 slices. You started with 5 slices and gave away 2. That leaves 3 out of 6 slices — exactly half the pie."
+        },
+        {
+          "id": "fo-9",
+          "problem": "A carton holds 4/5 liter of orange juice. You drink 3/5 liter at breakfast. How much is left?",
+          "solution": "Subtract numerators: 4 − 3 = 1. Keep the denominator.\n4/5 − 3/5 = 1/5 liter of orange juice left.\n\n1/5 is already in simplest form (1 and 5 share no common factor other than 1)."
+        },
+        {
+          "id": "fo-10",
+          "problem": "You have 3 1/4 pounds of apples. You use 1 3/4 pounds for a pie. How many pounds are left?",
+          "solution": "Try to subtract the fractions: 1/4 − 3/4 — uh-oh, 1/4 is less than 3/4! We need to borrow.\nBorrow 1 whole from the 3: 3 1/4 becomes 2 + 4/4 + 1/4 = 2 5/4.\nNow subtract: 2 5/4 − 1 3/4.\nWhole numbers: 2 − 1 = 1.\nFractions: 5/4 − 3/4 = 2/4 = 1/2.\nAnswer: 1 1/2 pounds of apples left.\n\nThis is exactly like borrowing in 31 − 17: you borrow from the tens place. Here you borrow from the whole number and turn it into fourths."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Subtracting Like-Denominator Fractions — Your Turn (With Help)",
+      "skill": "emf-subtract-fractions-like",
+      "problems": [
+        {
+          "id": "fo-11",
+          "problem": "A chocolate bar is divided into 8 equal pieces. You had 7/8 of the bar and gave 3/8 to your sister. How much do you have left?",
+          "hints": [
+            "Both fractions are eighths — subtract the numerators: 7 − 3 = ?",
+            "Can you simplify 4/8? What number divides evenly into both 4 and 8?"
+          ],
+          "answer": "7/8 − 3/8 = 4/8 = 1/2 of the chocolate bar."
+        },
+        {
+          "id": "fo-12",
+          "problem": "You bought 5 1/3 pounds of grapes. You used 2 2/3 pounds for a fruit salad. How many pounds remain?",
+          "hints": [
+            "Look at the fractions: 1/3 − 2/3 — can you do that? No! You need to borrow.",
+            "Borrow 1 whole from the 5: 5 1/3 becomes 4 4/3. (Why 4/3? Because 1 whole = 3/3, and 3/3 + 1/3 = 4/3.)",
+            "Now subtract: whole numbers 4 − 2, fractions 4/3 − 2/3"
+          ],
+          "answer": "5 1/3 = 4 4/3. Then 4 4/3 − 2 2/3 = 2 2/3 pounds of grapes remain."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Subtracting Like-Denominator Fractions — On Your Own",
+      "skill": "emf-subtract-fractions-like",
+      "problems": [
+        {
+          "id": "fo-13",
+          "problem": "You have 9/10 of a bag of rice. You use 3/10 of the bag for dinner. How much rice is left?",
+          "answer": "9/10 − 3/10 = 6/10 = 3/5 of the bag."
+        },
+        {
+          "id": "fo-14",
+          "problem": "A baker starts with 4 2/6 cups of butter. She uses 1 5/6 cups for a cake. How much butter is left?",
+          "answer": "4 2/6 = 3 8/6 (borrow 1 whole = 6/6). Then 3 8/6 − 1 5/6 = 2 3/6 = 2 1/2 cups of butter."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Adding and Subtracting Fractions with Unlike Denominators",
+      "skill": "emf-add-subtract-unlike",
+      "content": "This is the big skill! When fractions have different denominators, the pieces are different sizes — you cannot just add or subtract the numerators. First, you need to find a common denominator so both fractions are split into the same-size pieces. Think of it like converting inches and centimeters to the same unit before comparing them.",
+      "keyPoints": [
+        "Unlike denominators = different-size pieces. You must make them the same size first.",
+        "Least Common Denominator (LCD): the smallest number that both denominators divide into evenly. Example: LCD of 3 and 4 is 12.",
+        "To convert: multiply numerator and denominator by the same number so the denominator becomes the LCD. This does not change the fraction's value — it is like trading 1 quarter for 5 nickels.",
+        "Once both fractions have the same denominator, add or subtract the numerators as before and simplify.",
+        "Quick LCD trick: if the denominators share no common factor, just multiply them. (3 × 4 = 12.) If one denominator is a multiple of the other, the bigger one is the LCD. (6 and 3 → LCD is 6.)"
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Unlike-Denominator Fractions — Worked Examples",
+      "skill": "emf-add-subtract-unlike",
+      "examples": [
+        {
+          "id": "fo-15",
+          "problem": "You mix 1/3 cup of lemon juice with 1/4 cup of honey for a glaze. How much liquid is that altogether?",
+          "solution": "The denominators are 3 and 4 — different-size pieces.\nStep 1 — Find the LCD: 3 × 4 = 12.\nStep 2 — Convert each fraction:\n  1/3 = (1 × 4)/(3 × 4) = 4/12\n  1/4 = (1 × 3)/(4 × 3) = 3/12\nStep 3 — Add: 4/12 + 3/12 = 7/12 cup.\n7/12 is already in simplest form (7 is prime and does not divide 12).\n\nPicture it: imagine cutting a measuring cup into 12 equal rows. Lemon juice fills 4 rows, honey fills 3 rows. Together they fill 7 out of 12 rows."
+        },
+        {
+          "id": "fo-16",
+          "problem": "A recipe uses 2/3 cup of white flour and 1/6 cup of whole-wheat flour. How much flour in total?",
+          "solution": "Denominators: 3 and 6. Since 6 is a multiple of 3, the LCD is 6 — no need to change the second fraction!\nConvert: 2/3 = (2 × 2)/(3 × 2) = 4/6.\nAdd: 4/6 + 1/6 = 5/6 cup of flour.\n\nTip: When one denominator is already a multiple of the other, the LCD is the bigger denominator. That saves you work!"
+        },
+        {
+          "id": "fo-17",
+          "problem": "You have 3/4 of a watermelon. You give 1/3 of a watermelon to a friend. How much do you have left?",
+          "solution": "Denominators: 4 and 3. LCD = 12.\nConvert:\n  3/4 = (3 × 3)/(4 × 3) = 9/12\n  1/3 = (1 × 4)/(3 × 4) = 4/12\nSubtract: 9/12 − 4/12 = 5/12 of the watermelon left.\n\nCheck: 5/12 + 4/12 = 9/12 = 3/4. That matches what we started with!"
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Unlike-Denominator Fractions — Your Turn (With Help)",
+      "skill": "emf-add-subtract-unlike",
+      "problems": [
+        {
+          "id": "fo-18",
+          "problem": "A fruit punch recipe calls for 1/2 cup of grape juice and 1/3 cup of cranberry juice. How much juice is that?",
+          "hints": [
+            "The denominators are 2 and 3. What is the LCD? (Hint: 2 × 3 = ?)",
+            "Convert: 1/2 = ?/6 and 1/3 = ?/6",
+            "Now add the two sixths together"
+          ],
+          "answer": "LCD = 6. 1/2 = 3/6, 1/3 = 2/6. Sum: 3/6 + 2/6 = 5/6 cup of juice."
+        },
+        {
+          "id": "fo-19",
+          "problem": "You have 5/6 of a bag of pretzels. You eat 1/4 of a bag. How much is left?",
+          "hints": [
+            "Denominators are 6 and 4. LCD = 12 (smallest number both 6 and 4 divide into)",
+            "Convert: 5/6 = 10/12 and 1/4 = 3/12",
+            "Subtract: 10/12 − 3/12 = ?"
+          ],
+          "answer": "5/6 = 10/12, 1/4 = 3/12. Difference: 10/12 − 3/12 = 7/12 of the bag left."
+        },
+        {
+          "id": "fo-20",
+          "problem": "A salad dressing uses 2/5 cup of olive oil and 1/3 cup of vinegar. How much dressing is that in total?",
+          "hints": [
+            "Denominators are 5 and 3. LCD = 15",
+            "Convert: 2/5 = 6/15 and 1/3 = 5/15",
+            "Add the fifteenths"
+          ],
+          "answer": "2/5 = 6/15, 1/3 = 5/15. Sum: 6/15 + 5/15 = 11/15 cup of dressing."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Unlike-Denominator Fractions — On Your Own",
+      "skill": "emf-add-subtract-unlike",
+      "problems": [
+        {
+          "id": "fo-21",
+          "problem": "You combine 3/4 cup of cheddar cheese with 2/5 cup of mozzarella for a quesadilla. How much cheese altogether?",
+          "answer": "LCD = 20. 3/4 = 15/20, 2/5 = 8/20. Sum: 15/20 + 8/20 = 23/20 = 1 3/20 cups of cheese."
+        },
+        {
+          "id": "fo-22",
+          "problem": "A pitcher holds 7/8 gallon of lemonade. You pour out 1/3 gallon for a glass. How much lemonade is left in the pitcher?",
+          "answer": "LCD = 24. 7/8 = 21/24, 1/3 = 8/24. Difference: 21/24 − 8/24 = 13/24 gallon left."
+        },
+        {
+          "id": "fo-23",
+          "problem": "At a party you eat 1/2 of an apple pie and 2/5 of a cherry pie (both the same size). How much total pie did you eat?",
+          "answer": "LCD = 10. 1/2 = 5/10, 2/5 = 4/10. Sum: 5/10 + 4/10 = 9/10 of a pie."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Multiplying Fractions",
+      "skill": "emf-multiply-fractions",
+      "content": "Multiplying fractions answers the question 'What is a fraction OF another amount?' If you eat 1/2 of 1/3 of a pan of brownies, you are taking a part of a part — and the result is smaller than either fraction you started with! The algorithm is simple: multiply straight across. But the area model shows you WHY it works.",
+      "keyPoints": [
+        "Multiply numerator × numerator and denominator × denominator: (a/b) × (c/d) = (a × c)/(b × d)",
+        "Area model: draw a rectangle, divide it one way for the first fraction and the other way for the second. The overlap is your answer. This shows why the product is SMALLER than both factors.",
+        "Fraction × whole number: write the whole number as a fraction over 1. Example: 2/3 × 6 = 2/3 × 6/1 = 12/3 = 4",
+        "Cross-canceling (simplify before you multiply): if a numerator and the opposite denominator share a common factor, divide both by that factor first. This keeps numbers small and avoids simplifying a big product afterward.",
+        "Always simplify your final answer to lowest terms"
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Multiplying Fractions — Worked Examples",
+      "skill": "emf-multiply-fractions",
+      "examples": [
+        {
+          "id": "fo-24",
+          "problem": "A recipe makes 1/3 of a pan of brownies. You only want to make half of that recipe. What fraction of the pan will you fill?",
+          "solution": "You want 1/2 OF 1/3, so multiply: 1/2 × 1/3.\nNumerators: 1 × 1 = 1.\nDenominators: 2 × 3 = 6.\n1/2 × 1/3 = 1/6 of the pan.\n\nArea model: Draw a rectangle for the pan. Divide it into 3 equal columns and shade 1 column (that is 1/3). Now divide those columns in half horizontally (2 rows). Shade only the top half of the already-shaded column. You shaded 1 piece out of 6 total — that is 1/6!"
+        },
+        {
+          "id": "fo-25",
+          "problem": "You have 3/4 of a bag of trail mix. You eat 2/5 of what is left. How much of the whole bag did you eat?",
+          "solution": "You ate 2/5 OF 3/4.\nMultiply: 3/4 × 2/5.\nNumerators: 3 × 2 = 6.\nDenominators: 4 × 5 = 20.\n6/20 — simplify by dividing both by 2: 6/20 = 3/10.\nYou ate 3/10 of the whole bag.\n\nNotice: 3/10 is less than 3/4 (what you had) and less than 2/5 (the portion you ate). When you multiply two fractions that are each less than 1, the result is always smaller than either one."
+        },
+        {
+          "id": "fo-26",
+          "problem": "A cookie recipe needs 2/3 cup of butter per batch. You are making 6 batches for a bake sale. How much butter do you need?",
+          "solution": "Fraction × whole number: 2/3 × 6.\nWrite 6 as 6/1: 2/3 × 6/1.\nNumerators: 2 × 6 = 12.\nDenominators: 3 × 1 = 3.\n12/3 = 4 cups of butter.\n\nCross-cancel shortcut: before multiplying, notice 6 and 3 share a factor of 3. Divide: 6 ÷ 3 = 2, 3 ÷ 3 = 1. Now multiply: 2/1 × 2/1 = 4/1 = 4. Same answer, smaller numbers!"
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Multiplying Fractions — Your Turn (With Help)",
+      "skill": "emf-multiply-fractions",
+      "problems": [
+        {
+          "id": "fo-27",
+          "problem": "A recipe calls for 2/3 cup of sugar. You only want to make 1/4 of the recipe. How much sugar do you need?",
+          "hints": [
+            "You want 1/4 OF 2/3 — multiply the two fractions",
+            "Numerators: 1 × 2 = ? Denominators: 4 × 3 = ?",
+            "Can you simplify your answer? Check if the numerator and denominator share a common factor"
+          ],
+          "answer": "1/4 × 2/3 = 2/12 = 1/6 cup of sugar."
+        },
+        {
+          "id": "fo-28",
+          "problem": "Each serving of frozen yogurt uses 3/5 cup. How much frozen yogurt do you need for 10 servings?",
+          "hints": [
+            "Fraction × whole number: 3/5 × 10. Write 10 as 10/1.",
+            "Before multiplying, can you cross-cancel? 10 and 5 share a factor of 5.",
+            "After canceling: 3/1 × 2/1 = ?"
+          ],
+          "answer": "3/5 × 10 = 3/5 × 10/1. Cross-cancel (10 ÷ 5 = 2, 5 ÷ 5 = 1): 3/1 × 2/1 = 6 cups."
+        },
+        {
+          "id": "fo-29",
+          "problem": "A chocolate bar weighs 3/8 of a pound. A brownie recipe needs 2/3 of that bar. How many pounds of chocolate does the recipe use?",
+          "hints": [
+            "You need 2/3 OF 3/8 — multiply the fractions",
+            "Before multiplying straight across, look for cross-canceling: do the 3 in the numerator and the 3 in the denominator cancel?",
+            "After canceling the 3s: 2/8 × 1/1 — simplify"
+          ],
+          "answer": "2/3 × 3/8: cross-cancel the 3s → 2/1 × 1/8 = 2/8 = 1/4 pound of chocolate."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Multiplying Fractions — On Your Own",
+      "skill": "emf-multiply-fractions",
+      "problems": [
+        {
+          "id": "fo-30",
+          "problem": "You have 5/6 of a bag of flour. A muffin recipe uses 3/4 of what you have. How much of a full bag does the recipe need?",
+          "answer": "5/6 × 3/4 = 15/24 = 5/8 of the bag."
+        },
+        {
+          "id": "fo-31",
+          "problem": "Each pancake needs 4/5 tablespoon of maple syrup. You are making 15 pancakes for a big family breakfast. How many tablespoons of syrup do you need?",
+          "answer": "4/5 × 15 = 4/5 × 15/1. Cross-cancel (15 ÷ 5 = 3): 4/1 × 3/1 = 12 tablespoons."
+        },
+        {
+          "id": "fo-32",
+          "problem": "A pitcher holds 2/3 gallon of juice. You fill 3/4 of the pitcher. How many gallons of juice is that?",
+          "answer": "2/3 × 3/4: cross-cancel the 3s → 2/1 × 1/4 = 2/4 = 1/2 gallon of juice."
+        }
+      ],
+      "lessonId": "fraction_operations"
+    }
+  ],
+  "answerKeys": {
+    "fo-1": "3/5",
+    "fo-2": "1 (or 8/8)",
+    "fo-3": "4 1/6",
+    "fo-4": "3/4",
+    "fo-5": "4 1/5",
+    "fo-6": "6/7",
+    "fo-7": "6 1/2",
+    "fo-8": "1/2 (or 3/6)",
+    "fo-9": "1/5",
+    "fo-10": "1 1/2",
+    "fo-11": "1/2 (or 4/8)",
+    "fo-12": "2 2/3",
+    "fo-13": "3/5 (or 6/10)",
+    "fo-14": "2 1/2",
+    "fo-15": "7/12",
+    "fo-16": "5/6",
+    "fo-17": "5/12",
+    "fo-18": "5/6",
+    "fo-19": "7/12",
+    "fo-20": "11/15",
+    "fo-21": "1 3/20 (or 23/20)",
+    "fo-22": "13/24",
+    "fo-23": "9/10",
+    "fo-24": "1/6",
+    "fo-25": "3/10",
+    "fo-26": "4",
+    "fo-27": "1/6",
+    "fo-28": "6",
+    "fo-29": "1/4",
+    "fo-30": "5/8",
+    "fo-31": "12",
+    "fo-32": "1/2"
+  }
+}

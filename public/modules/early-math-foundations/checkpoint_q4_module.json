@@ -1,0 +1,204 @@
+{
+  "moduleId": "checkpoint_q4",
+  "course": "Early Math Foundations",
+  "unit": 8,
+  "title": "Checkpoint: Quarter 4 \u2014 Geometry, Data, and Cumulative",
+  "weeks": "24",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering geometry, measurement, data interpretation, patterns, and cumulative skills from all units.",
+  "skillsCovered": [
+    "emf-perimeter",
+    "emf-area-rectangles",
+    "emf-angles-basics",
+    "emf-shapes-properties",
+    "emf-measurement-units",
+    "emf-data-graphs",
+    "emf-data-interpretation",
+    "emf-patterns-rules",
+    "emf-unknowns-intro"
+  ],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest geometry, data, and pattern skills. Remediation bridges concrete models (grid paper, rulers, real graphs) to abstract reasoning.",
+    "clusters": [
+      {
+        "skillId": "emf-perimeter",
+        "reteachFocus": "Walk around the shape, add every side, watch for missing sides on irregular shapes, perimeter is always a length (one unit, not squared)"
+      },
+      {
+        "skillId": "emf-area-rectangles",
+        "reteachFocus": "Area = length \u00d7 width, count unit squares on grid paper first, area uses square units, distinguish from perimeter"
+      },
+      {
+        "skillId": "emf-angles-basics",
+        "reteachFocus": "Right angle = 90\u00b0 (square corner), acute < 90\u00b0, obtuse > 90\u00b0, angles on a straight line sum to 180\u00b0, use a corner of paper as a right-angle checker"
+      },
+      {
+        "skillId": "emf-shapes-properties",
+        "reteachFocus": "Count sides and angles, identify parallel and perpendicular sides, quadrilateral family tree (square \u2192 rectangle \u2192 parallelogram), sort shapes by properties not appearance"
+      },
+      {
+        "skillId": "emf-measurement-units",
+        "reteachFocus": "Customary vs metric, converting within the same system (12 in = 1 ft, 100 cm = 1 m), multiply to go smaller \u2192 bigger count, divide to go bigger \u2192 smaller count"
+      },
+      {
+        "skillId": "emf-data-graphs",
+        "reteachFocus": "Read axis labels and scale carefully, bar height = value, line plot Xs above number line, always check what each axis represents before answering"
+      },
+      {
+        "skillId": "emf-data-interpretation",
+        "reteachFocus": "Compare bars or data points, find totals by adding, find differences by subtracting, 'how many more' = subtraction, draw conclusions from data"
+      },
+      {
+        "skillId": "emf-patterns-rules",
+        "reteachFocus": "Find what changes each step (add, subtract, multiply), write the rule in words first then with numbers, use the rule to predict future terms, input/output tables"
+      },
+      {
+        "skillId": "emf-unknowns-intro",
+        "reteachFocus": "Unknown = a number we need to find, use a letter or box, set up the equation from the word problem, use inverse operations to solve, check by plugging back in"
+      }
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cq4-1",
+      "question": "A rectangle has a length of 12 cm and a width of 5 cm. What is the perimeter of the rectangle?",
+      "answer": "Perimeter = 2 \u00d7 length + 2 \u00d7 width = 2 \u00d7 12 + 2 \u00d7 5 = 24 + 10 = 34 cm.",
+      "skill": "emf-perimeter",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq4-2",
+      "question": "Jayla wants to put a fence around her rectangular garden. The garden is 18 feet long and 9 feet wide. How many feet of fencing does she need?",
+      "answer": "Perimeter = 2 \u00d7 18 + 2 \u00d7 9 = 36 + 18 = 54 feet of fencing.",
+      "skill": "emf-perimeter",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-3",
+      "question": "A rectangular rug is 7 feet long and 4 feet wide. What is the area of the rug?",
+      "answer": "Area = length \u00d7 width = 7 \u00d7 4 = 28 square feet.",
+      "skill": "emf-area-rectangles",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq4-4",
+      "question": "Mr. Torres is tiling a rectangular kitchen floor that is 15 feet long and 8 feet wide. Each tile covers 1 square foot and costs $2. What is the total cost to tile the entire floor?",
+      "answer": "Area = 15 \u00d7 8 = 120 square feet. Total cost = 120 \u00d7 $2 = $240. He needs 120 tiles and will spend $240.",
+      "skill": "emf-area-rectangles",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq4-5",
+      "question": "Look at these three angles: Angle A opens as wide as a book barely cracked open. Angle B looks like the corner of a piece of paper. Angle C opens wider than a book laid flat. Classify each angle as acute, right, or obtuse.",
+      "answer": "Angle A is acute (less than 90\u00b0 \u2014 a small opening). Angle B is a right angle (exactly 90\u00b0 \u2014 a square corner). Angle C is obtuse (greater than 90\u00b0 \u2014 opens wider than a right angle).",
+      "skill": "emf-angles-basics",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq4-6",
+      "question": "Two angles sit on a straight line. One angle measures 115\u00b0. What is the measure of the other angle? What type of angle is it \u2014 acute, right, or obtuse?",
+      "answer": "Angles on a straight line add up to 180\u00b0. The other angle = 180\u00b0 \u2212 115\u00b0 = 65\u00b0. Since 65\u00b0 is less than 90\u00b0, it is an acute angle.",
+      "skill": "emf-angles-basics",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-7",
+      "question": "Name a shape that has exactly 4 sides, 4 right angles, and all sides the same length. Then name a shape that has 4 sides and 4 right angles but does NOT have all sides the same length. What makes these two shapes different?",
+      "answer": "A square has 4 sides, 4 right angles, and all sides equal. A rectangle has 4 sides and 4 right angles but opposite sides are equal (not all four). The difference is that a square has all equal sides while a rectangle has two pairs of equal sides.",
+      "skill": "emf-shapes-properties",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-8",
+      "question": "A parallelogram has opposite sides that are parallel and equal in length. Is a rectangle a parallelogram? Is a triangle a parallelogram? Explain both answers using the properties.",
+      "answer": "Yes, a rectangle is a parallelogram because it has two pairs of parallel sides and opposite sides are equal in length. It is a special parallelogram with all right angles. No, a triangle is NOT a parallelogram because it has only 3 sides (a parallelogram must have exactly 4) and it does not have two pairs of parallel sides.",
+      "skill": "emf-shapes-properties",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq4-9",
+      "question": "Convert: How many inches are in 4 feet? (Remember: 1 foot = 12 inches.)",
+      "answer": "4 feet \u00d7 12 inches per foot = 48 inches.",
+      "skill": "emf-measurement-units",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq4-10",
+      "question": "A bookshelf is 3 feet 7 inches tall. A doorway is 50 inches tall. Will the bookshelf fit through the doorway? Show your work.",
+      "answer": "Convert the bookshelf to inches: 3 feet = 36 inches, so 3 feet 7 inches = 36 + 7 = 43 inches. Compare: 43 inches < 50 inches. Yes, the bookshelf will fit through the doorway with 7 inches to spare.",
+      "skill": "emf-measurement-units",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-11",
+      "question": "A bar graph shows the number of books read by four students in March: Aisha \u2014 8 books, Ben \u2014 5 books, Carlos \u2014 10 books, Dana \u2014 7 books. How many books did all four students read in total?",
+      "answer": "Add all the values: 8 + 5 + 10 + 7 = 30 books total.",
+      "skill": "emf-data-graphs",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "cq4-12",
+      "question": "Using the same data \u2014 Aisha: 8 books, Ben: 5 books, Carlos: 10 books, Dana: 7 books \u2014 answer these questions: (a) How many more books did Carlos read than Ben? (b) If Aisha reads 4 more books in April, will she have read more total books than Carlos did in March?",
+      "answer": "(a) Carlos read 10 \u2212 5 = 5 more books than Ben. (b) Aisha in March + April = 8 + 4 = 12 books. Carlos in March = 10 books. 12 > 10, so yes, Aisha will have read more than Carlos.",
+      "skill": "emf-data-interpretation",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-13",
+      "question": "Find the rule and give the next three numbers in this pattern: 3, 7, 11, 15, 19, ___, ___, ___.",
+      "answer": "The rule is add 4 each time (7 \u2212 3 = 4, 11 \u2212 7 = 4, 15 \u2212 11 = 4). Next three: 19 + 4 = 23, 23 + 4 = 27, 27 + 4 = 31. The pattern continues: 23, 27, 31.",
+      "skill": "emf-patterns-rules",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "cq4-14",
+      "question": "An input-output table shows: Input 2 \u2192 Output 7, Input 4 \u2192 Output 13, Input 6 \u2192 Output 19, Input 10 \u2192 Output ___. Find the rule and use it to find the missing output.",
+      "answer": "Look at the pattern: 2 \u2192 7 (multiply by 3, add 1: 2\u00d73+1=7), 4 \u2192 13 (4\u00d73+1=13), 6 \u2192 19 (6\u00d73+1=19). The rule is: Output = Input \u00d7 3 + 1. For input 10: 10 \u00d7 3 + 1 = 31. The missing output is 31.",
+      "skill": "emf-patterns-rules",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "cq4-15",
+      "question": "Mia has some stickers. She gives 14 stickers to her friend and has 23 stickers left. Write an equation using a letter for the unknown number, and solve it. How many stickers did Mia start with?",
+      "answer": "Let s = the number of stickers Mia started with. Equation: s \u2212 14 = 23. Solve: s = 23 + 14 = 37. Mia started with 37 stickers. Check: 37 \u2212 14 = 23 \u2713.",
+      "skill": "emf-unknowns-intro",
+      "difficulty": 2,
+      "points": 4
+    }
+  ],
+  "answerKeys": {
+    "cq4-1": "34 cm",
+    "cq4-2": "54 feet",
+    "cq4-3": "28 square feet",
+    "cq4-4": "120 square feet; $240",
+    "cq4-5": "A = acute, B = right, C = obtuse",
+    "cq4-6": "65\u00b0; acute",
+    "cq4-7": "Square (all sides equal, 4 right angles); Rectangle (opposite sides equal, 4 right angles)",
+    "cq4-8": "Yes, a rectangle is a parallelogram; No, a triangle is not",
+    "cq4-9": "48 inches",
+    "cq4-10": "43 inches < 50 inches; yes, it fits",
+    "cq4-11": "30 books",
+    "cq4-12": "(a) 5 more books (b) Yes, 12 > 10",
+    "cq4-13": "Add 4; 23, 27, 31",
+    "cq4-14": "Rule: Input \u00d7 3 + 1; Output = 31",
+    "cq4-15": "s \u2212 14 = 23; s = 37 stickers"
+  }
+}

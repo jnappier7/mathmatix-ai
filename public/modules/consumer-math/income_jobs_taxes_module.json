@@ -6,8 +6,20 @@
   "weeks": "8",
   "estimatedDuration": 35,
   "description": "What does a job ACTUALLY pay? This module strips away the illusion of a salary number and teaches students to calculate what really lands in their bank account. Hourly vs salary vs commission, overtime math, W-2 vs 1099 tax implications, progressive taxation, and the hidden value of employer benefits. By the end, students can compare two job offers and make a justified recommendation.",
-  "skills": ["cm-pay-structures", "cm-overtime-timesheets", "cm-tax-basics", "cm-benefits-comparison"],
-  "standardsAlignment": ["Financial Literacy Standard 1", "7.RP.1", "7.RP.3", "7.EE.3", "MP.1", "MP.4"],
+  "skills": [
+    "cm-pay-structures",
+    "cm-overtime-timesheets",
+    "cm-tax-basics",
+    "cm-benefits-comparison"
+  ],
+  "standardsAlignment": [
+    "Financial Literacy Standard 1",
+    "7.RP.1",
+    "7.RP.3",
+    "7.EE.3",
+    "MP.1",
+    "MP.4"
+  ],
   "goals": [
     "Calculate gross pay for hourly, salaried, and commission-based pay structures",
     "Compute overtime pay using time-and-a-half and read/build weekly timesheets",
@@ -35,7 +47,8 @@
         "Commission: Base salary + (total sales × commission rate). A 5% commission on $80,000 in sales = $4,000 in commission income.",
         "Hourly equivalent of salary: Annual salary ÷ 2,080 hours (40 hrs/wk × 52 wks). $50,000/year = $24.04/hour.",
         "When comparing pay structures, always convert to the same basis. Weekly, biweekly, and annual comparisons each reveal different things about cash flow and total earnings."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -55,7 +68,8 @@
           "problem": "David is a car salesperson who earns a base salary of $2,000/month plus 3% commission on all sales. In March, he sold $120,000 worth of vehicles. What was his total gross pay for March?",
           "solution": "Step 1: Calculate commission.\nCommission = total sales × commission rate = $120,000 × 0.03 = $3,600\n\nStep 2: Add base salary.\nTotal gross pay = base + commission = $2,000 + $3,600 = $5,600\n\nDavid earned $5,600 in March. Note: In a slow month with only $40,000 in sales, his commission would be just $1,200, making total pay $3,200 — commission income varies significantly."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -65,7 +79,7 @@
       "problems": [
         {
           "id": "ijt-1",
-          "prompt": "Keisha works as a pharmacy technician earning $16.75 per hour. She worked 35 hours this week. What is her gross pay for the week?",
+          "question": "Keisha works as a pharmacy technician earning $16.75 per hour. She worked 35 hours this week. What is her gross pay for the week?",
           "hints": [
             "Use the formula: gross pay = hourly rate × hours worked",
             "$16.75 × 35 — multiply the dollars by the hours"
@@ -74,7 +88,7 @@
         },
         {
           "id": "ijt-2",
-          "prompt": "Tyler earns an annual salary of $41,600. His company pays employees semimonthly (twice per month). What is Tyler's gross pay per paycheck?",
+          "question": "Tyler earns an annual salary of $41,600. His company pays employees semimonthly (twice per month). What is Tyler's gross pay per paycheck?",
           "hints": [
             "Semimonthly = 24 pay periods per year (2 per month × 12 months)",
             "Divide annual salary by number of pay periods: $41,600 ÷ 24"
@@ -83,14 +97,15 @@
         },
         {
           "id": "ijt-3",
-          "prompt": "Jasmine works in retail and earns a base salary of $1,800/month plus 4.5% commission on her sales. In November she sold $65,000 worth of merchandise. What was her total gross pay for November?",
+          "question": "Jasmine works in retail and earns a base salary of $1,800/month plus 4.5% commission on her sales. In November she sold $65,000 worth of merchandise. What was her total gross pay for November?",
           "hints": [
             "First calculate commission: $65,000 × 0.045",
             "Then add the base salary to the commission"
           ],
           "answer": "$4,725.00. Commission = $65,000 × 0.045 = $2,925. Total = $1,800 + $2,925 = $4,725.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -100,20 +115,21 @@
       "problems": [
         {
           "id": "ijt-4",
-          "prompt": "A warehouse worker earns $21.00 per hour and worked 40 hours this week. What is the worker's gross pay?",
+          "question": "A warehouse worker earns $21.00 per hour and worked 40 hours this week. What is the worker's gross pay?",
           "answer": "$840.00. Gross pay = $21.00 × 40 = $840.00."
         },
         {
           "id": "ijt-5",
-          "prompt": "Rena earns an annual salary of $63,000 and is paid monthly. What is her gross pay per paycheck? Then convert her salary to an hourly equivalent (assume 2,080 work hours per year). Round to the nearest cent.",
+          "question": "Rena earns an annual salary of $63,000 and is paid monthly. What is her gross pay per paycheck? Then convert her salary to an hourly equivalent (assume 2,080 work hours per year). Round to the nearest cent.",
           "answer": "Monthly gross = $5,250.00. Hourly equivalent = $30.29. Monthly: $63,000 ÷ 12 = $5,250. Hourly: $63,000 ÷ 2,080 = $30.29."
         },
         {
           "id": "ijt-6",
-          "prompt": "A real estate agent earns no base salary but receives a 2.5% commission on every home sold. In one month she sold two homes: one for $280,000 and one for $415,000. What was her total gross pay for the month?",
+          "question": "A real estate agent earns no base salary but receives a 2.5% commission on every home sold. In one month she sold two homes: one for $280,000 and one for $415,000. What was her total gross pay for the month?",
           "answer": "$17,375.00. Total sales = $280,000 + $415,000 = $695,000. Commission = $695,000 × 0.025 = $17,375.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -128,7 +144,8 @@
         "Only hours OVER 40 are overtime. A 47-hour week means 40 regular hours + 7 overtime hours — not 47 overtime hours.",
         "Timesheets: add daily hours for the week. Watch for lunch breaks — if a shift is 8:00 AM to 4:30 PM with a 30-minute unpaid lunch, that is 8 hours worked, not 8.5.",
         "Some states (like California) also require daily overtime for hours over 8 in a single day, but the standard federal rule uses the 40-hour weekly threshold."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -148,7 +165,8 @@
           "problem": "Two workers both earn $22.00/hour. Worker A works exactly 40 hours every week. Worker B works 35 hours most weeks but picks up a 50-hour week once a month. Over a 4-week period where Worker B works 35, 35, 35, and 50 hours, who earns more?",
           "solution": "Worker A (4 weeks at 40 hrs):\n4 × (40 × $22.00) = 4 × $880 = $3,520.00\n\nWorker B:\nWeeks 1-3 (35 hrs each): 3 × (35 × $22.00) = 3 × $770 = $2,310.00\nWeek 4 (50 hrs):\n  Regular = 40 × $22.00 = $880.00\n  OT = 10 × ($22.00 × 1.5) = 10 × $33.00 = $330.00\n  Week 4 total = $1,210.00\nWorker B total = $2,310 + $1,210 = $3,520.00\n\nThey earn the same amount! But Worker B worked only 155 total hours vs Worker A's 160 hours. Worker B averaged $22.71/hour across all hours thanks to overtime on that one big week."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -158,7 +176,7 @@
       "problems": [
         {
           "id": "ijt-7",
-          "prompt": "Sandra earns $15.00 per hour at a distribution center. She worked 44 hours last week. Calculate her gross pay.",
+          "question": "Sandra earns $15.00 per hour at a distribution center. She worked 44 hours last week. Calculate her gross pay.",
           "hints": [
             "First find overtime hours: 44 - 40 = 4 overtime hours",
             "Regular pay = 40 × $15.00. Overtime rate = $15.00 × 1.5 = $22.50. OT pay = 4 × $22.50."
@@ -167,7 +185,7 @@
         },
         {
           "id": "ijt-8",
-          "prompt": "Read this timesheet for Carlos ($19.00/hour):\nMon: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nTue: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nWed: 7:00 AM - 5:00 PM (30 min unpaid lunch)\nThu: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nFri: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nWhat are his total hours for the week, and what is his gross pay?",
+          "question": "Read this timesheet for Carlos ($19.00/hour):\nMon: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nTue: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nWed: 7:00 AM - 5:00 PM (30 min unpaid lunch)\nThu: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nFri: 7:00 AM - 3:30 PM (30 min unpaid lunch)\nWhat are his total hours for the week, and what is his gross pay?",
           "hints": [
             "Calculate each day: Mon/Tue/Thu/Fri are 8.5 hrs on-site minus 0.5 hr lunch = 8 hrs. Wed is 10 hrs on-site minus 0.5 hr = 9.5 hrs.",
             "Total = 8 + 8 + 9.5 + 8 + 8 = 41.5 hours. Overtime = 41.5 - 40 = 1.5 hours."
@@ -176,14 +194,15 @@
         },
         {
           "id": "ijt-9",
-          "prompt": "An employee earns $14.00/hour and worked 52 hours in one week. What is the difference between the gross pay calculated correctly (with overtime) and the incorrect calculation of simply multiplying $14.00 × 52?",
+          "question": "An employee earns $14.00/hour and worked 52 hours in one week. What is the difference between the gross pay calculated correctly (with overtime) and the incorrect calculation of simply multiplying $14.00 × 52?",
           "hints": [
             "Correct: (40 × $14) + (12 × $14 × 1.5). Incorrect: 52 × $14.",
             "Find each total, then subtract to find the difference."
           ],
           "answer": "$84.00 difference. Correct gross = (40 × $14) + (12 × $21) = $560 + $252 = $812. Incorrect = 52 × $14 = $728. Difference = $812 - $728 = $84.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -193,20 +212,21 @@
       "problems": [
         {
           "id": "ijt-10",
-          "prompt": "A construction worker earns $25.00/hour and worked 48 hours last week. Calculate the worker's gross pay for the week.",
+          "question": "A construction worker earns $25.00/hour and worked 48 hours last week. Calculate the worker's gross pay for the week.",
           "answer": "$1,300.00. Regular: 40 × $25.00 = $1,000.00. OT: 8 × $37.50 = $300.00. Total = $1,000 + $300 = $1,300.00."
         },
         {
           "id": "ijt-11",
-          "prompt": "Here is Mia's timesheet ($16.50/hour):\nMon: 9 hours\nTue: 8 hours\nWed: 9 hours\nThu: 8 hours\nFri: 9 hours\nSat: 5 hours\nWhat is her total hours and gross pay for the week?",
+          "question": "Here is Mia's timesheet ($16.50/hour):\nMon: 9 hours\nTue: 8 hours\nWed: 9 hours\nThu: 8 hours\nFri: 9 hours\nSat: 5 hours\nWhat is her total hours and gross pay for the week?",
           "answer": "48 total hours. Gross pay = $858.00. Regular: 40 × $16.50 = $660.00. OT: 8 × $24.75 = $198.00. Total = $660 + $198 = $858.00."
         },
         {
           "id": "ijt-12",
-          "prompt": "Two job offers: Job A pays $18/hour with a guaranteed 45 hours per week. Job B pays $20/hour with exactly 40 hours per week. Which job pays more per week, and by how much?",
+          "question": "Two job offers: Job A pays $18/hour with a guaranteed 45 hours per week. Job B pays $20/hour with exactly 40 hours per week. Which job pays more per week, and by how much?",
           "answer": "Job A pays $55 more per week. Job A: (40 × $18) + (5 × $27) = $720 + $135 = $855. Job B: 40 × $20 = $800. Difference = $855 - $800 = $55."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -221,7 +241,8 @@
         "Marginal tax rate: the rate on your next dollar of income. Effective tax rate: total tax paid ÷ gross income. Effective is always lower than marginal.",
         "Quick W-2 estimate: for a typical single filer earning $40,000-$60,000, total taxes (federal + state + FICA) run roughly 22-25% of gross pay.",
         "A $60,000 1099 contract is NOT the same as a $60,000 W-2 salary. After self-employment tax (~$9,180) and no employer benefits, the 1099 worker often nets less than a W-2 employee earning a lower salary."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -241,7 +262,8 @@
           "problem": "Compare: Jordan is offered a $60,000/year 1099 contract. His friend Malik has a $55,000/year W-2 job. Using a 23% total tax estimate for the W-2 and 15.3% self-employment tax plus 12% effective income tax for the 1099, who takes home more?",
           "solution": "Jordan (1099 at $60,000):\nSelf-employment tax = $60,000 × 0.153 = $9,180\nEstimated income tax = $60,000 × 0.12 = $7,200\nTotal tax = $9,180 + $7,200 = $16,380\nTake-home = $60,000 - $16,380 = $43,620\n\nMalik (W-2 at $55,000):\nTotal taxes (federal + state + FICA) = $55,000 × 0.23 = $12,650\nTake-home = $55,000 - $12,650 = $42,350\n\nJordan technically takes home $1,270 more, but Malik gets employer benefits — health insurance worth $6,000+, retirement match, and paid time off. Once you factor in benefits, Malik's total compensation package likely wins by thousands of dollars."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -251,7 +273,7 @@
       "problems": [
         {
           "id": "ijt-13",
-          "prompt": "Darnell earns a W-2 salary of $52,000/year. Using an estimated total tax rate of 24%, calculate his estimated annual take-home pay and his monthly take-home pay.",
+          "question": "Darnell earns a W-2 salary of $52,000/year. Using an estimated total tax rate of 24%, calculate his estimated annual take-home pay and his monthly take-home pay.",
           "hints": [
             "Total taxes = $52,000 × 0.24",
             "Take-home = gross - taxes. Monthly = annual take-home ÷ 12."
@@ -260,7 +282,7 @@
         },
         {
           "id": "ijt-14",
-          "prompt": "Using these simplified brackets, calculate the federal income tax on $38,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\nWhat is the tax amount and the effective federal rate?",
+          "question": "Using these simplified brackets, calculate the federal income tax on $38,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\nWhat is the tax amount and the effective federal rate?",
           "hints": [
             "All $38,000 fits within the first two brackets. Bracket 1: $11,000 × 0.10. Bracket 2: ($38,000 - $11,000) × 0.12.",
             "Effective rate = total tax ÷ $38,000."
@@ -269,14 +291,15 @@
         },
         {
           "id": "ijt-15",
-          "prompt": "Alicia is a freelance graphic designer (1099 contractor) who earned $45,000 this year. Calculate her self-employment tax (15.3%). Then estimate her total tax burden if her effective income tax rate is about 14%. How much does she take home?",
+          "question": "Alicia is a freelance graphic designer (1099 contractor) who earned $45,000 this year. Calculate her self-employment tax (15.3%). Then estimate her total tax burden if her effective income tax rate is about 14%. How much does she take home?",
           "hints": [
             "SE tax = $45,000 × 0.153",
             "Income tax = $45,000 × 0.14. Total tax = SE tax + income tax. Take-home = $45,000 - total tax."
           ],
           "answer": "Take-home: $31,815. SE tax = $45,000 × 0.153 = $6,885. Income tax = $45,000 × 0.14 = $6,300. Total tax = $6,885 + $6,300 = $13,185. Take-home = $45,000 - $13,185 = $31,815."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -286,20 +309,21 @@
       "problems": [
         {
           "id": "ijt-16",
-          "prompt": "Nadia earns a W-2 salary of $44,000. Her employer withholds 22% for all taxes combined. What is her annual take-home pay, and what does she receive per biweekly paycheck (26 pay periods)?",
+          "question": "Nadia earns a W-2 salary of $44,000. Her employer withholds 22% for all taxes combined. What is her annual take-home pay, and what does she receive per biweekly paycheck (26 pay periods)?",
           "answer": "Annual take-home: $34,320. Biweekly: $1,320.00. Taxes = $44,000 × 0.22 = $9,680. Take-home = $44,000 - $9,680 = $34,320. Biweekly = $34,320 ÷ 26 = $1,320.00."
         },
         {
           "id": "ijt-17",
-          "prompt": "Calculate the federal income tax on $55,000 of taxable income using these brackets:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\nWhat is the total tax and the effective rate?",
+          "question": "Calculate the federal income tax on $55,000 of taxable income using these brackets:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\nWhat is the total tax and the effective rate?",
           "answer": "Tax = $7,407.50. Effective rate = 13.5%. Bracket 1: $11,000 × 0.10 = $1,100. Bracket 2: $33,725 × 0.12 = $4,047. Bracket 3: $10,275 × 0.22 = $2,260.50. Total = $1,100 + $4,047 + $2,260.50 = $7,407.50. Effective = $7,407.50 ÷ $55,000 = 0.1347 = 13.5%."
         },
         {
           "id": "ijt-18",
-          "prompt": "Marcus is choosing between a $50,000/year W-2 job (estimated 23% total tax) and a $58,000/year 1099 contract (15.3% SE tax + estimated 13% income tax rate). Based on take-home pay alone, which option gives him more money? By how much?",
+          "question": "Marcus is choosing between a $50,000/year W-2 job (estimated 23% total tax) and a $58,000/year 1099 contract (15.3% SE tax + estimated 13% income tax rate). Based on take-home pay alone, which option gives him more money? By how much?",
           "answer": "The 1099 wins on take-home by $3,086, but lacks benefits. W-2: $50,000 × 0.77 = $38,500. 1099: SE tax = $58,000 × 0.153 = $8,874. Income tax = $58,000 × 0.13 = $7,540. Total 1099 tax = $16,414. Take-home = $58,000 - $16,414 = $41,586. Difference = $41,586 - $38,500 = $3,086. However, the W-2 job includes employer benefits (health insurance, retirement match, PTO) that could easily exceed $3,086 in value."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -314,7 +338,8 @@
         "Paid Time Off (PTO): convert to dollars. 10 PTO days for a $50,000/year worker = 10 × ($50,000 ÷ 260 work days) = 10 × $192.31 = $1,923 in paid days off.",
         "Other benefits to quantify: life insurance, disability insurance, tuition reimbursement, commuter benefits, wellness stipends.",
         "When comparing offers: line up every component side by side and total them. A $52,000 salary with strong benefits often beats a $60,000 salary with bare-bones or no benefits."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -330,7 +355,8 @@
           "problem": "Kayla receives two nursing job offers:\nHospital A: $68,000 salary, employer pays $7,500 for health insurance, 5% retirement match, 15 PTO days.\nClinic B: $72,000 salary, employer pays $4,000 for health insurance, no retirement match, 10 PTO days.\nWhich has better total compensation?",
           "solution": "Hospital A:\n- Salary: $68,000\n- Health: $7,500\n- Retirement match: $68,000 × 0.05 = $3,400\n- PTO: 15 × ($68,000 ÷ 260) = 15 × $261.54 = $3,923.08\n- Total: $68,000 + $7,500 + $3,400 + $3,923.08 = $82,823.08\n\nClinic B:\n- Salary: $72,000\n- Health: $4,000\n- Retirement match: $0\n- PTO: 10 × ($72,000 ÷ 260) = 10 × $276.92 = $2,769.23\n- Total: $72,000 + $4,000 + $0 + $2,769.23 = $78,769.23\n\nHospital A total compensation is $82,823.08 vs Clinic B at $78,769.23. Hospital A wins by $4,053.85 despite the $4,000 lower salary."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -340,7 +366,7 @@
       "problems": [
         {
           "id": "ijt-19",
-          "prompt": "Company A offers $47,000/year with employer health insurance worth $5,800/year and a 4% 401(k) match. Company B offers $53,000/year with no health insurance and no retirement match. Calculate total compensation for each (ignore PTO for this problem). Which offer has higher total compensation?",
+          "question": "Company A offers $47,000/year with employer health insurance worth $5,800/year and a 4% 401(k) match. Company B offers $53,000/year with no health insurance and no retirement match. Calculate total compensation for each (ignore PTO for this problem). Which offer has higher total compensation?",
           "hints": [
             "Company A total = salary + health insurance + retirement match. Retirement match = $47,000 × 0.04.",
             "Company B total = salary only (no benefits to add)."
@@ -349,7 +375,7 @@
         },
         {
           "id": "ijt-20",
-          "prompt": "Convert 15 PTO days to a dollar value for an employee earning $58,000/year. Assume 260 working days per year.",
+          "question": "Convert 15 PTO days to a dollar value for an employee earning $58,000/year. Assume 260 working days per year.",
           "hints": [
             "Daily rate = annual salary ÷ 260 working days",
             "PTO value = daily rate × number of PTO days"
@@ -358,14 +384,15 @@
         },
         {
           "id": "ijt-21",
-          "prompt": "Job X: $50,000 salary, $6,000 employer health insurance, 3% 401(k) match, 10 PTO days.\nJob Y: $56,000 salary, $3,500 employer health insurance, 1% 401(k) match, 8 PTO days.\nCalculate full total compensation for each and determine which is the better financial offer.",
+          "question": "Job X: $50,000 salary, $6,000 employer health insurance, 3% 401(k) match, 10 PTO days.\nJob Y: $56,000 salary, $3,500 employer health insurance, 1% 401(k) match, 8 PTO days.\nCalculate full total compensation for each and determine which is the better financial offer.",
           "hints": [
             "For each job: total = salary + health + (salary × match%) + (PTO days × daily rate). Daily rate = salary ÷ 260.",
             "Job X: $50,000 + $6,000 + $1,500 + (10 × $192.31). Job Y: $56,000 + $3,500 + $560 + (8 × $215.38)."
           ],
           "answer": "Job X: $59,423.08. Job Y: $61,783.08. Job Y wins by $2,360. Job X: $50,000 + $6,000 + $1,500 + (10 × $192.31 = $1,923.08) = $59,423.08. Job Y: $56,000 + $3,500 + $560 + (8 × $215.38 = $1,723.08) = $61,783.08."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -375,20 +402,21 @@
       "problems": [
         {
           "id": "ijt-22",
-          "prompt": "An employee earns $46,000/year and receives 12 PTO days. The employer contributes $5,400/year for health insurance and matches 3% for retirement. What is the employee's total compensation?",
+          "question": "An employee earns $46,000/year and receives 12 PTO days. The employer contributes $5,400/year for health insurance and matches 3% for retirement. What is the employee's total compensation?",
           "answer": "$54,903.08. Retirement match = $46,000 × 0.03 = $1,380. PTO = 12 × ($46,000 ÷ 260) = 12 × $176.92 = $2,123.08. Total = $46,000 + $5,400 + $1,380 + $2,123.08 = $54,903.08."
         },
         {
           "id": "ijt-23",
-          "prompt": "Offer A: $60,000 salary, $7,200 employer health insurance, 4% retirement match, 15 PTO days.\nOffer B: $70,000 salary, no employer health insurance, no retirement match, 5 PTO days.\nWhich offer has higher total compensation, and by how much?",
+          "question": "Offer A: $60,000 salary, $7,200 employer health insurance, 4% retirement match, 15 PTO days.\nOffer B: $70,000 salary, no employer health insurance, no retirement match, 5 PTO days.\nWhich offer has higher total compensation, and by how much?",
           "answer": "Offer A: $73,661.54. Offer B: $71,346.15. Offer A wins by $2,315.38. Offer A: $60,000 + $7,200 + ($60,000 × 0.04 = $2,400) + (15 × $230.77 = $3,461.54) + (rounding: 15 × ($60,000 ÷ 260) = 15 × $230.77 = $3,461.54) = $73,061.54. Offer B: $70,000 + (5 × $269.23 = $1,346.15) = $71,346.15. Correction — Offer A: $60,000 + $7,200 + $2,400 + $3,461.54 = $73,061.54. Offer A wins by $1,715.38."
         },
         {
           "id": "ijt-24",
-          "prompt": "Deshawn is comparing a W-2 job and a 1099 contract:\nW-2 Job: $52,000 salary (23% total tax), $6,500 employer health insurance, 4% retirement match, 10 PTO days.\n1099 Contract: $68,000 (15.3% SE tax + 13% income tax), no benefits.\nCalculate take-home pay for the 1099 and total compensation for the W-2. Which is the better deal overall?",
+          "question": "Deshawn is comparing a W-2 job and a 1099 contract:\nW-2 Job: $52,000 salary (23% total tax), $6,500 employer health insurance, 4% retirement match, 10 PTO days.\n1099 Contract: $68,000 (15.3% SE tax + 13% income tax), no benefits.\nCalculate take-home pay for the 1099 and total compensation for the W-2. Which is the better deal overall?",
           "answer": "W-2 total compensation: $64,500. W-2 take-home: $40,040. 1099 take-home: $48,764. The W-2 total compensation package is worth $64,500 ($52,000 + $6,500 + $2,080 + $2,000 [from 10 × $200] = wait, let me recalculate). W-2 total comp: $52,000 + $6,500 + ($52,000 × 0.04 = $2,080) + (10 × ($52,000 ÷ 260) = 10 × $200 = $2,000) = $62,580. W-2 take-home: $52,000 × 0.77 = $40,040. 1099 take-home: $68,000 - ($68,000 × 0.153 = $10,404) - ($68,000 × 0.13 = $8,840) = $68,000 - $19,244 = $48,756. The 1099 has higher take-home by $8,716, but the W-2 benefits add $10,580 in value. When factoring in total compensation, the W-2 is the stronger deal."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     }
   ],
   "answerKeys": {

@@ -1,0 +1,557 @@
+{
+  "moduleId": "bootcamp",
+  "course": "6th Grade Math",
+  "unit": 0,
+  "title": "Start-of-Year Boot Camp",
+  "weeks": "1-2",
+  "estimatedDuration": 30,
+  "description": "Fix the 5th-grade foundations before they poison everything. This boot camp targets the five foundation skills that 6th graders MUST have on autopilot: place value and decimal fluency, fraction operations, integer basics, multiplication/division fluency, and basic expression writing. Diagnostic-first: assess before reteaching, skip what's solid, hammer what's shaky.",
+  "skills": [
+    "g6-place-value-decimals",
+    "g6-fraction-ops-review",
+    "g6-integer-basics",
+    "g6-mult-div-fluency",
+    "g6-expression-writing-intro"
+  ],
+  "standardsAlignment": [
+    "5.NBT.A.1",
+    "5.NBT.A.3",
+    "5.NBT.B.5",
+    "5.NBT.B.6",
+    "5.NF.A.1",
+    "5.NF.B.4",
+    "5.NF.B.7",
+    "5.OA.A.2",
+    "6.NS.C.5",
+    "6.NS.C.7",
+    "6.EE.A.2"
+  ],
+  "goals": [
+    "Read, write, compare, and round decimals through the thousandths place with confidence, and add and subtract decimals fluently",
+    "Add, subtract, multiply, and divide fractions and mixed numbers accurately, including with unlike denominators",
+    "Locate positive and negative integers on a number line and compare and order them using inequality symbols",
+    "Recall multiplication facts automatically and execute multi-digit multiplication and long division without errors",
+    "Translate everyday word phrases into mathematical expressions using variables and the terms sum, difference, product, and quotient"
+  ],
+  "instructionalStrategy": [
+    "Diagnostic-first: every skill opens with a quick probe. If the student nails it, skip the reteach and move to practice. If they stumble, drop into the full explanation-model-guided cycle. Do NOT waste time reteaching what is already solid.",
+    "Decimal and fraction work must be grounded in contexts these kids actually care about—money, gaming scores, recipes, sports stats. Abstract drill is the fastest way to lose an 11-year-old.",
+    "Integer basics are a 6th-grade NEW concept for many students, not just review. Use the number line as the primary visual. Avoid rules-before-reasons: let them see why -3 < 2 on the line before memorizing sign rules.",
+    "Multiplication and division fluency is non-negotiable. Students who still finger-count single-digit facts will drown in fraction and ratio work later. Use timed mental-math bursts, not shame—frame speed as a game, not a test.",
+    "Expression writing is the bridge from arithmetic to algebra. Anchor every translation in a real scenario first ('you have x dollars and spend 5' → x - 5), then strip away the story. If a student writes '5 - x' when they mean 'x - 5,' that misconception must be caught immediately."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "skill": "g6-place-value-decimals",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Every digit in a number has a job, and that job depends on WHERE the digit sits. This is place value. You already know the ones, tens, hundreds places to the LEFT of the decimal point. Now we zoom in on what lives to the RIGHT: tenths, hundredths, and thousandths.\n\nThink of it like zooming in on a ruler. One whole unit splits into 10 tenths, each tenth splits into 10 hundredths, and each hundredth splits into 10 thousandths. The pattern is always times-ten or divide-by-ten.\n\nWhen you compare decimals, line up the decimal points and read left to right—just like comparing whole numbers. When you round, look at the digit ONE place to the right of where you're rounding: 5 or more rounds up, 4 or less stays. Adding and subtracting decimals? Line up the decimal points, fill empty spots with zeros, and add or subtract as usual.",
+      "keyPoints": [
+        "Each place to the right of the decimal is one-tenth of the place before it: tenths (0.1), hundredths (0.01), thousandths (0.001)",
+        "To compare decimals, align the decimal points and compare digit by digit from left to right—0.52 > 0.509 because 2 hundredths > 0 hundredths in the second decimal place",
+        "When rounding, look at the digit immediately to the right of the target place: 5 or above rounds up, 4 or below keeps the digit the same",
+        "To add or subtract decimals, stack them vertically with decimal points aligned and pad with trailing zeros so every number has the same number of decimal places",
+        "A digit's value is (digit) x (place value): the 7 in 0.073 is worth 7 x 0.01 = 0.07, not just 7"
+      ],
+      "title": "Concept: Place Value Decimals",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-place-value-decimals",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "A store sells two brands of headphones. Brand A costs $14.095 and Brand B costs $14.12. Which costs more? Then round each price to the nearest cent (hundredths place).",
+          "solution": "Step 1: Line up the decimal points and pad with zeros.\n  14.095\n  14.120\nStep 2: Compare left to right. The ones (14 vs 14) and tenths (0 vs 1) — wait, both have 1 tenth. Move to hundredths: 0 hundredths vs 1 hundredth. Nope — let me re-read: 14.095 has 0 tenths? No. 14.095 → 1 ten, 4 ones, 0 tenths, 9 hundredths, 5 thousandths. 14.120 → 1 ten, 4 ones, 1 tenth, 2 hundredths, 0 thousandths. Tenths: 0 vs 1. Since 1 > 0, Brand B ($14.12) costs more.\nStep 3: Round to the nearest hundredth. For $14.095, the thousandths digit is 5, so round up: $14.10. For $14.120, the thousandths digit is 0, so it stays: $14.12.\nAnswer: Brand B costs more. Brand A rounds to $14.10 and Brand B stays at $14.12."
+        },
+        {
+          "problem": "Write the value of each digit in 3.847, then compute 3.847 + 12.6.",
+          "solution": "Step 1: Break down 3.847.\n  3 → 3 ones = 3\n  8 → 8 tenths = 0.8\n  4 → 4 hundredths = 0.04\n  7 → 7 thousandths = 0.007\nStep 2: Add 3.847 + 12.6. Align decimal points and pad:\n   3.847\n +12.600\n ------\n  16.447\nAnswer: The digit values are 3, 0.8, 0.04, and 0.007. The sum is 16.447."
+        },
+        {
+          "problem": "Subtract: 20 - 7.368.",
+          "solution": "Step 1: Rewrite 20 as 20.000 so we have matching decimal places.\nStep 2: Subtract column by column from right to left, borrowing as needed.\n  20.000\n - 7.368\n -------\n  12.632\nAnswer: 20 - 7.368 = 12.632."
+        }
+      ],
+      "title": "I-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-place-value-decimals",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "bc-1",
+          "question": "You ran the 100-meter dash in 13.450 seconds and your friend ran it in 13.045 seconds. Who was faster? By how much?",
+          "hints": [
+            "Line up the decimals: 13.450 vs 13.045. Compare tenths first: 4 tenths vs 0 tenths.",
+            "Since 13.045 < 13.450, your friend was faster (lower time = faster). Subtract: 13.450 - 13.045 = 0.405 seconds."
+          ],
+          "answer": "Your friend was faster by 0.405 seconds"
+        },
+        {
+          "id": "bc-2",
+          "question": "Round 8.5672 to the nearest tenth, nearest hundredth, and nearest thousandth.",
+          "hints": [
+            "Nearest tenth: look at the hundredths digit (6). Since 6 >= 5, round up: 8.6.",
+            "Nearest hundredth: look at thousandths digit (7). Since 7 >= 5, round up: 8.57.",
+            "Nearest thousandth: look at the ten-thousandths digit (2). Since 2 < 5, keep: 8.567."
+          ],
+          "answer": "Nearest tenth: 8.6; nearest hundredth: 8.57; nearest thousandth: 8.567"
+        },
+        {
+          "id": "bc-3",
+          "question": "A recipe calls for 2.75 cups of flour and 1.375 cups of sugar. How much total dry ingredient is that? Then subtract: if you already added 1.8 cups, how much is left to add?",
+          "hints": [
+            "Add first: line up decimals. 2.750 + 1.375 = 4.125 cups total.",
+            "Subtract: 4.125 - 1.800 = 2.325 cups still left to add."
+          ],
+          "answer": "Total: 4.125 cups. Left to add: 2.325 cups"
+        }
+      ],
+      "title": "We-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-place-value-decimals",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "bc-4",
+          "question": "Put these times from a swim meet in order from fastest to slowest: 28.190 s, 28.091 s, 28.910 s, 28.019 s.",
+          "answer": "28.019 s, 28.091 s, 28.190 s, 28.910 s"
+        },
+        {
+          "id": "bc-5",
+          "question": "Your phone screen is 6.1 inches tall. Your tablet screen is 10.95 inches tall. How much taller is the tablet? Round your answer to the nearest tenth.",
+          "answer": "10.95 - 6.10 = 4.85 inches; rounded to nearest tenth: 4.9 inches"
+        },
+        {
+          "id": "bc-6",
+          "question": "In the number 0.582, what is the value of the digit 8? Write a decimal that has a 3 in the thousandths place and is between 0.58 and 0.59.",
+          "answer": "The 8 is in the hundredths place, so its value is 0.08. Example: 0.583 (any decimal of the form 0.58_ where _ is some digit works, but the thousandths digit must be 3, so 0.583)"
+        }
+      ],
+      "title": "You-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-fraction-ops-review",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Fractions are just division that hasn't finished yet. The numerator is how many pieces you have; the denominator is how many equal pieces make one whole. In 5th grade you learned to add, subtract, multiply, and divide them. Now we lock those skills in.\n\nAdding or subtracting fractions: you MUST have a common denominator first. Find the least common denominator (LCD), rewrite each fraction, then add or subtract the numerators. Simplify at the end.\n\nMultiplying fractions: multiply straight across—numerator times numerator, denominator times denominator. Simplify or cross-cancel before you multiply to keep numbers small.\n\nDividing fractions: Keep the first fraction, Change the division to multiplication, Flip the second fraction (KCF). Then multiply.\n\nMixed numbers: convert to improper fractions first for multiplication and division. For addition and subtraction, you can work with mixed numbers directly if the fractions share a denominator, but converting to improper fractions always works.",
+      "keyPoints": [
+        "To add or subtract fractions with unlike denominators, find the LCD, rewrite both fractions with that denominator, then combine the numerators",
+        "Multiply fractions straight across: (a/b) x (c/d) = (ac)/(bd). Cross-cancel common factors BEFORE multiplying to keep numbers manageable",
+        "Divide fractions using Keep-Change-Flip: (a/b) / (c/d) = (a/b) x (d/c)",
+        "Convert mixed numbers to improper fractions before multiplying or dividing: 2 1/3 = 7/3",
+        "Always simplify your final answer—reduce the fraction to lowest terms or convert an improper fraction back to a mixed number when appropriate"
+      ],
+      "title": "Concept: Fraction Ops Review",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-fraction-ops-review",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Add: 2 3/4 + 1 2/3.",
+          "solution": "Step 1: Find the LCD of 4 and 3. LCD = 12.\nStep 2: Convert fractions. 3/4 = 9/12, and 2/3 = 8/12.\nStep 3: Add whole numbers and fractions separately. 2 + 1 = 3. 9/12 + 8/12 = 17/12 = 1 5/12.\nStep 4: Combine. 3 + 1 5/12 = 4 5/12.\nAnswer: 4 5/12."
+        },
+        {
+          "problem": "Multiply: 3/5 x 2 1/2.",
+          "solution": "Step 1: Convert the mixed number. 2 1/2 = 5/2.\nStep 2: Multiply straight across. 3/5 x 5/2. Cross-cancel the 5s: 3/1 x 1/2 = 3/2.\nStep 3: Convert. 3/2 = 1 1/2.\nAnswer: 1 1/2."
+        },
+        {
+          "problem": "Divide: 4/9 / 2/3.",
+          "solution": "Step 1: Keep-Change-Flip. 4/9 x 3/2.\nStep 2: Cross-cancel. The 4 and 2 share a factor of 2: becomes 2/9 x 3/1. The 9 and 3 share a factor of 3: becomes 2/3 x 1/1 = 2/3.\nAnswer: 2/3."
+        }
+      ],
+      "title": "I-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-fraction-ops-review",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "bc-7",
+          "question": "You ate 1/3 of a pizza and your friend ate 3/8 of the same pizza. How much of the pizza did you eat together? How much is left?",
+          "hints": [
+            "Find LCD of 3 and 8. LCD = 24. Rewrite: 1/3 = 8/24, 3/8 = 9/24.",
+            "Add: 8/24 + 9/24 = 17/24 of the pizza eaten. Left over: 24/24 - 17/24 = 7/24."
+          ],
+          "answer": "You ate 17/24 together. 7/24 of the pizza is left."
+        },
+        {
+          "id": "bc-8",
+          "question": "A board is 5 1/4 feet long. You need to cut off a piece that is 2 5/6 feet. How long is the remaining piece?",
+          "hints": [
+            "Convert to improper fractions: 5 1/4 = 21/4, 2 5/6 = 17/6.",
+            "LCD of 4 and 6 is 12. 21/4 = 63/12, 17/6 = 34/12. Subtract: 63/12 - 34/12 = 29/12 = 2 5/12 feet."
+          ],
+          "answer": "2 5/12 feet"
+        },
+        {
+          "id": "bc-9",
+          "question": "A recipe makes 3/4 of a batch. If the full batch needs 2 2/3 cups of milk, how much milk do you need for the smaller batch?",
+          "hints": [
+            "This is multiplication: 3/4 x 2 2/3. Convert: 2 2/3 = 8/3.",
+            "3/4 x 8/3. Cross-cancel the 3s: 1/4 x 8/1 = 8/4 = 2 cups."
+          ],
+          "answer": "2 cups of milk"
+        }
+      ],
+      "title": "We-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-fraction-ops-review",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "bc-10",
+          "question": "Subtract: 4 1/6 - 1 3/4.",
+          "answer": "2 5/12"
+        },
+        {
+          "id": "bc-11",
+          "question": "A bag has 3 1/2 pounds of trail mix. You want to split it into portions of 1/4 pound each. How many portions can you make?",
+          "answer": "14 portions (3 1/2 / 1/4 = 7/2 x 4/1 = 28/2 = 14)"
+        },
+        {
+          "id": "bc-12",
+          "question": "Multiply 2 1/5 by 5/11 and simplify fully.",
+          "answer": "1 (because 2 1/5 = 11/5, and 11/5 x 5/11 = 55/55 = 1)"
+        }
+      ],
+      "title": "You-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-integer-basics",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Up until now, most of your math has lived on the positive side of the number line. Time to open the other half. Integers are all the whole numbers: positive, negative, and zero. The number line stretches left forever (negative) and right forever (positive), with zero in the middle.\n\nNegative numbers show up everywhere: temperatures below zero, elevations below sea level, losing yards in football, owing money. Any time something goes DOWN or is LESS THAN a starting point, negatives appear.\n\nComparing integers on a number line: farther RIGHT means GREATER. So 3 > -5 because 3 is to the right of -5. And -2 > -7 because -2 is to the right of -7. The tricky part: -100 is LESS THAN -1 because it is farther LEFT.\n\nAbsolute value is the DISTANCE from zero, so it is always positive or zero. |-4| = 4, |7| = 7, |0| = 0. Two numbers can have the same absolute value but be on opposite sides of zero, like -6 and 6.",
+      "keyPoints": [
+        "Integers include all positive whole numbers, all negative whole numbers, and zero: ... -3, -2, -1, 0, 1, 2, 3 ...",
+        "On a number line, numbers increase as you move right and decrease as you move left, so every positive number is greater than every negative number",
+        "When comparing two negative numbers, the one closer to zero is greater: -2 > -8 because -2 is farther right on the number line",
+        "Absolute value is the distance from zero and is always non-negative: |-5| = 5 and |5| = 5",
+        "Real-world negatives: temperature below zero, depth below sea level, debt or money owed, yards lost in a game"
+      ],
+      "title": "Concept: Integer Basics",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-integer-basics",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Place these integers on a number line and order them from least to greatest: 4, -7, 0, -2, 3, -7.",
+          "solution": "Step 1: Draw a number line from -8 to 5.\nStep 2: Plot each point:\n  -7 is farthest left.\n  -2 is between -3 and -1.\n  0 is in the center.\n  3 and 4 are on the right.\nStep 3: Read left to right for least to greatest: -7, -7, -2, 0, 3, 4.\nNote: -7 appears twice—duplicates sit on the same point.\nAnswer: -7, -7, -2, 0, 3, 4."
+        },
+        {
+          "problem": "The temperature at 6 AM was -4 degrees Fahrenheit. By noon it rose 11 degrees. Then from noon to midnight it dropped 9 degrees. What was the midnight temperature?",
+          "solution": "Step 1: Start at -4.\nStep 2: Rose 11 degrees means move RIGHT on the number line. -4 + 11 = 7 degrees F at noon.\nStep 3: Dropped 9 degrees means move LEFT. 7 - 9 = -2 degrees F at midnight.\nAnswer: The midnight temperature was -2 degrees F."
+        }
+      ],
+      "title": "I-Do: Integer Basics",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-integer-basics",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "bc-13",
+          "question": "Fill in the blank with < , > , or = :\n(a) -5 ___ -3\n(b) 0 ___ -12\n(c) |-6| ___ |4|",
+          "hints": [
+            "(a) On the number line, -5 is to the LEFT of -3, so -5 < -3.",
+            "(b) 0 is to the RIGHT of -12, so 0 > -12.",
+            "(c) |-6| = 6 and |4| = 4. Since 6 > 4, |-6| > |4|."
+          ],
+          "answer": "(a) -5 < -3, (b) 0 > -12, (c) |-6| > |4|"
+        },
+        {
+          "id": "bc-14",
+          "question": "A submarine is at -150 meters (below sea level). It rises 90 meters, then dives 40 meters. What is its final position?",
+          "hints": [
+            "Start at -150. Rising means adding: -150 + 90 = -60.",
+            "Diving means subtracting (going deeper): -60 - 40 = -100 meters."
+          ],
+          "answer": "-100 meters (100 meters below sea level)"
+        },
+        {
+          "id": "bc-15",
+          "question": "Order from least to greatest: 2, -8, -1, 5, -8, 0, -3.",
+          "hints": [
+            "Start with the most negative. -8 is the farthest left. There are two of them.",
+            "Continuing right: -3, -1, 0, 2, 5. Full order: -8, -8, -3, -1, 0, 2, 5."
+          ],
+          "answer": "-8, -8, -3, -1, 0, 2, 5"
+        }
+      ],
+      "title": "We-Do: Integer Basics",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-integer-basics",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "bc-16",
+          "question": "You have $20 in your bank account. You spend $35 using a debit card (the bank lets it go negative). What integer represents your balance? Then you deposit $15. New balance?",
+          "answer": "After spending: 20 - 35 = -15 dollars. After deposit: -15 + 15 = 0 dollars."
+        },
+        {
+          "id": "bc-17",
+          "question": "Which is colder: -14 degrees F or -6 degrees F? How many degrees apart are they?",
+          "answer": "-14 degrees F is colder (farther left on the number line). They are 8 degrees apart (|-14 - (-6)| = |-14 + 6| = |-8| = 8)."
+        },
+        {
+          "id": "bc-18",
+          "question": "Find two integers whose absolute values are equal but whose sum is 0. Then find two integers where one has a greater absolute value but is the lesser number.",
+          "answer": "Example of equal absolute values summing to 0: 9 and -9 (|9| = |-9| = 9, and 9 + (-9) = 0). Example of greater absolute value but lesser number: -10 and 3. |-10| = 10 > |3| = 3, but -10 < 3."
+        }
+      ],
+      "title": "You-Do: Integer Basics",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-mult-div-fluency",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "Multiplication and division are the engine behind almost everything in 6th grade: fractions, ratios, percentages, and area all run on them. If you have to stop and count on your fingers for 7 x 8, every problem takes twice as long and your brain has no room left for the real thinking. The goal here is AUTOMATICITY—you see 6 x 9 and 54 just appears.\n\nMulti-digit multiplication uses the distributive property in disguise. When you multiply 47 x 36, you are really computing 47 x 30 + 47 x 6. The standard algorithm stacks these partial products.\n\nLong division is the reverse process: how many groups of the divisor fit into the dividend? You work digit by digit from left to right: Divide, Multiply, Subtract, Bring down (DMSB). Remainders can be written as R3, as a fraction (3/divisor), or as a decimal if you add zeros and keep dividing.",
+      "keyPoints": [
+        "Single-digit multiplication facts (through 12 x 12) must be automatic—if you hesitate on 8 x 7, practice that fact until 56 is instant",
+        "Multi-digit multiplication uses partial products: break the bottom number by place value, multiply each part, then add the results",
+        "Long division follows Divide-Multiply-Subtract-Bring down (DMSB) repeated until you run out of digits or reach the desired decimal place",
+        "You can check any division by multiplying: quotient x divisor + remainder = dividend",
+        "Estimation is your safety net—round before computing to predict a reasonable answer, then check if your exact answer is close"
+      ],
+      "title": "Concept: Mult Div Fluency",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-mult-div-fluency",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Multiply 248 x 35.",
+          "solution": "Step 1: Break 35 into 30 + 5.\nStep 2: Multiply 248 x 5 = 1,240.\nStep 3: Multiply 248 x 30 = 7,440.\nStep 4: Add partial products: 1,240 + 7,440 = 8,680.\nEstimate check: 250 x 35 = 8,750. Our answer 8,680 is close. Reasonable.\nAnswer: 8,680."
+        },
+        {
+          "problem": "Divide 1,974 / 6.",
+          "solution": "Step 1: 6 into 1? Does not go. 6 into 19? 3 times (3 x 6 = 18). Write 3. Subtract 19 - 18 = 1.\nStep 2: Bring down 7 to make 17. 6 into 17? 2 times (2 x 6 = 12). Write 2. Subtract 17 - 12 = 5.\nStep 3: Bring down 4 to make 54. 6 into 54? 9 times (9 x 6 = 54). Write 9. Subtract 54 - 54 = 0.\nAnswer: 329.\nCheck: 329 x 6 = 1,974. Confirmed."
+        },
+        {
+          "problem": "Divide 845 / 12. Express the remainder as a fraction.",
+          "solution": "Step 1: 12 into 84? 7 times (7 x 12 = 84). Write 7. Subtract 84 - 84 = 0.\nStep 2: Bring down 5. 12 into 5? 0 times. Write 0. Remainder is 5.\nAnswer: 70 5/12.\nCheck: 70 x 12 + 5 = 840 + 5 = 845. Confirmed."
+        }
+      ],
+      "title": "I-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-mult-div-fluency",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "bc-19",
+          "question": "A school ordered 36 boxes of markers. Each box has 24 markers. How many markers total?",
+          "hints": [
+            "Multiply 36 x 24. Break it up: 36 x 20 = 720, and 36 x 4 = 144.",
+            "Add: 720 + 144 = 864 markers."
+          ],
+          "answer": "864 markers"
+        },
+        {
+          "id": "bc-20",
+          "question": "You have 1,536 stickers to share equally among 8 friends. How many stickers does each friend get?",
+          "hints": [
+            "Divide 1,536 / 8. Start: 8 into 15 = 1 (8), subtract to get 7. Bring down 3 for 73. 8 into 73 = 9 (72), subtract to get 1. Bring down 6 for 16. 8 into 16 = 2.",
+            "Answer: 192 stickers each. Check: 192 x 8 = 1,536."
+          ],
+          "answer": "192 stickers each"
+        },
+        {
+          "id": "bc-21",
+          "question": "Divide 2,507 by 11. Write your answer with a remainder as a fraction.",
+          "hints": [
+            "11 into 25 = 2 (22), remainder 3. Bring down 0 for 30. 11 into 30 = 2 (22), remainder 8. Bring down 7 for 87. 11 into 87 = 7 (77), remainder 10.",
+            "Answer: 227 10/11. Check: 227 x 11 + 10 = 2,497 + 10 = 2,507."
+          ],
+          "answer": "227 10/11"
+        }
+      ],
+      "title": "We-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-mult-div-fluency",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "bc-22",
+          "question": "A movie theater has 48 rows with 52 seats per row. How many seats are in the theater?",
+          "answer": "2,496 seats (48 x 52 = 48 x 50 + 48 x 2 = 2,400 + 96 = 2,496)"
+        },
+        {
+          "id": "bc-23",
+          "question": "A factory produced 7,392 water bottles in one day across 16 identical machines. How many bottles did each machine produce?",
+          "answer": "462 bottles (7,392 / 16 = 462)"
+        },
+        {
+          "id": "bc-24",
+          "question": "Compute 375 x 14, then divide your answer by 25.",
+          "answer": "375 x 14 = 5,250. Then 5,250 / 25 = 210."
+        }
+      ],
+      "title": "You-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-expression-writing-intro",
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "content": "An expression is a math phrase that uses numbers, operations, and sometimes variables—but no equals sign. When your teacher says 'write an expression for five more than a number,' you are translating English into math.\n\nHere are the key vocabulary words and what they mean:\n- SUM means addition: 'the sum of x and 7' → x + 7\n- DIFFERENCE means subtraction: 'the difference of 12 and y' → 12 - y\n- PRODUCT means multiplication: 'the product of 3 and n' → 3n\n- QUOTIENT means division: 'the quotient of m and 4' → m/4\n\nA variable is just a letter that stands in for a number you do not know yet. When we write 'a number,' we pick a letter like x or n to represent it.\n\nOrder matters for subtraction and division! '10 minus x' is NOT the same as 'x minus 10.' Read carefully and match the order of the English words to the order in your expression.",
+      "keyPoints": [
+        "Sum = addition, difference = subtraction, product = multiplication, quotient = division—memorize these translations cold",
+        "A variable is a letter representing an unknown number; use it when the problem says 'a number' or describes an unknown quantity",
+        "Order matters for subtraction and division: 'x minus 5' is x - 5, but '5 minus x' is 5 - x—they are NOT the same",
+        "Multiplication with a variable drops the times sign: '3 times n' is written 3n, not 3 x n",
+        "Parentheses group operations: 'twice the sum of a number and 4' means 2(n + 4), not 2n + 4",
+        "An expression has no equals sign; an equation does—know the difference"
+      ],
+      "title": "Concept: Expression Writing Intro",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-expression-writing-intro",
+      "type": "model",
+      "lessonPhase": "i-do",
+      "examples": [
+        {
+          "problem": "Translate into a math expression: 'Seven less than three times a number.'",
+          "solution": "Step 1: Identify the variable. 'A number' → let's call it n.\nStep 2: 'Three times a number' → 3n.\nStep 3: 'Seven less than' means subtract 7 FROM the quantity. So it is 3n - 7, NOT 7 - 3n.\nAnswer: 3n - 7.\nCommon mistake: writing 7 - 3n. 'Less than' flips the order—the 7 comes AFTER the subtraction sign."
+        },
+        {
+          "problem": "Write an expression: 'You start with $50 and spend d dollars each week for w weeks. How much money do you have left?'",
+          "solution": "Step 1: Total spent = d dollars/week x w weeks = dw.\nStep 2: Money left = starting amount minus total spent = 50 - dw.\nAnswer: 50 - dw.\nNote: we used TWO variables here because there are two unknowns."
+        },
+        {
+          "problem": "Translate: 'The quotient of the sum of x and 9, divided by 2.'",
+          "solution": "Step 1: 'The sum of x and 9' → x + 9. This entire sum is being divided.\nStep 2: 'Divided by 2' → put the sum over 2.\nStep 3: Use parentheses to show the sum is grouped: (x + 9) / 2.\nAnswer: (x + 9) / 2."
+        }
+      ],
+      "title": "I-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-expression-writing-intro",
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "id": "bc-25",
+          "question": "Write an expression: 'You earn $12 per hour for h hours and then spend $20 on lunch.' What is left?",
+          "hints": [
+            "Earnings = 12 times h = 12h.",
+            "After spending $20: 12h - 20."
+          ],
+          "answer": "12h - 20"
+        },
+        {
+          "id": "bc-26",
+          "question": "Translate into a math expression: 'Twice the difference of a number and 6.'",
+          "hints": [
+            "'The difference of a number and 6' means n - 6.",
+            "'Twice' means multiply by 2. Since it is twice the WHOLE difference, use parentheses: 2(n - 6)."
+          ],
+          "answer": "2(n - 6)"
+        },
+        {
+          "id": "bc-27",
+          "question": "You and two friends split the cost of a $45 video game equally, then each of you also buys a $5 snack. Write an expression for how much one person spends total.",
+          "hints": [
+            "Each person's share of the game: 45 / 3 = 15, but what if the cost were unknown? With 45 it is just 45/3.",
+            "Add the snack: 45/3 + 5 = 15 + 5 = 20. As an expression: 45/3 + 5."
+          ],
+          "answer": "45/3 + 5 (which equals 20 dollars)"
+        }
+      ],
+      "title": "We-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
+    },
+    {
+      "skill": "g6-expression-writing-intro",
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "id": "bc-28",
+          "question": "Write an expression: 'A number increased by the product of 4 and that same number.'",
+          "answer": "n + 4n (which simplifies to 5n)"
+        },
+        {
+          "id": "bc-29",
+          "question": "You have g gummy bears. You eat 5, then split the rest equally between yourself and 3 friends (4 people total). Write an expression for how many each person gets.",
+          "answer": "(g - 5) / 4"
+        },
+        {
+          "id": "bc-30",
+          "question": "Translate and evaluate: 'The sum of 18 and the quotient of 36 and 4.' First write the expression, then compute the value.",
+          "answer": "Expression: 18 + 36/4. Value: 18 + 9 = 27."
+        }
+      ],
+      "title": "You-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
+    }
+  ],
+  "answerKeys": {
+    "bc-1": "Your friend was faster by 0.405 seconds",
+    "bc-2": "Nearest tenth: 8.6; nearest hundredth: 8.57; nearest thousandth: 8.567",
+    "bc-3": "Total: 4.125 cups. Left to add: 2.325 cups",
+    "bc-4": "28.019 s, 28.091 s, 28.190 s, 28.910 s",
+    "bc-5": "10.95 - 6.10 = 4.85 inches; rounded to nearest tenth: 4.9 inches",
+    "bc-6": "The 8 is in the hundredths place, so its value is 0.08. Example: 0.583",
+    "bc-7": "You ate 17/24 together. 7/24 of the pizza is left.",
+    "bc-8": "2 5/12 feet",
+    "bc-9": "2 cups of milk",
+    "bc-10": "2 5/12",
+    "bc-11": "14 portions",
+    "bc-12": "1",
+    "bc-13": "(a) -5 < -3, (b) 0 > -12, (c) |-6| > |4|",
+    "bc-14": "-100 meters (100 meters below sea level)",
+    "bc-15": "-8, -8, -3, -1, 0, 2, 5",
+    "bc-16": "After spending: -15 dollars. After deposit: 0 dollars.",
+    "bc-17": "-14 degrees F is colder. They are 8 degrees apart.",
+    "bc-18": "Equal absolute values summing to 0: 9 and -9. Greater absolute value but lesser number: -10 and 3.",
+    "bc-19": "864 markers",
+    "bc-20": "192 stickers each",
+    "bc-21": "227 10/11",
+    "bc-22": "2,496 seats",
+    "bc-23": "462 bottles",
+    "bc-24": "375 x 14 = 5,250. Then 5,250 / 25 = 210.",
+    "bc-25": "12h - 20",
+    "bc-26": "2(n - 6)",
+    "bc-27": "45/3 + 5 (which equals 20 dollars)",
+    "bc-28": "n + 4n (which simplifies to 5n)",
+    "bc-29": "(g - 5) / 4",
+    "bc-30": "Expression: 18 + 36/4. Value: 18 + 9 = 27."
+  }
+}

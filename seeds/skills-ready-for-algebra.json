@@ -145,7 +145,7 @@
   },
   {
     "skillId": "order-of-operations",
-    "displayName": "Order of Operations (GEMS/PEMDAS)",
+    "displayName": "Order of Operations (GEMS)",
     "description": "Apply correct order when solving multi-step expressions",
     "category": "operations",
     "prerequisites": ["integer-all-operations"],
@@ -163,7 +163,7 @@
         "Skipping grouping symbols"
       ],
       "teachingTips": [
-        "Use GEMS or PEMDAS mnemonic",
+        "Use GEMS mnemonic",
         "Show what happens when order is wrong",
         "Practice with clear step-by-step work"
       ],
@@ -307,10 +307,10 @@
     "standardsAlignment": ["7.EE.4", "8.EE.7"],
     "teachingGuidance": {
       "coreConcepts": [
-        "Undo operations in reverse order (reverse of order of operations)",
-        "Undo addition/subtraction first",
-        "Then undo multiplication/division",
-        "Work backwards through GEMS"
+        "Box the variable term, think outside the box",
+        "Outside the box: use opposites to make zero",
+        "Inside the box: divide it out",
+        "Equations MUST always stay equal"
       ],
       "commonMistakes": [
         "Dividing first instead of undoing addition",

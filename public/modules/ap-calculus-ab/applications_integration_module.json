@@ -56,7 +56,8 @@
         "On the AP exam: always state the formula, show the integral setup, and interpret the result in context",
         "Units: f_avg has the same units as f(x). If f is in gallons/minute, the average value is in gallons/minute.",
         "Common error: forgetting the 1/(b-a) factor — the integral alone gives total accumulated quantity, not the average"
-      ]
+      ],
+      "lessonId": "average-value"
     },
     {
       "type": "model",
@@ -72,7 +73,8 @@
           "problem": "The temperature in a greenhouse is modeled by T(t) = 70 + 8sin(πt/12) degrees Fahrenheit, where t is hours after midnight. Find the average temperature from 6 AM to 6 PM (t = 6 to t = 18).",
           "solution": "T_avg = (1/(18-6)) ∫₆¹⁸ [70 + 8sin(πt/12)] dt = (1/12)[70t - 8(12/π)cos(πt/12)]₆¹⁸ = (1/12)[70t - (96/π)cos(πt/12)]₆¹⁸. At t=18: 70(18) - (96/π)cos(3π/2) = 1260 - 0 = 1260. At t=6: 70(6) - (96/π)cos(π/2) = 420 - 0 = 420. T_avg = (1/12)(1260 - 420) = 840/12 = 70°F. The average temperature over the 12-hour daytime period is 70°F."
         }
-      ]
+      ],
+      "lessonId": "average-value"
     },
     {
       "type": "explanation",
@@ -88,7 +90,8 @@
         "Net change theorem: ∫ₐᵇ f'(x) dx = f(b) - f(a). The integral of a rate gives the net accumulated change.",
         "Context examples: ∫ rate of water flow = net change in volume; ∫ marginal cost = change in total cost",
         "Speed = |v(t)|. A particle speeds up when v and a have the same sign; slows down when they have opposite signs."
-      ]
+      ],
+      "lessonId": "motion-net-change"
     },
     {
       "type": "model",
@@ -108,13 +111,13 @@
           "problem": "A particle's velocity is v(t) = 3cos(t) m/s and its position at t = 0 is s(0) = 2 m. Find the position at t = π and the total distance traveled on [0, π].",
           "solution": "Position: s(π) = s(0) + ∫₀π 3cos(t) dt = 2 + [3sin(t)]₀π = 2 + (0 - 0) = 2 m. Displacement is 0 — the particle returns to its starting position. Total distance: v(t) = 3cos(t) = 0 at t = π/2. v > 0 on [0, π/2], v < 0 on [π/2, π]. Distance = ∫₀^(π/2) 3cos(t) dt + ∫_(π/2)^π |3cos(t)| dt = [3sin(t)]₀^(π/2) + [-3sin(t)]_(π/2)^π = 3 + 3 = 6 m."
         }
-      ]
+      ],
+      "lessonId": "motion-net-change"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Average Value & Motion/Net Change Practice",
-      "skills": ["average-value-function", "motion-via-integrals-net-change"],
       "problems": [
         {
           "problem": "Find the average value of f(x) = 6x - x² on [0, 6] and find all values c in (0, 6) where f(c) equals the average value.",
@@ -143,7 +146,9 @@
           ],
           "answer": "Total = [-2500e^(-0.03t)]₀¹⁰ = -2500e^(-0.3) + 2500 = 2500(1 - e^(-0.3)) ≈ 2500(1 - 0.7408) ≈ 648.0 gallons. Average rate = 648.0/10 ≈ 64.8 gallons/hour."
         }
-      ]
+      ],
+      "skill": "motion-via-integrals-net-change",
+      "lessonId": "motion-net-change"
     },
     {
       "type": "explanation",
@@ -158,7 +163,8 @@
         "Integrating with respect to y: Area = ∫_c^d [R(y) - L(y)] dy where R is the right curve and L is the left curve",
         "When to use dy: when the region is more naturally bounded by functions of y, or when horizontal slicing avoids splitting",
         "Common AP error: setting up ∫(f - g) when g > f yields a negative answer. Always verify which curve is on top."
-      ]
+      ],
+      "lessonId": "area-between-curves"
     },
     {
       "type": "model",
@@ -178,7 +184,8 @@
           "problem": "Find the area between y = sin(x) and y = cos(x) on [0, π/2].",
           "solution": "Find where they cross: sin(x) = cos(x) → tan(x) = 1 → x = π/4. On [0, π/4]: cos(x) ≥ sin(x). On [π/4, π/2]: sin(x) ≥ cos(x). Area = ∫₀^(π/4) [cos(x) - sin(x)] dx + ∫_(π/4)^(π/2) [sin(x) - cos(x)] dx = [sin(x) + cos(x)]₀^(π/4) + [-cos(x) - sin(x)]_(π/4)^(π/2) = (√2/2 + √2/2 - 0 - 1) + (-0 - 1 + √2/2 + √2/2) = (√2 - 1) + (√2 - 1) = 2√2 - 2."
         }
-      ]
+      ],
+      "lessonId": "area-between-curves"
     },
     {
       "type": "explanation",
@@ -193,7 +200,8 @@
         "Equilateral triangle cross-sections: if the side is s(x), then A(x) = (√3/4)[s(x)]²",
         "The side/diameter is typically the distance between two curves: s(x) = f(x) - g(x)",
         "Perpendicular to x-axis: integrate with respect to x. Perpendicular to y-axis: integrate with respect to y."
-      ]
+      ],
+      "lessonId": "volume-cross-sections"
     },
     {
       "type": "model",
@@ -209,7 +217,8 @@
           "problem": "A solid has a base bounded by y = 1 - x² and y = 0 (the region above the x-axis). Cross-sections perpendicular to the x-axis are semicircles with diameter running from y = 0 to y = 1 - x². Find the volume.",
           "solution": "Base region: 1 - x² ≥ 0 → -1 ≤ x ≤ 1. Diameter: d(x) = 1 - x². Radius: r(x) = (1-x²)/2. Area: A(x) = (1/2)π[(1-x²)/2]² = π(1-x²)²/8. Volume = (π/8) ∫₋₁¹ (1-x²)² dx. Expand: (1-x²)² = 1 - 2x² + x⁴. By symmetry: (π/8)·2 ∫₀¹ (1 - 2x² + x⁴) dx = (π/4)[x - 2x³/3 + x⁵/5]₀¹ = (π/4)(1 - 2/3 + 1/5) = (π/4)(8/15) = 2π/15."
         }
-      ]
+      ],
+      "lessonId": "volume-cross-sections"
     },
     {
       "type": "explanation",
@@ -225,7 +234,8 @@
         "Revolving around y = k (non-axis line): R(x) = |f(x) - k| for outer, r(x) = |g(x) - k| for inner",
         "Revolving around x = k: R(y) = |g(y) - k| for outer, r(y) = |h(y) - k| for inner; integrate dy",
         "Common AP error: writing R² - r² as (R - r)². They are NOT the same. Always square each radius separately."
-      ]
+      ],
+      "lessonId": "volume-disk-washer"
     },
     {
       "type": "model",
@@ -245,13 +255,13 @@
           "problem": "Find the volume of the solid formed by revolving the region bounded by y = x and y = x² about the line y = 2.",
           "solution": "Intersections: x = x² → x² - x = 0 → x(x-1) = 0 → x = 0, 1. On [0, 1]: x ≥ x² so y = x is on top (closer to y = 2 from below, but we measure from the axis). Since y = 2 is above both curves on [0, 1]: Outer radius R(x) = 2 - x² (distance from axis to farther curve from axis). Inner radius r(x) = 2 - x (distance from axis to closer curve to axis). V = π ∫₀¹ [(2 - x²)² - (2 - x)²] dx. Expand: (2-x²)² = 4 - 4x² + x⁴; (2-x)² = 4 - 4x + x². Difference: -4x² + x⁴ + 4x - x² = x⁴ - 5x² + 4x. V = π ∫₀¹ (x⁴ - 5x² + 4x) dx = π[x⁵/5 - 5x³/3 + 2x²]₀¹ = π(1/5 - 5/3 + 2) = π(3/15 - 25/15 + 30/15) = 8π/15."
         }
-      ]
+      ],
+      "lessonId": "volume-disk-washer"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Area & Volume Practice",
-      "skills": ["area-between-curves", "volume-cross-sections", "volume-disk-washer"],
       "problems": [
         {
           "problem": "Find the area enclosed by y = x³ - x and y = 3x. Sketch the region first.",
@@ -289,13 +299,14 @@
           ],
           "answer": "R(x) = 5 - x², r(x) = 1. V = π ∫₋₂² [(5-x²)² - 1] dx = π ∫₋₂² (25 - 10x² + x⁴ - 1) dx = π ∫₋₂² (24 - 10x² + x⁴) dx. By symmetry: 2π ∫₀² (24 - 10x² + x⁴) dx = 2π[24x - 10x³/3 + x⁵/5]₀² = 2π(48 - 80/3 + 32/5) = 2π(720/15 - 400/15 + 96/15) = 2π(416/15) = 832π/15."
         }
-      ]
+      ],
+      "skill": "volume-disk-washer",
+      "lessonId": "volume-disk-washer"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Applications of Integration Mastery Practice",
-      "skills": ["average-value-function", "motion-via-integrals-net-change", "area-between-curves", "volume-cross-sections", "volume-disk-washer"],
       "problems": [
         {
           "problem": "Find the average value of g(x) = sin(x) on [0, π]. Then find the value c in (0, π) guaranteed by the MVT for Integrals where g(c) = g_avg.",
@@ -321,7 +332,9 @@
           "problem": "(FRQ-style) Water flows into a reservoir at a rate of R(t) = 100e^(-0.1t) cubic feet per hour and flows out at a constant rate of 40 cubic feet per hour. At t = 0, the reservoir holds 800 cubic feet. (a) Is the amount of water increasing or decreasing at t = 5? (b) Find the average rate of net inflow on [0, 10]. (c) At what time t does the reservoir reach its maximum volume? (d) What is the maximum volume?",
           "answer": "(a) Net rate at t=5: R(5) - 40 = 100e^(-0.5) - 40 ≈ 60.65 - 40 = 20.65 > 0. Increasing. (b) Net inflow rate: R(t) - 40. Average = (1/10)∫₀¹⁰ (100e^(-0.1t) - 40) dt = (1/10)[-1000e^(-0.1t) - 40t]₀¹⁰ = (1/10)[(-1000e^(-1) - 400) - (-1000)] = (1/10)(600 - 1000e^(-1)) ≈ (1/10)(600 - 367.88) = 23.21 ft³/hr. (c) Max when R(t) = 40: 100e^(-0.1t) = 40 → e^(-0.1t) = 0.4 → -0.1t = ln(0.4) → t = -10ln(0.4) = 10ln(2.5) ≈ 9.16 hours. (d) V(t*) = 800 + ∫₀^(10ln2.5) (100e^(-0.1t) - 40) dt = 800 + [-1000e^(-0.1t) - 40t]₀^(10ln2.5) = 800 + (-1000(0.4) - 40·10ln2.5 + 1000) = 800 + (600 - 400 - 400ln2.5) = 800 + 200 - 400ln(2.5) ≈ 1000 - 366.5 ≈ 633.5. So maximum volume ≈ 1633.5 cubic feet. Wait, let me recompute: V = 800 + [-1000e^(-0.1t) - 40t] from 0 to t*. At t*: -1000(0.4) - 40(10ln2.5) = -400 - 400ln(2.5). At 0: -1000. Net: -400 - 400ln(2.5) + 1000 = 600 - 400ln(2.5) ≈ 600 - 366.5 = 233.5. V_max = 800 + 233.5 ≈ 1033.5 ft³."
         }
-      ]
+      ],
+      "skill": "average-value-function",
+      "lessonId": "average-value"
     }
   ],
   "answerKeys": {
@@ -351,5 +364,32 @@
     "ip-vol-cross-square": "V = 1/30.",
     "ip-vol-two-axes": "(a) V = 256π/5. (b) V = 64π.",
     "ip-frq-reservoir": "(a) Increasing (net rate ≈ 20.65). (b) Avg ≈ 23.21 ft³/hr. (c) t = 10ln(2.5) ≈ 9.16 hr. (d) V_max ≈ 1033.5 ft³."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "average-value",
+      "title": "Average Value of a Function",
+      "order": 1
+    },
+    {
+      "lessonId": "motion-net-change",
+      "title": "Motion via Integrals & Net Change",
+      "order": 2
+    },
+    {
+      "lessonId": "area-between-curves",
+      "title": "Area Between Curves",
+      "order": 3
+    },
+    {
+      "lessonId": "volume-cross-sections",
+      "title": "Volume by Cross-Sections",
+      "order": 4
+    },
+    {
+      "lessonId": "volume-disk-washer",
+      "title": "Volume: Disk & Washer Methods",
+      "order": 5
+    }
+  ]
 }

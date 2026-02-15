@@ -6,8 +6,20 @@
   "weeks": "5",
   "estimatedDuration": 35,
   "description": "Learn how banks help your money grow through simple and compound interest, build a plan for an emergency fund, and understand the true cost of every spending decision through opportunity cost analysis. Apply formulas to real savings accounts, loans, and personal budgets.",
-  "skills": ["cm-simple-interest", "cm-compound-interest", "cm-emergency-fund", "cm-opportunity-cost"],
-  "standardsAlignment": ["7.RP.3", "7.EE.3", "7.EE.4", "Financial Literacy Standard 3", "MP.2", "MP.4"],
+  "skills": [
+    "cm-simple-interest",
+    "cm-compound-interest",
+    "cm-emergency-fund",
+    "cm-opportunity-cost"
+  ],
+  "standardsAlignment": [
+    "7.RP.3",
+    "7.EE.3",
+    "7.EE.4",
+    "Financial Literacy Standard 3",
+    "MP.2",
+    "MP.4"
+  ],
   "goals": [
     "Calculate simple interest and total amount using I = Prt and A = P + I for both savings and loan scenarios",
     "Apply the compound interest formula A = P(1 + r/n)^(nt) and compare growth to simple interest over time",
@@ -37,7 +49,8 @@
         "Time must be in years: divide months by 12 (e.g., 6 months = 0.5 years)",
         "Simple interest is calculated only on the original principal — it does not grow on itself",
         "The same formula applies to savings (you earn interest) and loans (you owe interest)"
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "model",
@@ -57,7 +70,8 @@
           "problem": "A friend lends you $300 at 5% simple interest. After paying back $330 total, how long did you have the loan?",
           "solution": "Find the interest paid: I = A - P = $330 - $300 = $30.\nUse I = Prt and solve for t: 30 = 300 x 0.05 x t, so 30 = 15t, so t = 2 years.\nYou had the loan for 2 years."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "guided_practice",
@@ -67,7 +81,7 @@
       "problems": [
         {
           "id": "bs-1",
-          "prompt": "You deposit $800 into an account that earns 4% simple interest per year. How much interest do you earn after 3 years, and what is the total amount?",
+          "question": "You deposit $800 into an account that earns 4% simple interest per year. How much interest do you earn after 3 years, and what is the total amount?",
           "hints": [
             "Convert the rate: 4% = 0.04",
             "Use I = Prt: I = 800 x 0.04 x 3",
@@ -77,7 +91,7 @@
         },
         {
           "id": "bs-2",
-          "prompt": "You take out a $2,000 personal loan at 6.5% simple interest for 9 months. How much interest do you owe? What is the total amount you repay?",
+          "question": "You take out a $2,000 personal loan at 6.5% simple interest for 9 months. How much interest do you owe? What is the total amount you repay?",
           "hints": [
             "Convert 6.5% to a decimal: 0.065",
             "Convert 9 months to years: 9/12 = 0.75",
@@ -87,7 +101,7 @@
         },
         {
           "id": "bs-3",
-          "prompt": "You earned $60 in simple interest on a $1,500 deposit at 2% per year. How many years was the money in the account?",
+          "question": "You earned $60 in simple interest on a $1,500 deposit at 2% per year. How many years was the money in the account?",
           "hints": [
             "You know I, P, and r — solve for t",
             "I = Prt rearranges to t = I / (P x r)",
@@ -95,7 +109,8 @@
           ],
           "answer": "t = 60 / (1,500 x 0.02) = 60 / 30 = 2 years."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "independent_practice",
@@ -105,20 +120,21 @@
       "problems": [
         {
           "id": "bs-4",
-          "prompt": "You deposit $1,000 into a savings account at 3.5% simple interest per year. How much interest do you earn after 4 years? What is the total balance?",
+          "question": "You deposit $1,000 into a savings account at 3.5% simple interest per year. How much interest do you earn after 4 years? What is the total balance?",
           "answer": "I = 1,000 x 0.035 x 4 = $140. A = $1,000 + $140 = $1,140."
         },
         {
           "id": "bs-5",
-          "prompt": "A student borrows $750 at 9% simple interest for 6 months to buy a laptop. How much total does the student repay?",
+          "question": "A student borrows $750 at 9% simple interest for 6 months to buy a laptop. How much total does the student repay?",
           "answer": "t = 6/12 = 0.5 years. I = 750 x 0.09 x 0.5 = $33.75. A = $750 + $33.75 = $783.75."
         },
         {
           "id": "bs-6",
-          "prompt": "You want to earn $200 in simple interest from a $2,500 deposit at 4% per year. How many years will that take?",
+          "question": "You want to earn $200 in simple interest from a $2,500 deposit at 4% per year. How many years will that take?",
           "answer": "t = I / (P x r) = 200 / (2,500 x 0.04) = 200 / 100 = 2 years."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "explanation",
@@ -133,7 +149,8 @@
         "APR = stated annual rate; APY = effective annual rate including compounding (APY is always >= APR)",
         "Over long periods (10-30 years), compound interest dramatically outpaces simple interest on the same principal and rate",
         "The more frequently interest compounds, the more you earn (monthly > quarterly > annually)"
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "model",
@@ -153,7 +170,8 @@
           "problem": "A savings account advertises 4.8% APR compounded monthly. What is the APY?",
           "solution": "APY = (1 + r/n)^n - 1 = (1 + 0.048/12)^12 - 1 = (1.004)^12 - 1.\n(1.004)^12 = 1.04907.\nAPY = 0.04907 = 4.91%.\nThe APY (4.91%) is slightly higher than the APR (4.8%) because of monthly compounding."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "guided_practice",
@@ -163,7 +181,7 @@
       "problems": [
         {
           "id": "bs-7",
-          "prompt": "You deposit $500 into an account that earns 4% interest compounded quarterly. How much is in the account after 5 years?",
+          "question": "You deposit $500 into an account that earns 4% interest compounded quarterly. How much is in the account after 5 years?",
           "hints": [
             "P = $500, r = 0.04, n = 4 (quarterly), t = 5",
             "A = 500(1 + 0.04/4)^(4 x 5) = 500(1.01)^20",
@@ -173,7 +191,7 @@
         },
         {
           "id": "bs-8",
-          "prompt": "You invest $3,000 at 5% compounded annually. Your friend invests $3,000 at 5% simple interest. How much more do you have after 20 years?",
+          "question": "You invest $3,000 at 5% compounded annually. Your friend invests $3,000 at 5% simple interest. How much more do you have after 20 years?",
           "hints": [
             "Your compound: A = 3,000(1.05)^20",
             "Friend's simple: A = 3,000 + 3,000 x 0.05 x 20",
@@ -183,7 +201,7 @@
         },
         {
           "id": "bs-9",
-          "prompt": "An account offers 3.6% APR compounded monthly. Calculate the APY. Is the APY higher or lower than the APR?",
+          "question": "An account offers 3.6% APR compounded monthly. Calculate the APY. Is the APY higher or lower than the APR?",
           "hints": [
             "APY = (1 + r/n)^n - 1",
             "r = 0.036, n = 12",
@@ -191,7 +209,8 @@
           ],
           "answer": "APY = (1 + 0.036/12)^12 - 1 = (1.003)^12 - 1 = 1.03660 - 1 = 0.03660 = 3.66%. The APY (3.66%) is higher than the APR (3.6%) due to compounding."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "independent_practice",
@@ -201,20 +220,21 @@
       "problems": [
         {
           "id": "bs-10",
-          "prompt": "You deposit $2,500 at 3% compounded monthly. How much do you have after 6 years?",
+          "question": "You deposit $2,500 at 3% compounded monthly. How much do you have after 6 years?",
           "answer": "A = 2,500(1 + 0.03/12)^(12 x 6) = 2,500(1.0025)^72 = 2,500 x 1.19668 = $2,991.71."
         },
         {
           "id": "bs-11",
-          "prompt": "You deposit $5,000 at 4.5% compounded annually. How much do you have after 30 years? How much of the final amount is interest?",
+          "question": "You deposit $5,000 at 4.5% compounded annually. How much do you have after 30 years? How much of the final amount is interest?",
           "answer": "A = 5,000(1.045)^30 = 5,000 x 3.7453 = $18,726.53. Interest earned = $18,726.53 - $5,000 = $13,726.53."
         },
         {
           "id": "bs-12",
-          "prompt": "Bank A offers 5% compounded annually. Bank B offers 4.9% compounded daily. Which gives a higher APY?",
+          "question": "Bank A offers 5% compounded annually. Bank B offers 4.9% compounded daily. Which gives a higher APY?",
           "answer": "Bank A APY: (1 + 0.05/1)^1 - 1 = 5.00%. Bank B APY: (1 + 0.049/365)^365 - 1 = 5.02%. Bank B has the higher APY (5.02% vs 5.00%)."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "explanation",
@@ -229,7 +249,8 @@
         "Time to reach goal = target amount / monthly savings rate",
         "Start small — even $500 covers many common emergencies like a car repair or medical copay",
         "Keep emergency funds in a liquid, accessible account (savings account, not invested in stocks)"
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "model",
@@ -249,7 +270,8 @@
           "problem": "James has monthly essentials of $1,800. He wants a 6-month emergency fund and can save $450 per month. How long will it take?",
           "solution": "Target: $1,800 x 6 = $10,800.\nTime: $10,800 / $450 = 24 months (2 years).\nNote: If James increased his savings to $600/month, he could reach the goal in $10,800 / $600 = 18 months — 6 months sooner."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "guided_practice",
@@ -259,7 +281,7 @@
       "problems": [
         {
           "id": "bs-13",
-          "prompt": "Alex's monthly essential expenses are: rent $950, utilities $120, groceries $280, transportation $150, and insurance $100. Calculate Alex's emergency fund target for 3 months and for 6 months.",
+          "question": "Alex's monthly essential expenses are: rent $950, utilities $120, groceries $280, transportation $150, and insurance $100. Calculate Alex's emergency fund target for 3 months and for 6 months.",
           "hints": [
             "First total the monthly essentials: $950 + $120 + $280 + $150 + $100",
             "Multiply the total by 3 for the low target",
@@ -269,7 +291,7 @@
         },
         {
           "id": "bs-14",
-          "prompt": "Alex (monthly essentials $1,600) wants a 3-month emergency fund ($4,800). If Alex saves $200 per month, how many months will it take? What if Alex saves $400 per month instead?",
+          "question": "Alex (monthly essentials $1,600) wants a 3-month emergency fund ($4,800). If Alex saves $200 per month, how many months will it take? What if Alex saves $400 per month instead?",
           "hints": [
             "Time = Target / Monthly savings",
             "At $200/month: $4,800 / $200",
@@ -279,7 +301,7 @@
         },
         {
           "id": "bs-15",
-          "prompt": "Taylor has $1,500 already saved and wants a $6,000 emergency fund. If Taylor saves $250 per month, how many more months are needed?",
+          "question": "Taylor has $1,500 already saved and wants a $6,000 emergency fund. If Taylor saves $250 per month, how many more months are needed?",
           "hints": [
             "Remaining amount = Target - Already saved",
             "$6,000 - $1,500 = $4,500 still needed",
@@ -287,7 +309,8 @@
           ],
           "answer": "Remaining = $6,000 - $1,500 = $4,500. Time = $4,500 / $250 = 18 months."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "independent_practice",
@@ -297,20 +320,21 @@
       "problems": [
         {
           "id": "bs-16",
-          "prompt": "Sam's monthly essentials total $2,100. Calculate the emergency fund target for both 3 months and 6 months.",
+          "question": "Sam's monthly essentials total $2,100. Calculate the emergency fund target for both 3 months and 6 months.",
           "answer": "3-month target: $2,100 x 3 = $6,300. 6-month target: $2,100 x 6 = $12,600."
         },
         {
           "id": "bs-17",
-          "prompt": "Sam (essentials $2,100/month) wants a 4-month emergency fund and can save $350 per month. How many months will it take? How many years is that?",
+          "question": "Sam (essentials $2,100/month) wants a 4-month emergency fund and can save $350 per month. How many months will it take? How many years is that?",
           "answer": "Target = $2,100 x 4 = $8,400. Time = $8,400 / $350 = 24 months = 2 years."
         },
         {
           "id": "bs-18",
-          "prompt": "Dana has $3,200 saved toward a $9,600 emergency fund goal. If Dana saves $400 per month, how many more months to reach the goal?",
+          "question": "Dana has $3,200 saved toward a $9,600 emergency fund goal. If Dana saves $400 per month, how many more months to reach the goal?",
           "answer": "Remaining = $9,600 - $3,200 = $6,400. Time = $6,400 / $400 = 16 months."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "explanation",
@@ -325,7 +349,8 @@
         "Factor in potential investment growth to see the full long-term opportunity cost",
         "Opportunity cost applies to time as well as money — an hour spent on one task is an hour not spent on another",
         "Not all spending has high opportunity cost — essentials like food and housing are necessary, but discretionary spending is where opportunity cost matters most"
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "model",
@@ -345,7 +370,8 @@
           "problem": "A student can either work a part-time job earning $12/hour for 10 hours per week, or spend those 10 hours studying. If working, the student earns $120/week. What is the opportunity cost of each choice?",
           "solution": "If the student works: earns $120/week but the opportunity cost is 10 hours of study time that could improve grades, scholarships, or future earnings.\nIf the student studies: gains knowledge and potential future benefits, but the opportunity cost is $120/week in lost wages.\nOpportunity cost is not always purely financial — it includes time and future benefits that are harder to quantify."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "guided_practice",
@@ -355,7 +381,7 @@
       "problems": [
         {
           "id": "bs-19",
-          "prompt": "You spend $8 on lunch out every school day instead of packing a $3 lunch. What is the extra cost per day? What is the total extra cost over a 180-day school year?",
+          "question": "You spend $8 on lunch out every school day instead of packing a $3 lunch. What is the extra cost per day? What is the total extra cost over a 180-day school year?",
           "hints": [
             "Extra cost per day = $8 - $3",
             "Multiply the daily difference by 180 school days",
@@ -365,7 +391,7 @@
         },
         {
           "id": "bs-20",
-          "prompt": "Instead of spending $50/month on a streaming bundle, you invest that $50/month for 1 year (total saved at end of year earns 3% simple interest for 1 year). How much would you have? What is the opportunity cost of keeping the streaming bundle?",
+          "question": "Instead of spending $50/month on a streaming bundle, you invest that $50/month for 1 year (total saved at end of year earns 3% simple interest for 1 year). How much would you have? What is the opportunity cost of keeping the streaming bundle?",
           "hints": [
             "Total saved in 12 months: $50 x 12 = $600",
             "Simple interest on the total for 1 year: I = 600 x 0.03 x 1",
@@ -375,7 +401,7 @@
         },
         {
           "id": "bs-21",
-          "prompt": "You have $1,500 and must choose: (A) Buy a new phone, or (B) Invest at 5% compounded annually for 4 years. What is the opportunity cost of buying the phone?",
+          "question": "You have $1,500 and must choose: (A) Buy a new phone, or (B) Invest at 5% compounded annually for 4 years. What is the opportunity cost of buying the phone?",
           "hints": [
             "Calculate what $1,500 would grow to: A = 1,500(1.05)^4",
             "(1.05)^4 = 1.21551",
@@ -383,7 +409,8 @@
           ],
           "answer": "A = 1,500(1.05)^4 = 1,500 x 1.21551 = $1,823.26. The opportunity cost of buying the phone is $1,823.26 — the amount the money would have grown to."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     },
     {
       "type": "independent_practice",
@@ -393,20 +420,21 @@
       "problems": [
         {
           "id": "bs-22",
-          "prompt": "You spend $4 on a vending machine snack every weekday. Calculate the annual cost (assume 52 weeks, 5 days per week). If you saved that money instead, how much would you have at the end of the year?",
+          "question": "You spend $4 on a vending machine snack every weekday. Calculate the annual cost (assume 52 weeks, 5 days per week). If you saved that money instead, how much would you have at the end of the year?",
           "answer": "Annual cost: $4 x 5 x 52 = $1,040. If saved, you would have $1,040 at the end of the year."
         },
         {
           "id": "bs-23",
-          "prompt": "You are choosing between a $300 concert ticket and investing the $300 at 6% compounded annually for 3 years. What is the opportunity cost of attending the concert?",
+          "question": "You are choosing between a $300 concert ticket and investing the $300 at 6% compounded annually for 3 years. What is the opportunity cost of attending the concert?",
           "answer": "A = 300(1.06)^3 = 300 x 1.19102 = $357.30. The opportunity cost of the concert is $357.30."
         },
         {
           "id": "bs-24",
-          "prompt": "A family spends $150/month eating out. If they cut this to $50/month and invested the $100 difference each month for a year (total invested earns 4% simple interest for 1 year), what is the opportunity cost of continuing to eat out at $150/month?",
+          "question": "A family spends $150/month eating out. If they cut this to $50/month and invested the $100 difference each month for a year (total invested earns 4% simple interest for 1 year), what is the opportunity cost of continuing to eat out at $150/month?",
           "answer": "Monthly savings: $150 - $50 = $100. Annual savings: $100 x 12 = $1,200. Interest: I = 1,200 x 0.04 x 1 = $48. Total: $1,200 + $48 = $1,248. The opportunity cost of eating out is $1,248 per year."
         }
-      ]
+      ],
+      "lessonId": "banking_saving"
     }
   ],
   "answerKeys": {

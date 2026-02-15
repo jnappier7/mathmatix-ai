@@ -9,6 +9,7 @@ const path = require('path');
 const CourseSession = require('../models/courseSession');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
+const { calculateOverallProgress } = require('../utils/coursePrompt');
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -16,6 +17,7 @@ const User = require('../models/user');
    ============================================================ */
 // Catalog enrichment: difficulty levels, taglines, icons
 const CATALOG_META = {
+  '6th-grade-math':      { difficulty: 'Foundational', tagline: 'Fractions, ratios, expressions, geometry, and statistics', icon: '6️⃣' },
   '7th-grade-math':      { difficulty: 'Foundational', tagline: 'Rational numbers, proportions, geometry, and probability', icon: '7️⃣' },
   'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
   'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
@@ -24,7 +26,8 @@ const CATALOG_META = {
   'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
   'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' },
   'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '🎯' },
-  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' }
+  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' },
+  'early-math-foundations': { difficulty: 'Foundational', tagline: 'Whole numbers, fractions, decimals, and geometry for grades 3–5', icon: '🧱' }
 };
 
 router.get('/catalog', async (req, res) => {
@@ -418,9 +421,8 @@ router.post('/:id/complete-module', async (req, res) => {
       session.currentModuleId = nextMod.moduleId;
     }
 
-    // Calculate overall progress
-    const completedCount = session.modules.filter(m => m.status === 'completed').length;
-    session.overallProgress = Math.round((completedCount / session.modules.length) * 100);
+    // Calculate blended overall progress (includes scaffold progress for in-progress modules)
+    session.overallProgress = calculateOverallProgress(session.modules);
 
     // Check if course is fully completed
     const courseComplete = completedCount === session.modules.length;

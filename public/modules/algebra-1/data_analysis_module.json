@@ -7,8 +7,19 @@
   "weeks": "19-21",
   "estimatedDuration": 45,
   "description": "Explore measures of central tendency (mean, median, mode) and understand how outliers affect each measure, read and construct data displays including histograms, box plots, and dot plots, analyze scatter plots to identify positive, negative, or no correlation, distinguish between correlation and causation, estimate and use lines of best fit to make predictions, and apply basic probability concepts to real-world scenarios.",
-  "skills": ["measures-of-central-tendency", "scatter-plots-correlation", "data-displays", "intro-probability"],
-  "standardsAlignment": ["S-ID.1", "S-ID.2", "S-ID.6", "S-ID.7", "S-ID.8"],
+  "skills": [
+    "measures-of-central-tendency",
+    "scatter-plots-correlation",
+    "data-displays",
+    "intro-probability"
+  ],
+  "standardsAlignment": [
+    "S-ID.1",
+    "S-ID.2",
+    "S-ID.6",
+    "S-ID.7",
+    "S-ID.8"
+  ],
   "goals": [
     "Calculate mean, median, mode, and range for a data set, and explain how adding or removing an outlier affects each measure of central tendency",
     "Read, interpret, and construct histograms, box plots, and dot plots, and use the five-number summary (minimum, Q1, median, Q3, maximum) to describe the spread of data",
@@ -30,8 +41,9 @@
       "lessonPhase": "concept-intro",
       "skill": "measures-of-central-tendency",
       "title": "Introduction to Measures of Central Tendency",
-      "text": "When we have a set of data, we often want to describe it with a single number that represents the 'center' or 'typical value.' These are called **measures of central tendency**.\n\n**Mean (average):** Add all values and divide by the number of values.\nFormula: mean = (sum of all values) / (number of values)\n\n**Median:** The middle value when data is arranged in order. If there is an even number of values, the median is the average of the two middle values.\n\n**Mode:** The value that appears most frequently. A data set can have one mode, more than one mode, or no mode (if all values appear the same number of times).\n\n**Range:** The difference between the maximum and minimum values. Range = max − min. It measures the spread of the data.\n\n**Outliers and their effects:**\nAn **outlier** is a data value that is significantly higher or lower than the rest. Outliers have a large effect on the **mean** (they pull it toward the outlier), but they have little or no effect on the **median** (since the median depends on position, not value). This is why the median is often called a **resistant** measure — it resists the influence of extreme values.\n\n**When to use which measure:**\n- Use the **mean** when data is roughly symmetric with no extreme outliers.\n- Use the **median** when data is skewed or has outliers (e.g., income data, home prices).\n- Use the **mode** when you want the most common value (e.g., most popular shoe size).",
-      "initialPrompt": "Consider the data set {12, 15, 18, 15, 22, 15, 30}. Without calculating yet — do you think the mean and median will be close together or far apart? Why?"
+      "content": "When we have a set of data, we often want to describe it with a single number that represents the 'center' or 'typical value.' These are called **measures of central tendency**.\n\n**Mean (average):** Add all values and divide by the number of values.\nFormula: mean = (sum of all values) / (number of values)\n\n**Median:** The middle value when data is arranged in order. If there is an even number of values, the median is the average of the two middle values.\n\n**Mode:** The value that appears most frequently. A data set can have one mode, more than one mode, or no mode (if all values appear the same number of times).\n\n**Range:** The difference between the maximum and minimum values. Range = max − min. It measures the spread of the data.\n\n**Outliers and their effects:**\nAn **outlier** is a data value that is significantly higher or lower than the rest. Outliers have a large effect on the **mean** (they pull it toward the outlier), but they have little or no effect on the **median** (since the median depends on position, not value). This is why the median is often called a **resistant** measure — it resists the influence of extreme values.\n\n**When to use which measure:**\n- Use the **mean** when data is roughly symmetric with no extreme outliers.\n- Use the **median** when data is skewed or has outliers (e.g., income data, home prices).\n- Use the **mode** when you want the most common value (e.g., most popular shoe size).",
+      "initialPrompt": "Consider the data set {12, 15, 18, 15, 22, 15, 30}. Without calculating yet — do you think the mean and median will be close together or far apart? Why?",
+      "lessonId": "central-tendency"
     },
     {
       "type": "model",
@@ -55,15 +67,17 @@
           "tip": "Whenever you see salary, home price, or income data, expect the median to be more appropriate. These data sets are typically right-skewed with high-end outliers."
         }
       ],
-      "initialPrompt": "In the first example, the mean (18.1) is higher than the median (15). Looking at the ordered data {12, 15, 15, 15, 18, 22, 30}, why does the value 30 pull the mean up more than the rest of the data pulls it down?"
+      "initialPrompt": "In the first example, the mean (18.1) is higher than the median (15). Looking at the ordered data {12, 15, 15, 15, 18, 22, 30}, why does the value 30 pull the mean up more than the rest of the data pulls it down?",
+      "lessonId": "central-tendency"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "data-displays",
       "title": "Data Displays: Histograms, Box Plots, and Dot Plots",
-      "text": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
-      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?"
+      "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
+      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?",
+      "lessonId": "scatter-plots"
     },
     {
       "type": "model",
@@ -82,7 +96,8 @@
           "tip": "When comparing histograms, focus on three things: (1) Where is the center of each? (2) What is the shape? (3) How spread out are the data values?"
         }
       ],
-      "initialPrompt": "In the box plot example, the IQR was 13 and the range was 27. What does it tell us that the IQR is about half the range? If the IQR were much smaller than half the range, what would that mean?"
+      "initialPrompt": "In the box plot example, the IQR was 13 and the range was 27. What does it tell us that the IQR is about half the range? If the IQR were much smaller than half the range, what would that mean?",
+      "lessonId": "scatter-plots"
     },
     {
       "type": "guided_practice",
@@ -131,15 +146,31 @@
           ]
         }
       ],
-      "initialPrompt": "Let's practice together! For the first problem, start by identifying whether the data is already in order. Then find each measure one at a time. What is the mean of {4, 7, 7, 9, 12, 15, 18}?"
+      "initialPrompt": "Let's practice together! For the first problem, start by identifying whether the data is already in order. Then find each measure one at a time. What is the mean of {4, 7, 7, 9, 12, 15, 18}?",
+      "lessonId": "central-tendency"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "scatter-plots-correlation",
       "title": "Scatter Plots, Correlation, and Lines of Best Fit",
-      "text": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
-      "initialPrompt": "Think of two variables you encounter in daily life that might have a positive correlation, and two that might have a negative correlation. Can you also think of two variables that probably have no correlation at all?"
+      "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
+      "initialPrompt": "Think of two variables you encounter in daily life that might have a positive correlation, and two that might have a negative correlation. Can you also think of two variables that probably have no correlation at all?",
+      "lessonId": "data-displays"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "intro-probability",
+      "title": "We-Do: Intro Probability — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for intro probability.",
+          "hint": "Apply the concepts of intro probability.",
+          "solution": "Step-by-step solution for intro probability."
+        }
+      ],
+      "lessonId": "lines-of-best-fit"
     },
     {
       "type": "model",
@@ -163,7 +194,8 @@
           "tip": "Always check whether your prediction is interpolation (within the data range — more trustworthy) or extrapolation (beyond the data range — use with caution)."
         }
       ],
-      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?"
+      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?",
+      "lessonId": "data-displays"
     },
     {
       "type": "guided_practice",
@@ -212,7 +244,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these problems together. For the first one, look at the data pairs. As temperature goes from 30 to 65, what happens to the number of cups sold? What type of correlation is this?"
+      "initialPrompt": "Let's work through these problems together. For the first one, look at the data pairs. As temperature goes from 30 to 65, what happens to the number of cups sold? What type of correlation is this?",
+      "lessonId": "data-displays"
     },
     {
       "type": "independent_practice",
@@ -224,45 +257,59 @@
           "question": "The ages of employees at a startup are: {23, 24, 25, 26, 27, 28, 29, 30, 55}. Find the mean, median, and range. Which measure of center better represents the typical employee age? Explain.",
           "answer": "Mean = (23+24+25+26+27+28+29+30+55)/9 = 267/9 ≈ 29.7. Median = 5th value = 27. Range = 55 − 23 = 32. The median (27) better represents the typical age because the outlier (55) pulls the mean up to 29.7, which is higher than 7 of the 9 employees' actual ages. Without the outlier, the mean would be about 26.5.",
           "skill": "measures-of-central-tendency",
-          "hints": ["Order the data (it's already ordered). Find the mean by summing all 9 values and dividing by 9. The 55 is an outlier — how does it affect the mean compared to the median?"]
+          "hints": [
+            "Order the data (it's already ordered). Find the mean by summing all 9 values and dividing by 9. The 55 is an outlier — how does it affect the mean compared to the median?"
+          ]
         },
         {
           "id": "da-yp2",
           "question": "Construct a five-number summary for the data: {12, 18, 22, 25, 30, 33, 37, 40, 42, 48, 55}. Then calculate the IQR. Would any values be considered outliers using the 1.5 × IQR rule?",
           "answer": "11 values. Min = 12, Max = 55. Median = 6th value = 33. Lower half: {12, 18, 22, 25, 30}, Q1 = 22. Upper half: {37, 40, 42, 48, 55}, Q3 = 42. Five-number summary: {12, 22, 33, 42, 55}. IQR = 42 − 22 = 20. Lower fence = Q1 − 1.5(IQR) = 22 − 30 = −8. Upper fence = Q3 + 1.5(IQR) = 42 + 30 = 72. All values fall between −8 and 72, so there are **no outliers** by the 1.5 × IQR rule.",
           "skill": "data-displays",
-          "hints": ["Find Q1 (median of lower half) and Q3 (median of upper half). IQR = Q3 − Q1. For outliers, check if any value is below Q1 − 1.5(IQR) or above Q3 + 1.5(IQR)."]
+          "hints": [
+            "Find Q1 (median of lower half) and Q3 (median of upper half). IQR = Q3 − Q1. For outliers, check if any value is below Q1 − 1.5(IQR) or above Q3 + 1.5(IQR)."
+          ]
         },
         {
           "id": "da-yp3",
           "question": "Identify the type of correlation (positive, negative, or none) for each scenario:\n(a) Hours of exercise per week vs. resting heart rate\n(b) Number of pages in a book vs. the author's age\n(c) Outside temperature vs. heating bill amount",
           "answer": "(a) **Negative correlation** — more exercise is associated with a lower resting heart rate. (b) **No correlation** — the number of pages in a book has no predictable relationship to the author's age. (c) **Negative correlation** — as outside temperature increases, the heating bill decreases (less heating needed).",
           "skill": "scatter-plots-correlation",
-          "hints": ["For each pair, ask: as the first variable increases, does the second tend to increase (positive), decrease (negative), or show no pattern (none)?"]
+          "hints": [
+            "For each pair, ask: as the first variable increases, does the second tend to increase (positive), decrease (negative), or show no pattern (none)?"
+          ]
         },
         {
           "id": "da-yp4",
           "question": "Data on car age (years) and value ($1000s): (1, 28), (2, 24), (3, 21), (4, 18), (5, 16), (6, 13), (7, 11), (8, 9). Estimate a line of best fit using points (1, 28) and (8, 9). Predict the value of a 5-year-old car using your line. Compare to the actual value.",
           "answer": "Slope: m = (9 − 28)/(8 − 1) = −19/7 ≈ −2.71. Using (1, 28): 28 = −2.71(1) + b → b = 30.71. Equation: y = −2.71x + 30.71. At x = 5: y = −2.71(5) + 30.71 = −13.55 + 30.71 = 17.16 ≈ $17,160. Actual value at x = 5 is $16,000. The prediction is close — about $1,160 higher than actual, which is reasonable for an estimated trend line.",
           "skill": "scatter-plots-correlation",
-          "hints": ["Calculate slope using the two given points. Then use point-slope form to find b. Plug in x = 5 for the prediction. Compare your answer to the actual data point (5, 16)."]
+          "hints": [
+            "Calculate slope using the two given points. Then use point-slope form to find b. Plug in x = 5 for the prediction. Compare your answer to the actual data point (5, 16)."
+          ]
         },
         {
           "id": "da-yp5",
           "question": "A bag contains 3 red marbles, 4 blue marbles, and 3 green marbles. (a) What is the probability of drawing a green marble? (b) What is the probability of drawing a red or blue marble? (c) If you draw one marble, replace it, and draw again, what is the probability of drawing two red marbles in a row?",
           "answer": "(a) Total = 3 + 4 + 3 = 10. P(green) = 3/10 = 0.3 = 30%. (b) Red or blue = 3 + 4 = 7. P(red or blue) = 7/10 = 0.7 = 70%. Alternatively, P(red or blue) = 1 − P(green) = 1 − 3/10 = 7/10. (c) With replacement, draws are independent. P(red then red) = P(red) × P(red) = (3/10) × (3/10) = 9/100 = 0.09 = 9%.",
           "skill": "intro-probability",
-          "hints": ["For (a) and (b), use P = favorable/total with total = 10. For (c), since the marble is replaced, each draw has the same probabilities. Multiply the individual probabilities: P(both red) = P(red) × P(red)."]
+          "hints": [
+            "For (a) and (b), use P = favorable/total with total = 10. For (c), since the marble is replaced, each draw has the same probabilities. Multiply the individual probabilities: P(both red) = P(red) × P(red)."
+          ]
         },
         {
           "id": "da-yp6",
           "question": "A survey found that cities with more fire stations tend to have more fires. A student concludes that fire stations cause fires. Explain the error in this reasoning and identify the likely lurking variable.",
           "answer": "The student is confusing **correlation with causation**. Fire stations do not cause fires. The likely **lurking variable** is **city size (population)**. Larger cities have more people, more buildings, and therefore more fires — and they also build more fire stations to serve the larger population. Both the number of fires and the number of fire stations increase with city size, creating a positive correlation, but one does not cause the other. This is a classic example of why correlation ≠ causation — a third variable (population/city size) drives both.",
           "skill": "scatter-plots-correlation",
-          "hints": ["Think about what third variable could explain why both fire stations and fires increase together. What do larger cities have more of?"]
+          "hints": [
+            "Think about what third variable could explain why both fire stations and fires increase together. What do larger cities have more of?"
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "measures-of-central-tendency",
+      "lessonId": "central-tendency"
     }
   ],
   "answerKeys": {
@@ -280,5 +327,32 @@
     "da-yp4": "y = −2.71x + 30.71. Predicted value at 5 years ≈ $17,160. Actual = $16,000. Close estimate.",
     "da-yp5": "(a) P(green) = 3/10 = 30%. (b) P(red or blue) = 7/10 = 70%. (c) P(two reds) = 9/100 = 9%.",
     "da-yp6": "Correlation ≠ causation. Lurking variable: city size. Larger cities have more fires AND more fire stations."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "central-tendency",
+      "title": "Measures of Central Tendency",
+      "order": 1
+    },
+    {
+      "lessonId": "data-displays",
+      "title": "Data Displays",
+      "order": 2
+    },
+    {
+      "lessonId": "scatter-plots",
+      "title": "Scatter Plots and Correlation",
+      "order": 3
+    },
+    {
+      "lessonId": "lines-of-best-fit",
+      "title": "Lines of Best Fit",
+      "order": 4
+    },
+    {
+      "lessonId": "probability-intro",
+      "title": "Introduction to Probability",
+      "order": 5
+    }
+  ]
 }

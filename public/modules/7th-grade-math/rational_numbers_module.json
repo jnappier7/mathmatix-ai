@@ -6,18 +6,23 @@
   "weeks": "3-6",
   "estimatedDuration": 30,
   "description": "Master operations with positive and negative numbers — the gateway skill for all future algebra. Students build fluency adding, subtracting, multiplying, and dividing integers and rational numbers using number line models, sign rules, and real-world contexts like temperature, elevation, and money. Absolute value is introduced as distance from zero. This is the make-or-break unit for 7th grade: signed-number fluency is essential for expressions, equations, and every math course that follows.",
-
-  "skills": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals", "g7-rational-word-problems", "g7-absolute-value"],
-
-  "standardsAlignment": ["7.NS.1", "7.NS.2", "7.NS.3"],
-
+  "skills": [
+    "g7-add-subtract-rationals",
+    "g7-multiply-divide-rationals",
+    "g7-rational-word-problems",
+    "g7-absolute-value"
+  ],
+  "standardsAlignment": [
+    "7.NS.1",
+    "7.NS.2",
+    "7.NS.3"
+  ],
   "goals": [
     "Add and subtract integers and rational numbers fluently using number line models and sign rules",
     "Apply sign rules to multiply and divide positive and negative rational numbers",
     "Solve real-world problems involving rational number operations (temperature changes, bank balances, elevation)",
     "Interpret absolute value as distance from zero and use it to find distances between numbers on the number line"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -25,9 +30,7 @@
     "Emphasize key rules through repeated practice: subtracting a negative = adding a positive; same signs → positive product, different signs → negative product",
     "All problems are open-response to build computational fluency rather than answer elimination"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -41,7 +44,8 @@
         "Adding numbers with different signs: subtract the smaller absolute value from the larger, then take the sign of the number with the larger absolute value. Example: −7 + 4 → 7 − 4 = 3, and since |−7| > |4| the answer is −3",
         "Subtracting a negative is the SAME as adding a positive: a − (−b) = a + b. Example: 3 − (−8) = 3 + 8 = 11. Think of it as removing a debt — you gain.",
         "To add or subtract fractions with different signs, find a common denominator first, then apply the integer sign rules to the numerators"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
@@ -65,7 +69,8 @@
           "problem": "Compute: −2/3 + 1/4",
           "solution": "Step 1 — Find a common denominator. LCD of 3 and 4 is 12.\n−2/3 = −8/12 and 1/4 = 3/12\nStep 2 — Add the numerators (apply sign rules): −8 + 3 = −5\nStep 3 — Keep the denominator: −5/12\nAnswer: −5/12"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
@@ -81,7 +86,8 @@
         "Multiplying fractions: multiply numerators, multiply denominators, then apply the sign rule and simplify",
         "Dividing fractions: multiply by the reciprocal (flip the second fraction), then apply the sign rule",
         "Zero times any number is zero. Division by zero is undefined — it has no answer"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
@@ -105,7 +111,8 @@
           "problem": "Compute: (−5/6) ÷ (2/3)",
           "solution": "Step 1 — Rewrite as multiplication by the reciprocal:\n(−5/6) ÷ (2/3) = (−5/6) × (3/2)\nStep 2 — Different signs → negative result.\nMultiply numerators: 5 × 3 = 15. Multiply denominators: 6 × 2 = 12.\nResult: 15/12. Simplify by dividing both by 3: 5/4.\nApply the sign: −5/4.\nAnswer: −5/4 (or −1 1/4)"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
@@ -119,7 +126,8 @@
         "Elevation and depth: above sea level is positive; below sea level is negative",
         "Problem-solving strategy: (1) identify each quantity as positive or negative, (2) write the expression, (3) compute using sign rules",
         "Look for keywords: 'dropped,' 'lost,' 'below,' 'withdrew,' 'descended' → negative; 'rose,' 'gained,' 'above,' 'deposited,' 'climbed' → positive"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
@@ -139,7 +147,8 @@
           "problem": "A submarine is cruising at −240 feet (240 feet below sea level). It rises 85 feet, then dives 120 feet. What is its new position?",
           "solution": "Start: −240 feet. Rise: +85 feet. Dive: −120 feet.\nExpression: −240 + 85 − 120.\nStep 1: −240 + 85 = −155 (still below sea level).\nStep 2: −155 − 120 = −275.\nAnswer: −275 feet (275 feet below sea level)"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
@@ -153,7 +162,8 @@
         "Absolute value bars act like grouping symbols: simplify the expression inside first, then take the absolute value",
         "Distance between two numbers a and b on a number line = |a − b| (order does not matter: |a − b| = |b − a|)",
         "Comparing distances from zero: the number with the greater absolute value is farther from zero, regardless of sign"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
@@ -173,13 +183,13 @@
           "problem": "Which integer is farther from zero: −6 or 4? By how much?",
           "solution": "Find each absolute value:\n|−6| = 6 and |4| = 4.\nSince 6 > 4, −6 is farther from zero.\nDifference: 6 − 4 = 2 units farther.\nAnswer: −6 is farther from zero, by 2 units"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Adding, Subtracting, Multiplying & Dividing Practice",
-      "skills": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals"],
       "problems": [
         {
           "problem": "Compute: −9 + 3",
@@ -213,13 +223,14 @@
           ],
           "answer": "−3/2 (or −1 1/2). Rewrite as (−3/4) × (2/1) = −6/4 = −3/2."
         }
-      ]
+      ],
+      "skill": "g7-absolute-value",
+      "lessonId": "rational_numbers"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Word Problems & Absolute Value Practice",
-      "skills": ["g7-rational-word-problems", "g7-absolute-value"],
       "problems": [
         {
           "problem": "A scuba diver is at −30 feet. She descends another 18 feet. What is her new depth?",
@@ -253,13 +264,14 @@
           ],
           "answer": "12 units. |−7 − 5| = |−12| = 12."
         }
-      ]
+      ],
+      "skill": "g7-absolute-value",
+      "lessonId": "rational_numbers"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Rational Numbers — Practice Set",
-      "skills": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals", "g7-rational-word-problems", "g7-absolute-value"],
       "problems": [
         {
           "problem": "Compute: −12 + 7",
@@ -301,10 +313,11 @@
           "problem": "Jaylen has $210 in his account. He writes checks for $85.50 and $137.25. What is his new balance?",
           "answer": "−$12.75. 210 − 85.50 − 137.25 = 124.50 − 137.25 = −12.75. His account is overdrawn by $12.75."
         }
-      ]
+      ],
+      "skill": "g7-add-subtract-rationals",
+      "lessonId": "rational_numbers"
     }
   ],
-
   "answerKeys": {
     "add-neg-neg": "-8",
     "add-diff-signs": "-3",

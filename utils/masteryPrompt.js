@@ -164,7 +164,7 @@ ${gradeLevel >= 10 ? `   - Use sophisticated mathematical discourse
 
    4. **VERBAL** - How do we describe it in words?
       - Plain language explanations
-      - Example: "This means we're undoing operations in reverse order"
+      - Example: "Box the variable term — anything outside the box, use opposites to make zero. Anything inside, divide it out."
       - Talk through the reasoning
 
    **Check all 4:** After teaching, verify understanding across representations:
