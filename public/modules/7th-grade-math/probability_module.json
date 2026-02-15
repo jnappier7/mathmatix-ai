@@ -6,11 +6,18 @@
   "weeks": "26-29",
   "estimatedDuration": 30,
   "description": "Explore the mathematics of chance. Learn to calculate probabilities of simple events, compare experimental results to theoretical predictions, find sample spaces for compound events using organized lists, tables, and tree diagrams, and design simulations to estimate real-world probabilities.",
-
-  "skills": ["g7-simple-probability", "g7-experimental-theoretical", "g7-compound-events", "g7-probability-simulations"],
-
-  "standardsAlignment": ["7.SP.5", "7.SP.6", "7.SP.7", "7.SP.8"],
-
+  "skills": [
+    "g7-simple-probability",
+    "g7-experimental-theoretical",
+    "g7-compound-events",
+    "g7-probability-simulations"
+  ],
+  "standardsAlignment": [
+    "7.SP.5",
+    "7.SP.6",
+    "7.SP.7",
+    "7.SP.8"
+  ],
   "goals": [
     "Calculate the probability of simple events as favorable outcomes over total outcomes, expressed as simplified fractions",
     "Explain that probability is a number between 0 and 1 that represents the likelihood of an event",
@@ -19,7 +26,6 @@
     "Find probabilities of compound events using organized lists, tables, and tree diagrams",
     "Design and describe simulations using coins, dice, or spinners to estimate probabilities"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -28,9 +34,7 @@
     "Tree diagrams described in text to build reasoning about compound event sample spaces",
     "Gambler's fallacy addressed directly to correct a common misconception about independent events"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -45,7 +49,8 @@
         "The probability of an event NOT happening = 1 minus the probability that it does happen. For example, if P(rain) = 1/4, then P(no rain) = 3/4.",
         "Always simplify your fraction. For example, 6/12 simplifies to 1/2.",
         "Common random devices: a fair coin has 2 equally likely outcomes, a standard number cube (die) has 6, a standard deck of cards has 52."
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "explanation",
@@ -60,7 +65,8 @@
         "Law of large numbers: as you perform more and more trials, the experimental probability tends to get closer and closer to the theoretical probability.",
         "The gambler's fallacy is the mistaken belief that past results change future probabilities. For example, if a fair coin lands on heads 5 times in a row, the probability of tails on the next flip is still 1/2. The coin has no memory.",
         "Each flip of a coin or roll of a die is an independent event — it is not affected by what happened before."
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "explanation",
@@ -76,7 +82,8 @@
         "Tree diagram: draw a branch for each outcome of the first event. From each branch, draw branches for every outcome of the second event. The total paths = total outcomes.",
         "If event A has m outcomes and event B has n outcomes, the total number of outcomes in the sample space is m × n.",
         "For independent events with replacement: P(A and B) = P(A) × P(B)."
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "explanation",
@@ -92,7 +99,8 @@
         "Step 4: Repeat many trials (at least 20-50) and record results.",
         "Step 5: Calculate the experimental probability from your results: successes / total trials.",
         "More trials give a more reliable estimate. The simulation result will approximate the theoretical probability."
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "model",
@@ -112,7 +120,8 @@
           "problem": "A spinner is divided into 8 equal sections numbered 1 through 8. What is the probability of landing on an odd number?",
           "solution": "Total sections: 8.\nOdd numbers from 1 to 8 are {1, 3, 5, 7} — that is 4 favorable outcomes.\nP(odd) = 4/8.\nSimplify: 4/8 = 1/2.\nThe probability of landing on an odd number is 1/2."
         }
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "model",
@@ -132,7 +141,8 @@
           "problem": "A fair coin has landed on heads 5 times in a row. What is the probability that the next flip will be tails? Explain your reasoning.",
           "solution": "The probability of tails on the next flip is 1/2.\n\nEach coin flip is independent — the coin has no memory of previous flips. The past 5 heads do not change what happens next.\n\nThe mistaken belief that tails is 'due' or 'overdue' after several heads is called the gambler's fallacy. No matter what happened before, a fair coin always has a 1/2 probability of landing on heads and a 1/2 probability of landing on tails."
         }
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "model",
@@ -152,7 +162,8 @@
           "problem": "A bag contains 3 red marbles and 2 blue marbles. You draw one marble, put it back, then draw again. What is the probability of drawing a red marble both times?",
           "solution": "Since you replace the marble, the two draws are independent.\n\nBuild a tree diagram:\n  First draw: R (3/5) or B (2/5)\n    From R: second draw → R (3/5) or B (2/5)\n    From B: second draw → R (3/5) or B (2/5)\n\nP(red first) = 3/5.\nP(red second) = 3/5 (the bag is the same because we replaced the first marble).\n\nP(red both times) = 3/5 × 3/5 = 9/25."
         }
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "model",
@@ -168,13 +179,13 @@
           "problem": "At a school carnival, you have a 1-in-6 chance of winning a prize each time you play a game. Design a simulation to estimate the probability of winning at least once if you play 3 times.",
           "solution": "Simulation design:\n  Device: a standard die (rolling a 1 = win, rolling 2-6 = no win).\n  One trial: roll the die 3 times.\n  Success: at least one of the 3 rolls is a 1.\n  Repeat for at least 30 trials. Record how many trials have at least one 1.\n  Experimental probability = number of successes / total trials.\n\nTheoretical check:\n  P(no win on one play) = 5/6.\n  P(no win in 3 plays) = 5/6 × 5/6 × 5/6 = 125/216.\n  P(at least one win) = 1 − 125/216 = 91/216.\n\nThe simulation results should approximate 91/216 over many trials."
         }
-      ]
+      ],
+      "lessonId": "probability"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Simple & Experimental Probability Practice",
-      "skills": ["g7-simple-probability", "g7-experimental-theoretical"],
       "problems": [
         {
           "problem": "A bag contains 5 red marbles, 3 blue marbles, and 2 yellow marbles. What is the probability of NOT drawing a red marble?",
@@ -201,13 +212,14 @@
           ],
           "answer": "P(ace) = 4/52 = 1/13."
         }
-      ]
+      ],
+      "skill": "g7-probability-simulations",
+      "lessonId": "probability"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Compound Events & Simulations Practice",
-      "skills": ["g7-compound-events", "g7-probability-simulations"],
       "problems": [
         {
           "problem": "Two coins are flipped. List all the outcomes in the sample space. Then find the probability of getting exactly one head.",
@@ -233,13 +245,14 @@
           ],
           "answer": "Let rolling a 1 or 2 represent a made free throw (probability 2/6 = 1/3) and rolling 3, 4, 5, or 6 represent a miss. One trial: roll the die 3 times. Success: exactly 2 of the 3 rolls show a 1 or 2. Repeat for many trials and calculate successes / total trials. Theoretical probability: C(3,2) × (1/3)^2 × (2/3)^1 = 3 × 1/9 × 2/3 = 6/27 = 2/9."
         }
-      ]
+      ],
+      "skill": "g7-compound-events",
+      "lessonId": "probability"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Probability — Independent Practice",
-      "skills": ["g7-simple-probability", "g7-experimental-theoretical", "g7-compound-events", "g7-probability-simulations"],
       "problems": [
         {
           "problem": "A jar contains 6 green marbles, 4 orange marbles, and 2 white marbles. What is the probability of randomly drawing a green marble?",
@@ -265,10 +278,11 @@
           "problem": "A cereal box contains 1 of 5 different toy figures, each equally likely. Describe how you would simulate finding the probability of getting the same figure in 2 consecutive boxes. Then state the theoretical probability.",
           "answer": "Simulation: Label a spinner with 5 equal sections (1 through 5), or put 5 slips numbered 1-5 in a hat. One trial: spin (or draw) twice, replacing between draws. Success: both spins land on the same number. Repeat for many trials. Experimental probability = successes / total trials. Theoretical probability: P(any figure first) = 1, P(same figure second) = 1/5. P(match) = 1/5."
         }
-      ]
+      ],
+      "skill": "g7-simple-probability",
+      "lessonId": "probability"
     }
   ],
-
   "answerKeys": {
     "marble-blue": "1/2",
     "cube-greater-than-4": "1/3",

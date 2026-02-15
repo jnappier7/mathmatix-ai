@@ -11,7 +11,12 @@
     "separable-differential-equations",
     "exponential-growth-decay-models"
   ],
-  "standardsAlignment": ["AP Calc AB 7.3", "AP Calc AB 7.6", "AP Calc AB 7.7", "AP Calc AB 7.8"],
+  "standardsAlignment": [
+    "AP Calc AB 7.3",
+    "AP Calc AB 7.6",
+    "AP Calc AB 7.7",
+    "AP Calc AB 7.8"
+  ],
   "goals": [
     "Sketch slope fields from a given differential equation and draw solution curves through specified initial conditions.",
     "Match slope fields to their corresponding differential equations by analyzing slope behavior.",
@@ -42,7 +47,8 @@
         "Solution curves follow the slope field — they are tangent to the segments at every point. Different initial conditions give different solution curves in the same field.",
         "To draw a solution curve through (x₀, y₀): start at that point and trace a smooth curve that follows the direction of the segments in both directions.",
         "Matching slope fields to DEs: check if slopes depend on x only, y only, or both. Check slope values at key points (e.g., where slope = 0, where slope is positive/negative)."
-      ]
+      ],
+      "lessonId": "slope-fields"
     },
     {
       "type": "model",
@@ -62,7 +68,8 @@
           "problem": "For dy/dx = 2x, sketch the slope field at x = -2, -1, 0, 1, 2 for any y. Draw two solution curves: one through (0, 1) and one through (0, -3).",
           "solution": "Since dy/dx = 2x depends only on x, all segments in a given column have the same slope. At x = -2: slope = -4. At x = -1: slope = -2. At x = 0: slope = 0. At x = 1: slope = 2. At x = 2: slope = 4. All segments in each column are parallel. Solution: integrate dy/dx = 2x → y = x² + C. Through (0,1): 1 = 0 + C → C = 1, so y = x² + 1. Through (0,-3): -3 = 0 + C → C = -3, so y = x² - 3. Both are parabolas opening upward — they are vertical shifts of each other, which matches the parallel-column slope field."
         }
-      ]
+      ],
+      "lessonId": "slope-fields"
     },
     {
       "type": "explanation",
@@ -77,7 +84,8 @@
         "Particular solution: use the initial condition (x₀, y₀) to solve for C. Then state the specific solution.",
         "Solve for y explicitly when possible. Sometimes you must leave the solution in implicit form (e.g., ln|y| = ... or y³ = ...).",
         "Common trap: don't forget absolute values with ln|y|. When solving for y, consider ±. Use the IC to determine the correct sign."
-      ]
+      ],
+      "lessonId": "separable-des"
     },
     {
       "type": "model",
@@ -97,35 +105,53 @@
           "problem": "Solve dy/dx = -2xy/(x² + 1). Find the particular solution with y(0) = 4.",
           "solution": "Separate: (1/y) dy = -2x/(x²+1) dx. Integrate: ln|y| = -ln(x²+1) + C. (Right side: let u = x²+1, du = 2x dx → ∫-2x/(x²+1) dx = -ln(x²+1).) Exponentiate: |y| = e^C/(x²+1). Write y = A/(x²+1). IC y(0) = 4: 4 = A/(0+1) = A. Particular solution: y = 4/(x²+1)."
         }
-      ]
+      ],
+      "lessonId": "separable-des"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Slope Fields & Separable DEs Practice",
-      "skills": ["slope-fields-solution-curves", "separable-differential-equations"],
       "problems": [
         {
           "problem": "For dy/dx = y/x, determine the slopes at (1,1), (1,2), (2,1), (-1,1), and (1,-1). What do the solution curves look like?",
-          "hints": ["Plug each point into dy/dx = y/x", "Notice: along any line y = mx through the origin, the slope is m", "Separate and integrate to verify: the solutions are y = Cx"],
+          "hints": [
+            "Plug each point into dy/dx = y/x",
+            "Notice: along any line y = mx through the origin, the slope is m",
+            "Separate and integrate to verify: the solutions are y = Cx"
+          ],
           "answer": "Slopes: (1,1)→1, (1,2)→2, (2,1)→1/2, (-1,1)→-1, (1,-1)→-1. Solution curves are lines through the origin: separate (1/y)dy = (1/x)dx → ln|y| = ln|x| + C → y = Kx. Each solution curve is a straight line through the origin with slope K."
         },
         {
           "problem": "Solve dy/dx = 6x²/(2y + cos y). Find the general solution.",
-          "hints": ["Separate: (2y + cos y) dy = 6x² dx", "Integrate each side: left gives y² + sin y, right gives 2x³", "This cannot be solved explicitly for y — leave in implicit form"],
+          "hints": [
+            "Separate: (2y + cos y) dy = 6x² dx",
+            "Integrate each side: left gives y² + sin y, right gives 2x³",
+            "This cannot be solved explicitly for y — leave in implicit form"
+          ],
           "answer": "Separate: (2y + cos y) dy = 6x² dx. Integrate: y² + sin y = 2x³ + C. This is the general solution in implicit form (cannot be solved for y explicitly)."
         },
         {
           "problem": "Solve dy/dx = (1 + y²) with y(0) = 1.",
-          "hints": ["Separate: dy/(1+y²) = dx", "Recall: ∫1/(1+y²) dy = arctan(y)", "Apply the initial condition to find C"],
+          "hints": [
+            "Separate: dy/(1+y²) = dx",
+            "Recall: ∫1/(1+y²) dy = arctan(y)",
+            "Apply the initial condition to find C"
+          ],
           "answer": "Separate: dy/(1+y²) = dx. Integrate: arctan(y) = x + C. IC y(0) = 1: arctan(1) = 0 + C → C = π/4. So arctan(y) = x + π/4, hence y = tan(x + π/4). Domain: -3π/4 < x < π/4."
         },
         {
           "problem": "A slope field has horizontal segments along the line y = 3, positive slopes below y = 3, and negative slopes above y = 3. The slopes do not depend on x. Which DE fits: (A) dy/dx = 3 - y, (B) dy/dx = y - 3, (C) dy/dx = 3y, (D) dy/dx = x - 3? Solve the DE with y(0) = 1.",
-          "hints": ["Horizontal segments where dy/dx = 0 → check which option gives 0 at y = 3", "Below y = 3 means y < 3, slopes are positive", "Eliminate: (D) depends on x, (C) gives 0 at y = 0 not y = 3"],
+          "hints": [
+            "Horizontal segments where dy/dx = 0 → check which option gives 0 at y = 3",
+            "Below y = 3 means y < 3, slopes are positive",
+            "Eliminate: (D) depends on x, (C) gives 0 at y = 0 not y = 3"
+          ],
           "answer": "(A) dy/dx = 3 - y. Check: at y = 3, slope = 0 ✓. y < 3: slope > 0 ✓. y > 3: slope < 0 ✓. No x-dependence ✓. Solve: separate dy/(3-y) = dx → -ln|3-y| = x + C. At y(0) = 1: -ln(2) = C. So -ln|3-y| = x - ln 2 → |3-y| = 2e^(-x). Since y(0)=1 < 3, take 3-y = 2e^(-x) → y = 3 - 2e^(-x)."
         }
-      ]
+      ],
+      "skill": "separable-differential-equations",
+      "lessonId": "separable-des"
     },
     {
       "type": "explanation",
@@ -141,7 +167,8 @@
         "Half-life (decay): the time for half the quantity to remain. Set y₀e^(kt) = y₀/2 → e^(kt) = 1/2 → t_half = ln(2)/|k|.",
         "Doubling time (growth): the time to double. Set y₀e^(kt) = 2y₀ → t_double = ln(2)/k.",
         "Setting up from verbal descriptions: identify what is changing (y), what it is proportional to (ky, k(M-y), etc.), and the initial condition."
-      ]
+      ],
+      "lessonId": "growth-decay"
     },
     {
       "type": "model",
@@ -161,36 +188,49 @@
           "problem": "A cup of coffee cools from 195°F in a 68°F room. After 5 minutes it is 160°F. Using Newton's Law of Cooling (dT/dt = k(T - 68)), find the temperature after 15 minutes.",
           "solution": "Let u = T - 68 (temperature above room). Then du/dt = ku, so u(t) = u₀e^(kt). u₀ = 195 - 68 = 127. At t = 5: u(5) = 160 - 68 = 92. So 92 = 127e^(5k) → e^(5k) = 92/127 → 5k = ln(92/127) → k = ln(92/127)/5 ≈ -0.0642. At t = 15: u(15) = 127e^(15k) = 127·(92/127)³ = 127·(92/127)³. Compute: (92/127)³ ≈ (0.7244)³ ≈ 0.3802. u(15) ≈ 127·0.3802 ≈ 48.3. T(15) ≈ 68 + 48.3 ≈ 116.3°F."
         }
-      ]
+      ],
+      "lessonId": "growth-decay"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Exponential Growth & Decay Practice",
-      "skills": ["exponential-growth-decay-models"],
       "problems": [
         {
           "problem": "A population of fish grows according to dP/dt = 0.15P. If there are 2000 fish initially, (a) find P(t), (b) find the population after 10 years, (c) find the doubling time.",
-          "hints": ["This is dy/dt = ky with k = 0.15 and y₀ = 2000", "P(t) = 2000e^(0.15t)", "Doubling time = ln(2)/k"],
+          "hints": [
+            "This is dy/dt = ky with k = 0.15 and y₀ = 2000",
+            "P(t) = 2000e^(0.15t)",
+            "Doubling time = ln(2)/k"
+          ],
           "answer": "(a) P(t) = 2000e^(0.15t). (b) P(10) = 2000e^(1.5) ≈ 2000·4.4817 ≈ 8963 fish. (c) t_double = ln(2)/0.15 ≈ 0.693/0.15 ≈ 4.62 years."
         },
         {
           "problem": "A radioactive isotope decays so that after 20 years, only 30% of the original amount remains. Find the half-life.",
-          "hints": ["Set up: y(20) = 0.30·y₀", "0.30 = e^(20k) → k = ln(0.30)/20", "Half-life = ln(2)/|k|"],
+          "hints": [
+            "Set up: y(20) = 0.30·y₀",
+            "0.30 = e^(20k) → k = ln(0.30)/20",
+            "Half-life = ln(2)/|k|"
+          ],
           "answer": "0.30·y₀ = y₀·e^(20k) → e^(20k) = 0.30 → 20k = ln(0.30) ≈ -1.204 → k ≈ -0.0602. Half-life = ln(2)/|k| = 0.693/0.0602 ≈ 11.51 years."
         },
         {
           "problem": "An investment earns interest continuously at rate r, modeled by dA/dt = 0.06A. If $5000 is invested, how long until the investment reaches $12000?",
-          "hints": ["A(t) = 5000e^(0.06t)", "Set 12000 = 5000e^(0.06t)", "Solve for t using ln"],
+          "hints": [
+            "A(t) = 5000e^(0.06t)",
+            "Set 12000 = 5000e^(0.06t)",
+            "Solve for t using ln"
+          ],
           "answer": "A(t) = 5000e^(0.06t). Set 12000 = 5000e^(0.06t) → e^(0.06t) = 2.4 → 0.06t = ln(2.4) ≈ 0.8755 → t ≈ 14.59 years."
         }
-      ]
+      ],
+      "skill": "exponential-growth-decay-models",
+      "lessonId": "growth-decay"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Differential Equations Mastery Practice",
-      "skills": ["slope-fields-solution-curves", "separable-differential-equations", "exponential-growth-decay-models"],
       "problems": [
         {
           "problem": "For dy/dx = x/y with y > 0, (a) solve the separable DE, (b) find the particular solution with y(0) = 4, (c) describe what the solution curves look like geometrically.",
@@ -212,7 +252,9 @@
           "problem": "(FRQ-style) At time t = 0, a tank contains 150 liters of a solution. Fresh solution flows in and the well-mixed solution flows out such that the amount of solute S(t) satisfies dS/dt = -S/50. (a) Find S(t) given S(0) = 90 grams. (b) Find lim(t→∞) S(t) and interpret in context. (c) At what time is S(t) = 15 grams?",
           "answer": "(a) Separate: dS/S = -dt/50. Integrate: ln|S| = -t/50 + C. S(0)=90: ln(90)=C. So S(t) = 90e^(-t/50). (b) lim(t→∞) S(t) = lim(t→∞) 90e^(-t/50) = 0. In context: over time, the solute is completely flushed from the tank. (c) 15 = 90e^(-t/50) → e^(-t/50) = 1/6 → -t/50 = ln(1/6) = -ln 6 → t = 50·ln 6 ≈ 89.59 minutes."
         }
-      ]
+      ],
+      "skill": "slope-fields-solution-curves",
+      "lessonId": "slope-fields"
     }
   ],
   "answerKeys": {
@@ -237,5 +279,22 @@
     "ip-frq-separable": "Slopes at 6 points. y = ln(x² + 1).",
     "ip-decay-model": "M(t) = 50e^(-0.0558t). Half-life ≈ 12.42 hrs. 10 g at ≈ 28.83 hrs.",
     "ip-frq-tank": "S(t) = 90e^(-t/50). lim = 0. S = 15 at t = 50·ln 6 ≈ 89.59 min."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "slope-fields",
+      "title": "Slope Fields & Solution Curves",
+      "order": 1
+    },
+    {
+      "lessonId": "separable-des",
+      "title": "Separable Differential Equations",
+      "order": 2
+    },
+    {
+      "lessonId": "growth-decay",
+      "title": "Exponential Growth & Decay Models",
+      "order": 3
+    }
+  ]
 }

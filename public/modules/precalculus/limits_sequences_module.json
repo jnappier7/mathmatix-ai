@@ -14,7 +14,12 @@
     "limits-algebraic",
     "limits-continuity-infinity"
   ],
-  "standardsAlignment": ["F-BF.2", "F-IF.3", "A-SSE.4", "F-LE.2"],
+  "standardsAlignment": [
+    "F-BF.2",
+    "F-IF.3",
+    "A-SSE.4",
+    "F-LE.2"
+  ],
   "goals": [
     "Find the nth term and partial sums of arithmetic sequences; model linear growth.",
     "Find the nth term, partial sums, and infinite sums of geometric sequences; model exponential growth/decay.",
@@ -34,7 +39,6 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Sequences: Arithmetic & Geometric",
-      "skills": ["sequences-arithmetic", "sequences-geometric"],
       "content": "A sequence is an ordered list of numbers. Arithmetic sequences have a constant difference; geometric sequences have a constant ratio.",
       "keyPoints": [
         "Arithmetic: aₙ = a₁ + (n-1)d. Common difference d = aₙ₊₁ - aₙ.",
@@ -43,13 +47,14 @@
         "Geometric partial sum: Sₙ = a₁(1-rⁿ)/(1-r) for r ≠ 1.",
         "Infinite geometric series: S = a₁/(1-r) converges only if |r| < 1.",
         "Recursive vs. explicit formulas: recursive defines each term from previous; explicit gives nth term directly."
-      ]
+      ],
+      "skill": "sequences-arithmetic",
+      "lessonId": "sequences"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Sequences — Worked Examples",
-      "skills": ["sequences-arithmetic", "sequences-geometric"],
       "examples": [
         {
           "problem": "An arithmetic sequence has a₃ = 11 and a₈ = 31. Find: (a) d and a₁, (b) a₂₀, (c) S₂₀.",
@@ -63,7 +68,9 @@
           "problem": "Write the repeating decimal 0.454545... as a fraction using an infinite geometric series.",
           "solution": "0.454545... = 0.45 + 0.0045 + 0.000045 + ··· = 45/100 + 45/10000 + ···. Geometric with a₁ = 45/100, r = 1/100. S = (45/100)/(1-1/100) = (45/100)/(99/100) = 45/99 = 5/11."
         }
-      ]
+      ],
+      "skill": "sequences-geometric",
+      "lessonId": "series-sigma"
     },
     {
       "type": "explanation",
@@ -78,7 +85,8 @@
         "Useful formulas: Σk = n(n+1)/2, Σk² = n(n+1)(2n+1)/6, Σk³ = [n(n+1)/2]².",
         "Telescoping series: most terms cancel, leaving first and last.",
         "Partial sums Sₙ reveal convergence behavior."
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "model",
@@ -98,30 +106,43 @@
           "problem": "Evaluate Σₖ₌₁⁴⁰ (2k + 5).",
           "solution": "Σ(2k+5) = 2·Σk + Σ5 = 2·(40·41/2) + 5·40 = 1640 + 200 = 1840."
         }
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Sequences & Series Practice",
-      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation"],
       "problems": [
         {
           "problem": "Find the sum of the first 30 terms of the arithmetic sequence 7, 12, 17, 22, ...",
-          "hints": ["a₁=7, d=5", "a₃₀ = 7+29(5) = 152", "S₃₀ = 30/2·(7+152)"],
+          "hints": [
+            "a₁=7, d=5",
+            "a₃₀ = 7+29(5) = 152",
+            "S₃₀ = 30/2·(7+152)"
+          ],
           "answer": "a₃₀ = 7+29(5) = 152. S₃₀ = 15·159 = 2385."
         },
         {
           "problem": "Determine whether the infinite geometric series 12 - 8 + 16/3 - 32/9 + ··· converges. If so, find the sum.",
-          "hints": ["r = -8/12 = -2/3", "|r| = 2/3 < 1 → converges", "S = 12/(1-(-2/3)) = 12/(5/3)"],
+          "hints": [
+            "r = -8/12 = -2/3",
+            "|r| = 2/3 < 1 → converges",
+            "S = 12/(1-(-2/3)) = 12/(5/3)"
+          ],
           "answer": "r = -2/3, |r| < 1 → converges. S = 12/(5/3) = 36/5 = 7.2."
         },
         {
           "problem": "Evaluate Σₖ₌₁²⁰ k².",
-          "hints": ["Use formula: Σk² = n(n+1)(2n+1)/6", "= 20·21·41/6"],
+          "hints": [
+            "Use formula: Σk² = n(n+1)(2n+1)/6",
+            "= 20·21·41/6"
+          ],
           "answer": "Σₖ₌₁²⁰ k² = 20·21·41/6 = 17220/6 = 2870."
         }
-      ]
+      ],
+      "skill": "series-sigma-notation",
+      "lessonId": "limits-preview"
     },
     {
       "type": "explanation",
@@ -136,7 +157,8 @@
         "The limit can exist even if f(c) is undefined (e.g., removable discontinuity).",
         "Estimate limits from tables by evaluating f(x) for x-values approaching c from both sides.",
         "Estimate limits from graphs by tracing the curve toward x = c from both directions."
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "model",
@@ -156,7 +178,8 @@
           "problem": "Given the piecewise function f(x) = {x+1 if x<3; 5 if x=3; 2x-2 if x>3}, find lim(x→3) f(x).",
           "solution": "lim(x→3⁻) f(x) = lim(x→3⁻)(x+1) = 4. lim(x→3⁺) f(x) = lim(x→3⁺)(2x-2) = 4. Both sides equal 4, so lim(x→3) f(x) = 4. (Note: f(3)=5≠4, so there's a removable discontinuity.)"
         }
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "explanation",
@@ -171,7 +194,8 @@
         "Complex fractions: simplify by finding common denominator.",
         "Limit laws: sum, product, quotient, constant multiple, power rules.",
         "Special limit: lim(x→0) sin(x)/x = 1."
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "model",
@@ -191,7 +215,8 @@
           "problem": "Evaluate lim(x→0) (1/(x+3) - 1/3)/x.",
           "solution": "Direct sub: 0/0. Simplify the complex fraction: (1/(x+3)-1/3)/x = ((3-(x+3))/(3(x+3)))/x = (-x/(3(x+3)))/x = -1/(3(x+3)). lim(x→0) -1/(3(x+3)) = -1/(3·3) = -1/9."
         }
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "explanation",
@@ -206,7 +231,8 @@
         "Limits at infinity: lim(x→∞) 1/xⁿ = 0 for n > 0.",
         "Rational functions: divide by highest power of x. Compare degrees of numerator and denominator.",
         "Horizontal asymptotes: deg(num) < deg(den) → HA y=0; equal degrees → HA y = leading coeff ratio; deg(num) > deg(den) → no HA."
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "model",
@@ -226,13 +252,13 @@
           "problem": "Find lim(x→∞) (5x³ + 2x)/(x² - 1) and lim(x→∞) (x + 3)/(x³ + 1).",
           "solution": "First: deg(num)=3 > deg(den)=2. Divide by x²: (5x+2/x)/(1-1/x²) → ∞. The limit is ∞ (no horizontal asymptote). Second: deg(num)=1 < deg(den)=3. Divide by x³: (1/x²+3/x³)/(1+1/x³) → 0. The limit is 0 (HA y=0)."
         }
-      ]
+      ],
+      "lessonId": "limits-preview"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Sequences, Series & Limits Mastery Practice",
-      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation", "limits-intuitive", "limits-algebraic", "limits-continuity-infinity"],
       "problems": [
         {
           "problem": "An arithmetic sequence has a₁ = -5 and d = 3. Find a₁₅ and S₁₅.",
@@ -258,7 +284,9 @@
           "problem": "Find lim(x→∞) (4x² - 7)/(6x² + 5x).",
           "answer": "Equal degrees (both 2). Limit = 4/6 = 2/3. (Divide by x²: (4-7/x²)/(6+5/x) → 4/6.)"
         }
-      ]
+      ],
+      "skill": "sequences-arithmetic",
+      "lessonId": "sequences"
     }
   ],
   "answerKeys": {
@@ -286,5 +314,22 @@
     "ip-lim-factor": "lim=1.",
     "ip-lim-radical": "lim=1/6.",
     "ip-lim-inf": "lim=2/3."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "sequences",
+      "title": "Arithmetic & Geometric Sequences",
+      "order": 1
+    },
+    {
+      "lessonId": "series-sigma",
+      "title": "Series & Sigma Notation",
+      "order": 2
+    },
+    {
+      "lessonId": "limits-preview",
+      "title": "Introduction to Limits & Continuity",
+      "order": 3
+    }
+  ]
 }

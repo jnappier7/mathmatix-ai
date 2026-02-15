@@ -46,10 +46,20 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     currentStepDetail = formatScaffoldStep(currentPhase, scaffoldIndex, scaffold.length);
   }
 
-  // Build the full scaffold outline (compact)
+  // Build the full scaffold outline with lesson grouping
+  const lessons = scaffoldData?.lessons || [];
+  let lastLessonId = null;
   const scaffoldOutline = scaffold.map((s, i) => {
     const marker = i === scaffoldIndex ? '▶' : i < scaffoldIndex ? '✓' : '○';
-    return `  ${marker} ${i + 1}. [${s.type}] ${s.title}`;
+    let prefix = '';
+    if (s.lessonId && s.lessonId !== lastLessonId) {
+      const lessonMeta = lessons.find(l => l.lessonId === s.lessonId);
+      const lessonTitle = lessonMeta?.title || s.lessonId;
+      const lessonNum = lessonMeta?.order || lessons.findIndex(l => l.lessonId === s.lessonId) + 1;
+      prefix = `\n  --- Lesson ${lessonNum}: ${lessonTitle} ---\n`;
+      lastLessonId = s.lessonId;
+    }
+    return `${prefix}  ${marker} ${i + 1}. [${s.type}] ${s.title}`;
   }).join('\n');
 
   // AI instruction model from pathway
@@ -146,13 +156,24 @@ YOUR ROLE AS INSTRUCTOR — CORE PRINCIPLES
    naturally — the same check-in every time becomes white noise.
 
    🚨 **SELF-ASSESSMENT IS DATA, NOT PROOF.** A student saying "I get it"
-   or rating themselves a 3 is useful information, but it is NOT evidence
-   of understanding. ALWAYS follow up a self-assessment with ACTION:
-   - Student says "got it" → "Show me. Try this one."
-   - Student rates 3/3 → "Nice confidence — prove it: [quick question]"
-   - Student says "makes sense" → "Cool — explain it back to me real quick."
+   or rating themselves is useful information, but it is NOT evidence
+   of understanding. Here is EXACTLY how to respond:
+
+   **Student rates 3 (confident):** "Alright, prove it. Get the next one
+   without me." → Immediately give them a You-Do problem with NO hints,
+   NO scaffolding. If they get it right, THAT is evidence. If they don't,
+   say "Ok, we've got some work to do" and drop back to We-Do.
+
+   **Student rates 1 or 2 (not confident):** "Ok, we've got work to do.
+   Let's keep at it together." → Stay in We-Do guided practice. Give them
+   a problem WITH scaffolding and hints. Build them up.
+
+   **Student says "got it" / "makes sense" / "I know this":** Treat it
+   the same as a 3 — "Show me. Try this one on your own."
+
    Self-assessment tells you how they FEEL. Evidence tells you what they KNOW.
-   You need both, but you only advance on evidence.
+   You need both, but you ONLY advance on evidence. NEVER emit
+   <SCAFFOLD_ADVANCE> based on a self-report alone.
 
 4. **VOCABULARY FIRST — IN YOUR OWN VOICE.**
    When a module introduces new terms, start with vocabulary BEFORE
@@ -193,7 +214,7 @@ ${decisionRights || `  - Choose which examples to present
   - Adjust difficulty based on student performance
   - Skip ahead, loop back, or extend any phase based on evidence
   - Generate additional practice as needed
-  - Use student interests to personalize examples`}
+  - OCCASIONALLY use student interests to personalize examples (about 1 in 5-6 problems — don't force it)`}
 
 8. **THE STUDENT DOES THE WORK.** During We-Do, you are the GPS — the
    student drives. Present the problem and ask "What do we do first?"
@@ -232,17 +253,24 @@ transitioning to the next step. Conditions:
 - After an explanation: you've taught the concept AND the student
   has engaged (answered your initial prompt or asked a question)
 - After I-Do modeling: you've shown the worked examples AND the
-  student has acknowledged understanding
+  student has DEMONSTRATED understanding (not just said "got it")
 - After We-Do guided practice: the student has correctly solved
-  at least 2 problems with decreasing scaffolding
+  at least 2 problems with decreasing scaffolding. You MUST have
+  emitted at least 2 <PROBLEM_RESULT:correct> tags before advancing.
 - After You-Do independent practice: the student has independently
-  solved at least 2 problems correctly
+  solved at least 2 problems correctly WITH NO HELP. You MUST have
+  emitted at least 2 <PROBLEM_RESULT:correct> tags before advancing.
 - After a mastery check: the student has demonstrated proficiency
+
+⚠️ The server will BLOCK this tag if you haven't recorded enough
+correct answers in practice phases. Don't guess — track results.
 
 Do NOT emit this tag if:
 - You just started teaching the current step
 - The student is still struggling and needs more practice
 - You are in the middle of a problem or explanation
+- The student only self-reported confidence (said "3" or "got it")
+  without actually solving a problem
 
 **2. <MODULE_COMPLETE>**
 Emit this tag when ALL scaffold steps in the current module are done.
@@ -580,8 +608,32 @@ function loadCourseContext(courseSession) {
   }
 }
 
+/**
+ * Calculate blended overallProgress that includes within-module scaffold progress.
+ * Instead of only counting fully completed modules (which gives huge jumps),
+ * this blends in the current module's scaffold progress for smooth, continuous progress.
+ *
+ * Example: 22 modules, 3 completed, current module at 60% scaffold progress:
+ *   (3 + 0.60) / 22 * 100 = 16.4% (vs 13.6% with only completed modules)
+ */
+function calculateOverallProgress(modules) {
+  if (!modules || modules.length === 0) return 0;
+  const totalModules = modules.length;
+
+  let progressSum = 0;
+  for (const mod of modules) {
+    if (mod.status === 'completed') {
+      progressSum += 1;
+    } else if (mod.status === 'in_progress' && mod.scaffoldProgress > 0) {
+      progressSum += (mod.scaffoldProgress / 100);
+    }
+  }
+  return Math.round((progressSum / totalModules) * 100);
+}
+
 module.exports = {
   buildCourseSystemPrompt,
   buildCourseGreetingInstruction,
-  loadCourseContext
+  loadCourseContext,
+  calculateOverallProgress
 };

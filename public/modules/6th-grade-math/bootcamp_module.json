@@ -53,7 +53,9 @@
         "When rounding, look at the digit immediately to the right of the target place: 5 or above rounds up, 4 or below keeps the digit the same",
         "To add or subtract decimals, stack them vertically with decimal points aligned and pad with trailing zeros so every number has the same number of decimal places",
         "A digit's value is (digit) x (place value): the 7 in 0.073 is worth 7 x 0.01 = 0.07, not just 7"
-      ]
+      ],
+      "title": "Concept: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -72,7 +74,9 @@
           "problem": "Subtract: 20 - 7.368.",
           "solution": "Step 1: Rewrite 20 as 20.000 so we have matching decimal places.\nStep 2: Subtract column by column from right to left, borrowing as needed.\n  20.000\n - 7.368\n -------\n  12.632\nAnswer: 20 - 7.368 = 12.632."
         }
-      ]
+      ],
+      "title": "I-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -81,7 +85,7 @@
       "problems": [
         {
           "id": "bc-1",
-          "prompt": "You ran the 100-meter dash in 13.450 seconds and your friend ran it in 13.045 seconds. Who was faster? By how much?",
+          "question": "You ran the 100-meter dash in 13.450 seconds and your friend ran it in 13.045 seconds. Who was faster? By how much?",
           "hints": [
             "Line up the decimals: 13.450 vs 13.045. Compare tenths first: 4 tenths vs 0 tenths.",
             "Since 13.045 < 13.450, your friend was faster (lower time = faster). Subtract: 13.450 - 13.045 = 0.405 seconds."
@@ -90,7 +94,7 @@
         },
         {
           "id": "bc-2",
-          "prompt": "Round 8.5672 to the nearest tenth, nearest hundredth, and nearest thousandth.",
+          "question": "Round 8.5672 to the nearest tenth, nearest hundredth, and nearest thousandth.",
           "hints": [
             "Nearest tenth: look at the hundredths digit (6). Since 6 >= 5, round up: 8.6.",
             "Nearest hundredth: look at thousandths digit (7). Since 7 >= 5, round up: 8.57.",
@@ -100,14 +104,16 @@
         },
         {
           "id": "bc-3",
-          "prompt": "A recipe calls for 2.75 cups of flour and 1.375 cups of sugar. How much total dry ingredient is that? Then subtract: if you already added 1.8 cups, how much is left to add?",
+          "question": "A recipe calls for 2.75 cups of flour and 1.375 cups of sugar. How much total dry ingredient is that? Then subtract: if you already added 1.8 cups, how much is left to add?",
           "hints": [
             "Add first: line up decimals. 2.750 + 1.375 = 4.125 cups total.",
             "Subtract: 4.125 - 1.800 = 2.325 cups still left to add."
           ],
           "answer": "Total: 4.125 cups. Left to add: 2.325 cups"
         }
-      ]
+      ],
+      "title": "We-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -116,20 +122,22 @@
       "problems": [
         {
           "id": "bc-4",
-          "prompt": "Put these times from a swim meet in order from fastest to slowest: 28.190 s, 28.091 s, 28.910 s, 28.019 s.",
+          "question": "Put these times from a swim meet in order from fastest to slowest: 28.190 s, 28.091 s, 28.910 s, 28.019 s.",
           "answer": "28.019 s, 28.091 s, 28.190 s, 28.910 s"
         },
         {
           "id": "bc-5",
-          "prompt": "Your phone screen is 6.1 inches tall. Your tablet screen is 10.95 inches tall. How much taller is the tablet? Round your answer to the nearest tenth.",
+          "question": "Your phone screen is 6.1 inches tall. Your tablet screen is 10.95 inches tall. How much taller is the tablet? Round your answer to the nearest tenth.",
           "answer": "10.95 - 6.10 = 4.85 inches; rounded to nearest tenth: 4.9 inches"
         },
         {
           "id": "bc-6",
-          "prompt": "In the number 0.582, what is the value of the digit 8? Write a decimal that has a 3 in the thousandths place and is between 0.58 and 0.59.",
+          "question": "In the number 0.582, what is the value of the digit 8? Write a decimal that has a 3 in the thousandths place and is between 0.58 and 0.59.",
           "answer": "The 8 is in the hundredths place, so its value is 0.08. Example: 0.583 (any decimal of the form 0.58_ where _ is some digit works, but the thousandths digit must be 3, so 0.583)"
         }
-      ]
+      ],
+      "title": "You-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -142,7 +150,9 @@
         "Divide fractions using Keep-Change-Flip: (a/b) / (c/d) = (a/b) x (d/c)",
         "Convert mixed numbers to improper fractions before multiplying or dividing: 2 1/3 = 7/3",
         "Always simplify your final answer—reduce the fraction to lowest terms or convert an improper fraction back to a mixed number when appropriate"
-      ]
+      ],
+      "title": "Concept: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -161,7 +171,9 @@
           "problem": "Divide: 4/9 / 2/3.",
           "solution": "Step 1: Keep-Change-Flip. 4/9 x 3/2.\nStep 2: Cross-cancel. The 4 and 2 share a factor of 2: becomes 2/9 x 3/1. The 9 and 3 share a factor of 3: becomes 2/3 x 1/1 = 2/3.\nAnswer: 2/3."
         }
-      ]
+      ],
+      "title": "I-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -170,7 +182,7 @@
       "problems": [
         {
           "id": "bc-7",
-          "prompt": "You ate 1/3 of a pizza and your friend ate 3/8 of the same pizza. How much of the pizza did you eat together? How much is left?",
+          "question": "You ate 1/3 of a pizza and your friend ate 3/8 of the same pizza. How much of the pizza did you eat together? How much is left?",
           "hints": [
             "Find LCD of 3 and 8. LCD = 24. Rewrite: 1/3 = 8/24, 3/8 = 9/24.",
             "Add: 8/24 + 9/24 = 17/24 of the pizza eaten. Left over: 24/24 - 17/24 = 7/24."
@@ -179,7 +191,7 @@
         },
         {
           "id": "bc-8",
-          "prompt": "A board is 5 1/4 feet long. You need to cut off a piece that is 2 5/6 feet. How long is the remaining piece?",
+          "question": "A board is 5 1/4 feet long. You need to cut off a piece that is 2 5/6 feet. How long is the remaining piece?",
           "hints": [
             "Convert to improper fractions: 5 1/4 = 21/4, 2 5/6 = 17/6.",
             "LCD of 4 and 6 is 12. 21/4 = 63/12, 17/6 = 34/12. Subtract: 63/12 - 34/12 = 29/12 = 2 5/12 feet."
@@ -188,14 +200,16 @@
         },
         {
           "id": "bc-9",
-          "prompt": "A recipe makes 3/4 of a batch. If the full batch needs 2 2/3 cups of milk, how much milk do you need for the smaller batch?",
+          "question": "A recipe makes 3/4 of a batch. If the full batch needs 2 2/3 cups of milk, how much milk do you need for the smaller batch?",
           "hints": [
             "This is multiplication: 3/4 x 2 2/3. Convert: 2 2/3 = 8/3.",
             "3/4 x 8/3. Cross-cancel the 3s: 1/4 x 8/1 = 8/4 = 2 cups."
           ],
           "answer": "2 cups of milk"
         }
-      ]
+      ],
+      "title": "We-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -204,20 +218,22 @@
       "problems": [
         {
           "id": "bc-10",
-          "prompt": "Subtract: 4 1/6 - 1 3/4.",
+          "question": "Subtract: 4 1/6 - 1 3/4.",
           "answer": "2 5/12"
         },
         {
           "id": "bc-11",
-          "prompt": "A bag has 3 1/2 pounds of trail mix. You want to split it into portions of 1/4 pound each. How many portions can you make?",
+          "question": "A bag has 3 1/2 pounds of trail mix. You want to split it into portions of 1/4 pound each. How many portions can you make?",
           "answer": "14 portions (3 1/2 / 1/4 = 7/2 x 4/1 = 28/2 = 14)"
         },
         {
           "id": "bc-12",
-          "prompt": "Multiply 2 1/5 by 5/11 and simplify fully.",
+          "question": "Multiply 2 1/5 by 5/11 and simplify fully.",
           "answer": "1 (because 2 1/5 = 11/5, and 11/5 x 5/11 = 55/55 = 1)"
         }
-      ]
+      ],
+      "title": "You-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -230,7 +246,9 @@
         "When comparing two negative numbers, the one closer to zero is greater: -2 > -8 because -2 is farther right on the number line",
         "Absolute value is the distance from zero and is always non-negative: |-5| = 5 and |5| = 5",
         "Real-world negatives: temperature below zero, depth below sea level, debt or money owed, yards lost in a game"
-      ]
+      ],
+      "title": "Concept: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -245,7 +263,9 @@
           "problem": "The temperature at 6 AM was -4 degrees Fahrenheit. By noon it rose 11 degrees. Then from noon to midnight it dropped 9 degrees. What was the midnight temperature?",
           "solution": "Step 1: Start at -4.\nStep 2: Rose 11 degrees means move RIGHT on the number line. -4 + 11 = 7 degrees F at noon.\nStep 3: Dropped 9 degrees means move LEFT. 7 - 9 = -2 degrees F at midnight.\nAnswer: The midnight temperature was -2 degrees F."
         }
-      ]
+      ],
+      "title": "I-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -254,7 +274,7 @@
       "problems": [
         {
           "id": "bc-13",
-          "prompt": "Fill in the blank with < , > , or = :\n(a) -5 ___ -3\n(b) 0 ___ -12\n(c) |-6| ___ |4|",
+          "question": "Fill in the blank with < , > , or = :\n(a) -5 ___ -3\n(b) 0 ___ -12\n(c) |-6| ___ |4|",
           "hints": [
             "(a) On the number line, -5 is to the LEFT of -3, so -5 < -3.",
             "(b) 0 is to the RIGHT of -12, so 0 > -12.",
@@ -264,7 +284,7 @@
         },
         {
           "id": "bc-14",
-          "prompt": "A submarine is at -150 meters (below sea level). It rises 90 meters, then dives 40 meters. What is its final position?",
+          "question": "A submarine is at -150 meters (below sea level). It rises 90 meters, then dives 40 meters. What is its final position?",
           "hints": [
             "Start at -150. Rising means adding: -150 + 90 = -60.",
             "Diving means subtracting (going deeper): -60 - 40 = -100 meters."
@@ -273,14 +293,16 @@
         },
         {
           "id": "bc-15",
-          "prompt": "Order from least to greatest: 2, -8, -1, 5, -8, 0, -3.",
+          "question": "Order from least to greatest: 2, -8, -1, 5, -8, 0, -3.",
           "hints": [
             "Start with the most negative. -8 is the farthest left. There are two of them.",
             "Continuing right: -3, -1, 0, 2, 5. Full order: -8, -8, -3, -1, 0, 2, 5."
           ],
           "answer": "-8, -8, -3, -1, 0, 2, 5"
         }
-      ]
+      ],
+      "title": "We-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -289,20 +311,22 @@
       "problems": [
         {
           "id": "bc-16",
-          "prompt": "You have $20 in your bank account. You spend $35 using a debit card (the bank lets it go negative). What integer represents your balance? Then you deposit $15. New balance?",
+          "question": "You have $20 in your bank account. You spend $35 using a debit card (the bank lets it go negative). What integer represents your balance? Then you deposit $15. New balance?",
           "answer": "After spending: 20 - 35 = -15 dollars. After deposit: -15 + 15 = 0 dollars."
         },
         {
           "id": "bc-17",
-          "prompt": "Which is colder: -14 degrees F or -6 degrees F? How many degrees apart are they?",
+          "question": "Which is colder: -14 degrees F or -6 degrees F? How many degrees apart are they?",
           "answer": "-14 degrees F is colder (farther left on the number line). They are 8 degrees apart (|-14 - (-6)| = |-14 + 6| = |-8| = 8)."
         },
         {
           "id": "bc-18",
-          "prompt": "Find two integers whose absolute values are equal but whose sum is 0. Then find two integers where one has a greater absolute value but is the lesser number.",
+          "question": "Find two integers whose absolute values are equal but whose sum is 0. Then find two integers where one has a greater absolute value but is the lesser number.",
           "answer": "Example of equal absolute values summing to 0: 9 and -9 (|9| = |-9| = 9, and 9 + (-9) = 0). Example of greater absolute value but lesser number: -10 and 3. |-10| = 10 > |3| = 3, but -10 < 3."
         }
-      ]
+      ],
+      "title": "You-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -315,7 +339,9 @@
         "Long division follows Divide-Multiply-Subtract-Bring down (DMSB) repeated until you run out of digits or reach the desired decimal place",
         "You can check any division by multiplying: quotient x divisor + remainder = dividend",
         "Estimation is your safety net—round before computing to predict a reasonable answer, then check if your exact answer is close"
-      ]
+      ],
+      "title": "Concept: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -334,7 +360,9 @@
           "problem": "Divide 845 / 12. Express the remainder as a fraction.",
           "solution": "Step 1: 12 into 84? 7 times (7 x 12 = 84). Write 7. Subtract 84 - 84 = 0.\nStep 2: Bring down 5. 12 into 5? 0 times. Write 0. Remainder is 5.\nAnswer: 70 5/12.\nCheck: 70 x 12 + 5 = 840 + 5 = 845. Confirmed."
         }
-      ]
+      ],
+      "title": "I-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -343,7 +371,7 @@
       "problems": [
         {
           "id": "bc-19",
-          "prompt": "A school ordered 36 boxes of markers. Each box has 24 markers. How many markers total?",
+          "question": "A school ordered 36 boxes of markers. Each box has 24 markers. How many markers total?",
           "hints": [
             "Multiply 36 x 24. Break it up: 36 x 20 = 720, and 36 x 4 = 144.",
             "Add: 720 + 144 = 864 markers."
@@ -352,7 +380,7 @@
         },
         {
           "id": "bc-20",
-          "prompt": "You have 1,536 stickers to share equally among 8 friends. How many stickers does each friend get?",
+          "question": "You have 1,536 stickers to share equally among 8 friends. How many stickers does each friend get?",
           "hints": [
             "Divide 1,536 / 8. Start: 8 into 15 = 1 (8), subtract to get 7. Bring down 3 for 73. 8 into 73 = 9 (72), subtract to get 1. Bring down 6 for 16. 8 into 16 = 2.",
             "Answer: 192 stickers each. Check: 192 x 8 = 1,536."
@@ -361,14 +389,16 @@
         },
         {
           "id": "bc-21",
-          "prompt": "Divide 2,507 by 11. Write your answer with a remainder as a fraction.",
+          "question": "Divide 2,507 by 11. Write your answer with a remainder as a fraction.",
           "hints": [
             "11 into 25 = 2 (22), remainder 3. Bring down 0 for 30. 11 into 30 = 2 (22), remainder 8. Bring down 7 for 87. 11 into 87 = 7 (77), remainder 10.",
             "Answer: 227 10/11. Check: 227 x 11 + 10 = 2,497 + 10 = 2,507."
           ],
           "answer": "227 10/11"
         }
-      ]
+      ],
+      "title": "We-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -377,20 +407,22 @@
       "problems": [
         {
           "id": "bc-22",
-          "prompt": "A movie theater has 48 rows with 52 seats per row. How many seats are in the theater?",
+          "question": "A movie theater has 48 rows with 52 seats per row. How many seats are in the theater?",
           "answer": "2,496 seats (48 x 52 = 48 x 50 + 48 x 2 = 2,400 + 96 = 2,496)"
         },
         {
           "id": "bc-23",
-          "prompt": "A factory produced 7,392 water bottles in one day across 16 identical machines. How many bottles did each machine produce?",
+          "question": "A factory produced 7,392 water bottles in one day across 16 identical machines. How many bottles did each machine produce?",
           "answer": "462 bottles (7,392 / 16 = 462)"
         },
         {
           "id": "bc-24",
-          "prompt": "Compute 375 x 14, then divide your answer by 25.",
+          "question": "Compute 375 x 14, then divide your answer by 25.",
           "answer": "375 x 14 = 5,250. Then 5,250 / 25 = 210."
         }
-      ]
+      ],
+      "title": "You-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -404,7 +436,9 @@
         "Multiplication with a variable drops the times sign: '3 times n' is written 3n, not 3 x n",
         "Parentheses group operations: 'twice the sum of a number and 4' means 2(n + 4), not 2n + 4",
         "An expression has no equals sign; an equation does—know the difference"
-      ]
+      ],
+      "title": "Concept: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -423,7 +457,9 @@
           "problem": "Translate: 'The quotient of the sum of x and 9, divided by 2.'",
           "solution": "Step 1: 'The sum of x and 9' → x + 9. This entire sum is being divided.\nStep 2: 'Divided by 2' → put the sum over 2.\nStep 3: Use parentheses to show the sum is grouped: (x + 9) / 2.\nAnswer: (x + 9) / 2."
         }
-      ]
+      ],
+      "title": "I-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -432,7 +468,7 @@
       "problems": [
         {
           "id": "bc-25",
-          "prompt": "Write an expression: 'You earn $12 per hour for h hours and then spend $20 on lunch.' What is left?",
+          "question": "Write an expression: 'You earn $12 per hour for h hours and then spend $20 on lunch.' What is left?",
           "hints": [
             "Earnings = 12 times h = 12h.",
             "After spending $20: 12h - 20."
@@ -441,7 +477,7 @@
         },
         {
           "id": "bc-26",
-          "prompt": "Translate into a math expression: 'Twice the difference of a number and 6.'",
+          "question": "Translate into a math expression: 'Twice the difference of a number and 6.'",
           "hints": [
             "'The difference of a number and 6' means n - 6.",
             "'Twice' means multiply by 2. Since it is twice the WHOLE difference, use parentheses: 2(n - 6)."
@@ -450,14 +486,16 @@
         },
         {
           "id": "bc-27",
-          "prompt": "You and two friends split the cost of a $45 video game equally, then each of you also buys a $5 snack. Write an expression for how much one person spends total.",
+          "question": "You and two friends split the cost of a $45 video game equally, then each of you also buys a $5 snack. Write an expression for how much one person spends total.",
           "hints": [
             "Each person's share of the game: 45 / 3 = 15, but what if the cost were unknown? With 45 it is just 45/3.",
             "Add the snack: 45/3 + 5 = 15 + 5 = 20. As an expression: 45/3 + 5."
           ],
           "answer": "45/3 + 5 (which equals 20 dollars)"
         }
-      ]
+      ],
+      "title": "We-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -466,20 +504,22 @@
       "problems": [
         {
           "id": "bc-28",
-          "prompt": "Write an expression: 'A number increased by the product of 4 and that same number.'",
+          "question": "Write an expression: 'A number increased by the product of 4 and that same number.'",
           "answer": "n + 4n (which simplifies to 5n)"
         },
         {
           "id": "bc-29",
-          "prompt": "You have g gummy bears. You eat 5, then split the rest equally between yourself and 3 friends (4 people total). Write an expression for how many each person gets.",
+          "question": "You have g gummy bears. You eat 5, then split the rest equally between yourself and 3 friends (4 people total). Write an expression for how many each person gets.",
           "answer": "(g - 5) / 4"
         },
         {
           "id": "bc-30",
-          "prompt": "Translate and evaluate: 'The sum of 18 and the quotient of 36 and 4.' First write the expression, then compute the value.",
+          "question": "Translate and evaluate: 'The sum of 18 and the quotient of 36 and 4.' First write the expression, then compute the value.",
           "answer": "Expression: 18 + 36/4. Value: 18 + 9 = 27."
         }
-      ]
+      ],
+      "title": "You-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     }
   ],
   "answerKeys": {

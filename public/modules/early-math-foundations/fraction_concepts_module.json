@@ -6,7 +6,6 @@
   "weeks": "10-12",
   "estimatedDuration": 40,
   "description": "What fractions actually mean — before any operations. Students build understanding of fractions as parts of a whole, parts of a set, and points on a number line. They generate equivalent fractions, compare and order fractions using benchmarks and common denominators, convert between mixed numbers and improper fractions, and calculate fractions of a whole number. This conceptual foundation must be rock-solid before fraction operations.",
-
   "skills": [
     "emf-fraction-concepts",
     "emf-equivalent-fractions",
@@ -14,7 +13,6 @@
     "emf-mixed-numbers-improper",
     "emf-fractions-of-whole"
   ],
-
   "standardsAlignment": [
     "3.NF.A.1",
     "3.NF.A.2",
@@ -27,7 +25,6 @@
     "4.NF.B.4",
     "5.NF.B.4"
   ],
-
   "goals": [
     "Identify and write fractions as parts of a whole, parts of a set, and locations on a number line",
     "Generate equivalent fractions by multiplying or dividing the numerator and denominator by the same number, and simplify fractions to lowest terms",
@@ -35,7 +32,6 @@
     "Convert fluently between mixed numbers and improper fractions in both directions",
     "Calculate a fraction of a whole number using the divide-then-multiply method"
   ],
-
   "instructionalStrategy": [
     "Concrete-first approach: every concept starts with a visual or hands-on scenario (pizza slices, chocolate bars, animal groups) before moving to abstract notation",
     "Gradual release: explanation (concept-intro) → model (I Do) → guided practice (We Do) → independent practice (You Do)",
@@ -43,9 +39,7 @@
     "Benchmark fractions (0, 1/2, 1) serve as anchor points throughout comparison and ordering tasks",
     "Students should demonstrate understanding with physical or drawn models before relying solely on numeric procedures"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -60,7 +54,8 @@
         "Parts of a set: if 3 out of 8 puppies are brown, then 3/8 of the puppies are brown",
         "Number line: fractions live between whole numbers — 3/4 is the point three-fourths of the way from 0 to 1",
         "The parts MUST be equal size for the fraction to be correct"
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "model",
@@ -80,7 +75,8 @@
           "problem": "Mark a point at 3/4 on a number line from 0 to 1.",
           "solution": "Step 1: The denominator is 4, so divide the space from 0 to 1 into 4 equal sections.\nStep 2: Starting at 0, count over 3 sections to the right.\nStep 3: That landing point is 3/4.\n\n0---|---|---|---|1\n   1/4 2/4 3/4\n\n3/4 is past the halfway mark (2/4 = 1/2) but not all the way to 1."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "guided_practice",
@@ -115,7 +111,8 @@
           ],
           "answer": "2/5. The number line is divided into 5 equal parts, and the dot is at the 2nd mark, which is 2/5."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "independent_practice",
@@ -138,7 +135,8 @@
           "problem": "A number line goes from 0 to 1 and is divided into 8 equal parts. A dot is placed on the 5th mark. Write the fraction for the dot. Is it closer to 1/2 or to 1?",
           "answer": "The dot is at 5/8. Since 1/2 = 4/8, the dot is just one eighth past halfway. Since 1 = 8/8, the dot is three eighths away from 1. So 5/8 is closer to 1/2."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "explanation",
@@ -153,7 +151,8 @@
         "Fraction strips or fraction walls help you SEE that 1/2 lines up exactly with 2/4, 3/6, etc.",
         "A fraction is in simplest form (lowest terms) when the numerator and denominator share no common factor other than 1",
         "Simplifying does NOT change the value — it just gives the fraction its shortest name"
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "model",
@@ -173,7 +172,8 @@
           "problem": "Simplify 6/8 to its lowest terms.",
           "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "guided_practice",
@@ -208,7 +208,8 @@
           ],
           "answer": "Yes, they are equivalent. 2/5 = (2x2)/(5x2) = 4/10. Multiplying top and bottom by 2 turns 2/5 into 4/10, so they name the same amount."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "independent_practice",
@@ -231,7 +232,8 @@
           "problem": "Find the missing number: 3/7 = ?/21.",
           "answer": "9. Since 7 x 3 = 21, multiply the numerator by 3: 3 x 3 = 9. So 3/7 = 9/21."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "explanation",
@@ -246,7 +248,8 @@
         "Common denominator: rewrite both fractions with the same bottom number, then compare numerators",
         "To find a common denominator, use the least common multiple (LCM) of the two denominators",
         "Ordering three or more fractions: use any combination of these strategies, then line them up from least to greatest (or greatest to least)"
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "model",
@@ -266,7 +269,8 @@
           "problem": "Order these fractions from least to greatest: 1/3, 3/4, 1/2.",
           "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!"
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "guided_practice",
@@ -301,7 +305,8 @@
           ],
           "answer": "1/4, 2/3, 5/6. 1/4 is below 1/2, so it is the smallest. Comparing 2/3 and 5/6 with denominator 6: 2/3 = 4/6, and 4/6 < 5/6. So the order is 1/4 < 2/3 < 5/6."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "independent_practice",
@@ -324,7 +329,8 @@
           "problem": "Order from least to greatest: 3/8, 1/2, 2/5.",
           "answer": "3/8, 2/5, 1/2. Common denominator 40: 3/8 = 15/40, 2/5 = 16/40, 1/2 = 20/40. Since 15 < 16 < 20, the order is 3/8 < 2/5 < 1/2."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "explanation",
@@ -339,7 +345,8 @@
         "Improper fraction → mixed number: divide the numerator by the denominator. The quotient is the whole number, the remainder is the new numerator. Example: 11/4 → 11 ÷ 4 = 2 remainder 3 → 2 3/4",
         "On a number line, mixed numbers live between whole numbers: 1 2/5 is between 1 and 2, specifically two-fifths of the way past 1",
         "Neither form is 'better' — improper fractions are easier for calculations, mixed numbers are easier to picture"
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "model",
@@ -359,7 +366,8 @@
           "problem": "Place 1 2/3 on a number line.",
           "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "guided_practice",
@@ -394,7 +402,8 @@
           ],
           "answer": "22/5. Whole x denominator + numerator = 4 x 5 + 2 = 22. So 4 2/5 = 22/5."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "independent_practice",
@@ -417,7 +426,8 @@
           "problem": "Convert the improper fraction 19/3 to a mixed number.",
           "answer": "6 1/3. 19 ÷ 3 = 6 remainder 1. So 19/3 = 6 1/3."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "explanation",
@@ -432,7 +442,8 @@
         "Example: 3/4 of 20 → 20 ÷ 4 = 5, then 5 x 3 = 15. So 3/4 of 20 = 15",
         "This works because dividing by the denominator gives you one part, and multiplying by the numerator gives you the number of parts you need",
         "Tip: it is often easier to divide first (to get a smaller number) and multiply second"
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "model",
@@ -452,7 +463,8 @@
           "problem": "A baker made 30 cookies. She gave 2/5 of them to her neighbor. How many cookies did the neighbor get?",
           "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!"
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "guided_practice",
@@ -487,7 +499,8 @@
           ],
           "answer": "15. 25 ÷ 5 = 5, then 5 x 3 = 15. So 3/5 of 25 = 15."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     },
     {
       "type": "independent_practice",
@@ -510,10 +523,10 @@
           "problem": "A farm has 35 animals. 2/7 of them are horses. How many horses are on the farm?",
           "answer": "10 horses. 35 ÷ 7 = 5, then 5 x 2 = 10. So 2/7 of 35 = 10."
         }
-      ]
+      ],
+      "lessonId": "fraction_concepts"
     }
   ],
-
   "answerKeys": {
     "fc-1": "2/6",
     "fc-2": "3/10",

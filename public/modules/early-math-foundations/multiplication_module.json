@@ -6,7 +6,6 @@
   "weeks": "5-7",
   "estimatedDuration": 40,
   "description": "The most important unit in this course. Multiplication fact fluency is the single biggest predictor of math success in upper elementary and middle school. Students build from equal groups and arrays to automatic recall of facts through 12×12, learn the properties that make multiplication easier, master the multi-digit algorithm, solve comparison and multi-step word problems, and understand factors and multiples.",
-
   "skills": [
     "emf-multiplication-facts",
     "emf-multiplication-properties",
@@ -14,7 +13,6 @@
     "emf-multiply-word-problems",
     "emf-factors-multiples"
   ],
-
   "standardsAlignment": [
     "3.OA.A.1",
     "3.OA.A.3",
@@ -25,7 +23,6 @@
     "4.OA.B.4",
     "5.NBT.B.5"
   ],
-
   "goals": [
     "Recall multiplication facts through 12×12 from memory within 3 seconds, understanding them as equal groups and arrays rather than counting",
     "Apply the commutative, associative, distributive, zero, and identity properties to simplify multiplication and break apart difficult facts",
@@ -33,7 +30,6 @@
     "Solve one-step and two-step word problems involving equal groups, arrays, and multiplicative comparison ('times as many')",
     "Find all factor pairs of a number, identify numbers as prime or composite, list multiples, and apply factors and multiples to real-world grouping situations"
   ],
-
   "instructionalStrategy": [
     "Gradual release for each skill: concept-intro → I Do → We Do → You Do before moving to the next skill",
     "AI uses scaffold array as scope and worked-example bank — problems use concrete contexts familiar to 8-11 year olds: snacks, sports teams, classroom supplies, animals, and party planning",
@@ -41,9 +37,7 @@
     "Use visual language (rows, columns, groups, arrays) so students can picture the multiplication even in text-based interaction",
     "Connect each new skill to prior ones — properties help with facts, facts power the algorithm, the algorithm enables word problems, factors and multiples tie it all together"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -58,7 +52,8 @@
         "The goal is automatic recall — you should know facts the way you know your address, without having to count or figure it out each time",
         "Patterns help: any number × 1 = itself, any number × 0 = 0, the 2s are doubles, the 5s end in 0 or 5, the 9s digits always add to 9 (9, 18, 27, 36 …)",
         "The trickiest facts for most students are 6 × 7, 6 × 8, 7 × 8, 8 × 8, and 7 × 12 — give these extra practice"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -78,7 +73,8 @@
           "problem": "There are 12 months in a year. If a library orders 11 new books every month, how many new books does the library get in a year?",
           "solution": "This is 12 groups of 11 (or 11 groups of 12 — same thing).\n12 × 11 = 132.\nOne way to remember: 12 × 11 is just 12 × 10 + 12 × 1 = 120 + 12 = 132.\nAnswer: 132 new books."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -88,7 +84,7 @@
       "problems": [
         {
           "id": "mult-1",
-          "prompt": "A baker puts 6 muffins on each tray. She fills 8 trays. How many muffins did she bake?",
+          "question": "A baker puts 6 muffins on each tray. She fills 8 trays. How many muffins did she bake?",
           "hints": [
             "This is 8 groups of 6. What is 8 × 6?",
             "Think of it as an array: 8 rows with 6 in each row. Or use a fact you know — 8 × 6 is the same as 6 × 8."
@@ -97,7 +93,7 @@
         },
         {
           "id": "mult-2",
-          "prompt": "What is 7 × 7?",
+          "question": "What is 7 × 7?",
           "hints": [
             "7 × 7 is a square number — the same number times itself.",
             "If you know 7 × 6 = 42, just add one more group of 7: 42 + 7."
@@ -106,14 +102,15 @@
         },
         {
           "id": "mult-3",
-          "prompt": "A soccer league has 9 teams. Each team has 12 players. How many players are in the league?",
+          "question": "A soccer league has 9 teams. Each team has 12 players. How many players are in the league?",
           "hints": [
             "This is 9 groups of 12, which is the same as 9 × 12.",
             "Break it apart: 9 × 12 = 9 × 10 + 9 × 2."
           ],
           "answer": "108 players. 9 × 12 = 108. (9 × 10 = 90, 9 × 2 = 18, 90 + 18 = 108.) ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -123,20 +120,21 @@
       "problems": [
         {
           "id": "mult-4",
-          "prompt": "A parking lot has 11 rows of cars with 8 cars in each row. How many cars are in the lot?",
+          "question": "A parking lot has 11 rows of cars with 8 cars in each row. How many cars are in the lot?",
           "answer": "88 cars"
         },
         {
           "id": "mult-5",
-          "prompt": "What is 12 × 12?",
+          "question": "What is 12 × 12?",
           "answer": "144"
         },
         {
           "id": "mult-6",
-          "prompt": "A camp has 6 cabins. Each cabin holds 7 campers. How many campers can the camp hold?",
+          "question": "A camp has 6 cabins. Each cabin holds 7 campers. How many campers can the camp hold?",
           "answer": "42 campers"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -151,7 +149,8 @@
         "Zero property: any number times 0 equals 0. 500 × 0 = 0.",
         "Identity property: any number times 1 equals that same number. 73 × 1 = 73.",
         "The distributive property is the most powerful — it is the engine behind the multi-digit multiplication algorithm you will learn next"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -171,7 +170,8 @@
           "problem": "Use the distributive property to find 7 × 8.",
           "solution": "Break 8 into friendly parts: 8 = 5 + 3.\n7 × 8 = 7 × (5 + 3) = 7 × 5 + 7 × 3 = 35 + 21 = 56.\nOr break 7 into parts: 7 = 5 + 2.\n7 × 8 = (5 + 2) × 8 = 5 × 8 + 2 × 8 = 40 + 16 = 56.\nEither way the answer is the same.\nAnswer: 56"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -181,7 +181,7 @@
       "problems": [
         {
           "id": "mult-7",
-          "prompt": "Which property tells you that 8 × 5 and 5 × 8 give the same answer? What is the answer?",
+          "question": "Which property tells you that 8 × 5 and 5 × 8 give the same answer? What is the answer?",
           "hints": [
             "Think about the property that says the order of the numbers does not change the product.",
             "This is the commutative property. Now find the product: 8 × 5 = ?"
@@ -190,7 +190,7 @@
         },
         {
           "id": "mult-8",
-          "prompt": "Use the distributive property to find 6 × 9. Break 9 into 10 − 1.",
+          "question": "Use the distributive property to find 6 × 9. Break 9 into 10 − 1.",
           "hints": [
             "The distributive property works with subtraction too: 6 × 9 = 6 × (10 − 1).",
             "Now multiply each part: 6 × 10 = 60 and 6 × 1 = 6. Then subtract."
@@ -199,14 +199,15 @@
         },
         {
           "id": "mult-9",
-          "prompt": "Find 4 × 8 × 25 using the associative property. Hint: pair the two numbers that give a nice round product first.",
+          "question": "Find 4 × 8 × 25 using the associative property. Hint: pair the two numbers that give a nice round product first.",
           "hints": [
             "Look for a pair that makes a round number. What is 4 × 25?",
             "4 × 25 = 100. Now multiply: 100 × 8."
           ],
           "answer": "800. Group 4 × 25 first = 100, then 100 × 8 = 800. The associative property lets you regroup without changing the answer. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -216,20 +217,21 @@
       "problems": [
         {
           "id": "mult-10",
-          "prompt": "Use the distributive property to find 7 × 12. Break 12 into 10 + 2.",
+          "question": "Use the distributive property to find 7 × 12. Break 12 into 10 + 2.",
           "answer": "84. 7 × (10 + 2) = 7 × 10 + 7 × 2 = 70 + 14 = 84."
         },
         {
           "id": "mult-11",
-          "prompt": "Name the property: 1 × 458 = 458.",
+          "question": "Name the property: 1 × 458 = 458.",
           "answer": "The identity property of multiplication. Any number times 1 equals itself."
         },
         {
           "id": "mult-12",
-          "prompt": "Find 2 × 9 × 5 by regrouping with the associative property.",
+          "question": "Find 2 × 9 × 5 by regrouping with the associative property.",
           "answer": "90. Regroup: (2 × 5) × 9 = 10 × 9 = 90."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -244,7 +246,8 @@
         "Standard algorithm: multiply by the ones digit first (write that row), then multiply by the tens digit (shift one place left), then add the rows.",
         "When you multiply by tens, hundreds, etc., you are really using the distributive property — the algorithm just organizes the work.",
         "Always compare your exact answer to your estimate. If they are far apart, double-check your work."
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -264,7 +267,8 @@
           "problem": "A school orders 158 notebooks for each of 6 classrooms. How many notebooks does the school order in all?",
           "solution": "Estimate: 160 × 6 = 960.\nStandard algorithm:\n  158\n×   6\n-----\nStep 1: 6 × 8 = 48. Write 8, carry 4.\nStep 2: 6 × 5 = 30, plus 4 = 34. Write 4, carry 3.\nStep 3: 6 × 1 = 6, plus 3 = 9. Write 9.\nResult: 948.\nEstimate check: 948 is close to 960. ✓\nAnswer: 948 notebooks."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -274,7 +278,7 @@
       "problems": [
         {
           "id": "mult-13",
-          "prompt": "Multiply 53 × 7. Estimate first, then use the standard algorithm.",
+          "question": "Multiply 53 × 7. Estimate first, then use the standard algorithm.",
           "hints": [
             "Estimate: round 53 to 50. What is 50 × 7?",
             "Now do the algorithm: 7 × 3 = 21, write 1 and carry the 2. Then 7 × 5 = 35, plus the carried 2 = 37."
@@ -283,7 +287,7 @@
         },
         {
           "id": "mult-14",
-          "prompt": "Multiply 38 × 25 using partial products.",
+          "question": "Multiply 38 × 25 using partial products.",
           "hints": [
             "Break the numbers apart: 38 = 30 + 8 and 25 = 20 + 5. Multiply each pair of parts.",
             "The four partial products are: 30 × 20, 30 × 5, 8 × 20, and 8 × 5. Add them all up."
@@ -292,14 +296,15 @@
         },
         {
           "id": "mult-15",
-          "prompt": "A farmer plants 215 seeds in each of 4 rows. How many seeds does the farmer plant?",
+          "question": "A farmer plants 215 seeds in each of 4 rows. How many seeds does the farmer plant?",
           "hints": [
             "Estimate first: 200 × 4 = ?",
             "Standard algorithm: start with 4 × 5 = 20 (write 0, carry 2). Then 4 × 1 = 4, plus 2 = 6. Then 4 × 2 = 8."
           ],
           "answer": "860 seeds. Estimate: 200 × 4 = 800. Algorithm: 4 × 5 = 20 (write 0, carry 2), 4 × 1 = 4 + 2 = 6, 4 × 2 = 8. Answer: 860. Close to estimate. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -309,20 +314,21 @@
       "problems": [
         {
           "id": "mult-16",
-          "prompt": "Multiply 64 × 37.",
+          "question": "Multiply 64 × 37.",
           "answer": "2,368"
         },
         {
           "id": "mult-17",
-          "prompt": "A theater has 24 rows with 32 seats in each row. How many seats are in the theater?",
+          "question": "A theater has 24 rows with 32 seats in each row. How many seats are in the theater?",
           "answer": "768 seats"
         },
         {
           "id": "mult-18",
-          "prompt": "Multiply 305 × 8.",
+          "question": "Multiply 305 × 8.",
           "answer": "2,440"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -337,7 +343,8 @@
         "Two-step problems: read the whole problem first, plan both steps, then solve one at a time",
         "Draw a simple picture or write a number sentence before computing — it helps you organize your thinking",
         "Always label your answer with the correct units (books, dollars, miles, etc.) and ask: does this answer make sense?"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -357,7 +364,8 @@
           "problem": "A school buys 5 boxes of markers. Each box has 12 markers. They also buy 8 boxes of colored pencils with 10 pencils in each box. How many supplies did they buy in all?",
           "solution": "Type: two-step problem.\nStep 1 — markers: 5 × 12 = 60 markers.\nStep 2 — colored pencils: 8 × 10 = 80 colored pencils.\nStep 3 — total: 60 + 80 = 140 supplies.\nAnswer: 140 supplies in all."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -367,7 +375,7 @@
       "problems": [
         {
           "id": "mult-19",
-          "prompt": "A garden has 7 rows of tomato plants with 6 plants in each row. How many tomato plants are in the garden?",
+          "question": "A garden has 7 rows of tomato plants with 6 plants in each row. How many tomato plants are in the garden?",
           "hints": [
             "This is an array problem. What multiplication sentence matches 7 rows of 6?",
             "7 × 6 = ?"
@@ -376,7 +384,7 @@
         },
         {
           "id": "mult-20",
-          "prompt": "Noah has 8 stickers. His sister has 5 times as many stickers as Noah. How many stickers does his sister have?",
+          "question": "Noah has 8 stickers. His sister has 5 times as many stickers as Noah. How many stickers does his sister have?",
           "hints": [
             "The phrase 'times as many' tells you this is a comparison problem.",
             "Multiply Noah's amount by 5: 5 × 8 = ?"
@@ -385,14 +393,15 @@
         },
         {
           "id": "mult-21",
-          "prompt": "A cafeteria serves lunch to 4 classes. Each class has 25 students. Each student gets 2 cartons of milk. How many cartons of milk does the cafeteria need?",
+          "question": "A cafeteria serves lunch to 4 classes. Each class has 25 students. Each student gets 2 cartons of milk. How many cartons of milk does the cafeteria need?",
           "hints": [
             "This is a two-step problem. First, find the total number of students: 4 × 25.",
             "Then multiply the total number of students by 2 cartons each."
           ],
           "answer": "200 cartons of milk. Step 1: 4 × 25 = 100 students. Step 2: 100 × 2 = 200 cartons. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -402,20 +411,21 @@
       "problems": [
         {
           "id": "mult-22",
-          "prompt": "A bookshelf has 6 shelves with 11 books on each shelf. How many books are on the bookshelf?",
+          "question": "A bookshelf has 6 shelves with 11 books on each shelf. How many books are on the bookshelf?",
           "answer": "66 books"
         },
         {
           "id": "mult-23",
-          "prompt": "Carlos ran 3 miles on Saturday. His dad ran 4 times as far as Carlos. How far did his dad run?",
+          "question": "Carlos ran 3 miles on Saturday. His dad ran 4 times as far as Carlos. How far did his dad run?",
           "answer": "12 miles"
         },
         {
           "id": "mult-24",
-          "prompt": "For a class party, 3 parents each bring 2 packs of juice boxes. Each pack has 8 juice boxes. How many juice boxes are there in all?",
+          "question": "For a class party, 3 parents each bring 2 packs of juice boxes. Each pack has 8 juice boxes. How many juice boxes are there in all?",
           "answer": "48 juice boxes. (3 × 2 = 6 packs. 6 × 8 = 48.)"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -431,7 +441,8 @@
         "The number 1 is neither prime nor composite — it has only one factor.",
         "Multiples of a number go on forever: multiples of 5 are 5, 10, 15, 20, 25, 30, ...",
         "Real-world use: factors help you figure out how to split things into equal groups with nothing left over"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -451,7 +462,8 @@
           "problem": "You have 30 cupcakes to arrange in equal rows with none left over. List three different ways you could arrange them.",
           "solution": "Find factor pairs of 30:\n1 × 30, 2 × 15, 3 × 10, 5 × 6.\nThree possible arrangements:\n• 2 rows of 15 cupcakes\n• 3 rows of 10 cupcakes\n• 5 rows of 6 cupcakes\n(There are more — any factor pair works!)"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -461,7 +473,7 @@
       "problems": [
         {
           "id": "mult-25",
-          "prompt": "Find all the factor pairs of 28.",
+          "question": "Find all the factor pairs of 28.",
           "hints": [
             "Start with 1 × 28 and work up: try 2, 3, 4, 5, 6, 7 ...",
             "28 ÷ 2 = 14, 28 ÷ 3 is not a whole number, 28 ÷ 4 = 7. Since 5 × 5 = 25 < 28 and 6 × 5 = 30 > 28, check 5, 6, and 7 to be thorough."
@@ -470,7 +482,7 @@
         },
         {
           "id": "mult-26",
-          "prompt": "Is 23 prime or composite? Explain how you know.",
+          "question": "Is 23 prime or composite? Explain how you know.",
           "hints": [
             "Try dividing 23 by 2, 3, 4 ... Does any of them divide evenly?",
             "You only need to check up to about 5 (because 5 × 5 = 25, which is already bigger than 23)."
@@ -479,14 +491,15 @@
         },
         {
           "id": "mult-27",
-          "prompt": "List the first five multiples of 8. Then answer: is 52 a multiple of 8?",
+          "question": "List the first five multiples of 8. Then answer: is 52 a multiple of 8?",
           "hints": [
             "Multiples of 8: 8 × 1, 8 × 2, 8 × 3, 8 × 4, 8 × 5.",
             "To check if 52 is a multiple of 8, divide: 52 ÷ 8 = ?"
           ],
           "answer": "First five multiples of 8: 8, 16, 24, 32, 40. Is 52 a multiple of 8? 52 ÷ 8 = 6.5 — not a whole number, so 52 is NOT a multiple of 8. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -496,23 +509,23 @@
       "problems": [
         {
           "id": "mult-28",
-          "prompt": "Find all the factors of 40.",
+          "question": "Find all the factors of 40.",
           "answer": "1, 2, 4, 5, 8, 10, 20, 40"
         },
         {
           "id": "mult-29",
-          "prompt": "A teacher has 18 students and wants to split them into equal groups with no one left out. List all the possible group sizes.",
+          "question": "A teacher has 18 students and wants to split them into equal groups with no one left out. List all the possible group sizes.",
           "answer": "1, 2, 3, 6, 9, or 18 students per group (the factors of 18)"
         },
         {
           "id": "mult-30",
-          "prompt": "Is 51 prime or composite? Prove it.",
+          "question": "Is 51 prime or composite? Prove it.",
           "answer": "Composite. 51 ÷ 3 = 17, so 51 = 3 × 17. It has factors other than 1 and itself."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     }
   ],
-
   "answerKeys": {
     "mult-1": "48",
     "mult-2": "49",

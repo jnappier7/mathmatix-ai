@@ -136,7 +136,7 @@ const SKILL_PREREQUISITES = {
   'evaluating-expressions': {
     prerequisites: ['order-of-operations', 'substituting-variables'],
     components: ['replace-variables', 'follow-pemdas'],
-    warmupConcepts: ['Calculate 2(3) + 4', 'If x = 5, what is x + 3?', 'Follow PEMDAS']
+    warmupConcepts: ['Calculate 2(3) + 4', 'If x = 5, what is x + 3?', 'Follow GEMS']
   },
 
   // ========== DECIMALS ==========

@@ -75,7 +75,8 @@
         "LCM: the smallest multiple shared by two numbers. LCM is useful for finding common denominators and solving timing/scheduling problems.",
         "Mixed numbers: convert to improper fractions before multiplying or dividing, then convert back if needed.",
         "Always check: Does my answer make sense? Is it in simplest form?"
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -93,7 +94,8 @@
           "problem": "A recipe calls for 3/4 cup of sugar, but Deshawn is making 2/3 of the recipe. How much sugar does he need? Then find the GCF of 36 and 54.",
           "answer": "Sugar: (3/4) x (2/3) = 6/12 = 1/2 cup. GCF of 36 and 54: Factors of 36 = 1, 2, 3, 4, 6, 9, 12, 18, 36. Factors of 54 = 1, 2, 3, 6, 9, 18, 27, 54. GCF = 18."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -116,7 +118,8 @@
           "problem": "A gym teacher has 48 basketballs and 60 jump ropes. She wants to create identical activity kits with no supplies left over. What is the greatest number of kits she can make, and what goes in each?",
           "answer": "GCF of 48 and 60 = 12. She can make 12 kits. Each kit: 48/12 = 4 basketballs and 60/12 = 5 jump ropes."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -139,7 +142,8 @@
           "problem": "Hot dogs come in packs of 8. Buns come in packs of 6. What is the least number of each you must buy so you have equal numbers of hot dogs and buns with none left over?",
           "answer": "LCM of 8 and 6 = 24. Buy 24/8 = 3 packs of hot dogs and 24/6 = 4 packs of buns. You'll have 24 of each."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -154,7 +158,8 @@
         "Percent means 'per 100.' 40% = 40/100 = 0.40. Convert between fractions, decimals, and percents fluently.",
         "To find a percent of a number: convert percent to a decimal and multiply. 25% of 80 = 0.25 x 80 = 20.",
         "Proportion strategy: set up two equivalent ratios and cross-multiply, or use the unit rate to scale."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -172,7 +177,8 @@
           "problem": "In a class of 30 students, 18 prefer basketball over soccer. What percent prefer basketball? What percent prefer soccer?",
           "answer": "Basketball: 18/30 = 3/5 = 60%. Soccer: 30 - 18 = 12 students. 12/30 = 2/5 = 40%."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -195,7 +201,8 @@
           "problem": "A jacket that normally costs $60 is on sale for 15% off. What is the sale price?",
           "answer": "Discount: 15% of $60 = 0.15 x 60 = $9. Sale price: $60 - $9 = $51."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -218,7 +225,8 @@
           "problem": "Marcus scored 42 out of 56 on a test. Priya scored 36 out of 45 on a different test. Who scored a higher percentage?",
           "answer": "Marcus: 42/56 = 3/4 = 75%. Priya: 36/45 = 4/5 = 80%. Priya scored a higher percentage."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -229,11 +237,12 @@
       "keyPoints": [
         "An expression uses numbers, variables, and operations but has NO equal sign. Example: 3x + 7.",
         "Translate words to math: 'sum of' = +, 'product of' = x, '5 less than n' = n - 5 (careful with order!).",
-        "Evaluate: substitute the given value and follow order of operations (PEMDAS/GEMDAS).",
+        "Evaluate: substitute the given value and follow order of operations (GEMS).",
         "An equation has an equal sign. Solve by using inverse operations to isolate the variable.",
-        "Two-step equations: undo addition/subtraction first, then multiplication/division. Example: 2x + 5 = 13 -> 2x = 8 -> x = 4.",
+        "Two-step equations: Box the variable term [2x] in 2x + 5 = 13. Outside the box: opposites make zero (subtract 5) -> 2x = 8. Inside the box: divide it out (divide by 2) -> x = 4.",
         "Inequality: same process as equations, but flip the symbol when multiplying or dividing by a negative. Graph on a number line (open circle for < or >, closed for <= or >=)."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -251,7 +260,8 @@
           "problem": "Solve: 4x - 7 = 21. Then solve: x/3 + 5 > 9 and graph the solution.",
           "answer": "Equation: 4x - 7 = 21 -> 4x = 28 -> x = 7. Inequality: x/3 + 5 > 9 -> x/3 > 4 -> x > 12. Graph: open circle at 12, arrow pointing right."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -274,7 +284,8 @@
           "problem": "Solve and graph: 14 - 2x >= 8.",
           "answer": "14 - 2x >= 8 -> -2x >= -6 -> x <= 3 (flip the symbol because we divided by -2). Graph: closed circle at 3, arrow pointing left."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -297,7 +308,8 @@
           "problem": "A student needs to save at least $200 for a school trip. She already has $65 and earns $15 per hour babysitting. Write and solve an inequality to find how many hours she must work.",
           "answer": "65 + 15h >= 200 -> 15h >= 135 -> h >= 9. She must babysit at least 9 hours."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -312,7 +324,8 @@
         "Volume of a rectangular prism: V = length x width x height, or V = base area x height. Works with fractional edges too.",
         "For fractional edge lengths, multiply as fractions: V = (l)(w)(h). Can also pack with unit-fraction cubes and count.",
         "Always include correct units: area in square units, volume in cubic units."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -330,7 +343,8 @@
           "problem": "A fish tank is 2 1/2 ft long, 1 1/4 ft wide, and 1 1/2 ft tall. What is the volume of the tank?",
           "answer": "V = (5/2)(5/4)(3/2) = 75/16 = 4 11/16 cubic feet."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -348,7 +362,8 @@
           "problem": "A cereal box is 12 in tall, 8 in wide, and 3 in deep. How much cardboard is needed to make the box (surface area)? How much cereal can it hold (volume)?",
           "answer": "SA = 2(12 x 8) + 2(12 x 3) + 2(8 x 3) = 192 + 72 + 48 = 312 sq in. Volume = 12 x 8 x 3 = 288 cubic in."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -371,7 +386,8 @@
           "problem": "A storage container is 15 ft long, 8 ft wide, and 10 ft tall. A company needs to ship 1,500 cubic feet of material. Will one container be enough?",
           "answer": "Volume = 15 x 8 x 10 = 1,200 cubic ft. 1,200 < 1,500, so one container is NOT enough."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -386,7 +402,8 @@
         "MAD (Mean Absolute Deviation): average distance each data point is from the mean. Measures spread.",
         "Range = max - min. IQR = Q3 - Q1. IQR resists outliers better than range.",
         "Coordinate plane: four quadrants. Ordered pairs (x, y). Negative x = left, negative y = down. Reflections across axes change the sign of one coordinate."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -404,7 +421,8 @@
           "problem": "Plot these points on a coordinate plane: A(3, -2), B(-4, 5), C(-1, -3), D(0, 4). Which point is in Quadrant II? What is the reflection of A across the x-axis?",
           "answer": "B(-4, 5) is in Quadrant II (negative x, positive y). Reflection of A(3, -2) across the x-axis changes the sign of the y-coordinate: A' = (3, 2)."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -427,7 +445,8 @@
           "problem": "A histogram shows hours of sleep for 20 students: 5-6 hrs (2 students), 6-7 hrs (5 students), 7-8 hrs (8 students), 8-9 hrs (4 students), 9-10 hrs (1 student). Which interval is the mode? Can you find the exact mean from a histogram?",
           "answer": "The modal interval is 7-8 hours (highest frequency: 8 students). You cannot find the exact mean from a histogram because individual data values are not shown — only intervals. You can estimate the mean using midpoints: (5.5x2 + 6.5x5 + 7.5x8 + 8.5x4 + 9.5x1)/20 = (11+32.5+60+34+9.5)/20 = 147/20 = 7.35 hours (estimated)."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -450,7 +469,8 @@
           "problem": "A survey asked 25 students how many hours they spend on homework per week. The five-number summary is: Min = 2, Q1 = 5, Median = 7, Q3 = 10, Max = 15. Draw a box plot. What is the IQR? A new student who does 20 hours per week joins. Would this change the IQR, the range, or both?",
           "answer": "IQR = Q3 - Q1 = 10 - 5 = 5. Range = 15 - 2 = 13. Adding a student who does 20 hrs would change the Max to 20, so the new range = 20 - 2 = 18. The IQR likely stays the same or changes very little because IQR depends on the middle 50% and one extreme value does not usually affect Q1 or Q3 significantly. The range definitely changes; the IQR probably does not."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     }
   ],
   "answerKeys": {

@@ -14,7 +14,18 @@
     "common-derivatives",
     "derivatives-from-graphs-tables"
   ],
-  "standardsAlignment": ["AP Calc AB 2.1", "AP Calc AB 2.2", "AP Calc AB 2.3", "AP Calc AB 2.4", "AP Calc AB 2.5", "AP Calc AB 2.6", "AP Calc AB 2.7", "AP Calc AB 2.8", "AP Calc AB 2.9", "AP Calc AB 2.10"],
+  "standardsAlignment": [
+    "AP Calc AB 2.1",
+    "AP Calc AB 2.2",
+    "AP Calc AB 2.3",
+    "AP Calc AB 2.4",
+    "AP Calc AB 2.5",
+    "AP Calc AB 2.6",
+    "AP Calc AB 2.7",
+    "AP Calc AB 2.8",
+    "AP Calc AB 2.9",
+    "AP Calc AB 2.10"
+  ],
   "goals": [
     "Compute derivatives using the limit definition (difference quotient) in both forms and interpret the result as the slope of the tangent line.",
     "Interpret the derivative as an instantaneous rate of change in applied contexts with correct units.",
@@ -45,7 +56,8 @@
         "Geometric meaning: the derivative at x = a is the slope of the line tangent to y = f(x) at the point (a, f(a)).",
         "Tangent line equation: y - f(a) = f'(a)(x - a). Point-slope form using the derivative as slope.",
         "If the limit DNE, the derivative at that point does not exist (the function is not differentiable there)."
-      ]
+      ],
+      "lessonId": "derivative-definition"
     },
     {
       "type": "model",
@@ -69,7 +81,8 @@
           "problem": "The definition of the derivative of g at x = 5 is given as lim(h→0) [(5+h)³ - 125] / h. Identify the function g and find this limit.",
           "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75."
         }
-      ]
+      ],
+      "lessonId": "derivative-definition"
     },
     {
       "type": "explanation",
@@ -84,7 +97,8 @@
         "Units of f'(x): (units of f) per (unit of x). Example: if P(t) = population and t = years, then P'(t) is people per year.",
         "AP interpretation format: 'At t = 3, the [quantity] is [increasing/decreasing] at a rate of |f'(3)| [units] per [unit of input].'",
         "f'(a) > 0 means f is increasing at x = a. f'(a) < 0 means f is decreasing at x = a. f'(a) = 0 means horizontal tangent."
-      ]
+      ],
+      "lessonId": "differentiability"
     },
     {
       "type": "model",
@@ -104,7 +118,8 @@
           "problem": "Water drains from a tank. The volume V(t) (gallons) at time t (minutes) satisfies V(3) = 50 and V'(3) = -8. Interpret V'(3) in context.",
           "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min."
         }
-      ]
+      ],
+      "lessonId": "differentiability"
     },
     {
       "type": "explanation",
@@ -119,7 +134,8 @@
         "Cusp: derivatives from both sides go to ±∞ in opposite directions. Example: f(x) = x^(2/3) at x = 0.",
         "Vertical tangent: derivative goes to +∞ or -∞ from both sides (same sign). Example: f(x) = x^(1/3) at x = 0.",
         "Discontinuity: any type (removable, jump, infinite) automatically means not differentiable at that point."
-      ]
+      ],
+      "lessonId": "basic-rules"
     },
     {
       "type": "model",
@@ -143,7 +159,8 @@
           "problem": "If g is differentiable at x = 5, what can you conclude about continuity? If g is continuous at x = 5, can you conclude differentiability?",
           "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there."
         }
-      ]
+      ],
+      "lessonId": "basic-rules"
     },
     {
       "type": "explanation",
@@ -159,7 +176,8 @@
         "Product rule: d/dx[f·g] = f'·g + f·g'. Order: (derivative of first)(second) + (first)(derivative of second).",
         "Quotient rule: d/dx[f/g] = [f'·g - f·g'] / g². Mnemonic: 'lo d-hi minus hi d-lo over lo-lo.'",
         "Rewrite before differentiating: convert radicals and fractions to power form (e.g., √x = x^(1/2), 1/x² = x⁻²) to use the power rule instead of the quotient rule when possible."
-      ]
+      ],
+      "lessonId": "common-derivatives"
     },
     {
       "type": "model",
@@ -183,7 +201,8 @@
           "problem": "Differentiate by rewriting first: f(x) = (3/x²) + 5√x - 4/∛x.",
           "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3))."
         }
-      ]
+      ],
+      "lessonId": "common-derivatives"
     },
     {
       "type": "explanation",
@@ -199,7 +218,8 @@
         "d/dx[ln x] = 1/x (x > 0). d/dx[ln|x|] = 1/x (x ≠ 0).",
         "d/dx[aˣ] = aˣ · ln a. d/dx[log_a(x)] = 1/(x · ln a).",
         "These combine with product/quotient rules immediately. Chain rule (Unit 3) extends them to compositions."
-      ]
+      ],
+      "lessonId": "derivatives-graphs-tables"
     },
     {
       "type": "model",
@@ -223,35 +243,53 @@
           "problem": "Differentiate: y = 5·2ˣ + 4ln x - sec x.",
           "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
         }
-      ]
+      ],
+      "lessonId": "derivatives-graphs-tables"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Derivatives Practice: Definition, Rules & Common Functions",
-      "skills": ["derivative-definition-difference-quotient", "derivative-as-rate-of-change", "differentiability-vs-continuity", "basic-differentiation-rules", "common-derivatives"],
       "problems": [
         {
           "problem": "Use the limit definition to find f'(x) for f(x) = 3x² - x + 4.",
-          "hints": ["Compute f(x+h) = 3(x+h)² - (x+h) + 4", "Expand: 3x² + 6xh + 3h² - x - h + 4", "Subtract f(x), divide by h, take the limit"],
+          "hints": [
+            "Compute f(x+h) = 3(x+h)² - (x+h) + 4",
+            "Expand: 3x² + 6xh + 3h² - x - h + 4",
+            "Subtract f(x), divide by h, take the limit"
+          ],
           "answer": "f(x+h) - f(x) = 6xh + 3h² - h. Divide by h: 6x + 3h - 1. As h→0: f'(x) = 6x - 1."
         },
         {
           "problem": "For f(x) = {2x², x ≤ 1; 4x - 2, x > 1}, determine if f is differentiable at x = 1.",
-          "hints": ["First check continuity: do both pieces give the same value at x = 1?", "Find the derivative of each piece at x = 1", "Compare left and right derivatives"],
+          "hints": [
+            "First check continuity: do both pieces give the same value at x = 1?",
+            "Find the derivative of each piece at x = 1",
+            "Compare left and right derivatives"
+          ],
           "answer": "Continuity: lim(x→1⁻) 2(1)² = 2. lim(x→1⁺) 4(1)-2 = 2. f(1) = 2. Continuous. Left derivative: d/dx(2x²) at x=1 = 4(1) = 4. Right derivative: d/dx(4x-2) = 4. Left = right = 4. Differentiable, f'(1) = 4."
         },
         {
           "problem": "Differentiate: y = (x³ + 2x)/(sin x).",
-          "hints": ["Use the quotient rule", "d/dx[x³ + 2x] = 3x² + 2", "d/dx[sin x] = cos x"],
+          "hints": [
+            "Use the quotient rule",
+            "d/dx[x³ + 2x] = 3x² + 2",
+            "d/dx[sin x] = cos x"
+          ],
           "answer": "Quotient rule: y' = [(3x² + 2)sin x - (x³ + 2x)cos x] / sin²x."
         },
         {
           "problem": "A company's revenue is R(t) = 120t - 3t² thousand dollars, where t is months after launch. Find and interpret R'(10).",
-          "hints": ["Differentiate: R'(t) = 120 - 6t", "Evaluate at t = 10", "State units and direction of change"],
+          "hints": [
+            "Differentiate: R'(t) = 120 - 6t",
+            "Evaluate at t = 10",
+            "State units and direction of change"
+          ],
           "answer": "R'(t) = 120 - 6t. R'(10) = 120 - 60 = 60. At t = 10 months, revenue is increasing at a rate of $60 thousand per month."
         }
-      ]
+      ],
+      "skill": "common-derivatives",
+      "lessonId": "derivatives-graphs-tables"
     },
     {
       "type": "explanation",
@@ -266,7 +304,8 @@
         "f' > 0 where f is increasing. f' < 0 where f is decreasing. f' = 0 at local maxima/minima and horizontal tangents.",
         "f' is undefined at corners, cusps, vertical tangents, and discontinuities of f.",
         "Steeper graph of f means |f'| is larger. Flat portions of f mean f' ≈ 0."
-      ]
+      ],
+      "lessonId": "common-derivatives"
     },
     {
       "type": "model",
@@ -286,13 +325,13 @@
           "problem": "A graph of f shows: f increases on (0, 2), has a horizontal tangent at x = 2, decreases on (2, 5), has a corner at x = 5, and increases on (5, 7). Describe f'.",
           "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
         }
-      ]
+      ],
+      "lessonId": "common-derivatives"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Derivatives: Definition & Basic Rules Mastery Practice",
-      "skills": ["derivative-definition-difference-quotient", "derivative-as-rate-of-change", "differentiability-vs-continuity", "basic-differentiation-rules", "common-derivatives", "derivatives-from-graphs-tables"],
       "problems": [
         {
           "problem": "Use the limit definition to find f'(x) for f(x) = 1/(2x + 1).",
@@ -318,7 +357,9 @@
           "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
           "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness — f'(0) ≈ 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
         }
-      ]
+      ],
+      "skill": "derivative-definition-difference-quotient",
+      "lessonId": "derivative-definition"
     }
   ],
   "answerKeys": {
@@ -354,5 +395,32 @@
     "ip-quotient-mixed": "[(cos x + eˣ)(x²+1) - (sin x + eˣ)(2x)]/(x²+1)².",
     "ip-table-population": "P'(10) ≈ 4.1 thousand/year. Increasing at ~4,100 people/year in 2010.",
     "ip-graph-reading": "(a) ≈2 (b) 0 (c) ≈-3 (d) DNE (corner)."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "derivative-definition",
+      "title": "Derivative Definition & Difference Quotient",
+      "order": 1
+    },
+    {
+      "lessonId": "differentiability",
+      "title": "Differentiability vs. Continuity",
+      "order": 2
+    },
+    {
+      "lessonId": "basic-rules",
+      "title": "Basic Differentiation Rules",
+      "order": 3
+    },
+    {
+      "lessonId": "common-derivatives",
+      "title": "Common Derivatives & Trig Derivatives",
+      "order": 4
+    },
+    {
+      "lessonId": "derivatives-graphs-tables",
+      "title": "Derivatives from Graphs & Tables",
+      "order": 5
+    }
+  ]
 }

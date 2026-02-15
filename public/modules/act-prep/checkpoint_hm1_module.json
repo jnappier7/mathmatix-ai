@@ -29,7 +29,7 @@
     "clusters": [
       {
         "skillId": "act-real-complex-numbers",
-        "reteachFocus": "PEMDAS precision, fraction arithmetic, complex number cycle (i, -1, -i, 1)"
+        "reteachFocus": "GEMS precision, fraction arithmetic, complex number cycle (i, -1, -i, 1)"
       },
       {
         "skillId": "act-exponents-roots",

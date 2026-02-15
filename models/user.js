@@ -648,7 +648,7 @@ const userSchema = new Schema({
       orderOfOperations: {
         type: String,
         enum: ['PEMDAS', 'GEMS', 'BODMAS', 'BEDMAS', 'teacher-custom'],
-        default: 'PEMDAS'
+        default: 'GEMS'
       },
       customVocabulary: [{ type: String }],  // Array of custom terms: ["Use 'rate of change' not 'slope'"]
       vocabularyNote: { type: String, default: '' }

@@ -14,7 +14,13 @@
     "solving-logarithmic-equations",
     "exponential-logarithmic-modeling"
   ],
-  "standardsAlignment": ["F-LE.4", "F-BF.5", "F-IF.7e", "F-IF.8b", "A-SSE.3c"],
+  "standardsAlignment": [
+    "F-LE.4",
+    "F-BF.5",
+    "F-IF.7e",
+    "F-IF.8b",
+    "A-SSE.3c"
+  ],
   "goals": [
     "Analyze exponential functions f(x) = a·bˣ and f(x) = a·eʳˣ including domain, range, asymptotes, intercepts, transformations, and end behavior for growth and decay.",
     "Evaluate and analyze logarithmic functions including common log, natural log, and arbitrary base; convert between exponential and logarithmic forms.",
@@ -45,7 +51,8 @@
         "Compound interest: A = P(1 + r/n)ⁿᵗ; continuous compounding: A = Peʳᵗ",
         "Half-life: A(t) = A₀·(1/2)^(t/h) where h = half-life period",
         "Transformations: g(x) = a·bˣ⁻ᶜ + d shifts HA to y = d, shifts graph right c units"
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "model",
@@ -65,7 +72,8 @@
           "problem": "An investment of $10,000 earns 6% annual interest compounded monthly. (a) Write the function A(t). (b) Find the value after 10 years. (c) How long until the investment doubles?",
           "solution": "(a) A(t) = 10000(1 + 0.06/12)^(12t) = 10000(1.005)^(12t). (b) A(10) = 10000(1.005)^120 = 10000(1.8194) ≈ $18,193.97. (c) 20000 = 10000(1.005)^(12t) → 2 = 1.005^(12t) → ln(2) = 12t·ln(1.005) → t = ln(2)/(12·ln(1.005)) = 0.6931/(12·0.004988) ≈ 0.6931/0.05986 ≈ 11.58 years."
         }
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "explanation",
@@ -81,7 +89,8 @@
         "Logarithmic graphs: increasing for b > 1, decreasing for 0 < b < 1",
         "Transformations: g(x) = a·log_b(x − c) + d shifts VA to x = c",
         "Change of base: log_b(x) = ln(x)/ln(b) = log(x)/log(b)"
-      ]
+      ],
+      "lessonId": "logarithmic-functions"
     },
     {
       "type": "model",
@@ -101,7 +110,8 @@
           "problem": "Given log₂(5) ≈ 2.322, evaluate: (a) log₂(20), (b) log₂(5/8), (c) log₂(√5).",
           "solution": "(a) log₂(20) = log₂(4·5) = log₂(4) + log₂(5) = 2 + 2.322 = 4.322. (b) log₂(5/8) = log₂(5) - log₂(8) = 2.322 - 3 = -0.678. (c) log₂(√5) = log₂(5^(1/2)) = (1/2)·log₂(5) = 1.161."
         }
-      ]
+      ],
+      "lessonId": "logarithmic-functions"
     },
     {
       "type": "explanation",
@@ -117,7 +127,8 @@
         "Expansion: write a single log as a sum/difference of simpler logs",
         "Condensation: combine multiple log terms into a single logarithm",
         "Common traps: log(M + N) ≠ log(M) + log(N); log(M/N) ≠ log(M)/log(N)"
-      ]
+      ],
+      "lessonId": "solving-modeling"
     },
     {
       "type": "model",
@@ -137,30 +148,45 @@
           "problem": "Use change of base to evaluate log₅(17) using natural logarithm. Then verify: 5^(answer) ≈ 17.",
           "solution": "log₅(17) = ln(17)/ln(5) ≈ 2.8332/1.6094 ≈ 1.7604. Verify: 5^1.7604 ≈ 17.0 ✓."
         }
-      ]
+      ],
+      "lessonId": "solving-modeling"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Exponential & Logarithmic Foundations Practice",
-      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion"],
       "problems": [
         {
           "problem": "For f(x) = -e^(x-2) + 3, find: domain, range, HA, intercepts, and end behavior.",
-          "hints": ["Parent: eˣ. Shift right 2, reflect over x-axis, shift up 3", "HA: y = 3. Range: (-∞, 3)", "y-int: f(0) = -e⁻² + 3 ≈ 2.865", "x-int: -e^(x-2)+3=0 → e^(x-2)=3 → x=2+ln(3)"],
+          "hints": [
+            "Parent: eˣ. Shift right 2, reflect over x-axis, shift up 3",
+            "HA: y = 3. Range: (-∞, 3)",
+            "y-int: f(0) = -e⁻² + 3 ≈ 2.865",
+            "x-int: -e^(x-2)+3=0 → e^(x-2)=3 → x=2+ln(3)"
+          ],
           "answer": "Domain: (-∞,∞). Range: (-∞,3). HA: y=3. y-int: (0, -e⁻²+3) ≈ (0, 2.865). x-int: x = 2 + ln(3) ≈ 3.099. End behavior: as x→-∞, f(x)→3; as x→∞, f(x)→-∞."
         },
         {
           "problem": "Expand: ln(x²(x+1)³/(x-1)⁴).",
-          "hints": ["Product/quotient rules first, then power rule", "ln(numerator) - ln(denominator)", "ln(x²) + ln((x+1)³) - ln((x-1)⁴)"],
+          "hints": [
+            "Product/quotient rules first, then power rule",
+            "ln(numerator) - ln(denominator)",
+            "ln(x²) + ln((x+1)³) - ln((x-1)⁴)"
+          ],
           "answer": "2·ln(x) + 3·ln(x+1) - 4·ln(x-1)."
         },
         {
           "problem": "Condense: 2·log(x) + log(y) - 3·log(z) - log(4).",
-          "hints": ["Power rule: 2·log(x) = log(x²)", "Combine additions and subtractions", "Result is a single log"],
+          "hints": [
+            "Power rule: 2·log(x) = log(x²)",
+            "Combine additions and subtractions",
+            "Result is a single log"
+          ],
           "answer": "log(x²y/(4z³))."
         }
-      ]
+      ],
+      "skill": "logarithm-rules-expansion",
+      "lessonId": "solving-modeling"
     },
     {
       "type": "explanation",
@@ -174,7 +200,8 @@
         "Isolate exponential term first, then take log: a·bᶠ⁽ˣ⁾ = c → bᶠ⁽ˣ⁾ = c/a → f(x) = log_b(c/a)",
         "Quadratic form: equations like e²ˣ - 5eˣ + 6 = 0 → let u = eˣ → u² - 5u + 6 = 0",
         "Always check: exponential expressions are always positive, so bˣ = negative has no solution"
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "model",
@@ -194,7 +221,8 @@
           "problem": "Solve: e²ˣ - 4eˣ - 5 = 0.",
           "solution": "Let u = eˣ (u > 0). u² - 4u - 5 = 0 → (u - 5)(u + 1) = 0. u = 5 or u = -1. Reject u = -1 (since eˣ > 0). eˣ = 5 → x = ln(5) ≈ 1.6094."
         }
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "explanation",
@@ -208,7 +236,8 @@
         "One-to-one: if log_b(M) = log_b(N) then M = N",
         "ALWAYS CHECK: substitute back to verify all log arguments are positive",
         "Extraneous solutions arise when solving produces values that make original log arguments ≤ 0"
-      ]
+      ],
+      "lessonId": "logarithmic-functions"
     },
     {
       "type": "model",
@@ -228,30 +257,47 @@
           "problem": "Solve: log(x² + 4x) = log(x + 10) + log(2).",
           "solution": "Condense right side: log(x² + 4x) = log(2(x + 10)) = log(2x + 20). One-to-one: x² + 4x = 2x + 20 → x² + 2x - 20 = 0. Quadratic formula: x = (-2 ± √(4 + 80))/2 = (-2 ± √84)/2 = -1 ± √21. x = -1 + √21 ≈ 3.583 or x = -1 - √21 ≈ -5.583. Check x = -1 + √21: x² + 4x = (-1+√21)² + 4(-1+√21) = 1 - 2√21 + 21 - 4 + 4√21 = 18 + 2√21 > 0 ✓. Also x + 10 = 9 + √21 > 0 ✓. Check x = -1 - √21 ≈ -5.583: x + 10 = 9 - √21 ≈ 4.42 > 0, but x² + 4x = (−1−√21)² + 4(−1−√21) = 22 + 2√21 − 4 − 4√21 = 18 − 2√21 ≈ 8.83 > 0 ✓. Both solutions are valid! x = -1 ± √21."
         }
-      ]
+      ],
+      "lessonId": "logarithmic-functions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Solving Exponential & Logarithmic Equations Practice",
-      "skills": ["solving-exponential-equations", "solving-logarithmic-equations"],
       "problems": [
         {
           "problem": "Solve: 2^(3x+1) = 5^(x-2).",
-          "hints": ["Take ln of both sides", "(3x+1)ln(2) = (x-2)ln(5)", "Distribute and collect x terms", "x(3ln2 - ln5) = -2ln5 - ln2"],
+          "hints": [
+            "Take ln of both sides",
+            "(3x+1)ln(2) = (x-2)ln(5)",
+            "Distribute and collect x terms",
+            "x(3ln2 - ln5) = -2ln5 - ln2"
+          ],
           "answer": "ln both sides: (3x+1)ln2 = (x-2)ln5. Distribute: 3x·ln2 + ln2 = x·ln5 - 2ln5. Collect: x(3ln2 - ln5) = -2ln5 - ln2. x = (-2ln5 - ln2)/(3ln2 - ln5) = (-2(1.6094) - 0.6931)/(3(0.6931) - 1.6094) = (-3.9119)/(0.4699) ≈ -8.324."
         },
         {
           "problem": "Solve: log₃(2x - 1) - log₃(x - 3) = 2.",
-          "hints": ["Condense: log₃((2x-1)/(x-3)) = 2", "Convert: (2x-1)/(x-3) = 9", "Solve: 2x-1 = 9(x-3)", "Check domain: x > 3"],
+          "hints": [
+            "Condense: log₃((2x-1)/(x-3)) = 2",
+            "Convert: (2x-1)/(x-3) = 9",
+            "Solve: 2x-1 = 9(x-3)",
+            "Check domain: x > 3"
+          ],
           "answer": "log₃((2x-1)/(x-3)) = 2 → (2x-1)/(x-3) = 9 → 2x-1 = 9x-27 → -7x = -26 → x = 26/7 ≈ 3.714. Check: x > 3 ✓, 2x-1 = 45/7 > 0 ✓. Solution: x = 26/7."
         },
         {
           "problem": "Solve: 3e^(2x) + 4e^x - 4 = 0.",
-          "hints": ["Let u = eˣ, u > 0", "3u² + 4u - 4 = 0", "Factor or use quadratic formula", "Only keep positive u values"],
+          "hints": [
+            "Let u = eˣ, u > 0",
+            "3u² + 4u - 4 = 0",
+            "Factor or use quadratic formula",
+            "Only keep positive u values"
+          ],
           "answer": "Let u = eˣ. 3u² + 4u - 4 = 0 → (3u - 2)(u + 2) = 0. u = 2/3 or u = -2. Reject u = -2. eˣ = 2/3 → x = ln(2/3) = ln2 - ln3 ≈ -0.4055."
         }
-      ]
+      ],
+      "skill": "solving-logarithmic-equations",
+      "lessonId": "logarithmic-functions"
     },
     {
       "type": "explanation",
@@ -266,7 +312,8 @@
         "pH = -log[H⁺]; decibels: dB = 10·log(I/I₀); Richter: M = log(A/A₀)",
         "Newton's Cooling: T(t) = Tₛ + (T₀ - Tₛ)·e⁻ᵏᵗ",
         "Doubling time: t = ln(2)/r for continuous growth"
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "model",
@@ -286,7 +333,8 @@
           "problem": "Compare: $5,000 invested at 4.5% compounded quarterly vs. 4.4% compounded continuously. Which yields more after 15 years?",
           "solution": "Quarterly: A = 5000(1 + 0.045/4)^(4·15) = 5000(1.01125)⁶⁰ = 5000(1.9616) ≈ $9,808.02. Continuous: A = 5000·e^(0.044·15) = 5000·e^0.66 = 5000(1.9348) ≈ $9,673.95. The 4.5% compounded quarterly yields ≈ $134 more."
         }
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "guided_practice",
@@ -296,26 +344,39 @@
       "problems": [
         {
           "problem": "A culture of bacteria doubles every 4 hours. Starting with 500 bacteria, (a) write the growth function, (b) find the population after 14 hours, (c) when will the population reach 50,000?",
-          "hints": ["A(t) = 500·2^(t/4)", "A(14) = 500·2^(3.5)", "50000 = 500·2^(t/4) → 100 = 2^(t/4)"],
+          "hints": [
+            "A(t) = 500·2^(t/4)",
+            "A(14) = 500·2^(3.5)",
+            "50000 = 500·2^(t/4) → 100 = 2^(t/4)"
+          ],
           "answer": "(a) A(t) = 500·2^(t/4). (b) A(14) = 500·2^(3.5) = 500·11.314 ≈ 5,657 bacteria. (c) 100 = 2^(t/4) → t/4 = log₂(100) = ln(100)/ln(2) ≈ 6.644 → t ≈ 26.58 hours."
         },
         {
           "problem": "A sound measures 75 decibels. If the threshold of hearing is I₀ = 10⁻¹² W/m², find the intensity of the sound. Then find the intensity of a sound that is 10 dB louder.",
-          "hints": ["dB = 10·log(I/I₀)", "75 = 10·log(I/10⁻¹²) → log(I/10⁻¹²) = 7.5", "I/10⁻¹² = 10^7.5", "10 dB louder = factor of 10 in intensity"],
+          "hints": [
+            "dB = 10·log(I/I₀)",
+            "75 = 10·log(I/10⁻¹²) → log(I/10⁻¹²) = 7.5",
+            "I/10⁻¹² = 10^7.5",
+            "10 dB louder = factor of 10 in intensity"
+          ],
           "answer": "75 = 10·log(I/10⁻¹²) → I = 10⁻¹²·10^7.5 = 10⁻⁴·⁵ ≈ 3.162 × 10⁻⁵ W/m². For 85 dB: I = 10⁻¹²·10^8.5 = 10⁻³·⁵ ≈ 3.162 × 10⁻⁴ W/m² (10× louder)."
         },
         {
           "problem": "How long will it take $8,000 to grow to $15,000 at 5.2% compounded continuously?",
-          "hints": ["A = Pe^(rt)", "15000 = 8000·e^(0.052t)", "Solve for t using ln"],
+          "hints": [
+            "A = Pe^(rt)",
+            "15000 = 8000·e^(0.052t)",
+            "Solve for t using ln"
+          ],
           "answer": "15000 = 8000·e^(0.052t) → e^(0.052t) = 15/8 → 0.052t = ln(15/8) → t = ln(15/8)/0.052 = 0.6286/0.052 ≈ 12.09 years."
         }
-      ]
+      ],
+      "lessonId": "exponential-functions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Exponential & Logarithmic Mastery Practice",
-      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion", "solving-exponential-equations", "solving-logarithmic-equations", "exponential-logarithmic-modeling"],
       "problems": [
         {
           "problem": "For f(x) = 2·(1/3)^(x+1) - 5, identify all key features: domain, range, HA, intercepts, and classify as growth or decay.",
@@ -341,7 +402,9 @@
           "problem": "An earthquake measured 6.8 on the Richter scale. (a) How many times more intense is it than a 4.2 quake? (b) What Richter magnitude is an earthquake that is 500 times more intense than a 3.0 quake?",
           "answer": "(a) Difference: 6.8 - 4.2 = 2.6. Intensity ratio: 10^2.6 ≈ 398.1 times more intense. (b) 500 = 10^d → d = log(500) ≈ 2.699. Magnitude = 3.0 + 2.699 ≈ 5.7."
         }
-      ]
+      ],
+      "skill": "exponential-functions-properties",
+      "lessonId": "exponential-functions"
     }
   ],
   "answerKeys": {
@@ -378,5 +441,22 @@
     "ip-log-equation": "x=(3+√33)/2. (x=(3-√33)/2 extraneous.)",
     "ip-population": "r≈0.0933. P(15)≈8,102.",
     "ip-richter": "(a) 10^2.6≈398× more. (b) M≈5.7."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "exponential-functions",
+      "title": "Exponential Functions & Properties",
+      "order": 1
+    },
+    {
+      "lessonId": "logarithmic-functions",
+      "title": "Logarithmic Functions & Properties",
+      "order": 2
+    },
+    {
+      "lessonId": "solving-modeling",
+      "title": "Solving Equations & Modeling",
+      "order": 3
+    }
+  ]
 }

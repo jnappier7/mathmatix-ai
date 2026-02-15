@@ -6,8 +6,19 @@
   "weeks": "3-5",
   "estimatedDuration": 50,
   "description": "Build a rock-solid understanding of the real number system — rational versus irrational, approximating square roots on the number line — then master integer exponent rules and scientific notation. These skills power every computation and estimation task for the rest of the year.",
-  "skills": ["rational-irrational", "real-number-ordering", "exponent-rules", "scientific-notation"],
-  "standardsAlignment": ["8.NS.1", "8.NS.2", "8.EE.1", "8.EE.3", "8.EE.4"],
+  "skills": [
+    "rational-irrational",
+    "real-number-ordering",
+    "exponent-rules",
+    "scientific-notation"
+  ],
+  "standardsAlignment": [
+    "8.NS.1",
+    "8.NS.2",
+    "8.EE.1",
+    "8.EE.3",
+    "8.EE.4"
+  ],
   "goals": [
     "Classify numbers as rational or irrational and justify the classification.",
     "Approximate irrational numbers on a number line to a given decimal place.",
@@ -20,7 +31,7 @@
     "Use estimation anchors: students should know that √2 ≈ 1.41 and √3 ≈ 1.73 as landmarks.",
     "Scientific notation connects to real data — distances in space, sizes of cells — to motivate the 'why'."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -34,7 +45,22 @@
         "Every real number is either rational or irrational — never both",
         "Natural ⊂ Whole ⊂ Integer ⊂ Rational ⊂ Real; irrationals fill the gaps",
         "Approximate irrational square roots by squeezing between perfect squares"
-      ]
+      ],
+      "lessonId": "rational-irrational"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "real-number-ordering",
+      "title": "We-Do: Real Number Ordering — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for real number ordering.",
+          "hint": "Apply the concepts of real number ordering.",
+          "solution": "Step-by-step solution for real number ordering."
+        }
+      ],
+      "lessonId": "exponent-rules"
     },
     {
       "type": "model",
@@ -54,7 +80,8 @@
           "problem": "Order from least to greatest: √3, 1.5, −√2, −2, π/2",
           "solution": "Convert to decimals:\n√3 ≈ 1.732, 1.5 = 1.5, −√2 ≈ −1.414, −2 = −2, π/2 ≈ 1.571.\nOrder from least to greatest: −2, −√2, 1.5, π/2, √3.\nThat is: −2, −1.414..., 1.5, 1.571..., 1.732..."
         }
-      ]
+      ],
+      "lessonId": "rational-irrational"
     },
     {
       "type": "explanation",
@@ -68,7 +95,8 @@
         "Power-of-a-power: (aᵐ)ⁿ = aᵐⁿ (multiply exponents)",
         "Zero exponent: a⁰ = 1 (any nonzero base to the zero power equals 1)",
         "Negative exponent: a⁻ⁿ = 1/aⁿ (flip to the denominator)"
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "model",
@@ -88,7 +116,8 @@
           "problem": "Evaluate: 5⁰ + 3⁻²",
           "solution": "5⁰ = 1 (any nonzero base to the zero power is 1).\n3⁻² = 1/3² = 1/9.\n1 + 1/9 = 9/9 + 1/9 = 10/9.\nAnswer: 10/9."
         }
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "explanation",
@@ -102,7 +131,8 @@
         "Compare by exponent first, then by leading number",
         "Multiply: multiply leading numbers, add exponents",
         "Divide: divide leading numbers, subtract exponents; adjust if leading number ≥ 10"
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "model",
@@ -122,7 +152,8 @@
           "problem": "Multiply: (2 × 10³)(4 × 10⁵)",
           "solution": "Step 1: Multiply leading numbers: 2 × 4 = 8.\nStep 2: Add exponents: 10³⁺⁵ = 10⁸.\nResult: 8 × 10⁸.\nNo adjustment needed since 1 ≤ 8 < 10.\nAnswer: 8 × 10⁸."
         }
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "guided_practice",
@@ -134,21 +165,32 @@
           "id": "ns-wp1",
           "question": "Classify each number as rational or irrational: √49, 0.121212..., √8",
           "answer": "√49 = 7 → rational (it simplifies to an integer). 0.121212... = 12/99 = 4/33 → rational (repeating decimal). √8 = 2.82842... → irrational (non-terminating, non-repeating).",
-          "hints": ["Can you simplify √49 to a whole number?", "Does 0.121212... have a repeating pattern? Repeating decimals are always rational.", "Is 8 a perfect square?"]
+          "hints": [
+            "Can you simplify √49 to a whole number?",
+            "Does 0.121212... have a repeating pattern? Repeating decimals are always rational.",
+            "Is 8 a perfect square?"
+          ]
         },
         {
           "id": "ns-wp2",
           "question": "Approximate √7 between two consecutive integers, then between two consecutive tenths.",
           "answer": "2² = 4 and 3² = 9, so 2 < √7 < 3. Then 2.6² = 6.76 and 2.7² = 7.29, so 2.6 < √7 < 2.7. √7 ≈ 2.65.",
-          "hints": ["Which two perfect squares does 7 fall between?", "Try squaring 2.6 and 2.7 to narrow it down."]
+          "hints": [
+            "Which two perfect squares does 7 fall between?",
+            "Try squaring 2.6 and 2.7 to narrow it down."
+          ]
         },
         {
           "id": "ns-wp3",
           "question": "Order from least to greatest: √5, 2.1, −π, −3, 7/3",
           "answer": "Convert: √5 ≈ 2.236, 2.1 = 2.1, −π ≈ −3.14, −3 = −3, 7/3 ≈ 2.333. Order: −π, −3, 2.1, √5, 7/3.",
-          "hints": ["Approximate each value as a decimal first.", "Remember −π is more negative than −3 because π > 3."]
+          "hints": [
+            "Approximate each value as a decimal first.",
+            "Remember −π is more negative than −3 because π > 3."
+          ]
         }
-      ]
+      ],
+      "lessonId": "rational-irrational"
     },
     {
       "type": "guided_practice",
@@ -160,21 +202,31 @@
           "id": "ns-wp4",
           "question": "Simplify: a⁵ · a² / a³",
           "answer": "Product rule first: a⁵ · a² = a⁷. Then quotient rule: a⁷ / a³ = a⁴. Answer: a⁴.",
-          "hints": ["When multiplying same bases, add exponents.", "When dividing same bases, subtract exponents."]
+          "hints": [
+            "When multiplying same bases, add exponents.",
+            "When dividing same bases, subtract exponents."
+          ]
         },
         {
           "id": "ns-wp5",
           "question": "Simplify: (4x²)³",
           "answer": "Apply the exponent to BOTH the coefficient and the variable: 4³ · (x²)³ = 64 · x⁶ = 64x⁶.",
-          "hints": ["The exponent 3 applies to everything inside the parentheses.", "4³ = 64 and (x²)³ = x⁶ by power-of-a-power."]
+          "hints": [
+            "The exponent 3 applies to everything inside the parentheses.",
+            "4³ = 64 and (x²)³ = x⁶ by power-of-a-power."
+          ]
         },
         {
           "id": "ns-wp6",
           "question": "Evaluate: 2⁻³ + 5⁰",
           "answer": "2⁻³ = 1/2³ = 1/8. 5⁰ = 1. So 1/8 + 1 = 1/8 + 8/8 = 9/8.",
-          "hints": ["A negative exponent means 'take the reciprocal.'", "Any nonzero number to the zero power equals 1."]
+          "hints": [
+            "A negative exponent means 'take the reciprocal.'",
+            "Any nonzero number to the zero power equals 1."
+          ]
         }
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "guided_practice",
@@ -186,21 +238,31 @@
           "id": "ns-wp7",
           "question": "Write 6,370,000 in scientific notation.",
           "answer": "Move the decimal left 6 places: 6.37 × 10⁶.",
-          "hints": ["Move the decimal until you have a number between 1 and 10.", "Count how many places you moved — that's your exponent."]
+          "hints": [
+            "Move the decimal until you have a number between 1 and 10.",
+            "Count how many places you moved — that's your exponent."
+          ]
         },
         {
           "id": "ns-wp8",
           "question": "Divide: (9 × 10⁷) ÷ (3 × 10⁴)",
           "answer": "Divide leading numbers: 9 ÷ 3 = 3. Subtract exponents: 10⁷⁻⁴ = 10³. Answer: 3 × 10³.",
-          "hints": ["Divide the leading numbers, then subtract the exponents.", "Is 3 between 1 and 10? If so, no adjustment needed."]
+          "hints": [
+            "Divide the leading numbers, then subtract the exponents.",
+            "Is 3 between 1 and 10? If so, no adjustment needed."
+          ]
         },
         {
           "id": "ns-wp9",
           "question": "Multiply: (5.2 × 10³)(3 × 10⁻⁵)",
           "answer": "Multiply leading numbers: 5.2 × 3 = 15.6. Add exponents: 10³⁺⁽⁻⁵⁾ = 10⁻². Result: 15.6 × 10⁻². Adjust: 1.56 × 10⁻¹.",
-          "hints": ["Multiply the leading numbers and add the exponents.", "15.6 is too big for scientific notation — adjust by moving the decimal one place left and adding 1 to the exponent."]
+          "hints": [
+            "Multiply the leading numbers and add the exponents.",
+            "15.6 is too big for scientific notation — adjust by moving the decimal one place left and adding 1 to the exponent."
+          ]
         }
-      ]
+      ],
+      "lessonId": "scientific-notation"
     },
     {
       "type": "independent_practice",
@@ -213,44 +275,57 @@
           "question": "Classify each as rational or irrational: −2/3, √12, 0.454545..., π/4",
           "answer": "−2/3: rational (fraction of integers). √12 ≈ 3.464...: irrational (12 is not a perfect square). 0.454545... = 5/11: rational (repeating). π/4 ≈ 0.785...: irrational (π divided by a rational is still irrational).",
           "skill": "rational-irrational",
-          "hints": ["Can each be written as a fraction of integers? If yes, it's rational."]
+          "hints": [
+            "Can each be written as a fraction of integers? If yes, it's rational."
+          ]
         },
         {
           "id": "ns-yp2",
           "question": "Approximate √20 between two consecutive tenths.",
           "answer": "4² = 16, 5² = 25, so 4 < √20 < 5. Then 4.4² = 19.36 and 4.5² = 20.25, so 4.4 < √20 < 4.5. √20 ≈ 4.47.",
           "skill": "real-number-ordering",
-          "hints": ["Start by finding which two perfect squares 20 falls between."]
+          "hints": [
+            "Start by finding which two perfect squares 20 falls between."
+          ]
         },
         {
           "id": "ns-yp3",
           "question": "Simplify: (3²)⁴ · 3⁻⁵",
           "answer": "(3²)⁴ = 3⁸. Then 3⁸ · 3⁻⁵ = 3³ = 27.",
           "skill": "exponent-rules",
-          "hints": ["Use power-of-a-power first, then the product rule."]
+          "hints": [
+            "Use power-of-a-power first, then the product rule."
+          ]
         },
         {
           "id": "ns-yp4",
           "question": "Evaluate: 4⁻² + 2⁰ − (1/2)²",
           "answer": "4⁻² = 1/16. 2⁰ = 1. (1/2)² = 1/4. So 1/16 + 1 − 1/4 = 1/16 + 16/16 − 4/16 = 13/16.",
           "skill": "exponent-rules",
-          "hints": ["Evaluate each term separately, then find a common denominator."]
+          "hints": [
+            "Evaluate each term separately, then find a common denominator."
+          ]
         },
         {
           "id": "ns-yp5",
           "question": "Write 0.0000082 in scientific notation.",
           "answer": "Move decimal right 6 places: 8.2 × 10⁻⁶.",
           "skill": "scientific-notation",
-          "hints": ["Count how many places the decimal moves to get a number between 1 and 10."]
+          "hints": [
+            "Count how many places the decimal moves to get a number between 1 and 10."
+          ]
         },
         {
           "id": "ns-yp6",
           "question": "Compute: (6 × 10⁴)(7 × 10⁻²)",
           "answer": "6 × 7 = 42. 10⁴ × 10⁻² = 10². Result: 42 × 10² = 4.2 × 10³.",
           "skill": "scientific-notation",
-          "hints": ["Multiply leading numbers, add exponents, then adjust if needed."]
+          "hints": [
+            "Multiply leading numbers, add exponents, then adjust if needed."
+          ]
         }
-      ]
+      ],
+      "lessonId": "rational-irrational"
     }
   ],
   "answerKeys": {
@@ -269,5 +344,22 @@
     "ns-yp4": "13/16",
     "ns-yp5": "8.2 × 10⁻⁶",
     "ns-yp6": "4.2 × 10³"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "rational-irrational",
+      "title": "Rational vs Irrational Numbers",
+      "order": 1
+    },
+    {
+      "lessonId": "exponent-rules",
+      "title": "Integer Exponent Rules",
+      "order": 2
+    },
+    {
+      "lessonId": "scientific-notation",
+      "title": "Scientific Notation",
+      "order": 3
+    }
+  ]
 }

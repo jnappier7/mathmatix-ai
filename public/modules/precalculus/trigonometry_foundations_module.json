@@ -14,7 +14,14 @@
     "solving-trig-equations",
     "sinusoidal-modeling"
   ],
-  "standardsAlignment": ["F-TF.1", "F-TF.2", "F-TF.3", "F-TF.5", "F-TF.7", "F-TF.8"],
+  "standardsAlignment": [
+    "F-TF.1",
+    "F-TF.2",
+    "F-TF.3",
+    "F-TF.5",
+    "F-TF.7",
+    "F-TF.8"
+  ],
   "goals": [
     "Convert between degrees and radians; compute arc length, sector area, and angular speed.",
     "Evaluate all six trig functions at standard unit circle angles (multiples of π/6, π/4, π/3) and determine signs by quadrant.",
@@ -44,7 +51,8 @@
         "Sector area: A = (1/2)r²θ (θ in radians)",
         "Angular speed: ω = θ/t (rad/time); linear speed: v = rω = s/t",
         "Coterminal angles: θ ± 2πn (or θ ± 360°n)"
-      ]
+      ],
+      "lessonId": "radians-unit-circle"
     },
     {
       "type": "model",
@@ -64,7 +72,8 @@
           "problem": "A wheel of radius 2 feet rotates at 150 rpm. Find the angular speed in rad/s and the linear speed of a point on the rim.",
           "solution": "Angular speed: ω = 150 rev/min × 2π rad/rev × 1 min/60 s = 300π/60 = 5π rad/s ≈ 15.71 rad/s. Linear speed: v = rω = 2(5π) = 10π ≈ 31.42 ft/s."
         }
-      ]
+      ],
+      "lessonId": "radians-unit-circle"
     },
     {
       "type": "explanation",
@@ -80,7 +89,8 @@
         "ASTC (All Students Take Calculus): Q1 all+, Q2 sin/csc+, Q3 tan/cot+, Q4 cos/sec+",
         "Memorize: sin/cos for 0, π/6, π/4, π/3, π/2 (0, 1/2, √2/2, √3/2, 1)",
         "Special triangles: 30-60-90 (1, √3, 2) and 45-45-90 (1, 1, √2)"
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "model",
@@ -100,30 +110,43 @@
           "problem": "Find all angles θ in [0, 2π) where tan θ = √3.",
           "solution": "tan θ = √3 when reference angle = π/3 (since tan(π/3) = √3). Tangent is positive in Q1 and Q3. θ = π/3 or θ = π + π/3 = 4π/3. Solutions: {π/3, 4π/3}."
         }
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Radians & Unit Circle Practice",
-      "skills": ["radian-measure-arc-length", "unit-circle-trig-values"],
       "problems": [
         {
           "problem": "A sprinkler rotates through 3π/4 radians. If the water reaches 20 feet, find: (a) the arc length of the watered area boundary, (b) the total area watered.",
-          "hints": ["s = rθ = 20(3π/4)", "A = (1/2)r²θ = (1/2)(400)(3π/4)"],
+          "hints": [
+            "s = rθ = 20(3π/4)",
+            "A = (1/2)r²θ = (1/2)(400)(3π/4)"
+          ],
           "answer": "(a) s = 20(3π/4) = 15π ≈ 47.12 feet. (b) A = (1/2)(400)(3π/4) = 150π ≈ 471.24 sq ft."
         },
         {
           "problem": "Evaluate without a calculator: (a) sin(4π/3), (b) cos(-3π/4), (c) tan(11π/6), (d) sec(2π/3).",
-          "hints": ["4π/3: Q3, ref π/3", "-3π/4: coterminal with 5π/4 (Q3), ref π/4", "11π/6: Q4, ref π/6", "2π/3: Q2, ref π/3"],
+          "hints": [
+            "4π/3: Q3, ref π/3",
+            "-3π/4: coterminal with 5π/4 (Q3), ref π/4",
+            "11π/6: Q4, ref π/6",
+            "2π/3: Q2, ref π/3"
+          ],
           "answer": "(a) sin(4π/3) = -√3/2 (Q3, ref π/3). (b) cos(-3π/4) = cos(5π/4) = -√2/2 (Q3, ref π/4). (c) tan(11π/6) = -tan(π/6) = -√3/3 (Q4, ref π/6). (d) sec(2π/3) = 1/cos(2π/3) = 1/(-1/2) = -2 (Q2, ref π/3)."
         },
         {
           "problem": "Find all angles θ in [0, 2π) satisfying: (a) cos θ = -1/2, (b) sin θ = -√2/2.",
-          "hints": ["(a) cos = -1/2: ref angle π/3, cos negative in Q2 and Q3", "(b) sin = -√2/2: ref angle π/4, sin negative in Q3 and Q4"],
+          "hints": [
+            "(a) cos = -1/2: ref angle π/3, cos negative in Q2 and Q3",
+            "(b) sin = -√2/2: ref angle π/4, sin negative in Q3 and Q4"
+          ],
           "answer": "(a) θ = 2π/3 or θ = 4π/3. (b) θ = 5π/4 or θ = 7π/4."
         }
-      ]
+      ],
+      "skill": "unit-circle-trig-values",
+      "lessonId": "trig-graphs"
     },
     {
       "type": "explanation",
@@ -139,7 +162,8 @@
         "Sine: starts at midline, goes up. Cosine: starts at max",
         "Tangent: period π, VA at x = π/2 + nπ, passes through origin",
         "Secant/cosecant: reciprocal graphs of cos/sin, U-shaped branches between asymptotes"
-      ]
+      ],
+      "lessonId": "identities-equations"
     },
     {
       "type": "model",
@@ -159,7 +183,8 @@
           "problem": "For y = -2·tan(x/2 - π/4) + 1, find period, phase shift, vertical asymptotes, and describe the graph.",
           "solution": "Rewrite: y = -2·tan((1/2)(x - π/2)) + 1. Period: π/(1/2) = 2π. Phase shift: π/2 right. Vertical shift: up 1. Reflection (negative). VAs: (1/2)(x - π/2) = π/2 + nπ → x - π/2 = π + 2nπ → x = 3π/2 + 2nπ. Two consecutive VAs: x = -π/2 and x = 3π/2. Center between VAs: x = π/2, y = 1 (midpoint on graph due to shift)."
         }
-      ]
+      ],
+      "lessonId": "identities-equations"
     },
     {
       "type": "guided_practice",
@@ -169,20 +194,36 @@
       "problems": [
         {
           "problem": "For y = -2·cos(3x - π) + 4, rewrite in standard form and find all key features.",
-          "hints": ["Factor: -2·cos(3(x - π/3)) + 4", "Amplitude: 2, Period: 2π/3", "Phase shift: π/3 right, midline: y = 4", "Reflected: starts at minimum"],
+          "hints": [
+            "Factor: -2·cos(3(x - π/3)) + 4",
+            "Amplitude: 2, Period: 2π/3",
+            "Phase shift: π/3 right, midline: y = 4",
+            "Reflected: starts at minimum"
+          ],
           "answer": "y = -2·cos(3(x - π/3)) + 4. Amplitude: 2. Period: 2π/3. Phase shift: π/3 right. Midline: y = 4. Max: 6. Min: 2. Since A < 0, starts at minimum (y = 2) at x = π/3."
         },
         {
           "problem": "A temperature model is T(t) = 15·sin(π/12·(t - 8)) + 65, where t is hours past midnight. Find: (a) max/min temperatures and when they occur, (b) the period, (c) T(14).",
-          "hints": ["Amplitude 15, midline 65", "Max: 65+15=80 at sin=1, min: 65-15=50 at sin=-1", "sin=1 when π(t-8)/12=π/2 → t-8=6 → t=14 (2 PM)", "Period: 2π/(π/12)=24 hours"],
+          "hints": [
+            "Amplitude 15, midline 65",
+            "Max: 65+15=80 at sin=1, min: 65-15=50 at sin=-1",
+            "sin=1 when π(t-8)/12=π/2 → t-8=6 → t=14 (2 PM)",
+            "Period: 2π/(π/12)=24 hours"
+          ],
           "answer": "(a) Max: 80°F at t=14 (2:00 PM). Min: 50°F at t=2 (2:00 AM). (b) Period: 24 hours. (c) T(14) = 15·sin(π/12·6) + 65 = 15·sin(π/2) + 65 = 15(1) + 65 = 80°F."
         },
         {
           "problem": "Write the equation of a sinusoidal function that passes through (0, 3), has maximum value 7, minimum value -1, and period π.",
-          "hints": ["Midline: (7+(-1))/2 = 3, Amplitude: (7-(-1))/2 = 4", "Period π → B = 2π/π = 2", "At x=0, y=3 (midline) going up → use sine", "y = 4sin(2x) + 3"],
+          "hints": [
+            "Midline: (7+(-1))/2 = 3, Amplitude: (7-(-1))/2 = 4",
+            "Period π → B = 2π/π = 2",
+            "At x=0, y=3 (midline) going up → use sine",
+            "y = 4sin(2x) + 3"
+          ],
           "answer": "Midline: D = 3. Amplitude: A = 4. B = 2. Since (0, 3) is on the midline and we want it going up: y = 4·sin(2x) + 3."
         }
-      ]
+      ],
+      "lessonId": "identities-equations"
     },
     {
       "type": "explanation",
@@ -197,7 +238,8 @@
         "Even-odd: cos(-θ) = cos θ, sin(-θ) = -sin θ, tan(-θ) = -tan θ",
         "Cofunction: sin(π/2 - θ) = cos θ, tan(π/2 - θ) = cot θ, sec(π/2 - θ) = csc θ",
         "Verifying identities: work one side only, transform to match the other. Common strategies: convert to sin/cos, factor, find common denominator, multiply by conjugate"
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "model",
@@ -221,7 +263,8 @@
           "problem": "Simplify: cot²θ · sin²θ + tan²θ · cos²θ.",
           "solution": "cot²θ · sin²θ = (cos²θ/sin²θ) · sin²θ = cos²θ. tan²θ · cos²θ = (sin²θ/cos²θ) · cos²θ = sin²θ. Sum: cos²θ + sin²θ = 1."
         }
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "guided_practice",
@@ -231,20 +274,33 @@
       "problems": [
         {
           "problem": "Simplify: (sec²θ - 1)/sec²θ.",
-          "hints": ["sec²θ - 1 = tan²θ (Pythagorean)", "tan²θ/sec²θ = (sin²θ/cos²θ)/(1/cos²θ)", "= sin²θ"],
+          "hints": [
+            "sec²θ - 1 = tan²θ (Pythagorean)",
+            "tan²θ/sec²θ = (sin²θ/cos²θ)/(1/cos²θ)",
+            "= sin²θ"
+          ],
           "answer": "(sec²θ - 1)/sec²θ = tan²θ/sec²θ = (sin²θ/cos²θ) · cos²θ = sin²θ."
         },
         {
           "problem": "Verify: csc θ - sin θ = cos θ · cot θ.",
-          "hints": ["LHS: 1/sin θ - sin θ = (1 - sin²θ)/sin θ", "= cos²θ/sin θ", "= cos θ · (cos θ/sin θ) = cos θ · cot θ"],
+          "hints": [
+            "LHS: 1/sin θ - sin θ = (1 - sin²θ)/sin θ",
+            "= cos²θ/sin θ",
+            "= cos θ · (cos θ/sin θ) = cos θ · cot θ"
+          ],
           "answer": "LHS: csc θ - sin θ = (1 - sin²θ)/sin θ = cos²θ/sin θ = cos θ · (cos θ/sin θ) = cos θ · cot θ = RHS. ✓"
         },
         {
           "problem": "Simplify: (1 + tan²θ)/(1 + cot²θ).",
-          "hints": ["1 + tan²θ = sec²θ", "1 + cot²θ = csc²θ", "sec²θ/csc²θ = (1/cos²θ)/(1/sin²θ)"],
+          "hints": [
+            "1 + tan²θ = sec²θ",
+            "1 + cot²θ = csc²θ",
+            "sec²θ/csc²θ = (1/cos²θ)/(1/sin²θ)"
+          ],
           "answer": "sec²θ/csc²θ = sin²θ/cos²θ = tan²θ."
         }
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "explanation",
@@ -260,7 +316,22 @@
         "General solution: add + 2nπ (for sin/cos) or + nπ (for tan) where n is any integer",
         "Quadratic trig equations: factor or use quadratic formula with u-substitution",
         "Always check for extraneous solutions when squaring was used"
-      ]
+      ],
+      "lessonId": "trig-graphs"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "sinusoidal-modeling",
+      "title": "We-Do: Sinusoidal Modeling — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for sinusoidal modeling.",
+          "hint": "Apply the concepts of sinusoidal modeling.",
+          "solution": "Step-by-step solution for sinusoidal modeling."
+        }
+      ],
+      "lessonId": "identities-equations"
     },
     {
       "type": "model",
@@ -284,7 +355,8 @@
           "problem": "Solve 2·sin²(x) + 3·sin(x) + 1 = 0 on [0, 2π).",
           "solution": "Let u = sin(x): 2u² + 3u + 1 = 0 → (2u + 1)(u + 1) = 0. u = -1/2 or u = -1. sin(x) = -1/2: ref angle π/6, sin negative in Q3, Q4 → x = 7π/6, 11π/6. sin(x) = -1: x = 3π/2. Solutions: {7π/6, 3π/2, 11π/6}."
         }
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "guided_practice",
@@ -294,26 +366,39 @@
       "problems": [
         {
           "problem": "Solve on [0, 2π): 2·cos(x) + √3 = 0.",
-          "hints": ["cos(x) = -√3/2", "Reference angle: π/6", "Cosine negative in Q2 and Q3"],
+          "hints": [
+            "cos(x) = -√3/2",
+            "Reference angle: π/6",
+            "Cosine negative in Q2 and Q3"
+          ],
           "answer": "cos(x) = -√3/2. Ref angle: π/6. Q2: x = π - π/6 = 5π/6. Q3: x = π + π/6 = 7π/6. Solutions: {5π/6, 7π/6}."
         },
         {
           "problem": "Solve on [0, 2π): sin(2x) = √3/2.",
-          "hints": ["Let u = 2x, solve sin(u) = √3/2 first", "u = π/3 or u = 2π/3 (plus period additions)", "Since 0 ≤ x < 2π, we need 0 ≤ u < 4π", "u = π/3, 2π/3, π/3 + 2π = 7π/3, 2π/3 + 2π = 8π/3"],
+          "hints": [
+            "Let u = 2x, solve sin(u) = √3/2 first",
+            "u = π/3 or u = 2π/3 (plus period additions)",
+            "Since 0 ≤ x < 2π, we need 0 ≤ u < 4π",
+            "u = π/3, 2π/3, π/3 + 2π = 7π/3, 2π/3 + 2π = 8π/3"
+          ],
           "answer": "sin(2x) = √3/2. 2x = π/3, 2π/3, 7π/3, 8π/3 (all in [0, 4π)). x = π/6, π/3, 7π/6, 4π/3. Solutions: {π/6, π/3, 7π/6, 4π/3}."
         },
         {
           "problem": "Solve on [0, 2π): 2·sin²(x) - sin(x) = 0.",
-          "hints": ["Factor: sin(x)(2sin(x) - 1) = 0", "sin(x) = 0: x = 0, π", "sin(x) = 1/2: x = π/6, 5π/6"],
+          "hints": [
+            "Factor: sin(x)(2sin(x) - 1) = 0",
+            "sin(x) = 0: x = 0, π",
+            "sin(x) = 1/2: x = π/6, 5π/6"
+          ],
           "answer": "sin(x)(2sin(x) - 1) = 0. sin(x) = 0: x = 0, π. sin(x) = 1/2: x = π/6, 5π/6. Solutions: {0, π/6, 5π/6, π}."
         }
-      ]
+      ],
+      "lessonId": "trig-graphs"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Trigonometry Foundations Mastery Practice",
-      "skills": ["radian-measure-arc-length", "unit-circle-trig-values", "trig-function-graphs", "fundamental-trig-identities", "solving-trig-equations", "sinusoidal-modeling"],
       "problems": [
         {
           "problem": "A pendulum swings through an angle of 5π/12 radians. If the pendulum is 80 cm long, find the arc length of the swing.",
@@ -339,7 +424,9 @@
           "problem": "The height (in meters) of a Ferris wheel seat is modeled by h(t) = -18·cos(πt/5) + 20, where t is in minutes. (a) Find the diameter and the height of the center. (b) Find h(2.5). (c) How long for one revolution? (d) At what times in the first revolution is the seat at 30 m?",
           "answer": "(a) Amplitude = 18 → radius = 18 m → diameter = 36 m. Center height = midline = 20 m. Min height = 20 - 18 = 2 m (platform height). (b) h(2.5) = -18cos(π(2.5)/5) + 20 = -18cos(π/2) + 20 = -18(0) + 20 = 20 m. (c) Period = 2π/(π/5) = 10 minutes. (d) 30 = -18cos(πt/5) + 20 → cos(πt/5) = -10/18 = -5/9. πt/5 = arccos(-5/9) ≈ 2.0137. t = 5(2.0137)/π ≈ 3.204 min. Also πt/5 = 2π - 2.0137 ≈ 4.2695. t ≈ 5(4.2695)/π ≈ 6.796 min. Seat is at 30 m at t ≈ 3.20 min and t ≈ 6.80 min."
         }
-      ]
+      ],
+      "skill": "radian-measure-arc-length",
+      "lessonId": "radians-unit-circle"
     }
   ],
   "answerKeys": {
@@ -378,5 +465,22 @@
     "ip-identity": "(sinθ+cosθ)²=1+2sinθcosθ. ✓",
     "ip-solve": "{π/6, 5π/6, 7π/6, 11π/6}.",
     "ip-ferris": "Diameter 36m. h(2.5)=20m. Period 10min. At 30m: t≈3.20 and 6.80 min."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "radians-unit-circle",
+      "title": "Radian Measure & the Unit Circle",
+      "order": 1
+    },
+    {
+      "lessonId": "trig-graphs",
+      "title": "Trigonometric Function Graphs",
+      "order": 2
+    },
+    {
+      "lessonId": "identities-equations",
+      "title": "Identities & Trig Equations",
+      "order": 3
+    }
+  ]
 }

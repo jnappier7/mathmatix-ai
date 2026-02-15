@@ -6,14 +6,12 @@
   "weeks": "8-9",
   "estimatedDuration": 35,
   "description": "Division is multiplication's partner. Students connect division facts to multiplication through fact families, master the long division algorithm (DMSB: Divide-Multiply-Subtract-Bring down) with 1-digit and 2-digit divisors, learn to interpret remainders in context (round up, drop, or convert to fraction), and solve division word problems involving sharing and grouping.",
-
   "skills": [
     "emf-division-facts",
     "emf-long-division",
     "emf-interpreting-remainders",
     "emf-divide-word-problems"
   ],
-
   "standardsAlignment": [
     "3.OA.A.2",
     "3.OA.A.3",
@@ -22,23 +20,19 @@
     "4.OA.A.3",
     "5.NBT.B.6"
   ],
-
   "goals": [
     "Recall division facts through 144 ÷ 12 fluently by connecting each fact to its multiplication partner",
     "Execute the long division algorithm (DMSB) accurately with both 1-digit and 2-digit divisors, including quotients with zeros",
     "Interpret remainders correctly based on the real-world context of a problem — round up, drop, or express as a fraction",
     "Solve single-step and multi-step division word problems involving sharing and grouping, and check that answers are reasonable"
   ],
-
   "instructionalStrategy": [
     "Gradual release for each skill: concept-intro → I Do → We Do → You Do, keeping pace patient and building on prior multiplication knowledge",
     "Connect every division fact to multiplication ('think multiplication': 56 ÷ 8 = ? means 8 × ? = 56) so students build on what they already know",
     "Use relatable, real-world scenarios (sharing snacks, field trips, packing boxes, splitting pizza) to make division meaningful and concrete",
     "Encourage students to estimate before calculating and check answers by multiplying back — build the habit of asking 'Does my answer make sense?'"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -53,7 +47,8 @@
         "You need division facts all the way through 144 ÷ 12 — that means knowing your times tables through 12 × 12",
         "Any number divided by 1 equals itself (24 ÷ 1 = 24). Any number divided by itself equals 1 (24 ÷ 24 = 1). You can never divide by 0.",
         "Tip: If a division fact feels hard, flip it into multiplication. The multiplication form is usually easier to recall."
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "model",
@@ -73,7 +68,8 @@
           "problem": "Write the complete fact family for 6 × 9 = 54.",
           "solution": "A fact family has four equations — two multiplication and two division:\n1) 6 × 9 = 54\n2) 9 × 6 = 54\n3) 54 ÷ 6 = 9\n4) 54 ÷ 9 = 6\n\nAll four facts use the same three numbers: 6, 9, and 54. Knowing any one of these means you know the other three!"
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "guided_practice",
@@ -108,7 +104,8 @@
           ],
           "answer": "The fact family is: 7 × 11 = 77, 11 × 7 = 77, 77 ÷ 7 = 11, 77 ÷ 11 = 7."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "independent_practice",
@@ -131,9 +128,9 @@
           "problem": "If 9 × ___ = 63, then what is 63 ÷ 9?",
           "answer": "9 × 7 = 63, so 63 ÷ 9 = 7. The multiplication fact and the division fact are partners."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -148,7 +145,8 @@
         "Important: If the divisor doesn't go into the current number at all, write 0 on top and bring down the next digit. Don't skip the zero!",
         "With 2-digit divisors, estimate each digit: 'About how many times does 23 go into 174?' Think: 23 × 7 = 161, 23 × 8 = 184 (too big), so it goes 7 times.",
         "Always check your answer: quotient × divisor should equal the dividend."
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "model",
@@ -168,7 +166,8 @@
           "problem": "Solve 1,748 ÷ 23 using long division (2-digit divisor).",
           "solution": "Set up: 23 ) 1748\n\nFirst, does 23 go into 1? No. Into 17? No (23 > 17). Into 174? Yes!\n\nD: Estimate — 23 × 7 = 161, 23 × 8 = 184 (too big). So 7.\nM: 7 × 23 = 161. Write 161 below 174.\nS: 174 − 161 = 13.\nB: Bring down the 8. Now you have 138.\n\nD: Estimate — 23 × 6 = 138. Exactly!\nM: 6 × 23 = 138. Write 138 below.\nS: 138 − 138 = 0.\n\nAnswer: 1,748 ÷ 23 = 76.\nCheck: 76 × 23 = 1,748. ✓\n\nWith 2-digit divisors, estimating each digit is the key skill. Round the divisor: think '23 is close to 20' to help guess."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "guided_practice",
@@ -203,7 +202,8 @@
           ],
           "answer": "1,536 ÷ 32 = 48. Steps: 32 into 153 = 4 (4 × 32 = 128, remainder 25), bring down 6 → 256, 32 into 256 = 8 (8 × 32 = 256, remainder 0). Check: 48 × 32 = 1,536."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "independent_practice",
@@ -226,9 +226,9 @@
           "problem": "Solve 2,088 ÷ 24 using long division (2-digit divisor).",
           "answer": "2,088 ÷ 24 = 87. Steps: 24 into 20 = can't, look at 208. 24 × 8 = 192, 24 × 9 = 216 (too big). So 8. 208 − 192 = 16, bring down 8 → 168. 24 × 7 = 168. 168 − 168 = 0. Check: 87 × 24 = 2,088."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -241,7 +241,8 @@
         "Express the remainder as a fraction: When you're sharing something that CAN be split into pieces. Example: 3 friends share 7 cookies — each gets 2 whole cookies and 1/3 of the leftover cookie.",
         "To write the remainder as a fraction: put the remainder over the divisor. For 7 ÷ 3 = 2 R1, each person gets 2 and 1/3.",
         "Key question to ask yourself: 'Does the leftover part matter in this story? If so, how?'"
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "model",
@@ -261,7 +262,8 @@
           "problem": "3 friends share 7 cookies equally. How many cookies does each friend get?",
           "solution": "Divide: 7 ÷ 3 = 2 remainder 1.\n\nEach friend gets 2 whole cookies (3 × 2 = 6 cookies used). There's 1 cookie left over. But you CAN split a cookie!\n\nAction: Write the remainder as a FRACTION. The 1 leftover cookie is split 3 ways, so each friend gets 1/3 more.\n\nEach friend gets 2 and 1/3 cookies.\n\nWhy? Cookies can be cut into pieces, so we share the leftover fairly.\n\nAnswer: 2 1/3 cookies each."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "guided_practice",
@@ -296,7 +298,8 @@
           ],
           "answer": "3 1/4 feet each. 13 ÷ 4 = 3 R1. Ribbon can be cut, so express the remainder as a fraction: 1/4. Each friend gets 3 and 1/4 feet of ribbon."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "independent_practice",
@@ -319,9 +322,9 @@
           "problem": "6 children share 20 granola bars equally. How many granola bars does each child get?",
           "answer": "3 1/3 granola bars each. 20 ÷ 6 = 3 R2. Granola bars can be split, so express the remainder as a fraction: 2/6 = 1/3. Each child gets 3 and 1/3 granola bars."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -335,7 +338,8 @@
         "Clue words: 'equally,' 'each,' 'per,' 'shared,' 'split,' 'distributed,' and 'how many groups' often signal division.",
         "Reasonableness check: After solving, ask 'Does my answer make sense?' Multiply back to verify: quotient × divisor should equal the dividend.",
         "Not every problem with big numbers requires division — read carefully and choose the right operation."
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "model",
@@ -355,7 +359,8 @@
           "problem": "Sam had 128 baseball cards. He gave 28 to his friend. He wants to put the rest in pages that hold 4 cards each. How many pages does he need?",
           "solution": "This is a MULTI-STEP problem.\n\nStep 1 — Subtract first: 128 − 28 = 100 cards remaining.\nStep 2 — Then divide: 100 ÷ 4 = 25 pages.\n\nSam needs 25 pages.\n\nCheck: 25 × 4 = 100, and 100 + 28 = 128. ✓\n\nAlways read the whole problem before you start computing. If you just divided 128 ÷ 4, you'd get the wrong answer!"
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "guided_practice",
@@ -390,7 +395,8 @@
           ],
           "answer": "$12 per week. Step 1: $45 + $63 = $108 total. Step 2: $108 ÷ 9 = $12 per week. Check: $12 × 9 = $108."
         }
-      ]
+      ],
+      "lessonId": "division"
     },
     {
       "type": "independent_practice",
@@ -413,10 +419,10 @@
           "problem": "A class collected 145 cans in Week 1 and 175 cans in Week 2. They want to fill bags of 8 cans each for recycling. How many full bags can they fill?",
           "answer": "40 full bags. Step 1: 145 + 175 = 320 total cans. Step 2: 320 ÷ 8 = 40 bags with no remainder. Check: 40 × 8 = 320."
         }
-      ]
+      ],
+      "lessonId": "division"
     }
   ],
-
   "answerKeys": {
     "div-1": "8",
     "div-2": "9",

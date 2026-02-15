@@ -6,14 +6,12 @@
   "weeks": "13-15",
   "estimatedDuration": 40,
   "description": "Now that students understand what fractions mean, they learn to compute with them. Starting with like denominators (easy wins), then building to unlike denominators (the big skill), and finally multiplying fractions. Each operation is grounded in visual models before moving to algorithms.",
-
   "skills": [
     "emf-add-fractions-like",
     "emf-subtract-fractions-like",
     "emf-add-subtract-unlike",
     "emf-multiply-fractions"
   ],
-
   "standardsAlignment": [
     "4.NF.B.3a",
     "4.NF.B.3c",
@@ -23,23 +21,19 @@
     "5.NF.B.5",
     "5.NF.B.6"
   ],
-
   "goals": [
     "Add and subtract fractions with the same denominator, including mixed numbers, and simplify the result",
     "Find the least common denominator and use it to add and subtract fractions with unlike denominators",
     "Multiply fractions and whole numbers using both the algorithm and area-model reasoning",
     "Solve real-world problems involving fraction operations using visual models and number sense"
   ],
-
   "instructionalStrategy": [
     "Concrete-first: every operation begins with a food or recipe visual (pizza slices, measuring cups, chocolate bars) before introducing the algorithm",
     "Like denominators come first to build confidence — students see immediate success before tackling the harder LCD skill",
     "Encourage estimation before computing ('Is the answer more or less than 1?') to build number sense alongside procedural fluency",
     "Mistakes are learning moments: common errors (adding denominators, forgetting to simplify) are addressed explicitly in worked examples"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -53,7 +47,8 @@
         "If the numerator becomes equal to or larger than the denominator, you have a whole (or more): 5/8 + 6/8 = 11/8 = 1 3/8",
         "With mixed numbers: add the whole-number parts, then add the fraction parts. Regroup if the fraction part is improper.",
         "Always check: can you simplify? Divide numerator and denominator by their greatest common factor (GCF)"
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "model",
@@ -76,7 +71,8 @@
           "problem": "Mom uses 1 2/6 cups of flour for pancakes in the morning and 2 5/6 cups of flour for banana bread in the afternoon. How much flour did she use altogether?",
           "solution": "Step 1 — Add the whole numbers: 1 + 2 = 3.\nStep 2 — Add the fractions: 2/6 + 5/6 = 7/6.\nStep 3 — 7/6 is more than 1 whole (since 7 > 6). Regroup: 7/6 = 1 1/6.\nStep 4 — Combine: 3 + 1 1/6 = 4 1/6 cups of flour.\n\nTip: Whenever the fraction part adds up to more than 1, trade it in for an extra whole and a leftover fraction."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "guided_practice",
@@ -103,7 +99,8 @@
           ],
           "answer": "2 3/10 + 1 9/10 = 3 + 12/10 = 3 + 1 2/10 = 4 2/10 = 4 1/5 cups of fruit."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "independent_practice",
@@ -121,9 +118,9 @@
           "problem": "You need 3 5/8 cups of oats for granola bars and 2 7/8 cups of oats for cookies. How many cups of oats do you need in total?",
           "answer": "3 5/8 + 2 7/8 = 5 + 12/8 = 5 + 1 4/8 = 6 4/8 = 6 1/2 cups of oats."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -136,7 +133,8 @@
         "Mixed-number borrowing: if the fraction part being subtracted is larger, borrow 1 whole and convert it to a fraction. Example: 3 1/4 becomes 2 5/4",
         "Check your work: add the answer back to what was subtracted — you should get the original amount",
         "Real-world cue: 'How much is left?' or 'How much more?' signals subtraction"
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "model",
@@ -159,7 +157,8 @@
           "problem": "You have 3 1/4 pounds of apples. You use 1 3/4 pounds for a pie. How many pounds are left?",
           "solution": "Try to subtract the fractions: 1/4 − 3/4 — uh-oh, 1/4 is less than 3/4! We need to borrow.\nBorrow 1 whole from the 3: 3 1/4 becomes 2 + 4/4 + 1/4 = 2 5/4.\nNow subtract: 2 5/4 − 1 3/4.\nWhole numbers: 2 − 1 = 1.\nFractions: 5/4 − 3/4 = 2/4 = 1/2.\nAnswer: 1 1/2 pounds of apples left.\n\nThis is exactly like borrowing in 31 − 17: you borrow from the tens place. Here you borrow from the whole number and turn it into fourths."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "guided_practice",
@@ -186,7 +185,8 @@
           ],
           "answer": "5 1/3 = 4 4/3. Then 4 4/3 − 2 2/3 = 2 2/3 pounds of grapes remain."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "independent_practice",
@@ -204,9 +204,9 @@
           "problem": "A baker starts with 4 2/6 cups of butter. She uses 1 5/6 cups for a cake. How much butter is left?",
           "answer": "4 2/6 = 3 8/6 (borrow 1 whole = 6/6). Then 3 8/6 − 1 5/6 = 2 3/6 = 2 1/2 cups of butter."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -219,7 +219,8 @@
         "To convert: multiply numerator and denominator by the same number so the denominator becomes the LCD. This does not change the fraction's value — it is like trading 1 quarter for 5 nickels.",
         "Once both fractions have the same denominator, add or subtract the numerators as before and simplify.",
         "Quick LCD trick: if the denominators share no common factor, just multiply them. (3 × 4 = 12.) If one denominator is a multiple of the other, the bigger one is the LCD. (6 and 3 → LCD is 6.)"
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "model",
@@ -242,7 +243,8 @@
           "problem": "You have 3/4 of a watermelon. You give 1/3 of a watermelon to a friend. How much do you have left?",
           "solution": "Denominators: 4 and 3. LCD = 12.\nConvert:\n  3/4 = (3 × 3)/(4 × 3) = 9/12\n  1/3 = (1 × 4)/(3 × 4) = 4/12\nSubtract: 9/12 − 4/12 = 5/12 of the watermelon left.\n\nCheck: 5/12 + 4/12 = 9/12 = 3/4. That matches what we started with!"
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "guided_practice",
@@ -280,7 +282,8 @@
           ],
           "answer": "2/5 = 6/15, 1/3 = 5/15. Sum: 6/15 + 5/15 = 11/15 cup of dressing."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "independent_practice",
@@ -303,9 +306,9 @@
           "problem": "At a party you eat 1/2 of an apple pie and 2/5 of a cherry pie (both the same size). How much total pie did you eat?",
           "answer": "LCD = 10. 1/2 = 5/10, 2/5 = 4/10. Sum: 5/10 + 4/10 = 9/10 of a pie."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -318,7 +321,8 @@
         "Fraction × whole number: write the whole number as a fraction over 1. Example: 2/3 × 6 = 2/3 × 6/1 = 12/3 = 4",
         "Cross-canceling (simplify before you multiply): if a numerator and the opposite denominator share a common factor, divide both by that factor first. This keeps numbers small and avoids simplifying a big product afterward.",
         "Always simplify your final answer to lowest terms"
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "model",
@@ -341,7 +345,8 @@
           "problem": "A cookie recipe needs 2/3 cup of butter per batch. You are making 6 batches for a bake sale. How much butter do you need?",
           "solution": "Fraction × whole number: 2/3 × 6.\nWrite 6 as 6/1: 2/3 × 6/1.\nNumerators: 2 × 6 = 12.\nDenominators: 3 × 1 = 3.\n12/3 = 4 cups of butter.\n\nCross-cancel shortcut: before multiplying, notice 6 and 3 share a factor of 3. Divide: 6 ÷ 3 = 2, 3 ÷ 3 = 1. Now multiply: 2/1 × 2/1 = 4/1 = 4. Same answer, smaller numbers!"
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "guided_practice",
@@ -379,7 +384,8 @@
           ],
           "answer": "2/3 × 3/8: cross-cancel the 3s → 2/1 × 1/8 = 2/8 = 1/4 pound of chocolate."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     },
     {
       "type": "independent_practice",
@@ -402,10 +408,10 @@
           "problem": "A pitcher holds 2/3 gallon of juice. You fill 3/4 of the pitcher. How many gallons of juice is that?",
           "answer": "2/3 × 3/4: cross-cancel the 3s → 2/1 × 1/4 = 2/4 = 1/2 gallon of juice."
         }
-      ]
+      ],
+      "lessonId": "fraction_operations"
     }
   ],
-
   "answerKeys": {
     "fo-1": "3/5",
     "fo-2": "1 (or 8/8)",

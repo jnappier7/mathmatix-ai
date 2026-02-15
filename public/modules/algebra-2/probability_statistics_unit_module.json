@@ -5,8 +5,24 @@
   "title": "Probability & Statistics",
   "weeks": "30-32",
   "estimatedDuration": 50,
-  "skills": ["counting-principles", "permutations-combinations", "probability-rules", "conditional-probability", "binomial-probability", "data-analysis-normal-distribution"],
-  "standardsAlignment": ["S-CP.1", "S-CP.2", "S-CP.5", "S-CP.7", "S-CP.9", "S-MD.3", "S-ID.4"],
+  "description": "Apply counting principles, probability rules, and statistical reasoning to analyze data and make predictions about uncertain events.",
+  "skills": [
+    "counting-principles",
+    "permutations-combinations",
+    "probability-rules",
+    "conditional-probability",
+    "binomial-probability",
+    "data-analysis-normal-distribution"
+  ],
+  "standardsAlignment": [
+    "S-CP.1",
+    "S-CP.2",
+    "S-CP.5",
+    "S-CP.7",
+    "S-CP.9",
+    "S-MD.3",
+    "S-ID.4"
+  ],
   "goals": [
     "Apply the Fundamental Counting Principle to determine the number of outcomes in multi-stage experiments",
     "Distinguish between permutations and combinations and apply the correct formula in context",
@@ -28,179 +44,358 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Counting Principles**\n\n**Fundamental Counting Principle (FCP):**\nIf event A has m outcomes and event B has n outcomes, then A followed by B has m × n outcomes.\n\nExtends to any number of stages: multiply the number of choices at each stage.\n\n**Examples:**\n- 3 shirts × 4 pants × 2 shoes = 24 outfits\n- 26 letters × 26 letters × 10 digits × 10 digits = 67,600 codes\n- 5 appetizers × 8 entrees × 4 desserts = 160 meals\n\n**Factorials:**\nn! = n × (n-1) × (n-2) × ... × 2 × 1\n- 5! = 120, 4! = 24, 3! = 6, 1! = 1, 0! = 1 (by definition)\n- n! counts the number of ways to arrange n distinct objects in a line\n\n**Permutations** (order matters):\nP(n, r) = n! / (n - r)!\n- Arranging r items from n distinct items where order matters\n- Example: How many ways to award gold, silver, bronze from 10 athletes? P(10,3) = 10!/7! = 720\n\n**Combinations** (order doesn't matter):\nC(n, r) = n! / (r!(n - r)!)\n- Choosing r items from n distinct items where order doesn't matter\n- Example: Choose a committee of 3 from 10 people? C(10,3) = 120\n\n**The key question: DOES ORDER MATTER?**\n- Yes → Permutation\n- No → Combination",
-      "initialPrompt": "A pizza shop has 8 toppings. You want exactly 3 toppings. Does the order you pick toppings matter? Is this a permutation or combination? Calculate the answer."
+      "skill": "counting-principles",
+      "title": "Concept: Counting Principles",
+      "initialPrompt": "A pizza shop has 8 toppings. You want exactly 3 toppings. Does the order you pick toppings matter? Is this a permutation or combination? Calculate the answer.",
+      "content": "**Counting Principles**\n\n**Fundamental Counting Principle (FCP):**\nIf event A has m outcomes and event B has n outcomes, then A followed by B has m × n outcomes.\n\nExtends to any number of stages: multiply the number of choices at each stage.\n\n**Examples:**\n- 3 shirts × 4 pants × 2 shoes = 24 outfits\n- 26 letters × 26 letters × 10 digits × 10 digits = 67,600 codes\n- 5 appetizers × 8 entrees × 4 desserts = 160 meals\n\n**Factorials:**\nn! = n × (n-1) × (n-2) × ... × 2 × 1\n- 5! = 120, 4! = 24, 3! = 6, 1! = 1, 0! = 1 (by definition)\n- n! counts the number of ways to arrange n distinct objects in a line\n\n**Permutations** (order matters):\nP(n, r) = n! / (n - r)!\n- Arranging r items from n distinct items where order matters\n- Example: How many ways to award gold, silver, bronze from 10 athletes? P(10,3) = 10!/7! = 720\n\n**Combinations** (order doesn't matter):\nC(n, r) = n! / (r!(n - r)!)\n- Choosing r items from n distinct items where order doesn't matter\n- Example: Choose a committee of 3 from 10 people? C(10,3) = 120\n\n**The key question: DOES ORDER MATTER?**\n- Yes → Permutation\n- No → Combination",
+      "lessonId": "counting-perm-comb"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "(a) How many 4-digit PIN codes are possible if digits can repeat? (b) How many if no digit can repeat? (c) A club of 12 members elects a president, VP, and secretary. How many outcomes? (d) From 12 members, choose a 3-person committee. How many ways?",
-      "explanation": "**(a) 4-digit PINs with repetition:**\nEach digit has 10 choices (0-9), and repetition allowed.\n10 × 10 × 10 × 10 = **10,000 PINs**\n\n**(b) 4-digit PINs, no repetition:**\nFirst digit: 10, second: 9, third: 8, fourth: 7.\n10 × 9 × 8 × 7 = **5,040 PINs**\nThis is P(10, 4) = 10!/6! = 5,040.\n\n**(c) President, VP, Secretary from 12:**\nOrder matters (President ≠ VP). This is a permutation.\nP(12, 3) = 12 × 11 × 10 = **1,320 ways**\n\n**(d) 3-person committee from 12:**\nOrder doesn't matter (choosing {A, B, C} = {B, C, A}). This is a combination.\nC(12, 3) = 12! / (3! × 9!) = (12 × 11 × 10) / (3 × 2 × 1) = 1320/6 = **220 ways**\n\n**Notice:** Parts (c) and (d) use the same 12 people choosing 3. The difference is that the committee (220) has fewer arrangements than the officers (1320) because order doesn't matter for committees. In fact, 1320 / 6 = 220, where 6 = 3! accounts for the 6 ways to arrange 3 people.",
-      "initialPrompt": "Look at parts (c) and (d). The permutation answer (1320) is exactly 6 times the combination answer (220). Why? What does the factor of 6 represent?"
+      "skill": "counting-principles",
+      "title": "I-Do: Counting Principles — Worked Examples",
+      "initialPrompt": "Look at parts (c) and (d). The permutation answer (1320) is exactly 6 times the combination answer (220). Why? What does the factor of 6 represent?",
+      "examples": [
+        {
+          "problem": "(a) How many 4-digit PIN codes are possible if digits can repeat? (b) How many if no digit can repeat? (c) A club of 12 members elects a president, VP, and secretary. How many outcomes? (d) From 12 members, choose a 3-person committee. How many ways?",
+          "solution": "**(a) 4-digit PINs with repetition:**\nEach digit has 10 choices (0-9), and repetition allowed.\n10 × 10 × 10 × 10 = **10,000 PINs**\n\n**(b) 4-digit PINs, no repetition:**\nFirst digit: 10, second: 9, third: 8, fourth: 7.\n10 × 9 × 8 × 7 = **5,040 PINs**\nThis is P(10, 4) = 10!/6! = 5,040.\n\n**(c) President, VP, Secretary from 12:**\nOrder matters (President ≠ VP). This is a permutation.\nP(12, 3) = 12 × 11 × 10 = **1,320 ways**\n\n**(d) 3-person committee from 12:**\nOrder doesn't matter (choosing {A, B, C} = {B, C, A}). This is a combination.\nC(12, 3) = 12! / (3! × 9!) = (12 × 11 × 10) / (3 × 2 × 1) = 1320/6 = **220 ways**\n\n**Notice:** Parts (c) and (d) use the same 12 people choosing 3. The difference is that the committee (220) has fewer arrangements than the officers (1320) because order doesn't matter for committees. In fact, 1320 / 6 = 220, where 6 = 3! accounts for the 6 ways to arrange 3 people."
+        }
+      ],
+      "lessonId": "counting-perm-comb"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "counting-principles",
+      "title": "We-Do: Counting Principles — Guided Practice",
       "problems": [
         {
           "question": "A license plate has 3 letters followed by 4 digits. Letters and digits can repeat. How many plates are possible?",
           "answer": "26³ × 10⁴ = 17,576 × 10,000 = 175,760,000",
-          "hints": ["3 letter positions: 26 × 26 × 26 = 26³.", "4 digit positions: 10 × 10 × 10 × 10 = 10⁴.", "FCP: multiply = 26³ × 10⁴ = 175,760,000."]
+          "hints": [
+            "3 letter positions: 26 × 26 × 26 = 26³.",
+            "4 digit positions: 10 × 10 × 10 × 10 = 10⁴.",
+            "FCP: multiply = 26³ × 10⁴ = 175,760,000."
+          ]
         },
         {
           "question": "How many ways can 8 runners finish a race (all finish, no ties)?",
           "answer": "8! = 40,320",
-          "hints": ["First place: 8 choices. Second: 7. Third: 6. And so on.", "8 × 7 × 6 × 5 × 4 × 3 × 2 × 1 = 8! = 40,320."]
+          "hints": [
+            "First place: 8 choices. Second: 7. Third: 6. And so on.",
+            "8 × 7 × 6 × 5 × 4 × 3 × 2 × 1 = 8! = 40,320."
+          ]
         },
         {
           "question": "From a standard 52-card deck, how many 5-card hands are possible?",
           "answer": "C(52, 5) = 2,598,960",
-          "hints": ["Order doesn't matter in a hand (same 5 cards = same hand).", "C(52, 5) = 52!/(5! × 47!) = (52 × 51 × 50 × 49 × 48)/(5 × 4 × 3 × 2 × 1) = 2,598,960."]
+          "hints": [
+            "Order doesn't matter in a hand (same 5 cards = same hand).",
+            "C(52, 5) = 52!/(5! × 47!) = (52 × 51 × 50 × 49 × 48)/(5 × 4 × 3 × 2 × 1) = 2,598,960."
+          ]
         }
       ],
-      "initialPrompt": "For the license plate problem, how many choices are there for the first letter? The second? The third? Then apply the Fundamental Counting Principle."
+      "initialPrompt": "For the license plate problem, how many choices are there for the first letter? The second? The third? Then apply the Fundamental Counting Principle.",
+      "lessonId": "counting-perm-comb"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Probability Rules**\n\n**Basic probability:** P(A) = favorable outcomes / total outcomes. Always 0 ≤ P(A) ≤ 1.\n\n**Complement Rule:** P(not A) = 1 - P(A)\nOften easier to find P(not A) and subtract from 1.\n\n**Addition Rule (OR):**\n- **Mutually exclusive events** (can't happen together): P(A or B) = P(A) + P(B)\n- **General case:** P(A or B) = P(A) + P(B) - P(A and B)\n- Subtract P(A and B) to avoid double-counting the overlap.\n\n**Multiplication Rule (AND):**\n- **Independent events** (one doesn't affect the other): P(A and B) = P(A) × P(B)\n- **General case:** P(A and B) = P(A) × P(B|A)\n\n**Key vocabulary:**\n- **Mutually exclusive:** P(A and B) = 0 (no overlap)\n- **Independent:** P(A|B) = P(A) (knowing B doesn't change A's probability)\n- **Conditional probability:** P(A|B) = P(A and B) / P(B)\n\n**Important:** Mutually exclusive and independent are DIFFERENT concepts!\n- Mutually exclusive events are NEVER independent (if one happened, the other definitely didn't).\n- Independent events CAN overlap.",
-      "initialPrompt": "A single die is rolled. Events: A = 'even number', B = 'greater than 3'. Find P(A), P(B), P(A and B), and P(A or B). Are A and B mutually exclusive? Are they independent?"
+      "skill": "permutations-combinations",
+      "title": "Concept: Permutations Combinations",
+      "initialPrompt": "A single die is rolled. Events: A = 'even number', B = 'greater than 3'. Find P(A), P(B), P(A and B), and P(A or B). Are A and B mutually exclusive? Are they independent?",
+      "content": "**Probability Rules**\n\n**Basic probability:** P(A) = favorable outcomes / total outcomes. Always 0 ≤ P(A) ≤ 1.\n\n**Complement Rule:** P(not A) = 1 - P(A)\nOften easier to find P(not A) and subtract from 1.\n\n**Addition Rule (OR):**\n- **Mutually exclusive events** (can't happen together): P(A or B) = P(A) + P(B)\n- **General case:** P(A or B) = P(A) + P(B) - P(A and B)\n- Subtract P(A and B) to avoid double-counting the overlap.\n\n**Multiplication Rule (AND):**\n- **Independent events** (one doesn't affect the other): P(A and B) = P(A) × P(B)\n- **General case:** P(A and B) = P(A) × P(B|A)\n\n**Key vocabulary:**\n- **Mutually exclusive:** P(A and B) = 0 (no overlap)\n- **Independent:** P(A|B) = P(A) (knowing B doesn't change A's probability)\n- **Conditional probability:** P(A|B) = P(A and B) / P(B)\n\n**Important:** Mutually exclusive and independent are DIFFERENT concepts!\n- Mutually exclusive events are NEVER independent (if one happened, the other definitely didn't).\n- Independent events CAN overlap.",
+      "lessonId": "probability-rules"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "(a) Two cards are drawn from a 52-card deck without replacement. Find P(both hearts). (b) In a class of 30 students, 18 play sports, 12 play an instrument, and 5 do both. Find the probability a randomly chosen student plays sports OR an instrument. (c) A bag has 6 red, 4 blue, 5 green marbles. Find P(not green).",
-      "explanation": "**(a) P(both hearts) without replacement:**\nP(1st heart) = 13/52 = 1/4\nP(2nd heart | 1st was heart) = 12/51 (one heart gone, one card gone)\nP(both) = (13/52) × (12/51) = 156/2652 = **1/17 ≈ 0.0588**\n\nThese are NOT independent — the first draw affects the second.\n\n**(b) Sports OR instrument:**\nP(S) = 18/30, P(I) = 12/30, P(S and I) = 5/30\nP(S or I) = P(S) + P(I) - P(S and I)\n= 18/30 + 12/30 - 5/30 = **25/30 = 5/6 ≈ 0.833**\n\nWe subtract P(S and I) because those 5 students were counted in BOTH P(S) and P(I).\n\n**(c) P(not green):**\nTotal marbles: 6 + 4 + 5 = 15\nP(green) = 5/15 = 1/3\nP(not green) = 1 - 1/3 = **2/3**\n\nOr directly: P(not green) = (6 + 4)/15 = 10/15 = 2/3. Same answer!",
-      "initialPrompt": "For part (a), what would the answer be if we drew WITH replacement (put the first card back)? Why is 'with replacement' easier to calculate?"
+      "skill": "permutations-combinations",
+      "title": "I-Do: Permutations Combinations — Worked Examples",
+      "initialPrompt": "For part (a), what would the answer be if we drew WITH replacement (put the first card back)? Why is 'with replacement' easier to calculate?",
+      "examples": [
+        {
+          "problem": "(a) Two cards are drawn from a 52-card deck without replacement. Find P(both hearts). (b) In a class of 30 students, 18 play sports, 12 play an instrument, and 5 do both. Find the probability a randomly chosen student plays sports OR an instrument. (c) A bag has 6 red, 4 blue, 5 green marbles. Find P(not green).",
+          "solution": "**(a) P(both hearts) without replacement:**\nP(1st heart) = 13/52 = 1/4\nP(2nd heart | 1st was heart) = 12/51 (one heart gone, one card gone)\nP(both) = (13/52) × (12/51) = 156/2652 = **1/17 ≈ 0.0588**\n\nThese are NOT independent — the first draw affects the second.\n\n**(b) Sports OR instrument:**\nP(S) = 18/30, P(I) = 12/30, P(S and I) = 5/30\nP(S or I) = P(S) + P(I) - P(S and I)\n= 18/30 + 12/30 - 5/30 = **25/30 = 5/6 ≈ 0.833**\n\nWe subtract P(S and I) because those 5 students were counted in BOTH P(S) and P(I).\n\n**(c) P(not green):**\nTotal marbles: 6 + 4 + 5 = 15\nP(green) = 5/15 = 1/3\nP(not green) = 1 - 1/3 = **2/3**\n\nOr directly: P(not green) = (6 + 4)/15 = 10/15 = 2/3. Same answer!"
+        }
+      ],
+      "lessonId": "probability-rules"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "permutations-combinations",
+      "title": "I-Do: Permutations and Combinations with Restrictions",
+      "initialPrompt": "What if Anna and Ben must NOT sit next to each other? How would you calculate that? (Hint: Total arrangements minus adjacent arrangements.)",
+      "examples": [
+        {
+          "problem": "(a) How many ways can 5 students sit in a row of 5 chairs if two specific students (Anna and Ben) must sit next to each other?\n(b) From a group of 9 men and 7 women, a committee of 5 is formed. How many committees have exactly 3 men and 2 women?\n(c) How many ways can you arrange the letters in the word MISSISSIPPI?",
+          "solution": "**(a) Adjacent constraint:**\nTreat Anna and Ben as a single unit [AB]. Now we have 4 units to arrange: [AB], C, D, E.\n4 units can be arranged in 4! = 24 ways.\nBut within the [AB] unit, Anna and Ben can switch: AB or BA = 2 arrangements.\n\nTotal: 4! × 2 = 24 × 2 = **48 ways**\n\n**(b) Committee with exactly 3 men and 2 women:**\nChoose 3 men from 9: C(9, 3) = 84\nChoose 2 women from 7: C(7, 2) = 21\n\nBy FCP: 84 × 21 = **1,764 committees**\n\nThe multiplication principle applies because the two choices are independent -- which men you pick does not affect which women you pick.\n\n**(c) Arrangements of MISSISSIPPI:**\nTotal letters: 11 (M:1, I:4, S:4, P:2)\n\nIf all letters were distinct: 11! arrangements.\nBut identical letters are indistinguishable, so divide by the factorials of the repeated counts:\n\n11! / (1! × 4! × 4! × 2!) = 39916800 / (1 × 24 × 24 × 2) = 39916800 / 1152 = **34,650 arrangements**\n\nThis is the formula for permutations with repetition: n! / (n₁! × n₂! × ... × nₖ!)",
+          "tip": "For adjacent constraints, group the adjacent items as a single block, then count arrangements of the blocks, and multiply by the arrangements within the block. For committees with specific composition, multiply the combinations for each group."
+        }
+      ],
+      "lessonId": "probability-rules"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "conditional-probability",
+      "title": "I-Do: Conditional Probability with Two-Way Tables",
+      "initialPrompt": "Are 'Prefers English' and 'Grade 12' independent? Compute P(English | Grade 12) and P(English) and compare.",
+      "examples": [
+        {
+          "problem": "A survey of 200 students produced this two-way table:\n\n|           | Prefers Math | Prefers English | Total |\n|-----------|-------------|----------------|-------|\n| Grade 10  |     45      |      35        |  80   |\n| Grade 11  |     50      |      30        |  80   |\n| Grade 12  |     20      |      20        |  40   |\n| Total     |    115      |      85        | 200   |\n\n(a) Find P(Math | Grade 11).\n(b) Find P(Grade 10 | English).\n(c) Are 'Prefers Math' and 'Grade 11' independent events?",
+          "solution": "**(a) P(Math | Grade 11):**\nGiven the student is in Grade 11, what fraction prefers Math?\nP(Math | Grade 11) = 50/80 = **5/8 = 0.625**\n\nWe restrict our attention to the Grade 11 row (80 students) and find the 50 who prefer Math.\n\n**(b) P(Grade 10 | English):**\nGiven the student prefers English, what fraction is in Grade 10?\nP(Grade 10 | English) = 35/85 = **7/17 ≈ 0.412**\n\nWe restrict to the English column (85 students) and find the 35 who are in Grade 10.\n\n**(c) Independence test:**\nEvents A (Math) and B (Grade 11) are independent if P(A|B) = P(A).\n\nP(Math | Grade 11) = 50/80 = 0.625\nP(Math) = 115/200 = 0.575\n\nSince 0.625 ≠ 0.575, the events are **NOT independent**.\n\nGrade 11 students are slightly more likely to prefer Math than the overall population. Knowing the grade gives you information about the preference -- that is exactly what 'not independent' means.",
+          "tip": "The independence test compares P(A|B) with P(A). If they are equal, the events are independent (knowing B does not change the probability of A). If they differ, the events are dependent. Two-way tables make this comparison straightforward."
+        }
+      ],
+      "lessonId": "normal-distribution"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "probability-rules",
+      "title": "I-Do: Probability — Compound Events and the Complement Strategy",
+      "initialPrompt": "For part (a), if the draws were WITH replacement instead, what would P(all red) be? Why is 'with replacement' simpler?",
+      "examples": [
+        {
+          "problem": "(a) A bag has 5 red and 3 blue marbles. You draw 3 marbles without replacement. Find P(all red).\n(b) A 4-digit number is formed using digits 1-9 (no zeros, digits may repeat). Find P(at least one digit is 7).\n(c) Events A and B satisfy P(A) = 0.6, P(B) = 0.5, P(A or B) = 0.8. Find P(A and B). Are A and B independent?",
+          "solution": "**(a) P(all red), 3 draws without replacement:**\nP(1st red) = 5/8\nP(2nd red | 1st red) = 4/7\nP(3rd red | first two red) = 3/6 = 1/2\n\nP(all red) = (5/8)(4/7)(1/2) = 20/112 = **5/28 ≈ 0.1786**\n\nAlternatively: C(5,3)/C(8,3) = 10/56 = 5/28. Same answer!\nThe combination approach counts favorable outcomes over total outcomes.\n\n**(b) P(at least one 7) in a 4-digit number (digits 1-9, repeats allowed):**\nComplement strategy: P(at least one 7) = 1 - P(no 7s)\n\nP(no 7 on one digit) = 8/9 (8 choices out of 9 that aren't 7)\nP(no 7s in all 4 digits) = (8/9)⁴ = 4096/6561 ≈ 0.6243\n\nP(at least one 7) = 1 - 0.6243 = **0.3757 ≈ 37.6%**\n\n**(c) Find P(A and B):**\nP(A or B) = P(A) + P(B) - P(A and B)\n0.8 = 0.6 + 0.5 - P(A and B)\nP(A and B) = 1.1 - 0.8 = **0.3**\n\nIndependence check: If independent, P(A and B) = P(A) × P(B) = 0.6 × 0.5 = 0.3.\nSince P(A and B) = 0.3 = P(A) × P(B), the events **are independent**.",
+          "tip": "The complement strategy (1 - P(opposite)) is your best friend for 'at least one' problems. Calculating P(none) is almost always easier than adding P(1) + P(2) + P(3) + ..."
+        }
+      ],
+      "lessonId": "binomial-probability"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "data-analysis-normal-distribution",
+      "title": "I-Do: Comparing Values with Z-Scores",
+      "initialPrompt": "A third student scored 95 on an art test with mean 88 and σ = 3. Find the z-score. Who performed best relative to their class among all three students?",
+      "examples": [
+        {
+          "problem": "Student A scored 82 on a history test (class mean 75, σ = 5). Student B scored 90 on a chemistry test (class mean 80, σ = 8). Who performed better relative to their class?",
+          "solution": "**We cannot compare 82 and 90 directly because the tests have different scales. Z-scores standardize the comparison.**\n\n**Student A (History):**\nz_A = (82 - 75) / 5 = 7/5 = **1.4**\nStudent A scored 1.4 standard deviations above the history mean.\n\n**Student B (Chemistry):**\nz_B = (90 - 80) / 8 = 10/8 = **1.25**\nStudent B scored 1.25 standard deviations above the chemistry mean.\n\n**Conclusion: Student A performed relatively better** (z = 1.4 > 1.25), even though Student B had a higher raw score.\n\nUsing the Empirical Rule:\n- A z-score of 1.4 means Student A outperformed roughly 92% of the history class.\n- A z-score of 1.25 means Student B outperformed roughly 89% of the chemistry class.\n\nZ-scores let you compare apples to oranges -- different tests, different grading scales, different distributions -- by converting everything to 'standard deviations from the mean.'",
+          "tip": "Z-scores are the universal translator for data comparison. Higher z-score = further above the mean = relatively better performance. A z-score only makes sense if the data is approximately normally distributed."
+        }
+      ],
+      "lessonId": "normal-distribution"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "probability-rules",
+      "title": "We-Do: Probability Rules — Guided Practice",
       "problems": [
         {
           "question": "A coin is flipped 3 times. Find P(at least one head).",
           "answer": "7/8",
-          "hints": ["P(at least 1 head) = 1 - P(no heads) = 1 - P(all tails).", "P(all tails) = (1/2)³ = 1/8.", "P(at least 1 head) = 1 - 1/8 = 7/8."]
+          "hints": [
+            "P(at least 1 head) = 1 - P(no heads) = 1 - P(all tails).",
+            "P(all tails) = (1/2)³ = 1/8.",
+            "P(at least 1 head) = 1 - 1/8 = 7/8."
+          ]
         },
         {
           "question": "P(A) = 0.4, P(B) = 0.3, and A and B are independent. Find P(A and B) and P(A or B).",
           "answer": "P(A and B) = 0.12, P(A or B) = 0.58",
-          "hints": ["Independent: P(A and B) = P(A) × P(B) = 0.4 × 0.3 = 0.12.", "P(A or B) = P(A) + P(B) - P(A and B) = 0.4 + 0.3 - 0.12 = 0.58."]
+          "hints": [
+            "Independent: P(A and B) = P(A) × P(B) = 0.4 × 0.3 = 0.12.",
+            "P(A or B) = P(A) + P(B) - P(A and B) = 0.4 + 0.3 - 0.12 = 0.58."
+          ]
         },
         {
           "question": "In a survey, 60% of students like pizza, 45% like tacos, and 25% like both. What is the probability a student likes pizza given that they like tacos?",
           "answer": "P(pizza | tacos) = 25/45 = 5/9 ≈ 0.556",
-          "hints": ["P(pizza | tacos) = P(pizza and tacos) / P(tacos).", "= 0.25 / 0.45 = 25/45 = 5/9 ≈ 0.556."]
+          "hints": [
+            "P(pizza | tacos) = P(pizza and tacos) / P(tacos).",
+            "= 0.25 / 0.45 = 25/45 = 5/9 ≈ 0.556."
+          ]
         }
       ],
-      "initialPrompt": "For the coin problem, finding P(at least 1 head) directly means counting HHH, HHT, HTH, THH, HTT, THT, TTH = 7 outcomes. The complement approach (1 - P(all tails)) is much faster. Can you see why?"
+      "initialPrompt": "For the coin problem, finding P(at least 1 head) directly means counting HHH, HHT, HTH, THH, HTT, THT, TTH = 7 outcomes. The complement approach (1 - P(all tails)) is much faster. Can you see why?",
+      "lessonId": "binomial-probability"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Binomial Probability**\n\nA **binomial experiment** has:\n1. A fixed number of trials: n\n2. Each trial has exactly two outcomes: success (p) or failure (q = 1 - p)\n3. The probability p stays the same for each trial\n4. Trials are independent\n\n**The Binomial Probability Formula:**\nP(X = k) = C(n, k) · p^k · (1 - p)^(n - k)\n\nwhere:\n- n = number of trials\n- k = number of successes you want\n- p = probability of success on one trial\n- C(n, k) = number of ways to choose which k trials are successes\n\n**Why C(n, k)?** If you flip a coin 5 times and want exactly 3 heads, the 3 heads could occur in C(5, 3) = 10 different positions (HHHTT, HHTHT, etc.). Each arrangement has the same probability p³q², so you multiply by C(5,3).\n\n**Common applications:**\n- Free throw shooting: n shots, each with probability p of making it\n- Quality control: n items, each with probability p of being defective\n- Surveys: n people, each with probability p of saying 'yes'\n\n**'At least' and 'at most' problems:** Use the complement.\n- P(at least 1) = 1 - P(0)\n- P(at most 2) = P(0) + P(1) + P(2)",
-      "initialPrompt": "A basketball player makes 80% of free throws. In 5 attempts, what's the probability of making exactly 4? Identify n, k, p, then plug into the formula."
+      "skill": "probability-rules",
+      "title": "Concept: Probability Rules",
+      "initialPrompt": "A basketball player makes 80% of free throws. In 5 attempts, what's the probability of making exactly 4? Identify n, k, p, then plug into the formula.",
+      "content": "**Binomial Probability**\n\nA **binomial experiment** has:\n1. A fixed number of trials: n\n2. Each trial has exactly two outcomes: success (p) or failure (q = 1 - p)\n3. The probability p stays the same for each trial\n4. Trials are independent\n\n**The Binomial Probability Formula:**\nP(X = k) = C(n, k) · p^k · (1 - p)^(n - k)\n\nwhere:\n- n = number of trials\n- k = number of successes you want\n- p = probability of success on one trial\n- C(n, k) = number of ways to choose which k trials are successes\n\n**Why C(n, k)?** If you flip a coin 5 times and want exactly 3 heads, the 3 heads could occur in C(5, 3) = 10 different positions (HHHTT, HHTHT, etc.). Each arrangement has the same probability p³q², so you multiply by C(5,3).\n\n**Common applications:**\n- Free throw shooting: n shots, each with probability p of making it\n- Quality control: n items, each with probability p of being defective\n- Surveys: n people, each with probability p of saying 'yes'\n\n**'At least' and 'at most' problems:** Use the complement.\n- P(at least 1) = 1 - P(0)\n- P(at most 2) = P(0) + P(1) + P(2)",
+      "lessonId": "binomial-probability"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "A multiple-choice test has 8 questions, each with 4 choices. A student guesses randomly on every question. Find: (a) P(exactly 3 correct), (b) P(none correct), (c) P(at least 1 correct).",
-      "explanation": "**Setup:** n = 8 trials, p = 1/4 = 0.25 (probability of guessing correctly), q = 3/4 = 0.75.\n\n**(a) P(exactly 3 correct):**\nP(X = 3) = C(8, 3) × (0.25)³ × (0.75)⁵\n\nC(8, 3) = 56\n(0.25)³ = 0.015625\n(0.75)⁵ = 0.2373046875\n\nP(X = 3) = 56 × 0.015625 × 0.2373046875\n= 56 × 0.003707886...\n= **0.2076 ≈ 20.8%**\n\n**(b) P(none correct):**\nP(X = 0) = C(8, 0) × (0.25)⁰ × (0.75)⁸\n= 1 × 1 × (0.75)⁸\n= **0.1001 ≈ 10.0%**\n\n**(c) P(at least 1 correct):**\nUse complement: P(X ≥ 1) = 1 - P(X = 0)\n= 1 - 0.1001\n= **0.8999 ≈ 90.0%**\n\nSo even by pure guessing, there's a 90% chance of getting at least 1 right out of 8. But the expected number correct is only np = 8(0.25) = 2.",
-      "initialPrompt": "Why is P(at least 1) = 1 - P(0) so much easier than computing P(1) + P(2) + P(3) + ... + P(8) directly? How many terms would you need to add?"
+      "skill": "conditional-probability",
+      "title": "I-Do: Conditional Probability — Worked Examples",
+      "initialPrompt": "Why is P(at least 1) = 1 - P(0) so much easier than computing P(1) + P(2) + P(3) + ... + P(8) directly? How many terms would you need to add?",
+      "examples": [
+        {
+          "problem": "A multiple-choice test has 8 questions, each with 4 choices. A student guesses randomly on every question. Find: (a) P(exactly 3 correct), (b) P(none correct), (c) P(at least 1 correct).",
+          "solution": "**Setup:** n = 8 trials, p = 1/4 = 0.25 (probability of guessing correctly), q = 3/4 = 0.75.\n\n**(a) P(exactly 3 correct):**\nP(X = 3) = C(8, 3) × (0.25)³ × (0.75)⁵\n\nC(8, 3) = 56\n(0.25)³ = 0.015625\n(0.75)⁵ = 0.2373046875\n\nP(X = 3) = 56 × 0.015625 × 0.2373046875\n= 56 × 0.003707886...\n= **0.2076 ≈ 20.8%**\n\n**(b) P(none correct):**\nP(X = 0) = C(8, 0) × (0.25)⁰ × (0.75)⁸\n= 1 × 1 × (0.75)⁸\n= **0.1001 ≈ 10.0%**\n\n**(c) P(at least 1 correct):**\nUse complement: P(X ≥ 1) = 1 - P(X = 0)\n= 1 - 0.1001\n= **0.8999 ≈ 90.0%**\n\nSo even by pure guessing, there's a 90% chance of getting at least 1 right out of 8. But the expected number correct is only np = 8(0.25) = 2."
+        }
+      ],
+      "lessonId": "normal-distribution"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "conditional-probability",
+      "title": "We-Do: Conditional Probability — Guided Practice",
       "problems": [
         {
           "question": "A coin is flipped 6 times. Find P(exactly 2 heads).",
           "answer": "C(6,2) × (0.5)² × (0.5)⁴ = 15 × 1/64 = 15/64 ≈ 0.2344",
-          "hints": ["n = 6, k = 2, p = 0.5.", "C(6,2) = 15. (0.5)⁶ = 1/64.", "P = 15 × (0.5)² × (0.5)⁴ = 15/64 ≈ 0.2344."]
+          "hints": [
+            "n = 6, k = 2, p = 0.5.",
+            "C(6,2) = 15. (0.5)⁶ = 1/64.",
+            "P = 15 × (0.5)² × (0.5)⁴ = 15/64 ≈ 0.2344."
+          ]
         },
         {
           "question": "A factory produces items with a 5% defect rate. In a batch of 10, find P(exactly 1 defective).",
           "answer": "C(10,1) × (0.05)¹ × (0.95)⁹ = 10 × 0.05 × 0.6302 ≈ 0.3151",
-          "hints": ["n = 10, k = 1, p = 0.05.", "C(10,1) = 10. (0.95)⁹ ≈ 0.6302.", "P = 10 × 0.05 × 0.6302 ≈ 0.3151."]
+          "hints": [
+            "n = 10, k = 1, p = 0.05.",
+            "C(10,1) = 10. (0.95)⁹ ≈ 0.6302.",
+            "P = 10 × 0.05 × 0.6302 ≈ 0.3151."
+          ]
         },
         {
           "question": "70% of students pass a driving test on their first try. Out of 5 students, find P(at least 4 pass).",
           "answer": "P(4) + P(5) = 0.36015 + 0.16807 ≈ 0.5282",
-          "hints": ["P(4) = C(5,4)(0.7)⁴(0.3)¹ = 5 × 0.2401 × 0.3 = 0.36015.", "P(5) = C(5,5)(0.7)⁵(0.3)⁰ = 1 × 0.16807 = 0.16807.", "P(at least 4) = 0.36015 + 0.16807 = 0.52822."]
+          "hints": [
+            "P(4) = C(5,4)(0.7)⁴(0.3)¹ = 5 × 0.2401 × 0.3 = 0.36015.",
+            "P(5) = C(5,5)(0.7)⁵(0.3)⁰ = 1 × 0.16807 = 0.16807.",
+            "P(at least 4) = 0.36015 + 0.16807 = 0.52822."
+          ]
         }
       ],
-      "initialPrompt": "For the coin problem, identify n, k, and p. Then compute C(6,2) — how many ways can 2 heads occur in 6 flips?"
+      "initialPrompt": "For the coin problem, identify n, k, and p. Then compute C(6,2) — how many ways can 2 heads occur in 6 flips?",
+      "lessonId": "normal-distribution"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Normal Distribution and the Empirical Rule**\n\nThe **normal distribution** (bell curve) is symmetric about the mean μ, with spread determined by standard deviation σ.\n\n**The Empirical Rule (68-95-99.7 Rule):**\nFor any normal distribution:\n- **68%** of data falls within 1 standard deviation of the mean (μ ± σ)\n- **95%** of data falls within 2 standard deviations (μ ± 2σ)\n- **99.7%** of data falls within 3 standard deviations (μ ± 3σ)\n\n**Using the Empirical Rule:**\n1. Find how many standard deviations a value is from the mean\n2. Use the percentages to estimate probabilities\n\n**Z-scores:** z = (x - μ) / σ\n- A z-score tells you how many standard deviations x is from the mean\n- z = 0 means x = μ (average)\n- z = 1 means x is 1σ above the mean\n- z = -2 means x is 2σ below the mean\n\n**Applications:**\n- Test scores, heights, weights, measurement errors\n- Quality control (values beyond 2σ or 3σ may indicate problems)\n- Comparing values from different distributions using z-scores",
-      "initialPrompt": "Scores on a test are normally distributed with mean 75 and standard deviation 8. What range contains the middle 68% of scores? What about the middle 95%?"
+      "skill": "binomial-probability",
+      "title": "Concept: Binomial Probability",
+      "initialPrompt": "Scores on a test are normally distributed with mean 75 and standard deviation 8. What range contains the middle 68% of scores? What about the middle 95%?",
+      "content": "**Normal Distribution and the Empirical Rule**\n\nThe **normal distribution** (bell curve) is symmetric about the mean μ, with spread determined by standard deviation σ.\n\n**The Empirical Rule (68-95-99.7 Rule):**\nFor any normal distribution:\n- **68%** of data falls within 1 standard deviation of the mean (μ ± σ)\n- **95%** of data falls within 2 standard deviations (μ ± 2σ)\n- **99.7%** of data falls within 3 standard deviations (μ ± 3σ)\n\n**Using the Empirical Rule:**\n1. Find how many standard deviations a value is from the mean\n2. Use the percentages to estimate probabilities\n\n**Z-scores:** z = (x - μ) / σ\n- A z-score tells you how many standard deviations x is from the mean\n- z = 0 means x = μ (average)\n- z = 1 means x is 1σ above the mean\n- z = -2 means x is 2σ below the mean\n\n**Applications:**\n- Test scores, heights, weights, measurement errors\n- Quality control (values beyond 2σ or 3σ may indicate problems)\n- Comparing values from different distributions using z-scores",
+      "lessonId": "probability-rules"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "The heights of adult women in a population are normally distributed with μ = 64 inches and σ = 2.5 inches. (a) What percentage of women are between 59 and 69 inches? (b) What percentage are taller than 69 inches? (c) A woman is 61.5 inches tall. Find her z-score and interpret it.",
-      "explanation": "**(a) Between 59 and 69 inches:**\n59 = 64 - 2(2.5) = μ - 2σ\n69 = 64 + 2(2.5) = μ + 2σ\nThis is within 2 standard deviations: **95%**\n\n**(b) Taller than 69 inches:**\n69 inches is μ + 2σ. By the Empirical Rule, 95% is between μ - 2σ and μ + 2σ.\nThat leaves 5% in the two tails combined.\nBy symmetry, the upper tail has 5%/2 = **2.5%**\n\n**(c) Z-score for 61.5 inches:**\nz = (x - μ) / σ = (61.5 - 64) / 2.5 = -2.5 / 2.5 = **-1**\n\nInterpretation: This woman is exactly 1 standard deviation below the mean height. By the Empirical Rule, about 68% of women are within 1σ of the mean, so about 16% are shorter than her (half of the 32% outside the 68% range, taking just the lower tail).",
-      "initialPrompt": "What percentage of women are shorter than 59 inches (μ - 2σ)? Use the same logic as part (b): find the percentage in the lower tail."
+      "skill": "binomial-probability",
+      "title": "I-Do: Binomial Probability — Worked Examples",
+      "initialPrompt": "What percentage of women are shorter than 59 inches (μ - 2σ)? Use the same logic as part (b): find the percentage in the lower tail.",
+      "examples": [
+        {
+          "problem": "The heights of adult women in a population are normally distributed with μ = 64 inches and σ = 2.5 inches. (a) What percentage of women are between 59 and 69 inches? (b) What percentage are taller than 69 inches? (c) A woman is 61.5 inches tall. Find her z-score and interpret it.",
+          "solution": "**(a) Between 59 and 69 inches:**\n59 = 64 - 2(2.5) = μ - 2σ\n69 = 64 + 2(2.5) = μ + 2σ\nThis is within 2 standard deviations: **95%**\n\n**(b) Taller than 69 inches:**\n69 inches is μ + 2σ. By the Empirical Rule, 95% is between μ - 2σ and μ + 2σ.\nThat leaves 5% in the two tails combined.\nBy symmetry, the upper tail has 5%/2 = **2.5%**\n\n**(c) Z-score for 61.5 inches:**\nz = (x - μ) / σ = (61.5 - 64) / 2.5 = -2.5 / 2.5 = **-1**\n\nInterpretation: This woman is exactly 1 standard deviation below the mean height. By the Empirical Rule, about 68% of women are within 1σ of the mean, so about 16% are shorter than her (half of the 32% outside the 68% range, taking just the lower tail)."
+        }
+      ],
+      "lessonId": "probability-rules"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "data-analysis-normal-distribution",
+      "title": "We-Do: Data Analysis Normal Distribution — Guided Practice",
       "problems": [
         {
           "question": "SAT scores are normally distributed with μ = 1060 and σ = 195. Using the Empirical Rule, between what two scores do the middle 68% of students fall?",
           "answer": "Between 865 and 1255 (1060 ± 195)",
-          "hints": ["68% = within 1σ of the mean.", "Lower: 1060 - 195 = 865. Upper: 1060 + 195 = 1255."]
+          "hints": [
+            "68% = within 1σ of the mean.",
+            "Lower: 1060 - 195 = 865. Upper: 1060 + 195 = 1255."
+          ]
         },
         {
           "question": "Using the same SAT distribution: (a) What percent score above 1450? (b) Find the z-score for a student who scored 1350.",
           "answer": "(a) About 2.5%. (b) z ≈ 1.49.",
-          "hints": ["(a) 1450 = 1060 + 2(195) = μ + 2σ. Above μ + 2σ is about 2.5%.", "(b) z = (1350 - 1060)/195 = 290/195 ≈ 1.49. This student scored about 1.5 standard deviations above the mean."]
+          "hints": [
+            "(a) 1450 = 1060 + 2(195) = μ + 2σ. Above μ + 2σ is about 2.5%.",
+            "(b) z = (1350 - 1060)/195 = 290/195 ≈ 1.49. This student scored about 1.5 standard deviations above the mean."
+          ]
         },
         {
           "question": "Machine parts have mean weight 50g with σ = 0.8g. Parts more than 3σ from the mean are rejected. What weight range is acceptable?",
           "answer": "47.6g to 52.4g (only 0.3% rejected)",
-          "hints": ["3σ = 3(0.8) = 2.4g.", "Acceptable: 50 - 2.4 = 47.6g to 50 + 2.4 = 52.4g.", "By the Empirical Rule, 99.7% of parts are acceptable (0.3% rejected)."]
+          "hints": [
+            "3σ = 3(0.8) = 2.4g.",
+            "Acceptable: 50 - 2.4 = 47.6g to 50 + 2.4 = 52.4g.",
+            "By the Empirical Rule, 99.7% of parts are acceptable (0.3% rejected)."
+          ]
         }
       ],
-      "initialPrompt": "For the SAT scores, the mean is 1060 and one standard deviation is 195. Add and subtract 195 from the mean to find the 68% range."
+      "initialPrompt": "For the SAT scores, the mean is 1060 and one standard deviation is 195. Add and subtract 195 from the mean to find the 68% range.",
+      "lessonId": "normal-distribution"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "skill": "data-analysis-normal-distribution",
+      "title": "You-Do: Data Analysis Normal Distribution — Independent Practice",
       "problems": [
         {
           "question": "A locker combination uses 3 numbers from 0-39 (repetition allowed). How many combinations are possible?",
           "answer": "40³ = 64,000",
-          "hints": ["Each position: 40 choices. FCP: 40 × 40 × 40 = 64,000.", "Note: 'combination' here is actually a misnomer — order matters for locks!"]
+          "hints": [
+            "Each position: 40 choices. FCP: 40 × 40 × 40 = 64,000.",
+            "Note: 'combination' here is actually a misnomer — order matters for locks!"
+          ]
         },
         {
           "question": "From 15 students, a teacher selects 4 for a study group. How many ways?",
           "answer": "C(15, 4) = 1,365",
-          "hints": ["Order doesn't matter (it's a group, not ranked positions).", "C(15,4) = 15!/(4!·11!) = (15 × 14 × 13 × 12)/(4 × 3 × 2 × 1) = 1,365."]
+          "hints": [
+            "Order doesn't matter (it's a group, not ranked positions).",
+            "C(15,4) = 15!/(4!·11!) = (15 × 14 × 13 × 12)/(4 × 3 × 2 × 1) = 1,365."
+          ]
         },
         {
           "question": "Two dice are rolled. Find P(sum is 7 or sum is 11).",
           "answer": "8/36 = 2/9 ≈ 0.222",
-          "hints": ["Sum 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 outcomes.", "Sum 11: (5,6),(6,5) = 2 outcomes. These are mutually exclusive.", "P = (6 + 2)/36 = 8/36 = 2/9."]
+          "hints": [
+            "Sum 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 outcomes.",
+            "Sum 11: (5,6),(6,5) = 2 outcomes. These are mutually exclusive.",
+            "P = (6 + 2)/36 = 8/36 = 2/9."
+          ]
         },
         {
           "question": "A basketball player has a 75% free throw rate. She shoots 6 free throws. Find P(exactly 5 makes).",
           "answer": "C(6,5)(0.75)⁵(0.25)¹ = 6 × 0.2373 × 0.25 ≈ 0.3560",
-          "hints": ["n = 6, k = 5, p = 0.75, q = 0.25.", "C(6,5) = 6. (0.75)⁵ ≈ 0.2373. (0.25)¹ = 0.25.", "P = 6 × 0.2373 × 0.25 ≈ 0.3560."]
+          "hints": [
+            "n = 6, k = 5, p = 0.75, q = 0.25.",
+            "C(6,5) = 6. (0.75)⁵ ≈ 0.2373. (0.25)¹ = 0.25.",
+            "P = 6 × 0.2373 × 0.25 ≈ 0.3560."
+          ]
         },
         {
           "question": "Light bulb lifetimes are normally distributed with μ = 1200 hours and σ = 100 hours. (a) What percent last between 1000 and 1400 hours? (b) What percent last more than 1300 hours? (c) Find the z-score for a bulb that lasted 1050 hours.",
           "answer": "(a) 95%. (b) About 16%. (c) z = -1.5.",
-          "hints": ["(a) 1000 = μ-2σ, 1400 = μ+2σ → 95%.", "(b) 1300 = μ+σ. Above μ+σ: (100%-68%)/2 = 16%.", "(c) z = (1050-1200)/100 = -150/100 = -1.5."]
+          "hints": [
+            "(a) 1000 = μ-2σ, 1400 = μ+2σ → 95%.",
+            "(b) 1300 = μ+σ. Above μ+σ: (100%-68%)/2 = 16%.",
+            "(c) z = (1050-1200)/100 = -150/100 = -1.5."
+          ]
         },
         {
           "question": "A card is drawn from a standard deck. Given that the card is red, what is the probability it's a heart?",
           "answer": "P(heart | red) = P(heart and red)/P(red) = (13/52)/(26/52) = 13/26 = 1/2",
-          "hints": ["All hearts are red, so P(heart and red) = P(heart) = 13/52.", "P(red) = 26/52. P(heart | red) = (13/52)/(26/52) = 1/2.", "Makes sense: half the red cards are hearts, half are diamonds."]
+          "hints": [
+            "All hearts are red, so P(heart and red) = P(heart) = 13/52.",
+            "P(red) = 26/52. P(heart | red) = (13/52)/(26/52) = 1/2.",
+            "Makes sense: half the red cards are hearts, half are diamonds."
+          ]
         }
       ],
-      "attemptsRequired": 4
+      "attemptsRequired": 4,
+      "lessonId": "normal-distribution"
     }
   ],
   "answerKeys": {
@@ -238,6 +433,40 @@
     "bulbs 1000-1400": "95%",
     "bulbs above 1300": "≈ 16%",
     "bulb z-score 1050": "-1.5",
-    "P(heart | red)": "1/2"
-  }
+    "P(heart | red)": "1/2",
+    "5 students Anna&Ben adjacent": "48",
+    "committee 3M 2W from 9M 7W": "1,764",
+    "arrangements MISSISSIPPI": "34,650",
+    "P(Math|Grade11) table": "5/8 = 0.625",
+    "P(Grade10|English) table": "7/17 ≈ 0.412",
+    "Math and Grade11 independent?": "No (0.625 ≠ 0.575)",
+    "P(all red) 3 from 5R 3B no replace": "5/28",
+    "P(at least one 7) 4-digit": "≈ 0.3757",
+    "P(A and B) from union": "0.3 (independent)",
+    "z-score history 82": "1.4",
+    "z-score chemistry 90": "1.25",
+    "who performed relatively better": "Student A (z=1.4 > 1.25)"
+  },
+  "lessons": [
+    {
+      "lessonId": "counting-perm-comb",
+      "title": "Counting Principles, Permutations & Combinations",
+      "order": 1
+    },
+    {
+      "lessonId": "probability-rules",
+      "title": "Probability Rules & Conditional Probability",
+      "order": 2
+    },
+    {
+      "lessonId": "binomial-probability",
+      "title": "Binomial Probability",
+      "order": 3
+    },
+    {
+      "lessonId": "normal-distribution",
+      "title": "Normal Distribution & Z-Scores",
+      "order": 4
+    }
+  ]
 }

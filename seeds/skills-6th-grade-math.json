@@ -318,7 +318,7 @@
     "enables": ["g6-one-two-step-equations", "g6-formulas-area-volume"],
     "standardsAlignment": ["6.EE.A.2c"],
     "teachingGuidance": {
-      "coreConcepts": ["Replace each variable with its value (use parentheses around the substituted value)", "Apply order of operations (PEMDAS/GEMDAS) strictly", "Evaluate expressions with one and two variables", "Check by substituting back if solving"],
+      "coreConcepts": ["Replace each variable with its value (use parentheses around the substituted value)", "Apply order of operations (GEMS) strictly", "Evaluate expressions with one and two variables", "Check by substituting back if solving"],
       "commonMistakes": ["Not using parentheses when substituting (especially negatives)", "Left-to-right errors with multiplication/division or addition/subtraction", "Forgetting that 2x means 2 × x, not 2 next to x"],
       "teachingTips": ["Always write the substitution step: if x=3, write 2(3)+5, not just 11", "Use tables: 'Evaluate 3x + 1 for x = 0, 1, 2, 3, 4' to show patterns", "Connect to function machines: input → rule → output"]
     },
@@ -395,7 +395,7 @@
     "enables": ["g6-variables-both-sides", "g6-word-problem-equations"],
     "standardsAlignment": ["6.EE.B.5", "6.EE.B.7"],
     "teachingGuidance": {
-      "coreConcepts": ["Equation = a balance scale — whatever you do to one side, do to the other", "Inverse operations: addition ↔ subtraction, multiplication ↔ division", "Two-step: undo addition/subtraction first, THEN multiplication/division", "Always check by substituting the answer back"],
+      "coreConcepts": ["Equation = a balance scale — whatever you do to one side, do to the other", "Inverse operations: addition ↔ subtraction, multiplication ↔ division", "Box the variable term: outside the box use opposites, inside the box divide it out", "Always check by substituting the answer back"],
       "commonMistakes": ["Performing the same operation instead of the inverse", "In two-step equations, dividing before subtracting (order matters)", "Forgetting to check the solution"],
       "teachingTips": ["Balance scale model is essential — physical or virtual", "Start with 'guess and check' to build intuition, then formalize with inverse operations", "Cover equations with fractions and decimals, not just whole numbers"]
     },

@@ -24,7 +24,7 @@
     },
     {
       "skillId": "solving-two-step-equations",
-      "reteachFocus": "Using reverse PEMDAS to undo addition/subtraction first, then multiplication/division; handling fractions as division",
+      "reteachFocus": "Box the variable term, think outside the box (deal with constants first), opposites make zero, side by side gotta divide; handling fractions as division",
       "resources": ["equations_inequalities_module.json - scaffold phases 1-2"]
     },
     {

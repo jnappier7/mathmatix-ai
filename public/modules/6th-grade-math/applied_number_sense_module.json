@@ -6,8 +6,21 @@
   "weeks": "31-33",
   "estimatedDuration": 35,
   "description": "Everything connects here. Students tackle mixed problems combining ratios, fractions, and equations. They get a proper introduction to percent as a rate per 100 (connecting to fractions and decimals), practice unit conversions in multi-step contexts, and solve complex real-world tasks that require tables, diagrams, and multi-domain reasoning. This is the bridge to 7th-grade math — proof that students can handle complexity.",
-  "skills": ["g6-mixed-problem-solving", "g6-percent-intro", "g6-unit-conversions", "g6-multi-step-reasoning"],
-  "standardsAlignment": ["6.NS.A.1", "6.RP.A.3", "6.RP.A.3c", "6.RP.A.3d", "6.EE.B.7", "MP.1", "MP.4"],
+  "skills": [
+    "g6-mixed-problem-solving",
+    "g6-percent-intro",
+    "g6-unit-conversions",
+    "g6-multi-step-reasoning"
+  ],
+  "standardsAlignment": [
+    "6.NS.A.1",
+    "6.RP.A.3",
+    "6.RP.A.3c",
+    "6.RP.A.3d",
+    "6.EE.B.7",
+    "MP.1",
+    "MP.4"
+  ],
   "goals": [
     "Solve multi-step problems that combine ratios, fractions, and algebraic reasoning",
     "Understand percent as a rate per 100 and fluently convert between fractions, decimals, and percents",
@@ -16,11 +29,11 @@
     "Tackle complex real-world tasks using tables, diagrams, and multi-domain mathematical reasoning"
   ],
   "instructionalStrategy": [
-    "Gradual release for each skill: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do",
-    "AI uses scaffold array as the definitive scope \u2014 all examples and problems drawn from real-world contexts relatable to 6th graders",
+    "Gradual release for each skill: concept-intro → I Do → We Do → You Do",
+    "AI uses scaffold array as the definitive scope — all examples and problems drawn from real-world contexts relatable to 6th graders",
     "Emphasize cross-domain connections: ratios, fractions, percents, and equations are tools in the same toolbox",
     "Encourage students to organize information using tables, lists, or diagrams before computing",
-    "Final skill deliberately integrates all prior domains \u2014 treat it as proof of readiness for 7th-grade math"
+    "Final skill deliberately integrates all prior domains — treat it as proof of readiness for 7th-grade math"
   ],
   "aiFlexLevel": "moderate",
   "scaffold": [
@@ -31,367 +44,383 @@
       "skill": "g6-mixed-problem-solving",
       "content": "Real-world math rarely uses just one skill at a time. When you plan a party, go shopping, or cook a big meal, you might need ratios AND fractions AND equations all in the same problem. The key is learning to read the whole problem, identify which tools you need, and break it into smaller steps.",
       "keyPoints": [
-        "Read the whole problem first \u2014 identify which math tools you need (ratios, fractions, equations, or a combination)",
-        "Break multi-step problems into smaller parts \u2014 solve one step at a time and label each step clearly",
+        "Read the whole problem first — identify which math tools you need (ratios, fractions, equations, or a combination)",
+        "Break multi-step problems into smaller parts — solve one step at a time and label each step clearly",
         "Look for keywords: 'per' or 'for every' signals a ratio, 'of' often means multiply, 'is' often means equals",
-        "Use your answer from one step as the input for the next step \u2014 chain your work together",
-        "Always check at the end: does your answer make sense in the real-world context? (e.g., you can\u2019t buy half a bag)"
-      ]
+        "Use your answer from one step as the input for the next step — chain your work together",
+        "Always check at the end: does your answer make sense in the real-world context? (e.g., you can’t buy half a bag)"
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Mixed Problem Solving \u2014 Worked Examples",
+      "title": "Mixed Problem Solving — Worked Examples",
       "skill": "g6-mixed-problem-solving",
       "examples": [
         {
           "problem": "Marcus is making trail mix for a camping trip. The recipe calls for 3/4 cup of nuts for every 1/2 cup of chocolate chips. He wants to use 2 cups of chocolate chips. The ratio of raisins to nuts in the recipe is 2:3. How many cups of raisins does he need?",
-          "solution": "Step 1 \u2014 Find the cups of nuts.\nThe recipe ratio is 3/4 cup nuts per 1/2 cup chips.\nMarcus is using 2 cups of chips. That\u2019s 2 \u00f7 1/2 = 4 times the recipe amount.\nNuts needed: 4 \u00d7 3/4 = 3 cups.\n\nStep 2 \u2014 Find the cups of raisins.\nRaisins : nuts = 2 : 3, and he has 3 cups of nuts.\n2/3 = raisins/3 \u2192 raisins = 2 cups.\n\nAnswer: Marcus needs 2 cups of raisins."
+          "solution": "Step 1 — Find the cups of nuts.\nThe recipe ratio is 3/4 cup nuts per 1/2 cup chips.\nMarcus is using 2 cups of chips. That’s 2 ÷ 1/2 = 4 times the recipe amount.\nNuts needed: 4 × 3/4 = 3 cups.\n\nStep 2 — Find the cups of raisins.\nRaisins : nuts = 2 : 3, and he has 3 cups of nuts.\n2/3 = raisins/3 → raisins = 2 cups.\n\nAnswer: Marcus needs 2 cups of raisins."
         },
         {
           "problem": "A store sells notebooks for $2.50 each and pens for $1.50 each. Mia buys twice as many pens as notebooks and spends $27.50 total. How many notebooks did she buy?",
-          "solution": "Step 1 \u2014 Set up the relationship.\nLet n = number of notebooks. Pens = 2n (twice as many).\n\nStep 2 \u2014 Write and solve an equation.\n2.50n + 1.50(2n) = 27.50\n2.50n + 3.00n = 27.50\n5.50n = 27.50\nn = 5\n\nStep 3 \u2014 Check: 5 notebooks = $12.50. 10 pens = $15.00. Total = $27.50. \u2713\n\nAnswer: Mia bought 5 notebooks (and 10 pens)."
+          "solution": "Step 1 — Set up the relationship.\nLet n = number of notebooks. Pens = 2n (twice as many).\n\nStep 2 — Write and solve an equation.\n2.50n + 1.50(2n) = 27.50\n2.50n + 3.00n = 27.50\n5.50n = 27.50\nn = 5\n\nStep 3 — Check: 5 notebooks = $12.50. 10 pens = $15.00. Total = $27.50. ✓\n\nAnswer: Mia bought 5 notebooks (and 10 pens)."
         },
         {
           "problem": "On a road trip, the Garcia family drove 1/3 of the total distance before lunch. After lunch, they drove 125 more miles and still had 1/4 of the trip left. What is the total distance of the trip?",
-          "solution": "Step 1 \u2014 Set up the equation. Let d = total distance.\nBefore lunch: 1/3 d. After lunch: 125 miles. Remaining: 1/4 d.\n1/3 d + 125 + 1/4 d = d\n\nStep 2 \u2014 Combine fractions (LCD = 12).\n4/12 d + 3/12 d + 125 = d\n7/12 d + 125 = d\n\nStep 3 \u2014 Solve.\n125 = d \u2212 7/12 d = 5/12 d\nd = 125 \u00d7 12/5 = 300 miles\n\nCheck: 1/3 \u00d7 300 = 100. 100 + 125 = 225. Remaining: 300 \u2212 225 = 75 = 1/4 \u00d7 300. \u2713\n\nAnswer: The total distance is 300 miles."
+          "solution": "Step 1 — Set up the equation. Let d = total distance.\nBefore lunch: 1/3 d. After lunch: 125 miles. Remaining: 1/4 d.\n1/3 d + 125 + 1/4 d = d\n\nStep 2 — Combine fractions (LCD = 12).\n4/12 d + 3/12 d + 125 = d\n7/12 d + 125 = d\n\nStep 3 — Solve.\n125 = d − 7/12 d = 5/12 d\nd = 125 × 12/5 = 300 miles\n\nCheck: 1/3 × 300 = 100. 100 + 125 = 225. Remaining: 300 − 225 = 75 = 1/4 × 300. ✓\n\nAnswer: The total distance is 300 miles."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Mixed Problem Solving \u2014 Practice Together",
+      "title": "Mixed Problem Solving — Practice Together",
       "skill": "g6-mixed-problem-solving",
       "problems": [
         {
           "id": "ans-1",
-          "prompt": "Jayden earns $8 per hour at a pet store. He works 3/4 of an hour on Monday and 2 1/2 hours on Wednesday. He wants to buy a video game that costs $35 and already has $12 saved. Does he earn enough this week to buy the game? If so, how much money will he have left over?",
+          "question": "Jayden earns $8 per hour at a pet store. He works 3/4 of an hour on Monday and 2 1/2 hours on Wednesday. He wants to buy a video game that costs $35 and already has $12 saved. Does he earn enough this week to buy the game? If so, how much money will he have left over?",
           "hints": [
-            "Find Monday\u2019s earnings: $8 \u00d7 3/4",
-            "Find Wednesday\u2019s earnings: $8 \u00d7 2 1/2",
+            "Find Monday’s earnings: $8 × 3/4",
+            "Find Wednesday’s earnings: $8 × 2 1/2",
             "Add his earnings to his savings, then compare to $35"
           ],
-          "answer": "Yes, with $3 left over. Monday: $8 \u00d7 3/4 = $6. Wednesday: $8 \u00d7 2 1/2 = $20. Total earned: $6 + $20 = $26. Total money: $12 + $26 = $38. Since $38 > $35, he can buy the game. $38 \u2212 $35 = $3 left over."
+          "answer": "Yes, with $3 left over. Monday: $8 × 3/4 = $6. Wednesday: $8 × 2 1/2 = $20. Total earned: $6 + $20 = $26. Total money: $12 + $26 = $38. Since $38 > $35, he can buy the game. $38 − $35 = $3 left over."
         },
         {
           "id": "ans-2",
-          "prompt": "A cookie recipe that makes 12 cookies uses 2/3 cup of sugar. Lina needs to bake 42 cookies for a school bake sale. Sugar comes in bags of 2 cups each. How many bags does she need to buy?",
+          "question": "A cookie recipe that makes 12 cookies uses 2/3 cup of sugar. Lina needs to bake 42 cookies for a school bake sale. Sugar comes in bags of 2 cups each. How many bags does she need to buy?",
           "hints": [
-            "How many batches does she need? 42 \u00f7 12",
+            "How many batches does she need? 42 ÷ 12",
             "Multiply the number of batches by 2/3 cup to get total sugar",
-            "Divide total cups by 2 (cups per bag) and round up \u2014 she can\u2019t buy a partial bag"
+            "Divide total cups by 2 (cups per bag) and round up — she can’t buy a partial bag"
           ],
-          "answer": "2 bags. Batches: 42 \u00f7 12 = 3.5 batches. Sugar: 3.5 \u00d7 2/3 = 7/3 = 2 1/3 cups. Bags: 2 1/3 \u00f7 2 = 7/6 \u2248 1.17 bags. She can\u2019t buy a partial bag, so she needs 2 bags."
+          "answer": "2 bags. Batches: 42 ÷ 12 = 3.5 batches. Sugar: 3.5 × 2/3 = 7/3 = 2 1/3 cups. Bags: 2 1/3 ÷ 2 = 7/6 ≈ 1.17 bags. She can’t buy a partial bag, so she needs 2 bags."
         },
         {
           "id": "ans-3",
-          "prompt": "The school store sells erasers for $0.75 each and pencils for $0.50 each. On Friday, they sold a total of 60 items and earned $37.50. How many erasers and how many pencils did they sell?",
+          "question": "The school store sells erasers for $0.75 each and pencils for $0.50 each. On Friday, they sold a total of 60 items and earned $37.50. How many erasers and how many pencils did they sell?",
           "hints": [
             "Try a guess: if they sold 30 erasers and 30 pencils, what would the total be?",
-            "30 \u00d7 $0.75 + 30 \u00d7 $0.50 = $22.50 + $15.00 = $37.50 \u2014 check if that matches!",
-            "Or use an equation: let e = erasers, then pencils = 60 \u2212 e. Write 0.75e + 0.50(60 \u2212 e) = 37.50"
+            "30 × $0.75 + 30 × $0.50 = $22.50 + $15.00 = $37.50 — check if that matches!",
+            "Or use an equation: let e = erasers, then pencils = 60 − e. Write 0.75e + 0.50(60 − e) = 37.50"
           ],
-          "answer": "30 erasers and 30 pencils. Using the equation: 0.75e + 0.50(60 \u2212 e) = 37.50 \u2192 0.75e + 30 \u2212 0.50e = 37.50 \u2192 0.25e = 7.50 \u2192 e = 30. Pencils: 60 \u2212 30 = 30. Check: 30 \u00d7 $0.75 + 30 \u00d7 $0.50 = $22.50 + $15.00 = $37.50. \u2713"
+          "answer": "30 erasers and 30 pencils. Using the equation: 0.75e + 0.50(60 − e) = 37.50 → 0.75e + 30 − 0.50e = 37.50 → 0.25e = 7.50 → e = 30. Pencils: 60 − 30 = 30. Check: 30 × $0.75 + 30 × $0.50 = $22.50 + $15.00 = $37.50. ✓"
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Mixed Problem Solving \u2014 On Your Own",
+      "title": "Mixed Problem Solving — On Your Own",
       "skill": "g6-mixed-problem-solving",
       "problems": [
         {
           "id": "ans-4",
-          "prompt": "A family is driving 360 miles to the beach. They drive 2/5 of the total distance before stopping for gas. After the gas stop, they drive another 90 miles and then stop for lunch. What fraction of the total trip is left after lunch?",
-          "answer": "7/20 of the trip is left. Before gas: 2/5 \u00d7 360 = 144 miles. After gas stop: 144 + 90 = 234 miles driven. Remaining: 360 \u2212 234 = 126 miles. Fraction left: 126/360 = 7/20."
+          "question": "A family is driving 360 miles to the beach. They drive 2/5 of the total distance before stopping for gas. After the gas stop, they drive another 90 miles and then stop for lunch. What fraction of the total trip is left after lunch?",
+          "answer": "7/20 of the trip is left. Before gas: 2/5 × 360 = 144 miles. After gas stop: 144 + 90 = 234 miles driven. Remaining: 360 − 234 = 126 miles. Fraction left: 126/360 = 7/20."
         },
         {
           "id": "ans-5",
-          "prompt": "Tyler is buying balloons for a birthday party. He needs 3 balloons for every 2 guests. Each bag contains 8 balloons and costs $3.25. If 16 guests are coming, how much will he spend on balloons?",
-          "answer": "$9.75. Balloons needed: (3/2) \u00d7 16 = 24 balloons. Bags needed: 24 \u00f7 8 = 3 bags. Cost: 3 \u00d7 $3.25 = $9.75."
+          "question": "Tyler is buying balloons for a birthday party. He needs 3 balloons for every 2 guests. Each bag contains 8 balloons and costs $3.25. If 16 guests are coming, how much will he spend on balloons?",
+          "answer": "$9.75. Balloons needed: (3/2) × 16 = 24 balloons. Bags needed: 24 ÷ 8 = 3 bags. Cost: 3 × $3.25 = $9.75."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Introduction to Percent",
       "skill": "g6-percent-intro",
-      "content": "Percent means 'per 100.' When you see 45%, it means 45 out of every 100. Percents connect directly to fractions and decimals \u2014 they\u2019re just another way of expressing part of a whole. Once you master the trio (fraction \u2194 decimal \u2194 percent), you can move between them whenever it\u2019s convenient.",
+      "content": "Percent means 'per 100.' When you see 45%, it means 45 out of every 100. Percents connect directly to fractions and decimals — they’re just another way of expressing part of a whole. Once you master the trio (fraction ↔ decimal ↔ percent), you can move between them whenever it’s convenient.",
       "keyPoints": [
-        "Percent means 'per 100' \u2014 45% means 45 out of 100, which is the fraction 45/100",
+        "Percent means 'per 100' — 45% means 45 out of 100, which is the fraction 45/100",
         "The trio: every value can be written as a fraction, a decimal, or a percent (e.g., 3/4 = 0.75 = 75%)",
-        "Percent \u2192 decimal: divide by 100 (move the decimal point two places left). Example: 35% = 0.35",
-        "Decimal \u2192 percent: multiply by 100 (move the decimal point two places right). Example: 0.6 = 60%",
-        "To find a percent of a number: convert the percent to a decimal, then multiply. Example: 30% of 80 = 0.30 \u00d7 80 = 24",
+        "Percent → decimal: divide by 100 (move the decimal point two places left). Example: 35% = 0.35",
+        "Decimal → percent: multiply by 100 (move the decimal point two places right). Example: 0.6 = 60%",
+        "To find a percent of a number: convert the percent to a decimal, then multiply. Example: 30% of 80 = 0.30 × 80 = 24",
         "Benchmark percents to memorize: 10% = 1/10, 25% = 1/4, 50% = 1/2, 75% = 3/4, 100% = the whole thing"
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Introduction to Percent \u2014 Worked Examples",
+      "title": "Introduction to Percent — Worked Examples",
       "skill": "g6-percent-intro",
       "examples": [
         {
           "problem": "Convert 3/5 to a decimal and a percent.",
-          "solution": "Step 1 \u2014 Fraction to decimal: divide the numerator by the denominator.\n3 \u00f7 5 = 0.6\n\nStep 2 \u2014 Decimal to percent: multiply by 100.\n0.6 \u00d7 100 = 60%\n\nAnswer: 3/5 = 0.6 = 60%"
+          "solution": "Step 1 — Fraction to decimal: divide the numerator by the denominator.\n3 ÷ 5 = 0.6\n\nStep 2 — Decimal to percent: multiply by 100.\n0.6 × 100 = 60%\n\nAnswer: 3/5 = 0.6 = 60%"
         },
         {
-          "problem": "A jacket originally costs $80. It\u2019s on sale for 30% off. What is the sale price?",
-          "solution": "Step 1 \u2014 Find the discount amount.\n30% of $80 = 0.30 \u00d7 80 = $24\n\nStep 2 \u2014 Subtract the discount from the original price.\n$80 \u2212 $24 = $56\n\nAnswer: The sale price is $56."
+          "problem": "A jacket originally costs $80. It’s on sale for 30% off. What is the sale price?",
+          "solution": "Step 1 — Find the discount amount.\n30% of $80 = 0.30 × 80 = $24\n\nStep 2 — Subtract the discount from the original price.\n$80 − $24 = $56\n\nAnswer: The sale price is $56."
         },
         {
           "problem": "There are 200 students in the 6th grade. 45% signed up for the school dance. How many students signed up?",
-          "solution": "Convert and multiply.\n45% of 200 = 0.45 \u00d7 200 = 90\n\nShortcut using benchmarks: 50% of 200 = 100. 5% of 200 = 10. So 45% = 100 \u2212 10 = 90. \u2713\n\nAnswer: 90 students signed up."
+          "solution": "Convert and multiply.\n45% of 200 = 0.45 × 200 = 90\n\nShortcut using benchmarks: 50% of 200 = 100. 5% of 200 = 10. So 45% = 100 − 10 = 90. ✓\n\nAnswer: 90 students signed up."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Introduction to Percent \u2014 Practice Together",
+      "title": "Introduction to Percent — Practice Together",
       "skill": "g6-percent-intro",
       "problems": [
         {
           "id": "ans-6",
-          "prompt": "Write 7/8 as a percent.",
+          "question": "Write 7/8 as a percent.",
           "hints": [
             "First convert to a decimal: divide 7 by 8",
-            "7 \u00f7 8 = 0.875",
+            "7 ÷ 8 = 0.875",
             "Now multiply by 100 to get the percent"
           ],
-          "answer": "87.5%. Divide: 7 \u00f7 8 = 0.875. Multiply by 100: 0.875 \u00d7 100 = 87.5%."
+          "answer": "87.5%. Divide: 7 ÷ 8 = 0.875. Multiply by 100: 0.875 × 100 = 87.5%."
         },
         {
           "id": "ans-7",
-          "prompt": "A phone store has 120 phones in stock. 25% are on display in the showroom and the rest are in the stockroom. How many phones are in the stockroom?",
+          "question": "A phone store has 120 phones in stock. 25% are on display in the showroom and the rest are in the stockroom. How many phones are in the stockroom?",
           "hints": [
-            "Find 25% of 120 (that\u2019s the phones on display)",
-            "25% = 1/4, so 1/4 \u00d7 120 = ?",
+            "Find 25% of 120 (that’s the phones on display)",
+            "25% = 1/4, so 1/4 × 120 = ?",
             "Subtract the display phones from 120 to get the stockroom count"
           ],
-          "answer": "90 phones. On display: 25% of 120 = 0.25 \u00d7 120 = 30. In stockroom: 120 \u2212 30 = 90."
+          "answer": "90 phones. On display: 25% of 120 = 0.25 × 120 = 30. In stockroom: 120 − 30 = 90."
         },
         {
           "id": "ans-8",
-          "prompt": "During a basketball game, Priya made 12 out of 16 free throws. What percent of her free throws did she make?",
+          "question": "During a basketball game, Priya made 12 out of 16 free throws. What percent of her free throws did she make?",
           "hints": [
             "Write it as a fraction first: 12/16",
             "Simplify: 12/16 = 3/4",
             "Convert 3/4 to a percent"
           ],
-          "answer": "75%. As a fraction: 12/16 = 3/4. As a decimal: 3 \u00f7 4 = 0.75. As a percent: 0.75 \u00d7 100 = 75%."
+          "answer": "75%. As a fraction: 12/16 = 3/4. As a decimal: 3 ÷ 4 = 0.75. As a percent: 0.75 × 100 = 75%."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Introduction to Percent \u2014 On Your Own",
+      "title": "Introduction to Percent — On Your Own",
       "skill": "g6-percent-intro",
       "problems": [
         {
           "id": "ans-9",
-          "prompt": "A pizza shop sold 240 slices on Saturday. 40% were pepperoni, 35% were cheese, and the rest were veggie. How many veggie slices were sold?",
-          "answer": "60 veggie slices. Veggie percent: 100% \u2212 40% \u2212 35% = 25%. Veggie slices: 25% of 240 = 0.25 \u00d7 240 = 60."
+          "question": "A pizza shop sold 240 slices on Saturday. 40% were pepperoni, 35% were cheese, and the rest were veggie. How many veggie slices were sold?",
+          "answer": "60 veggie slices. Veggie percent: 100% − 40% − 35% = 25%. Veggie slices: 25% of 240 = 0.25 × 240 = 60."
         },
         {
           "id": "ans-10",
-          "prompt": "Emma scored 85% on a math test that had 40 questions. How many questions did she answer correctly?",
-          "answer": "34 questions. 85% of 40 = 0.85 \u00d7 40 = 34."
+          "question": "Emma scored 85% on a math test that had 40 questions. How many questions did she answer correctly?",
+          "answer": "34 questions. 85% of 40 = 0.85 × 40 = 34."
         },
         {
           "id": "ans-11",
-          "prompt": "Complete each conversion:\n(a) Write 0.375 as a fraction and a percent.\n(b) Write 2/5 as a decimal and a percent.\n(c) Write 150% as a decimal and a fraction.",
+          "question": "Complete each conversion:\n(a) Write 0.375 as a fraction and a percent.\n(b) Write 2/5 as a decimal and a percent.\n(c) Write 150% as a decimal and a fraction.",
           "answer": "(a) 0.375 = 375/1000 = 3/8 = 37.5%. (b) 2/5 = 0.4 = 40%. (c) 150% = 1.5 = 3/2 (or 1 1/2)."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Unit Conversions",
       "skill": "g6-unit-conversions",
-      "content": "Converting between units is really just ratio reasoning in disguise. A conversion factor is a fraction equal to 1 (like 12 in / 1 ft). Multiply by it and the old units cancel, leaving the new units behind. For multi-step conversions, chain conversion factors together \u2014 go through an intermediate unit when you don\u2019t have a direct conversion.",
+      "content": "Converting between units is really just ratio reasoning in disguise. A conversion factor is a fraction equal to 1 (like 12 in / 1 ft). Multiply by it and the old units cancel, leaving the new units behind. For multi-step conversions, chain conversion factors together — go through an intermediate unit when you don’t have a direct conversion.",
       "keyPoints": [
         "Customary length: 12 inches = 1 foot, 3 feet = 1 yard, 5,280 feet = 1 mile",
         "Customary capacity: 8 fluid oz = 1 cup, 2 cups = 1 pint, 2 pints = 1 quart, 4 quarts = 1 gallon (so 1 gallon = 16 cups)",
         "Customary weight: 16 ounces = 1 pound",
-        "Metric system: kilo- means \u00d71,000, centi- means \u00f7100, milli- means \u00f71,000 \u2014 just move the decimal point",
-        "Set up conversion factors as fractions and cancel units like you cancel numbers: (4 yards) \u00d7 (3 ft / 1 yd) = 12 ft",
-        "Multi-step conversions: chain factors together through an intermediate unit (e.g., gallons \u2192 quarts \u2192 pints \u2192 cups)"
-      ]
+        "Metric system: kilo- means ×1,000, centi- means ÷100, milli- means ÷1,000 — just move the decimal point",
+        "Set up conversion factors as fractions and cancel units like you cancel numbers: (4 yards) × (3 ft / 1 yd) = 12 ft",
+        "Multi-step conversions: chain factors together through an intermediate unit (e.g., gallons → quarts → pints → cups)"
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Unit Conversions \u2014 Worked Examples",
+      "title": "Unit Conversions — Worked Examples",
       "skill": "g6-unit-conversions",
       "examples": [
         {
           "problem": "A fish tank holds 5 gallons of water. How many cups is that?",
-          "solution": "Chain the conversion factors:\n5 gallons \u00d7 (4 quarts / 1 gallon) = 20 quarts\n20 quarts \u00d7 (2 pints / 1 quart) = 40 pints\n40 pints \u00d7 (2 cups / 1 pint) = 80 cups\n\nShortcut: 1 gallon = 16 cups, so 5 \u00d7 16 = 80 cups.\n\nAnswer: 80 cups."
+          "solution": "Chain the conversion factors:\n5 gallons × (4 quarts / 1 gallon) = 20 quarts\n20 quarts × (2 pints / 1 quart) = 40 pints\n40 pints × (2 cups / 1 pint) = 80 cups\n\nShortcut: 1 gallon = 16 cups, so 5 × 16 = 80 cups.\n\nAnswer: 80 cups."
         },
         {
           "problem": "A ribbon is 4 yards long. You need to cut pieces that are each 8 inches. How many pieces can you cut?",
-          "solution": "Step 1 \u2014 Convert yards to inches (two-step).\n4 yards \u00d7 3 feet/yard = 12 feet\n12 feet \u00d7 12 inches/foot = 144 inches\n\nStep 2 \u2014 Divide by the length of each piece.\n144 \u00f7 8 = 18 pieces\n\nAnswer: You can cut 18 pieces."
+          "solution": "Step 1 — Convert yards to inches (two-step).\n4 yards × 3 feet/yard = 12 feet\n12 feet × 12 inches/foot = 144 inches\n\nStep 2 — Divide by the length of each piece.\n144 ÷ 8 = 18 pieces\n\nAnswer: You can cut 18 pieces."
         },
         {
           "problem": "A bottle holds 1.5 liters of juice. How many 250-milliliter glasses can you fill?",
-          "solution": "Step 1 \u2014 Convert liters to milliliters.\n1.5 L \u00d7 1,000 mL/L = 1,500 mL\n\nStep 2 \u2014 Divide by the glass size.\n1,500 \u00f7 250 = 6 glasses\n\nAnswer: You can fill 6 glasses."
+          "solution": "Step 1 — Convert liters to milliliters.\n1.5 L × 1,000 mL/L = 1,500 mL\n\nStep 2 — Divide by the glass size.\n1,500 ÷ 250 = 6 glasses\n\nAnswer: You can fill 6 glasses."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Unit Conversions \u2014 Practice Together",
+      "title": "Unit Conversions — Practice Together",
       "skill": "g6-unit-conversions",
       "problems": [
         {
           "id": "ans-12",
-          "prompt": "You\u2019re setting up a relay race that\u2019s 2 miles long. Each leg of the relay is 880 yards. How many legs are in the race? (1 mile = 5,280 feet, 1 yard = 3 feet)",
+          "question": "You’re setting up a relay race that’s 2 miles long. Each leg of the relay is 880 yards. How many legs are in the race? (1 mile = 5,280 feet, 1 yard = 3 feet)",
           "hints": [
-            "Convert miles to feet first: 2 \u00d7 5,280",
+            "Convert miles to feet first: 2 × 5,280",
             "Then convert feet to yards: divide by 3",
             "Finally divide total yards by 880 to find the number of legs"
           ],
-          "answer": "4 legs. Convert: 2 miles \u00d7 5,280 ft/mi = 10,560 feet. 10,560 ft \u00f7 3 ft/yd = 3,520 yards. Legs: 3,520 \u00f7 880 = 4."
+          "answer": "4 legs. Convert: 2 miles × 5,280 ft/mi = 10,560 feet. 10,560 ft ÷ 3 ft/yd = 3,520 yards. Legs: 3,520 ÷ 880 = 4."
         },
         {
           "id": "ans-13",
-          "prompt": "A water cooler at school holds 18.9 liters. How many 300 mL water bottles can you fill from it?",
+          "question": "A water cooler at school holds 18.9 liters. How many 300 mL water bottles can you fill from it?",
           "hints": [
-            "Convert liters to milliliters: 18.9 \u00d7 1,000",
+            "Convert liters to milliliters: 18.9 × 1,000",
             "Divide the total mL by 300"
           ],
-          "answer": "63 bottles. Convert: 18.9 L \u00d7 1,000 = 18,900 mL. Bottles: 18,900 \u00f7 300 = 63."
+          "answer": "63 bottles. Convert: 18.9 L × 1,000 = 18,900 mL. Bottles: 18,900 ÷ 300 = 63."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Unit Conversions \u2014 On Your Own",
+      "title": "Unit Conversions — On Your Own",
       "skill": "g6-unit-conversions",
       "problems": [
         {
           "id": "ans-14",
-          "prompt": "A recipe makes 3 quarts of soup. You want to serve it in bowls that hold 1.5 cups each. How many full bowls can you fill? (1 quart = 2 pints, 1 pint = 2 cups)",
-          "answer": "8 bowls. Convert: 3 quarts \u00d7 2 = 6 pints. 6 pints \u00d7 2 = 12 cups. Bowls: 12 \u00f7 1.5 = 8."
+          "question": "A recipe makes 3 quarts of soup. You want to serve it in bowls that hold 1.5 cups each. How many full bowls can you fill? (1 quart = 2 pints, 1 pint = 2 cups)",
+          "answer": "8 bowls. Convert: 3 quarts × 2 = 6 pints. 6 pints × 2 = 12 cups. Bowls: 12 ÷ 1.5 = 8."
         },
         {
           "id": "ans-15",
-          "prompt": "A hiking trail is 6.4 kilometers long. Aliya has already walked 2,800 meters. How many more meters does she need to walk to finish the trail?",
-          "answer": "3,600 meters. Convert: 6.4 km \u00d7 1,000 = 6,400 m. Remaining: 6,400 \u2212 2,800 = 3,600 m."
+          "question": "A hiking trail is 6.4 kilometers long. Aliya has already walked 2,800 meters. How many more meters does she need to walk to finish the trail?",
+          "answer": "3,600 meters. Convert: 6.4 km × 1,000 = 6,400 m. Remaining: 6,400 − 2,800 = 3,600 m."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Multi-Step Reasoning with Tables and Diagrams",
       "skill": "g6-multi-step-reasoning",
-      "content": "The hardest real-world problems don\u2019t tell you which operation to use \u2014 they give you a situation and you have to figure it out. These problems often come with tables, price lists, or descriptions full of data. Your job is to organize the information, decide which math tools to use, solve step by step, and explain why your answer makes sense.",
+      "content": "The hardest real-world problems don’t tell you which operation to use — they give you a situation and you have to figure it out. These problems often come with tables, price lists, or descriptions full of data. Your job is to organize the information, decide which math tools to use, solve step by step, and explain why your answer makes sense.",
       "keyPoints": [
         "Start by organizing: pull data into a table or list before you calculate anything",
-        "Identify which math domains you need \u2014 ratios, fractions, decimals, percents, equations, or a combination",
+        "Identify which math domains you need — ratios, fractions, decimals, percents, equations, or a combination",
         "Show your work step by step and label each step so you (and others) can follow your reasoning",
-        "Watch for hidden steps: rounding up for whole items (you can\u2019t order half a bus), leftover amounts, or multi-part questions",
-        "Always justify your final answer in context \u2014 explain WHY it makes sense, not just what the number is"
-      ]
+        "Watch for hidden steps: rounding up for whole items (you can’t order half a bus), leftover amounts, or multi-part questions",
+        "Always justify your final answer in context — explain WHY it makes sense, not just what the number is"
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Multi-Step Reasoning \u2014 Worked Examples",
+      "title": "Multi-Step Reasoning — Worked Examples",
       "skill": "g6-multi-step-reasoning",
       "examples": [
         {
           "problem": "Carlos has $20 to spend at the school supply store.\n\nItem       | Price\nNotebook   | $3.25\nPen pack   | $2.50\nFolder     | $1.75\n\nHe buys 3 notebooks and 2 pen packs. How many folders can he buy with the remaining money?",
-          "solution": "Step 1 \u2014 Calculate what he\u2019s already spending.\nNotebooks: 3 \u00d7 $3.25 = $9.75\nPen packs: 2 \u00d7 $2.50 = $5.00\nTotal spent so far: $9.75 + $5.00 = $14.75\n\nStep 2 \u2014 Find remaining money.\n$20.00 \u2212 $14.75 = $5.25\n\nStep 3 \u2014 Divide by folder price.\n$5.25 \u00f7 $1.75 = 3\n\nAnswer: Carlos can buy 3 folders (spending exactly his remaining $5.25)."
+          "solution": "Step 1 — Calculate what he’s already spending.\nNotebooks: 3 × $3.25 = $9.75\nPen packs: 2 × $2.50 = $5.00\nTotal spent so far: $9.75 + $5.00 = $14.75\n\nStep 2 — Find remaining money.\n$20.00 − $14.75 = $5.25\n\nStep 3 — Divide by folder price.\n$5.25 ÷ $1.75 = 3\n\nAnswer: Carlos can buy 3 folders (spending exactly his remaining $5.25)."
         },
         {
           "problem": "A school is planning a field trip for 156 students. Each bus seats 48 passengers. The school requires 1 adult chaperone for every 12 students. Chaperones ride the buses too. How many buses does the school need?",
-          "solution": "Step 1 \u2014 Find the number of chaperones.\n156 \u00f7 12 = 13 chaperones\n\nStep 2 \u2014 Find the total number of passengers.\n156 students + 13 chaperones = 169 people\n\nStep 3 \u2014 Find the number of buses.\n169 \u00f7 48 = 3.52...\n\nStep 4 \u2014 Round up (you can\u2019t use half a bus!).\n4 buses\n\nAnswer: The school needs 4 buses. (The 4th bus will have extra empty seats, but 3 buses would only hold 144 people.)"
+          "solution": "Step 1 — Find the number of chaperones.\n156 ÷ 12 = 13 chaperones\n\nStep 2 — Find the total number of passengers.\n156 students + 13 chaperones = 169 people\n\nStep 3 — Find the number of buses.\n169 ÷ 48 = 3.52...\n\nStep 4 — Round up (you can’t use half a bus!).\n4 buses\n\nAnswer: The school needs 4 buses. (The 4th bus will have extra empty seats, but 3 buses would only hold 144 people.)"
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Multi-Step Reasoning \u2014 Practice Together",
+      "title": "Multi-Step Reasoning — Practice Together",
       "skill": "g6-multi-step-reasoning",
       "problems": [
         {
           "id": "ans-16",
-          "prompt": "The Lopez family is planning a cookout for 8 adults and 12 children. Each adult eats 3 hot dogs and each child eats 2 hot dogs. Hot dogs come in packs of 10 ($4.50 per pack). Buns come in packs of 8 ($2.75 per pack). They need one bun per hot dog. How many packs of each do they need, and what is the total cost?",
+          "question": "The Lopez family is planning a cookout for 8 adults and 12 children. Each adult eats 3 hot dogs and each child eats 2 hot dogs. Hot dogs come in packs of 10 ($4.50 per pack). Buns come in packs of 8 ($2.75 per pack). They need one bun per hot dog. How many packs of each do they need, and what is the total cost?",
           "hints": [
-            "Total hot dogs: (8 \u00d7 3) + (12 \u00d7 2) = ?",
+            "Total hot dogs: (8 × 3) + (12 × 2) = ?",
             "Divide hot dogs by 10 to find packs (round up). Divide buns needed by 8 to find packs (round up).",
             "Multiply each pack count by its price and add"
           ],
-          "answer": "5 packs of hot dogs and 6 packs of buns for $39.00 total. Hot dogs needed: (8 \u00d7 3) + (12 \u00d7 2) = 24 + 24 = 48. Hot dog packs: 48 \u00f7 10 = 4.8 \u2192 5 packs. Buns needed: 48. Bun packs: 48 \u00f7 8 = 6 packs. Cost: (5 \u00d7 $4.50) + (6 \u00d7 $2.75) = $22.50 + $16.50 = $39.00."
+          "answer": "5 packs of hot dogs and 6 packs of buns for $39.00 total. Hot dogs needed: (8 × 3) + (12 × 2) = 24 + 24 = 48. Hot dog packs: 48 ÷ 10 = 4.8 → 5 packs. Buns needed: 48. Bun packs: 48 ÷ 8 = 6 packs. Cost: (5 × $4.50) + (6 × $2.75) = $22.50 + $16.50 = $39.00."
         },
         {
           "id": "ans-17",
-          "prompt": "Three friends are splitting the cost of a gift that costs $54. Aiden pays 1/3 of the total. Bella pays 50% of what\u2019s left. Carlos pays the rest. How much does each person pay?",
+          "question": "Three friends are splitting the cost of a gift that costs $54. Aiden pays 1/3 of the total. Bella pays 50% of what’s left. Carlos pays the rest. How much does each person pay?",
           "hints": [
-            "Aiden: 1/3 \u00d7 $54 = ?",
-            "What\u2019s left after Aiden? Then find 50% of that amount for Bella.",
+            "Aiden: 1/3 × $54 = ?",
+            "What’s left after Aiden? Then find 50% of that amount for Bella.",
             "Carlos pays whatever remains"
           ],
-          "answer": "Each person pays $18. Aiden: 1/3 \u00d7 $54 = $18. Remaining: $54 \u2212 $18 = $36. Bella: 50% of $36 = $18. Carlos: $36 \u2212 $18 = $18."
+          "answer": "Each person pays $18. Aiden: 1/3 × $54 = $18. Remaining: $54 − $18 = $36. Bella: 50% of $36 = $18. Carlos: $36 − $18 = $18."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Multi-Step Reasoning \u2014 On Your Own",
+      "title": "Multi-Step Reasoning — On Your Own",
       "skill": "g6-multi-step-reasoning",
       "problems": [
         {
           "id": "ans-18",
-          "prompt": "A school is planning a dance. Here are the costs:\n\nExpense      | Cost\nDJ           | $150 (flat fee)\nDecorations  | $85\nSnacks       | $1.25 per student\nDrinks       | $0.75 per student\n\nTickets cost $5 each. If 80 students attend, will the ticket sales cover all the expenses? How much money is left over or still needed?",
-          "answer": "Yes, with $5 left over. Revenue: 80 \u00d7 $5 = $400. Expenses: $150 + $85 + (80 \u00d7 $1.25) + (80 \u00d7 $0.75) = $150 + $85 + $100 + $60 = $395. Left over: $400 \u2212 $395 = $5."
+          "question": "A school is planning a dance. Here are the costs:\n\nExpense      | Cost\nDJ           | $150 (flat fee)\nDecorations  | $85\nSnacks       | $1.25 per student\nDrinks       | $0.75 per student\n\nTickets cost $5 each. If 80 students attend, will the ticket sales cover all the expenses? How much money is left over or still needed?",
+          "answer": "Yes, with $5 left over. Revenue: 80 × $5 = $400. Expenses: $150 + $85 + (80 × $1.25) + (80 × $0.75) = $150 + $85 + $100 + $60 = $395. Left over: $400 − $395 = $5."
         },
         {
           "id": "ans-19",
-          "prompt": "Mia is training for a 5K race (5 kilometers). Her training plan:\n\u2022 Week 1: Run 1/4 of the race distance each day, 4 days per week\n\u2022 Week 2: Run 2/5 of the race distance each day, 3 days per week\n\u2022 Week 3: Run 3/4 of the race distance each day, 3 days per week\n\nHow many total kilometers will Mia run during her 3-week training plan?",
-          "answer": "22.25 km. Week 1: 1/4 \u00d7 5 = 1.25 km/day \u00d7 4 days = 5 km. Week 2: 2/5 \u00d7 5 = 2 km/day \u00d7 3 days = 6 km. Week 3: 3/4 \u00d7 5 = 3.75 km/day \u00d7 3 days = 11.25 km. Total: 5 + 6 + 11.25 = 22.25 km."
+          "question": "Mia is training for a 5K race (5 kilometers). Her training plan:\n• Week 1: Run 1/4 of the race distance each day, 4 days per week\n• Week 2: Run 2/5 of the race distance each day, 3 days per week\n• Week 3: Run 3/4 of the race distance each day, 3 days per week\n\nHow many total kilometers will Mia run during her 3-week training plan?",
+          "answer": "22.25 km. Week 1: 1/4 × 5 = 1.25 km/day × 4 days = 5 km. Week 2: 2/5 × 5 = 2 km/day × 3 days = 6 km. Week 3: 3/4 × 5 = 3.75 km/day × 3 days = 11.25 km. Total: 5 + 6 + 11.25 = 22.25 km."
         },
         {
           "id": "ans-20",
-          "prompt": "A family is driving 480 miles for vacation. Their car gets 32 miles per gallon and gas costs $3.60 per gallon. They also budget $45 for food and $120 for a hotel. If they split all costs equally among 4 family members, how much does each person pay?",
-          "answer": "$54.75 per person. Gas needed: 480 \u00f7 32 = 15 gallons. Gas cost: 15 \u00d7 $3.60 = $54. Total trip cost: $54 + $45 + $120 = $219. Per person: $219 \u00f7 4 = $54.75."
+          "question": "A family is driving 480 miles for vacation. Their car gets 32 miles per gallon and gas costs $3.60 per gallon. They also budget $45 for food and $120 for a hotel. If they split all costs equally among 4 family members, how much does each person pay?",
+          "answer": "$54.75 per person. Gas needed: 480 ÷ 32 = 15 gallons. Gas cost: 15 × $3.60 = $54. Total trip cost: $54 + $45 + $120 = $219. Per person: $219 ÷ 4 = $54.75."
         }
-      ]
+      ],
+      "lessonId": "applied_number_sense"
     }
   ],
   "answerKeys": {
     "ans-1": "Yes, $3 left over. Monday: $6, Wednesday: $20, total earned: $26, total money: $38, leftover: $38 - $35 = $3.",
-    "ans-2": "2 bags. 3.5 batches \u00d7 2/3 cup = 7/3 = 2 1/3 cups of sugar. 2 1/3 \u00f7 2 cups/bag = 1.17 bags \u2192 round up to 2.",
+    "ans-2": "2 bags. 3.5 batches × 2/3 cup = 7/3 = 2 1/3 cups of sugar. 2 1/3 ÷ 2 cups/bag = 1.17 bags → round up to 2.",
     "ans-3": "30 erasers and 30 pencils. 0.25e = 7.50, e = 30, p = 30.",
     "ans-4": "7/20 of the trip. Driven: 144 + 90 = 234 miles. Remaining: 126/360 = 7/20.",
-    "ans-5": "$9.75. 24 balloons \u00f7 8/bag = 3 bags \u00d7 $3.25 = $9.75.",
-    "ans-6": "87.5%. 7 \u00f7 8 = 0.875 = 87.5%.",
+    "ans-5": "$9.75. 24 balloons ÷ 8/bag = 3 bags × $3.25 = $9.75.",
+    "ans-6": "87.5%. 7 ÷ 8 = 0.875 = 87.5%.",
     "ans-7": "90 phones. 25% of 120 = 30 on display. 120 - 30 = 90 in stockroom.",
     "ans-8": "75%. 12/16 = 3/4 = 0.75 = 75%.",
     "ans-9": "60 veggie slices. 100% - 40% - 35% = 25%. 25% of 240 = 60.",
-    "ans-10": "34 questions. 85% of 40 = 0.85 \u00d7 40 = 34.",
+    "ans-10": "34 questions. 85% of 40 = 0.85 × 40 = 34.",
     "ans-11": "(a) 3/8, 37.5%. (b) 0.4, 40%. (c) 1.5, 3/2.",
-    "ans-12": "4 legs. 2 mi = 10,560 ft = 3,520 yd. 3,520 \u00f7 880 = 4.",
-    "ans-13": "63 bottles. 18,900 mL \u00f7 300 mL = 63.",
-    "ans-14": "8 bowls. 3 quarts = 12 cups. 12 \u00f7 1.5 = 8.",
+    "ans-12": "4 legs. 2 mi = 10,560 ft = 3,520 yd. 3,520 ÷ 880 = 4.",
+    "ans-13": "63 bottles. 18,900 mL ÷ 300 mL = 63.",
+    "ans-14": "8 bowls. 3 quarts = 12 cups. 12 ÷ 1.5 = 8.",
     "ans-15": "3,600 meters. 6,400 m - 2,800 m = 3,600 m.",
     "ans-16": "5 hot dog packs, 6 bun packs, $39.00 total.",
     "ans-17": "Aiden: $18, Bella: $18, Carlos: $18.",
     "ans-18": "Yes, $5 left over. Revenue $400, expenses $395.",
     "ans-19": "22.25 km total (5 + 6 + 11.25).",
-    "ans-20": "$54.75 per person. Total cost $219 \u00f7 4 = $54.75."
+    "ans-20": "$54.75 per person. Total cost $219 ÷ 4 = $54.75."
   }
 }

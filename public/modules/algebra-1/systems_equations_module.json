@@ -7,8 +7,17 @@
   "weeks": "9-11",
   "estimatedDuration": 45,
   "description": "Solve systems of two linear equations in two variables using graphing, substitution, and elimination methods. Interpret solutions graphically as intersection points, classify systems as consistent/inconsistent and dependent/independent, solve real-world problems by setting up and solving systems, and extend understanding to systems of linear inequalities.",
-  "skills": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems"],
-  "standardsAlignment": ["A-REI.6", "A-REI.11", "A-REI.12"],
+  "skills": [
+    "systems-of-equations-graphing",
+    "systems-of-equations-substitution",
+    "systems-of-equations-elimination",
+    "systems-word-problems"
+  ],
+  "standardsAlignment": [
+    "A-REI.6",
+    "A-REI.11",
+    "A-REI.12"
+  ],
   "goals": [
     "Solve systems of linear equations by graphing and identify the solution as the point of intersection",
     "Solve systems of linear equations using the substitution method, including cases requiring rearrangement",
@@ -30,8 +39,9 @@
       "lessonPhase": "concept-intro",
       "skill": "systems-of-equations-graphing",
       "title": "What Is a System of Equations?",
-      "text": "A **system of equations** is a set of two (or more) equations with the same variables. For a system of two linear equations in two unknowns, we are looking for values of x and y that make BOTH equations true at the same time.\n\n**Graphically:** Each linear equation is a line. The **solution** to the system is the point where the two lines **intersect**—the one (x, y) pair that lies on both lines.\n\n**Three possible outcomes:**\n- **One solution:** The lines intersect at exactly one point (most common). The system is *consistent and independent*.\n- **No solution:** The lines are parallel—they never intersect. The system is *inconsistent*. You will get a false statement like 0 = 5.\n- **Infinitely many solutions:** The lines are the same line (they overlap completely). The system is *consistent and dependent*. You will get a true statement like 0 = 0.\n\nTo solve by graphing: graph both equations on the same coordinate plane, then read the intersection point. Always verify by substituting back into BOTH equations.",
-      "initialPrompt": "If two lines have the same slope but different y-intercepts, how many times will they intersect? What does that tell us about the system?"
+      "content": "A **system of equations** is a set of two (or more) equations with the same variables. For a system of two linear equations in two unknowns, we are looking for values of x and y that make BOTH equations true at the same time.\n\n**Graphically:** Each linear equation is a line. The **solution** to the system is the point where the two lines **intersect**—the one (x, y) pair that lies on both lines.\n\n**Three possible outcomes:**\n- **One solution:** The lines intersect at exactly one point (most common). The system is *consistent and independent*.\n- **No solution:** The lines are parallel—they never intersect. The system is *inconsistent*. You will get a false statement like 0 = 5.\n- **Infinitely many solutions:** The lines are the same line (they overlap completely). The system is *consistent and dependent*. You will get a true statement like 0 = 0.\n\nTo solve by graphing: graph both equations on the same coordinate plane, then read the intersection point. Always verify by substituting back into BOTH equations.",
+      "initialPrompt": "If two lines have the same slope but different y-intercepts, how many times will they intersect? What does that tell us about the system?",
+      "lessonId": "systems-intro"
     },
     {
       "type": "model",
@@ -52,15 +62,17 @@
           "solution": "**Step 1: Solve one equation for one variable.**\nThe second equation is easiest to rearrange:\nx - y = 2 → x = y + 2\n\n**Step 2: Substitute into the other equation.**\nReplace x in the first equation with (y + 2):\n3(y + 2) + 2y = 16\n3y + 6 + 2y = 16\n5y + 6 = 16\n5y = 10\ny = 2\n\n**Step 3: Back-substitute to find x.**\nx = y + 2 = 2 + 2 = 4\n\n**Step 4: Verify in BOTH original equations.**\nEquation 1: 3(4) + 2(2) = 12 + 4 = 16 ✓\nEquation 2: 4 - 2 = 2 ✓\n\n**Solution: (4, 2)**\n\nKey insight: choose the equation and variable that will be simplest to isolate—look for a coefficient of 1 or -1."
         }
       ],
-      "initialPrompt": "In the third example, why did we choose to solve the second equation for x instead of solving the first equation for x or y?"
+      "initialPrompt": "In the third example, why did we choose to solve the second equation for x instead of solving the first equation for x or y?",
+      "lessonId": "systems-intro"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "systems-of-equations-elimination",
       "title": "The Elimination Method",
-      "text": "The **elimination method** (also called the addition method) works by adding or subtracting the two equations to eliminate one variable.\n\n**Core idea:** If one variable has the same coefficient (or opposite coefficients) in both equations, you can add or subtract the equations to cancel that variable out.\n\n**Steps:**\n1. **Align** both equations in standard form (Ax + By = C)\n2. **Look** for a variable with the same or opposite coefficients\n3. **Add** equations (if coefficients are opposites) or **subtract** (if coefficients are the same) to eliminate one variable\n4. **Solve** the resulting one-variable equation\n5. **Back-substitute** to find the other variable\n6. **Verify** in both original equations\n\n**If coefficients don't match:** Multiply one or both equations by constants to CREATE matching or opposite coefficients before adding/subtracting.\n\n**Special cases:**\n- If both variables cancel and you get a **false statement** (like 0 = 5) → **no solution** (parallel lines)\n- If both variables cancel and you get a **true statement** (like 0 = 0) → **infinitely many solutions** (same line)",
-      "initialPrompt": "Why does adding two true equations together always give another true equation? Think about what = means."
+      "content": "The **elimination method** (also called the addition method) works by adding or subtracting the two equations to eliminate one variable.\n\n**Core idea:** If one variable has the same coefficient (or opposite coefficients) in both equations, you can add or subtract the equations to cancel that variable out.\n\n**Steps:**\n1. **Align** both equations in standard form (Ax + By = C)\n2. **Look** for a variable with the same or opposite coefficients\n3. **Add** equations (if coefficients are opposites) or **subtract** (if coefficients are the same) to eliminate one variable\n4. **Solve** the resulting one-variable equation\n5. **Back-substitute** to find the other variable\n6. **Verify** in both original equations\n\n**If coefficients don't match:** Multiply one or both equations by constants to CREATE matching or opposite coefficients before adding/subtracting.\n\n**Special cases:**\n- If both variables cancel and you get a **false statement** (like 0 = 5) → **no solution** (parallel lines)\n- If both variables cancel and you get a **true statement** (like 0 = 0) → **infinitely many solutions** (same line)",
+      "initialPrompt": "Why does adding two true equations together always give another true equation? Think about what = means.",
+      "lessonId": "systems-substitution"
     },
     {
       "type": "model",
@@ -81,7 +93,8 @@
           "solution": "**Step 1: Make coefficients match.**\nMultiply equation 2 by 2: 2x + 4y = 16\n\n**Step 2: Subtract.**\n  (2x + 4y) - (2x + 4y) = 10 - 16\n  0 = -6\n\n**This is a FALSE statement!** Both variables canceled out and we got 0 = -6, which is impossible.\n\n**What this means:**\nThe original equations are:\n  y = -½x + 5/2\n  y = -½x + 4\n\nSame slope (-½), different y-intercepts → **parallel lines** that never intersect.\n\n**No solution.** The system is **inconsistent.**\n\nRecognition shortcut: if you multiply equation 2 by 2, the left sides become identical (2x + 4y) but the right sides differ (10 ≠ 16). This signals parallel lines immediately."
         }
       ],
-      "initialPrompt": "In the first example, we subtracted because the x-coefficients were the same. When would we add instead of subtract?"
+      "initialPrompt": "In the first example, we subtracted because the x-coefficients were the same. When would we add instead of subtract?",
+      "lessonId": "systems-substitution"
     },
     {
       "type": "guided_practice",
@@ -140,15 +153,17 @@
           ]
         }
       ],
-      "initialPrompt": "Let's practice all three methods. For the first problem, both equations are already solved for y. What's the quickest way to find where they intersect?"
+      "initialPrompt": "Let's practice all three methods. For the first problem, both equations are already solved for y. What's the quickest way to find where they intersect?",
+      "lessonId": "systems-graphing"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "systems-word-problems",
       "title": "Setting Up Systems from Word Problems",
-      "text": "Many real-world situations involve two unknowns and two conditions — perfect for systems of equations!\n\n**Strategy for word problems:**\n1. **Define your variables** — clearly state what x and y represent (with units)\n2. **Write two equations** — each condition in the problem gives you one equation\n3. **Solve the system** — choose the most efficient method\n4. **Interpret and verify** — answer in context and check that it makes sense\n\n**Common word problem types:**\n- **Mixture/combination:** You combine two things with different rates/prices (e.g., mixing nuts at $5/lb and $8/lb)\n- **Cost comparison/break-even:** Two options with different fixed costs and per-unit costs (e.g., two phone plans)\n- **Distance-rate-time:** Two travelers or vehicles with related speeds/times\n- **Number relationships:** 'The sum of two numbers is __ and the difference is __'\n\n**Key tip:** Look for TWO different relationships between the same two unknowns. One equation usually describes a total or sum; the other describes a rate, difference, or ratio.",
-      "initialPrompt": "If a problem says 'You buy 5 apples and 3 oranges for $11,' what equation would you write? What would you need as a second equation to solve for the prices?"
+      "content": "Many real-world situations involve two unknowns and two conditions — perfect for systems of equations!\n\n**Strategy for word problems:**\n1. **Define your variables** — clearly state what x and y represent (with units)\n2. **Write two equations** — each condition in the problem gives you one equation\n3. **Solve the system** — choose the most efficient method\n4. **Interpret and verify** — answer in context and check that it makes sense\n\n**Common word problem types:**\n- **Mixture/combination:** You combine two things with different rates/prices (e.g., mixing nuts at $5/lb and $8/lb)\n- **Cost comparison/break-even:** Two options with different fixed costs and per-unit costs (e.g., two phone plans)\n- **Distance-rate-time:** Two travelers or vehicles with related speeds/times\n- **Number relationships:** 'The sum of two numbers is __ and the difference is __'\n\n**Key tip:** Look for TWO different relationships between the same two unknowns. One equation usually describes a total or sum; the other describes a rate, difference, or ratio.",
+      "initialPrompt": "If a problem says 'You buy 5 apples and 3 oranges for $11,' what equation would you write? What would you need as a second equation to solve for the prices?",
+      "lessonId": "systems-elimination"
     },
     {
       "type": "model",
@@ -165,7 +180,8 @@
           "solution": "**Step 1: Define variables.**\nLet t = number of texts, C = total monthly cost.\n\n**Step 2: Write two equations (one for each plan).**\nPlan A: C = 25 + 0.10t\nPlan B: C = 15 + 0.20t\n\n**Step 3: Find the break-even point (set costs equal).**\n25 + 0.10t = 15 + 0.20t\n25 - 15 = 0.20t - 0.10t\n10 = 0.10t\nt = 100\n\nAt t = 100: C = 25 + 0.10(100) = $35\n\n**Step 4: Compare at 150 texts.**\nPlan A: 25 + 0.10(150) = 25 + 15 = $40\nPlan B: 15 + 0.20(150) = 15 + 30 = $45\n\n**Answer: The plans cost the same at 100 texts ($35 each). For 150 texts, Plan A is cheaper ($40 vs $45).**\n\nInterpretation: below 100 texts, Plan B is cheaper (lower base cost); above 100 texts, Plan A is cheaper (lower per-text rate)."
         }
       ],
-      "initialPrompt": "In the coffee shop problem, why does the equation s + L = 80 represent the total number of coffees? What real-world fact gives us the second equation?"
+      "initialPrompt": "In the coffee shop problem, why does the equation s + L = 80 represent the total number of coffees? What real-world fact gives us the second equation?",
+      "lessonId": "systems-elimination"
     },
     {
       "type": "guided_practice",
@@ -204,7 +220,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the ticket problem, start by defining your variables. What two pieces of information does the problem give you? Each one becomes an equation."
+      "initialPrompt": "For the ticket problem, start by defining your variables. What two pieces of information does the problem give you? Each one becomes an equation.",
+      "lessonId": "systems-elimination"
     },
     {
       "type": "independent_practice",
@@ -216,59 +233,77 @@
           "question": "Solve by graphing or setting equations equal:\ny = 3x - 4\ny = -x + 8",
           "answer": "3x - 4 = -x + 8 → 4x = 12 → x = 3, y = 5. Solution: (3, 5).",
           "skill": "systems-of-equations-graphing",
-          "hints": ["Set the two expressions for y equal to each other and solve for x."]
+          "hints": [
+            "Set the two expressions for y equal to each other and solve for x."
+          ]
         },
         {
           "id": "se-yp2",
           "question": "Solve by substitution:\nx = 2y + 1\n3x - 4y = 7",
           "answer": "Substitute: 3(2y + 1) - 4y = 7 → 6y + 3 - 4y = 7 → 2y = 4 → y = 2, x = 5. Solution: (5, 2).",
           "skill": "systems-of-equations-substitution",
-          "hints": ["x is already isolated in the first equation — plug 2y + 1 into the second equation for x."]
+          "hints": [
+            "x is already isolated in the first equation — plug 2y + 1 into the second equation for x."
+          ]
         },
         {
           "id": "se-yp3",
           "question": "Solve by elimination:\n3x + y = 11\n5x + y = 15",
           "answer": "Subtract: (5x + y) - (3x + y) = 15 - 11 → 2x = 4 → x = 2. Then 3(2) + y = 11 → y = 5. Solution: (2, 5).",
           "skill": "systems-of-equations-elimination",
-          "hints": ["Both equations have the same y-coefficient (+1y). Subtract to eliminate y."]
+          "hints": [
+            "Both equations have the same y-coefficient (+1y). Subtract to eliminate y."
+          ]
         },
         {
           "id": "se-yp4",
           "question": "Solve by elimination:\n2x + 5y = 1\n3x - 2y = -8",
           "answer": "Multiply eq 1 by 2 and eq 2 by 5: 4x + 10y = 2 and 15x - 10y = -40. Add: 19x = -38 → x = -2. Then 2(-2) + 5y = 1 → 5y = 5 → y = 1. Solution: (-2, 1).",
           "skill": "systems-of-equations-elimination",
-          "hints": ["Multiply to make the y-coefficients opposites: equation 1 by 2 and equation 2 by 5 gives +10y and -10y."]
+          "hints": [
+            "Multiply to make the y-coefficients opposites: equation 1 by 2 and equation 2 by 5 gives +10y and -10y."
+          ]
         },
         {
           "id": "se-yp5",
           "question": "Classify the system and solve:\n4x - 2y = 6\n-6x + 3y = -9",
           "answer": "Multiply eq 1 by 3 and eq 2 by 2: 12x - 6y = 18 and -12x + 6y = -18. Add: 0 = 0. True statement → infinitely many solutions. The system is consistent and dependent. (Both equations simplify to y = 2x - 3.)",
           "skill": "systems-of-equations-elimination",
-          "hints": ["Try elimination. If both variables cancel, check whether the result is true or false."]
+          "hints": [
+            "Try elimination. If both variables cancel, check whether the result is true or false."
+          ]
         },
         {
           "id": "se-yp6",
           "question": "Classify the system and solve:\n3x + y = 5\n6x + 2y = 7",
           "answer": "Multiply eq 1 by 2: 6x + 2y = 10. Compare with eq 2: 6x + 2y = 7. Subtract: 0 = 3. False statement → no solution. The lines are parallel (same slope, different intercepts). The system is inconsistent.",
           "skill": "systems-of-equations-elimination",
-          "hints": ["Multiply the first equation by 2. Compare the result to the second equation — what do you notice?"]
+          "hints": [
+            "Multiply the first equation by 2. Compare the result to the second equation — what do you notice?"
+          ]
         },
         {
           "id": "se-yp7",
           "question": "A boat travels 30 miles downstream in 2 hours and 18 miles upstream in 3 hours. Find the speed of the boat in still water and the speed of the current.",
           "answer": "Let b = boat speed, c = current speed. Downstream: b + c = 30/2 = 15. Upstream: b - c = 18/3 = 6. Add: 2b = 21 → b = 10.5 mph. Then c = 15 - 10.5 = 4.5 mph.",
           "skill": "systems-word-problems",
-          "hints": ["Downstream speed = boat + current, upstream speed = boat - current. Use distance = rate × time to find each speed."]
+          "hints": [
+            "Downstream speed = boat + current, upstream speed = boat - current. Use distance = rate × time to find each speed."
+          ]
         },
         {
           "id": "se-yp8",
           "question": "A store sells notebooks for $4 and pens for $2. A customer buys 3 more pens than notebooks and spends $26 total. How many of each did they buy?",
           "answer": "Let n = notebooks, p = pens. p = n + 3 and 4n + 2p = 26. Substitute: 4n + 2(n + 3) = 26 → 4n + 2n + 6 = 26 → 6n = 20 → n = 10/3. Since we need whole numbers, let's recheck: if p = n + 3 and 4n + 2p = 26, then 4n + 2n + 6 = 26, 6n = 20, n = 10/3. This gives non-integer results. Adjusting: actually 4n + 2(n+3) = 26 → 6n + 6 = 26 → 6n = 20 → n = 20/6 = 10/3. With the constraint of whole items: n = 3, p = 6 → 4(3)+2(6) = 12+12 = 24 ≠ 26. n = 4, p = 7 → 4(4)+2(7) = 16+14 = 30 ≠ 26. Revised problem: The customer spends $30 → 6n + 6 = 30 → n = 4, p = 7. Verify: 4(4)+2(7) = 16+14 = 30 ✓.",
           "skill": "systems-word-problems",
-          "hints": ["Define variables: n = notebooks, p = pens. Two equations: p = n + 3 (relationship) and 4n + 2p = total cost."]
+          "hints": [
+            "Define variables: n = notebooks, p = pens. Two equations: p = n + 3 (relationship) and 4n + 2p = total cost."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "systems-of-equations-graphing",
+      "lessonId": "systems-intro"
     }
   ],
   "answerKeys": {
@@ -288,5 +323,42 @@
     "se-yp6": "No solution (inconsistent, parallel lines).",
     "se-yp7": "Boat = 10.5 mph, current = 4.5 mph.",
     "se-yp8": "4 notebooks, 7 pens ($30 total)."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "systems-intro",
+      "title": "Introduction to Systems",
+      "order": 1
+    },
+    {
+      "lessonId": "systems-graphing",
+      "title": "Solving by Graphing",
+      "order": 2
+    },
+    {
+      "lessonId": "systems-substitution",
+      "title": "Solving by Substitution",
+      "order": 3
+    },
+    {
+      "lessonId": "systems-elimination",
+      "title": "Solving by Elimination",
+      "order": 4
+    },
+    {
+      "lessonId": "systems-special-cases",
+      "title": "Special Cases: No Solution and Infinite Solutions",
+      "order": 5
+    },
+    {
+      "lessonId": "systems-word-problems",
+      "title": "Systems Word Problems",
+      "order": 6
+    },
+    {
+      "lessonId": "systems-inequalities",
+      "title": "Systems of Inequalities",
+      "order": 7
+    }
+  ]
 }

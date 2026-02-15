@@ -42,7 +42,8 @@
         "Piecewise function evaluation: check which piece applies, then substitute. Boundary behavior matters for limits.",
         "Domain restrictions: division by zero, even roots of negatives, log of non-positives.",
         "Growth hierarchy: logarithmic < polynomial < exponential (critical for limits at infinity)"
-      ]
+      ],
+      "lessonId": "function-behavior"
     },
     {
       "type": "model",
@@ -62,7 +63,8 @@
           "problem": "Rank the growth rates and predict limits at infinity: (a) lim(x→∞) ln(x)/x, (b) lim(x→∞) x²/eˣ, (c) lim(x→∞) (3x² + 1)/(5x² - 2).",
           "solution": "(a) ln grows slower than x → 0. (b) x² grows slower than eˣ → 0. (c) Same degree: 3/5. Growth hierarchy: log < polynomial < exponential."
         }
-      ]
+      ],
+      "lessonId": "function-behavior"
     },
     {
       "type": "explanation",
@@ -77,7 +79,8 @@
         "Change of base: log_b(x) = ln(x)/ln(b)",
         "Key identities: e^(ln x) = x, ln(eˣ) = x, b^(log_b x) = x",
         "Rewriting for calculus: √x = x^(1/2), 1/x² = x⁻², ³√x = x^(1/3). Power rule requires this form."
-      ]
+      ],
+      "lessonId": "graph-reading-modeling"
     },
     {
       "type": "model",
@@ -97,7 +100,8 @@
           "problem": "Condense into a single logarithm: 2·ln(x) + ln(x+1) - 3·ln(x-2).",
           "solution": "ln(x²) + ln(x+1) - ln((x-2)³) = ln(x²(x+1)/(x-2)³)."
         }
-      ]
+      ],
+      "lessonId": "graph-reading-modeling"
     },
     {
       "type": "explanation",
@@ -113,7 +117,8 @@
         "Double-angle: sin(2θ) = 2sinθcosθ, cos(2θ) = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ",
         "Critical for calculus: lim(x→0) sin(x)/x = 1 (needs trig fluency to understand)",
         "Reciprocal functions: csc = 1/sin, sec = 1/cos, cot = 1/tan (derivatives of these are on the exam)"
-      ]
+      ],
+      "lessonId": "exponent-log-trig"
     },
     {
       "type": "model",
@@ -133,35 +138,53 @@
           "problem": "Solve on [0, 2π): 2sin²x - sin x - 1 = 0.",
           "solution": "Factor: (2sin x + 1)(sin x - 1) = 0. sin x = -1/2: x = 7π/6, 11π/6. sin x = 1: x = π/2. Solutions: {π/2, 7π/6, 11π/6}."
         }
-      ]
+      ],
+      "lessonId": "exponent-log-trig"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Function Behavior & Algebra Repair Practice",
-      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review"],
       "problems": [
         {
           "problem": "For f(x) = (2x² + 3x - 5)/(x² - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
-          "hints": ["Factor numerator and denominator", "Check for common factors", "Sign analysis near VAs"],
+          "hints": [
+            "Factor numerator and denominator",
+            "Check for common factors",
+            "Sign analysis near VAs"
+          ],
           "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
         },
         {
           "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x² + 5√x - 1/∛x.",
-          "hints": ["3/x² = 3x⁻²", "5√x = 5x^(1/2)", "1/∛x = x^(-1/3)"],
+          "hints": [
+            "3/x² = 3x⁻²",
+            "5√x = 5x^(1/2)",
+            "1/∛x = x^(-1/3)"
+          ],
           "answer": "f(x) = 3x⁻² + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
         },
         {
           "problem": "Evaluate all six trig functions at θ = 5π/4.",
-          "hints": ["Q3: sin and cos both negative, tan positive", "Reference angle is π/4", "sin(π/4) = cos(π/4) = √2/2"],
+          "hints": [
+            "Q3: sin and cos both negative, tan positive",
+            "Reference angle is π/4",
+            "sin(π/4) = cos(π/4) = √2/2"
+          ],
           "answer": "sin(5π/4) = -√2/2. cos(5π/4) = -√2/2. tan(5π/4) = 1. csc = -√2. sec = -√2. cot = 1."
         },
         {
           "problem": "Solve: ln(x²) - ln(x + 3) = ln(4). Check your answer.",
-          "hints": ["Condense left side", "Convert to exponential form", "Check domain: x + 3 > 0 and x ≠ 0"],
+          "hints": [
+            "Condense left side",
+            "Convert to exponential form",
+            "Check domain: x + 3 > 0 and x ≠ 0"
+          ],
           "answer": "ln(x²/(x+3)) = ln(4) → x²/(x+3) = 4 → x² = 4x + 12 → x² - 4x - 12 = 0 → (x-6)(x+2) = 0. x = 6 or x = -2. Check: x=6: ln(36)-ln(9)=ln(4) ✓. x=-2: ln(4)-ln(1)=ln(4) ✓. Both valid."
         }
-      ]
+      ],
+      "skill": "trig-fluency-review",
+      "lessonId": "exponent-log-trig"
     },
     {
       "type": "explanation",
@@ -176,7 +199,8 @@
         "Average rate of change = slope of secant line = [f(b)-f(a)]/(b-a). THIS becomes the derivative definition.",
         "Contextual interpretation: 'f(t) represents gallons of water' → f'(t) = rate in gallons per minute. Units matter.",
         "Key features to identify: intercepts, max/min, inflection points (where concavity changes), symmetry."
-      ]
+      ],
+      "lessonId": "graph-reading-modeling"
     },
     {
       "type": "model",
@@ -192,13 +216,13 @@
           "problem": "The temperature T(t) of coffee (in °F) is given by a graph that starts at 200, decreases rapidly, then levels off near 70. At t = 5 minutes, the tangent line appears to have slope -15. Interpret this value.",
           "solution": "At t = 5 minutes, the coffee is cooling at a rate of 15°F per minute. The negative sign indicates temperature is decreasing. The leveling off near 70 means the rate of cooling is slowing down (the slope is becoming less negative), which suggests concave up behavior."
         }
-      ]
+      ],
+      "lessonId": "graph-reading-modeling"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Bootcamp Mastery Practice",
-      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review", "graph-reading-modeling"],
       "problems": [
         {
           "problem": "For g(x) = (x³ - 8)/(x² - 4), simplify, find all asymptotes and holes, and state end behavior.",
@@ -224,7 +248,9 @@
           "problem": "The graph of f shows f(0)=2, f(2)=6, f(4)=6, f(6)=2. The graph increases on [0,2], is flat on [2,4], and decreases on [4,6]. (a) Find the average rate of change on [0,6]. (b) On which interval is the average rate of change greatest? (c) Describe what the graph of f' would look like.",
           "answer": "(a) (f(6)-f(0))/(6-0) = (2-2)/6 = 0. (b) [0,2]: (6-2)/2 = 2. [2,4]: 0. [4,6]: (2-6)/2 = -2. Greatest: [0,2] with rate 2. (c) f' > 0 on (0,2) (positive), f' = 0 on (2,4) (zero), f' < 0 on (4,6) (negative). f' starts positive, reaches zero, stays zero, then goes negative."
         }
-      ]
+      ],
+      "skill": "function-behavior-review",
+      "lessonId": "function-behavior"
     }
   ],
   "answerKeys": {
@@ -247,5 +273,22 @@
     "ip-medication": "(a) 200mg (b) 15%/hr (c) ≈-25.7 mg/hr (d) No.",
     "ip-identity": "1+sin(2x) ✓.",
     "ip-graph-reading": "(a) 0 (b) [0,2] rate=2 (c) positive→zero→negative."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "function-behavior",
+      "title": "Function Behavior & Rational Functions",
+      "order": 1
+    },
+    {
+      "lessonId": "exponent-log-trig",
+      "title": "Exponent/Log Rules & Trig Fluency",
+      "order": 2
+    },
+    {
+      "lessonId": "graph-reading-modeling",
+      "title": "Graph Reading & Modeling Vocabulary",
+      "order": 3
+    }
+  ]
 }

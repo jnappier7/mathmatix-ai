@@ -11,7 +11,7 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
-const { buildCourseSystemPrompt, loadCourseContext } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 const { callLLM, callLLMStream } = require('../utils/llmGateway');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -349,6 +349,133 @@ router.post('/', async (req, res) => {
             if (wasCorrect) conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
         }
 
+        // ── SCAFFOLD & MODULE PROGRESS TRACKING ──────────────
+        // Parse signal tags that control course progression
+        const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
+        const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
+        let courseProgressUpdate = null;
+
+        // Strip signal tags from student-facing text
+        if (hasScaffoldAdvance || hasModuleComplete) {
+            aiResponseText = aiResponseText
+                .replace(/<SCAFFOLD_ADVANCE>/gi, '')
+                .replace(/<MODULE_COMPLETE>/gi, '')
+                .trim();
+            // In streaming mode, tags were already sent — send replacement to overwrite
+            if (useStreaming && !clientDisconnected) {
+                try { res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`); } catch (e) {}
+            }
+        }
+
+        if (hasScaffoldAdvance || hasModuleComplete) {
+            try {
+                const totalSteps = moduleData?.scaffold?.length || 1;
+                const currentIdx = courseSession.currentScaffoldIndex || 0;
+                const mod = courseSession.modules.find(m => m.moduleId === courseSession.currentModuleId);
+
+                if (hasModuleComplete && mod) {
+                    // MODULE COMPLETE: mark done, unlock next, reset scaffold
+                    mod.status = 'completed';
+                    mod.scaffoldProgress = 100;
+                    mod.completedAt = new Date();
+
+                    const modIdx = courseSession.modules.findIndex(m => m.moduleId === courseSession.currentModuleId);
+                    if (modIdx >= 0 && modIdx < courseSession.modules.length - 1) {
+                        const nextMod = courseSession.modules[modIdx + 1];
+                        if (nextMod.status === 'locked') nextMod.status = 'available';
+                        nextMod.startedAt = new Date();
+                        courseSession.currentModuleId = nextMod.moduleId;
+                    }
+                    courseSession.currentScaffoldIndex = 0;
+
+                    courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
+
+                    if (doneCount === courseSession.modules.length) {
+                        courseSession.status = 'completed';
+                        courseSession.completedAt = new Date();
+                    }
+
+                    courseSession.markModified('modules');
+                    await courseSession.save();
+
+                    // Award module completion XP (fire-and-forget)
+                    const moduleXP = 150;
+                    try {
+                        const userService = require('../services/userService');
+                        await userService.awardXP(user._id, moduleXP, `Module complete: ${mod.moduleId}`);
+                    } catch (xpErr) {
+                        user.xp = (user.xp || 0) + moduleXP;
+                    }
+
+                    console.log(`🎓 [CourseChat] ${user.firstName} completed module ${mod.moduleId} — progress: ${courseSession.overallProgress}%`);
+
+                    courseProgressUpdate = {
+                        event: 'module_complete',
+                        moduleId: mod.moduleId,
+                        overallProgress: courseSession.overallProgress,
+                        nextModuleId: courseSession.currentModuleId,
+                        xpAwarded: moduleXP,
+                        courseComplete: courseSession.status === 'completed'
+                    };
+
+                } else if (hasScaffoldAdvance && mod) {
+                    // SCAFFOLD ADVANCE: validate practice phases require evidence
+                    const currentStep = moduleData?.scaffold?.[currentIdx];
+                    const stepType = currentStep?.type || currentStep?.lessonPhase || '';
+                    const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
+
+                    let correctSinceLastAdvance = 0;
+                    if (isPracticePhase && conversation?.messages) {
+                        for (let i = conversation.messages.length - 1; i >= 0; i--) {
+                            const msg = conversation.messages[i];
+                            if (msg.scaffoldAdvanced) break;
+                            if (msg.problemResult === 'correct') correctSinceLastAdvance++;
+                        }
+                        if (wasCorrect) correctSinceLastAdvance++;
+                    }
+
+                    const MIN_CORRECT = 2;
+                    if (isPracticePhase && correctSinceLastAdvance < MIN_CORRECT) {
+                        console.log(`⚠️ [CourseChat] SCAFFOLD_ADVANCE blocked — "${stepType}" needs ${MIN_CORRECT} correct, got ${correctSinceLastAdvance}`);
+                    } else {
+                        const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
+                        courseSession.currentScaffoldIndex = newIdx;
+
+                        mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
+                        if (mod.status === 'available') {
+                            mod.status = 'in_progress';
+                            mod.startedAt = mod.startedAt || new Date();
+                        }
+
+                        // Recalculate blended overall progress (includes scaffold progress)
+                        courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
+
+                        courseSession.markModified('modules');
+                        await courseSession.save();
+
+                        // Mark advance point for future counting
+                        if (conversation?.messages?.length > 0) {
+                            conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;
+                        }
+
+                        const nextStep = moduleData?.scaffold?.[newIdx];
+                        console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
+
+                        courseProgressUpdate = {
+                            event: 'scaffold_advance',
+                            scaffoldIndex: newIdx,
+                            scaffoldTotal: totalSteps,
+                            scaffoldProgress: mod.scaffoldProgress,
+                            overallProgress: courseSession.overallProgress,
+                            stepTitle: nextStep?.title || null
+                        };
+                    }
+                }
+            } catch (progressErr) {
+                console.error('[CourseChat] Scaffold progression error:', progressErr.message);
+            }
+        }
+
         // ── Save AI response to conversation ────────────────
         conversation.messages.push({
             role: 'assistant',
@@ -460,7 +587,9 @@ router.post('/', async (req, res) => {
                 : null,
             // Interactive tools
             graphTool: graphToolConfig,
-            // Course-specific fields
+            // Course progress update (scaffold advance, module complete)
+            courseProgress: courseProgressUpdate || null,
+            // Course context metadata
             courseContext: {
                 courseId: courseSession.courseId,
                 courseName: courseSession.courseName,
@@ -549,6 +678,29 @@ async function handleCourseGreeting(req, res, userId) {
         }
         if (!conversation.isActive) {
             conversation.isActive = true;
+        }
+
+        // Idempotency: if conversation already has a greeting, return it instead of generating a new one
+        // This prevents duplicate welcome messages when a user re-enters a course session
+        if (conversation.messages && conversation.messages.length > 0) {
+            const lastMsg = conversation.messages[conversation.messages.length - 1];
+            if (lastMsg.role === 'assistant') {
+                const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+                    ? user.selectedTutorId : 'default';
+                const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+                console.log(`📚 [CourseGreeting] ${user.firstName} → returning existing greeting (idempotent)`);
+                return res.json({
+                    text: lastMsg.content,
+                    voiceId: currentTutor.voiceId,
+                    isGreeting: true,
+                    courseContext: {
+                        courseId: courseSession.courseId,
+                        courseName: courseSession.courseName,
+                        currentModuleId: courseSession.currentModuleId,
+                        overallProgress: courseSession.overallProgress
+                    }
+                });
+            }
         }
 
         // Build course prompt

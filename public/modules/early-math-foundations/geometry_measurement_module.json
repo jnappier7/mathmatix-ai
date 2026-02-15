@@ -6,7 +6,6 @@
   "weeks": "19-21",
   "estimatedDuration": 35,
   "description": "Shapes, angles, and measuring the world. Students calculate perimeter by adding all sides, find area of rectangles and composite rectangular figures, classify angles as right/acute/obtuse, identify and classify triangles and quadrilaterals by their properties, and convert between common measurement units. Everything connects to real objects students can see and touch.",
-
   "skills": [
     "emf-perimeter",
     "emf-area-rectangles",
@@ -14,7 +13,6 @@
     "emf-shapes-properties",
     "emf-measurement-units"
   ],
-
   "standardsAlignment": [
     "3.MD.C.5",
     "3.MD.C.6",
@@ -31,7 +29,6 @@
     "5.G.B.4",
     "5.MD.A.1"
   ],
-
   "goals": [
     "Calculate the perimeter of polygons by adding side lengths, use the shortcut P = 2l + 2w for rectangles, and find a missing side when the perimeter is known",
     "Find the area of rectangles using A = l x w, count square units on a grid, and decompose L-shaped and other composite figures into non-overlapping rectangles to find total area",
@@ -39,7 +36,6 @@
     "Identify and classify triangles by their sides (equilateral, isosceles, scalene) and angles, and place quadrilaterals in a hierarchy (square, rectangle, parallelogram, rhombus, trapezoid)",
     "Convert between common units of length, weight, and capacity within both customary and metric systems using multiplication and division"
   ],
-
   "instructionalStrategy": [
     "Start every concept with a physical object students can hold or draw: use string to measure perimeter, cut grid paper to count area, fold paper corners to test angles.",
     "Use the gradual-release scaffold: concept-intro with keyPoints, teacher-modeled worked examples, guided practice with hints, then independent practice where students work on their own.",
@@ -47,9 +43,7 @@
     "Emphasize precise vocabulary (perimeter vs. area, square units vs. linear units, equilateral vs. isosceles) and correct units in every answer to build mathematical communication skills.",
     "For measurement conversions, always display the conversion fact first, then show the multiply-or-divide decision rule: going from a bigger unit to a smaller unit means multiply; smaller to bigger means divide."
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -63,7 +57,8 @@
         "Square shortcut: P = 4s because all four sides are equal.",
         "Finding a missing side: plug the known values into the formula and solve for the unknown.",
         "Perimeter is measured in linear units (cm, ft, m) — NOT square units."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -86,7 +81,8 @@
           "solution": "Start with the formula and plug in what you know:\nP = 2l + 2w\n30 = 2(9) + 2w\n30 = 18 + 2w\n30 - 18 = 2w\n12 = 2w\nw = 6 m\nThe width is 6 meters.",
           "tip": "Think of it as: the two lengths use up 18 m of the 30 m total. That leaves 12 m shared by the two widths, so each width is 6 m."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -121,7 +117,8 @@
           ],
           "answer": "9 cm. Since P = 4s, each side = 36 / 4 = 9 cm."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
@@ -132,22 +129,29 @@
         {
           "id": "gm-4",
           "question": "A pentagon (5-sided shape) has sides measuring 5 cm, 3 cm, 7 cm, 4 cm, and 6 cm. What is the perimeter?",
-          "hints": ["Add all five side lengths: 5 + 3 + 7 + 4 + 6."],
+          "hints": [
+            "Add all five side lengths: 5 + 3 + 7 + 4 + 6."
+          ],
           "answer": "25 cm"
         },
         {
           "id": "gm-5",
           "question": "A soccer field is a rectangle that is 100 m long and 68 m wide. If a player jogs one full lap around the field, how far does she run?",
-          "hints": ["One lap = perimeter. Use P = 2l + 2w."],
+          "hints": [
+            "One lap = perimeter. Use P = 2l + 2w."
+          ],
           "answer": "336 m"
         },
         {
           "id": "gm-6",
           "question": "A rectangle has a perimeter of 46 ft. Its length is 15 ft. What is the width?",
-          "hints": ["Plug into P = 2l + 2w and solve for w."],
+          "hints": [
+            "Plug into P = 2l + 2w and solve for w."
+          ],
           "answer": "8 ft"
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -161,7 +165,8 @@
         "Composite shapes (like L-shapes): split into non-overlapping rectangles, find each area, then add.",
         "Area uses SQUARE units (sq in, sq cm, sq ft). Perimeter uses LINEAR units (in, cm, ft).",
         "Counting squares on grid paper is a great way to check your multiplication."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -184,7 +189,8 @@
           "solution": "Split the L-shape into two rectangles:\nRectangle 1 (top): A = 10 x 4 = 40 sq ft\nRectangle 2 (bottom): A = 6 x 8 = 48 sq ft\nTotal area = 40 + 48 = 88 sq ft",
           "tip": "There is often more than one way to split a composite shape. Any way you split it, you should get the same total area."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -210,7 +216,8 @@
           ],
           "answer": "44 sq m. Top: 8 x 3 = 24 sq m. Bottom: 5 x 4 = 20 sq m. Total: 24 + 20 = 44 sq m."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
@@ -221,22 +228,29 @@
         {
           "id": "gm-9",
           "question": "A bedroom floor measures 10 ft by 12 ft. How many square feet of carpet are needed to cover the entire floor?",
-          "hints": ["Use A = l x w with length = 12 ft and width = 10 ft."],
+          "hints": [
+            "Use A = l x w with length = 12 ft and width = 10 ft."
+          ],
           "answer": "120 sq ft"
         },
         {
           "id": "gm-10",
           "question": "Mia is wrapping the top of a gift box that is 14 in long and 10 in wide. What is the area she needs to cover?",
-          "hints": ["The top of the box is a rectangle. Use A = l x w."],
+          "hints": [
+            "The top of the box is a rectangle. Use A = l x w."
+          ],
           "answer": "140 sq in"
         },
         {
           "id": "gm-11",
           "question": "An L-shaped swimming pool can be split into two rectangles. The large section is 10 m long and 6 m wide. The small section is 3 m long and 4 m wide. What is the total area of the pool?",
-          "hints": ["Find each rectangle's area, then add them together."],
+          "hints": [
+            "Find each rectangle's area, then add them together."
+          ],
           "answer": "72 sq m"
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -251,7 +265,8 @@
         "Straight angle = exactly 180 degrees. It forms a straight line.",
         "Full turn = 360 degrees. Spinning all the way around in a circle.",
         "Paper-corner test: hold a square corner against the angle to see if it is right, acute, or obtuse."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -274,7 +289,8 @@
           "solution": "135 degrees is greater than 90 degrees but less than 180 degrees.\nThis makes it an obtuse angle.\nThe door is open wider than a square corner but is not flat against the opposite wall.",
           "tip": "If you hold a paper corner against this angle, the angle goes beyond the paper corner — that tells you it is obtuse."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -300,7 +316,8 @@
           ],
           "answer": "Obtuse. 110 degrees is greater than 90 degrees (bigger than a square corner) but less than 180 degrees, so it is obtuse."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
@@ -311,16 +328,21 @@
         {
           "id": "gm-14",
           "question": "The hands of a clock at 6 o'clock form a straight line. What type of angle is this, and how many degrees does it measure?",
-          "hints": ["When the hands point in exactly opposite directions, they form a straight line."],
+          "hints": [
+            "When the hands point in exactly opposite directions, they form a straight line."
+          ],
           "answer": "Straight angle, 180 degrees"
         },
         {
           "id": "gm-15",
           "question": "A slice of pizza has a tip angle of 72 degrees. Is this angle acute, right, or obtuse?",
-          "hints": ["Compare 72 degrees to 90 degrees."],
+          "hints": [
+            "Compare 72 degrees to 90 degrees."
+          ],
           "answer": "Acute. 72 degrees is less than 90 degrees."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -335,7 +357,8 @@
         "Quadrilateral hierarchy: square -> rectangle -> parallelogram. Also: rhombus -> parallelogram.",
         "Trapezoid: exactly one pair of parallel sides.",
         "Every square is a rectangle, but not every rectangle is a square."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -358,7 +381,8 @@
           "solution": "By sides: two sides are equal (6 and 6), so it is an isosceles triangle.\nBy angles: one angle is 97 degrees, which is greater than 90 degrees, so it is an obtuse triangle.\nFull classification: isosceles obtuse triangle.",
           "tip": "A triangle can only have at most one obtuse angle or one right angle. The other two angles must be acute."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -384,7 +408,8 @@
           ],
           "answer": "Parallelogram. It has two pairs of parallel sides, but since the angles are not 90 degrees it is not a rectangle, and since the sides are not all equal it is not a rhombus."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
@@ -395,16 +420,21 @@
         {
           "id": "gm-18",
           "question": "A triangle has sides measuring 3 cm, 4 cm, and 5 cm. One of its angles is exactly 90 degrees. Classify the triangle by its sides and by its angles.",
-          "hints": ["No equal sides = scalene. One 90-degree angle = right."],
+          "hints": [
+            "No equal sides = scalene. One 90-degree angle = right."
+          ],
           "answer": "Scalene right triangle"
         },
         {
           "id": "gm-19",
           "question": "A four-sided shape has exactly one pair of parallel sides. The other two sides are not parallel. What is this shape called?",
-          "hints": ["Think about the quadrilateral hierarchy. Which shape has exactly one pair of parallel sides?"],
+          "hints": [
+            "Think about the quadrilateral hierarchy. Which shape has exactly one pair of parallel sides?"
+          ],
           "answer": "Trapezoid"
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -419,7 +449,8 @@
         "Time: 1 minute = 60 seconds, 1 hour = 60 minutes, 1 day = 24 hours.",
         "Bigger unit to smaller unit = MULTIPLY (e.g., feet to inches: multiply by 12).",
         "Smaller unit to bigger unit = DIVIDE (e.g., grams to kilograms: divide by 1,000)."
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
@@ -442,7 +473,8 @@
           "solution": "Conversion fact: 1 gallon = 4 quarts.\nWe are going from a smaller unit (quarts) to a bigger unit (gallons), so we DIVIDE.\n12 / 4 = 3 gallons.\n12 quarts = 3 gallons.",
           "tip": "To remember cups-pints-quarts-gallons, think: 2 cups = 1 pint, 2 pints = 1 quart, 4 quarts = 1 gallon."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -468,7 +500,8 @@
           ],
           "answer": "3 pints. 6 cups / 2 = 3 pints."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
@@ -479,25 +512,31 @@
         {
           "id": "gm-22",
           "question": "A puppy weighs 48 ounces. How many pounds is that?",
-          "hints": ["1 pound = 16 ounces. Divide ounces by 16."],
+          "hints": [
+            "1 pound = 16 ounces. Divide ounces by 16."
+          ],
           "answer": "3 pounds"
         },
         {
           "id": "gm-23",
           "question": "A ribbon is 2 meters long. How many centimeters is that?",
-          "hints": ["1 meter = 100 centimeters. Multiply."],
+          "hints": [
+            "1 meter = 100 centimeters. Multiply."
+          ],
           "answer": "200 cm"
         },
         {
           "id": "gm-24",
           "question": "A fish tank holds 3 gallons of water. How many quarts is that?",
-          "hints": ["1 gallon = 4 quarts. Multiply."],
+          "hints": [
+            "1 gallon = 4 quarts. Multiply."
+          ],
           "answer": "12 quarts"
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     }
   ],
-
   "answerKeys": {
     "gm-1": "18 in",
     "gm-2": "42 ft",

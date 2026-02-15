@@ -100,8 +100,8 @@
           "lessonId": "order-of-operations",
           "title": "Order of Operations",
           "order": 2,
-          "concepts": ["PEMDAS/GEMS framework", "Grouping symbols first", "Left-to-right for equal-precedence operations"],
-          "teachingNotes": "Emphasize that PEMDAS is a convention, not a law of nature. Show how different orders give different answers."
+          "concepts": ["GEMS framework", "Grouping symbols first", "Left-to-right for equal-precedence operations"],
+          "teachingNotes": "Emphasize that GEMS is a convention, not a law of nature. Show how different orders give different answers."
         },
         {
           "lessonId": "algebraic-properties",
@@ -167,8 +167,8 @@
           "lessonId": "two-step-equations",
           "title": "Two-Step Equations",
           "order": 3,
-          "concepts": ["Undo addition/subtraction first, then multiplication/division", "ax + b = c form", "Reverse order of operations"],
-          "teachingNotes": "Mnemonic: 'Peel the onion'—undo the outermost operation first."
+          "concepts": ["Box the variable term, think outside the box", "Outside the box: use opposites to make zero", "Inside the box: divide it out", "ax + b = c form"],
+          "teachingNotes": "Strategy: Box the variable term (e.g., [3x] + 7 = 22). Anything outside the box — use opposites to make zero. Anything inside the box — divide it out. Equations MUST always stay equal."
         },
         {
           "lessonId": "multi-step-equations",

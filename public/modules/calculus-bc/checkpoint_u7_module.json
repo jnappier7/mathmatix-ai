@@ -7,28 +7,65 @@
   "estimatedDuration": 30,
   "type": "assessment",
   "description": "Summative checkpoint assessing slope fields, separation of variables, general/particular solutions, exponential growth/decay, logistic growth (BC), and Euler's method (BC).",
-  "skillsCovered": ["slope-fields", "separation-of-variables", "particular-solutions", "exponential-models", "euler-method", "logistic-growth"],
+  "skillsCovered": [
+    "slope-fields",
+    "separation-of-variables",
+    "particular-solutions",
+    "separation-of-variables",
+    "eulers-method",
+    "logistic-growth"
+  ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "slope-fields", "reteachFocus": "Evaluate dy/dx at grid points, draw short segments; match slope to equation; sketch solution curve through initial condition", "resources": ["differential_equations_module.json - scaffold phases 1-3"] },
-    { "skillId": "separation-of-variables", "reteachFocus": "Separate: g(y)dy = f(x)dx; integrate both sides; +C on one side only; solve for y if possible", "resources": ["differential_equations_module.json - scaffold phases 4-6"] },
-    { "skillId": "exponential-models", "reteachFocus": "dy/dt=ky → y=Ce^(kt); growth k>0, decay k<0; use initial condition for C, second point for k; half-life/doubling time", "resources": ["differential_equations_module.json - scaffold phases 7-9"] },
-    { "skillId": "logistic-growth", "reteachFocus": "dy/dt=ky(1−y/L); L is carrying capacity; fastest growth at y=L/2; S-shaped curve", "resources": ["differential_equations_module.json - scaffold phases 7-9"] },
-    { "skillId": "euler-method", "reteachFocus": "y_{n+1}=y_n+f(x_n,y_n)·Δx; step-by-step computation; systematic table approach", "resources": ["differential_equations_module.json - scaffold phases 7-9"] }
+    {
+      "skillId": "slope-fields",
+      "reteachFocus": "Evaluate dy/dx at grid points, draw short segments; match slope to equation; sketch solution curve through initial condition",
+      "resources": [
+        "differential_equations_module.json - scaffold phases 1-3"
+      ]
+    },
+    {
+      "skillId": "separation-of-variables",
+      "reteachFocus": "Separate: g(y)dy = f(x)dx; integrate both sides; +C on one side only; solve for y if possible",
+      "resources": [
+        "differential_equations_module.json - scaffold phases 4-6"
+      ]
+    },
+    {
+      "skillId": "separation-of-variables",
+      "reteachFocus": "dy/dt=ky \u2192 y=Ce^(kt); growth k>0, decay k<0; use initial condition for C, second point for k; half-life/doubling time",
+      "resources": [
+        "differential_equations_module.json - scaffold phases 7-9"
+      ]
+    },
+    {
+      "skillId": "logistic-growth",
+      "reteachFocus": "dy/dt=ky(1\u2212y/L); L is carrying capacity; fastest growth at y=L/2; S-shaped curve",
+      "resources": [
+        "differential_equations_module.json - scaffold phases 7-9"
+      ]
+    },
+    {
+      "skillId": "eulers-method",
+      "reteachFocus": "y_{n+1}=y_n+f(x_n,y_n)\u00b7\u0394x; step-by-step computation; systematic table approach",
+      "resources": [
+        "differential_equations_module.json - scaffold phases 7-9"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
       "id": "cbu7-1",
-      "question": "Solve the differential equation: dy/dx = 3x²y, y(0) = 5.",
-      "answer": "Separate: dy/y = 3x²dx. Integrate: ln|y| = x³ + C. y = Ae^(x³). y(0)=5: A=5. Solution: y = 5e^(x³).",
+      "question": "Solve the differential equation: dy/dx = 3x\u00b2y, y(0) = 5.",
+      "answer": "Separate: dy/y = 3x\u00b2dx. Integrate: ln|y| = x\u00b3 + C. y = Ae^(x\u00b3). y(0)=5: A=5. Solution: y = 5e^(x\u00b3).",
       "skill": "separation-of-variables",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu7-2",
-      "question": "Solve: dy/dx = (x+1)/y², y(0) = 3.",
-      "answer": "Separate: y²dy = (x+1)dx. Integrate: y³/3 = x²/2 + x + C. y(0)=3: 27/3=C → C=9. y³/3 = x²/2+x+9 → y³ = 3x²/2+3x+27 → y = ∛(3x²/2+3x+27).",
+      "question": "Solve: dy/dx = (x+1)/y\u00b2, y(0) = 3.",
+      "answer": "Separate: y\u00b2dy = (x+1)dx. Integrate: y\u00b3/3 = x\u00b2/2 + x + C. y(0)=3: 27/3=C \u2192 C=9. y\u00b3/3 = x\u00b2/2+x+9 \u2192 y\u00b3 = 3x\u00b2/2+3x+27 \u2192 y = \u221b(3x\u00b2/2+3x+27).",
       "skill": "separation-of-variables",
       "difficulty": 5,
       "points": 10
@@ -36,47 +73,47 @@
     {
       "id": "cbu7-3",
       "question": "A population grows at a rate proportional to its size. If the population is 500 at t=0 and 1500 at t=4 years, find the population at t=10.",
-      "answer": "dy/dt=ky → y=500e^(kt). y(4)=1500: 1500=500e^(4k) → e^(4k)=3 → 4k=ln3 → k=ln3/4. y(10)=500e^(10ln3/4)=500·3^(10/4)=500·3^(5/2)=500·9√3=4500√3≈7794.",
-      "skill": "exponential-models",
+      "answer": "dy/dt=ky \u2192 y=500e^(kt). y(4)=1500: 1500=500e^(4k) \u2192 e^(4k)=3 \u2192 4k=ln3 \u2192 k=ln3/4. y(10)=500e^(10ln3/4)=500\u00b73^(10/4)=500\u00b73^(5/2)=500\u00b79\u221a3=4500\u221a3\u22487794.",
+      "skill": "separation-of-variables",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cbu7-4",
       "question": "A radioactive substance has a half-life of 8 years. If the initial amount is 200 grams, how much remains after 20 years?",
-      "answer": "y=200e^(kt). Half-life: 100=200e^(8k) → e^(8k)=1/2 → 8k=−ln2 → k=−ln2/8. y(20)=200e^(−20ln2/8)=200·2^(−5/2)=200/(4√2)=50/√2=25√2≈35.4 g.",
-      "skill": "exponential-models",
+      "answer": "y=200e^(kt). Half-life: 100=200e^(8k) \u2192 e^(8k)=1/2 \u2192 8k=\u2212ln2 \u2192 k=\u2212ln2/8. y(20)=200e^(\u221220ln2/8)=200\u00b72^(\u22125/2)=200/(4\u221a2)=50/\u221a2=25\u221a2\u224835.4 g.",
+      "skill": "separation-of-variables",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu7-5",
-      "question": "Use Euler's method with step size Δx = 0.5 and initial condition y(0) = 1 to approximate y(1) for dy/dx = x + y.",
-      "answer": "Step 1: x₀=0, y₀=1. dy/dx=0+1=1. y₁=1+1(0.5)=1.5. Step 2: x₁=0.5, y₁=1.5. dy/dx=0.5+1.5=2. y₂=1.5+2(0.5)=2.5. So y(1) ≈ 2.5.",
-      "skill": "euler-method",
+      "question": "Use Euler's method with step size \u0394x = 0.5 and initial condition y(0) = 1 to approximate y(1) for dy/dx = x + y.",
+      "answer": "Step 1: x\u2080=0, y\u2080=1. dy/dx=0+1=1. y\u2081=1+1(0.5)=1.5. Step 2: x\u2081=0.5, y\u2081=1.5. dy/dx=0.5+1.5=2. y\u2082=1.5+2(0.5)=2.5. So y(1) \u2248 2.5.",
+      "skill": "eulers-method",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu7-6",
-      "question": "A population P follows the logistic model dP/dt = 0.5P(1 − P/1000). (a) What is the carrying capacity? (b) At what population is the growth rate maximum? (c) If P(0) = 100, is the population increasing or decreasing initially?",
-      "answer": "(a) Carrying capacity L = 1000. (b) Maximum growth at P = L/2 = 500. (c) At P=100: dP/dt = 0.5(100)(1−100/1000) = 50(0.9) = 45 > 0 → increasing.",
+      "question": "A population P follows the logistic model dP/dt = 0.5P(1 \u2212 P/1000). (a) What is the carrying capacity? (b) At what population is the growth rate maximum? (c) If P(0) = 100, is the population increasing or decreasing initially?",
+      "answer": "(a) Carrying capacity L = 1000. (b) Maximum growth at P = L/2 = 500. (c) At P=100: dP/dt = 0.5(100)(1\u2212100/1000) = 50(0.9) = 45 > 0 \u2192 increasing.",
       "skill": "logistic-growth",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu7-7",
-      "question": "Which of the following slope fields could represent dy/dx = x − y? Justify by checking: (a) At (0,0), slope = 0. (b) At (1,0), slope = 1. (c) At (0,1), slope = −1. (d) Along y = x, slope = 0.",
-      "answer": "At (0,0): 0−0=0 ✓. At (1,0): 1−0=1 ✓. At (0,1): 0−1=−1 ✓. Along y=x: x−x=0 ✓. The correct slope field has zero slopes along y=x, positive slopes below, and negative slopes above.",
+      "question": "Which of the following slope fields could represent dy/dx = x \u2212 y? Justify by checking: (a) At (0,0), slope = 0. (b) At (1,0), slope = 1. (c) At (0,1), slope = \u22121. (d) Along y = x, slope = 0.",
+      "answer": "At (0,0): 0\u22120=0 \u2713. At (1,0): 1\u22120=1 \u2713. At (0,1): 0\u22121=\u22121 \u2713. Along y=x: x\u2212x=0 \u2713. The correct slope field has zero slopes along y=x, positive slopes below, and negative slopes above.",
       "skill": "slope-fields",
       "difficulty": 3,
       "points": 6
     },
     {
       "id": "cbu7-8",
-      "question": "ANALYSIS: The temperature T of a cooling object satisfies dT/dt = −0.1(T − 70), where 70°F is the ambient temperature. (a) Solve this DE with T(0) = 200. (b) Find T(10). (c) What temperature does the object approach as t → ∞? (d) When does the object reach 100°F?",
-      "answer": "(a) Let u=T−70: du/dt=−0.1u → u=Ce^(−0.1t) → T−70=Ce^(−0.1t). T(0)=200: 130=C. T=70+130e^(−0.1t). (b) T(10)=70+130e^(−1)=70+130/e≈70+47.8≈117.8°F. (c) As t→∞, e^(−0.1t)→0, so T→70°F. (d) 100=70+130e^(−0.1t) → 30=130e^(−0.1t) → e^(−0.1t)=3/13 → t=−10ln(3/13)=10ln(13/3)≈14.7 min.",
+      "question": "ANALYSIS: The temperature T of a cooling object satisfies dT/dt = \u22120.1(T \u2212 70), where 70\u00b0F is the ambient temperature. (a) Solve this DE with T(0) = 200. (b) Find T(10). (c) What temperature does the object approach as t \u2192 \u221e? (d) When does the object reach 100\u00b0F?",
+      "answer": "(a) Let u=T\u221270: du/dt=\u22120.1u \u2192 u=Ce^(\u22120.1t) \u2192 T\u221270=Ce^(\u22120.1t). T(0)=200: 130=C. T=70+130e^(\u22120.1t). (b) T(10)=70+130e^(\u22121)=70+130/e\u224870+47.8\u2248117.8\u00b0F. (c) As t\u2192\u221e, e^(\u22120.1t)\u21920, so T\u219270\u00b0F. (d) 100=70+130e^(\u22120.1t) \u2192 30=130e^(\u22120.1t) \u2192 e^(\u22120.1t)=3/13 \u2192 t=\u221210ln(3/13)=10ln(13/3)\u224814.7 min.",
       "skill": "separation-of-variables",
       "difficulty": 6,
       "points": 14
@@ -85,8 +122,8 @@
   "spiralReview": [
     {
       "id": "cbu7-spiral-1",
-      "question": "SPIRAL (Integration): Evaluate ∫₀^π sin(x) dx.",
-      "answer": "[−cos(x)]₀^π = −cos(π)+cos(0) = −(−1)+1 = 2.",
+      "question": "SPIRAL (Integration): Evaluate \u222b\u2080^\u03c0 sin(x) dx.",
+      "answer": "[\u2212cos(x)]\u2080^\u03c0 = \u2212cos(\u03c0)+cos(0) = \u2212(\u22121)+1 = 2.",
       "skill": "ftc-part2",
       "difficulty": 3,
       "points": 0,
@@ -94,8 +131,8 @@
     },
     {
       "id": "cbu7-spiral-2",
-      "question": "SPIRAL (FDT): Find the intervals where f(x) = x³ − 3x is increasing.",
-      "answer": "f'(x)=3x²−3=3(x−1)(x+1). f'>0 on (−∞,−1) and (1,∞). Increasing on (−∞,−1) ∪ (1,∞).",
+      "question": "SPIRAL (FDT): Find the intervals where f(x) = x\u00b3 \u2212 3x is increasing.",
+      "answer": "f'(x)=3x\u00b2\u22123=3(x\u22121)(x+1). f'>0 on (\u2212\u221e,\u22121) and (1,\u221e). Increasing on (\u2212\u221e,\u22121) \u222a (1,\u221e).",
       "skill": "increasing-decreasing-extrema",
       "difficulty": 3,
       "points": 0,
@@ -103,15 +140,15 @@
     }
   ],
   "answerKeys": {
-    "cbu7-1": "y = 5e^(x³).",
-    "cbu7-2": "y = ∛(3x²/2+3x+27).",
-    "cbu7-3": "4500√3 ≈ 7794.",
-    "cbu7-4": "25√2 ≈ 35.4 g.",
-    "cbu7-5": "y(1) ≈ 2.5.",
+    "cbu7-1": "y = 5e^(x\u00b3).",
+    "cbu7-2": "y = \u221b(3x\u00b2/2+3x+27).",
+    "cbu7-3": "4500\u221a3 \u2248 7794.",
+    "cbu7-4": "25\u221a2 \u2248 35.4 g.",
+    "cbu7-5": "y(1) \u2248 2.5.",
     "cbu7-6": "(a) 1000. (b) 500. (c) Increasing.",
-    "cbu7-7": "Slopes: (0,0)→0, (1,0)→1, (0,1)→−1, y=x→0.",
-    "cbu7-8": "T=70+130e^(−0.1t); T(10)≈117.8°F; T→70°F; t≈14.7 min.",
+    "cbu7-7": "Slopes: (0,0)\u21920, (1,0)\u21921, (0,1)\u2192\u22121, y=x\u21920.",
+    "cbu7-8": "T=70+130e^(\u22120.1t); T(10)\u2248117.8\u00b0F; T\u219270\u00b0F; t\u224814.7 min.",
     "cbu7-spiral-1": "2.",
-    "cbu7-spiral-2": "(−∞,−1)∪(1,∞)."
+    "cbu7-spiral-2": "(\u2212\u221e,\u22121)\u222a(1,\u221e)."
   }
 }

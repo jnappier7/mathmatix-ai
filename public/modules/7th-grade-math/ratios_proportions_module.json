@@ -13,7 +13,12 @@
     "g7-percent-applications",
     "g7-percent-change"
   ],
-  "standardsAlignment": ["7.RP.1", "7.RP.2", "7.RP.3", "7.G.1"],
+  "standardsAlignment": [
+    "7.RP.1",
+    "7.RP.2",
+    "7.RP.3",
+    "7.G.1"
+  ],
   "goals": [
     "Compute unit rates and use them to compare two quantities (e.g., price per ounce, speed in miles per hour)",
     "Set up and solve proportions using cross-multiplication and equivalent ratios",
@@ -42,7 +47,8 @@
         "Unit rates allow fair comparisons between options with different sizes or quantities",
         "Common unit rates include price per item, miles per hour, and calories per serving"
       ],
-      "initialPrompt": "Imagine you are at the store and you see two bags of trail mix: a 10-oz bag for $3.50 and a 14-oz bag for $4.20. How would you figure out which is the better deal?"
+      "initialPrompt": "Imagine you are at the store and you see two bags of trail mix: a 10-oz bag for $3.50 and a 14-oz bag for $4.20. How would you figure out which is the better deal?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "explanation",
@@ -56,7 +62,8 @@
         "Always label your units to make sure the same type of quantity is in the same position on both sides",
         "Check your answer by substituting back in — both ratios should simplify to the same value"
       ],
-      "initialPrompt": "If you know a car uses 3 gallons of gas to drive 87 miles, how would you set up a proportion to find how many gallons it needs for a 145-mile trip?"
+      "initialPrompt": "If you know a car uses 3 gallons of gas to drive 87 miles, how would you set up a proportion to find how many gallons it needs for a 145-mile trip?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "explanation",
@@ -70,7 +77,8 @@
         "Drawing to actual: multiply by the scale factor; actual to drawing: divide by the scale factor",
         "Maps are scale drawings — use the legend (scale bar) to convert between map distance and real distance"
       ],
-      "initialPrompt": "If a map's scale says 1 inch = 25 miles, and you measure 6 inches between your hometown and the beach, how far is the actual drive?"
+      "initialPrompt": "If a map's scale says 1 inch = 25 miles, and you measure 6 inches between your hometown and the beach, how far is the actual drive?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "explanation",
@@ -85,7 +93,8 @@
         "Markup increases the wholesale cost to set the retail price",
         "Always identify the base (the original amount the percent is taken of)"
       ],
-      "initialPrompt": "You see a sign that says '30% off all sneakers.' If a pair costs $60, walk me through how you would calculate the sale price."
+      "initialPrompt": "You see a sign that says '30% off all sneakers.' If a pair costs $60, walk me through how you would calculate the sale price.",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "explanation",
@@ -99,7 +108,8 @@
         "Always divide by the ORIGINAL value, not the new value",
         "A percent increase then the same percent decrease does NOT return to the starting value because the base changes"
       ],
-      "initialPrompt": "A new video game costs $50 at launch. A month later the price drops to $40. What is the percent decrease? How did you decide what number to divide by?"
+      "initialPrompt": "A new video game costs $50 at launch. A month later the price drops to $40. What is the percent decrease? How did you decide what number to divide by?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "model",
@@ -123,7 +133,8 @@
           "tip": "When comparing, compute the unit rate for each option, then pick the one with the lower price per unit (if you want the cheaper option)."
         }
       ],
-      "initialPrompt": "In the third example, what if Store A ran a 10% off sale? Would Store A then be cheaper per pound than Store B?"
+      "initialPrompt": "In the third example, what if Store A ran a 10% off sale? Would Store A then be cheaper per pound than Store B?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "model",
@@ -142,7 +153,8 @@
           "tip": "Always check by computing the unit rate and multiplying. If both methods give the same answer, you know you set up the proportion correctly."
         }
       ],
-      "initialPrompt": "Try this: a car travels 87 miles on 3 gallons of gas. Set up a proportion to find how many gallons it needs for a 145-mile trip."
+      "initialPrompt": "Try this: a car travels 87 miles on 3 gallons of gas. Set up a proportion to find how many gallons it needs for a 145-mile trip.",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "model",
@@ -166,7 +178,8 @@
           "tip": "You can either multiply directly (4.5 * 3 = 13.5) or set up a proportion — both give the same result."
         }
       ],
-      "initialPrompt": "A park on a map measures 4 cm by 2.5 cm. If the scale is 1 cm = 50 meters, what are the actual dimensions of the park?"
+      "initialPrompt": "A park on a map measures 4 cm by 2.5 cm. If the scale is 1 cm = 50 meters, what are the actual dimensions of the park?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "model",
@@ -190,7 +203,8 @@
           "tip": "Markup works just like tax and tip — you are adding a percent to the base amount."
         }
       ],
-      "initialPrompt": "You buy a book for $24 and there is 5% sales tax. Can you find the total price using both methods — first finding the tax amount and adding, then using the shortcut multiplier?"
+      "initialPrompt": "You buy a book for $24 and there is 5% sales tax. Can you find the total price using both methods — first finding the tax amount and adding, then using the shortcut multiplier?",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "model",
@@ -214,12 +228,12 @@
           "tip": "This is a classic trick question! A percent increase and the same percent decrease will always result in a value LESS than the original because the decrease is calculated on a larger base."
         }
       ],
-      "initialPrompt": "What if the store decreased the $200 item by 10% first, and then increased that result by 10%? Would the answer still be $198, or something different? Try it!"
+      "initialPrompt": "What if the store decreased the $200 item by 10% first, and then increased that result by 10%? Would the answer still be $198, or something different? Try it!",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings"],
       "title": "We-Do: Rates, Proportions, and Scale Drawings",
       "problems": [
         {
@@ -253,12 +267,13 @@
           "answer": "3.75 inches"
         }
       ],
-      "initialPrompt": "Let's work through these together! For the first problem, what two quantities are you comparing, and which one should be 'per one'?"
+      "initialPrompt": "Let's work through these together! For the first problem, what two quantities are you comparing, and which one should be 'per one'?",
+      "skill": "g7-proportions",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": ["g7-percent-applications", "g7-percent-change"],
       "title": "We-Do: Percent Applications and Percent Change",
       "problems": [
         {
@@ -282,12 +297,13 @@
           "answer": "25% increase"
         }
       ],
-      "initialPrompt": "For the skateboard problem, what do you need to calculate first — the tax or the discount? Why does the order matter?"
+      "initialPrompt": "For the skateboard problem, what do you need to calculate first — the tax or the discount? Why does the order matter?",
+      "skill": "g7-percent-applications",
+      "lessonId": "ratios_proportions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings", "g7-percent-applications", "g7-percent-change"],
       "title": "You-Do: Independent Practice",
       "problems": [
         {
@@ -362,7 +378,9 @@
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "g7-unit-rates",
+      "lessonId": "ratios_proportions"
     }
   ],
   "answerKeys": {

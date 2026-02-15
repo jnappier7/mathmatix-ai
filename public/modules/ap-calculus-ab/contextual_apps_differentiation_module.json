@@ -50,7 +50,8 @@
         "Step 5 — Substitute all known values (including the specific moment's measurements and rates) and solve for the unknown rate.",
         "Classic scenarios: ladder sliding down a wall (Pythagorean), expanding/draining cone (volume), balloon inflating (sphere volume/surface area), shadow lengthening (similar triangles), two objects moving (distance formula).",
         "Common trap: substituting specific values BEFORE differentiating. Always differentiate the general equation first."
-      ]
+      ],
+      "lessonId": "related-rates"
     },
     {
       "type": "model",
@@ -70,7 +71,8 @@
           "problem": "Water drains from a conical tank (height 12 ft, radius 4 ft at top) at 3 ft³/min. How fast is the water level dropping when the water is 6 ft deep?",
           "solution": "Draw: inverted cone. By similar triangles: r/h = 4/12 = 1/3, so r = h/3. Volume: V = (1/3)pi r²h = (1/3)pi(h/3)²h = pi h³/27. Given: dV/dt = -3 ft³/min (draining, so negative). Want: dh/dt when h = 6. Differentiate: dV/dt = (pi/27)(3h²)(dh/dt) = (pi h²/9)(dh/dt). Substitute: -3 = (pi(36)/9)(dh/dt) = 4pi(dh/dt). dh/dt = -3/(4pi) ft/min, approximately -0.239 ft/min. The water level drops at 3/(4pi) ft/min."
         }
-      ]
+      ],
+      "lessonId": "related-rates"
     },
     {
       "type": "explanation",
@@ -87,7 +89,8 @@
         "Slowing down: v(t) and a(t) have OPPOSITE signs. The velocity is moving toward zero.",
         "Object is at rest when v(t) = 0. Being at rest does not necessarily mean direction changes — v could touch zero and bounce back.",
         "Displacement over [a, b]: s(b) - s(a). Total distance over [a, b]: integral of |v(t)| dt (not tested in this unit, but conceptually important)."
-      ]
+      ],
+      "lessonId": "motion"
     },
     {
       "type": "model",
@@ -107,13 +110,13 @@
           "problem": "A particle has velocity v(t) = sin(t) - cos(t) for 0 <= t <= 2pi. Find the acceleration at t = pi/4. Is the particle speeding up or slowing down at t = pi/4?",
           "solution": "a(t) = v'(t) = cos(t) + sin(t). At t = pi/4: a(pi/4) = cos(pi/4) + sin(pi/4) = sqrt(2)/2 + sqrt(2)/2 = sqrt(2). Now check v(pi/4) = sin(pi/4) - cos(pi/4) = sqrt(2)/2 - sqrt(2)/2 = 0. Since v(pi/4) = 0, the particle is instantaneously at rest — it is neither speeding up nor slowing down at this exact moment. (Speed is |v| = 0 and is about to increase.)"
         }
-      ]
+      ],
+      "lessonId": "motion"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Related Rates & Motion Practice",
-      "skills": ["related-rates-setup-solve", "motion-position-velocity-acceleration"],
       "problems": [
         {
           "problem": "A 6-ft tall man walks away from a 15-ft streetlight at 4 ft/s. How fast is the tip of his shadow moving along the ground when he is 20 ft from the light?",
@@ -152,7 +155,9 @@
           ],
           "answer": "dA/dt = 2pi(20)(3) = 120pi m²/min, approximately 376.99 m²/min."
         }
-      ]
+      ],
+      "skill": "motion-position-velocity-acceleration",
+      "lessonId": "motion"
     },
     {
       "type": "explanation",
@@ -167,7 +172,8 @@
         "Relationship: delta y (actual change) approximately equals dy (estimated change). The approximation improves as dx shrinks.",
         "Over/underestimate: if f is concave up (f'' > 0) near a, the tangent line lies BELOW the curve — linearization UNDERESTIMATES. If f is concave down (f'' < 0), the tangent line lies ABOVE — linearization OVERESTIMATES.",
         "AP FRQ tip: when asked whether an approximation is an over- or underestimate, cite concavity as your justification."
-      ]
+      ],
+      "lessonId": "linearization"
     },
     {
       "type": "model",
@@ -187,7 +193,8 @@
           "problem": "Given f(3) = 7 and f'(3) = -2, approximate f(3.05) using linearization. If f''(3) > 0, is this an overestimate or underestimate?",
           "solution": "L(x) = f(3) + f'(3)(x - 3) = 7 + (-2)(x - 3). L(3.05) = 7 + (-2)(0.05) = 7 - 0.1 = 6.9. Since f''(3) > 0, the function is concave up near x = 3. A concave-up function curves above its tangent line, so the tangent line (our linearization) lies below the actual curve. Therefore 6.9 is an UNDERESTIMATE of f(3.05)."
         }
-      ]
+      ],
+      "lessonId": "linearization"
     },
     {
       "type": "explanation",
@@ -203,7 +210,8 @@
         "Other indeterminate forms (0 * infinity, infinity - infinity, 0^0, 1^infinity, infinity^0) must be algebraically rewritten as 0/0 or infinity/infinity before applying L'Hopital's.",
         "Common trap: applying L'Hopital's when the form is NOT indeterminate (e.g., 5/0 or 3/7). The rule does not apply in those cases.",
         "When L'Hopital's applies, the derivatives should simplify the expression. If it gets more complicated, consider an alternative algebraic approach."
-      ]
+      ],
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "model",
@@ -223,13 +231,13 @@
           "problem": "Evaluate: lim(x->0) (e^x - 1 - x)/x².",
           "solution": "Check form: (1 - 1 - 0)/0 = 0/0. L'Hopital's applies. First application: lim(x->0) (e^x - 1)/(2x). Check: (1 - 1)/0 = 0/0. Still indeterminate. Second application: lim(x->0) e^x/2 = 1/2. The limit is 1/2."
         }
-      ]
+      ],
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Linearization & L'Hopital's Rule Practice",
-      "skills": ["local-linearization-differentials", "lhopitals-rule"],
       "problems": [
         {
           "problem": "Use linearization to approximate (1.02)^5. Is this an overestimate or underestimate?",
@@ -259,13 +267,14 @@
           ],
           "answer": "Rewrite: lim ln(1 + 3/x)/(1/x). Form: 0/0. Differentiate: numerator derivative = [1/(1 + 3/x)](-3/x²) = -3/(x²(1 + 3/x)). Denominator derivative = -1/x². Ratio: [-3/(x²(1 + 3/x))]/(-1/x²) = 3/(1 + 3/x). As x -> infinity: 3/(1 + 0) = 3."
         }
-      ]
+      ],
+      "skill": "lhopitals-rule",
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Contextual Applications of Differentiation — Mastery Practice",
-      "skills": ["related-rates-setup-solve", "motion-position-velocity-acceleration", "local-linearization-differentials", "lhopitals-rule"],
       "problems": [
         {
           "problem": "A boat is pulled toward a dock by a rope attached to the bow. The rope is wound through a pulley on the dock that is 6 ft higher than the bow. If the rope is pulled in at 2 ft/s, how fast is the boat approaching the dock when 10 ft of rope is out?",
@@ -291,7 +300,9 @@
           "problem": "A particle moves along a line with position s(t) = t³ - 9t² + 24t for t >= 0. (a) Find the total number of times the particle changes direction. (b) Find the particle's position at each direction change. (c) At t = 3, is the particle speeding up or slowing down?",
           "answer": "(a) v(t) = 3t² - 18t + 24 = 3(t² - 6t + 8) = 3(t - 2)(t - 4) = 0 at t = 2, t = 4. v changes sign at both, so 2 direction changes. (b) s(2) = 8 - 36 + 48 = 20. s(4) = 64 - 144 + 96 = 16. (c) v(3) = 27 - 54 + 24 = -3 < 0. a(t) = 6t - 18. a(3) = 0. Since a(3) = 0, the particle is neither speeding up nor slowing down at that instant (acceleration is zero)."
         }
-      ]
+      ],
+      "skill": "related-rates-setup-solve",
+      "lessonId": "related-rates"
     }
   ],
   "answerKeys": {
@@ -320,5 +331,27 @@
     "ip-lhopital-e2x": "2. Two applications of L'Hopital.",
     "ip-rr-cone-net": "dh/dt = 3/(8pi) m/min.",
     "ip-motion-full": "2 direction changes at t=2,4. s(2)=20, s(4)=16. At t=3: a=0, neither speeding up nor slowing down."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "related-rates",
+      "title": "Related Rates",
+      "order": 1
+    },
+    {
+      "lessonId": "motion",
+      "title": "Motion: Position, Velocity, Acceleration",
+      "order": 2
+    },
+    {
+      "lessonId": "linearization",
+      "title": "Local Linearization & Differentials",
+      "order": 3
+    },
+    {
+      "lessonId": "lhopitals-rule",
+      "title": "L'Hôpital's Rule",
+      "order": 4
+    }
+  ]
 }

@@ -28,7 +28,7 @@ const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit 
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
-const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -1351,8 +1351,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             csDoc.currentScaffoldIndex = 0;
 
                             // Recalculate overall progress
-                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
-                            csDoc.overallProgress = Math.round((doneCount / csDoc.modules.length) * 100);
+                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
 
                             // Check for full course completion
                             if (doneCount === csDoc.modules.length) {
@@ -1387,9 +1386,39 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             };
 
                         } else if (hasScaffoldAdvance && mod) {
-                            // SCAFFOLD ADVANCE: move to next step in the current module
+                            // SCAFFOLD ADVANCE: validate before moving to next step
+                            // Practice phases (we-do, you-do) require minimum correct answers
+                            const currentStep = courseCtx?.scaffoldData?.scaffold?.[currentIdx];
+                            const stepType = currentStep?.type || currentStep?.lessonPhase || '';
+                            const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
+
+                            // Count PROBLEM_RESULT:correct tags since the last scaffold advance
+                            // by scanning recent conversation messages for problemResult markers
+                            let correctSinceLastAdvance = 0;
+                            if (isPracticePhase && activeConversation?.messages) {
+                                // Walk backwards through messages until we find a previous scaffold advance marker
+                                for (let i = activeConversation.messages.length - 1; i >= 0; i--) {
+                                    const msg = activeConversation.messages[i];
+                                    if (msg.scaffoldAdvanced) break; // stop at last advance
+                                    if (msg.problemResult === 'correct') correctSinceLastAdvance++;
+                                }
+                                // Also count the current response's result (parsed above)
+                                if (wasCorrect) correctSinceLastAdvance++;
+                            }
+
+                            const MIN_CORRECT_FOR_PRACTICE = 2;
+                            if (isPracticePhase && correctSinceLastAdvance < MIN_CORRECT_FOR_PRACTICE) {
+                                console.log(`⚠️ [Course] SCAFFOLD_ADVANCE blocked for ${user.firstName} — practice phase "${stepType}" requires ${MIN_CORRECT_FOR_PRACTICE} correct, only ${correctSinceLastAdvance} so far`);
+                                // Don't advance — the AI jumped the gun. Student needs more practice.
+                            } else {
+                            // Advance is valid
                             const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
                             csDoc.currentScaffoldIndex = newIdx;
+
+                            // Mark the advance point in conversation for future counting
+                            if (activeConversation?.messages?.length > 0) {
+                                activeConversation.messages[activeConversation.messages.length - 1].scaffoldAdvanced = true;
+                            }
 
                             // Update module scaffoldProgress as percentage
                             mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
@@ -1397,6 +1426,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                                 mod.status = 'in_progress';
                                 mod.startedAt = mod.startedAt || new Date();
                             }
+
+                            // Recalculate blended overall progress (includes scaffold progress)
+                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
 
                             csDoc.markModified('modules');
                             await csDoc.save();
@@ -1409,8 +1441,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                                 scaffoldIndex: newIdx,
                                 scaffoldTotal: totalSteps,
                                 scaffoldProgress: mod.scaffoldProgress,
+                                overallProgress: csDoc.overallProgress,
                                 stepTitle: nextStep?.title || null
                             };
+                            } // end else (advance is valid)
                         }
                     }
                 }

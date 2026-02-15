@@ -7,8 +7,18 @@
   "weeks": "19-21",
   "estimatedDuration": 45,
   "description": "Understand similarity and scale factors, prove triangles similar using AA, SSS~, and SAS~ theorems, solve real-world proportion problems, and apply the geometric mean in right triangles with altitude-on-hypotenuse.",
-  "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"],
-  "standardsAlignment": ["G-SRT.2", "G-SRT.3", "G-SRT.4", "G-SRT.5"],
+  "skills": [
+    "similarity-ratios",
+    "similar-triangle-theorems",
+    "similarity-proofs",
+    "geometric-mean"
+  ],
+  "standardsAlignment": [
+    "G-SRT.2",
+    "G-SRT.3",
+    "G-SRT.4",
+    "G-SRT.5"
+  ],
   "goals": [
     "Understand similarity and find scale factors between similar figures",
     "Prove triangles similar using AA, SSS~, and SAS~ theorems",
@@ -28,8 +38,23 @@
       "lessonPhase": "concept-intro",
       "skill": "similar-triangle-theorems",
       "title": "Similarity and Triangle Similarity Theorems",
-      "text": "Two figures are **similar** (symbol: ~) if:\n1. All corresponding angles are congruent\n2. All corresponding sides are proportional\n\nThe **scale factor** is the ratio of corresponding sides. If △ABC ~ △DEF with sides 3, 4, 5 and 6, 8, 10, the scale factor is 1:2 (or 2:1 depending on direction).\n\n**Three ways to prove triangles similar:**\n• **AA (Angle-Angle)** — two pairs of congruent angles (the third is automatic)\n• **SSS~ (Side-Side-Side)** — all three pairs of sides proportional\n• **SAS~ (Side-Angle-Side)** — two pairs of sides proportional AND the included angle congruent",
-      "initialPrompt": "Congruent figures are similar with a scale factor of 1. What does a scale factor of 3 mean in practical terms—like a 3:1 model of a building?"
+      "content": "Two figures are **similar** (symbol: ~) if:\n1. All corresponding angles are congruent\n2. All corresponding sides are proportional\n\nThe **scale factor** is the ratio of corresponding sides. If △ABC ~ △DEF with sides 3, 4, 5 and 6, 8, 10, the scale factor is 1:2 (or 2:1 depending on direction).\n\n**Three ways to prove triangles similar:**\n• **AA (Angle-Angle)** — two pairs of congruent angles (the third is automatic)\n• **SSS~ (Side-Side-Side)** — all three pairs of sides proportional\n• **SAS~ (Side-Angle-Side)** — two pairs of sides proportional AND the included angle congruent",
+      "initialPrompt": "Congruent figures are similar with a scale factor of 1. What does a scale factor of 3 mean in practical terms—like a 3:1 model of a building?",
+      "lessonId": "triangle-similarity-theorems"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "similarity-proofs",
+      "title": "We-Do: Similarity Proofs — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for similarity proofs.",
+          "hint": "Apply the concepts of similarity proofs.",
+          "solution": "Step-by-step solution for similarity proofs."
+        }
+      ],
+      "lessonId": "similarity-applications"
     },
     {
       "type": "model",
@@ -50,7 +75,8 @@
           "solution": "Two pairs of sides: PQ/ST = 6/8 = 3/4, QR/TU = 9/12 = 3/4. ✓ Proportional.\nIncluded angle: ∠Q = ∠T = 48° ✓\n\nBy **SAS~ Similarity**, △PQR ~ △STU with scale factor **3:4**."
         }
       ],
-      "initialPrompt": "Why is AA sufficient? Why don't we need to check sides too? Think about what happens when you fix two angles of a triangle."
+      "initialPrompt": "Why is AA sufficient? Why don't we need to check sides too? Think about what happens when you fix two angles of a triangle.",
+      "lessonId": "triangle-similarity-theorems"
     },
     {
       "type": "guided_practice",
@@ -86,15 +112,17 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what does SSS~ require? Compare each pair of corresponding sides."
+      "initialPrompt": "For the first problem, what does SSS~ require? Compare each pair of corresponding sides.",
+      "lessonId": "triangle-similarity-theorems"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "similarity-ratios",
       "title": "Proportions and Scale Factor Applications",
-      "text": "When triangles are similar, corresponding sides are **proportional**. Set up a proportion to find missing sides:\n\nIf △ABC ~ △DEF with scale factor k, then:\nAB/DE = BC/EF = AC/DF = k\n\n**Cross-multiplication** solves proportions: if a/b = c/d, then ad = bc.\n\n**Real-world applications:**\n• Shadow problems (sun creates similar triangles)\n• Map scales (small:large ratio)\n• Indirect measurement (mirror method, similar triangle method)\n\nKey rule: always match corresponding sides consistently. If the first ratio is small/large, keep ALL ratios small/large.",
-      "initialPrompt": "A map has a scale of 1 inch = 3 miles. If two cities are 4.5 inches apart on the map, how far apart are they in real life?"
+      "content": "When triangles are similar, corresponding sides are **proportional**. Set up a proportion to find missing sides:\n\nIf △ABC ~ △DEF with scale factor k, then:\nAB/DE = BC/EF = AC/DF = k\n\n**Cross-multiplication** solves proportions: if a/b = c/d, then ad = bc.\n\n**Real-world applications:**\n• Shadow problems (sun creates similar triangles)\n• Map scales (small:large ratio)\n• Indirect measurement (mirror method, similar triangle method)\n\nKey rule: always match corresponding sides consistently. If the first ratio is small/large, keep ALL ratios small/large.",
+      "initialPrompt": "A map has a scale of 1 inch = 3 miles. If two cities are 4.5 inches apart on the map, how far apart are they in real life?",
+      "lessonId": "similarity-intro"
     },
     {
       "type": "model",
@@ -115,7 +143,8 @@
           "solution": "Set up proportion: 2 cm / 15 km = 7 cm / x km\n\nCross multiply: 2x = 105 → x = **52.5 km**\n\nVerify: 2/15 = 7/52.5 = 0.1333... ✓"
         }
       ],
-      "initialPrompt": "If we know PR = 15 in the smaller triangle, what would SU be in the larger triangle?"
+      "initialPrompt": "If we know PR = 15 in the smaller triangle, what would SU be in the larger triangle?",
+      "lessonId": "similarity-intro"
     },
     {
       "type": "guided_practice",
@@ -151,15 +180,17 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what is the scale factor from △ABC to △DEF?"
+      "initialPrompt": "For the first problem, what is the scale factor from △ABC to △DEF?",
+      "lessonId": "similarity-intro"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "geometric-mean",
       "title": "Geometric Mean and Right Triangle Altitude Theorem",
-      "text": "**Geometric Mean and Right Triangle Altitude Theorem:**\n\nWhen an altitude is drawn from the right angle to the hypotenuse of a right triangle, it creates two smaller triangles that are each similar to the original and to each other.\n\nThis gives us three important relationships:\n\n1. **Altitude Rule:** altitude² = (segment 1)(segment 2)\n   The altitude is the geometric mean of the two segments of the hypotenuse.\n\n2. **Leg Rule:** leg² = (adjacent segment)(hypotenuse)\n   Each leg is the geometric mean of the adjacent hypotenuse segment and the whole hypotenuse.\n\nThe **geometric mean** of two numbers a and b is √(ab).",
-      "initialPrompt": "The geometric mean of 4 and 9 is √(4×9) = √36 = 6. Notice that 6 is between 4 and 9. Can you find the geometric mean of 3 and 12?"
+      "content": "**Geometric Mean and Right Triangle Altitude Theorem:**\n\nWhen an altitude is drawn from the right angle to the hypotenuse of a right triangle, it creates two smaller triangles that are each similar to the original and to each other.\n\nThis gives us three important relationships:\n\n1. **Altitude Rule:** altitude² = (segment 1)(segment 2)\n   The altitude is the geometric mean of the two segments of the hypotenuse.\n\n2. **Leg Rule:** leg² = (adjacent segment)(hypotenuse)\n   Each leg is the geometric mean of the adjacent hypotenuse segment and the whole hypotenuse.\n\nThe **geometric mean** of two numbers a and b is √(ab).",
+      "initialPrompt": "The geometric mean of 4 and 9 is √(4×9) = √36 = 6. Notice that 6 is between 4 and 9. Can you find the geometric mean of 3 and 12?",
+      "lessonId": "geometric-mean"
     },
     {
       "type": "model",
@@ -180,7 +211,8 @@
           "solution": "By the Leg Rule: leg² = (adjacent segment)(full hypotenuse)\n\nShorter leg (adjacent to 4): leg² = 4 × 13 = 52 → leg = √52 = **2√13 ≈ 7.21**\nLonger leg (adjacent to 9): leg² = 9 × 13 = 117 → leg = √117 = **3√13 ≈ 10.82**\n\nVerify with Pythagorean Theorem: (2√13)² + (3√13)² = 52 + 117 = 169 = 13² ✓"
         }
       ],
-      "initialPrompt": "The geometric mean is found with the formula √(a × b). How does this connect to the altitude creating similar triangles?"
+      "initialPrompt": "The geometric mean is found with the formula √(a × b). How does this connect to the altitude creating similar triangles?",
+      "lessonId": "geometric-mean"
     },
     {
       "type": "guided_practice",
@@ -215,7 +247,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what is 5 × 20?"
+      "initialPrompt": "For the first problem, what is 5 × 20?",
+      "lessonId": "geometric-mean"
     },
     {
       "type": "independent_practice",
@@ -227,45 +260,59 @@
           "question": "△MNO ~ △PQR. MN = 10, NO = 14, MO = 8, PQ = 15. Find QR and PR.",
           "answer": "QR = 21, PR = 12",
           "skill": "similarity-ratios",
-          "hints": ["Scale factor: 10/15 = 2/3. QR = 14×3/2 = 21. PR = 8×3/2 = 12."]
+          "hints": [
+            "Scale factor: 10/15 = 2/3. QR = 14×3/2 = 21. PR = 8×3/2 = 12."
+          ]
         },
         {
           "id": "si-yp2",
           "question": "Two triangles have two pairs of congruent angles (32° and 58°). Are they similar? By what theorem?",
           "answer": "Yes, by AA Similarity",
           "skill": "similar-triangle-theorems",
-          "hints": ["Two pairs of congruent angles is sufficient for AA."]
+          "hints": [
+            "Two pairs of congruent angles is sufficient for AA."
+          ]
         },
         {
           "id": "si-yp3",
           "question": "A flagpole casts a 12-foot shadow. At the same time, a 5-foot person casts a 3-foot shadow. How tall is the flagpole?",
           "answer": "20 feet",
           "skill": "similarity-ratios",
-          "hints": ["5/3 = x/12. Cross multiply: 3x = 60, x = 20."]
+          "hints": [
+            "5/3 = x/12. Cross multiply: 3x = 60, x = 20."
+          ]
         },
         {
           "id": "si-yp4",
           "question": "Find the geometric mean of 8 and 32.",
           "answer": "16",
           "skill": "geometric-mean",
-          "hints": ["√(8 × 32) = √256 = 16."]
+          "hints": [
+            "√(8 × 32) = √256 = 16."
+          ]
         },
         {
           "id": "si-yp5",
           "question": "In a right triangle, the altitude from the right angle to the hypotenuse creates segments of 3 and 12. Find the altitude.",
           "answer": "6",
           "skill": "geometric-mean",
-          "hints": ["altitude = √(3 × 12) = √36 = 6."]
+          "hints": [
+            "altitude = √(3 × 12) = √36 = 6."
+          ]
         },
         {
           "id": "si-yp6",
           "question": "Using the same triangle (segments 3 and 12, hypotenuse = 15), find the shorter leg.",
           "answer": "√45 = 3√5 ≈ 6.71",
           "skill": "geometric-mean",
-          "hints": ["Shorter leg is adjacent to segment 3. leg² = 3 × 15 = 45. Leg = √45 = 3√5."]
+          "hints": [
+            "Shorter leg is adjacent to segment 3. leg² = 3 × 15 = 45. Leg = √45 = 3√5."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "similarity-ratios",
+      "lessonId": "similarity-intro"
     }
   ],
   "answerKeys": {
@@ -284,5 +331,27 @@
     "si-yp4": "16.",
     "si-yp5": "6.",
     "si-yp6": "3√5."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "similarity-intro",
+      "title": "Similar Figures and Scale Factors",
+      "order": 1
+    },
+    {
+      "lessonId": "triangle-similarity-theorems",
+      "title": "Triangle Similarity Theorems",
+      "order": 2
+    },
+    {
+      "lessonId": "similarity-applications",
+      "title": "Similarity in the Real World",
+      "order": 3
+    },
+    {
+      "lessonId": "geometric-mean",
+      "title": "Geometric Mean and Right Triangle Altitude",
+      "order": 4
+    }
+  ]
 }

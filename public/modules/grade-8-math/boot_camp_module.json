@@ -6,8 +6,18 @@
   "weeks": "1-2",
   "estimatedDuration": 50,
   "description": "Diagnose and repair the prerequisite skills that wreck the entire year if they're shaky: integer operations, fraction/decimal fluency, solving basic equations, and coordinate plane literacy. Every example connects forward to 8th-grade content so students see WHY these skills matter now.",
-  "skills": ["integer-operations", "fraction-decimal-fluency", "basic-equations", "coordinate-plane-basics"],
-  "standardsAlignment": ["Review of 6.NS", "Review of 7.NS", "Review of 7.EE", "Preview of 8.EE"],
+  "skills": [
+    "integer-operations",
+    "fraction-decimal-fluency",
+    "basic-equations",
+    "coordinate-plane-basics"
+  ],
+  "standardsAlignment": [
+    "Review of 6.NS",
+    "Review of 7.NS",
+    "Review of 7.EE",
+    "Preview of 8.EE"
+  ],
   "goals": [
     "Perform all four operations with integers without sign errors.",
     "Add, subtract, multiply, and divide fractions and decimals fluently.",
@@ -20,21 +30,22 @@
     "Heavy emphasis on self-checking: after solving, substitute back in. Build the habit NOW.",
     "Use number lines and coordinate planes as visual anchors throughout."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Integer Operations: The Foundation of Everything",
       "skill": "integer-operations",
-      "content": "Every equation, every expression, every graph in 8th grade involves integers. Sign errors are the #1 source of wrong answers all year.\n\n**Addition:** Same signs → add, keep sign. Different signs → subtract, keep sign of the bigger absolute value.\n**Subtraction:** Add the opposite. a − b = a + (−b). ALWAYS rewrite subtraction as adding the opposite.\n**Multiplication/Division:** Same signs → positive. Different signs → negative.\n**Order of operations:** PEMDAS still applies, but now with negative numbers in the mix.\n\n**8th-grade preview:** When you solve 3x − 7 = −22, you'll add 7, then divide by 3. If you mess up −22 + 7 = −15 (not −29), the whole answer is wrong.",
+      "content": "Every equation, every expression, every graph in 8th grade involves integers. Sign errors are the #1 source of wrong answers all year.\n\n**Addition:** Same signs → add, keep sign. Different signs → subtract, keep sign of the bigger absolute value.\n**Subtraction:** Add the opposite. a − b = a + (−b). ALWAYS rewrite subtraction as adding the opposite.\n**Multiplication/Division:** Same signs → positive. Different signs → negative.\n**Order of operations:** GEMS still applies, but now with negative numbers in the mix.\n\n**8th-grade preview:** When you solve 3x − 7 = −22, you'll add 7, then divide by 3. If you mess up −22 + 7 = −15 (not −29), the whole answer is wrong.",
       "keyPoints": [
         "Same signs → add magnitudes, keep sign: (−4) + (−3) = −7",
         "Different signs → subtract magnitudes, sign of larger: (−8) + 5 = −3",
         "Subtraction = add the opposite: 6 − (−2) = 6 + 2 = 8",
         "Multiplication/division: same signs → positive, different → negative",
         "Order of operations applies to ALL expressions, including negatives"
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "model",
@@ -54,7 +65,8 @@
           "problem": "Evaluate: (−2)³ − 4(−3)",
           "solution": "Step 1: (−2)³ = (−2)(−2)(−2) = −8 (odd exponent → negative).\nStep 2: 4(−3) = −12.\nStep 3: −8 − (−12) = −8 + 12 = 4.\nAnswer: 4.\n\n8th-grade preview: Exponents with negatives will show up constantly in Unit 1."
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "explanation",
@@ -68,7 +80,8 @@
         "Divide fractions: keep the first, change ÷ to ×, flip the second",
         "Decimals: align decimal points for add/subtract",
         "Key conversions: 1/4=0.25, 1/3≈0.333, 1/2=0.5, 3/4=0.75"
-      ]
+      ],
+      "lessonId": "fraction-decimal-review"
     },
     {
       "type": "model",
@@ -88,20 +101,22 @@
           "problem": "Evaluate: 3.6 × 0.04",
           "solution": "Ignore decimals: 36 × 4 = 144.\nCount decimal places: 3.6 has 1, 0.04 has 2 → total 3 places.\n144 → 0.144.\nAnswer: 0.144."
         }
-      ]
+      ],
+      "lessonId": "fraction-decimal-review"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Solving 1-Step and 2-Step Equations",
       "skill": "basic-equations",
-      "content": "Equations are the backbone of algebra. Every unit this year uses equation-solving. The key idea: whatever you do to one side, you MUST do to the other.\n\n**1-Step:** Use the inverse operation to isolate x. Addition ↔ subtraction. Multiplication ↔ division.\n**2-Step:** Undo addition/subtraction FIRST (peel off the outer layer), then undo multiplication/division.\n**Always check:** Substitute your answer back into the original equation.\n\n**Preview:** In Unit 2, you'll solve equations with variables on BOTH sides. These same inverse-operation skills are the foundation.",
+      "content": "Equations are the backbone of algebra. Every unit this year uses equation-solving. The key idea: whatever you do to one side, you MUST do to the other.\n\n**1-Step:** Use the inverse operation to isolate x. Addition ↔ subtraction. Multiplication ↔ division.\n**2-Step:** Box the variable term (like [3x] in 3x + 5 = 20). Anything OUTSIDE the box — use opposites to make zero. Anything INSIDE the box — divide it out.\n**Always check:** Substitute your answer back into the original equation.\n\n**Preview:** In Unit 2, you'll solve equations with variables on BOTH sides. These same inverse-operation skills are the foundation.",
       "keyPoints": [
         "Inverse operations: addition ↔ subtraction, multiplication ↔ division",
-        "2-step: undo add/subtract first, then multiply/divide",
+        "2-step: box the variable term, outside the box use opposites, inside the box divide",
         "Always check by substituting back into the original",
         "Show every step — skipping steps causes errors"
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "model",
@@ -121,7 +136,8 @@
           "problem": "Solve: 3x − 5 = 16",
           "solution": "Step 1 (undo subtraction): 3x = 16 + 5 = 21.\nStep 2 (undo multiplication): x = 21 ÷ 3 = 7.\nCheck: 3(7) − 5 = 21 − 5 = 16 ✓\nAnswer: x = 7."
         }
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "guided_practice",
@@ -133,21 +149,31 @@
           "id": "bc-wp1",
           "question": "Evaluate: −15 + 8 − (−4) + (−6)",
           "answer": "−15 + 8 + 4 + (−6) = −15 + 8 + 4 − 6 = 12 − 21 = −9",
-          "hints": ["Rewrite −(−4) as +4 first.", "Group all positive and negative numbers separately."]
+          "hints": [
+            "Rewrite −(−4) as +4 first.",
+            "Group all positive and negative numbers separately."
+          ]
         },
         {
           "id": "bc-wp2",
           "question": "Evaluate: (−2/3) + (5/6)",
           "answer": "LCD = 6. −2/3 = −4/6. −4/6 + 5/6 = 1/6.",
-          "hints": ["Find the LCD of 3 and 6.", "Convert −2/3 to sixths, then add."]
+          "hints": [
+            "Find the LCD of 3 and 6.",
+            "Convert −2/3 to sixths, then add."
+          ]
         },
         {
           "id": "bc-wp3",
           "question": "Evaluate: (−1.5)² + 3(−2)",
           "answer": "(−1.5)² = 2.25 (squaring makes it positive). 3(−2) = −6. 2.25 + (−6) = −3.75.",
-          "hints": ["Remember: (−1.5)² = (−1.5)(−1.5) = positive.", "Compute each piece separately, then combine."]
+          "hints": [
+            "Remember: (−1.5)² = (−1.5)(−1.5) = positive.",
+            "Compute each piece separately, then combine."
+          ]
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "guided_practice",
@@ -159,21 +185,30 @@
           "id": "bc-wp4",
           "question": "Solve: x/4 = −6",
           "answer": "Multiply both sides by 4: x = −24. Check: −24/4 = −6 ✓",
-          "hints": ["x/4 means x divided by 4. What's the inverse of dividing by 4?"]
+          "hints": [
+            "x/4 means x divided by 4. What's the inverse of dividing by 4?"
+          ]
         },
         {
           "id": "bc-wp5",
           "question": "Solve: 2x + 9 = 1",
           "answer": "2x = 1 − 9 = −8. x = −8/2 = −4. Check: 2(−4) + 9 = −8 + 9 = 1 ✓",
-          "hints": ["Subtract 9 from both sides first.", "Then divide by 2."]
+          "hints": [
+            "Subtract 9 from both sides first.",
+            "Then divide by 2."
+          ]
         },
         {
           "id": "bc-wp6",
           "question": "Solve: −5x + 3 = −17",
           "answer": "−5x = −17 − 3 = −20. x = −20/(−5) = 4. Check: −5(4) + 3 = −20 + 3 = −17 ✓",
-          "hints": ["Subtract 3 from both sides.", "Divide by −5. What sign does x have?"]
+          "hints": [
+            "Subtract 3 from both sides.",
+            "Divide by −5. What sign does x have?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "guided_practice",
@@ -185,21 +220,28 @@
           "id": "bc-wp7",
           "question": "Plot and identify the quadrant for each point: A(3, −2), B(−4, 5), C(−1, −3).",
           "answer": "A(3, −2): Quadrant IV (positive x, negative y). B(−4, 5): Quadrant II (negative x, positive y). C(−1, −3): Quadrant III (both negative).",
-          "hints": ["Remember: Quadrants go counterclockwise starting from the upper right: I, II, III, IV."]
+          "hints": [
+            "Remember: Quadrants go counterclockwise starting from the upper right: I, II, III, IV."
+          ]
         },
         {
           "id": "bc-wp8",
           "question": "Simplify using exponent rules: 2³ · 2⁴",
           "answer": "Same base, add exponents: 2³⁺⁴ = 2⁷ = 128.",
-          "hints": ["When multiplying same bases, what do you do with the exponents?"]
+          "hints": [
+            "When multiplying same bases, what do you do with the exponents?"
+          ]
         },
         {
           "id": "bc-wp9",
           "question": "Simplify: (3²)³",
           "answer": "Power of a power — multiply exponents: 3²ˣ³ = 3⁶ = 729.",
-          "hints": ["Power of a power: multiply the exponents together."]
+          "hints": [
+            "Power of a power: multiply the exponents together."
+          ]
         }
-      ]
+      ],
+      "lessonId": "coordinate-plane-review"
     },
     {
       "type": "independent_practice",
@@ -212,44 +254,57 @@
           "question": "Evaluate: −4(−3) + (−2)³ − 5",
           "answer": "12 + (−8) − 5 = 12 − 8 − 5 = −1",
           "skill": "integer-operations",
-          "hints": ["Handle exponent first, then multiplication, then add/subtract left to right."]
+          "hints": [
+            "Handle exponent first, then multiplication, then add/subtract left to right."
+          ]
         },
         {
           "id": "bc-yp2",
           "question": "Evaluate: 3/4 − 5/6",
           "answer": "LCD = 12. 9/12 − 10/12 = −1/12.",
           "skill": "fraction-decimal-fluency",
-          "hints": ["Find the LCD of 4 and 6."]
+          "hints": [
+            "Find the LCD of 4 and 6."
+          ]
         },
         {
           "id": "bc-yp3",
           "question": "Solve: −3x − 7 = 20",
           "answer": "−3x = 27. x = −9. Check: −3(−9) − 7 = 27 − 7 = 20 ✓",
           "skill": "basic-equations",
-          "hints": ["Add 7 to both sides first."]
+          "hints": [
+            "Add 7 to both sides first."
+          ]
         },
         {
           "id": "bc-yp4",
           "question": "Evaluate: (2/5) × (−15/8)",
           "answer": "2 × (−15) / (5 × 8) = −30/40 = −3/4.",
           "skill": "fraction-decimal-fluency",
-          "hints": ["Multiply straight across. You can cross-cancel before multiplying."]
+          "hints": [
+            "Multiply straight across. You can cross-cancel before multiplying."
+          ]
         },
         {
           "id": "bc-yp5",
           "question": "Solve: x/3 + 4 = −2",
           "answer": "x/3 = −6. x = −18. Check: −18/3 + 4 = −6 + 4 = −2 ✓",
           "skill": "basic-equations",
-          "hints": ["Subtract 4 first, then multiply by 3."]
+          "hints": [
+            "Subtract 4 first, then multiply by 3."
+          ]
         },
         {
           "id": "bc-yp6",
           "question": "A point moves from (2, −3) to (−1, 4). What is the horizontal change and vertical change?",
           "answer": "Horizontal change: −1 − 2 = −3 (moved 3 units left). Vertical change: 4 − (−3) = 7 (moved 7 units up).",
           "skill": "coordinate-plane-basics",
-          "hints": ["Horizontal = change in x. Vertical = change in y. Subtract: end minus start."]
+          "hints": [
+            "Horizontal = change in x. Vertical = change in y. Subtract: end minus start."
+          ]
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     }
   ],
   "answerKeys": {
@@ -268,5 +323,27 @@
     "bc-yp4": "−3/4",
     "bc-yp5": "x = −18",
     "bc-yp6": "Horizontal: −3, Vertical: 7"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "integer-ops",
+      "title": "Integer Operations Review",
+      "order": 1
+    },
+    {
+      "lessonId": "fraction-decimal-review",
+      "title": "Fraction & Decimal Fluency",
+      "order": 2
+    },
+    {
+      "lessonId": "basic-equations-review",
+      "title": "Solving 1-Step and 2-Step Equations",
+      "order": 3
+    },
+    {
+      "lessonId": "coordinate-plane-review",
+      "title": "Coordinate Plane Basics",
+      "order": 4
+    }
+  ]
 }

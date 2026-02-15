@@ -31,7 +31,7 @@
     "clusters": [
       {
         "skillId": "act-real-complex-numbers",
-        "reteachFocus": "PEMDAS precision, fraction arithmetic, complex number operations"
+        "reteachFocus": "GEMS precision, fraction arithmetic, complex number operations"
       },
       {
         "skillId": "act-linear-equations",

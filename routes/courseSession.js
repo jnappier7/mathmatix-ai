@@ -9,6 +9,7 @@ const path = require('path');
 const CourseSession = require('../models/courseSession');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
+const { calculateOverallProgress } = require('../utils/coursePrompt');
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -408,9 +409,8 @@ router.post('/:id/complete-module', async (req, res) => {
       session.currentModuleId = nextMod.moduleId;
     }
 
-    // Calculate overall progress
-    const completedCount = session.modules.filter(m => m.status === 'completed').length;
-    session.overallProgress = Math.round((completedCount / session.modules.length) * 100);
+    // Calculate blended overall progress (includes scaffold progress for in-progress modules)
+    session.overallProgress = calculateOverallProgress(session.modules);
 
     // Check if course is fully completed
     const courseComplete = completedCount === session.modules.length;

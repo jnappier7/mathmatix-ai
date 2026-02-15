@@ -58,10 +58,11 @@
         "Adding integers: same signs → add and keep the sign. Different signs → subtract and keep the sign of the larger absolute value. Example: -8 + 5 = -3 (8 > 5, so negative wins).",
         "Subtracting integers: CHANGE to adding the opposite. Example: 4 - (-9) = 4 + 9 = 13. 'Keep-Change-Change' or 'Add the opposite' — pick a phrase and make it automatic.",
         "Multiplying and dividing: same signs → positive result. Different signs → negative result. Example: (-6)(-4) = +24, but (-6)(4) = -24.",
-        "Order of operations (PEMDAS) still applies with negatives. Watch out: -3^2 = -9 (square first, then negate), but (-3)^2 = 9 (negate first, then square). Parentheses matter!",
+        "Order of operations (GEMS) still applies with negatives. Watch out: -3^2 = -9 (square first, then negate), but (-3)^2 = 9 (negate first, then square). Parentheses matter!",
         "Zero facts: anything times 0 is 0. Division by 0 is undefined. 0 divided by anything is 0.",
         "Real-world connection: temperature drops, debt vs. savings, yards lost in football — integers are everywhere."
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "model",
@@ -81,7 +82,8 @@
           "problem": "Evaluate: (-4)^2 - 3(-5) + (-18) / (-6)",
           "solution": "Follow order of operations (exponents, then multiply/divide, then add/subtract):\nExponents: (-4)^2 = 16\nMultiply: 3(-5) = -15\nDivide: (-18)/(-6) = 3 (same signs → positive)\nNow combine: 16 - (-15) + 3 = 16 + 15 + 3 = 34\nAnswer: 34"
         }
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "explanation",
@@ -96,7 +98,8 @@
         "Decimal operations: line up decimal points for adding/subtracting. For multiplication, count total decimal places. For division, move the decimal to make the divisor a whole number.",
         "Converting: fraction to decimal — divide numerator by denominator. Decimal to fraction — use place value (0.75 = 75/100 = 3/4). Know the key conversions: 1/2 = 0.5, 1/3 = 0.333..., 1/4 = 0.25, 1/5 = 0.2, 3/4 = 0.75.",
         "Negative fractions: -2/3, 2/(-3), and -(2/3) are ALL the same value. The negative sign can sit in front, in the numerator, or in the denominator."
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "model",
@@ -116,7 +119,8 @@
           "problem": "Compute: 4.08 - 7.5 + 2.375",
           "solution": "Work left to right:\n4.08 - 7.5 = -(7.5 - 4.08) = -(3.42) = -3.42\n-3.42 + 2.375 = -(3.42 - 2.375) = -(1.045) = -1.045\nAnswer: -1.045"
         }
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "explanation",
@@ -131,7 +135,8 @@
         "Common mistake: forgetting to distribute to the SECOND term. Example: 3(2x + 4) = 6x + 12, NOT 6x + 4.",
         "After distributing, always combine like terms to finish simplifying. Example: 2(x + 3) + 5x = 2x + 6 + 5x = 7x + 6.",
         "Coefficients of 1 are invisible: x means 1x. Coefficients of -1 are almost invisible: -x means -1x."
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "model",
@@ -151,7 +156,8 @@
           "problem": "Write an expression for the perimeter of a rectangle with length (3x + 1) and width (x - 4). Simplify.",
           "solution": "Perimeter = 2(length) + 2(width)\nP = 2(3x + 1) + 2(x - 4)\nDistribute: P = 6x + 2 + 2x - 8\nCombine: P = 8x - 6\nAnswer: 8x - 6"
         }
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "explanation",
@@ -161,12 +167,13 @@
       "content": "An equation says two things are EQUAL. Solving means finding the value of the variable that makes it true. The golden rule: whatever you do to one side, you MUST do to the other side.",
       "keyPoints": [
         "One-step equations use a single inverse operation. Addition ↔ subtraction. Multiplication ↔ division. Example: x + 7 = 12 → subtract 7 → x = 5.",
-        "Two-step equations: undo addition/subtraction FIRST, then undo multiplication/division. Example: 3x + 5 = 20 → subtract 5 → 3x = 15 → divide by 3 → x = 5. Think 'reverse PEMDAS.'",
+        "Two-step equations: Box the variable term [3x] in 3x + 5 = 20. Think outside the box — deal with +5 first. Opposites make zero: subtract 5 → 3x = 15. Now 3 is inside the box with x — divide it out: x = 5.",
         "Equations with negatives: -4x = 28 → divide by -4 → x = -7. Dividing by a negative flips the sign.",
         "Equations with fractions: (2/3)x = 10 → multiply both sides by the reciprocal 3/2 → x = 15. Or multiply both sides by the denominator: multiply by 3 → 2x = 30 → x = 15.",
         "ALWAYS check your answer by substituting back into the original equation. If both sides are equal, you are correct.",
         "Translating words to equations: 'five more than a number' → x + 5. 'Three times a number decreased by 7' → 3x - 7."
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "model",
@@ -186,7 +193,8 @@
           "problem": "Solve: x/4 - 3 = 2",
           "solution": "Step 1: Add 3 to both sides.\nx/4 = 5\nStep 2: Multiply both sides by 4.\nx = 20\nCheck: 20/4 - 3 = 5 - 3 = 2. Correct!\nAnswer: x = 20"
         }
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "explanation",
@@ -201,7 +209,8 @@
         "Reflections: reflecting over the x-axis changes the sign of y. Reflecting over the y-axis changes the sign of x. Example: (3, -2) reflected over x-axis → (3, 2). Over y-axis → (-3, -2).",
         "Distance between points sharing a coordinate: points (2, 5) and (2, -3) share x = 2 — distance = |5 - (-3)| = 8. Use absolute value of the difference.",
         "Real-world connection: maps use coordinates, video game character positions use (x, y), and every graph you read in science class is a coordinate plane."
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "model",
@@ -221,13 +230,13 @@
           "problem": "A rectangular park has corners at (1, 2), (1, 8), (5, 8), and (5, 2). What are the length and width of the park? What is its perimeter?",
           "solution": "Length (horizontal): from x = 1 to x = 5 → |5 - 1| = 4 units.\nWidth (vertical): from y = 2 to y = 8 → |8 - 2| = 6 units.\nPerimeter = 2(4) + 2(6) = 8 + 12 = 20 units.\nAnswer: Length = 4, Width = 6, Perimeter = 20 units"
         }
-      ]
+      ],
+      "lessonId": "bootcamp"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Boot Camp Guided Practice — Integers, Fractions, and Expressions",
-      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics"],
       "problems": [
         {
           "problem": "At 6 AM the temperature was -8 degrees F. By noon it rose 15 degrees, and by midnight it dropped 22 degrees from the noon temperature. What was the midnight temperature?",
@@ -283,13 +292,14 @@
           ],
           "answer": "3x + 13"
         }
-      ]
+      ],
+      "skill": "g7-coordinate-plane-basics",
+      "lessonId": "bootcamp"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Boot Camp Guided Practice — Equations and Coordinate Plane",
-      "skills": ["g7-one-two-step-equations", "g7-coordinate-plane-basics"],
       "problems": [
         {
           "problem": "Solve and check: 5x - 8 = 22",
@@ -345,13 +355,14 @@
           ],
           "answer": "AB = 7 units, BC = 6 units"
         }
-      ]
+      ],
+      "skill": "g7-coordinate-plane-basics",
+      "lessonId": "bootcamp"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Boot Camp Mastery Practice",
-      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics", "g7-one-two-step-equations", "g7-coordinate-plane-basics"],
       "problems": [
         {
           "problem": "Simplify: -6 + (-4) - (-10) + 3 - 8",
@@ -414,7 +425,9 @@
           "answer": "Length = |4 - (-3)| = 7 units, Width = |5 - (-1)| = 6 units, Area = 42 square units"
         }
       ],
-      "attemptsRequired": 10
+      "attemptsRequired": 10,
+      "skill": "g7-integer-operations",
+      "lessonId": "bootcamp"
     }
   ],
   "answerKeys": {

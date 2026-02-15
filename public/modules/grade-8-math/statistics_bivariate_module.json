@@ -6,8 +6,19 @@
   "weeks": "29-33",
   "estimatedDuration": 50,
   "description": "Investigate patterns in two-variable data using scatter plots, lines of best fit, and two-way frequency tables. Students learn to describe associations (form, direction, strength), draw and write equations for trend lines, interpret slope and y-intercept in context, construct and analyze two-way tables for categorical data, and critically distinguish correlation from causation. All data sets use engaging, relatable contexts: study habits vs. grades, temperature vs. sales, height vs. shoe size, and more.",
-  "skills": ["scatter-plots", "line-of-best-fit", "interpret-slope-intercept", "two-way-tables", "correlation-causation"],
-  "standardsAlignment": ["8.SP.1", "8.SP.2", "8.SP.3", "8.SP.4"],
+  "skills": [
+    "scatter-plots",
+    "line-of-best-fit",
+    "interpret-slope-intercept",
+    "two-way-tables",
+    "correlation-causation"
+  ],
+  "standardsAlignment": [
+    "8.SP.1",
+    "8.SP.2",
+    "8.SP.3",
+    "8.SP.4"
+  ],
   "goals": [
     "Construct scatter plots and describe patterns: form (linear/nonlinear), direction (positive/negative), strength (strong/weak), and outliers.",
     "Draw a line of best fit through a scatter plot, write its equation, and use it to make predictions.",
@@ -21,7 +32,7 @@
     "Line of best fit: emphasize that it's an ESTIMATE. The line doesn't go through every point — it captures the overall trend. Show that different students might draw slightly different lines, and that's okay.",
     "Correlation vs. causation is the capstone idea: use dramatic examples (firefighters/fires, ice cream/drowning) to burn in the lesson that correlation ≠ causation."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -35,7 +46,8 @@
         "Direction: positive (up-right), negative (down-right), or no association",
         "Strength: strong (tight cluster) vs. weak (spread out)",
         "Outliers: points far from the general pattern — always investigate"
-      ]
+      ],
+      "lessonId": "scatter-plots"
     },
     {
       "type": "explanation",
@@ -49,7 +61,22 @@
         "Use two points ON the line to write its equation in y = mx + b form",
         "Slope tells the rate of change in context; y-intercept is the starting value",
         "Interpolation (within data range) is more reliable than extrapolation (outside)"
-      ]
+      ],
+      "lessonId": "line-of-best-fit"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "interpret-slope-intercept",
+      "title": "We-Do: Interpret Slope Intercept — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for interpret slope intercept.",
+          "hint": "Apply the concepts of interpret slope intercept.",
+          "solution": "Step-by-step solution for interpret slope intercept."
+        }
+      ],
+      "lessonId": "interpret-data"
     },
     {
       "type": "explanation",
@@ -63,7 +90,22 @@
         "Correlation = two variables change together; causation = one causes the other",
         "Correlation does NOT imply causation — always look for confounding variables",
         "Confounding variable: a hidden factor that affects both measured variables"
-      ]
+      ],
+      "lessonId": "two-way-tables-correlation"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "correlation-causation",
+      "title": "We-Do: Correlation Causation — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for correlation causation.",
+          "hint": "Apply the concepts of correlation causation.",
+          "solution": "Step-by-step solution for correlation causation."
+        }
+      ],
+      "lessonId": "two-way-tables-correlation"
     },
     {
       "type": "model",
@@ -83,7 +125,8 @@
           "problem": "Data on height vs. shoe size:\nHeight (in): 60, 62, 64, 65, 66, 68, 70, 64\nShoe size: 7, 8, 8.5, 9, 9.5, 10, 11, 13\n\nDescribe the association. Identify any outliers.",
           "solution": "Plot the points. Most follow an upward trend, but (64, 13) stands out — height 64 inches with shoe size 13 is unusually large for that height.\n\nForm: Linear (ignoring the outlier).\nDirection: Positive — taller people tend to have larger shoe sizes.\nStrength: Moderate to strong (would be strong without the outlier).\nOutlier: (64, 13) — shoe size 13 at 64 inches tall is far above the trend.\n\nThe outlier could be a data entry error (maybe the shoe size is actually 8, not 13) or a genuine unusual observation."
         }
-      ]
+      ],
+      "lessonId": "scatter-plots"
     },
     {
       "type": "model",
@@ -103,7 +146,8 @@
           "problem": "Data on shoe size vs. math test score:\nShoe size: 6, 7, 8, 9, 10, 11\nMath score: 82, 75, 91, 68, 85, 78\n\nShould we draw a line of best fit?",
           "solution": "Plot the points: (6,82), (7,75), (8,91), (9,68), (10,85), (11,78).\n\nThe points are scattered randomly — no clear linear pattern. Scores go up, down, up, down with no consistent direction.\n\nConclusion: There is NO association between shoe size and math score. A line of best fit would not be meaningful here.\n\nThis makes sense: shoe size has no logical connection to math ability. Any apparent pattern would be coincidence."
         }
-      ]
+      ],
+      "lessonId": "line-of-best-fit"
     },
     {
       "type": "model",
@@ -123,7 +167,8 @@
           "problem": "A survey of 130 students on phone ownership:\n\n| | Has Phone | No Phone | Total |\n|---|---|---|---|\n| Grade 7 | 42 | 18 | 60 |\n| Grade 8 | 56 | 14 | 70 |\n| Total | 98 | 32 | 130 |\n\nIs there an association between grade and phone ownership?",
           "solution": "Conditional relative frequencies:\nGrade 7 with phone: 42/60 = 70%.\nGrade 8 with phone: 56/70 = 80%.\n\nCompare: 80% vs. 70%. Grade 8 students are more likely to have phones.\n\nAssociation: Yes, there appears to be an association between being in 8th grade and phone ownership. This makes intuitive sense — older students are more likely to have phones.\n\nNote: The percentages are fairly close (70% vs. 80%), so the association is moderate, not overwhelming."
         }
-      ]
+      ],
+      "lessonId": "two-way-tables-correlation"
     },
     {
       "type": "guided_practice",
@@ -135,21 +180,31 @@
           "id": "sb-wp1",
           "question": "Data on hours of sleep vs. alertness score (1-10 scale):\nSleep: 4, 5, 6, 7, 8, 9\nAlertness: 3, 4, 5.5, 7, 8, 9\n\nDescribe the association (form, direction, strength).",
           "answer": "Form: Linear. Direction: Positive (more sleep → higher alertness). Strength: Strong (points closely follow an upward line). No outliers.",
-          "hints": ["Do the points follow a line or a curve? Does alertness go up or down as sleep increases?", "How tightly do the points cluster around the trend? Tight = strong."]
+          "hints": [
+            "Do the points follow a line or a curve? Does alertness go up or down as sleep increases?",
+            "How tightly do the points cluster around the trend? Tight = strong."
+          ]
         },
         {
           "id": "sb-wp2",
           "question": "Data on daily screen time vs. GPA:\nScreen time (hrs): 1, 2, 3, 4, 5, 6\nGPA: 3.8, 3.5, 3.2, 2.8, 2.5, 2.0\n\nDescribe the association.",
           "answer": "Form: Linear. Direction: Negative (more screen time → lower GPA). Strength: Strong (points closely follow a downward trend). No outliers.",
-          "hints": ["As screen time increases from 1 to 6 hours, what happens to GPA?", "The consistent decrease with tight clustering indicates strong, negative, linear."]
+          "hints": [
+            "As screen time increases from 1 to 6 hours, what happens to GPA?",
+            "The consistent decrease with tight clustering indicates strong, negative, linear."
+          ]
         },
         {
           "id": "sb-wp3",
           "question": "Data on study hours vs. quiz score:\nStudy hours: 2, 3, 4, 5, 6, 3\nQuiz score: 60, 70, 75, 85, 92, 40\n\nIdentify the outlier and describe the association ignoring it.",
           "answer": "The point (3, 40) is the outlier — a student who studied 3 hours but scored only 40, far below the trend. Ignoring it, the remaining data shows a strong, positive, linear association.",
-          "hints": ["Most points follow an upward trend. Which point breaks the pattern?", "The student with 3 hours and score 40 is far below the other student with 3 hours (score 70)."]
+          "hints": [
+            "Most points follow an upward trend. Which point breaks the pattern?",
+            "The student with 3 hours and score 40 is far below the other student with 3 hours (score 70)."
+          ]
         }
-      ]
+      ],
+      "lessonId": "scatter-plots"
     },
     {
       "type": "guided_practice",
@@ -161,21 +216,31 @@
           "id": "sb-wp4",
           "question": "Height (in) vs. weight (lb) data:\nHeight: 60, 63, 65, 68, 70, 72\nWeight: 110, 125, 135, 150, 165, 175\n\nUsing the points (60, 110) and (70, 160) on the line of best fit, write the equation. Predict the weight of a 66-inch person.",
           "answer": "Slope: (160 − 110)/(70 − 60) = 50/10 = 5. Y-intercept: 110 = 5(60) + b → b = −190. Equation: y = 5x − 190. Predict at x = 66: y = 5(66) − 190 = 330 − 190 = 140 lb.",
-          "hints": ["Slope = rise/run = (160 − 110)/(70 − 60).", "Plug one point into y = mx + b to find b. Then predict by plugging x = 66."]
+          "hints": [
+            "Slope = rise/run = (160 − 110)/(70 − 60).",
+            "Plug one point into y = mx + b to find b. Then predict by plugging x = 66."
+          ]
         },
         {
           "id": "sb-wp5",
           "question": "Lemonade stand data — Temperature (°F) vs. cups sold:\nTemp: 70, 75, 80, 85, 90\nCups: 10, 20, 30, 40, 50\n\nUsing points (70, 10) and (90, 50), write the equation. Predict sales at 95°F.",
           "answer": "Slope: (50 − 10)/(90 − 70) = 40/20 = 2. Y-intercept: 10 = 2(70) + b → b = −130. Equation: y = 2x − 130. Predict at 95°F: y = 2(95) − 130 = 190 − 130 = 60 cups.",
-          "hints": ["Slope = (50 − 10)/(90 − 70). Then use one point to find b.", "Prediction at 95°F is slight extrapolation — just one step beyond the data."]
+          "hints": [
+            "Slope = (50 − 10)/(90 − 70). Then use one point to find b.",
+            "Prediction at 95°F is slight extrapolation — just one step beyond the data."
+          ]
         },
         {
           "id": "sb-wp6",
           "question": "A scatter plot models absences (x) vs. final grade (y). The line of best fit is y = −3x + 95. Interpret the slope and y-intercept in context.",
           "answer": "Slope (−3): Each additional absence is associated with a 3-point decrease in final grade. Y-intercept (95): A student with 0 absences has a predicted final grade of 95.",
-          "hints": ["The slope tells you how much y changes for each 1-unit increase in x.", "The y-intercept is the predicted value when x = 0 (zero absences)."]
+          "hints": [
+            "The slope tells you how much y changes for each 1-unit increase in x.",
+            "The y-intercept is the predicted value when x = 0 (zero absences)."
+          ]
         }
-      ]
+      ],
+      "lessonId": "line-of-best-fit"
     },
     {
       "type": "guided_practice",
@@ -187,21 +252,31 @@
           "id": "sb-wp7",
           "question": "A survey of 130 middle schoolers on food preference:\n\n| | Prefer Pizza | Prefer Tacos | Total |\n|---|---|---|---|\n| 7th Grade | 35 | 25 | 60 |\n| 8th Grade | 30 | 40 | 70 |\n| Total | 65 | 65 | 130 |\n\nIs there an association between grade level and food preference?",
           "answer": "7th graders who prefer pizza: 35/60 ≈ 58.3%. 8th graders who prefer pizza: 30/70 ≈ 42.9%. Yes, there is an association — 7th graders are more likely to prefer pizza while 8th graders are more likely to prefer tacos.",
-          "hints": ["Calculate the percent who prefer pizza for each grade separately.", "If the percentages are different, there is an association."]
+          "hints": [
+            "Calculate the percent who prefer pizza for each grade separately.",
+            "If the percentages are different, there is an association."
+          ]
         },
         {
           "id": "sb-wp8",
           "question": "A study claims: 'Students who eat breakfast score higher on tests.' Is this evidence of correlation or causation? Explain.",
           "answer": "This is correlation, not necessarily causation. Confounding variables could explain both: students who eat breakfast may come from homes with more structure, better sleep habits, more parental support — any of these could cause higher test scores independent of breakfast itself.",
-          "hints": ["Does eating breakfast directly CAUSE higher scores, or could something else explain both?", "Think about confounding variables — what third factors could affect both breakfast eating and test scores?"]
+          "hints": [
+            "Does eating breakfast directly CAUSE higher scores, or could something else explain both?",
+            "Think about confounding variables — what third factors could affect both breakfast eating and test scores?"
+          ]
         },
         {
           "id": "sb-wp9",
           "question": "Survey of 100 students on sports participation and honor roll:\n\n| | Sports Team | No Sports | Total |\n|---|---|---|---|\n| Honor Roll | 28 | 22 | 50 |\n| Not Honor Roll | 32 | 18 | 50 |\n| Total | 60 | 40 | 100 |\n\nIs there an association between playing sports and being on the honor roll?",
           "answer": "Sports members on honor roll: 28/60 ≈ 46.7%. Non-sports on honor roll: 22/40 = 55%. Non-sports students are slightly more likely to be on honor roll (55% vs. 46.7%). There is a weak association — non-athletes are somewhat more likely to make honor roll.",
-          "hints": ["Compute the honor roll percentage for each group separately.", "Compare 28/60 to 22/40. Which group has a higher honor roll rate?"]
+          "hints": [
+            "Compute the honor roll percentage for each group separately.",
+            "Compare 28/60 to 22/40. Which group has a higher honor roll rate?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "two-way-tables-correlation"
     },
     {
       "type": "independent_practice",
@@ -214,44 +289,57 @@
           "question": "Data on hours worked at a part-time job vs. money earned:\nHours: 2, 4, 6, 8, 10\nMoney ($): 20, 42, 58, 82, 98\n\nDescribe the association (form, direction, strength).",
           "answer": "Form: Linear. Direction: Positive (more hours → more money). Strength: Strong (points closely follow an upward line).",
           "skill": "scatter-plots",
-          "hints": ["Plot the points and look for a pattern. Does money go up as hours increase?"]
+          "hints": [
+            "Plot the points and look for a pattern. Does money go up as hours increase?"
+          ]
         },
         {
           "id": "sb-yp2",
           "question": "Data on daily high temperature vs. hot chocolate cups sold:\nTemp (°F): 30, 40, 50, 60, 70, 80\nCups: 55, 43, 35, 20, 12, 5\n\nDescribe the association.",
           "answer": "Form: Linear. Direction: Negative (warmer weather → fewer cups sold). Strength: Strong (consistent downward trend).",
           "skill": "scatter-plots",
-          "hints": ["As temperature increases, what happens to hot chocolate sales?"]
+          "hints": [
+            "As temperature increases, what happens to hot chocolate sales?"
+          ]
         },
         {
           "id": "sb-yp3",
           "question": "A line of best fit for study time (x, in hours) and exam score (y) is y = 5x + 60. Predict the exam score for a student who studies 7 hours.",
           "answer": "y = 5(7) + 60 = 35 + 60 = 95. Predicted exam score: 95.",
           "skill": "line-of-best-fit",
-          "hints": ["Substitute x = 7 into the equation y = 5x + 60."]
+          "hints": [
+            "Substitute x = 7 into the equation y = 5x + 60."
+          ]
         },
         {
           "id": "sb-yp4",
           "question": "A line of best fit relating absences (x) to final grade (y) is y = −2.5x + 100. Interpret the slope and y-intercept in context.",
           "answer": "Slope (−2.5): Each additional absence is associated with a 2.5-point decrease in final grade. Y-intercept (100): A student with 0 absences has a predicted grade of 100.",
           "skill": "interpret-slope-intercept",
-          "hints": ["What does the slope −2.5 tell you about the relationship between absences and grades?"]
+          "hints": [
+            "What does the slope −2.5 tell you about the relationship between absences and grades?"
+          ]
         },
         {
           "id": "sb-yp5",
           "question": "Survey of 110 students on how they get to school:\n\n| | Walk | Bus | Total |\n|---|---|---|---|\n| 7th Grade | 20 | 30 | 50 |\n| 8th Grade | 35 | 25 | 60 |\n| Total | 55 | 55 | 110 |\n\nIs there an association between grade level and how students get to school?",
           "answer": "7th graders who walk: 20/50 = 40%. 8th graders who walk: 35/60 ≈ 58.3%. Yes, there is an association — 8th graders are more likely to walk to school (58.3% vs. 40%).",
           "skill": "two-way-tables",
-          "hints": ["Compute the walking percentage for each grade and compare."]
+          "hints": [
+            "Compute the walking percentage for each grade and compare."
+          ]
         },
         {
           "id": "sb-yp6",
           "question": "Someone claims: 'Cities with more firefighters have more fires. Therefore, firefighters cause fires.' Is this reasoning correct? Explain the flaw.",
           "answer": "This reasoning is incorrect. There is a correlation between number of firefighters and number of fires, but the relationship is NOT causal. The confounding variable is city size — larger cities have both more firefighters (because they need more) AND more fires (because there are more buildings). City size drives both variables.",
           "skill": "correlation-causation",
-          "hints": ["Is there a third variable that could explain why both firefighters and fires are high in the same cities?"]
+          "hints": [
+            "Is there a third variable that could explain why both firefighters and fires are high in the same cities?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "scatter-plots"
     }
   ],
   "answerKeys": {
@@ -270,5 +358,27 @@
     "sb-yp4": "Slope: −2.5 points per absence; y-intercept: 100",
     "sb-yp5": "Yes; 8th graders walk more (58.3% vs. 40%)",
     "sb-yp6": "Correlation, not causation; city size is the confounding variable"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "scatter-plots",
+      "title": "Scatter Plots: Form, Direction, Strength",
+      "order": 1
+    },
+    {
+      "lessonId": "line-of-best-fit",
+      "title": "Line of Best Fit",
+      "order": 2
+    },
+    {
+      "lessonId": "interpret-data",
+      "title": "Interpreting Slope & Intercept in Data Contexts",
+      "order": 3
+    },
+    {
+      "lessonId": "two-way-tables-correlation",
+      "title": "Two-Way Tables & Correlation vs Causation",
+      "order": 4
+    }
+  ]
 }

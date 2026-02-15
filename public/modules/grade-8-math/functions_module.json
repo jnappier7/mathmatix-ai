@@ -6,8 +6,19 @@
   "weeks": "14-16",
   "estimatedDuration": 50,
   "description": "Formalize the concept of a function — every input maps to exactly one output — and learn to identify, evaluate, compare, and model functions using equations, tables, graphs, and verbal descriptions. This unit bridges algebraic thinking to the function-based reasoning used in high school math.",
-  "skills": ["function-definition", "identify-functions", "compare-functions", "function-modeling"],
-  "standardsAlignment": ["8.F.1", "8.F.2", "8.F.3", "8.F.4", "8.F.5"],
+  "skills": [
+    "function-definition",
+    "identify-functions",
+    "compare-functions",
+    "function-modeling"
+  ],
+  "standardsAlignment": [
+    "8.F.1",
+    "8.F.2",
+    "8.F.3",
+    "8.F.4",
+    "8.F.5"
+  ],
   "goals": [
     "Define a function as a rule that assigns each input exactly one output and use function notation f(x).",
     "Determine whether a relation is a function from tables, ordered pairs, mapping diagrams, and graphs (vertical line test).",
@@ -20,7 +31,7 @@
     "Vertical line test: use it as a visual check, but always connect back to the definition (one output per input).",
     "Comparing functions across representations is the capstone skill — push students to translate everything to a common form before comparing."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -34,7 +45,8 @@
         "Multiple inputs CAN share the same output",
         "One input CANNOT produce multiple outputs",
         "Evaluate by substituting the input value for x"
-      ]
+      ],
+      "lessonId": "function-concept"
     },
     {
       "type": "model",
@@ -54,7 +66,8 @@
           "problem": "Is {(1, 2), (3, 4), (1, 5)} a function?",
           "solution": "Check each input:\n• Input 1 → output 2\n• Input 3 → output 4\n• Input 1 → output 5\nInput 1 maps to TWO different outputs (2 and 5). This violates the definition.\nAnswer: No, it is NOT a function."
         }
-      ]
+      ],
+      "lessonId": "function-concept"
     },
     {
       "type": "explanation",
@@ -68,7 +81,8 @@
         "Vertical Line Test: if a vertical line crosses the graph more than once, it's not a function",
         "Multiple inputs sharing an output is allowed",
         "Circles fail the vertical line test; lines and parabolas pass"
-      ]
+      ],
+      "lessonId": "identifying-functions"
     },
     {
       "type": "model",
@@ -88,7 +102,8 @@
           "problem": "A mapping diagram shows: a → 1, b → 2, c → 1. Is this a function?",
           "solution": "Check each input:\n• a → 1 (one output ✓)\n• b → 2 (one output ✓)\n• c → 1 (one output ✓)\nDifferent inputs (a and c) share the same output (1), and that's allowed.\nAnswer: Yes, it IS a function."
         }
-      ]
+      ],
+      "lessonId": "identifying-functions"
     },
     {
       "type": "explanation",
@@ -102,7 +117,22 @@
         "Model real situations: f(x) = rate · x + initial value",
         "Describe qualitatively: increasing, decreasing, constant, linear, nonlinear",
         "Identify maximums, minimums, and intervals of increase/decrease"
-      ]
+      ],
+      "lessonId": "comparing-functions"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "function-modeling",
+      "title": "We-Do: Function Modeling — Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for function modeling.",
+          "hint": "Apply the concepts of function modeling.",
+          "solution": "Step-by-step solution for function modeling."
+        }
+      ],
+      "lessonId": "function-concept"
     },
     {
       "type": "model",
@@ -122,7 +152,8 @@
           "problem": "Describe qualitatively: A graph shows temperature rising in the morning, staying flat at midday, then falling in the evening.",
           "solution": "Morning: the function is increasing (temperature goes up).\nMidday: the function is constant (temperature stays the same).\nEvening: the function is decreasing (temperature goes down).\nThe maximum temperature occurs at the start of the constant interval.\nThis IS a function of time — at every moment, there's exactly one temperature.\nAnswer: Increasing → constant → decreasing; maximum at midday."
         }
-      ]
+      ],
+      "lessonId": "comparing-functions"
     },
     {
       "type": "guided_practice",
@@ -134,21 +165,31 @@
           "id": "fn-wp1",
           "question": "Is {(2, 4), (3, 6), (4, 8), (2, 10)} a function? Explain why or why not.",
           "answer": "No — input 2 maps to both 4 and 10. A function requires each input to have exactly one output.",
-          "hints": ["Check if any input (x-value) appears more than once.", "Input 2 appears twice. Do both pairs have the same output?"]
+          "hints": [
+            "Check if any input (x-value) appears more than once.",
+            "Input 2 appears twice. Do both pairs have the same output?"
+          ]
         },
         {
           "id": "fn-wp2",
           "question": "Evaluate g(x) = −2x + 7 for x = −3.",
           "answer": "g(−3) = −2(−3) + 7 = 6 + 7 = 13.",
-          "hints": ["Substitute −3 for every x in the expression.", "Remember: −2 times −3 is positive 6."]
+          "hints": [
+            "Substitute −3 for every x in the expression.",
+            "Remember: −2 times −3 is positive 6."
+          ]
         },
         {
           "id": "fn-wp3",
           "question": "Evaluate f(x) = x² − 3x at x = 5.",
           "answer": "f(5) = (5)² − 3(5) = 25 − 15 = 10.",
-          "hints": ["Substitute 5 for x: 5 squared minus 3 times 5.", "Follow order of operations: exponent first, then multiplication."]
+          "hints": [
+            "Substitute 5 for x: 5 squared minus 3 times 5.",
+            "Follow order of operations: exponent first, then multiplication."
+          ]
         }
-      ]
+      ],
+      "lessonId": "function-concept"
     },
     {
       "type": "guided_practice",
@@ -160,21 +201,31 @@
           "id": "fn-wp4",
           "question": "Does this table represent a function? x: 1, 2, 3, 4, 5; y: 3, 6, 9, 12, 15. If so, what is the rule?",
           "answer": "Yes — each input has exactly one output. The rule is y = 3x (each y is 3 times its x).",
-          "hints": ["Check: does any x-value repeat with a different y-value?", "Look for a pattern: how does y relate to x?"]
+          "hints": [
+            "Check: does any x-value repeat with a different y-value?",
+            "Look for a pattern: how does y relate to x?"
+          ]
         },
         {
           "id": "fn-wp5",
           "question": "A mapping diagram shows: 1 → a, 2 → b, 3 → a, 4 → c. Is this a function?",
           "answer": "Yes — each input (1, 2, 3, 4) has exactly one output. Different inputs (1 and 3) sharing output 'a' is allowed.",
-          "hints": ["Does any single input have more than one arrow leaving it?", "Remember: different inputs CAN share the same output."]
+          "hints": [
+            "Does any single input have more than one arrow leaving it?",
+            "Remember: different inputs CAN share the same output."
+          ]
         },
         {
           "id": "fn-wp6",
           "question": "A graph shows a vertical line at x = 3. Is this a function?",
           "answer": "No — a vertical line fails the vertical line test. The input x = 3 has infinitely many y-values (every point on the line).",
-          "hints": ["Apply the vertical line test to the graph itself.", "How many y-values does x = 3 have?"]
+          "hints": [
+            "Apply the vertical line test to the graph itself.",
+            "How many y-values does x = 3 have?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "identifying-functions"
     },
     {
       "type": "guided_practice",
@@ -186,21 +237,31 @@
           "id": "fn-wp7",
           "question": "Compare f(x) = 4x − 3 with a table: x: 0, 1, 2, 3; y: 2, 5, 8, 11. Which has the greater rate of change? Which has the greater initial value?",
           "answer": "f(x): slope = 4, y-intercept = −3. Table: slope = (5 − 2)/(1 − 0) = 3, y-intercept = 2. f(x) grows faster (rate 4 vs 3). Table starts higher (initial value 2 vs −3).",
-          "hints": ["Find the slope and y-intercept for each function.", "For the table, use two consecutive rows to find slope and the x = 0 row for y-intercept."]
+          "hints": [
+            "Find the slope and y-intercept for each function.",
+            "For the table, use two consecutive rows to find slope and the x = 0 row for y-intercept."
+          ]
         },
         {
           "id": "fn-wp8",
           "question": "A bathtub has 30 gallons and drains at 2 gallons per minute. Write a function and state a reasonable domain.",
           "answer": "V(t) = 30 − 2t, where t is minutes. Domain: 0 ≤ t ≤ 15 (the tub empties when 30 − 2t = 0, so t = 15).",
-          "hints": ["The initial value is 30 gallons. The rate is −2 gallons per minute.", "What values of t make sense? Can t be negative? Can the volume be negative?"]
+          "hints": [
+            "The initial value is 30 gallons. The rate is −2 gallons per minute.",
+            "What values of t make sense? Can t be negative? Can the volume be negative?"
+          ]
         },
         {
           "id": "fn-wp9",
           "question": "A student walks to school: distance increases steadily, then the student waits at a crosswalk (distance stays the same), then continues walking (distance increases again). Is this a function of time?",
           "answer": "Yes — at any given time there is exactly one distance from home. The graph shows: increasing → constant → increasing. No vertical overlap means it passes the vertical line test.",
-          "hints": ["At any single moment in time, can the student be at two different distances?", "Describe each phase: what is the distance doing?"]
+          "hints": [
+            "At any single moment in time, can the student be at two different distances?",
+            "Describe each phase: what is the distance doing?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "comparing-functions"
     },
     {
       "type": "independent_practice",
@@ -213,44 +274,57 @@
           "question": "Is {(0, 1), (1, 3), (2, 5), (3, 7)} a function? If so, find the rule.",
           "answer": "Yes — each input has exactly one output. Pattern: outputs increase by 2 each time. Rule: f(x) = 2x + 1. Check: f(0) = 1, f(1) = 3, f(2) = 5, f(3) = 7 ✓",
           "skill": "function-definition",
-          "hints": ["Check for repeated inputs first. Then look for a pattern in the outputs."]
+          "hints": [
+            "Check for repeated inputs first. Then look for a pattern in the outputs."
+          ]
         },
         {
           "id": "fn-yp2",
           "question": "Evaluate h(x) = −x² + 4 at x = −3.",
           "answer": "h(−3) = −(−3)² + 4 = −9 + 4 = −5.",
           "skill": "function-definition",
-          "hints": ["Square −3 first (you get 9), then apply the negative sign in front."]
+          "hints": [
+            "Square −3 first (you get 9), then apply the negative sign in front."
+          ]
         },
         {
           "id": "fn-yp3",
           "question": "A mapping diagram shows: a → 1, b → 2, c → 3, d → 2. Is this a function?",
           "answer": "Yes — each input (a, b, c, d) has exactly one output. Inputs b and d share the output 2, which is allowed.",
           "skill": "identify-functions",
-          "hints": ["Does any single input map to more than one output?"]
+          "hints": [
+            "Does any single input map to more than one output?"
+          ]
         },
         {
           "id": "fn-yp4",
           "question": "Compare f(x) = 5x − 2 with g shown in a table: x: 0, 1, 2; y: 1, 4, 7. Which has the greater rate of change? Which has the greater initial value?",
           "answer": "f: slope = 5, y-intercept = −2. g: slope = (4 − 1)/(1 − 0) = 3, y-intercept = 1. f grows faster (5 > 3). g starts higher (1 > −2).",
           "skill": "compare-functions",
-          "hints": ["Write both functions in y = mx + b form, then compare m and b."]
+          "hints": [
+            "Write both functions in y = mx + b form, then compare m and b."
+          ]
         },
         {
           "id": "fn-yp5",
           "question": "A plant is 4 cm tall and grows 1.5 cm per week. Write the function and find its height after 6 weeks.",
           "answer": "h(w) = 4 + 1.5w, where w = weeks. h(6) = 4 + 1.5(6) = 4 + 9 = 13 cm.",
           "skill": "function-modeling",
-          "hints": ["Initial value = 4 cm. Rate of change = 1.5 cm/week."]
+          "hints": [
+            "Initial value = 4 cm. Rate of change = 1.5 cm/week."
+          ]
         },
         {
           "id": "fn-yp6",
           "question": "A graph shows a ball being thrown upward: height increases, reaches a peak, then decreases back to the ground. During which intervals is the function increasing and decreasing?",
           "answer": "The function is increasing from the start (throw) to the peak (maximum height). The function is decreasing from the peak back down to the ground. The peak is the maximum value of the function.",
           "skill": "function-modeling",
-          "hints": ["When is the ball going up? When is it coming down? Where is the highest point?"]
+          "hints": [
+            "When is the ball going up? When is it coming down? Where is the highest point?"
+          ]
         }
-      ]
+      ],
+      "lessonId": "function-concept"
     }
   ],
   "answerKeys": {
@@ -269,5 +343,22 @@
     "fn-yp4": "f grows faster (5 vs 3); g starts higher (1 vs −2)",
     "fn-yp5": "h(w) = 4 + 1.5w; height at 6 weeks = 13 cm",
     "fn-yp6": "Increasing from start to peak; decreasing from peak to ground"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "function-concept",
+      "title": "What is a Function?",
+      "order": 1
+    },
+    {
+      "lessonId": "identifying-functions",
+      "title": "Identifying Functions from Representations",
+      "order": 2
+    },
+    {
+      "lessonId": "comparing-functions",
+      "title": "Comparing Functions Across Representations",
+      "order": 3
+    }
+  ]
 }
