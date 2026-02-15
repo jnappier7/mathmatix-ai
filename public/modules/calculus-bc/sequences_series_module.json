@@ -65,7 +65,7 @@
       "title": "Convergence Tests and Alternating Series",
       "content": "**Your Convergence Test Toolkit:**\n\n**1. Integral Test:** If f is positive, continuous, and decreasing on [1, ∞) with f(n) = aₙ, then Σaₙ and ∫₁^∞ f(x) dx both converge or both diverge.\n\n**2. Direct Comparison Test:** If 0 ≤ aₙ ≤ bₙ for all n:\n• Σbₙ converges ⇒ Σaₙ converges\n• Σaₙ diverges ⇒ Σbₙ diverges\n\n**3. Limit Comparison Test:** If lim(n→∞) aₙ/bₙ = L where 0 < L < ∞, then Σaₙ and Σbₙ both converge or both diverge.\n\n**4. Ratio Test:** Let L = lim(n→∞) |a_{n+1}/aₙ|.\n• L < 1 → converges absolutely\n• L > 1 → diverges\n• L = 1 → **INCONCLUSIVE** (must try another test)\n\n**Best for:** series with factorials (n!) or exponentials (aⁿ).\n\n**5. Alternating Series Test (AST):** For Σ(−1)ⁿbₙ with bₙ > 0:\nIf bₙ is eventually decreasing AND lim bₙ = 0, the series converges.\n\n**Alternating Series Error Bound:**\n|S − Sₙ| ≤ |a_{n+1}| = b_{n+1}\nThe error is bounded by the first omitted term.\n\n**Absolute vs. Conditional Convergence:**\n• Absolute: Σ|aₙ| converges (stronger)\n• Conditional: Σaₙ converges but Σ|aₙ| diverges\n\n**Decision Tree (use this on the AP exam):**\n1. Check nth-term test first — quick divergence check\n2. Recognize geometric or p-series? → Apply directly\n3. Alternating? → AST\n4. Factorials or exponentials? → Ratio test\n5. Looks like a p-series? → Limit comparison\n6. Can integrate? → Integral test",
       "initialPrompt": "Consider Σ(−1)ⁿ/n. Does it converge by the alternating series test? Is the convergence absolute or conditional? Justify both answers.",
-      "lessonId": "alternating-series"
+      "lessonId": "convergence-tests"
     },
     {
       "type": "guided_practice",
@@ -79,7 +79,7 @@
           "solution": "Step-by-step solution for alternating series error."
         }
       ],
-      "lessonId": "taylor-maclaurin"
+      "lessonId": "alternating-series"
     },
     {
       "type": "explanation",
@@ -88,7 +88,7 @@
       "title": "Taylor/Maclaurin Series and Power Series",
       "content": "**Taylor Polynomial Centered at x = a:**\nPₙ(x) = Σ_{k=0}^n [f⁽ᵏ⁾(a) / k!] (x − a)ᵏ\n= f(a) + f'(a)(x−a) + f''(a)(x−a)²/2! + f'''(a)(x−a)³/3! + ⋯\n\nMaclaurin polynomial = Taylor polynomial at a = 0.\n\n**Four Memorized Series (centered at 0):**\n\n• eˣ = Σ_{n=0}^∞ xⁿ/n! = 1 + x + x²/2! + x³/3! + ⋯  (converges for all x)\n• sin x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1)! = x − x³/3! + x⁵/5! − ⋯  (all x)\n• cos x = Σ_{n=0}^∞ (−1)ⁿ x²ⁿ/(2n)! = 1 − x²/2! + x⁴/4! − ⋯  (all x)\n• 1/(1−x) = Σ_{n=0}^∞ xⁿ = 1 + x + x² + x³ + ⋯  (|x| < 1)\n\n**Building New Series from Known Ones:**\n• Substitution: e^(−x²) → replace x with −x² in eˣ series\n• Differentiation: d/dx[1/(1−x)] = 1/(1−x)² → differentiate the geometric series term by term\n• Integration: ∫1/(1+x²) dx = arctan x → integrate the series for 1/(1+x²) term by term\n\n**Radius and Interval of Convergence:**\nUse the ratio test on |a_{n+1}/aₙ| to find R. The series converges for |x − a| < R. Then check each endpoint separately — each endpoint is its own convergence problem.\n\n**Lagrange Error Bound:**\n|Rₙ(x)| ≤ M · |x − a|ⁿ⁺¹ / (n+1)!\nwhere M = max|f⁽ⁿ⁺¹⁾(c)| for c between a and x.\n\nFor eˣ: M = e^(max|x|). For sin x, cos x: M = 1 (all derivatives bounded by 1).",
       "initialPrompt": "Write the first four nonzero terms of the Maclaurin series for e^(−x²) by substituting u = −x² into the eˣ series. Is this faster than computing derivatives of e^(−x²) directly?",
-      "lessonId": "power-series-convergence"
+      "lessonId": "taylor-maclaurin"
     },
     {
       "type": "model",
@@ -110,7 +110,7 @@
         }
       ],
       "initialPrompt": "In example 2, could you use the ratio test instead of the nth-term test? Try computing lim |a_{n+1}/aₙ| and see what happens.",
-      "lessonId": "convergence-tests"
+      "lessonId": "sequences-series-intro"
     },
     {
       "type": "model",
@@ -132,7 +132,7 @@
         }
       ],
       "initialPrompt": "In example 1, the ratio test gave L = ∞. What does this tell you about how the terms aₙ behave as n grows? Does |aₙ| increase or decrease?",
-      "lessonId": "alternating-series"
+      "lessonId": "convergence-tests"
     },
     {
       "type": "model",
@@ -154,7 +154,7 @@
         }
       ],
       "initialPrompt": "In example 2, we found the series for 1/(1+x²). If you integrate both sides from 0 to 1, what famous result do you get? (Hint: arctan(1) = ?)",
-      "lessonId": "lagrange-error"
+      "lessonId": "taylor-maclaurin"
     },
     {
       "type": "guided_practice",
@@ -182,7 +182,7 @@
           "solution": "Step-by-step solution for power series interval."
         }
       ],
-      "lessonId": "sequences-series-intro"
+      "lessonId": "power-series-convergence"
     },
     {
       "type": "guided_practice",
@@ -219,7 +219,7 @@
         }
       ],
       "initialPrompt": "For the first problem, identify the first term (when n = 0) and the common ratio. Then apply the geometric series sum formula.",
-      "lessonId": "convergence-tests"
+      "lessonId": "sequences-series-intro"
     },
     {
       "type": "guided_practice",
@@ -256,7 +256,7 @@
         }
       ],
       "initialPrompt": "For the first problem, the ratio test is the right choice because the series has an exponential (2ⁿ) and a factorial (n!). Compute the ratio |a_{n+1}/aₙ| and simplify.",
-      "lessonId": "alternating-series"
+      "lessonId": "convergence-tests"
     },
     {
       "type": "guided_practice",
@@ -293,7 +293,7 @@
         }
       ],
       "initialPrompt": "For the first problem, you need to compute f(4), f'(4), and f''(4) for f(x) = √x. Start by writing f(x) = x^(1/2) and differentiating using the power rule.",
-      "lessonId": "lagrange-error"
+      "lessonId": "taylor-maclaurin"
     },
     {
       "type": "independent_practice",

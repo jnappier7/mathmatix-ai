@@ -212,7 +212,7 @@
         "Connecting f, f', f'': f' is the slope of f. f'' is the slope of f'. f'' is the concavity of f. Every statement about f'' is a statement about how f' is changing.",
         "AP FRQ strategy: when given a table of f' values at selected points, use sign changes between entries to justify conclusions about f. You must explicitly state the sign change."
       ],
-      "lessonId": "optimization"
+      "lessonId": "curve-sketching"
     },
     {
       "type": "model",
@@ -233,7 +233,7 @@
           "solution": "(a) f' > 0 on approximately [-2, 0) and (4, 6]: f is increasing. f' < 0 on approximately (0, 4): f is decreasing. (b) At x = 0: f' changes from positive to negative -> local maximum. At x = 4: f' changes from negative to positive -> local minimum. (c) Looking at how f' changes: f' is decreasing on [-2, 2] (values go 3, 1, 0, -2, -3), so f'' < 0 -> concave down. f' is increasing on [2, 6] (values go -3, -1, 0, 2, 4), so f'' > 0 -> concave up. Approximate inflection point near x = 2 where f' changes from decreasing to increasing."
         }
       ],
-      "lessonId": "optimization"
+      "lessonId": "curve-sketching"
     },
     {
       "type": "explanation",

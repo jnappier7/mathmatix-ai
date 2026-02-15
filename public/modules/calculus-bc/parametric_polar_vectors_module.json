@@ -57,7 +57,7 @@
           "solution": "Step-by-step solution for parametric arc length."
         }
       ],
-      "lessonId": "polar-coordinates"
+      "lessonId": "parametric-equations"
     },
     {
       "type": "explanation",
@@ -66,7 +66,7 @@
       "title": "Polar Coordinates: Curves, Area, and Slope",
       "content": "**Polar Coordinates:**\n\nEvery point is described by (r, θ) where r = distance from origin and θ = angle from positive x-axis.\n\n**Conversions:**\n• x = r cos θ,  y = r sin θ\n• r² = x² + y²,  tan θ = y/x\n\n**Common Polar Curves (memorize these shapes):**\n• r = a — circle of radius a centered at origin\n• r = a cos θ or r = a sin θ — circle of diameter a\n• r = a(1 ± cos θ) or a(1 ± sin θ) — cardioid\n• r = a ± b cos θ (a ≠ b) — limaçon (with/without inner loop depending on a/b ratio)\n• r = a cos(nθ) — rose with n petals (n odd) or 2n petals (n even)\n\n**Area Enclosed by a Polar Curve:**\nA = (1/2) ∫_α^β r² dθ\n\nThis formula comes from summing infinitesimal sectors, each with area (1/2)r² dθ.\n\n**Slope of a Polar Curve:**\nSince x = r cos θ and y = r sin θ:\ndy/dx = (dy/dθ) / (dx/dθ) = ((dr/dθ) sin θ + r cos θ) / ((dr/dθ) cos θ − r sin θ)\n\n**Key insight:** You must use the product rule to differentiate x = r cos θ and y = r sin θ with respect to θ, since r depends on θ.",
       "initialPrompt": "The curve r = 2 cos θ is a circle. Convert this equation to rectangular form to verify. What are the center and radius?",
-      "lessonId": "vector-valued"
+      "lessonId": "polar-coordinates"
     },
     {
       "type": "explanation",
@@ -119,7 +119,7 @@
         }
       ],
       "initialPrompt": "In example 1, why did we integrate from 0 to 2π for the cardioid? What would happen if we integrated from 0 to π instead?",
-      "lessonId": "vector-valued"
+      "lessonId": "polar-coordinates"
     },
     {
       "type": "model",
@@ -215,7 +215,7 @@
         }
       ],
       "initialPrompt": "For the first problem, note that r = 3 cos θ traces a complete circle from θ = 0 to θ = π (not 2π). Sketch the curve or verify that r = 0 at θ = π/2 going to negative for π/2 < θ < π, so the full circle is covered by θ ∈ [0, π].",
-      "lessonId": "vector-valued"
+      "lessonId": "polar-coordinates"
     },
     {
       "type": "guided_practice",

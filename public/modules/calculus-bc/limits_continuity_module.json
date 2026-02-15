@@ -76,7 +76,7 @@
         }
       ],
       "initialPrompt": "In examples 2 and 3, why did direct substitution fail? What is the 0/0 form telling us about the function near that point?",
-      "lessonId": "one-sided-infinite"
+      "lessonId": "limits-intro"
     },
     {
       "type": "guided_practice",
@@ -113,7 +113,7 @@
         }
       ],
       "initialPrompt": "Start with lc-wp1. What do you get when you try direct substitution? What kind of factoring should you try on x² + 5x + 4?",
-      "lessonId": "one-sided-infinite"
+      "lessonId": "limits-intro"
     },
     {
       "type": "explanation",
@@ -122,7 +122,7 @@
       "title": "One-Sided Limits, Infinite Limits, and Limits at Infinity",
       "content": "**One-Sided Limits:**\n\n• lim_{x→c⁻} f(x): the limit from the **left** (x approaches c through values less than c)\n• lim_{x→c⁺} f(x): the limit from the **right** (x approaches c through values greater than c)\n• The two-sided limit lim_{x→c} f(x) exists **if and only if** both one-sided limits exist and are equal.\n\n**Key application:** Piecewise functions often require checking one-sided limits at the breakpoints.\n\n**Infinite Limits (vertical asymptotes):**\n\n• lim_{x→c} f(x) = ±∞ means f(x) grows without bound near x = c.\n• This signals a **vertical asymptote** at x = c.\n• To determine the sign (+ or −∞), check the signs of the numerator and denominator as x → c from each side.\n• Important: lim = ∞ means the limit **does not exist** as a finite number, but we use ∞ to describe the behavior.\n\n**Limits at Infinity (horizontal asymptotes):**\n\nFor rational functions f(x) = p(x)/q(x):\n• If deg(p) < deg(q): lim_{x→±∞} f(x) = 0\n• If deg(p) = deg(q): lim_{x→±∞} f(x) = (leading coeff of p)/(leading coeff of q)\n• If deg(p) > deg(q): lim_{x→±∞} f(x) = ±∞ (no horizontal asymptote)\n\n**Shortcut:** Divide numerator and denominator by the highest power of x in the denominator.",
       "initialPrompt": "Consider f(x) = 1/(x − 2). What happens as x → 2⁺? What happens as x → 2⁻? Why are the answers different?",
-      "lessonId": "continuity-ivt"
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "guided_practice",
@@ -136,7 +136,7 @@
           "solution": "Step-by-step solution for limits at infinity."
         }
       ],
-      "lessonId": "limits-intro"
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "model",
@@ -158,7 +158,7 @@
         }
       ],
       "initialPrompt": "In example 2, what is the critical difference between getting 0/0 (like in the previous lesson) and getting 3/0? How should your approach differ?",
-      "lessonId": "continuity-ivt"
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "guided_practice",
@@ -195,7 +195,7 @@
         }
       ],
       "initialPrompt": "Start with lc-wp4. This is a piecewise function — which piece do you use for the left-hand limit, and which for the right-hand limit?",
-      "lessonId": "continuity-ivt"
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "explanation",

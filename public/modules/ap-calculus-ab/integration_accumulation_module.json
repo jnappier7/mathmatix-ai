@@ -81,7 +81,7 @@
           "solution": "Delta_x = (5 - 1)/n = 4/n. Right endpoints: x_i = 1 + i*(4/n). Sigma notation: sum from i=1 to n of sqrt(1 + 4i/n) * (4/n). For n = 4: Delta_x = 1. Right endpoints: x = 2, 3, 4, 5. RRS = sqrt(2)*1 + sqrt(3)*1 + sqrt(4)*1 + sqrt(5)*1 = 1.414 + 1.732 + 2 + 2.236 = 7.382. Since sqrt(x) is increasing, the right Riemann sum is an OVERESTIMATE. (Exact value: (2/3)(5^(3/2) - 1) approximately 6.787.)"
         }
       ],
-      "lessonId": "ftc"
+      "lessonId": "accumulation-riemann"
     },
     {
       "type": "explanation",
@@ -97,7 +97,7 @@
         "Part 2 transforms the difficult limit-of-Riemann-sums computation into a simple subtraction, once you know an antiderivative.",
         "Connection: Part 1 guarantees that continuous functions HAVE antiderivatives (the integral itself is one). Part 2 shows how to USE antiderivatives to evaluate definite integrals."
       ],
-      "lessonId": "antiderivatives"
+      "lessonId": "ftc"
     },
     {
       "type": "model",
@@ -118,7 +118,7 @@
           "solution": "Find an antiderivative: F(x) = x^3 - x^2 + 5x. (No +C needed for definite integrals.) Apply FTC Part 2: F(4) - F(1) = (64 - 16 + 20) - (1 - 1 + 5) = 68 - 5 = 63."
         }
       ],
-      "lessonId": "antiderivatives"
+      "lessonId": "ftc"
     },
     {
       "type": "guided_practice",
@@ -180,7 +180,7 @@
         "The +C is CRITICAL for indefinite integrals. It accounts for the family of ALL antiderivatives (vertical shifts of the same curve).",
         "Constant multiple and sum rules: integral of k*f(x)dx = k*integral of f(x)dx. integral of [f(x) +/- g(x)]dx = integral of f(x)dx +/- integral of g(x)dx."
       ],
-      "lessonId": "integral-properties"
+      "lessonId": "antiderivatives"
     },
     {
       "type": "model",
@@ -201,7 +201,7 @@
           "solution": "Rewrite: integral of (x^(1/2) + x^(-2)) dx. Power rule: x^(1/2) -> x^(3/2)/(3/2) = (2/3)x^(3/2). x^(-2) -> x^(-1)/(-1) = -1/x. Result: (2/3)x^(3/2) - 1/x + C. Always rewrite radicals and fractions as powers of x before integrating."
         }
       ],
-      "lessonId": "integral-properties"
+      "lessonId": "antiderivatives"
     },
     {
       "type": "explanation",

@@ -27,7 +27,7 @@
     "optimization-problems",
     "riemann-sums-approximation",
     "ftc-part-1",
-    "ftc-part-1",
+    "ftc-part-2",
     "antiderivatives-indefinite-integrals",
     "integral-properties-techniques",
     "slope-fields-solution-curves",
@@ -122,7 +122,7 @@
     {
       "id": "abf-11",
       "question": "[FRQ] Given f(x) = x\u2074 - 4x\u00b3 + 4x\u00b2. (a) Find all critical points. (b) Determine intervals of increase/decrease. (c) Classify each critical point. (d) Find inflection points.",
-      "answer": "(a) f'(x) = 4x\u00b3 - 12x\u00b2 + 8x = 4x(x\u00b2 - 3x + 2) = 4x(x-1)(x-2). Critical: x=0,1,2. (b) f'>0: (-\u221e,0)\u222a(1,2); f'<0: (0,1)\u222a(2,\u221e). Wait: test signs. f'(-1)=4(-1)(4)=-16<0. f'(0.5)=4(.5)(-.5)(-1.5)=1.5>0. f'(1.5)=4(1.5)(.5)(-.5)=-1.5<0. f'(3)=4(3)(2)(1)=24>0. So f'>0: (0,1)\u222a(2,\u221e); f'<0: (-\u221e,0)\u222a(1,2). (c) x=0: local min; x=1: local max; x=2: local min. (d) f''(x)=12x\u00b2-24x+8=4(3x\u00b2-6x+2)=0 \u2192 x=(6\u00b1\u221a12)/6=1\u00b1\u221a3/3. Inflection at x\u22480.423 and x\u22481.577.",
+      "answer": "(a) f'(x) = 4x\u00b3 - 12x\u00b2 + 8x = 4x(x\u00b2 - 3x + 2) = 4x(x-1)(x-2). Critical: x=0,1,2. (b) Test signs: f'(-1)=4(-1)(4)=-16<0. f'(0.5)=4(0.5)(-0.5)(-1.5)=1.5>0. f'(1.5)=4(1.5)(0.5)(-0.5)=-1.5<0. f'(3)=4(3)(2)(1)=24>0. So f'>0: (0,1)\u222a(2,\u221e); f'<0: (-\u221e,0)\u222a(1,2). (c) x=0: f' changes - to + \u2192 local min; x=1: f' changes + to - \u2192 local max; x=2: f' changes - to + \u2192 local min. (d) f''(x)=12x\u00b2-24x+8=4(3x\u00b2-6x+2)=0 \u2192 x=(6\u00b1\u221a12)/6=1\u00b1\u221a3/3. Inflection at x\u22480.423 and x\u22481.577.",
       "skill": "increasing-decreasing-extrema",
       "difficulty": 6,
       "points": 10

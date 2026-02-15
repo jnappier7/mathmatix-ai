@@ -237,8 +237,8 @@
       "skill": "ap-mc-calculator",
       "examples": [
         {
-          "problem": "MC (Calc): The area of the region enclosed by y = x³−2x and y = x is closest to: (A) 1.5 (B) 2.25 (C) 3.08 (D) 5.33",
-          "solution": "Intersections: x³−2x = x → x³−3x = 0 → x(x²−3) = 0 → x = 0, ±√3. On [−√3, 0]: x³−3x > 0 (top). On [0, √3]: x³−3x < 0 (bottom). By symmetry: A = 2∫₀^{√3}(3x−x³)dx = 2[3x²/2−x⁴/4]₀^{√3} = 2[9/2−9/4] = 2·9/4 = 9/2 = 4.5. Hmm, none match exactly. Let me recheck: area between y=x and y=x³−2x is ∫|x−(x³−2x)|dx = ∫|3x−x³|dx. A = 2∫₀^{√3}(3x−x³)dx = 2[3x²/2−x⁴/4]₀^{√3} = 2(9/2−9/4) = 2(9/4) = 9/2 = 4.5. With calculator this computes directly. Actually if the choices were (A) 2.25, (B) 3.08, (C) 4.50, (D) 5.33, answer is (C). The point: use the calculator to evaluate definite integrals quickly."
+          "problem": "MC (Calc): The area of the region enclosed by y = x³−2x and y = x is closest to: (A) 2.25 (B) 3.08 (C) 4.50 (D) 5.33",
+          "solution": "Intersections: x³−2x = x → x³−3x = 0 → x(x²−3) = 0 → x = 0, ±√3. The area between the curves is ∫|x−(x³−2x)|dx = ∫|3x−x³|dx. By symmetry: A = 2∫₀^{√3}(3x−x³)dx = 2[3x²/2−x⁴/4]₀^{√3} = 2(9/2−9/4) = 2(9/4) = 9/2 = 4.5. Answer: (C). Strategy: use the calculator to evaluate definite integrals quickly and verify your algebra."
         },
         {
           "problem": "MC (Calc): A particle moves with velocity v(t) = ln(t+1)−t for t ≥ 0. At what time t does the particle change direction for the first time?",

@@ -185,7 +185,7 @@
       "examples": [
         {
           "problem": "Evaluate without a calculator: sin(7π/6) + cos(4π/3)",
-          "solution": "**sin(7π/6):** Reference angle = 7π/6 − π = π/6. QII I → sin is negative.\nsin(7π/6) = −sin(π/6) = **−1/2**\n\n**cos(4π/3):** Reference angle = 4π/3 − π = π/3. QIII → cos is negative.\ncos(4π/3) = −cos(π/3) = **−1/2**\n\n**Sum:** −1/2 + (−1/2) = **−1**"
+          "solution": "**sin(7π/6):** Reference angle = 7π/6 − π = π/6. QIII → sin is negative.\nsin(7π/6) = −sin(π/6) = **−1/2**\n\n**cos(4π/3):** Reference angle = 4π/3 − π = π/3. QIII → cos is negative.\ncos(4π/3) = −cos(π/3) = **−1/2**\n\n**Sum:** −1/2 + (−1/2) = **−1**"
         },
         {
           "problem": "Simplify: (1 − cos²θ)/sin θ",

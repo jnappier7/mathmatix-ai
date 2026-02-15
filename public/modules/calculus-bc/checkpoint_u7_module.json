@@ -11,8 +11,8 @@
     "slope-fields",
     "separation-of-variables",
     "particular-solutions",
-    "separation-of-variables",
-    "eulers-method",
+    "exponential-models",
+    "euler-method",
     "logistic-growth"
   ],
   "passThreshold": 70,
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "skillId": "separation-of-variables",
+      "skillId": "exponential-models",
       "reteachFocus": "dy/dt=ky \u2192 y=Ce^(kt); growth k>0, decay k<0; use initial condition for C, second point for k; half-life/doubling time",
       "resources": [
         "differential_equations_module.json - scaffold phases 7-9"
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "skillId": "eulers-method",
+      "skillId": "euler-method",
       "reteachFocus": "y_{n+1}=y_n+f(x_n,y_n)\u00b7\u0394x; step-by-step computation; systematic table approach",
       "resources": [
         "differential_equations_module.json - scaffold phases 7-9"
@@ -74,7 +74,7 @@
       "id": "cbu7-3",
       "question": "A population grows at a rate proportional to its size. If the population is 500 at t=0 and 1500 at t=4 years, find the population at t=10.",
       "answer": "dy/dt=ky \u2192 y=500e^(kt). y(4)=1500: 1500=500e^(4k) \u2192 e^(4k)=3 \u2192 4k=ln3 \u2192 k=ln3/4. y(10)=500e^(10ln3/4)=500\u00b73^(10/4)=500\u00b73^(5/2)=500\u00b79\u221a3=4500\u221a3\u22487794.",
-      "skill": "separation-of-variables",
+      "skill": "exponential-models",
       "difficulty": 5,
       "points": 10
     },
@@ -82,7 +82,7 @@
       "id": "cbu7-4",
       "question": "A radioactive substance has a half-life of 8 years. If the initial amount is 200 grams, how much remains after 20 years?",
       "answer": "y=200e^(kt). Half-life: 100=200e^(8k) \u2192 e^(8k)=1/2 \u2192 8k=\u2212ln2 \u2192 k=\u2212ln2/8. y(20)=200e^(\u221220ln2/8)=200\u00b72^(\u22125/2)=200/(4\u221a2)=50/\u221a2=25\u221a2\u224835.4 g.",
-      "skill": "separation-of-variables",
+      "skill": "exponential-models",
       "difficulty": 4,
       "points": 8
     },
@@ -90,7 +90,7 @@
       "id": "cbu7-5",
       "question": "Use Euler's method with step size \u0394x = 0.5 and initial condition y(0) = 1 to approximate y(1) for dy/dx = x + y.",
       "answer": "Step 1: x\u2080=0, y\u2080=1. dy/dx=0+1=1. y\u2081=1+1(0.5)=1.5. Step 2: x\u2081=0.5, y\u2081=1.5. dy/dx=0.5+1.5=2. y\u2082=1.5+2(0.5)=2.5. So y(1) \u2248 2.5.",
-      "skill": "eulers-method",
+      "skill": "euler-method",
       "difficulty": 4,
       "points": 8
     },

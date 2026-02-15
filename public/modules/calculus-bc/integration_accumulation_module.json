@@ -8,8 +8,10 @@
   "description": "Master the definite integral from first principles through advanced techniques. Begin with Riemann sums and the concept of accumulation, then formalize with the Fundamental Theorem of Calculus (both parts). Build a toolkit of antidifferentiation methods: u-substitution for chain-rule reversal, integration by parts for products, partial fractions for rational functions, and improper integrals for unbounded domains or integrands. This heavyweight unit is the backbone of AP Calculus BC — nearly half of the exam's free-response questions require fluent integration skills.",
   "skills": [
     "riemann-sums",
+    "definite-integral-properties",
     "ftc-part1",
     "ftc-part2",
+    "antiderivatives",
     "u-substitution",
     "integration-by-parts",
     "partial-fractions",
@@ -149,7 +151,7 @@
       "title": "The Fundamental Theorem of Calculus (Parts 1 & 2) and u-Substitution",
       "content": "**FTC Part 1 — Differentiating an Integral:**\n\nIf f is continuous on [a, b] and g(x) = ∫ₐˣ f(t) dt, then:\n\ng'(x) = f(x)\n\nIn words: the derivative of the accumulation function equals the integrand evaluated at the upper limit.\n\n**Chain rule extension:** If the upper limit is a function u(x):\nd/dx ∫ₐ^{u(x)} f(t) dt = f(u(x)) · u'(x)\n\n**FTC Part 2 — Evaluating a Definite Integral:**\n\nIf F is any antiderivative of f (i.e., F' = f), then:\n\n∫ₐᵇ f(x) dx = F(b) − F(a)\n\nThis connects the two main branches of calculus: differentiation and integration are inverse operations.\n\n**u-Substitution (Reverse Chain Rule):**\n\nWhen the integrand contains a composite function and its derivative:\n∫ f(g(x)) · g'(x) dx → let u = g(x), du = g'(x) dx → ∫ f(u) du\n\nFor definite integrals, convert the limits: when x = a, u = g(a); when x = b, u = g(b).\n\n**Common patterns to recognize:**\n• ∫ 2x · cos(x²) dx → u = x², du = 2x dx\n• ∫ eˣ/(1 + eˣ) dx → u = 1 + eˣ, du = eˣ dx\n• ∫ sin(x) cos(x) dx → u = sin(x), du = cos(x) dx",
       "initialPrompt": "If g(x) = ∫₀ˣ cos(t²) dt, what is g'(x)? What if the upper limit were x³ instead of x?",
-      "lessonId": "antiderivatives-u-sub"
+      "lessonId": "definite-integral-ftc"
     },
     {
       "type": "guided_practice",
@@ -163,7 +165,7 @@
           "solution": "Step-by-step solution for u substitution."
         }
       ],
-      "lessonId": "integration-by-parts"
+      "lessonId": "antiderivatives-u-sub"
     },
     {
       "type": "model",
@@ -185,7 +187,7 @@
         }
       ],
       "initialPrompt": "In example 3, what would change if the integral were ∫ x cos(x²) dx (missing the factor of 2)? How would you handle it?",
-      "lessonId": "antiderivatives-u-sub"
+      "lessonId": "definite-integral-ftc"
     },
     {
       "type": "guided_practice",
@@ -222,7 +224,7 @@
         }
       ],
       "initialPrompt": "For the first problem, what does FTC Part 1 say about d/dx ∫ₐˣ f(t) dt? Apply it directly — you do NOT need to find an antiderivative.",
-      "lessonId": "antiderivatives-u-sub"
+      "lessonId": "definite-integral-ftc"
     },
     {
       "type": "explanation",
@@ -231,7 +233,7 @@
       "title": "Advanced Integration: By Parts, Partial Fractions & Improper Integrals",
       "content": "**Integration by Parts (BC Topic):**\n\nUsed when the integrand is a product that doesn't yield to u-substitution.\n\n**Formula:** ∫ u dv = uv − ∫ v du\n\n**LIATE rule** for choosing u (in order of priority):\nL — Logarithmic (ln x)\nI — Inverse trig (arctan x, arcsin x)\nA — Algebraic (x², x, polynomials)\nT — Trigonometric (sin x, cos x)\nE — Exponential (eˣ)\n\nChoose u from highest priority. The rest is dv.\n\n**Partial Fractions (BC Topic):**\n\nDecompose a rational function into simpler fractions before integrating.\n\nFor distinct linear factors:\nP(x)/[(x − a)(x − b)] = A/(x − a) + B/(x − b)\n\nSolve for A and B by plugging in x = a and x = b (cover-up method).\n\n**Improper Integrals (BC Topic):**\n\nIntegrals with infinite bounds or discontinuous integrands.\n\n∫ₐ^∞ f(x) dx = lim_{b→∞} ∫ₐᵇ f(x) dx\n\nIf the limit exists and is finite, the integral **converges**. Otherwise, it **diverges**.\n\n**p-test:** ∫₁^∞ 1/xᵖ dx converges if p > 1, diverges if p ≤ 1.",
       "initialPrompt": "For ∫ x eˣ dx, LIATE says choose u = x (algebraic) and dv = eˣ dx (exponential). Find du and v. What integral remains after applying the formula?",
-      "lessonId": "partial-fractions"
+      "lessonId": "integration-by-parts"
     },
     {
       "type": "guided_practice",
@@ -245,7 +247,7 @@
           "solution": "Step-by-step solution for improper integrals."
         }
       ],
-      "lessonId": "accumulation-functions"
+      "lessonId": "improper-integrals"
     },
     {
       "type": "guided_practice",
@@ -259,7 +261,7 @@
           "solution": "Step-by-step solution for partial fractions."
         }
       ],
-      "lessonId": "improper-integrals"
+      "lessonId": "partial-fractions"
     },
     {
       "type": "model",
@@ -281,7 +283,7 @@
         }
       ],
       "initialPrompt": "In example 2, what would happen if the denominator were x² + 3x + 2 and you forgot to factor it first? Why is factoring the essential first step for partial fractions?",
-      "lessonId": "partial-fractions"
+      "lessonId": "integration-by-parts"
     },
     {
       "type": "guided_practice",
@@ -318,7 +320,7 @@
         }
       ],
       "initialPrompt": "For the first problem, identify u and dv using the LIATE rule. Then find du and v before applying the formula ∫ u dv = uv − ∫ v du.",
-      "lessonId": "partial-fractions"
+      "lessonId": "integration-by-parts"
     },
     {
       "type": "independent_practice",

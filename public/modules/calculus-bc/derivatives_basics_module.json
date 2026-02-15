@@ -53,7 +53,7 @@
           "solution": "Step-by-step solution for derivative interpretation."
         }
       ],
-      "lessonId": "basic-rules"
+      "lessonId": "derivative-definition"
     },
     {
       "type": "model",
@@ -121,7 +121,7 @@
       "title": "Basic Differentiation Rules",
       "content": "**The limit definition works but is slow. These rules let you differentiate instantly:**\n\n**Constant Rule:** d/dx[c] = 0\n\n**Power Rule:** d/dx[x^n] = nx^(n−1) — works for ALL real exponents (integer, fractional, negative)\n\n**Constant Multiple:** d/dx[cf(x)] = c · f'(x)\n\n**Sum/Difference:** d/dx[f(x) ± g(x)] = f'(x) ± g'(x)\n\n**Trig Derivatives:**\n• d/dx[sin x] = cos x\n• d/dx[cos x] = −sin x\n• d/dx[tan x] = sec²x\n• d/dx[csc x] = −csc x · cot x\n• d/dx[sec x] = sec x · tan x\n• d/dx[cot x] = −csc²x\n\n**Exponential & Logarithmic:**\n• d/dx[e^x] = e^x\n• d/dx[ln x] = 1/x\n• d/dx[a^x] = a^x · ln a\n\n**Key Strategy:** Before differentiating, ALWAYS rewrite radicals and fractions as power expressions:\n• √x = x^(1/2), 1/x² = x^(−2), ³√x = x^(1/3), 5/x = 5x^(−1)",
       "initialPrompt": "Rewrite f(x) = 4/x³ + 3√x − 2/√x using exponent notation so the power rule applies directly.",
-      "lessonId": "derivatives-graphs-tables"
+      "lessonId": "basic-rules"
     },
     {
       "type": "model",
@@ -143,7 +143,7 @@
         }
       ],
       "initialPrompt": "In example 1, what would happen if you tried to differentiate 2/x² directly without rewriting as 2x⁻²? What rule would you need?",
-      "lessonId": "derivatives-graphs-tables"
+      "lessonId": "basic-rules"
     },
     {
       "type": "guided_practice",
@@ -180,7 +180,7 @@
         }
       ],
       "initialPrompt": "For the first problem, start by rewriting −3/x and 7√x using exponent notation. What power of x do you get for each?",
-      "lessonId": "derivatives-graphs-tables"
+      "lessonId": "basic-rules"
     },
     {
       "type": "explanation",

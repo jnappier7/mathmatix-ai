@@ -9,7 +9,9 @@
   "skills": [
     "slope-fields",
     "separation-of-variables",
-    "eulers-method",
+    "particular-solutions",
+    "exponential-models",
+    "euler-method",
     "logistic-growth"
   ],
   "standardsAlignment": [
@@ -177,11 +179,11 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "eulers-method",
+      "skill": "euler-method",
       "title": "Euler's Method & Logistic Growth",
       "content": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x₀, y₀). Use the slope dy/dx = f(x₀, y₀) to take a small step forward:\n\ny_{n+1} = yₙ + f(xₙ, yₙ) · Δx\nx_{n+1} = xₙ + Δx\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller Δx → more steps → better approximation. Euler's method is a first-order method: halving Δx roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\ndP/dt = kP(1 − P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n• **Fastest growth at P = L/2** — this is the inflection point of the logistic curve.\n• **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n• **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n• This DE is separable — the solution is P(t) = L/(1 + Ae^(−kt)) where A depends on the initial condition.",
       "initialPrompt": "If dP/dt = 0.5P(1 − P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?",
-      "lessonId": "exponential-logistic"
+      "lessonId": "euler-method"
     },
     {
       "type": "guided_practice",
@@ -195,12 +197,12 @@
           "solution": "Step-by-step solution for logistic growth."
         }
       ],
-      "lessonId": "euler-method"
+      "lessonId": "exponential-logistic"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "skill": "eulers-method",
+      "skill": "euler-method",
       "title": "I-Do: Euler's Method & Logistic Growth",
       "examples": [
         {
@@ -217,12 +219,12 @@
         }
       ],
       "initialPrompt": "In example 2, Euler's method gave 1.331 while the exact answer is about 1.35. If you halved the step size to Δx = 0.05, would the approximation improve? Why?",
-      "lessonId": "exponential-logistic"
+      "lessonId": "euler-method"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skill": "eulers-method",
+      "skill": "euler-method",
       "title": "We-Do: Euler's Method & Logistic Growth",
       "problems": [
         {
@@ -254,7 +256,7 @@
         }
       ],
       "initialPrompt": "For the first problem, start at (x₀, y₀) = (0, 1). Compute the slope f(0, 1) = 2(0) = 0, then step forward: y₁ = y₀ + slope · Δx.",
-      "lessonId": "exponential-logistic"
+      "lessonId": "euler-method"
     },
     {
       "type": "independent_practice",
@@ -292,7 +294,7 @@
           "id": "de-yp4",
           "question": "Use Euler's method with Δx = 0.5 to approximate y(1.5) given dy/dx = x − y, y(0) = 1.",
           "answer": "y(1.5) ≈ 0.75",
-          "skill": "eulers-method",
+          "skill": "euler-method",
           "hints": [
             "Step 1: (0,1), slope = −1, y₁ = 1+(−1)(0.5) = 0.5, x₁ = 0.5. Step 2: (0.5, 0.5), slope = 0, y₂ = 0.5+0(0.5) = 0.5, x₂ = 1. Step 3: (1, 0.5), slope = 0.5, y₃ = 0.5+0.5(0.5) = 0.75, x₃ = 1.5."
           ]

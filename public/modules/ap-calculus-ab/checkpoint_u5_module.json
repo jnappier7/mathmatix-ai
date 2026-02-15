@@ -12,7 +12,7 @@
     "mvt-evt-theorems",
     "increasing-decreasing-extrema",
     "concavity-inflection-points",
-    "concavity-inflection-points",
+    "first-second-derivative-tests",
     "curve-sketching-from-derivatives",
     "optimization-problems"
   ],
@@ -76,7 +76,7 @@
       "id": "cu5-5",
       "question": "Find the absolute maximum and minimum of f(x) = x\u00b3 - 6x\u00b2 + 9x + 1 on [0, 4].",
       "answer": "f'(x) = 3x\u00b2-12x+9 = 3(x-1)(x-3). Critical: x=1, x=3 (both in [0,4]). Evaluate: f(0)=1, f(1)=1-6+9+1=5, f(3)=27-54+27+1=1, f(4)=64-96+36+1=5. Absolute max: 5 at x=1 and x=4. Absolute min: 1 at x=0 and x=3.",
-      "skill": "concavity-inflection-points",
+      "skill": "increasing-decreasing-extrema",
       "difficulty": 5,
       "points": 10
     },
@@ -92,7 +92,7 @@
       "id": "cu5-frq",
       "question": "(FRQ) A particle moves along the x-axis with velocity v(t) = t\u00b2 - 5t + 4 for t \u2265 0. (a) Find all times when the particle changes direction. (b) Find the acceleration at t = 3. (c) Is the particle speeding up or slowing down at t = 3? Justify.",
       "answer": "(a) v(t)=(t-1)(t-4)=0 at t=1, t=4. Sign changes at both \u2192 direction changes at t=1 and t=4. (b) a(t)=2t-5. a(3)=6-5=1. (c) v(3)=9-15+4=-2<0. a(3)=1>0. v and a have opposite signs \u2192 slowing down.",
-      "skill": "increasing-decreasing-extrema",
+      "skill": "motion-position-velocity-acceleration",
       "difficulty": 6,
       "points": 12
     },
@@ -100,7 +100,7 @@
       "id": "cu5-spiral",
       "question": "SPIRAL: Use L'H\u00f4pital's Rule to evaluate lim(x\u21920) (x - sin x)/x\u00b3.",
       "answer": "0/0. L'H\u00f4pital: (1-cos x)/(3x\u00b2) \u2192 0/0. Again: sin x/(6x) \u2192 0/0. Again: cos x/6 \u2192 1/6.",
-      "skill": "mvt-evt-theorems",
+      "skill": "lhopitals-rule",
       "difficulty": 6,
       "points": 5
     }

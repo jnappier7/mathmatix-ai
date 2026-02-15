@@ -60,7 +60,7 @@
         },
         {
           "problem": "Water pours into an inverted cone (height 10 ft, top radius 5 ft) at 2 ft³/min. How fast is the water level rising when the depth is 4 ft?",
-          "solution": "**Step 1 — Relate r and h by similar triangles:**\nr/h = 5/10 = 1/2, so r = h/2\n\n**Step 2 — Volume in terms of h only:**\nV = (1/3)πr²h = (1/3)π(h/2)²h = (1/3)π(h²/4)h = πh³/12\n\n**Step 3 — Differentiate:**\ndV/dt = (πh²/4)(dh/dt)\n\nWait — let me verify: d/dh[πh³/12] = 3πh²/12 = πh²/4 ✓\n\n**Step 4 — Substitute:** dV/dt = 2, h = 4:\n2 = (π(16)/4)(dh/dt)\n2 = 4π(dh/dt)\ndh/dt = 2/(4π) = **1/(2π) ft/min ≈ 0.159 ft/min**"
+          "solution": "**Step 1 — Relate r and h by similar triangles:**\nr/h = 5/10 = 1/2, so r = h/2\n\n**Step 2 — Volume in terms of h only:**\nV = (1/3)πr²h = (1/3)π(h/2)²h = (1/3)π(h²/4)h = πh³/12\n\n**Step 3 — Differentiate:**\ndV/dt = (πh²/4)(dh/dt)\n\n(Verify: d/dh[πh³/12] = 3πh²/12 = πh²/4 ✓)\n\n**Step 4 — Substitute:** dV/dt = 2, h = 4:\n2 = (π(16)/4)(dh/dt)\n2 = 4π(dh/dt)\ndh/dt = 2/(4π) = **1/(2π) ft/min ≈ 0.159 ft/min**"
         }
       ],
       "initialPrompt": "In the ladder problem, why must we differentiate BEFORE substituting x = 6 and y = 8? What would go wrong if we substituted first?",
