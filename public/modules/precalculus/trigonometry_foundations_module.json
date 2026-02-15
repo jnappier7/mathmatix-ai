@@ -308,6 +308,19 @@
       ]
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "sinusoidal-modeling",
+      "title": "We-Do: Sinusoidal Modeling \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for sinusoidal modeling.",
+          "hint": "Apply the concepts of sinusoidal modeling.",
+          "solution": "Step-by-step solution for sinusoidal modeling."
+        }
+      ]
+    },
+    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Solving Trig Equations \u2014 Worked Examples",

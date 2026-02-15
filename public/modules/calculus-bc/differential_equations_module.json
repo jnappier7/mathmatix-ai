@@ -5,7 +5,7 @@
   "title": "Differential Equations",
   "weeks": "20-21",
   "estimatedDuration": 50,
-  "description": "Model real-world phenomena with differential equations and solve them analytically and numerically. Start with slope fields to visualize solution families, then master separation of variables to find general and particular solutions. Approximate solutions numerically with Euler's method when closed-form answers are unavailable. Conclude with the logistic growth model — the BC-specific application that combines separation of variables, equilibrium analysis, and population dynamics.",
+  "description": "Model real-world phenomena with differential equations and solve them analytically and numerically. Start with slope fields to visualize solution families, then master separation of variables to find general and particular solutions. Approximate solutions numerically with Euler's method when closed-form answers are unavailable. Conclude with the logistic growth model \u2014 the BC-specific application that combines separation of variables, equilibrium analysis, and population dynamics.",
   "skills": [
     "slope-fields",
     "separation-of-variables",
@@ -30,10 +30,10 @@
     "Analyze logistic growth models including carrying capacity, inflection point, and maximum growth rate"
   ],
   "instructionalStrategy": [
-    "Start with slope fields — students need to see what a differential equation means geometrically before they solve one algebraically.",
+    "Start with slope fields \u2014 students need to see what a differential equation means geometrically before they solve one algebraically.",
     "Emphasize that dy/dx = f(x, y) gives a slope at every point. Slope fields make the infinite family of solutions visible.",
     "For separation of variables, insist on the full process: separate, integrate both sides, solve for y, apply initial conditions last.",
-    "Euler's method is 'slope field arithmetic' — connect the geometric intuition to the numerical procedure.",
+    "Euler's method is 'slope field arithmetic' \u2014 connect the geometric intuition to the numerical procedure.",
     "Logistic growth ties the entire unit together: it's a separable DE with a slope field, equilibrium analysis, and real-world context."
   ],
   "aiFlexLevel": "moderate",
@@ -43,8 +43,8 @@
       "lessonPhase": "concept-intro",
       "skill": "slope-fields",
       "title": "Slope Fields & General/Particular Solutions",
-      "content": "**Differential Equations — The Big Idea:**\n\nA differential equation (DE) relates a function to its derivative(s). The simplest first-order form is:\n\ndy/dx = f(x, y)\n\nThis tells you the slope of the solution curve at every point (x, y). The solution is a function y(x) whose derivative matches the rule.\n\n**Slope Fields (Direction Fields):**\n\nAt each point (x, y) in the plane, draw a short line segment with slope f(x, y). The resulting picture is a slope field. Solution curves thread through the field, always tangent to the segments.\n\n**Reading a Slope field:**\n• Where segments are horizontal → dy/dx = 0 (these are the nullclines).\n• Where segments are steep → |dy/dx| is large.\n• Segments with the same slope lie along curves called isoclines.\n\n**General vs. Particular Solutions:**\n• **General solution:** The family of all solutions, containing an arbitrary constant C.\n  Example: dy/dx = 2x → y = x² + C (family of parabolas).\n• **Particular solution:** One specific curve from the family, determined by an initial condition y(x₀) = y₀.\n  Example: y(0) = 3 → C = 3 → y = x² + 3.\n\n**Equilibrium solutions** are constant solutions where dy/dx = 0 for all x. On a slope field, they appear as horizontal lines.",
-      "initialPrompt": "For dy/dx = x − y, what is the slope at (0, 0)? At (1, 1)? Along what line in the plane are all slopes equal to zero?"
+      "content": "**Differential Equations \u2014 The Big Idea:**\n\nA differential equation (DE) relates a function to its derivative(s). The simplest first-order form is:\n\ndy/dx = f(x, y)\n\nThis tells you the slope of the solution curve at every point (x, y). The solution is a function y(x) whose derivative matches the rule.\n\n**Slope Fields (Direction Fields):**\n\nAt each point (x, y) in the plane, draw a short line segment with slope f(x, y). The resulting picture is a slope field. Solution curves thread through the field, always tangent to the segments.\n\n**Reading a Slope field:**\n\u2022 Where segments are horizontal \u2192 dy/dx = 0 (these are the nullclines).\n\u2022 Where segments are steep \u2192 |dy/dx| is large.\n\u2022 Segments with the same slope lie along curves called isoclines.\n\n**General vs. Particular Solutions:**\n\u2022 **General solution:** The family of all solutions, containing an arbitrary constant C.\n  Example: dy/dx = 2x \u2192 y = x\u00b2 + C (family of parabolas).\n\u2022 **Particular solution:** One specific curve from the family, determined by an initial condition y(x\u2080) = y\u2080.\n  Example: y(0) = 3 \u2192 C = 3 \u2192 y = x\u00b2 + 3.\n\n**Equilibrium solutions** are constant solutions where dy/dx = 0 for all x. On a slope field, they appear as horizontal lines.",
+      "initialPrompt": "For dy/dx = x \u2212 y, what is the slope at (0, 0)? At (1, 1)? Along what line in the plane are all slopes equal to zero?"
     },
     {
       "type": "model",
@@ -53,16 +53,16 @@
       "title": "I-Do: Slope Fields & Finding Solutions",
       "examples": [
         {
-          "problem": "For dy/dx = x − y, compute slopes at (0,0), (1,0), (0,1), (1,1), (2,1) and describe the slope field behavior.",
-          "solution": "**Compute slopes at each point:**\n• (0, 0): slope = 0 − 0 = 0\n• (1, 0): slope = 1 − 0 = 1\n• (0, 1): slope = 0 − 1 = −1\n• (1, 1): slope = 1 − 1 = 0\n• (2, 1): slope = 2 − 1 = 1\n\n**Nullcline (slope = 0):** x − y = 0, i.e., the line y = x.\n\nAbove the line y = x, slopes are negative (solutions decrease toward y = x).\nBelow the line y = x, slopes are positive (solutions increase toward y = x).\n\n**Behavior:** Solution curves are attracted toward the line y = x. This makes sense — the DE pushes y toward x."
+          "problem": "For dy/dx = x \u2212 y, compute slopes at (0,0), (1,0), (0,1), (1,1), (2,1) and describe the slope field behavior.",
+          "solution": "**Compute slopes at each point:**\n\u2022 (0, 0): slope = 0 \u2212 0 = 0\n\u2022 (1, 0): slope = 1 \u2212 0 = 1\n\u2022 (0, 1): slope = 0 \u2212 1 = \u22121\n\u2022 (1, 1): slope = 1 \u2212 1 = 0\n\u2022 (2, 1): slope = 2 \u2212 1 = 1\n\n**Nullcline (slope = 0):** x \u2212 y = 0, i.e., the line y = x.\n\nAbove the line y = x, slopes are negative (solutions decrease toward y = x).\nBelow the line y = x, slopes are positive (solutions increase toward y = x).\n\n**Behavior:** Solution curves are attracted toward the line y = x. This makes sense \u2014 the DE pushes y toward x."
         },
         {
-          "problem": "For dy/dx = y(1 − y), find the equilibrium solutions and describe stability.",
-          "solution": "**Equilibrium:** dy/dx = 0 when y(1 − y) = 0 → y = 0 or y = 1.\n\n**Analyze stability using sign of dy/dx:**\n• y < 0: y is negative, (1 − y) is positive → dy/dx < 0 → solutions decrease.\n• 0 < y < 1: y is positive, (1 − y) is positive → dy/dx > 0 → solutions increase.\n• y > 1: y is positive, (1 − y) is negative → dy/dx < 0 → solutions decrease.\n\n**Conclusion:**\n• **y = 0 is unstable** (solutions near 0 move away).\n• **y = 1 is stable** (solutions near 1 are attracted toward it).\n\nIn the slope field, solution curves between 0 and 1 rise toward y = 1, and curves above 1 fall toward y = 1."
+          "problem": "For dy/dx = y(1 \u2212 y), find the equilibrium solutions and describe stability.",
+          "solution": "**Equilibrium:** dy/dx = 0 when y(1 \u2212 y) = 0 \u2192 y = 0 or y = 1.\n\n**Analyze stability using sign of dy/dx:**\n\u2022 y < 0: y is negative, (1 \u2212 y) is positive \u2192 dy/dx < 0 \u2192 solutions decrease.\n\u2022 0 < y < 1: y is positive, (1 \u2212 y) is positive \u2192 dy/dx > 0 \u2192 solutions increase.\n\u2022 y > 1: y is positive, (1 \u2212 y) is negative \u2192 dy/dx < 0 \u2192 solutions decrease.\n\n**Conclusion:**\n\u2022 **y = 0 is unstable** (solutions near 0 move away).\n\u2022 **y = 1 is stable** (solutions near 1 are attracted toward it).\n\nIn the slope field, solution curves between 0 and 1 rise toward y = 1, and curves above 1 fall toward y = 1."
         },
         {
           "problem": "Given dy/dx = 2x and y(0) = 3, find the particular solution.",
-          "solution": "**Integrate both sides with respect to x:**\ny = ∫ 2x dx = x² + C\n\n**Apply the initial condition y(0) = 3:**\n3 = 0² + C → C = 3\n\n**Particular solution: y = x² + 3**\n\n**Verify:** dy/dx = 2x ✓ and y(0) = 0 + 3 = 3 ✓\n\n**Note:** This DE had the form dy/dx = f(x) — the right side depended only on x — so we could integrate directly. When the right side involves y as well, we need separation of variables."
+          "solution": "**Integrate both sides with respect to x:**\ny = \u222b 2x dx = x\u00b2 + C\n\n**Apply the initial condition y(0) = 3:**\n3 = 0\u00b2 + C \u2192 C = 3\n\n**Particular solution: y = x\u00b2 + 3**\n\n**Verify:** dy/dx = 2x \u2713 and y(0) = 0 + 3 = 3 \u2713\n\n**Note:** This DE had the form dy/dx = f(x) \u2014 the right side depended only on x \u2014 so we could integrate directly. When the right side involves y as well, we need separation of variables."
         }
       ],
       "initialPrompt": "In example 2, why is y = 1 called a 'stable' equilibrium? What happens to a solution that starts at y = 0.9? At y = 1.1?"
@@ -75,29 +75,29 @@
       "problems": [
         {
           "id": "de-wp1",
-          "question": "For dy/dx = x + y, compute the slope at each point: (0,0), (1,0), (0,1), (1,1), (−1,0).",
-          "answer": "Slopes: 0, 1, 1, 2, −1",
+          "question": "For dy/dx = x + y, compute the slope at each point: (0,0), (1,0), (0,1), (1,1), (\u22121,0).",
+          "answer": "Slopes: 0, 1, 1, 2, \u22121",
           "hints": [
             "Plug each (x,y) into f(x,y) = x + y.",
-            "(0,0): 0+0=0. (1,0): 1+0=1. (0,1): 0+1=1. (1,1): 1+1=2. (−1,0): −1+0=−1."
+            "(0,0): 0+0=0. (1,0): 1+0=1. (0,1): 0+1=1. (1,1): 1+1=2. (\u22121,0): \u22121+0=\u22121."
           ]
         },
         {
           "id": "de-wp2",
           "question": "For dy/dx = y/x, find where slopes are zero and where slopes are undefined. What are the isoclines for slope = 2?",
-          "answer": "Slopes are zero when y = 0 (x-axis, x ≠ 0); undefined when x = 0 (y-axis). The isocline for slope 2 is the line y = 2x.",
+          "answer": "Slopes are zero when y = 0 (x-axis, x \u2260 0); undefined when x = 0 (y-axis). The isocline for slope 2 is the line y = 2x.",
           "hints": [
-            "dy/dx = y/x = 0 when y = 0 (and x ≠ 0). Undefined when x = 0.",
-            "Isocline for slope k: y/x = k → y = kx. For k = 2: y = 2x. Along this line, every slope segment has slope 2."
+            "dy/dx = y/x = 0 when y = 0 (and x \u2260 0). Undefined when x = 0.",
+            "Isocline for slope k: y/x = k \u2192 y = kx. For k = 2: y = 2x. Along this line, every slope segment has slope 2."
           ]
         },
         {
           "id": "de-wp3",
-          "question": "Given dy/dx = 3x² and y(1) = 5, find the particular solution.",
-          "answer": "y = x³ + 4",
+          "question": "Given dy/dx = 3x\u00b2 and y(1) = 5, find the particular solution.",
+          "answer": "y = x\u00b3 + 4",
           "hints": [
-            "Integrate: y = ∫ 3x² dx = x³ + C.",
-            "Apply y(1) = 5: 1 + C = 5 → C = 4. So y = x³ + 4."
+            "Integrate: y = \u222b 3x\u00b2 dx = x\u00b3 + C.",
+            "Apply y(1) = 5: 1 + C = 5 \u2192 C = 4. So y = x\u00b3 + 4."
           ]
         }
       ],
@@ -108,7 +108,7 @@
       "lessonPhase": "concept-intro",
       "skill": "separation-of-variables",
       "title": "Separation of Variables",
-      "content": "**When dy/dx Involves Both x and y:**\n\nIf dy/dx = f(x, y) can be written as dy/dx = g(x) · h(y), the equation is **separable**.\n\n**The Method:**\n1. **Separate:** Move all y-terms to the left and all x-terms to the right:\n   (1/h(y)) dy = g(x) dx\n\n2. **Integrate both sides:**\n   ∫ (1/h(y)) dy = ∫ g(x) dx\n\n3. **Solve for y** (if possible).\n\n4. **Apply the initial condition** to find C.\n\n**Example walkthrough:** dy/dx = 2xy\n• Separate: dy/y = 2x dx\n• Integrate: ln|y| = x² + C\n• Solve for y: |y| = e^(x²+C) = Ae^(x²), so y = Ae^(x²) (A can be positive or negative)\n• If y(0) = 3: A = 3, so y = 3e^(x²)\n\n**Common mistakes to avoid:**\n• Forgetting to put +C after integration (put it on ONE side only).\n• Forgetting that ln|y| = ... needs |y| = e^(...), not just y = e^(...).\n• Not checking whether h(y) = 0 for any y — those give equilibrium solutions that the separation process might miss.",
+      "content": "**When dy/dx Involves Both x and y:**\n\nIf dy/dx = f(x, y) can be written as dy/dx = g(x) \u00b7 h(y), the equation is **separable**.\n\n**The Method:**\n1. **Separate:** Move all y-terms to the left and all x-terms to the right:\n   (1/h(y)) dy = g(x) dx\n\n2. **Integrate both sides:**\n   \u222b (1/h(y)) dy = \u222b g(x) dx\n\n3. **Solve for y** (if possible).\n\n4. **Apply the initial condition** to find C.\n\n**Example walkthrough:** dy/dx = 2xy\n\u2022 Separate: dy/y = 2x dx\n\u2022 Integrate: ln|y| = x\u00b2 + C\n\u2022 Solve for y: |y| = e^(x\u00b2+C) = Ae^(x\u00b2), so y = Ae^(x\u00b2) (A can be positive or negative)\n\u2022 If y(0) = 3: A = 3, so y = 3e^(x\u00b2)\n\n**Common mistakes to avoid:**\n\u2022 Forgetting to put +C after integration (put it on ONE side only).\n\u2022 Forgetting that ln|y| = ... needs |y| = e^(...), not just y = e^(...).\n\u2022 Not checking whether h(y) = 0 for any y \u2014 those give equilibrium solutions that the separation process might miss.",
       "initialPrompt": "Is dy/dx = x + y separable? What about dy/dx = xy? How can you tell the difference?"
     },
     {
@@ -119,15 +119,15 @@
       "examples": [
         {
           "problem": "Solve dy/dx = 2xy, y(0) = 3.",
-          "solution": "**Separate:**\ndy/y = 2x dx\n\n**Integrate both sides:**\n∫ dy/y = ∫ 2x dx\nln|y| = x² + C\n\n**Solve for y:**\n|y| = e^(x²+C) = e^C · e^(x²)\ny = Ae^(x²) where A = ±e^C\n\n**Apply y(0) = 3:**\n3 = Ae⁰ = A → A = 3\n\n**Particular solution: y = 3e^(x²)**\n\n**Check:** dy/dx = 3 · 2x · e^(x²) = 6xe^(x²). And 2xy = 2x · 3e^(x²) = 6xe^(x²) ✓"
+          "solution": "**Separate:**\ndy/y = 2x dx\n\n**Integrate both sides:**\n\u222b dy/y = \u222b 2x dx\nln|y| = x\u00b2 + C\n\n**Solve for y:**\n|y| = e^(x\u00b2+C) = e^C \u00b7 e^(x\u00b2)\ny = Ae^(x\u00b2) where A = \u00b1e^C\n\n**Apply y(0) = 3:**\n3 = Ae\u2070 = A \u2192 A = 3\n\n**Particular solution: y = 3e^(x\u00b2)**\n\n**Check:** dy/dx = 3 \u00b7 2x \u00b7 e^(x\u00b2) = 6xe^(x\u00b2). And 2xy = 2x \u00b7 3e^(x\u00b2) = 6xe^(x\u00b2) \u2713"
         },
         {
-          "problem": "Solve dy/dx = y² sin(x), y(0) = 1.",
-          "solution": "**Separate:**\ndy/y² = sin(x) dx\n\n**Integrate both sides:**\n∫ y⁻² dy = ∫ sin(x) dx\n−1/y = −cos(x) + C\n\n**Solve for y:**\n1/y = cos(x) − C\ny = 1/(cos(x) − C)\n\n**Apply y(0) = 1:**\n1 = 1/(cos(0) − C) = 1/(1 − C)\n1 − C = 1 → C = 0\n\n**Particular solution: y = 1/cos(x) = sec(x)**\n\n**Check:** dy/dx = sec(x)tan(x). And y²sin(x) = sec²(x)sin(x) = sin(x)/cos²(x) = tan(x)sec(x) ✓"
+          "problem": "Solve dy/dx = y\u00b2 sin(x), y(0) = 1.",
+          "solution": "**Separate:**\ndy/y\u00b2 = sin(x) dx\n\n**Integrate both sides:**\n\u222b y\u207b\u00b2 dy = \u222b sin(x) dx\n\u22121/y = \u2212cos(x) + C\n\n**Solve for y:**\n1/y = cos(x) \u2212 C\ny = 1/(cos(x) \u2212 C)\n\n**Apply y(0) = 1:**\n1 = 1/(cos(0) \u2212 C) = 1/(1 \u2212 C)\n1 \u2212 C = 1 \u2192 C = 0\n\n**Particular solution: y = 1/cos(x) = sec(x)**\n\n**Check:** dy/dx = sec(x)tan(x). And y\u00b2sin(x) = sec\u00b2(x)sin(x) = sin(x)/cos\u00b2(x) = tan(x)sec(x) \u2713"
         },
         {
           "problem": "Solve dy/dx = (x + 1)/y, y(0) = 4.",
-          "solution": "**Separate:**\ny dy = (x + 1) dx\n\n**Integrate both sides:**\ny²/2 = x²/2 + x + C\n\n**Apply y(0) = 4:**\n16/2 = 0 + 0 + C → C = 8\n\n**Solve for y:**\ny²/2 = x²/2 + x + 8\ny² = x² + 2x + 16\ny = √(x² + 2x + 16) (positive root, since y(0) = 4 > 0)\n\n**Check:** 2y(dy/dx) = 2x + 2 → dy/dx = (2x + 2)/(2y) = (x + 1)/y ✓"
+          "solution": "**Separate:**\ny dy = (x + 1) dx\n\n**Integrate both sides:**\ny\u00b2/2 = x\u00b2/2 + x + C\n\n**Apply y(0) = 4:**\n16/2 = 0 + 0 + C \u2192 C = 8\n\n**Solve for y:**\ny\u00b2/2 = x\u00b2/2 + x + 8\ny\u00b2 = x\u00b2 + 2x + 16\ny = \u221a(x\u00b2 + 2x + 16) (positive root, since y(0) = 4 > 0)\n\n**Check:** 2y(dy/dx) = 2x + 2 \u2192 dy/dx = (2x + 2)/(2y) = (x + 1)/y \u2713"
         }
       ],
       "initialPrompt": "In example 2, why did we get y = sec(x)? Recall that sec(x) = 1/cos(x). At what values of x does this solution blow up (become undefined)?"
@@ -144,25 +144,25 @@
           "answer": "y = 2e^(3x)",
           "hints": [
             "Separate: dy/y = 3 dx. Integrate: ln|y| = 3x + C. Solve: y = Ae^(3x).",
-            "Apply y(0) = 2: A = 2. Particular solution: y = 2e^(3x). Check: dy/dx = 6e^(3x) = 3 · 2e^(3x) = 3y ✓"
+            "Apply y(0) = 2: A = 2. Particular solution: y = 2e^(3x). Check: dy/dx = 6e^(3x) = 3 \u00b7 2e^(3x) = 3y \u2713"
           ]
         },
         {
           "id": "de-wp5",
           "question": "Solve dy/dx = xy, y(0) = 5.",
-          "answer": "y = 5e^(x²/2)",
+          "answer": "y = 5e^(x\u00b2/2)",
           "hints": [
-            "Separate: dy/y = x dx. Integrate: ln|y| = x²/2 + C. Solve: y = Ae^(x²/2).",
-            "Apply y(0) = 5: A = 5. Particular solution: y = 5e^(x²/2)."
+            "Separate: dy/y = x dx. Integrate: ln|y| = x\u00b2/2 + C. Solve: y = Ae^(x\u00b2/2).",
+            "Apply y(0) = 5: A = 5. Particular solution: y = 5e^(x\u00b2/2)."
           ]
         },
         {
           "id": "de-wp6",
           "question": "Solve dy/dx = x/y, y(0) = 3.",
-          "answer": "y = √(x² + 9)",
+          "answer": "y = \u221a(x\u00b2 + 9)",
           "hints": [
-            "Separate: y dy = x dx. Integrate: y²/2 = x²/2 + C.",
-            "Apply y(0) = 3: 9/2 = 0 + C, C = 9/2. So y² = x² + 9, giving y = √(x² + 9) (positive root since y(0) = 3 > 0)."
+            "Separate: y dy = x dx. Integrate: y\u00b2/2 = x\u00b2/2 + C.",
+            "Apply y(0) = 3: 9/2 = 0 + C, C = 9/2. So y\u00b2 = x\u00b2 + 9, giving y = \u221a(x\u00b2 + 9) (positive root since y(0) = 3 > 0)."
           ]
         }
       ],
@@ -173,8 +173,21 @@
       "lessonPhase": "concept-intro",
       "skill": "eulers-method",
       "title": "Euler's Method & Logistic Growth",
-      "content": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x₀, y₀). Use the slope dy/dx = f(x₀, y₀) to take a small step forward:\n\ny_{n+1} = yₙ + f(xₙ, yₙ) · Δx\nx_{n+1} = xₙ + Δx\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller Δx → more steps → better approximation. Euler's method is a first-order method: halving Δx roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\ndP/dt = kP(1 − P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n• **Fastest growth at P = L/2** — this is the inflection point of the logistic curve.\n• **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n• **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n• This DE is separable — the solution is P(t) = L/(1 + Ae^(−kt)) where A depends on the initial condition.",
-      "initialPrompt": "If dP/dt = 0.5P(1 − P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?"
+      "content": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x\u2080, y\u2080). Use the slope dy/dx = f(x\u2080, y\u2080) to take a small step forward:\n\ny_{n+1} = y\u2099 + f(x\u2099, y\u2099) \u00b7 \u0394x\nx_{n+1} = x\u2099 + \u0394x\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller \u0394x \u2192 more steps \u2192 better approximation. Euler's method is a first-order method: halving \u0394x roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever \u2014 resources limit them.\n\ndP/dt = kP(1 \u2212 P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n\u2022 **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n\u2022 **Fastest growth at P = L/2** \u2014 this is the inflection point of the logistic curve.\n\u2022 **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n\u2022 **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n\u2022 This DE is separable \u2014 the solution is P(t) = L/(1 + Ae^(\u2212kt)) where A depends on the initial condition.",
+      "initialPrompt": "If dP/dt = 0.5P(1 \u2212 P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "logistic-growth",
+      "title": "We-Do: Logistic Growth \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for logistic growth.",
+          "hint": "Apply the concepts of logistic growth.",
+          "solution": "Step-by-step solution for logistic growth."
+        }
+      ]
     },
     {
       "type": "model",
@@ -183,19 +196,19 @@
       "title": "I-Do: Euler's Method & Logistic Growth",
       "examples": [
         {
-          "problem": "Use Euler's method with Δx = 0.5 to approximate y(2) given dy/dx = x + y, y(1) = 0.",
-          "solution": "**Step 1:** x₀ = 1, y₀ = 0\nSlope: f(1, 0) = 1 + 0 = 1\ny₁ = 0 + 1 · 0.5 = 0.5\nx₁ = 1.5\n\n**Step 2:** x₁ = 1.5, y₁ = 0.5\nSlope: f(1.5, 0.5) = 1.5 + 0.5 = 2\ny₂ = 0.5 + 2 · 0.5 = 1.5\nx₂ = 2\n\n**Approximation: y(2) ≈ 1.5**\n\nEach step uses the current point's slope to project forward. More steps (smaller Δx) would give a better approximation."
+          "problem": "Use Euler's method with \u0394x = 0.5 to approximate y(2) given dy/dx = x + y, y(1) = 0.",
+          "solution": "**Step 1:** x\u2080 = 1, y\u2080 = 0\nSlope: f(1, 0) = 1 + 0 = 1\ny\u2081 = 0 + 1 \u00b7 0.5 = 0.5\nx\u2081 = 1.5\n\n**Step 2:** x\u2081 = 1.5, y\u2081 = 0.5\nSlope: f(1.5, 0.5) = 1.5 + 0.5 = 2\ny\u2082 = 0.5 + 2 \u00b7 0.5 = 1.5\nx\u2082 = 2\n\n**Approximation: y(2) \u2248 1.5**\n\nEach step uses the current point's slope to project forward. More steps (smaller \u0394x) would give a better approximation."
         },
         {
-          "problem": "Use Euler's method with Δx = 0.1 to approximate y(0.3) given dy/dx = y, y(0) = 1.",
-          "solution": "**Step 1:** x₀ = 0, y₀ = 1\nSlope: f(0, 1) = 1\ny₁ = 1 + 1(0.1) = 1.1, x₁ = 0.1\n\n**Step 2:** x₁ = 0.1, y₁ = 1.1\nSlope: f(0.1, 1.1) = 1.1\ny₂ = 1.1 + 1.1(0.1) = 1.21, x₂ = 0.2\n\n**Step 3:** x₂ = 0.2, y₂ = 1.21\nSlope: f(0.2, 1.21) = 1.21\ny₃ = 1.21 + 1.21(0.1) = 1.331, x₃ = 0.3\n\n**Approximation: y(0.3) ≈ 1.331**\n\n**Compare to exact:** The exact solution is y = eˣ, so y(0.3) = e^(0.3) ≈ 1.3499. Euler underestimates because the solution eˣ is concave up."
+          "problem": "Use Euler's method with \u0394x = 0.1 to approximate y(0.3) given dy/dx = y, y(0) = 1.",
+          "solution": "**Step 1:** x\u2080 = 0, y\u2080 = 1\nSlope: f(0, 1) = 1\ny\u2081 = 1 + 1(0.1) = 1.1, x\u2081 = 0.1\n\n**Step 2:** x\u2081 = 0.1, y\u2081 = 1.1\nSlope: f(0.1, 1.1) = 1.1\ny\u2082 = 1.1 + 1.1(0.1) = 1.21, x\u2082 = 0.2\n\n**Step 3:** x\u2082 = 0.2, y\u2082 = 1.21\nSlope: f(0.2, 1.21) = 1.21\ny\u2083 = 1.21 + 1.21(0.1) = 1.331, x\u2083 = 0.3\n\n**Approximation: y(0.3) \u2248 1.331**\n\n**Compare to exact:** The exact solution is y = e\u02e3, so y(0.3) = e^(0.3) \u2248 1.3499. Euler underestimates because the solution e\u02e3 is concave up."
         },
         {
-          "problem": "A population follows dP/dt = 0.5P(1 − P/1000), P(0) = 100. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
-          "solution": "**Identify parameters:**\nThis is the logistic model dP/dt = kP(1 − P/L) with k = 0.5 and L = 1000.\n\n**Carrying capacity:** L = **1000**\n\n**Fastest growth occurs at P = L/2:**\nP = 1000/2 = **500**\n\n**Maximum growth rate (at P = 500):**\ndP/dt = 0.5(500)(1 − 500/1000) = 0.5(500)(0.5) = **125**\n\n**Alternatively:** dP/dt|_{max} = kL/4 = 0.5(1000)/4 = 125 ✓\n\n**Interpretation:** At P = 500, the population adds 125 individuals per unit time — the fastest rate possible under this model. After P exceeds 500, growth decelerates as the population approaches the carrying capacity of 1000."
+          "problem": "A population follows dP/dt = 0.5P(1 \u2212 P/1000), P(0) = 100. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
+          "solution": "**Identify parameters:**\nThis is the logistic model dP/dt = kP(1 \u2212 P/L) with k = 0.5 and L = 1000.\n\n**Carrying capacity:** L = **1000**\n\n**Fastest growth occurs at P = L/2:**\nP = 1000/2 = **500**\n\n**Maximum growth rate (at P = 500):**\ndP/dt = 0.5(500)(1 \u2212 500/1000) = 0.5(500)(0.5) = **125**\n\n**Alternatively:** dP/dt|_{max} = kL/4 = 0.5(1000)/4 = 125 \u2713\n\n**Interpretation:** At P = 500, the population adds 125 individuals per unit time \u2014 the fastest rate possible under this model. After P exceeds 500, growth decelerates as the population approaches the carrying capacity of 1000."
         }
       ],
-      "initialPrompt": "In example 2, Euler's method gave 1.331 while the exact answer is about 1.35. If you halved the step size to Δx = 0.05, would the approximation improve? Why?"
+      "initialPrompt": "In example 2, Euler's method gave 1.331 while the exact answer is about 1.35. If you halved the step size to \u0394x = 0.05, would the approximation improve? Why?"
     },
     {
       "type": "guided_practice",
@@ -205,33 +218,33 @@
       "problems": [
         {
           "id": "de-wp7",
-          "question": "Use Euler's method with Δx = 1 to approximate y(3) given dy/dx = 2x, y(0) = 1.",
-          "answer": "y(3) ≈ 7",
+          "question": "Use Euler's method with \u0394x = 1 to approximate y(3) given dy/dx = 2x, y(0) = 1.",
+          "answer": "y(3) \u2248 7",
           "hints": [
-            "Step 1: (0, 1), slope = 0, y₁ = 1 + 0(1) = 1, x₁ = 1. Step 2: (1, 1), slope = 2, y₂ = 1 + 2(1) = 3, x₂ = 2.",
-            "Step 3: (2, 3), slope = 4, y₃ = 3 + 4(1) = 7, x₃ = 3. Approximation: y(3) ≈ 7. (Exact: y = x² + 1, y(3) = 10. Euler underestimates since y'' = 2 > 0 — the solution is concave up.)"
+            "Step 1: (0, 1), slope = 0, y\u2081 = 1 + 0(1) = 1, x\u2081 = 1. Step 2: (1, 1), slope = 2, y\u2082 = 1 + 2(1) = 3, x\u2082 = 2.",
+            "Step 3: (2, 3), slope = 4, y\u2083 = 3 + 4(1) = 7, x\u2083 = 3. Approximation: y(3) \u2248 7. (Exact: y = x\u00b2 + 1, y(3) = 10. Euler underestimates since y'' = 2 > 0 \u2014 the solution is concave up.)"
           ]
         },
         {
           "id": "de-wp8",
-          "question": "Use Euler's method with Δx = 0.5 to approximate y(1) given dy/dx = −y, y(0) = 4.",
-          "answer": "y(1) ≈ 1",
+          "question": "Use Euler's method with \u0394x = 0.5 to approximate y(1) given dy/dx = \u2212y, y(0) = 4.",
+          "answer": "y(1) \u2248 1",
           "hints": [
-            "Step 1: (0, 4), slope = −4, y₁ = 4 + (−4)(0.5) = 2, x₁ = 0.5.",
-            "Step 2: (0.5, 2), slope = −2, y₂ = 2 + (−2)(0.5) = 1, x₂ = 1. Approximation: y(1) ≈ 1. (Exact: y = 4e⁻ˣ, y(1) = 4/e ≈ 1.472.)"
+            "Step 1: (0, 4), slope = \u22124, y\u2081 = 4 + (\u22124)(0.5) = 2, x\u2081 = 0.5.",
+            "Step 2: (0.5, 2), slope = \u22122, y\u2082 = 2 + (\u22122)(0.5) = 1, x\u2082 = 1. Approximation: y(1) \u2248 1. (Exact: y = 4e\u207b\u02e3, y(1) = 4/e \u2248 1.472.)"
           ]
         },
         {
           "id": "de-wp9",
-          "question": "A population follows dP/dt = 0.2P(1 − P/500), P(0) = 50. Find the carrying capacity and the population at which growth is fastest. What is the maximum growth rate?",
+          "question": "A population follows dP/dt = 0.2P(1 \u2212 P/500), P(0) = 50. Find the carrying capacity and the population at which growth is fastest. What is the maximum growth rate?",
           "answer": "Carrying capacity = 500. Fastest growth at P = 250. Maximum rate = 25.",
           "hints": [
             "Logistic model: k = 0.2, L = 500. Carrying capacity: L = 500. Fastest growth at P = L/2 = 250.",
-            "Max rate: dP/dt = 0.2(250)(1 − 250/500) = 0.2(250)(0.5) = 25. Or use kL/4 = 0.2(500)/4 = 25."
+            "Max rate: dP/dt = 0.2(250)(1 \u2212 250/500) = 0.2(250)(0.5) = 25. Or use kL/4 = 0.2(500)/4 = 25."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start at (x₀, y₀) = (0, 1). Compute the slope f(0, 1) = 2(0) = 0, then step forward: y₁ = y₀ + slope · Δx."
+      "initialPrompt": "For the first problem, start at (x\u2080, y\u2080) = (0, 1). Compute the slope f(0, 1) = 2(0) = 0, then step forward: y\u2081 = y\u2080 + slope \u00b7 \u0394x."
     },
     {
       "type": "independent_practice",
@@ -240,20 +253,20 @@
       "problems": [
         {
           "id": "de-yp1",
-          "question": "For dy/dx = x² − y, compute the slope at each point: (0,0), (1,0), (0,1), (1,1), (2,1).",
-          "answer": "Slopes: 0, 1, −1, 0, 3",
+          "question": "For dy/dx = x\u00b2 \u2212 y, compute the slope at each point: (0,0), (1,0), (0,1), (1,1), (2,1).",
+          "answer": "Slopes: 0, 1, \u22121, 0, 3",
           "skill": "slope-fields",
           "hints": [
-            "Plug each point into f(x,y) = x² − y. (0,0): 0−0=0. (1,0): 1−0=1. (0,1): 0−1=−1. (1,1): 1−1=0. (2,1): 4−1=3."
+            "Plug each point into f(x,y) = x\u00b2 \u2212 y. (0,0): 0\u22120=0. (1,0): 1\u22120=1. (0,1): 0\u22121=\u22121. (1,1): 1\u22121=0. (2,1): 4\u22121=3."
           ]
         },
         {
           "id": "de-yp2",
-          "question": "Solve dy/dx = 2xy², y(0) = 1.",
-          "answer": "y = 1/(1 − x²)",
+          "question": "Solve dy/dx = 2xy\u00b2, y(0) = 1.",
+          "answer": "y = 1/(1 \u2212 x\u00b2)",
           "skill": "separation-of-variables",
           "hints": [
-            "Separate: dy/y² = 2x dx. Integrate: −1/y = x² + C. Apply y(0) = 1: −1 = 0 + C, C = −1. So −1/y = x² − 1, giving 1/y = 1 − x², y = 1/(1 − x²)."
+            "Separate: dy/y\u00b2 = 2x dx. Integrate: \u22121/y = x\u00b2 + C. Apply y(0) = 1: \u22121 = 0 + C, C = \u22121. So \u22121/y = x\u00b2 \u2212 1, giving 1/y = 1 \u2212 x\u00b2, y = 1/(1 \u2212 x\u00b2)."
           ]
         },
         {
@@ -262,21 +275,21 @@
           "answer": "y = 2x + 1",
           "skill": "separation-of-variables",
           "hints": [
-            "Separate: dy/(1+y) = dx/(1+x). Integrate: ln|1+y| = ln|1+x| + C. So 1+y = A(1+x). Apply y(0)=1: 2 = A. Thus y = 2(1+x) − 1 = 2x + 1. Check: dy/dx = 2 and (1+y)/(1+x) = (2+2x)/(1+x) = 2 ✓"
+            "Separate: dy/(1+y) = dx/(1+x). Integrate: ln|1+y| = ln|1+x| + C. So 1+y = A(1+x). Apply y(0)=1: 2 = A. Thus y = 2(1+x) \u2212 1 = 2x + 1. Check: dy/dx = 2 and (1+y)/(1+x) = (2+2x)/(1+x) = 2 \u2713"
           ]
         },
         {
           "id": "de-yp4",
-          "question": "Use Euler's method with Δx = 0.5 to approximate y(1.5) given dy/dx = x − y, y(0) = 1.",
-          "answer": "y(1.5) ≈ 0.75",
+          "question": "Use Euler's method with \u0394x = 0.5 to approximate y(1.5) given dy/dx = x \u2212 y, y(0) = 1.",
+          "answer": "y(1.5) \u2248 0.75",
           "skill": "eulers-method",
           "hints": [
-            "Step 1: (0,1), slope = −1, y₁ = 1+(−1)(0.5) = 0.5, x₁ = 0.5. Step 2: (0.5, 0.5), slope = 0, y₂ = 0.5+0(0.5) = 0.5, x₂ = 1. Step 3: (1, 0.5), slope = 0.5, y₃ = 0.5+0.5(0.5) = 0.75, x₃ = 1.5."
+            "Step 1: (0,1), slope = \u22121, y\u2081 = 1+(\u22121)(0.5) = 0.5, x\u2081 = 0.5. Step 2: (0.5, 0.5), slope = 0, y\u2082 = 0.5+0(0.5) = 0.5, x\u2082 = 1. Step 3: (1, 0.5), slope = 0.5, y\u2083 = 0.5+0.5(0.5) = 0.75, x\u2083 = 1.5."
           ]
         },
         {
           "id": "de-yp5",
-          "question": "A fish population follows dP/dt = 0.4P(1 − P/2000), P(0) = 200. What is the carrying capacity? At what population is growth fastest? What is that maximum growth rate?",
+          "question": "A fish population follows dP/dt = 0.4P(1 \u2212 P/2000), P(0) = 200. What is the carrying capacity? At what population is growth fastest? What is that maximum growth rate?",
           "answer": "Carrying capacity = 2000. Fastest growth at P = 1000. Maximum rate = 200.",
           "skill": "logistic-growth",
           "hints": [
@@ -285,11 +298,11 @@
         },
         {
           "id": "de-yp6",
-          "question": "Solve dy/dx = eˣ⁺ʸ, y(0) = 0. (Hint: eˣ⁺ʸ = eˣ · eʸ.)",
-          "answer": "y = −ln(2 − eˣ)",
+          "question": "Solve dy/dx = e\u02e3\u207a\u02b8, y(0) = 0. (Hint: e\u02e3\u207a\u02b8 = e\u02e3 \u00b7 e\u02b8.)",
+          "answer": "y = \u2212ln(2 \u2212 e\u02e3)",
           "skill": "separation-of-variables",
           "hints": [
-            "Rewrite: dy/dx = eˣ · eʸ. Separate: e⁻ʸ dy = eˣ dx. Integrate: −e⁻ʸ = eˣ + C. Apply y(0)=0: −1 = 1+C, C = −2. So −e⁻ʸ = eˣ − 2, e⁻ʸ = 2 − eˣ, −y = ln(2 − eˣ), y = −ln(2 − eˣ)."
+            "Rewrite: dy/dx = e\u02e3 \u00b7 e\u02b8. Separate: e\u207b\u02b8 dy = e\u02e3 dx. Integrate: \u2212e\u207b\u02b8 = e\u02e3 + C. Apply y(0)=0: \u22121 = 1+C, C = \u22122. So \u2212e\u207b\u02b8 = e\u02e3 \u2212 2, e\u207b\u02b8 = 2 \u2212 e\u02e3, \u2212y = ln(2 \u2212 e\u02e3), y = \u2212ln(2 \u2212 e\u02e3)."
           ]
         }
       ],
@@ -298,20 +311,20 @@
     }
   ],
   "answerKeys": {
-    "de-wp1": "Slopes: 0, 1, 1, 2, −1.",
-    "de-wp2": "Slopes are zero when y = 0 (x ≠ 0); undefined when x = 0. Isocline for slope 2: y = 2x.",
-    "de-wp3": "y = x³ + 4.",
+    "de-wp1": "Slopes: 0, 1, 1, 2, \u22121.",
+    "de-wp2": "Slopes are zero when y = 0 (x \u2260 0); undefined when x = 0. Isocline for slope 2: y = 2x.",
+    "de-wp3": "y = x\u00b3 + 4.",
     "de-wp4": "y = 2e^(3x).",
-    "de-wp5": "y = 5e^(x²/2).",
-    "de-wp6": "y = √(x² + 9).",
-    "de-wp7": "y(3) ≈ 7.",
-    "de-wp8": "y(1) ≈ 1.",
+    "de-wp5": "y = 5e^(x\u00b2/2).",
+    "de-wp6": "y = \u221a(x\u00b2 + 9).",
+    "de-wp7": "y(3) \u2248 7.",
+    "de-wp8": "y(1) \u2248 1.",
     "de-wp9": "Carrying capacity = 500. Fastest growth at P = 250. Maximum rate = 25.",
-    "de-yp1": "Slopes: 0, 1, −1, 0, 3.",
-    "de-yp2": "y = 1/(1 − x²).",
+    "de-yp1": "Slopes: 0, 1, \u22121, 0, 3.",
+    "de-yp2": "y = 1/(1 \u2212 x\u00b2).",
     "de-yp3": "y = 2x + 1.",
-    "de-yp4": "y(1.5) ≈ 0.75.",
+    "de-yp4": "y(1.5) \u2248 0.75.",
     "de-yp5": "Carrying capacity = 2000. Fastest at P = 1000. Maximum rate = 200.",
-    "de-yp6": "y = −ln(2 − eˣ)."
+    "de-yp6": "y = \u2212ln(2 \u2212 e\u02e3)."
   }
 }

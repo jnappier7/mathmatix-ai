@@ -27,10 +27,10 @@
     "Use circle theorems involving chords, tangents, and secants"
   ],
   "instructionalStrategy": [
-    "Build from circumference (C = 2πr) to arc length (fraction of circumference) to sector area (fraction of total area).",
-    "The central angle is the 'fraction control knob'—θ/360 determines what fraction of the whole circle you're measuring.",
-    "Inscribed angles are always half the central angle that subtends the same arc—use this as the 'master theorem' that unlocks the rest.",
-    "Tangent lines are always perpendicular to the radius at the point of tangency—draw the radius first, then the tangent."
+    "Build from circumference (C = 2\u03c0r) to arc length (fraction of circumference) to sector area (fraction of total area).",
+    "The central angle is the 'fraction control knob'\u2014\u03b8/360 determines what fraction of the whole circle you're measuring.",
+    "Inscribed angles are always half the central angle that subtends the same arc\u2014use this as the 'master theorem' that unlocks the rest.",
+    "Tangent lines are always perpendicular to the radius at the point of tangency\u2014draw the radius first, then the tangent."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -39,8 +39,21 @@
       "lessonPhase": "concept-intro",
       "skill": "circle-basics",
       "title": "Circle Vocabulary, Circumference, and Area",
-      "content": "A **circle** is the set of all points equidistant from a center point. Key vocabulary:\n\n• **Radius (r)** — segment from center to any point on the circle\n• **Diameter (d)** — segment through the center connecting two points on the circle (d = 2r)\n• **Chord** — segment connecting any two points on the circle\n• **Secant** — a line that intersects a circle at two points\n• **Tangent** — a line that touches the circle at exactly one point\n• **Arc** — a portion of the circle between two points\n• **Central angle** — angle with vertex at the center\n• **Inscribed angle** — angle with vertex on the circle\n\n**Circumference:** C = 2πr = πd\n**Area:** A = πr²",
+      "content": "A **circle** is the set of all points equidistant from a center point. Key vocabulary:\n\n\u2022 **Radius (r)** \u2014 segment from center to any point on the circle\n\u2022 **Diameter (d)** \u2014 segment through the center connecting two points on the circle (d = 2r)\n\u2022 **Chord** \u2014 segment connecting any two points on the circle\n\u2022 **Secant** \u2014 a line that intersects a circle at two points\n\u2022 **Tangent** \u2014 a line that touches the circle at exactly one point\n\u2022 **Arc** \u2014 a portion of the circle between two points\n\u2022 **Central angle** \u2014 angle with vertex at the center\n\u2022 **Inscribed angle** \u2014 angle with vertex on the circle\n\n**Circumference:** C = 2\u03c0r = \u03c0d\n**Area:** A = \u03c0r\u00b2",
       "initialPrompt": "A circle has a diameter of 10 inches. What is the radius? Can you find the circumference and area?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "circle-area",
+      "title": "We-Do: Circle Area \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for circle area.",
+          "hint": "Apply the concepts of circle area.",
+          "solution": "Step-by-step solution for circle area."
+        }
+      ]
     },
     {
       "type": "model",
@@ -50,15 +63,15 @@
       "examples": [
         {
           "problem": "A circle has a radius of 7 cm. Find the circumference and area.",
-          "solution": "Circumference: C = 2πr = 2π(7) = **14π ≈ 43.98 cm**\nArea: A = πr² = π(7²) = **49π ≈ 153.94 cm²**\n\nKey difference: Circumference uses r (linear → length), Area uses r² (squared → square units)."
+          "solution": "Circumference: C = 2\u03c0r = 2\u03c0(7) = **14\u03c0 \u2248 43.98 cm**\nArea: A = \u03c0r\u00b2 = \u03c0(7\u00b2) = **49\u03c0 \u2248 153.94 cm\u00b2**\n\nKey difference: Circumference uses r (linear \u2192 length), Area uses r\u00b2 (squared \u2192 square units)."
         },
         {
           "problem": "A circle has a diameter of 20 inches. Find the circumference and area.",
-          "solution": "Radius = 20/2 = 10 inches.\nCircumference: C = πd = 20π ≈ 62.83 in (or C = 2π(10) = 20π)\nArea: A = π(10²) = **100π ≈ 314.16 in²**"
+          "solution": "Radius = 20/2 = 10 inches.\nCircumference: C = \u03c0d = 20\u03c0 \u2248 62.83 in (or C = 2\u03c0(10) = 20\u03c0)\nArea: A = \u03c0(10\u00b2) = **100\u03c0 \u2248 314.16 in\u00b2**"
         },
         {
-          "problem": "A circle has circumference 36π. Find the radius, diameter, and area.",
-          "solution": "C = 2πr = 36π → r = **18**\nDiameter: d = 2(18) = **36**\nArea: A = π(18²) = **324π ≈ 1017.88**\n\nWorking backwards from circumference: divide by 2π to get r."
+          "problem": "A circle has circumference 36\u03c0. Find the radius, diameter, and area.",
+          "solution": "C = 2\u03c0r = 36\u03c0 \u2192 r = **18**\nDiameter: d = 2(18) = **36**\nArea: A = \u03c0(18\u00b2) = **324\u03c0 \u2248 1017.88**\n\nWorking backwards from circumference: divide by 2\u03c0 to get r."
         }
       ],
       "initialPrompt": "What happens to the circumference and area if we double the radius to 14 cm? Does each one double?"
@@ -71,29 +84,29 @@
       "problems": [
         {
           "id": "ci-wp1",
-          "question": "A circle has area 144π. Find the radius and circumference.",
-          "answer": "r = 12, C = 24π",
+          "question": "A circle has area 144\u03c0. Find the radius and circumference.",
+          "answer": "r = 12, C = 24\u03c0",
           "hints": [
-            "A = πr² = 144π → r² = 144 → r = 12.",
-            "C = 2π(12) = 24π ≈ 75.40."
+            "A = \u03c0r\u00b2 = 144\u03c0 \u2192 r\u00b2 = 144 \u2192 r = 12.",
+            "C = 2\u03c0(12) = 24\u03c0 \u2248 75.40."
           ]
         },
         {
           "id": "ci-wp2",
           "question": "A semicircle has diameter 14. Find the total perimeter (curved part + flat edge).",
-          "answer": "7π + 14 ≈ 35.99",
+          "answer": "7\u03c0 + 14 \u2248 35.99",
           "hints": [
-            "r = 7. Half circumference = (1/2)(2π)(7) = 7π.",
-            "Perimeter = curved + flat = 7π + 14 ≈ 35.99."
+            "r = 7. Half circumference = (1/2)(2\u03c0)(7) = 7\u03c0.",
+            "Perimeter = curved + flat = 7\u03c0 + 14 \u2248 35.99."
           ]
         },
         {
           "id": "ci-wp3",
           "question": "Two concentric circles have radii 5 and 12. Find the area of the region between them (the annulus).",
-          "answer": "119π ≈ 373.85",
+          "answer": "119\u03c0 \u2248 373.85",
           "hints": [
-            "Outer area = π(12²) = 144π. Inner area = π(5²) = 25π.",
-            "Annulus area = 144π - 25π = 119π."
+            "Outer area = \u03c0(12\u00b2) = 144\u03c0. Inner area = \u03c0(5\u00b2) = 25\u03c0.",
+            "Annulus area = 144\u03c0 - 25\u03c0 = 119\u03c0."
           ]
         }
       ],
@@ -104,8 +117,21 @@
       "lessonPhase": "concept-intro",
       "skill": "arc-length",
       "title": "Arc Length and Sector Area",
-      "content": "**Arc Length** and **Sector Area** are fractions of the whole circle, controlled by the central angle:\n\n**Arc Length** = (θ/360°) × 2πr\nThis is the fraction (θ/360°) of the full circumference.\n\n**Sector Area** = (θ/360°) × πr²\nThis is the fraction (θ/360°) of the full area.\n\nThink of it like a pizza: the central angle determines what fraction of the pizza (circle) you're taking. A 90° slice is 90/360 = 1/4 of the pizza.",
-      "initialPrompt": "A pizza has a 12-inch diameter. If you cut a slice with a 60° central angle, what fraction of the whole pizza is that slice?"
+      "content": "**Arc Length** and **Sector Area** are fractions of the whole circle, controlled by the central angle:\n\n**Arc Length** = (\u03b8/360\u00b0) \u00d7 2\u03c0r\nThis is the fraction (\u03b8/360\u00b0) of the full circumference.\n\n**Sector Area** = (\u03b8/360\u00b0) \u00d7 \u03c0r\u00b2\nThis is the fraction (\u03b8/360\u00b0) of the full area.\n\nThink of it like a pizza: the central angle determines what fraction of the pizza (circle) you're taking. A 90\u00b0 slice is 90/360 = 1/4 of the pizza.",
+      "initialPrompt": "A pizza has a 12-inch diameter. If you cut a slice with a 60\u00b0 central angle, what fraction of the whole pizza is that slice?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "sector-area",
+      "title": "We-Do: Sector Area \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for sector area.",
+          "hint": "Apply the concepts of sector area.",
+          "solution": "Step-by-step solution for sector area."
+        }
+      ]
     },
     {
       "type": "model",
@@ -114,19 +140,19 @@
       "title": "I-Do: Arc Length and Sector Area",
       "examples": [
         {
-          "problem": "A circle has radius 10 cm. Find the arc length and sector area for a central angle of 72°.",
-          "solution": "Fraction of the circle: 72/360 = 1/5\n\nArc Length = (1/5) × 2π(10) = (1/5) × 20π = **4π ≈ 12.57 cm**\n\nSector Area = (1/5) × π(10²) = (1/5) × 100π = **20π ≈ 62.83 cm²**\n\nBoth are exactly 1/5 of the whole."
+          "problem": "A circle has radius 10 cm. Find the arc length and sector area for a central angle of 72\u00b0.",
+          "solution": "Fraction of the circle: 72/360 = 1/5\n\nArc Length = (1/5) \u00d7 2\u03c0(10) = (1/5) \u00d7 20\u03c0 = **4\u03c0 \u2248 12.57 cm**\n\nSector Area = (1/5) \u00d7 \u03c0(10\u00b2) = (1/5) \u00d7 100\u03c0 = **20\u03c0 \u2248 62.83 cm\u00b2**\n\nBoth are exactly 1/5 of the whole."
         },
         {
-          "problem": "A circle has radius 6 ft. Find the arc length and sector area for a 150° central angle.",
-          "solution": "Fraction: 150/360 = 5/12\n\nArc Length = (5/12) × 2π(6) = (5/12) × 12π = **5π ≈ 15.71 ft**\n\nSector Area = (5/12) × π(6²) = (5/12) × 36π = **15π ≈ 47.12 ft²**"
+          "problem": "A circle has radius 6 ft. Find the arc length and sector area for a 150\u00b0 central angle.",
+          "solution": "Fraction: 150/360 = 5/12\n\nArc Length = (5/12) \u00d7 2\u03c0(6) = (5/12) \u00d7 12\u03c0 = **5\u03c0 \u2248 15.71 ft**\n\nSector Area = (5/12) \u00d7 \u03c0(6\u00b2) = (5/12) \u00d7 36\u03c0 = **15\u03c0 \u2248 47.12 ft\u00b2**"
         },
         {
-          "problem": "An arc has length 8π on a circle with radius 12. Find the central angle.",
-          "solution": "Arc length = (θ/360) × 2πr\n8π = (θ/360) × 2π(12)\n8π = (θ/360) × 24π\n8/24 = θ/360\n1/3 = θ/360\nθ = **120°**\n\nVerify: (120/360) × 24π = (1/3)(24π) = 8π ✓"
+          "problem": "An arc has length 8\u03c0 on a circle with radius 12. Find the central angle.",
+          "solution": "Arc length = (\u03b8/360) \u00d7 2\u03c0r\n8\u03c0 = (\u03b8/360) \u00d7 2\u03c0(12)\n8\u03c0 = (\u03b8/360) \u00d7 24\u03c0\n8/24 = \u03b8/360\n1/3 = \u03b8/360\n\u03b8 = **120\u00b0**\n\nVerify: (120/360) \u00d7 24\u03c0 = (1/3)(24\u03c0) = 8\u03c0 \u2713"
         }
       ],
-      "initialPrompt": "If the central angle were 144° instead of 72° (double), would the arc length and sector area also exactly double?"
+      "initialPrompt": "If the central angle were 144\u00b0 instead of 72\u00b0 (double), would the arc length and sector area also exactly double?"
     },
     {
       "type": "guided_practice",
@@ -136,41 +162,54 @@
       "problems": [
         {
           "id": "ci-wp4",
-          "question": "A circle has radius 9 inches. Find the arc length for a central angle of 120°.",
-          "answer": "6π inches ≈ 18.85 inches",
+          "question": "A circle has radius 9 inches. Find the arc length for a central angle of 120\u00b0.",
+          "answer": "6\u03c0 inches \u2248 18.85 inches",
           "hints": [
             "Fraction of circle: 120/360 = 1/3.",
-            "Arc length = (1/3) × 2π(9) = (1/3) × 18π = 6π."
+            "Arc length = (1/3) \u00d7 2\u03c0(9) = (1/3) \u00d7 18\u03c0 = 6\u03c0."
           ]
         },
         {
           "id": "ci-wp5",
-          "question": "A sector has an area of 25π cm² and the circle has radius 10 cm. Find the central angle.",
-          "answer": "90°",
+          "question": "A sector has an area of 25\u03c0 cm\u00b2 and the circle has radius 10 cm. Find the central angle.",
+          "answer": "90\u00b0",
           "hints": [
-            "Total area = π(10²) = 100π. The sector is 25π/100π = 1/4 of the circle.",
-            "Central angle = (1/4) × 360° = 90°."
+            "Total area = \u03c0(10\u00b2) = 100\u03c0. The sector is 25\u03c0/100\u03c0 = 1/4 of the circle.",
+            "Central angle = (1/4) \u00d7 360\u00b0 = 90\u00b0."
           ]
         },
         {
           "id": "ci-wp6",
-          "question": "A running track has a circular curve with radius 50 m and central angle of 90°. How long is the curved section?",
-          "answer": "25π m ≈ 78.54 m",
+          "question": "A running track has a circular curve with radius 50 m and central angle of 90\u00b0. How long is the curved section?",
+          "answer": "25\u03c0 m \u2248 78.54 m",
           "hints": [
             "Fraction: 90/360 = 1/4.",
-            "Arc length = (1/4) × 2π(50) = (1/4)(100π) = 25π."
+            "Arc length = (1/4) \u00d7 2\u03c0(50) = (1/4)(100\u03c0) = 25\u03c0."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what fraction of the whole circle does a 120° angle represent?"
+      "initialPrompt": "For the first problem, what fraction of the whole circle does a 120\u00b0 angle represent?"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "inscribed-angles",
       "title": "Inscribed Angle Theorem and Circle Theorems",
-      "content": "**Inscribed Angle Theorem:** An inscribed angle (vertex on the circle) is **half** the central angle that intercepts the same arc.\n\nIf a central angle = 80°, an inscribed angle intercepting the same arc = 40°.\n\n**Key Corollaries:**\n• Inscribed angles that intercept the SAME arc are congruent\n• An inscribed angle that intercepts a semicircle (diameter) = 90°\n• Opposite angles of an inscribed quadrilateral are supplementary (sum to 180°)\n\n**Tangent-Radius Relationship:** A tangent line is always **perpendicular** to the radius drawn to the point of tangency.\n\n**Tangent-Chord Angle:** The angle between a tangent and a chord = half the intercepted arc.",
+      "content": "**Inscribed Angle Theorem:** An inscribed angle (vertex on the circle) is **half** the central angle that intercepts the same arc.\n\nIf a central angle = 80\u00b0, an inscribed angle intercepting the same arc = 40\u00b0.\n\n**Key Corollaries:**\n\u2022 Inscribed angles that intercept the SAME arc are congruent\n\u2022 An inscribed angle that intercepts a semicircle (diameter) = 90\u00b0\n\u2022 Opposite angles of an inscribed quadrilateral are supplementary (sum to 180\u00b0)\n\n**Tangent-Radius Relationship:** A tangent line is always **perpendicular** to the radius drawn to the point of tangency.\n\n**Tangent-Chord Angle:** The angle between a tangent and a chord = half the intercepted arc.",
       "initialPrompt": "If a triangle is inscribed in a circle and one side is a diameter, what must the angle opposite that diameter be? Why?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "circle-theorems",
+      "title": "We-Do: Circle Theorems \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for circle theorems.",
+          "hint": "Apply the concepts of circle theorems.",
+          "solution": "Step-by-step solution for circle theorems."
+        }
+      ]
     },
     {
       "type": "model",
@@ -179,16 +218,16 @@
       "title": "I-Do: Inscribed Angles and Circle Theorems",
       "examples": [
         {
-          "problem": "A central angle measures 100°. Find the inscribed angle that intercepts the same arc, and the major arc.",
-          "solution": "Inscribed angle = central angle / 2 = 100° / 2 = **50°**\n\nThe intercepted (minor) arc = 100° (same as central angle).\nMajor arc = 360° - 100° = **260°**"
+          "problem": "A central angle measures 100\u00b0. Find the inscribed angle that intercepts the same arc, and the major arc.",
+          "solution": "Inscribed angle = central angle / 2 = 100\u00b0 / 2 = **50\u00b0**\n\nThe intercepted (minor) arc = 100\u00b0 (same as central angle).\nMajor arc = 360\u00b0 - 100\u00b0 = **260\u00b0**"
         },
         {
-          "problem": "Quadrilateral ABCD is inscribed in a circle. ∠A = (3x + 5)° and ∠C = (5x - 25)°. Find x, ∠A, and ∠C.",
-          "solution": "Opposite angles of an inscribed quadrilateral are supplementary:\n(3x + 5) + (5x - 25) = 180\n8x - 20 = 180\n8x = 200 → x = 25\n\n∠A = 3(25) + 5 = **80°**, ∠C = 5(25) - 25 = **100°**\nCheck: 80 + 100 = 180° ✓"
+          "problem": "Quadrilateral ABCD is inscribed in a circle. \u2220A = (3x + 5)\u00b0 and \u2220C = (5x - 25)\u00b0. Find x, \u2220A, and \u2220C.",
+          "solution": "Opposite angles of an inscribed quadrilateral are supplementary:\n(3x + 5) + (5x - 25) = 180\n8x - 20 = 180\n8x = 200 \u2192 x = 25\n\n\u2220A = 3(25) + 5 = **80\u00b0**, \u2220C = 5(25) - 25 = **100\u00b0**\nCheck: 80 + 100 = 180\u00b0 \u2713"
         },
         {
           "problem": "Tangent PA touches circle O at point A. Radius OA = 5. If the distance from P to center O is 13, find the length of tangent PA.",
-          "solution": "Tangent ⊥ radius at point of tangency, so △OAP is a right triangle with:\n• OA = 5 (leg)\n• OP = 13 (hypotenuse)\n• PA = ? (leg)\n\nPA² + OA² = OP²\nPA² + 25 = 169\nPA² = 144\nPA = **12**\n\nThis is a 5-12-13 Pythagorean triple!"
+          "solution": "Tangent \u22a5 radius at point of tangency, so \u25b3OAP is a right triangle with:\n\u2022 OA = 5 (leg)\n\u2022 OP = 13 (hypotenuse)\n\u2022 PA = ? (leg)\n\nPA\u00b2 + OA\u00b2 = OP\u00b2\nPA\u00b2 + 25 = 169\nPA\u00b2 = 144\nPA = **12**\n\nThis is a 5-12-13 Pythagorean triple!"
         }
       ],
       "initialPrompt": "In the inscribed quadrilateral, why must opposite angles be supplementary?"
@@ -201,29 +240,29 @@
       "problems": [
         {
           "id": "ci-wp7",
-          "question": "A central angle measures 140°. What is the measure of an inscribed angle that intercepts the same arc?",
-          "answer": "70°",
+          "question": "A central angle measures 140\u00b0. What is the measure of an inscribed angle that intercepts the same arc?",
+          "answer": "70\u00b0",
           "hints": [
             "Inscribed angle = half the central angle.",
-            "70° = 140° ÷ 2."
+            "70\u00b0 = 140\u00b0 \u00f7 2."
           ]
         },
         {
           "id": "ci-wp8",
-          "question": "An inscribed angle measures 55°. What is the measure of the intercepted arc?",
-          "answer": "110°",
+          "question": "An inscribed angle measures 55\u00b0. What is the measure of the intercepted arc?",
+          "answer": "110\u00b0",
           "hints": [
-            "The intercepted arc = 2 × the inscribed angle.",
-            "Arc = 2 × 55° = 110°."
+            "The intercepted arc = 2 \u00d7 the inscribed angle.",
+            "Arc = 2 \u00d7 55\u00b0 = 110\u00b0."
           ]
         },
         {
           "id": "ci-wp9",
-          "question": "Quadrilateral ABCD is inscribed in a circle. ∠A = 85°. Find ∠C.",
-          "answer": "95°",
+          "question": "Quadrilateral ABCD is inscribed in a circle. \u2220A = 85\u00b0. Find \u2220C.",
+          "answer": "95\u00b0",
           "hints": [
             "Opposite angles of an inscribed quadrilateral are supplementary.",
-            "∠A + ∠C = 180°, so ∠C = 180° - 85° = 95°."
+            "\u2220A + \u2220C = 180\u00b0, so \u2220C = 180\u00b0 - 85\u00b0 = 95\u00b0."
           ]
         }
       ],
@@ -237,55 +276,55 @@
         {
           "id": "ci-yp1",
           "question": "A circle has diameter 26 cm. Find the circumference and area.",
-          "answer": "C = 26π ≈ 81.68 cm, A = 169π ≈ 530.93 cm²",
+          "answer": "C = 26\u03c0 \u2248 81.68 cm, A = 169\u03c0 \u2248 530.93 cm\u00b2",
           "skill": "circle-basics",
           "hints": [
-            "Radius = 13. C = 2π(13) = 26π. A = π(13²) = 169π."
+            "Radius = 13. C = 2\u03c0(13) = 26\u03c0. A = \u03c0(13\u00b2) = 169\u03c0."
           ]
         },
         {
           "id": "ci-yp2",
-          "question": "Find the arc length for a circle with radius 15 m and central angle of 80°.",
-          "answer": "20π/3 m ≈ 20.94 m",
+          "question": "Find the arc length for a circle with radius 15 m and central angle of 80\u00b0.",
+          "answer": "20\u03c0/3 m \u2248 20.94 m",
           "skill": "arc-length",
           "hints": [
-            "Arc length = (80/360) × 2π(15) = (2/9) × 30π = 20π/3."
+            "Arc length = (80/360) \u00d7 2\u03c0(15) = (2/9) \u00d7 30\u03c0 = 20\u03c0/3."
           ]
         },
         {
           "id": "ci-yp3",
-          "question": "A sector of a circle with radius 8 has an area of 16π. Find the central angle.",
-          "answer": "90°",
+          "question": "A sector of a circle with radius 8 has an area of 16\u03c0. Find the central angle.",
+          "answer": "90\u00b0",
           "skill": "sector-area",
           "hints": [
-            "Total area = 64π. Fraction = 16π/64π = 1/4. Angle = 360/4 = 90°."
+            "Total area = 64\u03c0. Fraction = 16\u03c0/64\u03c0 = 1/4. Angle = 360/4 = 90\u00b0."
           ]
         },
         {
           "id": "ci-yp4",
           "question": "An inscribed angle intercepts a semicircle. What is the measure of the inscribed angle?",
-          "answer": "90°",
+          "answer": "90\u00b0",
           "skill": "inscribed-angles",
           "hints": [
-            "A semicircle has a central angle of 180°. Inscribed angle = 180°/2 = 90°."
+            "A semicircle has a central angle of 180\u00b0. Inscribed angle = 180\u00b0/2 = 90\u00b0."
           ]
         },
         {
           "id": "ci-yp5",
-          "question": "A tangent line meets a radius at the point of tangency. The tangent makes a 35° angle with a chord drawn from the point of tangency. Find the intercepted arc.",
-          "answer": "70°",
+          "question": "A tangent line meets a radius at the point of tangency. The tangent makes a 35\u00b0 angle with a chord drawn from the point of tangency. Find the intercepted arc.",
+          "answer": "70\u00b0",
           "skill": "circle-theorems",
           "hints": [
-            "Tangent-chord angle = half the intercepted arc. Arc = 2 × 35° = 70°."
+            "Tangent-chord angle = half the intercepted arc. Arc = 2 \u00d7 35\u00b0 = 70\u00b0."
           ]
         },
         {
           "id": "ci-yp6",
-          "question": "Quadrilateral PQRS is inscribed in a circle. ∠P = (2x + 20)° and ∠R = (3x + 10)°. Find x, ∠P, and ∠R.",
-          "answer": "x = 30, ∠P = 80°, ∠R = 100°",
+          "question": "Quadrilateral PQRS is inscribed in a circle. \u2220P = (2x + 20)\u00b0 and \u2220R = (3x + 10)\u00b0. Find x, \u2220P, and \u2220R.",
+          "answer": "x = 30, \u2220P = 80\u00b0, \u2220R = 100\u00b0",
           "skill": "inscribed-angles",
           "hints": [
-            "Opposite supplementary: (2x+20)+(3x+10)=180 → 5x+30=180 → x=30. ∠P=80°, ∠R=100°."
+            "Opposite supplementary: (2x+20)+(3x+10)=180 \u2192 5x+30=180 \u2192 x=30. \u2220P=80\u00b0, \u2220R=100\u00b0."
           ]
         }
       ],
@@ -294,20 +333,20 @@
     }
   ],
   "answerKeys": {
-    "ci-wp1": "r=12, C=24π.",
-    "ci-wp2": "7π+14 ≈ 35.99.",
-    "ci-wp3": "119π ≈ 373.85.",
-    "ci-wp4": "6π inches.",
-    "ci-wp5": "90°.",
-    "ci-wp6": "25π m ≈ 78.54.",
-    "ci-wp7": "70°.",
-    "ci-wp8": "110°.",
-    "ci-wp9": "95°.",
-    "ci-yp1": "C=26π, A=169π.",
-    "ci-yp2": "20π/3 m.",
-    "ci-yp3": "90°.",
-    "ci-yp4": "90°.",
-    "ci-yp5": "70°.",
-    "ci-yp6": "x=30, ∠P=80°, ∠R=100°."
+    "ci-wp1": "r=12, C=24\u03c0.",
+    "ci-wp2": "7\u03c0+14 \u2248 35.99.",
+    "ci-wp3": "119\u03c0 \u2248 373.85.",
+    "ci-wp4": "6\u03c0 inches.",
+    "ci-wp5": "90\u00b0.",
+    "ci-wp6": "25\u03c0 m \u2248 78.54.",
+    "ci-wp7": "70\u00b0.",
+    "ci-wp8": "110\u00b0.",
+    "ci-wp9": "95\u00b0.",
+    "ci-yp1": "C=26\u03c0, A=169\u03c0.",
+    "ci-yp2": "20\u03c0/3 m.",
+    "ci-yp3": "90\u00b0.",
+    "ci-yp4": "90\u00b0.",
+    "ci-yp5": "70\u00b0.",
+    "ci-yp6": "x=30, \u2220P=80\u00b0, \u2220R=100\u00b0."
   }
 }

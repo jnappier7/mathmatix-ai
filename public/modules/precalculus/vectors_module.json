@@ -125,6 +125,19 @@
       ]
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "vector-projections",
+      "title": "We-Do: Vector Projections \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for vector projections.",
+          "hint": "Apply the concepts of vector projections.",
+          "solution": "Step-by-step solution for vector projections."
+        }
+      ]
+    },
+    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Dot Product & Projections \u2014 Worked Examples",

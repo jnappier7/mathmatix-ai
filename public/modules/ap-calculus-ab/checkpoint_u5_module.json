@@ -8,39 +8,58 @@
   "type": "assessment",
   "diagnosticMode": false,
   "description": "Big unit exam + at least 2 full FRQs. This is the largest unit (15-18% of AP exam). Covers MVT/EVT, increasing/decreasing, extrema, concavity, curve sketching, and optimization.",
-  "skillsCovered": ["mvt-evt-theorems", "increasing-decreasing-extrema", "concavity-inflection-points", "first-second-derivative-tests", "curve-sketching-from-derivatives", "optimization-problems"],
+  "skillsCovered": [
+    "mvt-evt-theorems",
+    "increasing-decreasing-extrema",
+    "concavity-inflection-points",
+    "concavity-inflection-points",
+    "curve-sketching-from-derivatives",
+    "optimization-problems"
+  ],
   "passThreshold": 70,
   "remediationStrategy": {
     "approach": "targeted-reteach",
-    "description": "Critical unit — students must master these skills before integration. Focused reteaching on weak clusters.",
+    "description": "Critical unit \u2014 students must master these skills before integration. Focused reteaching on weak clusters.",
     "clusters": [
-      {"skillId": "mvt-evt-theorems", "reteachFocus": "Stating hypotheses and conclusion, MVT justification writing"},
-      {"skillId": "increasing-decreasing-extrema", "reteachFocus": "Sign charts, First Derivative Test, Candidates Test"},
-      {"skillId": "concavity-inflection-points", "reteachFocus": "f'' sign analysis, Second Derivative Test, connecting f/f'/f'' graphs"},
-      {"skillId": "optimization-problems", "reteachFocus": "Setup: objective + constraint, reduce variables, check endpoints"}
+      {
+        "skillId": "mvt-evt-theorems",
+        "reteachFocus": "Stating hypotheses and conclusion, MVT justification writing"
+      },
+      {
+        "skillId": "increasing-decreasing-extrema",
+        "reteachFocus": "Sign charts, First Derivative Test, Candidates Test"
+      },
+      {
+        "skillId": "concavity-inflection-points",
+        "reteachFocus": "f'' sign analysis, Second Derivative Test, connecting f/f'/f'' graphs"
+      },
+      {
+        "skillId": "optimization-problems",
+        "reteachFocus": "Setup: objective + constraint, reduce variables, check endpoints"
+      }
     ]
   },
   "assessmentProblems": [
     {
       "id": "cu5-1",
-      "question": "Verify MVT applies to f(x) = x³ - 3x on [0, 2], then find all c values guaranteed by MVT.",
-      "answer": "f is polynomial → continuous on [0,2] and differentiable on (0,2). f(0)=0, f(2)=8-6=2. MVT: f'(c) = (2-0)/(2-0) = 1. f'(x)=3x²-3=1 → 3x²=4 → x²=4/3 → x=2/√3=2√3/3≈1.155. In (0,2): c=2√3/3.",
+      "question": "Verify MVT applies to f(x) = x\u00b3 - 3x on [0, 2], then find all c values guaranteed by MVT.",
+      "answer": "f is polynomial \u2192 continuous on [0,2] and differentiable on (0,2). f(0)=0, f(2)=8-6=2. MVT: f'(c) = (2-0)/(2-0) = 1. f'(x)=3x\u00b2-3=1 \u2192 3x\u00b2=4 \u2192 x\u00b2=4/3 \u2192 x=2/\u221a3=2\u221a3/3\u22481.155. In (0,2): c=2\u221a3/3.",
       "skill": "mvt-evt-theorems",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cu5-2",
-      "question": "Find the intervals where f(x) = x⁴ - 4x³ + 10 is increasing and decreasing. Find all local extrema.",
-      "answer": "f'(x) = 4x³ - 12x² = 4x²(x-3). Critical points: x=0, x=3. Sign chart: f'<0 on (-∞,0), f'<0 on (0,3), f'>0 on (3,∞). Decreasing on (-∞,3), increasing on (3,∞). At x=0: no sign change → no extremum. At x=3: f'changes - to + → local min. f(3) = 81-108+10 = -17.",
+      "question": "Find the intervals where f(x) = x\u2074 - 4x\u00b3 + 10 is increasing and decreasing. Find all local extrema.",
+      "answer": "f'(x) = 4x\u00b3 - 12x\u00b2 = 4x\u00b2(x-3). Critical points: x=0, x=3. Sign chart: f'<0 on (-\u221e,0), f'<0 on (0,3), f'>0 on (3,\u221e). Decreasing on (-\u221e,3), increasing on (3,\u221e). At x=0: no sign change \u2192 no extremum. At x=3: f'changes - to + \u2192 local min. f(3) = 81-108+10 = -17.",
       "skill": "increasing-decreasing-extrema",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cu5-3",
-      "question": "Find the intervals of concavity and inflection points of f(x) = x⁴ - 4x³ + 10.",
-      "answer": "f''(x) = 12x² - 24x = 12x(x-2). f''=0 at x=0, x=2. Sign: f''>0 on (-∞,0), f''<0 on (0,2), f''>0 on (2,∞). Concave up: (-∞,0)∪(2,∞). Concave down: (0,2). Inflection at x=0: f(0)=10 and x=2: f(2)=16-32+10=-6.",
+      "question": "Find the intervals of concavity and inflection points of f(x) = x\u2074 - 4x\u00b3 + 10.",
+      "answer": "f''(x) = 12x\u00b2 - 24x = 12x(x-2). f''=0 at x=0, x=2. Sign: f''>0 on (-\u221e,0), f''<0 on (0,2), f''>0 on (2,\u221e). Concave up: (-\u221e,0)\u222a(2,\u221e). Concave down: (0,2). Inflection at x=0: f(0)=10 and x=2: f(2)=16-32+10=-6.",
       "skill": "concavity-inflection-points",
       "difficulty": 5,
       "points": 10
@@ -48,51 +67,51 @@
     {
       "id": "cu5-4",
       "question": "(FRQ) The graph of f' (not f) is given: f' is positive and decreasing on (0,2), crosses zero at x=2, negative on (2,5), has a minimum at x=3.5, and crosses zero again at x=5. (a) Where does f have local extrema? (b) Where is f concave up? (c) Where does f have inflection points?",
-      "answer": "(a) f'=0 at x=2 (changes +→-) → local max. f'=0 at x=5 (changes -→+) → local min. (b) f concave up where f' is increasing: (3.5, 5+). (c) f'' = 0 where f' has extrema: inflection at x=3.5 (f' changes from decreasing to increasing, so f'' changes sign).",
+      "answer": "(a) f'=0 at x=2 (changes +\u2192-) \u2192 local max. f'=0 at x=5 (changes -\u2192+) \u2192 local min. (b) f concave up where f' is increasing: (3.5, 5+). (c) f'' = 0 where f' has extrema: inflection at x=3.5 (f' changes from decreasing to increasing, so f'' changes sign).",
       "skill": "curve-sketching-from-derivatives",
       "difficulty": 6,
       "points": 12
     },
     {
       "id": "cu5-5",
-      "question": "Find the absolute maximum and minimum of f(x) = x³ - 6x² + 9x + 1 on [0, 4].",
-      "answer": "f'(x) = 3x²-12x+9 = 3(x-1)(x-3). Critical: x=1, x=3 (both in [0,4]). Evaluate: f(0)=1, f(1)=1-6+9+1=5, f(3)=27-54+27+1=1, f(4)=64-96+36+1=5. Absolute max: 5 at x=1 and x=4. Absolute min: 1 at x=0 and x=3.",
-      "skill": "first-second-derivative-tests",
+      "question": "Find the absolute maximum and minimum of f(x) = x\u00b3 - 6x\u00b2 + 9x + 1 on [0, 4].",
+      "answer": "f'(x) = 3x\u00b2-12x+9 = 3(x-1)(x-3). Critical: x=1, x=3 (both in [0,4]). Evaluate: f(0)=1, f(1)=1-6+9+1=5, f(3)=27-54+27+1=1, f(4)=64-96+36+1=5. Absolute max: 5 at x=1 and x=4. Absolute min: 1 at x=0 and x=3.",
+      "skill": "concavity-inflection-points",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cu5-6",
       "question": "A farmer has 300 feet of fencing and wants to enclose a rectangular area next to a river (no fence needed along the river). Find the dimensions that maximize the area.",
-      "answer": "Let x = side perpendicular to river (two of these), y = side parallel. Constraint: 2x+y=300 → y=300-2x. Objective: A = xy = x(300-2x) = 300x-2x². A'=300-4x=0 → x=75. y=300-150=150. A''=-4<0 → max. Dimensions: 75ft × 150ft. Max area: 11,250 ft².",
+      "answer": "Let x = side perpendicular to river (two of these), y = side parallel. Constraint: 2x+y=300 \u2192 y=300-2x. Objective: A = xy = x(300-2x) = 300x-2x\u00b2. A'=300-4x=0 \u2192 x=75. y=300-150=150. A''=-4<0 \u2192 max. Dimensions: 75ft \u00d7 150ft. Max area: 11,250 ft\u00b2.",
       "skill": "optimization-problems",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cu5-frq",
-      "question": "(FRQ) A particle moves along the x-axis with velocity v(t) = t² - 5t + 4 for t ≥ 0. (a) Find all times when the particle changes direction. (b) Find the acceleration at t = 3. (c) Is the particle speeding up or slowing down at t = 3? Justify.",
-      "answer": "(a) v(t)=(t-1)(t-4)=0 at t=1, t=4. Sign changes at both → direction changes at t=1 and t=4. (b) a(t)=2t-5. a(3)=6-5=1. (c) v(3)=9-15+4=-2<0. a(3)=1>0. v and a have opposite signs → slowing down.",
+      "question": "(FRQ) A particle moves along the x-axis with velocity v(t) = t\u00b2 - 5t + 4 for t \u2265 0. (a) Find all times when the particle changes direction. (b) Find the acceleration at t = 3. (c) Is the particle speeding up or slowing down at t = 3? Justify.",
+      "answer": "(a) v(t)=(t-1)(t-4)=0 at t=1, t=4. Sign changes at both \u2192 direction changes at t=1 and t=4. (b) a(t)=2t-5. a(3)=6-5=1. (c) v(3)=9-15+4=-2<0. a(3)=1>0. v and a have opposite signs \u2192 slowing down.",
       "skill": "increasing-decreasing-extrema",
       "difficulty": 6,
       "points": 12
     },
     {
       "id": "cu5-spiral",
-      "question": "SPIRAL: Use L'Hôpital's Rule to evaluate lim(x→0) (x - sin x)/x³.",
-      "answer": "0/0. L'Hôpital: (1-cos x)/(3x²) → 0/0. Again: sin x/(6x) → 0/0. Again: cos x/6 → 1/6.",
+      "question": "SPIRAL: Use L'H\u00f4pital's Rule to evaluate lim(x\u21920) (x - sin x)/x\u00b3.",
+      "answer": "0/0. L'H\u00f4pital: (1-cos x)/(3x\u00b2) \u2192 0/0. Again: sin x/(6x) \u2192 0/0. Again: cos x/6 \u2192 1/6.",
       "skill": "mvt-evt-theorems",
       "difficulty": 6,
       "points": 5
     }
   ],
   "answerKeys": {
-    "cu5-1": "c = 2√3/3 ≈ 1.155",
-    "cu5-2": "Decreasing (-∞,3), increasing (3,∞). Local min at (3,-17). No extremum at x=0.",
-    "cu5-3": "CU: (-∞,0)∪(2,∞). CD: (0,2). Inflection: (0,10) and (2,-6).",
+    "cu5-1": "c = 2\u221a3/3 \u2248 1.155",
+    "cu5-2": "Decreasing (-\u221e,3), increasing (3,\u221e). Local min at (3,-17). No extremum at x=0.",
+    "cu5-3": "CU: (-\u221e,0)\u222a(2,\u221e). CD: (0,2). Inflection: (0,10) and (2,-6).",
     "cu5-4": "(a) Max at x=2, min at x=5 (b) (3.5,5+) (c) x=3.5",
     "cu5-5": "Max=5 at x=1,4. Min=1 at x=0,3.",
-    "cu5-6": "75ft × 150ft. Area=11,250 ft².",
+    "cu5-6": "75ft \u00d7 150ft. Area=11,250 ft\u00b2.",
     "cu5-frq": "(a) t=1,4 (b) a(3)=1 (c) slowing down (v<0, a>0)",
     "cu5-spiral": "1/6"
   }

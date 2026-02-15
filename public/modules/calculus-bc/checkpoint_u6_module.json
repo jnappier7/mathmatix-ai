@@ -7,95 +7,154 @@
   "estimatedDuration": 40,
   "type": "assessment",
   "description": "Summative checkpoint for the heavyweight integration unit (17-20% of AP exam). Assesses Riemann sums, FTC Parts 1 & 2, antiderivatives, u-substitution, integration by parts (BC), partial fractions (BC), improper integrals (BC), and accumulation function interpretation.",
-  "skillsCovered": ["riemann-sums", "definite-integral-properties", "ftc-part1", "ftc-part2", "antiderivatives", "u-substitution", "integration-by-parts", "partial-fractions", "improper-integrals", "accumulation-functions"],
+  "skillsCovered": [
+    "riemann-sums",
+    "definite-integral-properties",
+    "ftc-part1",
+    "ftc-part2",
+    "antiderivatives",
+    "u-substitution",
+    "integration-by-parts",
+    "partial-fractions",
+    "improper-integrals",
+    "accumulation-functions"
+  ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "riemann-sums", "reteachFocus": "L/R/M sums, over/under based on increasing/decreasing + concavity; trapezoidal approximation", "resources": ["integration_accumulation_module.json - scaffold phases 1-2"] },
-    { "skillId": "ftc-part1", "reteachFocus": "d/dx[∫ₐˣ f(t)dt] = f(x); with chain rule: d/dx[∫ₐ^{g(x)} f(t)dt] = f(g(x))·g'(x)", "resources": ["integration_accumulation_module.json - scaffold phases 3-4"] },
-    { "skillId": "ftc-part2", "reteachFocus": "∫ₐᵇ f(x)dx = F(b)−F(a) where F'=f; find antiderivative, evaluate at bounds", "resources": ["integration_accumulation_module.json - scaffold phases 3-4"] },
-    { "skillId": "u-substitution", "reteachFocus": "Identify inner function as u, du = derivative of inner × dx; change bounds for definite integrals or back-substitute", "resources": ["integration_accumulation_module.json - scaffold phases 5-6"] },
-    { "skillId": "integration-by-parts", "reteachFocus": "∫u dv = uv − ∫v du; LIATE for choosing u; tabular method for repeated applications", "resources": ["integration_accumulation_module.json - scaffold phases 7-8"] },
-    { "skillId": "partial-fractions", "reteachFocus": "Factor denominator into linear factors; A/(x−a)+B/(x−b); solve for A,B; integrate each as ln|x−a|", "resources": ["integration_accumulation_module.json - scaffold phases 7-8"] },
-    { "skillId": "improper-integrals", "reteachFocus": "Replace ∞ with limit variable; Type I (infinite bounds) and Type II (discontinuous integrand); convergent vs divergent", "resources": ["integration_accumulation_module.json - scaffold phases 9-10"] },
-    { "skillId": "accumulation-functions", "reteachFocus": "g(x)=∫ₐˣ f(t)dt; g'=f, g''=f'; interpret from graph of f: g increasing where f>0; net change ∫f'=f(b)−f(a)", "resources": ["integration_accumulation_module.json - scaffold phases 9-10"] }
+    {
+      "skillId": "riemann-sums",
+      "reteachFocus": "L/R/M sums, over/under based on increasing/decreasing + concavity; trapezoidal approximation",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 1-2"
+      ]
+    },
+    {
+      "skillId": "ftc-part1",
+      "reteachFocus": "d/dx[\u222b\u2090\u02e3 f(t)dt] = f(x); with chain rule: d/dx[\u222b\u2090^{g(x)} f(t)dt] = f(g(x))\u00b7g'(x)",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 3-4"
+      ]
+    },
+    {
+      "skillId": "ftc-part2",
+      "reteachFocus": "\u222b\u2090\u1d47 f(x)dx = F(b)\u2212F(a) where F'=f; find antiderivative, evaluate at bounds",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 3-4"
+      ]
+    },
+    {
+      "skillId": "u-substitution",
+      "reteachFocus": "Identify inner function as u, du = derivative of inner \u00d7 dx; change bounds for definite integrals or back-substitute",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 5-6"
+      ]
+    },
+    {
+      "skillId": "integration-by-parts",
+      "reteachFocus": "\u222bu dv = uv \u2212 \u222bv du; LIATE for choosing u; tabular method for repeated applications",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 7-8"
+      ]
+    },
+    {
+      "skillId": "partial-fractions",
+      "reteachFocus": "Factor denominator into linear factors; A/(x\u2212a)+B/(x\u2212b); solve for A,B; integrate each as ln|x\u2212a|",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 7-8"
+      ]
+    },
+    {
+      "skillId": "improper-integrals",
+      "reteachFocus": "Replace \u221e with limit variable; Type I (infinite bounds) and Type II (discontinuous integrand); convergent vs divergent",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 9-10"
+      ]
+    },
+    {
+      "skillId": "accumulation-functions",
+      "reteachFocus": "g(x)=\u222b\u2090\u02e3 f(t)dt; g'=f, g''=f'; interpret from graph of f: g increasing where f>0; net change \u222bf'=f(b)\u2212f(a)",
+      "resources": [
+        "integration_accumulation_module.json - scaffold phases 9-10"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
       "id": "cbu6-1",
-      "question": "Use a left Riemann sum with n=4 subintervals to approximate ∫₀⁸ f(x)dx given:\n| x | 0 | 2 | 4 | 6 | 8 |\n|---|---|---|---|---|---|\n| f(x) | 3 | 5 | 4 | 7 | 6 |\nIs this an over- or underestimate if f is increasing?",
-      "answer": "Δx = 2. Left sum = Δx[f(0)+f(2)+f(4)+f(6)] = 2[3+5+4+7] = 2(19) = 38. If f is increasing, left endpoints are below the curve → underestimate.",
+      "question": "Use a left Riemann sum with n=4 subintervals to approximate \u222b\u2080\u2078 f(x)dx given:\n| x | 0 | 2 | 4 | 6 | 8 |\n|---|---|---|---|---|---|\n| f(x) | 3 | 5 | 4 | 7 | 6 |\nIs this an over- or underestimate if f is increasing?",
+      "answer": "\u0394x = 2. Left sum = \u0394x[f(0)+f(2)+f(4)+f(6)] = 2[3+5+4+7] = 2(19) = 38. If f is increasing, left endpoints are below the curve \u2192 underestimate.",
       "skill": "riemann-sums",
       "difficulty": 3,
       "points": 6
     },
     {
       "id": "cbu6-2",
-      "question": "Evaluate: ∫₁⁴ (3x² − 2x + 5) dx",
-      "answer": "Antiderivative: x³ − x² + 5x. Evaluate: [4³−4²+5(4)] − [1−1+5] = [64−16+20] − [5] = 68 − 5 = 63.",
+      "question": "Evaluate: \u222b\u2081\u2074 (3x\u00b2 \u2212 2x + 5) dx",
+      "answer": "Antiderivative: x\u00b3 \u2212 x\u00b2 + 5x. Evaluate: [4\u00b3\u22124\u00b2+5(4)] \u2212 [1\u22121+5] = [64\u221216+20] \u2212 [5] = 68 \u2212 5 = 63.",
       "skill": "ftc-part2",
       "difficulty": 3,
       "points": 6
     },
     {
       "id": "cbu6-3",
-      "question": "Find d/dx[∫₁^{x²} cos(t³) dt].",
-      "answer": "By FTC Part 1 with chain rule: d/dx[∫₁^{g(x)} f(t)dt] = f(g(x))·g'(x). Here g(x) = x², g'(x) = 2x. Answer: cos((x²)³) · 2x = 2x·cos(x⁶).",
+      "question": "Find d/dx[\u222b\u2081^{x\u00b2} cos(t\u00b3) dt].",
+      "answer": "By FTC Part 1 with chain rule: d/dx[\u222b\u2081^{g(x)} f(t)dt] = f(g(x))\u00b7g'(x). Here g(x) = x\u00b2, g'(x) = 2x. Answer: cos((x\u00b2)\u00b3) \u00b7 2x = 2x\u00b7cos(x\u2076).",
       "skill": "ftc-part1",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu6-4",
-      "question": "Evaluate: ∫ x·cos(x²) dx",
-      "answer": "u = x², du = 2x dx → x dx = du/2. ∫cos(u)·(du/2) = (1/2)sin(u) + C = (1/2)sin(x²) + C.",
+      "question": "Evaluate: \u222b x\u00b7cos(x\u00b2) dx",
+      "answer": "u = x\u00b2, du = 2x dx \u2192 x dx = du/2. \u222bcos(u)\u00b7(du/2) = (1/2)sin(u) + C = (1/2)sin(x\u00b2) + C.",
       "skill": "u-substitution",
       "difficulty": 3,
       "points": 6
     },
     {
       "id": "cbu6-5",
-      "question": "Evaluate: ∫₀¹ xe^(−x²) dx",
-      "answer": "u = −x², du = −2x dx → x dx = −du/2. Bounds: x=0→u=0, x=1→u=−1. ∫₀^{−1} e^u(−du/2) = (1/2)∫_{−1}^{0} e^u du = (1/2)[e^u]_{−1}^{0} = (1/2)(1−e^{−1}) = (1/2)(1−1/e) = (e−1)/(2e).",
+      "question": "Evaluate: \u222b\u2080\u00b9 xe^(\u2212x\u00b2) dx",
+      "answer": "u = \u2212x\u00b2, du = \u22122x dx \u2192 x dx = \u2212du/2. Bounds: x=0\u2192u=0, x=1\u2192u=\u22121. \u222b\u2080^{\u22121} e^u(\u2212du/2) = (1/2)\u222b_{\u22121}^{0} e^u du = (1/2)[e^u]_{\u22121}^{0} = (1/2)(1\u2212e^{\u22121}) = (1/2)(1\u22121/e) = (e\u22121)/(2e).",
       "skill": "u-substitution",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu6-6",
-      "question": "Evaluate using integration by parts: ∫ x·eˣ dx",
-      "answer": "u = x, dv = eˣ dx. du = dx, v = eˣ. ∫x·eˣ dx = xeˣ − ∫eˣ dx = xeˣ − eˣ + C = eˣ(x−1) + C.",
+      "question": "Evaluate using integration by parts: \u222b x\u00b7e\u02e3 dx",
+      "answer": "u = x, dv = e\u02e3 dx. du = dx, v = e\u02e3. \u222bx\u00b7e\u02e3 dx = xe\u02e3 \u2212 \u222be\u02e3 dx = xe\u02e3 \u2212 e\u02e3 + C = e\u02e3(x\u22121) + C.",
       "skill": "integration-by-parts",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu6-7",
-      "question": "Evaluate using partial fractions: ∫ 3/[(x−1)(x+2)] dx",
-      "answer": "3/[(x−1)(x+2)] = A/(x−1) + B/(x+2). Multiply: 3 = A(x+2) + B(x−1). x=1: 3=3A → A=1. x=−2: 3=−3B → B=−1. ∫[1/(x−1) − 1/(x+2)] dx = ln|x−1| − ln|x+2| + C = ln|(x−1)/(x+2)| + C.",
+      "question": "Evaluate using partial fractions: \u222b 3/[(x\u22121)(x+2)] dx",
+      "answer": "3/[(x\u22121)(x+2)] = A/(x\u22121) + B/(x+2). Multiply: 3 = A(x+2) + B(x\u22121). x=1: 3=3A \u2192 A=1. x=\u22122: 3=\u22123B \u2192 B=\u22121. \u222b[1/(x\u22121) \u2212 1/(x+2)] dx = ln|x\u22121| \u2212 ln|x+2| + C = ln|(x\u22121)/(x+2)| + C.",
       "skill": "partial-fractions",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu6-8",
-      "question": "Determine whether ∫₁^∞ 1/x² dx converges or diverges. If convergent, find its value.",
-      "answer": "∫₁^∞ x⁻² dx = lim_{b→∞} ∫₁ᵇ x⁻² dx = lim_{b→∞} [−x⁻¹]₁ᵇ = lim_{b→∞} (−1/b + 1) = 0 + 1 = 1. Converges to 1.",
+      "question": "Determine whether \u222b\u2081^\u221e 1/x\u00b2 dx converges or diverges. If convergent, find its value.",
+      "answer": "\u222b\u2081^\u221e x\u207b\u00b2 dx = lim_{b\u2192\u221e} \u222b\u2081\u1d47 x\u207b\u00b2 dx = lim_{b\u2192\u221e} [\u2212x\u207b\u00b9]\u2081\u1d47 = lim_{b\u2192\u221e} (\u22121/b + 1) = 0 + 1 = 1. Converges to 1.",
       "skill": "improper-integrals",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "cbu6-9",
-      "question": "Let g(x) = ∫₀ˣ f(t) dt, where the graph of f is a semicircle of radius 2 centered at (2, 0) above the x-axis, followed by a horizontal line at y = −1 for 4 ≤ x ≤ 6. Find g(4) and g(6).",
-      "answer": "g(4) = ∫₀⁴ f(t)dt = area of semicircle of radius 2 = (1/2)π(2²) = 2π. g(6) = g(4) + ∫₄⁶ f(t)dt = 2π + ∫₄⁶(−1)dt = 2π + (−2) = 2π − 2.",
+      "question": "Let g(x) = \u222b\u2080\u02e3 f(t) dt, where the graph of f is a semicircle of radius 2 centered at (2, 0) above the x-axis, followed by a horizontal line at y = \u22121 for 4 \u2264 x \u2264 6. Find g(4) and g(6).",
+      "answer": "g(4) = \u222b\u2080\u2074 f(t)dt = area of semicircle of radius 2 = (1/2)\u03c0(2\u00b2) = 2\u03c0. g(6) = g(4) + \u222b\u2084\u2076 f(t)dt = 2\u03c0 + \u222b\u2084\u2076(\u22121)dt = 2\u03c0 + (\u22122) = 2\u03c0 \u2212 2.",
       "skill": "accumulation-functions",
       "difficulty": 5,
       "points": 10
     },
     {
       "id": "cbu6-10",
-      "question": "ANALYSIS: The rate at which water flows into a tank is R(t) = 200 − 4t² gallons/minute for 0 ≤ t ≤ 7. (a) Find the total amount of water that flows in from t = 0 to t = 5. (b) At what time does the flow rate equal zero? (c) Find the average flow rate over [0, 5].",
-      "answer": "(a) ∫₀⁵(200−4t²)dt = [200t − (4/3)t³]₀⁵ = 1000 − (4/3)(125) = 1000 − 500/3 = 3000/3 − 500/3 = 2500/3 ≈ 833.3 gallons. (b) 200−4t²=0 → t² = 50 → t = 5√2 ≈ 7.07 min (outside [0,7] barely). (c) Average = (1/5)·(2500/3) = 500/3 ≈ 166.7 gal/min.",
+      "question": "ANALYSIS: The rate at which water flows into a tank is R(t) = 200 \u2212 4t\u00b2 gallons/minute for 0 \u2264 t \u2264 7. (a) Find the total amount of water that flows in from t = 0 to t = 5. (b) At what time does the flow rate equal zero? (c) Find the average flow rate over [0, 5].",
+      "answer": "(a) \u222b\u2080\u2075(200\u22124t\u00b2)dt = [200t \u2212 (4/3)t\u00b3]\u2080\u2075 = 1000 \u2212 (4/3)(125) = 1000 \u2212 500/3 = 3000/3 \u2212 500/3 = 2500/3 \u2248 833.3 gallons. (b) 200\u22124t\u00b2=0 \u2192 t\u00b2 = 50 \u2192 t = 5\u221a2 \u2248 7.07 min (outside [0,7] barely). (c) Average = (1/5)\u00b7(2500/3) = 500/3 \u2248 166.7 gal/min.",
       "skill": "accumulation-functions",
       "difficulty": 5,
       "points": 14
@@ -104,8 +163,8 @@
   "spiralReview": [
     {
       "id": "cbu6-spiral-1",
-      "question": "SPIRAL (Optimization): Find the maximum value of f(x) = 12x − x³ on [0, 3].",
-      "answer": "f'(x)=12−3x²=0→x²=4→x=2. f(0)=0, f(2)=24−8=16, f(3)=36−27=9. Max = 16 at x=2.",
+      "question": "SPIRAL (Optimization): Find the maximum value of f(x) = 12x \u2212 x\u00b3 on [0, 3].",
+      "answer": "f'(x)=12\u22123x\u00b2=0\u2192x\u00b2=4\u2192x=2. f(0)=0, f(2)=24\u22128=16, f(3)=36\u221227=9. Max = 16 at x=2.",
       "skill": "optimization",
       "difficulty": 4,
       "points": 0,
@@ -113,8 +172,8 @@
     },
     {
       "id": "cbu6-spiral-2",
-      "question": "SPIRAL (L'Hôpital): Evaluate lim_{x→0} (eˣ − 1 − x)/x²",
-      "answer": "0/0 form. L'Hôpital: lim (eˣ−1)/(2x). Still 0/0. Again: lim eˣ/2 = 1/2.",
+      "question": "SPIRAL (L'H\u00f4pital): Evaluate lim_{x\u21920} (e\u02e3 \u2212 1 \u2212 x)/x\u00b2",
+      "answer": "0/0 form. L'H\u00f4pital: lim (e\u02e3\u22121)/(2x). Still 0/0. Again: lim e\u02e3/2 = 1/2.",
       "skill": "lhopitals-rule",
       "difficulty": 4,
       "points": 0,
@@ -124,14 +183,14 @@
   "answerKeys": {
     "cbu6-1": "38 (underestimate if increasing).",
     "cbu6-2": "63.",
-    "cbu6-3": "2x·cos(x⁶).",
-    "cbu6-4": "(1/2)sin(x²)+C.",
-    "cbu6-5": "(e−1)/(2e).",
-    "cbu6-6": "eˣ(x−1)+C.",
-    "cbu6-7": "ln|(x−1)/(x+2)|+C.",
+    "cbu6-3": "2x\u00b7cos(x\u2076).",
+    "cbu6-4": "(1/2)sin(x\u00b2)+C.",
+    "cbu6-5": "(e\u22121)/(2e).",
+    "cbu6-6": "e\u02e3(x\u22121)+C.",
+    "cbu6-7": "ln|(x\u22121)/(x+2)|+C.",
     "cbu6-8": "Converges to 1.",
-    "cbu6-9": "g(4)=2π, g(6)=2π−2.",
-    "cbu6-10": "(a) 2500/3. (b) t=5√2. (c) 500/3.",
+    "cbu6-9": "g(4)=2\u03c0, g(6)=2\u03c0\u22122.",
+    "cbu6-10": "(a) 2500/3. (b) t=5\u221a2. (c) 500/3.",
     "cbu6-spiral-1": "16 at x=2.",
     "cbu6-spiral-2": "1/2."
   }

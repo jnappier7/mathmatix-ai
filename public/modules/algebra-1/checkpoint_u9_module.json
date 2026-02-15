@@ -15,55 +15,73 @@
   ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "simplifying-rational-expressions", "reteachFocus": "Factoring numerators and denominators completely, cancelling only common factors (never terms), identifying all excluded values from the original denominator", "resources": ["rational_expressions_module.json - scaffold phases 1-2"] },
-    { "skillId": "multiplying-dividing-rationals", "reteachFocus": "Multiplying by factoring and cancelling across fractions, dividing by flipping and multiplying, adding and subtracting using the LCD, building equivalent fractions", "resources": ["rational_expressions_module.json - scaffold phases 3-5"] },
-    { "skillId": "solving-rational-equations", "reteachFocus": "Clearing denominators by multiplying every term by the LCD, solving the resulting polynomial equation, checking all candidate solutions for extraneous results", "resources": ["rational_expressions_module.json - scaffold phases 6-7"] }
+    {
+      "skillId": "simplifying-rational-expressions",
+      "reteachFocus": "Factoring numerators and denominators completely, cancelling only common factors (never terms), identifying all excluded values from the original denominator",
+      "resources": [
+        "rational_expressions_module.json - scaffold phases 1-2"
+      ]
+    },
+    {
+      "skillId": "multiplying-dividing-rationals",
+      "reteachFocus": "Multiplying by factoring and cancelling across fractions, dividing by flipping and multiplying, adding and subtracting using the LCD, building equivalent fractions",
+      "resources": [
+        "rational_expressions_module.json - scaffold phases 3-5"
+      ]
+    },
+    {
+      "skillId": "solving-rational-equations",
+      "reteachFocus": "Clearing denominators by multiplying every term by the LCD, solving the resulting polynomial equation, checking all candidate solutions for extraneous results",
+      "resources": [
+        "rational_expressions_module.json - scaffold phases 6-7"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
       "id": "a1u9-1",
-      "question": "Simplify (x² − 25)/(x² + 8x + 15). State all excluded values.",
-      "answer": "Factor numerator: x² − 25 = (x − 5)(x + 5) (difference of squares). Factor denominator: x² + 8x + 15 = (x + 3)(x + 5) (find two numbers that multiply to 15 and add to 8: 3 and 5). Cancel (x + 5). Result: (x − 5)/(x + 3), where x ≠ −5 and x ≠ −3.",
+      "question": "Simplify (x\u00b2 \u2212 25)/(x\u00b2 + 8x + 15). State all excluded values.",
+      "answer": "Factor numerator: x\u00b2 \u2212 25 = (x \u2212 5)(x + 5) (difference of squares). Factor denominator: x\u00b2 + 8x + 15 = (x + 3)(x + 5) (find two numbers that multiply to 15 and add to 8: 3 and 5). Cancel (x + 5). Result: (x \u2212 5)/(x + 3), where x \u2260 \u22125 and x \u2260 \u22123.",
       "skill": "simplifying-rational-expressions",
       "difficulty": 2,
       "points": 8
     },
     {
       "id": "a1u9-2",
-      "question": "Simplify (3x² − 12x)/(6x). State all excluded values.",
-      "answer": "Factor numerator: 3x² − 12x = 3x(x − 4). Factor denominator: 6x. Cancel common factors: 3x/6x = 1/2. Result: (x − 4)/2, where x ≠ 0.",
+      "question": "Simplify (3x\u00b2 \u2212 12x)/(6x). State all excluded values.",
+      "answer": "Factor numerator: 3x\u00b2 \u2212 12x = 3x(x \u2212 4). Factor denominator: 6x. Cancel common factors: 3x/6x = 1/2. Result: (x \u2212 4)/2, where x \u2260 0.",
       "skill": "simplifying-rational-expressions",
       "difficulty": 2,
       "points": 8
     },
     {
       "id": "a1u9-3",
-      "question": "Identify all excluded values for the expression (x + 7)/(x² − x − 6). Do not simplify.",
-      "answer": "Factor the denominator: x² − x − 6 = (x − 3)(x + 2) (numbers that multiply to −6 and add to −1: −3 and 2). Set each factor to zero: x − 3 = 0 → x = 3; x + 2 = 0 → x = −2. Excluded values: x ≠ 3 and x ≠ −2.",
+      "question": "Identify all excluded values for the expression (x + 7)/(x\u00b2 \u2212 x \u2212 6). Do not simplify.",
+      "answer": "Factor the denominator: x\u00b2 \u2212 x \u2212 6 = (x \u2212 3)(x + 2) (numbers that multiply to \u22126 and add to \u22121: \u22123 and 2). Set each factor to zero: x \u2212 3 = 0 \u2192 x = 3; x + 2 = 0 \u2192 x = \u22122. Excluded values: x \u2260 3 and x \u2260 \u22122.",
       "skill": "simplifying-rational-expressions",
       "difficulty": 3,
       "points": 8
     },
     {
       "id": "a1u9-4",
-      "question": "Multiply: (x + 3)/(x² − 1) · (x − 1)/(x + 3). Simplify completely and state excluded values.",
-      "answer": "Factor x² − 1 = (x − 1)(x + 1). Expression: (x + 3)/((x − 1)(x + 1)) · (x − 1)/(x + 3). Cancel (x + 3) and (x − 1). Result: 1/(x + 1), where x ≠ 1, x ≠ −1, and x ≠ −3.",
+      "question": "Multiply: (x + 3)/(x\u00b2 \u2212 1) \u00b7 (x \u2212 1)/(x + 3). Simplify completely and state excluded values.",
+      "answer": "Factor x\u00b2 \u2212 1 = (x \u2212 1)(x + 1). Expression: (x + 3)/((x \u2212 1)(x + 1)) \u00b7 (x \u2212 1)/(x + 3). Cancel (x + 3) and (x \u2212 1). Result: 1/(x + 1), where x \u2260 1, x \u2260 \u22121, and x \u2260 \u22123.",
       "skill": "multiplying-dividing-rationals",
       "difficulty": 3,
       "points": 10
     },
     {
       "id": "a1u9-5",
-      "question": "Divide: (x² − 4)/(x + 5) ÷ (x + 2)/3. Simplify completely and state excluded values.",
-      "answer": "Multiply by reciprocal: (x² − 4)/(x + 5) · 3/(x + 2). Factor: x² − 4 = (x − 2)(x + 2). Expression: (x − 2)(x + 2)/(x + 5) · 3/(x + 2). Cancel (x + 2). Result: 3(x − 2)/(x + 5), where x ≠ −5 and x ≠ −2.",
+      "question": "Divide: (x\u00b2 \u2212 4)/(x + 5) \u00f7 (x + 2)/3. Simplify completely and state excluded values.",
+      "answer": "Multiply by reciprocal: (x\u00b2 \u2212 4)/(x + 5) \u00b7 3/(x + 2). Factor: x\u00b2 \u2212 4 = (x \u2212 2)(x + 2). Expression: (x \u2212 2)(x + 2)/(x + 5) \u00b7 3/(x + 2). Cancel (x + 2). Result: 3(x \u2212 2)/(x + 5), where x \u2260 \u22125 and x \u2260 \u22122.",
       "skill": "multiplying-dividing-rationals",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "a1u9-6",
-      "question": "Add: 4/(x + 1) + 3/(x − 2). Express with a common denominator and simplify.",
-      "answer": "LCD = (x + 1)(x − 2). Rewrite: 4(x − 2)/((x + 1)(x − 2)) + 3(x + 1)/((x + 1)(x − 2)). Numerator: 4(x − 2) + 3(x + 1) = 4x − 8 + 3x + 3 = 7x − 5. Result: (7x − 5)/((x + 1)(x − 2)), where x ≠ −1 and x ≠ 2.",
+      "question": "Add: 4/(x + 1) + 3/(x \u2212 2). Express with a common denominator and simplify.",
+      "answer": "LCD = (x + 1)(x \u2212 2). Rewrite: 4(x \u2212 2)/((x + 1)(x \u2212 2)) + 3(x + 1)/((x + 1)(x \u2212 2)). Numerator: 4(x \u2212 2) + 3(x + 1) = 4x \u2212 8 + 3x + 3 = 7x \u2212 5. Result: (7x \u2212 5)/((x + 1)(x \u2212 2)), where x \u2260 \u22121 and x \u2260 2.",
       "skill": "multiplying-dividing-rationals",
       "difficulty": 4,
       "points": 10
@@ -71,23 +89,23 @@
     {
       "id": "a1u9-7",
       "question": "Solve: 4/x + 1/6 = 3/x. Check your solution.",
-      "answer": "LCD = 6x. Multiply every term: 6x(4/x) + 6x(1/6) = 6x(3/x) → 24 + x = 18 → x = −6. Check: 4/(−6) + 1/6 = −2/3 + 1/6 = −4/6 + 1/6 = −3/6 = −1/2. And 3/(−6) = −1/2 ✓. Solution: x = −6.",
+      "answer": "LCD = 6x. Multiply every term: 6x(4/x) + 6x(1/6) = 6x(3/x) \u2192 24 + x = 18 \u2192 x = \u22126. Check: 4/(\u22126) + 1/6 = \u22122/3 + 1/6 = \u22124/6 + 1/6 = \u22123/6 = \u22121/2. And 3/(\u22126) = \u22121/2 \u2713. Solution: x = \u22126.",
       "skill": "solving-rational-equations",
       "difficulty": 3,
       "points": 10
     },
     {
       "id": "a1u9-8",
-      "question": "Solve: 2/(x + 3) + 1/(x − 3) = 10/(x² − 9). Check your solution.",
-      "answer": "Factor: x² − 9 = (x + 3)(x − 3). LCD = (x + 3)(x − 3). Multiply: 2(x − 3) + 1(x + 3) = 10. Expand: 2x − 6 + x + 3 = 10 → 3x − 3 = 10 → 3x = 13 → x = 13/3. Check: x = 13/3 does not make any denominator zero (x + 3 = 22/3, x − 3 = 4/3, x² − 9 = 88/9). Verify: 2/(22/3) + 1/(4/3) = 6/22 + 3/4 = 3/11 + 3/4 = 12/44 + 33/44 = 45/44. And 10/(88/9) = 90/88 = 45/44 ✓. Solution: x = 13/3.",
+      "question": "Solve: 2/(x + 3) + 1/(x \u2212 3) = 10/(x\u00b2 \u2212 9). Check your solution.",
+      "answer": "Factor: x\u00b2 \u2212 9 = (x + 3)(x \u2212 3). LCD = (x + 3)(x \u2212 3). Multiply: 2(x \u2212 3) + 1(x + 3) = 10. Expand: 2x \u2212 6 + x + 3 = 10 \u2192 3x \u2212 3 = 10 \u2192 3x = 13 \u2192 x = 13/3. Check: x = 13/3 does not make any denominator zero (x + 3 = 22/3, x \u2212 3 = 4/3, x\u00b2 \u2212 9 = 88/9). Verify: 2/(22/3) + 1/(4/3) = 6/22 + 3/4 = 3/11 + 3/4 = 12/44 + 33/44 = 45/44. And 10/(88/9) = 90/88 = 45/44 \u2713. Solution: x = 13/3.",
       "skill": "solving-rational-equations",
       "difficulty": 5,
       "points": 12
     },
     {
       "id": "a1u9-9",
-      "question": "Solve: (x + 4)/(x − 1) = 5/(x − 1). Determine whether the equation has a valid solution or no solution.",
-      "answer": "LCD = (x − 1). Multiply both sides: x + 4 = 5 → x = 1. Check: x = 1 makes the denominator (x − 1) = 0. Therefore x = 1 is EXTRANEOUS. The equation has no solution.",
+      "question": "Solve: (x + 4)/(x \u2212 1) = 5/(x \u2212 1). Determine whether the equation has a valid solution or no solution.",
+      "answer": "LCD = (x \u2212 1). Multiply both sides: x + 4 = 5 \u2192 x = 1. Check: x = 1 makes the denominator (x \u2212 1) = 0. Therefore x = 1 is EXTRANEOUS. The equation has no solution.",
       "skill": "solving-rational-equations",
       "difficulty": 4,
       "points": 12
@@ -95,7 +113,7 @@
     {
       "id": "a1u9-10",
       "question": "ANALYSIS: A student simplifies (x + 3)/(x + 5) by cancelling the x's to get 3/5. Is this correct? Explain the error, and state what the correct simplified form is. Then give an example of a rational expression where cancelling IS valid and explain why.",
-      "answer": "The student is **incorrect**. In (x + 3)/(x + 5), the x is a **term** (connected by addition), not a **factor** (connected by multiplication). You can only cancel **factors**, not terms.\n\nDisproof by example: Let x = 2. The original expression gives (2 + 3)/(2 + 5) = 5/7, which is NOT equal to 3/5.\n\nThe expression (x + 3)/(x + 5) **cannot be simplified further** because the numerator and denominator share no common factors.\n\nExample where cancelling IS valid: x(x + 3)/(x(x + 5)) = (x + 3)/(x + 5), because x is a **factor** of both the numerator and denominator (it is multiplied, not added). We can cancel x because it is a common factor, leaving (x + 3)/(x + 5) with x ≠ 0.\n\n**The rule:** Factor completely first. Only expressions that appear as entire multiplicative factors in both the numerator and denominator can be cancelled. Individual terms within a sum cannot be cancelled.",
+      "answer": "The student is **incorrect**. In (x + 3)/(x + 5), the x is a **term** (connected by addition), not a **factor** (connected by multiplication). You can only cancel **factors**, not terms.\n\nDisproof by example: Let x = 2. The original expression gives (2 + 3)/(2 + 5) = 5/7, which is NOT equal to 3/5.\n\nThe expression (x + 3)/(x + 5) **cannot be simplified further** because the numerator and denominator share no common factors.\n\nExample where cancelling IS valid: x(x + 3)/(x(x + 5)) = (x + 3)/(x + 5), because x is a **factor** of both the numerator and denominator (it is multiplied, not added). We can cancel x because it is a common factor, leaving (x + 3)/(x + 5) with x \u2260 0.\n\n**The rule:** Factor completely first. Only expressions that appear as entire multiplicative factors in both the numerator and denominator can be cancelled. Individual terms within a sum cannot be cancelled.",
       "skill": "simplifying-rational-expressions",
       "difficulty": 6,
       "points": 16
@@ -105,7 +123,7 @@
     {
       "id": "a1u9-spiral-1",
       "question": "SPIRAL (Exponential Functions): A population of 5,000 bacteria doubles every 6 hours. Write an exponential model and find the population after 24 hours.",
-      "answer": "P₀ = 5000, doubling time d = 6 hours. Model: P = 5000·2^(t/6). At t = 24: P = 5000·2^(24/6) = 5000·2⁴ = 5000·16 = 80,000 bacteria. Check: 4 doubling periods → 5000→10000→20000→40000→80000 ✓.",
+      "answer": "P\u2080 = 5000, doubling time d = 6 hours. Model: P = 5000\u00b72^(t/6). At t = 24: P = 5000\u00b72^(24/6) = 5000\u00b72\u2074 = 5000\u00b716 = 80,000 bacteria. Check: 4 doubling periods \u2192 5000\u219210000\u219220000\u219240000\u219280000 \u2713.",
       "skill": "exponential-growth-decay",
       "difficulty": 3,
       "points": 0,
@@ -113,8 +131,8 @@
     },
     {
       "id": "a1u9-spiral-2",
-      "question": "SPIRAL (Quadratic Functions): Solve x² + 2x − 15 = 0 by factoring.",
-      "answer": "Find two numbers that multiply to −15 and add to 2: 5 and −3. Factor: (x + 5)(x − 3) = 0. Solutions: x = −5 or x = 3. Verify: (−5)² + 2(−5) − 15 = 25 − 10 − 15 = 0 ✓. (3)² + 2(3) − 15 = 9 + 6 − 15 = 0 ✓.",
+      "question": "SPIRAL (Quadratic Functions): Solve x\u00b2 + 2x \u2212 15 = 0 by factoring.",
+      "answer": "Find two numbers that multiply to \u221215 and add to 2: 5 and \u22123. Factor: (x + 5)(x \u2212 3) = 0. Solutions: x = \u22125 or x = 3. Verify: (\u22125)\u00b2 + 2(\u22125) \u2212 15 = 25 \u2212 10 \u2212 15 = 0 \u2713. (3)\u00b2 + 2(3) \u2212 15 = 9 + 6 \u2212 15 = 0 \u2713.",
       "skill": "quadratic-equations-factoring",
       "difficulty": 3,
       "points": 0,
@@ -122,17 +140,17 @@
     }
   ],
   "answerKeys": {
-    "a1u9-1": "(x − 5)/(x + 3), where x ≠ −5 and x ≠ −3. Factor and cancel (x + 5).",
-    "a1u9-2": "(x − 4)/2, where x ≠ 0. Factor: 3x(x − 4)/(6x), cancel 3x.",
-    "a1u9-3": "Excluded values: x ≠ 3, x ≠ −2. Factor denominator: (x − 3)(x + 2).",
-    "a1u9-4": "1/(x + 1), where x ≠ 1, x ≠ −1, x ≠ −3. Cancel (x + 3) and (x − 1).",
-    "a1u9-5": "3(x − 2)/(x + 5), where x ≠ −5 and x ≠ −2. Flip, factor, cancel (x + 2).",
-    "a1u9-6": "(7x − 5)/((x + 1)(x − 2)), where x ≠ −1 and x ≠ 2. LCD = (x + 1)(x − 2). Numerator: 4(x − 2) + 3(x + 1) = 7x − 5.",
-    "a1u9-7": "x = −6. LCD = 6x. Equation: 24 + x = 18. Check: 4/(−6) + 1/6 = −1/2 = 3/(−6) ✓.",
-    "a1u9-8": "x = 13/3. LCD = (x + 3)(x − 3). Equation: 2(x − 3) + (x + 3) = 10 → 3x = 13. Not extraneous ✓.",
-    "a1u9-9": "No solution. x = 1 is extraneous (makes denominator x − 1 = 0).",
-    "a1u9-10": "Student is wrong. Cannot cancel terms (x's connected by +), only factors. (x + 3)/(x + 5) is already simplified. Disproof: at x = 2, (5/7) ≠ (3/5).",
-    "a1u9-spiral-1": "80,000 bacteria after 24 hours. P = 5000·2^(t/6), 4 doubling periods.",
-    "a1u9-spiral-2": "x = −5 or x = 3. Factor: (x + 5)(x − 3) = 0."
+    "a1u9-1": "(x \u2212 5)/(x + 3), where x \u2260 \u22125 and x \u2260 \u22123. Factor and cancel (x + 5).",
+    "a1u9-2": "(x \u2212 4)/2, where x \u2260 0. Factor: 3x(x \u2212 4)/(6x), cancel 3x.",
+    "a1u9-3": "Excluded values: x \u2260 3, x \u2260 \u22122. Factor denominator: (x \u2212 3)(x + 2).",
+    "a1u9-4": "1/(x + 1), where x \u2260 1, x \u2260 \u22121, x \u2260 \u22123. Cancel (x + 3) and (x \u2212 1).",
+    "a1u9-5": "3(x \u2212 2)/(x + 5), where x \u2260 \u22125 and x \u2260 \u22122. Flip, factor, cancel (x + 2).",
+    "a1u9-6": "(7x \u2212 5)/((x + 1)(x \u2212 2)), where x \u2260 \u22121 and x \u2260 2. LCD = (x + 1)(x \u2212 2). Numerator: 4(x \u2212 2) + 3(x + 1) = 7x \u2212 5.",
+    "a1u9-7": "x = \u22126. LCD = 6x. Equation: 24 + x = 18. Check: 4/(\u22126) + 1/6 = \u22121/2 = 3/(\u22126) \u2713.",
+    "a1u9-8": "x = 13/3. LCD = (x + 3)(x \u2212 3). Equation: 2(x \u2212 3) + (x + 3) = 10 \u2192 3x = 13. Not extraneous \u2713.",
+    "a1u9-9": "No solution. x = 1 is extraneous (makes denominator x \u2212 1 = 0).",
+    "a1u9-10": "Student is wrong. Cannot cancel terms (x's connected by +), only factors. (x + 3)/(x + 5) is already simplified. Disproof: at x = 2, (5/7) \u2260 (3/5).",
+    "a1u9-spiral-1": "80,000 bacteria after 24 hours. P = 5000\u00b72^(t/6), 4 doubling periods.",
+    "a1u9-spiral-2": "x = \u22125 or x = 3. Factor: (x + 5)(x \u2212 3) = 0."
   }
 }

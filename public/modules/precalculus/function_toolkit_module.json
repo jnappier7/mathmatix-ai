@@ -245,6 +245,19 @@
       ]
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "domain-range-analysis",
+      "title": "We-Do: Domain Range Analysis \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for domain range analysis.",
+          "hint": "Apply the concepts of domain range analysis.",
+          "solution": "Step-by-step solution for domain range analysis."
+        }
+      ]
+    },
+    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Finding Inverses \u2014 Worked Examples",

@@ -28,11 +28,11 @@
     "Calculate basic probabilities of simple events, express probabilities as fractions, decimals, and percentages, and interpret what a probability value means in context"
   ],
   "instructionalStrategy": [
-    "Ground every statistics concept in real, relatable data sets — test scores, sports stats, temperatures — so students see data analysis as a tool for understanding their world, not just abstract arithmetic.",
+    "Ground every statistics concept in real, relatable data sets \u2014 test scores, sports stats, temperatures \u2014 so students see data analysis as a tool for understanding their world, not just abstract arithmetic.",
     "Teach measures of central tendency as a 'which average is fairest?' question: use side-by-side examples where mean is misleading (skewed by outliers) versus where median tells the real story, building critical thinking about which measure to report.",
-    "For data displays, always start by reading existing graphs before asking students to create them — interpretation before construction ensures they understand what each graph type communicates before worrying about how to draw it.",
+    "For data displays, always start by reading existing graphs before asking students to create them \u2014 interpretation before construction ensures they understand what each graph type communicates before worrying about how to draw it.",
     "Introduce scatter plots through a 'predict the pattern' activity: show the scatter plot first, ask students to describe the trend in plain language, then formalize the vocabulary (positive correlation, negative correlation, no correlation).",
-    "When teaching lines of best fit, emphasize that the line is an estimate — show that slightly different lines can be reasonable, then use the line to make predictions, discussing when predictions are trustworthy (interpolation) versus risky (extrapolation)."
+    "When teaching lines of best fit, emphasize that the line is an estimate \u2014 show that slightly different lines can be reasonable, then use the line to make predictions, discussing when predictions are trustworthy (interpolation) versus risky (extrapolation)."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -41,8 +41,8 @@
       "lessonPhase": "concept-intro",
       "skill": "measures-of-central-tendency",
       "title": "Introduction to Measures of Central Tendency",
-      "content": "When we have a set of data, we often want to describe it with a single number that represents the 'center' or 'typical value.' These are called **measures of central tendency**.\n\n**Mean (average):** Add all values and divide by the number of values.\nFormula: mean = (sum of all values) / (number of values)\n\n**Median:** The middle value when data is arranged in order. If there is an even number of values, the median is the average of the two middle values.\n\n**Mode:** The value that appears most frequently. A data set can have one mode, more than one mode, or no mode (if all values appear the same number of times).\n\n**Range:** The difference between the maximum and minimum values. Range = max − min. It measures the spread of the data.\n\n**Outliers and their effects:**\nAn **outlier** is a data value that is significantly higher or lower than the rest. Outliers have a large effect on the **mean** (they pull it toward the outlier), but they have little or no effect on the **median** (since the median depends on position, not value). This is why the median is often called a **resistant** measure — it resists the influence of extreme values.\n\n**When to use which measure:**\n- Use the **mean** when data is roughly symmetric with no extreme outliers.\n- Use the **median** when data is skewed or has outliers (e.g., income data, home prices).\n- Use the **mode** when you want the most common value (e.g., most popular shoe size).",
-      "initialPrompt": "Consider the data set {12, 15, 18, 15, 22, 15, 30}. Without calculating yet — do you think the mean and median will be close together or far apart? Why?"
+      "content": "When we have a set of data, we often want to describe it with a single number that represents the 'center' or 'typical value.' These are called **measures of central tendency**.\n\n**Mean (average):** Add all values and divide by the number of values.\nFormula: mean = (sum of all values) / (number of values)\n\n**Median:** The middle value when data is arranged in order. If there is an even number of values, the median is the average of the two middle values.\n\n**Mode:** The value that appears most frequently. A data set can have one mode, more than one mode, or no mode (if all values appear the same number of times).\n\n**Range:** The difference between the maximum and minimum values. Range = max \u2212 min. It measures the spread of the data.\n\n**Outliers and their effects:**\nAn **outlier** is a data value that is significantly higher or lower than the rest. Outliers have a large effect on the **mean** (they pull it toward the outlier), but they have little or no effect on the **median** (since the median depends on position, not value). This is why the median is often called a **resistant** measure \u2014 it resists the influence of extreme values.\n\n**When to use which measure:**\n- Use the **mean** when data is roughly symmetric with no extreme outliers.\n- Use the **median** when data is skewed or has outliers (e.g., income data, home prices).\n- Use the **mode** when you want the most common value (e.g., most popular shoe size).",
+      "initialPrompt": "Consider the data set {12, 15, 18, 15, 22, 15, 30}. Without calculating yet \u2014 do you think the mean and median will be close together or far apart? Why?"
     },
     {
       "type": "model",
@@ -52,17 +52,17 @@
       "examples": [
         {
           "problem": "Find the mean, median, and mode of the data set {12, 15, 18, 15, 22, 15, 30}.",
-          "solution": "**Step 1: Arrange the data in order.**\n12, 15, 15, 15, 18, 22, 30\n\n**Step 2: Find the mean.**\nSum = 12 + 15 + 15 + 15 + 18 + 22 + 30 = 127\nNumber of values = 7\nMean = 127 / 7 ≈ **18.1**\n\n**Step 3: Find the median.**\nThere are 7 values (odd), so the median is the middle value (4th value).\n12, 15, 15, **15**, 18, 22, 30\nMedian = **15**\n\n**Step 4: Find the mode.**\nThe value 15 appears 3 times — more than any other value.\nMode = **15**\n\n**Step 5: Find the range.**\nRange = 30 − 12 = **18**\n\n**Summary:** Mean ≈ 18.1, Median = 15, Mode = 15, Range = 18.\nThe mean (18.1) is higher than the median (15) because the larger value 30 pulls the mean upward. The median and mode are both 15, which reflects where the data clusters.",
-          "tip": "Always arrange data in order first — it makes finding the median easy and helps you spot outliers visually."
+          "solution": "**Step 1: Arrange the data in order.**\n12, 15, 15, 15, 18, 22, 30\n\n**Step 2: Find the mean.**\nSum = 12 + 15 + 15 + 15 + 18 + 22 + 30 = 127\nNumber of values = 7\nMean = 127 / 7 \u2248 **18.1**\n\n**Step 3: Find the median.**\nThere are 7 values (odd), so the median is the middle value (4th value).\n12, 15, 15, **15**, 18, 22, 30\nMedian = **15**\n\n**Step 4: Find the mode.**\nThe value 15 appears 3 times \u2014 more than any other value.\nMode = **15**\n\n**Step 5: Find the range.**\nRange = 30 \u2212 12 = **18**\n\n**Summary:** Mean \u2248 18.1, Median = 15, Mode = 15, Range = 18.\nThe mean (18.1) is higher than the median (15) because the larger value 30 pulls the mean upward. The median and mode are both 15, which reflects where the data clusters.",
+          "tip": "Always arrange data in order first \u2014 it makes finding the median easy and helps you spot outliers visually."
         },
         {
           "problem": "Now add the value 95 to the data set: {12, 15, 18, 15, 22, 15, 30, 95}. Recalculate the mean and median. How does the outlier affect each measure?",
           "solution": "**Step 1: Arrange the new data in order.**\n12, 15, 15, 15, 18, 22, 30, 95\n\n**Step 2: Find the new mean.**\nSum = 12 + 15 + 15 + 15 + 18 + 22 + 30 + 95 = 222\nNumber of values = 8\nMean = 222 / 8 = **27.75**\n\n**Step 3: Find the new median.**\nThere are 8 values (even), so the median is the average of the 4th and 5th values.\n12, 15, 15, **15**, **18**, 22, 30, 95\nMedian = (15 + 18) / 2 = 33 / 2 = **16.5**\n\n**Step 4: Compare.**\n| Measure | Without 95 | With 95 | Change |\n|---------|-----------|---------|--------|\n| Mean    | 18.1      | 27.75   | Increased by 9.65 |\n| Median  | 15        | 16.5    | Increased by 1.5 |\n\nThe outlier 95 **pulled the mean up by 9.65 points** but only moved the median up by 1.5 points. This demonstrates that the mean is sensitive to outliers while the median is resistant.\n\n**Conclusion:** When a data set has outliers, the **median** is a better measure of center because it is not distorted by extreme values.",
-          "tip": "The mean is like a balance point — one extreme value can tip it significantly. The median just looks at position, so one extra value at the extreme only shifts it slightly."
+          "tip": "The mean is like a balance point \u2014 one extreme value can tip it significantly. The median just looks at position, so one extra value at the extreme only shifts it slightly."
         },
         {
           "problem": "A company's employee salaries (in thousands) are: {$35, $38, $40, $42, $45, $48, $310}. The $310K salary is the CEO. Which measure of central tendency best represents the typical salary?",
-          "solution": "**Step 1: Data is already in order.**\n35, 38, 40, 42, 45, 48, 310\n\n**Step 2: Calculate all three measures.**\nMean = (35 + 38 + 40 + 42 + 45 + 48 + 310) / 7 = 558 / 7 ≈ **$79.7K**\nMedian = 4th value = **$42K**\nMode = none (all values appear once)\n\n**Step 3: Which is most useful?**\nThe mean ($79.7K) is misleading — it is higher than 6 of the 7 employees' actual salaries. No regular employee earns close to $79.7K. The CEO's salary of $310K is an extreme outlier that pulls the mean far above the typical salary.\n\nThe median ($42K) much better represents what a typical employee earns. Half earn more, half earn less.\n\n**Best answer:** The **median ($42K)** is the most appropriate measure of central tendency for this data set. Salary data is almost always reported using the median for exactly this reason — a few very high earners skew the mean upward.\n\nThis is a classic example of when the mean is misleading. In skewed data sets, the **median tells the real story**.",
+          "solution": "**Step 1: Data is already in order.**\n35, 38, 40, 42, 45, 48, 310\n\n**Step 2: Calculate all three measures.**\nMean = (35 + 38 + 40 + 42 + 45 + 48 + 310) / 7 = 558 / 7 \u2248 **$79.7K**\nMedian = 4th value = **$42K**\nMode = none (all values appear once)\n\n**Step 3: Which is most useful?**\nThe mean ($79.7K) is misleading \u2014 it is higher than 6 of the 7 employees' actual salaries. No regular employee earns close to $79.7K. The CEO's salary of $310K is an extreme outlier that pulls the mean far above the typical salary.\n\nThe median ($42K) much better represents what a typical employee earns. Half earn more, half earn less.\n\n**Best answer:** The **median ($42K)** is the most appropriate measure of central tendency for this data set. Salary data is almost always reported using the median for exactly this reason \u2014 a few very high earners skew the mean upward.\n\nThis is a classic example of when the mean is misleading. In skewed data sets, the **median tells the real story**.",
           "tip": "Whenever you see salary, home price, or income data, expect the median to be more appropriate. These data sets are typically right-skewed with high-end outliers."
         }
       ],
@@ -73,8 +73,8 @@
       "lessonPhase": "concept-intro",
       "skill": "data-displays",
       "title": "Data Displays: Histograms, Box Plots, and Dot Plots",
-      "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
-      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?"
+      "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** \u2014 the smallest value\n2. **Q1 (first quartile)** \u2014 the median of the lower half (25th percentile)\n3. **Median (Q2)** \u2014 the middle value (50th percentile)\n4. **Q3 (third quartile)** \u2014 the median of the upper half (75th percentile)\n5. **Maximum** \u2014 the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 \u2212 Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
+      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best \u2014 a dot plot, histogram, or box plot? Why?"
     },
     {
       "type": "model",
@@ -83,13 +83,13 @@
       "title": "I-Do: Reading and Interpreting Data Displays",
       "examples": [
         {
-          "problem": "A box plot of daily temperatures (°F) has the following five-number summary: min = 58, Q1 = 65, median = 72, Q3 = 78, max = 85. Find the IQR and describe what the box plot tells us about the data.",
-          "solution": "**Step 1: Identify the five-number summary.**\n- Minimum = 58\n- Q1 = 65\n- Median = 72\n- Q3 = 78\n- Maximum = 85\n\n**Step 2: Calculate the IQR.**\nIQR = Q3 − Q1 = 78 − 65 = **13°F**\nThe middle 50% of temperatures span 13 degrees.\n\n**Step 3: Calculate the range.**\nRange = Max − Min = 85 − 58 = **27°F**\n\n**Step 4: Interpret the box plot.**\n- The **box** spans from 65 to 78, with the median line at 72.\n- The median (72) is roughly centered within the box: 72 − 65 = 7 on the left, 78 − 72 = 6 on the right. The middle 50% is approximately symmetric.\n- The **left whisker** (58 to 65) has length 7.\n- The **right whisker** (78 to 85) has length 7.\n- Since both whiskers are the same length and the median is near the center of the box, the distribution is roughly **symmetric**.\n\n**Step 5: What each part tells us.**\n- 25% of days had temperatures below 65°F (below Q1).\n- 50% of days had temperatures between 65°F and 78°F (the box).\n- 25% of days had temperatures above 78°F (above Q3).\n- The typical day was about 72°F (the median).",
+          "problem": "A box plot of daily temperatures (\u00b0F) has the following five-number summary: min = 58, Q1 = 65, median = 72, Q3 = 78, max = 85. Find the IQR and describe what the box plot tells us about the data.",
+          "solution": "**Step 1: Identify the five-number summary.**\n- Minimum = 58\n- Q1 = 65\n- Median = 72\n- Q3 = 78\n- Maximum = 85\n\n**Step 2: Calculate the IQR.**\nIQR = Q3 \u2212 Q1 = 78 \u2212 65 = **13\u00b0F**\nThe middle 50% of temperatures span 13 degrees.\n\n**Step 3: Calculate the range.**\nRange = Max \u2212 Min = 85 \u2212 58 = **27\u00b0F**\n\n**Step 4: Interpret the box plot.**\n- The **box** spans from 65 to 78, with the median line at 72.\n- The median (72) is roughly centered within the box: 72 \u2212 65 = 7 on the left, 78 \u2212 72 = 6 on the right. The middle 50% is approximately symmetric.\n- The **left whisker** (58 to 65) has length 7.\n- The **right whisker** (78 to 85) has length 7.\n- Since both whiskers are the same length and the median is near the center of the box, the distribution is roughly **symmetric**.\n\n**Step 5: What each part tells us.**\n- 25% of days had temperatures below 65\u00b0F (below Q1).\n- 50% of days had temperatures between 65\u00b0F and 78\u00b0F (the box).\n- 25% of days had temperatures above 78\u00b0F (above Q3).\n- The typical day was about 72\u00b0F (the median).",
           "tip": "The IQR measures the spread of the middle 50% of data. Compare IQR to the range: here IQR (13) is about half the range (27), meaning the data is moderately concentrated in the middle."
         },
         {
           "problem": "Two classes took the same test. Class A histogram: 50-59 (3), 60-69 (5), 70-79 (12), 80-89 (7), 90-100 (3). Class B histogram: 50-59 (1), 60-69 (2), 70-79 (6), 80-89 (10), 90-100 (11). Compare the two distributions.",
-          "solution": "**Step 1: Summarize each distribution.**\nClass A: Total = 3 + 5 + 12 + 7 + 3 = 30 students.\nPeak interval: 70-79 (12 students). Shape: roughly symmetric with center around 70-79.\n\nClass B: Total = 1 + 2 + 6 + 10 + 11 = 30 students.\nPeak interval: 90-100 (11 students). Shape: skewed left (long tail toward lower scores, bulk of data on the right).\n\n**Step 2: Estimate the centers.**\nClass A: The 15th and 16th values fall in the 70-79 interval. Estimated median ≈ 75.\nClass B: Counting from the left — 1 + 2 + 6 = 9 values through 70-79, then 80-89 covers values 10-19. The 15th value is in 80-89. Estimated median ≈ 84.\n\n**Step 3: Compare spreads.**\nClass A has its data more evenly distributed across all intervals, while Class B is heavily concentrated in the 80-100 range (21 out of 30 students, or 70%).\n\n**Step 4: Summary.**\n- Class B performed significantly better overall (estimated median 84 vs. 75).\n- Class B is left-skewed (most students scored high); Class A is roughly symmetric.\n- Class A has more students in the low-scoring intervals (8 students below 70 vs. only 3 for Class B).\n- Both classes have 30 students, making direct comparison straightforward.",
+          "solution": "**Step 1: Summarize each distribution.**\nClass A: Total = 3 + 5 + 12 + 7 + 3 = 30 students.\nPeak interval: 70-79 (12 students). Shape: roughly symmetric with center around 70-79.\n\nClass B: Total = 1 + 2 + 6 + 10 + 11 = 30 students.\nPeak interval: 90-100 (11 students). Shape: skewed left (long tail toward lower scores, bulk of data on the right).\n\n**Step 2: Estimate the centers.**\nClass A: The 15th and 16th values fall in the 70-79 interval. Estimated median \u2248 75.\nClass B: Counting from the left \u2014 1 + 2 + 6 = 9 values through 70-79, then 80-89 covers values 10-19. The 15th value is in 80-89. Estimated median \u2248 84.\n\n**Step 3: Compare spreads.**\nClass A has its data more evenly distributed across all intervals, while Class B is heavily concentrated in the 80-100 range (21 out of 30 students, or 70%).\n\n**Step 4: Summary.**\n- Class B performed significantly better overall (estimated median 84 vs. 75).\n- Class B is left-skewed (most students scored high); Class A is roughly symmetric.\n- Class A has more students in the low-scoring intervals (8 students below 70 vs. only 3 for Class B).\n- Both classes have 30 students, making direct comparison straightforward.",
           "tip": "When comparing histograms, focus on three things: (1) Where is the center of each? (2) What is the shape? (3) How spread out are the data values?"
         }
       ],
@@ -104,17 +104,17 @@
         {
           "id": "da-wp1",
           "question": "Find the mean, median, mode, and range of the data set {4, 7, 7, 9, 12, 15, 18}. Which measure best represents the center? Explain.",
-          "answer": "Data in order: 4, 7, 7, 9, 12, 15, 18. Mean = (4+7+7+9+12+15+18)/7 = 72/7 ≈ 10.3. Median = 9 (4th value). Mode = 7 (appears twice). Range = 18 − 4 = 14. The data is slightly skewed right (tail toward 18), so the median (9) is a slightly better representation of the typical value than the mean (10.3), though both are reasonable since there are no extreme outliers.",
+          "answer": "Data in order: 4, 7, 7, 9, 12, 15, 18. Mean = (4+7+7+9+12+15+18)/7 = 72/7 \u2248 10.3. Median = 9 (4th value). Mode = 7 (appears twice). Range = 18 \u2212 4 = 14. The data is slightly skewed right (tail toward 18), so the median (9) is a slightly better representation of the typical value than the mean (10.3), though both are reasonable since there are no extreme outliers.",
           "hints": [
             "The data is already in order. Count: there are 7 values, so the median is the 4th value.",
-            "Mean = 72/7 ≈ 10.3. Median = 9. Mode = 7 (only repeated value). Range = 18 − 4 = 14.",
+            "Mean = 72/7 \u2248 10.3. Median = 9. Mode = 7 (only repeated value). Range = 18 \u2212 4 = 14.",
             "The mean (10.3) is pulled slightly higher by the larger values 15 and 18. Since the data leans a bit to the right, the median (9) is a slightly better representative, but neither measure is misleading here."
           ]
         },
         {
           "id": "da-wp2",
           "question": "The salaries at a small company are: {$32K, $35K, $38K, $40K, $42K, $150K}. Find the mean and median. Which better represents the 'typical' salary? Why?",
-          "answer": "Mean = (32+35+38+40+42+150)/6 = 337/6 ≈ $56.2K. Median = average of 3rd and 4th values = (38+40)/2 = $39K. The median ($39K) much better represents the typical salary. The CEO's salary of $150K is an outlier that pulls the mean up to $56.2K, which is higher than 5 of the 6 employees' actual salaries. The median is resistant to this outlier.",
+          "answer": "Mean = (32+35+38+40+42+150)/6 = 337/6 \u2248 $56.2K. Median = average of 3rd and 4th values = (38+40)/2 = $39K. The median ($39K) much better represents the typical salary. The CEO's salary of $150K is an outlier that pulls the mean up to $56.2K, which is higher than 5 of the 6 employees' actual salaries. The median is resistant to this outlier.",
           "hints": [
             "Add all six salaries: 32 + 35 + 38 + 40 + 42 + 150 = 337. Divide by 6 for the mean.",
             "For the median with 6 values (even count), average the 3rd and 4th values: (38 + 40)/2 = 39.",
@@ -124,17 +124,17 @@
         {
           "id": "da-wp3",
           "question": "Construct a five-number summary and calculate the IQR for the data set: {22, 25, 28, 30, 33, 35, 38, 40, 45}.",
-          "answer": "Data is in order with 9 values. Minimum = 22. Maximum = 45. Median (Q2) = 5th value = 33. Lower half: {22, 25, 28, 30}. Q1 = (25+28)/2 = 26.5. Upper half: {35, 38, 40, 45}. Q3 = (38+40)/2 = 39. Five-number summary: {22, 26.5, 33, 39, 45}. IQR = 39 − 26.5 = 12.5.",
+          "answer": "Data is in order with 9 values. Minimum = 22. Maximum = 45. Median (Q2) = 5th value = 33. Lower half: {22, 25, 28, 30}. Q1 = (25+28)/2 = 26.5. Upper half: {35, 38, 40, 45}. Q3 = (38+40)/2 = 39. Five-number summary: {22, 26.5, 33, 39, 45}. IQR = 39 \u2212 26.5 = 12.5.",
           "hints": [
             "There are 9 values. The median is the 5th value: 33. Split the remaining data into lower half {22, 25, 28, 30} and upper half {35, 38, 40, 45}.",
             "Q1 = median of {22, 25, 28, 30} = (25+28)/2 = 26.5. Q3 = median of {35, 38, 40, 45} = (38+40)/2 = 39.",
-            "Five-number summary: 22, 26.5, 33, 39, 45. IQR = Q3 − Q1 = 39 − 26.5 = 12.5."
+            "Five-number summary: 22, 26.5, 33, 39, 45. IQR = Q3 \u2212 Q1 = 39 \u2212 26.5 = 12.5."
           ]
         },
         {
           "id": "da-wp4",
           "question": "A histogram of student heights shows: 50-54 in. (3 students), 55-59 in. (8 students), 60-64 in. (12 students), 65-69 in. (6 students), 70-74 in. (1 student). Describe the shape of the distribution and estimate the median height.",
-          "answer": "Total = 3 + 8 + 12 + 6 + 1 = 30 students. Shape: roughly symmetric with a very slight right skew (the tail is slightly longer on the right with the lone student at 70-74). The peak is at 60-64 inches. Median = 15th and 16th values. Counting: 50-54 covers values 1-3, 55-59 covers 4-11, 60-64 covers 12-23. Both the 15th and 16th values fall in the 60-64 interval. Estimated median ≈ 62 inches.",
+          "answer": "Total = 3 + 8 + 12 + 6 + 1 = 30 students. Shape: roughly symmetric with a very slight right skew (the tail is slightly longer on the right with the lone student at 70-74). The peak is at 60-64 inches. Median = 15th and 16th values. Counting: 50-54 covers values 1-3, 55-59 covers 4-11, 60-64 covers 12-23. Both the 15th and 16th values fall in the 60-64 interval. Estimated median \u2248 62 inches.",
           "hints": [
             "Add up the frequencies to find the total number of students: 3 + 8 + 12 + 6 + 1 = 30.",
             "For the shape, the tallest bar is 60-64. Bars decrease on both sides. The right tail (70-74 has only 1) is slightly longer, suggesting a very slight right skew.",
@@ -149,8 +149,21 @@
       "lessonPhase": "concept-intro",
       "skill": "scatter-plots-correlation",
       "title": "Scatter Plots, Correlation, and Lines of Best Fit",
-      "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
+      "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** \u2014 hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
       "initialPrompt": "Think of two variables you encounter in daily life that might have a positive correlation, and two that might have a negative correlation. Can you also think of two variables that probably have no correlation at all?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "intro-probability",
+      "title": "We-Do: Intro Probability \u2014 Guided Practice",
+      "problems": [
+        {
+          "question": "Practice problem for intro probability.",
+          "hint": "Apply the concepts of intro probability.",
+          "solution": "Step-by-step solution for intro probability."
+        }
+      ]
     },
     {
       "type": "model",
@@ -160,21 +173,21 @@
       "examples": [
         {
           "problem": "A teacher collected data on hours studied and test scores for 8 students: (1, 55), (2, 60), (3, 68), (3, 65), (4, 72), (5, 80), (6, 85), (7, 92). Identify the type and strength of correlation.",
-          "solution": "**Step 1: Plot the points mentally or on a graph.**\nAs hours studied (x) increases from 1 to 7, test scores (y) generally increase from 55 to 92.\n\n**Step 2: Identify the direction.**\nThe points slope **upward** from left to right. This is a **positive correlation** — more study hours are associated with higher test scores.\n\n**Step 3: Assess the strength.**\nThe points follow the upward trend very closely with little scatter. This is a **strong positive correlation**.\n\n**Step 4: Consider causation.**\nIt is reasonable (and supported by research) that studying more **causes** higher test scores. However, other factors also contribute (prior knowledge, sleep, test difficulty), so we should say studying more is **associated with** higher scores, and likely contributes to them.\n\n**Conclusion: Strong positive correlation.** Students who studied more hours tended to score higher on the test.",
+          "solution": "**Step 1: Plot the points mentally or on a graph.**\nAs hours studied (x) increases from 1 to 7, test scores (y) generally increase from 55 to 92.\n\n**Step 2: Identify the direction.**\nThe points slope **upward** from left to right. This is a **positive correlation** \u2014 more study hours are associated with higher test scores.\n\n**Step 3: Assess the strength.**\nThe points follow the upward trend very closely with little scatter. This is a **strong positive correlation**.\n\n**Step 4: Consider causation.**\nIt is reasonable (and supported by research) that studying more **causes** higher test scores. However, other factors also contribute (prior knowledge, sleep, test difficulty), so we should say studying more is **associated with** higher scores, and likely contributes to them.\n\n**Conclusion: Strong positive correlation.** Students who studied more hours tended to score higher on the test.",
           "tip": "To identify correlation, ask: 'As x goes up, does y go up (positive), go down (negative), or show no pattern (none)?' Then check how tightly the points follow that trend (strong vs. weak)."
         },
         {
           "problem": "Using the study hours vs. test scores data, estimate a line of best fit and write its equation.",
-          "solution": "**Step 1: Choose two representative points on the trend.**\nLooking at the data, the points (1, 55) and (7, 92) are near the edges of the data and fall close to the overall trend.\n\n**Step 2: Calculate the slope.**\nm = (y₂ − y₁) / (x₂ − x₁) = (92 − 55) / (7 − 1) = 37 / 6 ≈ **6.2**\n\nThis means test scores increase by about 6.2 points for each additional hour studied.\n\n**Step 3: Find the y-intercept.**\nUsing point (1, 55): y = mx + b → 55 = 6.2(1) + b → b = 55 − 6.2 = **48.8**\n\n**Step 4: Write the equation.**\n**y = 6.2x + 48.8**\n\n**Step 5: Check reasonableness.**\n- At x = 3: y = 6.2(3) + 48.8 = 18.6 + 48.8 = 67.4 (actual values: 68 and 65 — close!)\n- At x = 5: y = 6.2(5) + 48.8 = 31 + 48.8 = 79.8 (actual: 80 — very close!)\n\nThe line fits the data well.",
-          "tip": "A line of best fit is an estimate — slightly different point choices will give slightly different equations, and that's okay. The goal is a line that captures the overall trend, not one that hits every point."
+          "solution": "**Step 1: Choose two representative points on the trend.**\nLooking at the data, the points (1, 55) and (7, 92) are near the edges of the data and fall close to the overall trend.\n\n**Step 2: Calculate the slope.**\nm = (y\u2082 \u2212 y\u2081) / (x\u2082 \u2212 x\u2081) = (92 \u2212 55) / (7 \u2212 1) = 37 / 6 \u2248 **6.2**\n\nThis means test scores increase by about 6.2 points for each additional hour studied.\n\n**Step 3: Find the y-intercept.**\nUsing point (1, 55): y = mx + b \u2192 55 = 6.2(1) + b \u2192 b = 55 \u2212 6.2 = **48.8**\n\n**Step 4: Write the equation.**\n**y = 6.2x + 48.8**\n\n**Step 5: Check reasonableness.**\n- At x = 3: y = 6.2(3) + 48.8 = 18.6 + 48.8 = 67.4 (actual values: 68 and 65 \u2014 close!)\n- At x = 5: y = 6.2(5) + 48.8 = 31 + 48.8 = 79.8 (actual: 80 \u2014 very close!)\n\nThe line fits the data well.",
+          "tip": "A line of best fit is an estimate \u2014 slightly different point choices will give slightly different equations, and that's okay. The goal is a line that captures the overall trend, not one that hits every point."
         },
         {
           "problem": "Using the line of best fit y = 6.2x + 48.8, predict the test score for a student who studies 4.5 hours. Then predict for a student who studies 12 hours. Which prediction is more reliable?",
-          "solution": "**Prediction 1: x = 4.5 hours (interpolation)**\ny = 6.2(4.5) + 48.8 = 27.9 + 48.8 = **76.7 ≈ 77**\nThis is **interpolation** because 4.5 is within the data range (1 to 7 hours). This prediction is **reliable** — we have data surrounding this value.\n\n**Prediction 2: x = 12 hours (extrapolation)**\ny = 6.2(12) + 48.8 = 74.4 + 48.8 = **123.2**\nThis is **extrapolation** because 12 is far beyond the data range (1 to 7 hours). This prediction is **unreliable** — a score of 123 is impossible on a 100-point test!\n\n**Why extrapolation is risky:**\nThe linear trend may not continue indefinitely. In reality, test scores have a ceiling (100), and the relationship between study hours and scores likely levels off at some point (diminishing returns). The line of best fit is only trustworthy **within or near** the range of the original data.\n\n**Conclusion:** The prediction of 77 for 4.5 hours is reasonable. The prediction of 123.2 for 12 hours is not — it shows the danger of extrapolating too far.",
-          "tip": "Always check whether your prediction is interpolation (within the data range — more trustworthy) or extrapolation (beyond the data range — use with caution)."
+          "solution": "**Prediction 1: x = 4.5 hours (interpolation)**\ny = 6.2(4.5) + 48.8 = 27.9 + 48.8 = **76.7 \u2248 77**\nThis is **interpolation** because 4.5 is within the data range (1 to 7 hours). This prediction is **reliable** \u2014 we have data surrounding this value.\n\n**Prediction 2: x = 12 hours (extrapolation)**\ny = 6.2(12) + 48.8 = 74.4 + 48.8 = **123.2**\nThis is **extrapolation** because 12 is far beyond the data range (1 to 7 hours). This prediction is **unreliable** \u2014 a score of 123 is impossible on a 100-point test!\n\n**Why extrapolation is risky:**\nThe linear trend may not continue indefinitely. In reality, test scores have a ceiling (100), and the relationship between study hours and scores likely levels off at some point (diminishing returns). The line of best fit is only trustworthy **within or near** the range of the original data.\n\n**Conclusion:** The prediction of 77 for 4.5 hours is reasonable. The prediction of 123.2 for 12 hours is not \u2014 it shows the danger of extrapolating too far.",
+          "tip": "Always check whether your prediction is interpolation (within the data range \u2014 more trustworthy) or extrapolation (beyond the data range \u2014 use with caution)."
         }
       ],
-      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?"
+      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out \u2014 say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) \u2014 would we still say there is a strong correlation?"
     },
     {
       "type": "guided_practice",
@@ -184,42 +197,42 @@
       "problems": [
         {
           "id": "da-wp5",
-          "question": "A scatter plot shows the relationship between outdoor temperature (°F) and hot chocolate sales (cups per day): (30, 52), (35, 48), (40, 40), (45, 35), (50, 30), (55, 22), (60, 18), (65, 10). Identify the type and strength of correlation. Does temperature cause hot chocolate sales to change?",
-          "answer": "As temperature increases (30→65), hot chocolate sales decrease (52→10). This is a **strong negative correlation** — the points follow a clear downward trend with minimal scatter. Temperature likely has a **causal** influence on hot chocolate sales (colder weather drives people to buy warm drinks), though other factors also play a role (marketing, season, location). It is reasonable to say higher temperatures cause a decrease in hot chocolate purchases.",
+          "question": "A scatter plot shows the relationship between outdoor temperature (\u00b0F) and hot chocolate sales (cups per day): (30, 52), (35, 48), (40, 40), (45, 35), (50, 30), (55, 22), (60, 18), (65, 10). Identify the type and strength of correlation. Does temperature cause hot chocolate sales to change?",
+          "answer": "As temperature increases (30\u219265), hot chocolate sales decrease (52\u219210). This is a **strong negative correlation** \u2014 the points follow a clear downward trend with minimal scatter. Temperature likely has a **causal** influence on hot chocolate sales (colder weather drives people to buy warm drinks), though other factors also play a role (marketing, season, location). It is reasonable to say higher temperatures cause a decrease in hot chocolate purchases.",
           "hints": [
-            "Look at the trend: as x (temperature) goes up, what happens to y (sales)? Sales go down — that's a negative correlation.",
-            "The values decrease consistently from 52 to 10 as temperature rises from 30 to 65. Very little scatter — this is a strong correlation.",
-            "For causation: think about whether temperature directly influences the desire for hot chocolate. Yes — cold weather makes people want warm drinks. This is one case where correlation likely reflects causation."
+            "Look at the trend: as x (temperature) goes up, what happens to y (sales)? Sales go down \u2014 that's a negative correlation.",
+            "The values decrease consistently from 52 to 10 as temperature rises from 30 to 65. Very little scatter \u2014 this is a strong correlation.",
+            "For causation: think about whether temperature directly influences the desire for hot chocolate. Yes \u2014 cold weather makes people want warm drinks. This is one case where correlation likely reflects causation."
           ]
         },
         {
           "id": "da-wp6",
-          "question": "Using the hot chocolate data from the previous problem, estimate a line of best fit by using the points (30, 52) and (65, 10). Write the equation and predict sales when the temperature is 48°F.",
-          "answer": "Slope: m = (10 − 52)/(65 − 30) = −42/35 = −1.2. Using (30, 52): 52 = −1.2(30) + b → 52 = −36 + b → b = 88. Equation: y = −1.2x + 88. Prediction at 48°F: y = −1.2(48) + 88 = −57.6 + 88 = 30.4 ≈ **30 cups**. This is interpolation (48 is between 30 and 65), so the prediction is reasonable.",
+          "question": "Using the hot chocolate data from the previous problem, estimate a line of best fit by using the points (30, 52) and (65, 10). Write the equation and predict sales when the temperature is 48\u00b0F.",
+          "answer": "Slope: m = (10 \u2212 52)/(65 \u2212 30) = \u221242/35 = \u22121.2. Using (30, 52): 52 = \u22121.2(30) + b \u2192 52 = \u221236 + b \u2192 b = 88. Equation: y = \u22121.2x + 88. Prediction at 48\u00b0F: y = \u22121.2(48) + 88 = \u221257.6 + 88 = 30.4 \u2248 **30 cups**. This is interpolation (48 is between 30 and 65), so the prediction is reasonable.",
           "hints": [
-            "Slope = (10 − 52)/(65 − 30) = −42/35 = −1.2. The negative slope confirms the negative correlation.",
-            "Use point (30, 52) to find b: 52 = −1.2(30) + b → b = 52 + 36 = 88. The equation is y = −1.2x + 88.",
-            "At 48°F: y = −1.2(48) + 88 = 30.4 ≈ 30 cups. Since 48 is within the data range (30 to 65), this is interpolation and is a reliable estimate."
+            "Slope = (10 \u2212 52)/(65 \u2212 30) = \u221242/35 = \u22121.2. The negative slope confirms the negative correlation.",
+            "Use point (30, 52) to find b: 52 = \u22121.2(30) + b \u2192 b = 52 + 36 = 88. The equation is y = \u22121.2x + 88.",
+            "At 48\u00b0F: y = \u22121.2(48) + 88 = 30.4 \u2248 30 cups. Since 48 is within the data range (30 to 65), this is interpolation and is a reliable estimate."
           ]
         },
         {
           "id": "da-wp7",
           "question": "A news headline states: 'Students who eat breakfast score 15% higher on standardized tests.' Does eating breakfast cause higher test scores? Explain using the concepts of correlation vs. causation.",
-          "answer": "The headline describes a **correlation** — students who eat breakfast tend to score higher. However, this does not necessarily mean breakfast **causes** higher scores. There may be **lurking variables**: families that provide breakfast may also provide a more structured home environment, more sleep, tutoring, or greater emphasis on education. These factors could independently boost test scores. To establish causation, a controlled experiment would be needed (randomly assign students to eat/skip breakfast and compare scores while controlling other variables). The correct interpretation is: eating breakfast is **associated with** higher test scores, but we cannot conclude from this data alone that it **causes** them.",
+          "answer": "The headline describes a **correlation** \u2014 students who eat breakfast tend to score higher. However, this does not necessarily mean breakfast **causes** higher scores. There may be **lurking variables**: families that provide breakfast may also provide a more structured home environment, more sleep, tutoring, or greater emphasis on education. These factors could independently boost test scores. To establish causation, a controlled experiment would be needed (randomly assign students to eat/skip breakfast and compare scores while controlling other variables). The correct interpretation is: eating breakfast is **associated with** higher test scores, but we cannot conclude from this data alone that it **causes** them.",
           "hints": [
             "The headline shows a correlation: breakfast is associated with higher scores. But does breakfast directly cause the improvement?",
             "Think about lurking variables. What other factors might differ between students who eat breakfast and those who don't? (Home stability, sleep habits, parental involvement, etc.)",
-            "Correlation ≠ causation. To prove causation, you would need a controlled experiment. The data only shows an association."
+            "Correlation \u2260 causation. To prove causation, you would need a controlled experiment. The data only shows an association."
           ]
         },
         {
           "id": "da-wp8",
           "question": "A bag contains 3 red marbles, 4 blue marbles, and 3 green marbles. (a) What is the probability of drawing a red marble? (b) What is the probability of NOT drawing a blue marble? Express each answer as a fraction, decimal, and percentage.",
-          "answer": "(a) Total marbles = 3 + 4 + 3 = 10. P(red) = 3/10 = 0.3 = 30%. (b) Non-blue marbles = 3 + 3 = 6. P(not blue) = 6/10 = 3/5 = 0.6 = 60%. Alternatively, P(not blue) = 1 − P(blue) = 1 − 4/10 = 6/10 = 3/5. A probability of 0 means impossible, 1 means certain. P(red) = 0.3 means if you drew a marble many times (replacing it each time), about 30% of draws would be red.",
+          "answer": "(a) Total marbles = 3 + 4 + 3 = 10. P(red) = 3/10 = 0.3 = 30%. (b) Non-blue marbles = 3 + 3 = 6. P(not blue) = 6/10 = 3/5 = 0.6 = 60%. Alternatively, P(not blue) = 1 \u2212 P(blue) = 1 \u2212 4/10 = 6/10 = 3/5. A probability of 0 means impossible, 1 means certain. P(red) = 0.3 means if you drew a marble many times (replacing it each time), about 30% of draws would be red.",
           "hints": [
             "Total marbles = 3 + 4 + 3 = 10. Probability = favorable outcomes / total outcomes.",
-            "P(red) = 3/10. To convert: 3 ÷ 10 = 0.3 = 30%.",
-            "P(not blue) = 1 − P(blue) = 1 − 4/10 = 6/10 = 3/5 = 0.6 = 60%. The complement rule: P(not A) = 1 − P(A)."
+            "P(red) = 3/10. To convert: 3 \u00f7 10 = 0.3 = 30%.",
+            "P(not blue) = 1 \u2212 P(blue) = 1 \u2212 4/10 = 6/10 = 3/5 = 0.6 = 60%. The complement rule: P(not A) = 1 \u2212 P(A)."
           ]
         }
       ],
@@ -228,30 +241,30 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "You-Do: Independent Practice — All Data Analysis & Probability Skills",
+      "title": "You-Do: Independent Practice \u2014 All Data Analysis & Probability Skills",
       "problems": [
         {
           "id": "da-yp1",
           "question": "The ages of employees at a startup are: {23, 24, 25, 26, 27, 28, 29, 30, 55}. Find the mean, median, and range. Which measure of center better represents the typical employee age? Explain.",
-          "answer": "Mean = (23+24+25+26+27+28+29+30+55)/9 = 267/9 ≈ 29.7. Median = 5th value = 27. Range = 55 − 23 = 32. The median (27) better represents the typical age because the outlier (55) pulls the mean up to 29.7, which is higher than 7 of the 9 employees' actual ages. Without the outlier, the mean would be about 26.5.",
+          "answer": "Mean = (23+24+25+26+27+28+29+30+55)/9 = 267/9 \u2248 29.7. Median = 5th value = 27. Range = 55 \u2212 23 = 32. The median (27) better represents the typical age because the outlier (55) pulls the mean up to 29.7, which is higher than 7 of the 9 employees' actual ages. Without the outlier, the mean would be about 26.5.",
           "skill": "measures-of-central-tendency",
           "hints": [
-            "Order the data (it's already ordered). Find the mean by summing all 9 values and dividing by 9. The 55 is an outlier — how does it affect the mean compared to the median?"
+            "Order the data (it's already ordered). Find the mean by summing all 9 values and dividing by 9. The 55 is an outlier \u2014 how does it affect the mean compared to the median?"
           ]
         },
         {
           "id": "da-yp2",
-          "question": "Construct a five-number summary for the data: {12, 18, 22, 25, 30, 33, 37, 40, 42, 48, 55}. Then calculate the IQR. Would any values be considered outliers using the 1.5 × IQR rule?",
-          "answer": "11 values. Min = 12, Max = 55. Median = 6th value = 33. Lower half: {12, 18, 22, 25, 30}, Q1 = 22. Upper half: {37, 40, 42, 48, 55}, Q3 = 42. Five-number summary: {12, 22, 33, 42, 55}. IQR = 42 − 22 = 20. Lower fence = Q1 − 1.5(IQR) = 22 − 30 = −8. Upper fence = Q3 + 1.5(IQR) = 42 + 30 = 72. All values fall between −8 and 72, so there are **no outliers** by the 1.5 × IQR rule.",
+          "question": "Construct a five-number summary for the data: {12, 18, 22, 25, 30, 33, 37, 40, 42, 48, 55}. Then calculate the IQR. Would any values be considered outliers using the 1.5 \u00d7 IQR rule?",
+          "answer": "11 values. Min = 12, Max = 55. Median = 6th value = 33. Lower half: {12, 18, 22, 25, 30}, Q1 = 22. Upper half: {37, 40, 42, 48, 55}, Q3 = 42. Five-number summary: {12, 22, 33, 42, 55}. IQR = 42 \u2212 22 = 20. Lower fence = Q1 \u2212 1.5(IQR) = 22 \u2212 30 = \u22128. Upper fence = Q3 + 1.5(IQR) = 42 + 30 = 72. All values fall between \u22128 and 72, so there are **no outliers** by the 1.5 \u00d7 IQR rule.",
           "skill": "data-displays",
           "hints": [
-            "Find Q1 (median of lower half) and Q3 (median of upper half). IQR = Q3 − Q1. For outliers, check if any value is below Q1 − 1.5(IQR) or above Q3 + 1.5(IQR)."
+            "Find Q1 (median of lower half) and Q3 (median of upper half). IQR = Q3 \u2212 Q1. For outliers, check if any value is below Q1 \u2212 1.5(IQR) or above Q3 + 1.5(IQR)."
           ]
         },
         {
           "id": "da-yp3",
           "question": "Identify the type of correlation (positive, negative, or none) for each scenario:\n(a) Hours of exercise per week vs. resting heart rate\n(b) Number of pages in a book vs. the author's age\n(c) Outside temperature vs. heating bill amount",
-          "answer": "(a) **Negative correlation** — more exercise is associated with a lower resting heart rate. (b) **No correlation** — the number of pages in a book has no predictable relationship to the author's age. (c) **Negative correlation** — as outside temperature increases, the heating bill decreases (less heating needed).",
+          "answer": "(a) **Negative correlation** \u2014 more exercise is associated with a lower resting heart rate. (b) **No correlation** \u2014 the number of pages in a book has no predictable relationship to the author's age. (c) **Negative correlation** \u2014 as outside temperature increases, the heating bill decreases (less heating needed).",
           "skill": "scatter-plots-correlation",
           "hints": [
             "For each pair, ask: as the first variable increases, does the second tend to increase (positive), decrease (negative), or show no pattern (none)?"
@@ -260,7 +273,7 @@
         {
           "id": "da-yp4",
           "question": "Data on car age (years) and value ($1000s): (1, 28), (2, 24), (3, 21), (4, 18), (5, 16), (6, 13), (7, 11), (8, 9). Estimate a line of best fit using points (1, 28) and (8, 9). Predict the value of a 5-year-old car using your line. Compare to the actual value.",
-          "answer": "Slope: m = (9 − 28)/(8 − 1) = −19/7 ≈ −2.71. Using (1, 28): 28 = −2.71(1) + b → b = 30.71. Equation: y = −2.71x + 30.71. At x = 5: y = −2.71(5) + 30.71 = −13.55 + 30.71 = 17.16 ≈ $17,160. Actual value at x = 5 is $16,000. The prediction is close — about $1,160 higher than actual, which is reasonable for an estimated trend line.",
+          "answer": "Slope: m = (9 \u2212 28)/(8 \u2212 1) = \u221219/7 \u2248 \u22122.71. Using (1, 28): 28 = \u22122.71(1) + b \u2192 b = 30.71. Equation: y = \u22122.71x + 30.71. At x = 5: y = \u22122.71(5) + 30.71 = \u221213.55 + 30.71 = 17.16 \u2248 $17,160. Actual value at x = 5 is $16,000. The prediction is close \u2014 about $1,160 higher than actual, which is reasonable for an estimated trend line.",
           "skill": "scatter-plots-correlation",
           "hints": [
             "Calculate slope using the two given points. Then use point-slope form to find b. Plug in x = 5 for the prediction. Compare your answer to the actual data point (5, 16)."
@@ -269,16 +282,16 @@
         {
           "id": "da-yp5",
           "question": "A bag contains 3 red marbles, 4 blue marbles, and 3 green marbles. (a) What is the probability of drawing a green marble? (b) What is the probability of drawing a red or blue marble? (c) If you draw one marble, replace it, and draw again, what is the probability of drawing two red marbles in a row?",
-          "answer": "(a) Total = 3 + 4 + 3 = 10. P(green) = 3/10 = 0.3 = 30%. (b) Red or blue = 3 + 4 = 7. P(red or blue) = 7/10 = 0.7 = 70%. Alternatively, P(red or blue) = 1 − P(green) = 1 − 3/10 = 7/10. (c) With replacement, draws are independent. P(red then red) = P(red) × P(red) = (3/10) × (3/10) = 9/100 = 0.09 = 9%.",
+          "answer": "(a) Total = 3 + 4 + 3 = 10. P(green) = 3/10 = 0.3 = 30%. (b) Red or blue = 3 + 4 = 7. P(red or blue) = 7/10 = 0.7 = 70%. Alternatively, P(red or blue) = 1 \u2212 P(green) = 1 \u2212 3/10 = 7/10. (c) With replacement, draws are independent. P(red then red) = P(red) \u00d7 P(red) = (3/10) \u00d7 (3/10) = 9/100 = 0.09 = 9%.",
           "skill": "intro-probability",
           "hints": [
-            "For (a) and (b), use P = favorable/total with total = 10. For (c), since the marble is replaced, each draw has the same probabilities. Multiply the individual probabilities: P(both red) = P(red) × P(red)."
+            "For (a) and (b), use P = favorable/total with total = 10. For (c), since the marble is replaced, each draw has the same probabilities. Multiply the individual probabilities: P(both red) = P(red) \u00d7 P(red)."
           ]
         },
         {
           "id": "da-yp6",
           "question": "A survey found that cities with more fire stations tend to have more fires. A student concludes that fire stations cause fires. Explain the error in this reasoning and identify the likely lurking variable.",
-          "answer": "The student is confusing **correlation with causation**. Fire stations do not cause fires. The likely **lurking variable** is **city size (population)**. Larger cities have more people, more buildings, and therefore more fires — and they also build more fire stations to serve the larger population. Both the number of fires and the number of fire stations increase with city size, creating a positive correlation, but one does not cause the other. This is a classic example of why correlation ≠ causation — a third variable (population/city size) drives both.",
+          "answer": "The student is confusing **correlation with causation**. Fire stations do not cause fires. The likely **lurking variable** is **city size (population)**. Larger cities have more people, more buildings, and therefore more fires \u2014 and they also build more fire stations to serve the larger population. Both the number of fires and the number of fire stations increase with city size, creating a positive correlation, but one does not cause the other. This is a classic example of why correlation \u2260 causation \u2014 a third variable (population/city size) drives both.",
           "skill": "scatter-plots-correlation",
           "hints": [
             "Think about what third variable could explain why both fire stations and fires increase together. What do larger cities have more of?"
@@ -290,19 +303,19 @@
     }
   ],
   "answerKeys": {
-    "da-wp1": "Mean ≈ 10.3, Median = 9, Mode = 7, Range = 14. Median is slightly better due to mild right skew.",
-    "da-wp2": "Mean ≈ $56.2K, Median = $39K. Median better represents typical salary; $150K outlier inflates the mean.",
+    "da-wp1": "Mean \u2248 10.3, Median = 9, Mode = 7, Range = 14. Median is slightly better due to mild right skew.",
+    "da-wp2": "Mean \u2248 $56.2K, Median = $39K. Median better represents typical salary; $150K outlier inflates the mean.",
     "da-wp3": "Five-number summary: {22, 26.5, 33, 39, 45}. IQR = 12.5.",
-    "da-wp4": "Shape: roughly symmetric, slight right skew. Peak at 60-64 in. Estimated median ≈ 62 inches.",
+    "da-wp4": "Shape: roughly symmetric, slight right skew. Peak at 60-64 in. Estimated median \u2248 62 inches.",
     "da-wp5": "Strong negative correlation. Temperature likely has a causal effect on hot chocolate sales.",
-    "da-wp6": "y = −1.2x + 88. At 48°F, predicted sales ≈ 30 cups (interpolation — reliable).",
+    "da-wp6": "y = \u22121.2x + 88. At 48\u00b0F, predicted sales \u2248 30 cups (interpolation \u2014 reliable).",
     "da-wp7": "Correlation, not proven causation. Lurking variables (home environment, sleep, parental involvement) may explain the association.",
     "da-wp8": "(a) P(red) = 3/10 = 0.3 = 30%. (b) P(not blue) = 3/5 = 0.6 = 60%.",
-    "da-yp1": "Mean ≈ 29.7, Median = 27, Range = 32. Median better represents typical age; outlier 55 inflates the mean.",
-    "da-yp2": "Five-number summary: {12, 22, 33, 42, 55}. IQR = 20. No outliers by the 1.5 × IQR rule.",
+    "da-yp1": "Mean \u2248 29.7, Median = 27, Range = 32. Median better represents typical age; outlier 55 inflates the mean.",
+    "da-yp2": "Five-number summary: {12, 22, 33, 42, 55}. IQR = 20. No outliers by the 1.5 \u00d7 IQR rule.",
     "da-yp3": "(a) Negative. (b) None. (c) Negative.",
-    "da-yp4": "y = −2.71x + 30.71. Predicted value at 5 years ≈ $17,160. Actual = $16,000. Close estimate.",
+    "da-yp4": "y = \u22122.71x + 30.71. Predicted value at 5 years \u2248 $17,160. Actual = $16,000. Close estimate.",
     "da-yp5": "(a) P(green) = 3/10 = 30%. (b) P(red or blue) = 7/10 = 70%. (c) P(two reds) = 9/100 = 9%.",
-    "da-yp6": "Correlation ≠ causation. Lurking variable: city size. Larger cities have more fires AND more fire stations."
+    "da-yp6": "Correlation \u2260 causation. Lurking variable: city size. Larger cities have more fires AND more fire stations."
   }
 }
