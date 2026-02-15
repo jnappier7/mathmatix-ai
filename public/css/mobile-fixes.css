@@ -1164,16 +1164,19 @@ body.is-mobile #sidebar-toggle {
         --header-height: 48px;
     }
 
-    /* App wrapper: flex column so chat-container can use flex:1 instead of height:100%.
-       This is more reliable than height:100% which can fail when the parent's
-       height comes from a calc() expression. */
+    /* App wrapper: let flex distribute remaining space after the sticky header.
+       Using flex:1 instead of an explicit calc(100vh - 48px) avoids height
+       mismatches caused by mobile browser chrome resizing the viewport. */
     #app-layout-wrapper {
-        height: calc(100vh - 48px) !important;
-        height: calc(100dvh - 48px) !important;
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        height: auto !important;
         overflow: hidden !important;
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        align-items: stretch !important;
     }
 
     /* Chat container fills remaining space via flex, not height:100% */
