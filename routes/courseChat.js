@@ -551,6 +551,29 @@ async function handleCourseGreeting(req, res, userId) {
             conversation.isActive = true;
         }
 
+        // Idempotency: if conversation already has a greeting, return it instead of generating a new one
+        // This prevents duplicate welcome messages when a user re-enters a course session
+        if (conversation.messages && conversation.messages.length > 0) {
+            const lastMsg = conversation.messages[conversation.messages.length - 1];
+            if (lastMsg.role === 'assistant') {
+                const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+                    ? user.selectedTutorId : 'default';
+                const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+                console.log(`📚 [CourseGreeting] ${user.firstName} → returning existing greeting (idempotent)`);
+                return res.json({
+                    text: lastMsg.content,
+                    voiceId: currentTutor.voiceId,
+                    isGreeting: true,
+                    courseContext: {
+                        courseId: courseSession.courseId,
+                        courseName: courseSession.courseName,
+                        currentModuleId: courseSession.currentModuleId,
+                        overallProgress: courseSession.overallProgress
+                    }
+                });
+            }
+        }
+
         // Build course prompt
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
             ? user.selectedTutorId : 'default';
