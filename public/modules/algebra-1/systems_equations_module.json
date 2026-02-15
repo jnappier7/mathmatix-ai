@@ -11,9 +11,12 @@
     "systems-of-equations-graphing",
     "systems-of-equations-substitution",
     "systems-of-equations-elimination",
-    "systems-word-problems"
+    "systems-special-cases",
+    "systems-word-problems",
+    "systems-of-inequalities"
   ],
   "standardsAlignment": [
+    "A-REI.5",
     "A-REI.6",
     "A-REI.11",
     "A-REI.12"
@@ -23,7 +26,8 @@
     "Solve systems of linear equations using the substitution method, including cases requiring rearrangement",
     "Solve systems of linear equations using the elimination method, including multiplying to create opposite coefficients",
     "Classify systems as having one solution, no solution, or infinitely many solutions and explain the graphical meaning of each",
-    "Model and solve real-world problems by writing and solving systems of two linear equations"
+    "Model and solve real-world problems by writing and solving systems of two linear equations",
+    "Graph systems of linear inequalities and identify the solution region as the overlap"
   ],
   "instructionalStrategy": [
     "Use graph intersection visuals—graph both lines on the same coordinate plane so students physically see the solution as the crossing point.",
@@ -39,7 +43,7 @@
       "lessonPhase": "concept-intro",
       "skill": "systems-of-equations-graphing",
       "title": "What Is a System of Equations?",
-      "content": "A **system of equations** is a set of two (or more) equations with the same variables. For a system of two linear equations in two unknowns, we are looking for values of x and y that make BOTH equations true at the same time.\n\n**Graphically:** Each linear equation is a line. The **solution** to the system is the point where the two lines **intersect**—the one (x, y) pair that lies on both lines.\n\n**Three possible outcomes:**\n- **One solution:** The lines intersect at exactly one point (most common). The system is *consistent and independent*.\n- **No solution:** The lines are parallel—they never intersect. The system is *inconsistent*. You will get a false statement like 0 = 5.\n- **Infinitely many solutions:** The lines are the same line (they overlap completely). The system is *consistent and dependent*. You will get a true statement like 0 = 0.\n\nTo solve by graphing: graph both equations on the same coordinate plane, then read the intersection point. Always verify by substituting back into BOTH equations.",
+      "content": "A **system of equations** is a set of two (or more) equations with the same variables. For a system of two linear equations in two unknowns, we are looking for values of x and y that make BOTH equations true at the same time.\n\n**Graphically:** Each linear equation is a line. The **solution** to the system is the point where the two lines **intersect** — the one (x, y) pair that lies on both lines.\n\n**Three possible outcomes:**\n- **One solution:** The lines intersect at exactly one point (most common). The system is *consistent and independent*.\n- **No solution:** The lines are parallel — they never intersect. The system is *inconsistent*. You will get a false statement like 0 = 5.\n- **Infinitely many solutions:** The lines are the same line (they overlap completely). The system is *consistent and dependent*. You will get a true statement like 0 = 0.\n\nTo check a solution: substitute the x and y values into BOTH equations. If both are true, it's a valid solution.",
       "initialPrompt": "If two lines have the same slope but different y-intercepts, how many times will they intersect? What does that tell us about the system?",
       "lessonId": "systems-intro"
     },
@@ -47,123 +51,418 @@
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "systems-of-equations-graphing",
-      "title": "I-Do: Solving by Graphing and Substitution",
+      "title": "I-Do: Introduction to Systems",
       "examples": [
         {
-          "problem": "Solve the system by graphing:\ny = 2x + 1\ny = -x + 7",
-          "solution": "**Step 1: Graph both lines.**\n\nLine 1: y = 2x + 1 → slope = 2, y-intercept = (0, 1)\nLine 2: y = -x + 7 → slope = -1, y-intercept = (0, 7)\n\nPlot both lines on the same coordinate plane.\n\n**Step 2: Find the intersection point.**\nThe lines cross at **(2, 5)**.\n\n**Step 3: Verify in BOTH equations.**\nEquation 1: y = 2x + 1 → 5 = 2(2) + 1 = 5 ✓\nEquation 2: y = -x + 7 → 5 = -(2) + 7 = 5 ✓\n\n**Solution: (2, 5)**\n\nAlgebraic shortcut: since both equations equal y, set them equal: 2x + 1 = -x + 7 → 3x = 6 → x = 2 → y = 2(2) + 1 = 5."
+          "problem": "Determine whether (3, 1) is a solution to the system:\n2x + y = 7\nx - y = 2",
+          "solution": "Check equation 1: 2(3) + 1 = 6 + 1 = 7 ✓\nCheck equation 2: 3 - 1 = 2 ✓\n\nBoth equations are true, so **(3, 1) IS a solution** to the system.\n\nThe point (3, 1) lies on both lines — it's where they intersect.",
+          "tip": "A solution to a system must satisfy ALL equations, not just one. Always check both."
         },
         {
-          "problem": "Solve by substitution:\ny = 3x\n2x + y = 10",
-          "solution": "**Step 1: Identify the variable already isolated.**\nThe first equation gives us y = 3x — y is already isolated!\n\n**Step 2: Substitute into the other equation.**\nReplace y in the second equation with 3x:\n2x + (3x) = 10\n5x = 10\nx = 2\n\n**Step 3: Back-substitute to find y.**\ny = 3x = 3(2) = 6\n\n**Step 4: Verify in BOTH original equations.**\nEquation 1: y = 3x → 6 = 3(2) = 6 ✓\nEquation 2: 2x + y = 10 → 2(2) + 6 = 10 ✓\n\n**Solution: (2, 6)**"
-        },
-        {
-          "problem": "Solve by substitution:\n3x + 2y = 16\nx - y = 2",
-          "solution": "**Step 1: Solve one equation for one variable.**\nThe second equation is easiest to rearrange:\nx - y = 2 → x = y + 2\n\n**Step 2: Substitute into the other equation.**\nReplace x in the first equation with (y + 2):\n3(y + 2) + 2y = 16\n3y + 6 + 2y = 16\n5y + 6 = 16\n5y = 10\ny = 2\n\n**Step 3: Back-substitute to find x.**\nx = y + 2 = 2 + 2 = 4\n\n**Step 4: Verify in BOTH original equations.**\nEquation 1: 3(4) + 2(2) = 12 + 4 = 16 ✓\nEquation 2: 4 - 2 = 2 ✓\n\n**Solution: (4, 2)**\n\nKey insight: choose the equation and variable that will be simplest to isolate—look for a coefficient of 1 or -1."
+          "problem": "Without solving, predict how many solutions each system has:\n(a) y = 2x + 1 and y = 2x - 3\n(b) y = 3x + 2 and y = -x + 6\n(c) y = 4x - 5 and 2y = 8x - 10",
+          "solution": "(a) Both lines have slope 2 but different y-intercepts (1 and -3) → **parallel lines → no solution**.\n\n(b) Slopes are 3 and -1 — different slopes → the lines must cross → **one solution**.\n\n(c) Divide the second equation by 2: y = 4x - 5. This is identical to the first equation → **same line → infinitely many solutions**.\n\nKey pattern: compare slopes first. Different slopes = one solution. Same slope, different intercept = no solution. Same slope, same intercept = infinite solutions.",
+          "tip": "Convert both equations to slope-intercept form to quickly compare slopes and intercepts."
         }
       ],
-      "initialPrompt": "In the third example, why did we choose to solve the second equation for x instead of solving the first equation for x or y?",
+      "initialPrompt": "For system (a) above, the slopes are the same. What does that mean about the lines on a graph?",
+      "lessonId": "systems-intro"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-of-equations-graphing",
+      "title": "We-Do: Introduction to Systems",
+      "problems": [
+        {
+          "id": "se-L1-w1",
+          "question": "Determine whether (2, -1) is a solution to the system: x + 3y = -1 and 2x - y = 5.",
+          "answer": "Check eq 1: 2 + 3(-1) = 2 - 3 = -1 ✓. Check eq 2: 2(2) - (-1) = 4 + 1 = 5 ✓. Yes, (2, -1) is a solution.",
+          "hints": [
+            "Substitute x = 2 and y = -1 into each equation.",
+            "Equation 1: 2 + 3(-1) = 2 - 3 = -1. Is that equal to -1? Yes. Equation 2: 2(2) - (-1) = 5. Is that equal to 5? Yes."
+          ]
+        },
+        {
+          "id": "se-L1-w2",
+          "question": "Without solving, predict how many solutions: y = -3x + 4 and y = -3x + 9. Classify the system.",
+          "answer": "No solution. Both have slope -3 but different y-intercepts (4 and 9) → parallel lines → inconsistent system.",
+          "hints": [
+            "Compare the slopes: both are -3. Compare the y-intercepts: 4 and 9 — different.",
+            "Same slope, different y-intercept means parallel lines that never cross → no solution."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what do you need to check to verify a solution?",
+      "lessonId": "systems-intro"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-of-equations-graphing",
+      "title": "You-Do: Introduction to Systems",
+      "problems": [
+        {
+          "id": "se-L1-y1",
+          "question": "Determine whether (4, 3) is a solution to the system: x - y = 1 and 2x + y = 10.",
+          "answer": "Eq 1: 4 - 3 = 1 ✓. Eq 2: 2(4) + 3 = 11 ≠ 10 ✗. No, (4, 3) is NOT a solution.",
+          "skill": "systems-of-equations-graphing",
+          "hints": ["Check both equations. If even ONE fails, it's not a solution."]
+        },
+        {
+          "id": "se-L1-y2",
+          "question": "Without solving, predict how many solutions: y = 5x - 2 and y = -x + 10. Explain.",
+          "answer": "One solution. The slopes are different (5 and -1), so the lines must intersect at exactly one point.",
+          "skill": "systems-of-equations-graphing",
+          "hints": ["Different slopes mean the lines are NOT parallel — they will cross at one point."]
+        }
+      ],
+      "attemptsRequired": 2,
       "lessonId": "systems-intro"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "systems-of-equations-elimination",
-      "title": "The Elimination Method",
-      "content": "The **elimination method** (also called the addition method) works by adding or subtracting the two equations to eliminate one variable.\n\n**Core idea:** If one variable has the same coefficient (or opposite coefficients) in both equations, you can add or subtract the equations to cancel that variable out.\n\n**Steps:**\n1. **Align** both equations in standard form (Ax + By = C)\n2. **Look** for a variable with the same or opposite coefficients\n3. **Add** equations (if coefficients are opposites) or **subtract** (if coefficients are the same) to eliminate one variable\n4. **Solve** the resulting one-variable equation\n5. **Back-substitute** to find the other variable\n6. **Verify** in both original equations\n\n**If coefficients don't match:** Multiply one or both equations by constants to CREATE matching or opposite coefficients before adding/subtracting.\n\n**Special cases:**\n- If both variables cancel and you get a **false statement** (like 0 = 5) → **no solution** (parallel lines)\n- If both variables cancel and you get a **true statement** (like 0 = 0) → **infinitely many solutions** (same line)",
-      "initialPrompt": "Why does adding two true equations together always give another true equation? Think about what = means.",
+      "skill": "systems-of-equations-graphing",
+      "title": "Solving Systems by Graphing",
+      "content": "The most visual way to solve a system is **graphing** — plot both lines on the same coordinate plane and find where they cross.\n\n**Steps to solve by graphing:**\n1. Write both equations in slope-intercept form (y = mx + b)\n2. Graph Line 1: plot the y-intercept, use the slope to find more points\n3. Graph Line 2: same process on the same axes\n4. Read the intersection point (x, y)\n5. Verify by substituting into BOTH equations\n\n**Strengths of graphing:**\n- You can SEE the solution and understand it visually\n- You can see whether lines are parallel or the same line\n- Great for estimating solutions\n\n**Limitations:**\n- Hard to read non-integer solutions from a graph (e.g., x = 2/3)\n- Time-consuming for precise answers\n\n**Algebraic shortcut:** If both equations are in y = form, you can set them equal: if y = 2x + 1 and y = -x + 7, then 2x + 1 = -x + 7. This finds the x-coordinate of the intersection without drawing anything.",
+      "initialPrompt": "If you graph y = x + 2 and y = -x + 6, what is the y-intercept of each line? Where would you start plotting?",
+      "lessonId": "systems-graphing"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "systems-of-equations-graphing",
+      "title": "I-Do: Solving by Graphing",
+      "examples": [
+        {
+          "problem": "Solve the system by graphing:\ny = 2x + 1\ny = -x + 7",
+          "solution": "**Step 1: Graph Line 1:** y = 2x + 1\n- y-intercept: (0, 1). Slope: 2 (up 2, right 1).\n- Points: (0, 1), (1, 3), (2, 5)\n\n**Step 2: Graph Line 2:** y = -x + 7\n- y-intercept: (0, 7). Slope: -1 (down 1, right 1).\n- Points: (0, 7), (1, 6), (2, 5)\n\n**Step 3: Find the intersection.**\nBoth lines pass through **(2, 5)**.\n\n**Step 4: Verify.**\nEq 1: y = 2(2) + 1 = 5 ✓\nEq 2: y = -(2) + 7 = 5 ✓\n\n**Solution: (2, 5)**",
+          "tip": "Notice both tables of values gave (2, 5) — that's the intersection. You can also set the equations equal: 2x + 1 = -x + 7 → 3x = 6 → x = 2."
+        },
+        {
+          "problem": "Solve by graphing:\ny = (1/2)x + 1\ny = -(3/2)x + 5",
+          "solution": "**Graph Line 1:** y = (1/2)x + 1\n- y-intercept: (0, 1). Slope: 1/2 (up 1, right 2).\n- Points: (0, 1), (2, 2), (4, 3)\n\n**Graph Line 2:** y = -(3/2)x + 5\n- y-intercept: (0, 5). Slope: -3/2 (down 3, right 2).\n- Points: (0, 5), (2, 2)\n\n**Intersection:** Both lines pass through **(2, 2)**.\n\n**Verify:**\nEq 1: (1/2)(2) + 1 = 1 + 1 = 2 ✓\nEq 2: -(3/2)(2) + 5 = -3 + 5 = 2 ✓\n\n**Solution: (2, 2)**",
+          "tip": "With fractional slopes, choose x-values that are multiples of the denominator to get clean points for plotting."
+        }
+      ],
+      "initialPrompt": "In the first example, how did we know to check x = 2? What if the intersection didn't fall on a grid point?",
+      "lessonId": "systems-graphing"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-of-equations-graphing",
+      "title": "We-Do: Solving by Graphing",
+      "problems": [
+        {
+          "id": "se-L2-w1",
+          "question": "Solve by graphing or by setting equations equal:\ny = x + 3\ny = -2x + 9",
+          "answer": "(2, 5). Set equal: x + 3 = -2x + 9 → 3x = 6 → x = 2, y = 5.",
+          "hints": [
+            "Both equations are solved for y — set them equal: x + 3 = -2x + 9.",
+            "Add 2x to both sides: 3x + 3 = 9. Subtract 3: 3x = 6. So x = 2.",
+            "Plug back in: y = 2 + 3 = 5. Verify in both equations."
+          ]
+        },
+        {
+          "id": "se-L2-w2",
+          "question": "Solve by graphing:\ny = -x + 4\ny = 2x - 2",
+          "answer": "(2, 2). Set equal: -x + 4 = 2x - 2 → 6 = 3x → x = 2, y = 2.",
+          "hints": [
+            "Set the y-expressions equal: -x + 4 = 2x - 2.",
+            "Add x to both sides: 4 = 3x - 2. Add 2: 6 = 3x. So x = 2, y = -2 + 4 = 2."
+          ]
+        }
+      ],
+      "initialPrompt": "Both equations are in y = form. What's the quickest way to find the intersection?",
+      "lessonId": "systems-graphing"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-of-equations-graphing",
+      "title": "You-Do: Solving by Graphing",
+      "problems": [
+        {
+          "id": "se-L2-y1",
+          "question": "Solve by graphing or setting equations equal:\ny = 3x - 4\ny = -x + 8",
+          "answer": "(3, 5). Set equal: 3x - 4 = -x + 8 → 4x = 12 → x = 3, y = 5.",
+          "skill": "systems-of-equations-graphing",
+          "hints": ["Set 3x - 4 = -x + 8 and solve for x."]
+        },
+        {
+          "id": "se-L2-y2",
+          "question": "Solve:\ny = (1/2)x + 1\ny = -x + 7",
+          "answer": "(4, 3). Set equal: (1/2)x + 1 = -x + 7 → (3/2)x = 6 → x = 4, y = 3.",
+          "skill": "systems-of-equations-graphing",
+          "hints": ["Set (1/2)x + 1 = -x + 7. Add x to both sides: (3/2)x + 1 = 7. Subtract 1: (3/2)x = 6. Multiply by 2/3: x = 4."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-graphing"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "systems-of-equations-substitution",
+      "title": "The Substitution Method",
+      "content": "**Substitution** is an algebraic method for solving systems. The idea: if one equation tells you what a variable equals, plug that expression into the other equation.\n\n**Steps:**\n1. **Isolate** one variable in one equation (look for a coefficient of 1 or -1 — it's already nearly solved)\n2. **Substitute** that expression into the other equation\n3. **Solve** the resulting one-variable equation\n4. **Back-substitute** to find the other variable\n5. **Verify** in BOTH original equations\n\n**When to use substitution:**\n- One equation is already solved for a variable (y = ... or x = ...)\n- One variable has a coefficient of 1 or -1 (easy to isolate)\n\n**Example preview:**\nIf y = 3x and 2x + y = 10:\n- y is already isolated as 3x\n- Replace y with 3x in the second equation: 2x + 3x = 10\n- Now it's a one-variable equation: 5x = 10, x = 2\n- Back-substitute: y = 3(2) = 6",
+      "initialPrompt": "In the system x + 2y = 10 and 3x - y = 5, which equation would be easiest to solve for a variable? Which variable?",
       "lessonId": "systems-substitution"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "skill": "systems-of-equations-elimination",
-      "title": "I-Do: Elimination Method and Special Cases",
+      "skill": "systems-of-equations-substitution",
+      "title": "I-Do: Solving by Substitution",
       "examples": [
         {
-          "problem": "Solve by elimination:\n2x + 3y = 12\n2x - y = 4",
-          "solution": "**Step 1: Notice both equations have 2x.**\nThe x-coefficients are the same (both 2x), so we subtract to eliminate x.\n\n**Step 2: Subtract the second equation from the first.**\n  (2x + 3y) - (2x - y) = 12 - 4\n  2x + 3y - 2x + y = 8\n  4y = 8\n  y = 2\n\n**Step 3: Back-substitute into either original equation.**\n2x - y = 4 → 2x - 2 = 4 → 2x = 6 → x = 3\n\n**Step 4: Verify in BOTH equations.**\nEquation 1: 2(3) + 3(2) = 6 + 6 = 12 ✓\nEquation 2: 2(3) - 2 = 6 - 2 = 4 ✓\n\n**Solution: (3, 2)**"
+          "problem": "Solve by substitution:\ny = 3x\n2x + y = 10",
+          "solution": "**Step 1:** y is already isolated: y = 3x.\n\n**Step 2:** Substitute into the second equation.\n2x + (3x) = 10\n5x = 10\nx = 2\n\n**Step 3:** Back-substitute.\ny = 3(2) = 6\n\n**Step 4:** Verify.\nEq 1: 6 = 3(2) = 6 ✓\nEq 2: 2(2) + 6 = 10 ✓\n\n**Solution: (2, 6)**",
+          "tip": "When y is already isolated, substitution takes just seconds. Always look for the easy win."
         },
         {
-          "problem": "Solve by elimination:\n3x + 2y = 11\n5x - 3y = 7",
-          "solution": "**Step 1: No matching coefficients — we need to create them.**\nTo eliminate y, make the y-coefficients opposites:\nMultiply equation 1 by 3: 9x + 6y = 33\nMultiply equation 2 by 2: 10x - 6y = 14\n\n**Step 2: Add the equations (6y and -6y cancel).**\n  9x + 6y + 10x - 6y = 33 + 14\n  19x = 47\n  x = 47/19\n\nHmm, that's not clean. Let's try eliminating x instead:\nMultiply equation 1 by 5: 15x + 10y = 55\nMultiply equation 2 by 3: 15x - 9y = 21\n\n**Step 2 (revised): Subtract to eliminate x.**\n  (15x + 10y) - (15x - 9y) = 55 - 21\n  19y = 34\n  y = 34/19\n\nActually, let's reconsider the original system with cleaner numbers:\n3x + 2y = 11\n5x - 3y = 7\n\nMultiply equation 1 by 3: 9x + 6y = 33\nMultiply equation 2 by 2: 10x - 6y = 14\nAdd: 19x = 47 → x = 47/19. This system has fractional answers.\n\n**Let's use a cleaner example:**\n4x + 3y = 18\n2x - 5y = -8\n\nMultiply equation 2 by 2: 4x - 10y = -16\nSubtract from equation 1: (4x + 3y) - (4x - 10y) = 18 - (-16)\n13y = 34 → still fractional.\n\n**Better approach — use the original system and carry through:**\n3x + 2y = 11 ... multiply by 3 → 9x + 6y = 33\n5x - 3y = 7  ... multiply by 2 → 10x - 6y = 14\n\nAdd: 19x = 47 → x = 47/19 ≈ 2.47\n\nLet's instead present a clean system:\n**Revised problem: Solve 3x + 4y = 10 and 5x + 4y = 14.**\n\nBoth have 4y → subtract:\n(5x + 4y) - (3x + 4y) = 14 - 10\n2x = 4 → x = 2\nBack-substitute: 3(2) + 4y = 10 → 4y = 4 → y = 1\nVerify: 3(2)+4(1)=10 ✓ and 5(2)+4(1)=14 ✓\n\n**Solution: (2, 1)**\n\nThe takeaway: when coefficients don't match, multiply one or both equations to CREATE matching coefficients, then add or subtract."
-        },
-        {
-          "problem": "Solve by elimination:\n2x + 4y = 10\nx + 2y = 8",
-          "solution": "**Step 1: Make coefficients match.**\nMultiply equation 2 by 2: 2x + 4y = 16\n\n**Step 2: Subtract.**\n  (2x + 4y) - (2x + 4y) = 10 - 16\n  0 = -6\n\n**This is a FALSE statement!** Both variables canceled out and we got 0 = -6, which is impossible.\n\n**What this means:**\nThe original equations are:\n  y = -½x + 5/2\n  y = -½x + 4\n\nSame slope (-½), different y-intercepts → **parallel lines** that never intersect.\n\n**No solution.** The system is **inconsistent.**\n\nRecognition shortcut: if you multiply equation 2 by 2, the left sides become identical (2x + 4y) but the right sides differ (10 ≠ 16). This signals parallel lines immediately."
+          "problem": "Solve by substitution:\n3x + 2y = 16\nx - y = 2",
+          "solution": "**Step 1:** Solve the second equation for x (coefficient of x is 1 — easy!).\nx - y = 2 → x = y + 2\n\n**Step 2:** Substitute x = y + 2 into the first equation.\n3(y + 2) + 2y = 16\n3y + 6 + 2y = 16\n5y + 6 = 16\n5y = 10\ny = 2\n\n**Step 3:** Back-substitute.\nx = y + 2 = 2 + 2 = 4\n\n**Step 4:** Verify.\nEq 1: 3(4) + 2(2) = 12 + 4 = 16 ✓\nEq 2: 4 - 2 = 2 ✓\n\n**Solution: (4, 2)**",
+          "tip": "Choose the equation and variable that's simplest to isolate — look for a coefficient of 1 or -1."
         }
       ],
-      "initialPrompt": "In the first example, we subtracted because the x-coefficients were the same. When would we add instead of subtract?",
+      "initialPrompt": "In the second example, why did we choose to solve the second equation for x instead of the first equation?",
       "lessonId": "systems-substitution"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "systems-of-equations-substitution",
-      "title": "We-Do: Graphing, Substitution, and Elimination Practice",
+      "title": "We-Do: Substitution",
       "problems": [
         {
-          "id": "se-wp1",
-          "question": "Solve by graphing or algebraically:\ny = x + 3\ny = -2x + 9",
-          "answer": "Set equal: x + 3 = -2x + 9 → 3x = 6 → x = 2, y = 5. Solution: (2, 5).",
-          "hints": [
-            "Both equations are solved for y — set them equal to each other.",
-            "x + 3 = -2x + 9. Add 2x to both sides: 3x + 3 = 9. Subtract 3: 3x = 6.",
-            "x = 2. Plug back in: y = 2 + 3 = 5. Verify in both equations."
-          ]
-        },
-        {
-          "id": "se-wp2",
+          "id": "se-L3-w1",
           "question": "Solve by substitution:\ny = 4x - 1\n3x + 2y = 12",
-          "answer": "Substitute y = 4x - 1: 3x + 2(4x - 1) = 12 → 3x + 8x - 2 = 12 → 11x = 14 → x = 14/11, y = 4(14/11) - 1 = 45/11. Solution: (14/11, 45/11).",
+          "answer": "Substitute: 3x + 2(4x - 1) = 12 → 3x + 8x - 2 = 12 → 11x = 14 → x = 14/11, y = 45/11. Solution: (14/11, 45/11).",
           "hints": [
-            "y is already isolated in the first equation — substitute 4x - 1 for y in the second equation.",
-            "3x + 2(4x - 1) = 12 → distribute the 2: 3x + 8x - 2 = 12.",
-            "Combine: 11x - 2 = 12 → 11x = 14 → x = 14/11. Then find y."
+            "y is already isolated: substitute 4x - 1 for y in the second equation.",
+            "3x + 2(4x - 1) = 12. Distribute: 3x + 8x - 2 = 12. Combine: 11x = 14.",
+            "x = 14/11. Back-substitute: y = 4(14/11) - 1 = 56/11 - 11/11 = 45/11."
           ]
         },
         {
-          "id": "se-wp3",
-          "question": "Solve by elimination:\nx + y = 7\nx - y = 3",
-          "answer": "Add equations: 2x = 10 → x = 5. Then 5 + y = 7 → y = 2. Solution: (5, 2).",
+          "id": "se-L3-w2",
+          "question": "Solve by substitution:\n2x + y = 9\nx - 3y = -1",
+          "answer": "From eq 2: x = 3y - 1. Substitute: 2(3y - 1) + y = 9 → 6y - 2 + y = 9 → 7y = 11 → y = 11/7, x = 26/7. Solution: (26/7, 11/7).",
           "hints": [
-            "Look at the y terms: +y and -y are already opposites!",
-            "Add the two equations together: the y terms cancel.",
-            "x + y + x - y = 7 + 3 → 2x = 10 → x = 5. Now find y."
+            "The second equation has x with coefficient 1 — solve for x: x = 3y - 1.",
+            "Substitute into eq 1: 2(3y - 1) + y = 9. Distribute: 6y - 2 + y = 9.",
+            "7y = 11 → y = 11/7. Then x = 3(11/7) - 1 = 33/7 - 7/7 = 26/7."
           ]
+        }
+      ],
+      "initialPrompt": "For the first problem, which variable is already isolated? What will you substitute?",
+      "lessonId": "systems-substitution"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-of-equations-substitution",
+      "title": "You-Do: Substitution",
+      "problems": [
+        {
+          "id": "se-L3-y1",
+          "question": "Solve by substitution:\nx = 2y + 1\n3x - 4y = 7",
+          "answer": "Substitute: 3(2y + 1) - 4y = 7 → 6y + 3 - 4y = 7 → 2y = 4 → y = 2, x = 5. Solution: (5, 2).",
+          "skill": "systems-of-equations-substitution",
+          "hints": ["x is already isolated. Plug 2y + 1 in for x in the second equation."]
         },
         {
-          "id": "se-wp4",
+          "id": "se-L3-y2",
+          "question": "Solve by substitution:\n5x + y = 13\n2x - 3y = -4",
+          "answer": "From eq 1: y = 13 - 5x. Substitute: 2x - 3(13 - 5x) = -4 → 2x - 39 + 15x = -4 → 17x = 35 → x = 35/17, y = 13 - 175/17 = 46/17. Solution: (35/17, 46/17).",
+          "skill": "systems-of-equations-substitution",
+          "hints": ["Isolate y in eq 1: y = 13 - 5x. Substitute into eq 2."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-substitution"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "systems-of-equations-elimination",
+      "title": "The Elimination Method",
+      "content": "The **elimination method** (also called the addition method) works by adding or subtracting the two equations to eliminate one variable.\n\n**Core idea:** If one variable has opposite coefficients in the two equations, adding the equations cancels that variable out.\n\n**Steps:**\n1. **Align** both equations in standard form (Ax + By = C)\n2. **Look** for a variable with opposite coefficients (like +3y and -3y)\n3. **Add** the equations to eliminate that variable\n4. **Solve** the resulting one-variable equation\n5. **Back-substitute** to find the other variable\n6. **Verify** in both original equations\n\n**If coefficients don't match:** Multiply one or both equations by constants to CREATE opposite coefficients before adding.\n\n**When to use elimination:**\n- Both equations are in standard form (Ax + By = C)\n- Coefficients are already opposites or easy to make opposite\n- Neither variable is easily isolated (substitution would be messy)",
+      "initialPrompt": "In the system x + y = 7 and x - y = 3, what happens if you add the two equations together? What cancels?",
+      "lessonId": "systems-elimination"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "systems-of-equations-elimination",
+      "title": "I-Do: Solving by Elimination",
+      "examples": [
+        {
+          "problem": "Solve by elimination:\nx + y = 7\nx - y = 3",
+          "solution": "**Step 1:** The y-coefficients are +1 and -1 — already opposites!\n\n**Step 2:** Add the equations.\n(x + y) + (x - y) = 7 + 3\n2x = 10\nx = 5\n\n**Step 3:** Back-substitute into either equation.\n5 + y = 7 → y = 2\n\n**Step 4:** Verify.\nEq 1: 5 + 2 = 7 ✓\nEq 2: 5 - 2 = 3 ✓\n\n**Solution: (5, 2)**",
+          "tip": "When coefficients are already opposite, just add. When they're the same, subtract instead."
+        },
+        {
+          "problem": "Solve by elimination:\n2x + 3y = 12\n4x - 3y = 6",
+          "solution": "**Step 1:** The y-coefficients are +3 and -3 — opposites!\n\n**Step 2:** Add the equations.\n(2x + 3y) + (4x - 3y) = 12 + 6\n6x = 18\nx = 3\n\n**Step 3:** Back-substitute.\n2(3) + 3y = 12 → 6 + 3y = 12 → 3y = 6 → y = 2\n\n**Step 4:** Verify.\nEq 1: 2(3) + 3(2) = 6 + 6 = 12 ✓\nEq 2: 4(3) - 3(2) = 12 - 6 = 6 ✓\n\n**Solution: (3, 2)**",
+          "tip": "Scan for opposites first: +3y and -3y cancel perfectly when you add."
+        },
+        {
+          "problem": "Solve by elimination:\n3x + 4y = 10\n5x + 4y = 14",
+          "solution": "**Step 1:** Both y-coefficients are +4 (the same, not opposite).\n\n**Step 2:** Subtract the first equation from the second.\n(5x + 4y) - (3x + 4y) = 14 - 10\n2x = 4\nx = 2\n\n**Step 3:** Back-substitute.\n3(2) + 4y = 10 → 6 + 4y = 10 → 4y = 4 → y = 1\n\n**Step 4:** Verify.\nEq 1: 3(2) + 4(1) = 10 ✓\nEq 2: 5(2) + 4(1) = 14 ✓\n\n**Solution: (2, 1)**",
+          "tip": "Same coefficients → subtract. Opposite coefficients → add. The goal is always to cancel one variable."
+        }
+      ],
+      "initialPrompt": "In the third example, we subtracted because the y-coefficients were the same. What if one equation had +4y and the other had +5y — what would you do?",
+      "lessonId": "systems-elimination"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-of-equations-elimination",
+      "title": "We-Do: Elimination",
+      "problems": [
+        {
+          "id": "se-L4-w1",
           "question": "Solve by elimination:\n4x + 3y = 25\n2x + 3y = 17",
-          "answer": "Subtract: 2x = 8 → x = 4. Then 2(4) + 3y = 17 → 3y = 9 → y = 3. Solution: (4, 3).",
+          "answer": "Subtract: (4x + 3y) - (2x + 3y) = 25 - 17 → 2x = 8 → x = 4. Then 2(4) + 3y = 17 → 3y = 9 → y = 3. Solution: (4, 3).",
           "hints": [
-            "Both equations have 3y — the y-coefficients are the same.",
+            "Both equations have +3y — the coefficients are the same.",
             "Subtract the second equation from the first to eliminate y.",
             "(4x + 3y) - (2x + 3y) = 25 - 17 → 2x = 8 → x = 4."
           ]
         },
         {
-          "id": "se-wp5",
-          "question": "Solve the system and classify it:\n6x - 3y = 12\n-2x + y = -4",
-          "answer": "Multiply equation 2 by 3: -6x + 3y = -12. Add to equation 1: 0 = 0. True statement → infinitely many solutions (same line). The system is consistent and dependent.",
+          "id": "se-L4-w2",
+          "question": "Solve by elimination (you'll need to multiply first):\n2x + 5y = 1\n3x - 2y = -8",
+          "answer": "Multiply eq 1 by 2 and eq 2 by 5: 4x + 10y = 2 and 15x - 10y = -40. Add: 19x = -38 → x = -2. Then 2(-2) + 5y = 1 → 5y = 5 → y = 1. Solution: (-2, 1).",
           "hints": [
-            "Multiply the second equation by 3 to match the coefficients of the first.",
-            "-2x + y = -4 becomes -6x + 3y = -12. Now add to 6x - 3y = 12.",
-            "Everything cancels: 0 = 0. This is always true — what does that mean about the system?"
+            "No coefficients match yet. To eliminate y: multiply eq 1 by 2 and eq 2 by 5 to get +10y and -10y.",
+            "4x + 10y = 2 and 15x - 10y = -40. Add them: 19x = -38.",
+            "x = -2. Back-substitute: 2(-2) + 5y = 1 → 5y = 5 → y = 1."
           ]
         }
       ],
-      "initialPrompt": "Let's practice all three methods. For the first problem, both equations are already solved for y. What's the quickest way to find where they intersect?",
-      "lessonId": "systems-graphing"
+      "initialPrompt": "For the first problem, what are the y-coefficients? Are they the same or opposite? Should you add or subtract?",
+      "lessonId": "systems-elimination"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-of-equations-elimination",
+      "title": "You-Do: Elimination",
+      "problems": [
+        {
+          "id": "se-L4-y1",
+          "question": "Solve by elimination:\n3x + y = 11\n5x + y = 15",
+          "answer": "Subtract: 2x = 4 → x = 2. Then 3(2) + y = 11 → y = 5. Solution: (2, 5).",
+          "skill": "systems-of-equations-elimination",
+          "hints": ["Both have +y. Subtract the first from the second to eliminate y."]
+        },
+        {
+          "id": "se-L4-y2",
+          "question": "Solve by elimination:\n3x + 2y = 7\n5x - 3y = 1",
+          "answer": "Multiply eq 1 by 3 and eq 2 by 2: 9x + 6y = 21 and 10x - 6y = 2. Add: 19x = 23 → x = 23/19. Then 3(23/19) + 2y = 7 → 2y = 7 - 69/19 = 64/19 → y = 32/19. Solution: (23/19, 32/19).",
+          "skill": "systems-of-equations-elimination",
+          "hints": ["Multiply eq 1 by 3 and eq 2 by 2 to get +6y and -6y. Then add."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-elimination"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "systems-special-cases",
+      "title": "Special Cases: No Solution and Infinite Solutions",
+      "content": "Not every system has exactly one solution. When you solve and **both variables cancel**, the result tells you what kind of system you have:\n\n**No Solution (Inconsistent):**\nBoth variables cancel and you get a **false statement** like 0 = 5.\n- Graphically: the lines are **parallel** (same slope, different intercepts)\n- The system has no point that satisfies both equations\n\n**Infinitely Many Solutions (Consistent & Dependent):**\nBoth variables cancel and you get a **true statement** like 0 = 0.\n- Graphically: the lines are the **same line** (one is a multiple of the other)\n- Every point on the line is a solution\n\n**How to recognize early:**\n- If one equation is a constant multiple of the other → same line → infinite solutions\n- If the left sides are multiples but the right sides aren't → parallel → no solution\n\nExample: 2x + 4y = 10 and x + 2y = 5. Multiply the second by 2: you get 2x + 4y = 10 — identical to the first. Same line → infinitely many solutions.",
+      "initialPrompt": "If you get 0 = -6 when solving a system, what does that tell you about the two lines? How many solutions are there?",
+      "lessonId": "systems-special-cases"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "systems-special-cases",
+      "title": "I-Do: Special Cases",
+      "examples": [
+        {
+          "problem": "Solve and classify:\n2x + 4y = 10\nx + 2y = 8",
+          "solution": "**Step 1:** Multiply equation 2 by 2: 2x + 4y = 16.\n\n**Step 2:** Subtract from equation 1.\n(2x + 4y) - (2x + 4y) = 10 - 16\n0 = -6\n\n**This is FALSE.** Both variables canceled and we got an impossibility.\n\n**What happened graphically?**\nEq 1: y = -(1/2)x + 5/2 → slope = -1/2\nEq 2: y = -(1/2)x + 4 → slope = -1/2\nSame slope, different y-intercepts → **parallel lines.**\n\n**No solution. The system is inconsistent.**",
+          "tip": "If multiplying one equation makes the left side match but the right side doesn't, the lines are parallel."
+        },
+        {
+          "problem": "Solve and classify:\n6x - 3y = 12\n-2x + y = -4",
+          "solution": "**Step 1:** Multiply equation 2 by 3: -6x + 3y = -12.\n\n**Step 2:** Add to equation 1.\n(6x - 3y) + (-6x + 3y) = 12 + (-12)\n0 = 0\n\n**This is TRUE.** Both variables canceled and we got a tautology.\n\n**What happened graphically?**\nEq 1: y = 2x - 4\nEq 2: y = 2x - 4\nThey're the **same line!**\n\n**Infinitely many solutions. The system is consistent and dependent.**\n\nEvery point on y = 2x - 4 is a solution: (0, -4), (2, 0), (3, 2), etc.",
+          "tip": "If one equation is a constant multiple of the other, they describe the same line."
+        }
+      ],
+      "initialPrompt": "In the first example, what's the relationship between the two equations? Can you see why they're parallel just by looking at them?",
+      "lessonId": "systems-special-cases"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-special-cases",
+      "title": "We-Do: Special Cases",
+      "problems": [
+        {
+          "id": "se-L5-w1",
+          "question": "Solve and classify:\n3x + y = 5\n6x + 2y = 7",
+          "answer": "Multiply eq 1 by 2: 6x + 2y = 10. Compare with eq 2: 6x + 2y = 7. Subtract: 0 = 3. False → no solution, inconsistent (parallel lines).",
+          "hints": [
+            "Multiply the first equation by 2. What do you get on the left side?",
+            "Left sides are identical (6x + 2y) but right sides differ (10 ≠ 7). Subtract: 0 = 3.",
+            "False statement means parallel lines → no solution."
+          ]
+        },
+        {
+          "id": "se-L5-w2",
+          "question": "Solve and classify:\n4x - 2y = 6\n-6x + 3y = -9",
+          "answer": "Multiply eq 1 by 3 and eq 2 by 2: 12x - 6y = 18 and -12x + 6y = -18. Add: 0 = 0. True → infinitely many solutions, consistent and dependent.",
+          "hints": [
+            "Try elimination: multiply eq 1 by 3 → 12x - 6y = 18. Multiply eq 2 by 2 → -12x + 6y = -18.",
+            "Add: 0 = 0. True statement — what does that mean?",
+            "Both equations simplify to y = 2x - 3. Same line → infinitely many solutions."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, try multiplying equation 1 by 2. What do you notice when you compare the result to equation 2?",
+      "lessonId": "systems-special-cases"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-special-cases",
+      "title": "You-Do: Special Cases",
+      "problems": [
+        {
+          "id": "se-L5-y1",
+          "question": "Solve and classify:\n5x - 10y = 15\n-x + 2y = -3",
+          "answer": "Multiply eq 2 by 5: -5x + 10y = -15. Add to eq 1: 0 = 0. True → infinitely many solutions (both simplify to x - 2y = 3).",
+          "skill": "systems-special-cases",
+          "hints": ["Multiply eq 2 by 5 and add to eq 1. What result do you get?"]
+        },
+        {
+          "id": "se-L5-y2",
+          "question": "Solve and classify:\n2x + 3y = 8\n4x + 6y = 20",
+          "answer": "Multiply eq 1 by 2: 4x + 6y = 16. Compare to eq 2: 4x + 6y = 20. Subtract: 0 = -4. False → no solution, inconsistent.",
+          "skill": "systems-special-cases",
+          "hints": ["Multiply eq 1 by 2. Compare left and right sides to eq 2."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-special-cases"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "systems-word-problems",
       "title": "Setting Up Systems from Word Problems",
-      "content": "Many real-world situations involve two unknowns and two conditions — perfect for systems of equations!\n\n**Strategy for word problems:**\n1. **Define your variables** — clearly state what x and y represent (with units)\n2. **Write two equations** — each condition in the problem gives you one equation\n3. **Solve the system** — choose the most efficient method\n4. **Interpret and verify** — answer in context and check that it makes sense\n\n**Common word problem types:**\n- **Mixture/combination:** You combine two things with different rates/prices (e.g., mixing nuts at $5/lb and $8/lb)\n- **Cost comparison/break-even:** Two options with different fixed costs and per-unit costs (e.g., two phone plans)\n- **Distance-rate-time:** Two travelers or vehicles with related speeds/times\n- **Number relationships:** 'The sum of two numbers is __ and the difference is __'\n\n**Key tip:** Look for TWO different relationships between the same two unknowns. One equation usually describes a total or sum; the other describes a rate, difference, or ratio.",
-      "initialPrompt": "If a problem says 'You buy 5 apples and 3 oranges for $11,' what equation would you write? What would you need as a second equation to solve for the prices?",
-      "lessonId": "systems-elimination"
+      "content": "Many real-world situations involve two unknowns and two conditions — perfect for systems of equations!\n\n**Strategy for word problems:**\n1. **Define your variables** — clearly state what x and y represent (with units)\n2. **Write two equations** — each condition in the problem gives you one equation\n3. **Solve the system** — choose the most efficient method\n4. **Interpret and verify** — answer in context and check that it makes sense\n\n**Common word problem types:**\n- **Combination/total:** You buy items at different prices; you know the total number of items and total cost → two equations\n- **Cost comparison/break-even:** Two plans with different fixed and variable costs; find when they're equal\n- **Mixture:** Combine two solutions with different concentrations to get a target concentration\n- **Distance-rate-time:** Two travelers or a boat going upstream and downstream\n\n**Key tip:** Look for TWO different relationships between the same two unknowns. One equation usually describes a total or quantity; the other describes a value, cost, or rate.",
+      "initialPrompt": "If a problem says 'You buy 5 apples and 3 oranges for $11,' what equation would you write? What would you need as a second equation?",
+      "lessonId": "systems-word-problems"
     },
     {
       "type": "model",
@@ -173,192 +472,192 @@
       "examples": [
         {
           "problem": "A coffee shop sells small coffees for $3 and large coffees for $5. On Monday, they sold 80 coffees and made $340. How many of each size did they sell?",
-          "solution": "**Step 1: Define variables.**\nLet s = number of small coffees, L = number of large coffees.\n\n**Step 2: Write two equations.**\nTotal coffees: s + L = 80\nTotal revenue: 3s + 5L = 340\n\n**Step 3: Solve (substitution works well).**\nFrom equation 1: s = 80 - L\nSubstitute into equation 2:\n3(80 - L) + 5L = 340\n240 - 3L + 5L = 340\n2L = 100\nL = 50\n\nBack-substitute: s = 80 - 50 = 30\n\n**Step 4: Verify and interpret.**\nTotal coffees: 30 + 50 = 80 ✓\nTotal revenue: 3(30) + 5(50) = 90 + 250 = 340 ✓\n\n**Answer: 30 small coffees and 50 large coffees.**"
+          "solution": "**Step 1: Define variables.**\nLet s = small coffees, L = large coffees.\n\n**Step 2: Write two equations.**\nTotal coffees: s + L = 80\nTotal revenue: 3s + 5L = 340\n\n**Step 3: Solve (substitution).**\nFrom eq 1: s = 80 - L\n3(80 - L) + 5L = 340\n240 - 3L + 5L = 340\n2L = 100\nL = 50, s = 30\n\n**Step 4: Verify.**\n30 + 50 = 80 ✓\n3(30) + 5(50) = 90 + 250 = 340 ✓\n\n**Answer: 30 small and 50 large coffees.**",
+          "tip": "One equation counts items (s + L = 80). The other counts money (3s + 5L = 340). This 'quantity + value' pattern appears in many word problems."
         },
         {
-          "problem": "Two cell phone plans: Plan A charges $25/month plus $0.10 per text. Plan B charges $15/month plus $0.20 per text. After how many texts do the plans cost the same? Which plan is cheaper for 150 texts?",
-          "solution": "**Step 1: Define variables.**\nLet t = number of texts, C = total monthly cost.\n\n**Step 2: Write two equations (one for each plan).**\nPlan A: C = 25 + 0.10t\nPlan B: C = 15 + 0.20t\n\n**Step 3: Find the break-even point (set costs equal).**\n25 + 0.10t = 15 + 0.20t\n25 - 15 = 0.20t - 0.10t\n10 = 0.10t\nt = 100\n\nAt t = 100: C = 25 + 0.10(100) = $35\n\n**Step 4: Compare at 150 texts.**\nPlan A: 25 + 0.10(150) = 25 + 15 = $40\nPlan B: 15 + 0.20(150) = 15 + 30 = $45\n\n**Answer: The plans cost the same at 100 texts ($35 each). For 150 texts, Plan A is cheaper ($40 vs $45).**\n\nInterpretation: below 100 texts, Plan B is cheaper (lower base cost); above 100 texts, Plan A is cheaper (lower per-text rate)."
+          "problem": "Two cell phone plans: Plan A charges $25/month plus $0.10 per text. Plan B charges $15/month plus $0.20 per text. After how many texts do they cost the same?",
+          "solution": "**Step 1: Variables.**\nt = number of texts, C = monthly cost.\n\n**Step 2: Equations.**\nPlan A: C = 25 + 0.10t\nPlan B: C = 15 + 0.20t\n\n**Step 3: Set equal (break-even).**\n25 + 0.10t = 15 + 0.20t\n10 = 0.10t\nt = 100\n\nAt t = 100: C = 25 + 0.10(100) = $35.\n\n**Answer: At 100 texts, both plans cost $35.**\n\nBelow 100 texts → Plan B is cheaper. Above 100 texts → Plan A is cheaper.",
+          "tip": "Break-even problems: set the two cost expressions equal and solve for the variable."
         }
       ],
-      "initialPrompt": "In the coffee shop problem, why does the equation s + L = 80 represent the total number of coffees? What real-world fact gives us the second equation?",
-      "lessonId": "systems-elimination"
+      "initialPrompt": "In the coffee shop problem, why did we need TWO equations? Could we have solved with just the equation s + L = 80?",
+      "lessonId": "systems-word-problems"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "systems-word-problems",
-      "title": "We-Do: Word Problem Practice",
+      "title": "We-Do: Word Problems",
       "problems": [
         {
-          "id": "se-wp6",
-          "question": "A school fundraiser sells adult tickets for $8 and student tickets for $5. They sold 200 tickets total and raised $1,180. How many adult tickets and how many student tickets were sold?",
-          "answer": "Let a = adult, s = student. a + s = 200 and 8a + 5s = 1180. From eq 1: s = 200 - a. Substitute: 8a + 5(200 - a) = 1180 → 8a + 1000 - 5a = 1180 → 3a = 180 → a = 60. Then s = 140. Verify: 60+140=200 ✓ and 8(60)+5(140)=480+700=1180 ✓.",
+          "id": "se-L6-w1",
+          "question": "A school fundraiser sells adult tickets for $8 and student tickets for $5. They sold 200 tickets total and raised $1,180. How many of each were sold?",
+          "answer": "Let a = adult, s = student. a + s = 200 and 8a + 5s = 1180. From eq 1: s = 200 - a. Substitute: 8a + 5(200 - a) = 1180 → 3a = 180 → a = 60, s = 140.",
           "hints": [
             "Define variables: a = adult tickets, s = student tickets.",
-            "Two facts: total tickets = 200 (gives a + s = 200) and total money = $1,180 (gives 8a + 5s = 1180).",
-            "Solve for s from the first equation: s = 200 - a. Substitute into the second equation."
+            "Two facts: a + s = 200 (total tickets) and 8a + 5s = 1180 (total money).",
+            "From eq 1: s = 200 - a. Substitute into eq 2: 8a + 5(200 - a) = 1180."
           ]
         },
         {
-          "id": "se-wp7",
-          "question": "A chemist needs to mix a 40% acid solution with a 70% acid solution to get 60 liters of a 50% acid solution. How many liters of each should be used?",
-          "answer": "Let x = liters of 40% solution, y = liters of 70% solution. x + y = 60 and 0.40x + 0.70y = 0.50(60) = 30. From eq 1: x = 60 - y. Substitute: 0.40(60 - y) + 0.70y = 30 → 24 - 0.40y + 0.70y = 30 → 0.30y = 6 → y = 20. Then x = 40. Verify: 40+20=60 ✓ and 0.40(40)+0.70(20)=16+14=30 ✓.",
+          "id": "se-L6-w2",
+          "question": "A chemist mixes a 40% acid solution with a 70% acid solution to make 60 liters of a 50% solution. How many liters of each?",
+          "answer": "Let x = liters of 40%, y = liters of 70%. x + y = 60 and 0.40x + 0.70y = 30. From eq 1: x = 60 - y. Substitute: 0.40(60 - y) + 0.70y = 30 → 0.30y = 6 → y = 20, x = 40.",
           "hints": [
-            "Define variables: x = liters of 40% solution, y = liters of 70% solution.",
+            "Variables: x = liters of 40%, y = liters of 70%.",
             "Total volume: x + y = 60. Total acid: 0.40x + 0.70y = 0.50 × 60 = 30.",
-            "From x + y = 60, get x = 60 - y. Substitute into the acid equation."
-          ]
-        },
-        {
-          "id": "se-wp8",
-          "question": "The sum of two numbers is 52. The larger number is 8 more than twice the smaller number. Find both numbers.",
-          "answer": "Let s = smaller number, L = larger number. s + L = 52 and L = 2s + 8. Substitute: s + (2s + 8) = 52 → 3s + 8 = 52 → 3s = 44 → s = 44/3. Hmm, let's recheck: 3s = 44 → s = 44/3 ≈ 14.67. Actually using whole numbers: s + L = 52 and L = 2s + 8, so s + 2s + 8 = 52 → 3s = 44 → s = 44/3. The problem works with s = 44/3 and L = 52 - 44/3 = 112/3. Verify: 44/3 + 112/3 = 156/3 = 52 ✓ and 112/3 = 2(44/3) + 8 = 88/3 + 24/3 = 112/3 ✓. Alternatively, express as decimals: s ≈ 14.67, L ≈ 37.33.",
-          "hints": [
-            "Define variables: let s = smaller number, L = larger number.",
-            "Two relationships: s + L = 52 and L = 2s + 8.",
-            "Substitute the second equation into the first: s + (2s + 8) = 52."
+            "Substitute x = 60 - y into the acid equation."
           ]
         }
       ],
-      "initialPrompt": "For the ticket problem, start by defining your variables. What two pieces of information does the problem give you? Each one becomes an equation.",
-      "lessonId": "systems-elimination"
+      "initialPrompt": "For the ticket problem, what are the two pieces of information that give you two equations?",
+      "lessonId": "systems-word-problems"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "You-Do: Independent Practice — All Methods",
+      "skill": "systems-word-problems",
+      "title": "You-Do: Word Problems",
       "problems": [
         {
-          "id": "se-yp1",
-          "question": "Solve by graphing or setting equations equal:\ny = 3x - 4\ny = -x + 8",
-          "answer": "3x - 4 = -x + 8 → 4x = 12 → x = 3, y = 5. Solution: (3, 5).",
-          "skill": "systems-of-equations-graphing",
-          "hints": [
-            "Set the two expressions for y equal to each other and solve for x."
-          ]
-        },
-        {
-          "id": "se-yp2",
-          "question": "Solve by substitution:\nx = 2y + 1\n3x - 4y = 7",
-          "answer": "Substitute: 3(2y + 1) - 4y = 7 → 6y + 3 - 4y = 7 → 2y = 4 → y = 2, x = 5. Solution: (5, 2).",
-          "skill": "systems-of-equations-substitution",
-          "hints": [
-            "x is already isolated in the first equation — plug 2y + 1 into the second equation for x."
-          ]
-        },
-        {
-          "id": "se-yp3",
-          "question": "Solve by elimination:\n3x + y = 11\n5x + y = 15",
-          "answer": "Subtract: (5x + y) - (3x + y) = 15 - 11 → 2x = 4 → x = 2. Then 3(2) + y = 11 → y = 5. Solution: (2, 5).",
-          "skill": "systems-of-equations-elimination",
-          "hints": [
-            "Both equations have the same y-coefficient (+1y). Subtract to eliminate y."
-          ]
-        },
-        {
-          "id": "se-yp4",
-          "question": "Solve by elimination:\n2x + 5y = 1\n3x - 2y = -8",
-          "answer": "Multiply eq 1 by 2 and eq 2 by 5: 4x + 10y = 2 and 15x - 10y = -40. Add: 19x = -38 → x = -2. Then 2(-2) + 5y = 1 → 5y = 5 → y = 1. Solution: (-2, 1).",
-          "skill": "systems-of-equations-elimination",
-          "hints": [
-            "Multiply to make the y-coefficients opposites: equation 1 by 2 and equation 2 by 5 gives +10y and -10y."
-          ]
-        },
-        {
-          "id": "se-yp5",
-          "question": "Classify the system and solve:\n4x - 2y = 6\n-6x + 3y = -9",
-          "answer": "Multiply eq 1 by 3 and eq 2 by 2: 12x - 6y = 18 and -12x + 6y = -18. Add: 0 = 0. True statement → infinitely many solutions. The system is consistent and dependent. (Both equations simplify to y = 2x - 3.)",
-          "skill": "systems-of-equations-elimination",
-          "hints": [
-            "Try elimination. If both variables cancel, check whether the result is true or false."
-          ]
-        },
-        {
-          "id": "se-yp6",
-          "question": "Classify the system and solve:\n3x + y = 5\n6x + 2y = 7",
-          "answer": "Multiply eq 1 by 2: 6x + 2y = 10. Compare with eq 2: 6x + 2y = 7. Subtract: 0 = 3. False statement → no solution. The lines are parallel (same slope, different intercepts). The system is inconsistent.",
-          "skill": "systems-of-equations-elimination",
-          "hints": [
-            "Multiply the first equation by 2. Compare the result to the second equation — what do you notice?"
-          ]
-        },
-        {
-          "id": "se-yp7",
+          "id": "se-L6-y1",
           "question": "A boat travels 30 miles downstream in 2 hours and 18 miles upstream in 3 hours. Find the speed of the boat in still water and the speed of the current.",
-          "answer": "Let b = boat speed, c = current speed. Downstream: b + c = 30/2 = 15. Upstream: b - c = 18/3 = 6. Add: 2b = 21 → b = 10.5 mph. Then c = 15 - 10.5 = 4.5 mph.",
+          "answer": "Let b = boat speed, c = current. Downstream: b + c = 15. Upstream: b - c = 6. Add: 2b = 21 → b = 10.5 mph. Then c = 4.5 mph.",
           "skill": "systems-word-problems",
+          "hints": ["Downstream speed = b + c = 30/2 = 15. Upstream speed = b - c = 18/3 = 6. Now solve the system."]
+        },
+        {
+          "id": "se-L6-y2",
+          "question": "A store sells notebooks for $4 and pens for $2. A customer buys 3 more pens than notebooks and spends $30 total. How many of each?",
+          "answer": "Let n = notebooks, p = pens. p = n + 3 and 4n + 2p = 30. Substitute: 4n + 2(n + 3) = 30 → 6n + 6 = 30 → n = 4, p = 7. Verify: 4(4) + 2(7) = 16 + 14 = 30 ✓.",
+          "skill": "systems-word-problems",
+          "hints": ["Two facts: p = n + 3 (relationship) and 4n + 2p = 30 (cost). Substitute the first into the second."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-word-problems"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "systems-of-inequalities",
+      "title": "Systems of Linear Inequalities",
+      "content": "A **system of inequalities** involves two or more inequalities graphed on the same coordinate plane. The solution is the **overlap region** — the set of all points that satisfy ALL inequalities at the same time.\n\n**How to graph a system of inequalities:**\n1. **Graph each inequality separately** (boundary line + shading)\n   - Solid line for ≤ or ≥; dashed line for < or >\n   - Use a test point to determine which side to shade\n2. **Identify the overlap** — the region where ALL shadings intersect\n3. **The solution region** is where all conditions are met simultaneously\n\n**Key differences from systems of equations:**\n- A system of equations usually has one point as a solution\n- A system of inequalities has a whole REGION of solutions (infinitely many points)\n\n**Real-world context:** Systems of inequalities define **feasible regions** — for example, budget constraints (can't spend more than $100) combined with quantity constraints (need at least 5 items) create a region of valid choices.",
+      "initialPrompt": "If you shade above the line for one inequality and below the line for another, where is the solution region?",
+      "lessonId": "systems-inequalities"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "systems-of-inequalities",
+      "title": "I-Do: Graphing Systems of Inequalities",
+      "examples": [
+        {
+          "problem": "Graph the system:\ny ≤ x + 3\ny > -2x + 1",
+          "solution": "**Inequality 1: y ≤ x + 3**\n- Boundary line: y = x + 3 → slope 1, y-intercept 3.\n- **Solid line** (≤ includes boundary).\n- Test (0, 0): 0 ≤ 0 + 3 → 0 ≤ 3 → TRUE. Shade the side containing (0, 0) — **below/right** of the line.\n\n**Inequality 2: y > -2x + 1**\n- Boundary line: y = -2x + 1 → slope -2, y-intercept 1.\n- **Dashed line** (strict >, boundary NOT included).\n- Test (0, 0): 0 > -2(0) + 1 → 0 > 1 → FALSE. Shade the side NOT containing (0, 0) — **above/right** of the line.\n\n**Solution region:** The overlapping area where both shadings meet. This is the region that is simultaneously below y = x + 3 AND above y = -2x + 1.\n\nAny point in this overlap is a solution. For example, (2, 3): 3 ≤ 2 + 3 = 5 ✓ and 3 > -2(2) + 1 = -3 ✓.",
+          "tip": "The solution region is always the INTERSECTION (overlap) of all shaded regions. If there's no overlap, the system has no solution."
+        },
+        {
+          "problem": "A student needs at least 3 hours of study (x ≥ 3) and at most 8 hours total of study and exercise combined (x + y ≤ 8, where y = exercise hours). Both x and y must be non-negative. Graph the feasible region.",
+          "solution": "**Four inequalities:**\n1. x ≥ 3 (vertical solid line at x = 3, shade right)\n2. x + y ≤ 8 → y ≤ -x + 8 (solid line, shade below)\n3. x ≥ 0 (y-axis, shade right)\n4. y ≥ 0 (x-axis, shade above)\n\nThe feasible region is the area satisfying ALL four: it's a triangle with vertices at (3, 0), (8, 0), and (3, 5).\n\nAny point inside this triangle represents a valid schedule. For example, (5, 2) means 5 hours studying and 2 hours exercising: 5 ≥ 3 ✓, 5 + 2 = 7 ≤ 8 ✓, both non-negative ✓.",
+          "tip": "In real-world problems, constraints like x ≥ 0 and y ≥ 0 keep us in the first quadrant, where quantities make sense."
+        }
+      ],
+      "initialPrompt": "In the first example, one boundary is solid and one is dashed. Why the difference?",
+      "lessonId": "systems-inequalities"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-of-inequalities",
+      "title": "We-Do: Systems of Inequalities",
+      "problems": [
+        {
+          "id": "se-L7-w1",
+          "question": "Graph the system and describe the solution region:\ny ≥ x - 1\ny < -x + 5",
+          "answer": "Line 1: y = x - 1 (solid, shade above). Line 2: y = -x + 5 (dashed, shade below). The solution region is the overlap — above y = x - 1 and below y = -x + 5. The lines intersect at (3, 2).",
           "hints": [
-            "Downstream speed = boat + current, upstream speed = boat - current. Use distance = rate × time to find each speed."
+            "Graph y = x - 1 as a solid line (≥). Test (0, 0): 0 ≥ -1 → TRUE. Shade the side with (0, 0) — above the line.",
+            "Graph y = -x + 5 as a dashed line (<). Test (0, 0): 0 < 5 → TRUE. Shade the side with (0, 0) — below the line.",
+            "The overlap of both shaded regions is the solution. The boundary lines meet at (3, 2)."
           ]
         },
         {
-          "id": "se-yp8",
-          "question": "A store sells notebooks for $4 and pens for $2. A customer buys 3 more pens than notebooks and spends $26 total. How many of each did they buy?",
-          "answer": "Let n = notebooks, p = pens. p = n + 3 and 4n + 2p = 26. Substitute: 4n + 2(n + 3) = 26 → 4n + 2n + 6 = 26 → 6n = 20 → n = 10/3. Since we need whole numbers, let's recheck: if p = n + 3 and 4n + 2p = 26, then 4n + 2n + 6 = 26, 6n = 20, n = 10/3. This gives non-integer results. Adjusting: actually 4n + 2(n+3) = 26 → 6n + 6 = 26 → 6n = 20 → n = 20/6 = 10/3. With the constraint of whole items: n = 3, p = 6 → 4(3)+2(6) = 12+12 = 24 ≠ 26. n = 4, p = 7 → 4(4)+2(7) = 16+14 = 30 ≠ 26. Revised problem: The customer spends $30 → 6n + 6 = 30 → n = 4, p = 7. Verify: 4(4)+2(7) = 16+14 = 30 ✓.",
-          "skill": "systems-word-problems",
+          "id": "se-L7-w2",
+          "question": "Is the point (1, 4) a solution to the system: y ≤ 2x + 3 and y > x + 1?",
+          "answer": "Check: 4 ≤ 2(1) + 3 = 5 → TRUE. And 4 > 1 + 1 = 2 → TRUE. Yes, (1, 4) is a solution.",
           "hints": [
-            "Define variables: n = notebooks, p = pens. Two equations: p = n + 3 (relationship) and 4n + 2p = total cost."
+            "Substitute (1, 4) into each inequality.",
+            "Inequality 1: 4 ≤ 2(1) + 3 = 5 → 4 ≤ 5 → TRUE. Inequality 2: 4 > 1 + 1 = 2 → 4 > 2 → TRUE. Both true!"
           ]
         }
       ],
-      "attemptsRequired": 3,
-      "skill": "systems-of-equations-graphing",
-      "lessonId": "systems-intro"
+      "initialPrompt": "For the first problem, start by graphing y = x - 1. Is the line solid or dashed? Which side do you shade?",
+      "lessonId": "systems-inequalities"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "skill": "systems-of-inequalities",
+      "title": "You-Do: Systems of Inequalities",
+      "problems": [
+        {
+          "id": "se-L7-y1",
+          "question": "Is the point (2, 3) a solution to the system: y ≤ -x + 6 and y ≥ 2x - 1?",
+          "answer": "Check: 3 ≤ -(2) + 6 = 4 → TRUE. And 3 ≥ 2(2) - 1 = 3 → TRUE (3 ≥ 3). Yes, (2, 3) is a solution.",
+          "skill": "systems-of-inequalities",
+          "hints": ["Substitute into both inequalities. Both must be true for the point to be a solution."]
+        },
+        {
+          "id": "se-L7-y2",
+          "question": "Graph the system: y > x and y ≤ -x + 4. Where do the boundary lines intersect? Name one point in the solution region.",
+          "answer": "Lines intersect at (2, 2). Solution region: above y = x (dashed) and below y = -x + 4 (solid). Example point in region: (1, 2) — 2 > 1 ✓ and 2 ≤ 3 ✓.",
+          "skill": "systems-of-inequalities",
+          "hints": ["Find intersection: x = -x + 4 → 2x = 4 → x = 2, y = 2. The overlap region is between the two lines, near (2, 2)."]
+        }
+      ],
+      "attemptsRequired": 2,
+      "lessonId": "systems-inequalities"
     }
   ],
   "answerKeys": {
-    "se-wp1": "(2, 5). Set y = x + 3 and y = -2x + 9 equal; x = 2, y = 5.",
-    "se-wp2": "(14/11, 45/11). Substitute y = 4x - 1 into 3x + 2y = 12.",
-    "se-wp3": "(5, 2). Add x + y = 7 and x - y = 3; 2x = 10.",
-    "se-wp4": "(4, 3). Subtract equations (same y-coeff); 2x = 8.",
-    "se-wp5": "Infinitely many solutions (0 = 0). Consistent and dependent — same line.",
-    "se-wp6": "60 adult, 140 student tickets.",
-    "se-wp7": "40 L of 40% solution, 20 L of 70% solution.",
-    "se-wp8": "s = 44/3 ≈ 14.67, L = 112/3 ≈ 37.33. Verify: sum = 52, L = 2s + 8.",
-    "se-yp1": "(3, 5).",
-    "se-yp2": "(5, 2).",
-    "se-yp3": "(2, 5).",
-    "se-yp4": "(-2, 1).",
-    "se-yp5": "Infinitely many solutions (consistent and dependent).",
-    "se-yp6": "No solution (inconsistent, parallel lines).",
-    "se-yp7": "Boat = 10.5 mph, current = 4.5 mph.",
-    "se-yp8": "4 notebooks, 7 pens ($30 total)."
+    "se-L1-w1": "(2, -1) is a solution. Eq 1: 2 + 3(-1) = -1 ✓. Eq 2: 2(2) - (-1) = 5 ✓.",
+    "se-L1-w2": "No solution. Parallel lines (same slope -3, different intercepts). Inconsistent.",
+    "se-L1-y1": "(4, 3) is NOT a solution. Eq 2 fails: 2(4) + 3 = 11 ≠ 10.",
+    "se-L1-y2": "One solution. Different slopes (5 and -1) → lines must intersect.",
+    "se-L2-w1": "(2, 5). Set equal: x + 3 = -2x + 9 → 3x = 6 → x = 2.",
+    "se-L2-w2": "(2, 2). Set equal: -x + 4 = 2x - 2 → 6 = 3x → x = 2.",
+    "se-L2-y1": "(3, 5). Set equal: 3x - 4 = -x + 8 → 4x = 12 → x = 3.",
+    "se-L2-y2": "(4, 3). Set equal: (1/2)x + 1 = -x + 7 → (3/2)x = 6 → x = 4.",
+    "se-L3-w1": "(14/11, 45/11). Substitute y = 4x - 1 into 3x + 2y = 12.",
+    "se-L3-w2": "(26/7, 11/7). Solve eq 2 for x, substitute into eq 1.",
+    "se-L3-y1": "(5, 2). Substitute x = 2y + 1 into eq 2.",
+    "se-L3-y2": "(35/17, 46/17). Isolate y in eq 1, substitute into eq 2.",
+    "se-L4-w1": "(4, 3). Subtract equations (same y-coeff 3y); 2x = 8.",
+    "se-L4-w2": "(-2, 1). Multiply to make opposite y-coeffs, then add.",
+    "se-L4-y1": "(2, 5). Subtract equations (same y-coeff); 2x = 4.",
+    "se-L4-y2": "(23/19, 32/19). Multiply to make opposite y-coeffs, then add.",
+    "se-L5-w1": "No solution (inconsistent). 0 = 3 is false → parallel lines.",
+    "se-L5-w2": "Infinitely many solutions (consistent, dependent). 0 = 0 → same line.",
+    "se-L5-y1": "Infinitely many solutions. 0 = 0 → same line (both simplify to x - 2y = 3).",
+    "se-L5-y2": "No solution. 0 = -4 is false → parallel lines.",
+    "se-L6-w1": "60 adult, 140 student tickets. a + s = 200, 8a + 5s = 1180.",
+    "se-L6-w2": "40 L of 40% solution, 20 L of 70% solution.",
+    "se-L6-y1": "Boat = 10.5 mph, current = 4.5 mph.",
+    "se-L6-y2": "4 notebooks, 7 pens. Verify: 4(4) + 2(7) = 30 ✓.",
+    "se-L7-w1": "Overlap above y = x - 1 (solid) and below y = -x + 5 (dashed). Lines meet at (3, 2).",
+    "se-L7-w2": "Yes. 4 ≤ 5 ✓ and 4 > 2 ✓.",
+    "se-L7-y1": "Yes. 3 ≤ 4 ✓ and 3 ≥ 3 ✓.",
+    "se-L7-y2": "Lines intersect at (2, 2). Example solution: (1, 2)."
   },
   "lessons": [
-    {
-      "lessonId": "systems-intro",
-      "title": "Introduction to Systems",
-      "order": 1
-    },
-    {
-      "lessonId": "systems-graphing",
-      "title": "Solving by Graphing",
-      "order": 2
-    },
-    {
-      "lessonId": "systems-substitution",
-      "title": "Solving by Substitution",
-      "order": 3
-    },
-    {
-      "lessonId": "systems-elimination",
-      "title": "Solving by Elimination",
-      "order": 4
-    },
-    {
-      "lessonId": "systems-special-cases",
-      "title": "Special Cases: No Solution and Infinite Solutions",
-      "order": 5
-    },
-    {
-      "lessonId": "systems-word-problems",
-      "title": "Systems Word Problems",
-      "order": 6
-    },
-    {
-      "lessonId": "systems-inequalities",
-      "title": "Systems of Inequalities",
-      "order": 7
-    }
+    { "lessonId": "systems-intro", "title": "Introduction to Systems", "order": 1 },
+    { "lessonId": "systems-graphing", "title": "Solving by Graphing", "order": 2 },
+    { "lessonId": "systems-substitution", "title": "Solving by Substitution", "order": 3 },
+    { "lessonId": "systems-elimination", "title": "Solving by Elimination", "order": 4 },
+    { "lessonId": "systems-special-cases", "title": "Special Cases: No Solution and Infinite Solutions", "order": 5 },
+    { "lessonId": "systems-word-problems", "title": "Systems Word Problems", "order": 6 },
+    { "lessonId": "systems-inequalities", "title": "Systems of Inequalities", "order": 7 }
   ]
 }
