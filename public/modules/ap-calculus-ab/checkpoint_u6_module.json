@@ -12,7 +12,7 @@
     "definite-integral-as-accumulation",
     "riemann-sums-approximation",
     "ftc-part-1",
-    "ftc-part-1",
+    "ftc-part-2",
     "antiderivatives-indefinite-integrals",
     "integral-properties-techniques"
   ],
@@ -99,7 +99,7 @@
     {
       "id": "cu6-frq",
       "question": "(FRQ) Let g(x) = \u222b\u2080\u02e3 f(t)dt, where f is the function graphed (piecewise linear: f(0)=2, f(2)=2, f(4)=-2, f(6)=0). (a) Find g(2), g(4), g(6). (b) Where does g have a maximum on [0,6]? (c) Where is g concave down?",
-      "answer": "(a) g(2) = area of rectangle 2\u00d72 = 4. g(4) = 4 + area of triangle (base 2, heights 2 to -2) = 4+0=4. Actually: \u222b\u2082\u2074 f(t)dt = triangle from (2,2) to (4,-2): area = (1/2)(2)(2)-(1/2)(2)(2) \u2014 more precisely, the region has area = 0 (positive and negative cancel if linear). g(4) = 4+0 = 4. g(6) = 4+\u222b\u2084\u2076 f(t)dt = 4+(-2)(2)/2 = 4+(-2) = 2. Wait \u2014 f goes from -2 to 0 linearly: area = (1/2)(2)(-2+0) = -2. g(6) = 4-2 = 2. (b) g'(x)=f(x). f(x)>0 on [0, ~3], f=0 at x\u22483. g' changes +\u2192- at x\u22483. Max at x\u22483. (c) g''=f'. f'<0 where f is decreasing: (2, 4). Concave down on (2, 4).",
+      "answer": "(a) g(2) = area of rectangle 2\u00d72 = 4. g(4) = g(2) + \u222b\u2082\u2074 f(t)dt. Since f is linear from (2,2) to (4,-2), the integral equals the net signed area: (1/2)(2)(2) + (1/2)(2)(-2) = 2 - 2 = 0. So g(4) = 4 + 0 = 4. g(6) = g(4) + \u222b\u2084\u2076 f(t)dt. Since f is linear from (4,-2) to (6,0), the integral = (1/2)(2)(-2+0) = -2. So g(6) = 4 - 2 = 2. (b) g'(x)=f(x). f(x)>0 on [0, ~3], f=0 at x\u22483. g' changes + to - at x\u22483 \u2192 max at x\u22483. (c) g''=f'. f'<0 where f is decreasing: (2, 4). Concave down on (2, 4).",
       "skill": "ftc-part-1",
       "difficulty": 6,
       "points": 12

@@ -98,7 +98,7 @@
         "AP interpretation format: 'At t = 3, the [quantity] is [increasing/decreasing] at a rate of |f'(3)| [units] per [unit of input].'",
         "f'(a) > 0 means f is increasing at x = a. f'(a) < 0 means f is decreasing at x = a. f'(a) = 0 means horizontal tangent."
       ],
-      "lessonId": "differentiability"
+      "lessonId": "derivative-definition"
     },
     {
       "type": "model",
@@ -119,7 +119,7 @@
           "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min."
         }
       ],
-      "lessonId": "differentiability"
+      "lessonId": "derivative-definition"
     },
     {
       "type": "explanation",
@@ -135,7 +135,7 @@
         "Vertical tangent: derivative goes to +∞ or -∞ from both sides (same sign). Example: f(x) = x^(1/3) at x = 0.",
         "Discontinuity: any type (removable, jump, infinite) automatically means not differentiable at that point."
       ],
-      "lessonId": "basic-rules"
+      "lessonId": "differentiability"
     },
     {
       "type": "model",
@@ -160,7 +160,7 @@
           "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there."
         }
       ],
-      "lessonId": "basic-rules"
+      "lessonId": "differentiability"
     },
     {
       "type": "explanation",
@@ -177,7 +177,7 @@
         "Quotient rule: d/dx[f/g] = [f'·g - f·g'] / g². Mnemonic: 'lo d-hi minus hi d-lo over lo-lo.'",
         "Rewrite before differentiating: convert radicals and fractions to power form (e.g., √x = x^(1/2), 1/x² = x⁻²) to use the power rule instead of the quotient rule when possible."
       ],
-      "lessonId": "common-derivatives"
+      "lessonId": "basic-rules"
     },
     {
       "type": "model",
@@ -202,7 +202,7 @@
           "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3))."
         }
       ],
-      "lessonId": "common-derivatives"
+      "lessonId": "basic-rules"
     },
     {
       "type": "explanation",
@@ -219,7 +219,7 @@
         "d/dx[aˣ] = aˣ · ln a. d/dx[log_a(x)] = 1/(x · ln a).",
         "These combine with product/quotient rules immediately. Chain rule (Unit 3) extends them to compositions."
       ],
-      "lessonId": "derivatives-graphs-tables"
+      "lessonId": "common-derivatives"
     },
     {
       "type": "model",
@@ -244,7 +244,7 @@
           "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
         }
       ],
-      "lessonId": "derivatives-graphs-tables"
+      "lessonId": "common-derivatives"
     },
     {
       "type": "guided_practice",
@@ -305,7 +305,7 @@
         "f' is undefined at corners, cusps, vertical tangents, and discontinuities of f.",
         "Steeper graph of f means |f'| is larger. Flat portions of f mean f' ≈ 0."
       ],
-      "lessonId": "common-derivatives"
+      "lessonId": "derivatives-graphs-tables"
     },
     {
       "type": "model",
@@ -326,7 +326,7 @@
           "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
         }
       ],
-      "lessonId": "common-derivatives"
+      "lessonId": "derivatives-graphs-tables"
     },
     {
       "type": "independent_practice",

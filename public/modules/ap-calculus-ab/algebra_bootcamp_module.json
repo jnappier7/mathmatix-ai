@@ -80,7 +80,7 @@
         "Key identities: e^(ln x) = x, ln(eˣ) = x, b^(log_b x) = x",
         "Rewriting for calculus: √x = x^(1/2), 1/x² = x⁻², ³√x = x^(1/3). Power rule requires this form."
       ],
-      "lessonId": "graph-reading-modeling"
+      "lessonId": "exponent-log-trig"
     },
     {
       "type": "model",
@@ -101,7 +101,7 @@
           "solution": "ln(x²) + ln(x+1) - ln((x-2)³) = ln(x²(x+1)/(x-2)³)."
         }
       ],
-      "lessonId": "graph-reading-modeling"
+      "lessonId": "exponent-log-trig"
     },
     {
       "type": "explanation",
@@ -254,7 +254,7 @@
     }
   ],
   "answerKeys": {
-    "fn-rational": "Hole at x=2 (y=4/3). VA: x=-1. HA: y=2.",
+    "fn-rational": "Hole at x=2 (y=4/3). VA: x=-1. HA: y=1.",
     "fn-piecewise": "f(2)=5. Both sides → 5. Continuous.",
     "fn-growth": "(a) 0 (b) 0 (c) 3/5.",
     "exp-rewrite": "(a) x⁻³ (b) x^(5/2) (c) x^(-1/2) (d) x^(5/2).",
