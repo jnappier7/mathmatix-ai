@@ -55,160 +55,38 @@ input, textarea, select, .math-field {
     }
 
     /* The one-time tour prompt popup is positioned fixed at bottom-right via
-       inline styles.  Push it above the input area so it doesn't overlap. */
+       inline styles.  Push it above the bottom nav so it doesn't overlap. */
     #tour-prompt > div {
-        bottom: 80px !important;
+        bottom: 72px !important;
     }
 }
 
-/* --- 2. MOBILE HEADER (<=768px) --- */
+/* --- 2. MOBILE HEADER (<=768px) — Ultra-minimal top bar ---
+   All navigation lives in the bottom nav bar now.
+   The header is just a slim brand strip with the centred logo. */
 
 @media (max-width: 768px) {
-    /* Hide desktop sidebar toggle on mobile */
+    /* Hide desktop sidebar toggle */
     #sidebar-toggle {
         display: none !important;
     }
 
-    /* Streamlined header: Glass-morphism, compact, sticky
-       !important on height/flex-wrap overrides style.css @media(max-width:600px) rules
-       that set height:auto, min-height:60px, flex-wrap:wrap */
+    /* Header hidden on mobile — watermark handles branding,
+       bottom nav handles navigation. */
     .landing-header {
-        min-height: 48px !important;
-        height: 48px !important;
-        padding: 4px 12px !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1100;
-        background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        width: 100%;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        gap: 4px;
-        flex-wrap: nowrap !important;
+        display: none !important;
     }
 
-    /* Show logo on mobile but make it compact */
-    .header-logo-container {
-        display: flex !important;
-        flex-shrink: 1;
-        min-width: 0;
-        align-items: center;
-        overflow: hidden;
-    }
+    /* All header children hidden via parent display:none */
 
-    .header-logo-container .main-logo-hero {
-        max-height: 28px;
-        width: auto;
-        max-width: 120px;
-        object-fit: contain;
-    }
-
-    /* Compact nav with scrollable icons
-       !important overrides style.css @media(max-width:600px) rules that set
-       flex-wrap:wrap, width:100%, justify-content:center */
-    .landing-nav {
-        gap: 1px;
-        display: flex !important;
-        align-items: center;
-        flex-wrap: nowrap !important;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        flex-shrink: 1;
-        min-width: 0;
-        width: auto !important;
-        justify-content: flex-end !important;
-    }
-    .landing-nav::-webkit-scrollbar { display: none; }
-
-    /* Compact nav buttons — constrained to fit header */
-    .landing-nav button,
-    .landing-nav .btn {
-        padding: 6px 10px !important;
-        font-size: 0.95rem;
-        min-width: 36px !important;
-        min-height: 36px !important;
-        max-height: 40px;
-        border-radius: 10px;
-        flex-shrink: 0;
-        background: transparent;
-        box-shadow: none;
-        color: var(--clr-text-dim);
-        transition: color 150ms ease, background 150ms ease, transform 100ms ease;
-    }
-
-    .landing-nav button:active,
-    .landing-nav .btn:active {
-        background: rgba(var(--clr-primary-teal-rgb), 0.1);
-        color: var(--clr-primary-teal);
-        transform: scale(0.90);
-    }
-
-    .landing-nav button i,
-    .landing-nav .btn i {
-        font-size: 1.1rem;
-    }
-
-    /* Override Section 15 accessibility min-height for header buttons
-       (44px min-height overflows the 48px header with padding) */
-    .landing-header button,
-    .landing-header .btn,
-    .landing-header .drawer-toggle-btn {
-        min-height: 36px !important;
-    }
-
-    /* Hide less important header buttons on mobile */
+    /* General hide helpers */
+    .mobile-hide,
+    .desktop-only,
     #open-resources-modal-btn,
     #restart-audio-btn,
     #pause-audio-btn,
     #open-settings-modal-btn {
         display: none !important;
-    }
-
-    /* Hide text labels on mobile */
-    .mobile-hide {
-        display: none !important;
-    }
-
-    /* Desktop-only elements */
-    .desktop-only {
-        display: none !important;
-    }
-
-    /* Enhanced Mobile Drawer Toggle Buttons
-       !important on display overrides .desktop-hide { display: block !important } */
-    .drawer-toggle-btn {
-        min-width: 36px;
-        min-height: 36px;
-        max-height: 40px;
-        padding: 6px 8px !important;
-        border-radius: 10px;
-        transition: all 150ms ease;
-        flex-shrink: 0;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        color: var(--clr-text);
-    }
-
-    .drawer-toggle-btn i {
-        font-size: 1.2rem;
-    }
-
-    .drawer-toggle-btn:active {
-        background: rgba(var(--clr-primary-teal-rgb), 0.1);
-        transform: scale(0.92);
     }
 }
 
@@ -324,12 +202,12 @@ input, textarea, select, .math-field {
 /* --- 4. MOBILE INPUT AREA --- */
 
 @media (max-width: 768px) {
-    /* Input container — clean, lifted appearance */
+    /* Input container — sits above the bottom nav; no safe-area padding
+       needed here because the bottom nav bar handles that. */
     #input-container {
         position: relative;
         z-index: 100;
         padding: 8px 12px;
-        padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px);
         background: var(--clr-bg-light, #fff);
         border-top: 1px solid rgba(0, 0, 0, 0.06);
         box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.03);
@@ -564,7 +442,7 @@ input, textarea, select, .math-field {
 
 .pinch-zoom-hint {
     position: fixed;
-    bottom: 80px;
+    bottom: 72px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(18, 179, 179, 0.92);
@@ -584,6 +462,139 @@ input, textarea, select, .math-field {
     10% { opacity: 1; transform: translateX(-50%) translateY(0); }
     90% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
+/* --- 6b. BOTTOM NAVIGATION BAR ---
+   Five-item glass-morphism nav: Sessions · Tools · Chat · Theme · Profile
+   Created dynamically by mobile-chat-nav.js; styled entirely here. */
+
+.mobile-chat-nav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    body.has-chat-nav .mobile-chat-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        box-sizing: content-box;                   /* so padding-bottom adds to 56px */
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+        z-index: 1800;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .chat-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        flex: 1;
+        padding: 6px 0;
+        background: none;
+        border: none;
+        color: var(--clr-text-dim, #8896a6);
+        transition: color 200ms ease, transform 150ms ease;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .chat-nav-item i {
+        font-size: 1.15rem;
+        transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .chat-nav-item span {
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    /* Active state — brand teal with gentle scale */
+    .chat-nav-item.active {
+        color: var(--clr-primary-teal, #12B3B3);
+    }
+
+    .chat-nav-item.active i {
+        transform: scale(1.12);
+    }
+
+    /* Active indicator dot */
+    .chat-nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background: var(--clr-primary-teal, #12B3B3);
+        border-radius: 50%;
+    }
+
+    /* Tap feedback */
+    .chat-nav-item:active {
+        transform: scale(0.88);
+        color: var(--clr-primary-teal, #12B3B3);
+    }
+
+    /* Dark mode glass */
+    [data-theme="dark"] .mobile-chat-nav {
+        background: rgba(18, 22, 30, 0.88);
+        border-top-color: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* --- 6c. CHAT WATERMARK ---
+   Semi-transparent brand mark behind the message area.
+   pointer-events: none keeps it completely touch-safe. */
+
+#chat-watermark {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    body.has-chat-nav #chat-watermark {
+        display: flex;
+        position: fixed;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.07;
+        width: 180px;
+        height: 180px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #chat-watermark img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: grayscale(100%);
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* Dark mode: invert the watermark for subtle white-on-dark effect */
+    [data-theme="dark"] #chat-watermark {
+        opacity: 0.08;
+        filter: invert(1);
+    }
 }
 
 /* --- 7. MOBILE DRAWERS --- */
@@ -845,20 +856,23 @@ input, textarea, select, .math-field {
 /* --- 8. MOBILE Z-INDEX STACKING --- */
 
 @media (max-width: 768px) {
-    .landing-header { z-index: 1100; }
-    #app-sidebar { z-index: 1500; }
-    .mobile-drawer { z-index: 2000; }
-    .drawer-overlay { z-index: 1999; }
-    .modal-overlay { z-index: 9999; touch-action: none; }
-    .modal-content { touch-action: auto; }
-    #levelup-celebration-modal,
-    #badge-celebration-modal { z-index: 10000; }
+    .landing-header            { z-index: 1100; }
+    #xp-feed                   { top: 46px; right: 10px; max-width: calc(100vw - 20px); z-index: 1400; }
+    #streak-counter            { top: 46px; left: 10px; z-index: 1400; }
+    #app-sidebar               { z-index: 1500; }
     #whiteboard-panel,
-    #floating-calculator { z-index: 1600; }
-    #xp-feed { top: 55px; right: 10px; max-width: calc(100vw - 20px); z-index: 1400; }
-    #streak-counter { top: 55px; left: 10px; z-index: 1400; }
+    #floating-calculator       { z-index: 1600; }
+    .mobile-chat-nav           { z-index: 1800; }
+    .drawer-overlay            { z-index: 1999; }
+    .mobile-drawer             { z-index: 2000; }
+    .more-tools-overlay        { z-index: 2099; }
+    .more-tools-menu           { z-index: 2100; }
+    .modal-overlay             { z-index: 9999; touch-action: none; }
+    .modal-content             { touch-action: auto; }
+    #levelup-celebration-modal,
+    #badge-celebration-modal   { z-index: 10000; }
 
-    /* Session stats bar - hidden on mobile (available in drawer) */
+    /* Session stats bar — hidden on mobile (available in drawer) */
     #session-stats-bar,
     .session-stats-bar {
         display: none !important;
@@ -873,28 +887,40 @@ input, textarea, select, .math-field {
 
 /* --- 9. ORIENTATION HANDLING --- */
 
-/* Landscape mobile */
+/* Landscape mobile — squeeze bottom bar for max chat space */
 @media (max-height: 500px) and (orientation: landscape) {
-    .landing-header {
-        min-height: 36px;
-        height: 36px;
-        padding: 2px 6px;
+    /* Header already hidden via Section 2 */
+
+    /* Compact bottom nav in landscape */
+    body.has-chat-nav .mobile-chat-nav {
+        height: 40px !important;
     }
 
-    .landing-nav button {
-        min-width: 36px;
-        min-height: 36px;
-        padding: 4px;
+    /* Adjust wrapper offset for smaller nav */
+    #app-layout-wrapper {
+        padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    .chat-nav-item span {
+        display: none;
+    }
+
+    .chat-nav-item i {
+        font-size: 1.05rem;
+    }
+
+    .chat-nav-item.active::after {
+        bottom: 1px;
     }
 
     .input-toolbar button {
-        min-width: 38px;
-        min-height: 38px;
+        min-width: 36px;
+        min-height: 36px;
     }
 
     #send-button {
-        min-height: 38px;
-        padding: 6px 16px;
+        min-height: 36px;
+        padding: 6px 14px;
     }
 
     #chat-messages-container {
@@ -936,12 +962,12 @@ input, textarea, select, .math-field {
     }
 }
 
-/* Touch device overrides */
-body.is-touch-device .landing-header,
-body.is-mobile .landing-header {
-    min-height: 48px;
-    height: 48px;
-    padding: 4px 8px;
+/* Touch device overrides — header hidden on mobile */
+@media (max-width: 768px) {
+    body.is-touch-device .landing-header,
+    body.is-mobile .landing-header {
+        display: none !important;
+    }
 }
 
 body.is-touch-device #sidebar-toggle,
@@ -1143,40 +1169,60 @@ body.is-mobile #sidebar-toggle {
 }
 
 /* --- 16. MOBILE LAYOUT OVERRIDES (CRITICAL) ---
-   These rules MUST load after sidebar-layout.css to win the cascade.
-   They fix footer overlap, header height mismatch, and chat container sizing.
+   Body becomes a flex column:  header (40px) → chat (flex:1) → bottom nav (56px).
+   Uses 100dvh for modern browsers, falls back to 100vh.
+   MUST load after sidebar-layout.css to win the cascade.
    ------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
-    /* Hide footer on mobile chat — saves ~50px of precious screen space.
-       Copyright info is not critical for the chat experience. */
+    /* Hide footer — copyright is not needed in chat */
     body.landing-page-body footer {
         display: none !important;
     }
 
-    /* Remove the desktop-only footer margin from the chat container */
+    /* ---- THE FLEX COLUMN ---- */
+    body.landing-page-body {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Header hidden — no flex space needed */
+    body.landing-page-body .landing-header {
+        flex: 0 0 0px !important;
+        display: none !important;
+    }
+
+    :root {
+        --header-height: 0px;
+    }
+
+    /* App wrapper fills the space between header and bottom nav.
+       Bottom nav is position:fixed (56px + safe-area), so we need
+       padding-bottom to prevent content from being hidden behind it. */
+    #app-layout-wrapper {
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        height: auto !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    /* Remove desktop sidebar margin */
     body.landing-page-body #chat-container {
         margin-bottom: 0 !important;
     }
 
-    /* Fix header height variable to match actual mobile header (48px not 60px) */
-    :root {
-        --header-height: 48px;
-    }
-
-    /* App wrapper: flex column so chat-container can use flex:1 instead of height:100%.
-       This is more reliable than height:100% which can fail when the parent's
-       height comes from a calc() expression. */
-    #app-layout-wrapper {
-        height: calc(100vh - 48px) !important;
-        height: calc(100dvh - 48px) !important;
-        overflow: hidden !important;
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    /* Chat container fills remaining space via flex, not height:100% */
+    /* Chat container — inner flex column */
     #chat-container {
         flex: 1 1 0% !important;
         min-height: 0 !important;
@@ -1187,7 +1233,7 @@ body.is-mobile #sidebar-toggle {
         margin-bottom: 0 !important;
     }
 
-    /* Chat messages scroll area fills remaining space */
+    /* Messages: scrollable, fills remaining height */
     #chat-messages-container {
         flex: 1 1 0% !important;
         min-height: 0 !important;
@@ -1195,7 +1241,7 @@ body.is-mobile #sidebar-toggle {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Input container sits firmly at the bottom — never collapses, never grows */
+    /* Input: pinned at bottom of chat, never collapses */
     #input-container {
         flex: 0 0 auto !important;
         position: relative !important;
@@ -1203,16 +1249,14 @@ body.is-mobile #sidebar-toggle {
         background: var(--clr-bg-light, #fff);
         border-top: 1px solid rgba(0, 0, 0, 0.06);
         box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.03);
-        padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
     }
 
-    /* Compact the inline toolbar row (overrides inline styles) */
+    /* Compact inline toolbar row (overrides inline styles) */
     #input-container > div[style*="display: flex"] {
         padding: 2px 8px !important;
         gap: 6px !important;
     }
 
-    /* Compact toolbar buttons */
     .input-toolbar-compact {
         gap: 2px !important;
     }
@@ -1224,7 +1268,7 @@ body.is-mobile #sidebar-toggle {
         font-size: 0.85rem !important;
     }
 
-    /* Send button: full width, polished */
+    /* Send button */
     #send-button.send-button-fullwidth {
         width: 100%;
         min-height: 42px !important;
@@ -1235,7 +1279,7 @@ body.is-mobile #sidebar-toggle {
         letter-spacing: 0.02em;
     }
 
-    /* Text input: compact, clean */
+    /* Text input */
     #user-input {
         min-height: 42px !important;
         padding: 10px 16px !important;
@@ -1244,12 +1288,12 @@ body.is-mobile #sidebar-toggle {
         font-size: 16px;
     }
 
-    /* Hide the session stats bar on mobile */
+    /* Hide session stats on mobile */
     .session-stats-bar {
         display: none !important;
     }
 
-    /* Chat disclaimer: subtle, compact on mobile */
+    /* Chat disclaimer */
     .chat-disclaimer {
         font-size: 0.68rem;
         margin: 2px 0 4px;
@@ -1267,9 +1311,9 @@ body.is-mobile #sidebar-toggle {
    ----------------------------------------------------------- */
 
 @media (max-width: 600px) {
-    /* Move IEP break button above the input area */
+    /* Move IEP break button above the bottom nav */
     .iep-break-btn {
-        bottom: 80px;
+        bottom: 72px;
         left: 10px;
         font-size: 12px;
         padding: 8px 12px;
@@ -1277,7 +1321,7 @@ body.is-mobile #sidebar-toggle {
 
     /* Move multiplication chart button to the right to not overlap break btn */
     .iep-mult-chart-btn {
-        bottom: 80px;
+        bottom: 72px;
         right: 10px;
         left: auto;
         font-size: 12px;
@@ -1292,6 +1336,6 @@ body.is-mobile #sidebar-toggle {
     }
 
     .iep-goal-notification.visible {
-        bottom: 80px;
+        bottom: 72px;
     }
 }
