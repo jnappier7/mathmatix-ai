@@ -40,6 +40,10 @@ router.get('/catalog', async (req, res) => {
       try {
         const raw = fs.readFileSync(path.join(resourcesDir, file), 'utf8');
         const pathway = JSON.parse(raw);
+
+        // Skip parent-audience courses — they belong in the Parent Learning Center, not the student catalog
+        if (pathway.audience === 'parent') continue;
+
         const cid = pathway.courseId || file.replace('-pathway.json', '');
         const meta = CATALOG_META[cid] || {};
 
@@ -188,6 +192,12 @@ router.post('/enroll', async (req, res) => {
     }
 
     const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+
+    // Prevent students from enrolling in parent-audience courses
+    if (pathway.audience === 'parent') {
+      return res.status(403).json({ success: false, message: 'This course is not available for student enrollment.' });
+    }
+
     const modules = (pathway.modules || []).map((m, i) => ({
       moduleId: m.moduleId,
       status: i === 0 ? 'available' : 'locked',
