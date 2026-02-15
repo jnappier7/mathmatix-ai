@@ -47,6 +47,7 @@
     "convergence-tests",
     "alternating-series-error",
     "taylor-maclaurin-polynomials",
+    "taylor-series-known",
     "power-series-interval",
     "lagrange-error-bound"
   ],
@@ -150,8 +151,8 @@
     },
     {
       "id": "cbf-13",
-      "question": "Use Euler's method with step size \u0394x = 0.5 to approximate y(1) given dy/dx = x + y and y(0) = 1.",
-      "answer": "Step 1: x\u2080=0, y\u2080=1. dy/dx=0+1=1. y\u2081 = 1+1(0.5) = 1.5. Step 2: x\u2081=0.5, y\u2081=1.5. dy/dx=0.5+1.5=2. y\u2082 = 1.5+2(0.5) = 2.5. y(1) \u2248 2.5.",
+      "question": "Use Euler's method with step size \u0394x = 0.5 to approximate y(1) given dy/dx = y \u2212 x and y(0) = 2.",
+      "answer": "Step 1: x\u2080=0, y\u2080=2. dy/dx=2\u22120=2. y\u2081 = 2+2(0.5) = 3. Step 2: x\u2081=0.5, y\u2081=3. dy/dx=3\u22120.5=2.5. y\u2082 = 3+2.5(0.5) = 4.25. y(1) \u2248 4.25.",
       "skill": "euler-method",
       "difficulty": 4,
       "points": 6
@@ -226,7 +227,7 @@
     "cbf-10": "1/4.",
     "cbf-11": "3\u03c0/4.",
     "cbf-12": "y = 2e^(sin x).",
-    "cbf-13": "y(1) \u2248 2.5.",
+    "cbf-13": "y(1) \u2248 4.25.",
     "cbf-14": "t = 1 and t = \u22121.",
     "cbf-15": "3\u03c0/2.",
     "cbf-16": "Speed at t=0: 1. Distance = \u222b\u2080\u00b9\u221a(4t\u00b2+e^(2t))dt.",

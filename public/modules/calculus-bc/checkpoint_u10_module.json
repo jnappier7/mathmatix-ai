@@ -103,7 +103,7 @@
     {
       "id": "cbu10-11",
       "question": "ANALYSIS: The function f has derivatives of all orders, and the Maclaurin series for f is Σ_{n=0}^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1). (a) Identify f(x). (b) Find the radius of convergence. (c) Use the first three nonzero terms to approximate f(1/2) and bound the error.",
-      "answer": "(a) This is the Maclaurin series for arctan(x): arctan(x) = Σ_{n=0}^∞ (−1)ⁿx²ⁿ⁺¹/(2n+1) = x − x³/3 + x⁵/5 − ⋯. (b) Ratio test: |a_{n+1}/aₙ| = |x|²ⁿ⁺³/(2n+3) · (2n+1)/|x|²ⁿ⁺¹ = (2n+1)/(2n+3)·x². L = x². Converges when x² < 1 → |x| < 1, so R = 1. (c) f(1/2) ≈ 1/2 − (1/2)³/3 + (1/2)⁵/5 = 1/2 − 1/24 + 1/160 = 60/120 − 5/120 + 3/4·1/120. Let me compute: 1/2 = 240/480, 1/24 = 20/480, 1/160 = 3/480. Sum = 223/480 ≈ 0.4646. This is alternating and |terms| decrease, so error ≤ |first omitted| = (1/2)⁷/7 = 1/896 ≈ 0.00112. (Actual: arctan(1/2) ≈ 0.4636.)",
+      "answer": "(a) This is the Maclaurin series for arctan(x): arctan(x) = Σ_{n=0}^∞ (−1)ⁿx²ⁿ⁺¹/(2n+1) = x − x³/3 + x⁵/5 − ⋯. (b) Ratio test: |a_{n+1}/aₙ| = |x|²ⁿ⁺³/(2n+3) · (2n+1)/|x|²ⁿ⁺¹ = (2n+1)/(2n+3)·x². L = x². Converges when x² < 1 → |x| < 1, so R = 1. (c) f(1/2) ≈ 1/2 − (1/2)³/3 + (1/2)⁵/5 = 1/2 − 1/24 + 1/160. Common denominator 480: 240/480 − 20/480 + 3/480 = 223/480 ≈ 0.4646. This is alternating and |terms| decrease, so error ≤ |first omitted| = (1/2)⁷/7 = 1/896 ≈ 0.00112. (Actual: arctan(1/2) ≈ 0.4636.)",
       "skill": "taylor-series-known",
       "difficulty": 6,
       "points": 14
