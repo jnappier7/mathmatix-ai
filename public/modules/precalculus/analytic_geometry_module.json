@@ -26,11 +26,11 @@
     "Analyze hyperbolas: center, vertices, foci, asymptotes, eccentricity, equation from geometric properties.",
     "Write and interpret parametric equations; eliminate the parameter; graph parametric curves.",
     "Convert between polar and rectangular coordinates; plot polar coordinates.",
-    "Graph polar curves (circles, roses, lima\u00e7ons, cardioids, lemniscates) and convert equations between forms."
+    "Graph polar curves (circles, roses, limaçons, cardioids, lemniscates) and convert equations between forms."
   ],
   "instructionalStrategy": [
     "Gradual release model; AI-led instruction using scaffold as scope",
-    "Geometric visualization emphasized \u2014 relate algebra to shape properties",
+    "Geometric visualization emphasized — relate algebra to shape properties",
     "Spiral prior skills: completing the square, trig identities, graphing transformations"
   ],
   "aiFlexLevel": "moderate",
@@ -42,99 +42,105 @@
       "skill": "parabola-analysis",
       "content": "A parabola is the set of points equidistant from a fixed point (focus) and a fixed line (directrix). Standard forms center at vertex (h, k).",
       "keyPoints": [
-        "Vertical axis: (x-h)\u00b2 = 4p(y-k). Focus: (h, k+p). Directrix: y = k-p.",
-        "Horizontal axis: (y-k)\u00b2 = 4p(x-h). Focus: (h+p, k). Directrix: x = h-p.",
+        "Vertical axis: (x-h)² = 4p(y-k). Focus: (h, k+p). Directrix: y = k-p.",
+        "Horizontal axis: (y-k)² = 4p(x-h). Focus: (h+p, k). Directrix: x = h-p.",
         "p > 0: opens up/right. p < 0: opens down/left.",
         "Focal length |p| = distance from vertex to focus = distance from vertex to directrix.",
         "Latus rectum length = |4p| (width of parabola through focus).",
-        "From general form Ax\u00b2 + Bx + Cy + D = 0: complete the square."
-      ]
+        "From general form Ax² + Bx + Cy + D = 0: complete the square."
+      ],
+      "lessonId": "conic-sections"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Parabola \u2014 Worked Examples",
+      "title": "Parabola — Worked Examples",
       "skill": "parabola-analysis",
       "examples": [
         {
-          "problem": "Find the vertex, focus, directrix, and axis of symmetry of (x-3)\u00b2 = -8(y+1).",
-          "solution": "Standard form (x-h)\u00b2=4p(y-k): h=3, k=-1, 4p=-8 \u2192 p=-2. Vertex: (3,-1). Focus: (3, -1+(-2)) = (3,-3). Directrix: y = -1-(-2) = y = 1. Axis of symmetry: x = 3. Opens downward (p < 0)."
+          "problem": "Find the vertex, focus, directrix, and axis of symmetry of (x-3)² = -8(y+1).",
+          "solution": "Standard form (x-h)²=4p(y-k): h=3, k=-1, 4p=-8 → p=-2. Vertex: (3,-1). Focus: (3, -1+(-2)) = (3,-3). Directrix: y = -1-(-2) = y = 1. Axis of symmetry: x = 3. Opens downward (p < 0)."
         },
         {
           "problem": "Write the equation of a parabola with focus (2, 5) and directrix y = 1.",
-          "solution": "Vertex is midpoint between focus and directrix: (2, (5+1)/2) = (2, 3). p = 5-3 = 2 (opens up). Equation: (x-2)\u00b2 = 4(2)(y-3) = 8(y-3)."
+          "solution": "Vertex is midpoint between focus and directrix: (2, (5+1)/2) = (2, 3). p = 5-3 = 2 (opens up). Equation: (x-2)² = 4(2)(y-3) = 8(y-3)."
         },
         {
-          "problem": "Convert to standard form and find all features: x\u00b2 + 6x + 4y + 1 = 0.",
-          "solution": "Complete the square: (x\u00b2+6x+9) + 4y + 1 - 9 = 0 \u2192 (x+3)\u00b2 = -4y + 8 = -4(y-2). Standard form: (x+3)\u00b2 = -4(y-2). 4p=-4 \u2192 p=-1. Vertex: (-3,2). Focus: (-3, 2+(-1)) = (-3,1). Directrix: y = 2-(-1) = 3. Opens down."
+          "problem": "Convert to standard form and find all features: x² + 6x + 4y + 1 = 0.",
+          "solution": "Complete the square: (x²+6x+9) + 4y + 1 - 9 = 0 → (x+3)² = -4y + 8 = -4(y-2). Standard form: (x+3)² = -4(y-2). 4p=-4 → p=-1. Vertex: (-3,2). Focus: (-3, 2+(-1)) = (-3,1). Directrix: y = 2-(-1) = 3. Opens down."
         }
-      ]
+      ],
+      "lessonId": "conic-sections"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Ellipses: Center, Vertices, Foci",
       "skill": "ellipse-analysis",
-      "content": "An ellipse is the set of points where the sum of distances to two foci is constant. Key relationship: c\u00b2 = a\u00b2 - b\u00b2 where a > b.",
+      "content": "An ellipse is the set of points where the sum of distances to two foci is constant. Key relationship: c² = a² - b² where a > b.",
       "keyPoints": [
-        "Horizontal major axis: (x-h)\u00b2/a\u00b2 + (y-k)\u00b2/b\u00b2 = 1, a > b",
-        "Vertical major axis: (x-h)\u00b2/b\u00b2 + (y-k)\u00b2/a\u00b2 = 1, a > b",
-        "Center: (h,k). Vertices: (h\u00b1a, k) or (h, k\u00b1a). Co-vertices: (h\u00b1b, k) or (h, k\u00b1b)",
-        "Foci: distance c from center along major axis. c\u00b2 = a\u00b2 - b\u00b2",
-        "Eccentricity: e = c/a, 0 < e < 1. Closer to 0 \u2192 more circular",
+        "Horizontal major axis: (x-h)²/a² + (y-k)²/b² = 1, a > b",
+        "Vertical major axis: (x-h)²/b² + (y-k)²/a² = 1, a > b",
+        "Center: (h,k). Vertices: (h±a, k) or (h, k±a). Co-vertices: (h±b, k) or (h, k±b)",
+        "Foci: distance c from center along major axis. c² = a² - b²",
+        "Eccentricity: e = c/a, 0 < e < 1. Closer to 0 → more circular",
         "From general form: complete the square for both x and y"
-      ]
+      ],
+      "lessonId": "parametric-equations"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Ellipse \u2014 Worked Examples",
+      "title": "Ellipse — Worked Examples",
       "skill": "ellipse-analysis",
       "examples": [
         {
-          "problem": "For (x-1)\u00b2/25 + (y+2)\u00b2/16 = 1, find center, vertices, co-vertices, foci, and eccentricity.",
-          "solution": "Center: (1,-2). a\u00b2=25 \u2192 a=5, b\u00b2=16 \u2192 b=4. Horizontal major axis. Vertices: (1\u00b15,-2) = (-4,-2) and (6,-2). Co-vertices: (1,-2\u00b14) = (1,-6) and (1,2). c\u00b2 = 25-16 = 9 \u2192 c=3. Foci: (1\u00b13,-2) = (-2,-2) and (4,-2). Eccentricity: e = 3/5 = 0.6."
+          "problem": "For (x-1)²/25 + (y+2)²/16 = 1, find center, vertices, co-vertices, foci, and eccentricity.",
+          "solution": "Center: (1,-2). a²=25 → a=5, b²=16 → b=4. Horizontal major axis. Vertices: (1±5,-2) = (-4,-2) and (6,-2). Co-vertices: (1,-2±4) = (1,-6) and (1,2). c² = 25-16 = 9 → c=3. Foci: (1±3,-2) = (-2,-2) and (4,-2). Eccentricity: e = 3/5 = 0.6."
         },
         {
-          "problem": "Write the equation of an ellipse with foci at (0,\u00b14) and vertices at (0,\u00b15).",
-          "solution": "Vertical major axis, center (0,0). a=5 (vertices), c=4 (foci). b\u00b2 = a\u00b2-c\u00b2 = 25-16 = 9 \u2192 b=3. Equation: x\u00b2/9 + y\u00b2/25 = 1."
+          "problem": "Write the equation of an ellipse with foci at (0,±4) and vertices at (0,±5).",
+          "solution": "Vertical major axis, center (0,0). a=5 (vertices), c=4 (foci). b² = a²-c² = 25-16 = 9 → b=3. Equation: x²/9 + y²/25 = 1."
         },
         {
-          "problem": "Convert to standard form: 4x\u00b2+9y\u00b2-16x+54y+61=0.",
-          "solution": "Group: 4(x\u00b2-4x) + 9(y\u00b2+6y) = -61. Complete squares: 4(x\u00b2-4x+4) + 9(y\u00b2+6y+9) = -61+16+81 = 36. 4(x-2)\u00b2+9(y+3)\u00b2=36. Divide by 36: (x-2)\u00b2/9+(y+3)\u00b2/4=1. Center (2,-3), a=3, b=2, horizontal major axis. c\u00b2=9-4=5, c=\u221a5. Foci: (2\u00b1\u221a5,-3)."
+          "problem": "Convert to standard form: 4x²+9y²-16x+54y+61=0.",
+          "solution": "Group: 4(x²-4x) + 9(y²+6y) = -61. Complete squares: 4(x²-4x+4) + 9(y²+6y+9) = -61+16+81 = 36. 4(x-2)²+9(y+3)²=36. Divide by 36: (x-2)²/9+(y+3)²/4=1. Center (2,-3), a=3, b=2, horizontal major axis. c²=9-4=5, c=√5. Foci: (2±√5,-3)."
         }
-      ]
+      ],
+      "lessonId": "parametric-equations"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Hyperbolas: Center, Vertices, Asymptotes",
       "skill": "hyperbola-analysis",
-      "content": "A hyperbola is the set of points where the absolute difference of distances to two foci is constant. Key relationship: c\u00b2 = a\u00b2 + b\u00b2.",
+      "content": "A hyperbola is the set of points where the absolute difference of distances to two foci is constant. Key relationship: c² = a² + b².",
       "keyPoints": [
-        "Horizontal transverse: (x-h)\u00b2/a\u00b2 - (y-k)\u00b2/b\u00b2 = 1. Opens left/right.",
-        "Vertical transverse: (y-k)\u00b2/a\u00b2 - (x-h)\u00b2/b\u00b2 = 1. Opens up/down.",
-        "Vertices: (h\u00b1a, k) or (h, k\u00b1a) along transverse axis",
-        "c\u00b2 = a\u00b2 + b\u00b2 (note: SUM, unlike ellipse)",
-        "Asymptotes: y-k = \u00b1(b/a)(x-h) for horizontal; y-k = \u00b1(a/b)(x-h) for vertical",
+        "Horizontal transverse: (x-h)²/a² - (y-k)²/b² = 1. Opens left/right.",
+        "Vertical transverse: (y-k)²/a² - (x-h)²/b² = 1. Opens up/down.",
+        "Vertices: (h±a, k) or (h, k±a) along transverse axis",
+        "c² = a² + b² (note: SUM, unlike ellipse)",
+        "Asymptotes: y-k = ±(b/a)(x-h) for horizontal; y-k = ±(a/b)(x-h) for vertical",
         "Eccentricity: e = c/a > 1"
-      ]
+      ],
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Hyperbola \u2014 Worked Examples",
+      "title": "Hyperbola — Worked Examples",
       "skill": "hyperbola-analysis",
       "examples": [
         {
-          "problem": "For (x+2)\u00b2/16 - (y-1)\u00b2/9 = 1, find center, vertices, foci, asymptotes, and eccentricity.",
-          "solution": "Center: (-2,1). a\u00b2=16\u2192a=4, b\u00b2=9\u2192b=3. Horizontal transverse axis. Vertices: (-2\u00b14,1) = (-6,1) and (2,1). c\u00b2=16+9=25\u2192c=5. Foci: (-2\u00b15,1) = (-7,1) and (3,1). Asymptotes: y-1 = \u00b1(3/4)(x+2), i.e., y = (3/4)x + 5/2 and y = -(3/4)x - 1/2. Eccentricity: e = 5/4 = 1.25."
+          "problem": "For (x+2)²/16 - (y-1)²/9 = 1, find center, vertices, foci, asymptotes, and eccentricity.",
+          "solution": "Center: (-2,1). a²=16→a=4, b²=9→b=3. Horizontal transverse axis. Vertices: (-2±4,1) = (-6,1) and (2,1). c²=16+9=25→c=5. Foci: (-2±5,1) = (-7,1) and (3,1). Asymptotes: y-1 = ±(3/4)(x+2), i.e., y = (3/4)x + 5/2 and y = -(3/4)x - 1/2. Eccentricity: e = 5/4 = 1.25."
         },
         {
-          "problem": "Write the equation of a hyperbola with vertices at (0,\u00b13) and asymptotes y = \u00b1(3/5)x.",
-          "solution": "Vertical transverse, center (0,0), a=3 (vertices). Asymptotes: y = \u00b1(a/b)x = \u00b1(3/b)x = \u00b1(3/5)x \u2192 b=5. Equation: y\u00b2/9 - x\u00b2/25 = 1."
+          "problem": "Write the equation of a hyperbola with vertices at (0,±3) and asymptotes y = ±(3/5)x.",
+          "solution": "Vertical transverse, center (0,0), a=3 (vertices). Asymptotes: y = ±(a/b)x = ±(3/b)x = ±(3/5)x → b=5. Equation: y²/9 - x²/25 = 1."
         }
-      ]
+      ],
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "guided_practice",
@@ -142,34 +148,35 @@
       "title": "Conic Sections Practice",
       "problems": [
         {
-          "problem": "Identify the conic and find all features: 9x\u00b2+4y\u00b2-36x+8y-104=0.",
+          "problem": "Identify the conic and find all features: 9x²+4y²-36x+8y-104=0.",
           "hints": [
-            "Group: 9(x\u00b2-4x)+4(y\u00b2+2y)=104",
-            "Complete squares: 9(x-2)\u00b2+4(y+1)\u00b2=104+36+4=144",
-            "Divide by 144: (x-2)\u00b2/16+(y+1)\u00b2/36=1",
-            "a\u00b2=36>b\u00b2=16 \u2192 vertical major axis"
+            "Group: 9(x²-4x)+4(y²+2y)=104",
+            "Complete squares: 9(x-2)²+4(y+1)²=104+36+4=144",
+            "Divide by 144: (x-2)²/16+(y+1)²/36=1",
+            "a²=36>b²=16 → vertical major axis"
           ],
-          "answer": "Ellipse. (x-2)\u00b2/16+(y+1)\u00b2/36=1. Center (2,-1). a=6, b=4 (vertical major). Vertices: (2,-7) and (2,5). Co-vertices: (-2,-1) and (6,-1). c\u00b2=36-16=20\u2192c=2\u221a5. Foci: (2,-1\u00b12\u221a5). e=2\u221a5/6\u22480.745."
+          "answer": "Ellipse. (x-2)²/16+(y+1)²/36=1. Center (2,-1). a=6, b=4 (vertical major). Vertices: (2,-7) and (2,5). Co-vertices: (-2,-1) and (6,-1). c²=36-16=20→c=2√5. Foci: (2,-1±2√5). e=2√5/6≈0.745."
         },
         {
           "problem": "Write the equation of a parabola with vertex at (-1, 4) and focus at (-1, 2).",
           "hints": [
             "Vertical axis, p = 2-4 = -2 (opens down)",
-            "(x+1)\u00b2 = 4(-2)(y-4)"
+            "(x+1)² = 4(-2)(y-4)"
           ],
-          "answer": "(x+1)\u00b2 = -8(y-4). Focus: (-1,2). Directrix: y=6."
+          "answer": "(x+1)² = -8(y-4). Focus: (-1,2). Directrix: y=6."
         },
         {
-          "problem": "For x\u00b2/4 - y\u00b2/12 = 1, find foci, asymptotes, and eccentricity.",
+          "problem": "For x²/4 - y²/12 = 1, find foci, asymptotes, and eccentricity.",
           "hints": [
-            "a\u00b2=4, b\u00b2=12. Horizontal transverse.",
-            "c\u00b2=4+12=16\u2192c=4",
-            "Asymptotes: y=\u00b1(b/a)x=\u00b1(2\u221a3/2)x=\u00b1\u221a3\u00b7x"
+            "a²=4, b²=12. Horizontal transverse.",
+            "c²=4+12=16→c=4",
+            "Asymptotes: y=±(b/a)x=±(2√3/2)x=±√3·x"
           ],
-          "answer": "Foci: (\u00b14, 0). Asymptotes: y=\u00b1\u221a3\u00b7x. e=c/a=4/2=2."
+          "answer": "Foci: (±4, 0). Asymptotes: y=±√3·x. e=c/a=4/2=2."
         }
       ],
-      "skill": "hyperbola-analysis"
+      "skill": "hyperbola-analysis",
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "explanation",
@@ -180,80 +187,85 @@
       "keyPoints": [
         "Parametric form: x = f(t), y = g(t) for t in some interval",
         "Eliminating the parameter: solve one equation for t, substitute into the other",
-        "For trig parametrics: use sin\u00b2t + cos\u00b2t = 1 to eliminate t",
+        "For trig parametrics: use sin²t + cos²t = 1 to eliminate t",
         "Circle: x = r cos t, y = r sin t; Ellipse: x = a cos t, y = b sin t",
-        "Line: x = x\u2080 + at, y = y\u2080 + bt",
+        "Line: x = x₀ + at, y = y₀ + bt",
         "Direction of travel: increasing t shows path direction"
-      ]
+      ],
+      "lessonId": "parametric-equations"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Parametric Equations \u2014 Worked Examples",
+      "title": "Parametric Equations — Worked Examples",
       "skill": "parametric-equations",
       "examples": [
         {
           "problem": "Eliminate the parameter and identify the curve: x = 3cos(t), y = 2sin(t).",
-          "solution": "cos(t) = x/3, sin(t) = y/2. Use sin\u00b2t + cos\u00b2t = 1: (y/2)\u00b2 + (x/3)\u00b2 = 1 \u2192 x\u00b2/9 + y\u00b2/4 = 1. This is an ellipse with a=3, b=2."
+          "solution": "cos(t) = x/3, sin(t) = y/2. Use sin²t + cos²t = 1: (y/2)² + (x/3)² = 1 → x²/9 + y²/4 = 1. This is an ellipse with a=3, b=2."
         },
         {
-          "problem": "Eliminate the parameter: x = t + 1, y = t\u00b2 - 3t.",
-          "solution": "From x = t+1: t = x-1. Substitute: y = (x-1)\u00b2 - 3(x-1) = x\u00b2 - 2x + 1 - 3x + 3 = x\u00b2 - 5x + 4. Parabola y = x\u00b2 - 5x + 4."
+          "problem": "Eliminate the parameter: x = t + 1, y = t² - 3t.",
+          "solution": "From x = t+1: t = x-1. Substitute: y = (x-1)² - 3(x-1) = x² - 2x + 1 - 3x + 3 = x² - 5x + 4. Parabola y = x² - 5x + 4."
         },
         {
           "problem": "Write parametric equations for the line segment from (1, 4) to (5, -2).",
-          "solution": "x = 1 + (5-1)t = 1 + 4t, y = 4 + (-2-4)t = 4 - 6t, for t \u2208 [0, 1]. At t=0: (1,4). At t=1: (5,-2)."
+          "solution": "x = 1 + (5-1)t = 1 + 4t, y = 4 + (-2-4)t = 4 - 6t, for t ∈ [0, 1]. At t=0: (1,4). At t=1: (5,-2)."
         }
-      ]
+      ],
+      "lessonId": "parametric-equations"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Polar Coordinates & Conversions",
       "skill": "polar-coordinates",
-      "content": "Polar coordinates (r, \u03b8) locate points by distance from origin and angle from positive x-axis. Every point has multiple polar representations.",
+      "content": "Polar coordinates (r, θ) locate points by distance from origin and angle from positive x-axis. Every point has multiple polar representations.",
       "keyPoints": [
-        "Conversion: x = r cos \u03b8, y = r sin \u03b8",
-        "Conversion: r\u00b2 = x\u00b2 + y\u00b2, tan \u03b8 = y/x (adjust quadrant)",
-        "Multiple representations: (r, \u03b8) = (r, \u03b8 + 2n\u03c0) = (-r, \u03b8 + \u03c0)",
-        "r < 0: point in opposite direction of \u03b8",
-        "Common polar equations: r = a (circle), \u03b8 = \u03b1 (line through origin), r = a cos \u03b8 or r = a sin \u03b8 (circles)"
-      ]
+        "Conversion: x = r cos θ, y = r sin θ",
+        "Conversion: r² = x² + y², tan θ = y/x (adjust quadrant)",
+        "Multiple representations: (r, θ) = (r, θ + 2nπ) = (-r, θ + π)",
+        "r < 0: point in opposite direction of θ",
+        "Common polar equations: r = a (circle), θ = α (line through origin), r = a cos θ or r = a sin θ (circles)"
+      ],
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Polar Coordinates \u2014 Worked Examples",
+      "title": "Polar Coordinates — Worked Examples",
       "skill": "polar-coordinates",
       "examples": [
         {
-          "problem": "Convert (3, 5\u03c0/6) from polar to rectangular coordinates.",
-          "solution": "x = 3cos(5\u03c0/6) = 3(-\u221a3/2) = -3\u221a3/2. y = 3sin(5\u03c0/6) = 3(1/2) = 3/2. Rectangular: (-3\u221a3/2, 3/2)."
+          "problem": "Convert (3, 5π/6) from polar to rectangular coordinates.",
+          "solution": "x = 3cos(5π/6) = 3(-√3/2) = -3√3/2. y = 3sin(5π/6) = 3(1/2) = 3/2. Rectangular: (-3√3/2, 3/2)."
         },
         {
           "problem": "Convert (-2, 3) from rectangular to polar coordinates.",
-          "solution": "r = \u221a(4+9) = \u221a13. tan \u03b8 = 3/(-2) \u2192 reference angle = arctan(3/2) \u2248 56.31\u00b0. Point in Q2 \u2192 \u03b8 = 180\u00b0 - 56.31\u00b0 \u2248 123.69\u00b0 \u2248 2.159 rad. Polar: (\u221a13, arctan(3/(-2)) + \u03c0) or equivalently (\u221a13, \u03c0 - arctan(3/2))."
+          "solution": "r = √(4+9) = √13. tan θ = 3/(-2) → reference angle = arctan(3/2) ≈ 56.31°. Point in Q2 → θ = 180° - 56.31° ≈ 123.69° ≈ 2.159 rad. Polar: (√13, arctan(3/(-2)) + π) or equivalently (√13, π - arctan(3/2))."
         },
         {
-          "problem": "Convert the rectangular equation x\u00b2 + y\u00b2 - 4x = 0 to polar form.",
-          "solution": "Substitute: r\u00b2 - 4r cos \u03b8 = 0 \u2192 r(r - 4cos \u03b8) = 0. Since r = 0 is just the origin (included when \u03b8 gives cos \u03b8 > 0), we get r = 4cos \u03b8. This is a circle with diameter 4, centered at (2, 0)."
+          "problem": "Convert the rectangular equation x² + y² - 4x = 0 to polar form.",
+          "solution": "Substitute: r² - 4r cos θ = 0 → r(r - 4cos θ) = 0. Since r = 0 is just the origin (included when θ gives cos θ > 0), we get r = 4cos θ. This is a circle with diameter 4, centered at (2, 0)."
         }
-      ]
+      ],
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Polar Curves",
       "skill": "polar-curves",
-      "content": "Common polar curve families include roses, lima\u00e7ons, cardioids, and lemniscates. Their shapes are determined by the form of the equation.",
+      "content": "Common polar curve families include roses, limaçons, cardioids, and lemniscates. Their shapes are determined by the form of the equation.",
       "keyPoints": [
-        "Rose: r = a cos(n\u03b8) or r = a sin(n\u03b8). n petals if n odd; 2n petals if n even.",
-        "Lima\u00e7on: r = a \u00b1 b cos \u03b8 (or sin \u03b8). Inner loop if a < b; cardioid if a = b; dimpled if b < a < 2b; convex if a \u2265 2b.",
-        "Cardioid: r = a(1 \u00b1 cos \u03b8) or r = a(1 \u00b1 sin \u03b8). Heart-shaped.",
-        "Lemniscate: r\u00b2 = a\u00b2 cos(2\u03b8) or r\u00b2 = a\u00b2 sin(2\u03b8). Figure-8 shape.",
-        "Circle: r = a, r = a cos \u03b8, r = a sin \u03b8.",
-        "Symmetry tests: replace \u03b8 with -\u03b8 (x-axis), replace \u03b8 with \u03c0-\u03b8 (y-axis), replace r with -r (origin)"
-      ]
+        "Rose: r = a cos(nθ) or r = a sin(nθ). n petals if n odd; 2n petals if n even.",
+        "Limaçon: r = a ± b cos θ (or sin θ). Inner loop if a < b; cardioid if a = b; dimpled if b < a < 2b; convex if a ≥ 2b.",
+        "Cardioid: r = a(1 ± cos θ) or r = a(1 ± sin θ). Heart-shaped.",
+        "Lemniscate: r² = a² cos(2θ) or r² = a² sin(2θ). Figure-8 shape.",
+        "Circle: r = a, r = a cos θ, r = a sin θ.",
+        "Symmetry tests: replace θ with -θ (x-axis), replace θ with π-θ (y-axis), replace r with -r (origin)"
+      ],
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "guided_practice",
@@ -263,32 +275,33 @@
         {
           "problem": "Eliminate the parameter: x = 2sec(t), y = 3tan(t).",
           "hints": [
-            "sec\u00b2t - tan\u00b2t = 1",
+            "sec²t - tan²t = 1",
             "sec(t) = x/2, tan(t) = y/3",
-            "(x/2)\u00b2 - (y/3)\u00b2 = 1"
+            "(x/2)² - (y/3)² = 1"
           ],
-          "answer": "x\u00b2/4 - y\u00b2/9 = 1. Hyperbola."
+          "answer": "x²/4 - y²/9 = 1. Hyperbola."
         },
         {
-          "problem": "Convert the polar equation r = 6sin \u03b8 to rectangular form and identify the curve.",
+          "problem": "Convert the polar equation r = 6sin θ to rectangular form and identify the curve.",
           "hints": [
-            "Multiply both sides by r: r\u00b2 = 6r sin \u03b8",
-            "Substitute: x\u00b2 + y\u00b2 = 6y",
-            "Complete the square: x\u00b2 + (y-3)\u00b2 = 9"
+            "Multiply both sides by r: r² = 6r sin θ",
+            "Substitute: x² + y² = 6y",
+            "Complete the square: x² + (y-3)² = 9"
           ],
-          "answer": "x\u00b2 + (y-3)\u00b2 = 9. Circle centered at (0, 3) with radius 3."
+          "answer": "x² + (y-3)² = 9. Circle centered at (0, 3) with radius 3."
         },
         {
-          "problem": "Describe the polar curve r = 2 + 3cos \u03b8. What type is it? Any special features?",
+          "problem": "Describe the polar curve r = 2 + 3cos θ. What type is it? Any special features?",
           "hints": [
-            "Form r = a + b cos \u03b8 with a=2, b=3",
-            "Since a < b (2 < 3), lima\u00e7on with inner loop",
-            "Inner loop when 2+3cos\u03b8 = 0 \u2192 cos\u03b8 = -2/3"
+            "Form r = a + b cos θ with a=2, b=3",
+            "Since a < b (2 < 3), limaçon with inner loop",
+            "Inner loop when 2+3cosθ = 0 → cosθ = -2/3"
           ],
-          "answer": "Lima\u00e7on with inner loop (a < b). The curve has an inner loop when cos \u03b8 < -2/3. Max r = 5 (at \u03b8 = 0). Symmetric about x-axis."
+          "answer": "Limaçon with inner loop (a < b). The curve has an inner loop when cos θ < -2/3. Max r = 5 (at θ = 0). Symmetric about x-axis."
         }
       ],
-      "skill": "polar-curves"
+      "skill": "polar-curves",
+      "lessonId": "polar-coordinates-curves"
     },
     {
       "type": "independent_practice",
@@ -297,58 +310,76 @@
       "problems": [
         {
           "problem": "Find the equation of a parabola with focus (4, -1) and directrix x = -2. Identify vertex and axis of symmetry.",
-          "answer": "Horizontal axis. Vertex: midpoint of focus and directrix point \u2192 ((4+(-2))/2, -1) = (1, -1). p = 4-1 = 3. Equation: (y+1)\u00b2 = 12(x-1). Axis: y = -1."
+          "answer": "Horizontal axis. Vertex: midpoint of focus and directrix point → ((4+(-2))/2, -1) = (1, -1). p = 4-1 = 3. Equation: (y+1)² = 12(x-1). Axis: y = -1."
         },
         {
-          "problem": "For 9x\u00b2 + 25y\u00b2 = 225, find center, vertices, foci, and eccentricity.",
-          "answer": "Divide by 225: x\u00b2/25 + y\u00b2/9 = 1. Center (0,0). a=5, b=3 (horizontal major). Vertices: (\u00b15, 0). Co-vertices: (0, \u00b13). c\u00b2=25-9=16\u2192c=4. Foci: (\u00b14, 0). e = 4/5 = 0.8."
+          "problem": "For 9x² + 25y² = 225, find center, vertices, foci, and eccentricity.",
+          "answer": "Divide by 225: x²/25 + y²/9 = 1. Center (0,0). a=5, b=3 (horizontal major). Vertices: (±5, 0). Co-vertices: (0, ±3). c²=25-9=16→c=4. Foci: (±4, 0). e = 4/5 = 0.8."
         },
         {
-          "problem": "For y\u00b2/9 - x\u00b2/16 = 1, find vertices, foci, asymptotes.",
-          "answer": "Vertical transverse. a\u00b2=9\u2192a=3, b\u00b2=16\u2192b=4. Vertices: (0, \u00b13). c\u00b2=9+16=25\u2192c=5. Foci: (0, \u00b15). Asymptotes: y = \u00b1(3/4)x."
+          "problem": "For y²/9 - x²/16 = 1, find vertices, foci, asymptotes.",
+          "answer": "Vertical transverse. a²=9→a=3, b²=16→b=4. Vertices: (0, ±3). c²=9+16=25→c=5. Foci: (0, ±5). Asymptotes: y = ±(3/4)x."
         },
         {
           "problem": "Eliminate the parameter: x = 4cos(t) + 1, y = 4sin(t) - 2.",
-          "answer": "cos(t) = (x-1)/4, sin(t) = (y+2)/4. sin\u00b2t + cos\u00b2t = 1: ((x-1)/4)\u00b2 + ((y+2)/4)\u00b2 = 1 \u2192 (x-1)\u00b2 + (y+2)\u00b2 = 16. Circle centered at (1, -2) with radius 4."
+          "answer": "cos(t) = (x-1)/4, sin(t) = (y+2)/4. sin²t + cos²t = 1: ((x-1)/4)² + ((y+2)/4)² = 1 → (x-1)² + (y+2)² = 16. Circle centered at (1, -2) with radius 4."
         },
         {
-          "problem": "Convert the rectangular equation x\u00b2 + y\u00b2 = 6x to polar form.",
-          "answer": "r\u00b2 = 6r cos \u03b8 \u2192 r = 6cos \u03b8. Circle with diameter 6, centered at (3, 0)."
+          "problem": "Convert the rectangular equation x² + y² = 6x to polar form.",
+          "answer": "r² = 6r cos θ → r = 6cos θ. Circle with diameter 6, centered at (3, 0)."
         },
         {
-          "problem": "For the polar curve r = 4cos(3\u03b8), identify the type of curve and find the number of petals.",
-          "answer": "Rose curve with n = 3 (odd). Number of petals = 3. Each petal has length 4. Petals at \u03b8 = 0, 2\u03c0/3, 4\u03c0/3."
+          "problem": "For the polar curve r = 4cos(3θ), identify the type of curve and find the number of petals.",
+          "answer": "Rose curve with n = 3 (odd). Number of petals = 3. Each petal has length 4. Petals at θ = 0, 2π/3, 4π/3."
         }
       ],
-      "skill": "parabola-analysis"
+      "skill": "parabola-analysis",
+      "lessonId": "conic-sections"
     }
   ],
   "answerKeys": {
     "para-standard": "V(3,-1), F(3,-3), dir y=1, axis x=3. Opens down.",
-    "para-from-geom": "(x-2)\u00b2=8(y-3). V(2,3), F(2,5), dir y=1.",
-    "para-general": "(x+3)\u00b2=-4(y-2). V(-3,2), F(-3,1), dir y=3.",
+    "para-from-geom": "(x-2)²=8(y-3). V(2,3), F(2,5), dir y=1.",
+    "para-general": "(x+3)²=-4(y-2). V(-3,2), F(-3,1), dir y=3.",
     "ellipse-standard": "C(1,-2), V(-4,-2)&(6,-2), CV(1,-6)&(1,2), F(-2,-2)&(4,-2), e=3/5.",
-    "ellipse-from-geom": "x\u00b2/9+y\u00b2/25=1.",
-    "ellipse-general": "(x-2)\u00b2/9+(y+3)\u00b2/4=1. C(2,-3), F(2\u00b1\u221a5,-3).",
-    "hyp-standard": "C(-2,1), V(-6,1)&(2,1), F(-7,1)&(3,1), asymp y=\u00b1(3/4)(x+2)+1, e=5/4.",
-    "hyp-from-geom": "y\u00b2/9-x\u00b2/25=1.",
-    "wp-conic-ellipse": "(x-2)\u00b2/16+(y+1)\u00b2/36=1. Vertical, F(2,-1\u00b12\u221a5), e\u22480.745.",
-    "wp-conic-parabola": "(x+1)\u00b2=-8(y-4). F(-1,2), dir y=6.",
-    "wp-conic-hyperbola": "F(\u00b14,0). Asymp y=\u00b1\u221a3\u00b7x. e=2.",
-    "param-ellipse": "x\u00b2/9+y\u00b2/4=1. Ellipse.",
-    "param-parabola": "y=x\u00b2-5x+4.",
-    "param-line": "x=1+4t, y=4-6t, t\u2208[0,1].",
-    "polar-to-rect": "(-3\u221a3/2, 3/2).",
-    "rect-to-polar": "(\u221a13, \u03c0-arctan(3/2)).",
-    "rect-to-polar-eq": "r=4cos\u03b8.",
-    "wp-param-hyp": "x\u00b2/4-y\u00b2/9=1. Hyperbola.",
-    "wp-polar-circle": "x\u00b2+(y-3)\u00b2=9. Circle C(0,3), r=3.",
-    "wp-polar-limacon": "Lima\u00e7on with inner loop. a=2<b=3.",
-    "ip-parabola": "(y+1)\u00b2=12(x-1). V(1,-1), axis y=-1.",
-    "ip-ellipse": "x\u00b2/25+y\u00b2/9=1. F(\u00b14,0). e=4/5.",
-    "ip-hyperbola": "V(0,\u00b13), F(0,\u00b15), asymp y=\u00b1(3/4)x.",
-    "ip-param-circle": "(x-1)\u00b2+(y+2)\u00b2=16. Circle.",
-    "ip-polar-convert": "r=6cos\u03b8.",
+    "ellipse-from-geom": "x²/9+y²/25=1.",
+    "ellipse-general": "(x-2)²/9+(y+3)²/4=1. C(2,-3), F(2±√5,-3).",
+    "hyp-standard": "C(-2,1), V(-6,1)&(2,1), F(-7,1)&(3,1), asymp y=±(3/4)(x+2)+1, e=5/4.",
+    "hyp-from-geom": "y²/9-x²/25=1.",
+    "wp-conic-ellipse": "(x-2)²/16+(y+1)²/36=1. Vertical, F(2,-1±2√5), e≈0.745.",
+    "wp-conic-parabola": "(x+1)²=-8(y-4). F(-1,2), dir y=6.",
+    "wp-conic-hyperbola": "F(±4,0). Asymp y=±√3·x. e=2.",
+    "param-ellipse": "x²/9+y²/4=1. Ellipse.",
+    "param-parabola": "y=x²-5x+4.",
+    "param-line": "x=1+4t, y=4-6t, t∈[0,1].",
+    "polar-to-rect": "(-3√3/2, 3/2).",
+    "rect-to-polar": "(√13, π-arctan(3/2)).",
+    "rect-to-polar-eq": "r=4cosθ.",
+    "wp-param-hyp": "x²/4-y²/9=1. Hyperbola.",
+    "wp-polar-circle": "x²+(y-3)²=9. Circle C(0,3), r=3.",
+    "wp-polar-limacon": "Limaçon with inner loop. a=2<b=3.",
+    "ip-parabola": "(y+1)²=12(x-1). V(1,-1), axis y=-1.",
+    "ip-ellipse": "x²/25+y²/9=1. F(±4,0). e=4/5.",
+    "ip-hyperbola": "V(0,±3), F(0,±5), asymp y=±(3/4)x.",
+    "ip-param-circle": "(x-1)²+(y+2)²=16. Circle.",
+    "ip-polar-convert": "r=6cosθ.",
     "ip-polar-rose": "Rose, 3 petals, length 4."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "conic-sections",
+      "title": "Conic Sections: Parabolas, Ellipses, Hyperbolas",
+      "order": 1
+    },
+    {
+      "lessonId": "parametric-equations",
+      "title": "Parametric Equations",
+      "order": 2
+    },
+    {
+      "lessonId": "polar-coordinates-curves",
+      "title": "Polar Coordinates & Curves",
+      "order": 3
+    }
+  ]
 }

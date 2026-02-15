@@ -29,8 +29,8 @@
   ],
   "instructionalStrategy": [
     "Students saw basic substitution and elimination in Algebra 1. Now we extend to messier coefficients, three-variable systems, and special cases (no solution, infinitely many). Emphasize CHOOSING the most efficient method.",
-    "Substitution is best when a variable is already isolated or has coefficient 1. Elimination is best when coefficients line up or are easy to scale. There's no single 'right method'\u2014strategic thinking matters.",
-    "Systems of inequalities: the solution is a REGION (shading), not a point. Test points confirm which side to shade. Emphasize the graphical interpretation\u2014every point in the shaded region satisfies ALL inequalities simultaneously.",
+    "Substitution is best when a variable is already isolated or has coefficient 1. Elimination is best when coefficients line up or are easy to scale. There's no single 'right method'—strategic thinking matters.",
+    "Systems of inequalities: the solution is a REGION (shading), not a point. Test points confirm which side to shade. Emphasize the graphical interpretation—every point in the shaded region satisfies ALL inequalities simultaneously.",
     "Matrices are introduced as a tool, not an abstraction. Show the direct connection: matrix equation Ax = b mirrors the system. Inverse matrices 'undo' multiplication just like dividing undoes multiplying in a regular equation.",
     "Mathematical modeling is the payoff: real-world problems naturally produce systems. Students must write the system FROM the context, solve it, then interpret the answer IN context."
   ],
@@ -41,34 +41,37 @@
       "lessonPhase": "concept-intro",
       "skill": "systems-substitution-elimination",
       "title": "Concept: Systems Substitution Elimination",
-      "initialPrompt": "You solved systems in Algebra 1. Which method did you prefer\u2014substitution or elimination? Let's try a system with fractions and see if your preference holds up.",
-      "content": "A **system of linear equations** is two or more equations with the same variables. The solution is the point(s) where ALL equations are true simultaneously.\n\n**Three methods for solving:**\n\n1. **Graphing** \u2014 plot both lines, find intersection (great for visualization, imprecise for ugly numbers)\n2. **Substitution** \u2014 solve one equation for a variable, plug into the other\n3. **Elimination** \u2014 add/subtract equations to eliminate a variable\n\n**Three possible outcomes:**\n\u2022 **One solution** \u2014 lines intersect at one point (consistent, independent)\n\u2022 **No solution** \u2014 lines are parallel (inconsistent)\n\u2022 **Infinitely many** \u2014 lines are the same (consistent, dependent)\n\nAlgebra 2 twist: the coefficients get messier, and we add modeling applications."
+      "initialPrompt": "You solved systems in Algebra 1. Which method did you prefer—substitution or elimination? Let's try a system with fractions and see if your preference holds up.",
+      "content": "A **system of linear equations** is two or more equations with the same variables. The solution is the point(s) where ALL equations are true simultaneously.\n\n**Three methods for solving:**\n\n1. **Graphing** — plot both lines, find intersection (great for visualization, imprecise for ugly numbers)\n2. **Substitution** — solve one equation for a variable, plug into the other\n3. **Elimination** — add/subtract equations to eliminate a variable\n\n**Three possible outcomes:**\n• **One solution** — lines intersect at one point (consistent, independent)\n• **No solution** — lines are parallel (inconsistent)\n• **Infinitely many** — lines are the same (consistent, dependent)\n\nAlgebra 2 twist: the coefficients get messier, and we add modeling applications.",
+      "lessonId": "substitution-method"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "systems-substitution-elimination",
-      "title": "I-Do: Systems Substitution Elimination \u2014 Worked Examples",
+      "title": "I-Do: Systems Substitution Elimination — Worked Examples",
       "initialPrompt": "Could we have eliminated y instead? Which approach would have been less work? (Hint: look at the y-coefficients: 5 and -3.)",
       "examples": [
         {
           "problem": "Solve the system: 3x + 5y = 7 and 2x - 3y = 1. Use elimination.",
-          "solution": "**Goal:** eliminate one variable by making coefficients match.\n\nTo eliminate x, multiply equation 1 by 2 and equation 2 by 3:\n6x + 10y = 14\n6x - 9y = 3\n\n**Subtract** (or multiply second by -1 and add):\n(6x + 10y) - (6x - 9y) = 14 - 3\n19y = 11\ny = 11/19\n\n**Back-substitute** into equation 2:\n2x - 3(11/19) = 1\n2x - 33/19 = 1\n2x = 1 + 33/19 = 19/19 + 33/19 = 52/19\nx = 26/19\n\n**Solution:** (26/19, 11/19)\n\n**Check in equation 1:** 3(26/19) + 5(11/19) = 78/19 + 55/19 = 133/19 = 7 \u2713\n\nYes, systems in Algebra 2 often have fraction answers. That's normal."
+          "solution": "**Goal:** eliminate one variable by making coefficients match.\n\nTo eliminate x, multiply equation 1 by 2 and equation 2 by 3:\n6x + 10y = 14\n6x - 9y = 3\n\n**Subtract** (or multiply second by -1 and add):\n(6x + 10y) - (6x - 9y) = 14 - 3\n19y = 11\ny = 11/19\n\n**Back-substitute** into equation 2:\n2x - 3(11/19) = 1\n2x - 33/19 = 1\n2x = 1 + 33/19 = 19/19 + 33/19 = 52/19\nx = 26/19\n\n**Solution:** (26/19, 11/19)\n\n**Check in equation 1:** 3(26/19) + 5(11/19) = 78/19 + 55/19 = 133/19 = 7 ✓\n\nYes, systems in Algebra 2 often have fraction answers. That's normal."
         }
-      ]
+      ],
+      "lessonId": "substitution-method"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "systems-linear-inequalities",
-      "title": "I-Do: Systems Linear Inequalities \u2014 Worked Examples",
+      "title": "I-Do: Systems Linear Inequalities — Worked Examples",
       "initialPrompt": "What if the problem said the shop made 'at least $152'? How would the setup change? (Hint: it becomes an inequality system.)",
       "examples": [
         {
           "problem": "A coffee shop sells regular coffee for $3 and lattes for $5. In one hour they sold 40 drinks totaling $152. How many of each?",
-          "solution": "**Step 1: Define variables.**\nLet r = regular coffees, L = lattes.\n\n**Step 2: Write the system.**\nr + L = 40 (total drinks)\n3r + 5L = 152 (total revenue)\n\n**Step 3: Solve.** (Substitution is clean here\u2014r = 40 - L)\n3(40 - L) + 5L = 152\n120 - 3L + 5L = 152\n2L = 32\nL = 16\nr = 40 - 16 = 24\n\n**Step 4: Interpret and check.**\n24 regular coffees and 16 lattes.\nCheck: 24 + 16 = 40 \u2713 and 3(24) + 5(16) = 72 + 80 = 152 \u2713\n\n**The modeling cycle:** Define \u2192 Write \u2192 Solve \u2192 Interpret \u2192 Check. Always end by answering the QUESTION in CONTEXT, not just giving numbers."
+          "solution": "**Step 1: Define variables.**\nLet r = regular coffees, L = lattes.\n\n**Step 2: Write the system.**\nr + L = 40 (total drinks)\n3r + 5L = 152 (total revenue)\n\n**Step 3: Solve.** (Substitution is clean here—r = 40 - L)\n3(40 - L) + 5L = 152\n120 - 3L + 5L = 152\n2L = 32\nL = 16\nr = 40 - 16 = 24\n\n**Step 4: Interpret and check.**\n24 regular coffees and 16 lattes.\nCheck: 24 + 16 = 40 ✓ and 3(24) + 5(16) = 72 + 80 = 152 ✓\n\n**The modeling cycle:** Define → Write → Solve → Interpret → Check. Always end by answering the QUESTION in CONTEXT, not just giving numbers."
         }
-      ]
+      ],
+      "lessonId": "elimination-method"
     },
     {
       "type": "model",
@@ -79,10 +82,11 @@
       "examples": [
         {
           "problem": "(a) Solve the 3-variable system:\n  x + y + z = 6\n  2x - y + 3z = 14\n  3x + 2y - z = 2\n\n(b) Classify: 6x - 4y = 10 and -9x + 6y = -15.",
-          "solution": "**(a) Three-variable system:**\n\nStrategy: eliminate one variable from two pairs, reducing to a 2-variable system.\n\n**Eliminate y using equations 1 and 2:**\n  (x + y + z = 6) + (2x - y + 3z = 14)\n  3x + 4z = 20 ... call this equation A\n\n**Eliminate y using equations 1 and 3:**\n  Multiply eq 1 by -2: -2x - 2y - 2z = -12\n  Add to eq 3:          3x + 2y - z = 2\n  Result:                x - 3z = -10 ... call this equation B\n\n**Solve the 2x2 system (A and B):**\n  3x + 4z = 20\n  x - 3z = -10\n\nFrom B: x = 3z - 10. Substitute into A:\n  3(3z - 10) + 4z = 20\n  9z - 30 + 4z = 20\n  13z = 50\n  z = 50/13\n\n  x = 3(50/13) - 10 = 150/13 - 130/13 = 20/13\n  y = 6 - x - z = 78/13 - 20/13 - 50/13 = 8/13\n\n**Solution: (20/13, 8/13, 50/13)**\n\nCheck in eq 2: 2(20/13) - 8/13 + 3(50/13) = 40/13 - 8/13 + 150/13 = 182/13 = 14 \u2713\n\n**(b) Classify:**\nMultiply equation 1 by 3/2: 9x - 6y = 15\nCompare with equation 2: -9x + 6y = -15\n\nAdding: 0 = 0 (always true). The equations are equivalent.\n**Infinitely many solutions** (dependent system).\nParametric form: x = (5 + 2t)/3, y = t for any real number t.",
+          "solution": "**(a) Three-variable system:**\n\nStrategy: eliminate one variable from two pairs, reducing to a 2-variable system.\n\n**Eliminate y using equations 1 and 2:**\n  (x + y + z = 6) + (2x - y + 3z = 14)\n  3x + 4z = 20 ... call this equation A\n\n**Eliminate y using equations 1 and 3:**\n  Multiply eq 1 by -2: -2x - 2y - 2z = -12\n  Add to eq 3:          3x + 2y - z = 2\n  Result:                x - 3z = -10 ... call this equation B\n\n**Solve the 2x2 system (A and B):**\n  3x + 4z = 20\n  x - 3z = -10\n\nFrom B: x = 3z - 10. Substitute into A:\n  3(3z - 10) + 4z = 20\n  9z - 30 + 4z = 20\n  13z = 50\n  z = 50/13\n\n  x = 3(50/13) - 10 = 150/13 - 130/13 = 20/13\n  y = 6 - x - z = 78/13 - 20/13 - 50/13 = 8/13\n\n**Solution: (20/13, 8/13, 50/13)**\n\nCheck in eq 2: 2(20/13) - 8/13 + 3(50/13) = 40/13 - 8/13 + 150/13 = 182/13 = 14 ✓\n\n**(b) Classify:**\nMultiply equation 1 by 3/2: 9x - 6y = 15\nCompare with equation 2: -9x + 6y = -15\n\nAdding: 0 = 0 (always true). The equations are equivalent.\n**Infinitely many solutions** (dependent system).\nParametric form: x = (5 + 2t)/3, y = t for any real number t.",
           "tip": "For 3-variable systems, always reduce to 2 variables by eliminating the SAME variable from two different pairs of equations. Then solve the resulting 2x2 system as usual."
         }
-      ]
+      ],
+      "lessonId": "substitution-method"
     },
     {
       "type": "model",
@@ -93,10 +97,11 @@
       "examples": [
         {
           "problem": "A bakery makes cakes (x) and pies (y). Each cake requires 3 hours of labor and each pie requires 2 hours. The bakery has at most 24 labor hours, wants to make at least 4 cakes, and at most 8 pies. Graph the feasible region and find the vertices.",
-          "solution": "**Write the inequality system:**\n  3x + 2y \u2264 24 (labor constraint)\n  x \u2265 4         (minimum cakes)\n  y \u2264 8         (maximum pies)\n  x \u2265 0, y \u2265 0 (non-negativity)\n\n**Graph each boundary and shade:**\n\n1. 3x + 2y = 24: x-intercept (8, 0), y-intercept (0, 12). Shade below (\u2264).\n2. x = 4: vertical line. Shade to the right (\u2265).\n3. y = 8: horizontal line. Shade below (\u2264).\n4. Axes: stay in quadrant I.\n\n**Find vertices** (corners of the feasible region):\n\n- x = 4 and y = 0: **(4, 0)** -- check: 3(4) + 0 = 12 \u2264 24 \u2713\n- x = 4 and 3x + 2y = 24: 12 + 2y = 24, y = 6. **(4, 6)** \u2713\n- x = 4 and y = 8: check: 3(4) + 2(8) = 28 > 24. NOT in the region!\n- y = 8 and 3x + 2y = 24: 3x + 16 = 24, x = 8/3 \u2248 2.67. But x \u2265 4 fails!\n- 3x + 2(0) = 24 with y = 0: x = 8. **(8, 0)** \u2713\n\n**Vertices: (4, 0), (8, 0), (4, 6)**\n\nThe feasible region is a triangle. Every point inside represents a valid production plan.",
+          "solution": "**Write the inequality system:**\n  3x + 2y ≤ 24 (labor constraint)\n  x ≥ 4         (minimum cakes)\n  y ≤ 8         (maximum pies)\n  x ≥ 0, y ≥ 0 (non-negativity)\n\n**Graph each boundary and shade:**\n\n1. 3x + 2y = 24: x-intercept (8, 0), y-intercept (0, 12). Shade below (≤).\n2. x = 4: vertical line. Shade to the right (≥).\n3. y = 8: horizontal line. Shade below (≤).\n4. Axes: stay in quadrant I.\n\n**Find vertices** (corners of the feasible region):\n\n- x = 4 and y = 0: **(4, 0)** -- check: 3(4) + 0 = 12 ≤ 24 ✓\n- x = 4 and 3x + 2y = 24: 12 + 2y = 24, y = 6. **(4, 6)** ✓\n- x = 4 and y = 8: check: 3(4) + 2(8) = 28 > 24. NOT in the region!\n- y = 8 and 3x + 2y = 24: 3x + 16 = 24, x = 8/3 ≈ 2.67. But x ≥ 4 fails!\n- 3x + 2(0) = 24 with y = 0: x = 8. **(8, 0)** ✓\n\n**Vertices: (4, 0), (8, 0), (4, 6)**\n\nThe feasible region is a triangle. Every point inside represents a valid production plan.",
           "tip": "Always test candidate vertices against ALL constraints. Two boundary lines may intersect outside the feasible region if a third constraint is violated at that point."
         }
-      ]
+      ],
+      "lessonId": "elimination-method"
     },
     {
       "type": "model",
@@ -107,37 +112,39 @@
       "examples": [
         {
           "problem": "A chemist needs to mix a 20% acid solution with a 60% acid solution to produce 500 mL of a 35% acid solution. How many mL of each?",
-          "solution": "**Step 1: Define variables.**\nLet x = mL of 20% solution, y = mL of 60% solution.\n\n**Step 2: Write the system.**\nTotal volume: x + y = 500\nTotal acid:   0.20x + 0.60y = 0.35(500) = 175\n\n**Step 3: Solve.**\nFrom equation 1: x = 500 - y. Substitute into equation 2:\n0.20(500 - y) + 0.60y = 175\n100 - 0.20y + 0.60y = 175\n0.40y = 75\ny = 187.5\nx = 500 - 187.5 = 312.5\n\n**Step 4: Interpret and verify.**\n**312.5 mL of the 20% solution and 187.5 mL of the 60% solution.**\n\nCheck volume: 312.5 + 187.5 = 500 \u2713\nCheck acid: 0.20(312.5) + 0.60(187.5) = 62.5 + 112.5 = 175 \u2713\n175/500 = 0.35 = 35% \u2713\n\nMixture problems always produce two equations: one for total quantity and one for the 'stuff inside' (acid, salt, etc.).",
+          "solution": "**Step 1: Define variables.**\nLet x = mL of 20% solution, y = mL of 60% solution.\n\n**Step 2: Write the system.**\nTotal volume: x + y = 500\nTotal acid:   0.20x + 0.60y = 0.35(500) = 175\n\n**Step 3: Solve.**\nFrom equation 1: x = 500 - y. Substitute into equation 2:\n0.20(500 - y) + 0.60y = 175\n100 - 0.20y + 0.60y = 175\n0.40y = 75\ny = 187.5\nx = 500 - 187.5 = 312.5\n\n**Step 4: Interpret and verify.**\n**312.5 mL of the 20% solution and 187.5 mL of the 60% solution.**\n\nCheck volume: 312.5 + 187.5 = 500 ✓\nCheck acid: 0.20(312.5) + 0.60(187.5) = 62.5 + 112.5 = 175 ✓\n175/500 = 0.35 = 35% ✓\n\nMixture problems always produce two equations: one for total quantity and one for the 'stuff inside' (acid, salt, etc.).",
           "tip": "In mixture problems, the concentration equation counts the actual amount of substance, not the percentage. Multiply percentage by volume to get amount."
         }
-      ]
+      ],
+      "lessonId": "systems-inequalities-modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "matrices-operations",
-      "title": "I-Do: Matrix Operations \u2014 Addition, Scalar Multiplication, Multiplication",
+      "title": "I-Do: Matrix Operations — Addition, Scalar Multiplication, Multiplication",
       "initialPrompt": "Can you multiply a 2x3 matrix by a 3x2 matrix? What size is the result? Can you multiply in the other order? What size would that be?",
       "examples": [
         {
           "problem": "Given A = [2 -1; 3 4] and B = [5 0; -2 1]:\n(a) Find 3A - 2B.\n(b) Find AB.\n(c) Find BA. Is AB = BA?",
-          "solution": "**(a) 3A - 2B:**\n3A = [6 -3; 9 12]\n2B = [10 0; -4 2]\n3A - 2B = [6-10  -3-0; 9-(-4)  12-2] = **[-4 -3; 13 10]**\n\n**(b) AB:**\nA is 2x2, B is 2x2, so result is 2x2.\n\nRow 1 of A dot Col 1 of B: (2)(5) + (-1)(-2) = 10 + 2 = 12\nRow 1 of A dot Col 2 of B: (2)(0) + (-1)(1) = 0 - 1 = -1\nRow 2 of A dot Col 1 of B: (3)(5) + (4)(-2) = 15 - 8 = 7\nRow 2 of A dot Col 2 of B: (3)(0) + (4)(1) = 0 + 4 = 4\n\nAB = **[12 -1; 7 4]**\n\n**(c) BA:**\nRow 1 of B dot Col 1 of A: (5)(2) + (0)(3) = 10\nRow 1 of B dot Col 2 of A: (5)(-1) + (0)(4) = -5\nRow 2 of B dot Col 1 of A: (-2)(2) + (1)(3) = -1\nRow 2 of B dot Col 2 of A: (-2)(-1) + (1)(4) = 6\n\nBA = **[10 -5; -1 6]**\n\n**AB \u2260 BA!** Matrix multiplication is NOT commutative. The order matters -- this is a fundamental difference from regular algebra.",
+          "solution": "**(a) 3A - 2B:**\n3A = [6 -3; 9 12]\n2B = [10 0; -4 2]\n3A - 2B = [6-10  -3-0; 9-(-4)  12-2] = **[-4 -3; 13 10]**\n\n**(b) AB:**\nA is 2x2, B is 2x2, so result is 2x2.\n\nRow 1 of A dot Col 1 of B: (2)(5) + (-1)(-2) = 10 + 2 = 12\nRow 1 of A dot Col 2 of B: (2)(0) + (-1)(1) = 0 - 1 = -1\nRow 2 of A dot Col 1 of B: (3)(5) + (4)(-2) = 15 - 8 = 7\nRow 2 of A dot Col 2 of B: (3)(0) + (4)(1) = 0 + 4 = 4\n\nAB = **[12 -1; 7 4]**\n\n**(c) BA:**\nRow 1 of B dot Col 1 of A: (5)(2) + (0)(3) = 10\nRow 1 of B dot Col 2 of A: (5)(-1) + (0)(4) = -5\nRow 2 of B dot Col 1 of A: (-2)(2) + (1)(3) = -1\nRow 2 of B dot Col 2 of A: (-2)(-1) + (1)(4) = 6\n\nBA = **[10 -5; -1 6]**\n\n**AB ≠ BA!** Matrix multiplication is NOT commutative. The order matters -- this is a fundamental difference from regular algebra.",
           "tip": "To multiply matrices, use 'row times column.' Entry (i, j) of the product is the dot product of row i of the first matrix with column j of the second."
         }
-      ]
+      ],
+      "lessonId": "matrix-intro"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "systems-linear-inequalities",
-      "title": "We-Do: Systems Linear Inequalities \u2014 Guided Practice",
+      "title": "We-Do: Systems Linear Inequalities — Guided Practice",
       "problems": [
         {
           "question": "Solve using substitution: y = 2x - 1 and 3x + 4y = 21.",
           "answer": "x = 25/11, y = 39/11",
           "hints": [
             "Substitute y = 2x-1 into second equation: 3x + 4(2x-1) = 21.",
-            "11x - 4 = 21. 11x = 25. x = 25/11. y = 2(25/11) - 1 = 39/11. Check: 3(25/11) + 4(39/11) = 231/11 = 21 \u2713"
+            "11x - 4 = 21. 11x = 25. x = 25/11. y = 2(25/11) - 1 = 39/11. Check: 3(25/11) + 4(39/11) = 231/11 = 21 ✓"
           ]
         },
         {
@@ -149,16 +156,17 @@
           ]
         },
         {
-          "question": "Graph the system of inequalities: y > 2x - 3 and y \u2264 -x + 4. Where is the solution region?",
+          "question": "Graph the system of inequalities: y > 2x - 3 and y ≤ -x + 4. Where is the solution region?",
           "answer": "The solution region is above the line y = 2x - 3 (dashed) AND below/on the line y = -x + 4 (solid). The region is the overlap.",
           "hints": [
             "Graph y = 2x - 3 as a dashed line (strict >), shade above.",
-            "Graph y = -x + 4 as a solid line (\u2264), shade below.",
+            "Graph y = -x + 4 as a solid line (≤), shade below.",
             "The solution region is where both shadings overlap. The lines intersect at (7/3, 5/3)."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, which variable is already isolated? That tells you substitution is the right call."
+      "initialPrompt": "For the first problem, which variable is already isolated? That tells you substitution is the right call.",
+      "lessonId": "elimination-method"
     },
     {
       "type": "explanation",
@@ -166,29 +174,31 @@
       "skill": "mathematical-modeling-systems",
       "title": "Concept: Mathematical Modeling Systems",
       "initialPrompt": "For the matrix [3 5; 2 -3], what is the determinant? Is it invertible?",
-      "content": "**Matrices: A New Tool for Solving Systems**\n\nA **matrix** is a rectangular array of numbers. We use them to represent and solve systems efficiently.\n\n**Matrix Operations:**\n\u2022 **Addition:** Add corresponding entries (matrices must be same size)\n\u2022 **Scalar multiplication:** Multiply every entry by the scalar\n\u2022 **Matrix multiplication:** Row \u00d7 column, dot product pattern\n  - (m\u00d7n) \u00b7 (n\u00d7p) = (m\u00d7p). Inner dimensions must match!\n\n**Solving Ax = b:**\nA system like 3x + 5y = 7, 2x - 3y = 1 becomes:\n[3  5] [x]   [7]\n[2 -3] [y] = [1]\n\nIf A has an inverse A\u207b\u00b9, then x = A\u207b\u00b9b.\n\n**2\u00d72 Inverse:**\nFor A = [a b; c d], A\u207b\u00b9 = (1/det) \u00b7 [d -b; -c a]\nwhere det = ad - bc. If det = 0, no inverse exists (singular matrix)."
+      "content": "**Matrices: A New Tool for Solving Systems**\n\nA **matrix** is a rectangular array of numbers. We use them to represent and solve systems efficiently.\n\n**Matrix Operations:**\n• **Addition:** Add corresponding entries (matrices must be same size)\n• **Scalar multiplication:** Multiply every entry by the scalar\n• **Matrix multiplication:** Row × column, dot product pattern\n  - (m×n) · (n×p) = (m×p). Inner dimensions must match!\n\n**Solving Ax = b:**\nA system like 3x + 5y = 7, 2x - 3y = 1 becomes:\n[3  5] [x]   [7]\n[2 -3] [y] = [1]\n\nIf A has an inverse A⁻¹, then x = A⁻¹b.\n\n**2×2 Inverse:**\nFor A = [a b; c d], A⁻¹ = (1/det) · [d -b; -c a]\nwhere det = ad - bc. If det = 0, no inverse exists (singular matrix).",
+      "lessonId": "systems-inequalities-modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "matrices-operations",
-      "title": "I-Do: Matrices Operations \u2014 Worked Examples",
+      "title": "I-Do: Matrices Operations — Worked Examples",
       "initialPrompt": "We got the same answer using elimination earlier. What's the advantage of matrices? Think about what happens with 3 or 4 variables.",
       "examples": [
         {
           "problem": "Use an inverse matrix to solve: 3x + 5y = 7 and 2x - 3y = 1.",
-          "solution": "**Set up Ax = b:**\nA = [3  5]   x = [x]   b = [7]\n    [2 -3]       [y]       [1]\n\n**Find A\u207b\u00b9:**\ndet(A) = (3)(-3) - (5)(2) = -9 - 10 = -19\n\nA\u207b\u00b9 = (1/-19) \u00b7 [-3 -5] = [3/19   5/19]\n                 [-2  3]   [2/19  -3/19]\n\n**Solve x = A\u207b\u00b9b:**\n[x] = [3/19   5/19] [7] = [(21 + 5)/19 ] = [26/19]\n[y]   [2/19  -3/19] [1]   [(14 + -3)/19]   [11/19]\n\n**Solution:** x = 26/19, y = 11/19\n\nSame answer as elimination! The matrix method is mechanical\u2014no strategic decisions needed. It shines for larger systems."
+          "solution": "**Set up Ax = b:**\nA = [3  5]   x = [x]   b = [7]\n    [2 -3]       [y]       [1]\n\n**Find A⁻¹:**\ndet(A) = (3)(-3) - (5)(2) = -9 - 10 = -19\n\nA⁻¹ = (1/-19) · [-3 -5] = [3/19   5/19]\n                 [-2  3]   [2/19  -3/19]\n\n**Solve x = A⁻¹b:**\n[x] = [3/19   5/19] [7] = [(21 + 5)/19 ] = [26/19]\n[y]   [2/19  -3/19] [1]   [(14 + -3)/19]   [11/19]\n\n**Solution:** x = 26/19, y = 11/19\n\nSame answer as elimination! The matrix method is mechanical—no strategic decisions needed. It shines for larger systems."
         }
-      ]
+      ],
+      "lessonId": "matrix-intro"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "matrices-operations",
-      "title": "We-Do: Matrices Operations \u2014 Guided Practice",
+      "title": "We-Do: Matrices Operations — Guided Practice",
       "problems": [
         {
-          "question": "Multiply: [2 -1; 3 4] \u00b7 [5; 2].",
+          "question": "Multiply: [2 -1; 3 4] · [5; 2].",
           "answer": "[8; 23]",
           "hints": [
             "Row 1: 2(5) + (-1)(2) = 10 - 2 = 8.",
@@ -200,43 +210,44 @@
           "answer": "[2 -1; -7 4]",
           "hints": [
             "det = 4(2) - 1(7) = 8 - 7 = 1.",
-            "A\u207b\u00b9 = (1/1)[2 -1; -7 4] = [2 -1; -7 4]."
+            "A⁻¹ = (1/1)[2 -1; -7 4] = [2 -1; -7 4]."
           ]
         },
         {
           "question": "Use the inverse matrix to solve: 4x + y = 10 and 7x + 2y = 19.",
           "answer": "x = 1, y = 6",
           "hints": [
-            "A\u207b\u00b9 = [2 -1; -7 4] from above.",
+            "A⁻¹ = [2 -1; -7 4] from above.",
             "[x; y] = [2 -1; -7 4][10; 19] = [20-19; -70+76] = [1; 6]."
           ]
         }
       ],
-      "initialPrompt": "For matrix multiplication, remember: rows of the first times columns of the second. What is the dot product of [2, -1] and [5, 2]?"
+      "initialPrompt": "For matrix multiplication, remember: rows of the first times columns of the second. What is the dot product of [2, -1] and [5, 2]?",
+      "lessonId": "matrix-intro"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "skill": "matrices-solving-systems",
-      "title": "You-Do: Matrices Solving Systems \u2014 Independent Practice",
+      "title": "You-Do: Matrices Solving Systems — Independent Practice",
       "problems": [
         {
           "question": "Solve by elimination: 5x + 3y = 11 and 2x + y = 4.",
           "answer": "x = 1, y = 2",
           "hints": [
             "Multiply eq2 by -3: -6x - 3y = -12. Add to eq1: -x = -1, x = 1.",
-            "Substitute: 2(1) + y = 4, y = 2. Check: 5(1)+3(2)=11 \u2713."
+            "Substitute: 2(1) + y = 4, y = 2. Check: 5(1)+3(2)=11 ✓."
           ]
         },
         {
           "question": "A store sells pens for $2 and notebooks for $5. A customer buys 8 items for $25. How many pens and notebooks?",
           "answer": "5 pens and 3 notebooks",
           "hints": [
-            "p + n = 8 and 2p + 5n = 25. From first: p = 8 - n. Substitute: 2(8-n) + 5n = 25 \u2192 16 + 3n = 25 \u2192 n = 3, p = 5."
+            "p + n = 8 and 2p + 5n = 25. From first: p = 8 - n. Substitute: 2(8-n) + 5n = 25 → 16 + 3n = 25 → n = 3, p = 5."
           ]
         },
         {
-          "question": "Graph the solution region: x + y \u2264 6, x \u2265 0, y \u2265 0. What shape is the solution region?",
+          "question": "Graph the solution region: x + y ≤ 6, x ≥ 0, y ≥ 0. What shape is the solution region?",
           "answer": "A triangle with vertices at (0,0), (6,0), and (0,6).",
           "hints": [
             "The three inequalities form the first-quadrant triangle bounded by the line x + y = 6."
@@ -254,12 +265,13 @@
           "answer": "x = 1, y = 2",
           "hints": [
             "A = [1 3; 2 5]. det = 5 - 6 = -1.",
-            "A\u207b\u00b9 = (1/-1)[5 -3; -2 1] = [-5 3; 2 -1].",
+            "A⁻¹ = (1/-1)[5 -3; -2 1] = [-5 3; 2 -1].",
             "[x;y] = [-5 3; 2 -1][7;12] = [-35+36; 14-12] = [1; 2]."
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "lessonId": "systems-inequalities-modeling"
     }
   ],
   "answerKeys": {
@@ -267,7 +279,7 @@
     "Coffee shop: 40 drinks, $152": "24 regular, 16 lattes",
     "y=2x-1, 3x+4y=21": "(25/11, 39/11)",
     "4x-6y=10, -2x+3y=-5": "Infinitely many solutions",
-    "Matrix multiply [2 -1;3 4]\u00b7[5;2]": "[8; 23]",
+    "Matrix multiply [2 -1;3 4]·[5;2]": "[8; 23]",
     "Inverse [4 1;7 2]": "[2 -1; -7 4]",
     "4x+y=10, 7x+2y=19 via matrix": "x=1, y=6",
     "Pens and notebooks: 8 items, $25": "5 pens, 3 notebooks",
@@ -280,6 +292,28 @@
     "3A-2B matrices": "[-4 -3; 13 10]",
     "AB product": "[12 -1; 7 4]",
     "BA product": "[10 -5; -1 6]",
-    "AB vs BA commutative": "AB \u2260 BA (not commutative)"
-  }
+    "AB vs BA commutative": "AB ≠ BA (not commutative)"
+  },
+  "lessons": [
+    {
+      "lessonId": "substitution-method",
+      "title": "Solving Systems by Substitution",
+      "order": 1
+    },
+    {
+      "lessonId": "elimination-method",
+      "title": "Solving Systems by Elimination",
+      "order": 2
+    },
+    {
+      "lessonId": "systems-inequalities-modeling",
+      "title": "Systems of Inequalities & Modeling",
+      "order": 3
+    },
+    {
+      "lessonId": "matrix-intro",
+      "title": "Matrix Operations & Inverse Matrices",
+      "order": 4
+    }
+  ]
 }

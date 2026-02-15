@@ -18,15 +18,15 @@
     "G-MG.1"
   ],
   "goals": [
-    "Find the sum of interior and exterior angles of any polygon using (n-2)\u00b7180\u00b0",
+    "Find the sum of interior and exterior angles of any polygon using (n-2)·180°",
     "Identify and apply properties of parallelograms, rectangles, rhombi, and squares",
     "Use properties of quadrilaterals to write proofs",
     "Apply properties of trapezoids and kites"
   ],
   "instructionalStrategy": [
-    "Derive the polygon angle sum formula by triangulating from one vertex\u2014students see why (n-2) works.",
-    "Build the quadrilateral hierarchy as a family tree: quadrilateral \u2192 parallelogram \u2192 rectangle/rhombus \u2192 square.",
-    "Every property of a parent in the hierarchy is inherited by children\u2014a square has ALL properties of a parallelogram, rectangle, AND rhombus.",
+    "Derive the polygon angle sum formula by triangulating from one vertex—students see why (n-2) works.",
+    "Build the quadrilateral hierarchy as a family tree: quadrilateral → parallelogram → rectangle/rhombus → square.",
+    "Every property of a parent in the hierarchy is inherited by children—a square has ALL properties of a parallelogram, rectangle, AND rhombus.",
     "Use coordinate geometry to verify quadrilateral properties (slopes for parallel sides, distance for congruent sides)."
   ],
   "aiFlexLevel": "high",
@@ -36,8 +36,9 @@
       "lessonPhase": "concept-intro",
       "skill": "polygon-angle-sum",
       "title": "Polygon Interior and Exterior Angle Sums",
-      "content": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n - 2) \u00d7 180\u00b0**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n - 2) triangles. Each triangle has 180\u00b0, so the total is (n - 2) \u00d7 180\u00b0.\n\nExamples:\n\u2022 Triangle (n=3): (3-2) \u00d7 180\u00b0 = 180\u00b0\n\u2022 Quadrilateral (n=4): (4-2) \u00d7 180\u00b0 = 360\u00b0\n\u2022 Pentagon (n=5): (5-2) \u00d7 180\u00b0 = 540\u00b0\n\u2022 Hexagon (n=6): (6-2) \u00d7 180\u00b0 = 720\u00b0\n\nFor a **regular polygon** (all sides and angles equal), each angle = (n-2) \u00d7 180\u00b0 / n.\n\n**Exterior Angle Sum:** The sum of exterior angles of ANY convex polygon is always **360\u00b0**. For a regular polygon, each exterior angle = 360\u00b0 / n.",
-      "initialPrompt": "A stop sign is a regular octagon (8 sides). Can you calculate the sum of its interior angles and the measure of each individual angle?"
+      "content": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n - 2) × 180°**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n - 2) triangles. Each triangle has 180°, so the total is (n - 2) × 180°.\n\nExamples:\n• Triangle (n=3): (3-2) × 180° = 180°\n• Quadrilateral (n=4): (4-2) × 180° = 360°\n• Pentagon (n=5): (5-2) × 180° = 540°\n• Hexagon (n=6): (6-2) × 180° = 720°\n\nFor a **regular polygon** (all sides and angles equal), each angle = (n-2) × 180° / n.\n\n**Exterior Angle Sum:** The sum of exterior angles of ANY convex polygon is always **360°**. For a regular polygon, each exterior angle = 360° / n.",
+      "initialPrompt": "A stop sign is a regular octagon (8 sides). Can you calculate the sum of its interior angles and the measure of each individual angle?",
+      "lessonId": "polygon-angle-sums"
     },
     {
       "type": "model",
@@ -47,18 +48,19 @@
       "examples": [
         {
           "problem": "Find the sum of interior angles of a decagon (10 sides) and the measure of each interior angle if it is regular.",
-          "solution": "Sum of interior angles: (n-2) \u00d7 180\u00b0 = (10-2) \u00d7 180\u00b0 = 8 \u00d7 180\u00b0 = **1440\u00b0**\n\nEach angle of a regular decagon: 1440\u00b0 \u00f7 10 = **144\u00b0**\n\nExterior angle at each vertex: 180\u00b0 - 144\u00b0 = 36\u00b0. Check: 36\u00b0 \u00d7 10 = 360\u00b0 \u2713"
+          "solution": "Sum of interior angles: (n-2) × 180° = (10-2) × 180° = 8 × 180° = **1440°**\n\nEach angle of a regular decagon: 1440° ÷ 10 = **144°**\n\nExterior angle at each vertex: 180° - 144° = 36°. Check: 36° × 10 = 360° ✓"
         },
         {
-          "problem": "The interior angles of a polygon sum to 2340\u00b0. How many sides does the polygon have?",
-          "solution": "Work backwards: (n-2) \u00d7 180 = 2340\nn - 2 = 2340 \u00f7 180 = 13\nn = **15 sides** (a 15-gon)\n\nVerify: (15-2) \u00d7 180 = 13 \u00d7 180 = 2340\u00b0 \u2713"
+          "problem": "The interior angles of a polygon sum to 2340°. How many sides does the polygon have?",
+          "solution": "Work backwards: (n-2) × 180 = 2340\nn - 2 = 2340 ÷ 180 = 13\nn = **15 sides** (a 15-gon)\n\nVerify: (15-2) × 180 = 13 × 180 = 2340° ✓"
         },
         {
-          "problem": "Each interior angle of a regular polygon measures 150\u00b0. Find the number of sides and the sum of all interior angles.",
-          "solution": "Each exterior angle = 180\u00b0 - 150\u00b0 = 30\u00b0\nn = 360\u00b0 \u00f7 30\u00b0 = **12 sides** (a regular dodecagon)\n\nSum = (12-2) \u00d7 180\u00b0 = 10 \u00d7 180\u00b0 = **1800\u00b0**\nVerify: 1800\u00b0 \u00f7 12 = 150\u00b0 per angle \u2713"
+          "problem": "Each interior angle of a regular polygon measures 150°. Find the number of sides and the sum of all interior angles.",
+          "solution": "Each exterior angle = 180° - 150° = 30°\nn = 360° ÷ 30° = **12 sides** (a regular dodecagon)\n\nSum = (12-2) × 180° = 10 × 180° = **1800°**\nVerify: 1800° ÷ 12 = 150° per angle ✓"
         }
       ],
-      "initialPrompt": "The exterior angles always sum to 360\u00b0, no matter how many sides. Why do you think that's true? Think about walking around the outside of the shape."
+      "initialPrompt": "The exterior angles always sum to 360°, no matter how many sides. Why do you think that's true? Think about walking around the outside of the shape.",
+      "lessonId": "polygon-angle-sums"
     },
     {
       "type": "guided_practice",
@@ -68,54 +70,57 @@
       "problems": [
         {
           "id": "pq-wp1",
-          "question": "The interior angles of a polygon sum to 900\u00b0. How many sides does it have?",
+          "question": "The interior angles of a polygon sum to 900°. How many sides does it have?",
           "answer": "7",
           "hints": [
-            "Use the formula backwards: (n-2) \u00d7 180 = 900.",
-            "n - 2 = 900 \u00f7 180 = 5. So n = 7 (a heptagon)."
+            "Use the formula backwards: (n-2) × 180 = 900.",
+            "n - 2 = 900 ÷ 180 = 5. So n = 7 (a heptagon)."
           ]
         },
         {
           "id": "pq-wp2",
-          "question": "Each interior angle of a regular polygon measures 156\u00b0. How many sides does it have?",
+          "question": "Each interior angle of a regular polygon measures 156°. How many sides does it have?",
           "answer": "15",
           "hints": [
-            "Each exterior angle = 180\u00b0 - 156\u00b0 = 24\u00b0.",
-            "Since exterior angles sum to 360\u00b0: n = 360\u00b0 \u00f7 24\u00b0 = 15 sides."
+            "Each exterior angle = 180° - 156° = 24°.",
+            "Since exterior angles sum to 360°: n = 360° ÷ 24° = 15 sides."
           ]
         },
         {
           "id": "pq-wp3",
-          "question": "A convex hexagon has five angles measuring 110\u00b0, 130\u00b0, 120\u00b0, 115\u00b0, and 140\u00b0. Find the sixth angle.",
-          "answer": "105\u00b0",
+          "question": "A convex hexagon has five angles measuring 110°, 130°, 120°, 115°, and 140°. Find the sixth angle.",
+          "answer": "105°",
           "hints": [
-            "Sum of hexagon interior angles = (6-2) \u00d7 180\u00b0 = 720\u00b0.",
-            "Sum of known angles = 110 + 130 + 120 + 115 + 140 = 615\u00b0. Missing angle = 720 - 615 = 105\u00b0."
+            "Sum of hexagon interior angles = (6-2) × 180° = 720°.",
+            "Sum of known angles = 110 + 130 + 120 + 115 + 140 = 615°. Missing angle = 720 - 615 = 105°."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, we need to work backwards from the angle sum. What formula relates the number of sides to the angle sum?"
+      "initialPrompt": "For the first problem, we need to work backwards from the angle sum. What formula relates the number of sides to the angle sum?",
+      "lessonId": "polygon-angle-sums"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "quadrilateral-properties",
       "title": "The Quadrilateral Family Hierarchy",
-      "content": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** \u2014 both pairs of opposite sides parallel:\n\u2022 Opposite sides are congruent\n\u2022 Opposite angles are congruent\n\u2022 Consecutive angles are supplementary\n\u2022 Diagonals bisect each other\n\n**Rectangle** \u2014 parallelogram with 4 right angles:\n\u2022 All parallelogram properties PLUS\n\u2022 Diagonals are congruent\n\n**Rhombus** \u2014 parallelogram with 4 congruent sides:\n\u2022 All parallelogram properties PLUS\n\u2022 Diagonals are perpendicular\n\u2022 Diagonals bisect the angles\n\n**Square** \u2014 a rectangle AND a rhombus:\n\u2022 ALL properties of parallelogram, rectangle, AND rhombus",
-      "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference."
+      "content": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** — both pairs of opposite sides parallel:\n• Opposite sides are congruent\n• Opposite angles are congruent\n• Consecutive angles are supplementary\n• Diagonals bisect each other\n\n**Rectangle** — parallelogram with 4 right angles:\n• All parallelogram properties PLUS\n• Diagonals are congruent\n\n**Rhombus** — parallelogram with 4 congruent sides:\n• All parallelogram properties PLUS\n• Diagonals are perpendicular\n• Diagonals bisect the angles\n\n**Square** — a rectangle AND a rhombus:\n• ALL properties of parallelogram, rectangle, AND rhombus",
+      "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference.",
+      "lessonId": "exterior-angle-sums"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "parallelogram-proofs",
-      "title": "We-Do: Parallelogram Proofs \u2014 Guided Practice",
+      "title": "We-Do: Parallelogram Proofs — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for parallelogram proofs.",
           "hint": "Apply the concepts of parallelogram proofs.",
           "solution": "Step-by-step solution for parallelogram proofs."
         }
-      ]
+      ],
+      "lessonId": "parallelogram-properties"
     },
     {
       "type": "model",
@@ -124,19 +129,20 @@
       "title": "I-Do: Quadrilateral Property Applications",
       "examples": [
         {
-          "problem": "In parallelogram ABCD, \u2220A = (3x + 10)\u00b0 and \u2220B = (5x - 30)\u00b0. Find all four angles.",
-          "solution": "Consecutive angles are supplementary:\n(3x + 10) + (5x - 30) = 180\n8x - 20 = 180\n8x = 200 \u2192 x = 25\n\n\u2220A = 3(25) + 10 = **85\u00b0**, \u2220B = 5(25) - 30 = **95\u00b0**\nOpposite angles congruent: \u2220C = \u2220A = **85\u00b0**, \u2220D = \u2220B = **95\u00b0**\n\nCheck: 85 + 95 + 85 + 95 = 360\u00b0 \u2713"
+          "problem": "In parallelogram ABCD, ∠A = (3x + 10)° and ∠B = (5x - 30)°. Find all four angles.",
+          "solution": "Consecutive angles are supplementary:\n(3x + 10) + (5x - 30) = 180\n8x - 20 = 180\n8x = 200 → x = 25\n\n∠A = 3(25) + 10 = **85°**, ∠B = 5(25) - 30 = **95°**\nOpposite angles congruent: ∠C = ∠A = **85°**, ∠D = ∠B = **95°**\n\nCheck: 85 + 95 + 85 + 95 = 360° ✓"
         },
         {
           "problem": "In rectangle EFGH, the diagonals intersect at M. If EG = 26, find EM, MG, and FH.",
-          "solution": "Rectangle diagonals bisect each other:\nEM = MG = 26 \u00f7 2 = **13**\n\nRectangle diagonals are congruent:\nFH = EG = **26**\n\nSo FM = MH = 13 as well."
+          "solution": "Rectangle diagonals bisect each other:\nEM = MG = 26 ÷ 2 = **13**\n\nRectangle diagonals are congruent:\nFH = EG = **26**\n\nSo FM = MH = 13 as well."
         },
         {
-          "problem": "Rhombus JKLM has \u2220J = 60\u00b0 and each side = 10. Find all angles and both diagonal lengths.",
-          "solution": "Opposite angles: \u2220L = \u2220J = **60\u00b0**. Consecutive supplementary: \u2220K = \u2220M = **120\u00b0**.\n\nDiagonals bisect angles and are perpendicular. Let O be the intersection.\nIn right triangle JOK: \u2220OJK = 60\u00b0/2 = 30\u00b0, JK = 10 (hypotenuse of the right triangle at O).\n\nThis is a 30-60-90 triangle:\nJO = 10 \u00d7 cos(30\u00b0) = 10 \u00d7 (\u221a3/2) = 5\u221a3\nKO = 10 \u00d7 sin(30\u00b0) = 10 \u00d7 (1/2) = 5\n\nDiagonals: JL = 2 \u00d7 5\u221a3 = **10\u221a3 \u2248 17.3**, KM = 2 \u00d7 5 = **10**\nVerify: (5\u221a3)\u00b2 + 5\u00b2 = 75 + 25 = 100 = 10\u00b2 \u2713"
+          "problem": "Rhombus JKLM has ∠J = 60° and each side = 10. Find all angles and both diagonal lengths.",
+          "solution": "Opposite angles: ∠L = ∠J = **60°**. Consecutive supplementary: ∠K = ∠M = **120°**.\n\nDiagonals bisect angles and are perpendicular. Let O be the intersection.\nIn right triangle JOK: ∠OJK = 60°/2 = 30°, JK = 10 (hypotenuse of the right triangle at O).\n\nThis is a 30-60-90 triangle:\nJO = 10 × cos(30°) = 10 × (√3/2) = 5√3\nKO = 10 × sin(30°) = 10 × (1/2) = 5\n\nDiagonals: JL = 2 × 5√3 = **10√3 ≈ 17.3**, KM = 2 × 5 = **10**\nVerify: (5√3)² + 5² = 75 + 25 = 100 = 10² ✓"
         }
       ],
-      "initialPrompt": "What if this were a rectangle instead of just a parallelogram\u2014what would all four angles have to be?"
+      "initialPrompt": "What if this were a rectangle instead of just a parallelogram—what would all four angles have to be?",
+      "lessonId": "exterior-angle-sums"
     },
     {
       "type": "guided_practice",
@@ -150,8 +156,8 @@
           "answer": "13",
           "hints": [
             "Diagonals of a rhombus bisect each other AND are perpendicular.",
-            "So PT = 12, QT = 5, and angle PTQ = 90\u00b0. Use Pythagorean Theorem: PQ\u00b2 = 12\u00b2 + 5\u00b2.",
-            "PQ\u00b2 = 144 + 25 = 169. PQ = 13."
+            "So PT = 12, QT = 5, and angle PTQ = 90°. Use Pythagorean Theorem: PQ² = 12² + 5².",
+            "PQ² = 144 + 25 = 169. PQ = 13."
           ]
         },
         {
@@ -168,20 +174,22 @@
           "question": "In parallelogram ABCD, AB = 2x + 3 and CD = 4x - 9. Also, BC = x + 8. Find x, AB, CD, and BC.",
           "answer": "x = 6, AB = CD = 15, BC = AD = 14",
           "hints": [
-            "Opposite sides of a parallelogram are congruent: AB = CD \u2192 2x + 3 = 4x - 9.",
-            "12 = 2x \u2192 x = 6. AB = CD = 2(6)+3 = 15. BC = AD = 6+8 = 14."
+            "Opposite sides of a parallelogram are congruent: AB = CD → 2x + 3 = 4x - 9.",
+            "12 = 2x → x = 6. AB = CD = 2(6)+3 = 15. BC = AD = 6+8 = 14."
           ]
         }
       ],
-      "initialPrompt": "In the rhombus problem, what special properties do rhombus diagonals have that we can use?"
+      "initialPrompt": "In the rhombus problem, what special properties do rhombus diagonals have that we can use?",
+      "lessonId": "exterior-angle-sums"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "trapezoid-properties",
       "title": "Trapezoids and Kites",
-      "content": "**Trapezoids** have exactly one pair of parallel sides (called **bases**). The non-parallel sides are called **legs**.\n\n**Isosceles Trapezoid** (congruent legs):\n\u2022 Base angles are congruent\n\u2022 Diagonals are congruent\n\u2022 Legs are congruent\n\u2022 Same-side angles between a base and leg are supplementary\n\n**Midsegment of a Trapezoid:**\nThe segment connecting the midpoints of the legs is called the midsegment. Its length = (base\u2081 + base\u2082) / 2 (the average of the two bases).\n\n**Kites** have two pairs of consecutive congruent sides (not opposite):\n\u2022 One pair of opposite angles is congruent (between the non-equal sides)\n\u2022 Diagonals are perpendicular\n\u2022 One diagonal bisects the other\n\u2022 Area = (d\u2081 \u00d7 d\u2082) / 2",
-      "initialPrompt": "A trapezoid has bases of 8 and 14. What is the length of the midsegment? Can you see why it's called the 'average' of the bases?"
+      "content": "**Trapezoids** have exactly one pair of parallel sides (called **bases**). The non-parallel sides are called **legs**.\n\n**Isosceles Trapezoid** (congruent legs):\n• Base angles are congruent\n• Diagonals are congruent\n• Legs are congruent\n• Same-side angles between a base and leg are supplementary\n\n**Midsegment of a Trapezoid:**\nThe segment connecting the midpoints of the legs is called the midsegment. Its length = (base₁ + base₂) / 2 (the average of the two bases).\n\n**Kites** have two pairs of consecutive congruent sides (not opposite):\n• One pair of opposite angles is congruent (between the non-equal sides)\n• Diagonals are perpendicular\n• One diagonal bisects the other\n• Area = (d₁ × d₂) / 2",
+      "initialPrompt": "A trapezoid has bases of 8 and 14. What is the length of the midsegment? Can you see why it's called the 'average' of the bases?",
+      "lessonId": "rectangles-rhombi-squares"
     },
     {
       "type": "model",
@@ -191,18 +199,19 @@
       "examples": [
         {
           "problem": "A trapezoid has bases of 14 and 22. Find the length of the midsegment.",
-          "solution": "Midsegment = (base\u2081 + base\u2082) / 2 = (14 + 22) / 2 = 36 / 2 = **18**\n\nThe midsegment is always parallel to both bases and exactly halfway between them."
+          "solution": "Midsegment = (base₁ + base₂) / 2 = (14 + 22) / 2 = 36 / 2 = **18**\n\nThe midsegment is always parallel to both bases and exactly halfway between them."
         },
         {
-          "problem": "In isosceles trapezoid ABCD, \u2220A = (4x + 10)\u00b0 and \u2220D = (8x - 10)\u00b0, where AB \u2225 DC. Find x and all four angle measures.",
-          "solution": "In a trapezoid with AB \u2225 DC, angles A and D are same-side interior angles (supplementary):\n(4x + 10) + (8x - 10) = 180\n12x = 180 \u2192 x = 15\n\n\u2220A = 4(15) + 10 = **70\u00b0**, \u2220D = 8(15) - 10 = **110\u00b0**\nIsosceles: \u2220B = \u2220A = **70\u00b0**, \u2220C = \u2220D = **110\u00b0**\n\nCheck: 70 + 70 + 110 + 110 = 360\u00b0 \u2713"
+          "problem": "In isosceles trapezoid ABCD, ∠A = (4x + 10)° and ∠D = (8x - 10)°, where AB ∥ DC. Find x and all four angle measures.",
+          "solution": "In a trapezoid with AB ∥ DC, angles A and D are same-side interior angles (supplementary):\n(4x + 10) + (8x - 10) = 180\n12x = 180 → x = 15\n\n∠A = 4(15) + 10 = **70°**, ∠D = 8(15) - 10 = **110°**\nIsosceles: ∠B = ∠A = **70°**, ∠C = ∠D = **110°**\n\nCheck: 70 + 70 + 110 + 110 = 360° ✓"
         },
         {
           "problem": "Kite WXYZ has diagonals WY = 16 and XZ = 12, with the diagonals perpendicular. Find the area of the kite.",
-          "solution": "Area of a kite = (d\u2081 \u00d7 d\u2082) / 2\nArea = (16 \u00d7 12) / 2 = 192 / 2 = **96 square units**\n\nThis works because the kite can be split into 4 right triangles by its diagonals."
+          "solution": "Area of a kite = (d₁ × d₂) / 2\nArea = (16 × 12) / 2 = 192 / 2 = **96 square units**\n\nThis works because the kite can be split into 4 right triangles by its diagonals."
         }
       ],
-      "initialPrompt": "In an isosceles trapezoid, which pairs of angles are congruent and which are supplementary?"
+      "initialPrompt": "In an isosceles trapezoid, which pairs of angles are congruent and which are supplementary?",
+      "lessonId": "rectangles-rhombi-squares"
     },
     {
       "type": "guided_practice",
@@ -216,20 +225,21 @@
           "answer": "x = 9, midsegment = 22",
           "hints": [
             "Midsegment = (28 + 16) / 2 = 22.",
-            "2x + 4 = 22 \u2192 2x = 18 \u2192 x = 9."
+            "2x + 4 = 22 → 2x = 18 → x = 9."
           ]
         },
         {
           "id": "pq-wp8",
-          "question": "In isosceles trapezoid RSTU with RS \u2225 UT, \u2220R = 65\u00b0. Find all other angles.",
-          "answer": "\u2220S = 65\u00b0, \u2220T = 115\u00b0, \u2220U = 115\u00b0",
+          "question": "In isosceles trapezoid RSTU with RS ∥ UT, ∠R = 65°. Find all other angles.",
+          "answer": "∠S = 65°, ∠T = 115°, ∠U = 115°",
           "hints": [
-            "Isosceles trapezoid: base angles congruent \u2192 \u2220S = \u2220R = 65\u00b0.",
-            "Same-side interior supplementary: \u2220U = 180\u00b0 - 65\u00b0 = 115\u00b0, \u2220T = 115\u00b0. Check: 65+65+115+115=360\u00b0 \u2713."
+            "Isosceles trapezoid: base angles congruent → ∠S = ∠R = 65°.",
+            "Same-side interior supplementary: ∠U = 180° - 65° = 115°, ∠T = 115°. Check: 65+65+115+115=360° ✓."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what is the formula for the midsegment of a trapezoid?"
+      "initialPrompt": "For the first problem, what is the formula for the midsegment of a trapezoid?",
+      "lessonId": "rectangles-rhombi-squares"
     },
     {
       "type": "independent_practice",
@@ -239,19 +249,19 @@
         {
           "id": "pq-yp1",
           "question": "Find the sum of interior angles of a regular 12-sided polygon (dodecagon) and each interior angle.",
-          "answer": "sum = 1800\u00b0, each angle = 150\u00b0",
+          "answer": "sum = 1800°, each angle = 150°",
           "skill": "polygon-angle-sum",
           "hints": [
-            "(12-2) \u00d7 180 = 1800\u00b0. Each angle = 1800/12 = 150\u00b0."
+            "(12-2) × 180 = 1800°. Each angle = 1800/12 = 150°."
           ]
         },
         {
           "id": "pq-yp2",
-          "question": "Each exterior angle of a regular polygon is 40\u00b0. How many sides does it have? What is each interior angle?",
-          "answer": "9 sides, each interior angle = 140\u00b0",
+          "question": "Each exterior angle of a regular polygon is 40°. How many sides does it have? What is each interior angle?",
+          "answer": "9 sides, each interior angle = 140°",
           "skill": "polygon-angle-sum",
           "hints": [
-            "360\u00b0 \u00f7 40\u00b0 = 9 sides. Interior = 180\u00b0 - 40\u00b0 = 140\u00b0."
+            "360° ÷ 40° = 9 sides. Interior = 180° - 40° = 140°."
           ]
         },
         {
@@ -266,7 +276,7 @@
         {
           "id": "pq-yp4",
           "question": "Is a square always a rhombus? Is a rhombus always a square? Explain.",
-          "answer": "Yes, a square is always a rhombus (4 congruent sides). No, a rhombus is not always a square\u2014it doesn't require right angles.",
+          "answer": "Yes, a square is always a rhombus (4 congruent sides). No, a rhombus is not always a square—it doesn't require right angles.",
           "skill": "quadrilateral-properties",
           "hints": [
             "A square has 4 congruent sides (rhombus) AND 4 right angles (rectangle). A rhombus only needs 4 congruent sides."
@@ -278,7 +288,7 @@
           "answer": "16",
           "skill": "trapezoid-properties",
           "hints": [
-            "Midsegment = (base\u2081 + base\u2082) / 2 = (12 + 20) / 2 = 16."
+            "Midsegment = (base₁ + base₂) / 2 = (12 + 20) / 2 = 16."
           ]
         },
         {
@@ -287,28 +297,56 @@
           "answer": "side = 17, perimeter = 68",
           "skill": "quadrilateral-properties",
           "hints": [
-            "Half-diagonals: 15 and 8. Side = \u221a(15\u00b2 + 8\u00b2) = \u221a(225+64) = \u221a289 = 17. Perimeter = 4 \u00d7 17 = 68."
+            "Half-diagonals: 15 and 8. Side = √(15² + 8²) = √(225+64) = √289 = 17. Perimeter = 4 × 17 = 68."
           ]
         }
       ],
       "attemptsRequired": 3,
-      "skill": "polygon-angle-sum"
+      "skill": "polygon-angle-sum",
+      "lessonId": "polygon-angle-sums"
     }
   ],
   "answerKeys": {
     "pq-wp1": "7 (heptagon).",
     "pq-wp2": "15 sides.",
-    "pq-wp3": "105\u00b0.",
+    "pq-wp3": "105°.",
     "pq-wp4": "13 (5-12-13 right triangle in each quarter).",
     "pq-wp5": "x=8, diagonal=31.",
     "pq-wp6": "x=6, AB=CD=15, BC=AD=14.",
     "pq-wp7": "x=9, midsegment=22.",
-    "pq-wp8": "\u2220S=65\u00b0, \u2220T=115\u00b0, \u2220U=115\u00b0.",
-    "pq-yp1": "Sum=1800\u00b0, each=150\u00b0.",
-    "pq-yp2": "9 sides, interior=140\u00b0.",
+    "pq-wp8": "∠S=65°, ∠T=115°, ∠U=115°.",
+    "pq-yp1": "Sum=1800°, each=150°.",
+    "pq-yp2": "9 sides, interior=140°.",
     "pq-yp3": "a=6, WX=23.",
-    "pq-yp4": "Square\u2192always rhombus. Rhombus\u2192not always square.",
+    "pq-yp4": "Square→always rhombus. Rhombus→not always square.",
     "pq-yp5": "16.",
     "pq-yp6": "Side=17, perimeter=68."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "polygon-angle-sums",
+      "title": "Polygon Interior Angle Sum",
+      "order": 1
+    },
+    {
+      "lessonId": "exterior-angle-sums",
+      "title": "Polygon Exterior Angle Sum",
+      "order": 2
+    },
+    {
+      "lessonId": "parallelogram-properties",
+      "title": "Properties of Parallelograms",
+      "order": 3
+    },
+    {
+      "lessonId": "rectangles-rhombi-squares",
+      "title": "Rectangles, Rhombi, and Squares",
+      "order": 4
+    },
+    {
+      "lessonId": "trapezoids-kites",
+      "title": "Trapezoids and Kites",
+      "order": 5
+    }
+  ]
 }

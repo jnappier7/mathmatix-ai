@@ -54,7 +54,8 @@
         "Zero is the reference point: 0 degrees is the freezing point on the Celsius scale, 0 ft is sea level, $0 means no money owed or earned",
         "The same situation can be described with either sign depending on your perspective: losing $20 is -20 from your viewpoint but +20 from the store's viewpoint",
         "On a number line, positive numbers are to the right of zero and negative numbers are to the left of zero"
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "model",
@@ -74,7 +75,8 @@
           "problem": "A submarine is at sea level (0 ft). It dives 200 feet, then rises 75 feet. What is its position relative to sea level?",
           "solution": "Sea level is our reference: 0 ft.\nDiving 200 feet means going below sea level: -200 ft.\nRising 75 feet is a positive change: +75 ft.\nPosition: 0 + (-200) + 75 = -200 + 75 = -125 ft.\nThe submarine is 125 feet below sea level. We write this as -125 ft."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "guided_practice",
@@ -112,7 +114,8 @@
           ],
           "answer": "Death Valley is 282 feet below sea level, so it is represented as -282 ft. Mount Whitney is 14,505 feet above sea level, so it is +14,505 ft. Zero (sea level) is the reference point. The difference is 14,505 - (-282) = 14,505 + 282 = 14,787 feet. Without negative numbers we could not show that Death Valley is below the reference point."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "independent_practice",
@@ -135,7 +138,8 @@
           "question": "A scuba diver is at -40 feet (below sea level). She ascends 25 feet, then descends 10 feet. Write a signed number for each movement and find her final depth.",
           "answer": "Start: -40 ft. Ascend: +25 ft. Descend: -10 ft. Final depth: -40 + 25 + (-10) = -40 + 25 - 10 = -25 ft. She is 25 feet below sea level."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "explanation",
@@ -150,7 +154,8 @@
         "To compare fractions and decimals with different signs, convert to the same form (all decimals or all fractions) then place on the number line",
         "Use inequality symbols: < (less than), > (greater than), = (equal to). The symbol always opens toward the larger number",
         "To order a mixed set of rational numbers, place each one on a number line first, then read left to right for least to greatest"
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "model",
@@ -170,7 +175,8 @@
           "problem": "Insert < , > , or = : -2/3 ___ -5/6",
           "solution": "Find a common denominator to compare: LCD = 6.\n-2/3 = -4/6\n-5/6 = -5/6\n\nCompare: -4/6 and -5/6.\nSince -4/6 is closer to zero than -5/6, it is greater.\n-4/6 > -5/6\n\nSo -2/3 > -5/6."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "guided_practice",
@@ -208,7 +214,8 @@
           ],
           "answer": "-3/5 > -0.7. Since -3/5 = -0.6, and -0.6 is closer to zero than -0.7, we have -0.6 > -0.7, so -3/5 > -0.7."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "independent_practice",
@@ -231,7 +238,8 @@
           "question": "Insert < , > , or = : -7/10 ___ -3/5",
           "answer": "-7/10 < -3/5. Convert: -3/5 = -6/10. Since -7/10 is farther from zero than -6/10, it is less. -7/10 < -6/10, so -7/10 < -3/5."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "explanation",
@@ -245,7 +253,8 @@
         "|0| = 0 because zero is zero distance from itself",
         "The opposite of a number is the number on the other side of zero at the same distance: the opposite of 4 is -4, the opposite of -7 is 7",
         "A number and its opposite always add to zero: 4 + (-4) = 0"
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "model",
@@ -265,7 +274,8 @@
           "problem": "Find the opposite of each number, then verify by adding the number and its opposite: 8, -3, -1/2",
           "solution": "Opposite of 8 is -8. Check: 8 + (-8) = 0.\nOpposite of -3 is 3. Check: -3 + 3 = 0.\nOpposite of -1/2 is 1/2. Check: -1/2 + 1/2 = 0.\n\nEvery number plus its opposite equals zero. That is the defining property of opposites."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "guided_practice",
@@ -303,7 +313,8 @@
           ],
           "answer": "The opposite of -9 is 9. |-9| = 9 and |9| = 9. They are equal. A number and its opposite always have the same absolute value because they are the same distance from zero."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "independent_practice",
@@ -326,7 +337,8 @@
           "question": "Find the opposite of 3/4. Then find the absolute value of both 3/4 and its opposite. Does the relationship you saw with integers also hold for fractions?",
           "answer": "The opposite of 3/4 is -3/4. |3/4| = 3/4 and |-3/4| = 3/4. Yes, the relationship holds: a number and its opposite have the same absolute value regardless of whether they are integers or fractions."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "explanation",
@@ -341,7 +353,8 @@
         "Quadrant III: x negative, y negative (-, -) is lower-left",
         "Quadrant IV: x positive, y negative (+, -) is lower-right",
         "Points on an axis are not in any quadrant: (3, 0) is on the x-axis, (0, -5) is on the y-axis"
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "model",
@@ -361,7 +374,8 @@
           "problem": "You are playing Battleship on a coordinate grid. Your opponent's ship is at position (2, -4). You call out your shot. Describe the path from the origin to that position.",
           "solution": "From the origin (0, 0):\nStep 1: Move 2 units to the RIGHT (positive x-direction).\nStep 2: Move 4 units DOWN (negative y-direction).\nYou end up at (2, -4) in Quadrant IV.\n\nRemember: always move horizontally first (x), then vertically (y). Order matters in ordered pairs!"
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "guided_practice",
@@ -399,7 +413,8 @@
           ],
           "answer": "(-3, 4) is in Quadrant II because x is negative and y is positive. (0, 5) is on the y-axis because x = 0, so it is not in any quadrant. (1, -2) is in Quadrant IV."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "independent_practice",
@@ -422,7 +437,8 @@
           "question": "In Battleship, your opponent calls out the shots (4, 3), (-4, 3), (-4, -3), and (4, -3). Each shot is in a different quadrant. List which quadrant each shot is in.",
           "answer": "(4, 3): Quadrant I. (-4, 3): Quadrant II. (-4, -3): Quadrant III. (4, -3): Quadrant IV."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "explanation",
@@ -436,7 +452,8 @@
         "Absolute value ensures the distance is always positive regardless of the order you subtract",
         "Reflecting across the x-axis: (x, y) becomes (x, -y). The y-coordinate flips sign.",
         "Reflecting across the y-axis: (x, y) becomes (-x, y). The x-coordinate flips sign."
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "model",
@@ -456,7 +473,8 @@
           "problem": "On a city map, a school is at (-2, 5) and a library is at (-2, -3). How far apart are they? The school is reflected across the x-axis to a new location. What are the coordinates of the reflection?",
           "solution": "Distance: same x-coordinate (-2), so use vertical distance.\n|5 - (-3)| = |5 + 3| = |8| = 8 units apart.\n\nReflection of (-2, 5) across the x-axis: flip the y-coordinate.\n(-2, 5) becomes (-2, -5).\n\nThe school was 5 units above the x-axis and its reflection is 5 units below the x-axis."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "guided_practice",
@@ -494,7 +512,8 @@
           ],
           "answer": "B = (5, -2). Horizontal distance: |-5 - 5| = |-10| = 10 units. Point A is 5 units left of the y-axis and point B is 5 units right, so they are 10 units apart."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     },
     {
       "type": "independent_practice",
@@ -517,7 +536,8 @@
           "question": "On a map, a fire station is at (-4, 6) and a hospital is at (-4, -5). How many units apart are they? A new clinic will be built at the reflection of the hospital across the x-axis. What are the clinic's coordinates and how far is it from the fire station?",
           "answer": "Distance between fire station and hospital: |6 - (-5)| = |6 + 5| = 11 units. Reflection of (-4, -5) across x-axis: (-4, 5). Distance from clinic (-4, 5) to fire station (-4, 6): |5 - 6| = |-1| = 1 unit."
         }
-      ]
+      ],
+      "lessonId": "integers_coordinate_plane"
     }
   ],
   "answerKeys": {

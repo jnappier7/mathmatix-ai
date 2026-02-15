@@ -40,7 +40,7 @@
     "Use the Intermediate Value Theorem and the Squeeze Theorem to justify existence of function values and evaluate limits"
   ],
   "instructionalStrategy": [
-    "Build limit intuition graphically and numerically first, then formalize with algebraic methods \u2014 this mirrors the CED progression from Topic 1.2 through 1.7.",
+    "Build limit intuition graphically and numerically first, then formalize with algebraic methods — this mirrors the CED progression from Topic 1.2 through 1.7.",
     "Emphasize the three-condition definition of continuity as a justification framework students will use repeatedly on the AP Exam.",
     "Connect limits at infinity and infinite limits to asymptotes students already know from Pre-Calculus, reinforcing graph literacy from Unit 0.",
     "Foreshadow the derivative: every limit technique mastered here reappears when computing derivatives from the definition in Unit 2."
@@ -52,29 +52,31 @@
       "lessonPhase": "concept-intro",
       "skill": "limits-graphical-numerical",
       "title": "Limits from Graphs, Tables, and Direct Substitution",
-      "content": "**The Big Idea:**\n\nA limit describes the value a function *approaches* as x approaches some value \u2014 even if the function never reaches that value.\n\n**Notation:** lim_{x\u2192c} f(x) = L means \"as x gets arbitrarily close to c (from both sides), f(x) gets arbitrarily close to L.\"\n\n**Three Ways to Find a Limit:**\n\n**1. Graphically:** Trace the curve from the left and right toward x = c. If both sides approach the same y-value, that's the limit.\n\n**2. Numerically (tables):** Plug in values approaching c from both sides (e.g., 2.9, 2.99, 2.999 and 3.1, 3.01, 3.001). If both columns converge to the same value, that's the limit.\n\n**3. Algebraically (direct substitution):** If f is continuous at c, just plug in: lim_{x\u2192c} f(x) = f(c). This works for polynomials, rationals (where defined), exponentials, logs, and trig functions at points in their domains.\n\n**When direct substitution gives 0/0:** This is an *indeterminate form* \u2014 NOT the answer. It means more work is needed: try factoring, rationalizing, or other algebraic manipulation.\n\n**Limit Laws (for limits that exist):**\n\u2022 lim [f(x) \u00b1 g(x)] = lim f(x) \u00b1 lim g(x)\n\u2022 lim [f(x) \u00b7 g(x)] = lim f(x) \u00b7 lim g(x)\n\u2022 lim [f(x)/g(x)] = lim f(x) / lim g(x), provided lim g(x) \u2260 0\n\u2022 lim [f(x)]\u207f = [lim f(x)]\u207f",
-      "initialPrompt": "Try direct substitution: lim_{x\u21923} (x\u00b2 \u2212 9)/(x \u2212 3). What do you get? Why doesn't direct substitution work here, and what could you do instead?"
+      "content": "**The Big Idea:**\n\nA limit describes the value a function *approaches* as x approaches some value — even if the function never reaches that value.\n\n**Notation:** lim_{x→c} f(x) = L means \"as x gets arbitrarily close to c (from both sides), f(x) gets arbitrarily close to L.\"\n\n**Three Ways to Find a Limit:**\n\n**1. Graphically:** Trace the curve from the left and right toward x = c. If both sides approach the same y-value, that's the limit.\n\n**2. Numerically (tables):** Plug in values approaching c from both sides (e.g., 2.9, 2.99, 2.999 and 3.1, 3.01, 3.001). If both columns converge to the same value, that's the limit.\n\n**3. Algebraically (direct substitution):** If f is continuous at c, just plug in: lim_{x→c} f(x) = f(c). This works for polynomials, rationals (where defined), exponentials, logs, and trig functions at points in their domains.\n\n**When direct substitution gives 0/0:** This is an *indeterminate form* — NOT the answer. It means more work is needed: try factoring, rationalizing, or other algebraic manipulation.\n\n**Limit Laws (for limits that exist):**\n• lim [f(x) ± g(x)] = lim f(x) ± lim g(x)\n• lim [f(x) · g(x)] = lim f(x) · lim g(x)\n• lim [f(x)/g(x)] = lim f(x) / lim g(x), provided lim g(x) ≠ 0\n• lim [f(x)]ⁿ = [lim f(x)]ⁿ",
+      "initialPrompt": "Try direct substitution: lim_{x→3} (x² − 9)/(x − 3). What do you get? Why doesn't direct substitution work here, and what could you do instead?",
+      "lessonId": "limits-intro"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "limits-algebraic",
-      "title": "Limits \u2014 Worked Examples",
+      "title": "Limits — Worked Examples",
       "examples": [
         {
-          "problem": "Evaluate: lim_{x\u21922} (x\u00b3 \u2212 3x + 1)",
-          "solution": "**Try direct substitution first (always!):**\n\nf(2) = (2)\u00b3 \u2212 3(2) + 1 = 8 \u2212 6 + 1 = **3**\n\nDirect substitution works because polynomials are continuous everywhere.\n\n**lim_{x\u21922} (x\u00b3 \u2212 3x + 1) = 3**\n\n**Key takeaway:** For any polynomial p(x), lim_{x\u2192c} p(x) = p(c). Always try direct substitution first \u2014 if it produces a real number, you're done."
+          "problem": "Evaluate: lim_{x→2} (x³ − 3x + 1)",
+          "solution": "**Try direct substitution first (always!):**\n\nf(2) = (2)³ − 3(2) + 1 = 8 − 6 + 1 = **3**\n\nDirect substitution works because polynomials are continuous everywhere.\n\n**lim_{x→2} (x³ − 3x + 1) = 3**\n\n**Key takeaway:** For any polynomial p(x), lim_{x→c} p(x) = p(c). Always try direct substitution first — if it produces a real number, you're done."
         },
         {
-          "problem": "Evaluate: lim_{x\u21923} (x\u00b2 \u2212 9)/(x \u2212 3)",
-          "solution": "**Step 1 \u2014 Try direct substitution:**\n(3\u00b2 \u2212 9)/(3 \u2212 3) = 0/0 \u2014 indeterminate form. More work needed.\n\n**Step 2 \u2014 Factor the numerator:**\nx\u00b2 \u2212 9 = (x \u2212 3)(x + 3)\n\n**Step 3 \u2014 Cancel the common factor:**\n(x \u2212 3)(x + 3)/(x \u2212 3) = x + 3, for x \u2260 3\n\n**Step 4 \u2014 Now substitute:**\nlim_{x\u21923} (x + 3) = 3 + 3 = **6**\n\n**lim_{x\u21923} (x\u00b2 \u2212 9)/(x \u2212 3) = 6**\n\n**Why is this legal?** For the purpose of a limit as x \u2192 3, we only care about values *near* 3, not *at* 3. Since (x\u00b2 \u2212 9)/(x \u2212 3) = x + 3 for all x \u2260 3, the limit equals lim (x + 3) = 6."
+          "problem": "Evaluate: lim_{x→3} (x² − 9)/(x − 3)",
+          "solution": "**Step 1 — Try direct substitution:**\n(3² − 9)/(3 − 3) = 0/0 — indeterminate form. More work needed.\n\n**Step 2 — Factor the numerator:**\nx² − 9 = (x − 3)(x + 3)\n\n**Step 3 — Cancel the common factor:**\n(x − 3)(x + 3)/(x − 3) = x + 3, for x ≠ 3\n\n**Step 4 — Now substitute:**\nlim_{x→3} (x + 3) = 3 + 3 = **6**\n\n**lim_{x→3} (x² − 9)/(x − 3) = 6**\n\n**Why is this legal?** For the purpose of a limit as x → 3, we only care about values *near* 3, not *at* 3. Since (x² − 9)/(x − 3) = x + 3 for all x ≠ 3, the limit equals lim (x + 3) = 6."
         },
         {
-          "problem": "Evaluate: lim_{x\u21920} (\u221a(x + 4) \u2212 2)/x",
-          "solution": "**Step 1 \u2014 Direct substitution:**\n(\u221a(0+4) \u2212 2)/0 = (2 \u2212 2)/0 = 0/0 \u2014 indeterminate.\n\n**Step 2 \u2014 Multiply by the conjugate:**\n(\u221a(x+4) \u2212 2)/x \u00b7 (\u221a(x+4) + 2)/(\u221a(x+4) + 2)\n\n**Numerator becomes a difference of squares:**\n= (x + 4 \u2212 4) / [x(\u221a(x+4) + 2)]\n= x / [x(\u221a(x+4) + 2)]\n\n**Step 3 \u2014 Cancel x:**\n= 1 / (\u221a(x+4) + 2), for x \u2260 0\n\n**Step 4 \u2014 Now substitute x = 0:**\n= 1 / (\u221a(0+4) + 2) = 1 / (2 + 2) = **1/4**\n\n**lim_{x\u21920} (\u221a(x + 4) \u2212 2)/x = 1/4**\n\n**Pattern to remember:** When you see a radical minus a constant giving 0/0, multiply by the conjugate. This technique will reappear when deriving the derivative of \u221ax from the definition."
+          "problem": "Evaluate: lim_{x→0} (√(x + 4) − 2)/x",
+          "solution": "**Step 1 — Direct substitution:**\n(√(0+4) − 2)/0 = (2 − 2)/0 = 0/0 — indeterminate.\n\n**Step 2 — Multiply by the conjugate:**\n(√(x+4) − 2)/x · (√(x+4) + 2)/(√(x+4) + 2)\n\n**Numerator becomes a difference of squares:**\n= (x + 4 − 4) / [x(√(x+4) + 2)]\n= x / [x(√(x+4) + 2)]\n\n**Step 3 — Cancel x:**\n= 1 / (√(x+4) + 2), for x ≠ 0\n\n**Step 4 — Now substitute x = 0:**\n= 1 / (√(0+4) + 2) = 1 / (2 + 2) = **1/4**\n\n**lim_{x→0} (√(x + 4) − 2)/x = 1/4**\n\n**Pattern to remember:** When you see a radical minus a constant giving 0/0, multiply by the conjugate. This technique will reappear when deriving the derivative of √x from the definition."
         }
       ],
-      "initialPrompt": "In examples 2 and 3, why did direct substitution fail? What is the 0/0 form telling us about the function near that point?"
+      "initialPrompt": "In examples 2 and 3, why did direct substitution fail? What is the 0/0 form telling us about the function near that point?",
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "guided_practice",
@@ -84,75 +86,79 @@
       "problems": [
         {
           "id": "lc-wp1",
-          "question": "Evaluate: lim_{x\u2192\u22121} (x\u00b2 + 5x + 4)/(x + 1)",
+          "question": "Evaluate: lim_{x→−1} (x² + 5x + 4)/(x + 1)",
           "answer": "3",
           "hints": [
-            "Try direct substitution: (1 \u2212 5 + 4)/(\u22121 + 1) = 0/0. Indeterminate \u2014 factor the numerator.",
-            "x\u00b2 + 5x + 4 = (x + 1)(x + 4). Cancel (x + 1): lim_{x\u2192\u22121} (x + 4) = \u22121 + 4 = 3."
+            "Try direct substitution: (1 − 5 + 4)/(−1 + 1) = 0/0. Indeterminate — factor the numerator.",
+            "x² + 5x + 4 = (x + 1)(x + 4). Cancel (x + 1): lim_{x→−1} (x + 4) = −1 + 4 = 3."
           ]
         },
         {
           "id": "lc-wp2",
-          "question": "Evaluate: lim_{x\u21924} (\u221ax \u2212 2)/(x \u2212 4)",
+          "question": "Evaluate: lim_{x→4} (√x − 2)/(x − 4)",
           "answer": "1/4",
           "hints": [
-            "Direct substitution gives 0/0. Multiply numerator and denominator by the conjugate (\u221ax + 2).",
-            "(\u221ax \u2212 2)(\u221ax + 2) = x \u2212 4. So (x \u2212 4)/[(x \u2212 4)(\u221ax + 2)] = 1/(\u221ax + 2). At x = 4: 1/(2 + 2) = 1/4."
+            "Direct substitution gives 0/0. Multiply numerator and denominator by the conjugate (√x + 2).",
+            "(√x − 2)(√x + 2) = x − 4. So (x − 4)/[(x − 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4."
           ]
         },
         {
           "id": "lc-wp3",
-          "question": "Evaluate: lim_{x\u2192\u22122} (x\u00b3 + 8)/(x + 2)",
+          "question": "Evaluate: lim_{x→−2} (x³ + 8)/(x + 2)",
           "answer": "12",
           "hints": [
-            "Direct substitution gives 0/0. Factor x\u00b3 + 8 as a sum of cubes: (x + 2)(x\u00b2 \u2212 2x + 4).",
-            "Cancel (x + 2): lim_{x\u2192\u22122} (x\u00b2 \u2212 2x + 4) = 4 + 4 + 4 = 12."
+            "Direct substitution gives 0/0. Factor x³ + 8 as a sum of cubes: (x + 2)(x² − 2x + 4).",
+            "Cancel (x + 2): lim_{x→−2} (x² − 2x + 4) = 4 + 4 + 4 = 12."
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp1. What do you get when you try direct substitution? What kind of factoring should you try on x\u00b2 + 5x + 4?"
+      "initialPrompt": "Start with lc-wp1. What do you get when you try direct substitution? What kind of factoring should you try on x² + 5x + 4?",
+      "lessonId": "one-sided-infinite"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "one-sided-infinite-limits",
       "title": "One-Sided Limits, Infinite Limits, and Limits at Infinity",
-      "content": "**One-Sided Limits:**\n\n\u2022 lim_{x\u2192c\u207b} f(x): the limit from the **left** (x approaches c through values less than c)\n\u2022 lim_{x\u2192c\u207a} f(x): the limit from the **right** (x approaches c through values greater than c)\n\u2022 The two-sided limit lim_{x\u2192c} f(x) exists **if and only if** both one-sided limits exist and are equal.\n\n**Key application:** Piecewise functions often require checking one-sided limits at the breakpoints.\n\n**Infinite Limits (vertical asymptotes):**\n\n\u2022 lim_{x\u2192c} f(x) = \u00b1\u221e means f(x) grows without bound near x = c.\n\u2022 This signals a **vertical asymptote** at x = c.\n\u2022 To determine the sign (+ or \u2212\u221e), check the signs of the numerator and denominator as x \u2192 c from each side.\n\u2022 Important: lim = \u221e means the limit **does not exist** as a finite number, but we use \u221e to describe the behavior.\n\n**Limits at Infinity (horizontal asymptotes):**\n\nFor rational functions f(x) = p(x)/q(x):\n\u2022 If deg(p) < deg(q): lim_{x\u2192\u00b1\u221e} f(x) = 0\n\u2022 If deg(p) = deg(q): lim_{x\u2192\u00b1\u221e} f(x) = (leading coeff of p)/(leading coeff of q)\n\u2022 If deg(p) > deg(q): lim_{x\u2192\u00b1\u221e} f(x) = \u00b1\u221e (no horizontal asymptote)\n\n**Shortcut:** Divide numerator and denominator by the highest power of x in the denominator.",
-      "initialPrompt": "Consider f(x) = 1/(x \u2212 2). What happens as x \u2192 2\u207a? What happens as x \u2192 2\u207b? Why are the answers different?"
+      "content": "**One-Sided Limits:**\n\n• lim_{x→c⁻} f(x): the limit from the **left** (x approaches c through values less than c)\n• lim_{x→c⁺} f(x): the limit from the **right** (x approaches c through values greater than c)\n• The two-sided limit lim_{x→c} f(x) exists **if and only if** both one-sided limits exist and are equal.\n\n**Key application:** Piecewise functions often require checking one-sided limits at the breakpoints.\n\n**Infinite Limits (vertical asymptotes):**\n\n• lim_{x→c} f(x) = ±∞ means f(x) grows without bound near x = c.\n• This signals a **vertical asymptote** at x = c.\n• To determine the sign (+ or −∞), check the signs of the numerator and denominator as x → c from each side.\n• Important: lim = ∞ means the limit **does not exist** as a finite number, but we use ∞ to describe the behavior.\n\n**Limits at Infinity (horizontal asymptotes):**\n\nFor rational functions f(x) = p(x)/q(x):\n• If deg(p) < deg(q): lim_{x→±∞} f(x) = 0\n• If deg(p) = deg(q): lim_{x→±∞} f(x) = (leading coeff of p)/(leading coeff of q)\n• If deg(p) > deg(q): lim_{x→±∞} f(x) = ±∞ (no horizontal asymptote)\n\n**Shortcut:** Divide numerator and denominator by the highest power of x in the denominator.",
+      "initialPrompt": "Consider f(x) = 1/(x − 2). What happens as x → 2⁺? What happens as x → 2⁻? Why are the answers different?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "limits-at-infinity",
-      "title": "We-Do: Limits At Infinity \u2014 Guided Practice",
+      "title": "We-Do: Limits At Infinity — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for limits at infinity.",
           "hint": "Apply the concepts of limits at infinity.",
           "solution": "Step-by-step solution for limits at infinity."
         }
-      ]
+      ],
+      "lessonId": "limits-intro"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "one-sided-infinite-limits",
-      "title": "Advanced Limits \u2014 Worked Examples",
+      "title": "Advanced Limits — Worked Examples",
       "examples": [
         {
-          "problem": "Find lim_{x\u21921\u207b} f(x) and lim_{x\u21921\u207a} f(x) where f(x) = { 3 \u2212 x if x < 1; x\u00b2 if x \u2265 1 }. Does lim_{x\u21921} f(x) exist?",
-          "solution": "**Left-hand limit (x \u2192 1\u207b):** Use the piece where x < 1:\nlim_{x\u21921\u207b} (3 \u2212 x) = 3 \u2212 1 = **2**\n\n**Right-hand limit (x \u2192 1\u207a):** Use the piece where x \u2265 1:\nlim_{x\u21921\u207a} (x\u00b2) = 1\u00b2 = **1**\n\n**Two-sided limit:** Since 2 \u2260 1, the one-sided limits disagree.\n\n**lim_{x\u21921} f(x) does not exist.** This is a **jump discontinuity**.\n\n**AP Exam note:** When a problem asks you to evaluate a limit of a piecewise function at a breakpoint, you MUST check both one-sided limits. Never just plug into one piece."
+          "problem": "Find lim_{x→1⁻} f(x) and lim_{x→1⁺} f(x) where f(x) = { 3 − x if x < 1; x² if x ≥ 1 }. Does lim_{x→1} f(x) exist?",
+          "solution": "**Left-hand limit (x → 1⁻):** Use the piece where x < 1:\nlim_{x→1⁻} (3 − x) = 3 − 1 = **2**\n\n**Right-hand limit (x → 1⁺):** Use the piece where x ≥ 1:\nlim_{x→1⁺} (x²) = 1² = **1**\n\n**Two-sided limit:** Since 2 ≠ 1, the one-sided limits disagree.\n\n**lim_{x→1} f(x) does not exist.** This is a **jump discontinuity**.\n\n**AP Exam note:** When a problem asks you to evaluate a limit of a piecewise function at a breakpoint, you MUST check both one-sided limits. Never just plug into one piece."
         },
         {
-          "problem": "Evaluate: lim_{x\u21922\u207a} (x + 1)/(x \u2212 2)",
-          "solution": "**Direct substitution gives:** (2 + 1)/(2 \u2212 2) = 3/0 \u2014 this is NOT indeterminate. It signals a vertical asymptote.\n\n**Analyze the sign:**\n\u2022 As x \u2192 2\u207a: numerator \u2192 3 (positive)\n\u2022 As x \u2192 2\u207a: denominator = x \u2212 2 \u2192 0\u207a (small positive)\n\u2022 Positive / small positive = large positive\n\n**lim_{x\u21922\u207a} (x + 1)/(x \u2212 2) = +\u221e**\n\n**Note:** lim_{x\u21922\u207b} (x + 1)/(x \u2212 2) = 3/0\u207b = \u2212\u221e (denominator approaches 0 from the negative side).\n\nSo x = 2 is a vertical asymptote. The function goes to +\u221e from the right and \u2212\u221e from the left.\n\n**Key distinction:** 0/0 = indeterminate (do more algebra). k/0 where k \u2260 0 = infinite limit (vertical asymptote)."
+          "problem": "Evaluate: lim_{x→2⁺} (x + 1)/(x − 2)",
+          "solution": "**Direct substitution gives:** (2 + 1)/(2 − 2) = 3/0 — this is NOT indeterminate. It signals a vertical asymptote.\n\n**Analyze the sign:**\n• As x → 2⁺: numerator → 3 (positive)\n• As x → 2⁺: denominator = x − 2 → 0⁺ (small positive)\n• Positive / small positive = large positive\n\n**lim_{x→2⁺} (x + 1)/(x − 2) = +∞**\n\n**Note:** lim_{x→2⁻} (x + 1)/(x − 2) = 3/0⁻ = −∞ (denominator approaches 0 from the negative side).\n\nSo x = 2 is a vertical asymptote. The function goes to +∞ from the right and −∞ from the left.\n\n**Key distinction:** 0/0 = indeterminate (do more algebra). k/0 where k ≠ 0 = infinite limit (vertical asymptote)."
         },
         {
-          "problem": "Evaluate: lim_{x\u2192\u221e} (3x\u00b2 + 1)/(5x\u00b2 \u2212 2)",
-          "solution": "**Method \u2014 Divide every term by x\u00b2 (highest power in denominator):**\n\nlim_{x\u2192\u221e} (3x\u00b2/x\u00b2 + 1/x\u00b2) / (5x\u00b2/x\u00b2 \u2212 2/x\u00b2)\n= lim_{x\u2192\u221e} (3 + 1/x\u00b2) / (5 \u2212 2/x\u00b2)\n\nAs x \u2192 \u221e: 1/x\u00b2 \u2192 0 and 2/x\u00b2 \u2192 0\n\n= (3 + 0)/(5 \u2212 0) = **3/5**\n\n**lim_{x\u2192\u221e} (3x\u00b2 + 1)/(5x\u00b2 \u2212 2) = 3/5**\n\n**Shortcut (equal degrees):** When the degree of the numerator equals the degree of the denominator, the limit at infinity is the ratio of leading coefficients: 3/5.\n\nThe horizontal asymptote is y = 3/5."
+          "problem": "Evaluate: lim_{x→∞} (3x² + 1)/(5x² − 2)",
+          "solution": "**Method — Divide every term by x² (highest power in denominator):**\n\nlim_{x→∞} (3x²/x² + 1/x²) / (5x²/x² − 2/x²)\n= lim_{x→∞} (3 + 1/x²) / (5 − 2/x²)\n\nAs x → ∞: 1/x² → 0 and 2/x² → 0\n\n= (3 + 0)/(5 − 0) = **3/5**\n\n**lim_{x→∞} (3x² + 1)/(5x² − 2) = 3/5**\n\n**Shortcut (equal degrees):** When the degree of the numerator equals the degree of the denominator, the limit at infinity is the ratio of leading coefficients: 3/5.\n\nThe horizontal asymptote is y = 3/5."
         }
       ],
-      "initialPrompt": "In example 2, what is the critical difference between getting 0/0 (like in the previous lesson) and getting 3/0? How should your approach differ?"
+      "initialPrompt": "In example 2, what is the critical difference between getting 0/0 (like in the previous lesson) and getting 3/0? How should your approach differ?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
@@ -162,25 +168,25 @@
       "problems": [
         {
           "id": "lc-wp4",
-          "question": "Find lim_{x\u21921\u207b} f(x) and lim_{x\u21921\u207a} f(x) where f(x) = { 2x + 3 if x < 1; x\u00b2 + 2 if x \u2265 1 }. Does lim_{x\u21921} f(x) exist?",
-          "answer": "lim_{x\u21921\u207b} = 5, lim_{x\u21921\u207a} = 3. Since 5 \u2260 3, lim_{x\u21921} f(x) DNE (jump discontinuity).",
+          "question": "Find lim_{x→1⁻} f(x) and lim_{x→1⁺} f(x) where f(x) = { 2x + 3 if x < 1; x² + 2 if x ≥ 1 }. Does lim_{x→1} f(x) exist?",
+          "answer": "lim_{x→1⁻} = 5, lim_{x→1⁺} = 3. Since 5 ≠ 3, lim_{x→1} f(x) DNE (jump discontinuity).",
           "hints": [
-            "For x < 1, use f(x) = 2x + 3: lim_{x\u21921\u207b} = 2(1) + 3 = 5. For x \u2265 1, use f(x) = x\u00b2 + 2: lim_{x\u21921\u207a} = 1 + 2 = 3.",
-            "Since the left-hand limit (5) \u2260 right-hand limit (3), the two-sided limit does not exist. This is a jump discontinuity."
+            "For x < 1, use f(x) = 2x + 3: lim_{x→1⁻} = 2(1) + 3 = 5. For x ≥ 1, use f(x) = x² + 2: lim_{x→1⁺} = 1 + 2 = 3.",
+            "Since the left-hand limit (5) ≠ right-hand limit (3), the two-sided limit does not exist. This is a jump discontinuity."
           ]
         },
         {
           "id": "lc-wp5",
-          "question": "Evaluate: lim_{x\u2192\u22123\u207a} x\u00b2/(x + 3)",
-          "answer": "+\u221e",
+          "question": "Evaluate: lim_{x→−3⁺} x²/(x + 3)",
+          "answer": "+∞",
           "hints": [
-            "Direct sub: (\u22123)\u00b2/(\u22123+3) = 9/0 \u2014 not indeterminate. Analyze the sign as x \u2192 \u22123\u207a.",
-            "As x \u2192 \u22123\u207a: numerator \u2192 9 (positive). Denominator = x + 3 \u2192 0\u207a (small positive). So 9/0\u207a = +\u221e."
+            "Direct sub: (−3)²/(−3+3) = 9/0 — not indeterminate. Analyze the sign as x → −3⁺.",
+            "As x → −3⁺: numerator → 9 (positive). Denominator = x + 3 → 0⁺ (small positive). So 9/0⁺ = +∞."
           ]
         },
         {
           "id": "lc-wp6",
-          "question": "Evaluate: lim_{x\u2192\u221e} (4x\u00b3 \u2212 x)/(2x\u00b3 + 5x\u00b2 \u2212 1)",
+          "question": "Evaluate: lim_{x→∞} (4x³ − x)/(2x³ + 5x² − 1)",
           "answer": "2",
           "hints": [
             "The degree of the numerator (3) equals the degree of the denominator (3). Use the ratio of leading coefficients.",
@@ -188,49 +194,53 @@
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp4. This is a piecewise function \u2014 which piece do you use for the left-hand limit, and which for the right-hand limit?"
+      "initialPrompt": "Start with lc-wp4. This is a piecewise function — which piece do you use for the left-hand limit, and which for the right-hand limit?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "continuity-ivt",
       "title": "Continuity, Types of Discontinuity, and the Intermediate Value Theorem",
-      "content": "**Definition of Continuity at a Point:**\n\nA function f is continuous at x = c if and only if ALL THREE conditions hold:\n1. f(c) is defined\n2. lim_{x\u2192c} f(x) exists\n3. lim_{x\u2192c} f(x) = f(c)\n\nIf any condition fails, f is **discontinuous** at c.\n\n**Types of Discontinuity:**\n\u2022 **Removable (hole):** The limit exists but either f(c) is undefined or f(c) \u2260 limit. Can be \"fixed\" by redefining f(c).\n\u2022 **Jump:** The left and right limits both exist but are not equal. Cannot be fixed.\n\u2022 **Infinite (asymptote):** The function approaches \u00b1\u221e. Cannot be fixed.\n\n**Continuity on an Interval:**\nf is continuous on [a, b] if it's continuous at every point in (a, b), continuous from the right at a, and continuous from the left at b.\n\n**Intermediate Value Theorem (IVT):**\nIf f is continuous on [a, b] and k is any value between f(a) and f(b), then there exists at least one c in (a, b) such that f(c) = k.\n\n**IVT Justification Template (AP Exam):**\n1. State that f is continuous on [a, b] (and why).\n2. Compute f(a) and f(b).\n3. Note that k is between f(a) and f(b).\n4. Conclude: by IVT, there exists c in (a, b) with f(c) = k.\n\n**Squeeze Theorem:**\nIf g(x) \u2264 f(x) \u2264 h(x) near x = c, and lim_{x\u2192c} g(x) = lim_{x\u2192c} h(x) = L, then lim_{x\u2192c} f(x) = L.\n\nClassic example: lim_{x\u21920} x\u00b2 sin(1/x) = 0 (squeezed between \u2212x\u00b2 and x\u00b2).",
-      "initialPrompt": "Consider f(x) = (x\u00b2 \u2212 1)/(x \u2212 1) with f(1) = 5. Check the three conditions for continuity at x = 1. Which condition fails?"
+      "content": "**Definition of Continuity at a Point:**\n\nA function f is continuous at x = c if and only if ALL THREE conditions hold:\n1. f(c) is defined\n2. lim_{x→c} f(x) exists\n3. lim_{x→c} f(x) = f(c)\n\nIf any condition fails, f is **discontinuous** at c.\n\n**Types of Discontinuity:**\n• **Removable (hole):** The limit exists but either f(c) is undefined or f(c) ≠ limit. Can be \"fixed\" by redefining f(c).\n• **Jump:** The left and right limits both exist but are not equal. Cannot be fixed.\n• **Infinite (asymptote):** The function approaches ±∞. Cannot be fixed.\n\n**Continuity on an Interval:**\nf is continuous on [a, b] if it's continuous at every point in (a, b), continuous from the right at a, and continuous from the left at b.\n\n**Intermediate Value Theorem (IVT):**\nIf f is continuous on [a, b] and k is any value between f(a) and f(b), then there exists at least one c in (a, b) such that f(c) = k.\n\n**IVT Justification Template (AP Exam):**\n1. State that f is continuous on [a, b] (and why).\n2. Compute f(a) and f(b).\n3. Note that k is between f(a) and f(b).\n4. Conclude: by IVT, there exists c in (a, b) with f(c) = k.\n\n**Squeeze Theorem:**\nIf g(x) ≤ f(x) ≤ h(x) near x = c, and lim_{x→c} g(x) = lim_{x→c} h(x) = L, then lim_{x→c} f(x) = L.\n\nClassic example: lim_{x→0} x² sin(1/x) = 0 (squeezed between −x² and x²).",
+      "initialPrompt": "Consider f(x) = (x² − 1)/(x − 1) with f(1) = 5. Check the three conditions for continuity at x = 1. Which condition fails?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "squeeze-theorem",
-      "title": "We-Do: Squeeze Theorem \u2014 Guided Practice",
+      "title": "We-Do: Squeeze Theorem — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for squeeze theorem.",
           "hint": "Apply the concepts of squeeze theorem.",
           "solution": "Step-by-step solution for squeeze theorem."
         }
-      ]
+      ],
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "continuity-ivt",
-      "title": "Continuity & IVT \u2014 Worked Examples",
+      "title": "Continuity & IVT — Worked Examples",
       "examples": [
         {
-          "problem": "Determine whether f is continuous at x = 1, where f(x) = { (x\u00b2 \u2212 1)/(x \u2212 1) if x \u2260 1; 3 if x = 1 }.",
-          "solution": "**Check all three conditions:**\n\n**Condition 1 \u2014 f(1) is defined:**\nf(1) = 3 \u2713\n\n**Condition 2 \u2014 lim_{x\u21921} f(x) exists:**\nFor x \u2260 1: (x\u00b2 \u2212 1)/(x \u2212 1) = (x \u2212 1)(x + 1)/(x \u2212 1) = x + 1\nlim_{x\u21921} (x + 1) = 2 \u2713 (limit exists)\n\n**Condition 3 \u2014 lim_{x\u21921} f(x) = f(1)?**\n2 \u2260 3 \u2717\n\n**f is NOT continuous at x = 1.** This is a **removable discontinuity** \u2014 the limit exists (2) but doesn't equal f(1) = 3. Redefining f(1) = 2 would make f continuous."
+          "problem": "Determine whether f is continuous at x = 1, where f(x) = { (x² − 1)/(x − 1) if x ≠ 1; 3 if x = 1 }.",
+          "solution": "**Check all three conditions:**\n\n**Condition 1 — f(1) is defined:**\nf(1) = 3 ✓\n\n**Condition 2 — lim_{x→1} f(x) exists:**\nFor x ≠ 1: (x² − 1)/(x − 1) = (x − 1)(x + 1)/(x − 1) = x + 1\nlim_{x→1} (x + 1) = 2 ✓ (limit exists)\n\n**Condition 3 — lim_{x→1} f(x) = f(1)?**\n2 ≠ 3 ✗\n\n**f is NOT continuous at x = 1.** This is a **removable discontinuity** — the limit exists (2) but doesn't equal f(1) = 3. Redefining f(1) = 2 would make f continuous."
         },
         {
-          "problem": "Find the value of c that makes f continuous at x = 2, where f(x) = { x\u00b2 + cx if x < 2; 3x + 1 if x \u2265 2 }.",
-          "solution": "**For continuity at x = 2, we need:**\nlim_{x\u21922\u207b} f(x) = lim_{x\u21922\u207a} f(x) = f(2)\n\n**Right-hand limit and f(2):**\nf(2) = 3(2) + 1 = 7\nlim_{x\u21922\u207a} f(x) = 7\n\n**Left-hand limit:**\nlim_{x\u21922\u207b} (x\u00b2 + cx) = 4 + 2c\n\n**Set them equal:**\n4 + 2c = 7\n2c = 3\n**c = 3/2**\n\n**Verify:** With c = 3/2, lim_{x\u21922\u207b} f(x) = 4 + 3 = 7 = f(2) \u2713"
+          "problem": "Find the value of c that makes f continuous at x = 2, where f(x) = { x² + cx if x < 2; 3x + 1 if x ≥ 2 }.",
+          "solution": "**For continuity at x = 2, we need:**\nlim_{x→2⁻} f(x) = lim_{x→2⁺} f(x) = f(2)\n\n**Right-hand limit and f(2):**\nf(2) = 3(2) + 1 = 7\nlim_{x→2⁺} f(x) = 7\n\n**Left-hand limit:**\nlim_{x→2⁻} (x² + cx) = 4 + 2c\n\n**Set them equal:**\n4 + 2c = 7\n2c = 3\n**c = 3/2**\n\n**Verify:** With c = 3/2, lim_{x→2⁻} f(x) = 4 + 3 = 7 = f(2) ✓"
         },
         {
-          "problem": "Show that f(x) = x\u00b3 \u2212 4x + 1 has a zero on the interval [1, 2].",
-          "solution": "**Step 1 \u2014 Verify the hypothesis of IVT:**\nf(x) = x\u00b3 \u2212 4x + 1 is a polynomial, so it is continuous on [1, 2]. \u2713\n\n**Step 2 \u2014 Compute endpoint values:**\nf(1) = 1 \u2212 4 + 1 = **\u22122**\nf(2) = 8 \u2212 8 + 1 = **1**\n\n**Step 3 \u2014 Identify the target value:**\nWe want f(c) = 0. Note that 0 is between f(1) = \u22122 and f(2) = 1.\n\n**Step 4 \u2014 Apply IVT:**\nSince f is continuous on [1, 2] and f(1) = \u22122 < 0 < 1 = f(2), the Intermediate Value Theorem guarantees there exists at least one value c in (1, 2) such that f(c) = 0.\n\n**AP Exam note:** This four-step IVT justification template is required for full credit. You must (1) state continuity, (2) show endpoint values, (3) show k is between them, (4) cite IVT by name."
+          "problem": "Show that f(x) = x³ − 4x + 1 has a zero on the interval [1, 2].",
+          "solution": "**Step 1 — Verify the hypothesis of IVT:**\nf(x) = x³ − 4x + 1 is a polynomial, so it is continuous on [1, 2]. ✓\n\n**Step 2 — Compute endpoint values:**\nf(1) = 1 − 4 + 1 = **−2**\nf(2) = 8 − 8 + 1 = **1**\n\n**Step 3 — Identify the target value:**\nWe want f(c) = 0. Note that 0 is between f(1) = −2 and f(2) = 1.\n\n**Step 4 — Apply IVT:**\nSince f is continuous on [1, 2] and f(1) = −2 < 0 < 1 = f(2), the Intermediate Value Theorem guarantees there exists at least one value c in (1, 2) such that f(c) = 0.\n\n**AP Exam note:** This four-step IVT justification template is required for full credit. You must (1) state continuity, (2) show endpoint values, (3) show k is between them, (4) cite IVT by name."
         }
       ],
-      "initialPrompt": "In example 1, what type of discontinuity is this? What single change would make f continuous at x = 1?"
+      "initialPrompt": "In example 1, what type of discontinuity is this? What single change would make f continuous at x = 1?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "guided_practice",
@@ -240,33 +250,34 @@
       "problems": [
         {
           "id": "lc-wp7",
-          "question": "Is f continuous at x = 3, where f(x) = { (x\u00b2 \u2212 9)/(x \u2212 3) if x \u2260 3; 5 if x = 3 }? Justify using the three-condition definition.",
-          "answer": "Not continuous. f(3) = 5, but lim_{x\u21923} f(x) = lim (x+3) = 6. Since 5 \u2260 6, condition 3 fails (removable discontinuity).",
+          "question": "Is f continuous at x = 3, where f(x) = { (x² − 9)/(x − 3) if x ≠ 3; 5 if x = 3 }? Justify using the three-condition definition.",
+          "answer": "Not continuous. f(3) = 5, but lim_{x→3} f(x) = lim (x+3) = 6. Since 5 ≠ 6, condition 3 fails (removable discontinuity).",
           "hints": [
-            "Check condition 1: f(3) = 5, so f(3) is defined. Check condition 2: factor (x\u00b2\u22129)/(x\u22123) = (x\u22123)(x+3)/(x\u22123) = x+3 for x\u22603, so lim = 6.",
-            "Check condition 3: lim_{x\u21923} f(x) = 6, but f(3) = 5. Since 6 \u2260 5, f is NOT continuous at x = 3. This is a removable discontinuity."
+            "Check condition 1: f(3) = 5, so f(3) is defined. Check condition 2: factor (x²−9)/(x−3) = (x−3)(x+3)/(x−3) = x+3 for x≠3, so lim = 6.",
+            "Check condition 3: lim_{x→3} f(x) = 6, but f(3) = 5. Since 6 ≠ 5, f is NOT continuous at x = 3. This is a removable discontinuity."
           ]
         },
         {
           "id": "lc-wp8",
-          "question": "Find the value of k that makes f continuous at x = 2, where f(x) = { x\u00b2 + 1 if x \u2264 2; kx \u2212 3 if x > 2 }.",
+          "question": "Find the value of k that makes f continuous at x = 2, where f(x) = { x² + 1 if x ≤ 2; kx − 3 if x > 2 }.",
           "answer": "k = 4",
           "hints": [
-            "For continuity: lim_{x\u21922\u207b} f(x) = 2\u00b2 + 1 = 5. Also f(2) = 5. We need lim_{x\u21922\u207a} = 5 as well.",
-            "lim_{x\u21922\u207a} (kx \u2212 3) = 2k \u2212 3. Set 2k \u2212 3 = 5: 2k = 8, so k = 4."
+            "For continuity: lim_{x→2⁻} f(x) = 2² + 1 = 5. Also f(2) = 5. We need lim_{x→2⁺} = 5 as well.",
+            "lim_{x→2⁺} (kx − 3) = 2k − 3. Set 2k − 3 = 5: 2k = 8, so k = 4."
           ]
         },
         {
           "id": "lc-wp9",
-          "question": "Use the Intermediate Value Theorem to show that f(x) = x\u00b2 \u2212 5x + 3 has a zero on [0, 1].",
-          "answer": "f is continuous on [0,1] (polynomial). f(0) = 3, f(1) = \u22121. Since f(0) = 3 > 0 > \u22121 = f(1), by IVT there exists c in (0,1) with f(c) = 0.",
+          "question": "Use the Intermediate Value Theorem to show that f(x) = x² − 5x + 3 has a zero on [0, 1].",
+          "answer": "f is continuous on [0,1] (polynomial). f(0) = 3, f(1) = −1. Since f(0) = 3 > 0 > −1 = f(1), by IVT there exists c in (0,1) with f(c) = 0.",
           "hints": [
-            "f is a polynomial \u2192 continuous on [0,1]. Compute: f(0) = 0 \u2212 0 + 3 = 3 and f(1) = 1 \u2212 5 + 3 = \u22121.",
-            "Since f(0) = 3 > 0 and f(1) = \u22121 < 0, the value 0 lies between f(0) and f(1). By IVT, there exists c in (0,1) with f(c) = 0."
+            "f is a polynomial → continuous on [0,1]. Compute: f(0) = 0 − 0 + 3 = 3 and f(1) = 1 − 5 + 3 = −1.",
+            "Since f(0) = 3 > 0 and f(1) = −1 < 0, the value 0 lies between f(0) and f(1). By IVT, there exists c in (0,1) with f(c) = 0."
           ]
         }
       ],
-      "initialPrompt": "Start with lc-wp7. What are the three conditions you need to check? Begin with condition 1: is f(3) defined?"
+      "initialPrompt": "Start with lc-wp7. What are the three conditions you need to check? Begin with condition 1: is f(3) defined?",
+      "lessonId": "continuity-ivt"
     },
     {
       "type": "independent_practice",
@@ -275,25 +286,25 @@
       "problems": [
         {
           "id": "lc-yp1",
-          "question": "Evaluate: lim_{x\u2192\u22123} (x\u00b2 \u2212 9)/(x + 3)",
-          "answer": "\u22126",
+          "question": "Evaluate: lim_{x→−3} (x² − 9)/(x + 3)",
+          "answer": "−6",
           "skill": "limits-algebraic",
           "hints": [
-            "Factor x\u00b2 \u2212 9 = (x \u2212 3)(x + 3). Cancel (x + 3): lim_{x\u2192\u22123} (x \u2212 3) = \u22123 \u2212 3 = \u22126."
+            "Factor x² − 9 = (x − 3)(x + 3). Cancel (x + 3): lim_{x→−3} (x − 3) = −3 − 3 = −6."
           ]
         },
         {
           "id": "lc-yp2",
-          "question": "Evaluate: lim_{x\u21920} (\u221a(x + 9) \u2212 3)/x",
+          "question": "Evaluate: lim_{x→0} (√(x + 9) − 3)/x",
           "answer": "1/6",
           "skill": "limits-algebraic",
           "hints": [
-            "Multiply by the conjugate (\u221a(x+9)+3)/(\u221a(x+9)+3). Numerator becomes (x+9)\u22129 = x. Cancel x: 1/(\u221a(x+9)+3). At x=0: 1/(3+3) = 1/6."
+            "Multiply by the conjugate (√(x+9)+3)/(√(x+9)+3). Numerator becomes (x+9)−9 = x. Cancel x: 1/(√(x+9)+3). At x=0: 1/(3+3) = 1/6."
           ]
         },
         {
           "id": "lc-yp3",
-          "question": "Evaluate: lim_{x\u2192\u221e} (2x\u00b2 \u2212 3x + 1)/(4x\u00b2 + x \u2212 5)",
+          "question": "Evaluate: lim_{x→∞} (2x² − 3x + 1)/(4x² + x − 5)",
           "answer": "1/2",
           "skill": "limits-at-infinity",
           "hints": [
@@ -302,34 +313,35 @@
         },
         {
           "id": "lc-yp4",
-          "question": "Use the Squeeze Theorem to evaluate: lim_{x\u21920} x\u00b2 sin(1/x)",
+          "question": "Use the Squeeze Theorem to evaluate: lim_{x→0} x² sin(1/x)",
           "answer": "0",
           "skill": "squeeze-theorem",
           "hints": [
-            "Since \u22121 \u2264 sin(1/x) \u2264 1, multiply by x\u00b2: \u2212x\u00b2 \u2264 x\u00b2 sin(1/x) \u2264 x\u00b2. Both \u2212x\u00b2 and x\u00b2 \u2192 0 as x\u21920. By the Squeeze Theorem, lim_{x\u21920} x\u00b2 sin(1/x) = 0."
+            "Since −1 ≤ sin(1/x) ≤ 1, multiply by x²: −x² ≤ x² sin(1/x) ≤ x². Both −x² and x² → 0 as x→0. By the Squeeze Theorem, lim_{x→0} x² sin(1/x) = 0."
           ]
         },
         {
           "id": "lc-yp5",
-          "question": "Find the value of k that makes f continuous at x = 1, where f(x) = { kx\u00b2 if x \u2264 1; 4x \u2212 1 if x > 1 }.",
+          "question": "Find the value of k that makes f continuous at x = 1, where f(x) = { kx² if x ≤ 1; 4x − 1 if x > 1 }.",
           "answer": "k = 3",
           "skill": "continuity-ivt",
           "hints": [
-            "For continuity: lim_{x\u21921\u207b} = k(1)\u00b2 = k. f(1) = k. lim_{x\u21921\u207a} = 4(1)\u22121 = 3. Set k = 3."
+            "For continuity: lim_{x→1⁻} = k(1)² = k. f(1) = k. lim_{x→1⁺} = 4(1)−1 = 3. Set k = 3."
           ]
         },
         {
           "id": "lc-yp6",
-          "question": "Use the IVT to show that the equation e\u02e3 = 3 \u2212 x has at least one solution on [0, 2]. (Hint: let f(x) = e\u02e3 \u2212 3 + x.)",
-          "answer": "f(x) = e\u02e3 + x \u2212 3 is continuous on [0,2]. f(0) = 1+0\u22123 = \u22122 < 0. f(2) = e\u00b2+2\u22123 = e\u00b2\u22121 \u2248 6.39 > 0. Since f(0) < 0 < f(2), by IVT there exists c in (0,2) with f(c) = 0, i.e., e\u1d9c = 3 \u2212 c.",
+          "question": "Use the IVT to show that the equation eˣ = 3 − x has at least one solution on [0, 2]. (Hint: let f(x) = eˣ − 3 + x.)",
+          "answer": "f(x) = eˣ + x − 3 is continuous on [0,2]. f(0) = 1+0−3 = −2 < 0. f(2) = e²+2−3 = e²−1 ≈ 6.39 > 0. Since f(0) < 0 < f(2), by IVT there exists c in (0,2) with f(c) = 0, i.e., eᶜ = 3 − c.",
           "skill": "continuity-ivt",
           "hints": [
-            "Let f(x) = e\u02e3 + x \u2212 3. This is continuous (sum of continuous functions). f(0) = 1+0\u22123 = \u22122. f(2) = e\u00b2+2\u22123 = e\u00b2\u22121 \u2248 6.39. Since \u22122 < 0 < 6.39, IVT guarantees a c in (0,2) with f(c) = 0."
+            "Let f(x) = eˣ + x − 3. This is continuous (sum of continuous functions). f(0) = 1+0−3 = −2. f(2) = e²+2−3 = e²−1 ≈ 6.39. Since −2 < 0 < 6.39, IVT guarantees a c in (0,2) with f(c) = 0."
           ]
         }
       ],
       "attemptsRequired": 3,
-      "skill": "limits-graphical-numerical"
+      "skill": "limits-graphical-numerical",
+      "lessonId": "limits-intro"
     }
   ],
   "answerKeys": {
@@ -337,16 +349,33 @@
     "lc-wp2": "1/4",
     "lc-wp3": "12",
     "lc-wp4": "DNE (left = 5, right = 3, jump discontinuity)",
-    "lc-wp5": "+\u221e",
+    "lc-wp5": "+∞",
     "lc-wp6": "2",
     "lc-wp7": "Not continuous (lim = 6 but f(3) = 5, removable discontinuity)",
     "lc-wp8": "k = 4",
-    "lc-wp9": "Zero exists on (0,1) by IVT: f(0)=3, f(1)=\u22121",
-    "lc-yp1": "\u22126",
+    "lc-wp9": "Zero exists on (0,1) by IVT: f(0)=3, f(1)=−1",
+    "lc-yp1": "−6",
     "lc-yp2": "1/6",
     "lc-yp3": "1/2",
     "lc-yp4": "0",
     "lc-yp5": "k = 3",
-    "lc-yp6": "Solution exists on (0,2) by IVT: f(0)=\u22122, f(2)=e\u00b2\u22121\u22486.39"
-  }
+    "lc-yp6": "Solution exists on (0,2) by IVT: f(0)=−2, f(2)=e²−1≈6.39"
+  },
+  "lessons": [
+    {
+      "lessonId": "limits-intro",
+      "title": "Limits from Graphs, Tables, and Algebra",
+      "order": 1
+    },
+    {
+      "lessonId": "one-sided-infinite",
+      "title": "One-Sided Limits, Infinite Limits, Limits at Infinity",
+      "order": 2
+    },
+    {
+      "lessonId": "continuity-ivt",
+      "title": "Continuity and Intermediate Value Theorem",
+      "order": 3
+    }
+  ]
 }

@@ -19,17 +19,17 @@
     "7.G.6"
   ],
   "goals": [
-    "Calculate the area and circumference of circles using A = \u03c0r\u00b2 and C = 2\u03c0r (or C = \u03c0d)",
+    "Calculate the area and circumference of circles using A = πr² and C = 2πr (or C = πd)",
     "Find the area of composite figures by decomposing them into rectangles, triangles, and partial circles",
     "Compute the surface area of rectangular prisms, triangular prisms, and pyramids using nets and formulas",
     "Calculate the volume of rectangular prisms and cylinders using V = Bh",
     "Identify and describe cross-sections formed when three-dimensional figures are sliced by a plane"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do",
+    "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
     "Real-world contexts (gift wrapping, gardening, room layouts, food containers) make geometry concrete and relatable",
-    "Formulas introduced alongside visual reasoning \u2014 nets for surface area, base-times-height for volume",
+    "Formulas introduced alongside visual reasoning — nets for surface area, base-times-height for volume",
     "Students encouraged to draw and label diagrams before computing"
   ],
   "aiFlexLevel": "moderate",
@@ -39,15 +39,16 @@
       "lessonPhase": "concept-intro",
       "title": "Area and Circumference of Circles",
       "skill": "g7-area-circumference",
-      "content": "Circles are everywhere \u2014 wheels, clocks, pizzas, sprinklers. Two key measurements describe every circle: the circumference (distance around) and the area (space inside). Both formulas depend on the radius or diameter and the special number \u03c0 (pi), which is approximately 3.14.",
+      "content": "Circles are everywhere — wheels, clocks, pizzas, sprinklers. Two key measurements describe every circle: the circumference (distance around) and the area (space inside). Both formulas depend on the radius or diameter and the special number π (pi), which is approximately 3.14.",
       "keyPoints": [
         "The radius (r) is the distance from the center to any point on the circle. The diameter (d) is twice the radius: d = 2r.",
-        "Circumference is the perimeter of a circle: C = 2\u03c0r, which is the same as C = \u03c0d.",
-        "Area of a circle: A = \u03c0r\u00b2. Always use the radius (not the diameter) in this formula.",
-        "Use \u03c0 \u2248 3.14 for calculations unless told otherwise. Exact answers can be left in terms of \u03c0.",
-        "Common mistake: using the diameter instead of the radius in A = \u03c0r\u00b2. If given a diameter, divide by 2 first.",
-        "Units matter: circumference is measured in linear units (cm, ft), area in square units (cm\u00b2, ft\u00b2)."
-      ]
+        "Circumference is the perimeter of a circle: C = 2πr, which is the same as C = πd.",
+        "Area of a circle: A = πr². Always use the radius (not the diameter) in this formula.",
+        "Use π ≈ 3.14 for calculations unless told otherwise. Exact answers can be left in terms of π.",
+        "Common mistake: using the diameter instead of the radius in A = πr². If given a diameter, divide by 2 first.",
+        "Units matter: circumference is measured in linear units (cm, ft), area in square units (cm², ft²)."
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
@@ -61,134 +62,142 @@
         "If shapes are joined together, ADD their areas.",
         "If a shape has a piece removed (like a hole), SUBTRACT the missing area.",
         "Always draw the figure and label the dimensions of each part before calculating.",
-        "Check that your sub-shapes account for the entire figure \u2014 no overlaps and no gaps."
-      ]
+        "Check that your sub-shapes account for the entire figure — no overlaps and no gaps."
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Surface Area of Prisms and Pyramids",
       "skill": "g7-surface-area",
-      "content": "Surface area is the total area of all the faces of a three-dimensional figure. Imagine unfolding a box into a flat pattern (called a net) \u2014 the surface area is the area of that entire net. This is useful when you need to know how much material covers the outside of an object, like wrapping paper for a gift or paint for a wall.",
+      "content": "Surface area is the total area of all the faces of a three-dimensional figure. Imagine unfolding a box into a flat pattern (called a net) — the surface area is the area of that entire net. This is useful when you need to know how much material covers the outside of an object, like wrapping paper for a gift or paint for a wall.",
       "keyPoints": [
         "A net is a 2D pattern that folds into a 3D shape. Drawing a net helps you see every face.",
         "Rectangular prism: 6 rectangular faces. SA = 2(lw + lh + wh), where l = length, w = width, h = height.",
         "Triangular prism: 2 triangular bases + 3 rectangular faces. Find each area and add them together.",
         "Pyramid: 1 base + triangular lateral faces. The number of lateral faces equals the number of sides on the base.",
         "For pyramids, slant height is the height of each triangular face, not the height of the pyramid itself.",
-        "Surface area is always measured in square units (in\u00b2, cm\u00b2, m\u00b2)."
-      ]
+        "Surface area is always measured in square units (in², cm², m²)."
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Volume of Prisms and Cylinders",
       "skill": "g7-volume",
-      "content": "Volume measures how much space a three-dimensional figure occupies \u2014 or how much it can hold. Think of filling a fish tank with water or packing a shipping box. The key idea is simple: volume equals the area of the base times the height (V = Bh).",
+      "content": "Volume measures how much space a three-dimensional figure occupies — or how much it can hold. Think of filling a fish tank with water or packing a shipping box. The key idea is simple: volume equals the area of the base times the height (V = Bh).",
       "keyPoints": [
         "Volume formula: V = Bh, where B is the area of the base and h is the height of the prism or cylinder.",
         "Rectangular prism: base is a rectangle, so V = lwh.",
-        "Cylinder: base is a circle, so V = \u03c0r\u00b2h.",
-        "Always identify the BASE first \u2014 it is the shape that is repeated (stacked) along the height.",
-        "Volume is measured in cubic units (in\u00b3, cm\u00b3, ft\u00b3).",
-        "1 cm\u00b3 = 1 mL, so volume in cubic centimeters tells you capacity in milliliters."
-      ]
+        "Cylinder: base is a circle, so V = πr²h.",
+        "Always identify the BASE first — it is the shape that is repeated (stacked) along the height.",
+        "Volume is measured in cubic units (in³, cm³, ft³).",
+        "1 cm³ = 1 mL, so volume in cubic centimeters tells you capacity in milliliters."
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Cross-Sections of 3D Figures",
       "skill": "g7-cross-sections",
-      "content": "When you slice a three-dimensional figure with a flat plane, the shape you see at the cut is called a cross-section. Think of slicing a loaf of bread \u2014 each slice shows you a cross-section. Different angles of slicing produce different shapes, even from the same solid.",
+      "content": "When you slice a three-dimensional figure with a flat plane, the shape you see at the cut is called a cross-section. Think of slicing a loaf of bread — each slice shows you a cross-section. Different angles of slicing produce different shapes, even from the same solid.",
       "keyPoints": [
         "A cross-section is the 2D shape formed where a plane intersects a 3D figure.",
         "Slicing a rectangular prism parallel to a face produces a rectangle (or square) matching that face.",
         "Slicing a cylinder parallel to its base produces a circle.",
         "Slicing a cylinder perpendicular to its base (straight down through the center) produces a rectangle.",
         "Slicing a pyramid parallel to its base produces a smaller version of the base shape.",
-        "The orientation of the cut determines the shape of the cross-section \u2014 the same solid can produce different cross-sections."
-      ]
+        "The orientation of the cut determines the shape of the cross-section — the same solid can produce different cross-sections."
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Area and Circumference of Circles \u2014 Worked Examples",
+      "title": "Area and Circumference of Circles — Worked Examples",
       "skill": "g7-area-circumference",
       "examples": [
         {
           "problem": "A circular flower bed has a radius of 5 feet. How much soil is needed to fill the bed (find the area)?",
-          "solution": "Identify: radius r = 5 ft. We need the area.\nFormula: A = \u03c0r\u00b2\nA = 3.14 \u00d7 5\u00b2 = 3.14 \u00d7 25 = 78.5 sq ft\nYou need 78.5 square feet of soil."
+          "solution": "Identify: radius r = 5 ft. We need the area.\nFormula: A = πr²\nA = 3.14 × 5² = 3.14 × 25 = 78.5 sq ft\nYou need 78.5 square feet of soil."
         },
         {
           "problem": "A circular running track has a diameter of 50 meters. How far is one lap around the track?",
-          "solution": "Identify: diameter d = 50 m. We need the circumference (distance around).\nFormula: C = \u03c0d\nC = 3.14 \u00d7 50 = 157 m\nOne lap around the track is 157 meters."
+          "solution": "Identify: diameter d = 50 m. We need the circumference (distance around).\nFormula: C = πd\nC = 3.14 × 50 = 157 m\nOne lap around the track is 157 meters."
         },
         {
           "problem": "A sprinkler waters a circular area with a radius of 8 feet. What is the circumference of the watered region?",
-          "solution": "Identify: radius r = 8 ft. We need the circumference.\nFormula: C = 2\u03c0r\nC = 2 \u00d7 3.14 \u00d7 8 = 50.24 ft\nThe circumference of the watered area is 50.24 feet."
+          "solution": "Identify: radius r = 8 ft. We need the circumference.\nFormula: C = 2πr\nC = 2 × 3.14 × 8 = 50.24 ft\nThe circumference of the watered area is 50.24 feet."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Area of Composite Figures \u2014 Worked Examples",
+      "title": "Area of Composite Figures — Worked Examples",
       "skill": "g7-composite-figures",
       "examples": [
         {
           "problem": "A room is shaped like a 10 ft by 8 ft rectangle, but a 3 ft by 4 ft rectangular closet is built into one corner. What is the floor area of the room (not including the closet)?",
-          "solution": "Step 1: Full rectangle area = 10 \u00d7 8 = 80 sq ft\nStep 2: Closet area to subtract = 3 \u00d7 4 = 12 sq ft\nStep 3: Room floor area = 80 \u2212 12 = 68 sq ft\nThe floor area of the room is 68 square feet."
+          "solution": "Step 1: Full rectangle area = 10 × 8 = 80 sq ft\nStep 2: Closet area to subtract = 3 × 4 = 12 sq ft\nStep 3: Room floor area = 80 − 12 = 68 sq ft\nThe floor area of the room is 68 square feet."
         },
         {
           "problem": "A decorative window is a rectangle 4 ft wide and 5 ft tall, topped with a semicircle that has the same width as the rectangle. Find the total area of the window.",
-          "solution": "Step 1: Rectangle area = 4 \u00d7 5 = 20 sq ft\nStep 2: The semicircle has diameter 4 ft, so radius = 2 ft.\nSemicircle area = (1/2)\u03c0r\u00b2 = (1/2)(3.14)(2\u00b2) = (1/2)(3.14)(4) = 6.28 sq ft\nStep 3: Total area = 20 + 6.28 = 26.28 sq ft\nThe total area of the window is 26.28 square feet."
+          "solution": "Step 1: Rectangle area = 4 × 5 = 20 sq ft\nStep 2: The semicircle has diameter 4 ft, so radius = 2 ft.\nSemicircle area = (1/2)πr² = (1/2)(3.14)(2²) = (1/2)(3.14)(4) = 6.28 sq ft\nStep 3: Total area = 20 + 6.28 = 26.28 sq ft\nThe total area of the window is 26.28 square feet."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Surface Area of Prisms and Pyramids \u2014 Worked Examples",
+      "title": "Surface Area of Prisms and Pyramids — Worked Examples",
       "skill": "g7-surface-area",
       "examples": [
         {
           "problem": "You are wrapping a gift box that measures 12 in long, 8 in wide, and 5 in tall. How much wrapping paper do you need (find the surface area)?",
-          "solution": "Formula: SA = 2(lw + lh + wh)\nSA = 2(12\u00d78 + 12\u00d75 + 8\u00d75)\nSA = 2(96 + 60 + 40)\nSA = 2(196) = 392 sq in\nYou need 392 square inches of wrapping paper."
+          "solution": "Formula: SA = 2(lw + lh + wh)\nSA = 2(12×8 + 12×5 + 8×5)\nSA = 2(96 + 60 + 40)\nSA = 2(196) = 392 sq in\nYou need 392 square inches of wrapping paper."
         },
         {
           "problem": "A tent is shaped like a triangular prism. The triangular base is a right triangle with legs 3 m and 4 m (hypotenuse 5 m), and the tent is 10 m long. Find the total surface area.",
-          "solution": "Step 1: Two triangular bases.\nArea of one triangle = (1/2)(3)(4) = 6 sq m\nTwo bases = 2 \u00d7 6 = 12 sq m\nStep 2: Three rectangular faces (each has width = tent length = 10 m).\n3 \u00d7 10 = 30 sq m\n4 \u00d7 10 = 40 sq m\n5 \u00d7 10 = 50 sq m\nStep 3: Total SA = 12 + 30 + 40 + 50 = 132 sq m\nThe total surface area of the tent is 132 square meters."
+          "solution": "Step 1: Two triangular bases.\nArea of one triangle = (1/2)(3)(4) = 6 sq m\nTwo bases = 2 × 6 = 12 sq m\nStep 2: Three rectangular faces (each has width = tent length = 10 m).\n3 × 10 = 30 sq m\n4 × 10 = 40 sq m\n5 × 10 = 50 sq m\nStep 3: Total SA = 12 + 30 + 40 + 50 = 132 sq m\nThe total surface area of the tent is 132 square meters."
         },
         {
           "problem": "A square pyramid has a base with side length 6 cm and four triangular faces, each with a base of 6 cm and a slant height of 8 cm. Find the total surface area.",
-          "solution": "Step 1: Base area = 6 \u00d7 6 = 36 sq cm\nStep 2: Area of one triangular face = (1/2)(base)(slant height) = (1/2)(6)(8) = 24 sq cm\nFour triangular faces = 4 \u00d7 24 = 96 sq cm\nStep 3: Total SA = 36 + 96 = 132 sq cm\nThe total surface area of the pyramid is 132 square centimeters."
+          "solution": "Step 1: Base area = 6 × 6 = 36 sq cm\nStep 2: Area of one triangular face = (1/2)(base)(slant height) = (1/2)(6)(8) = 24 sq cm\nFour triangular faces = 4 × 24 = 96 sq cm\nStep 3: Total SA = 36 + 96 = 132 sq cm\nThe total surface area of the pyramid is 132 square centimeters."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Volume of Prisms and Cylinders \u2014 Worked Examples",
+      "title": "Volume of Prisms and Cylinders — Worked Examples",
       "skill": "g7-volume",
       "examples": [
         {
           "problem": "An aquarium shaped like a rectangular prism is 20 inches long, 10 inches wide, and 12 inches tall. How much water can it hold?",
-          "solution": "Formula: V = lwh\nV = 20 \u00d7 10 \u00d7 12 = 2400 cubic inches\nThe aquarium can hold 2,400 cubic inches of water."
+          "solution": "Formula: V = lwh\nV = 20 × 10 × 12 = 2400 cubic inches\nThe aquarium can hold 2,400 cubic inches of water."
         },
         {
           "problem": "A cylindrical water bottle has a radius of 3 cm and a height of 10 cm. What is its volume?",
-          "solution": "Formula: V = \u03c0r\u00b2h\nV = 3.14 \u00d7 3\u00b2 \u00d7 10\nV = 3.14 \u00d7 9 \u00d7 10\nV = 3.14 \u00d7 90 = 282.6 cm\u00b3\nThe water bottle holds 282.6 cubic centimeters (or 282.6 mL)."
+          "solution": "Formula: V = πr²h\nV = 3.14 × 3² × 10\nV = 3.14 × 9 × 10\nV = 3.14 × 90 = 282.6 cm³\nThe water bottle holds 282.6 cubic centimeters (or 282.6 mL)."
         },
         {
           "problem": "A triangular prism-shaped planter has a right-triangle base with legs 6 in and 8 in, and a length of 15 in. What is the volume?",
-          "solution": "Step 1: Find the base area (right triangle).\nB = (1/2)(6)(8) = 24 sq in\nStep 2: Multiply by the height (length of the prism).\nV = Bh = 24 \u00d7 15 = 360 cubic inches\nThe planter holds 360 cubic inches of soil."
+          "solution": "Step 1: Find the base area (right triangle).\nB = (1/2)(6)(8) = 24 sq in\nStep 2: Multiply by the height (length of the prism).\nV = Bh = 24 × 15 = 360 cubic inches\nThe planter holds 360 cubic inches of soil."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Cross-Sections of 3D Figures \u2014 Worked Examples",
+      "title": "Cross-Sections of 3D Figures — Worked Examples",
       "skill": "g7-cross-sections",
       "examples": [
         {
@@ -199,7 +208,8 @@
           "problem": "A can of soup is shaped like a cylinder. Describe the cross-section if you slice it (a) horizontally, parallel to the circular base, and (b) vertically, straight down through the center.",
           "solution": "(a) Horizontal slice (parallel to base): the cross-section is a circle, the same shape and size as the base.\n(b) Vertical slice through the center (perpendicular to base): the cross-section is a rectangle whose width equals the diameter of the cylinder and whose height equals the height of the cylinder."
         }
-      ]
+      ],
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -208,33 +218,34 @@
       "problems": [
         {
           "id": "gp1-1",
-          "problem": "A circular garden has a radius of 7 feet. How much fencing is needed to go around it, and how much sod is needed to cover it? (Use \u03c0 \u2248 3.14)",
+          "problem": "A circular garden has a radius of 7 feet. How much fencing is needed to go around it, and how much sod is needed to cover it? (Use π ≈ 3.14)",
           "hints": [
-            "Fencing goes around the outside \u2014 that is the circumference. Use C = 2\u03c0r.",
-            "Sod covers the surface \u2014 that is the area. Use A = \u03c0r\u00b2. Remember r = 7."
+            "Fencing goes around the outside — that is the circumference. Use C = 2πr.",
+            "Sod covers the surface — that is the area. Use A = πr². Remember r = 7."
           ],
-          "answer": "Fencing (circumference): C = 2(3.14)(7) = 43.96 ft. Sod (area): A = 3.14 \u00d7 49 = 153.86 sq ft."
+          "answer": "Fencing (circumference): C = 2(3.14)(7) = 43.96 ft. Sod (area): A = 3.14 × 49 = 153.86 sq ft."
         },
         {
           "id": "gp1-2",
           "problem": "A room is shaped like a 12 ft by 10 ft rectangle with a semicircular alcove on one of the 10-foot walls. Find the total floor area of the room.",
           "hints": [
-            "Find the rectangle area first: 12 \u00d7 10.",
-            "The semicircle has diameter 10 ft, so radius = 5 ft. Semicircle area = (1/2)\u03c0r\u00b2."
+            "Find the rectangle area first: 12 × 10.",
+            "The semicircle has diameter 10 ft, so radius = 5 ft. Semicircle area = (1/2)πr²."
           ],
-          "answer": "Rectangle = 12 \u00d7 10 = 120 sq ft. Semicircle = (1/2)(3.14)(25) = 39.25 sq ft. Total = 120 + 39.25 = 159.25 sq ft."
+          "answer": "Rectangle = 12 × 10 = 120 sq ft. Semicircle = (1/2)(3.14)(25) = 39.25 sq ft. Total = 120 + 39.25 = 159.25 sq ft."
         },
         {
           "id": "gp1-3",
           "problem": "You are wrapping a shoe box that measures 14 inches long, 10 inches wide, and 5 inches tall. How much wrapping paper do you need? (Find the surface area.)",
           "hints": [
             "Use the rectangular prism formula: SA = 2(lw + lh + wh).",
-            "Compute each product: 14 \u00d7 10 = 140, 14 \u00d7 5 = 70, 10 \u00d7 5 = 50. Then add and multiply by 2."
+            "Compute each product: 14 × 10 = 140, 14 × 5 = 70, 10 × 5 = 50. Then add and multiply by 2."
           ],
           "answer": "SA = 2(140 + 70 + 50) = 2(260) = 520 sq in."
         }
       ],
-      "skill": "g7-composite-figures"
+      "skill": "g7-composite-figures",
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "guided_practice",
@@ -245,61 +256,62 @@
           "id": "gp2-1",
           "problem": "A cylindrical water tank has a radius of 4 feet and a height of 6 feet. How many cubic feet of water can it hold?",
           "hints": [
-            "Use V = \u03c0r\u00b2h for a cylinder.",
-            "V = 3.14 \u00d7 4\u00b2 \u00d7 6. Start with 4\u00b2 = 16, then multiply step by step."
+            "Use V = πr²h for a cylinder.",
+            "V = 3.14 × 4² × 6. Start with 4² = 16, then multiply step by step."
           ],
-          "answer": "V = 3.14 \u00d7 16 \u00d7 6 = 3.14 \u00d7 96 = 301.44 cubic feet."
+          "answer": "V = 3.14 × 16 × 6 = 3.14 × 96 = 301.44 cubic feet."
         },
         {
           "id": "gp2-2",
           "problem": "A storage container is shaped like a rectangular prism measuring 2.5 ft long, 2 ft wide, and 3 ft tall. What is its volume?",
           "hints": [
-            "For a rectangular prism, V = length \u00d7 width \u00d7 height.",
-            "Multiply: 2.5 \u00d7 2 = 5, then 5 \u00d7 3."
+            "For a rectangular prism, V = length × width × height.",
+            "Multiply: 2.5 × 2 = 5, then 5 × 3."
           ],
-          "answer": "V = 2.5 \u00d7 2 \u00d7 3 = 15 cubic feet."
+          "answer": "V = 2.5 × 2 × 3 = 15 cubic feet."
         },
         {
           "id": "gp2-3",
           "problem": "A cone is sliced horizontally, parallel to its circular base. What shape is the cross-section?",
           "hints": [
-            "Think about the base of a cone \u2014 it is a circle.",
+            "Think about the base of a cone — it is a circle.",
             "A horizontal slice parallel to that circular base will produce a shape similar to the base."
           ],
           "answer": "The cross-section is a circle (smaller than the base)."
         }
       ],
-      "skill": "g7-volume"
+      "skill": "g7-volume",
+      "lessonId": "geometry_measurement"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Geometry and Measurement \u2014 Practice Set",
+      "title": "Geometry and Measurement — Practice Set",
       "problems": [
         {
           "id": "ip-1",
-          "problem": "A circular pizza has a diameter of 16 inches. What is the area of the pizza? (Use \u03c0 \u2248 3.14)",
-          "answer": "Radius = 8 in. A = 3.14 \u00d7 64 = 200.96 sq in."
+          "problem": "A circular pizza has a diameter of 16 inches. What is the area of the pizza? (Use π ≈ 3.14)",
+          "answer": "Radius = 8 in. A = 3.14 × 64 = 200.96 sq in."
         },
         {
           "id": "ip-2",
           "problem": "A bicycle wheel has a diameter of 26 inches. How far does the bike travel in one full rotation of the wheel?",
-          "answer": "C = \u03c0d = 3.14 \u00d7 26 = 81.64 inches."
+          "answer": "C = πd = 3.14 × 26 = 81.64 inches."
         },
         {
           "id": "ip-3",
           "problem": "A playground is shaped like a rectangle that is 30 m long and 20 m wide, with a semicircle on each of the two shorter ends (each semicircle has a diameter of 20 m). Find the total area of the playground.",
-          "answer": "Rectangle = 30 \u00d7 20 = 600 sq m. Two semicircles = one full circle with r = 10: 3.14 \u00d7 100 = 314 sq m. Total = 600 + 314 = 914 sq m."
+          "answer": "Rectangle = 30 × 20 = 600 sq m. Two semicircles = one full circle with r = 10: 3.14 × 100 = 314 sq m. Total = 600 + 314 = 914 sq m."
         },
         {
           "id": "ip-4",
           "problem": "A cereal box is 25 cm tall, 18 cm wide, and 6 cm deep. Find its total surface area.",
-          "answer": "SA = 2(25\u00d718 + 25\u00d76 + 18\u00d76) = 2(450 + 150 + 108) = 2(708) = 1416 sq cm."
+          "answer": "SA = 2(25×18 + 25×6 + 18×6) = 2(450 + 150 + 108) = 2(708) = 1416 sq cm."
         },
         {
           "id": "ip-5",
           "problem": "A cylindrical can of soup has a radius of 4 cm and a height of 12 cm. How much soup can it hold? (Find the volume.)",
-          "answer": "V = \u03c0r\u00b2h = 3.14 \u00d7 16 \u00d7 12 = 3.14 \u00d7 192 = 602.88 cm\u00b3."
+          "answer": "V = πr²h = 3.14 × 16 × 12 = 3.14 × 192 = 602.88 cm³."
         },
         {
           "id": "ip-6",
@@ -312,7 +324,8 @@
           "answer": "The cross-section is a square (smaller than the base)."
         }
       ],
-      "skill": "g7-area-circumference"
+      "skill": "g7-area-circumference",
+      "lessonId": "geometry_measurement"
     }
   ],
   "answerKeys": {
@@ -326,7 +339,7 @@
     "ip-2": "81.64 inches",
     "ip-3": "914 sq m",
     "ip-4": "1416 sq cm",
-    "ip-5": "602.88 cm\u00b3",
+    "ip-5": "602.88 cm³",
     "ip-6": "triangle",
     "ip-7": "square"
   }

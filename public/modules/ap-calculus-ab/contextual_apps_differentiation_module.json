@@ -41,36 +41,38 @@
       "lessonPhase": "concept-intro",
       "title": "Related Rates: Setup & Strategy",
       "skill": "related-rates-setup-solve",
-      "content": "Related rates problems ask: given how fast one quantity changes, how fast does a related quantity change? The key insight is that every variable is a function of time t, so differentiating any equation connecting them produces a relationship among their rates. The setup is everything \u2014 most errors come from skipping steps, not from calculus mistakes.",
+      "content": "Related rates problems ask: given how fast one quantity changes, how fast does a related quantity change? The key insight is that every variable is a function of time t, so differentiating any equation connecting them produces a relationship among their rates. The setup is everything — most errors come from skipping steps, not from calculus mistakes.",
       "keyPoints": [
-        "Step 1 \u2014 Draw a picture. Label ALL relevant quantities with variables. Do NOT label anything with a number if it changes over time.",
-        "Step 2 \u2014 Identify what you KNOW (given rates: dx/dt, dy/dt, etc.) and what you WANT (the unknown rate).",
-        "Step 3 \u2014 Write an equation relating the variables. Use geometry (Pythagorean theorem, similar triangles, area/volume formulas, trig) \u2014 NOT rates yet.",
-        "Step 4 \u2014 Differentiate both sides with respect to t using implicit differentiation and the chain rule. Every variable gets a d/dt.",
-        "Step 5 \u2014 Substitute all known values (including the specific moment's measurements and rates) and solve for the unknown rate.",
+        "Step 1 — Draw a picture. Label ALL relevant quantities with variables. Do NOT label anything with a number if it changes over time.",
+        "Step 2 — Identify what you KNOW (given rates: dx/dt, dy/dt, etc.) and what you WANT (the unknown rate).",
+        "Step 3 — Write an equation relating the variables. Use geometry (Pythagorean theorem, similar triangles, area/volume formulas, trig) — NOT rates yet.",
+        "Step 4 — Differentiate both sides with respect to t using implicit differentiation and the chain rule. Every variable gets a d/dt.",
+        "Step 5 — Substitute all known values (including the specific moment's measurements and rates) and solve for the unknown rate.",
         "Classic scenarios: ladder sliding down a wall (Pythagorean), expanding/draining cone (volume), balloon inflating (sphere volume/surface area), shadow lengthening (similar triangles), two objects moving (distance formula).",
         "Common trap: substituting specific values BEFORE differentiating. Always differentiate the general equation first."
-      ]
+      ],
+      "lessonId": "related-rates"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Related Rates \u2014 Worked Examples",
+      "title": "Related Rates — Worked Examples",
       "skill": "related-rates-setup-solve",
       "examples": [
         {
           "problem": "A 10-ft ladder leans against a vertical wall. The bottom slides away from the wall at 2 ft/s. How fast is the top sliding down when the bottom is 6 ft from the wall?",
-          "solution": "Draw: right triangle with wall (y), ground (x), ladder (10). Given: dx/dt = 2 ft/s. Want: dy/dt when x = 6. Equation: x\u00b2 + y\u00b2 = 100. When x = 6: 36 + y\u00b2 = 100, so y = 8. Differentiate: 2x(dx/dt) + 2y(dy/dt) = 0. Substitute: 2(6)(2) + 2(8)(dy/dt) = 0. 24 + 16(dy/dt) = 0. dy/dt = -24/16 = -3/2 ft/s. The top slides down at 3/2 ft/s (negative because y is decreasing)."
+          "solution": "Draw: right triangle with wall (y), ground (x), ladder (10). Given: dx/dt = 2 ft/s. Want: dy/dt when x = 6. Equation: x² + y² = 100. When x = 6: 36 + y² = 100, so y = 8. Differentiate: 2x(dx/dt) + 2y(dy/dt) = 0. Substitute: 2(6)(2) + 2(8)(dy/dt) = 0. 24 + 16(dy/dt) = 0. dy/dt = -24/16 = -3/2 ft/s. The top slides down at 3/2 ft/s (negative because y is decreasing)."
         },
         {
           "problem": "A spherical balloon is inflated so that its volume increases at a constant rate of 10 cubic cm per second. How fast is the radius increasing when the radius is 5 cm?",
-          "solution": "Draw: sphere with radius r. Given: dV/dt = 10 cm\u00b3/s. Want: dr/dt when r = 5. Equation: V = (4/3)pi r\u00b3. Differentiate: dV/dt = 4pi r\u00b2(dr/dt). Substitute: 10 = 4pi(25)(dr/dt). dr/dt = 10/(100pi) = 1/(10pi) cm/s, approximately 0.0318 cm/s."
+          "solution": "Draw: sphere with radius r. Given: dV/dt = 10 cm³/s. Want: dr/dt when r = 5. Equation: V = (4/3)pi r³. Differentiate: dV/dt = 4pi r²(dr/dt). Substitute: 10 = 4pi(25)(dr/dt). dr/dt = 10/(100pi) = 1/(10pi) cm/s, approximately 0.0318 cm/s."
         },
         {
-          "problem": "Water drains from a conical tank (height 12 ft, radius 4 ft at top) at 3 ft\u00b3/min. How fast is the water level dropping when the water is 6 ft deep?",
-          "solution": "Draw: inverted cone. By similar triangles: r/h = 4/12 = 1/3, so r = h/3. Volume: V = (1/3)pi r\u00b2h = (1/3)pi(h/3)\u00b2h = pi h\u00b3/27. Given: dV/dt = -3 ft\u00b3/min (draining, so negative). Want: dh/dt when h = 6. Differentiate: dV/dt = (pi/27)(3h\u00b2)(dh/dt) = (pi h\u00b2/9)(dh/dt). Substitute: -3 = (pi(36)/9)(dh/dt) = 4pi(dh/dt). dh/dt = -3/(4pi) ft/min, approximately -0.239 ft/min. The water level drops at 3/(4pi) ft/min."
+          "problem": "Water drains from a conical tank (height 12 ft, radius 4 ft at top) at 3 ft³/min. How fast is the water level dropping when the water is 6 ft deep?",
+          "solution": "Draw: inverted cone. By similar triangles: r/h = 4/12 = 1/3, so r = h/3. Volume: V = (1/3)pi r²h = (1/3)pi(h/3)²h = pi h³/27. Given: dV/dt = -3 ft³/min (draining, so negative). Want: dh/dt when h = 6. Differentiate: dV/dt = (pi/27)(3h²)(dh/dt) = (pi h²/9)(dh/dt). Substitute: -3 = (pi(36)/9)(dh/dt) = 4pi(dh/dt). dh/dt = -3/(4pi) ft/min, approximately -0.239 ft/min. The water level drops at 3/(4pi) ft/min."
         }
-      ]
+      ],
+      "lessonId": "related-rates"
     },
     {
       "type": "explanation",
@@ -85,29 +87,31 @@
         "Object changes direction when v(t) changes sign (v = 0 and sign changes). Check a sign chart of v(t).",
         "Speeding up: v(t) and a(t) have the SAME sign (both positive or both negative). The velocity is moving further from zero.",
         "Slowing down: v(t) and a(t) have OPPOSITE signs. The velocity is moving toward zero.",
-        "Object is at rest when v(t) = 0. Being at rest does not necessarily mean direction changes \u2014 v could touch zero and bounce back.",
+        "Object is at rest when v(t) = 0. Being at rest does not necessarily mean direction changes — v could touch zero and bounce back.",
         "Displacement over [a, b]: s(b) - s(a). Total distance over [a, b]: integral of |v(t)| dt (not tested in this unit, but conceptually important)."
-      ]
+      ],
+      "lessonId": "motion"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Motion Along a Line \u2014 Worked Examples",
+      "title": "Motion Along a Line — Worked Examples",
       "skill": "motion-position-velocity-acceleration",
       "examples": [
         {
-          "problem": "A particle moves along the x-axis with position s(t) = t\u00b3 - 6t\u00b2 + 9t + 2 for t >= 0. Find when the particle is at rest, moving left, and moving right. When does it change direction?",
-          "solution": "v(t) = s'(t) = 3t\u00b2 - 12t + 9 = 3(t\u00b2 - 4t + 3) = 3(t - 1)(t - 3). v(t) = 0 at t = 1 and t = 3 (at rest). Sign chart: v(t) > 0 on (0, 1) \u2014 moving right. v(t) < 0 on (1, 3) \u2014 moving left. v(t) > 0 on (3, infinity) \u2014 moving right. Direction changes at t = 1 (right to left) and t = 3 (left to right) because v changes sign at both."
+          "problem": "A particle moves along the x-axis with position s(t) = t³ - 6t² + 9t + 2 for t >= 0. Find when the particle is at rest, moving left, and moving right. When does it change direction?",
+          "solution": "v(t) = s'(t) = 3t² - 12t + 9 = 3(t² - 4t + 3) = 3(t - 1)(t - 3). v(t) = 0 at t = 1 and t = 3 (at rest). Sign chart: v(t) > 0 on (0, 1) — moving right. v(t) < 0 on (1, 3) — moving left. v(t) > 0 on (3, infinity) — moving right. Direction changes at t = 1 (right to left) and t = 3 (left to right) because v changes sign at both."
         },
         {
-          "problem": "Using the same position function s(t) = t\u00b3 - 6t\u00b2 + 9t + 2, determine when the particle is speeding up and slowing down.",
-          "solution": "v(t) = 3(t - 1)(t - 3). a(t) = v'(t) = 6t - 12 = 6(t - 2). a(t) = 0 at t = 2. Sign analysis: on (0, 1), v > 0 and a < 0 \u2014 opposite signs \u2014 slowing down. On (1, 2), v < 0 and a < 0 \u2014 same sign \u2014 speeding up. On (2, 3), v < 0 and a > 0 \u2014 opposite signs \u2014 slowing down. On (3, infinity), v > 0 and a > 0 \u2014 same sign \u2014 speeding up."
+          "problem": "Using the same position function s(t) = t³ - 6t² + 9t + 2, determine when the particle is speeding up and slowing down.",
+          "solution": "v(t) = 3(t - 1)(t - 3). a(t) = v'(t) = 6t - 12 = 6(t - 2). a(t) = 0 at t = 2. Sign analysis: on (0, 1), v > 0 and a < 0 — opposite signs — slowing down. On (1, 2), v < 0 and a < 0 — same sign — speeding up. On (2, 3), v < 0 and a > 0 — opposite signs — slowing down. On (3, infinity), v > 0 and a > 0 — same sign — speeding up."
         },
         {
           "problem": "A particle has velocity v(t) = sin(t) - cos(t) for 0 <= t <= 2pi. Find the acceleration at t = pi/4. Is the particle speeding up or slowing down at t = pi/4?",
-          "solution": "a(t) = v'(t) = cos(t) + sin(t). At t = pi/4: a(pi/4) = cos(pi/4) + sin(pi/4) = sqrt(2)/2 + sqrt(2)/2 = sqrt(2). Now check v(pi/4) = sin(pi/4) - cos(pi/4) = sqrt(2)/2 - sqrt(2)/2 = 0. Since v(pi/4) = 0, the particle is instantaneously at rest \u2014 it is neither speeding up nor slowing down at this exact moment. (Speed is |v| = 0 and is about to increase.)"
+          "solution": "a(t) = v'(t) = cos(t) + sin(t). At t = pi/4: a(pi/4) = cos(pi/4) + sin(pi/4) = sqrt(2)/2 + sqrt(2)/2 = sqrt(2). Now check v(pi/4) = sin(pi/4) - cos(pi/4) = sqrt(2)/2 - sqrt(2)/2 = 0. Since v(pi/4) = 0, the particle is instantaneously at rest — it is neither speeding up nor slowing down at this exact moment. (Speed is |v| = 0 and is about to increase.)"
         }
-      ]
+      ],
+      "lessonId": "motion"
     },
     {
       "type": "guided_practice",
@@ -128,7 +132,7 @@
           "problem": "Two cars leave an intersection at the same time. Car A heads east at 30 mph and Car B heads north at 40 mph. How fast is the distance between them increasing after 2 hours?",
           "hints": [
             "Draw: right triangle. a = distance east, b = distance north, d = distance between them",
-            "a\u00b2 + b\u00b2 = d\u00b2. At t = 2: a = 60, b = 80, so d = 100",
+            "a² + b² = d². At t = 2: a = 60, b = 80, so d = 100",
             "da/dt = 30, db/dt = 40. Differentiate: 2a(da/dt) + 2b(db/dt) = 2d(dd/dt)"
           ],
           "answer": "2(60)(30) + 2(80)(40) = 2(100)(dd/dt). 3600 + 6400 = 200(dd/dt). dd/dt = 10000/200 = 50 mph."
@@ -145,14 +149,15 @@
         {
           "problem": "The radius of an oil spill (circular) is growing at 3 m/min. At what rate is the area increasing when the radius is 20 m?",
           "hints": [
-            "A = pi r\u00b2",
+            "A = pi r²",
             "Differentiate: dA/dt = 2pi r (dr/dt)",
             "Substitute r = 20 and dr/dt = 3"
           ],
-          "answer": "dA/dt = 2pi(20)(3) = 120pi m\u00b2/min, approximately 376.99 m\u00b2/min."
+          "answer": "dA/dt = 2pi(20)(3) = 120pi m²/min, approximately 376.99 m²/min."
         }
       ],
-      "skill": "motion-position-velocity-acceleration"
+      "skill": "motion-position-velocity-acceleration",
+      "lessonId": "motion"
     },
     {
       "type": "explanation",
@@ -165,29 +170,31 @@
         "Choose a so that f(a) and f'(a) are easy to compute (nice numbers), and x is close to a.",
         "Differential notation: dy = f'(x) dx. Here dx is a small change in x, and dy approximates the resulting change in y.",
         "Relationship: delta y (actual change) approximately equals dy (estimated change). The approximation improves as dx shrinks.",
-        "Over/underestimate: if f is concave up (f'' > 0) near a, the tangent line lies BELOW the curve \u2014 linearization UNDERESTIMATES. If f is concave down (f'' < 0), the tangent line lies ABOVE \u2014 linearization OVERESTIMATES.",
+        "Over/underestimate: if f is concave up (f'' > 0) near a, the tangent line lies BELOW the curve — linearization UNDERESTIMATES. If f is concave down (f'' < 0), the tangent line lies ABOVE — linearization OVERESTIMATES.",
         "AP FRQ tip: when asked whether an approximation is an over- or underestimate, cite concavity as your justification."
-      ]
+      ],
+      "lessonId": "linearization"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Local Linearization & Differentials \u2014 Worked Examples",
+      "title": "Local Linearization & Differentials — Worked Examples",
       "skill": "local-linearization-differentials",
       "examples": [
         {
           "problem": "Use linearization to approximate sqrt(4.1).",
-          "solution": "Let f(x) = sqrt(x). Choose a = 4 (perfect square, close to 4.1). f(4) = 2. f'(x) = 1/(2sqrt(x)), so f'(4) = 1/4. L(x) = 2 + (1/4)(x - 4). L(4.1) = 2 + (1/4)(0.1) = 2 + 0.025 = 2.025. Actual: sqrt(4.1) = 2.02485... The linearization slightly overestimates. Why? f''(x) = -1/(4x^(3/2)) < 0, so f is concave down \u2014 tangent line is above the curve."
+          "solution": "Let f(x) = sqrt(x). Choose a = 4 (perfect square, close to 4.1). f(4) = 2. f'(x) = 1/(2sqrt(x)), so f'(4) = 1/4. L(x) = 2 + (1/4)(x - 4). L(4.1) = 2 + (1/4)(0.1) = 2 + 0.025 = 2.025. Actual: sqrt(4.1) = 2.02485... The linearization slightly overestimates. Why? f''(x) = -1/(4x^(3/2)) < 0, so f is concave down — tangent line is above the curve."
         },
         {
           "problem": "The side of a cube is measured as 5 cm with a possible error of +/- 0.02 cm. Use differentials to estimate the maximum error in the calculated volume.",
-          "solution": "V = s\u00b3. dV = 3s\u00b2 ds. With s = 5 and ds = +/- 0.02: dV = 3(25)(+/- 0.02) = +/- 1.5 cm\u00b3. The volume is approximately 125 +/- 1.5 cm\u00b3. The relative error is |dV/V| = 1.5/125 = 0.012 = 1.2%."
+          "solution": "V = s³. dV = 3s² ds. With s = 5 and ds = +/- 0.02: dV = 3(25)(+/- 0.02) = +/- 1.5 cm³. The volume is approximately 125 +/- 1.5 cm³. The relative error is |dV/V| = 1.5/125 = 0.012 = 1.2%."
         },
         {
           "problem": "Given f(3) = 7 and f'(3) = -2, approximate f(3.05) using linearization. If f''(3) > 0, is this an overestimate or underestimate?",
           "solution": "L(x) = f(3) + f'(3)(x - 3) = 7 + (-2)(x - 3). L(3.05) = 7 + (-2)(0.05) = 7 - 0.1 = 6.9. Since f''(3) > 0, the function is concave up near x = 3. A concave-up function curves above its tangent line, so the tangent line (our linearization) lies below the actual curve. Therefore 6.9 is an UNDERESTIMATE of f(3.05)."
         }
-      ]
+      ],
+      "lessonId": "linearization"
     },
     {
       "type": "explanation",
@@ -198,32 +205,34 @@
       "keyPoints": [
         "Applies ONLY to indeterminate forms: 0/0 or infinity/infinity. Always verify the form first.",
         "The rule: if lim(x->c) f(x)/g(x) gives 0/0 or inf/inf, then lim(x->c) f(x)/g(x) = lim(x->c) f'(x)/g'(x), provided the latter limit exists.",
-        "Differentiate numerator and denominator SEPARATELY. This is NOT the quotient rule \u2014 you take f'(x) and g'(x) independently.",
+        "Differentiate numerator and denominator SEPARATELY. This is NOT the quotient rule — you take f'(x) and g'(x) independently.",
         "You may need to apply L'Hopital's Rule more than once if the result is still indeterminate. Re-check the form each time.",
         "Other indeterminate forms (0 * infinity, infinity - infinity, 0^0, 1^infinity, infinity^0) must be algebraically rewritten as 0/0 or infinity/infinity before applying L'Hopital's.",
         "Common trap: applying L'Hopital's when the form is NOT indeterminate (e.g., 5/0 or 3/7). The rule does not apply in those cases.",
         "When L'Hopital's applies, the derivatives should simplify the expression. If it gets more complicated, consider an alternative algebraic approach."
-      ]
+      ],
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "L'Hopital's Rule \u2014 Worked Examples",
+      "title": "L'Hopital's Rule — Worked Examples",
       "skill": "lhopitals-rule",
       "examples": [
         {
           "problem": "Evaluate: lim(x->0) sin(x)/x using L'Hopital's Rule.",
-          "solution": "Check form: sin(0)/0 = 0/0. Indeterminate \u2014 L'Hopital's applies. Differentiate separately: d/dx[sin(x)] = cos(x), d/dx[x] = 1. lim(x->0) cos(x)/1 = cos(0) = 1. This confirms the well-known result: lim(x->0) sin(x)/x = 1."
+          "solution": "Check form: sin(0)/0 = 0/0. Indeterminate — L'Hopital's applies. Differentiate separately: d/dx[sin(x)] = cos(x), d/dx[x] = 1. lim(x->0) cos(x)/1 = cos(0) = 1. This confirms the well-known result: lim(x->0) sin(x)/x = 1."
         },
         {
-          "problem": "Evaluate: lim(x->infinity) (3x\u00b2 + 2x)/(e^x).",
+          "problem": "Evaluate: lim(x->infinity) (3x² + 2x)/(e^x).",
           "solution": "Check form: infinity/infinity. L'Hopital's applies. First application: lim(x->infinity) (6x + 2)/(e^x). Still infinity/infinity. Second application: lim(x->infinity) 6/(e^x) = 6/infinity = 0. Exponential growth dominates polynomial growth. The limit is 0."
         },
         {
-          "problem": "Evaluate: lim(x->0) (e^x - 1 - x)/x\u00b2.",
+          "problem": "Evaluate: lim(x->0) (e^x - 1 - x)/x².",
           "solution": "Check form: (1 - 1 - 0)/0 = 0/0. L'Hopital's applies. First application: lim(x->0) (e^x - 1)/(2x). Check: (1 - 1)/0 = 0/0. Still indeterminate. Second application: lim(x->0) e^x/2 = 1/2. The limit is 1/2."
         }
-      ]
+      ],
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "guided_practice",
@@ -243,55 +252,57 @@
           "problem": "Evaluate: lim(x->0) (tan(x) - x)/x^3.",
           "hints": [
             "Check: (0 - 0)/0 = 0/0. L'Hopital's applies.",
-            "First application: (sec\u00b2(x) - 1)/(3x\u00b2). Check form again: 0/0.",
-            "Second application: differentiate numerator (2sec\u00b2(x)tan(x)) and denominator (6x). Still 0/0.",
+            "First application: (sec²(x) - 1)/(3x²). Check form again: 0/0.",
+            "Second application: differentiate numerator (2sec²(x)tan(x)) and denominator (6x). Still 0/0.",
             "Third application: differentiate again and evaluate at x = 0."
           ],
-          "answer": "First: lim (sec\u00b2x - 1)/(3x\u00b2) = 0/0. Note: sec\u00b2x - 1 = tan\u00b2x, so lim tan\u00b2x/(3x\u00b2) = (1/3) lim (tanx/x)\u00b2 = (1/3)(1)\u00b2 = 1/3. Alternatively, continue L'Hopital's: second application gives lim 2sec\u00b2x tanx/(6x) = 0/0. Third application: lim (2sec^4x + 4sec\u00b2x tan\u00b2x\u00b7... )/6. Evaluating carefully at x = 0 yields 2/6 = 1/3."
+          "answer": "First: lim (sec²x - 1)/(3x²) = 0/0. Note: sec²x - 1 = tan²x, so lim tan²x/(3x²) = (1/3) lim (tanx/x)² = (1/3)(1)² = 1/3. Alternatively, continue L'Hopital's: second application gives lim 2sec²x tanx/(6x) = 0/0. Third application: lim (2sec^4x + 4sec²x tan²x·... )/6. Evaluating carefully at x = 0 yields 2/6 = 1/3."
         },
         {
-          "problem": "Evaluate: lim(x->infinity) x\u00b7ln(1 + 3/x).",
+          "problem": "Evaluate: lim(x->infinity) x·ln(1 + 3/x).",
           "hints": [
             "This is an infinity * 0 form. Rewrite as: ln(1 + 3/x)/(1/x)",
             "Now it is 0/0 as x -> infinity (since 1/x -> 0). Apply L'Hopital's.",
             "Differentiate numerator and denominator with respect to x."
           ],
-          "answer": "Rewrite: lim ln(1 + 3/x)/(1/x). Form: 0/0. Differentiate: numerator derivative = [1/(1 + 3/x)](-3/x\u00b2) = -3/(x\u00b2(1 + 3/x)). Denominator derivative = -1/x\u00b2. Ratio: [-3/(x\u00b2(1 + 3/x))]/(-1/x\u00b2) = 3/(1 + 3/x). As x -> infinity: 3/(1 + 0) = 3."
+          "answer": "Rewrite: lim ln(1 + 3/x)/(1/x). Form: 0/0. Differentiate: numerator derivative = [1/(1 + 3/x)](-3/x²) = -3/(x²(1 + 3/x)). Denominator derivative = -1/x². Ratio: [-3/(x²(1 + 3/x))]/(-1/x²) = 3/(1 + 3/x). As x -> infinity: 3/(1 + 0) = 3."
         }
       ],
-      "skill": "lhopitals-rule"
+      "skill": "lhopitals-rule",
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Contextual Applications of Differentiation \u2014 Mastery Practice",
+      "title": "Contextual Applications of Differentiation — Mastery Practice",
       "problems": [
         {
           "problem": "A boat is pulled toward a dock by a rope attached to the bow. The rope is wound through a pulley on the dock that is 6 ft higher than the bow. If the rope is pulled in at 2 ft/s, how fast is the boat approaching the dock when 10 ft of rope is out?",
-          "answer": "Let r = rope length, x = horizontal distance. r\u00b2 = x\u00b2 + 36. When r = 10: x\u00b2 = 100 - 36 = 64, so x = 8. Differentiate: 2r(dr/dt) = 2x(dx/dt). 2(10)(-2) = 2(8)(dx/dt). -40 = 16(dx/dt). dx/dt = -5/2 ft/s. The boat approaches at 5/2 ft/s."
+          "answer": "Let r = rope length, x = horizontal distance. r² = x² + 36. When r = 10: x² = 100 - 36 = 64, so x = 8. Differentiate: 2r(dr/dt) = 2x(dx/dt). 2(10)(-2) = 2(8)(dx/dt). -40 = 16(dx/dt). dx/dt = -5/2 ft/s. The boat approaches at 5/2 ft/s."
         },
         {
-          "problem": "A particle moves along the x-axis with velocity v(t) = 3t\u00b2 - 12t + 9. Find all times when the particle changes direction. Determine when the particle is speeding up on the interval [0, 5].",
+          "problem": "A particle moves along the x-axis with velocity v(t) = 3t² - 12t + 9. Find all times when the particle changes direction. Determine when the particle is speeding up on the interval [0, 5].",
           "answer": "v(t) = 3(t - 1)(t - 3) = 0 at t = 1 and t = 3. Sign of v: positive on (0,1), negative on (1,3), positive on (3,5). Direction changes at t = 1 and t = 3. a(t) = 6t - 12 = 0 at t = 2. Sign of a: negative on (0,2), positive on (2,5). Speeding up when v and a share sign: on (1,2) both negative (speeding up), on (3,5) both positive (speeding up). Speeding up on (1, 2) union (3, 5)."
         },
         {
           "problem": "Use the tangent line to f(x) = ln(x) at x = 1 to approximate ln(1.05). Is this an overestimate or underestimate? Justify with concavity.",
-          "answer": "f(1) = 0. f'(x) = 1/x, f'(1) = 1. L(x) = 0 + 1(x - 1) = x - 1. L(1.05) = 0.05. Actual ln(1.05) = 0.04879... Since f''(x) = -1/x\u00b2 < 0, f is concave down. The tangent line lies above the curve, so 0.05 is an OVERESTIMATE."
+          "answer": "f(1) = 0. f'(x) = 1/x, f'(1) = 1. L(x) = 0 + 1(x - 1) = x - 1. L(1.05) = 0.05. Actual ln(1.05) = 0.04879... Since f''(x) = -1/x² < 0, f is concave down. The tangent line lies above the curve, so 0.05 is an OVERESTIMATE."
         },
         {
-          "problem": "Evaluate: lim(x->0) (e^(2x) - 2x - 1)/(x\u00b2).",
+          "problem": "Evaluate: lim(x->0) (e^(2x) - 2x - 1)/(x²).",
           "answer": "Check: (1 - 0 - 1)/0 = 0/0. L'Hopital's: lim (2e^(2x) - 2)/(2x). Check: (2 - 2)/0 = 0/0. Apply again: lim 4e^(2x)/2 = 4(1)/2 = 2."
         },
         {
-          "problem": "An inverted conical tank has height 10 m and top radius 5 m. Water flows in at 2 m\u00b3/min and leaks out at 0.5 m\u00b3/min. How fast is the water level rising when the depth is 4 m?",
-          "answer": "Net flow: dV/dt = 2 - 0.5 = 1.5 m\u00b3/min. Similar triangles: r/h = 5/10 = 1/2, so r = h/2. V = (1/3)pi r\u00b2h = (1/3)pi(h/2)\u00b2h = pi h\u00b3/12. Differentiate: dV/dt = (pi/12)(3h\u00b2)(dh/dt) = (pi h\u00b2/4)(dh/dt). At h = 4: 1.5 = (16pi/4)(dh/dt) = 4pi(dh/dt). dh/dt = 1.5/(4pi) = 3/(8pi) m/min, approximately 0.119 m/min."
+          "problem": "An inverted conical tank has height 10 m and top radius 5 m. Water flows in at 2 m³/min and leaks out at 0.5 m³/min. How fast is the water level rising when the depth is 4 m?",
+          "answer": "Net flow: dV/dt = 2 - 0.5 = 1.5 m³/min. Similar triangles: r/h = 5/10 = 1/2, so r = h/2. V = (1/3)pi r²h = (1/3)pi(h/2)²h = pi h³/12. Differentiate: dV/dt = (pi/12)(3h²)(dh/dt) = (pi h²/4)(dh/dt). At h = 4: 1.5 = (16pi/4)(dh/dt) = 4pi(dh/dt). dh/dt = 1.5/(4pi) = 3/(8pi) m/min, approximately 0.119 m/min."
         },
         {
-          "problem": "A particle moves along a line with position s(t) = t\u00b3 - 9t\u00b2 + 24t for t >= 0. (a) Find the total number of times the particle changes direction. (b) Find the particle's position at each direction change. (c) At t = 3, is the particle speeding up or slowing down?",
-          "answer": "(a) v(t) = 3t\u00b2 - 18t + 24 = 3(t\u00b2 - 6t + 8) = 3(t - 2)(t - 4) = 0 at t = 2, t = 4. v changes sign at both, so 2 direction changes. (b) s(2) = 8 - 36 + 48 = 20. s(4) = 64 - 144 + 96 = 16. (c) v(3) = 27 - 54 + 24 = -3 < 0. a(t) = 6t - 18. a(3) = 0. Since a(3) = 0, the particle is neither speeding up nor slowing down at that instant (acceleration is zero)."
+          "problem": "A particle moves along a line with position s(t) = t³ - 9t² + 24t for t >= 0. (a) Find the total number of times the particle changes direction. (b) Find the particle's position at each direction change. (c) At t = 3, is the particle speeding up or slowing down?",
+          "answer": "(a) v(t) = 3t² - 18t + 24 = 3(t² - 6t + 8) = 3(t - 2)(t - 4) = 0 at t = 2, t = 4. v changes sign at both, so 2 direction changes. (b) s(2) = 8 - 36 + 48 = 20. s(4) = 64 - 144 + 96 = 16. (c) v(3) = 27 - 54 + 24 = -3 < 0. a(t) = 6t - 18. a(3) = 0. Since a(3) = 0, the particle is neither speeding up nor slowing down at that instant (acceleration is zero)."
         }
       ],
-      "skill": "related-rates-setup-solve"
+      "skill": "related-rates-setup-solve",
+      "lessonId": "related-rates"
     }
   ],
   "answerKeys": {
@@ -320,5 +331,27 @@
     "ip-lhopital-e2x": "2. Two applications of L'Hopital.",
     "ip-rr-cone-net": "dh/dt = 3/(8pi) m/min.",
     "ip-motion-full": "2 direction changes at t=2,4. s(2)=20, s(4)=16. At t=3: a=0, neither speeding up nor slowing down."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "related-rates",
+      "title": "Related Rates",
+      "order": 1
+    },
+    {
+      "lessonId": "motion",
+      "title": "Motion: Position, Velocity, Acceleration",
+      "order": 2
+    },
+    {
+      "lessonId": "linearization",
+      "title": "Local Linearization & Differentials",
+      "order": 3
+    },
+    {
+      "lessonId": "lhopitals-rule",
+      "title": "L'Hôpital's Rule",
+      "order": 4
+    }
+  ]
 }

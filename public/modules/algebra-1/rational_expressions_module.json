@@ -39,7 +39,8 @@
       "skill": "simplifying-rational-expressions",
       "title": "Introduction to Rational Expressions",
       "content": "A **rational expression** is a fraction whose numerator and denominator are **polynomials**. Examples: (x + 3)/(x − 1), (2x² + 5x)/(x² − 4), 7/(x + 2).\n\nJust as numeric fractions can be simplified (e.g., 12/18 = 2/3), rational expressions can be simplified by **factoring and cancelling common factors**.\n\n**Excluded values (restrictions):**\nA rational expression is **undefined** whenever its denominator equals zero. The values of the variable that make the denominator zero are called **excluded values**.\n- For 5/(x − 3): the denominator is zero when x = 3, so x ≠ 3.\n- For (x + 1)/(x² − 4): factor the denominator as (x − 2)(x + 2). The expression is undefined when x = 2 or x = −2.\n\n**You must always state excluded values**, even after simplifying. If a factor cancels, the original restriction still applies.\n\n**Simplifying rational expressions — the process:**\n1. **Factor** the numerator and denominator completely.\n2. **Identify excluded values** from the factored denominator (set each factor = 0).\n3. **Cancel common factors** that appear in both the numerator and denominator.\n4. **Write the simplified expression** and list all excluded values.\n\n**Critical rule:** You can only cancel **factors** (expressions connected by multiplication), never **terms** (expressions connected by addition or subtraction). For example, in (x + 5)/(x + 3), the x's are terms, not factors — you cannot cancel them.\n\nExample: Simplify (x² − 9)/(x² + 5x + 6).\nFactor: (x − 3)(x + 3) / (x + 2)(x + 3).\nCancel (x + 3): (x − 3)/(x + 2).\nExcluded values: x ≠ −3, x ≠ −2 (from original denominator factors).",
-      "initialPrompt": "Consider the expression (x² − 4)/(x² − 4x + 4). Can you factor both the numerator and the denominator? What factor, if any, is common to both? What are the excluded values?"
+      "initialPrompt": "Consider the expression (x² − 4)/(x² − 4x + 4). Can you factor both the numerator and the denominator? What factor, if any, is common to both? What are the excluded values?",
+      "lessonId": "simplifying-rationals"
     },
     {
       "type": "model",
@@ -63,7 +64,8 @@
           "tip": "Always factor the denominator completely to find ALL excluded values. A quadratic denominator can produce up to two excluded values. Don't forget to check for differences of squares."
         }
       ],
-      "initialPrompt": "In the first example, we factored x² − 9 as (x − 3)(x + 3) and x² + 5x + 6 as (x + 2)(x + 3). The common factor (x + 3) cancelled, but x = −3 is still excluded. Why must we keep x = −3 as a restriction even after simplifying?"
+      "initialPrompt": "In the first example, we factored x² − 9 as (x − 3)(x + 3) and x² + 5x + 6 as (x + 2)(x + 3). The common factor (x + 3) cancelled, but x = −3 is still excluded. Why must we keep x = −3 as a restriction even after simplifying?",
+      "lessonId": "simplifying-rationals"
     },
     {
       "type": "explanation",
@@ -71,7 +73,8 @@
       "skill": "multiplying-dividing-rationals",
       "title": "Multiplying, Dividing, Adding, and Subtracting Rational Expressions",
       "content": "Operations with rational expressions follow the **same rules as operations with numeric fractions**.\n\n**Multiplying rational expressions:**\n1. Factor all numerators and denominators completely.\n2. Cancel any common factors between any numerator and any denominator.\n3. Multiply remaining numerators together and remaining denominators together.\n\nRule: (a/b) · (c/d) = (a·c)/(b·d), then simplify.\n\n**Dividing rational expressions:**\nTo divide, **multiply by the reciprocal** of the divisor.\n(a/b) ÷ (c/d) = (a/b) · (d/c)\nThen proceed as with multiplication: factor, cancel, multiply.\n\n**Adding and subtracting rational expressions:**\nJust like numeric fractions, you need a **common denominator** before combining.\n1. Factor all denominators.\n2. Find the **Least Common Denominator (LCD)** — the product of all distinct factors, each raised to its highest power.\n3. Rewrite each fraction as an equivalent fraction with the LCD.\n4. Combine the numerators (add or subtract) over the LCD.\n5. Simplify the resulting expression if possible.\n\nExample of finding the LCD:\nFor 3/x and 5/(x + 2), the denominators are x and (x + 2). These share no common factors, so the LCD = x(x + 2).\n\n**Common mistake:** Students try to add fractions by adding numerators and denominators separately: 3/x + 5/(x+2) ≠ 8/(2x+2). This is wrong for the same reason 1/2 + 1/3 ≠ 2/5. You must use a common denominator.",
-      "initialPrompt": "When you add 1/4 + 1/6 with numbers, you find the LCD (12), rewrite as 3/12 + 2/12 = 5/12. How would you apply the same idea to add 1/x + 1/(x + 1)?"
+      "initialPrompt": "When you add 1/4 + 1/6 with numbers, you find the LCD (12), rewrite as 3/12 + 2/12 = 5/12. How would you apply the same idea to add 1/x + 1/(x + 1)?",
+      "lessonId": "multiplying-dividing-rationals"
     },
     {
       "type": "model",
@@ -95,7 +98,8 @@
           "tip": "Finding the LCD for rational expressions works exactly like finding the LCD for numeric fractions. If the denominators share no common factors, the LCD is simply their product."
         }
       ],
-      "initialPrompt": "In the multiplication example, (x + 2) and (x − 1) both cancelled because each appeared in a numerator and a denominator. What would happen if (x + 2) appeared in both numerators instead? Could you still cancel it?"
+      "initialPrompt": "In the multiplication example, (x + 2) and (x − 1) both cancelled because each appeared in a numerator and a denominator. What would happen if (x + 2) appeared in both numerators instead? Could you still cancel it?",
+      "lessonId": "multiplying-dividing-rationals"
     },
     {
       "type": "guided_practice",
@@ -144,7 +148,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these together. For the first problem, you need to simplify (x² − 4x)/(x² − 16). Start by factoring both the numerator and denominator. What is the GCF of x² − 4x? And what factoring pattern does x² − 16 follow?"
+      "initialPrompt": "Let's work through these together. For the first problem, you need to simplify (x² − 4x)/(x² − 16). Start by factoring both the numerator and denominator. What is the GCF of x² − 4x? And what factoring pattern does x² − 16 follow?",
+      "lessonId": "multiplying-dividing-rationals"
     },
     {
       "type": "explanation",
@@ -152,7 +157,8 @@
       "skill": "solving-rational-equations",
       "title": "Solving Rational Equations",
       "content": "A **rational equation** is an equation that contains one or more rational expressions (fractions with variables in the denominator).\n\nExamples: 3/x + 1/4 = 5/x, or x/(x − 3) = 3/(x − 3) + 2.\n\n**Strategy for solving rational equations:**\n1. **Identify the LCD** of all fractions in the equation.\n2. **Multiply every term** on both sides of the equation by the LCD. This clears all denominators.\n3. **Solve** the resulting equation (which should have no fractions).\n4. **Check for extraneous solutions.** A solution is **extraneous** if it makes any denominator in the original equation equal to zero. Extraneous solutions must be rejected.\n\n**Why extraneous solutions occur:**\nWhen we multiply both sides by the LCD, we may introduce values that were not in the domain of the original equation. The LCD contains the variable, so multiplying by it can create solutions that make the original denominators zero. These are not true solutions — they are artifacts of the solving process.\n\n**Critical step:** After solving, you MUST substitute every candidate solution back into the original equation's denominators. If any denominator becomes zero, that solution is extraneous and must be rejected.\n\n**Possible outcomes:**\n- All candidate solutions are valid → report them as the solution set.\n- Some candidate solutions are extraneous → reject the extraneous ones, keep the valid ones.\n- ALL candidate solutions are extraneous → the equation has **no solution**.",
-      "initialPrompt": "Consider the equation 1/x = 1/(x − 2). If you multiply both sides by x(x − 2), what equation do you get? What values of x would be excluded from the start?"
+      "initialPrompt": "Consider the equation 1/x = 1/(x − 2). If you multiply both sides by x(x − 2), what equation do you get? What values of x would be excluded from the start?",
+      "lessonId": "adding-subtracting-rationals"
     },
     {
       "type": "model",
@@ -176,7 +182,8 @@
           "tip": "When a denominator is already factored as the product of the other denominators (as x² − 1 = (x+1)(x−1) here), the LCD is simply that factored form. Recognizing this pattern saves time."
         }
       ],
-      "initialPrompt": "In the second example, the algebra produced x = 3, but we had to reject it because x = 3 makes the denominator (x − 3) equal to zero. Why can't we just 'plug in' x = 3 and say the answer is infinity or some large number? What does 'undefined' really mean here?"
+      "initialPrompt": "In the second example, the algebra produced x = 3, but we had to reject it because x = 3 makes the denominator (x − 3) equal to zero. Why can't we just 'plug in' x = 3 and say the answer is infinity or some large number? What does 'undefined' really mean here?",
+      "lessonId": "adding-subtracting-rationals"
     },
     {
       "type": "independent_practice",
@@ -239,7 +246,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "simplifying-rational-expressions"
+      "skill": "simplifying-rational-expressions",
+      "lessonId": "simplifying-rationals"
     }
   ],
   "answerKeys": {
@@ -253,5 +261,27 @@
     "re-yp4": "x = 9. LCD = 3x. Equation: 15 − x = 6. Check: 5/9 − 1/3 = 2/9 ✓.",
     "re-yp5": "No solution. x = 2 is extraneous (makes denominator zero).",
     "re-yp6": "x = 4. LCD = (x + 2)(x − 2). Equation: 3(x − 2) + (x + 2) = 12 → 4x = 16. Check: 3/6 + 1/2 = 1, 12/12 = 1 ✓."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "simplifying-rationals",
+      "title": "Simplifying Rational Expressions",
+      "order": 1
+    },
+    {
+      "lessonId": "multiplying-dividing-rationals",
+      "title": "Multiplying and Dividing Rational Expressions",
+      "order": 2
+    },
+    {
+      "lessonId": "adding-subtracting-rationals",
+      "title": "Adding and Subtracting Rational Expressions",
+      "order": 3
+    },
+    {
+      "lessonId": "solving-rational-equations",
+      "title": "Solving Rational Equations",
+      "order": 4
+    }
+  ]
 }

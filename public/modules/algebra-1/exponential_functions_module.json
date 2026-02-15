@@ -41,7 +41,8 @@
       "skill": "exponential-functions-basics",
       "title": "Introduction to Exponential Functions",
       "content": "An **exponential function** has the form **f(x) = a·bˣ**, where:\n- **a** is the **initial value** (the y-intercept when x = 0, since f(0) = a·b⁰ = a·1 = a)\n- **b** is the **base** (the constant multiplier)\n- **b > 0** and **b ≠ 1**\n\n**Growth vs. Decay:**\n- If **b > 1**, the function models **exponential growth** — the output increases as x increases. Example: f(x) = 2ˣ doubles each time x increases by 1.\n- If **0 < b < 1**, the function models **exponential decay** — the output decreases as x increases. Example: f(x) = (1/2)ˣ halves each time x increases by 1.\n\n**Key features of the graph:**\n- **Horizontal asymptote**: y = 0 (the x-axis). The graph approaches but never touches y = 0.\n- **y-intercept**: (0, a). When x = 0, f(0) = a.\n- **Domain**: all real numbers. **Range**: y > 0 (when a > 0).\n- The graph is always **curved** — it is not a straight line.\n\n**Constant ratio vs. constant difference:**\n- In a **linear** function, consecutive y-values have a **constant difference** (you add the same amount each step).\n- In an **exponential** function, consecutive y-values have a **constant ratio** (you multiply by the same factor each step).\n\nExample: For f(x) = 3·2ˣ, the outputs are 3, 6, 12, 24, 48, … Each output is **2 times** the previous one (constant ratio = 2).",
-      "initialPrompt": "Consider f(x) = 5·3ˣ. What is the initial value? What is the base? Does this function model growth or decay? What is f(0)?"
+      "initialPrompt": "Consider f(x) = 5·3ˣ. What is the initial value? What is the base? Does this function model growth or decay? What is f(0)?",
+      "lessonId": "exponential-intro"
     },
     {
       "type": "model",
@@ -65,7 +66,8 @@
           "tip": "For growth graphs (b > 1), the curve starts low on the left (approaching y = 0), passes through (0, a), and rises steeply to the right. The larger the base b, the steeper the rise."
         }
       ],
-      "initialPrompt": "In the first example, f(x) = 3·2ˣ is growth because b = 2 > 1, and g(x) = 100·(0.75)ˣ is decay because b = 0.75 < 1. What would happen if the base were exactly 1? Why is b = 1 excluded from exponential functions?"
+      "initialPrompt": "In the first example, f(x) = 3·2ˣ is growth because b = 2 > 1, and g(x) = 100·(0.75)ˣ is decay because b = 0.75 < 1. What would happen if the base were exactly 1? Why is b = 1 excluded from exponential functions?",
+      "lessonId": "exponential-intro"
     },
     {
       "type": "explanation",
@@ -73,7 +75,8 @@
       "skill": "exponential-growth-decay",
       "title": "Exponential Growth and Decay Applications",
       "content": "Many real-world situations involve quantities that grow or shrink by a **fixed percentage** over equal time periods. We model these with:\n\n**Exponential Growth:** A = P(1 + r)ᵗ\n**Exponential Decay:** A = P(1 - r)ᵗ\n\nwhere:\n- **A** = the amount after time t\n- **P** = the initial (principal/starting) amount\n- **r** = the rate of growth or decay (as a decimal, e.g., 5% = 0.05)\n- **t** = time (number of periods)\n\n**Growth** (1 + r): the base is greater than 1 because you are adding to the original.\n**Decay** (1 - r): the base is between 0 and 1 because you are subtracting from the original.\n\n**Common applications:**\n- **Compound interest**: A = P(1 + r)ᵗ where r is the annual interest rate and t is years.\n- **Population growth**: P = P₀(1 + r)ᵗ where r is the growth rate per period.\n- **Doubling time**: the time it takes for a quantity to double. If a population doubles every d time units, the model is P = P₀ · 2^(t/d).\n- **Depreciation**: A = P(1 - r)ᵗ where r is the annual depreciation rate.\n- **Half-life**: the time it takes for a quantity to reduce to half. If a substance has a half-life of h time units, the model is A = A₀ · (1/2)^(t/h).\n\n**Tip:** Always identify three things from any word problem: (1) the initial amount P, (2) the rate r and whether it is growth or decay, and (3) the time t.",
-      "initialPrompt": "A savings account starts with $500 and earns 6% interest per year. What is P? What is r? Is this growth or decay? Write the formula for the amount after t years."
+      "initialPrompt": "A savings account starts with $500 and earns 6% interest per year. What is P? What is r? Is this growth or decay? Write the formula for the amount after t years.",
+      "lessonId": "exponential-growth"
     },
     {
       "type": "model",
@@ -97,7 +100,8 @@
           "tip": "For decay, the base is (1 - r), which is less than 1. Here, 1 - 0.15 = 0.85. A common mistake is writing 25000(0.15)ᵗ — but 0.15 is the rate lost, not the rate retained."
         }
       ],
-      "initialPrompt": "In the compound interest example, we started with $500 and ended with $669.11 after 5 years at 6%. With simple interest at the same rate, the total would have been only $650. Why does compound interest produce more? What does 'interest on interest' mean?"
+      "initialPrompt": "In the compound interest example, we started with $500 and ended with $669.11 after 5 years at 6%. With simple interest at the same rate, the total would have been only $650. Why does compound interest produce more? What does 'interest on interest' mean?",
+      "lessonId": "exponential-growth"
     },
     {
       "type": "guided_practice",
@@ -146,7 +150,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these together. For the first problem, you need to evaluate f(x) = 4·3ˣ at several x-values. Start with f(0) — what is 3⁰?"
+      "initialPrompt": "Let's work through these together. For the first problem, you need to evaluate f(x) = 4·3ˣ at several x-values. Start with f(0) — what is 3⁰?",
+      "lessonId": "exponential-growth"
     },
     {
       "type": "explanation",
@@ -154,7 +159,8 @@
       "skill": "comparing-linear-exponential",
       "title": "Comparing Linear and Exponential Models",
       "content": "How do you decide whether a situation is **linear** or **exponential**? Look at the pattern of change.\n\n**Linear functions** (y = mx + b):\n- Have a **constant rate of change** (constant difference).\n- When x increases by 1, y changes by the **same amount** (the slope m) every time.\n- In a table, the **differences** between consecutive y-values are equal.\n- Graph: a **straight line**.\n- Example: Earning $50 per week. After 1 week: $50, 2 weeks: $100, 3 weeks: $150. Difference is always +$50.\n\n**Exponential functions** (y = a·bˣ):\n- Have a **constant percent change** (constant ratio).\n- When x increases by 1, y is **multiplied by the same factor** (the base b) every time.\n- In a table, the **ratios** between consecutive y-values are equal.\n- Graph: a **curve** that either rises faster and faster (growth) or falls slower and slower (decay).\n- Example: Investment growing 10% per year. After 1 year: $110, 2 years: $121, 3 years: $133.10. Ratio is always ×1.10.\n\n**Key comparison:** For large x, exponential growth **always** eventually overtakes linear growth, no matter how steep the line or how slow the exponential base. A function growing by 1% per step will eventually surpass a function growing by adding 1,000,000 per step — it just takes a very long time.\n\n**How to identify from a table:**\n1. Check the **differences** between consecutive y-values. If constant → linear.\n2. Check the **ratios** between consecutive y-values. If constant → exponential.\n3. If neither is constant, the function may be neither linear nor exponential.",
-      "initialPrompt": "Consider two sequences: Sequence A: 5, 10, 15, 20, 25 and Sequence B: 5, 10, 20, 40, 80. Find the differences and ratios for each. Which is linear and which is exponential?"
+      "initialPrompt": "Consider two sequences: Sequence A: 5, 10, 15, 20, 25 and Sequence B: 5, 10, 20, 40, 80. Find the differences and ratios for each. Which is linear and which is exponential?",
+      "lessonId": "exponential-decay"
     },
     {
       "type": "model",
@@ -173,7 +179,8 @@
           "tip": "If the differences are constant, stop — it is linear. You do not need to check ratios. But checking both is a good habit to confirm your answer."
         }
       ],
-      "initialPrompt": "In the first example, the differences were 3, 6, 12, 24 — not constant. But the ratios were all 2 — constant. What would the differences look like if the data were linear instead?"
+      "initialPrompt": "In the first example, the differences were 3, 6, 12, 24 — not constant. But the ratios were all 2 — constant. What would the differences look like if the data were linear instead?",
+      "lessonId": "exponential-decay"
     },
     {
       "type": "guided_practice",
@@ -212,7 +219,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start by computing both differences and ratios between the consecutive y-values. What is 15 - 5? What is 15/5? Do you see a pattern in either set?"
+      "initialPrompt": "For the first problem, start by computing both differences and ratios between the consecutive y-values. What is 15 - 5? What is 15/5? Do you see a pattern in either set?",
+      "lessonId": "exponential-decay"
     },
     {
       "type": "independent_practice",
@@ -275,7 +283,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "exponential-functions-basics"
+      "skill": "exponential-functions-basics",
+      "lessonId": "exponential-intro"
     }
   ],
   "answerKeys": {
@@ -292,5 +301,32 @@
     "ef-yp4": "≈ 71.19 mg after 6 hours. A = 400(0.75)⁶.",
     "ef-yp5": "5 grams after 20 days (5 half-lives). A = 160·(1/2)⁵.",
     "ef-yp6": "(a) Exponential: y = 8·(1.5)ˣ (constant ratio 1.5). (b) Linear: y = 6x + 8 (constant difference 6)."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "exponential-intro",
+      "title": "Understanding Exponential Functions",
+      "order": 1
+    },
+    {
+      "lessonId": "exponential-growth",
+      "title": "Exponential Growth",
+      "order": 2
+    },
+    {
+      "lessonId": "exponential-decay",
+      "title": "Exponential Decay",
+      "order": 3
+    },
+    {
+      "lessonId": "graphing-exponentials",
+      "title": "Graphing Exponential Functions",
+      "order": 4
+    },
+    {
+      "lessonId": "linear-vs-exponential",
+      "title": "Comparing Linear and Exponential Models",
+      "order": 5
+    }
+  ]
 }

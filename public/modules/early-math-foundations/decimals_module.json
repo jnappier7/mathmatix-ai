@@ -6,32 +6,33 @@
   "weeks": "16-18",
   "estimatedDuration": 35,
   "description": "Decimals are fractions in disguise — just written in base-10. Students learn decimal place value through thousandths, compare and order decimals by annexing zeros and aligning place values, add and subtract decimals using the standard algorithm with decimal alignment, and build the fraction-decimal connection so they can move between forms fluently. Money is the anchor context throughout.",
-
   "skills": [
     "emf-decimal-place-value",
     "emf-compare-order-decimals",
     "emf-add-subtract-decimals",
     "emf-decimals-fractions-connection"
   ],
-
-  "standardsAlignment": ["4.NF.C.6", "4.NF.C.7", "5.NBT.A.1", "5.NBT.A.3", "5.NBT.A.3b", "5.NBT.B.7"],
-
+  "standardsAlignment": [
+    "4.NF.C.6",
+    "4.NF.C.7",
+    "5.NBT.A.1",
+    "5.NBT.A.3",
+    "5.NBT.A.3b",
+    "5.NBT.B.7"
+  ],
   "goals": [
     "Read, write, and identify the value of each digit in a decimal through thousandths using place-value charts and expanded form",
     "Compare and order decimals through thousandths by annexing zeros and aligning place values",
     "Add and subtract decimals through hundredths using the standard algorithm with correct decimal-point alignment",
     "Convert between fractions (denominators of 10, 100, and 1000) and decimals, and recognize common equivalents like 1/2 = 0.5 and 1/4 = 0.25"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do, with money as the anchor context in every phase",
     "AI uses scaffold array as scope and worked-example bank; encourages effort with age-appropriate praise",
     "Place-value charts, number lines, and base-10 block visuals are referenced to build conceptual understanding before procedural fluency",
     "Frequent real-world money scenarios keep problems concrete and relatable for ages 8-11"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -46,7 +47,8 @@
         "Each digit's VALUE = digit × its place value. In 3.547: the 5 is worth 5 × 1/10 = 5/10 = 0.5.",
         "Expanded form: 3.547 = 3 + 0.5 + 0.04 + 0.007 (three and five tenths, four hundredths, seven thousandths).",
         "Reading decimals: say the whole part, then 'and' for the decimal point, then read the decimal digits as a whole number followed by the smallest place name. 3.547 → 'three and five hundred forty-seven thousandths'."
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "model",
@@ -66,7 +68,8 @@
           "problem": "A gallon of gas costs $3.459. How do you read this number aloud, and what place is the 9 in?",
           "solution": "Count the decimal places:\n  3 . 4  5  9\n  ↑   ↑  ↑  ↑\n  ones tenths hundredths thousandths\n\nThe 9 is in the THOUSANDTHS place.\nRead it aloud: 'three and four hundred fifty-nine thousandths.'\nFun fact: gas stations use thousandths (called 'mills') to set their prices!\nAnswer: The 9 is in the thousandths place. Read as 'three and four hundred fifty-nine thousandths.'"
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "guided_practice",
@@ -101,7 +104,8 @@
           ],
           "answer": "The digit 6 is in the hundredths place. Its value is 0.06 (six hundredths)."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "independent_practice",
@@ -124,7 +128,8 @@
           "problem": "A race time is recorded as 9.173 seconds. Read this number aloud and name the place value of each digit after the decimal point.",
           "answer": "Nine and one hundred seventy-three thousandths. The 1 is in the tenths place (0.1), the 7 is in the hundredths place (0.07), and the 3 is in the thousandths place (0.003)."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "explanation",
@@ -139,7 +144,8 @@
         "On a number line, the decimal farther to the right is greater.",
         "Use >, <, or = to show the comparison. Remember: the 'hungry alligator' always opens toward the bigger number!",
         "To ORDER decimals, first annex zeros so all have the same number of places, then sort from least to greatest or greatest to least."
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "model",
@@ -159,7 +165,8 @@
           "problem": "Liam has $2.50 and Ava has $2.05. Who has more money?",
           "solution": "Line up the decimal points:\n  2.50\n  2.05\n  ↑ ones: 2 = 2 — tie\n  ↑ tenths: 5 > 0 → STOP!\n\n2.50 > 2.05\nLiam has more money — he has two dollars and fifty cents, while Ava has two dollars and five cents.\nAnswer: Liam has more money. $2.50 > $2.05."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "guided_practice",
@@ -194,7 +201,8 @@
           ],
           "answer": "Rosa is NOT correct. $0.90 = 90 cents (9 dimes) and $0.09 = 9 cents (9 pennies). The 9 is in different place-value positions, so the amounts are very different. $0.90 > $0.09."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "independent_practice",
@@ -217,7 +225,8 @@
           "problem": "Carlos scored 9.75 in a gymnastics event and Mia scored 9.8. Who got the higher score?",
           "answer": "Mia got the higher score. Annex a zero: 9.80 vs. 9.75. Tenths: 8 > 7, so 9.80 > 9.75."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "explanation",
@@ -232,7 +241,8 @@
         "Regroup (carry or borrow) across the decimal point the same way you do with whole numbers.",
         "Bring the decimal point STRAIGHT DOWN into the answer — it stays in the same column.",
         "Check with money: does your answer make sense as a dollar amount? If $5.30 + $2.17 = $7.47, that sounds right!"
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "model",
@@ -252,7 +262,8 @@
           "problem": "Find the sum: 12.5 + 0.375 + 3",
           "solution": "Step 1 — Annex zeros so all have 3 decimal places:\n  12.500\n   0.375\n   3.000\n\nStep 2 — Line up and add:\n  12.500\n   0.375\n+  3.000\n-------\n  15.875\n\nThousandths: 0 + 5 + 0 = 5\nHundredths: 0 + 7 + 0 = 7\nTenths: 5 + 3 + 0 = 8\nOnes: 2 + 0 + 3 = 5\nTens: 1 + 0 + 0 = 1\n\nAnswer: 15.875"
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "guided_practice",
@@ -287,7 +298,8 @@
           ],
           "answer": "7.078. With annexed zeros: 0.600 + 2.350 + 4.128 = 7.078."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "independent_practice",
@@ -310,7 +322,8 @@
           "problem": "Two runners' times in a race are 12.09 seconds and 11.8 seconds. What is the difference between their times?",
           "answer": "0.29 seconds. Annex a zero to 11.8 → 11.80. Then 12.09 − 11.80 = 0.29 seconds."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "explanation",
@@ -325,7 +338,8 @@
         "Common equivalents to memorize: 1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75, 1/5 = 0.2, 1/10 = 0.1.",
         "Money connection: a quarter ($0.25) is 1/4 of a dollar, a half-dollar ($0.50) is 1/2 of a dollar, three quarters ($0.75) is 3/4 of a dollar.",
         "To simplify a fraction, divide numerator and denominator by their greatest common factor (GCF). 75/100 → GCF is 25 → 3/4."
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "model",
@@ -345,7 +359,8 @@
           "problem": "A recipe calls for 0.5 cups of sugar and 2/10 cups of vanilla. Which is more?",
           "solution": "Convert both to the same form:\n  0.5 = 5/10 (or stay as 0.5)\n  2/10 = 0.2\n\nNow compare: 0.5 vs. 0.2 → 0.5 > 0.2.\nMoney way: 0.5 is like 50 cents, 0.2 is like 20 cents. 50 > 20!\n\n0.5 cups of sugar is more than 2/10 cups of vanilla.\nAnswer: 0.5 cups (sugar) is more. 0.5 = 5/10 > 2/10."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "guided_practice",
@@ -380,7 +395,8 @@
           ],
           "answer": "Marcus ate more. 0.75 > 0.70 (which is 7/10). In money terms, 75 cents is more than 70 cents."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     },
     {
       "type": "independent_practice",
@@ -403,10 +419,10 @@
           "problem": "Emma saves 3/4 of her allowance. Jake saves 0.6 of his allowance. If they both get the same allowance, who saves more?",
           "answer": "Emma saves more. 3/4 = 0.75, and 0.75 > 0.6. In money terms, if the allowance is $1.00, Emma saves $0.75 and Jake saves $0.60."
         }
-      ]
+      ],
+      "lessonId": "decimals"
     }
   ],
-
   "answerKeys": {
     "dec-1": "0.3 (three tenths, or 3 dimes)",
     "dec-2": "5 + 0.02 + 0.009",

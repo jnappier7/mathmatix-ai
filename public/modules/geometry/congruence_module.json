@@ -39,7 +39,8 @@
       "skill": "triangle-congruence-sss-sas-asa",
       "title": "Congruence and the Big 5 Shortcuts",
       "content": "Two triangles are **congruent** if they have exactly the same size and shape—all corresponding sides and angles are equal. But we don't need to check all six parts! We can prove congruence with just three pieces of information, if they're the right combination:\n\n**The Big 5 Congruence Shortcuts:**\n• **SSS** — three pairs of congruent sides\n• **SAS** — two sides and the INCLUDED angle\n• **ASA** — two angles and the INCLUDED side\n• **AAS** — two angles and a NON-included side\n• **HL** — hypotenuse and leg (RIGHT triangles only)\n\nThe key word for SAS and ASA is **included**—the angle/side must be between the two sides/angles.\n\n⚠️ **SSA does NOT work!** Two sides and a non-included angle can produce two different triangles (the ambiguous case).",
-      "initialPrompt": "Why do you think we need the angle to be 'included' (between the two sides) for SAS? What could go wrong if the angle wasn't between the two sides?"
+      "initialPrompt": "Why do you think we need the angle to be 'included' (between the two sides) for SAS? What could go wrong if the angle wasn't between the two sides?",
+      "lessonId": "congruence-intro"
     },
     {
       "type": "model",
@@ -60,7 +61,8 @@
           "solution": "What we have:\n1. ∠M ≅ ∠M' (an angle)\n2. MN ≅ MN (the shared side — **Reflexive Property**)\n3. ∠N ≅ ∠N' (another angle)\n\nThe side MN is **included** between the two pairs of congruent angles. By the **ASA (Angle-Side-Angle) Postulate**, the triangles are congruent.\n\nKey insight: a shared side is always congruent to itself by the Reflexive Property. This is one of the most common tools in proofs!"
         }
       ],
-      "initialPrompt": "If I wrote △ABC ≅ △FED instead of △DEF, would that be correct? Why does the order of letters matter?"
+      "initialPrompt": "If I wrote △ABC ≅ △FED instead of △DEF, would that be correct? Why does the order of letters matter?",
+      "lessonId": "congruence-intro"
     },
     {
       "type": "explanation",
@@ -68,7 +70,8 @@
       "skill": "triangle-congruence-aas-hl",
       "title": "AAS and HL Theorems",
       "content": "Two more congruence shortcuts complete the Big 5:\n\n**AAS (Angle-Angle-Side):** Two pairs of congruent angles and one pair of congruent NON-included sides. Why does this work? If two angles match, the third angle is forced (angle sum = 180°), effectively giving you ASA.\n\n**HL (Hypotenuse-Leg):** For RIGHT triangles only: if the hypotenuses are congruent and one pair of legs is congruent, the triangles are congruent. Always verify the right angle first!\n\nRemember: **SSA is NOT valid** (the ambiguous case). But HL works for right triangles because the right angle eliminates the ambiguity.",
-      "initialPrompt": "Why does HL only work for right triangles? Why can't we use it for any triangle?"
+      "initialPrompt": "Why does HL only work for right triangles? Why can't we use it for any triangle?",
+      "lessonId": "sss-sas"
     },
     {
       "type": "model",
@@ -89,7 +92,8 @@
           "solution": "Let's check what we have:\n1. AB ≅ DE (side)\n2. BC ≅ EF (side)\n3. ∠A ≅ ∠D (angle NOT between the two sides)\n\nThis is **SSA** (Side-Side-Angle with the angle not included). SSA is **NOT a valid congruence shortcut!**\n\nWhy? The angle and two sides can create two possible triangles (the 'swinging door' effect). Unless we know these are right triangles (which would make it HL), we **cannot** prove congruence."
         }
       ],
-      "initialPrompt": "Can you think of why SSA doesn't work? Imagine you have two sticks and an angle at one end—could you create two different triangles?"
+      "initialPrompt": "Can you think of why SSA doesn't work? Imagine you have two sticks and an angle at one end—could you create two different triangles?",
+      "lessonId": "sss-sas"
     },
     {
       "type": "guided_practice",
@@ -125,7 +129,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's practice identifying congruence postulates. For the first problem, what's special about a side shared by two triangles?"
+      "initialPrompt": "Let's practice identifying congruence postulates. For the first problem, what's special about a side shared by two triangles?",
+      "lessonId": "congruence-intro"
     },
     {
       "type": "explanation",
@@ -133,7 +138,8 @@
       "skill": "cpctc",
       "title": "CPCTC: The Payoff of Proving Congruence",
       "content": "**CPCTC** stands for \"Corresponding Parts of Congruent Triangles are Congruent.\" This is the payoff of proving triangles congruent—once you know two triangles are congruent, ALL their corresponding parts are congruent.\n\nThe typical proof flow is:\n1. Prove the triangles congruent (using SSS, SAS, ASA, AAS, or HL)\n2. THEN conclude that specific corresponding parts are congruent (using CPCTC)\n\nCPCTC is never used to PROVE triangles congruent—it's used AFTER you've already proven congruence.",
-      "initialPrompt": "Why can't we use CPCTC as the very first step? What has to happen before we can use it?"
+      "initialPrompt": "Why can't we use CPCTC as the very first step? What has to happen before we can use it?",
+      "lessonId": "asa-aas-hl"
     },
     {
       "type": "model",
@@ -154,7 +160,8 @@
           "solution": "From the congruence statement △PQR ≅ △STU, the correspondence is:\nP↔S, Q↔T, R↔U\n\nUsing CPCTC:\n• PQ ↔ ST → **ST = 8**\n• QR ↔ TU → **TU = 12**\n• ∠Q ↔ ∠T → **∠T = 65°**\n\nThe order of vertices in the congruence statement directly tells you which parts correspond."
         }
       ],
-      "initialPrompt": "In the first proof, why are ∠AMC and ∠BMD congruent? What kind of angles are they?"
+      "initialPrompt": "In the first proof, why are ∠AMC and ∠BMD congruent? What kind of angles are they?",
+      "lessonId": "cpctc"
     },
     {
       "type": "guided_practice",
@@ -182,7 +189,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, let's start by identifying what parallel lines give us. What angle pairs are created?"
+      "initialPrompt": "For the first problem, let's start by identifying what parallel lines give us. What angle pairs are created?",
+      "lessonId": "cpctc"
     },
     {
       "type": "independent_practice",
@@ -236,7 +244,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "triangle-congruence-sss-sas-asa"
+      "skill": "triangle-congruence-sss-sas-asa",
+      "lessonId": "congruence-intro"
     }
   ],
   "answerKeys": {
@@ -250,5 +259,32 @@
     "cg-yp3": "No (ambiguous case).",
     "cg-yp4": "SAS (midpoint + reflexive).",
     "cg-yp5": "WX=11, XY=14, WY=9, ∠X=72°."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "congruence-intro",
+      "title": "What is Congruence?",
+      "order": 1
+    },
+    {
+      "lessonId": "sss-sas",
+      "title": "SSS and SAS Postulates",
+      "order": 2
+    },
+    {
+      "lessonId": "asa-aas-hl",
+      "title": "ASA, AAS, and HL Theorems",
+      "order": 3
+    },
+    {
+      "lessonId": "cpctc",
+      "title": "CPCTC",
+      "order": 4
+    },
+    {
+      "lessonId": "congruence-proofs",
+      "title": "Writing Congruence Proofs",
+      "order": 5
+    }
+  ]
 }

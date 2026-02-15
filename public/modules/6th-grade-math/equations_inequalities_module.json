@@ -47,7 +47,8 @@
         "Two-step equations: box the variable term, then think outside the box — anything outside, use opposites to make zero; anything inside, divide it out",
         "After solving, ALWAYS check your answer by substituting it back into the original equation to make sure both sides are equal",
         "The goal is to isolate the variable: get it alone on one side so you have variable = number"
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "model",
@@ -67,7 +68,8 @@
           "problem": "Solve: 2x + 5 = 17",
           "solution": "This is a two-step equation. Step 1: Undo the addition — subtract 5 from both sides.\n2x + 5 − 5 = 17 − 5\n2x = 12\nStep 2: Undo the multiplication — divide both sides by 2.\n2x ÷ 2 = 12 ÷ 2\nx = 6\nCheck: 2(6) + 5 = 12 + 5 = 17 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "guided_practice",
@@ -102,7 +104,8 @@
           ],
           "answer": "x = 7. Step 1: 4x − 3 + 3 = 25 + 3 → 4x = 28. Step 2: 4x ÷ 4 = 28 ÷ 4 → x = 7. Check: 4(7) − 3 = 28 − 3 = 25 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "independent_practice",
@@ -125,7 +128,8 @@
           "question": "Solve: 3p + 7 = 28",
           "answer": "p = 7"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "explanation",
@@ -139,7 +143,8 @@
         "After collecting variables on one side, you have a regular two-step equation — solve as usual",
         "Always check your answer by substituting into BOTH sides of the original equation and confirming they are equal",
         "This is a preview skill for 6th grade — you will work with more complex versions in 7th grade and beyond"
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "model",
@@ -159,7 +164,8 @@
           "problem": "Solve: 4x + 6 = x + 21",
           "solution": "Subtract x from both sides.\n4x + 6 − x = x + 21 − x\n3x + 6 = 21\nSubtract 6 from both sides.\n3x = 15\nDivide both sides by 3.\nx = 5\nCheck: Left side: 4(5) + 6 = 26. Right side: 5 + 21 = 26. Both sides equal 26 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "guided_practice",
@@ -185,7 +191,8 @@
           ],
           "answer": "m = 5. Subtract 3m: 3m − 5 = 10. Add 5: 3m = 15. Divide by 3: m = 5. Check: 6(5) − 5 = 25, 3(5) + 10 = 25 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "independent_practice",
@@ -203,7 +210,8 @@
           "question": "Solve: 7y − 4 = 3y + 16",
           "answer": "y = 5"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "explanation",
@@ -218,7 +226,8 @@
         "Number line graphs: use an OPEN circle for < or > (the endpoint is NOT included) and a CLOSED (filled) circle for ≤ or ≥ (the endpoint IS included)",
         "Shade the number line in the direction of the solutions: right for > or ≥, left for < or ≤",
         "Key phrases in context: 'at least' means ≥, 'no more than' means ≤, 'fewer than' means <, 'more than' means >"
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "model",
@@ -238,7 +247,8 @@
           "problem": "Ella must practice piano at least 30 minutes each day. Write an inequality for the number of minutes m she practices, and describe the graph.",
           "solution": "The phrase 'at least 30' means 30 or more, so we use ≥.\nm ≥ 30\nGraph: CLOSED circle at 30 (30 is included because she can practice exactly 30 minutes), shade to the RIGHT.\nAny value of m that is 30 or greater makes this inequality true."
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "guided_practice",
@@ -273,7 +283,8 @@
           ],
           "answer": "h ≥ 48. 'At least 48 inches' means 48 or taller, which translates to h ≥ 48. Closed circle at 48, shade to the right."
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "independent_practice",
@@ -296,7 +307,8 @@
           "question": "A school bus can hold no more than 48 students. There are already 31 students on the bus. Write and solve an inequality for the number of additional students s who can board.",
           "answer": "31 + s ≤ 48, so s ≤ 17. No more than 17 additional students can board."
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "explanation",
@@ -310,7 +322,8 @@
         "Step 3 — Solve the equation or inequality using inverse operations",
         "Step 4 — Interpret: answer the question in a complete sentence and check that the answer makes sense in context",
         "Common translation patterns: 'is' → =, 'more than' → +, 'less than' → −, 'times' → ×, 'per' → ×, 'split equally' → ÷"
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "model",
@@ -330,7 +343,8 @@
           "problem": "A cell phone plan costs $15 per month plus $0.10 per text message. Last month the bill was $23. How many text messages were sent?",
           "solution": "Step 1 — Variable: Let t = number of text messages.\nStep 2 — Equation: Monthly cost + text cost = total bill.\n15 + 0.10t = 23\nStep 3 — Solve: Subtract 15 from both sides.\n0.10t = 8\nDivide both sides by 0.10.\nt = 80\nStep 4 — Interpret: 80 text messages were sent.\nCheck: 15 + 0.10(80) = 15 + 8 = 23 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "guided_practice",
@@ -365,7 +379,8 @@
           ],
           "answer": "Sister is 9 years old, Tyler is 13 years old. Equation: s + (s + 4) = 22 → 2s + 4 = 22 → 2s = 18 → s = 9. Tyler = 9 + 4 = 13. Check: 9 + 13 = 22 ✓"
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     },
     {
       "type": "independent_practice",
@@ -388,7 +403,8 @@
           "question": "A school club needs to raise at least $200 for a field trip. They have already raised $65 and plan to sell cookies for $3 each. How many cookies do they need to sell? Write and solve an inequality.",
           "answer": "At least 45 cookies. Let c = number of cookies. 65 + 3c ≥ 200 → 3c ≥ 135 → c ≥ 45."
         }
-      ]
+      ],
+      "lessonId": "equations_inequalities"
     }
   ],
   "answerKeys": {

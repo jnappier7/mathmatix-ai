@@ -48,7 +48,8 @@
         "A line plot uses Xs or dots above a number line to show how often each value occurs — great for measurement data.",
         "Every graph must have a title (what the data is about), labels (what the axes or categories represent), and a scale or key (how to read the numbers or symbols).",
         "Before answering any question about a graph, always read the title, labels, and scale first."
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "model",
@@ -68,7 +69,8 @@
           "problem": "Students measured the lengths of 12 caterpillars to the nearest centimeter:\n3, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 8\nDescribe how you would create a line plot for this data.",
           "solution": "Step 1: Draw a number line from 3 to 8 (the smallest to largest value).\nStep 2: Put an X above each number for every caterpillar with that length.\n3 cm: X (1 caterpillar)\n4 cm: X X (2 caterpillars)\n5 cm: X X X (3 caterpillars)\n6 cm: X X X X (4 caterpillars)\n7 cm: X (1 caterpillar)\n8 cm: X (1 caterpillar)\nStep 3: Add a title: 'Lengths of Caterpillars (cm)' and label the number line 'Length in cm.'"
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "guided_practice",
@@ -103,7 +105,8 @@
           ],
           "answer": "The number 10 appears 4 times, so 4 Xs would go above it. Frequencies: 8 appears 2 times, 9 appears 3 times, 10 appears 4 times, 11 appears 1 time. The length 10 inches has the most Xs."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "independent_practice",
@@ -126,7 +129,8 @@
           "question": "Ten students measured the number of raisins in their snack boxes:\n12, 14, 14, 15, 15, 15, 16, 16, 17, 19\nDraw a line plot in your notebook. Then answer: How many Xs are above 15? What is the range of the data (greatest value minus smallest value)?",
           "answer": "There are 3 Xs above 15 (the number 15 appears 3 times). The range is 19 - 12 = 7 raisins."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "explanation",
@@ -140,7 +144,8 @@
         "'How many more/fewer' questions: subtract the smaller amount from the larger amount.",
         "'Combine' or 'total' questions: add the amounts for two or more categories together.",
         "Always use evidence from the graph in your answer — name the categories and their values."
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "model",
@@ -160,7 +165,8 @@
           "problem": "A line plot shows the number of jumping jacks students completed in 30 seconds:\nValues on the number line: 10(XX), 11(X), 12(XXX), 13(XXXX), 14(XX), 15(X)\nWhat number of jumping jacks was most common? How many students did fewer than 13 jumping jacks?",
           "solution": "The most common number is 13 because it has the most Xs (4 Xs). That means 4 students each did 13 jumping jacks.\nStudents who did fewer than 13: count Xs above 10, 11, and 12.\n10: 2 students + 11: 1 student + 12: 3 students = 6 students did fewer than 13 jumping jacks."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "guided_practice",
@@ -197,7 +203,8 @@
           ],
           "answer": "(a) Total students: 3 + 4 + 5 + 3 + 2 + 1 = 18 students. (b) Students with 2 or more pull-ups: 5 + 3 + 2 + 1 = 11 students. (c) The least common number is 5 pull-ups, with only 1 student (1 X)."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "independent_practice",
@@ -220,7 +227,8 @@
           "question": "A line plot shows the number of letters in students' first names:\n3(XX), 4(XXXXX), 5(XXXXXX), 6(XXXX), 7(XXX), 8(X)\n(a) What is the most common name length?\n(b) How many students have names with 6 or more letters?\n(c) How many students are in the class altogether?",
           "answer": "(a) The most common name length is 5 letters (6 Xs). (b) Students with 6 or more letters: 4 + 3 + 1 = 8 students. (c) Total: 2 + 5 + 6 + 4 + 3 + 1 = 21 students in the class."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "explanation",
@@ -234,7 +242,8 @@
         "An input/output table has two columns. The rule connects each input to its output (e.g., input x 3 = output).",
         "To find the rule in an input/output table, ask: 'What do I do to the input number to get the output number?' Try adding, subtracting, multiplying, or dividing.",
         "Describe patterns in words: 'Start at 4 and add 5 each time' or 'Multiply the input by 3, then add 1.'"
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "model",
@@ -254,7 +263,8 @@
           "problem": "Describe this growing pattern in words and find the next two terms:\n3, 7, 11, 15, 19, ___, ___",
           "solution": "7 - 3 = 4, 11 - 7 = 4, 15 - 11 = 4, 19 - 15 = 4.\nIn words: 'Start at 3 and add 4 each time.'\nNext two: 19 + 4 = 23, 23 + 4 = 27.\nThe pattern is 3, 7, 11, 15, 19, 23, 27."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "guided_practice",
@@ -289,7 +299,8 @@
           ],
           "answer": "60 - 52 = 8, 52 - 44 = 8, 44 - 36 = 8. The rule is 'subtract 8 each time' or 'start at 60 and take away 8 each time.' Next two terms: 36 - 8 = 28, 28 - 8 = 20. Pattern: 60, 52, 44, 36, 28, 20."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "independent_practice",
@@ -312,7 +323,8 @@
           "question": "Look at this pattern:\n2, 6, 18, 54, ___\nThis is NOT an adding pattern. What operation is being used? Describe the rule in words and find the next term.",
           "answer": "Each number is multiplied by 3 to get the next number: 2x3=6, 6x3=18, 18x3=54. The rule is 'multiply by 3 each time.' The next term is 54 x 3 = 162."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "explanation",
@@ -327,7 +339,8 @@
         "To find a missing number being subtracted, think addition: if 15 - square = 9, then square = 15 - 9 = 6.",
         "Inverse operations are opposites that undo each other: addition undoes subtraction, and multiplication undoes division.",
         "Always check your answer by plugging it back in: does 7 + 5 = 12? Yes — balanced!"
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "model",
@@ -347,7 +360,8 @@
           "problem": "Solve using a letter: n + 8 = 15. What is n?",
           "solution": "The letter n stands for the unknown number, just like a box.\nn + 8 = 15\nTo get n alone, use the inverse of adding 8 — subtract 8.\nn = 15 - 8 = 7\nCheck: 7 + 8 = 15. The equation balances, so n = 7."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "guided_practice",
@@ -383,7 +397,8 @@
           ],
           "answer": "Left side: 6 + 4 = 10. Right side: 5 + 5 = 10. Both sides equal 10, so the equation is TRUE. The equals sign works like a balance — both sides weigh the same."
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     },
     {
       "type": "independent_practice",
@@ -406,7 +421,8 @@
           "question": "True or false? For each equation, calculate both sides and decide if the seesaw is balanced.\n(a) 12 + 3 = 20 - 5\n(b) 4 + 7 = 15 - 3\n(c) 9 + 6 = 8 + 7",
           "answer": "(a) Left: 12 + 3 = 15. Right: 20 - 5 = 15. TRUE — balanced! (b) Left: 4 + 7 = 11. Right: 15 - 3 = 12. FALSE — 11 does not equal 12. (c) Left: 9 + 6 = 15. Right: 8 + 7 = 15. TRUE — balanced!"
         }
-      ]
+      ],
+      "lessonId": "data_patterns"
     }
   ],
   "answerKeys": {

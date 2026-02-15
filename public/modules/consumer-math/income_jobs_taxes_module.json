@@ -47,7 +47,8 @@
         "Commission: Base salary + (total sales × commission rate). A 5% commission on $80,000 in sales = $4,000 in commission income.",
         "Hourly equivalent of salary: Annual salary ÷ 2,080 hours (40 hrs/wk × 52 wks). $50,000/year = $24.04/hour.",
         "When comparing pay structures, always convert to the same basis. Weekly, biweekly, and annual comparisons each reveal different things about cash flow and total earnings."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -67,7 +68,8 @@
           "problem": "David is a car salesperson who earns a base salary of $2,000/month plus 3% commission on all sales. In March, he sold $120,000 worth of vehicles. What was his total gross pay for March?",
           "solution": "Step 1: Calculate commission.\nCommission = total sales × commission rate = $120,000 × 0.03 = $3,600\n\nStep 2: Add base salary.\nTotal gross pay = base + commission = $2,000 + $3,600 = $5,600\n\nDavid earned $5,600 in March. Note: In a slow month with only $40,000 in sales, his commission would be just $1,200, making total pay $3,200 — commission income varies significantly."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -102,7 +104,8 @@
           ],
           "answer": "$4,725.00. Commission = $65,000 × 0.045 = $2,925. Total = $1,800 + $2,925 = $4,725.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -125,7 +128,8 @@
           "question": "A real estate agent earns no base salary but receives a 2.5% commission on every home sold. In one month she sold two homes: one for $280,000 and one for $415,000. What was her total gross pay for the month?",
           "answer": "$17,375.00. Total sales = $280,000 + $415,000 = $695,000. Commission = $695,000 × 0.025 = $17,375.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -140,7 +144,8 @@
         "Only hours OVER 40 are overtime. A 47-hour week means 40 regular hours + 7 overtime hours — not 47 overtime hours.",
         "Timesheets: add daily hours for the week. Watch for lunch breaks — if a shift is 8:00 AM to 4:30 PM with a 30-minute unpaid lunch, that is 8 hours worked, not 8.5.",
         "Some states (like California) also require daily overtime for hours over 8 in a single day, but the standard federal rule uses the 40-hour weekly threshold."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -160,7 +165,8 @@
           "problem": "Two workers both earn $22.00/hour. Worker A works exactly 40 hours every week. Worker B works 35 hours most weeks but picks up a 50-hour week once a month. Over a 4-week period where Worker B works 35, 35, 35, and 50 hours, who earns more?",
           "solution": "Worker A (4 weeks at 40 hrs):\n4 × (40 × $22.00) = 4 × $880 = $3,520.00\n\nWorker B:\nWeeks 1-3 (35 hrs each): 3 × (35 × $22.00) = 3 × $770 = $2,310.00\nWeek 4 (50 hrs):\n  Regular = 40 × $22.00 = $880.00\n  OT = 10 × ($22.00 × 1.5) = 10 × $33.00 = $330.00\n  Week 4 total = $1,210.00\nWorker B total = $2,310 + $1,210 = $3,520.00\n\nThey earn the same amount! But Worker B worked only 155 total hours vs Worker A's 160 hours. Worker B averaged $22.71/hour across all hours thanks to overtime on that one big week."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -195,7 +201,8 @@
           ],
           "answer": "$84.00 difference. Correct gross = (40 × $14) + (12 × $21) = $560 + $252 = $812. Incorrect = 52 × $14 = $728. Difference = $812 - $728 = $84.00."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -218,7 +225,8 @@
           "question": "Two job offers: Job A pays $18/hour with a guaranteed 45 hours per week. Job B pays $20/hour with exactly 40 hours per week. Which job pays more per week, and by how much?",
           "answer": "Job A pays $55 more per week. Job A: (40 × $18) + (5 × $27) = $720 + $135 = $855. Job B: 40 × $20 = $800. Difference = $855 - $800 = $55."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -233,7 +241,8 @@
         "Marginal tax rate: the rate on your next dollar of income. Effective tax rate: total tax paid ÷ gross income. Effective is always lower than marginal.",
         "Quick W-2 estimate: for a typical single filer earning $40,000-$60,000, total taxes (federal + state + FICA) run roughly 22-25% of gross pay.",
         "A $60,000 1099 contract is NOT the same as a $60,000 W-2 salary. After self-employment tax (~$9,180) and no employer benefits, the 1099 worker often nets less than a W-2 employee earning a lower salary."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -253,7 +262,8 @@
           "problem": "Compare: Jordan is offered a $60,000/year 1099 contract. His friend Malik has a $55,000/year W-2 job. Using a 23% total tax estimate for the W-2 and 15.3% self-employment tax plus 12% effective income tax for the 1099, who takes home more?",
           "solution": "Jordan (1099 at $60,000):\nSelf-employment tax = $60,000 × 0.153 = $9,180\nEstimated income tax = $60,000 × 0.12 = $7,200\nTotal tax = $9,180 + $7,200 = $16,380\nTake-home = $60,000 - $16,380 = $43,620\n\nMalik (W-2 at $55,000):\nTotal taxes (federal + state + FICA) = $55,000 × 0.23 = $12,650\nTake-home = $55,000 - $12,650 = $42,350\n\nJordan technically takes home $1,270 more, but Malik gets employer benefits — health insurance worth $6,000+, retirement match, and paid time off. Once you factor in benefits, Malik's total compensation package likely wins by thousands of dollars."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -288,7 +298,8 @@
           ],
           "answer": "Take-home: $31,815. SE tax = $45,000 × 0.153 = $6,885. Income tax = $45,000 × 0.14 = $6,300. Total tax = $6,885 + $6,300 = $13,185. Take-home = $45,000 - $13,185 = $31,815."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -311,7 +322,8 @@
           "question": "Marcus is choosing between a $50,000/year W-2 job (estimated 23% total tax) and a $58,000/year 1099 contract (15.3% SE tax + estimated 13% income tax rate). Based on take-home pay alone, which option gives him more money? By how much?",
           "answer": "The 1099 wins on take-home by $3,086, but lacks benefits. W-2: $50,000 × 0.77 = $38,500. 1099: SE tax = $58,000 × 0.153 = $8,874. Income tax = $58,000 × 0.13 = $7,540. Total 1099 tax = $16,414. Take-home = $58,000 - $16,414 = $41,586. Difference = $41,586 - $38,500 = $3,086. However, the W-2 job includes employer benefits (health insurance, retirement match, PTO) that could easily exceed $3,086 in value."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "explanation",
@@ -326,7 +338,8 @@
         "Paid Time Off (PTO): convert to dollars. 10 PTO days for a $50,000/year worker = 10 × ($50,000 ÷ 260 work days) = 10 × $192.31 = $1,923 in paid days off.",
         "Other benefits to quantify: life insurance, disability insurance, tuition reimbursement, commuter benefits, wellness stipends.",
         "When comparing offers: line up every component side by side and total them. A $52,000 salary with strong benefits often beats a $60,000 salary with bare-bones or no benefits."
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "model",
@@ -342,7 +355,8 @@
           "problem": "Kayla receives two nursing job offers:\nHospital A: $68,000 salary, employer pays $7,500 for health insurance, 5% retirement match, 15 PTO days.\nClinic B: $72,000 salary, employer pays $4,000 for health insurance, no retirement match, 10 PTO days.\nWhich has better total compensation?",
           "solution": "Hospital A:\n- Salary: $68,000\n- Health: $7,500\n- Retirement match: $68,000 × 0.05 = $3,400\n- PTO: 15 × ($68,000 ÷ 260) = 15 × $261.54 = $3,923.08\n- Total: $68,000 + $7,500 + $3,400 + $3,923.08 = $82,823.08\n\nClinic B:\n- Salary: $72,000\n- Health: $4,000\n- Retirement match: $0\n- PTO: 10 × ($72,000 ÷ 260) = 10 × $276.92 = $2,769.23\n- Total: $72,000 + $4,000 + $0 + $2,769.23 = $78,769.23\n\nHospital A total compensation is $82,823.08 vs Clinic B at $78,769.23. Hospital A wins by $4,053.85 despite the $4,000 lower salary."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "guided_practice",
@@ -377,7 +391,8 @@
           ],
           "answer": "Job X: $59,423.08. Job Y: $61,783.08. Job Y wins by $2,360. Job X: $50,000 + $6,000 + $1,500 + (10 × $192.31 = $1,923.08) = $59,423.08. Job Y: $56,000 + $3,500 + $560 + (8 × $215.38 = $1,723.08) = $61,783.08."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     },
     {
       "type": "independent_practice",
@@ -400,7 +415,8 @@
           "question": "Deshawn is comparing a W-2 job and a 1099 contract:\nW-2 Job: $52,000 salary (23% total tax), $6,500 employer health insurance, 4% retirement match, 10 PTO days.\n1099 Contract: $68,000 (15.3% SE tax + 13% income tax), no benefits.\nCalculate take-home pay for the 1099 and total compensation for the W-2. Which is the better deal overall?",
           "answer": "W-2 total compensation: $64,500. W-2 take-home: $40,040. 1099 take-home: $48,764. The W-2 total compensation package is worth $64,500 ($52,000 + $6,500 + $2,080 + $2,000 [from 10 × $200] = wait, let me recalculate). W-2 total comp: $52,000 + $6,500 + ($52,000 × 0.04 = $2,080) + (10 × ($52,000 ÷ 260) = 10 × $200 = $2,000) = $62,580. W-2 take-home: $52,000 × 0.77 = $40,040. 1099 take-home: $68,000 - ($68,000 × 0.153 = $10,404) - ($68,000 × 0.13 = $8,840) = $68,000 - $19,244 = $48,756. The 1099 has higher take-home by $8,716, but the W-2 benefits add $10,580 in value. When factoring in total compensation, the W-2 is the stronger deal."
         }
-      ]
+      ],
+      "lessonId": "income_jobs_taxes"
     }
   ],
   "answerKeys": {

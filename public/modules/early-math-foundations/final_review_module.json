@@ -66,7 +66,8 @@
         "Multi-digit multiplication: use partial products or the standard algorithm. Always estimate first so you know if your answer makes sense.",
         "Long division: Divide, Multiply, Subtract, Bring down. Repeat until you are done. Check your answer by multiplying the quotient by the divisor and adding the remainder.",
         "Always ask yourself: Does my answer make sense? Is it close to my estimate?"
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -84,7 +85,8 @@
           "problem": "A farmer plants 36 rows of corn with 48 plants in each row. How many corn plants in total? If the farmer divides the corn equally among 8 trucks, how many plants go on each truck?",
           "answer": "Total plants: 36 x 48 = 1,728 corn plants. Per truck: 1,728 / 8 = 216 plants per truck. Check: 216 x 8 = 1,728."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -107,7 +109,8 @@
           "problem": "A candy factory made 2,592 gummy bears. They pack them into bags of 12. How many bags can they fill?",
           "answer": "2,592 / 12 = 216 bags. Check: 216 x 12 = 2,592."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -130,7 +133,8 @@
           "problem": "A school has 1,575 students split equally into 25 classrooms. How many students are in each classroom? Show how you would check your answer.",
           "answer": "1,575 / 25 = 63 students per classroom. Check: 63 x 25 = 1,575."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -145,7 +149,8 @@
         "Adding and subtracting with unlike denominators: find the least common denominator (LCD), rewrite each fraction, then add or subtract the numerators.",
         "Multiplying fractions: multiply numerator times numerator and denominator times denominator. Simplify the result. When both fractions are less than 1, the answer is smaller than either fraction.",
         "Always simplify your answer and convert improper fractions to mixed numbers when it makes sense."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -163,7 +168,8 @@
           "problem": "A recipe needs 2/3 cup of flour and 1/4 cup of sugar. How much flour and sugar combined? Then find 3/5 x 2/3.",
           "answer": "2/3 + 1/4: LCD = 12. 2/3 = 8/12, 1/4 = 3/12. 8/12 + 3/12 = 11/12 cup combined. Multiplication: 3/5 x 2/3 = 6/15 = 2/5."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -186,7 +192,8 @@
           "problem": "A small garden is 3/4 of a meter long and 2/5 of a meter wide. What is the area of the garden? (Remember: area = length x width.)",
           "answer": "3/4 x 2/5 = 6/20 = 3/10 square meters."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -209,7 +216,8 @@
           "problem": "A painter uses 2/3 of a can of paint for each full wall. She only needs to paint 3/4 of a wall. How much paint does she need? If she has 5/6 of a can left, does she have enough?",
           "answer": "Paint needed: 2/3 x 3/4 = 6/12 = 1/2 can. She has 5/6 of a can. 1/2 = 3/6 and 5/6 > 3/6, so yes, she has enough paint."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -224,7 +232,8 @@
         "Fraction-decimal connection: 1/2 = 0.5, 1/4 = 0.25, 3/4 = 0.75, 1/5 = 0.2, 1/10 = 0.1. To convert any fraction: divide numerator by denominator.",
         "Always estimate first! $3.75 + $2.49 is about $4 + $2.50 = $6.50. Use this to check your answer.",
         "Money is decimals: dollars and cents follow the same place value rules. The decimal point separates dollars from cents."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -242,7 +251,8 @@
           "problem": "Aiden bought a notebook for $3.49 and a pen for $1.75. How much did he spend? If he paid with a $10 bill, how much change did he get? Then convert 3/4 to a decimal.",
           "answer": "Spent: $3.49 + $1.75 = $5.24. Change: $10.00 - $5.24 = $4.76. 3/4 = 3 divided by 4 = 0.75."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -260,7 +270,8 @@
           "problem": "Convert these fractions to decimals: 1/2, 3/5, 7/10. Then convert 0.6 to a fraction in simplest form.",
           "answer": "1/2 = 0.5, 3/5 = 0.6, 7/10 = 0.7. Converting back: 0.6 = 6/10 = 3/5."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -283,7 +294,8 @@
           "problem": "A recipe calls for 0.75 cups of milk. Is that more or less than 2/3 of a cup? Convert both to the same form to prove your answer.",
           "answer": "0.75 = 3/4. Compare 3/4 and 2/3: LCD = 12. 3/4 = 9/12, 2/3 = 8/12. Since 9/12 > 8/12, 0.75 cups (3/4) is more than 2/3 cup."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -298,7 +310,8 @@
         "For compound shapes (like an L-shape), break them into rectangles, find each area separately, then add them together.",
         "Always include units in your answer. A fence needs perimeter (how far around). Carpet needs area (how much space to cover).",
         "Sketch the shape and label the sides before computing — it helps you see what you are solving for."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -316,7 +329,8 @@
           "problem": "A garden has an L-shape. The bottom rectangle is 10 m by 4 m. The top rectangle is 6 m by 3 m. What is the total area?",
           "answer": "Bottom rectangle: 10 x 4 = 40 sq m. Top rectangle: 6 x 3 = 18 sq m. Total area: 40 + 18 = 58 square meters."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -334,7 +348,8 @@
           "problem": "Emma's bedroom is 12 feet long and 9 feet wide. She wants to buy carpet that costs $2 per square foot. How much will the carpet cost?",
           "answer": "Area: 12 x 9 = 108 square feet. Cost: 108 x $2 = $216."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -352,7 +367,8 @@
           "problem": "A poster is 18 inches long and 12 inches wide. A frame around it is 24 inches long and 16 inches wide. How much wall space does the frame take up? How much of the frame area is NOT covered by the poster?",
           "answer": "Frame area: 24 x 16 = 384 square inches. Poster area: 18 x 12 = 216 square inches. Uncovered frame area: 384 - 216 = 168 square inches."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "explanation",
@@ -367,7 +383,8 @@
         "To find an unknown: use inverse (opposite) operations. Addition undoes subtraction. Multiplication undoes division.",
         "Always check your answer by plugging it back in: if n = 8, does 8 + 7 = 15? Yes!",
         "Patterns and unknowns are the very beginning of algebra — and algebra is the gateway to all the math you will do in middle school and beyond."
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "model",
@@ -385,7 +402,8 @@
           "problem": "Solve for the unknown: n x 6 = 72. Then solve: 45 - ? = 28.",
           "answer": "n x 6 = 72, so n = 72 / 6 = 12. Check: 12 x 6 = 72. For 45 - ? = 28: ? = 45 - 28 = 17. Check: 45 - 17 = 28."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "guided_practice",
@@ -403,7 +421,8 @@
           "problem": "Solve for the unknown: n + 24 = 61. Then solve: 4 x ? = 148.",
           "answer": "n + 24 = 61, so n = 61 - 24 = 37. Check: 37 + 24 = 61. For 4 x ? = 148: ? = 148 / 4 = 37. Check: 4 x 37 = 148."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     },
     {
       "type": "independent_practice",
@@ -426,7 +445,8 @@
           "problem": "A pattern of tiles starts with 4 tiles at step 1. Each step adds 3 more tiles. How many tiles are at step 5? Can you write a rule that gives the number of tiles for any step number s?",
           "answer": "Step 1: 4, Step 2: 7, Step 3: 10, Step 4: 13, Step 5: 16 tiles. Rule: tiles = 3 x s + 1. Check step 5: 3 x 5 + 1 = 16."
         }
-      ]
+      ],
+      "lessonId": "final_review"
     }
   ],
   "answerKeys": {

@@ -26,10 +26,10 @@
     "Use coordinates to prove geometric theorems"
   ],
   "instructionalStrategy": [
-    "Connect the distance formula directly to the Pythagorean Theorem\u2014draw the right triangle formed by two points on the coordinate plane.",
-    "The midpoint formula is just the average of the coordinates\u2014nothing more.",
+    "Connect the distance formula directly to the Pythagorean Theorem—draw the right triangle formed by two points on the coordinate plane.",
+    "The midpoint formula is just the average of the coordinates—nothing more.",
     "Parallel lines have equal slopes, perpendicular lines have negative reciprocal slopes (product = -1).",
-    "Coordinate proofs combine algebra and geometry\u2014use distance (congruent sides), slope (parallel/perpendicular), and midpoint (bisection) as your proof tools."
+    "Coordinate proofs combine algebra and geometry—use distance (congruent sides), slope (parallel/perpendicular), and midpoint (bisection) as your proof tools."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -38,8 +38,9 @@
       "lessonPhase": "concept-intro",
       "skill": "coordinate-geometry-distance-midpoint",
       "title": "Distance and Midpoint Formulas",
-      "content": "**The Distance Formula** finds the length between two points (x\u2081, y\u2081) and (x\u2082, y\u2082):\n\n**d = \u221a[(x\u2082 - x\u2081)\u00b2 + (y\u2082 - y\u2081)\u00b2]**\n\nThis is the Pythagorean Theorem in disguise! The horizontal distance (x\u2082 - x\u2081) is one leg, the vertical distance (y\u2082 - y\u2081) is the other leg, and d is the hypotenuse.\n\n**The Midpoint Formula** finds the point exactly halfway between two points:\n\n**M = ((x\u2081 + x\u2082)/2, (y\u2081 + y\u2082)/2)**\n\nThis is just the average of the x-coordinates and the average of the y-coordinates.",
-      "initialPrompt": "Find the distance and midpoint between (1, 2) and (4, 6). Can you see the right triangle that the distance formula is based on?"
+      "content": "**The Distance Formula** finds the length between two points (x₁, y₁) and (x₂, y₂):\n\n**d = √[(x₂ - x₁)² + (y₂ - y₁)²]**\n\nThis is the Pythagorean Theorem in disguise! The horizontal distance (x₂ - x₁) is one leg, the vertical distance (y₂ - y₁) is the other leg, and d is the hypotenuse.\n\n**The Midpoint Formula** finds the point exactly halfway between two points:\n\n**M = ((x₁ + x₂)/2, (y₁ + y₂)/2)**\n\nThis is just the average of the x-coordinates and the average of the y-coordinates.",
+      "initialPrompt": "Find the distance and midpoint between (1, 2) and (4, 6). Can you see the right triangle that the distance formula is based on?",
+      "lessonId": "distance-midpoint"
     },
     {
       "type": "model",
@@ -49,18 +50,19 @@
       "examples": [
         {
           "problem": "Find the distance and midpoint between A(3, -1) and B(-5, 5).",
-          "solution": "**Distance:**\nd = \u221a[(\u22125 \u2212 3)\u00b2 + (5 \u2212 (\u22121))\u00b2]\nd = \u221a[(\u22128)\u00b2 + (6)\u00b2]\nd = \u221a[64 + 36]\nd = \u221a100\nd = **10**\n\n**Midpoint:**\nM = ((3 + (\u22125))/2, (\u22121 + 5)/2)\nM = (\u22122/2, 4/2)\nM = **(\u22121, 2)**\n\nVerify: Check that M is equidistant from both A and B. Distance from A(3,-1) to M(-1,2): \u221a(16+9) = \u221a25 = 5. Distance from B(-5,5) to M(-1,2): \u221a(16+9) = \u221a25 = 5. \u2713 Both are half of 10."
+          "solution": "**Distance:**\nd = √[(−5 − 3)² + (5 − (−1))²]\nd = √[(−8)² + (6)²]\nd = √[64 + 36]\nd = √100\nd = **10**\n\n**Midpoint:**\nM = ((3 + (−5))/2, (−1 + 5)/2)\nM = (−2/2, 4/2)\nM = **(−1, 2)**\n\nVerify: Check that M is equidistant from both A and B. Distance from A(3,-1) to M(-1,2): √(16+9) = √25 = 5. Distance from B(-5,5) to M(-1,2): √(16+9) = √25 = 5. ✓ Both are half of 10."
         },
         {
           "problem": "Find the distance between (1, 2) and (10, 14).",
-          "solution": "**Distance:**\nd = \u221a[(10 \u2212 1)\u00b2 + (14 \u2212 2)\u00b2]\nd = \u221a[(9)\u00b2 + (12)\u00b2]\nd = \u221a[81 + 144]\nd = \u221a225\nd = **15**\n\nNotice: 9-12-15 is a Pythagorean triple. It's 3 times the fundamental 3-4-5 triple (3\u00d73 = 9, 3\u00d74 = 12, 3\u00d75 = 15). Recognizing these multiples can save you time."
+          "solution": "**Distance:**\nd = √[(10 − 1)² + (14 − 2)²]\nd = √[(9)² + (12)²]\nd = √[81 + 144]\nd = √225\nd = **15**\n\nNotice: 9-12-15 is a Pythagorean triple. It's 3 times the fundamental 3-4-5 triple (3×3 = 9, 3×4 = 12, 3×5 = 15). Recognizing these multiples can save you time."
         },
         {
           "problem": "Find the midpoint of (-6, 3) and (4, -7), then verify your answer using the distance formula.",
-          "solution": "**Midpoint:**\nM = ((-6 + 4)/2, (3 + (-7))/2)\nM = (-2/2, -4/2)\nM = **(-1, -2)**\n\n**Verification \u2014 the midpoint must be equidistant from both endpoints:**\nDistance from (-6, 3) to M(-1, -2):\nd = \u221a[(-1-(-6))\u00b2 + (-2-3)\u00b2] = \u221a[25 + 25] = \u221a50 = 5\u221a2\n\nDistance from (4, -7) to M(-1, -2):\nd = \u221a[(-1-4)\u00b2 + (-2-(-7))\u00b2] = \u221a[25 + 25] = \u221a50 = 5\u221a2\n\nBoth distances are 5\u221a2. \u2713 The midpoint is equidistant from both endpoints."
+          "solution": "**Midpoint:**\nM = ((-6 + 4)/2, (3 + (-7))/2)\nM = (-2/2, -4/2)\nM = **(-1, -2)**\n\n**Verification — the midpoint must be equidistant from both endpoints:**\nDistance from (-6, 3) to M(-1, -2):\nd = √[(-1-(-6))² + (-2-3)²] = √[25 + 25] = √50 = 5√2\n\nDistance from (4, -7) to M(-1, -2):\nd = √[(-1-4)² + (-2-(-7))²] = √[25 + 25] = √50 = 5√2\n\nBoth distances are 5√2. ✓ The midpoint is equidistant from both endpoints."
         }
       ],
-      "initialPrompt": "The first distance turned out to be a nice whole number (10). That's because 6-8-10 is a Pythagorean triple. Do distances always come out as whole numbers?"
+      "initialPrompt": "The first distance turned out to be a nice whole number (10). That's because 6-8-10 is a Pythagorean triple. Do distances always come out as whole numbers?",
+      "lessonId": "distance-midpoint"
     },
     {
       "type": "guided_practice",
@@ -73,8 +75,8 @@
           "question": "Find the distance between (2, 3) and (7, 15).",
           "answer": "13",
           "hints": [
-            "d = \u221a[(7-2)\u00b2 + (15-3)\u00b2] = \u221a[25 + 144].",
-            "d = \u221a169 = 13. (This is a 5-12-13 triple!)"
+            "d = √[(7-2)² + (15-3)²] = √[25 + 144].",
+            "d = √169 = 13. (This is a 5-12-13 triple!)"
           ]
         },
         {
@@ -96,15 +98,17 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what are x\u2082 - x\u2081 and y\u2082 - y\u2081?"
+      "initialPrompt": "For the first problem, what are x₂ - x₁ and y₂ - y₁?",
+      "lessonId": "distance-midpoint"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "equation-of-circle",
       "title": "Equation of a Circle and Slope Relationships",
-      "content": "**Equation of a Circle** in standard form:\n\n**(x - h)\u00b2 + (y - k)\u00b2 = r\u00b2**\n\nwhere (h, k) is the center and r is the radius.\n\nExamples:\n\u2022 Center (0, 0), radius 5: x\u00b2 + y\u00b2 = 25\n\u2022 Center (3, -2), radius 4: (x - 3)\u00b2 + (y + 2)\u00b2 = 16\n\nNotice: the signs in the equation are OPPOSITE the coordinates of the center (because of the subtraction). And the right side is r\u00b2, not r.\n\n**Slope Relationships:**\n\u2022 **Parallel lines:** m\u2081 = m\u2082 (equal slopes)\n\u2022 **Perpendicular lines:** m\u2081 \u00d7 m\u2082 = -1 (negative reciprocal slopes)\n  Example: if m\u2081 = 2/3, then m\u2082 = -3/2",
-      "initialPrompt": "Write the equation of a circle with center (\u22121, 4) and radius 6. Be careful with the signs!"
+      "content": "**Equation of a Circle** in standard form:\n\n**(x - h)² + (y - k)² = r²**\n\nwhere (h, k) is the center and r is the radius.\n\nExamples:\n• Center (0, 0), radius 5: x² + y² = 25\n• Center (3, -2), radius 4: (x - 3)² + (y + 2)² = 16\n\nNotice: the signs in the equation are OPPOSITE the coordinates of the center (because of the subtraction). And the right side is r², not r.\n\n**Slope Relationships:**\n• **Parallel lines:** m₁ = m₂ (equal slopes)\n• **Perpendicular lines:** m₁ × m₂ = -1 (negative reciprocal slopes)\n  Example: if m₁ = 2/3, then m₂ = -3/2",
+      "initialPrompt": "Write the equation of a circle with center (−1, 4) and radius 6. Be careful with the signs!",
+      "lessonId": "equation-of-circle"
     },
     {
       "type": "model",
@@ -114,18 +118,19 @@
       "examples": [
         {
           "problem": "A circle has endpoints of a diameter at (2, -3) and (8, 5). Find the equation of the circle.",
-          "solution": "**Step 1: Find the center** (midpoint of the diameter):\nCenter = ((2+8)/2, (-3+5)/2) = (5, 1)\n\n**Step 2: Find the radius** (distance from center to either endpoint):\nr = \u221a[(8-5)\u00b2 + (5-1)\u00b2] = \u221a[9 + 16] = \u221a25 = 5\n\n**Step 3: Write the equation:**\n(x - 5)\u00b2 + (y - 1)\u00b2 = 25\n\nVerify: Point (2, -3) should satisfy: (2-5)\u00b2 + (-3-1)\u00b2 = 9 + 16 = 25 \u2713"
+          "solution": "**Step 1: Find the center** (midpoint of the diameter):\nCenter = ((2+8)/2, (-3+5)/2) = (5, 1)\n\n**Step 2: Find the radius** (distance from center to either endpoint):\nr = √[(8-5)² + (5-1)²] = √[9 + 16] = √25 = 5\n\n**Step 3: Write the equation:**\n(x - 5)² + (y - 1)² = 25\n\nVerify: Point (2, -3) should satisfy: (2-5)² + (-3-1)² = 9 + 16 = 25 ✓"
         },
         {
-          "problem": "Convert the circle equation x\u00b2 + y\u00b2 - 6x + 4y - 12 = 0 to standard form. Identify the center and radius.",
-          "solution": "**Step 1: Group x-terms and y-terms, move the constant:**\n(x\u00b2 - 6x) + (y\u00b2 + 4y) = 12\n\n**Step 2: Complete the square for each group:**\nFor x: half of -6 is -3, and (-3)\u00b2 = 9. Add 9.\nFor y: half of 4 is 2, and (2)\u00b2 = 4. Add 4.\n\n(x\u00b2 - 6x + 9) + (y\u00b2 + 4y + 4) = 12 + 9 + 4\n\n**Step 3: Write as perfect squares:**\n**(x - 3)\u00b2 + (y + 2)\u00b2 = 25**\n\n**Center:** (3, -2)\n**Radius:** \u221a25 = **5**"
+          "problem": "Convert the circle equation x² + y² - 6x + 4y - 12 = 0 to standard form. Identify the center and radius.",
+          "solution": "**Step 1: Group x-terms and y-terms, move the constant:**\n(x² - 6x) + (y² + 4y) = 12\n\n**Step 2: Complete the square for each group:**\nFor x: half of -6 is -3, and (-3)² = 9. Add 9.\nFor y: half of 4 is 2, and (2)² = 4. Add 4.\n\n(x² - 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4\n\n**Step 3: Write as perfect squares:**\n**(x - 3)² + (y + 2)² = 25**\n\n**Center:** (3, -2)\n**Radius:** √25 = **5**"
         },
         {
-          "problem": "Determine whether the point (7, 1) lies on the circle (x - 3)\u00b2 + (y + 2)\u00b2 = 25.",
-          "solution": "**Substitute (7, 1) into the equation:**\n(7 - 3)\u00b2 + (1 + 2)\u00b2 = ?\n(4)\u00b2 + (3)\u00b2 = ?\n16 + 9 = 25\n\n**25 = 25 \u2713**\n\nYes, the point (7, 1) lies on the circle. If the result were less than 25, the point would be inside the circle; if greater than 25, it would be outside."
+          "problem": "Determine whether the point (7, 1) lies on the circle (x - 3)² + (y + 2)² = 25.",
+          "solution": "**Substitute (7, 1) into the equation:**\n(7 - 3)² + (1 + 2)² = ?\n(4)² + (3)² = ?\n16 + 9 = 25\n\n**25 = 25 ✓**\n\nYes, the point (7, 1) lies on the circle. If the result were less than 25, the point would be inside the circle; if greater than 25, it would be outside."
         }
       ],
-      "initialPrompt": "Could we have used the other endpoint (2, -3) instead of (8, 5) to find the radius? Would we get the same answer?"
+      "initialPrompt": "Could we have used the other endpoint (2, -3) instead of (8, 5) to find the radius? Would we get the same answer?",
+      "lessonId": "equation-of-circle"
     },
     {
       "type": "guided_practice",
@@ -136,19 +141,19 @@
         {
           "id": "cg-wp4",
           "question": "Write the equation of a circle with center (-3, 7) and radius 10.",
-          "answer": "(x + 3)\u00b2 + (y - 7)\u00b2 = 100",
+          "answer": "(x + 3)² + (y - 7)² = 100",
           "hints": [
-            "Standard form: (x - h)\u00b2 + (y - k)\u00b2 = r\u00b2. Center is (-3, 7), so h = -3, k = 7.",
-            "(x - (-3))\u00b2 + (y - 7)\u00b2 = 10\u00b2. That simplifies to (x + 3)\u00b2 + (y - 7)\u00b2 = 100."
+            "Standard form: (x - h)² + (y - k)² = r². Center is (-3, 7), so h = -3, k = 7.",
+            "(x - (-3))² + (y - 7)² = 10². That simplifies to (x + 3)² + (y - 7)² = 100."
           ]
         },
         {
           "id": "cg-wp5",
-          "question": "A circle has equation (x - 4)\u00b2 + (y + 1)\u00b2 = 49. What is the center and radius?",
+          "question": "A circle has equation (x - 4)² + (y + 1)² = 49. What is the center and radius?",
           "answer": "Center (4, -1), radius 7",
           "hints": [
-            "Compare to (x - h)\u00b2 + (y - k)\u00b2 = r\u00b2.",
-            "h = 4, k = -1 (note: y + 1 means k = -1). r\u00b2 = 49, so r = 7."
+            "Compare to (x - h)² + (y - k)² = r².",
+            "h = 4, k = -1 (note: y + 1 means k = -1). r² = 49, so r = 7."
           ]
         },
         {
@@ -161,28 +166,31 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, remember that the equation uses subtraction. What happens to h = -3 when you write (x - h)\u00b2?"
+      "initialPrompt": "For the first problem, remember that the equation uses subtraction. What happens to h = -3 when you write (x - h)²?",
+      "lessonId": "equation-of-circle"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "coordinate-proofs",
       "title": "Coordinate Proofs",
-      "content": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n\u2022 **Distance formula** \u2192 proves sides are congruent\n\u2022 **Slope formula** \u2192 proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n\u2022 **Midpoint formula** \u2192 proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
-      "initialPrompt": "If you have a quadrilateral with vertices at specific coordinates, what's the minimum you'd need to calculate to prove it's a rectangle?"
+      "content": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n• **Distance formula** → proves sides are congruent\n• **Slope formula** → proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n• **Midpoint formula** → proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
+      "initialPrompt": "If you have a quadrilateral with vertices at specific coordinates, what's the minimum you'd need to calculate to prove it's a rectangle?",
+      "lessonId": "parallel-perpendicular-slopes"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "parallel-perpendicular-slopes",
-      "title": "We-Do: Parallel Perpendicular Slopes \u2014 Guided Practice",
+      "title": "We-Do: Parallel Perpendicular Slopes — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for parallel perpendicular slopes.",
           "hint": "Apply the concepts of parallel perpendicular slopes.",
           "solution": "Step-by-step solution for parallel perpendicular slopes."
         }
-      ]
+      ],
+      "lessonId": "coordinate-proofs"
     },
     {
       "type": "model",
@@ -192,18 +200,19 @@
       "examples": [
         {
           "problem": "Prove that triangle A(0, 0), B(4, 0), C(0, 3) is a right triangle using slopes.",
-          "solution": "**Find the slopes of the sides:**\nSlope of AB = (0 - 0)/(4 - 0) = 0/4 = 0 (horizontal line)\nSlope of AC = (3 - 0)/(0 - 0) = 3/0 = undefined (vertical line)\n\nA horizontal line (slope 0) and a vertical line (undefined slope) are always **perpendicular**.\n\n**Conclusion:** Since AB \u22a5 AC, there is a right angle at vertex A. Therefore, triangle ABC is a right triangle. \u2713\n\nNote: We can verify with the Pythagorean Theorem: AB = 4, AC = 3, BC = \u221a(16+9) = 5. And 3\u00b2 + 4\u00b2 = 5\u00b2 \u2713"
+          "solution": "**Find the slopes of the sides:**\nSlope of AB = (0 - 0)/(4 - 0) = 0/4 = 0 (horizontal line)\nSlope of AC = (3 - 0)/(0 - 0) = 3/0 = undefined (vertical line)\n\nA horizontal line (slope 0) and a vertical line (undefined slope) are always **perpendicular**.\n\n**Conclusion:** Since AB ⊥ AC, there is a right angle at vertex A. Therefore, triangle ABC is a right triangle. ✓\n\nNote: We can verify with the Pythagorean Theorem: AB = 4, AC = 3, BC = √(16+9) = 5. And 3² + 4² = 5² ✓"
         },
         {
           "problem": "Prove that the quadrilateral with vertices (0, 0), (4, 0), (5, 3), (1, 3) is a parallelogram.",
-          "solution": "**Strategy:** Show that both pairs of opposite sides are parallel (equal slopes).\n\n**Side 1:** (0, 0) \u2192 (4, 0): slope = (0-0)/(4-0) = **0**\n**Side 2:** (1, 3) \u2192 (5, 3): slope = (3-3)/(5-1) = **0**\nSides 1 and 2 are parallel (both horizontal). \u2713\n\n**Side 3:** (0, 0) \u2192 (1, 3): slope = (3-0)/(1-0) = **3**\n**Side 4:** (4, 0) \u2192 (5, 3): slope = (3-0)/(5-4) = **3**\nSides 3 and 4 are parallel (both slope 3). \u2713\n\n**Conclusion:** Both pairs of opposite sides are parallel, so the quadrilateral is a **parallelogram**."
+          "solution": "**Strategy:** Show that both pairs of opposite sides are parallel (equal slopes).\n\n**Side 1:** (0, 0) → (4, 0): slope = (0-0)/(4-0) = **0**\n**Side 2:** (1, 3) → (5, 3): slope = (3-3)/(5-1) = **0**\nSides 1 and 2 are parallel (both horizontal). ✓\n\n**Side 3:** (0, 0) → (1, 3): slope = (3-0)/(1-0) = **3**\n**Side 4:** (4, 0) → (5, 3): slope = (3-0)/(5-4) = **3**\nSides 3 and 4 are parallel (both slope 3). ✓\n\n**Conclusion:** Both pairs of opposite sides are parallel, so the quadrilateral is a **parallelogram**."
         },
         {
           "problem": "Prove that the line through (1, 2) and (3, 8) is parallel to the line through (0, 5) and (2, 11).",
-          "solution": "**Find the slope of each line:**\n\nLine 1 through (1, 2) and (3, 8):\nm\u2081 = (8 - 2)/(3 - 1) = 6/2 = **3**\n\nLine 2 through (0, 5) and (2, 11):\nm\u2082 = (11 - 5)/(2 - 0) = 6/2 = **3**\n\n**Since m\u2081 = m\u2082 = 3, the slopes are equal.**\n\n**Conclusion:** Lines with equal slopes are parallel. Therefore, the two lines are parallel. \u2713"
+          "solution": "**Find the slope of each line:**\n\nLine 1 through (1, 2) and (3, 8):\nm₁ = (8 - 2)/(3 - 1) = 6/2 = **3**\n\nLine 2 through (0, 5) and (2, 11):\nm₂ = (11 - 5)/(2 - 0) = 6/2 = **3**\n\n**Since m₁ = m₂ = 3, the slopes are equal.**\n\n**Conclusion:** Lines with equal slopes are parallel. Therefore, the two lines are parallel. ✓"
         }
       ],
-      "initialPrompt": "In the first example, we used slopes to prove perpendicularity. What other method could we have used?"
+      "initialPrompt": "In the first example, we used slopes to prove perpendicularity. What other method could we have used?",
+      "lessonId": "parallel-perpendicular-slopes"
     },
     {
       "type": "guided_practice",
@@ -217,20 +226,21 @@
           "answer": "No, not perpendicular",
           "hints": [
             "First find the slope of Line B: slope = (2-4)/(4-1) = -2/3.",
-            "For perpendicular lines, the product of slopes must equal -1. Check: (2/3)(-2/3) = -4/9. Since -4/9 \u2260 -1, the lines are NOT perpendicular."
+            "For perpendicular lines, the product of slopes must equal -1. Check: (2/3)(-2/3) = -4/9. Since -4/9 ≠ -1, the lines are NOT perpendicular."
           ]
         },
         {
           "id": "cg-wp8",
           "question": "Show that M(3, 5) is the midpoint of A(1, 2) and B(5, 8).",
-          "answer": "((1+5)/2, (2+8)/2) = (3, 5) \u2713",
+          "answer": "((1+5)/2, (2+8)/2) = (3, 5) ✓",
           "hints": [
-            "Use the midpoint formula: M = ((x\u2081+x\u2082)/2, (y\u2081+y\u2082)/2).",
-            "M = ((1+5)/2, (2+8)/2) = (6/2, 10/2) = (3, 5). This matches the given point, so M is the midpoint. \u2713"
+            "Use the midpoint formula: M = ((x₁+x₂)/2, (y₁+y₂)/2).",
+            "M = ((1+5)/2, (2+8)/2) = (6/2, 10/2) = (3, 5). This matches the given point, so M is the midpoint. ✓"
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start by finding the slope of Line B. Then test the perpendicularity condition."
+      "initialPrompt": "For the first problem, start by finding the slope of Line B. Then test the perpendicularity condition.",
+      "lessonId": "parallel-perpendicular-slopes"
     },
     {
       "type": "independent_practice",
@@ -243,7 +253,7 @@
           "answer": "10",
           "skill": "coordinate-geometry-distance-midpoint",
           "hints": [
-            "d = \u221a[(5-(-3))\u00b2 + (-2-4)\u00b2] = \u221a[64 + 36] = \u221a100 = 10."
+            "d = √[(5-(-3))² + (-2-4)²] = √[64 + 36] = √100 = 10."
           ]
         },
         {
@@ -258,10 +268,10 @@
         {
           "id": "cg-yp3",
           "question": "Write the equation of a circle with center (0, -5) and radius 8.",
-          "answer": "x\u00b2 + (y + 5)\u00b2 = 64",
+          "answer": "x² + (y + 5)² = 64",
           "skill": "equation-of-circle",
           "hints": [
-            "(x - 0)\u00b2 + (y - (-5))\u00b2 = 8\u00b2. Simplify: x\u00b2 + (y + 5)\u00b2 = 64."
+            "(x - 0)² + (y - (-5))² = 8². Simplify: x² + (y + 5)² = 64."
           ]
         },
         {
@@ -275,31 +285,54 @@
         },
         {
           "id": "cg-yp5",
-          "question": "Prove that triangle with vertices A(0, 0), B(6, 0), and C(3, 3\u221a3) is equilateral by finding all three side lengths.",
+          "question": "Prove that triangle with vertices A(0, 0), B(6, 0), and C(3, 3√3) is equilateral by finding all three side lengths.",
           "answer": "AB = 6, BC = 6, AC = 6 (all equal, so equilateral)",
           "skill": "coordinate-proofs",
           "hints": [
-            "AB = \u221a(36+0) = 6. BC = \u221a(9+27) = \u221a36 = 6. AC = \u221a(9+27) = \u221a36 = 6."
+            "AB = √(36+0) = 6. BC = √(9+27) = √36 = 6. AC = √(9+27) = √36 = 6."
           ]
         }
       ],
       "attemptsRequired": 3,
-      "skill": "coordinate-geometry-distance-midpoint"
+      "skill": "coordinate-geometry-distance-midpoint",
+      "lessonId": "distance-midpoint"
     }
   ],
   "answerKeys": {
     "cg-wp1": "13",
     "cg-wp2": "(3, 3)",
     "cg-wp3": "(8, -5)",
-    "cg-wp4": "(x+3)\u00b2 + (y-7)\u00b2 = 100",
+    "cg-wp4": "(x+3)² + (y-7)² = 100",
     "cg-wp5": "Center (4,-1), radius 7",
     "cg-wp6": "-5/3",
-    "cg-wp7": "No \u2014 slope of B = -2/3, product = -4/9 \u2260 -1, not perpendicular",
-    "cg-wp8": "((1+5)/2, (2+8)/2) = (3, 5) \u2713",
+    "cg-wp7": "No — slope of B = -2/3, product = -4/9 ≠ -1, not perpendicular",
+    "cg-wp8": "((1+5)/2, (2+8)/2) = (3, 5) ✓",
     "cg-yp1": "10",
     "cg-yp2": "(2, 2)",
-    "cg-yp3": "x\u00b2 + (y+5)\u00b2 = 64",
+    "cg-yp3": "x² + (y+5)² = 64",
     "cg-yp4": "n = -2, p = 1/2",
     "cg-yp5": "AB = BC = AC = 6"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "distance-midpoint",
+      "title": "Distance and Midpoint Formulas",
+      "order": 1
+    },
+    {
+      "lessonId": "parallel-perpendicular-slopes",
+      "title": "Parallel and Perpendicular Slopes",
+      "order": 2
+    },
+    {
+      "lessonId": "equation-of-circle",
+      "title": "Equation of a Circle",
+      "order": 3
+    },
+    {
+      "lessonId": "coordinate-proofs",
+      "title": "Coordinate Proofs",
+      "order": 4
+    }
+  ]
 }

@@ -6,8 +6,19 @@
   "weeks": "34-36",
   "estimatedDuration": 10,
   "description": "Comprehensive spiral review across all 8th grade standards: 8.NS (Number System), 8.EE (Expressions & Equations), 8.F (Functions), 8.G (Geometry), and 8.SP (Statistics & Probability). Mixed-topic problem sets build fluency switching between concepts. Focus on multi-step problems requiring multiple skill integration and Algebra 1 readiness.",
-  "skills": ["spiral-number-system", "spiral-equations-functions", "spiral-geometry", "spiral-statistics"],
-  "standardsAlignment": ["8.NS", "8.EE", "8.F", "8.G", "8.SP"],
+  "skills": [
+    "spiral-number-system",
+    "spiral-equations-functions",
+    "spiral-geometry",
+    "spiral-statistics"
+  ],
+  "standardsAlignment": [
+    "8.NS",
+    "8.EE",
+    "8.F",
+    "8.G",
+    "8.SP"
+  ],
   "goals": [
     "Synthesize equation-solving, function analysis, and graphing skills across all problem types.",
     "Apply geometric reasoning (transformations, Pythagorean theorem, volume) to multi-step problems.",
@@ -36,7 +47,8 @@
         "Variables both sides: move all variables to one side, constants to the other.",
         "Special cases: true statement = infinitely many; false statement = no solution.",
         "Inequalities: flip the sign when multiplying/dividing by a negative."
-      ]
+      ],
+      "lessonId": "review-ns-ee"
     },
     {
       "type": "guided_practice",
@@ -48,21 +60,28 @@
           "id": "fr-wp1",
           "question": "Simplify: (4⁻² · 4⁵) / 4²",
           "answer": "4⁻²⁺⁵ / 4² = 4³ / 4² = 4¹ = 4.",
-          "hints": ["Add exponents in the numerator first, then subtract the denominator exponent."]
+          "hints": [
+            "Add exponents in the numerator first, then subtract the denominator exponent."
+          ]
         },
         {
           "id": "fr-wp2",
           "question": "Solve: 4(2x − 3) = 5x + 6",
           "answer": "8x − 12 = 5x + 6. 3x = 18. x = 6. Check: 4(12−3)=36, 5(6)+6=36 ✓",
-          "hints": ["Distribute the 4 first, then collect variable terms on one side."]
+          "hints": [
+            "Distribute the 4 first, then collect variable terms on one side."
+          ]
         },
         {
           "id": "fr-wp3",
           "question": "The mass of a hydrogen atom is about 1.67 × 10⁻²⁴ grams. How much do 6 × 10²³ hydrogen atoms weigh?",
           "answer": "(1.67 × 10⁻²⁴)(6 × 10²³) = 10.02 × 10⁻¹ = 1.002 grams ≈ 1 gram. (This is Avogadro's number — one mole of hydrogen!)",
-          "hints": ["Multiply the coefficients and add the exponents of 10."]
+          "hints": [
+            "Multiply the coefficients and add the exponents of 10."
+          ]
         }
-      ]
+      ],
+      "lessonId": "review-ns-ee"
     },
     {
       "type": "explanation",
@@ -78,7 +97,8 @@
         "Compare functions across representations: find slope and intercept for each.",
         "Systems: intersection = solution. No solution = parallel. Infinite = same line.",
         "Substitution: isolate one variable, plug into the other equation."
-      ]
+      ],
+      "lessonId": "review-functions-graphing"
     },
     {
       "type": "guided_practice",
@@ -90,21 +110,28 @@
           "id": "fr-wp4",
           "question": "Function A: y = −x + 8. Function B goes through (0, 2) and (4, 10). Which has a greater rate of change? When do they have the same output?",
           "answer": "A: slope = −1. B: slope = (10−2)/(4−0) = 2. B has greater rate of change (2 > −1). Equal: −x+8 = 2x+2 → 6 = 3x → x = 2. Both give y = 6.",
-          "hints": ["Find slope and equation for B first, then set them equal."]
+          "hints": [
+            "Find slope and equation for B first, then set them equal."
+          ]
         },
         {
           "id": "fr-wp5",
           "question": "Solve the system: 3x + y = 14 and x = y + 2",
           "answer": "Substitute x = y+2: 3(y+2) + y = 14. 3y+6+y = 14. 4y = 8. y = 2. x = 2+2 = 4. Solution: (4, 2).",
-          "hints": ["The second equation already has x isolated — substitute directly."]
+          "hints": [
+            "The second equation already has x isolated — substitute directly."
+          ]
         },
         {
           "id": "fr-wp6",
           "question": "A table shows x: 1, 3, 5, 7 and y: 2, 8, 14, 20. Is this a linear function? If so, write the equation.",
           "answer": "Rate of change: (8−2)/(3−1) = 6/2 = 3. Check: (14−8)/(5−3) = 3, (20−14)/(7−5) = 3. Constant rate → linear. y = 3x + b: 2 = 3(1)+b → b = −1. y = 3x − 1.",
-          "hints": ["Check that the rate of change is the same between all consecutive pairs."]
+          "hints": [
+            "Check that the rate of change is the same between all consecutive pairs."
+          ]
         }
-      ]
+      ],
+      "lessonId": "review-functions-graphing"
     },
     {
       "type": "explanation",
@@ -120,7 +147,8 @@
         "Volume: cylinder πr²h, cone (1/3)πr²h, sphere (4/3)πr³. Scaling by k → volume ×k³.",
         "Scatter plots: form, direction, strength. Line of best fit for predictions.",
         "Correlation ≠ causation. Always look for lurking variables."
-      ]
+      ],
+      "lessonId": "review-geometry-stats"
     },
     {
       "type": "guided_practice",
@@ -132,21 +160,28 @@
           "id": "fr-wp7",
           "question": "A right triangle has one leg of 9 and a hypotenuse of 15. Find the other leg.",
           "answer": "9² + b² = 15². 81 + b² = 225. b² = 144. b = 12.",
-          "hints": ["The hypotenuse is always c (the longest side). Rearrange a²+b²=c² to solve for the missing leg."]
+          "hints": [
+            "The hypotenuse is always c (the longest side). Rearrange a²+b²=c² to solve for the missing leg."
+          ]
         },
         {
           "id": "fr-wp8",
           "question": "A cylinder has radius 3 and height 10. A cone has radius 3 and height 10. What fraction of the cylinder's volume is the cone's volume?",
           "answer": "Cylinder: π(9)(10) = 90π. Cone: (1/3)π(9)(10) = 30π. Fraction: 30π/90π = 1/3. (The cone is always 1/3 of the cylinder with same base and height.)",
-          "hints": ["Compute each volume, then divide."]
+          "hints": [
+            "Compute each volume, then divide."
+          ]
         },
         {
           "id": "fr-wp9",
           "question": "A news article says 'States with more swimming pools have more car accidents.' Explain why swimming pools probably don't cause car accidents.",
           "answer": "Lurking variable: population. States with more people have more of EVERYTHING — more pools, more cars, more accidents. Swimming pools don't cause car accidents; population size drives both.",
-          "hints": ["Think about what third variable could be related to BOTH swimming pools and car accidents."]
+          "hints": [
+            "Think about what third variable could be related to BOTH swimming pools and car accidents."
+          ]
         }
-      ]
+      ],
+      "lessonId": "review-geometry-stats"
     },
     {
       "type": "model",
@@ -166,7 +201,8 @@
           "problem": "A water tank is a cylinder with radius 5 ft and height 8 ft, topped with a hemisphere of radius 5 ft. Find the total volume.",
           "solution": "Cylinder: π(25)(8) = 200π. Hemisphere: (1/2)(4/3)π(125) = (2/3)(125π) = 250π/3. Total: 200π + 250π/3 = 600π/3 + 250π/3 = 850π/3 ≈ 890.1 ft³."
         }
-      ]
+      ],
+      "lessonId": "review-functions-graphing"
     },
     {
       "type": "model",
@@ -186,7 +222,8 @@
           "problem": "Error analysis: A student found the slope between (2,5) and (4,1) as m = (4−2)/(1−5) = 2/(−4) = −1/2. What's wrong?",
           "solution": "The student switched x and y in the formula. Slope = (y₂−y₁)/(x₂−x₁) = (1−5)/(4−2) = −4/2 = −2, not −1/2. Remember: y-change goes on TOP."
         }
-      ]
+      ],
+      "lessonId": "review-ns-ee"
     },
     {
       "type": "model",
@@ -206,7 +243,8 @@
           "problem": "Preview: Elimination. In 8th grade you solved systems by substitution. In Algebra 1, you'll learn elimination: add or subtract equations to cancel a variable. Example: x+y=7 and x−y=3 → add: 2x=10, x=5, y=2.",
           "solution": "By adding the equations: (x+y)+(x−y) = 7+3 → 2x = 10 → x = 5. Then y = 7−5 = 2. Solution: (5, 2). Check: 5+2=7 ✓, 5−2=3 ✓. Much faster than substitution for some systems!"
         }
-      ]
+      ],
+      "lessonId": "review-functions-graphing"
     },
     {
       "type": "independent_practice",
@@ -219,44 +257,57 @@
           "question": "Classify √49 and √50 as rational or irrational. Explain.",
           "answer": "√49 = 7 → rational (it's a whole number = 7/1). √50 is irrational (50 is not a perfect square, so √50 is non-terminating, non-repeating).",
           "skill": "rational-irrational",
-          "hints": ["Check if the number under the square root is a perfect square."]
+          "hints": [
+            "Check if the number under the square root is a perfect square."
+          ]
         },
         {
           "id": "fr-yp2",
           "question": "Solve: 7 − 2(x + 3) = 3x − 9",
           "answer": "7 − 2x − 6 = 3x − 9. 1 − 2x = 3x − 9. 10 = 5x. x = 2. Check: 7−2(5)=−3, 3(2)−9=−3 ✓",
           "skill": "variables-both-sides",
-          "hints": ["Distribute −2 carefully (the negative matters!), then collect variables on one side."]
+          "hints": [
+            "Distribute −2 carefully (the negative matters!), then collect variables on one side."
+          ]
         },
         {
           "id": "fr-yp3",
           "question": "Write the equation of the line through (−2, 7) and (4, −5).",
           "answer": "m = (−5−7)/(4−(−2)) = −12/6 = −2. y = −2x+b: 7=−2(−2)+b → 7=4+b → b=3. y = −2x + 3.",
           "skill": "write-linear-equations",
-          "hints": ["Find slope first, then plug one point into y=mx+b to find b."]
+          "hints": [
+            "Find slope first, then plug one point into y=mx+b to find b."
+          ]
         },
         {
           "id": "fr-yp4",
           "question": "A sphere has radius 9 cm. Find its volume in terms of π.",
           "answer": "V = (4/3)π(9³) = (4/3)π(729) = 972π cm³.",
           "skill": "volume-spheres",
-          "hints": ["V = (4/3)πr³. Don't forget to cube the radius."]
+          "hints": [
+            "V = (4/3)πr³. Don't forget to cube the radius."
+          ]
         },
         {
           "id": "fr-yp5",
           "question": "Solve the system: y = 4x − 1 and 2x + y = 11.",
           "answer": "Substitute: 2x + (4x−1) = 11. 6x − 1 = 11. 6x = 12. x = 2. y = 4(2)−1 = 7. Solution: (2, 7).",
           "skill": "systems-substitution",
-          "hints": ["y is already isolated in the first equation — substitute into the second."]
+          "hints": [
+            "y is already isolated in the first equation — substitute into the second."
+          ]
         },
         {
           "id": "fr-yp6",
           "question": "Find the distance between A(−3, 1) and B(5, −5). Then determine if triangle with vertices A(−3,1), B(5,−5), C(5,1) is a right triangle.",
           "answer": "AB = √((5−(−3))²+(−5−1)²) = √(64+36) = √100 = 10. AC = 5−(−3) = 8 (horizontal). BC = |−5−1| = 6 (vertical). Check: 8²+6² = 64+36 = 100 = 10². Yes, right triangle (right angle at C).",
           "skill": "pythagorean-theorem",
-          "hints": ["Find all three side lengths. If a²+b²=c², it's a right triangle."]
+          "hints": [
+            "Find all three side lengths. If a²+b²=c², it's a right triangle."
+          ]
         }
-      ]
+      ],
+      "lessonId": "review-functions-graphing"
     }
   ],
   "answerKeys": {
@@ -275,5 +326,22 @@
     "fr-yp4": "972π cm³",
     "fr-yp5": "(2, 7)",
     "fr-yp6": "AB=10, right triangle at C (8²+6²=10²)."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "review-ns-ee",
+      "title": "Review: Number System & Equations",
+      "order": 1
+    },
+    {
+      "lessonId": "review-functions-graphing",
+      "title": "Review: Functions & Linear Relationships",
+      "order": 2
+    },
+    {
+      "lessonId": "review-geometry-stats",
+      "title": "Review: Geometry & Statistics",
+      "order": 3
+    }
+  ]
 }

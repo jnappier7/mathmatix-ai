@@ -47,7 +47,8 @@
         "HEIGHT must be perpendicular (at a right angle) to the base — it is NOT the slant side.",
         "Any side of a triangle or parallelogram can be chosen as the base, but the height must correspond to that base.",
         "Always include units squared (e.g., cm², ft², m²) because area measures two-dimensional space."
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "model",
@@ -67,7 +68,8 @@
           "problem": "A parallelogram-shaped parking space has an area of 108 ft² and a base of 18 ft. What is the height?",
           "solution": "We know A = bh. Substitute and solve for h.\n108 = 18 x h\nh = 108 / 18\nh = 6 ft\n\nThe perpendicular height of the parking space is 6 feet."
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "guided_practice",
@@ -102,7 +104,8 @@
           ],
           "answer": "9 ft"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "independent_practice",
@@ -125,7 +128,8 @@
           "question": "A parallelogram has an area of 91 cm² and a height of 7 cm. What is the length of its base?",
           "answer": "13 cm"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "explanation",
@@ -139,7 +143,8 @@
         "Strategy 2 — Surround and subtract: enclose the figure in a large rectangle, find its area, and subtract the missing pieces.",
         "Label each sub-shape with its own dimensions before calculating — this prevents mixing up measurements.",
         "Check that your sub-shapes account for the ENTIRE figure with no overlaps and no gaps."
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "model",
@@ -155,7 +160,8 @@
           "problem": "A park is shaped like a rectangle with a triangular section attached to one end. The rectangle is 20 m by 8 m. The triangle has a base of 8 m and a height of 5 m. What is the total area of the park?",
           "solution": "Decompose into two shapes.\nRectangle area: 20 x 8 = 160 m²\nTriangle area: 1/2 x 8 x 5 = 20 m²\nTotal area: 160 + 20 = 180 m²"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "guided_practice",
@@ -190,7 +196,8 @@
           ],
           "answer": "72 in²"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "independent_practice",
@@ -208,7 +215,8 @@
           "question": "A sign is shaped like a rectangle (18 in. by 12 in.) with a right triangle attached to the right side. The triangle has legs of 12 in. and 5 in. What is the total area of the sign?",
           "answer": "246 in²"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "explanation",
@@ -223,7 +231,8 @@
         "Rectangular prism formula: SA = 2lw + 2lh + 2wh (two of each pair).",
         "Triangular prism net: 2 congruent triangles + 3 rectangles. Add all five areas.",
         "Surface area is measured in square units (cm², ft², m²) because it covers a 2D surface."
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "model",
@@ -243,7 +252,8 @@
           "problem": "A cube has an edge length of 5 m. What is its surface area?",
           "solution": "A cube has 6 identical square faces.\nArea of one face: 5 x 5 = 25 m²\nSA = 6 x 25 = 150 m²\n\nUsing the rectangular prism formula (l = w = h = 5):\nSA = 2(5)(5) + 2(5)(5) + 2(5)(5) = 50 + 50 + 50 = 150 m². Same answer!"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "guided_practice",
@@ -269,7 +279,8 @@
           ],
           "answer": "96 cm²"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "independent_practice",
@@ -287,7 +298,8 @@
           "question": "Marcus is painting all 6 faces of a wooden box that is 20 in. long, 14 in. wide, and 10 in. tall. One can of paint covers 400 in². How many cans does he need?",
           "answer": "4 cans (SA = 1,240 in², and 1,240 / 400 = 3.1, so he needs 4 cans)"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "explanation",
@@ -302,7 +314,8 @@
         "Packing with unit cubes: the number of unit cubes that fit inside equals the volume.",
         "With fractional edges, you can use smaller cubes (e.g., 1/2-unit cubes) to fill the prism exactly.",
         "Always write cubic units: in.³, ft³, cm³, m³."
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "model",
@@ -322,7 +335,8 @@
           "problem": "A sandbox is 6 ft long, 4 ft wide, and 1 1/2 ft deep. How many cubic feet of sand are needed to fill it?",
           "solution": "Convert the mixed number: 1 1/2 = 3/2 ft.\nV = 6 x 4 x 3/2\nV = 24 x 3/2\nV = 72/2\nV = 36 ft³\n\nYou need 36 cubic feet of sand."
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "guided_practice",
@@ -357,7 +371,8 @@
           ],
           "answer": "3 ft"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "independent_practice",
@@ -375,7 +390,8 @@
           "question": "A rectangular planter box is 3 1/2 ft long, 1 ft wide, and 2/3 ft deep. How many cubic feet of soil does it hold?",
           "answer": "7/3 ft³ (or 2 1/3 ft³)"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "explanation",
@@ -389,7 +405,8 @@
         "VOLUME: filling the inside of a 3D container — water in a pool, sand in a sandbox, soil in a planter.",
         "Multi-step problems: calculate the measurement first, then multiply by a rate (cost per square foot, price per cubic yard, etc.).",
         "Always label your answer with the correct units: square units for area/SA, cubic units for volume."
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "model",
@@ -409,7 +426,8 @@
           "problem": "A rectangular planter is 4 ft long, 2 ft wide, and 1.5 ft deep. Potting soil costs $3.00 per cubic foot. How much will it cost to fill the planter?",
           "solution": "Step 1: This is a VOLUME problem (filling the inside).\nV = lwh = 4 x 2 x 1.5 = 12 ft³\n\nStep 2: Calculate cost.\nCost = 12 x $3.00 = $36.00"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "guided_practice",
@@ -444,7 +462,8 @@
           ],
           "answer": "3 ft³; $7.50"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     },
     {
       "type": "independent_practice",
@@ -467,7 +486,8 @@
           "question": "A raised garden bed is 8 ft long, 4 ft wide, and 3/4 ft deep. Soil costs $5.00 per cubic foot. How much will it cost to fill the bed?",
           "answer": "$120.00 (V = 24 ft³, cost = 24 x $5.00)"
         }
-      ]
+      ],
+      "lessonId": "geometry"
     }
   ],
   "answerKeys": {

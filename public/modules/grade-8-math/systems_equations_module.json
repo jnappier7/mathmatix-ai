@@ -5,7 +5,7 @@
   "title": "Systems of Linear Equations",
   "weeks": "17-19",
   "estimatedDuration": 50,
-  "description": "Master solving systems of two linear equations using graphing and substitution. Students learn to identify the intersection point as the solution, apply substitution when one variable is already isolated, and interpret special cases \u2014 parallel lines (no solution) and identical lines (infinitely many solutions). Every system is grounded in real-world 'two plans' contexts: phone plans, gym memberships, ticket sales, and more.",
+  "description": "Master solving systems of two linear equations using graphing and substitution. Students learn to identify the intersection point as the solution, apply substitution when one variable is already isolated, and interpret special cases — parallel lines (no solution) and identical lines (infinitely many solutions). Every system is grounded in real-world 'two plans' contexts: phone plans, gym memberships, ticket sales, and more.",
   "skills": [
     "systems-graphing",
     "systems-substitution",
@@ -25,9 +25,9 @@
     "Recognize special cases: parallel lines yield no solution, identical lines yield infinitely many solutions."
   ],
   "instructionalStrategy": [
-    "Start every system with a real-world scenario so students see WHY we need two equations \u2014 one equation isn't enough to pin down two unknowns.",
+    "Start every system with a real-world scenario so students see WHY we need two equations — one equation isn't enough to pin down two unknowns.",
     "Graphing first: students should see the intersection before they compute it. This builds geometric intuition for what 'solving a system' means.",
-    "Substitution as a precision tool: graphing shows the idea, substitution gets the exact answer. Motivate substitution by showing a graph where the intersection is at (2.5, 3.7) \u2014 hard to read off a graph.",
+    "Substitution as a precision tool: graphing shows the idea, substitution gets the exact answer. Motivate substitution by showing a graph where the intersection is at (2.5, 3.7) — hard to read off a graph.",
     "Special cases last: after students expect one intersection, surprise them with parallel lines and identical lines. Use the algebra to explain the geometry."
   ],
   "aiFlexLevel": "moderate",
@@ -37,55 +37,59 @@
       "lessonPhase": "concept-intro",
       "title": "Solving Systems by Graphing",
       "skill": "systems-graphing",
-      "content": "A system of linear equations is two (or more) equations with the same variables. The solution is the point (x, y) that makes BOTH equations true at the same time.\n\n**Graphing method:** Graph both lines on the same coordinate plane. The point where the lines cross \u2014 the intersection \u2014 is the solution.\n\n**Steps:**\n1. Write each equation in slope-intercept form (y = mx + b).\n2. Graph both lines using slope and y-intercept.\n3. Read the intersection point (x, y).\n4. CHECK: Substitute (x, y) into BOTH original equations.\n\n**Why it works:** Every point on a line satisfies that line's equation. The intersection point lies on BOTH lines, so it satisfies BOTH equations.\n\n**Real-world connection:** Phone Plan A charges $20/month plus $0.10/minute. Plan B charges $30/month plus $0.05/minute. When do they cost the same? That's a system: y = 0.10x + 20 and y = 0.05x + 30.",
+      "content": "A system of linear equations is two (or more) equations with the same variables. The solution is the point (x, y) that makes BOTH equations true at the same time.\n\n**Graphing method:** Graph both lines on the same coordinate plane. The point where the lines cross — the intersection — is the solution.\n\n**Steps:**\n1. Write each equation in slope-intercept form (y = mx + b).\n2. Graph both lines using slope and y-intercept.\n3. Read the intersection point (x, y).\n4. CHECK: Substitute (x, y) into BOTH original equations.\n\n**Why it works:** Every point on a line satisfies that line's equation. The intersection point lies on BOTH lines, so it satisfies BOTH equations.\n\n**Real-world connection:** Phone Plan A charges $20/month plus $0.10/minute. Plan B charges $30/month plus $0.05/minute. When do they cost the same? That's a system: y = 0.10x + 20 and y = 0.05x + 30.",
       "keyPoints": [
         "A system of equations has two equations with the same variables",
         "The solution is the ordered pair (x, y) that satisfies BOTH equations",
         "Graphing: the intersection of the two lines IS the solution",
         "Always convert to slope-intercept form (y = mx + b) before graphing",
         "Always check your solution in BOTH original equations"
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Solving Systems by Substitution",
       "skill": "systems-substitution",
-      "content": "Graphing shows the big picture, but reading exact coordinates from a graph can be imprecise. Substitution gives you the EXACT answer every time.\n\n**Steps:**\n1. Isolate one variable in one equation (pick the equation where a variable already has coefficient 1 or is already solved).\n2. Substitute that expression into the OTHER equation.\n3. Solve the resulting one-variable equation.\n4. Back-substitute to find the other variable.\n5. CHECK in both original equations.\n\n**Example setup:** If y = 3x \u2212 5 and 2x + y = 15, replace y in the second equation with (3x \u2212 5). Now you have one equation with one unknown: 2x + (3x \u2212 5) = 15.\n\n**When to use substitution:** Whenever one variable is already isolated (y = ... or x = ...) or has a coefficient of 1 (like x + 2y = 10 \u2192 x = 10 \u2212 2y).",
+      "content": "Graphing shows the big picture, but reading exact coordinates from a graph can be imprecise. Substitution gives you the EXACT answer every time.\n\n**Steps:**\n1. Isolate one variable in one equation (pick the equation where a variable already has coefficient 1 or is already solved).\n2. Substitute that expression into the OTHER equation.\n3. Solve the resulting one-variable equation.\n4. Back-substitute to find the other variable.\n5. CHECK in both original equations.\n\n**Example setup:** If y = 3x − 5 and 2x + y = 15, replace y in the second equation with (3x − 5). Now you have one equation with one unknown: 2x + (3x − 5) = 15.\n\n**When to use substitution:** Whenever one variable is already isolated (y = ... or x = ...) or has a coefficient of 1 (like x + 2y = 10 → x = 10 − 2y).",
       "keyPoints": [
-        "Substitution gives exact answers \u2014 no graph-reading errors",
+        "Substitution gives exact answers — no graph-reading errors",
         "Step 1: Isolate a variable in one equation",
         "Step 2: Substitute into the other equation to get one variable",
         "Step 3: Solve, then back-substitute for the second variable",
         "Always check the solution in BOTH original equations"
-      ]
+      ],
+      "lessonId": "systems-substitution"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Interpreting Solutions & Special Cases",
       "skill": "systems-special-cases",
-      "content": "Not every system has exactly one solution. The geometry of two lines tells the whole story:\n\n**One solution (intersecting lines):** The lines cross at exactly one point. Different slopes guarantee this. Most systems you'll see have one solution.\n\n**No solution (parallel lines):** The lines never cross. Same slope, different y-intercepts. In the algebra, you'll get a contradiction like 5 = \u22122. Example: y = 2x + 3 and y = 2x \u2212 1. Both have slope 2 but different intercepts \u2014 parallel.\n\n**Infinitely many solutions (same line):** The equations describe the SAME line. Same slope AND same y-intercept (or one equation is a multiple of the other). In the algebra, you'll get a tautology like 8 = 8. Example: 2x + 4y = 8 and x + 2y = 4 are the same line.\n\n**Interpreting in context:** If two phone plans never cost the same \u2192 no solution (one is always cheaper). If two plans always cost the same \u2192 infinitely many solutions (they're the same plan).",
+      "content": "Not every system has exactly one solution. The geometry of two lines tells the whole story:\n\n**One solution (intersecting lines):** The lines cross at exactly one point. Different slopes guarantee this. Most systems you'll see have one solution.\n\n**No solution (parallel lines):** The lines never cross. Same slope, different y-intercepts. In the algebra, you'll get a contradiction like 5 = −2. Example: y = 2x + 3 and y = 2x − 1. Both have slope 2 but different intercepts — parallel.\n\n**Infinitely many solutions (same line):** The equations describe the SAME line. Same slope AND same y-intercept (or one equation is a multiple of the other). In the algebra, you'll get a tautology like 8 = 8. Example: 2x + 4y = 8 and x + 2y = 4 are the same line.\n\n**Interpreting in context:** If two phone plans never cost the same → no solution (one is always cheaper). If two plans always cost the same → infinitely many solutions (they're the same plan).",
       "keyPoints": [
-        "One solution: lines have different slopes \u2192 they intersect once",
-        "No solution: same slope, different intercepts \u2192 parallel lines \u2192 contradiction in algebra",
-        "Infinitely many solutions: same line \u2192 tautology in algebra (like 0 = 0)",
+        "One solution: lines have different slopes → they intersect once",
+        "No solution: same slope, different intercepts → parallel lines → contradiction in algebra",
+        "Infinitely many solutions: same line → tautology in algebra (like 0 = 0)",
         "In context: no solution means the plans never match; infinite means they always match",
         "Quick check: compare slopes first to predict the number of solutions"
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "systems-interpretation",
-      "title": "We-Do: Systems Interpretation \u2014 Guided Practice",
+      "title": "We-Do: Systems Interpretation — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for systems interpretation.",
           "hint": "Apply the concepts of systems interpretation.",
           "solution": "Step-by-step solution for systems interpretation."
         }
-      ]
+      ],
+      "lessonId": "systems-context-special"
     },
     {
       "type": "model",
@@ -94,18 +98,19 @@
       "skill": "systems-graphing",
       "examples": [
         {
-          "problem": "Solve the system by graphing: y = 2x + 1 and y = \u2212x + 7",
-          "solution": "Both equations are already in slope-intercept form.\nLine 1: y = 2x + 1 \u2192 slope 2, y-intercept (0, 1).\nLine 2: y = \u2212x + 7 \u2192 slope \u22121, y-intercept (0, 7).\n\nTo find the intersection algebraically (to confirm the graph):\n2x + 1 = \u2212x + 7\n3x = 6\nx = 2\ny = 2(2) + 1 = 5\n\nCheck in equation 2: y = \u2212(2) + 7 = 5 \u2713\nSolution: (2, 5)."
+          "problem": "Solve the system by graphing: y = 2x + 1 and y = −x + 7",
+          "solution": "Both equations are already in slope-intercept form.\nLine 1: y = 2x + 1 → slope 2, y-intercept (0, 1).\nLine 2: y = −x + 7 → slope −1, y-intercept (0, 7).\n\nTo find the intersection algebraically (to confirm the graph):\n2x + 1 = −x + 7\n3x = 6\nx = 2\ny = 2(2) + 1 = 5\n\nCheck in equation 2: y = −(2) + 7 = 5 ✓\nSolution: (2, 5)."
         },
         {
-          "problem": "Solve the system by graphing: y = x \u2212 1 and y = \u22122x + 8",
-          "solution": "Line 1: slope 1, y-intercept (0, \u22121).\nLine 2: slope \u22122, y-intercept (0, 8).\n\nSet equal to find intersection:\nx \u2212 1 = \u22122x + 8\n3x = 9\nx = 3\ny = 3 \u2212 1 = 2\n\nCheck in equation 2: y = \u22122(3) + 8 = \u22126 + 8 = 2 \u2713\nSolution: (3, 2)."
+          "problem": "Solve the system by graphing: y = x − 1 and y = −2x + 8",
+          "solution": "Line 1: slope 1, y-intercept (0, −1).\nLine 2: slope −2, y-intercept (0, 8).\n\nSet equal to find intersection:\nx − 1 = −2x + 8\n3x = 9\nx = 3\ny = 3 − 1 = 2\n\nCheck in equation 2: y = −2(3) + 8 = −6 + 8 = 2 ✓\nSolution: (3, 2)."
         },
         {
           "problem": "Two phone plans: Plan A charges $20/month plus $0.10/minute. Plan B charges $30/month plus $0.05/minute. After how many minutes do they cost the same?\n\nSystem: y = 0.10x + 20 and y = 0.05x + 30",
-          "solution": "Graph both lines (y = total cost, x = minutes).\nLine 1: slope 0.10, y-intercept 20.\nLine 2: slope 0.05, y-intercept 30.\n\nSet equal:\n0.10x + 20 = 0.05x + 30\n0.05x = 10\nx = 200\ny = 0.10(200) + 20 = 20 + 20 = 40\n\nCheck in equation 2: y = 0.05(200) + 30 = 10 + 30 = 40 \u2713\nSolution: (200, 40).\n\nInterpretation: At 200 minutes, both plans cost $40. Below 200 min, Plan A is cheaper. Above 200 min, Plan B is cheaper."
+          "solution": "Graph both lines (y = total cost, x = minutes).\nLine 1: slope 0.10, y-intercept 20.\nLine 2: slope 0.05, y-intercept 30.\n\nSet equal:\n0.10x + 20 = 0.05x + 30\n0.05x = 10\nx = 200\ny = 0.10(200) + 20 = 20 + 20 = 40\n\nCheck in equation 2: y = 0.05(200) + 30 = 10 + 30 = 40 ✓\nSolution: (200, 40).\n\nInterpretation: At 200 minutes, both plans cost $40. Below 200 min, Plan A is cheaper. Above 200 min, Plan B is cheaper."
         }
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "model",
@@ -114,18 +119,19 @@
       "skill": "systems-substitution",
       "examples": [
         {
-          "problem": "Solve by substitution: y = 3x \u2212 5 and 2x + y = 15",
-          "solution": "Step 1: y is already isolated in equation 1: y = 3x \u2212 5.\nStep 2: Substitute into equation 2:\n2x + (3x \u2212 5) = 15\n5x \u2212 5 = 15\n5x = 20\nx = 4\n\nStep 3: Back-substitute: y = 3(4) \u2212 5 = 12 \u2212 5 = 7.\n\nCheck equation 1: 7 = 3(4) \u2212 5 = 7 \u2713\nCheck equation 2: 2(4) + 7 = 8 + 7 = 15 \u2713\nSolution: (4, 7)."
+          "problem": "Solve by substitution: y = 3x − 5 and 2x + y = 15",
+          "solution": "Step 1: y is already isolated in equation 1: y = 3x − 5.\nStep 2: Substitute into equation 2:\n2x + (3x − 5) = 15\n5x − 5 = 15\n5x = 20\nx = 4\n\nStep 3: Back-substitute: y = 3(4) − 5 = 12 − 5 = 7.\n\nCheck equation 1: 7 = 3(4) − 5 = 7 ✓\nCheck equation 2: 2(4) + 7 = 8 + 7 = 15 ✓\nSolution: (4, 7)."
         },
         {
-          "problem": "Solve by substitution: x + 2y = 8 and 3x \u2212 y = 3",
-          "solution": "Step 1: Isolate x in equation 1 (coefficient of x is 1):\nx = 8 \u2212 2y\n\nStep 2: Substitute into equation 2:\n3(8 \u2212 2y) \u2212 y = 3\n24 \u2212 6y \u2212 y = 3\n24 \u2212 7y = 3\n\u22127y = \u221221\ny = 3\n\nStep 3: Back-substitute: x = 8 \u2212 2(3) = 8 \u2212 6 = 2.\n\nCheck equation 1: 2 + 2(3) = 2 + 6 = 8 \u2713\nCheck equation 2: 3(2) \u2212 3 = 6 \u2212 3 = 3 \u2713\nSolution: (2, 3)."
+          "problem": "Solve by substitution: x + 2y = 8 and 3x − y = 3",
+          "solution": "Step 1: Isolate x in equation 1 (coefficient of x is 1):\nx = 8 − 2y\n\nStep 2: Substitute into equation 2:\n3(8 − 2y) − y = 3\n24 − 6y − y = 3\n24 − 7y = 3\n−7y = −21\ny = 3\n\nStep 3: Back-substitute: x = 8 − 2(3) = 8 − 6 = 2.\n\nCheck equation 1: 2 + 2(3) = 2 + 6 = 8 ✓\nCheck equation 2: 3(2) − 3 = 6 − 3 = 3 ✓\nSolution: (2, 3)."
         },
         {
           "problem": "Two gyms: Gym A charges a $50 sign-up fee plus $25/month. Gym B charges a $25 sign-up fee plus $30/month. After how many months do they cost the same?\n\nSystem: y = 25x + 50 and y = 30x + 25",
-          "solution": "Step 1: Both equations have y isolated.\nStep 2: Set equal (substitute):\n25x + 50 = 30x + 25\n50 \u2212 25 = 30x \u2212 25x\n25 = 5x\nx = 5\n\nStep 3: y = 25(5) + 50 = 125 + 50 = 175.\n\nCheck equation 2: y = 30(5) + 25 = 150 + 25 = 175 \u2713\nSolution: (5, 175).\n\nInterpretation: After 5 months, both gyms cost $175 total. Before 5 months, Gym B is cheaper. After 5 months, Gym A is cheaper."
+          "solution": "Step 1: Both equations have y isolated.\nStep 2: Set equal (substitute):\n25x + 50 = 30x + 25\n50 − 25 = 30x − 25x\n25 = 5x\nx = 5\n\nStep 3: y = 25(5) + 50 = 125 + 50 = 175.\n\nCheck equation 2: y = 30(5) + 25 = 150 + 25 = 175 ✓\nSolution: (5, 175).\n\nInterpretation: After 5 months, both gyms cost $175 total. Before 5 months, Gym B is cheaper. After 5 months, Gym A is cheaper."
         }
-      ]
+      ],
+      "lessonId": "systems-substitution"
     },
     {
       "type": "model",
@@ -134,18 +140,19 @@
       "skill": "systems-special-cases",
       "examples": [
         {
-          "problem": "Solve: y = 2x + 3 and y = 2x \u2212 1",
-          "solution": "Set equal:\n2x + 3 = 2x \u2212 1\n3 = \u22121\n\nThis is a contradiction \u2014 it's NEVER true.\n\nConclusion: No solution. The lines are parallel (both have slope 2 but different y-intercepts: 3 and \u22121). They never intersect.\n\nOn a graph: two parallel lines going in the same direction, always 4 units apart vertically."
+          "problem": "Solve: y = 2x + 3 and y = 2x − 1",
+          "solution": "Set equal:\n2x + 3 = 2x − 1\n3 = −1\n\nThis is a contradiction — it's NEVER true.\n\nConclusion: No solution. The lines are parallel (both have slope 2 but different y-intercepts: 3 and −1). They never intersect.\n\nOn a graph: two parallel lines going in the same direction, always 4 units apart vertically."
         },
         {
           "problem": "Solve: 2x + 4y = 8 and x + 2y = 4",
-          "solution": "Isolate x in equation 2: x = 4 \u2212 2y.\nSubstitute into equation 1:\n2(4 \u2212 2y) + 4y = 8\n8 \u2212 4y + 4y = 8\n8 = 8\n\nThis is always true \u2014 a tautology.\n\nConclusion: Infinitely many solutions. The equations describe the same line (equation 1 is just 2 times equation 2). Every point on the line x + 2y = 4 is a solution."
+          "solution": "Isolate x in equation 2: x = 4 − 2y.\nSubstitute into equation 1:\n2(4 − 2y) + 4y = 8\n8 − 4y + 4y = 8\n8 = 8\n\nThis is always true — a tautology.\n\nConclusion: Infinitely many solutions. The equations describe the same line (equation 1 is just 2 times equation 2). Every point on the line x + 2y = 4 is a solution."
         },
         {
           "problem": "A school sold 120 tickets for a concert. Student tickets cost $5 and adult tickets cost $8. Total revenue was $780. How many of each type were sold?\n\nSystem: s + a = 120 and 5s + 8a = 780",
-          "solution": "Step 1: Isolate s in equation 1: s = 120 \u2212 a.\nStep 2: Substitute into equation 2:\n5(120 \u2212 a) + 8a = 780\n600 \u2212 5a + 8a = 780\n600 + 3a = 780\n3a = 180\na = 60\n\nStep 3: s = 120 \u2212 60 = 60.\n\nCheck equation 2: 5(60) + 8(60) = 300 + 480 = 780 \u2713\nSolution: 60 student tickets and 60 adult tickets.\n\nInterpretation: The solution makes sense \u2014 60 + 60 = 120 total tickets, and the revenue checks out."
+          "solution": "Step 1: Isolate s in equation 1: s = 120 − a.\nStep 2: Substitute into equation 2:\n5(120 − a) + 8a = 780\n600 − 5a + 8a = 780\n600 + 3a = 780\n3a = 180\na = 60\n\nStep 3: s = 120 − 60 = 60.\n\nCheck equation 2: 5(60) + 8(60) = 300 + 480 = 780 ✓\nSolution: 60 student tickets and 60 adult tickets.\n\nInterpretation: The solution makes sense — 60 + 60 = 120 total tickets, and the revenue checks out."
         }
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "guided_practice",
@@ -155,8 +162,8 @@
       "problems": [
         {
           "id": "se-wp1",
-          "question": "Solve the system by graphing: y = x + 2 and y = \u2212x + 6",
-          "answer": "Set equal: x + 2 = \u2212x + 6 \u2192 2x = 4 \u2192 x = 2. y = 2 + 2 = 4. Check: 4 = \u22122 + 6 = 4 \u2713. Solution: (2, 4).",
+          "question": "Solve the system by graphing: y = x + 2 and y = −x + 6",
+          "answer": "Set equal: x + 2 = −x + 6 → 2x = 4 → x = 2. y = 2 + 2 = 4. Check: 4 = −2 + 6 = 4 ✓. Solution: (2, 4).",
           "hints": [
             "Both lines are in slope-intercept form. What are their slopes and y-intercepts?",
             "Set the two expressions for y equal to each other and solve for x."
@@ -164,23 +171,24 @@
         },
         {
           "id": "se-wp2",
-          "question": "Solve the system by graphing: y = 3x \u2212 1 and y = x + 3",
-          "answer": "Set equal: 3x \u2212 1 = x + 3 \u2192 2x = 4 \u2192 x = 2. y = 3(2) \u2212 1 = 5. Check: 5 = 2 + 3 = 5 \u2713. Solution: (2, 5).",
+          "question": "Solve the system by graphing: y = 3x − 1 and y = x + 3",
+          "answer": "Set equal: 3x − 1 = x + 3 → 2x = 4 → x = 2. y = 3(2) − 1 = 5. Check: 5 = 2 + 3 = 5 ✓. Solution: (2, 5).",
           "hints": [
-            "Graph Line 1 starting at y-intercept \u22121 with slope 3. Graph Line 2 starting at y-intercept 3 with slope 1.",
-            "Where do they cross? Set 3x \u2212 1 = x + 3 and solve."
+            "Graph Line 1 starting at y-intercept −1 with slope 3. Graph Line 2 starting at y-intercept 3 with slope 1.",
+            "Where do they cross? Set 3x − 1 = x + 3 and solve."
           ]
         },
         {
           "id": "se-wp3",
           "question": "Two texting plans: Plan A costs $15/month plus $0.20/text. Plan B costs $25/month plus $0.10/text. Write the system and find when they cost the same.\n\nSystem: y = 0.20x + 15 and y = 0.10x + 25",
-          "answer": "0.20x + 15 = 0.10x + 25 \u2192 0.10x = 10 \u2192 x = 100. y = 0.20(100) + 15 = 35. Check: y = 0.10(100) + 25 = 35 \u2713. Solution: (100, 35). At 100 texts, both plans cost $35.",
+          "answer": "0.20x + 15 = 0.10x + 25 → 0.10x = 10 → x = 100. y = 0.20(100) + 15 = 35. Check: y = 0.10(100) + 25 = 35 ✓. Solution: (100, 35). At 100 texts, both plans cost $35.",
           "hints": [
             "Set the two cost expressions equal: 0.20x + 15 = 0.10x + 25.",
             "Subtract 0.10x from both sides, then subtract 15 from both sides."
           ]
         }
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "guided_practice",
@@ -191,7 +199,7 @@
         {
           "id": "se-wp4",
           "question": "Solve by substitution: y = 2x + 1 and 3x + y = 16",
-          "answer": "Substitute y = 2x + 1 into equation 2: 3x + (2x + 1) = 16 \u2192 5x + 1 = 16 \u2192 5x = 15 \u2192 x = 3. y = 2(3) + 1 = 7. Check: 3(3) + 7 = 16 \u2713. Solution: (3, 7).",
+          "answer": "Substitute y = 2x + 1 into equation 2: 3x + (2x + 1) = 16 → 5x + 1 = 16 → 5x = 15 → x = 3. y = 2(3) + 1 = 7. Check: 3(3) + 7 = 16 ✓. Solution: (3, 7).",
           "hints": [
             "y is already isolated in the first equation. Replace y in the second equation with (2x + 1).",
             "After substituting, combine like terms and solve for x."
@@ -199,23 +207,24 @@
         },
         {
           "id": "se-wp5",
-          "question": "Solve by substitution: x = 4y \u2212 3 and 2x + 3y = 16",
-          "answer": "Substitute x = 4y \u2212 3 into equation 2: 2(4y \u2212 3) + 3y = 16 \u2192 8y \u2212 6 + 3y = 16 \u2192 11y = 22 \u2192 y = 2. x = 4(2) \u2212 3 = 5. Check: 2(5) + 3(2) = 16 \u2713. Solution: (5, 2).",
+          "question": "Solve by substitution: x = 4y − 3 and 2x + 3y = 16",
+          "answer": "Substitute x = 4y − 3 into equation 2: 2(4y − 3) + 3y = 16 → 8y − 6 + 3y = 16 → 11y = 22 → y = 2. x = 4(2) − 3 = 5. Check: 2(5) + 3(2) = 16 ✓. Solution: (5, 2).",
           "hints": [
-            "x is already isolated. Substitute (4y \u2212 3) for x in the second equation.",
+            "x is already isolated. Substitute (4y − 3) for x in the second equation.",
             "Distribute the 2, combine the y-terms, then solve for y."
           ]
         },
         {
           "id": "se-wp6",
           "question": "Two gyms: Gym A charges $20 sign-up plus $15/month. Gym B charges $50 sign-up plus $10/month. After how many months do they cost the same?\n\nSystem: y = 15x + 20 and y = 10x + 50",
-          "answer": "15x + 20 = 10x + 50 \u2192 5x = 30 \u2192 x = 6. y = 15(6) + 20 = 110. Check: y = 10(6) + 50 = 110 \u2713. Solution: (6, 110). After 6 months, both gyms cost $110.",
+          "answer": "15x + 20 = 10x + 50 → 5x = 30 → x = 6. y = 15(6) + 20 = 110. Check: y = 10(6) + 50 = 110 ✓. Solution: (6, 110). After 6 months, both gyms cost $110.",
           "hints": [
             "Both equations have y isolated. Set the right sides equal.",
             "Solve for x (months), then find y (total cost)."
           ]
         }
-      ]
+      ],
+      "lessonId": "systems-substitution"
     },
     {
       "type": "guided_practice",
@@ -225,17 +234,17 @@
       "problems": [
         {
           "id": "se-wp7",
-          "question": "Solve: y = 4x + 5 and y = 4x \u2212 2. How many solutions? Explain.",
-          "answer": "4x + 5 = 4x \u2212 2 \u2192 5 = \u22122. Contradiction! No solution. Both lines have slope 4 but different y-intercepts (5 and \u22122), so they are parallel and never intersect.",
+          "question": "Solve: y = 4x + 5 and y = 4x − 2. How many solutions? Explain.",
+          "answer": "4x + 5 = 4x − 2 → 5 = −2. Contradiction! No solution. Both lines have slope 4 but different y-intercepts (5 and −2), so they are parallel and never intersect.",
           "hints": [
             "Set the two expressions equal. What happens when you subtract 4x from both sides?",
-            "If you get a false statement like 5 = \u22122, what does that tell you about the system?"
+            "If you get a false statement like 5 = −2, what does that tell you about the system?"
           ]
         },
         {
           "id": "se-wp8",
           "question": "Solve: 3x + 6y = 12 and x + 2y = 4. How many solutions?",
-          "answer": "Isolate x in equation 2: x = 4 \u2212 2y. Substitute: 3(4 \u2212 2y) + 6y = 12 \u2192 12 \u2212 6y + 6y = 12 \u2192 12 = 12. Always true! Infinitely many solutions \u2014 the first equation is 3 times the second, so they're the same line.",
+          "answer": "Isolate x in equation 2: x = 4 − 2y. Substitute: 3(4 − 2y) + 6y = 12 → 12 − 6y + 6y = 12 → 12 = 12. Always true! Infinitely many solutions — the first equation is 3 times the second, so they're the same line.",
           "hints": [
             "Isolate x in the simpler equation (equation 2), then substitute.",
             "If you get a true statement like 12 = 12, what does that mean?"
@@ -244,13 +253,14 @@
         {
           "id": "se-wp9",
           "question": "A parking lot has only cars and motorcycles. There are 30 vehicles and 100 wheels total. How many cars and how many motorcycles?\n\nSystem: c + m = 30 and 4c + 2m = 100",
-          "answer": "Isolate c: c = 30 \u2212 m. Substitute: 4(30 \u2212 m) + 2m = 100 \u2192 120 \u2212 4m + 2m = 100 \u2192 \u22122m = \u221220 \u2192 m = 10. c = 30 \u2212 10 = 20. Check: 4(20) + 2(10) = 80 + 20 = 100 \u2713. 20 cars and 10 motorcycles.",
+          "answer": "Isolate c: c = 30 − m. Substitute: 4(30 − m) + 2m = 100 → 120 − 4m + 2m = 100 → −2m = −20 → m = 10. c = 30 − 10 = 20. Check: 4(20) + 2(10) = 80 + 20 = 100 ✓. 20 cars and 10 motorcycles.",
           "hints": [
             "Let c = cars, m = motorcycles. Cars have 4 wheels, motorcycles have 2.",
-            "Isolate c from the first equation: c = 30 \u2212 m. Then substitute into the wheel equation."
+            "Isolate c from the first equation: c = 30 − m. Then substitute into the wheel equation."
           ]
         }
-      ]
+      ],
+      "lessonId": "systems-graphing"
     },
     {
       "type": "independent_practice",
@@ -260,8 +270,8 @@
       "problems": [
         {
           "id": "se-yp1",
-          "question": "Solve the system by graphing: y = 2x \u2212 3 and y = \u2212x + 6",
-          "answer": "2x \u2212 3 = \u2212x + 6 \u2192 3x = 9 \u2192 x = 3. y = 2(3) \u2212 3 = 3. Check: 3 = \u22123 + 6 \u2713. Solution: (3, 3).",
+          "question": "Solve the system by graphing: y = 2x − 3 and y = −x + 6",
+          "answer": "2x − 3 = −x + 6 → 3x = 9 → x = 3. y = 2(3) − 3 = 3. Check: 3 = −3 + 6 ✓. Solution: (3, 3).",
           "skill": "systems-graphing",
           "hints": [
             "Set the two y-expressions equal and solve for x."
@@ -269,17 +279,17 @@
         },
         {
           "id": "se-yp2",
-          "question": "Solve by substitution: y = \u22123x + 10 and 2x + y = 7",
-          "answer": "2x + (\u22123x + 10) = 7 \u2192 \u2212x + 10 = 7 \u2192 \u2212x = \u22123 \u2192 x = 3. y = \u22123(3) + 10 = 1. Check: 2(3) + 1 = 7 \u2713. Solution: (3, 1).",
+          "question": "Solve by substitution: y = −3x + 10 and 2x + y = 7",
+          "answer": "2x + (−3x + 10) = 7 → −x + 10 = 7 → −x = −3 → x = 3. y = −3(3) + 10 = 1. Check: 2(3) + 1 = 7 ✓. Solution: (3, 1).",
           "skill": "systems-substitution",
           "hints": [
-            "Replace y in the second equation with (\u22123x + 10)."
+            "Replace y in the second equation with (−3x + 10)."
           ]
         },
         {
           "id": "se-yp3",
           "question": "Solve by substitution: 2x + 3y = 12 and x = y + 1",
-          "answer": "2(y + 1) + 3y = 12 \u2192 2y + 2 + 3y = 12 \u2192 5y = 10 \u2192 y = 2. x = 2 + 1 = 3. Check: 2(3) + 3(2) = 12 \u2713. Solution: (3, 2).",
+          "answer": "2(y + 1) + 3y = 12 → 2y + 2 + 3y = 12 → 5y = 10 → y = 2. x = 2 + 1 = 3. Check: 2(3) + 3(2) = 12 ✓. Solution: (3, 2).",
           "skill": "systems-substitution",
           "hints": [
             "Substitute (y + 1) for x in the first equation."
@@ -287,8 +297,8 @@
         },
         {
           "id": "se-yp4",
-          "question": "Solve: y = \u2212x + 5 and y = \u2212x + 2. How many solutions? Explain.",
-          "answer": "\u2212x + 5 = \u2212x + 2 \u2192 5 = 2. Contradiction. No solution \u2014 the lines are parallel (both have slope \u22121 but different y-intercepts).",
+          "question": "Solve: y = −x + 5 and y = −x + 2. How many solutions? Explain.",
+          "answer": "−x + 5 = −x + 2 → 5 = 2. Contradiction. No solution — the lines are parallel (both have slope −1 but different y-intercepts).",
           "skill": "systems-special-cases",
           "hints": [
             "Compare the slopes. What happens when you set the equations equal?"
@@ -297,7 +307,7 @@
         {
           "id": "se-yp5",
           "question": "Two streaming services: Service A costs $0.15/song plus a $30 monthly fee. Service B costs $0.25/song plus a $20 monthly fee. Write a system and find when they cost the same.\n\nSystem: y = 0.15x + 30 and y = 0.25x + 20",
-          "answer": "0.15x + 30 = 0.25x + 20 \u2192 10 = 0.10x \u2192 x = 100. y = 0.15(100) + 30 = 45. Check: y = 0.25(100) + 20 = 45 \u2713. At 100 songs, both cost $45.",
+          "answer": "0.15x + 30 = 0.25x + 20 → 10 = 0.10x → x = 100. y = 0.15(100) + 30 = 45. Check: y = 0.25(100) + 20 = 45 ✓. At 100 songs, both cost $45.",
           "skill": "systems-interpretation",
           "hints": [
             "Set the cost expressions equal and solve for x (number of songs)."
@@ -306,30 +316,48 @@
         {
           "id": "se-yp6",
           "question": "A school play sold 200 tickets. Adult tickets cost $10 and student tickets cost $6. Total revenue was $1,520. How many of each type were sold?\n\nSystem: a + s = 200 and 10a + 6s = 1520",
-          "answer": "a = 200 \u2212 s. Substitute: 10(200 \u2212 s) + 6s = 1520 \u2192 2000 \u2212 10s + 6s = 1520 \u2192 \u22124s = \u2212480 \u2192 s = 120. a = 200 \u2212 120 = 80. Check: 10(80) + 6(120) = 800 + 720 = 1520 \u2713. 80 adult tickets and 120 student tickets.",
+          "answer": "a = 200 − s. Substitute: 10(200 − s) + 6s = 1520 → 2000 − 10s + 6s = 1520 → −4s = −480 → s = 120. a = 200 − 120 = 80. Check: 10(80) + 6(120) = 800 + 720 = 1520 ✓. 80 adult tickets and 120 student tickets.",
           "skill": "systems-interpretation",
           "hints": [
             "Isolate a from the first equation, then substitute into the revenue equation."
           ]
         }
-      ]
+      ],
+      "lessonId": "systems-graphing"
     }
   ],
   "answerKeys": {
     "se-wp1": "(2, 4)",
     "se-wp2": "(2, 5)",
-    "se-wp3": "(100, 35) \u2014 at 100 texts, both plans cost $35",
+    "se-wp3": "(100, 35) — at 100 texts, both plans cost $35",
     "se-wp4": "(3, 7)",
     "se-wp5": "(5, 2)",
-    "se-wp6": "(6, 110) \u2014 after 6 months, both gyms cost $110",
+    "se-wp6": "(6, 110) — after 6 months, both gyms cost $110",
     "se-wp7": "No solution (parallel lines, same slope of 4)",
     "se-wp8": "Infinitely many solutions (same line)",
     "se-wp9": "20 cars and 10 motorcycles",
     "se-yp1": "(3, 3)",
     "se-yp2": "(3, 1)",
     "se-yp3": "(3, 2)",
-    "se-yp4": "No solution (parallel lines, slope \u22121)",
-    "se-yp5": "(100, 45) \u2014 at 100 songs, both cost $45",
+    "se-yp4": "No solution (parallel lines, slope −1)",
+    "se-yp5": "(100, 45) — at 100 songs, both cost $45",
     "se-yp6": "80 adult tickets, 120 student tickets"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "systems-graphing",
+      "title": "Solving Systems by Graphing",
+      "order": 1
+    },
+    {
+      "lessonId": "systems-substitution",
+      "title": "Solving Systems by Substitution",
+      "order": 2
+    },
+    {
+      "lessonId": "systems-context-special",
+      "title": "Interpreting Solutions & Special Cases",
+      "order": 3
+    }
+  ]
 }

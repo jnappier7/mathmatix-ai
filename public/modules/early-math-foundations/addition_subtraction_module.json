@@ -45,7 +45,8 @@
         "You can regroup in multiple columns — just track each carry carefully",
         "Check your work by estimating: round each number and see if your answer is close"
       ],
-      "initialPrompt": "Have you ever added two numbers and gotten a digit bigger than 9 in one column? That's where regrouping comes in! Let's see how it works with bigger numbers."
+      "initialPrompt": "Have you ever added two numbers and gotten a digit bigger than 9 in one column? That's where regrouping comes in! Let's see how it works with bigger numbers.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "model",
@@ -69,7 +70,8 @@
           "tip": "Even when a problem is a word problem, the addition steps are the same. Find the numbers, line them up, and add column by column."
         }
       ],
-      "initialPrompt": "Watch how I work through each column carefully and carry when I need to. After each example, I'll check my answer with an estimate."
+      "initialPrompt": "Watch how I work through each column carefully and carry when I need to. After each example, I'll check my answer with an estimate.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "guided_practice",
@@ -108,7 +110,8 @@
           ]
         }
       ],
-      "initialPrompt": "Now it's your turn — but I'll be right here to help! Try the first one. Start at the ones column and tell me what you get."
+      "initialPrompt": "Now it's your turn — but I'll be right here to help! Try the first one. Start at the ones column and tell me what you get.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "independent_practice",
@@ -144,7 +147,8 @@
           ]
         }
       ],
-      "attemptsRequired": 2
+      "attemptsRequired": 2,
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "explanation",
@@ -159,7 +163,8 @@
         "For borrowing across zeros: go left until you find a non-zero digit, reduce it by 1, and let each zero become 9 except the last one which becomes 10",
         "Always check your answer by adding: if 3,004 − 1,567 = 1,437, then 1,437 + 1,567 should equal 3,004"
       ],
-      "initialPrompt": "Borrowing can feel tricky at first, especially across zeros. But once you see the pattern, it clicks! Let me show you exactly how it works."
+      "initialPrompt": "Borrowing can feel tricky at first, especially across zeros. But once you see the pattern, it clicks! Let me show you exactly how it works.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "model",
@@ -183,7 +188,8 @@
           "tip": "When borrowing across many zeros, the 4 drops to 3, and every 0 becomes 9 except the ones place which becomes 10. Try to see the pattern!"
         }
       ],
-      "initialPrompt": "Watch how I handle each problem — especially when there are zeros. I'll show you the 'neighbor knocking' trick for borrowing across zeros."
+      "initialPrompt": "Watch how I handle each problem — especially when there are zeros. I'll show you the 'neighbor knocking' trick for borrowing across zeros.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "guided_practice",
@@ -222,7 +228,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's tackle subtraction together! Try the first one — start at the ones column and let me know if you need to borrow."
+      "initialPrompt": "Let's tackle subtraction together! Try the first one — start at the ones column and let me know if you need to borrow.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "independent_practice",
@@ -258,7 +265,8 @@
           ]
         }
       ],
-      "attemptsRequired": 2
+      "attemptsRequired": 2,
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "explanation",
@@ -273,7 +281,8 @@
         "Two-step problems require two operations — solve one part first, then use that answer in the next step",
         "Underline or highlight the question the problem is asking before you start calculating"
       ],
-      "initialPrompt": "Word problems are like little puzzles! The key is figuring out whether the story is about putting things together, taking things apart, or comparing. Let's practice spotting the clues."
+      "initialPrompt": "Word problems are like little puzzles! The key is figuring out whether the story is about putting things together, taking things apart, or comparing. Let's practice spotting the clues.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "model",
@@ -297,7 +306,8 @@
           "tip": "The word 'fewer' can be a clue for subtraction. 'Combined' is a clue for addition. One problem can have both!"
         }
       ],
-      "initialPrompt": "Let me show you how to break down word problems step by step. I always start by asking: is this a joining, separating, or comparing situation?"
+      "initialPrompt": "Let me show you how to break down word problems step by step. I always start by asking: is this a joining, separating, or comparing situation?",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "guided_practice",
@@ -336,7 +346,8 @@
           ]
         }
       ],
-      "initialPrompt": "Time for word problems! Read each one carefully and think — is this joining, separating, or comparing? Tell me what operation you'd use before you start calculating."
+      "initialPrompt": "Time for word problems! Read each one carefully and think — is this joining, separating, or comparing? Tell me what operation you'd use before you start calculating.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "independent_practice",
@@ -372,7 +383,8 @@
           ]
         }
       ],
-      "attemptsRequired": 2
+      "attemptsRequired": 2,
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "explanation",
@@ -387,7 +399,8 @@
         "Counting up: for subtraction, count forward from the smaller number to the larger number",
         "Choose the strategy that fits the numbers — there's no single 'best' strategy for every problem"
       ],
-      "initialPrompt": "Mental math strategies are like having a toolbox — each tool works best in different situations. Let's see which strategy you'd reach for first!"
+      "initialPrompt": "Mental math strategies are like having a toolbox — each tool works best in different situations. Let's see which strategy you'd reach for first!",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "model",
@@ -411,7 +424,8 @@
           "tip": "Before adding a string of numbers, scan for compatible pairs first. Look for numbers that make 100, 500, or 1,000."
         }
       ],
-      "initialPrompt": "Watch how I pick the best strategy for each problem. I'll explain why I chose it and how it makes the math easier."
+      "initialPrompt": "Watch how I pick the best strategy for each problem. I'll explain why I chose it and how it makes the math easier.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "guided_practice",
@@ -450,7 +464,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's practice choosing the right strategy! For each problem, first tell me which strategy you'd pick, then solve it."
+      "initialPrompt": "Let's practice choosing the right strategy! For each problem, first tell me which strategy you'd pick, then solve it.",
+      "lessonId": "addition_subtraction"
     },
     {
       "type": "independent_practice",
@@ -486,7 +501,8 @@
           ]
         }
       ],
-      "attemptsRequired": 2
+      "attemptsRequired": 2,
+      "lessonId": "addition_subtraction"
     }
   ],
   "answerKeys": {

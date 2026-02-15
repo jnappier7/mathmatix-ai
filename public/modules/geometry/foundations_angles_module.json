@@ -39,7 +39,8 @@
       "skill": "points-lines-planes",
       "title": "Undefined Terms: Points, Lines, and Planes",
       "content": "Welcome to Geometry! Everything in geometry starts with three undefined terms: **points**, **lines**, and **planes**. A point is a location with no size—just a dot we label with a capital letter (A). A line extends infinitely in both directions through two points. A plane is a flat surface that extends infinitely in all directions. These three ideas are the building blocks for everything we'll study this year.",
-      "initialPrompt": "Think about the room you're in right now. Can you point out something that represents a point, something that represents a line, and something that represents a plane?"
+      "initialPrompt": "Think about the room you're in right now. Can you point out something that represents a point, something that represents a line, and something that represents a plane?",
+      "lessonId": "points-lines-planes"
     },
     {
       "type": "explanation",
@@ -47,7 +48,8 @@
       "skill": "points-lines-planes",
       "title": "Collinear, Coplanar, and Line Relationships",
       "content": "Points that lie on the same line are called **collinear**. Points that lie on the same plane are called **coplanar**. Lines can intersect (cross at one point), be parallel (never cross, same plane), or be skew (never cross, different planes). Understanding these relationships is fundamental to geometric reasoning.",
-      "initialPrompt": "If two lines are in the same plane and never touch, what do we call them? What about two lines that aren't in the same plane and never touch?"
+      "initialPrompt": "If two lines are in the same plane and never touch, what do we call them? What about two lines that aren't in the same plane and never touch?",
+      "lessonId": "points-lines-planes"
     },
     {
       "type": "model",
@@ -68,7 +70,8 @@
           "solution": "**Segment AB** has two endpoints (A and B) — it's the finite piece between them. **Ray AB** has one endpoint (A) and extends infinitely through B and beyond. **Line AB** has no endpoints — it extends infinitely in both directions through A and B. Notation matters: a segment has a bar over AB, a ray has an arrow over AB, and a line has arrows on both ends over AB."
         }
       ],
-      "initialPrompt": "How is a ray different from a line segment? What about a line?"
+      "initialPrompt": "How is a ray different from a line segment? What about a line?",
+      "lessonId": "points-lines-planes"
     },
     {
       "type": "explanation",
@@ -76,7 +79,8 @@
       "skill": "angle-measurement",
       "title": "Angle Classification and Angle Pairs",
       "content": "An angle is formed by two rays with a common endpoint (the vertex). We classify angles by their measure:\n• **Acute**: between 0° and 90°\n• **Right**: exactly 90°\n• **Obtuse**: between 90° and 180°\n• **Straight**: exactly 180°\n\nAngles also form special **pairs**:\n• **Complementary angles** sum to 90°\n• **Supplementary angles** sum to 180°\n• **Vertical angles** are formed by two intersecting lines and are always congruent (equal)\n• **Linear pairs** are adjacent angles on a straight line and are always supplementary",
-      "initialPrompt": "If one angle in a complementary pair is 25°, what's the other? What if one angle in a supplementary pair is 25°?"
+      "initialPrompt": "If one angle in a complementary pair is 25°, what's the other? What if one angle in a supplementary pair is 25°?",
+      "lessonId": "angle-measurement"
     },
     {
       "type": "model",
@@ -97,7 +101,8 @@
           "solution": "When two lines intersect:\n• The angle **vertical** to 72° is also **72°** (vertical angles are congruent)\n• Each angle **adjacent** to 72° forms a linear pair: 180° - 72° = **108°**\n• The fourth angle is vertical to 108°, so it's also **108°**\n\nThe four angles are: **72°, 108°, 72°, 108°**\n\nNotice: opposite angles match (vertical angles), and every pair of adjacent angles sums to 180° (linear pairs)."
         }
       ],
-      "initialPrompt": "What's the relationship between vertical angles? Why must they always be equal?"
+      "initialPrompt": "What's the relationship between vertical angles? Why must they always be equal?",
+      "lessonId": "angle-pairs"
     },
     {
       "type": "guided_practice",
@@ -133,7 +138,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through angle pair relationships together. For the first problem, what do you know about complementary angles?"
+      "initialPrompt": "Let's work through angle pair relationships together. For the first problem, what do you know about complementary angles?",
+      "lessonId": "angle-pairs"
     },
     {
       "type": "explanation",
@@ -141,7 +147,8 @@
       "skill": "parallel-lines-transversals",
       "title": "Parallel Lines Cut by a Transversal",
       "content": "When a line (called a **transversal**) crosses two parallel lines, it creates 8 angles with special relationships:\n• **Corresponding angles** (same position at each intersection) are congruent — look for the F-pattern\n• **Alternate interior angles** (inside, opposite sides) are congruent — look for the Z-pattern\n• **Alternate exterior angles** (outside, opposite sides) are congruent\n• **Same-side interior angles** (inside, same side) are supplementary (sum to 180°) — look for the C-pattern\n\nKey insight: once you know ONE angle, you can find all EIGHT using these relationships.",
-      "initialPrompt": "Look at the letters F, Z, and C. Can you see how the angles in those letter shapes match the angle pair types I just described?"
+      "initialPrompt": "Look at the letters F, Z, and C. Can you see how the angles in those letter shapes match the angle pair types I just described?",
+      "lessonId": "parallel-lines-transversals"
     },
     {
       "type": "model",
@@ -162,7 +169,8 @@
           "solution": "Corresponding angles are congruent when lines are parallel, so set them equal:\n4x + 15 = 7x - 30\n15 + 30 = 7x - 4x\n45 = 3x\nx = 15\n\nAngle measures: 4(15) + 15 = 75° and 7(15) - 30 = 75° ✓\n\nBoth angles are 75°, confirming they're congruent as expected."
         }
       ],
-      "initialPrompt": "Why do you think all 8 angles ended up being just two different measures? What's special about parallel lines that causes this?"
+      "initialPrompt": "Why do you think all 8 angles ended up being just two different measures? What's special about parallel lines that causes this?",
+      "lessonId": "parallel-lines-transversals"
     },
     {
       "type": "guided_practice",
@@ -191,7 +199,8 @@
           ]
         }
       ],
-      "initialPrompt": "Now let's apply transversal angle relationships with algebra. For the first problem, what kind of angles are alternate interior angles?"
+      "initialPrompt": "Now let's apply transversal angle relationships with algebra. For the first problem, what kind of angles are alternate interior angles?",
+      "lessonId": "parallel-lines-transversals"
     },
     {
       "type": "independent_practice",
@@ -257,7 +266,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "points-lines-planes"
+      "skill": "points-lines-planes",
+      "lessonId": "points-lines-planes"
     }
   ],
   "answerKeys": {
@@ -272,5 +282,32 @@
     "fa-yp4": "45°, 135°, 45°",
     "fa-yp5": "45° and 135°",
     "fa-yp6": "B = 160/3 ≈ 53.3°, A = 380/3 ≈ 126.7°"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "points-lines-planes",
+      "title": "Points, Lines, and Planes",
+      "order": 1
+    },
+    {
+      "lessonId": "angle-measurement",
+      "title": "Measuring and Classifying Angles",
+      "order": 2
+    },
+    {
+      "lessonId": "angle-pairs",
+      "title": "Angle Pair Relationships",
+      "order": 3
+    },
+    {
+      "lessonId": "parallel-lines-transversals",
+      "title": "Parallel Lines and Transversals",
+      "order": 4
+    },
+    {
+      "lessonId": "transversal-algebra",
+      "title": "Solving with Transversal Angle Relationships",
+      "order": 5
+    }
+  ]
 }

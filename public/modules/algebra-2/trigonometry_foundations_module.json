@@ -5,7 +5,7 @@
   "title": "Trigonometry Foundations",
   "weeks": "25-29",
   "estimatedDuration": 75,
-  "description": "Build your first encounter with trigonometric functions\u2014sine, cosine, and tangent\u2014from right-triangle definitions through unit circle understanding.",
+  "description": "Build your first encounter with trigonometric functions—sine, cosine, and tangent—from right-triangle definitions through unit circle understanding.",
   "skills": [
     "angle-measure-radians",
     "unit-circle-values",
@@ -31,12 +31,12 @@
     "Solve basic trigonometric equations on specified intervals"
   ],
   "instructionalStrategy": [
-    "Begin with what students already know: right triangle trig from Geometry (SOH-CAH-TOA). The unit circle is NOT a new concept \u2014 it's what happens when the hypotenuse is always 1 and the triangle rotates around the origin.",
-    "Degrees vs. radians: a radian is a ratio (arc length / radius), not an arbitrary unit. The key conversion: \u03c0 rad = 180\u00b0. Students should internalize the common angles (30\u00b0 = \u03c0/6, 45\u00b0 = \u03c0/4, 60\u00b0 = \u03c0/3, 90\u00b0 = \u03c0/2) through repeated use, not memorization drills.",
-    "The unit circle has only 5 key reference points in Q1 (0\u00b0, 30\u00b0, 45\u00b0, 60\u00b0, 90\u00b0). Symmetry gives you ALL other quadrants. Teach the pattern, not 16 separate facts: coordinates in Q1 use (\u221a0/2, \u221a1/2, \u221a2/2, \u221a3/2, \u221a4/2) = (0, 1/2, \u221a2/2, \u221a3/2, 1) for sine values.",
-    "For graphing sinusoidal functions, always identify the four transformations systematically: A = amplitude (vertical stretch), B determines period (2\u03c0/|B|), C/B = phase shift (horizontal), D = vertical shift (midline). Connect each parameter to a PHYSICAL meaning: amplitude = max displacement, period = time for one cycle.",
-    "Inverse trig functions are about RESTRICTING the domain to get a function. sin\u207b\u00b9 lives on [-\u03c0/2, \u03c0/2], cos\u207b\u00b9 on [0, \u03c0], tan\u207b\u00b9 on (-\u03c0/2, \u03c0/2). Students must know these ranges \u2014 they determine which angle the calculator returns.",
-    "When solving trig equations, find ALL solutions in the given interval. Use reference angles and quadrant analysis. Common mistake: finding only one solution when two (or more) exist in [0, 2\u03c0)."
+    "Begin with what students already know: right triangle trig from Geometry (SOH-CAH-TOA). The unit circle is NOT a new concept — it's what happens when the hypotenuse is always 1 and the triangle rotates around the origin.",
+    "Degrees vs. radians: a radian is a ratio (arc length / radius), not an arbitrary unit. The key conversion: π rad = 180°. Students should internalize the common angles (30° = π/6, 45° = π/4, 60° = π/3, 90° = π/2) through repeated use, not memorization drills.",
+    "The unit circle has only 5 key reference points in Q1 (0°, 30°, 45°, 60°, 90°). Symmetry gives you ALL other quadrants. Teach the pattern, not 16 separate facts: coordinates in Q1 use (√0/2, √1/2, √2/2, √3/2, √4/2) = (0, 1/2, √2/2, √3/2, 1) for sine values.",
+    "For graphing sinusoidal functions, always identify the four transformations systematically: A = amplitude (vertical stretch), B determines period (2π/|B|), C/B = phase shift (horizontal), D = vertical shift (midline). Connect each parameter to a PHYSICAL meaning: amplitude = max displacement, period = time for one cycle.",
+    "Inverse trig functions are about RESTRICTING the domain to get a function. sin⁻¹ lives on [-π/2, π/2], cos⁻¹ on [0, π], tan⁻¹ on (-π/2, π/2). Students must know these ranges — they determine which angle the calculator returns.",
+    "When solving trig equations, find ALL solutions in the given interval. Use reference angles and quadrant analysis. Common mistake: finding only one solution when two (or more) exist in [0, 2π)."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -45,139 +45,147 @@
       "lessonPhase": "concept-intro",
       "skill": "angle-measure-radians",
       "title": "Concept: Angle Measure Radians",
-      "initialPrompt": "Convert 135\u00b0 to radians. Then find two angles coterminal with 135\u00b0 \u2014 one positive and one negative.",
-      "content": "**Angle Measurement: Degrees and Radians**\n\n**Radian definition:** One radian is the angle where the arc length equals the radius. A full circle = 2\u03c0 radians = 360\u00b0.\n\n**Key conversion:** \u03c0 radians = 180\u00b0\n- Degrees \u2192 Radians: multiply by \u03c0/180\n- Radians \u2192 Degrees: multiply by 180/\u03c0\n\n**Essential angle equivalences:**\n| Degrees | Radians | Simplified |\n|---------|---------|------------|\n| 0\u00b0 | 0 | 0 |\n| 30\u00b0 | \u03c0/6 | |\n| 45\u00b0 | \u03c0/4 | |\n| 60\u00b0 | \u03c0/3 | |\n| 90\u00b0 | \u03c0/2 | |\n| 180\u00b0 | \u03c0 | |\n| 270\u00b0 | 3\u03c0/2 | |\n| 360\u00b0 | 2\u03c0 | |\n\n**Coterminal angles:** Angles that share the same terminal side.\n- Add or subtract 360\u00b0 (or 2\u03c0) to find coterminal angles.\n- Example: 30\u00b0 and 390\u00b0 are coterminal (390\u00b0 - 360\u00b0 = 30\u00b0)\n- Example: -\u03c0/4 and 7\u03c0/4 are coterminal (-\u03c0/4 + 2\u03c0 = 7\u03c0/4)\n\n**Arc length formula:** s = r\u03b8 (\u03b8 must be in radians!)\n- This is WHY radians are useful: the formula is clean with no conversion factor."
+      "initialPrompt": "Convert 135° to radians. Then find two angles coterminal with 135° — one positive and one negative.",
+      "content": "**Angle Measurement: Degrees and Radians**\n\n**Radian definition:** One radian is the angle where the arc length equals the radius. A full circle = 2π radians = 360°.\n\n**Key conversion:** π radians = 180°\n- Degrees → Radians: multiply by π/180\n- Radians → Degrees: multiply by 180/π\n\n**Essential angle equivalences:**\n| Degrees | Radians | Simplified |\n|---------|---------|------------|\n| 0° | 0 | 0 |\n| 30° | π/6 | |\n| 45° | π/4 | |\n| 60° | π/3 | |\n| 90° | π/2 | |\n| 180° | π | |\n| 270° | 3π/2 | |\n| 360° | 2π | |\n\n**Coterminal angles:** Angles that share the same terminal side.\n- Add or subtract 360° (or 2π) to find coterminal angles.\n- Example: 30° and 390° are coterminal (390° - 360° = 30°)\n- Example: -π/4 and 7π/4 are coterminal (-π/4 + 2π = 7π/4)\n\n**Arc length formula:** s = rθ (θ must be in radians!)\n- This is WHY radians are useful: the formula is clean with no conversion factor.",
+      "lessonId": "angle-measure-radians"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "angle-measure-radians",
-      "title": "I-Do: Angle Measure Radians \u2014 Worked Examples",
-      "initialPrompt": "For part (d), what would happen if you accidentally used 135\u00b0 instead of 3\u03c0/4 in the formula? Why would that give a wrong answer?",
+      "title": "I-Do: Angle Measure Radians — Worked Examples",
+      "initialPrompt": "For part (d), what would happen if you accidentally used 135° instead of 3π/4 in the formula? Why would that give a wrong answer?",
       "examples": [
         {
-          "problem": "(a) Convert 240\u00b0 to radians. (b) Convert 5\u03c0/4 to degrees. (c) Find a positive angle coterminal with -150\u00b0. (d) An arc on a circle of radius 10 cm subtends an angle of 3\u03c0/4 radians. Find the arc length.",
-          "solution": "**(a) 240\u00b0 to radians:**\n240\u00b0 \u00d7 (\u03c0/180\u00b0) = 240\u03c0/180 = **4\u03c0/3 radians**\n\n**(b) 5\u03c0/4 to degrees:**\n5\u03c0/4 \u00d7 (180\u00b0/\u03c0) = 5(180\u00b0)/4 = 900\u00b0/4 = **225\u00b0**\n\n**(c) Coterminal with -150\u00b0:**\n-150\u00b0 + 360\u00b0 = **210\u00b0**\nCheck: both point in the same direction (third quadrant).\n\n**(d) Arc length:**\ns = r\u03b8 = 10 \u00d7 3\u03c0/4 = **30\u03c0/4 = 15\u03c0/2 \u2248 23.56 cm**\n\nRemember: the arc length formula s = r\u03b8 ONLY works when \u03b8 is in radians. If you're given degrees, convert first!"
+          "problem": "(a) Convert 240° to radians. (b) Convert 5π/4 to degrees. (c) Find a positive angle coterminal with -150°. (d) An arc on a circle of radius 10 cm subtends an angle of 3π/4 radians. Find the arc length.",
+          "solution": "**(a) 240° to radians:**\n240° × (π/180°) = 240π/180 = **4π/3 radians**\n\n**(b) 5π/4 to degrees:**\n5π/4 × (180°/π) = 5(180°)/4 = 900°/4 = **225°**\n\n**(c) Coterminal with -150°:**\n-150° + 360° = **210°**\nCheck: both point in the same direction (third quadrant).\n\n**(d) Arc length:**\ns = rθ = 10 × 3π/4 = **30π/4 = 15π/2 ≈ 23.56 cm**\n\nRemember: the arc length formula s = rθ ONLY works when θ is in radians. If you're given degrees, convert first!"
         }
-      ]
+      ],
+      "lessonId": "angle-measure-radians"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "angle-measure-radians",
       "title": "Concept: Angle Measure Radians",
-      "initialPrompt": "Find sin(150\u00b0) using reference angles. Step 1: What quadrant is 150\u00b0 in? Step 2: What is the reference angle? Step 3: What is sin of the reference angle? Step 4: What sign does sine have in that quadrant?",
-      "content": "**The Unit Circle and Trigonometric Functions**\n\nThe unit circle is a circle with radius 1 centered at the origin. For any angle \u03b8, the point where the terminal side meets the circle has coordinates:\n\n**(cos \u03b8, sin \u03b8)**\n\nSo cos \u03b8 = x-coordinate and sin \u03b8 = y-coordinate on the unit circle.\n\n**Special values in Quadrant I (memorize this pattern):**\n| \u03b8 | sin \u03b8 | cos \u03b8 | tan \u03b8 |\n|---|-------|-------|-------|\n| 0\u00b0 (0) | 0 | 1 | 0 |\n| 30\u00b0 (\u03c0/6) | 1/2 | \u221a3/2 | \u221a3/3 |\n| 45\u00b0 (\u03c0/4) | \u221a2/2 | \u221a2/2 | 1 |\n| 60\u00b0 (\u03c0/3) | \u221a3/2 | 1/2 | \u221a3 |\n| 90\u00b0 (\u03c0/2) | 1 | 0 | undefined |\n\n**The pattern trick:** Sine values in Q1 go \u221a0/2, \u221a1/2, \u221a2/2, \u221a3/2, \u221a4/2 = 0, 1/2, \u221a2/2, \u221a3/2, 1. Cosine is the reverse!\n\n**Signs by quadrant (All Students Take Calculus):**\n- Q1: All positive\n- Q2: Sin positive (cos, tan negative)\n- Q3: Tan positive (sin, cos negative)\n- Q4: Cos positive (sin, tan negative)\n\n**Reference angles:** The acute angle between the terminal side and the x-axis. Use it to find trig values for any angle:\n1. Find the reference angle\n2. Look up the Q1 value\n3. Apply the correct sign for the quadrant"
+      "initialPrompt": "Find sin(150°) using reference angles. Step 1: What quadrant is 150° in? Step 2: What is the reference angle? Step 3: What is sin of the reference angle? Step 4: What sign does sine have in that quadrant?",
+      "content": "**The Unit Circle and Trigonometric Functions**\n\nThe unit circle is a circle with radius 1 centered at the origin. For any angle θ, the point where the terminal side meets the circle has coordinates:\n\n**(cos θ, sin θ)**\n\nSo cos θ = x-coordinate and sin θ = y-coordinate on the unit circle.\n\n**Special values in Quadrant I (memorize this pattern):**\n| θ | sin θ | cos θ | tan θ |\n|---|-------|-------|-------|\n| 0° (0) | 0 | 1 | 0 |\n| 30° (π/6) | 1/2 | √3/2 | √3/3 |\n| 45° (π/4) | √2/2 | √2/2 | 1 |\n| 60° (π/3) | √3/2 | 1/2 | √3 |\n| 90° (π/2) | 1 | 0 | undefined |\n\n**The pattern trick:** Sine values in Q1 go √0/2, √1/2, √2/2, √3/2, √4/2 = 0, 1/2, √2/2, √3/2, 1. Cosine is the reverse!\n\n**Signs by quadrant (All Students Take Calculus):**\n- Q1: All positive\n- Q2: Sin positive (cos, tan negative)\n- Q3: Tan positive (sin, cos negative)\n- Q4: Cos positive (sin, tan negative)\n\n**Reference angles:** The acute angle between the terminal side and the x-axis. Use it to find trig values for any angle:\n1. Find the reference angle\n2. Look up the Q1 value\n3. Apply the correct sign for the quadrant",
+      "lessonId": "angle-measure-radians"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "unit-circle-values",
-      "title": "I-Do: Unit Circle Values \u2014 Worked Examples",
-      "initialPrompt": "For part (c), verify using the definition: tan = sin/cos. What are sin(4\u03c0/3) and cos(4\u03c0/3) individually? Does their ratio equal \u221a3?",
+      "title": "I-Do: Unit Circle Values — Worked Examples",
+      "initialPrompt": "For part (c), verify using the definition: tan = sin/cos. What are sin(4π/3) and cos(4π/3) individually? Does their ratio equal √3?",
       "examples": [
         {
-          "problem": "Evaluate without a calculator: (a) sin(5\u03c0/6), (b) cos(315\u00b0), (c) tan(4\u03c0/3), (d) sin(-\u03c0/4).",
-          "solution": "**(a) sin(5\u03c0/6):**\n5\u03c0/6 is in Q2 (between \u03c0/2 and \u03c0).\nReference angle: \u03c0 - 5\u03c0/6 = \u03c0/6.\nsin(\u03c0/6) = 1/2. Sine is positive in Q2.\n**sin(5\u03c0/6) = 1/2**\n\n**(b) cos(315\u00b0):**\n315\u00b0 is in Q4 (between 270\u00b0 and 360\u00b0).\nReference angle: 360\u00b0 - 315\u00b0 = 45\u00b0.\ncos(45\u00b0) = \u221a2/2. Cosine is positive in Q4.\n**cos(315\u00b0) = \u221a2/2**\n\n**(c) tan(4\u03c0/3):**\n4\u03c0/3 is in Q3 (between \u03c0 and 3\u03c0/2).\nReference angle: 4\u03c0/3 - \u03c0 = \u03c0/3.\ntan(\u03c0/3) = \u221a3. Tangent is positive in Q3.\n**tan(4\u03c0/3) = \u221a3**\n\n**(d) sin(-\u03c0/4):**\n-\u03c0/4 is equivalent to rotating \u03c0/4 clockwise, which lands in Q4.\nReference angle: \u03c0/4.\nsin(\u03c0/4) = \u221a2/2. Sine is negative in Q4.\n**sin(-\u03c0/4) = -\u221a2/2**\n\nAlternatively: sin is an odd function, so sin(-x) = -sin(x). sin(-\u03c0/4) = -sin(\u03c0/4) = -\u221a2/2."
+          "problem": "Evaluate without a calculator: (a) sin(5π/6), (b) cos(315°), (c) tan(4π/3), (d) sin(-π/4).",
+          "solution": "**(a) sin(5π/6):**\n5π/6 is in Q2 (between π/2 and π).\nReference angle: π - 5π/6 = π/6.\nsin(π/6) = 1/2. Sine is positive in Q2.\n**sin(5π/6) = 1/2**\n\n**(b) cos(315°):**\n315° is in Q4 (between 270° and 360°).\nReference angle: 360° - 315° = 45°.\ncos(45°) = √2/2. Cosine is positive in Q4.\n**cos(315°) = √2/2**\n\n**(c) tan(4π/3):**\n4π/3 is in Q3 (between π and 3π/2).\nReference angle: 4π/3 - π = π/3.\ntan(π/3) = √3. Tangent is positive in Q3.\n**tan(4π/3) = √3**\n\n**(d) sin(-π/4):**\n-π/4 is equivalent to rotating π/4 clockwise, which lands in Q4.\nReference angle: π/4.\nsin(π/4) = √2/2. Sine is negative in Q4.\n**sin(-π/4) = -√2/2**\n\nAlternatively: sin is an odd function, so sin(-x) = -sin(x). sin(-π/4) = -sin(π/4) = -√2/2."
         }
-      ]
+      ],
+      "lessonId": "unit-circle"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "unit-circle-values",
-      "title": "We-Do: Unit Circle Values \u2014 Guided Practice",
+      "title": "We-Do: Unit Circle Values — Guided Practice",
       "problems": [
         {
-          "question": "Convert 7\u03c0/6 to degrees and identify its quadrant.",
-          "answer": "210\u00b0, Quadrant III",
+          "question": "Convert 7π/6 to degrees and identify its quadrant.",
+          "answer": "210°, Quadrant III",
           "hints": [
-            "7\u03c0/6 \u00d7 (180\u00b0/\u03c0) = 7(180\u00b0)/6 = 1260\u00b0/6 = 210\u00b0.",
-            "210\u00b0 is between 180\u00b0 and 270\u00b0, so it's in Quadrant III."
+            "7π/6 × (180°/π) = 7(180°)/6 = 1260°/6 = 210°.",
+            "210° is between 180° and 270°, so it's in Quadrant III."
           ]
         },
         {
-          "question": "Evaluate cos(2\u03c0/3) without a calculator.",
+          "question": "Evaluate cos(2π/3) without a calculator.",
           "answer": "-1/2",
           "hints": [
-            "2\u03c0/3 is in Q2 (between \u03c0/2 and \u03c0).",
-            "Reference angle: \u03c0 - 2\u03c0/3 = \u03c0/3. cos(\u03c0/3) = 1/2.",
-            "Cosine is negative in Q2: cos(2\u03c0/3) = -1/2."
+            "2π/3 is in Q2 (between π/2 and π).",
+            "Reference angle: π - 2π/3 = π/3. cos(π/3) = 1/2.",
+            "Cosine is negative in Q2: cos(2π/3) = -1/2."
           ]
         },
         {
-          "question": "A circle has radius 8 inches. Find the arc length subtended by a central angle of 150\u00b0.",
-          "answer": "20\u03c0/3 \u2248 20.94 inches",
+          "question": "A circle has radius 8 inches. Find the arc length subtended by a central angle of 150°.",
+          "answer": "20π/3 ≈ 20.94 inches",
           "hints": [
-            "First convert 150\u00b0 to radians: 150\u00b0 \u00d7 \u03c0/180\u00b0 = 5\u03c0/6.",
-            "Use s = r\u03b8: s = 8 \u00d7 5\u03c0/6 = 40\u03c0/6 = 20\u03c0/3 \u2248 20.94 inches."
+            "First convert 150° to radians: 150° × π/180° = 5π/6.",
+            "Use s = rθ: s = 8 × 5π/6 = 40π/6 = 20π/3 ≈ 20.94 inches."
           ]
         },
         {
-          "question": "Evaluate sin(330\u00b0) and tan(330\u00b0).",
-          "answer": "sin(330\u00b0) = -1/2, tan(330\u00b0) = -\u221a3/3",
+          "question": "Evaluate sin(330°) and tan(330°).",
+          "answer": "sin(330°) = -1/2, tan(330°) = -√3/3",
           "hints": [
-            "330\u00b0 is in Q4. Reference angle: 360\u00b0 - 330\u00b0 = 30\u00b0.",
-            "sin(30\u00b0) = 1/2. Sine is negative in Q4: sin(330\u00b0) = -1/2.",
-            "tan(30\u00b0) = \u221a3/3. Tangent is negative in Q4: tan(330\u00b0) = -\u221a3/3."
+            "330° is in Q4. Reference angle: 360° - 330° = 30°.",
+            "sin(30°) = 1/2. Sine is negative in Q4: sin(330°) = -1/2.",
+            "tan(30°) = √3/3. Tangent is negative in Q4: tan(330°) = -√3/3."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, multiply 7\u03c0/6 by 180\u00b0/\u03c0. The \u03c0 cancels \u2014 what degree value do you get?"
+      "initialPrompt": "For the first problem, multiply 7π/6 by 180°/π. The π cancels — what degree value do you get?",
+      "lessonId": "unit-circle"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "right-triangle-trig",
       "title": "Concept: Right Triangle Trig",
-      "initialPrompt": "Evaluate sin\u207b\u00b9(1/2). What angle in [-\u03c0/2, \u03c0/2] has a sine of 1/2? There's only one answer \u2014 which is it?",
-      "content": "**Right Triangle Trig and Inverse Functions**\n\n**SOH-CAH-TOA (review from Geometry):**\n- sin \u03b8 = Opposite / Hypotenuse\n- cos \u03b8 = Adjacent / Hypotenuse\n- tan \u03b8 = Opposite / Adjacent\n\n**Solving right triangles:** Given some sides and/or angles, find ALL missing parts. Use trig ratios to connect angles and sides.\n\n**Inverse Trig Functions** answer the question: 'What angle has this trig value?'\n- \u03b8 = sin\u207b\u00b9(x) means sin \u03b8 = x, with \u03b8 in [-\u03c0/2, \u03c0/2] (Q1 or Q4)\n- \u03b8 = cos\u207b\u00b9(x) means cos \u03b8 = x, with \u03b8 in [0, \u03c0] (Q1 or Q2)\n- \u03b8 = tan\u207b\u00b9(x) means tan \u03b8 = x, with \u03b8 in (-\u03c0/2, \u03c0/2) (Q1 or Q4)\n\n**Critical detail:** Inverse trig functions return ONE specific angle (the principal value). If the problem asks for all solutions, you must use the principal value plus symmetry.\n\n**Domain/Range:**\n| Function | Domain | Range |\n|----------|--------|-------|\n| sin\u207b\u00b9(x) | [-1, 1] | [-\u03c0/2, \u03c0/2] |\n| cos\u207b\u00b9(x) | [-1, 1] | [0, \u03c0] |\n| tan\u207b\u00b9(x) | all reals | (-\u03c0/2, \u03c0/2) |\n\n**Applications:** angle of elevation/depression, navigation, surveying, physics (force components)."
+      "initialPrompt": "Evaluate sin⁻¹(1/2). What angle in [-π/2, π/2] has a sine of 1/2? There's only one answer — which is it?",
+      "content": "**Right Triangle Trig and Inverse Functions**\n\n**SOH-CAH-TOA (review from Geometry):**\n- sin θ = Opposite / Hypotenuse\n- cos θ = Adjacent / Hypotenuse\n- tan θ = Opposite / Adjacent\n\n**Solving right triangles:** Given some sides and/or angles, find ALL missing parts. Use trig ratios to connect angles and sides.\n\n**Inverse Trig Functions** answer the question: 'What angle has this trig value?'\n- θ = sin⁻¹(x) means sin θ = x, with θ in [-π/2, π/2] (Q1 or Q4)\n- θ = cos⁻¹(x) means cos θ = x, with θ in [0, π] (Q1 or Q2)\n- θ = tan⁻¹(x) means tan θ = x, with θ in (-π/2, π/2) (Q1 or Q4)\n\n**Critical detail:** Inverse trig functions return ONE specific angle (the principal value). If the problem asks for all solutions, you must use the principal value plus symmetry.\n\n**Domain/Range:**\n| Function | Domain | Range |\n|----------|--------|-------|\n| sin⁻¹(x) | [-1, 1] | [-π/2, π/2] |\n| cos⁻¹(x) | [-1, 1] | [0, π] |\n| tan⁻¹(x) | all reals | (-π/2, π/2) |\n\n**Applications:** angle of elevation/depression, navigation, surveying, physics (force components).",
+      "lessonId": "right-triangle-trig"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "right-triangle-trig",
-      "title": "I-Do: Right Triangle Trig \u2014 Worked Examples",
-      "initialPrompt": "For part (a), which trig ratio connects the angle (65\u00b0), the hypotenuse (20 ft), and the height (opposite)? Why is sine the right choice here, not cosine or tangent?",
+      "title": "I-Do: Right Triangle Trig — Worked Examples",
+      "initialPrompt": "For part (a), which trig ratio connects the angle (65°), the hypotenuse (20 ft), and the height (opposite)? Why is sine the right choice here, not cosine or tangent?",
       "examples": [
         {
-          "problem": "(a) A 20-foot ladder leans against a wall, making a 65\u00b0 angle with the ground. How high up the wall does it reach? (b) Evaluate cos\u207b\u00b9(-\u221a3/2). (c) From a point 50 meters from the base of a building, the angle of elevation to the top is 32\u00b0. Find the height of the building.",
-          "solution": "**(a) Ladder problem:**\nDraw the triangle: hypotenuse = 20 ft, angle with ground = 65\u00b0, height = opposite side.\nsin(65\u00b0) = opposite/hypotenuse = h/20\nh = 20 sin(65\u00b0) \u2248 20(0.9063) \u2248 **18.13 feet**\n\n**(b) cos\u207b\u00b9(-\u221a3/2):**\nWe need an angle in [0, \u03c0] where cosine = -\u221a3/2.\ncos(\u03c0/6) = \u221a3/2. Since we need the negative value and must stay in [0, \u03c0], the angle is in Q2.\n\u03b8 = \u03c0 - \u03c0/6 = **5\u03c0/6 (or 150\u00b0)**\n\nCheck: cos(5\u03c0/6) = -cos(\u03c0/6) = -\u221a3/2. \u2713\n\n**(c) Building height:**\nDraw the triangle: adjacent = 50 m, angle of elevation = 32\u00b0, height = opposite side.\ntan(32\u00b0) = h/50\nh = 50 tan(32\u00b0) \u2248 50(0.6249) \u2248 **31.24 meters**"
+          "problem": "(a) A 20-foot ladder leans against a wall, making a 65° angle with the ground. How high up the wall does it reach? (b) Evaluate cos⁻¹(-√3/2). (c) From a point 50 meters from the base of a building, the angle of elevation to the top is 32°. Find the height of the building.",
+          "solution": "**(a) Ladder problem:**\nDraw the triangle: hypotenuse = 20 ft, angle with ground = 65°, height = opposite side.\nsin(65°) = opposite/hypotenuse = h/20\nh = 20 sin(65°) ≈ 20(0.9063) ≈ **18.13 feet**\n\n**(b) cos⁻¹(-√3/2):**\nWe need an angle in [0, π] where cosine = -√3/2.\ncos(π/6) = √3/2. Since we need the negative value and must stay in [0, π], the angle is in Q2.\nθ = π - π/6 = **5π/6 (or 150°)**\n\nCheck: cos(5π/6) = -cos(π/6) = -√3/2. ✓\n\n**(c) Building height:**\nDraw the triangle: adjacent = 50 m, angle of elevation = 32°, height = opposite side.\ntan(32°) = h/50\nh = 50 tan(32°) ≈ 50(0.6249) ≈ **31.24 meters**"
         }
-      ]
+      ],
+      "lessonId": "right-triangle-trig"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "right-triangle-trig",
-      "title": "We-Do: Right Triangle Trig \u2014 Guided Practice",
+      "title": "We-Do: Right Triangle Trig — Guided Practice",
       "problems": [
         {
-          "question": "Evaluate: (a) sin\u207b\u00b9(\u221a2/2), (b) tan\u207b\u00b9(-1).",
-          "answer": "(a) \u03c0/4 (45\u00b0). (b) -\u03c0/4 (-45\u00b0).",
+          "question": "Evaluate: (a) sin⁻¹(√2/2), (b) tan⁻¹(-1).",
+          "answer": "(a) π/4 (45°). (b) -π/4 (-45°).",
           "hints": [
-            "(a) sin(\u03c0/4) = \u221a2/2 and \u03c0/4 is in [-\u03c0/2, \u03c0/2]. So sin\u207b\u00b9(\u221a2/2) = \u03c0/4.",
-            "(b) tan(\u03c0/4) = 1, so tan(-\u03c0/4) = -1 (tan is odd). Since -\u03c0/4 is in (-\u03c0/2, \u03c0/2), tan\u207b\u00b9(-1) = -\u03c0/4."
+            "(a) sin(π/4) = √2/2 and π/4 is in [-π/2, π/2]. So sin⁻¹(√2/2) = π/4.",
+            "(b) tan(π/4) = 1, so tan(-π/4) = -1 (tan is odd). Since -π/4 is in (-π/2, π/2), tan⁻¹(-1) = -π/4."
           ]
         },
         {
           "question": "A ramp rises 6 feet over a horizontal distance of 24 feet. Find the angle of incline.",
-          "answer": "\u03b8 = tan\u207b\u00b9(6/24) = tan\u207b\u00b9(1/4) \u2248 14.04\u00b0",
+          "answer": "θ = tan⁻¹(6/24) = tan⁻¹(1/4) ≈ 14.04°",
           "hints": [
             "Rise = opposite = 6, run = adjacent = 24.",
-            "tan \u03b8 = 6/24 = 1/4. \u03b8 = tan\u207b\u00b9(0.25) \u2248 14.04\u00b0."
+            "tan θ = 6/24 = 1/4. θ = tan⁻¹(0.25) ≈ 14.04°."
           ]
         },
         {
           "question": "In a right triangle, the hypotenuse is 13 and one leg is 5. Find all missing sides and angles.",
-          "answer": "Other leg = 12, angles \u2248 22.62\u00b0 and 67.38\u00b0",
+          "answer": "Other leg = 12, angles ≈ 22.62° and 67.38°",
           "hints": [
-            "Pythagorean theorem: b\u00b2 = 13\u00b2 - 5\u00b2 = 169 - 25 = 144, so b = 12.",
-            "sin\u207b\u00b9(5/13) \u2248 22.62\u00b0 and sin\u207b\u00b9(12/13) \u2248 67.38\u00b0. Check: 22.62\u00b0 + 67.38\u00b0 = 90\u00b0. \u2713"
+            "Pythagorean theorem: b² = 13² - 5² = 169 - 25 = 144, so b = 12.",
+            "sin⁻¹(5/13) ≈ 22.62° and sin⁻¹(12/13) ≈ 67.38°. Check: 22.62° + 67.38° = 90°. ✓"
           ]
         }
       ],
-      "initialPrompt": "For the inverse trig evaluations, remember the ranges: sin\u207b\u00b9 returns angles in [-\u03c0/2, \u03c0/2], tan\u207b\u00b9 returns angles in (-\u03c0/2, \u03c0/2). Which angle in that range has sin = \u221a2/2?"
+      "initialPrompt": "For the inverse trig evaluations, remember the ranges: sin⁻¹ returns angles in [-π/2, π/2], tan⁻¹ returns angles in (-π/2, π/2). Which angle in that range has sin = √2/2?",
+      "lessonId": "right-triangle-trig"
     },
     {
       "type": "explanation",
@@ -185,213 +193,247 @@
       "skill": "inverse-trig-functions",
       "title": "Concept: Inverse Trig Functions",
       "initialPrompt": "For y = 3sin(2x) + 1, identify: amplitude, period, midline, maximum value, and minimum value. How does this compare to the basic y = sin(x)?",
-      "content": "**Graphing Sinusoidal Functions**\n\nThe general form: **y = A sin(Bx + C) + D** or **y = A cos(Bx + C) + D**\n\n**Four transformations to identify:**\n\n| Parameter | What It Controls | Formula |\n|-----------|------------------|---------|\n| A | **Amplitude** (vertical stretch) | Amplitude = |A| |\n| B | **Period** (horizontal stretch) | Period = 2\u03c0/|B| |\n| C | **Phase shift** (horizontal shift) | Phase shift = -C/B |\n| D | **Vertical shift** (midline) | Midline: y = D |\n\n**Graphing procedure:**\n1. Identify A, B, C, D\n2. Calculate amplitude = |A|, period = 2\u03c0/|B|, phase shift = -C/B, midline = D\n3. Plot the midline (horizontal line y = D)\n4. Mark max (D + |A|) and min (D - |A|)\n5. Divide one period into 4 equal parts to find the key points\n6. Plot key points and connect with a smooth curve\n\n**Key points for one period of y = sin(x):**\n- Start: (0, 0) \u2014 midline crossing going up\n- Quarter: (\u03c0/2, 1) \u2014 maximum\n- Half: (\u03c0, 0) \u2014 midline crossing going down\n- Three-quarter: (3\u03c0/2, -1) \u2014 minimum\n- End: (2\u03c0, 0) \u2014 back to start\n\n**Sine vs. Cosine:** cos(x) = sin(x + \u03c0/2). Cosine starts at maximum; sine starts at midline. Same shape, shifted by \u03c0/2."
+      "content": "**Graphing Sinusoidal Functions**\n\nThe general form: **y = A sin(Bx + C) + D** or **y = A cos(Bx + C) + D**\n\n**Four transformations to identify:**\n\n| Parameter | What It Controls | Formula |\n|-----------|------------------|---------|\n| A | **Amplitude** (vertical stretch) | Amplitude = |A| |\n| B | **Period** (horizontal stretch) | Period = 2π/|B| |\n| C | **Phase shift** (horizontal shift) | Phase shift = -C/B |\n| D | **Vertical shift** (midline) | Midline: y = D |\n\n**Graphing procedure:**\n1. Identify A, B, C, D\n2. Calculate amplitude = |A|, period = 2π/|B|, phase shift = -C/B, midline = D\n3. Plot the midline (horizontal line y = D)\n4. Mark max (D + |A|) and min (D - |A|)\n5. Divide one period into 4 equal parts to find the key points\n6. Plot key points and connect with a smooth curve\n\n**Key points for one period of y = sin(x):**\n- Start: (0, 0) — midline crossing going up\n- Quarter: (π/2, 1) — maximum\n- Half: (π, 0) — midline crossing going down\n- Three-quarter: (3π/2, -1) — minimum\n- End: (2π, 0) — back to start\n\n**Sine vs. Cosine:** cos(x) = sin(x + π/2). Cosine starts at maximum; sine starts at midline. Same shape, shifted by π/2.",
+      "lessonId": "graphing-sinusoidal"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "inverse-trig-functions",
-      "title": "I-Do: Inverse Trig Functions \u2014 Worked Examples",
+      "title": "I-Do: Inverse Trig Functions — Worked Examples",
       "initialPrompt": "How would the graph change if we replaced sin with cos? Where would the starting key point be? (Hint: cosine starts at its maximum, not at the midline.)",
       "examples": [
         {
-          "problem": "Graph y = 2sin(\u03c0/2 \u00b7 x - \u03c0) + 3 over one full period. Identify amplitude, period, phase shift, and midline.",
-          "solution": "**Rewrite in standard form:** y = 2sin((\u03c0/2)(x - 2)) + 3\nFactor B out of the argument: (\u03c0/2)x - \u03c0 = (\u03c0/2)(x - 2)\n\n**Identify parameters:**\n- A = 2 \u2192 Amplitude = 2\n- B = \u03c0/2 \u2192 Period = 2\u03c0/(\u03c0/2) = 2\u03c0 \u00b7 2/\u03c0 = **4**\n- Phase shift = -C/B. Here C = -\u03c0, B = \u03c0/2, so shift = -(-\u03c0)/(\u03c0/2) = \u03c0 \u00b7 2/\u03c0 = **2 (right)**\n- D = 3 \u2192 Midline: **y = 3**\n\n**Key values:**\n- Maximum = 3 + 2 = 5\n- Minimum = 3 - 2 = 1\n\n**Key points (starting at phase shift, spacing = period/4 = 1):**\n| x | y | Description |\n|---|---|-------------|\n| 2 | 3 | Start at midline (going up) |\n| 3 | 5 | Maximum |\n| 4 | 3 | Midline (going down) |\n| 5 | 1 | Minimum |\n| 6 | 3 | Back to midline |\n\nThe graph is a sine wave centered on y = 3, oscillating between 1 and 5, with each complete cycle taking 4 units along the x-axis, shifted 2 units to the right."
+          "problem": "Graph y = 2sin(π/2 · x - π) + 3 over one full period. Identify amplitude, period, phase shift, and midline.",
+          "solution": "**Rewrite in standard form:** y = 2sin((π/2)(x - 2)) + 3\nFactor B out of the argument: (π/2)x - π = (π/2)(x - 2)\n\n**Identify parameters:**\n- A = 2 → Amplitude = 2\n- B = π/2 → Period = 2π/(π/2) = 2π · 2/π = **4**\n- Phase shift = -C/B. Here C = -π, B = π/2, so shift = -(-π)/(π/2) = π · 2/π = **2 (right)**\n- D = 3 → Midline: **y = 3**\n\n**Key values:**\n- Maximum = 3 + 2 = 5\n- Minimum = 3 - 2 = 1\n\n**Key points (starting at phase shift, spacing = period/4 = 1):**\n| x | y | Description |\n|---|---|-------------|\n| 2 | 3 | Start at midline (going up) |\n| 3 | 5 | Maximum |\n| 4 | 3 | Midline (going down) |\n| 5 | 1 | Minimum |\n| 6 | 3 | Back to midline |\n\nThe graph is a sine wave centered on y = 3, oscillating between 1 and 5, with each complete cycle taking 4 units along the x-axis, shifted 2 units to the right."
         }
-      ]
+      ],
+      "lessonId": "graphing-sinusoidal"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "graphing-sinusoidal",
-      "title": "We-Do: Graphing Sinusoidal \u2014 Guided Practice",
+      "title": "We-Do: Graphing Sinusoidal — Guided Practice",
       "problems": [
         {
-          "question": "Identify amplitude, period, phase shift, and midline for y = -4cos(3x - \u03c0/2) + 2.",
-          "answer": "Amplitude = 4, Period = 2\u03c0/3, Phase shift = \u03c0/6 right, Midline y = 2",
+          "question": "Identify amplitude, period, phase shift, and midline for y = -4cos(3x - π/2) + 2.",
+          "answer": "Amplitude = 4, Period = 2π/3, Phase shift = π/6 right, Midline y = 2",
           "hints": [
             "A = -4, so amplitude = |A| = 4. The negative means the graph is reflected (starts at minimum).",
-            "B = 3, so period = 2\u03c0/3. Factor: 3(x - \u03c0/6), so phase shift = \u03c0/6 to the right.",
+            "B = 3, so period = 2π/3. Factor: 3(x - π/6), so phase shift = π/6 to the right.",
             "D = 2, so the midline is y = 2. Max = 2 + 4 = 6, Min = 2 - 4 = -2."
           ]
         },
         {
-          "question": "Write an equation for a sinusoidal function with amplitude 5, period \u03c0, shifted up 1, and no phase shift.",
+          "question": "Write an equation for a sinusoidal function with amplitude 5, period π, shifted up 1, and no phase shift.",
           "answer": "y = 5sin(2x) + 1 (or y = 5cos(2x) + 1)",
           "hints": [
             "Amplitude 5: A = 5.",
-            "Period = \u03c0: 2\u03c0/B = \u03c0, so B = 2.",
+            "Period = π: 2π/B = π, so B = 2.",
             "Vertical shift up 1: D = 1. No phase shift: C = 0.",
             "y = 5sin(2x) + 1. Cosine works too: y = 5cos(2x) + 1."
           ]
         },
         {
           "question": "A Ferris wheel has diameter 40 meters, its center is 25 meters above the ground, and it completes one revolution every 3 minutes. A rider starts at the bottom. Write a function h(t) for the rider's height above the ground after t minutes.",
-          "answer": "h(t) = -20cos(2\u03c0t/3) + 25",
+          "answer": "h(t) = -20cos(2πt/3) + 25",
           "hints": [
             "Amplitude = radius = 20 meters. Midline = center height = 25 meters. Period = 3 minutes.",
-            "B = 2\u03c0/period = 2\u03c0/3.",
-            "Starting at the bottom means minimum first. Use negative cosine: h(t) = -20cos(2\u03c0t/3) + 25.",
-            "Check: h(0) = -20(1) + 25 = 5 meters (bottom). h(1.5) = -20(-1) + 25 = 45 meters (top). \u2713"
+            "B = 2π/period = 2π/3.",
+            "Starting at the bottom means minimum first. Use negative cosine: h(t) = -20cos(2πt/3) + 25.",
+            "Check: h(0) = -20(1) + 25 = 5 meters (bottom). h(1.5) = -20(-1) + 25 = 45 meters (top). ✓"
           ]
         }
       ],
-      "initialPrompt": "For the first problem, factor out B = 3 from the argument 3x - \u03c0/2 to find the phase shift. What do you get when you write it as 3(x - ?)?"
+      "initialPrompt": "For the first problem, factor out B = 3 from the argument 3x - π/2 to find the phase shift. What do you get when you write it as 3(x - ?)?",
+      "lessonId": "trig-equations"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "graphing-sinusoidal",
       "title": "Concept: Graphing Sinusoidal",
-      "initialPrompt": "Solve 2sin \u03b8 - 1 = 0 for \u03b8 in [0, 2\u03c0). First isolate sin \u03b8. Then: in which quadrants is sine positive? What are the two angles?",
-      "content": "**Solving Trigonometric Equations**\n\nThe goal: find ALL angles \u03b8 that satisfy the equation within a given interval (usually [0, 2\u03c0) or [0\u00b0, 360\u00b0)).\n\n**Strategy:**\n1. Isolate the trig function (treat sin \u03b8 or cos \u03b8 like a variable)\n2. Find the reference angle using inverse trig\n3. Use quadrant analysis to find ALL solutions in the interval\n\n**Key principle:** Most trig equations have TWO solutions per period (except at max/min values).\n\n**Common patterns:**\n\n| Equation Form | Solutions in [0, 2\u03c0) |\n|---------------|----------------------|\n| sin \u03b8 = k (k > 0) | \u03b8 = sin\u207b\u00b9(k) and \u03b8 = \u03c0 - sin\u207b\u00b9(k) |\n| sin \u03b8 = k (k < 0) | \u03b8 = \u03c0 - sin\u207b\u00b9(k) and \u03b8 = 2\u03c0 + sin\u207b\u00b9(k) |\n| cos \u03b8 = k (k > 0) | \u03b8 = cos\u207b\u00b9(k) and \u03b8 = 2\u03c0 - cos\u207b\u00b9(k) |\n| cos \u03b8 = k (k < 0) | \u03b8 = cos\u207b\u00b9(k) and \u03b8 = 2\u03c0 - cos\u207b\u00b9(k) |\n| tan \u03b8 = k | \u03b8 = tan\u207b\u00b9(k) and \u03b8 = \u03c0 + tan\u207b\u00b9(k) |\n\n**Equations reducible to quadratics:**\n2sin\u00b2\u03b8 - sin \u03b8 - 1 = 0 \u2192 let u = sin \u03b8 \u2192 2u\u00b2 - u - 1 = 0 \u2192 factor and solve."
+      "initialPrompt": "Solve 2sin θ - 1 = 0 for θ in [0, 2π). First isolate sin θ. Then: in which quadrants is sine positive? What are the two angles?",
+      "content": "**Solving Trigonometric Equations**\n\nThe goal: find ALL angles θ that satisfy the equation within a given interval (usually [0, 2π) or [0°, 360°)).\n\n**Strategy:**\n1. Isolate the trig function (treat sin θ or cos θ like a variable)\n2. Find the reference angle using inverse trig\n3. Use quadrant analysis to find ALL solutions in the interval\n\n**Key principle:** Most trig equations have TWO solutions per period (except at max/min values).\n\n**Common patterns:**\n\n| Equation Form | Solutions in [0, 2π) |\n|---------------|----------------------|\n| sin θ = k (k > 0) | θ = sin⁻¹(k) and θ = π - sin⁻¹(k) |\n| sin θ = k (k < 0) | θ = π - sin⁻¹(k) and θ = 2π + sin⁻¹(k) |\n| cos θ = k (k > 0) | θ = cos⁻¹(k) and θ = 2π - cos⁻¹(k) |\n| cos θ = k (k < 0) | θ = cos⁻¹(k) and θ = 2π - cos⁻¹(k) |\n| tan θ = k | θ = tan⁻¹(k) and θ = π + tan⁻¹(k) |\n\n**Equations reducible to quadratics:**\n2sin²θ - sin θ - 1 = 0 → let u = sin θ → 2u² - u - 1 = 0 → factor and solve.",
+      "lessonId": "trig-equations"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "graphing-sinusoidal",
-      "title": "I-Do: Graphing Sinusoidal \u2014 Worked Examples",
-      "initialPrompt": "In part (b), why are there 4 solutions instead of 2? The squared equation splits into two cases (tan \u03b8 = 1 and tan \u03b8 = -1), and each case has two solutions per period.",
+      "title": "I-Do: Graphing Sinusoidal — Worked Examples",
+      "initialPrompt": "In part (b), why are there 4 solutions instead of 2? The squared equation splits into two cases (tan θ = 1 and tan θ = -1), and each case has two solutions per period.",
       "examples": [
         {
-          "problem": "Solve each equation for \u03b8 in [0, 2\u03c0):\n(a) 2cos \u03b8 + \u221a3 = 0\n(b) tan\u00b2\u03b8 - 1 = 0\n(c) 2sin\u00b2\u03b8 + sin \u03b8 - 1 = 0",
-          "solution": "**(a) 2cos \u03b8 + \u221a3 = 0:**\nIsolate: cos \u03b8 = -\u221a3/2\nReference angle: cos\u207b\u00b9(\u221a3/2) = \u03c0/6\nCosine is negative in Q2 and Q3:\n\u03b8 = \u03c0 - \u03c0/6 = **5\u03c0/6** and \u03b8 = \u03c0 + \u03c0/6 = **7\u03c0/6**\n\n**(b) tan\u00b2\u03b8 - 1 = 0:**\ntan\u00b2\u03b8 = 1, so tan \u03b8 = \u00b11\n\ntan \u03b8 = 1: reference angle = \u03c0/4. Tangent positive in Q1, Q3.\n\u03b8 = \u03c0/4 and \u03b8 = \u03c0 + \u03c0/4 = 5\u03c0/4\n\ntan \u03b8 = -1: reference angle = \u03c0/4. Tangent negative in Q2, Q4.\n\u03b8 = \u03c0 - \u03c0/4 = 3\u03c0/4 and \u03b8 = 2\u03c0 - \u03c0/4 = 7\u03c0/4\n\n**Solutions: \u03b8 = \u03c0/4, 3\u03c0/4, 5\u03c0/4, 7\u03c0/4**\n\n**(c) 2sin\u00b2\u03b8 + sin \u03b8 - 1 = 0:**\nSubstitute u = sin \u03b8: 2u\u00b2 + u - 1 = 0\nFactor: (2u - 1)(u + 1) = 0\nu = 1/2 or u = -1\n\nsin \u03b8 = 1/2: \u03b8 = \u03c0/6 and \u03b8 = \u03c0 - \u03c0/6 = 5\u03c0/6\nsin \u03b8 = -1: \u03b8 = 3\u03c0/2\n\n**Solutions: \u03b8 = \u03c0/6, 5\u03c0/6, 3\u03c0/2**"
+          "problem": "Solve each equation for θ in [0, 2π):\n(a) 2cos θ + √3 = 0\n(b) tan²θ - 1 = 0\n(c) 2sin²θ + sin θ - 1 = 0",
+          "solution": "**(a) 2cos θ + √3 = 0:**\nIsolate: cos θ = -√3/2\nReference angle: cos⁻¹(√3/2) = π/6\nCosine is negative in Q2 and Q3:\nθ = π - π/6 = **5π/6** and θ = π + π/6 = **7π/6**\n\n**(b) tan²θ - 1 = 0:**\ntan²θ = 1, so tan θ = ±1\n\ntan θ = 1: reference angle = π/4. Tangent positive in Q1, Q3.\nθ = π/4 and θ = π + π/4 = 5π/4\n\ntan θ = -1: reference angle = π/4. Tangent negative in Q2, Q4.\nθ = π - π/4 = 3π/4 and θ = 2π - π/4 = 7π/4\n\n**Solutions: θ = π/4, 3π/4, 5π/4, 7π/4**\n\n**(c) 2sin²θ + sin θ - 1 = 0:**\nSubstitute u = sin θ: 2u² + u - 1 = 0\nFactor: (2u - 1)(u + 1) = 0\nu = 1/2 or u = -1\n\nsin θ = 1/2: θ = π/6 and θ = π - π/6 = 5π/6\nsin θ = -1: θ = 3π/2\n\n**Solutions: θ = π/6, 5π/6, 3π/2**"
         }
-      ]
+      ],
+      "lessonId": "trig-equations"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "trig-equations-basic",
-      "title": "We-Do: Trig Equations Basic \u2014 Guided Practice",
+      "title": "We-Do: Trig Equations Basic — Guided Practice",
       "problems": [
         {
-          "question": "Solve for \u03b8 in [0, 2\u03c0): 2sin \u03b8 - \u221a3 = 0.",
-          "answer": "\u03b8 = \u03c0/3 and \u03b8 = 2\u03c0/3",
+          "question": "Solve for θ in [0, 2π): 2sin θ - √3 = 0.",
+          "answer": "θ = π/3 and θ = 2π/3",
           "hints": [
-            "Isolate: sin \u03b8 = \u221a3/2.",
-            "Reference angle: sin\u207b\u00b9(\u221a3/2) = \u03c0/3.",
-            "Sine is positive in Q1 and Q2: \u03b8 = \u03c0/3 and \u03b8 = \u03c0 - \u03c0/3 = 2\u03c0/3."
+            "Isolate: sin θ = √3/2.",
+            "Reference angle: sin⁻¹(√3/2) = π/3.",
+            "Sine is positive in Q1 and Q2: θ = π/3 and θ = π - π/3 = 2π/3."
           ]
         },
         {
-          "question": "Solve for \u03b8 in [0, 2\u03c0): cos\u00b2\u03b8 = 3/4.",
-          "answer": "\u03b8 = \u03c0/6, 5\u03c0/6, 7\u03c0/6, 11\u03c0/6",
+          "question": "Solve for θ in [0, 2π): cos²θ = 3/4.",
+          "answer": "θ = π/6, 5π/6, 7π/6, 11π/6",
           "hints": [
-            "cos\u00b2\u03b8 = 3/4, so cos \u03b8 = \u00b1\u221a3/2.",
-            "cos \u03b8 = \u221a3/2: Q1 and Q4 \u2192 \u03b8 = \u03c0/6 and 11\u03c0/6.",
-            "cos \u03b8 = -\u221a3/2: Q2 and Q3 \u2192 \u03b8 = 5\u03c0/6 and 7\u03c0/6."
+            "cos²θ = 3/4, so cos θ = ±√3/2.",
+            "cos θ = √3/2: Q1 and Q4 → θ = π/6 and 11π/6.",
+            "cos θ = -√3/2: Q2 and Q3 → θ = 5π/6 and 7π/6."
           ]
         },
         {
-          "question": "Solve for \u03b8 in [0, 2\u03c0): 2cos\u00b2\u03b8 - cos \u03b8 = 0.",
-          "answer": "\u03b8 = \u03c0/3, \u03c0/2, 3\u03c0/2, 5\u03c0/3",
+          "question": "Solve for θ in [0, 2π): 2cos²θ - cos θ = 0.",
+          "answer": "θ = π/3, π/2, 3π/2, 5π/3",
           "hints": [
-            "Factor: cos \u03b8(2cos \u03b8 - 1) = 0.",
-            "cos \u03b8 = 0: \u03b8 = \u03c0/2 and 3\u03c0/2.",
-            "2cos \u03b8 - 1 = 0 \u2192 cos \u03b8 = 1/2: \u03b8 = \u03c0/3 and 5\u03c0/3."
+            "Factor: cos θ(2cos θ - 1) = 0.",
+            "cos θ = 0: θ = π/2 and 3π/2.",
+            "2cos θ - 1 = 0 → cos θ = 1/2: θ = π/3 and 5π/3."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, isolate sin \u03b8 first. What value do you get? Then think: which quadrants have positive sine?"
+      "initialPrompt": "For the first problem, isolate sin θ first. What value do you get? Then think: which quadrants have positive sine?",
+      "lessonId": "right-triangle-trig"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "skill": "trig-equations-basic",
-      "title": "You-Do: Trig Equations Basic \u2014 Independent Practice",
+      "title": "You-Do: Trig Equations Basic — Independent Practice",
       "problems": [
         {
-          "question": "Convert 315\u00b0 to radians and find the reference angle.",
-          "answer": "7\u03c0/4 radians, reference angle = \u03c0/4 (45\u00b0)",
+          "question": "Convert 315° to radians and find the reference angle.",
+          "answer": "7π/4 radians, reference angle = π/4 (45°)",
           "hints": [
-            "315\u00b0 \u00d7 \u03c0/180\u00b0 = 315\u03c0/180 = 7\u03c0/4.",
-            "315\u00b0 is in Q4. Reference angle: 360\u00b0 - 315\u00b0 = 45\u00b0 = \u03c0/4."
+            "315° × π/180° = 315π/180 = 7π/4.",
+            "315° is in Q4. Reference angle: 360° - 315° = 45° = π/4."
           ]
         },
         {
-          "question": "Evaluate without a calculator: sin(5\u03c0/3), cos(3\u03c0/4), tan(7\u03c0/6).",
-          "answer": "sin(5\u03c0/3) = -\u221a3/2, cos(3\u03c0/4) = -\u221a2/2, tan(7\u03c0/6) = \u221a3/3",
+          "question": "Evaluate without a calculator: sin(5π/3), cos(3π/4), tan(7π/6).",
+          "answer": "sin(5π/3) = -√3/2, cos(3π/4) = -√2/2, tan(7π/6) = √3/3",
           "hints": [
-            "5\u03c0/3 is in Q4, ref angle \u03c0/3. sin negative in Q4: -\u221a3/2.",
-            "3\u03c0/4 is in Q2, ref angle \u03c0/4. cos negative in Q2: -\u221a2/2.",
-            "7\u03c0/6 is in Q3, ref angle \u03c0/6. tan positive in Q3: tan(\u03c0/6) = \u221a3/3."
+            "5π/3 is in Q4, ref angle π/3. sin negative in Q4: -√3/2.",
+            "3π/4 is in Q2, ref angle π/4. cos negative in Q2: -√2/2.",
+            "7π/6 is in Q3, ref angle π/6. tan positive in Q3: tan(π/6) = √3/3."
           ]
         },
         {
-          "question": "A tree casts a shadow 40 feet long when the angle of elevation of the sun is 35\u00b0. How tall is the tree?",
-          "answer": "40 tan(35\u00b0) \u2248 28.01 feet",
+          "question": "A tree casts a shadow 40 feet long when the angle of elevation of the sun is 35°. How tall is the tree?",
+          "answer": "40 tan(35°) ≈ 28.01 feet",
           "hints": [
             "The shadow is the adjacent side, the tree height is the opposite side.",
-            "tan(35\u00b0) = height/40. Height = 40 tan(35\u00b0) \u2248 40(0.7002) \u2248 28.01 feet."
+            "tan(35°) = height/40. Height = 40 tan(35°) ≈ 40(0.7002) ≈ 28.01 feet."
           ]
         },
         {
-          "question": "For y = 3cos(\u03c0x/2) - 1, find the amplitude, period, midline, and the coordinates of the first maximum and first minimum for x \u2265 0.",
+          "question": "For y = 3cos(πx/2) - 1, find the amplitude, period, midline, and the coordinates of the first maximum and first minimum for x ≥ 0.",
           "answer": "Amplitude = 3, Period = 4, Midline y = -1. First max at (0, 2), first min at (2, -4).",
           "hints": [
-            "A = 3, B = \u03c0/2, D = -1. Period = 2\u03c0/(\u03c0/2) = 4.",
+            "A = 3, B = π/2, D = -1. Period = 2π/(π/2) = 4.",
             "Max = -1 + 3 = 2, Min = -1 - 3 = -4.",
             "Cosine starts at max: (0, 2). First min at half-period: (2, -4)."
           ]
         },
         {
-          "question": "Solve for \u03b8 in [0, 2\u03c0): 2sin\u00b2\u03b8 - 3sin \u03b8 + 1 = 0.",
-          "answer": "\u03b8 = \u03c0/6, \u03c0/2, 5\u03c0/6",
+          "question": "Solve for θ in [0, 2π): 2sin²θ - 3sin θ + 1 = 0.",
+          "answer": "θ = π/6, π/2, 5π/6",
           "hints": [
-            "Let u = sin \u03b8: 2u\u00b2 - 3u + 1 = 0. Factor: (2u - 1)(u - 1) = 0.",
-            "u = 1/2 or u = 1. sin \u03b8 = 1/2: \u03b8 = \u03c0/6, 5\u03c0/6. sin \u03b8 = 1: \u03b8 = \u03c0/2."
+            "Let u = sin θ: 2u² - 3u + 1 = 0. Factor: (2u - 1)(u - 1) = 0.",
+            "u = 1/2 or u = 1. sin θ = 1/2: θ = π/6, 5π/6. sin θ = 1: θ = π/2."
           ]
         },
         {
           "question": "A Ferris wheel has a radius of 30 meters, its center is 35 meters above the ground, and it takes 4 minutes for one revolution. A rider starts at the 3 o'clock position (at the center height, going up). Write a function h(t) for height after t minutes, and find when the rider first reaches the top.",
-          "answer": "h(t) = 30sin(\u03c0t/2) + 35. First reaches top at t = 1 minute.",
+          "answer": "h(t) = 30sin(πt/2) + 35. First reaches top at t = 1 minute.",
           "hints": [
             "Starting at center going up = sine behavior. A = 30, midline = 35, period = 4.",
-            "B = 2\u03c0/4 = \u03c0/2. h(t) = 30sin(\u03c0t/2) + 35.",
-            "Top when sin(\u03c0t/2) = 1: \u03c0t/2 = \u03c0/2, so t = 1 minute. h(1) = 30 + 35 = 65 meters."
+            "B = 2π/4 = π/2. h(t) = 30sin(πt/2) + 35.",
+            "Top when sin(πt/2) = 1: πt/2 = π/2, so t = 1 minute. h(1) = 30 + 35 = 65 meters."
           ]
         }
       ],
-      "attemptsRequired": 4
+      "attemptsRequired": 4,
+      "lessonId": "right-triangle-trig"
     }
   ],
   "answerKeys": {
-    "240\u00b0 to radians": "4\u03c0/3",
-    "5\u03c0/4 to degrees": "225\u00b0",
-    "coterminal with -150\u00b0": "210\u00b0",
-    "arc length r=10 \u03b8=3\u03c0/4": "15\u03c0/2 \u2248 23.56 cm",
-    "sin(5\u03c0/6)": "1/2",
-    "cos(315\u00b0)": "\u221a2/2",
-    "tan(4\u03c0/3)": "\u221a3",
-    "sin(-\u03c0/4)": "-\u221a2/2",
-    "7\u03c0/6 to degrees": "210\u00b0",
-    "cos(2\u03c0/3)": "-1/2",
-    "arc length r=8 \u03b8=150\u00b0": "20\u03c0/3 \u2248 20.94 in",
-    "sin(330\u00b0)": "-1/2",
-    "tan(330\u00b0)": "-\u221a3/3",
-    "sin\u207b\u00b9(\u221a2/2)": "\u03c0/4",
-    "tan\u207b\u00b9(-1)": "-\u03c0/4",
-    "ramp angle 6/24": "tan\u207b\u00b9(1/4) \u2248 14.04\u00b0",
-    "right triangle 5-12-13 angles": "22.62\u00b0 and 67.38\u00b0",
-    "ladder 20ft at 65\u00b0": "\u2248 18.13 ft",
-    "cos\u207b\u00b9(-\u221a3/2)": "5\u03c0/6",
-    "building height 50m at 32\u00b0": "\u2248 31.24 m",
-    "y=-4cos(3x-\u03c0/2)+2 params": "Amp=4, Per=2\u03c0/3, Phase=\u03c0/6 right, Mid=2",
-    "amp 5 period \u03c0 up 1": "y=5sin(2x)+1",
-    "Ferris wheel diameter 40 period 3": "h(t)=-20cos(2\u03c0t/3)+25",
-    "y=2sin(\u03c0x/2-\u03c0)+3 params": "Amp=2, Per=4, Phase=2 right, Mid=3",
-    "2cos\u03b8+\u221a3=0": "5\u03c0/6, 7\u03c0/6",
-    "tan\u00b2\u03b8-1=0": "\u03c0/4, 3\u03c0/4, 5\u03c0/4, 7\u03c0/4",
-    "2sin\u00b2\u03b8+sin\u03b8-1=0": "\u03c0/6, 5\u03c0/6, 3\u03c0/2",
-    "2sin\u03b8-\u221a3=0": "\u03c0/3, 2\u03c0/3",
-    "cos\u00b2\u03b8=3/4": "\u03c0/6, 5\u03c0/6, 7\u03c0/6, 11\u03c0/6",
-    "2cos\u00b2\u03b8-cos\u03b8=0": "\u03c0/3, \u03c0/2, 3\u03c0/2, 5\u03c0/3",
-    "315\u00b0 to radians": "7\u03c0/4, ref angle \u03c0/4",
-    "sin(5\u03c0/3) cos(3\u03c0/4) tan(7\u03c0/6)": "-\u221a3/2, -\u221a2/2, \u221a3/3",
-    "tree shadow 40ft at 35\u00b0": "\u2248 28.01 ft",
-    "y=3cos(\u03c0x/2)-1 analysis": "Amp=3, Per=4, Mid=-1, Max(0,2), Min(2,-4)",
-    "2sin\u00b2\u03b8-3sin\u03b8+1=0": "\u03c0/6, \u03c0/2, 5\u03c0/6",
-    "Ferris wheel r=30 start 3oclock": "h(t)=30sin(\u03c0t/2)+35, top at t=1 min"
-  }
+    "240° to radians": "4π/3",
+    "5π/4 to degrees": "225°",
+    "coterminal with -150°": "210°",
+    "arc length r=10 θ=3π/4": "15π/2 ≈ 23.56 cm",
+    "sin(5π/6)": "1/2",
+    "cos(315°)": "√2/2",
+    "tan(4π/3)": "√3",
+    "sin(-π/4)": "-√2/2",
+    "7π/6 to degrees": "210°",
+    "cos(2π/3)": "-1/2",
+    "arc length r=8 θ=150°": "20π/3 ≈ 20.94 in",
+    "sin(330°)": "-1/2",
+    "tan(330°)": "-√3/3",
+    "sin⁻¹(√2/2)": "π/4",
+    "tan⁻¹(-1)": "-π/4",
+    "ramp angle 6/24": "tan⁻¹(1/4) ≈ 14.04°",
+    "right triangle 5-12-13 angles": "22.62° and 67.38°",
+    "ladder 20ft at 65°": "≈ 18.13 ft",
+    "cos⁻¹(-√3/2)": "5π/6",
+    "building height 50m at 32°": "≈ 31.24 m",
+    "y=-4cos(3x-π/2)+2 params": "Amp=4, Per=2π/3, Phase=π/6 right, Mid=2",
+    "amp 5 period π up 1": "y=5sin(2x)+1",
+    "Ferris wheel diameter 40 period 3": "h(t)=-20cos(2πt/3)+25",
+    "y=2sin(πx/2-π)+3 params": "Amp=2, Per=4, Phase=2 right, Mid=3",
+    "2cosθ+√3=0": "5π/6, 7π/6",
+    "tan²θ-1=0": "π/4, 3π/4, 5π/4, 7π/4",
+    "2sin²θ+sinθ-1=0": "π/6, 5π/6, 3π/2",
+    "2sinθ-√3=0": "π/3, 2π/3",
+    "cos²θ=3/4": "π/6, 5π/6, 7π/6, 11π/6",
+    "2cos²θ-cosθ=0": "π/3, π/2, 3π/2, 5π/3",
+    "315° to radians": "7π/4, ref angle π/4",
+    "sin(5π/3) cos(3π/4) tan(7π/6)": "-√3/2, -√2/2, √3/3",
+    "tree shadow 40ft at 35°": "≈ 28.01 ft",
+    "y=3cos(πx/2)-1 analysis": "Amp=3, Per=4, Mid=-1, Max(0,2), Min(2,-4)",
+    "2sin²θ-3sinθ+1=0": "π/6, π/2, 5π/6",
+    "Ferris wheel r=30 start 3oclock": "h(t)=30sin(πt/2)+35, top at t=1 min"
+  },
+  "lessons": [
+    {
+      "lessonId": "angle-measure-radians",
+      "title": "Angle Measurement: Degrees & Radians",
+      "order": 1
+    },
+    {
+      "lessonId": "unit-circle",
+      "title": "The Unit Circle & Trig Functions",
+      "order": 2
+    },
+    {
+      "lessonId": "right-triangle-trig",
+      "title": "Right Triangle Trig & Inverse Functions",
+      "order": 3
+    },
+    {
+      "lessonId": "graphing-sinusoidal",
+      "title": "Graphing Sinusoidal Functions",
+      "order": 4
+    },
+    {
+      "lessonId": "trig-equations",
+      "title": "Solving Trigonometric Equations",
+      "order": 5
+    }
+  ]
 }

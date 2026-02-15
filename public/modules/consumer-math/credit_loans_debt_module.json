@@ -5,7 +5,7 @@
   "title": "Credit, Loans, and Debt",
   "weeks": "6-7",
   "estimatedDuration": 40,
-  "description": "The most important module in this course. Credit is a tool \u2014 but used wrong, it's a trap. Students learn how credit scores work, why minimum payments are a disaster, the real cost of loans, how amortization shifts over time, and the red flags of predatory lending. Every concept uses actual dollar amounts and real APRs.",
+  "description": "The most important module in this course. Credit is a tool — but used wrong, it's a trap. Students learn how credit scores work, why minimum payments are a disaster, the real cost of loans, how amortization shifts over time, and the red flags of predatory lending. Every concept uses actual dollar amounts and real APRs.",
   "skills": [
     "cm-credit-scores",
     "cm-credit-card-math",
@@ -25,12 +25,12 @@
     "Explain what a credit score measures and identify the five factors that affect it",
     "Calculate monthly credit card interest and demonstrate the true cost of minimum payments",
     "Compare loan options using total cost (not just monthly payment) and identify the better deal",
-    "Explain how amortization works \u2014 why early payments are mostly interest",
+    "Explain how amortization works — why early payments are mostly interest",
     "Identify red flags of predatory lending including payday loans, balloon payments, and pressure tactics"
   ],
   "instructionalStrategy": [
     "Credit scores: use the 'report card for borrowing' analogy. Show the rate difference: 4% vs 8% on a $20,000 car loan.",
-    "Credit card math is the most powerful lesson. Show a $3,000 balance at 22% APR with $60 minimum payments \u2014 total paid is ~$7,000+ over 15 years. That shock teaches.",
+    "Credit card math is the most powerful lesson. Show a $3,000 balance at 22% APR with $60 minimum payments — total paid is ~$7,000+ over 15 years. That shock teaches.",
     "Loan comparison: same car, 3-year vs 6-year loan. Lower monthly payment does not equal better deal. Always calculate total cost.",
     "Amortization: show a 3-4 row snippet from a real amortization table. Payment #1 vs payment #60. The 'aha' is 'I paid $500 but only $150 went to my balance?!'",
     "Predatory lending: calculate the real cost of a $500 payday loan at 400% APR. Compare to credit card and personal loan. Frame as protection, not preaching."
@@ -50,12 +50,13 @@
         "Length of credit history (15%): how long your accounts have been open. Older accounts help your score. This is why closing your oldest card can hurt.",
         "New credit (10%): how many new accounts or inquiries you have recently. Each hard inquiry (loan application) can lower your score by 5-10 points temporarily.",
         "Credit mix (10%): having different types of credit (credit card, auto loan, mortgage) shows you can manage various accounts. Not a dealbreaker, but it helps."
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Credit Scores \u2014 Worked Examples",
+      "title": "Credit Scores — Worked Examples",
       "skill": "cm-credit-scores",
       "examples": [
         {
@@ -64,14 +65,15 @@
         },
         {
           "problem": "Jasmine has a credit score of 680. She has $3,000 in credit card balances on $10,000 total credit limits. She wants to raise her score. Which two actions would have the biggest impact, and why?",
-          "solution": "The two biggest score factors are:\n1. Payment history (35%) \u2014 Jasmine should make sure she never misses a payment. Setting up autopay for at least the minimum guarantees on-time payments.\n2. Amounts owed / utilization (30%) \u2014 She is using $3,000 of $10,000 = 30% utilization. Paying down to $1,000 would bring her to 10%, which is excellent.\n\nThese two factors alone control 65% of her score. Improving both could realistically push her from 680 into the 740+ range over 6-12 months."
+          "solution": "The two biggest score factors are:\n1. Payment history (35%) — Jasmine should make sure she never misses a payment. Setting up autopay for at least the minimum guarantees on-time payments.\n2. Amounts owed / utilization (30%) — She is using $3,000 of $10,000 = 30% utilization. Paying down to $1,000 would bring her to 10%, which is excellent.\n\nThese two factors alone control 65% of her score. Improving both could realistically push her from 680 into the 740+ range over 6-12 months."
         }
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Credit Scores \u2014 Guided Practice",
+      "title": "Credit Scores — Guided Practice",
       "problems": [
         {
           "id": "cld-1",
@@ -91,7 +93,7 @@
             "For utilization, calculate: $2,000 / $10,000 = 20%. Is that good or bad?",
             "Opening 2 new accounts recently affects the 'new credit' category (10%)."
           ],
-          "answer": "Payment history (35%): Strong \u2014 pays all bills on time. Amounts owed (30%): Strong \u2014 20% utilization ($2,000 / $10,000) is well under 30%. Length of history (15%): Strong \u2014 8 years is solid. New credit (10%): Needs work \u2014 2 new accounts in one month creates multiple hard inquiries. Credit mix (10%): Strong \u2014 has both revolving credit (card) and installment credit (car loan). Overall this is a strong profile with one temporary weak spot."
+          "answer": "Payment history (35%): Strong — pays all bills on time. Amounts owed (30%): Strong — 20% utilization ($2,000 / $10,000) is well under 30%. Length of history (15%): Strong — 8 years is solid. New credit (10%): Needs work — 2 new accounts in one month creates multiple hard inquiries. Credit mix (10%): Strong — has both revolving credit (card) and installment credit (car loan). Overall this is a strong profile with one temporary weak spot."
         },
         {
           "id": "cld-3",
@@ -101,15 +103,16 @@
             "Missing a payment hits payment history (35%). Maxing out a card hits utilization (30%).",
             "Closing your oldest card affects length of history (15%). A new account affects new credit (10%)."
           ],
-          "answer": "Most harmful to least harmful: B, C, D, A. (B) Missing a mortgage payment by 60 days \u2014 hits payment history (35%), the biggest factor. A 60-day late is a severe derogatory mark. (C) Maxing out a $5,000 card \u2014 shoots utilization to 100% on that card, hurting amounts owed (30%). (D) Closing oldest card \u2014 reduces average account age, hurting length of history (15%). (A) Opening a new store card \u2014 minor hit to new credit (10%), usually only 5-10 points."
+          "answer": "Most harmful to least harmful: B, C, D, A. (B) Missing a mortgage payment by 60 days — hits payment history (35%), the biggest factor. A 60-day late is a severe derogatory mark. (C) Maxing out a $5,000 card — shoots utilization to 100% on that card, hurting amounts owed (30%). (D) Closing oldest card — reduces average account age, hurting length of history (15%). (A) Opening a new store card — minor hit to new credit (10%), usually only 5-10 points."
         }
       ],
-      "skill": "cm-credit-scores"
+      "skill": "cm-credit-scores",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Credit Scores \u2014 Independent Practice",
+      "title": "Credit Scores — Independent Practice",
       "problems": [
         {
           "id": "cld-4",
@@ -119,17 +122,18 @@
         {
           "id": "cld-5",
           "question": "Aisha has a $4,000 balance on a credit card with a $5,000 limit, and a $1,500 balance on a card with a $15,000 limit. What is her overall credit utilization percentage? Is this considered good, fair, or poor?",
-          "answer": "Total balances: $4,000 + $1,500 = $5,500. Total limits: $5,000 + $15,000 = $20,000. Utilization: $5,500 / $20,000 = 0.275 = 27.5%. This is fair \u2014 it is under 30% but not under 10%. Paying down the first card would help the most since it is at 80% utilization on its own."
+          "answer": "Total balances: $4,000 + $1,500 = $5,500. Total limits: $5,000 + $15,000 = $20,000. Utilization: $5,500 / $20,000 = 0.275 = 27.5%. This is fair — it is under 30% but not under 10%. Paying down the first card would help the most since it is at 80% utilization on its own."
         }
       ],
-      "skill": "cm-credit-scores"
+      "skill": "cm-credit-scores",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "title": "Credit Card Math \u2014 APR, Interest, and the Minimum Payment Trap",
+      "title": "Credit Card Math — APR, Interest, and the Minimum Payment Trap",
       "skill": "cm-credit-card-math",
-      "content": "Credit cards charge interest on any balance you carry past the due date. The rate is expressed as an APR (Annual Percentage Rate), but interest is calculated monthly. The formula is simple: Monthly Interest = (APR / 12) x Balance. The trap is minimum payments \u2014 they are designed to keep you in debt as long as possible. Most of your minimum payment goes to interest, and only a tiny sliver reduces your actual balance.",
+      "content": "Credit cards charge interest on any balance you carry past the due date. The rate is expressed as an APR (Annual Percentage Rate), but interest is calculated monthly. The formula is simple: Monthly Interest = (APR / 12) x Balance. The trap is minimum payments — they are designed to keep you in debt as long as possible. Most of your minimum payment goes to interest, and only a tiny sliver reduces your actual balance.",
       "keyPoints": [
         "APR stands for Annual Percentage Rate. Typical credit card APRs range from 18% to 25%. To get the monthly rate, divide APR by 12.",
         "Monthly interest formula: Monthly Interest = (APR / 12) x Current Balance. Example: 24% APR on $1,000 = (0.24 / 12) x $1,000 = 0.02 x $1,000 = $20 per month.",
@@ -137,12 +141,13 @@
         "The minimum payment trap: on a $3,000 balance at 22% APR with a $60 minimum payment, about $55 goes to interest and only $5 goes to principal. At that rate, payoff takes 15+ years and you pay over $7,000 total on a $3,000 purchase.",
         "Payoff strategy: always pay MORE than the minimum. Even an extra $50/month can cut payoff time from 15 years to under 3 years.",
         "If you pay your full statement balance by the due date every month, you pay ZERO interest. This is how credit cards should be used."
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Credit Card Math \u2014 Worked Examples",
+      "title": "Credit Card Math — Worked Examples",
       "skill": "cm-credit-card-math",
       "examples": [
         {
@@ -151,18 +156,19 @@
         },
         {
           "problem": "Your credit card balance is $3,000 at 22% APR. Your minimum payment is $60. How much of your first minimum payment goes to interest vs. principal? At this pace, will you pay off the card in 5 years, 10 years, or 15+ years?",
-          "solution": "Step 1: Monthly rate = 22% / 12 = 1.833%\n\nStep 2: Month 1 interest = 1.833% x $3,000 = 0.01833 x $3,000 = $55.00\n\nStep 3: Principal paid = Payment - Interest = $60 - $55 = $5.00\n\nSo out of your $60 payment, $55 goes straight to the bank as interest. Only $5 actually reduces your balance. Your new balance is $2,995 \u2014 you barely made a dent.\n\nAt this pace: $3,000 / $5 per month = 600 months = 50 years if the balance never shrank further. In reality, because the balance drops slightly each month, it takes about 15+ years and you pay roughly $7,200 total on a $3,000 purchase. The interest more than doubles the original cost."
+          "solution": "Step 1: Monthly rate = 22% / 12 = 1.833%\n\nStep 2: Month 1 interest = 1.833% x $3,000 = 0.01833 x $3,000 = $55.00\n\nStep 3: Principal paid = Payment - Interest = $60 - $55 = $5.00\n\nSo out of your $60 payment, $55 goes straight to the bank as interest. Only $5 actually reduces your balance. Your new balance is $2,995 — you barely made a dent.\n\nAt this pace: $3,000 / $5 per month = 600 months = 50 years if the balance never shrank further. In reality, because the balance drops slightly each month, it takes about 15+ years and you pay roughly $7,200 total on a $3,000 purchase. The interest more than doubles the original cost."
         },
         {
           "problem": "Compare two payoff strategies for a $1,800 balance at 20% APR. Strategy A: pay the $45 minimum. Strategy B: pay $150 per month. What happens in month 1 for each?",
           "solution": "Monthly rate = 20% / 12 = 1.667%\nMonth 1 interest (same for both) = 1.667% x $1,800 = 0.01667 x $1,800 = $30.00\n\nStrategy A ($45 minimum):\nPrincipal paid = $45 - $30 = $15.00\nNew balance = $1,800 - $15 = $1,785\n\nStrategy B ($150 per month):\nPrincipal paid = $150 - $30 = $120.00\nNew balance = $1,800 - $120 = $1,680\n\nStrategy B knocks out 8x more principal in the very first month ($120 vs $15). Strategy A would take about 5 years to pay off. Strategy B would take about 13 months. The total interest paid under Strategy A is roughly $700. Under Strategy B, roughly $150."
         }
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Credit Card Math \u2014 Guided Practice",
+      "title": "Credit Card Math — Guided Practice",
       "problems": [
         {
           "id": "cld-6",
@@ -194,12 +200,13 @@
           "answer": "Monthly rate = 19.99% / 12 = 1.666%. Interest = 1.666% x $5,000 = $83.29. At $100/month: principal = $100 - $83.29 = $16.71. At $250/month: principal = $250 - $83.29 = $166.71. Difference: $166.71 - $16.71 = $150.00. The $250 payment covers $150 more in principal. The $100 payment barely touches the balance."
         }
       ],
-      "skill": "cm-credit-card-math"
+      "skill": "cm-credit-card-math",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Credit Card Math \u2014 Independent Practice",
+      "title": "Credit Card Math — Independent Practice",
       "problems": [
         {
           "id": "cld-9",
@@ -214,30 +221,32 @@
         {
           "id": "cld-11",
           "question": "Nina owes $6,000 at 24% APR. She is deciding between paying the $120 minimum or paying $300 per month. Calculate the interest and principal for month 1 under each strategy. How many times more principal does the $300 payment cover?",
-          "answer": "Monthly rate = 24% / 12 = 2%. Interest = 2% x $6,000 = $120.00. At $120 minimum: principal = $120 - $120 = $0.00 \u2014 the entire payment goes to interest and the balance does not decrease at all. At $300: principal = $300 - $120 = $180.00. The $300 payment covers infinitely more principal because the minimum payment covers zero. This is the minimum payment trap in its worst form."
+          "answer": "Monthly rate = 24% / 12 = 2%. Interest = 2% x $6,000 = $120.00. At $120 minimum: principal = $120 - $120 = $0.00 — the entire payment goes to interest and the balance does not decrease at all. At $300: principal = $300 - $120 = $180.00. The $300 payment covers infinitely more principal because the minimum payment covers zero. This is the minimum payment trap in its worst form."
         }
       ],
-      "skill": "cm-credit-card-math"
+      "skill": "cm-credit-card-math",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "title": "Loan Basics \u2014 Principal, Rate, Term, and Total Cost",
+      "title": "Loan Basics — Principal, Rate, Term, and Total Cost",
       "skill": "cm-loan-basics",
-      "content": "When you borrow money \u2014 for a car, college, or anything else \u2014 you repay the original amount (principal) plus interest. Three numbers define every loan: the principal (how much you borrow), the interest rate (APR), and the term (how long you take to repay). The key insight: a lower monthly payment does NOT mean a better deal. You must always compare loans by total cost, which is the monthly payment multiplied by the number of payments.",
+      "content": "When you borrow money — for a car, college, or anything else — you repay the original amount (principal) plus interest. Three numbers define every loan: the principal (how much you borrow), the interest rate (APR), and the term (how long you take to repay). The key insight: a lower monthly payment does NOT mean a better deal. You must always compare loans by total cost, which is the monthly payment multiplied by the number of payments.",
       "keyPoints": [
         "Principal: the amount borrowed. A $20,000 car loan has a $20,000 principal.",
         "Interest rate (APR): the annual cost of borrowing. Lower is better. Rates depend on your credit score, the loan type, and market conditions.",
         "Term: how many months (or years) you have to repay. Common terms: 36, 48, 60, or 72 months for auto loans; 15 or 30 years for mortgages.",
         "Total cost = monthly payment x number of payments. This is the REAL price of the loan. Always calculate this before signing.",
         "Longer terms mean lower monthly payments BUT higher total cost. A 72-month car loan looks cheaper per month, but you pay thousands more in interest than a 48-month loan.",
-        "When comparing two loan offers, the one with the lower total cost is the better deal \u2014 even if its monthly payment is higher."
-      ]
+        "When comparing two loan offers, the one with the lower total cost is the better deal — even if its monthly payment is higher."
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Loan Basics \u2014 Worked Examples",
+      "title": "Loan Basics — Worked Examples",
       "skill": "cm-loan-basics",
       "examples": [
         {
@@ -246,14 +255,15 @@
         },
         {
           "problem": "Samira needs a $10,000 personal loan. Bank A: 7.5% for 36 months, $311/month. Bank B: 10.2% for 60 months, $213/month. Which costs less overall, and by how much?",
-          "solution": "Bank A total: $311 x 36 = $11,196\nBank B total: $213 x 60 = $12,780\n\nBank A saves: $12,780 - $11,196 = $1,584\n\nBank A is the better deal by $1,584. Bank B charges more interest ($2,780 vs $1,196) because of the higher rate AND longer term. The lower monthly payment is a trap \u2014 it just stretches the pain over more months."
+          "solution": "Bank A total: $311 x 36 = $11,196\nBank B total: $213 x 60 = $12,780\n\nBank A saves: $12,780 - $11,196 = $1,584\n\nBank A is the better deal by $1,584. Bank B charges more interest ($2,780 vs $1,196) because of the higher rate AND longer term. The lower monthly payment is a trap — it just stretches the pain over more months."
         }
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Loan Basics \u2014 Guided Practice",
+      "title": "Loan Basics — Guided Practice",
       "problems": [
         {
           "id": "cld-12",
@@ -269,18 +279,19 @@
           "question": "Maria is comparing two offers for a $20,000 car loan. Offer 1: 3.9% APR for 48 months, payment $451. Offer 2: 0% APR for 60 months, but the sale price increases to $22,000 (no discount), payment $367. Which offer has the lower total cost?",
           "hints": [
             "Offer 1 total = $451 x 48. Offer 2 total = $367 x 60.",
-            "Be careful \u2014 the 0% APR sounds great, but the price of the car went up by $2,000.",
+            "Be careful — the 0% APR sounds great, but the price of the car went up by $2,000.",
             "Compare the two totals. The lower one is the better deal."
           ],
-          "answer": "Offer 1: $451 x 48 = $21,648. Offer 2: $367 x 60 = $22,020. Offer 1 is the better deal by $372. The '0% APR' offer hides extra cost in the higher sticker price. Always calculate total cost \u2014 marketing can be misleading."
+          "answer": "Offer 1: $451 x 48 = $21,648. Offer 2: $367 x 60 = $22,020. Offer 1 is the better deal by $372. The '0% APR' offer hides extra cost in the higher sticker price. Always calculate total cost — marketing can be misleading."
         }
       ],
-      "skill": "cm-loan-basics"
+      "skill": "cm-loan-basics",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Loan Basics \u2014 Independent Practice",
+      "title": "Loan Basics — Independent Practice",
       "problems": [
         {
           "id": "cld-14",
@@ -298,47 +309,50 @@
           "answer": "First National: $566 x 48 = $27,168. Community CU: $459 x 60 = $27,540. First National costs $372 less in total, even though the monthly payment is $107 higher. The shorter term wins again."
         }
       ],
-      "skill": "cm-loan-basics"
+      "skill": "cm-loan-basics",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "How Amortization Works",
       "skill": "cm-amortization",
-      "content": "Amortization is the process of paying off a loan through regular payments over time. The critical insight is that each payment is split between interest and principal \u2014 and that split changes dramatically over the life of the loan. Early payments are mostly interest. Late payments are mostly principal. This is why it feels like you are barely making progress in the first few years of a mortgage.",
+      "content": "Amortization is the process of paying off a loan through regular payments over time. The critical insight is that each payment is split between interest and principal — and that split changes dramatically over the life of the loan. Early payments are mostly interest. Late payments are mostly principal. This is why it feels like you are barely making progress in the first few years of a mortgage.",
       "keyPoints": [
         "Every loan payment has two parts: the interest portion (what you pay the bank for borrowing) and the principal portion (what actually reduces your balance).",
-        "In early payments, interest is high because the balance is large. Example: on a $180,000 mortgage at 6%, payment #1 is $1,079 \u2014 but $900 goes to interest and only $179 goes to principal.",
+        "In early payments, interest is high because the balance is large. Example: on a $180,000 mortgage at 6%, payment #1 is $1,079 — but $900 goes to interest and only $179 goes to principal.",
         "In later payments, interest is lower because the balance has shrunk. The same $1,079 payment sends more and more toward principal as months go by.",
         "An amortization table shows the breakdown for every payment: payment number, interest portion, principal portion, and remaining balance.",
         "Extra payments go entirely toward principal (since your scheduled interest is already covered). Even $50-$100 extra per month can save tens of thousands in interest and years off a mortgage.",
-        "This is why refinancing to a lower rate or making extra payments early in the loan saves the most money \u2014 you reduce the balance while interest has the biggest impact."
-      ]
+        "This is why refinancing to a lower rate or making extra payments early in the loan saves the most money — you reduce the balance while interest has the biggest impact."
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Amortization \u2014 Worked Examples",
+      "title": "Amortization — Worked Examples",
       "skill": "cm-amortization",
       "examples": [
         {
           "problem": "Here is a snippet from an amortization table for a $180,000 mortgage at 6% APR for 30 years (monthly payment: $1,079.19).\n\nPayment #1: Interest $900.00 | Principal $179.19 | Balance $179,820.81\nPayment #2: Interest $899.10 | Principal $180.09 | Balance $179,640.72\n\nWhat percentage of payment #1 goes to interest? What percentage goes to principal?",
-          "solution": "Interest percentage = $900.00 / $1,079.19 = 0.834 = 83.4%\nPrincipal percentage = $179.19 / $1,079.19 = 0.166 = 16.6%\n\nSo 83.4% of your first payment goes straight to the bank as interest. Only 16.6% \u2014 less than one-sixth \u2014 actually pays down your loan. You paid $1,079.19 but your balance only dropped by $179.19. This is the 'aha moment' of amortization."
+          "solution": "Interest percentage = $900.00 / $1,079.19 = 0.834 = 83.4%\nPrincipal percentage = $179.19 / $1,079.19 = 0.166 = 16.6%\n\nSo 83.4% of your first payment goes straight to the bank as interest. Only 16.6% — less than one-sixth — actually pays down your loan. You paid $1,079.19 but your balance only dropped by $179.19. This is the 'aha moment' of amortization."
         },
         {
           "problem": "Same mortgage. Here are payments at different points in the loan:\n\nPayment #1: Interest $900.00 | Principal $179.19\nPayment #180 (year 15): Interest $631.00 | Principal $448.19\nPayment #300 (year 25): Interest $269.00 | Principal $810.19\n\nDescribe how the interest-to-principal split changes over time.",
-          "solution": "Payment #1: $900 interest vs $179 principal \u2014 interest is 5x larger than principal.\nPayment #180: $631 interest vs $448 principal \u2014 interest is still larger, but the gap is closing.\nPayment #300: $269 interest vs $810 principal \u2014 principal is now 3x larger than interest.\n\nThe pattern: early on, most of your payment feeds the bank. Over time, the split reverses. By year 25, over 75% of each payment goes to reducing your balance. This is why the first 5 years of a mortgage feel like you are treading water."
+          "solution": "Payment #1: $900 interest vs $179 principal — interest is 5x larger than principal.\nPayment #180: $631 interest vs $448 principal — interest is still larger, but the gap is closing.\nPayment #300: $269 interest vs $810 principal — principal is now 3x larger than interest.\n\nThe pattern: early on, most of your payment feeds the bank. Over time, the split reverses. By year 25, over 75% of each payment goes to reducing your balance. This is why the first 5 years of a mortgage feel like you are treading water."
         },
         {
           "problem": "A homeowner has the $180,000 mortgage above. She decides to pay an extra $200/month starting from month 1. The original payoff is 30 years (360 payments) with a total cost of $388,508. With the extra $200/month, the loan pays off in about 22 years (264 payments) with a total cost of $337,782. How much does she save?",
           "solution": "Payments saved: 360 - 264 = 96 payments = 8 years\nMoney saved: $388,508 - $337,782 = $50,726\n\nBy paying $200 extra per month, she saves $50,726 and gets out of debt 8 years early. The extra payments go directly to principal, which reduces the balance faster, which reduces future interest charges. It is a snowball effect."
         }
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Amortization \u2014 Guided Practice",
+      "title": "Amortization — Guided Practice",
       "problems": [
         {
           "id": "cld-17",
@@ -360,12 +374,13 @@
           "answer": "Total paid = $1,264.14 x 120 = $151,696.80. Principal paid off = $200,000 - $175,868 = $24,132. Interest paid = $151,696.80 - $24,132 = $127,564.80. After 10 years and over $151,000 in payments, only $24,132 (about 12%) of the original loan has been paid off. The remaining $127,565 went to interest."
         }
       ],
-      "skill": "cm-amortization"
+      "skill": "cm-amortization",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Amortization \u2014 Independent Practice",
+      "title": "Amortization — Independent Practice",
       "problems": [
         {
           "id": "cld-19",
@@ -383,27 +398,29 @@
           "answer": "Payment #12: principal % = $195 / ($880 + $195) = $195 / $1,075 = 18.1%. Payment #240: principal % = $585 / ($490 + $585) = $585 / $1,075 = 54.4%. In year 1, only 18% of the payment reduces the balance. By year 20, over 54% goes to principal. Amortization gradually shifts the split from mostly-interest to mostly-principal over the life of the loan."
         }
       ],
-      "skill": "cm-amortization"
+      "skill": "cm-amortization",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "title": "Predatory Lending \u2014 Red Flags and Real Costs",
+      "title": "Predatory Lending — Red Flags and Real Costs",
       "skill": "cm-predatory-lending",
       "content": "Predatory lending means offering loan terms designed to trap borrowers in debt. It targets people who are desperate, have low credit scores, or do not fully understand the terms. The most common form is payday loans, which charge fees equivalent to 400%+ APR. Knowing the red flags protects you from financial harm.",
       "keyPoints": [
         "Payday loans: short-term (usually 14 days), small-dollar loans with fees of $15-$20 per $100 borrowed. That translates to approximately 400-520% APR. Borrowers often cannot repay on time and 're-roll' the loan, paying the fee again and again.",
         "Red flag #1: 'Guaranteed approval' or 'No credit check needed.' Legitimate lenders always assess your ability to repay. If they do not check, they profit whether you can repay or not.",
-        "Red flag #2: Pressure to sign immediately. 'This offer expires today!' or 'Just sign \u2014 do not worry about the details.' Legitimate lenders give you time to review terms.",
+        "Red flag #2: Pressure to sign immediately. 'This offer expires today!' or 'Just sign — do not worry about the details.' Legitimate lenders give you time to review terms.",
         "Red flag #3: No clear disclosure of APR or total cost. If the lender only talks about the 'fee' ($15 per $100) and never mentions the APR, they are hiding the true cost.",
         "Balloon payments: a loan with low monthly payments but a massive lump sum due at the end. If you cannot pay the balloon, you must refinance (often at worse terms) or lose the asset.",
         "Alternatives to predatory loans: credit union personal loans (8-18% APR), payment plans with creditors, community assistance programs, borrowing from family with a written agreement."
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Predatory Lending \u2014 Worked Examples",
+      "title": "Predatory Lending — Worked Examples",
       "skill": "cm-predatory-lending",
       "examples": [
         {
@@ -412,18 +429,19 @@
         },
         {
           "problem": "Compare the cost of borrowing $500 through three different options for an emergency. Option A: Payday loan, $75 fee, due in 14 days. Option B: Credit card cash advance at 24% APR, repaid in 30 days. Option C: Credit union personal loan at 12% APR, repaid over 6 months at $86/month.",
-          "solution": "Option A (Payday loan): Cost = $75 fee. Total repaid = $575.\n\nOption B (Credit card advance): Monthly rate = 24% / 12 = 2%. Interest for one month = 2% x $500 = $10.00. Total repaid = $510.\n\nOption C (Credit union loan): Total = $86 x 6 = $516. Interest = $516 - $500 = $16.00.\n\nComparison:\nPayday loan: $75 cost\nCredit card: $10 cost\nCredit union: $16 cost\n\nThe payday loan costs 7.5x more than the credit card and nearly 5x more than the personal loan. Even a credit card cash advance \u2014 normally considered expensive \u2014 is dramatically cheaper than a payday loan."
+          "solution": "Option A (Payday loan): Cost = $75 fee. Total repaid = $575.\n\nOption B (Credit card advance): Monthly rate = 24% / 12 = 2%. Interest for one month = 2% x $500 = $10.00. Total repaid = $510.\n\nOption C (Credit union loan): Total = $86 x 6 = $516. Interest = $516 - $500 = $16.00.\n\nComparison:\nPayday loan: $75 cost\nCredit card: $10 cost\nCredit union: $16 cost\n\nThe payday loan costs 7.5x more than the credit card and nearly 5x more than the personal loan. Even a credit card cash advance — normally considered expensive — is dramatically cheaper than a payday loan."
         },
         {
           "problem": "A car dealership offers a loan with monthly payments of $199 for 60 months, plus a balloon payment of $8,000 due at the end. The car costs $18,000. What is the total amount paid? How does it compare to the car's price?",
           "solution": "Step 1: Regular payments = $199 x 60 = $11,940\n\nStep 2: Add balloon payment: $11,940 + $8,000 = $19,940\n\nStep 3: Compare to price: $19,940 - $18,000 = $1,940 in interest/fees\n\nTotal paid = $19,940. That is $1,940 more than the car's value. The low $199 monthly payment hides the $8,000 surprise at the end. If the buyer cannot come up with $8,000 in month 60, they face repossession or must refinance at even worse terms. This is a textbook predatory structure."
         }
-      ]
+      ],
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Predatory Lending \u2014 Guided Practice",
+      "title": "Predatory Lending — Guided Practice",
       "problems": [
         {
           "id": "cld-22",
@@ -437,21 +455,22 @@
         },
         {
           "id": "cld-23",
-          "question": "Identify the red flags in this advertisement: 'GUARANTEED APPROVAL! No credit check needed! Get $1,000 cash TODAY! Do not worry about the fine print \u2014 just sign and drive!' List at least three warning signs and explain why each is dangerous.",
+          "question": "Identify the red flags in this advertisement: 'GUARANTEED APPROVAL! No credit check needed! Get $1,000 cash TODAY! Do not worry about the fine print — just sign and drive!' List at least three warning signs and explain why each is dangerous.",
           "hints": [
             "Look for promises that sound too good to be true.",
             "Think about why a legitimate lender would always check your credit.",
             "Why would a lender tell you NOT to read the terms?"
           ],
-          "answer": "Red flags: (1) 'Guaranteed approval' with 'no credit check' \u2014 legitimate lenders must assess ability to repay; skipping this means the lender profits regardless of whether you can afford the loan. (2) 'Get $1,000 TODAY' \u2014 pressure to act immediately without researching alternatives or reading terms. (3) 'Do not worry about the fine print' \u2014 actively discouraging the borrower from understanding costs, fees, and penalties. (4) No mention of APR, interest rate, or total repayment cost anywhere in the ad. Any one of these is a warning sign; all four together is a textbook predatory offer."
+          "answer": "Red flags: (1) 'Guaranteed approval' with 'no credit check' — legitimate lenders must assess ability to repay; skipping this means the lender profits regardless of whether you can afford the loan. (2) 'Get $1,000 TODAY' — pressure to act immediately without researching alternatives or reading terms. (3) 'Do not worry about the fine print' — actively discouraging the borrower from understanding costs, fees, and penalties. (4) No mention of APR, interest rate, or total repayment cost anywhere in the ad. Any one of these is a warning sign; all four together is a textbook predatory offer."
         }
       ],
-      "skill": "cm-predatory-lending"
+      "skill": "cm-predatory-lending",
+      "lessonId": "credit_loans_debt"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Predatory Lending \u2014 Independent Practice",
+      "title": "Predatory Lending — Independent Practice",
       "problems": [
         {
           "id": "cld-24",
@@ -469,7 +488,8 @@
           "answer": "Option A: Cost = $90. Option B: Monthly rate = 22% / 12 = 1.833%. Interest = 1.833% x $600 = $11.00. Cost = $11. Option C: Total = $153 x 4 = $612. Cost = $612 - $600 = $12. Ranking cheapest to most expensive: Option B ($11), Option C ($12), Option A ($90). The payday loan costs more than 8x the next most expensive option."
         }
       ],
-      "skill": "cm-predatory-lending"
+      "skill": "cm-predatory-lending",
+      "lessonId": "credit_loans_debt"
     }
   ],
   "answerKeys": {
@@ -477,7 +497,7 @@
     "cld-2": "Payment history: strong. Amounts owed (20% utilization): strong. Length of history (8 years): strong. New credit (2 recent accounts): needs work. Credit mix (card + car loan): strong.",
     "cld-3": "Most to least harmful: B (payment history 35%), C (utilization 30%), D (length of history 15%), A (new credit 10%).",
     "cld-4": "$5,700. Tyler: $373 x 60 = $22,380. Brianna: $468 x 60 = $28,080. Difference = $5,700.",
-    "cld-5": "27.5% utilization ($5,500 / $20,000). Fair \u2014 under 30% but not under 10%.",
+    "cld-5": "27.5% utilization ($5,500 / $20,000). Fair — under 30% but not under 10%.",
     "cld-6": "Monthly rate = 2%. Monthly interest = $90.00.",
     "cld-7": "$30.00 to interest, $10.00 to principal.",
     "cld-8": "$150.00 more principal. $100 payment: $16.71 principal. $250 payment: $166.71 principal.",

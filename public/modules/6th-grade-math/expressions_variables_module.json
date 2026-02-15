@@ -51,7 +51,8 @@
         "'More than' and 'less than' flip the order: '5 more than n' is written n + 5, not 5 + n (though both are equal)",
         "We usually skip the × sign with variables: 3 × n is written as 3n",
         "'Twice' means × 2, 'triple' means × 3, 'half of' means ÷ 2 or ½ ×"
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "model",
@@ -71,7 +72,8 @@
           "problem": "Write the expression 2x + 5 in words.",
           "solution": "Read each piece:\n• 2x means '2 times x' or 'twice x'\n• + 5 means 'plus 5' or '5 more'\nIn words: 'Five more than twice a number x'\nAlso acceptable: 'The sum of two times x and five'"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "guided_practice",
@@ -106,7 +108,8 @@
           ],
           "answer": "Three more than a number n divided by 4 (or: the quotient of n and 4, plus 3)"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "independent_practice",
@@ -129,7 +132,8 @@
           "question": "Write the expression 5(x − 2) in words.",
           "answer": "Five times the difference of x and 2 (or: the product of 5 and the quantity x minus 2)"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "explanation",
@@ -143,7 +147,8 @@
         "When a variable appears more than once, replace every copy with the same value",
         "Two-variable expressions: substitute each variable with its own given value",
         "Implied multiplication: 3n means 3 × n, so if n = 4, write 3(4) = 12"
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "model",
@@ -163,7 +168,8 @@
           "problem": "Evaluate (n + 8) ÷ 2 when n = 6.",
           "solution": "Substitute 6 for n:\n(6 + 8) ÷ 2\nParentheses first: 14 ÷ 2\nDivide: 7\nAnswer: 7"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "guided_practice",
@@ -198,7 +204,8 @@
           ],
           "answer": "26"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "independent_practice",
@@ -221,7 +228,8 @@
           "question": "A phone plan costs $12 per month plus $0.05 per text message. The expression is 12 + 0.05t. Find the total cost for 200 texts.",
           "answer": "$22"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "explanation",
@@ -236,7 +244,8 @@
         "Commutative property lets you rearrange: a + b = b + a and a × b = b × a",
         "Associative property lets you regroup: (a + b) + c = a + (b + c)",
         "Constants (plain numbers with no variable) are like terms with each other"
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "model",
@@ -256,7 +265,8 @@
           "problem": "Simplify: 4a + 7b − 2a + 3b",
           "solution": "Group by variable:\na-terms: 4a − 2a = 2a\nb-terms: 7b + 3b = 10b\nSimplified: 2a + 10b\n(You cannot combine 2a and 10b because they have different variables.)"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "guided_practice",
@@ -291,7 +301,8 @@
           ],
           "answer": "5y + 4"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "independent_practice",
@@ -314,7 +325,8 @@
           "question": "Simplify: 10 + 2(x + 3) − x",
           "answer": "x + 16"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "explanation",
@@ -328,7 +340,8 @@
         "A constant is a term with no variable — just a number: in 3n + 8, the constant is 8",
         "A factor is one of the quantities being multiplied: in 6xy, the factors are 6, x, and y",
         "In the expression 4x² + 7x − 5, there are three terms (4x², 7x, −5), two coefficients (4 and 7), and one constant (−5)"
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "model",
@@ -344,7 +357,8 @@
           "problem": "Identify all parts of the expression 2x² − 5x + 8.",
           "solution": "Terms: 2x², −5x, and 8 (three terms total)\nCoefficients: 2 (on x²) and −5 (on x) — the negative sign stays with the coefficient\nConstant: 8\nFactors of the first term: 2, x, and x (or 2 and x²)"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "guided_practice",
@@ -370,7 +384,8 @@
           ],
           "answer": "(a) Factors: 3 and (x + 2). (b) Expanded: 3x + 6. Terms: 3x and 6. Coefficient: 3. Constant: 6."
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "independent_practice",
@@ -388,7 +403,8 @@
           "question": "For 5a + 3b, answer: (a) How many terms? (b) What are the coefficients? (c) Is there a constant? (d) What are the factors of the first term?",
           "answer": "(a) 2 terms. (b) Coefficients: 5 and 3. (c) No constant. (d) Factors of 5a: 5 and a."
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "explanation",
@@ -402,7 +418,8 @@
         "Volume of a rectangular prism (box shape): V = lwh (length times width times height); answer is in cubic units (in³, m³, etc.)",
         "To find a missing dimension: substitute what you know into the formula, then solve for the unknown",
         "Always include the correct units in your answer — square units for area, cubic units for volume"
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "model",
@@ -422,7 +439,8 @@
           "problem": "A storage box is 4 ft long, 3 ft wide, and 2 ft tall. Find the volume.",
           "solution": "Formula: V = lwh\nSubstitute: V = (4)(3)(2)\nCalculate: V = 24\nAnswer: 24 ft³"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "guided_practice",
@@ -457,7 +475,8 @@
           ],
           "answer": "2,400 cubic inches"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     },
     {
       "type": "independent_practice",
@@ -480,7 +499,8 @@
           "question": "A shoebox has a volume of 1,320 cubic centimeters. It is 22 cm long and 12 cm wide. How tall is it?",
           "answer": "5 cm"
         }
-      ]
+      ],
+      "lessonId": "expressions_variables"
     }
   ],
   "answerKeys": {

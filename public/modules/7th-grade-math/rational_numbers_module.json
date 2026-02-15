@@ -5,7 +5,7 @@
   "title": "Rational Numbers & Operations",
   "weeks": "3-6",
   "estimatedDuration": 30,
-  "description": "Master operations with positive and negative numbers \u2014 the gateway skill for all future algebra. Students build fluency adding, subtracting, multiplying, and dividing integers and rational numbers using number line models, sign rules, and real-world contexts like temperature, elevation, and money. Absolute value is introduced as distance from zero. This is the make-or-break unit for 7th grade: signed-number fluency is essential for expressions, equations, and every math course that follows.",
+  "description": "Master operations with positive and negative numbers — the gateway skill for all future algebra. Students build fluency adding, subtracting, multiplying, and dividing integers and rational numbers using number line models, sign rules, and real-world contexts like temperature, elevation, and money. Absolute value is introduced as distance from zero. This is the make-or-break unit for 7th grade: signed-number fluency is essential for expressions, equations, and every math course that follows.",
   "skills": [
     "g7-add-subtract-rationals",
     "g7-multiply-divide-rationals",
@@ -24,10 +24,10 @@
     "Interpret absolute value as distance from zero and use it to find distances between numbers on the number line"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do",
+    "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
     "Use number line models and real-world contexts (temperature, money, elevation) to build intuition before introducing formal rules",
-    "Emphasize key rules through repeated practice: subtracting a negative = adding a positive; same signs \u2192 positive product, different signs \u2192 negative product",
+    "Emphasize key rules through repeated practice: subtracting a negative = adding a positive; same signs → positive product, different signs → negative product",
     "All problems are open-response to build computational fluency rather than answer elimination"
   ],
   "aiFlexLevel": "moderate",
@@ -37,112 +37,118 @@
       "lessonPhase": "concept-intro",
       "title": "Adding & Subtracting Rational Numbers",
       "skill": "g7-add-subtract-rationals",
-      "content": "Positive and negative numbers show up everywhere \u2014 temperature, elevation, money, and more. Adding and subtracting signed numbers is the single most important skill you will learn in 7th grade math because every equation and expression you see from here on out uses these rules. We start with the number line to build intuition, then move to the shortcut rules.",
+      "content": "Positive and negative numbers show up everywhere — temperature, elevation, money, and more. Adding and subtracting signed numbers is the single most important skill you will learn in 7th grade math because every equation and expression you see from here on out uses these rules. We start with the number line to build intuition, then move to the shortcut rules.",
       "keyPoints": [
         "Number line model: adding a positive moves RIGHT, adding a negative moves LEFT",
-        "Adding two negatives: add their absolute values and keep the negative sign. Example: \u22123 + (\u22125) \u2192 add 3 and 5, result is \u22128",
-        "Adding numbers with different signs: subtract the smaller absolute value from the larger, then take the sign of the number with the larger absolute value. Example: \u22127 + 4 \u2192 7 \u2212 4 = 3, and since |\u22127| > |4| the answer is \u22123",
-        "Subtracting a negative is the SAME as adding a positive: a \u2212 (\u2212b) = a + b. Example: 3 \u2212 (\u22128) = 3 + 8 = 11. Think of it as removing a debt \u2014 you gain.",
+        "Adding two negatives: add their absolute values and keep the negative sign. Example: −3 + (−5) → add 3 and 5, result is −8",
+        "Adding numbers with different signs: subtract the smaller absolute value from the larger, then take the sign of the number with the larger absolute value. Example: −7 + 4 → 7 − 4 = 3, and since |−7| > |4| the answer is −3",
+        "Subtracting a negative is the SAME as adding a positive: a − (−b) = a + b. Example: 3 − (−8) = 3 + 8 = 11. Think of it as removing a debt — you gain.",
         "To add or subtract fractions with different signs, find a common denominator first, then apply the integer sign rules to the numerators"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Adding & Subtracting Rational Numbers \u2014 Worked Examples",
+      "title": "Adding & Subtracting Rational Numbers — Worked Examples",
       "skill": "g7-add-subtract-rationals",
       "examples": [
         {
-          "problem": "Compute: \u22123 + (\u22125)",
-          "solution": "Both numbers are negative \u2192 same sign rule.\nAdd the absolute values: 3 + 5 = 8.\nKeep the negative sign: \u22128.\n\nNumber line check: Start at \u22123, move 5 units LEFT \u2192 land on \u22128.\nAnswer: \u22128"
+          "problem": "Compute: −3 + (−5)",
+          "solution": "Both numbers are negative → same sign rule.\nAdd the absolute values: 3 + 5 = 8.\nKeep the negative sign: −8.\n\nNumber line check: Start at −3, move 5 units LEFT → land on −8.\nAnswer: −8"
         },
         {
-          "problem": "Compute: \u22127 + 4",
-          "solution": "Different signs \u2192 subtract the smaller absolute value from the larger.\n|\u22127| = 7, |4| = 4. Subtract: 7 \u2212 4 = 3.\nThe number with the larger absolute value is \u22127 (negative), so the result is negative.\nAnswer: \u22123\n\nNumber line check: Start at \u22127, move 4 units RIGHT \u2192 \u22126, \u22125, \u22124, \u22123. \u2713"
+          "problem": "Compute: −7 + 4",
+          "solution": "Different signs → subtract the smaller absolute value from the larger.\n|−7| = 7, |4| = 4. Subtract: 7 − 4 = 3.\nThe number with the larger absolute value is −7 (negative), so the result is negative.\nAnswer: −3\n\nNumber line check: Start at −7, move 4 units RIGHT → −6, −5, −4, −3. ✓"
         },
         {
-          "problem": "Compute: 3 \u2212 (\u22128)",
-          "solution": "Subtracting a negative = adding a positive.\nRewrite: 3 \u2212 (\u22128) = 3 + 8 = 11.\nAnswer: 11\n\nWhy does this work? Think of \u2212(\u22128) as 'the opposite of \u22128,' which is +8."
+          "problem": "Compute: 3 − (−8)",
+          "solution": "Subtracting a negative = adding a positive.\nRewrite: 3 − (−8) = 3 + 8 = 11.\nAnswer: 11\n\nWhy does this work? Think of −(−8) as 'the opposite of −8,' which is +8."
         },
         {
-          "problem": "Compute: \u22122/3 + 1/4",
-          "solution": "Step 1 \u2014 Find a common denominator. LCD of 3 and 4 is 12.\n\u22122/3 = \u22128/12 and 1/4 = 3/12\nStep 2 \u2014 Add the numerators (apply sign rules): \u22128 + 3 = \u22125\nStep 3 \u2014 Keep the denominator: \u22125/12\nAnswer: \u22125/12"
+          "problem": "Compute: −2/3 + 1/4",
+          "solution": "Step 1 — Find a common denominator. LCD of 3 and 4 is 12.\n−2/3 = −8/12 and 1/4 = 3/12\nStep 2 — Add the numerators (apply sign rules): −8 + 3 = −5\nStep 3 — Keep the denominator: −5/12\nAnswer: −5/12"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Multiplying & Dividing Rational Numbers",
       "skill": "g7-multiply-divide-rationals",
-      "content": "Once you are comfortable adding and subtracting signed numbers, multiplication and division follow a simple pattern based on the signs of the two numbers. Learn these rules and you can handle any product or quotient \u2014 integers, decimals, or fractions.",
+      "content": "Once you are comfortable adding and subtracting signed numbers, multiplication and division follow a simple pattern based on the signs of the two numbers. Learn these rules and you can handle any product or quotient — integers, decimals, or fractions.",
       "keyPoints": [
-        "Same signs \u2192 POSITIVE result: positive \u00d7 positive = positive, negative \u00d7 negative = positive",
-        "Different signs \u2192 NEGATIVE result: positive \u00d7 negative = negative, negative \u00d7 positive = negative",
+        "Same signs → POSITIVE result: positive × positive = positive, negative × negative = positive",
+        "Different signs → NEGATIVE result: positive × negative = negative, negative × positive = negative",
         "The same sign rules apply to division",
         "Quick check: count the negatives. An even number of negatives gives a positive result; an odd number gives a negative result",
         "Multiplying fractions: multiply numerators, multiply denominators, then apply the sign rule and simplify",
         "Dividing fractions: multiply by the reciprocal (flip the second fraction), then apply the sign rule",
-        "Zero times any number is zero. Division by zero is undefined \u2014 it has no answer"
-      ]
+        "Zero times any number is zero. Division by zero is undefined — it has no answer"
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Multiplying & Dividing Rational Numbers \u2014 Worked Examples",
+      "title": "Multiplying & Dividing Rational Numbers — Worked Examples",
       "skill": "g7-multiply-divide-rationals",
       "examples": [
         {
-          "problem": "Compute: (\u22124) \u00d7 (\u22126)",
-          "solution": "Both numbers are negative \u2192 same signs \u2192 positive result.\nMultiply the absolute values: 4 \u00d7 6 = 24.\nAnswer: 24\n\nPattern reminder: a negative times a negative is always positive."
+          "problem": "Compute: (−4) × (−6)",
+          "solution": "Both numbers are negative → same signs → positive result.\nMultiply the absolute values: 4 × 6 = 24.\nAnswer: 24\n\nPattern reminder: a negative times a negative is always positive."
         },
         {
-          "problem": "Compute: (\u22123) \u00d7 5",
-          "solution": "One negative, one positive \u2192 different signs \u2192 negative result.\nMultiply the absolute values: 3 \u00d7 5 = 15.\nApply the sign: \u221215.\nAnswer: \u221215"
+          "problem": "Compute: (−3) × 5",
+          "solution": "One negative, one positive → different signs → negative result.\nMultiply the absolute values: 3 × 5 = 15.\nApply the sign: −15.\nAnswer: −15"
         },
         {
-          "problem": "Compute: (\u22122/3) \u00d7 (9/4)",
-          "solution": "Different signs (negative \u00d7 positive) \u2192 negative result.\nMultiply numerators: 2 \u00d7 9 = 18.\nMultiply denominators: 3 \u00d7 4 = 12.\nResult before sign: 18/12. Simplify by dividing both by 6: 3/2.\nApply the sign: \u22123/2.\nAnswer: \u22123/2 (or \u22121 1/2)"
+          "problem": "Compute: (−2/3) × (9/4)",
+          "solution": "Different signs (negative × positive) → negative result.\nMultiply numerators: 2 × 9 = 18.\nMultiply denominators: 3 × 4 = 12.\nResult before sign: 18/12. Simplify by dividing both by 6: 3/2.\nApply the sign: −3/2.\nAnswer: −3/2 (or −1 1/2)"
         },
         {
-          "problem": "Compute: (\u22125/6) \u00f7 (2/3)",
-          "solution": "Step 1 \u2014 Rewrite as multiplication by the reciprocal:\n(\u22125/6) \u00f7 (2/3) = (\u22125/6) \u00d7 (3/2)\nStep 2 \u2014 Different signs \u2192 negative result.\nMultiply numerators: 5 \u00d7 3 = 15. Multiply denominators: 6 \u00d7 2 = 12.\nResult: 15/12. Simplify by dividing both by 3: 5/4.\nApply the sign: \u22125/4.\nAnswer: \u22125/4 (or \u22121 1/4)"
+          "problem": "Compute: (−5/6) ÷ (2/3)",
+          "solution": "Step 1 — Rewrite as multiplication by the reciprocal:\n(−5/6) ÷ (2/3) = (−5/6) × (3/2)\nStep 2 — Different signs → negative result.\nMultiply numerators: 5 × 3 = 15. Multiply denominators: 6 × 2 = 12.\nResult: 15/12. Simplify by dividing both by 3: 5/4.\nApply the sign: −5/4.\nAnswer: −5/4 (or −1 1/4)"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Rational Numbers in the Real World",
       "skill": "g7-rational-word-problems",
-      "content": "Negative numbers are not just abstract \u2014 they describe real situations you encounter every day. Temperature drops below zero, bank accounts get overdrawn, submarines dive below sea level, and elevations go below ground. Translating a word problem into a signed-number expression is the key step, and then you just apply the rules you already know.",
+      "content": "Negative numbers are not just abstract — they describe real situations you encounter every day. Temperature drops below zero, bank accounts get overdrawn, submarines dive below sea level, and elevations go below ground. Translating a word problem into a signed-number expression is the key step, and then you just apply the rules you already know.",
       "keyPoints": [
         "Temperature: a drop or fall means subtract (or add a negative); a rise or increase means add a positive",
         "Money and bank accounts: deposits and earnings are positive; withdrawals, spending, and fees are negative",
         "Elevation and depth: above sea level is positive; below sea level is negative",
         "Problem-solving strategy: (1) identify each quantity as positive or negative, (2) write the expression, (3) compute using sign rules",
-        "Look for keywords: 'dropped,' 'lost,' 'below,' 'withdrew,' 'descended' \u2192 negative; 'rose,' 'gained,' 'above,' 'deposited,' 'climbed' \u2192 positive"
-      ]
+        "Look for keywords: 'dropped,' 'lost,' 'below,' 'withdrew,' 'descended' → negative; 'rose,' 'gained,' 'above,' 'deposited,' 'climbed' → positive"
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Real-World Rational Number Problems \u2014 Worked Examples",
+      "title": "Real-World Rational Number Problems — Worked Examples",
       "skill": "g7-rational-word-problems",
       "examples": [
         {
-          "problem": "At 6 AM, the temperature was \u22128\u00b0F. By noon, it had risen 15\u00b0F. What was the temperature at noon?",
-          "solution": "Start: \u22128\u00b0F. Change: +15\u00b0F (rose).\nExpression: \u22128 + 15.\nDifferent signs \u2192 subtract absolute values: 15 \u2212 8 = 7.\nThe positive number has the larger absolute value, so the result is positive.\nAnswer: 7\u00b0F"
+          "problem": "At 6 AM, the temperature was −8°F. By noon, it had risen 15°F. What was the temperature at noon?",
+          "solution": "Start: −8°F. Change: +15°F (rose).\nExpression: −8 + 15.\nDifferent signs → subtract absolute values: 15 − 8 = 7.\nThe positive number has the larger absolute value, so the result is positive.\nAnswer: 7°F"
         },
         {
           "problem": "Rosa has $125.50 in her checking account. She writes a check for $83.75 and then deposits $40.00. What is her new balance?",
-          "solution": "Start: $125.50. Check (withdrawal): \u2212$83.75. Deposit: +$40.00.\nExpression: 125.50 \u2212 83.75 + 40.00.\nStep 1: 125.50 \u2212 83.75 = 41.75.\nStep 2: 41.75 + 40.00 = 81.75.\nAnswer: $81.75"
+          "solution": "Start: $125.50. Check (withdrawal): −$83.75. Deposit: +$40.00.\nExpression: 125.50 − 83.75 + 40.00.\nStep 1: 125.50 − 83.75 = 41.75.\nStep 2: 41.75 + 40.00 = 81.75.\nAnswer: $81.75"
         },
         {
-          "problem": "A submarine is cruising at \u2212240 feet (240 feet below sea level). It rises 85 feet, then dives 120 feet. What is its new position?",
-          "solution": "Start: \u2212240 feet. Rise: +85 feet. Dive: \u2212120 feet.\nExpression: \u2212240 + 85 \u2212 120.\nStep 1: \u2212240 + 85 = \u2212155 (still below sea level).\nStep 2: \u2212155 \u2212 120 = \u2212275.\nAnswer: \u2212275 feet (275 feet below sea level)"
+          "problem": "A submarine is cruising at −240 feet (240 feet below sea level). It rises 85 feet, then dives 120 feet. What is its new position?",
+          "solution": "Start: −240 feet. Rise: +85 feet. Dive: −120 feet.\nExpression: −240 + 85 − 120.\nStep 1: −240 + 85 = −155 (still below sea level).\nStep 2: −155 − 120 = −275.\nAnswer: −275 feet (275 feet below sea level)"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "explanation",
@@ -151,32 +157,34 @@
       "skill": "g7-absolute-value",
       "content": "Absolute value answers one simple question: how far is this number from zero? It strips away the sign and tells you the distance. This idea extends naturally to finding the distance between any two numbers on the number line, which is useful in many real-world situations.",
       "keyPoints": [
-        "Absolute value of a number is its distance from 0 on the number line \u2014 always zero or positive",
-        "|a| = a if a is zero or positive. |a| = \u2212a if a is negative. Example: |\u22125| = \u2212(\u22125) = 5",
+        "Absolute value of a number is its distance from 0 on the number line — always zero or positive",
+        "|a| = a if a is zero or positive. |a| = −a if a is negative. Example: |−5| = −(−5) = 5",
         "Absolute value bars act like grouping symbols: simplify the expression inside first, then take the absolute value",
-        "Distance between two numbers a and b on a number line = |a \u2212 b| (order does not matter: |a \u2212 b| = |b \u2212 a|)",
+        "Distance between two numbers a and b on a number line = |a − b| (order does not matter: |a − b| = |b − a|)",
         "Comparing distances from zero: the number with the greater absolute value is farther from zero, regardless of sign"
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Absolute Value \u2014 Worked Examples",
+      "title": "Absolute Value — Worked Examples",
       "skill": "g7-absolute-value",
       "examples": [
         {
-          "problem": "Find |\u22129|.",
-          "solution": "|\u22129| is the distance from \u22129 to 0 on the number line.\nCounting: \u22129 is 9 units away from 0.\nAnswer: 9"
+          "problem": "Find |−9|.",
+          "solution": "|−9| is the distance from −9 to 0 on the number line.\nCounting: −9 is 9 units away from 0.\nAnswer: 9"
         },
         {
-          "problem": "Evaluate |5 \u2212 12|.",
-          "solution": "Step 1 \u2014 Simplify inside the bars: 5 \u2212 12 = \u22127.\nStep 2 \u2014 Take the absolute value: |\u22127| = 7.\nThis also tells us the distance between 5 and 12 on the number line is 7 units.\nAnswer: 7"
+          "problem": "Evaluate |5 − 12|.",
+          "solution": "Step 1 — Simplify inside the bars: 5 − 12 = −7.\nStep 2 — Take the absolute value: |−7| = 7.\nThis also tells us the distance between 5 and 12 on the number line is 7 units.\nAnswer: 7"
         },
         {
-          "problem": "Which integer is farther from zero: \u22126 or 4? By how much?",
-          "solution": "Find each absolute value:\n|\u22126| = 6 and |4| = 4.\nSince 6 > 4, \u22126 is farther from zero.\nDifference: 6 \u2212 4 = 2 units farther.\nAnswer: \u22126 is farther from zero, by 2 units"
+          "problem": "Which integer is farther from zero: −6 or 4? By how much?",
+          "solution": "Find each absolute value:\n|−6| = 6 and |4| = 4.\nSince 6 > 4, −6 is farther from zero.\nDifference: 6 − 4 = 2 units farther.\nAnswer: −6 is farther from zero, by 2 units"
         }
-      ]
+      ],
+      "lessonId": "rational_numbers"
     },
     {
       "type": "guided_practice",
@@ -184,39 +192,40 @@
       "title": "Adding, Subtracting, Multiplying & Dividing Practice",
       "problems": [
         {
-          "problem": "Compute: \u22129 + 3",
+          "problem": "Compute: −9 + 3",
           "hints": [
             "The signs are different, so subtract the smaller absolute value from the larger.",
-            "|\u22129| = 9 and |3| = 3. Subtract: 9 \u2212 3 = 6. Since 9 > 3 and the 9 came from the negative number, the result is negative."
+            "|−9| = 9 and |3| = 3. Subtract: 9 − 3 = 6. Since 9 > 3 and the 9 came from the negative number, the result is negative."
           ],
-          "answer": "\u22126. Different signs: 9 \u2212 3 = 6, and the larger absolute value belongs to \u22129, so the answer is \u22126."
+          "answer": "−6. Different signs: 9 − 3 = 6, and the larger absolute value belongs to −9, so the answer is −6."
         },
         {
-          "problem": "Compute: 4 \u2212 (\u22127)",
+          "problem": "Compute: 4 − (−7)",
           "hints": [
             "Subtracting a negative is the same as adding a positive.",
-            "Rewrite: 4 \u2212 (\u22127) = 4 + 7."
+            "Rewrite: 4 − (−7) = 4 + 7."
           ],
           "answer": "11. Rewrite as 4 + 7 = 11."
         },
         {
-          "problem": "Compute: (\u22128) \u00d7 (\u22123)",
+          "problem": "Compute: (−8) × (−3)",
           "hints": [
-            "Both numbers are negative \u2014 same signs.",
-            "Same signs \u2192 positive result. Multiply the absolute values: 8 \u00d7 3."
+            "Both numbers are negative — same signs.",
+            "Same signs → positive result. Multiply the absolute values: 8 × 3."
           ],
-          "answer": "24. Same signs (negative \u00d7 negative) \u2192 positive. 8 \u00d7 3 = 24."
+          "answer": "24. Same signs (negative × negative) → positive. 8 × 3 = 24."
         },
         {
-          "problem": "Compute: (\u22123/4) \u00f7 (1/2)",
+          "problem": "Compute: (−3/4) ÷ (1/2)",
           "hints": [
             "To divide by a fraction, multiply by its reciprocal. The reciprocal of 1/2 is 2/1.",
-            "Rewrite: (\u22123/4) \u00d7 (2/1) = \u22126/4. Now simplify."
+            "Rewrite: (−3/4) × (2/1) = −6/4. Now simplify."
           ],
-          "answer": "\u22123/2 (or \u22121 1/2). Rewrite as (\u22123/4) \u00d7 (2/1) = \u22126/4 = \u22123/2."
+          "answer": "−3/2 (or −1 1/2). Rewrite as (−3/4) × (2/1) = −6/4 = −3/2."
         }
       ],
-      "skill": "g7-absolute-value"
+      "skill": "g7-absolute-value",
+      "lessonId": "rational_numbers"
     },
     {
       "type": "guided_practice",
@@ -224,87 +233,89 @@
       "title": "Word Problems & Absolute Value Practice",
       "problems": [
         {
-          "problem": "A scuba diver is at \u221230 feet. She descends another 18 feet. What is her new depth?",
+          "problem": "A scuba diver is at −30 feet. She descends another 18 feet. What is her new depth?",
           "hints": [
-            "Descending means going deeper \u2014 that is adding a negative.",
-            "Write the expression: \u221230 + (\u221218). Both are negative, so add absolute values and keep the negative sign."
+            "Descending means going deeper — that is adding a negative.",
+            "Write the expression: −30 + (−18). Both are negative, so add absolute values and keep the negative sign."
           ],
-          "answer": "\u221248 feet. \u221230 + (\u221218) = \u221248. She is now 48 feet below sea level."
+          "answer": "−48 feet. −30 + (−18) = −48. She is now 48 feet below sea level."
         },
         {
-          "problem": "The high temperature on Monday was 3\u00b0C and the low was \u221211\u00b0C. What is the difference between the high and the low?",
+          "problem": "The high temperature on Monday was 3°C and the low was −11°C. What is the difference between the high and the low?",
           "hints": [
-            "Difference means subtract: high \u2212 low = 3 \u2212 (\u221211).",
+            "Difference means subtract: high − low = 3 − (−11).",
             "Subtracting a negative is adding a positive: 3 + 11."
           ],
-          "answer": "14\u00b0C. 3 \u2212 (\u221211) = 3 + 11 = 14."
+          "answer": "14°C. 3 − (−11) = 3 + 11 = 14."
         },
         {
           "problem": "Marcus has $52 in his checking account. He uses his debit card to buy headphones for $67. What is his account balance now?",
           "hints": [
-            "Spending $67 means subtracting: 52 \u2212 67.",
+            "Spending $67 means subtracting: 52 − 67.",
             "You are subtracting a larger number from a smaller one, so the result will be negative."
           ],
-          "answer": "\u2212$15. 52 \u2212 67 = \u221215. His account is overdrawn by $15."
+          "answer": "−$15. 52 − 67 = −15. His account is overdrawn by $15."
         },
         {
-          "problem": "Find the distance between \u22127 and 5 on the number line.",
+          "problem": "Find the distance between −7 and 5 on the number line.",
           "hints": [
-            "Distance = |a \u2212 b|. Plug in: |\u22127 \u2212 5|.",
-            "Simplify inside: \u22127 \u2212 5 = \u221212. Then take the absolute value."
+            "Distance = |a − b|. Plug in: |−7 − 5|.",
+            "Simplify inside: −7 − 5 = −12. Then take the absolute value."
           ],
-          "answer": "12 units. |\u22127 \u2212 5| = |\u221212| = 12."
+          "answer": "12 units. |−7 − 5| = |−12| = 12."
         }
       ],
-      "skill": "g7-absolute-value"
+      "skill": "g7-absolute-value",
+      "lessonId": "rational_numbers"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Rational Numbers \u2014 Practice Set",
+      "title": "Rational Numbers — Practice Set",
       "problems": [
         {
-          "problem": "Compute: \u221212 + 7",
-          "answer": "\u22125. Different signs: 12 \u2212 7 = 5, and the larger absolute value belongs to \u221212, so the answer is \u22125."
+          "problem": "Compute: −12 + 7",
+          "answer": "−5. Different signs: 12 − 7 = 5, and the larger absolute value belongs to −12, so the answer is −5."
         },
         {
-          "problem": "Compute: 5 \u2212 (\u22129)",
+          "problem": "Compute: 5 − (−9)",
           "answer": "14. Subtracting a negative = adding a positive: 5 + 9 = 14."
         },
         {
-          "problem": "Compute: \u22121/2 + 3/4",
-          "answer": "1/4. Common denominator is 4: \u22122/4 + 3/4 = 1/4."
+          "problem": "Compute: −1/2 + 3/4",
+          "answer": "1/4. Common denominator is 4: −2/4 + 3/4 = 1/4."
         },
         {
-          "problem": "Compute: (\u22126) \u00d7 (\u22129)",
-          "answer": "54. Same signs \u2192 positive. 6 \u00d7 9 = 54."
+          "problem": "Compute: (−6) × (−9)",
+          "answer": "54. Same signs → positive. 6 × 9 = 54."
         },
         {
-          "problem": "Compute: (\u22122/5) \u00d7 (15/4)",
-          "answer": "\u22123/2 (or \u22121 1/2). Different signs \u2192 negative. (2 \u00d7 15)/(5 \u00d7 4) = 30/20 = 3/2. Apply sign: \u22123/2."
+          "problem": "Compute: (−2/5) × (15/4)",
+          "answer": "−3/2 (or −1 1/2). Different signs → negative. (2 × 15)/(5 × 4) = 30/20 = 3/2. Apply sign: −3/2."
         },
         {
-          "problem": "Compute: (\u22124/3) \u00f7 (\u22122/9)",
-          "answer": "6. Rewrite as (\u22124/3) \u00d7 (\u22129/2). Same signs \u2192 positive. (4 \u00d7 9)/(3 \u00d7 2) = 36/6 = 6."
+          "problem": "Compute: (−4/3) ÷ (−2/9)",
+          "answer": "6. Rewrite as (−4/3) × (−9/2). Same signs → positive. (4 × 9)/(3 × 2) = 36/6 = 6."
         },
         {
-          "problem": "At midnight the temperature was \u22125\u00b0F. By 3 PM it rose 22\u00b0F, then dropped 8\u00b0F by evening. What was the evening temperature?",
-          "answer": "9\u00b0F. \u22125 + 22 \u2212 8 = 17 \u2212 8 = 9."
+          "problem": "At midnight the temperature was −5°F. By 3 PM it rose 22°F, then dropped 8°F by evening. What was the evening temperature?",
+          "answer": "9°F. −5 + 22 − 8 = 17 − 8 = 9."
         },
         {
-          "problem": "Evaluate: |\u221213| \u2212 |4|",
-          "answer": "9. |\u221213| = 13 and |4| = 4. 13 \u2212 4 = 9."
+          "problem": "Evaluate: |−13| − |4|",
+          "answer": "9. |−13| = 13 and |4| = 4. 13 − 4 = 9."
         },
         {
-          "problem": "What is the distance between \u22128 and \u22123 on the number line?",
-          "answer": "5 units. |\u22128 \u2212 (\u22123)| = |\u22128 + 3| = |\u22125| = 5."
+          "problem": "What is the distance between −8 and −3 on the number line?",
+          "answer": "5 units. |−8 − (−3)| = |−8 + 3| = |−5| = 5."
         },
         {
           "problem": "Jaylen has $210 in his account. He writes checks for $85.50 and $137.25. What is his new balance?",
-          "answer": "\u2212$12.75. 210 \u2212 85.50 \u2212 137.25 = 124.50 \u2212 137.25 = \u221212.75. His account is overdrawn by $12.75."
+          "answer": "−$12.75. 210 − 85.50 − 137.25 = 124.50 − 137.25 = −12.75. His account is overdrawn by $12.75."
         }
       ],
-      "skill": "g7-add-subtract-rationals"
+      "skill": "g7-add-subtract-rationals",
+      "lessonId": "rational_numbers"
     }
   ],
   "answerKeys": {

@@ -5,7 +5,7 @@
   "title": "Test Strategies & Modeling",
   "weeks": "8-9",
   "estimatedDuration": 30,
-  "description": "Covers the meta-skill of diagnosing multiple choice problems \u2014 how to read, classify, and attack ANY ACT question before choosing a strategy. Then teaches ACT-specific strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT).",
+  "description": "Covers the meta-skill of diagnosing multiple choice problems — how to read, classify, and attack ANY ACT question before choosing a strategy. Then teaches ACT-specific strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT).",
   "skills": [
     "act-backsolving",
     "act-picking-numbers",
@@ -29,7 +29,7 @@
     "Choose appropriate model types (linear, exponential, quadratic) for given data"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do \u2192 mastery-check",
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
     "LEAD with problem diagnosis: teach students to READ the problem before SOLVING the problem",
     "The SCAN framework (Skim, Classify, Attack, Nail it) is taught first as the overarching method",
@@ -45,92 +45,95 @@
       "lessonPhase": "concept-intro",
       "title": "The SCAN Method: How to Diagnose Any MCQ Problem",
       "skill": "act-estimation-elimination",
-      "content": "Before you pick up your pencil, DIAGNOSE the problem. Most students lose points not because they can't do the math \u2014 they lose points because they misread the question, fall for a trap, or waste time on a bad approach. The SCAN method gives you a 10-second diagnosis before you solve anything.",
+      "content": "Before you pick up your pencil, DIAGNOSE the problem. Most students lose points not because they can't do the math — they lose points because they misread the question, fall for a trap, or waste time on a bad approach. The SCAN method gives you a 10-second diagnosis before you solve anything.",
       "keyPoints": [
-        "S \u2014 SKIM THE QUESTION: Read the LAST sentence first (that's what they're actually asking). Then read the full problem. Many students solve the wrong thing because they didn't read carefully.",
-        "C \u2014 CLASSIFY THE PROBLEM: What math topic is this? (algebra, geometry, functions, stats, word problem). What sub-type? (solve for x, find the area, interpret a graph). Classification tells you which toolkit to reach for.",
-        "A \u2014 ANALYZE THE ANSWER CHOICES: The choices are a goldmine of information BEFORE you solve. Are they numbers? Try backsolving. Are they expressions with variables? Try picking numbers. Are they spread far apart? Estimate. Are they close together? Be precise.",
-        "N \u2014 NAME YOUR APPROACH: Decide in advance: direct algebra, backsolving, picking numbers, estimation, or draw a picture. Commit to one and go. If it stalls after 30 seconds, switch.",
-        "READING THE CHOICES \u2014 5 patterns to spot immediately:",
-        "Pattern 1 \u2014 'Off by one' traps: choices like x and x+1 mean the ACT expects you to solve for the wrong thing (they ask for x+1 but you stopped at x).",
-        "Pattern 2 \u2014 Sign traps: both 5 and \u22125 are choices? They're testing whether you handle negatives correctly.",
-        "Pattern 3 \u2014 Common-mistake answers: one choice is what you get if you forget to distribute, or if you add instead of multiply. The wrong answer is there ON PURPOSE.",
-        "Pattern 4 \u2014 Unit/conversion traps: answers in different units or mixing diameter/radius, area/perimeter.",
-        "Pattern 5 \u2014 Partial-work answers: the answer you get if you solve half the problem but stop too soon."
-      ]
+        "S — SKIM THE QUESTION: Read the LAST sentence first (that's what they're actually asking). Then read the full problem. Many students solve the wrong thing because they didn't read carefully.",
+        "C — CLASSIFY THE PROBLEM: What math topic is this? (algebra, geometry, functions, stats, word problem). What sub-type? (solve for x, find the area, interpret a graph). Classification tells you which toolkit to reach for.",
+        "A — ANALYZE THE ANSWER CHOICES: The choices are a goldmine of information BEFORE you solve. Are they numbers? Try backsolving. Are they expressions with variables? Try picking numbers. Are they spread far apart? Estimate. Are they close together? Be precise.",
+        "N — NAME YOUR APPROACH: Decide in advance: direct algebra, backsolving, picking numbers, estimation, or draw a picture. Commit to one and go. If it stalls after 30 seconds, switch.",
+        "READING THE CHOICES — 5 patterns to spot immediately:",
+        "Pattern 1 — 'Off by one' traps: choices like x and x+1 mean the ACT expects you to solve for the wrong thing (they ask for x+1 but you stopped at x).",
+        "Pattern 2 — Sign traps: both 5 and −5 are choices? They're testing whether you handle negatives correctly.",
+        "Pattern 3 — Common-mistake answers: one choice is what you get if you forget to distribute, or if you add instead of multiply. The wrong answer is there ON PURPOSE.",
+        "Pattern 4 — Unit/conversion traps: answers in different units or mixing diameter/radius, area/perimeter.",
+        "Pattern 5 — Partial-work answers: the answer you get if you solve half the problem but stop too soon."
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Problem Diagnosis \u2014 Worked Examples",
+      "title": "Problem Diagnosis — Worked Examples",
       "skill": "act-estimation-elimination",
       "examples": [
         {
           "problem": "A store reduces the price of a $120 jacket by 30%, then reduces the new price by an additional 20%. What is the final price?\n(A) $60.00  (B) $67.20  (C) $72.00  (D) $84.00  (E) $96.00",
-          "solution": "SCAN DIAGNOSIS (before solving):\n\nS \u2014 SKIM: 'What is the FINAL price?' after TWO successive discounts.\n\nC \u2014 CLASSIFY: Percent application, successive discounts. I know this type.\n\nA \u2014 ANALYZE CHOICES:\n\u2022 (A) $60 = exactly 50% off \u2192 trap for students who ADD 30%+20%=50%\n\u2022 (D) $84 = 30% off only ($120\u00d70.70) \u2192 trap for students who stop after first discount\n\u2022 (E) $96 = 20% off only \u2192 trap for students who skip the first discount\n\u2022 (B) $67.20 and (C) $72.00 are the real contenders.\n\nN \u2014 NAME APPROACH: Direct calculation, multiply the discount multipliers.\n\nSOLVE: $120 \u00d7 0.70 \u00d7 0.80 = $120 \u00d7 0.56 = $67.20\nAnswer: (B) $67.20\n\nNotice: THREE of the five choices are traps for specific common mistakes."
+          "solution": "SCAN DIAGNOSIS (before solving):\n\nS — SKIM: 'What is the FINAL price?' after TWO successive discounts.\n\nC — CLASSIFY: Percent application, successive discounts. I know this type.\n\nA — ANALYZE CHOICES:\n• (A) $60 = exactly 50% off → trap for students who ADD 30%+20%=50%\n• (D) $84 = 30% off only ($120×0.70) → trap for students who stop after first discount\n• (E) $96 = 20% off only → trap for students who skip the first discount\n• (B) $67.20 and (C) $72.00 are the real contenders.\n\nN — NAME APPROACH: Direct calculation, multiply the discount multipliers.\n\nSOLVE: $120 × 0.70 × 0.80 = $120 × 0.56 = $67.20\nAnswer: (B) $67.20\n\nNotice: THREE of the five choices are traps for specific common mistakes."
         },
         {
-          "problem": "If x\u00b2 \u2212 5x \u2212 6 = 0, what is the sum of the solutions?\n(A) \u22126  (B) \u22125  (C) \u22121  (D) 5  (E) 6",
-          "solution": "SCAN DIAGNOSIS:\n\nS \u2014 SKIM: 'the SUM of the solutions' \u2014 not the solutions themselves, the SUM.\n\nC \u2014 CLASSIFY: Quadratic equation \u2192 I could factor and add, or use Vieta's (sum = \u2212b/a).\n\nA \u2014 ANALYZE CHOICES:\n\u2022 Both 5 and \u22125 are there \u2192 sign trap. They're testing if you know it's \u2212b/a (positive 5) vs \u2212b (negative 5) vs b (5).\n\u2022 \u22126 and 6 are the product (c/a) \u2192 trap for students who find the wrong quantity.\n\u2022 \u22121 = difference of roots \u2192 trap for solving and subtracting instead of adding.\n\nN \u2014 NAME APPROACH: Vieta's shortcut \u2014 sum = \u2212b/a = \u2212(\u22125)/1 = 5. No factoring needed.\n\nAnswer: (D) 5\n\nIf you factored: (x\u22126)(x+1) = 0 \u2192 x = 6, x = \u22121. Sum = 6+(\u22121) = 5. Same answer, more work."
+          "problem": "If x² − 5x − 6 = 0, what is the sum of the solutions?\n(A) −6  (B) −5  (C) −1  (D) 5  (E) 6",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'the SUM of the solutions' — not the solutions themselves, the SUM.\n\nC — CLASSIFY: Quadratic equation → I could factor and add, or use Vieta's (sum = −b/a).\n\nA — ANALYZE CHOICES:\n• Both 5 and −5 are there → sign trap. They're testing if you know it's −b/a (positive 5) vs −b (negative 5) vs b (5).\n• −6 and 6 are the product (c/a) → trap for students who find the wrong quantity.\n• −1 = difference of roots → trap for solving and subtracting instead of adding.\n\nN — NAME APPROACH: Vieta's shortcut — sum = −b/a = −(−5)/1 = 5. No factoring needed.\n\nAnswer: (D) 5\n\nIf you factored: (x−6)(x+1) = 0 → x = 6, x = −1. Sum = 6+(−1) = 5. Same answer, more work."
         },
         {
-          "problem": "In the figure below, line m is parallel to line n. If angle 1 = 3x + 10 and angle 2 = 5x \u2212 30, what is the value of x?\n(A) 10  (B) 20  (C) 25  (D) 40  (E) 70",
-          "solution": "SCAN DIAGNOSIS:\n\nS \u2014 SKIM: 'value of x' \u2014 not the angle measure, just x. (But watch out: one of the choices is probably the angle measure.)\n\nC \u2014 CLASSIFY: Parallel lines + transversal \u2192 angle relationships. Need to know if angles 1 and 2 are equal (corresponding/alternate interior) or supplementary (co-interior).\n\nA \u2014 ANALYZE CHOICES:\n\u2022 Wide range (10 to 70) \u2192 estimation could help but direct solve is fast.\n\u2022 (E) 70 is suspiciously large \u2014 could be the ANGLE value not x.\n\nN \u2014 NAME APPROACH: Need the figure to know the relationship, but let's try both:\n\nIf EQUAL (alternate interior): 3x+10 = 5x\u221230 \u2192 40 = 2x \u2192 x = 20.\nIf SUPPLEMENTARY: 3x+10 + 5x\u221230 = 180 \u2192 8x\u221220 = 180 \u2192 8x = 200 \u2192 x = 25.\n\nBoth 20 and 25 are answer choices \u2014 the figure determines which. But the DIAGNOSIS told us to expect two plausible approaches.\n\nCheck traps: if x=25, angles are 85\u00b0 and 95\u00b0 (supplementary \u2713). If x=20, angles are 70\u00b0 and 70\u00b0 (equal \u2713). The figure dictates the answer, but you're prepared for both."
+          "problem": "In the figure below, line m is parallel to line n. If angle 1 = 3x + 10 and angle 2 = 5x − 30, what is the value of x?\n(A) 10  (B) 20  (C) 25  (D) 40  (E) 70",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'value of x' — not the angle measure, just x. (But watch out: one of the choices is probably the angle measure.)\n\nC — CLASSIFY: Parallel lines + transversal → angle relationships. Need to know if angles 1 and 2 are equal (corresponding/alternate interior) or supplementary (co-interior).\n\nA — ANALYZE CHOICES:\n• Wide range (10 to 70) → estimation could help but direct solve is fast.\n• (E) 70 is suspiciously large — could be the ANGLE value not x.\n\nN — NAME APPROACH: Need the figure to know the relationship, but let's try both:\n\nIf EQUAL (alternate interior): 3x+10 = 5x−30 → 40 = 2x → x = 20.\nIf SUPPLEMENTARY: 3x+10 + 5x−30 = 180 → 8x−20 = 180 → 8x = 200 → x = 25.\n\nBoth 20 and 25 are answer choices — the figure determines which. But the DIAGNOSIS told us to expect two plausible approaches.\n\nCheck traps: if x=25, angles are 85° and 95° (supplementary ✓). If x=20, angles are 70° and 70° (equal ✓). The figure dictates the answer, but you're prepared for both."
         },
         {
-          "problem": "For all positive integers n, which expression is equal to (n+1)\u00b2 \u2212 n\u00b2?\n(A) 1  (B) 2n  (C) 2n + 1  (D) n\u00b2 + 1  (E) 2n\u00b2 + 1",
-          "solution": "SCAN DIAGNOSIS:\n\nS \u2014 SKIM: 'For all positive integers' + 'which expression is equal to' \u2192 this is an equivalence question with variables.\n\nC \u2014 CLASSIFY: Algebraic simplification OR picking numbers. The 'for all' tells me picking numbers is perfect.\n\nA \u2014 ANALYZE CHOICES:\n\u2022 (A) 1 = constant \u2192 would mean the expression doesn't depend on n. Unlikely but possible.\n\u2022 Mix of expressions \u2192 picking numbers will nail it.\n\nN \u2014 NAME APPROACH: PICK NUMBERS. Try n = 1.\n\nPick n = 1: (1+1)\u00b2 \u2212 1\u00b2 = 4 \u2212 1 = 3.\nCheck: (A) 1 \u2717  (B) 2 \u2717  (C) 2(1)+1 = 3 \u2713  (D) 2 \u2717  (E) 3 \u2713\n\nTie between (C) and (E). Try n = 2: (3)\u00b2 \u2212 (2)\u00b2 = 9\u22124 = 5.\n(C) 2(2)+1 = 5 \u2713  (E) 2(4)+1 = 9 \u2717\n\nAnswer: (C) 2n + 1\n\nAlgebra verify: (n+1)\u00b2 \u2212 n\u00b2 = n\u00b2 + 2n + 1 \u2212 n\u00b2 = 2n + 1."
+          "problem": "For all positive integers n, which expression is equal to (n+1)² − n²?\n(A) 1  (B) 2n  (C) 2n + 1  (D) n² + 1  (E) 2n² + 1",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'For all positive integers' + 'which expression is equal to' → this is an equivalence question with variables.\n\nC — CLASSIFY: Algebraic simplification OR picking numbers. The 'for all' tells me picking numbers is perfect.\n\nA — ANALYZE CHOICES:\n• (A) 1 = constant → would mean the expression doesn't depend on n. Unlikely but possible.\n• Mix of expressions → picking numbers will nail it.\n\nN — NAME APPROACH: PICK NUMBERS. Try n = 1.\n\nPick n = 1: (1+1)² − 1² = 4 − 1 = 3.\nCheck: (A) 1 ✗  (B) 2 ✗  (C) 2(1)+1 = 3 ✓  (D) 2 ✗  (E) 3 ✓\n\nTie between (C) and (E). Try n = 2: (3)² − (2)² = 9−4 = 5.\n(C) 2(2)+1 = 5 ✓  (E) 2(4)+1 = 9 ✗\n\nAnswer: (C) 2n + 1\n\nAlgebra verify: (n+1)² − n² = n² + 2n + 1 − n² = 2n + 1."
         }
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Problem Diagnosis Practice \u2014 Classify Before You Solve",
+      "title": "Problem Diagnosis Practice — Classify Before You Solve",
       "problems": [
         {
           "problem": "DIAGNOSIS EXERCISE: Before solving, classify this problem and name your approach.\n\nA rectangular garden is 3 feet longer than it is wide. If the perimeter is 42 feet, what is the width?\n(A) 7  (B) 9  (C) 10.5  (D) 12  (E) 18",
           "hints": [
-            "SKIM: asks for 'the width' \u2014 not length, not area, not perimeter.",
-            "CLASSIFY: geometry word problem \u2192 translate to algebra.",
-            "ANALYZE CHOICES: all numbers \u2192 backsolving works. (E) 18 would make perimeter way too big. Eliminate it.",
-            "APPROACH: Backsolve starting at (B) 9: width=9, length=12, perimeter=2(9+12)=42. \u2713 Done!"
+            "SKIM: asks for 'the width' — not length, not area, not perimeter.",
+            "CLASSIFY: geometry word problem → translate to algebra.",
+            "ANALYZE CHOICES: all numbers → backsolving works. (E) 18 would make perimeter way too big. Eliminate it.",
+            "APPROACH: Backsolve starting at (B) 9: width=9, length=12, perimeter=2(9+12)=42. ✓ Done!"
           ],
-          "answer": "(B) 9. Backsolve: width=9, length=9+3=12. Perimeter = 2(9+12) = 42. \u2713\nOr algebra: 2(w + w+3) = 42 \u2192 4w+6 = 42 \u2192 w = 9."
+          "answer": "(B) 9. Backsolve: width=9, length=9+3=12. Perimeter = 2(9+12) = 42. ✓\nOr algebra: 2(w + w+3) = 42 → 4w+6 = 42 → w = 9."
         },
         {
-          "problem": "DIAGNOSIS EXERCISE: Before solving, analyze the answer choices for traps.\n\nA circle has a diameter of 10 cm. What is its area?\n(A) 10\u03c0  (B) 25\u03c0  (C) 50\u03c0  (D) 100\u03c0  (E) 31.4",
+          "problem": "DIAGNOSIS EXERCISE: Before solving, analyze the answer choices for traps.\n\nA circle has a diameter of 10 cm. What is its area?\n(A) 10π  (B) 25π  (C) 50π  (D) 100π  (E) 31.4",
           "hints": [
             "SKIM: 'area' of a circle given 'diameter'.",
-            "CLASSIFY: geometry formula (A = \u03c0r\u00b2). The key question: did they give radius or diameter?",
-            "TRAP ANALYSIS: (D) 100\u03c0 = \u03c0(10\u00b2) \u2192 using DIAMETER instead of radius. (A) 10\u03c0 = \u03c0d \u2192 circumference formula. (E) 31.4 = 10\u03c0 as a decimal \u2192 confusing area with circumference.",
+            "CLASSIFY: geometry formula (A = πr²). The key question: did they give radius or diameter?",
+            "TRAP ANALYSIS: (D) 100π = π(10²) → using DIAMETER instead of radius. (A) 10π = πd → circumference formula. (E) 31.4 = 10π as a decimal → confusing area with circumference.",
             "Three of five choices are traps for specific mistakes!"
           ],
-          "answer": "(B) 25\u03c0. Diameter = 10, so radius = 5. A = \u03c0(5\u00b2) = 25\u03c0. Three traps avoided: diameter-as-radius, circumference formula, decimal conversion."
+          "answer": "(B) 25π. Diameter = 10, so radius = 5. A = π(5²) = 25π. Three traps avoided: diameter-as-radius, circumference formula, decimal conversion."
         },
         {
-          "problem": "DIAGNOSIS EXERCISE: Without solving, which approach is FASTEST for this problem?\n\nIf f(x) = 2x \u2212 3, for what value of x does f(x) = f\u207b\u00b9(x)?\n(A) 1  (B) 2  (C) 3  (D) 4  (E) 5",
+          "problem": "DIAGNOSIS EXERCISE: Without solving, which approach is FASTEST for this problem?\n\nIf f(x) = 2x − 3, for what value of x does f(x) = f⁻¹(x)?\n(A) 1  (B) 2  (C) 3  (D) 4  (E) 5",
           "hints": [
-            "SKIM: 'for what value of x does f(x) = f\u207b\u00b9(x)' \u2014 find where a function equals its inverse.",
-            "CLASSIFY: Functions/inverses. Could find f\u207b\u00b9, set equal, solve. OR...",
-            "KEY INSIGHT: f(x) = f\u207b\u00b9(x) happens on the line y = x. So f(x) = x \u2192 2x\u22123 = x \u2192 x = 3.",
-            "But if you don't see that insight: BACKSOLVE. Try (C) x=3: f(3) = 3. f\u207b\u00b9(3) = (3+3)/2 = 3. Equal! \u2713"
+            "SKIM: 'for what value of x does f(x) = f⁻¹(x)' — find where a function equals its inverse.",
+            "CLASSIFY: Functions/inverses. Could find f⁻¹, set equal, solve. OR...",
+            "KEY INSIGHT: f(x) = f⁻¹(x) happens on the line y = x. So f(x) = x → 2x−3 = x → x = 3.",
+            "But if you don't see that insight: BACKSOLVE. Try (C) x=3: f(3) = 3. f⁻¹(3) = (3+3)/2 = 3. Equal! ✓"
           ],
-          "answer": "(C) 3. f(x) = f\u207b\u00b9(x) occurs where both equal x. So 2x\u22123 = x \u2192 x = 3. Backsolving also works instantly."
+          "answer": "(C) 3. f(x) = f⁻¹(x) occurs where both equal x. So 2x−3 = x → x = 3. Backsolving also works instantly."
         },
         {
-          "problem": "DIAGNOSIS EXERCISE: Read the choices, then decide \u2014 estimate or calculate?\n\nThe area of a square with diagonal 8 is:\n(A) 16  (B) 32  (C) 64  (D) 32\u221a2  (E) 128",
+          "problem": "DIAGNOSIS EXERCISE: Read the choices, then decide — estimate or calculate?\n\nThe area of a square with diagonal 8 is:\n(A) 16  (B) 32  (C) 64  (D) 32√2  (E) 128",
           "hints": [
             "SKIM: area of a square, given the diagonal (not the side!).",
-            "CLASSIFY: geometry \u2014 need to convert diagonal to side first, or use the shortcut A = d\u00b2/2.",
-            "ANALYZE CHOICES: (C) 64 = 8\u00b2 \u2192 trap for using diagonal AS the side. (E) 128 = 2\u00d764 \u2192 another common error.",
+            "CLASSIFY: geometry — need to convert diagonal to side first, or use the shortcut A = d²/2.",
+            "ANALYZE CHOICES: (C) 64 = 8² → trap for using diagonal AS the side. (E) 128 = 2×64 → another common error.",
             "ESTIMATE: Side < 8 (diagonal is always longer than side), so area < 64. Eliminate (C), (D), (E).",
-            "Only (A) 16 and (B) 32 remain. Side = 8/\u221a2 \u2248 5.66. Area \u2248 32. Answer: (B)."
+            "Only (A) 16 and (B) 32 remain. Side = 8/√2 ≈ 5.66. Area ≈ 32. Answer: (B)."
           ],
-          "answer": "(B) 32. Diagonal = s\u221a2, so s = 8/\u221a2 = 4\u221a2. Area = s\u00b2 = 32. Or shortcut: A = d\u00b2/2 = 64/2 = 32."
+          "answer": "(B) 32. Diagonal = s√2, so s = 8/√2 = 4√2. Area = s² = 32. Or shortcut: A = d²/2 = 64/2 = 32."
         }
       ],
-      "skill": "act-estimation-elimination"
+      "skill": "act-estimation-elimination",
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "explanation",
@@ -139,33 +142,35 @@
       "skill": "act-backsolving",
       "content": "Backsolving is the #1 ACT-specific strategy. Instead of solving algebraically, you test the answer choices in the problem. It works best when the question asks for a specific value and the answer choices are numbers.",
       "keyPoints": [
-        "Start with answer choice (C) \u2014 it's the middle value, so one test tells you which direction to go.",
+        "Start with answer choice (C) — it's the middle value, so one test tells you which direction to go.",
         "If (C) is too big, try (A) or (B). If too small, try (D) or (E).",
         "Best for: single-variable equations, word problems asking 'what is the value of...', percent problems.",
         "NOT for: 'which is equivalent to' questions, multi-variable problems, questions with non-numeric answers.",
         "Backsolving typically takes 2 attempts on average when starting from the middle.",
         "It turns a 'set up and solve' problem into a simpler 'check if this works' problem."
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Backsolving \u2014 Worked Examples",
+      "title": "Backsolving — Worked Examples",
       "skill": "act-backsolving",
       "examples": [
         {
           "problem": "If 3x + 7 = 2x + 15, what is x?\n(A) 2  (B) 4  (C) 8  (D) 11  (E) 22",
-          "solution": "ALGEBRA: 3x + 7 = 2x + 15 \u2192 x = 8. Answer: (C).\n\nBACKSOLVE: Start with (C) x = 8.\nLeft: 3(8) + 7 = 31. Right: 2(8) + 15 = 31. \u2713 Done in one try!\nAnswer: (C) 8"
+          "solution": "ALGEBRA: 3x + 7 = 2x + 15 → x = 8. Answer: (C).\n\nBACKSOLVE: Start with (C) x = 8.\nLeft: 3(8) + 7 = 31. Right: 2(8) + 15 = 31. ✓ Done in one try!\nAnswer: (C) 8"
         },
         {
           "problem": "A number is doubled, then 5 is subtracted. The result is 23. What is the number?\n(A) 9  (B) 12  (C) 14  (D) 16  (E) 18",
-          "solution": "BACKSOLVE: Start with (C) 14.\nDouble: 28. Subtract 5: 23. \u2713 That's the target!\nAnswer: (C) 14\n\nFaster than setting up 2x \u2212 5 = 23 for many students."
+          "solution": "BACKSOLVE: Start with (C) 14.\nDouble: 28. Subtract 5: 23. ✓ That's the target!\nAnswer: (C) 14\n\nFaster than setting up 2x − 5 = 23 for many students."
         },
         {
           "problem": "The sum of three consecutive even integers is 78. What is the largest?\n(A) 24  (B) 26  (C) 28  (D) 30  (E) 32",
-          "solution": "BACKSOLVE: The largest is (C) 28, so the three numbers are 24, 26, 28.\n24 + 26 + 28 = 78. \u2713\nAnswer: (C) 28\n\nACT Tip: For consecutive integer problems, always backsolve \u2014 it's instant."
+          "solution": "BACKSOLVE: The largest is (C) 28, so the three numbers are 24, 26, 28.\n24 + 26 + 28 = 78. ✓\nAnswer: (C) 28\n\nACT Tip: For consecutive integer problems, always backsolve — it's instant."
         }
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "explanation",
@@ -175,34 +180,36 @@
       "content": "Picking numbers turns abstract algebra into concrete arithmetic. Estimation eliminates wrong answers in seconds. Together, these strategies save time on questions that would otherwise require complex calculation.",
       "keyPoints": [
         "PICKING NUMBERS: Replace variables with easy concrete values (2, 3, 5, 10).",
-        "Avoid 0 and 1 \u2014 they have special properties that can make multiple answers 'work'.",
-        "Avoid numbers that appear in the problem \u2014 they can create false matches.",
+        "Avoid 0 and 1 — they have special properties that can make multiple answers 'work'.",
+        "Avoid numbers that appear in the problem — they can create false matches.",
         "Evaluate the problem AND each answer choice with your chosen numbers. The one that matches is correct.",
         "If two answers match, try a different number to break the tie.",
-        "ESTIMATION: Round to friendly numbers (\u03c0 \u2248 3, \u221a2 \u2248 1.4, \u221a3 \u2248 1.7).",
+        "ESTIMATION: Round to friendly numbers (π ≈ 3, √2 ≈ 1.4, √3 ≈ 1.7).",
         "Eliminate answers that are clearly wrong by order of magnitude.",
         "Combined strategy: estimate first to eliminate 2-3 choices, then backsolve or calculate among remaining."
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Picking Numbers & Estimation \u2014 Worked Examples",
+      "title": "Picking Numbers & Estimation — Worked Examples",
       "skill": "act-estimation-elimination",
       "examples": [
         {
-          "problem": "If x is a positive even integer, which expression is always odd?\n(A) x + 2  (B) 2x + 1  (C) x\u00b2  (D) x/2  (E) x + 4",
-          "solution": "PICK x = 2:\n(A) 2 + 2 = 4 (even) \u2717\n(B) 2(2) + 1 = 5 (odd) \u2713\n(C) 4 (even) \u2717\n(D) 1 (odd) \u2014 could be a match\n(E) 6 (even) \u2717\n\nTwo candidates: (B) and (D). Try x = 4:\n(B) 2(4) + 1 = 9 (odd) \u2713\n(D) 4/2 = 2 (even) \u2717\n\nAnswer: (B) 2x + 1"
+          "problem": "If x is a positive even integer, which expression is always odd?\n(A) x + 2  (B) 2x + 1  (C) x²  (D) x/2  (E) x + 4",
+          "solution": "PICK x = 2:\n(A) 2 + 2 = 4 (even) ✗\n(B) 2(2) + 1 = 5 (odd) ✓\n(C) 4 (even) ✗\n(D) 1 (odd) — could be a match\n(E) 6 (even) ✗\n\nTwo candidates: (B) and (D). Try x = 4:\n(B) 2(4) + 1 = 9 (odd) ✓\n(D) 4/2 = 2 (even) ✗\n\nAnswer: (B) 2x + 1"
         },
         {
-          "problem": "A circle has area 200\u03c0 square inches. What is the approximate diameter?\n(A) 10 in  (B) 14 in  (C) 20 in  (D) 28 in  (E) 40 in",
-          "solution": "ESTIMATE: \u03c0r\u00b2 = 200\u03c0 \u2192 r\u00b2 = 200 \u2192 r \u2248 14.1 \u2192 diameter \u2248 28.\n\nElimination: (A) gives area = 25\u03c0 (way too small). (E) gives area = 400\u03c0 (too big).\n(D) 28 \u2192 r = 14 \u2192 area = 196\u03c0 \u2248 200\u03c0. \u2713\nAnswer: (D) 28 in"
+          "problem": "A circle has area 200π square inches. What is the approximate diameter?\n(A) 10 in  (B) 14 in  (C) 20 in  (D) 28 in  (E) 40 in",
+          "solution": "ESTIMATE: πr² = 200π → r² = 200 → r ≈ 14.1 → diameter ≈ 28.\n\nElimination: (A) gives area = 25π (way too small). (E) gives area = 400π (too big).\n(D) 28 → r = 14 → area = 196π ≈ 200π. ✓\nAnswer: (D) 28 in"
         },
         {
-          "problem": "For all x > 0, which is equivalent to (x\u00b3 \u00b7 x\u2075) / x\u00b2?\n(A) x\u2076  (B) x\u2078  (C) x\u00b9\u2070  (D) x\u2076\u00b7\u2075  (E) x\u2078/\u00b2",
-          "solution": "ALGEBRA: x^(3+5-2) = x\u2076. Answer: (A).\n\nPICK NUMBERS: Let x = 2.\nNumerator: 2\u00b3 \u00b7 2\u2075 = 8 \u00b7 32 = 256.\nDenominator: 2\u00b2 = 4.\n256/4 = 64.\nCheck: (A) 2\u2076 = 64 \u2713. Answer: (A) x\u2076"
+          "problem": "For all x > 0, which is equivalent to (x³ · x⁵) / x²?\n(A) x⁶  (B) x⁸  (C) x¹⁰  (D) x⁶·⁵  (E) x⁸/²",
+          "solution": "ALGEBRA: x^(3+5-2) = x⁶. Answer: (A).\n\nPICK NUMBERS: Let x = 2.\nNumerator: 2³ · 2⁵ = 8 · 32 = 256.\nDenominator: 2² = 4.\n256/4 = 64.\nCheck: (A) 2⁶ = 64 ✓. Answer: (A) x⁶"
         }
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "guided_practice",
@@ -212,17 +219,17 @@
         {
           "problem": "If 2^x = 32, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 16",
           "hints": [
-            "Backsolve: try (C) x = 5. 2\u2075 = 32. \u2713"
+            "Backsolve: try (C) x = 5. 2⁵ = 32. ✓"
           ],
-          "answer": "(C) 5. 2\u2075 = 32."
+          "answer": "(C) 5. 2⁵ = 32."
         },
         {
-          "problem": "For all a \u2260 0, which is equivalent to (3a\u00b2)\u00b3 / a\u2074?\n(A) 3a\u00b2  (B) 9a\u00b2  (C) 27a\u00b2  (D) 27a  (E) 9a\u2076",
+          "problem": "For all a ≠ 0, which is equivalent to (3a²)³ / a⁴?\n(A) 3a²  (B) 9a²  (C) 27a²  (D) 27a  (E) 9a⁶",
           "hints": [
-            "Pick a = 2: (3\u00b74)\u00b3 / 16 = 12\u00b3/16 = 1728/16 = 108",
-            "Check: (C) 27(4) = 108 \u2713"
+            "Pick a = 2: (3·4)³ / 16 = 12³/16 = 1728/16 = 108",
+            "Check: (C) 27(4) = 108 ✓"
           ],
-          "answer": "(C) 27a\u00b2. (3a\u00b2)\u00b3 = 27a\u2076. 27a\u2076/a\u2074 = 27a\u00b2. Or pick a=2: 12\u00b3/16 = 108 = 27(4)."
+          "answer": "(C) 27a². (3a²)³ = 27a⁶. 27a⁶/a⁴ = 27a². Or pick a=2: 12³/16 = 108 = 27(4)."
         },
         {
           "problem": "A rectangular field has area 2,400 square meters and length 80 meters. What is the perimeter?\n(A) 110 m  (B) 190 m  (C) 220 m  (D) 2,560 m  (E) 4,800 m",
@@ -233,38 +240,40 @@
           "answer": "(C) 220 m. Width = 30. Perimeter = 2(80+30) = 220."
         },
         {
-          "problem": "The volume of a sphere is approximately 904.8 cubic inches. What is the radius? (Use \u03c0 \u2248 3.14)\n(A) 4  (B) 6  (C) 8  (D) 10  (E) 12",
+          "problem": "The volume of a sphere is approximately 904.8 cubic inches. What is the radius? (Use π ≈ 3.14)\n(A) 4  (B) 6  (C) 8  (D) 10  (E) 12",
           "hints": [
-            "Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 \u2248 904.8 \u2713"
+            "Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 ≈ 904.8 ✓"
           ],
-          "answer": "(B) 6. V = (4/3)(3.14)(6\u00b3) = (4/3)(3.14)(216) \u2248 904.8."
+          "answer": "(B) 6. V = (4/3)(3.14)(6³) = (4/3)(3.14)(216) ≈ 904.8."
         }
       ],
-      "skill": "act-backsolving"
+      "skill": "act-backsolving",
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Pacing Strategy & Mathematical Modeling",
       "skill": "act-pacing-strategy",
-      "content": "The ACT Math section is 60 questions in 60 minutes. Pacing is a skill that must be practiced. Modeling (~25% of the test) is a cross-cutting category that appears in all content areas \u2014 it's about applying math to real situations.",
+      "content": "The ACT Math section is 60 questions in 60 minutes. Pacing is a skill that must be practiced. Modeling (~25% of the test) is a cross-cutting category that appears in all content areas — it's about applying math to real situations.",
       "keyPoints": [
         "PACING: 1 minute per question on average. Questions get harder: #1-20 easy, #21-40 medium, #41-60 hard.",
         "Never spend more than 90 seconds on a single question. Mark it and come back.",
-        "No penalty for guessing \u2014 ANSWER EVERY QUESTION even if you have to guess.",
-        "If time is running out, guess the same letter for all remaining \u2014 statistically better than random.",
+        "No penalty for guessing — ANSWER EVERY QUESTION even if you have to guess.",
+        "If time is running out, guess the same letter for all remaining — statistically better than random.",
         "MODELING: Choosing the right function type for a situation.",
         "Linear: constant rate of change (adding the same amount each time).",
         "Exponential: constant PERCENT change (multiplying by the same factor each time).",
         "Quadratic: changing rate of change, often involves area or projectile motion.",
         "Interpreting slope in context: 'for each additional [x-unit], [y] changes by [slope] [y-units].'",
         "Interpreting y-intercept in context: 'when [x] is 0, [y] is [intercept].'"
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Modeling & Interpretation \u2014 Worked Examples",
+      "title": "Modeling & Interpretation — Worked Examples",
       "skill": "act-model-interpretation",
       "examples": [
         {
@@ -277,9 +286,10 @@
         },
         {
           "problem": "A scatter plot of (hours studied, test score) shows a roughly linear trend. The line of best fit is y = 4.5x + 62. What does the model predict for a student who studies 0 hours?\n(A) 0  (B) 4.5  (C) 62  (D) 66.5  (E) Cannot determine",
-          "solution": "When x = 0: y = 4.5(0) + 62 = 62.\nThe y-intercept represents the predicted score with 0 hours of studying.\nAnswer: (C) 62\n\nNote: This is the baseline score \u2014 probably reflecting what students learned in class."
+          "solution": "When x = 0: y = 4.5(0) + 62 = 62.\nThe y-intercept represents the predicted score with 0 hours of studying.\nAnswer: (C) 62\n\nNote: This is the baseline score — probably reflecting what students learned in class."
         }
-      ]
+      ],
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "guided_practice",
@@ -289,50 +299,51 @@
         {
           "problem": "A car depreciates from $25,000 to $16,000 in 3 years. Which model type best fits this situation?\n(A) Linear  (B) Quadratic  (C) Exponential decay  (D) Exponential growth  (E) Logarithmic",
           "hints": [
-            "Depreciation is a percentage loss each year \u2192 multiplicative",
+            "Depreciation is a percentage loss each year → multiplicative",
             "Check: is the amount lost the same each year (linear) or a percentage (exponential)?"
           ],
-          "answer": "(C) Exponential decay. Depreciation is typically a constant percentage per year \u2192 exponential."
+          "answer": "(C) Exponential decay. Depreciation is typically a constant percentage per year → exponential."
         },
         {
-          "problem": "The equation h = \u221216t\u00b2 + 48t + 5 models the height (in feet) of a ball t seconds after being thrown. What is the maximum height?\n(A) 5 ft  (B) 41 ft  (C) 48 ft  (D) 53 ft  (E) 64 ft",
+          "problem": "The equation h = −16t² + 48t + 5 models the height (in feet) of a ball t seconds after being thrown. What is the maximum height?\n(A) 5 ft  (B) 41 ft  (C) 48 ft  (D) 53 ft  (E) 64 ft",
           "hints": [
-            "Maximum occurs at vertex: t = \u2212b/(2a) = \u221248/(2(\u221216)) = 1.5",
-            "h(1.5) = \u221216(2.25) + 48(1.5) + 5"
+            "Maximum occurs at vertex: t = −b/(2a) = −48/(2(−16)) = 1.5",
+            "h(1.5) = −16(2.25) + 48(1.5) + 5"
           ],
-          "answer": "(B) 41 ft. t = 1.5. h = \u221216(2.25) + 72 + 5 = \u221236 + 72 + 5 = 41."
+          "answer": "(B) 41 ft. t = 1.5. h = −16(2.25) + 72 + 5 = −36 + 72 + 5 = 41."
         },
         {
           "problem": "A linear model predicts that a factory produces 200 widgets on day 1 and 215 widgets on day 2. According to this model, how many widgets will be produced on day 10?\n(A) 335  (B) 345  (C) 350  (D) 400  (E) 2,150",
           "hints": [
-            "Rate = 215 \u2212 200 = 15 widgets/day",
-            "Day 10: 200 + 15(10\u22121) = 200 + 135"
+            "Rate = 215 − 200 = 15 widgets/day",
+            "Day 10: 200 + 15(10−1) = 200 + 135"
           ],
           "answer": "(A) 335. Rate = 15/day. Day 10: 200 + 15(9) = 200 + 135 = 335."
         }
       ],
-      "skill": "act-model-interpretation"
+      "skill": "act-model-interpretation",
+      "lessonId": "test_strategies_modeling"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Test Strategies & Modeling \u2014 ACT-Style Practice Set",
+      "title": "Test Strategies & Modeling — ACT-Style Practice Set",
       "problems": [
         {
           "problem": "Three times a number, decreased by 7, is 29. What is the number? (Use backsolving)\n(A) 8  (B) 10  (C) 12  (D) 14  (E) 22",
-          "answer": "(C) 12. Backsolve: 3(12) \u2212 7 = 36 \u2212 7 = 29. \u2713"
+          "answer": "(C) 12. Backsolve: 3(12) − 7 = 36 − 7 = 29. ✓"
         },
         {
-          "problem": "For all x > 0, which expression equals (\u221ax)\u00b3 \u00b7 \u221ax?\n(A) x  (B) x\u00b2  (C) x\u00b3  (D) x\u2074  (E) x^(3/2)",
-          "answer": "(B) x\u00b2. Pick x = 4: (\u221a4)\u00b3 \u00b7 \u221a4 = 8 \u00b7 2 = 16. Check: (B) 4\u00b2 = 16. \u2713 Or algebraically: x^(3/2) \u00b7 x^(1/2) = x\u00b2."
+          "problem": "For all x > 0, which expression equals (√x)³ · √x?\n(A) x  (B) x²  (C) x³  (D) x⁴  (E) x^(3/2)",
+          "answer": "(B) x². Pick x = 4: (√4)³ · √4 = 8 · 2 = 16. Check: (B) 4² = 16. ✓ Or algebraically: x^(3/2) · x^(1/2) = x²."
         },
         {
-          "problem": "\u03c0\u00b2 is approximately:\n(A) 3.14  (B) 6.28  (C) 9.87  (D) 12.56  (E) 31.4",
-          "answer": "(C) 9.87. \u03c0 \u2248 3.14. \u03c0\u00b2 \u2248 3.14\u00b2 \u2248 9.87. Estimation: 3\u00b2 = 9, 3.2\u00b2 = 10.24. \u03c0\u00b2 is between 9 and 10."
+          "problem": "π² is approximately:\n(A) 3.14  (B) 6.28  (C) 9.87  (D) 12.56  (E) 31.4",
+          "answer": "(C) 9.87. π ≈ 3.14. π² ≈ 3.14² ≈ 9.87. Estimation: 3² = 9, 3.2² = 10.24. π² is between 9 and 10."
         },
         {
           "problem": "A company's revenue R (in thousands) is modeled by R = 2.5x + 10, where x is months since launch. After how many months will revenue reach $35,000?\n(A) 5  (B) 10  (C) 14  (D) 18  (E) 25",
-          "answer": "(B) 10. Set R = 35: 2.5x + 10 = 35 \u2192 2.5x = 25 \u2192 x = 10 months."
+          "answer": "(B) 10. Set R = 35: 2.5x + 10 = 35 → 2.5x = 25 → x = 10 months."
         },
         {
           "problem": "The number of bacteria doubles every 4 hours. Starting with 500, which expression gives the count after t hours?\n(A) 500 + 2t  (B) 500(2)^t  (C) 500(2)^(t/4)  (D) 1000^t  (E) 500(4)^t",
@@ -347,11 +358,12 @@
           "answer": "(B) $12.00. Always start with the choice closest to your estimate."
         },
         {
-          "problem": "The equation T = \u22120.005a\u00b2 + 0.4a + 50 models temperature T based on altitude a (in thousands of feet). At what altitude is the temperature highest?\n(A) 10,000 ft  (B) 20,000 ft  (C) 40,000 ft  (D) 50,000 ft  (E) 80,000 ft",
-          "answer": "(C) 40,000 ft. Vertex at a = \u22120.4/(2(\u22120.005)) = \u22120.4/(\u22120.01) = 40. Since a is in thousands, that's 40,000 ft."
+          "problem": "The equation T = −0.005a² + 0.4a + 50 models temperature T based on altitude a (in thousands of feet). At what altitude is the temperature highest?\n(A) 10,000 ft  (B) 20,000 ft  (C) 40,000 ft  (D) 50,000 ft  (E) 80,000 ft",
+          "answer": "(C) 40,000 ft. Vertex at a = −0.4/(2(−0.005)) = −0.4/(−0.01) = 40. Since a is in thousands, that's 40,000 ft."
         }
       ],
-      "skill": "act-backsolving"
+      "skill": "act-backsolving",
+      "lessonId": "test_strategies_modeling"
     }
   ],
   "answerKeys": {
@@ -360,9 +372,9 @@
     "backsolve-consecutive": "28",
     "picking-always-odd": "2x + 1",
     "estimation-circle": "28",
-    "picking-exponents": "x\u2076",
+    "picking-exponents": "x⁶",
     "backsolve-power": "5",
-    "picking-cubic": "27a\u00b2",
+    "picking-cubic": "27a²",
     "estimation-perimeter": "220",
     "backsolve-sphere": "6",
     "model-cellphone": "cost per minute",
@@ -372,7 +384,7 @@
     "model-projectile": "41",
     "model-factory": "335",
     "backsolve-3x-7": "12",
-    "picking-sqrt-cube": "x\u00b2",
+    "picking-sqrt-cube": "x²",
     "estimation-pi-sq": "9.87",
     "model-revenue": "10",
     "model-bacteria": "500(2)^(t/4)",

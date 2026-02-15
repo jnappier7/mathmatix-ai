@@ -46,10 +46,20 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     currentStepDetail = formatScaffoldStep(currentPhase, scaffoldIndex, scaffold.length);
   }
 
-  // Build the full scaffold outline (compact)
+  // Build the full scaffold outline with lesson grouping
+  const lessons = scaffoldData?.lessons || [];
+  let lastLessonId = null;
   const scaffoldOutline = scaffold.map((s, i) => {
     const marker = i === scaffoldIndex ? '▶' : i < scaffoldIndex ? '✓' : '○';
-    return `  ${marker} ${i + 1}. [${s.type}] ${s.title}`;
+    let prefix = '';
+    if (s.lessonId && s.lessonId !== lastLessonId) {
+      const lessonMeta = lessons.find(l => l.lessonId === s.lessonId);
+      const lessonTitle = lessonMeta?.title || s.lessonId;
+      const lessonNum = lessonMeta?.order || lessons.findIndex(l => l.lessonId === s.lessonId) + 1;
+      prefix = `\n  --- Lesson ${lessonNum}: ${lessonTitle} ---\n`;
+      lastLessonId = s.lessonId;
+    }
+    return `${prefix}  ${marker} ${i + 1}. [${s.type}] ${s.title}`;
   }).join('\n');
 
   // AI instruction model from pathway
@@ -598,8 +608,32 @@ function loadCourseContext(courseSession) {
   }
 }
 
+/**
+ * Calculate blended overallProgress that includes within-module scaffold progress.
+ * Instead of only counting fully completed modules (which gives huge jumps),
+ * this blends in the current module's scaffold progress for smooth, continuous progress.
+ *
+ * Example: 22 modules, 3 completed, current module at 60% scaffold progress:
+ *   (3 + 0.60) / 22 * 100 = 16.4% (vs 13.6% with only completed modules)
+ */
+function calculateOverallProgress(modules) {
+  if (!modules || modules.length === 0) return 0;
+  const totalModules = modules.length;
+
+  let progressSum = 0;
+  for (const mod of modules) {
+    if (mod.status === 'completed') {
+      progressSum += 1;
+    } else if (mod.status === 'in_progress' && mod.scaffoldProgress > 0) {
+      progressSum += (mod.scaffoldProgress / 100);
+    }
+  }
+  return Math.round((progressSum / totalModules) * 100);
+}
+
 module.exports = {
   buildCourseSystemPrompt,
   buildCourseGreetingInstruction,
-  loadCourseContext
+  loadCourseContext,
+  calculateOverallProgress
 };

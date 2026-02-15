@@ -39,7 +39,8 @@
         "Inverse: f⁻¹ exists if f is one-to-one. Reflect over y=x. f(f⁻¹(x))=x.",
         "Polynomial: end behavior, zeros, multiplicity, turning points. Rational: asymptotes, holes.",
         "Exponential: y=abˣ growth/decay. Logarithmic: inverse of exponential, properties/laws."
-      ]
+      ],
+      "lessonId": "review-functions"
     },
     {
       "type": "guided_practice",
@@ -59,7 +60,8 @@
           "problem": "Solve: 3ˣ⁺² = 5·2ˣ. Give an exact answer.",
           "answer": "3ˣ·9 = 5·2ˣ → (3/2)ˣ = 5/9. x·ln(3/2)=ln(5/9). x = ln(5/9)/ln(3/2)."
         }
-      ]
+      ],
+      "lessonId": "review-functions"
     },
     {
       "type": "explanation",
@@ -74,7 +76,8 @@
         "Solving: isolate trig function, find reference angle, apply quadrant, check interval.",
         "Inverse trig: restricted domains. arcsin[-π/2,π/2], arccos[0,π], arctan(-π/2,π/2).",
         "Law of Sines: a/sinA=b/sinB. SSA ambiguous case. Law of Cosines: a²=b²+c²-2bc·cosA."
-      ]
+      ],
+      "lessonId": "review-trig"
     },
     {
       "type": "guided_practice",
@@ -94,7 +97,8 @@
           "problem": "Triangle has a=7, b=10, C=40°. Find c and the area.",
           "answer": "Law of Cosines: c²=49+100-2(7)(10)cos40°=149-140(0.766)=149-107.24=41.76. c≈6.46. Area=(1/2)(7)(10)sin40°=35(0.6428)≈22.50."
         }
-      ]
+      ],
+      "lessonId": "review-trig"
     },
     {
       "type": "explanation",
@@ -109,7 +113,8 @@
         "Polar: x=rcosθ, y=rsinθ, r²=x²+y². Curves: roses, limaçons, cardioids, lemniscates.",
         "Vectors: dot product for angle/orthogonality/projection. Work=F·d.",
         "Complex: z=r·cis(θ). DeMoivre's: zⁿ=rⁿcis(nθ). nth roots: n equally spaced."
-      ]
+      ],
+      "lessonId": "review-analytic-vectors-limits"
     },
     {
       "type": "guided_practice",
@@ -129,7 +134,8 @@
           "problem": "Find all square roots of z = -2+2√3i in rectangular form.",
           "answer": "r=√(4+12)=4. θ=arctan(2√3/(-2))=2π/3 (Q2). z=4cis(2π/3). Square roots: √4·cis((2π/3+2kπ)/2) = 2cis(π/3) and 2cis(4π/3). Root1: 2(1/2+i√3/2)=1+√3i. Root2: 2(-1/2-i√3/2)=-1-√3i."
         }
-      ]
+      ],
+      "lessonId": "review-analytic-vectors-limits"
     },
     {
       "type": "explanation",
@@ -144,7 +150,8 @@
         "Continuity: f(c) defined, limit exists, limit=f(c).",
         "Limits at infinity: compare degrees for rational functions.",
         "Connection: infinite series = limit of partial sums."
-      ]
+      ],
+      "lessonId": "review-functions"
     },
     {
       "type": "guided_practice",
@@ -164,7 +171,8 @@
           "problem": "Evaluate lim(x→∞) (√(4x²+1) - 2x).",
           "answer": "Multiply by conjugate: (√(4x²+1)-2x)(√(4x²+1)+2x)/(√(4x²+1)+2x) = (4x²+1-4x²)/(√(4x²+1)+2x) = 1/(√(4x²+1)+2x). As x→∞: √(4x²+1)≈2x, so denominator→4x→∞. Limit=0."
         }
-      ]
+      ],
+      "lessonId": "review-functions"
     }
   ],
   "answerKeys": {
@@ -180,5 +188,22 @@
     "rev-inf-series": "S=2.",
     "rev-lim-factor": "lim=3.",
     "rev-lim-conjugate": "lim=0."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "review-functions",
+      "title": "Review: Functions, Polynomials, Exp/Log",
+      "order": 1
+    },
+    {
+      "lessonId": "review-trig",
+      "title": "Review: Trigonometry Comprehensive",
+      "order": 2
+    },
+    {
+      "lessonId": "review-analytic-vectors-limits",
+      "title": "Review: Conics, Vectors, Series & Limits",
+      "order": 3
+    }
+  ]
 }

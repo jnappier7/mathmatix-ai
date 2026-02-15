@@ -5,7 +5,7 @@
   "title": "Function Toolkit & Transformations",
   "weeks": "3-5",
   "estimatedDuration": 15,
-  "description": "Deep study of parent function families and their key features, transformation template g(x) = af(b(x \u2212 c)) + d, combining and composing functions, and inverse functions. Emphasis on fluent identification of domain, range, asymptotes, and end behavior across all function types encountered in Algebra 2 and beyond.",
+  "description": "Deep study of parent function families and their key features, transformation template g(x) = af(b(x − c)) + d, combining and composing functions, and inverse functions. Emphasis on fluent identification of domain, range, asymptotes, and end behavior across all function types encountered in Algebra 2 and beyond.",
   "skills": [
     "function-families-overview",
     "transformations-toolkit",
@@ -24,14 +24,14 @@
   ],
   "goals": [
     "Identify and analyze parent function families (linear, quadratic, cubic, absolute value, square root, cube root, exponential, logarithmic, rational, greatest integer) with domain, range, intercepts, asymptotes, and end behavior.",
-    "Apply the transformation template g(x) = af(b(x \u2212 c)) + d to any parent function, describing and performing reflections, stretches/compressions, and shifts in correct order.",
+    "Apply the transformation template g(x) = af(b(x − c)) + d to any parent function, describing and performing reflections, stretches/compressions, and shifts in correct order.",
     "Combine functions using arithmetic operations (sum, difference, product, quotient) and determine resulting domains.",
     "Evaluate and simplify compositions f(g(x)) and g(f(x)), find composition domains, and decompose composite functions.",
-    "Find inverse functions algebraically, restrict domains when necessary, verify inverses via composition, and relate domain/range of f and f\u207b\u00b9.",
+    "Find inverse functions algebraically, restrict domains when necessary, verify inverses via composition, and relate domain/range of f and f⁻¹.",
     "Analyze domain and range across combined, composed, and inverse functions using interval notation."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
+    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
     "Multi-representation approach: algebraic, graphical, numerical (tables), verbal descriptions",
     "Spiral prior Algebra 2 skills (factoring, solving equations) into practice problems"
@@ -45,44 +45,46 @@
       "skill": "function-families-overview",
       "content": "Comprehensive review and extension of parent function families. For each parent function, students catalog: equation, domain, range, intercepts, asymptotes, end behavior, symmetry (even/odd/neither), and continuity.",
       "keyPoints": [
-        "Linear: f(x) = x \u2014 domain (-\u221e,\u221e), range (-\u221e,\u221e), no asymptotes, odd symmetry",
-        "Quadratic: f(x) = x\u00b2 \u2014 domain (-\u221e,\u221e), range [0,\u221e), vertex (0,0), even symmetry",
-        "Cubic: f(x) = x\u00b3 \u2014 domain (-\u221e,\u221e), range (-\u221e,\u221e), inflection at origin, odd symmetry",
-        "Absolute value: f(x) = |x| \u2014 domain (-\u221e,\u221e), range [0,\u221e), vertex (0,0), even symmetry, not differentiable at 0",
-        "Square root: f(x) = \u221ax \u2014 domain [0,\u221e), range [0,\u221e), endpoint (0,0), neither even nor odd",
-        "Cube root: f(x) = \u221bx \u2014 domain (-\u221e,\u221e), range (-\u221e,\u221e), inflection at origin, odd symmetry",
-        "Exponential: f(x) = b\u02e3 (b > 1) \u2014 domain (-\u221e,\u221e), range (0,\u221e), HA y = 0, y-int (0,1), always increasing",
-        "Logarithmic: f(x) = log_b(x) \u2014 domain (0,\u221e), range (-\u221e,\u221e), VA x = 0, x-int (1,0), inverse of exponential",
-        "Rational (reciprocal): f(x) = 1/x \u2014 domain (-\u221e,0)\u222a(0,\u221e), range (-\u221e,0)\u222a(0,\u221e), HA y=0, VA x=0, odd symmetry",
-        "Greatest integer: f(x) = \u230ax\u230b \u2014 domain (-\u221e,\u221e), range \u2124, step function, discontinuous at integers"
-      ]
+        "Linear: f(x) = x — domain (-∞,∞), range (-∞,∞), no asymptotes, odd symmetry",
+        "Quadratic: f(x) = x² — domain (-∞,∞), range [0,∞), vertex (0,0), even symmetry",
+        "Cubic: f(x) = x³ — domain (-∞,∞), range (-∞,∞), inflection at origin, odd symmetry",
+        "Absolute value: f(x) = |x| — domain (-∞,∞), range [0,∞), vertex (0,0), even symmetry, not differentiable at 0",
+        "Square root: f(x) = √x — domain [0,∞), range [0,∞), endpoint (0,0), neither even nor odd",
+        "Cube root: f(x) = ∛x — domain (-∞,∞), range (-∞,∞), inflection at origin, odd symmetry",
+        "Exponential: f(x) = bˣ (b > 1) — domain (-∞,∞), range (0,∞), HA y = 0, y-int (0,1), always increasing",
+        "Logarithmic: f(x) = log_b(x) — domain (0,∞), range (-∞,∞), VA x = 0, x-int (1,0), inverse of exponential",
+        "Rational (reciprocal): f(x) = 1/x — domain (-∞,0)∪(0,∞), range (-∞,0)∪(0,∞), HA y=0, VA x=0, odd symmetry",
+        "Greatest integer: f(x) = ⌊x⌋ — domain (-∞,∞), range ℤ, step function, discontinuous at integers"
+      ],
+      "lessonId": "parent-functions"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Analyzing Function Families \u2014 Worked Examples",
+      "title": "Analyzing Function Families — Worked Examples",
       "skill": "function-families-overview",
       "examples": [
         {
           "problem": "For f(x) = -3(2)^(x-1) + 6, identify the parent function and list all key features: domain, range, asymptotes, intercepts, end behavior.",
-          "solution": "Parent: f(x) = 2^x (exponential). Transformations: shift right 1, vertical stretch by 3, reflect over x-axis, shift up 6. Domain: (-\u221e, \u221e). Range: (-\u221e, 6). Horizontal asymptote: y = 6. y-intercept: f(0) = -3(2)^(-1) + 6 = -3/2 + 6 = 9/2 = 4.5, so (0, 4.5). x-intercept: -3(2)^(x-1) + 6 = 0 \u2192 2^(x-1) = 2 \u2192 x - 1 = 1 \u2192 x = 2, so (2, 0). End behavior: as x \u2192 -\u221e, f(x) \u2192 6 (from below); as x \u2192 \u221e, f(x) \u2192 -\u221e."
+          "solution": "Parent: f(x) = 2^x (exponential). Transformations: shift right 1, vertical stretch by 3, reflect over x-axis, shift up 6. Domain: (-∞, ∞). Range: (-∞, 6). Horizontal asymptote: y = 6. y-intercept: f(0) = -3(2)^(-1) + 6 = -3/2 + 6 = 9/2 = 4.5, so (0, 4.5). x-intercept: -3(2)^(x-1) + 6 = 0 → 2^(x-1) = 2 → x - 1 = 1 → x = 2, so (2, 0). End behavior: as x → -∞, f(x) → 6 (from below); as x → ∞, f(x) → -∞."
         },
         {
           "problem": "For g(x) = (2x + 1)/(x - 4), find: domain, range, all asymptotes, intercepts, and end behavior.",
-          "solution": "Parent: f(x) = 1/x (rational). Domain: x \u2260 4, i.e., (-\u221e, 4) \u222a (4, \u221e). Vertical asymptote: x = 4 (denominator = 0). Horizontal asymptote: degree equal in numerator and denominator, so y = 2/1 = 2. Range: y \u2260 2, i.e., (-\u221e, 2) \u222a (2, \u221e). y-intercept: g(0) = 1/(-4) = -1/4, so (0, -1/4). x-intercept: 2x + 1 = 0 \u2192 x = -1/2, so (-1/2, 0). End behavior: as x \u2192 \u00b1\u221e, g(x) \u2192 2."
+          "solution": "Parent: f(x) = 1/x (rational). Domain: x ≠ 4, i.e., (-∞, 4) ∪ (4, ∞). Vertical asymptote: x = 4 (denominator = 0). Horizontal asymptote: degree equal in numerator and denominator, so y = 2/1 = 2. Range: y ≠ 2, i.e., (-∞, 2) ∪ (2, ∞). y-intercept: g(0) = 1/(-4) = -1/4, so (0, -1/4). x-intercept: 2x + 1 = 0 → x = -1/2, so (-1/2, 0). End behavior: as x → ±∞, g(x) → 2."
         },
         {
-          "problem": "Classify each function as even, odd, or neither: (a) f(x) = x\u2074 - 3x\u00b2 + 1, (b) g(x) = x\u00b3 - 2x, (c) h(x) = x\u00b2 + x.",
-          "solution": "(a) f(-x) = (-x)\u2074 - 3(-x)\u00b2 + 1 = x\u2074 - 3x\u00b2 + 1 = f(x). Even. (b) g(-x) = (-x)\u00b3 - 2(-x) = -x\u00b3 + 2x = -(x\u00b3 - 2x) = -g(x). Odd. (c) h(-x) = (-x)\u00b2 + (-x) = x\u00b2 - x. This is neither h(x) = x\u00b2 + x nor -h(x) = -x\u00b2 - x. Neither."
+          "problem": "Classify each function as even, odd, or neither: (a) f(x) = x⁴ - 3x² + 1, (b) g(x) = x³ - 2x, (c) h(x) = x² + x.",
+          "solution": "(a) f(-x) = (-x)⁴ - 3(-x)² + 1 = x⁴ - 3x² + 1 = f(x). Even. (b) g(-x) = (-x)³ - 2(-x) = -x³ + 2x = -(x³ - 2x) = -g(x). Odd. (c) h(-x) = (-x)² + (-x) = x² - x. This is neither h(x) = x² + x nor -h(x) = -x² - x. Neither."
         }
-      ]
+      ],
+      "lessonId": "parent-functions"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "The Transformation Template",
       "skill": "transformations-toolkit",
-      "content": "Universal transformation framework: g(x) = a \u00b7 f(b(x \u2212 c)) + d. Each parameter controls a specific transformation. Order of operations matters: horizontal transformations (inside the function) apply in reverse order of what you might expect.",
+      "content": "Universal transformation framework: g(x) = a · f(b(x − c)) + d. Each parameter controls a specific transformation. Order of operations matters: horizontal transformations (inside the function) apply in reverse order of what you might expect.",
       "keyPoints": [
         "a > 1: vertical stretch by factor |a|; 0 < |a| < 1: vertical compression",
         "a < 0: reflection over x-axis",
@@ -92,7 +94,8 @@
         "d > 0: shift up d units; d < 0: shift down |d| units",
         "Order of transformations: (1) horizontal stretch/compress and reflect, (2) horizontal shift, (3) vertical stretch/compress and reflect, (4) vertical shift",
         "Key point tracking: apply each transformation to the parent function's key point (e.g., vertex, endpoint) to find the new key point"
-      ]
+      ],
+      "lessonId": "transformations"
     },
     {
       "type": "model",
@@ -101,18 +104,19 @@
       "skill": "transformations-toolkit",
       "examples": [
         {
-          "problem": "Starting from f(x) = \u221ax, describe all transformations and find the equation for: reflect over y-axis, horizontal stretch by factor 3, shift left 2, shift up 4.",
-          "solution": "Start: f(x) = \u221ax. (1) Reflect over y-axis \u2192 \u221a(-x). (2) Horizontal stretch by 3 (replace x with x/3) \u2192 \u221a(-x/3). (3) Shift left 2 (replace x with x + 2) \u2192 \u221a(-(x+2)/3). (4) Shift up 4 \u2192 g(x) = \u221a(-(x+2)/3) + 4. Domain: -(x+2)/3 \u2265 0 \u2192 x + 2 \u2264 0 \u2192 x \u2264 -2, so (-\u221e, -2]. Key point: parent endpoint (0,0) \u2192 reflect: (0,0) \u2192 stretch: (0,0) \u2192 left 2: (-2,0) \u2192 up 4: (-2, 4). So endpoint is (-2, 4)."
+          "problem": "Starting from f(x) = √x, describe all transformations and find the equation for: reflect over y-axis, horizontal stretch by factor 3, shift left 2, shift up 4.",
+          "solution": "Start: f(x) = √x. (1) Reflect over y-axis → √(-x). (2) Horizontal stretch by 3 (replace x with x/3) → √(-x/3). (3) Shift left 2 (replace x with x + 2) → √(-(x+2)/3). (4) Shift up 4 → g(x) = √(-(x+2)/3) + 4. Domain: -(x+2)/3 ≥ 0 → x + 2 ≤ 0 → x ≤ -2, so (-∞, -2]. Key point: parent endpoint (0,0) → reflect: (0,0) → stretch: (0,0) → left 2: (-2,0) → up 4: (-2, 4). So endpoint is (-2, 4)."
         },
         {
-          "problem": "The graph of g(x) has vertex at (3, -5), passes through (5, -1), and has the shape of a parabola opening upward. Write g(x) in terms of the parent f(x) = x\u00b2.",
-          "solution": "Vertex form: g(x) = a(x - 3)\u00b2 - 5. Use point (5, -1): -1 = a(5-3)\u00b2 - 5 \u2192 -1 = 4a - 5 \u2192 4a = 4 \u2192 a = 1. So g(x) = (x - 3)\u00b2 - 5. Transformations from f(x) = x\u00b2: shift right 3, shift down 5."
+          "problem": "The graph of g(x) has vertex at (3, -5), passes through (5, -1), and has the shape of a parabola opening upward. Write g(x) in terms of the parent f(x) = x².",
+          "solution": "Vertex form: g(x) = a(x - 3)² - 5. Use point (5, -1): -1 = a(5-3)² - 5 → -1 = 4a - 5 → 4a = 4 → a = 1. So g(x) = (x - 3)² - 5. Transformations from f(x) = x²: shift right 3, shift down 5."
         },
         {
           "problem": "Given the graph of f(x) = |x|, write the equation and describe transformations for g(x) = -2|x - 1| + 3. Track the vertex through each transformation.",
-          "solution": "Parent vertex: (0, 0). Transformations in order: (1) Horizontal shift right 1 \u2192 |x - 1|, vertex \u2192 (1, 0). (2) Vertical stretch by 2 \u2192 2|x - 1|, vertex \u2192 (1, 0) [y = 0 unchanged]. (3) Reflect over x-axis \u2192 -2|x - 1|, vertex \u2192 (1, 0) [y = 0 unchanged]. (4) Shift up 3 \u2192 -2|x - 1| + 3, vertex \u2192 (1, 3). Final: g(x) = -2|x - 1| + 3, vertex (1, 3), opens downward."
+          "solution": "Parent vertex: (0, 0). Transformations in order: (1) Horizontal shift right 1 → |x - 1|, vertex → (1, 0). (2) Vertical stretch by 2 → 2|x - 1|, vertex → (1, 0) [y = 0 unchanged]. (3) Reflect over x-axis → -2|x - 1|, vertex → (1, 0) [y = 0 unchanged]. (4) Shift up 3 → -2|x - 1| + 3, vertex → (1, 3). Final: g(x) = -2|x - 1| + 3, vertex (1, 3), opens downward."
         }
-      ]
+      ],
+      "lessonId": "transformations"
     },
     {
       "type": "guided_practice",
@@ -128,69 +132,72 @@
             "Horizontal compression by 1/2, shift right 3, vertical stretch by 3, shift down 1",
             "Vertex: (3, -1)"
           ],
-          "answer": "g(x) = 3|2(x - 3)| - 1. Parent: f(x) = |x|. Transformations: horizontal compression by factor 1/2, shift right 3, vertical stretch by factor 3, shift down 1. Vertex: (3, -1). Domain: (-\u221e, \u221e). Range: [-1, \u221e)."
+          "answer": "g(x) = 3|2(x - 3)| - 1. Parent: f(x) = |x|. Transformations: horizontal compression by factor 1/2, shift right 3, vertical stretch by factor 3, shift down 1. Vertex: (3, -1). Domain: (-∞, ∞). Range: [-1, ∞)."
         },
         {
           "problem": "Write the equation of the function obtained from f(x) = 1/x by: reflecting over the x-axis, shifting left 4, shifting up 2. State domain, range, and asymptotes.",
           "hints": [
             "Reflect: -1/x",
-            "Shift left 4: replace x with x + 4 \u2192 -1/(x+4)",
+            "Shift left 4: replace x with x + 4 → -1/(x+4)",
             "Shift up 2: -1/(x+4) + 2",
             "VA at x = -4, HA at y = 2"
           ],
-          "answer": "g(x) = -1/(x + 4) + 2. Domain: (-\u221e, -4) \u222a (-4, \u221e). Range: (-\u221e, 2) \u222a (2, \u221e). Vertical asymptote: x = -4. Horizontal asymptote: y = 2."
+          "answer": "g(x) = -1/(x + 4) + 2. Domain: (-∞, -4) ∪ (-4, ∞). Range: (-∞, 2) ∪ (2, ∞). Vertical asymptote: x = -4. Horizontal asymptote: y = 2."
         },
         {
-          "problem": "The function g(x) = -\u221a(x + 5) + 3 is a transformation of f(x) = \u221ax. (a) List the transformations. (b) Find the endpoint. (c) Find the x-intercept. (d) State domain and range.",
+          "problem": "The function g(x) = -√(x + 5) + 3 is a transformation of f(x) = √x. (a) List the transformations. (b) Find the endpoint. (c) Find the x-intercept. (d) State domain and range.",
           "hints": [
             "Shift left 5, reflect over x-axis, shift up 3",
-            "Endpoint: parent (0,0) \u2192 (-5, 3)",
-            "x-int: -\u221a(x+5) + 3 = 0 \u2192 \u221a(x+5) = 3 \u2192 x + 5 = 9 \u2192 x = 4",
-            "Domain: x \u2265 -5"
+            "Endpoint: parent (0,0) → (-5, 3)",
+            "x-int: -√(x+5) + 3 = 0 → √(x+5) = 3 → x + 5 = 9 → x = 4",
+            "Domain: x ≥ -5"
           ],
-          "answer": "(a) Shift left 5, reflect over x-axis, shift up 3. (b) Endpoint: (-5, 3). (c) x-intercept: -\u221a(x+5) + 3 = 0 \u2192 \u221a(x+5) = 3 \u2192 x = 4, so (4, 0). (d) Domain: [-5, \u221e). Range: (-\u221e, 3]."
+          "answer": "(a) Shift left 5, reflect over x-axis, shift up 3. (b) Endpoint: (-5, 3). (c) x-intercept: -√(x+5) + 3 = 0 → √(x+5) = 3 → x = 4, so (4, 0). (d) Domain: [-5, ∞). Range: (-∞, 3]."
         }
-      ]
+      ],
+      "lessonId": "transformations"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Combining Functions & Composition",
       "skill": "combining-functions",
-      "content": "Functions can be combined arithmetically (f + g, f \u2212 g, f \u00b7 g, f/g) or through composition (f \u2218 g)(x) = f(g(x)). Domain analysis is critical: combined function domains are the intersection of individual domains with additional restrictions for quotients (denominator \u2260 0) and compositions (output of inner function must be in domain of outer function).",
+      "content": "Functions can be combined arithmetically (f + g, f − g, f · g, f/g) or through composition (f ∘ g)(x) = f(g(x)). Domain analysis is critical: combined function domains are the intersection of individual domains with additional restrictions for quotients (denominator ≠ 0) and compositions (output of inner function must be in domain of outer function).",
       "keyPoints": [
-        "(f + g)(x) = f(x) + g(x); domain = dom(f) \u2229 dom(g)",
-        "(f \u2212 g)(x) = f(x) \u2212 g(x); domain = dom(f) \u2229 dom(g)",
-        "(f \u00b7 g)(x) = f(x) \u00b7 g(x); domain = dom(f) \u2229 dom(g)",
-        "(f/g)(x) = f(x)/g(x); domain = dom(f) \u2229 dom(g), g(x) \u2260 0",
-        "(f \u2218 g)(x) = f(g(x)); domain: all x in dom(g) where g(x) is in dom(f)",
-        "Composition is NOT commutative: f(g(x)) \u2260 g(f(x)) in general",
+        "(f + g)(x) = f(x) + g(x); domain = dom(f) ∩ dom(g)",
+        "(f − g)(x) = f(x) − g(x); domain = dom(f) ∩ dom(g)",
+        "(f · g)(x) = f(x) · g(x); domain = dom(f) ∩ dom(g)",
+        "(f/g)(x) = f(x)/g(x); domain = dom(f) ∩ dom(g), g(x) ≠ 0",
+        "(f ∘ g)(x) = f(g(x)); domain: all x in dom(g) where g(x) is in dom(f)",
+        "Composition is NOT commutative: f(g(x)) ≠ g(f(x)) in general",
         "Decomposition: express a complex function as a composition of simpler functions"
-      ]
+      ],
+      "lessonId": "composition-inverses"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Combining & Composing Functions \u2014 Worked Examples",
+      "title": "Combining & Composing Functions — Worked Examples",
       "skill": "function-composition",
       "examples": [
         {
-          "problem": "For f(x) = x\u00b2 - 9 and g(x) = \u221a(x + 3): (a) find (f \u00b7 g)(x), (b) find the domain of f \u00b7 g, (c) find (f/g)(x), (d) find the domain of f/g.",
-          "solution": "(a) (f \u00b7 g)(x) = (x\u00b2 - 9)\u221a(x + 3). (b) dom(f) = (-\u221e,\u221e), dom(g): x + 3 \u2265 0 \u2192 x \u2265 -3, so dom(f \u00b7 g) = [-3, \u221e). (c) (f/g)(x) = (x\u00b2 - 9)/\u221a(x + 3). (d) Need x + 3 > 0 (strict, since \u221a(x+3) is denominator), so x > -3. Domain of f/g = (-3, \u221e)."
+          "problem": "For f(x) = x² - 9 and g(x) = √(x + 3): (a) find (f · g)(x), (b) find the domain of f · g, (c) find (f/g)(x), (d) find the domain of f/g.",
+          "solution": "(a) (f · g)(x) = (x² - 9)√(x + 3). (b) dom(f) = (-∞,∞), dom(g): x + 3 ≥ 0 → x ≥ -3, so dom(f · g) = [-3, ∞). (c) (f/g)(x) = (x² - 9)/√(x + 3). (d) Need x + 3 > 0 (strict, since √(x+3) is denominator), so x > -3. Domain of f/g = (-3, ∞)."
         },
         {
-          "problem": "For f(x) = 2x + 1 and g(x) = x\u00b2 - 3: (a) find f(g(x)), (b) find g(f(x)), (c) verify these are not equal.",
-          "solution": "(a) f(g(x)) = f(x\u00b2 - 3) = 2(x\u00b2 - 3) + 1 = 2x\u00b2 - 6 + 1 = 2x\u00b2 - 5. (b) g(f(x)) = g(2x + 1) = (2x + 1)\u00b2 - 3 = 4x\u00b2 + 4x + 1 - 3 = 4x\u00b2 + 4x - 2. (c) f(g(x)) = 2x\u00b2 - 5 \u2260 4x\u00b2 + 4x - 2 = g(f(x)). For example, at x = 1: f(g(1)) = 2(1) - 5 = -3, g(f(1)) = 4 + 4 - 2 = 6."
+          "problem": "For f(x) = 2x + 1 and g(x) = x² - 3: (a) find f(g(x)), (b) find g(f(x)), (c) verify these are not equal.",
+          "solution": "(a) f(g(x)) = f(x² - 3) = 2(x² - 3) + 1 = 2x² - 6 + 1 = 2x² - 5. (b) g(f(x)) = g(2x + 1) = (2x + 1)² - 3 = 4x² + 4x + 1 - 3 = 4x² + 4x - 2. (c) f(g(x)) = 2x² - 5 ≠ 4x² + 4x - 2 = g(f(x)). For example, at x = 1: f(g(1)) = 2(1) - 5 = -3, g(f(1)) = 4 + 4 - 2 = 6."
         },
         {
-          "problem": "For f(x) = 1/(x - 2) and g(x) = \u221a(x + 1), find f(g(x)) and determine the domain.",
-          "solution": "f(g(x)) = f(\u221a(x+1)) = 1/(\u221a(x+1) - 2). Domain requires: (1) g(x) defined: x + 1 \u2265 0 \u2192 x \u2265 -1. (2) Denominator \u2260 0: \u221a(x+1) \u2260 2 \u2192 x + 1 \u2260 4 \u2192 x \u2260 3. Domain: [-1, 3) \u222a (3, \u221e)."
+          "problem": "For f(x) = 1/(x - 2) and g(x) = √(x + 1), find f(g(x)) and determine the domain.",
+          "solution": "f(g(x)) = f(√(x+1)) = 1/(√(x+1) - 2). Domain requires: (1) g(x) defined: x + 1 ≥ 0 → x ≥ -1. (2) Denominator ≠ 0: √(x+1) ≠ 2 → x + 1 ≠ 4 → x ≠ 3. Domain: [-1, 3) ∪ (3, ∞)."
         },
         {
-          "problem": "Express h(x) = \u221a(x\u00b2 + 5) as a composition f(g(x)).",
-          "solution": "Let g(x) = x\u00b2 + 5 (inner function) and f(x) = \u221ax (outer function). Then f(g(x)) = \u221a(x\u00b2 + 5) = h(x). Note: since x\u00b2 + 5 \u2265 5 > 0 for all x, the domain is (-\u221e, \u221e)."
+          "problem": "Express h(x) = √(x² + 5) as a composition f(g(x)).",
+          "solution": "Let g(x) = x² + 5 (inner function) and f(x) = √x (outer function). Then f(g(x)) = √(x² + 5) = h(x). Note: since x² + 5 ≥ 5 > 0 for all x, the domain is (-∞, ∞)."
         }
-      ]
+      ],
+      "lessonId": "composition-inverses"
     },
     {
       "type": "guided_practice",
@@ -203,79 +210,83 @@
           "hints": [
             "Substitute: f(1/x) = (1/x)/((1/x) + 1)",
             "Multiply numerator and denominator by x: 1/(1 + x)",
-            "Domain: need x \u2260 0 (for g) and x \u2260 -1 (denominator of result)"
+            "Domain: need x ≠ 0 (for g) and x ≠ -1 (denominator of result)"
           ],
-          "answer": "f(g(x)) = (1/x)/((1/x) + 1) = (1/x)/((1 + x)/x) = 1/(1 + x). Domain: x \u2260 0 and x \u2260 -1, so (-\u221e, -1) \u222a (-1, 0) \u222a (0, \u221e)."
+          "answer": "f(g(x)) = (1/x)/((1/x) + 1) = (1/x)/((1 + x)/x) = 1/(1 + x). Domain: x ≠ 0 and x ≠ -1, so (-∞, -1) ∪ (-1, 0) ∪ (0, ∞)."
         },
         {
-          "problem": "For f(x) = x\u00b2 + 1 and g(x) = \u221a(x - 2), find: (a) f(g(x)), (b) g(f(x)), (c) the domain of each composition.",
+          "problem": "For f(x) = x² + 1 and g(x) = √(x - 2), find: (a) f(g(x)), (b) g(f(x)), (c) the domain of each composition.",
           "hints": [
-            "(a) f(\u221a(x-2)) = (\u221a(x-2))\u00b2 + 1 = x - 2 + 1 = x - 1",
-            "(b) g(x\u00b2+1) = \u221a(x\u00b2+1-2) = \u221a(x\u00b2-1)",
-            "Domain of f(g(x)): x \u2265 2",
-            "Domain of g(f(x)): x\u00b2 - 1 \u2265 0 \u2192 x \u2264 -1 or x \u2265 1"
+            "(a) f(√(x-2)) = (√(x-2))² + 1 = x - 2 + 1 = x - 1",
+            "(b) g(x²+1) = √(x²+1-2) = √(x²-1)",
+            "Domain of f(g(x)): x ≥ 2",
+            "Domain of g(f(x)): x² - 1 ≥ 0 → x ≤ -1 or x ≥ 1"
           ],
-          "answer": "(a) f(g(x)) = (x - 2) + 1 = x - 1. Domain: x \u2265 2, so [2, \u221e). (b) g(f(x)) = \u221a(x\u00b2 - 1). Domain: x\u00b2 \u2265 1 \u2192 x \u2264 -1 or x \u2265 1, so (-\u221e, -1] \u222a [1, \u221e)."
+          "answer": "(a) f(g(x)) = (x - 2) + 1 = x - 1. Domain: x ≥ 2, so [2, ∞). (b) g(f(x)) = √(x² - 1). Domain: x² ≥ 1 → x ≤ -1 or x ≥ 1, so (-∞, -1] ∪ [1, ∞)."
         },
         {
-          "problem": "Express h(x) = |3x - 6|\u00b2 as a composition of three functions f(g(k(x))).",
+          "problem": "Express h(x) = |3x - 6|² as a composition of three functions f(g(k(x))).",
           "hints": [
             "Innermost: k(x) = 3x - 6 (linear)",
             "Middle: g(x) = |x| (absolute value)",
-            "Outer: f(x) = x\u00b2 (squaring)"
+            "Outer: f(x) = x² (squaring)"
           ],
-          "answer": "Let k(x) = 3x - 6, g(x) = |x|, f(x) = x\u00b2. Then f(g(k(x))) = (|3x - 6|)\u00b2 = |3x - 6|\u00b2 = h(x). Note: since |a|\u00b2 = a\u00b2, this simplifies to (3x - 6)\u00b2 = 9(x - 2)\u00b2."
+          "answer": "Let k(x) = 3x - 6, g(x) = |x|, f(x) = x². Then f(g(k(x))) = (|3x - 6|)² = |3x - 6|² = h(x). Note: since |a|² = a², this simplifies to (3x - 6)² = 9(x - 2)²."
         }
-      ]
+      ],
+      "lessonId": "composition-inverses"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Inverse Functions",
       "skill": "inverse-functions",
-      "content": "The inverse function f\u207b\u00b9 reverses the input-output relationship of f. Graphically, f and f\u207b\u00b9 are reflections over y = x. Domain of f becomes range of f\u207b\u00b9 and vice versa. Only one-to-one functions have inverses without domain restriction; the Horizontal Line Test determines one-to-one status.",
+      "content": "The inverse function f⁻¹ reverses the input-output relationship of f. Graphically, f and f⁻¹ are reflections over y = x. Domain of f becomes range of f⁻¹ and vice versa. Only one-to-one functions have inverses without domain restriction; the Horizontal Line Test determines one-to-one status.",
       "keyPoints": [
-        "Definition: f\u207b\u00b9(f(x)) = x and f(f\u207b\u00b9(x)) = x for all x in appropriate domains",
+        "Definition: f⁻¹(f(x)) = x and f(f⁻¹(x)) = x for all x in appropriate domains",
         "Finding inverses algebraically: (1) replace f(x) with y, (2) swap x and y, (3) solve for y",
         "Horizontal Line Test: if any horizontal line crosses the graph more than once, f is not one-to-one",
-        "Restricting domain: for non-one-to-one functions, restrict domain to make f one-to-one (e.g., x\u00b2 with x \u2265 0)",
-        "Domain of f\u207b\u00b9 = Range of f; Range of f\u207b\u00b9 = Domain of f",
-        "Graphs of f and f\u207b\u00b9 are reflections over y = x; (a, b) on f \u2194 (b, a) on f\u207b\u00b9",
-        "Rational function inverses: HA of f becomes VA of f\u207b\u00b9 and vice versa"
-      ]
+        "Restricting domain: for non-one-to-one functions, restrict domain to make f one-to-one (e.g., x² with x ≥ 0)",
+        "Domain of f⁻¹ = Range of f; Range of f⁻¹ = Domain of f",
+        "Graphs of f and f⁻¹ are reflections over y = x; (a, b) on f ↔ (b, a) on f⁻¹",
+        "Rational function inverses: HA of f becomes VA of f⁻¹ and vice versa"
+      ],
+      "lessonId": "parent-functions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "domain-range-analysis",
-      "title": "We-Do: Domain Range Analysis \u2014 Guided Practice",
+      "title": "We-Do: Domain Range Analysis — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for domain range analysis.",
           "hint": "Apply the concepts of domain range analysis.",
           "solution": "Step-by-step solution for domain range analysis."
         }
-      ]
+      ],
+      "lessonId": "composition-inverses"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Finding Inverses \u2014 Worked Examples",
+      "title": "Finding Inverses — Worked Examples",
       "skill": "inverse-functions",
       "examples": [
         {
-          "problem": "Find the inverse of f(x) = (5x - 3)/(2x + 1). State domains and ranges of both f and f\u207b\u00b9.",
-          "solution": "Swap: x = (5y - 3)/(2y + 1). Solve: x(2y + 1) = 5y - 3 \u2192 2xy + x = 5y - 3 \u2192 2xy - 5y = -x - 3 \u2192 y(2x - 5) = -(x + 3) \u2192 y = -(x + 3)/(2x - 5) = (-x - 3)/(2x - 5). So f\u207b\u00b9(x) = (-x - 3)/(2x - 5). Domain of f: x \u2260 -1/2, Range of f: y \u2260 5/2 (HA at y = 5/2). Domain of f\u207b\u00b9: x \u2260 5/2, Range of f\u207b\u00b9: y \u2260 -1/2 (HA at y = -1/2). Verification: f(f\u207b\u00b9(x)) = f((-x-3)/(2x-5)) = (5\u00b7((-x-3)/(2x-5)) - 3)/(2\u00b7((-x-3)/(2x-5)) + 1) = ((-5x-15-3(2x-5))/(2x-5))/((-2x-6+2x-5)/(2x-5)) = (-5x-15-6x+15)/(-11) = -11x/(-11) = x."
+          "problem": "Find the inverse of f(x) = (5x - 3)/(2x + 1). State domains and ranges of both f and f⁻¹.",
+          "solution": "Swap: x = (5y - 3)/(2y + 1). Solve: x(2y + 1) = 5y - 3 → 2xy + x = 5y - 3 → 2xy - 5y = -x - 3 → y(2x - 5) = -(x + 3) → y = -(x + 3)/(2x - 5) = (-x - 3)/(2x - 5). So f⁻¹(x) = (-x - 3)/(2x - 5). Domain of f: x ≠ -1/2, Range of f: y ≠ 5/2 (HA at y = 5/2). Domain of f⁻¹: x ≠ 5/2, Range of f⁻¹: y ≠ -1/2 (HA at y = -1/2). Verification: f(f⁻¹(x)) = f((-x-3)/(2x-5)) = (5·((-x-3)/(2x-5)) - 3)/(2·((-x-3)/(2x-5)) + 1) = ((-5x-15-3(2x-5))/(2x-5))/((-2x-6+2x-5)/(2x-5)) = (-5x-15-6x+15)/(-11) = -11x/(-11) = x."
         },
         {
-          "problem": "Find the inverse of f(x) = x\u00b3 + 2. Verify by composition.",
-          "solution": "Swap: x = y\u00b3 + 2 \u2192 y\u00b3 = x - 2 \u2192 y = \u221b(x - 2). So f\u207b\u00b9(x) = \u221b(x - 2). Domain of both f and f\u207b\u00b9: (-\u221e, \u221e). Verification: f(f\u207b\u00b9(x)) = (\u221b(x-2))\u00b3 + 2 = (x - 2) + 2 = x. \u2713"
+          "problem": "Find the inverse of f(x) = x³ + 2. Verify by composition.",
+          "solution": "Swap: x = y³ + 2 → y³ = x - 2 → y = ∛(x - 2). So f⁻¹(x) = ∛(x - 2). Domain of both f and f⁻¹: (-∞, ∞). Verification: f(f⁻¹(x)) = (∛(x-2))³ + 2 = (x - 2) + 2 = x. ✓"
         },
         {
-          "problem": "Find the inverse of f(x) = x\u00b2 - 6x + 11 with domain restricted to x \u2265 3.",
-          "solution": "Complete the square: f(x) = (x - 3)\u00b2 + 2. Swap: x = (y - 3)\u00b2 + 2 \u2192 (y - 3)\u00b2 = x - 2 \u2192 y - 3 = \u221a(x - 2) (positive root since y \u2265 3) \u2192 y = \u221a(x - 2) + 3. So f\u207b\u00b9(x) = \u221a(x - 2) + 3. Domain of f: [3, \u221e), Range of f: [2, \u221e). Domain of f\u207b\u00b9: [2, \u221e), Range of f\u207b\u00b9: [3, \u221e). Verification: f(f\u207b\u00b9(x)) = (\u221a(x-2) + 3 - 3)\u00b2 + 2 = (\u221a(x-2))\u00b2 + 2 = x - 2 + 2 = x. \u2713"
+          "problem": "Find the inverse of f(x) = x² - 6x + 11 with domain restricted to x ≥ 3.",
+          "solution": "Complete the square: f(x) = (x - 3)² + 2. Swap: x = (y - 3)² + 2 → (y - 3)² = x - 2 → y - 3 = √(x - 2) (positive root since y ≥ 3) → y = √(x - 2) + 3. So f⁻¹(x) = √(x - 2) + 3. Domain of f: [3, ∞), Range of f: [2, ∞). Domain of f⁻¹: [2, ∞), Range of f⁻¹: [3, ∞). Verification: f(f⁻¹(x)) = (√(x-2) + 3 - 3)² + 2 = (√(x-2))² + 2 = x - 2 + 2 = x. ✓"
         }
-      ]
+      ],
+      "lessonId": "parent-functions"
     },
     {
       "type": "guided_practice",
@@ -284,36 +295,37 @@
       "skill": "inverse-functions",
       "problems": [
         {
-          "problem": "Find the inverse of f(x) = (3x + 7)/(x - 2). State the domain and range of both f and f\u207b\u00b9.",
+          "problem": "Find the inverse of f(x) = (3x + 7)/(x - 2). State the domain and range of both f and f⁻¹.",
           "hints": [
             "Swap x and y: x = (3y + 7)/(y - 2)",
             "Cross multiply: x(y - 2) = 3y + 7",
-            "Collect y terms: xy - 2x = 3y + 7 \u2192 y(x - 3) = 2x + 7",
-            "f\u207b\u00b9(x) = (2x + 7)/(x - 3); HA of f is y = 3, VA of f is x = 2"
+            "Collect y terms: xy - 2x = 3y + 7 → y(x - 3) = 2x + 7",
+            "f⁻¹(x) = (2x + 7)/(x - 3); HA of f is y = 3, VA of f is x = 2"
           ],
-          "answer": "f\u207b\u00b9(x) = (2x + 7)/(x - 3). Domain of f: x \u2260 2, Range of f: y \u2260 3. Domain of f\u207b\u00b9: x \u2260 3, Range of f\u207b\u00b9: y \u2260 2."
+          "answer": "f⁻¹(x) = (2x + 7)/(x - 3). Domain of f: x ≠ 2, Range of f: y ≠ 3. Domain of f⁻¹: x ≠ 3, Range of f⁻¹: y ≠ 2."
         },
         {
-          "problem": "Find the inverse of f(x) = 4x\u00b2 - 8x + 5 restricted to x \u2265 1. Verify f(f\u207b\u00b9(x)) = x.",
+          "problem": "Find the inverse of f(x) = 4x² - 8x + 5 restricted to x ≥ 1. Verify f(f⁻¹(x)) = x.",
           "hints": [
-            "Complete the square: 4(x\u00b2 - 2x) + 5 = 4(x - 1)\u00b2 + 1",
-            "Swap: x = 4(y - 1)\u00b2 + 1 \u2192 (y - 1)\u00b2 = (x - 1)/4",
-            "Since y \u2265 1, take positive root",
-            "f\u207b\u00b9(x) = \u221a((x-1)/4) + 1 = (1/2)\u221a(x-1) + 1"
+            "Complete the square: 4(x² - 2x) + 5 = 4(x - 1)² + 1",
+            "Swap: x = 4(y - 1)² + 1 → (y - 1)² = (x - 1)/4",
+            "Since y ≥ 1, take positive root",
+            "f⁻¹(x) = √((x-1)/4) + 1 = (1/2)√(x-1) + 1"
           ],
-          "answer": "f(x) = 4(x - 1)\u00b2 + 1. f\u207b\u00b9(x) = (1/2)\u221a(x - 1) + 1. Domain of f\u207b\u00b9: [1, \u221e). Verification: f(f\u207b\u00b9(x)) = 4((1/2)\u221a(x-1) + 1 - 1)\u00b2 + 1 = 4 \u00b7 (1/4)(x - 1) + 1 = (x - 1) + 1 = x. \u2713"
+          "answer": "f(x) = 4(x - 1)² + 1. f⁻¹(x) = (1/2)√(x - 1) + 1. Domain of f⁻¹: [1, ∞). Verification: f(f⁻¹(x)) = 4((1/2)√(x-1) + 1 - 1)² + 1 = 4 · (1/4)(x - 1) + 1 = (x - 1) + 1 = x. ✓"
         },
         {
-          "problem": "Determine whether f(x) = x\u00b3 - x is one-to-one on (-\u221e, \u221e). If not, suggest a domain restriction that makes it one-to-one.",
+          "problem": "Determine whether f(x) = x³ - x is one-to-one on (-∞, ∞). If not, suggest a domain restriction that makes it one-to-one.",
           "hints": [
-            "Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 \u2014 wait, f(0)=0, f(1)=0, so not one-to-one",
-            "Also: f(-1) = -1+1 = 0 \u2014 three inputs give output 0",
-            "f'(x) = 3x\u00b2 - 1 = 0 at x = \u00b11/\u221a3 \u2014 local max/min",
-            "Restrict to x \u2265 1/\u221a3 (or x \u2264 -1/\u221a3) for one-to-one"
+            "Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 — wait, f(0)=0, f(1)=0, so not one-to-one",
+            "Also: f(-1) = -1+1 = 0 — three inputs give output 0",
+            "f'(x) = 3x² - 1 = 0 at x = ±1/√3 — local max/min",
+            "Restrict to x ≥ 1/√3 (or x ≤ -1/√3) for one-to-one"
           ],
-          "answer": "f is not one-to-one on (-\u221e, \u221e). Evidence: f(0) = 0, f(1) = 0, and f(-1) = 0. The function has a local max at x = -1/\u221a3 and local min at x = 1/\u221a3. Restrict domain to [1/\u221a3, \u221e) (or (-\u221e, -1/\u221a3]) to make it one-to-one."
+          "answer": "f is not one-to-one on (-∞, ∞). Evidence: f(0) = 0, f(1) = 0, and f(-1) = 0. The function has a local max at x = -1/√3 and local min at x = 1/√3. Restrict domain to [1/√3, ∞) (or (-∞, -1/√3]) to make it one-to-one."
         }
-      ]
+      ],
+      "lessonId": "parent-functions"
     },
     {
       "type": "independent_practice",
@@ -321,61 +333,79 @@
       "title": "Function Toolkit Mastery Practice",
       "problems": [
         {
-          "problem": "For f(x) = -log\u2082(x - 4) + 3, identify the parent function, list all transformations, and find: domain, range, asymptote, x-intercept, and y-intercept (if any).",
-          "answer": "Parent: f(x) = log\u2082(x). Transformations: shift right 4, reflect over x-axis, shift up 3. Domain: (4, \u221e). Range: (-\u221e, \u221e). Vertical asymptote: x = 4. x-intercept: -log\u2082(x-4) + 3 = 0 \u2192 log\u2082(x-4) = 3 \u2192 x - 4 = 8 \u2192 x = 12, so (12, 0). No y-intercept (x = 0 is not in domain)."
+          "problem": "For f(x) = -log₂(x - 4) + 3, identify the parent function, list all transformations, and find: domain, range, asymptote, x-intercept, and y-intercept (if any).",
+          "answer": "Parent: f(x) = log₂(x). Transformations: shift right 4, reflect over x-axis, shift up 3. Domain: (4, ∞). Range: (-∞, ∞). Vertical asymptote: x = 4. x-intercept: -log₂(x-4) + 3 = 0 → log₂(x-4) = 3 → x - 4 = 8 → x = 12, so (12, 0). No y-intercept (x = 0 is not in domain)."
         },
         {
-          "problem": "Given f(x) = 2x\u00b2 - 3 and g(x) = \u221a(x + 3), find (a) (f \u2218 g)(x), (b) the domain of (f \u2218 g), (c) (g \u2218 f)(x), (d) the domain of (g \u2218 f).",
-          "answer": "(a) f(g(x)) = 2(\u221a(x+3))\u00b2 - 3 = 2(x + 3) - 3 = 2x + 3. (b) Domain: need x + 3 \u2265 0, so x \u2265 -3; domain = [-3, \u221e). (c) g(f(x)) = \u221a(2x\u00b2 - 3 + 3) = \u221a(2x\u00b2) = |x|\u221a2. (d) Domain: 2x\u00b2 \u2265 0 is true for all x, so domain = (-\u221e, \u221e)."
+          "problem": "Given f(x) = 2x² - 3 and g(x) = √(x + 3), find (a) (f ∘ g)(x), (b) the domain of (f ∘ g), (c) (g ∘ f)(x), (d) the domain of (g ∘ f).",
+          "answer": "(a) f(g(x)) = 2(√(x+3))² - 3 = 2(x + 3) - 3 = 2x + 3. (b) Domain: need x + 3 ≥ 0, so x ≥ -3; domain = [-3, ∞). (c) g(f(x)) = √(2x² - 3 + 3) = √(2x²) = |x|√2. (d) Domain: 2x² ≥ 0 is true for all x, so domain = (-∞, ∞)."
         },
         {
-          "problem": "Find the inverse of f(x) = (4x - 1)/(2x + 3). Verify that f(f\u207b\u00b9(x)) = x. State domain and range of both functions.",
-          "answer": "Swap: x = (4y - 1)/(2y + 3). Solve: 2xy + 3x = 4y - 1 \u2192 2xy - 4y = -3x - 1 \u2192 y(2x - 4) = -(3x + 1) \u2192 y = -(3x + 1)/(2x - 4) = (-3x - 1)/(2(x - 2)). So f\u207b\u00b9(x) = (-3x - 1)/(2(x - 2)). Domain of f: x \u2260 -3/2, Range of f: y \u2260 2 (HA at y = 4/2 = 2). Domain of f\u207b\u00b9: x \u2260 2, Range of f\u207b\u00b9: y \u2260 -3/2. Verification: f(f\u207b\u00b9(x)) = (4\u00b7(-3x-1)/(2(x-2)) - 1)/(2\u00b7(-3x-1)/(2(x-2)) + 3) = ((-12x-4-2(x-2))/(2(x-2)))/((-6x-2+6(x-2))/(2(x-2))) = (-12x-4-2x+4)/(-6x-2+6x-12) = -14x/(-14) = x. \u2713"
+          "problem": "Find the inverse of f(x) = (4x - 1)/(2x + 3). Verify that f(f⁻¹(x)) = x. State domain and range of both functions.",
+          "answer": "Swap: x = (4y - 1)/(2y + 3). Solve: 2xy + 3x = 4y - 1 → 2xy - 4y = -3x - 1 → y(2x - 4) = -(3x + 1) → y = -(3x + 1)/(2x - 4) = (-3x - 1)/(2(x - 2)). So f⁻¹(x) = (-3x - 1)/(2(x - 2)). Domain of f: x ≠ -3/2, Range of f: y ≠ 2 (HA at y = 4/2 = 2). Domain of f⁻¹: x ≠ 2, Range of f⁻¹: y ≠ -3/2. Verification: f(f⁻¹(x)) = (4·(-3x-1)/(2(x-2)) - 1)/(2·(-3x-1)/(2(x-2)) + 3) = ((-12x-4-2(x-2))/(2(x-2)))/((-6x-2+6(x-2))/(2(x-2))) = (-12x-4-2x+4)/(-6x-2+6x-12) = -14x/(-14) = x. ✓"
         },
         {
           "problem": "For f(x) = 1/(x + 2) and g(x) = 3x/(x - 1), find f(g(x)). Simplify completely and state the domain.",
-          "answer": "f(g(x)) = 1/(g(x) + 2) = 1/((3x/(x-1)) + 2) = 1/((3x + 2(x-1))/(x-1)) = (x - 1)/(3x + 2x - 2) = (x - 1)/(5x - 2). Domain: x \u2260 1 (for g) and x \u2260 2/5 (denominator of result), so (-\u221e, 2/5) \u222a (2/5, 1) \u222a (1, \u221e)."
+          "answer": "f(g(x)) = 1/(g(x) + 2) = 1/((3x/(x-1)) + 2) = 1/((3x + 2(x-1))/(x-1)) = (x - 1)/(3x + 2x - 2) = (x - 1)/(5x - 2). Domain: x ≠ 1 (for g) and x ≠ 2/5 (denominator of result), so (-∞, 2/5) ∪ (2/5, 1) ∪ (1, ∞)."
         },
         {
-          "problem": "Write the equation of the function obtained from f(x) = \u221bx by applying: vertical stretch by 2, reflect over y-axis, shift right 5, shift down 3. State domain and range.",
-          "answer": "Step by step: (1) Vertical stretch by 2: 2\u221bx. (2) Reflect over y-axis (replace x with -x): 2\u221b(-x). (3) Shift right 5 (replace x with x-5): 2\u221b(-(x-5)) = 2\u221b(5-x). (4) Shift down 3: g(x) = 2\u221b(5-x) - 3. Domain: (-\u221e, \u221e) (cube root accepts all reals). Range: (-\u221e, \u221e)."
+          "problem": "Write the equation of the function obtained from f(x) = ∛x by applying: vertical stretch by 2, reflect over y-axis, shift right 5, shift down 3. State domain and range.",
+          "answer": "Step by step: (1) Vertical stretch by 2: 2∛x. (2) Reflect over y-axis (replace x with -x): 2∛(-x). (3) Shift right 5 (replace x with x-5): 2∛(-(x-5)) = 2∛(5-x). (4) Shift down 3: g(x) = 2∛(5-x) - 3. Domain: (-∞, ∞) (cube root accepts all reals). Range: (-∞, ∞)."
         },
         {
-          "problem": "A company finds that its daily cost is C(x) = 0.5x + 80 and its revenue is R(x) = x\u00b7p(x), where the price function is p(x) = 20 - 0.1x (x = number of units). (a) Find P(x) = R(x) - C(x). (b) Find the break-even points. (c) Find the number of units that maximizes profit.",
-          "answer": "(a) R(x) = x(20 - 0.1x) = 20x - 0.1x\u00b2. P(x) = (20x - 0.1x\u00b2) - (0.5x + 80) = -0.1x\u00b2 + 19.5x - 80. (b) -0.1x\u00b2 + 19.5x - 80 = 0 \u2192 x\u00b2 - 195x + 800 = 0. Quadratic formula: x = (195 \u00b1 \u221a(38025 - 3200))/2 = (195 \u00b1 \u221a34825)/2 = (195 \u00b1 5\u221a1393)/2. Approximation: \u221a1393 \u2248 37.32, so 5\u221a1393 \u2248 186.6. x \u2248 (195 - 186.6)/2 \u2248 4.2 or x \u2248 (195 + 186.6)/2 \u2248 190.8. (c) Vertex: x = -19.5/(2\u00b7(-0.1)) = 19.5/0.2 = 97.5 units. Max profit: P(97.5) = -0.1(97.5)\u00b2 + 19.5(97.5) - 80 = -950.625 + 1901.25 - 80 = 870.625."
+          "problem": "A company finds that its daily cost is C(x) = 0.5x + 80 and its revenue is R(x) = x·p(x), where the price function is p(x) = 20 - 0.1x (x = number of units). (a) Find P(x) = R(x) - C(x). (b) Find the break-even points. (c) Find the number of units that maximizes profit.",
+          "answer": "(a) R(x) = x(20 - 0.1x) = 20x - 0.1x². P(x) = (20x - 0.1x²) - (0.5x + 80) = -0.1x² + 19.5x - 80. (b) -0.1x² + 19.5x - 80 = 0 → x² - 195x + 800 = 0. Quadratic formula: x = (195 ± √(38025 - 3200))/2 = (195 ± √34825)/2 = (195 ± 5√1393)/2. Approximation: √1393 ≈ 37.32, so 5√1393 ≈ 186.6. x ≈ (195 - 186.6)/2 ≈ 4.2 or x ≈ (195 + 186.6)/2 ≈ 190.8. (c) Vertex: x = -19.5/(2·(-0.1)) = 19.5/0.2 = 97.5 units. Max profit: P(97.5) = -0.1(97.5)² + 19.5(97.5) - 80 = -950.625 + 1901.25 - 80 = 870.625."
         }
       ],
-      "skill": "function-families-overview"
+      "skill": "function-families-overview",
+      "lessonId": "parent-functions"
     }
   ],
   "answerKeys": {
-    "families-exponential": "Parent: 2^x. f(0)=-3(2)^(-1)+6=4.5. x-int: x=2. HA: y=6. Range: (-\u221e,6).",
+    "families-exponential": "Parent: 2^x. f(0)=-3(2)^(-1)+6=4.5. x-int: x=2. HA: y=6. Range: (-∞,6).",
     "families-rational": "g(x)=(2x+1)/(x-4). VA: x=4, HA: y=2. y-int: (0,-1/4). x-int: (-1/2,0).",
-    "families-symmetry": "(a) x\u2074-3x\u00b2+1: even. (b) x\u00b3-2x: odd. (c) x\u00b2+x: neither.",
-    "transform-sqrt": "g(x)=\u221a(-(x+2)/3)+4. Endpoint: (-2,4). Domain: (-\u221e,-2].",
-    "transform-parabola": "g(x)=(x-3)\u00b2-5. a=1. Right 3, down 5.",
+    "families-symmetry": "(a) x⁴-3x²+1: even. (b) x³-2x: odd. (c) x²+x: neither.",
+    "transform-sqrt": "g(x)=√(-(x+2)/3)+4. Endpoint: (-2,4). Domain: (-∞,-2].",
+    "transform-parabola": "g(x)=(x-3)²-5. a=1. Right 3, down 5.",
     "transform-absval": "g(x)=-2|x-1|+3. Vertex: (1,3). Opens down.",
-    "wp-transform-abs": "g(x)=3|2(x-3)|-1. Vertex: (3,-1). Domain: (-\u221e,\u221e). Range: [-1,\u221e).",
+    "wp-transform-abs": "g(x)=3|2(x-3)|-1. Vertex: (3,-1). Domain: (-∞,∞). Range: [-1,∞).",
     "wp-transform-recip": "g(x)=-1/(x+4)+2. VA: x=-4. HA: y=2.",
-    "wp-transform-sqrt": "Endpoint: (-5,3). x-int: (4,0). Domain: [-5,\u221e). Range: (-\u221e,3].",
-    "combine-product": "(f\u00b7g)(x)=(x\u00b2-9)\u221a(x+3). Domain: [-3,\u221e). (f/g) domain: (-3,\u221e).",
-    "compose-linear-quad": "f(g(x))=2x\u00b2-5. g(f(x))=4x\u00b2+4x-2. Not equal.",
-    "compose-domain": "f(g(x))=1/(\u221a(x+1)-2). Domain: [-1,3)\u222a(3,\u221e).",
-    "compose-decompose": "g(x)=x\u00b2+5, f(x)=\u221ax. Domain: (-\u221e,\u221e).",
-    "wp-compose-rational": "f(g(x))=1/(1+x). Domain: x\u22600 and x\u2260-1.",
-    "wp-compose-sq-sqrt": "(a) f(g(x))=2x+3, dom [-3,\u221e). (b) g(f(x))=|x|\u221a2, dom (-\u221e,\u221e).",
-    "wp-compose-triple": "f(g(k(x)))=|3x-6|\u00b2=9(x-2)\u00b2.",
-    "inverse-rational": "f\u207b\u00b9(x)=(-x-3)/(2x-5). Dom f: x\u2260-1/2. Range f: y\u22605/2.",
-    "inverse-cube": "f\u207b\u00b9(x)=\u221b(x-2). Domain: (-\u221e,\u221e).",
-    "inverse-restricted": "f\u207b\u00b9(x)=\u221a(x-2)+3. Domain: [2,\u221e).",
-    "wp-inverse-rational": "f\u207b\u00b9(x)=(2x+7)/(x-3). Dom f: x\u22602, Range f: y\u22603.",
-    "wp-inverse-quad": "f\u207b\u00b9(x)=(1/2)\u221a(x-1)+1. Domain: [1,\u221e). f(f\u207b\u00b9(x))=x \u2713.",
-    "wp-one-to-one": "Not one-to-one. f(0)=f(1)=f(-1)=0. Restrict to x\u22651/\u221a3.",
-    "ip-log-transform": "Parent: log\u2082(x). Domain: (4,\u221e). VA: x=4. x-int: (12,0). No y-int.",
-    "ip-compose-mixed": "(a) f\u2218g=2x+3, [-3,\u221e). (b) g\u2218f=|x|\u221a2, (-\u221e,\u221e).",
-    "ip-inverse-rational2": "f\u207b\u00b9(x)=(-3x-1)/(2(x-2)). Dom f: x\u2260-3/2. Range f: y\u22602.",
-    "ip-compose-rational2": "f(g(x))=(x-1)/(5x-2). Domain: x\u22601 and x\u22602/5.",
-    "ip-cuberoot-transform": "g(x)=2\u221b(5-x)-3. Domain: (-\u221e,\u221e). Range: (-\u221e,\u221e).",
-    "ip-profit-analysis": "P(x)=-0.1x\u00b2+19.5x-80. Break-even: x\u22484.2 and x\u2248190.8. Max profit at x=97.5 units, P\u2248$870.63."
-  }
+    "wp-transform-sqrt": "Endpoint: (-5,3). x-int: (4,0). Domain: [-5,∞). Range: (-∞,3].",
+    "combine-product": "(f·g)(x)=(x²-9)√(x+3). Domain: [-3,∞). (f/g) domain: (-3,∞).",
+    "compose-linear-quad": "f(g(x))=2x²-5. g(f(x))=4x²+4x-2. Not equal.",
+    "compose-domain": "f(g(x))=1/(√(x+1)-2). Domain: [-1,3)∪(3,∞).",
+    "compose-decompose": "g(x)=x²+5, f(x)=√x. Domain: (-∞,∞).",
+    "wp-compose-rational": "f(g(x))=1/(1+x). Domain: x≠0 and x≠-1.",
+    "wp-compose-sq-sqrt": "(a) f(g(x))=2x+3, dom [-3,∞). (b) g(f(x))=|x|√2, dom (-∞,∞).",
+    "wp-compose-triple": "f(g(k(x)))=|3x-6|²=9(x-2)².",
+    "inverse-rational": "f⁻¹(x)=(-x-3)/(2x-5). Dom f: x≠-1/2. Range f: y≠5/2.",
+    "inverse-cube": "f⁻¹(x)=∛(x-2). Domain: (-∞,∞).",
+    "inverse-restricted": "f⁻¹(x)=√(x-2)+3. Domain: [2,∞).",
+    "wp-inverse-rational": "f⁻¹(x)=(2x+7)/(x-3). Dom f: x≠2, Range f: y≠3.",
+    "wp-inverse-quad": "f⁻¹(x)=(1/2)√(x-1)+1. Domain: [1,∞). f(f⁻¹(x))=x ✓.",
+    "wp-one-to-one": "Not one-to-one. f(0)=f(1)=f(-1)=0. Restrict to x≥1/√3.",
+    "ip-log-transform": "Parent: log₂(x). Domain: (4,∞). VA: x=4. x-int: (12,0). No y-int.",
+    "ip-compose-mixed": "(a) f∘g=2x+3, [-3,∞). (b) g∘f=|x|√2, (-∞,∞).",
+    "ip-inverse-rational2": "f⁻¹(x)=(-3x-1)/(2(x-2)). Dom f: x≠-3/2. Range f: y≠2.",
+    "ip-compose-rational2": "f(g(x))=(x-1)/(5x-2). Domain: x≠1 and x≠2/5.",
+    "ip-cuberoot-transform": "g(x)=2∛(5-x)-3. Domain: (-∞,∞). Range: (-∞,∞).",
+    "ip-profit-analysis": "P(x)=-0.1x²+19.5x-80. Break-even: x≈4.2 and x≈190.8. Max profit at x=97.5 units, P≈$870.63."
+  },
+  "lessons": [
+    {
+      "lessonId": "parent-functions",
+      "title": "Parent Function Library",
+      "order": 1
+    },
+    {
+      "lessonId": "transformations",
+      "title": "Transformations Toolkit",
+      "order": 2
+    },
+    {
+      "lessonId": "composition-inverses",
+      "title": "Composition & Inverse Functions",
+      "order": 3
+    }
+  ]
 }

@@ -28,15 +28,15 @@
     "Convert fluently between standard, factored, and vertex forms of quadratics",
     "Solve quadratics using ALL methods: factoring, square root, completing the square, quadratic formula",
     "Use the discriminant to predict the number and type of solutions",
-    "Graph parabolas using transformations from the parent function y = x\u00b2",
+    "Graph parabolas using transformations from the parent function y = x²",
     "Perform operations with complex numbers and solve equations with complex solutions"
   ],
   "instructionalStrategy": [
-    "Students saw quadratics in Algebra 1. The Algebra 2 approach goes DEEPER: every form reveals different information (standard \u2192 y-intercept, factored \u2192 x-intercepts, vertex \u2192 min/max), and the 'which method?' decision is the real skill.",
-    "Completing the square is THE key technique of this unit\u2014it derives the quadratic formula, converts to vertex form, and reappears in conic sections (Unit 8). If students can complete the square fluently, everything else follows.",
-    "The discriminant (b\u00b2-4ac) is a diagnostic tool: positive \u2192 2 real solutions, zero \u2192 1 repeated, negative \u2192 2 complex. Teach students to CHECK the discriminant BEFORE choosing a solving method.",
-    "Complex numbers feel alien at first. Ground them in necessity: 'x\u00b2 + 1 = 0 has no REAL solutions, so we invent a number system where it does.' The powers of i cycle: i, -1, -i, 1, repeat.",
-    "For 'which method?' problems: factoring is fastest when it works; square root method for (x+a)\u00b2 = b; completing the square always works and gives vertex form; quadratic formula is the universal fallback."
+    "Students saw quadratics in Algebra 1. The Algebra 2 approach goes DEEPER: every form reveals different information (standard → y-intercept, factored → x-intercepts, vertex → min/max), and the 'which method?' decision is the real skill.",
+    "Completing the square is THE key technique of this unit—it derives the quadratic formula, converts to vertex form, and reappears in conic sections (Unit 8). If students can complete the square fluently, everything else follows.",
+    "The discriminant (b²-4ac) is a diagnostic tool: positive → 2 real solutions, zero → 1 repeated, negative → 2 complex. Teach students to CHECK the discriminant BEFORE choosing a solving method.",
+    "Complex numbers feel alien at first. Ground them in necessity: 'x² + 1 = 0 has no REAL solutions, so we invent a number system where it does.' The powers of i cycle: i, -1, -i, 1, repeat.",
+    "For 'which method?' problems: factoring is fastest when it works; square root method for (x+a)² = b; completing the square always works and gives vertex form; quadratic formula is the universal fallback."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
@@ -45,90 +45,95 @@
       "lessonPhase": "concept-intro",
       "skill": "quadratic-forms-converting",
       "title": "Concept: Quadratic Forms Converting",
-      "initialPrompt": "Given y = 2(x - 3)\u00b2 - 8, what form is this? What is the vertex? Now convert it to standard form and then try to factor it.",
-      "content": "**Three Forms of a Quadratic \u2014 Each Reveals Different Information:**\n\n| Form | Equation | Reveals |\n|------|----------|--------|\n| **Standard** | y = ax\u00b2 + bx + c | y-intercept (c), direction (a), axis of symmetry (-b/2a) |\n| **Factored** | y = a(x - r\u2081)(x - r\u2082) | x-intercepts (r\u2081 and r\u2082), direction (a) |\n| **Vertex** | y = a(x - h)\u00b2 + k | Vertex (h, k), direction (a), min/max value (k) |\n\n**Converting Between Forms:**\n\u2022 Standard \u2192 Factored: factor the expression\n\u2022 Standard \u2192 Vertex: complete the square\n\u2022 Factored \u2192 Standard: FOIL and distribute a\n\u2022 Vertex \u2192 Standard: expand (x-h)\u00b2, distribute a, combine\n\u2022 Any form \u2192 Standard is always possible; Standard \u2192 Factored requires factorable zeros\n\nThe sign of **a** determines:\n\u2022 a > 0: parabola opens UP (minimum at vertex)\n\u2022 a < 0: parabola opens DOWN (maximum at vertex)"
+      "initialPrompt": "Given y = 2(x - 3)² - 8, what form is this? What is the vertex? Now convert it to standard form and then try to factor it.",
+      "content": "**Three Forms of a Quadratic — Each Reveals Different Information:**\n\n| Form | Equation | Reveals |\n|------|----------|--------|\n| **Standard** | y = ax² + bx + c | y-intercept (c), direction (a), axis of symmetry (-b/2a) |\n| **Factored** | y = a(x - r₁)(x - r₂) | x-intercepts (r₁ and r₂), direction (a) |\n| **Vertex** | y = a(x - h)² + k | Vertex (h, k), direction (a), min/max value (k) |\n\n**Converting Between Forms:**\n• Standard → Factored: factor the expression\n• Standard → Vertex: complete the square\n• Factored → Standard: FOIL and distribute a\n• Vertex → Standard: expand (x-h)², distribute a, combine\n• Any form → Standard is always possible; Standard → Factored requires factorable zeros\n\nThe sign of **a** determines:\n• a > 0: parabola opens UP (minimum at vertex)\n• a < 0: parabola opens DOWN (maximum at vertex)",
+      "lessonId": "quadratic-forms"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "quadratic-forms-converting",
-      "title": "I-Do: Quadratic Forms Converting \u2014 Worked Examples",
+      "title": "I-Do: Quadratic Forms Converting — Worked Examples",
       "initialPrompt": "Notice that the vertex (3, -8) is exactly halfway between the x-intercepts 1 and 5 (average = 3). Is this always true? Why?",
       "examples": [
         {
-          "problem": "Convert y = 2x\u00b2 - 12x + 10 to vertex form and factored form.",
-          "solution": "**To Vertex Form (complete the square):**\ny = 2x\u00b2 - 12x + 10\ny = 2(x\u00b2 - 6x) + 10          \u2014 factor out a from x-terms\ny = 2(x\u00b2 - 6x + 9 - 9) + 10   \u2014 add and subtract (b/2)\u00b2 = 9 inside\ny = 2(x\u00b2 - 6x + 9) - 18 + 10  \u2014 distribute the -9 out (multiply by 2)\ny = **2(x - 3)\u00b2 - 8**\n\nVertex: (3, -8). Opens up. Minimum value is -8.\n\n**To Factored Form:**\n0 = 2x\u00b2 - 12x + 10 = 2(x\u00b2 - 6x + 5) = 2(x - 1)(x - 5)\ny = **2(x - 1)(x - 5)**\n\nx-intercepts: (1, 0) and (5, 0).\n\n**All three forms describe the SAME parabola:**\n\u2022 Standard: y = 2x\u00b2 - 12x + 10 \u2192 y-intercept is 10\n\u2022 Vertex: y = 2(x - 3)\u00b2 - 8 \u2192 vertex at (3, -8)\n\u2022 Factored: y = 2(x - 1)(x - 5) \u2192 zeros at 1 and 5"
+          "problem": "Convert y = 2x² - 12x + 10 to vertex form and factored form.",
+          "solution": "**To Vertex Form (complete the square):**\ny = 2x² - 12x + 10\ny = 2(x² - 6x) + 10          — factor out a from x-terms\ny = 2(x² - 6x + 9 - 9) + 10   — add and subtract (b/2)² = 9 inside\ny = 2(x² - 6x + 9) - 18 + 10  — distribute the -9 out (multiply by 2)\ny = **2(x - 3)² - 8**\n\nVertex: (3, -8). Opens up. Minimum value is -8.\n\n**To Factored Form:**\n0 = 2x² - 12x + 10 = 2(x² - 6x + 5) = 2(x - 1)(x - 5)\ny = **2(x - 1)(x - 5)**\n\nx-intercepts: (1, 0) and (5, 0).\n\n**All three forms describe the SAME parabola:**\n• Standard: y = 2x² - 12x + 10 → y-intercept is 10\n• Vertex: y = 2(x - 3)² - 8 → vertex at (3, -8)\n• Factored: y = 2(x - 1)(x - 5) → zeros at 1 and 5"
         }
-      ]
+      ],
+      "lessonId": "quadratic-forms"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "quadratic-solving-all-methods",
-      "title": "We-Do: Quadratic Solving All Methods \u2014 Guided Practice",
+      "title": "We-Do: Quadratic Solving All Methods — Guided Practice",
       "problems": [
         {
-          "question": "Solve x\u00b2 - 6x + 5 = 0 using ALL four methods.",
+          "question": "Solve x² - 6x + 5 = 0 using ALL four methods.",
           "answer": "x = 1 and x = 5 (all methods give the same answer)",
           "hints": [
-            "**Factoring:** (x-1)(x-5)=0 \u2192 x=1, x=5.",
-            "**Quadratic formula:** x=(6\u00b1\u221a(36-20))/2=(6\u00b14)/2 \u2192 x=5 or x=1.",
-            "**Completing square:** (x-3)\u00b2-4=0 \u2192 (x-3)\u00b2=4 \u2192 x-3=\u00b12 \u2192 x=5 or x=1.",
-            "**Square root method** doesn't apply directly since it's not in (x+a)\u00b2=b form until you complete the square."
+            "**Factoring:** (x-1)(x-5)=0 → x=1, x=5.",
+            "**Quadratic formula:** x=(6±√(36-20))/2=(6±4)/2 → x=5 or x=1.",
+            "**Completing square:** (x-3)²-4=0 → (x-3)²=4 → x-3=±2 → x=5 or x=1.",
+            "**Square root method** doesn't apply directly since it's not in (x+a)²=b form until you complete the square."
           ]
         },
         {
-          "question": "Solve by completing the square: 2x\u00b2 + 8x - 3 = 0.",
-          "answer": "x = -2 \u00b1 \u221a(22)/2 (or equivalently x = (-4 \u00b1 \u221a22)/2)",
+          "question": "Solve by completing the square: 2x² + 8x - 3 = 0.",
+          "answer": "x = -2 ± √(22)/2 (or equivalently x = (-4 ± √22)/2)",
           "hints": [
-            "Divide by 2: x\u00b2 + 4x - 3/2 = 0. Move constant: x\u00b2 + 4x = 3/2.",
-            "Complete square: x\u00b2 + 4x + 4 = 3/2 + 4 = 11/2.",
-            "(x + 2)\u00b2 = 11/2. x + 2 = \u00b1\u221a(11/2) = \u00b1\u221a22/2. x = -2 \u00b1 \u221a22/2."
+            "Divide by 2: x² + 4x - 3/2 = 0. Move constant: x² + 4x = 3/2.",
+            "Complete square: x² + 4x + 4 = 3/2 + 4 = 11/2.",
+            "(x + 2)² = 11/2. x + 2 = ±√(11/2) = ±√22/2. x = -2 ± √22/2."
           ]
         },
         {
-          "question": "Without solving, how many real solutions does 3x\u00b2 - 2x + 5 = 0 have? What type are the solutions?",
+          "question": "Without solving, how many real solutions does 3x² - 2x + 5 = 0 have? What type are the solutions?",
           "answer": "No real solutions (two complex conjugate solutions). D = 4 - 60 = -56 < 0.",
           "hints": [
-            "D = b\u00b2 - 4ac = (-2)\u00b2 - 4(3)(5) = 4 - 60 = -56.",
-            "D < 0 \u2192 no real solutions. The solutions are complex conjugates."
+            "D = b² - 4ac = (-2)² - 4(3)(5) = 4 - 60 = -56.",
+            "D < 0 → no real solutions. The solutions are complex conjugates."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start with factoring\u2014it's the fastest when it works. Can you find two numbers that multiply to 5 and add to -6?"
+      "initialPrompt": "For the first problem, start with factoring—it's the fastest when it works. Can you find two numbers that multiply to 5 and add to -6?",
+      "lessonId": "solving-all-methods"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "discriminant-analysis",
       "title": "Concept: Discriminant Analysis",
-      "initialPrompt": "What is i\u2077\u00b3? (Hint: divide 73 by 4 and look at the remainder.)",
-      "content": "**Complex Numbers:**\n\nThe imaginary unit **i** is defined so that **i\u00b2 = -1** (equivalently, i = \u221a(-1)).\n\n**Standard form:** a + bi, where a is the real part and b is the imaginary part.\n\n**Operations:**\n\u2022 Add/Subtract: combine real parts and imaginary parts separately\n  (3 + 2i) + (1 - 5i) = 4 - 3i\n\u2022 Multiply: use FOIL, remembering i\u00b2 = -1\n  (2 + 3i)(4 - i) = 8 - 2i + 12i - 3i\u00b2 = 8 + 10i + 3 = 11 + 10i\n\u2022 Divide: multiply by the **conjugate** of the denominator\n  (3 + i)/(2 - i) \u00d7 (2 + i)/(2 + i) = (6 + 3i + 2i + i\u00b2)/(4 + 1) = (5 + 5i)/5 = 1 + i\n\n**Powers of i cycle every 4:**\ni\u00b9 = i, i\u00b2 = -1, i\u00b3 = -i, i\u2074 = 1, i\u2075 = i, ...\n\n**Complex Conjugate:** The conjugate of a + bi is a - bi. Their product is always REAL: (a+bi)(a-bi) = a\u00b2 + b\u00b2."
+      "initialPrompt": "What is i⁷³? (Hint: divide 73 by 4 and look at the remainder.)",
+      "content": "**Complex Numbers:**\n\nThe imaginary unit **i** is defined so that **i² = -1** (equivalently, i = √(-1)).\n\n**Standard form:** a + bi, where a is the real part and b is the imaginary part.\n\n**Operations:**\n• Add/Subtract: combine real parts and imaginary parts separately\n  (3 + 2i) + (1 - 5i) = 4 - 3i\n• Multiply: use FOIL, remembering i² = -1\n  (2 + 3i)(4 - i) = 8 - 2i + 12i - 3i² = 8 + 10i + 3 = 11 + 10i\n• Divide: multiply by the **conjugate** of the denominator\n  (3 + i)/(2 - i) × (2 + i)/(2 + i) = (6 + 3i + 2i + i²)/(4 + 1) = (5 + 5i)/5 = 1 + i\n\n**Powers of i cycle every 4:**\ni¹ = i, i² = -1, i³ = -i, i⁴ = 1, i⁵ = i, ...\n\n**Complex Conjugate:** The conjugate of a + bi is a - bi. Their product is always REAL: (a+bi)(a-bi) = a² + b².",
+      "lessonId": "complex-numbers-intro"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "discriminant-analysis",
-      "title": "I-Do: Discriminant Analysis \u2014 Worked Examples",
-      "initialPrompt": "Could we have used completing the square instead? Try it: x\u00b2 + 4x + 13 = 0 \u2192 (x+2)\u00b2 = ? What happens when the right side is negative?",
+      "title": "I-Do: Discriminant Analysis — Worked Examples",
+      "initialPrompt": "Could we have used completing the square instead? Try it: x² + 4x + 13 = 0 → (x+2)² = ? What happens when the right side is negative?",
       "examples": [
         {
-          "problem": "Solve: x\u00b2 + 4x + 13 = 0.",
-          "solution": "**Check discriminant first:**\nD = b\u00b2 - 4ac = 16 - 52 = -36\nD < 0 \u2192 two complex conjugate solutions.\n\n**Quadratic formula:**\nx = (-4 \u00b1 \u221a(-36))/2\nx = (-4 \u00b1 6i)/2\nx = **-2 \u00b1 3i**\n\n**Verify:** Plug in x = -2 + 3i:\n(-2+3i)\u00b2 + 4(-2+3i) + 13\n= (4 - 12i + 9i\u00b2) + (-8 + 12i) + 13\n= (4 - 12i - 9) + (-8 + 12i) + 13\n= -5 - 12i - 8 + 12i + 13\n= 0 \u2713\n\n**Key pattern:** Complex solutions ALWAYS come in conjugate pairs. If -2 + 3i is a solution, then -2 - 3i must also be a solution."
+          "problem": "Solve: x² + 4x + 13 = 0.",
+          "solution": "**Check discriminant first:**\nD = b² - 4ac = 16 - 52 = -36\nD < 0 → two complex conjugate solutions.\n\n**Quadratic formula:**\nx = (-4 ± √(-36))/2\nx = (-4 ± 6i)/2\nx = **-2 ± 3i**\n\n**Verify:** Plug in x = -2 + 3i:\n(-2+3i)² + 4(-2+3i) + 13\n= (4 - 12i + 9i²) + (-8 + 12i) + 13\n= (4 - 12i - 9) + (-8 + 12i) + 13\n= -5 - 12i - 8 + 12i + 13\n= 0 ✓\n\n**Key pattern:** Complex solutions ALWAYS come in conjugate pairs. If -2 + 3i is a solution, then -2 - 3i must also be a solution."
         }
-      ]
+      ],
+      "lessonId": "complex-numbers-intro"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "parabola-transformations",
-      "title": "We-Do: Parabola Transformations \u2014 Guided Practice",
+      "title": "We-Do: Parabola Transformations — Guided Practice",
       "problems": [
         {
           "question": "Simplify: (5 - 2i)(3 + 4i).",
           "answer": "23 + 14i",
           "hints": [
-            "FOIL: 15 + 20i - 6i - 8i\u00b2.",
+            "FOIL: 15 + 20i - 6i - 8i².",
             "= 15 + 14i - 8(-1) = 15 + 14i + 8 = 23 + 14i."
           ]
         },
@@ -137,12 +142,12 @@
           "answer": "(5 + 14i)/13",
           "hints": [
             "Multiply top and bottom by conjugate (2+3i).",
-            "Top: (4+i)(2+3i) = 8+12i+2i+3i\u00b2 = 8+14i-3 = 5+14i.",
+            "Top: (4+i)(2+3i) = 8+12i+2i+3i² = 8+14i-3 = 5+14i.",
             "Bottom: (2-3i)(2+3i) = 4+9 = 13. Result: (5+14i)/13."
           ]
         },
         {
-          "question": "Describe the graph transformations: y = -3(x + 2)\u00b2 + 5 compared to y = x\u00b2.",
+          "question": "Describe the graph transformations: y = -3(x + 2)² + 5 compared to y = x².",
           "answer": "Reflect over x-axis, vertical stretch by 3, shift left 2, shift up 5. Vertex at (-2, 5), opens down.",
           "hints": [
             "a = -3: reflect (negative) and stretch by 3.",
@@ -151,71 +156,95 @@
           ]
         }
       ],
-      "initialPrompt": "For the first multiplication, remember FOIL: First, Outside, Inside, Last. What is the First terms product?"
+      "initialPrompt": "For the first multiplication, remember FOIL: First, Outside, Inside, Last. What is the First terms product?",
+      "lessonId": "quadratic-transformations-modeling"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "skill": "complex-numbers",
-      "title": "You-Do: Complex Numbers \u2014 Independent Practice",
+      "title": "You-Do: Complex Numbers — Independent Practice",
       "problems": [
         {
-          "question": "Convert y = -x\u00b2 + 8x - 12 to vertex form and factored form.",
-          "answer": "Vertex: y = -(x - 4)\u00b2 + 4. Factored: y = -(x - 2)(x - 6).",
+          "question": "Convert y = -x² + 8x - 12 to vertex form and factored form.",
+          "answer": "Vertex: y = -(x - 4)² + 4. Factored: y = -(x - 2)(x - 6).",
           "hints": [
-            "Complete square: -(x\u00b2-8x)-12 = -(x\u00b2-8x+16)+16-12 = -(x-4)\u00b2+4.",
-            "Factor: -(x\u00b2-8x+12) = -(x-2)(x-6)."
+            "Complete square: -(x²-8x)-12 = -(x²-8x+16)+16-12 = -(x-4)²+4.",
+            "Factor: -(x²-8x+12) = -(x-2)(x-6)."
           ]
         },
         {
-          "question": "Which solving method is most efficient? Solve: (3x - 1)\u00b2 = 20.",
-          "answer": "Square root method. x = (1 \u00b1 2\u221a5)/3.",
+          "question": "Which solving method is most efficient? Solve: (3x - 1)² = 20.",
+          "answer": "Square root method. x = (1 ± 2√5)/3.",
           "hints": [
-            "Already in (expression)\u00b2 = number form \u2192 square root method.",
-            "3x-1 = \u00b1\u221a20 = \u00b12\u221a5. 3x = 1\u00b12\u221a5. x = (1\u00b12\u221a5)/3."
+            "Already in (expression)² = number form → square root method.",
+            "3x-1 = ±√20 = ±2√5. 3x = 1±2√5. x = (1±2√5)/3."
           ]
         },
         {
-          "question": "Use the discriminant to match: (a) x\u00b2+6x+9=0, (b) x\u00b2+2x+5=0, (c) x\u00b2-5x+2=0. Which has 1 repeated real, 2 complex, or 2 distinct real solutions?",
-          "answer": "(a) D=0 \u2192 1 repeated real. (b) D=-16 \u2192 2 complex. (c) D=17 \u2192 2 distinct real.",
+          "question": "Use the discriminant to match: (a) x²+6x+9=0, (b) x²+2x+5=0, (c) x²-5x+2=0. Which has 1 repeated real, 2 complex, or 2 distinct real solutions?",
+          "answer": "(a) D=0 → 1 repeated real. (b) D=-16 → 2 complex. (c) D=17 → 2 distinct real.",
           "hints": [
             "(a) D=36-36=0. (b) D=4-20=-16. (c) D=25-8=17."
           ]
         },
         {
-          "question": "Simplify i\u2074\u2075 + i\u00b9\u2070\u2070 + i\u00b2\u00b3.",
+          "question": "Simplify i⁴⁵ + i¹⁰⁰ + i²³.",
           "answer": "1",
           "hints": [
-            "i\u2074\u2075: 45\u00f74 = 11 remainder 1, so i\u2074\u2075 = i\u00b9 = i.",
-            "i\u00b9\u2070\u2070: 100\u00f74 = 25 remainder 0, so i\u00b9\u2070\u2070 = i\u2070 = 1.",
-            "i\u00b2\u00b3: 23\u00f74 = 5 remainder 3, so i\u00b2\u00b3 = i\u00b3 = -i.",
+            "i⁴⁵: 45÷4 = 11 remainder 1, so i⁴⁵ = i¹ = i.",
+            "i¹⁰⁰: 100÷4 = 25 remainder 0, so i¹⁰⁰ = i⁰ = 1.",
+            "i²³: 23÷4 = 5 remainder 3, so i²³ = i³ = -i.",
             "Sum: i + 1 + (-i) = 1."
           ]
         },
         {
-          "question": "Solve: 2x\u00b2 - 3x + 5 = 0. Express answers in a + bi form.",
-          "answer": "x = (3 \u00b1 i\u221a31)/4",
+          "question": "Solve: 2x² - 3x + 5 = 0. Express answers in a + bi form.",
+          "answer": "x = (3 ± i√31)/4",
           "hints": [
-            "D = 9 - 40 = -31 < 0 \u2192 complex solutions.",
-            "x = (3 \u00b1 \u221a(-31))/4 = (3 \u00b1 i\u221a31)/4."
+            "D = 9 - 40 = -31 < 0 → complex solutions.",
+            "x = (3 ± √(-31))/4 = (3 ± i√31)/4."
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "lessonId": "complex-numbers-intro"
     }
   ],
   "answerKeys": {
-    "2x\u00b2-12x+10 to vertex form": "2(x-3)\u00b2-8",
-    "2x\u00b2-12x+10 to factored form": "2(x-1)(x-5)",
-    "x\u00b2-6x+5=0 all methods": "x=1 and x=5",
-    "2x\u00b2+8x-3=0 completing square": "x=-2\u00b1\u221a22/2",
-    "3x\u00b2-2x+5=0 discriminant": "D=-56, no real solutions",
+    "2x²-12x+10 to vertex form": "2(x-3)²-8",
+    "2x²-12x+10 to factored form": "2(x-1)(x-5)",
+    "x²-6x+5=0 all methods": "x=1 and x=5",
+    "2x²+8x-3=0 completing square": "x=-2±√22/2",
+    "3x²-2x+5=0 discriminant": "D=-56, no real solutions",
     "(5-2i)(3+4i)": "23+14i",
     "(4+i)/(2-3i)": "(5+14i)/13",
-    "x\u00b2+4x+13=0": "x=-2\u00b13i",
-    "-x\u00b2+8x-12 vertex form": "-(x-4)\u00b2+4",
-    "(3x-1)\u00b2=20": "x=(1\u00b12\u221a5)/3",
-    "i\u2074\u2075+i\u00b9\u2070\u2070+i\u00b2\u00b3": "1",
-    "2x\u00b2-3x+5=0": "x=(3\u00b1i\u221a31)/4"
-  }
+    "x²+4x+13=0": "x=-2±3i",
+    "-x²+8x-12 vertex form": "-(x-4)²+4",
+    "(3x-1)²=20": "x=(1±2√5)/3",
+    "i⁴⁵+i¹⁰⁰+i²³": "1",
+    "2x²-3x+5=0": "x=(3±i√31)/4"
+  },
+  "lessons": [
+    {
+      "lessonId": "quadratic-forms",
+      "title": "Three Forms of a Quadratic",
+      "order": 1
+    },
+    {
+      "lessonId": "solving-all-methods",
+      "title": "Solving Quadratics: All Methods",
+      "order": 2
+    },
+    {
+      "lessonId": "complex-numbers-intro",
+      "title": "Complex Numbers & the Discriminant",
+      "order": 3
+    },
+    {
+      "lessonId": "quadratic-transformations-modeling",
+      "title": "Transformations & Quadratic Modeling",
+      "order": 4
+    }
+  ]
 }

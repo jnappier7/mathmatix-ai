@@ -44,7 +44,8 @@
         "Subtraction = add the opposite: 6 − (−2) = 6 + 2 = 8",
         "Multiplication/division: same signs → positive, different → negative",
         "Order of operations applies to ALL expressions, including negatives"
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "model",
@@ -64,7 +65,8 @@
           "problem": "Evaluate: (−2)³ − 4(−3)",
           "solution": "Step 1: (−2)³ = (−2)(−2)(−2) = −8 (odd exponent → negative).\nStep 2: 4(−3) = −12.\nStep 3: −8 − (−12) = −8 + 12 = 4.\nAnswer: 4.\n\n8th-grade preview: Exponents with negatives will show up constantly in Unit 1."
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "explanation",
@@ -78,7 +80,8 @@
         "Divide fractions: keep the first, change ÷ to ×, flip the second",
         "Decimals: align decimal points for add/subtract",
         "Key conversions: 1/4=0.25, 1/3≈0.333, 1/2=0.5, 3/4=0.75"
-      ]
+      ],
+      "lessonId": "fraction-decimal-review"
     },
     {
       "type": "model",
@@ -98,7 +101,8 @@
           "problem": "Evaluate: 3.6 × 0.04",
           "solution": "Ignore decimals: 36 × 4 = 144.\nCount decimal places: 3.6 has 1, 0.04 has 2 → total 3 places.\n144 → 0.144.\nAnswer: 0.144."
         }
-      ]
+      ],
+      "lessonId": "fraction-decimal-review"
     },
     {
       "type": "explanation",
@@ -111,7 +115,8 @@
         "2-step: box the variable term, outside the box use opposites, inside the box divide",
         "Always check by substituting back into the original",
         "Show every step — skipping steps causes errors"
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "model",
@@ -131,7 +136,8 @@
           "problem": "Solve: 3x − 5 = 16",
           "solution": "Step 1 (undo subtraction): 3x = 16 + 5 = 21.\nStep 2 (undo multiplication): x = 21 ÷ 3 = 7.\nCheck: 3(7) − 5 = 21 − 5 = 16 ✓\nAnswer: x = 7."
         }
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "guided_practice",
@@ -166,7 +172,8 @@
             "Compute each piece separately, then combine."
           ]
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     },
     {
       "type": "guided_practice",
@@ -200,7 +207,8 @@
             "Divide by −5. What sign does x have?"
           ]
         }
-      ]
+      ],
+      "lessonId": "basic-equations-review"
     },
     {
       "type": "guided_practice",
@@ -232,7 +240,8 @@
             "Power of a power: multiply the exponents together."
           ]
         }
-      ]
+      ],
+      "lessonId": "coordinate-plane-review"
     },
     {
       "type": "independent_practice",
@@ -294,7 +303,8 @@
             "Horizontal = change in x. Vertical = change in y. Subtract: end minus start."
           ]
         }
-      ]
+      ],
+      "lessonId": "integer-ops"
     }
   ],
   "answerKeys": {
@@ -313,5 +323,27 @@
     "bc-yp4": "−3/4",
     "bc-yp5": "x = −18",
     "bc-yp6": "Horizontal: −3, Vertical: 7"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "integer-ops",
+      "title": "Integer Operations Review",
+      "order": 1
+    },
+    {
+      "lessonId": "fraction-decimal-review",
+      "title": "Fraction & Decimal Fluency",
+      "order": 2
+    },
+    {
+      "lessonId": "basic-equations-review",
+      "title": "Solving 1-Step and 2-Step Equations",
+      "order": 3
+    },
+    {
+      "lessonId": "coordinate-plane-review",
+      "title": "Coordinate Plane Basics",
+      "order": 4
+    }
+  ]
 }

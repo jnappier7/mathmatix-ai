@@ -5,7 +5,7 @@
   "title": "Integrating Essential Skills",
   "weeks": "7-8",
   "estimatedDuration": 35,
-  "description": "Covers 40-43% of the ACT \u2014 the LARGEST reporting category. These are multi-step problems that synthesize arithmetic, algebra, geometry, and data skills. They test whether you can combine 'basic' skills under time pressure to solve real-world problems.",
+  "description": "Covers 40-43% of the ACT — the LARGEST reporting category. These are multi-step problems that synthesize arithmetic, algebra, geometry, and data skills. They test whether you can combine 'basic' skills under time pressure to solve real-world problems.",
   "skills": [
     "act-multi-step-rate-proportion",
     "act-area-perimeter-composite",
@@ -28,11 +28,11 @@
     "Convert between units using dimensional analysis"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do \u2192 mastery-check",
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
     "Problems are intentionally multi-step and context-heavy to match ACT IES questions",
     "Teach problem decomposition: break one hard problem into 2-3 simpler steps",
-    "Emphasize careful reading \u2014 IES questions often have extra information as distractors"
+    "Emphasize careful reading — IES questions often have extra information as distractors"
   ],
   "aiFlexLevel": "moderate",
   "scaffold": [
@@ -41,21 +41,22 @@
       "lessonPhase": "concept-intro",
       "title": "Multi-Step Rate & Proportion Problems",
       "skill": "act-multi-step-rate-proportion",
-      "content": "Integrating Essential Skills questions make up 40-43% of the ACT \u2014 more than any other category. These are NOT new content; they're combinations of skills you already know. The challenge is chaining multiple steps together accurately under time pressure.",
+      "content": "Integrating Essential Skills questions make up 40-43% of the ACT — more than any other category. These are NOT new content; they're combinations of skills you already know. The challenge is chaining multiple steps together accurately under time pressure.",
       "keyPoints": [
-        "Rate \u00d7 Time = Amount. Distance = Rate \u00d7 Time. Work = Rate \u00d7 Time.",
+        "Rate × Time = Amount. Distance = Rate × Time. Work = Rate × Time.",
         "Combined work rates: if A does a job in a hours and B in b hours, together: 1/a + 1/b = 1/total",
         "Multi-leg distance problems: total distance = sum of individual leg distances",
-        "Average speed \u2260 average of speeds. Average speed = total distance / total time.",
-        "Mixture problems: (amount\u2081 \u00d7 concentration\u2081) + (amount\u2082 \u00d7 concentration\u2082) = total amount \u00d7 total concentration",
+        "Average speed ≠ average of speeds. Average speed = total distance / total time.",
+        "Mixture problems: (amount₁ × concentration₁) + (amount₂ × concentration₂) = total amount × total concentration",
         "Proportional reasoning: if the ratio stays constant, set up and solve a proportion",
         "ACT Tip: label EVERY quantity with units. This catches setup errors before they cost you points."
-      ]
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Multi-Step Rate Problems \u2014 Worked Examples",
+      "title": "Multi-Step Rate Problems — Worked Examples",
       "skill": "act-multi-step-rate-proportion",
       "examples": [
         {
@@ -64,13 +65,14 @@
         },
         {
           "problem": "Pipe A can fill a tank in 6 hours. Pipe B can fill it in 4 hours. How long does it take both pipes together?\n(A) 2 hours  (B) 2.4 hours  (C) 3 hours  (D) 5 hours  (E) 10 hours",
-          "solution": "Rate A = 1/6 tank per hour. Rate B = 1/4 tank per hour.\nCombined rate: 1/6 + 1/4 = 2/12 + 3/12 = 5/12 tank per hour.\nTime = 1 \u00f7 (5/12) = 12/5 = 2.4 hours.\nAnswer: (B) 2.4 hours\n\nCommon mistake: averaging 6 and 4 to get 5 hours \u2014 rates don't average like that."
+          "solution": "Rate A = 1/6 tank per hour. Rate B = 1/4 tank per hour.\nCombined rate: 1/6 + 1/4 = 2/12 + 3/12 = 5/12 tank per hour.\nTime = 1 ÷ (5/12) = 12/5 = 2.4 hours.\nAnswer: (B) 2.4 hours\n\nCommon mistake: averaging 6 and 4 to get 5 hours — rates don't average like that."
         },
         {
           "problem": "A 10-liter container holds a 30% salt solution. How many liters of pure water must be added to dilute it to a 20% solution?\n(A) 2  (B) 3  (C) 5  (D) 10  (E) 15",
-          "solution": "Salt stays constant: 10 \u00d7 0.30 = 3 liters of salt.\nAfter adding w liters of water: 3/(10 + w) = 0.20\n3 = 0.20(10 + w) = 2 + 0.20w\n1 = 0.20w \u2192 w = 5 liters\nAnswer: (C) 5"
+          "solution": "Salt stays constant: 10 × 0.30 = 3 liters of salt.\nAfter adding w liters of water: 3/(10 + w) = 0.20\n3 = 0.20(10 + w) = 2 + 0.20w\n1 = 0.20w → w = 5 liters\nAnswer: (C) 5"
         }
-      ]
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "explanation",
@@ -80,33 +82,35 @@
       "content": "Composite figure problems combine multiple shapes. Percent application problems chain multiple percent calculations. Both require careful step-by-step work.",
       "keyPoints": [
         "Composite area: decompose into simpler shapes (rectangles, triangles, circles), find each area, add or subtract.",
-        "Shaded region: total area \u2212 unshaded area.",
+        "Shaded region: total area − unshaded area.",
         "Perimeter of composite figures: trace the outside, count only exposed edges.",
-        "Tax/tip: final = price \u00d7 (1 + rate). Discount: final = price \u00d7 (1 \u2212 rate).",
-        "Successive percent changes: multiply multipliers. 20% up then 10% down = 1.20 \u00d7 0.90 = 1.08 (8% up, not 10%).",
+        "Tax/tip: final = price × (1 + rate). Discount: final = price × (1 − rate).",
+        "Successive percent changes: multiply multipliers. 20% up then 10% down = 1.20 × 0.90 = 1.08 (8% up, not 10%).",
         "Simple interest: I = Prt. Compound interest: A = P(1 + r/n)^(nt).",
-        "Markup: retail = wholesale \u00d7 (1 + markup%). Markdown: sale = retail \u00d7 (1 \u2212 markdown%)."
-      ]
+        "Markup: retail = wholesale × (1 + markup%). Markdown: sale = retail × (1 − markdown%)."
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Composite Figures & Percents \u2014 Worked Examples",
+      "title": "Composite Figures & Percents — Worked Examples",
       "skill": "act-percent-applications",
       "examples": [
         {
-          "problem": "A rectangular room is 12 ft \u00d7 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 9\u03c0/2  (B) 180 + 4.5\u03c0  (C) 180 + 9\u03c0  (D) 192  (E) 180 + 18\u03c0",
-          "solution": "Rectangle: 12 \u00d7 15 = 180 sq ft.\nSemicircle: diameter = 6, radius = 3. Area = (1/2)\u03c0r\u00b2 = (1/2)\u03c0(9) = 9\u03c0/2 = 4.5\u03c0.\nTotal = 180 + 4.5\u03c0.\nAnswer: (B) 180 + 4.5\u03c0 (also = (A) since 9\u03c0/2 = 4.5\u03c0)"
+          "problem": "A rectangular room is 12 ft × 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 9π/2  (B) 180 + 4.5π  (C) 180 + 9π  (D) 192  (E) 180 + 18π",
+          "solution": "Rectangle: 12 × 15 = 180 sq ft.\nSemicircle: diameter = 6, radius = 3. Area = (1/2)πr² = (1/2)π(9) = 9π/2 = 4.5π.\nTotal = 180 + 4.5π.\nAnswer: (B) 180 + 4.5π (also = (A) since 9π/2 = 4.5π)"
         },
         {
           "problem": "A jacket costs $80. It's marked up 50% by the retailer, then put on a 20% off sale. What is the sale price?\n(A) $80  (B) $84  (C) $96  (D) $100  (E) $104",
-          "solution": "Markup: $80 \u00d7 1.50 = $120.\nSale: $120 \u00d7 0.80 = $96.\nAnswer: (C) $96\n\nTrap: 50% up and 20% down \u2260 30% up. It's actually 1.50 \u00d7 0.80 = 1.20, so 20% up from original."
+          "solution": "Markup: $80 × 1.50 = $120.\nSale: $120 × 0.80 = $96.\nAnswer: (C) $96\n\nTrap: 50% up and 20% down ≠ 30% up. It's actually 1.50 × 0.80 = 1.20, so 20% up from original."
         },
         {
           "problem": "$1,000 is invested at 5% annual simple interest. What is the total value after 3 years?\n(A) $1,050  (B) $1,100  (C) $1,150  (D) $1,157.63  (E) $1,500",
-          "solution": "Simple interest: I = Prt = 1000 \u00d7 0.05 \u00d7 3 = $150.\nTotal = 1000 + 150 = $1,150.\nAnswer: (C) $1,150\n\nNote: (D) would be compound interest. The question says 'simple interest.'"
+          "solution": "Simple interest: I = Prt = 1000 × 0.05 × 3 = $150.\nTotal = 1000 + 150 = $1,150.\nAnswer: (C) $1,150\n\nNote: (D) would be compound interest. The question says 'simple interest.'"
         }
-      ]
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "guided_practice",
@@ -117,23 +121,23 @@
           "problem": "A runner jogs at 6 mph for 30 minutes, then walks at 3 mph for 1 hour. What is the total distance?\n(A) 3 miles  (B) 4.5 miles  (C) 6 miles  (D) 9 miles  (E) 12 miles",
           "hints": [
             "Convert 30 minutes to 0.5 hours",
-            "Jog: 6 \u00d7 0.5 = 3 miles. Walk: 3 \u00d7 1 = 3 miles. Total = 6."
+            "Jog: 6 × 0.5 = 3 miles. Walk: 3 × 1 = 3 miles. Total = 6."
           ],
           "answer": "(C) 6 miles. Jog: 6(0.5) = 3 mi. Walk: 3(1) = 3 mi. Total = 6 mi."
         },
         {
-          "problem": "A rectangular pool (20 ft \u00d7 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 408  (C) 472  (D) 800  (E) 1,196",
+          "problem": "A rectangular pool (20 ft × 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 408  (C) 472  (D) 800  (E) 1,196",
           "hints": [
-            "Outer rectangle: (20+6) \u00d7 (40+6) = 26 \u00d7 46",
-            "Pool area: 20 \u00d7 40 = 800. Walkway = outer \u2212 pool."
+            "Outer rectangle: (20+6) × (40+6) = 26 × 46",
+            "Pool area: 20 × 40 = 800. Walkway = outer − pool."
           ],
-          "answer": "(B) 408. Outer: 26 \u00d7 46 = 1,196. Pool: 800. Walkway: 1,196 \u2212 800 = 396. Wait: 26 \u00d7 46 = 1196. 1196 \u2212 800 = 396. Answer: (A) 396."
+          "answer": "(B) 408. Outer: 26 × 46 = 1,196. Pool: 800. Walkway: 1,196 − 800 = 396. Wait: 26 × 46 = 1196. 1196 − 800 = 396. Answer: (A) 396."
         },
         {
           "problem": "A restaurant bill is $65. After an 8% tax and a 20% tip (on the pre-tax amount), what is the total?\n(A) $78.00  (B) $81.20  (C) $83.20  (D) $85.80  (E) $89.70",
           "hints": [
-            "Tax: $65 \u00d7 0.08 = $5.20",
-            "Tip on pre-tax: $65 \u00d7 0.20 = $13.00",
+            "Tax: $65 × 0.08 = $5.20",
+            "Tip on pre-tax: $65 × 0.20 = $13.00",
             "Total: $65 + $5.20 + $13.00"
           ],
           "answer": "(C) $83.20. Tax = $5.20. Tip = $13.00. Total = 65 + 5.20 + 13.00 = $83.20."
@@ -144,10 +148,11 @@
             "Set up proportion: 2/12 = x/42",
             "Cross multiply: 12x = 84"
           ],
-          "answer": "(C) 7. 2/12 = x/42 \u2192 12x = 84 \u2192 x = 7 cups."
+          "answer": "(C) 7. 2/12 = x/42 → 12x = 84 → x = 7 cups."
         }
       ],
-      "skill": "act-percent-applications"
+      "skill": "act-percent-applications",
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "explanation",
@@ -159,30 +164,32 @@
         "Translation key: 'is' = equals, 'of' = multiply, 'more than' = add, 'less than' = subtract",
         "Define variables FIRST: 'Let x = ...' before writing any equation",
         "Read the question TWICE: what are they actually asking for? (x? 2x? x+3?)",
-        "Unit conversion: multiply by fractions where old units cancel. 60 mph \u00d7 (5280 ft / 1 mi) \u00d7 (1 hr / 3600 sec) = 88 ft/sec",
-        "Area units: if linear conversion is k, area conversion is k\u00b2. 1 ft\u00b2 = 144 in\u00b2 (not 12 in\u00b2)",
-        "Volume units: if linear conversion is k, volume conversion is k\u00b3. 1 ft\u00b3 = 1,728 in\u00b3"
-      ]
+        "Unit conversion: multiply by fractions where old units cancel. 60 mph × (5280 ft / 1 mi) × (1 hr / 3600 sec) = 88 ft/sec",
+        "Area units: if linear conversion is k, area conversion is k². 1 ft² = 144 in² (not 12 in²)",
+        "Volume units: if linear conversion is k, volume conversion is k³. 1 ft³ = 1,728 in³"
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Algebraic Reasoning & Unit Conversion \u2014 Worked Examples",
+      "title": "Algebraic Reasoning & Unit Conversion — Worked Examples",
       "skill": "act-measurement-unit-conversion",
       "examples": [
         {
           "problem": "A plumber charges $45 for a house call plus $60 per hour. A homeowner has a budget of $225. What is the maximum number of whole hours the plumber can work?\n(A) 2  (B) 3  (C) 4  (D) 5  (E) 6",
-          "solution": "Set up: 45 + 60h \u2264 225\n60h \u2264 180\nh \u2264 3\nMaximum whole hours = 3.\nAnswer: (B) 3"
+          "solution": "Set up: 45 + 60h ≤ 225\n60h ≤ 180\nh ≤ 3\nMaximum whole hours = 3.\nAnswer: (B) 3"
         },
         {
           "problem": "A car travels at 65 miles per hour. What is this speed in feet per second? (1 mile = 5,280 feet)\n(A) 88  (B) 95.3  (C) 96  (D) 104.5  (E) 352",
-          "solution": "65 mi/hr \u00d7 (5280 ft / 1 mi) \u00d7 (1 hr / 3600 sec)\n= 65 \u00d7 5280 / 3600\n= 343,200 / 3600\n= 95.33 ft/sec\nAnswer: (B) 95.3"
+          "solution": "65 mi/hr × (5280 ft / 1 mi) × (1 hr / 3600 sec)\n= 65 × 5280 / 3600\n= 343,200 / 3600\n= 95.33 ft/sec\nAnswer: (B) 95.3"
         },
         {
           "problem": "A square room has area 400 square feet. What is the area in square yards? (1 yard = 3 feet)\n(A) 44.4 sq yd  (B) 133.3 sq yd  (C) 200 sq yd  (D) 1,200 sq yd  (E) 3,600 sq yd",
-          "solution": "1 yard = 3 feet, so 1 sq yard = 9 sq feet.\n400 sq ft \u00f7 9 = 44.4 sq yd.\nAnswer: (A) 44.4 sq yd\n\nTrap: (B) divides by 3 instead of 9."
+          "solution": "1 yard = 3 feet, so 1 sq yard = 9 sq feet.\n400 sq ft ÷ 9 = 44.4 sq yd.\nAnswer: (A) 44.4 sq yd\n\nTrap: (B) divides by 3 instead of 9."
         }
-      ]
+      ],
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "guided_practice",
@@ -195,73 +202,75 @@
             "Let j = Juan's age",
             "Maria: 2j + 4 = 26. Solve for j."
           ],
-          "answer": "(B) 11. 2j + 4 = 26 \u2192 2j = 22 \u2192 j = 11."
+          "answer": "(B) 11. 2j + 4 = 26 → 2j = 22 → j = 11."
         },
         {
-          "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile \u2248 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 3.5 mi  (D) 5.0 mi  (E) 8.0 mi",
+          "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile ≈ 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 3.5 mi  (D) 5.0 mi  (E) 8.0 mi",
           "hints": [
-            "Divide: 5 km \u00f7 1.609 km/mi",
-            "\u2248 3.107 miles"
+            "Divide: 5 km ÷ 1.609 km/mi",
+            "≈ 3.107 miles"
           ],
-          "answer": "(B) 3.1 mi. 5 / 1.609 \u2248 3.1 miles."
+          "answer": "(B) 3.1 mi. 5 / 1.609 ≈ 3.1 miles."
         },
         {
-          "problem": "A company's profit is modeled by P = 15x \u2212 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 58  (D) 60  (E) 67",
+          "problem": "A company's profit is modeled by P = 15x − 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 58  (D) 60  (E) 67",
           "hints": [
-            "Set 15x \u2212 200 \u2265 700",
-            "15x \u2265 900 \u2192 x \u2265 60"
+            "Set 15x − 200 ≥ 700",
+            "15x ≥ 900 → x ≥ 60"
           ],
-          "answer": "(D) 60. 15x \u2212 200 \u2265 700 \u2192 15x \u2265 900 \u2192 x \u2265 60."
+          "answer": "(D) 60. 15x − 200 ≥ 700 → 15x ≥ 900 → x ≥ 60."
         }
       ],
-      "skill": "act-measurement-unit-conversion"
+      "skill": "act-measurement-unit-conversion",
+      "lessonId": "integrating_essential_skills"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Integrating Essential Skills \u2014 ACT-Style Practice Set",
+      "title": "Integrating Essential Skills — ACT-Style Practice Set",
       "problems": [
         {
           "problem": "Machine A produces 30 widgets per hour. Machine B produces 45 widgets per hour. How many hours will it take both machines working together to produce 600 widgets?\n(A) 6  (B) 8  (C) 10  (D) 13.3  (E) 20",
           "answer": "(B) 8. Combined rate: 30 + 45 = 75 per hour. Time: 600/75 = 8 hours."
         },
         {
-          "problem": "A circular garden (radius 10 ft) has a square fountain (side 4 ft) in the center. What is the area of the garden not covered by the fountain?\n(A) 100\u03c0 \u2212 16  (B) 100\u03c0 \u2212 8  (C) 96\u03c0  (D) 20\u03c0 \u2212 16  (E) 300",
-          "answer": "(A) 100\u03c0 \u2212 16. Circle area: \u03c0(10\u00b2) = 100\u03c0. Square area: 4\u00b2 = 16. Garden area: 100\u03c0 \u2212 16."
+          "problem": "A circular garden (radius 10 ft) has a square fountain (side 4 ft) in the center. What is the area of the garden not covered by the fountain?\n(A) 100π − 16  (B) 100π − 8  (C) 96π  (D) 20π − 16  (E) 300",
+          "answer": "(A) 100π − 16. Circle area: π(10²) = 100π. Square area: 4² = 16. Garden area: 100π − 16."
         },
         {
           "problem": "A store offers 'buy 2, get 1 free' on shirts that cost $25 each. What is the effective price per shirt if you buy 3?\n(A) $8.33  (B) $12.50  (C) $16.67  (D) $18.75  (E) $25.00",
-          "answer": "(C) $16.67. Pay for 2: 2 \u00d7 $25 = $50. Get 3 shirts. $50/3 \u2248 $16.67."
+          "answer": "(C) $16.67. Pay for 2: 2 × $25 = $50. Get 3 shirts. $50/3 ≈ $16.67."
         },
         {
           "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.0 hours  (B) 2.5 hours  (C) 3.0 hours  (D) 3.5 hours  (E) 4.0 hours",
-          "answer": "(C) 3.0 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) \u00f7 (1/8) = (7/20)(8) = 56/20 = 2.8 hours. Approximately (B) 2.5... Actually: 7/20 \u00f7 1/8 = 7\u00d78/20 = 56/20 = 2.8 hours. Closest answer: (C) 3.0."
+          "answer": "(C) 3.0 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours. Approximately (B) 2.5... Actually: 7/20 ÷ 1/8 = 7×8/20 = 56/20 = 2.8 hours. Closest answer: (C) 3.0."
         },
         {
           "problem": "A $2,000 computer depreciates 15% per year. What is its value after 2 years?\n(A) $1,400  (B) $1,445  (C) $1,500  (D) $1,700  (E) $1,785",
-          "answer": "(B) $1,445. Year 1: 2000 \u00d7 0.85 = $1,700. Year 2: 1700 \u00d7 0.85 = $1,445."
+          "answer": "(B) $1,445. Year 1: 2000 × 0.85 = $1,700. Year 2: 1700 × 0.85 = $1,445."
         },
         {
           "problem": "A swimming pool holds 15,000 gallons. If a hose fills it at 500 gallons per hour, and water evaporates at 20 gallons per hour, how long does it take to fill the pool?\n(A) 28.8 hours  (B) 30 hours  (C) 31.25 hours  (D) 33.3 hours  (E) 750 hours",
-          "answer": "(C) 31.25 hours. Net rate: 500 \u2212 20 = 480 gal/hr. Time: 15,000/480 = 31.25 hours."
+          "answer": "(C) 31.25 hours. Net rate: 500 − 20 = 480 gal/hr. Time: 15,000/480 = 31.25 hours."
         },
         {
           "problem": "A recipe calls for 3/4 cup of sugar to make 2 dozen cookies. How much sugar is needed for 5 dozen cookies?\n(A) 15/8 cups  (B) 2 cups  (C) 3 cups  (D) 3.75 cups  (E) 7.5 cups",
           "answer": "(A) 15/8 cups (= 1 7/8 cups). Proportion: (3/4)/2 = x/5. x = (3/4)(5/2) = 15/8."
         },
         {
-          "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon \u2248 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 480  (D) 908.4  (E) 960",
-          "answer": "(D) 908.4. 240 \u00d7 3.785 = 908.4 liters."
+          "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon ≈ 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 480  (D) 908.4  (E) 960",
+          "answer": "(D) 908.4. 240 × 3.785 = 908.4 liters."
         }
       ],
-      "skill": "act-multi-step-rate-proportion"
+      "skill": "act-multi-step-rate-proportion",
+      "lessonId": "integrating_essential_skills"
     }
   ],
   "answerKeys": {
     "average-speed": "50 mph",
     "combined-work": "2.4 hours",
     "mixture-dilution": "5 liters",
-    "composite-bay-window": "180 + 4.5\u03c0",
+    "composite-bay-window": "180 + 4.5π",
     "markup-then-sale": "$96",
     "simple-interest": "$1,150",
     "runner-distance": "6 miles",
@@ -275,7 +284,7 @@
     "5k-miles": "3.1",
     "profit-inequality": "60",
     "combined-machines": "8",
-    "garden-fountain": "100\u03c0 \u2212 16",
+    "garden-fountain": "100π − 16",
     "buy2get1": "$16.67",
     "painter-apprentice": "3.0",
     "depreciation-2yr": "$1,445",

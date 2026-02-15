@@ -28,7 +28,7 @@ const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit 
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
-const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -1351,8 +1351,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             csDoc.currentScaffoldIndex = 0;
 
                             // Recalculate overall progress
-                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
-                            csDoc.overallProgress = Math.round((doneCount / csDoc.modules.length) * 100);
+                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
 
                             // Check for full course completion
                             if (doneCount === csDoc.modules.length) {
@@ -1428,6 +1427,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                                 mod.startedAt = mod.startedAt || new Date();
                             }
 
+                            // Recalculate blended overall progress (includes scaffold progress)
+                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
+
                             csDoc.markModified('modules');
                             await csDoc.save();
 
@@ -1439,6 +1441,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                                 scaffoldIndex: newIdx,
                                 scaffoldTotal: totalSteps,
                                 scaffoldProgress: mod.scaffoldProgress,
+                                overallProgress: csDoc.overallProgress,
                                 stepTitle: nextStep?.title || null
                             };
                             } // end else (advance is valid)

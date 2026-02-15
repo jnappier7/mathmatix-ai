@@ -54,7 +54,8 @@
         "To add or subtract decimals, stack them vertically with decimal points aligned and pad with trailing zeros so every number has the same number of decimal places",
         "A digit's value is (digit) x (place value): the 7 in 0.073 is worth 7 x 0.01 = 0.07, not just 7"
       ],
-      "title": "Concept: Place Value Decimals"
+      "title": "Concept: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -74,7 +75,8 @@
           "solution": "Step 1: Rewrite 20 as 20.000 so we have matching decimal places.\nStep 2: Subtract column by column from right to left, borrowing as needed.\n  20.000\n - 7.368\n -------\n  12.632\nAnswer: 20 - 7.368 = 12.632."
         }
       ],
-      "title": "I-Do: Place Value Decimals"
+      "title": "I-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -110,7 +112,8 @@
           "answer": "Total: 4.125 cups. Left to add: 2.325 cups"
         }
       ],
-      "title": "We-Do: Place Value Decimals"
+      "title": "We-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-place-value-decimals",
@@ -133,7 +136,8 @@
           "answer": "The 8 is in the hundredths place, so its value is 0.08. Example: 0.583 (any decimal of the form 0.58_ where _ is some digit works, but the thousandths digit must be 3, so 0.583)"
         }
       ],
-      "title": "You-Do: Place Value Decimals"
+      "title": "You-Do: Place Value Decimals",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -147,7 +151,8 @@
         "Convert mixed numbers to improper fractions before multiplying or dividing: 2 1/3 = 7/3",
         "Always simplify your final answer—reduce the fraction to lowest terms or convert an improper fraction back to a mixed number when appropriate"
       ],
-      "title": "Concept: Fraction Ops Review"
+      "title": "Concept: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -167,7 +172,8 @@
           "solution": "Step 1: Keep-Change-Flip. 4/9 x 3/2.\nStep 2: Cross-cancel. The 4 and 2 share a factor of 2: becomes 2/9 x 3/1. The 9 and 3 share a factor of 3: becomes 2/3 x 1/1 = 2/3.\nAnswer: 2/3."
         }
       ],
-      "title": "I-Do: Fraction Ops Review"
+      "title": "I-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -202,7 +208,8 @@
           "answer": "2 cups of milk"
         }
       ],
-      "title": "We-Do: Fraction Ops Review"
+      "title": "We-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-fraction-ops-review",
@@ -225,7 +232,8 @@
           "answer": "1 (because 2 1/5 = 11/5, and 11/5 x 5/11 = 55/55 = 1)"
         }
       ],
-      "title": "You-Do: Fraction Ops Review"
+      "title": "You-Do: Fraction Ops Review",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -239,7 +247,8 @@
         "Absolute value is the distance from zero and is always non-negative: |-5| = 5 and |5| = 5",
         "Real-world negatives: temperature below zero, depth below sea level, debt or money owed, yards lost in a game"
       ],
-      "title": "Concept: Integer Basics"
+      "title": "Concept: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -255,7 +264,8 @@
           "solution": "Step 1: Start at -4.\nStep 2: Rose 11 degrees means move RIGHT on the number line. -4 + 11 = 7 degrees F at noon.\nStep 3: Dropped 9 degrees means move LEFT. 7 - 9 = -2 degrees F at midnight.\nAnswer: The midnight temperature was -2 degrees F."
         }
       ],
-      "title": "I-Do: Integer Basics"
+      "title": "I-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -291,7 +301,8 @@
           "answer": "-8, -8, -3, -1, 0, 2, 5"
         }
       ],
-      "title": "We-Do: Integer Basics"
+      "title": "We-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-integer-basics",
@@ -314,7 +325,8 @@
           "answer": "Example of equal absolute values summing to 0: 9 and -9 (|9| = |-9| = 9, and 9 + (-9) = 0). Example of greater absolute value but lesser number: -10 and 3. |-10| = 10 > |3| = 3, but -10 < 3."
         }
       ],
-      "title": "You-Do: Integer Basics"
+      "title": "You-Do: Integer Basics",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -328,7 +340,8 @@
         "You can check any division by multiplying: quotient x divisor + remainder = dividend",
         "Estimation is your safety net—round before computing to predict a reasonable answer, then check if your exact answer is close"
       ],
-      "title": "Concept: Mult Div Fluency"
+      "title": "Concept: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -348,7 +361,8 @@
           "solution": "Step 1: 12 into 84? 7 times (7 x 12 = 84). Write 7. Subtract 84 - 84 = 0.\nStep 2: Bring down 5. 12 into 5? 0 times. Write 0. Remainder is 5.\nAnswer: 70 5/12.\nCheck: 70 x 12 + 5 = 840 + 5 = 845. Confirmed."
         }
       ],
-      "title": "I-Do: Mult Div Fluency"
+      "title": "I-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -383,7 +397,8 @@
           "answer": "227 10/11"
         }
       ],
-      "title": "We-Do: Mult Div Fluency"
+      "title": "We-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-mult-div-fluency",
@@ -406,7 +421,8 @@
           "answer": "375 x 14 = 5,250. Then 5,250 / 25 = 210."
         }
       ],
-      "title": "You-Do: Mult Div Fluency"
+      "title": "You-Do: Mult Div Fluency",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -421,7 +437,8 @@
         "Parentheses group operations: 'twice the sum of a number and 4' means 2(n + 4), not 2n + 4",
         "An expression has no equals sign; an equation does—know the difference"
       ],
-      "title": "Concept: Expression Writing Intro"
+      "title": "Concept: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -441,7 +458,8 @@
           "solution": "Step 1: 'The sum of x and 9' → x + 9. This entire sum is being divided.\nStep 2: 'Divided by 2' → put the sum over 2.\nStep 3: Use parentheses to show the sum is grouped: (x + 9) / 2.\nAnswer: (x + 9) / 2."
         }
       ],
-      "title": "I-Do: Expression Writing Intro"
+      "title": "I-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -476,7 +494,8 @@
           "answer": "45/3 + 5 (which equals 20 dollars)"
         }
       ],
-      "title": "We-Do: Expression Writing Intro"
+      "title": "We-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     },
     {
       "skill": "g6-expression-writing-intro",
@@ -499,7 +518,8 @@
           "answer": "Expression: 18 + 36/4. Value: 18 + 9 = 27."
         }
       ],
-      "title": "You-Do: Expression Writing Intro"
+      "title": "You-Do: Expression Writing Intro",
+      "lessonId": "bootcamp"
     }
   ],
   "answerKeys": {

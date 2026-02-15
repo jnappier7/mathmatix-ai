@@ -49,7 +49,8 @@
         "Withholdings: amounts your employer sends to the government for you — federal income tax, state income tax, Social Security (6.2%), and Medicare (1.45%).",
         "Deductions: additional amounts subtracted from your paycheck — health insurance premiums, retirement contributions (401k), union dues, dental/vision insurance.",
         "Pay periods: Biweekly = every 2 weeks (26 paychecks/year). Semi-monthly = twice a month on fixed dates (24 paychecks/year). Monthly = once a month (12 paychecks/year)."
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "model",
@@ -69,7 +70,8 @@
           "problem": "Deshawn earns $14.00/hour and worked 46 hours this week. His overtime rate is 1.5× for any hours over 40. What is his gross pay for the week?",
           "solution": "Regular pay: 40 hours × $14.00 = $560.00.\nOvertime rate: $14.00 × 1.5 = $21.00/hour.\nOvertime pay: 6 hours × $21.00 = $126.00.\nTotal gross pay: $560.00 + $126.00 = $686.00.\n\nThe 6 overtime hours earned Deshawn an extra $42.00 compared to what he'd make at his regular rate ($126 at overtime vs $84 at regular). Overtime adds up fast."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "guided_practice",
@@ -106,7 +108,8 @@
           ],
           "answer": "$713.00"
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "independent_practice",
@@ -124,7 +127,8 @@
           "question": "Jordan is deciding between two job offers. Job 1: $19.50/hr, 40 hrs/week, with average overtime of 5 extra hours per week at 1.5× rate. Job 2: $48,000 annual salary, no overtime pay. Based on annual gross pay, which pays more? What risk should Jordan consider before choosing?",
           "answer": "Job 1 regular: $19.50 × 40 × 52 = $40,560. Overtime: $29.25 × 5 × 52 = $7,605. Total = $48,165. Job 2: $48,000. Job 1 pays $165 more per year WITH overtime — but overtime is not guaranteed. If overtime hours drop, Job 1 falls to $40,560. Job 2's guaranteed $48,000 is the safer choice."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "explanation",
@@ -140,7 +144,8 @@
         "Medicare: exactly 1.45% of your gross pay — also the same for everyone.",
         "Voluntary deductions appear below taxes: health insurance premiums, 401(k) retirement contributions, dental, vision, life insurance, union dues.",
         "Net pay is the bottom line = Gross pay minus ALL withholdings and deductions. This is what gets deposited into your bank account."
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "model",
@@ -160,7 +165,8 @@
           "problem": "Compare these two pay stubs. Worker A: Gross $1,400.00, total deductions $336.00. Worker B: Gross $2,200.00, total deductions $561.00. Who keeps a higher percentage of their gross pay?",
           "solution": "Worker A: Net = $1,400.00 - $336.00 = $1,064.00. Take-home percentage: $1,064 / $1,400 = 76.0%.\nWorker B: Net = $2,200.00 - $561.00 = $1,639.00. Take-home percentage: $1,639 / $2,200 = 74.5%.\n\nWorker A keeps 76.0% vs Worker B's 74.5%. Even though Worker B takes home more dollars ($1,639 vs $1,064), Worker A keeps a higher percentage. Higher income often means a higher tax bracket and more deductions."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "guided_practice",
@@ -198,7 +204,8 @@
           ],
           "answer": "$103.00"
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "independent_practice",
@@ -216,7 +223,8 @@
           "question": "DeShawn's biweekly pay stub shows: Gross pay $2,240.00, federal tax $268.80, state tax $89.60, Social Security $138.88, Medicare $32.48, health insurance $135.00, 401(k) contribution $112.00. His monthly rent is $950. Assuming two paychecks per month, can he afford rent and still have at least $1,000 left over for other expenses? Show your work.",
           "answer": "Total deductions: $776.76. Net per paycheck: $2,240.00 - $776.76 = $1,463.24. Monthly net (2 paychecks): $2,926.48. After rent ($950): $2,926.48 - $950 = $1,976.48. Yes — he has $1,976.48 left, well above the $1,000 threshold."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "explanation",
@@ -231,7 +239,8 @@
         "Credit card: swipe it and you're BORROWING money from the card company. You must pay it back. If you don't pay the full balance by the due date, you're charged interest (typically 18-25% APR).",
         "Overdraft: if your checking balance goes below $0, the bank charges an overdraft fee — typically $25-$35 per transaction. One mistake can cascade into multiple fees.",
         "Interest works in two directions: savings accounts pay YOU interest (the bank pays you for holding your money). Credit cards charge YOU interest (you pay the bank for borrowing their money)."
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "model",
@@ -251,7 +260,8 @@
           "problem": "Jayden charges $800 on a credit card with a 22% APR. He only makes the minimum payment of $25 per month. After one month, how much interest is charged, and what is his new balance?",
           "solution": "Monthly interest rate = 22% ÷ 12 = 1.833%.\nInterest for month 1: $800.00 × 0.01833 = $14.67.\nAfter $25 minimum payment:\nNew balance = $800.00 + $14.67 - $25.00 = $789.67.\n\nJayden paid $25 but only reduced his actual debt by $10.33. The other $14.67 went straight to the credit card company as interest. At minimum payments, this $800 would take over 40 months to pay off and cost over $200 in interest on top of the original $800."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "guided_practice",
@@ -289,7 +299,8 @@
           ],
           "answer": "$18.00 in interest. $82.00 of the $100 payment reduces the balance. New balance: $1,118.00."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "independent_practice",
@@ -307,7 +318,8 @@
           "question": "Tomas has $3,000 in a savings account earning 4.0% APY. He also has $3,000 in credit card debt at 24% APR. How much interest does his savings earn in one year? How much interest does his credit card charge in just the first month? Should he use his savings to pay off the credit card debt? Use the numbers to explain your decision.",
           "answer": "Savings earns: $3,000 × 0.04 = $120.00 per year. Credit card charges: $3,000 × 0.24 ÷ 12 = $60.00 in the FIRST MONTH alone. The credit card costs $60/month while savings earns only $10/month ($120/12). He should absolutely use his savings to pay off the card — the 24% he's paying crushes the 4% he's earning. He'd save hundreds of dollars in interest over the year."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "explanation",
@@ -321,7 +333,8 @@
         "The gray zone: a phone is a need, but a $1,200 flagship phone is a want (a $200 phone covers the need). Food is a need, but a $45 restaurant meal is a want (groceries cover the need).",
         "The 50/30/20 guideline: aim for 50% of net pay on needs, 30% on wants, and 20% on savings or debt payoff. It's a starting target, not a rigid rule.",
         "In an emergency, wants are your release valve — they're the expenses you can cut immediately to free up cash for what matters."
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "model",
@@ -341,7 +354,8 @@
           "problem": "In a financial emergency, which expenses can be cut immediately and which cannot? Monthly expenses: Rent $1,100, streaming services $48, groceries $320, dining out $180, car insurance $130, gym $50, electricity $95, haircut appointment $45.",
           "solution": "Can cut immediately (wants): Streaming $48 + Dining out $180 + Gym $50 + Haircut $45 = $323 freed up.\nCannot skip (needs): Rent $1,100 + Groceries $320 + Car insurance $130 + Electricity $95 = $1,645.\n\nIn one month, cutting all wants frees up $323. That's real money — enough to cover an unexpected car repair or medical bill. This is why knowing the difference matters: it's your financial emergency plan already built into your budget."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "guided_practice",
@@ -379,7 +393,8 @@
           ],
           "answer": "Needs: $2,090 (67.4%). Wants: $297 (9.6%). Remaining for savings: $713 (23.0%). Jasmine's needs are high at 67.4%, but she keeps wants very low at 9.6%, giving her strong savings at 23%."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     },
     {
       "type": "independent_practice",
@@ -397,7 +412,8 @@
           "question": "Angela takes home $2,600/month. Her needs total $1,950 (high-rent area). She spends $400/month on wants and saves $250/month. Her car needs a $1,200 repair and she has no emergency fund. Compare these three options using actual numbers: (A) Put it on a credit card at 24% APR and pay $100/month extra. (B) Cut wants to $0 and redirect all non-need money to a repair fund. (C) Cut wants to $200/month and build the repair fund more slowly. Which option do you recommend and why?",
           "answer": "Option A: Credit card charges $1,200 × 24% ÷ 12 = $24/month interest. At $100/month payments, most of the early payments go to interest — total cost over $130 extra. Option B: Available per month = $2,600 - $1,950 = $650. All to repair fund = done in under 2 months, but zero wants or savings is harsh. Option C: Wants $200/month, repair fund gets $2,600 - $1,950 - $200 = $450/month. Done in under 3 months with no interest. Option C is the best balance — avoids $130+ in interest, takes about 3 months, and still allows $200/month for basic wants."
         }
-      ]
+      ],
+      "lessonId": "money_rules_baseline"
     }
   ],
   "answerKeys": {

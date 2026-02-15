@@ -49,7 +49,8 @@
         "Example of a statistical question: 'How many hours per night do 6th graders sleep?' — answers vary from student to student.",
         "Statistical questions lead to data collection — you need to gather multiple values to answer them.",
         "The word 'typical' is a clue: 'What is a typical quiz score in our class?' is statistical because scores vary."
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "model",
@@ -65,7 +66,8 @@
           "problem": "'What was the high temperature in Phoenix on January 1, 2025?' — Is this statistical?\nWhat about: 'What are the high temperatures in Phoenix during January?'",
           "solution": "The first question has one exact answer for that specific date — non-statistical.\nThe second question expects variability because the high temperature changes from day to day during January. That makes it statistical; you would collect 31 different data points and the values would vary."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "guided_practice",
@@ -100,7 +102,8 @@
           ],
           "answer": "A good revision: 'How many points per game did LeBron James score this season?' or 'How many points do NBA players typically score per game?' Both versions expect variability because the values change across games or across players."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "independent_practice",
@@ -118,7 +121,8 @@
           "question": "A survey asks 25 sixth graders: 'How many siblings do you have?' Is this a statistical question? If 25 students answered, would you expect variability in the data? Explain.",
           "answer": "Yes, this is a statistical question. Different students have different numbers of siblings (some have 0, some have 1, 2, or more), so there is variability. Surveying 25 students would produce a data set with a range of different values."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "explanation",
@@ -133,7 +137,8 @@
         "To find Q1 and Q3: order the data, find the median of the lower half (Q1) and the median of the upper half (Q3).",
         "The box in a box plot spans from Q1 to Q3 and contains the middle 50% of the data. The line inside the box marks the median.",
         "Choosing the right display: use a dot plot for fewer than about 25 values, a histogram for larger data sets showing shape, and box plots when comparing two or more groups side by side."
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "model",
@@ -153,7 +158,8 @@
           "problem": "Find the five-number summary for this data set:\n12, 15, 18, 20, 22, 25, 28, 30, 35",
           "solution": "Min = 12, Max = 35.\nWith 9 values, the median is the 5th value: 22.\nLower half (values below the median): 12, 15, 18, 20 → Q1 = (15 + 18) / 2 = 16.5\nUpper half (values above the median): 25, 28, 30, 35 → Q3 = (28 + 30) / 2 = 29\nFive-number summary: Min = 12, Q1 = 16.5, Median = 22, Q3 = 29, Max = 35."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "guided_practice",
@@ -189,7 +195,8 @@
           ],
           "answer": "Min = 65. Lower half: 65, 70, 72, 78, 80 → Q1 = 72 (the 3rd value). Median = (80 + 85) / 2 = 82.5. Upper half: 85, 88, 90, 92, 95 → Q3 = 90 (the 3rd value). Max = 95. IQR = 90 − 72 = 18."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "independent_practice",
@@ -212,7 +219,8 @@
           "question": "A box plot of video game high scores shows: min = 120, Q1 = 200, median = 310, Q3 = 450, max = 580.\n(a) What is the range?\n(b) What is the IQR?\n(c) What percentage of scores fall between 200 and 450?",
           "answer": "(a) Range = 580 − 120 = 460. (b) IQR = 450 − 200 = 250. (c) 50% of the scores fall between Q1 (200) and Q3 (450), since the box contains the middle 50% of the data."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "explanation",
@@ -227,7 +235,8 @@
         "Range: maximum minus minimum. It measures total spread but can be affected by a single outlier.",
         "Interquartile Range (IQR): Q3 minus Q1. It measures the spread of the middle 50% of the data and ignores extremes.",
         "When data is symmetric, mean and median are close together. When data is skewed or has outliers, the median and IQR give a more accurate picture."
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "model",
@@ -247,7 +256,8 @@
           "problem": "Students recorded their daily screen time in minutes: 30, 45, 50, 55, 60, 60, 65, 200. The value 200 is an outlier. Should you use mean or median to describe the typical screen time?",
           "solution": "Mean = (30 + 45 + 50 + 55 + 60 + 60 + 65 + 200) ÷ 8 = 565 ÷ 8 = 70.6 minutes.\nMedian = (55 + 60) ÷ 2 = 57.5 minutes.\nThe mean (70.6) is pulled up by the outlier of 200. The median (57.5) better represents the typical student's screen time. Use the median when there are outliers."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "guided_practice",
@@ -283,7 +293,8 @@
           ],
           "answer": "(a) Range = 14 − 10 = 4 years. (b) Lower half: 10, 11, 11, 12 → Q1 = (11 + 11) ÷ 2 = 11. Upper half: 12, 13, 13, 14 → Q3 = (13 + 13) ÷ 2 = 13. IQR = 13 − 11 = 2 years."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "independent_practice",
@@ -306,7 +317,8 @@
           "question": "Two friends compared their weekly step counts (in thousands):\nFriend A: 5, 7, 8, 8, 9, 11\nFriend B: 3, 5, 8, 10, 12, 14\nFind the IQR for each friend. Who has more variability in their step counts?",
           "answer": "Friend A: Lower half: 5, 7, 8 → Q1 = 7. Upper half: 8, 9, 11 → Q3 = 9. IQR = 9 − 7 = 2. Friend B: Lower half: 3, 5, 8 → Q1 = 5. Upper half: 10, 12, 14 → Q3 = 12. IQR = 12 − 5 = 7. Friend B has more variability (IQR of 7 vs. 2), meaning their step count changes much more from week to week."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "explanation",
@@ -320,7 +332,8 @@
         "Spread: compare the range or IQR of each group. A larger spread means more variability — data is less consistent.",
         "When comparing, always state a claim and back it up with specific numbers as evidence. Example: 'Team A is typically faster (median of 12 seconds vs. 15 seconds).'",
         "Side-by-side box plots are especially useful for comparisons — you can visually compare medians, IQRs, and overall ranges at a glance."
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "model",
@@ -336,7 +349,8 @@
           "problem": "A survey asked students how many hours they slept last night.\n6th graders: 6, 7, 7, 8, 8, 8, 8, 9, 9, 10\n7th graders: 5, 5, 6, 6, 7, 7, 8, 9, 10, 11\nDescribe the shape of each distribution and compare the centers.",
           "solution": "6th graders: Mean = (6+7+7+8+8+8+8+9+9+10) ÷ 10 = 80 ÷ 10 = 8. Median = (8+8) ÷ 2 = 8. Data clusters around 8 — roughly symmetric.\n7th graders: Mean = (5+5+6+6+7+7+8+9+10+11) ÷ 10 = 74 ÷ 10 = 7.4. Median = (7+7) ÷ 2 = 7. Data is more spread out — roughly symmetric but wider.\nClaim: 6th graders typically got more sleep. Evidence: the 6th-grade median is 8 hours vs. 7 hours for 7th graders. The 7th graders' data also has a wider range (6 vs. 4), showing more variability in sleep habits."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "guided_practice",
@@ -363,7 +377,8 @@
           ],
           "answer": "Class X: Mean = 500 ÷ 10 = 50. Median = (45 + 50) ÷ 2 = 47.5. The value 120 is an outlier that pulls the mean above the median. Class Y: Mean = 475 ÷ 10 = 47.5. Median = (45 + 50) ÷ 2 = 47.5. Mean equals median — the distribution is symmetric. Class Y is more symmetric. Class X has an outlier (120 minutes) that raises the mean by 2.5 above the median."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     },
     {
       "type": "independent_practice",
@@ -386,7 +401,8 @@
           "question": "A teacher collected data on the number of push-ups completed by two gym classes:\nClass A: 10, 12, 15, 15, 18, 20, 22, 25, 28, 35\nClass B: 12, 16, 18, 19, 20, 22, 23, 24, 26, 30\nDescribe the shape of each distribution (symmetric or skewed). Then compare the centers and spreads using at least two measures.",
           "answer": "Class A: Mean = 200 ÷ 10 = 20. Median = (18 + 20) ÷ 2 = 19. The mean is slightly above the median, and the value 35 pulls the tail to the right — slight right skew. Q1 = 15, Q3 = 25, IQR = 10, Range = 25. Class B: Mean = 210 ÷ 10 = 21. Median = (20 + 22) ÷ 2 = 21. Mean equals median — roughly symmetric. Q1 = 18, Q3 = 24, IQR = 6, Range = 18. Comparison: Class B has a slightly higher center (median 21 vs. 19) and is more consistent (IQR 6 vs. 10). Class A is more spread out with a slight right skew caused by the high value of 35."
         }
-      ]
+      ],
+      "lessonId": "statistics"
     }
   ],
   "answerKeys": {

@@ -34,11 +34,11 @@
     "Find the average value of a function and use accumulation functions to model displacement, total distance, and net change"
   ],
   "instructionalStrategy": [
-    "Always sketch the region first \u2014 correct limits and correct top/bottom (or right/left) identification depend on a clear picture.",
+    "Always sketch the region first — correct limits and correct top/bottom (or right/left) identification depend on a clear picture.",
     "For area problems, emphasize the 'top minus bottom' (dx) or 'right minus left' (dy) framework. Let students decide which orientation is simpler.",
-    "Volume problems are area problems in disguise: the cross-sectional area A(x) is the new integrand. Disk/washer is just the special case where A(x) = \u03c0(radius)\u00b2.",
-    "Connect motion problems back to FTC Part 2: displacement = \u222bv(t)dt, total distance = \u222b|v(t)|dt. Students must split intervals at v = 0.",
-    "Average value = (1/(b\u2212a))\u222bf(x)dx. Reinforce this as 'the height of a rectangle with the same area.'"
+    "Volume problems are area problems in disguise: the cross-sectional area A(x) is the new integrand. Disk/washer is just the special case where A(x) = π(radius)².",
+    "Connect motion problems back to FTC Part 2: displacement = ∫v(t)dt, total distance = ∫|v(t)|dt. Students must split intervals at v = 0.",
+    "Average value = (1/(b−a))∫f(x)dx. Reinforce this as 'the height of a rectangle with the same area.'"
   ],
   "aiFlexLevel": "moderate",
   "scaffold": [
@@ -47,8 +47,9 @@
       "lessonPhase": "concept-intro",
       "skill": "area-between-curves",
       "title": "Area Between Curves (dx and dy Integration)",
-      "content": "**Area Between Two Curves:**\n\nTo find the area between y = f(x) and y = g(x) on [a, b] where f(x) \u2265 g(x):\n\nA = \u222b\u2090\u1d47 [f(x) \u2212 g(x)] dx = \u222b\u2090\u1d47 [top \u2212 bottom] dx\n\n**Steps:**\n1. **Sketch** both curves and identify the enclosed region.\n2. **Find intersection points** (set f(x) = g(x) and solve for x) \u2014 these are your limits.\n3. **Identify top and bottom** functions in the region.\n4. **Integrate** (top \u2212 bottom).\n\n**Integrating with respect to y (dy):**\n\nSometimes it's easier to integrate horizontally. If the region is bounded by x = f(y) on the right and x = g(y) on the left:\n\nA = \u222b_c^d [f(y) \u2212 g(y)] dy = \u222b_c^d [right \u2212 left] dy\n\n**When to use dy:** When the curves are more naturally expressed as functions of y, or when using dx would require splitting the integral.\n\n**Key principle:** Area is always \u222b(bigger \u2212 smaller), whether you integrate in x or y. The answer should always be positive.",
-      "initialPrompt": "For the curves y = x\u00b2 and y = x, where do they intersect? Which curve is on top between the intersection points?"
+      "content": "**Area Between Two Curves:**\n\nTo find the area between y = f(x) and y = g(x) on [a, b] where f(x) ≥ g(x):\n\nA = ∫ₐᵇ [f(x) − g(x)] dx = ∫ₐᵇ [top − bottom] dx\n\n**Steps:**\n1. **Sketch** both curves and identify the enclosed region.\n2. **Find intersection points** (set f(x) = g(x) and solve for x) — these are your limits.\n3. **Identify top and bottom** functions in the region.\n4. **Integrate** (top − bottom).\n\n**Integrating with respect to y (dy):**\n\nSometimes it's easier to integrate horizontally. If the region is bounded by x = f(y) on the right and x = g(y) on the left:\n\nA = ∫_c^d [f(y) − g(y)] dy = ∫_c^d [right − left] dy\n\n**When to use dy:** When the curves are more naturally expressed as functions of y, or when using dx would require splitting the integral.\n\n**Key principle:** Area is always ∫(bigger − smaller), whether you integrate in x or y. The answer should always be positive.",
+      "initialPrompt": "For the curves y = x² and y = x, where do they intersect? Which curve is on top between the intersection points?",
+      "lessonId": "area-between-curves"
     },
     {
       "type": "model",
@@ -57,19 +58,20 @@
       "title": "I-Do: Area Between Curves",
       "examples": [
         {
-          "problem": "Find the area between y = x\u00b2 and y = x on [0, 1].",
-          "solution": "**Sketch:** On [0, 1], the line y = x sits above the parabola y = x\u00b2 (since x > x\u00b2 for 0 < x < 1).\n\n**Top \u2212 bottom:**\nA = \u222b\u2080\u00b9 (x \u2212 x\u00b2) dx\n\n**Evaluate:**\n= [x\u00b2/2 \u2212 x\u00b3/3]\u2080\u00b9\n= (1/2 \u2212 1/3) \u2212 0\n= **1/6**\n\n**Check:** 1/6 \u2248 0.167. The region is a thin sliver between the line and parabola, so a small area makes sense."
+          "problem": "Find the area between y = x² and y = x on [0, 1].",
+          "solution": "**Sketch:** On [0, 1], the line y = x sits above the parabola y = x² (since x > x² for 0 < x < 1).\n\n**Top − bottom:**\nA = ∫₀¹ (x − x²) dx\n\n**Evaluate:**\n= [x²/2 − x³/3]₀¹\n= (1/2 − 1/3) − 0\n= **1/6**\n\n**Check:** 1/6 ≈ 0.167. The region is a thin sliver between the line and parabola, so a small area makes sense."
         },
         {
-          "problem": "Find the area enclosed by y = x\u00b2 and y = 2x.",
-          "solution": "**Find intersections:** x\u00b2 = 2x \u2192 x\u00b2 \u2212 2x = 0 \u2192 x(x \u2212 2) = 0 \u2192 x = 0, x = 2.\n\n**Top/bottom on [0, 2]:** Test x = 1: 2(1) = 2 > 1 = 1\u00b2. So y = 2x is on top.\n\n**Integrate:**\nA = \u222b\u2080\u00b2 (2x \u2212 x\u00b2) dx = [x\u00b2 \u2212 x\u00b3/3]\u2080\u00b2 = (4 \u2212 8/3) \u2212 0\n= 12/3 \u2212 8/3 = **4/3**"
+          "problem": "Find the area enclosed by y = x² and y = 2x.",
+          "solution": "**Find intersections:** x² = 2x → x² − 2x = 0 → x(x − 2) = 0 → x = 0, x = 2.\n\n**Top/bottom on [0, 2]:** Test x = 1: 2(1) = 2 > 1 = 1². So y = 2x is on top.\n\n**Integrate:**\nA = ∫₀² (2x − x²) dx = [x² − x³/3]₀² = (4 − 8/3) − 0\n= 12/3 − 8/3 = **4/3**"
         },
         {
-          "problem": "Find the area between x = y\u00b2 and x = 4 \u2212 y\u00b2 (integrate with respect to y).",
-          "solution": "**Find intersections:** y\u00b2 = 4 \u2212 y\u00b2 \u2192 2y\u00b2 = 4 \u2192 y\u00b2 = 2 \u2192 y = \u00b1\u221a2.\n\n**Right/left:** At y = 0: right curve x = 4 \u2212 0 = 4, left curve x = 0. So x = 4 \u2212 y\u00b2 is on the right, x = y\u00b2 on the left.\n\n**Integrate (dy):**\nA = \u222b_{\u2212\u221a2}^{\u221a2} [(4 \u2212 y\u00b2) \u2212 y\u00b2] dy = \u222b_{\u2212\u221a2}^{\u221a2} (4 \u2212 2y\u00b2) dy\n\n**Use symmetry:**\n= 2 \u222b\u2080^{\u221a2} (4 \u2212 2y\u00b2) dy = 2[4y \u2212 2y\u00b3/3]\u2080^{\u221a2}\n= 2[4\u221a2 \u2212 2(2\u221a2)/3] = 2[4\u221a2 \u2212 4\u221a2/3]\n= 2 \u00b7 (8\u221a2/3) = **16\u221a2/3**\n\n**Note:** Using dy gave one integral. Using dx would have required splitting at the vertices \u2014 dy was the better choice here."
+          "problem": "Find the area between x = y² and x = 4 − y² (integrate with respect to y).",
+          "solution": "**Find intersections:** y² = 4 − y² → 2y² = 4 → y² = 2 → y = ±√2.\n\n**Right/left:** At y = 0: right curve x = 4 − 0 = 4, left curve x = 0. So x = 4 − y² is on the right, x = y² on the left.\n\n**Integrate (dy):**\nA = ∫_{−√2}^{√2} [(4 − y²) − y²] dy = ∫_{−√2}^{√2} (4 − 2y²) dy\n\n**Use symmetry:**\n= 2 ∫₀^{√2} (4 − 2y²) dy = 2[4y − 2y³/3]₀^{√2}\n= 2[4√2 − 2(2√2)/3] = 2[4√2 − 4√2/3]\n= 2 · (8√2/3) = **16√2/3**\n\n**Note:** Using dy gave one integral. Using dx would have required splitting at the vertices — dy was the better choice here."
         }
       ],
-      "initialPrompt": "In example 3, why was it easier to integrate with respect to y instead of x? What complications would arise if you tried to use dx?"
+      "initialPrompt": "In example 3, why was it easier to integrate with respect to y instead of x? What complications would arise if you tried to use dx?",
+      "lessonId": "area-between-curves"
     },
     {
       "type": "guided_practice",
@@ -79,54 +81,57 @@
       "problems": [
         {
           "id": "iap-wp1",
-          "question": "Find the area enclosed between y = x\u00b2 and y = 4.",
+          "question": "Find the area enclosed between y = x² and y = 4.",
           "answer": "32/3",
           "hints": [
-            "Intersections: x\u00b2 = 4 \u2192 x = \u00b12. On [\u22122, 2], y = 4 is on top and y = x\u00b2 on bottom.",
-            "A = \u222b\u208b\u2082\u00b2 (4 \u2212 x\u00b2) dx = [4x \u2212 x\u00b3/3]\u208b\u2082\u00b2 = (8 \u2212 8/3) \u2212 (\u22128 + 8/3) = 2(8 \u2212 8/3) = 2(16/3) = 32/3."
+            "Intersections: x² = 4 → x = ±2. On [−2, 2], y = 4 is on top and y = x² on bottom.",
+            "A = ∫₋₂² (4 − x²) dx = [4x − x³/3]₋₂² = (8 − 8/3) − (−8 + 8/3) = 2(8 − 8/3) = 2(16/3) = 32/3."
           ]
         },
         {
           "id": "iap-wp2",
-          "question": "Find the area between y = x\u00b3 and y = x on [0, 1].",
+          "question": "Find the area between y = x³ and y = x on [0, 1].",
           "answer": "1/4",
           "hints": [
-            "On (0, 1): test x = 0.5: x = 0.5, x\u00b3 = 0.125. So y = x is on top.",
-            "A = \u222b\u2080\u00b9 (x \u2212 x\u00b3) dx = [x\u00b2/2 \u2212 x\u2074/4]\u2080\u00b9 = 1/2 \u2212 1/4 = 1/4."
+            "On (0, 1): test x = 0.5: x = 0.5, x³ = 0.125. So y = x is on top.",
+            "A = ∫₀¹ (x − x³) dx = [x²/2 − x⁴/4]₀¹ = 1/2 − 1/4 = 1/4."
           ]
         },
         {
           "id": "iap-wp3",
-          "question": "Find the area between x = y and x = y\u00b2 \u2212 2 by integrating with respect to y.",
+          "question": "Find the area between x = y and x = y² − 2 by integrating with respect to y.",
           "answer": "9/2",
           "hints": [
-            "Intersections: y = y\u00b2 \u2212 2 \u2192 y\u00b2 \u2212 y \u2212 2 = 0 \u2192 (y\u22122)(y+1) = 0 \u2192 y = \u22121, 2. On [\u22121, 2], test y = 0: right = 0, left = \u22122. So x = y is on the right.",
-            "A = \u222b\u208b\u2081\u00b2 [y \u2212 (y\u00b2 \u2212 2)] dy = \u222b\u208b\u2081\u00b2 (y \u2212 y\u00b2 + 2) dy = [y\u00b2/2 \u2212 y\u00b3/3 + 2y]\u208b\u2081\u00b2 = (2 \u2212 8/3 + 4) \u2212 (1/2 + 1/3 \u2212 2) = 10/3 \u2212 (\u22127/6) = 10/3 + 7/6 = 27/6 = 9/2."
+            "Intersections: y = y² − 2 → y² − y − 2 = 0 → (y−2)(y+1) = 0 → y = −1, 2. On [−1, 2], test y = 0: right = 0, left = −2. So x = y is on the right.",
+            "A = ∫₋₁² [y − (y² − 2)] dy = ∫₋₁² (y − y² + 2) dy = [y²/2 − y³/3 + 2y]₋₁² = (2 − 8/3 + 4) − (1/2 + 1/3 − 2) = 10/3 − (−7/6) = 10/3 + 7/6 = 27/6 = 9/2."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, start by finding where y = x\u00b2 meets y = 4. Then set up the integral with the top function minus the bottom function."
+      "initialPrompt": "For the first problem, start by finding where y = x² meets y = 4. Then set up the integral with the top function minus the bottom function.",
+      "lessonId": "area-between-curves"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "volume-disk-washer",
       "title": "Volumes of Revolution & Known Cross-Sections",
-      "content": "**Volumes of Solids of Revolution:**\n\nWhen a region is revolved around an axis, the cross-section at each x-value is a circle (or washer). Integrate the cross-sectional area to get volume.\n\n**Disk Method (solid cross-section, no hole):**\nRevolving y = f(x) around the x-axis on [a, b]:\nV = \u03c0 \u222b\u2090\u1d47 [f(x)]\u00b2 dx = \u03c0 \u222b\u2090\u1d47 R\u00b2 dx\nwhere R = f(x) is the radius.\n\n**Washer Method (hollow cross-section):**\nRevolving a region between y = f(x) and y = g(x) around the x-axis, where f(x) \u2265 g(x) \u2265 0:\nV = \u03c0 \u222b\u2090\u1d47 [R\u00b2 \u2212 r\u00b2] dx\nwhere R = f(x) (outer radius) and r = g(x) (inner radius).\n\n**Volumes with Known Cross-Sections:**\n\nIf cross-sections perpendicular to the x-axis have known shape and the side length s(x) is determined by the bounding curves:\n\u2022 **Squares:** A(x) = [s(x)]\u00b2\n\u2022 **Equilateral triangles:** A(x) = (\u221a3/4)[s(x)]\u00b2\n\u2022 **Semicircles:** A(x) = (\u03c0/8)[s(x)]\u00b2 (diameter = s(x))\n\u2022 **Isosceles right triangles (leg = s):** A(x) = (1/2)[s(x)]\u00b2\n\nIn all cases: V = \u222b\u2090\u1d47 A(x) dx\n\n**The key to every volume problem:** Identify the cross-sectional area A(x) as a function of x, then integrate.",
-      "initialPrompt": "If you revolve the region under y = \u221ax from x = 0 to x = 4 around the x-axis, what shape is each cross-section? What is the radius as a function of x?"
+      "content": "**Volumes of Solids of Revolution:**\n\nWhen a region is revolved around an axis, the cross-section at each x-value is a circle (or washer). Integrate the cross-sectional area to get volume.\n\n**Disk Method (solid cross-section, no hole):**\nRevolving y = f(x) around the x-axis on [a, b]:\nV = π ∫ₐᵇ [f(x)]² dx = π ∫ₐᵇ R² dx\nwhere R = f(x) is the radius.\n\n**Washer Method (hollow cross-section):**\nRevolving a region between y = f(x) and y = g(x) around the x-axis, where f(x) ≥ g(x) ≥ 0:\nV = π ∫ₐᵇ [R² − r²] dx\nwhere R = f(x) (outer radius) and r = g(x) (inner radius).\n\n**Volumes with Known Cross-Sections:**\n\nIf cross-sections perpendicular to the x-axis have known shape and the side length s(x) is determined by the bounding curves:\n• **Squares:** A(x) = [s(x)]²\n• **Equilateral triangles:** A(x) = (√3/4)[s(x)]²\n• **Semicircles:** A(x) = (π/8)[s(x)]² (diameter = s(x))\n• **Isosceles right triangles (leg = s):** A(x) = (1/2)[s(x)]²\n\nIn all cases: V = ∫ₐᵇ A(x) dx\n\n**The key to every volume problem:** Identify the cross-sectional area A(x) as a function of x, then integrate.",
+      "initialPrompt": "If you revolve the region under y = √x from x = 0 to x = 4 around the x-axis, what shape is each cross-section? What is the radius as a function of x?",
+      "lessonId": "volume-revolution"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "volume-cross-sections",
-      "title": "We-Do: Volume Cross Sections \u2014 Guided Practice",
+      "title": "We-Do: Volume Cross Sections — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for volume cross sections.",
           "hint": "Apply the concepts of volume cross sections.",
           "solution": "Step-by-step solution for volume cross sections."
         }
-      ]
+      ],
+      "lessonId": "volume-cross-sections"
     },
     {
       "type": "model",
@@ -135,19 +140,20 @@
       "title": "I-Do: Volumes of Revolution & Cross-Sections",
       "examples": [
         {
-          "problem": "Find the volume when the region under y = \u221ax, from x = 0 to x = 4, is revolved about the x-axis.",
-          "solution": "**Method:** Disk (no hole \u2014 the region touches the axis).\n\n**Radius:** R(x) = \u221ax\n\n**Volume:**\nV = \u03c0 \u222b\u2080\u2074 (\u221ax)\u00b2 dx = \u03c0 \u222b\u2080\u2074 x dx\n= \u03c0 [x\u00b2/2]\u2080\u2074\n= \u03c0 (16/2 \u2212 0) = **8\u03c0**"
+          "problem": "Find the volume when the region under y = √x, from x = 0 to x = 4, is revolved about the x-axis.",
+          "solution": "**Method:** Disk (no hole — the region touches the axis).\n\n**Radius:** R(x) = √x\n\n**Volume:**\nV = π ∫₀⁴ (√x)² dx = π ∫₀⁴ x dx\n= π [x²/2]₀⁴\n= π (16/2 − 0) = **8π**"
         },
         {
-          "problem": "Find the volume when the region between y = x and y = x\u00b2 (on [0, 1]) is revolved about the x-axis.",
-          "solution": "**Method:** Washer (there's a gap between the curves and the axis).\n\n**Outer radius:** R = x (the farther curve from the axis)\n**Inner radius:** r = x\u00b2 (the closer curve)\n\n**Volume:**\nV = \u03c0 \u222b\u2080\u00b9 (R\u00b2 \u2212 r\u00b2) dx = \u03c0 \u222b\u2080\u00b9 (x\u00b2 \u2212 x\u2074) dx\n= \u03c0 [x\u00b3/3 \u2212 x\u2075/5]\u2080\u00b9\n= \u03c0 (1/3 \u2212 1/5) = \u03c0 (2/15) = **2\u03c0/15**\n\n**Check:** 2\u03c0/15 \u2248 0.419. The solid is a thin ring-like shape, so a small volume makes sense."
+          "problem": "Find the volume when the region between y = x and y = x² (on [0, 1]) is revolved about the x-axis.",
+          "solution": "**Method:** Washer (there's a gap between the curves and the axis).\n\n**Outer radius:** R = x (the farther curve from the axis)\n**Inner radius:** r = x² (the closer curve)\n\n**Volume:**\nV = π ∫₀¹ (R² − r²) dx = π ∫₀¹ (x² − x⁴) dx\n= π [x³/3 − x⁵/5]₀¹\n= π (1/3 − 1/5) = π (2/15) = **2π/15**\n\n**Check:** 2π/15 ≈ 0.419. The solid is a thin ring-like shape, so a small volume makes sense."
         },
         {
-          "problem": "A solid has its base in the region bounded by y = \u221ax, y = 0, and x = 1. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
-          "solution": "**Side length:** The base at position x extends from y = 0 to y = \u221ax, so s(x) = \u221ax.\n\n**Cross-sectional area (square):**\nA(x) = [s(x)]\u00b2 = (\u221ax)\u00b2 = x\n\n**Volume:**\nV = \u222b\u2080\u00b9 x dx = [x\u00b2/2]\u2080\u00b9 = **1/2**\n\n**Contrast with revolution:** If we had revolved the same region, we'd get V = \u03c0\u222b\u2080\u00b9 x dx = \u03c0/2 \u2248 1.571. The square cross-sections give a different (smaller) volume because squares are smaller than circles with the same 'diameter.'"
+          "problem": "A solid has its base in the region bounded by y = √x, y = 0, and x = 1. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "solution": "**Side length:** The base at position x extends from y = 0 to y = √x, so s(x) = √x.\n\n**Cross-sectional area (square):**\nA(x) = [s(x)]² = (√x)² = x\n\n**Volume:**\nV = ∫₀¹ x dx = [x²/2]₀¹ = **1/2**\n\n**Contrast with revolution:** If we had revolved the same region, we'd get V = π∫₀¹ x dx = π/2 ≈ 1.571. The square cross-sections give a different (smaller) volume because squares are smaller than circles with the same 'diameter.'"
         }
       ],
-      "initialPrompt": "In the washer example, what happens to the inner radius if the region started at y = 0 instead of y = x\u00b2? How does the setup change?"
+      "initialPrompt": "In the washer example, what happens to the inner radius if the region started at y = 0 instead of y = x²? How does the setup change?",
+      "lessonId": "volume-revolution"
     },
     {
       "type": "guided_practice",
@@ -157,54 +163,57 @@
       "problems": [
         {
           "id": "iap-wp4",
-          "question": "Find the volume when the region under y = x\u00b2, from x = 0 to x = 2, is revolved about the x-axis.",
-          "answer": "32\u03c0/5",
+          "question": "Find the volume when the region under y = x², from x = 0 to x = 2, is revolved about the x-axis.",
+          "answer": "32π/5",
           "hints": [
-            "Disk method: R(x) = x\u00b2. V = \u03c0 \u222b\u2080\u00b2 (x\u00b2)\u00b2 dx = \u03c0 \u222b\u2080\u00b2 x\u2074 dx.",
-            "= \u03c0 [x\u2075/5]\u2080\u00b2 = \u03c0(32/5) = 32\u03c0/5."
+            "Disk method: R(x) = x². V = π ∫₀² (x²)² dx = π ∫₀² x⁴ dx.",
+            "= π [x⁵/5]₀² = π(32/5) = 32π/5."
           ]
         },
         {
           "id": "iap-wp5",
-          "question": "Find the volume when the region between y = \u221ax and y = x (on [0, 1]) is revolved about the x-axis.",
-          "answer": "\u03c0/6",
+          "question": "Find the volume when the region between y = √x and y = x (on [0, 1]) is revolved about the x-axis.",
+          "answer": "π/6",
           "hints": [
-            "Intersections: \u221ax = x \u2192 x = x\u00b2 \u2192 x = 0, 1. For 0 < x < 1: \u221ax > x, so outer R = \u221ax, inner r = x.",
-            "V = \u03c0 \u222b\u2080\u00b9 [(\u221ax)\u00b2 \u2212 x\u00b2] dx = \u03c0 \u222b\u2080\u00b9 (x \u2212 x\u00b2) dx = \u03c0[x\u00b2/2 \u2212 x\u00b3/3]\u2080\u00b9 = \u03c0(1/2 \u2212 1/3) = \u03c0/6."
+            "Intersections: √x = x → x = x² → x = 0, 1. For 0 < x < 1: √x > x, so outer R = √x, inner r = x.",
+            "V = π ∫₀¹ [(√x)² − x²] dx = π ∫₀¹ (x − x²) dx = π[x²/2 − x³/3]₀¹ = π(1/2 − 1/3) = π/6."
           ]
         },
         {
           "id": "iap-wp6",
-          "question": "A solid has its base bounded by y = 1 \u2212 x\u00b2 and y = 0. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
-          "answer": "4\u221a3/15",
+          "question": "A solid has its base bounded by y = 1 − x² and y = 0. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
+          "answer": "4√3/15",
           "hints": [
-            "Base region: y = 1 \u2212 x\u00b2, y = 0 intersect at x = \u00b11. Side length: s(x) = 1 \u2212 x\u00b2. Area of equilateral triangle: A = (\u221a3/4)s\u00b2 = (\u221a3/4)(1 \u2212 x\u00b2)\u00b2.",
-            "V = \u222b\u208b\u2081\u00b9 (\u221a3/4)(1 \u2212 x\u00b2)\u00b2 dx = (\u221a3/2) \u222b\u2080\u00b9 (1 \u2212 2x\u00b2 + x\u2074) dx = (\u221a3/2)[x \u2212 2x\u00b3/3 + x\u2075/5]\u2080\u00b9 = (\u221a3/2)(1 \u2212 2/3 + 1/5) = (\u221a3/2)(8/15) = 4\u221a3/15."
+            "Base region: y = 1 − x², y = 0 intersect at x = ±1. Side length: s(x) = 1 − x². Area of equilateral triangle: A = (√3/4)s² = (√3/4)(1 − x²)².",
+            "V = ∫₋₁¹ (√3/4)(1 − x²)² dx = (√3/2) ∫₀¹ (1 − 2x² + x⁴) dx = (√3/2)[x − 2x³/3 + x⁵/5]₀¹ = (√3/2)(1 − 2/3 + 1/5) = (√3/2)(8/15) = 4√3/15."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, since the region is revolved around the x-axis and there is no hole, use the disk method. What is the radius R(x)?"
+      "initialPrompt": "For the first problem, since the region is revolved around the x-axis and there is no hole, use the disk method. What is the radius R(x)?",
+      "lessonId": "volume-revolution"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "average-value",
       "title": "Average Value of a Function & Motion/Accumulation",
-      "content": "**Average Value of a Function:**\n\nThe average value of f on [a, b] is:\n\nf_avg = (1/(b \u2212 a)) \u222b\u2090\u1d47 f(x) dx\n\n**Interpretation:** f_avg is the height of a rectangle with base (b \u2212 a) that has the same area as the region under f. The Mean Value Theorem for Integrals guarantees that if f is continuous, there exists some c in [a, b] where f(c) = f_avg.\n\n**Motion Applications:**\n\nGiven velocity v(t):\n\n\u2022 **Displacement** (net change in position) on [a, b]:\n  \u0394s = \u222b\u2090\u1d47 v(t) dt\n  This can be positive, negative, or zero.\n\n\u2022 **Total distance traveled** on [a, b]:\n  D = \u222b\u2090\u1d47 |v(t)| dt\n  Always non-negative. Split the integral at points where v(t) = 0.\n\n\u2022 **Position function** from acceleration:\n  v(t) = v(0) + \u222b\u2080\u1d57 a(\u03c4) d\u03c4\n  s(t) = s(0) + \u222b\u2080\u1d57 v(\u03c4) d\u03c4\n\n**General Accumulation:**\n\nIf R(t) is a rate of change, then \u222b\u2090\u1d47 R(t) dt gives the total accumulated quantity over [a, b]. This applies to water flow, population change, cost, and any rate-to-total conversion.",
-      "initialPrompt": "If a car has velocity v(t) = t\u00b2 \u2212 4t + 3 m/s, at what times is the car momentarily stopped? Why does finding these times matter for computing total distance?"
+      "content": "**Average Value of a Function:**\n\nThe average value of f on [a, b] is:\n\nf_avg = (1/(b − a)) ∫ₐᵇ f(x) dx\n\n**Interpretation:** f_avg is the height of a rectangle with base (b − a) that has the same area as the region under f. The Mean Value Theorem for Integrals guarantees that if f is continuous, there exists some c in [a, b] where f(c) = f_avg.\n\n**Motion Applications:**\n\nGiven velocity v(t):\n\n• **Displacement** (net change in position) on [a, b]:\n  Δs = ∫ₐᵇ v(t) dt\n  This can be positive, negative, or zero.\n\n• **Total distance traveled** on [a, b]:\n  D = ∫ₐᵇ |v(t)| dt\n  Always non-negative. Split the integral at points where v(t) = 0.\n\n• **Position function** from acceleration:\n  v(t) = v(0) + ∫₀ᵗ a(τ) dτ\n  s(t) = s(0) + ∫₀ᵗ v(τ) dτ\n\n**General Accumulation:**\n\nIf R(t) is a rate of change, then ∫ₐᵇ R(t) dt gives the total accumulated quantity over [a, b]. This applies to water flow, population change, cost, and any rate-to-total conversion.",
+      "initialPrompt": "If a car has velocity v(t) = t² − 4t + 3 m/s, at what times is the car momentarily stopped? Why does finding these times matter for computing total distance?",
+      "lessonId": "average-value-motion"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "motion-accumulation",
-      "title": "We-Do: Motion Accumulation \u2014 Guided Practice",
+      "title": "We-Do: Motion Accumulation — Guided Practice",
       "problems": [
         {
           "question": "Practice problem for motion accumulation.",
           "hint": "Apply the concepts of motion accumulation.",
           "solution": "Step-by-step solution for motion accumulation."
         }
-      ]
+      ],
+      "lessonId": "average-value-motion"
     },
     {
       "type": "model",
@@ -213,19 +222,20 @@
       "title": "I-Do: Average Value & Motion Applications",
       "examples": [
         {
-          "problem": "Find the average value of f(x) = x\u00b2 on [0, 3].",
-          "solution": "**Formula:** f_avg = (1/(b \u2212 a)) \u222b\u2090\u1d47 f(x) dx\n\n**Compute the integral:**\n\u222b\u2080\u00b3 x\u00b2 dx = [x\u00b3/3]\u2080\u00b3 = 9\n\n**Divide by interval length:**\nf_avg = (1/3)(9) = **3**\n\n**Interpretation:** A horizontal line at y = 3 on [0, 3] encloses the same area (9 square units) as the parabola y = x\u00b2."
+          "problem": "Find the average value of f(x) = x² on [0, 3].",
+          "solution": "**Formula:** f_avg = (1/(b − a)) ∫ₐᵇ f(x) dx\n\n**Compute the integral:**\n∫₀³ x² dx = [x³/3]₀³ = 9\n\n**Divide by interval length:**\nf_avg = (1/3)(9) = **3**\n\n**Interpretation:** A horizontal line at y = 3 on [0, 3] encloses the same area (9 square units) as the parabola y = x²."
         },
         {
-          "problem": "A particle moves with velocity v(t) = t\u00b2 \u2212 4t + 3 on [0, 4]. Find the displacement and total distance traveled.",
-          "solution": "**Displacement:**\n\u222b\u2080\u2074 (t\u00b2 \u2212 4t + 3) dt = [t\u00b3/3 \u2212 2t\u00b2 + 3t]\u2080\u2074\n= (64/3 \u2212 32 + 12) \u2212 0 = 64/3 \u2212 20 = **4/3**\n\n**Find where v = 0:** t\u00b2 \u2212 4t + 3 = (t \u2212 1)(t \u2212 3) = 0 \u2192 t = 1, t = 3.\nSign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4].\n\n**Total distance (split at zeros):**\n\u222b\u2080\u00b9 v dt = [t\u00b3/3 \u2212 2t\u00b2 + 3t]\u2080\u00b9 = 1/3 \u2212 2 + 3 = 4/3\n\u222b\u2081\u00b3 v dt = [t\u00b3/3 \u2212 2t\u00b2 + 3t]\u2081\u00b3 = (9 \u2212 18 + 9) \u2212 (4/3) = 0 \u2212 4/3 = \u22124/3\n\u222b\u2083\u2074 v dt = [t\u00b3/3 \u2212 2t\u00b2 + 3t]\u2083\u2074 = (64/3 \u2212 32 + 12) \u2212 (0) = 4/3\n\nTotal distance = |4/3| + |\u22124/3| + |4/3| = 4/3 + 4/3 + 4/3 = **4**"
+          "problem": "A particle moves with velocity v(t) = t² − 4t + 3 on [0, 4]. Find the displacement and total distance traveled.",
+          "solution": "**Displacement:**\n∫₀⁴ (t² − 4t + 3) dt = [t³/3 − 2t² + 3t]₀⁴\n= (64/3 − 32 + 12) − 0 = 64/3 − 20 = **4/3**\n\n**Find where v = 0:** t² − 4t + 3 = (t − 1)(t − 3) = 0 → t = 1, t = 3.\nSign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4].\n\n**Total distance (split at zeros):**\n∫₀¹ v dt = [t³/3 − 2t² + 3t]₀¹ = 1/3 − 2 + 3 = 4/3\n∫₁³ v dt = [t³/3 − 2t² + 3t]₁³ = (9 − 18 + 9) − (4/3) = 0 − 4/3 = −4/3\n∫₃⁴ v dt = [t³/3 − 2t² + 3t]₃⁴ = (64/3 − 32 + 12) − (0) = 4/3\n\nTotal distance = |4/3| + |−4/3| + |4/3| = 4/3 + 4/3 + 4/3 = **4**"
         },
         {
-          "problem": "Given a(t) = 6t with v(0) = \u22125 and s(0) = 2, find s(t) and the position at t = 3.",
-          "solution": "**Find velocity:**\nv(t) = \u222b 6t dt = 3t\u00b2 + C\u2081\nv(0) = \u22125 \u2192 C\u2081 = \u22125\nv(t) = 3t\u00b2 \u2212 5\n\n**Find position:**\ns(t) = \u222b (3t\u00b2 \u2212 5) dt = t\u00b3 \u2212 5t + C\u2082\ns(0) = 2 \u2192 C\u2082 = 2\ns(t) = t\u00b3 \u2212 5t + 2\n\n**Position at t = 3:**\ns(3) = 27 \u2212 15 + 2 = **14**"
+          "problem": "Given a(t) = 6t with v(0) = −5 and s(0) = 2, find s(t) and the position at t = 3.",
+          "solution": "**Find velocity:**\nv(t) = ∫ 6t dt = 3t² + C₁\nv(0) = −5 → C₁ = −5\nv(t) = 3t² − 5\n\n**Find position:**\ns(t) = ∫ (3t² − 5) dt = t³ − 5t + C₂\ns(0) = 2 → C₂ = 2\ns(t) = t³ − 5t + 2\n\n**Position at t = 3:**\ns(3) = 27 − 15 + 2 = **14**"
         }
       ],
-      "initialPrompt": "In example 2, the displacement was 4/3 but the total distance was 4. Why are these different? What does the difference tell you about the particle's motion?"
+      "initialPrompt": "In example 2, the displacement was 4/3 but the total distance was 4. Why are these different? What does the difference tell you about the particle's motion?",
+      "lessonId": "average-value-motion"
     },
     {
       "type": "guided_practice",
@@ -235,20 +245,20 @@
       "problems": [
         {
           "id": "iap-wp7",
-          "question": "Find the average value of f(x) = sin x on [0, \u03c0].",
-          "answer": "2/\u03c0",
+          "question": "Find the average value of f(x) = sin x on [0, π].",
+          "answer": "2/π",
           "hints": [
-            "f_avg = (1/\u03c0) \u222b\u2080^\u03c0 sin x dx = (1/\u03c0)[\u2212cos x]\u2080^\u03c0.",
-            "= (1/\u03c0)[\u2212cos(\u03c0) \u2212 (\u2212cos(0))] = (1/\u03c0)[1 + 1] = 2/\u03c0."
+            "f_avg = (1/π) ∫₀^π sin x dx = (1/π)[−cos x]₀^π.",
+            "= (1/π)[−cos(π) − (−cos(0))] = (1/π)[1 + 1] = 2/π."
           ]
         },
         {
           "id": "iap-wp8",
-          "question": "A particle has velocity v(t) = 3t\u00b2 \u2212 12 on [0, 3]. Find the total distance traveled.",
+          "question": "A particle has velocity v(t) = 3t² − 12 on [0, 3]. Find the total distance traveled.",
           "answer": "23",
           "hints": [
-            "v = 0: 3t\u00b2 = 12 \u2192 t = 2. On [0,2]: v < 0 (moving left). On [2,3]: v > 0 (moving right).",
-            "\u222b\u2080\u00b2 (3t\u00b2\u221212) dt = [t\u00b3\u221212t]\u2080\u00b2 = (8\u221224) = \u221216. \u222b\u2082\u00b3 (3t\u00b2\u221212) dt = [t\u00b3\u221212t]\u2082\u00b3 = (27\u221236)\u2212(8\u221224) = \u22129+16 = 7. Total distance = |\u221216| + |7| = 16 + 7 = 23."
+            "v = 0: 3t² = 12 → t = 2. On [0,2]: v < 0 (moving left). On [2,3]: v > 0 (moving right).",
+            "∫₀² (3t²−12) dt = [t³−12t]₀² = (8−24) = −16. ∫₂³ (3t²−12) dt = [t³−12t]₂³ = (27−36)−(8−24) = −9+16 = 7. Total distance = |−16| + |7| = 16 + 7 = 23."
           ]
         },
         {
@@ -256,12 +266,13 @@
           "question": "Water flows into a tank at rate R(t) = 4t + 2 liters/minute. How much water enters between t = 0 and t = 5 minutes?",
           "answer": "60 liters",
           "hints": [
-            "Total water = \u222b\u2080\u2075 (4t + 2) dt = [2t\u00b2 + 2t]\u2080\u2075.",
-            "= (2 \u00b7 25 + 10) \u2212 0 = 50 + 10 = 60 liters."
+            "Total water = ∫₀⁵ (4t + 2) dt = [2t² + 2t]₀⁵.",
+            "= (2 · 25 + 10) − 0 = 50 + 10 = 60 liters."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, recall the average value formula: f_avg = (1/(b\u2212a)) \u222b\u2090\u1d47 f(x) dx. What are a, b, and f(x) here?"
+      "initialPrompt": "For the first problem, recall the average value formula: f_avg = (1/(b−a)) ∫ₐᵇ f(x) dx. What are a, b, and f(x) here?",
+      "lessonId": "average-value-motion"
     },
     {
       "type": "independent_practice",
@@ -270,78 +281,101 @@
       "problems": [
         {
           "id": "iap-yp1",
-          "question": "Find the area enclosed by y = x\u00b2 \u2212 1 and y = 3.",
+          "question": "Find the area enclosed by y = x² − 1 and y = 3.",
           "answer": "32/3",
           "skill": "area-between-curves",
           "hints": [
-            "Intersections: x\u00b2\u22121 = 3 \u2192 x = \u00b12. A = \u222b\u208b\u2082\u00b2 [3 \u2212 (x\u00b2\u22121)] dx = \u222b\u208b\u2082\u00b2 (4 \u2212 x\u00b2) dx = [4x \u2212 x\u00b3/3]\u208b\u2082\u00b2 = (8\u22128/3)\u2212(\u22128+8/3) = 2(16/3) = 32/3."
+            "Intersections: x²−1 = 3 → x = ±2. A = ∫₋₂² [3 − (x²−1)] dx = ∫₋₂² (4 − x²) dx = [4x − x³/3]₋₂² = (8−8/3)−(−8+8/3) = 2(16/3) = 32/3."
           ]
         },
         {
           "id": "iap-yp2",
-          "question": "Find the volume when the region bounded by y = 3x \u2212 x\u00b2 and y = 0 is revolved about the x-axis.",
-          "answer": "81\u03c0/10",
+          "question": "Find the volume when the region bounded by y = 3x − x² and y = 0 is revolved about the x-axis.",
+          "answer": "81π/10",
           "skill": "volume-disk-washer",
           "hints": [
-            "Region: 3x\u2212x\u00b2 = 0 \u2192 x = 0, 3. Disk: V = \u03c0\u222b\u2080\u00b3(3x\u2212x\u00b2)\u00b2dx = \u03c0\u222b\u2080\u00b3(9x\u00b2\u22126x\u00b3+x\u2074)dx = \u03c0[3x\u00b3\u22123x\u2074/2+x\u2075/5]\u2080\u00b3 = \u03c0[81\u2212243/2+243/5] = \u03c0(810\u22121215+486)/10 = 81\u03c0/10."
+            "Region: 3x−x² = 0 → x = 0, 3. Disk: V = π∫₀³(3x−x²)²dx = π∫₀³(9x²−6x³+x⁴)dx = π[3x³−3x⁴/2+x⁵/5]₀³ = π[81−243/2+243/5] = π(810−1215+486)/10 = 81π/10."
           ]
         },
         {
           "id": "iap-yp3",
-          "question": "A solid has its base bounded by y = 4 \u2212 x\u00b2 and y = 0. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "question": "A solid has its base bounded by y = 4 − x² and y = 0. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
           "answer": "512/15",
           "skill": "volume-cross-sections",
           "hints": [
-            "Base: 4\u2212x\u00b2 = 0 \u2192 x = \u00b12. Side s(x) = 4\u2212x\u00b2. V = \u222b\u208b\u2082\u00b2(4\u2212x\u00b2)\u00b2 dx = 2\u222b\u2080\u00b2(16\u22128x\u00b2+x\u2074) dx = 2[16x\u22128x\u00b3/3+x\u2075/5]\u2080\u00b2 = 2[32\u221264/3+32/5] = 2(480\u2212320+96)/15 = 2(256/15) = 512/15."
+            "Base: 4−x² = 0 → x = ±2. Side s(x) = 4−x². V = ∫₋₂²(4−x²)² dx = 2∫₀²(16−8x²+x⁴) dx = 2[16x−8x³/3+x⁵/5]₀² = 2[32−64/3+32/5] = 2(480−320+96)/15 = 2(256/15) = 512/15."
           ]
         },
         {
           "id": "iap-yp4",
-          "question": "Find the average value of f(x) = e\u02e3 on [0, 2].",
-          "answer": "(e\u00b2 \u2212 1)/2",
+          "question": "Find the average value of f(x) = eˣ on [0, 2].",
+          "answer": "(e² − 1)/2",
           "skill": "average-value",
           "hints": [
-            "f_avg = (1/2)\u222b\u2080\u00b2 e\u02e3 dx = (1/2)[e\u02e3]\u2080\u00b2 = (1/2)(e\u00b2 \u2212 1) = (e\u00b2 \u2212 1)/2 \u2248 3.195."
+            "f_avg = (1/2)∫₀² eˣ dx = (1/2)[eˣ]₀² = (1/2)(e² − 1) = (e² − 1)/2 ≈ 3.195."
           ]
         },
         {
           "id": "iap-yp5",
-          "question": "A particle has velocity v(t) = cos(t). Find the displacement and total distance traveled on [0, 2\u03c0].",
+          "question": "A particle has velocity v(t) = cos(t). Find the displacement and total distance traveled on [0, 2π].",
           "answer": "Displacement = 0. Total distance = 4.",
           "skill": "motion-accumulation",
           "hints": [
-            "Displacement: \u222b\u2080^{2\u03c0} cos t dt = [sin t]\u2080^{2\u03c0} = 0. For distance: v=0 at t=\u03c0/2, 3\u03c0/2. Total = |\u222b\u2080^{\u03c0/2}cos t dt| + |\u222b_{\u03c0/2}^{3\u03c0/2}cos t dt| + |\u222b_{3\u03c0/2}^{2\u03c0}cos t dt| = |1| + |\u22122| + |1| = 4."
+            "Displacement: ∫₀^{2π} cos t dt = [sin t]₀^{2π} = 0. For distance: v=0 at t=π/2, 3π/2. Total = |∫₀^{π/2}cos t dt| + |∫_{π/2}^{3π/2}cos t dt| + |∫_{3π/2}^{2π}cos t dt| = |1| + |−2| + |1| = 4."
           ]
         },
         {
           "id": "iap-yp6",
-          "question": "Water drains from a tank at rate R(t) = 100e^(\u22120.5t) liters/min. Find the total amount that drains from t = 0 to t = 4.",
-          "answer": "200(1 \u2212 e\u207b\u00b2) \u2248 172.93 liters",
+          "question": "Water drains from a tank at rate R(t) = 100e^(−0.5t) liters/min. Find the total amount that drains from t = 0 to t = 4.",
+          "answer": "200(1 − e⁻²) ≈ 172.93 liters",
           "skill": "motion-accumulation",
           "hints": [
-            "\u222b\u2080\u2074 100e^(\u22120.5t) dt = 100[\u22122e^(\u22120.5t)]\u2080\u2074 = \u2212200[e\u207b\u00b2 \u2212 e\u2070] = \u2212200(e\u207b\u00b2 \u2212 1) = 200(1 \u2212 e\u207b\u00b2) \u2248 200(0.8647) \u2248 172.93 liters."
+            "∫₀⁴ 100e^(−0.5t) dt = 100[−2e^(−0.5t)]₀⁴ = −200[e⁻² − e⁰] = −200(e⁻² − 1) = 200(1 − e⁻²) ≈ 200(0.8647) ≈ 172.93 liters."
           ]
         }
       ],
       "attemptsRequired": 3,
-      "skill": "area-between-curves"
+      "skill": "area-between-curves",
+      "lessonId": "area-between-curves"
     }
   ],
   "answerKeys": {
     "iap-wp1": "32/3.",
     "iap-wp2": "1/4.",
     "iap-wp3": "9/2.",
-    "iap-wp4": "32\u03c0/5.",
-    "iap-wp5": "\u03c0/6.",
-    "iap-wp6": "4\u221a3/15.",
-    "iap-wp7": "2/\u03c0.",
+    "iap-wp4": "32π/5.",
+    "iap-wp5": "π/6.",
+    "iap-wp6": "4√3/15.",
+    "iap-wp7": "2/π.",
     "iap-wp8": "23.",
     "iap-wp9": "60 liters.",
     "iap-yp1": "32/3.",
-    "iap-yp2": "81\u03c0/10.",
+    "iap-yp2": "81π/10.",
     "iap-yp3": "512/15.",
-    "iap-yp4": "(e\u00b2 \u2212 1)/2.",
+    "iap-yp4": "(e² − 1)/2.",
     "iap-yp5": "Displacement = 0. Total distance = 4.",
-    "iap-yp6": "200(1 \u2212 e\u207b\u00b2) \u2248 172.93 liters."
-  }
+    "iap-yp6": "200(1 − e⁻²) ≈ 172.93 liters."
+  },
+  "lessons": [
+    {
+      "lessonId": "area-between-curves",
+      "title": "Area Between Curves",
+      "order": 1
+    },
+    {
+      "lessonId": "volume-revolution",
+      "title": "Volume: Disk & Washer Methods",
+      "order": 2
+    },
+    {
+      "lessonId": "volume-cross-sections",
+      "title": "Volume by Cross-Sections",
+      "order": 3
+    },
+    {
+      "lessonId": "average-value-motion",
+      "title": "Average Value & Motion/Accumulation Applications",
+      "order": 4
+    }
+  ]
 }

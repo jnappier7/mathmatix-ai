@@ -30,9 +30,9 @@
     "Solve polynomial and rational inequalities using sign analysis on a number line, expressing solutions in interval notation."
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 concept-check \u2192 We Do \u2192 check-in \u2192 You Do \u2192 mastery-check",
+    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
-    "Graphical interpretation emphasized throughout \u2014 connect algebra to graph shape",
+    "Graphical interpretation emphasized throughout — connect algebra to graph shape",
     "Spiral prior skills: factoring, function composition, domain analysis"
   ],
   "aiFlexLevel": "moderate",
@@ -42,106 +42,112 @@
       "lessonPhase": "concept-intro",
       "title": "Polynomial Behavior & End Behavior",
       "skill": "polynomial-end-behavior",
-      "content": "Polynomial functions f(x) = a\u2099x\u207f + ... + a\u2081x + a\u2080 are classified by degree and leading coefficient. End behavior is determined entirely by the leading term a\u2099x\u207f. The degree also bounds the number of turning points and real zeros.",
+      "content": "Polynomial functions f(x) = aₙxⁿ + ... + a₁x + a₀ are classified by degree and leading coefficient. End behavior is determined entirely by the leading term aₙxⁿ. The degree also bounds the number of turning points and real zeros.",
       "keyPoints": [
-        "Leading Coefficient Test: end behavior depends only on sign of a\u2099 and parity of n",
-        "Even degree, a\u2099 > 0: both ends rise (\u2197 ... \u2197). Even degree, a\u2099 < 0: both ends fall (\u2198 ... \u2198)",
-        "Odd degree, a\u2099 > 0: falls left, rises right (\u2198 ... \u2197). Odd degree, a\u2099 < 0: rises left, falls right (\u2197 ... \u2198)",
-        "Maximum number of turning points = n \u2212 1 (degree n polynomial)",
+        "Leading Coefficient Test: end behavior depends only on sign of aₙ and parity of n",
+        "Even degree, aₙ > 0: both ends rise (↗ ... ↗). Even degree, aₙ < 0: both ends fall (↘ ... ↘)",
+        "Odd degree, aₙ > 0: falls left, rises right (↘ ... ↗). Odd degree, aₙ < 0: rises left, falls right (↗ ... ↘)",
+        "Maximum number of turning points = n − 1 (degree n polynomial)",
         "Maximum number of real zeros = n; minimum number of real zeros: n (if n odd) or 0 (if n even), accounting for complex conjugate pairs",
         "Intermediate Value Theorem: if f(a) and f(b) have opposite signs, there is at least one zero between a and b"
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Analyzing Polynomial Behavior \u2014 Worked Examples",
+      "title": "Analyzing Polynomial Behavior — Worked Examples",
       "skill": "polynomial-end-behavior",
       "examples": [
         {
-          "problem": "For f(x) = -2x\u2075 + 3x\u00b3 \u2212 x + 4, determine: (a) degree, (b) leading coefficient, (c) end behavior, (d) maximum number of turning points, (e) maximum number of real zeros.",
-          "solution": "(a) Degree: 5 (odd). (b) Leading coefficient: \u22122 (negative). (c) End behavior: odd degree with negative leading coefficient \u2192 rises left, falls right. As x \u2192 \u2212\u221e, f(x) \u2192 +\u221e; as x \u2192 +\u221e, f(x) \u2192 \u2212\u221e. (d) Maximum turning points: 5 \u2212 1 = 4. (e) Maximum real zeros: 5."
+          "problem": "For f(x) = -2x⁵ + 3x³ − x + 4, determine: (a) degree, (b) leading coefficient, (c) end behavior, (d) maximum number of turning points, (e) maximum number of real zeros.",
+          "solution": "(a) Degree: 5 (odd). (b) Leading coefficient: −2 (negative). (c) End behavior: odd degree with negative leading coefficient → rises left, falls right. As x → −∞, f(x) → +∞; as x → +∞, f(x) → −∞. (d) Maximum turning points: 5 − 1 = 4. (e) Maximum real zeros: 5."
         },
         {
-          "problem": "For f(x) = x\u2074 \u2212 5x\u00b2 + 4, find all real zeros and describe the graph's behavior at each zero and at the ends.",
-          "solution": "Factor: let u = x\u00b2, so u\u00b2 \u2212 5u + 4 = (u \u2212 4)(u \u2212 1) = (x\u00b2 \u2212 4)(x\u00b2 \u2212 1) = (x \u2212 2)(x + 2)(x \u2212 1)(x + 1). Zeros: x = \u22122, \u22121, 1, 2, each with multiplicity 1 (graph crosses at each). End behavior: degree 4, leading coefficient 1 > 0 \u2192 both ends rise. As x \u2192 \u00b1\u221e, f(x) \u2192 +\u221e. Turning points: up to 3. Since f crosses x-axis 4 times with ends up, there are exactly 3 turning points."
+          "problem": "For f(x) = x⁴ − 5x² + 4, find all real zeros and describe the graph's behavior at each zero and at the ends.",
+          "solution": "Factor: let u = x², so u² − 5u + 4 = (u − 4)(u − 1) = (x² − 4)(x² − 1) = (x − 2)(x + 2)(x − 1)(x + 1). Zeros: x = −2, −1, 1, 2, each with multiplicity 1 (graph crosses at each). End behavior: degree 4, leading coefficient 1 > 0 → both ends rise. As x → ±∞, f(x) → +∞. Turning points: up to 3. Since f crosses x-axis 4 times with ends up, there are exactly 3 turning points."
         },
         {
-          "problem": "Determine the end behavior and sketch the general shape of g(x) = 3x\u00b3 \u2212 12x. How many turning points does it have?",
-          "solution": "Factor: g(x) = 3x(x\u00b2 \u2212 4) = 3x(x \u2212 2)(x + 2). Zeros: x = \u22122, 0, 2, all multiplicity 1. End behavior: degree 3, leading coefficient 3 > 0 \u2192 falls left, rises right. As x \u2192 \u2212\u221e, g(x) \u2192 \u2212\u221e; as x \u2192 +\u221e, g(x) \u2192 +\u221e. Since the polynomial crosses 3 times with opposite end behaviors, there are exactly 2 turning points (one local max, one local min)."
+          "problem": "Determine the end behavior and sketch the general shape of g(x) = 3x³ − 12x. How many turning points does it have?",
+          "solution": "Factor: g(x) = 3x(x² − 4) = 3x(x − 2)(x + 2). Zeros: x = −2, 0, 2, all multiplicity 1. End behavior: degree 3, leading coefficient 3 > 0 → falls left, rises right. As x → −∞, g(x) → −∞; as x → +∞, g(x) → +∞. Since the polynomial crosses 3 times with opposite end behaviors, there are exactly 2 turning points (one local max, one local min)."
         }
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Zeros, Multiplicity & the Factor/Rational Root Theorems",
       "skill": "polynomial-zeros-multiplicity",
-      "content": "Every polynomial of degree n has exactly n zeros (counting multiplicity, including complex). The Factor Theorem states (x \u2212 c) is a factor iff f(c) = 0. The Rational Root Theorem limits possible rational zeros to \u00b1(factors of constant term)/(factors of leading coefficient). Multiplicity determines graph behavior at each zero.",
+      "content": "Every polynomial of degree n has exactly n zeros (counting multiplicity, including complex). The Factor Theorem states (x − c) is a factor iff f(c) = 0. The Rational Root Theorem limits possible rational zeros to ±(factors of constant term)/(factors of leading coefficient). Multiplicity determines graph behavior at each zero.",
       "keyPoints": [
-        "Factor Theorem: f(c) = 0 \u2194 (x \u2212 c) is a factor of f(x)",
-        "Rational Root Theorem: possible rational zeros = \u00b1p/q, where p | constant term and q | leading coefficient",
+        "Factor Theorem: f(c) = 0 ↔ (x − c) is a factor of f(x)",
+        "Rational Root Theorem: possible rational zeros = ±p/q, where p | constant term and q | leading coefficient",
         "Multiplicity 1 (odd): graph crosses x-axis at the zero",
         "Multiplicity 2 (even): graph touches/bounces off x-axis at the zero",
         "Multiplicity 3+ (odd): graph crosses with flattening (inflection-like) at the zero",
-        "Complex Conjugate Theorem: complex zeros come in conjugate pairs a \u00b1 bi for polynomials with real coefficients",
-        "Descartes' Rule of Signs: number of positive real zeros \u2264 number of sign changes in f(x)"
-      ]
+        "Complex Conjugate Theorem: complex zeros come in conjugate pairs a ± bi for polynomials with real coefficients",
+        "Descartes' Rule of Signs: number of positive real zeros ≤ number of sign changes in f(x)"
+      ],
+      "lessonId": "division-theorems"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Finding Zeros & Multiplicity \u2014 Worked Examples",
+      "title": "Finding Zeros & Multiplicity — Worked Examples",
       "skill": "polynomial-zeros-multiplicity",
       "examples": [
         {
-          "problem": "Find all zeros of f(x) = 2x\u00b3 \u2212 3x\u00b2 \u2212 11x + 6 and state their multiplicities.",
-          "solution": "Rational Root Theorem: possible rational zeros = \u00b1{1, 2, 3, 6, 1/2, 3/2} (factors of 6 over factors of 2). Test x = 3: f(3) = 2(27) \u2212 3(9) \u2212 11(3) + 6 = 54 \u2212 27 \u2212 33 + 6 = 0. \u2713 So (x \u2212 3) is a factor. Synthetic division: 2x\u00b3 \u2212 3x\u00b2 \u2212 11x + 6 \u00f7 (x \u2212 3): coefficients [2, \u22123, \u221211, 6], divisor 3 \u2192 [2, 3, \u22122, 0]. Quotient: 2x\u00b2 + 3x \u2212 2 = (2x \u2212 1)(x + 2). All zeros: x = 3, x = 1/2, x = \u22122, each multiplicity 1."
+          "problem": "Find all zeros of f(x) = 2x³ − 3x² − 11x + 6 and state their multiplicities.",
+          "solution": "Rational Root Theorem: possible rational zeros = ±{1, 2, 3, 6, 1/2, 3/2} (factors of 6 over factors of 2). Test x = 3: f(3) = 2(27) − 3(9) − 11(3) + 6 = 54 − 27 − 33 + 6 = 0. ✓ So (x − 3) is a factor. Synthetic division: 2x³ − 3x² − 11x + 6 ÷ (x − 3): coefficients [2, −3, −11, 6], divisor 3 → [2, 3, −2, 0]. Quotient: 2x² + 3x − 2 = (2x − 1)(x + 2). All zeros: x = 3, x = 1/2, x = −2, each multiplicity 1."
         },
         {
-          "problem": "Write a polynomial of degree 4 with leading coefficient 1 whose zeros are: x = \u22121 (multiplicity 2), x = 3 (multiplicity 1), and x = 0 (multiplicity 1).",
-          "solution": "f(x) = x(x + 1)\u00b2(x \u2212 3). Expand: x(x + 1)\u00b2 = x(x\u00b2 + 2x + 1) = x\u00b3 + 2x\u00b2 + x. Then (x\u00b3 + 2x\u00b2 + x)(x \u2212 3) = x\u2074 + 2x\u00b3 + x\u00b2 \u2212 3x\u00b3 \u2212 6x\u00b2 \u2212 3x = x\u2074 \u2212 x\u00b3 \u2212 5x\u00b2 \u2212 3x. Verify degree 4 \u2713, leading coefficient 1 \u2713."
+          "problem": "Write a polynomial of degree 4 with leading coefficient 1 whose zeros are: x = −1 (multiplicity 2), x = 3 (multiplicity 1), and x = 0 (multiplicity 1).",
+          "solution": "f(x) = x(x + 1)²(x − 3). Expand: x(x + 1)² = x(x² + 2x + 1) = x³ + 2x² + x. Then (x³ + 2x² + x)(x − 3) = x⁴ + 2x³ + x² − 3x³ − 6x² − 3x = x⁴ − x³ − 5x² − 3x. Verify degree 4 ✓, leading coefficient 1 ✓."
         },
         {
-          "problem": "Find all zeros (real and complex) of f(x) = x\u2074 \u2212 6x\u00b3 + 14x\u00b2 \u2212 14x + 5.",
-          "solution": "Rational Root Theorem: possible rational zeros = \u00b1{1, 5}. Test x = 1: f(1) = 1 \u2212 6 + 14 \u2212 14 + 5 = 0. \u2713 Synthetic division by (x \u2212 1): [1, \u22126, 14, \u221214, 5] \u2192 [1, \u22125, 9, \u22125, 0]. Quotient: x\u00b3 \u2212 5x\u00b2 + 9x \u2212 5. Test x = 1 again: 1 \u2212 5 + 9 \u2212 5 = 0. \u2713 Synthetic division by (x \u2212 1): [1, \u22125, 9, \u22125] \u2192 [1, \u22124, 5, 0]. Quotient: x\u00b2 \u2212 4x + 5. Discriminant: 16 \u2212 20 = \u22124 < 0. Complex zeros: x = (4 \u00b1 2i)/2 = 2 \u00b1 i. All zeros: x = 1 (multiplicity 2), x = 2 + i, x = 2 \u2212 i."
+          "problem": "Find all zeros (real and complex) of f(x) = x⁴ − 6x³ + 14x² − 14x + 5.",
+          "solution": "Rational Root Theorem: possible rational zeros = ±{1, 5}. Test x = 1: f(1) = 1 − 6 + 14 − 14 + 5 = 0. ✓ Synthetic division by (x − 1): [1, −6, 14, −14, 5] → [1, −5, 9, −5, 0]. Quotient: x³ − 5x² + 9x − 5. Test x = 1 again: 1 − 5 + 9 − 5 = 0. ✓ Synthetic division by (x − 1): [1, −5, 9, −5] → [1, −4, 5, 0]. Quotient: x² − 4x + 5. Discriminant: 16 − 20 = −4 < 0. Complex zeros: x = (4 ± 2i)/2 = 2 ± i. All zeros: x = 1 (multiplicity 2), x = 2 + i, x = 2 − i."
         }
-      ]
+      ],
+      "lessonId": "division-theorems"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Synthetic Division & the Remainder/Factor Theorems",
       "skill": "synthetic-division-remainder",
-      "content": "Synthetic division is an efficient method for dividing a polynomial by a linear factor (x \u2212 c). The Remainder Theorem states that f(c) equals the remainder when f(x) is divided by (x \u2212 c). The Factor Theorem is the special case: if the remainder is 0, then (x \u2212 c) is a factor.",
+      "content": "Synthetic division is an efficient method for dividing a polynomial by a linear factor (x − c). The Remainder Theorem states that f(c) equals the remainder when f(x) is divided by (x − c). The Factor Theorem is the special case: if the remainder is 0, then (x − c) is a factor.",
       "keyPoints": [
         "Synthetic division process: write coefficients, bring down first, multiply-add repeatedly",
-        "Only works for divisors of the form (x \u2212 c); for (x + c), use c = \u2212c",
-        "Remainder Theorem: f(c) = remainder when f(x) \u00f7 (x \u2212 c)",
+        "Only works for divisors of the form (x − c); for (x + c), use c = −c",
+        "Remainder Theorem: f(c) = remainder when f(x) ÷ (x − c)",
         "Useful for evaluating f(c) without full substitution, especially for high-degree polynomials",
-        "Factor Theorem: remainder = 0 \u2194 (x \u2212 c) is a factor \u2194 f(c) = 0",
+        "Factor Theorem: remainder = 0 ↔ (x − c) is a factor ↔ f(c) = 0",
         "Repeated synthetic division can fully factor a polynomial one root at a time"
-      ]
+      ],
+      "lessonId": "rational-functions"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Synthetic Division \u2014 Worked Examples",
+      "title": "Synthetic Division — Worked Examples",
       "skill": "synthetic-division-remainder",
       "examples": [
         {
-          "problem": "Divide f(x) = 3x\u2074 \u2212 2x\u00b3 + 5x \u2212 8 by (x \u2212 2) using synthetic division. State the quotient and remainder. Verify using the Remainder Theorem.",
-          "solution": "Note: include 0 for the missing x\u00b2 term. Coefficients: [3, \u22122, 0, 5, \u22128], c = 2. Synthetic division: bring down 3. 3\u00d72=6, \u22122+6=4. 4\u00d72=8, 0+8=8. 8\u00d72=16, 5+16=21. 21\u00d72=42, \u22128+42=34. Quotient: 3x\u00b3 + 4x\u00b2 + 8x + 21, Remainder: 34. Verify: f(2) = 3(16) \u2212 2(8) + 5(2) \u2212 8 = 48 \u2212 16 + 10 \u2212 8 = 34. \u2713"
+          "problem": "Divide f(x) = 3x⁴ − 2x³ + 5x − 8 by (x − 2) using synthetic division. State the quotient and remainder. Verify using the Remainder Theorem.",
+          "solution": "Note: include 0 for the missing x² term. Coefficients: [3, −2, 0, 5, −8], c = 2. Synthetic division: bring down 3. 3×2=6, −2+6=4. 4×2=8, 0+8=8. 8×2=16, 5+16=21. 21×2=42, −8+42=34. Quotient: 3x³ + 4x² + 8x + 21, Remainder: 34. Verify: f(2) = 3(16) − 2(8) + 5(2) − 8 = 48 − 16 + 10 − 8 = 34. ✓"
         },
         {
-          "problem": "Use the Remainder Theorem to find f(\u22123) for f(x) = x\u2074 + 2x\u00b3 \u2212 7x\u00b2 + x + 12 without substituting.",
-          "solution": "Synthetic division with c = \u22123. Coefficients: [1, 2, \u22127, 1, 12]. Bring down 1. 1\u00d7(\u22123)=\u22123, 2+(\u22123)=\u22121. \u22121\u00d7(\u22123)=3, \u22127+3=\u22124. \u22124\u00d7(\u22123)=12, 1+12=13. 13\u00d7(\u22123)=\u221239, 12+(\u221239)=\u221227. Remainder = \u221227. By the Remainder Theorem, f(\u22123) = \u221227. Verify: (\u22123)\u2074 + 2(\u22123)\u00b3 \u2212 7(\u22123)\u00b2 + (\u22123) + 12 = 81 \u2212 54 \u2212 63 \u2212 3 + 12 = \u221227. \u2713"
+          "problem": "Use the Remainder Theorem to find f(−3) for f(x) = x⁴ + 2x³ − 7x² + x + 12 without substituting.",
+          "solution": "Synthetic division with c = −3. Coefficients: [1, 2, −7, 1, 12]. Bring down 1. 1×(−3)=−3, 2+(−3)=−1. −1×(−3)=3, −7+3=−4. −4×(−3)=12, 1+12=13. 13×(−3)=−39, 12+(−39)=−27. Remainder = −27. By the Remainder Theorem, f(−3) = −27. Verify: (−3)⁴ + 2(−3)³ − 7(−3)² + (−3) + 12 = 81 − 54 − 63 − 3 + 12 = −27. ✓"
         },
         {
-          "problem": "Completely factor f(x) = x\u00b3 + 2x\u00b2 \u2212 5x \u2212 6 using synthetic division.",
-          "solution": "Possible rational roots: \u00b1{1, 2, 3, 6}. Test x = \u22121: synthetic division [1, 2, \u22125, \u22126] with c = \u22121. Bring down 1. 1\u00d7(\u22121)=\u22121, 2+(\u22121)=1. 1\u00d7(\u22121)=\u22121, \u22125+(\u22121)=\u22126. \u22126\u00d7(\u22121)=6, \u22126+6=0. Remainder = 0, so (x + 1) is a factor. Quotient: x\u00b2 + x \u2212 6 = (x + 3)(x \u2212 2). Complete factorization: f(x) = (x + 1)(x + 3)(x \u2212 2). Zeros: x = \u22123, \u22121, 2."
+          "problem": "Completely factor f(x) = x³ + 2x² − 5x − 6 using synthetic division.",
+          "solution": "Possible rational roots: ±{1, 2, 3, 6}. Test x = −1: synthetic division [1, 2, −5, −6] with c = −1. Bring down 1. 1×(−1)=−1, 2+(−1)=1. 1×(−1)=−1, −5+(−1)=−6. −6×(−1)=6, −6+6=0. Remainder = 0, so (x + 1) is a factor. Quotient: x² + x − 6 = (x + 3)(x − 2). Complete factorization: f(x) = (x + 1)(x + 3)(x − 2). Zeros: x = −3, −1, 2."
         }
-      ]
+      ],
+      "lessonId": "rational-functions"
     },
     {
       "type": "guided_practice",
@@ -149,77 +155,80 @@
       "title": "Polynomial Analysis Practice",
       "problems": [
         {
-          "problem": "For f(x) = \u2212x\u2074 + 6x\u00b3 \u2212 9x\u00b2, find all zeros with multiplicities and describe end behavior and graph behavior at each zero.",
+          "problem": "For f(x) = −x⁴ + 6x³ − 9x², find all zeros with multiplicities and describe end behavior and graph behavior at each zero.",
           "hints": [
-            "Factor out \u2212x\u00b2: f(x) = \u2212x\u00b2(x\u00b2 \u2212 6x + 9)",
-            "x\u00b2 \u2212 6x + 9 = (x \u2212 3)\u00b2",
-            "f(x) = \u2212x\u00b2(x \u2212 3)\u00b2. Zeros: x = 0 (mult 2), x = 3 (mult 2)",
-            "Even multiplicities \u2192 graph bounces at both zeros. Degree 4, negative leading coeff \u2192 both ends fall."
+            "Factor out −x²: f(x) = −x²(x² − 6x + 9)",
+            "x² − 6x + 9 = (x − 3)²",
+            "f(x) = −x²(x − 3)². Zeros: x = 0 (mult 2), x = 3 (mult 2)",
+            "Even multiplicities → graph bounces at both zeros. Degree 4, negative leading coeff → both ends fall."
           ],
-          "answer": "f(x) = \u2212x\u00b2(x \u2212 3)\u00b2. Zeros: x = 0 (multiplicity 2, graph bounces), x = 3 (multiplicity 2, graph bounces). End behavior: degree 4 with leading coefficient \u22121 < 0 \u2192 both ends fall (as x \u2192 \u00b1\u221e, f(x) \u2192 \u2212\u221e). The graph bounces at x = 0 and x = 3, staying at or below the x-axis."
+          "answer": "f(x) = −x²(x − 3)². Zeros: x = 0 (multiplicity 2, graph bounces), x = 3 (multiplicity 2, graph bounces). End behavior: degree 4 with leading coefficient −1 < 0 → both ends fall (as x → ±∞, f(x) → −∞). The graph bounces at x = 0 and x = 3, staying at or below the x-axis."
         },
         {
-          "problem": "Find all zeros of f(x) = 2x\u00b3 + x\u00b2 \u2212 13x + 6 using the Rational Root Theorem and synthetic division.",
+          "problem": "Find all zeros of f(x) = 2x³ + x² − 13x + 6 using the Rational Root Theorem and synthetic division.",
           "hints": [
-            "Possible rational roots: \u00b1{1, 2, 3, 6, 1/2, 3/2}",
-            "Test x = 2: f(2) = 16 + 4 \u2212 26 + 6 = 0 \u2713",
-            "Synthetic division by (x \u2212 2): quotient is 2x\u00b2 + 5x \u2212 3",
-            "Factor: 2x\u00b2 + 5x \u2212 3 = (2x \u2212 1)(x + 3)"
+            "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}",
+            "Test x = 2: f(2) = 16 + 4 − 26 + 6 = 0 ✓",
+            "Synthetic division by (x − 2): quotient is 2x² + 5x − 3",
+            "Factor: 2x² + 5x − 3 = (2x − 1)(x + 3)"
           ],
-          "answer": "Possible rational roots: \u00b1{1, 2, 3, 6, 1/2, 3/2}. f(2) = 16 + 4 \u2212 26 + 6 = 0. Synthetic division: [2, 1, \u221213, 6] \u00f7 (x \u2212 2) \u2192 [2, 5, \u22123, 0]. Quotient: 2x\u00b2 + 5x \u2212 3 = (2x \u2212 1)(x + 3). Zeros: x = 2, x = 1/2, x = \u22123, all multiplicity 1."
+          "answer": "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}. f(2) = 16 + 4 − 26 + 6 = 0. Synthetic division: [2, 1, −13, 6] ÷ (x − 2) → [2, 5, −3, 0]. Quotient: 2x² + 5x − 3 = (2x − 1)(x + 3). Zeros: x = 2, x = 1/2, x = −3, all multiplicity 1."
         },
         {
-          "problem": "Use synthetic division to divide f(x) = 2x\u2074 \u2212 x\u00b3 + 3x \u2212 5 by (x + 2). State the quotient, remainder, and f(\u22122).",
+          "problem": "Use synthetic division to divide f(x) = 2x⁴ − x³ + 3x − 5 by (x + 2). State the quotient, remainder, and f(−2).",
           "hints": [
-            "Include 0 for missing x\u00b2 term: [2, \u22121, 0, 3, \u22125]",
-            "c = \u22122 (since dividing by x + 2 = x \u2212 (\u22122))",
+            "Include 0 for missing x² term: [2, −1, 0, 3, −5]",
+            "c = −2 (since dividing by x + 2 = x − (−2))",
             "Perform synthetic division step by step",
-            "Remainder = f(\u22122) by Remainder Theorem"
+            "Remainder = f(−2) by Remainder Theorem"
           ],
-          "answer": "Coefficients: [2, \u22121, 0, 3, \u22125], c = \u22122. Bring down 2. 2(\u22122)=\u22124, \u22121+(\u22124)=\u22125. \u22125(\u22122)=10, 0+10=10. 10(\u22122)=\u221220, 3+(\u221220)=\u221217. \u221217(\u22122)=34, \u22125+34=29. Quotient: 2x\u00b3 \u2212 5x\u00b2 + 10x \u2212 17, Remainder: 29. By the Remainder Theorem, f(\u22122) = 29."
+          "answer": "Coefficients: [2, −1, 0, 3, −5], c = −2. Bring down 2. 2(−2)=−4, −1+(−4)=−5. −5(−2)=10, 0+10=10. 10(−2)=−20, 3+(−20)=−17. −17(−2)=34, −5+34=29. Quotient: 2x³ − 5x² + 10x − 17, Remainder: 29. By the Remainder Theorem, f(−2) = 29."
         }
       ],
-      "skill": "synthetic-division-remainder"
+      "skill": "synthetic-division-remainder",
+      "lessonId": "rational-functions"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Rational Functions & Asymptotes",
       "skill": "rational-function-analysis",
-      "content": "A rational function is f(x) = p(x)/q(x) where p and q are polynomials with q(x) \u2260 0. Key features include domain restrictions, vertical asymptotes, holes, horizontal or oblique asymptotes, and intercepts.",
+      "content": "A rational function is f(x) = p(x)/q(x) where p and q are polynomials with q(x) ≠ 0. Key features include domain restrictions, vertical asymptotes, holes, horizontal or oblique asymptotes, and intercepts.",
       "keyPoints": [
         "Domain: all real numbers except where q(x) = 0",
-        "Vertical asymptotes (VA): occur at x = c where q(c) = 0 but p(c) \u2260 0 (after cancellation)",
+        "Vertical asymptotes (VA): occur at x = c where q(c) = 0 but p(c) ≠ 0 (after cancellation)",
         "Holes: occur at x = c where both p(c) = 0 and q(c) = 0 (common factor cancels)",
-        "Horizontal asymptote (HA): deg(p) < deg(q) \u2192 y = 0; deg(p) = deg(q) \u2192 y = (leading coeff of p)/(leading coeff of q); deg(p) > deg(q) \u2192 no HA",
+        "Horizontal asymptote (HA): deg(p) < deg(q) → y = 0; deg(p) = deg(q) → y = (leading coeff of p)/(leading coeff of q); deg(p) > deg(q) → no HA",
         "Oblique/slant asymptote: exists when deg(p) = deg(q) + 1; found by polynomial long division",
-        "x-intercepts: where p(x) = 0 (and q(x) \u2260 0)",
+        "x-intercepts: where p(x) = 0 (and q(x) ≠ 0)",
         "y-intercept: f(0) = p(0)/q(0), if defined"
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Analyzing Rational Functions \u2014 Worked Examples",
+      "title": "Analyzing Rational Functions — Worked Examples",
       "skill": "asymptote-analysis",
       "examples": [
         {
-          "problem": "Fully analyze f(x) = (x\u00b2 \u2212 4)/(x\u00b2 \u2212 x \u2212 6): domain, holes, VA, HA, intercepts.",
-          "solution": "Factor: f(x) = (x \u2212 2)(x + 2)/((x \u2212 3)(x + 2)). Common factor (x + 2) cancels \u2192 hole at x = \u22122. Simplified: f(x) = (x \u2212 2)/(x \u2212 3), x \u2260 \u22122. Domain: x \u2260 3 and x \u2260 \u22122, i.e., (\u2212\u221e,\u22122) \u222a (\u22122,3) \u222a (3,\u221e). VA: x = 3 (denominator = 0, no cancellation). Hole: at x = \u22122, y = (\u22122\u22122)/(\u22122\u22123) = (\u22124)/(\u22125) = 4/5. Hole at (\u22122, 4/5). HA: degrees equal \u2192 y = 1/1 = 1. x-intercept: x \u2212 2 = 0 \u2192 x = 2, so (2, 0). y-intercept: f(0) = (\u22122)/(\u22123) = 2/3, so (0, 2/3)."
+          "problem": "Fully analyze f(x) = (x² − 4)/(x² − x − 6): domain, holes, VA, HA, intercepts.",
+          "solution": "Factor: f(x) = (x − 2)(x + 2)/((x − 3)(x + 2)). Common factor (x + 2) cancels → hole at x = −2. Simplified: f(x) = (x − 2)/(x − 3), x ≠ −2. Domain: x ≠ 3 and x ≠ −2, i.e., (−∞,−2) ∪ (−2,3) ∪ (3,∞). VA: x = 3 (denominator = 0, no cancellation). Hole: at x = −2, y = (−2−2)/(−2−3) = (−4)/(−5) = 4/5. Hole at (−2, 4/5). HA: degrees equal → y = 1/1 = 1. x-intercept: x − 2 = 0 → x = 2, so (2, 0). y-intercept: f(0) = (−2)/(−3) = 2/3, so (0, 2/3)."
         },
         {
-          "problem": "Fully analyze g(x) = (3x + 6)/(x\u00b2 \u2212 4): domain, VA, HA, intercepts. Is there a hole?",
-          "solution": "Factor: g(x) = 3(x + 2)/((x \u2212 2)(x + 2)). Common factor (x + 2) cancels \u2192 hole at x = \u22122. Simplified: g(x) = 3/(x \u2212 2), x \u2260 \u22122. Domain: x \u2260 2 and x \u2260 \u22122. VA: x = 2. Hole at x = \u22122: y = 3/(\u22122 \u2212 2) = 3/(\u22124) = \u22123/4. Hole at (\u22122, \u22123/4). HA: deg(numerator) < deg(denominator) in original \u2192 y = 0. (Or in simplified form: deg(0) < deg(1) \u2192 y = 0.) x-intercept: numerator 3 \u2260 0 \u2192 no x-intercept. y-intercept: g(0) = 3/(0 \u2212 2) = \u22123/2, so (0, \u22123/2)."
+          "problem": "Fully analyze g(x) = (3x + 6)/(x² − 4): domain, VA, HA, intercepts. Is there a hole?",
+          "solution": "Factor: g(x) = 3(x + 2)/((x − 2)(x + 2)). Common factor (x + 2) cancels → hole at x = −2. Simplified: g(x) = 3/(x − 2), x ≠ −2. Domain: x ≠ 2 and x ≠ −2. VA: x = 2. Hole at x = −2: y = 3/(−2 − 2) = 3/(−4) = −3/4. Hole at (−2, −3/4). HA: deg(numerator) < deg(denominator) in original → y = 0. (Or in simplified form: deg(0) < deg(1) → y = 0.) x-intercept: numerator 3 ≠ 0 → no x-intercept. y-intercept: g(0) = 3/(0 − 2) = −3/2, so (0, −3/2)."
         },
         {
-          "problem": "For h(x) = (2x\u00b2 + 3x \u2212 1)/(x + 1), find the oblique asymptote and all other key features.",
-          "solution": "Degree of numerator (2) = degree of denominator (1) + 1 \u2192 oblique asymptote exists. Long division: (2x\u00b2 + 3x \u2212 1) \u00f7 (x + 1). 2x\u00b2 \u00f7 x = 2x. 2x(x+1) = 2x\u00b2+2x. Subtract: x \u2212 1. x \u00f7 x = 1. 1(x+1) = x + 1. Subtract: \u22122. So h(x) = 2x + 1 \u2212 2/(x+1). Oblique asymptote: y = 2x + 1. VA: x = \u22121 (denominator = 0). No HA (oblique instead). x-intercepts: 2x\u00b2 + 3x \u2212 1 = 0 \u2192 x = (\u22123 \u00b1 \u221a(9+8))/4 = (\u22123 \u00b1 \u221a17)/4. y-intercept: h(0) = \u22121/1 = \u22121, so (0, \u22121). Domain: x \u2260 \u22121."
+          "problem": "For h(x) = (2x² + 3x − 1)/(x + 1), find the oblique asymptote and all other key features.",
+          "solution": "Degree of numerator (2) = degree of denominator (1) + 1 → oblique asymptote exists. Long division: (2x² + 3x − 1) ÷ (x + 1). 2x² ÷ x = 2x. 2x(x+1) = 2x²+2x. Subtract: x − 1. x ÷ x = 1. 1(x+1) = x + 1. Subtract: −2. So h(x) = 2x + 1 − 2/(x+1). Oblique asymptote: y = 2x + 1. VA: x = −1 (denominator = 0). No HA (oblique instead). x-intercepts: 2x² + 3x − 1 = 0 → x = (−3 ± √(9+8))/4 = (−3 ± √17)/4. y-intercept: h(0) = −1/1 = −1, so (0, −1). Domain: x ≠ −1."
         },
         {
-          "problem": "Analyze f(x) = (x \u2212 1)/(x\u00b2 + 1). Find domain, asymptotes, intercepts.",
-          "solution": "Denominator: x\u00b2 + 1 > 0 for all real x \u2192 never zero. Domain: (\u2212\u221e, \u221e). No VA, no holes. HA: deg(num) = 1 < deg(den) = 2 \u2192 y = 0. x-intercept: x \u2212 1 = 0 \u2192 x = 1, so (1, 0). y-intercept: f(0) = \u22121/1 = \u22121, so (0, \u22121)."
+          "problem": "Analyze f(x) = (x − 1)/(x² + 1). Find domain, asymptotes, intercepts.",
+          "solution": "Denominator: x² + 1 > 0 for all real x → never zero. Domain: (−∞, ∞). No VA, no holes. HA: deg(num) = 1 < deg(den) = 2 → y = 0. x-intercept: x − 1 = 0 → x = 1, so (1, 0). y-intercept: f(0) = −1/1 = −1, so (0, −1)."
         }
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "guided_practice",
@@ -227,74 +236,77 @@
       "title": "Rational Function Practice",
       "problems": [
         {
-          "problem": "Fully analyze f(x) = (x\u00b2 + x \u2212 6)/(x\u00b2 \u2212 9): domain, VA, HA, holes, intercepts.",
+          "problem": "Fully analyze f(x) = (x² + x − 6)/(x² − 9): domain, VA, HA, holes, intercepts.",
           "hints": [
-            "Factor: num = (x+3)(x\u22122), den = (x\u22123)(x+3)",
-            "Common factor (x+3) \u2192 hole at x = \u22123",
-            "Simplified: (x\u22122)/(x\u22123), x \u2260 \u22123",
-            "Hole y-value: (\u22123\u22122)/(\u22123\u22123) = \u22125/(\u22126) = 5/6"
+            "Factor: num = (x+3)(x−2), den = (x−3)(x+3)",
+            "Common factor (x+3) → hole at x = −3",
+            "Simplified: (x−2)/(x−3), x ≠ −3",
+            "Hole y-value: (−3−2)/(−3−3) = −5/(−6) = 5/6"
           ],
-          "answer": "f(x) = (x+3)(x\u22122)/((x\u22123)(x+3)). Hole at x = \u22123, y = (\u22123\u22122)/(\u22123\u22123) = 5/6, so hole at (\u22123, 5/6). Simplified: (x\u22122)/(x\u22123). VA: x = 3. HA: y = 1 (equal degrees, ratio 1/1). x-int: x = 2, so (2,0). y-int: f(0) = (\u22122)/(\u22123) = 2/3, so (0, 2/3). Domain: x \u2260 \u22123 and x \u2260 3."
+          "answer": "f(x) = (x+3)(x−2)/((x−3)(x+3)). Hole at x = −3, y = (−3−2)/(−3−3) = 5/6, so hole at (−3, 5/6). Simplified: (x−2)/(x−3). VA: x = 3. HA: y = 1 (equal degrees, ratio 1/1). x-int: x = 2, so (2,0). y-int: f(0) = (−2)/(−3) = 2/3, so (0, 2/3). Domain: x ≠ −3 and x ≠ 3."
         },
         {
-          "problem": "For g(x) = (x\u00b3 \u2212 x)/(x\u00b2 \u2212 1), simplify and find domain, asymptotes, holes, intercepts.",
+          "problem": "For g(x) = (x³ − x)/(x² − 1), simplify and find domain, asymptotes, holes, intercepts.",
           "hints": [
-            "Factor: num = x(x\u00b2\u22121) = x(x\u22121)(x+1), den = (x\u22121)(x+1)",
-            "Cancel (x\u22121)(x+1) \u2192 g(x) = x, x \u2260 \u00b11",
-            "Two holes: at x = 1 (y=1) and x = \u22121 (y=\u22121)",
-            "Simplified form is linear \u2014 no asymptotes"
+            "Factor: num = x(x²−1) = x(x−1)(x+1), den = (x−1)(x+1)",
+            "Cancel (x−1)(x+1) → g(x) = x, x ≠ ±1",
+            "Two holes: at x = 1 (y=1) and x = −1 (y=−1)",
+            "Simplified form is linear — no asymptotes"
           ],
-          "answer": "g(x) = x(x\u22121)(x+1)/((x\u22121)(x+1)) = x, with x \u2260 1 and x \u2260 \u22121. Holes at (1, 1) and (\u22121, \u22121). The simplified function is the line y = x. No VA, no HA. Domain: (\u2212\u221e,\u22121)\u222a(\u22121,1)\u222a(1,\u221e). x-int: (0,0). y-int: (0,0)."
+          "answer": "g(x) = x(x−1)(x+1)/((x−1)(x+1)) = x, with x ≠ 1 and x ≠ −1. Holes at (1, 1) and (−1, −1). The simplified function is the line y = x. No VA, no HA. Domain: (−∞,−1)∪(−1,1)∪(1,∞). x-int: (0,0). y-int: (0,0)."
         },
         {
-          "problem": "For h(x) = (x\u00b2 + 2x + 1)/(x + 3), find the oblique asymptote and all key features.",
+          "problem": "For h(x) = (x² + 2x + 1)/(x + 3), find the oblique asymptote and all key features.",
           "hints": [
-            "Degree 2 over degree 1 \u2192 oblique asymptote exists",
-            "Long division: (x\u00b2+2x+1)\u00f7(x+3) = x \u2212 1 + 4/(x+3)",
-            "Oblique asymptote: y = x \u2212 1",
-            "Numerator = (x+1)\u00b2, so x-int at x = \u22121 (multiplicity 2)"
+            "Degree 2 over degree 1 → oblique asymptote exists",
+            "Long division: (x²+2x+1)÷(x+3) = x − 1 + 4/(x+3)",
+            "Oblique asymptote: y = x − 1",
+            "Numerator = (x+1)², so x-int at x = −1 (multiplicity 2)"
           ],
-          "answer": "h(x) = (x+1)\u00b2/(x+3). Long division: x \u2212 1 + 4/(x+3). Oblique asymptote: y = x \u2212 1. VA: x = \u22123. No HA. x-int: x = \u22121 (double root, graph touches axis). y-int: h(0) = 1/3, so (0, 1/3). Domain: x \u2260 \u22123."
+          "answer": "h(x) = (x+1)²/(x+3). Long division: x − 1 + 4/(x+3). Oblique asymptote: y = x − 1. VA: x = −3. No HA. x-int: x = −1 (double root, graph touches axis). y-int: h(0) = 1/3, so (0, 1/3). Domain: x ≠ −3."
         }
       ],
-      "skill": "asymptote-analysis"
+      "skill": "asymptote-analysis",
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Polynomial & Rational Inequalities",
       "skill": "polynomial-rational-inequalities",
-      "content": "Solving polynomial and rational inequalities uses sign analysis: find critical values (zeros and undefined points), create intervals, test each interval's sign, and assemble the solution using interval notation. Boundary points are included (closed dot) when the inequality is \u2264 or \u2265 and the point is in the domain.",
+      "content": "Solving polynomial and rational inequalities uses sign analysis: find critical values (zeros and undefined points), create intervals, test each interval's sign, and assemble the solution using interval notation. Boundary points are included (closed dot) when the inequality is ≤ or ≥ and the point is in the domain.",
       "keyPoints": [
         "Step 1: Move everything to one side so the other side is 0",
         "Step 2: Factor completely (polynomial) or simplify to one fraction (rational)",
-        "Step 3: Find critical values \u2014 zeros of numerator and denominator",
+        "Step 3: Find critical values — zeros of numerator and denominator",
         "Step 4: Place critical values on number line, creating intervals",
         "Step 5: Test sign in each interval using test points or factor sign analysis",
         "Step 6: Select intervals satisfying the inequality; include endpoints where appropriate",
-        "For rational inequalities: NEVER include points where the denominator is 0 (even with \u2264 or \u2265)",
-        "Multiplicity affects sign changes: odd multiplicity \u2192 sign changes; even multiplicity \u2192 sign stays"
-      ]
+        "For rational inequalities: NEVER include points where the denominator is 0 (even with ≤ or ≥)",
+        "Multiplicity affects sign changes: odd multiplicity → sign changes; even multiplicity → sign stays"
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Solving Inequalities \u2014 Worked Examples",
+      "title": "Solving Inequalities — Worked Examples",
       "skill": "polynomial-rational-inequalities",
       "examples": [
         {
-          "problem": "Solve x\u00b3 \u2212 4x > 0.",
-          "solution": "Factor: x(x\u00b2 \u2212 4) = x(x \u2212 2)(x + 2) > 0. Critical values: x = \u22122, 0, 2. Sign analysis on intervals: (\u2212\u221e,\u22122): test x=\u22123, (\u22123)(\u22123\u22122)(\u22123+2) = (\u22123)(\u22125)(\u22121) = \u221215 < 0. (\u22122,0): test x=\u22121, (\u22121)(\u22121\u22122)(\u22121+2) = (\u22121)(\u22123)(1) = 3 > 0. (0,2): test x=1, (1)(1\u22122)(1+2) = (1)(\u22121)(3) = \u22123 < 0. (2,\u221e): test x=3, (3)(3\u22122)(3+2) = (3)(1)(5) = 15 > 0. Solution: (\u22122, 0) \u222a (2, \u221e). Open intervals since strict inequality (>)."
+          "problem": "Solve x³ − 4x > 0.",
+          "solution": "Factor: x(x² − 4) = x(x − 2)(x + 2) > 0. Critical values: x = −2, 0, 2. Sign analysis on intervals: (−∞,−2): test x=−3, (−3)(−3−2)(−3+2) = (−3)(−5)(−1) = −15 < 0. (−2,0): test x=−1, (−1)(−1−2)(−1+2) = (−1)(−3)(1) = 3 > 0. (0,2): test x=1, (1)(1−2)(1+2) = (1)(−1)(3) = −3 < 0. (2,∞): test x=3, (3)(3−2)(3+2) = (3)(1)(5) = 15 > 0. Solution: (−2, 0) ∪ (2, ∞). Open intervals since strict inequality (>)."
         },
         {
-          "problem": "Solve (x + 2)/(x \u2212 3) \u2264 1.",
-          "solution": "Subtract 1: (x+2)/(x\u22123) \u2212 1 \u2264 0 \u2192 (x+2\u2212(x\u22123))/(x\u22123) \u2264 0 \u2192 5/(x\u22123) \u2264 0. Since numerator 5 > 0 always, we need denominator < 0: x \u2212 3 < 0 \u2192 x < 3. Note: x = 3 makes it undefined, so not included. Also, 5/(x\u22123) is never 0, so equality never holds. Solution: (\u2212\u221e, 3)."
+          "problem": "Solve (x + 2)/(x − 3) ≤ 1.",
+          "solution": "Subtract 1: (x+2)/(x−3) − 1 ≤ 0 → (x+2−(x−3))/(x−3) ≤ 0 → 5/(x−3) ≤ 0. Since numerator 5 > 0 always, we need denominator < 0: x − 3 < 0 → x < 3. Note: x = 3 makes it undefined, so not included. Also, 5/(x−3) is never 0, so equality never holds. Solution: (−∞, 3)."
         },
         {
-          "problem": "Solve (x\u00b2 \u2212 x \u2212 6)/(x \u2212 1) \u2265 0.",
-          "solution": "Factor: (x\u22123)(x+2)/(x\u22121) \u2265 0. Critical values: x = \u22122 (zero), x = 1 (undefined), x = 3 (zero). Sign analysis: (\u2212\u221e,\u22122): test x=\u22123, (\u22126)(\u22121)/(\u22124) = 6/(\u22124) < 0. (\u22122,1): test x=0, (\u22123)(2)/(\u22121) = 6 > 0. (1,3): test x=2, (\u22121)(4)/(1) = \u22124 < 0. (3,\u221e): test x=4, (1)(6)/(3) = 2 > 0. Include zeros (\u22122 and 3) since \u2265, exclude x = 1 (undefined). Solution: [\u22122, 1) \u222a [3, \u221e)."
+          "problem": "Solve (x² − x − 6)/(x − 1) ≥ 0.",
+          "solution": "Factor: (x−3)(x+2)/(x−1) ≥ 0. Critical values: x = −2 (zero), x = 1 (undefined), x = 3 (zero). Sign analysis: (−∞,−2): test x=−3, (−6)(−1)/(−4) = 6/(−4) < 0. (−2,1): test x=0, (−3)(2)/(−1) = 6 > 0. (1,3): test x=2, (−1)(4)/(1) = −4 < 0. (3,∞): test x=4, (1)(6)/(3) = 2 > 0. Include zeros (−2 and 3) since ≥, exclude x = 1 (undefined). Solution: [−2, 1) ∪ [3, ∞)."
         }
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "guided_practice",
@@ -303,36 +315,37 @@
       "skill": "polynomial-rational-inequalities",
       "problems": [
         {
-          "problem": "Solve x\u2074 \u2212 5x\u00b2 + 4 \u2264 0.",
+          "problem": "Solve x⁴ − 5x² + 4 ≤ 0.",
           "hints": [
-            "Factor: (x\u00b2\u22124)(x\u00b2\u22121) = (x\u22122)(x+2)(x\u22121)(x+1)",
-            "Critical values: \u22122, \u22121, 1, 2",
-            "All multiplicity 1 \u2192 sign alternates through intervals",
-            "Test far-left interval (\u2212\u221e,\u22122): large positive \u2192 > 0"
+            "Factor: (x²−4)(x²−1) = (x−2)(x+2)(x−1)(x+1)",
+            "Critical values: −2, −1, 1, 2",
+            "All multiplicity 1 → sign alternates through intervals",
+            "Test far-left interval (−∞,−2): large positive → > 0"
           ],
-          "answer": "(x\u22122)(x+2)(x\u22121)(x+1) \u2264 0. Intervals: (\u2212\u221e,\u22122): + . (\u22122,\u22121): \u2212 . (\u22121,1): + . (1,2): \u2212 . (2,\u221e): + . Need \u2264 0: include negative intervals and zeros. Solution: [\u22122, \u22121] \u222a [1, 2]."
+          "answer": "(x−2)(x+2)(x−1)(x+1) ≤ 0. Intervals: (−∞,−2): + . (−2,−1): − . (−1,1): + . (1,2): − . (2,∞): + . Need ≤ 0: include negative intervals and zeros. Solution: [−2, −1] ∪ [1, 2]."
         },
         {
-          "problem": "Solve (2x \u2212 1)/(x + 4) > 3.",
+          "problem": "Solve (2x − 1)/(x + 4) > 3.",
           "hints": [
-            "Subtract 3: (2x\u22121)/(x+4) \u2212 3 > 0",
-            "Common denominator: (2x\u22121\u22123(x+4))/(x+4) > 0",
-            "Simplify numerator: 2x\u22121\u22123x\u221212 = \u2212x\u221213",
-            "(\u2212x\u221213)/(x+4) > 0"
+            "Subtract 3: (2x−1)/(x+4) − 3 > 0",
+            "Common denominator: (2x−1−3(x+4))/(x+4) > 0",
+            "Simplify numerator: 2x−1−3x−12 = −x−13",
+            "(−x−13)/(x+4) > 0"
           ],
-          "answer": "(2x\u22121)/(x+4) \u2212 3 > 0 \u2192 (\u2212x\u221213)/(x+4) > 0. Critical values: x = \u221213 (zero), x = \u22124 (undefined). Sign analysis: (\u2212\u221e,\u221213): (positive)/(negative) = negative. (\u221213,\u22124): (negative)/(negative) = positive. (\u22124,\u221e): (negative)/(positive) = negative. Solution: (\u221213, \u22124). Strict inequality, so endpoints excluded."
+          "answer": "(2x−1)/(x+4) − 3 > 0 → (−x−13)/(x+4) > 0. Critical values: x = −13 (zero), x = −4 (undefined). Sign analysis: (−∞,−13): (positive)/(negative) = negative. (−13,−4): (negative)/(negative) = positive. (−4,∞): (negative)/(positive) = negative. Solution: (−13, −4). Strict inequality, so endpoints excluded."
         },
         {
-          "problem": "Solve x\u00b3 \u2212 x\u00b2 \u2212 6x \u2265 0.",
+          "problem": "Solve x³ − x² − 6x ≥ 0.",
           "hints": [
-            "Factor: x(x\u00b2 \u2212 x \u2212 6) = x(x \u2212 3)(x + 2)",
-            "Critical values: \u22122, 0, 3",
-            "Test intervals: (\u2212\u221e,\u22122), (\u22122,0), (0,3), (3,\u221e)",
-            "Include endpoints since \u2265"
+            "Factor: x(x² − x − 6) = x(x − 3)(x + 2)",
+            "Critical values: −2, 0, 3",
+            "Test intervals: (−∞,−2), (−2,0), (0,3), (3,∞)",
+            "Include endpoints since ≥"
           ],
-          "answer": "x(x\u22123)(x+2) \u2265 0. Sign analysis: (\u2212\u221e,\u22122): test x=\u22123, (\u22123)(\u22126)(\u22121) = \u221218 < 0. (\u22122,0): test x=\u22121, (\u22121)(\u22124)(1) = 4 > 0. (0,3): test x=1, (1)(\u22122)(3) = \u22126 < 0. (3,\u221e): test x=4, (4)(1)(6) = 24 > 0. Solution: [\u22122, 0] \u222a [3, \u221e)."
+          "answer": "x(x−3)(x+2) ≥ 0. Sign analysis: (−∞,−2): test x=−3, (−3)(−6)(−1) = −18 < 0. (−2,0): test x=−1, (−1)(−4)(1) = 4 > 0. (0,3): test x=1, (1)(−2)(3) = −6 < 0. (3,∞): test x=4, (4)(1)(6) = 24 > 0. Solution: [−2, 0] ∪ [3, ∞)."
         }
-      ]
+      ],
+      "lessonId": "polynomial-analysis"
     },
     {
       "type": "independent_practice",
@@ -340,64 +353,82 @@
       "title": "Polynomial & Rational Functions Mastery Practice",
       "problems": [
         {
-          "problem": "For f(x) = \u22123x\u2075 + 7x\u2074 \u2212 2x + 9, determine the end behavior, maximum number of turning points, and maximum number of real zeros.",
-          "answer": "Degree 5 (odd), leading coefficient \u22123 (negative). End behavior: as x \u2192 \u2212\u221e, f(x) \u2192 +\u221e; as x \u2192 +\u221e, f(x) \u2192 \u2212\u221e. Maximum turning points: 4. Maximum real zeros: 5."
+          "problem": "For f(x) = −3x⁵ + 7x⁴ − 2x + 9, determine the end behavior, maximum number of turning points, and maximum number of real zeros.",
+          "answer": "Degree 5 (odd), leading coefficient −3 (negative). End behavior: as x → −∞, f(x) → +∞; as x → +∞, f(x) → −∞. Maximum turning points: 4. Maximum real zeros: 5."
         },
         {
-          "problem": "Find all zeros (real and complex) of f(x) = x\u2074 \u2212 2x\u00b3 \u2212 3x\u00b2 + 8x \u2212 4. (Hint: x = 1 is a zero.)",
-          "answer": "Synthetic division by (x\u22121): [1,\u22122,\u22123,8,\u22124] \u2192 [1,\u22121,\u22124,4,0]. Quotient: x\u00b3\u2212x\u00b2\u22124x+4. Test x = 1 again: 1\u22121\u22124+4 = 0. Synthetic division: [1,\u22121,\u22124,4] \u2192 [1,0,\u22124,0]. Quotient: x\u00b2\u22124 = (x\u22122)(x+2). All zeros: x = 1 (multiplicity 2), x = 2, x = \u22122. All real, all multiplicity 1 except x = 1."
+          "problem": "Find all zeros (real and complex) of f(x) = x⁴ − 2x³ − 3x² + 8x − 4. (Hint: x = 1 is a zero.)",
+          "answer": "Synthetic division by (x−1): [1,−2,−3,8,−4] → [1,−1,−4,4,0]. Quotient: x³−x²−4x+4. Test x = 1 again: 1−1−4+4 = 0. Synthetic division: [1,−1,−4,4] → [1,0,−4,0]. Quotient: x²−4 = (x−2)(x+2). All zeros: x = 1 (multiplicity 2), x = 2, x = −2. All real, all multiplicity 1 except x = 1."
         },
         {
-          "problem": "Divide f(x) = 4x\u00b3 \u2212 7x + 3 by (x + 2) using synthetic division. State quotient, remainder, and verify f(\u22122).",
-          "answer": "Coefficients (include 0 for x\u00b2): [4, 0, \u22127, 3], c = \u22122. Bring down 4. 4(\u22122)=\u22128, 0+(\u22128)=\u22128. \u22128(\u22122)=16, \u22127+16=9. 9(\u22122)=\u221218, 3+(\u221218)=\u221215. Quotient: 4x\u00b2 \u2212 8x + 9, Remainder: \u221215. f(\u22122) = 4(\u22128) \u2212 7(\u22122) + 3 = \u221232 + 14 + 3 = \u221215. \u2713"
+          "problem": "Divide f(x) = 4x³ − 7x + 3 by (x + 2) using synthetic division. State quotient, remainder, and verify f(−2).",
+          "answer": "Coefficients (include 0 for x²): [4, 0, −7, 3], c = −2. Bring down 4. 4(−2)=−8, 0+(−8)=−8. −8(−2)=16, −7+16=9. 9(−2)=−18, 3+(−18)=−15. Quotient: 4x² − 8x + 9, Remainder: −15. f(−2) = 4(−8) − 7(−2) + 3 = −32 + 14 + 3 = −15. ✓"
         },
         {
-          "problem": "Fully analyze f(x) = (2x\u00b2 \u2212 8)/(x\u00b2 \u2212 5x + 6): domain, VA, HA, holes, intercepts.",
-          "answer": "Factor: num = 2(x\u00b2\u22124) = 2(x\u22122)(x+2), den = (x\u22122)(x\u22123). Common factor (x\u22122) \u2192 hole at x = 2. Simplified: 2(x+2)/(x\u22123), x \u2260 2. Hole y-value: 2(2+2)/(2\u22123) = 8/(\u22121) = \u22128, hole at (2,\u22128). VA: x = 3. HA: degrees equal \u2192 y = 2/1 = 2. x-int: x+2 = 0 \u2192 x = \u22122, so (\u22122,0). y-int: f(0) = 2(2)/(\u22123) = \u22124/3, so (0,\u22124/3). Domain: x \u2260 2, x \u2260 3."
+          "problem": "Fully analyze f(x) = (2x² − 8)/(x² − 5x + 6): domain, VA, HA, holes, intercepts.",
+          "answer": "Factor: num = 2(x²−4) = 2(x−2)(x+2), den = (x−2)(x−3). Common factor (x−2) → hole at x = 2. Simplified: 2(x+2)/(x−3), x ≠ 2. Hole y-value: 2(2+2)/(2−3) = 8/(−1) = −8, hole at (2,−8). VA: x = 3. HA: degrees equal → y = 2/1 = 2. x-int: x+2 = 0 → x = −2, so (−2,0). y-int: f(0) = 2(2)/(−3) = −4/3, so (0,−4/3). Domain: x ≠ 2, x ≠ 3."
         },
         {
-          "problem": "For g(x) = (x\u00b3 + 2x\u00b2 \u2212 x + 6)/(x + 3), find the oblique asymptote and determine if there's a hole or a VA at x = \u22123.",
-          "answer": "Test if (x+3) is a factor: synthetic division with c = \u22123. [1, 2, \u22121, 6]. Bring down 1. 1(\u22123)=\u22123, 2+(\u22123)=\u22121. \u22121(\u22123)=3, \u22121+3=2. 2(\u22123)=\u22126, 6+(\u22126)=0. Remainder = 0, so (x+3) IS a factor \u2192 hole at x = \u22123, NOT a VA. g(x) = x\u00b2 \u2212 x + 2, x \u2260 \u22123. This is a parabola with a hole at x = \u22123, y = 9+3+2 = 14, hole at (\u22123, 14). No VA, no HA, no oblique asymptote (the function reduces to a polynomial)."
+          "problem": "For g(x) = (x³ + 2x² − x + 6)/(x + 3), find the oblique asymptote and determine if there's a hole or a VA at x = −3.",
+          "answer": "Test if (x+3) is a factor: synthetic division with c = −3. [1, 2, −1, 6]. Bring down 1. 1(−3)=−3, 2+(−3)=−1. −1(−3)=3, −1+3=2. 2(−3)=−6, 6+(−6)=0. Remainder = 0, so (x+3) IS a factor → hole at x = −3, NOT a VA. g(x) = x² − x + 2, x ≠ −3. This is a parabola with a hole at x = −3, y = 9+3+2 = 14, hole at (−3, 14). No VA, no HA, no oblique asymptote (the function reduces to a polynomial)."
         },
         {
-          "problem": "Solve (x \u2212 1)/(x + 2) \u2264 (x + 3)/(x \u2212 4).",
-          "answer": "Subtract: (x\u22121)/(x+2) \u2212 (x+3)/(x\u22124) \u2264 0. Common denominator (x+2)(x\u22124): ((x\u22121)(x\u22124) \u2212 (x+3)(x+2))/((x+2)(x\u22124)) \u2264 0. Expand numerator: (x\u00b2\u22125x+4) \u2212 (x\u00b2+5x+6) = \u221210x \u2212 2. So (\u221210x\u22122)/((x+2)(x\u22124)) \u2264 0. Factor numerator: \u22122(5x+1). Critical values: x = \u22121/5 (zero), x = \u22122 (undefined), x = 4 (undefined). Sign analysis: (\u2212\u221e,\u22122): test x=\u22123: \u22122(\u221214)/((\u22121)(\u22127)) = 28/7 > 0. (\u22122,\u22121/5): test x=\u22121: \u22122(\u22124)/((1)(\u22125)) = 8/(\u22125) < 0. (\u22121/5,4): test x=0: \u22122(1)/((2)(\u22124)) = \u22122/(\u22128) > 0. (4,\u221e): test x=5: \u22122(26)/((7)(1)) = \u221252/7 < 0. Need \u2264 0. Include x = \u22121/5 (zero); exclude \u22122, 4 (undefined). Solution: (\u22122, \u22121/5] \u222a (4, \u221e)."
+          "problem": "Solve (x − 1)/(x + 2) ≤ (x + 3)/(x − 4).",
+          "answer": "Subtract: (x−1)/(x+2) − (x+3)/(x−4) ≤ 0. Common denominator (x+2)(x−4): ((x−1)(x−4) − (x+3)(x+2))/((x+2)(x−4)) ≤ 0. Expand numerator: (x²−5x+4) − (x²+5x+6) = −10x − 2. So (−10x−2)/((x+2)(x−4)) ≤ 0. Factor numerator: −2(5x+1). Critical values: x = −1/5 (zero), x = −2 (undefined), x = 4 (undefined). Sign analysis: (−∞,−2): test x=−3: −2(−14)/((−1)(−7)) = 28/7 > 0. (−2,−1/5): test x=−1: −2(−4)/((1)(−5)) = 8/(−5) < 0. (−1/5,4): test x=0: −2(1)/((2)(−4)) = −2/(−8) > 0. (4,∞): test x=5: −2(26)/((7)(1)) = −52/7 < 0. Need ≤ 0. Include x = −1/5 (zero); exclude −2, 4 (undefined). Solution: (−2, −1/5] ∪ (4, ∞)."
         }
       ],
-      "skill": "polynomial-end-behavior"
+      "skill": "polynomial-end-behavior",
+      "lessonId": "polynomial-analysis"
     }
   ],
   "answerKeys": {
-    "eb-degree5": "Degree 5, odd, LC = \u22122 < 0. Ends: rises left, falls right. Max turning pts: 4. Max zeros: 5.",
-    "eb-quartic-factor": "f(x) = (x\u22122)(x+2)(x\u22121)(x+1). Zeros: \u00b11, \u00b12 (mult 1). Both ends rise. 3 turning pts.",
-    "eb-cubic-factor": "g(x) = 3x(x\u22122)(x+2). Zeros: \u22122,0,2 (mult 1). Falls left, rises right. 2 turning pts.",
-    "zeros-cubic-rrt": "f(x) = (x\u22123)(2x\u22121)(x+2). Zeros: 3, 1/2, \u22122 (all mult 1).",
-    "zeros-write-poly": "f(x) = x(x+1)\u00b2(x\u22123) = x\u2074 \u2212 x\u00b3 \u2212 5x\u00b2 \u2212 3x.",
-    "zeros-complex": "x = 1 (mult 2), x = 2 \u00b1 i. Quotient chain: x\u00b3\u22125x\u00b2+9x\u22125 \u2192 x\u00b2\u22124x+5.",
-    "sd-divide": "3x\u2074\u22122x\u00b3+5x\u22128 \u00f7 (x\u22122): Q = 3x\u00b3+4x\u00b2+8x+21, R = 34. f(2)=34.",
-    "sd-remainder": "f(\u22123) = \u221227 via synthetic division. Verified by direct substitution.",
-    "sd-factor": "f(x) = (x+1)(x+3)(x\u22122). Zeros: \u22123, \u22121, 2.",
-    "wp-poly-mult": "f(x) = \u2212x\u00b2(x\u22123)\u00b2. Zeros: 0 (mult 2), 3 (mult 2). Both ends fall. Bounces at both.",
-    "wp-poly-rrt": "Zeros: 2, 1/2, \u22123. Quotient: 2x\u00b2+5x\u22123 = (2x\u22121)(x+3).",
-    "wp-sd-divide": "Q = 2x\u00b3\u22125x\u00b2+10x\u221217, R = 29. f(\u22122) = 29.",
-    "rat-holes": "f(x) = (x\u22122)/(x\u22123), hole at (\u22122, 4/5). VA: x=3. HA: y=1. x-int: (2,0). y-int: (0,2/3).",
-    "rat-cancel": "g(x) = 3/(x\u22122), hole at (\u22122, \u22123/4). VA: x=2. HA: y=0. No x-int. y-int: (0,\u22123/2).",
-    "rat-oblique": "h(x) = 2x+1 \u2212 2/(x+1). Oblique: y=2x+1. VA: x=\u22121. x-int: (\u22123\u00b1\u221a17)/4. y-int: (0,\u22121).",
-    "rat-all-real": "f(x)=(x\u22121)/(x\u00b2+1). Domain: all reals. No VA. HA: y=0. x-int: (1,0). y-int: (0,\u22121).",
-    "wp-rat-holes": "Simplified: (x\u22122)/(x\u22123), hole at (\u22123, 5/6). VA: x=3. HA: y=1. x-int: (2,0). y-int: (0,2/3).",
-    "wp-rat-simplify": "g(x) = x, holes at (1,1) and (\u22121,\u22121). Linear, no asymptotes.",
-    "wp-rat-oblique": "h(x) = x\u22121+4/(x+3). Oblique: y=x\u22121. VA: x=\u22123. x-int: x=\u22121 (double).",
-    "ineq-cubic": "x(x\u22122)(x+2) > 0. Solution: (\u22122,0) \u222a (2,\u221e).",
-    "ineq-rational-sub": "5/(x\u22123) \u2264 0. Solution: (\u2212\u221e, 3).",
-    "ineq-rational-sign": "(x\u22123)(x+2)/(x\u22121) \u2265 0. Solution: [\u22122,1) \u222a [3,\u221e).",
-    "wp-ineq-quartic": "(x\u22122)(x+2)(x\u22121)(x+1) \u2264 0. Solution: [\u22122,\u22121] \u222a [1,2].",
-    "wp-ineq-rational": "(\u2212x\u221213)/(x+4) > 0. Solution: (\u221213, \u22124).",
-    "wp-ineq-cubic2": "x(x\u22123)(x+2) \u2265 0. Solution: [\u22122,0] \u222a [3,\u221e).",
-    "ip-end-behavior": "Degree 5, LC = \u22123. Rises left, falls right. Max turning pts: 4. Max zeros: 5.",
-    "ip-all-zeros": "x = 1 (mult 2), x = 2, x = \u22122. All real.",
-    "ip-syn-div": "Q = 4x\u00b2\u22128x+9, R = \u221215. f(\u22122) = \u221215.",
-    "ip-rat-analysis": "Hole at (2,\u22128). VA: x=3. HA: y=2. x-int: (\u22122,0). y-int: (0,\u22124/3).",
-    "ip-rat-hole-or-va": "Remainder = 0 \u2192 hole at (\u22123, 14). Reduces to x\u00b2\u2212x+2. No asymptotes.",
-    "ip-rational-ineq": "\u22122(5x+1)/((x+2)(x\u22124)) \u2264 0. Solution: (\u22122, \u22121/5] \u222a (4, \u221e)."
-  }
+    "eb-degree5": "Degree 5, odd, LC = −2 < 0. Ends: rises left, falls right. Max turning pts: 4. Max zeros: 5.",
+    "eb-quartic-factor": "f(x) = (x−2)(x+2)(x−1)(x+1). Zeros: ±1, ±2 (mult 1). Both ends rise. 3 turning pts.",
+    "eb-cubic-factor": "g(x) = 3x(x−2)(x+2). Zeros: −2,0,2 (mult 1). Falls left, rises right. 2 turning pts.",
+    "zeros-cubic-rrt": "f(x) = (x−3)(2x−1)(x+2). Zeros: 3, 1/2, −2 (all mult 1).",
+    "zeros-write-poly": "f(x) = x(x+1)²(x−3) = x⁴ − x³ − 5x² − 3x.",
+    "zeros-complex": "x = 1 (mult 2), x = 2 ± i. Quotient chain: x³−5x²+9x−5 → x²−4x+5.",
+    "sd-divide": "3x⁴−2x³+5x−8 ÷ (x−2): Q = 3x³+4x²+8x+21, R = 34. f(2)=34.",
+    "sd-remainder": "f(−3) = −27 via synthetic division. Verified by direct substitution.",
+    "sd-factor": "f(x) = (x+1)(x+3)(x−2). Zeros: −3, −1, 2.",
+    "wp-poly-mult": "f(x) = −x²(x−3)². Zeros: 0 (mult 2), 3 (mult 2). Both ends fall. Bounces at both.",
+    "wp-poly-rrt": "Zeros: 2, 1/2, −3. Quotient: 2x²+5x−3 = (2x−1)(x+3).",
+    "wp-sd-divide": "Q = 2x³−5x²+10x−17, R = 29. f(−2) = 29.",
+    "rat-holes": "f(x) = (x−2)/(x−3), hole at (−2, 4/5). VA: x=3. HA: y=1. x-int: (2,0). y-int: (0,2/3).",
+    "rat-cancel": "g(x) = 3/(x−2), hole at (−2, −3/4). VA: x=2. HA: y=0. No x-int. y-int: (0,−3/2).",
+    "rat-oblique": "h(x) = 2x+1 − 2/(x+1). Oblique: y=2x+1. VA: x=−1. x-int: (−3±√17)/4. y-int: (0,−1).",
+    "rat-all-real": "f(x)=(x−1)/(x²+1). Domain: all reals. No VA. HA: y=0. x-int: (1,0). y-int: (0,−1).",
+    "wp-rat-holes": "Simplified: (x−2)/(x−3), hole at (−3, 5/6). VA: x=3. HA: y=1. x-int: (2,0). y-int: (0,2/3).",
+    "wp-rat-simplify": "g(x) = x, holes at (1,1) and (−1,−1). Linear, no asymptotes.",
+    "wp-rat-oblique": "h(x) = x−1+4/(x+3). Oblique: y=x−1. VA: x=−3. x-int: x=−1 (double).",
+    "ineq-cubic": "x(x−2)(x+2) > 0. Solution: (−2,0) ∪ (2,∞).",
+    "ineq-rational-sub": "5/(x−3) ≤ 0. Solution: (−∞, 3).",
+    "ineq-rational-sign": "(x−3)(x+2)/(x−1) ≥ 0. Solution: [−2,1) ∪ [3,∞).",
+    "wp-ineq-quartic": "(x−2)(x+2)(x−1)(x+1) ≤ 0. Solution: [−2,−1] ∪ [1,2].",
+    "wp-ineq-rational": "(−x−13)/(x+4) > 0. Solution: (−13, −4).",
+    "wp-ineq-cubic2": "x(x−3)(x+2) ≥ 0. Solution: [−2,0] ∪ [3,∞).",
+    "ip-end-behavior": "Degree 5, LC = −3. Rises left, falls right. Max turning pts: 4. Max zeros: 5.",
+    "ip-all-zeros": "x = 1 (mult 2), x = 2, x = −2. All real.",
+    "ip-syn-div": "Q = 4x²−8x+9, R = −15. f(−2) = −15.",
+    "ip-rat-analysis": "Hole at (2,−8). VA: x=3. HA: y=2. x-int: (−2,0). y-int: (0,−4/3).",
+    "ip-rat-hole-or-va": "Remainder = 0 → hole at (−3, 14). Reduces to x²−x+2. No asymptotes.",
+    "ip-rational-ineq": "−2(5x+1)/((x+2)(x−4)) ≤ 0. Solution: (−2, −1/5] ∪ (4, ∞)."
+  },
+  "lessons": [
+    {
+      "lessonId": "polynomial-analysis",
+      "title": "Polynomial Functions: End Behavior & Zeros",
+      "order": 1
+    },
+    {
+      "lessonId": "division-theorems",
+      "title": "Polynomial Division & Factor Theorem",
+      "order": 2
+    },
+    {
+      "lessonId": "rational-functions",
+      "title": "Rational Functions & Inequalities",
+      "order": 3
+    }
+  ]
 }

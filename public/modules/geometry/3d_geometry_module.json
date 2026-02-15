@@ -38,7 +38,8 @@
       "skill": "volume-prisms-cylinders",
       "title": "Volume of Prisms and Cylinders",
       "content": "**Volume of Prisms and Cylinders** (constant cross-section solids):\n\nAll prisms and cylinders share one key idea: the cross-section stays the same from top to bottom. So the volume formula is simply:\n\n**V = Bh** (Base area × height)\n\n| Solid | Base shape | Volume formula |\n|---|---|---|\n| Rectangular prism | Rectangle | V = lwh |\n| Triangular prism | Triangle | V = (½)bh × H |\n| Cylinder | Circle | V = πr²h |\n| Any prism | Any polygon | V = (area of base) × h |\n\n**Cavalieri’s Principle:** If two solids have the same height and the same cross-sectional area at every level, they have the same volume—even if they look different. A slanted cylinder (oblique) and a straight cylinder with the same radius and height have equal volumes.",
-      "initialPrompt": "If a cylinder and a rectangular prism have bases with the same area and the same height, do they have the same volume? Why or why not?"
+      "initialPrompt": "If a cylinder and a rectangular prism have bases with the same area and the same height, do they have the same volume? Why or why not?",
+      "lessonId": "volume-prisms-cylinders"
     },
     {
       "type": "model",
@@ -59,7 +60,8 @@
           "explanation": "**Step 1 — Find the base area:**\nThe base is a right triangle, so B = (½)(6)(8) = 24 square units.\n\n**Step 2 — Apply V = Bh:**\nV = 24 × 10 = 240 cubic units\n\n**Think about it:** Identify the base shape first (triangle), compute its area, then multiply by the prism height. Don’t confuse the triangle’s height (a leg) with the prism’s height (the depth of the solid)."
         }
       ],
-      "initialPrompt": "In example 3, what would happen to the volume if the prism's height doubled from 10 to 20?"
+      "initialPrompt": "In example 3, what would happen to the volume if the prism's height doubled from 10 to 20?",
+      "lessonId": "volume-prisms-cylinders"
     },
     {
       "type": "guided_practice",
@@ -95,7 +97,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what is the base shape of a cylinder, and what formula gives the area of that shape?"
+      "initialPrompt": "For the first problem, what is the base shape of a cylinder, and what formula gives the area of that shape?",
+      "lessonId": "volume-prisms-cylinders"
     },
     {
       "type": "explanation",
@@ -103,7 +106,8 @@
       "skill": "volume-pyramids-cones-spheres",
       "title": "Volume of Pyramids, Cones, and Spheres",
       "content": "**Volume of Pyramids and Cones** (solids that taper to a point):\n\nPyramids and cones are related to prisms and cylinders by a factor of **1/3**:\n\n| Solid | Volume formula |\n|---|---|\n| Pyramid | V = (1/3)Bh |\n| Cone | V = (1/3)πr²h |\n\nWhy 1/3? You can fit exactly **3 pyramids** inside a prism with the same base and height. Imagine filling a cone with water and pouring it into a cylinder of the same dimensions—it takes exactly 3 cone-fulls to fill the cylinder.\n\n**Volume of a Sphere:**\n\n| Solid | Volume formula |\n|---|---|\n| Sphere | V = (4/3)πr³ |\n\nThe sphere formula can be derived by calculus, but the key is that it depends only on the radius—no height, no base area. Double the radius and the volume increases by a factor of 2³ = 8.",
-      "initialPrompt": "If a cone and a cylinder have the same radius and height, and the cylinder holds 90 mL of water, how much would the cone hold?"
+      "initialPrompt": "If a cone and a cylinder have the same radius and height, and the cylinder holds 90 mL of water, how much would the cone hold?",
+      "lessonId": "volume-pyramids-cones-spheres"
     },
     {
       "type": "model",
@@ -124,7 +128,8 @@
           "explanation": "**Identify the formula:** Sphere → V = (4/3)πr³\n\n**Substitute:**\nV = (4/3)π(3³)\nV = (4/3)π(27)\nV = (108/3)π\nV = 36π cm³\n\n**Think about it:** The volume depends only on the radius. If we doubled the radius to 6 cm, the volume would be (4/3)π(216) = 288π—that’s 8 times larger, because 2³ = 8."
         }
       ],
-      "initialPrompt": "In example 1, what if you doubled the radius to 12 cm but kept the height at 10 cm? Would the volume double?"
+      "initialPrompt": "In example 1, what if you doubled the radius to 12 cm but kept the height at 10 cm? Would the volume double?",
+      "lessonId": "volume-pyramids-cones-spheres"
     },
     {
       "type": "guided_practice",
@@ -160,7 +165,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what formula do you use for a cone, and what value of r will you substitute?"
+      "initialPrompt": "For the first problem, what formula do you use for a cone, and what value of r will you substitute?",
+      "lessonId": "volume-pyramids-cones-spheres"
     },
     {
       "type": "explanation",
@@ -168,7 +174,8 @@
       "skill": "surface-area-prisms-cylinders",
       "title": "Surface Area Formulas",
       "content": "**Surface Area** (total area of all outer faces):\n\n**Prism:** SA = 2B + Ph (2 bases + lateral area)\n• Rectangular: SA = 2(lw + lh + wh)\n\n**Cylinder:** SA = 2πr² + 2πrh (2 circles + rectangle that wraps around)\n\n**Pyramid:** SA = B + (½)Pl (base + lateral faces)\n• l = slant height (not vertical height!)\n\n**Cone:** SA = πr² + πrl (base circle + lateral surface)\n• l = slant height\n\n**Sphere:** SA = 4πr²\n\nThe slant height (l) is different from the vertical height (h). For cones and pyramids, use the Pythagorean Theorem: l² = r² + h² (cone) or l² = h² + (half base)² (pyramid).",
-      "initialPrompt": "Why do you think we need the slant height for surface area but the vertical height for volume? Think about what each formula is actually measuring."
+      "initialPrompt": "Why do you think we need the slant height for surface area but the vertical height for volume? Think about what each formula is actually measuring.",
+      "lessonId": "surface-area-prisms-cylinders"
     },
     {
       "type": "model",
@@ -189,7 +196,8 @@
           "explanation": "**Step 1 — Find the radius:**\nr = 14 ÷ 2 = 7 cm\n\n**Step 2 — Apply SA = 4πr²:**\nSA = 4π(7²)\nSA = 4π(49)\nSA = 196π cm²\n\n**Think about it:** The surface area of a sphere equals exactly 4 times the area of a great circle (πr²). So SA = 4 × 49π = 196π."
         }
       ],
-      "initialPrompt": "For the cylinder, what are the three 'pieces' of its surface: two _____ and one _____?"
+      "initialPrompt": "For the cylinder, what are the three 'pieces' of its surface: two _____ and one _____?",
+      "lessonId": "surface-area-prisms-cylinders"
     },
     {
       "type": "guided_practice",
@@ -225,7 +233,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, why can't you use the given height directly in the surface area formula for a cone?"
+      "initialPrompt": "For the first problem, why can't you use the given height directly in the surface area formula for a cone?",
+      "lessonId": "surface-area-pyramids-cones-spheres"
     },
     {
       "type": "independent_practice",
@@ -274,7 +283,8 @@
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "lessonId": "3d-applications"
     }
   ],
   "answerKeys": {
@@ -292,5 +302,32 @@
     "td-yp3": "6 cm",
     "td-yp4": "l = 13, SA = 90π",
     "td-yp5": "72π ft³"
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "volume-prisms-cylinders",
+      "title": "Volume of Prisms and Cylinders",
+      "order": 1
+    },
+    {
+      "lessonId": "volume-pyramids-cones-spheres",
+      "title": "Volume of Pyramids, Cones, and Spheres",
+      "order": 2
+    },
+    {
+      "lessonId": "surface-area-prisms-cylinders",
+      "title": "Surface Area of Prisms and Cylinders",
+      "order": 3
+    },
+    {
+      "lessonId": "surface-area-pyramids-cones-spheres",
+      "title": "Surface Area of Pyramids, Cones, and Spheres",
+      "order": 4
+    },
+    {
+      "lessonId": "3d-applications",
+      "title": "3D Geometry Applications",
+      "order": 5
+    }
+  ]
 }

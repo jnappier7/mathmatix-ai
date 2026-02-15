@@ -59,7 +59,8 @@
         "Trapezoidal sum: average of LRS and RRS. Formula: (Delta_x / 2) * [f(x_0) + 2f(x_1) + 2f(x_2) + ... + 2f(x_{n-1}) + f(x_n)].",
         "Over/underestimates: if f is increasing on [a, b], LRS is an underestimate and RRS is an overestimate. If f is decreasing, it's reversed. If f is concave up, the trapezoidal sum is an overestimate.",
         "As n approaches infinity, all Riemann sums converge to the definite integral: integral from a to b of f(x)dx = lim(n->infinity) sum of f(x_i)*Delta_x."
-      ]
+      ],
+      "lessonId": "accumulation-riemann"
     },
     {
       "type": "model",
@@ -79,7 +80,8 @@
           "problem": "Using sigma notation, write the right Riemann sum for the integral from 1 to 5 of sqrt(x) dx with n subintervals, then compute the approximation for n = 4.",
           "solution": "Delta_x = (5 - 1)/n = 4/n. Right endpoints: x_i = 1 + i*(4/n). Sigma notation: sum from i=1 to n of sqrt(1 + 4i/n) * (4/n). For n = 4: Delta_x = 1. Right endpoints: x = 2, 3, 4, 5. RRS = sqrt(2)*1 + sqrt(3)*1 + sqrt(4)*1 + sqrt(5)*1 = 1.414 + 1.732 + 2 + 2.236 = 7.382. Since sqrt(x) is increasing, the right Riemann sum is an OVERESTIMATE. (Exact value: (2/3)(5^(3/2) - 1) approximately 6.787.)"
         }
-      ]
+      ],
+      "lessonId": "ftc"
     },
     {
       "type": "explanation",
@@ -94,7 +96,8 @@
         "FTC Part 2 (Evaluation Theorem): If F is any antiderivative of f on [a, b], then integral from a to b of f(x)dx = F(b) - F(a). We write F(x) | from a to b = F(b) - F(a).",
         "Part 2 transforms the difficult limit-of-Riemann-sums computation into a simple subtraction, once you know an antiderivative.",
         "Connection: Part 1 guarantees that continuous functions HAVE antiderivatives (the integral itself is one). Part 2 shows how to USE antiderivatives to evaluate definite integrals."
-      ]
+      ],
+      "lessonId": "antiderivatives"
     },
     {
       "type": "model",
@@ -114,7 +117,8 @@
           "problem": "Evaluate: integral from 1 to 4 of (3x^2 - 2x + 5) dx using FTC Part 2.",
           "solution": "Find an antiderivative: F(x) = x^3 - x^2 + 5x. (No +C needed for definite integrals.) Apply FTC Part 2: F(4) - F(1) = (64 - 16 + 20) - (1 - 1 + 5) = 68 - 5 = 63."
         }
-      ]
+      ],
+      "lessonId": "antiderivatives"
     },
     {
       "type": "guided_practice",
@@ -159,7 +163,8 @@
           "answer": "F(x) = 2sin(x) + 3x. F(pi) - F(0) = (2sin(pi) + 3pi) - (2sin(0) + 0) = (0 + 3pi) - 0 = 3pi."
         }
       ],
-      "skill": "ftc-part-1"
+      "skill": "ftc-part-1",
+      "lessonId": "antiderivatives"
     },
     {
       "type": "explanation",
@@ -174,7 +179,8 @@
         "Exponential/logarithmic: integral of e^x dx = e^x + C. integral of a^x dx = a^x/ln(a) + C.",
         "The +C is CRITICAL for indefinite integrals. It accounts for the family of ALL antiderivatives (vertical shifts of the same curve).",
         "Constant multiple and sum rules: integral of k*f(x)dx = k*integral of f(x)dx. integral of [f(x) +/- g(x)]dx = integral of f(x)dx +/- integral of g(x)dx."
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "model",
@@ -194,7 +200,8 @@
           "problem": "Evaluate: integral of (sqrt(x) + 1/x^2) dx. Rewrite using exponents first.",
           "solution": "Rewrite: integral of (x^(1/2) + x^(-2)) dx. Power rule: x^(1/2) -> x^(3/2)/(3/2) = (2/3)x^(3/2). x^(-2) -> x^(-1)/(-1) = -1/x. Result: (2/3)x^(3/2) - 1/x + C. Always rewrite radicals and fractions as powers of x before integrating."
         }
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "explanation",
@@ -209,7 +216,8 @@
         "Common patterns: integral of f(ax + b)dx -> u = ax + b, du = a*dx. integral of f(x^n)*x^(n-1)dx -> u = x^n. integral of [f(x)]^n * f'(x)dx -> u = f(x).",
         "If du is off by a constant factor, adjust: e.g., if you need 3x^2 dx but only have x^2 dx, write x^2 dx = (1/3)du.",
         "Always check your answer by differentiating the result -- you should recover the original integrand."
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "model",
@@ -229,7 +237,8 @@
           "problem": "Evaluate the definite integral: integral from 0 to 2 of x * sqrt(x^2 + 1) dx.",
           "solution": "Let u = x^2 + 1. Then du = 2x dx, so x dx = du/2. Change bounds: when x = 0, u = 1; when x = 2, u = 5. Integral becomes: integral from 1 to 5 of sqrt(u) * (du/2) = (1/2) * integral from 1 to 5 of u^(1/2) du = (1/2) * [u^(3/2)/(3/2)] from 1 to 5 = (1/2)(2/3)[u^(3/2)] from 1 to 5 = (1/3)[5^(3/2) - 1^(3/2)] = (1/3)(5*sqrt(5) - 1) = (5*sqrt(5) - 1)/3."
         }
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "explanation",
@@ -244,7 +253,8 @@
         "Sum/difference (linearity): integral from a to b of [f(x) +/- g(x)]dx = integral from a to b of f(x)dx +/- integral from a to b of g(x)dx.",
         "Additivity over intervals: integral from a to b of f(x)dx + integral from b to c of f(x)dx = integral from a to c of f(x)dx. You can split or combine adjacent intervals.",
         "These properties are tools for reasoning -- on the AP exam, you may need to combine 2-3 properties in a single problem."
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "model",
@@ -260,7 +270,8 @@
           "problem": "Given: integral from 0 to 7 of f(x)dx = 10 and integral from 0 to 3 of f(x)dx = 4. Find: integral from 3 to 7 of f(x)dx and integral from 7 to 3 of f(x)dx.",
           "solution": "Additivity: integral from 0 to 3 + integral from 3 to 7 = integral from 0 to 7. So integral from 3 to 7 = 10 - 4 = 6. Reversing limits: integral from 7 to 3 of f(x)dx = -integral from 3 to 7 of f(x)dx = -6."
         }
-      ]
+      ],
+      "lessonId": "integral-properties"
     },
     {
       "type": "guided_practice",
@@ -301,7 +312,8 @@
           "answer": "By additivity: integral from 2 to 9 of f(x)dx = 12 + 7 = 19. By linearity: integral from 2 to 9 of [f(x) + 3g(x)]dx = 19 + 3(-5) = 19 - 15 = 4."
         }
       ],
-      "skill": "integral-properties-techniques"
+      "skill": "integral-properties-techniques",
+      "lessonId": "integral-properties"
     },
     {
       "type": "independent_practice",
@@ -333,7 +345,8 @@
           "answer": "(a) Additivity: integral from 0 to 7 of f(x)dx = 10 + (-2) = 8. (b) Reversing limits: integral from 7 to 0 of f(x)dx = -8. (c) Linearity: 3*integral of f - 2*integral of g = 3(8) - 2(6) = 24 - 12 = 12."
         }
       ],
-      "skill": "definite-integral-as-accumulation"
+      "skill": "definite-integral-as-accumulation",
+      "lessonId": "accumulation-riemann"
     }
   ],
   "answerKeys": {
@@ -365,5 +378,32 @@
     "ip-ftc2-exponential": "19 - e^3.",
     "ip-usub-definite-sec2": "sqrt(3)/2.",
     "ip-properties-all": "(a) 8. (b) -8. (c) 12."
-  }
+  },
+  "lessons": [
+    {
+      "lessonId": "accumulation-riemann",
+      "title": "Definite Integral as Accumulation & Riemann Sums",
+      "order": 1
+    },
+    {
+      "lessonId": "ftc",
+      "title": "Fundamental Theorem of Calculus (Parts 1 & 2)",
+      "order": 2
+    },
+    {
+      "lessonId": "antiderivatives",
+      "title": "Antiderivatives & Indefinite Integrals",
+      "order": 3
+    },
+    {
+      "lessonId": "u-substitution",
+      "title": "u-Substitution",
+      "order": 4
+    },
+    {
+      "lessonId": "integral-properties",
+      "title": "Properties of Integrals",
+      "order": 5
+    }
+  ]
 }

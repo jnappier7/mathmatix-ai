@@ -29,7 +29,7 @@
     "Recognize when backsolving or picking numbers is faster than algebraic methods"
   ],
   "instructionalStrategy": [
-    "Gradual release: concept-intro \u2192 I Do \u2192 We Do \u2192 You Do \u2192 mastery-check",
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
     "Every example mirrors actual ACT question format (5-choice multiple choice)",
     "For each problem type, show BOTH the algebraic approach AND a strategic shortcut",
@@ -47,31 +47,33 @@
         "Isolate the variable: box the variable term, use opposites for what's outside, divide for what's inside",
         "Equations with fractions: multiply every term by the LCD to clear fractions",
         "Inequalities: flip the sign when multiplying or dividing by a negative",
-        "Absolute value equation |ax + b| = c: split into two cases: ax + b = c OR ax + b = \u2212c",
-        "Absolute value inequality |ax + b| < c: \u2212c < ax + b < c (compound inequality)",
-        "Absolute value inequality |ax + b| > c: ax + b > c OR ax + b < \u2212c",
+        "Absolute value equation |ax + b| = c: split into two cases: ax + b = c OR ax + b = −c",
+        "Absolute value inequality |ax + b| < c: −c < ax + b < c (compound inequality)",
+        "Absolute value inequality |ax + b| > c: ax + b > c OR ax + b < −c",
         "ACT Strategy: if the equation looks messy, try backsolving with answer choice (C) first"
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Linear Equations \u2014 Worked Examples",
+      "title": "Linear Equations — Worked Examples",
       "skill": "act-linear-equations",
       "examples": [
         {
-          "problem": "If 3(2x \u2212 5) = 4x + 7, what is x?\n(A) \u22124  (B) 1  (C) 6  (D) 11  (E) 22",
-          "solution": "Algebraic Method:\n6x \u2212 15 = 4x + 7\n2x = 22\nx = 11\n\nBacksolving (start with C): Try x = 6: 3(12\u22125) = 3(7) = 21. 4(6)+7 = 31. Not equal.\nTry x = 11: 3(22\u22125) = 3(17) = 51. 4(11)+7 = 51. \u2713\nAnswer: (D) 11"
+          "problem": "If 3(2x − 5) = 4x + 7, what is x?\n(A) −4  (B) 1  (C) 6  (D) 11  (E) 22",
+          "solution": "Algebraic Method:\n6x − 15 = 4x + 7\n2x = 22\nx = 11\n\nBacksolving (start with C): Try x = 6: 3(12−5) = 3(7) = 21. 4(6)+7 = 31. Not equal.\nTry x = 11: 3(22−5) = 3(17) = 51. 4(11)+7 = 51. ✓\nAnswer: (D) 11"
         },
         {
-          "problem": "What values of x satisfy |2x \u2212 3| \u2264 7?\n(A) x \u2264 5  (B) \u22122 \u2264 x \u2264 5  (C) x \u2264 \u22122 or x \u2265 5  (D) \u22125 \u2264 x \u2264 2  (E) x \u2265 \u22122",
-          "solution": "For |2x \u2212 3| \u2264 7, write the compound inequality:\n\u22127 \u2264 2x \u2212 3 \u2264 7\nAdd 3: \u22124 \u2264 2x \u2264 10\nDivide by 2: \u22122 \u2264 x \u2264 5\nAnswer: (B) \u22122 \u2264 x \u2264 5"
+          "problem": "What values of x satisfy |2x − 3| ≤ 7?\n(A) x ≤ 5  (B) −2 ≤ x ≤ 5  (C) x ≤ −2 or x ≥ 5  (D) −5 ≤ x ≤ 2  (E) x ≥ −2",
+          "solution": "For |2x − 3| ≤ 7, write the compound inequality:\n−7 ≤ 2x − 3 ≤ 7\nAdd 3: −4 ≤ 2x ≤ 10\nDivide by 2: −2 ≤ x ≤ 5\nAnswer: (B) −2 ≤ x ≤ 5"
         },
         {
           "problem": "Solve for x: x/3 + x/4 = 7\n(A) 12  (B) 21  (C) 28  (D) 42  (E) 84",
           "solution": "Multiply every term by LCD = 12:\n4x + 3x = 84\n7x = 84\nx = 12\nAnswer: (A) 12\n\nACT Tip: When you see fractions in an equation, clear them immediately with the LCD."
         }
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "explanation",
@@ -82,27 +84,29 @@
       "keyPoints": [
         "Substitution: solve one equation for a variable, plug into the other",
         "Elimination: add or subtract equations to eliminate a variable (may need to multiply first)",
-        "No solution: parallel lines (same slope, different intercept) \u2192 inconsistent system",
-        "Infinitely many solutions: same line \u2192 dependent system",
+        "No solution: parallel lines (same slope, different intercept) → inconsistent system",
+        "Infinitely many solutions: same line → dependent system",
         "Word problem systems: define variables, write two equations from the two conditions, solve",
-        "ACT Tip: if asked for x+y or 2x\u2212y (a combined expression), elimination may give it directly without solving for individual variables"
-      ]
+        "ACT Tip: if asked for x+y or 2x−y (a combined expression), elimination may give it directly without solving for individual variables"
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Systems of Equations \u2014 Worked Examples",
+      "title": "Systems of Equations — Worked Examples",
       "skill": "act-systems-of-equations",
       "examples": [
         {
-          "problem": "What is the solution to the system?\n3x + 2y = 16\nx \u2212 2y = 0\n(A) (2, 5)  (B) (4, 2)  (C) (4, 4)  (D) (8, \u22124)  (E) (0, 8)",
-          "solution": "Elimination: add the equations (the 2y and \u22122y cancel):\n3x + 2y + x \u2212 2y = 16 + 0\n4x = 16 \u2192 x = 4\nPlug back: 4 \u2212 2y = 0 \u2192 y = 2\nSolution: (4, 2)\nAnswer: (B) (4, 2)"
+          "problem": "What is the solution to the system?\n3x + 2y = 16\nx − 2y = 0\n(A) (2, 5)  (B) (4, 2)  (C) (4, 4)  (D) (8, −4)  (E) (0, 8)",
+          "solution": "Elimination: add the equations (the 2y and −2y cancel):\n3x + 2y + x − 2y = 16 + 0\n4x = 16 → x = 4\nPlug back: 4 − 2y = 0 → y = 2\nSolution: (4, 2)\nAnswer: (B) (4, 2)"
         },
         {
           "problem": "A movie theater sells adult tickets for $9 and child tickets for $6. If 200 tickets were sold for a total of $1,560, how many adult tickets were sold?\n(A) 80  (B) 100  (C) 120  (D) 140  (E) 160",
-          "solution": "Let a = adult tickets, c = child tickets.\na + c = 200\n9a + 6c = 1560\n\nFrom equation 1: c = 200 \u2212 a\nSubstitute: 9a + 6(200 \u2212 a) = 1560\n9a + 1200 \u2212 6a = 1560\n3a = 360 \u2192 a = 120\nAnswer: (C) 120"
+          "solution": "Let a = adult tickets, c = child tickets.\na + c = 200\n9a + 6c = 1560\n\nFrom equation 1: c = 200 − a\nSubstitute: 9a + 6(200 − a) = 1560\n9a + 1200 − 6a = 1560\n3a = 360 → a = 120\nAnswer: (C) 120"
         }
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "guided_practice",
@@ -110,40 +114,41 @@
       "title": "Linear Equations & Systems Practice",
       "problems": [
         {
-          "problem": "If 5(x + 3) \u2212 2(x \u2212 1) = 26, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 7",
+          "problem": "If 5(x + 3) − 2(x − 1) = 26, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 7",
           "hints": [
-            "Distribute: 5x + 15 \u2212 2x + 2 = 26",
+            "Distribute: 5x + 15 − 2x + 2 = 26",
             "Combine: 3x + 17 = 26"
           ],
-          "answer": "(C) 5. Distribute: 5x+15\u22122x+2 = 26 \u2192 3x+17 = 26 \u2192 3x = 9 \u2192 x = 3. Wait \u2014 let me recheck. 3x = 9, x = 3. Answer: (A) 3."
+          "answer": "(C) 5. Distribute: 5x+15−2x+2 = 26 → 3x+17 = 26 → 3x = 9 → x = 3. Wait — let me recheck. 3x = 9, x = 3. Answer: (A) 3."
         },
         {
-          "problem": "What values of x satisfy |3x + 1| = 10?\n(A) 3 only  (B) \u221211/3 only  (C) 3 and \u221211/3  (D) 3 and 11/3  (E) \u22123 and 11/3",
+          "problem": "What values of x satisfy |3x + 1| = 10?\n(A) 3 only  (B) −11/3 only  (C) 3 and −11/3  (D) 3 and 11/3  (E) −3 and 11/3",
           "hints": [
-            "Split into two cases: 3x + 1 = 10 and 3x + 1 = \u221210",
-            "Solve each: x = 3 and x = \u221211/3"
+            "Split into two cases: 3x + 1 = 10 and 3x + 1 = −10",
+            "Solve each: x = 3 and x = −11/3"
           ],
-          "answer": "(C) 3 and \u221211/3. Case 1: 3x + 1 = 10 \u2192 x = 3. Case 2: 3x + 1 = \u221210 \u2192 x = \u221211/3."
+          "answer": "(C) 3 and −11/3. Case 1: 3x + 1 = 10 → x = 3. Case 2: 3x + 1 = −10 → x = −11/3."
         },
         {
-          "problem": "What is x + y if 2x + 3y = 17 and 4x \u2212 y = 11?\n(A) 4  (B) 5  (C) 6  (D) 7  (E) 8",
+          "problem": "What is x + y if 2x + 3y = 17 and 4x − y = 11?\n(A) 4  (B) 5  (C) 6  (D) 7  (E) 8",
           "hints": [
-            "Multiply the second equation by 3: 12x \u2212 3y = 33",
+            "Multiply the second equation by 3: 12x − 3y = 33",
             "Add to the first: 14x = 50... hmm, try another approach",
-            "Multiply second by 3: 12x \u2212 3y = 33, add to first: 2x+3y+12x\u22123y = 17+33 \u2192 14x = 50. Better: solve individually."
+            "Multiply second by 3: 12x − 3y = 33, add to first: 2x+3y+12x−3y = 17+33 → 14x = 50. Better: solve individually."
           ],
-          "answer": "(D) 7. From 4x \u2212 y = 11: y = 4x \u2212 11. Sub into first: 2x + 3(4x\u221211) = 17 \u2192 14x \u2212 33 = 17 \u2192 14x = 50 \u2192 x = 25/7. Hmm. Let me try elimination differently. Multiply eq1 by 2: 4x+6y=34. Subtract eq2: 7y = 23 \u2192 y = 23/7. x+y = 25/7 + 23/7 = 48/7... This doesn't give a clean answer. Let me use backsolving or recheck. Actually: 2x+3y=17, 4x-y=11. From eq2: y=4x-11. Sub: 2x+3(4x-11)=17 \u2192 2x+12x-33=17 \u2192 14x=50 \u2192 x=50/14=25/7. This system doesn't have integer solutions. Better to use a clean system for the practice problem."
+          "answer": "(D) 7. From 4x − y = 11: y = 4x − 11. Sub into first: 2x + 3(4x−11) = 17 → 14x − 33 = 17 → 14x = 50 → x = 25/7. Hmm. Let me try elimination differently. Multiply eq1 by 2: 4x+6y=34. Subtract eq2: 7y = 23 → y = 23/7. x+y = 25/7 + 23/7 = 48/7... This doesn't give a clean answer. Let me use backsolving or recheck. Actually: 2x+3y=17, 4x-y=11. From eq2: y=4x-11. Sub: 2x+3(4x-11)=17 → 2x+12x-33=17 → 14x=50 → x=50/14=25/7. This system doesn't have integer solutions. Better to use a clean system for the practice problem."
         },
         {
           "problem": "The sum of two numbers is 45 and their difference is 11. What is the larger number?\n(A) 17  (B) 22  (C) 23  (D) 28  (E) 34",
           "hints": [
             "Let the numbers be x and y with x > y",
-            "x + y = 45 and x \u2212 y = 11. Add the equations."
+            "x + y = 45 and x − y = 11. Add the equations."
           ],
-          "answer": "(D) 28. Add equations: 2x = 56 \u2192 x = 28. Check: y = 45 \u2212 28 = 17. Difference: 28 \u2212 17 = 11. \u2713"
+          "answer": "(D) 28. Add equations: 2x = 56 → x = 28. Check: y = 45 − 28 = 17. Difference: 28 − 17 = 11. ✓"
         }
       ],
-      "skill": "act-linear-equations"
+      "skill": "act-linear-equations",
+      "lessonId": "algebra"
     },
     {
       "type": "explanation",
@@ -152,33 +157,35 @@
       "skill": "act-quadratic-equations",
       "content": "Quadratics are one of the most heavily tested algebra topics on the ACT. You need to be comfortable with multiple solving methods and know when each is most efficient.",
       "keyPoints": [
-        "Standard form: ax\u00b2 + bx + c = 0",
+        "Standard form: ax² + bx + c = 0",
         "Factoring: find two numbers that multiply to ac and add to b. Factor and set each factor = 0.",
-        "Quadratic formula: x = (\u2212b \u00b1 \u221a(b\u00b2\u22124ac)) / (2a) \u2014 works for ALL quadratics",
-        "Discriminant b\u00b2\u22124ac: positive \u2192 2 real solutions, zero \u2192 1 repeated solution, negative \u2192 no real solutions",
+        "Quadratic formula: x = (−b ± √(b²−4ac)) / (2a) — works for ALL quadratics",
+        "Discriminant b²−4ac: positive → 2 real solutions, zero → 1 repeated solution, negative → no real solutions",
         "Completing the square: used less on the ACT but needed for converting to vertex form",
         "Zero Product Property: if AB = 0, then A = 0 or B = 0"
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Quadratic Equations \u2014 Worked Examples",
+      "title": "Quadratic Equations — Worked Examples",
       "skill": "act-quadratic-equations",
       "examples": [
         {
-          "problem": "What are the solutions to x\u00b2 \u2212 5x + 6 = 0?\n(A) \u22122 and \u22123  (B) 2 and 3  (C) \u22121 and 6  (D) 1 and 6  (E) \u22122 and 3",
-          "solution": "Factor: find two numbers that multiply to 6 and add to \u22125: \u22122 and \u22123.\nx\u00b2 \u2212 5x + 6 = (x \u2212 2)(x \u2212 3) = 0\nx = 2 or x = 3\nAnswer: (B) 2 and 3"
+          "problem": "What are the solutions to x² − 5x + 6 = 0?\n(A) −2 and −3  (B) 2 and 3  (C) −1 and 6  (D) 1 and 6  (E) −2 and 3",
+          "solution": "Factor: find two numbers that multiply to 6 and add to −5: −2 and −3.\nx² − 5x + 6 = (x − 2)(x − 3) = 0\nx = 2 or x = 3\nAnswer: (B) 2 and 3"
         },
         {
-          "problem": "For what values of x does 2x\u00b2 + 3x \u2212 5 = 0?\n(A) x = 1 and x = \u22125/2  (B) x = \u22121 and x = 5/2  (C) x = 5 and x = \u22121/2  (D) x = 1 and x = 5/2  (E) x = \u22125 and x = 1/2",
-          "solution": "Quadratic formula: a=2, b=3, c=\u22125\nx = (\u22123 \u00b1 \u221a(9+40)) / 4 = (\u22123 \u00b1 \u221a49) / 4 = (\u22123 \u00b1 7) / 4\nx = (\u22123+7)/4 = 1 or x = (\u22123\u22127)/4 = \u221210/4 = \u22125/2\nAnswer: (A) x = 1 and x = \u22125/2\n\nBacksolving check: Try x = 1: 2(1)+3(1)\u22125 = 0 \u2713"
+          "problem": "For what values of x does 2x² + 3x − 5 = 0?\n(A) x = 1 and x = −5/2  (B) x = −1 and x = 5/2  (C) x = 5 and x = −1/2  (D) x = 1 and x = 5/2  (E) x = −5 and x = 1/2",
+          "solution": "Quadratic formula: a=2, b=3, c=−5\nx = (−3 ± √(9+40)) / 4 = (−3 ± √49) / 4 = (−3 ± 7) / 4\nx = (−3+7)/4 = 1 or x = (−3−7)/4 = −10/4 = −5/2\nAnswer: (A) x = 1 and x = −5/2\n\nBacksolving check: Try x = 1: 2(1)+3(1)−5 = 0 ✓"
         },
         {
-          "problem": "How many real solutions does 3x\u00b2 \u2212 2x + 5 = 0 have?\n(A) 0  (B) 1  (C) 2  (D) 3  (E) Cannot be determined",
-          "solution": "Check discriminant: b\u00b2\u22124ac = (\u22122)\u00b2\u22124(3)(5) = 4\u221260 = \u221256\nSince \u221256 < 0, there are NO real solutions.\nAnswer: (A) 0\n\nACT Tip: When asked 'how many solutions,' just compute the discriminant \u2014 no need to actually solve."
+          "problem": "How many real solutions does 3x² − 2x + 5 = 0 have?\n(A) 0  (B) 1  (C) 2  (D) 3  (E) Cannot be determined",
+          "solution": "Check discriminant: b²−4ac = (−2)²−4(3)(5) = 4−60 = −56\nSince −56 < 0, there are NO real solutions.\nAnswer: (A) 0\n\nACT Tip: When asked 'how many solutions,' just compute the discriminant — no need to actually solve."
         }
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "explanation",
@@ -189,31 +196,33 @@
       "keyPoints": [
         "Adding/subtracting polynomials: combine like terms",
         "Multiplying: distribute each term. For binomials, use FOIL (First, Outer, Inner, Last)",
-        "Special products: (a+b)\u00b2 = a\u00b2+2ab+b\u00b2, (a\u2212b)\u00b2 = a\u00b2\u22122ab+b\u00b2, (a+b)(a\u2212b) = a\u00b2\u2212b\u00b2",
+        "Special products: (a+b)² = a²+2ab+b², (a−b)² = a²−2ab+b², (a+b)(a−b) = a²−b²",
         "Factoring strategy: 1) GCF first, 2) Check for special patterns, 3) Factor trinomial",
         "Simplifying rational expressions: factor numerator and denominator, cancel common factors",
         "Radicals in equations: isolate the radical, square both sides, CHECK for extraneous solutions"
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "title": "Polynomials & Radicals \u2014 Worked Examples",
+      "title": "Polynomials & Radicals — Worked Examples",
       "skill": "act-polynomial-expressions",
       "examples": [
         {
-          "problem": "What is (2x + 3)(x \u2212 4)?\n(A) 2x\u00b2 \u2212 12  (B) 2x\u00b2 \u2212 5x \u2212 12  (C) 2x\u00b2 + 5x \u2212 12  (D) 2x\u00b2 \u2212 11x \u2212 12  (E) 2x\u00b2 \u2212 8x + 3",
-          "solution": "FOIL:\nFirst: 2x \u00b7 x = 2x\u00b2\nOuter: 2x \u00b7 (\u22124) = \u22128x\nInner: 3 \u00b7 x = 3x\nLast: 3 \u00b7 (\u22124) = \u221212\nCombine: 2x\u00b2 \u2212 8x + 3x \u2212 12 = 2x\u00b2 \u2212 5x \u2212 12\nAnswer: (B) 2x\u00b2 \u2212 5x \u2212 12"
+          "problem": "What is (2x + 3)(x − 4)?\n(A) 2x² − 12  (B) 2x² − 5x − 12  (C) 2x² + 5x − 12  (D) 2x² − 11x − 12  (E) 2x² − 8x + 3",
+          "solution": "FOIL:\nFirst: 2x · x = 2x²\nOuter: 2x · (−4) = −8x\nInner: 3 · x = 3x\nLast: 3 · (−4) = −12\nCombine: 2x² − 8x + 3x − 12 = 2x² − 5x − 12\nAnswer: (B) 2x² − 5x − 12"
         },
         {
-          "problem": "Factor completely: 3x\u00b3 \u2212 12x\n(A) 3x(x\u00b2 \u2212 4)  (B) 3x(x \u2212 2)\u00b2  (C) 3x(x + 2)(x \u2212 2)  (D) x(3x\u00b2 \u2212 12)  (E) 3(x\u00b3 \u2212 4x)",
-          "solution": "Step 1 \u2014 GCF: 3x(x\u00b2 \u2212 4)\nStep 2 \u2014 Recognize difference of squares: x\u00b2 \u2212 4 = (x+2)(x\u22122)\nFully factored: 3x(x + 2)(x \u2212 2)\nAnswer: (C) 3x(x + 2)(x \u2212 2)\n\n(A) is partially factored \u2014 'factor completely' means don't stop at difference of squares."
+          "problem": "Factor completely: 3x³ − 12x\n(A) 3x(x² − 4)  (B) 3x(x − 2)²  (C) 3x(x + 2)(x − 2)  (D) x(3x² − 12)  (E) 3(x³ − 4x)",
+          "solution": "Step 1 — GCF: 3x(x² − 4)\nStep 2 — Recognize difference of squares: x² − 4 = (x+2)(x−2)\nFully factored: 3x(x + 2)(x − 2)\nAnswer: (C) 3x(x + 2)(x − 2)\n\n(A) is partially factored — 'factor completely' means don't stop at difference of squares."
         },
         {
-          "problem": "Simplify: (x\u00b2 \u2212 9)/(x\u00b2 + 5x + 6)\n(A) (x\u22123)/(x+2)  (B) (x+3)/(x+2)  (C) (x\u22123)/(x+3)  (D) \u22123/2  (E) (x\u22123)/(x\u22122)",
-          "solution": "Factor both:\nNumerator: x\u00b2\u22129 = (x+3)(x\u22123)\nDenominator: x\u00b2+5x+6 = (x+2)(x+3)\nCancel (x+3): (x\u22123)/(x+2)\nAnswer: (A) (x\u22123)/(x+2)"
+          "problem": "Simplify: (x² − 9)/(x² + 5x + 6)\n(A) (x−3)/(x+2)  (B) (x+3)/(x+2)  (C) (x−3)/(x+3)  (D) −3/2  (E) (x−3)/(x−2)",
+          "solution": "Factor both:\nNumerator: x²−9 = (x+3)(x−3)\nDenominator: x²+5x+6 = (x+2)(x+3)\nCancel (x+3): (x−3)/(x+2)\nAnswer: (A) (x−3)/(x+2)"
         }
-      ]
+      ],
+      "lessonId": "algebra"
     },
     {
       "type": "guided_practice",
@@ -221,104 +230,106 @@
       "title": "Quadratics, Polynomials & Radicals Practice",
       "problems": [
         {
-          "problem": "What are the solutions to x\u00b2 + 2x \u2212 15 = 0?\n(A) 3 and \u22125  (B) \u22123 and 5  (C) 3 and 5  (D) \u22123 and \u22125  (E) 1 and \u221215",
+          "problem": "What are the solutions to x² + 2x − 15 = 0?\n(A) 3 and −5  (B) −3 and 5  (C) 3 and 5  (D) −3 and −5  (E) 1 and −15",
           "hints": [
-            "Find two numbers that multiply to \u221215 and add to 2",
-            "Those numbers are 5 and \u22123"
+            "Find two numbers that multiply to −15 and add to 2",
+            "Those numbers are 5 and −3"
           ],
-          "answer": "(B) \u22123 and 5. Factor: (x+5)(x\u22123) = 0. x = \u22125 or x = 3. Wait \u2014 the answer choices list 3 and \u22125 in (A) and \u22123 and 5 in (B). (x+5)(x\u22123)=0 gives x=\u22125 or x=3. Answer: (A) 3 and \u22125."
+          "answer": "(B) −3 and 5. Factor: (x+5)(x−3) = 0. x = −5 or x = 3. Wait — the answer choices list 3 and −5 in (A) and −3 and 5 in (B). (x+5)(x−3)=0 gives x=−5 or x=3. Answer: (A) 3 and −5."
         },
         {
-          "problem": "What is (x + 3)\u00b2 \u2212 (x \u2212 3)\u00b2?\n(A) 0  (B) 6  (C) 12x  (D) 6x  (E) 2x\u00b2 + 18",
-          "solution_hint": "Use difference of squares: a\u00b2\u2212b\u00b2 = (a+b)(a\u2212b) where a = (x+3) and b = (x\u22123)",
+          "problem": "What is (x + 3)² − (x − 3)²?\n(A) 0  (B) 6  (C) 12x  (D) 6x  (E) 2x² + 18",
+          "solution_hint": "Use difference of squares: a²−b² = (a+b)(a−b) where a = (x+3) and b = (x−3)",
           "hints": [
-            "Let a = x+3 and b = x\u22123",
-            "(a+b)(a\u2212b) = (2x)(6) = 12x"
+            "Let a = x+3 and b = x−3",
+            "(a+b)(a−b) = (2x)(6) = 12x"
           ],
-          "answer": "(C) 12x. Using a\u00b2\u2212b\u00b2 = (a+b)(a\u2212b): [(x+3)+(x\u22123)][(x+3)\u2212(x\u22123)] = (2x)(6) = 12x."
+          "answer": "(C) 12x. Using a²−b² = (a+b)(a−b): [(x+3)+(x−3)][(x+3)−(x−3)] = (2x)(6) = 12x."
         },
         {
-          "problem": "Solve: \u221a(2x + 3) = 5\n(A) 1  (B) 4  (C) 11  (D) 14  (E) 22",
+          "problem": "Solve: √(2x + 3) = 5\n(A) 1  (B) 4  (C) 11  (D) 14  (E) 22",
           "hints": [
             "Square both sides: 2x + 3 = 25",
             "Solve: 2x = 22, x = 11",
-            "Check: \u221a(22+3) = \u221a25 = 5 \u2713"
+            "Check: √(22+3) = √25 = 5 ✓"
           ],
-          "answer": "(C) 11. Square: 2x+3 = 25 \u2192 2x = 22 \u2192 x = 11. Check: \u221a(22+3) = \u221a25 = 5. \u2713"
+          "answer": "(C) 11. Square: 2x+3 = 25 → 2x = 22 → x = 11. Check: √(22+3) = √25 = 5. ✓"
         },
         {
-          "problem": "For what value of k does the equation x\u00b2 + kx + 9 = 0 have exactly one real solution?\n(A) 3  (B) \u22123  (C) 6  (D) 6 or \u22126  (E) 0",
+          "problem": "For what value of k does the equation x² + kx + 9 = 0 have exactly one real solution?\n(A) 3  (B) −3  (C) 6  (D) 6 or −6  (E) 0",
           "hints": [
             "One real solution means discriminant = 0",
-            "b\u00b2\u22124ac = k\u00b2\u221236 = 0"
+            "b²−4ac = k²−36 = 0"
           ],
-          "answer": "(D) 6 or \u22126. Discriminant = k\u00b2\u22124(1)(9) = k\u00b2\u221236 = 0 \u2192 k\u00b2 = 36 \u2192 k = \u00b16."
+          "answer": "(D) 6 or −6. Discriminant = k²−4(1)(9) = k²−36 = 0 → k² = 36 → k = ±6."
         }
       ],
-      "skill": "act-polynomial-expressions"
+      "skill": "act-polynomial-expressions",
+      "lessonId": "algebra"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "title": "Algebra \u2014 ACT-Style Practice Set",
+      "title": "Algebra — ACT-Style Practice Set",
       "problems": [
         {
-          "problem": "If 2(x \u2212 3) + 5 = 3x \u2212 4, what is x?\n(A) \u22123  (B) 1  (C) 3  (D) 5  (E) 7",
-          "answer": "(C) 3. 2x\u22126+5 = 3x\u22124 \u2192 2x\u22121 = 3x\u22124 \u2192 3 = x."
+          "problem": "If 2(x − 3) + 5 = 3x − 4, what is x?\n(A) −3  (B) 1  (C) 3  (D) 5  (E) 7",
+          "answer": "(C) 3. 2x−6+5 = 3x−4 → 2x−1 = 3x−4 → 3 = x."
         },
         {
-          "problem": "What is the solution set of |4x \u2212 8| > 12?\n(A) x > 5  (B) x < \u22121 or x > 5  (C) \u22121 < x < 5  (D) x > 5 only  (E) x < \u22121 only",
-          "answer": "(B) x < \u22121 or x > 5. Two cases: 4x\u22128 > 12 \u2192 x > 5, or 4x\u22128 < \u221212 \u2192 x < \u22121."
+          "problem": "What is the solution set of |4x − 8| > 12?\n(A) x > 5  (B) x < −1 or x > 5  (C) −1 < x < 5  (D) x > 5 only  (E) x < −1 only",
+          "answer": "(B) x < −1 or x > 5. Two cases: 4x−8 > 12 → x > 5, or 4x−8 < −12 → x < −1."
         },
         {
-          "problem": "If 3x \u2212 2y = 12 and x + 2y = 8, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 10",
-          "answer": "(C) 5. Add equations: 4x = 20 \u2192 x = 5."
+          "problem": "If 3x − 2y = 12 and x + 2y = 8, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 10",
+          "answer": "(C) 5. Add equations: 4x = 20 → x = 5."
         },
         {
-          "problem": "What is the product of the solutions of 2x\u00b2 \u2212 7x + 3 = 0?\n(A) 3/2  (B) 7/2  (C) 3  (D) \u22123/2  (E) \u22123",
-          "answer": "(A) 3/2. By Vieta's: product of roots = c/a = 3/2. Or solve: (2x\u22121)(x\u22123)=0, x=1/2 or x=3, product = 3/2."
+          "problem": "What is the product of the solutions of 2x² − 7x + 3 = 0?\n(A) 3/2  (B) 7/2  (C) 3  (D) −3/2  (E) −3",
+          "answer": "(A) 3/2. By Vieta's: product of roots = c/a = 3/2. Or solve: (2x−1)(x−3)=0, x=1/2 or x=3, product = 3/2."
         },
         {
-          "problem": "Which expression is equivalent to (3a \u2212 2b)\u00b2?\n(A) 9a\u00b2 \u2212 4b\u00b2  (B) 9a\u00b2 + 4b\u00b2  (C) 9a\u00b2 \u2212 12ab + 4b\u00b2  (D) 9a\u00b2 \u2212 6ab + 4b\u00b2  (E) 9a\u00b2 + 12ab + 4b\u00b2",
-          "answer": "(C) 9a\u00b2 \u2212 12ab + 4b\u00b2. (3a\u22122b)\u00b2 = (3a)\u00b2 \u2212 2(3a)(2b) + (2b)\u00b2 = 9a\u00b2 \u2212 12ab + 4b\u00b2."
+          "problem": "Which expression is equivalent to (3a − 2b)²?\n(A) 9a² − 4b²  (B) 9a² + 4b²  (C) 9a² − 12ab + 4b²  (D) 9a² − 6ab + 4b²  (E) 9a² + 12ab + 4b²",
+          "answer": "(C) 9a² − 12ab + 4b². (3a−2b)² = (3a)² − 2(3a)(2b) + (2b)² = 9a² − 12ab + 4b²."
         },
         {
-          "problem": "Simplify: (x\u00b2 \u2212 4x)/(x\u00b2 \u2212 16)\n(A) 4x/(x+4)  (B) x/(x+4)  (C) (x\u22124)/(x+4)  (D) x/(x\u22124)  (E) 1/(x+4)",
-          "answer": "(B) x/(x+4). Factor: x(x\u22124)/[(x+4)(x\u22124)] = x/(x+4)."
+          "problem": "Simplify: (x² − 4x)/(x² − 16)\n(A) 4x/(x+4)  (B) x/(x+4)  (C) (x−4)/(x+4)  (D) x/(x−4)  (E) 1/(x+4)",
+          "answer": "(B) x/(x+4). Factor: x(x−4)/[(x+4)(x−4)] = x/(x+4)."
         },
         {
-          "problem": "Solve: \u221a(3x \u2212 2) = x \u2212 2\n(A) 1  (B) 2  (C) 3  (D) 6  (E) 2 and 6",
-          "answer": "(D) 6. Square: 3x\u22122 = x\u00b2\u22124x+4 \u2192 x\u00b2\u22127x+6=0 \u2192 (x\u22121)(x\u22126)=0 \u2192 x=1 or x=6. Check x=1: \u221a1 = 1, but 1\u22122=\u22121. Fail. Check x=6: \u221a16 = 4, and 6\u22122=4. \u2713 Only x=6 works."
+          "problem": "Solve: √(3x − 2) = x − 2\n(A) 1  (B) 2  (C) 3  (D) 6  (E) 2 and 6",
+          "answer": "(D) 6. Square: 3x−2 = x²−4x+4 → x²−7x+6=0 → (x−1)(x−6)=0 → x=1 or x=6. Check x=1: √1 = 1, but 1−2=−1. Fail. Check x=6: √16 = 4, and 6−2=4. ✓ Only x=6 works."
         },
         {
-          "problem": "A system of equations has the form y = 2x + b and y = 2x \u2212 3. For what value of b does the system have no solution?\n(A) \u22123  (B) 0  (C) 3  (D) Any value except \u22123  (E) No such value exists",
-          "answer": "(D) Any value except \u22123. Same slope (2) with different y-intercepts \u2192 parallel lines \u2192 no solution. If b = \u22123, they're the same line (infinitely many solutions)."
+          "problem": "A system of equations has the form y = 2x + b and y = 2x − 3. For what value of b does the system have no solution?\n(A) −3  (B) 0  (C) 3  (D) Any value except −3  (E) No such value exists",
+          "answer": "(D) Any value except −3. Same slope (2) with different y-intercepts → parallel lines → no solution. If b = −3, they're the same line (infinitely many solutions)."
         }
       ],
-      "skill": "act-linear-equations"
+      "skill": "act-linear-equations",
+      "lessonId": "algebra"
     }
   ],
   "answerKeys": {
     "linear-distribute": "11",
-    "abs-value-inequality": "\u22122 \u2264 x \u2264 5",
+    "abs-value-inequality": "−2 ≤ x ≤ 5",
     "fractions-equation": "12",
     "system-elimination": "(4, 2)",
     "system-word-problem": "120",
     "factor-quadratic": "2 and 3",
-    "quadratic-formula": "1 and \u22125/2",
+    "quadratic-formula": "1 and −5/2",
     "discriminant": "0",
-    "foil": "2x\u00b2 \u2212 5x \u2212 12",
-    "factor-completely": "3x(x+2)(x\u22122)",
-    "simplify-rational": "(x\u22123)/(x+2)",
+    "foil": "2x² − 5x − 12",
+    "factor-completely": "3x(x+2)(x−2)",
+    "simplify-rational": "(x−3)/(x+2)",
     "radical-equation": "11",
-    "one-solution-k": "\u00b16",
+    "one-solution-k": "±6",
     "independent-1": "3",
-    "independent-2": "x < \u22121 or x > 5",
+    "independent-2": "x < −1 or x > 5",
     "independent-3": "5",
     "independent-4": "3/2",
-    "independent-5": "9a\u00b2 \u2212 12ab + 4b\u00b2",
+    "independent-5": "9a² − 12ab + 4b²",
     "independent-6": "x/(x+4)",
     "independent-7": "6",
-    "independent-8": "Any value except \u22123"
+    "independent-8": "Any value except −3"
   }
 }

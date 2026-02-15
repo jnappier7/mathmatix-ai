@@ -52,7 +52,8 @@
         "The goal is automatic recall — you should know facts the way you know your address, without having to count or figure it out each time",
         "Patterns help: any number × 1 = itself, any number × 0 = 0, the 2s are doubles, the 5s end in 0 or 5, the 9s digits always add to 9 (9, 18, 27, 36 …)",
         "The trickiest facts for most students are 6 × 7, 6 × 8, 7 × 8, 8 × 8, and 7 × 12 — give these extra practice"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -72,7 +73,8 @@
           "problem": "There are 12 months in a year. If a library orders 11 new books every month, how many new books does the library get in a year?",
           "solution": "This is 12 groups of 11 (or 11 groups of 12 — same thing).\n12 × 11 = 132.\nOne way to remember: 12 × 11 is just 12 × 10 + 12 × 1 = 120 + 12 = 132.\nAnswer: 132 new books."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -107,7 +109,8 @@
           ],
           "answer": "108 players. 9 × 12 = 108. (9 × 10 = 90, 9 × 2 = 18, 90 + 18 = 108.) ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -130,7 +133,8 @@
           "question": "A camp has 6 cabins. Each cabin holds 7 campers. How many campers can the camp hold?",
           "answer": "42 campers"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -145,7 +149,8 @@
         "Zero property: any number times 0 equals 0. 500 × 0 = 0.",
         "Identity property: any number times 1 equals that same number. 73 × 1 = 73.",
         "The distributive property is the most powerful — it is the engine behind the multi-digit multiplication algorithm you will learn next"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -165,7 +170,8 @@
           "problem": "Use the distributive property to find 7 × 8.",
           "solution": "Break 8 into friendly parts: 8 = 5 + 3.\n7 × 8 = 7 × (5 + 3) = 7 × 5 + 7 × 3 = 35 + 21 = 56.\nOr break 7 into parts: 7 = 5 + 2.\n7 × 8 = (5 + 2) × 8 = 5 × 8 + 2 × 8 = 40 + 16 = 56.\nEither way the answer is the same.\nAnswer: 56"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -200,7 +206,8 @@
           ],
           "answer": "800. Group 4 × 25 first = 100, then 100 × 8 = 800. The associative property lets you regroup without changing the answer. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -223,7 +230,8 @@
           "question": "Find 2 × 9 × 5 by regrouping with the associative property.",
           "answer": "90. Regroup: (2 × 5) × 9 = 10 × 9 = 90."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -238,7 +246,8 @@
         "Standard algorithm: multiply by the ones digit first (write that row), then multiply by the tens digit (shift one place left), then add the rows.",
         "When you multiply by tens, hundreds, etc., you are really using the distributive property — the algorithm just organizes the work.",
         "Always compare your exact answer to your estimate. If they are far apart, double-check your work."
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -258,7 +267,8 @@
           "problem": "A school orders 158 notebooks for each of 6 classrooms. How many notebooks does the school order in all?",
           "solution": "Estimate: 160 × 6 = 960.\nStandard algorithm:\n  158\n×   6\n-----\nStep 1: 6 × 8 = 48. Write 8, carry 4.\nStep 2: 6 × 5 = 30, plus 4 = 34. Write 4, carry 3.\nStep 3: 6 × 1 = 6, plus 3 = 9. Write 9.\nResult: 948.\nEstimate check: 948 is close to 960. ✓\nAnswer: 948 notebooks."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -293,7 +303,8 @@
           ],
           "answer": "860 seeds. Estimate: 200 × 4 = 800. Algorithm: 4 × 5 = 20 (write 0, carry 2), 4 × 1 = 4 + 2 = 6, 4 × 2 = 8. Answer: 860. Close to estimate. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -316,7 +327,8 @@
           "question": "Multiply 305 × 8.",
           "answer": "2,440"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -331,7 +343,8 @@
         "Two-step problems: read the whole problem first, plan both steps, then solve one at a time",
         "Draw a simple picture or write a number sentence before computing — it helps you organize your thinking",
         "Always label your answer with the correct units (books, dollars, miles, etc.) and ask: does this answer make sense?"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -351,7 +364,8 @@
           "problem": "A school buys 5 boxes of markers. Each box has 12 markers. They also buy 8 boxes of colored pencils with 10 pencils in each box. How many supplies did they buy in all?",
           "solution": "Type: two-step problem.\nStep 1 — markers: 5 × 12 = 60 markers.\nStep 2 — colored pencils: 8 × 10 = 80 colored pencils.\nStep 3 — total: 60 + 80 = 140 supplies.\nAnswer: 140 supplies in all."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -386,7 +400,8 @@
           ],
           "answer": "200 cartons of milk. Step 1: 4 × 25 = 100 students. Step 2: 100 × 2 = 200 cartons. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -409,7 +424,8 @@
           "question": "For a class party, 3 parents each bring 2 packs of juice boxes. Each pack has 8 juice boxes. How many juice boxes are there in all?",
           "answer": "48 juice boxes. (3 × 2 = 6 packs. 6 × 8 = 48.)"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "explanation",
@@ -425,7 +441,8 @@
         "The number 1 is neither prime nor composite — it has only one factor.",
         "Multiples of a number go on forever: multiples of 5 are 5, 10, 15, 20, 25, 30, ...",
         "Real-world use: factors help you figure out how to split things into equal groups with nothing left over"
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "model",
@@ -445,7 +462,8 @@
           "problem": "You have 30 cupcakes to arrange in equal rows with none left over. List three different ways you could arrange them.",
           "solution": "Find factor pairs of 30:\n1 × 30, 2 × 15, 3 × 10, 5 × 6.\nThree possible arrangements:\n• 2 rows of 15 cupcakes\n• 3 rows of 10 cupcakes\n• 5 rows of 6 cupcakes\n(There are more — any factor pair works!)"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "guided_practice",
@@ -480,7 +498,8 @@
           ],
           "answer": "First five multiples of 8: 8, 16, 24, 32, 40. Is 52 a multiple of 8? 52 ÷ 8 = 6.5 — not a whole number, so 52 is NOT a multiple of 8. ✓"
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     },
     {
       "type": "independent_practice",
@@ -503,7 +522,8 @@
           "question": "Is 51 prime or composite? Prove it.",
           "answer": "Composite. 51 ÷ 3 = 17, so 51 = 3 × 17. It has factors other than 1 and itself."
         }
-      ]
+      ],
+      "lessonId": "multiplication"
     }
   ],
   "answerKeys": {
