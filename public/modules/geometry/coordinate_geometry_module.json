@@ -7,8 +7,18 @@
   "weeks": "25-27",
   "description": "Apply the distance and midpoint formulas, write equations of circles in standard form, determine parallel and perpendicular line relationships using slopes, and write coordinate proofs.",
   "estimatedDuration": 45,
-  "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"],
-  "standardsAlignment": ["G-GPE.1", "G-GPE.4", "G-GPE.5", "G-GPE.7"],
+  "skills": [
+    "coordinate-geometry-distance-midpoint",
+    "coordinate-proofs",
+    "equation-of-circle",
+    "parallel-perpendicular-slopes"
+  ],
+  "standardsAlignment": [
+    "G-GPE.1",
+    "G-GPE.4",
+    "G-GPE.5",
+    "G-GPE.7"
+  ],
   "goals": [
     "Apply the distance and midpoint formulas",
     "Write and use the equation of a circle in standard form",
@@ -28,7 +38,7 @@
       "lessonPhase": "concept-intro",
       "skill": "coordinate-geometry-distance-midpoint",
       "title": "Distance and Midpoint Formulas",
-      "text": "**The Distance Formula** finds the length between two points (x₁, y₁) and (x₂, y₂):\n\n**d = √[(x₂ - x₁)² + (y₂ - y₁)²]**\n\nThis is the Pythagorean Theorem in disguise! The horizontal distance (x₂ - x₁) is one leg, the vertical distance (y₂ - y₁) is the other leg, and d is the hypotenuse.\n\n**The Midpoint Formula** finds the point exactly halfway between two points:\n\n**M = ((x₁ + x₂)/2, (y₁ + y₂)/2)**\n\nThis is just the average of the x-coordinates and the average of the y-coordinates.",
+      "content": "**The Distance Formula** finds the length between two points (x₁, y₁) and (x₂, y₂):\n\n**d = √[(x₂ - x₁)² + (y₂ - y₁)²]**\n\nThis is the Pythagorean Theorem in disguise! The horizontal distance (x₂ - x₁) is one leg, the vertical distance (y₂ - y₁) is the other leg, and d is the hypotenuse.\n\n**The Midpoint Formula** finds the point exactly halfway between two points:\n\n**M = ((x₁ + x₂)/2, (y₁ + y₂)/2)**\n\nThis is just the average of the x-coordinates and the average of the y-coordinates.",
       "initialPrompt": "Find the distance and midpoint between (1, 2) and (4, 6). Can you see the right triangle that the distance formula is based on?"
     },
     {
@@ -93,7 +103,7 @@
       "lessonPhase": "concept-intro",
       "skill": "equation-of-circle",
       "title": "Equation of a Circle and Slope Relationships",
-      "text": "**Equation of a Circle** in standard form:\n\n**(x - h)² + (y - k)² = r²**\n\nwhere (h, k) is the center and r is the radius.\n\nExamples:\n• Center (0, 0), radius 5: x² + y² = 25\n• Center (3, -2), radius 4: (x - 3)² + (y + 2)² = 16\n\nNotice: the signs in the equation are OPPOSITE the coordinates of the center (because of the subtraction). And the right side is r², not r.\n\n**Slope Relationships:**\n• **Parallel lines:** m₁ = m₂ (equal slopes)\n• **Perpendicular lines:** m₁ × m₂ = -1 (negative reciprocal slopes)\n  Example: if m₁ = 2/3, then m₂ = -3/2",
+      "content": "**Equation of a Circle** in standard form:\n\n**(x - h)² + (y - k)² = r²**\n\nwhere (h, k) is the center and r is the radius.\n\nExamples:\n• Center (0, 0), radius 5: x² + y² = 25\n• Center (3, -2), radius 4: (x - 3)² + (y + 2)² = 16\n\nNotice: the signs in the equation are OPPOSITE the coordinates of the center (because of the subtraction). And the right side is r², not r.\n\n**Slope Relationships:**\n• **Parallel lines:** m₁ = m₂ (equal slopes)\n• **Perpendicular lines:** m₁ × m₂ = -1 (negative reciprocal slopes)\n  Example: if m₁ = 2/3, then m₂ = -3/2",
       "initialPrompt": "Write the equation of a circle with center (−1, 4) and radius 6. Be careful with the signs!"
     },
     {
@@ -158,7 +168,7 @@
       "lessonPhase": "concept-intro",
       "skill": "coordinate-proofs",
       "title": "Coordinate Proofs",
-      "text": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n• **Distance formula** → proves sides are congruent\n• **Slope formula** → proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n• **Midpoint formula** → proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
+      "content": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n• **Distance formula** → proves sides are congruent\n• **Slope formula** → proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n• **Midpoint formula** → proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
       "initialPrompt": "If you have a quadrilateral with vertices at specific coordinates, what's the minimum you'd need to calculate to prove it's a rectangle?"
     },
     {
@@ -219,38 +229,49 @@
           "question": "Find the distance between (-3, 4) and (5, -2).",
           "answer": "10",
           "skill": "coordinate-geometry-distance-midpoint",
-          "hints": ["d = √[(5-(-3))² + (-2-4)²] = √[64 + 36] = √100 = 10."]
+          "hints": [
+            "d = √[(5-(-3))² + (-2-4)²] = √[64 + 36] = √100 = 10."
+          ]
         },
         {
           "id": "cg-yp2",
           "question": "Find the midpoint of (7, -5) and (-3, 9).",
           "answer": "(2, 2)",
           "skill": "coordinate-geometry-distance-midpoint",
-          "hints": ["M = ((7+(-3))/2, (-5+9)/2) = (4/2, 4/2) = (2, 2)."]
+          "hints": [
+            "M = ((7+(-3))/2, (-5+9)/2) = (4/2, 4/2) = (2, 2)."
+          ]
         },
         {
           "id": "cg-yp3",
           "question": "Write the equation of a circle with center (0, -5) and radius 8.",
           "answer": "x² + (y + 5)² = 64",
           "skill": "equation-of-circle",
-          "hints": ["(x - 0)² + (y - (-5))² = 8². Simplify: x² + (y + 5)² = 64."]
+          "hints": [
+            "(x - 0)² + (y - (-5))² = 8². Simplify: x² + (y + 5)² = 64."
+          ]
         },
         {
           "id": "cg-yp4",
           "question": "Line m has slope -2. Line n is parallel to line m. Line p is perpendicular to line m. Find the slopes of n and p.",
           "answer": "slope of n = -2, slope of p = 1/2",
           "skill": "parallel-perpendicular-slopes",
-          "hints": ["Parallel: same slope = -2. Perpendicular: negative reciprocal of -2 = 1/2."]
+          "hints": [
+            "Parallel: same slope = -2. Perpendicular: negative reciprocal of -2 = 1/2."
+          ]
         },
         {
           "id": "cg-yp5",
           "question": "Prove that triangle with vertices A(0, 0), B(6, 0), and C(3, 3√3) is equilateral by finding all three side lengths.",
           "answer": "AB = 6, BC = 6, AC = 6 (all equal, so equilateral)",
           "skill": "coordinate-proofs",
-          "hints": ["AB = √(36+0) = 6. BC = √(9+27) = √36 = 6. AC = √(9+27) = √36 = 6."]
+          "hints": [
+            "AB = √(36+0) = 6. BC = √(9+27) = √36 = 6. AC = √(9+27) = √36 = 6."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "coordinate-geometry-distance-midpoint"
     }
   ],
   "answerKeys": {

@@ -7,8 +7,19 @@
   "weeks": "1-2",
   "estimatedDuration": 45,
   "description": "Build the foundational language of algebra by introducing variables, translating verbal phrases into algebraic expressions, mastering the order of operations (PEMDAS), exploring the commutative, associative, and distributive properties, and developing fluency with combining like terms and distributing over grouped expressions.",
-  "skills": ["variable-expressions", "order-of-operations", "algebraic-properties", "combining-like-terms", "distributive-property"],
-  "standardsAlignment": ["A-SSE.1", "A-SSE.1a", "A-SSE.1b", "A-SSE.2"],
+  "skills": [
+    "variable-expressions",
+    "order-of-operations",
+    "algebraic-properties",
+    "combining-like-terms",
+    "distributive-property"
+  ],
+  "standardsAlignment": [
+    "A-SSE.1",
+    "A-SSE.1a",
+    "A-SSE.1b",
+    "A-SSE.2"
+  ],
   "goals": [
     "Define variables and translate verbal phrases into algebraic expressions",
     "Apply the order of operations (PEMDAS) to evaluate numerical and algebraic expressions accurately",
@@ -30,7 +41,7 @@
       "lessonPhase": "concept-intro",
       "skill": "variable-expressions",
       "title": "Variables and Algebraic Expressions",
-      "text": "Welcome to Algebra! In algebra, we use **variables**—letters like x, y, or n—to represent unknown or changing quantities. An **algebraic expression** combines numbers, variables, and operations (like +, -, x, /) without an equals sign.\n\nTranslating words into algebra is one of the most important skills you'll learn:\n- \"5 more than a number\" becomes **x + 5**\n- \"Twice a number\" becomes **2x**\n- \"A number decreased by 7\" becomes **x - 7**\n- \"The product of 4 and a number, increased by 3\" becomes **4x + 3**\n\nTo **evaluate** an expression means to substitute a given value for the variable and compute the result. For example, if we evaluate 3x + 2 when x = 4, we get 3(4) + 2 = 12 + 2 = 14.",
+      "content": "Welcome to Algebra! In algebra, we use **variables**—letters like x, y, or n—to represent unknown or changing quantities. An **algebraic expression** combines numbers, variables, and operations (like +, -, x, /) without an equals sign.\n\nTranslating words into algebra is one of the most important skills you'll learn:\n- \"5 more than a number\" becomes **x + 5**\n- \"Twice a number\" becomes **2x**\n- \"A number decreased by 7\" becomes **x - 7**\n- \"The product of 4 and a number, increased by 3\" becomes **4x + 3**\n\nTo **evaluate** an expression means to substitute a given value for the variable and compute the result. For example, if we evaluate 3x + 2 when x = 4, we get 3(4) + 2 = 12 + 2 = 14.",
       "initialPrompt": "Can you think of a real-life situation where you might use a variable to represent something unknown? Try translating this phrase into algebra: 'a number tripled, minus 8.'"
     },
     {
@@ -38,7 +49,7 @@
       "lessonPhase": "concept-intro",
       "skill": "order-of-operations",
       "title": "Order of Operations (PEMDAS)",
-      "text": "When an expression contains more than one operation, we follow a specific order called **PEMDAS**:\n\n1. **P**arentheses (and other grouping symbols like brackets and fraction bars)\n2. **E**xponents\n3. **M**ultiplication and **D**ivision (left to right—they are equal in priority)\n4. **A**ddition and **S**ubtraction (left to right—they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols—like brackets around parentheses [2 + (3 x 4)]—always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
+      "content": "When an expression contains more than one operation, we follow a specific order called **PEMDAS**:\n\n1. **P**arentheses (and other grouping symbols like brackets and fraction bars)\n2. **E**xponents\n3. **M**ultiplication and **D**ivision (left to right—they are equal in priority)\n4. **A**ddition and **S**ubtraction (left to right—they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols—like brackets around parentheses [2 + (3 x 4)]—always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
       "initialPrompt": "Try this: What is the value of 8 - 2 x 3 + 1? Be careful—don't just go left to right!"
     },
     {
@@ -70,7 +81,7 @@
       "lessonPhase": "concept-intro",
       "skill": "algebraic-properties",
       "title": "Properties of Real Numbers",
-      "text": "Algebra relies on three key properties that let us rearrange and simplify expressions:\n\n**Commutative Property** — You can swap the order of addition or multiplication without changing the result.\n- Addition: 3 + 5 = 5 + 3 = 8\n- Multiplication: 4 x 7 = 7 x 4 = 28\n- Does NOT apply to subtraction or division (5 - 3 is not 3 - 5).\n\n**Associative Property** — You can regroup numbers in addition or multiplication without changing the result.\n- Addition: (2 + 3) + 4 = 2 + (3 + 4) = 9\n- Multiplication: (2 x 3) x 4 = 2 x (3 x 4) = 24\n\n**Distributive Property** — Multiplication distributes over addition (or subtraction) inside parentheses.\n- 3(x + 4) = 3x + 12\n- 5(2y - 3) = 10y - 15\n\nThese properties are the 'rules of the game' in algebra—they tell us what moves are legal when simplifying expressions.",
+      "content": "Algebra relies on three key properties that let us rearrange and simplify expressions:\n\n**Commutative Property** — You can swap the order of addition or multiplication without changing the result.\n- Addition: 3 + 5 = 5 + 3 = 8\n- Multiplication: 4 x 7 = 7 x 4 = 28\n- Does NOT apply to subtraction or division (5 - 3 is not 3 - 5).\n\n**Associative Property** — You can regroup numbers in addition or multiplication without changing the result.\n- Addition: (2 + 3) + 4 = 2 + (3 + 4) = 9\n- Multiplication: (2 x 3) x 4 = 2 x (3 x 4) = 24\n\n**Distributive Property** — Multiplication distributes over addition (or subtraction) inside parentheses.\n- 3(x + 4) = 3x + 12\n- 5(2y - 3) = 10y - 15\n\nThese properties are the 'rules of the game' in algebra—they tell us what moves are legal when simplifying expressions.",
       "initialPrompt": "Which property justifies rewriting 6 + x as x + 6? What about rewriting 3(x + 2) as 3x + 6?"
     },
     {
@@ -165,45 +176,63 @@
           "question": "Translate into an algebraic expression: 'The sum of three times a number and 11.'",
           "answer": "3x + 11",
           "skill": "variable-expressions",
-          "hints": ["'Three times a number' becomes 3x. 'The sum of ... and 11' means you add 11."]
+          "hints": [
+            "'Three times a number' becomes 3x. 'The sum of ... and 11' means you add 11."
+          ]
         },
         {
           "id": "fa-yp2",
           "question": "Evaluate: 4 + 6 / 2 - 1",
           "answer": "6",
           "skill": "order-of-operations",
-          "hints": ["Division comes before addition and subtraction. Compute 6 / 2 = 3 first.", "Then go left to right: 4 + 3 - 1 = 6."]
+          "hints": [
+            "Division comes before addition and subtraction. Compute 6 / 2 = 3 first.",
+            "Then go left to right: 4 + 3 - 1 = 6."
+          ]
         },
         {
           "id": "fa-yp3",
           "question": "Evaluate 2(x + 5) - x when x = 7.",
           "answer": "17",
           "skill": "variable-expressions",
-          "hints": ["Substitute x = 7: 2(7 + 5) - 7. Simplify inside the parentheses first: 7 + 5 = 12.", "Now compute: 2(12) - 7 = 24 - 7 = 17."]
+          "hints": [
+            "Substitute x = 7: 2(7 + 5) - 7. Simplify inside the parentheses first: 7 + 5 = 12.",
+            "Now compute: 2(12) - 7 = 24 - 7 = 17."
+          ]
         },
         {
           "id": "fa-yp4",
           "question": "Simplify: 6a + 4b - 2a + 3b",
           "answer": "4a + 7b",
           "skill": "combining-like-terms",
-          "hints": ["Combine the a-terms together and the b-terms together.", "6a - 2a = 4a and 4b + 3b = 7b. Simplified: 4a + 7b."]
+          "hints": [
+            "Combine the a-terms together and the b-terms together.",
+            "6a - 2a = 4a and 4b + 3b = 7b. Simplified: 4a + 7b."
+          ]
         },
         {
           "id": "fa-yp5",
           "question": "Use the distributive property to expand and simplify: -4(3x - 2) + 7",
           "answer": "-12x + 15",
           "skill": "distributive-property",
-          "hints": ["Distribute -4: (-4)(3x) + (-4)(-2) = -12x + 8.", "Now add the constant: -12x + 8 + 7 = -12x + 15."]
+          "hints": [
+            "Distribute -4: (-4)(3x) + (-4)(-2) = -12x + 8.",
+            "Now add the constant: -12x + 8 + 7 = -12x + 15."
+          ]
         },
         {
           "id": "fa-yp6",
           "question": "Simplify completely: 3(x + 4) - 2(x - 5) + x",
           "answer": "2x + 22",
           "skill": "distributive-property",
-          "hints": ["Distribute: 3x + 12 - 2x + 10 + x.", "Combine like terms: (3x - 2x + x) + (12 + 10) = 2x + 22."]
+          "hints": [
+            "Distribute: 3x + 12 - 2x + 10 + x.",
+            "Combine like terms: (3x - 2x + x) + (12 + 10) = 2x + 22."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "variable-expressions"
     }
   ],
   "answerKeys": {

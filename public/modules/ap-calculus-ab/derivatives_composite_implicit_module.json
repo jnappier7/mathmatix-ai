@@ -113,7 +113,10 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Inverse Function Derivatives & Inverse Trig Derivatives",
-      "skills": ["inverse-function-derivatives", "inverse-trig-derivatives"],
+      "skills": [
+        "inverse-function-derivatives",
+        "inverse-trig-derivatives"
+      ],
       "content": "If f and f^{-1} are inverse functions, there is a clean relationship between their derivatives. This theorem lets you find the derivative of an inverse even when you cannot write a formula for f^{-1}. The inverse trig functions (arcsin, arccos, arctan) are special cases with formulas you should memorize.",
       "keyPoints": [
         "Inverse function derivative theorem: (f^{-1})'(a) = 1 / f'(f^{-1}(a)). In words: evaluate f' at the point whose output is a, then take the reciprocal.",
@@ -123,13 +126,17 @@
         "d/dx[arccos(x)] = -1/sqrt(1 - x^2), for |x| < 1.",
         "d/dx[arctan(x)] = 1/(1 + x^2).",
         "Chain rule extensions: d/dx[arctan(g(x))] = g'(x)/(1 + [g(x)]^2). Always apply the chain rule when the argument is not simply x."
-      ]
+      ],
+      "skill": "inverse-function-derivatives"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Inverse Function & Inverse Trig Derivatives — Worked Examples",
-      "skills": ["inverse-function-derivatives", "inverse-trig-derivatives"],
+      "skills": [
+        "inverse-function-derivatives",
+        "inverse-trig-derivatives"
+      ],
       "examples": [
         {
           "problem": "Let f(x) = x^3 + x. Given that f(2) = 10, find (f^{-1})'(10).",
@@ -143,13 +150,19 @@
           "problem": "Find d/dx[arcsin(x^2)].",
           "solution": "Use the arcsin derivative with chain rule: d/dx[arcsin(u)] = u'/sqrt(1 - u^2). Here u = x^2, u' = 2x. So d/dx[arcsin(x^2)] = 2x/sqrt(1 - x^4)."
         }
-      ]
+      ],
+      "skill": "inverse-trig-derivatives"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Chain Rule, Implicit & Inverse Derivatives Practice",
-      "skills": ["chain-rule-composite", "implicit-differentiation", "inverse-function-derivatives", "inverse-trig-derivatives"],
+      "skills": [
+        "chain-rule-composite",
+        "implicit-differentiation",
+        "inverse-function-derivatives",
+        "inverse-trig-derivatives"
+      ],
       "problems": [
         {
           "problem": "Find d/dx[e^(sin(x^2))].",
@@ -187,7 +200,8 @@
           ],
           "answer": "Product rule: 1 * arctan(x) + x * 1/(1 + x^2) = arctan(x) + x/(1 + x^2)."
         }
-      ]
+      ],
+      "skill": "inverse-trig-derivatives"
     },
     {
       "type": "explanation",
@@ -228,7 +242,13 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Composite, Implicit & Inverse Derivatives Mastery Practice",
-      "skills": ["chain-rule-composite", "implicit-differentiation", "inverse-function-derivatives", "inverse-trig-derivatives", "higher-order-derivatives"],
+      "skills": [
+        "chain-rule-composite",
+        "implicit-differentiation",
+        "inverse-function-derivatives",
+        "inverse-trig-derivatives",
+        "higher-order-derivatives"
+      ],
       "problems": [
         {
           "problem": "No calculator. Find d/dx[cos^3(2x)] (i.e., d/dx[(cos(2x))^3]).",
@@ -254,7 +274,8 @@
           "problem": "No calculator. Find dy/dx for e^(xy) = x + y. Then evaluate dy/dx at the point (0, 1).",
           "answer": "Differentiate: e^(xy)(y + x(dy/dx)) = 1 + dy/dx. Expand: ye^(xy) + xe^(xy)(dy/dx) = 1 + dy/dx. Collect: (xe^(xy) - 1)(dy/dx) = 1 - ye^(xy). So dy/dx = (1 - ye^(xy))/(xe^(xy) - 1). At (0, 1): e^(0) = 1. dy/dx = (1 - 1*1)/(0*1 - 1) = 0/(-1) = 0."
         }
-      ]
+      ],
+      "skill": "chain-rule-composite"
     }
   ],
   "answerKeys": {

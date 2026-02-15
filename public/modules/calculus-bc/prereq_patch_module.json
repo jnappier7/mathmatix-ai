@@ -6,8 +6,18 @@
   "weeks": "1-2",
   "estimatedDuration": 50,
   "description": "Diagnose and repair the algebra, trig, and function gaps that sabotage calculus performance. Composition/inverses feed the chain rule; exponent/log rules feed integration; unit circle values feed trig derivatives. Fix these now or pay for them all year.",
-  "skills": ["function-fluency", "algebra-cleanup", "trig-essentials", "graph-literacy"],
-  "standardsAlignment": ["F-BF.1", "F-BF.4", "F-IF.7", "F-TF.2"],
+  "skills": [
+    "function-fluency",
+    "algebra-cleanup",
+    "trig-essentials",
+    "graph-literacy"
+  ],
+  "standardsAlignment": [
+    "F-BF.1",
+    "F-BF.4",
+    "F-IF.7",
+    "F-TF.2"
+  ],
   "goals": [
     "Demonstrate fluency with function composition, inverses, and transformations",
     "Apply factoring, exponent rules, log rules, and rational expression techniques accurately",
@@ -27,7 +37,7 @@
       "lessonPhase": "concept-intro",
       "skill": "function-fluency",
       "title": "Function Fluency: Composition & Inverses",
-      "text": "**Why This Matters for Calculus:**\n\nComposition feeds the **chain rule** — the most important differentiation technique. If you can't identify the outer and inner functions in f(g(x)), the chain rule will be a mystery.\n\nInverses feed **inverse function derivatives** and **logarithmic/exponential relationships**.\n\n**Key Ideas:**\n• (f ∘ g)(x) = f(g(x)) — apply g first, then f\n• Domain of f ∘ g: x must be in the domain of g, AND g(x) must be in the domain of f\n• f⁻¹ exists only if f is one-to-one (passes horizontal line test)\n• f(f⁻¹(x)) = x and f⁻¹(f(x)) = x\n• To find f⁻¹: swap x and y, solve for y\n• Graph of f⁻¹ is the reflection of f over y = x",
+      "content": "**Why This Matters for Calculus:**\n\nComposition feeds the **chain rule** — the most important differentiation technique. If you can't identify the outer and inner functions in f(g(x)), the chain rule will be a mystery.\n\nInverses feed **inverse function derivatives** and **logarithmic/exponential relationships**.\n\n**Key Ideas:**\n• (f ∘ g)(x) = f(g(x)) — apply g first, then f\n• Domain of f ∘ g: x must be in the domain of g, AND g(x) must be in the domain of f\n• f⁻¹ exists only if f is one-to-one (passes horizontal line test)\n• f(f⁻¹(x)) = x and f⁻¹(f(x)) = x\n• To find f⁻¹: swap x and y, solve for y\n• Graph of f⁻¹ is the reflection of f over y = x",
       "initialPrompt": "If f(x) = 2x + 3 and g(x) = x², find f(g(x)) and g(f(x)). Are they the same? Why does order matter?"
     },
     {
@@ -92,7 +102,7 @@
       "lessonPhase": "concept-intro",
       "skill": "algebra-cleanup",
       "title": "Algebra Cleanup: The Skills That Kill Calculus Students",
-      "text": "**These algebra errors cause more calculus failures than actual calculus:**\n\n**Factoring:** Every limit, every simplification, every partial fraction depends on factoring.\n• GCF first, always\n• Trinomials: a=1 and a≠1\n• Difference of squares: a² − b² = (a+b)(a−b)\n• Sum/difference of cubes: a³ ± b³ = (a ± b)(a² ∓ ab + b²)\n\n**Exponent Rules:**\n• x^a · x^b = x^(a+b)\n• x^a / x^b = x^(a−b)\n• (x^a)^b = x^(ab)\n• x^(−n) = 1/x^n\n• x^(1/n) = ⁿ√x\n\n**Log Rules:**\n• log(ab) = log a + log b\n• log(a/b) = log a − log b\n• log(aⁿ) = n log a\n• ln(eˣ) = x, e^(ln x) = x\n\n**Rational Expressions:** Simplify BEFORE differentiating. Rewrite as negative exponents for the power rule:\n• 1/x² = x⁻², 1/√x = x^(−1/2), ³√x² = x^(2/3)",
+      "content": "**These algebra errors cause more calculus failures than actual calculus:**\n\n**Factoring:** Every limit, every simplification, every partial fraction depends on factoring.\n• GCF first, always\n• Trinomials: a=1 and a≠1\n• Difference of squares: a² − b² = (a+b)(a−b)\n• Sum/difference of cubes: a³ ± b³ = (a ± b)(a² ∓ ab + b²)\n\n**Exponent Rules:**\n• x^a · x^b = x^(a+b)\n• x^a / x^b = x^(a−b)\n• (x^a)^b = x^(ab)\n• x^(−n) = 1/x^n\n• x^(1/n) = ⁿ√x\n\n**Log Rules:**\n• log(ab) = log a + log b\n• log(a/b) = log a − log b\n• log(aⁿ) = n log a\n• ln(eˣ) = x, e^(ln x) = x\n\n**Rational Expressions:** Simplify BEFORE differentiating. Rewrite as negative exponents for the power rule:\n• 1/x² = x⁻², 1/√x = x^(−1/2), ³√x² = x^(2/3)",
       "initialPrompt": "Rewrite these in a form ready for the power rule: 5/x³, √(x⁵), 1/(2√x). Can you see why exponent form is critical for calculus?"
     },
     {
@@ -157,7 +167,7 @@
       "lessonPhase": "concept-intro",
       "skill": "trig-essentials",
       "title": "Trig Essentials for Calculus",
-      "text": "**You need these values on autopilot — no calculator:**\n\n| θ | sin θ | cos θ | tan θ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| π/6 | 1/2 | √3/2 | √3/3 |\n| π/4 | √2/2 | √2/2 | 1 |\n| π/3 | √3/2 | 1/2 | √3 |\n| π/2 | 1 | 0 | undef |\n| π | 0 | −1 | 0 |\n\n**Key Identities:**\n• sin²θ + cos²θ = 1\n• 1 + tan²θ = sec²θ\n• 1 + cot²θ = csc²θ\n• sin(2θ) = 2 sin θ cos θ\n• cos(2θ) = cos²θ − sin²θ = 2cos²θ − 1 = 1 − 2sin²θ\n\n**Why this matters:**\nDerivatives of trig functions are trig functions. If you don't know that sin(π/4) = √2/2 instantly, evaluating f'(π/4) when f(x) = sin(x) will stall you.",
+      "content": "**You need these values on autopilot — no calculator:**\n\n| θ | sin θ | cos θ | tan θ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| π/6 | 1/2 | √3/2 | √3/3 |\n| π/4 | √2/2 | √2/2 | 1 |\n| π/3 | √3/2 | 1/2 | √3 |\n| π/2 | 1 | 0 | undef |\n| π | 0 | −1 | 0 |\n\n**Key Identities:**\n• sin²θ + cos²θ = 1\n• 1 + tan²θ = sec²θ\n• 1 + cot²θ = csc²θ\n• sin(2θ) = 2 sin θ cos θ\n• cos(2θ) = cos²θ − sin²θ = 2cos²θ − 1 = 1 − 2sin²θ\n\n**Why this matters:**\nDerivatives of trig functions are trig functions. If you don't know that sin(π/4) = √2/2 instantly, evaluating f'(π/4) when f(x) = sin(x) will stall you.",
       "initialPrompt": "Without a calculator: what is cos(5π/6)? Hint: 5π/6 is in the second quadrant."
     },
     {
@@ -222,7 +232,7 @@
       "lessonPhase": "concept-intro",
       "skill": "graph-literacy",
       "title": "Graph Literacy for AP Calculus",
-      "text": "**AP Calculus is heavily graphical.** You must read graphs as fluently as equations.\n\n**What to identify from a graph:**\n• Intercepts (where the graph crosses the axes)\n• Asymptotes (vertical: function blows up; horizontal: end behavior)\n• End behavior (what happens as x → ±∞)\n• Piecewise definitions (different rules on different intervals)\n• Intervals of increase/decrease\n• Concavity (curves up like a cup = concave up)\n\n**From tables:**\n• Estimate rates of change: [f(b) − f(a)] / (b − a)\n• Identify patterns (increasing, decreasing, concavity)\n• Use symmetric difference quotient for better derivative estimates\n\n**Reading a piecewise graph:**\n• Open circles (○) = NOT included\n• Closed circles (●) = included\n• Check continuity: does the value from the left match the value from the right?",
+      "content": "**AP Calculus is heavily graphical.** You must read graphs as fluently as equations.\n\n**What to identify from a graph:**\n• Intercepts (where the graph crosses the axes)\n• Asymptotes (vertical: function blows up; horizontal: end behavior)\n• End behavior (what happens as x → ±∞)\n• Piecewise definitions (different rules on different intervals)\n• Intervals of increase/decrease\n• Concavity (curves up like a cup = concave up)\n\n**From tables:**\n• Estimate rates of change: [f(b) − f(a)] / (b − a)\n• Identify patterns (increasing, decreasing, concavity)\n• Use symmetric difference quotient for better derivative estimates\n\n**Reading a piecewise graph:**\n• Open circles (○) = NOT included\n• Closed circles (●) = included\n• Check continuity: does the value from the left match the value from the right?",
       "initialPrompt": "Look at a function where f(2) = 5 but lim_{x→2} f(x) = 3. What type of discontinuity is this? Is f continuous at x = 2?"
     },
     {
@@ -292,45 +302,58 @@
           "question": "Given f(x) = 2x + 1 and g(x) = x² − 3, find g(f(x)).",
           "answer": "(2x+1)² − 3 = 4x² + 4x − 2",
           "skill": "function-fluency",
-          "hints": ["g(f(x)) = (f(x))² − 3 = (2x+1)² − 3 = 4x²+4x+1−3 = 4x²+4x−2."]
+          "hints": [
+            "g(f(x)) = (f(x))² − 3 = (2x+1)² − 3 = 4x²+4x+1−3 = 4x²+4x−2."
+          ]
         },
         {
           "id": "pp-yp2",
           "question": "Factor completely: 8x³ + 27",
           "answer": "(2x + 3)(4x² − 6x + 9)",
           "skill": "algebra-cleanup",
-          "hints": ["Sum of cubes: a³+b³=(a+b)(a²−ab+b²). Here a=2x, b=3. (2x+3)(4x²−6x+9)."]
+          "hints": [
+            "Sum of cubes: a³+b³=(a+b)(a²−ab+b²). Here a=2x, b=3. (2x+3)(4x²−6x+9)."
+          ]
         },
         {
           "id": "pp-yp3",
           "question": "Evaluate without a calculator: tan(5π/3)",
           "answer": "−√3",
           "skill": "trig-essentials",
-          "hints": ["5π/3 is in QIV. Reference angle = 2π − 5π/3 = π/3. tan(π/3) = √3. QIV: tan is neg → −√3."]
+          "hints": [
+            "5π/3 is in QIV. Reference angle = 2π − 5π/3 = π/3. tan(π/3) = √3. QIV: tan is neg → −√3."
+          ]
         },
         {
           "id": "pp-yp4",
           "question": "Rewrite for the power rule and differentiate: f(x) = 6/x³ − 2√x",
           "answer": "f(x) = 6x⁻³ − 2x^(1/2). f'(x) = −18x⁻⁴ − x^(−1/2) = −18/x⁴ − 1/√x",
           "skill": "algebra-cleanup",
-          "hints": ["6/x³ = 6x⁻³, 2√x = 2x^(1/2). Power rule: −18x⁻⁴ − 2·(1/2)x^(−1/2) = −18x⁻⁴ − x^(−1/2)."]
+          "hints": [
+            "6/x³ = 6x⁻³, 2√x = 2x^(1/2). Power rule: −18x⁻⁴ − 2·(1/2)x^(−1/2) = −18x⁻⁴ − x^(−1/2)."
+          ]
         },
         {
           "id": "pp-yp5",
           "question": "Find the inverse of f(x) = (x − 4)/3. Verify by computing f(f⁻¹(x)).",
           "answer": "f⁻¹(x) = 3x + 4. f(f⁻¹(x)) = f(3x+4) = ((3x+4)−4)/3 = 3x/3 = x ✓",
           "skill": "function-fluency",
-          "hints": ["Swap: x = (y−4)/3 → 3x = y−4 → y = 3x+4. So f⁻¹(x) = 3x+4."]
+          "hints": [
+            "Swap: x = (y−4)/3 → 3x = y−4 → y = 3x+4. So f⁻¹(x) = 3x+4."
+          ]
         },
         {
           "id": "pp-yp6",
           "question": "Find all asymptotes and holes of f(x) = (x² − 9)/(x² − x − 6).",
           "answer": "Hole at x = 3 (y = 6/5). VA: x = −2. HA: y = 1.",
           "skill": "graph-literacy",
-          "hints": ["Factor: (x−3)(x+3)/[(x−3)(x+2)]. Cancel (x−3) → hole at x=3. Reduced: (x+3)/(x+2). VA: x=−2. HA: y=1 (equal degrees)."]
+          "hints": [
+            "Factor: (x−3)(x+3)/[(x−3)(x+2)]. Cancel (x−3) → hole at x=3. Reduced: (x+3)/(x+2). VA: x=−2. HA: y=1 (equal degrees)."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "function-fluency"
     }
   ],
   "answerKeys": {

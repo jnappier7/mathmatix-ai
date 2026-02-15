@@ -153,7 +153,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Review Block D: Mixed Integration Applications",
-      "skills": ["error-analysis-correction", "calculator-active-fluency"],
+      "skill": "error-analysis-correction",
       "problems": [
         {
           "problem": "Find the area enclosed by y = x² and y = 2x + 3.",

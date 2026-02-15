@@ -6,8 +6,18 @@
   "weeks": "15-17",
   "estimatedDuration": 35,
   "description": "Where algebra gets real. Students solve one-step and two-step equations using inverse operations, get a conceptual introduction to variables on both sides, write and solve inequalities with number line graphs, and build equations from word problems. The balance scale model is the central metaphor — whatever you do to one side, you must do to the other.",
-  "skills": ["g6-one-two-step-equations", "g6-variables-both-sides", "g6-inequalities", "g6-word-problem-equations"],
-  "standardsAlignment": ["6.EE.B.5", "6.EE.B.6", "6.EE.B.7", "6.EE.B.8"],
+  "skills": [
+    "g6-one-two-step-equations",
+    "g6-variables-both-sides",
+    "g6-inequalities",
+    "g6-word-problem-equations"
+  ],
+  "standardsAlignment": [
+    "6.EE.B.5",
+    "6.EE.B.6",
+    "6.EE.B.7",
+    "6.EE.B.8"
+  ],
   "goals": [
     "Solve one-step and two-step equations using inverse operations and verify every solution by substitution",
     "Understand the concept of variables appearing on both sides of an equation and solve simple cases by collecting variable terms",
@@ -67,7 +77,7 @@
       "problems": [
         {
           "id": "ei-1",
-          "prompt": "Solve: y − 9 = 14",
+          "question": "Solve: y − 9 = 14",
           "hints": [
             "What operation is being done to y? Subtraction of 9.",
             "The inverse of subtraction is addition. Add 9 to both sides."
@@ -76,7 +86,7 @@
         },
         {
           "id": "ei-2",
-          "prompt": "Solve: m/4 = 7",
+          "question": "Solve: m/4 = 7",
           "hints": [
             "m/4 means m divided by 4.",
             "The inverse of dividing by 4 is multiplying by 4. Multiply both sides by 4."
@@ -85,7 +95,7 @@
         },
         {
           "id": "ei-3",
-          "prompt": "Solve: 4x − 3 = 25",
+          "question": "Solve: 4x − 3 = 25",
           "hints": [
             "Two steps: first undo the subtraction by adding 3 to both sides.",
             "You should get 4x = 28. Now undo the multiplication by dividing both sides by 4."
@@ -102,17 +112,17 @@
       "problems": [
         {
           "id": "ei-4",
-          "prompt": "Solve: n + 12 = 30",
+          "question": "Solve: n + 12 = 30",
           "answer": "n = 18"
         },
         {
           "id": "ei-5",
-          "prompt": "Solve: 5w = 45",
+          "question": "Solve: 5w = 45",
           "answer": "w = 9"
         },
         {
           "id": "ei-6",
-          "prompt": "Solve: 3p + 7 = 28",
+          "question": "Solve: 3p + 7 = 28",
           "answer": "p = 7"
         }
       ]
@@ -159,7 +169,7 @@
       "problems": [
         {
           "id": "ei-7",
-          "prompt": "Solve: 4x + 1 = 2x + 9",
+          "question": "Solve: 4x + 1 = 2x + 9",
           "hints": [
             "Subtract 2x from both sides to get all the x terms on one side: 2x + 1 = 9.",
             "Now subtract 1 from both sides to get 2x = 8, then divide both sides by 2."
@@ -168,7 +178,7 @@
         },
         {
           "id": "ei-8",
-          "prompt": "Solve: 6m − 5 = 3m + 10",
+          "question": "Solve: 6m − 5 = 3m + 10",
           "hints": [
             "Subtract 3m from both sides: 3m − 5 = 10.",
             "Add 5 to both sides: 3m = 15. Then divide both sides by 3."
@@ -185,12 +195,12 @@
       "problems": [
         {
           "id": "ei-9",
-          "prompt": "Solve: 5x + 3 = 2x + 15",
+          "question": "Solve: 5x + 3 = 2x + 15",
           "answer": "x = 4"
         },
         {
           "id": "ei-10",
-          "prompt": "Solve: 7y − 4 = 3y + 16",
+          "question": "Solve: 7y − 4 = 3y + 16",
           "answer": "y = 5"
         }
       ]
@@ -238,7 +248,7 @@
       "problems": [
         {
           "id": "ei-11",
-          "prompt": "Solve: x + 5 > 12. Then state whether the graph uses an open or closed circle and which direction to shade.",
+          "question": "Solve: x + 5 > 12. Then state whether the graph uses an open or closed circle and which direction to shade.",
           "hints": [
             "Use the inverse of adding 5 — subtract 5 from both sides.",
             "Is the symbol > or ≥? That tells you open or closed circle."
@@ -247,7 +257,7 @@
         },
         {
           "id": "ei-12",
-          "prompt": "Solve: 3n ≤ 18. Describe the number line graph.",
+          "question": "Solve: 3n ≤ 18. Describe the number line graph.",
           "hints": [
             "Divide both sides by 3.",
             "The ≤ symbol means the endpoint IS included — what kind of circle is that?"
@@ -256,7 +266,7 @@
         },
         {
           "id": "ei-13",
-          "prompt": "A roller coaster requires riders to be at least 48 inches tall. Write an inequality for the height h (in inches) of a person who can ride.",
+          "question": "A roller coaster requires riders to be at least 48 inches tall. Write an inequality for the height h (in inches) of a person who can ride.",
           "hints": [
             "What does 'at least' mean? It means 'that much or more.'",
             "Which inequality symbol means 'greater than or equal to'?"
@@ -273,17 +283,17 @@
       "problems": [
         {
           "id": "ei-14",
-          "prompt": "Solve: y − 6 < 9. State the type of circle and shading direction for the graph.",
+          "question": "Solve: y − 6 < 9. State the type of circle and shading direction for the graph.",
           "answer": "y < 15. Open circle at 15, shade to the left."
         },
         {
           "id": "ei-15",
-          "prompt": "Solve: 4k ≥ 28. State the type of circle and shading direction for the graph.",
+          "question": "Solve: 4k ≥ 28. State the type of circle and shading direction for the graph.",
           "answer": "k ≥ 7. Closed circle at 7, shade to the right."
         },
         {
           "id": "ei-16",
-          "prompt": "A school bus can hold no more than 48 students. There are already 31 students on the bus. Write and solve an inequality for the number of additional students s who can board.",
+          "question": "A school bus can hold no more than 48 students. There are already 31 students on the bus. Write and solve an inequality for the number of additional students s who can board.",
           "answer": "31 + s ≤ 48, so s ≤ 17. No more than 17 additional students can board."
         }
       ]
@@ -330,7 +340,7 @@
       "problems": [
         {
           "id": "ei-17",
-          "prompt": "Maya has $45 and wants to buy notebooks that cost $5 each. She also needs to buy a $10 binder. How many notebooks can she buy? Write and solve an equation.",
+          "question": "Maya has $45 and wants to buy notebooks that cost $5 each. She also needs to buy a $10 binder. How many notebooks can she buy? Write and solve an equation.",
           "hints": [
             "Let n = the number of notebooks. The total cost is the binder plus the notebooks: 10 + 5n.",
             "Set the total cost equal to the money she has: 10 + 5n = 45. Now solve for n."
@@ -339,7 +349,7 @@
         },
         {
           "id": "ei-18",
-          "prompt": "A soccer team scored 3 times as many goals in the second half as in the first half. They scored 12 goals total. How many goals did they score in the first half?",
+          "question": "A soccer team scored 3 times as many goals in the second half as in the first half. They scored 12 goals total. How many goals did they score in the first half?",
           "hints": [
             "Let g = goals in the first half. Then the second half goals = 3g.",
             "First half + second half = total: g + 3g = 12. Combine like terms and solve."
@@ -348,7 +358,7 @@
         },
         {
           "id": "ei-19",
-          "prompt": "Tyler is 4 years older than his sister. The sum of their ages is 22. How old is each person?",
+          "question": "Tyler is 4 years older than his sister. The sum of their ages is 22. How old is each person?",
           "hints": [
             "Let s = the sister's age. Then Tyler's age = s + 4.",
             "Their ages add up to 22: s + (s + 4) = 22. Combine like terms and solve."
@@ -365,17 +375,17 @@
       "problems": [
         {
           "id": "ei-20",
-          "prompt": "A pizza shop charges $8 for a large pizza plus $1.50 for each topping. Jasmine paid $14. How many toppings did she get? Define a variable, write an equation, and solve.",
+          "question": "A pizza shop charges $8 for a large pizza plus $1.50 for each topping. Jasmine paid $14. How many toppings did she get? Define a variable, write an equation, and solve.",
           "answer": "4 toppings. Let t = number of toppings. 8 + 1.50t = 14 → 1.50t = 6 → t = 4."
         },
         {
           "id": "ei-21",
-          "prompt": "Marcus and his 3 friends split the cost of a $52 gift equally. Marcus also paid $6 for gift wrapping. How much did Marcus pay in total? Define a variable, write an equation, and solve.",
+          "question": "Marcus and his 3 friends split the cost of a $52 gift equally. Marcus also paid $6 for gift wrapping. How much did Marcus pay in total? Define a variable, write an equation, and solve.",
           "answer": "Marcus paid $19. Each person's share = 52 ÷ 4 = $13. Marcus's total: 13 + 6 = $19."
         },
         {
           "id": "ei-22",
-          "prompt": "A school club needs to raise at least $200 for a field trip. They have already raised $65 and plan to sell cookies for $3 each. How many cookies do they need to sell? Write and solve an inequality.",
+          "question": "A school club needs to raise at least $200 for a field trip. They have already raised $65 and plan to sell cookies for $3 each. How many cookies do they need to sell? Write and solve an inequality.",
           "answer": "At least 45 cookies. Let c = number of cookies. 65 + 3c ≥ 200 → 3c ≥ 135 → c ≥ 45."
         }
       ]

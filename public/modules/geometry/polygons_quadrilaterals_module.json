@@ -7,8 +7,16 @@
   "weeks": "13-15",
   "estimatedDuration": 50,
   "description": "Derive and apply the polygon interior angle sum formula, explore the quadrilateral hierarchy (parallelogram, rectangle, rhombus, square), and apply properties of trapezoids and kites.",
-  "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"],
-  "standardsAlignment": ["G-CO.11", "G-MG.1"],
+  "skills": [
+    "polygon-angle-sum",
+    "quadrilateral-properties",
+    "parallelogram-proofs",
+    "trapezoid-properties"
+  ],
+  "standardsAlignment": [
+    "G-CO.11",
+    "G-MG.1"
+  ],
   "goals": [
     "Find the sum of interior and exterior angles of any polygon using (n-2)·180°",
     "Identify and apply properties of parallelograms, rectangles, rhombi, and squares",
@@ -28,7 +36,7 @@
       "lessonPhase": "concept-intro",
       "skill": "polygon-angle-sum",
       "title": "Polygon Interior and Exterior Angle Sums",
-      "text": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n - 2) × 180°**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n - 2) triangles. Each triangle has 180°, so the total is (n - 2) × 180°.\n\nExamples:\n• Triangle (n=3): (3-2) × 180° = 180°\n• Quadrilateral (n=4): (4-2) × 180° = 360°\n• Pentagon (n=5): (5-2) × 180° = 540°\n• Hexagon (n=6): (6-2) × 180° = 720°\n\nFor a **regular polygon** (all sides and angles equal), each angle = (n-2) × 180° / n.\n\n**Exterior Angle Sum:** The sum of exterior angles of ANY convex polygon is always **360°**. For a regular polygon, each exterior angle = 360° / n.",
+      "content": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n - 2) × 180°**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n - 2) triangles. Each triangle has 180°, so the total is (n - 2) × 180°.\n\nExamples:\n• Triangle (n=3): (3-2) × 180° = 180°\n• Quadrilateral (n=4): (4-2) × 180° = 360°\n• Pentagon (n=5): (5-2) × 180° = 540°\n• Hexagon (n=6): (6-2) × 180° = 720°\n\nFor a **regular polygon** (all sides and angles equal), each angle = (n-2) × 180° / n.\n\n**Exterior Angle Sum:** The sum of exterior angles of ANY convex polygon is always **360°**. For a regular polygon, each exterior angle = 360° / n.",
       "initialPrompt": "A stop sign is a regular octagon (8 sides). Can you calculate the sum of its interior angles and the measure of each individual angle?"
     },
     {
@@ -93,7 +101,7 @@
       "lessonPhase": "concept-intro",
       "skill": "quadrilateral-properties",
       "title": "The Quadrilateral Family Hierarchy",
-      "text": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** — both pairs of opposite sides parallel:\n• Opposite sides are congruent\n• Opposite angles are congruent\n• Consecutive angles are supplementary\n• Diagonals bisect each other\n\n**Rectangle** — parallelogram with 4 right angles:\n• All parallelogram properties PLUS\n• Diagonals are congruent\n\n**Rhombus** — parallelogram with 4 congruent sides:\n• All parallelogram properties PLUS\n• Diagonals are perpendicular\n• Diagonals bisect the angles\n\n**Square** — a rectangle AND a rhombus:\n• ALL properties of parallelogram, rectangle, AND rhombus",
+      "content": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** — both pairs of opposite sides parallel:\n• Opposite sides are congruent\n• Opposite angles are congruent\n• Consecutive angles are supplementary\n• Diagonals bisect each other\n\n**Rectangle** — parallelogram with 4 right angles:\n• All parallelogram properties PLUS\n• Diagonals are congruent\n\n**Rhombus** — parallelogram with 4 congruent sides:\n• All parallelogram properties PLUS\n• Diagonals are perpendicular\n• Diagonals bisect the angles\n\n**Square** — a rectangle AND a rhombus:\n• ALL properties of parallelogram, rectangle, AND rhombus",
       "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference."
     },
     {
@@ -159,7 +167,7 @@
       "lessonPhase": "concept-intro",
       "skill": "trapezoid-properties",
       "title": "Trapezoids and Kites",
-      "text": "**Trapezoids** have exactly one pair of parallel sides (called **bases**). The non-parallel sides are called **legs**.\n\n**Isosceles Trapezoid** (congruent legs):\n• Base angles are congruent\n• Diagonals are congruent\n• Legs are congruent\n• Same-side angles between a base and leg are supplementary\n\n**Midsegment of a Trapezoid:**\nThe segment connecting the midpoints of the legs is called the midsegment. Its length = (base₁ + base₂) / 2 (the average of the two bases).\n\n**Kites** have two pairs of consecutive congruent sides (not opposite):\n• One pair of opposite angles is congruent (between the non-equal sides)\n• Diagonals are perpendicular\n• One diagonal bisects the other\n• Area = (d₁ × d₂) / 2",
+      "content": "**Trapezoids** have exactly one pair of parallel sides (called **bases**). The non-parallel sides are called **legs**.\n\n**Isosceles Trapezoid** (congruent legs):\n• Base angles are congruent\n• Diagonals are congruent\n• Legs are congruent\n• Same-side angles between a base and leg are supplementary\n\n**Midsegment of a Trapezoid:**\nThe segment connecting the midpoints of the legs is called the midsegment. Its length = (base₁ + base₂) / 2 (the average of the two bases).\n\n**Kites** have two pairs of consecutive congruent sides (not opposite):\n• One pair of opposite angles is congruent (between the non-equal sides)\n• Diagonals are perpendicular\n• One diagonal bisects the other\n• Area = (d₁ × d₂) / 2",
       "initialPrompt": "A trapezoid has bases of 8 and 14. What is the length of the midsegment? Can you see why it's called the 'average' of the bases?"
     },
     {
@@ -220,45 +228,58 @@
           "question": "Find the sum of interior angles of a regular 12-sided polygon (dodecagon) and each interior angle.",
           "answer": "sum = 1800°, each angle = 150°",
           "skill": "polygon-angle-sum",
-          "hints": ["(12-2) × 180 = 1800°. Each angle = 1800/12 = 150°."]
+          "hints": [
+            "(12-2) × 180 = 1800°. Each angle = 1800/12 = 150°."
+          ]
         },
         {
           "id": "pq-yp2",
           "question": "Each exterior angle of a regular polygon is 40°. How many sides does it have? What is each interior angle?",
           "answer": "9 sides, each interior angle = 140°",
           "skill": "polygon-angle-sum",
-          "hints": ["360° ÷ 40° = 9 sides. Interior = 180° - 40° = 140°."]
+          "hints": [
+            "360° ÷ 40° = 9 sides. Interior = 180° - 40° = 140°."
+          ]
         },
         {
           "id": "pq-yp3",
           "question": "In parallelogram WXYZ, WX = 3a + 5 and YZ = 5a - 7. Find a and the length of WX.",
           "answer": "a = 6, WX = 23",
           "skill": "quadrilateral-properties",
-          "hints": ["Opposite sides congruent: 3a + 5 = 5a - 7. So 12 = 2a, a = 6. WX = 3(6)+5 = 23."]
+          "hints": [
+            "Opposite sides congruent: 3a + 5 = 5a - 7. So 12 = 2a, a = 6. WX = 3(6)+5 = 23."
+          ]
         },
         {
           "id": "pq-yp4",
           "question": "Is a square always a rhombus? Is a rhombus always a square? Explain.",
           "answer": "Yes, a square is always a rhombus (4 congruent sides). No, a rhombus is not always a square—it doesn't require right angles.",
           "skill": "quadrilateral-properties",
-          "hints": ["A square has 4 congruent sides (rhombus) AND 4 right angles (rectangle). A rhombus only needs 4 congruent sides."]
+          "hints": [
+            "A square has 4 congruent sides (rhombus) AND 4 right angles (rectangle). A rhombus only needs 4 congruent sides."
+          ]
         },
         {
           "id": "pq-yp5",
           "question": "A trapezoid has bases of 12 and 20. Find the midsegment length.",
           "answer": "16",
           "skill": "trapezoid-properties",
-          "hints": ["Midsegment = (base₁ + base₂) / 2 = (12 + 20) / 2 = 16."]
+          "hints": [
+            "Midsegment = (base₁ + base₂) / 2 = (12 + 20) / 2 = 16."
+          ]
         },
         {
           "id": "pq-yp6",
           "question": "A rhombus has diagonals of 30 and 16. Find the length of each side and the perimeter.",
           "answer": "side = 17, perimeter = 68",
           "skill": "quadrilateral-properties",
-          "hints": ["Half-diagonals: 15 and 8. Side = √(15² + 8²) = √(225+64) = √289 = 17. Perimeter = 4 × 17 = 68."]
+          "hints": [
+            "Half-diagonals: 15 and 8. Side = √(15² + 8²) = √(225+64) = √289 = 17. Perimeter = 4 × 17 = 68."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "polygon-angle-sum"
     }
   ],
   "answerKeys": {

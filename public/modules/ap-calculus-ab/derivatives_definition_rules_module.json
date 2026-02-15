@@ -14,7 +14,18 @@
     "common-derivatives",
     "derivatives-from-graphs-tables"
   ],
-  "standardsAlignment": ["AP Calc AB 2.1", "AP Calc AB 2.2", "AP Calc AB 2.3", "AP Calc AB 2.4", "AP Calc AB 2.5", "AP Calc AB 2.6", "AP Calc AB 2.7", "AP Calc AB 2.8", "AP Calc AB 2.9", "AP Calc AB 2.10"],
+  "standardsAlignment": [
+    "AP Calc AB 2.1",
+    "AP Calc AB 2.2",
+    "AP Calc AB 2.3",
+    "AP Calc AB 2.4",
+    "AP Calc AB 2.5",
+    "AP Calc AB 2.6",
+    "AP Calc AB 2.7",
+    "AP Calc AB 2.8",
+    "AP Calc AB 2.9",
+    "AP Calc AB 2.10"
+  ],
   "goals": [
     "Compute derivatives using the limit definition (difference quotient) in both forms and interpret the result as the slope of the tangent line.",
     "Interpret the derivative as an instantaneous rate of change in applied contexts with correct units.",
@@ -229,29 +240,52 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Derivatives Practice: Definition, Rules & Common Functions",
-      "skills": ["derivative-definition-difference-quotient", "derivative-as-rate-of-change", "differentiability-vs-continuity", "basic-differentiation-rules", "common-derivatives"],
+      "skills": [
+        "derivative-definition-difference-quotient",
+        "derivative-as-rate-of-change",
+        "differentiability-vs-continuity",
+        "basic-differentiation-rules",
+        "common-derivatives"
+      ],
       "problems": [
         {
           "problem": "Use the limit definition to find f'(x) for f(x) = 3x² - x + 4.",
-          "hints": ["Compute f(x+h) = 3(x+h)² - (x+h) + 4", "Expand: 3x² + 6xh + 3h² - x - h + 4", "Subtract f(x), divide by h, take the limit"],
+          "hints": [
+            "Compute f(x+h) = 3(x+h)² - (x+h) + 4",
+            "Expand: 3x² + 6xh + 3h² - x - h + 4",
+            "Subtract f(x), divide by h, take the limit"
+          ],
           "answer": "f(x+h) - f(x) = 6xh + 3h² - h. Divide by h: 6x + 3h - 1. As h→0: f'(x) = 6x - 1."
         },
         {
           "problem": "For f(x) = {2x², x ≤ 1; 4x - 2, x > 1}, determine if f is differentiable at x = 1.",
-          "hints": ["First check continuity: do both pieces give the same value at x = 1?", "Find the derivative of each piece at x = 1", "Compare left and right derivatives"],
+          "hints": [
+            "First check continuity: do both pieces give the same value at x = 1?",
+            "Find the derivative of each piece at x = 1",
+            "Compare left and right derivatives"
+          ],
           "answer": "Continuity: lim(x→1⁻) 2(1)² = 2. lim(x→1⁺) 4(1)-2 = 2. f(1) = 2. Continuous. Left derivative: d/dx(2x²) at x=1 = 4(1) = 4. Right derivative: d/dx(4x-2) = 4. Left = right = 4. Differentiable, f'(1) = 4."
         },
         {
           "problem": "Differentiate: y = (x³ + 2x)/(sin x).",
-          "hints": ["Use the quotient rule", "d/dx[x³ + 2x] = 3x² + 2", "d/dx[sin x] = cos x"],
+          "hints": [
+            "Use the quotient rule",
+            "d/dx[x³ + 2x] = 3x² + 2",
+            "d/dx[sin x] = cos x"
+          ],
           "answer": "Quotient rule: y' = [(3x² + 2)sin x - (x³ + 2x)cos x] / sin²x."
         },
         {
           "problem": "A company's revenue is R(t) = 120t - 3t² thousand dollars, where t is months after launch. Find and interpret R'(10).",
-          "hints": ["Differentiate: R'(t) = 120 - 6t", "Evaluate at t = 10", "State units and direction of change"],
+          "hints": [
+            "Differentiate: R'(t) = 120 - 6t",
+            "Evaluate at t = 10",
+            "State units and direction of change"
+          ],
           "answer": "R'(t) = 120 - 6t. R'(10) = 120 - 60 = 60. At t = 10 months, revenue is increasing at a rate of $60 thousand per month."
         }
-      ]
+      ],
+      "skill": "common-derivatives"
     },
     {
       "type": "explanation",
@@ -292,7 +326,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Derivatives: Definition & Basic Rules Mastery Practice",
-      "skills": ["derivative-definition-difference-quotient", "derivative-as-rate-of-change", "differentiability-vs-continuity", "basic-differentiation-rules", "common-derivatives", "derivatives-from-graphs-tables"],
+      "skills": [
+        "derivative-definition-difference-quotient",
+        "derivative-as-rate-of-change",
+        "differentiability-vs-continuity",
+        "basic-differentiation-rules",
+        "common-derivatives",
+        "derivatives-from-graphs-tables"
+      ],
       "problems": [
         {
           "problem": "Use the limit definition to find f'(x) for f(x) = 1/(2x + 1).",
@@ -318,7 +359,8 @@
           "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
           "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness — f'(0) ≈ 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
         }
-      ]
+      ],
+      "skill": "derivative-definition-difference-quotient"
     }
   ],
   "answerKeys": {

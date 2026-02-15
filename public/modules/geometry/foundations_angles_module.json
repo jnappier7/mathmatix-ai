@@ -7,8 +7,16 @@
   "weeks": "1-3",
   "estimatedDuration": 45,
   "description": "Introduce the language of geometry through undefined terms, proper notation, angle classification, angle pair relationships (complementary, supplementary, vertical, linear pair), and transversal angle theorems for parallel lines.",
-  "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"],
-  "standardsAlignment": ["G-CO.1", "G-CO.9"],
+  "skills": [
+    "points-lines-planes",
+    "angle-measurement",
+    "angle-pair-relationships",
+    "parallel-lines-transversals"
+  ],
+  "standardsAlignment": [
+    "G-CO.1",
+    "G-CO.9"
+  ],
   "goals": [
     "Identify and use the undefined terms: point, line, and plane",
     "Measure and classify angles as acute, right, obtuse, or straight",
@@ -30,7 +38,7 @@
       "lessonPhase": "concept-intro",
       "skill": "points-lines-planes",
       "title": "Undefined Terms: Points, Lines, and Planes",
-      "text": "Welcome to Geometry! Everything in geometry starts with three undefined terms: **points**, **lines**, and **planes**. A point is a location with no size—just a dot we label with a capital letter (A). A line extends infinitely in both directions through two points. A plane is a flat surface that extends infinitely in all directions. These three ideas are the building blocks for everything we'll study this year.",
+      "content": "Welcome to Geometry! Everything in geometry starts with three undefined terms: **points**, **lines**, and **planes**. A point is a location with no size—just a dot we label with a capital letter (A). A line extends infinitely in both directions through two points. A plane is a flat surface that extends infinitely in all directions. These three ideas are the building blocks for everything we'll study this year.",
       "initialPrompt": "Think about the room you're in right now. Can you point out something that represents a point, something that represents a line, and something that represents a plane?"
     },
     {
@@ -38,7 +46,7 @@
       "lessonPhase": "concept-intro",
       "skill": "points-lines-planes",
       "title": "Collinear, Coplanar, and Line Relationships",
-      "text": "Points that lie on the same line are called **collinear**. Points that lie on the same plane are called **coplanar**. Lines can intersect (cross at one point), be parallel (never cross, same plane), or be skew (never cross, different planes). Understanding these relationships is fundamental to geometric reasoning.",
+      "content": "Points that lie on the same line are called **collinear**. Points that lie on the same plane are called **coplanar**. Lines can intersect (cross at one point), be parallel (never cross, same plane), or be skew (never cross, different planes). Understanding these relationships is fundamental to geometric reasoning.",
       "initialPrompt": "If two lines are in the same plane and never touch, what do we call them? What about two lines that aren't in the same plane and never touch?"
     },
     {
@@ -67,7 +75,7 @@
       "lessonPhase": "concept-intro",
       "skill": "angle-measurement",
       "title": "Angle Classification and Angle Pairs",
-      "text": "An angle is formed by two rays with a common endpoint (the vertex). We classify angles by their measure:\n• **Acute**: between 0° and 90°\n• **Right**: exactly 90°\n• **Obtuse**: between 90° and 180°\n• **Straight**: exactly 180°\n\nAngles also form special **pairs**:\n• **Complementary angles** sum to 90°\n• **Supplementary angles** sum to 180°\n• **Vertical angles** are formed by two intersecting lines and are always congruent (equal)\n• **Linear pairs** are adjacent angles on a straight line and are always supplementary",
+      "content": "An angle is formed by two rays with a common endpoint (the vertex). We classify angles by their measure:\n• **Acute**: between 0° and 90°\n• **Right**: exactly 90°\n• **Obtuse**: between 90° and 180°\n• **Straight**: exactly 180°\n\nAngles also form special **pairs**:\n• **Complementary angles** sum to 90°\n• **Supplementary angles** sum to 180°\n• **Vertical angles** are formed by two intersecting lines and are always congruent (equal)\n• **Linear pairs** are adjacent angles on a straight line and are always supplementary",
       "initialPrompt": "If one angle in a complementary pair is 25°, what's the other? What if one angle in a supplementary pair is 25°?"
     },
     {
@@ -132,7 +140,7 @@
       "lessonPhase": "concept-intro",
       "skill": "parallel-lines-transversals",
       "title": "Parallel Lines Cut by a Transversal",
-      "text": "When a line (called a **transversal**) crosses two parallel lines, it creates 8 angles with special relationships:\n• **Corresponding angles** (same position at each intersection) are congruent — look for the F-pattern\n• **Alternate interior angles** (inside, opposite sides) are congruent — look for the Z-pattern\n• **Alternate exterior angles** (outside, opposite sides) are congruent\n• **Same-side interior angles** (inside, same side) are supplementary (sum to 180°) — look for the C-pattern\n\nKey insight: once you know ONE angle, you can find all EIGHT using these relationships.",
+      "content": "When a line (called a **transversal**) crosses two parallel lines, it creates 8 angles with special relationships:\n• **Corresponding angles** (same position at each intersection) are congruent — look for the F-pattern\n• **Alternate interior angles** (inside, opposite sides) are congruent — look for the Z-pattern\n• **Alternate exterior angles** (outside, opposite sides) are congruent\n• **Same-side interior angles** (inside, same side) are supplementary (sum to 180°) — look for the C-pattern\n\nKey insight: once you know ONE angle, you can find all EIGHT using these relationships.",
       "initialPrompt": "Look at the letters F, Z, and C. Can you see how the angles in those letter shapes match the angle pair types I just described?"
     },
     {
@@ -195,45 +203,61 @@
           "question": "An angle measures 52°. What is the measure of its complement?",
           "answer": "38",
           "skill": "angle-pair-relationships",
-          "hints": ["Complementary angles sum to 90°."]
+          "hints": [
+            "Complementary angles sum to 90°."
+          ]
         },
         {
           "id": "fa-yp2",
           "question": "Two parallel lines are cut by a transversal. A corresponding angle pair includes one angle measuring 78°. What does the other corresponding angle measure?",
           "answer": "78",
           "skill": "parallel-lines-transversals",
-          "hints": ["Corresponding angles formed by parallel lines and a transversal are congruent."]
+          "hints": [
+            "Corresponding angles formed by parallel lines and a transversal are congruent."
+          ]
         },
         {
           "id": "fa-yp3",
           "question": "Lines m and n are parallel, cut by transversal t. An alternate exterior angle pair measures (4x + 5)° and (6x - 25)°. Find x.",
           "answer": "15",
           "skill": "parallel-lines-transversals",
-          "hints": ["Alternate exterior angles are congruent when lines are parallel.", "4x + 5 = 6x - 25. Solve for x."]
+          "hints": [
+            "Alternate exterior angles are congruent when lines are parallel.",
+            "4x + 5 = 6x - 25. Solve for x."
+          ]
         },
         {
           "id": "fa-yp4",
           "question": "Two lines intersect. One of the four angles formed measures 135°. Find the measures of the other three angles.",
           "answer": "45, 135, 45",
           "skill": "angle-pair-relationships",
-          "hints": ["Vertical angles are congruent. Adjacent angles are supplementary (linear pair)."]
+          "hints": [
+            "Vertical angles are congruent. Adjacent angles are supplementary (linear pair)."
+          ]
         },
         {
           "id": "fa-yp5",
           "question": "Two parallel lines are cut by a transversal. One same-side interior angle is 3 times the other. Find both angle measures.",
           "answer": "45 and 135",
           "skill": "parallel-lines-transversals",
-          "hints": ["Same-side interior angles are supplementary: x + 3x = 180.", "4x = 180, so x = 45. The other is 3(45) = 135."]
+          "hints": [
+            "Same-side interior angles are supplementary: x + 3x = 180.",
+            "4x = 180, so x = 45. The other is 3(45) = 135."
+          ]
         },
         {
           "id": "fa-yp6",
           "question": "Angles A and B are supplementary. Angle A is 20° more than twice Angle B. Find both angle measures.",
           "answer": "Angle B = 53.33° (160/3), Angle A = 126.67° (380/3)",
           "skill": "angle-pair-relationships",
-          "hints": ["A + B = 180 and A = 2B + 20. Substitute: (2B + 20) + B = 180.", "3B + 20 = 180, so 3B = 160, B = 160/3 ≈ 53.3°. A = 180 - 160/3 = 380/3 ≈ 126.7°."]
+          "hints": [
+            "A + B = 180 and A = 2B + 20. Substitute: (2B + 20) + B = 180.",
+            "3B + 20 = 180, so 3B = 160, B = 160/3 ≈ 53.3°. A = 180 - 160/3 = 380/3 ≈ 126.7°."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "points-lines-planes"
     }
   ],
   "answerKeys": {

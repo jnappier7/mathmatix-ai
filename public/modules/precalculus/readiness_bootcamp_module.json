@@ -5,8 +5,22 @@
   "title": "Readiness Boot Camp",
   "weeks": "1-2",
   "estimatedDuration": 40,
-  "skills": ["function-notation-domain-range", "solving-equations-review", "factoring-simplification-fluency", "graphing-transformations-review"],
-  "standardsAlignment": ["F-IF.1", "F-IF.2", "F-IF.5", "F-IF.7", "A-SSE.2", "A-REI.4", "F-BF.3"],
+  "description": "A diagnostic-first review of the Algebra 2 skills that form the backbone of Pre-Calculus: function notation fluency, equation solving across all types, efficient factoring, and transformation rules that apply to every function family you will study this year.",
+  "skills": [
+    "function-notation-domain-range",
+    "solving-equations-review",
+    "factoring-simplification-fluency",
+    "graphing-transformations-review"
+  ],
+  "standardsAlignment": [
+    "F-IF.1",
+    "F-IF.2",
+    "F-IF.5",
+    "F-IF.7",
+    "A-SSE.2",
+    "A-REI.4",
+    "F-BF.3"
+  ],
   "goals": [
     "Demonstrate fluency with function notation, domain/range determination, and interval notation",
     "Solve equations and inequalities across all Algebra 2 types: linear, quadratic, rational, radical, exponential",
@@ -25,15 +39,19 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Function Notation, Domain & Range**\n\nA function f takes an input x and produces exactly one output f(x).\n\n**Evaluating functions:**\n- f(3) means: substitute 3 for x\n- f(a + h) means: substitute (a + h) for every x\n- f(g(x)) means: substitute g(x) for every x in f\n\n**Domain** = all valid inputs (x-values). Look for restrictions:\n1. **Fractions:** denominator ≠ 0\n2. **Even roots:** radicand ≥ 0\n3. **Logarithms:** argument > 0\n\n**Range** = all outputs (y-values) the function actually produces.\n\n**Interval Notation:**\n- [a, b] = includes endpoints (closed)\n- (a, b) = excludes endpoints (open)\n- (-∞, ∞) = all real numbers\n- Use ∪ for unions: (-∞, 2) ∪ (2, ∞) means all reals except 2\n\n**Even/Odd Symmetry:**\n- Even: f(-x) = f(x) → symmetric about y-axis (e.g., x², cos x)\n- Odd: f(-x) = -f(x) → symmetric about origin (e.g., x³, sin x)",
-      "initialPrompt": "For f(x) = (x + 1)/(x² - 4), find: (a) f(3), (b) the domain in interval notation, (c) any x-values where f(x) = 0."
+      "content": "**Function Notation, Domain & Range**\n\nA function f takes an input x and produces exactly one output f(x).\n\n**Evaluating functions:**\n- f(3) means: substitute 3 for x\n- f(a + h) means: substitute (a + h) for every x\n- f(g(x)) means: substitute g(x) for every x in f\n\n**Domain** = all valid inputs (x-values). Look for restrictions:\n1. **Fractions:** denominator ≠ 0\n2. **Even roots:** radicand ≥ 0\n3. **Logarithms:** argument > 0\n\n**Range** = all outputs (y-values) the function actually produces.\n\n**Interval Notation:**\n- [a, b] = includes endpoints (closed)\n- (a, b) = excludes endpoints (open)\n- (-∞, ∞) = all real numbers\n- Use ∪ for unions: (-∞, 2) ∪ (2, ∞) means all reals except 2\n\n**Even/Odd Symmetry:**\n- Even: f(-x) = f(x) → symmetric about y-axis (e.g., x², cos x)\n- Odd: f(-x) = -f(x) → symmetric about origin (e.g., x³, sin x)",
+      "initialPrompt": "For f(x) = (x + 1)/(x² - 4), find: (a) f(3), (b) the domain in interval notation, (c) any x-values where f(x) = 0.",
+      "skill": "function-notation-domain-range",
+      "title": "Concept: Function Notation Domain Range"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "problem": "(a) For f(x) = √(3x - 6), find the domain. (b) For g(x) = (x² - 1)/(x² - 5x + 6), find the domain and simplify. (c) Given f(x) = 2x - 1 and g(x) = x² + 3, find f(g(2)) and g(f(x)).",
       "explanation": "**(a) Domain of f(x) = √(3x - 6):**\nEven root → radicand ≥ 0:\n3x - 6 ≥ 0 → x ≥ 2\n**Domain: [2, ∞)**\n\n**(b) Domain and simplification of g(x) = (x² - 1)/(x² - 5x + 6):**\nDenominator: x² - 5x + 6 = (x - 2)(x - 3) ≠ 0 → x ≠ 2, x ≠ 3\n**Domain: (-∞, 2) ∪ (2, 3) ∪ (3, ∞)**\n\nSimplify: (x² - 1)/((x-2)(x-3)) = (x-1)(x+1)/((x-2)(x-3))\nNo common factors, so this is already simplified.\n\n**(c) Composition:**\nf(g(2)): First, g(2) = 4 + 3 = 7. Then f(7) = 14 - 1 = **13**.\ng(f(x)): g(2x - 1) = (2x - 1)² + 3 = 4x² - 4x + 1 + 3 = **4x² - 4x + 4**",
-      "initialPrompt": "For part (b), what would happen if the numerator were (x² - 4) instead of (x² - 1)? Would any factors cancel? What would that mean for the graph?"
+      "initialPrompt": "For part (b), what would happen if the numerator were (x² - 4) instead of (x² - 1)? Would any factors cancel? What would that mean for the graph?",
+      "skill": "solving-equations-review",
+      "title": "I-Do: Solving Equations Review"
     },
     {
       "type": "guided_practice",
@@ -42,33 +60,50 @@
         {
           "question": "Find the domain of h(x) = ln(x - 5) + √(10 - x) in interval notation.",
           "answer": "(5, 10]",
-          "hints": ["ln requires x - 5 > 0, so x > 5.", "√ requires 10 - x ≥ 0, so x ≤ 10.", "Both conditions: 5 < x ≤ 10 → (5, 10]."]
+          "hints": [
+            "ln requires x - 5 > 0, so x > 5.",
+            "√ requires 10 - x ≥ 0, so x ≤ 10.",
+            "Both conditions: 5 < x ≤ 10 → (5, 10]."
+          ]
         },
         {
           "question": "For f(x) = x³ - 4x, determine if f is even, odd, or neither.",
           "answer": "Odd: f(-x) = -x³ + 4x = -(x³ - 4x) = -f(x)",
-          "hints": ["Compute f(-x): (-x)³ - 4(-x) = -x³ + 4x.", "Compare to f(x) = x³ - 4x. Is f(-x) = f(x)? No.", "Is f(-x) = -f(x)? Yes: -x³ + 4x = -(x³ - 4x). So f is odd."]
+          "hints": [
+            "Compute f(-x): (-x)³ - 4(-x) = -x³ + 4x.",
+            "Compare to f(x) = x³ - 4x. Is f(-x) = f(x)? No.",
+            "Is f(-x) = -f(x)? Yes: -x³ + 4x = -(x³ - 4x). So f is odd."
+          ]
         },
         {
           "question": "Given f(x) = 3/(x - 2) and g(x) = x + 5, find f(g(x)) and its domain.",
           "answer": "f(g(x)) = 3/((x+5)-2) = 3/(x+3). Domain: (-∞, -3) ∪ (-3, ∞).",
-          "hints": ["Substitute g(x) into f: f(x+5) = 3/((x+5) - 2) = 3/(x+3).", "Domain restriction: x + 3 ≠ 0, so x ≠ -3."]
+          "hints": [
+            "Substitute g(x) into f: f(x+5) = 3/((x+5) - 2) = 3/(x+3).",
+            "Domain restriction: x + 3 ≠ 0, so x ≠ -3."
+          ]
         }
       ],
-      "initialPrompt": "For the domain problem, you need BOTH conditions satisfied simultaneously. What does the ln need? What does the √ need?"
+      "initialPrompt": "For the domain problem, you need BOTH conditions satisfied simultaneously. What does the ln need? What does the √ need?",
+      "skill": "solving-equations-review",
+      "title": "We-Do: Solving Equations Review"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Solving Equations & Inequalities — The Full Toolkit**\n\nBy now you should have these methods in your toolkit:\n\n| Equation Type | Method |\n|--------------|--------|\n| Linear: ax + b = c | Isolate x |\n| Quadratic: ax² + bx + c = 0 | Factor, complete the square, or quadratic formula |\n| Rational: f(x)/g(x) = k | Multiply by LCD, solve, CHECK for extraneous |\n| Radical: √(expr) = k | Isolate radical, square both sides, CHECK |\n| Exponential: b^f(x) = k | Take log of both sides, or use common base |\n| Logarithmic: log_b(expr) = k | Convert to exponential form, CHECK domain |\n| Absolute value: |expr| = k | Split into two cases |\n\n**Inequalities** follow the same methods, BUT:\n- Flip the inequality when multiplying/dividing by a negative\n- For rational/polynomial inequalities: find critical values, test intervals, use a sign chart\n- Always express answers in interval notation\n\n**The Universal Check Rule:** Any time you square both sides, multiply by a variable expression, or solve a log equation, you MUST check for extraneous solutions.",
-      "initialPrompt": "Solve: √(2x + 3) = x. Isolate, square, solve the resulting quadratic, then check both solutions."
+      "content": "**Solving Equations & Inequalities — The Full Toolkit**\n\nBy now you should have these methods in your toolkit:\n\n| Equation Type | Method |\n|--------------|--------|\n| Linear: ax + b = c | Isolate x |\n| Quadratic: ax² + bx + c = 0 | Factor, complete the square, or quadratic formula |\n| Rational: f(x)/g(x) = k | Multiply by LCD, solve, CHECK for extraneous |\n| Radical: √(expr) = k | Isolate radical, square both sides, CHECK |\n| Exponential: b^f(x) = k | Take log of both sides, or use common base |\n| Logarithmic: log_b(expr) = k | Convert to exponential form, CHECK domain |\n| Absolute value: |expr| = k | Split into two cases |\n\n**Inequalities** follow the same methods, BUT:\n- Flip the inequality when multiplying/dividing by a negative\n- For rational/polynomial inequalities: find critical values, test intervals, use a sign chart\n- Always express answers in interval notation\n\n**The Universal Check Rule:** Any time you square both sides, multiply by a variable expression, or solve a log equation, you MUST check for extraneous solutions.",
+      "initialPrompt": "Solve: √(2x + 3) = x. Isolate, square, solve the resulting quadratic, then check both solutions.",
+      "skill": "solving-equations-review",
+      "title": "Concept: Solving Equations Review"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "problem": "Solve each equation:\n(a) (3x)/(x - 4) = 2 + 12/(x - 4)\n(b) 3^(2x - 1) = 27^(x + 2)\n(c) |2x - 5| ≤ 7",
       "explanation": "**(a) Rational equation:**\nLCD = (x - 4). Multiply both sides:\n3x = 2(x - 4) + 12\n3x = 2x - 8 + 12\n3x = 2x + 4\nx = 4\n\nCHECK: x = 4 makes denominator zero → **EXTRANEOUS. No solution.**\n\n**(b) Exponential equation:**\nRewrite 27 = 3³: 3^(2x-1) = (3³)^(x+2) = 3^(3x+6)\nSet exponents equal: 2x - 1 = 3x + 6 → -x = 7 → **x = -7**\nCheck: 3^(-15) = 27^(-5) = 3^(-15). ✓\n\n**(c) Absolute value inequality:**\n|2x - 5| ≤ 7 means -7 ≤ 2x - 5 ≤ 7\nAdd 5: -2 ≤ 2x ≤ 12\nDivide by 2: -1 ≤ x ≤ 6\n**Solution: [-1, 6]**",
-      "initialPrompt": "For part (a), why does x = 4 appear as a solution algebraically but fail? What happens at x = 4 in the original equation?"
+      "initialPrompt": "For part (a), why does x = 4 appear as a solution algebraically but fail? What happens at x = 4 in the original equation?",
+      "skill": "factoring-simplification-fluency",
+      "title": "I-Do: Factoring Simplification Fluency"
     },
     {
       "type": "guided_practice",
@@ -77,33 +112,51 @@
         {
           "question": "Solve: √(2x + 3) = x.",
           "answer": "x = 3 (x = -1 is extraneous)",
-          "hints": ["Square both sides: 2x + 3 = x².", "Rearrange: x² - 2x - 3 = 0. Factor: (x-3)(x+1) = 0.", "x = 3: √9 = 3 ✓. x = -1: √1 = 1 ≠ -1. Extraneous."]
+          "hints": [
+            "Square both sides: 2x + 3 = x².",
+            "Rearrange: x² - 2x - 3 = 0. Factor: (x-3)(x+1) = 0.",
+            "x = 3: √9 = 3 ✓. x = -1: √1 = 1 ≠ -1. Extraneous."
+          ]
         },
         {
           "question": "Solve: log₂(x + 3) + log₂(x - 1) = 5.",
           "answer": "x = 5 (x = -7 is extraneous)",
-          "hints": ["Combine: log₂((x+3)(x-1)) = 5.", "Convert: (x+3)(x-1) = 32. Expand: x² + 2x - 3 = 32.", "x² + 2x - 35 = 0 → (x+7)(x-5) = 0. Domain requires x > 1: only x = 5."]
+          "hints": [
+            "Combine: log₂((x+3)(x-1)) = 5.",
+            "Convert: (x+3)(x-1) = 32. Expand: x² + 2x - 3 = 32.",
+            "x² + 2x - 35 = 0 → (x+7)(x-5) = 0. Domain requires x > 1: only x = 5."
+          ]
         },
         {
           "question": "Solve: (x² - x - 6)/(x - 3) ≥ 0. Express in interval notation.",
           "answer": "[-2, 3) ∪ (3, ∞)",
-          "hints": ["Factor: (x-3)(x+2)/(x-3). Cancel (x-3) but note x ≠ 3.", "Simplified: x + 2 ≥ 0 with x ≠ 3. So x ≥ -2 and x ≠ 3.", "Interval notation: [-2, 3) ∪ (3, ∞)."]
+          "hints": [
+            "Factor: (x-3)(x+2)/(x-3). Cancel (x-3) but note x ≠ 3.",
+            "Simplified: x + 2 ≥ 0 with x ≠ 3. So x ≥ -2 and x ≠ 3.",
+            "Interval notation: [-2, 3) ∪ (3, ∞)."
+          ]
         }
       ],
-      "initialPrompt": "For the radical equation, start by squaring both sides. What quadratic do you get?"
+      "initialPrompt": "For the radical equation, start by squaring both sides. What quadratic do you get?",
+      "skill": "factoring-simplification-fluency",
+      "title": "We-Do: Factoring Simplification Fluency"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Factoring & Simplification Fluency**\n\nFactoring is the single most important algebraic manipulation in PreCalc. You need ALL of these on autopilot:\n\n| Pattern | Example |\n|---------|---------|\n| GCF | 6x³ - 4x² = 2x²(3x - 2) |\n| Trinomial (a=1) | x² + 5x + 6 = (x+2)(x+3) |\n| Trinomial (a≠1) | 6x² - 7x - 3 = (2x-3)(3x+1) |\n| Difference of squares | x² - 49 = (x-7)(x+7) |\n| Perfect square trinomial | x² + 10x + 25 = (x+5)² |\n| Sum of cubes | x³ + 8 = (x+2)(x²-2x+4) |\n| Difference of cubes | x³ - 27 = (x-3)(x²+3x+9) |\n| Grouping | x³ + 3x² - 4x - 12 = (x+3)(x²-4) = (x+3)(x-2)(x+2) |\n| Substitution | x⁴ - 5x² + 4 = (x²-4)(x²-1) = (x-2)(x+2)(x-1)(x+1) |\n\n**Simplification fluency also includes:**\n- Rationalizing denominators (monomial and conjugate)\n- Combining fractions with unlike denominators\n- Simplifying complex fractions\n- Working with negative and rational exponents",
-      "initialPrompt": "Factor completely: (a) 2x³ - 16, (b) x⁴ - 13x² + 36, (c) 6x³ + x² - 12x - 2."
+      "content": "**Factoring & Simplification Fluency**\n\nFactoring is the single most important algebraic manipulation in PreCalc. You need ALL of these on autopilot:\n\n| Pattern | Example |\n|---------|---------|\n| GCF | 6x³ - 4x² = 2x²(3x - 2) |\n| Trinomial (a=1) | x² + 5x + 6 = (x+2)(x+3) |\n| Trinomial (a≠1) | 6x² - 7x - 3 = (2x-3)(3x+1) |\n| Difference of squares | x² - 49 = (x-7)(x+7) |\n| Perfect square trinomial | x² + 10x + 25 = (x+5)² |\n| Sum of cubes | x³ + 8 = (x+2)(x²-2x+4) |\n| Difference of cubes | x³ - 27 = (x-3)(x²+3x+9) |\n| Grouping | x³ + 3x² - 4x - 12 = (x+3)(x²-4) = (x+3)(x-2)(x+2) |\n| Substitution | x⁴ - 5x² + 4 = (x²-4)(x²-1) = (x-2)(x+2)(x-1)(x+1) |\n\n**Simplification fluency also includes:**\n- Rationalizing denominators (monomial and conjugate)\n- Combining fractions with unlike denominators\n- Simplifying complex fractions\n- Working with negative and rational exponents",
+      "initialPrompt": "Factor completely: (a) 2x³ - 16, (b) x⁴ - 13x² + 36, (c) 6x³ + x² - 12x - 2.",
+      "skill": "factoring-simplification-fluency",
+      "title": "Concept: Factoring Simplification Fluency"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "problem": "Factor completely:\n(a) 2x³ - 54\n(b) x⁴ - 5x² - 36\n(c) Simplify: (x² - 9)/(x² + 6x + 9) · (x² + 5x + 6)/(x² - 4)",
       "explanation": "**(a) 2x³ - 54:**\nGCF first: 2(x³ - 27)\nDifference of cubes: a³ - b³ = (a-b)(a²+ab+b²) with a=x, b=3\n**2(x - 3)(x² + 3x + 9)**\n\n**(b) x⁴ - 5x² - 36:**\nSubstitution: let u = x². Then u² - 5u - 36 = (u - 9)(u + 4)\nBack-substitute: (x² - 9)(x² + 4)\nFactor further: **(x - 3)(x + 3)(x² + 4)**\nNote: x² + 4 doesn't factor over the reals.\n\n**(c) Rational expression:**\nFactor everything:\n((x-3)(x+3))/((x+3)(x+3)) · ((x+2)(x+3))/((x-2)(x+2))\n\nCancel common factors: (x+3), (x+3), (x+2)\n= **(x - 3)/(x - 2)**\nRestrictions: x ≠ -3, -2, 2",
-      "initialPrompt": "In part (b), why can't x² + 4 be factored? What would you need for it to factor — and when might that happen in math?"
+      "initialPrompt": "In part (b), why can't x² + 4 be factored? What would you need for it to factor — and when might that happen in math?",
+      "skill": "graphing-transformations-review",
+      "title": "I-Do: Graphing Transformations Review"
     },
     {
       "type": "guided_practice",
@@ -112,33 +165,51 @@
         {
           "question": "Factor completely: 3x³ + 24.",
           "answer": "3(x + 2)(x² - 2x + 4)",
-          "hints": ["GCF: 3(x³ + 8).", "Sum of cubes: x³ + 8 = (x+2)(x²-2x+4).", "Final: 3(x + 2)(x² - 2x + 4)."]
+          "hints": [
+            "GCF: 3(x³ + 8).",
+            "Sum of cubes: x³ + 8 = (x+2)(x²-2x+4).",
+            "Final: 3(x + 2)(x² - 2x + 4)."
+          ]
         },
         {
           "question": "Simplify: 1/(x+1) - 1/(x-1).",
           "answer": "-2/(x² - 1)",
-          "hints": ["LCD = (x+1)(x-1).", "Numerator: (x-1) - (x+1) = -2.", "Result: -2/((x+1)(x-1)) = -2/(x² - 1)."]
+          "hints": [
+            "LCD = (x+1)(x-1).",
+            "Numerator: (x-1) - (x+1) = -2.",
+            "Result: -2/((x+1)(x-1)) = -2/(x² - 1)."
+          ]
         },
         {
           "question": "Simplify: (x^(-1) + y^(-1)) / (x^(-1) - y^(-1)).",
           "answer": "(y + x)/(y - x), equivalently -(x + y)/(x - y)",
-          "hints": ["Rewrite: (1/x + 1/y)/(1/x - 1/y).", "Multiply top and bottom by xy: (y + x)/(y - x).", "Or equivalently: -(x + y)/(x - y)."]
+          "hints": [
+            "Rewrite: (1/x + 1/y)/(1/x - 1/y).",
+            "Multiply top and bottom by xy: (y + x)/(y - x).",
+            "Or equivalently: -(x + y)/(x - y)."
+          ]
         }
       ],
-      "initialPrompt": "For the sum of cubes, remember the pattern: a³ + b³ = (a + b)(a² - ab + b²). What are a and b here?"
+      "initialPrompt": "For the sum of cubes, remember the pattern: a³ + b³ = (a + b)(a² - ab + b²). What are a and b here?",
+      "skill": "graphing-transformations-review",
+      "title": "We-Do: Graphing Transformations Review"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Graphing Basics & Transformations**\n\n**Parent functions you must know by heart:**\n- Linear: f(x) = x\n- Quadratic: f(x) = x²\n- Cubic: f(x) = x³\n- Absolute value: f(x) = |x|\n- Square root: f(x) = √x\n- Reciprocal: f(x) = 1/x\n- Exponential: f(x) = bˣ (b > 1)\n- Logarithmic: f(x) = log_b(x)\n\n**Universal transformation template:**\ng(x) = a · f(b(x - c)) + d\n\n| Parameter | Effect |\n|-----------|--------|\n| a | Vertical stretch (|a| > 1) or compression (|a| < 1). Negative a = reflect over x-axis. |\n| b | Horizontal stretch (|b| < 1) or compression (|b| > 1). Negative b = reflect over y-axis. |\n| c | Horizontal shift: right if c > 0, left if c < 0. |\n| d | Vertical shift: up if d > 0, down if d < 0. |\n\n**Order of transformations:** Horizontal (inside) then vertical (outside). Inside the function: the opposite of what you'd expect (subtract c = shift right, multiply by b = compress).\n\n**Key graph features to identify for ANY function:**\n- Domain and range\n- Intercepts (x and y)\n- Symmetry (even/odd)\n- End behavior\n- Asymptotes (if any)\n- Increasing/decreasing intervals",
-      "initialPrompt": "Starting from f(x) = √x, describe the graph of g(x) = -2√(x + 3) - 1. List each transformation in order."
+      "content": "**Graphing Basics & Transformations**\n\n**Parent functions you must know by heart:**\n- Linear: f(x) = x\n- Quadratic: f(x) = x²\n- Cubic: f(x) = x³\n- Absolute value: f(x) = |x|\n- Square root: f(x) = √x\n- Reciprocal: f(x) = 1/x\n- Exponential: f(x) = bˣ (b > 1)\n- Logarithmic: f(x) = log_b(x)\n\n**Universal transformation template:**\ng(x) = a · f(b(x - c)) + d\n\n| Parameter | Effect |\n|-----------|--------|\n| a | Vertical stretch (|a| > 1) or compression (|a| < 1). Negative a = reflect over x-axis. |\n| b | Horizontal stretch (|b| < 1) or compression (|b| > 1). Negative b = reflect over y-axis. |\n| c | Horizontal shift: right if c > 0, left if c < 0. |\n| d | Vertical shift: up if d > 0, down if d < 0. |\n\n**Order of transformations:** Horizontal (inside) then vertical (outside). Inside the function: the opposite of what you'd expect (subtract c = shift right, multiply by b = compress).\n\n**Key graph features to identify for ANY function:**\n- Domain and range\n- Intercepts (x and y)\n- Symmetry (even/odd)\n- End behavior\n- Asymptotes (if any)\n- Increasing/decreasing intervals",
+      "initialPrompt": "Starting from f(x) = √x, describe the graph of g(x) = -2√(x + 3) - 1. List each transformation in order.",
+      "skill": "graphing-transformations-review",
+      "title": "Concept: Graphing Transformations Review"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "problem": "For g(x) = -|x - 2| + 5:\n(a) Identify the parent function and list all transformations.\n(b) Find the vertex, domain, range, and intercepts.\n(c) Sketch the graph.\n\nThen: Describe the transformations that turn f(x) = 1/x into h(x) = 3/(x + 4) - 2.",
       "explanation": "**g(x) = -|x - 2| + 5:**\n\n**(a)** Parent: f(x) = |x|\nTransformations (in order):\n1. Shift right 2 (the x - 2 inside)\n2. Reflect over x-axis (the negative)\n3. Shift up 5 (the + 5)\n\n**(b)** Vertex: (2, 5) — the peak (since reflection flips the V upside down)\nDomain: (-∞, ∞) — absolute value is defined for all reals\nRange: (-∞, 5] — opens downward from vertex\ny-intercept: g(0) = -|0-2| + 5 = -2 + 5 = 3. Point: (0, 3)\nx-intercepts: -|x-2| + 5 = 0 → |x-2| = 5 → x = 7 or x = -3. Points: (-3, 0) and (7, 0)\n\n**(c)** Upside-down V with vertex at (2, 5), passing through (-3, 0), (0, 3), (7, 0).\n\n---\n\n**h(x) = 3/(x + 4) - 2:**\nParent: f(x) = 1/x\n1. Shift left 4 (x + 4 = x - (-4))\n2. Vertical stretch by 3\n3. Shift down 2\n\nVertical asymptote: x = -4 (shifted from x = 0)\nHorizontal asymptote: y = -2 (shifted from y = 0)",
-      "initialPrompt": "For the reciprocal transformation, where are the asymptotes? How does each transformation move them from the parent function's asymptotes at x = 0 and y = 0?"
+      "initialPrompt": "For the reciprocal transformation, where are the asymptotes? How does each transformation move them from the parent function's asymptotes at x = 0 and y = 0?",
+      "skill": "graphing-transformations-review",
+      "title": "I-Do: Graphing Transformations Review"
     },
     {
       "type": "independent_practice",
@@ -147,35 +218,60 @@
         {
           "question": "Find the domain of f(x) = √(x + 4) / (x² - 9) in interval notation.",
           "answer": "[-4, 3) ∪ (3, ∞)",
-          "hints": ["√ needs x + 4 ≥ 0 → x ≥ -4.", "Denominator needs x² - 9 ≠ 0 → x ≠ ±3.", "Combine: x ≥ -4 AND x ≠ 3 AND x ≠ -3. But -3 < -4 is false, so -3 is already excluded. Domain: [-4, 3) ∪ (3, ∞)."]
+          "hints": [
+            "√ needs x + 4 ≥ 0 → x ≥ -4.",
+            "Denominator needs x² - 9 ≠ 0 → x ≠ ±3.",
+            "Combine: x ≥ -4 AND x ≠ 3 AND x ≠ -3. But -3 < -4 is false, so -3 is already excluded. Domain: [-4, 3) ∪ (3, ∞)."
+          ]
         },
         {
           "question": "Solve: 5^(x + 1) = 25^(2x - 3).",
           "answer": "x = 7/3",
-          "hints": ["Rewrite 25 = 5²: 5^(x+1) = 5^(2(2x-3)) = 5^(4x-6).", "Set exponents equal: x + 1 = 4x - 6.", "3x = 7, x = 7/3."]
+          "hints": [
+            "Rewrite 25 = 5²: 5^(x+1) = 5^(2(2x-3)) = 5^(4x-6).",
+            "Set exponents equal: x + 1 = 4x - 6.",
+            "3x = 7, x = 7/3."
+          ]
         },
         {
           "question": "Factor completely: 8x³ - 27y³.",
           "answer": "(2x - 3y)(4x² + 6xy + 9y²)",
-          "hints": ["Difference of cubes: a = 2x, b = 3y.", "a³ - b³ = (a-b)(a²+ab+b²).", "(2x-3y)(4x² + 6xy + 9y²)."]
+          "hints": [
+            "Difference of cubes: a = 2x, b = 3y.",
+            "a³ - b³ = (a-b)(a²+ab+b²).",
+            "(2x-3y)(4x² + 6xy + 9y²)."
+          ]
         },
         {
           "question": "Solve and express in interval notation: (x + 2)/(x - 1) < 0.",
           "answer": "(-2, 1)",
-          "hints": ["Critical values: x = -2 (numerator = 0) and x = 1 (denominator = 0).", "Test intervals: x < -2: (+)→neg/(neg)→pos. -2 < x < 1: (pos)/(neg) = neg ✓. x > 1: pos/pos = pos.", "Solution: (-2, 1). Exclude endpoints: -2 gives 0 (not < 0), 1 is undefined."]
+          "hints": [
+            "Critical values: x = -2 (numerator = 0) and x = 1 (denominator = 0).",
+            "Test intervals: x < -2: (+)→neg/(neg)→pos. -2 < x < 1: (pos)/(neg) = neg ✓. x > 1: pos/pos = pos.",
+            "Solution: (-2, 1). Exclude endpoints: -2 gives 0 (not < 0), 1 is undefined."
+          ]
         },
         {
           "question": "For g(x) = 2(x + 1)³ - 4, identify the parent function, list transformations, and find the y-intercept.",
           "answer": "Parent: f(x) = x³. Left 1, vertical stretch by 2, down 4. y-intercept: g(0) = 2(1)³ - 4 = -2.",
-          "hints": ["Parent: x³. Transformations: shift left 1, stretch vertically by 2, shift down 4.", "y-intercept: g(0) = 2(0+1)³ - 4 = 2(1) - 4 = -2."]
+          "hints": [
+            "Parent: x³. Transformations: shift left 1, stretch vertically by 2, shift down 4.",
+            "y-intercept: g(0) = 2(0+1)³ - 4 = 2(1) - 4 = -2."
+          ]
         },
         {
           "question": "Simplify: (2x² - 5x - 3)/(x² - 9) ÷ (2x + 1)/(x + 3).",
           "answer": "(x - 3)/(x - 3) · ... = 1. Wait — let me factor: (2x+1)(x-3)/((x-3)(x+3)) · (x+3)/(2x+1) = 1. Restrictions: x ≠ 3, -3, -1/2.",
-          "hints": ["Factor: 2x²-5x-3 = (2x+1)(x-3). x²-9 = (x-3)(x+3).", "Flip and multiply: ((2x+1)(x-3))/((x-3)(x+3)) × (x+3)/(2x+1).", "Cancel all common factors: result = 1. Restrictions: x ≠ 3, -3, -1/2."]
+          "hints": [
+            "Factor: 2x²-5x-3 = (2x+1)(x-3). x²-9 = (x-3)(x+3).",
+            "Flip and multiply: ((2x+1)(x-3))/((x-3)(x+3)) × (x+3)/(2x+1).",
+            "Cancel all common factors: result = 1. Restrictions: x ≠ 3, -3, -1/2."
+          ]
         }
       ],
-      "attemptsRequired": 4
+      "attemptsRequired": 4,
+      "skill": "function-notation-domain-range",
+      "title": "You-Do: Function Notation Domain Range"
     }
   ],
   "answerKeys": {

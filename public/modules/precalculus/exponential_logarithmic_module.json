@@ -14,7 +14,13 @@
     "solving-logarithmic-equations",
     "exponential-logarithmic-modeling"
   ],
-  "standardsAlignment": ["F-LE.4", "F-BF.5", "F-IF.7e", "F-IF.8b", "A-SSE.3c"],
+  "standardsAlignment": [
+    "F-LE.4",
+    "F-BF.5",
+    "F-IF.7e",
+    "F-IF.8b",
+    "A-SSE.3c"
+  ],
   "goals": [
     "Analyze exponential functions f(x) = a·bˣ and f(x) = a·eʳˣ including domain, range, asymptotes, intercepts, transformations, and end behavior for growth and decay.",
     "Evaluate and analyze logarithmic functions including common log, natural log, and arbitrary base; convert between exponential and logarithmic forms.",
@@ -143,24 +149,42 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Exponential & Logarithmic Foundations Practice",
-      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion"],
+      "skills": [
+        "exponential-functions-properties",
+        "logarithmic-functions-properties",
+        "logarithm-rules-expansion"
+      ],
       "problems": [
         {
           "problem": "For f(x) = -e^(x-2) + 3, find: domain, range, HA, intercepts, and end behavior.",
-          "hints": ["Parent: eˣ. Shift right 2, reflect over x-axis, shift up 3", "HA: y = 3. Range: (-∞, 3)", "y-int: f(0) = -e⁻² + 3 ≈ 2.865", "x-int: -e^(x-2)+3=0 → e^(x-2)=3 → x=2+ln(3)"],
+          "hints": [
+            "Parent: eˣ. Shift right 2, reflect over x-axis, shift up 3",
+            "HA: y = 3. Range: (-∞, 3)",
+            "y-int: f(0) = -e⁻² + 3 ≈ 2.865",
+            "x-int: -e^(x-2)+3=0 → e^(x-2)=3 → x=2+ln(3)"
+          ],
           "answer": "Domain: (-∞,∞). Range: (-∞,3). HA: y=3. y-int: (0, -e⁻²+3) ≈ (0, 2.865). x-int: x = 2 + ln(3) ≈ 3.099. End behavior: as x→-∞, f(x)→3; as x→∞, f(x)→-∞."
         },
         {
           "problem": "Expand: ln(x²(x+1)³/(x-1)⁴).",
-          "hints": ["Product/quotient rules first, then power rule", "ln(numerator) - ln(denominator)", "ln(x²) + ln((x+1)³) - ln((x-1)⁴)"],
+          "hints": [
+            "Product/quotient rules first, then power rule",
+            "ln(numerator) - ln(denominator)",
+            "ln(x²) + ln((x+1)³) - ln((x-1)⁴)"
+          ],
           "answer": "2·ln(x) + 3·ln(x+1) - 4·ln(x-1)."
         },
         {
           "problem": "Condense: 2·log(x) + log(y) - 3·log(z) - log(4).",
-          "hints": ["Power rule: 2·log(x) = log(x²)", "Combine additions and subtractions", "Result is a single log"],
+          "hints": [
+            "Power rule: 2·log(x) = log(x²)",
+            "Combine additions and subtractions",
+            "Result is a single log"
+          ],
           "answer": "log(x²y/(4z³))."
         }
-      ]
+      ],
+      "skill": "logarithm-rules-expansion"
     },
     {
       "type": "explanation",
@@ -234,24 +258,43 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Solving Exponential & Logarithmic Equations Practice",
-      "skills": ["solving-exponential-equations", "solving-logarithmic-equations"],
+      "skills": [
+        "solving-exponential-equations",
+        "solving-logarithmic-equations"
+      ],
       "problems": [
         {
           "problem": "Solve: 2^(3x+1) = 5^(x-2).",
-          "hints": ["Take ln of both sides", "(3x+1)ln(2) = (x-2)ln(5)", "Distribute and collect x terms", "x(3ln2 - ln5) = -2ln5 - ln2"],
+          "hints": [
+            "Take ln of both sides",
+            "(3x+1)ln(2) = (x-2)ln(5)",
+            "Distribute and collect x terms",
+            "x(3ln2 - ln5) = -2ln5 - ln2"
+          ],
           "answer": "ln both sides: (3x+1)ln2 = (x-2)ln5. Distribute: 3x·ln2 + ln2 = x·ln5 - 2ln5. Collect: x(3ln2 - ln5) = -2ln5 - ln2. x = (-2ln5 - ln2)/(3ln2 - ln5) = (-2(1.6094) - 0.6931)/(3(0.6931) - 1.6094) = (-3.9119)/(0.4699) ≈ -8.324."
         },
         {
           "problem": "Solve: log₃(2x - 1) - log₃(x - 3) = 2.",
-          "hints": ["Condense: log₃((2x-1)/(x-3)) = 2", "Convert: (2x-1)/(x-3) = 9", "Solve: 2x-1 = 9(x-3)", "Check domain: x > 3"],
+          "hints": [
+            "Condense: log₃((2x-1)/(x-3)) = 2",
+            "Convert: (2x-1)/(x-3) = 9",
+            "Solve: 2x-1 = 9(x-3)",
+            "Check domain: x > 3"
+          ],
           "answer": "log₃((2x-1)/(x-3)) = 2 → (2x-1)/(x-3) = 9 → 2x-1 = 9x-27 → -7x = -26 → x = 26/7 ≈ 3.714. Check: x > 3 ✓, 2x-1 = 45/7 > 0 ✓. Solution: x = 26/7."
         },
         {
           "problem": "Solve: 3e^(2x) + 4e^x - 4 = 0.",
-          "hints": ["Let u = eˣ, u > 0", "3u² + 4u - 4 = 0", "Factor or use quadratic formula", "Only keep positive u values"],
+          "hints": [
+            "Let u = eˣ, u > 0",
+            "3u² + 4u - 4 = 0",
+            "Factor or use quadratic formula",
+            "Only keep positive u values"
+          ],
           "answer": "Let u = eˣ. 3u² + 4u - 4 = 0 → (3u - 2)(u + 2) = 0. u = 2/3 or u = -2. Reject u = -2. eˣ = 2/3 → x = ln(2/3) = ln2 - ln3 ≈ -0.4055."
         }
-      ]
+      ],
+      "skill": "solving-logarithmic-equations"
     },
     {
       "type": "explanation",
@@ -296,17 +339,30 @@
       "problems": [
         {
           "problem": "A culture of bacteria doubles every 4 hours. Starting with 500 bacteria, (a) write the growth function, (b) find the population after 14 hours, (c) when will the population reach 50,000?",
-          "hints": ["A(t) = 500·2^(t/4)", "A(14) = 500·2^(3.5)", "50000 = 500·2^(t/4) → 100 = 2^(t/4)"],
+          "hints": [
+            "A(t) = 500·2^(t/4)",
+            "A(14) = 500·2^(3.5)",
+            "50000 = 500·2^(t/4) → 100 = 2^(t/4)"
+          ],
           "answer": "(a) A(t) = 500·2^(t/4). (b) A(14) = 500·2^(3.5) = 500·11.314 ≈ 5,657 bacteria. (c) 100 = 2^(t/4) → t/4 = log₂(100) = ln(100)/ln(2) ≈ 6.644 → t ≈ 26.58 hours."
         },
         {
           "problem": "A sound measures 75 decibels. If the threshold of hearing is I₀ = 10⁻¹² W/m², find the intensity of the sound. Then find the intensity of a sound that is 10 dB louder.",
-          "hints": ["dB = 10·log(I/I₀)", "75 = 10·log(I/10⁻¹²) → log(I/10⁻¹²) = 7.5", "I/10⁻¹² = 10^7.5", "10 dB louder = factor of 10 in intensity"],
+          "hints": [
+            "dB = 10·log(I/I₀)",
+            "75 = 10·log(I/10⁻¹²) → log(I/10⁻¹²) = 7.5",
+            "I/10⁻¹² = 10^7.5",
+            "10 dB louder = factor of 10 in intensity"
+          ],
           "answer": "75 = 10·log(I/10⁻¹²) → I = 10⁻¹²·10^7.5 = 10⁻⁴·⁵ ≈ 3.162 × 10⁻⁵ W/m². For 85 dB: I = 10⁻¹²·10^8.5 = 10⁻³·⁵ ≈ 3.162 × 10⁻⁴ W/m² (10× louder)."
         },
         {
           "problem": "How long will it take $8,000 to grow to $15,000 at 5.2% compounded continuously?",
-          "hints": ["A = Pe^(rt)", "15000 = 8000·e^(0.052t)", "Solve for t using ln"],
+          "hints": [
+            "A = Pe^(rt)",
+            "15000 = 8000·e^(0.052t)",
+            "Solve for t using ln"
+          ],
           "answer": "15000 = 8000·e^(0.052t) → e^(0.052t) = 15/8 → 0.052t = ln(15/8) → t = ln(15/8)/0.052 = 0.6286/0.052 ≈ 12.09 years."
         }
       ]
@@ -315,7 +371,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Exponential & Logarithmic Mastery Practice",
-      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion", "solving-exponential-equations", "solving-logarithmic-equations", "exponential-logarithmic-modeling"],
+      "skills": [
+        "exponential-functions-properties",
+        "logarithmic-functions-properties",
+        "logarithm-rules-expansion",
+        "solving-exponential-equations",
+        "solving-logarithmic-equations",
+        "exponential-logarithmic-modeling"
+      ],
       "problems": [
         {
           "problem": "For f(x) = 2·(1/3)^(x+1) - 5, identify all key features: domain, range, HA, intercepts, and classify as growth or decay.",
@@ -341,7 +404,8 @@
           "problem": "An earthquake measured 6.8 on the Richter scale. (a) How many times more intense is it than a 4.2 quake? (b) What Richter magnitude is an earthquake that is 500 times more intense than a 3.0 quake?",
           "answer": "(a) Difference: 6.8 - 4.2 = 2.6. Intensity ratio: 10^2.6 ≈ 398.1 times more intense. (b) 500 = 10^d → d = log(500) ≈ 2.699. Magnitude = 3.0 + 2.699 ≈ 5.7."
         }
-      ]
+      ],
+      "skill": "exponential-functions-properties"
     }
   ],
   "answerKeys": {

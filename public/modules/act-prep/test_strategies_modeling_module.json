@@ -6,7 +6,6 @@
   "weeks": "8-9",
   "estimatedDuration": 30,
   "description": "Covers the meta-skill of diagnosing multiple choice problems — how to read, classify, and attack ANY ACT question before choosing a strategy. Then teaches ACT-specific strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT).",
-
   "skills": [
     "act-backsolving",
     "act-picking-numbers",
@@ -14,9 +13,10 @@
     "act-pacing-strategy",
     "act-model-interpretation"
   ],
-
-  "standardsAlignment": ["ACT Strategy", "ACT Modeling (cross-cutting)"],
-
+  "standardsAlignment": [
+    "ACT Strategy",
+    "ACT Modeling (cross-cutting)"
+  ],
   "goals": [
     "Diagnose any ACT math problem in under 10 seconds: read the question, classify the type, spot the traps, choose the approach",
     "Use the SCAN method to systematically break down multiple choice problems before solving",
@@ -28,7 +28,6 @@
     "Interpret slope, intercepts, and parameters of models in real-world context",
     "Choose appropriate model types (linear, exponential, quadratic) for given data"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -39,9 +38,7 @@
     "Timed practice sets to build pacing instincts",
     "Modeling taught as a lens that applies to ALL content areas, not a separate topic"
   ],
-
   "aiFlexLevel": "high",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -90,7 +87,11 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Problem Diagnosis Practice — Classify Before You Solve",
-      "skills": ["act-estimation-elimination", "act-backsolving", "act-picking-numbers"],
+      "skills": [
+        "act-estimation-elimination",
+        "act-backsolving",
+        "act-picking-numbers"
+      ],
       "problems": [
         {
           "problem": "DIAGNOSIS EXERCISE: Before solving, classify this problem and name your approach.\n\nA rectangular garden is 3 feet longer than it is wide. If the perimeter is 42 feet, what is the width?\n(A) 7  (B) 9  (C) 10.5  (D) 12  (E) 18",
@@ -133,7 +134,8 @@
           ],
           "answer": "(B) 32. Diagonal = s√2, so s = 8/√2 = 4√2. Area = s² = 32. Or shortcut: A = d²/2 = 64/2 = 32."
         }
-      ]
+      ],
+      "skill": "act-estimation-elimination"
     },
     {
       "type": "explanation",
@@ -211,29 +213,44 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Strategy Practice: Backsolving, Picking Numbers, Estimation",
-      "skills": ["act-backsolving", "act-picking-numbers", "act-estimation-elimination"],
+      "skills": [
+        "act-backsolving",
+        "act-picking-numbers",
+        "act-estimation-elimination"
+      ],
       "problems": [
         {
           "problem": "If 2^x = 32, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 16",
-          "hints": ["Backsolve: try (C) x = 5. 2⁵ = 32. ✓"],
+          "hints": [
+            "Backsolve: try (C) x = 5. 2⁵ = 32. ✓"
+          ],
           "answer": "(C) 5. 2⁵ = 32."
         },
         {
           "problem": "For all a ≠ 0, which is equivalent to (3a²)³ / a⁴?\n(A) 3a²  (B) 9a²  (C) 27a²  (D) 27a  (E) 9a⁶",
-          "hints": ["Pick a = 2: (3·4)³ / 16 = 12³/16 = 1728/16 = 108", "Check: (C) 27(4) = 108 ✓"],
+          "hints": [
+            "Pick a = 2: (3·4)³ / 16 = 12³/16 = 1728/16 = 108",
+            "Check: (C) 27(4) = 108 ✓"
+          ],
           "answer": "(C) 27a². (3a²)³ = 27a⁶. 27a⁶/a⁴ = 27a². Or pick a=2: 12³/16 = 108 = 27(4)."
         },
         {
           "problem": "A rectangular field has area 2,400 square meters and length 80 meters. What is the perimeter?\n(A) 110 m  (B) 190 m  (C) 220 m  (D) 2,560 m  (E) 4,800 m",
-          "hints": ["Width = 2400/80 = 30 m", "Perimeter = 2(80 + 30). Estimate: should be around 200-ish."],
+          "hints": [
+            "Width = 2400/80 = 30 m",
+            "Perimeter = 2(80 + 30). Estimate: should be around 200-ish."
+          ],
           "answer": "(C) 220 m. Width = 30. Perimeter = 2(80+30) = 220."
         },
         {
           "problem": "The volume of a sphere is approximately 904.8 cubic inches. What is the radius? (Use π ≈ 3.14)\n(A) 4  (B) 6  (C) 8  (D) 10  (E) 12",
-          "hints": ["Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 ≈ 904.8 ✓"],
+          "hints": [
+            "Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 ≈ 904.8 ✓"
+          ],
           "answer": "(B) 6. V = (4/3)(3.14)(6³) = (4/3)(3.14)(216) ≈ 904.8."
         }
-      ]
+      ],
+      "skill": "act-backsolving"
     },
     {
       "type": "explanation",
@@ -278,30 +295,49 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Modeling & Strategy Practice",
-      "skills": ["act-model-interpretation", "act-pacing-strategy"],
+      "skills": [
+        "act-model-interpretation",
+        "act-pacing-strategy"
+      ],
       "problems": [
         {
           "problem": "A car depreciates from $25,000 to $16,000 in 3 years. Which model type best fits this situation?\n(A) Linear  (B) Quadratic  (C) Exponential decay  (D) Exponential growth  (E) Logarithmic",
-          "hints": ["Depreciation is a percentage loss each year → multiplicative", "Check: is the amount lost the same each year (linear) or a percentage (exponential)?"],
+          "hints": [
+            "Depreciation is a percentage loss each year → multiplicative",
+            "Check: is the amount lost the same each year (linear) or a percentage (exponential)?"
+          ],
           "answer": "(C) Exponential decay. Depreciation is typically a constant percentage per year → exponential."
         },
         {
           "problem": "The equation h = −16t² + 48t + 5 models the height (in feet) of a ball t seconds after being thrown. What is the maximum height?\n(A) 5 ft  (B) 41 ft  (C) 48 ft  (D) 53 ft  (E) 64 ft",
-          "hints": ["Maximum occurs at vertex: t = −b/(2a) = −48/(2(−16)) = 1.5", "h(1.5) = −16(2.25) + 48(1.5) + 5"],
+          "hints": [
+            "Maximum occurs at vertex: t = −b/(2a) = −48/(2(−16)) = 1.5",
+            "h(1.5) = −16(2.25) + 48(1.5) + 5"
+          ],
           "answer": "(B) 41 ft. t = 1.5. h = −16(2.25) + 72 + 5 = −36 + 72 + 5 = 41."
         },
         {
           "problem": "A linear model predicts that a factory produces 200 widgets on day 1 and 215 widgets on day 2. According to this model, how many widgets will be produced on day 10?\n(A) 335  (B) 345  (C) 350  (D) 400  (E) 2,150",
-          "hints": ["Rate = 215 − 200 = 15 widgets/day", "Day 10: 200 + 15(10−1) = 200 + 135"],
+          "hints": [
+            "Rate = 215 − 200 = 15 widgets/day",
+            "Day 10: 200 + 15(10−1) = 200 + 135"
+          ],
           "answer": "(A) 335. Rate = 15/day. Day 10: 200 + 15(9) = 200 + 135 = 335."
         }
-      ]
+      ],
+      "skill": "act-model-interpretation"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Test Strategies & Modeling — ACT-Style Practice Set",
-      "skills": ["act-backsolving", "act-picking-numbers", "act-estimation-elimination", "act-pacing-strategy", "act-model-interpretation"],
+      "skills": [
+        "act-backsolving",
+        "act-picking-numbers",
+        "act-estimation-elimination",
+        "act-pacing-strategy",
+        "act-model-interpretation"
+      ],
       "problems": [
         {
           "problem": "Three times a number, decreased by 7, is 29. What is the number? (Use backsolving)\n(A) 8  (B) 10  (C) 12  (D) 14  (E) 22",
@@ -335,10 +371,10 @@
           "problem": "The equation T = −0.005a² + 0.4a + 50 models temperature T based on altitude a (in thousands of feet). At what altitude is the temperature highest?\n(A) 10,000 ft  (B) 20,000 ft  (C) 40,000 ft  (D) 50,000 ft  (E) 80,000 ft",
           "answer": "(C) 40,000 ft. Vertex at a = −0.4/(2(−0.005)) = −0.4/(−0.01) = 40. Since a is in thousands, that's 40,000 ft."
         }
-      ]
+      ],
+      "skill": "act-backsolving"
     }
   ],
-
   "answerKeys": {
     "backsolve-linear": "8",
     "backsolve-double": "14",

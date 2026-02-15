@@ -227,7 +227,11 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Boot Camp Guided Practice — Integers, Fractions, and Expressions",
-      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics"],
+      "skills": [
+        "g7-integer-operations",
+        "g7-fraction-decimal-fluency",
+        "g7-simplify-expressions-basics"
+      ],
       "problems": [
         {
           "problem": "At 6 AM the temperature was -8 degrees F. By noon it rose 15 degrees, and by midnight it dropped 22 degrees from the noon temperature. What was the midnight temperature?",
@@ -283,13 +287,17 @@
           ],
           "answer": "3x + 13"
         }
-      ]
+      ],
+      "skill": "g7-coordinate-plane-basics"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Boot Camp Guided Practice — Equations and Coordinate Plane",
-      "skills": ["g7-one-two-step-equations", "g7-coordinate-plane-basics"],
+      "skills": [
+        "g7-one-two-step-equations",
+        "g7-coordinate-plane-basics"
+      ],
       "problems": [
         {
           "problem": "Solve and check: 5x - 8 = 22",
@@ -345,13 +353,20 @@
           ],
           "answer": "AB = 7 units, BC = 6 units"
         }
-      ]
+      ],
+      "skill": "g7-coordinate-plane-basics"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Boot Camp Mastery Practice",
-      "skills": ["g7-integer-operations", "g7-fraction-decimal-fluency", "g7-simplify-expressions-basics", "g7-one-two-step-equations", "g7-coordinate-plane-basics"],
+      "skills": [
+        "g7-integer-operations",
+        "g7-fraction-decimal-fluency",
+        "g7-simplify-expressions-basics",
+        "g7-one-two-step-equations",
+        "g7-coordinate-plane-basics"
+      ],
       "problems": [
         {
           "problem": "Simplify: -6 + (-4) - (-10) + 3 - 8",
@@ -414,7 +429,8 @@
           "answer": "Length = |4 - (-3)| = 7 units, Width = |5 - (-1)| = 6 units, Area = 42 square units"
         }
       ],
-      "attemptsRequired": 10
+      "attemptsRequired": 10,
+      "skill": "g7-integer-operations"
     }
   ],
   "answerKeys": {

@@ -113,7 +113,10 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Related Rates & Motion Practice",
-      "skills": ["related-rates-setup-solve", "motion-position-velocity-acceleration"],
+      "skills": [
+        "related-rates-setup-solve",
+        "motion-position-velocity-acceleration"
+      ],
       "problems": [
         {
           "problem": "A 6-ft tall man walks away from a 15-ft streetlight at 4 ft/s. How fast is the tip of his shadow moving along the ground when he is 20 ft from the light?",
@@ -152,7 +155,8 @@
           ],
           "answer": "dA/dt = 2pi(20)(3) = 120pi m²/min, approximately 376.99 m²/min."
         }
-      ]
+      ],
+      "skill": "motion-position-velocity-acceleration"
     },
     {
       "type": "explanation",
@@ -229,7 +233,10 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Linearization & L'Hopital's Rule Practice",
-      "skills": ["local-linearization-differentials", "lhopitals-rule"],
+      "skills": [
+        "local-linearization-differentials",
+        "lhopitals-rule"
+      ],
       "problems": [
         {
           "problem": "Use linearization to approximate (1.02)^5. Is this an overestimate or underestimate?",
@@ -259,13 +266,19 @@
           ],
           "answer": "Rewrite: lim ln(1 + 3/x)/(1/x). Form: 0/0. Differentiate: numerator derivative = [1/(1 + 3/x)](-3/x²) = -3/(x²(1 + 3/x)). Denominator derivative = -1/x². Ratio: [-3/(x²(1 + 3/x))]/(-1/x²) = 3/(1 + 3/x). As x -> infinity: 3/(1 + 0) = 3."
         }
-      ]
+      ],
+      "skill": "lhopitals-rule"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Contextual Applications of Differentiation — Mastery Practice",
-      "skills": ["related-rates-setup-solve", "motion-position-velocity-acceleration", "local-linearization-differentials", "lhopitals-rule"],
+      "skills": [
+        "related-rates-setup-solve",
+        "motion-position-velocity-acceleration",
+        "local-linearization-differentials",
+        "lhopitals-rule"
+      ],
       "problems": [
         {
           "problem": "A boat is pulled toward a dock by a rope attached to the bow. The rope is wound through a pulley on the dock that is 6 ft higher than the bow. If the rope is pulled in at 2 ft/s, how fast is the boat approaching the dock when 10 ft of rope is out?",
@@ -291,7 +304,8 @@
           "problem": "A particle moves along a line with position s(t) = t³ - 9t² + 24t for t >= 0. (a) Find the total number of times the particle changes direction. (b) Find the particle's position at each direction change. (c) At t = 3, is the particle speeding up or slowing down?",
           "answer": "(a) v(t) = 3t² - 18t + 24 = 3(t² - 6t + 8) = 3(t - 2)(t - 4) = 0 at t = 2, t = 4. v changes sign at both, so 2 direction changes. (b) s(2) = 8 - 36 + 48 = 20. s(4) = 64 - 144 + 96 = 16. (c) v(3) = 27 - 54 + 24 = -3 < 0. a(t) = 6t - 18. a(3) = 0. Since a(3) = 0, the particle is neither speeding up nor slowing down at that instant (acceleration is zero)."
         }
-      ]
+      ],
+      "skill": "related-rates-setup-solve"
     }
   ],
   "answerKeys": {

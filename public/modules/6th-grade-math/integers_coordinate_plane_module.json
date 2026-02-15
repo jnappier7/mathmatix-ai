@@ -84,7 +84,7 @@
       "problems": [
         {
           "id": "icp-1",
-          "prompt": "The temperature at midnight was -3 degrees Celsius. By 8 AM it dropped another 7 degrees. Represent the midnight temperature and the change with signed numbers, then find the 8 AM temperature.",
+          "question": "The temperature at midnight was -3 degrees Celsius. By 8 AM it dropped another 7 degrees. Represent the midnight temperature and the change with signed numbers, then find the 8 AM temperature.",
           "hints": [
             "The midnight temperature is already negative: -3",
             "A drop of 7 degrees is a decrease, so the change is -7",
@@ -94,7 +94,7 @@
         },
         {
           "id": "icp-2",
-          "prompt": "Priya's savings account has a balance of $0. She deposits $65 on Monday and then withdraws $90 on Wednesday. Represent each transaction with a signed number and find her balance. Is the account overdrawn?",
+          "question": "Priya's savings account has a balance of $0. She deposits $65 on Monday and then withdraws $90 on Wednesday. Represent each transaction with a signed number and find her balance. Is the account overdrawn?",
           "hints": [
             "A deposit puts money in: +$65",
             "A withdrawal takes money out: -$90",
@@ -104,7 +104,7 @@
         },
         {
           "id": "icp-3",
-          "prompt": "Death Valley, California has an elevation of -282 feet (below sea level). Mount Whitney, also in California, has an elevation of 14,505 feet. A hiker says the difference in elevation is about 14,787 feet. Explain why both a negative and a positive number are needed to describe these elevations.",
+          "question": "Death Valley, California has an elevation of -282 feet (below sea level). Mount Whitney, also in California, has an elevation of 14,505 feet. A hiker says the difference in elevation is about 14,787 feet. Explain why both a negative and a positive number are needed to describe these elevations.",
           "hints": [
             "Sea level is the reference point (zero)",
             "Death Valley is below sea level so its elevation is negative",
@@ -122,17 +122,17 @@
       "problems": [
         {
           "id": "icp-4",
-          "prompt": "A football team gains 8 yards on first down, loses 12 yards on second down, and gains 5 yards on third down. Represent each play with a signed number and find the team's net yardage over the three plays.",
+          "question": "A football team gains 8 yards on first down, loses 12 yards on second down, and gains 5 yards on third down. Represent each play with a signed number and find the team's net yardage over the three plays.",
           "answer": "Plays: +8, -12, +5. Net yardage: 8 + (-12) + 5 = 8 - 12 + 5 = 1 yard gained."
         },
         {
           "id": "icp-5",
-          "prompt": "At 5 PM the temperature in Anchorage was 2 degrees Fahrenheit. Overnight it dropped 19 degrees. What was the overnight low temperature? Use a signed number to represent the change.",
+          "question": "At 5 PM the temperature in Anchorage was 2 degrees Fahrenheit. Overnight it dropped 19 degrees. What was the overnight low temperature? Use a signed number to represent the change.",
           "answer": "Change: -19 degrees. Low temperature: 2 + (-19) = 2 - 19 = -17 degrees Fahrenheit. It was 17 degrees below zero."
         },
         {
           "id": "icp-6",
-          "prompt": "A scuba diver is at -40 feet (below sea level). She ascends 25 feet, then descends 10 feet. Write a signed number for each movement and find her final depth.",
+          "question": "A scuba diver is at -40 feet (below sea level). She ascends 25 feet, then descends 10 feet. Write a signed number for each movement and find her final depth.",
           "answer": "Start: -40 ft. Ascend: +25 ft. Descend: -10 ft. Final depth: -40 + 25 + (-10) = -40 + 25 - 10 = -25 ft. She is 25 feet below sea level."
         }
       ]
@@ -180,7 +180,7 @@
       "problems": [
         {
           "id": "icp-7",
-          "prompt": "Compare -8 and -3 using < or >. Explain your reasoning using a number line.",
+          "question": "Compare -8 and -3 using < or >. Explain your reasoning using a number line.",
           "hints": [
             "Which number is farther left on the number line?",
             "-8 is farther from zero than -3",
@@ -190,7 +190,7 @@
         },
         {
           "id": "icp-8",
-          "prompt": "Order from least to greatest: -1.5, 3/4, -2, 0.25, -1/4",
+          "question": "Order from least to greatest: -1.5, 3/4, -2, 0.25, -1/4",
           "hints": [
             "Convert all to decimals: 3/4 = 0.75, -1/4 = -0.25",
             "Place them on a number line: -2, -1.5, -0.25, 0.25, 0.75",
@@ -200,7 +200,7 @@
         },
         {
           "id": "icp-9",
-          "prompt": "Insert < , > , or = : -3/5 ___ -0.7",
+          "question": "Insert < , > , or = : -3/5 ___ -0.7",
           "hints": [
             "Convert -3/5 to a decimal: -3/5 = -0.6",
             "Now compare -0.6 and -0.7",
@@ -218,17 +218,17 @@
       "problems": [
         {
           "id": "icp-10",
-          "prompt": "Compare -14 and -6 using < or >.",
+          "question": "Compare -14 and -6 using < or >.",
           "answer": "-14 < -6. On the number line -14 is farther left, so it is less. Owing $14 is worse than owing $6."
         },
         {
           "id": "icp-11",
-          "prompt": "Order from least to greatest: 2/3, -5/4, 0, -0.8, 1.5",
+          "question": "Order from least to greatest: 2/3, -5/4, 0, -0.8, 1.5",
           "answer": "As decimals: 2/3 is about 0.667, -5/4 = -1.25, 0 = 0, -0.8 = -0.8, 1.5 = 1.5. Least to greatest: -5/4, -0.8, 0, 2/3, 1.5."
         },
         {
           "id": "icp-12",
-          "prompt": "Insert < , > , or = : -7/10 ___ -3/5",
+          "question": "Insert < , > , or = : -7/10 ___ -3/5",
           "answer": "-7/10 < -3/5. Convert: -3/5 = -6/10. Since -7/10 is farther from zero than -6/10, it is less. -7/10 < -6/10, so -7/10 < -3/5."
         }
       ]
@@ -275,7 +275,7 @@
       "problems": [
         {
           "id": "icp-13",
-          "prompt": "Evaluate: |-17| + |3| - |(-4)|",
+          "question": "Evaluate: |-17| + |3| - |(-4)|",
           "hints": [
             "Find each absolute value separately: |-17| = 17, |3| = 3, |(-4)| = 4",
             "The extra parentheses inside |(-4)| do not change anything: the absolute value of -4 is still 4",
@@ -285,7 +285,7 @@
         },
         {
           "id": "icp-14",
-          "prompt": "Two hikers check their elevations. Hiker A is at -150 feet (in a valley below sea level). Hiker B is at 120 feet above sea level. Which hiker is farther from sea level? Use absolute value to explain.",
+          "question": "Two hikers check their elevations. Hiker A is at -150 feet (in a valley below sea level). Hiker B is at 120 feet above sea level. Which hiker is farther from sea level? Use absolute value to explain.",
           "hints": [
             "Sea level is zero, so find each hiker's distance from zero",
             "|-150| = 150 and |120| = 120",
@@ -295,7 +295,7 @@
         },
         {
           "id": "icp-15",
-          "prompt": "Find the opposite of -9. Then find the absolute value of both -9 and its opposite. What do you notice?",
+          "question": "Find the opposite of -9. Then find the absolute value of both -9 and its opposite. What do you notice?",
           "hints": [
             "The opposite of -9 is the number the same distance from zero on the other side",
             "Opposite of -9 is 9",
@@ -313,17 +313,17 @@
       "problems": [
         {
           "id": "icp-16",
-          "prompt": "Evaluate: |(-25)| - |-10| + |7|",
+          "question": "Evaluate: |(-25)| - |-10| + |7|",
           "answer": "|(-25)| = 25, |-10| = 10, |7| = 7. So 25 - 10 + 7 = 22."
         },
         {
           "id": "icp-17",
-          "prompt": "A bank account shows a balance of -$45 (overdrawn). What is the absolute value of this balance, and what does it tell you in this context?",
+          "question": "A bank account shows a balance of -$45 (overdrawn). What is the absolute value of this balance, and what does it tell you in this context?",
           "answer": "|-45| = 45. The absolute value tells you the account is $45 away from a zero balance. In context it means the account holder owes the bank $45."
         },
         {
           "id": "icp-18",
-          "prompt": "Find the opposite of 3/4. Then find the absolute value of both 3/4 and its opposite. Does the relationship you saw with integers also hold for fractions?",
+          "question": "Find the opposite of 3/4. Then find the absolute value of both 3/4 and its opposite. Does the relationship you saw with integers also hold for fractions?",
           "answer": "The opposite of 3/4 is -3/4. |3/4| = 3/4 and |-3/4| = 3/4. Yes, the relationship holds: a number and its opposite have the same absolute value regardless of whether they are integers or fractions."
         }
       ]
@@ -371,7 +371,7 @@
       "problems": [
         {
           "id": "icp-19",
-          "prompt": "Name the quadrant for each point: (5, 3), (-2, 7), (-4, -1), (6, -8).",
+          "question": "Name the quadrant for each point: (5, 3), (-2, 7), (-4, -1), (6, -8).",
           "hints": [
             "Check the signs of x and y for each point",
             "(+, +) = Quadrant I, (-, +) = Quadrant II, (-, -) = Quadrant III, (+, -) = Quadrant IV",
@@ -381,7 +381,7 @@
         },
         {
           "id": "icp-20",
-          "prompt": "Describe the steps to plot (-5, -3) starting from the origin. What quadrant will the point be in?",
+          "question": "Describe the steps to plot (-5, -3) starting from the origin. What quadrant will the point be in?",
           "hints": [
             "Start at (0, 0)",
             "The x-coordinate is -5: which direction is negative on the x-axis?",
@@ -391,7 +391,7 @@
         },
         {
           "id": "icp-21",
-          "prompt": "In a Battleship game on a coordinate grid, your ships are at (-3, 4), (1, -2), and (0, 5). Which ship is in Quadrant II? Which ship is on an axis instead of in a quadrant?",
+          "question": "In a Battleship game on a coordinate grid, your ships are at (-3, 4), (1, -2), and (0, 5). Which ship is in Quadrant II? Which ship is on an axis instead of in a quadrant?",
           "hints": [
             "Quadrant II has negative x and positive y",
             "A point is on an axis if either coordinate is 0",
@@ -409,17 +409,17 @@
       "problems": [
         {
           "id": "icp-22",
-          "prompt": "Name the quadrant or axis for each point: (-9, 2), (3, 0), (4, 7), (-1, -5).",
+          "question": "Name the quadrant or axis for each point: (-9, 2), (3, 0), (4, 7), (-1, -5).",
           "answer": "(-9, 2): Quadrant II. (3, 0): on the x-axis. (4, 7): Quadrant I. (-1, -5): Quadrant III."
         },
         {
           "id": "icp-23",
-          "prompt": "A treasure map uses a coordinate grid. The treasure is 6 units left of the origin and 2 units up. Write the ordered pair for the treasure's location and name the quadrant.",
+          "question": "A treasure map uses a coordinate grid. The treasure is 6 units left of the origin and 2 units up. Write the ordered pair for the treasure's location and name the quadrant.",
           "answer": "6 units left means x = -6 and 2 units up means y = 2. The ordered pair is (-6, 2), which is in Quadrant II."
         },
         {
           "id": "icp-24",
-          "prompt": "In Battleship, your opponent calls out the shots (4, 3), (-4, 3), (-4, -3), and (4, -3). Each shot is in a different quadrant. List which quadrant each shot is in.",
+          "question": "In Battleship, your opponent calls out the shots (4, 3), (-4, 3), (-4, -3), and (4, -3). Each shot is in a different quadrant. List which quadrant each shot is in.",
           "answer": "(4, 3): Quadrant I. (-4, 3): Quadrant II. (-4, -3): Quadrant III. (4, -3): Quadrant IV."
         }
       ]
@@ -466,7 +466,7 @@
       "problems": [
         {
           "id": "icp-25",
-          "prompt": "Find the distance between (-7, 1) and (4, 1).",
+          "question": "Find the distance between (-7, 1) and (4, 1).",
           "hints": [
             "Check: do the points share the same x-coordinate or the same y-coordinate?",
             "Both have y = 1, so this is a horizontal distance",
@@ -476,7 +476,7 @@
         },
         {
           "id": "icp-26",
-          "prompt": "A map shows a park at (3, -4) and a pool at (3, 5). How far apart are they? If the park is reflected across the x-axis, what are the new coordinates?",
+          "question": "A map shows a park at (3, -4) and a pool at (3, 5). How far apart are they? If the park is reflected across the x-axis, what are the new coordinates?",
           "hints": [
             "Same x-coordinate (3), so use vertical distance: |y1 - y2|",
             "|-4 - 5| = |-9| = 9",
@@ -486,7 +486,7 @@
         },
         {
           "id": "icp-27",
-          "prompt": "Point A is at (-5, -2). Reflect A across the y-axis to get point B. What are B's coordinates? What is the horizontal distance between A and B?",
+          "question": "Point A is at (-5, -2). Reflect A across the y-axis to get point B. What are B's coordinates? What is the horizontal distance between A and B?",
           "hints": [
             "Reflecting across the y-axis flips the sign of the x-coordinate",
             "A is at (-5, -2), so B is at (5, -2)",
@@ -504,17 +504,17 @@
       "problems": [
         {
           "id": "icp-28",
-          "prompt": "Find the distance between (-6, -3) and (2, -3).",
+          "question": "Find the distance between (-6, -3) and (2, -3).",
           "answer": "Same y-coordinate (-3), so horizontal distance = |-6 - 2| = |-8| = 8 units."
         },
         {
           "id": "icp-29",
-          "prompt": "Reflect the point (7, -1) across the x-axis, then reflect the result across the y-axis. What are the final coordinates?",
+          "question": "Reflect the point (7, -1) across the x-axis, then reflect the result across the y-axis. What are the final coordinates?",
           "answer": "Start: (7, -1). Reflect across x-axis: flip y to get (7, 1). Reflect across y-axis: flip x to get (-7, 1). Final coordinates: (-7, 1)."
         },
         {
           "id": "icp-30",
-          "prompt": "On a map, a fire station is at (-4, 6) and a hospital is at (-4, -5). How many units apart are they? A new clinic will be built at the reflection of the hospital across the x-axis. What are the clinic's coordinates and how far is it from the fire station?",
+          "question": "On a map, a fire station is at (-4, 6) and a hospital is at (-4, -5). How many units apart are they? A new clinic will be built at the reflection of the hospital across the x-axis. What are the clinic's coordinates and how far is it from the fire station?",
           "answer": "Distance between fire station and hospital: |6 - (-5)| = |6 + 5| = 11 units. Reflection of (-4, -5) across x-axis: (-4, 5). Distance from clinic (-4, 5) to fire station (-4, 6): |5 - 6| = |-1| = 1 unit."
         }
       ]

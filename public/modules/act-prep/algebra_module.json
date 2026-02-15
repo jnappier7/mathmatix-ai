@@ -6,7 +6,6 @@
   "weeks": "2-3",
   "estimatedDuration": 30,
   "description": "Covers 12-15% of the ACT. Master linear equations, inequalities, systems of equations, quadratics, polynomial operations, and radical/rational expressions. Heavy emphasis on strategic solving: algebra vs. backsolving vs. picking numbers.",
-
   "skills": [
     "act-linear-equations",
     "act-systems-of-equations",
@@ -14,9 +13,13 @@
     "act-polynomial-expressions",
     "act-radical-rational-expressions"
   ],
-
-  "standardsAlignment": ["ACT A 201-205", "ACT A 301-305", "ACT A 401-405", "ACT A 501-505", "ACT A 601-605"],
-
+  "standardsAlignment": [
+    "ACT A 201-205",
+    "ACT A 301-305",
+    "ACT A 401-405",
+    "ACT A 501-505",
+    "ACT A 601-605"
+  ],
   "goals": [
     "Solve linear equations and inequalities including absolute value",
     "Solve systems of equations using substitution and elimination",
@@ -25,7 +28,6 @@
     "Simplify and solve equations involving radicals and rational expressions",
     "Recognize when backsolving or picking numbers is faster than algebraic methods"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -33,9 +35,7 @@
     "For each problem type, show BOTH the algebraic approach AND a strategic shortcut",
     "Backsolving and picking numbers taught as parallel strategies alongside standard algebra"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -108,29 +108,46 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Linear Equations & Systems Practice",
-      "skills": ["act-linear-equations", "act-systems-of-equations"],
+      "skills": [
+        "act-linear-equations",
+        "act-systems-of-equations"
+      ],
       "problems": [
         {
           "problem": "If 5(x + 3) − 2(x − 1) = 26, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 7",
-          "hints": ["Distribute: 5x + 15 − 2x + 2 = 26", "Combine: 3x + 17 = 26"],
+          "hints": [
+            "Distribute: 5x + 15 − 2x + 2 = 26",
+            "Combine: 3x + 17 = 26"
+          ],
           "answer": "(C) 5. Distribute: 5x+15−2x+2 = 26 → 3x+17 = 26 → 3x = 9 → x = 3. Wait — let me recheck. 3x = 9, x = 3. Answer: (A) 3."
         },
         {
           "problem": "What values of x satisfy |3x + 1| = 10?\n(A) 3 only  (B) −11/3 only  (C) 3 and −11/3  (D) 3 and 11/3  (E) −3 and 11/3",
-          "hints": ["Split into two cases: 3x + 1 = 10 and 3x + 1 = −10", "Solve each: x = 3 and x = −11/3"],
+          "hints": [
+            "Split into two cases: 3x + 1 = 10 and 3x + 1 = −10",
+            "Solve each: x = 3 and x = −11/3"
+          ],
           "answer": "(C) 3 and −11/3. Case 1: 3x + 1 = 10 → x = 3. Case 2: 3x + 1 = −10 → x = −11/3."
         },
         {
           "problem": "What is x + y if 2x + 3y = 17 and 4x − y = 11?\n(A) 4  (B) 5  (C) 6  (D) 7  (E) 8",
-          "hints": ["Multiply the second equation by 3: 12x − 3y = 33", "Add to the first: 14x = 50... hmm, try another approach", "Multiply second by 3: 12x − 3y = 33, add to first: 2x+3y+12x−3y = 17+33 → 14x = 50. Better: solve individually."],
+          "hints": [
+            "Multiply the second equation by 3: 12x − 3y = 33",
+            "Add to the first: 14x = 50... hmm, try another approach",
+            "Multiply second by 3: 12x − 3y = 33, add to first: 2x+3y+12x−3y = 17+33 → 14x = 50. Better: solve individually."
+          ],
           "answer": "(D) 7. From 4x − y = 11: y = 4x − 11. Sub into first: 2x + 3(4x−11) = 17 → 14x − 33 = 17 → 14x = 50 → x = 25/7. Hmm. Let me try elimination differently. Multiply eq1 by 2: 4x+6y=34. Subtract eq2: 7y = 23 → y = 23/7. x+y = 25/7 + 23/7 = 48/7... This doesn't give a clean answer. Let me use backsolving or recheck. Actually: 2x+3y=17, 4x-y=11. From eq2: y=4x-11. Sub: 2x+3(4x-11)=17 → 2x+12x-33=17 → 14x=50 → x=50/14=25/7. This system doesn't have integer solutions. Better to use a clean system for the practice problem."
         },
         {
           "problem": "The sum of two numbers is 45 and their difference is 11. What is the larger number?\n(A) 17  (B) 22  (C) 23  (D) 28  (E) 34",
-          "hints": ["Let the numbers be x and y with x > y", "x + y = 45 and x − y = 11. Add the equations."],
+          "hints": [
+            "Let the numbers be x and y with x > y",
+            "x + y = 45 and x − y = 11. Add the equations."
+          ],
           "answer": "(D) 28. Add equations: 2x = 56 → x = 28. Check: y = 45 − 28 = 17. Difference: 28 − 17 = 11. ✓"
         }
-      ]
+      ],
+      "skill": "act-linear-equations"
     },
     {
       "type": "explanation",
@@ -206,36 +223,60 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Quadratics, Polynomials & Radicals Practice",
-      "skills": ["act-quadratic-equations", "act-polynomial-expressions", "act-radical-rational-expressions"],
+      "skills": [
+        "act-quadratic-equations",
+        "act-polynomial-expressions",
+        "act-radical-rational-expressions"
+      ],
       "problems": [
         {
           "problem": "What are the solutions to x² + 2x − 15 = 0?\n(A) 3 and −5  (B) −3 and 5  (C) 3 and 5  (D) −3 and −5  (E) 1 and −15",
-          "hints": ["Find two numbers that multiply to −15 and add to 2", "Those numbers are 5 and −3"],
+          "hints": [
+            "Find two numbers that multiply to −15 and add to 2",
+            "Those numbers are 5 and −3"
+          ],
           "answer": "(B) −3 and 5. Factor: (x+5)(x−3) = 0. x = −5 or x = 3. Wait — the answer choices list 3 and −5 in (A) and −3 and 5 in (B). (x+5)(x−3)=0 gives x=−5 or x=3. Answer: (A) 3 and −5."
         },
         {
           "problem": "What is (x + 3)² − (x − 3)²?\n(A) 0  (B) 6  (C) 12x  (D) 6x  (E) 2x² + 18",
           "solution_hint": "Use difference of squares: a²−b² = (a+b)(a−b) where a = (x+3) and b = (x−3)",
-          "hints": ["Let a = x+3 and b = x−3", "(a+b)(a−b) = (2x)(6) = 12x"],
+          "hints": [
+            "Let a = x+3 and b = x−3",
+            "(a+b)(a−b) = (2x)(6) = 12x"
+          ],
           "answer": "(C) 12x. Using a²−b² = (a+b)(a−b): [(x+3)+(x−3)][(x+3)−(x−3)] = (2x)(6) = 12x."
         },
         {
           "problem": "Solve: √(2x + 3) = 5\n(A) 1  (B) 4  (C) 11  (D) 14  (E) 22",
-          "hints": ["Square both sides: 2x + 3 = 25", "Solve: 2x = 22, x = 11", "Check: √(22+3) = √25 = 5 ✓"],
+          "hints": [
+            "Square both sides: 2x + 3 = 25",
+            "Solve: 2x = 22, x = 11",
+            "Check: √(22+3) = √25 = 5 ✓"
+          ],
           "answer": "(C) 11. Square: 2x+3 = 25 → 2x = 22 → x = 11. Check: √(22+3) = √25 = 5. ✓"
         },
         {
           "problem": "For what value of k does the equation x² + kx + 9 = 0 have exactly one real solution?\n(A) 3  (B) −3  (C) 6  (D) 6 or −6  (E) 0",
-          "hints": ["One real solution means discriminant = 0", "b²−4ac = k²−36 = 0"],
+          "hints": [
+            "One real solution means discriminant = 0",
+            "b²−4ac = k²−36 = 0"
+          ],
           "answer": "(D) 6 or −6. Discriminant = k²−4(1)(9) = k²−36 = 0 → k² = 36 → k = ±6."
         }
-      ]
+      ],
+      "skill": "act-polynomial-expressions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Algebra — ACT-Style Practice Set",
-      "skills": ["act-linear-equations", "act-systems-of-equations", "act-quadratic-equations", "act-polynomial-expressions", "act-radical-rational-expressions"],
+      "skills": [
+        "act-linear-equations",
+        "act-systems-of-equations",
+        "act-quadratic-equations",
+        "act-polynomial-expressions",
+        "act-radical-rational-expressions"
+      ],
       "problems": [
         {
           "problem": "If 2(x − 3) + 5 = 3x − 4, what is x?\n(A) −3  (B) 1  (C) 3  (D) 5  (E) 7",
@@ -269,10 +310,10 @@
           "problem": "A system of equations has the form y = 2x + b and y = 2x − 3. For what value of b does the system have no solution?\n(A) −3  (B) 0  (C) 3  (D) Any value except −3  (E) No such value exists",
           "answer": "(D) Any value except −3. Same slope (2) with different y-intercepts → parallel lines → no solution. If b = −3, they're the same line (infinitely many solutions)."
         }
-      ]
+      ],
+      "skill": "act-linear-equations"
     }
   ],
-
   "answerKeys": {
     "linear-distribute": "11",
     "abs-value-inequality": "−2 ≤ x ≤ 5",

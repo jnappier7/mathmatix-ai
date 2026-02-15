@@ -6,8 +6,22 @@
   "weeks": "25-28",
   "estimatedDuration": 100,
   "description": "Master the three alternative coordinate systems tested exclusively on AP Calculus BC. Parametric equations describe curves using a parameter t, polar coordinates replace (x, y) with (r, θ), and vector-valued functions package motion into component form. You will learn to compute derivatives, arc lengths, areas, velocities, and accelerations in all three frameworks — skills that appear in both multiple-choice and free-response sections of the BC exam.",
-  "skills": ["parametric-derivatives", "parametric-arc-length", "polar-graphing-area", "vector-valued-functions"],
-  "standardsAlignment": ["CED 9.1", "CED 9.2", "CED 9.4", "CED 9.5", "CED 9.6", "CED 9.7", "CED 9.8", "CED 9.9"],
+  "skills": [
+    "parametric-derivatives",
+    "parametric-arc-length",
+    "polar-graphing-area",
+    "vector-valued-functions"
+  ],
+  "standardsAlignment": [
+    "CED 9.1",
+    "CED 9.2",
+    "CED 9.4",
+    "CED 9.5",
+    "CED 9.6",
+    "CED 9.7",
+    "CED 9.8",
+    "CED 9.9"
+  ],
   "goals": [
     "Compute first and second derivatives of parametric curves using dy/dx = (dy/dt)/(dx/dt) and the formula for d²y/dx²",
     "Calculate arc length of parametric curves using L = ∫√((dx/dt)² + (dy/dt)²) dt",
@@ -20,14 +34,14 @@
     "Polar coordinates require strong trig fluency. Spend time on graphing common curves before computing areas — students must understand which bounds produce which region.",
     "Vector-valued functions unify parametric and motion concepts. Speed is the magnitude of velocity, distance is the integral of speed — connect these to the parametric arc-length formula explicitly."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "parametric-derivatives",
       "title": "Parametric Equations: Curves, Derivatives, and Second Derivatives",
-      "text": "**Parametric Equations:**\n\nInstead of y = f(x), we describe a curve using a parameter t:\nx = f(t),  y = g(t)\n\nAs t varies, the point (x, y) traces a curve. Example: x = cos t, y = sin t traces the unit circle.\n\n**First Derivative — Slope of the Curve:**\ndy/dx = (dy/dt) / (dx/dt),  provided dx/dt ≠ 0\n\nThis is just the chain rule: dy/dx = (dy/dt) · (dt/dx) = (dy/dt) / (dx/dt).\n\n**Second Derivative — Concavity:**\nd²y/dx² = d/dx[dy/dx] = (d/dt[dy/dx]) / (dx/dt)\n\n**Critical warning:** d²y/dx² is NOT (d²y/dt²) / (d²x/dt²). You must differentiate the first derivative dy/dx with respect to t, then divide by dx/dt.\n\n**Arc Length:**\nL = ∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt\n\nThe integrand √((dx/dt)² + (dy/dt)²) is the speed at which the point moves along the curve.",
+      "content": "**Parametric Equations:**\n\nInstead of y = f(x), we describe a curve using a parameter t:\nx = f(t),  y = g(t)\n\nAs t varies, the point (x, y) traces a curve. Example: x = cos t, y = sin t traces the unit circle.\n\n**First Derivative — Slope of the Curve:**\ndy/dx = (dy/dt) / (dx/dt),  provided dx/dt ≠ 0\n\nThis is just the chain rule: dy/dx = (dy/dt) · (dt/dx) = (dy/dt) / (dx/dt).\n\n**Second Derivative — Concavity:**\nd²y/dx² = d/dx[dy/dx] = (d/dt[dy/dx]) / (dx/dt)\n\n**Critical warning:** d²y/dx² is NOT (d²y/dt²) / (d²x/dt²). You must differentiate the first derivative dy/dx with respect to t, then divide by dx/dt.\n\n**Arc Length:**\nL = ∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt\n\nThe integrand √((dx/dt)² + (dy/dt)²) is the speed at which the point moves along the curve.",
       "initialPrompt": "For x = t², y = t³, find dy/dx. What happens to the slope at t = 0? Does the curve have a tangent there?"
     },
     {
@@ -35,7 +49,7 @@
       "lessonPhase": "concept-intro",
       "skill": "polar-graphing-area",
       "title": "Polar Coordinates: Curves, Area, and Slope",
-      "text": "**Polar Coordinates:**\n\nEvery point is described by (r, θ) where r = distance from origin and θ = angle from positive x-axis.\n\n**Conversions:**\n• x = r cos θ,  y = r sin θ\n• r² = x² + y²,  tan θ = y/x\n\n**Common Polar Curves (memorize these shapes):**\n• r = a — circle of radius a centered at origin\n• r = a cos θ or r = a sin θ — circle of diameter a\n• r = a(1 ± cos θ) or a(1 ± sin θ) — cardioid\n• r = a ± b cos θ (a ≠ b) — limaçon (with/without inner loop depending on a/b ratio)\n• r = a cos(nθ) — rose with n petals (n odd) or 2n petals (n even)\n\n**Area Enclosed by a Polar Curve:**\nA = (1/2) ∫_α^β r² dθ\n\nThis formula comes from summing infinitesimal sectors, each with area (1/2)r² dθ.\n\n**Slope of a Polar Curve:**\nSince x = r cos θ and y = r sin θ:\ndy/dx = (dy/dθ) / (dx/dθ) = ((dr/dθ) sin θ + r cos θ) / ((dr/dθ) cos θ − r sin θ)\n\n**Key insight:** You must use the product rule to differentiate x = r cos θ and y = r sin θ with respect to θ, since r depends on θ.",
+      "content": "**Polar Coordinates:**\n\nEvery point is described by (r, θ) where r = distance from origin and θ = angle from positive x-axis.\n\n**Conversions:**\n• x = r cos θ,  y = r sin θ\n• r² = x² + y²,  tan θ = y/x\n\n**Common Polar Curves (memorize these shapes):**\n• r = a — circle of radius a centered at origin\n• r = a cos θ or r = a sin θ — circle of diameter a\n• r = a(1 ± cos θ) or a(1 ± sin θ) — cardioid\n• r = a ± b cos θ (a ≠ b) — limaçon (with/without inner loop depending on a/b ratio)\n• r = a cos(nθ) — rose with n petals (n odd) or 2n petals (n even)\n\n**Area Enclosed by a Polar Curve:**\nA = (1/2) ∫_α^β r² dθ\n\nThis formula comes from summing infinitesimal sectors, each with area (1/2)r² dθ.\n\n**Slope of a Polar Curve:**\nSince x = r cos θ and y = r sin θ:\ndy/dx = (dy/dθ) / (dx/dθ) = ((dr/dθ) sin θ + r cos θ) / ((dr/dθ) cos θ − r sin θ)\n\n**Key insight:** You must use the product rule to differentiate x = r cos θ and y = r sin θ with respect to θ, since r depends on θ.",
       "initialPrompt": "The curve r = 2 cos θ is a circle. Convert this equation to rectangular form to verify. What are the center and radius?"
     },
     {
@@ -43,7 +57,7 @@
       "lessonPhase": "concept-intro",
       "skill": "vector-valued-functions",
       "title": "Vector-Valued Functions: Position, Velocity, and Speed",
-      "text": "**Vector-Valued Functions:**\n\nA particle's position at time t is given by:\nr(t) = ⟨x(t), y(t)⟩\n\nThis is equivalent to parametric equations x = x(t), y = y(t), but packaged as a single vector.\n\n**Velocity:** v(t) = r'(t) = ⟨x'(t), y'(t)⟩\nThe velocity vector points in the direction of motion.\n\n**Acceleration:** a(t) = v'(t) = r''(t) = ⟨x''(t), y''(t)⟩\n\n**Speed (scalar, always ≥ 0):**\n|v(t)| = √((x'(t))² + (y'(t))²)\n\nSpeed is the magnitude of the velocity vector — it tells you how fast the particle is moving regardless of direction.\n\n**Total Distance Traveled:**\nDistance = ∫ₐᵇ |v(t)| dt = ∫ₐᵇ √((x'(t))² + (y'(t))²) dt\n\nNotice this is exactly the parametric arc-length formula! Distance traveled = arc length of the path.\n\n**Displacement vs. Distance:**\n• Displacement = r(b) − r(a) — a vector, can be zero even if the particle moved\n• Distance = ∫|v| dt — always positive, measures total path length",
+      "content": "**Vector-Valued Functions:**\n\nA particle's position at time t is given by:\nr(t) = ⟨x(t), y(t)⟩\n\nThis is equivalent to parametric equations x = x(t), y = y(t), but packaged as a single vector.\n\n**Velocity:** v(t) = r'(t) = ⟨x'(t), y'(t)⟩\nThe velocity vector points in the direction of motion.\n\n**Acceleration:** a(t) = v'(t) = r''(t) = ⟨x''(t), y''(t)⟩\n\n**Speed (scalar, always ≥ 0):**\n|v(t)| = √((x'(t))² + (y'(t))²)\n\nSpeed is the magnitude of the velocity vector — it tells you how fast the particle is moving regardless of direction.\n\n**Total Distance Traveled:**\nDistance = ∫ₐᵇ |v(t)| dt = ∫ₐᵇ √((x'(t))² + (y'(t))²) dt\n\nNotice this is exactly the parametric arc-length formula! Distance traveled = arc length of the path.\n\n**Displacement vs. Distance:**\n• Displacement = r(b) − r(a) — a vector, can be zero even if the particle moved\n• Distance = ∫|v| dt — always positive, measures total path length",
       "initialPrompt": "A particle moves along r(t) = ⟨cos t, sin t⟩ from t = 0 to t = 2π. What is the displacement? What is the total distance traveled? Why are they different?"
     },
     {
@@ -227,45 +241,58 @@
           "question": "For x = t² + 1, y = t³ − t, find dy/dx at t = −1.",
           "answer": "−1",
           "skill": "parametric-derivatives",
-          "hints": ["dy/dt = 3t² − 1, dx/dt = 2t. At t = −1: dy/dt = 3 − 1 = 2, dx/dt = −2. So dy/dx = 2/(−2) = −1."]
+          "hints": [
+            "dy/dt = 3t² − 1, dx/dt = 2t. At t = −1: dy/dt = 3 − 1 = 2, dx/dt = −2. So dy/dx = 2/(−2) = −1."
+          ]
         },
         {
           "id": "ppv-yp2",
           "question": "Find the arc length of x = 3 cos t, y = 3 sin t from t = 0 to t = π/2.",
           "answer": "3π/2",
           "skill": "parametric-arc-length",
-          "hints": ["dx/dt = −3 sin t, dy/dt = 3 cos t. Speed = √(9 sin²t + 9 cos²t) = 3. L = ∫₀^(π/2) 3 dt = 3π/2."]
+          "hints": [
+            "dx/dt = −3 sin t, dy/dt = 3 cos t. Speed = √(9 sin²t + 9 cos²t) = 3. L = ∫₀^(π/2) 3 dt = 3π/2."
+          ]
         },
         {
           "id": "ppv-yp3",
           "question": "Find the area of one petal of the rose r = cos(3θ).",
           "answer": "π/12",
           "skill": "polar-graphing-area",
-          "hints": ["r = cos(3θ) has 3 petals (n odd). One petal: θ from −π/6 to π/6. A = (1/2) ∫_{−π/6}^{π/6} cos²(3θ) dθ = (1/4) ∫_{−π/6}^{π/6} (1 + cos 6θ) dθ = (1/4)[θ + sin(6θ)/6]_{−π/6}^{π/6} = (1/4)(π/3) = π/12."]
+          "hints": [
+            "r = cos(3θ) has 3 petals (n odd). One petal: θ from −π/6 to π/6. A = (1/2) ∫_{−π/6}^{π/6} cos²(3θ) dθ = (1/4) ∫_{−π/6}^{π/6} (1 + cos 6θ) dθ = (1/4)[θ + sin(6θ)/6]_{−π/6}^{π/6} = (1/4)(π/3) = π/12."
+          ]
         },
         {
           "id": "ppv-yp4",
           "question": "A particle moves along r(t) = ⟨2t, t² − 4⟩. At what time(s) is the speed equal to 4?",
           "answer": "t = √3 and t = −√3",
           "skill": "vector-valued-functions",
-          "hints": ["v(t) = ⟨2, 2t⟩. Speed = √(4 + 4t²) = 2√(1 + t²). Set 2√(1 + t²) = 4 → √(1 + t²) = 2 → 1 + t² = 4 → t² = 3 → t = ±√3."]
+          "hints": [
+            "v(t) = ⟨2, 2t⟩. Speed = √(4 + 4t²) = 2√(1 + t²). Set 2√(1 + t²) = 4 → √(1 + t²) = 2 → 1 + t² = 4 → t² = 3 → t = ±√3."
+          ]
         },
         {
           "id": "ppv-yp5",
           "question": "For x = eᵗ, y = e²ᵗ, find d²y/dx².",
           "answer": "2",
           "skill": "parametric-derivatives",
-          "hints": ["dy/dt = 2e²ᵗ, dx/dt = eᵗ. dy/dx = 2e²ᵗ/eᵗ = 2eᵗ. Then d/dt[dy/dx] = 2eᵗ. So d²y/dx² = 2eᵗ/eᵗ = 2 (constant)."]
+          "hints": [
+            "dy/dt = 2e²ᵗ, dx/dt = eᵗ. dy/dx = 2e²ᵗ/eᵗ = 2eᵗ. Then d/dt[dy/dx] = 2eᵗ. So d²y/dx² = 2eᵗ/eᵗ = 2 (constant)."
+          ]
         },
         {
           "id": "ppv-yp6",
           "question": "Find the slope of the cardioid r = 2 + 2 cos θ at θ = π/6.",
           "answer": "−1",
           "skill": "polar-graphing-area",
-          "hints": ["dr/dθ = −2 sin θ. At θ = π/6: r = 2 + √3, dr/dθ = −1, sin(π/6) = 1/2, cos(π/6) = √3/2. Numerator: (−1)(1/2) + (2 + √3)(√3/2) = −1/2 + (2√3 + 3)/2 = (2 + 2√3)/2 = 1 + √3. Denominator: (−1)(√3/2) − (2 + √3)(1/2) = (−√3 − 2 − √3)/2 = −(1 + √3). So dy/dx = (1 + √3)/(−(1 + √3)) = −1."]
+          "hints": [
+            "dr/dθ = −2 sin θ. At θ = π/6: r = 2 + √3, dr/dθ = −1, sin(π/6) = 1/2, cos(π/6) = √3/2. Numerator: (−1)(1/2) + (2 + √3)(√3/2) = −1/2 + (2√3 + 3)/2 = (2 + 2√3)/2 = 1 + √3. Denominator: (−1)(√3/2) − (2 + √3)(1/2) = (−√3 − 2 − √3)/2 = −(1 + √3). So dy/dx = (1 + √3)/(−(1 + √3)) = −1."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "parametric-derivatives"
     }
   ],
   "answerKeys": {

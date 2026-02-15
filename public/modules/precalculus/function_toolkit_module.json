@@ -14,7 +14,14 @@
     "inverse-functions",
     "domain-range-analysis"
   ],
-  "standardsAlignment": ["F-IF.4", "F-IF.7", "F-BF.1", "F-BF.3", "F-BF.4", "F-IF.5"],
+  "standardsAlignment": [
+    "F-IF.4",
+    "F-IF.7",
+    "F-BF.1",
+    "F-BF.3",
+    "F-BF.4",
+    "F-IF.5"
+  ],
   "goals": [
     "Identify and analyze parent function families (linear, quadratic, cubic, absolute value, square root, cube root, exponential, logarithmic, rational, greatest integer) with domain, range, intercepts, asymptotes, and end behavior.",
     "Apply the transformation template g(x) = af(b(x − c)) + d to any parent function, describing and performing reflections, stretches/compressions, and shifts in correct order.",
@@ -115,17 +122,32 @@
       "problems": [
         {
           "problem": "For g(x) = 3|2x - 6| - 1, rewrite in transformation form, identify the parent, list all transformations, and find the vertex, domain, and range.",
-          "hints": ["Factor inside: 3|2(x - 3)| - 1", "Parent: f(x) = |x|", "Horizontal compression by 1/2, shift right 3, vertical stretch by 3, shift down 1", "Vertex: (3, -1)"],
+          "hints": [
+            "Factor inside: 3|2(x - 3)| - 1",
+            "Parent: f(x) = |x|",
+            "Horizontal compression by 1/2, shift right 3, vertical stretch by 3, shift down 1",
+            "Vertex: (3, -1)"
+          ],
           "answer": "g(x) = 3|2(x - 3)| - 1. Parent: f(x) = |x|. Transformations: horizontal compression by factor 1/2, shift right 3, vertical stretch by factor 3, shift down 1. Vertex: (3, -1). Domain: (-∞, ∞). Range: [-1, ∞)."
         },
         {
           "problem": "Write the equation of the function obtained from f(x) = 1/x by: reflecting over the x-axis, shifting left 4, shifting up 2. State domain, range, and asymptotes.",
-          "hints": ["Reflect: -1/x", "Shift left 4: replace x with x + 4 → -1/(x+4)", "Shift up 2: -1/(x+4) + 2", "VA at x = -4, HA at y = 2"],
+          "hints": [
+            "Reflect: -1/x",
+            "Shift left 4: replace x with x + 4 → -1/(x+4)",
+            "Shift up 2: -1/(x+4) + 2",
+            "VA at x = -4, HA at y = 2"
+          ],
           "answer": "g(x) = -1/(x + 4) + 2. Domain: (-∞, -4) ∪ (-4, ∞). Range: (-∞, 2) ∪ (2, ∞). Vertical asymptote: x = -4. Horizontal asymptote: y = 2."
         },
         {
           "problem": "The function g(x) = -√(x + 5) + 3 is a transformation of f(x) = √x. (a) List the transformations. (b) Find the endpoint. (c) Find the x-intercept. (d) State domain and range.",
-          "hints": ["Shift left 5, reflect over x-axis, shift up 3", "Endpoint: parent (0,0) → (-5, 3)", "x-int: -√(x+5) + 3 = 0 → √(x+5) = 3 → x + 5 = 9 → x = 4", "Domain: x ≥ -5"],
+          "hints": [
+            "Shift left 5, reflect over x-axis, shift up 3",
+            "Endpoint: parent (0,0) → (-5, 3)",
+            "x-int: -√(x+5) + 3 = 0 → √(x+5) = 3 → x + 5 = 9 → x = 4",
+            "Domain: x ≥ -5"
+          ],
           "answer": "(a) Shift left 5, reflect over x-axis, shift up 3. (b) Endpoint: (-5, 3). (c) x-intercept: -√(x+5) + 3 = 0 → √(x+5) = 3 → x = 4, so (4, 0). (d) Domain: [-5, ∞). Range: (-∞, 3]."
         }
       ]
@@ -178,17 +200,30 @@
       "problems": [
         {
           "problem": "For f(x) = x/(x + 1) and g(x) = 1/x, find f(g(x)). Simplify completely and state the domain.",
-          "hints": ["Substitute: f(1/x) = (1/x)/((1/x) + 1)", "Multiply numerator and denominator by x: 1/(1 + x)", "Domain: need x ≠ 0 (for g) and x ≠ -1 (denominator of result)"],
+          "hints": [
+            "Substitute: f(1/x) = (1/x)/((1/x) + 1)",
+            "Multiply numerator and denominator by x: 1/(1 + x)",
+            "Domain: need x ≠ 0 (for g) and x ≠ -1 (denominator of result)"
+          ],
           "answer": "f(g(x)) = (1/x)/((1/x) + 1) = (1/x)/((1 + x)/x) = 1/(1 + x). Domain: x ≠ 0 and x ≠ -1, so (-∞, -1) ∪ (-1, 0) ∪ (0, ∞)."
         },
         {
           "problem": "For f(x) = x² + 1 and g(x) = √(x - 2), find: (a) f(g(x)), (b) g(f(x)), (c) the domain of each composition.",
-          "hints": ["(a) f(√(x-2)) = (√(x-2))² + 1 = x - 2 + 1 = x - 1", "(b) g(x²+1) = √(x²+1-2) = √(x²-1)", "Domain of f(g(x)): x ≥ 2", "Domain of g(f(x)): x² - 1 ≥ 0 → x ≤ -1 or x ≥ 1"],
+          "hints": [
+            "(a) f(√(x-2)) = (√(x-2))² + 1 = x - 2 + 1 = x - 1",
+            "(b) g(x²+1) = √(x²+1-2) = √(x²-1)",
+            "Domain of f(g(x)): x ≥ 2",
+            "Domain of g(f(x)): x² - 1 ≥ 0 → x ≤ -1 or x ≥ 1"
+          ],
           "answer": "(a) f(g(x)) = (x - 2) + 1 = x - 1. Domain: x ≥ 2, so [2, ∞). (b) g(f(x)) = √(x² - 1). Domain: x² ≥ 1 → x ≤ -1 or x ≥ 1, so (-∞, -1] ∪ [1, ∞)."
         },
         {
           "problem": "Express h(x) = |3x - 6|² as a composition of three functions f(g(k(x))).",
-          "hints": ["Innermost: k(x) = 3x - 6 (linear)", "Middle: g(x) = |x| (absolute value)", "Outer: f(x) = x² (squaring)"],
+          "hints": [
+            "Innermost: k(x) = 3x - 6 (linear)",
+            "Middle: g(x) = |x| (absolute value)",
+            "Outer: f(x) = x² (squaring)"
+          ],
           "answer": "Let k(x) = 3x - 6, g(x) = |x|, f(x) = x². Then f(g(k(x))) = (|3x - 6|)² = |3x - 6|² = h(x). Note: since |a|² = a², this simplifies to (3x - 6)² = 9(x - 2)²."
         }
       ]
@@ -237,17 +272,32 @@
       "problems": [
         {
           "problem": "Find the inverse of f(x) = (3x + 7)/(x - 2). State the domain and range of both f and f⁻¹.",
-          "hints": ["Swap x and y: x = (3y + 7)/(y - 2)", "Cross multiply: x(y - 2) = 3y + 7", "Collect y terms: xy - 2x = 3y + 7 → y(x - 3) = 2x + 7", "f⁻¹(x) = (2x + 7)/(x - 3); HA of f is y = 3, VA of f is x = 2"],
+          "hints": [
+            "Swap x and y: x = (3y + 7)/(y - 2)",
+            "Cross multiply: x(y - 2) = 3y + 7",
+            "Collect y terms: xy - 2x = 3y + 7 → y(x - 3) = 2x + 7",
+            "f⁻¹(x) = (2x + 7)/(x - 3); HA of f is y = 3, VA of f is x = 2"
+          ],
           "answer": "f⁻¹(x) = (2x + 7)/(x - 3). Domain of f: x ≠ 2, Range of f: y ≠ 3. Domain of f⁻¹: x ≠ 3, Range of f⁻¹: y ≠ 2."
         },
         {
           "problem": "Find the inverse of f(x) = 4x² - 8x + 5 restricted to x ≥ 1. Verify f(f⁻¹(x)) = x.",
-          "hints": ["Complete the square: 4(x² - 2x) + 5 = 4(x - 1)² + 1", "Swap: x = 4(y - 1)² + 1 → (y - 1)² = (x - 1)/4", "Since y ≥ 1, take positive root", "f⁻¹(x) = √((x-1)/4) + 1 = (1/2)√(x-1) + 1"],
+          "hints": [
+            "Complete the square: 4(x² - 2x) + 5 = 4(x - 1)² + 1",
+            "Swap: x = 4(y - 1)² + 1 → (y - 1)² = (x - 1)/4",
+            "Since y ≥ 1, take positive root",
+            "f⁻¹(x) = √((x-1)/4) + 1 = (1/2)√(x-1) + 1"
+          ],
           "answer": "f(x) = 4(x - 1)² + 1. f⁻¹(x) = (1/2)√(x - 1) + 1. Domain of f⁻¹: [1, ∞). Verification: f(f⁻¹(x)) = 4((1/2)√(x-1) + 1 - 1)² + 1 = 4 · (1/4)(x - 1) + 1 = (x - 1) + 1 = x. ✓"
         },
         {
           "problem": "Determine whether f(x) = x³ - x is one-to-one on (-∞, ∞). If not, suggest a domain restriction that makes it one-to-one.",
-          "hints": ["Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 — wait, f(0)=0, f(1)=0, so not one-to-one", "Also: f(-1) = -1+1 = 0 — three inputs give output 0", "f'(x) = 3x² - 1 = 0 at x = ±1/√3 — local max/min", "Restrict to x ≥ 1/√3 (or x ≤ -1/√3) for one-to-one"],
+          "hints": [
+            "Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 — wait, f(0)=0, f(1)=0, so not one-to-one",
+            "Also: f(-1) = -1+1 = 0 — three inputs give output 0",
+            "f'(x) = 3x² - 1 = 0 at x = ±1/√3 — local max/min",
+            "Restrict to x ≥ 1/√3 (or x ≤ -1/√3) for one-to-one"
+          ],
           "answer": "f is not one-to-one on (-∞, ∞). Evidence: f(0) = 0, f(1) = 0, and f(-1) = 0. The function has a local max at x = -1/√3 and local min at x = 1/√3. Restrict domain to [1/√3, ∞) (or (-∞, -1/√3]) to make it one-to-one."
         }
       ]
@@ -256,7 +306,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Function Toolkit Mastery Practice",
-      "skills": ["function-families-overview", "transformations-toolkit", "combining-functions", "function-composition", "inverse-functions", "domain-range-analysis"],
+      "skills": [
+        "function-families-overview",
+        "transformations-toolkit",
+        "combining-functions",
+        "function-composition",
+        "inverse-functions",
+        "domain-range-analysis"
+      ],
       "problems": [
         {
           "problem": "For f(x) = -log₂(x - 4) + 3, identify the parent function, list all transformations, and find: domain, range, asymptote, x-intercept, and y-intercept (if any).",
@@ -282,7 +339,8 @@
           "problem": "A company finds that its daily cost is C(x) = 0.5x + 80 and its revenue is R(x) = x·p(x), where the price function is p(x) = 20 - 0.1x (x = number of units). (a) Find P(x) = R(x) - C(x). (b) Find the break-even points. (c) Find the number of units that maximizes profit.",
           "answer": "(a) R(x) = x(20 - 0.1x) = 20x - 0.1x². P(x) = (20x - 0.1x²) - (0.5x + 80) = -0.1x² + 19.5x - 80. (b) -0.1x² + 19.5x - 80 = 0 → x² - 195x + 800 = 0. Quadratic formula: x = (195 ± √(38025 - 3200))/2 = (195 ± √34825)/2 = (195 ± 5√1393)/2. Approximation: √1393 ≈ 37.32, so 5√1393 ≈ 186.6. x ≈ (195 - 186.6)/2 ≈ 4.2 or x ≈ (195 + 186.6)/2 ≈ 190.8. (c) Vertex: x = -19.5/(2·(-0.1)) = 19.5/0.2 = 97.5 units. Max profit: P(97.5) = -0.1(97.5)² + 19.5(97.5) - 80 = -950.625 + 1901.25 - 80 = 870.625."
         }
-      ]
+      ],
+      "skill": "function-families-overview"
     }
   ],
   "answerKeys": {

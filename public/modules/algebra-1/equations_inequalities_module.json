@@ -14,7 +14,10 @@
     "solving-equations-with-variables-both-sides",
     "solving-inequalities"
   ],
-  "standardsAlignment": ["A-REI.1", "A-REI.3"],
+  "standardsAlignment": [
+    "A-REI.1",
+    "A-REI.3"
+  ],
   "goals": [
     "Solve one-step and two-step equations using inverse operations and verify solutions by substitution",
     "Solve multi-step equations involving the distributive property and combining like terms",
@@ -36,7 +39,7 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-one-step-equations",
       "title": "What Is an Equation?",
-      "text": "An **equation** is a mathematical statement that two expressions are equal, connected by the equals sign (=). Think of it like a balanced scale: the left side weighs the same as the right side. Our goal when solving an equation is to find the value of the variable that makes the statement true.\n\nWe solve equations using **inverse operations**—operations that undo each other:\n- Addition and subtraction are inverses\n- Multiplication and division are inverses\n\nThe golden rule: **whatever you do to one side, you must do to the other side** to keep the equation balanced.\n\nFor a one-step equation like x + 7 = 15, you only need one inverse operation to isolate x. Since 7 is being added to x, subtract 7 from both sides: x = 15 - 7 = 8. Always **check** your answer by plugging it back in: 8 + 7 = 15 ✓.",
+      "content": "An **equation** is a mathematical statement that two expressions are equal, connected by the equals sign (=). Think of it like a balanced scale: the left side weighs the same as the right side. Our goal when solving an equation is to find the value of the variable that makes the statement true.\n\nWe solve equations using **inverse operations**—operations that undo each other:\n- Addition and subtraction are inverses\n- Multiplication and division are inverses\n\nThe golden rule: **whatever you do to one side, you must do to the other side** to keep the equation balanced.\n\nFor a one-step equation like x + 7 = 15, you only need one inverse operation to isolate x. Since 7 is being added to x, subtract 7 from both sides: x = 15 - 7 = 8. Always **check** your answer by plugging it back in: 8 + 7 = 15 ✓.",
       "initialPrompt": "Imagine a balanced scale with x + 7 on the left and 15 on the right. What would you do to both sides to get x by itself?"
     },
     {
@@ -65,7 +68,7 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-multi-step-equations",
       "title": "Multi-Step Equations: Distribute First, Then Combine Like Terms",
-      "text": "Not all equations can be solved in one or two steps. **Multi-step equations** require you to simplify each side before isolating the variable. Here is the strategy:\n\n1. **Distribute** — If there are parentheses with a coefficient, apply the distributive property: a(b + c) = ab + ac.\n2. **Combine like terms** — Simplify each side by combining terms that have the same variable (or are both constants).\n3. **Use inverse operations** — Move variable terms to one side and constants to the other using reverse PEMDAS: undo addition/subtraction first, then undo multiplication/division.\n4. **Check** — Substitute your answer back into the original equation.\n\nFor example, in the equation 3(x + 4) - 2 = 19, you would first distribute the 3 to get 3x + 12 - 2 = 19, then combine like terms to get 3x + 10 = 19, then solve the resulting two-step equation.\n\nSometimes you will encounter **special cases**:\n- If the variables cancel and you get a **false statement** like 0 = 5, the equation has **no solution**.\n- If the variables cancel and you get a **true statement** like 0 = 0, the equation is an **identity** (every real number is a solution).",
+      "content": "Not all equations can be solved in one or two steps. **Multi-step equations** require you to simplify each side before isolating the variable. Here is the strategy:\n\n1. **Distribute** — If there are parentheses with a coefficient, apply the distributive property: a(b + c) = ab + ac.\n2. **Combine like terms** — Simplify each side by combining terms that have the same variable (or are both constants).\n3. **Use inverse operations** — Move variable terms to one side and constants to the other using reverse PEMDAS: undo addition/subtraction first, then undo multiplication/division.\n4. **Check** — Substitute your answer back into the original equation.\n\nFor example, in the equation 3(x + 4) - 2 = 19, you would first distribute the 3 to get 3x + 12 - 2 = 19, then combine like terms to get 3x + 10 = 19, then solve the resulting two-step equation.\n\nSometimes you will encounter **special cases**:\n- If the variables cancel and you get a **false statement** like 0 = 5, the equation has **no solution**.\n- If the variables cancel and you get a **true statement** like 0 = 0, the equation is an **identity** (every real number is a solution).",
       "initialPrompt": "What does the distributive property do? Why do we need to use it before we can combine like terms?"
     },
     {
@@ -153,7 +156,7 @@
       "lessonPhase": "concept-intro",
       "skill": "solving-inequalities",
       "title": "Solving Inequalities",
-      "text": "An **inequality** is like an equation, but instead of saying two expressions are equal, it says one is greater than or less than the other. The symbols are:\n- **>** greater than\n- **<** less than\n- **>=** greater than or equal to\n- **<=** less than or equal to\n\nSolving inequalities works **almost exactly like solving equations** — you use the same inverse operations to isolate the variable. But there is one critical difference:\n\n**When you multiply or divide both sides by a NEGATIVE number, you must FLIP the inequality sign.**\n\nWhy? Consider: 2 < 5 is true. But if we multiply both sides by -1, we get -2 and -5. Since -2 is to the RIGHT of -5 on the number line, -2 > -5. The order reversed!\n\nThe solution to an inequality is usually a range of values, not just one number. For example, x > 4 means every number greater than 4 is a solution. On a number line, we show this with an open circle at 4 (not included) and an arrow going right.\n\nFor <= or >=, we use a **closed (filled) circle** to show the endpoint IS included.",
+      "content": "An **inequality** is like an equation, but instead of saying two expressions are equal, it says one is greater than or less than the other. The symbols are:\n- **>** greater than\n- **<** less than\n- **>=** greater than or equal to\n- **<=** less than or equal to\n\nSolving inequalities works **almost exactly like solving equations** — you use the same inverse operations to isolate the variable. But there is one critical difference:\n\n**When you multiply or divide both sides by a NEGATIVE number, you must FLIP the inequality sign.**\n\nWhy? Consider: 2 < 5 is true. But if we multiply both sides by -1, we get -2 and -5. Since -2 is to the RIGHT of -5 on the number line, -2 > -5. The order reversed!\n\nThe solution to an inequality is usually a range of values, not just one number. For example, x > 4 means every number greater than 4 is a solution. On a number line, we show this with an open circle at 4 (not included) and an arrow going right.\n\nFor <= or >=, we use a **closed (filled) circle** to show the endpoint IS included.",
       "initialPrompt": "Why does multiplying by a negative number flip the inequality? Try it with a simple example: if 3 < 7, what happens when you multiply both sides by -1?"
     },
     {
@@ -222,59 +225,76 @@
           "question": "Solve: x - 9 = 14",
           "answer": "x = 23",
           "skill": "solving-one-step-equations",
-          "hints": ["Add 9 to both sides to isolate x."]
+          "hints": [
+            "Add 9 to both sides to isolate x."
+          ]
         },
         {
           "id": "ei-yp2",
           "question": "Solve: -7x = 42",
           "answer": "x = -6",
           "skill": "solving-one-step-equations",
-          "hints": ["Divide both sides by -7."]
+          "hints": [
+            "Divide both sides by -7."
+          ]
         },
         {
           "id": "ei-yp3",
           "question": "Solve: 4x - 9 = 23",
           "answer": "x = 8",
           "skill": "solving-two-step-equations",
-          "hints": ["Add 9 to both sides first, then divide by 4."]
+          "hints": [
+            "Add 9 to both sides first, then divide by 4."
+          ]
         },
         {
           "id": "ei-yp4",
           "question": "Solve: 2(3x - 1) + 4 = 20",
           "answer": "x = 3",
           "skill": "solving-multi-step-equations",
-          "hints": ["Distribute first: 6x - 2 + 4 = 20. Combine like terms: 6x + 2 = 20. Then solve the two-step equation."]
+          "hints": [
+            "Distribute first: 6x - 2 + 4 = 20. Combine like terms: 6x + 2 = 20. Then solve the two-step equation."
+          ]
         },
         {
           "id": "ei-yp5",
           "question": "Solve: 7x - 10 = 4x + 5",
           "answer": "x = 5",
           "skill": "solving-equations-with-variables-both-sides",
-          "hints": ["Subtract 4x from both sides to get 3x - 10 = 5. Then add 10 and divide by 3."]
+          "hints": [
+            "Subtract 4x from both sides to get 3x - 10 = 5. Then add 10 and divide by 3."
+          ]
         },
         {
           "id": "ei-yp6",
           "question": "Solve: 3(x + 2) = 3x + 6. Identify the type of solution.",
           "answer": "All real numbers (identity)",
           "skill": "solving-equations-with-variables-both-sides",
-          "hints": ["Distribute on the left: 3x + 6 = 3x + 6. Subtract 3x from both sides. What do you get?"]
+          "hints": [
+            "Distribute on the left: 3x + 6 = 3x + 6. Subtract 3x from both sides. What do you get?"
+          ]
         },
         {
           "id": "ei-yp7",
           "question": "Solve: -3x + 8 > 2",
           "answer": "x < 2",
           "skill": "solving-inequalities",
-          "hints": ["Subtract 8 from both sides: -3x > -6. Divide by -3 and remember to flip the inequality sign."]
+          "hints": [
+            "Subtract 8 from both sides: -3x > -6. Divide by -3 and remember to flip the inequality sign."
+          ]
         },
         {
           "id": "ei-yp8",
           "question": "Solve: 5 - 2(x + 1) >= 7",
           "answer": "x <= -2",
           "skill": "solving-inequalities",
-          "hints": ["Distribute: 5 - 2x - 2 >= 7. Combine like terms: 3 - 2x >= 7. Subtract 3: -2x >= 4. Divide by -2 and flip the sign."]
+          "hints": [
+            "Distribute: 5 - 2x - 2 >= 7. Combine like terms: 3 - 2x >= 7. Subtract 3: -2x >= 4. Divide by -2 and flip the sign."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "solving-one-step-equations"
     }
   ],
   "answerKeys": {

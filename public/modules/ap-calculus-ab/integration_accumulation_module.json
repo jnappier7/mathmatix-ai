@@ -120,7 +120,11 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Riemann Sums & FTC Practice",
-      "skills": ["riemann-sums-approximation", "ftc-part-1", "ftc-part-2"],
+      "skills": [
+        "riemann-sums-approximation",
+        "ftc-part-1",
+        "ftc-part-2"
+      ],
       "problems": [
         {
           "problem": "Approximate the integral from 0 to 6 of f(x)dx using a midpoint Riemann sum with 3 equal subintervals, given f(x) = 2x + 3.",
@@ -159,7 +163,8 @@
           ],
           "answer": "F(x) = 2sin(x) + 3x. F(pi) - F(0) = (2sin(pi) + 3pi) - (2sin(0) + 0) = (0 + 3pi) - 0 = 3pi."
         }
-      ]
+      ],
+      "skill": "ftc-part-1"
     },
     {
       "type": "explanation",
@@ -266,7 +271,10 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Antiderivatives, u-Substitution & Properties Practice",
-      "skills": ["antiderivatives-indefinite-integrals", "integral-properties-techniques"],
+      "skills": [
+        "antiderivatives-indefinite-integrals",
+        "integral-properties-techniques"
+      ],
       "problems": [
         {
           "problem": "Evaluate: integral of (6x^2 - 4/x + sec^2(x)) dx.",
@@ -301,7 +309,8 @@
           ],
           "answer": "By additivity: integral from 2 to 9 of f(x)dx = 12 + 7 = 19. By linearity: integral from 2 to 9 of [f(x) + 3g(x)]dx = 19 + 3(-5) = 19 - 15 = 4."
         }
-      ]
+      ],
+      "skill": "integral-properties-techniques"
     },
     {
       "type": "independent_practice",
@@ -340,7 +349,8 @@
           "problem": "Given that integral from 0 to 4 of f(x)dx = 10, integral from 4 to 7 of f(x)dx = -2, and integral from 0 to 7 of g(x)dx = 6, find: (a) integral from 0 to 7 of f(x)dx, (b) integral from 7 to 0 of f(x)dx, (c) integral from 0 to 7 of [3f(x) - 2g(x)]dx.",
           "answer": "(a) Additivity: integral from 0 to 7 of f(x)dx = 10 + (-2) = 8. (b) Reversing limits: integral from 7 to 0 of f(x)dx = -8. (c) Linearity: 3*integral of f - 2*integral of g = 3(8) - 2(6) = 24 - 12 = 12."
         }
-      ]
+      ],
+      "skill": "definite-integral-as-accumulation"
     }
   ],
   "answerKeys": {

@@ -6,8 +6,16 @@
   "weeks": "25-28",
   "estimatedDuration": 50,
   "description": "Build fluency with the three curved-surface volume formulas: cylinders (V = πr²h), cones (V = ⅓πr²h), and spheres (V = ⁴⁄₃πr³). Students connect each formula to its rectangular prism cousin, explore the 1/3 and 4/3 relationships, tackle composite figures, and discover the k³ scaling rule. Every problem is grounded in real-world objects — soup cans, ice cream cones, basketballs, water tanks — so students see volume as a practical measurement tool.",
-  "skills": ["volume-cylinders", "volume-cones", "volume-spheres", "volume-scaling", "volume-word-problems"],
-  "standardsAlignment": ["8.G.9"],
+  "skills": [
+    "volume-cylinders",
+    "volume-cones",
+    "volume-spheres",
+    "volume-scaling",
+    "volume-word-problems"
+  ],
+  "standardsAlignment": [
+    "8.G.9"
+  ],
   "goals": [
     "Calculate the volume of cylinders using V = πr²h and connect the formula to rectangular prisms.",
     "Calculate the volume of cones using V = ⅓πr²h and spheres using V = ⁴⁄₃πr³.",
@@ -21,7 +29,7 @@
     "Spheres: the 4/3 coefficient is harder to visualize, but note that a sphere fits inside a cylinder with r = r and h = 2r, and fills exactly 2/3 of that cylinder.",
     "Use real objects for every formula: cans for cylinders, party hats for cones, basketballs for spheres. This grounds abstract formulas in physical intuition."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -135,19 +143,28 @@
           "id": "vs-wp1",
           "question": "Find the volume of a cylinder with radius 7 inches and height 10 inches.",
           "answer": "V = π(7)²(10) = π(49)(10) = 490π ≈ 1539.38 in³.",
-          "hints": ["Plug into V = πr²h. Square the radius first: 7² = 49.", "Multiply: 49 × 10 = 490. So V = 490π."]
+          "hints": [
+            "Plug into V = πr²h. Square the radius first: 7² = 49.",
+            "Multiply: 49 × 10 = 490. So V = 490π."
+          ]
         },
         {
           "id": "vs-wp2",
           "question": "A coffee mug is approximately a cylinder with diameter 8 cm and height 9 cm. How much coffee does it hold?",
           "answer": "Radius = 8/2 = 4 cm. V = π(4)²(9) = π(16)(9) = 144π ≈ 452.39 cm³ (about 452 mL).",
-          "hints": ["Diameter is 8, so radius is 4. Don't forget to halve!", "V = π(4²)(9) = π(16)(9)."]
+          "hints": [
+            "Diameter is 8, so radius is 4. Don't forget to halve!",
+            "V = π(4²)(9) = π(16)(9)."
+          ]
         },
         {
           "id": "vs-wp3",
           "question": "A hollow pipe has an outer radius of 5 cm, an inner radius of 3 cm, and a length of 20 cm. Find the volume of the material (the pipe wall).",
           "answer": "Outer cylinder: π(5)²(20) = 500π. Inner cylinder: π(3)²(20) = 180π. Material = 500π − 180π = 320π ≈ 1005.31 cm³.",
-          "hints": ["Find the volume of the outer cylinder and the inner cylinder separately.", "Subtract the inner from the outer to get just the pipe material."]
+          "hints": [
+            "Find the volume of the outer cylinder and the inner cylinder separately.",
+            "Subtract the inner from the outer to get just the pipe material."
+          ]
         }
       ]
     },
@@ -161,19 +178,28 @@
           "id": "vs-wp4",
           "question": "Find the volume of a cone with radius 6 m and height 9 m.",
           "answer": "V = ⅓π(6)²(9) = ⅓π(36)(9) = ⅓(324π) = 108π ≈ 339.29 m³.",
-          "hints": ["V = ⅓πr²h. Compute r² = 36 first, then multiply by h = 9.", "36 × 9 = 324. Divide by 3: 324/3 = 108. So V = 108π."]
+          "hints": [
+            "V = ⅓πr²h. Compute r² = 36 first, then multiply by h = 9.",
+            "36 × 9 = 324. Divide by 3: 324/3 = 108. So V = 108π."
+          ]
         },
         {
           "id": "vs-wp5",
           "question": "Find the volume of a sphere with radius 9 cm.",
           "answer": "V = ⁴⁄₃π(9)³ = ⁴⁄₃π(729) = 2916π/3 = 972π ≈ 3053.63 cm³.",
-          "hints": ["First compute r³ = 9³ = 729.", "Then: (4 × 729)/3 = 2916/3 = 972. So V = 972π."]
+          "hints": [
+            "First compute r³ = 9³ = 729.",
+            "Then: (4 × 729)/3 = 2916/3 = 972. So V = 972π."
+          ]
         },
         {
           "id": "vs-wp6",
           "question": "A waffle cone has a radius of 4 cm and a height of 14 cm. What volume of frozen yogurt can it hold?",
           "answer": "V = ⅓π(4)²(14) = ⅓π(16)(14) = ⅓(224π) = 224π/3 ≈ 234.57 cm³.",
-          "hints": ["V = ⅓πr²h. Compute 4² = 16, then 16 × 14 = 224.", "Divide by 3: 224/3 ≈ 74.67. So V ≈ 74.67π ≈ 234.57 cm³."]
+          "hints": [
+            "V = ⅓πr²h. Compute 4² = 16, then 16 × 14 = 224.",
+            "Divide by 3: 224/3 ≈ 74.67. So V ≈ 74.67π ≈ 234.57 cm³."
+          ]
         }
       ]
     },
@@ -187,19 +213,28 @@
           "id": "vs-wp7",
           "question": "A cylinder has radius 3 cm and height 5 cm. If all dimensions are tripled, what is the new volume? How many times larger is the new volume?",
           "answer": "Original: V = π(9)(5) = 45π. Scale factor k = 3, so k³ = 27. New V = 27 × 45π = 1215π ≈ 3817.04 cm³. The new volume is 27 times larger.",
-          "hints": ["When all dimensions are multiplied by k, volume is multiplied by k³.", "k = 3, so k³ = 27. Multiply the original volume by 27."]
+          "hints": [
+            "When all dimensions are multiplied by k, volume is multiplied by k³.",
+            "k = 3, so k³ = 27. Multiply the original volume by 27."
+          ]
         },
         {
           "id": "vs-wp8",
           "question": "A grain silo is a cylinder (radius 5 m, height 12 m) topped by a hemisphere (radius 5 m). Find the total volume.",
           "answer": "Cylinder: π(25)(12) = 300π. Hemisphere: ½ × ⁴⁄₃π(125) = ½ × 500π/3 = 250π/3. Total: 300π + 250π/3 = 900π/3 + 250π/3 = 1150π/3 ≈ 1204.28 m³.",
-          "hints": ["A hemisphere is half a sphere: V = ½ × ⁴⁄₃πr³.", "Add the cylinder volume and hemisphere volume. Use a common denominator of 3."]
+          "hints": [
+            "A hemisphere is half a sphere: V = ½ × ⁴⁄₃πr³.",
+            "Add the cylinder volume and hemisphere volume. Use a common denominator of 3."
+          ]
         },
         {
           "id": "vs-wp9",
           "question": "A decorative candle is a cylinder (radius 3 cm, height 10 cm) with a cone-shaped hole scooped from the top (radius 3 cm, height 2 cm). Find the remaining volume.",
           "answer": "Cylinder: π(9)(10) = 90π. Cone: ⅓π(9)(2) = 6π. Remaining: 90π − 6π = 84π ≈ 263.89 cm³.",
-          "hints": ["Find the full cylinder volume, then subtract the cone volume.", "Cone: ⅓π(3²)(2) = ⅓π(9)(2) = ⅓(18π) = 6π."]
+          "hints": [
+            "Find the full cylinder volume, then subtract the cone volume.",
+            "Cone: ⅓π(3²)(2) = ⅓π(9)(2) = ⅓(18π) = 6π."
+          ]
         }
       ]
     },
@@ -214,42 +249,54 @@
           "question": "A cylindrical storage drum has a diameter of 14 cm and a height of 20 cm. Find its volume.",
           "answer": "Radius = 14/2 = 7 cm. V = π(7)²(20) = π(49)(20) = 980π ≈ 3078.76 cm³.",
           "skill": "volume-cylinders",
-          "hints": ["Remember: diameter = 14, so radius = 7. Use V = πr²h."]
+          "hints": [
+            "Remember: diameter = 14, so radius = 7. Use V = πr²h."
+          ]
         },
         {
           "id": "vs-yp2",
           "question": "A traffic cone has a radius of 8 inches and a height of 15 inches. Find its volume.",
           "answer": "V = ⅓π(8)²(15) = ⅓π(64)(15) = ⅓(960π) = 320π ≈ 1005.31 in³.",
           "skill": "volume-cones",
-          "hints": ["Use V = ⅓πr²h. Compute 8² = 64, then 64 × 15 = 960, then divide by 3."]
+          "hints": [
+            "Use V = ⅓πr²h. Compute 8² = 64, then 64 × 15 = 960, then divide by 3."
+          ]
         },
         {
           "id": "vs-yp3",
           "question": "A soccer ball has a diameter of 18 cm. Find its volume.",
           "answer": "Radius = 9 cm. V = ⁴⁄₃π(9)³ = ⁴⁄₃π(729) = 2916π/3 = 972π ≈ 3053.63 cm³.",
           "skill": "volume-spheres",
-          "hints": ["Diameter = 18, so radius = 9. Use V = ⁴⁄₃πr³."]
+          "hints": [
+            "Diameter = 18, so radius = 9. Use V = ⁴⁄₃πr³."
+          ]
         },
         {
           "id": "vs-yp4",
           "question": "A water bottle is shaped like a cylinder with radius 3 cm and height 20 cm. How many milliliters of water does it hold? (1 cm³ = 1 mL)",
           "answer": "V = π(3)²(20) = π(9)(20) = 180π ≈ 565.49 cm³. Since 1 cm³ = 1 mL, the bottle holds approximately 565 mL.",
           "skill": "volume-word-problems",
-          "hints": ["Find the volume in cm³ using V = πr²h, then convert using 1 cm³ = 1 mL."]
+          "hints": [
+            "Find the volume in cm³ using V = πr²h, then convert using 1 cm³ = 1 mL."
+          ]
         },
         {
           "id": "vs-yp5",
           "question": "A grain silo is a cylinder (radius 4 m, height 10 m) topped by a cone (radius 4 m, height 3 m). Find the total volume.",
           "answer": "Cylinder: π(16)(10) = 160π. Cone: ⅓π(16)(3) = 16π. Total: 160π + 16π = 176π ≈ 552.92 m³.",
           "skill": "volume-word-problems",
-          "hints": ["Break it into two shapes. Find each volume, then add."]
+          "hints": [
+            "Break it into two shapes. Find each volume, then add."
+          ]
         },
         {
           "id": "vs-yp6",
           "question": "A model sphere has a radius of 2 cm. A larger version has a radius of 6 cm (triple the original). How many times larger is the volume of the bigger sphere?",
           "answer": "Scale factor k = 6/2 = 3. Volume scales by k³ = 3³ = 27. The larger sphere has 27 times the volume. Verification: Small V = ⁴⁄₃π(8) = 32π/3. Large V = ⁴⁄₃π(216) = 288π. Ratio: 288π ÷ (32π/3) = 288 × 3/32 = 864/32 = 27 ✓.",
           "skill": "volume-scaling",
-          "hints": ["Find the scale factor k = new radius / old radius, then compute k³."]
+          "hints": [
+            "Find the scale factor k = new radius / old radius, then compute k³."
+          ]
         }
       ]
     }

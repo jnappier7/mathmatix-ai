@@ -14,7 +14,13 @@
     "law-of-cosines",
     "triangle-area-applications"
   ],
-  "standardsAlignment": ["F-TF.6", "F-TF.7", "F-TF.9", "G-SRT.10", "G-SRT.11"],
+  "standardsAlignment": [
+    "F-TF.6",
+    "F-TF.7",
+    "F-TF.9",
+    "G-SRT.10",
+    "G-SRT.11"
+  ],
   "goals": [
     "Evaluate inverse trig functions (arcsin, arccos, arctan) exactly and in compositions; understand restricted domains.",
     "Apply sum and difference identities for sine, cosine, and tangent to find exact values and verify identities.",
@@ -140,24 +146,41 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Advanced Identities Practice",
-      "skills": ["inverse-trig-functions", "sum-difference-identities", "double-half-angle-formulas"],
+      "skills": [
+        "inverse-trig-functions",
+        "sum-difference-identities",
+        "double-half-angle-formulas"
+      ],
       "problems": [
         {
           "problem": "Find the exact value of sin(arccos(5/13)).",
-          "hints": ["Let θ = arccos(5/13), so cos θ = 5/13", "θ ∈ [0, π], so sin θ ≥ 0", "sin θ = √(1 - 25/169) = √(144/169) = 12/13"],
+          "hints": [
+            "Let θ = arccos(5/13), so cos θ = 5/13",
+            "θ ∈ [0, π], so sin θ ≥ 0",
+            "sin θ = √(1 - 25/169) = √(144/169) = 12/13"
+          ],
           "answer": "12/13."
         },
         {
           "problem": "Find the exact value of tan(5π/12).",
-          "hints": ["5π/12 = π/4 + π/6", "tan(A+B) = (tanA + tanB)/(1 - tanA·tanB)", "tan(π/4) = 1, tan(π/6) = √3/3"],
+          "hints": [
+            "5π/12 = π/4 + π/6",
+            "tan(A+B) = (tanA + tanB)/(1 - tanA·tanB)",
+            "tan(π/4) = 1, tan(π/6) = √3/3"
+          ],
           "answer": "tan(5π/12) = (1 + √3/3)/(1 - 1·√3/3) = (3 + √3)/(3 - √3). Rationalize: multiply by (3+√3)/(3+√3) = (9 + 6√3 + 3)/(9 - 3) = (12 + 6√3)/6 = 2 + √3."
         },
         {
           "problem": "If sin θ = 7/25 and θ is in Q2, find: (a) cos(2θ), (b) sin(θ/2).",
-          "hints": ["Q2: cos θ = -24/25", "(a) cos(2θ) = 1 - 2sin²θ = 1 - 2(49/625)", "(b) θ in Q2 means π/2 < θ < π, so π/4 < θ/2 < π/2 (Q1, positive)"],
+          "hints": [
+            "Q2: cos θ = -24/25",
+            "(a) cos(2θ) = 1 - 2sin²θ = 1 - 2(49/625)",
+            "(b) θ in Q2 means π/2 < θ < π, so π/4 < θ/2 < π/2 (Q1, positive)"
+          ],
           "answer": "(a) cos(2θ) = 1 - 2(49/625) = 1 - 98/625 = 527/625. (b) sin(θ/2) = √((1 - cos θ)/2) = √((1 + 24/25)/2) = √(49/50) = 7/(5√2) = 7√2/10."
         }
-      ]
+      ],
+      "skill": "double-half-angle-formulas"
     },
     {
       "type": "explanation",
@@ -227,24 +250,40 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Law of Sines/Cosines Practice",
-      "skills": ["law-of-sines", "law-of-cosines", "triangle-area-applications"],
+      "skills": [
+        "law-of-sines",
+        "law-of-cosines",
+        "triangle-area-applications"
+      ],
       "problems": [
         {
           "problem": "In triangle ABC, A = 35°, B = 80°, b = 15. Find a and c.",
-          "hints": ["C = 180° - 35° - 80° = 65°", "a/sinA = b/sinB → a = 15sin35°/sin80°", "c = 15sin65°/sin80°"],
+          "hints": [
+            "C = 180° - 35° - 80° = 65°",
+            "a/sinA = b/sinB → a = 15sin35°/sin80°",
+            "c = 15sin65°/sin80°"
+          ],
           "answer": "C = 65°. a = 15sin35°/sin80° = 15(0.5736)/0.9848 ≈ 8.74. c = 15sin65°/sin80° = 15(0.9063)/0.9848 ≈ 13.80."
         },
         {
           "problem": "In triangle ABC, a = 6, b = 9, c = 12. Find the largest angle.",
-          "hints": ["Largest angle is opposite longest side (c = 12)", "cos C = (36 + 81 - 144)/(2·6·9)", "= -27/108 = -1/4"],
+          "hints": [
+            "Largest angle is opposite longest side (c = 12)",
+            "cos C = (36 + 81 - 144)/(2·6·9)",
+            "= -27/108 = -1/4"
+          ],
           "answer": "cos C = (36 + 81 - 144)/108 = -27/108 = -1/4. C = arccos(-1/4) ≈ 104.48°."
         },
         {
           "problem": "Find the area of triangle ABC where a = 10, b = 14, C = 48°.",
-          "hints": ["Area = (1/2)ab·sinC", "= (1/2)(10)(14)sin48°"],
+          "hints": [
+            "Area = (1/2)ab·sinC",
+            "= (1/2)(10)(14)sin48°"
+          ],
           "answer": "Area = (1/2)(10)(14)sin48° = 70(0.7431) ≈ 52.02 square units."
         }
-      ]
+      ],
+      "skill": "law-of-sines"
     },
     {
       "type": "explanation",
@@ -279,7 +318,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Advanced Trig Mastery Practice",
-      "skills": ["inverse-trig-functions", "sum-difference-identities", "double-half-angle-formulas", "law-of-sines", "law-of-cosines", "triangle-area-applications"],
+      "skills": [
+        "inverse-trig-functions",
+        "sum-difference-identities",
+        "double-half-angle-formulas",
+        "law-of-sines",
+        "law-of-cosines",
+        "triangle-area-applications"
+      ],
       "problems": [
         {
           "problem": "Find the exact value of cos(arcsin(8/17)).",
@@ -305,7 +351,8 @@
           "problem": "Find the area of a triangle with sides 8, 11, and 15 using Heron's formula.",
           "answer": "s = (8 + 11 + 15)/2 = 17. A = √(17·9·6·2) = √1836 = √(4·459) = 2√459 = 2·3√51 = 6√51 ≈ 42.85 sq units."
         }
-      ]
+      ],
+      "skill": "inverse-trig-functions"
     }
   ],
   "answerKeys": {

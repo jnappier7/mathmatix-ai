@@ -6,7 +6,6 @@
   "weeks": "18-22",
   "estimatedDuration": 45,
   "description": "From flat shapes to 3D thinking. Students build area formulas from rectangles — proving that a parallelogram is a rearranged rectangle and a triangle is half of one. They decompose composite figures, unfold prisms into nets to find surface area, and calculate volume of rectangular prisms with fractional edge lengths. Every concept connects to real contexts: flooring, wrapping paper, storage, and packaging.",
-
   "skills": [
     "g6-area-triangles-parallelograms",
     "g6-area-composite-figures",
@@ -14,9 +13,11 @@
     "g6-volume-rectangular-prisms",
     "g6-geometry-applications"
   ],
-
-  "standardsAlignment": ["6.G.A.1", "6.G.A.2", "6.G.A.4"],
-
+  "standardsAlignment": [
+    "6.G.A.1",
+    "6.G.A.2",
+    "6.G.A.4"
+  ],
   "goals": [
     "Derive and apply the area formulas for parallelograms (A = bh) and triangles (A = 1/2 bh) by relating them to rectangles",
     "Decompose composite figures into rectangles and triangles to find total area",
@@ -24,7 +25,6 @@
     "Calculate the volume of rectangular prisms including those with fractional edge lengths using V = lwh",
     "Select the appropriate measurement (area, surface area, or volume) for real-world problems and solve multi-step applications"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> We Do -> You Do for each skill",
     "Anchor every formula in a physical derivation — cut a parallelogram and rearrange it into a rectangle, fold a triangle to show it is half the rectangle",
@@ -32,9 +32,7 @@
     "Emphasize that HEIGHT must be perpendicular to the base — draw the right-angle mark every time to build the habit",
     "When working with fractional edge lengths in volume, connect back to fraction multiplication so students see unit consistency"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -79,7 +77,7 @@
       "problems": [
         {
           "id": "geo-1",
-          "prompt": "A parallelogram-shaped floor tile has a base of 8 inches and a height of 5 inches. What is the area of one tile?",
+          "question": "A parallelogram-shaped floor tile has a base of 8 inches and a height of 5 inches. What is the area of one tile?",
           "hints": [
             "Use the parallelogram area formula: A = base x height.",
             "A = 8 x 5 = 40 square inches."
@@ -88,7 +86,7 @@
         },
         {
           "id": "geo-2",
-          "prompt": "A triangle has a base of 14 cm and a height of 9 cm. Find the area.",
+          "question": "A triangle has a base of 14 cm and a height of 9 cm. Find the area.",
           "hints": [
             "Use the triangle formula: A = 1/2 x base x height.",
             "A = 1/2 x 14 x 9 = 1/2 x 126 = 63 cm²."
@@ -97,7 +95,7 @@
         },
         {
           "id": "geo-3",
-          "prompt": "A triangular sail has an area of 54 ft² and a base of 12 ft. What is the height of the sail?",
+          "question": "A triangular sail has an area of 54 ft² and a base of 12 ft. What is the height of the sail?",
           "hints": [
             "Start with A = 1/2 bh and substitute what you know: 54 = 1/2 x 12 x h.",
             "Simplify: 54 = 6h, so h = 54 / 6 = 9 ft."
@@ -114,17 +112,17 @@
       "problems": [
         {
           "id": "geo-4",
-          "prompt": "A parallelogram has a base of 15 m and a height of 8 m. Its slanted side is 10 m. What is its area?",
+          "question": "A parallelogram has a base of 15 m and a height of 8 m. Its slanted side is 10 m. What is its area?",
           "answer": "120 m²"
         },
         {
           "id": "geo-5",
-          "prompt": "A triangular flower bed has a base of 7.5 feet and a height of 4 feet. How many square feet of soil do you need to fill it?",
+          "question": "A triangular flower bed has a base of 7.5 feet and a height of 4 feet. How many square feet of soil do you need to fill it?",
           "answer": "15 ft²"
         },
         {
           "id": "geo-6",
-          "prompt": "A parallelogram has an area of 91 cm² and a height of 7 cm. What is the length of its base?",
+          "question": "A parallelogram has an area of 91 cm² and a height of 7 cm. What is the length of its base?",
           "answer": "13 cm"
         }
       ]
@@ -167,7 +165,7 @@
       "problems": [
         {
           "id": "geo-7",
-          "prompt": "A T-shaped stage is formed by two rectangles. The top bar is 14 ft long and 3 ft wide. The vertical stem is 4 ft wide and 8 ft long. What is the total area of the stage?",
+          "question": "A T-shaped stage is formed by two rectangles. The top bar is 14 ft long and 3 ft wide. The vertical stem is 4 ft wide and 8 ft long. What is the total area of the stage?",
           "hints": [
             "Break the T into two non-overlapping rectangles: the top bar and the stem.",
             "Top bar: 14 x 3 = 42 ft². Stem: 4 x 8 = 32 ft². Total = 42 + 32 = 74 ft²."
@@ -176,7 +174,7 @@
         },
         {
           "id": "geo-8",
-          "prompt": "A rectangular yard is 30 m by 20 m. A rectangular swimming pool that is 10 m by 6 m is built inside it. What is the area of the remaining grass?",
+          "question": "A rectangular yard is 30 m by 20 m. A rectangular swimming pool that is 10 m by 6 m is built inside it. What is the area of the remaining grass?",
           "hints": [
             "This is a subtract problem: total yard minus pool.",
             "Yard: 30 x 20 = 600 m². Pool: 10 x 6 = 60 m². Grass = 600 - 60 = 540 m²."
@@ -185,7 +183,7 @@
         },
         {
           "id": "geo-9",
-          "prompt": "A pennant (flag) is shaped like a rectangle topped with a triangle. The rectangle is 6 in. wide and 10 in. tall. The triangle sits on top with a base of 6 in. and a height of 4 in. What is the total area of the pennant?",
+          "question": "A pennant (flag) is shaped like a rectangle topped with a triangle. The rectangle is 6 in. wide and 10 in. tall. The triangle sits on top with a base of 6 in. and a height of 4 in. What is the total area of the pennant?",
           "hints": [
             "Find each area separately: rectangle area = 6 x 10 and triangle area = 1/2 x 6 x 4.",
             "Rectangle = 60 in². Triangle = 12 in². Total = 60 + 12 = 72 in²."
@@ -202,12 +200,12 @@
       "problems": [
         {
           "id": "geo-10",
-          "prompt": "An L-shaped kitchen floor has a full length of 15 ft, a full width of 9 ft, and a 6 ft by 4 ft cutout in one corner. What is the floor area?",
+          "question": "An L-shaped kitchen floor has a full length of 15 ft, a full width of 9 ft, and a 6 ft by 4 ft cutout in one corner. What is the floor area?",
           "answer": "111 ft²"
         },
         {
           "id": "geo-11",
-          "prompt": "A sign is shaped like a rectangle (18 in. by 12 in.) with a right triangle attached to the right side. The triangle has legs of 12 in. and 5 in. What is the total area of the sign?",
+          "question": "A sign is shaped like a rectangle (18 in. by 12 in.) with a right triangle attached to the right side. The triangle has legs of 12 in. and 5 in. What is the total area of the sign?",
           "answer": "246 in²"
         }
       ]
@@ -255,7 +253,7 @@
       "problems": [
         {
           "id": "geo-12",
-          "prompt": "A cereal box is 12 inches tall, 8 inches wide, and 3 inches deep. How much cardboard is needed to make the box?",
+          "question": "A cereal box is 12 inches tall, 8 inches wide, and 3 inches deep. How much cardboard is needed to make the box?",
           "hints": [
             "This is a surface area problem. Use SA = 2lw + 2lh + 2wh with l=8, w=3, h=12.",
             "SA = 2(8)(3) + 2(8)(12) + 2(3)(12) = 48 + 192 + 72 = 312 in²."
@@ -264,7 +262,7 @@
         },
         {
           "id": "geo-13",
-          "prompt": "A cube-shaped jewelry box has edges of 4 cm. Mia wants to cover it with decorative paper. How much paper does she need?",
+          "question": "A cube-shaped jewelry box has edges of 4 cm. Mia wants to cover it with decorative paper. How much paper does she need?",
           "hints": [
             "A cube has 6 identical square faces. Find the area of one face first.",
             "One face = 4 x 4 = 16 cm². Total SA = 6 x 16 = 96 cm²."
@@ -281,12 +279,12 @@
       "problems": [
         {
           "id": "geo-14",
-          "prompt": "A rectangular storage container is 2 ft long, 1.5 ft wide, and 1 ft tall. What is the total surface area?",
+          "question": "A rectangular storage container is 2 ft long, 1.5 ft wide, and 1 ft tall. What is the total surface area?",
           "answer": "13 ft²"
         },
         {
           "id": "geo-15",
-          "prompt": "Marcus is painting all 6 faces of a wooden box that is 20 in. long, 14 in. wide, and 10 in. tall. One can of paint covers 400 in². How many cans does he need?",
+          "question": "Marcus is painting all 6 faces of a wooden box that is 20 in. long, 14 in. wide, and 10 in. tall. One can of paint covers 400 in². How many cans does he need?",
           "answer": "4 cans (SA = 1,240 in², and 1,240 / 400 = 3.1, so he needs 4 cans)"
         }
       ]
@@ -334,7 +332,7 @@
       "problems": [
         {
           "id": "geo-16",
-          "prompt": "A fish tank is 24 inches long, 12 inches wide, and 16 inches tall. What is the volume of the tank in cubic inches?",
+          "question": "A fish tank is 24 inches long, 12 inches wide, and 16 inches tall. What is the volume of the tank in cubic inches?",
           "hints": [
             "Use V = lwh. Substitute l = 24, w = 12, h = 16.",
             "V = 24 x 12 x 16 = 24 x 192 = 4,608 in.³"
@@ -343,7 +341,7 @@
         },
         {
           "id": "geo-17",
-          "prompt": "A small rectangular prism has a length of 1 1/2 cm, a width of 2/3 cm, and a height of 4 cm. What is the volume?",
+          "question": "A small rectangular prism has a length of 1 1/2 cm, a width of 2/3 cm, and a height of 4 cm. What is the volume?",
           "hints": [
             "Convert the mixed number: 1 1/2 = 3/2. Then multiply: V = 3/2 x 2/3 x 4.",
             "3/2 x 2/3 = 6/6 = 1. Then 1 x 4 = 4 cm³."
@@ -352,7 +350,7 @@
         },
         {
           "id": "geo-18",
-          "prompt": "A packing crate has a volume of 60 ft³. Its length is 5 ft and its width is 4 ft. What is its height?",
+          "question": "A packing crate has a volume of 60 ft³. Its length is 5 ft and its width is 4 ft. What is its height?",
           "hints": [
             "Use V = lwh and solve for h: 60 = 5 x 4 x h.",
             "60 = 20h, so h = 60 / 20 = 3 ft."
@@ -369,12 +367,12 @@
       "problems": [
         {
           "id": "geo-19",
-          "prompt": "A toolbox is 18 in. long, 8 in. wide, and 9 in. tall. What is its volume?",
+          "question": "A toolbox is 18 in. long, 8 in. wide, and 9 in. tall. What is its volume?",
           "answer": "1,296 in.³"
         },
         {
           "id": "geo-20",
-          "prompt": "A rectangular planter box is 3 1/2 ft long, 1 ft wide, and 2/3 ft deep. How many cubic feet of soil does it hold?",
+          "question": "A rectangular planter box is 3 1/2 ft long, 1 ft wide, and 2/3 ft deep. How many cubic feet of soil does it hold?",
           "answer": "7/3 ft³ (or 2 1/3 ft³)"
         }
       ]
@@ -421,7 +419,7 @@
       "problems": [
         {
           "id": "geo-21",
-          "prompt": "A company ships products in boxes that are 16 in. long, 10 in. wide, and 8 in. tall. They need to cover each box with a branded label on all 6 sides. How many square inches of label material are needed per box?",
+          "question": "A company ships products in boxes that are 16 in. long, 10 in. wide, and 8 in. tall. They need to cover each box with a branded label on all 6 sides. How many square inches of label material are needed per box?",
           "hints": [
             "Covering all 6 sides = surface area. Use SA = 2lw + 2lh + 2wh.",
             "SA = 2(16)(10) + 2(16)(8) + 2(10)(8) = 320 + 256 + 160 = 736 in²."
@@ -430,7 +428,7 @@
         },
         {
           "id": "geo-22",
-          "prompt": "A community garden plot is shaped like a parallelogram with a base of 18 ft and a height of 10 ft. Fertilizer costs $0.75 per square foot. How much will it cost to fertilize the entire plot?",
+          "question": "A community garden plot is shaped like a parallelogram with a base of 18 ft and a height of 10 ft. Fertilizer costs $0.75 per square foot. How much will it cost to fertilize the entire plot?",
           "hints": [
             "First find the area: A = bh = 18 x 10 = 180 ft².",
             "Then multiply by cost: 180 x $0.75 = $135.00."
@@ -439,7 +437,7 @@
         },
         {
           "id": "geo-23",
-          "prompt": "A cooler is 2 ft long, 1 ft wide, and 1.5 ft tall. How many cubic feet of ice can it hold? If ice costs $2.50 per cubic foot, how much does it cost to fill the cooler?",
+          "question": "A cooler is 2 ft long, 1 ft wide, and 1.5 ft tall. How many cubic feet of ice can it hold? If ice costs $2.50 per cubic foot, how much does it cost to fill the cooler?",
           "hints": [
             "Volume first: V = 2 x 1 x 1.5 = 3 ft³.",
             "Cost: 3 x $2.50 = $7.50."
@@ -456,23 +454,22 @@
       "problems": [
         {
           "id": "geo-24",
-          "prompt": "A triangular patio has a base of 16 ft and a height of 9 ft. Paving stones cost $6.00 per square foot. What is the total cost to pave the patio?",
+          "question": "A triangular patio has a base of 16 ft and a height of 9 ft. Paving stones cost $6.00 per square foot. What is the total cost to pave the patio?",
           "answer": "$432.00"
         },
         {
           "id": "geo-25",
-          "prompt": "Jamal is building a wooden storage chest that is 3 ft long, 2 ft wide, and 2 ft tall. He needs to buy wood for all 6 faces. Wood costs $1.20 per square foot. What is the total cost of the wood?",
+          "question": "Jamal is building a wooden storage chest that is 3 ft long, 2 ft wide, and 2 ft tall. He needs to buy wood for all 6 faces. Wood costs $1.20 per square foot. What is the total cost of the wood?",
           "answer": "$38.40 (SA = 32 ft², cost = 32 x $1.20)"
         },
         {
           "id": "geo-26",
-          "prompt": "A raised garden bed is 8 ft long, 4 ft wide, and 3/4 ft deep. Soil costs $5.00 per cubic foot. How much will it cost to fill the bed?",
+          "question": "A raised garden bed is 8 ft long, 4 ft wide, and 3/4 ft deep. Soil costs $5.00 per cubic foot. How much will it cost to fill the bed?",
           "answer": "$120.00 (V = 24 ft³, cost = 24 x $5.00)"
         }
       ]
     }
   ],
-
   "answerKeys": {
     "geo-1": "40 in²",
     "geo-2": "63 cm²",

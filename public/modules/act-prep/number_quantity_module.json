@@ -6,16 +6,18 @@
   "weeks": "1-2",
   "estimatedDuration": 25,
   "description": "Covers 7-10% of the ACT. Master real and complex number operations, exponent rules, roots, ratios, proportions, percents, and basic matrices/vectors. Emphasis on speed and accuracy with number-sense shortcuts.",
-
   "skills": [
     "act-real-complex-numbers",
     "act-exponents-roots",
     "act-ratios-proportions-percents",
     "act-matrices-vectors"
   ],
-
-  "standardsAlignment": ["ACT N 201-205", "ACT N 301-305", "ACT N 401-405", "ACT N 601-605"],
-
+  "standardsAlignment": [
+    "ACT N 201-205",
+    "ACT N 301-305",
+    "ACT N 401-405",
+    "ACT N 601-605"
+  ],
   "goals": [
     "Perform arithmetic with integers, fractions, decimals, and mixed numbers quickly and accurately",
     "Apply all exponent rules and simplify radical expressions",
@@ -24,7 +26,6 @@
     "Add, subtract, and scalar-multiply 2×2 matrices",
     "Use estimation to eliminate wrong answer choices"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -32,9 +33,7 @@
     "Integrate estimation and backsolving strategies alongside content instruction",
     "Teach efficiency: when exact calculation is needed vs. when estimation suffices"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -111,29 +110,45 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Number Operations & Exponents Practice",
-      "skills": ["act-real-complex-numbers", "act-exponents-roots"],
+      "skills": [
+        "act-real-complex-numbers",
+        "act-exponents-roots"
+      ],
       "problems": [
         {
           "problem": "What is the value of |−7| + |3 − 10|?\n(A) 0  (B) 4  (C) 10  (D) 14  (E) 20",
-          "hints": ["Calculate each absolute value separately", "|−7| = 7 and |3 − 10| = |−7| = 7"],
+          "hints": [
+            "Calculate each absolute value separately",
+            "|−7| = 7 and |3 − 10| = |−7| = 7"
+          ],
           "answer": "(D) 14. |−7| = 7, |3 − 10| = |−7| = 7. Sum = 7 + 7 = 14."
         },
         {
           "problem": "If x⁻² = 1/25, what is x?\n(A) −5 only  (B) 5 only  (C) ±5  (D) 1/5  (E) ±1/5",
-          "hints": ["x⁻² means 1/x²", "So 1/x² = 1/25, which means x² = 25"],
+          "hints": [
+            "x⁻² means 1/x²",
+            "So 1/x² = 1/25, which means x² = 25"
+          ],
           "answer": "(C) ±5. Since x⁻² = 1/x² = 1/25, we get x² = 25, so x = ±5."
         },
         {
           "problem": "Simplify: (3√5)²\n(A) 9√5  (B) 15  (C) 45  (D) 3√25  (E) 75",
-          "hints": ["Square each part: 3² and (√5)²", "3² = 9 and (√5)² = 5"],
+          "hints": [
+            "Square each part: 3² and (√5)²",
+            "3² = 9 and (√5)² = 5"
+          ],
           "answer": "(C) 45. (3√5)² = 3² · (√5)² = 9 · 5 = 45."
         },
         {
           "problem": "A store marks up the wholesale price of a jacket by 60%, then offers a 25% discount. If the wholesale price is $50, what is the final selling price?\n(A) $50.00  (B) $55.00  (C) $57.50  (D) $60.00  (E) $67.50",
-          "hints": ["First calculate the marked-up price: $50 × 1.60", "Then apply the discount: marked-up price × 0.75"],
+          "hints": [
+            "First calculate the marked-up price: $50 × 1.60",
+            "Then apply the discount: marked-up price × 0.75"
+          ],
           "answer": "(D) $60.00. Markup: $50 × 1.60 = $80. Discount: $80 × 0.75 = $60."
         }
-      ]
+      ],
+      "skill": "act-exponents-roots"
     },
     {
       "type": "explanation",
@@ -210,35 +225,57 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Ratios, Complex Numbers & Matrices Practice",
-      "skills": ["act-ratios-proportions-percents", "act-real-complex-numbers", "act-matrices-vectors"],
+      "skills": [
+        "act-ratios-proportions-percents",
+        "act-real-complex-numbers",
+        "act-matrices-vectors"
+      ],
       "problems": [
         {
           "problem": "A recipe calls for flour and sugar in a 5:2 ratio. If you use 3 cups of sugar, how many cups of flour do you need?\n(A) 1.2  (B) 6  (C) 7.5  (D) 10  (E) 15",
-          "hints": ["Set up the proportion: 5/2 = x/3", "Cross-multiply: 2x = 15"],
+          "hints": [
+            "Set up the proportion: 5/2 = x/3",
+            "Cross-multiply: 2x = 15"
+          ],
           "answer": "(C) 7.5. 5/2 = x/3 → x = 15/2 = 7.5 cups of flour."
         },
         {
           "problem": "The price of gas increased from $3.20 to $3.60 per gallon. What is the percent increase, to the nearest tenth?\n(A) 10.0%  (B) 11.1%  (C) 12.5%  (D) 14.3%  (E) 40.0%",
-          "hints": ["Use percent change formula: (new - old)/old × 100", "Change = $0.40, original = $3.20"],
+          "hints": [
+            "Use percent change formula: (new - old)/old × 100",
+            "Change = $0.40, original = $3.20"
+          ],
           "answer": "(C) 12.5%. Change = 3.60 - 3.20 = 0.40. Percent = 0.40/3.20 × 100 = 12.5%."
         },
         {
           "problem": "What is (2 − 3i)²?\n(A) 4 − 9i  (B) −5 − 12i  (C) 13 − 12i  (D) 4 + 9  (E) −5 + 12i",
-          "hints": ["Expand using FOIL: (2-3i)(2-3i)", "Remember i² = -1"],
+          "hints": [
+            "Expand using FOIL: (2-3i)(2-3i)",
+            "Remember i² = -1"
+          ],
           "answer": "(B) −5 − 12i. (2-3i)² = 4 - 12i + 9i² = 4 - 12i + 9(-1) = -5 - 12i."
         },
         {
           "problem": "If M = [4 2; −1 3], what is 3M?\n(A) [12 6; −3 9]  (B) [7 5; 2 6]  (C) [12 2; −1 9]  (D) [4 6; −3 3]  (E) [12 6; −1 3]",
-          "hints": ["Multiply every entry by 3", "3 × 4 = 12, 3 × 2 = 6, 3 × (−1) = −3, 3 × 3 = 9"],
+          "hints": [
+            "Multiply every entry by 3",
+            "3 × 4 = 12, 3 × 2 = 6, 3 × (−1) = −3, 3 × 3 = 9"
+          ],
           "answer": "(A) [12 6; −3 9]. Multiply each entry by 3: [3·4, 3·2; 3·(−1), 3·3] = [12, 6; −3, 9]."
         }
-      ]
+      ],
+      "skill": "act-matrices-vectors"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Number & Quantity — ACT-Style Practice Set",
-      "skills": ["act-real-complex-numbers", "act-exponents-roots", "act-ratios-proportions-percents", "act-matrices-vectors"],
+      "skills": [
+        "act-real-complex-numbers",
+        "act-exponents-roots",
+        "act-ratios-proportions-percents",
+        "act-matrices-vectors"
+      ],
       "problems": [
         {
           "problem": "What is the value of (−2)³ + (−3)²?\n(A) −17  (B) −1  (C) 1  (D) 5  (E) 17",
@@ -272,10 +309,10 @@
           "problem": "Which expression is equivalent to x^(3/2)?\n(A) x√x  (B) (√x)³  (C) x · √x  (D) All of the above  (E) None of the above",
           "answer": "(D) All of the above. x^(3/2) = x^1 · x^(1/2) = x√x = (√x)³ = x · √x. All equivalent."
         }
-      ]
+      ],
+      "skill": "act-real-complex-numbers"
     }
   ],
-
   "answerKeys": {
     "pemdas-1": "17",
     "fractions-1": "17/12",

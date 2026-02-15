@@ -13,7 +13,12 @@
     "g7-percent-applications",
     "g7-percent-change"
   ],
-  "standardsAlignment": ["7.RP.1", "7.RP.2", "7.RP.3", "7.G.1"],
+  "standardsAlignment": [
+    "7.RP.1",
+    "7.RP.2",
+    "7.RP.3",
+    "7.G.1"
+  ],
   "goals": [
     "Compute unit rates and use them to compare two quantities (e.g., price per ounce, speed in miles per hour)",
     "Set up and solve proportions using cross-multiplication and equivalent ratios",
@@ -219,7 +224,11 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings"],
+      "skills": [
+        "g7-unit-rates",
+        "g7-proportions",
+        "g7-scale-drawings"
+      ],
       "title": "We-Do: Rates, Proportions, and Scale Drawings",
       "problems": [
         {
@@ -253,12 +262,16 @@
           "answer": "3.75 inches"
         }
       ],
-      "initialPrompt": "Let's work through these together! For the first problem, what two quantities are you comparing, and which one should be 'per one'?"
+      "initialPrompt": "Let's work through these together! For the first problem, what two quantities are you comparing, and which one should be 'per one'?",
+      "skill": "g7-proportions"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skills": ["g7-percent-applications", "g7-percent-change"],
+      "skills": [
+        "g7-percent-applications",
+        "g7-percent-change"
+      ],
       "title": "We-Do: Percent Applications and Percent Change",
       "problems": [
         {
@@ -282,12 +295,19 @@
           "answer": "25% increase"
         }
       ],
-      "initialPrompt": "For the skateboard problem, what do you need to calculate first — the tax or the discount? Why does the order matter?"
+      "initialPrompt": "For the skateboard problem, what do you need to calculate first — the tax or the discount? Why does the order matter?",
+      "skill": "g7-percent-applications"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "skills": ["g7-unit-rates", "g7-proportions", "g7-scale-drawings", "g7-percent-applications", "g7-percent-change"],
+      "skills": [
+        "g7-unit-rates",
+        "g7-proportions",
+        "g7-scale-drawings",
+        "g7-percent-applications",
+        "g7-percent-change"
+      ],
       "title": "You-Do: Independent Practice",
       "problems": [
         {
@@ -362,7 +382,8 @@
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "g7-unit-rates"
     }
   ],
   "answerKeys": {

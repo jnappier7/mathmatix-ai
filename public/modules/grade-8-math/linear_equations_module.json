@@ -6,8 +6,18 @@
   "weeks": "6-9",
   "estimatedDuration": 50,
   "description": "Master multi-step linear equations — distribute, combine like terms, handle variables on both sides — and learn to recognize when an equation has no solution or infinitely many solutions. Extend the same reasoning to inequalities and real-world word problems.",
-  "skills": ["multi-step-equations", "variables-both-sides", "special-cases", "linear-inequalities", "equation-word-problems"],
-  "standardsAlignment": ["8.EE.7", "8.EE.7a", "8.EE.7b"],
+  "skills": [
+    "multi-step-equations",
+    "variables-both-sides",
+    "special-cases",
+    "linear-inequalities",
+    "equation-word-problems"
+  ],
+  "standardsAlignment": [
+    "8.EE.7",
+    "8.EE.7a",
+    "8.EE.7b"
+  ],
   "goals": [
     "Solve multi-step linear equations by distributing and combining like terms.",
     "Solve equations with variables on both sides and identify special cases (no solution, infinitely many solutions).",
@@ -20,7 +30,7 @@
     "Inequality sign-flip rule: demonstrate with concrete numbers first (if 2 < 5, then −2 > −5) before stating the abstract rule.",
     "Word problems come LAST, after mechanical fluency is solid. Translate in small bites: identify the unknown, write the relationship, solve, interpret."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -134,19 +144,30 @@
           "id": "le-wp1",
           "question": "Solve: 4(x − 3) + 2 = 22",
           "answer": "Distribute: 4x − 12 + 2 = 22. Combine: 4x − 10 = 22. Add 10: 4x = 32. Divide by 4: x = 8. Check: 4(8 − 3) + 2 = 4(5) + 2 = 22 ✓",
-          "hints": ["Distribute the 4 first.", "Combine −12 and +2 on the left side.", "Then use inverse operations to isolate x."]
+          "hints": [
+            "Distribute the 4 first.",
+            "Combine −12 and +2 on the left side.",
+            "Then use inverse operations to isolate x."
+          ]
         },
         {
           "id": "le-wp2",
           "question": "Solve: −2(3x + 5) + x = 5",
           "answer": "Distribute: −6x − 10 + x = 5. Combine: −5x − 10 = 5. Add 10: −5x = 15. Divide by −5: x = −3. Check: −2(3(−3) + 5) + (−3) = −2(−4) − 3 = 8 − 3 = 5 ✓",
-          "hints": ["Distribute −2 to BOTH terms: 3x and 5.", "Don't forget the sign: −2 × 5 = −10.", "After combining like terms, isolate x."]
+          "hints": [
+            "Distribute −2 to BOTH terms: 3x and 5.",
+            "Don't forget the sign: −2 × 5 = −10.",
+            "After combining like terms, isolate x."
+          ]
         },
         {
           "id": "le-wp3",
           "question": "Solve: (2x − 6)/3 = 4",
           "answer": "Multiply both sides by 3: 2x − 6 = 12. Add 6: 2x = 18. Divide by 2: x = 9. Check: (2(9) − 6)/3 = 12/3 = 4 ✓",
-          "hints": ["Clear the fraction by multiplying both sides by 3.", "Then solve the 2-step equation."]
+          "hints": [
+            "Clear the fraction by multiplying both sides by 3.",
+            "Then solve the 2-step equation."
+          ]
         }
       ]
     },
@@ -160,19 +181,30 @@
           "id": "le-wp4",
           "question": "Solve: 7x − 3 = 4x + 9",
           "answer": "Subtract 4x: 3x − 3 = 9. Add 3: 3x = 12. Divide by 3: x = 4. Check: 7(4) − 3 = 25 and 4(4) + 9 = 25 ✓",
-          "hints": ["Move the variable terms to one side by subtracting 4x.", "Then solve as a two-step equation."]
+          "hints": [
+            "Move the variable terms to one side by subtracting 4x.",
+            "Then solve as a two-step equation."
+          ]
         },
         {
           "id": "le-wp5",
           "question": "Solve: 5(x + 2) = 5x + 10",
           "answer": "Distribute: 5x + 10 = 5x + 10. Subtract 5x: 10 = 10. TRUE → infinitely many solutions.",
-          "hints": ["Distribute on the left side.", "What happens when you try to get all x-terms on one side?", "A true statement like 10 = 10 means the equation is always true."]
+          "hints": [
+            "Distribute on the left side.",
+            "What happens when you try to get all x-terms on one side?",
+            "A true statement like 10 = 10 means the equation is always true."
+          ]
         },
         {
           "id": "le-wp6",
           "question": "Solve: 6x − (2x + 8) = 4x + 1",
           "answer": "Distribute the negative: 6x − 2x − 8 = 4x + 1. Combine: 4x − 8 = 4x + 1. Subtract 4x: −8 = 1. FALSE → no solution.",
-          "hints": ["Distribute the negative sign to both terms in the parentheses.", "Combine like terms on the left side.", "What happens when the variable terms cancel?"]
+          "hints": [
+            "Distribute the negative sign to both terms in the parentheses.",
+            "Combine like terms on the left side.",
+            "What happens when the variable terms cancel?"
+          ]
         }
       ]
     },
@@ -186,19 +218,29 @@
           "id": "le-wp7",
           "question": "Solve: 5x + 2 < −13",
           "answer": "Subtract 2: 5x < −15. Divide by 5: x < −3.",
-          "hints": ["Isolate the variable term first by subtracting 2.", "Divide by 5 — since 5 is positive, the inequality sign stays the same."]
+          "hints": [
+            "Isolate the variable term first by subtracting 2.",
+            "Divide by 5 — since 5 is positive, the inequality sign stays the same."
+          ]
         },
         {
           "id": "le-wp8",
           "question": "Solve: −4x + 7 ≥ 19",
           "answer": "Subtract 7: −4x ≥ 12. Divide by −4 and FLIP: x ≤ −3.",
-          "hints": ["Subtract 7 from both sides.", "When you divide by −4, what happens to the inequality sign?"]
+          "hints": [
+            "Subtract 7 from both sides.",
+            "When you divide by −4, what happens to the inequality sign?"
+          ]
         },
         {
           "id": "le-wp9",
           "question": "A phone plan costs $25/month plus $0.10 per text message. Write and solve an inequality for spending at most $40/month.",
           "answer": "25 + 0.10t ≤ 40. Subtract 25: 0.10t ≤ 15. Divide by 0.10: t ≤ 150. At most 150 text messages.",
-          "hints": ["'At most $40' means ≤ 40.", "The total cost is the base fee plus the per-text charge.", "Solve for t the same way you'd solve an equation."]
+          "hints": [
+            "'At most $40' means ≤ 40.",
+            "The total cost is the base fee plus the per-text charge.",
+            "Solve for t the same way you'd solve an equation."
+          ]
         }
       ]
     },
@@ -213,42 +255,54 @@
           "question": "Solve: 5(2x − 1) − 3x = 23",
           "answer": "Distribute: 10x − 5 − 3x = 23. Combine: 7x − 5 = 23. Add 5: 7x = 28. Divide by 7: x = 4. Check: 5(2(4) − 1) − 3(4) = 5(7) − 12 = 35 − 12 = 23 ✓",
           "skill": "multi-step-equations",
-          "hints": ["Distribute the 5 first, then combine like terms."]
+          "hints": [
+            "Distribute the 5 first, then combine like terms."
+          ]
         },
         {
           "id": "le-yp2",
           "question": "Solve: 8x − 3 = 3x + 22",
           "answer": "Subtract 3x: 5x − 3 = 22. Add 3: 5x = 25. Divide by 5: x = 5. Check: 8(5) − 3 = 37 and 3(5) + 22 = 37 ✓",
           "skill": "variables-both-sides",
-          "hints": ["Move x-terms to one side first."]
+          "hints": [
+            "Move x-terms to one side first."
+          ]
         },
         {
           "id": "le-yp3",
           "question": "Solve: 4(x − 1) = 4x + 7",
           "answer": "Distribute: 4x − 4 = 4x + 7. Subtract 4x: −4 = 7. FALSE → no solution.",
           "skill": "special-cases",
-          "hints": ["After distributing, try to collect x-terms on one side."]
+          "hints": [
+            "After distributing, try to collect x-terms on one side."
+          ]
         },
         {
           "id": "le-yp4",
           "question": "Solve: −3x + 8 > 20",
           "answer": "Subtract 8: −3x > 12. Divide by −3 and FLIP: x < −4.",
           "skill": "linear-inequalities",
-          "hints": ["Remember to flip the inequality when dividing by a negative."]
+          "hints": [
+            "Remember to flip the inequality when dividing by a negative."
+          ]
         },
         {
           "id": "le-yp5",
           "question": "Solve: 6(x + 3) − 2x = 4x + 18",
           "answer": "Distribute: 6x + 18 − 2x = 4x + 18. Combine: 4x + 18 = 4x + 18. Subtract 4x: 18 = 18. TRUE → infinitely many solutions.",
           "skill": "special-cases",
-          "hints": ["Simplify both sides completely before comparing."]
+          "hints": [
+            "Simplify both sides completely before comparing."
+          ]
         },
         {
           "id": "le-yp6",
           "question": "A gym charges a $50 sign-up fee and $30 per month. How many months can you stay if your budget is at most $260?",
           "answer": "50 + 30m ≤ 260. 30m ≤ 210. m ≤ 7. At most 7 months.",
           "skill": "equation-word-problems",
-          "hints": ["'At most $260' means the total cost must be ≤ 260."]
+          "hints": [
+            "'At most $260' means the total cost must be ≤ 260."
+          ]
         }
       ]
     }

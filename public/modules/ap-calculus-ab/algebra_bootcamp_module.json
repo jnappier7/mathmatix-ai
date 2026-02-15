@@ -139,29 +139,50 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Function Behavior & Algebra Repair Practice",
-      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review"],
+      "skills": [
+        "function-behavior-review",
+        "exponent-log-rules-review",
+        "trig-fluency-review"
+      ],
       "problems": [
         {
           "problem": "For f(x) = (2x² + 3x - 5)/(x² - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
-          "hints": ["Factor numerator and denominator", "Check for common factors", "Sign analysis near VAs"],
+          "hints": [
+            "Factor numerator and denominator",
+            "Check for common factors",
+            "Sign analysis near VAs"
+          ],
           "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
         },
         {
           "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x² + 5√x - 1/∛x.",
-          "hints": ["3/x² = 3x⁻²", "5√x = 5x^(1/2)", "1/∛x = x^(-1/3)"],
+          "hints": [
+            "3/x² = 3x⁻²",
+            "5√x = 5x^(1/2)",
+            "1/∛x = x^(-1/3)"
+          ],
           "answer": "f(x) = 3x⁻² + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
         },
         {
           "problem": "Evaluate all six trig functions at θ = 5π/4.",
-          "hints": ["Q3: sin and cos both negative, tan positive", "Reference angle is π/4", "sin(π/4) = cos(π/4) = √2/2"],
+          "hints": [
+            "Q3: sin and cos both negative, tan positive",
+            "Reference angle is π/4",
+            "sin(π/4) = cos(π/4) = √2/2"
+          ],
           "answer": "sin(5π/4) = -√2/2. cos(5π/4) = -√2/2. tan(5π/4) = 1. csc = -√2. sec = -√2. cot = 1."
         },
         {
           "problem": "Solve: ln(x²) - ln(x + 3) = ln(4). Check your answer.",
-          "hints": ["Condense left side", "Convert to exponential form", "Check domain: x + 3 > 0 and x ≠ 0"],
+          "hints": [
+            "Condense left side",
+            "Convert to exponential form",
+            "Check domain: x + 3 > 0 and x ≠ 0"
+          ],
           "answer": "ln(x²/(x+3)) = ln(4) → x²/(x+3) = 4 → x² = 4x + 12 → x² - 4x - 12 = 0 → (x-6)(x+2) = 0. x = 6 or x = -2. Check: x=6: ln(36)-ln(9)=ln(4) ✓. x=-2: ln(4)-ln(1)=ln(4) ✓. Both valid."
         }
-      ]
+      ],
+      "skill": "trig-fluency-review"
     },
     {
       "type": "explanation",
@@ -198,7 +219,12 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Bootcamp Mastery Practice",
-      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review", "graph-reading-modeling"],
+      "skills": [
+        "function-behavior-review",
+        "exponent-log-rules-review",
+        "trig-fluency-review",
+        "graph-reading-modeling"
+      ],
       "problems": [
         {
           "problem": "For g(x) = (x³ - 8)/(x² - 4), simplify, find all asymptotes and holes, and state end behavior.",
@@ -224,7 +250,8 @@
           "problem": "The graph of f shows f(0)=2, f(2)=6, f(4)=6, f(6)=2. The graph increases on [0,2], is flat on [2,4], and decreases on [4,6]. (a) Find the average rate of change on [0,6]. (b) On which interval is the average rate of change greatest? (c) Describe what the graph of f' would look like.",
           "answer": "(a) (f(6)-f(0))/(6-0) = (2-2)/6 = 0. (b) [0,2]: (6-2)/2 = 2. [2,4]: 0. [4,6]: (2-6)/2 = -2. Greatest: [0,2] with rate 2. (c) f' > 0 on (0,2) (positive), f' = 0 on (2,4) (zero), f' < 0 on (4,6) (negative). f' starts positive, reaches zero, stays zero, then goes negative."
         }
-      ]
+      ],
+      "skill": "function-behavior-review"
     }
   ],
   "answerKeys": {

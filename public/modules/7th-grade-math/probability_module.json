@@ -6,11 +6,18 @@
   "weeks": "26-29",
   "estimatedDuration": 30,
   "description": "Explore the mathematics of chance. Learn to calculate probabilities of simple events, compare experimental results to theoretical predictions, find sample spaces for compound events using organized lists, tables, and tree diagrams, and design simulations to estimate real-world probabilities.",
-
-  "skills": ["g7-simple-probability", "g7-experimental-theoretical", "g7-compound-events", "g7-probability-simulations"],
-
-  "standardsAlignment": ["7.SP.5", "7.SP.6", "7.SP.7", "7.SP.8"],
-
+  "skills": [
+    "g7-simple-probability",
+    "g7-experimental-theoretical",
+    "g7-compound-events",
+    "g7-probability-simulations"
+  ],
+  "standardsAlignment": [
+    "7.SP.5",
+    "7.SP.6",
+    "7.SP.7",
+    "7.SP.8"
+  ],
   "goals": [
     "Calculate the probability of simple events as favorable outcomes over total outcomes, expressed as simplified fractions",
     "Explain that probability is a number between 0 and 1 that represents the likelihood of an event",
@@ -19,7 +26,6 @@
     "Find probabilities of compound events using organized lists, tables, and tree diagrams",
     "Design and describe simulations using coins, dice, or spinners to estimate probabilities"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -28,9 +34,7 @@
     "Tree diagrams described in text to build reasoning about compound event sample spaces",
     "Gambler's fallacy addressed directly to correct a common misconception about independent events"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -174,7 +178,10 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Simple & Experimental Probability Practice",
-      "skills": ["g7-simple-probability", "g7-experimental-theoretical"],
+      "skills": [
+        "g7-simple-probability",
+        "g7-experimental-theoretical"
+      ],
       "problems": [
         {
           "problem": "A bag contains 5 red marbles, 3 blue marbles, and 2 yellow marbles. What is the probability of NOT drawing a red marble?",
@@ -201,13 +208,17 @@
           ],
           "answer": "P(ace) = 4/52 = 1/13."
         }
-      ]
+      ],
+      "skill": "g7-probability-simulations"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Compound Events & Simulations Practice",
-      "skills": ["g7-compound-events", "g7-probability-simulations"],
+      "skills": [
+        "g7-compound-events",
+        "g7-probability-simulations"
+      ],
       "problems": [
         {
           "problem": "Two coins are flipped. List all the outcomes in the sample space. Then find the probability of getting exactly one head.",
@@ -233,13 +244,19 @@
           ],
           "answer": "Let rolling a 1 or 2 represent a made free throw (probability 2/6 = 1/3) and rolling 3, 4, 5, or 6 represent a miss. One trial: roll the die 3 times. Success: exactly 2 of the 3 rolls show a 1 or 2. Repeat for many trials and calculate successes / total trials. Theoretical probability: C(3,2) × (1/3)^2 × (2/3)^1 = 3 × 1/9 × 2/3 = 6/27 = 2/9."
         }
-      ]
+      ],
+      "skill": "g7-compound-events"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Probability — Independent Practice",
-      "skills": ["g7-simple-probability", "g7-experimental-theoretical", "g7-compound-events", "g7-probability-simulations"],
+      "skills": [
+        "g7-simple-probability",
+        "g7-experimental-theoretical",
+        "g7-compound-events",
+        "g7-probability-simulations"
+      ],
       "problems": [
         {
           "problem": "A jar contains 6 green marbles, 4 orange marbles, and 2 white marbles. What is the probability of randomly drawing a green marble?",
@@ -265,10 +282,10 @@
           "problem": "A cereal box contains 1 of 5 different toy figures, each equally likely. Describe how you would simulate finding the probability of getting the same figure in 2 consecutive boxes. Then state the theoretical probability.",
           "answer": "Simulation: Label a spinner with 5 equal sections (1 through 5), or put 5 slips numbered 1-5 in a hat. One trial: spin (or draw) twice, replacing between draws. Success: both spins land on the same number. Repeat for many trials. Experimental probability = successes / total trials. Theoretical probability: P(any figure first) = 1, P(same figure second) = 1/5. P(match) = 1/5."
         }
-      ]
+      ],
+      "skill": "g7-simple-probability"
     }
   ],
-
   "answerKeys": {
     "marble-blue": "1/2",
     "cube-greater-than-4": "1/3",

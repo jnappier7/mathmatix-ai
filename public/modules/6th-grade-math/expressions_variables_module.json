@@ -6,7 +6,6 @@
   "weeks": "11-14",
   "estimatedDuration": 40,
   "description": "The bridge from arithmetic to algebra. Students learn to write expressions from words and words from expressions, evaluate expressions by substitution with order of operations, combine like terms using the distributive and other properties, identify the parts of expressions (terms, coefficients, constants), and use formulas for area and volume. This is where variables stop being scary and start being useful.",
-
   "skills": [
     "g6-write-expressions",
     "g6-evaluate-expressions",
@@ -14,7 +13,6 @@
     "g6-parts-of-expressions",
     "g6-formulas-area-volume"
   ],
-
   "standardsAlignment": [
     "6.EE.A.1",
     "6.EE.A.2",
@@ -25,7 +23,6 @@
     "6.EE.A.4",
     "6.EE.B.6"
   ],
-
   "goals": [
     "Translate verbal phrases into algebraic expressions and interpret algebraic expressions in words",
     "Evaluate algebraic expressions by substituting given values and applying order of operations (PEMDAS)",
@@ -33,7 +30,6 @@
     "Identify and name the parts of an expression: terms, coefficients, constants, and factors",
     "Apply area and volume formulas by substituting values and solving for a missing dimension"
   ],
-
   "instructionalStrategy": [
     "Gradual release for every skill: concept-intro → I Do → We Do → You Do",
     "AI uses the scaffold array as its scope and worked-example bank",
@@ -41,9 +37,7 @@
     "Explicitly connect arithmetic thinking to algebraic thinking — show how expressions generalize repeated calculations",
     "Encourage students to read expressions aloud in words to build fluency translating in both directions"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -87,7 +81,7 @@
       "problems": [
         {
           "id": "ev-1",
-          "prompt": "A movie ticket costs d dollars. You buy 3 tickets and a $5 bucket of popcorn. Write an expression for the total cost.",
+          "question": "A movie ticket costs d dollars. You buy 3 tickets and a $5 bucket of popcorn. Write an expression for the total cost.",
           "hints": [
             "What operation do you use when you buy more than one of the same item?",
             "Multiply the price per ticket by 3, then add the popcorn cost"
@@ -96,7 +90,7 @@
         },
         {
           "id": "ev-2",
-          "prompt": "Maya has some stickers. She gives 8 away. Write an expression using s for the number of stickers she started with.",
+          "question": "Maya has some stickers. She gives 8 away. Write an expression using s for the number of stickers she started with.",
           "hints": [
             "Giving away means she ends up with fewer stickers",
             "What operation makes a number smaller?"
@@ -105,7 +99,7 @@
         },
         {
           "id": "ev-3",
-          "prompt": "Write the expression n/4 + 3 in words.",
+          "question": "Write the expression n/4 + 3 in words.",
           "hints": [
             "The fraction bar means division — read the division part first",
             "Then describe adding 3"
@@ -122,17 +116,17 @@
       "problems": [
         {
           "id": "ev-4",
-          "prompt": "You and your friends split the cost of a $24 pizza equally among f friends. Write an expression for the cost per person.",
+          "question": "You and your friends split the cost of a $24 pizza equally among f friends. Write an expression for the cost per person.",
           "answer": "24/f"
         },
         {
           "id": "ev-5",
-          "prompt": "A baker makes b brownies each morning and puts them into boxes of 6. Write an expression for the number of full boxes.",
+          "question": "A baker makes b brownies each morning and puts them into boxes of 6. Write an expression for the number of full boxes.",
           "answer": "b/6"
         },
         {
           "id": "ev-6",
-          "prompt": "Write the expression 5(x − 2) in words.",
+          "question": "Write the expression 5(x − 2) in words.",
           "answer": "Five times the difference of x and 2 (or: the product of 5 and the quantity x minus 2)"
         }
       ]
@@ -179,7 +173,7 @@
       "problems": [
         {
           "id": "ev-7",
-          "prompt": "Evaluate 4m − 3 when m = 6.",
+          "question": "Evaluate 4m − 3 when m = 6.",
           "hints": [
             "Replace m with 6: 4(6) − 3",
             "Multiply first: 4 × 6 = 24, then subtract 3"
@@ -188,7 +182,7 @@
         },
         {
           "id": "ev-8",
-          "prompt": "Evaluate x² + 2x when x = 5.",
+          "question": "Evaluate x² + 2x when x = 5.",
           "hints": [
             "Substitute: (5)² + 2(5)",
             "Exponent first: 25 + 2(5), then multiply: 25 + 10"
@@ -197,7 +191,7 @@
         },
         {
           "id": "ev-9",
-          "prompt": "Evaluate 3a + 2b when a = 4 and b = 7.",
+          "question": "Evaluate 3a + 2b when a = 4 and b = 7.",
           "hints": [
             "Replace a with 4 and b with 7: 3(4) + 2(7)",
             "Multiply each part: 12 + 14"
@@ -214,17 +208,17 @@
       "problems": [
         {
           "id": "ev-10",
-          "prompt": "Evaluate 7 + n³ when n = 2.",
+          "question": "Evaluate 7 + n³ when n = 2.",
           "answer": "15"
         },
         {
           "id": "ev-11",
-          "prompt": "Evaluate (y + 3)(y − 1) when y = 5.",
+          "question": "Evaluate (y + 3)(y − 1) when y = 5.",
           "answer": "32"
         },
         {
           "id": "ev-12",
-          "prompt": "A phone plan costs $12 per month plus $0.05 per text message. The expression is 12 + 0.05t. Find the total cost for 200 texts.",
+          "question": "A phone plan costs $12 per month plus $0.05 per text message. The expression is 12 + 0.05t. Find the total cost for 200 texts.",
           "answer": "$22"
         }
       ]
@@ -272,7 +266,7 @@
       "problems": [
         {
           "id": "ev-13",
-          "prompt": "Simplify: 6n + 4 + 3n − 2",
+          "question": "Simplify: 6n + 4 + 3n − 2",
           "hints": [
             "Group the n-terms together and the constant terms together",
             "6n + 3n = 9n and 4 − 2 = 2"
@@ -281,7 +275,7 @@
         },
         {
           "id": "ev-14",
-          "prompt": "Expand and simplify: 2(x + 5) + 3x",
+          "question": "Expand and simplify: 2(x + 5) + 3x",
           "hints": [
             "Use the distributive property on 2(x + 5) first",
             "2 · x + 2 · 5 = 2x + 10, then combine 2x + 3x"
@@ -290,7 +284,7 @@
         },
         {
           "id": "ev-15",
-          "prompt": "Simplify: 8y − 3 + y + 7 − 4y",
+          "question": "Simplify: 8y − 3 + y + 7 − 4y",
           "hints": [
             "Collect all y-terms: 8y + y − 4y",
             "Collect constants: −3 + 7"
@@ -307,17 +301,17 @@
       "problems": [
         {
           "id": "ev-16",
-          "prompt": "Simplify: 3a + 2b + 5a − b",
+          "question": "Simplify: 3a + 2b + 5a − b",
           "answer": "8a + b"
         },
         {
           "id": "ev-17",
-          "prompt": "Expand and simplify: 4(2m − 3) + 5",
+          "question": "Expand and simplify: 4(2m − 3) + 5",
           "answer": "8m − 7"
         },
         {
           "id": "ev-18",
-          "prompt": "Simplify: 10 + 2(x + 3) − x",
+          "question": "Simplify: 10 + 2(x + 3) − x",
           "answer": "x + 16"
         }
       ]
@@ -360,7 +354,7 @@
       "problems": [
         {
           "id": "ev-19",
-          "prompt": "For the expression 9m − 4 + 2m, answer: (a) How many terms are there? (b) What are the coefficients? (c) What is the constant?",
+          "question": "For the expression 9m − 4 + 2m, answer: (a) How many terms are there? (b) What are the coefficients? (c) What is the constant?",
           "hints": [
             "Terms are separated by + and − signs",
             "The coefficient is the number in front of the variable; the constant is the term with no variable"
@@ -369,7 +363,7 @@
         },
         {
           "id": "ev-20",
-          "prompt": "For the expression 3(x + 2): (a) What are the two factors being multiplied? (b) Expand it and then name the terms, coefficient, and constant.",
+          "question": "For the expression 3(x + 2): (a) What are the two factors being multiplied? (b) Expand it and then name the terms, coefficient, and constant.",
           "hints": [
             "Factors are the things being multiplied — look for what is on each side of the implied multiplication",
             "Use the distributive property to expand: 3 · x + 3 · 2"
@@ -386,12 +380,12 @@
       "problems": [
         {
           "id": "ev-21",
-          "prompt": "For 7y² + y − 10, name: (a) the terms, (b) all coefficients, (c) the constant.",
+          "question": "For 7y² + y − 10, name: (a) the terms, (b) all coefficients, (c) the constant.",
           "answer": "(a) Terms: 7y², y, and −10. (b) Coefficients: 7 and 1. (c) Constant: −10."
         },
         {
           "id": "ev-22",
-          "prompt": "For 5a + 3b, answer: (a) How many terms? (b) What are the coefficients? (c) Is there a constant? (d) What are the factors of the first term?",
+          "question": "For 5a + 3b, answer: (a) How many terms? (b) What are the coefficients? (c) Is there a constant? (d) What are the factors of the first term?",
           "answer": "(a) 2 terms. (b) Coefficients: 5 and 3. (c) No constant. (d) Factors of 5a: 5 and a."
         }
       ]
@@ -438,7 +432,7 @@
       "problems": [
         {
           "id": "ev-23",
-          "prompt": "Your tablet screen is a rectangle that is 10 inches long and 7 inches wide. What is the area of the screen?",
+          "question": "Your tablet screen is a rectangle that is 10 inches long and 7 inches wide. What is the area of the screen?",
           "hints": [
             "Use A = lw for a rectangle",
             "A = 10 × 7"
@@ -447,7 +441,7 @@
         },
         {
           "id": "ev-24",
-          "prompt": "A triangular pennant flag has a base of 10 inches and a height of 14 inches. What is its area?",
+          "question": "A triangular pennant flag has a base of 10 inches and a height of 14 inches. What is its area?",
           "hints": [
             "Use A = ½bh for a triangle",
             "A = ½ × 10 × 14 = ½ × 140"
@@ -456,7 +450,7 @@
         },
         {
           "id": "ev-25",
-          "prompt": "A fish tank is 20 inches long, 10 inches wide, and 12 inches tall. What is its volume?",
+          "question": "A fish tank is 20 inches long, 10 inches wide, and 12 inches tall. What is its volume?",
           "hints": [
             "Use V = lwh for a rectangular prism",
             "V = 20 × 10 × 12"
@@ -473,23 +467,22 @@
       "problems": [
         {
           "id": "ev-26",
-          "prompt": "A rectangular garden has an area of 54 square feet and a width of 6 feet. What is the length?",
+          "question": "A rectangular garden has an area of 54 square feet and a width of 6 feet. What is the length?",
           "answer": "9 feet"
         },
         {
           "id": "ev-27",
-          "prompt": "A triangular sail has an area of 30 square feet and a base of 10 feet. What is the height?",
+          "question": "A triangular sail has an area of 30 square feet and a base of 10 feet. What is the height?",
           "answer": "6 feet"
         },
         {
           "id": "ev-28",
-          "prompt": "A shoebox has a volume of 1,320 cubic centimeters. It is 22 cm long and 12 cm wide. How tall is it?",
+          "question": "A shoebox has a volume of 1,320 cubic centimeters. It is 22 cm long and 12 cm wide. How tall is it?",
           "answer": "5 cm"
         }
       ]
     }
   ],
-
   "answerKeys": {
     "ev-1": "3d + 5",
     "ev-2": "s − 8",

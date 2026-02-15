@@ -6,8 +6,18 @@
   "weeks": "5-6",
   "estimatedDuration": 50,
   "description": "Cover derivative definition via difference quotient, derivative as slope and instantaneous rate of change, basic differentiation rules (power, constant, sum/difference), trig/exp/ln derivatives, and reading derivatives from graphs and tables.",
-  "skills": ["derivative-definition", "derivative-interpretation", "basic-differentiation-rules", "derivatives-from-graphs-tables"],
-  "standardsAlignment": ["CHA-2.A", "CHA-2.B", "FUN-3.A", "FUN-3.B"],
+  "skills": [
+    "derivative-definition",
+    "derivative-interpretation",
+    "basic-differentiation-rules",
+    "derivatives-from-graphs-tables"
+  ],
+  "standardsAlignment": [
+    "CHA-2.A",
+    "CHA-2.B",
+    "FUN-3.A",
+    "FUN-3.B"
+  ],
   "goals": [
     "Define the derivative using the limit of a difference quotient and compute derivatives from the definition",
     "Interpret the derivative as the slope of a tangent line and as an instantaneous rate of change",
@@ -27,7 +37,7 @@
       "lessonPhase": "concept-intro",
       "skill": "derivative-definition",
       "title": "The Derivative — Rates of Change & Tangent Lines",
-      "text": "**The Big Idea:**\n\nThe derivative measures how fast a function is changing at a single instant. It transforms the average rate of change (slope of a secant line) into the instantaneous rate of change (slope of the tangent line) by taking a limit.\n\n**Formal Definition:**\n\nf'(x) = lim_{h→0} [f(x + h) − f(x)] / h\n\nThis is called the **difference quotient** form.\n\n**Alternate Form (at a point x = a):**\n\nf'(a) = lim_{x→a} [f(x) − f(a)] / (x − a)\n\n**Interpretations:**\n• **Geometric:** f'(a) is the slope of the tangent line to y = f(x) at x = a\n• **Physical:** If s(t) is position, then s'(t) is velocity — the instantaneous rate of change of position\n• **General:** f'(a) is the instantaneous rate of change of f with respect to x at x = a\n\n**Tangent Line Equation:**\nGiven the point (a, f(a)) and slope m = f'(a):\ny − f(a) = f'(a)(x − a)",
+      "content": "**The Big Idea:**\n\nThe derivative measures how fast a function is changing at a single instant. It transforms the average rate of change (slope of a secant line) into the instantaneous rate of change (slope of the tangent line) by taking a limit.\n\n**Formal Definition:**\n\nf'(x) = lim_{h→0} [f(x + h) − f(x)] / h\n\nThis is called the **difference quotient** form.\n\n**Alternate Form (at a point x = a):**\n\nf'(a) = lim_{x→a} [f(x) − f(a)] / (x − a)\n\n**Interpretations:**\n• **Geometric:** f'(a) is the slope of the tangent line to y = f(x) at x = a\n• **Physical:** If s(t) is position, then s'(t) is velocity — the instantaneous rate of change of position\n• **General:** f'(a) is the instantaneous rate of change of f with respect to x at x = a\n\n**Tangent Line Equation:**\nGiven the point (a, f(a)) and slope m = f'(a):\ny − f(a) = f'(a)(x − a)",
       "initialPrompt": "What is the difference between the average rate of change of f on [a, b] and the instantaneous rate of change at x = a? How does the limit connect them?"
     },
     {
@@ -92,7 +102,7 @@
       "lessonPhase": "concept-intro",
       "skill": "basic-differentiation-rules",
       "title": "Basic Differentiation Rules",
-      "text": "**The limit definition works but is slow. These rules let you differentiate instantly:**\n\n**Constant Rule:** d/dx[c] = 0\n\n**Power Rule:** d/dx[x^n] = nx^(n−1) — works for ALL real exponents (integer, fractional, negative)\n\n**Constant Multiple:** d/dx[cf(x)] = c · f'(x)\n\n**Sum/Difference:** d/dx[f(x) ± g(x)] = f'(x) ± g'(x)\n\n**Trig Derivatives:**\n• d/dx[sin x] = cos x\n• d/dx[cos x] = −sin x\n• d/dx[tan x] = sec²x\n• d/dx[csc x] = −csc x · cot x\n• d/dx[sec x] = sec x · tan x\n• d/dx[cot x] = −csc²x\n\n**Exponential & Logarithmic:**\n• d/dx[e^x] = e^x\n• d/dx[ln x] = 1/x\n• d/dx[a^x] = a^x · ln a\n\n**Key Strategy:** Before differentiating, ALWAYS rewrite radicals and fractions as power expressions:\n• √x = x^(1/2), 1/x² = x^(−2), ³√x = x^(1/3), 5/x = 5x^(−1)",
+      "content": "**The limit definition works but is slow. These rules let you differentiate instantly:**\n\n**Constant Rule:** d/dx[c] = 0\n\n**Power Rule:** d/dx[x^n] = nx^(n−1) — works for ALL real exponents (integer, fractional, negative)\n\n**Constant Multiple:** d/dx[cf(x)] = c · f'(x)\n\n**Sum/Difference:** d/dx[f(x) ± g(x)] = f'(x) ± g'(x)\n\n**Trig Derivatives:**\n• d/dx[sin x] = cos x\n• d/dx[cos x] = −sin x\n• d/dx[tan x] = sec²x\n• d/dx[csc x] = −csc x · cot x\n• d/dx[sec x] = sec x · tan x\n• d/dx[cot x] = −csc²x\n\n**Exponential & Logarithmic:**\n• d/dx[e^x] = e^x\n• d/dx[ln x] = 1/x\n• d/dx[a^x] = a^x · ln a\n\n**Key Strategy:** Before differentiating, ALWAYS rewrite radicals and fractions as power expressions:\n• √x = x^(1/2), 1/x² = x^(−2), ³√x = x^(1/3), 5/x = 5x^(−1)",
       "initialPrompt": "Rewrite f(x) = 4/x³ + 3√x − 2/√x using exponent notation so the power rule applies directly."
     },
     {
@@ -157,7 +167,7 @@
       "lessonPhase": "concept-intro",
       "skill": "derivatives-from-graphs-tables",
       "title": "Derivatives from Graphs & Tables",
-      "text": "**AP Calculus tests derivatives in ALL representations — not just algebraic.**\n\n**Estimating f'(a) from a Table:**\nIf you don't have a formula but have data points, use the **symmetric difference quotient**:\nf'(a) ≈ [f(a + h) − f(a − h)] / (2h)\nThis uses one point on each side of a and gives a better estimate than a one-sided quotient.\n\n**Reading f' from a Graph of f:**\n• Where f is increasing → f' > 0\n• Where f is decreasing → f' < 0\n• Where f has a horizontal tangent (local max/min) → f' = 0\n• Steeper slope on f → larger |f'|\n• If f is a line segment with slope m → f' = m (constant) on that interval\n\n**Differentiability:**\nf is differentiable at x = a if and only if f'(a) exists (the limit definition gives a finite value). Differentiability REQUIRES continuity, but continuity does NOT guarantee differentiability.\n\n**f is NOT differentiable at:**\n• **Corners** (sharp turns) — left and right slopes exist but differ\n• **Cusps** — slopes approach +∞ and −∞ from opposite sides\n• **Vertical tangents** — slope approaches ±∞\n• **Discontinuities** — function not continuous, so not differentiable",
+      "content": "**AP Calculus tests derivatives in ALL representations — not just algebraic.**\n\n**Estimating f'(a) from a Table:**\nIf you don't have a formula but have data points, use the **symmetric difference quotient**:\nf'(a) ≈ [f(a + h) − f(a − h)] / (2h)\nThis uses one point on each side of a and gives a better estimate than a one-sided quotient.\n\n**Reading f' from a Graph of f:**\n• Where f is increasing → f' > 0\n• Where f is decreasing → f' < 0\n• Where f has a horizontal tangent (local max/min) → f' = 0\n• Steeper slope on f → larger |f'|\n• If f is a line segment with slope m → f' = m (constant) on that interval\n\n**Differentiability:**\nf is differentiable at x = a if and only if f'(a) exists (the limit definition gives a finite value). Differentiability REQUIRES continuity, but continuity does NOT guarantee differentiability.\n\n**f is NOT differentiable at:**\n• **Corners** (sharp turns) — left and right slopes exist but differ\n• **Cusps** — slopes approach +∞ and −∞ from opposite sides\n• **Vertical tangents** — slope approaches ±∞\n• **Discontinuities** — function not continuous, so not differentiable",
       "initialPrompt": "If a function f is continuous at x = 3 but has a corner there, does f'(3) exist? Why or why not?"
     },
     {
@@ -283,7 +293,8 @@
           ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "derivative-definition"
     }
   ],
   "answerKeys": {

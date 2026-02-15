@@ -14,7 +14,16 @@
     "vector-applications",
     "complex-polar-form"
   ],
-  "standardsAlignment": ["N-VM.1", "N-VM.2", "N-VM.3", "N-VM.4", "N-VM.5", "N-CN.3", "N-CN.4", "N-CN.5"],
+  "standardsAlignment": [
+    "N-VM.1",
+    "N-VM.2",
+    "N-VM.3",
+    "N-VM.4",
+    "N-VM.5",
+    "N-CN.3",
+    "N-CN.4",
+    "N-CN.5"
+  ],
   "goals": [
     "Represent vectors in component form; find magnitude and direction angle; compute unit vectors.",
     "Perform vector addition, subtraction, and scalar multiplication algebraically and geometrically.",
@@ -119,7 +128,10 @@
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Dot Product & Projections — Worked Examples",
-      "skills": ["dot-product", "vector-projections"],
+      "skills": [
+        "dot-product",
+        "vector-projections"
+      ],
       "examples": [
         {
           "problem": "Find the angle between u = ⟨3, 1⟩ and v = ⟨-2, 4⟩.",
@@ -133,30 +145,48 @@
           "problem": "Find the scalar projection and vector projection of v = ⟨4, 3⟩ onto u = ⟨2, 0⟩.",
           "solution": "comp_u(v) = (v·u)/||u|| = (8+0)/2 = 4. proj_u(v) = ((v·u)/||u||²)u = (8/4)⟨2,0⟩ = 2⟨2,0⟩ = ⟨4,0⟩. The perpendicular component: v - proj_u(v) = ⟨4,3⟩-⟨4,0⟩ = ⟨0,3⟩."
         }
-      ]
+      ],
+      "skill": "dot-product"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Vectors & Dot Product Practice",
-      "skills": ["vector-representation", "vector-operations", "dot-product", "vector-projections"],
+      "skills": [
+        "vector-representation",
+        "vector-operations",
+        "dot-product",
+        "vector-projections"
+      ],
       "problems": [
         {
           "problem": "Find the unit vector in the direction of v = ⟨-5, 12⟩ and verify your answer.",
-          "hints": ["||v|| = √(25+144) = 13", "v̂ = ⟨-5/13, 12/13⟩", "Check: ||v̂|| = √(25/169+144/169) = 1"],
+          "hints": [
+            "||v|| = √(25+144) = 13",
+            "v̂ = ⟨-5/13, 12/13⟩",
+            "Check: ||v̂|| = √(25/169+144/169) = 1"
+          ],
           "answer": "v̂ = ⟨-5/13, 12/13⟩. ||v̂|| = √(25/169+144/169) = √(169/169) = 1 ✓."
         },
         {
           "problem": "Find the angle between a = ⟨1, √3⟩ and b = ⟨√3, -1⟩.",
-          "hints": ["a·b = √3-√3 = 0", "If dot product is 0, vectors are orthogonal"],
+          "hints": [
+            "a·b = √3-√3 = 0",
+            "If dot product is 0, vectors are orthogonal"
+          ],
           "answer": "a·b = 1(√3)+√3(-1) = √3-√3 = 0. The vectors are orthogonal: θ = 90°."
         },
         {
           "problem": "Find proj_u(v) where u = ⟨3, 4⟩ and v = ⟨7, 1⟩.",
-          "hints": ["v·u = 21+4 = 25", "||u||² = 25", "proj_u(v) = (25/25)⟨3,4⟩ = ⟨3,4⟩"],
+          "hints": [
+            "v·u = 21+4 = 25",
+            "||u||² = 25",
+            "proj_u(v) = (25/25)⟨3,4⟩ = ⟨3,4⟩"
+          ],
           "answer": "v·u = 25. ||u||² = 25. proj_u(v) = (25/25)⟨3,4⟩ = ⟨3,4⟩. Perpendicular component: ⟨7,1⟩-⟨3,4⟩ = ⟨4,-3⟩."
         }
-      ]
+      ],
+      "skill": "dot-product"
     },
     {
       "type": "explanation",
@@ -232,7 +262,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Vectors & Complex Numbers Mastery Practice",
-      "skills": ["vector-representation", "vector-operations", "dot-product", "vector-projections", "vector-applications", "complex-polar-form"],
+      "skills": [
+        "vector-representation",
+        "vector-operations",
+        "dot-product",
+        "vector-projections",
+        "vector-applications",
+        "complex-polar-form"
+      ],
       "problems": [
         {
           "problem": "Find the magnitude, direction angle, and unit vector for v = ⟨-6, 8⟩.",
@@ -258,7 +295,8 @@
           "problem": "Find all fourth roots of z = 16.",
           "answer": "16 = 16 cis(0). Fourth roots: ⁴√16 cis((0+2kπ)/4) = 2 cis(kπ/2). k=0: 2cis(0) = 2. k=1: 2cis(π/2) = 2i. k=2: 2cis(π) = -2. k=3: 2cis(3π/2) = -2i. Roots: {2, 2i, -2, -2i}."
         }
-      ]
+      ],
+      "skill": "vector-representation"
     }
   ],
   "answerKeys": {

@@ -14,7 +14,12 @@
     "limits-algebraic",
     "limits-continuity-infinity"
   ],
-  "standardsAlignment": ["F-BF.2", "F-IF.3", "A-SSE.4", "F-LE.2"],
+  "standardsAlignment": [
+    "F-BF.2",
+    "F-IF.3",
+    "A-SSE.4",
+    "F-LE.2"
+  ],
   "goals": [
     "Find the nth term and partial sums of arithmetic sequences; model linear growth.",
     "Find the nth term, partial sums, and infinite sums of geometric sequences; model exponential growth/decay.",
@@ -34,7 +39,10 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Sequences: Arithmetic & Geometric",
-      "skills": ["sequences-arithmetic", "sequences-geometric"],
+      "skills": [
+        "sequences-arithmetic",
+        "sequences-geometric"
+      ],
       "content": "A sequence is an ordered list of numbers. Arithmetic sequences have a constant difference; geometric sequences have a constant ratio.",
       "keyPoints": [
         "Arithmetic: aₙ = a₁ + (n-1)d. Common difference d = aₙ₊₁ - aₙ.",
@@ -43,13 +51,17 @@
         "Geometric partial sum: Sₙ = a₁(1-rⁿ)/(1-r) for r ≠ 1.",
         "Infinite geometric series: S = a₁/(1-r) converges only if |r| < 1.",
         "Recursive vs. explicit formulas: recursive defines each term from previous; explicit gives nth term directly."
-      ]
+      ],
+      "skill": "sequences-arithmetic"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Sequences — Worked Examples",
-      "skills": ["sequences-arithmetic", "sequences-geometric"],
+      "skills": [
+        "sequences-arithmetic",
+        "sequences-geometric"
+      ],
       "examples": [
         {
           "problem": "An arithmetic sequence has a₃ = 11 and a₈ = 31. Find: (a) d and a₁, (b) a₂₀, (c) S₂₀.",
@@ -63,7 +75,8 @@
           "problem": "Write the repeating decimal 0.454545... as a fraction using an infinite geometric series.",
           "solution": "0.454545... = 0.45 + 0.0045 + 0.000045 + ··· = 45/100 + 45/10000 + ···. Geometric with a₁ = 45/100, r = 1/100. S = (45/100)/(1-1/100) = (45/100)/(99/100) = 45/99 = 5/11."
         }
-      ]
+      ],
+      "skill": "sequences-geometric"
     },
     {
       "type": "explanation",
@@ -104,24 +117,40 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Sequences & Series Practice",
-      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation"],
+      "skills": [
+        "sequences-arithmetic",
+        "sequences-geometric",
+        "series-sigma-notation"
+      ],
       "problems": [
         {
           "problem": "Find the sum of the first 30 terms of the arithmetic sequence 7, 12, 17, 22, ...",
-          "hints": ["a₁=7, d=5", "a₃₀ = 7+29(5) = 152", "S₃₀ = 30/2·(7+152)"],
+          "hints": [
+            "a₁=7, d=5",
+            "a₃₀ = 7+29(5) = 152",
+            "S₃₀ = 30/2·(7+152)"
+          ],
           "answer": "a₃₀ = 7+29(5) = 152. S₃₀ = 15·159 = 2385."
         },
         {
           "problem": "Determine whether the infinite geometric series 12 - 8 + 16/3 - 32/9 + ··· converges. If so, find the sum.",
-          "hints": ["r = -8/12 = -2/3", "|r| = 2/3 < 1 → converges", "S = 12/(1-(-2/3)) = 12/(5/3)"],
+          "hints": [
+            "r = -8/12 = -2/3",
+            "|r| = 2/3 < 1 → converges",
+            "S = 12/(1-(-2/3)) = 12/(5/3)"
+          ],
           "answer": "r = -2/3, |r| < 1 → converges. S = 12/(5/3) = 36/5 = 7.2."
         },
         {
           "problem": "Evaluate Σₖ₌₁²⁰ k².",
-          "hints": ["Use formula: Σk² = n(n+1)(2n+1)/6", "= 20·21·41/6"],
+          "hints": [
+            "Use formula: Σk² = n(n+1)(2n+1)/6",
+            "= 20·21·41/6"
+          ],
           "answer": "Σₖ₌₁²⁰ k² = 20·21·41/6 = 17220/6 = 2870."
         }
-      ]
+      ],
+      "skill": "series-sigma-notation"
     },
     {
       "type": "explanation",
@@ -232,7 +261,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Sequences, Series & Limits Mastery Practice",
-      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation", "limits-intuitive", "limits-algebraic", "limits-continuity-infinity"],
+      "skills": [
+        "sequences-arithmetic",
+        "sequences-geometric",
+        "series-sigma-notation",
+        "limits-intuitive",
+        "limits-algebraic",
+        "limits-continuity-infinity"
+      ],
       "problems": [
         {
           "problem": "An arithmetic sequence has a₁ = -5 and d = 3. Find a₁₅ and S₁₅.",
@@ -258,7 +294,8 @@
           "problem": "Find lim(x→∞) (4x² - 7)/(6x² + 5x).",
           "answer": "Equal degrees (both 2). Limit = 4/6 = 2/3. (Divide by x²: (4-7/x²)/(6+5/x) → 4/6.)"
         }
-      ]
+      ],
+      "skill": "sequences-arithmetic"
     }
   ],
   "answerKeys": {

@@ -6,8 +6,18 @@
   "weeks": "17-19",
   "estimatedDuration": 50,
   "description": "Master solving systems of two linear equations using graphing and substitution. Students learn to identify the intersection point as the solution, apply substitution when one variable is already isolated, and interpret special cases — parallel lines (no solution) and identical lines (infinitely many solutions). Every system is grounded in real-world 'two plans' contexts: phone plans, gym memberships, ticket sales, and more.",
-  "skills": ["systems-graphing", "systems-substitution", "systems-interpretation", "systems-special-cases"],
-  "standardsAlignment": ["8.EE.8", "8.EE.8a", "8.EE.8b", "8.EE.8c"],
+  "skills": [
+    "systems-graphing",
+    "systems-substitution",
+    "systems-interpretation",
+    "systems-special-cases"
+  ],
+  "standardsAlignment": [
+    "8.EE.8",
+    "8.EE.8a",
+    "8.EE.8b",
+    "8.EE.8c"
+  ],
   "goals": [
     "Solve a system of two linear equations by graphing and identify the intersection as the solution.",
     "Solve a system of two linear equations using the substitution method.",
@@ -20,7 +30,7 @@
     "Substitution as a precision tool: graphing shows the idea, substitution gets the exact answer. Motivate substitution by showing a graph where the intersection is at (2.5, 3.7) — hard to read off a graph.",
     "Special cases last: after students expect one intersection, surprise them with parallel lines and identical lines. Use the algebra to explain the geometry."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -134,19 +144,28 @@
           "id": "se-wp1",
           "question": "Solve the system by graphing: y = x + 2 and y = −x + 6",
           "answer": "Set equal: x + 2 = −x + 6 → 2x = 4 → x = 2. y = 2 + 2 = 4. Check: 4 = −2 + 6 = 4 ✓. Solution: (2, 4).",
-          "hints": ["Both lines are in slope-intercept form. What are their slopes and y-intercepts?", "Set the two expressions for y equal to each other and solve for x."]
+          "hints": [
+            "Both lines are in slope-intercept form. What are their slopes and y-intercepts?",
+            "Set the two expressions for y equal to each other and solve for x."
+          ]
         },
         {
           "id": "se-wp2",
           "question": "Solve the system by graphing: y = 3x − 1 and y = x + 3",
           "answer": "Set equal: 3x − 1 = x + 3 → 2x = 4 → x = 2. y = 3(2) − 1 = 5. Check: 5 = 2 + 3 = 5 ✓. Solution: (2, 5).",
-          "hints": ["Graph Line 1 starting at y-intercept −1 with slope 3. Graph Line 2 starting at y-intercept 3 with slope 1.", "Where do they cross? Set 3x − 1 = x + 3 and solve."]
+          "hints": [
+            "Graph Line 1 starting at y-intercept −1 with slope 3. Graph Line 2 starting at y-intercept 3 with slope 1.",
+            "Where do they cross? Set 3x − 1 = x + 3 and solve."
+          ]
         },
         {
           "id": "se-wp3",
           "question": "Two texting plans: Plan A costs $15/month plus $0.20/text. Plan B costs $25/month plus $0.10/text. Write the system and find when they cost the same.\n\nSystem: y = 0.20x + 15 and y = 0.10x + 25",
           "answer": "0.20x + 15 = 0.10x + 25 → 0.10x = 10 → x = 100. y = 0.20(100) + 15 = 35. Check: y = 0.10(100) + 25 = 35 ✓. Solution: (100, 35). At 100 texts, both plans cost $35.",
-          "hints": ["Set the two cost expressions equal: 0.20x + 15 = 0.10x + 25.", "Subtract 0.10x from both sides, then subtract 15 from both sides."]
+          "hints": [
+            "Set the two cost expressions equal: 0.20x + 15 = 0.10x + 25.",
+            "Subtract 0.10x from both sides, then subtract 15 from both sides."
+          ]
         }
       ]
     },
@@ -160,19 +179,28 @@
           "id": "se-wp4",
           "question": "Solve by substitution: y = 2x + 1 and 3x + y = 16",
           "answer": "Substitute y = 2x + 1 into equation 2: 3x + (2x + 1) = 16 → 5x + 1 = 16 → 5x = 15 → x = 3. y = 2(3) + 1 = 7. Check: 3(3) + 7 = 16 ✓. Solution: (3, 7).",
-          "hints": ["y is already isolated in the first equation. Replace y in the second equation with (2x + 1).", "After substituting, combine like terms and solve for x."]
+          "hints": [
+            "y is already isolated in the first equation. Replace y in the second equation with (2x + 1).",
+            "After substituting, combine like terms and solve for x."
+          ]
         },
         {
           "id": "se-wp5",
           "question": "Solve by substitution: x = 4y − 3 and 2x + 3y = 16",
           "answer": "Substitute x = 4y − 3 into equation 2: 2(4y − 3) + 3y = 16 → 8y − 6 + 3y = 16 → 11y = 22 → y = 2. x = 4(2) − 3 = 5. Check: 2(5) + 3(2) = 16 ✓. Solution: (5, 2).",
-          "hints": ["x is already isolated. Substitute (4y − 3) for x in the second equation.", "Distribute the 2, combine the y-terms, then solve for y."]
+          "hints": [
+            "x is already isolated. Substitute (4y − 3) for x in the second equation.",
+            "Distribute the 2, combine the y-terms, then solve for y."
+          ]
         },
         {
           "id": "se-wp6",
           "question": "Two gyms: Gym A charges $20 sign-up plus $15/month. Gym B charges $50 sign-up plus $10/month. After how many months do they cost the same?\n\nSystem: y = 15x + 20 and y = 10x + 50",
           "answer": "15x + 20 = 10x + 50 → 5x = 30 → x = 6. y = 15(6) + 20 = 110. Check: y = 10(6) + 50 = 110 ✓. Solution: (6, 110). After 6 months, both gyms cost $110.",
-          "hints": ["Both equations have y isolated. Set the right sides equal.", "Solve for x (months), then find y (total cost)."]
+          "hints": [
+            "Both equations have y isolated. Set the right sides equal.",
+            "Solve for x (months), then find y (total cost)."
+          ]
         }
       ]
     },
@@ -186,19 +214,28 @@
           "id": "se-wp7",
           "question": "Solve: y = 4x + 5 and y = 4x − 2. How many solutions? Explain.",
           "answer": "4x + 5 = 4x − 2 → 5 = −2. Contradiction! No solution. Both lines have slope 4 but different y-intercepts (5 and −2), so they are parallel and never intersect.",
-          "hints": ["Set the two expressions equal. What happens when you subtract 4x from both sides?", "If you get a false statement like 5 = −2, what does that tell you about the system?"]
+          "hints": [
+            "Set the two expressions equal. What happens when you subtract 4x from both sides?",
+            "If you get a false statement like 5 = −2, what does that tell you about the system?"
+          ]
         },
         {
           "id": "se-wp8",
           "question": "Solve: 3x + 6y = 12 and x + 2y = 4. How many solutions?",
           "answer": "Isolate x in equation 2: x = 4 − 2y. Substitute: 3(4 − 2y) + 6y = 12 → 12 − 6y + 6y = 12 → 12 = 12. Always true! Infinitely many solutions — the first equation is 3 times the second, so they're the same line.",
-          "hints": ["Isolate x in the simpler equation (equation 2), then substitute.", "If you get a true statement like 12 = 12, what does that mean?"]
+          "hints": [
+            "Isolate x in the simpler equation (equation 2), then substitute.",
+            "If you get a true statement like 12 = 12, what does that mean?"
+          ]
         },
         {
           "id": "se-wp9",
           "question": "A parking lot has only cars and motorcycles. There are 30 vehicles and 100 wheels total. How many cars and how many motorcycles?\n\nSystem: c + m = 30 and 4c + 2m = 100",
           "answer": "Isolate c: c = 30 − m. Substitute: 4(30 − m) + 2m = 100 → 120 − 4m + 2m = 100 → −2m = −20 → m = 10. c = 30 − 10 = 20. Check: 4(20) + 2(10) = 80 + 20 = 100 ✓. 20 cars and 10 motorcycles.",
-          "hints": ["Let c = cars, m = motorcycles. Cars have 4 wheels, motorcycles have 2.", "Isolate c from the first equation: c = 30 − m. Then substitute into the wheel equation."]
+          "hints": [
+            "Let c = cars, m = motorcycles. Cars have 4 wheels, motorcycles have 2.",
+            "Isolate c from the first equation: c = 30 − m. Then substitute into the wheel equation."
+          ]
         }
       ]
     },
@@ -213,42 +250,54 @@
           "question": "Solve the system by graphing: y = 2x − 3 and y = −x + 6",
           "answer": "2x − 3 = −x + 6 → 3x = 9 → x = 3. y = 2(3) − 3 = 3. Check: 3 = −3 + 6 ✓. Solution: (3, 3).",
           "skill": "systems-graphing",
-          "hints": ["Set the two y-expressions equal and solve for x."]
+          "hints": [
+            "Set the two y-expressions equal and solve for x."
+          ]
         },
         {
           "id": "se-yp2",
           "question": "Solve by substitution: y = −3x + 10 and 2x + y = 7",
           "answer": "2x + (−3x + 10) = 7 → −x + 10 = 7 → −x = −3 → x = 3. y = −3(3) + 10 = 1. Check: 2(3) + 1 = 7 ✓. Solution: (3, 1).",
           "skill": "systems-substitution",
-          "hints": ["Replace y in the second equation with (−3x + 10)."]
+          "hints": [
+            "Replace y in the second equation with (−3x + 10)."
+          ]
         },
         {
           "id": "se-yp3",
           "question": "Solve by substitution: 2x + 3y = 12 and x = y + 1",
           "answer": "2(y + 1) + 3y = 12 → 2y + 2 + 3y = 12 → 5y = 10 → y = 2. x = 2 + 1 = 3. Check: 2(3) + 3(2) = 12 ✓. Solution: (3, 2).",
           "skill": "systems-substitution",
-          "hints": ["Substitute (y + 1) for x in the first equation."]
+          "hints": [
+            "Substitute (y + 1) for x in the first equation."
+          ]
         },
         {
           "id": "se-yp4",
           "question": "Solve: y = −x + 5 and y = −x + 2. How many solutions? Explain.",
           "answer": "−x + 5 = −x + 2 → 5 = 2. Contradiction. No solution — the lines are parallel (both have slope −1 but different y-intercepts).",
           "skill": "systems-special-cases",
-          "hints": ["Compare the slopes. What happens when you set the equations equal?"]
+          "hints": [
+            "Compare the slopes. What happens when you set the equations equal?"
+          ]
         },
         {
           "id": "se-yp5",
           "question": "Two streaming services: Service A costs $0.15/song plus a $30 monthly fee. Service B costs $0.25/song plus a $20 monthly fee. Write a system and find when they cost the same.\n\nSystem: y = 0.15x + 30 and y = 0.25x + 20",
           "answer": "0.15x + 30 = 0.25x + 20 → 10 = 0.10x → x = 100. y = 0.15(100) + 30 = 45. Check: y = 0.25(100) + 20 = 45 ✓. At 100 songs, both cost $45.",
           "skill": "systems-interpretation",
-          "hints": ["Set the cost expressions equal and solve for x (number of songs)."]
+          "hints": [
+            "Set the cost expressions equal and solve for x (number of songs)."
+          ]
         },
         {
           "id": "se-yp6",
           "question": "A school play sold 200 tickets. Adult tickets cost $10 and student tickets cost $6. Total revenue was $1,520. How many of each type were sold?\n\nSystem: a + s = 200 and 10a + 6s = 1520",
           "answer": "a = 200 − s. Substitute: 10(200 − s) + 6s = 1520 → 2000 − 10s + 6s = 1520 → −4s = −480 → s = 120. a = 200 − 120 = 80. Check: 10(80) + 6(120) = 800 + 720 = 1520 ✓. 80 adult tickets and 120 student tickets.",
           "skill": "systems-interpretation",
-          "hints": ["Isolate a from the first equation, then substitute into the revenue equation."]
+          "hints": [
+            "Isolate a from the first equation, then substitute into the revenue equation."
+          ]
         }
       ]
     }

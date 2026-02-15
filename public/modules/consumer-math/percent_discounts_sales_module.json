@@ -6,8 +6,18 @@
   "weeks": "4",
   "estimatedDuration": 35,
   "description": "The math behind deals — and the math stores hope you DON'T do. This module builds percent fluency through the lens of real shopping: discounts, stacked coupons, sales tax, restaurant tips, retail markup, and unit pricing. Students learn to calculate the ACTUAL cost of anything and decide whether a deal is genuinely good or just marketing.",
-  "skills": ["cm-percent-of-number", "cm-discounts-coupons", "cm-tax-tip-markup", "cm-unit-price-comparisons"],
-  "standardsAlignment": ["7.RP.1", "7.RP.3", "7.EE.3", "MP.4"],
+  "skills": [
+    "cm-percent-of-number",
+    "cm-discounts-coupons",
+    "cm-tax-tip-markup",
+    "cm-unit-price-comparisons"
+  ],
+  "standardsAlignment": [
+    "7.RP.1",
+    "7.RP.3",
+    "7.EE.3",
+    "MP.4"
+  ],
   "goals": [
     "Calculate percent of a number and percent change using the multiplier method",
     "Apply sequential and stacked discounts correctly (not by adding percentages)",
@@ -62,11 +72,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Percent of a Number — Practice",
-      "skills": ["cm-percent-of-number"],
+      "skills": [
+        "cm-percent-of-number"
+      ],
       "problems": [
         {
           "id": "pds-1",
-          "prompt": "A skateboard costs $65. The shop is having a 40% off sale. How much is 40% of $65, and what is the sale price?",
+          "question": "A skateboard costs $65. The shop is having a 40% off sale. How much is 40% of $65, and what is the sale price?",
           "hints": [
             "Convert 40% to a decimal: 0.40",
             "Multiply: 0.40 x $65 to find the discount amount",
@@ -76,7 +88,7 @@
         },
         {
           "id": "pds-2",
-          "prompt": "A pair of running shoes was priced at $85 in September. By November, the price had risen to $102. What is the percent increase?",
+          "question": "A pair of running shoes was priced at $85 in September. By November, the price had risen to $102. What is the percent increase?",
           "hints": [
             "Use the percent change formula: (new - original) / original x 100%",
             "The change is $102 - $85 = $17",
@@ -86,7 +98,7 @@
         },
         {
           "id": "pds-3",
-          "prompt": "A backpack originally costs $140. It's marked down 35%. Use the multiplier method to find the sale price in one step.",
+          "question": "A backpack originally costs $140. It's marked down 35%. Use the multiplier method to find the sale price in one step.",
           "hints": [
             "35% off means you pay 100% - 35% = 65%",
             "Convert 65% to a decimal: 0.65",
@@ -94,30 +106,34 @@
           ],
           "answer": "Multiplier = 1 - 0.35 = 0.65. Sale price = 0.65 x $140 = $91.00."
         }
-      ]
+      ],
+      "skill": "cm-percent-of-number"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Percent of a Number — You Try",
-      "skills": ["cm-percent-of-number"],
+      "skills": [
+        "cm-percent-of-number"
+      ],
       "problems": [
         {
           "id": "pds-4",
-          "prompt": "Your phone bill is $250 this month. The carrier is offering an 18% loyalty discount. How much do you save?",
+          "question": "Your phone bill is $250 this month. The carrier is offering an 18% loyalty discount. How much do you save?",
           "answer": "0.18 x $250 = $45.00. You save $45, making the bill $205.00."
         },
         {
           "id": "pds-5",
-          "prompt": "Concert tickets were $75 last summer. This year the same tickets cost $90. What is the percent increase?",
+          "question": "Concert tickets were $75 last summer. This year the same tickets cost $90. What is the percent increase?",
           "answer": "Percent increase = (90 - 75) / 75 x 100 = 15 / 75 x 100 = 20%."
         },
         {
           "id": "pds-6",
-          "prompt": "A video game is listed at $60 and is currently 15% off. Use the multiplier method to find the sale price.",
+          "question": "A video game is listed at $60 and is currently 15% off. Use the multiplier method to find the sale price.",
           "answer": "Multiplier = 1 - 0.15 = 0.85. Sale price = 0.85 x $60 = $51.00."
         }
-      ]
+      ],
+      "skill": "cm-percent-of-number"
     },
     {
       "type": "explanation",
@@ -157,11 +173,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Discounts and Coupons — Practice",
-      "skills": ["cm-discounts-coupons"],
+      "skills": [
+        "cm-discounts-coupons"
+      ],
       "problems": [
         {
           "id": "pds-7",
-          "prompt": "A $48 shirt is marked 15% off. What is the sale price?",
+          "question": "A $48 shirt is marked 15% off. What is the sale price?",
           "hints": [
             "15% off means you pay 85%",
             "Multiplier = 0.85",
@@ -171,7 +189,7 @@
         },
         {
           "id": "pds-8",
-          "prompt": "A store is running 20% off storewide. You also have a 10% off coupon that applies after the store discount. The item you want costs $80. What is your final price?",
+          "question": "A store is running 20% off storewide. You also have a 10% off coupon that applies after the store discount. The item you want costs $80. What is your final price?",
           "hints": [
             "Apply the 20% store discount first: 0.80 x $80",
             "Then apply the 10% coupon to the RESULT, not the original",
@@ -181,7 +199,7 @@
         },
         {
           "id": "pds-9",
-          "prompt": "You're buying a $58 book bag. You have two coupons (pick one): $10 off, or 15% off. Which coupon saves you more money?",
+          "question": "You're buying a $58 book bag. You have two coupons (pick one): $10 off, or 15% off. Which coupon saves you more money?",
           "hints": [
             "Calculate the price with each coupon separately",
             "$10 off: $58 - $10",
@@ -189,30 +207,34 @@
           ],
           "answer": "$10 off: $58 - $10 = $48.00. 15% off: 0.85 x $58 = $49.30. The $10 off coupon saves $1.30 more. Use the $10 coupon."
         }
-      ]
+      ],
+      "skill": "cm-discounts-coupons"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Discounts and Coupons — You Try",
-      "skills": ["cm-discounts-coupons"],
+      "skills": [
+        "cm-discounts-coupons"
+      ],
       "problems": [
         {
           "id": "pds-10",
-          "prompt": "A pair of sneakers is originally $120. The store has a 35% off sale. What is the sale price?",
+          "question": "A pair of sneakers is originally $120. The store has a 35% off sale. What is the sale price?",
           "answer": "0.65 x $120 = $78.00."
         },
         {
           "id": "pds-11",
-          "prompt": "A clothing store advertises 25% off, then takes an additional 20% off at the register. The original price of a dress is $90. What is the final price, and what single discount percentage would equal this?",
+          "question": "A clothing store advertises 25% off, then takes an additional 20% off at the register. The original price of a dress is $90. What is the final price, and what single discount percentage would equal this?",
           "answer": "First discount: 0.75 x $90 = $67.50. Second discount: 0.80 x $67.50 = $54.00. Combined: 0.75 x 0.80 = 0.60, meaning you pay 60% of original. That's equivalent to a single 40% discount (not 45%)."
         },
         {
           "id": "pds-12",
-          "prompt": "You're buying a $95 pair of boots. Coupon A: 30% off one item. Coupon B: $25 off any purchase over $75. Which coupon gives you the lower price?",
+          "question": "You're buying a $95 pair of boots. Coupon A: 30% off one item. Coupon B: $25 off any purchase over $75. Which coupon gives you the lower price?",
           "answer": "Coupon A: 0.70 x $95 = $66.50. Coupon B: $95 - $25 = $70.00. Coupon A saves $28.50 vs $25.00. Use Coupon A — you save $3.50 more."
         }
-      ]
+      ],
+      "skill": "cm-percent-of-number"
     },
     {
       "type": "explanation",
@@ -253,11 +275,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Tax, Tip, and Markup — Practice",
-      "skills": ["cm-tax-tip-markup"],
+      "skills": [
+        "cm-tax-tip-markup"
+      ],
       "problems": [
         {
           "id": "pds-13",
-          "prompt": "You buy a backpack priced at $35. Sales tax in your area is 7%. What is the total cost?",
+          "question": "You buy a backpack priced at $35. Sales tax in your area is 7%. What is the total cost?",
           "hints": [
             "Total = price x (1 + tax rate)",
             "Tax rate as a decimal: 7% = 0.07",
@@ -267,7 +291,7 @@
         },
         {
           "id": "pds-14",
-          "prompt": "Your family's dinner bill has a pre-tax subtotal of $64. Tax is 6.5% and you want to leave an 18% tip on the pre-tax amount. What is the total?",
+          "question": "Your family's dinner bill has a pre-tax subtotal of $64. Tax is 6.5% and you want to leave an 18% tip on the pre-tax amount. What is the total?",
           "hints": [
             "Calculate tax and tip separately, both based on $64",
             "Tax: 0.065 x $64. Tip: 0.18 x $64.",
@@ -277,7 +301,7 @@
         },
         {
           "id": "pds-15",
-          "prompt": "A store buys wireless earbuds from the manufacturer for $18 and marks them up 120%. What retail price goes on the tag?",
+          "question": "A store buys wireless earbuds from the manufacturer for $18 and marks them up 120%. What retail price goes on the tag?",
           "hints": [
             "120% markup means the markup equals 120% of the wholesale cost",
             "Multiplier: 1 + 1.20 = 2.20",
@@ -285,30 +309,34 @@
           ],
           "answer": "$18 x 2.20 = $39.60. The earbuds retail for $39.60."
         }
-      ]
+      ],
+      "skill": "cm-tax-tip-markup"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Tax, Tip, and Markup — You Try",
-      "skills": ["cm-tax-tip-markup"],
+      "skills": [
+        "cm-tax-tip-markup"
+      ],
       "problems": [
         {
           "id": "pds-16",
-          "prompt": "You're buying a $1,200 laptop. Sales tax is 8.25%. What is the total cost including tax?",
+          "question": "You're buying a $1,200 laptop. Sales tax is 8.25%. What is the total cost including tax?",
           "answer": "$1,200 x 1.0825 = $1,299.00. Tax adds $99 to the price."
         },
         {
           "id": "pds-17",
-          "prompt": "At a restaurant, your group orders appetizers ($14), entrees ($38), and drinks ($9). Tax is 7% and you plan to tip 20% on the pre-tax subtotal. What is the total bill?",
+          "question": "At a restaurant, your group orders appetizers ($14), entrees ($38), and drinks ($9). Tax is 7% and you plan to tip 20% on the pre-tax subtotal. What is the total bill?",
           "answer": "Subtotal: $14 + $38 + $9 = $61.00. Tax: 0.07 x $61 = $4.27. Tip: 0.20 x $61 = $12.20. Total: $61 + $4.27 + $12.20 = $77.47."
         },
         {
           "id": "pds-18",
-          "prompt": "A retailer buys a jacket wholesale for $40, applies a 90% markup, and then puts it on a 30% off clearance sale. What is the final sale price, and does the store still make a profit?",
+          "question": "A retailer buys a jacket wholesale for $40, applies a 90% markup, and then puts it on a 30% off clearance sale. What is the final sale price, and does the store still make a profit?",
           "answer": "Markup: $40 x 1.90 = $76.00 retail. Clearance: 0.70 x $76 = $53.20 sale price. Profit: $53.20 - $40.00 = $13.20. Yes, the store still profits $13.20 per jacket."
         }
-      ]
+      ],
+      "skill": "cm-percent-of-number"
     },
     {
       "type": "explanation",
@@ -349,11 +377,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Unit Price Comparisons — Practice",
-      "skills": ["cm-unit-price-comparisons"],
+      "skills": [
+        "cm-unit-price-comparisons"
+      ],
       "problems": [
         {
           "id": "pds-19",
-          "prompt": "Brand A peanut butter: 16 oz for $3.84. Brand B peanut butter: 28 oz for $5.88. Find the unit price of each and identify the better deal.",
+          "question": "Brand A peanut butter: 16 oz for $3.84. Brand B peanut butter: 28 oz for $5.88. Find the unit price of each and identify the better deal.",
           "hints": [
             "Unit price = total price / number of ounces",
             "Brand A: $3.84 / 16",
@@ -363,7 +393,7 @@
         },
         {
           "id": "pds-20",
-          "prompt": "Laundry detergent: 50 oz bottle for $7.50 or 100 oz bottle for $13.00. Find the unit price of each. Which is the better deal per ounce?",
+          "question": "Laundry detergent: 50 oz bottle for $7.50 or 100 oz bottle for $13.00. Find the unit price of each. Which is the better deal per ounce?",
           "hints": [
             "Divide each price by its number of ounces",
             "50 oz: $7.50 / 50",
@@ -373,7 +403,7 @@
         },
         {
           "id": "pds-21",
-          "prompt": "You need rice for a recipe that calls for 3 lbs. A 5 lb bag costs $6.25 and a 2 lb bag costs $2.90. Compare the unit prices. If you won't use the extra rice from the 5 lb bag, which option actually costs less for the 3 lbs you need?",
+          "question": "You need rice for a recipe that calls for 3 lbs. A 5 lb bag costs $6.25 and a 2 lb bag costs $2.90. Compare the unit prices. If you won't use the extra rice from the 5 lb bag, which option actually costs less for the 3 lbs you need?",
           "hints": [
             "Find unit price for each: divide price by pounds",
             "For the 2 lb bags, you'd need two bags (4 lbs) to get at least 3 lbs",
@@ -381,30 +411,34 @@
           ],
           "answer": "5 lb bag: $6.25 / 5 = $1.25/lb. 2 lb bag: $2.90 / 2 = $1.45/lb. The 5 lb bag has a better unit price. But for exactly 3 lbs: one 5 lb bag = $6.25 (2 lbs wasted). Two 2 lb bags = $5.80 for 4 lbs (1 lb extra). Two 2 lb bags cost $0.45 less overall. However, rice doesn't spoil quickly — if you'll eventually use it, the 5 lb bag at $1.25/lb is the better long-term value."
         }
-      ]
+      ],
+      "skill": "cm-unit-price-comparisons"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Unit Price Comparisons — You Try",
-      "skills": ["cm-unit-price-comparisons"],
+      "skills": [
+        "cm-unit-price-comparisons"
+      ],
       "problems": [
         {
           "id": "pds-22",
-          "prompt": "Olive oil: 16 oz bottle for $6.40 vs 25 oz bottle for $8.75. Find the unit price of each and determine which is the better value.",
+          "question": "Olive oil: 16 oz bottle for $6.40 vs 25 oz bottle for $8.75. Find the unit price of each and determine which is the better value.",
           "answer": "16 oz: $6.40 / 16 = $0.40/oz. 25 oz: $8.75 / 25 = $0.35/oz. The 25 oz bottle is $0.05 cheaper per ounce."
         },
         {
           "id": "pds-23",
-          "prompt": "Dog food: 15 lb bag for $22.50 vs 30 lb bag for $39.00. Your dog eats 1 lb per day. Compare unit prices and determine which to buy.",
+          "question": "Dog food: 15 lb bag for $22.50 vs 30 lb bag for $39.00. Your dog eats 1 lb per day. Compare unit prices and determine which to buy.",
           "answer": "15 lb bag: $22.50 / 15 = $1.50/lb. 30 lb bag: $39.00 / 30 = $1.30/lb. The 30 lb bag saves $0.20/lb. Over 30 lbs, that's $6.00 saved ($45.00 for two 15-lb bags vs $39.00). Since your dog will eat all of it within a month, the 30 lb bag is the clear winner."
         },
         {
           "id": "pds-24",
-          "prompt": "Shampoo comes in three sizes: 12 oz for $4.44, 20 oz for $6.80, and 32 oz for $9.92. Find the unit price of each. Which is the best value?",
+          "question": "Shampoo comes in three sizes: 12 oz for $4.44, 20 oz for $6.80, and 32 oz for $9.92. Find the unit price of each. Which is the best value?",
           "answer": "12 oz: $4.44 / 12 = $0.37/oz. 20 oz: $6.80 / 20 = $0.34/oz. 32 oz: $9.92 / 32 = $0.31/oz. The 32 oz bottle has the lowest unit price at $0.31/oz. Savings vs smallest: $0.06/oz, which is $1.92 less per 32 oz of shampoo used."
         }
-      ]
+      ],
+      "skill": "cm-unit-price-comparisons"
     }
   ],
   "answerKeys": {

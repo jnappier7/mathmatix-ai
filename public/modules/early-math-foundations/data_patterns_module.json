@@ -6,32 +6,35 @@
   "weeks": "22-24",
   "estimatedDuration": 35,
   "description": "Reading the world through data and patterns. Students read and create bar graphs, line plots, and pictographs, answer questions by interpreting data displays, identify and extend number patterns with input/output tables, and get their first taste of algebraic thinking by finding missing numbers in equations using the balance concept.",
-
   "skills": [
     "emf-data-graphs",
     "emf-data-interpretation",
     "emf-patterns-rules",
     "emf-unknowns-intro"
   ],
-
-  "standardsAlignment": ["3.MD.B.3", "3.OA.A.4", "3.OA.D.9", "4.MD.B.4", "4.OA.A.3", "4.OA.C.5", "5.MD.B.2", "5.OA.B.3"],
-
+  "standardsAlignment": [
+    "3.MD.B.3",
+    "3.OA.A.4",
+    "3.OA.D.9",
+    "4.MD.B.4",
+    "4.OA.A.3",
+    "4.OA.C.5",
+    "5.MD.B.2",
+    "5.OA.B.3"
+  ],
   "goals": [
     "Read and create bar graphs, line plots, and pictographs with accurate titles, labels, and scales",
     "Answer comparison, combination, and 'how many more/fewer' questions by interpreting data displays and citing evidence from the graph",
     "Identify the rule in a number pattern, complete input/output tables, and describe growing patterns in words",
     "Find missing numbers in equations using the balance concept and begin using letters to represent unknowns"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> We Do -> You Do for each skill, with kid-friendly contexts like class surveys, favorite foods, and recess games",
     "AI uses scaffold array as scope and worked-example bank; flexes within each phase based on student responses and comfort level",
     "Emphasize visual literacy: every graph problem should prompt students to read the title, labels, and scale before answering any questions",
     "For patterns and unknowns, encourage students to describe rules in their own words before writing number sentences — building verbal reasoning alongside symbolic thinking"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -75,7 +78,7 @@
       "problems": [
         {
           "id": "dp-1",
-          "prompt": "Mr. Chen's class collected data on their favorite sport:\nSoccer: 9 students | Basketball: 7 students | Baseball: 4 students | Swimming: 6 students\nIf you drew a bar graph, list the sports in order from tallest bar to shortest bar.",
+          "question": "Mr. Chen's class collected data on their favorite sport:\nSoccer: 9 students | Basketball: 7 students | Baseball: 4 students | Swimming: 6 students\nIf you drew a bar graph, list the sports in order from tallest bar to shortest bar.",
           "hints": [
             "The tallest bar belongs to the sport with the most students. Which sport has the highest number?",
             "Put the numbers in order from greatest to least: 9, 7, 6, 4. Match each number to its sport."
@@ -84,7 +87,7 @@
         },
         {
           "id": "dp-2",
-          "prompt": "A pictograph shows how many goals different soccer teams scored this season:\nWolves: ⚽⚽⚽⚽⚽⚽\nEagles: ⚽⚽⚽⚽\nTigers: ⚽⚽⚽⚽⚽⚽⚽⚽\nKey: Each ⚽ = 3 goals\nHow many goals did each team score?",
+          "question": "A pictograph shows how many goals different soccer teams scored this season:\nWolves: ⚽⚽⚽⚽⚽⚽\nEagles: ⚽⚽⚽⚽\nTigers: ⚽⚽⚽⚽⚽⚽⚽⚽\nKey: Each ⚽ = 3 goals\nHow many goals did each team score?",
           "hints": [
             "Look at the key: each soccer ball picture stands for 3 goals.",
             "Multiply the number of pictures by 3 for each team."
@@ -93,7 +96,7 @@
         },
         {
           "id": "dp-3",
-          "prompt": "Students measured the length of their shoes to the nearest inch and got these results:\n8, 8, 9, 9, 9, 10, 10, 10, 10, 11\nHow many Xs would go above the number 10 on a line plot? Which length would have the most Xs?",
+          "question": "Students measured the length of their shoes to the nearest inch and got these results:\n8, 8, 9, 9, 9, 10, 10, 10, 10, 11\nHow many Xs would go above the number 10 on a line plot? Which length would have the most Xs?",
           "hints": [
             "Count how many times the number 10 appears in the data.",
             "Count the frequency of each value: 8 appears ___ times, 9 appears ___ times, 10 appears ___ times, 11 appears ___ time."
@@ -110,22 +113,21 @@
       "problems": [
         {
           "id": "dp-4",
-          "prompt": "A bar graph titled 'Snacks Sold at the School Fair' shows:\nPopcorn bar reaches up to 25 | Cotton Candy bar reaches up to 18 | Pretzels bar reaches up to 12 | Fruit Cups bar reaches up to 20\nList three things every good bar graph needs. Then name the snack that sold the most and the snack that sold the least.",
+          "question": "A bar graph titled 'Snacks Sold at the School Fair' shows:\nPopcorn bar reaches up to 25 | Cotton Candy bar reaches up to 18 | Pretzels bar reaches up to 12 | Fruit Cups bar reaches up to 20\nList three things every good bar graph needs. Then name the snack that sold the most and the snack that sold the least.",
           "answer": "Every good bar graph needs: (1) a title, (2) labels on each axis, and (3) a scale with evenly spaced numbers. The most-sold snack is Popcorn (25). The least-sold snack is Pretzels (12)."
         },
         {
           "id": "dp-5",
-          "prompt": "Create a pictograph key for this situation: A library tracks books checked out each day. On Monday 15 books were checked out, Tuesday 20, and Wednesday 10. If each picture stands for 5 books, how many pictures go in each row?",
+          "question": "Create a pictograph key for this situation: A library tracks books checked out each day. On Monday 15 books were checked out, Tuesday 20, and Wednesday 10. If each picture stands for 5 books, how many pictures go in each row?",
           "answer": "Key: Each picture = 5 books. Monday: 15 / 5 = 3 pictures. Tuesday: 20 / 5 = 4 pictures. Wednesday: 10 / 5 = 2 pictures."
         },
         {
           "id": "dp-6",
-          "prompt": "Ten students measured the number of raisins in their snack boxes:\n12, 14, 14, 15, 15, 15, 16, 16, 17, 19\nDraw a line plot in your notebook. Then answer: How many Xs are above 15? What is the range of the data (greatest value minus smallest value)?",
+          "question": "Ten students measured the number of raisins in their snack boxes:\n12, 14, 14, 15, 15, 15, 16, 16, 17, 19\nDraw a line plot in your notebook. Then answer: How many Xs are above 15? What is the range of the data (greatest value minus smallest value)?",
           "answer": "There are 3 Xs above 15 (the number 15 appears 3 times). The range is 19 - 12 = 7 raisins."
         }
       ]
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -168,7 +170,7 @@
       "problems": [
         {
           "id": "dp-7",
-          "prompt": "A bar graph titled 'Points Scored in Saturday's Games' shows:\nLions: 24 points | Bears: 18 points | Hawks: 30 points | Sharks: 15 points\n(a) Which team scored the most points?\n(b) How many more points did the Hawks score than the Bears?\n(c) How many total points were scored by all four teams?",
+          "question": "A bar graph titled 'Points Scored in Saturday's Games' shows:\nLions: 24 points | Bears: 18 points | Hawks: 30 points | Sharks: 15 points\n(a) Which team scored the most points?\n(b) How many more points did the Hawks score than the Bears?\n(c) How many total points were scored by all four teams?",
           "hints": [
             "For (a), find the tallest bar.",
             "For (b), subtract: Hawks points minus Bears points.",
@@ -178,7 +180,7 @@
         },
         {
           "id": "dp-8",
-          "prompt": "A pictograph titled 'Laps Swum This Week' shows:\nMonday: 🏊🏊🏊\nTuesday: 🏊🏊🏊🏊🏊\nWednesday: 🏊🏊\nThursday: 🏊🏊🏊🏊\nKey: Each 🏊 = 4 laps\nOn which day were the most laps swum? How many total laps were swum on Monday and Thursday combined?",
+          "question": "A pictograph titled 'Laps Swum This Week' shows:\nMonday: 🏊🏊🏊\nTuesday: 🏊🏊🏊🏊🏊\nWednesday: 🏊🏊\nThursday: 🏊🏊🏊🏊\nKey: Each 🏊 = 4 laps\nOn which day were the most laps swum? How many total laps were swum on Monday and Thursday combined?",
           "hints": [
             "First, find which day has the most pictures — that is the day with the most laps.",
             "Multiply the number of pictures by 4 (the key value) for each day you need."
@@ -187,7 +189,7 @@
         },
         {
           "id": "dp-9",
-          "prompt": "A line plot shows how many pull-ups students completed:\n0(XXX), 1(XXXX), 2(XXXXX), 3(XXX), 4(XX), 5(X)\n(a) How many students are represented in the data?\n(b) How many students did 2 or more pull-ups?\n(c) What is the least common number of pull-ups?",
+          "question": "A line plot shows how many pull-ups students completed:\n0(XXX), 1(XXXX), 2(XXXXX), 3(XXX), 4(XX), 5(X)\n(a) How many students are represented in the data?\n(b) How many students did 2 or more pull-ups?\n(c) What is the least common number of pull-ups?",
           "hints": [
             "Count the total number of Xs across all values to find the total number of students.",
             "For 2 or more, add the Xs above 2, 3, 4, and 5.",
@@ -205,22 +207,21 @@
       "problems": [
         {
           "id": "dp-10",
-          "prompt": "A bar graph titled 'Student Council Election Results' shows:\nAnya: 35 votes | Ben: 22 votes | Carlos: 28 votes | Diana: 15 votes\nWho won the election? By how many votes did the winner beat the runner-up? How many students voted in total?",
+          "question": "A bar graph titled 'Student Council Election Results' shows:\nAnya: 35 votes | Ben: 22 votes | Carlos: 28 votes | Diana: 15 votes\nWho won the election? By how many votes did the winner beat the runner-up? How many students voted in total?",
           "answer": "Anya won with 35 votes. The runner-up is Carlos with 28 votes. Anya won by 35 - 28 = 7 votes. Total votes: 35 + 22 + 28 + 15 = 100 students voted."
         },
         {
           "id": "dp-11",
-          "prompt": "A pictograph titled 'Sandwiches Sold at Lunch' shows:\nPB&J: 🥪🥪🥪🥪🥪🥪🥪\nTurkey: 🥪🥪🥪🥪🥪\nHam: 🥪🥪🥪\nKey: Each 🥪 = 4 sandwiches\nHow many more PB&J sandwiches were sold than Ham sandwiches?",
+          "question": "A pictograph titled 'Sandwiches Sold at Lunch' shows:\nPB&J: 🥪🥪🥪🥪🥪🥪🥪\nTurkey: 🥪🥪🥪🥪🥪\nHam: 🥪🥪🥪\nKey: Each 🥪 = 4 sandwiches\nHow many more PB&J sandwiches were sold than Ham sandwiches?",
           "answer": "PB&J: 7 x 4 = 28 sandwiches. Ham: 3 x 4 = 12 sandwiches. Difference: 28 - 12 = 16 more PB&J sandwiches were sold than Ham."
         },
         {
           "id": "dp-12",
-          "prompt": "A line plot shows the number of letters in students' first names:\n3(XX), 4(XXXXX), 5(XXXXXX), 6(XXXX), 7(XXX), 8(X)\n(a) What is the most common name length?\n(b) How many students have names with 6 or more letters?\n(c) How many students are in the class altogether?",
+          "question": "A line plot shows the number of letters in students' first names:\n3(XX), 4(XXXXX), 5(XXXXXX), 6(XXXX), 7(XXX), 8(X)\n(a) What is the most common name length?\n(b) How many students have names with 6 or more letters?\n(c) How many students are in the class altogether?",
           "answer": "(a) The most common name length is 5 letters (6 Xs). (b) Students with 6 or more letters: 4 + 3 + 1 = 8 students. (c) Total: 2 + 5 + 6 + 4 + 3 + 1 = 21 students in the class."
         }
       ]
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -263,7 +264,7 @@
       "problems": [
         {
           "id": "dp-13",
-          "prompt": "Find the rule and fill in the missing numbers:\n8, 15, 22, 29, ___, ___, 50",
+          "question": "Find the rule and fill in the missing numbers:\n8, 15, 22, 29, ___, ___, 50",
           "hints": [
             "Find the difference between consecutive numbers: 15 - 8 = ?",
             "Check: 22 - 15 = ? and 29 - 22 = ? If the difference is the same each time, that is your rule."
@@ -272,7 +273,7 @@
         },
         {
           "id": "dp-14",
-          "prompt": "Find the rule for this input/output table:\n| Input | Output |\n|   1   |    5   |\n|   2   |    8   |\n|   3   |   11   |\n|   4   |   14   |\n|   6   |   ?    |",
+          "question": "Find the rule for this input/output table:\n| Input | Output |\n|   1   |    5   |\n|   2   |    8   |\n|   3   |   11   |\n|   4   |   14   |\n|   6   |   ?    |",
           "hints": [
             "Try multiplying the input by different numbers. Does input x 5 work for all rows?",
             "If multiplication alone does not work, try a two-step rule like 'multiply by ___ then add ___.' Check: 1 x 3 = 3, then 3 + 2 = 5. Does that work for input 2?"
@@ -281,7 +282,7 @@
         },
         {
           "id": "dp-15",
-          "prompt": "A decreasing pattern starts at 60:\n60, 52, 44, 36, ___, ___\nWhat is the rule? Describe it in words and write the next two terms.",
+          "question": "A decreasing pattern starts at 60:\n60, 52, 44, 36, ___, ___\nWhat is the rule? Describe it in words and write the next two terms.",
           "hints": [
             "Find the difference: 60 - 52 = ?",
             "Is the pattern going up or going down? If the numbers are getting smaller, the rule involves subtracting."
@@ -298,22 +299,21 @@
       "problems": [
         {
           "id": "dp-16",
-          "prompt": "A coach records how many laps the team runs each week:\nWeek 1: 4 laps | Week 2: 7 laps | Week 3: 10 laps | Week 4: 13 laps\nWhat is the rule? How many laps will they run in Week 6?",
+          "question": "A coach records how many laps the team runs each week:\nWeek 1: 4 laps | Week 2: 7 laps | Week 3: 10 laps | Week 4: 13 laps\nWhat is the rule? How many laps will they run in Week 6?",
           "answer": "The rule is 'add 3 each week.' Week 5: 13 + 3 = 16 laps. Week 6: 16 + 3 = 19 laps."
         },
         {
           "id": "dp-17",
-          "prompt": "Complete the input/output table and state the rule:\n| Input | Output |\n|   3   |    9   |\n|   5   |   15   |\n|   8   |   24   |\n|   4   |   ?    |\n|  12   |   ?    |",
+          "question": "Complete the input/output table and state the rule:\n| Input | Output |\n|   3   |    9   |\n|   5   |   15   |\n|   8   |   24   |\n|   4   |   ?    |\n|  12   |   ?    |",
           "answer": "The rule is 'multiply by 3.' Check: 3x3=9, 5x3=15, 8x3=24. For input 4: 4x3=12. For input 12: 12x3=36."
         },
         {
           "id": "dp-18",
-          "prompt": "Look at this pattern:\n2, 6, 18, 54, ___\nThis is NOT an adding pattern. What operation is being used? Describe the rule in words and find the next term.",
+          "question": "Look at this pattern:\n2, 6, 18, 54, ___\nThis is NOT an adding pattern. What operation is being used? Describe the rule in words and find the next term.",
           "answer": "Each number is multiplied by 3 to get the next number: 2x3=6, 6x3=18, 18x3=54. The rule is 'multiply by 3 each time.' The next term is 54 x 3 = 162."
         }
       ]
     },
-
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
@@ -357,7 +357,7 @@
       "problems": [
         {
           "id": "dp-19",
-          "prompt": "Find the missing number: ☐ + 9 = 16\nThen check your answer by plugging it back in.",
+          "question": "Find the missing number: ☐ + 9 = 16\nThen check your answer by plugging it back in.",
           "hints": [
             "To find ☐, use the inverse of adding 9. What is 16 - 9?",
             "After you find ☐, check: does your answer + 9 equal 16?"
@@ -366,7 +366,7 @@
         },
         {
           "id": "dp-20",
-          "prompt": "Solve: 25 - n = 18. What is n?",
+          "question": "Solve: 25 - n = 18. What is n?",
           "hints": [
             "Think: 25 minus what number gives 18?",
             "Use the inverse: n = 25 - 18."
@@ -375,7 +375,7 @@
         },
         {
           "id": "dp-21",
-          "prompt": "Is this equation true or false? Explain using the balance idea.\n6 + 4 = 5 + 5",
+          "question": "Is this equation true or false? Explain using the balance idea.\n6 + 4 = 5 + 5",
           "hints": [
             "Calculate the value of the left side: 6 + 4 = ?",
             "Calculate the value of the right side: 5 + 5 = ?",
@@ -393,23 +393,22 @@
       "problems": [
         {
           "id": "dp-22",
-          "prompt": "Solve each equation:\n(a) ☐ + 14 = 23\n(b) 30 - ☐ = 17\n(c) n + 25 = 40",
+          "question": "Solve each equation:\n(a) ☐ + 14 = 23\n(b) 30 - ☐ = 17\n(c) n + 25 = 40",
           "answer": "(a) ☐ = 23 - 14 = 9. Check: 9 + 14 = 23. (b) ☐ = 30 - 17 = 13. Check: 30 - 13 = 17. (c) n = 40 - 25 = 15. Check: 15 + 25 = 40."
         },
         {
           "id": "dp-23",
-          "prompt": "Marcus has some baseball cards. His friend gives him 8 more and now he has 21 cards. Write an equation with a letter for the unknown, then solve it.\nHint: Think about what you know and what you do not know.",
+          "question": "Marcus has some baseball cards. His friend gives him 8 more and now he has 21 cards. Write an equation with a letter for the unknown, then solve it.\nHint: Think about what you know and what you do not know.",
           "answer": "Let c = the number of cards Marcus started with. Equation: c + 8 = 21. Solve: c = 21 - 8 = 13. Marcus started with 13 baseball cards. Check: 13 + 8 = 21."
         },
         {
           "id": "dp-24",
-          "prompt": "True or false? For each equation, calculate both sides and decide if the seesaw is balanced.\n(a) 12 + 3 = 20 - 5\n(b) 4 + 7 = 15 - 3\n(c) 9 + 6 = 8 + 7",
+          "question": "True or false? For each equation, calculate both sides and decide if the seesaw is balanced.\n(a) 12 + 3 = 20 - 5\n(b) 4 + 7 = 15 - 3\n(c) 9 + 6 = 8 + 7",
           "answer": "(a) Left: 12 + 3 = 15. Right: 20 - 5 = 15. TRUE — balanced! (b) Left: 4 + 7 = 11. Right: 15 - 3 = 12. FALSE — 11 does not equal 12. (c) Left: 9 + 6 = 15. Right: 8 + 7 = 15. TRUE — balanced!"
         }
       ]
     }
   ],
-
   "answerKeys": {
     "dp-1": "Tallest to shortest: Soccer (9), Basketball (7), Swimming (6), Baseball (4)",
     "dp-2": "Wolves: 18 goals, Eagles: 12 goals, Tigers: 24 goals",

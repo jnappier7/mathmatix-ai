@@ -7,8 +7,19 @@
   "weeks": "16-18",
   "estimatedDuration": 50,
   "description": "Identify circle parts and find circumference and area, calculate arc lengths and sector areas using the central angle fraction, apply the Inscribed Angle Theorem and its corollaries, and use tangent-radius perpendicularity.",
-  "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
-  "standardsAlignment": ["G-C.1", "G-C.2", "G-C.5"],
+  "skills": [
+    "circle-basics",
+    "circle-area",
+    "arc-length",
+    "sector-area",
+    "inscribed-angles",
+    "circle-theorems"
+  ],
+  "standardsAlignment": [
+    "G-C.1",
+    "G-C.2",
+    "G-C.5"
+  ],
   "goals": [
     "Identify parts of a circle and find circumference and area",
     "Calculate area of circles, arc lengths, and sector areas",
@@ -28,7 +39,7 @@
       "lessonPhase": "concept-intro",
       "skill": "circle-basics",
       "title": "Circle Vocabulary, Circumference, and Area",
-      "text": "A **circle** is the set of all points equidistant from a center point. Key vocabulary:\n\n• **Radius (r)** — segment from center to any point on the circle\n• **Diameter (d)** — segment through the center connecting two points on the circle (d = 2r)\n• **Chord** — segment connecting any two points on the circle\n• **Secant** — a line that intersects a circle at two points\n• **Tangent** — a line that touches the circle at exactly one point\n• **Arc** — a portion of the circle between two points\n• **Central angle** — angle with vertex at the center\n• **Inscribed angle** — angle with vertex on the circle\n\n**Circumference:** C = 2πr = πd\n**Area:** A = πr²",
+      "content": "A **circle** is the set of all points equidistant from a center point. Key vocabulary:\n\n• **Radius (r)** — segment from center to any point on the circle\n• **Diameter (d)** — segment through the center connecting two points on the circle (d = 2r)\n• **Chord** — segment connecting any two points on the circle\n• **Secant** — a line that intersects a circle at two points\n• **Tangent** — a line that touches the circle at exactly one point\n• **Arc** — a portion of the circle between two points\n• **Central angle** — angle with vertex at the center\n• **Inscribed angle** — angle with vertex on the circle\n\n**Circumference:** C = 2πr = πd\n**Area:** A = πr²",
       "initialPrompt": "A circle has a diameter of 10 inches. What is the radius? Can you find the circumference and area?"
     },
     {
@@ -93,7 +104,7 @@
       "lessonPhase": "concept-intro",
       "skill": "arc-length",
       "title": "Arc Length and Sector Area",
-      "text": "**Arc Length** and **Sector Area** are fractions of the whole circle, controlled by the central angle:\n\n**Arc Length** = (θ/360°) × 2πr\nThis is the fraction (θ/360°) of the full circumference.\n\n**Sector Area** = (θ/360°) × πr²\nThis is the fraction (θ/360°) of the full area.\n\nThink of it like a pizza: the central angle determines what fraction of the pizza (circle) you're taking. A 90° slice is 90/360 = 1/4 of the pizza.",
+      "content": "**Arc Length** and **Sector Area** are fractions of the whole circle, controlled by the central angle:\n\n**Arc Length** = (θ/360°) × 2πr\nThis is the fraction (θ/360°) of the full circumference.\n\n**Sector Area** = (θ/360°) × πr²\nThis is the fraction (θ/360°) of the full area.\n\nThink of it like a pizza: the central angle determines what fraction of the pizza (circle) you're taking. A 90° slice is 90/360 = 1/4 of the pizza.",
       "initialPrompt": "A pizza has a 12-inch diameter. If you cut a slice with a 60° central angle, what fraction of the whole pizza is that slice?"
     },
     {
@@ -158,7 +169,7 @@
       "lessonPhase": "concept-intro",
       "skill": "inscribed-angles",
       "title": "Inscribed Angle Theorem and Circle Theorems",
-      "text": "**Inscribed Angle Theorem:** An inscribed angle (vertex on the circle) is **half** the central angle that intercepts the same arc.\n\nIf a central angle = 80°, an inscribed angle intercepting the same arc = 40°.\n\n**Key Corollaries:**\n• Inscribed angles that intercept the SAME arc are congruent\n• An inscribed angle that intercepts a semicircle (diameter) = 90°\n• Opposite angles of an inscribed quadrilateral are supplementary (sum to 180°)\n\n**Tangent-Radius Relationship:** A tangent line is always **perpendicular** to the radius drawn to the point of tangency.\n\n**Tangent-Chord Angle:** The angle between a tangent and a chord = half the intercepted arc.",
+      "content": "**Inscribed Angle Theorem:** An inscribed angle (vertex on the circle) is **half** the central angle that intercepts the same arc.\n\nIf a central angle = 80°, an inscribed angle intercepting the same arc = 40°.\n\n**Key Corollaries:**\n• Inscribed angles that intercept the SAME arc are congruent\n• An inscribed angle that intercepts a semicircle (diameter) = 90°\n• Opposite angles of an inscribed quadrilateral are supplementary (sum to 180°)\n\n**Tangent-Radius Relationship:** A tangent line is always **perpendicular** to the radius drawn to the point of tangency.\n\n**Tangent-Chord Angle:** The angle between a tangent and a chord = half the intercepted arc.",
       "initialPrompt": "If a triangle is inscribed in a circle and one side is a diameter, what must the angle opposite that diameter be? Why?"
     },
     {
@@ -228,45 +239,58 @@
           "question": "A circle has diameter 26 cm. Find the circumference and area.",
           "answer": "C = 26π ≈ 81.68 cm, A = 169π ≈ 530.93 cm²",
           "skill": "circle-basics",
-          "hints": ["Radius = 13. C = 2π(13) = 26π. A = π(13²) = 169π."]
+          "hints": [
+            "Radius = 13. C = 2π(13) = 26π. A = π(13²) = 169π."
+          ]
         },
         {
           "id": "ci-yp2",
           "question": "Find the arc length for a circle with radius 15 m and central angle of 80°.",
           "answer": "20π/3 m ≈ 20.94 m",
           "skill": "arc-length",
-          "hints": ["Arc length = (80/360) × 2π(15) = (2/9) × 30π = 20π/3."]
+          "hints": [
+            "Arc length = (80/360) × 2π(15) = (2/9) × 30π = 20π/3."
+          ]
         },
         {
           "id": "ci-yp3",
           "question": "A sector of a circle with radius 8 has an area of 16π. Find the central angle.",
           "answer": "90°",
           "skill": "sector-area",
-          "hints": ["Total area = 64π. Fraction = 16π/64π = 1/4. Angle = 360/4 = 90°."]
+          "hints": [
+            "Total area = 64π. Fraction = 16π/64π = 1/4. Angle = 360/4 = 90°."
+          ]
         },
         {
           "id": "ci-yp4",
           "question": "An inscribed angle intercepts a semicircle. What is the measure of the inscribed angle?",
           "answer": "90°",
           "skill": "inscribed-angles",
-          "hints": ["A semicircle has a central angle of 180°. Inscribed angle = 180°/2 = 90°."]
+          "hints": [
+            "A semicircle has a central angle of 180°. Inscribed angle = 180°/2 = 90°."
+          ]
         },
         {
           "id": "ci-yp5",
           "question": "A tangent line meets a radius at the point of tangency. The tangent makes a 35° angle with a chord drawn from the point of tangency. Find the intercepted arc.",
           "answer": "70°",
           "skill": "circle-theorems",
-          "hints": ["Tangent-chord angle = half the intercepted arc. Arc = 2 × 35° = 70°."]
+          "hints": [
+            "Tangent-chord angle = half the intercepted arc. Arc = 2 × 35° = 70°."
+          ]
         },
         {
           "id": "ci-yp6",
           "question": "Quadrilateral PQRS is inscribed in a circle. ∠P = (2x + 20)° and ∠R = (3x + 10)°. Find x, ∠P, and ∠R.",
           "answer": "x = 30, ∠P = 80°, ∠R = 100°",
           "skill": "inscribed-angles",
-          "hints": ["Opposite supplementary: (2x+20)+(3x+10)=180 → 5x+30=180 → x=30. ∠P=80°, ∠R=100°."]
+          "hints": [
+            "Opposite supplementary: (2x+20)+(3x+10)=180 → 5x+30=180 → x=30. ∠P=80°, ∠R=100°."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "circle-basics"
     }
   ],
   "answerKeys": {

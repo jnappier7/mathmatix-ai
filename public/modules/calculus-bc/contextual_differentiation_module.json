@@ -6,8 +6,21 @@
   "weeks": "9-10",
   "estimatedDuration": 50,
   "description": "Put differentiation to work in the real world. Related rates translate physical situations into calculus equations. Motion problems connect position, velocity, and acceleration through derivatives. Linearization uses the tangent line to approximate function values. L'Hôpital's Rule resolves indeterminate limits that stumped us in Unit 1. Every topic here is an AP exam staple — related rates and motion problems appear on the FRQ section almost every year.",
-  "skills": ["related-rates", "motion-problems", "linearization-differentials", "lhopitals-rule"],
-  "standardsAlignment": ["CED 4.1", "CED 4.2", "CED 4.3", "CED 4.4", "CED 4.5", "CED 4.6", "CED 4.7"],
+  "skills": [
+    "related-rates",
+    "motion-problems",
+    "linearization-differentials",
+    "lhopitals-rule"
+  ],
+  "standardsAlignment": [
+    "CED 4.1",
+    "CED 4.2",
+    "CED 4.3",
+    "CED 4.4",
+    "CED 4.5",
+    "CED 4.6",
+    "CED 4.7"
+  ],
   "goals": [
     "Set up and solve related rates problems by translating physical scenarios into equations and differentiating with respect to time",
     "Analyze straight-line motion using position, velocity, and acceleration functions, distinguishing displacement from total distance",
@@ -27,7 +40,7 @@
       "lessonPhase": "concept-intro",
       "skill": "related-rates",
       "title": "Related Rates: Connecting Changing Quantities",
-      "text": "**The Big Idea:**\n\nIn a related rates problem, two or more quantities are changing with respect to time, and those quantities are connected by an equation. We differentiate that equation with respect to t (time) to find how the rates are related.\n\n**The Framework (follow every time):**\n1. **Draw a diagram** and label ALL variables\n2. **Write the equation** connecting the variables\n3. **Differentiate both sides** with respect to t (implicit differentiation!)\n4. **Substitute** the known values and solve for the unknown rate\n5. **State the answer** with units and interpretation\n\n**Common setups:**\n• Pythagorean theorem: x² + y² = L² (ladders, shadows)\n• Volume/area formulas: V = (4/3)πr³, A = πr², V = (1/3)πr²h\n• Similar triangles: ratios stay constant as dimensions change\n• Trigonometric: tan θ = opposite/adjacent\n\n**Critical:** Never substitute numerical values for changing variables BEFORE differentiating. Substitution happens AFTER.",
+      "content": "**The Big Idea:**\n\nIn a related rates problem, two or more quantities are changing with respect to time, and those quantities are connected by an equation. We differentiate that equation with respect to t (time) to find how the rates are related.\n\n**The Framework (follow every time):**\n1. **Draw a diagram** and label ALL variables\n2. **Write the equation** connecting the variables\n3. **Differentiate both sides** with respect to t (implicit differentiation!)\n4. **Substitute** the known values and solve for the unknown rate\n5. **State the answer** with units and interpretation\n\n**Common setups:**\n• Pythagorean theorem: x² + y² = L² (ladders, shadows)\n• Volume/area formulas: V = (4/3)πr³, A = πr², V = (1/3)πr²h\n• Similar triangles: ratios stay constant as dimensions change\n• Trigonometric: tan θ = opposite/adjacent\n\n**Critical:** Never substitute numerical values for changing variables BEFORE differentiating. Substitution happens AFTER.",
       "initialPrompt": "A 10-ft ladder leans against a wall. If the bottom slides out, the top slides down. What equation connects the bottom's distance from the wall, the top's height, and the ladder's length?"
     },
     {
@@ -92,7 +105,7 @@
       "lessonPhase": "concept-intro",
       "skill": "motion-problems",
       "title": "Straight-Line Motion: Position, Velocity, Acceleration",
-      "text": "**The Derivative Chain of Motion:**\n\nPosition → Velocity → Acceleration\ns(t) → v(t) = s'(t) → a(t) = v'(t) = s''(t)\n\n**Key Relationships:**\n• **Velocity** = rate of change of position. Positive = moving right/up, negative = moving left/down.\n• **Speed** = |v(t)| (always non-negative)\n• **Acceleration** = rate of change of velocity\n• **Particle at rest:** v(t) = 0\n• **Changes direction:** v(t) changes sign (must pass through 0)\n\n**Speeding up vs. slowing down:**\n• **Speeding up:** v(t) and a(t) have the SAME sign (both positive or both negative)\n• **Slowing down:** v(t) and a(t) have OPPOSITE signs\n\n**Displacement vs. Total Distance on [a, b]:**\n• Displacement = s(b) − s(a) (net change — can be negative)\n• Total distance = sum of |s(t)| segments between direction changes\n\n**AP loves motion problems.** They appear on FRQs nearly every year, often with tabular data.",
+      "content": "**The Derivative Chain of Motion:**\n\nPosition → Velocity → Acceleration\ns(t) → v(t) = s'(t) → a(t) = v'(t) = s''(t)\n\n**Key Relationships:**\n• **Velocity** = rate of change of position. Positive = moving right/up, negative = moving left/down.\n• **Speed** = |v(t)| (always non-negative)\n• **Acceleration** = rate of change of velocity\n• **Particle at rest:** v(t) = 0\n• **Changes direction:** v(t) changes sign (must pass through 0)\n\n**Speeding up vs. slowing down:**\n• **Speeding up:** v(t) and a(t) have the SAME sign (both positive or both negative)\n• **Slowing down:** v(t) and a(t) have OPPOSITE signs\n\n**Displacement vs. Total Distance on [a, b]:**\n• Displacement = s(b) − s(a) (net change — can be negative)\n• Total distance = sum of |s(t)| segments between direction changes\n\n**AP loves motion problems.** They appear on FRQs nearly every year, often with tabular data.",
       "initialPrompt": "If a car has v(t) = −20 mph and a(t) = −5 mph², is the car speeding up or slowing down? Be careful — the signs are both negative."
     },
     {
@@ -157,7 +170,7 @@
       "lessonPhase": "concept-intro",
       "skill": "linearization-differentials",
       "title": "Linearization, Differentials & L'Hôpital's Rule",
-      "text": "**Linearization (Tangent-Line Approximation):**\n\nThe tangent line at x = a gives the best linear approximation to f near a:\n\n**L(x) = f(a) + f'(a)(x − a)**\n\nThis is the same as the tangent line equation! Use it to estimate function values without a calculator.\n\n**Differentials:**\ndy = f'(x) dx\nThe differential dy approximates the actual change Δy for small dx.\n\n**L'Hôpital's Rule — Resolving Indeterminate Limits:**\n\nIf lim[x→c] f(x)/g(x) gives 0/0 or ∞/∞, then:\nlim[x→c] f(x)/g(x) = lim[x→c] f'(x)/g'(x)\n(provided the right-side limit exists or is ±∞)\n\n**Critical requirements:**\n1. VERIFY the indeterminate form FIRST — if it's not 0/0 or ∞/∞, L'Hôpital does NOT apply\n2. Differentiate numerator and denominator SEPARATELY (this is NOT the quotient rule)\n3. You may need to apply L'Hôpital more than once\n4. Other forms (0·∞, ∞−∞, 0⁰, 1^∞, ∞⁰) must be rewritten as 0/0 or ∞/∞ first",
+      "content": "**Linearization (Tangent-Line Approximation):**\n\nThe tangent line at x = a gives the best linear approximation to f near a:\n\n**L(x) = f(a) + f'(a)(x − a)**\n\nThis is the same as the tangent line equation! Use it to estimate function values without a calculator.\n\n**Differentials:**\ndy = f'(x) dx\nThe differential dy approximates the actual change Δy for small dx.\n\n**L'Hôpital's Rule — Resolving Indeterminate Limits:**\n\nIf lim[x→c] f(x)/g(x) gives 0/0 or ∞/∞, then:\nlim[x→c] f(x)/g(x) = lim[x→c] f'(x)/g'(x)\n(provided the right-side limit exists or is ±∞)\n\n**Critical requirements:**\n1. VERIFY the indeterminate form FIRST — if it's not 0/0 or ∞/∞, L'Hôpital does NOT apply\n2. Differentiate numerator and denominator SEPARATELY (this is NOT the quotient rule)\n3. You may need to apply L'Hôpital more than once\n4. Other forms (0·∞, ∞−∞, 0⁰, 1^∞, ∞⁰) must be rewritten as 0/0 or ∞/∞ first",
       "initialPrompt": "Use the tangent line to √x at x = 25 to estimate √26. Why is the tangent line a good approximation for values close to 25?"
     },
     {
@@ -227,45 +240,58 @@
           "question": "A rectangle has length growing at 3 cm/s and width shrinking at 2 cm/s. Find the rate of area change when l = 12 cm and w = 5 cm.",
           "answer": "−9 cm²/s (area is decreasing)",
           "skill": "related-rates",
-          "hints": ["A = lw. dA/dt = l(dw/dt) + w(dl/dt) = 12(−2) + 5(3) = −24 + 15 = −9 cm²/s."]
+          "hints": [
+            "A = lw. dA/dt = l(dw/dt) + w(dl/dt) = 12(−2) + 5(3) = −24 + 15 = −9 cm²/s."
+          ]
         },
         {
           "id": "cd-yp2",
           "question": "s(t) = t⁴/4 − 2t² + 4 for t ≥ 0. Find v(t) and the time(s) when the particle changes direction.",
           "answer": "v(t) = t³ − 4t = t(t − 2)(t + 2). Changes direction at t = 2.",
           "skill": "motion-problems",
-          "hints": ["v(t) = t³ − 4t = t(t² − 4) = t(t − 2)(t + 2). For t ≥ 0: v = 0 at t = 0 and t = 2. Check sign change: v is negative on (0, 2) and positive on (2, ∞). Direction change at t = 2 (t = 0 is initial, not a reversal since v goes from 0 to negative)."]
+          "hints": [
+            "v(t) = t³ − 4t = t(t² − 4) = t(t − 2)(t + 2). For t ≥ 0: v = 0 at t = 0 and t = 2. Check sign change: v is negative on (0, 2) and positive on (2, ∞). Direction change at t = 2 (t = 0 is initial, not a reversal since v goes from 0 to negative)."
+          ]
         },
         {
           "id": "cd-yp3",
           "question": "Use linearization of f(x) = ∛x at a = 8 to approximate ∛(8.1).",
           "answer": "2 + 1/120 = 241/120 ≈ 2.0083",
           "skill": "linearization-differentials",
-          "hints": ["f(8) = 2, f'(x) = (1/3)x^(−2/3), f'(8) = (1/3)(1/4) = 1/12. L(x) = 2 + (1/12)(x − 8). L(8.1) = 2 + (1/12)(0.1) = 2 + 1/120 ≈ 2.0083."]
+          "hints": [
+            "f(8) = 2, f'(x) = (1/3)x^(−2/3), f'(8) = (1/3)(1/4) = 1/12. L(x) = 2 + (1/12)(x − 8). L(8.1) = 2 + (1/12)(0.1) = 2 + 1/120 ≈ 2.0083."
+          ]
         },
         {
           "id": "cd-yp4",
           "question": "Evaluate: lim[x→0] (eˣ − 1)/x.",
           "answer": "1",
           "skill": "lhopitals-rule",
-          "hints": ["Direct sub: (1 − 1)/0 = 0/0. L'Hôpital: lim eˣ/1 = e⁰ = 1."]
+          "hints": [
+            "Direct sub: (1 − 1)/0 = 0/0. L'Hôpital: lim eˣ/1 = e⁰ = 1."
+          ]
         },
         {
           "id": "cd-yp5",
           "question": "v(t) = t² − 4t + 3 on [0, 4]. Find total distance traveled.",
           "answer": "4",
           "skill": "motion-problems",
-          "hints": ["v(t) = (t − 1)(t − 3). v = 0 at t = 1, t = 3. Antiderivative: s(t) = t³/3 − 2t² + 3t. s(0) = 0, s(1) = 1/3 − 2 + 3 = 4/3, s(3) = 9 − 18 + 9 = 0, s(4) = 64/3 − 32 + 12 = 4/3. Total distance = |4/3| + |0 − 4/3| + |4/3 − 0| = 4/3 + 4/3 + 4/3 = 4."]
+          "hints": [
+            "v(t) = (t − 1)(t − 3). v = 0 at t = 1, t = 3. Antiderivative: s(t) = t³/3 − 2t² + 3t. s(0) = 0, s(1) = 1/3 − 2 + 3 = 4/3, s(3) = 9 − 18 + 9 = 0, s(4) = 64/3 − 32 + 12 = 4/3. Total distance = |4/3| + |0 − 4/3| + |4/3 − 0| = 4/3 + 4/3 + 4/3 = 4."
+          ]
         },
         {
           "id": "cd-yp6",
           "question": "Evaluate: lim[x→∞] ln(x)/√x.",
           "answer": "0",
           "skill": "lhopitals-rule",
-          "hints": ["Form: ∞/∞. L'Hôpital: lim (1/x)/(1/(2√x)) = lim 2√x/x = lim 2/√x = 0."]
+          "hints": [
+            "Form: ∞/∞. L'Hôpital: lim (1/x)/(1/(2√x)) = lim 2√x/x = lim 2/√x = 0."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "related-rates"
     }
   ],
   "answerKeys": {

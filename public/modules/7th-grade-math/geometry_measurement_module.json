@@ -6,7 +6,6 @@
   "weeks": "18-22",
   "estimatedDuration": 30,
   "description": "Covers 7.G standards on geometry. Students review and extend circle area and circumference, find the area of composite figures, compute surface area of prisms and pyramids using nets and formulas, calculate volume of prisms and cylinders, and explore cross-sections of three-dimensional figures.",
-
   "skills": [
     "g7-area-circumference",
     "g7-composite-figures",
@@ -14,9 +13,11 @@
     "g7-volume",
     "g7-cross-sections"
   ],
-
-  "standardsAlignment": ["7.G.3", "7.G.4", "7.G.6"],
-
+  "standardsAlignment": [
+    "7.G.3",
+    "7.G.4",
+    "7.G.6"
+  ],
   "goals": [
     "Calculate the area and circumference of circles using A = πr² and C = 2πr (or C = πd)",
     "Find the area of composite figures by decomposing them into rectangles, triangles, and partial circles",
@@ -24,7 +25,6 @@
     "Calculate the volume of rectangular prisms and cylinders using V = Bh",
     "Identify and describe cross-sections formed when three-dimensional figures are sliced by a plane"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -32,9 +32,7 @@
     "Formulas introduced alongside visual reasoning — nets for surface area, base-times-height for volume",
     "Students encouraged to draw and label diagrams before computing"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -111,7 +109,6 @@
         "The orientation of the cut determines the shape of the cross-section — the same solid can produce different cross-sections."
       ]
     },
-
     {
       "type": "model",
       "lessonPhase": "i-do",
@@ -204,12 +201,15 @@
         }
       ]
     },
-
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Circles, Composite Figures & Surface Area Practice",
-      "skills": ["g7-area-circumference", "g7-composite-figures", "g7-surface-area"],
+      "skills": [
+        "g7-area-circumference",
+        "g7-composite-figures",
+        "g7-surface-area"
+      ],
       "problems": [
         {
           "id": "gp1-1",
@@ -238,13 +238,17 @@
           ],
           "answer": "SA = 2(140 + 70 + 50) = 2(260) = 520 sq in."
         }
-      ]
+      ],
+      "skill": "g7-composite-figures"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Volume & Cross-Sections Practice",
-      "skills": ["g7-volume", "g7-cross-sections"],
+      "skills": [
+        "g7-volume",
+        "g7-cross-sections"
+      ],
       "problems": [
         {
           "id": "gp2-1",
@@ -273,14 +277,20 @@
           ],
           "answer": "The cross-section is a circle (smaller than the base)."
         }
-      ]
+      ],
+      "skill": "g7-volume"
     },
-
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Geometry and Measurement — Practice Set",
-      "skills": ["g7-area-circumference", "g7-composite-figures", "g7-surface-area", "g7-volume", "g7-cross-sections"],
+      "skills": [
+        "g7-area-circumference",
+        "g7-composite-figures",
+        "g7-surface-area",
+        "g7-volume",
+        "g7-cross-sections"
+      ],
       "problems": [
         {
           "id": "ip-1",
@@ -317,10 +327,10 @@
           "problem": "A square pyramid is sliced horizontally, parallel to its square base, halfway between the base and the apex. What shape is the cross-section?",
           "answer": "The cross-section is a square (smaller than the base)."
         }
-      ]
+      ],
+      "skill": "g7-area-circumference"
     }
   ],
-
   "answerKeys": {
     "gp1-1": "C = 43.96 ft; A = 153.86 sq ft",
     "gp1-2": "159.25 sq ft",

@@ -6,7 +6,6 @@
   "weeks": "6-7",
   "estimatedDuration": 25,
   "description": "Covers 8-12% of the ACT. Master measures of center and spread, data representations (bar/line/scatter/histogram/box plots), two-way tables, probability, and counting techniques. Focus on fast and accurate graph reading.",
-
   "skills": [
     "act-center-spread",
     "act-data-representations",
@@ -14,9 +13,12 @@
     "act-probability",
     "act-counting-techniques"
   ],
-
-  "standardsAlignment": ["ACT S 301-305", "ACT S 401-405", "ACT S 501-505", "ACT S 601-605"],
-
+  "standardsAlignment": [
+    "ACT S 301-305",
+    "ACT S 401-405",
+    "ACT S 501-505",
+    "ACT S 601-605"
+  ],
   "goals": [
     "Calculate mean, median, mode, range, and weighted averages efficiently",
     "Read and interpret graphs, scatter plots, histograms, and box plots",
@@ -24,7 +26,6 @@
     "Calculate basic, compound, and conditional probabilities",
     "Apply the fundamental counting principle, permutations, and combinations"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -32,9 +33,7 @@
     "Two-way tables taught as a dedicated topic since they appear frequently",
     "Probability taught with emphasis on complementary probability (P(at least 1) = 1 - P(none))"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -113,24 +112,39 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Statistics & Data Practice",
-      "skills": ["act-center-spread", "act-data-representations", "act-two-way-tables"],
+      "skills": [
+        "act-center-spread",
+        "act-data-representations",
+        "act-two-way-tables"
+      ],
       "problems": [
         {
           "problem": "The median of {3, 7, 12, 15, x, 25, 30} (already sorted) is 15. What are the possible values of x?\n(A) x = 15  (B) x ≥ 15  (C) x ≤ 15  (D) 15 ≤ x ≤ 25  (E) Any value",
-          "hints": ["With 7 values, the median is the 4th value", "For the 4th value to be 15, x must be ≥ 15 (to keep 15 in the 4th position)"],
+          "hints": [
+            "With 7 values, the median is the 4th value",
+            "For the 4th value to be 15, x must be ≥ 15 (to keep 15 in the 4th position)"
+          ],
           "answer": "(B) x ≥ 15. The 4th value in sorted order must be 15. If x < 15, x goes before 15 and shifts 15 to 5th position, making median = x or 15 depending on x. Actually: {3, 7, 12, 15, x, 25, 30} sorted — if x ≥ 15, median is 15. Answer: (D) 15 ≤ x ≤ 25."
         },
         {
           "problem": "A class of 30 students has a mean test score of 82. If the teacher removes the lowest score of 40, what is the new mean?\n(A) 82  (B) 83.0  (C) 83.4  (D) 84.0  (E) 84.6",
-          "hints": ["Total = 30 × 82 = 2460", "New total = 2460 − 40 = 2420. New count = 29.", "New mean = 2420/29 ≈ 83.4"],
+          "hints": [
+            "Total = 30 × 82 = 2460",
+            "New total = 2460 − 40 = 2420. New count = 29.",
+            "New mean = 2420/29 ≈ 83.4"
+          ],
           "answer": "(C) 83.4. Total = 2460. Remove 40: 2420/29 ≈ 83.45."
         },
         {
           "problem": "Using the two-way table:\n\n              | Yes | No | Total\n    Seniors   |  25 | 15 |   40\n    Juniors   |  30 | 30 |   60\n    Total     |  55 | 45 |  100\n\nWhat percent of Juniors said Yes?\n(A) 30%  (B) 50%  (C) 55%  (D) 60%  (E) 75%",
-          "hints": ["Focus on the Juniors row", "Juniors who said Yes = 30, total Juniors = 60"],
+          "hints": [
+            "Focus on the Juniors row",
+            "Juniors who said Yes = 30, total Juniors = 60"
+          ],
           "answer": "(B) 50%. 30/60 = 50%."
         }
-      ]
+      ],
+      "skill": "act-two-way-tables"
     },
     {
       "type": "explanation",
@@ -177,30 +191,50 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Probability & Counting Practice",
-      "skills": ["act-probability", "act-counting-techniques"],
+      "skills": [
+        "act-probability",
+        "act-counting-techniques"
+      ],
       "problems": [
         {
           "problem": "A coin is flipped 3 times. What is the probability of getting at least one head?\n(A) 1/8  (B) 3/8  (C) 1/2  (D) 7/8  (E) 1",
-          "hints": ["Use complementary probability: P(at least 1 head) = 1 − P(no heads)", "P(no heads) = P(TTT) = (1/2)³ = 1/8"],
+          "hints": [
+            "Use complementary probability: P(at least 1 head) = 1 − P(no heads)",
+            "P(no heads) = P(TTT) = (1/2)³ = 1/8"
+          ],
           "answer": "(D) 7/8. P(at least 1 head) = 1 − P(TTT) = 1 − 1/8 = 7/8."
         },
         {
           "problem": "A jar has 5 red and 3 blue marbles. Two marbles are drawn without replacement. What is the probability both are red?\n(A) 5/14  (B) 25/64  (C) 5/8  (D) 10/28  (E) 15/56",
-          "hints": ["First draw: P(red) = 5/8", "Second draw (without replacement): P(red) = 4/7", "Multiply: 5/8 × 4/7"],
+          "hints": [
+            "First draw: P(red) = 5/8",
+            "Second draw (without replacement): P(red) = 4/7",
+            "Multiply: 5/8 × 4/7"
+          ],
           "answer": "(A) 5/14. (5/8)(4/7) = 20/56 = 5/14."
         },
         {
           "problem": "In how many ways can 5 runners finish in first, second, and third place?\n(A) 10  (B) 15  (C) 60  (D) 120  (E) 125",
-          "hints": ["Order matters → permutation", "5P3 = 5 × 4 × 3"],
+          "hints": [
+            "Order matters → permutation",
+            "5P3 = 5 × 4 × 3"
+          ],
           "answer": "(C) 60. 5P3 = 5 × 4 × 3 = 60."
         }
-      ]
+      ],
+      "skill": "act-probability"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Statistics & Probability — ACT-Style Practice Set",
-      "skills": ["act-center-spread", "act-data-representations", "act-two-way-tables", "act-probability", "act-counting-techniques"],
+      "skills": [
+        "act-center-spread",
+        "act-data-representations",
+        "act-two-way-tables",
+        "act-probability",
+        "act-counting-techniques"
+      ],
       "problems": [
         {
           "problem": "The mean of 5 numbers is 24. If one number (30) is removed, what is the mean of the remaining 4 numbers?\n(A) 20  (B) 22.5  (C) 23.5  (D) 24  (E) 25.5",
@@ -226,10 +260,10 @@
           "problem": "In a survey, 60% of respondents like pizza, 40% like sushi, and 25% like both. What percent like pizza or sushi?\n(A) 65%  (B) 75%  (C) 85%  (D) 100%  (E) 125%",
           "answer": "(B) 75%. P(pizza or sushi) = 60% + 40% − 25% = 75%."
         }
-      ]
+      ],
+      "skill": "act-probability"
     }
   ],
-
   "answerKeys": {
     "mean-5tests": "88",
     "weighted-average": "90",

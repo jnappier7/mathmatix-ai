@@ -7,8 +7,16 @@
   "weeks": "7-9",
   "estimatedDuration": 50,
   "description": "Prove triangles congruent using the Big 5 shortcuts (SSS, SAS, ASA, AAS, HL), apply CPCTC to find missing parts, and write formal two-column and paragraph proofs involving triangle congruence.",
-  "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"],
-  "standardsAlignment": ["G-CO.7", "G-CO.8"],
+  "skills": [
+    "triangle-congruence-sss-sas-asa",
+    "triangle-congruence-aas-hl",
+    "cpctc",
+    "congruence-proofs"
+  ],
+  "standardsAlignment": [
+    "G-CO.7",
+    "G-CO.8"
+  ],
   "goals": [
     "Prove triangles congruent using SSS, SAS, and ASA postulates",
     "Prove triangles congruent using AAS theorem and HL theorem",
@@ -30,7 +38,7 @@
       "lessonPhase": "concept-intro",
       "skill": "triangle-congruence-sss-sas-asa",
       "title": "Congruence and the Big 5 Shortcuts",
-      "text": "Two triangles are **congruent** if they have exactly the same size and shape—all corresponding sides and angles are equal. But we don't need to check all six parts! We can prove congruence with just three pieces of information, if they're the right combination:\n\n**The Big 5 Congruence Shortcuts:**\n• **SSS** — three pairs of congruent sides\n• **SAS** — two sides and the INCLUDED angle\n• **ASA** — two angles and the INCLUDED side\n• **AAS** — two angles and a NON-included side\n• **HL** — hypotenuse and leg (RIGHT triangles only)\n\nThe key word for SAS and ASA is **included**—the angle/side must be between the two sides/angles.\n\n⚠️ **SSA does NOT work!** Two sides and a non-included angle can produce two different triangles (the ambiguous case).",
+      "content": "Two triangles are **congruent** if they have exactly the same size and shape—all corresponding sides and angles are equal. But we don't need to check all six parts! We can prove congruence with just three pieces of information, if they're the right combination:\n\n**The Big 5 Congruence Shortcuts:**\n• **SSS** — three pairs of congruent sides\n• **SAS** — two sides and the INCLUDED angle\n• **ASA** — two angles and the INCLUDED side\n• **AAS** — two angles and a NON-included side\n• **HL** — hypotenuse and leg (RIGHT triangles only)\n\nThe key word for SAS and ASA is **included**—the angle/side must be between the two sides/angles.\n\n⚠️ **SSA does NOT work!** Two sides and a non-included angle can produce two different triangles (the ambiguous case).",
       "initialPrompt": "Why do you think we need the angle to be 'included' (between the two sides) for SAS? What could go wrong if the angle wasn't between the two sides?"
     },
     {
@@ -59,7 +67,7 @@
       "lessonPhase": "concept-intro",
       "skill": "triangle-congruence-aas-hl",
       "title": "AAS and HL Theorems",
-      "text": "Two more congruence shortcuts complete the Big 5:\n\n**AAS (Angle-Angle-Side):** Two pairs of congruent angles and one pair of congruent NON-included sides. Why does this work? If two angles match, the third angle is forced (angle sum = 180°), effectively giving you ASA.\n\n**HL (Hypotenuse-Leg):** For RIGHT triangles only: if the hypotenuses are congruent and one pair of legs is congruent, the triangles are congruent. Always verify the right angle first!\n\nRemember: **SSA is NOT valid** (the ambiguous case). But HL works for right triangles because the right angle eliminates the ambiguity.",
+      "content": "Two more congruence shortcuts complete the Big 5:\n\n**AAS (Angle-Angle-Side):** Two pairs of congruent angles and one pair of congruent NON-included sides. Why does this work? If two angles match, the third angle is forced (angle sum = 180°), effectively giving you ASA.\n\n**HL (Hypotenuse-Leg):** For RIGHT triangles only: if the hypotenuses are congruent and one pair of legs is congruent, the triangles are congruent. Always verify the right angle first!\n\nRemember: **SSA is NOT valid** (the ambiguous case). But HL works for right triangles because the right angle eliminates the ambiguity.",
       "initialPrompt": "Why does HL only work for right triangles? Why can't we use it for any triangle?"
     },
     {
@@ -124,7 +132,7 @@
       "lessonPhase": "concept-intro",
       "skill": "cpctc",
       "title": "CPCTC: The Payoff of Proving Congruence",
-      "text": "**CPCTC** stands for \"Corresponding Parts of Congruent Triangles are Congruent.\" This is the payoff of proving triangles congruent—once you know two triangles are congruent, ALL their corresponding parts are congruent.\n\nThe typical proof flow is:\n1. Prove the triangles congruent (using SSS, SAS, ASA, AAS, or HL)\n2. THEN conclude that specific corresponding parts are congruent (using CPCTC)\n\nCPCTC is never used to PROVE triangles congruent—it's used AFTER you've already proven congruence.",
+      "content": "**CPCTC** stands for \"Corresponding Parts of Congruent Triangles are Congruent.\" This is the payoff of proving triangles congruent—once you know two triangles are congruent, ALL their corresponding parts are congruent.\n\nThe typical proof flow is:\n1. Prove the triangles congruent (using SSS, SAS, ASA, AAS, or HL)\n2. THEN conclude that specific corresponding parts are congruent (using CPCTC)\n\nCPCTC is never used to PROVE triangles congruent—it's used AFTER you've already proven congruence.",
       "initialPrompt": "Why can't we use CPCTC as the very first step? What has to happen before we can use it?"
     },
     {
@@ -186,38 +194,49 @@
           "question": "You are given ∠A ≅ ∠D, ∠C ≅ ∠F, and AC ≅ DF. Which congruence theorem proves △ABC ≅ △DEF?",
           "answer": "AAS",
           "skill": "triangle-congruence-aas-hl",
-          "hints": ["Two angles and a non-included side → AAS."]
+          "hints": [
+            "Two angles and a non-included side → AAS."
+          ]
         },
         {
           "id": "cg-yp2",
           "question": "Two right triangles have congruent hypotenuses (10 cm each) and one pair of congruent legs (6 cm each). Are the triangles congruent? By what theorem?",
           "answer": "Yes, by HL",
           "skill": "triangle-congruence-aas-hl",
-          "hints": ["Right triangles + hypotenuse + one leg = HL Theorem."]
+          "hints": [
+            "Right triangles + hypotenuse + one leg = HL Theorem."
+          ]
         },
         {
           "id": "cg-yp3",
           "question": "Can you use SSA to prove triangles congruent? Explain why or why not.",
           "answer": "No. SSA is not valid because two different triangles can be formed with the same two sides and a non-included angle (the ambiguous case).",
           "skill": "triangle-congruence-sss-sas-asa",
-          "hints": ["Think about the 'swinging door' effect—the third side can swing to two different positions."]
+          "hints": [
+            "Think about the 'swinging door' effect—the third side can swing to two different positions."
+          ]
         },
         {
           "id": "cg-yp4",
           "question": "Given: ∠P ≅ ∠R, and Q is the midpoint of PR. Why is △PQS ≅ △RQS (where S is a point above PR forming two triangles)?",
           "answer": "∠P ≅ ∠R (given), PQ ≅ RQ (definition of midpoint), QS ≅ QS (reflexive). SAS.",
           "skill": "congruence-proofs",
-          "hints": ["Q is the midpoint of PR, so PQ ≅ RQ. QS is shared. What postulate fits?"]
+          "hints": [
+            "Q is the midpoint of PR, so PQ ≅ RQ. QS is shared. What postulate fits?"
+          ]
         },
         {
           "id": "cg-yp5",
           "question": "△JKL ≅ △WXY. If JK = 11, KL = 14, JL = 9, and ∠K = 72°, find WX, XY, WY, and ∠X.",
           "answer": "WX = 11, XY = 14, WY = 9, ∠X = 72°",
           "skill": "cpctc",
-          "hints": ["J↔W, K↔X, L↔Y. Use CPCTC to match all parts."]
+          "hints": [
+            "J↔W, K↔X, L↔Y. Use CPCTC to match all parts."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "triangle-congruence-sss-sas-asa"
     }
   ],
   "answerKeys": {

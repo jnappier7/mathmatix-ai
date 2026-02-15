@@ -6,7 +6,6 @@
   "weeks": "7-8",
   "estimatedDuration": 35,
   "description": "Covers 40-43% of the ACT — the LARGEST reporting category. These are multi-step problems that synthesize arithmetic, algebra, geometry, and data skills. They test whether you can combine 'basic' skills under time pressure to solve real-world problems.",
-
   "skills": [
     "act-multi-step-rate-proportion",
     "act-area-perimeter-composite",
@@ -14,9 +13,13 @@
     "act-percent-applications",
     "act-measurement-unit-conversion"
   ],
-
-  "standardsAlignment": ["ACT IES 201-205", "ACT IES 301-305", "ACT IES 401-405", "ACT IES 501-505", "ACT IES 601-605"],
-
+  "standardsAlignment": [
+    "ACT IES 201-205",
+    "ACT IES 301-305",
+    "ACT IES 401-405",
+    "ACT IES 501-505",
+    "ACT IES 601-605"
+  ],
   "goals": [
     "Solve multi-step rate, work, distance, and mixture problems",
     "Calculate area and perimeter of composite and shaded-region figures",
@@ -24,7 +27,6 @@
     "Apply successive percent changes, tax, tip, discount, and interest calculations",
     "Convert between units using dimensional analysis"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
@@ -32,9 +34,7 @@
     "Teach problem decomposition: break one hard problem into 2-3 simpler steps",
     "Emphasize careful reading — IES questions often have extra information as distractors"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -112,29 +112,48 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Multi-Step & Application Practice",
-      "skills": ["act-multi-step-rate-proportion", "act-area-perimeter-composite", "act-percent-applications", "act-measurement-unit-conversion"],
+      "skills": [
+        "act-multi-step-rate-proportion",
+        "act-area-perimeter-composite",
+        "act-percent-applications",
+        "act-measurement-unit-conversion"
+      ],
       "problems": [
         {
           "problem": "A runner jogs at 6 mph for 30 minutes, then walks at 3 mph for 1 hour. What is the total distance?\n(A) 3 miles  (B) 4.5 miles  (C) 6 miles  (D) 9 miles  (E) 12 miles",
-          "hints": ["Convert 30 minutes to 0.5 hours", "Jog: 6 × 0.5 = 3 miles. Walk: 3 × 1 = 3 miles. Total = 6."],
+          "hints": [
+            "Convert 30 minutes to 0.5 hours",
+            "Jog: 6 × 0.5 = 3 miles. Walk: 3 × 1 = 3 miles. Total = 6."
+          ],
           "answer": "(C) 6 miles. Jog: 6(0.5) = 3 mi. Walk: 3(1) = 3 mi. Total = 6 mi."
         },
         {
           "problem": "A rectangular pool (20 ft × 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 408  (C) 472  (D) 800  (E) 1,196",
-          "hints": ["Outer rectangle: (20+6) × (40+6) = 26 × 46", "Pool area: 20 × 40 = 800. Walkway = outer − pool."],
+          "hints": [
+            "Outer rectangle: (20+6) × (40+6) = 26 × 46",
+            "Pool area: 20 × 40 = 800. Walkway = outer − pool."
+          ],
           "answer": "(B) 408. Outer: 26 × 46 = 1,196. Pool: 800. Walkway: 1,196 − 800 = 396. Wait: 26 × 46 = 1196. 1196 − 800 = 396. Answer: (A) 396."
         },
         {
           "problem": "A restaurant bill is $65. After an 8% tax and a 20% tip (on the pre-tax amount), what is the total?\n(A) $78.00  (B) $81.20  (C) $83.20  (D) $85.80  (E) $89.70",
-          "hints": ["Tax: $65 × 0.08 = $5.20", "Tip on pre-tax: $65 × 0.20 = $13.00", "Total: $65 + $5.20 + $13.00"],
+          "hints": [
+            "Tax: $65 × 0.08 = $5.20",
+            "Tip on pre-tax: $65 × 0.20 = $13.00",
+            "Total: $65 + $5.20 + $13.00"
+          ],
           "answer": "(C) $83.20. Tax = $5.20. Tip = $13.00. Total = 65 + 5.20 + 13.00 = $83.20."
         },
         {
           "problem": "A recipe requires 2 cups of flour for 12 cookies. How many cups are needed for 42 cookies?\n(A) 3.5  (B) 5  (C) 7  (D) 21  (E) 84",
-          "hints": ["Set up proportion: 2/12 = x/42", "Cross multiply: 12x = 84"],
+          "hints": [
+            "Set up proportion: 2/12 = x/42",
+            "Cross multiply: 12x = 84"
+          ],
           "answer": "(C) 7. 2/12 = x/42 → 12x = 84 → x = 7 cups."
         }
-      ]
+      ],
+      "skill": "act-percent-applications"
     },
     {
       "type": "explanation",
@@ -175,30 +194,49 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Word Problems & Unit Conversion Practice",
-      "skills": ["act-algebraic-reasoning-context", "act-measurement-unit-conversion"],
+      "skills": [
+        "act-algebraic-reasoning-context",
+        "act-measurement-unit-conversion"
+      ],
       "problems": [
         {
           "problem": "Maria is 4 years older than twice Juan's age. If Maria is 26, how old is Juan?\n(A) 9  (B) 11  (C) 13  (D) 15  (E) 22",
-          "hints": ["Let j = Juan's age", "Maria: 2j + 4 = 26. Solve for j."],
+          "hints": [
+            "Let j = Juan's age",
+            "Maria: 2j + 4 = 26. Solve for j."
+          ],
           "answer": "(B) 11. 2j + 4 = 26 → 2j = 22 → j = 11."
         },
         {
           "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile ≈ 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 3.5 mi  (D) 5.0 mi  (E) 8.0 mi",
-          "hints": ["Divide: 5 km ÷ 1.609 km/mi", "≈ 3.107 miles"],
+          "hints": [
+            "Divide: 5 km ÷ 1.609 km/mi",
+            "≈ 3.107 miles"
+          ],
           "answer": "(B) 3.1 mi. 5 / 1.609 ≈ 3.1 miles."
         },
         {
           "problem": "A company's profit is modeled by P = 15x − 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 58  (D) 60  (E) 67",
-          "hints": ["Set 15x − 200 ≥ 700", "15x ≥ 900 → x ≥ 60"],
+          "hints": [
+            "Set 15x − 200 ≥ 700",
+            "15x ≥ 900 → x ≥ 60"
+          ],
           "answer": "(D) 60. 15x − 200 ≥ 700 → 15x ≥ 900 → x ≥ 60."
         }
-      ]
+      ],
+      "skill": "act-measurement-unit-conversion"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Integrating Essential Skills — ACT-Style Practice Set",
-      "skills": ["act-multi-step-rate-proportion", "act-area-perimeter-composite", "act-algebraic-reasoning-context", "act-percent-applications", "act-measurement-unit-conversion"],
+      "skills": [
+        "act-multi-step-rate-proportion",
+        "act-area-perimeter-composite",
+        "act-algebraic-reasoning-context",
+        "act-percent-applications",
+        "act-measurement-unit-conversion"
+      ],
       "problems": [
         {
           "problem": "Machine A produces 30 widgets per hour. Machine B produces 45 widgets per hour. How many hours will it take both machines working together to produce 600 widgets?\n(A) 6  (B) 8  (C) 10  (D) 13.3  (E) 20",
@@ -232,10 +270,10 @@
           "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon ≈ 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 480  (D) 908.4  (E) 960",
           "answer": "(D) 908.4. 240 × 3.785 = 908.4 liters."
         }
-      ]
+      ],
+      "skill": "act-multi-step-rate-proportion"
     }
   ],
-
   "answerKeys": {
     "average-speed": "50 mph",
     "combined-work": "2.4 hours",

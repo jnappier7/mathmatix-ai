@@ -14,7 +14,19 @@
     "continuity-types",
     "ivt-squeeze-theorem"
   ],
-  "standardsAlignment": ["AP Calc AB 1.1", "AP Calc AB 1.2", "AP Calc AB 1.3", "AP Calc AB 1.4", "AP Calc AB 1.5", "AP Calc AB 1.6", "AP Calc AB 1.7", "AP Calc AB 1.8", "AP Calc AB 1.10", "AP Calc AB 1.11", "AP Calc AB 1.12"],
+  "standardsAlignment": [
+    "AP Calc AB 1.1",
+    "AP Calc AB 1.2",
+    "AP Calc AB 1.3",
+    "AP Calc AB 1.4",
+    "AP Calc AB 1.5",
+    "AP Calc AB 1.6",
+    "AP Calc AB 1.7",
+    "AP Calc AB 1.8",
+    "AP Calc AB 1.10",
+    "AP Calc AB 1.11",
+    "AP Calc AB 1.12"
+  ],
   "goals": [
     "Evaluate limits from graphs and tables, including recognizing when limits do not exist.",
     "Compute limits algebraically using direct substitution, factoring, conjugates, and special trig limits.",
@@ -110,29 +122,48 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Limits Practice: Graphical & Algebraic",
-      "skills": ["limits-graphical-numerical", "limits-algebraic-techniques"],
+      "skills": [
+        "limits-graphical-numerical",
+        "limits-algebraic-techniques"
+      ],
       "problems": [
         {
           "problem": "Evaluate: lim(x→5) (x² - 3x - 10)/(x² - 25).",
-          "hints": ["Try substitution: 0/0", "Factor both: (x-5)(x+2) and (x-5)(x+5)", "Cancel (x-5), substitute x=5"],
+          "hints": [
+            "Try substitution: 0/0",
+            "Factor both: (x-5)(x+2) and (x-5)(x+5)",
+            "Cancel (x-5), substitute x=5"
+          ],
           "answer": "Factor: (x-5)(x+2)/((x-5)(x+5)) = (x+2)/(x+5). At x=5: 7/10."
         },
         {
           "problem": "Evaluate: lim(x→9) (3 - √x)/(9 - x).",
-          "hints": ["0/0 form. Rationalize or factor the denominator", "9-x = (3-√x)(3+√x)", "Cancel (3-√x)"],
+          "hints": [
+            "0/0 form. Rationalize or factor the denominator",
+            "9-x = (3-√x)(3+√x)",
+            "Cancel (3-√x)"
+          ],
           "answer": "9-x = (3-√x)(3+√x). So (3-√x)/((3-√x)(3+√x)) = 1/(3+√x). At x=9: 1/6."
         },
         {
           "problem": "Evaluate: lim(x→0) tan(2x)/sin(3x).",
-          "hints": ["tan(2x) = sin(2x)/cos(2x)", "Rewrite as [sin(2x)/(2x)]·[3x/sin(3x)]·(2x)/(3x·cos(2x))", "Use sin(u)/u → 1"],
+          "hints": [
+            "tan(2x) = sin(2x)/cos(2x)",
+            "Rewrite as [sin(2x)/(2x)]·[3x/sin(3x)]·(2x)/(3x·cos(2x))",
+            "Use sin(u)/u → 1"
+          ],
           "answer": "Rewrite: [sin(2x)/cos(2x)]/sin(3x) = sin(2x)/(cos(2x)·sin(3x)). Multiply by (2x·3x)/(2x·3x): [sin(2x)/(2x)]·[3x/sin(3x)]·2/(3cos(2x)). As x→0: 1·1·2/(3·1) = 2/3."
         },
         {
           "problem": "Given the table: t = 2.9, 2.99, 2.999, 3.001, 3.01, 3.1 and g(t) = 4.71, 4.9701, 4.997, 5.003, 5.0301, 5.31. Estimate lim(t→3) g(t). If g(3) = 7, is g continuous at t=3?",
-          "hints": ["Watch what g(t) approaches from both sides", "Continuity requires limit = f(a)"],
+          "hints": [
+            "Watch what g(t) approaches from both sides",
+            "Continuity requires limit = f(a)"
+          ],
           "answer": "From both sides, g(t) → 5. So lim(t→3) g(t) = 5. Since g(3) = 7 ≠ 5, g is NOT continuous at t=3 (removable discontinuity)."
         }
-      ]
+      ],
+      "skill": "limits-algebraic-techniques"
     },
     {
       "type": "explanation",
@@ -209,29 +240,48 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "One-Sided, Infinite & Limits at Infinity Practice",
-      "skills": ["one-sided-infinite-limits", "limits-at-infinity-asymptotes"],
+      "skills": [
+        "one-sided-infinite-limits",
+        "limits-at-infinity-asymptotes"
+      ],
       "problems": [
         {
           "problem": "Evaluate: lim(x→3⁺) (x - 5)/(x - 3) and lim(x→3⁻) (x - 5)/(x - 3).",
-          "hints": ["At x=3: numerator = -2. Denominator → 0.", "From right: x-3 > 0 (small positive). From left: x-3 < 0 (small negative).", "-2/(0⁺) vs -2/(0⁻)"],
+          "hints": [
+            "At x=3: numerator = -2. Denominator → 0.",
+            "From right: x-3 > 0 (small positive). From left: x-3 < 0 (small negative).",
+            "-2/(0⁺) vs -2/(0⁻)"
+          ],
           "answer": "lim(x→3⁺): -2/(0⁺) = -∞. lim(x→3⁻): -2/(0⁻) = +∞."
         },
         {
           "problem": "Find all horizontal and vertical asymptotes of f(x) = (3x - 1)/(x² - 4).",
-          "hints": ["Factor denominator: (x-2)(x+2)", "HA: compare degrees (1 < 2)", "VA: where denominator = 0 and numerator ≠ 0"],
+          "hints": [
+            "Factor denominator: (x-2)(x+2)",
+            "HA: compare degrees (1 < 2)",
+            "VA: where denominator = 0 and numerator ≠ 0"
+          ],
           "answer": "VA: x=2 and x=-2 (denominator zeros, numerator nonzero). HA: y=0 (degree numerator < degree denominator)."
         },
         {
           "problem": "Evaluate: lim(x→∞) (5x³ - 2x)/(3x³ + x² - 7).",
-          "hints": ["Same degree (3)", "Ratio of leading coefficients"],
+          "hints": [
+            "Same degree (3)",
+            "Ratio of leading coefficients"
+          ],
           "answer": "5/3."
         },
         {
           "problem": "Evaluate: lim(x→∞) (√(9x² + 2) - 3x).",
-          "hints": ["Multiply by conjugate (√(9x²+2)+3x)/(√(9x²+2)+3x)", "Numerator: 9x²+2-9x² = 2", "Denominator → 6x as x→∞"],
+          "hints": [
+            "Multiply by conjugate (√(9x²+2)+3x)/(√(9x²+2)+3x)",
+            "Numerator: 9x²+2-9x² = 2",
+            "Denominator → 6x as x→∞"
+          ],
           "answer": "Conjugate: 2/(√(9x²+2)+3x). As x→∞: √(9x²+2)≈3x, so denominator→6x→∞. Limit = 0."
         }
-      ]
+      ],
+      "skill": "limits-at-infinity-asymptotes"
     },
     {
       "type": "explanation",
@@ -307,30 +357,52 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Continuity, IVT & Squeeze Practice",
-      "skills": ["continuity-types", "ivt-squeeze-theorem"],
+      "skills": [
+        "continuity-types",
+        "ivt-squeeze-theorem"
+      ],
       "problems": [
         {
           "problem": "For f(x) = {(x²-4)/(x-2), x ≠ 2; k, x = 2}, find k that makes f continuous at x = 2.",
-          "hints": ["Find lim(x→2) by factoring", "Set f(2) = k equal to the limit"],
+          "hints": [
+            "Find lim(x→2) by factoring",
+            "Set f(2) = k equal to the limit"
+          ],
           "answer": "lim(x→2) (x-2)(x+2)/(x-2) = x+2 → 4. Set k = 4. Then f(2) = lim = 4, so f is continuous."
         },
         {
           "problem": "Show that eˣ = 3 - x has at least one solution.",
-          "hints": ["Let h(x) = eˣ - 3 + x", "h is continuous (sum of continuous functions)", "Find h(0) and h(1) and check for sign change"],
+          "hints": [
+            "Let h(x) = eˣ - 3 + x",
+            "h is continuous (sum of continuous functions)",
+            "Find h(0) and h(1) and check for sign change"
+          ],
           "answer": "h(x) = eˣ + x - 3. h(0) = 1+0-3 = -2 < 0. h(1) = e+1-3 ≈ 0.718 > 0. Since h is continuous on [0,1] and h(0)<0<h(1), by IVT there exists c in (0,1) where h(c) = 0, i.e., eᶜ = 3-c."
         },
         {
           "problem": "Evaluate: lim(x→0) (x·cos(1/x)).",
-          "hints": ["-1 ≤ cos(1/x) ≤ 1", "Multiply by |x|: -|x| ≤ x·cos(1/x) ≤ |x|", "Apply Squeeze Theorem"],
+          "hints": [
+            "-1 ≤ cos(1/x) ≤ 1",
+            "Multiply by |x|: -|x| ≤ x·cos(1/x) ≤ |x|",
+            "Apply Squeeze Theorem"
+          ],
           "answer": "Since -|x| ≤ x·cos(1/x) ≤ |x| and lim(x→0)(-|x|) = lim(x→0)|x| = 0, by Squeeze: lim = 0."
         }
-      ]
+      ],
+      "skill": "ivt-squeeze-theorem"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Limits & Continuity Mastery Practice",
-      "skills": ["limits-graphical-numerical", "limits-algebraic-techniques", "one-sided-infinite-limits", "limits-at-infinity-asymptotes", "continuity-types", "ivt-squeeze-theorem"],
+      "skills": [
+        "limits-graphical-numerical",
+        "limits-algebraic-techniques",
+        "one-sided-infinite-limits",
+        "limits-at-infinity-asymptotes",
+        "continuity-types",
+        "ivt-squeeze-theorem"
+      ],
       "problems": [
         {
           "problem": "Evaluate: lim(x→-2) (x² + 5x + 6)/(x² + 3x + 2).",
@@ -356,7 +428,8 @@
           "problem": "The temperature T(t) is continuous on [0, 10] with T(0)=45°F and T(10)=72°F. A student claims there must be a time when T(t)=60°F. Is this claim justified? Explain using a theorem.",
           "answer": "Yes. Since T is continuous on [0,10] and 60 is between T(0)=45 and T(10)=72, by IVT there exists some c in (0,10) where T(c)=60°F."
         }
-      ]
+      ],
+      "skill": "limits-graphical-numerical"
     }
   ],
   "answerKeys": {

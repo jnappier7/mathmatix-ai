@@ -5,8 +5,18 @@
   "title": "Radical & Rational Exponent Equations",
   "weeks": "20-21",
   "estimatedDuration": 45,
-  "skills": ["rational-exponents-radicals", "simplifying-radicals-variables", "radical-equations", "radical-applications"],
-  "standardsAlignment": ["N-RN.1", "N-RN.2", "A-REI.2"],
+  "description": "Bridge the gap between radicals and rational exponents, mastering simplification, equation solving, and the critical skill of checking for extraneous solutions.",
+  "skills": [
+    "rational-exponents-radicals",
+    "simplifying-radicals-variables",
+    "radical-equations",
+    "radical-applications"
+  ],
+  "standardsAlignment": [
+    "N-RN.1",
+    "N-RN.2",
+    "A-REI.2"
+  ],
   "goals": [
     "Convert fluently between radical form and rational exponent form",
     "Simplify radical expressions involving variables and higher-index roots",
@@ -25,12 +35,16 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Rational Exponents and Radicals — Two Notations, One Concept:**\n\n| Radical Form | Exponent Form | Value |\n|---|---|---|\n| √x | x^(1/2) | square root of x |\n| ∛x | x^(1/3) | cube root of x |\n| ⁿ√(xᵐ) | x^(m/n) | nth root of x to the m |\n\n**All exponent rules apply to rational exponents:**\n• x^(1/2) · x^(1/3) = x^(5/6)\n• (x^(2/3))⁴ = x^(8/3)\n• x^(-1/2) = 1/√x\n\n**Simplifying Radicals with Variables:**\n• √(x⁶) = x³ (even power ÷ 2)\n• ∛(x⁷) = x² · ∛x (7÷3 = 2 remainder 1)\n• √(50x⁴y³) = 5x²y√(2y)\n\n**Key properties:**\n• √(ab) = √a · √b ✓\n• √(a/b) = √a / √b ✓\n• √(a + b) ≠ √a + √b ✗ ← NEVER",
-      "initialPrompt": "Simplify 8^(2/3) two ways: (1) cube root first, then square; (2) square first, then cube root. Which is easier? Do both give the same answer?"
+      "skill": "rational-exponents-radicals",
+      "title": "Concept: Rational Exponents Radicals",
+      "initialPrompt": "Simplify 8^(2/3) two ways: (1) cube root first, then square; (2) square first, then cube root. Which is easier? Do both give the same answer?",
+      "content": "**Rational Exponents and Radicals — Two Notations, One Concept:**\n\n| Radical Form | Exponent Form | Value |\n|---|---|---|\n| √x | x^(1/2) | square root of x |\n| ∛x | x^(1/3) | cube root of x |\n| ⁿ√(xᵐ) | x^(m/n) | nth root of x to the m |\n\n**All exponent rules apply to rational exponents:**\n• x^(1/2) · x^(1/3) = x^(5/6)\n• (x^(2/3))⁴ = x^(8/3)\n• x^(-1/2) = 1/√x\n\n**Simplifying Radicals with Variables:**\n• √(x⁶) = x³ (even power ÷ 2)\n• ∛(x⁷) = x² · ∛x (7÷3 = 2 remainder 1)\n• √(50x⁴y³) = 5x²y√(2y)\n\n**Key properties:**\n• √(ab) = √a · √b ✓\n• √(a/b) = √a / √b ✓\n• √(a + b) ≠ √a + √b ✗ ← NEVER"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
+      "skill": "rational-exponents-radicals",
+      "title": "I-Do: Rational Exponents Radicals — Worked Examples",
       "problem": "Simplify: (a) √(72x⁵y⁸), (b) ∛(54a⁶b⁴), (c) Rationalize: 6/(√5 - √2).",
       "explanation": "**(a) √(72x⁵y⁸):**\n√72 = √(36·2) = 6√2\n√(x⁵) = √(x⁴·x) = x²√x\n√(y⁸) = y⁴\nResult: **6x²y⁴√(2x)**\n\n**(b) ∛(54a⁶b⁴):**\n∛54 = ∛(27·2) = 3∛2\n∛(a⁶) = a²\n∛(b⁴) = ∛(b³·b) = b∛b\nResult: **3a²b · ∛(2b)**\n\n**(c) Rationalize 6/(√5 - √2):**\nMultiply by conjugate: 6(√5 + √2)/((√5 - √2)(√5 + √2))\nDenominator: 5 - 2 = 3\nResult: **6(√5 + √2)/3 = 2(√5 + √2) = 2√5 + 2√2**",
       "initialPrompt": "For part (a), why did we split x⁵ into x⁴ · x instead of some other way? What's the largest even power we can extract?"
@@ -38,21 +52,33 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "simplifying-radicals-variables",
+      "title": "We-Do: Simplifying Radicals Variables — Guided Practice",
       "problems": [
         {
           "question": "Rewrite using rational exponents, then simplify: ∛(x⁶) · √(x³).",
           "answer": "x^(7/2) or x³√x",
-          "hints": ["∛(x⁶) = x^(6/3) = x². √(x³) = x^(3/2).", "x² · x^(3/2) = x^(2 + 3/2) = x^(7/2) = x³·x^(1/2) = x³√x."]
+          "hints": [
+            "∛(x⁶) = x^(6/3) = x². √(x³) = x^(3/2).",
+            "x² · x^(3/2) = x^(2 + 3/2) = x^(7/2) = x³·x^(1/2) = x³√x."
+          ]
         },
         {
           "question": "Simplify: (16x⁸y¹²)^(3/4).",
           "answer": "8x⁶y⁹",
-          "hints": ["16^(3/4) = (⁴√16)³ = 2³ = 8.", "(x⁸)^(3/4) = x⁶. (y¹²)^(3/4) = y⁹.", "Result: 8x⁶y⁹."]
+          "hints": [
+            "16^(3/4) = (⁴√16)³ = 2³ = 8.",
+            "(x⁸)^(3/4) = x⁶. (y¹²)^(3/4) = y⁹.",
+            "Result: 8x⁶y⁹."
+          ]
         },
         {
           "question": "Rationalize: 3/(∛4).",
           "answer": "3∛2/2",
-          "hints": ["Need ∛4 · ∛? = ∛(perfect cube). ∛4 · ∛2 = ∛8 = 2.", "Multiply by ∛2/∛2: 3∛2/2."]
+          "hints": [
+            "Need ∛4 · ∛? = ∛(perfect cube). ∛4 · ∛2 = ∛8 = 2.",
+            "Multiply by ∛2/∛2: 3∛2/2."
+          ]
         }
       ],
       "initialPrompt": "For the first problem, convert each radical to rational exponent form first. Then use the product rule for exponents."
@@ -60,12 +86,16 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Solving Radical Equations:**\n\n**Procedure:**\n1. **Isolate** the radical on one side\n2. **Raise both sides** to the power that eliminates the radical\n   - Square root → square both sides\n   - Cube root → cube both sides\n3. **Solve** the resulting equation\n4. **CHECK every solution** in the original equation\n\n**For equations with TWO radicals:**\n1. Isolate ONE radical\n2. Square both sides (the other radical may still remain)\n3. Isolate the remaining radical\n4. Square again\n5. CHECK (even more important—two squarings = more chances for extraneous)\n\n**Why extraneous solutions appear:**\nSquaring destroys sign information. The equation √x = -3 has no solution (√ is always ≥ 0), but squaring gives x = 9, which is false.\n\n**Rule of thumb:** If the equation requires the square root to equal a negative number, there's no solution.",
-      "initialPrompt": "Before solving √(2x + 3) = x - 1, what restriction must x satisfy? (Hint: the right side must be ≥ 0 since it equals a square root.)"
+      "skill": "simplifying-radicals-variables",
+      "title": "Concept: Simplifying Radicals Variables",
+      "initialPrompt": "Before solving √(2x + 3) = x - 1, what restriction must x satisfy? (Hint: the right side must be ≥ 0 since it equals a square root.)",
+      "content": "**Solving Radical Equations:**\n\n**Procedure:**\n1. **Isolate** the radical on one side\n2. **Raise both sides** to the power that eliminates the radical\n   - Square root → square both sides\n   - Cube root → cube both sides\n3. **Solve** the resulting equation\n4. **CHECK every solution** in the original equation\n\n**For equations with TWO radicals:**\n1. Isolate ONE radical\n2. Square both sides (the other radical may still remain)\n3. Isolate the remaining radical\n4. Square again\n5. CHECK (even more important—two squarings = more chances for extraneous)\n\n**Why extraneous solutions appear:**\nSquaring destroys sign information. The equation √x = -3 has no solution (√ is always ≥ 0), but squaring gives x = 9, which is false.\n\n**Rule of thumb:** If the equation requires the square root to equal a negative number, there's no solution."
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
+      "skill": "radical-equations",
+      "title": "I-Do: Radical Equations — Worked Examples",
       "problem": "Solve: √(3x + 7) = x + 1. Check for extraneous solutions.",
       "explanation": "**Step 1: Square both sides.**\n3x + 7 = (x + 1)² = x² + 2x + 1\n\n**Step 2: Rearrange.**\n0 = x² + 2x + 1 - 3x - 7\n0 = x² - x - 6\n0 = (x - 3)(x + 2)\nx = 3 or x = -2\n\n**Step 3: CHECK both solutions.**\n\n**x = 3:** √(9 + 7) = √16 = 4. And 3 + 1 = 4. ✓ Valid!\n\n**x = -2:** √(-6 + 7) = √1 = 1. And -2 + 1 = -1. Is 1 = -1? ✗ Extraneous!\n\n**Solution: x = 3 only.**\n\nWhy was x = -2 extraneous? The right side (x + 1) was negative (-1), but a square root can't equal a negative number. We could have caught this early by requiring x + 1 ≥ 0, i.e., x ≥ -1.",
       "initialPrompt": "Could we have predicted x = -2 would fail before checking? Look at the original equation: the right side x + 1 must be ≥ 0. What does that tell us?"
@@ -73,21 +103,33 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "radical-equations",
+      "title": "We-Do: Radical Equations — Guided Practice",
       "problems": [
         {
           "question": "Solve: √(5x - 1) = 3.",
           "answer": "x = 2",
-          "hints": ["Square: 5x - 1 = 9. 5x = 10. x = 2.", "Check: √(10 - 1) = √9 = 3 ✓."]
+          "hints": [
+            "Square: 5x - 1 = 9. 5x = 10. x = 2.",
+            "Check: √(10 - 1) = √9 = 3 ✓."
+          ]
         },
         {
           "question": "Solve: ∛(2x - 1) = -3.",
           "answer": "x = -13",
-          "hints": ["Cube both sides: 2x - 1 = -27. 2x = -26. x = -13.", "Check: ∛(-26 - 1) = ∛(-27) = -3 ✓. (Cube roots CAN be negative!)"]
+          "hints": [
+            "Cube both sides: 2x - 1 = -27. 2x = -26. x = -13.",
+            "Check: ∛(-26 - 1) = ∛(-27) = -3 ✓. (Cube roots CAN be negative!)"
+          ]
         },
         {
           "question": "Solve: √(x + 5) + 1 = x. Check for extraneous solutions.",
           "answer": "x = 4 (x = -1 is extraneous)",
-          "hints": ["Isolate: √(x+5) = x - 1. Square: x + 5 = x² - 2x + 1. → x² - 3x - 4 = 0.", "(x-4)(x+1) = 0. x = 4 or x = -1.", "Check x=4: √9 + 1 = 4 ✓. Check x=-1: √4 + 1 = 3 ≠ -1 ✗."]
+          "hints": [
+            "Isolate: √(x+5) = x - 1. Square: x + 5 = x² - 2x + 1. → x² - 3x - 4 = 0.",
+            "(x-4)(x+1) = 0. x = 4 or x = -1.",
+            "Check x=4: √9 + 1 = 4 ✓. Check x=-1: √4 + 1 = 3 ≠ -1 ✗."
+          ]
         }
       ],
       "initialPrompt": "For the first problem, the radical is already isolated. What do you do next?"
@@ -95,31 +137,48 @@
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "skill": "radical-applications",
+      "title": "You-Do: Radical Applications — Independent Practice",
       "problems": [
         {
           "question": "Simplify: (32x¹⁰y⁵)^(2/5).",
           "answer": "4x⁴y²",
-          "hints": ["32^(2/5) = (⁵√32)² = 2² = 4. (x¹⁰)^(2/5) = x⁴. (y⁵)^(2/5) = y²."]
+          "hints": [
+            "32^(2/5) = (⁵√32)² = 2² = 4. (x¹⁰)^(2/5) = x⁴. (y⁵)^(2/5) = y²."
+          ]
         },
         {
           "question": "Simplify: √(48x⁷) - 2x√(12x⁵).",
           "answer": "4x³√(3x) - 4x³√(3x) = 0",
-          "hints": ["√(48x⁷) = 4x³√(3x). 2x√(12x⁵) = 2x·2x²√(3x) = 4x³√(3x).", "Subtract: 4x³√(3x) - 4x³√(3x) = 0."]
+          "hints": [
+            "√(48x⁷) = 4x³√(3x). 2x√(12x⁵) = 2x·2x²√(3x) = 4x³√(3x).",
+            "Subtract: 4x³√(3x) - 4x³√(3x) = 0."
+          ]
         },
         {
           "question": "Solve: 2√(x - 3) = x - 3.",
           "answer": "x = 3 and x = 7",
-          "hints": ["Let u = √(x-3). Then 2u = u². u²-2u=0, u(u-2)=0, u=0 or u=2.", "u=0: x-3=0, x=3. u=2: x-3=4, x=7. Check both: ✓."]
+          "hints": [
+            "Let u = √(x-3). Then 2u = u². u²-2u=0, u(u-2)=0, u=0 or u=2.",
+            "u=0: x-3=0, x=3. u=2: x-3=4, x=7. Check both: ✓."
+          ]
         },
         {
           "question": "Solve: √(2x + 5) - √(x + 2) = 1.",
           "answer": "x = 2",
-          "hints": ["Isolate one: √(2x+5) = 1 + √(x+2). Square: 2x+5 = 1 + 2√(x+2) + x+2.", "x + 2 = 2√(x+2). Square again: x² + 4x + 4 = 4(x+2) = 4x+8. x² = 4. x = ±2.", "Check x=2: √9-√4=3-2=1 ✓. Check x=-2: √1-√0=1-0=1 ✓. Wait: actually x=-2: √(−4+5)−√(−2+2)=√1−√0=1−0=1 ✓. Both work!"]
+          "hints": [
+            "Isolate one: √(2x+5) = 1 + √(x+2). Square: 2x+5 = 1 + 2√(x+2) + x+2.",
+            "x + 2 = 2√(x+2). Square again: x² + 4x + 4 = 4(x+2) = 4x+8. x² = 4. x = ±2.",
+            "Check x=2: √9-√4=3-2=1 ✓. Check x=-2: √1-√0=1-0=1 ✓. Wait: actually x=-2: √(−4+5)−√(−2+2)=√1−√0=1−0=1 ✓. Both work!"
+          ]
         },
         {
           "question": "A pendulum's period is T = 2π√(L/9.8) seconds, where L is length in meters. Find the length that gives a period of exactly 2 seconds.",
           "answer": "L ≈ 0.993 meters (about 1 meter)",
-          "hints": ["2 = 2π√(L/9.8). Divide by 2π: 1/π = √(L/9.8).", "Square: 1/π² = L/9.8. L = 9.8/π² ≈ 0.993 meters."]
+          "hints": [
+            "2 = 2π√(L/9.8). Divide by 2π: 1/π = √(L/9.8).",
+            "Square: 1/π² = L/9.8. L = 9.8/π² ≈ 0.993 meters."
+          ]
         }
       ],
       "attemptsRequired": 3

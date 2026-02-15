@@ -6,17 +6,24 @@
   "weeks": "23-25",
   "estimatedDuration": 30,
   "description": "Explore how to collect and analyze data using random samples to draw conclusions about larger populations. Learn to identify populations and samples, understand why random sampling produces reliable results, compare data sets using measures of center and variability (mean, median, range, MAD), and make informal inferences about two populations based on sample data.",
-
-  "skills": ["g7-populations-samples", "g7-random-sampling", "g7-compare-data-sets", "g7-informal-inferences"],
-  "standardsAlignment": ["7.SP.1", "7.SP.2", "7.SP.3", "7.SP.4"],
-
+  "skills": [
+    "g7-populations-samples",
+    "g7-random-sampling",
+    "g7-compare-data-sets",
+    "g7-informal-inferences"
+  ],
+  "standardsAlignment": [
+    "7.SP.1",
+    "7.SP.2",
+    "7.SP.3",
+    "7.SP.4"
+  ],
   "goals": [
     "Distinguish between a population and a sample and explain why sampling is necessary",
     "Understand that a random sample is likely to be representative and support valid inferences about a population",
     "Compare two data sets by computing and interpreting mean, median, range, and mean absolute deviation (MAD)",
     "Draw informal inferences about two populations based on measures of center and variability from random samples"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro -> I Do -> We Do -> You Do",
     "AI uses scaffold array as scope and worked-example bank",
@@ -24,9 +31,7 @@
     "Emphasis on computing and interpreting mean, median, range, and MAD — not just calculating but explaining what the numbers mean",
     "Inference questions require written justification comparing the difference in means to the variability within groups"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -90,7 +95,6 @@
         "Example: If School A's sample mean is 78 (MAD 5) and School B's is 85 (MAD 4), the 7-point gap is larger than either MAD, so School B likely scores higher overall."
       ]
     },
-
     {
       "type": "model",
       "lessonPhase": "i-do",
@@ -167,12 +171,14 @@
         }
       ]
     },
-
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Populations, Samples, and Random Sampling Practice",
-      "skills": ["g7-populations-samples", "g7-random-sampling"],
+      "skills": [
+        "g7-populations-samples",
+        "g7-random-sampling"
+      ],
       "problems": [
         {
           "id": "gp1-pop-sample",
@@ -194,13 +200,17 @@
           ],
           "answer": "This is NOT a random sample. People at a grocery store on a Tuesday morning do not represent all 5,000 residents. People who work during the day, students in school, and residents who shop at other stores or on other days are excluded. The results could be biased — for example, retirees and stay-at-home parents might be over-represented, and their opinions about a park could differ from the broader population. A better method would be to randomly select 100 addresses from the town directory and mail or deliver surveys to those households."
         }
-      ]
+      ],
+      "skill": "g7-random-sampling"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Comparing Data Sets and Drawing Inferences",
-      "skills": ["g7-compare-data-sets", "g7-informal-inferences"],
+      "skills": [
+        "g7-compare-data-sets",
+        "g7-informal-inferences"
+      ],
       "problems": [
         {
           "id": "gp2-compare-teams",
@@ -223,14 +233,19 @@
           ],
           "answer": "The difference in means is 62 - 59 = 3 inches. Both MADs are relatively small (2.5 and 2 inches), meaning students within each school have heights that are fairly close to their school's average. The 3-inch difference between the schools is larger than either MAD, which suggests the difference is meaningful and not just due to random chance. Inference: Seventh graders at Lincoln Middle School are likely taller on average than seventh graders at Washington Middle School."
         }
-      ]
+      ],
+      "skill": "g7-random-sampling"
     },
-
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Statistics: Sampling and Inference — Practice Set",
-      "skills": ["g7-populations-samples", "g7-random-sampling", "g7-compare-data-sets", "g7-informal-inferences"],
+      "skills": [
+        "g7-populations-samples",
+        "g7-random-sampling",
+        "g7-compare-data-sets",
+        "g7-informal-inferences"
+      ],
       "problems": [
         {
           "id": "ip-pop-sample",
@@ -257,10 +272,10 @@
           "problem": "A random sample of 25 students from Riverside Middle School spent a mean of 45 minutes per night on homework with a MAD of 10 minutes. A random sample of 25 students from Hilltop Middle School spent a mean of 60 minutes per night with a MAD of 8 minutes. Draw an informal inference comparing the homework habits of students at these two schools. Justify your answer using the data.",
           "answer": "The difference in means is 60 - 45 = 15 minutes. The MADs are 10 minutes (Riverside) and 8 minutes (Hilltop), so the typical variation within each school is about 8 to 10 minutes. The 15-minute difference between the schools is larger than the variation within either school, which suggests the difference is real and not just due to sampling variability. Inference: Students at Hilltop Middle School likely spend more time on homework per night than students at Riverside Middle School."
         }
-      ]
+      ],
+      "skill": "g7-populations-samples"
     }
   ],
-
   "answerKeys": {
     "gp1-pop-sample": "Population: all 800 students. Sample: the 50 students surveyed.",
     "gp1-random-sampling": "Not a random sample. People at a grocery store on a Tuesday morning are not representative of all 5,000 residents.",

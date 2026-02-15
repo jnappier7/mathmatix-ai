@@ -6,8 +6,23 @@
   "weeks": "20-24",
   "estimatedDuration": 50,
   "description": "Explore the geometry of motion and measurement. Students perform translations, reflections, rotations, and dilations on the coordinate plane using precise coordinate rules. They connect rigid motions to congruence and dilations to similarity, analyze angle relationships formed by parallel lines and transversals, and apply the Pythagorean theorem to find missing side lengths, diagonals, and distances between points in the coordinate plane.",
-  "skills": ["transformations", "congruence-similarity", "angle-relationships", "pythagorean-theorem", "distance-coordinate"],
-  "standardsAlignment": ["8.G.1", "8.G.2", "8.G.3", "8.G.4", "8.G.5", "8.G.6", "8.G.7", "8.G.8"],
+  "skills": [
+    "transformations",
+    "congruence-similarity",
+    "angle-relationships",
+    "pythagorean-theorem",
+    "distance-coordinate"
+  ],
+  "standardsAlignment": [
+    "8.G.1",
+    "8.G.2",
+    "8.G.3",
+    "8.G.4",
+    "8.G.5",
+    "8.G.6",
+    "8.G.7",
+    "8.G.8"
+  ],
   "goals": [
     "Perform translations, reflections, rotations, and dilations on the coordinate plane using coordinate rules.",
     "Understand that rigid motions (translations, reflections, rotations) produce congruent figures and dilations produce similar figures.",
@@ -21,7 +36,7 @@
     "Connect transformations to congruence and similarity: 'If you can get from one figure to another using only rigid motions, they're congruent. If you need a dilation too, they're similar.'",
     "Pythagorean theorem builds on coordinate plane skills — distance IS the Pythagorean theorem applied to a horizontal and vertical leg."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
@@ -135,19 +150,28 @@
           "id": "gt-wp1",
           "question": "Translate rectangle ABCD with vertices A(0, 0), B(3, 0), C(3, 2), D(0, 2) by the rule (x + 4, y − 3). Find the image vertices.",
           "answer": "A'(4, −3), B'(7, −3), C'(7, −1), D'(4, −1). Each vertex shifted right 4 and down 3.",
-          "hints": ["Add 4 to every x-coordinate and subtract 3 from every y-coordinate.", "A(0,0) → (0+4, 0−3) = (4, −3). Do the same for B, C, D."]
+          "hints": [
+            "Add 4 to every x-coordinate and subtract 3 from every y-coordinate.",
+            "A(0,0) → (0+4, 0−3) = (4, −3). Do the same for B, C, D."
+          ]
         },
         {
           "id": "gt-wp2",
           "question": "Reflect triangle PQR with vertices P(2, 5), Q(6, 5), R(4, 1) over the x-axis. Find the image vertices.",
           "answer": "Over x-axis: (x, y) → (x, −y). P'(2, −5), Q'(6, −5), R'(4, −1). The triangle flips below the x-axis.",
-          "hints": ["Reflection over the x-axis: keep x the same, negate y.", "P(2, 5) → P'(2, −5). Apply the same rule to Q and R."]
+          "hints": [
+            "Reflection over the x-axis: keep x the same, negate y.",
+            "P(2, 5) → P'(2, −5). Apply the same rule to Q and R."
+          ]
         },
         {
           "id": "gt-wp3",
           "question": "Rotate point M(3, −2) by 180° about the origin. Then dilate the result by scale factor 3 from the origin. What is the final image?",
           "answer": "180° rotation: (x, y) → (−x, −y). M(3, −2) → M'(−3, 2). Dilation by 3: (−3, 2) → (−9, 6). Final image: (−9, 6).",
-          "hints": ["180° rotation rule: negate both coordinates.", "Then multiply both coordinates of the rotated point by 3."]
+          "hints": [
+            "180° rotation rule: negate both coordinates.",
+            "Then multiply both coordinates of the rotated point by 3."
+          ]
         }
       ]
     },
@@ -161,19 +185,28 @@
           "id": "gt-wp4",
           "question": "Two parallel lines are cut by a transversal. Angle 1 measures 72°. Find the measure of its corresponding angle (Angle 2) and its co-interior angle (Angle 3).",
           "answer": "Angle 2 (corresponding) = 72°. Angle 3 (co-interior) = 180° − 72° = 108°.",
-          "hints": ["Corresponding angles are equal when lines are parallel.", "Co-interior (same-side interior) angles are supplementary — they add to 180°."]
+          "hints": [
+            "Corresponding angles are equal when lines are parallel.",
+            "Co-interior (same-side interior) angles are supplementary — they add to 180°."
+          ]
         },
         {
           "id": "gt-wp5",
           "question": "Triangle ABC has sides 3, 4, 5. Triangle DEF has sides 9, 12, 15. Are they similar? What is the scale factor? Are they congruent?",
           "answer": "Ratios: 9/3 = 3, 12/4 = 3, 15/5 = 3. All equal → similar with scale factor 3. Not congruent (different sizes).",
-          "hints": ["Compare corresponding sides by dividing. Are all ratios equal?", "Similar means same shape. Congruent means same shape AND same size."]
+          "hints": [
+            "Compare corresponding sides by dividing. Are all ratios equal?",
+            "Similar means same shape. Congruent means same shape AND same size."
+          ]
         },
         {
           "id": "gt-wp6",
           "question": "A triangle has angles 55° and 65°. Find the missing angle. If another triangle has the same three angle measures, are they similar?",
           "answer": "Missing angle: 180° − 55° − 65° = 60°. Yes, the triangles are similar by AA (Angle-Angle) — same angles guarantee same shape.",
-          "hints": ["Triangle angles sum to 180°.", "Two triangles with the same angles are always similar (AA similarity)."]
+          "hints": [
+            "Triangle angles sum to 180°.",
+            "Two triangles with the same angles are always similar (AA similarity)."
+          ]
         }
       ]
     },
@@ -187,19 +220,28 @@
           "id": "gt-wp7",
           "question": "A right triangle has one leg of 9 and a hypotenuse of 15. Find the other leg.",
           "answer": "b² = 15² − 9² = 225 − 81 = 144. b = √144 = 12. (This is a 9-12-15 triple — triple the 3-4-5.)",
-          "hints": ["Use a² + b² = c² where c = 15 is the hypotenuse.", "Rearrange: b² = c² − a² = 225 − 81."]
+          "hints": [
+            "Use a² + b² = c² where c = 15 is the hypotenuse.",
+            "Rearrange: b² = c² − a² = 225 − 81."
+          ]
         },
         {
           "id": "gt-wp8",
           "question": "A rectangular garden is 8 meters by 15 meters. What is the length of the diagonal?",
           "answer": "d = √(8² + 15²) = √(64 + 225) = √289 = 17 meters. (8-15-17 is a Pythagorean triple.)",
-          "hints": ["The diagonal cuts the rectangle into two right triangles.", "The sides 8 and 15 are the legs; the diagonal is the hypotenuse."]
+          "hints": [
+            "The diagonal cuts the rectangle into two right triangles.",
+            "The sides 8 and 15 are the legs; the diagonal is the hypotenuse."
+          ]
         },
         {
           "id": "gt-wp9",
           "question": "Find the distance between the points (−2, 3) and (4, −5).",
           "answer": "d = √((4 − (−2))² + (−5 − 3)²) = √(6² + (−8)²) = √(36 + 64) = √100 = 10 units.",
-          "hints": ["Horizontal distance: 4 − (−2) = 6. Vertical distance: −5 − 3 = −8.", "Plug into distance formula: d = √(6² + 8²). Recognize the 6-8-10 triple!"]
+          "hints": [
+            "Horizontal distance: 4 − (−2) = 6. Vertical distance: −5 − 3 = −8.",
+            "Plug into distance formula: d = √(6² + 8²). Recognize the 6-8-10 triple!"
+          ]
         }
       ]
     },
@@ -214,42 +256,54 @@
           "question": "Reflect triangle with vertices A(1, 3), B(5, 3), C(3, 7) over the y-axis. Find the image vertices.",
           "answer": "Over y-axis: (x, y) → (−x, y). A'(−1, 3), B'(−5, 3), C'(−3, 7).",
           "skill": "transformations",
-          "hints": ["Reflection over y-axis: negate the x-coordinate, keep y the same."]
+          "hints": [
+            "Reflection over y-axis: negate the x-coordinate, keep y the same."
+          ]
         },
         {
           "id": "gt-yp2",
           "question": "Rotate the point (5, −2) by 90° counterclockwise about the origin.",
           "answer": "90° CCW rule: (x, y) → (−y, x). (5, −2) → (−(−2), 5) = (2, 5).",
           "skill": "transformations",
-          "hints": ["Apply the rule: (x, y) → (−y, x). What is −(−2)?"]
+          "hints": [
+            "Apply the rule: (x, y) → (−y, x). What is −(−2)?"
+          ]
         },
         {
           "id": "gt-yp3",
           "question": "Two parallel lines are cut by a transversal. One angle measures 130°. List all eight angle measures at both intersections.",
           "answer": "At each intersection: 130°, 50°, 130°, 50° (vertical pairs). Both intersections are identical. All eight angles: four measuring 130° and four measuring 50°.",
           "skill": "angle-relationships",
-          "hints": ["The supplement of 130° is 50°. Vertical angles are equal."]
+          "hints": [
+            "The supplement of 130° is 50°. Vertical angles are equal."
+          ]
         },
         {
           "id": "gt-yp4",
           "question": "A right triangle has legs 5 cm and 12 cm. Find the hypotenuse.",
           "answer": "c² = 5² + 12² = 25 + 144 = 169. c = √169 = 13 cm. (5-12-13 triple.)",
           "skill": "pythagorean-theorem",
-          "hints": ["Use a² + b² = c². Plug in 5 and 12."]
+          "hints": [
+            "Use a² + b² = c². Plug in 5 and 12."
+          ]
         },
         {
           "id": "gt-yp5",
           "question": "A TV screen is 36 inches wide and 27 inches tall. What is the diagonal measurement?",
           "answer": "d = √(36² + 27²) = √(1296 + 729) = √2025 = 45 inches.",
           "skill": "pythagorean-theorem",
-          "hints": ["Width and height are the legs; the diagonal is the hypotenuse."]
+          "hints": [
+            "Width and height are the legs; the diagonal is the hypotenuse."
+          ]
         },
         {
           "id": "gt-yp6",
           "question": "Find the distance between the points (−3, 4) and (5, −2).",
           "answer": "d = √((5 − (−3))² + (−2 − 4)²) = √(8² + (−6)²) = √(64 + 36) = √100 = 10 units.",
           "skill": "distance-coordinate",
-          "hints": ["Find horizontal and vertical distances first, then use the distance formula."]
+          "hints": [
+            "Find horizontal and vertical distances first, then use the distance formula."
+          ]
         }
       ]
     }

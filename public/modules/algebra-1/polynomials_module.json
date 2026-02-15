@@ -16,7 +16,12 @@
     "factoring-trinomials",
     "factoring-difference-of-squares"
   ],
-  "standardsAlignment": ["A-SSE.2", "A-SSE.3c", "A-APR.1", "N-RN.1"],
+  "standardsAlignment": [
+    "A-SSE.2",
+    "A-SSE.3c",
+    "A-APR.1",
+    "N-RN.1"
+  ],
   "goals": [
     "Apply the product, quotient, power, zero-exponent, and negative-exponent rules to simplify expressions with integer exponents",
     "Add, subtract, and classify polynomials by degree and number of terms, writing results in standard form",
@@ -38,7 +43,7 @@
       "lessonPhase": "concept-intro",
       "skill": "exponent-rules-multiplication",
       "title": "Laws of Exponents",
-      "text": "An **exponent** tells you how many times a base is used as a factor: x⁴ = x·x·x·x.\n\nHere are the five core exponent rules you need:\n\n**1. Product Rule:** aᵐ · aⁿ = aᵐ⁺ⁿ\nWhen you multiply powers with the **same base**, ADD the exponents.\nWhy? x³ · x⁴ = (x·x·x)(x·x·x·x) = x⁷ — that is 3 + 4 = 7 factors of x.\n\n**2. Quotient Rule:** aᵐ / aⁿ = aᵐ⁻ⁿ (a ≠ 0)\nWhen you divide powers with the **same base**, SUBTRACT the exponents.\nWhy? x⁵ / x² = (x·x·x·x·x) / (x·x) — two factors cancel, leaving x³ = x⁵⁻².\n\n**3. Power Rule:** (aᵐ)ⁿ = aᵐⁿ\nWhen you raise a power to another power, MULTIPLY the exponents.\nWhy? (x²)³ = x² · x² · x² = x⁶ = x²ˣ³.\n\n**4. Zero Exponent Rule:** a⁰ = 1 (a ≠ 0)\nAny nonzero base raised to the zero power equals 1.\nWhy? aⁿ / aⁿ = aⁿ⁻ⁿ = a⁰, but aⁿ / aⁿ is also 1, so a⁰ = 1.\n\n**5. Negative Exponent Rule:** a⁻ⁿ = 1/aⁿ (a ≠ 0)\nA negative exponent means 'take the reciprocal.'\nWhy? a⁻ⁿ = a⁰⁻ⁿ = a⁰ / aⁿ = 1/aⁿ.\n\n**Important:** These rules only apply when the bases are the **same**. You cannot use the product rule to simplify x³ · y² because the bases (x and y) are different.",
+      "content": "An **exponent** tells you how many times a base is used as a factor: x⁴ = x·x·x·x.\n\nHere are the five core exponent rules you need:\n\n**1. Product Rule:** aᵐ · aⁿ = aᵐ⁺ⁿ\nWhen you multiply powers with the **same base**, ADD the exponents.\nWhy? x³ · x⁴ = (x·x·x)(x·x·x·x) = x⁷ — that is 3 + 4 = 7 factors of x.\n\n**2. Quotient Rule:** aᵐ / aⁿ = aᵐ⁻ⁿ (a ≠ 0)\nWhen you divide powers with the **same base**, SUBTRACT the exponents.\nWhy? x⁵ / x² = (x·x·x·x·x) / (x·x) — two factors cancel, leaving x³ = x⁵⁻².\n\n**3. Power Rule:** (aᵐ)ⁿ = aᵐⁿ\nWhen you raise a power to another power, MULTIPLY the exponents.\nWhy? (x²)³ = x² · x² · x² = x⁶ = x²ˣ³.\n\n**4. Zero Exponent Rule:** a⁰ = 1 (a ≠ 0)\nAny nonzero base raised to the zero power equals 1.\nWhy? aⁿ / aⁿ = aⁿ⁻ⁿ = a⁰, but aⁿ / aⁿ is also 1, so a⁰ = 1.\n\n**5. Negative Exponent Rule:** a⁻ⁿ = 1/aⁿ (a ≠ 0)\nA negative exponent means 'take the reciprocal.'\nWhy? a⁻ⁿ = a⁰⁻ⁿ = a⁰ / aⁿ = 1/aⁿ.\n\n**Important:** These rules only apply when the bases are the **same**. You cannot use the product rule to simplify x³ · y² because the bases (x and y) are different.",
       "initialPrompt": "Expand x³ · x⁴ by writing all the factors of x out. How many total factors of x do you get? How does that connect to the product rule?"
     },
     {
@@ -67,7 +72,7 @@
       "lessonPhase": "concept-intro",
       "skill": "polynomial-addition-subtraction",
       "title": "Polynomial Vocabulary and Classification",
-      "text": "A **polynomial** is an expression made up of one or more **terms**, where each term is a product of a number (coefficient) and a variable raised to a whole-number exponent.\n\nKey vocabulary:\n- **Term:** A single piece of a polynomial, such as 5x³ or -2x or 7.\n- **Coefficient:** The number in front of the variable (in 5x³, the coefficient is 5).\n- **Degree of a term:** The exponent on the variable (5x³ has degree 3; a constant like 7 has degree 0).\n- **Degree of a polynomial:** The highest degree among all its terms. Example: 4x³ + 2x - 7 has degree 3.\n- **Leading coefficient:** The coefficient of the term with the highest degree.\n- **Standard form:** Terms written in order from highest degree to lowest degree.\n\n**Classification by number of terms:**\n- **Monomial:** 1 term (e.g., 5x²)\n- **Binomial:** 2 terms (e.g., 3x + 7)\n- **Trinomial:** 3 terms (e.g., x² + 4x - 1)\n- **Polynomial:** general name for any number of terms\n\n**Adding polynomials:** Combine like terms (same variable and same exponent).\n**Subtracting polynomials:** Distribute the negative sign to every term in the second polynomial, then combine like terms.\n\nAlways write your final answer in **standard form** (highest degree first).",
+      "content": "A **polynomial** is an expression made up of one or more **terms**, where each term is a product of a number (coefficient) and a variable raised to a whole-number exponent.\n\nKey vocabulary:\n- **Term:** A single piece of a polynomial, such as 5x³ or -2x or 7.\n- **Coefficient:** The number in front of the variable (in 5x³, the coefficient is 5).\n- **Degree of a term:** The exponent on the variable (5x³ has degree 3; a constant like 7 has degree 0).\n- **Degree of a polynomial:** The highest degree among all its terms. Example: 4x³ + 2x - 7 has degree 3.\n- **Leading coefficient:** The coefficient of the term with the highest degree.\n- **Standard form:** Terms written in order from highest degree to lowest degree.\n\n**Classification by number of terms:**\n- **Monomial:** 1 term (e.g., 5x²)\n- **Binomial:** 2 terms (e.g., 3x + 7)\n- **Trinomial:** 3 terms (e.g., x² + 4x - 1)\n- **Polynomial:** general name for any number of terms\n\n**Adding polynomials:** Combine like terms (same variable and same exponent).\n**Subtracting polynomials:** Distribute the negative sign to every term in the second polynomial, then combine like terms.\n\nAlways write your final answer in **standard form** (highest degree first).",
       "initialPrompt": "What is the degree of the polynomial 2x⁴ - 7x² + 3x - 1? How many terms does it have, and what would you call it?"
     },
     {
@@ -150,7 +155,7 @@
       "lessonPhase": "concept-intro",
       "skill": "factoring-gcf",
       "title": "Introduction to Factoring",
-      "text": "**Factoring** is the reverse of multiplication. When we multiply, we go from factors to a product. When we factor, we go from a product back to its factors.\n\nMultiplication: 3x(2x + 3) = 6x² + 9x\nFactoring: 6x² + 9x = 3x(2x + 3)\n\n**Why factor?** Factoring lets us solve equations (the Zero Product Property says if ab = 0, then a = 0 or b = 0), simplify expressions, and find key features of parabolas.\n\n**Rule #1 — ALWAYS check for a GCF first!**\n\nThe **Greatest Common Factor (GCF)** is the largest factor that divides evenly into every term of the polynomial.\n\nTo find the GCF:\n1. Find the GCF of the **coefficients** (the largest number that divides all of them).\n2. Find the GCF of the **variables** (take the lowest exponent of each variable that appears in every term).\n3. Multiply these together.\n\nAfter pulling out the GCF, look inside the parentheses to see if the remaining expression can be factored further.\n\n**Three main factoring strategies for this unit:**\n1. **GCF factoring** — always try this first\n2. **Trinomial factoring** — for expressions of the form x² + bx + c\n3. **Difference of squares** — for expressions of the form a² - b²",
+      "content": "**Factoring** is the reverse of multiplication. When we multiply, we go from factors to a product. When we factor, we go from a product back to its factors.\n\nMultiplication: 3x(2x + 3) = 6x² + 9x\nFactoring: 6x² + 9x = 3x(2x + 3)\n\n**Why factor?** Factoring lets us solve equations (the Zero Product Property says if ab = 0, then a = 0 or b = 0), simplify expressions, and find key features of parabolas.\n\n**Rule #1 — ALWAYS check for a GCF first!**\n\nThe **Greatest Common Factor (GCF)** is the largest factor that divides evenly into every term of the polynomial.\n\nTo find the GCF:\n1. Find the GCF of the **coefficients** (the largest number that divides all of them).\n2. Find the GCF of the **variables** (take the lowest exponent of each variable that appears in every term).\n3. Multiply these together.\n\nAfter pulling out the GCF, look inside the parentheses to see if the remaining expression can be factored further.\n\n**Three main factoring strategies for this unit:**\n1. **GCF factoring** — always try this first\n2. **Trinomial factoring** — for expressions of the form x² + bx + c\n3. **Difference of squares** — for expressions of the form a² - b²",
       "initialPrompt": "In the expression 6x² + 9x, what is the largest number that divides both 6 and 9? What is the lowest power of x that appears in both terms?"
     },
     {
@@ -238,59 +243,76 @@
           "question": "Simplify: (5x⁴)(2x³)",
           "answer": "10x⁷",
           "skill": "exponent-rules-multiplication",
-          "hints": ["Multiply the coefficients: 5 × 2 = 10. Add the exponents: x⁴ · x³ = x⁷."]
+          "hints": [
+            "Multiply the coefficients: 5 × 2 = 10. Add the exponents: x⁴ · x³ = x⁷."
+          ]
         },
         {
           "id": "po-yp2",
           "question": "Simplify: 18x⁶ / (6x²)",
           "answer": "3x⁴",
           "skill": "exponent-rules-division",
-          "hints": ["Divide the coefficients: 18 ÷ 6 = 3. Subtract the exponents: x⁶⁻² = x⁴."]
+          "hints": [
+            "Divide the coefficients: 18 ÷ 6 = 3. Subtract the exponents: x⁶⁻² = x⁴."
+          ]
         },
         {
           "id": "po-yp3",
           "question": "Subtract: (5x² + 3x - 8) - (2x² - x + 4)",
           "answer": "3x² + 4x - 12",
           "skill": "polynomial-addition-subtraction",
-          "hints": ["Distribute the negative to every term in the second polynomial: -2x² + x - 4. Then combine like terms: (5x² - 2x²) + (3x + x) + (-8 - 4)."]
+          "hints": [
+            "Distribute the negative to every term in the second polynomial: -2x² + x - 4. Then combine like terms: (5x² - 2x²) + (3x + x) + (-8 - 4)."
+          ]
         },
         {
           "id": "po-yp4",
           "question": "Multiply using FOIL: (x - 4)(x + 7)",
           "answer": "x² + 3x - 28",
           "skill": "polynomial-multiplication-monomial",
-          "hints": ["F: x². O: 7x. I: -4x. L: -28. Combine: x² + 7x - 4x - 28 = x² + 3x - 28."]
+          "hints": [
+            "F: x². O: 7x. I: -4x. L: -28. Combine: x² + 7x - 4x - 28 = x² + 3x - 28."
+          ]
         },
         {
           "id": "po-yp5",
           "question": "Factor: 10x³ - 15x²",
           "answer": "5x²(2x - 3)",
           "skill": "factoring-gcf",
-          "hints": ["GCF of 10 and 15 is 5. GCF of x³ and x² is x². Factor out 5x²: 10x³ ÷ 5x² = 2x, and 15x² ÷ 5x² = 3."]
+          "hints": [
+            "GCF of 10 and 15 is 5. GCF of x³ and x² is x². Factor out 5x²: 10x³ ÷ 5x² = 2x, and 15x² ÷ 5x² = 3."
+          ]
         },
         {
           "id": "po-yp6",
           "question": "Factor: x² - 3x - 18",
           "answer": "(x - 6)(x + 3)",
           "skill": "factoring-trinomials",
-          "hints": ["Find two numbers that multiply to -18 and add to -3. Since the product is negative, the numbers have different signs. -6 × 3 = -18 and -6 + 3 = -3."]
+          "hints": [
+            "Find two numbers that multiply to -18 and add to -3. Since the product is negative, the numbers have different signs. -6 × 3 = -18 and -6 + 3 = -3."
+          ]
         },
         {
           "id": "po-yp7",
           "question": "Factor: 25x² - 49",
           "answer": "(5x + 7)(5x - 7)",
           "skill": "factoring-difference-of-squares",
-          "hints": ["Recognize the pattern: 25x² = (5x)² and 49 = 7². Apply a² - b² = (a + b)(a - b)."]
+          "hints": [
+            "Recognize the pattern: 25x² = (5x)² and 49 = 7². Apply a² - b² = (a + b)(a - b)."
+          ]
         },
         {
           "id": "po-yp8",
           "question": "Factor completely: 3x² - 27",
           "answer": "3(x + 3)(x - 3)",
           "skill": "factoring-difference-of-squares",
-          "hints": ["First pull out the GCF: 3(x² - 9). Then recognize x² - 9 as a difference of squares: x² - 3² = (x + 3)(x - 3). Final answer: 3(x + 3)(x - 3)."]
+          "hints": [
+            "First pull out the GCF: 3(x² - 9). Then recognize x² - 9 as a difference of squares: x² - 3² = (x + 3)(x - 3). Final answer: 3(x + 3)(x - 3)."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "exponent-rules-multiplication"
     }
   ],
   "answerKeys": {

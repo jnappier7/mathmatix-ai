@@ -6,8 +6,18 @@
   "weeks": "7-10",
   "estimatedDuration": 30,
   "description": "Students build core algebra skills for 7th grade. They learn to translate verbal phrases into algebraic expressions and equations, simplify expressions using the distributive property and combining like terms, solve multi-step equations including word problems requiring equation setup, and solve and graph inequalities with attention to the sign-flip rule when multiplying or dividing by a negative.",
-  "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions", "g7-multi-step-equations", "g7-inequalities"],
-  "standardsAlignment": ["7.EE.1", "7.EE.2", "7.EE.3", "7.EE.4"],
+  "skills": [
+    "g7-verbal-to-algebraic",
+    "g7-simplify-expressions",
+    "g7-multi-step-equations",
+    "g7-inequalities"
+  ],
+  "standardsAlignment": [
+    "7.EE.1",
+    "7.EE.2",
+    "7.EE.3",
+    "7.EE.4"
+  ],
   "goals": [
     "Translate verbal phrases and sentences into algebraic expressions and equations.",
     "Simplify algebraic expressions by applying the distributive property and combining like terms.",
@@ -167,7 +177,10 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Translating & Simplifying Practice",
-      "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions"],
+      "skills": [
+        "g7-verbal-to-algebraic",
+        "g7-simplify-expressions"
+      ],
       "problems": [
         {
           "id": "gp1",
@@ -209,13 +222,17 @@
           ],
           "answer": "6x + 3"
         }
-      ]
+      ],
+      "skill": "g7-inequalities"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Equations & Inequalities Practice",
-      "skills": ["g7-multi-step-equations", "g7-inequalities"],
+      "skills": [
+        "g7-multi-step-equations",
+        "g7-inequalities"
+      ],
       "problems": [
         {
           "id": "gp5",
@@ -247,13 +264,19 @@
           ],
           "answer": "x < -4. Graph: open circle at -4, shade left. Check: try x = -5: -4(-5) + 2 = 22 > 18. ✓"
         }
-      ]
+      ],
+      "skill": "g7-inequalities"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Expressions & Equations Mastery Practice",
-      "skills": ["g7-verbal-to-algebraic", "g7-simplify-expressions", "g7-multi-step-equations", "g7-inequalities"],
+      "skills": [
+        "g7-verbal-to-algebraic",
+        "g7-simplify-expressions",
+        "g7-multi-step-equations",
+        "g7-inequalities"
+      ],
       "problems": [
         {
           "id": "ip1",
@@ -285,7 +308,8 @@
           "problem": "A student needs at least a 90 average on four tests. The first three scores are 88, 94, and 85. Write and solve an inequality to find the minimum score needed on the fourth test.",
           "answer": "(88 + 94 + 85 + t) / 4 ≥ 90 → 267 + t ≥ 360 → t ≥ 93. The student needs at least a 93. Check: (88 + 94 + 85 + 93) / 4 = 360 / 4 = 90. ✓"
         }
-      ]
+      ],
+      "skill": "g7-verbal-to-algebraic"
     }
   ],
   "answerKeys": {

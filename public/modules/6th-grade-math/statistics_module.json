@@ -6,16 +6,21 @@
   "weeks": "23-26",
   "estimatedDuration": 35,
   "description": "Data tells a story — but only if you know how to read it. Students learn to ask statistical questions (ones that expect variability), create and read dot plots, histograms, and box plots, calculate measures of center (mean, median) and variability (range, IQR), and compare two distributions using shape, center, and spread with claim-and-evidence reasoning.",
-
   "skills": [
     "g6-statistical-questions",
     "g6-data-displays",
     "g6-measures-center-variability",
     "g6-compare-distributions"
   ],
-
-  "standardsAlignment": ["6.SP.A.1", "6.SP.A.2", "6.SP.A.3", "6.SP.B.4", "6.SP.B.5", "6.SP.B.5c", "6.SP.B.5d"],
-
+  "standardsAlignment": [
+    "6.SP.A.1",
+    "6.SP.A.2",
+    "6.SP.A.3",
+    "6.SP.B.4",
+    "6.SP.B.5",
+    "6.SP.B.5c",
+    "6.SP.B.5d"
+  ],
   "goals": [
     "Distinguish statistical questions from non-statistical questions by identifying whether variability is expected in the answers",
     "Create and interpret dot plots, histograms, and box plots to represent data distributions",
@@ -23,7 +28,6 @@
     "Describe the shape of a distribution as symmetric, skewed left, or skewed right",
     "Compare two data sets using shape, center, and spread, supporting conclusions with claim-and-evidence reasoning"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do for each skill",
     "AI uses scaffold array as scope and worked-example bank; flexes within each phase based on student responses",
@@ -31,9 +35,7 @@
     "Emphasize precise vocabulary: distribution, variability, center, spread, five-number summary",
     "Build toward claim-and-evidence reasoning in the final skill so students practice constructing short data-supported arguments"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -73,7 +75,7 @@
       "problems": [
         {
           "id": "stat-1",
-          "prompt": "Marcus wants to know about his classmates' video game habits. He writes: 'How many hours per week do 6th graders spend playing video games?' Is this a statistical question? Explain why or why not.",
+          "question": "Marcus wants to know about his classmates' video game habits. He writes: 'How many hours per week do 6th graders spend playing video games?' Is this a statistical question? Explain why or why not.",
           "hints": [
             "Does this question have one fixed answer, or would you expect different answers from different students?",
             "If you surveyed 30 classmates, would they all give the same number?"
@@ -82,7 +84,7 @@
         },
         {
           "id": "stat-2",
-          "prompt": "Which of these is a statistical question?\n(A) 'How many pages are in our math textbook?'\n(B) 'How many pages did students in our class read last month?'\n(C) 'What is the school's street address?'\n(D) 'Who is the principal of our school?'",
+          "question": "Which of these is a statistical question?\n(A) 'How many pages are in our math textbook?'\n(B) 'How many pages did students in our class read last month?'\n(C) 'What is the school's street address?'\n(D) 'Who is the principal of our school?'",
           "hints": [
             "A statistical question anticipates variability — different data points give different answers.",
             "Which question would produce different answers from different people?"
@@ -91,7 +93,7 @@
         },
         {
           "id": "stat-3",
-          "prompt": "Rewrite this non-statistical question into a statistical one: 'How many points did LeBron James score on February 3?'",
+          "question": "Rewrite this non-statistical question into a statistical one: 'How many points did LeBron James score on February 3?'",
           "hints": [
             "The original has one exact answer. How could you change it so the answer involves variability?",
             "Think about asking across multiple games, multiple players, or a time period."
@@ -108,12 +110,12 @@
       "problems": [
         {
           "id": "stat-4",
-          "prompt": "Sort these questions into Statistical or Non-Statistical:\n(1) 'What is the average rainfall in Seattle during April?'\n(2) 'How many inches of rain fell in Seattle on April 10?'\n(3) 'How many pets do students in our school have?'\n(4) 'What is the school lunch menu today?'",
+          "question": "Sort these questions into Statistical or Non-Statistical:\n(1) 'What is the average rainfall in Seattle during April?'\n(2) 'How many inches of rain fell in Seattle on April 10?'\n(3) 'How many pets do students in our school have?'\n(4) 'What is the school lunch menu today?'",
           "answer": "Statistical: (1) and (3) — both expect variability across multiple days or students. Non-Statistical: (2) and (4) — both have a single, fixed answer."
         },
         {
           "id": "stat-5",
-          "prompt": "A survey asks 25 sixth graders: 'How many siblings do you have?' Is this a statistical question? If 25 students answered, would you expect variability in the data? Explain.",
+          "question": "A survey asks 25 sixth graders: 'How many siblings do you have?' Is this a statistical question? If 25 students answered, would you expect variability in the data? Explain.",
           "answer": "Yes, this is a statistical question. Different students have different numbers of siblings (some have 0, some have 1, 2, or more), so there is variability. Surveying 25 students would produce a data set with a range of different values."
         }
       ]
@@ -161,7 +163,7 @@
       "problems": [
         {
           "id": "stat-6",
-          "prompt": "The following data shows the number of books 10 students read over the summer:\n2, 5, 3, 7, 4, 3, 6, 2, 5, 3\nIf you made a dot plot, how many dots would be stacked above the number 3? What value has the most dots?",
+          "question": "The following data shows the number of books 10 students read over the summer:\n2, 5, 3, 7, 4, 3, 6, 2, 5, 3\nIf you made a dot plot, how many dots would be stacked above the number 3? What value has the most dots?",
           "hints": [
             "Count how many times the number 3 appears in the data set.",
             "List each value and its frequency: 2 appears ___, 3 appears ___, 4 appears ___, 5 appears ___, 6 appears ___, 7 appears ___."
@@ -170,7 +172,7 @@
         },
         {
           "id": "stat-7",
-          "prompt": "A histogram of daily high temperatures (°F) during June shows:\n60-69: 3 days | 70-79: 8 days | 80-89: 12 days | 90-99: 7 days\n(a) How many days of data are represented?\n(b) What percentage of days had temperatures in the 80s?",
+          "question": "A histogram of daily high temperatures (°F) during June shows:\n60-69: 3 days | 70-79: 8 days | 80-89: 12 days | 90-99: 7 days\n(a) How many days of data are represented?\n(b) What percentage of days had temperatures in the 80s?",
           "hints": [
             "Add all the frequencies together to find the total number of days.",
             "Percentage = (frequency for 80-89) ÷ total × 100."
@@ -179,7 +181,7 @@
         },
         {
           "id": "stat-8",
-          "prompt": "Find the five-number summary for this data set of quiz scores:\n65, 70, 72, 78, 80, 85, 88, 90, 92, 95\nThen calculate the IQR.",
+          "question": "Find the five-number summary for this data set of quiz scores:\n65, 70, 72, 78, 80, 85, 88, 90, 92, 95\nThen calculate the IQR.",
           "hints": [
             "The data is already in order. With 10 values, the median is the average of the 5th and 6th values.",
             "The lower half is the first 5 values; Q1 is the median of those (the 3rd). The upper half is the last 5 values; Q3 is the median of those.",
@@ -197,17 +199,17 @@
       "problems": [
         {
           "id": "stat-9",
-          "prompt": "A dot plot shows the number of free throws made (out of 10) by players during basketball practice:\n3, 4, 4, 5, 5, 5, 6, 6, 7, 8\nHow many players made 5 or more free throws?",
+          "question": "A dot plot shows the number of free throws made (out of 10) by players during basketball practice:\n3, 4, 4, 5, 5, 5, 6, 6, 7, 8\nHow many players made 5 or more free throws?",
           "answer": "Count values that are 5 or greater: 5, 5, 5, 6, 6, 7, 8. That is 7 players who made 5 or more free throws."
         },
         {
           "id": "stat-10",
-          "prompt": "A histogram of students' daily screen time (hours) shows:\n0-1 hrs: 4 students | 1-2 hrs: 9 students | 2-3 hrs: 11 students | 3-4 hrs: 6 students | 4-5 hrs: 2 students\nWhat fraction of students have 2 or more hours of screen time per day?",
+          "question": "A histogram of students' daily screen time (hours) shows:\n0-1 hrs: 4 students | 1-2 hrs: 9 students | 2-3 hrs: 11 students | 3-4 hrs: 6 students | 4-5 hrs: 2 students\nWhat fraction of students have 2 or more hours of screen time per day?",
           "answer": "Students with 2+ hours: 11 + 6 + 2 = 19. Total students: 4 + 9 + 11 + 6 + 2 = 32. Fraction = 19/32."
         },
         {
           "id": "stat-11",
-          "prompt": "A box plot of video game high scores shows: min = 120, Q1 = 200, median = 310, Q3 = 450, max = 580.\n(a) What is the range?\n(b) What is the IQR?\n(c) What percentage of scores fall between 200 and 450?",
+          "question": "A box plot of video game high scores shows: min = 120, Q1 = 200, median = 310, Q3 = 450, max = 580.\n(a) What is the range?\n(b) What is the IQR?\n(c) What percentage of scores fall between 200 and 450?",
           "answer": "(a) Range = 580 − 120 = 460. (b) IQR = 450 − 200 = 250. (c) 50% of the scores fall between Q1 (200) and Q3 (450), since the box contains the middle 50% of the data."
         }
       ]
@@ -255,7 +257,7 @@
       "problems": [
         {
           "id": "stat-12",
-          "prompt": "A group of friends tracked how many text messages they sent in one day: 12, 15, 22, 18, 33. Calculate the mean number of texts.",
+          "question": "A group of friends tracked how many text messages they sent in one day: 12, 15, 22, 18, 33. Calculate the mean number of texts.",
           "hints": [
             "Add all five values together: 12 + 15 + 22 + 18 + 33.",
             "Divide the sum by 5 (the number of data values)."
@@ -264,7 +266,7 @@
         },
         {
           "id": "stat-13",
-          "prompt": "Find the median of these soccer jersey numbers picked for a drill: 4, 11, 7, 2, 15, 9, 20, 1. (Careful — the data must be ordered first!)",
+          "question": "Find the median of these soccer jersey numbers picked for a drill: 4, 11, 7, 2, 15, 9, 20, 1. (Careful — the data must be ordered first!)",
           "hints": [
             "First, arrange the values from least to greatest: 1, 2, 4, 7, 9, 11, 15, 20.",
             "With 8 values (even count), the median is the average of the 4th and 5th values."
@@ -273,7 +275,7 @@
         },
         {
           "id": "stat-14",
-          "prompt": "The ages of players on a youth volleyball team are: 10, 11, 11, 12, 12, 12, 13, 13, 14. Find:\n(a) the range\n(b) Q1, Q3, and the IQR",
+          "question": "The ages of players on a youth volleyball team are: 10, 11, 11, 12, 12, 12, 13, 13, 14. Find:\n(a) the range\n(b) Q1, Q3, and the IQR",
           "hints": [
             "Range = maximum − minimum.",
             "With 9 values, the median is the 5th value (12). The lower half is the first 4 values: 10, 11, 11, 12. Q1 is the median of those.",
@@ -291,17 +293,17 @@
       "problems": [
         {
           "id": "stat-15",
-          "prompt": "Students in a science class measured the length (in cm) of 6 earthworms: 8, 12, 15, 9, 11, 17. Find the mean length.",
+          "question": "Students in a science class measured the length (in cm) of 6 earthworms: 8, 12, 15, 9, 11, 17. Find the mean length.",
           "answer": "Sum = 8 + 12 + 15 + 9 + 11 + 17 = 72. Mean = 72 ÷ 6 = 12 cm."
         },
         {
           "id": "stat-16",
-          "prompt": "A student's quiz scores this semester are: 70, 85, 88, 90, 92, 95, 100. The teacher accidentally entered one score as 10 instead of 100.\n(a) Find the median of the correct data set.\n(b) Would the mean or the median change more because of this error? Explain.",
+          "question": "A student's quiz scores this semester are: 70, 85, 88, 90, 92, 95, 100. The teacher accidentally entered one score as 10 instead of 100.\n(a) Find the median of the correct data set.\n(b) Would the mean or the median change more because of this error? Explain.",
           "answer": "(a) Correct data ordered: 70, 85, 88, 90, 92, 95, 100. Median = 90 (the 4th of 7 values). (b) The mean changes much more. With the error (10 instead of 100), the sum drops by 90, pulling the mean way down. The median stays at 88 (reordered: 10, 70, 85, 88, 92, 95, 100 — still the 4th value). This shows the median is resistant to outliers while the mean is not."
         },
         {
           "id": "stat-17",
-          "prompt": "Two friends compared their weekly step counts (in thousands):\nFriend A: 5, 7, 8, 8, 9, 11\nFriend B: 3, 5, 8, 10, 12, 14\nFind the IQR for each friend. Who has more variability in their step counts?",
+          "question": "Two friends compared their weekly step counts (in thousands):\nFriend A: 5, 7, 8, 8, 9, 11\nFriend B: 3, 5, 8, 10, 12, 14\nFind the IQR for each friend. Who has more variability in their step counts?",
           "answer": "Friend A: Lower half: 5, 7, 8 → Q1 = 7. Upper half: 8, 9, 11 → Q3 = 9. IQR = 9 − 7 = 2. Friend B: Lower half: 3, 5, 8 → Q1 = 5. Upper half: 10, 12, 14 → Q3 = 12. IQR = 12 − 5 = 7. Friend B has more variability (IQR of 7 vs. 2), meaning their step count changes much more from week to week."
         }
       ]
@@ -344,7 +346,7 @@
       "problems": [
         {
           "id": "stat-18",
-          "prompt": "Two basketball players' points per game are summarized in box plots:\nPlayer A: min = 8, Q1 = 12, median = 18, Q3 = 22, max = 30\nPlayer B: min = 10, Q1 = 15, median = 20, Q3 = 24, max = 28\n(a) Who has the higher typical score? Use the median as evidence.\n(b) Who is more consistent? Use the IQR as evidence.",
+          "question": "Two basketball players' points per game are summarized in box plots:\nPlayer A: min = 8, Q1 = 12, median = 18, Q3 = 22, max = 30\nPlayer B: min = 10, Q1 = 15, median = 20, Q3 = 24, max = 28\n(a) Who has the higher typical score? Use the median as evidence.\n(b) Who is more consistent? Use the IQR as evidence.",
           "hints": [
             "Compare the medians: Player A's median = 18, Player B's median = 20.",
             "Find each IQR: IQR = Q3 − Q1. A smaller IQR means more consistency."
@@ -353,7 +355,7 @@
         },
         {
           "id": "stat-19",
-          "prompt": "Two 6th-grade classes did a survey on daily screen time (minutes):\nClass X: 20, 30, 30, 40, 45, 50, 50, 55, 60, 120\nClass Y: 35, 40, 40, 45, 45, 50, 50, 55, 55, 60\nWhich class has a more symmetric distribution? Which class has an outlier that affects the mean? Support your answer with calculations.",
+          "question": "Two 6th-grade classes did a survey on daily screen time (minutes):\nClass X: 20, 30, 30, 40, 45, 50, 50, 55, 60, 120\nClass Y: 35, 40, 40, 45, 45, 50, 50, 55, 55, 60\nWhich class has a more symmetric distribution? Which class has an outlier that affects the mean? Support your answer with calculations.",
           "hints": [
             "Calculate the mean and median for each class.",
             "Look for values that are far from the rest of the data — those are outliers.",
@@ -371,23 +373,22 @@
       "problems": [
         {
           "id": "stat-20",
-          "prompt": "Two soccer teams recorded the number of goals scored per game over 8 games.\nTeam Lightning: 1, 2, 2, 3, 3, 3, 4, 6\nTeam Thunder: 0, 1, 1, 2, 4, 5, 5, 6\nFind the median and IQR for each team. Write a claim comparing the two teams, supported by evidence.",
+          "question": "Two soccer teams recorded the number of goals scored per game over 8 games.\nTeam Lightning: 1, 2, 2, 3, 3, 3, 4, 6\nTeam Thunder: 0, 1, 1, 2, 4, 5, 5, 6\nFind the median and IQR for each team. Write a claim comparing the two teams, supported by evidence.",
           "answer": "Team Lightning: Median = (3 + 3) ÷ 2 = 3. Q1 = (2 + 2) ÷ 2 = 2. Q3 = (3 + 4) ÷ 2 = 3.5. IQR = 1.5. Team Thunder: Median = (2 + 4) ÷ 2 = 3. Q1 = (1 + 1) ÷ 2 = 1. Q3 = (5 + 5) ÷ 2 = 5. IQR = 4. Claim: Both teams have the same typical number of goals (median = 3), but Team Lightning is much more consistent (IQR of 1.5 vs. 4). Team Thunder's scoring is more unpredictable."
         },
         {
           "id": "stat-21",
-          "prompt": "The box plots for two students' weekly quiz scores show:\nStudent A: min = 60, Q1 = 70, median = 82, Q3 = 90, max = 100\nStudent B: min = 75, Q1 = 78, median = 80, Q3 = 84, max = 88\nWhich student has the higher typical score? Which student is more consistent? Write your answer in claim-and-evidence format.",
+          "question": "The box plots for two students' weekly quiz scores show:\nStudent A: min = 60, Q1 = 70, median = 82, Q3 = 90, max = 100\nStudent B: min = 75, Q1 = 78, median = 80, Q3 = 84, max = 88\nWhich student has the higher typical score? Which student is more consistent? Write your answer in claim-and-evidence format.",
           "answer": "Claim: Student A has a slightly higher typical score (median 82 vs. 80), but Student B is far more consistent. Evidence: Student A's IQR = 90 − 70 = 20 and range = 100 − 60 = 40. Student B's IQR = 84 − 78 = 6 and range = 88 − 75 = 13. Student B's scores are much more tightly grouped, meaning you can predict Student B's performance more reliably."
         },
         {
           "id": "stat-22",
-          "prompt": "A teacher collected data on the number of push-ups completed by two gym classes:\nClass A: 10, 12, 15, 15, 18, 20, 22, 25, 28, 35\nClass B: 12, 16, 18, 19, 20, 22, 23, 24, 26, 30\nDescribe the shape of each distribution (symmetric or skewed). Then compare the centers and spreads using at least two measures.",
+          "question": "A teacher collected data on the number of push-ups completed by two gym classes:\nClass A: 10, 12, 15, 15, 18, 20, 22, 25, 28, 35\nClass B: 12, 16, 18, 19, 20, 22, 23, 24, 26, 30\nDescribe the shape of each distribution (symmetric or skewed). Then compare the centers and spreads using at least two measures.",
           "answer": "Class A: Mean = 200 ÷ 10 = 20. Median = (18 + 20) ÷ 2 = 19. The mean is slightly above the median, and the value 35 pulls the tail to the right — slight right skew. Q1 = 15, Q3 = 25, IQR = 10, Range = 25. Class B: Mean = 210 ÷ 10 = 21. Median = (20 + 22) ÷ 2 = 21. Mean equals median — roughly symmetric. Q1 = 18, Q3 = 24, IQR = 6, Range = 18. Comparison: Class B has a slightly higher center (median 21 vs. 19) and is more consistent (IQR 6 vs. 10). Class A is more spread out with a slight right skew caused by the high value of 35."
         }
       ]
     }
   ],
-
   "answerKeys": {
     "stat-1": "Statistical — different students play different amounts, so variability is expected",
     "stat-2": "B",

@@ -6,11 +6,19 @@
   "weeks": "9",
   "estimatedDuration": 35,
   "description": "The payoff module. Everything students learned — budgeting, percent fluency, compound interest, opportunity cost — converges here. This module introduces why investing exists (inflation erodes cash), what the basic investment types are (stocks, bonds, index funds), how retirement accounts work (401k, Roth IRA), the power of compound growth over decades, and how to spot financial scams. The core lesson: time is the most powerful variable in investing, and starting early beats starting big.",
-
-  "skills": ["cm-why-investing", "cm-investment-types", "cm-retirement-accounts", "cm-compound-growth", "cm-scam-detection"],
-
-  "standardsAlignment": ["Financial Literacy Standard 5", "7.EE.3", "MP.2", "MP.4"],
-
+  "skills": [
+    "cm-why-investing",
+    "cm-investment-types",
+    "cm-retirement-accounts",
+    "cm-compound-growth",
+    "cm-scam-detection"
+  ],
+  "standardsAlignment": [
+    "Financial Literacy Standard 5",
+    "7.EE.3",
+    "MP.2",
+    "MP.4"
+  ],
   "goals": [
     "Explain why investing matters: inflation erodes purchasing power and savings accounts may not keep up",
     "Describe the basic investment types (stocks, bonds, index funds) and the concept of diversification",
@@ -18,7 +26,6 @@
     "Calculate and compare compound growth scenarios to prove that starting early beats starting big",
     "Identify common financial scam red flags: guaranteed returns, urgency, unsolicited offers"
   ],
-
   "instructionalStrategy": [
     "Start with inflation: $100 today buys less than $100 ten years ago. Show specific examples with real prices.",
     "Investment types: keep it conceptual. Stock = own a piece of a company. Bond = lend money. Index fund = bundle of many stocks (the whole pizza, not one slice). Students don't need to know HOW to buy yet.",
@@ -26,9 +33,7 @@
     "Compound growth is THE lesson: $200/month at 8% starting at age 22 vs age 32. Use the Rule of 72 (years to double = 72 / rate). Make it visual and concrete.",
     "Scam detection: show real patterns (anonymized). The 'if it sounds too good to be true' test genuinely works. Teach the pause: never make a financial decision under pressure."
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -68,11 +73,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Inflation and Purchasing Power — Practice",
-      "skills": ["cm-why-investing"],
+      "skills": [
+        "cm-why-investing"
+      ],
       "problems": [
         {
           "id": "ip-1",
-          "prompt": "A savings account pays 1.5% interest per year. Inflation averages 3% per year. You deposit $5,000. After one year, what is your account balance? What do goods that previously cost $5,000 now cost? Did your purchasing power increase or decrease, and by how much?",
+          "question": "A savings account pays 1.5% interest per year. Inflation averages 3% per year. You deposit $5,000. After one year, what is your account balance? What do goods that previously cost $5,000 now cost? Did your purchasing power increase or decrease, and by how much?",
           "hints": [
             "Interest earned: $5,000 x 0.015 = $75",
             "Price increase: $5,000 x 0.03 = $150",
@@ -82,7 +89,7 @@
         },
         {
           "id": "ip-2",
-          "prompt": "A loaf of bread costs $3.50 today. If inflation averages 3% per year, what will the same loaf cost in 10 years? Round to the nearest cent. Use the formula: Future Price = Current Price x (1 + inflation rate)^years. (Hint: (1.03)^10 = 1.3439)",
+          "question": "A loaf of bread costs $3.50 today. If inflation averages 3% per year, what will the same loaf cost in 10 years? Round to the nearest cent. Use the formula: Future Price = Current Price x (1 + inflation rate)^years. (Hint: (1.03)^10 = 1.3439)",
           "hints": [
             "Plug in: $3.50 x (1.03)^10",
             "Use the given value: (1.03)^10 = 1.3439",
@@ -90,25 +97,29 @@
           ],
           "answer": "$4.70. Calculation: $3.50 x 1.3439 = $4.70. A loaf of bread that costs $3.50 today will cost about $4.70 in 10 years at 3% inflation."
         }
-      ]
+      ],
+      "skill": "cm-why-investing"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Inflation and Investing — Apply It",
-      "skills": ["cm-why-investing"],
+      "skills": [
+        "cm-why-investing"
+      ],
       "problems": [
         {
           "id": "ip-3",
-          "prompt": "You have $1,000 to set aside for 20 years. Option A: savings account at 2% annual interest. Option B: stock index fund averaging 8% per year. Calculate the final value of each using A = P(1 + r)^t. How much more does Option B earn? (Hints: (1.02)^20 = 1.4859 and (1.08)^20 = 4.6610)",
+          "question": "You have $1,000 to set aside for 20 years. Option A: savings account at 2% annual interest. Option B: stock index fund averaging 8% per year. Calculate the final value of each using A = P(1 + r)^t. How much more does Option B earn? (Hints: (1.02)^20 = 1.4859 and (1.08)^20 = 4.6610)",
           "answer": "Option A: $1,000 x 1.4859 = $1,485.90. Option B: $1,000 x 4.6610 = $4,661.00. Option B earns approximately $3,175 more."
         },
         {
           "id": "ip-4",
-          "prompt": "If inflation averages 3% per year and your investment earns 7% per year, what is your approximate real (inflation-adjusted) return? Use the approximation: real return = nominal return - inflation rate. Explain in one sentence why this number matters more than the 7%.",
+          "question": "If inflation averages 3% per year and your investment earns 7% per year, what is your approximate real (inflation-adjusted) return? Use the approximation: real return = nominal return - inflation rate. Explain in one sentence why this number matters more than the 7%.",
           "answer": "Approximately 4%. Real return = 7% - 3% = 4%. This matters more because it represents how much your actual purchasing power grows each year after accounting for rising prices."
         }
-      ]
+      ],
+      "skill": "cm-why-investing"
     },
     {
       "type": "explanation",
@@ -148,11 +159,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Investment Types — Practice",
-      "skills": ["cm-investment-types"],
+      "skills": [
+        "cm-investment-types"
+      ],
       "problems": [
         {
           "id": "ip-5",
-          "prompt": "Match each investment type with its correct description.\n1. Stock\n2. Bond\n3. Index Fund\n\nA. You lend money to a company or government and receive fixed interest payments over a set period.\nB. You buy a share of ownership in a single company.\nC. You buy a bundle of many stocks that tracks an entire market, giving you built-in diversification.",
+          "question": "Match each investment type with its correct description.\n1. Stock\n2. Bond\n3. Index Fund\n\nA. You lend money to a company or government and receive fixed interest payments over a set period.\nB. You buy a share of ownership in a single company.\nC. You buy a bundle of many stocks that tracks an entire market, giving you built-in diversification.",
           "hints": [
             "A stock means you OWN a piece of a company — you are a part-owner",
             "A bond is like being the bank — you lend money and earn interest"
@@ -161,32 +174,36 @@
         },
         {
           "id": "ip-6",
-          "prompt": "An S&P 500 index fund has historically returned about 10% per year on average. A corporate bond fund returns about 5% per year. A savings account pays 1.5% per year. If you invest $4,000 in each for 10 years, which will have the highest final value and which the lowest? You do not need to calculate exact amounts — just rank them and explain why the returns differ.",
+          "question": "An S&P 500 index fund has historically returned about 10% per year on average. A corporate bond fund returns about 5% per year. A savings account pays 1.5% per year. If you invest $4,000 in each for 10 years, which will have the highest final value and which the lowest? You do not need to calculate exact amounts — just rank them and explain why the returns differ.",
           "hints": [
             "Higher annual return = higher final value over the same time period",
             "Think about the risk-return tradeoff: why does the stock index fund pay more than a savings account?"
           ],
           "answer": "Highest: S&P 500 index fund (10%/year). Middle: Corporate bond fund (5%/year). Lowest: Savings account (1.5%/year). Returns differ because of risk: the index fund has the most short-term volatility (prices swing up and down), bonds have moderate risk, and savings accounts are virtually risk-free but grow the slowest. Higher risk is compensated with higher expected returns over time."
         }
-      ]
+      ],
+      "skill": "cm-investment-types"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Investment Types — Apply It",
-      "skills": ["cm-investment-types"],
+      "skills": [
+        "cm-investment-types"
+      ],
       "problems": [
         {
           "id": "ip-7",
-          "prompt": "A bond pays 5% annual interest on a $1,000 investment. How much interest do you receive each year? How much total interest do you receive over the bond's 10-year term? What total amount do you get back when the bond matures (interest plus principal)?",
+          "question": "A bond pays 5% annual interest on a $1,000 investment. How much interest do you receive each year? How much total interest do you receive over the bond's 10-year term? What total amount do you get back when the bond matures (interest plus principal)?",
           "answer": "$50 per year in interest. Over 10 years: $50 x 10 = $500 total interest. Total at maturity: $1,000 principal + $500 interest = $1,500."
         },
         {
           "id": "ip-8",
-          "prompt": "Rank the following from LOWEST risk to HIGHEST risk and briefly explain each: (A) buying stock in one small tech startup, (B) putting money in an FDIC-insured savings account, (C) investing in an S&P 500 index fund.",
+          "question": "Rank the following from LOWEST risk to HIGHEST risk and briefly explain each: (A) buying stock in one small tech startup, (B) putting money in an FDIC-insured savings account, (C) investing in an S&P 500 index fund.",
           "answer": "B (savings account) then C (S&P 500 index fund) then A (single tech startup). Savings account is FDIC insured with virtually zero risk of losing money. S&P 500 index fund holds 500 companies so risk is spread out, though prices fluctuate in the short term. A single tech startup is highest risk because the company could succeed spectacularly or fail completely — all your money is concentrated in one bet."
         }
-      ]
+      ],
+      "skill": "cm-investment-types"
     },
     {
       "type": "explanation",
@@ -226,11 +243,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Retirement Accounts — Practice",
-      "skills": ["cm-retirement-accounts"],
+      "skills": [
+        "cm-retirement-accounts"
+      ],
       "problems": [
         {
           "id": "ip-9",
-          "prompt": "Marcus earns $52,000 per year. His employer offers a 401(k) with a 100% match on the first 4% of salary. Marcus contributes 4% of his salary. How much does Marcus contribute per year? How much does his employer contribute? What is the total annual amount going into his 401(k)?",
+          "question": "Marcus earns $52,000 per year. His employer offers a 401(k) with a 100% match on the first 4% of salary. Marcus contributes 4% of his salary. How much does Marcus contribute per year? How much does his employer contribute? What is the total annual amount going into his 401(k)?",
           "hints": [
             "Calculate 4% of $52,000: multiply $52,000 x 0.04",
             "A 100% match means the employer puts in the same dollar amount Marcus does (up to 4% of salary)"
@@ -239,7 +258,7 @@
         },
         {
           "id": "ip-10",
-          "prompt": "Priya earns $52,000 and decides to contribute only 2% to her 401(k), even though her employer matches 100% of the first 4%. How much employer match money is Priya leaving on the table each year compared to contributing the full 4%?",
+          "question": "Priya earns $52,000 and decides to contribute only 2% to her 401(k), even though her employer matches 100% of the first 4%. How much employer match money is Priya leaving on the table each year compared to contributing the full 4%?",
           "hints": [
             "At 2%, Priya contributes $1,040 and receives $1,040 in employer match",
             "At 4%, she would contribute $2,080 and receive $2,080 in employer match",
@@ -247,25 +266,29 @@
           ],
           "answer": "At 2%: employer match = $1,040. At 4%: employer match = $2,080. Priya is leaving $2,080 - $1,040 = $1,040 per year of free money on the table."
         }
-      ]
+      ],
+      "skill": "cm-retirement-accounts"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Retirement Accounts — Apply It",
-      "skills": ["cm-retirement-accounts"],
+      "skills": [
+        "cm-retirement-accounts"
+      ],
       "problems": [
         {
           "id": "ip-11",
-          "prompt": "Explain one key difference between a 401(k) and a Roth IRA in terms of when you pay taxes. Then state one advantage of each account type.",
+          "question": "Explain one key difference between a 401(k) and a Roth IRA in terms of when you pay taxes. Then state one advantage of each account type.",
           "answer": "Key difference: 401(k) contributions are pre-tax (you pay taxes when you withdraw in retirement), while Roth IRA contributions are after-tax (you pay taxes now, but all withdrawals in retirement are tax-free). 401(k) advantage: reduces your taxable income today and may include employer matching. Roth IRA advantage: all growth and withdrawals in retirement are completely tax-free."
         },
         {
           "id": "ip-12",
-          "prompt": "A 22-year-old starts contributing $3,000 per year to a Roth IRA. Assuming 8% average annual growth, use the Rule of 72 to estimate how many times her first contribution doubles by age 67 (45 years). Approximately how much will that first $3,000 be worth? Remember: all Roth IRA withdrawals are tax-free.",
+          "question": "A 22-year-old starts contributing $3,000 per year to a Roth IRA. Assuming 8% average annual growth, use the Rule of 72 to estimate how many times her first contribution doubles by age 67 (45 years). Approximately how much will that first $3,000 be worth? Remember: all Roth IRA withdrawals are tax-free.",
           "answer": "At 8%, money doubles every 72 / 8 = 9 years. In 45 years: 45 / 9 = 5 doublings. $3,000 x 2^5 = $3,000 x 32 = $96,000. Her first $3,000 contribution alone would grow to approximately $96,000, all tax-free in a Roth IRA."
         }
-      ]
+      ],
+      "skill": "cm-retirement-accounts"
     },
     {
       "type": "explanation",
@@ -306,11 +329,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Compound Growth — Practice",
-      "skills": ["cm-compound-growth"],
+      "skills": [
+        "cm-compound-growth"
+      ],
       "problems": [
         {
           "id": "ip-13",
-          "prompt": "Use the Rule of 72 to estimate how long it takes an investment to double at each annual rate: (a) 6%, (b) 9%, (c) 3%.",
+          "question": "Use the Rule of 72 to estimate how long it takes an investment to double at each annual rate: (a) 6%, (b) 9%, (c) 3%.",
           "hints": [
             "Rule of 72: divide 72 by the annual interest rate",
             "For 6%: 72 / 6 = ?"
@@ -319,7 +344,7 @@
         },
         {
           "id": "ip-14",
-          "prompt": "Sophie invests $5,000 in an index fund that averages 7% per year (compounded annually). Using A = P(1 + r)^t, how much will Sophie have after 30 years? Round to the nearest dollar. (Hint: (1.07)^30 = 7.6123)",
+          "question": "Sophie invests $5,000 in an index fund that averages 7% per year (compounded annually). Using A = P(1 + r)^t, how much will Sophie have after 30 years? Round to the nearest dollar. (Hint: (1.07)^30 = 7.6123)",
           "hints": [
             "Plug into the formula: A = $5,000 x (1.07)^30",
             "You are given that (1.07)^30 = 7.6123 — multiply this by $5,000"
@@ -328,7 +353,7 @@
         },
         {
           "id": "ip-15",
-          "prompt": "Person A invests $200/month starting at age 22 for 40 years at 8% annual return. Total invested: $96,000. Final value: approximately $699,000.\n\nPerson B invests $400/month starting at age 32 for 30 years at 8% annual return. Total invested: $144,000. Final value: approximately $597,000.\n\nWho ends up with more money? Who invested more total cash? What does this prove about the power of starting early?",
+          "question": "Person A invests $200/month starting at age 22 for 40 years at 8% annual return. Total invested: $96,000. Final value: approximately $699,000.\n\nPerson B invests $400/month starting at age 32 for 30 years at 8% annual return. Total invested: $144,000. Final value: approximately $597,000.\n\nWho ends up with more money? Who invested more total cash? What does this prove about the power of starting early?",
           "hints": [
             "Compare final values: $699,000 vs $597,000",
             "Compare total invested: $96,000 vs $144,000",
@@ -336,30 +361,34 @@
           ],
           "answer": "Person A ends up with about $102,000 more ($699,000 vs $597,000) despite investing $48,000 less total ($96,000 vs $144,000). This proves that starting early is more powerful than investing larger amounts later. The 10 extra years of compounding are worth more than doubling the monthly contribution."
         }
-      ]
+      ],
+      "skill": "cm-compound-growth"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Compound Growth — Apply It",
-      "skills": ["cm-compound-growth"],
+      "skills": [
+        "cm-compound-growth"
+      ],
       "problems": [
         {
           "id": "ip-16",
-          "prompt": "At current inflation of approximately 3% per year, use the Rule of 72 to estimate how many years it takes for prices to double. If a college semester currently costs $12,000, approximately what will it cost when prices have doubled?",
+          "question": "At current inflation of approximately 3% per year, use the Rule of 72 to estimate how many years it takes for prices to double. If a college semester currently costs $12,000, approximately what will it cost when prices have doubled?",
           "answer": "72 / 3 = 24 years for prices to double. A $12,000 semester would cost approximately $24,000 in about 24 years."
         },
         {
           "id": "ip-17",
-          "prompt": "Zara invests $10,000 at 8% compounded annually. Using A = P(1 + r)^t, calculate the value after 9 years. Then verify using the Rule of 72 that this is approximately double the original amount. (Hint: (1.08)^9 = 1.999)",
+          "question": "Zara invests $10,000 at 8% compounded annually. Using A = P(1 + r)^t, calculate the value after 9 years. Then verify using the Rule of 72 that this is approximately double the original amount. (Hint: (1.08)^9 = 1.999)",
           "answer": "A = $10,000 x (1.08)^9 = $10,000 x 1.999 = $19,990. The Rule of 72 predicts doubling at 72 / 8 = 9 years. $19,990 is almost exactly double $10,000, confirming the Rule of 72 works."
         },
         {
           "id": "ip-18",
-          "prompt": "Two cousins each receive $3,000 at age 18. Cousin A invests it immediately at 8% annual return and leaves it for 45 years (until age 63). Cousin B spends the $3,000 and waits until age 28 to invest a new $3,000 at the same 8% rate for 35 years (until age 63). Calculate each cousin's final amount. How much did waiting 10 years cost Cousin B? (Hints: (1.08)^45 = 31.92 and (1.08)^35 = 14.79)",
+          "question": "Two cousins each receive $3,000 at age 18. Cousin A invests it immediately at 8% annual return and leaves it for 45 years (until age 63). Cousin B spends the $3,000 and waits until age 28 to invest a new $3,000 at the same 8% rate for 35 years (until age 63). Calculate each cousin's final amount. How much did waiting 10 years cost Cousin B? (Hints: (1.08)^45 = 31.92 and (1.08)^35 = 14.79)",
           "answer": "Cousin A: $3,000 x 31.92 = $95,760. Cousin B: $3,000 x 14.79 = $44,370. Waiting 10 years cost Cousin B: $95,760 - $44,370 = $51,390. The 10-year delay cut the final amount by more than half, even though both invested the same $3,000."
         }
-      ]
+      ],
+      "skill": "cm-compound-growth"
     },
     {
       "type": "explanation",
@@ -399,11 +428,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Scam Detection — Practice",
-      "skills": ["cm-scam-detection"],
+      "skills": [
+        "cm-scam-detection"
+      ],
       "problems": [
         {
           "id": "ip-19",
-          "prompt": "Read the following pitch: 'Join our exclusive investment group! We use a secret trading algorithm that GUARANTEES 25% returns every month. Our members are getting rich — but we only accept 50 new people this week. Wire $1,000 to this account to secure your spot. Do not tell anyone — this is a private, members-only opportunity.' Identify at least three red flags in this message.",
+          "question": "Read the following pitch: 'Join our exclusive investment group! We use a secret trading algorithm that GUARANTEES 25% returns every month. Our members are getting rich — but we only accept 50 new people this week. Wire $1,000 to this account to secure your spot. Do not tell anyone — this is a private, members-only opportunity.' Identify at least three red flags in this message.",
           "hints": [
             "Look for promises that are unrealistic — what is a normal annual return for even the best investors?",
             "Why would a real investment require secrecy and urgency?"
@@ -412,35 +443,38 @@
         },
         {
           "id": "ip-20",
-          "prompt": "Your classmate says: 'My uncle says this company lets you invest $1,000 and recruit three friends who each invest $1,000. Then each of them recruits three more people. You earn a cut from everyone below you! People at the top make $20,000 a month.' What type of scheme does this sound like, and why is it mathematically unsustainable?",
+          "question": "Your classmate says: 'My uncle says this company lets you invest $1,000 and recruit three friends who each invest $1,000. Then each of them recruits three more people. You earn a cut from everyone below you! People at the top make $20,000 a month.' What type of scheme does this sound like, and why is it mathematically unsustainable?",
           "hints": [
             "Think about the recruitment math: if each person recruits 3, how fast does the number grow? Level 1 = 3, Level 2 = 9, Level 3 = 27...",
             "Where is the money coming from — real business profits or just from new recruits?"
           ],
           "answer": "This is a pyramid scheme. It is unsustainable because it requires exponential recruitment: Level 1 = 3, Level 2 = 9, Level 3 = 27, Level 4 = 81. By Level 13, you would need over 1.5 million new recruits. The money at the top comes entirely from new people joining at the bottom, not from any real product or investment. When recruitment inevitably slows, the scheme collapses and those at the bottom (the vast majority) lose their money."
         }
-      ]
+      ],
+      "skill": "cm-scam-detection"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Scam Detection — Apply It",
-      "skills": ["cm-scam-detection"],
+      "skills": [
+        "cm-scam-detection"
+      ],
       "problems": [
         {
           "id": "ip-21",
-          "prompt": "For each scenario, decide: LEGITIMATE or RED FLAG.\n(A) A well-known brokerage firm offers an index fund with average historical returns of 10% per year and a disclaimer that past performance does not guarantee future results.\n(B) A social media ad promises 'Risk-free investment! Double your money in 30 days!'\n(C) Your employer offers to match your 401(k) contributions up to 5% of your salary.\n(D) A stranger emails you saying you have been selected for an exclusive investment opportunity and asks for your bank account number.",
+          "question": "For each scenario, decide: LEGITIMATE or RED FLAG.\n(A) A well-known brokerage firm offers an index fund with average historical returns of 10% per year and a disclaimer that past performance does not guarantee future results.\n(B) A social media ad promises 'Risk-free investment! Double your money in 30 days!'\n(C) Your employer offers to match your 401(k) contributions up to 5% of your salary.\n(D) A stranger emails you saying you have been selected for an exclusive investment opportunity and asks for your bank account number.",
           "answer": "(A) LEGITIMATE — established firm, realistic returns, includes required risk disclaimer. (B) RED FLAG — 'risk-free' does not exist in investing, and doubling money in 30 days is an unrealistic promise. (C) LEGITIMATE — employer 401(k) matching is a standard, regulated workplace benefit. (D) RED FLAG — unsolicited contact from a stranger, claims of exclusivity, and requesting bank account information are classic scam indicators."
         },
         {
           "id": "ip-22",
-          "prompt": "Your friend is excited about an investment and asks your advice: 'This guy on TikTok says if I invest $200 in his forex trading program, I can make $5,000 a month with just 15 minutes of work per day.' Write a brief response (2-3 sentences) explaining why your friend should be cautious, and name at least two specific red flags.",
+          "question": "Your friend is excited about an investment and asks your advice: 'This guy on TikTok says if I invest $200 in his forex trading program, I can make $5,000 a month with just 15 minutes of work per day.' Write a brief response (2-3 sentences) explaining why your friend should be cautious, and name at least two specific red flags.",
           "answer": "Your friend should be very cautious because this has multiple scam red flags. The promise of $5,000 per month from a $200 investment is an unrealistic return (2,500% monthly), and the claim of easy money from just 15 minutes a day is a classic too-good-to-be-true lure. Additional red flags: it is an unsolicited pitch from a social media stranger, and it promotes a paid program rather than providing legitimate financial education."
         }
-      ]
+      ],
+      "skill": "cm-scam-detection"
     }
   ],
-
   "answerKeys": {
     "ip-1": "Decreased by $75",
     "ip-2": "$4.70",

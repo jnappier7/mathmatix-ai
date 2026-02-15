@@ -6,7 +6,6 @@
   "weeks": "7-10",
   "estimatedDuration": 40,
   "description": "The biggest conceptual leap in 6th grade. Students move from additive thinking ('how much more?') to multiplicative thinking ('how many times?'). This unit builds ratio language, unit rate fluency, equivalent ratio tables, real-world ratio/rate problem solving, and measurement conversions — all grounded in contexts students care about: recipes, shopping, speed, and sports stats.",
-
   "skills": [
     "g6-ratio-language",
     "g6-unit-rates",
@@ -14,7 +13,6 @@
     "g6-ratio-problem-solving",
     "g6-measurement-conversions"
   ],
-
   "standardsAlignment": [
     "6.RP.A.1",
     "6.RP.A.2",
@@ -23,7 +21,6 @@
     "6.RP.A.3b",
     "6.RP.A.3d"
   ],
-
   "goals": [
     "Use ratio language to describe relationships between two quantities and write ratios in all three forms (a:b, a to b, a/b)",
     "Find and interpret unit rates to compare real-world options like prices, speeds, and per-game averages",
@@ -31,7 +28,6 @@
     "Apply ratio and rate reasoning with tables, diagrams, and scale factors to solve multi-step real-world problems",
     "Convert measurement units within a system (customary and metric) using ratio reasoning"
   ],
-
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do for each skill, building from ratio language through conversions",
     "Anchor every ratio concept in concrete, familiar contexts (recipes, shopping, sports) before moving to abstract notation",
@@ -39,9 +35,7 @@
     "Explicitly address the additive-to-multiplicative thinking shift by comparing 'how much more' vs 'how many times as much'",
     "Build unit rate fluency through repeated comparison tasks before introducing formal conversion problems"
   ],
-
   "aiFlexLevel": "moderate",
-
   "scaffold": [
     {
       "type": "explanation",
@@ -82,11 +76,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Ratio Language — Practice Together",
-      "skills": ["g6-ratio-language"],
+      "skills": [
+        "g6-ratio-language"
+      ],
       "problems": [
         {
           "id": "rr-1",
-          "prompt": "A trail mix recipe uses 3 cups of granola, 2 cups of raisins, and 1 cup of chocolate chips. Write the ratio of raisins to granola in all three forms. Is this a part-to-part or part-to-whole ratio?",
+          "question": "A trail mix recipe uses 3 cups of granola, 2 cups of raisins, and 1 cup of chocolate chips. Write the ratio of raisins to granola in all three forms. Is this a part-to-part or part-to-whole ratio?",
           "hints": [
             "Raisins = 2 cups, Granola = 3 cups. Put raisins first since the question asks 'raisins to granola'",
             "The three forms are: colon (a:b), word (a to b), and fraction (a/b)",
@@ -96,7 +92,7 @@
         },
         {
           "id": "rr-2",
-          "prompt": "At a pizza party, there are 18 slices of pepperoni and 12 slices of cheese. Write the ratio of cheese to total slices in simplest form. What fraction of the pizza is cheese?",
+          "question": "At a pizza party, there are 18 slices of pepperoni and 12 slices of cheese. Write the ratio of cheese to total slices in simplest form. What fraction of the pizza is cheese?",
           "hints": [
             "Total slices = 18 + 12 = 30",
             "Cheese to total = 12:30. Find the GCF of 12 and 30 to simplify",
@@ -106,37 +102,41 @@
         },
         {
           "id": "rr-3",
-          "prompt": "Marcus says the ratio of cats to dogs at the shelter is 4:5, so there must be exactly 4 cats and 5 dogs. Is Marcus correct? Explain why or why not.",
+          "question": "Marcus says the ratio of cats to dogs at the shelter is 4:5, so there must be exactly 4 cats and 5 dogs. Is Marcus correct? Explain why or why not.",
           "hints": [
             "Think about what a ratio tells you — does it tell you exact amounts?",
             "Could there be 8 cats and 10 dogs and still have a 4:5 ratio?"
           ],
           "answer": "Marcus is not correct. A ratio of 4:5 means for every 4 cats there are 5 dogs, but the actual numbers could be any equivalent amounts: 4 and 5, 8 and 10, 12 and 15, 40 and 50, etc. Ratios describe a relationship, not specific counts."
         }
-      ]
+      ],
+      "skill": "g6-ratio-language"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Ratio Language — On Your Own",
-      "skills": ["g6-ratio-language"],
+      "skills": [
+        "g6-ratio-language"
+      ],
       "problems": [
         {
           "id": "rr-4",
-          "prompt": "A soccer team played 24 games. They won 14, lost 6, and tied 4. Write these ratios in simplest form: (a) wins to losses, (b) ties to total games, (c) losses to wins.",
+          "question": "A soccer team played 24 games. They won 14, lost 6, and tied 4. Write these ratios in simplest form: (a) wins to losses, (b) ties to total games, (c) losses to wins.",
           "answer": "(a) wins to losses = 14:6 = 7:3. (b) ties to total = 4:24 = 1:6. (c) losses to wins = 6:14 = 3:7. Notice (a) and (c) are the same numbers in reverse order — order matters!"
         },
         {
           "id": "rr-5",
-          "prompt": "A bag has red and blue marbles in a ratio of 3:5. If there are 40 marbles total, how many are red and how many are blue?",
+          "question": "A bag has red and blue marbles in a ratio of 3:5. If there are 40 marbles total, how many are red and how many are blue?",
           "answer": "Total parts = 3 + 5 = 8. Each part = 40 / 8 = 5 marbles. Red = 3 x 5 = 15 marbles. Blue = 5 x 5 = 25 marbles. Check: 15 + 25 = 40 and 15:25 = 3:5."
         },
         {
           "id": "rr-6",
-          "prompt": "In Ms. Rivera's class, the ratio of students who prefer basketball to soccer is 7:5. The ratio of students who prefer soccer to swimming is 5:3. What is the ratio of basketball to soccer to swimming fans?",
+          "question": "In Ms. Rivera's class, the ratio of students who prefer basketball to soccer is 7:5. The ratio of students who prefer soccer to swimming is 5:3. What is the ratio of basketball to soccer to swimming fans?",
           "answer": "Basketball:soccer = 7:5 and soccer:swimming = 5:3. Since soccer is 5 in both ratios, we can combine them directly: basketball:soccer:swimming = 7:5:3."
         }
-      ]
+      ],
+      "skill": "g6-ratio-language"
     },
     {
       "type": "explanation",
@@ -176,11 +176,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Unit Rates — Practice Together",
-      "skills": ["g6-unit-rates"],
+      "skills": [
+        "g6-unit-rates"
+      ],
       "problems": [
         {
           "id": "rr-7",
-          "prompt": "Brand A cereal: 18 oz for $3.60. Brand B cereal: 24 oz for $4.56. Find the unit price of each and determine which is the better buy.",
+          "question": "Brand A cereal: 18 oz for $3.60. Brand B cereal: 24 oz for $4.56. Find the unit price of each and determine which is the better buy.",
           "hints": [
             "Unit price = total price / number of ounces",
             "Brand A: $3.60 / 18 oz. Brand B: $4.56 / 24 oz",
@@ -190,7 +192,7 @@
         },
         {
           "id": "rr-8",
-          "prompt": "A car travels 245 miles on 7 gallons of gas. A truck travels 180 miles on 9 gallons. Which vehicle gets better gas mileage (miles per gallon)?",
+          "question": "A car travels 245 miles on 7 gallons of gas. A truck travels 180 miles on 9 gallons. Which vehicle gets better gas mileage (miles per gallon)?",
           "hints": [
             "Find miles per gallon for each: divide miles by gallons",
             "Car: 245 / 7. Truck: 180 / 9"
@@ -199,37 +201,41 @@
         },
         {
           "id": "rr-9",
-          "prompt": "Emma scored 84 points in her last 7 basketball games. Mia scored 70 points in her last 5 games. Who is averaging more points per game?",
+          "question": "Emma scored 84 points in her last 7 basketball games. Mia scored 70 points in her last 5 games. Who is averaging more points per game?",
           "hints": [
             "Points per game = total points / number of games",
             "Emma: 84 / 7. Mia: 70 / 5"
           ],
           "answer": "Emma: 84 / 7 = 12 points per game. Mia: 70 / 5 = 14 points per game. Mia is averaging more points per game (14 vs 12)."
         }
-      ]
+      ],
+      "skill": "g6-unit-rates"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Unit Rates — On Your Own",
-      "skills": ["g6-unit-rates"],
+      "skills": [
+        "g6-unit-rates"
+      ],
       "problems": [
         {
           "id": "rr-10",
-          "prompt": "A 15 oz jar of peanut butter costs $3.75. A 28 oz jar costs $6.44. Which jar is the better buy? By how much per ounce?",
+          "question": "A 15 oz jar of peanut butter costs $3.75. A 28 oz jar costs $6.44. Which jar is the better buy? By how much per ounce?",
           "answer": "15 oz jar: $3.75 / 15 = $0.25/oz. 28 oz jar: $6.44 / 28 = $0.23/oz. The 28 oz jar is the better buy, saving $0.02 per ounce."
         },
         {
           "id": "rr-11",
-          "prompt": "A cyclist rides 52 miles in 4 hours. At that rate, how far will she ride in 6.5 hours?",
+          "question": "A cyclist rides 52 miles in 4 hours. At that rate, how far will she ride in 6.5 hours?",
           "answer": "Unit rate: 52 / 4 = 13 miles per hour. In 6.5 hours: 13 x 6.5 = 84.5 miles."
         },
         {
           "id": "rr-12",
-          "prompt": "Tyler reads 42 pages in 1.5 hours. Nadia reads 65 pages in 2.5 hours. Who reads faster? How many pages would each read in 3 hours?",
+          "question": "Tyler reads 42 pages in 1.5 hours. Nadia reads 65 pages in 2.5 hours. Who reads faster? How many pages would each read in 3 hours?",
           "answer": "Tyler: 42 / 1.5 = 28 pages per hour. Nadia: 65 / 2.5 = 26 pages per hour. Tyler reads faster. In 3 hours: Tyler reads 28 x 3 = 84 pages, Nadia reads 26 x 3 = 78 pages."
         }
-      ]
+      ],
+      "skill": "g6-unit-rates"
     },
     {
       "type": "explanation",
@@ -270,11 +276,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Equivalent Ratios — Practice Together",
-      "skills": ["g6-equivalent-ratios"],
+      "skills": [
+        "g6-equivalent-ratios"
+      ],
       "problems": [
         {
           "id": "rr-13",
-          "prompt": "A lemonade recipe uses 4 lemons for every 6 cups of water. Complete the ratio table:\nLemons: 4, 8, ?, 16\nWater: 6, ?, 15, ?",
+          "question": "A lemonade recipe uses 4 lemons for every 6 cups of water. Complete the ratio table:\nLemons: 4, 8, ?, 16\nWater: 6, ?, 15, ?",
           "hints": [
             "Find the multiplier for each column by comparing to the base ratio 4:6",
             "Column 2: lemons doubled (4 to 8), so water doubles too",
@@ -284,7 +292,7 @@
         },
         {
           "id": "rr-14",
-          "prompt": "Determine which of these ratios are equivalent to 6:10. (a) 3:5  (b) 12:18  (c) 15:25  (d) 9:15",
+          "question": "Determine which of these ratios are equivalent to 6:10. (a) 3:5  (b) 12:18  (c) 15:25  (d) 9:15",
           "hints": [
             "Simplify 6:10 first — divide both by their GCF",
             "6:10 simplifies to 3:5. Now simplify each option to see if it also equals 3:5",
@@ -294,7 +302,7 @@
         },
         {
           "id": "rr-15",
-          "prompt": "To make orange paint, you mix red and yellow in a 2:5 ratio. You have 35 cups of yellow paint. How many cups of red do you need? How many cups of orange paint will you make in total?",
+          "question": "To make orange paint, you mix red and yellow in a 2:5 ratio. You have 35 cups of yellow paint. How many cups of red do you need? How many cups of orange paint will you make in total?",
           "hints": [
             "Set up the ratio: Red:Yellow = 2:5. You know Yellow = 35",
             "Find the multiplier: 5 x ? = 35",
@@ -302,30 +310,34 @@
           ],
           "answer": "Multiplier: 35 / 5 = 7. Red = 2 x 7 = 14 cups. Total orange paint = 14 + 35 = 49 cups."
         }
-      ]
+      ],
+      "skill": "g6-equivalent-ratios"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Equivalent Ratios — On Your Own",
-      "skills": ["g6-equivalent-ratios"],
+      "skills": [
+        "g6-equivalent-ratios"
+      ],
       "problems": [
         {
           "id": "rr-16",
-          "prompt": "A school has a student-to-teacher ratio of 18:1. If there are 450 students, how many teachers are there?",
+          "question": "A school has a student-to-teacher ratio of 18:1. If there are 450 students, how many teachers are there?",
           "answer": "Multiplier: 450 / 18 = 25. Teachers = 1 x 25 = 25 teachers."
         },
         {
           "id": "rr-17",
-          "prompt": "A pancake recipe uses flour and milk in a 3:2 ratio. Write five equivalent ratios in a ratio table. If you need exactly 20 cups of milk, how much flour do you need?",
+          "question": "A pancake recipe uses flour and milk in a 3:2 ratio. Write five equivalent ratios in a ratio table. If you need exactly 20 cups of milk, how much flour do you need?",
           "answer": "Ratio table — Flour: 3, 6, 9, 12, 15. Milk: 2, 4, 6, 8, 10. For 20 cups of milk: multiplier = 20 / 2 = 10, so Flour = 3 x 10 = 30 cups."
         },
         {
           "id": "rr-18",
-          "prompt": "At a school spirit day, the ratio of students wearing blue to students wearing gold is 5:3. If 120 students total are wearing blue or gold, how many are wearing each color?",
+          "question": "At a school spirit day, the ratio of students wearing blue to students wearing gold is 5:3. If 120 students total are wearing blue or gold, how many are wearing each color?",
           "answer": "Total parts = 5 + 3 = 8. Each part = 120 / 8 = 15 students. Blue = 5 x 15 = 75 students. Gold = 3 x 15 = 45 students. Check: 75 + 45 = 120 and 75:45 = 5:3."
         }
-      ]
+      ],
+      "skill": "g6-equivalent-ratios"
     },
     {
       "type": "explanation",
@@ -366,11 +378,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Ratio and Rate Problem Solving — Practice Together",
-      "skills": ["g6-ratio-problem-solving"],
+      "skills": [
+        "g6-ratio-problem-solving"
+      ],
       "problems": [
         {
           "id": "rr-19",
-          "prompt": "A movie theater sells popcorn in two sizes. A small holds 4 cups and costs $3.50. A large holds 10 cups and costs $7.50. Which size gives you more popcorn per dollar?",
+          "question": "A movie theater sells popcorn in two sizes. A small holds 4 cups and costs $3.50. A large holds 10 cups and costs $7.50. Which size gives you more popcorn per dollar?",
           "hints": [
             "Find the unit rate for each: cups of popcorn per dollar",
             "Small: 4 cups / $3.50. Large: 10 cups / $7.50",
@@ -380,7 +394,7 @@
         },
         {
           "id": "rr-20",
-          "prompt": "A map has a scale of 2 inches : 15 miles. Two cities are 9 inches apart on the map. What is the actual distance between the two cities?",
+          "question": "A map has a scale of 2 inches : 15 miles. Two cities are 9 inches apart on the map. What is the actual distance between the two cities?",
           "hints": [
             "Set up a ratio: 2 inches = 15 miles, 9 inches = ? miles",
             "Find the unit rate: how many miles does 1 inch represent?",
@@ -390,7 +404,7 @@
         },
         {
           "id": "rr-21",
-          "prompt": "A soccer team's win-to-loss ratio is 5:2. They have played 28 games total with no ties. How many games have they won? How many more games have they won than lost?",
+          "question": "A soccer team's win-to-loss ratio is 5:2. They have played 28 games total with no ties. How many games have they won? How many more games have they won than lost?",
           "hints": [
             "Total parts = 5 + 2 = 7",
             "Find the value of one part: 28 / 7",
@@ -398,30 +412,34 @@
           ],
           "answer": "One part = 28 / 7 = 4 games. Wins = 5 x 4 = 20 games. Losses = 2 x 4 = 8 games. They won 20 - 8 = 12 more games than they lost."
         }
-      ]
+      ],
+      "skill": "g6-ratio-problem-solving"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Ratio and Rate Problem Solving — On Your Own",
-      "skills": ["g6-ratio-problem-solving"],
+      "skills": [
+        "g6-ratio-problem-solving"
+      ],
       "problems": [
         {
           "id": "rr-22",
-          "prompt": "An art supply store sells colored pencils in packs. A 12-pack costs $4.20 and a 36-pack costs $10.80. Are the pencils the same price per pencil in both packs? If not, which is the better deal?",
+          "question": "An art supply store sells colored pencils in packs. A 12-pack costs $4.20 and a 36-pack costs $10.80. Are the pencils the same price per pencil in both packs? If not, which is the better deal?",
           "answer": "12-pack: $4.20 / 12 = $0.35 per pencil. 36-pack: $10.80 / 36 = $0.30 per pencil. They are NOT the same price. The 36-pack is the better deal, saving $0.05 per pencil."
         },
         {
           "id": "rr-23",
-          "prompt": "A summer camp has counselors and campers in a ratio of 2:9. If there are 132 people at the camp total, how many counselors are there? If 4 counselors call in sick, what is the new ratio of counselors to campers?",
+          "question": "A summer camp has counselors and campers in a ratio of 2:9. If there are 132 people at the camp total, how many counselors are there? If 4 counselors call in sick, what is the new ratio of counselors to campers?",
           "answer": "Total parts = 2 + 9 = 11. One part = 132 / 11 = 12. Counselors = 2 x 12 = 24. Campers = 9 x 12 = 108. After 4 sick: 20 counselors to 108 campers = 20:108 = 5:27."
         },
         {
           "id": "rr-24",
-          "prompt": "Priya can type 450 words in 10 minutes. She needs to type a 2,700-word report. How long will it take her? If she takes a 5-minute break every 30 minutes, what is the total time including breaks?",
+          "question": "Priya can type 450 words in 10 minutes. She needs to type a 2,700-word report. How long will it take her? If she takes a 5-minute break every 30 minutes, what is the total time including breaks?",
           "answer": "Unit rate: 450 / 10 = 45 words per minute. Time for 2,700 words: 2,700 / 45 = 60 minutes of typing. In 60 minutes she takes a break at the 30-minute mark (1 break). Total time = 60 + 5 = 65 minutes."
         }
-      ]
+      ],
+      "skill": "g6-ratio-language"
     },
     {
       "type": "explanation",
@@ -462,11 +480,13 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Measurement Conversions — Practice Together",
-      "skills": ["g6-measurement-conversions"],
+      "skills": [
+        "g6-measurement-conversions"
+      ],
       "problems": [
         {
           "id": "rr-25",
-          "prompt": "A recipe calls for 2.5 pounds of chicken. You only have a scale that measures in ounces. How many ounces of chicken do you need? (1 pound = 16 ounces)",
+          "question": "A recipe calls for 2.5 pounds of chicken. You only have a scale that measures in ounces. How many ounces of chicken do you need? (1 pound = 16 ounces)",
           "hints": [
             "Set up the conversion: 1 pound = 16 ounces",
             "Multiply: 2.5 pounds x 16 ounces per pound",
@@ -476,7 +496,7 @@
         },
         {
           "id": "rr-26",
-          "prompt": "A fish tank holds 5 gallons of water. How many quarts is that? How many cups? (1 gallon = 4 quarts, 1 quart = 4 cups)",
+          "question": "A fish tank holds 5 gallons of water. How many quarts is that? How many cups? (1 gallon = 4 quarts, 1 quart = 4 cups)",
           "hints": [
             "First convert gallons to quarts: 5 x 4",
             "Then convert quarts to cups: multiply your quarts answer by 4",
@@ -486,7 +506,7 @@
         },
         {
           "id": "rr-27",
-          "prompt": "A track and field athlete threw a javelin 18.5 meters. Her goal is 2,000 centimeters. Did she reach her goal? By how much did she exceed or miss it? (1 m = 100 cm)",
+          "question": "A track and field athlete threw a javelin 18.5 meters. Her goal is 2,000 centimeters. Did she reach her goal? By how much did she exceed or miss it? (1 m = 100 cm)",
           "hints": [
             "Convert 18.5 meters to centimeters: 1 m = 100 cm",
             "18.5 x 100 = ?",
@@ -494,33 +514,36 @@
           ],
           "answer": "18.5 m x 100 = 1,850 cm. Her goal was 2,000 cm. She missed by 2,000 - 1,850 = 150 cm (or 1.5 m)."
         }
-      ]
+      ],
+      "skill": "g6-measurement-conversions"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Measurement Conversions — On Your Own",
-      "skills": ["g6-measurement-conversions"],
+      "skills": [
+        "g6-measurement-conversions"
+      ],
       "problems": [
         {
           "id": "rr-28",
-          "prompt": "A hiker walked 2.5 miles. Her friend walked 4,000 yards. Who walked farther and by how much? (1 mile = 1,760 yards)",
+          "question": "A hiker walked 2.5 miles. Her friend walked 4,000 yards. Who walked farther and by how much? (1 mile = 1,760 yards)",
           "answer": "Hiker: 2.5 x 1,760 = 4,400 yards. Friend: 4,000 yards. The hiker walked farther by 4,400 - 4,000 = 400 yards."
         },
         {
           "id": "rr-29",
-          "prompt": "A juice company ships boxes that each contain 24 bottles. Each bottle holds 500 mL. How many liters of juice are in one box? How many boxes are needed to ship 600 liters?",
+          "question": "A juice company ships boxes that each contain 24 bottles. Each bottle holds 500 mL. How many liters of juice are in one box? How many boxes are needed to ship 600 liters?",
           "answer": "One box: 24 x 500 = 12,000 mL = 12 L. Boxes for 600 L: 600 / 12 = 50 boxes."
         },
         {
           "id": "rr-30",
-          "prompt": "A football field is 100 yards long. A soccer field is 110 meters long. Which field is longer, and by how many feet? (1 yard = 3 feet, 1 meter = 3.28 feet)",
+          "question": "A football field is 100 yards long. A soccer field is 110 meters long. Which field is longer, and by how many feet? (1 yard = 3 feet, 1 meter = 3.28 feet)",
           "answer": "Football: 100 x 3 = 300 feet. Soccer: 110 x 3.28 = 360.8 feet. The soccer field is longer by 360.8 - 300 = 60.8 feet."
         }
-      ]
+      ],
+      "skill": "g6-measurement-conversions"
     }
   ],
-
   "answerKeys": {
     "rr-1": "2:3, part-to-part",
     "rr-2": "2:5, cheese is 2/5 of total",

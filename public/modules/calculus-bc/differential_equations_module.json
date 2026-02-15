@@ -6,8 +6,23 @@
   "weeks": "20-21",
   "estimatedDuration": 50,
   "description": "Model real-world phenomena with differential equations and solve them analytically and numerically. Start with slope fields to visualize solution families, then master separation of variables to find general and particular solutions. Approximate solutions numerically with Euler's method when closed-form answers are unavailable. Conclude with the logistic growth model — the BC-specific application that combines separation of variables, equilibrium analysis, and population dynamics.",
-  "skills": ["slope-fields", "separation-of-variables", "eulers-method", "logistic-growth"],
-  "standardsAlignment": ["CED 7.1", "CED 7.2", "CED 7.3", "CED 7.4", "CED 7.5", "CED 7.6", "CED 7.7", "CED 7.8", "CED 7.9"],
+  "skills": [
+    "slope-fields",
+    "separation-of-variables",
+    "eulers-method",
+    "logistic-growth"
+  ],
+  "standardsAlignment": [
+    "CED 7.1",
+    "CED 7.2",
+    "CED 7.3",
+    "CED 7.4",
+    "CED 7.5",
+    "CED 7.6",
+    "CED 7.7",
+    "CED 7.8",
+    "CED 7.9"
+  ],
   "goals": [
     "Sketch and interpret slope fields to visualize the family of solutions to a differential equation",
     "Solve separable differential equations to find general solutions and apply initial conditions to find particular solutions",
@@ -21,14 +36,14 @@
     "Euler's method is 'slope field arithmetic' — connect the geometric intuition to the numerical procedure.",
     "Logistic growth ties the entire unit together: it's a separable DE with a slope field, equilibrium analysis, and real-world context."
   ],
-  "aiFlexLevel": 0.6,
+  "aiFlexLevel": "moderate",
   "scaffold": [
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "slope-fields",
       "title": "Slope Fields & General/Particular Solutions",
-      "text": "**Differential Equations — The Big Idea:**\n\nA differential equation (DE) relates a function to its derivative(s). The simplest first-order form is:\n\ndy/dx = f(x, y)\n\nThis tells you the slope of the solution curve at every point (x, y). The solution is a function y(x) whose derivative matches the rule.\n\n**Slope Fields (Direction Fields):**\n\nAt each point (x, y) in the plane, draw a short line segment with slope f(x, y). The resulting picture is a slope field. Solution curves thread through the field, always tangent to the segments.\n\n**Reading a Slope field:**\n• Where segments are horizontal → dy/dx = 0 (these are the nullclines).\n• Where segments are steep → |dy/dx| is large.\n• Segments with the same slope lie along curves called isoclines.\n\n**General vs. Particular Solutions:**\n• **General solution:** The family of all solutions, containing an arbitrary constant C.\n  Example: dy/dx = 2x → y = x² + C (family of parabolas).\n• **Particular solution:** One specific curve from the family, determined by an initial condition y(x₀) = y₀.\n  Example: y(0) = 3 → C = 3 → y = x² + 3.\n\n**Equilibrium solutions** are constant solutions where dy/dx = 0 for all x. On a slope field, they appear as horizontal lines.",
+      "content": "**Differential Equations — The Big Idea:**\n\nA differential equation (DE) relates a function to its derivative(s). The simplest first-order form is:\n\ndy/dx = f(x, y)\n\nThis tells you the slope of the solution curve at every point (x, y). The solution is a function y(x) whose derivative matches the rule.\n\n**Slope Fields (Direction Fields):**\n\nAt each point (x, y) in the plane, draw a short line segment with slope f(x, y). The resulting picture is a slope field. Solution curves thread through the field, always tangent to the segments.\n\n**Reading a Slope field:**\n• Where segments are horizontal → dy/dx = 0 (these are the nullclines).\n• Where segments are steep → |dy/dx| is large.\n• Segments with the same slope lie along curves called isoclines.\n\n**General vs. Particular Solutions:**\n• **General solution:** The family of all solutions, containing an arbitrary constant C.\n  Example: dy/dx = 2x → y = x² + C (family of parabolas).\n• **Particular solution:** One specific curve from the family, determined by an initial condition y(x₀) = y₀.\n  Example: y(0) = 3 → C = 3 → y = x² + 3.\n\n**Equilibrium solutions** are constant solutions where dy/dx = 0 for all x. On a slope field, they appear as horizontal lines.",
       "initialPrompt": "For dy/dx = x − y, what is the slope at (0, 0)? At (1, 1)? Along what line in the plane are all slopes equal to zero?"
     },
     {
@@ -93,7 +108,7 @@
       "lessonPhase": "concept-intro",
       "skill": "separation-of-variables",
       "title": "Separation of Variables",
-      "text": "**When dy/dx Involves Both x and y:**\n\nIf dy/dx = f(x, y) can be written as dy/dx = g(x) · h(y), the equation is **separable**.\n\n**The Method:**\n1. **Separate:** Move all y-terms to the left and all x-terms to the right:\n   (1/h(y)) dy = g(x) dx\n\n2. **Integrate both sides:**\n   ∫ (1/h(y)) dy = ∫ g(x) dx\n\n3. **Solve for y** (if possible).\n\n4. **Apply the initial condition** to find C.\n\n**Example walkthrough:** dy/dx = 2xy\n• Separate: dy/y = 2x dx\n• Integrate: ln|y| = x² + C\n• Solve for y: |y| = e^(x²+C) = Ae^(x²), so y = Ae^(x²) (A can be positive or negative)\n• If y(0) = 3: A = 3, so y = 3e^(x²)\n\n**Common mistakes to avoid:**\n• Forgetting to put +C after integration (put it on ONE side only).\n• Forgetting that ln|y| = ... needs |y| = e^(...), not just y = e^(...).\n• Not checking whether h(y) = 0 for any y — those give equilibrium solutions that the separation process might miss.",
+      "content": "**When dy/dx Involves Both x and y:**\n\nIf dy/dx = f(x, y) can be written as dy/dx = g(x) · h(y), the equation is **separable**.\n\n**The Method:**\n1. **Separate:** Move all y-terms to the left and all x-terms to the right:\n   (1/h(y)) dy = g(x) dx\n\n2. **Integrate both sides:**\n   ∫ (1/h(y)) dy = ∫ g(x) dx\n\n3. **Solve for y** (if possible).\n\n4. **Apply the initial condition** to find C.\n\n**Example walkthrough:** dy/dx = 2xy\n• Separate: dy/y = 2x dx\n• Integrate: ln|y| = x² + C\n• Solve for y: |y| = e^(x²+C) = Ae^(x²), so y = Ae^(x²) (A can be positive or negative)\n• If y(0) = 3: A = 3, so y = 3e^(x²)\n\n**Common mistakes to avoid:**\n• Forgetting to put +C after integration (put it on ONE side only).\n• Forgetting that ln|y| = ... needs |y| = e^(...), not just y = e^(...).\n• Not checking whether h(y) = 0 for any y — those give equilibrium solutions that the separation process might miss.",
       "initialPrompt": "Is dy/dx = x + y separable? What about dy/dx = xy? How can you tell the difference?"
     },
     {
@@ -158,7 +173,7 @@
       "lessonPhase": "concept-intro",
       "skill": "eulers-method",
       "title": "Euler's Method & Logistic Growth",
-      "text": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x₀, y₀). Use the slope dy/dx = f(x₀, y₀) to take a small step forward:\n\ny_{n+1} = yₙ + f(xₙ, yₙ) · Δx\nx_{n+1} = xₙ + Δx\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller Δx → more steps → better approximation. Euler's method is a first-order method: halving Δx roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\ndP/dt = kP(1 − P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n• **Fastest growth at P = L/2** — this is the inflection point of the logistic curve.\n• **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n• **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n• This DE is separable — the solution is P(t) = L/(1 + Ae^(−kt)) where A depends on the initial condition.",
+      "content": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x₀, y₀). Use the slope dy/dx = f(x₀, y₀) to take a small step forward:\n\ny_{n+1} = yₙ + f(xₙ, yₙ) · Δx\nx_{n+1} = xₙ + Δx\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller Δx → more steps → better approximation. Euler's method is a first-order method: halving Δx roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\ndP/dt = kP(1 − P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n• **Fastest growth at P = L/2** — this is the inflection point of the logistic curve.\n• **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n• **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n• This DE is separable — the solution is P(t) = L/(1 + Ae^(−kt)) where A depends on the initial condition.",
       "initialPrompt": "If dP/dt = 0.5P(1 − P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?"
     },
     {
@@ -228,45 +243,58 @@
           "question": "For dy/dx = x² − y, compute the slope at each point: (0,0), (1,0), (0,1), (1,1), (2,1).",
           "answer": "Slopes: 0, 1, −1, 0, 3",
           "skill": "slope-fields",
-          "hints": ["Plug each point into f(x,y) = x² − y. (0,0): 0−0=0. (1,0): 1−0=1. (0,1): 0−1=−1. (1,1): 1−1=0. (2,1): 4−1=3."]
+          "hints": [
+            "Plug each point into f(x,y) = x² − y. (0,0): 0−0=0. (1,0): 1−0=1. (0,1): 0−1=−1. (1,1): 1−1=0. (2,1): 4−1=3."
+          ]
         },
         {
           "id": "de-yp2",
           "question": "Solve dy/dx = 2xy², y(0) = 1.",
           "answer": "y = 1/(1 − x²)",
           "skill": "separation-of-variables",
-          "hints": ["Separate: dy/y² = 2x dx. Integrate: −1/y = x² + C. Apply y(0) = 1: −1 = 0 + C, C = −1. So −1/y = x² − 1, giving 1/y = 1 − x², y = 1/(1 − x²)."]
+          "hints": [
+            "Separate: dy/y² = 2x dx. Integrate: −1/y = x² + C. Apply y(0) = 1: −1 = 0 + C, C = −1. So −1/y = x² − 1, giving 1/y = 1 − x², y = 1/(1 − x²)."
+          ]
         },
         {
           "id": "de-yp3",
           "question": "Solve dy/dx = (1 + y)/(1 + x), y(0) = 1.",
           "answer": "y = 2x + 1",
           "skill": "separation-of-variables",
-          "hints": ["Separate: dy/(1+y) = dx/(1+x). Integrate: ln|1+y| = ln|1+x| + C. So 1+y = A(1+x). Apply y(0)=1: 2 = A. Thus y = 2(1+x) − 1 = 2x + 1. Check: dy/dx = 2 and (1+y)/(1+x) = (2+2x)/(1+x) = 2 ✓"]
+          "hints": [
+            "Separate: dy/(1+y) = dx/(1+x). Integrate: ln|1+y| = ln|1+x| + C. So 1+y = A(1+x). Apply y(0)=1: 2 = A. Thus y = 2(1+x) − 1 = 2x + 1. Check: dy/dx = 2 and (1+y)/(1+x) = (2+2x)/(1+x) = 2 ✓"
+          ]
         },
         {
           "id": "de-yp4",
           "question": "Use Euler's method with Δx = 0.5 to approximate y(1.5) given dy/dx = x − y, y(0) = 1.",
           "answer": "y(1.5) ≈ 0.75",
           "skill": "eulers-method",
-          "hints": ["Step 1: (0,1), slope = −1, y₁ = 1+(−1)(0.5) = 0.5, x₁ = 0.5. Step 2: (0.5, 0.5), slope = 0, y₂ = 0.5+0(0.5) = 0.5, x₂ = 1. Step 3: (1, 0.5), slope = 0.5, y₃ = 0.5+0.5(0.5) = 0.75, x₃ = 1.5."]
+          "hints": [
+            "Step 1: (0,1), slope = −1, y₁ = 1+(−1)(0.5) = 0.5, x₁ = 0.5. Step 2: (0.5, 0.5), slope = 0, y₂ = 0.5+0(0.5) = 0.5, x₂ = 1. Step 3: (1, 0.5), slope = 0.5, y₃ = 0.5+0.5(0.5) = 0.75, x₃ = 1.5."
+          ]
         },
         {
           "id": "de-yp5",
           "question": "A fish population follows dP/dt = 0.4P(1 − P/2000), P(0) = 200. What is the carrying capacity? At what population is growth fastest? What is that maximum growth rate?",
           "answer": "Carrying capacity = 2000. Fastest growth at P = 1000. Maximum rate = 200.",
           "skill": "logistic-growth",
-          "hints": ["Logistic model: k = 0.4, L = 2000. Carrying capacity = L = 2000. Fastest at P = L/2 = 1000. Max rate = kL/4 = 0.4(2000)/4 = 200."]
+          "hints": [
+            "Logistic model: k = 0.4, L = 2000. Carrying capacity = L = 2000. Fastest at P = L/2 = 1000. Max rate = kL/4 = 0.4(2000)/4 = 200."
+          ]
         },
         {
           "id": "de-yp6",
           "question": "Solve dy/dx = eˣ⁺ʸ, y(0) = 0. (Hint: eˣ⁺ʸ = eˣ · eʸ.)",
           "answer": "y = −ln(2 − eˣ)",
           "skill": "separation-of-variables",
-          "hints": ["Rewrite: dy/dx = eˣ · eʸ. Separate: e⁻ʸ dy = eˣ dx. Integrate: −e⁻ʸ = eˣ + C. Apply y(0)=0: −1 = 1+C, C = −2. So −e⁻ʸ = eˣ − 2, e⁻ʸ = 2 − eˣ, −y = ln(2 − eˣ), y = −ln(2 − eˣ)."]
+          "hints": [
+            "Rewrite: dy/dx = eˣ · eʸ. Separate: e⁻ʸ dy = eˣ dx. Integrate: −e⁻ʸ = eˣ + C. Apply y(0)=0: −1 = 1+C, C = −2. So −e⁻ʸ = eˣ − 2, e⁻ʸ = 2 − eˣ, −y = ln(2 − eˣ), y = −ln(2 − eˣ)."
+          ]
         }
       ],
-      "attemptsRequired": 3
+      "attemptsRequired": 3,
+      "skill": "slope-fields"
     }
   ],
   "answerKeys": {

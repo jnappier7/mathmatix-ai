@@ -14,7 +14,13 @@
     "asymptote-analysis",
     "polynomial-rational-inequalities"
   ],
-  "standardsAlignment": ["A-APR.2", "A-APR.3", "A-APR.6", "F-IF.7", "A-REI.11"],
+  "standardsAlignment": [
+    "A-APR.2",
+    "A-APR.3",
+    "A-APR.6",
+    "F-IF.7",
+    "A-REI.11"
+  ],
   "goals": [
     "Determine end behavior of polynomial functions using the Leading Coefficient Test and identify maximum number of turning points from degree.",
     "Find all zeros of polynomial functions using the Rational Root Theorem, synthetic division, and factoring; describe multiplicity effects on graph behavior at each zero.",
@@ -141,24 +147,44 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Polynomial Analysis Practice",
-      "skills": ["polynomial-end-behavior", "polynomial-zeros-multiplicity", "synthetic-division-remainder"],
+      "skills": [
+        "polynomial-end-behavior",
+        "polynomial-zeros-multiplicity",
+        "synthetic-division-remainder"
+      ],
       "problems": [
         {
           "problem": "For f(x) = −x⁴ + 6x³ − 9x², find all zeros with multiplicities and describe end behavior and graph behavior at each zero.",
-          "hints": ["Factor out −x²: f(x) = −x²(x² − 6x + 9)", "x² − 6x + 9 = (x − 3)²", "f(x) = −x²(x − 3)². Zeros: x = 0 (mult 2), x = 3 (mult 2)", "Even multiplicities → graph bounces at both zeros. Degree 4, negative leading coeff → both ends fall."],
+          "hints": [
+            "Factor out −x²: f(x) = −x²(x² − 6x + 9)",
+            "x² − 6x + 9 = (x − 3)²",
+            "f(x) = −x²(x − 3)². Zeros: x = 0 (mult 2), x = 3 (mult 2)",
+            "Even multiplicities → graph bounces at both zeros. Degree 4, negative leading coeff → both ends fall."
+          ],
           "answer": "f(x) = −x²(x − 3)². Zeros: x = 0 (multiplicity 2, graph bounces), x = 3 (multiplicity 2, graph bounces). End behavior: degree 4 with leading coefficient −1 < 0 → both ends fall (as x → ±∞, f(x) → −∞). The graph bounces at x = 0 and x = 3, staying at or below the x-axis."
         },
         {
           "problem": "Find all zeros of f(x) = 2x³ + x² − 13x + 6 using the Rational Root Theorem and synthetic division.",
-          "hints": ["Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}", "Test x = 2: f(2) = 16 + 4 − 26 + 6 = 0 ✓", "Synthetic division by (x − 2): quotient is 2x² + 5x − 3", "Factor: 2x² + 5x − 3 = (2x − 1)(x + 3)"],
+          "hints": [
+            "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}",
+            "Test x = 2: f(2) = 16 + 4 − 26 + 6 = 0 ✓",
+            "Synthetic division by (x − 2): quotient is 2x² + 5x − 3",
+            "Factor: 2x² + 5x − 3 = (2x − 1)(x + 3)"
+          ],
           "answer": "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}. f(2) = 16 + 4 − 26 + 6 = 0. Synthetic division: [2, 1, −13, 6] ÷ (x − 2) → [2, 5, −3, 0]. Quotient: 2x² + 5x − 3 = (2x − 1)(x + 3). Zeros: x = 2, x = 1/2, x = −3, all multiplicity 1."
         },
         {
           "problem": "Use synthetic division to divide f(x) = 2x⁴ − x³ + 3x − 5 by (x + 2). State the quotient, remainder, and f(−2).",
-          "hints": ["Include 0 for missing x² term: [2, −1, 0, 3, −5]", "c = −2 (since dividing by x + 2 = x − (−2))", "Perform synthetic division step by step", "Remainder = f(−2) by Remainder Theorem"],
+          "hints": [
+            "Include 0 for missing x² term: [2, −1, 0, 3, −5]",
+            "c = −2 (since dividing by x + 2 = x − (−2))",
+            "Perform synthetic division step by step",
+            "Remainder = f(−2) by Remainder Theorem"
+          ],
           "answer": "Coefficients: [2, −1, 0, 3, −5], c = −2. Bring down 2. 2(−2)=−4, −1+(−4)=−5. −5(−2)=10, 0+10=10. 10(−2)=−20, 3+(−20)=−17. −17(−2)=34, −5+34=29. Quotient: 2x³ − 5x² + 10x − 17, Remainder: 29. By the Remainder Theorem, f(−2) = 29."
         }
-      ]
+      ],
+      "skill": "synthetic-division-remainder"
     },
     {
       "type": "explanation",
@@ -204,24 +230,43 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Rational Function Practice",
-      "skills": ["rational-function-analysis", "asymptote-analysis"],
+      "skills": [
+        "rational-function-analysis",
+        "asymptote-analysis"
+      ],
       "problems": [
         {
           "problem": "Fully analyze f(x) = (x² + x − 6)/(x² − 9): domain, VA, HA, holes, intercepts.",
-          "hints": ["Factor: num = (x+3)(x−2), den = (x−3)(x+3)", "Common factor (x+3) → hole at x = −3", "Simplified: (x−2)/(x−3), x ≠ −3", "Hole y-value: (−3−2)/(−3−3) = −5/(−6) = 5/6"],
+          "hints": [
+            "Factor: num = (x+3)(x−2), den = (x−3)(x+3)",
+            "Common factor (x+3) → hole at x = −3",
+            "Simplified: (x−2)/(x−3), x ≠ −3",
+            "Hole y-value: (−3−2)/(−3−3) = −5/(−6) = 5/6"
+          ],
           "answer": "f(x) = (x+3)(x−2)/((x−3)(x+3)). Hole at x = −3, y = (−3−2)/(−3−3) = 5/6, so hole at (−3, 5/6). Simplified: (x−2)/(x−3). VA: x = 3. HA: y = 1 (equal degrees, ratio 1/1). x-int: x = 2, so (2,0). y-int: f(0) = (−2)/(−3) = 2/3, so (0, 2/3). Domain: x ≠ −3 and x ≠ 3."
         },
         {
           "problem": "For g(x) = (x³ − x)/(x² − 1), simplify and find domain, asymptotes, holes, intercepts.",
-          "hints": ["Factor: num = x(x²−1) = x(x−1)(x+1), den = (x−1)(x+1)", "Cancel (x−1)(x+1) → g(x) = x, x ≠ ±1", "Two holes: at x = 1 (y=1) and x = −1 (y=−1)", "Simplified form is linear — no asymptotes"],
+          "hints": [
+            "Factor: num = x(x²−1) = x(x−1)(x+1), den = (x−1)(x+1)",
+            "Cancel (x−1)(x+1) → g(x) = x, x ≠ ±1",
+            "Two holes: at x = 1 (y=1) and x = −1 (y=−1)",
+            "Simplified form is linear — no asymptotes"
+          ],
           "answer": "g(x) = x(x−1)(x+1)/((x−1)(x+1)) = x, with x ≠ 1 and x ≠ −1. Holes at (1, 1) and (−1, −1). The simplified function is the line y = x. No VA, no HA. Domain: (−∞,−1)∪(−1,1)∪(1,∞). x-int: (0,0). y-int: (0,0)."
         },
         {
           "problem": "For h(x) = (x² + 2x + 1)/(x + 3), find the oblique asymptote and all key features.",
-          "hints": ["Degree 2 over degree 1 → oblique asymptote exists", "Long division: (x²+2x+1)÷(x+3) = x − 1 + 4/(x+3)", "Oblique asymptote: y = x − 1", "Numerator = (x+1)², so x-int at x = −1 (multiplicity 2)"],
+          "hints": [
+            "Degree 2 over degree 1 → oblique asymptote exists",
+            "Long division: (x²+2x+1)÷(x+3) = x − 1 + 4/(x+3)",
+            "Oblique asymptote: y = x − 1",
+            "Numerator = (x+1)², so x-int at x = −1 (multiplicity 2)"
+          ],
           "answer": "h(x) = (x+1)²/(x+3). Long division: x − 1 + 4/(x+3). Oblique asymptote: y = x − 1. VA: x = −3. No HA. x-int: x = −1 (double root, graph touches axis). y-int: h(0) = 1/3, so (0, 1/3). Domain: x ≠ −3."
         }
-      ]
+      ],
+      "skill": "asymptote-analysis"
     },
     {
       "type": "explanation",
@@ -268,17 +313,32 @@
       "problems": [
         {
           "problem": "Solve x⁴ − 5x² + 4 ≤ 0.",
-          "hints": ["Factor: (x²−4)(x²−1) = (x−2)(x+2)(x−1)(x+1)", "Critical values: −2, −1, 1, 2", "All multiplicity 1 → sign alternates through intervals", "Test far-left interval (−∞,−2): large positive → > 0"],
+          "hints": [
+            "Factor: (x²−4)(x²−1) = (x−2)(x+2)(x−1)(x+1)",
+            "Critical values: −2, −1, 1, 2",
+            "All multiplicity 1 → sign alternates through intervals",
+            "Test far-left interval (−∞,−2): large positive → > 0"
+          ],
           "answer": "(x−2)(x+2)(x−1)(x+1) ≤ 0. Intervals: (−∞,−2): + . (−2,−1): − . (−1,1): + . (1,2): − . (2,∞): + . Need ≤ 0: include negative intervals and zeros. Solution: [−2, −1] ∪ [1, 2]."
         },
         {
           "problem": "Solve (2x − 1)/(x + 4) > 3.",
-          "hints": ["Subtract 3: (2x−1)/(x+4) − 3 > 0", "Common denominator: (2x−1−3(x+4))/(x+4) > 0", "Simplify numerator: 2x−1−3x−12 = −x−13", "(−x−13)/(x+4) > 0"],
+          "hints": [
+            "Subtract 3: (2x−1)/(x+4) − 3 > 0",
+            "Common denominator: (2x−1−3(x+4))/(x+4) > 0",
+            "Simplify numerator: 2x−1−3x−12 = −x−13",
+            "(−x−13)/(x+4) > 0"
+          ],
           "answer": "(2x−1)/(x+4) − 3 > 0 → (−x−13)/(x+4) > 0. Critical values: x = −13 (zero), x = −4 (undefined). Sign analysis: (−∞,−13): (positive)/(negative) = negative. (−13,−4): (negative)/(negative) = positive. (−4,∞): (negative)/(positive) = negative. Solution: (−13, −4). Strict inequality, so endpoints excluded."
         },
         {
           "problem": "Solve x³ − x² − 6x ≥ 0.",
-          "hints": ["Factor: x(x² − x − 6) = x(x − 3)(x + 2)", "Critical values: −2, 0, 3", "Test intervals: (−∞,−2), (−2,0), (0,3), (3,∞)", "Include endpoints since ≥"],
+          "hints": [
+            "Factor: x(x² − x − 6) = x(x − 3)(x + 2)",
+            "Critical values: −2, 0, 3",
+            "Test intervals: (−∞,−2), (−2,0), (0,3), (3,∞)",
+            "Include endpoints since ≥"
+          ],
           "answer": "x(x−3)(x+2) ≥ 0. Sign analysis: (−∞,−2): test x=−3, (−3)(−6)(−1) = −18 < 0. (−2,0): test x=−1, (−1)(−4)(1) = 4 > 0. (0,3): test x=1, (1)(−2)(3) = −6 < 0. (3,∞): test x=4, (4)(1)(6) = 24 > 0. Solution: [−2, 0] ∪ [3, ∞)."
         }
       ]
@@ -287,7 +347,14 @@
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Polynomial & Rational Functions Mastery Practice",
-      "skills": ["polynomial-end-behavior", "polynomial-zeros-multiplicity", "synthetic-division-remainder", "rational-function-analysis", "asymptote-analysis", "polynomial-rational-inequalities"],
+      "skills": [
+        "polynomial-end-behavior",
+        "polynomial-zeros-multiplicity",
+        "synthetic-division-remainder",
+        "rational-function-analysis",
+        "asymptote-analysis",
+        "polynomial-rational-inequalities"
+      ],
       "problems": [
         {
           "problem": "For f(x) = −3x⁵ + 7x⁴ − 2x + 9, determine the end behavior, maximum number of turning points, and maximum number of real zeros.",
@@ -313,7 +380,8 @@
           "problem": "Solve (x − 1)/(x + 2) ≤ (x + 3)/(x − 4).",
           "answer": "Subtract: (x−1)/(x+2) − (x+3)/(x−4) ≤ 0. Common denominator (x+2)(x−4): ((x−1)(x−4) − (x+3)(x+2))/((x+2)(x−4)) ≤ 0. Expand numerator: (x²−5x+4) − (x²+5x+6) = −10x − 2. So (−10x−2)/((x+2)(x−4)) ≤ 0. Factor numerator: −2(5x+1). Critical values: x = −1/5 (zero), x = −2 (undefined), x = 4 (undefined). Sign analysis: (−∞,−2): test x=−3: −2(−14)/((−1)(−7)) = 28/7 > 0. (−2,−1/5): test x=−1: −2(−4)/((1)(−5)) = 8/(−5) < 0. (−1/5,4): test x=0: −2(1)/((2)(−4)) = −2/(−8) > 0. (4,∞): test x=5: −2(26)/((7)(1)) = −52/7 < 0. Need ≤ 0. Include x = −1/5 (zero); exclude −2, 4 (undefined). Solution: (−2, −1/5] ∪ (4, ∞)."
         }
-      ]
+      ],
+      "skill": "polynomial-end-behavior"
     }
   ],
   "answerKeys": {
