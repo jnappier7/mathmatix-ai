@@ -8,8 +8,16 @@
     "quarter": 0,
     "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals"],
-    "standardsAlignment": ["6.NS.5", "6.NS.6", "7.NS.1", "7.NS.2"],
+    "enables": [
+      "g7-add-subtract-rationals",
+      "g7-multiply-divide-rationals"
+    ],
+    "standardsAlignment": [
+      "6.NS.5",
+      "6.NS.6",
+      "7.NS.1",
+      "7.NS.2"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Adding integers using number line model",
@@ -32,8 +40,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "integer-operations"
   },
   {
     "skillId": "g7-fraction-decimal-fluency",
@@ -44,8 +53,16 @@
     "quarter": 0,
     "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals", "g7-unit-rates"],
-    "standardsAlignment": ["6.NS.1", "6.NS.3", "7.NS.2"],
+    "enables": [
+      "g7-add-subtract-rationals",
+      "g7-multiply-divide-rationals",
+      "g7-unit-rates"
+    ],
+    "standardsAlignment": [
+      "6.NS.1",
+      "6.NS.3",
+      "7.NS.2"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Dividing fractions: multiply by the reciprocal (keep-change-flip)",
@@ -68,7 +85,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -80,8 +97,15 @@
     "quarter": 0,
     "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g7-simplify-expressions", "g7-multi-step-equations"],
-    "standardsAlignment": ["6.EE.3", "6.EE.4", "7.EE.1"],
+    "enables": [
+      "g7-simplify-expressions",
+      "g7-multi-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.3",
+      "6.EE.4",
+      "7.EE.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Like terms: same variable and same exponent",
@@ -104,7 +128,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -116,8 +140,15 @@
     "quarter": 0,
     "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g7-multi-step-equations", "g7-inequalities"],
-    "standardsAlignment": ["6.EE.5", "6.EE.7", "7.EE.4"],
+    "enables": [
+      "g7-multi-step-equations",
+      "g7-inequalities"
+    ],
+    "standardsAlignment": [
+      "6.EE.5",
+      "6.EE.7",
+      "7.EE.4"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Inverse operations: addition/subtraction, multiplication/division",
@@ -140,7 +171,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -152,8 +183,14 @@
     "quarter": 0,
     "unit": "Boot Camp",
     "prerequisites": [],
-    "enables": ["g7-graph-proportional", "g7-rational-word-problems"],
-    "standardsAlignment": ["6.NS.6", "6.NS.8"],
+    "enables": [
+      "g7-graph-proportional",
+      "g7-rational-word-problems"
+    ],
+    "standardsAlignment": [
+      "6.NS.6",
+      "6.NS.8"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Ordered pairs (x, y): x is horizontal, y is vertical",
@@ -187,9 +224,21 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Rational Numbers & Operations",
-    "prerequisites": ["g7-integer-operations", "g7-fraction-decimal-fluency"],
-    "enables": ["g7-rational-word-problems", "g7-multi-step-equations"],
-    "standardsAlignment": ["7.NS.1", "7.NS.1a", "7.NS.1b", "7.NS.1c", "7.NS.1d"],
+    "prerequisites": [
+      "g7-integer-operations",
+      "g7-fraction-decimal-fluency"
+    ],
+    "enables": [
+      "g7-rational-word-problems",
+      "g7-multi-step-equations"
+    ],
+    "standardsAlignment": [
+      "7.NS.1",
+      "7.NS.1a",
+      "7.NS.1b",
+      "7.NS.1c",
+      "7.NS.1d"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Adding rational numbers on a number line",
@@ -212,7 +261,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -223,9 +272,22 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Rational Numbers & Operations",
-    "prerequisites": ["g7-integer-operations", "g7-fraction-decimal-fluency"],
-    "enables": ["g7-rational-word-problems", "g7-multi-step-equations", "g7-unit-rates"],
-    "standardsAlignment": ["7.NS.2", "7.NS.2a", "7.NS.2b", "7.NS.2c", "7.NS.2d"],
+    "prerequisites": [
+      "g7-integer-operations",
+      "g7-fraction-decimal-fluency"
+    ],
+    "enables": [
+      "g7-rational-word-problems",
+      "g7-multi-step-equations",
+      "g7-unit-rates"
+    ],
+    "standardsAlignment": [
+      "7.NS.2",
+      "7.NS.2a",
+      "7.NS.2b",
+      "7.NS.2c",
+      "7.NS.2d"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Same signs → positive product/quotient",
@@ -248,8 +310,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "rational-number-operations"
   },
   {
     "skillId": "g7-rational-word-problems",
@@ -259,9 +322,19 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Rational Numbers & Operations",
-    "prerequisites": ["g7-add-subtract-rationals", "g7-multiply-divide-rationals"],
-    "enables": ["g7-multi-step-equations", "g7-equation-word-problems"],
-    "standardsAlignment": ["7.NS.3"],
+    "prerequisites": [
+      "g7-add-subtract-rationals",
+      "g7-multiply-divide-rationals",
+      "g7-coordinate-plane-basics",
+      "g7-absolute-value"
+    ],
+    "enables": [
+      "g7-multi-step-equations",
+      "g7-equation-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.NS.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Temperature change: rising = positive, falling = negative",
@@ -295,9 +368,16 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Rational Numbers & Operations",
-    "prerequisites": ["g7-integer-operations"],
-    "enables": ["g7-rational-word-problems"],
-    "standardsAlignment": ["7.NS.1", "7.NS.1c"],
+    "prerequisites": [
+      "g7-integer-operations"
+    ],
+    "enables": [
+      "g7-rational-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.NS.1",
+      "7.NS.1c"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "|a| = distance from a to 0 on the number line",
@@ -331,9 +411,17 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Expressions & Equations",
-    "prerequisites": ["g7-simplify-expressions-basics"],
-    "enables": ["g7-multi-step-equations", "g7-equation-word-problems"],
-    "standardsAlignment": ["7.EE.1", "7.EE.2"],
+    "prerequisites": [
+      "g7-simplify-expressions-basics"
+    ],
+    "enables": [
+      "g7-multi-step-equations",
+      "g7-equation-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.EE.1",
+      "7.EE.2"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Key words: sum/more/increased → addition, difference/less/decreased → subtraction",
@@ -367,9 +455,18 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Expressions & Equations",
-    "prerequisites": ["g7-simplify-expressions-basics", "g7-add-subtract-rationals"],
-    "enables": ["g7-multi-step-equations", "g7-evaluate-expressions"],
-    "standardsAlignment": ["7.EE.1", "7.EE.2"],
+    "prerequisites": [
+      "g7-simplify-expressions-basics",
+      "g7-add-subtract-rationals"
+    ],
+    "enables": [
+      "g7-multi-step-equations",
+      "g7-evaluate-expressions"
+    ],
+    "standardsAlignment": [
+      "7.EE.1",
+      "7.EE.2"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Distribute with negative and fractional coefficients",
@@ -392,7 +489,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -403,9 +500,24 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Expressions & Equations",
-    "prerequisites": ["g7-one-two-step-equations", "g7-simplify-expressions"],
-    "enables": ["g7-equation-word-problems", "g7-inequalities"],
-    "standardsAlignment": ["7.EE.3", "7.EE.4", "7.EE.4a"],
+    "prerequisites": [
+      "g7-one-two-step-equations",
+      "g7-simplify-expressions",
+      "g7-simplify-expressions-basics",
+      "g7-add-subtract-rationals",
+      "g7-multiply-divide-rationals",
+      "g7-rational-word-problems",
+      "g7-verbal-to-algebraic"
+    ],
+    "enables": [
+      "g7-equation-word-problems",
+      "g7-inequalities"
+    ],
+    "standardsAlignment": [
+      "7.EE.3",
+      "7.EE.4",
+      "7.EE.4a"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Distribute first, then combine like terms",
@@ -428,8 +540,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "solving-equations-7th"
   },
   {
     "skillId": "g7-inequalities",
@@ -439,9 +552,17 @@
     "course": "7th Grade Math",
     "quarter": 1,
     "unit": "Expressions & Equations",
-    "prerequisites": ["g7-one-two-step-equations", "g7-multi-step-equations"],
-    "enables": ["g7-equation-word-problems"],
-    "standardsAlignment": ["7.EE.4", "7.EE.4b"],
+    "prerequisites": [
+      "g7-one-two-step-equations",
+      "g7-multi-step-equations"
+    ],
+    "enables": [
+      "g7-equation-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.EE.4",
+      "7.EE.4b"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Inequality symbols: <, >, ≤, ≥ and their meanings",
@@ -460,12 +581,13 @@
         "Connect to real-world contexts: 'You need MORE than $50'"
       ]
     },
-    "difficultyLevel": 3,
+    "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "solving-inequalities-7th"
   },
   {
     "skillId": "g7-unit-rates",
@@ -475,9 +597,17 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Ratios, Rates, and Proportions",
-    "prerequisites": ["g7-fraction-decimal-fluency", "g7-multiply-divide-rationals"],
-    "enables": ["g7-proportions", "g7-constant-of-proportionality"],
-    "standardsAlignment": ["7.RP.1"],
+    "prerequisites": [
+      "g7-fraction-decimal-fluency",
+      "g7-multiply-divide-rationals"
+    ],
+    "enables": [
+      "g7-proportions",
+      "g7-constant-of-proportionality"
+    ],
+    "standardsAlignment": [
+      "7.RP.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Rate = ratio comparing two different units",
@@ -496,11 +626,11 @@
         "Practice 'which is the better deal?' problems for engagement"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "application",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -511,9 +641,19 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Ratios, Rates, and Proportions",
-    "prerequisites": ["g7-unit-rates", "g7-fraction-decimal-fluency"],
-    "enables": ["g7-scale-drawings", "g7-percent-applications", "g7-identify-proportional"],
-    "standardsAlignment": ["7.RP.2", "7.RP.3"],
+    "prerequisites": [
+      "g7-unit-rates",
+      "g7-fraction-decimal-fluency"
+    ],
+    "enables": [
+      "g7-scale-drawings",
+      "g7-percent-applications",
+      "g7-identify-proportional"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Proportion: two equal ratios (a/b = c/d)",
@@ -536,7 +676,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -547,9 +687,16 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Ratios, Rates, and Proportions",
-    "prerequisites": ["g7-proportions"],
-    "enables": ["g7-surface-area", "g7-volume"],
-    "standardsAlignment": ["7.G.1"],
+    "prerequisites": [
+      "g7-proportions"
+    ],
+    "enables": [
+      "g7-surface-area",
+      "g7-volume"
+    ],
+    "standardsAlignment": [
+      "7.G.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Scale = ratio of drawing dimension to actual dimension",
@@ -573,7 +720,8 @@
       "baseFluencyTime": 30,
       "fluencyType": "application",
       "toleranceFactor": 2.5
-    }
+    },
+    "quickRefSkillId": "scale-drawings"
   },
   {
     "skillId": "g7-percent-applications",
@@ -583,9 +731,18 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Ratios, Rates, and Proportions",
-    "prerequisites": ["g7-proportions", "g7-multiply-divide-rationals"],
-    "enables": ["g7-percent-change", "g7-equation-word-problems"],
-    "standardsAlignment": ["7.RP.3", "7.EE.3"],
+    "prerequisites": [
+      "g7-proportions",
+      "g7-multiply-divide-rationals"
+    ],
+    "enables": [
+      "g7-percent-change",
+      "g7-equation-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.RP.3",
+      "7.EE.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Percent = part/whole × 100",
@@ -608,8 +765,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "application",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "percent-applications"
   },
   {
     "skillId": "g7-percent-change",
@@ -619,9 +777,15 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Ratios, Rates, and Proportions",
-    "prerequisites": ["g7-percent-applications"],
-    "enables": ["g7-equation-word-problems"],
-    "standardsAlignment": ["7.RP.3"],
+    "prerequisites": [
+      "g7-percent-applications"
+    ],
+    "enables": [
+      "g7-equation-word-problems"
+    ],
+    "standardsAlignment": [
+      "7.RP.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Percent change = (new - original) / original × 100",
@@ -655,9 +819,18 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Proportional Relationships",
-    "prerequisites": ["g7-proportions", "g7-unit-rates"],
-    "enables": ["g7-constant-of-proportionality", "g7-proportional-equations"],
-    "standardsAlignment": ["7.RP.2", "7.RP.2a"],
+    "prerequisites": [
+      "g7-proportions",
+      "g7-unit-rates"
+    ],
+    "enables": [
+      "g7-constant-of-proportionality",
+      "g7-proportional-equations"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.2a"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Table test: all y/x ratios are equal",
@@ -681,7 +854,8 @@
       "baseFluencyTime": 20,
       "fluencyType": "conceptual",
       "toleranceFactor": 2.5
-    }
+    },
+    "quickRefSkillId": "proportional-relationships"
   },
   {
     "skillId": "g7-constant-of-proportionality",
@@ -691,9 +865,18 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Proportional Relationships",
-    "prerequisites": ["g7-identify-proportional", "g7-unit-rates"],
-    "enables": ["g7-proportional-equations", "g7-graph-proportional"],
-    "standardsAlignment": ["7.RP.2", "7.RP.2b"],
+    "prerequisites": [
+      "g7-identify-proportional",
+      "g7-unit-rates"
+    ],
+    "enables": [
+      "g7-proportional-equations",
+      "g7-graph-proportional"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.2b"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "k = y/x for any row in a proportional table",
@@ -727,9 +910,18 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Proportional Relationships",
-    "prerequisites": ["g7-constant-of-proportionality"],
-    "enables": ["g7-graph-proportional", "g7-function-input-output"],
-    "standardsAlignment": ["7.RP.2", "7.RP.2c"],
+    "prerequisites": [
+      "g7-constant-of-proportionality",
+      "g7-identify-proportional"
+    ],
+    "enables": [
+      "g7-graph-proportional",
+      "g7-function-input-output"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.2c"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Find k from the context or data, then write y = kx",
@@ -752,7 +944,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -763,9 +955,18 @@
     "course": "7th Grade Math",
     "quarter": 2,
     "unit": "Proportional Relationships",
-    "prerequisites": ["g7-coordinate-plane-basics", "g7-constant-of-proportionality"],
-    "enables": ["g7-function-input-output"],
-    "standardsAlignment": ["7.RP.2", "7.RP.2d"],
+    "prerequisites": [
+      "g7-coordinate-plane-basics",
+      "g7-constant-of-proportionality",
+      "g7-proportional-equations"
+    ],
+    "enables": [
+      "g7-function-input-output"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.2d"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Proportional graph: straight line through the origin",
@@ -799,9 +1000,18 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Geometry and Measurement",
-    "prerequisites": ["g7-multiply-divide-rationals"],
-    "enables": ["g7-composite-figures", "g7-surface-area", "g7-volume"],
-    "standardsAlignment": ["7.G.4", "7.G.6"],
+    "prerequisites": [
+      "g7-multiply-divide-rationals"
+    ],
+    "enables": [
+      "g7-composite-figures",
+      "g7-surface-area",
+      "g7-volume"
+    ],
+    "standardsAlignment": [
+      "7.G.4",
+      "7.G.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Circle area: A = πr²",
@@ -824,8 +1034,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "circles-circumference-area"
   },
   {
     "skillId": "g7-composite-figures",
@@ -835,9 +1046,15 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Geometry and Measurement",
-    "prerequisites": ["g7-area-circumference"],
-    "enables": ["g7-surface-area"],
-    "standardsAlignment": ["7.G.6"],
+    "prerequisites": [
+      "g7-area-circumference"
+    ],
+    "enables": [
+      "g7-surface-area"
+    ],
+    "standardsAlignment": [
+      "7.G.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Decompose: break into rectangles, triangles, semicircles",
@@ -871,9 +1088,15 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Geometry and Measurement",
-    "prerequisites": ["g7-area-circumference", "g7-composite-figures"],
+    "prerequisites": [
+      "g7-area-circumference",
+      "g7-composite-figures",
+      "g7-scale-drawings"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.G.6"],
+    "standardsAlignment": [
+      "7.G.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Surface area = total area of all faces",
@@ -907,9 +1130,14 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Geometry and Measurement",
-    "prerequisites": ["g7-area-circumference"],
+    "prerequisites": [
+      "g7-area-circumference",
+      "g7-scale-drawings"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.G.6"],
+    "standardsAlignment": [
+      "7.G.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Volume = Base area × height: V = Bh",
@@ -932,7 +1160,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -943,9 +1171,14 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Geometry and Measurement",
-    "prerequisites": ["g7-surface-area", "g7-volume"],
+    "prerequisites": [
+      "g7-surface-area",
+      "g7-volume"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.G.3"],
+    "standardsAlignment": [
+      "7.G.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Cross-section = shape formed when a plane cuts through a solid",
@@ -964,11 +1197,11 @@
         "This is more conceptual — emphasize visualization over computation"
       ]
     },
-    "difficultyLevel": 2,
+    "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -980,8 +1213,13 @@
     "quarter": 3,
     "unit": "Statistics: Sampling and Inference",
     "prerequisites": [],
-    "enables": ["g7-random-sampling", "g7-compare-data-sets"],
-    "standardsAlignment": ["7.SP.1"],
+    "enables": [
+      "g7-random-sampling",
+      "g7-compare-data-sets"
+    ],
+    "standardsAlignment": [
+      "7.SP.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Population: the entire group you want information about",
@@ -1004,7 +1242,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1015,9 +1253,15 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Statistics: Sampling and Inference",
-    "prerequisites": ["g7-populations-samples"],
-    "enables": ["g7-informal-inferences"],
-    "standardsAlignment": ["7.SP.1"],
+    "prerequisites": [
+      "g7-populations-samples"
+    ],
+    "enables": [
+      "g7-informal-inferences"
+    ],
+    "standardsAlignment": [
+      "7.SP.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Random sample: every member of the population has an equal chance of being selected",
@@ -1040,7 +1284,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1051,9 +1295,16 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Statistics: Sampling and Inference",
-    "prerequisites": ["g7-populations-samples"],
-    "enables": ["g7-informal-inferences"],
-    "standardsAlignment": ["7.SP.3", "7.SP.4"],
+    "prerequisites": [
+      "g7-populations-samples"
+    ],
+    "enables": [
+      "g7-informal-inferences"
+    ],
+    "standardsAlignment": [
+      "7.SP.3",
+      "7.SP.4"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Mean: add all values, divide by count",
@@ -1087,9 +1338,15 @@
     "course": "7th Grade Math",
     "quarter": 3,
     "unit": "Statistics: Sampling and Inference",
-    "prerequisites": ["g7-compare-data-sets", "g7-random-sampling"],
+    "prerequisites": [
+      "g7-compare-data-sets",
+      "g7-random-sampling"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.SP.2", "7.SP.4"],
+    "standardsAlignment": [
+      "7.SP.2",
+      "7.SP.4"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Inference: a conclusion drawn from evidence (not certainty)",
@@ -1112,7 +1369,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1123,9 +1380,17 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Probability",
-    "prerequisites": ["g7-fraction-decimal-fluency"],
-    "enables": ["g7-experimental-theoretical", "g7-compound-events"],
-    "standardsAlignment": ["7.SP.5", "7.SP.7"],
+    "prerequisites": [
+      "g7-fraction-decimal-fluency"
+    ],
+    "enables": [
+      "g7-experimental-theoretical",
+      "g7-compound-events"
+    ],
+    "standardsAlignment": [
+      "7.SP.5",
+      "7.SP.7"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "P(event) = favorable outcomes / total outcomes",
@@ -1148,8 +1413,9 @@
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
-    }
+      "toleranceFactor": 2
+    },
+    "quickRefSkillId": "probability-simple"
   },
   {
     "skillId": "g7-experimental-theoretical",
@@ -1159,9 +1425,16 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Probability",
-    "prerequisites": ["g7-simple-probability"],
-    "enables": ["g7-probability-simulations"],
-    "standardsAlignment": ["7.SP.5", "7.SP.6"],
+    "prerequisites": [
+      "g7-simple-probability"
+    ],
+    "enables": [
+      "g7-probability-simulations"
+    ],
+    "standardsAlignment": [
+      "7.SP.5",
+      "7.SP.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Theoretical probability: what SHOULD happen based on math",
@@ -1195,9 +1468,17 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Probability",
-    "prerequisites": ["g7-simple-probability"],
-    "enables": ["g7-probability-simulations"],
-    "standardsAlignment": ["7.SP.8", "7.SP.8a", "7.SP.8b"],
+    "prerequisites": [
+      "g7-simple-probability"
+    ],
+    "enables": [
+      "g7-probability-simulations"
+    ],
+    "standardsAlignment": [
+      "7.SP.8",
+      "7.SP.8a",
+      "7.SP.8b"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Compound event: two or more simple events combined",
@@ -1231,9 +1512,15 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Probability",
-    "prerequisites": ["g7-experimental-theoretical", "g7-compound-events"],
+    "prerequisites": [
+      "g7-experimental-theoretical",
+      "g7-compound-events"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.SP.8", "7.SP.8c"],
+    "standardsAlignment": [
+      "7.SP.8",
+      "7.SP.8c"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Simulation: using a model to estimate real-world probabilities",
@@ -1256,7 +1543,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "application",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1267,9 +1554,17 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Advanced Expressions & Intro to Functions",
-    "prerequisites": ["g7-simplify-expressions", "g7-multiply-divide-rationals"],
-    "enables": ["g7-function-input-output"],
-    "standardsAlignment": ["7.EE.1", "7.EE.3"],
+    "prerequisites": [
+      "g7-simplify-expressions",
+      "g7-multiply-divide-rationals"
+    ],
+    "enables": [
+      "g7-function-input-output"
+    ],
+    "standardsAlignment": [
+      "7.EE.1",
+      "7.EE.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Replace the variable with the given value (use parentheses!)",
@@ -1292,7 +1587,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -1303,9 +1598,20 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Advanced Expressions & Intro to Functions",
-    "prerequisites": ["g7-multi-step-equations", "g7-verbal-to-algebraic", "g7-percent-applications"],
+    "prerequisites": [
+      "g7-multi-step-equations",
+      "g7-verbal-to-algebraic",
+      "g7-percent-applications",
+      "g7-rational-word-problems",
+      "g7-inequalities",
+      "g7-percent-change"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.EE.3", "7.EE.4", "7.EE.4a"],
+    "standardsAlignment": [
+      "7.EE.3",
+      "7.EE.4",
+      "7.EE.4a"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Read → identify unknowns → define variables → write equation → solve → check",
@@ -1339,9 +1645,18 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Advanced Expressions & Intro to Functions",
-    "prerequisites": ["g7-evaluate-expressions", "g7-proportional-equations"],
-    "enables": ["g7-patterns-sequences"],
-    "standardsAlignment": ["7.EE.4", "8.F.1"],
+    "prerequisites": [
+      "g7-evaluate-expressions",
+      "g7-proportional-equations",
+      "g7-graph-proportional"
+    ],
+    "enables": [
+      "g7-patterns-sequences"
+    ],
+    "standardsAlignment": [
+      "7.EE.4",
+      "8.F.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Function: a rule that assigns exactly one output to each input",
@@ -1375,9 +1690,14 @@
     "course": "7th Grade Math",
     "quarter": 4,
     "unit": "Advanced Expressions & Intro to Functions",
-    "prerequisites": ["g7-function-input-output"],
+    "prerequisites": [
+      "g7-function-input-output"
+    ],
     "enables": [],
-    "standardsAlignment": ["7.EE.4", "8.F.1"],
+    "standardsAlignment": [
+      "7.EE.4",
+      "8.F.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Arithmetic sequence: add the same number each time (common difference)",
