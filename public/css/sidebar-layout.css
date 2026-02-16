@@ -1053,4 +1053,21 @@ footer {
     .session-meta {
         padding-left: 28px;
     }
+
+    /* ---- Mobile: hide header & footer (handled by bottom nav + watermark) ---- */
+    .landing-header {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    footer {
+        display: none !important;
+    }
+
+    /* No footer gap needed on mobile */
+    #chat-container {
+        margin-bottom: 0;
+    }
 }
