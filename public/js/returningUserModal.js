@@ -87,8 +87,8 @@ class ReturningUserModal {
                 });
             }
 
-            // Show modal
-            this.modal.style.display = 'flex';
+            // Show modal using the is-visible class (matches other modals)
+            this.modal.classList.add('is-visible');
         });
     }
 
@@ -226,7 +226,7 @@ class ReturningUserModal {
 
     close() {
         if (this.modal) {
-            this.modal.style.display = 'none';
+            this.modal.classList.remove('is-visible');
         }
     }
 

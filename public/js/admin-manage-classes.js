@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open modal
     if (openManageClassesBtn) {
         openManageClassesBtn.addEventListener('click', () => {
-            manageClassesModal.style.display = 'flex';
+            manageClassesModal.classList.add('is-visible');
             loadClasses();
             loadAllStudents();
             resetClassSelection();
@@ -38,14 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close modal
     if (closeManageClassesModal) {
         closeManageClassesModal.addEventListener('click', () => {
-            manageClassesModal.style.display = 'none';
+            manageClassesModal.classList.remove('is-visible');
         });
     }
 
     if (manageClassesModal) {
         manageClassesModal.addEventListener('click', (e) => {
             if (e.target === manageClassesModal) {
-                manageClassesModal.style.display = 'none';
+                manageClassesModal.classList.remove('is-visible');
             }
         });
     }

@@ -1,0 +1,1106 @@
+/* --- 14. Mobile Drawers & Responsiveness --- */
+
+/* Drawer Overlay (shown when drawer is open) */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 899;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Drawers for mobile (hidden by default on desktop, slide-in on mobile) */
+.drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85%;
+    overflow-y: auto;
+    background: var(--clr-bg-light);
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease;
+    z-index: 1000; /* Increased from 900 to ensure it's above sticky header (z-index: 100) */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+.drawer.left {
+    left: 0;
+    transform: translateX(-100%);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.drawer.right {
+    right: 0;
+    transform: translateX(100%);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.drawer.open {
+    transform: translateX(0);
+}
+
+/* Drawer Header with Close Button */
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--clr-primary-teal);
+    margin-bottom: 10px;
+}
+
+.drawer-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--clr-text);
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--clr-text-dim);
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.drawer-close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--clr-text);
+}
+
+/* Drawer Toggle Buttons (in header) */
+.drawer-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--clr-text);
+    cursor: pointer;
+    padding: 8px 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.drawer-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.drawer-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Show drawer toggle buttons on mobile */
+@media (max-width: 767px) {
+    .drawer-toggle-btn {
+        display: flex;
+        transition: opacity 0.3s ease; /* Smooth fade when hiding via JavaScript */
+    }
+}
+
+
+@media screen and (max-width: 1024px) {
+    /* Adjustments for larger tablets/smaller desktops */
+    :root {
+        --section-gap: 50px;
+        --brand-h1-font-size: 2.5em;
+        --brand-h3-font-size: 1.3em;
+    }
+    h1 { font-size: var(--brand-h1-font-size); }
+    h3 { font-size: var(--brand-h3-font-size); }
+
+    .hero-tagline {
+        font-size: 2.2em;
+    }
+    .hero-subtagline {
+        font-size: 1.1em;
+    }
+    /* Header responsiveness for wrapped state */
+    .landing-header {
+        flex-direction: row; /* Keep row for wider tablets */
+        align-items: center;
+        flex-wrap: nowrap; /* Prevent wrapping unless truly necessary */
+    }
+    .header-logo-container {
+        width: auto;
+        flex-grow: 0; /* Let logo be its size */
+    }
+    .landing-nav {
+        margin-top: 0;
+    }
+    .hero-section {
+        flex-direction: column; /* Back to column for tablets if side-by-side gets cramped */
+        text-align: center;
+    }
+    .hero-content {
+        max-width: 800px; /* Allow content to use more width */
+    }
+    .hero-actions {
+        justify-content: center;
+    }
+
+
+    .pricing-cards-grid,
+    .visual-feature-grid,
+    .approach-grid,
+    .feature-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+    .testimonial-grid {
+        grid-template-columns: 1fr; /* Single column on tablet if two get too narrow */
+    }
+
+    /* Avatar container responsive - prevent too tall on tablets */
+    #avatar-container {
+        min-height: 350px;
+        max-height: 450px;
+    }
+
+    /* Chat layout adjustments */
+    #app-layout-wrapper {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - var(--footer-height) - 20px);
+        padding: 0px 15px;
+    }
+    .admin-main-content {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--section-gap);
+        height: auto;
+    }
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
+        width: 100%;
+        flex: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow-y: visible;
+        min-width: unset;
+        padding: 0;
+        gap: 20px;
+    }
+    .admin-central-content, #chat-container {
+        width: 100%;
+        min-width: unset;
+        flex: auto;
+        height: auto;
+        border: 1px solid var(--clr-text-dim);
+        border-radius: var(--border-radius-base);
+        box-shadow: var(--shadow-sm);
+    }
+    .dashboard-panel {
+        flex-grow: 1;
+    }
+
+    /* Tutor selection */
+    .tutor-selection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    /* Adjustments for phones - LARGER BASE FONT */
+    :root {
+        --header-height: 48px;
+        --page-horizontal-padding: 10px;
+        --section-gap: 40px;
+        --brand-h1-font-size: 2em;
+        --brand-h3-font-size: 1.2em;
+        --brand-base-font-size: 1rem;
+    }
+
+    /* Increase base body font size on mobile */
+    body {
+        font-size: 16px;
+    }
+    h1 { font-size: var(--brand-h1-font-size); }
+    h2 { font-size: 1.8em; }
+    h3 { font-size: var(--brand-h3-font-size); }
+
+    .landing-header {
+        padding: 4px var(--page-horizontal-padding);
+        min-height: 48px;
+        height: 48px;
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+    }
+
+    /* Left drawer toggle */
+    #left-drawer-toggle {
+        flex-shrink: 0;
+    }
+
+    /* Logo: compact, don't stretch */
+    .header-logo-container {
+        flex-shrink: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .main-logo-hero {
+        max-height: 28px;
+        width: auto;
+    }
+
+    /* Right nav buttons: scrollable, compact */
+    .landing-nav {
+        flex-shrink: 0;
+        gap: 2px;
+        margin-top: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    /* Compact nav buttons on mobile */
+    .landing-nav .btn {
+        padding: 6px 8px;
+        min-width: 36px;
+        font-size: 0.9rem;
+    }
+    .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .hero-tagline {
+        font-size: 1.8em;
+    }
+
+    /* Avatar container responsive - smaller on mobile */
+    #avatar-container {
+        min-height: 120px;  /* Reduced from 250px for better space usage */
+        max-height: 180px;  /* Reduced from 350px to save screen space */
+        flex-shrink: 0;
+    }
+
+    .hero-subtagline {
+        font-size: 1em;
+    }
+    .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-hero-primary, .btn-hero-secondary {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+    .section-title {
+        font-size: 2em;
+        margin-bottom: 30px;
+    }
+    .visual-feature-grid,
+    .approach-grid,
+    .pricing-cards-grid,
+    .feature-cards-grid,
+    .testimonial-grid { /* Ensure testimonial grid also goes to single column */
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .visual-feature-item {
+        min-height: auto;
+        padding: 20px;
+    }
+    .visual-feature-image {
+        height: 80px; /* Smaller image height on mobile */
+    }
+    .approach-icon {
+        width: 70px; /* Even smaller approach icons */
+        height: 70px;
+    }
+
+    .accordion-container {
+        padding: 0 10px;
+    }
+    .accordion-header {
+        font-size: 1em;
+    }
+
+    /* Chat layout mobile - DOMINANT CHAT WINDOW */
+    #app-layout-wrapper {
+        padding: 0;
+        height: calc(100vh - var(--header-height));
+        height: calc(100dvh - var(--header-height)); /* Dynamic viewport for mobile browsers */
+        overflow: hidden;
+    }
+
+    .admin-main-content {
+        gap: 0;
+        height: 100%;
+    }
+
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
+        display: none;
+    }
+
+    .drawer-toggle {
+        display: flex;
+    }
+
+    /* Make chat container fill available space */
+    #chat-container {
+        padding: 0;
+        margin-bottom: 0;
+        min-width: unset;
+        border-radius: 0;
+        box-shadow: none;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--clr-bg-light);
+    }
+
+    /* Chat messages take up most of the screen */
+    #chat-messages-container {
+        flex: 1 1 0%;
+        overflow-y: auto;
+        padding: 12px;
+        padding-top: 16px; /* Extra top padding to prevent content from hiding under sticky header */
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Input container sticky at bottom */
+    #input-container {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        padding-bottom: max(env(safe-area-inset-bottom), 8px);
+        background: var(--clr-bg-light);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Compact toolbar on mobile */
+    .input-toolbar {
+        margin-bottom: 4px;
+    }
+
+    /* Compact toolbar row */
+    .input-toolbar-compact {
+        gap: 4px !important;
+    }
+
+    /* Auto-expanding textarea */
+    #user-input {
+        min-height: 40px !important;
+        max-height: 100px;
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 8px 12px;
+        border-radius: 20px;
+        resize: none;
+        overflow-y: auto;
+        line-height: 1.4;
+        border: 1.5px solid rgba(0, 0, 0, 0.12);
+        display: block !important;
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+
+    /* Hide suggestion chips on mobile - saves space and reduces clutter */
+    #suggestion-chips-container {
+        display: none !important;
+        max-height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Send button: compact on mobile */
+    #send-button {
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        min-height: 40px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    /* Messages optimized for mobile - LARGER TEXT */
+    .message {
+        font-size: 1.1em;
+        padding: 14px 18px;
+        border-radius: 14px;
+        max-width: 90%; /* IMPROVED: More room on mobile */
+        line-height: 1.5;
+    }
+
+    /* User messages align right */
+    .message.user-message, .message.user {
+        margin-left: auto; /* FIXED: Use auto instead of percentage */
+        margin-right: 20px; /* INCREASED AGAIN: Prevent cutoff on right edge */
+    }
+
+    /* AI messages align left */
+    .message.ai-message, .message.ai {
+        margin-right: 8%; /* Better spacing on mobile */
+        margin-left: 5px; /* Prevent cutoff */
+    }
+
+    /* Message paragraphs */
+    .message p {
+        font-size: 1em;
+        margin-bottom: 0.75em;
+    }
+
+    /* Code blocks in messages */
+    .message code {
+        font-size: 0.95em;
+    }
+
+    .message pre code {
+        font-size: 0.9em;
+    }
+
+    /* Tutor selection mobile */
+    .tutor-selection-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .tutor-card {
+        padding: 30px;
+    }
+    .tutor-card-image {
+        width: 100px;
+        height: 100px;
+    }
+    .tutor-card-name {
+        font-size: 1.2em;
+    }
+    .tutor-card-tagline {
+        font-size: 0.9em;
+    }
+    .tutor-actions-bar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .tutor-actions-bar .btn {
+        width: 100%;
+    }
+
+    /* Enhanced touch targets for all interactive elements - LARGER TEXT */
+    .btn,
+    button,
+    a.btn,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 48px;
+        min-width: 48px;
+        padding: 14px 22px;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Toolbar buttons specifically */
+    .input-toolbar .btn {
+        font-size: 1.3rem;
+    }
+
+    /* Better spacing for mobile forms */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-input,
+    .form-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        min-height: 48px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+        padding: 12px 15px;
+    }
+
+    /* Improve mobile header navigation */
+    .landing-header {
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+    }
+
+    .landing-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        padding: 5px 0;
+    }
+
+    .landing-nav .btn {
+        padding: 10px 14px;
+        min-width: 42px;
+        min-height: 42px;
+    }
+
+    /* Mobile modal improvements - LARGER TEXT */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        max-height: 90vh;
+        margin: 5vh auto;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 1.05rem;
+    }
+
+    .modal-content h2,
+    .modal-content h3 {
+        font-size: 1.4rem;
+    }
+
+    .modal-content p,
+    .modal-content label {
+        font-size: 1rem;
+    }
+
+    .modal-close-button {
+        width: 48px;
+        height: 48px;
+        font-size: 32px;
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Better spacing for dashboard panels */
+    .dashboard-panel {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .dashboard-panel-header {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+
+    /* Improve table readability on mobile */
+    .user-table {
+        font-size: 0.9rem;
+    }
+
+    .user-table th,
+    .user-table td {
+        padding: 10px 8px;
+    }
+
+    /* Mobile-friendly progress bars */
+    progress {
+        height: 12px;
+        border-radius: 6px;
+    }
+
+    /* Better spacing for lists */
+    ul, ol {
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    /* Improve code block readability */
+    pre,
+    code {
+        font-size: 0.85rem;
+        overflow-x: auto;
+    }
+
+    /* Mobile-friendly cards */
+    .card-style-1,
+    .card-style-2 {
+        margin-bottom: 16px;
+        border-radius: 12px;
+    }
+
+    /* Mobile Navigation Improvements */
+
+    /* Prevent horizontal scroll on mobile */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Make header sticky on mobile for better navigation */
+    .landing-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--clr-bg-light);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Improve logo clickability on mobile */
+    .header-logo-container {
+        padding: 8px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Hide footer on mobile chat page to maximize space */
+    body.landing-page-body footer {
+        display: none;
+    }
+
+    /* Show footer on other pages */
+    body:not(.landing-page-body) footer {
+        padding: 20px 15px;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    body:not(.landing-page-body) footer a {
+        display: inline-block;
+        padding: 8px;
+        margin: 4px;
+    }
+
+    /* Improve chat message bubbles on mobile */
+    .message {
+        max-width: 95%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Better file attachment display on mobile */
+    .file-grid-container {
+        gap: 10px;
+    }
+
+    /* Improve equation display on mobile */
+    .math-editor-input,
+    .inline-math-field,
+    math-field {
+        font-size: 18px;
+        min-height: 44px;
+    }
+
+    /* Better whiteboard controls on mobile */
+    .whiteboard-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .whiteboard-controls button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
+    }
+
+    /* Improve calculator display on mobile */
+    .calculator-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Better mastery mode display on mobile */
+    .arcade-hub {
+        padding: 1rem;
+    }
+
+    /* Smooth scrolling for mobile */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Thinking indicator on mobile - LARGER TEXT */
+    #thinking-indicator {
+        padding: 12px;
+        margin: 8px 12px;
+        font-size: 1rem;
+    }
+
+    #thinking-indicator span:not(.dot) {
+        font-size: 1.05rem;
+    }
+
+    /* Fix for iOS Safari bottom bar overlap */
+    #input-container {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* Ensure proper height calculation including sticky header */
+    body.landing-page-body {
+        overflow: hidden;
+        height: 100vh;
+        height: 100dvh; /* Use dynamic viewport height on mobile */
+    }
+
+    /* Better backdrop blur support */
+    @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+        .modal-overlay {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+    }
+}
+
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+    /* Hide navigational elements */
+    header, footer, .drawer, .drawer-toggle, #input-container, #thinking-indicator,
+    .logout-button, .btn, .modal-overlay, .submit-btn, .cancel-btn,
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right,
+    .landing-nav, .hero-actions, .pricing-card .btn, .access-grants-note,
+    .testimonial-carousel, .school-logos-container, .accordion-header, .final-cta-section .btn {
+        display: none !important;
+    }
+    /* Make main content flow */
+    #app-layout-wrapper, .admin-main-content, #chat-container, .tutor-details,
+    main,
+    .pricing-equity-section, .how-it-works-section,
+    .feature-grid-section, .social-proof-section, .faq-section, .final-cta-section,
+    .pricing-cards-grid, .stepper-container, .feature-cards-grid, .accordion-container {
+        display: block !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background-color: white !important;
+    }
+
+    .hero-section {
+        display: flex !important;
+        flex-direction: column !important;
+        text-align: left !important;
+        padding: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+
+    .hero-image-card {
+        max-width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        margin: 10px 0 !important;
+    }
+    .hero-classroom-image {
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
+        border-radius: 0 !important;
+        display: block !important;
+    }
+
+    .message {
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+        margin-bottom: 10px;
+    }
+    .user-table, #leaderboardTable {
+        border: 1px solid #000;
+    }
+    .user-table th, .user-table td, #leaderboardTable th, #leaderboardTable td {
+        border: 1px solid #000;
+        padding: 5px;
+    }
+    /* Ensure cards and accordions render content */
+    .card-style-1, .accordion-item {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 15px !important;
+        padding: 15px !important;
+        border-radius: 0 !important;
+    }
+    .accordion-content {
+        max-height: unset !important;
+        display: block !important;
+        padding: 0 10px !important;
+    }
+}
+
+
+.settings-form {
+    margin-top: 20px;
+}
+.form-group.settings-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.setting-description {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   WORK SNIPPET CARD (Show Your Work in Chat)
+   ============================================ */
+.work-snippet-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    border-left: 4px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    transition: all 0.3s ease;
+    max-width: 600px;
+}
+
+.work-snippet-card:hover {
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25);
+    transform: translateY(-2px);
+}
+
+.work-snippet-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.work-snippet-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.work-snippet-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.work-snippet-title strong {
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.work-snippet-time {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.work-snippet-body {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.work-snippet-thumbnail {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f3f4f6;
+    border: 2px solid #e5e7eb;
+}
+
+.work-snippet-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.work-snippet-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.work-snippet-score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    align-self: flex-start;
+    min-width: 80px;
+}
+
+.work-snippet-feedback {
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+    .work-snippet-body {
+        flex-direction: column;
+    }
+
+    .work-snippet-thumbnail {
+        width: 100%;
+        height: 160px;
+    }
+}
+
+/* ============================================
+   SCROLLABLE FORM PAGES FIX
+   Fix for pick-tutor and complete-profile pages
+   ============================================ */
+
+/* Allow pick-tutor page to scroll when content overflows */
+body.landing-page-body:has(.pick-tutor-main) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.pick-tutor-main) main {
+    overflow: visible;
+}
+
+.pick-tutor-main {
+    overflow: visible;
+}
+
+/* Allow complete-profile page to scroll when content overflows */
+body.landing-page-body:has(.profile-container) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.profile-container) main {
+    overflow: visible;
+}
+
+/* Allow landing page (index.html) to scroll */
+body.landing-page-body:has(.hero-section) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.hero-section) main {
+    overflow: visible;
+}
+
+/* Allow login page to scroll when content overflows */
+body.landing-page-body:has(.login-container) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.login-container) main {
+    overflow: visible;
+}
+
+/* Scrollable form wrapper for long forms */
+.scrollable-form-wrapper {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Ensure login-page-wrapper allows scrolling for long forms */
+.login-page-wrapper {
+    overflow: visible;
+}
+
+/* Allow content pages (privacy, terms, etc.) to scroll */
+body.landing-page-body:has(.content-page-wrapper) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.content-page-wrapper) main {
+    overflow: visible;
+}
+
+/* ============================================
+   MOBILE UTILITY CLASSES
+   ============================================ */
+
+/* Hide elements on mobile devices */
+@media (max-width: 767px) {
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .desktop-hide {
+        display: block !important;
+    }
+}
+
+/* Show only on desktop */
+@media (min-width: 768px) {
+    .desktop-hide {
+        display: none !important;
+    }
+
+    .mobile-hide {
+        display: inline !important;
+    }
+}
+
+/* Mobile-specific spacing utilities */
+@media (max-width: 767px) {
+    .mobile-padding {
+        padding: 16px !important;
+    }
+
+    .mobile-margin {
+        margin: 16px !important;
+    }
+
+    .mobile-no-padding {
+        padding: 0 !important;
+    }
+
+    .mobile-no-margin {
+        margin: 0 !important;
+    }
+}
+
+/* Touch-friendly utilities */
+.touch-target {
+    min-width: 48px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

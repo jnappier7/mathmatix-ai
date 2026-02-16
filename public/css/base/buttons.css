@@ -1,0 +1,140 @@
+/* --- 3. Global Button Styles --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.7rem 1.4rem;
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.95rem;
+    border-radius: var(--radius-base);
+    text-decoration: none;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    min-height: 44px; /* Touch-friendly minimum */
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.01em;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--clr-primary-teal);
+    outline-offset: 2px;
+}
+
+/* Primary Button (Hot Pink) */
+.btn-primary {
+    background: linear-gradient(135deg, var(--clr-accent-hotpink) 0%, #e63273 100%);
+    color: var(--clr-bg-light);
+    border: none;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #e63273 0%, #d12866 100%);
+    box-shadow: var(--shadow-glow-pink);
+    color: white;
+}
+
+/* Primary Outline Button (Hot Pink Border) */
+.btn-primary-outline {
+    background-color: transparent;
+    color: var(--clr-accent-hotpink);
+    border: 2px solid var(--clr-accent-hotpink);
+    box-shadow: none;
+}
+.btn-primary-outline:hover {
+    background-color: var(--clr-accent-hotpink);
+    color: var(--clr-bg-light);
+    box-shadow: var(--shadow-glow-pink);
+}
+
+/* Secondary Button (Teal) */
+.btn-secondary {
+    background: linear-gradient(135deg, var(--clr-primary-teal) 0%, #0E9494 100%);
+    color: var(--clr-bg-light);
+    border: none;
+}
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #0E9494 0%, #0C8282 100%);
+    box-shadow: var(--shadow-glow-teal);
+    color: white;
+}
+
+/* Tertiary Button (Subtle) */
+.btn-tertiary {
+    background-color: var(--clr-bg-subtle);
+    color: var(--clr-text-dim);
+    border: 1px solid var(--clr-border);
+    box-shadow: none;
+}
+.btn-tertiary:hover {
+    background-color: var(--clr-border-light);
+    color: var(--clr-text);
+    border-color: var(--clr-text-dim);
+}
+
+/* Hero specific buttons */
+.btn-hero-primary {
+    background: linear-gradient(135deg, var(--clr-accent-hotpink) 0%, #e63273 100%);
+    color: var(--clr-bg-light);
+    font-size: 1.1rem;
+    padding: 0.9rem 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg), var(--shadow-glow-pink);
+}
+.btn-hero-primary:hover {
+    background: linear-gradient(135deg, #e63273 0%, #d12866 100%);
+    box-shadow: var(--shadow-xl), var(--shadow-glow-pink);
+}
+
+.btn-hero-secondary {
+    background-color: transparent;
+    color: var(--clr-primary-teal);
+    border: 2px solid var(--clr-primary-teal);
+    font-size: 1.1rem;
+    padding: 0.9rem 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+}
+.btn-hero-secondary:hover {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+    box-shadow: var(--shadow-glow-teal);
+}
+
+
+/* --- 4. Card Styles (Reusable) --- */
+.card-style-1 {
+    background-color: var(--clr-bg-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--dashboard-panel-padding);
+    border: 1px solid var(--clr-border-light);
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+}
+.card-style-1:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(var(--clr-primary-teal-rgb), 0.15);
+}
+
+
+.card-style-1.card-hotpink-border {
+    border: 2px solid var(--clr-accent-hotpink);
+    box-shadow: var(--shadow-md);
+}
+.card-style-1.card-hotpink-border:hover {
+    box-shadow: var(--shadow-lg), var(--shadow-glow-pink);
+}

@@ -12,13 +12,13 @@
     const charCount = document.getElementById('char-count');
 
     function openModal() {
-        feedbackModal.style.display = 'flex';
+        feedbackModal.classList.add('is-visible');
         feedbackForm.reset();
         feedbackMessage.style.display = 'none';
     }
 
     function closeModal() {
-        feedbackModal.style.display = 'none';
+        feedbackModal.classList.remove('is-visible');
     }
 
     function showMessage(message, isError = false) {

@@ -1,0 +1,540 @@
+/* --- 12. Modal Styles (CORRECTED) --- */
+
+/* This rule hides the modal by default and prepares it for a fade-in transition */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* Use display to truly hide it */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0; /* Start transparent */
+    transition: opacity 0.3s ease;
+}
+
+/* Settings modal specific z-index */
+#settings-modal {
+    z-index: 1006;
+}
+
+/* This is the class JavaScript will add to show the modal */
+.modal-overlay.is-visible {
+    display: flex; /* Change display to show the element */
+    opacity: 1; /* Fade it into view */
+}
+
+/* Modal Content Box */
+.modal-content {
+    background: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+    padding: 30px;
+    position: relative;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+/* Adjust max-width for IEP/Conversation history if needed */
+#iep-editor-modal .modal-content, #conversation-history-modal .modal-content {
+    max-width: 800px;
+}
+
+.modal-overlay.is-visible .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Equation Modal - Draggable Positioning */
+#equation-modal .modal-content {
+    position: fixed;
+    /* Allow JavaScript to position it */
+}
+
+#equation-modal .modal-header-eq {
+    user-select: none; /* Prevent text selection while dragging */
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+    margin: -30px -30px 20px -30px;
+}
+
+/* MathLive Virtual Keyboard - Fix Z-Index */
+.ML__keyboard {
+    z-index: 10000 !important; /* Above modal overlay (z-index: 2000) */
+}
+
+.ML__keyboard-backdrop {
+    z-index: 9999 !important; /* Just below keyboard */
+}
+
+/* Ensure modal allows keyboard to show */
+#equation-modal {
+    overflow: visible !important;
+}
+
+#equation-modal .modal-content {
+    overflow: visible !important;
+}
+
+/* Send Button - Full Width */
+.send-button-fullwidth {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* --- Inline Equation Palette (MS Word-like) --- */
+.inline-equation-palette {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    margin-bottom: 10px;
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+    /* ADDED: Make it draggable and resizable */
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    resize: both; /* Allow resizing */
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.equation-palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: move; /* ADDED: Indicate draggable */
+    user-select: none; /* ADDED: Prevent text selection while dragging */
+}
+
+.equation-palette-header span {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.palette-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+}
+
+.palette-close-btn:hover {
+    color: #333;
+}
+
+.equation-symbols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.symbol-btn {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.symbol-btn:hover {
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(18, 179, 179, 0.3);
+}
+
+/* Subscript/Superscript Section */
+.equation-section-header {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
+.subscript-superscript-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.script-btn {
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.script-btn:hover {
+    background: #3a3a3a;
+    border-color: #12B3B3;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(18, 179, 179, 0.3);
+}
+
+.script-btn:hover .script-icon {
+    color: #12B3B3;
+}
+
+.script-icon {
+    width: 100%;
+    height: 100%;
+    max-width: 40px;
+    max-height: 40px;
+    color: #888;
+    transition: color 0.2s;
+}
+
+/* Palette keyboard tip */
+.palette-tip {
+    font-size: 0.75em;
+    color: #888;
+    text-align: center;
+    margin: 8px 0;
+    padding: 6px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.inline-math-field-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.inline-math-field-container label {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+}
+
+#math-lines-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.math-line-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.math-line-field {
+    flex: 1;
+    font-size: 1.1rem;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fdfdfd;
+}
+
+.math-line-remove {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.3em;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+.math-line-remove:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.math-line-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.inline-math-field {
+    flex: 1;
+    font-size: 1.1rem;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fdfdfd;
+}
+
+/* Multi-line math block in chat messages */
+.math-block-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 4px 0;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.03);
+    border-left: 3px solid #12B3B3;
+    border-radius: 4px;
+}
+
+.math-block-line {
+    display: block !important;
+    padding: 2px 0;
+}
+
+/* Dark mode */
+body.dark-mode .math-line-field {
+    background: #1e1e2e;
+    border-color: #3a3a4a;
+    color: #ddd;
+}
+body.dark-mode .math-line-remove:hover {
+    background: #3a1a1a;
+}
+body.dark-mode .math-block-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: #00bfa5;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    min-width: 70px; /* ADDED: Ensure button is always visible */
+    flex-shrink: 0; /* ADDED: Prevent button from shrinking */
+}
+
+/* Close Button (top-right 'x') */
+.modal-close-button {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #aaa;
+    padding: 0 5px;
+}
+.modal-close-button:hover, .modal-close-button:focus {
+    color: var(--clr-text);
+    text-decoration: none;
+}
+
+/* Modal Section Headers */
+.modal-section h3 {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: var(--clr-text);
+    border-bottom: 1px solid var(--clr-text-dim);
+    padding-bottom: 5px;
+}
+.modal-form-group {
+    margin-bottom: 15px;
+}
+.modal-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.modal-form-group input[type="text"],
+.modal-form-group input[type="email"],
+.modal-form-group input[type="number"],
+.modal-form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+/* Modal Action Buttons (Save/Cancel) */
+.modal-actions, .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--clr-text-dim);
+}
+
+.save-button, .cancel-button {
+    padding: 12px 25px;
+    border-radius: var(--border-radius-base);
+    font-size: 1.1em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.save-button { background-color: var(--clr-primary-teal); color: var(--clr-bg-light); border: none; }
+.save-button:hover { background-color: #109a9a; }
+.cancel-button { background-color: var(--clr-text-dim); color: var(--clr-bg-light); border: none; }
+.cancel-button:hover { background-color: #4a5763; }
+
+/* Specific IEP Editor Styles */
+#iep-editor-content {
+    padding-top: 10px;
+}
+#iep-editor-content .checkbox-group label {
+    margin-right: 20px;
+}
+#iep-editor-content input[type="number"],
+#iep-editor-content input[type="date"],
+#iep-editor-content input[type="text"],
+#iep-editor-content textarea,
+#iep-editor-content select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+#iep-goals-list {
+    list-style: none;
+    padding: 0;
+}
+.iep-goal-item {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-base);
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: var(--clr-bg-light);
+    box-shadow: var(--shadow-sm);
+}
+.iep-goal-item label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.iep-goal-item hr {
+    margin: 15px 0;
+    border: 0;
+    border-top: 1px dashed #eee;
+}
+.remove-goal-btn {
+    background-color: var(--clr-error-red);
+    color: var(--clr-bg-light);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+    float: right;
+}
+.remove-goal-btn:hover {
+    background-color: #ed4040;
+}
+#add-iep-goal-btn {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+#add-iep-goal-btn:hover { background-color: #109a9a; }
+
+
+/* Admin Dashboard Modal Specifics */
+.info-display-group {
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+}
+.info-display-group strong {
+    color: var(--clr-text);
+}
+.conversation-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: var(--border-radius-base);
+    background-color: #fefefe;
+}
+.conversation-item {
+    padding: 10px;
+    border-bottom: 1px dashed #eee;
+    margin-bottom: 10px;
+}
+.conversation-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+
+/* Conversation Summary Cards (Teacher Dashboard) */
+.conversation-card {
+    background-color: var(--clr-bg-light);
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-base);
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+}
+.conversation-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--clr-text);
+    font-size: 1.1em;
+}
+.conversation-card p {
+    margin: 0 0 5px 0;
+    font-size: 0.95em;
+    line-height: 1.4;
+    color: var(--clr-text-dim);
+}
+.conversation-card .session-date {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}

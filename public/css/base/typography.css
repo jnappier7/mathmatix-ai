@@ -1,0 +1,112 @@
+/* --- 2. Typography & General Elements --- */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-headlines);
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-text);
+    margin-bottom: 0.5em;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+}
+h1 { font-size: var(--brand-h1-font-size); }
+h2 { font-size: var(--brand-h2-font-size); }
+h3 { font-size: var(--brand-h3-font-size); }
+h4 { font-size: clamp(1.05rem, 2vw, 1.3rem); }
+
+p {
+    margin-bottom: 1em;
+}
+
+a {
+    color: var(--clr-primary-teal);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--clr-primary-teal-dark);
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    padding: 0.75em 1.25em;
+    border-radius: var(--radius-base);
+    font-weight: 600;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-xs);
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+button:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-sm);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--clr-primary-teal);
+    outline-offset: 2px;
+}
+
+/* Common form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--clr-border);
+    border-radius: var(--radius-base);
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: var(--clr-bg-light);
+    color: var(--clr-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="number"]:hover,
+input[type="date"]:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--clr-text-dim);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--clr-primary-teal);
+    box-shadow: 0 0 0 3px rgba(var(--clr-primary-teal-rgb), 0.12);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--clr-text-dim);
+    opacity: 0.7;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 5px;
+    accent-color: var(--clr-primary-teal);
+}

@@ -1,0 +1,417 @@
+/* --- 6. Landing Page Sections (MODIFIED & NEW) --- */
+.section-title {
+    text-align: center;
+    margin-bottom: calc(var(--section-gap) / 1.5); /* Reduced margin-bottom for tighter feel */
+    color: var(--clr-primary-teal);
+    font-size: 2.5em;
+    font-weight: var(--font-weight-headlines);
+}
+
+/* Hero Section */
+.hero-section {
+    display: flex;
+    flex-direction: column; /* Default to column for mobile */
+    align-items: center;
+    gap: calc(var(--section-gap) / 2); /* Reduced gap */
+    padding: 0; /* Use section-gap for internal padding, main handles outer */
+    background: var(--clr-bg-light); /* Start with light background for Apple-esque */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-sm); /* Lighter shadow for hero section */
+    margin-bottom: 0; /* No external margin-bottom, managed by main's gap */
+}
+
+/* Adjust hero section for desktop (side-by-side) */
+@media screen and (min-width: 768px) {
+    .hero-section {
+        flex-direction: row; /* Side-by-side on desktop */
+        text-align: left; /* Align text left */
+        justify-content: center; /* Center content horizontally */
+        padding: var(--section-gap) var(--page-horizontal-padding); /* Add horizontal padding back */
+        gap: 60px; /* Gap between text and image */
+    }
+    .hero-content {
+        flex: 1; /* Allow content to grow */
+        max-width: 50%; /* Control text width */
+        padding: 0; /* Remove internal padding as section has it */
+    }
+    .hero-tagline, .hero-subtagline, .hero-equity-blurb {
+        color: var(--clr-text); /* Dark text on light background */
+        text-shadow: none; /* No text shadow */
+    }
+    .hero-actions {
+        justify-content: flex-start; /* Align buttons left */
+    }
+    .hero-image-card {
+        flex: 1; /* Allow image to grow */
+        margin-top: 0; /* No top margin in row layout */
+    }
+}
+
+
+.hero-content {
+    max-width: 800px;
+    padding: 0 var(--page-horizontal-padding);
+}
+
+.hero-tagline {
+    font-size: 3em;
+    color: var(--clr-text); /* Changed to dark text on light background */
+    margin-bottom: 0.3em;
+    text-shadow: none; /* Removed text shadow */
+}
+.hero-subtagline {
+    font-size: 1.5em;
+    color: var(--clr-text-dim); /* Changed to dim text */
+    margin-bottom: 0.8em;
+    opacity: 1; /* Full opacity */
+    font-weight: var(--font-weight-body);
+}
+.hero-equity-blurb {
+    font-size: 1.1em;
+    color: var(--clr-text-dim); /* Changed to dim text */
+    margin-bottom: 1.5em;
+    font-style: italic;
+    opacity: 0.9; /* Slightly less opaque */
+}
+
+.hero-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.hero-image-card {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 8px 15px rgba(var(--clr-primary-teal-rgb), 0.1); /* Lighter teal themed shadow */
+    max-width: 600px; /* Controlled max width for image card */
+    min-width: 280px; /* Ensure it doesn't get too small */
+}
+.hero-classroom-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-base);
+    display: block;
+}
+
+
+/* NEW SECTION: Visual Features (Mimics 3-column dashboard panels) */
+.visual-features-section {
+    text-align: center;
+    padding: var(--section-gap) 0;
+}
+
+.visual-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Slightly smaller minmax */
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2); /* Half section gap */
+    justify-content: center;
+}
+
+.visual-feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px; /* Slightly less padding */
+    min-height: 280px; /* Reduced for less empty space */
+    text-align: center;
+    box-shadow: var(--shadow-sm); /* Softer shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.visual-feature-item i {
+    font-size: var(--icon-size-default); /* Uses new variable */
+}
+
+.visual-feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md); /* More pronounced shadow on hover */
+}
+
+.visual-feature-image {
+    max-width: 100%;
+    height: 100px; /* Reduced height for iconic feel */
+    object-fit: contain;
+    border-radius: var(--border-radius-base); /* Add border-radius for consistency */
+    margin-bottom: 20px; /* Reduced margin */
+    box-shadow: none; /* No shadow on image */
+}
+
+.visual-feature-item h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.visual-feature-item p {
+    font-size: 0.95em;
+    color: var(--clr-text-dim);
+    flex-grow: 1;
+}
+
+
+/* Pricing/Equity Section */
+.pricing-equity-section {
+    text-align: center;
+    padding: var(--section-gap) 0;
+}
+.pricing-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2); /* Half section gap */
+    justify-content: center;
+}
+.pricing-card {
+    text-align: center;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 280px;
+}
+.pricing-card h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+/* Specific styling for the 'Free while in Beta' part for clear hierarchy as per mockup */
+.pricing-card .beta-price-note {
+    font-size: 1.5em; /* Match mockup's emphasis */
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-accent-hotpink); /* Hot pink for visibility */
+    margin-bottom: 10px;
+}
+.pricing-card .price-post-beta {
+    color: var(--clr-text-dim); /* More subtle */
+    font-size: 1em; /* Smaller */
+    font-weight: var(--font-weight-body);
+    text-decoration: line-through; /* Strikethrough for beta pricing */
+    margin-bottom: 5px; /* Less margin */
+}
+
+
+.pricing-card .price-contact {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--clr-primary-teal);
+    margin-bottom: 10px;
+}
+.pricing-card .equity-cue {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.pricing-equity-section .btn {
+    width: 100%;
+    max-width: 200px;
+}
+.access-grants-note {
+    font-size: 0.9em;
+    margin-top: 30px;
+}
+
+
+/* NEW SECTION: Our Approach (Replaces 'How It Works' stepper) */
+.our-approach-section {
+    padding: var(--section-gap) 0;
+    text-align: center;
+}
+
+.our-approach-section .section-title {
+    margin-bottom: calc(var(--section-gap) / 2);
+}
+
+.approach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px; /* Reduced gap */
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.approach-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.approach-icon {
+    width: 90px; /* Smaller icons for a cleaner look */
+    height: 90px;
+    object-fit: contain;
+    border-radius: var(--border-radius-base); /* Add border-radius for consistency */
+    margin-bottom: 20px; /* Reduced margin */
+    box-shadow: none; /* No shadow on image */
+}
+
+.approach-item h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.approach-item p {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    flex-grow: 1;
+}
+
+
+/* Feature Grid Section - slight refinement */
+.feature-grid-section {
+    padding: var(--section-gap) 0;
+}
+.feature-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2);
+    justify-content: center;
+}
+.feature-card {
+    text-align: center;
+    padding: 30px;
+    min-height: 180px; /* Slightly reduced height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.feature-card h3 {
+    color: var(--clr-primary-teal);
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+.feature-card p {
+    font-size: 0.95em;
+    color: var(--clr-text-dim);
+    flex-grow: 1;
+}
+
+
+/* Social Proof Section */
+.social-proof-section {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+    padding: var(--section-gap);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+.social-proof-section .section-title {
+    color: var(--clr-bg-light);
+}
+/* NEW: Testimonial Grid (replacing carousel) */
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Two columns on desktop */
+    gap: 30px;
+    max-width: 900px; /* Max width for testimonials */
+    margin: 0 auto 30px;
+}
+.testimonial-item {
+    background-color: var(--clr-bg-light); /* White background for testimonials */
+    color: var(--clr-text); /* Dark text */
+    padding: 25px;
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-md);
+    text-align: left; /* Align text left within testimonial */
+    opacity: 1; /* Always visible, no fade */
+    position: static; /* Remove absolute positioning */
+    width: auto; /* Remove fixed width */
+    min-height: 0; /* Allow testimonial item to shrink */
+}
+.testimonial-item blockquote {
+    margin: 0;
+    font-size: 1.1em;
+    font-style: italic;
+    color: var(--clr-text);
+    margin-bottom: 10px;
+}
+.testimonial-author {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--clr-text-dim); /* Dimmed author text */
+}
+.school-logos-container {
+    display: none; /* Hide school logos as per mockup */
+}
+
+
+/* FAQ Section */
+.faq-section {
+    padding: var(--section-gap) 0;
+}
+.accordion-container {
+    max-width: 800px;
+    margin: calc(var(--section-gap) / 2) auto 0; /* Reduced top margin */
+}
+.accordion-item {
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+.accordion-header {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    background-color: var(--clr-bg-light);
+    border: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-sm);
+    color: var(--clr-text);
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+.accordion-header::after {
+    content: '\002B';
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+.accordion-header.active::after {
+    content: '\2212'; /* Change to minus sign */
+    transform: rotate(0deg); /* No rotation needed */
+}
+.accordion-content {
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    padding: 0 20px;
+    background-color: var(--clr-bg-light);
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
+    box-shadow: var(--shadow-sm);
+}
+.accordion-content p {
+    padding: 15px 0;
+    color: var(--clr-text-dim);
+}
+
+
+/* Final CTA Section */
+.final-cta-section {
+    text-align: center;
+    padding: var(--section-gap); /* Use full section gap for padding */
+    margin-bottom: var(--section-gap);
+    background: var(--clr-primary-teal); /* Solid teal background as per mockup */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+}
+.final-cta-blurb {
+    font-size: 1.2em;
+    color: var(--clr-bg-light); /* White text on teal background */
+    margin-bottom: 30px;
+}
