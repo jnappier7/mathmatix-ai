@@ -96,8 +96,8 @@ Remaining in script.js (candidates for future extraction):
 - Whiteboard
 - Event listeners
 
-### 3. style.css Modularization (DONE — Phase 1)
-Extracted 4 CSS modules from `style.css` (6,696 lines):
+### 3. style.css Modularization (DONE)
+Reduced `style.css` from **6,710 → 3,204 lines** by extracting 8 CSS modules:
 
 | Module | Lines | What it contains |
 |--------|-------|------------------|
@@ -105,8 +105,11 @@ Extracted 4 CSS modules from `style.css` (6,696 lines):
 | `css/base/typography.css` | 112 | Typography, form elements |
 | `css/base/buttons.css` | 140 | All button variants and card styles |
 | `css/base/landing.css` | 417 | Landing page sections (hero, pricing, FAQ, etc.) |
+| `css/base/chat.css` | 654 | Chat container, messages, reactions, toolbar, thinking indicator, leaderboard, XP widget, tutor avatar, course cards |
+| `css/base/modals.css` | 540 | Modal overlay, settings, equation, palette, IEP editor, admin modal, conversation summary cards |
+| `css/base/animations.css` | 368 | XP animation, level-up, celebrations, badge celebration with keyframes |
+| `css/base/responsive.css` | 1,106 | Mobile drawers, all media queries (1024/767/480px), print styles, mobile utilities |
 
-**Total extracted: 834 lines across 4 focused modules**
+**Total extracted: 3,502 lines across 8 focused modules**
 
-`style.css` is kept intact for backward compatibility with all 22 HTML pages.
-The `css/main.css` entry point imports the modular files for Vite production builds.
+`style.css` is now an `@import` manifest — it loads all 8 modules at the top, then contains the remaining ~3,200 lines of inline CSS. All 22 HTML pages continue to reference `/style.css` and work identically.
