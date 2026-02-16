@@ -5,11 +5,9 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { openai } = require('../utils/openaiClient');
-const axios = require('axios');
+const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
 const path = require('path');
-
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 /**
  * GET /api/voice/test
@@ -19,6 +17,7 @@ router.get('/test', isAuthenticated, async (req, res) => {
     const results = {
         timestamp: new Date().toISOString(),
         userId: req.user._id,
+        ttsProvider: ttsProvider.getProviderName(),
         tests: []
     };
 
@@ -46,10 +45,13 @@ router.get('/test', isAuthenticated, async (req, res) => {
         status: await testOpenAIClient()
     });
 
-    // Test 5: ElevenLabs API
+    // Test 5: TTS Provider API
+    const TUTOR_CONFIG = require('../utils/tutorConfig');
+    const defaultTutor = TUTOR_CONFIG['default'] || TUTOR_CONFIG['mr-nappier'];
+    const testVoiceId = ttsProvider.getVoiceId(defaultTutor);
     results.tests.push({
-        name: 'ElevenLabs API',
-        status: await testElevenLabsAPI()
+        name: `TTS Provider (${ttsProvider.getProviderName()})`,
+        status: await ttsProvider.testConnection(testVoiceId)
     });
 
     const allPassed = results.tests.every(test => test.status.success);
@@ -61,12 +63,12 @@ router.get('/test', isAuthenticated, async (req, res) => {
 function checkEnvVars() {
     const checks = {
         openaiKey: !!process.env.OPENAI_API_KEY,
-        elevenLabsKey: !!ELEVENLABS_API_KEY,
         openaiKeyFormat: process.env.OPENAI_API_KEY?.startsWith('sk-'),
-        elevenLabsKeyFormat: ELEVENLABS_API_KEY?.startsWith('sk_')
+        ttsProvider: ttsProvider.getProviderName(),
+        ttsConfigured: ttsProvider.isConfigured()
     };
 
-    const allPass = Object.values(checks).every(v => v);
+    const allPass = checks.openaiKey && checks.openaiKeyFormat && checks.ttsConfigured;
 
     return {
         success: allPass,
@@ -89,7 +91,7 @@ async function testTempDirectory() {
         fs.writeFileSync(testFile, 'test');
 
         // Test read
-        const content = fs.readFileSync(testFile, 'utf8');
+        fs.readFileSync(testFile, 'utf8');
 
         // Cleanup
         fs.unlinkSync(testFile);
@@ -122,7 +124,7 @@ async function testAudioDirectory() {
         fs.writeFileSync(testFile, 'test');
 
         // Test read
-        const content = fs.readFileSync(testFile, 'utf8');
+        fs.readFileSync(testFile, 'utf8');
 
         // Cleanup
         fs.unlinkSync(testFile);
@@ -167,57 +169,6 @@ async function testOpenAIClient() {
                 data: error.response?.data
             },
             message: `OpenAI API error: ${error.message}`
-        };
-    }
-}
-
-async function testElevenLabsAPI() {
-    try {
-        if (!ELEVENLABS_API_KEY) {
-            throw new Error('ELEVENLABS_API_KEY not set');
-        }
-
-        // Test with a minimal TTS request
-        const response = await axios.post(
-            'https://api.elevenlabs.io/v1/text-to-speech/2eFQnnNM32GDnZkCfkSm', // Mr. Nappier's voice
-            {
-                text: 'Test',
-                model_id: 'eleven_monolingual_v1',
-                voice_settings: {
-                    stability: 0.4,
-                    similarity_boost: 0.7
-                }
-            },
-            {
-                headers: {
-                    'xi-api-key': ELEVENLABS_API_KEY,
-                    'Content-Type': 'application/json',
-                    'Accept': 'audio/mpeg'
-                },
-                responseType: 'arraybuffer',
-                timeout: 10000
-            }
-        );
-
-        return {
-            success: true,
-            details: {
-                status: response.status,
-                audioSize: response.data.byteLength,
-                contentType: response.headers['content-type']
-            },
-            message: 'ElevenLabs API is working'
-        };
-    } catch (error) {
-        return {
-            success: false,
-            details: {
-                error: error.message,
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                data: error.response?.data?.toString('utf8')
-            },
-            message: `ElevenLabs API error: ${error.message}`
         };
     }
 }

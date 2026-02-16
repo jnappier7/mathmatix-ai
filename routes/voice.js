@@ -10,14 +10,12 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway");
 const { openai } = require('../utils/openaiClient');
 const { processAIResponse } = require('../utils/chatBoardParser');
-const { retryWithExponentialBackoff } = require('../utils/openaiClient');
-const axios = require('axios');
+
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+const ttsProvider = require('../utils/ttsProvider');
 
 /**
  * Check if user is under 13 based on dateOfBirth.
@@ -66,11 +64,11 @@ router.post('/process', isAuthenticated, async (req, res) => {
     }
 
     // Check API keys early
-    if (!ELEVENLABS_API_KEY) {
-        console.error('❌ [Voice] ELEVENLABS_API_KEY not configured');
+    if (!ttsProvider.isConfigured()) {
+        console.error(`❌ [Voice] ${ttsProvider.getProviderName()} API key not configured`);
         return res.status(500).json({
             error: 'Voice chat not configured',
-            message: 'ElevenLabs API key is missing. Please configure ELEVENLABS_API_KEY environment variable.'
+            message: `${ttsProvider.getProviderName()} API key is missing. Please configure the appropriate environment variable.`
         });
     }
 
@@ -264,50 +262,33 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const ttsText = cleanTextForTTS(aiResponseText);
 
         // ============================================
-        // STEP 4: TEXT-TO-SPEECH (ElevenLabs with Tutor Voice)
+        // STEP 4: TEXT-TO-SPEECH (via ttsProvider — ElevenLabs or Cartesia)
         // ============================================
 
         const step3Start = Date.now();
-        console.log('🔊 [Voice] Generating speech with tutor voice...');
+        console.log(`🔊 [Voice] Generating speech with ${ttsProvider.getProviderName()}...`);
 
-        // Get tutor's voice ID from tutor profile
-        const tutorVoiceId = tutorProfile.voiceId;
+        // Get tutor's voice ID for the active provider
+        const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
         console.log(`🎤 [Voice] Using tutor: ${tutorProfile.name} (${selectedTutorId})`);
-        console.log(`🎤 [Voice] Using tutor voice ID: ${tutorVoiceId}`);
+        console.log(`🎤 [Voice] Using ${ttsProvider.getProviderName()} voice ID: ${tutorVoiceId}`);
         console.log(`📝 [Voice] TTS text length: ${ttsText.length} chars`);
 
-        // Generate TTS audio using ElevenLabs
-        let elevenLabsResponse;
+        if (!tutorVoiceId) {
+            throw new Error(`No ${ttsProvider.getProviderName()} voice ID configured for tutor: ${selectedTutorId}`);
+        }
+
+        // Generate TTS audio via the active provider
+        let audioData;
         try {
-            elevenLabsResponse = await retryWithExponentialBackoff(async () => {
-                return await axios.post(
-                    `https://api.elevenlabs.io/v1/text-to-speech/${tutorVoiceId}`,
-                    {
-                        text: ttsText,  // Use cleaned text for TTS
-                        model_id: "eleven_monolingual_v1",
-                        voice_settings: {
-                            stability: 0.4,
-                            similarity_boost: 0.7
-                        }
-                    },
-                    {
-                        headers: {
-                            "xi-api-key": ELEVENLABS_API_KEY,
-                            "Content-Type": "application/json",
-                            "Accept": "audio/mpeg"
-                        },
-                        responseType: "arraybuffer"
-                    }
-                );
-            });
+            audioData = await ttsProvider.generateAudio(ttsText, tutorVoiceId);
         } catch (error) {
-            console.error('❌ [Voice] ElevenLabs TTS error:', error.message);
+            console.error(`❌ [Voice] ${ttsProvider.getProviderName()} TTS error:`, error.message);
             console.error('Error response:', error.response?.data);
             console.error('Error status:', error.response?.status);
             throw new Error(`TTS generation failed: ${error.message}`);
         }
 
-        const audioData = Buffer.from(elevenLabsResponse.data);
         const step3Time = Date.now() - step3Start;
         console.log(`✅ [Voice] TTS audio received (${step3Time}ms), size:`, audioData.length, 'bytes');
 
@@ -318,7 +299,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
             fs.mkdirSync(audioDir, { recursive: true });
         }
 
-        const audioFilename = `voice_${userId}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}.mp3`;
+        const ext = ttsProvider.getFileExtension();
+        const audioFilename = `voice_${userId}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}${ext}`;
         const audioPath = path.join(audioDir, audioFilename);
         fs.writeFileSync(audioPath, audioData);
 
@@ -385,7 +367,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         let userMessage = 'Failed to process voice input';
         if (error.message.includes('Whisper')) {
             userMessage = 'Speech recognition failed. Please try speaking again.';
-        } else if (error.message.includes('TTS') || error.message.includes('ElevenLabs')) {
+        } else if (error.message.includes('TTS') || error.message.includes('ElevenLabs') || error.message.includes('Cartesia')) {
             userMessage = 'Voice synthesis failed. Please try again.';
         } else if (error.message.includes('API key')) {
             userMessage = 'Voice feature is not configured. Please contact support.';
