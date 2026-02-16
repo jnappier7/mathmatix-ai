@@ -152,19 +152,31 @@ class CourseManager {
             const moduleDone = (s.modules || []).filter(m => m.status === 'completed').length;
             const moduleTotal = (s.modules || []).length;
 
-            // Format current module name from slug: "mod-linear-equations" → "Linear Equations"
-            const currentMod = s.currentModuleId || '';
-            const modLabel = currentMod
-                .replace(/^mod-/, '')
-                .replace(/-/g, ' ')
-                .replace(/\b\w/g, c => c.toUpperCase());
+            // Build breadcrumb from module/lesson data
+            const currentMod = (s.modules || []).find(m => m.moduleId === s.currentModuleId);
+            let modLabel = '';
+            if (s.status === 'paused') {
+                modLabel = 'Paused';
+            } else if (currentMod) {
+                const parts = [];
+                if (currentMod.unit) parts.push(`Unit ${currentMod.unit}`);
+                const curLesson = s.currentLessonId && currentMod.lessons
+                    ? currentMod.lessons.find(l => l.lessonId === s.currentLessonId)
+                    : null;
+                if (curLesson?.title) {
+                    parts.push(curLesson.title);
+                } else if (currentMod.title) {
+                    parts.push(currentMod.title);
+                }
+                modLabel = parts.join(' \u203A ');
+            }
 
             item.innerHTML = `
                 <div class="course-sidebar-row">
                     <div class="course-sidebar-icon">${s.status === 'paused' ? '⏸' : '📘'}</div>
                     <div class="course-sidebar-body">
                         <div class="course-sidebar-name">${this.escapeHtml(this.formatCourseName(s.courseName))}</div>
-                        <div class="course-sidebar-module">${s.status === 'paused' ? 'Paused' : modLabel}</div>
+                        <div class="course-sidebar-module">${modLabel}</div>
                         <div class="course-sidebar-progress-track">
                             <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
                         </div>
@@ -227,9 +239,26 @@ class CourseManager {
         if (fill) fill.style.width = `${session.overallProgress || 0}%`;
         if (pct) pct.textContent = `${session.overallProgress || 0}%`;
 
-        // Find current module name
-        const current = (session.modules || []).find(m => m.moduleId === session.currentModuleId);
-        if (mod) mod.textContent = current ? `Module: ${session.currentModuleId}` : '';
+        // Build breadcrumb: Unit X > Lesson Title
+        if (mod) {
+            const currentMod = (session.modules || []).find(m => m.moduleId === session.currentModuleId);
+            if (currentMod) {
+                const lessonId = session.currentLessonId;
+                const lesson = lessonId && currentMod.lessons
+                    ? currentMod.lessons.find(l => l.lessonId === lessonId)
+                    : null;
+                const parts = [];
+                if (currentMod.unit) parts.push(`Unit ${currentMod.unit}`);
+                if (lesson?.title) {
+                    parts.push(lesson.title);
+                } else if (currentMod.title) {
+                    parts.push(currentMod.title);
+                }
+                mod.textContent = parts.join(' \u203A ');
+            } else {
+                mod.textContent = '';
+            }
+        }
     }
 
     // --------------------------------------------------
@@ -420,9 +449,15 @@ class CourseManager {
 
                 this.renderModuleList(data);
 
-                // Also update the bar title with the current module
+                // Update breadcrumb from progress data
                 const mod = document.getElementById('course-progress-module');
-                if (mod && data.next) {
+                if (mod && data.breadcrumb) {
+                    const parts = [];
+                    if (data.breadcrumb.unit) parts.push(`Unit ${data.breadcrumb.unit}`);
+                    if (data.breadcrumb.lessonTitle) parts.push(data.breadcrumb.lessonTitle);
+                    else if (data.breadcrumb.moduleName) parts.push(data.breadcrumb.moduleName);
+                    mod.textContent = parts.join(' \u203A ');
+                } else if (mod && data.next) {
                     mod.textContent = data.next.title || '';
                 }
 
@@ -458,7 +493,7 @@ class CourseManager {
         const modules = data.modules || [];
         modules.forEach(m => {
             const el = document.createElement('div');
-            el.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid #f0f0f0;';
+            el.style.cssText = 'padding:6px 0; border-bottom:1px solid #f0f0f0;';
 
             // Status icon
             let icon = '';
@@ -478,23 +513,50 @@ class CourseManager {
             }
 
             const isCurrent = m.moduleId === data.currentModuleId;
+            const unitLabel = m.unit ? `Unit ${m.unit}: ` : '';
 
-            el.innerHTML = `
-                <i class="fas ${icon}" style="color:${iconColor}; font-size:16px; min-width:20px;"></i>
-                <div style="flex:1;">
-                    <div style="font-size:13px; font-weight:${isCurrent ? '700' : '500'}; color:${m.status === 'locked' ? '#aaa' : '#333'};">
-                        ${this.escapeHtml(m.title || m.moduleId)}
-                    </div>
-                    ${m.apWeight ? `<span style="font-size:10px; color:#764ba2; background:#f3f0ff; padding:1px 6px; border-radius:4px;">${m.apWeight}</span>` : ''}
-                    ${m.scaffoldProgress > 0 && m.status !== 'completed' ? `
-                        <div style="margin-top:3px; width:80px; height:3px; background:#e2e8f0; border-radius:2px;">
-                            <div style="height:100%; width:${m.scaffoldProgress}%; background:#667eea; border-radius:2px;"></div>
+            // Module header row
+            let html = `
+                <div style="display:flex; align-items:center; gap:10px; padding:4px 0;">
+                    <i class="fas ${icon}" style="color:${iconColor}; font-size:16px; min-width:20px;"></i>
+                    <div style="flex:1;">
+                        <div style="font-size:13px; font-weight:${isCurrent ? '700' : '500'}; color:${m.status === 'locked' ? '#aaa' : '#333'};">
+                            ${unitLabel}${this.escapeHtml(m.title || m.moduleId)}
                         </div>
-                    ` : ''}
-                </div>
-                ${m.checkpointPassed ? '<i class="fas fa-medal" style="color:#f59e0b; font-size:12px;" title="Checkpoint passed"></i>' : ''}
-            `;
+                        ${m.apWeight ? `<span style="font-size:10px; color:#764ba2; background:#f3f0ff; padding:1px 6px; border-radius:4px;">${m.apWeight}</span>` : ''}
+                        ${m.scaffoldProgress > 0 && m.status !== 'completed' ? `
+                            <div style="margin-top:3px; width:80px; height:3px; background:#e2e8f0; border-radius:2px;">
+                                <div style="height:100%; width:${m.scaffoldProgress}%; background:#667eea; border-radius:2px;"></div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${m.checkpointPassed ? '<i class="fas fa-medal" style="color:#f59e0b; font-size:12px;" title="Checkpoint passed"></i>' : ''}
+                </div>`;
 
+            // Lesson rows (only show for current/in-progress/available modules)
+            if (m.lessons && m.lessons.length > 0 && (isCurrent || m.status === 'in_progress' || m.status === 'available')) {
+                m.lessons.forEach(l => {
+                    let lIcon = 'fa-circle';
+                    let lColor = '#ddd';
+                    let lWeight = '400';
+                    if (l.status === 'completed') { lIcon = 'fa-check'; lColor = '#22c55e'; }
+                    else if (l.status === 'in_progress') { lIcon = 'fa-chevron-right'; lColor = '#667eea'; lWeight = '600'; }
+                    else if (l.status === 'available') { lIcon = 'fa-circle'; lColor = '#667eea'; }
+                    else { lIcon = 'fa-circle'; lColor = '#ddd'; }
+
+                    const isCurrentLesson = l.lessonId === data.currentLessonId;
+
+                    html += `
+                        <div style="display:flex; align-items:center; gap:8px; padding:3px 0 3px 32px;">
+                            <i class="fas ${lIcon}" style="color:${lColor}; font-size:9px; min-width:14px;"></i>
+                            <span style="font-size:12px; font-weight:${isCurrentLesson ? '600' : lWeight}; color:${l.status === 'locked' ? '#bbb' : '#555'};">
+                                ${this.escapeHtml(l.title || l.lessonId)}
+                            </span>
+                        </div>`;
+                });
+            }
+
+            el.innerHTML = html;
             list.appendChild(el);
         });
 
