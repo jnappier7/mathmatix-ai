@@ -565,7 +565,8 @@ router.post('/', async (req, res) => {
                     courseName: courseSession.courseName,
                     currentModuleId: courseSession.currentModuleId,
                     overallProgress: courseSession.overallProgress
-                }
+                },
+                courseProgress: courseProgressUpdate
             };
         } else {
             // Student response: full gamification
@@ -616,7 +617,8 @@ router.post('/', async (req, res) => {
                     courseName: courseSession.courseName,
                     currentModuleId: courseSession.currentModuleId,
                     overallProgress: courseSession.overallProgress
-                }
+                },
+                courseProgress: courseProgressUpdate
             };
         }
 
