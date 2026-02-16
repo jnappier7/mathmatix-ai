@@ -380,17 +380,31 @@ router.post('/', async (req, res) => {
                     mod.scaffoldProgress = 100;
                     mod.completedAt = new Date();
 
+                    // Mark all lessons in this module as completed
+                    if (mod.lessons && mod.lessons.length > 0) {
+                        mod.lessons.forEach(l => {
+                            if (l.status !== 'completed') {
+                                l.status = 'completed';
+                                l.completedAt = new Date();
+                            }
+                        });
+                    }
+
                     const modIdx = courseSession.modules.findIndex(m => m.moduleId === courseSession.currentModuleId);
                     if (modIdx >= 0 && modIdx < courseSession.modules.length - 1) {
                         const nextMod = courseSession.modules[modIdx + 1];
                         if (nextMod.status === 'locked') nextMod.status = 'available';
                         nextMod.startedAt = new Date();
                         courseSession.currentModuleId = nextMod.moduleId;
+                        // Set currentLessonId to first lesson of next module
+                        courseSession.currentLessonId = nextMod.lessons?.[0]?.lessonId || null;
+                        if (nextMod.lessons?.[0]) nextMod.lessons[0].status = 'available';
                     }
                     courseSession.currentScaffoldIndex = 0;
 
                     courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
 
+                    const doneCount = courseSession.modules.filter(m => m.status === 'completed').length;
                     if (doneCount === courseSession.modules.length) {
                         courseSession.status = 'completed';
                         courseSession.completedAt = new Date();
@@ -415,6 +429,7 @@ router.post('/', async (req, res) => {
                         moduleId: mod.moduleId,
                         overallProgress: courseSession.overallProgress,
                         nextModuleId: courseSession.currentModuleId,
+                        currentLessonId: courseSession.currentLessonId,
                         xpAwarded: moduleXP,
                         courseComplete: courseSession.status === 'completed'
                     };
@@ -448,6 +463,42 @@ router.post('/', async (req, res) => {
                             mod.startedAt = mod.startedAt || new Date();
                         }
 
+                        // Track lesson transitions
+                        const prevLessonId = currentStep?.lessonId;
+                        const nextStep = moduleData?.scaffold?.[newIdx];
+                        const nextLessonId = nextStep?.lessonId;
+
+                        if (prevLessonId && nextLessonId && mod.lessons && mod.lessons.length > 0) {
+                            // Mark current lesson in_progress if it hasn't been yet
+                            const curLesson = mod.lessons.find(l => l.lessonId === prevLessonId);
+                            if (curLesson && curLesson.status === 'locked') {
+                                curLesson.status = 'in_progress';
+                                curLesson.startedAt = curLesson.startedAt || new Date();
+                            }
+
+                            if (prevLessonId !== nextLessonId) {
+                                // Lesson boundary crossed — complete previous, start next
+                                if (curLesson && curLesson.status !== 'completed') {
+                                    curLesson.status = 'completed';
+                                    curLesson.completedAt = new Date();
+                                }
+                                const nextLesson = mod.lessons.find(l => l.lessonId === nextLessonId);
+                                if (nextLesson) {
+                                    nextLesson.status = 'in_progress';
+                                    nextLesson.startedAt = nextLesson.startedAt || new Date();
+                                }
+                                courseSession.currentLessonId = nextLessonId;
+                            } else if (!courseSession.currentLessonId) {
+                                courseSession.currentLessonId = prevLessonId;
+                            }
+
+                            // Also mark the current lesson as in_progress if first scaffold step
+                            if (curLesson && curLesson.status === 'available') {
+                                curLesson.status = 'in_progress';
+                                curLesson.startedAt = curLesson.startedAt || new Date();
+                            }
+                        }
+
                         // Recalculate blended overall progress (includes scaffold progress)
                         courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
 
@@ -459,8 +510,32 @@ router.post('/', async (req, res) => {
                             conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;
                         }
 
-                        const nextStep = moduleData?.scaffold?.[newIdx];
                         console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
+
+                        // Derive the scaffold phase label for breadcrumb display
+                        const phaseLabels = {
+                            'explanation': 'Concept Intro', 'concept-intro': 'Concept Intro',
+                            'model': 'I-Do (Modeling)', 'i-do': 'I-Do (Modeling)',
+                            'guided_practice': 'We-Do (Guided)', 'we-do': 'We-Do (Guided)',
+                            'independent_practice': 'You-Do (Independent)', 'you-do': 'You-Do (Independent)',
+                            'mastery-check': 'Mastery Check', 'concept-check': 'Concept Check',
+                            'check-in': 'Check-In'
+                        };
+                        const nextPhase = nextStep?.type || nextStep?.lessonPhase || '';
+                        const phaseLabel = phaseLabels[nextPhase] || nextPhase;
+
+                        // Find lesson title from module data
+                        const completedLessonTitle = mod.lessons?.find(l => l.lessonId === prevLessonId)?.title || '';
+                        const nextLessonTitle = mod.lessons?.find(l => l.lessonId === (nextLessonId || prevLessonId))?.title || '';
+                        const didTransitionLesson = prevLessonId && nextLessonId && prevLessonId !== nextLessonId;
+
+                        // Count lesson progress for the transition card
+                        let completedLessonCount = 0;
+                        let totalLessonCount = 0;
+                        if (mod.lessons && mod.lessons.length > 0) {
+                            totalLessonCount = mod.lessons.length;
+                            completedLessonCount = mod.lessons.filter(l => l.status === 'completed').length;
+                        }
 
                         courseProgressUpdate = {
                             event: 'scaffold_advance',
@@ -468,7 +543,22 @@ router.post('/', async (req, res) => {
                             scaffoldTotal: totalSteps,
                             scaffoldProgress: mod.scaffoldProgress,
                             overallProgress: courseSession.overallProgress,
-                            stepTitle: nextStep?.title || null
+                            stepTitle: nextStep?.title || null,
+                            // Breadcrumb data
+                            currentLessonId: courseSession.currentLessonId,
+                            lessonTitle: nextLessonTitle,
+                            phase: phaseLabel,
+                            unit: mod.unit,
+                            moduleName: mod.title,
+                            // Lesson transition data (only present when lesson boundary crossed)
+                            lessonTransition: didTransitionLesson ? {
+                                completedLessonId: prevLessonId,
+                                completedLessonTitle,
+                                nextLessonId,
+                                nextLessonTitle,
+                                lessonsCompleted: completedLessonCount,
+                                lessonsTotal: totalLessonCount
+                            } : null
                         };
                     }
                 }
@@ -563,8 +653,10 @@ router.post('/', async (req, res) => {
                     courseId: courseSession.courseId,
                     courseName: courseSession.courseName,
                     currentModuleId: courseSession.currentModuleId,
+                    currentLessonId: courseSession.currentLessonId,
                     overallProgress: courseSession.overallProgress
-                }
+                },
+                courseProgress: courseProgressUpdate
             };
         } else {
             // Student response: full gamification
@@ -614,8 +706,10 @@ router.post('/', async (req, res) => {
                     courseId: courseSession.courseId,
                     courseName: courseSession.courseName,
                     currentModuleId: courseSession.currentModuleId,
+                    currentLessonId: courseSession.currentLessonId,
                     overallProgress: courseSession.overallProgress
-                }
+                },
+                courseProgress: courseProgressUpdate
             };
         }
 

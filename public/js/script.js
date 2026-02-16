@@ -1778,7 +1778,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         fill.style.width = `${progressValue}%`;
                     }
                     if (pct && progressValue != null) pct.textContent = `${progressValue}%`;
-                    if (mod && cp.stepTitle) mod.textContent = cp.stepTitle;
+                    // Show breadcrumb: Unit X › Lesson Title › Phase
+                    if (mod) {
+                        const parts = [];
+                        if (cp.unit) parts.push(`Unit ${cp.unit}`);
+                        if (cp.lessonTitle) parts.push(cp.lessonTitle);
+                        if (cp.phase) parts.push(cp.phase);
+                        mod.textContent = parts.length > 0 ? parts.join(' \u203A ') : (cp.stepTitle || '');
+                    }
+                    // Show lesson transition card when crossing a lesson boundary
+                    if (cp.lessonTransition) {
+                        window.courseManager.showLessonTransition(cp.lessonTransition);
+                    }
                     console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal} (overall: ${cp.overallProgress}%)`);
                 } else if (cp.event === 'module_complete') {
                     // Refresh the full progress display and trigger celebration

@@ -6,8 +6,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const lessonProgressSchema = new Schema({
+  lessonId: { type: String, required: true },
+  title: { type: String },
+  order: { type: Number, default: 0 },
+  status: {
+    type: String,
+    enum: ['locked', 'available', 'in_progress', 'completed'],
+    default: 'locked'
+  },
+  startedAt: { type: Date },
+  completedAt: { type: Date }
+}, { _id: false });
+
 const moduleProgressSchema = new Schema({
   moduleId: { type: String, required: true },
+  unit: { type: Number },
+  title: { type: String },
   status: {
     type: String,
     enum: ['locked', 'available', 'in_progress', 'completed'],
@@ -17,7 +32,8 @@ const moduleProgressSchema = new Schema({
   completedAt: { type: Date },
   checkpointScore: { type: Number },
   checkpointPassed: { type: Boolean, default: false },
-  scaffoldProgress: { type: Number, default: 0, min: 0, max: 100 }
+  scaffoldProgress: { type: Number, default: 0, min: 0, max: 100 },
+  lessons: [lessonProgressSchema]
 }, { _id: false });
 
 const courseSessionSchema = new Schema({
@@ -35,6 +51,7 @@ const courseSessionSchema = new Schema({
 
   // Current position
   currentModuleId: { type: String },
+  currentLessonId: { type: String },
   currentScaffoldIndex: { type: Number, default: 0 },
 
   // Module-level progress

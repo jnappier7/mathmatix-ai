@@ -424,3 +424,90 @@
         margin: 8px;
     }
 }
+
+/* ----- Lesson Transition Card ----- */
+
+.lesson-transition-card {
+    margin: 20px auto;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.lesson-transition-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.lesson-transition-inner {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.lesson-transition-done {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.lesson-transition-done i {
+    font-size: 15px;
+}
+
+.lesson-transition-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.lesson-transition-track {
+    flex: 1;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.lesson-transition-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+.lesson-transition-count {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.lesson-transition-next {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #555;
+}
+
+.lesson-transition-next i {
+    color: #667eea;
+    font-size: 12px;
+}
+
+.lesson-transition-next strong {
+    color: #333;
+    font-weight: 600;
+}

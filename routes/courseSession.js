@@ -107,6 +107,16 @@ router.get('/', async (req, res) => {
       status: { $in: ['active', 'paused'] }
     }).sort({ updatedAt: -1 });
 
+    // Recalculate overallProgress from module data to fix any stale values
+    for (const s of sessions) {
+      const recalc = calculateOverallProgress(s.modules);
+      if (recalc !== s.overallProgress) {
+        s.overallProgress = recalc;
+        s.markModified('modules');
+        await s.save();
+      }
+    }
+
     res.json({ success: true, sessions });
   } catch (err) {
     console.error('[CourseSession] Error listing sessions:', err);
@@ -139,6 +149,9 @@ router.post('/enroll', async (req, res) => {
     // Resume a paused (dropped) session — restore progress instead of starting over
     if (existing && existing.status === 'paused') {
       existing.status = 'active';
+      // Recalculate progress from module data in case it was stale
+      existing.overallProgress = calculateOverallProgress(existing.modules);
+      existing.markModified('modules');
       await existing.save();
 
       await User.findByIdAndUpdate(req.user._id, {
@@ -202,8 +215,16 @@ router.post('/enroll', async (req, res) => {
 
     const modules = (pathway.modules || []).map((m, i) => ({
       moduleId: m.moduleId,
+      unit: m.unit,
+      title: m.title,
       status: i === 0 ? 'available' : 'locked',
-      scaffoldProgress: 0
+      scaffoldProgress: 0,
+      lessons: (m.lessons || []).map((l, li) => ({
+        lessonId: l.lessonId,
+        title: l.title,
+        order: l.order || li + 1,
+        status: (i === 0 && li === 0) ? 'available' : 'locked'
+      }))
     }));
 
     // Create a dedicated conversation for this course
@@ -223,6 +244,7 @@ router.post('/enroll', async (req, res) => {
       courseName: pathway.track || pathway.courseName || pathway.title || courseId,
       pathwayId: `${courseId}-pathway`,
       currentModuleId: modules[0]?.moduleId || null,
+      currentLessonId: modules[0]?.lessons?.[0]?.lessonId || null,
       modules,
       overallProgress: 0,
       status: 'active',
@@ -340,6 +362,18 @@ router.get('/:id/progress', async (req, res) => {
       const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
       moduleDetails = (pathway.modules || []).map(pm => {
         const progress = session.modules.find(m => m.moduleId === pm.moduleId);
+        // Merge lesson progress from session with pathway lesson metadata
+        const lessons = (pm.lessons || []).map(pl => {
+          const lp = (progress?.lessons || []).find(l => l.lessonId === pl.lessonId);
+          return {
+            lessonId: pl.lessonId,
+            title: pl.title || pl.lessonId,
+            order: pl.order,
+            status: lp?.status || 'locked',
+            startedAt: lp?.startedAt || null,
+            completedAt: lp?.completedAt || null
+          };
+        });
         return {
           moduleId: pm.moduleId,
           title: pm.title,
@@ -348,7 +382,8 @@ router.get('/:id/progress', async (req, res) => {
           scaffoldProgress: progress?.scaffoldProgress || 0,
           checkpointPassed: progress?.checkpointPassed || false,
           skills: pm.skills || [],
-          apWeight: pm.apWeight || null
+          apWeight: pm.apWeight || null,
+          lessons
         };
       });
     }
@@ -357,14 +392,26 @@ router.get('/:id/progress', async (req, res) => {
     const currentModule = moduleDetails.find(m => m.moduleId === session.currentModuleId);
     const nextModule = moduleDetails.find(m => m.status === 'available' || m.status === 'in_progress');
 
+    // Build breadcrumb for current position
+    const curMod = currentModule || nextModule;
+    const curLesson = curMod?.lessons?.find(l => l.lessonId === session.currentLessonId);
+    const breadcrumb = curMod ? {
+      unit: curMod.unit,
+      moduleName: curMod.title,
+      lessonTitle: curLesson?.title || null,
+      currentLessonId: session.currentLessonId
+    } : null;
+
     res.json({
       success: true,
       courseId: session.courseId,
       courseName: session.courseName,
       overallProgress: session.overallProgress,
       currentModuleId: session.currentModuleId,
+      currentLessonId: session.currentLessonId,
       modules: moduleDetails,
-      next: nextModule || currentModule || null
+      next: nextModule || currentModule || null,
+      breadcrumb
     });
   } catch (err) {
     console.error('[CourseSession] Error fetching progress:', err);
@@ -425,6 +472,7 @@ router.post('/:id/complete-module', async (req, res) => {
     session.overallProgress = calculateOverallProgress(session.modules);
 
     // Check if course is fully completed
+    const completedCount = session.modules.filter(m => m.status === 'completed').length;
     const courseComplete = completedCount === session.modules.length;
     if (courseComplete) {
       session.status = 'completed';
