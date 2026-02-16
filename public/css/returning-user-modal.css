@@ -5,15 +5,13 @@
    ============================================ */
 
 .returning-user-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 10000;
-  animation: returningFadeIn 0.25s ease;
   backdrop-filter: blur(4px);
+}
+
+/* Override base modal-overlay transition with a custom fade-in animation */
+.modal-overlay.is-visible.returning-user-overlay {
+  animation: returningFadeIn 0.25s ease;
 }
 
 @keyframes returningFadeIn {

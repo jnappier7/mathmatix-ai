@@ -201,8 +201,7 @@ async function claimBadge() {
  */
 function showBadgeEarnedModal(data) {
   const modal = document.createElement('div');
-  modal.className = 'modal-overlay';
-  modal.style.display = 'flex';
+  modal.className = 'modal-overlay is-visible';
 
   modal.innerHTML = `
     <div class="modal-content badge-earned-modal">

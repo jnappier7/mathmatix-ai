@@ -624,11 +624,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper functions
     function openModal(modal) {
-        if (modal) modal.style.display = 'flex';
+        if (modal) modal.classList.add('is-visible');
     }
 
     function closeModal(modal) {
-        if (modal) modal.style.display = 'none';
+        if (modal) modal.classList.remove('is-visible');
     }
 
     function escapeHtml(text) {
