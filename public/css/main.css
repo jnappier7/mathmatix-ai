@@ -1,0 +1,32 @@
+/*
+ * main.css — CSS entry point for Vite bundling
+ *
+ * This file imports all CSS modules in the correct cascade order.
+ * When Vite builds for production, these are bundled into a single
+ * optimized, minified file with tree-shaking.
+ *
+ * For development without Vite, the individual HTML pages continue
+ * to load /style.css directly (unchanged for backward compatibility).
+ */
+
+/* Base: Variables, Reset, Typography, Buttons */
+@import url('/css/base/variables.css');
+@import url('/css/base/typography.css');
+@import url('/css/base/buttons.css');
+
+/* Pages */
+@import url('/css/base/landing.css');
+
+/* Feature-specific stylesheets (already modular in css/) */
+@import url('/css/dark-mode.css');
+@import url('/css/iep-accommodations.css');
+
+/*
+ * NOTE: The remaining styles are still in /style.css (sections 5-end).
+ * As sections are incrementally extracted to css/base/, add them here
+ * and remove them from style.css. Planned extractions:
+ *   - css/base/chat.css       (chat page & messages)
+ *   - css/base/modals.css     (modal overlays)
+ *   - css/base/animations.css (XP, celebrations, transitions)
+ *   - css/base/responsive.css (mobile, drawers, media queries)
+ */

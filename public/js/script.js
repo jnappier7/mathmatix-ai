@@ -2,10 +2,16 @@
 
 console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 
+// --- ES Module Imports ---
+import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
+import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration } from './modules/gamification.js';
+import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
+import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
+
 // --- Global Variables ---
 let currentUser = null;
 let isPlaying = false;
-let audioQueue = [];
 let currentAudioSource = null;
 let fabricCanvas = null;
 let whiteboard = null; // New whiteboard instance
@@ -13,26 +19,10 @@ let attachedFile = null;
 let isRapportBuilding = false; // Track if user is in rapport building phase
 
 // --- Message Queue State ---
-// Handles back-to-back messages by queuing them and processing one at a time
 let messageQueue = {
-    queue: [],           // Array of pending messages
-    isProcessing: false, // True when actively processing a message
-    currentMessageId: 0  // Unique ID for each queued message
-};
-
-// Enhanced audio playback state
-let audioState = {
-    context: null,
-    buffer: null,
-    source: null,
-    startTime: 0,
-    pausedAt: 0,
-    isPaused: false,
-    isPlaying: false,
-    playbackRate: 1.0,
-    currentMessageId: null,
-    currentText: null,
-    currentVoiceId: null
+    queue: [],
+    isProcessing: false,
+    currentMessageId: 0
 };
 
 // Whiteboard state
@@ -46,410 +36,35 @@ let whiteboardState = {
     currentShape: null
 };
 
-// --- Session Time Tracking ---
-let sessionTracker = {
-    startTime: null,
-    totalActiveSeconds: 0,
-    lastHeartbeat: null,
-    heartbeatInterval: null,
-    isPageVisible: true,
-    lastVisibilityChange: null
-};
-
-function initSessionTracking() {
-    sessionTracker.startTime = Date.now();
-    sessionTracker.lastHeartbeat = Date.now();
-    sessionTracker.lastVisibilityChange = Date.now();
-
-    // Track page visibility (pause timer when tab is inactive)
-    document.addEventListener('visibilitychange', () => {
-        const now = Date.now();
-
-        if (document.hidden) {
-            // Tab became inactive - record active time
-            if (sessionTracker.isPageVisible) {
-                const activeSeconds = Math.floor((now - sessionTracker.lastVisibilityChange) / 1000);
-                sessionTracker.totalActiveSeconds += activeSeconds;
-            }
-            sessionTracker.isPageVisible = false;
-        } else {
-            // Tab became active again
-            sessionTracker.isPageVisible = true;
-            sessionTracker.lastVisibilityChange = now;
-        }
-    });
-
-    // Send heartbeat every 30 seconds
-    sessionTracker.heartbeatInterval = setInterval(() => {
-        sendTimeHeartbeat();
-    }, 30000); // 30 seconds
-
-    // Send final time on page unload
-    window.addEventListener('beforeunload', () => {
-        sendTimeHeartbeat(true);
-    });
-
-    // Also try pagehide for mobile browsers
-    window.addEventListener('pagehide', () => {
-        sendTimeHeartbeat(true);
-    });
+// Wrappers that pass currentUser to module functions
+function triggerXpAnimation(message, isLevelUp, isSpecialXp) {
+    _triggerXpAnimation(message, isLevelUp, isSpecialXp, currentUser);
+}
+function updateGamificationDisplay() {
+    _updateGamificationDisplay(currentUser);
 }
 
-function getActiveSeconds() {
-    const now = Date.now();
-    let totalSeconds = sessionTracker.totalActiveSeconds;
-
-    // Add current active period if page is visible
-    if (sessionTracker.isPageVisible && sessionTracker.lastVisibilityChange) {
-        const currentActiveSeconds = Math.floor((now - sessionTracker.lastVisibilityChange) / 1000);
-        totalSeconds += currentActiveSeconds;
-    }
-
-    return totalSeconds;
-}
-
-async function sendTimeHeartbeat(isFinal = false) {
-    if (!currentUser || !currentUser._id) return;
-
-    const activeSeconds = getActiveSeconds();
-
-    // Only send if we have at least 5 seconds of activity (avoid spam)
-    if (activeSeconds < 5 && !isFinal) return;
-
-    try {
-        const payload = {
-            activeSeconds: activeSeconds
-        };
-
-        if (isFinal) {
-            // Use sendBeacon for reliable delivery during page unload
-            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-            navigator.sendBeacon('/api/chat/track-time', blob);
-        } else {
-            // Regular fetch for heartbeats
-            await csrfFetch('/api/chat/track-time', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include'
-            });
-        }
-
-        // Reset the counter after successful send
-        sessionTracker.totalActiveSeconds = 0;
-        sessionTracker.lastVisibilityChange = Date.now();
-        sessionTracker.lastHeartbeat = Date.now();
-
-    } catch (error) {
-        console.error('Failed to send time tracking heartbeat:', error);
-    }
-}
-
-// --- Global Helper Functions ---
-const sleep = (ms) => new Promise(res => setTimeout(res, ms));
-
-// Get color for graph expressions (cycles through a palette)
-function getGraphColor(index) {
-    const colors = [
-        '#2563eb', // blue
-        '#dc2626', // red
-        '#16a34a', // green
-        '#9333ea', // purple
-        '#ea580c', // orange
-        '#0891b2', // cyan
-        '#c026d3', // magenta
-        '#65a30d'  // lime
-    ];
-    return colors[index % colors.length];
-}
-
-function generateSpeakableText(text) {
-    if (!text) return '';
-    if (!window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
-    const latexRegex = /(\\\(|\\\[|\$\$)([\s\S]+?)(\\\)|\\\]|\$\$)/g;
-    let result = '';
-    let lastIndex = 0;
-    text.replace(latexRegex, (match, openDelim, latexContent, closeDelim, offset) => {
-        result += text.substring(lastIndex, offset);
-        let speakableMath = MathLive.convertLatexToSpeakableText(latexContent, {
-            textToSpeechRules: 'sre', textToSpeechRulesOptions: { domain: 'mathspeak', ruleset: 'mathspeak-brief' }
-        });
-        // Clean up unwanted TTS verbosity
-        speakableMath = speakableMath
-            .replace(/\bopen paren(thesis)?\b/gi, '')
-            .replace(/\bclosed? paren(thesis)?\b/gi, '')
-            .replace(/\bopen fraction\b/gi, '')
-            .replace(/\bend fraction\b/gi, '')
-            .replace(/\bstart fraction\b/gi, '')
-            .replace(/\bfraction\s+(start|end|open|close)\b/gi, '')
-            .replace(/\bsubscript\b/gi, '')
-            .replace(/\bsuperscript\b/gi, '')
-            .replace(/\s+/g, ' ') // Collapse multiple spaces
-            .trim();
-        result += ` ${speakableMath} `;
-        lastIndex = offset + match.length;
-    });
-    if (lastIndex < text.length) { result += text.substring(lastIndex); }
-    return result.replace(/\*\*(.+?)\*\*/g, '$1').replace(/_(.+?)_/g, '$1').replace(/`(.+?)`/g, '$1').replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
-}
-
-/**
- * Show level-up celebration modal with tutor video
- * Uses smallcele for regular levels, levelUp for milestone levels (every 5)
- */
-function showLevelUpCelebration() {
-    const modal = document.getElementById('levelup-celebration-modal');
-    const video = document.getElementById('celebration-tutor-video');
-    const titleEl = document.getElementById('celebration-title');
-    const subtitleEl = document.getElementById('celebration-subtitle');
-
-    if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
-
-    // Get the tutor ID
-    const tutorId = currentUser.selectedTutorId;
-
-    // Determine which video to use based on level milestone
-    const currentLevel = currentUser.level || 1;
-    const isMilestone = currentLevel % 5 === 0;
-    const videoType = isMilestone ? 'levelUp' : 'smallcele';
-    const videoPath = `/videos/${tutorId}_${videoType}.mp4`;
-
-    // Update celebration text based on milestone
-    if (titleEl && subtitleEl) {
-        if (isMilestone) {
-            titleEl.textContent = `LEVEL ${currentLevel}!`;
-            subtitleEl.textContent = "🎉 Milestone Achievement! 🎉";
-        } else {
-            titleEl.textContent = "LEVEL UP!";
-            subtitleEl.textContent = "You're getting stronger!";
+// Handle audio ended event from audio module (hands-free auto-listen)
+// Note: recognition/isRecognizing are set up inside DOMContentLoaded, so
+// we use window._speechRecognition as a bridge
+document.addEventListener('audioPlaybackEnded', () => {
+    if (currentUser?.preferences?.handsFreeModeEnabled && audioQueue.length === 0) {
+        const recog = window._speechRecognition;
+        if (recog && recog.instance && !recog.isActive) {
+            try {
+                recog.instance.start();
+                recog.isActive = true;
+                const micBtn = document.getElementById('mic-button');
+                if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+            } catch(e) { console.error("Auto-listen could not be started:", e); }
         }
     }
+});
 
-    // Set video source
-    video.src = videoPath;
+// Session tracking, helpers, audio, gamification, and billing are now
+// imported from ES modules (see imports at top of file)
 
-    // Show modal with animation
-    modal.style.display = 'flex';
-
-    // Play video
-    video.play().catch(err => {
-        console.warn('Video playback failed:', err);
-    });
-
-    // Auto-dismiss when video ends (or after 4 seconds as fallback)
-    const dismissModal = () => {
-        modal.classList.add('fade-out');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('fade-out');
-            video.pause();
-            video.src = '';
-        }, 400);
-    };
-
-    video.addEventListener('ended', dismissModal, { once: true });
-    setTimeout(dismissModal, 4000); // Fallback timeout
-
-    // Allow click to dismiss
-    modal.addEventListener('click', dismissModal, { once: true });
-}
-
-function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
-    const animationText = document.createElement('div');
-    animationText.textContent = message;
-    animationText.classList.add('xp-animation-text');
-    if (isLevelUp) {
-        animationText.classList.add('level-up-animation-text', 'animate-level-up');
-
-        // Show celebration video modal
-        showLevelUpCelebration();
-
-        // Track milestone for survey triggers
-        if (window.MathMatixSurvey) {
-            window.MathMatixSurvey.trackMilestone('level_up');
-        }
-
-        const fireConfetti = () => {
-            if (typeof confetti !== 'function') return;
-            const duration = 3 * 1000;
-            const animationEnd = Date.now() + duration;
-            const brandColors = ['#12B3B3', '#FF3B7F', '#FFFFFF'];
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) { return clearInterval(interval); }
-                const particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: brandColors }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: brandColors }));
-            }, 250);
-        };
-        if (typeof confetti === 'function') {
-            fireConfetti();
-        } else if (window.ensureConfetti) {
-            window.ensureConfetti().then(fireConfetti);
-        }
-    } else {
-        animationText.classList.add('animate-xp');
-        if (isSpecialXp) {
-            animationText.classList.add('special-xp');
-        }
-    }
-    const chatContainer = document.getElementById('chat-container');
-    if (chatContainer) {
-        const rect = chatContainer.getBoundingClientRect();
-        animationText.style.position = 'fixed';
-        animationText.style.top = `${rect.top + (rect.height / 2)}px`;
-        animationText.style.left = `${rect.left + (rect.width / 2)}px`;
-        animationText.style.transform = 'translate(-50%, -50%)';
-    }
-    document.body.appendChild(animationText);
-    setTimeout(() => { animationText.remove(); }, 3000);
-}
-
-function showToast(message, duration = 3000) {
-    const toast = document.createElement("div");
-    toast.className = "toast-message";
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add("visible"), 10);
-    setTimeout(() => {
-        toast.classList.remove("visible");
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
-}
-
-function triggerConfetti() {
-    if (typeof confetti === 'function') {
-        confetti({
-            particleCount: 150,
-            spread: 80,
-            origin: { y: 0.6 },
-            zIndex: 9999
-        });
-    }
-}
-
-
-// --- Billing & Usage Gate ---
-async function checkBillingStatus() {
-    try {
-        const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
-        if (!res.ok) return null;
-        const data = await res.json();
-
-        // Store for quick access
-        window._billingStatus = data;
-
-        // When billing is off (pre-launch), skip all UI
-        if (data.billingEnabled === false) return data;
-
-        // Show time indicator for pack users and free users
-        if (data.tier !== 'unlimited' && data.usage) {
-            updateFreeTimeIndicator(data.usage);
-        }
-
-        return data;
-    } catch (e) {
-        console.error('[Billing] Status check failed:', e.message);
-        return null;
-    }
-}
-
-function updateFreeTimeIndicator(usage) {
-    let indicator = document.getElementById('free-time-indicator');
-    if (!indicator) {
-        indicator = document.createElement('div');
-        indicator.id = 'free-time-indicator';
-        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9000;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
-        indicator.addEventListener('click', () => showUpgradePrompt({}));
-        document.body.appendChild(indicator);
-    }
-
-    const remaining = usage.secondsRemaining || 0;
-    const mins = Math.floor(remaining / 60);
-
-    if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>';
-        indicator.style.borderColor = '#ff4444';
-    } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>`;
-        indicator.style.borderColor = '#ffaa00';
-    } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> remaining`;
-        indicator.style.borderColor = '#333';
-    }
-}
-
-function showUpgradePrompt(errorData) {
-    // Remove existing prompt if any
-    const existing = document.getElementById('upgrade-modal');
-    if (existing) existing.remove();
-
-    const isFeatureBlock = errorData.premiumFeatureBlocked;
-    const title = isFeatureBlock ? `${errorData.feature} Requires Unlimited` : 'Choose a Tutoring Pack';
-    const subtitle = isFeatureBlock
-        ? `Unlock ${errorData.feature.toLowerCase()}, unlimited tutoring, voice, and more.`
-        : 'Purchase minutes to continue learning with your AI tutor.';
-
-    const packBtnStyle = 'background:#1e1e3a;border:1px solid #444;border-radius:10px;padding:16px;cursor:pointer;text-align:center;color:#fff;transition:border-color 0.2s;';
-    const packBtnHover = 'onmouseover="this.style.borderColor=\'#00d4ff\'" onmouseout="this.style.borderColor=\'#444\'"';
-
-    const modal = document.createElement('div');
-    modal.id = 'upgrade-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
-    modal.innerHTML = `
-        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:480px;width:92%;color:#fff;border:1px solid #333;">
-            <h2 style="margin:0 0 8px;font-size:22px;text-align:center;">${title}</h2>
-            <p style="color:#aaa;margin:0 0 24px;text-align:center;line-height:1.5;">${subtitle}</p>
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                <div class="pack-option" data-pack="pack_60" style="${packBtnStyle}" ${packBtnHover}>
-                    <div style="font-size:20px;font-weight:bold;">60 Minutes</div>
-                    <div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$9.95</div>
-                    <div style="color:#888;font-size:12px;">$0.17/min &middot; Expires in 90 days</div>
-                </div>
-                <div class="pack-option" data-pack="pack_120" style="${packBtnStyle};border-color:#7b2ff7;" ${packBtnHover}>
-                    <div style="display:flex;justify-content:center;align-items:center;gap:8px;">
-                        <span style="font-size:20px;font-weight:bold;">120 Minutes</span>
-                        <span style="background:#7b2ff7;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:bold;">BEST VALUE</span>
-                    </div>
-                    <div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$14.95</div>
-                    <div style="color:#888;font-size:12px;">$0.12/min &middot; Expires in 180 days</div>
-                </div>
-                <div class="pack-option" data-pack="unlimited" style="${packBtnStyle}" ${packBtnHover}>
-                    <div style="font-size:20px;font-weight:bold;">Unlimited Monthly</div>
-                    <div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$19.95<span style="font-size:14px;color:#aaa;font-weight:normal">/mo</span></div>
-                    <div style="color:#888;font-size:12px;">Unlimited tutoring + voice + uploads &middot; Cancel anytime</div>
-                </div>
-            </div>
-            <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:16px;">Maybe later</button>
-        </div>`;
-    document.body.appendChild(modal);
-
-    // Attach click handlers to each pack option
-    modal.querySelectorAll('.pack-option').forEach(btn => {
-        btn.addEventListener('click', () => initiateUpgrade(btn.dataset.pack));
-    });
-    document.getElementById('upgrade-dismiss').addEventListener('click', () => modal.remove());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-}
-
-async function initiateUpgrade(pack) {
-    try {
-        const res = await csrfFetch('/api/billing/create-checkout-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pack }),
-            credentials: 'include'
-        });
-        if (!res.ok) throw new Error('Failed to create checkout session');
-        const data = await res.json();
-        window.location.href = data.url;
-    } catch (e) {
-        console.error('[Billing] Upgrade error:', e);
-        showToast('Something went wrong. Please try again.');
-    }
-}
+// Helpers, gamification, billing functions imported from modules above
 
 // --- Main Application Logic ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -493,18 +108,23 @@ document.addEventListener("DOMContentLoaded", () => {
     let recognition;
     let isRecognizing = false;
     let messageIndexCounter = 0; // Track message index for reactions
+
+    // Expose speech recognition state for audio module's hands-free auto-listen
+    window._speechRecognition = { instance: null, isActive: false };
+
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
+        window._speechRecognition.instance = recognition;
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             userInput.textContent += transcript;
         };
-        recognition.onerror = (event) => { console.error("Speech recognition error:", event.error); isRecognizing = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
-        recognition.onend = () => { isRecognizing = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
+        recognition.onerror = (event) => { console.error("Speech recognition error:", event.error); isRecognizing = false; window._speechRecognition.isActive = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
+        recognition.onend = () => { isRecognizing = false; window._speechRecognition.isActive = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
     }
 
     // --- Watermark Helper Function ---
@@ -895,8 +515,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
             if (!currentUser.selectedAvatarId && currentUser.role === 'student') return window.location.href = '/pick-avatar.html';
 
-            // Initialize session time tracking
-            initSessionTracking();
+            // Initialize session time tracking (pass getter for currentUser)
+            initSessionTracking(() => currentUser);
 
             // Check billing status (free tier remaining time)
             checkBillingStatus();
@@ -3793,381 +3413,8 @@ What would you like to work on first?`;
         }
     }
 
-    async function playAudio(text, voiceId, messageId) {
-        if (!text || !window.AudioContext) return;
-        audioQueue.push({ text, voiceId, messageId });
-        processAudioQueue();
-    }
-
-    async function processAudioQueue() {
-        if (audioState.isPlaying || audioQueue.length === 0) {
-            if (stopAudioBtn && !audioState.isPlaying) stopAudioBtn.style.display = 'none';
-            return;
-        }
-
-        audioState.isPlaying = true;
-        isPlaying = true; // Keep for backward compatibility
-
-        // Update UI
-        if (stopAudioBtn) stopAudioBtn.style.display = 'inline-flex';
-        updateAudioControls();
-
-        const { text, voiceId, messageId } = audioQueue.shift();
-        const messageBubble = document.getElementById(messageId);
-        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
-
-        // Store current playback info
-        audioState.currentMessageId = messageId;
-        audioState.currentText = text;
-        audioState.currentVoiceId = voiceId;
-
-        try {
-            const response = await csrfFetch('/api/speak', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, voiceId })
-            });
-
-            // COMPLIANCE: Under-13 users are blocked from ElevenLabs.
-            // Fall back to browser-native WebSpeech API.
-            if (response.status === 403) {
-                let errorData;
-                try { errorData = await response.json(); } catch (e) { errorData = {}; }
-                if (errorData.useWebSpeech && window.speechSynthesis) {
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.rate = 0.95;
-                    utterance.onend = () => {
-                        resetAudioState();
-                        if (playButton) {
-                            playButton.classList.remove('is-loading');
-                            playButton.classList.remove('is-playing');
-                        }
-                        processAudioQueue();
-                    };
-                    utterance.onerror = () => {
-                        resetAudioState();
-                        if (playButton) {
-                            playButton.classList.remove('is-loading');
-                            playButton.classList.remove('is-playing');
-                            playButton.disabled = false;
-                        }
-                        processAudioQueue();
-                    };
-                    if (playButton) playButton.classList.add('is-playing');
-                    window.speechSynthesis.speak(utterance);
-                    return;
-                }
-            }
-
-            if (!response.ok) throw new Error('Failed to fetch audio stream.');
-
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            audioState.context = audioContext;
-
-            const audioBuffer = await response.arrayBuffer();
-            await audioContext.decodeAudioData(audioBuffer, (buffer) => {
-                audioState.buffer = buffer;
-                startAudioPlayback(0, playButton);
-            });
-        } catch (error) {
-            console.error('Audio playback error:', error);
-            resetAudioState();
-            if (playButton) {
-                playButton.classList.remove('is-loading');
-                playButton.classList.remove('is-playing');
-                playButton.disabled = false;
-            }
-            processAudioQueue();
-        }
-    }
-
-    function startAudioPlayback(offset = 0, playButton = null) {
-        if (!audioState.buffer || !audioState.context) return;
-
-        const source = audioState.context.createBufferSource();
-        source.buffer = audioState.buffer;
-        source.playbackRate.value = audioState.playbackRate;
-        source.connect(audioState.context.destination);
-
-        audioState.source = source;
-        currentAudioSource = source; // Keep for backward compatibility
-        audioState.startTime = audioState.context.currentTime - offset;
-        audioState.isPaused = false;
-
-        if (playButton) {
-            playButton.classList.remove('is-loading');
-            playButton.classList.add('is-playing');
-        }
-
-        source.start(0, offset);
-
-        source.onended = () => {
-            // Only process if not manually stopped
-            if (audioState.isPlaying && !audioState.isPaused) {
-                handleAudioEnded(playButton);
-            }
-        };
-
-        updateAudioControls();
-    }
-
-    function handleAudioEnded(playButton) {
-        resetAudioState();
-
-        if (playButton) {
-            playButton.classList.remove('is-playing');
-            playButton.disabled = false;
-        }
-
-        if (currentUser?.preferences?.handsFreeModeEnabled && audioQueue.length === 0) {
-            if (recognition && !isRecognizing) {
-                try {
-                    recognition.start();
-                    isRecognizing = true;
-                    if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
-                } catch(e) { console.error("Auto-listen could not be started:", e); }
-            }
-        }
-
-        processAudioQueue();
-    }
-
-    function pauseAudio() {
-        if (!audioState.isPlaying || audioState.isPaused || !audioState.source) return;
-
-        const elapsed = audioState.context.currentTime - audioState.startTime;
-        audioState.pausedAt = elapsed;
-        audioState.isPaused = true;
-
-        audioState.source.stop();
-        audioState.source = null;
-        currentAudioSource = null;
-
-        updateAudioControls();
-
-        const messageBubble = document.getElementById(audioState.currentMessageId);
-        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
-        if (playButton) {
-            playButton.classList.remove('is-playing');
-            playButton.classList.add('is-paused');
-        }
-    }
-
-    function resumeAudio() {
-        if (!audioState.isPaused || !audioState.buffer) return;
-
-        const messageBubble = document.getElementById(audioState.currentMessageId);
-        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
-
-        if (playButton) {
-            playButton.classList.remove('is-paused');
-        }
-
-        startAudioPlayback(audioState.pausedAt, playButton);
-    }
-
-    function restartAudio() {
-        if (!audioState.isPlaying && !audioState.isPaused) return;
-
-        if (audioState.source) {
-            audioState.source.stop();
-            audioState.source = null;
-            currentAudioSource = null;
-        }
-
-        const messageBubble = document.getElementById(audioState.currentMessageId);
-        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
-
-        audioState.pausedAt = 0;
-        audioState.isPaused = false;
-
-        startAudioPlayback(0, playButton);
-    }
-
-    function stopAudio() {
-        if (audioState.source) {
-            audioState.source.stop();
-        }
-
-        const messageBubble = document.getElementById(audioState.currentMessageId);
-        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
-        if (playButton) {
-            playButton.classList.remove('is-playing', 'is-paused');
-            playButton.disabled = false;
-        }
-
-        resetAudioState();
-        updateAudioControls();
-        processAudioQueue();
-    }
-
-    function changePlaybackSpeed(rate) {
-        audioState.playbackRate = rate;
-
-        // If currently playing, apply the new rate
-        if (audioState.source && !audioState.isPaused) {
-            audioState.source.playbackRate.value = rate;
-        }
-
-        // Save preference
-        if (localStorage) {
-            localStorage.setItem('ttsPlaybackRate', rate);
-        }
-
-        updateAudioControls();
-    }
-
-    function resetAudioState() {
-        if (audioState.context) {
-            audioState.context.close();
-        }
-
-        audioState.context = null;
-        audioState.buffer = null;
-        audioState.source = null;
-        audioState.startTime = 0;
-        audioState.pausedAt = 0;
-        audioState.isPaused = false;
-        audioState.isPlaying = false;
-        audioState.currentMessageId = null;
-        audioState.currentText = null;
-        audioState.currentVoiceId = null;
-
-        isPlaying = false; // Keep for backward compatibility
-        currentAudioSource = null;
-
-        updateAudioControls();
-    }
-
-    function updateAudioControls() {
-        const pauseBtn = document.getElementById('pause-audio-btn');
-        const restartBtn = document.getElementById('restart-audio-btn');
-        const speedDisplay = document.getElementById('speed-display');
-        const speedControlContainer = document.getElementById('speed-control-container');
-
-        const isActive = audioState.isPlaying || audioState.isPaused;
-
-        if (pauseBtn) {
-            if (audioState.isPlaying && !audioState.isPaused) {
-                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                pauseBtn.title = 'Pause';
-                pauseBtn.style.display = 'inline-flex';
-            } else if (audioState.isPaused) {
-                pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-                pauseBtn.title = 'Resume';
-                pauseBtn.style.display = 'inline-flex';
-            } else {
-                pauseBtn.style.display = 'none';
-            }
-        }
-
-        if (restartBtn) {
-            restartBtn.style.display = isActive ? 'inline-flex' : 'none';
-        }
-
-        if (speedDisplay) {
-            speedDisplay.textContent = `${audioState.playbackRate}x`;
-        }
-
-        if (speedControlContainer) {
-            speedControlContainer.style.display = isActive ? 'inline-block' : 'none';
-        }
-
-        if (stopAudioBtn) {
-            stopAudioBtn.style.display = isActive ? 'inline-flex' : 'none';
-        }
-    }
-    
-    function updateGamificationDisplay() {
-        // Sidebar progress display
-        const sidebarLevel = document.getElementById("sidebar-level");
-        const sidebarXp = document.getElementById("sidebar-xp");
-        const sidebarProgressFill = document.getElementById("sidebar-progress-fill");
-
-        if (sidebarLevel && currentUser.level) {
-            sidebarLevel.textContent = currentUser.level;
-        }
-
-        if (sidebarXp && currentUser.xpForCurrentLevel !== undefined && currentUser.xpForNextLevel !== undefined) {
-            sidebarXp.textContent = `${currentUser.xpForCurrentLevel} / ${currentUser.xpForNextLevel} XP`;
-        }
-
-        if (sidebarProgressFill && currentUser.xpForCurrentLevel !== undefined && currentUser.xpForNextLevel !== undefined) {
-            const percentage = (currentUser.xpForCurrentLevel / currentUser.xpForNextLevel) * 100;
-            sidebarProgressFill.style.width = `${Math.min(100, percentage)}%`;
-        }
-
-        // Also update any legacy elements if they exist
-        const levelSpan = document.getElementById("current-level");
-        const xpSpan = document.getElementById("current-xp");
-        const xpBar = document.getElementById("xp-progress-bar");
-        const xpNeededSpan = document.getElementById("xp-needed");
-
-        if (levelSpan && currentUser.level) levelSpan.textContent = currentUser.level;
-        if (xpSpan && currentUser.xpForCurrentLevel !== undefined) xpSpan.textContent = currentUser.xpForCurrentLevel;
-        if (xpBar && currentUser.xpForCurrentLevel !== undefined) {
-            xpBar.value = currentUser.xpForCurrentLevel;
-            xpBar.max = currentUser.xpForNextLevel;
-        }
-        if (xpNeededSpan && currentUser.xpForNextLevel) {
-            xpNeededSpan.textContent = currentUser.xpForNextLevel;
-        }
-    }
-
-    async function fetchAndDisplayLeaderboard() {
-        const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
-        if (!leaderboardTableBody) return;
-        leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>`;
-        try {
-            const response = await fetch('/api/leaderboard', { credentials: 'include' });
-            if (!response.ok) throw new Error('Failed to load leaderboard');
-            const students = await response.json();
-            leaderboardTableBody.innerHTML = '';
-            if (students.length === 0) {
-                leaderboardTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data available.</td></tr>';
-                return;
-            }
-            students.forEach((student, index) => {
-                const row = leaderboardTableBody.insertRow();
-                row.innerHTML = `<td>${index + 1}</td><td>${student.name}</td><td>${student.level}</td><td>${student.xp}</td>`;
-            });
-        } catch (error) {
-            console.error('Leaderboard error:', error);
-            leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Could not load leaderboard.</td></tr>`;
-        }
-    }
-
-    /**
-     * Load and display daily quests and weekly challenges
-     */
-    async function loadQuestsAndChallenges() {
-        if (typeof window.renderDailyQuests !== 'function' || typeof window.renderWeeklyChallenges !== 'function') {
-            console.log('Quest rendering functions not available');
-            return;
-        }
-
-        try {
-            // Fetch daily quests
-            const questsRes = await fetch('/api/daily-quests', { credentials: 'include' });
-            if (questsRes.ok) {
-                const questsData = await questsRes.json();
-                if (questsData && questsData.quests) {
-                    window.renderDailyQuests(questsData.quests);
-                }
-            }
-
-            // Fetch weekly challenges
-            const challengesRes = await fetch('/api/weekly-challenges', { credentials: 'include' });
-            if (challengesRes.ok) {
-                const challengesData = await challengesRes.json();
-                if (challengesData && challengesData.challenges) {
-                    window.renderWeeklyChallenges(challengesData.challenges);
-                }
-            }
-        } catch (error) {
-            console.error('Error loading quests/challenges:', error);
-        }
-    }
+    // Audio, gamification display, leaderboard, and quests are now in ES modules
+    // (see imports at top of file)
 
     // --- Settings Modal Logic ---
     function openSettingsModal() {
@@ -4700,6 +3947,7 @@ What would you like to work on first?`;
             } else {
                 recognition.start();
                 isRecognizing = true;
+                window._speechRecognition.isActive = true;
                 micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
             }
         });
@@ -4793,67 +4041,7 @@ What would you like to work on first?`;
     }
 
     // ============================================
-    // TUTOR UNLOCK CELEBRATION
-    // ============================================
-    function showTutorUnlockCelebration(tutorIds) {
-        if (!tutorIds || tutorIds.length === 0) return;
-
-        let currentIndex = 0;
-
-        function showNextTutor() {
-            if (currentIndex >= tutorIds.length) {
-                triggerConfetti();
-                return;
-            }
-
-            const tutorId = tutorIds[currentIndex];
-            const tutor = window.TUTOR_CONFIG[tutorId];
-            if (!tutor) {
-                currentIndex++;
-                showNextTutor();
-                return;
-            }
-
-            const unlockScreen = document.getElementById('tutor-unlock-screen');
-            const unlockImage = document.getElementById('unlock-tutor-image');
-            const unlockName = document.getElementById('unlock-tutor-name');
-            const unlockCatchphrase = document.getElementById('unlock-tutor-catchphrase');
-            const unlockSpecialty = document.getElementById('unlock-tutor-specialty');
-
-            // Set tutor info
-            unlockImage.src = `/images/tutors/${tutor.image}`;
-            unlockImage.alt = tutor.name;
-            unlockName.textContent = tutor.name;
-            unlockCatchphrase.textContent = `"${tutor.catchphrase}"`;
-            unlockSpecialty.textContent = `Specialties: ${tutor.specialties}`;
-
-            // Show overlay
-            unlockScreen.style.display = 'flex';
-
-            // Play sound effect (optional - if you have one)
-            // You could add a dramatic sound here
-
-            // Click to dismiss
-            const dismissHandler = () => {
-                unlockScreen.style.display = 'none';
-                unlockScreen.removeEventListener('click', dismissHandler);
-                currentIndex++;
-                // Small delay before showing next tutor
-                setTimeout(showNextTutor, 300);
-            };
-
-            unlockScreen.addEventListener('click', dismissHandler);
-
-            // Auto-dismiss after 8 seconds if not clicked
-            setTimeout(() => {
-                if (unlockScreen.style.display === 'flex') {
-                    unlockScreen.click();
-                }
-            }, 8000);
-        }
-
-        showNextTutor();
-    }
+    // Tutor unlock celebration is now in modules/gamification.js
 
     // ============================================
     // EMOJI REACTION SYSTEM

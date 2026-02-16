@@ -1,5 +1,19 @@
 @charset "UTF-8";
 /* style.css — PHASE 2: Frontend HTML Structure & CSS Styling - Batch 1 (CORRECTED & MERGED) */
+/*
+ * CSS Modularization Note:
+ * The logical sections of this file have been extracted into separate modules
+ * under css/base/ for use with Vite bundling (see css/main.css).
+ * This file is kept intact for backward compatibility with all 22 HTML pages
+ * that reference it directly. Once Vite is used in production, this file
+ * can be replaced by the bundled output.
+ *
+ * Extracted modules:
+ *   css/base/variables.css  — Section 1: Root Variables & Reset
+ *   css/base/typography.css — Section 2: Typography & Forms
+ *   css/base/buttons.css    — Section 3: Buttons & Cards
+ *   css/base/landing.css    — Section 6: Landing Page Sections
+ */
 
 /* --- 1. Root Variables & Basic Reset --- */
 
