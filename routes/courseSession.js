@@ -107,6 +107,16 @@ router.get('/', async (req, res) => {
       status: { $in: ['active', 'paused'] }
     }).sort({ updatedAt: -1 });
 
+    // Recalculate overallProgress from module data to fix any stale values
+    for (const s of sessions) {
+      const recalc = calculateOverallProgress(s.modules);
+      if (recalc !== s.overallProgress) {
+        s.overallProgress = recalc;
+        s.markModified('modules');
+        await s.save();
+      }
+    }
+
     res.json({ success: true, sessions });
   } catch (err) {
     console.error('[CourseSession] Error listing sessions:', err);
@@ -139,6 +149,9 @@ router.post('/enroll', async (req, res) => {
     // Resume a paused (dropped) session — restore progress instead of starting over
     if (existing && existing.status === 'paused') {
       existing.status = 'active';
+      // Recalculate progress from module data in case it was stale
+      existing.overallProgress = calculateOverallProgress(existing.modules);
+      existing.markModified('modules');
       await existing.save();
 
       await User.findByIdAndUpdate(req.user._id, {
@@ -425,6 +438,7 @@ router.post('/:id/complete-module', async (req, res) => {
     session.overallProgress = calculateOverallProgress(session.modules);
 
     // Check if course is fully completed
+    const completedCount = session.modules.filter(m => m.status === 'completed').length;
     const courseComplete = completedCount === session.modules.length;
     if (courseComplete) {
       session.status = 'completed';

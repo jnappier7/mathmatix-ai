@@ -391,6 +391,7 @@ router.post('/', async (req, res) => {
 
                     courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
 
+                    const doneCount = courseSession.modules.filter(m => m.status === 'completed').length;
                     if (doneCount === courseSession.modules.length) {
                         courseSession.status = 'completed';
                         courseSession.completedAt = new Date();
