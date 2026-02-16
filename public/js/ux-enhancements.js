@@ -84,7 +84,7 @@
       { icon: 'fa-home', label: 'Home', href: '/student-dashboard.html', id: 'nav-home' },
       { icon: 'fa-comment', label: 'Chat', href: '/chat.html', id: 'nav-chat' },
       { icon: 'fa-chart-line', label: 'Progress', href: '/progress.html', id: 'nav-progress' },
-      { icon: 'fa-tasks', label: 'Quests', href: '/badge-map.html', id: 'nav-quests' },
+      { icon: 'fa-graduation-cap', label: 'Courses', href: '/chat.html?courses=1', id: 'nav-courses' },
       { icon: 'fa-user-circle', label: 'Profile', href: '/student-dashboard.html#profile', id: 'nav-profile' }
     ];
 
@@ -102,9 +102,20 @@
       link.id = item.id;
       link.setAttribute('aria-label', item.label);
 
-      // Detect active page
-      if (path === item.href || (item.href !== '/' && path.includes(item.href.replace('.html', '')))) {
-        link.classList.add('active');
+      // Detect active page (handle items sharing a path, e.g. Chat vs Courses)
+      const hrefPath = item.href.split('?')[0];
+      const hrefQuery = item.href.includes('?') ? item.href.split('?')[1] : '';
+      const pathMatches = path === hrefPath || (hrefPath !== '/' && path.includes(hrefPath.replace('.html', '')));
+      if (pathMatches) {
+        // If this item has a query param, only activate when the param is present
+        // If it doesn't, only activate when no other item's query param is present
+        if (hrefQuery) {
+          if (window.location.search.includes(hrefQuery)) link.classList.add('active');
+        } else {
+          // Don't activate if the URL has query params that belong to another nav item
+          const hasSpecialParam = navItems.some(n => n.href.includes('?') && n.href.split('?')[0] === hrefPath && window.location.search.includes(n.href.split('?')[1]));
+          if (!hasSpecialParam) link.classList.add('active');
+        }
       }
 
       link.innerHTML = `<i class="fas ${item.icon}"></i><span>${item.label}</span>`;
@@ -488,8 +499,7 @@
     const prefetchMap = {
       '/student-dashboard.html': ['/chat.html'],
       '/chat.html': ['/student-dashboard.html', '/progress.html'],
-      '/progress.html': ['/chat.html', '/student-dashboard.html'],
-      '/badge-map.html': ['/chat.html', '/student-dashboard.html']
+      '/progress.html': ['/chat.html', '/student-dashboard.html']
     };
 
     const toPrefetch = prefetchMap[currentPath] || [];

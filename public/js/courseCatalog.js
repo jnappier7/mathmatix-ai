@@ -87,6 +87,15 @@ class CourseManager {
         // Load enrolled courses on startup
         this.loadMySessions();
 
+        // Auto-open catalog if arriving via bottom nav (?courses=1)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('courses') === '1') {
+            // Clean the URL so a refresh doesn't re-open
+            history.replaceState(null, '', window.location.pathname);
+            // Small delay to let the page finish loading
+            setTimeout(() => this.openCatalog(), 300);
+        }
+
         console.log('[CourseManager] Initialised');
     }
 
