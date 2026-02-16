@@ -1,21 +1,17 @@
 // routes/speak.js
-// MODIFIED: Updated to support streaming audio from ElevenLabs for a responsive hands-free experience.
-// COMPLIANCE: ElevenLabs blocked for under-13 users — returns useWebSpeech flag for browser TTS fallback.
+// TTS endpoint for message playback — supports ElevenLabs and Cartesia via ttsProvider.
+// COMPLIANCE: Under-13 users get useWebSpeech flag for browser TTS fallback.
 
 const express = require("express");
-const axios = require("axios");
 const router = express.Router();
-const { retryWithExponentialBackoff } = require("../utils/openaiClient");
-
-const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+const ttsProvider = require("../utils/ttsProvider");
 
 router.post("/", async (req, res) => {
   const { text, voiceId } = req.body;
-  const voiceToUse = voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback voice
 
   if (!text) return res.status(400).send("Missing text to speak.");
 
-  // COMPLIANCE: ElevenLabs terms prohibit use by children under 13.
+  // COMPLIANCE: Third-party TTS services require users to be 13 or older.
   // Under-13 users must use browser-native WebSpeech API instead.
   if (req.user && req.user.dateOfBirth) {
       const age = (Date.now() - new Date(req.user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
@@ -28,50 +24,34 @@ router.post("/", async (req, res) => {
       }
   }
 
-  if (!ELEVENLABS_API_KEY) {
-      console.error("ERROR: ElevenLabs API Key is not set.");
+  if (!ttsProvider.isConfigured()) {
+      console.error(`ERROR: ${ttsProvider.getProviderName()} API key is not set.`);
       return res.status(500).send("Text-to-speech service not configured.");
   }
+
+  // Resolve voice ID for the active provider (maps ElevenLabs → Cartesia when needed)
+  const resolvedVoiceId = ttsProvider.resolveVoiceId(voiceId || "2eFQnnNM32GDnZkCfkSm");
 
   // Clean text for TTS (remove markdown and LaTeX)
   const cleanedText = cleanTextForTTS(text);
 
   try {
-    const elevenLabsResponse = await retryWithExponentialBackoff(async () => {
-        // The endpoint for streaming is slightly different.
-        const response = await axios.post(
-          `https://api.elevenlabs.io/v1/text-to-speech/${voiceToUse}/stream`,
-          {
-            text: cleanedText,
-            model_id: "eleven_monolingual_v1",
-            voice_settings: {
-              stability: 0.4,
-              similarity_boost: 0.7
-            }
-          },
-          {
-            headers: {
-              "xi-api-key": ELEVENLABS_API_KEY,
-              "Content-Type": "application/json",
-              "Accept": "audio/mpeg" // Important for streaming
-            },
-            // CRITICAL: Set responseType to 'stream' for axios to handle the binary stream
-            responseType: "stream"
-          }
-        );
-        return response;
-    });
-
-    res.setHeader("Content-Type", "audio/mpeg");
-    
-    // Pipe the audio stream directly to the response
-    elevenLabsResponse.data.pipe(res);
+    if (ttsProvider.getProvider() === 'elevenlabs') {
+        // ElevenLabs: stream audio for lower TTFB
+        const streamResponse = await ttsProvider.generateAudioStream(cleanedText, resolvedVoiceId);
+        res.setHeader("Content-Type", ttsProvider.getContentType());
+        streamResponse.data.pipe(res);
+    } else {
+        // Cartesia (and future providers): send buffered audio
+        const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId);
+        res.setHeader("Content-Type", ttsProvider.getContentType());
+        res.send(audioBuffer);
+    }
 
   } catch (err) {
-    console.error("ERROR: ElevenLabs TTS streaming error:", err.message);
+    console.error(`ERROR: ${ttsProvider.getProviderName()} TTS error:`, err.message);
     if (err.response) {
-        // Error handling for streams might not have a clean JSON body
-        console.error("ElevenLabs Response Status:", err.response.status);
+        console.error("Response Status:", err.response.status);
     }
     res.status(500).send("Text-to-speech failed.");
   }
