@@ -75,8 +75,10 @@ The following recommendations have been implemented:
 - Added `npm run build` and `npm run build:preview` scripts
 - CSS entry point: `public/css/main.css`
 
-### 2. script.js Modularization (DONE — Phase 1)
-Reduced `script.js` from **5,020 → 4,208 lines** by extracting 5 ES modules:
+### 2. script.js Modularization (DONE — Phase 1 + Phase 2)
+Reduced `script.js` from **5,020 → 2,626 lines** (−47.7%) across 8 ES modules:
+
+**Phase 1** — utility and feature modules:
 
 | Module | Lines | What it contains |
 |--------|-------|------------------|
@@ -86,15 +88,21 @@ Reduced `script.js` from **5,020 → 4,208 lines** by extracting 5 ES modules:
 | `modules/billing.js` | 132 | Billing status, usage gating, upgrade prompts, Stripe checkout |
 | `modules/audio.js` | 304 | TTS playback queue, pause/resume/speed, Web Audio API |
 
-**Total extracted: 887 lines across 5 focused modules**
+**Phase 2** — subsystem extraction with factory pattern:
 
-Remaining in script.js (candidates for future extraction):
+| Module | Lines | What it contains |
+|--------|-------|------------------|
+| `modules/whiteboard.js` | 887 | Shelved whiteboard system: canvas drawing, toolbar, coordinate grids, templates. Exports `initWhiteboardSystem()` factory. |
+| `modules/iep.js` | 373 | IEP accommodations, break overlays, breathing/stretch/grounding exercises, chunked assignments, multiplication chart. Uses `createIepSystem()` factory. |
+| `modules/assessment.js` | 309 | In-chat CAT placement assessment: pitch, adaptive problem loading, answer submission, results. Uses `createAssessmentSystem()` factory. |
+
+**Total extracted: 2,456 lines across 8 modules**
+
+Remaining in script.js (~2,626 lines) is the tightly coupled core:
 - Chat UI rendering (appendMessage, streaming, suggestions)
-- Message queue (send, queue, process)
-- IEP accommodations
-- Assessment system
-- Whiteboard
-- Event listeners
+- Message queue (send, queue, process with API integration)
+- Event listeners and settings
+- These reference each other heavily — extraction would require significant refactoring for diminishing returns.
 
 ### 3. style.css Modularization (DONE)
 Reduced `style.css` from **6,710 → 3,204 lines** by extracting 8 CSS modules:
@@ -113,3 +121,16 @@ Reduced `style.css` from **6,710 → 3,204 lines** by extracting 8 CSS modules:
 **Total extracted: 3,502 lines across 8 focused modules**
 
 `style.css` is now an `@import` manifest — it loads all 8 modules at the top, then contains the remaining ~3,200 lines of inline CSS. All 22 HTML pages continue to reference `/style.css` and work identically.
+
+### 4. chat.html Cleanup (DONE)
+Reduced `chat.html` from **1,800 → 1,598 lines** (−202) and **63 → 51 script tags** (−12).
+
+Removed all shelved/commented-out code:
+- Whiteboard HTML block (155 lines of commented-out toolbar, canvas, layout menus)
+- Whiteboard CSS links (3), JS scripts (9), Fabric.js CDN, sidebar buttons, toggle buttons
+- Algebra tiles CSS link, JS script, sidebar button, container div
+- Mastery mode JS script
+- Streak counter placeholder
+- Handwriting font (Indie Flower) used only by shelved whiteboard
+
+All removed content was already commented out and marked "SHELVED FOR BETA". The shelved code is preserved in git history and in `modules/whiteboard.js`.

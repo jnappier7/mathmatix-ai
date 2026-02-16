@@ -11,18 +11,12 @@
   <meta name="apple-mobile-web-app-title" content="MATHMATIX" />
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
-  <!-- WHITEBOARD SHELVED FOR BETA -->
-  <!-- <link rel="stylesheet" href="/css/whiteboard.css" /> -->
-  <!-- <link rel="stylesheet" href="/css/whiteboard-chat-layout.css" /> -->
-  <!-- <link rel="stylesheet" href="/css/split-screen-resizer.css" /> -->
   <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="/css/calculator.css" />
   <link rel="stylesheet" href="/css/responsive-resources.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ghostTimer.css" />
   <link rel="stylesheet" href="/css/badgeProgress.css" />
-  <!-- ALGEBRA TILES SHELVED FOR BETA -->
-  <!-- <link rel="stylesheet" href="/css/algebra-tiles.css" /> -->
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
@@ -37,10 +31,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
-  <!-- Handwriting Font for Intelligent Whiteboard -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
   <!-- Core libs (needed before first render) -->
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
@@ -50,8 +40,6 @@
   <!-- function-plot: loaded on demand when AI returns a graph -->
   <!-- confetti: loaded on demand when celebration triggers -->
   <!-- MathJax: loaded on demand when math content is detected -->
-  <!-- WHITEBOARD SHELVED FOR BETA -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script> -->
   <script>
     window.MathJax = {
       tex: {
@@ -242,11 +230,6 @@
           <span>Resources</span>
         </button>
 
-        <!-- WHITEBOARD SHELVED FOR BETA -->
-        <!-- <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
-          <i class="fas fa-chalkboard"></i>
-          <span>Whiteboard</span>
-        </button> -->
 
         <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
           <i class="fas fa-calculator"></i>
@@ -257,11 +240,6 @@
           <span>Upload Work</span>
         </button>
 
-        <!-- ALGEBRA TILES SHELVED FOR BETA -->
-        <!-- <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
-          <i class="fas fa-th"></i>
-          <span>Algebra Tiles</span>
-        </button> -->
       </div>
     </div>
 
@@ -394,7 +372,6 @@
       <!-- Live XP Feed -->
       <div id="xp-feed" class="xp-feed"></div>
 
-      <!-- STREAK COUNTER SHELVED FOR BETA -->
 
       <div id="thinking-indicator" style="display: none;">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -402,11 +379,7 @@
       </div>
      <div id="input-container">
     <!-- Hidden button triggers for sidebar -->
-    <!-- WHITEBOARD SHELVED FOR BETA -->
-    <!-- <button id="toggle-whiteboard-btn" style="display: none;"></button> -->
     <button id="toggle-calculator-btn" style="display: none;"></button>
-    <!-- ALGEBRA TILES SHELVED FOR BETA -->
-    <!-- <button id="algebra-tiles-btn" style="display: none;"></button> -->
 
     <!-- Inline Equation Palette (MS Word-like) -->
     <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
@@ -799,164 +772,6 @@
       </form>
     </div>
   </div>
-
-  <!-- WHITEBOARD SHELVED FOR BETA -->
-  <!-- <div id="whiteboard-panel" class="is-hidden">
-    <div class="whiteboard-header">
-      <h2>Whiteboard</h2>
-      <div class="whiteboard-header-controls">
-        <button class="whiteboard-control-btn" id="layout-mode-btn" data-tooltip="Layout" title="Change layout mode">
-          <i class="fas fa-columns"></i>
-        </button>
-        <div id="layout-mode-menu" class="layout-mode-dropdown" style="display: none;">
-          <button class="layout-option" data-mode="message-ticker">
-            <i class="fas fa-comment"></i> Message Ticker
-          </button>
-          <button class="layout-option" data-mode="split-screen">
-            <i class="fas fa-columns"></i> Split Screen
-          </button>
-          <button class="layout-option" data-mode="pip">
-            <i class="fas fa-window-restore"></i> Picture-in-Picture
-          </button>
-          <button class="layout-option" data-mode="compact">
-            <i class="fas fa-compress-alt"></i> Compact
-          </button>
-        </div>
-        <button class="whiteboard-control-btn" id="minimize-whiteboard-btn" data-tooltip="Minimize" title="Minimize">
-          <i class="fas fa-window-minimize"></i>
-        </button>
-        <button class="whiteboard-control-btn" id="maximize-whiteboard-btn" data-tooltip="Maximize" title="Maximize">
-          <i class="fas fa-expand"></i>
-        </button>
-        <button class="whiteboard-control-btn" id="close-whiteboard-btn" data-tooltip="Close" title="Close">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="whiteboard-toolbar">
-      <div class="toolbar-section">
-        <button class="toolbar-btn" id="tool-select" data-tooltip="Select" title="Select">
-          <i class="fas fa-mouse-pointer"></i>
-        </button>
-        <button class="toolbar-btn active" id="tool-pen" data-tooltip="Pen" title="Pen">
-          <i class="fas fa-pen"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-highlighter" data-tooltip="Highlighter" title="Highlighter">
-          <i class="fas fa-highlighter"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-eraser" data-tooltip="Eraser" title="Eraser">
-          <i class="fas fa-eraser"></i>
-        </button>
-      </div>
-
-      <div class="toolbar-section">
-        <button class="toolbar-btn" id="tool-line" data-tooltip="Line" title="Line">
-          <i class="fas fa-minus"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow (→)" title="Arrow - click to change mode">
-          <i class="fas fa-arrow-right"></i>
-        </button>
-        <div id="arrow-mode-menu" class="arrow-mode-dropdown" style="display: none;">
-          <button class="arrow-mode-option" data-mode="end">→ End Only</button>
-          <button class="arrow-mode-option" data-mode="start">← Start Only</button>
-          <button class="arrow-mode-option" data-mode="both">↔ Both Ends</button>
-          <button class="arrow-mode-option" data-mode="none">— No Arrows</button>
-        </div>
-        <button class="toolbar-btn" id="tool-rectangle" data-tooltip="Rectangle" title="Rectangle">
-          <i class="far fa-square"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-circle" data-tooltip="Circle" title="Circle">
-          <i class="far fa-circle"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-triangle" data-tooltip="Triangle" title="Triangle">
-          <i class="fas fa-play" style="transform: rotate(-90deg);"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-text" data-tooltip="Text" title="Text">
-          <i class="fas fa-font"></i>
-        </button>
-      </div>
-
-      <div class="toolbar-section">
-        <button class="toolbar-btn" id="tool-grid" data-tooltip="Add Grid" title="Add Grid">
-          <i class="fas fa-grip-lines"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-graph" data-tooltip="Graph Function" title="Graph Function">
-          <i class="fas fa-chart-line"></i>
-        </button>
-        <button class="toolbar-btn" id="tool-protractor" data-tooltip="Protractor" title="Protractor">
-          <i class="fas fa-circle-notch"></i>
-        </button>
-        <button class="toolbar-btn" id="background-menu-btn" data-tooltip="Background Options" title="Change background">
-          <i class="fas fa-image"></i>
-        </button>
-        <div id="background-menu" class="background-dropdown" style="display: none;">
-          <button class="bg-option" data-bg="none">Clear Background</button>
-          <button class="bg-option" data-bg="white">Solid White</button>
-          <button class="bg-option" data-bg="black">Solid Black</button>
-          <button class="bg-option" data-bg="grid">Coordinate Plane</button>
-          <button class="bg-option" data-bg="lined">Lined Paper</button>
-          <button class="bg-option" data-bg="graph">Graph Paper</button>
-          <button class="bg-option" data-bg="upload"><i class="fas fa-upload"></i> Upload Image</button>
-        </div>
-        <input type="file" id="whiteboard-bg-upload" accept="image/*,application/pdf" style="display: none;" />
-      </div>
-
-      <div class="toolbar-section">
-        <div class="color-picker-wrapper">
-          <label class="color-display" for="color-picker" style="color: #000000;"></label>
-          <input type="color" id="color-picker" value="#000000" />
-        </div>
-        <div class="stroke-width-control">
-          <input type="range" id="stroke-width-slider" class="stroke-width-slider" min="1" max="20" value="3" />
-        </div>
-      </div>
-
-      <div class="toolbar-section">
-        <button class="toolbar-btn" id="undo-btn" data-tooltip="Undo (Ctrl+Z)" title="Undo">
-          <i class="fas fa-undo"></i>
-        </button>
-        <button class="toolbar-btn" id="redo-btn" data-tooltip="Redo (Ctrl+Y)" title="Redo">
-          <i class="fas fa-redo"></i>
-        </button>
-        <button class="toolbar-btn" id="delete-btn" data-tooltip="Delete (Del)" title="Delete Selected">
-          <i class="fas fa-trash"></i>
-        </button>
-        <button class="toolbar-btn" id="clear-btn" data-tooltip="Clear All" title="Clear All">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-        <button class="toolbar-btn" id="download-btn" data-tooltip="Export" title="Export whiteboard">
-          <i class="fas fa-download"></i>
-        </button>
-        <div id="export-menu" class="export-dropdown" style="display: none;">
-          <button class="export-option" data-export="png"><i class="fas fa-image"></i> Export PNG</button>
-          <button class="export-option" data-export="pdf"><i class="fas fa-file-pdf"></i> Export PDF</button>
-          <button class="export-option" data-export="clipboard"><i class="fas fa-clipboard"></i> Copy to Clipboard</button>
-        </div>
-        <button class="toolbar-btn" id="region-overlay-btn" data-tooltip="Toggle Regions" title="Show/Hide workspace regions">
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button class="toolbar-btn" id="shortcuts-help-btn" data-tooltip="Shortcuts (?)" title="Keyboard shortcuts">
-          <i class="fas fa-keyboard"></i>
-        </button>
-        <button class="toolbar-btn" id="send-to-ai-btn" data-tooltip="Send to AI" title="Send to AI for feedback" style="background: linear-gradient(135deg, #12B3B3, #0ea5a5); color: white;">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="whiteboard-canvas-container">
-      <canvas id="tutor-canvas"></canvas>
-      <div class="canvas-overlay">
-        <div class="canvas-mode-indicator">✏️ Drawing</div>
-      </div>
-      <div class="whiteboard-resize-handle"></div>
-    </div>
-  </div> -->
-
-  <!-- <button id="open-whiteboard-btn" class="hidden">
-    ✏️
-  </button> -->
 
   <!-- Drag & Drop Overlay -->
   <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
@@ -1484,8 +1299,6 @@
     </div>
   </div>
 
-  <!-- ALGEBRA TILES SHELVED FOR BETA -->
-  <!-- <div id="algebraTilesContainer"></div> -->
 
   <!-- Welcome Tour Modal -->
   <div id="tour-modal" class="modal-overlay tour-overlay">
@@ -1723,17 +1536,8 @@
   <script src="/js/logout.js"></script>
   <script src="/js/role-switcher.js"></script>
   <script src="/js/auto-logout.js"></script>
-  <!-- ALGEBRA TILES SHELVED FOR BETA -->
-  <!-- <script src="/js/algebra-tiles.js"></script> -->
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
-  <!-- WHITEBOARD SHELVED FOR BETA -->
-  <!-- <script src="/js/whiteboard.js"></script> -->
-  <!-- <script src="/js/whiteboard-phase2.js"></script> -->
-  <!-- <script src="/js/whiteboard-handwriting.js"></script> -->
-  <!-- <script src="/js/whiteboard-enhanced.js"></script> -->
-  <!-- <script src="/js/whiteboard-math-procedures.js"></script> -->
-  <!-- <script src="/js/chat-board-integration.js"></script> -->
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/floating-screener.js"></script>
@@ -1744,10 +1548,6 @@
   <script src="/js/diagram-display.js"></script>
   <script src="/js/inlineChatVisuals.js"></script>
   <script src="/js/engagement-widgets.js"></script>
-  <!-- WHITEBOARD SHELVED FOR BETA -->
-  <!-- <script src="/js/visualTeachingHandler.js"></script> -->
-  <!-- <script src="/js/split-screen-resizer.js"></script> -->
-  <!-- <script src="/js/whiteboard-chat-layout.js"></script> -->
   <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
@@ -1784,8 +1584,6 @@
   <script src="/js/settings.js"></script>
   <script src="/js/show-your-work.js"></script>
   <script src="/js/ghostTimer.js"></script>
-  <!-- MASTERY MODE SHELVED FOR BETA -->
-  <!-- <script src="/js/masteryMode.js"></script> -->
   <script src="/js/badgeProgress.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
