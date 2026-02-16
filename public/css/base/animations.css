@@ -1,0 +1,368 @@
+/* --- 13. Animations --- */
+.xp-animation-text, .level-up-animation-text {
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 1.2rem;
+    position: fixed;
+}
+
+.xp-animation-text { color: var(--clr-success-green); }
+.xp-animation-text.special-xp { color: var(--clr-warning-gold); font-size: 1.4rem; }
+.level-up-animation-text { color: var(--clr-primary-teal); font-size: 1.6rem; }
+
+.animate-xp { animation: xpFlyUpFade 1.5s ease-out forwards; }
+@keyframes xpFlyUpFade {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100px); }
+}
+
+.animate-level-up { animation: levelUpPopFade 2s ease-out forwards; }
+@keyframes levelUpPopFade {
+    0% { opacity: 0; transform: scale(0.5); }
+    30% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(0.9) translateY(-50px); }
+}
+
+/* Level-Up Video Card Overlay */
+.levelup-video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.levelup-video-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    max-width: 500px;
+    width: 90%;
+    opacity: 0;
+    transform: scale(0.7) translateY(30px);
+    animation: cardEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.levelup-video-card.exiting {
+    animation: cardExit 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+@keyframes cardEnter {
+    0% {
+        opacity: 0;
+        transform: scale(0.7) translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes cardExit {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-30px);
+    }
+}
+
+.levelup-video-card video {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   CELEBRATION ANIMATIONS
+   ============================================ */
+
+/* Fade in overlay */
+@keyframes celebrationFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Spin + Fly In + Fold Out combo animation */
+@keyframes celebrationSpinFlyFold {
+    0% {
+        transform: translateY(-100vh) scale(0.1) rotate(-720deg);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(0) scale(1.15) rotate(10deg);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(0) scale(0.95) rotate(-5deg);
+    }
+    100% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Glow pulse effect on video container */
+@keyframes celebrationGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 40px rgba(18, 179, 179, 0.6),
+            0 0 80px rgba(255, 59, 127, 0.4),
+            0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 60px rgba(18, 179, 179, 0.9),
+            0 0 120px rgba(255, 59, 127, 0.6),
+            0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Text reveal with bounce */
+@keyframes celebrationTextReveal {
+    from {
+        transform: translateY(50px) scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Title pulse effect */
+@keyframes celebrationTitlePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Fade out animation */
+@keyframes celebrationFadeOut {
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.levelup-celebration-overlay.fade-out {
+    animation: celebrationFadeOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.levelup-celebration-overlay.fade-out .levelup-celebration-content {
+    animation: celebrationFadeOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .celebration-video-container {
+        width: 300px;
+        height: 300px;
+    }
+
+    .celebration-title {
+        font-size: 3rem;
+    }
+
+    .celebration-subtitle {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .celebration-video-container {
+        width: 250px;
+        height: 250px;
+    }
+
+    .celebration-title {
+        font-size: 2.5rem;
+    }
+
+    .celebration-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Badge Celebration Modal */
+.badge-celebration-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    backdrop-filter: blur(10px);
+    animation: celebrationFadeIn 0.3s ease-out forwards;
+}
+
+.badge-celebration-content {
+    text-align: center;
+    color: white;
+    animation: badgeBounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.badge-icon-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+}
+
+.badge-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4), transparent 70%);
+    animation: badgeGlowPulse 2s ease-in-out infinite;
+    border-radius: 50%;
+}
+
+.badge-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    color: #FFD700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    animation: badgeRotate 3s ease-in-out infinite;
+}
+
+.badge-title {
+    font-size: 3rem;
+    font-weight: 900;
+    margin: 0 0 10px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: badgeTitlePulse 1.5s ease-in-out infinite;
+}
+
+.badge-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 10px 0;
+}
+
+.badge-description {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 15px 0;
+    max-width: 500px;
+}
+
+.badge-xp-reward {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #FFD700;
+    margin: 20px 0;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.badge-dismiss-hint {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-top: 30px;
+}
+
+@keyframes badgeBounceIn {
+    from {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes badgeGlowPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.9;
+    }
+}
+
+@keyframes badgeRotate {
+    0%, 100% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) rotate(10deg) scale(1.1);
+    }
+}
+
+@keyframes badgeTitlePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .xp-feed {
+        width: 200px;
+        right: 10px;
+    }
+
+    .streak-counter {
+        bottom: 120px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .session-stats-bar {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+    }
+
+    .badge-icon {
+        font-size: 80px;
+    }
+
+    .badge-title {
+        font-size: 2rem;
+    }
+
+    .badge-name {
+        font-size: 1.3rem;
+    }
+}
