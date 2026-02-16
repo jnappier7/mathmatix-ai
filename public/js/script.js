@@ -1786,6 +1786,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (cp.phase) parts.push(cp.phase);
                         mod.textContent = parts.length > 0 ? parts.join(' \u203A ') : (cp.stepTitle || '');
                     }
+                    // Show lesson transition card when crossing a lesson boundary
+                    if (cp.lessonTransition) {
+                        window.courseManager.showLessonTransition(cp.lessonTransition);
+                    }
                     console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal} (overall: ${cp.overallProgress}%)`);
                 } else if (cp.event === 'module_complete') {
                     // Refresh the full progress display and trigger celebration

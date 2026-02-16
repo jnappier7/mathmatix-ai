@@ -419,6 +419,44 @@ class CourseManager {
     }
 
     // --------------------------------------------------
+    // Lesson transition card (subtle separator between lessons)
+    // --------------------------------------------------
+    showLessonTransition(transition) {
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+
+        const pct = transition.lessonsTotal > 0
+            ? Math.round((transition.lessonsCompleted / transition.lessonsTotal) * 100)
+            : 0;
+
+        const card = document.createElement('div');
+        card.className = 'lesson-transition-card';
+        card.innerHTML = `
+            <div class="lesson-transition-inner">
+                <div class="lesson-transition-done">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${this.escapeHtml(transition.completedLessonTitle)}</span>
+                </div>
+                <div class="lesson-transition-progress">
+                    <div class="lesson-transition-track">
+                        <div class="lesson-transition-fill" style="width: ${pct}%"></div>
+                    </div>
+                    <span class="lesson-transition-count">${transition.lessonsCompleted}/${transition.lessonsTotal} lessons</span>
+                </div>
+                <div class="lesson-transition-next">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Up next: <strong>${this.escapeHtml(transition.nextLessonTitle)}</strong></span>
+                </div>
+            </div>
+        `;
+
+        chatBox.appendChild(card);
+        // Brief delay so the animation triggers after DOM insertion
+        requestAnimationFrame(() => card.classList.add('visible'));
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --------------------------------------------------
     // Progress dropdown
     // --------------------------------------------------
     toggleProgressDropdown() {

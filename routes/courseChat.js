@@ -525,7 +525,17 @@ router.post('/', async (req, res) => {
                         const phaseLabel = phaseLabels[nextPhase] || nextPhase;
 
                         // Find lesson title from module data
-                        const lessonTitle = mod.lessons?.find(l => l.lessonId === (nextLessonId || prevLessonId))?.title || '';
+                        const completedLessonTitle = mod.lessons?.find(l => l.lessonId === prevLessonId)?.title || '';
+                        const nextLessonTitle = mod.lessons?.find(l => l.lessonId === (nextLessonId || prevLessonId))?.title || '';
+                        const didTransitionLesson = prevLessonId && nextLessonId && prevLessonId !== nextLessonId;
+
+                        // Count lesson progress for the transition card
+                        let completedLessonCount = 0;
+                        let totalLessonCount = 0;
+                        if (mod.lessons && mod.lessons.length > 0) {
+                            totalLessonCount = mod.lessons.length;
+                            completedLessonCount = mod.lessons.filter(l => l.status === 'completed').length;
+                        }
 
                         courseProgressUpdate = {
                             event: 'scaffold_advance',
@@ -536,10 +546,19 @@ router.post('/', async (req, res) => {
                             stepTitle: nextStep?.title || null,
                             // Breadcrumb data
                             currentLessonId: courseSession.currentLessonId,
-                            lessonTitle,
+                            lessonTitle: nextLessonTitle,
                             phase: phaseLabel,
                             unit: mod.unit,
-                            moduleName: mod.title
+                            moduleName: mod.title,
+                            // Lesson transition data (only present when lesson boundary crossed)
+                            lessonTransition: didTransitionLesson ? {
+                                completedLessonId: prevLessonId,
+                                completedLessonTitle,
+                                nextLessonId,
+                                nextLessonTitle,
+                                lessonsCompleted: completedLessonCount,
+                                lessonsTotal: totalLessonCount
+                            } : null
                         };
                     }
                 }
