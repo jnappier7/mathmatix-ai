@@ -77,7 +77,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // --- Initial Load ---
-    await fetchAssignedStudents();
+    // Fetch students and classes in parallel for faster initial load
+    await Promise.all([fetchAssignedStudents(), fetchClassesForGrouping()]);
+    // Re-render with class grouping now that both datasets are available
+    if (classesData.length > 0 && currentStudentsData.length > 0) {
+        renderStudentList(currentStudentsData);
+    }
 
     // Initialize search and filter
     initializeSearchAndFilter();
@@ -99,9 +104,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize smart alerts sidebar
     initializeSmartAlerts();
-
-    // Fetch classes for grouped view
-    fetchClassesForGrouping();
 
     // --- Modal Control Functions ---
     function showModal(modalElement) {
@@ -2050,24 +2052,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) return;
             const data = await response.json();
             classesData = data.classes || [];
-
-            // For each class, fetch student IDs to build the mapping
-            for (const cls of classesData) {
-                try {
-                    const stuResponse = await fetch(`/api/teacher/classes/${cls._id}/students`);
-                    if (stuResponse.ok) {
-                        const stuData = await stuResponse.json();
-                        cls.studentIds = (stuData.students || []).map(s => s._id);
-                    }
-                } catch (err) {
-                    console.log('Could not fetch students for class', cls._id);
-                }
-            }
-
-            // Re-render with grouped view if we have classes
-            if (classesData.length > 0) {
-                applyFilters();
-            }
+            // studentIds are now included in the classes response — no extra fetches needed
         } catch (err) {
             console.log('Could not load classes for grouping:', err.message);
         }

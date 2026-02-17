@@ -978,6 +978,7 @@ router.get('/classes', isTeacher, async (req, res) => {
       expiresAt: c.expiresAt,
       maxUses: c.maxUses,
       createdAt: c.createdAt,
+      studentIds: c.enrolledStudents.map(e => e.studentId?.toString()).filter(Boolean),
       studentCount: c.enrolledStudents.length,
       activeCount: c.enrolledStudents.filter(e => {
         const ll = loginMap[e.studentId?.toString()];
