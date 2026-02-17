@@ -80,6 +80,9 @@ async function findResourceInMessage(teacherId, message) {
 
     // FALLBACK: Use original regex + keyword matching
     const mentions = detectResourceMention(message);
+    if (mentions.length === 0) {
+        console.log(`[ResourceDetector] No resource mentions detected by regex in message: "${message?.substring(0, 80)}"`);
+    }
     if (mentions.length > 0) {
         console.log(`🔍 [Keyword Fallback] Detected resource mentions: ${mentions.join(', ')}`);
 
@@ -132,6 +135,12 @@ async function fetchAndProcessResource(resource) {
 
         let extractedText = resource.extractedText || '';
 
+        if (extractedText) {
+            console.log(`[ResourceDetector] Using cached text (${extractedText.length} chars) for "${resource.displayName}"`);
+        } else {
+            console.log(`[ResourceDetector] No cached text — running extraction (mimeType=${resource.mimeType}) for "${resource.displayName}"`);
+        }
+
         // If no cached text, extract it now
         if (!extractedText) {
             try {
@@ -142,14 +151,21 @@ async function fetchAndProcessResource(resource) {
                     extractedText = ocrResult.text || '';
                 }
 
+                console.log(`[ResourceDetector] Extraction result: ${extractedText.length} chars`);
+
                 // Cache the extracted text
                 if (extractedText) {
                     resource.extractedText = extractedText.slice(0, 5000);
                     await resource.save();
                 }
             } catch (error) {
-                console.error('Error extracting text:', error);
+                console.error('[ResourceDetector] Text extraction error:', error.message);
             }
+        }
+
+        const finalContent = extractedText.slice(0, 3000);
+        if (!finalContent) {
+            console.warn(`[ResourceDetector] ⚠️ No text content available for "${resource.displayName}" — AI will not have resource content`);
         }
 
         return {
@@ -158,7 +174,7 @@ async function fetchAndProcessResource(resource) {
                 displayName: resource.displayName,
                 description: resource.description,
                 fileType: resource.fileType,
-                content: extractedText.slice(0, 3000), // Limit to 3000 chars for AI context
+                content: finalContent, // Limit to 3000 chars for AI context
                 publicUrl: resource.publicUrl
             }
         };
@@ -180,16 +196,27 @@ async function fetchAndProcessResource(resource) {
  */
 async function detectAndFetchResource(teacherId, message) {
     try {
+        console.log(`[ResourceDetector] Entry — teacherId=${teacherId}, messageLen=${message?.length}`);
+
         const resource = await findResourceInMessage(teacherId, message);
-        if (!resource) return null;
+        if (!resource) {
+            console.log(`[ResourceDetector] No matching resource found for message: "${message?.substring(0, 80)}..."`);
+            return null;
+        }
 
+        console.log(`[ResourceDetector] Match found: "${resource.displayName}" (id=${resource._id}), fetching content...`);
         const processedResource = await fetchAndProcessResource(resource);
-        if (!processedResource.success) return null;
+        if (!processedResource.success) {
+            console.warn(`[ResourceDetector] fetchAndProcessResource failed: ${processedResource.error}`);
+            return null;
+        }
 
+        const contentLen = processedResource.resource?.content?.length || 0;
+        console.log(`[ResourceDetector] ✅ Resource ready — "${resource.displayName}", content=${contentLen} chars`);
         return processedResource.resource;
 
     } catch (error) {
-        console.error('Error in detectAndFetchResource:', error);
+        console.error('[ResourceDetector] Unexpected error:', error.message, error.stack?.split('\n')[1]);
         return null;
     }
 }

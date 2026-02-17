@@ -481,9 +481,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         if (user.teacherId) {
             contextPromises.push(
                 detectAndFetchResource(user.teacherId, message)
-                    .catch(err => { console.error('Error detecting resource:', err.message); return null; })
+                    .catch(err => { console.error('[Chat] Resource detection error:', err.message); return null; })
             );
         } else {
+            console.log(`[Chat] No teacherId on user ${user._id} — skipping resource detection`);
             contextPromises.push(Promise.resolve(null));
         }
 
@@ -524,9 +525,15 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`🎛️ [AI Settings] Loaded teacher settings for ${user.firstName}: calculator=${teacherAISettings.calculatorAccess || 'default'}, scaffolding=${teacherAISettings.scaffoldingLevel || 3}/5`);
         }
 
-        // Log resource if detected
+        // Log resource context resolution
         if (resourceContext) {
-            console.log(`📚 Resource detected and fetched: ${resourceContext.displayName}`);
+            const contentLen = resourceContext.content?.length || 0;
+            console.log(`📚 [Chat] Resource resolved: "${resourceContext.displayName}" — content=${contentLen} chars, notFound=${!!resourceContext.notFound}`);
+            if (contentLen === 0) {
+                console.warn(`[Chat] ⚠️ Resource context has no content — AI will not have resource material to work from`);
+            }
+        } else {
+            console.log(`[Chat] No resource context resolved for message: "${message?.substring(0, 60)}..."`);
         }
 
         // FALLBACK: If no uploaded resource was found but the message mentions a resource
@@ -541,7 +548,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     content: null,
                     notFound: true
                 };
-                console.log(`📋 Resource mentioned but not in DB: "${resourceContext.displayName}" — injecting stub context`);
+                console.log(`📋 [Chat] Resource mentioned but not in DB: "${resourceContext.displayName}" — injecting stub context (no content)`);
             }
         }
 
@@ -1318,6 +1325,11 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
                 const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
 
+                console.log(`[Progression] Engine active — sessionId=${user.activeCourseSessionId}, SCAFFOLD_ADVANCE=${hasScaffoldAdvance}, MODULE_COMPLETE=${hasModuleComplete}`);
+                if (!hasScaffoldAdvance && !hasModuleComplete) {
+                    console.log(`[Progression] No signal tags in AI response (first 200 chars): "${aiResponseText?.substring(0, 200)}"`);
+                }
+
                 // Strip signal tags from the response text (student should not see them)
                 if (hasScaffoldAdvance || hasModuleComplete) {
                     aiResponseText = aiResponseText
@@ -1342,6 +1354,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
                         if (hasModuleComplete && mod) {
                             // MODULE COMPLETE: mark done, unlock next, reset scaffold
+                            console.log(`[Progression] MODULE_COMPLETE — before: moduleId=${csDoc.currentModuleId}, status=${mod.status}, scaffoldIdx=${csDoc.currentScaffoldIndex}`);
                             mod.status = 'completed';
                             mod.scaffoldProgress = 100;
                             mod.completedAt = new Date();
@@ -1353,6 +1366,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                                 if (nextMod.status === 'locked') nextMod.status = 'available';
                                 nextMod.startedAt = new Date();
                                 csDoc.currentModuleId = nextMod.moduleId;
+                                console.log(`[Progression] Advanced to next module: ${nextMod.moduleId} (was idx ${modIdx}, now ${modIdx + 1})`);
+                            } else {
+                                console.log(`[Progression] No next module — modIdx=${modIdx}, total=${csDoc.modules.length}`);
                             }
                             csDoc.currentScaffoldIndex = 0;
 
@@ -1360,9 +1376,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
 
                             // Check for full course completion
+                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
+                            console.log(`[Progression] After MODULE_COMPLETE — completed=${doneCount}/${csDoc.modules.length}, overallProgress=${csDoc.overallProgress}%`);
                             if (doneCount === csDoc.modules.length) {
                                 csDoc.status = 'completed';
                                 csDoc.completedAt = new Date();
+                                console.log(`[Progression] 🎉 Full course completed!`);
                             }
 
                             csDoc.markModified('modules');
@@ -1397,6 +1416,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             const currentStep = courseCtx?.scaffoldData?.scaffold?.[currentIdx];
                             const stepType = currentStep?.type || currentStep?.lessonPhase || '';
                             const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
+                            console.log(`[Progression] SCAFFOLD_ADVANCE — currentIdx=${currentIdx}/${totalSteps - 1}, stepType="${stepType}", isPracticePhase=${isPracticePhase}, mod=${mod.moduleId} (status=${mod.status})`);
+                            if (!currentStep) console.warn(`[Progression] ⚠️ No scaffold step at index ${currentIdx} — scaffoldData may be missing or malformed`);
 
                             // Count PROBLEM_RESULT:correct tags since the last scaffold advance
                             // by scanning recent conversation messages for problemResult markers
@@ -1455,8 +1476,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     }
                 }
             } catch (courseProgressErr) {
-                console.error('[Course] Scaffold progression error:', courseProgressErr.message);
+                console.error('[Course] Scaffold progression error:', courseProgressErr.message, courseProgressErr.stack?.split('\n')[1]);
             }
+        } else if (user.activeCourseSessionId && !conversationContextForPrompt?.courseSession) {
+            console.warn(`[Progression] ⚠️ activeCourseSessionId=${user.activeCourseSessionId} is set but conversationContextForPrompt.courseSession is missing — engine skipped`);
         }
 
         // Smart auto-naming: Update session name if it's still generic
