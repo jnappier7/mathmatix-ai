@@ -24,6 +24,53 @@
     height: 100%;
 }
 
+/* Resource card wrapper groups download link + Ask Tutor button */
+.resource-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+}
+
+.resource-card-wrapper .resource-link {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.resource-card-wrapper .resource-link:hover {
+    border-bottom-color: #c5d1db;
+}
+
+/* "Ask Tutor About This" button */
+.send-to-tutor-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 8px 12px;
+    background: #eaf4fb;
+    color: #1a73e8;
+    font-size: 0.85em;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.send-to-tutor-btn:hover {
+    background: #1a73e8;
+    color: #fff;
+}
+
+.send-to-tutor-btn i {
+    font-size: 0.95em;
+}
+
 /* Resources modal improvements */
 .resource-link {
     display: flex;
