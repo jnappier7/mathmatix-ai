@@ -13,6 +13,7 @@ const fs = require('fs');
 const { extractTextFromPDF } = require('../utils/pdfOcr');
 const { performOCR } = require('../utils/ocr');
 const { generateEmbedding } = require('../utils/llmGateway'); // DIRECTIVE 3 + CTO REVIEW FIX
+const cloudStorage = require('../utils/cloudStorage');
 
 // Ensure upload directory exists
 const uploadDir = 'uploads/teacher-resources';
@@ -129,6 +130,20 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
             // Continue without embedding - can be regenerated later
         }
 
+        // Upload to cloud storage if configured (file stays on disk for local dev)
+        let publicUrl = null;
+        const s3Key = `teacher-resources/${req.user._id}/${path.basename(req.file.path)}`;
+        try {
+            publicUrl = await cloudStorage.uploadFile(req.file.path, s3Key, req.file.mimetype);
+        } catch (uploadErr) {
+            console.warn('⚠️ [Cloud Storage] Upload failed, falling back to local:', uploadErr.message);
+        }
+
+        // Clean up local file if cloud upload succeeded
+        if (publicUrl && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+
         // Create resource record
         const resource = new TeacherResource({
             teacherId: req.user._id,
@@ -143,7 +158,7 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
             category: category || 'other',
             extractedText: extractedText.slice(0, 5000), // Store first 5000 chars
             embedding: embedding, // DIRECTIVE 3: Store embedding vector
-            publicUrl: `/uploads/teacher-resources/${relativePath}`
+            publicUrl: publicUrl || null
         });
 
         await resource.save();
@@ -315,11 +330,15 @@ router.delete('/:id', isAuthenticated, isTeacher, validateObjectId('id'), async 
             return res.status(404).json({ message: 'Resource not found' });
         }
 
-        // Delete the file
+        // Delete the file from local disk
         const filePath = path.join(uploadDir, resource.storedFilename);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
+
+        // Delete from cloud storage if applicable
+        const s3Key = cloudStorage.getKeyFromUrl(resource.publicUrl);
+        await cloudStorage.deleteFile(s3Key);
 
         // Delete the database record
         await resource.deleteOne();
