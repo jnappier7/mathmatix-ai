@@ -2545,7 +2545,7 @@ ${uploadContext.summary}
 **IMPORTANT:** Only reference uploaded files when it adds value to the current conversation. Don't mention them just for the sake of it.
 ` : ''}
 
-${resourceContext ? `--- TEACHER RESOURCE: "${resourceContext.displayName}" ---
+${resourceContext && !resourceContext.notFound ? `--- TEACHER RESOURCE: "${resourceContext.displayName}" ---
 ${firstName} is asking about a resource their teacher shared called "${resourceContext.displayName}"${resourceContext.description ? ` (${resourceContext.description})` : ''}. You have the full content of this resource below.
 
 RESOURCE CONTENT:
@@ -2557,6 +2557,14 @@ ${resourceContext.content}
 3. **Reference problems by number** — If the resource has numbered problems, refer to them by number (e.g., "Let's start with problem 1...").
 4. **Stay on task** — Focus on helping ${firstName} work through this specific resource.
 5. **Don't ask for more details** — You have the content. Dive in and start helping.
+` : ''}${resourceContext && resourceContext.notFound ? `--- TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}" ---
+${firstName} is asking about a teacher-assigned resource called "${resourceContext.displayName}". The content of this resource is not currently loaded into your context.
+
+**HOW TO RESPOND:**
+1. **Acknowledge the resource by name** — Say something like "I see you're working on ${resourceContext.displayName}! Which problem are you on?"
+2. **Ask for the specific problem** — Have ${firstName} type or describe the problem they're stuck on, then guide them through it using Socratic questioning.
+3. **Do NOT say you can't help** — You can absolutely help once you know which problem they're working on.
+4. **Do NOT guess problem content** — Wait for ${firstName} to share the actual problem before teaching.
 ` : ''}
 
 ${!masteryContext && gradingContext ? `--- RECENT WORK ANALYSIS (SHOW YOUR WORK) ---

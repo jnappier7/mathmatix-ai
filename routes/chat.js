@@ -22,7 +22,7 @@ const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
-const { detectAndFetchResource } = require('../utils/resourceDetector');
+const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
@@ -529,6 +529,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`📚 Resource detected and fetched: ${resourceContext.displayName}`);
         }
 
+        // FALLBACK: If no uploaded resource was found but the message mentions a resource
+        // by name (e.g., "Module 8 Test PRACTICE (A)"), create a stub context so the AI
+        // at least knows the student is referencing a specific teacher-assigned resource.
+        if (!resourceContext) {
+            const resourceMentions = detectResourceMention(message);
+            if (resourceMentions.length > 0) {
+                resourceContext = {
+                    displayName: resourceMentions[0].trim(),
+                    description: null,
+                    content: null,
+                    notFound: true
+                };
+                console.log(`📋 Resource mentioned but not in DB: "${resourceContext.displayName}" — injecting stub context`);
+            }
+        }
+
         // Process uploads into context
         let uploadContext = null;
         if (recentUploads && recentUploads.length > 0) {
@@ -711,7 +727,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     courseSession: courseSessionDoc,
                     pathway: courseCtx.pathway,
                     scaffoldData: courseCtx.scaffoldData,
-                    currentModule: courseCtx.currentModule
+                    currentModule: courseCtx.currentModule,
+                    resourceContext
                 });
             } else {
                 systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
