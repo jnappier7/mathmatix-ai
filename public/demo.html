@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Try the Demo | Mathmatix AI</title>
+  <meta name="description" content="Experience Mathmatix AI as a teacher, parent, or student. Fully interactive playground accounts that reset after each session." />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/dark-mode.css" />
+  <link rel="stylesheet" href="css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+  <style>
+    .demo-page-wrapper {
+      min-height: calc(100dvh - 140px);
+      padding: 40px 20px 60px;
+      background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb), 0.03) 0%, transparent 50%);
+    }
+
+    .demo-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+
+    .demo-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      margin-bottom: 12px;
+    }
+
+    .demo-header p {
+      font-size: 1.05rem;
+      color: var(--clr-text-dim);
+      line-height: 1.6;
+    }
+
+    .demo-badge {
+      display: inline-block;
+      background: var(--clr-primary-teal-light);
+      color: var(--clr-primary-teal-dark);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .demo-card {
+      background: var(--clr-bg-light);
+      border: 1px solid var(--clr-border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-card:hover {
+      border-color: var(--clr-primary-teal);
+      box-shadow: var(--shadow-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .demo-card:active {
+      transform: translateY(0);
+    }
+
+    .demo-card.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .demo-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .demo-card-icon.teacher { background: #EDE9FE; color: #7C3AED; }
+    .demo-card-icon.parent { background: #FEF3C7; color: #D97706; }
+    .demo-card-icon.student { background: var(--clr-primary-teal-light); color: var(--clr-primary-teal-dark); }
+    .demo-card-icon.iep { background: #FCE7F3; color: #DB2777; }
+
+    .demo-card-role {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--clr-text-dim);
+      margin-bottom: 4px;
+    }
+
+    .demo-card-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--clr-text);
+      margin-bottom: 8px;
+    }
+
+    .demo-card-desc {
+      font-size: 0.9rem;
+      color: var(--clr-text-dim);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .demo-card-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .demo-highlight {
+      display: inline-block;
+      background: var(--clr-bg-subtle);
+      color: var(--clr-text-dim);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 100px;
+      border: 1px solid var(--clr-border-light);
+    }
+
+    .demo-card-spinner {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      color: var(--clr-primary-teal-dark);
+      font-weight: 600;
+    }
+
+    .demo-card.loading .demo-card-spinner {
+      display: flex;
+    }
+
+    .demo-card-spinner i {
+      margin-right: 8px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .demo-footer-note {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .demo-footer-note p {
+      font-size: 0.875rem;
+      color: var(--clr-text-dim);
+      line-height: 1.6;
+    }
+
+    .demo-footer-note i {
+      margin-right: 6px;
+      color: var(--clr-primary-teal);
+    }
+
+    .demo-error {
+      display: none;
+      text-align: center;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background: rgba(255, 78, 78, 0.08);
+      border: 1px solid rgba(255, 78, 78, 0.2);
+      color: var(--clr-error-red);
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--clr-text-dim);
+      text-decoration: none;
+      font-size: 0.875rem;
+      margin-bottom: 20px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--clr-primary-teal); }
+
+    @media (max-width: 640px) {
+      .demo-grid { grid-template-columns: 1fr; }
+      .demo-header h1 { font-size: 1.5rem; }
+      .demo-page-wrapper { padding: 24px 16px 40px; }
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/">
+        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      </a>
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-outline">Log In</a>
+      <a href="/signup.html" class="btn btn-primary">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="demo-page-wrapper">
+    <div class="demo-header">
+      <a href="/login.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+      <span class="demo-badge">Playground Mode</span>
+      <h1>Experience Mathmatix AI</h1>
+      <p>Choose a role below to explore the full platform. Every feature works just like a real account. All changes reset when you log out.</p>
+    </div>
+
+    <div id="demo-error" class="demo-error"></div>
+
+    <div class="demo-grid" id="demo-grid">
+      <!-- Teacher Card -->
+      <div class="demo-card" data-profile="teacher-rivera" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon teacher"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="demo-card-role">Teacher</div>
+        <div class="demo-card-name">Ms. Rivera</div>
+        <div class="demo-card-desc">View an 8th grade math class with 15 students at various ability levels, IEPs, and live tutoring sessions.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">Class of 15 students</span>
+          <span class="demo-highlight">Students with IEPs</span>
+          <span class="demo-highlight">Live activity feed</span>
+          <span class="demo-highlight">AI settings</span>
+        </div>
+      </div>
+
+      <!-- Parent Card -->
+      <div class="demo-card" data-profile="parent-chen" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon parent"><i class="fas fa-house-user"></i></div>
+        <div class="demo-card-role">Parent</div>
+        <div class="demo-card-name">Sarah Chen</div>
+        <div class="demo-card-desc">See the parent experience with two children — a 5th grader and an 11th grader.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">5th grader (Maya)</span>
+          <span class="demo-highlight">11th grader (Alex)</span>
+          <span class="demo-highlight">Progress reports</span>
+          <span class="demo-highlight">Multi-child view</span>
+        </div>
+      </div>
+
+      <!-- Student: Maya -->
+      <div class="demo-card" data-profile="student-maya" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon student"><i class="fas fa-graduation-cap"></i></div>
+        <div class="demo-card-role">5th Grade Student</div>
+        <div class="demo-card-name">Maya Chen</div>
+        <div class="demo-card-desc">Experience the AI tutor as a 5th grader working on fractions and decimals.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">Working on fractions</span>
+          <span class="demo-highlight">4-day streak</span>
+          <span class="demo-highlight">Daily quests</span>
+          <span class="demo-highlight">Parent connected</span>
+        </div>
+      </div>
+
+      <!-- Student: Alex -->
+      <div class="demo-card" data-profile="student-alex" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon student"><i class="fas fa-graduation-cap"></i></div>
+        <div class="demo-card-role">11th Grade Student</div>
+        <div class="demo-card-name">Alex Chen</div>
+        <div class="demo-card-desc">Explore the student experience as a high schooler tackling Algebra 2.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">Algebra 2</span>
+          <span class="demo-highlight">12-day streak</span>
+          <span class="demo-highlight">Mastery badges</span>
+          <span class="demo-highlight">Dark mode</span>
+        </div>
+      </div>
+
+      <!-- Student: Jordan (IEP) -->
+      <div class="demo-card" data-profile="student-jordan" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon iep"><i class="fas fa-universal-access"></i></div>
+        <div class="demo-card-role">8th Grader with IEP</div>
+        <div class="demo-card-name">Jordan Martinez</div>
+        <div class="demo-card-desc">See how accommodations and IEP goals are supported in tutoring sessions.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">3 active IEP goals</span>
+          <span class="demo-highlight">Extended time + calculator</span>
+          <span class="demo-highlight">Frequent breaks</span>
+          <span class="demo-highlight">Math anxiety support</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-footer-note">
+      <p><i class="fas fa-sync-alt"></i> All demo accounts reset to their initial state when you log out. Feel free to explore everything — nothing you do will be saved permanently.</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <script>
+    const demoGrid = document.getElementById('demo-grid');
+    const demoError = document.getElementById('demo-error');
+
+    demoGrid.addEventListener('click', handleDemoLogin);
+    demoGrid.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleDemoLogin(e);
+      }
+    });
+
+    async function handleDemoLogin(e) {
+      const card = e.target.closest('.demo-card');
+      if (!card || card.classList.contains('loading')) return;
+
+      const profileId = card.dataset.profile;
+      if (!profileId) return;
+
+      // Show loading state
+      card.classList.add('loading');
+      demoError.style.display = 'none';
+
+      try {
+        const response = await csrfFetch('/api/demo/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profileId }),
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          // Redirect to the appropriate dashboard
+          window.location.href = result.redirect;
+        } else {
+          demoError.textContent = result.message || 'Failed to start demo. Please try again.';
+          demoError.style.display = 'block';
+          card.classList.remove('loading');
+        }
+      } catch (error) {
+        console.error('Demo login error:', error);
+        demoError.textContent = 'Connection error. Please check your internet connection and try again.';
+        demoError.style.display = 'block';
+        card.classList.remove('loading');
+      }
+    }
+  </script>
+  <script src="/js/ux-enhancements.js"></script>
+</body>
+</html>

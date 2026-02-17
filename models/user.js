@@ -517,6 +517,10 @@ const userSchema = new Schema({
   role:      { type: String, enum: ['student','teacher','parent','admin'], default: 'student' },
   roles:     [{ type: String, enum: ['student','teacher','parent','admin'] }],
 
+  /* Demo / Playground Account */
+  isDemo:        { type: Boolean, default: false },    // True for playground demo accounts
+  demoProfileId: { type: String, trim: true },         // e.g., 'teacher-rivera', 'student-maya'
+
   /* Student-specific profile */
   gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'

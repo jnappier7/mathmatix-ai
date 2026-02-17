@@ -4,6 +4,7 @@
 
 const passport = require("passport");
 const rateLimit = require('express-rate-limit');
+const { resetDemoAccount } = require('../utils/demoReset');
 
 /**
  * Checks if a user is logged in and their session data is valid.
@@ -126,18 +127,33 @@ function isAuthorizedForLeaderboard(req, res, next) {
 
 // --- LOGOUT ROUTE HANDLER ---
 function handleLogout(req, res, next) {
+  // Capture demo session info before logout destroys the session
+  const isDemo = !!(req.session && req.session.isDemo);
+  const demoProfileId = req.session?.demoProfileId || null;
+
   req.logout(function(err) {
     if (err) {
       console.error("[handleLogout] Error during req.logout:", err);
       return next(err);
     }
-    req.session.destroy((err) => {
+    req.session.destroy(async (err) => {
       if (err) {
         console.error("[handleLogout] Error destroying session:", err);
         return res.status(500).send("Could not log out.");
       }
       res.clearCookie('connect.sid');
-      // Changed to a JSON response for consistency with API-like behavior
+
+      // If this was a demo/playground session, reset the account to initial state
+      if (isDemo && demoProfileId) {
+        try {
+          await resetDemoAccount(demoProfileId);
+          console.log(`[handleLogout] Demo account reset: ${demoProfileId}`);
+        } catch (resetErr) {
+          // Don't fail the logout if reset fails — log and continue
+          console.error(`[handleLogout] Demo reset failed for ${demoProfileId}:`, resetErr);
+        }
+      }
+
       res.status(200).json({ success: true, message: 'Logged out successfully' });
     });
   });
