@@ -419,7 +419,10 @@ function formatScaffoldStep(step, index, total) {
 
   switch (step.type) {
     case 'explanation':
-      detail += `TEACH THIS CONCEPT:\n${step.text || ''}\n\n`;
+      detail += `TEACH THIS CONCEPT:\n${step.content || step.text || ''}\n\n`;
+      if (step.keyPoints && step.keyPoints.length > 0) {
+        detail += `KEY POINTS TO COVER:\n${step.keyPoints.map(kp => `  - ${kp}`).join('\n')}\n\n`;
+      }
       if (step.initialPrompt) {
         detail += `After teaching, engage with: "${step.initialPrompt}"\n`;
       }
@@ -461,7 +464,7 @@ function formatScaffoldStep(step, index, total) {
       detail += `The student's hands should be on the wheel. You are the GPS.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.question}\n`;
+          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
           detail += `  Answer: ${p.answer}\n`;
           if (p.hints && p.hints.length > 0) {
             detail += `  Hints (use if stuck): ${p.hints.join(' → ')}\n`;
@@ -488,7 +491,7 @@ function formatScaffoldStep(step, index, total) {
       detail += `If they get it wrong, ask them to find their own mistake first.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.question}\n`;
+          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
           detail += `  Answer: ${p.answer}\n`;
           if (p.hints && p.hints.length > 0) {
             detail += `  Hints (ONLY if truly stuck): ${p.hints.join(' → ')}\n`;
@@ -930,7 +933,7 @@ function calculateOverallProgress(modules) {
   for (const mod of modules) {
     if (mod.status === 'completed') {
       progressSum += 1;
-    } else if (mod.status === 'in_progress' && mod.scaffoldProgress > 0) {
+    } else if (mod.status === 'in_progress') {
       progressSum += (mod.scaffoldProgress / 100);
     }
   }

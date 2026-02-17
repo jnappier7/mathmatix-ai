@@ -135,6 +135,16 @@ router.post('/', async (req, res) => {
             content: msg.content
         }));
 
+        // ── Mark module as in_progress on first student message ──
+        const activeMod = courseSession.modules.find(m => m.moduleId === courseSession.currentModuleId);
+        if (activeMod && activeMod.status === 'available') {
+            activeMod.status = 'in_progress';
+            activeMod.startedAt = activeMod.startedAt || new Date();
+            courseSession.markModified('modules');
+            await courseSession.save();
+            console.log(`▶ [CourseChat] Module ${activeMod.moduleId} marked in_progress on first message`);
+        }
+
         // ── Build system prompt ─────────────────────────────
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
             ? user.selectedTutorId : 'default';
