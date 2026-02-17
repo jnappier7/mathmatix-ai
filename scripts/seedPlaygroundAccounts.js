@@ -54,6 +54,14 @@ async function seedPlaygroundAccounts() {
       process.exit(0);
     }
 
+    // --- Drop stale unique index on badges.key if it exists ---
+    try {
+      await mongoose.connection.collection('users').dropIndex('badges.key_1');
+      console.log('[FIX] Dropped stale unique index badges.key_1');
+    } catch (e) {
+      // Index doesn't exist — nothing to do
+    }
+
     // --- CLEAN UP existing playground data ---
     console.log('[1/5] Cleaning up existing playground data...');
     await clearPlaygroundData();
