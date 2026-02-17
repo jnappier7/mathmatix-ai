@@ -561,6 +561,11 @@
       .lp-hero-preview { margin: 0; max-width: 100%; }
     }
 
+    /* ── Section alternating backgrounds for visual rhythm ─── */
+    .lp-section-alt {
+      background: var(--clr-bg-subtle, #F8FAFB);
+    }
+
     /* ── Features — Bento Grid ─────────────────────────────── */
     .lp-features {
       padding: 4rem var(--page-horizontal-padding);
@@ -1327,6 +1332,7 @@
   </style>
 </head>
 <body>
+  <a href="#lp-main" class="skip-to-content">Skip to main content</a>
   <header class="landing-header">
     <div class="header-logo-container">
       <a href="/">
@@ -1339,7 +1345,7 @@
     </nav>
   </header>
 
-  <main class="landing-main">
+  <main class="landing-main" id="lp-main">
     <!-- ── Launch Countdown ──────────────────────────────── -->
     <div class="lp-countdown-banner" id="lp-countdown">
       <div class="lp-countdown-inner">
@@ -1480,7 +1486,7 @@
     </section>
 
     <!-- ── Role Selector (interactive tabs) ───────────────── -->
-    <section class="lp-roles lp-reveal">
+    <section class="lp-roles lp-reveal lp-section-alt">
       <div class="lp-inner">
         <h2 class="lp-section-heading">Built for Everyone</h2>
         <p class="lp-section-sub">Select your role to see what Mathmatix offers you.</p>
@@ -1635,7 +1641,7 @@
     </section>
 
     <!-- ── Comparison ─────────────────────────────────────── -->
-    <section class="lp-compare lp-reveal">
+    <section class="lp-compare lp-reveal lp-section-alt">
       <div class="lp-inner">
         <h2 class="lp-section-heading">How Mathmatix Compares</h2>
         <p class="lp-section-sub">The personalization of a private tutor. The accessibility of AI. None of the shortcuts.</p>
@@ -1740,7 +1746,7 @@
     </section>
 
     <!-- ── FAQ ────────────────────────────────────────────── -->
-    <section class="lp-faq lp-reveal">
+    <section class="lp-faq lp-reveal lp-section-alt">
       <div class="lp-inner">
         <h2 class="lp-section-heading">Common Questions</h2>
         <p class="lp-section-sub">Everything you need to know before getting started.</p>

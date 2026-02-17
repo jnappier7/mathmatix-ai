@@ -984,3 +984,553 @@
 [data-prefetched]::after {
   /* No visual indicator needed, just a data attribute for tracking */
 }
+
+/* ============================================
+   14. TOAST NOTIFICATION SYSTEM
+   Global async feedback for user actions
+   ============================================ */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast, 10000);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-3);
+  pointer-events: none;
+  max-width: 420px;
+  width: calc(100% - var(--space-8));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--clr-bg-light, #fff);
+  border: 1px solid var(--clr-border, #E2E8F0);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  animation: toast-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--clr-text, #18202B);
+}
+
+.toast.toast-exiting {
+  animation: toast-exit 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toast-enter {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toast-exit {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(8px) scale(0.95); }
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: white;
+}
+
+.toast-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  font-size: 0.825rem;
+  color: var(--clr-text-dim, #5B6876);
+}
+
+.toast-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--clr-text-dim, #5B6876);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  line-height: 1;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.toast-dismiss:hover {
+  color: var(--clr-text);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Toast variants */
+.toast--success .toast-icon { background: var(--clr-success-green, #16C86D); }
+.toast--success { border-left: 3px solid var(--clr-success-green, #16C86D); }
+
+.toast--error .toast-icon { background: var(--clr-error-red, #FF4E4E); }
+.toast--error { border-left: 3px solid var(--clr-error-red, #FF4E4E); }
+
+.toast--warning .toast-icon { background: var(--clr-warning-gold, #FFC24B); }
+.toast--warning { border-left: 3px solid var(--clr-warning-gold, #FFC24B); }
+
+.toast--info .toast-icon { background: var(--clr-primary-teal, #12B3B3); }
+.toast--info { border-left: 3px solid var(--clr-primary-teal, #12B3B3); }
+
+.toast--xp .toast-icon {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  font-size: 14px;
+}
+.toast--xp { border-left: 3px solid #FFD700; }
+
+/* Toast progress bar (auto-dismiss timer) */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--clr-primary-teal, #12B3B3);
+  border-radius: 0 0 0 var(--radius-md);
+  animation: toast-progress-shrink var(--toast-duration, 4s) linear forwards;
+}
+
+@keyframes toast-progress-shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* Dark mode toast */
+[data-theme="dark"] .toast {
+  background: #1A2633;
+  border-color: #374151;
+  color: #F0F4F8;
+}
+
+[data-theme="dark"] .toast-dismiss:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Mobile toast adjustments */
+@media (max-width: 768px) {
+  .toast-container {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100% - var(--space-6));
+  }
+}
+
+/* ============================================
+   15. EMPTY STATE COMPONENT
+   Illustrated empty states with CTAs
+   ============================================ */
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.empty-state-illustration {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb), 0.08), rgba(var(--clr-primary-teal-rgb), 0.03));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+  position: relative;
+}
+
+.empty-state-illustration i {
+  font-size: 2.5rem;
+  color: var(--clr-primary-teal, #12B3B3);
+  opacity: 0.6;
+}
+
+/* Subtle floating dots decoration around illustration */
+.empty-state-illustration::before,
+.empty-state-illustration::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(var(--clr-primary-teal-rgb), 0.15);
+}
+
+.empty-state-illustration::before {
+  width: 12px;
+  height: 12px;
+  top: 8px;
+  right: -4px;
+  animation: empty-float 3s ease-in-out infinite;
+}
+
+.empty-state-illustration::after {
+  width: 8px;
+  height: 8px;
+  bottom: 12px;
+  left: -2px;
+  animation: empty-float 3s ease-in-out 1.5s infinite;
+}
+
+@keyframes empty-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.empty-state-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--clr-text, #18202B);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state-description {
+  font-size: 0.9rem;
+  color: var(--clr-text-dim, #5B6876);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+
+.empty-state-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3), #0a9f9f);
+  color: white;
+  border: none;
+  border-radius: var(--radius-base);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: 0 4px 12px rgba(var(--clr-primary-teal-rgb), 0.25);
+}
+
+.empty-state-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--clr-primary-teal-rgb), 0.35);
+}
+
+.empty-state-action:active {
+  transform: translateY(0);
+}
+
+/* Empty state variants */
+.empty-state-container--chat .empty-state-illustration {
+  background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb), 0.06), rgba(var(--clr-accent-hotpink-rgb), 0.04));
+}
+
+.empty-state-container--chat .empty-state-illustration i {
+  color: var(--clr-primary-teal);
+}
+
+/* Dark mode empty states */
+[data-theme="dark"] .empty-state-illustration {
+  background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb), 0.12), rgba(var(--clr-primary-teal-rgb), 0.04));
+}
+
+[data-theme="dark"] .empty-state-title { color: #F0F4F8; }
+[data-theme="dark"] .empty-state-description { color: #8B9AAB; }
+
+/* ============================================
+   16. STYLED LOADING INDICATORS
+   Consistent loading patterns across the app
+   ============================================ */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  gap: var(--space-4);
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(var(--clr-primary-teal-rgb), 0.15);
+  border-top-color: var(--clr-primary-teal, #12B3B3);
+  border-radius: 50%;
+  animation: loading-spin 0.7s linear infinite;
+}
+
+.loading-spinner--sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-spinner--lg {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+@keyframes loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  color: var(--clr-text-dim, #5B6876);
+  font-weight: 500;
+}
+
+/* Pulse dot loader (for chat thinking) */
+.pulse-loader {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: var(--space-2);
+}
+
+.pulse-loader .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--clr-primary-teal, #12B3B3);
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+.pulse-loader .dot:nth-child(2) { animation-delay: 0.2s; }
+.pulse-loader .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   17. CONFIRMATION DIALOG
+   For destructive actions
+   ============================================ */
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: var(--blur-sm, blur(4px));
+  z-index: var(--z-modal, 9999);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: toast-enter 0.2s ease forwards;
+}
+
+.confirm-dialog {
+  background: var(--clr-bg-light, #fff);
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--space-8);
+  max-width: 400px;
+  width: calc(100% - var(--space-8));
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+}
+
+.confirm-dialog-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.confirm-dialog-icon--danger {
+  background: rgba(255, 78, 78, 0.1);
+  color: var(--clr-error-red, #FF4E4E);
+}
+
+.confirm-dialog-icon--warning {
+  background: rgba(255, 194, 75, 0.1);
+  color: var(--clr-warning-gold, #FFC24B);
+}
+
+.confirm-dialog-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  color: var(--clr-text);
+}
+
+.confirm-dialog-message {
+  font-size: 0.9rem;
+  color: var(--clr-text-dim);
+  line-height: 1.5;
+  margin-bottom: var(--space-6);
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.confirm-dialog-actions .btn {
+  flex: 1;
+  max-width: 160px;
+}
+
+[data-theme="dark"] .confirm-dialog {
+  background: #1A2633;
+}
+
+/* ============================================
+   18. DASHBOARD CARD VARIANTS
+   Visual differentiation by card type
+   ============================================ */
+.dashboard-card--progress {
+  border-top: 3px solid var(--clr-primary-teal, #12B3B3);
+}
+
+.dashboard-card--progress .card-icon {
+  background: rgba(var(--clr-primary-teal-rgb), 0.1);
+  color: var(--clr-primary-teal);
+}
+
+.dashboard-card--learning {
+  border-top: 3px solid #6366f1;
+}
+
+.dashboard-card--learning .card-icon {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.dashboard-card--assessment {
+  border-top: 3px solid var(--clr-success-green, #16C86D);
+}
+
+.dashboard-card--assessment .card-icon {
+  background: rgba(var(--clr-success-green-rgb), 0.1);
+  color: var(--clr-success-green);
+}
+
+.dashboard-card--game {
+  border-top: 3px solid var(--clr-accent-hotpink, #FF3B7F);
+}
+
+.dashboard-card--game .card-icon {
+  background: rgba(var(--clr-accent-hotpink-rgb), 0.1);
+  color: var(--clr-accent-hotpink);
+}
+
+.dashboard-card--streak {
+  border-top: 3px solid var(--clr-warning-gold, #FFC24B);
+}
+
+.dashboard-card--streak .card-icon {
+  background: rgba(255, 194, 75, 0.1);
+  color: var(--clr-warning-gold);
+}
+
+/* Animated card entrance stagger */
+.dashboard-grid > .dashboard-card {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: card-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.dashboard-grid > .dashboard-card:nth-child(1) { animation-delay: 0.05s; }
+.dashboard-grid > .dashboard-card:nth-child(2) { animation-delay: 0.1s; }
+.dashboard-grid > .dashboard-card:nth-child(3) { animation-delay: 0.15s; }
+.dashboard-grid > .dashboard-card:nth-child(4) { animation-delay: 0.2s; }
+.dashboard-grid > .dashboard-card:nth-child(5) { animation-delay: 0.25s; }
+.dashboard-grid > .dashboard-card:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes card-enter {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   19. INLINE FORM VALIDATION
+   Per-field error states
+   ============================================ */
+.form-field-error input,
+.form-field-error textarea,
+.form-field-error select {
+  border-color: var(--clr-error-red, #FF4E4E) !important;
+  box-shadow: 0 0 0 3px rgba(255, 78, 78, 0.1);
+}
+
+.form-error-message {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--clr-error-red, #FF4E4E);
+  margin-top: var(--space-1);
+  padding-left: var(--space-1);
+}
+
+.form-error-message::before {
+  content: '\f06a'; /* Font Awesome exclamation-circle */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  margin-right: var(--space-1);
+  font-size: 0.75rem;
+}
+
+.form-field-success input,
+.form-field-success textarea {
+  border-color: var(--clr-success-green, #16C86D) !important;
+}
+
+/* ============================================
+   20. TOOLTIP SYSTEM
+   For icon-only buttons
+   ============================================ */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 6px 12px;
+  background: var(--clr-bg-dark, #0F1A24);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: var(--radius-sm, 6px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: var(--z-dropdown, 100);
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+[data-theme="dark"] [data-tooltip]::after {
+  background: #F0F4F8;
+  color: #0F1A24;
+}

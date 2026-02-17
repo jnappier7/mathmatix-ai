@@ -102,14 +102,35 @@
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
+    --radius-2xl: 24px;
     --radius-full: 9999px;
     --border-radius-base: 10px;
+
+    /* Card-specific radius tokens (use these for consistent component rounding) */
+    --radius-card: var(--radius-lg);
+    --radius-button: var(--radius-base);
+    --radius-input: var(--radius-base);
+    --radius-modal: var(--radius-md);
+    --radius-badge: var(--radius-full);
+    --radius-chip: var(--radius-full);
 
     /* Transitions */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 300ms cubic-bezier(0.22, 1, 0.36, 1);
     --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Focus ring — consistent across all interactive elements */
+    --focus-ring-color: rgba(var(--clr-primary-teal-rgb), 0.4);
+    --focus-ring-width: 3px;
+    --focus-ring-offset: 2px;
+    --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+
+    /* Backdrop filter for glassmorphism effects */
+    --blur-sm: blur(4px);
+    --blur-md: blur(8px);
+    --blur-lg: blur(16px);
 
     /* Z-index scale */
     --z-base: 1;
@@ -120,6 +141,7 @@
     --z-drawer: 2000;
     --z-modal: 9999;
     --z-toast: 10000;
+    --z-ceremony: 100000;
 }
 
 * {
@@ -157,9 +179,40 @@ body {
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
-        animation-duration: 0.01ms !important;
+        animation-duration: 0s !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        transition-duration: 0s !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* ── Global Focus-Visible Ring ─────────────────────────── */
+/* Consistent, accessible focus indicator on all interactive elements */
+:focus-visible {
+    outline: 2px solid var(--clr-primary-teal);
+    outline-offset: var(--focus-ring-offset);
+}
+
+/* Remove default outline for mouse/touch users (kept for keyboard via :focus-visible) */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ── Skip-to-Content Link (Accessibility) ──────────────── */
+.skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    z-index: calc(var(--z-toast) + 1);
+    padding: var(--space-3) var(--space-6);
+    background: var(--clr-primary-teal);
+    color: white;
+    font-weight: var(--font-weight-semibold);
+    border-radius: 0 0 var(--radius-base) var(--radius-base);
+    text-decoration: none;
+    transition: top var(--transition-fast);
+}
+
+.skip-to-content:focus {
+    top: 0;
 }

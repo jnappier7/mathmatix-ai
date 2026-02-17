@@ -364,10 +364,17 @@ body.dark-mode .math-block-container {
     cursor: pointer;
     color: #aaa;
     padding: 0 5px;
+    border-radius: var(--radius-sm, 6px);
+    transition: color var(--transition-fast, 150ms ease), background var(--transition-fast, 150ms ease);
 }
-.modal-close-button:hover, .modal-close-button:focus {
+.modal-close-button:hover, .modal-close-button:focus-visible {
     color: var(--clr-text);
+    background: rgba(0, 0, 0, 0.05);
     text-decoration: none;
+}
+.modal-close-button:focus-visible {
+    outline: 2px solid var(--clr-primary-teal, #12B3B3);
+    outline-offset: 2px;
 }
 
 /* Modal Section Headers */
