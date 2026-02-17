@@ -110,12 +110,14 @@ teacherResourceSchema.index({ teacherId: 1, keywords: 1 });
 teacherResourceSchema.statics.findByName = async function(teacherId, searchText) {
     // Normalize search text
     const normalized = searchText.toLowerCase().trim();
+    // Escape special regex characters (e.g. parentheses in "Module 8 Test PRACTICE (A)")
+    const escaped = normalized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     // Try exact match first
     let resource = await this.findOne({
         teacherId,
         isPublished: true,
-        displayName: { $regex: new RegExp(`^${normalized}$`, 'i') }
+        displayName: { $regex: new RegExp(`^${escaped}$`, 'i') }
     });
 
     if (resource) return resource;
@@ -124,7 +126,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
     resource = await this.findOne({
         teacherId,
         isPublished: true,
-        displayName: { $regex: new RegExp(normalized, 'i') }
+        displayName: { $regex: new RegExp(escaped, 'i') }
     });
 
     if (resource) return resource;
@@ -142,15 +144,16 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
 // Method to search for resources
 teacherResourceSchema.statics.search = async function(teacherId, query) {
     const normalized = query.toLowerCase().trim();
+    const escaped = normalized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const keywords = normalized.split(/\s+/);
 
     return this.find({
         teacherId,
         isPublished: true,
         $or: [
-            { displayName: { $regex: new RegExp(normalized, 'i') } },
+            { displayName: { $regex: new RegExp(escaped, 'i') } },
             { keywords: { $in: keywords } },
-            { description: { $regex: new RegExp(normalized, 'i') } }
+            { description: { $regex: new RegExp(escaped, 'i') } }
         ]
     }).sort({ accessCount: -1, uploadedAt: -1 });
 };
