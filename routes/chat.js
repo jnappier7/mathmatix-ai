@@ -2180,7 +2180,7 @@ async function handleGreetingRequest(req, res, userId) {
         // Always create a fresh conversation for greetings.
         // This ensures new logins start a clean session instead of
         // resuming stale or course-linked conversations.
-        const activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+        let activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
         user.activeConversationId = activeConversation._id;
         await user.save();
 

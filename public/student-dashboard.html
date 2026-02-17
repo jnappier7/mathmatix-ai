@@ -333,6 +333,7 @@
   </style>
 </head>
 <body class="landing-page-body">
+  <a href="#dashboard-content" class="skip-to-content">Skip to dashboard</a>
   <header class="landing-header">
     <div class="header-logo-container">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
@@ -462,9 +463,9 @@
       <!-- Main Cards -->
       <div class="dashboard-grid">
         <!-- Recent Progress Card -->
-        <div id="progress-card" class="dashboard-card" style="display: none;">
+        <div id="progress-card" class="dashboard-card dashboard-card--progress" style="display: none;">
           <div class="card-header">
-            <div class="card-icon"><i class="fas fa-trophy" style="color: var(--clr-primary-teal);"></i></div>
+            <div class="card-icon"><i class="fas fa-trophy"></i></div>
             <div>
               <h3 class="card-title">Recent Progress</h3>
             </div>
@@ -478,9 +479,9 @@
         </div>
 
         <!-- Get Started Card (No Assessment) -->
-        <div id="no-assessment-card" class="dashboard-card" style="display: none;">
+        <div id="no-assessment-card" class="dashboard-card dashboard-card--assessment" style="display: none;">
           <div class="card-header">
-            <div class="card-icon"><i class="fas fa-seedling" style="color: var(--clr-success-green);"></i></div>
+            <div class="card-icon"><i class="fas fa-seedling"></i></div>
             <div>
               <h3 class="card-title">Find Your Starting Point</h3>
             </div>

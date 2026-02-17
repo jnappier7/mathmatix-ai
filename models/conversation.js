@@ -10,7 +10,10 @@ const messageSchema = new Schema({
     role: { type: String, required: true }, // 'user' or 'assistant'
     content: { type: String, required: true },
     timestamp: { type: Date, default: Date.now },
-    reaction: { type: String, default: null } // Emoji reaction (e.g., '❤️', '👍', '💯')
+    reaction: { type: String, default: null }, // Emoji reaction (e.g., '❤️', '👍', '💯')
+    // Course scaffold tracking — persisted so progress survives across requests
+    problemResult: { type: String, default: null }, // 'correct' | 'incorrect' | 'skipped' (set on AI messages)
+    scaffoldAdvanced: { type: Boolean, default: false } // true on the user msg where an advance was granted
 }, { _id: false });
 
 const conversationSchema = new Schema({

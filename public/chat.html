@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
   <!-- Core libs (needed before first render) -->
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
 
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -98,6 +98,7 @@
   </script>
 </head>
 <body class="landing-page-body">
+  <a href="#chat-messages-container" class="skip-to-content">Skip to chat</a>
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
     <!-- Mobile Drawer Toggle Buttons -->
@@ -1324,7 +1325,11 @@
       <button class="modal-close-button" id="close-catalog-modal-btn">&times;</button>
       <div style="padding: 24px;">
         <h2 style="margin: 0 0 4px 0; font-size: 22px;"><i class="fas fa-graduation-cap" style="color: #667eea;"></i> Course Catalog</h2>
-        <p style="color: #888; margin: 0 0 20px 0; font-size: 14px;">Enroll in a course and learn at your own pace with your AI tutor.</p>
+        <p style="color: #888; margin: 0 0 8px 0; font-size: 14px;">Enroll in a course and learn at your own pace with your AI tutor.</p>
+        <p style="color: #b45309; background: #fef9c3; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 12px; margin: 0 0 16px 0; font-size: 12px; display: flex; align-items: flex-start; gap: 6px;">
+          <i class="fas fa-circle-exclamation" style="margin-top: 1px; flex-shrink: 0;"></i>
+          <span><strong>Disclaimer:</strong> These courses do not count for academic credit and are not meant to replace in-person instruction.</span>
+        </p>
         <div id="catalog-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
           <!-- Populated by courseCatalog.js -->
           <div style="text-align: center; padding: 40px; color: #aaa;">Loading courses...</div>

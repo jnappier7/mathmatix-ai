@@ -577,6 +577,150 @@
 
 
   // ============================================
+  // 9. ACCESSIBILITY ENHANCEMENTS
+  // ============================================
+
+  /**
+   * Enhance modals with ARIA attributes for screen readers
+   */
+  function enhanceModalAccessibility() {
+    // Add role="dialog" and aria-modal to all modal overlays
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      if (!modal.getAttribute('role')) {
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+      }
+
+      // Set aria-labelledby if a heading exists inside
+      const heading = modal.querySelector('h2, h3, .modal-title');
+      if (heading && !modal.getAttribute('aria-labelledby')) {
+        if (!heading.id) heading.id = 'modal-title-' + Math.random().toString(36).substr(2, 6);
+        modal.setAttribute('aria-labelledby', heading.id);
+      }
+    });
+
+    // Add aria-live region for chat messages
+    const chatContainer = document.getElementById('chat-messages-container');
+    if (chatContainer && !chatContainer.getAttribute('aria-live')) {
+      chatContainer.setAttribute('aria-live', 'polite');
+      chatContainer.setAttribute('aria-relevant', 'additions');
+      chatContainer.setAttribute('role', 'log');
+    }
+
+    // Add aria-label to close buttons that only have "×"
+    document.querySelectorAll('.modal-close-button').forEach(btn => {
+      if (!btn.getAttribute('aria-label')) {
+        btn.setAttribute('aria-label', 'Close dialog');
+      }
+    });
+  }
+
+  /**
+   * Trap keyboard focus inside open modals
+   */
+  function initModalFocusTrap() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+
+      const activeModal = document.querySelector('.modal-overlay.is-visible');
+      if (!activeModal) return;
+
+      const focusable = activeModal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const activeModal = document.querySelector('.modal-overlay.is-visible');
+      if (activeModal) {
+        const closeBtn = activeModal.querySelector('.modal-close-button');
+        if (closeBtn) closeBtn.click();
+      }
+    });
+  }
+
+
+  // ============================================
+  // 10. LIGHTWEIGHT TOAST (CSS-DRIVEN)
+  // ============================================
+
+  /**
+   * Show a lightweight CSS-driven toast notification.
+   * Uses the classes from ux-enhancements.css.
+   */
+  function showCSSToast(message, options = {}) {
+    const {
+      type = 'info',
+      title = null,
+      duration = 4000,
+      icon = null
+    } = options;
+
+    // Ensure container exists
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'toast-container';
+      container.setAttribute('aria-live', 'polite');
+      container.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(container);
+    }
+
+    const iconMap = {
+      success: 'fa-check',
+      error: 'fa-times',
+      warning: 'fa-exclamation',
+      info: 'fa-info',
+      xp: 'fa-star'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast--${type}`;
+    toast.setAttribute('role', 'status');
+    toast.style.setProperty('--toast-duration', `${duration}ms`);
+    toast.innerHTML = `
+      <div class="toast-icon"><i class="fas ${icon || iconMap[type] || iconMap.info}"></i></div>
+      <div class="toast-body">
+        ${title ? `<div class="toast-title">${title}</div>` : ''}
+        <div class="toast-message">${message}</div>
+      </div>
+      <button class="toast-dismiss" aria-label="Dismiss">&times;</button>
+      <div class="toast-progress"></div>
+    `;
+
+    // Dismiss handler
+    const dismiss = () => {
+      toast.classList.add('toast-exiting');
+      setTimeout(() => toast.remove(), 250);
+    };
+
+    toast.querySelector('.toast-dismiss').addEventListener('click', dismiss);
+
+    // Auto-dismiss
+    if (duration > 0) {
+      setTimeout(dismiss, duration);
+    }
+
+    container.appendChild(toast);
+    return toast;
+  }
+
+
+  // ============================================
   // INITIALIZATION
   // ============================================
 
@@ -597,6 +741,10 @@
     initBottomNav();
     initSkeletons();
 
+    // Accessibility enhancements
+    enhanceModalAccessibility();
+    initModalFocusTrap();
+
     // Chat-specific enhancements (only on chat pages)
     const chatContainer = document.getElementById('chat-messages-container');
     if (chatContainer) {
@@ -607,6 +755,19 @@
 
     // Hook badge ceremony globally
     hookBadgeCeremony();
+
+    // Re-enhance modals when new ones are added dynamically
+    const bodyObserver = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1 && (node.classList?.contains('modal-overlay') || node.querySelector?.('.modal-overlay'))) {
+            enhanceModalAccessibility();
+            break;
+          }
+        }
+      }
+    });
+    bodyObserver.observe(document.body, { childList: true, subtree: true });
   }
 
   // Expose utilities globally
@@ -615,6 +776,7 @@
     createSkeleton,
     showBadgeCeremony,
     detectContextAndShowChips,
+    showCSSToast,
     SUGGESTION_CONTEXTS
   };
 
