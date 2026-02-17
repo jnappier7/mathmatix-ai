@@ -229,10 +229,10 @@
     /* Adjustments for phones - LARGER BASE FONT */
     :root {
         --header-height: 48px;
-        --page-horizontal-padding: 10px;
+        --page-horizontal-padding: 12px;
         --section-gap: 40px;
-        --brand-h1-font-size: 2em;
-        --brand-h3-font-size: 1.2em;
+        --brand-h1-font-size: clamp(1.6rem, 6vw, 2rem);
+        --brand-h3-font-size: clamp(1.05rem, 3vw, 1.2rem);
         --brand-base-font-size: 1rem;
     }
 
@@ -241,7 +241,7 @@
         font-size: 16px;
     }
     h1 { font-size: var(--brand-h1-font-size); }
-    h2 { font-size: 1.8em; }
+    h2 { font-size: clamp(1.4rem, 5vw, 1.8rem); }
     h3 { font-size: var(--brand-h3-font-size); }
 
     .landing-header {
@@ -429,12 +429,31 @@
     }
 
 
-    /* Hide suggestion chips on mobile - saves space and reduces clutter */
+    /* Show suggestion chips as compact horizontal scroll on mobile */
     #suggestion-chips-container {
-        display: none !important;
-        max-height: 0 !important;
-        opacity: 0 !important;
-        overflow: hidden !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        gap: 6px !important;
+        padding: 6px 0 !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch;
+        max-height: 44px !important;
+        opacity: 1 !important;
+    }
+
+    #suggestion-chips-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    #suggestion-chips-container .suggestion-chip,
+    #suggestion-chips-container .suggestion-chip-enhanced {
+        flex-shrink: 0 !important;
+        font-size: 12px !important;
+        padding: 6px 12px !important;
+        min-height: 32px !important;
+        min-width: auto !important;
     }
 
     /* Send button: compact on mobile */

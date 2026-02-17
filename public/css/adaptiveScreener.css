@@ -2,10 +2,17 @@
  * ADAPTIVE SCREENER STYLES
  */
 
+/* Screener accent color tokens — uses brand teal instead of purple for cohesion */
+:root {
+  --screener-accent: var(--clr-primary-teal, #12B3B3);
+  --screener-accent-dark: var(--clr-primary-teal-dark, #0E8F8F);
+  --screener-gradient: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3) 0%, #0a8f9f 100%);
+}
+
 /* Container */
 .screener-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--screener-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +70,7 @@
 .welcome-content h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--screener-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -103,7 +110,7 @@
 }
 
 .info-box li i {
-  color: #667eea;
+  color: var(--screener-accent);
   font-size: 1.3rem;
   width: 24px;
 }
@@ -144,7 +151,7 @@
 .question-number {
   font-weight: 700;
   font-size: 0.95rem;
-  color: #667eea;
+  color: var(--screener-accent);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -210,8 +217,8 @@
 
 .answer-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--screener-accent);
+  box-shadow: 0 0 0 3px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
 }
 
 /* Feedback Section */
@@ -331,7 +338,7 @@
 }
 
 .result-stat {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--screener-gradient);
   border-radius: 12px;
   padding: 25px;
   color: white;
@@ -446,14 +453,14 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--screener-gradient);
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 20px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.4);
 }
 
 .btn-secondary {
@@ -691,15 +698,15 @@
 }
 
 .mc-option:hover {
-  border-color: #667eea;
+  border-color: var(--screener-accent);
   background: #f7fafc;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 4px 12px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.15);
 }
 
 .mc-option.selected {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: var(--screener-accent);
+  background: var(--screener-gradient);
   color: white;
 }
 
@@ -710,7 +717,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #667eea;
+  background: var(--screener-accent);
   color: white;
   border-radius: 50%;
   font-weight: 600;
@@ -718,7 +725,7 @@
 
 .mc-option.selected .option-label {
   background: white;
-  color: #667eea;
+  color: var(--screener-accent);
 }
 
 .mc-option .option-text {
@@ -745,7 +752,7 @@
 
 .interview-header h2 {
   font-size: 2rem;
-  color: #667eea;
+  color: var(--screener-accent);
   margin-bottom: 10px;
 }
 
@@ -757,7 +764,7 @@
 
 .interview-progress {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--screener-gradient);
   color: white;
   padding: 8px 20px;
   border-radius: 20px;
@@ -771,7 +778,7 @@
 
 .interview-question {
   background: #f8f9ff;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--screener-accent);
   padding: 25px;
   border-radius: 10px;
   margin-bottom: 25px;
@@ -819,15 +826,15 @@
 
 .interview-answer-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--screener-accent);
+  box-shadow: 0 0 0 3px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
 }
 
 .interview-submit-btn {
   align-self: flex-end;
   padding: 12px 40px;
   font-size: 1.1rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--screener-gradient);
   color: white;
   border: none;
   border-radius: 25px;
@@ -838,7 +845,7 @@
 
 .interview-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 5px 20px rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.35);
 }
 
 .interview-submit-btn:disabled {
@@ -872,7 +879,7 @@
 }
 
 .rating-good {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--screener-gradient);
   color: white;
 }
 

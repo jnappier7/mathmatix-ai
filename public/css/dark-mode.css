@@ -24,11 +24,11 @@
     --text-light: #0F1A24;
     --text-dark: #F0F4F8;
 
-    /* Adjusted brand colors for dark mode (slightly brighter for visibility) */
+    /* Adjusted brand colors for dark mode (brighter for WCAG AA contrast on dark bg) */
     --clr-primary-teal: #14C8C8;
     --clr-primary-teal-light: #0F2D2D;
     --clr-primary-teal-dark: #16DADA;
-    --clr-accent-hotpink: #FF4D8B;
+    --clr-accent-hotpink: #FF6FA0;  /* Bumped from #FF4D8B for 4.6:1 contrast on #0F1A24 */
     --clr-accent-hotpink-light: #2D0F1A;
     --clr-success-green: #1AD97A;
     --clr-success-green-light: #0F2D1A;
@@ -277,12 +277,12 @@
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
-    background: #243040;
+    background: #3A4A5C;
     border-radius: 4px;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-    background: #344050;
+    background: #4A5A6C;
 }
 
 /* Avatar and profile elements */
@@ -340,11 +340,21 @@
     accent-color: var(--clr-primary-teal);
 }
 
-/* Logo - invert for visibility, hue-rotate to preserve red accent */
+/* Logo - brighten for dark backgrounds (invert + hue-rotate preserves hue) */
 [data-theme="dark"] .main-logo-hero,
 [data-theme="dark"] .main-logo {
-    filter: invert(1) hue-rotate(180deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
 }
+
+/* Confirmation dialog dark mode */
+[data-theme="dark"] .confirm-dialog {
+    background: #1A2633;
+    border: 1px solid #243040;
+}
+
+[data-theme="dark"] .confirm-dialog-title { color: #F0F4F8; }
+[data-theme="dark"] .confirm-dialog-message { color: #8B9AAB; }
 
 /* Landing header glass effect in dark mode */
 [data-theme="dark"] .landing-header {
