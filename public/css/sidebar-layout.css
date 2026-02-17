@@ -141,7 +141,14 @@
 
 #sidebar-sessions.expanded {
     max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
 }
+
+#sidebar-sessions.expanded::-webkit-scrollbar { width: 4px; }
+#sidebar-sessions.expanded::-webkit-scrollbar-track { background: transparent; }
+#sidebar-sessions.expanded::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 2px; }
 
 #sidebar-tools.expanded {
     max-height: 600px;
@@ -1070,4 +1077,75 @@ footer {
     #chat-container {
         margin-bottom: 0;
     }
+}
+
+/* ============================================
+   CONTEXT-ADAPTIVE SIDEBAR
+   Shows/hides sections based on course vs general chat
+   ============================================ */
+
+/* When in course context, hide general-chat sections */
+#app-sidebar.ctx-course .sidebar-ctx-general {
+    display: none;
+}
+
+/* Compact section variant (less padding) */
+.sidebar-section-compact {
+    padding: 10px 14px !important;
+}
+
+/* Footer section: minimal padding, smaller divider */
+.sidebar-section-footer {
+    padding: 10px 14px !important;
+    margin-top: auto;
+}
+
+/* Share code row — compact single line */
+.sidebar-share-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+}
+
+.sidebar-share-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    white-space: nowrap;
+}
+
+.sidebar-share-code {
+    font-size: 12px;
+    font-weight: 700;
+    color: #667eea;
+    cursor: pointer;
+    padding: 3px 8px;
+    background: #f3f0ff;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    transition: background 0.15s ease;
+}
+
+.sidebar-share-code:hover {
+    background: #e8e0ff;
+}
+
+/* "See all" link button (leaderboard) */
+.sidebar-see-all-btn {
+    display: block;
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+    background: none;
+    border: none;
+    color: #667eea;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+
+.sidebar-see-all-btn:hover {
+    text-decoration: underline;
 }
