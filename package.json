@@ -13,6 +13,8 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "seed:test": "node scripts/seedTestData.js",
+    "seed:playground": "node scripts/seedPlaygroundAccounts.js",
+    "seed:playground:clear": "node scripts/seedPlaygroundAccounts.js --clear",
     "seed:skills": "node scripts/seed-pattern-skills.js",
     "generate:fraction-problems": "node scripts/generate-fraction-problems.js",
     "generate:all-pattern-problems": "node scripts/generate-all-pattern-problems.js",

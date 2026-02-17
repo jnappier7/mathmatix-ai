@@ -135,6 +135,7 @@ const waitlistRoutes = require('./routes/waitlist');  // Pre-launch email waitli
 const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA/COPPA data deletion & export
 const consentRoutes = require('./routes/consent');  // Privacy consent management (COPPA/FERPA)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
+const demoRoutes = require('./routes/demo');  // Playground demo account login & reset
 
 // Usage gate middleware for free tier enforcement
 const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
@@ -510,6 +511,9 @@ app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User imp
 // Pre-launch waitlist (public — no auth required)
 app.use('/api/waitlist', waitlistRoutes);
 
+// Playground demo accounts (public login, authenticated reset/status)
+app.use('/api/demo', demoRoutes);
+
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
     try {
@@ -739,6 +743,7 @@ app.get("/forgot-password.html", (req, res) => res.sendFile(path.join(__dirname,
 app.get("/reset-password.html", (req, res) => res.sendFile(path.join(__dirname, "public", "reset-password.html")));
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
+app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "demo.html")));
 
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
