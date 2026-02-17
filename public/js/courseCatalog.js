@@ -963,6 +963,10 @@ class CourseManager {
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
                 ${courseTipsHtml}
+                <div style="margin-top: 16px; padding: 8px 12px; background: #fef9c3; border: 1px solid #fde68a; border-radius: 8px; font-size: 11px; color: #b45309; display: flex; align-items: flex-start; gap: 6px;">
+                    <i class="fas fa-circle-exclamation" style="margin-top: 1px; flex-shrink: 0;"></i>
+                    <span><strong>Disclaimer:</strong> These courses do not count for academic credit and are not meant to replace in-person instruction.</span>
+                </div>
                 <button onclick="this.closest('.course-welcome-splash').remove()" style="
                     margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
                     background: linear-gradient(135deg, #667eea, #764ba2); color: white;
