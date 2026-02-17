@@ -20,7 +20,7 @@ const path = require('path');
  * @param {Object|null} opts.currentModule – the module entry from pathway.modules[]
  * @returns {string} system prompt
  */
-function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
+function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule, resourceContext = null }) {
   // Branch to parent-specific prompt when audience is 'parent'
   if (pathway.audience === 'parent') {
     return buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
@@ -418,7 +418,20 @@ in for a number we don't know yet. Think of it like a blank in a sentence.
 Can you put that in your own words?"
 
 ====================================================================
-`;
+${resourceContext && !resourceContext.notFound ? `====================================================================
+TEACHER RESOURCE: "${resourceContext.displayName}"
+====================================================================
+The student is asking about a teacher-assigned resource called "${resourceContext.displayName}"${resourceContext.description ? ` (${resourceContext.description})` : ''}.
+You have the full content below. Work directly from it using Socratic method — do not give answers, guide the student problem by problem.
+
+RESOURCE CONTENT:
+${resourceContext.content}
+` : ''}${resourceContext && resourceContext.notFound ? `====================================================================
+TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}"
+====================================================================
+The student is referencing a teacher-assigned resource called "${resourceContext.displayName}" but its content is not loaded.
+Acknowledge it by name, ask which specific problem they are on, then guide them through it once they share it.
+` : ''}`;
 }
 
 /**

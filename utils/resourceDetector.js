@@ -21,6 +21,8 @@ function detectResourceMention(message) {
 
     // Common patterns for resource mentions
     const patterns = [
+        // Teacher resource naming convention: "Module 8 Test PRACTICE (A)", "Unit 3 Quiz (B)", etc.
+        /(?:module|unit|chapter|lesson)\s+\d+\s+(?:test|quiz|practice|exam|homework)\s+(?:practice\s+)?(?:\([A-Za-z]\))?/gi,
         /(?:module|unit|lesson|chapter)\s+[\d.]+/gi,
         /(?:worksheet|practice|homework|assignment|quiz|test)\s+[\d]+/gi,
         /(?:page|problem|question)\s+[\d]+/gi,
