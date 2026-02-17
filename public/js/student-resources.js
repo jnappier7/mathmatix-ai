@@ -57,6 +57,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // "Ask Tutor About This" button — event delegation on resources content
+    resourcesContent?.addEventListener('click', (e) => {
+        const btn = e.target.closest('.send-to-tutor-btn');
+        if (!btn) return;
+
+        const resourceName = btn.dataset.resourceName;
+        if (!resourceName) return;
+
+        closeModal();
+
+        const chatInput = document.getElementById('user-input');
+        if (chatInput) {
+            chatInput.textContent = `Can you help me with "${resourceName}"?`;
+            chatInput.focus();
+            // Place cursor at end
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(chatInput);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+
     // Load resources from API
     async function loadResources() {
         resourcesContent.innerHTML = '<p style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading resources...</p>';
@@ -352,21 +376,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const resourcesHtml = resources.map(resource => {
             const icon = getResourceIcon(resource.fileType);
             const categoryLabel = categoryLabels[resource.category] || 'Resource';
+            const escapedName = resource.displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
-                <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link"
-                   style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
-                    <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 500;">${resource.displayName}</div>
-                        <div style="font-size: 0.85em; color: #666; margin-top: 2px;">
-                            <span style="background: #e8f5e9; color: #27ae60; padding: 1px 6px; border-radius: 3px; font-size: 0.9em;">${categoryLabel}</span>
-                            ${resource.fileType.toUpperCase()} &bull; ${formatFileSize(resource.fileSize)} &bull; ${formatDate(resource.uploadedAt)}
+                <div class="resource-card-wrapper">
+                    <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link"
+                       style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
+                        <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500;">${resource.displayName}</div>
+                            <div style="font-size: 0.85em; color: #666; margin-top: 2px;">
+                                <span style="background: #e8f5e9; color: #27ae60; padding: 1px 6px; border-radius: 3px; font-size: 0.9em;">${categoryLabel}</span>
+                                ${resource.fileType.toUpperCase()} &bull; ${formatFileSize(resource.fileSize)} &bull; ${formatDate(resource.uploadedAt)}
+                            </div>
+                            ${resource.description ? `<div style="font-size: 0.85em; color: #888; margin-top: 4px;">${resource.description}</div>` : ''}
                         </div>
-                        ${resource.description ? `<div style="font-size: 0.85em; color: #888; margin-top: 4px;">${resource.description}</div>` : ''}
-                    </div>
-                    <i class="fas fa-download" style="color: #999;"></i>
-                </a>
+                        <i class="fas fa-download" style="color: #999;"></i>
+                    </a>
+                    <button class="send-to-tutor-btn" data-resource-name="${escapedName}" title="Share this resource with your tutor">
+                        <i class="fas fa-comment-dots"></i> Ask Tutor About This
+                    </button>
+                </div>
             `;
         }).join('');
 
