@@ -138,9 +138,37 @@ async function findResourceInMessage(teacherId, message) {
 async function fetchAndProcessResource(resource) {
     try {
         const filePath = path.join('uploads/teacher-resources', resource.storedFilename);
+        let extractedText = resource.extractedText || '';
 
-        if (!fs.existsSync(filePath)) {
-            console.error(`❌ Resource file not found: ${filePath}`);
+        if (fs.existsSync(filePath)) {
+            // File is on disk — extract text if not already cached
+            if (!extractedText) {
+                try {
+                    if (resource.mimeType === 'application/pdf') {
+                        extractedText = await extractTextFromPDF(filePath);
+                    } else if (resource.mimeType.startsWith('image/')) {
+                        const ocrResult = await performOCR(filePath);
+                        extractedText = ocrResult.text || '';
+                    }
+
+                    // Cache the extracted text
+                    if (extractedText) {
+                        resource.extractedText = extractedText.slice(0, 5000);
+                        await resource.save();
+                    }
+                } catch (error) {
+                    console.error('Error extracting text:', error);
+                }
+            }
+        } else if (extractedText) {
+            // File not on disk but we have cached text from upload time (e.g. cloud storage)
+            console.log(`📖 [Resource] "${resource.displayName}" serving from cached extracted text`);
+        } else if (resource.publicUrl) {
+            // File not on disk, no cached text, but a cloud URL exists — serve metadata only
+            console.warn(`⚠️ [Resource] "${resource.displayName}" not on disk and no cached text; returning metadata only`);
+        } else {
+            // Truly missing — no local file, no cached text, no cloud URL
+            console.error(`❌ Resource file not found and no fallback available: ${filePath}`);
             return {
                 success: false,
                 error: 'File not found'
@@ -149,36 +177,6 @@ async function fetchAndProcessResource(resource) {
 
         // Record access
         await resource.recordAccess();
-
-        let extractedText = resource.extractedText || '';
-
-        if (extractedText) {
-            console.log(`[ResourceDetector] Using cached text (${extractedText.length} chars) for "${resource.displayName}"`);
-        } else {
-            console.log(`[ResourceDetector] No cached text — running extraction (mimeType=${resource.mimeType}) for "${resource.displayName}"`);
-        }
-
-        // If no cached text, extract it now
-        if (!extractedText) {
-            try {
-                if (resource.mimeType === 'application/pdf') {
-                    extractedText = await extractTextFromPDF(filePath);
-                } else if (resource.mimeType.startsWith('image/')) {
-                    const ocrResult = await performOCR(filePath);
-                    extractedText = ocrResult.text || '';
-                }
-
-                console.log(`[ResourceDetector] Extraction result: ${extractedText.length} chars`);
-
-                // Cache the extracted text
-                if (extractedText) {
-                    resource.extractedText = extractedText.slice(0, 5000);
-                    await resource.save();
-                }
-            } catch (error) {
-                console.error('[ResourceDetector] Text extraction error:', error.message);
-            }
-        }
 
         const finalContent = extractedText.slice(0, 3000);
         if (!finalContent) {
