@@ -223,9 +223,11 @@ class CourseManager {
             this.activeCourseSessionId = match._id;
             this.updateProgressBar(match);
             wrapper.style.display = 'block';
+            if (window.sidebar) window.sidebar.setContext('course');
         } else {
             wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
+            if (window.sidebar) window.sidebar.setContext('general');
         }
     }
 
@@ -833,6 +835,9 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
+            // Switch sidebar to course context (hides sessions, leaderboard, quests)
+            if (window.sidebar) window.sidebar.setContext('course');
+
             // Fire silent course greeting — AI introduces the course/module
             this.sendCourseGreeting();
 
@@ -887,6 +892,9 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
+
+            // Switch sidebar back to general context
+            if (window.sidebar) window.sidebar.setContext('general');
 
             this.showToast('Returned to general tutoring');
         } catch (err) {
