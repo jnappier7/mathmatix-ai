@@ -15,9 +15,9 @@ const cheerio = require('cheerio');
 const https = require('https');
 const http = require('http');
 
-// Configure multer for file uploads
+// Configure multer for file uploads (memory storage — no disk writes needed in container)
 const upload = multer({
-    dest: 'uploads/curriculum/',
+    storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/pdf'];
@@ -251,24 +251,19 @@ router.post('/teacher/curriculum/parse', isAuthenticated, isTeacher, upload.sing
         }
 
         const { name, courseLevel, gradeLevel, schoolYear } = req.body;
-        const filePath = req.file.path;
         const fileExt = path.extname(req.file.originalname).toLowerCase();
 
         let lessons = [];
 
         // Parse CSV file
         if (fileExt === '.csv' || req.file.mimetype === 'text/csv') {
-            lessons = await parseCSV(filePath);
+            lessons = await parseCSV(req.file.buffer);
         } else {
             // For now, only CSV is supported. PDF/Excel would need additional libraries
-            fs.unlinkSync(filePath); // Clean up uploaded file
             return res.status(400).json({
                 message: 'Currently only CSV files are supported. Export your schedule as CSV and try again.'
             });
         }
-
-        // Clean up uploaded file
-        fs.unlinkSync(filePath);
 
         if (lessons.length === 0) {
             return res.status(400).json({ message: 'No lessons found in file. Check the format and try again.' });
@@ -300,21 +295,18 @@ router.post('/teacher/curriculum/parse', isAuthenticated, isTeacher, upload.sing
 
     } catch (error) {
         console.error('Error parsing curriculum file:', error);
-        // Clean up file if it exists
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
         res.status(500).json({ message: 'Failed to parse curriculum file: ' + error.message });
     }
 });
 
-// Helper function to parse CSV
-function parseCSV(filePath) {
+// Helper function to parse CSV from a Buffer
+function parseCSV(buffer) {
+    const { Readable } = require('stream');
     return new Promise((resolve, reject) => {
         const lessons = [];
         let rowNum = 0;
 
-        fs.createReadStream(filePath)
+        Readable.from(buffer)
             .pipe(csv())
             .on('data', (row) => {
                 rowNum++;
