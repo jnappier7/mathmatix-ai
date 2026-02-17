@@ -137,7 +137,7 @@ const userPreferencesSchema = new Schema({
 
 /* ---------- BADGES ---------- */
 const badgeSchema = new Schema({
-  key:        { type: String, unique: true, sparse: true },
+  key:        { type: String },
   badgeId:    { type: String },  // For mastery mode badges
   unlockedAt: { type: Date,   default: Date.now },
   earnedDate: { type: Date },
