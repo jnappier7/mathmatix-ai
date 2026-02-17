@@ -8,31 +8,31 @@ const mongoose = require('mongoose');
 // Using fixed hex strings so relationships survive reset cycles.
 const DEMO_IDS = {
   // Loginable demo accounts
-  teacherRivera:  new mongoose.Types.ObjectId('d3m0000000000000000001a1'),
-  parentChen:     new mongoose.Types.ObjectId('d3m0000000000000000002a2'),
-  studentMaya:    new mongoose.Types.ObjectId('d3m0000000000000000003a3'),
-  studentAlex:    new mongoose.Types.ObjectId('d3m0000000000000000004a4'),
-  studentJordan:  new mongoose.Types.ObjectId('d3m0000000000000000005a5'),
+  teacherRivera:  new mongoose.Types.ObjectId('d3e00000000000000001a1a1'),
+  parentChen:     new mongoose.Types.ObjectId('d3e00000000000000002a2a2'),
+  studentMaya:    new mongoose.Types.ObjectId('d3e00000000000000003a3a3'),
+  studentAlex:    new mongoose.Types.ObjectId('d3e00000000000000004a4a4'),
+  studentJordan:  new mongoose.Types.ObjectId('d3e00000000000000005a5a5'),
 
   // Non-loginable mock students in Ms. Rivera's class
-  mockStudent01:  new mongoose.Types.ObjectId('d3m0000000000000000010b1'),
-  mockStudent02:  new mongoose.Types.ObjectId('d3m0000000000000000010b2'),
-  mockStudent03:  new mongoose.Types.ObjectId('d3m0000000000000000010b3'),
-  mockStudent04:  new mongoose.Types.ObjectId('d3m0000000000000000010b4'),
-  mockStudent05:  new mongoose.Types.ObjectId('d3m0000000000000000010b5'),
-  mockStudent06:  new mongoose.Types.ObjectId('d3m0000000000000000010b6'),
-  mockStudent07:  new mongoose.Types.ObjectId('d3m0000000000000000010b7'),
-  mockStudent08:  new mongoose.Types.ObjectId('d3m0000000000000000010b8'),
-  mockStudent09:  new mongoose.Types.ObjectId('d3m0000000000000000010b9'),
-  mockStudent10:  new mongoose.Types.ObjectId('d3m00000000000000001000'),
-  mockStudent11:  new mongoose.Types.ObjectId('d3m00000000000000001001'),
-  mockStudent12:  new mongoose.Types.ObjectId('d3m00000000000000001002'),
+  mockStudent01:  new mongoose.Types.ObjectId('d3e000000000000000100b01'),
+  mockStudent02:  new mongoose.Types.ObjectId('d3e000000000000000100b02'),
+  mockStudent03:  new mongoose.Types.ObjectId('d3e000000000000000100b03'),
+  mockStudent04:  new mongoose.Types.ObjectId('d3e000000000000000100b04'),
+  mockStudent05:  new mongoose.Types.ObjectId('d3e000000000000000100b05'),
+  mockStudent06:  new mongoose.Types.ObjectId('d3e000000000000000100b06'),
+  mockStudent07:  new mongoose.Types.ObjectId('d3e000000000000000100b07'),
+  mockStudent08:  new mongoose.Types.ObjectId('d3e000000000000000100b08'),
+  mockStudent09:  new mongoose.Types.ObjectId('d3e000000000000000100b09'),
+  mockStudent10:  new mongoose.Types.ObjectId('d3e0000000000000001000a0'),
+  mockStudent11:  new mongoose.Types.ObjectId('d3e0000000000000001001a1'),
+  mockStudent12:  new mongoose.Types.ObjectId('d3e0000000000000001002a2'),
 
   // A teacher for Maya & Alex (separate from Ms. Rivera)
-  teacherForChenKids: new mongoose.Types.ObjectId('d3m0000000000000000006a6'),
+  teacherForChenKids: new mongoose.Types.ObjectId('d3e00000000000000006a6a6'),
 
   // Enrollment code
-  enrollmentCode: new mongoose.Types.ObjectId('d3m0000000000000000e0001'),
+  enrollmentCode: new mongoose.Types.ObjectId('d3e0000000000000000e0001'),
 };
 
 // All demo user IDs for cleanup queries
