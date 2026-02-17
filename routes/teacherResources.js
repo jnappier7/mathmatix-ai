@@ -377,6 +377,7 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
         const resource = await TeacherResource.findById(req.params.id);
 
         if (!resource) {
+            console.warn(`⚠️ [Download] Resource not found in database: ${req.params.id}`);
             return res.status(404).json({ message: 'Resource not found' });
         }
 
@@ -400,17 +401,20 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
         // Serve the file
         const filePath = path.join(uploadDir, resource.storedFilename);
 
-        if (!fs.existsSync(filePath)) {
+        if (fs.existsSync(filePath)) {
+            // File exists on disk — stream it
+            res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
+            res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
+            const fileStream = fs.createReadStream(filePath);
+            fileStream.pipe(res);
+        } else if (resource.publicUrl) {
+            // File not on disk but has a public URL — redirect
+            console.warn(`⚠️ [Download] File not on disk for "${resource.displayName}" (${resource._id}), redirecting to publicUrl`);
+            res.redirect(resource.publicUrl);
+        } else {
+            console.error(`❌ [Download] File not found for "${resource.displayName}" (${resource._id}): ${filePath}`);
             return res.status(404).json({ message: 'File not found on server' });
         }
-
-        // Set appropriate headers
-        res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
-        res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
-
-        // Stream the file
-        const fileStream = fs.createReadStream(filePath);
-        fileStream.pipe(res);
 
     } catch (error) {
         console.error('Error downloading resource:', error);
