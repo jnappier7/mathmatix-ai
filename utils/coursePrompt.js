@@ -126,6 +126,14 @@ ${strategies ? `TEACHING STRATEGIES:\n${strategies}\n` : ''}
 SCAFFOLD SEQUENCE (your lesson plan):
 ${scaffoldOutline}
 
+🔒 YOU ARE LOCKED TO THE CURRENT STEP (▶). Do NOT move on to any content from
+a later step — even briefly — until you have emitted <SCAFFOLD_ADVANCE> in your
+response. Emitting that tag is what advances the step counter. If you discuss
+next-step content without emitting it first, the student's progress never moves.
+In diagnostic mode: if the student already knows the current step, ask ONE quick
+question, confirm they get it, then emit <SCAFFOLD_ADVANCE> and move on. Fast is
+fine — skipping the tag entirely is not.
+
 ${currentStepDetail}
 
 ====================================================================
@@ -251,6 +259,12 @@ PROGRESS SIGNALS (CRITICAL — you MUST emit these tags)
 You have two signal tags that control the student's course progress.
 Include them at the END of your response when the conditions are met.
 The student will NOT see these tags — they are parsed by the server.
+
+🚨 RULE #1: You may NEVER discuss content from the next scaffold step
+until you have emitted <SCAFFOLD_ADVANCE> in a prior response.
+Moving topics without the tag = student progress stays frozen at 0%.
+Even if you're moving quickly through review material, emit the tag
+every time you leave a step behind — there is no shortcut.
 
 **1. <SCAFFOLD_ADVANCE>**
 Emit this tag when the current scaffold step is COMPLETE and you are
@@ -426,6 +440,10 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `After teaching, engage with: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: Once the student has engaged with this concept (answered ` +
+                `a question or demonstrated any understanding), append <SCAFFOLD_ADVANCE> to the ` +
+                `END of that response before you say anything about the next topic. In diagnostic ` +
+                `mode, one correct reply is enough — move quickly.\n`;
       break;
 
     case 'model':
@@ -450,6 +468,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `\nAfter modeling, ask: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: After you've modeled the examples and the student has ` +
+                `correctly answered at least one follow-up question, append <SCAFFOLD_ADVANCE> ` +
+                `to the END of that response. Do NOT describe the next topic first.\n`;
       break;
 
     case 'guided_practice':
@@ -475,6 +496,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: After the student has correctly solved at least 2 problems ` +
+                `(server requires 2 <PROBLEM_RESULT:correct> tags), append <SCAFFOLD_ADVANCE> ` +
+                `to close this step. Do NOT move on without it.\n`;
       break;
 
     case 'independent_practice':
@@ -499,6 +523,9 @@ function formatScaffoldStep(step, index, total) {
         });
       }
       detail += `\nPresent ONE problem at a time. Wait for the student's full answer before responding.\n`;
+      detail += `\n⚡ CLOSE THIS STEP: After the student has independently solved at least 2 ` +
+                `problems correctly (server requires 2 <PROBLEM_RESULT:correct> tags), append ` +
+                `<SCAFFOLD_ADVANCE> to close this step. Do NOT move on without it.\n`;
       break;
 
     default:

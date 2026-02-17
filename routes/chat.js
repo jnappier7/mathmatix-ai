@@ -2250,10 +2250,13 @@ async function handleGreetingRequest(req, res, userId) {
         // Build messages for AI - the ghost message is the "user" message
         // but we add a system instruction to respond as if initiating
 
-        // Check if user is in an active course session
+        // Check if user is in an active course session.
+        // skipCourse is set when the user explicitly chose a fresh general session —
+        // in that case we must not hijack the conversation into course mode.
+        const skipCourse = req.body?.skipCourse === true;
         let courseContext = null;
         let isCourseGreeting = false;
-        if (user.activeCourseSessionId) {
+        if (user.activeCourseSessionId && !skipCourse) {
             try {
                 const CourseSession = require('../models/courseSession');
                 const courseSession = await CourseSession.findById(user.activeCourseSessionId);
