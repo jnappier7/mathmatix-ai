@@ -114,6 +114,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
     // Try exact match first
     let resource = await this.findOne({
         teacherId,
+        isPublished: true,
         displayName: { $regex: new RegExp(`^${normalized}$`, 'i') }
     });
 
@@ -122,6 +123,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
     // Try partial match
     resource = await this.findOne({
         teacherId,
+        isPublished: true,
         displayName: { $regex: new RegExp(normalized, 'i') }
     });
 
@@ -130,6 +132,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
     // Try keyword match
     resource = await this.findOne({
         teacherId,
+        isPublished: true,
         keywords: { $in: normalized.split(/\s+/) }
     });
 
@@ -143,6 +146,7 @@ teacherResourceSchema.statics.search = async function(teacherId, query) {
 
     return this.find({
         teacherId,
+        isPublished: true,
         $or: [
             { displayName: { $regex: new RegExp(normalized, 'i') } },
             { keywords: { $in: keywords } },
@@ -189,6 +193,7 @@ teacherResourceSchema.statics.vectorSearch = async function(teacherId, queryEmbe
     // Get all resources for this teacher that have embeddings
     const resources = await this.find({
         teacherId,
+        isPublished: true,
         embedding: { $exists: true, $ne: null, $not: { $size: 0 } }
     }).lean();
 
