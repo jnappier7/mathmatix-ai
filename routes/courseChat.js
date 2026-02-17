@@ -19,6 +19,7 @@ const BRAND_CONFIG = require('../utils/brand');
 const { calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { detectTopic } = require('../utils/activitySummarizer');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -145,6 +146,29 @@ router.post('/', async (req, res) => {
             console.log(`▶ [CourseChat] Module ${activeMod.moduleId} marked in_progress on first message`);
         }
 
+        // ── Detect teacher resource mentions ─────────────────
+        let resourceContext = null;
+        if (user.teacherId) {
+            try {
+                resourceContext = await detectAndFetchResource(user.teacherId, messageText);
+            } catch (err) {
+                console.error('[CourseChat] Resource detection error:', err.message);
+            }
+        }
+        // Fallback: resource mentioned by name but not found in DB
+        if (!resourceContext) {
+            const resourceMentions = detectResourceMention(messageText);
+            if (resourceMentions.length > 0) {
+                resourceContext = {
+                    displayName: resourceMentions[0].trim(),
+                    description: null,
+                    content: null,
+                    notFound: true
+                };
+                console.log(`📋 [CourseChat] Resource mentioned but not in DB: "${resourceContext.displayName}"`);
+            }
+        }
+
         // ── Build system prompt ─────────────────────────────
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
             ? user.selectedTutorId : 'default';
@@ -156,7 +180,8 @@ router.post('/', async (req, res) => {
             courseSession,
             pathway,
             scaffoldData: moduleData,
-            currentModule: currentPathwayModule
+            currentModule: currentPathwayModule,
+            resourceContext
         });
 
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
