@@ -1360,6 +1360,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
 
                             // Check for full course completion
+                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
                             if (doneCount === csDoc.modules.length) {
                                 csDoc.status = 'completed';
                                 csDoc.completedAt = new Date();
@@ -2157,7 +2158,7 @@ async function handleGreetingRequest(req, res, userId) {
         // Always create a fresh conversation for greetings.
         // This ensures new logins start a clean session instead of
         // resuming stale or course-linked conversations.
-        const activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+        let activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
         user.activeConversationId = activeConversation._id;
         await user.save();
 
