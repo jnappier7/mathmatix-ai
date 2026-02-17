@@ -573,7 +573,8 @@ class CourseManager {
 
             // Lesson rows (only show for current/in-progress/available modules)
             if (m.lessons && m.lessons.length > 0 && (isCurrent || m.status === 'in_progress' || m.status === 'available')) {
-                m.lessons.forEach(l => {
+                const sortedLessons = [...m.lessons].sort((a, b) => (a.order || 0) - (b.order || 0));
+                sortedLessons.forEach(l => {
                     let lIcon = 'fa-circle';
                     let lColor = '#ddd';
                     let lWeight = '400';
@@ -668,13 +669,24 @@ class CourseManager {
 
         // Difficulty badge colors
         const diffColors = {
+            'Foundational': { bg: '#ecfdf5', text: '#16a34a' },
             'Beginner': { bg: '#ecfdf5', text: '#16a34a' },
             'Intermediate': { bg: '#eff6ff', text: '#2563eb' },
             'Advanced': { bg: '#faf5ff', text: '#7c3aed' },
+            'Applied': { bg: '#fef3c7', text: '#b45309' },
             'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
         };
 
+        let lastGroup = '';
         catalog.forEach(course => {
+            // Insert group header when group changes
+            if (course.group && course.group !== lastGroup) {
+                lastGroup = course.group;
+                const header = document.createElement('div');
+                header.style.cssText = 'grid-column: 1 / -1; padding: 12px 0 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 4px;';
+                header.innerHTML = `<span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #667eea;">${this.escapeHtml(course.group)}</span>`;
+                grid.appendChild(header);
+            }
             const card = document.createElement('div');
             const isRecommended = course.courseId === recommended;
             card.style.cssText = `border:1px solid ${isRecommended ? '#667eea' : '#e2e8f0'}; border-radius:12px; padding:16px; display:flex; gap:14px; transition:box-shadow 0.15s; position:relative;${isRecommended ? ' background: #f8f7ff;' : ''}`;
