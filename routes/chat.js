@@ -558,18 +558,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
             .map(msg => ({ role: msg.role, content: msg.content }));
 
-        // If a resource was detected, inject it into the conversation
-        if (resourceContext) {
-            const resourceMessage = `[SYSTEM: Student is referencing "${resourceContext.displayName}"${resourceContext.description ? ` - ${resourceContext.description}` : ''}. Content:\n\n${resourceContext.content}\n\nPlease help the student with their question about this resource.]`;
-
-            // Replace the last user message with one that includes the resource context
-            if (formattedMessagesForLLM.length > 0) {
-                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
-                if (lastMessage.role === 'user') {
-                    lastMessage.content = resourceMessage + '\n\nStudent question: ' + lastMessage.content;
-                }
-            }
-        }
+        // Resource context is injected into the system prompt via generateSystemPrompt()
 
         // MATH VERIFICATION: Inject verified answer into context for LLM accuracy
         let mathVerificationContext = null;
@@ -725,10 +714,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     currentModule: courseCtx.currentModule
                 });
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
             }
         } else {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
         }
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 

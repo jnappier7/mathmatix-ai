@@ -488,7 +488,7 @@ function buildCourseProgressionContext(mathCourse, firstName) {
   }
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -2534,6 +2534,20 @@ ${uploadContext.summary}
 5. **Be Natural:** Don't force references to previous work, only mention when genuinely relevant
 
 **IMPORTANT:** Only reference uploaded files when it adds value to the current conversation. Don't mention them just for the sake of it.
+` : ''}
+
+${resourceContext ? `--- TEACHER RESOURCE: "${resourceContext.displayName}" ---
+${firstName} is asking about a resource their teacher shared called "${resourceContext.displayName}"${resourceContext.description ? ` (${resourceContext.description})` : ''}. You have the full content of this resource below.
+
+RESOURCE CONTENT:
+${resourceContext.content}
+
+**HOW TO USE THIS:**
+1. **Work directly from this content** — This is the actual material ${firstName} is working on. You don't need to ask them to share problems; you already have them.
+2. **Walk through it step by step** — Use Socratic method. Ask guiding questions, don't just give answers.
+3. **Reference problems by number** — If the resource has numbered problems, refer to them by number (e.g., "Let's start with problem 1...").
+4. **Stay on task** — Focus on helping ${firstName} work through this specific resource.
+5. **Don't ask for more details** — You have the content. Dive in and start helping.
 ` : ''}
 
 ${!masteryContext && gradingContext ? `--- RECENT WORK ANALYSIS (SHOW YOUR WORK) ---
