@@ -474,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await csrfFetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isGreeting: true })
+                body: JSON.stringify({ isGreeting: true, skipCourse: true })
             });
 
             const data = await res.json();
@@ -2460,6 +2460,14 @@ document.addEventListener("DOMContentLoaded", () => {
             e.stopPropagation();
             fullscreenDropzone.classList.remove('drag-active');
 
+            // Check if this is a teacher resource dragged from the resources panel
+            const resourceId = e.dataTransfer.getData('application/x-teacher-resource-id');
+            if (resourceId) {
+                const resourceName = e.dataTransfer.getData('application/x-teacher-resource-name') || 'Resource';
+                fetchAndUploadTeacherResource(resourceId, resourceName);
+                return;
+            }
+
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                 handleFileUpload(e.dataTransfer.files); // Handle all dropped files
                 const fileCount = e.dataTransfer.files.length;
@@ -2467,6 +2475,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.dataTransfer.clearData();
             }
         });
+    }
+
+    /**
+     * Fetch a teacher resource by ID and feed it into the file upload pipeline,
+     * exactly as if the student had dragged the PDF file from their computer.
+     */
+    async function fetchAndUploadTeacherResource(resourceId, resourceName) {
+        showToast(`Loading "${resourceName}"...`, 2500);
+        try {
+            const response = await fetch(`/api/teacher-resources/download/${resourceId}`);
+            if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+            const blob = await response.blob();
+            const mimeType = blob.type || 'application/pdf';
+
+            // Build a proper filename — keep the extension if the resource name already has one
+            const hasExt = /\.(pdf|png|jpg|jpeg|webp)$/i.test(resourceName);
+            const filename = hasExt ? resourceName : `${resourceName}.pdf`;
+
+            const file = new File([blob], filename, { type: mimeType });
+            handleFileUpload([file]);
+            showToast(`"${resourceName}" added to chat!`, 2000);
+        } catch (err) {
+            console.error('[TeacherResource] Failed to load resource for drag-drop:', err);
+            showToast('Could not load the resource. Try "Ask Tutor About This" instead.', 3500);
+        }
     }
 
     // ============================================

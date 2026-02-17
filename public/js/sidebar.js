@@ -149,6 +149,20 @@ class Sidebar {
         console.log('✅ Sidebar ready');
     }
 
+    /**
+     * Switch sidebar context between 'course' and 'general'.
+     * In course mode, session list / leaderboard / quests are hidden
+     * to reduce clutter — the student is focused on their course.
+     */
+    setContext(ctx) {
+        if (!this.sidebar) return;
+        if (ctx === 'course') {
+            this.sidebar.classList.add('ctx-course');
+        } else {
+            this.sidebar.classList.remove('ctx-course');
+        }
+    }
+
     toggleSidebar() {
         this.isOpen = !this.isOpen;
 
@@ -658,9 +672,14 @@ class Sidebar {
         const tbody = document.getElementById('sidebar-leaderboard-body');
         if (!tbody) return;
 
+        this._leaderboardData = leaderboard;
+        this._leaderboardShowAll = false;
+
         tbody.innerHTML = '';
 
-        leaderboard.slice(0, 10).forEach((student, index) => {
+        // Show top 3 by default (compact); full 10 on "See all"
+        const displayCount = 3;
+        leaderboard.slice(0, displayCount).forEach((student, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="font-weight: 600;">#${index + 1}</td>
@@ -673,10 +692,49 @@ class Sidebar {
             tbody.appendChild(row);
         });
 
+        // Show "See all" if there are more
+        const seeAllBtn = document.getElementById('leaderboard-see-all-btn');
+        if (seeAllBtn) {
+            if (leaderboard.length > displayCount) {
+                seeAllBtn.style.display = 'block';
+                seeAllBtn.textContent = `See all ${Math.min(leaderboard.length, 10)}`;
+                seeAllBtn.onclick = () => this.toggleFullLeaderboard();
+            } else {
+                seeAllBtn.style.display = 'none';
+            }
+        }
+
         // Sync to mobile drawer
         const drawerTbody = document.getElementById('drawer-leaderboard-body');
         if (drawerTbody) {
             drawerTbody.innerHTML = tbody.innerHTML;
+        }
+    }
+
+    toggleFullLeaderboard() {
+        const tbody = document.getElementById('sidebar-leaderboard-body');
+        const seeAllBtn = document.getElementById('leaderboard-see-all-btn');
+        if (!tbody || !this._leaderboardData) return;
+
+        this._leaderboardShowAll = !this._leaderboardShowAll;
+        tbody.innerHTML = '';
+
+        const count = this._leaderboardShowAll ? 10 : 3;
+        this._leaderboardData.slice(0, count).forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="font-weight: 600;">#${index + 1}</td>
+                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${student.name || student.firstName || 'Student'}
+                </td>
+                <td>L${student.level || 1}</td>
+                <td>${student.xp || student.totalXp || 0}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        if (seeAllBtn) {
+            seeAllBtn.textContent = this._leaderboardShowAll ? 'Show less' : `See all ${Math.min(this._leaderboardData.length, 10)}`;
         }
     }
 

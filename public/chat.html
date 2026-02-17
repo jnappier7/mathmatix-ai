@@ -176,8 +176,10 @@
 
   <!-- Collapsible Sidebar -->
   <aside id="app-sidebar">
-    <!-- Progress Section -->
-    <div class="sidebar-section">
+    <!-- ═══ ALWAYS VISIBLE ═══ -->
+
+    <!-- Compact Progress Card -->
+    <div class="sidebar-section sidebar-section-compact">
       <div class="sidebar-progress">
         <div class="sidebar-progress-level">Level <span id="sidebar-level">1</span></div>
         <div class="sidebar-progress-bar">
@@ -187,8 +189,58 @@
       </div>
     </div>
 
-    <!-- My Sessions Section -->
+    <!-- My Courses (always visible — primary navigation for enrolled students) -->
+    <div class="sidebar-section" id="sidebar-courses-section">
+      <button class="courses-toggle" id="courses-toggle-btn">
+        <span>My Courses</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+
+      <div id="sidebar-courses" class="sidebar-courses-list">
+        <div id="course-sessions-list">
+          <!-- Populated by courseCatalog.js -->
+        </div>
+        <button id="browse-courses-btn" class="sidebar-tool-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px;">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Browse Courses</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tools (always visible — compact row of buttons) -->
     <div class="sidebar-section">
+      <button class="tools-toggle">
+        <span>Tools</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+
+      <div id="sidebar-tools" class="sidebar-tools-list">
+        <!-- Starting Point (CAT Screener) - Glowing button -->
+        <button id="sidebar-starting-point-btn" class="sidebar-tool-btn sidebar-starting-point-btn" style="display: none;">
+          <i class="fas fa-crosshairs"></i>
+          <span>Starting Point</span>
+        </button>
+
+        <button id="sidebar-resources-btn" class="sidebar-tool-btn">
+          <i class="fas fa-book-open"></i>
+          <span>Resources</span>
+        </button>
+
+        <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
+          <i class="fas fa-calculator"></i>
+          <span>Calculator</span>
+        </button>
+        <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
+          <i class="fas fa-camera-retro"></i>
+          <span>Upload Work</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ GENERAL CHAT CONTEXT (hidden when in a course) ═══ -->
+
+    <!-- My Sessions -->
+    <div class="sidebar-section sidebar-ctx-general">
       <button class="sessions-toggle">
         <span>My Sessions</span>
         <i class="fas fa-chevron-down"></i>
@@ -211,58 +263,8 @@
       </div>
     </div>
 
-    <!-- Tools Section -->
-    <div class="sidebar-section">
-      <button class="tools-toggle">
-        <span>Tools</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
-
-      <div id="sidebar-tools" class="sidebar-tools-list">
-        <!-- Starting Point (CAT Screener) - Glowing button -->
-        <button id="sidebar-starting-point-btn" class="sidebar-tool-btn sidebar-starting-point-btn" style="display: none;">
-          <i class="fas fa-crosshairs"></i>
-          <span>Starting Point</span>
-        </button>
-
-        <button id="sidebar-resources-btn" class="sidebar-tool-btn">
-          <i class="fas fa-book-open"></i>
-          <span>Resources</span>
-        </button>
-
-
-        <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
-          <i class="fas fa-calculator"></i>
-          <span>Calculator</span>
-        </button>
-        <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
-          <i class="fas fa-camera-retro"></i>
-          <span>Upload Work</span>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- Courses Section (self-paced enrollment) -->
-    <div class="sidebar-section" id="sidebar-courses-section">
-      <button class="courses-toggle" id="courses-toggle-btn">
-        <span>My Courses</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
-
-      <div id="sidebar-courses" class="sidebar-courses-list">
-        <div id="course-sessions-list">
-          <!-- Populated by courseCatalog.js -->
-        </div>
-        <button id="browse-courses-btn" class="sidebar-tool-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px;">
-          <i class="fas fa-graduation-cap"></i>
-          <span>Browse Courses</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Leaderboard Section -->
-    <div class="sidebar-section">
+    <!-- Leaderboard (compact: top 3 + "See all") -->
+    <div class="sidebar-section sidebar-ctx-general">
       <button class="leaderboard-toggle">
         <span>Leaderboard</span>
         <i class="fas fa-chevron-down"></i>
@@ -279,23 +281,22 @@
             </tr>
           </thead>
           <tbody id="sidebar-leaderboard-body">
-            <!-- Populated by sidebar.js -->
+            <!-- Populated by sidebar.js (top 3 by default) -->
           </tbody>
         </table>
+        <button id="leaderboard-see-all-btn" class="sidebar-see-all-btn" style="display:none;">See all</button>
       </div>
     </div>
 
-    <!-- Quest Tracker Section -->
-    <div class="sidebar-section">
+    <!-- Daily Quests -->
+    <div class="sidebar-section sidebar-ctx-general">
       <button class="quest-toggle">
         <span>Daily Quests</span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
       <div id="sidebar-quests" class="sidebar-quests-list">
-        <!-- Daily quests populated by JS -->
         <div id="daily-quests-container"></div>
-
         <div style="margin-top: 15px;">
           <button class="quest-toggle-weekly" style="background: none; border: none; width: 100%; text-align: left; padding: 8px; cursor: pointer; font-weight: 600; color: #667eea;">
             <span>Weekly Challenges</span>
@@ -306,12 +307,13 @@
       </div>
     </div>
 
-    <!-- Parent Link Section -->
-    <div class="sidebar-section">
-      <div id="student-parent-link-display" style="padding: 0;">
-        <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; margin-bottom: 8px;">Share Progress</h3>
-        <p style="font-size: 11px; color: #666; margin-bottom: 8px;">Share this code with a parent or teacher to link accounts.</p>
-        <div id="student-link-code-value" title="Click to copy"></div>
+    <!-- ═══ FOOTER (always visible, compact) ═══ -->
+
+    <!-- Share Progress (compact single row) -->
+    <div class="sidebar-section sidebar-section-footer">
+      <div id="student-parent-link-display" class="sidebar-share-row">
+        <span class="sidebar-share-label">Share code:</span>
+        <span id="student-link-code-value" class="sidebar-share-code" title="Click to copy"></span>
       </div>
     </div>
   </aside>
@@ -351,22 +353,7 @@
           </div>
         </div>
       </div>
-      <!-- Course Resume Nudge (shown when user has active course but is in general chat) -->
-      <div id="course-resume-nudge" style="display: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: linear-gradient(135deg, #667eea08, #764ba210); border-bottom: 1px solid #e8e0f0;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-book-open" style="color: #667eea; font-size: 16px;"></i>
-            <div>
-              <span id="nudge-course-name" style="font-weight: 600; font-size: 13px; color: #333;"></span>
-              <span id="nudge-course-progress" style="font-size: 12px; color: #888; margin-left: 6px;"></span>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <button id="nudge-continue-btn" style="padding: 6px 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;">Continue</button>
-            <button id="nudge-dismiss-btn" style="padding: 6px 10px; background: none; border: none; color: #aaa; cursor: pointer; font-size: 12px;">Not now</button>
-          </div>
-        </div>
-      </div>
+
       <div id="chat-messages-container"></div>
 
       <!-- Live XP Feed -->

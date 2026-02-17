@@ -20,7 +20,7 @@ const path = require('path');
  * @param {Object|null} opts.currentModule – the module entry from pathway.modules[]
  * @returns {string} system prompt
  */
-function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
+function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule, resourceContext = null }) {
   // Branch to parent-specific prompt when audience is 'parent'
   if (pathway.audience === 'parent') {
     return buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
@@ -125,6 +125,14 @@ ${strategies ? `TEACHING STRATEGIES:\n${strategies}\n` : ''}
 
 SCAFFOLD SEQUENCE (your lesson plan):
 ${scaffoldOutline}
+
+🔒 YOU ARE LOCKED TO THE CURRENT STEP (▶). Do NOT move on to any content from
+a later step — even briefly — until you have emitted <SCAFFOLD_ADVANCE> in your
+response. Emitting that tag is what advances the step counter. If you discuss
+next-step content without emitting it first, the student's progress never moves.
+In diagnostic mode: if the student already knows the current step, ask ONE quick
+question, confirm they get it, then emit <SCAFFOLD_ADVANCE> and move on. Fast is
+fine — skipping the tag entirely is not.
 
 ${currentStepDetail}
 
@@ -251,6 +259,12 @@ PROGRESS SIGNALS (CRITICAL — you MUST emit these tags)
 You have two signal tags that control the student's course progress.
 Include them at the END of your response when the conditions are met.
 The student will NOT see these tags — they are parsed by the server.
+
+🚨 RULE #1: You may NEVER discuss content from the next scaffold step
+until you have emitted <SCAFFOLD_ADVANCE> in a prior response.
+Moving topics without the tag = student progress stays frozen at 0%.
+Even if you're moving quickly through review material, emit the tag
+every time you leave a step behind — there is no shortcut.
 
 **1. <SCAFFOLD_ADVANCE>**
 Emit this tag when the current scaffold step is COMPLETE and you are
@@ -404,7 +418,20 @@ in for a number we don't know yet. Think of it like a blank in a sentence.
 Can you put that in your own words?"
 
 ====================================================================
-`;
+${resourceContext && !resourceContext.notFound ? `====================================================================
+TEACHER RESOURCE: "${resourceContext.displayName}"
+====================================================================
+The student is asking about a teacher-assigned resource called "${resourceContext.displayName}"${resourceContext.description ? ` (${resourceContext.description})` : ''}.
+You have the full content below. Work directly from it using Socratic method — do not give answers, guide the student problem by problem.
+
+RESOURCE CONTENT:
+${resourceContext.content}
+` : ''}${resourceContext && resourceContext.notFound ? `====================================================================
+TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}"
+====================================================================
+The student is referencing a teacher-assigned resource called "${resourceContext.displayName}" but its content is not loaded.
+Acknowledge it by name, ask which specific problem they are on, then guide them through it once they share it.
+` : ''}`;
 }
 
 /**
@@ -419,10 +446,17 @@ function formatScaffoldStep(step, index, total) {
 
   switch (step.type) {
     case 'explanation':
-      detail += `TEACH THIS CONCEPT:\n${step.text || ''}\n\n`;
+      detail += `TEACH THIS CONCEPT:\n${step.content || step.text || ''}\n\n`;
+      if (step.keyPoints && step.keyPoints.length > 0) {
+        detail += `KEY POINTS TO COVER:\n${step.keyPoints.map(kp => `  - ${kp}`).join('\n')}\n\n`;
+      }
       if (step.initialPrompt) {
         detail += `After teaching, engage with: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: Once the student has engaged with this concept (answered ` +
+                `a question or demonstrated any understanding), append <SCAFFOLD_ADVANCE> to the ` +
+                `END of that response before you say anything about the next topic. In diagnostic ` +
+                `mode, one correct reply is enough — move quickly.\n`;
       break;
 
     case 'model':
@@ -447,6 +481,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `\nAfter modeling, ask: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: After you've modeled the examples and the student has ` +
+                `correctly answered at least one follow-up question, append <SCAFFOLD_ADVANCE> ` +
+                `to the END of that response. Do NOT describe the next topic first.\n`;
       break;
 
     case 'guided_practice':
@@ -461,7 +498,7 @@ function formatScaffoldStep(step, index, total) {
       detail += `The student's hands should be on the wheel. You are the GPS.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.question}\n`;
+          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
           detail += `  Answer: ${p.answer}\n`;
           if (p.hints && p.hints.length > 0) {
             detail += `  Hints (use if stuck): ${p.hints.join(' → ')}\n`;
@@ -472,6 +509,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
       }
+      detail += `\n⚡ CLOSE THIS STEP: After the student has correctly solved at least 2 problems ` +
+                `(server requires 2 <PROBLEM_RESULT:correct> tags), append <SCAFFOLD_ADVANCE> ` +
+                `to close this step. Do NOT move on without it.\n`;
       break;
 
     case 'independent_practice':
@@ -488,7 +528,7 @@ function formatScaffoldStep(step, index, total) {
       detail += `If they get it wrong, ask them to find their own mistake first.\n\n`;
       if (step.problems && step.problems.length > 0) {
         step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.question}\n`;
+          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
           detail += `  Answer: ${p.answer}\n`;
           if (p.hints && p.hints.length > 0) {
             detail += `  Hints (ONLY if truly stuck): ${p.hints.join(' → ')}\n`;
@@ -496,6 +536,9 @@ function formatScaffoldStep(step, index, total) {
         });
       }
       detail += `\nPresent ONE problem at a time. Wait for the student's full answer before responding.\n`;
+      detail += `\n⚡ CLOSE THIS STEP: After the student has independently solved at least 2 ` +
+                `problems correctly (server requires 2 <PROBLEM_RESULT:correct> tags), append ` +
+                `<SCAFFOLD_ADVANCE> to close this step. Do NOT move on without it.\n`;
       break;
 
     default:
@@ -930,7 +973,7 @@ function calculateOverallProgress(modules) {
   for (const mod of modules) {
     if (mod.status === 'completed') {
       progressSum += 1;
-    } else if (mod.status === 'in_progress' && mod.scaffoldProgress > 0) {
+    } else if (mod.status === 'in_progress') {
       progressSum += (mod.scaffoldProgress / 100);
     }
   }

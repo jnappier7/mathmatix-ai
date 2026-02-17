@@ -70,20 +70,6 @@ class CourseManager {
             }
         });
 
-        // Nudge banner buttons
-        const nudgeContinue = document.getElementById('nudge-continue-btn');
-        if (nudgeContinue) {
-            nudgeContinue.addEventListener('click', () => {
-                const sessionId = nudgeContinue.dataset.sessionId;
-                if (sessionId) this.activateCourse(sessionId);
-                this.hideNudge();
-            });
-        }
-        const nudgeDismiss = document.getElementById('nudge-dismiss-btn');
-        if (nudgeDismiss) {
-            nudgeDismiss.addEventListener('click', () => this.hideNudge());
-        }
-
         // Load enrolled courses on startup
         this.loadMySessions();
 
@@ -118,9 +104,7 @@ class CourseManager {
             this.renderSidebarCourses();
 
             // If there is an active course session tied to the current conversation,
-            // show the progress bar — otherwise show the resume nudge
             this.checkActiveProgressBar();
-            this.checkResumeNudge();
         } catch (err) {
             console.warn('[CourseManager] Failed to load sessions:', err);
         }
@@ -223,9 +207,11 @@ class CourseManager {
             this.activeCourseSessionId = match._id;
             this.updateProgressBar(match);
             wrapper.style.display = 'block';
+            if (window.sidebar) window.sidebar.setContext('course');
         } else {
             wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
+            if (window.sidebar) window.sidebar.setContext('general');
         }
     }
 
@@ -259,50 +245,6 @@ class CourseManager {
                 mod.textContent = '';
             }
         }
-    }
-
-    // --------------------------------------------------
-    // Resume nudge (shown when user has course but is in general chat)
-    // --------------------------------------------------
-    checkResumeNudge() {
-        const nudge = document.getElementById('course-resume-nudge');
-        if (!nudge) return;
-
-        // Don't show if already dismissed this page load
-        if (this._nudgeDismissed) {
-            nudge.style.display = 'none';
-            return;
-        }
-
-        // Don't show if progress bar is already visible (user IS in their course)
-        if (this.activeCourseSessionId) {
-            nudge.style.display = 'none';
-            return;
-        }
-
-        // Find an active course to nudge about
-        const activeCourse = this.courseSessions.find(s => s.status === 'active');
-        if (!activeCourse) {
-            nudge.style.display = 'none';
-            return;
-        }
-
-        // Show the nudge
-        const nameEl = document.getElementById('nudge-course-name');
-        const progressEl = document.getElementById('nudge-course-progress');
-        const continueBtn = document.getElementById('nudge-continue-btn');
-
-        if (nameEl) nameEl.textContent = activeCourse.courseName;
-        if (progressEl) progressEl.textContent = `${activeCourse.overallProgress || 0}% complete`;
-        if (continueBtn) continueBtn.dataset.sessionId = activeCourse._id;
-
-        nudge.style.display = 'block';
-    }
-
-    hideNudge() {
-        const nudge = document.getElementById('course-resume-nudge');
-        if (nudge) nudge.style.display = 'none';
-        this._nudgeDismissed = true;
     }
 
     // --------------------------------------------------
@@ -573,7 +515,8 @@ class CourseManager {
 
             // Lesson rows (only show for current/in-progress/available modules)
             if (m.lessons && m.lessons.length > 0 && (isCurrent || m.status === 'in_progress' || m.status === 'available')) {
-                m.lessons.forEach(l => {
+                const sortedLessons = [...m.lessons].sort((a, b) => (a.order || 0) - (b.order || 0));
+                sortedLessons.forEach(l => {
                     let lIcon = 'fa-circle';
                     let lColor = '#ddd';
                     let lWeight = '400';
@@ -668,13 +611,24 @@ class CourseManager {
 
         // Difficulty badge colors
         const diffColors = {
+            'Foundational': { bg: '#ecfdf5', text: '#16a34a' },
             'Beginner': { bg: '#ecfdf5', text: '#16a34a' },
             'Intermediate': { bg: '#eff6ff', text: '#2563eb' },
             'Advanced': { bg: '#faf5ff', text: '#7c3aed' },
+            'Applied': { bg: '#fef3c7', text: '#b45309' },
             'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
         };
 
+        let lastGroup = '';
         catalog.forEach(course => {
+            // Insert group header when group changes
+            if (course.group && course.group !== lastGroup) {
+                lastGroup = course.group;
+                const header = document.createElement('div');
+                header.style.cssText = 'grid-column: 1 / -1; padding: 12px 0 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 4px;';
+                header.innerHTML = `<span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #667eea;">${this.escapeHtml(course.group)}</span>`;
+                grid.appendChild(header);
+            }
             const card = document.createElement('div');
             const isRecommended = course.courseId === recommended;
             card.style.cssText = `border:1px solid ${isRecommended ? '#667eea' : '#e2e8f0'}; border-radius:12px; padding:16px; display:flex; gap:14px; transition:box-shadow 0.15s; position:relative;${isRecommended ? ' background: #f8f7ff;' : ''}`;
@@ -771,9 +725,6 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
-            // Hide nudge if showing
-            this.hideNudge();
-
             // Show welcome splash in the chat (with course tips for first-time, resume for returning)
             if (data.welcomeData) {
                 this.showWelcomeSplash(data.welcomeData, data.resumed || false);
@@ -820,6 +771,9 @@ class CourseManager {
             this.updateProgressBar(session);
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
+
+            // Switch sidebar to course context (hides sessions, leaderboard, quests)
+            if (window.sidebar) window.sidebar.setContext('course');
 
             // Fire silent course greeting — AI introduces the course/module
             this.sendCourseGreeting();
@@ -875,6 +829,9 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
+
+            // Switch sidebar back to general context
+            if (window.sidebar) window.sidebar.setContext('general');
 
             this.showToast('Returned to general tutoring');
         } catch (err) {

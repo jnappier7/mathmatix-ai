@@ -15,19 +15,21 @@ const { calculateOverallProgress } = require('../utils/coursePrompt');
    GET /api/course-sessions/catalog
    List all available pathway-based courses from disk
    ============================================================ */
-// Catalog enrichment: difficulty levels, taglines, icons
+// Catalog enrichment: difficulty levels, taglines, icons, sort order, and grouping
+// sortOrder controls display position; group controls section headers
 const CATALOG_META = {
-  '6th-grade-math':      { difficulty: 'Foundational', tagline: 'Fractions, ratios, expressions, geometry, and statistics', icon: '6️⃣' },
-  '7th-grade-math':      { difficulty: 'Foundational', tagline: 'Rational numbers, proportions, geometry, and probability', icon: '7️⃣' },
-  'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
-  'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
-  'algebra-2':           { difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '📉' },
-  'precalculus':         { difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '🌊' },
-  'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
-  'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' },
-  'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '🎯' },
-  'consumer-math':       { difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '💰' },
-  'early-math-foundations': { difficulty: 'Foundational', tagline: 'Whole numbers, fractions, decimals, and geometry for grades 3–5', icon: '🧱' }
+  'early-math-foundations': { group: 'Elementary', difficulty: 'Foundational', tagline: 'Whole numbers, fractions, decimals, and geometry for grades 3\u20135', icon: '\uD83E\uDDF1', sortOrder: 0 },
+  '6th-grade-math':         { group: 'Middle School', difficulty: 'Foundational', tagline: 'Fractions, ratios, expressions, geometry, and statistics', icon: '6\uFE0F\u20E3', sortOrder: 1 },
+  '7th-grade-math':         { group: 'Middle School', difficulty: 'Foundational', tagline: 'Rational numbers, proportions, geometry, and probability', icon: '7\uFE0F\u20E3', sortOrder: 2 },
+  'grade-8-math':           { group: 'Middle School', difficulty: 'Foundational', tagline: 'Linear equations, functions, and intro to geometry proofs', icon: '8\uFE0F\u20E3', sortOrder: 3 },
+  'algebra-1':              { group: 'High School', difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '\uD83C\uDD70\uFE0F', sortOrder: 4 },
+  'geometry':               { group: 'High School', difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '\uD83D\uDCD0', sortOrder: 5 },
+  'algebra-2':              { group: 'High School', difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '\uD83D\uDCC9', sortOrder: 6 },
+  'precalculus':            { group: 'High School', difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '\uD83C\uDF0A', sortOrder: 7 },
+  'ap-calculus-ab':         { group: 'Advanced & AP', difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '\uD83D\uDE80', sortOrder: 8 },
+  'calculus-bc':            { group: 'Advanced & AP', difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '\uD83D\uDE80', sortOrder: 9 },
+  'consumer-math':          { group: 'Applied & Test Prep', difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '\uD83D\uDCB0', sortOrder: 10 },
+  'act-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '\uD83C\uDFAF', sortOrder: 11 }
 };
 
 router.get('/catalog', async (req, res) => {
@@ -57,7 +59,9 @@ router.get('/catalog', async (req, res) => {
           description: pathway.overview || pathway.description || '',
           tagline: meta.tagline || '',
           difficulty: meta.difficulty || '',
-          icon: meta.icon || '📚',
+          icon: meta.icon || '\uD83D\uDCDA',
+          group: meta.group || '',
+          sortOrder: meta.sortOrder != null ? meta.sortOrder : 99,
           prerequisites: pathway.prerequisites || [],
           moduleCount: (pathway.modules || []).length,
           gradeBand: pathway.gradeBand || '',
@@ -68,25 +72,19 @@ router.get('/catalog', async (req, res) => {
       }
     }
 
-    // Sort roughly by difficulty (K first, Calc last)
-    const order = [
-      'algebra-1', 'geometry', 'algebra-2', 'precalculus',
-      'ap-calculus-ab', 'calculus-bc'
-    ];
-    catalog.sort((a, b) => {
-      const ai = order.indexOf(a.courseId);
-      const bi = order.indexOf(b.courseId);
-      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-    });
+    // Sort by grade progression (sortOrder from CATALOG_META)
+    catalog.sort((a, b) => a.sortOrder - b.sortOrder);
 
     // Personalized recommendation based on user's grade
+    const GRADE_COURSE_MAP = {
+      '3rd-grade': 'early-math-foundations', '4th-grade': 'early-math-foundations', '5th-grade': 'early-math-foundations',
+      '6th-grade': '6th-grade-math', '7th-grade': '7th-grade-math', '8th-grade': 'grade-8-math',
+      '9th-grade': 'algebra-1', '10th-grade': 'geometry', '11th-grade': 'algebra-2', '12th-grade': 'precalculus'
+    };
     let recommended = null;
     if (req.user && req.user.gradeLevel) {
       const grade = req.user.gradeLevel.toLowerCase().replace(/\s+/g, '-');
-      const idx = order.indexOf(grade);
-      if (idx >= 0 && idx < order.length - 1) {
-        recommended = order[idx + 1]; // Suggest the next course
-      }
+      recommended = GRADE_COURSE_MAP[grade] || null;
     }
 
     res.json({ success: true, catalog, recommended });
@@ -383,7 +381,7 @@ router.get('/:id/progress', async (req, res) => {
           checkpointPassed: progress?.checkpointPassed || false,
           skills: pm.skills || [],
           apWeight: pm.apWeight || null,
-          lessons
+          lessons: lessons.sort((a, b) => (a.order || 0) - (b.order || 0))
         };
       });
     }

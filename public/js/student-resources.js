@@ -81,6 +81,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Drag-to-chat: let students drag a resource card into the chat
+    resourcesContent?.addEventListener('dragstart', (e) => {
+        const card = e.target.closest('[data-resource-id]');
+        if (!card) return;
+
+        const resourceId = card.dataset.resourceId;
+        const resourceName = card.dataset.resourceName;
+        const resourceType = card.dataset.resourceType;
+
+        // Set custom data so the chat drop handler can detect it
+        e.dataTransfer.setData('application/x-teacher-resource-id', resourceId);
+        e.dataTransfer.setData('application/x-teacher-resource-name', resourceName);
+        e.dataTransfer.setData('application/x-teacher-resource-type', resourceType);
+        e.dataTransfer.effectAllowed = 'copy';
+
+        card.style.opacity = '0.5';
+        card.addEventListener('dragend', () => { card.style.opacity = ''; }, { once: true });
+    });
+
     // Load resources from API
     async function loadResources() {
         resourcesContent.innerHTML = '<p style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading resources...</p>';
@@ -379,9 +398,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const escapedName = resource.displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             return `
-                <div class="resource-card-wrapper">
+                <div class="resource-card-wrapper"
+                     draggable="true"
+                     data-resource-id="${resource.id}"
+                     data-resource-name="${escapedName}"
+                     data-resource-type="${resource.fileType}"
+                     title="Drag to chat to share with your tutor">
                     <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link"
-                       style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
+                       style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s; cursor: grab;">
                         <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
                         <div style="flex: 1;">
                             <div style="font-weight: 500;">${resource.displayName}</div>
@@ -391,7 +415,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             ${resource.description ? `<div style="font-size: 0.85em; color: #888; margin-top: 4px;">${resource.description}</div>` : ''}
                         </div>
-                        <i class="fas fa-download" style="color: #999;"></i>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-left: 8px;">
+                            <i class="fas fa-download" style="color: #999;" title="Download"></i>
+                            <i class="fas fa-grip-vertical" style="color: #bbb; font-size: 12px;" title="Drag to chat"></i>
+                        </div>
                     </a>
                     <button class="send-to-tutor-btn" data-resource-name="${escapedName}" title="Share this resource with your tutor">
                         <i class="fas fa-comment-dots"></i> Ask Tutor About This

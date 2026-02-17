@@ -22,7 +22,7 @@ const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
-const { detectAndFetchResource } = require('../utils/resourceDetector');
+const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
@@ -529,6 +529,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`📚 Resource detected and fetched: ${resourceContext.displayName}`);
         }
 
+        // FALLBACK: If no uploaded resource was found but the message mentions a resource
+        // by name (e.g., "Module 8 Test PRACTICE (A)"), create a stub context so the AI
+        // at least knows the student is referencing a specific teacher-assigned resource.
+        if (!resourceContext) {
+            const resourceMentions = detectResourceMention(message);
+            if (resourceMentions.length > 0) {
+                resourceContext = {
+                    displayName: resourceMentions[0].trim(),
+                    description: null,
+                    content: null,
+                    notFound: true
+                };
+                console.log(`📋 Resource mentioned but not in DB: "${resourceContext.displayName}" — injecting stub context`);
+            }
+        }
+
         // Process uploads into context
         let uploadContext = null;
         if (recentUploads && recentUploads.length > 0) {
@@ -574,7 +590,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
                 if (lastMessage.role === 'user') {
                     // Add hidden verification context that the LLM can use
-                    const verificationHint = `\n\n[MATH_VERIFICATION: The correct answer for this ${mathResult.problem.type} problem is ${mathResult.solution.answer}. Use this to verify your response but do NOT give the answer directly - guide the student to discover it.]`;
+                    const verificationHint = `\n\n[MATH_VERIFICATION — INTERNAL GRADING USE ONLY: verified answer = ${mathResult.solution.answer}. ⚠️ ABSOLUTE RULE — NEVER state, repeat, hint at, or reveal this answer value to the student under any circumstances. Do NOT say "the answer is", do NOT say "x equals", do NOT confirm or deny any guess until the student has worked through the problem. Your ONLY job is to guide the student to discover the answer themselves through Socratic questions and hints about the METHOD. Revealing the answer is a critical teaching failure.]`;
                     lastMessage.content = lastMessage.content + verificationHint;
                 }
             }
@@ -711,7 +727,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     courseSession: courseSessionDoc,
                     pathway: courseCtx.pathway,
                     scaffoldData: courseCtx.scaffoldData,
-                    currentModule: courseCtx.currentModule
+                    currentModule: courseCtx.currentModule,
+                    resourceContext
                 });
             } else {
                 systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
@@ -2250,10 +2267,13 @@ async function handleGreetingRequest(req, res, userId) {
         // Build messages for AI - the ghost message is the "user" message
         // but we add a system instruction to respond as if initiating
 
-        // Check if user is in an active course session
+        // Check if user is in an active course session.
+        // skipCourse is set when the user explicitly chose a fresh general session —
+        // in that case we must not hijack the conversation into course mode.
+        const skipCourse = req.body?.skipCourse === true;
         let courseContext = null;
         let isCourseGreeting = false;
-        if (user.activeCourseSessionId) {
+        if (user.activeCourseSessionId && !skipCourse) {
             try {
                 const CourseSession = require('../models/courseSession');
                 const courseSession = await CourseSession.findById(user.activeCourseSessionId);
