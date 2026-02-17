@@ -531,7 +531,7 @@ const studentJordan = {
       digitalMultiplicationChart: true,
       largePrintHighContrast: false,
       mathAnxietySupport: true,
-      custom: ['Frequent check-ins', 'Allow verbal responses']
+      custom: ['Frequent check-ins', 'Allow verbal responses', 'Frequent breaks']
     },
     goals: [
       {
@@ -1053,7 +1053,7 @@ module.exports = {
       description: 'See how accommodations and IEP goals are supported in tutoring sessions.',
       role: 'student',
       icon: 'fa-universal-access',
-      highlights: ['IEP with 3 active goals', 'Extended time + calculator', 'Math anxiety support', 'In Ms. Rivera\'s class']
+      highlights: ['IEP with 3 active goals', 'Extended time + calculator', 'Frequent breaks', 'Math anxiety support']
     }
   }
 };
