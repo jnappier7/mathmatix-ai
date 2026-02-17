@@ -578,11 +578,18 @@ router.post('/', async (req, res) => {
         }
 
         // ── Save AI response to conversation ────────────────
-        conversation.messages.push({
+        // problemResult is persisted so the scaffold advance counter survives
+        // across requests (previously it was never saved, causing the MIN_CORRECT
+        // gate to be permanently blocked at practice steps).
+        const aiMsg = {
             role: 'assistant',
             content: aiResponseText,
             timestamp: new Date()
-        });
+        };
+        if (problemAnswered) {
+            aiMsg.problemResult = wasCorrect ? 'correct' : 'incorrect';
+        }
+        conversation.messages.push(aiMsg);
         conversation.currentTopic = courseSession.courseName;
         conversation.lastActivity = new Date();
 

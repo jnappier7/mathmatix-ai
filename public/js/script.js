@@ -1812,6 +1812,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Passive sync: courseContext.overallProgress is in every course-chat response.
+            // Update the bar even when no signal fired (handles page reloads, drift, etc.)
+            if (!data.courseProgress && data.courseContext && data.courseContext.overallProgress != null) {
+                const fill = document.getElementById('course-progress-fill');
+                const pct  = document.getElementById('course-progress-pct');
+                if (fill) fill.style.width = `${data.courseContext.overallProgress}%`;
+                if (pct)  pct.textContent  = `${data.courseContext.overallProgress}%`;
+            }
+
         } catch (error) {
             console.error("Chat error:", error);
 
