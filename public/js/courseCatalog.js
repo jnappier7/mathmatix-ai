@@ -819,6 +819,11 @@ class CourseManager {
     async exitCourse() {
         this.closeProgressDropdown();
 
+        // Confirm before leaving the lesson
+        if (!confirm('Exit this lesson?\n\nYour progress is saved — you can pick up where you left off anytime.')) {
+            return;
+        }
+
         try {
             await csrfFetch('/api/course-sessions/deactivate', {
                 method: 'POST',
@@ -832,6 +837,13 @@ class CourseManager {
 
             // Switch sidebar back to general context
             if (window.sidebar) window.sidebar.setContext('general');
+
+            // Start a fresh general chat session so the user isn't
+            // left staring at stale course messages
+            if (window.sidebar) {
+                await window.sidebar.loadSessions();
+                await window.sidebar.createNewSession();
+            }
 
             this.showToast('Returned to general tutoring');
         } catch (err) {

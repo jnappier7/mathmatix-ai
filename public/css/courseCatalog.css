@@ -337,6 +337,33 @@
     color: #333 !important;
 }
 
+/* Persistent exit-lesson button in the progress bar */
+.course-exit-lesson-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.course-exit-lesson-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+
+.course-exit-lesson-btn i {
+    font-size: 11px;
+}
+
 /* ----- Toast animation ----- */
 
 @keyframes fadeInUp {
@@ -387,6 +414,18 @@
 [data-theme="dark"] #course-exit-btn:hover {
     background: #475569 !important;
     color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .course-exit-lesson-btn {
+    background: #334155;
+    color: #94a3b8;
+    border-color: #475569;
+}
+
+[data-theme="dark"] .course-exit-lesson-btn:hover {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-color: #991b1b;
 }
 
 [data-theme="dark"] #course-sessions-list {
