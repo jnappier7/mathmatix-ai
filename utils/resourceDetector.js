@@ -48,7 +48,24 @@ function detectResourceMention(message) {
 async function findResourceInMessage(teacherId, message) {
     if (!teacherId) return null;
 
-    // DIRECTIVE 3: Try vector similarity search first (semantic search)
+    // HIGHEST CONFIDENCE: Check for explicitly quoted resource names first
+    // Handles: "Module 8 Test PRACTICE (A)", 'Module 8 Test PRACTICE (A)', curly quotes
+    const quotedMatch = message.match(/[\u201c\u201d""]([^\u201c\u201d""]+)[\u201c\u201d""]/) ||
+                        message.match(/"([^"]+)"/) ||
+                        message.match(/\u2018([^\u2018\u2019]+)\u2019/) ||
+                        message.match(/'([^']+)'/);
+    if (quotedMatch) {
+        const quotedName = quotedMatch[1].trim();
+        console.log(`🔍 [Quoted Name] Trying exact match for: "${quotedName}"`);
+        const resource = await TeacherResource.findByName(teacherId, quotedName);
+        if (resource) {
+            console.log(`✅ [Quoted Name] Found resource: ${resource.displayName}`);
+            return resource;
+        }
+        console.log(`ℹ️ [Quoted Name] No match found for quoted name, continuing to vector search`);
+    }
+
+    // DIRECTIVE 3: Try vector similarity search (semantic search)
     try {
         console.log(`🔍 [Vector Search] Searching for resources matching: "${message.substring(0, 100)}..."`);
 

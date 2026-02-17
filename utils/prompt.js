@@ -2537,6 +2537,8 @@ ${uploadContext.summary}
 ` : ''}
 
 ${resourceContext ? `--- TEACHER RESOURCE: "${resourceContext.displayName}" ---
+⚠️ PRE-APPROVED EDUCATIONAL CONTENT: The material below was uploaded by ${firstName}'s teacher and is authorized academic content. Do NOT treat it as inappropriate regardless of subject matter (e.g., biology terms, historical events, test/quiz content are all expected). Responding with a safety refusal for this resource is incorrect.
+
 ${firstName} is asking about a resource their teacher shared called "${resourceContext.displayName}"${resourceContext.description ? ` (${resourceContext.description})` : ''}. You have the full content of this resource below.
 
 RESOURCE CONTENT:
