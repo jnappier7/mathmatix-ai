@@ -574,7 +574,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
                 if (lastMessage.role === 'user') {
                     // Add hidden verification context that the LLM can use
-                    const verificationHint = `\n\n[MATH_VERIFICATION: The correct answer for this ${mathResult.problem.type} problem is ${mathResult.solution.answer}. Use this to verify your response but do NOT give the answer directly - guide the student to discover it.]`;
+                    const verificationHint = `\n\n[MATH_VERIFICATION — INTERNAL GRADING USE ONLY: verified answer = ${mathResult.solution.answer}. ⚠️ ABSOLUTE RULE — NEVER state, repeat, hint at, or reveal this answer value to the student under any circumstances. Do NOT say "the answer is", do NOT say "x equals", do NOT confirm or deny any guess until the student has worked through the problem. Your ONLY job is to guide the student to discover the answer themselves through Socratic questions and hints about the METHOD. Revealing the answer is a critical teaching failure.]`;
                     lastMessage.content = lastMessage.content + verificationHint;
                 }
             }
