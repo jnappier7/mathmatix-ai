@@ -94,7 +94,12 @@ router.post('/', async (req, res) => {
             const moduleFile = path.join(__dirname, '../public/modules', courseSession.courseId, currentPathwayModule.moduleFile);
             if (fs.existsSync(moduleFile)) {
                 moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+                console.log(`[CourseChat] Loaded scaffold data: ${moduleData.scaffold?.length || 0} steps from ${currentPathwayModule.moduleFile}`);
+            } else {
+                console.warn(`[CourseChat] ⚠️ Module file not found: ${moduleFile} — scaffold will have no steps`);
             }
+        } else {
+            console.warn(`[CourseChat] ⚠️ No moduleFile defined for module ${currentPathwayModule.moduleId} — scaffold will be empty`);
         }
 
         // ── Load or create course conversation ──────────────
@@ -366,6 +371,11 @@ router.post('/', async (req, res) => {
         const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
         let courseProgressUpdate = null;
 
+        console.log(`[CourseChat:Progression] Tags detected — SCAFFOLD_ADVANCE=${hasScaffoldAdvance}, MODULE_COMPLETE=${hasModuleComplete}, sessionId=${courseSession._id}, currentModuleId=${courseSession.currentModuleId}, scaffoldIdx=${courseSession.currentScaffoldIndex}`);
+        if (!hasScaffoldAdvance && !hasModuleComplete) {
+            console.log(`[CourseChat:Progression] No signal tags in AI response (first 300 chars): "${aiResponseText?.substring(0, 300)}"`);
+        }
+
         // Strip signal tags from student-facing text
         if (hasScaffoldAdvance || hasModuleComplete) {
             aiResponseText = aiResponseText
@@ -383,9 +393,13 @@ router.post('/', async (req, res) => {
                 const totalSteps = moduleData?.scaffold?.length || 1;
                 const currentIdx = courseSession.currentScaffoldIndex || 0;
                 const mod = courseSession.modules.find(m => m.moduleId === courseSession.currentModuleId);
+                if (!mod) {
+                    console.error(`[CourseChat:Progression] ⚠️ Could not find module "${courseSession.currentModuleId}" in courseSession.modules (${courseSession.modules.map(m => m.moduleId).join(', ')}). Tags will be IGNORED.`);
+                }
 
                 if (hasModuleComplete && mod) {
                     // MODULE COMPLETE: mark done, unlock next, reset scaffold
+                    console.log(`[CourseChat:Progression] MODULE_COMPLETE — before: moduleId=${mod.moduleId}, status=${mod.status}, scaffoldIdx=${courseSession.currentScaffoldIndex}/${totalSteps - 1}, lessons=${mod.lessons?.length || 0}`);
                     mod.status = 'completed';
                     mod.scaffoldProgress = 100;
                     mod.completedAt = new Date();
@@ -409,19 +423,25 @@ router.post('/', async (req, res) => {
                         // Set currentLessonId to first lesson of next module
                         courseSession.currentLessonId = nextMod.lessons?.[0]?.lessonId || null;
                         if (nextMod.lessons?.[0]) nextMod.lessons[0].status = 'available';
+                        console.log(`[CourseChat:Progression] Advanced to next module: ${nextMod.moduleId} (idx ${modIdx} → ${modIdx + 1})`);
+                    } else {
+                        console.log(`[CourseChat:Progression] No next module after idx ${modIdx} — total modules: ${courseSession.modules.length}`);
                     }
                     courseSession.currentScaffoldIndex = 0;
 
                     courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
 
                     const doneCount = courseSession.modules.filter(m => m.status === 'completed').length;
+                    console.log(`[CourseChat:Progression] After MODULE_COMPLETE — completed=${doneCount}/${courseSession.modules.length}, overallProgress=${courseSession.overallProgress}%`);
                     if (doneCount === courseSession.modules.length) {
                         courseSession.status = 'completed';
                         courseSession.completedAt = new Date();
+                        console.log(`[CourseChat:Progression] 🎉 Full course completed!`);
                     }
 
                     courseSession.markModified('modules');
                     await courseSession.save();
+                    console.log(`[CourseChat:Progression] DB saved — MODULE_COMPLETE for ${mod.moduleId}`);
 
                     // Award module completion XP (fire-and-forget)
                     const moduleXP = 150;
@@ -449,6 +469,8 @@ router.post('/', async (req, res) => {
                     const currentStep = moduleData?.scaffold?.[currentIdx];
                     const stepType = currentStep?.type || currentStep?.lessonPhase || '';
                     const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
+                    console.log(`[CourseChat:Progression] SCAFFOLD_ADVANCE — currentIdx=${currentIdx}/${totalSteps - 1}, stepType="${stepType}", isPracticePhase=${isPracticePhase}, mod=${mod.moduleId} (status=${mod.status})`);
+                    if (!currentStep) console.warn(`[CourseChat:Progression] ⚠️ No scaffold step at index ${currentIdx} — moduleData.scaffold has ${moduleData?.scaffold?.length || 0} entries`);
 
                     let correctSinceLastAdvance = 0;
                     if (isPracticePhase && conversation?.messages) {
@@ -458,6 +480,7 @@ router.post('/', async (req, res) => {
                             if (msg.problemResult === 'correct') correctSinceLastAdvance++;
                         }
                         if (wasCorrect) correctSinceLastAdvance++;
+                        console.log(`[CourseChat:Progression] Practice gate check — correctSinceLastAdvance=${correctSinceLastAdvance}, wasCorrect=${wasCorrect}`);
                     }
 
                     const MIN_CORRECT = 2;
@@ -465,6 +488,9 @@ router.post('/', async (req, res) => {
                         console.log(`⚠️ [CourseChat] SCAFFOLD_ADVANCE blocked — "${stepType}" needs ${MIN_CORRECT} correct, got ${correctSinceLastAdvance}`);
                     } else {
                         const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
+                        if (newIdx === currentIdx) {
+                            console.warn(`[CourseChat:Progression] ⚠️ SCAFFOLD_ADVANCE at last step (idx=${currentIdx}/${totalSteps - 1}) — newIdx still ${newIdx}. AI should emit MODULE_COMPLETE instead.`);
+                        }
                         courseSession.currentScaffoldIndex = newIdx;
 
                         mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
@@ -514,6 +540,7 @@ router.post('/', async (req, res) => {
 
                         courseSession.markModified('modules');
                         await courseSession.save();
+                        console.log(`[CourseChat:Progression] DB saved — scaffold ${currentIdx} → ${newIdx}, scaffoldProgress=${mod.scaffoldProgress}%, overallProgress=${courseSession.overallProgress}%`);
 
                         // Mark advance point for future counting
                         if (conversation?.messages?.length > 0) {
@@ -573,7 +600,7 @@ router.post('/', async (req, res) => {
                     }
                 }
             } catch (progressErr) {
-                console.error('[CourseChat] Scaffold progression error:', progressErr.message);
+                console.error('[CourseChat] Scaffold progression error:', progressErr.message, progressErr.stack?.split('\n').slice(0, 3).join(' | '));
             }
         }
 
