@@ -93,7 +93,8 @@ router.post('/', async (req, res) => {
 
         let moduleData = { title: currentPathwayModule.title, skills: currentPathwayModule.skills || [] };
         if (currentPathwayModule.moduleFile) {
-            const moduleFile = path.join(__dirname, '../public/modules', courseSession.courseId, currentPathwayModule.moduleFile);
+            // moduleFile is stored as "/modules/{courseId}/file.json" — resolve relative to public/
+            const moduleFile = path.join(__dirname, '../public', currentPathwayModule.moduleFile);
             if (fs.existsSync(moduleFile)) {
                 moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
             }
@@ -305,7 +306,7 @@ router.post('/', async (req, res) => {
         }
 
         // Problem result tracking
-        const problemResultMatch = aiResponseText.match(/<PROBLEM_RESULT:(correct|incorrect|skipped)>/i);
+        const problemResultMatch = aiResponseText.match(/<\s*PROBLEM_RESULT\s*:\s*(correct|incorrect|skipped)\s*>/i);
         let problemAnswered = false;
         let wasCorrect = false;
 
@@ -388,15 +389,15 @@ router.post('/', async (req, res) => {
 
         // ── SCAFFOLD & MODULE PROGRESS TRACKING ──────────────
         // Parse signal tags that control course progression
-        const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
-        const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
+        const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(aiResponseText);
+        const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(aiResponseText);
         let courseProgressUpdate = null;
 
         // Strip signal tags from student-facing text
         if (hasScaffoldAdvance || hasModuleComplete) {
             aiResponseText = aiResponseText
-                .replace(/<SCAFFOLD_ADVANCE>/gi, '')
-                .replace(/<MODULE_COMPLETE>/gi, '')
+                .replace(/<\s*SCAFFOLD_ADVANCE\s*>/gi, '')
+                .replace(/<\s*MODULE_COMPLETE\s*>/gi, '')
                 .trim();
             // In streaming mode, tags were already sent — send replacement to overwrite
             if (useStreaming && !clientDisconnected) {
@@ -840,7 +841,8 @@ async function handleCourseGreeting(req, res, userId) {
 
         let moduleData = { title: currentPathwayModule?.title || courseSession.currentModuleId, skills: currentPathwayModule?.skills || [] };
         if (currentPathwayModule?.moduleFile) {
-            const moduleFile = path.join(__dirname, '../public/modules', courseSession.courseId, currentPathwayModule.moduleFile);
+            // moduleFile is stored as "/modules/{courseId}/file.json" — resolve relative to public/
+            const moduleFile = path.join(__dirname, '../public', currentPathwayModule.moduleFile);
             if (fs.existsSync(moduleFile)) {
                 moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
             }

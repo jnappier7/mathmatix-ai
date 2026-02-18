@@ -444,7 +444,8 @@ router.get('/:id/lesson-progress', async (req, res) => {
 
     let moduleData = { title: currentPathwayModule?.title || session.currentModuleId, skills: [] };
     if (currentPathwayModule?.moduleFile) {
-      const moduleFile = path.join(__dirname, '../public/modules', session.courseId, currentPathwayModule.moduleFile);
+      // moduleFile is stored as "/modules/{courseId}/file.json" — resolve relative to public/
+      const moduleFile = path.join(__dirname, '../public', currentPathwayModule.moduleFile);
       if (fs.existsSync(moduleFile)) {
         moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
       }
