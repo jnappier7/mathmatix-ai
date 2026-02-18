@@ -191,6 +191,22 @@ router.post('/', async (req, res) => {
             resourceContext
         });
 
+        // ── Inject step-context reminder into last user message ──
+        // The system prompt (at position 0) fades in long conversations.
+        // Appending a brief reminder to the last user message keeps the
+        // scaffold tag instruction in the AI's attention window.
+        const scaffold = moduleData?.scaffold || [];
+        if (scaffold.length > 1) {
+            const stepIdx = courseSession.currentScaffoldIndex || 0;
+            const currentStep = scaffold[stepIdx];
+            if (currentStep && formattedMessages.length > 0) {
+                const lastMsg = formattedMessages[formattedMessages.length - 1];
+                if (lastMsg?.role === 'user') {
+                    lastMsg.content += `\n\n[STEP ${stepIdx + 1}/${scaffold.length}: "${currentStep.title}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+                }
+            }
+        }
+
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
 
         console.log(`📚 [CourseChat] ${user.firstName} → ${courseSession.courseName} / ${courseSession.currentModuleId}`);
