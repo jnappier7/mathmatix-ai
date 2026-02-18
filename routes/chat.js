@@ -723,6 +723,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         // Use dedicated course prompt when in course mode, generic prompt otherwise
         let systemPrompt;
+        let courseScaffoldCtx = null; // Captured for step-context reminder below
         if (conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
             const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
@@ -737,12 +738,33 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     currentModule: courseCtx.currentModule,
                     resourceContext
                 });
+                // Capture scaffold info for recency-boosted reminder
+                const scaffold = courseCtx.scaffoldData?.scaffold || [];
+                if (scaffold.length > 1) {
+                    courseScaffoldCtx = {
+                        stepIdx: courseSessionDoc.currentScaffoldIndex || 0,
+                        totalSteps: scaffold.length,
+                        stepTitle: scaffold[courseSessionDoc.currentScaffoldIndex || 0]?.title
+                    };
+                }
             } else {
                 systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
             }
         } else {
             systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
         }
+
+        // ── Inject step-context reminder into last user message ──
+        // System prompt fades in long conversations. Appending a brief
+        // reminder to the last user message keeps the scaffold tag
+        // instruction in the AI's attention window.
+        if (courseScaffoldCtx?.stepTitle && formattedMessagesForLLM.length > 0) {
+            const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMsg?.role === 'user') {
+                lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+            }
+        }
+
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
