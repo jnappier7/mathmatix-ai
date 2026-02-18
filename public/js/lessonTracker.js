@@ -84,8 +84,8 @@ class LessonTracker {
         // Phase dots
         this._renderPhaseDots(pu.phaseGroups);
 
-        // Main progress bar
-        const displayPct = Math.max(pu.progressFloorPct || 0, pu.computedPct || 0);
+        // Main progress bar — use server-computed displayPct directly (no client math)
+        const displayPct = pu.displayPct || 0;
         const fill = document.getElementById('lt-progress-fill');
         const stepText = document.getElementById('lt-step-label');
         const phaseText = document.getElementById('lt-phase-label');

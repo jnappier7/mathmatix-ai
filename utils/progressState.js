@@ -169,6 +169,15 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
     showPercent: false  // Default: show step label instead
   };
 
+  // displayPct: the ONLY value the UI should use for the bar width.
+  // max(floor, computed) — enforced here so the frontend does zero math.
+  const displayPct = Math.max(progressFloorPct, computedPct);
+
+  // signalQuality: "approx" when lastSignal is inferred from binary
+  // PROBLEM_RESULT tags, "real" when sourced from lessonPhaseManager
+  // timing data. Prevents future-us from treating guesses as telemetry.
+  const signalQuality = lastSignal ? 'approx' : null;
+
   return {
     sessionId:         courseSession._id,
     lessonId:          courseSession.currentLessonId || null,
@@ -189,10 +198,12 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
     problemsCorrect,
 
     lastSignal:        lastSignal || null,
+    signalQuality,
     struggleFlag,
 
     computedPct,
     progressFloorPct,
+    displayPct,
 
     masterySignal:     null,
 
