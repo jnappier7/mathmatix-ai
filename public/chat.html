@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/lessonTracker.css" />
   <link rel="stylesheet" href="/css/tour-survey.css" />
   <link rel="stylesheet" href="/css/impersonation-banner.css" />
   <link rel="stylesheet" href="/css/iep-accommodations.css" />
@@ -356,6 +357,32 @@
               Exit Course
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Lesson Progress Tracker (phase dots + step bar + expandable details) -->
+      <div id="lesson-tracker-wrapper" style="display: none;">
+        <div class="lt-container">
+          <!-- Phase checkpoint dots (5 buckets) -->
+          <div id="lt-phase-dots" class="lt-phase-dots"></div>
+
+          <!-- Main progress bar + step label -->
+          <div class="lt-bar-row">
+            <div class="lt-bar-track">
+              <div id="lt-progress-fill" class="lt-bar-fill"></div>
+            </div>
+            <div class="lt-labels">
+              <span id="lt-step-label" class="lt-step-label"></span>
+              <span class="lt-label-sep">&middot;</span>
+              <span id="lt-phase-label" class="lt-phase-label"></span>
+              <button id="lt-details-toggle" class="lt-details-toggle" title="Show details">
+                <i class="fas fa-chevron-down lt-toggle-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Expandable details panel -->
+          <div id="lt-details-panel" class="lt-details-panel"></div>
         </div>
       </div>
 
@@ -1539,6 +1566,7 @@
   <script src="/js/floating-screener.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/courseCatalog.js"></script>
+  <script src="/js/lessonTracker.js"></script>
   <script src="/js/returningUserModal.js"></script>
   <script src="/js/graphTool.js"></script>
   <script src="/js/diagram-display.js"></script>

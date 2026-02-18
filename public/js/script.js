@@ -1821,6 +1821,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (pct)  pct.textContent  = `${data.courseContext.overallProgress}%`;
             }
 
+            // Lesson progress tracker: update on every course-chat response
+            if (data.progressUpdate && window.lessonTracker) {
+                window.lessonTracker.update(data.progressUpdate);
+            }
+
         } catch (error) {
             console.error("Chat error:", error);
 

@@ -20,6 +20,7 @@ const { calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { detectTopic } = require('../utils/activitySummarizer');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
+const { buildProgressUpdate } = require('../utils/progressState');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -682,6 +683,33 @@ router.post('/', async (req, res) => {
 
         await user.save();
 
+        // ── Build progressUpdate (ALWAYS — every response) ──
+        // Determine last assessment signal for this turn
+        let lastSignal = null;
+        let signalSource = null;
+        if (problemAnswered) {
+            // Binary signal from <PROBLEM_RESULT> tag — not real timing data.
+            // signalSource tracks which generator produced this so future code
+            // doesn't confuse it with lessonPhaseManager telemetry.
+            lastSignal = wasCorrect ? 'correct_fast' : 'incorrect_close';
+            signalSource = 'problem_result';
+        }
+
+        const progressUpdate = buildProgressUpdate({
+            courseSession,
+            moduleData,
+            conversation,
+            lastSignal,
+            signalSource,
+            showCheckpoint: false
+        });
+
+        // Persist the floor so it survives reloads
+        if (progressUpdate.progressFloorPct > (courseSession.progressFloorPct || 0)) {
+            courseSession.progressFloorPct = progressUpdate.progressFloorPct;
+            await courseSession.save();
+        }
+
         // ── Build response ──────────────────────────────────
         let responseData;
 
@@ -698,7 +726,8 @@ router.post('/', async (req, res) => {
                     currentLessonId: courseSession.currentLessonId,
                     overallProgress: courseSession.overallProgress
                 },
-                courseProgress: courseProgressUpdate
+                courseProgress: courseProgressUpdate,
+                progressUpdate
             };
         } else {
             // Student response: full gamification
@@ -751,7 +780,8 @@ router.post('/', async (req, res) => {
                     currentLessonId: courseSession.currentLessonId,
                     overallProgress: courseSession.overallProgress
                 },
-                courseProgress: courseProgressUpdate
+                courseProgress: courseProgressUpdate,
+                progressUpdate
             };
         }
 
@@ -846,6 +876,9 @@ async function handleCourseGreeting(req, res, userId) {
                     ? user.selectedTutorId : 'default';
                 const currentTutor = TUTOR_CONFIG[selectedTutorKey];
                 console.log(`📚 [CourseGreeting] ${user.firstName} → returning existing greeting (idempotent)`);
+                const greetingProgress = buildProgressUpdate({
+                    courseSession, moduleData, conversation, lastSignal: null, showCheckpoint: false
+                });
                 return res.json({
                     text: lastMsg.content,
                     voiceId: currentTutor.voiceId,
@@ -855,7 +888,8 @@ async function handleCourseGreeting(req, res, userId) {
                         courseName: courseSession.courseName,
                         currentModuleId: courseSession.currentModuleId,
                         overallProgress: courseSession.overallProgress
-                    }
+                    },
+                    progressUpdate: greetingProgress
                 });
             }
         }
@@ -961,6 +995,10 @@ async function handleCourseGreeting(req, res, userId) {
         conversation.lastActivity = new Date();
         await conversation.save();
 
+        const newGreetingProgress = buildProgressUpdate({
+            courseSession, moduleData, conversation, lastSignal: null, showCheckpoint: false
+        });
+
         res.json({
             text: greetingText,
             voiceId: currentTutor.voiceId,
@@ -970,7 +1008,8 @@ async function handleCourseGreeting(req, res, userId) {
                 courseName: courseSession.courseName,
                 currentModuleId: courseSession.currentModuleId,
                 overallProgress: courseSession.overallProgress
-            }
+            },
+            progressUpdate: newGreetingProgress
         });
 
     } catch (error) {

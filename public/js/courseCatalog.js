@@ -208,10 +208,20 @@ class CourseManager {
             this.updateProgressBar(match);
             wrapper.style.display = 'block';
             if (window.sidebar) window.sidebar.setContext('course');
+
+            // Rehydrate the lesson progress tracker
+            if (window.lessonTracker) {
+                window.lessonTracker.rehydrate(match._id);
+            }
         } else {
             wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
             if (window.sidebar) window.sidebar.setContext('general');
+
+            // Hide the lesson tracker when not in a course
+            if (window.lessonTracker) {
+                window.lessonTracker.hide();
+            }
         }
     }
 
@@ -807,6 +817,10 @@ class CourseManager {
             if (data.text && window.appendMessage) {
                 window.appendMessage(data.text, 'ai');
             }
+            // Feed the lesson tracker from greeting response
+            if (data.progressUpdate && window.lessonTracker) {
+                window.lessonTracker.update(data.progressUpdate);
+            }
         } catch (err) {
             if (window.showThinkingIndicator) window.showThinkingIndicator(false);
             console.error('[CourseManager] Course greeting failed:', err);
@@ -830,9 +844,10 @@ class CourseManager {
                 credentials: 'include'
             });
 
-            // Hide progress bar
+            // Hide progress bar and lesson tracker
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'none';
+            if (window.lessonTracker) window.lessonTracker.hide();
             this.activeCourseSessionId = null;
 
             // Switch sidebar back to general context

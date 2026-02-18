@@ -1,0 +1,244 @@
+/* ============================================
+   LESSON PROGRESS TRACKER
+   Calm, clear, never threatening.
+   Phase dots + step bar + expandable details.
+   ============================================ */
+
+/* Container */
+.lt-container {
+  background: linear-gradient(135deg, #667eea08, #764ba208);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 16px 8px;
+}
+
+/* ── Phase checkpoint dots ────────────────── */
+.lt-phase-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.lt-phase-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.lt-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.lt-dot-label {
+  font-size: 10px;
+  color: #94a3b8;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+/* Connector line between dots */
+.lt-dot-connector {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  min-width: 12px;
+  max-width: 60px;
+  margin: 0 2px;
+  align-self: flex-start;
+  margin-top: 9px; /* center with dot */
+  transition: background 0.3s;
+}
+
+/* Completed dot */
+.lt-dot-completed .lt-dot {
+  background: #667eea;
+}
+.lt-dot-completed .lt-dot-label {
+  color: #667eea;
+  font-weight: 600;
+}
+.lt-dot-completed + .lt-dot-connector {
+  background: #667eea;
+}
+
+/* Current dot */
+.lt-dot-current .lt-dot {
+  background: white;
+  border: 2.5px solid #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+.lt-dot-current .lt-dot-label {
+  color: #667eea;
+  font-weight: 700;
+}
+
+/* Pulse animation for current dot */
+.lt-dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #667eea;
+  animation: ltPulse 2s ease-in-out infinite;
+}
+
+@keyframes ltPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+/* Future dot */
+.lt-dot-future .lt-dot {
+  background: #e2e8f0;
+}
+.lt-dot-future .lt-dot-label {
+  color: #cbd5e1;
+}
+
+/* ── Main progress bar ────────────────────── */
+.lt-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lt-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.lt-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.lt-labels {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.lt-step-label {
+  color: #475569;
+  font-weight: 600;
+}
+
+.lt-label-sep {
+  color: #cbd5e1;
+}
+
+.lt-phase-label {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Details toggle button */
+.lt-details-toggle {
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 10px;
+  margin-left: auto;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.lt-details-toggle:hover {
+  background: #f1f5f9;
+  color: #667eea;
+}
+.lt-toggle-icon {
+  transition: transform 0.2s;
+}
+.lt-details-toggle.expanded .lt-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* ── Details panel (expandable) ───────────── */
+.lt-details-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+  padding: 0 4px;
+}
+.lt-details-panel.expanded {
+  max-height: 120px;
+  padding: 8px 4px 4px;
+}
+
+.lt-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 12px;
+}
+
+.lt-detail-key {
+  color: #94a3b8;
+}
+
+.lt-detail-val {
+  color: #475569;
+  font-weight: 500;
+}
+
+.lt-streak {
+  color: #667eea;
+}
+
+/* ── Dev overlay ──────────────────────────── */
+.lt-dev-overlay {
+  background: #faf5ff;
+  border: 1px dashed #c4b5fd;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+}
+
+/* ── Responsive ──────────────────────────── */
+@media (max-width: 600px) {
+  .lt-phase-dots {
+    padding: 0 2px;
+  }
+  .lt-dot-label {
+    font-size: 8px;
+  }
+  .lt-dot {
+    width: 16px;
+    height: 16px;
+  }
+  .lt-dot-connector {
+    min-width: 6px;
+    margin-top: 7px;
+  }
+  .lt-dot-pulse {
+    width: 6px;
+    height: 6px;
+  }
+  .lt-dot-completed .lt-dot svg {
+    width: 8px;
+    height: 8px;
+  }
+}
