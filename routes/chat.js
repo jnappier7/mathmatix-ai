@@ -1235,7 +1235,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // PROBLEM RESULT TRACKING: Parse structured tags for accurate stats
         // Format: <PROBLEM_RESULT:correct|incorrect|skipped>
         // This MUST happen before saving so stats are persisted correctly
-        const problemResultMatch = aiResponseText.match(/<PROBLEM_RESULT:(correct|incorrect|skipped)>/i);
+        const problemResultMatch = aiResponseText.match(/<\s*PROBLEM_RESULT\s*:\s*(correct|incorrect|skipped)\s*>/i);
         let problemAnswered = false;
         let wasCorrect = false;
         let wasSkipped = false;
@@ -1322,8 +1322,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
-                const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
-                const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
+                const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(aiResponseText);
+                const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(aiResponseText);
 
                 console.log(`[Progression] Engine active — sessionId=${user.activeCourseSessionId}, SCAFFOLD_ADVANCE=${hasScaffoldAdvance}, MODULE_COMPLETE=${hasModuleComplete}`);
                 if (!hasScaffoldAdvance && !hasModuleComplete) {
@@ -1333,8 +1333,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 // Strip signal tags from the response text (student should not see them)
                 if (hasScaffoldAdvance || hasModuleComplete) {
                     aiResponseText = aiResponseText
-                        .replace(/<SCAFFOLD_ADVANCE>/gi, '')
-                        .replace(/<MODULE_COMPLETE>/gi, '')
+                        .replace(/<\s*SCAFFOLD_ADVANCE\s*>/gi, '')
+                        .replace(/<\s*MODULE_COMPLETE\s*>/gi, '')
                         .trim();
                     // In streaming mode, tags were already sent — send replacement to overwrite
                     if (useStreaming && !clientDisconnected) {
