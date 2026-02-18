@@ -473,6 +473,11 @@ app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar customization endpoints
+
+// Public API routes (no auth required) — must come BEFORE the catch-all /api mount below
+app.use('/api/waitlist', waitlistRoutes);          // Pre-launch waitlist
+app.use('/api/demo', demoRoutes);                  // Playground demo account login & reset
+
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
@@ -507,12 +512,6 @@ app.post('/api/clever-sync/webhook', cleverSyncRoutes);
 app.use('/api/clever-sync', isAuthenticated, isAdmin, cleverSyncRoutes); // Clever roster & section sync (admin only)
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
-
-// Pre-launch waitlist (public — no auth required)
-app.use('/api/waitlist', waitlistRoutes);
-
-// Playground demo accounts (public login, authenticated reset/status)
-app.use('/api/demo', demoRoutes);
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
