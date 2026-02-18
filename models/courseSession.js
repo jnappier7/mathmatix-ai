@@ -60,6 +60,9 @@ const courseSessionSchema = new Schema({
   // Overall progress
   overallProgress: { type: Number, default: 0, min: 0, max: 100 },
 
+  // Progress floor: highest progress ever achieved (bar never moves backward)
+  progressFloorPct: { type: Number, default: 0, min: 0, max: 100 },
+
   // Status
   status: {
     type: String,

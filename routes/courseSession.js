@@ -10,6 +10,7 @@ const CourseSession = require('../models/courseSession');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
+const { buildProgressUpdate } = require('../utils/progressState');
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -414,6 +415,59 @@ router.get('/:id/progress', async (req, res) => {
   } catch (err) {
     console.error('[CourseSession] Error fetching progress:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch progress' });
+  }
+});
+
+/* ============================================================
+   GET /api/course-sessions/:id/lesson-progress
+   Rehydration endpoint: returns the full progressUpdate payload
+   for the student's current lesson position. Called on page load,
+   tab refocus, and reconnect.
+   ============================================================ */
+router.get('/:id/lesson-progress', async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Course session not found' });
+    }
+
+    // Load module data for scaffold info
+    const pathwayFile = path.join(__dirname, '../public/resources', `${session.courseId}-pathway.json`);
+    if (!fs.existsSync(pathwayFile)) {
+      return res.status(500).json({ success: false, message: 'Course pathway not found' });
+    }
+    const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+    const currentPathwayModule = (pathway.modules || []).find(m => m.moduleId === session.currentModuleId);
+
+    let moduleData = { title: currentPathwayModule?.title || session.currentModuleId, skills: [] };
+    if (currentPathwayModule?.moduleFile) {
+      const moduleFile = path.join(__dirname, '../public/modules', session.courseId, currentPathwayModule.moduleFile);
+      if (fs.existsSync(moduleFile)) {
+        moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+      }
+    }
+
+    // Load conversation for problem stats
+    let conversation = null;
+    if (session.conversationId) {
+      conversation = await Conversation.findById(session.conversationId);
+    }
+
+    const progressUpdate = buildProgressUpdate({
+      courseSession: session,
+      moduleData,
+      conversation,
+      lastSignal: null,
+      showCheckpoint: false
+    });
+
+    res.json({ success: true, progressUpdate });
+  } catch (err) {
+    console.error('[CourseSession] Error fetching lesson progress:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch lesson progress' });
   }
 });
 
