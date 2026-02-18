@@ -686,9 +686,13 @@ router.post('/', async (req, res) => {
         // ── Build progressUpdate (ALWAYS — every response) ──
         // Determine last assessment signal for this turn
         let lastSignal = null;
+        let signalSource = null;
         if (problemAnswered) {
-            // Map problem result to signal nomenclature
+            // Binary signal from <PROBLEM_RESULT> tag — not real timing data.
+            // signalSource tracks which generator produced this so future code
+            // doesn't confuse it with lessonPhaseManager telemetry.
             lastSignal = wasCorrect ? 'correct_fast' : 'incorrect_close';
+            signalSource = 'problem_result';
         }
 
         const progressUpdate = buildProgressUpdate({
@@ -696,6 +700,7 @@ router.post('/', async (req, res) => {
             moduleData,
             conversation,
             lastSignal,
+            signalSource,
             showCheckpoint: false
         });
 

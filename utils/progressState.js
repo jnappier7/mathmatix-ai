@@ -125,7 +125,7 @@ function computePhaseGroupStatuses(scaffoldData, currentScaffoldIndex) {
  * @param {boolean} opts.showCheckpoint - Whether the checkpoint phase is visible
  * @returns {Object} progressUpdate payload
  */
-function buildProgressUpdate({ courseSession, moduleData, conversation, lastSignal = null, showCheckpoint = false }) {
+function buildProgressUpdate({ courseSession, moduleData, conversation, lastSignal = null, signalSource = null, showCheckpoint = false }) {
   const scaffolds = moduleData?.scaffold || [];
   const totalScaffolds = scaffolds.length || 1;
   const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
@@ -140,12 +140,12 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
   // Step label: "Step 3 of 7"
   const stepLabel = `Step ${scaffoldIndex + 1} of ${totalScaffolds}`;
 
-  // Computed progress percentage based on traversed path
-  const computedPct = Math.round(((scaffoldIndex + 1) / totalScaffolds) * 100);
+  // Computed progress percentage based on traversed path (clamped int [0, 100])
+  const computedPct = Math.min(100, Math.max(0, Math.round(((scaffoldIndex + 1) / totalScaffolds) * 100)));
 
-  // Floor: never go below the highest progress ever achieved
+  // Floor: never go below the highest progress ever achieved (clamped int [0, 100])
   const existingFloor = courseSession.progressFloorPct || 0;
-  const progressFloorPct = Math.max(existingFloor, computedPct);
+  const progressFloorPct = Math.min(100, Math.max(0, Math.max(existingFloor, computedPct)));
 
   // Problem stats from conversation
   const problemsAttempted = conversation?.problemsAttempted || 0;
@@ -170,13 +170,8 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
   };
 
   // displayPct: the ONLY value the UI should use for the bar width.
-  // max(floor, computed) — enforced here so the frontend does zero math.
-  const displayPct = Math.max(progressFloorPct, computedPct);
-
-  // signalQuality: "approx" when lastSignal is inferred from binary
-  // PROBLEM_RESULT tags, "real" when sourced from lessonPhaseManager
-  // timing data. Prevents future-us from treating guesses as telemetry.
-  const signalQuality = lastSignal ? 'approx' : null;
+  // max(floor, computed), clamped int [0, 100] — frontend does zero math.
+  const displayPct = Math.min(100, Math.max(0, Math.max(progressFloorPct, computedPct)));
 
   return {
     sessionId:         courseSession._id,
@@ -198,7 +193,7 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
     problemsCorrect,
 
     lastSignal:        lastSignal || null,
-    signalQuality,
+    signalSource:      signalSource || null,  // 'problem_result' | 'lesson_phase_manager' | null
     struggleFlag,
 
     computedPct,
