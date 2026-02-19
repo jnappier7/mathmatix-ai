@@ -2586,7 +2586,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="skill-gap-meta">
                         <span><strong>${gap.mastered}</strong> mastered</span>
                         <span><strong>${gap.learning}</strong> learning</span>
-                        <span><strong>${gap.notMasteredCount}</strong> not started</span>
+                        <span><strong>${gap.notMasteredCount}</strong> not mastered</span>
                         ${gap.avgMasteryScore > 0 ? `<span>Avg: <strong>${gap.avgMasteryScore}%</strong></span>` : ''}
                     </div>
                 </div>
@@ -2599,7 +2599,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const skillId = item.dataset.skillId;
                 const gap = skillGapsData.find(g => g.skillId === skillId);
                 if (gap) {
-                    const prompt = `Help me plan a mini-lesson for "${gap.displayName}". ${gap.mastered} of ${gap.totalStudents} students have mastered it, and ${gap.learning} are currently learning. What's the best approach?`;
+                    const prompt = `Help me plan a mini-lesson for "${gap.displayName}". ${gap.mastered} of ${gap.totalStudents} students who attempted it have mastered it, and ${gap.learning} are currently learning. What's the best approach?`;
                     document.getElementById('planner-input').value = prompt;
                     sendLessonPlannerMessage(prompt);
                 }

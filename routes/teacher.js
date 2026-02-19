@@ -1193,6 +1193,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
             learning: 0,
             struggling: 0,
             notStarted: 0,
+            attempted: 0,
             totalStudents: 0,
             avgMasteryScore: 0,
             totalMasteryScore: 0,
@@ -1205,8 +1206,10 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 
         if (data.status === 'mastered') {
           agg.mastered++;
-        } else if (data.status === 'learning' || data.status === 'practicing') {
+          agg.attempted++;
+        } else if (data.status === 'learning' || data.status === 'practicing' || data.status === 're-fragile' || data.status === 'needs-review') {
           agg.learning++;
+          agg.attempted++;
         } else if (data.status === 'ready' || data.status === 'locked') {
           agg.notStarted++;
         }
@@ -1237,9 +1240,10 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
     const skillMap = {};
     skillDetails.forEach(s => { skillMap[s.skillId] = s; });
 
-    const gaps = Object.values(skillAggregation).map(agg => {
+    const gaps = Object.values(skillAggregation)
+      .filter(agg => agg.attempted > 0) // Only include skills that students have actually attempted
+      .map(agg => {
       const detail = skillMap[agg.skillId] || {};
-      const notMastered = agg.totalStudents - agg.mastered;
       agg.avgMasteryScore = agg.scoreCount > 0
         ? Math.round((agg.totalMasteryScore / agg.scoreCount) * 100)
         : 0;
@@ -1255,10 +1259,10 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
         mastered: agg.mastered,
         learning: agg.learning,
         struggling: agg.struggling,
-        notStarted: students.length - agg.totalStudents,
-        totalStudents: students.length,
+        notStarted: agg.notStarted,
+        totalStudents: agg.attempted,
         avgMasteryScore: agg.avgMasteryScore,
-        notMasteredCount: notMastered + (students.length - agg.totalStudents),
+        notMasteredCount: agg.attempted - agg.mastered,
         strugglingStudents: agg.strugglingStudents.slice(0, 5)
       };
     });
@@ -1269,7 +1273,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
     res.json({
       gaps: gaps.slice(0, 50), // Top 50 skill gaps
       studentCount: students.length,
-      totalSkillsTracked: skillIds.length
+      totalSkillsTracked: gaps.length
     });
 
   } catch (err) {
