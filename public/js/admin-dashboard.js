@@ -43,6 +43,65 @@ document.addEventListener("DOMContentLoaded", async () => {
     const conversationSummariesList = document.getElementById("conversationSummariesList");
 
     // -------------------------------------------------------------------------
+    // --- Toast Notification System ---
+    // -------------------------------------------------------------------------
+
+    function showToast(message, type = 'info', duration = 4000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        const iconMap = { success: 'check-circle', error: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
+        toast.innerHTML = `
+            <i class="fas fa-${iconMap[type] || iconMap.info}"></i>
+            <span>${message}</span>
+            <button class="toast-close" aria-label="Dismiss">&times;</button>
+        `;
+
+        toast.querySelector('.toast-close').addEventListener('click', () => dismiss(toast));
+        container.appendChild(toast);
+
+        const timer = setTimeout(() => dismiss(toast), duration);
+
+        function dismiss(el) {
+            clearTimeout(timer);
+            el.classList.add('toast-out');
+            el.addEventListener('animationend', () => el.remove());
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // --- Debounce Utility ---
+    // -------------------------------------------------------------------------
+
+    function debounce(fn, delay) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
+    // -------------------------------------------------------------------------
+    // --- Skeleton Loading ---
+    // -------------------------------------------------------------------------
+
+    function showUserTableSkeleton() {
+        const skeleton = document.getElementById('userTableSkeleton');
+        const tableContainer = document.getElementById('userTableContainer');
+        if (skeleton) skeleton.style.display = 'block';
+        if (tableContainer) tableContainer.style.display = 'none';
+    }
+
+    function hideUserTableSkeleton() {
+        const skeleton = document.getElementById('userTableSkeleton');
+        const tableContainer = document.getElementById('userTableContainer');
+        if (skeleton) skeleton.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'block';
+    }
+
+    // -------------------------------------------------------------------------
     // --- State Management ---
     // -------------------------------------------------------------------------
     let students = [];
@@ -62,6 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
      * Fetches all necessary data from the server and initializes the dashboard.
      */
     async function initializeDashboard() {
+        showUserTableSkeleton();
         try {
             const [usersRes, teachersRes] = await Promise.all([
                 fetch('/api/admin/users', { credentials: 'include' }),
@@ -74,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const allUsers = await usersRes.json();
             const teachers = await teachersRes.json();
-            
+
             students = allUsers; // Show all users (filtered by role dropdown in renderStudents)
 
             // Create a teacher lookup map for efficient name retrieval.
@@ -82,13 +142,42 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             renderTeacherOptions();
             renderStudents();
+            updateUserStatCards();
+            hideUserTableSkeleton();
             fetchAndDisplayLeaderboard();
             fetchSystemStatus();
 
         } catch (error) {
             console.error("Error initializing dashboard:", error);
-            if(userTableBody) userTableBody.innerHTML = `<tr><td colspan="5" class="text-center">Error loading data. Please refresh.</td></tr>`;
+            hideUserTableSkeleton();
+            if(userTableBody) userTableBody.innerHTML = `<tr><td colspan="6" class="text-center">Error loading data. Please refresh.</td></tr>`;
         }
+    }
+
+    /**
+     * Updates the user count stat cards based on current student data.
+     */
+    function updateUserStatCards() {
+        const total = students.length;
+        const counts = { student: 0, teacher: 0, parent: 0, admin: 0 };
+
+        students.forEach(s => {
+            const roles = (s.roles && s.roles.length > 0) ? s.roles : [s.role];
+            roles.forEach(r => {
+                if (counts.hasOwnProperty(r)) counts[r]++;
+            });
+        });
+
+        const el = (id, val) => {
+            const node = document.getElementById(id);
+            if (node) node.textContent = val;
+        };
+
+        el('statTotal', total);
+        el('statStudents', counts.student);
+        el('statTeachers', counts.teacher);
+        el('statParents', counts.parent);
+        el('statAdmins', counts.admin);
     }
     
     /**
@@ -193,19 +282,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
-                    <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles">
+                    <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles" aria-label="Edit roles for ${s.firstName} ${s.lastName}">
                         <i class="fas fa-user-tag"></i>
                     </button>
-                    <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
+                    <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}" aria-label="View as ${s.firstName} ${s.lastName}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email">
+                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email" aria-label="Send credentials to ${s.firstName} ${s.lastName}">
                         <i class="fas fa-envelope"></i>
                     </button>
-                    <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
+                    <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener" aria-label="Reset screener for ${s.firstName} ${s.lastName}">
                         <i class="fas fa-redo"></i>
                     </button>
-                    <button class="btn-icon btn-danger delete-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" title="Delete User">
+                    <button class="btn-icon btn-danger delete-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" title="Delete User" aria-label="Delete ${s.firstName} ${s.lastName}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -364,7 +453,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 popover.querySelector('.save-roles-btn').addEventListener('click', async () => {
                     const newRoles = Array.from(popover.querySelectorAll('.role-cb:checked')).map(cb => cb.value);
                     if (newRoles.length === 0) {
-                        alert('Select at least one role.');
+                        showToast('Select at least one role.', 'warning');
                         return;
                     }
 
@@ -387,7 +476,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             throw new Error(result.message || 'Failed to update roles');
                         }
                     } catch (error) {
-                        alert(`Error: ${error.message}`);
+                        showToast(`Error: ${error.message}`, 'error');
                         saveBtn.disabled = false;
                         saveBtn.textContent = 'Save';
                     }
@@ -433,16 +522,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (response.ok && result.success) {
                         if (result.temporaryPassword) {
                             // Email failed but password was reset - show it
-                            alert(`⚠️ ${result.message}`);
+                            showToast(result.message, 'warning', 6000);
                         } else {
-                            alert(`✅ ${result.message}`);
+                            showToast(result.message, 'success');
                         }
                     } else {
                         throw new Error(result.message || 'Failed to send credentials');
                     }
                 } catch (error) {
                     console.error('Send credentials error:', error);
-                    alert(`❌ Error: ${error.message}`);
+                    showToast(`Error: ${error.message}`, 'error');
                 } finally {
                     sendCredsBtn.disabled = false;
                     sendCredsBtn.innerHTML = '<i class="fas fa-envelope"></i>';
@@ -480,14 +569,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const result = await response.json();
 
                     if (response.ok && result.success) {
-                        alert(`✅ ${result.message}\n\nThe student can now retake the placement screener.`);
+                        showToast(`${result.message} — student can now retake the screener.`, 'success', 5000);
                         await initializeDashboard(); // Refresh the dashboard
                     } else {
                         throw new Error(result.message || 'Failed to reset assessment');
                     }
                 } catch (error) {
                     console.error('Reset assessment error:', error);
-                    alert(`❌ Error: ${error.message}`);
+                    showToast(`Error: ${error.message}`, 'error');
                 } finally {
                     resetBtn.disabled = false;
                     resetBtn.innerHTML = '<i class="fas fa-redo"></i>';
@@ -515,7 +604,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // Redirect happens automatically in the start function
                 } catch (error) {
                     console.error('Failed to start user view:', error);
-                    alert(`❌ Error: ${error.message || 'Failed to start user view'}`);
+                    showToast(`Error: ${error.message || 'Failed to start user view'}`, 'error');
                     viewAsBtn.disabled = false;
                     viewAsBtn.innerHTML = '<i class="fas fa-eye"></i>';
                 }
@@ -545,14 +634,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const result = await response.json();
 
                     if (response.ok && result.success) {
-                        alert(`✅ ${result.message}`);
+                        showToast(result.message, 'success');
                         await initializeDashboard(); // Refresh the dashboard
                     } else {
                         throw new Error(result.message || 'Failed to delete user');
                     }
                 } catch (error) {
                     console.error('Delete error:', error);
-                    alert(`❌ Error: ${error.message}`);
+                    showToast(`Error: ${error.message}`, 'error');
                     deleteBtn.disabled = false;
                     deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
                 }
@@ -560,7 +649,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    if (studentSearch) studentSearch.addEventListener("input", renderStudents);
+    if (studentSearch) studentSearch.addEventListener("input", debounce(renderStudents, 300));
     const userRoleFilter = document.getElementById('userRoleFilter');
     if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
 
@@ -568,7 +657,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         assignButton.addEventListener("click", async () => {
             const selectedIds = Array.from(userTableBody.querySelectorAll(".select-student:checked")).map(cb => cb.value);
             if (selectedIds.length === 0) {
-                alert("Please select at least one student.");
+                showToast('Please select at least one student.', 'warning');
                 return;
             }
             
@@ -586,10 +675,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const result = await res.json();
                 if(!res.ok) throw new Error(result.message || "Failed to assign teacher.");
                 
-                alert(result.message);
+                showToast(result.message, 'success');
                 await initializeDashboard(); // Refresh all data
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             }
         });
     }
@@ -657,12 +746,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (!profileRes.ok || !iepRes.ok) throw new Error('Failed to save one or more sections.');
 
-                alert('Student updated successfully!');
+                showToast('Student updated successfully!', 'success');
                 closeModal();
                 await initializeDashboard();
 
             } catch (error) {
-                alert(`Could not save changes: ${error.message}`);
+                showToast(`Could not save changes: ${error.message}`, 'error');
             } finally {
                 saveChangesButton.disabled = false;
                 saveChangesButton.textContent = 'Save Changes';
@@ -802,7 +891,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         } catch (error) {
             console.error('Error loading usage report:', error);
-            alert('Failed to load usage report');
+            showToast('Failed to load usage report', 'error');
         }
     }
 
@@ -847,7 +936,7 @@ document.addEventListener("DOMContentLoaded", async () => {
      */
     function exportUsageReportToCSV() {
         if (!currentReportData || !currentReportData.users) {
-            alert('No report data to export');
+            showToast('No report data to export', 'warning');
             return;
         }
 
@@ -1464,7 +1553,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ).map(cb => cb.value);
 
                 if (selectedRoles.length === 0) {
-                    alert('Please select at least one role.');
+                    showToast('Please select at least one role.', 'warning');
                     return;
                 }
 
@@ -1549,7 +1638,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(result.message || 'Failed to create user');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create User';
@@ -1564,7 +1653,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!lastCreatedUserId) return;
             const className = document.getElementById('followUpClassName').value.trim();
             if (!className) {
-                alert('Please enter a class name.');
+                showToast('Please enter a class name.', 'warning');
                 return;
             }
 
@@ -1592,7 +1681,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(result.message || 'Failed to create class code');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 followUpCreateClassBtn.disabled = false;
                 followUpCreateClassBtn.innerHTML = '<i class="fas fa-key"></i> Create Class Code';
@@ -1607,7 +1696,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!lastCreatedUserId) return;
             const studentId = document.getElementById('followUpParentStudentSelect').value;
             if (!studentId) {
-                alert('Please select a student.');
+                showToast('Please select a student.', 'warning');
                 return;
             }
 
@@ -1630,7 +1719,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(result.message || 'Failed to link parent to student');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 followUpLinkChildBtn.disabled = false;
                 followUpLinkChildBtn.innerHTML = '<i class="fas fa-link"></i> Link Student';
@@ -1647,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const teacherId = document.getElementById('followUpStudentTeacherSelect').value;
 
             if (!parentId && !teacherId) {
-                alert('Please select at least a parent or a teacher.');
+                showToast('Please select at least a parent or a teacher.', 'warning');
                 return;
             }
 
@@ -1691,7 +1780,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 resultEl.innerHTML = messages.map(m => `<i class="fas fa-check-circle"></i> ${m}`).join('<br>');
                 resultEl.style.display = 'block';
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 followUpLinkStudentBtn.disabled = false;
                 followUpLinkStudentBtn.innerHTML = '<i class="fas fa-link"></i> Link Selected';
@@ -1767,7 +1856,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(result.message || 'Failed to link parent to student');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-link"></i> Link Parent & Student';
@@ -1898,7 +1987,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(result.message || 'Failed to create enrollment code');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                showToast(`Error: ${error.message}`, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-key"></i> Create Code';
@@ -1974,7 +2063,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (exportCredentialsBtn) {
         exportCredentialsBtn.addEventListener('click', () => {
             if (lastImportedStudents.length === 0) {
-                alert('No students to export');
+                showToast('No students to export', 'warning');
                 return;
             }
 
@@ -1999,7 +2088,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const enrollmentCodeId = document.getElementById('rosterEnrollmentCodeSelect')?.value || '';
 
         if (!fileInput.files[0]) {
-            alert('Please select a CSV file');
+            showToast('Please select a CSV file', 'warning');
             return;
         }
 
@@ -2031,7 +2120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             displayImportResults(result, dryRun);
 
         } catch (error) {
-            alert(`Error: ${error.message}`);
+            showToast(`Error: ${error.message}`, 'error');
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
@@ -2247,47 +2336,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function showAdminNotification(message, type = 'info') {
-        let notification = document.getElementById('admin-notification');
-        if (!notification) {
-            notification = document.createElement('div');
-            notification.id = 'admin-notification';
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 16px 24px;
-                border-radius: 8px;
-                color: white;
-                font-weight: 500;
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            `;
-            document.body.appendChild(notification);
-        }
-
-        const colors = {
-            info: '#3498db',
-            success: '#27ae60',
-            warning: '#f39c12',
-            error: '#e74c3c'
-        };
-
-        notification.style.background = colors[type] || colors.info;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; margin-left: 10px;">&times;</button>
-        `;
-
-        setTimeout(() => {
-            if (notification && notification.parentElement) {
-                notification.remove();
-            }
-        }, 5000);
+        // Delegate to the stacked toast system
+        showToast(message, type);
     }
 
     // Start polling
@@ -2507,15 +2557,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // Add slideIn animation for notifications
-    const adminStyleEl = document.createElement('style');
-    adminStyleEl.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    `;
-    document.head.appendChild(adminStyleEl);
+    // Toast animations are now handled by CSS in the HTML file
 
     console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });
