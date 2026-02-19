@@ -69,9 +69,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 targetContent.classList.add('active');
             }
 
-            // Lazy-load classes data when tab is first opened
+            // Lazy-load data when tabs are first opened
             if (targetTab === 'classes' && !classesLoaded) {
                 fetchClasses();
+            }
+            if (targetTab === 'insights' && !insightsLoaded) {
+                fetchSkillGaps();
             }
         });
     });
@@ -475,6 +478,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const status = getStudentStatus(student);
         studentCard.className = `student-card status-${status}`;
         studentCard.dataset.studentId = student._id;
+        studentCard.setAttribute('role', 'article');
+        studentCard.setAttribute('aria-label', `Student card for ${student.firstName || student.username}`);
 
         const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
         const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
@@ -482,27 +487,81 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
         const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
+        const statusAriaLabel = status === 'active' ? 'Student is active' : status === 'struggling' ? 'Student needs help' : 'Student is inactive';
+
+        // Find current learning skill
+        const currentSkill = getCurrentLearningSkill(student);
+        const currentSkillHtml = currentSkill
+            ? `<span class="student-metric student-metric-skill" title="Currently learning"><i class="fas fa-brain"></i> ${escapeHtml(currentSkill)}</span>`
+            : '';
+
+        // IEP badge
+        const hasIep = student.iepPlan && (
+            student.iepPlan.accommodations?.extendedTime ||
+            student.iepPlan.accommodations?.audioReadAloud ||
+            student.iepPlan.accommodations?.calculatorAllowed ||
+            student.iepPlan.accommodations?.reducedDistraction ||
+            student.iepPlan.accommodations?.chunkedAssignments ||
+            student.iepPlan.accommodations?.breaksAsNeeded ||
+            student.iepPlan.accommodations?.largePrintHighContrast ||
+            student.iepPlan.accommodations?.mathAnxietySupport ||
+            student.iepPlan.accommodations?.digitalMultiplicationChart ||
+            (student.iepPlan.goals && student.iepPlan.goals.length > 0)
+        );
+        const iepBadgeHtml = hasIep
+            ? '<span class="student-iep-badge" title="IEP accommodations active" aria-label="Has IEP"><i class="fas fa-shield-alt"></i> IEP</span>'
+            : '';
+
+        // Streak badge
+        const streakHtml = (student.currentStreak && student.currentStreak >= 3)
+            ? `<span class="student-streak-badge" title="${student.currentStreak}-day streak" aria-label="${student.currentStreak} day streak"><i class="fas fa-fire"></i> ${student.currentStreak}</span>`
+            : '';
 
         studentCard.innerHTML = `
             <div class="student-card-header">
-                <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
-                <span class="student-status-badge ${badgeClass}">${badgeText}</span>
+                <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: var(--color-primary); text-decoration: none; cursor: pointer;">${fullName}</a></strong>
+                <div class="student-card-badges">
+                    ${iepBadgeHtml}
+                    ${streakHtml}
+                    <span class="student-status-badge ${badgeClass}" aria-label="${statusAriaLabel}">${badgeText}</span>
+                </div>
             </div>
             <div class="student-metrics">
-                <span class="student-metric"><i class="fas fa-user"></i> ${student.username}</span>
-                <span class="student-metric"><i class="fas fa-graduation-cap"></i> Grade ${student.gradeLevel || 'N/A'}</span>
-                <span class="student-metric"><i class="fas fa-trophy"></i> Level ${student.level || 1}</span>
-                <span class="student-metric"><i class="fas fa-clock"></i> ${lastLoginText}</span>
-                <span class="student-metric"><i class="fas fa-bolt"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
+                <span class="student-metric"><i class="fas fa-user" aria-hidden="true"></i> ${student.username}</span>
+                <span class="student-metric"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Grade ${student.gradeLevel || 'N/A'}</span>
+                <span class="student-metric"><i class="fas fa-trophy" aria-hidden="true"></i> Level ${student.level || 1}</span>
+                <span class="student-metric"><i class="fas fa-clock" aria-hidden="true"></i> ${lastLoginText}</span>
+                <span class="student-metric"><i class="fas fa-bolt" aria-hidden="true"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
+                ${currentSkillHtml}
             </div>
             <div class="card-buttons">
-                <button class="view-as-student-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" title="See what ${fullName} sees"><i class="fas fa-eye"></i> View</button>
-                <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-clipboard-list"></i> IEP</button>
-                <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-history"></i> History</button>
-                <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-redo"></i> Reset</button>
+                <button class="view-as-student-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" title="See what ${fullName} sees" aria-label="View ${fullName}'s student view"><i class="fas fa-eye" aria-hidden="true"></i> View</button>
+                <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" aria-label="Edit ${fullName}'s IEP"><i class="fas fa-clipboard-list" aria-hidden="true"></i> IEP</button>
+                <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" aria-label="View ${fullName}'s conversation history"><i class="fas fa-history" aria-hidden="true"></i> History</button>
+                <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}" aria-label="Reset ${fullName}'s placement screener"><i class="fas fa-redo" aria-hidden="true"></i> Reset</button>
             </div>
         `;
         return studentCard;
+    }
+
+    function getCurrentLearningSkill(student) {
+        const mastery = student.skillMastery || {};
+        let latestSkill = null;
+        let latestDate = null;
+        for (const [skillId, data] of Object.entries(mastery)) {
+            if (data.status === 'learning' || data.status === 'practicing') {
+                const practiced = data.lastPracticed ? new Date(data.lastPracticed) : null;
+                if (!latestDate || (practiced && practiced > latestDate)) {
+                    latestDate = practiced;
+                    latestSkill = skillId;
+                }
+            }
+        }
+        if (latestSkill) {
+            // Format skill ID: "adding-fractions" -> "Adding Fractions"
+            return latestSkill.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        return null;
     }
 
     // Print class roster
@@ -958,15 +1017,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function handleResetScreener(event) {
-        const studentId = event.target.dataset.studentId;
-        const studentName = event.target.dataset.studentName;
+        const studentId = event.target.dataset.studentId || event.target.closest('button')?.dataset.studentId;
+        const studentName = event.target.dataset.studentName || event.target.closest('button')?.dataset.studentName;
 
-        // Confirm action
-        const reason = prompt(
-            `Reset placement assessment for ${studentName}?\n\n` +
-            `This will allow them to retake the screener.\n\n` +
-            `Optional: Enter a reason for this reset (e.g., "summer break", "skill regression"):`
-        );
+        // Use themed confirm dialog
+        const reason = await showConfirmDialog({
+            title: `Reset Assessment for ${studentName}?`,
+            message: 'This will allow the student to retake the placement screener. Enter an optional reason below.',
+            confirmText: 'Reset Assessment',
+            type: 'warning',
+            showInput: true,
+            inputPlaceholder: 'e.g., summer break, skill regression'
+        });
 
         // User cancelled
         if (reason === null) return;
@@ -984,7 +1046,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             const result = await response.json();
-            alert(`✅ ${result.message}\n\nThe student can now retake the placement screener.`);
+            showToast(`${result.message} — student can now retake the screener.`, 'success');
 
             // Refresh student list to show updated status
             await fetchAssignedStudents();
@@ -1281,6 +1343,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (classesTabBtn) classesTabBtn.click();
             });
         }
+
+        // Insights quick action
+        const insightsBtn = document.getElementById('qa-insights');
+        if (insightsBtn) {
+            insightsBtn.addEventListener('click', () => {
+                const insightsTabBtn = document.querySelector('[data-tab="insights"]');
+                if (insightsTabBtn) insightsTabBtn.click();
+            });
+        }
     }
 
     function exportStudentData() {
@@ -1349,6 +1420,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 case 'r':
                     e.preventDefault();
                     document.querySelector('[data-tab="resources"]')?.click();
+                    break;
+                case 'i':
+                    e.preventDefault();
+                    document.querySelector('[data-tab="insights"]')?.click();
                     break;
                 case '/':
                     e.preventDefault();
@@ -1688,7 +1763,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     window.bulkResetAssessments = async function() {
         const count = selectedStudents.size;
-        if (!confirm(`Reset assessments for ${count} selected students?`)) return;
+        const confirmed = await showConfirmDialog({
+            title: `Reset ${count} Assessments?`,
+            message: `This will reset placement assessments for ${count} selected student${count > 1 ? 's' : ''}. They will be able to retake the screener.`,
+            confirmText: `Reset ${count} Assessment${count > 1 ? 's' : ''}`,
+            type: 'warning'
+        });
+        if (!confirmed) return;
 
         let successCount = 0;
         for (const studentId of selectedStudents) {
@@ -2288,5 +2369,418 @@ document.addEventListener("DOMContentLoaded", async () => {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // ============================================
+    // THEMED CONFIRM DIALOG (replaces native alert/confirm/prompt)
+    // ============================================
+
+    window.showConfirmDialog = function({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', type = 'warning', showInput = false, inputPlaceholder = '' }) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('confirm-dialog-overlay');
+            const titleEl = document.getElementById('confirm-dialog-title');
+            const messageEl = document.getElementById('confirm-dialog-message');
+            const confirmBtn = document.getElementById('confirm-dialog-confirm');
+            const cancelBtn = document.getElementById('confirm-dialog-cancel');
+            const iconEl = document.getElementById('confirm-dialog-icon');
+            const iconI = document.getElementById('confirm-dialog-icon-i');
+            const inputEl = document.getElementById('confirm-dialog-input');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            confirmBtn.textContent = confirmText;
+            cancelBtn.textContent = cancelText;
+
+            // Icon type
+            iconEl.className = `confirm-dialog-icon icon-${type}`;
+            const iconMap = { warning: 'fa-exclamation-triangle', danger: 'fa-trash-alt', info: 'fa-info-circle' };
+            iconI.className = `fas ${iconMap[type] || iconMap.warning}`;
+
+            // Confirm button style
+            if (type === 'danger') {
+                confirmBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            } else {
+                confirmBtn.style.background = '';
+            }
+
+            // Input
+            inputEl.style.display = showInput ? 'block' : 'none';
+            inputEl.placeholder = inputPlaceholder;
+            inputEl.value = '';
+
+            overlay.classList.add('is-visible');
+
+            function cleanup(result) {
+                overlay.classList.remove('is-visible');
+                confirmBtn.removeEventListener('click', onConfirm);
+                cancelBtn.removeEventListener('click', onCancel);
+                overlay.removeEventListener('click', onOverlay);
+                resolve(result);
+            }
+
+            function onConfirm() { cleanup(showInput ? inputEl.value : true); }
+            function onCancel() { cleanup(showInput ? null : false); }
+            function onOverlay(e) { if (e.target === overlay) cleanup(showInput ? null : false); }
+
+            confirmBtn.addEventListener('click', onConfirm);
+            cancelBtn.addEventListener('click', onCancel);
+            overlay.addEventListener('click', onOverlay);
+
+            if (showInput) {
+                setTimeout(() => inputEl.focus(), 100);
+            } else {
+                setTimeout(() => confirmBtn.focus(), 100);
+            }
+        });
+    };
+
+    // ============================================
+    // TAB SCROLL INDICATORS
+    // ============================================
+
+    function initializeTabScrollIndicators() {
+        const tabsContainer = document.getElementById('dashboard-tabs');
+        if (!tabsContainer) return;
+
+        // Wrap the tabs in a scroll indicator wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tabs-wrapper';
+        tabsContainer.parentNode.insertBefore(wrapper, tabsContainer);
+        wrapper.appendChild(tabsContainer);
+
+        function updateScrollIndicators() {
+            const { scrollLeft, scrollWidth, clientWidth } = tabsContainer;
+            wrapper.classList.toggle('can-scroll-left', scrollLeft > 5);
+            wrapper.classList.toggle('can-scroll-right', scrollLeft + clientWidth < scrollWidth - 5);
+        }
+
+        tabsContainer.addEventListener('scroll', updateScrollIndicators);
+        window.addEventListener('resize', updateScrollIndicators);
+        setTimeout(updateScrollIndicators, 100);
+    }
+
+    initializeTabScrollIndicators();
+
+    // ============================================
+    // INSIGHTS TAB - SKILL GAPS & LESSON PLANNER
+    // ============================================
+
+    let skillGapsData = [];
+    let lessonPlannerHistory = [];
+    let insightsLoaded = false;
+
+    function initializeInsightsTab() {
+        // Gap filter chips
+        document.querySelectorAll('[data-gap-filter]').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('[data-gap-filter]').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                renderSkillGaps(skillGapsData, chip.dataset.gapFilter);
+            });
+        });
+
+        // Suggestion chips
+        document.querySelectorAll('.planner-suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const prompt = chip.dataset.prompt;
+                document.getElementById('planner-input').value = prompt;
+                sendLessonPlannerMessage(prompt);
+            });
+        });
+
+        // Send button
+        const sendBtn = document.getElementById('planner-send-btn');
+        const input = document.getElementById('planner-input');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => {
+                const prompt = input.value.trim();
+                if (prompt) sendLessonPlannerMessage(prompt);
+            });
+        }
+        if (input) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const prompt = input.value.trim();
+                    if (prompt) sendLessonPlannerMessage(prompt);
+                }
+            });
+        }
+    }
+
+    async function fetchSkillGaps() {
+        try {
+            const response = await fetch('/api/teacher/class-skill-gaps');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            skillGapsData = data.gaps || [];
+            renderSkillGaps(skillGapsData, 'all');
+            insightsLoaded = true;
+        } catch (err) {
+            console.error('Error fetching skill gaps:', err);
+            const container = document.getElementById('skill-gaps-list');
+            if (container) {
+                container.innerHTML = `
+                    <div class="skill-gap-empty">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No skill data available yet. Skills will appear here as students practice.</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderSkillGaps(gaps, filter = 'all') {
+        const container = document.getElementById('skill-gaps-list');
+        if (!container) return;
+
+        let filtered = gaps;
+        if (filter === 'critical') {
+            filtered = gaps.filter(g => g.notMasteredCount > g.totalStudents * 0.5);
+        } else if (filter === 'progressing') {
+            filtered = gaps.filter(g => g.learning > 0 && g.notMasteredCount <= g.totalStudents * 0.5);
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="skill-gap-empty">
+                    <i class="fas fa-check-circle"></i>
+                    <p>${filter === 'all' ? 'No skill data yet. Skills will appear as students practice.' : 'No skills match this filter.'}</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(gap => {
+            const masteredPct = (gap.mastered / gap.totalStudents * 100).toFixed(0);
+            const learningPct = (gap.learning / gap.totalStudents * 100).toFixed(0);
+            const notStartedPct = (100 - parseFloat(masteredPct) - parseFloat(learningPct)).toFixed(0);
+            const categoryLabel = gap.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+            return `
+                <div class="skill-gap-item" role="listitem" data-skill-id="${gap.skillId}" tabindex="0"
+                     aria-label="${gap.displayName}: ${gap.mastered} of ${gap.totalStudents} mastered">
+                    <div class="skill-gap-top">
+                        <span class="skill-gap-name">${escapeHtml(gap.displayName)}</span>
+                        <span class="skill-gap-category">${escapeHtml(categoryLabel)}</span>
+                    </div>
+                    <div class="skill-gap-bar-container" role="progressbar"
+                         aria-valuenow="${masteredPct}" aria-valuemin="0" aria-valuemax="100"
+                         aria-label="${masteredPct}% mastered">
+                        <div class="skill-gap-bar-mastered" style="width: ${masteredPct}%"></div>
+                        <div class="skill-gap-bar-learning" style="width: ${learningPct}%"></div>
+                        <div class="skill-gap-bar-not-started" style="width: ${notStartedPct}%"></div>
+                    </div>
+                    <div class="skill-gap-meta">
+                        <span><strong>${gap.mastered}</strong> mastered</span>
+                        <span><strong>${gap.learning}</strong> learning</span>
+                        <span><strong>${gap.notMasteredCount}</strong> not started</span>
+                        ${gap.avgMasteryScore > 0 ? `<span>Avg: <strong>${gap.avgMasteryScore}%</strong></span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Click to ask about a skill
+        container.querySelectorAll('.skill-gap-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const skillId = item.dataset.skillId;
+                const gap = skillGapsData.find(g => g.skillId === skillId);
+                if (gap) {
+                    const prompt = `Help me plan a mini-lesson for "${gap.displayName}". ${gap.mastered} of ${gap.totalStudents} students have mastered it, and ${gap.learning} are currently learning. What's the best approach?`;
+                    document.getElementById('planner-input').value = prompt;
+                    sendLessonPlannerMessage(prompt);
+                }
+            });
+
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') item.click();
+            });
+        });
+    }
+
+    async function sendLessonPlannerMessage(prompt) {
+        const responseArea = document.getElementById('planner-response');
+        const input = document.getElementById('planner-input');
+        const sendBtn = document.getElementById('planner-send-btn');
+        if (!responseArea) return;
+
+        // Disable input while generating
+        input.value = '';
+        input.disabled = true;
+        sendBtn.disabled = true;
+
+        // Show user message and typing indicator
+        const userBubble = `<div style="background:var(--color-primary-light);padding:10px 14px;border-radius:var(--radius-md);margin-bottom:12px;font-weight:500;color:var(--color-text);">
+            <i class="fas fa-user" style="color:var(--color-primary);margin-right:6px;" aria-hidden="true"></i>${escapeHtml(prompt)}
+        </div>`;
+
+        // If this is the first message, clear the empty state
+        if (lessonPlannerHistory.length === 0) {
+            responseArea.innerHTML = '';
+        }
+
+        responseArea.innerHTML += userBubble;
+        responseArea.innerHTML += `<div id="planner-typing" class="planner-typing-indicator"><span></span><span></span><span></span></div>`;
+        responseArea.scrollTop = responseArea.scrollHeight;
+
+        lessonPlannerHistory.push({ role: 'user', content: prompt });
+
+        try {
+            // Use csrfFetch if available, otherwise fall back to plain fetch
+            const fetchFn = typeof csrfFetch === 'function' ? csrfFetch : fetch;
+            const response = await fetchFn('/api/teacher/lesson-planner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    prompt,
+                    skillGaps: skillGapsData.slice(0, 10),
+                    conversationHistory: lessonPlannerHistory.slice(-12)
+                })
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            // Remove typing indicator
+            const typing = document.getElementById('planner-typing');
+            if (typing) typing.remove();
+
+            // Create response container
+            const aiDiv = document.createElement('div');
+            aiDiv.style.cssText = 'margin-bottom:16px;padding:14px;background:white;border-radius:var(--radius-md);border:1px solid var(--color-border);';
+            aiDiv.innerHTML = '<i class="fas fa-magic" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>';
+            responseArea.appendChild(aiDiv);
+
+            // Stream the response
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponse = '';
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // Keep incomplete line in buffer
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6).trim();
+                        if (data === '[DONE]') continue;
+                        try {
+                            const parsed = JSON.parse(data);
+                            if (parsed.text) {
+                                fullResponse += parsed.text;
+                                aiDiv.innerHTML = '<i class="fas fa-magic" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>' + renderMarkdown(fullResponse);
+                                responseArea.scrollTop = responseArea.scrollHeight;
+                            }
+                        } catch (e) { /* skip invalid JSON */ }
+                    }
+                }
+            }
+
+            lessonPlannerHistory.push({ role: 'assistant', content: fullResponse });
+
+        } catch (err) {
+            console.error('Lesson planner error:', err);
+            const typing = document.getElementById('planner-typing');
+            if (typing) typing.remove();
+            responseArea.innerHTML += `<div style="color:var(--color-danger);padding:10px;">
+                <i class="fas fa-exclamation-circle"></i> Sorry, I couldn't generate a response. Please try again.
+            </div>`;
+        } finally {
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    }
+
+    // Simple markdown renderer for AI responses
+    function renderMarkdown(text) {
+        return text
+            .replace(/#### (.+)/g, '<h4>$1</h4>')
+            .replace(/### (.+)/g, '<h4>$1</h4>')
+            .replace(/## (.+)/g, '<h4>$1</h4>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/`(.+?)`/g, '<code>$1</code>')
+            .replace(/^- (.+)$/gm, '<li>$1</li>')
+            .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
+    }
+
+    // Initialize insights tab (lazy load on first visit)
+    initializeInsightsTab();
+
+    // ============================================
+    // FIX RIGHT SIDEBAR - Real computed stats
+    // ============================================
+
+    function updateRightSidebar(students) {
+        // Calculate real stats for today
+        const today = new Date().toDateString();
+        const loginsToday = students.filter(s => {
+            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toDateString() : null;
+            return lastLogin === today;
+        }).length;
+
+        document.getElementById('summary-logins').textContent = loginsToday;
+
+        // Count students with mastered skills this week
+        let recentMastery = 0;
+        students.forEach(s => {
+            const mastery = s.skillMastery || {};
+            Object.values(mastery).forEach(skill => {
+                if (skill.masteredDate) {
+                    const masteredDate = new Date(skill.masteredDate);
+                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                    if (masteredDate > weekAgo) recentMastery++;
+                }
+            });
+        });
+
+        document.getElementById('summary-problems').textContent = recentMastery;
+        document.getElementById('summary-time').textContent =
+            Math.round(students.reduce((sum, s) => sum + (s.weeklyActiveTutoringMinutes || 0), 0));
+
+        // Milestones - show students who recently mastered skills
+        const milestonesDiv = document.getElementById('recent-milestones');
+        const milestones = [];
+        students.forEach(s => {
+            const mastery = s.skillMastery || {};
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+            Object.entries(mastery).forEach(([skillId, skill]) => {
+                if (skill.status === 'mastered' && skill.masteredDate) {
+                    milestones.push({
+                        name,
+                        skill: skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                        date: new Date(skill.masteredDate)
+                    });
+                }
+            });
+        });
+
+        // Sort by most recent and take top 5
+        milestones.sort((a, b) => b.date - a.date);
+        const recentMilestones = milestones.slice(0, 5);
+
+        if (recentMilestones.length > 0) {
+            milestonesDiv.innerHTML = recentMilestones.map(m => `
+                <div class="milestone-item">
+                    <span class="milestone-icon" aria-hidden="true">&#127942;</span>
+                    <div class="milestone-content">
+                        <div class="milestone-student">${escapeHtml(m.name)}</div>
+                        <div class="milestone-text">Mastered ${escapeHtml(m.skill)}</div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            milestonesDiv.innerHTML = '<span class="milestone-empty">No recent skill milestones yet</span>';
+        }
     }
 });

@@ -11,6 +11,8 @@ const { cleanupStaleSessions } = require('../services/sessionService');
 
 const ScreenerSession = require('../models/screenerSession');
 const EnrollmentCode = require('../models/enrollmentCode');
+const Skill = require('../models/skill');
+const { callLLMStream } = require('../utils/openaiClient');
 
 // Fetches students assigned to the logged-in teacher
 router.get('/students', isTeacher, async (req, res) => {
@@ -1038,6 +1040,247 @@ router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
   } catch (err) {
     console.error('Error fetching class students:', err);
     res.status(500).json({ message: 'Server error fetching class students.' });
+  }
+});
+
+// ============================================
+// CLASS SKILL GAPS - Aggregated view of skill mastery across all students
+// GET /api/teacher/class-skill-gaps
+// ============================================
+router.get('/class-skill-gaps', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+
+    // Get all students with their skill mastery data
+    const students = await User.find(
+      { role: 'student', teacherId },
+      'firstName lastName username skillMastery gradeLevel mathCourse'
+    ).lean();
+
+    if (students.length === 0) {
+      return res.json({ gaps: [], studentCount: 0 });
+    }
+
+    // Aggregate skill data across all students
+    const skillAggregation = {};
+
+    students.forEach(student => {
+      const mastery = student.skillMastery || {};
+      for (const [skillId, data] of Object.entries(mastery)) {
+        if (!skillAggregation[skillId]) {
+          skillAggregation[skillId] = {
+            skillId,
+            mastered: 0,
+            learning: 0,
+            struggling: 0,
+            notStarted: 0,
+            totalStudents: 0,
+            avgMasteryScore: 0,
+            totalMasteryScore: 0,
+            scoreCount: 0,
+            strugglingStudents: []
+          };
+        }
+        const agg = skillAggregation[skillId];
+        agg.totalStudents++;
+
+        if (data.status === 'mastered') {
+          agg.mastered++;
+        } else if (data.status === 'learning' || data.status === 'practicing') {
+          agg.learning++;
+        } else if (data.status === 'ready' || data.status === 'locked') {
+          agg.notStarted++;
+        }
+
+        // Track struggling students (low mastery score or explicitly struggling)
+        if (data.strugglingAreas && data.strugglingAreas.length > 0) {
+          agg.struggling++;
+          const name = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+          agg.strugglingStudents.push({ name, areas: data.strugglingAreas });
+        }
+
+        if (typeof data.masteryScore === 'number') {
+          agg.totalMasteryScore += data.masteryScore;
+          agg.scoreCount++;
+        }
+      }
+    });
+
+    // Calculate averages and sort by "most students struggling / not mastered"
+    const skillIds = Object.keys(skillAggregation);
+
+    // Fetch skill details from Skills collection
+    const skillDetails = await Skill.find(
+      { skillId: { $in: skillIds } },
+      'skillId displayName category course teachingGuidance difficultyLevel standardsAlignment'
+    ).lean();
+
+    const skillMap = {};
+    skillDetails.forEach(s => { skillMap[s.skillId] = s; });
+
+    const gaps = Object.values(skillAggregation).map(agg => {
+      const detail = skillMap[agg.skillId] || {};
+      const notMastered = agg.totalStudents - agg.mastered;
+      agg.avgMasteryScore = agg.scoreCount > 0
+        ? Math.round((agg.totalMasteryScore / agg.scoreCount) * 100)
+        : 0;
+
+      return {
+        skillId: agg.skillId,
+        displayName: detail.displayName || agg.skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        category: detail.category || 'unknown',
+        course: detail.course || null,
+        difficultyLevel: detail.difficultyLevel || null,
+        standards: detail.standardsAlignment || [],
+        teachingGuidance: detail.teachingGuidance || null,
+        mastered: agg.mastered,
+        learning: agg.learning,
+        struggling: agg.struggling,
+        notStarted: students.length - agg.totalStudents,
+        totalStudents: students.length,
+        avgMasteryScore: agg.avgMasteryScore,
+        notMasteredCount: notMastered + (students.length - agg.totalStudents),
+        strugglingStudents: agg.strugglingStudents.slice(0, 5)
+      };
+    });
+
+    // Sort: most "not mastered" students first (biggest class gaps)
+    gaps.sort((a, b) => b.notMasteredCount - a.notMasteredCount);
+
+    res.json({
+      gaps: gaps.slice(0, 50), // Top 50 skill gaps
+      studentCount: students.length,
+      totalSkillsTracked: skillIds.length
+    });
+
+  } catch (err) {
+    console.error('Error fetching class skill gaps:', err);
+    res.status(500).json({ message: 'Server error fetching skill gaps.' });
+  }
+});
+
+// ============================================
+// AI LESSON PLANNER - Streaming thought partner for teachers
+// POST /api/teacher/lesson-planner
+// ============================================
+router.post('/lesson-planner', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const { prompt, skillGaps, conversationHistory } = req.body;
+
+    if (!prompt || typeof prompt !== 'string') {
+      return res.status(400).json({ message: 'Prompt is required.' });
+    }
+
+    // Get teacher's AI settings and class info
+    const teacher = await User.findById(teacherId, 'firstName lastName classAISettings').lean();
+    const students = await User.find(
+      { role: 'student', teacherId },
+      'firstName gradeLevel mathCourse iepPlan skillMastery'
+    ).lean();
+
+    // Build context about the class
+    const gradeLevels = [...new Set(students.map(s => s.gradeLevel).filter(Boolean))];
+    const courses = [...new Set(students.map(s => s.mathCourse).filter(Boolean))];
+    const iepCount = students.filter(s => {
+      const acc = s.iepPlan?.accommodations;
+      return acc && Object.values(acc).some(v => v === true);
+    }).length;
+
+    // Build skill gaps context if provided
+    let gapsContext = '';
+    if (skillGaps && skillGaps.length > 0) {
+      gapsContext = '\n\nCLASS SKILL GAPS (skills where students need the most help):\n';
+      skillGaps.slice(0, 10).forEach(gap => {
+        gapsContext += `- ${gap.displayName}: ${gap.mastered}/${gap.totalStudents} mastered, ${gap.learning} learning, ${gap.notMasteredCount} not mastered`;
+        if (gap.teachingGuidance) {
+          if (gap.teachingGuidance.commonMistakes && gap.teachingGuidance.commonMistakes.length > 0) {
+            gapsContext += ` | Common mistakes: ${gap.teachingGuidance.commonMistakes.slice(0, 2).join('; ')}`;
+          }
+        }
+        gapsContext += '\n';
+      });
+    }
+
+    // Build AI settings context
+    let settingsContext = '';
+    const settings = teacher?.classAISettings;
+    if (settings) {
+      const parts = [];
+      if (settings.currentTeaching?.topic) parts.push(`Currently teaching: ${settings.currentTeaching.topic}`);
+      if (settings.currentTeaching?.approach) parts.push(`Teaching approach: ${settings.currentTeaching.approach}`);
+      if (settings.solutionApproaches?.wordProblems) parts.push(`Word problem strategy: ${settings.solutionApproaches.wordProblems}`);
+      if (settings.vocabularyPreferences?.orderOfOperations) parts.push(`Order of operations: ${settings.vocabularyPreferences.orderOfOperations}`);
+      if (settings.responseStyle?.errorCorrectionStyle) parts.push(`Error correction style: ${settings.responseStyle.errorCorrectionStyle}`);
+      if (parts.length > 0) settingsContext = '\n\nTEACHER AI PREFERENCES:\n' + parts.join('\n');
+    }
+
+    const systemPrompt = `You are a helpful and experienced math instructional coach and lesson planning partner for a teacher using MATHMATIX AI, an adaptive math tutoring platform.
+
+CLASS OVERVIEW:
+- ${students.length} students total
+- Grade levels: ${gradeLevels.join(', ') || 'Mixed'}
+- Math courses: ${courses.join(', ') || 'Various'}
+- Students with IEP accommodations: ${iepCount}
+${gapsContext}${settingsContext}
+
+YOUR ROLE:
+- Help the teacher plan effective math lessons based on their class data
+- Suggest differentiation strategies for mixed-ability classrooms
+- Reference specific skill gaps when recommending focus areas
+- Propose warm-up activities, mini-lessons, guided practice, and independent work
+- Consider IEP accommodations when suggesting activities
+- Be practical and specific — give ready-to-use suggestions, not abstract theory
+- If the teacher asks about a specific skill or topic, reference the skill gap data
+- Keep responses focused and actionable
+- Use markdown formatting: headers (####), bullet points, bold for emphasis
+
+Respond conversationally as a thought partner, not a textbook.`;
+
+    // Build messages array
+    const messages = [{ role: 'system', content: systemPrompt }];
+
+    // Add conversation history (last 6 exchanges max)
+    if (conversationHistory && Array.isArray(conversationHistory)) {
+      const recent = conversationHistory.slice(-12); // 6 pairs
+      recent.forEach(msg => {
+        if (msg.role === 'user' || msg.role === 'assistant') {
+          messages.push({ role: msg.role, content: msg.content });
+        }
+      });
+    }
+
+    messages.push({ role: 'user', content: prompt });
+
+    // Stream the response
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    const stream = await callLLMStream('claude-3-5-sonnet-20241022', messages, {
+      max_tokens: 2000,
+      temperature: 0.7
+    });
+
+    // Handle Claude streaming
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta?.text) {
+        res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+      }
+    }
+
+    res.write('data: [DONE]\n\n');
+    res.end();
+
+  } catch (err) {
+    console.error('Error in lesson planner:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ message: 'Error generating lesson plan.' });
+    } else {
+      res.write(`data: ${JSON.stringify({ error: 'Stream interrupted' })}\n\n`);
+      res.end();
+    }
   }
 });
 
