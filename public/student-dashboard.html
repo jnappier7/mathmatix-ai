@@ -498,6 +498,41 @@
         </div>
       </div>
 
+      <!-- Join a Class Card (shown when student has no teacher OR as option) -->
+      <div id="join-class-section" class="join-class-card" style="display: none; margin-bottom: 1.5rem;">
+        <div class="card-header" style="justify-content: center;">
+          <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div>
+            <h3 class="card-title" id="join-class-title">Join a Class</h3>
+          </div>
+        </div>
+        <p id="join-class-description" style="color:#666;font-size:0.95rem;margin-bottom:0;">Enter the class code your teacher gave you to connect.</p>
+        <!-- Current class info (if already in a class) -->
+        <div id="current-class-info" style="display:none;margin:12px 0;padding:10px 14px;background:#f0faf0;border-radius:10px;text-align:left;font-size:0.9rem;">
+          <span style="color:#27ae60;font-weight:600;"><i class="fas fa-check-circle"></i> Current class:</span>
+          <span id="current-class-name">--</span>
+        </div>
+        <div class="join-class-input-row">
+          <input type="text" class="join-class-input" id="join-class-code-input"
+                 placeholder="Enter class code"
+                 maxlength="20"
+                 aria-label="Class enrollment code">
+          <button class="btn-primary" id="join-class-btn" style="width:auto;padding:12px 24px;" aria-label="Join class">
+            <i class="fas fa-sign-in-alt"></i> Join
+          </button>
+        </div>
+        <!-- Preview area (shows after code lookup) -->
+        <div id="join-class-preview" style="display:none;" class="join-class-preview">
+          <div style="font-weight:600;color:#333;" id="preview-class-name">--</div>
+          <div style="font-size:0.85rem;color:#666;" id="preview-teacher-name">--</div>
+          <div style="font-size:0.85rem;color:#666;" id="preview-course">--</div>
+          <button class="btn-primary" id="confirm-join-btn" style="margin-top:10px;">
+            <i class="fas fa-check"></i> Confirm & Join
+          </button>
+        </div>
+        <div class="join-class-status" id="join-class-status"></div>
+      </div>
+
       <!-- Quick Actions (consolidated to 4) -->
       <div class="quick-actions">
         <a href="/chat.html" class="quick-action-btn interactive-press">
@@ -512,10 +547,10 @@
           <i class="fas fa-seedling"></i>
           <span id="placement-btn-text">Find Your Starting Point</span>
         </a>
-        <a href="/badge-map.html" class="quick-action-btn interactive-press">
-          <i class="fas fa-medal"></i>
-          <span>Badge Map</span>
-        </a>
+        <button class="quick-action-btn interactive-press" id="qa-join-class-toggle" style="border:1.5px solid #e8e8e8;background:white;">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span>Join a Class</span>
+        </button>
       </div>
     </div>
   </main>
@@ -542,6 +577,9 @@
 
         currentUserId = user._id;
         document.getElementById('student-name').textContent = user.firstName || 'Student';
+
+        // Initialize join class feature
+        initJoinClass(user);
 
         // Load progress summary
         await loadProgressSummary();
@@ -681,6 +719,156 @@
         window.location.href = '/login.html';
       }
     });
+
+    // ============================================
+    // JOIN CLASS FUNCTIONALITY
+    // ============================================
+
+    let pendingClassCode = null;
+
+    function initJoinClass(user) {
+        const section = document.getElementById('join-class-section');
+        const toggleBtn = document.getElementById('qa-join-class-toggle');
+        const codeInput = document.getElementById('join-class-code-input');
+        const joinBtn = document.getElementById('join-class-btn');
+        const confirmBtn = document.getElementById('confirm-join-btn');
+        const statusEl = document.getElementById('join-class-status');
+
+        // Show section if student has no teacher (mandatory) or show toggle
+        if (!user.teacherId) {
+            section.style.display = 'block';
+            document.getElementById('join-class-title').textContent = 'Join Your Class';
+            document.getElementById('join-class-description').textContent =
+                'Enter the class code from your teacher to get started.';
+        } else {
+            // Has a teacher - show current class info and toggle
+            section.style.display = 'none';
+            if (user.mathCourse) {
+                document.getElementById('current-class-info').style.display = 'block';
+                document.getElementById('current-class-name').textContent = user.mathCourse;
+                document.getElementById('join-class-title').textContent = 'Switch Class';
+                document.getElementById('join-class-description').textContent =
+                    'Enter a new class code to switch to a different class.';
+            }
+        }
+
+        // Toggle button in quick actions
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                section.style.display = section.style.display === 'none' ? 'block' : 'none';
+                if (section.style.display === 'block') {
+                    codeInput.focus();
+                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+
+        // Look up code on button click
+        joinBtn.addEventListener('click', () => lookupClassCode());
+        codeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') lookupClassCode();
+            // Clear status on new input
+            statusEl.textContent = '';
+            statusEl.className = 'join-class-status';
+            document.getElementById('join-class-preview').style.display = 'none';
+        });
+
+        // Confirm join
+        confirmBtn.addEventListener('click', () => confirmJoinClass());
+
+        async function lookupClassCode() {
+            const code = codeInput.value.trim();
+            if (!code) {
+                statusEl.textContent = 'Please enter a class code.';
+                statusEl.className = 'join-class-status error';
+                return;
+            }
+
+            statusEl.textContent = 'Looking up code...';
+            statusEl.className = 'join-class-status';
+            joinBtn.disabled = true;
+
+            try {
+                const res = await fetch(`/api/student/preview-class/${encodeURIComponent(code)}`);
+                const data = await res.json();
+
+                if (!data.success) {
+                    statusEl.textContent = data.message || 'Code not found.';
+                    statusEl.className = 'join-class-status error';
+                    document.getElementById('join-class-preview').style.display = 'none';
+                    return;
+                }
+
+                if (data.alreadyEnrolled) {
+                    statusEl.textContent = 'You are already enrolled in this class!';
+                    statusEl.className = 'join-class-status success';
+                    document.getElementById('join-class-preview').style.display = 'none';
+                    return;
+                }
+
+                // Show preview
+                pendingClassCode = code;
+                document.getElementById('preview-class-name').textContent = data.className || 'Class';
+                document.getElementById('preview-teacher-name').textContent = `Teacher: ${data.teacherName}`;
+                document.getElementById('preview-course').textContent = data.mathCourse ? `Course: ${data.mathCourse}` : '';
+                document.getElementById('join-class-preview').style.display = 'block';
+                statusEl.textContent = '';
+
+            } catch (err) {
+                console.error('Error looking up class:', err);
+                statusEl.textContent = 'Error looking up code. Please try again.';
+                statusEl.className = 'join-class-status error';
+            } finally {
+                joinBtn.disabled = false;
+            }
+        }
+
+        async function confirmJoinClass() {
+            if (!pendingClassCode) return;
+
+            const confirmBtn = document.getElementById('confirm-join-btn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+
+            try {
+                const res = await csrfFetch('/api/student/join-class', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: pendingClassCode })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    statusEl.textContent = data.message;
+                    statusEl.className = 'join-class-status success';
+                    document.getElementById('join-class-preview').style.display = 'none';
+                    codeInput.value = '';
+                    pendingClassCode = null;
+
+                    // Update current class info
+                    if (data.className) {
+                        document.getElementById('current-class-info').style.display = 'block';
+                        document.getElementById('current-class-name').textContent =
+                            data.mathCourse || data.className;
+                    }
+
+                    // Refresh after a moment so the dashboard reflects the new class
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    statusEl.textContent = data.message || 'Could not join class.';
+                    statusEl.className = 'join-class-status error';
+                }
+            } catch (err) {
+                console.error('Error joining class:', err);
+                statusEl.textContent = 'Error joining class. Please try again.';
+                statusEl.className = 'join-class-status error';
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> Confirm & Join';
+            }
+        }
+    }
 
     // Initialize on page load
     init();

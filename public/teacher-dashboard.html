@@ -3510,6 +3510,210 @@
       0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
       30% { transform: translateY(-6px); opacity: 1; }
     }
+
+    /* ============================================
+       COURSE PROGRESS STRIP
+       ============================================ */
+
+    .course-progress-strip {
+      margin-bottom: var(--space-xl);
+    }
+
+    .course-progress-header {
+      margin-bottom: var(--space-md);
+    }
+
+    .course-progress-header h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .course-progress-header h3 i {
+      color: var(--color-primary);
+    }
+
+    .course-progress-cards {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-sm);
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .course-progress-cards::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .course-progress-cards::-webkit-scrollbar-track {
+      background: var(--color-border-light);
+      border-radius: 2px;
+    }
+
+    .course-progress-cards::-webkit-scrollbar-thumb {
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .course-card {
+      background: var(--color-bg-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      min-width: 220px;
+      max-width: 280px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .course-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .course-card-name {
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .course-card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .course-card-bar {
+      height: 8px;
+      background: var(--color-border-light);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .course-card-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .course-card-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .course-card-stats strong {
+      color: var(--color-text-secondary);
+    }
+
+    .course-card-expand {
+      margin-top: var(--space-sm);
+      display: none;
+      border-top: 1px solid var(--color-border-light);
+      padding-top: var(--space-sm);
+    }
+
+    .course-card.expanded .course-card-expand {
+      display: block;
+    }
+
+    .course-student-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+      font-size: var(--text-xs);
+    }
+
+    .course-student-row .student-bar {
+      width: 60px;
+      height: 4px;
+      background: var(--color-border-light);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-left: 8px;
+    }
+
+    .course-student-row .student-bar-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .course-progress-empty {
+      text-align: center;
+      padding: 24px;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+
+    /* ============================================
+       JOIN CLASS MODAL (for student-facing pages)
+       ============================================ */
+
+    .join-class-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      text-align: center;
+    }
+
+    .join-class-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .join-class-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+
+    .join-class-input:focus {
+      outline: none;
+      border-color: #12B3B3;
+    }
+
+    .join-class-status {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      min-height: 20px;
+    }
+
+    .join-class-status.success { color: #27ae60; }
+    .join-class-status.error { color: #e74c3c; }
+
+    .join-class-preview {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f0faf0;
+      border-radius: 10px;
+      text-align: left;
+    }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
   <link rel="stylesheet" href="/css/demo-mode.css" />
@@ -3870,8 +4074,20 @@
           </div>
         </div>
 
-        <!-- Insights Tab - Skill Gaps & AI Lesson Planner -->
+        <!-- Insights Tab - Course Progress, Skill Gaps & AI Lesson Planner -->
         <div class="tab-content" id="insights-tab">
+          <!-- Course Progress Strip -->
+          <div class="course-progress-strip" id="course-progress-strip">
+            <div class="course-progress-header">
+              <h3><i class="fas fa-graduation-cap" aria-hidden="true"></i> Course Progress</h3>
+            </div>
+            <div class="course-progress-cards" id="course-progress-cards" role="list" aria-label="Course progress">
+              <div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:var(--text-sm);">
+                <i class="fas fa-spinner fa-spin"></i> Loading courses...
+              </div>
+            </div>
+          </div>
+
           <div class="insights-layout">
             <!-- Skill Gaps Panel -->
             <div class="dashboard-panel skill-gaps-panel">

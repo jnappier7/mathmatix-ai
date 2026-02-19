@@ -2510,11 +2510,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function fetchSkillGaps() {
         try {
-            const response = await fetch('/api/teacher/class-skill-gaps');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            skillGapsData = data.gaps || [];
-            renderSkillGaps(skillGapsData, 'all');
+            // Fetch skill gaps and course progress in parallel
+            const [gapsRes, courseRes] = await Promise.all([
+                fetch('/api/teacher/class-skill-gaps'),
+                fetch('/api/teacher/course-progress')
+            ]);
+
+            if (gapsRes.ok) {
+                const data = await gapsRes.json();
+                skillGapsData = data.gaps || [];
+                renderSkillGaps(skillGapsData, 'all');
+            }
+
+            if (courseRes.ok) {
+                const courseData = await courseRes.json();
+                renderCourseProgress(courseData.courses || []);
+            }
+
             insightsLoaded = true;
         } catch (err) {
             console.error('Error fetching skill gaps:', err);
@@ -2712,6 +2724,66 @@ document.addEventListener("DOMContentLoaded", async () => {
             .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
             .replace(/\n\n/g, '<br><br>')
             .replace(/\n/g, '<br>');
+    }
+
+    function renderCourseProgress(courses) {
+        const container = document.getElementById('course-progress-cards');
+        if (!container) return;
+
+        if (courses.length === 0) {
+            container.innerHTML = `
+                <div class="course-progress-empty">
+                    <i class="fas fa-graduation-cap" style="font-size:1.5em;opacity:0.4;display:block;margin-bottom:8px;"></i>
+                    Course progress will appear here once students start practicing skills within a course.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = courses.map(course => {
+            const studentRows = course.students.slice(0, 5).map(s => `
+                <div class="course-student-row">
+                    <span>${escapeHtml(s.name)}</span>
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        <span class="student-bar"><span class="student-bar-fill" style="width:${s.progressPct}%"></span></span>
+                        <strong>${s.progressPct}%</strong>
+                    </span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="course-card" role="listitem" tabindex="0" aria-label="${course.course}: ${course.avgProgress}% average progress">
+                    <div class="course-card-name" title="${escapeHtml(course.course)}">${escapeHtml(course.course)}</div>
+                    <div class="course-card-meta">
+                        <span>${course.totalSkills} skills</span>
+                        <span>${course.activeStudents} student${course.activeStudents !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="course-card-bar">
+                        <div class="course-card-bar-fill" style="width: ${course.avgProgress}%"></div>
+                    </div>
+                    <div class="course-card-stats">
+                        <span>Avg: <strong>${course.avgProgress}%</strong></span>
+                        <span><strong>${course.totalMastered}</strong> mastered</span>
+                    </div>
+                    ${studentRows ? `
+                        <div class="course-card-expand">
+                            ${studentRows}
+                            ${course.students.length > 5 ? `<div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:4px;">+${course.students.length - 5} more</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+
+        // Toggle expand on click
+        container.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('expanded');
+            });
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') card.classList.toggle('expanded');
+            });
+        });
     }
 
     // Initialize insights tab (lazy load on first visit)

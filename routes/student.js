@@ -508,6 +508,119 @@ router.get('/my-calculator-access', isAuthenticated, isStudent, async (req, res)
     }
 });
 
+// ============================================
+// JOIN CLASS - Allow existing student to join a class via enrollment code
+// POST /api/student/join-class
+// ============================================
+const EnrollmentCode = require('../models/enrollmentCode');
+
+router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const { code } = req.body;
+
+        if (!code || typeof code !== 'string') {
+            return res.status(400).json({ success: false, message: 'Class code is required.' });
+        }
+
+        const trimmedCode = code.trim().toUpperCase();
+
+        // Find the enrollment code
+        const enrollmentCode = await EnrollmentCode.findOne({ code: trimmedCode });
+        if (!enrollmentCode) {
+            return res.status(404).json({ success: false, message: 'Class code not found. Please check the code and try again.' });
+        }
+
+        // Validate code is usable
+        const validation = enrollmentCode.isValidForUse();
+        if (!validation.valid) {
+            return res.status(400).json({ success: false, message: validation.reason });
+        }
+
+        // Check if already enrolled in this specific code
+        const alreadyEnrolled = enrollmentCode.enrolledStudents.some(
+            e => e.studentId.toString() === studentId.toString()
+        );
+        if (alreadyEnrolled) {
+            return res.status(400).json({ success: false, message: 'You are already enrolled in this class.' });
+        }
+
+        // Get teacher info for preview/confirmation
+        const teacher = await User.findById(enrollmentCode.teacherId, 'firstName lastName').lean();
+        const teacherName = teacher
+            ? `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim()
+            : 'Your teacher';
+
+        // Enroll the student
+        const enrollResult = await enrollmentCode.enrollStudent(studentId, 'self-signup');
+        if (!enrollResult.success) {
+            return res.status(400).json({ success: false, message: enrollResult.reason });
+        }
+
+        // Update student's teacherId and class info
+        const updateFields = { teacherId: enrollmentCode.teacherId };
+        if (enrollmentCode.mathCourse) updateFields.mathCourse = enrollmentCode.mathCourse;
+        if (enrollmentCode.gradeLevel) updateFields.gradeLevel = enrollmentCode.gradeLevel;
+
+        await User.findByIdAndUpdate(studentId, { $set: updateFields });
+
+        res.json({
+            success: true,
+            message: `You've joined ${enrollmentCode.className || 'the class'}!`,
+            className: enrollmentCode.className,
+            teacherName,
+            mathCourse: enrollmentCode.mathCourse || null
+        });
+
+    } catch (error) {
+        console.error('Error joining class:', error);
+        res.status(500).json({ success: false, message: 'Server error. Please try again.' });
+    }
+});
+
+// ============================================
+// PREVIEW CLASS - Look up a class code without joining
+// GET /api/student/preview-class/:code
+// ============================================
+router.get('/preview-class/:code', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const code = req.params.code.trim().toUpperCase();
+
+        const enrollmentCode = await EnrollmentCode.findOne({ code });
+        if (!enrollmentCode) {
+            return res.status(404).json({ success: false, message: 'Class code not found.' });
+        }
+
+        const validation = enrollmentCode.isValidForUse();
+        if (!validation.valid) {
+            return res.status(400).json({ success: false, message: validation.reason });
+        }
+
+        const teacher = await User.findById(enrollmentCode.teacherId, 'firstName lastName').lean();
+        const teacherName = teacher
+            ? `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim()
+            : 'Teacher';
+
+        // Check if student is already enrolled
+        const alreadyEnrolled = enrollmentCode.enrolledStudents.some(
+            e => e.studentId.toString() === req.user._id.toString()
+        );
+
+        res.json({
+            success: true,
+            className: enrollmentCode.className,
+            teacherName,
+            mathCourse: enrollmentCode.mathCourse || null,
+            gradeLevel: enrollmentCode.gradeLevel || null,
+            alreadyEnrolled
+        });
+
+    } catch (error) {
+        console.error('Error previewing class:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
 module.exports = {
     router,
     generateUniqueStudentLinkCode

@@ -1044,6 +1044,125 @@ router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
 });
 
 // ============================================
+// COURSE PROGRESS - Per-course skill mastery across all students
+// GET /api/teacher/course-progress
+// ============================================
+router.get('/course-progress', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+
+    // Get all students with their skill mastery
+    const students = await User.find(
+      { role: 'student', teacherId },
+      'firstName lastName username skillMastery mathCourse gradeLevel'
+    ).lean();
+
+    if (students.length === 0) {
+      return res.json({ courses: [], studentCount: 0 });
+    }
+
+    // Get all active skills grouped by course
+    const skillsByCourse = await Skill.aggregate([
+      { $match: { course: { $exists: true, $ne: null }, isActive: true } },
+      { $group: {
+        _id: '$course',
+        totalSkills: { $sum: 1 },
+        skillIds: { $push: '$skillId' }
+      }}
+    ]);
+
+    // Build a map: course -> { totalSkills, skillIds set }
+    const courseMap = {};
+    skillsByCourse.forEach(c => {
+      courseMap[c._id] = {
+        course: c._id,
+        totalSkills: c.totalSkills,
+        skillIdSet: new Set(c.skillIds)
+      };
+    });
+
+    // For each course, compute per-student mastery
+    const courseProgress = {};
+    for (const [courseName, courseData] of Object.entries(courseMap)) {
+      courseProgress[courseName] = {
+        course: courseName,
+        totalSkills: courseData.totalSkills,
+        students: [],
+        totalMastered: 0,
+        totalLearning: 0,
+        enrolledCount: 0
+      };
+    }
+
+    students.forEach(student => {
+      const mastery = student.skillMastery || {};
+      const name = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+
+      for (const [courseName, courseData] of Object.entries(courseMap)) {
+        let mastered = 0;
+        let learning = 0;
+
+        for (const [skillId, skillData] of Object.entries(mastery)) {
+          if (!courseData.skillIdSet.has(skillId)) continue;
+
+          if (skillData.status === 'mastered') {
+            mastered++;
+          } else if (skillData.status === 'learning' || skillData.status === 'practicing') {
+            learning++;
+          }
+        }
+
+        // Only include if student has any interaction with this course's skills
+        // or if it's their assigned math course
+        const isEnrolled = student.mathCourse === courseName;
+        if (mastered > 0 || learning > 0 || isEnrolled) {
+          const pct = Math.round((mastered / courseData.totalSkills) * 100);
+          courseProgress[courseName].students.push({
+            studentId: student._id,
+            name,
+            mastered,
+            learning,
+            progressPct: pct
+          });
+          courseProgress[courseName].totalMastered += mastered;
+          courseProgress[courseName].totalLearning += learning;
+          if (isEnrolled) courseProgress[courseName].enrolledCount++;
+        }
+      }
+    });
+
+    // Convert to array, sort by enrolled student count descending
+    const courses = Object.values(courseProgress)
+      .filter(c => c.students.length > 0)
+      .map(c => {
+        const avgProgress = c.students.length > 0
+          ? Math.round(c.students.reduce((s, st) => s + st.progressPct, 0) / c.students.length)
+          : 0;
+        return {
+          course: c.course,
+          totalSkills: c.totalSkills,
+          enrolledCount: c.enrolledCount,
+          activeStudents: c.students.length,
+          avgProgress,
+          totalMastered: c.totalMastered,
+          totalLearning: c.totalLearning,
+          students: c.students.sort((a, b) => b.progressPct - a.progressPct).slice(0, 20)
+        };
+      })
+      .sort((a, b) => b.activeStudents - a.activeStudents);
+
+    res.json({
+      courses,
+      studentCount: students.length
+    });
+
+  } catch (err) {
+    console.error('Error fetching course progress:', err);
+    res.status(500).json({ message: 'Server error fetching course progress.' });
+  }
+});
+
+// ============================================
 // CLASS SKILL GAPS - Aggregated view of skill mastery across all students
 // GET /api/teacher/class-skill-gaps
 // ============================================
@@ -1258,15 +1377,16 @@ Respond conversationally as a thought partner, not a textbook.`;
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
 
-    const stream = await callLLMStream('claude-3-5-sonnet-20241022', messages, {
+    const stream = await callLLMStream('gpt-4o-mini', messages, {
       max_tokens: 2000,
       temperature: 0.7
     });
 
-    // Handle Claude streaming
-    for await (const event of stream) {
-      if (event.type === 'content_block_delta' && event.delta?.text) {
-        res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+    // Handle OpenAI streaming
+    for await (const chunk of stream) {
+      const content = chunk.choices?.[0]?.delta?.content;
+      if (content) {
+        res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
       }
     }
 
