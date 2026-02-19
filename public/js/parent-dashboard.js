@@ -1,17 +1,297 @@
 // public/js/parent-dashboard.js
-// MODIFIED: Updated to fetch progress and conversation summaries for each child
-// individually from the new `/api/parent/child/:childId/progress` endpoint.
+// 3x Better: Toast system, parallel loading, skill mastery ring, weekly summary,
+// growth sparkline, copy-to-clipboard, skeleton loading, accessibility improvements.
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Add pulse animation for LIVE badge
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+    // ============================================
+    // TOAST NOTIFICATION SYSTEM
+    // ============================================
+
+    function showToast(message, type = 'info', duration = 4000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            warning: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <i class="fas ${icons[type] || icons.info} toast-icon"></i>
+            <span>${message}</span>
+            <button class="toast-close" aria-label="Dismiss notification">&times;</button>
+        `;
+
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+            toast.classList.add('toast-exit');
+            setTimeout(() => toast.remove(), 300);
+        });
+
+        container.appendChild(toast);
+
+        if (duration > 0) {
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add('toast-exit');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
         }
-    `;
-    document.head.appendChild(style);
+    }
+
+    // ============================================
+    // COPY TO CLIPBOARD
+    // ============================================
+
+    function setupCopyButtons() {
+        const copyBtn = document.getElementById('copy-code-btn');
+        const mobileCopyBtn = document.getElementById('mobile-copy-code-btn');
+
+        function handleCopy(btn) {
+            if (!btn) return;
+            btn.addEventListener('click', async () => {
+                const codeEl = document.getElementById('generated-code-value');
+                const code = codeEl ? codeEl.textContent.trim() : '';
+                if (!code) return;
+
+                try {
+                    await navigator.clipboard.writeText(code);
+                    btn.classList.add('copied');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    showToast('Invite code copied to clipboard!', 'success', 2000);
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                } catch (err) {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    textArea.style.position = 'fixed';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    btn.classList.add('copied');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    showToast('Invite code copied!', 'success', 2000);
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                }
+            });
+        }
+
+        handleCopy(copyBtn);
+        handleCopy(mobileCopyBtn);
+    }
+
+    // ============================================
+    // SKELETON LOADING
+    // ============================================
+
+    function showChildrenSkeleton() {
+        if (!childrenListContainer) return;
+        childrenListContainer.innerHTML = `
+            <div class="skeleton skeleton-card" style="height: 200px; margin-bottom: 15px;"></div>
+            <div class="skeleton skeleton-card" style="height: 200px; margin-bottom: 15px;"></div>
+        `;
+    }
+
+    function hideChildrenSkeleton() {
+        const skeletons = childrenListContainer?.querySelectorAll('.skeleton');
+        if (skeletons) skeletons.forEach(s => s.remove());
+    }
+
+    // ============================================
+    // SVG SKILL MASTERY RING
+    // ============================================
+
+    function buildSkillMasteryRing(skillsSummary) {
+        const mastered = skillsSummary?.mastered || 0;
+        const learning = skillsSummary?.learning || 0;
+        const needsReview = skillsSummary?.needsReview || 0;
+        const total = mastered + learning + needsReview;
+
+        if (total === 0) return '';
+
+        const radius = 32;
+        const circumference = 2 * Math.PI * radius;
+
+        // Calculate stroke segments
+        const masteredPct = mastered / total;
+        const learningPct = learning / total;
+        const reviewPct = needsReview / total;
+
+        const masteredLen = masteredPct * circumference;
+        const learningLen = learningPct * circumference;
+        const reviewLen = reviewPct * circumference;
+
+        const masteredOffset = 0;
+        const learningOffset = masteredLen;
+        const reviewOffset = masteredLen + learningLen;
+
+        return `
+            <div class="skill-mastery-container">
+                <div class="skill-ring-wrapper">
+                    <svg viewBox="0 0 80 80" width="80" height="80">
+                        <!-- Background circle -->
+                        <circle cx="40" cy="40" r="${radius}" fill="none" stroke="#e9ecef" stroke-width="8"/>
+                        ${mastered > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#27ae60" stroke-width="8"
+                            stroke-dasharray="${masteredLen} ${circumference - masteredLen}"
+                            stroke-dashoffset="${-masteredOffset}"
+                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
+                        ${learning > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#3498db" stroke-width="8"
+                            stroke-dasharray="${learningLen} ${circumference - learningLen}"
+                            stroke-dashoffset="${-learningOffset}"
+                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
+                        ${needsReview > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#f39c12" stroke-width="8"
+                            stroke-dasharray="${reviewLen} ${circumference - reviewLen}"
+                            stroke-dashoffset="${-reviewOffset}"
+                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
+                    </svg>
+                    <div class="skill-ring-center">
+                        <div class="skill-ring-number">${total}</div>
+                        <div class="skill-ring-label">skills</div>
+                    </div>
+                </div>
+                <div class="skill-legend">
+                    <div class="skill-legend-item">
+                        <span class="skill-legend-dot" style="background: #27ae60;"></span>
+                        <span>${mastered} mastered</span>
+                    </div>
+                    <div class="skill-legend-item">
+                        <span class="skill-legend-dot" style="background: #3498db;"></span>
+                        <span>${learning} learning</span>
+                    </div>
+                    <div class="skill-legend-item">
+                        <span class="skill-legend-dot" style="background: #f39c12;"></span>
+                        <span>${needsReview} needs review</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ============================================
+    // WEEKLY SUMMARY CARD
+    // ============================================
+
+    function buildWeeklySummary(weeklyStats) {
+        if (!weeklyStats) return '';
+        const accuracy = weeklyStats.accuracy || 0;
+        const problems = weeklyStats.problemsAttempted || 0;
+        const minutes = weeklyStats.activeMinutes || 0;
+        const sessions = weeklyStats.sessionCount || 0;
+
+        // Don't show if no activity
+        if (problems === 0 && minutes === 0 && sessions === 0) {
+            return `
+                <div class="weekly-summary" style="justify-content: center;">
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); font-size: 0.85em; padding: 8px;">
+                        <i class="fas fa-calendar-week"></i> No activity this week yet
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="weekly-summary" role="region" aria-label="This week's summary">
+                <div class="weekly-stat">
+                    <div class="weekly-stat-value">${sessions}</div>
+                    <div class="weekly-stat-label">Sessions</div>
+                </div>
+                <div class="weekly-stat">
+                    <div class="weekly-stat-value">${problems}</div>
+                    <div class="weekly-stat-label">Problems</div>
+                </div>
+                <div class="weekly-stat">
+                    <div class="weekly-stat-value">${accuracy}%</div>
+                    <div class="weekly-stat-label">Accuracy</div>
+                </div>
+                <div class="weekly-stat">
+                    <div class="weekly-stat-value">${Math.round(minutes)}</div>
+                    <div class="weekly-stat-label">Minutes</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ============================================
+    // GROWTH TREND SPARKLINE
+    // ============================================
+
+    function buildGrowthSparkline(growthData) {
+        if (!growthData || !growthData.history || growthData.history.length < 2) return '';
+
+        const history = growthData.history;
+        const totalGrowth = growthData.totalGrowth || 0;
+        const isPositive = totalGrowth >= 0;
+
+        // Build SVG sparkline
+        const width = 260;
+        const height = 40;
+        const padding = 4;
+
+        // Extract theta values (cumulative)
+        let runningTheta = 0;
+        const points = history.map((h, i) => {
+            runningTheta += (h.thetaChange || 0);
+            return runningTheta;
+        });
+
+        const minVal = Math.min(...points);
+        const maxVal = Math.max(...points);
+        const range = maxVal - minVal || 1;
+
+        const coords = points.map((val, i) => {
+            const x = padding + (i / (points.length - 1)) * (width - 2 * padding);
+            const y = height - padding - ((val - minVal) / range) * (height - 2 * padding);
+            return `${x},${y}`;
+        });
+
+        const polyline = coords.join(' ');
+        const strokeColor = isPositive ? '#27ae60' : '#e74c3c';
+        const fillColor = isPositive ? 'rgba(39,174,96,0.1)' : 'rgba(231,76,60,0.1)';
+
+        // Create fill polygon (area under curve)
+        const firstX = padding;
+        const lastX = padding + (width - 2 * padding);
+        const fillPoints = `${firstX},${height} ${polyline} ${lastX},${height}`;
+
+        const badgeColor = isPositive ? 'background: #d5f5e3; color: #1e8449;' : 'background: #fadbd8; color: #c0392b;';
+        const badgeText = isPositive
+            ? `<i class="fas fa-arrow-up"></i> +${Math.abs(totalGrowth).toFixed(2)}`
+            : `<i class="fas fa-arrow-down"></i> ${totalGrowth.toFixed(2)}`;
+
+        return `
+            <div class="growth-sparkline-container">
+                <div class="growth-sparkline-header">
+                    <span class="growth-sparkline-title"><i class="fas fa-chart-line"></i> Growth Trend</span>
+                    <span class="growth-sparkline-badge" style="${badgeColor}">${badgeText}</span>
+                </div>
+                <svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" preserveAspectRatio="none" aria-label="Growth trend chart showing ${history.length} data points">
+                    <polygon points="${fillPoints}" fill="${fillColor}"/>
+                    <polyline points="${polyline}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                    <!-- Latest point dot -->
+                    <circle cx="${coords[coords.length - 1].split(',')[0]}" cy="${coords[coords.length - 1].split(',')[1]}" r="3" fill="${strokeColor}"/>
+                </svg>
+                <div style="font-size: 0.72em; color: var(--color-text-muted); margin-top: 4px;">
+                    ${history.length} growth check${history.length !== 1 ? 's' : ''} completed
+                </div>
+            </div>
+        `;
+    }
 
     // --- Dashboard Elements ---
     const childrenListContainer = document.getElementById("children-list-container");
@@ -60,8 +340,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const res = await fetch("/user", { credentials: 'include' });
             if (!res.ok) {
-                alert("Session expired or unauthorized. Please log in again.");
-                window.location.href = "/login.html";
+                showToast("Session expired. Please log in again.", "warning");
+                setTimeout(() => { window.location.href = "/login.html"; }, 1500);
                 return null;
             }
             const data = await res.json();
@@ -69,8 +349,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             return data.user;
         } catch (error) {
             console.error("ERROR: Failed to load parent user data:", error);
-            alert("Could not load parent session. Please log in again.");
-            window.location.href = "/login.html";
+            showToast("Could not load session. Redirecting to login...", "error");
+            setTimeout(() => { window.location.href = "/login.html"; }, 1500);
             return null;
         }
     }
@@ -92,8 +372,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (sender === 'user') {
             container.style.justifyContent = 'flex-end';
             container.style.flexDirection = 'row-reverse';
+            container.setAttribute('aria-label', 'Your message');
         } else {
             container.style.justifyContent = 'flex-start';
+            container.setAttribute('aria-label', `Message from ${currentTutorInfo.name}`);
         }
 
         // Create avatar for AI messages
@@ -158,10 +440,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (tutorAvatarContainer) tutorAvatarContainer.style.display = 'block';
     }
 
-    // --- MODIFICATION: Updated function to load children and their progress ---
+    // --- Load children with PARALLEL progress fetching ---
     async function loadChildren() {
         if (loadingChildren) loadingChildren.style.display = 'block';
-        if (childrenListContainer) childrenListContainer.innerHTML = '';
+        showChildrenSkeleton();
         if (childSelector) childSelector.innerHTML = '<option value="">Select Child</option>';
 
         try {
@@ -186,8 +468,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            // Step 2: Populate dropdown and fetch progress for each child
-            childrenListContainer.innerHTML = '';
+            // Step 2: Populate dropdown
             children.forEach((child, i) => {
                 const option = document.createElement('option');
                 option.value = child._id;
@@ -205,35 +486,68 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (parentSendButton) parentSendButton.disabled = false;
             if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Select a child and ask a question about their progress.</p>';
 
-            // Step 3: Iterate and render progress cards
-            for (const child of children) {
+            // Step 3: PARALLEL fetch — progress + growth for all children at once
+            childrenListContainer.innerHTML = '';
+
+            const progressPromises = children.map(async (child) => {
                 try {
-                    const progressRes = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
-                    if (!progressRes.ok) {
-                        throw new Error(`Failed to load progress for ${child.firstName}`);
-                    }
-                    const progress = await progressRes.json();
-                    renderChildCard(progress);
-                } catch (progressErr) {
-                    console.error(`Could not fetch progress for child ${child._id}:`, progressErr);
-                    // Render a card with an error state
+                    // Fetch progress and growth data in parallel per child
+                    const [progressRes, growthRes] = await Promise.all([
+                        fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' }),
+                        fetch(`/api/parent/child/${child._id}/growth-history`, { credentials: 'include' })
+                    ]);
+
+                    const progress = progressRes.ok ? await progressRes.json() : null;
+                    const growthData = growthRes.ok ? await growthRes.json() : null;
+
+                    return { child, progress, growthData, error: progress ? null : 'Failed to load' };
+                } catch (err) {
+                    console.error(`Could not fetch data for child ${child._id}:`, err);
+                    return { child, progress: null, growthData: null, error: err.message };
+                }
+            });
+
+            const results = await Promise.all(progressPromises);
+
+            // Render all cards in order
+            results.forEach(({ child, progress, growthData, error }) => {
+                if (progress) {
+                    renderChildCard(progress, growthData);
+                } else {
                     const errorCard = document.createElement('div');
                     errorCard.className = 'child-card';
-                    errorCard.innerHTML = `<h2>${child.firstName} ${child.lastName}</h2><p class="text-red-500">Could not load progress data.</p>`;
+                    errorCard.innerHTML = `
+                        <h3>${child.firstName} ${child.lastName}</h3>
+                        <p style="color: var(--color-danger); font-size: 0.9em;">
+                            <i class="fas fa-exclamation-triangle"></i> Could not load progress data.
+                            <button class="btn btn-tertiary" style="margin-top: 8px; font-size: 0.85em;" onclick="location.reload()">
+                                <i class="fas fa-redo"></i> Retry
+                            </button>
+                        </p>
+                    `;
                     childrenListContainer.appendChild(errorCard);
                 }
-            }
+            });
 
         } catch (error) {
             console.error("Parent dashboard error fetching children list:", error);
             if (loadingChildren) loadingChildren.style.display = 'none';
-            if (childrenListContainer) childrenListContainer.innerHTML = `<p class="text-center text-red-500 py-4">Failed to load children data. Please try refreshing.</p>`;
+            childrenListContainer.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: var(--color-danger);">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
+                    <p>Failed to load children data.</p>
+                    <button class="btn btn-primary" style="margin-top: 12px;" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> Refresh Page
+                    </button>
+                </div>
+            `;
         }
     }
 
-    function renderChildCard(progress) {
+    function renderChildCard(progress, growthData) {
         const card = document.createElement('div');
         card.className = 'child-card';
+        card.dataset.childId = progress._id;
 
         // Build IEP accommodations display
         let accommodationsHTML = '';
@@ -274,8 +588,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <strong><i class="fas fa-bullseye"></i> IEP Goals:</strong>
                     <div style="margin-top: 8px;">
                         ${progress.iepPlan.goals.map(goal => {
-                            const statusColor = goal.status === 'completed' ? '#27ae60' :
-                                              goal.status === 'on-hold' ? '#f57c00' : '#1976d2';
+                            const statusColor = goal.status === 'completed' ? 'var(--color-success)' :
+                                              goal.status === 'on-hold' ? 'var(--color-warning-dark)' : 'var(--color-primary)';
                             const progressPercent = goal.currentProgress || 0;
 
                             // Calculate trend from history
@@ -292,10 +606,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                             let trendText = '';
                             if (recentUpdates.length > 0) {
                                 if (recentGain > 0) {
-                                    trendIcon = '<i class="fas fa-arrow-up" style="color:#27ae60;"></i>';
+                                    trendIcon = '<i class="fas fa-arrow-up" style="color: var(--color-success);"></i>';
                                     trendText = `+${recentGain}% in the last 2 weeks (${recentUpdates.length} update${recentUpdates.length !== 1 ? 's' : ''})`;
                                 } else {
-                                    trendIcon = '<i class="fas fa-minus" style="color:#f57c00;"></i>';
+                                    trendIcon = '<i class="fas fa-minus" style="color: var(--color-warning-dark);"></i>';
                                     trendText = `No change in the last 2 weeks`;
                                 }
                             } else if (progressHistory.length > 0) {
@@ -308,26 +622,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                             let deadlineNote = '';
                             if (goal.targetDate && goal.status === 'active') {
                                 const daysLeft = Math.ceil((new Date(goal.targetDate) - new Date()) / (1000*60*60*24));
-                                if (daysLeft < 0) deadlineNote = `<span style="color:#e74c3c;font-weight:600;">${Math.abs(daysLeft)} days past target</span>`;
-                                else if (daysLeft <= 14) deadlineNote = `<span style="color:#f57c00;">${daysLeft} days remaining</span>`;
+                                if (daysLeft < 0) deadlineNote = `<span style="color: var(--color-danger); font-weight:600;">${Math.abs(daysLeft)} days past target</span>`;
+                                else if (daysLeft <= 14) deadlineNote = `<span style="color: var(--color-warning-dark);">${daysLeft} days remaining</span>`;
                             }
 
+                            const statusIcon = goal.status === 'completed' ? 'fa-check-circle' :
+                                             goal.status === 'on-hold' ? 'fa-pause-circle' : 'fa-spinner';
+
                             return `
-                                <div style="margin-bottom: 12px; padding: 12px; background: #f9f9f9; border-left: 4px solid ${statusColor}; border-radius: 6px;">
+                                <div style="margin-bottom: 12px; padding: 12px; background: var(--color-bg); border-left: 4px solid ${statusColor}; border-radius: var(--radius-sm);">
                                     <div style="font-weight: 600; margin-bottom: 4px;">${goal.description}</div>
-                                    <div style="font-size: 0.85em; color: #666; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                                        <span style="text-transform:capitalize;">Status: <strong style="color:${statusColor};">${goal.status}</strong></span>
+                                    <div style="font-size: 0.85em; color: var(--color-text-secondary); display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                                        <span><i class="fas ${statusIcon}" style="color:${statusColor};"></i> <strong style="color:${statusColor}; text-transform:capitalize;">${goal.status}</strong></span>
                                         <span>Progress: <strong>${progressPercent}%</strong></span>
                                         ${goal.targetDate ? `<span>Target: <strong>${new Date(goal.targetDate).toLocaleDateString()}</strong></span>` : ''}
                                         ${deadlineNote}
                                     </div>
-                                    <div class="progress-bar" style="width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; margin-top: 8px; overflow: hidden;">
+                                    <div style="width: 100%; height: 8px; background: var(--color-border); border-radius: 4px; margin-top: 8px; overflow: hidden;">
                                         <div style="width: ${progressPercent}%; height: 100%; background: ${statusColor}; transition: width 0.5s; border-radius: 4px;"></div>
                                     </div>
-                                    <div style="font-size: 0.8em; color: #888; margin-top: 6px; display:flex; align-items:center; gap:4px;">
+                                    <div style="font-size: 0.8em; color: var(--color-text-muted); margin-top: 6px; display:flex; align-items:center; gap:4px;">
                                         ${trendIcon} ${trendText}
                                     </div>
-                                    ${goal.measurementMethod ? `<div style="font-size: 0.75em; color: #aaa; margin-top: 3px;">Measured by: ${goal.measurementMethod}</div>` : ''}
+                                    ${goal.measurementMethod ? `<div style="font-size: 0.75em; color: var(--color-text-disabled); margin-top: 3px;">Measured by: ${goal.measurementMethod}</div>` : ''}
                                 </div>
                             `;
                         }).join('')}
@@ -336,50 +653,66 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }
 
+        // Build weekly summary
+        const weeklySummaryHTML = buildWeeklySummary(progress.weeklyStats);
+
+        // Build skill mastery ring
+        const skillRingHTML = buildSkillMasteryRing(progress.skillsSummary);
+
+        // Build growth sparkline
+        const growthSparklineHTML = growthData ? buildGrowthSparkline(growthData) : '';
+
+        // Build sessions
+        const sessionsHTML = progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions
+            .filter(s => {
+                if (!s.date) return false;
+                if (!s.summary) return false;
+                if (s.summary.includes('--- End Session Transcript ---') ||
+                    s.summary.includes('Please provide a summary') ||
+                    s.summary.includes('**Concise (1-3 paragraphs)**')) {
+                    return false;
+                }
+                return true;
+            })
+            .map(s => {
+                const sessionDate = new Date(s.date);
+                const dateStr = isNaN(sessionDate.getTime()) ? 'Unknown date' : sessionDate.toLocaleDateString();
+                const isLive = s.isActive;
+                const liveBadge = isLive ? '<span class="live-badge"><span class="live-badge-dot"></span> LIVE</span>' : '';
+                const entryClass = isLive ? 'session-entry live-session' : 'session-entry';
+                return `
+                    <div class="${entryClass}">
+                        ${liveBadge}<strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
+                    </div>
+                `;
+            }).join('') || '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>'
+        : '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>';
+
         card.innerHTML = `
-            <div class="child-header">
+            <div class="child-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                 <div>
-                    <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
-                    <span class="child-stats">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                    <h3>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h3>
+                    <span style="font-size: 0.85em; color: var(--color-text-secondary);">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
                 </div>
-                <button class="view-as-child-btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" style="background: #9b59b6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                <button class="view-as-child-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" aria-label="View dashboard as ${progress.firstName || 'child'}" style="background: var(--color-purple); color: white; font-size: 0.85em; padding: 8px 14px;">
                     <i class="fas fa-eye"></i> View
                 </button>
             </div>
-            <div class="child-summary-details">
+            <div style="font-size: 0.85em; color: var(--color-text-muted); margin-bottom: 8px;">
                 ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
             </div>
 
+            ${weeklySummaryHTML}
+            ${skillRingHTML}
+            ${growthSparklineHTML}
             ${accommodationsHTML}
             ${goalsHTML}
 
-            <div class="session-log-container" style="margin-top: 12px;">
-                <strong>Recent Sessions:</strong>
-                ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions
-                    .filter(s => {
-                        // Filter out sessions with bad/prompt summaries or invalid dates
-                        if (!s.date) return false;
-                        if (!s.summary) return false;
-                        // Filter out summaries that are actually AI prompts (contain prompt keywords)
-                        if (s.summary.includes('--- End Session Transcript ---') ||
-                            s.summary.includes('Please provide a summary') ||
-                            s.summary.includes('**Concise (1-3 paragraphs)**')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    .map(s => {
-                        const sessionDate = new Date(s.date);
-                        const dateStr = isNaN(sessionDate.getTime()) ? 'Unknown date' : sessionDate.toLocaleDateString();
-                        const liveBadge = s.isActive ? '<span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-right: 8px; animation: pulse 2s infinite;">🟢 LIVE</span>' : '';
-                        const entryStyle = s.isActive ? 'background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left: 4px solid #27ae60;' : '';
-                        return `
-                        <div class="session-entry" style="${entryStyle}">
-                            ${liveBadge}<strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
-                        </div>
-                    `;
-                    }).join('') || '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'
-                : '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'}
+            <div style="margin-top: 12px;">
+                <strong style="font-size: 0.9em;"><i class="fas fa-history"></i> Recent Sessions:</strong>
+                <div style="margin-top: 8px;">
+                    ${sessionsHTML}
+                </div>
             </div>
         `;
         childrenListContainer.appendChild(card);
@@ -400,10 +733,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     viewAsChildBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
 
                     await window.ImpersonationBanner.start(childId, { readOnly: true });
-                    // Redirect happens automatically in the start function
                 } catch (error) {
                     console.error('Failed to start child view:', error);
-                    alert(error.message || 'Failed to start child view. Please try again.');
+                    showToast(error.message || 'Failed to start child view. Please try again.', 'error');
                     viewAsChildBtn.disabled = false;
                     viewAsChildBtn.innerHTML = '<i class="fas fa-eye"></i> View';
                 }
@@ -459,12 +791,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         parentSendButton.addEventListener("click", async () => {
             const message = parentUserInput.value.trim();
             if (!message || !selectedChild || !currentParentId) {
-                alert("Please select a child and type a message.");
+                showToast("Please select a child and type a message.", "warning");
                 return;
             }
             if (message.length > PARENT_CHAT_MAX_MESSAGE_LENGTH) {
-                 alert(`Your message is too long. Please shorten it to under ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters.`);
-                 return;
+                showToast(`Message too long. Please shorten to under ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters.`, "warning");
+                return;
             }
 
             appendParentMessage("user", message);
@@ -472,7 +804,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
 
             try {
-                const res = await csrfFetch("/api/chat", { // Note: The parent chat endpoint is currently the main chat endpoint
+                const res = await csrfFetch("/api/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
@@ -489,7 +821,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
                 const data = await res.json();
-                // Pass tutor info from response to show avatar with correct tutor
                 appendParentMessage("ai", data.text || "No response from tutor.", {
                     tutorName: data.tutorName,
                     tutorImage: data.tutorImage
@@ -513,20 +844,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- Helper Button Click Handlers ---
-    // These buttons let parents quickly ask common questions
     const helperButtons = document.querySelectorAll('.helper-btn');
     helperButtons.forEach(btn => {
         btn.addEventListener('click', async () => {
             const message = btn.getAttribute('data-message');
             if (!message || !selectedChild || !currentParentId) {
-                alert("Please select a child first.");
+                showToast("Please select a child first.", "warning");
                 return;
             }
 
-            // Show user's question in chat
             appendParentMessage("user", message);
-
-            // Show thinking indicator
             if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
 
             try {
@@ -547,7 +874,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
                 const data = await res.json();
-                // Pass tutor info from response
                 appendParentMessage("ai", data.text || "No response from tutor.", {
                     tutorName: data.tutorName,
                     tutorImage: data.tutorImage
@@ -563,6 +889,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (generateCodeBtn) {
         generateCodeBtn.addEventListener('click', async () => {
+            generateCodeBtn.disabled = true;
+            generateCodeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
             try {
                 const res = await csrfFetch("/api/parent/generate-invite-code", {
                     method: "POST",
@@ -574,12 +902,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     generatedCodeValue.textContent = data.code;
                     codeExpiresAt.textContent = new Date(data.expiresAt).toLocaleDateString();
                     inviteCodeOutput.style.display = 'block';
+
+                    // Also update mobile code display
+                    const mobileCodeEl = document.getElementById('mobile-generated-code-value');
+                    if (mobileCodeEl) mobileCodeEl.textContent = data.code;
+
+                    showToast("Invite code generated! Share it with your child.", "success");
                 } else {
-                    alert("Failed to generate code: " + data.message);
+                    showToast("Failed to generate code: " + data.message, "error");
                 }
             } catch (error) {
                 console.error("ERROR: Generate code error:", error);
-                alert("An error occurred while generating code.");
+                showToast("An error occurred while generating code.", "error");
+            } finally {
+                generateCodeBtn.disabled = false;
+                generateCodeBtn.innerHTML = '<i class="fas fa-key"></i> Generate Invite Code';
             }
         });
     }
@@ -601,15 +938,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                     linkStudentMessage.className = "mt-2 text-sm text-green-600";
                     linkStudentMessage.textContent = data.message;
                     studentLinkCodeInput.value = '';
+                    showToast(data.message, "success");
                     loadChildren(); // Reload children list after successful link
                 } else {
                     linkStudentMessage.className = "mt-2 text-sm text-red-600";
                     linkStudentMessage.textContent = data.message;
+                    showToast(data.message, "error");
                 }
             } catch (error) {
                 console.error("ERROR: Link student error:", error);
                 linkStudentMessage.className = "mt-2 text-sm text-red-600";
                 linkStudentMessage.textContent = "An error occurred while linking the student.";
+                showToast("An error occurred while linking the student.", "error");
             }
         });
     }
@@ -639,17 +979,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (data.success) {
                     settingsSaveMessage.className = "mt-2 text-sm text-green-600";
                     settingsSaveMessage.textContent = data.message;
+                    showToast("Settings saved!", "success", 2000);
                     setTimeout(() => {
                         settingsSaveMessage.textContent = '';
                     }, 3000);
                 } else {
                     settingsSaveMessage.className = "mt-2 text-sm text-red-600";
                     settingsSaveMessage.textContent = data.message || 'Failed to save settings';
+                    showToast("Failed to save settings.", "error");
                 }
             } catch (error) {
                 console.error("ERROR: Save settings error:", error);
                 settingsSaveMessage.className = "mt-2 text-sm text-red-600";
                 settingsSaveMessage.textContent = "An error occurred while saving settings.";
+                showToast("An error occurred while saving settings.", "error");
             }
         });
     }
@@ -663,23 +1006,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         testEmailBtn.addEventListener("click", async () => {
             try {
                 emailStatusMessage.textContent = "Sending test email...";
-                emailStatusMessage.style.color = "#666";
+                emailStatusMessage.style.color = "var(--color-text-muted)";
                 testEmailBtn.disabled = true;
 
                 const response = await csrfFetch('/api/email/test', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})  // Will use current user's email
+                    body: JSON.stringify({})
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    emailStatusMessage.textContent = "✅ Test email sent! Check your inbox.";
-                    emailStatusMessage.style.color = "#27ae60";
+                    emailStatusMessage.textContent = "Test email sent! Check your inbox.";
+                    emailStatusMessage.style.color = "var(--color-success)";
+                    showToast("Test email sent! Check your inbox.", "success");
                 } else {
-                    emailStatusMessage.textContent = `❌ ${data.message}`;
-                    emailStatusMessage.style.color = "#e74c3c";
+                    emailStatusMessage.textContent = data.message;
+                    emailStatusMessage.style.color = "var(--color-danger)";
+                    showToast(data.message, "error");
                 }
 
                 testEmailBtn.disabled = false;
@@ -688,8 +1033,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }, 5000);
             } catch (error) {
                 console.error("Error sending test email:", error);
-                emailStatusMessage.textContent = "❌ Error: Email not configured on server";
-                emailStatusMessage.style.color = "#e74c3c";
+                emailStatusMessage.textContent = "Error: Email not configured on server";
+                emailStatusMessage.style.color = "var(--color-danger)";
+                showToast("Email not configured on server.", "error");
                 testEmailBtn.disabled = false;
             }
         });
@@ -698,14 +1044,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (sendWeeklyReportBtn) {
         sendWeeklyReportBtn.addEventListener("click", async () => {
             if (!selectedChild) {
-                emailStatusMessage.textContent = "⚠️ Please select a child first";
-                emailStatusMessage.style.color = "#f39c12";
+                showToast("Please select a child first.", "warning");
                 return;
             }
 
             try {
                 emailStatusMessage.textContent = "Generating and sending report...";
-                emailStatusMessage.style.color = "#666";
+                emailStatusMessage.style.color = "var(--color-text-muted)";
                 sendWeeklyReportBtn.disabled = true;
 
                 const response = await csrfFetch('/api/email/weekly-report', {
@@ -717,11 +1062,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    emailStatusMessage.textContent = "✅ Weekly report sent! Check your inbox.";
-                    emailStatusMessage.style.color = "#27ae60";
+                    emailStatusMessage.textContent = "Weekly report sent! Check your inbox.";
+                    emailStatusMessage.style.color = "var(--color-success)";
+                    showToast("Weekly report sent!", "success");
                 } else {
-                    emailStatusMessage.textContent = `❌ ${data.message}`;
-                    emailStatusMessage.style.color = "#e74c3c";
+                    emailStatusMessage.textContent = data.message;
+                    emailStatusMessage.style.color = "var(--color-danger)";
+                    showToast(data.message, "error");
                 }
 
                 sendWeeklyReportBtn.disabled = false;
@@ -730,8 +1077,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }, 5000);
             } catch (error) {
                 console.error("Error sending weekly report:", error);
-                emailStatusMessage.textContent = "❌ Error: Email not configured on server";
-                emailStatusMessage.style.color = "#e74c3c";
+                emailStatusMessage.textContent = "Error: Email not configured on server";
+                emailStatusMessage.style.color = "var(--color-danger)";
+                showToast("Email not configured on server.", "error");
                 sendWeeklyReportBtn.disabled = false;
             }
         });
@@ -747,7 +1095,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!container) return;
 
         try {
-            // Load catalog (parent courses from pathway files) and enrolled sessions in parallel
             const [catalogRes, sessionsRes] = await Promise.all([
                 csrfFetch('/api/course-sessions/catalog?audience=parent', { credentials: 'include' }),
                 csrfFetch('/api/course-sessions', { credentials: 'include' })
@@ -758,7 +1105,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const courses = catalogData.catalog || [];
             const sessions = sessionsData.sessions || [];
 
-            // Map enrolled sessions by courseId for quick lookup
             const enrolledMap = {};
             sessions.forEach(s => {
                 if (s.status === 'active' || s.status === 'paused') {
@@ -822,7 +1168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Enroll in a parent course via the CourseSession system (pathway-based)
+    // Enroll in a parent course
     window.enrollParentCourse = async function(courseId, btnElement) {
         try {
             btnElement.disabled = true;
@@ -840,6 +1186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (data.success) {
                 btnElement.innerHTML = '<i class="fas fa-check-circle"></i> Enrolled!';
                 btnElement.classList.add('enrolled');
+                showToast("Course enrolled! Redirecting...", "success");
                 const sessionId = data.session?._id || '';
                 setTimeout(() => {
                     window.location.href = `/parent-course.html?sessionId=${sessionId}&courseId=${courseId}`;
@@ -853,6 +1200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } else {
                     btnElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Error'}`;
                     btnElement.disabled = false;
+                    showToast(data.message || 'Enrollment failed.', 'error');
                     setTimeout(() => {
                         btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
                     }, 3000);
@@ -862,13 +1210,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error enrolling in course:', error);
             btnElement.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
             btnElement.disabled = false;
+            showToast('Error enrolling in course.', 'error');
             setTimeout(() => {
                 btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
             }, 3000);
         }
     };
 
-    // Initial load (logout button handled by /js/logout.js)
+    // ============================================
+    // INITIAL LOAD
+    // ============================================
+
+    setupCopyButtons();
+
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();
@@ -877,38 +1231,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ============================================
-    // REAL-TIME UPDATES (3x Better UX)
+    // REAL-TIME UPDATES
     // ============================================
 
     let parentPollingInterval = null;
     let lastLiveSessionCount = 0;
 
     function startParentPolling() {
-        // Poll every 60 seconds for live session updates
+        if (parentPollingInterval) return; // Prevent duplicate intervals
         parentPollingInterval = setInterval(async () => {
             if (children.length === 0) return;
 
             try {
-                // Check for live sessions
                 let currentLiveSessions = 0;
 
-                for (const child of children) {
-                    try {
-                        const res = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
-                        if (res.ok) {
-                            const progress = await res.json();
-                            const liveSessions = progress.recentSessions?.filter(s => s.isActive) || [];
-                            currentLiveSessions += liveSessions.length;
-
-                            // Update live indicator on child cards
-                            updateChildLiveStatus(child._id, liveSessions.length > 0);
+                // Parallel polling for all children
+                const pollResults = await Promise.all(
+                    children.map(async (child) => {
+                        try {
+                            const res = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
+                            if (res.ok) {
+                                const progress = await res.json();
+                                const liveSessions = progress.recentSessions?.filter(s => s.isActive) || [];
+                                return { childId: child._id, isLive: liveSessions.length > 0, liveCount: liveSessions.length };
+                            }
+                        } catch (err) {
+                            console.log(`[Polling] Failed to check ${child.firstName}'s status`);
                         }
-                    } catch (err) {
-                        console.log(`[Polling] Failed to check ${child.firstName}'s status`);
-                    }
-                }
+                        return { childId: child._id, isLive: false, liveCount: 0 };
+                    })
+                );
 
-                // Notify if a child just started a session
+                pollResults.forEach(result => {
+                    currentLiveSessions += result.liveCount;
+                    updateChildLiveStatus(result.childId, result.isLive);
+                });
+
                 if (currentLiveSessions > lastLiveSessionCount && lastLiveSessionCount >= 0) {
                     showLiveSessionNotification(currentLiveSessions - lastLiveSessionCount);
                 }
@@ -917,7 +1275,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (error) {
                 console.log('[Parent Polling] Error:', error.message);
             }
-        }, 60000); // Check every 60 seconds
+        }, 60000);
     }
 
     function stopParentPolling() {
@@ -928,77 +1286,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function updateChildLiveStatus(childId, isLive) {
-        // Find the child card and update its live indicator
         const cards = document.querySelectorAll('.child-card');
         cards.forEach(card => {
-            // Check if this card is for the right child
-            const childName = children.find(c => c._id === childId);
-            if (!childName) return;
+            if (card.dataset.childId !== childId) return;
 
-            const fullName = `${childName.firstName} ${childName.lastName}`;
-            const cardHeader = card.querySelector('h2');
-            if (cardHeader && cardHeader.textContent.includes(childName.firstName)) {
-                // Add or remove live indicator
-                let liveIndicator = card.querySelector('.live-indicator');
+            const cardHeader = card.querySelector('h3');
+            if (!cardHeader) return;
 
-                if (isLive && !liveIndicator) {
-                    liveIndicator = document.createElement('span');
-                    liveIndicator.className = 'live-indicator';
-                    liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE NOW';
-                    liveIndicator.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px;';
-                    cardHeader.appendChild(liveIndicator);
+            let liveIndicator = card.querySelector('.live-indicator');
 
-                    // Highlight the card
-                    card.style.borderLeft = '4px solid #27ae60';
-                    card.style.boxShadow = '0 0 20px rgba(39, 174, 96, 0.2)';
-                } else if (!isLive && liveIndicator) {
-                    liveIndicator.remove();
-                    card.style.borderLeft = '';
-                    card.style.boxShadow = '';
-                }
+            if (isLive && !liveIndicator) {
+                liveIndicator = document.createElement('span');
+                liveIndicator.className = 'live-indicator';
+                liveIndicator.innerHTML = '<span class="live-badge-dot"></span> LIVE NOW';
+                liveIndicator.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; background: var(--color-success); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px;';
+                cardHeader.appendChild(liveIndicator);
+
+                card.style.borderLeft = '4px solid var(--color-success)';
+                card.style.boxShadow = '0 0 20px rgba(39, 174, 96, 0.2)';
+            } else if (!isLive && liveIndicator) {
+                liveIndicator.remove();
+                card.style.borderLeft = '';
+                card.style.boxShadow = '';
             }
         });
     }
 
     function showLiveSessionNotification(count) {
-        // Create notification banner
-        let notification = document.getElementById('live-session-notification');
-        if (!notification) {
-            notification = document.createElement('div');
-            notification.id = 'live-session-notification';
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #27ae60, #2ecc71);
-                color: white;
-                padding: 16px 24px;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(39, 174, 96, 0.4);
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            `;
-            document.body.appendChild(notification);
-        }
-
-        notification.innerHTML = `
-            <span style="font-size: 1.5em;">📚</span>
-            <div>
-                <div style="font-weight: 600;">Your child is learning!</div>
-                <div style="font-size: 0.85em; opacity: 0.9;">${count === 1 ? 'A session just started' : `${count} sessions active`}</div>
-            </div>
-            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.3em; cursor: pointer; margin-left: 10px;">&times;</button>
-        `;
-
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (notification && notification.parentElement) {
-                notification.remove();
-            }
-        }, 10000);
+        showToast(
+            count === 1
+                ? 'Your child just started a learning session!'
+                : `${count} children are now learning!`,
+            'success',
+            8000
+        );
 
         // Play notification sound
         try {
@@ -1023,21 +1344,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     window.addEventListener('beforeunload', stopParentPolling);
-
-    // Add slideIn animation
-    const styleEl = document.createElement('style');
-    styleEl.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: pulse 1s infinite;
-        }
-    `;
-    document.head.appendChild(styleEl);
 });
