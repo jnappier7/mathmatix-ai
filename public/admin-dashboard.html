@@ -12,6 +12,50 @@
        Fixed 3-Column Layout with Admin Branding
        ============================================ */
 
+    /* --- Design Tokens --- */
+    :root {
+      --color-primary: #e74c3c;
+      --color-primary-dark: #c0392b;
+      --color-primary-deeper: #a93226;
+      --color-accent: #e67e22;
+      --color-success: #27ae60;
+      --color-warning: #f39c12;
+      --color-danger: #e74c3c;
+      --color-info: #3498db;
+
+      --color-text: #2c3e50;
+      --color-text-muted: #7f8c8d;
+      --color-text-light: #95a5a6;
+
+      --color-bg: #f8f9fa;
+      --color-surface: #ffffff;
+      --color-border: #e9ecef;
+      --color-border-light: #f1f1f1;
+
+      --color-hover-row: #fff5f5;
+      --color-primary-tint: rgba(231, 76, 60, 0.08);
+
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-pill: 20px;
+
+      --shadow-sm: 0 2px 6px rgba(0,0,0,0.05);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.15);
+      --shadow-xl: 0 10px 40px rgba(0,0,0,0.3);
+
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+
+      --font-xs: 0.75em;
+      --font-sm: 0.85em;
+      --font-base: 0.95em;
+      --font-md: 1.1em;
+      --font-lg: 1.5em;
+      --font-xl: 1.8em;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -24,7 +68,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       overflow: hidden;
       height: 100dvh;
-      background: #f8f9fa;
+      background: var(--color-bg);
       -webkit-font-smoothing: antialiased;
     }
 
@@ -44,10 +88,10 @@
        ============================================ */
 
     .main-header {
-      background: linear-gradient(135deg, #e74c3c 0%, #e67e22 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
       color: white;
       padding: 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: var(--shadow-lg);
       flex-shrink: 0;
       z-index: 100;
     }
@@ -125,12 +169,12 @@
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: var(--font-base);
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
       white-space: nowrap;
     }
 
@@ -150,7 +194,7 @@
       grid-template-columns: 300px 1fr 300px;
       gap: 0;
       overflow: hidden;
-      background: #f8f9fa;
+      background: var(--color-bg);
     }
 
     .left-sidebar,
@@ -159,7 +203,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       padding: 20px;
-      background: #f8f9fa;
+      background: var(--color-bg);
     }
 
     /* Admin-themed scrollbars */
@@ -172,20 +216,20 @@
     .left-sidebar::-webkit-scrollbar-track,
     .center-content::-webkit-scrollbar-track,
     .right-sidebar::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: var(--color-border-light);
     }
 
     .left-sidebar::-webkit-scrollbar-thumb,
     .center-content::-webkit-scrollbar-thumb,
     .right-sidebar::-webkit-scrollbar-thumb {
-      background: #e74c3c;
+      background: var(--color-primary);
       border-radius: 4px;
     }
 
     .left-sidebar::-webkit-scrollbar-thumb:hover,
     .center-content::-webkit-scrollbar-thumb:hover,
     .right-sidebar::-webkit-scrollbar-thumb:hover {
-      background: #c0392b;
+      background: var(--color-primary-dark);
     }
 
     /* ============================================
@@ -193,33 +237,33 @@
        ============================================ */
 
     .dashboard-panel {
-      background: white;
-      border-radius: 12px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border: 1px solid #e9ecef;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-border);
     }
 
     .dashboard-panel-header {
-      font-size: 1.1em;
+      font-size: var(--font-md);
       font-weight: 700;
-      color: #2c3e50;
+      color: var(--color-text);
       margin-bottom: 15px;
       padding-bottom: 10px;
-      border-bottom: 2px solid #e74c3c;
+      border-bottom: 2px solid var(--color-primary);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .status-online {
-      color: #27ae60;
+      color: var(--color-success);
       font-weight: 600;
     }
 
     .status-offline {
-      color: #e74c3c;
+      color: var(--color-danger);
       font-weight: 600;
     }
 
@@ -229,46 +273,46 @@
 
     .btn {
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       border: none;
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: var(--font-base);
       font-weight: 600;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
       color: white;
     }
 
     .btn-primary:hover {
-      background: linear-gradient(135deg, #c0392b, #a93226);
+      background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-deeper));
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
     }
 
     .btn-secondary {
-      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      background: linear-gradient(135deg, var(--color-text-light), var(--color-text-muted));
       color: white;
     }
 
     .btn-secondary:hover {
-      background: linear-gradient(135deg, #7f8c8d, #6c7a89);
+      background: linear-gradient(135deg, var(--color-text-muted), #6c7a89);
       transform: translateY(-2px);
     }
 
     .btn-tertiary {
       background: transparent;
-      border: 2px solid #e74c3c;
-      color: #e74c3c;
+      border: 2px solid var(--color-primary);
+      color: var(--color-primary);
     }
 
     .btn-tertiary:hover {
-      background: #e74c3c;
+      background: var(--color-primary);
       color: white;
     }
 
@@ -284,18 +328,18 @@
     .table-scroll-container {
       max-height: 400px;
       overflow-y: auto;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
     }
 
     .user-table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      background: var(--color-surface);
     }
 
     .user-table thead {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
       color: white;
       position: sticky;
       top: 0;
@@ -306,7 +350,7 @@
     .user-table td {
       padding: 12px;
       text-align: left;
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .user-table th {
@@ -317,7 +361,7 @@
     }
 
     .user-table tbody tr:hover {
-      background: #fff5f5;
+      background: var(--color-hover-row);
     }
 
     /* ============================================
@@ -331,7 +375,7 @@
     .form-group label {
       display: block;
       font-weight: 600;
-      color: #2c3e50;
+      color: var(--color-text);
       margin-bottom: 5px;
       font-size: 0.9em;
     }
@@ -341,16 +385,16 @@
     .form-group textarea {
       width: 100%;
       padding: 10px;
-      border: 2px solid #e9ecef;
-      border-radius: 8px;
-      font-size: 0.95em;
-      transition: border-color 0.3s ease;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-base);
+      transition: border-color var(--transition-normal);
     }
 
     .form-group input:focus,
     .form-group select:focus {
       outline: none;
-      border-color: #e74c3c;
+      border-color: var(--color-primary);
     }
 
     /* ============================================
@@ -358,16 +402,16 @@
        ============================================ */
 
     .stat-card {
-      background: linear-gradient(135deg, #fff5f5 0%, white 100%);
-      border-left: 4px solid #e74c3c;
+      background: linear-gradient(135deg, var(--color-hover-row) 0%, var(--color-surface) 100%);
+      border-left: 4px solid var(--color-primary);
       padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
     }
 
     .stat-label {
-      font-size: 0.85em;
-      color: #7f8c8d;
+      font-size: var(--font-sm);
+      color: var(--color-text-muted);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -375,9 +419,9 @@
     }
 
     .stat-value {
-      font-size: 1.8em;
+      font-size: var(--font-xl);
       font-weight: 700;
-      color: #e74c3c;
+      color: var(--color-primary);
     }
 
     /* ============================================
@@ -402,13 +446,13 @@
     }
 
     .modal-content {
-      background: white;
-      border-radius: 12px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
       padding: 30px;
       max-width: 800px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      box-shadow: var(--shadow-xl);
       position: relative;
     }
 
@@ -416,7 +460,7 @@
       position: absolute;
       top: 15px;
       right: 15px;
-      background: #e74c3c;
+      background: var(--color-primary);
       color: white;
       border: none;
       width: 36px;
@@ -427,18 +471,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
+      transition: all var(--transition-normal);
     }
 
     .modal-close-button:hover {
-      background: #c0392b;
+      background: var(--color-primary-dark);
       transform: rotate(90deg);
     }
 
     .modal-section {
       margin-bottom: 25px;
       padding-bottom: 20px;
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .modal-section:last-child {
@@ -446,7 +490,7 @@
     }
 
     .modal-section h3 {
-      color: #e74c3c;
+      color: var(--color-primary);
       font-size: 1.2em;
       margin-bottom: 15px;
     }
@@ -458,7 +502,7 @@
     .modal-form-group label {
       display: block;
       font-weight: 600;
-      color: #2c3e50;
+      color: var(--color-text);
       margin-bottom: 5px;
       font-size: 0.9em;
     }
@@ -468,9 +512,9 @@
     .modal-form-group textarea {
       width: 100%;
       padding: 10px;
-      border: 2px solid #e9ecef;
-      border-radius: 8px;
-      font-size: 0.95em;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-base);
     }
 
     .checkbox-group {
@@ -509,18 +553,194 @@
       color: white;
       text-align: center;
       padding: 15px 20px;
-      font-size: 0.85em;
+      font-size: var(--font-sm);
       flex-shrink: 0;
     }
 
     .main-footer a {
-      color: #e74c3c;
+      color: var(--color-primary);
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: color var(--transition-normal);
     }
 
     .main-footer a:hover {
-      color: #c0392b;
+      color: var(--color-primary-dark);
+    }
+
+    /* ============================================
+       TOAST NOTIFICATIONS
+       ============================================ */
+
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      color: white;
+      font-weight: 500;
+      font-size: var(--font-base);
+      box-shadow: var(--shadow-lg);
+      pointer-events: auto;
+      animation: toastIn 0.3s ease forwards;
+      max-width: 400px;
+    }
+
+    .toast.toast-out {
+      animation: toastOut 0.25s ease forwards;
+    }
+
+    .toast-success { background: var(--color-success); }
+    .toast-error   { background: var(--color-danger); }
+    .toast-warning { background: var(--color-warning); }
+    .toast-info    { background: var(--color-info); }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-left: auto;
+      padding: 0 0 0 10px;
+      opacity: 0.8;
+    }
+
+    .toast-close:hover { opacity: 1; }
+
+    @keyframes toastIn {
+      from { transform: translateX(100px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(100px); opacity: 0; }
+    }
+
+    /* ============================================
+       SKELETON LOADING
+       ============================================ */
+
+    .skeleton {
+      background: linear-gradient(90deg, #eee 25%, #e0e0e0 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 1fr 80px 1fr 120px;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .skeleton-cell {
+      height: 16px;
+      background: linear-gradient(90deg, #eee 25%, #e0e0e0 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ============================================
+       USER COUNT STAT CARDS
+       ============================================ */
+
+    .user-stat-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .user-stat-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      text-align: center;
+      border: 1px solid var(--color-border);
+      transition: box-shadow var(--transition-fast);
+    }
+
+    .user-stat-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .user-stat-card .stat-count {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1.2;
+    }
+
+    .user-stat-card .stat-role {
+      font-size: var(--font-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* ============================================
+       ACCESSIBILITY & FOCUS
+       ============================================ */
+
+    *:focus-visible {
+      outline: 3px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      transition: all var(--transition-fast);
+      font-size: 0.95em;
+    }
+
+    .btn-icon:hover {
+      background: var(--color-primary-tint);
+      color: var(--color-primary);
+      border-color: var(--color-border);
+    }
+
+    .btn-icon.btn-danger:hover {
+      background: rgba(231,76,60,0.1);
+      color: var(--color-danger);
     }
 
     /* ============================================
@@ -651,16 +871,16 @@
          ============================================ -->
     <main class="main-content">
       <!-- LEFT SIDEBAR - System Status & Leaderboard -->
-      <aside class="left-sidebar">
+      <aside class="left-sidebar" role="complementary" aria-label="System status and leaderboard">
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">System Status</div>
+          <h2 class="dashboard-panel-header">System Status</h2>
           <p>Database: <span id="dbStatus" class="status-online">Online</span></p>
           <p>AI Service: <span id="aiStatus" class="status-online">Operational</span></p>
           <p>Last Sync: <span id="lastSyncTime">Just now</span></p>
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Top Students</div>
+          <h2 class="dashboard-panel-header">Top Students</h2>
           <div class="table-scroll-container">
             <table id="leaderboardTable" class="user-table">
               <thead>
@@ -681,10 +901,10 @@
 
       <!-- CENTER CONTENT - Student Management -->
       <section class="center-content">
-        <div class="dashboard-panel">
-          <div class="dashboard-panel-header">
+        <div class="dashboard-panel" role="region" aria-label="Teacher assignment">
+          <h2 class="dashboard-panel-header">
             Teacher Assignment
-          </div>
+          </h2>
           <div class="form-group">
             <label for="teacherSelect">Assign selected students to:</label>
             <select id="teacherSelect"></select>
@@ -694,14 +914,39 @@
           </button>
         </div>
 
-        <div class="dashboard-panel">
-          <div class="dashboard-panel-header">User List</div>
+        <div class="dashboard-panel" role="region" aria-label="User management">
+          <h2 class="dashboard-panel-header">User List</h2>
+
+          <!-- User count stat cards -->
+          <div class="user-stat-cards" id="userStatCards" aria-label="User counts by role">
+            <div class="user-stat-card">
+              <div class="stat-count" id="statTotal">--</div>
+              <div class="stat-role">Total</div>
+            </div>
+            <div class="user-stat-card">
+              <div class="stat-count" id="statStudents">--</div>
+              <div class="stat-role">Students</div>
+            </div>
+            <div class="user-stat-card">
+              <div class="stat-count" id="statTeachers">--</div>
+              <div class="stat-role">Teachers</div>
+            </div>
+            <div class="user-stat-card">
+              <div class="stat-count" id="statParents">--</div>
+              <div class="stat-role">Parents</div>
+            </div>
+            <div class="user-stat-card">
+              <div class="stat-count" id="statAdmins">--</div>
+              <div class="stat-role">Admins</div>
+            </div>
+          </div>
+
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <div class="form-group" style="flex: 1; margin-bottom: 0;">
-              <input type="text" id="studentSearch" placeholder="Search users by name or email..." />
+              <input type="text" id="studentSearch" placeholder="Search users by name or email..." aria-label="Search users" />
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-              <select id="userRoleFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;">
+              <select id="userRoleFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;" aria-label="Filter by role">
                 <option value="">All Roles</option>
                 <option value="student">Students</option>
                 <option value="teacher">Teachers</option>
@@ -710,11 +955,21 @@
               </select>
             </div>
           </div>
-          <div class="table-scroll-container">
-            <table class="user-table">
+
+          <!-- Skeleton loading placeholder -->
+          <div id="userTableSkeleton" style="display: none;">
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+          </div>
+
+          <div class="table-scroll-container" id="userTableContainer">
+            <table class="user-table" aria-label="User accounts table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAllCheckbox" title="Select All"></th>
+                  <th><input type="checkbox" id="selectAllCheckbox" title="Select All" aria-label="Select all users"></th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Role</th>
@@ -731,11 +986,11 @@
       </section>
 
       <!-- RIGHT SIDEBAR - Quick Actions -->
-      <aside class="right-sidebar">
+      <aside class="right-sidebar" role="complementary" aria-label="Quick actions and reports">
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">
+          <h2 class="dashboard-panel-header">
             <i class="fas fa-chalkboard-teacher"></i> User & Roster Setup
-          </div>
+          </h2>
           <p>Create user accounts, class codes, and import student rosters.</p>
           <button id="openTeacherSetupBtn" class="btn btn-primary main-action-btn">
             <i class="fas fa-user-plus"></i> Create User
@@ -755,7 +1010,7 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">User Summaries</div>
+          <h2 class="dashboard-panel-header">User Summaries</h2>
           <p>Quickly view detailed student and parent profiles.</p>
           <button id="openSummariesBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-list-alt"></i> View All Summaries
@@ -763,7 +1018,7 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Quick Reports</div>
+          <h2 class="dashboard-panel-header">Quick Reports</h2>
           <p>View comprehensive usage and activity reports.</p>
           <button id="openUsageReportBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-chart-bar"></i> Usage Report
@@ -774,9 +1029,9 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">
+          <h2 class="dashboard-panel-header">
             <i class="fas fa-star"></i> Alpha Testing Feedback
-          </div>
+          </h2>
           <p>View survey responses and user feedback from alpha testing.</p>
           <button id="openSurveyResponsesBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-chart-line"></i> Survey Analytics
@@ -789,9 +1044,9 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">
+          <h2 class="dashboard-panel-header">
             <i class="fas fa-envelope"></i> Bulk Email
-          </div>
+          </h2>
           <p>Send emails to students, parents, teachers, or classes.</p>
           <button id="openBulkEmailBtn" class="btn btn-primary main-action-btn">
             <i class="fas fa-paper-plane"></i> Compose Email
@@ -814,6 +1069,9 @@
       © 2026 MATHMATIX AI. All rights reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a>
     </footer>
   </div>
+
+  <!-- Toast notification container -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- ============================================
        MODALS (Unchanged functionality)
@@ -1553,7 +1811,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           <label>Search & Select Users</label>
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <input type="text" id="userSearchInput" placeholder="Search by name or email..." style="flex: 1;">
-            <select id="userRoleFilter" style="width: 120px;">
+            <select id="emailUserRoleFilter" style="width: 120px;">
               <option value="">All Roles</option>
               <option value="student">Students</option>
               <option value="parent">Parents</option>
