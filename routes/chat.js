@@ -1470,7 +1470,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                             }
 
                             // Update module scaffoldProgress as percentage
-                            mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
+                            mod.scaffoldProgress = Math.round((newIdx / totalSteps) * 100);
                             if (mod.status === 'available') {
                                 mod.status = 'in_progress';
                                 mod.startedAt = mod.startedAt || new Date();

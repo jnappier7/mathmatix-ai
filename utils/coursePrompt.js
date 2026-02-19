@@ -961,23 +961,31 @@ function formatParentScaffoldStep(step, index, total) {
 }
 
 /**
- * Calculate blended overall progress.
- * Completed modules count as 100%, in-progress modules contribute
- * their scaffold progress percentage.
+ * Calculate blended overall progress, weighted by lesson count.
+ * Content modules (with lessons) carry proportionally more weight
+ * than checkpoint / exam modules (min weight 1).
+ * Completed modules count as 100% of their weight; in-progress
+ * modules contribute their scaffoldProgress share.
  */
 function calculateOverallProgress(modules) {
   if (!modules || modules.length === 0) return 0;
-  const totalModules = modules.length;
 
-  let progressSum = 0;
+  let totalWeight = 0;
+  let progressWeight = 0;
+
   for (const mod of modules) {
+    const weight = Math.max(1, (mod.lessons || []).length);
+    totalWeight += weight;
+
     if (mod.status === 'completed') {
-      progressSum += 1;
+      progressWeight += weight;
     } else if (mod.status === 'in_progress') {
-      progressSum += (mod.scaffoldProgress / 100);
+      progressWeight += weight * ((mod.scaffoldProgress || 0) / 100);
     }
   }
-  return Math.round((progressSum / totalModules) * 100);
+
+  if (totalWeight === 0) return 0;
+  return Math.round((progressWeight / totalWeight) * 100);
 }
 
 module.exports = {
