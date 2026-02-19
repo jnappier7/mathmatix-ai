@@ -13,6 +13,71 @@
        Fixed 3-Column Layout with Teacher Branding
        ============================================ */
 
+    /* ============================================
+       DESIGN SYSTEM - CSS CUSTOM PROPERTIES
+       ============================================ */
+    :root {
+      /* Brand Colors */
+      --color-primary: #27ae60;
+      --color-primary-dark: #16a085;
+      --color-primary-light: #e8f5e9;
+      --color-primary-bg: #f0fdf4;
+
+      /* Status Colors */
+      --color-success: #16C86D;
+      --color-warning: #f39c12;
+      --color-warning-light: #FFC24B;
+      --color-danger: #e74c3c;
+      --color-info: #3498db;
+      --color-purple: #7b1fa2;
+
+      /* Text Colors */
+      --color-text: #2c3e50;
+      --color-text-secondary: #5B6876;
+      --color-text-muted: #7f8c8d;
+      --color-text-disabled: #95a5a6;
+
+      /* Background Colors */
+      --color-bg: #f8f9fa;
+      --color-bg-white: #ffffff;
+      --color-border: #e9ecef;
+      --color-border-light: #f1f1f1;
+
+      /* Spacing Scale (4px base) */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 12px;
+      --space-lg: 16px;
+      --space-xl: 20px;
+      --space-2xl: 24px;
+      --space-3xl: 32px;
+
+      /* Border Radius */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --radius-xl: 12px;
+      --radius-full: 50%;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-xl: 0 10px 40px rgba(0,0,0,0.15);
+
+      /* Transitions */
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.3s ease;
+
+      /* Font sizes */
+      --text-xs: 0.72em;
+      --text-sm: 0.85em;
+      --text-base: 0.95em;
+      --text-lg: 1.1em;
+      --text-xl: 1.3em;
+      --text-2xl: 1.5em;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -291,52 +356,108 @@
     }
 
     /* ============================================
-       RESOURCE UPLOAD ACTION BAR
+       SKILL MASTERY OVERVIEW BAR
        ============================================ */
 
-    .resource-action-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-      border: 2px solid #c8e6c9;
-      border-radius: 10px;
-      padding: 14px 20px;
+    .mastery-overview-bar {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f5e9 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
       margin-bottom: 16px;
-      gap: 16px;
+      border: 1px solid #c8e6c9;
     }
 
-    .resource-action-info {
+    .mastery-overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .mastery-overview-header h2 {
+      margin: 0;
+      font-size: 0.95em;
+      color: #2c3e50;
       display: flex;
       align-items: center;
-      gap: 10px;
-      color: #2e7d32;
-      font-weight: 500;
-      font-size: 0.95em;
+      gap: 8px;
     }
 
-    .resource-action-info i {
-      font-size: 1.3em;
+    .mastery-overview-header h2 i {
+      color: #7b1fa2;
     }
 
-    .resource-action-upload-btn {
-      white-space: nowrap;
-      padding: 10px 22px;
-      font-size: 0.95em;
-      font-weight: 600;
+    .mastery-overview-updated {
+      font-size: 0.75em;
+      color: #7f8c8d;
+    }
+
+    .mastery-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .mastery-stat {
+      background: white;
       border-radius: 8px;
-      border: none;
-      cursor: pointer;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
 
-    @media (max-width: 600px) {
-      .resource-action-bar {
-        flex-direction: column;
-        text-align: center;
-      }
+    .mastery-stat-ring {
+      position: relative;
+      width: 52px;
+      height: 52px;
+    }
 
-      .resource-action-upload-btn {
-        width: 100%;
+    .mastery-ring-svg {
+      width: 52px;
+      height: 52px;
+    }
+
+    .mastery-ring-svg circle:last-child {
+      transition: stroke-dasharray 0.8s ease;
+    }
+
+    .mastery-ring-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.85em;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .mastery-stat-number {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: #2c3e50;
+      line-height: 1.2;
+      padding: 8px 0;
+    }
+
+    .mastery-stat-label {
+      font-size: 0.72em;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .mastery-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .mastery-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -346,24 +467,44 @@
 
     .dashboard-tabs {
       display: flex;
-      gap: 10px;
+      gap: 6px;
       margin-bottom: 20px;
       border-bottom: 2px solid #e9ecef;
       padding-bottom: 10px;
       overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #27ae60 transparent;
+      position: relative;
+      flex-wrap: nowrap;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar-thumb {
+      background: #27ae60;
+      border-radius: 2px;
     }
 
     .tab-btn {
       background: transparent;
       border: none;
-      padding: 12px 20px;
+      padding: 10px 16px;
       border-radius: 8px 8px 0 0;
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: 0.9em;
       font-weight: 600;
       color: #7f8c8d;
       transition: all 0.3s ease;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .tab-btn:hover {
@@ -1270,6 +1411,45 @@
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 8px;
+    }
+
+    .student-card-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .student-iep-badge {
+      font-size: 0.65em;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      background: #e3f2fd;
+      color: var(--color-info);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .student-streak-badge {
+      font-size: 0.65em;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      background: #fff3e0;
+      color: #e65100;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .student-metric-skill {
+      background: #f3e5f5;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: var(--color-purple);
+      font-weight: 500;
     }
 
     .student-status-badge {
@@ -2814,6 +2994,726 @@
         padding: 12px;
       }
     }
+
+    /* ============================================
+       ACCESSIBILITY - FOCUS STATES & CONTRAST
+       ============================================ */
+
+    *:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .tab-btn:focus-visible,
+    .quick-action-btn:focus-visible,
+    .nav-btn:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Fix low-contrast text */
+    .insight-empty,
+    .milestone-empty {
+      color: var(--color-text-secondary);
+    }
+
+    /* ============================================
+       THEMED CONFIRM DIALOG
+       ============================================ */
+
+    .confirm-dialog-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .confirm-dialog-overlay.is-visible {
+      display: flex;
+    }
+
+    .confirm-dialog {
+      background: var(--color-bg-white);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+      max-width: 420px;
+      width: 90%;
+      box-shadow: var(--shadow-xl);
+      animation: confirmSlideIn 0.2s ease;
+    }
+
+    @keyframes confirmSlideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .confirm-dialog-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-lg);
+      font-size: 1.3em;
+    }
+
+    .confirm-dialog-icon.icon-warning {
+      background: #fff3e0;
+      color: var(--color-warning);
+    }
+
+    .confirm-dialog-icon.icon-danger {
+      background: #fce4ec;
+      color: var(--color-danger);
+    }
+
+    .confirm-dialog-icon.icon-info {
+      background: #e3f2fd;
+      color: var(--color-info);
+    }
+
+    .confirm-dialog-title {
+      font-size: var(--text-lg);
+      font-weight: 700;
+      color: var(--color-text);
+      text-align: center;
+      margin-bottom: var(--space-sm);
+    }
+
+    .confirm-dialog-message {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: var(--space-xl);
+    }
+
+    .confirm-dialog-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--text-base);
+      margin-bottom: var(--space-lg);
+      transition: border-color var(--transition-fast);
+    }
+
+    .confirm-dialog-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .confirm-dialog-buttons {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: center;
+    }
+
+    .confirm-dialog-buttons .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* ============================================
+       TAB SCROLL INDICATORS
+       ============================================ */
+
+    .tabs-wrapper {
+      position: relative;
+    }
+
+    .tabs-wrapper::before,
+    .tabs-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 10px;
+      width: 30px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    .tabs-wrapper::before {
+      left: 0;
+      background: linear-gradient(to right, var(--color-bg), transparent);
+    }
+
+    .tabs-wrapper::after {
+      right: 0;
+      background: linear-gradient(to left, var(--color-bg), transparent);
+    }
+
+    .tabs-wrapper.can-scroll-left::before {
+      opacity: 1;
+    }
+
+    .tabs-wrapper.can-scroll-right::after {
+      opacity: 1;
+    }
+
+    /* ============================================
+       INSIGHTS TAB - SKILL GAPS & LESSON PLANNER
+       ============================================ */
+
+    .insights-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      height: 100%;
+      min-height: 500px;
+    }
+
+    @media (max-width: 1100px) {
+      .insights-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Skill Gaps Panel */
+    .skill-gaps-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .skill-gaps-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .skill-gaps-header h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .skill-gaps-header h3 i {
+      color: var(--color-warning);
+    }
+
+    .skill-gaps-filters {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .skill-gaps-filters .filter-chip {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      color: var(--color-text-secondary);
+    }
+
+    .skill-gaps-filters .filter-chip:hover,
+    .skill-gaps-filters .filter-chip.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .skill-gaps-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      max-height: 500px;
+    }
+
+    .skill-gap-item {
+      background: var(--color-bg-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-lg);
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .skill-gap-item:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .skill-gap-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .skill-gap-name {
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+    }
+
+    .skill-gap-category {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      background: var(--color-bg);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .skill-gap-bar-container {
+      height: 8px;
+      background: var(--color-border-light);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 6px;
+    }
+
+    .skill-gap-bar-mastered {
+      background: var(--color-success);
+      transition: width 0.5s ease;
+    }
+
+    .skill-gap-bar-learning {
+      background: var(--color-info);
+      transition: width 0.5s ease;
+    }
+
+    .skill-gap-bar-not-started {
+      background: var(--color-border);
+      transition: width 0.5s ease;
+    }
+
+    .skill-gap-meta {
+      display: flex;
+      gap: var(--space-lg);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .skill-gap-meta strong {
+      color: var(--color-text-secondary);
+    }
+
+    .skill-gap-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--color-text-muted);
+    }
+
+    .skill-gap-empty i {
+      font-size: 2em;
+      color: var(--color-primary);
+      display: block;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Lesson Planner Panel */
+    .lesson-planner-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lesson-planner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .lesson-planner-header h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .lesson-planner-header h3 i {
+      color: var(--color-purple);
+    }
+
+    .planner-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+
+    .planner-suggestion-chip {
+      background: #f3e5f5;
+      border: 1px solid #ce93d8;
+      color: var(--color-purple);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .planner-suggestion-chip:hover {
+      background: var(--color-purple);
+      color: white;
+      border-color: var(--color-purple);
+    }
+
+    .planner-response-area {
+      flex: 1;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      overflow-y: auto;
+      max-height: 360px;
+      min-height: 200px;
+      font-size: var(--text-sm);
+      line-height: 1.7;
+      color: var(--color-text);
+    }
+
+    .planner-response-area h4 {
+      color: var(--color-primary);
+      margin: 16px 0 8px;
+      font-size: 1em;
+    }
+
+    .planner-response-area h4:first-child {
+      margin-top: 0;
+    }
+
+    .planner-response-area ul,
+    .planner-response-area ol {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+
+    .planner-response-area li {
+      margin-bottom: 4px;
+    }
+
+    .planner-response-area strong {
+      color: var(--color-text);
+    }
+
+    .planner-response-area code {
+      background: #e8f5e9;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    .planner-empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--color-text-muted);
+    }
+
+    .planner-empty-state i {
+      font-size: 2.5em;
+      color: var(--color-purple);
+      display: block;
+      margin-bottom: var(--space-md);
+      opacity: 0.5;
+    }
+
+    .planner-input-row {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .planner-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      transition: border-color var(--transition-fast);
+    }
+
+    .planner-input:focus {
+      outline: none;
+      border-color: var(--color-purple);
+    }
+
+    .planner-send-btn {
+      background: linear-gradient(135deg, var(--color-purple), #9c27b0);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .planner-send-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+    }
+
+    .planner-send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .planner-typing-indicator {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .planner-typing-indicator span {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--color-purple);
+      animation: typingBounce 1.4s infinite;
+    }
+
+    .planner-typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .planner-typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ============================================
+       COURSE PROGRESS STRIP
+       ============================================ */
+
+    .course-progress-strip {
+      margin-bottom: var(--space-xl);
+    }
+
+    .course-progress-header {
+      margin-bottom: var(--space-md);
+    }
+
+    .course-progress-header h3 {
+      margin: 0;
+      font-size: var(--text-lg);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .course-progress-header h3 i {
+      color: var(--color-primary);
+    }
+
+    .course-progress-cards {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-sm);
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .course-progress-cards::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .course-progress-cards::-webkit-scrollbar-track {
+      background: var(--color-border-light);
+      border-radius: 2px;
+    }
+
+    .course-progress-cards::-webkit-scrollbar-thumb {
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .course-card {
+      background: var(--color-bg-white);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      min-width: 220px;
+      max-width: 280px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .course-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .course-card-name {
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .course-card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .course-card-bar {
+      height: 8px;
+      background: var(--color-border-light);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .course-card-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .course-card-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .course-card-stats strong {
+      color: var(--color-text-secondary);
+    }
+
+    .course-card-expand {
+      margin-top: var(--space-sm);
+      display: none;
+      border-top: 1px solid var(--color-border-light);
+      padding-top: var(--space-sm);
+    }
+
+    .course-card.expanded .course-card-expand {
+      display: block;
+    }
+
+    .course-student-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+      font-size: var(--text-xs);
+    }
+
+    .course-student-row .student-bar {
+      width: 60px;
+      height: 4px;
+      background: var(--color-border-light);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-left: 8px;
+    }
+
+    .course-student-row .student-bar-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+
+    .course-progress-empty {
+      text-align: center;
+      padding: 24px;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+
+    /* ============================================
+       JOIN CLASS MODAL (for student-facing pages)
+       ============================================ */
+
+    .join-class-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      text-align: center;
+    }
+
+    .join-class-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .join-class-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+
+    .join-class-input:focus {
+      outline: none;
+      border-color: #12B3B3;
+    }
+
+    .join-class-status {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      min-height: 20px;
+    }
+
+    .join-class-status.success { color: #27ae60; }
+    .join-class-status.error { color: #e74c3c; }
+
+    .join-class-preview {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f0faf0;
+      border-radius: 10px;
+      text-align: left;
+    }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
   <link rel="stylesheet" href="/css/demo-mode.css" />
@@ -2999,40 +3899,73 @@
                 <span class="stat-label">Weekly Mins (Avg)</span>
               </div>
             </div>
-            <div class="stat-card stat-streak clickable" id="streak-card" title="Students with 3+ day login streaks">
-              <div class="stat-icon"><i class="fas fa-fire"></i></div>
+            <div class="stat-card stat-streak" title="Average mastery score across all students' tracked skills">
+              <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
               <div class="stat-content">
-                <span class="stat-number" id="stat-on-streak">--</span>
-                <span class="stat-label">On a Streak</span>
+                <span class="stat-number" id="stat-avg-accuracy">--</span>
+                <span class="stat-label">Avg Mastery</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Resource Upload Action Bar -->
-        <div class="resource-action-bar">
-          <div class="resource-action-info">
-            <i class="fas fa-file-upload"></i>
-            <span>Share worksheets, practice sheets, and other files with your class</span>
+        <!-- Skill Mastery Overview -->
+        <div class="mastery-overview-bar" id="mastery-overview-bar">
+          <div class="mastery-overview-header">
+            <h2><i class="fas fa-brain"></i> Skill Mastery Overview</h2>
+            <span class="mastery-overview-updated" id="mastery-overview-updated"></span>
           </div>
-          <button class="btn btn-primary resource-action-upload-btn" id="center-upload-resources-btn">
-            <i class="fas fa-upload"></i> Upload Resources
-          </button>
+          <div class="mastery-overview-grid">
+            <div class="mastery-stat mastery-stat-mastered">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#27ae60" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-mastered" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-mastered">--</span>
+              </div>
+              <span class="mastery-stat-label">Mastered</span>
+            </div>
+            <div class="mastery-stat mastery-stat-learning">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3498db" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-learning" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-learning">--</span>
+              </div>
+              <span class="mastery-stat-label">Learning</span>
+            </div>
+            <div class="mastery-stat mastery-stat-ready">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f39c12" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-ready" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-ready">--</span>
+              </div>
+              <span class="mastery-stat-label">Ready to Learn</span>
+            </div>
+            <div class="mastery-stat mastery-stat-total">
+              <div class="mastery-stat-number" id="mastery-total-skills">--</div>
+              <span class="mastery-stat-label">Total Skills Tracked</span>
+            </div>
+          </div>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="dashboard-tabs">
+        <div class="dashboard-tabs" id="dashboard-tabs">
           <button class="tab-btn active" data-tab="students">
             <i class="fas fa-users"></i> My Students <span class="tab-count" id="tab-student-count"></span>
+          </button>
+          <button class="tab-btn" data-tab="classes">
+            <i class="fas fa-chalkboard"></i> Classes <span class="tab-count" id="tab-class-count"></span>
           </button>
           <button class="tab-btn" data-tab="curriculum">
             <i class="fas fa-book"></i> Curriculum
           </button>
-          <button class="tab-btn" data-tab="schedule">
-            <i class="fas fa-calendar-alt"></i> Schedule
-          </button>
           <button class="tab-btn" data-tab="resources">
-            <i class="fas fa-file-upload"></i> Resources
+            <i class="fas fa-folder-open"></i> Resources
           </button>
           <button class="tab-btn" data-tab="announcements">
             <i class="fas fa-bullhorn"></i> Announcements
@@ -3040,6 +3973,12 @@
           <button class="tab-btn" data-tab="messages">
             <i class="fas fa-envelope"></i> Messages
             <span id="unread-messages-badge" class="tab-badge" style="display: none;">0</span>
+          </button>
+          <button class="tab-btn" data-tab="insights">
+            <i class="fas fa-lightbulb"></i> Insights
+          </button>
+          <button class="tab-btn" data-tab="schedule">
+            <i class="fas fa-calendar-alt"></i> Schedule
           </button>
         </div>
 
@@ -3103,14 +4042,14 @@
           </div>
         </div>
 
-        <!-- Classes Tab (hidden, kept for backwards compatibility) -->
-        <div class="tab-content" id="classes-tab" style="display:none;">
+        <!-- Classes Tab -->
+        <div class="tab-content" id="classes-tab">
           <div class="dashboard-panel flex-panel-content">
             <div class="dashboard-panel-header">
-              <span>My Classes</span>
+              <span><i class="fas fa-chalkboard"></i> My Classes & Enrollment Codes</span>
             </div>
             <div id="classes-list" style="padding: 16px;">
-              <div style="text-align: center; color: #999; padding: 40px;">Loading classes...</div>
+              <div style="text-align: center; color: #999; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading classes...</div>
             </div>
           </div>
         </div>
@@ -3131,6 +4070,82 @@
             </div>
             <div id="curriculum-content" class="table-scroll-container">
               Loading curriculum...
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights Tab - Course Progress, Skill Gaps & AI Lesson Planner -->
+        <div class="tab-content" id="insights-tab">
+          <!-- Course Progress Strip -->
+          <div class="course-progress-strip" id="course-progress-strip">
+            <div class="course-progress-header">
+              <h3><i class="fas fa-graduation-cap" aria-hidden="true"></i> Course Progress</h3>
+            </div>
+            <div class="course-progress-cards" id="course-progress-cards" role="list" aria-label="Course progress">
+              <div style="text-align:center;padding:20px;color:var(--color-text-muted);font-size:var(--text-sm);">
+                <i class="fas fa-spinner fa-spin"></i> Loading courses...
+              </div>
+            </div>
+          </div>
+
+          <div class="insights-layout">
+            <!-- Skill Gaps Panel -->
+            <div class="dashboard-panel skill-gaps-panel">
+              <div class="dashboard-panel-header" style="padding-bottom: 0; border-bottom: none;">
+                <div class="skill-gaps-header">
+                  <h3><i class="fas fa-chart-bar"></i> Class Skill Gaps</h3>
+                  <div class="skill-gaps-filters">
+                    <button class="filter-chip active" data-gap-filter="all">All</button>
+                    <button class="filter-chip" data-gap-filter="critical">Needs Work</button>
+                    <button class="filter-chip" data-gap-filter="progressing">Progressing</button>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-gaps-list" id="skill-gaps-list" role="list" aria-label="Skill gaps list">
+                <div class="skill-gap-empty">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <p>Loading class skill data...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Lesson Planner Panel -->
+            <div class="dashboard-panel lesson-planner-panel">
+              <div class="dashboard-panel-header" style="padding-bottom: 0; border-bottom: none;">
+                <div class="lesson-planner-header">
+                  <h3><i class="fas fa-magic"></i> AI Lesson Planner</h3>
+                </div>
+              </div>
+              <div class="planner-suggestions" id="planner-suggestions">
+                <button class="planner-suggestion-chip" data-prompt="Based on my class skill gaps, what should I focus on this week?">
+                  <i class="fas fa-bullseye"></i> This week's focus
+                </button>
+                <button class="planner-suggestion-chip" data-prompt="Create a warm-up activity targeting the skills my class is struggling with most.">
+                  <i class="fas fa-sun"></i> Warm-up activity
+                </button>
+                <button class="planner-suggestion-chip" data-prompt="How should I differentiate instruction for my mixed-ability class on the weakest skills?">
+                  <i class="fas fa-layer-group"></i> Differentiation ideas
+                </button>
+                <button class="planner-suggestion-chip" data-prompt="Suggest a small-group rotation plan based on student skill levels.">
+                  <i class="fas fa-users"></i> Group rotation plan
+                </button>
+              </div>
+              <div class="planner-response-area" id="planner-response" aria-live="polite" aria-label="AI lesson planner response">
+                <div class="planner-empty-state">
+                  <i class="fas fa-magic"></i>
+                  <p style="font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Your AI Teaching Partner</p>
+                  <p style="font-size: var(--text-xs);">Ask me anything about lesson planning, differentiation, or targeting skill gaps. Click a suggestion above or type your own question below.</p>
+                </div>
+              </div>
+              <div class="planner-input-row">
+                <input type="text" class="planner-input" id="planner-input"
+                       placeholder="Ask about lesson plans, activities, differentiation..."
+                       aria-label="Type a question for the AI lesson planner"
+                       maxlength="500">
+                <button class="planner-send-btn" id="planner-send-btn" aria-label="Send question">
+                  <i class="fas fa-paper-plane" aria-hidden="true"></i> Ask
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -3291,39 +4306,40 @@
         <div class="dashboard-panel quick-actions-panel">
           <div class="dashboard-panel-header"><i class="fas fa-bolt"></i> Quick Actions</div>
           <div class="quick-actions-grid">
-            <button class="quick-action-btn qa-highlight" id="qa-ai-settings" title="Configure how AI tutors your students">
-              <i class="fas fa-robot"></i>
+            <button class="quick-action-btn qa-highlight" id="qa-ai-settings" title="Configure how AI tutors your students" aria-label="AI Settings">
+              <i class="fas fa-robot" aria-hidden="true"></i>
               <span>AI Settings</span>
             </button>
-            <button class="quick-action-btn" id="qa-export-progress" title="Export class progress to CSV">
-              <i class="fas fa-download"></i>
+            <button class="quick-action-btn" id="qa-insights" title="View class skill gaps and AI lesson planner" aria-label="Insights and Lesson Planner">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i>
+              <span>Insights</span>
+            </button>
+            <button class="quick-action-btn" id="qa-export-progress" title="Export class progress to CSV" aria-label="Export Data">
+              <i class="fas fa-download" aria-hidden="true"></i>
               <span>Export Data</span>
             </button>
-            <button class="quick-action-btn" id="qa-celeration" title="View fact fluency charts">
-              <i class="fas fa-chart-line"></i>
-              <span>Fluency Charts</span>
-            </button>
-            <button class="quick-action-btn" id="qa-refresh" title="Refresh all data">
-              <i class="fas fa-sync-alt"></i>
-              <span>Refresh</span>
+            <button class="quick-action-btn" id="qa-manage-classes" title="View and manage your classes and enrollment codes" aria-label="My Classes">
+              <i class="fas fa-chalkboard" aria-hidden="true"></i>
+              <span>My Classes</span>
             </button>
           </div>
-          <button class="btn btn-primary main-action-btn" id="qa-upload-resources" title="Upload worksheets, practice sheets, and other files for your students">
-            <i class="fas fa-upload"></i> Upload Class Resources
+          <button class="quick-action-btn" id="qa-refresh" title="Refresh all data" aria-label="Refresh Data" style="width:100%;margin-top:8px;flex-direction:row;justify-content:center;">
+            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+            <span>Refresh Data</span>
           </button>
         </div>
 
-        <!-- Today's Summary Panel -->
+        <!-- This Week's Summary Panel -->
         <div class="dashboard-panel today-summary-panel">
-          <div class="dashboard-panel-header"><i class="fas fa-calendar-day"></i> Today's Summary</div>
+          <div class="dashboard-panel-header"><i class="fas fa-chart-pie"></i> This Week</div>
           <div class="summary-stats">
             <div class="summary-stat">
               <span class="summary-value" id="summary-logins">--</span>
-              <span class="summary-label">Student Logins</span>
+              <span class="summary-label">Active Today</span>
             </div>
             <div class="summary-stat">
               <span class="summary-value" id="summary-problems">--</span>
-              <span class="summary-label">Problems Solved</span>
+              <span class="summary-label">Skills Mastered</span>
             </div>
             <div class="summary-stat">
               <span class="summary-value" id="summary-time">--</span>
@@ -3347,8 +4363,9 @@
           <div class="dashboard-panel-header"><i class="fas fa-keyboard"></i> Keyboard Shortcuts</div>
           <div class="shortcuts-list">
             <div class="shortcut-item"><kbd>S</kbd> <span>Students tab</span></div>
-            <div class="shortcut-item"><kbd>C</kbd> <span>Curriculum tab</span></div>
+            <div class="shortcut-item"><kbd>C</kbd> <span>Classes tab</span></div>
             <div class="shortcut-item"><kbd>R</kbd> <span>Resources tab</span></div>
+            <div class="shortcut-item"><kbd>I</kbd> <span>Insights tab</span></div>
             <div class="shortcut-item"><kbd>/</kbd> <span>Search students</span></div>
             <div class="shortcut-item"><kbd>?</kbd> <span>Toggle shortcuts</span></div>
             <div class="shortcut-item"><kbd>Esc</kbd> <span>Close modal</span></div>
@@ -3411,6 +4428,22 @@
         <button class="mobile-action-btn" id="mobile-upload"><i class="fas fa-upload"></i> Upload Resources</button>
         <button class="mobile-action-btn" id="mobile-refresh"><i class="fas fa-sync-alt"></i> Refresh Data</button>
         <button class="mobile-action-btn" id="mobile-messages"><i class="fas fa-envelope"></i> Messages</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Themed Confirm Dialog (replaces native alert/confirm/prompt) -->
+  <div class="confirm-dialog-overlay" id="confirm-dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title">
+    <div class="confirm-dialog">
+      <div class="confirm-dialog-icon icon-warning" id="confirm-dialog-icon">
+        <i class="fas fa-exclamation-triangle" id="confirm-dialog-icon-i"></i>
+      </div>
+      <div class="confirm-dialog-title" id="confirm-dialog-title"></div>
+      <div class="confirm-dialog-message" id="confirm-dialog-message"></div>
+      <input type="text" class="confirm-dialog-input" id="confirm-dialog-input" style="display: none;">
+      <div class="confirm-dialog-buttons">
+        <button class="btn btn-secondary" id="confirm-dialog-cancel">Cancel</button>
+        <button class="btn btn-primary" id="confirm-dialog-confirm">Confirm</button>
       </div>
     </div>
   </div>
