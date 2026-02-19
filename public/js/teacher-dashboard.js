@@ -1009,7 +1009,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         let inactiveCount = 0;
         let totalLevel = 0;
         let totalWeeklyMinutes = 0;
-        let streakCount = 0;
 
         students.forEach(student => {
             const status = getStudentStatus(student);
@@ -1019,9 +1018,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             totalLevel += student.level || 1;
             totalWeeklyMinutes += student.weeklyActiveTutoringMinutes || 0;
-
-            // Count students with streaks (placeholder - would need streak data)
-            if (student.currentStreak && student.currentStreak >= 3) streakCount++;
         });
 
         document.getElementById('stat-active-now').textContent = activeCount;
@@ -1032,7 +1028,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('stat-weekly-minutes').textContent = students.length > 0
             ? Math.round(totalWeeklyMinutes / students.length)
             : '--';
-        document.getElementById('stat-on-streak').textContent = streakCount;
 
         // Update timestamp
         document.getElementById('overview-updated').textContent = 'Updated just now';
@@ -1044,9 +1039,87 @@ document.addEventListener("DOMContentLoaded", async () => {
             showToast('Showing students who need attention', 'info');
         };
 
-        document.getElementById('streak-card').onclick = () => {
-            showToast('Streak tracking coming soon!', 'info');
-        };
+        // Calculate and display average mastery from skill data
+        updateAvgMastery(students);
+    }
+
+    // ============================================
+    // SKILL MASTERY OVERVIEW
+    // ============================================
+
+    function updateMasteryOverview(students) {
+        let totalMastered = 0;
+        let totalLearning = 0;
+        let totalReady = 0;
+        let studentsWithSkills = 0;
+
+        students.forEach(student => {
+            const mastery = student.skillMastery || {};
+            const skills = Object.values(mastery);
+            if (skills.length > 0) {
+                studentsWithSkills++;
+                skills.forEach(skill => {
+                    if (skill.status === 'mastered') totalMastered++;
+                    else if (skill.status === 'learning') totalLearning++;
+                    else if (skill.status === 'ready') totalReady++;
+                });
+            }
+        });
+
+        const totalSkills = totalMastered + totalLearning + totalReady;
+
+        // Update counts
+        const masteredEl = document.getElementById('mastery-count-mastered');
+        const learningEl = document.getElementById('mastery-count-learning');
+        const readyEl = document.getElementById('mastery-count-ready');
+        const totalEl = document.getElementById('mastery-total-skills');
+        const updatedEl = document.getElementById('mastery-overview-updated');
+
+        if (masteredEl) masteredEl.textContent = totalMastered;
+        if (learningEl) learningEl.textContent = totalLearning;
+        if (readyEl) readyEl.textContent = totalReady;
+        if (totalEl) totalEl.textContent = totalSkills || '--';
+        if (updatedEl) updatedEl.textContent = studentsWithSkills > 0
+            ? `${studentsWithSkills} student${studentsWithSkills !== 1 ? 's' : ''} with data`
+            : '';
+
+        // Update ring charts
+        const maxVal = Math.max(totalSkills, 1);
+        updateMasteryRing('mastery-ring-mastered', totalMastered, maxVal);
+        updateMasteryRing('mastery-ring-learning', totalLearning, maxVal);
+        updateMasteryRing('mastery-ring-ready', totalReady, maxVal);
+    }
+
+    function updateMasteryRing(ringId, value, max) {
+        const ring = document.getElementById(ringId);
+        if (!ring) return;
+        const pct = max > 0 ? (value / max) * 100 : 0;
+        ring.setAttribute('stroke-dasharray', `${pct} ${100 - pct}`);
+    }
+
+    function updateAvgMastery(students) {
+        const el = document.getElementById('stat-avg-accuracy');
+        if (!el) return;
+
+        let totalScore = 0;
+        let skillCount = 0;
+
+        students.forEach(student => {
+            const mastery = student.skillMastery || {};
+            Object.values(mastery).forEach(skill => {
+                if (typeof skill.masteryScore === 'number') {
+                    totalScore += skill.masteryScore;
+                    skillCount++;
+                }
+            });
+        });
+
+        if (skillCount > 0) {
+            const avg = (totalScore / skillCount * 100).toFixed(0);
+            el.textContent = `${avg}%`;
+        } else {
+            el.textContent = '--';
+        }
     }
 
     // ============================================
@@ -1200,31 +1273,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
 
-        // Upload Resources quick actions (sidebar + center panel)
-        const uploadResourcesBtns = [
-            document.getElementById('qa-upload-resources'),
-            document.getElementById('center-upload-resources-btn')
-        ];
-        uploadResourcesBtns.forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    // Switch to the Resources tab
-                    const resourcesTabBtn = document.querySelector('[data-tab="resources"]');
-                    if (resourcesTabBtn) resourcesTabBtn.click();
-
-                    // Open the upload modal
-                    const uploadModal = document.getElementById('upload-resource-modal');
-                    if (uploadModal) uploadModal.classList.add('is-visible');
-                });
-            }
-        });
-
-        // Shortcuts toggle
-        const helpBtn = document.getElementById('qa-help');
-        const shortcutsPanel = document.getElementById('shortcuts-panel');
-        if (helpBtn && shortcutsPanel) {
-            helpBtn.addEventListener('click', () => {
-                shortcutsPanel.style.display = shortcutsPanel.style.display === 'none' ? 'block' : 'none';
+        // Manage Classes quick action
+        const manageClassesBtn = document.getElementById('qa-manage-classes');
+        if (manageClassesBtn) {
+            manageClassesBtn.addEventListener('click', () => {
+                const classesTabBtn = document.querySelector('[data-tab="classes"]');
+                if (classesTabBtn) classesTabBtn.click();
             });
         }
     }
@@ -1290,7 +1344,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     break;
                 case 'c':
                     e.preventDefault();
-                    document.querySelector('[data-tab="curriculum"]')?.click();
+                    document.querySelector('[data-tab="classes"]')?.click();
                     break;
                 case 'r':
                     e.preventDefault();
@@ -1422,6 +1476,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateRightSidebar(students);
             updateWeeklyComparison(students);
             renderSmartAlerts(students);
+            updateMasteryOverview(students);
 
             // Check for new struggling alerts
             checkForStrugglingAlerts(students);
@@ -1458,6 +1513,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     updateRightSidebar(students);
                     updateWeeklyComparison(students);
                     renderSmartAlerts(students);
+                    updateMasteryOverview(students);
 
                     // Only re-render list if no active search
                     if (!searchQuery) {
@@ -2052,7 +2108,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) return;
             const data = await response.json();
             classesData = data.classes || [];
-            // studentIds are now included in the classes response — no extra fetches needed
+            // Update class count badge in tab
+            const classCountEl = document.getElementById('tab-class-count');
+            if (classCountEl) classCountEl.textContent = `(${classesData.length})`;
         } catch (err) {
             console.log('Could not load classes for grouping:', err.message);
         }

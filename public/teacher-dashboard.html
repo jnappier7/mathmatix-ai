@@ -291,52 +291,108 @@
     }
 
     /* ============================================
-       RESOURCE UPLOAD ACTION BAR
+       SKILL MASTERY OVERVIEW BAR
        ============================================ */
 
-    .resource-action-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-      border: 2px solid #c8e6c9;
-      border-radius: 10px;
-      padding: 14px 20px;
+    .mastery-overview-bar {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f5e9 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
       margin-bottom: 16px;
-      gap: 16px;
+      border: 1px solid #c8e6c9;
     }
 
-    .resource-action-info {
+    .mastery-overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .mastery-overview-header h2 {
+      margin: 0;
+      font-size: 0.95em;
+      color: #2c3e50;
       display: flex;
       align-items: center;
-      gap: 10px;
-      color: #2e7d32;
-      font-weight: 500;
-      font-size: 0.95em;
+      gap: 8px;
     }
 
-    .resource-action-info i {
-      font-size: 1.3em;
+    .mastery-overview-header h2 i {
+      color: #7b1fa2;
     }
 
-    .resource-action-upload-btn {
-      white-space: nowrap;
-      padding: 10px 22px;
-      font-size: 0.95em;
-      font-weight: 600;
+    .mastery-overview-updated {
+      font-size: 0.75em;
+      color: #7f8c8d;
+    }
+
+    .mastery-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .mastery-stat {
+      background: white;
       border-radius: 8px;
-      border: none;
-      cursor: pointer;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
 
-    @media (max-width: 600px) {
-      .resource-action-bar {
-        flex-direction: column;
-        text-align: center;
-      }
+    .mastery-stat-ring {
+      position: relative;
+      width: 52px;
+      height: 52px;
+    }
 
-      .resource-action-upload-btn {
-        width: 100%;
+    .mastery-ring-svg {
+      width: 52px;
+      height: 52px;
+    }
+
+    .mastery-ring-svg circle:last-child {
+      transition: stroke-dasharray 0.8s ease;
+    }
+
+    .mastery-ring-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.85em;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .mastery-stat-number {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: #2c3e50;
+      line-height: 1.2;
+      padding: 8px 0;
+    }
+
+    .mastery-stat-label {
+      font-size: 0.72em;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .mastery-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .mastery-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -346,24 +402,44 @@
 
     .dashboard-tabs {
       display: flex;
-      gap: 10px;
+      gap: 6px;
       margin-bottom: 20px;
       border-bottom: 2px solid #e9ecef;
       padding-bottom: 10px;
       overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #27ae60 transparent;
+      position: relative;
+      flex-wrap: nowrap;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar-thumb {
+      background: #27ae60;
+      border-radius: 2px;
     }
 
     .tab-btn {
       background: transparent;
       border: none;
-      padding: 12px 20px;
+      padding: 10px 16px;
       border-radius: 8px 8px 0 0;
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: 0.9em;
       font-weight: 600;
       color: #7f8c8d;
       transition: all 0.3s ease;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .tab-btn:hover {
@@ -2999,40 +3075,73 @@
                 <span class="stat-label">Weekly Mins (Avg)</span>
               </div>
             </div>
-            <div class="stat-card stat-streak clickable" id="streak-card" title="Students with 3+ day login streaks">
-              <div class="stat-icon"><i class="fas fa-fire"></i></div>
+            <div class="stat-card stat-streak" title="Average mastery score across all students' tracked skills">
+              <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
               <div class="stat-content">
-                <span class="stat-number" id="stat-on-streak">--</span>
-                <span class="stat-label">On a Streak</span>
+                <span class="stat-number" id="stat-avg-accuracy">--</span>
+                <span class="stat-label">Avg Mastery</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Resource Upload Action Bar -->
-        <div class="resource-action-bar">
-          <div class="resource-action-info">
-            <i class="fas fa-file-upload"></i>
-            <span>Share worksheets, practice sheets, and other files with your class</span>
+        <!-- Skill Mastery Overview -->
+        <div class="mastery-overview-bar" id="mastery-overview-bar">
+          <div class="mastery-overview-header">
+            <h2><i class="fas fa-brain"></i> Skill Mastery Overview</h2>
+            <span class="mastery-overview-updated" id="mastery-overview-updated"></span>
           </div>
-          <button class="btn btn-primary resource-action-upload-btn" id="center-upload-resources-btn">
-            <i class="fas fa-upload"></i> Upload Resources
-          </button>
+          <div class="mastery-overview-grid">
+            <div class="mastery-stat mastery-stat-mastered">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#27ae60" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-mastered" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-mastered">--</span>
+              </div>
+              <span class="mastery-stat-label">Mastered</span>
+            </div>
+            <div class="mastery-stat mastery-stat-learning">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#3498db" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-learning" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-learning">--</span>
+              </div>
+              <span class="mastery-stat-label">Learning</span>
+            </div>
+            <div class="mastery-stat mastery-stat-ready">
+              <div class="mastery-stat-ring">
+                <svg viewBox="0 0 36 36" class="mastery-ring-svg">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f39c12" stroke-width="3" stroke-dasharray="0 100" id="mastery-ring-ready" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+                </svg>
+                <span class="mastery-ring-value" id="mastery-count-ready">--</span>
+              </div>
+              <span class="mastery-stat-label">Ready to Learn</span>
+            </div>
+            <div class="mastery-stat mastery-stat-total">
+              <div class="mastery-stat-number" id="mastery-total-skills">--</div>
+              <span class="mastery-stat-label">Total Skills Tracked</span>
+            </div>
+          </div>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="dashboard-tabs">
+        <div class="dashboard-tabs" id="dashboard-tabs">
           <button class="tab-btn active" data-tab="students">
             <i class="fas fa-users"></i> My Students <span class="tab-count" id="tab-student-count"></span>
+          </button>
+          <button class="tab-btn" data-tab="classes">
+            <i class="fas fa-chalkboard"></i> Classes <span class="tab-count" id="tab-class-count"></span>
           </button>
           <button class="tab-btn" data-tab="curriculum">
             <i class="fas fa-book"></i> Curriculum
           </button>
-          <button class="tab-btn" data-tab="schedule">
-            <i class="fas fa-calendar-alt"></i> Schedule
-          </button>
           <button class="tab-btn" data-tab="resources">
-            <i class="fas fa-file-upload"></i> Resources
+            <i class="fas fa-folder-open"></i> Resources
           </button>
           <button class="tab-btn" data-tab="announcements">
             <i class="fas fa-bullhorn"></i> Announcements
@@ -3040,6 +3149,9 @@
           <button class="tab-btn" data-tab="messages">
             <i class="fas fa-envelope"></i> Messages
             <span id="unread-messages-badge" class="tab-badge" style="display: none;">0</span>
+          </button>
+          <button class="tab-btn" data-tab="schedule">
+            <i class="fas fa-calendar-alt"></i> Schedule
           </button>
         </div>
 
@@ -3103,14 +3215,14 @@
           </div>
         </div>
 
-        <!-- Classes Tab (hidden, kept for backwards compatibility) -->
-        <div class="tab-content" id="classes-tab" style="display:none;">
+        <!-- Classes Tab -->
+        <div class="tab-content" id="classes-tab">
           <div class="dashboard-panel flex-panel-content">
             <div class="dashboard-panel-header">
-              <span>My Classes</span>
+              <span><i class="fas fa-chalkboard"></i> My Classes & Enrollment Codes</span>
             </div>
             <div id="classes-list" style="padding: 16px;">
-              <div style="text-align: center; color: #999; padding: 40px;">Loading classes...</div>
+              <div style="text-align: center; color: #999; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading classes...</div>
             </div>
           </div>
         </div>
@@ -3303,13 +3415,14 @@
               <i class="fas fa-chart-line"></i>
               <span>Fluency Charts</span>
             </button>
-            <button class="quick-action-btn" id="qa-refresh" title="Refresh all data">
-              <i class="fas fa-sync-alt"></i>
-              <span>Refresh</span>
+            <button class="quick-action-btn" id="qa-manage-classes" title="View and manage your classes and enrollment codes">
+              <i class="fas fa-chalkboard"></i>
+              <span>My Classes</span>
             </button>
           </div>
-          <button class="btn btn-primary main-action-btn" id="qa-upload-resources" title="Upload worksheets, practice sheets, and other files for your students">
-            <i class="fas fa-upload"></i> Upload Class Resources
+          <button class="quick-action-btn" id="qa-refresh" title="Refresh all data" style="width:100%;margin-top:8px;flex-direction:row;justify-content:center;">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh Data</span>
           </button>
         </div>
 
@@ -3347,7 +3460,7 @@
           <div class="dashboard-panel-header"><i class="fas fa-keyboard"></i> Keyboard Shortcuts</div>
           <div class="shortcuts-list">
             <div class="shortcut-item"><kbd>S</kbd> <span>Students tab</span></div>
-            <div class="shortcut-item"><kbd>C</kbd> <span>Curriculum tab</span></div>
+            <div class="shortcut-item"><kbd>C</kbd> <span>Classes tab</span></div>
             <div class="shortcut-item"><kbd>R</kbd> <span>Resources tab</span></div>
             <div class="shortcut-item"><kbd>/</kbd> <span>Search students</span></div>
             <div class="shortcut-item"><kbd>?</kbd> <span>Toggle shortcuts</span></div>

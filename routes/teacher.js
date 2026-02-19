@@ -18,7 +18,7 @@ router.get('/students', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
-      'firstName lastName username gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
+      'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery'
     ).lean();
     res.json(students);
   } catch (err) {
