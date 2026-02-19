@@ -510,7 +510,7 @@ router.post('/', async (req, res) => {
                         const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
                         courseSession.currentScaffoldIndex = newIdx;
 
-                        mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
+                        mod.scaffoldProgress = Math.round((newIdx / totalSteps) * 100);
                         if (mod.status === 'available') {
                             mod.status = 'in_progress';
                             mod.startedAt = mod.startedAt || new Date();
@@ -721,9 +721,11 @@ router.post('/', async (req, res) => {
             showCheckpoint: false
         });
 
-        // Persist the floor so it survives reloads
-        if (progressUpdate.progressFloorPct > (courseSession.progressFloorPct || 0)) {
-            courseSession.progressFloorPct = progressUpdate.progressFloorPct;
+        // Persist the course-wide floor so it survives reloads
+        const newFloor = progressUpdate.progressFloorPct;
+        if (newFloor > (courseSession.progressFloorPct || 0)) {
+            courseSession.progressFloorPct = newFloor;
+            courseSession.overallProgress = progressUpdate.overallPct;
             await courseSession.save();
         }
 

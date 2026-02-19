@@ -6,8 +6,10 @@
  * GET /api/course-progress rehydration endpoint.
  *
  * Internal phases (9) are mapped to 5 student-facing buckets.
- * The progress bar never moves backward (progressFloorPct).
+ * The course-wide progress bar never moves backward (progressFloorPct).
  */
+
+const { calculateOverallProgress } = require('./coursePrompt');
 
 // ── Phase group mapping ───────────────────────────────────────
 // Internal phase keys → student-safe bucket
@@ -140,12 +142,16 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
   // Step label: "Step 3 of 7"
   const stepLabel = `Step ${scaffoldIndex + 1} of ${totalScaffolds}`;
 
-  // Computed progress percentage based on traversed path (clamped int [0, 100])
-  const computedPct = Math.min(100, Math.max(0, Math.round(((scaffoldIndex + 1) / totalScaffolds) * 100)));
+  // Module-level progress: steps completed / total steps.
+  // scaffoldIndex is the step the student is ON; steps 0…(index-1) are done.
+  const computedPct = Math.min(100, Math.max(0, Math.round((scaffoldIndex / totalScaffolds) * 100)));
 
-  // Floor: never go below the highest progress ever achieved (clamped int [0, 100])
+  // Course-wide progress (lesson-count weighted) — the bar the student sees
+  const overallPct = calculateOverallProgress(courseSession.modules || []);
+
+  // Floor: course-wide progress never goes backward (clamped int [0, 100])
   const existingFloor = courseSession.progressFloorPct || 0;
-  const progressFloorPct = Math.min(100, Math.max(0, Math.max(existingFloor, computedPct)));
+  const progressFloorPct = Math.min(100, Math.max(0, Math.max(existingFloor, overallPct)));
 
   // Problem stats from conversation
   const problemsAttempted = conversation?.problemsAttempted || 0;
@@ -170,8 +176,8 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
   };
 
   // displayPct: the ONLY value the UI should use for the bar width.
-  // max(floor, computed), clamped int [0, 100] — frontend does zero math.
-  const displayPct = Math.min(100, Math.max(0, Math.max(progressFloorPct, computedPct)));
+  // Course-wide progress with floor guarantee — frontend does zero math.
+  const displayPct = Math.min(100, Math.max(0, Math.max(progressFloorPct, overallPct)));
 
   return {
     sessionId:         courseSession._id,
@@ -197,6 +203,7 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
     struggleFlag,
 
     computedPct,
+    overallPct,
     progressFloorPct,
     displayPct,
 
