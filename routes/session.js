@@ -9,7 +9,8 @@ const {
   endSession,
   recordHeartbeat,
   saveMasteryProgress,
-  cleanupStaleSessions
+  cleanupStaleSessions,
+  destroyIdleExpressSessions
 } = require('../services/sessionService');
 
 /**
@@ -38,24 +39,26 @@ router.post('/heartbeat', isAuthenticated, async (req, res) => {
 /**
  * POST /api/session/end
  * End session and generate summary
- * Handles both regular JSON requests and sendBeacon (text/plain)
+ * Handles both regular JSON requests and sendBeacon (text/plain or application/json)
+ * When destroySession=true, also destroys the express session (used by auto-logout and tab close)
  */
 router.post('/end', async (req, res) => {
   try {
-    // Handle sendBeacon which sends as text/plain
+    // Handle sendBeacon which may send as text/plain
     let body = req.body;
     if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
       } catch (e) {
         logger.warn('Failed to parse session end body as JSON');
+        body = {};
       }
     }
 
-    // Try to get user from session (regular requests) or skip if sendBeacon
+    // Try to get user from session (regular requests) or passport session data
     let userId = req.user?._id?.toString();
 
-    // If no authenticated user, try to extract from the request or session
+    // If no authenticated user, try to extract from the session passport data
     if (!userId && req.session?.passport?.user) {
       userId = req.session.passport.user;
     }
@@ -66,9 +69,35 @@ router.post('/end', async (req, res) => {
     }
 
     const sessionId = req.sessionID;
-    const { reason, sessionData } = body || {};
+    const { reason, sessionData, destroySession } = body || {};
 
     const summary = await endSession(userId, sessionId, reason || 'unknown', sessionData || {});
+
+    // If destroySession is requested (auto-logout, tab close, browser close),
+    // destroy the express session to actually log the user out server-side.
+    if (destroySession) {
+      try {
+        // Clear the session cookie
+        res.clearCookie('connect.sid');
+
+        // Destroy the session in MongoDB
+        await new Promise((resolve, reject) => {
+          req.session.destroy((err) => {
+            if (err) {
+              logger.error('Failed to destroy session on end', { error: err, userId });
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+
+        logger.info('Express session destroyed on session end', { userId, reason });
+      } catch (destroyError) {
+        logger.error('Error destroying express session', { error: destroyError, userId });
+        // Still return success for the session summary even if destroy fails
+      }
+    }
 
     res.json({
       success: true,
@@ -83,11 +112,22 @@ router.post('/end', async (req, res) => {
 /**
  * POST /api/session/save-mastery
  * Save mastery progress (called on logout/timeout)
+ * Handles both regular JSON requests and sendBeacon (CSRF-exempt).
+ * Accepts either { progressData } or { masteryProgress } in the body.
  */
-router.post('/save-mastery', isAuthenticated, async (req, res) => {
+router.post('/save-mastery', async (req, res) => {
   try {
-    const userId = req.user._id.toString();
-    const { progressData } = req.body;
+    let userId = req.user?._id?.toString();
+    if (!userId && req.session?.passport?.user) {
+      userId = req.session.passport.user;
+    }
+
+    if (!userId) {
+      return res.json({ success: true, message: 'Acknowledged' });
+    }
+
+    // Accept both property names (progressData from csrfFetch, masteryProgress from sendBeacon)
+    const progressData = req.body.progressData || req.body.masteryProgress;
 
     const success = await saveMasteryProgress(userId, progressData);
 
@@ -129,9 +169,14 @@ async function throttledCleanup() {
   const now = Date.now();
   if (now - lastCleanupTime > CLEANUP_INTERVAL) {
     lastCleanupTime = now;
-    // Run cleanup in background, don't wait
+    // Run both cleanup tasks in background, don't wait
     cleanupStaleSessions(30).catch(err => {
-      logger.error('Background cleanup failed', { error: err });
+      logger.error('Background conversation cleanup failed', { error: err });
+    });
+    // Also destroy idle express sessions (auth sessions with no recent heartbeat).
+    // Uses 35 min to give a small buffer beyond the 30-min client-side timeout.
+    destroyIdleExpressSessions(35).catch(err => {
+      logger.error('Background idle session destruction failed', { error: err });
     });
   }
 }

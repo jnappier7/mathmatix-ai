@@ -489,6 +489,83 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
   }
 }
 
+/**
+ * Destroy idle express sessions from the MongoDB sessions collection.
+ * The connect-mongo store keeps sessions alive for the full TTL (7 days),
+ * but sessions that haven't received a heartbeat in IDLE_TIMEOUT minutes
+ * should be destroyed so the user is effectively logged out server-side.
+ *
+ * This runs alongside cleanupStaleSessions (which handles Conversation summaries).
+ * @param {number} idleMinutes - Minutes of inactivity before destroying session (default: 35)
+ * @returns {Promise<number>} Number of express sessions destroyed
+ */
+async function destroyIdleExpressSessions(idleMinutes = 35) {
+  try {
+    const mongoose = require('mongoose');
+    const db = mongoose.connection.db;
+    if (!db) {
+      logger.warn('MongoDB connection not ready for idle session cleanup');
+      return 0;
+    }
+
+    const sessionsCollection = db.collection('sessions');
+    const idleThreshold = new Date(Date.now() - idleMinutes * 60 * 1000);
+
+    // connect-mongo stores sessions as { _id, expires, session (JSON string) }
+    // The session JSON includes passport.user and cookie data.
+    // We look for sessions whose stored cookie "expires" or whose last-modified
+    // time is older than the idle threshold. connect-mongo uses an "expires" field
+    // that reflects the cookie maxAge (7 days). We can't rely on that for idle
+    // detection. Instead, we use the fact that rolling:true updates the session
+    // on every request — so sessions not updated recently are idle.
+    //
+    // MongoDB stores an internal "lastModified" via connect-mongo's touchAfter
+    // or the natural document update from rolling sessions. We query for sessions
+    // not modified recently.
+    //
+    // connect-mongo documents have: { _id, expires, session }
+    // With rolling:true, every request updates the document, bumping its
+    // modification time. We can filter using the _id ObjectId timestamp
+    // (for very old sessions) or rely on the fact that connect-mongo
+    // re-saves the session on each request (updating the document).
+    //
+    // The safest approach: parse the session JSON, check if passport.user exists
+    // (authenticated sessions), and if the "expires" field minus maxAge indicates
+    // the session hasn't been touched recently.
+
+    // With rolling:true and maxAge of 7 days, the "expires" field is always
+    // set to "now + 7 days" on each request. So a session last accessed at
+    // time T will have expires = T + 7d. Therefore:
+    //   lastAccessed = expires - 7 days
+    //   idle if lastAccessed < now - idleMinutes
+    // Which means: expires < now - idleMinutes + 7 days
+    //   = now + 7 days - idleMinutes
+    // Actually simpler: expires < now + (7 days - idleMinutes)
+    const maxAgeDays = 7;
+    const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
+    const expiresThreshold = new Date(Date.now() + maxAgeMs - idleMinutes * 60 * 1000);
+
+    // Delete authenticated sessions that have not been refreshed within the
+    // idle threshold. "expires < expiresThreshold" means the session was last
+    // accessed more than idleMinutes ago (since expires = lastAccess + 7 days).
+    // Only target sessions with passport data (authenticated users) to avoid
+    // destroying anonymous/unauthenticated sessions.
+    const result = await sessionsCollection.deleteMany({
+      expires: { $lt: expiresThreshold },
+      session: { $regex: '"passport"' }
+    });
+
+    if (result.deletedCount > 0) {
+      logger.info(`Destroyed ${result.deletedCount} idle express sessions (threshold: ${idleMinutes} min)`);
+    }
+
+    return result.deletedCount || 0;
+  } catch (error) {
+    logger.error('Failed to destroy idle express sessions', { error });
+    return 0;
+  }
+}
+
 module.exports = {
   SESSION_CONFIG,
   generateSessionSummary,
@@ -496,5 +573,6 @@ module.exports = {
   notifyDashboards,
   endSession,
   recordHeartbeat,
-  cleanupStaleSessions
+  cleanupStaleSessions,
+  destroyIdleExpressSessions
 };
