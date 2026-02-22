@@ -5,7 +5,9 @@
  * 1. Inactivity timeout (30 minutes default)
  * 2. Manual logout button (handled elsewhere)
  *
- * Note: Tab-close logout removed to prevent unintended logouts during navigation
+ * The idle timeout continues to count even when the tab is hidden/minimized.
+ * When the tab becomes visible again, we check if the timeout has already
+ * elapsed and immediately log out if so.
  */
 
 (function() {
@@ -19,16 +21,16 @@
   let inactivityTimer = null;
   let warningTimer = null;
   let warningShown = false;
+  let lastActivityTime = Date.now(); // Track the actual wall-clock time of last activity
 
   /**
-   * Perform logout
+   * Perform logout - destroys server session via the CSRF-exempt endpoint
    */
   function performLogout() {
     // Clear ALL session storage (including tab session flag)
     if (window.StorageUtils) {
       StorageUtils.session.clear();
     } else {
-      // Fallback if StorageUtils not loaded
       try {
         sessionStorage.clear();
       } catch (e) {
@@ -36,17 +38,11 @@
       }
     }
 
-    // Use sendBeacon for reliable logout even during page unload
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon('/logout', new URLSearchParams({ method: 'POST' }));
-    } else {
-      // Fallback for older browsers
-      fetch('/logout', {
-        method: 'POST',
-        credentials: 'include',
-        keepalive: true
-      }).catch(err => console.error('Logout failed:', err));
-    }
+    // Use the CSRF-exempt /api/session/end endpoint (sendBeacon can't send CSRF headers).
+    // This endpoint destroys the express session on the server side.
+    const payload = JSON.stringify({ reason: 'auto_logout', destroySession: true });
+    const blob = new Blob([payload], { type: 'application/json' });
+    navigator.sendBeacon('/api/session/end', blob);
   }
 
   /**
@@ -65,6 +61,7 @@
 
     if (shouldStay) {
       // User wants to stay - reset timers
+      lastActivityTime = Date.now();
       resetInactivityTimer();
       warningShown = false;
     } else {
@@ -82,6 +79,7 @@
     if (inactivityTimer) clearTimeout(inactivityTimer);
     if (warningTimer) clearTimeout(warningTimer);
     warningShown = false;
+    lastActivityTime = Date.now();
 
     // Set warning timer (fires before logout)
     warningTimer = setTimeout(() => {
@@ -104,7 +102,6 @@
     if (window.StorageUtils) {
       StorageUtils.session.setItem(SESSION_KEY, 'true');
     } else {
-      // Fallback if StorageUtils not loaded
       try {
         sessionStorage.setItem(SESSION_KEY, 'true');
       } catch (e) {
@@ -142,16 +139,36 @@
     // Start the timer
     resetInactivityTimer();
 
-    // 2. VISIBILITY CHANGE (pause timers when tab is hidden)
-    // Use visibilitychange for tab switches
+    // 2. VISIBILITY CHANGE - check elapsed idle time when tab becomes visible again.
+    // Timers are NOT paused when the tab is hidden; they continue running.
+    // However, browsers may throttle setTimeout in background tabs, so when the
+    // tab becomes visible we check if the timeout has already elapsed.
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        // Tab hidden - pause timers to avoid logout while tab is in background
-        if (inactivityTimer) clearTimeout(inactivityTimer);
-        if (warningTimer) clearTimeout(warningTimer);
-      } else {
-        // Tab visible again - resume timers
-        resetInactivityTimer();
+      if (!document.hidden) {
+        // Tab just became visible - check how long user was actually idle
+        const idleMs = Date.now() - lastActivityTime;
+
+        if (idleMs >= INACTIVITY_TIMEOUT) {
+          // Already past timeout - log out immediately
+          console.log('[Auto-Logout] Tab returned after idle timeout elapsed');
+          performLogout();
+          window.location.href = '/login.html';
+        } else if (idleMs >= INACTIVITY_TIMEOUT - WARNING_BEFORE_LOGOUT) {
+          // In the warning window - show warning and restart timer for remaining time
+          if (inactivityTimer) clearTimeout(inactivityTimer);
+          if (warningTimer) clearTimeout(warningTimer);
+
+          const remaining = INACTIVITY_TIMEOUT - idleMs;
+          inactivityTimer = setTimeout(() => {
+            console.log('[Auto-Logout] Session timed out due to inactivity');
+            performLogout();
+            alert('You have been logged out due to inactivity.');
+            window.location.href = '/login.html';
+          }, remaining);
+
+          showInactivityWarning();
+        }
+        // If less than warning threshold, timers are still running correctly
       }
     });
 

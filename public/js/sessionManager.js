@@ -46,13 +46,20 @@ class SessionManager {
     // Start heartbeat
     this.startHeartbeat();
 
-    // Start idle check
-    this.startIdleCheck();
+    // Start idle check only if auto-logout.js is NOT loaded (avoid competing timers).
+    // auto-logout.js sets window.triggerLogout when initialized.
+    // If both scripts are present on a page, auto-logout.js handles the timeout
+    // and sessionManager focuses on heartbeats, time tracking, and session end beacons.
+    this.idleCheckEnabled = !window.triggerLogout;
+    if (this.idleCheckEnabled) {
+      this.startIdleCheck();
+      console.log('[SessionManager] Initialized with idle timeout (20 min)');
+    } else {
+      console.log('[SessionManager] Initialized (idle timeout deferred to auto-logout.js)');
+    }
 
     // Handle page unload (tab/browser close)
     this.setupUnloadHandler();
-
-    console.log('[SessionManager] Initialized - idle timeout: 20 min, warning: 2 min');
   }
 
   setupActivityTrackers() {
@@ -393,6 +400,7 @@ class SessionManager {
         },
         body: JSON.stringify({
           reason,
+          destroySession: true,
           sessionData: this.sessionData
         }),
         credentials: 'include'
@@ -436,9 +444,12 @@ class SessionManager {
         navigator.sendBeacon('/api/session/save-mastery', masteryBlob);
       }
 
-      // Send session end with proper content type (Blob ensures correct headers)
+      // Send session end AND destroy the server-side session.
+      // destroySession: true tells the server to call req.session.destroy()
+      // so the user is actually logged out (not just summarized).
       const payload = {
         reason,
+        destroySession: true,
         sessionData: {
           ...this.sessionData,
           timeSpent: Date.now() - this.sessionStartTime
