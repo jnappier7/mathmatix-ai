@@ -30,7 +30,9 @@ export async function checkBillingStatus() {
 }
 
 /**
- * Update the floating time-remaining indicator
+ * Update the floating time-remaining indicator.
+ * Shows AI processing time remaining (not wall-clock time).
+ * Time only counts while the AI is generating a response — reading/thinking is free.
  */
 export function updateFreeTimeIndicator(usage) {
     let indicator = document.getElementById('free-time-indicator');
@@ -38,6 +40,7 @@ export function updateFreeTimeIndicator(usage) {
         indicator = document.createElement('div');
         indicator.id = 'free-time-indicator';
         indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9000;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
+        indicator.title = 'AI processing time only — reading and thinking time is free';
         indicator.addEventListener('click', () => showUpgradePrompt({}));
         document.body.appendChild(indicator);
     }
@@ -46,13 +49,13 @@ export function updateFreeTimeIndicator(usage) {
     const mins = Math.floor(remaining / 60);
 
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>';
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>';
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>`;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> remaining`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left`;
         indicator.style.borderColor = '#333';
     }
 }

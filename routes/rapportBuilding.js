@@ -143,10 +143,17 @@ RESPOND IN JSON:
         ];
 
         // Use GPT-4o-mini for rapport building (keep it brief!)
+        const rapportAiStart = Date.now();
         const completion = await callLLM('gpt-4o-mini', extractionMessages, {
             max_tokens: 150,
             response_format: { type: 'json_object' }
         });
+
+        // Track AI processing time (server-side, for fair billing)
+        const rapportAiSeconds = Math.ceil((Date.now() - rapportAiStart) / 1000);
+        User.findByIdAndUpdate(user._id, {
+            $inc: { weeklyAISeconds: rapportAiSeconds, totalAISeconds: rapportAiSeconds }
+        }).catch(err => console.error('[Rapport] AI time tracking error:', err));
 
         const result = JSON.parse(completion.choices[0].message.content.trim());
 

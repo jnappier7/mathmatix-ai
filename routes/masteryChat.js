@@ -314,6 +314,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         // Check for streaming support
         const isStreaming = req.query.stream === 'true';
 
+        // Track AI processing time (server-side, for fair billing — only counts AI generation)
+        const aiStartTime = Date.now();
+
         if (isStreaming) {
             // Set up SSE headers
             res.setHeader('Content-Type', 'text/event-stream');
@@ -375,6 +378,12 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 user.markModified('masteryProgress');
                 await user.save();
 
+                // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
+                const aiProcessingSecondsStream = Math.ceil((Date.now() - aiStartTime) / 1000);
+                User.findByIdAndUpdate(userId, {
+                    $inc: { weeklyAISeconds: aiProcessingSecondsStream, totalAISeconds: aiProcessingSecondsStream }
+                }).catch(err => console.error('[MasteryChat] AI time tracking error:', err));
+
                 // Check for mastery completion
                 const masteryResult = await checkMasteryCompletion(user, activeBadge);
 
@@ -396,6 +405,12 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         } else {
             // Non-streaming response
             const aiResponse = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI);
+
+            // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
+            const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+            User.findByIdAndUpdate(userId, {
+                $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
+            }).catch(err => console.error('[MasteryChat] AI time tracking error:', err));
 
             // Save AI response
             masteryConversation.messages.push({
