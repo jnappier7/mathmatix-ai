@@ -28,7 +28,8 @@ const READ_ONLY_ALLOWED_ROUTES = [
   '/api/conversations',
   '/api/mastery',
   '/api/fact-fluency',
-  '/api/leaderboard'
+  '/api/leaderboard',
+  '/api/impersonation/end' // Must allow exiting impersonation in read-only mode
 ];
 
 /**
