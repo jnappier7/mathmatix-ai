@@ -1710,12 +1710,12 @@ router.post('/retention-check', isAuthenticated, async (req, res) => {
  */
 router.get('/dashboard', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).lean();
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Count badges by tier
+    // Count badges by tier (.lean() returns plain object instead of Map)
     const skillBadgeTiers = {
       bronze: 0,
       silver: 0,
@@ -1723,20 +1723,24 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
       diamond: 0
     };
 
-    for (const [skillId, skill] of user.skillMastery.entries()) {
+    const skillMasteryEntries = user.skillMastery ? Object.entries(user.skillMastery) : [];
+    // Wrap as a Map-like for getSkillsDueForRetention compatibility
+    const skillMasteryMap = new Map(skillMasteryEntries);
+
+    for (const [skillId, skill] of skillMasteryEntries) {
       if (skill.currentTier && skill.currentTier !== 'none') {
         skillBadgeTiers[skill.currentTier]++;
       }
     }
 
     // Get retention checks due
-    const skillsDue = getSkillsDueForRetention(user.skillMastery);
+    const skillsDue = getSkillsDueForRetention(skillMasteryMap);
 
     // Calculate overall mastery percentage
-    const masteredSkills = Array.from(user.skillMastery.values()).filter(
-      s => s.status === 'mastered'
+    const masteredSkills = skillMasteryEntries.filter(
+      ([, s]) => s.status === 'mastered'
     ).length;
-    const totalSkills = user.skillMastery.size;
+    const totalSkills = skillMasteryEntries.length;
 
     res.json({
       success: true,

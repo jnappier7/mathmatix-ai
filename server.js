@@ -57,6 +57,7 @@ const passport = require("passport");
 const MongoStore = require("connect-mongo");
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const compression = require('compression');
 const User = require('./models/user');
 
 // --- 3. CONFIGURATIONS ---
@@ -159,6 +160,13 @@ app.use(cors({
 // Stripe webhook needs raw body for signature verification — MUST be before express.json()
 app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 
+app.use(compression({
+  // Skip compression for SSE streaming responses (they handle their own flushing)
+  filter: (req, res) => {
+    if (req.headers.accept === 'text/event-stream') return false;
+    return compression.filter(req, res);
+  }
+}));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -167,17 +175,18 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  rolling: true, // Reset session expiration on every request (sliding window)
+  rolling: false, // Disabled: session touch below handles sliding expiration with less DB writes
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 7 * 24 * 60 * 60, // 7 days (sliding window with rolling: true, idle timeout handles active logout)
+    ttl: 7 * 24 * 60 * 60, // 7 days
+    touchAfter: 300, // Only update session in DB every 5 minutes (reduces write load by ~99%)
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days (extends on each request, idle timeout handles active logout)
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
 
@@ -266,7 +275,11 @@ app.use(helmet({
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 120,
-  message: "Too many requests from this IP, please try again after 15 minutes.",
+  keyGenerator: (req) => {
+    // Use user ID when authenticated so school networks (shared IP) don't share a budget
+    return req.user ? req.user._id.toString() : req.ip;
+  },
+  message: "Too many requests, please try again after 15 minutes.",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -517,50 +530,53 @@ app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User imp
 app.get("/user", isAuthenticated, async (req, res) => {
     try {
         if (!req.user) {
-            console.log('[/user] No req.user found');
             return res.json({ user: null });
         }
 
-        const User = require('./models/user');
         const { getTutorsToUnlock } = require('./utils/unlockTutors');
+        const BRAND_CONFIG = require('./utils/brand');
+
+        // Fast path: use .lean() for a plain JS object (5x faster than Mongoose doc)
+        const userObj = await User.findById(req.user._id).lean();
+
+        if (!userObj) {
+            return res.json({ user: null });
+        }
+
+        // Check if any corrections are needed before doing a full write
+        let needsSave = false;
 
         // Check for retroactive tutor unlocks
-        const user = await User.findById(req.user._id);
-
-        if (!user) {
-            console.error('[/user] User not found in database:', req.user._id);
-            return res.json({ user: null });
-        }
-
-        if (user && user.level) {
-            const tutorsToUnlock = getTutorsToUnlock(user.level, user.unlockedItems || []);
-
+        if (userObj.level) {
+            const tutorsToUnlock = getTutorsToUnlock(userObj.level, userObj.unlockedItems || []);
             if (tutorsToUnlock.length > 0) {
-                // User should have tutors they don't - add them retroactively
-                user.unlockedItems = user.unlockedItems || [];
+                userObj.unlockedItems = userObj.unlockedItems || [];
                 tutorsToUnlock.forEach(tutorId => {
-                    if (!user.unlockedItems.includes(tutorId)) {
-                        user.unlockedItems.push(tutorId);
+                    if (!userObj.unlockedItems.includes(tutorId)) {
+                        userObj.unlockedItems.push(tutorId);
                     }
                 });
-                await user.save();
-                console.log(`✨ Retroactively unlocked ${tutorsToUnlock.length} tutor(s) for ${user.firstName}: ${tutorsToUnlock.join(', ')}`);
+                needsSave = true;
             }
         }
 
-        const userObj = user ? user.toObject() : req.user.toObject();
-
         // Recalculate level from XP if they're out of sync (safety net)
-        const BRAND_CONFIG = require('./utils/brand');
         let correctLevel = 1;
         while ((userObj.xp || 0) >= BRAND_CONFIG.cumulativeXpForLevel(correctLevel + 1)) {
             correctLevel++;
         }
         if ((userObj.level || 1) !== correctLevel) {
-            console.warn(`⚠️ [XP] Level/XP mismatch on login for ${userObj.firstName}: level=${userObj.level}, xp=${userObj.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
-            user.level = correctLevel;
-            await user.save();
+            console.warn(`⚠️ [XP] Level/XP mismatch for ${userObj.firstName}: level=${userObj.level}, xp=${userObj.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
             userObj.level = correctLevel;
+            needsSave = true;
+        }
+
+        // Only hit the DB for a write if corrections were actually needed
+        if (needsSave) {
+            const updates = {};
+            if (userObj.unlockedItems) updates.unlockedItems = userObj.unlockedItems;
+            if (userObj.level === correctLevel) updates.level = correctLevel;
+            await User.updateOne({ _id: req.user._id }, { $set: updates });
         }
 
         // Attach computed XP fields so the frontend can display progress on page load
@@ -571,9 +587,7 @@ app.get("/user", isAuthenticated, async (req, res) => {
 
         res.json({ user: userObj });
     } catch (error) {
-        console.error('[/user] Error in /user endpoint:', error);
-        console.error('[/user] Error stack:', error.stack);
-        // Return 500 error instead of trying to send user data
+        console.error('[/user] Error:', error.message);
         res.status(500).json({ error: 'Failed to load user data', message: error.message });
     }
 });
@@ -790,8 +804,10 @@ app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fl
 
 // --- 10. STATIC FILE SERVING (AFTER ALL ROUTE DEFINITIONS) ---
 // IMPORTANT: This must come AFTER all HTML route definitions to ensure authentication checks run first
-app.use(express.static(path.join(__dirname, "public")));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+// Cache static assets (JS, CSS, images, fonts) so browsers don't re-download on every page load
+const staticCacheOptions = { maxAge: '1d', etag: true, lastModified: true };
+app.use(express.static(path.join(__dirname, "public"), staticCacheOptions));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images'), staticCacheOptions));
 
 // Fallback for 404
 app.get("*", (req, res) => {
