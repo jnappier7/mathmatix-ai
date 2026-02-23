@@ -336,14 +336,14 @@ router.get('/families', async (req, res) => {
 // GET /api/fact-fluency/progress - Get user's fact fluency progress
 router.get('/progress', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).lean();
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
 
     const progress = user.factFluencyProgress || {
       placement: { completed: false },
-      factFamilies: new Map(),
+      factFamilies: {},
       stats: {
         totalSessions: 0,
         totalProblemsAttempted: 0,
@@ -353,10 +353,10 @@ router.get('/progress', isAuthenticated, async (req, res) => {
       }
     };
 
-    // Convert Map to object for JSON serialization
+    // .lean() already returns plain objects, no Map conversion needed
     const progressObj = {
       ...progress,
-      factFamilies: Object.fromEntries(progress.factFamilies || new Map())
+      factFamilies: progress.factFamilies || {}
     };
 
     res.json({ success: true, progress: progressObj });

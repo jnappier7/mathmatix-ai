@@ -456,7 +456,8 @@ router.get('/search', isAuthenticated, async (req, res) => {
     })
     .sort({ isPinned: -1, lastActivity: -1 })
     .limit(20)
-    .select('_id topic topicEmoji conversationType conversationName customName lastActivity messages currentTopic isPinned');
+    .select('_id topic topicEmoji conversationType conversationName customName lastActivity messages currentTopic isPinned')
+    .lean();
 
     const formattedConversations = conversations.map(conv => ({
       _id: conv._id,

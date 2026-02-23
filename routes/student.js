@@ -70,7 +70,7 @@ router.post('/generate-link-code', isAuthenticated, isStudent, async (req, res) 
 // Allows a student to check if they are linked to a parent.
 router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
     try {
-        const student = await User.findById(req.user._id).select('parentIds hasParentalConsent').populate('parentIds', 'firstName lastName username role');
+        const student = await User.findById(req.user._id).select('parentIds hasParentalConsent').populate('parentIds', 'firstName lastName username role').lean();
         if (!student) {
             return res.status(404).json({ message: 'Student not found.' });
         }
@@ -163,7 +163,7 @@ router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
 // Returns student's learning progress (mastered, learning, ready skills)
 router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
     try {
-        const student = await User.findById(req.user._id);
+        const student = await User.findById(req.user._id).lean();
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -176,13 +176,14 @@ router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
             });
         }
 
-        // Parse skill mastery data
+        // Parse skill mastery data (.lean() returns plain object instead of Map)
         const mastered = [];
         const learning = [];
         const ready = [];
 
-        if (student.skillMastery && student.skillMastery.size > 0) {
-            for (const [skillId, data] of student.skillMastery) {
+        const skillEntries = student.skillMastery ? Object.entries(student.skillMastery) : [];
+        if (skillEntries.length > 0) {
+            for (const [skillId, data] of skillEntries) {
                 const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
                 const skillData = {
@@ -235,7 +236,7 @@ router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
 // Returns a quick summary for dashboard cards
 router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => {
     try {
-        const student = await User.findById(req.user._id);
+        const student = await User.findById(req.user._id).lean();
         if (!student) {
             return res.status(404).json({ error: 'Student not found' });
         }
@@ -252,12 +253,13 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         let currentLearning = null;
         let nextReady = null;
 
-        if (student.skillMastery && student.skillMastery.size > 0) {
+        const skillEntries = student.skillMastery ? Object.entries(student.skillMastery) : [];
+        if (skillEntries.length > 0) {
             const mastered = [];
             const learning = [];
             const ready = [];
 
-            for (const [skillId, data] of student.skillMastery) {
+            for (const [skillId, data] of skillEntries) {
                 const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
                 if (data.status === 'mastered' && data.masteredDate) {
