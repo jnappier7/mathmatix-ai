@@ -153,8 +153,9 @@ const BRAND_CONFIG = {
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 
-    // Images paths for classroom scene
-    classroomHeroImage: "/images/classroom-hero.png" //
+    // Images paths for homepage photos
+    girlStudyImage: "/images/girlStudy.png",
+    boyClassroomImage: "/images/boyClassroom.png"
 };
 
 /**
