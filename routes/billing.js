@@ -18,6 +18,7 @@ const { isAuthenticated } = require('../middleware/auth');
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
+const FREE_WEEKLY_SECONDS = 20 * 60; // 20 free AI minutes per week for all students
 
 const PACKS = {
   pack_60: {
@@ -298,14 +299,25 @@ router.get('/status', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Pack users — check expiry and balance
+    // Pack users — check free weekly allowance + pack balance
     if (tier === 'pack_60' || tier === 'pack_120') {
       const expired = user.packExpiresAt && now > user.packExpiresAt;
-      const remaining = expired ? 0 : (user.packSecondsRemaining || 0);
-      const limitReached = remaining <= 0;
+      const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
+
+      // Pack users also get 20 free minutes/week before pack is used
+      let weeklyAIUsedPack = user.weeklyAISeconds || 0;
+      const lastResetPack = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+      if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= 7) {
+        weeklyAIUsedPack = 0;
+      }
+      const freeRemainingPack = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsedPack);
+
+      // Total remaining = free minutes left + pack balance
+      const totalRemaining = freeRemainingPack + packRemaining;
+      const packLimitReached = totalRemaining <= 0;
 
       // Auto-downgrade expired/empty packs
-      if (limitReached && tier !== 'free') {
+      if (packRemaining <= 0) {
         user.subscriptionTier = 'free';
         await user.save();
       }
@@ -313,25 +325,54 @@ router.get('/status', isAuthenticated, async (req, res) => {
       return res.json({
         success: true,
         billingEnabled: true,
-        tier: limitReached ? 'free' : tier,
-        hasAccess: !limitReached,
+        tier: packRemaining <= 0 ? 'free' : tier,
+        hasAccess: !packLimitReached,
         usage: {
-          secondsRemaining: remaining,
-          minutesRemaining: Math.floor(remaining / 60),
+          secondsRemaining: totalRemaining,
+          minutesRemaining: Math.floor(totalRemaining / 60),
+          freeSecondsRemaining: freeRemainingPack,
+          packSecondsRemaining: packRemaining,
           packExpiresAt: user.packExpiresAt,
           expired,
-          limitReached
+          limitReached: packLimitReached
         }
       });
     }
 
-    // Free users
+    // Free users — calculate remaining free weekly AI minutes
+    // Teachers, parents, admins get unlimited; students get 20 free AI minutes/week
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+      return res.json({
+        success: true,
+        billingEnabled: true,
+        tier: 'free',
+        hasAccess: true,
+        usage: { secondsRemaining: Infinity, limitReached: false }
+      });
+    }
+
+    // Students: check weekly AI seconds used vs free allowance
+    let weeklyAIUsed = user.weeklyAISeconds || 0;
+    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
+      // Reset is pending — they effectively have full free minutes
+      weeklyAIUsed = 0;
+    }
+    const freeRemaining = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsed);
+    const limitReached = freeRemaining <= 0;
+
     res.json({
       success: true,
       billingEnabled: true,
       tier: 'free',
-      hasAccess: false,
-      usage: { secondsRemaining: 0, limitReached: true }
+      hasAccess: !limitReached,
+      usage: {
+        secondsRemaining: freeRemaining,
+        minutesRemaining: Math.floor(freeRemaining / 60),
+        weeklyAISecondsUsed: weeklyAIUsed,
+        freeWeeklySeconds: FREE_WEEKLY_SECONDS,
+        limitReached
+      }
     });
   } catch (error) {
     console.error('[Billing] Status check error:', error);

@@ -175,6 +175,7 @@ router.post('/',
         // Call LLM with vision support (Claude primary, OpenAI fallback)
         const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
         let aiResponseText;
+        const aiStartTime = Date.now(); // Track AI processing time (server-side, for fair billing)
 
         if (isClaudeModel && anthropic) {
             // PRIMARY: Try Claude vision API
@@ -264,6 +265,12 @@ router.post('/',
         if (answerKeyCheck.wasFiltered) {
             aiResponseText = answerKeyCheck.text;
         }
+
+        // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
+        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+        User.findByIdAndUpdate(userId, {
+            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
+        }).catch(err => console.error('[chatWithFile] AI time tracking error:', err));
 
         // --- Step 3: Handle Post-Processing (XP, Unlocks, etc.) ---
         // (This logic is copied and adapted from your chat.js)

@@ -132,7 +132,16 @@ ${phasePrompt}
             messages = messages.concat(conversationHistory);
         }
 
+        const lessonAiStart = Date.now();
         const completion = await callLLM("gpt-4o-mini", messages, { temperature: 0.7, max_tokens: 500 });
+
+        // Track AI processing time (server-side, for fair billing)
+        const lessonAiSeconds = Math.ceil((Date.now() - lessonAiStart) / 1000);
+        if (req.user?._id) {
+            User.findByIdAndUpdate(req.user._id, {
+                $inc: { weeklyAISeconds: lessonAiSeconds, totalAISeconds: lessonAiSeconds }
+            }).catch(err => console.error('[GuidedLesson] AI time tracking error:', err));
+        }
 
         const aiResponseText = completion.choices[0].message.content.trim();
 
@@ -227,7 +236,16 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
 5. Craft a natural, conversational response that builds confidence.
         `;
         
+        const hintAiStart = Date.now();
         const aiHint = await callLLM("gpt-4o-mini", [{ role: "system", content: systemPrompt + taskPrompt }], { temperature: 0.7, max_tokens: 150 }); // Using centralized LLM call
+
+        // Track AI processing time (server-side, for fair billing)
+        const hintAiSeconds = Math.ceil((Date.now() - hintAiStart) / 1000);
+        if (req.user?._id) {
+            User.findByIdAndUpdate(req.user._id, {
+                $inc: { weeklyAISeconds: hintAiSeconds, totalAISeconds: hintAiSeconds }
+            }).catch(err => console.error('[GuidedLesson/Hint] AI time tracking error:', err));
+        }
 
         res.json({ hint: aiHint.choices[0].message.content.trim() });
     } catch (error) {

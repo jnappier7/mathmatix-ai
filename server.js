@@ -466,7 +466,7 @@ app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
 app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
-app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
+app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes); // Usage-gated for free tier
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
@@ -489,7 +489,7 @@ app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessm
 app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (Starting Point)
 app.use('/api/growth-check', isAuthenticated, growthCheckRoutes); // Growth Check (short progress assessment)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
-app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
+app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes); // Mastery mode dedicated chat (usage-gated)
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes); // Premium: AI grading

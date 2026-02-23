@@ -260,8 +260,17 @@ router.get('/', async (req, res) => {
         messagesForAI.push({ role: "user", content: userMessagePart });
 
         // Use GPT-4o-mini for natural, engaging welcome messages
+        const welcomeAiStart = Date.now();
         const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
+
+        // Track AI processing time (server-side, for fair billing)
+        const welcomeAiSeconds = Math.ceil((Date.now() - welcomeAiStart) / 1000);
+        if (user?._id) {
+            User.findByIdAndUpdate(user._id, {
+                $inc: { weeklyAISeconds: welcomeAiSeconds, totalAISeconds: welcomeAiSeconds }
+            }).catch(err => console.error('[Welcome] AI time tracking error:', err));
+        }
 
         // Save welcome message to conversation history for AI context
         activeConversation.messages.push({

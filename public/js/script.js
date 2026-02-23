@@ -1595,6 +1595,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(errorMessage);
             }
 
+            // Update free time indicator from response headers (AI processing time only)
+            const freeRemainingHeader = response.headers.get('X-Free-Remaining-Seconds');
+            if (freeRemainingHeader !== null && typeof updateFreeTimeIndicator === 'function') {
+                const remaining = parseInt(freeRemainingHeader, 10);
+                if (!isNaN(remaining)) {
+                    updateFreeTimeIndicator({ secondsRemaining: remaining, limitReached: remaining <= 0 });
+                }
+            }
+
             const data = await response.json();
 
             // Process AI response (same logic as original sendMessage)

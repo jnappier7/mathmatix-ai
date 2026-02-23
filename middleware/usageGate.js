@@ -104,6 +104,7 @@ async function usageGate(req, res, next) {
     if (freeRemaining > 0) {
       // Still have free minutes — let them through regardless of tier
       res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
+      res.setHeader('Access-Control-Expose-Headers', 'X-Free-Remaining-Seconds, X-Usage-Warning');
       if (freeRemaining <= 120) {
         res.setHeader('X-Usage-Warning', 'low');
       }
