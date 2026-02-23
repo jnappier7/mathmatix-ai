@@ -25,6 +25,7 @@ const {
   DEMO_IDS,
   ALL_DEMO_USER_IDS,
   teacherRivera,
+  isCooper,
   parentChen,
   studentMaya,
   studentAlex,
@@ -32,6 +33,7 @@ const {
   teacherForChenKids,
   mockStudents,
   enrollmentCode: enrollmentCodeData,
+  enrollmentCodeIS: enrollmentCodeISData,
   buildConversations,
   DEMO_PROFILES,
 } = require('../utils/demoData');
@@ -73,6 +75,10 @@ async function seedPlaygroundAccounts() {
     const teacherRiveraDoc = new User(teacherRivera);
     await teacherRiveraDoc.save();
     console.log('   [Teacher] Ms. Rivera — demo-teacher / demo1234');
+
+    const isCooperDoc = new User(isCooper);
+    await isCooperDoc.save();
+    console.log('   [IS] Ms. Cooper — demo-is / demo1234');
 
     const teacherPatelDoc = new User(teacherForChenKids);
     await teacherPatelDoc.save();
@@ -121,6 +127,10 @@ async function seedPlaygroundAccounts() {
     await ecDoc.save();
     console.log(`   [Code] ${enrollmentCodeData.code} — ${enrollmentCodeData.className}`);
 
+    const ecISDoc = new EnrollmentCode(enrollmentCodeISData);
+    await ecISDoc.save();
+    console.log(`   [Code] ${enrollmentCodeISData.code} — ${enrollmentCodeISData.className}`);
+
     // --- CREATE CONVERSATIONS ---
     const conversations = buildConversations(DEMO_IDS);
     for (const convData of conversations) {
@@ -146,6 +156,7 @@ async function seedPlaygroundAccounts() {
 
     const profileToTemplate = {
       'teacher-rivera': teacherRivera,
+      'is-cooper': isCooper,
       'parent-chen': parentChen,
       'student-maya': studentMaya,
       'student-alex': studentAlex,
@@ -187,7 +198,7 @@ async function clearPlaygroundData() {
     userId: { $in: ALL_DEMO_USER_IDS }
   });
   const deletedCodes = await EnrollmentCode.deleteMany({
-    teacherId: { $in: [DEMO_IDS.teacherRivera, DEMO_IDS.teacherForChenKids] }
+    teacherId: { $in: [DEMO_IDS.teacherRivera, DEMO_IDS.teacherForChenKids, DEMO_IDS.isCooper] }
   });
 
   const total = deletedUsers.deletedCount + deletedConversations.deletedCount + deletedCodes.deletedCount;

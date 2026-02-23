@@ -11,6 +11,7 @@ const {
   DEMO_IDS,
   ALL_DEMO_USER_IDS,
   teacherRivera,
+  isCooper,
   parentChen,
   studentMaya,
   studentAlex,
@@ -18,12 +19,14 @@ const {
   teacherForChenKids,
   mockStudents,
   enrollmentCode: enrollmentCodeData,
+  enrollmentCodeIS: enrollmentCodeISData,
   buildConversations,
 } = require('./demoData');
 
 // Map demoProfileId → template data
 const PROFILE_TEMPLATES = {
   'teacher-rivera': teacherRivera,
+  'is-cooper': isCooper,
   'parent-chen': parentChen,
   'student-maya': studentMaya,
   'student-alex': studentAlex,
@@ -106,6 +109,9 @@ async function resetDemoAccount(demoProfileId) {
     if (template.role === 'teacher' && demoProfileId === 'teacher-rivera') {
       await resetEnrollmentCode();
     }
+    if (template.role === 'teacher' && demoProfileId === 'is-cooper') {
+      await resetISEnrollmentCode();
+    }
 
     logger.info(`[DemoReset] Successfully reset demo account: ${demoProfileId}`);
     return true;
@@ -163,6 +169,19 @@ async function resetEnrollmentCode() {
 }
 
 /**
+ * Reset the enrollment code for Ms. Cooper's intervention group.
+ */
+async function resetISEnrollmentCode() {
+  try {
+    await EnrollmentCode.deleteMany({ teacherId: DEMO_IDS.isCooper });
+    const ec = new EnrollmentCode(enrollmentCodeISData);
+    await ec.save();
+  } catch (err) {
+    logger.error('[DemoReset] Error resetting IS enrollment code:', err);
+  }
+}
+
+/**
  * Build a plain object with all resettable fields from a template.
  * Excludes _id and other immutable fields.
  */
@@ -185,5 +204,6 @@ module.exports = {
   resetDemoAccount,
   resetAllDemoAccounts,
   resetEnrollmentCode,
+  resetISEnrollmentCode,
   PROFILE_TEMPLATES
 };

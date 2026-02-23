@@ -94,32 +94,10 @@
       margin: 0 auto;
     }
 
-    /* Center the bottom row of 2 cards under 3-col layout */
-    .demo-grid .demo-card:nth-child(4) {
-      grid-column: 1 / 2;
-      margin-left: auto;
-      margin-right: 0;
-    }
-
-    .demo-grid .demo-card:nth-child(5) {
-      grid-column: 2 / 3;
-    }
-
     /* On screens where 3 cols get tight, switch to 2 */
     @media (max-width: 860px) and (min-width: 641px) {
       .demo-grid {
         grid-template-columns: repeat(2, 1fr);
-      }
-      .demo-grid .demo-card:nth-child(4),
-      .demo-grid .demo-card:nth-child(5) {
-        grid-column: auto;
-        margin-left: 0;
-      }
-      /* Center the 5th (orphan) card */
-      .demo-grid .demo-card:nth-child(5) {
-        grid-column: 1 / -1;
-        max-width: 400px;
-        margin: 0 auto;
       }
     }
 
@@ -164,6 +142,7 @@
     .demo-card-icon.parent { background: #FEF3C7; color: #D97706; }
     .demo-card-icon.student { background: var(--clr-primary-teal-light); color: var(--clr-primary-teal-dark); }
     .demo-card-icon.iep { background: #FCE7F3; color: #DB2777; }
+    .demo-card-icon.is { background: #E0F2FE; color: #0369A1; }
 
     .demo-card-role {
       font-size: 0.75rem;
@@ -278,12 +257,6 @@
 
     @media (max-width: 640px) {
       .demo-grid { grid-template-columns: 1fr; gap: 12px; }
-      .demo-grid .demo-card:nth-child(4),
-      .demo-grid .demo-card:nth-child(5) {
-        grid-column: auto;
-        margin-left: 0;
-        max-width: none;
-      }
       .demo-header h1 { font-size: 1.4rem; }
       .demo-page-wrapper { padding: 20px 14px 36px; }
     }
@@ -336,6 +309,21 @@
           <span class="demo-highlight">Students with IEPs</span>
           <span class="demo-highlight">Live activity feed</span>
           <span class="demo-highlight">AI settings</span>
+        </div>
+      </div>
+
+      <!-- Instructional Specialist Card -->
+      <div class="demo-card" data-profile="is-cooper" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon is"><i class="fas fa-hands-holding-child"></i></div>
+        <div class="demo-card-role">Instructional Specialist</div>
+        <div class="demo-card-name">Ms. Cooper</div>
+        <div class="demo-card-desc">Explore the IEP-focused teacher view with maximum scaffolding, accommodations, and goal tracking.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">IEP goal tracking</span>
+          <span class="demo-highlight">Max scaffolding</span>
+          <span class="demo-highlight">Accommodations</span>
+          <span class="demo-highlight">Intervention AI</span>
         </div>
       </div>
 

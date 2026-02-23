@@ -28,11 +28,15 @@ const DEMO_IDS = {
   mockStudent11:  new mongoose.Types.ObjectId('d3e0000000000000001001a1'),
   mockStudent12:  new mongoose.Types.ObjectId('d3e0000000000000001002a2'),
 
+  // Instructional Specialist (IEP-focused teacher demo)
+  isCooper:           new mongoose.Types.ObjectId('d3e00000000000000007a7a7'),
+
   // A teacher for Maya & Alex (separate from Ms. Rivera)
   teacherForChenKids: new mongoose.Types.ObjectId('d3e00000000000000006a6a6'),
 
-  // Enrollment code
-  enrollmentCode: new mongoose.Types.ObjectId('d3e0000000000000000e0001'),
+  // Enrollment codes
+  enrollmentCode:     new mongoose.Types.ObjectId('d3e0000000000000000e0001'),
+  enrollmentCodeIS:   new mongoose.Types.ObjectId('d3e0000000000000000e0002'),
 };
 
 // All demo user IDs for cleanup queries
@@ -100,6 +104,71 @@ const teacherRivera = {
     },
     responseStyle: {
       encouragementLevel: 'moderate',
+      errorCorrectionStyle: 'socratic',
+      showWorkRequirement: 'always'
+    },
+    lastUpdated: new Date()
+  }
+};
+
+// ============================================================================
+//  INSTRUCTIONAL SPECIALIST: Ms. Cooper — IEP & intervention focused
+// ============================================================================
+const isCooper = {
+  _id: DEMO_IDS.isCooper,
+  username: 'demo-is',
+  email: 'demo-is@mathmatix.ai',
+  passwordHash: DEMO_PASSWORD,
+  firstName: 'Ms.',
+  lastName: 'Cooper',
+  role: 'teacher',
+  roles: ['teacher'],
+  isDemo: true,
+  demoProfileId: 'is-cooper',
+  needsProfileCompletion: false,
+  emailVerified: true,
+  xp: 0,
+  level: 1,
+  selectedTutorId: 'default',
+  tourCompleted: false,
+  tourDismissed: false,
+  preferences: {
+    theme: 'light',
+    handsFreeModeEnabled: false,
+  },
+  classAISettings: {
+    calculatorAccess: 'always',
+    calculatorNote: 'All students have calculator access per IEP accommodations.',
+    scaffoldingLevel: 5,
+    scaffoldingNote: 'Maximum scaffolding — break every problem into small steps with frequent check-ins.',
+    vocabularyPreferences: {
+      orderOfOperations: 'PEMDAS',
+      customVocabulary: [
+        "Use simplified language at or below reading level",
+        "Always define new math terms in context",
+        "Use 'same as' instead of 'equivalent' until students are comfortable"
+      ],
+      vocabularyNote: 'Many students read below grade level. Keep language accessible.'
+    },
+    solutionApproaches: {
+      equationSolving: 'balance-method',
+      fractionOperations: 'visual-models-first',
+      wordProblems: 'UPS-Check',
+      customApproaches: 'Use graphic organizers for word problems. Always start with concrete/visual before abstract.'
+    },
+    manipulatives: {
+      allowed: true,
+      preferred: ['number-line', 'fraction-bars', 'algebra-tiles', 'multiplication-chart'],
+      note: 'Virtual manipulatives should always be available. Students should not have to ask.'
+    },
+    currentTeaching: {
+      topic: 'IEP Goal Progress — Mixed Skills',
+      approach: 'Individualized based on each student\'s IEP goals. Focus on foundational skill gaps.',
+      pacing: 'Student-driven pace. No time pressure. Celebrate small wins.',
+      additionalContext: 'These students are pulled out for intervention. Focus on IEP goal areas: equations, number sense, and word problems.'
+    },
+    responseStyle: {
+      encouragementLevel: 'high',
       errorCorrectionStyle: 'socratic',
       showWorkRequirement: 'always'
     },
@@ -809,6 +878,30 @@ const enrollmentCode = {
 };
 
 // ============================================================================
+//  ENROLLMENT CODE for Ms. Cooper's intervention group
+// ============================================================================
+const enrollmentCodeIS = {
+  _id: DEMO_IDS.enrollmentCodeIS,
+  code: 'COOPER-IEP',
+  teacherId: DEMO_IDS.isCooper,
+  className: 'Math Intervention — IEP Pull-Out',
+  description: 'Ms. Cooper\'s IEP intervention group',
+  gradeLevel: '8th Grade',
+  mathCourse: '8th Grade Math',
+  isActive: true,
+  expiresAt: new Date(Date.now() + 365 * 86400000),
+  maxUses: 10,
+  useCount: 3, // Jordan + Jasmine + Tyler
+  enrolledStudents: [
+    { studentId: DEMO_IDS.studentJordan, enrolledAt: new Date(Date.now() - 55 * 86400000), enrollmentMethod: 'admin-created' },
+    { studentId: DEMO_IDS.mockStudent07, enrolledAt: new Date(Date.now() - 50 * 86400000), enrollmentMethod: 'admin-created' },
+    { studentId: DEMO_IDS.mockStudent08, enrolledAt: new Date(Date.now() - 50 * 86400000), enrollmentMethod: 'admin-created' },
+  ],
+  createdBy: DEMO_IDS.isCooper,
+  createdAt: new Date(Date.now() - 60 * 86400000)
+};
+
+// ============================================================================
 //  SAMPLE CONVERSATIONS (for live activity feed & chat history)
 // ============================================================================
 function buildConversations(userIds) {
@@ -1000,6 +1093,7 @@ module.exports = {
 
   // Loginable accounts
   teacherRivera,
+  isCooper,
   parentChen,
   studentMaya,
   studentAlex,
@@ -1009,6 +1103,7 @@ module.exports = {
   teacherForChenKids,
   mockStudents,
   enrollmentCode,
+  enrollmentCodeIS,
 
   // Builder functions
   buildConversations,
@@ -1022,6 +1117,14 @@ module.exports = {
       role: 'teacher',
       icon: 'fa-chalkboard-teacher',
       highlights: ['Class of 15 students', 'Students with IEPs', 'Live activity feed', 'Class AI settings configured']
+    },
+    'is-cooper': {
+      label: 'Instructional Specialist',
+      name: 'Ms. Cooper',
+      description: 'Explore the IEP-focused teacher view with maximum scaffolding, accommodations, and goal tracking.',
+      role: 'teacher',
+      icon: 'fa-hands-holding-child',
+      highlights: ['IEP goal tracking', 'Max scaffolding configured', 'Accommodation settings', 'Intervention-focused AI']
     },
     'parent-chen': {
       label: 'Parent',
