@@ -74,6 +74,57 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
   <style>
+    /* ── Mobile Top Bar (visible only on mobile where header is hidden) ── */
+    .lp-mobile-topbar {
+      display: none; /* Hidden on desktop */
+    }
+
+    @media (max-width: 768px) {
+      .lp-mobile-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+      .lp-mobile-topbar-logo img {
+        height: 32px;
+        width: auto;
+        display: block;
+      }
+
+      .lp-mobile-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .lp-mobile-topbar-link {
+        color: var(--clr-primary, #12b3b3);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .lp-mobile-topbar-btn {
+        display: inline-block;
+        background: var(--clr-primary, #12b3b3);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+      }
+    }
+
     /* ── Landing Page Overrides ─────────────────────────────── */
     .landing-header .main-logo-hero {
       max-height: 65px;
@@ -1417,6 +1468,18 @@
 </head>
 <body>
   <a href="#lp-main" class="skip-to-content">Skip to main content</a>
+
+  <!-- Mobile-only top bar (desktop header is hidden on mobile by multiple CSS files) -->
+  <div class="lp-mobile-topbar">
+    <a href="/" class="lp-mobile-topbar-logo">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
+    </a>
+    <div class="lp-mobile-topbar-actions">
+      <a href="/demo.html" class="lp-mobile-topbar-link">Try Demo</a>
+      <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
+    </div>
+  </div>
+
   <header class="landing-header">
     <div class="header-logo-container">
       <a href="/">
