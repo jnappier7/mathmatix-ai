@@ -955,14 +955,78 @@
       font-size: 1.02rem;
     }
 
+    /* ── Social Proof Photo Banner ────────────────────────── */
+    .lp-photo-banner {
+      padding: 2.5rem var(--page-horizontal-padding) 0;
+      background: var(--clr-bg-light);
+    }
+
+    .lp-photo-banner-wrap {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      max-height: 380px;
+    }
+
+    .lp-photo-banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .lp-photo-banner-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+      padding: 2.5rem 2rem 1.5rem;
+    }
+
+    .lp-photo-banner-text {
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .lp-photo-banner { padding: 1.5rem var(--page-horizontal-padding) 0; }
+      .lp-photo-banner-wrap { max-height: 240px; border-radius: 12px; }
+      .lp-photo-banner-text { font-size: 1.05rem; }
+      .lp-photo-banner-overlay { padding: 2rem 1.25rem 1rem; }
+    }
+
+    @media (max-width: 375px) {
+      .lp-photo-banner-wrap { max-height: 200px; }
+      .lp-photo-banner-text { font-size: 0.95rem; }
+    }
+
     /* ── Mission ────────────────────────────────────────────── */
     .lp-mission {
       padding: 4rem var(--page-horizontal-padding);
       background: var(--clr-bg-dark); color: var(--clr-bg-light);
     }
 
-    .lp-mission-inner {
-      max-width: 680px; margin: 0 auto; text-align: center;
+    .lp-mission-layout {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: center;
+    }
+
+    .lp-mission-photo {
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .lp-mission-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      border-radius: 14px;
+    }
+
+    .lp-mission-content {
+      text-align: left;
     }
 
     .lp-mission h2 {
@@ -1272,6 +1336,10 @@
       .lp-step p { font-size: 0.88rem; }
 
       /* -- Mission -- */
+      .lp-mission-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+      .lp-mission-photo { max-height: 260px; }
+      .lp-mission-photo img { max-height: 260px; }
+      .lp-mission-content { text-align: center; }
       .lp-mission h2 { font-size: 1.45rem; }
       .lp-mission p { font-size: 0.92rem; }
 
@@ -1432,6 +1500,18 @@
         <div class="lp-trust-item"><i class="fas fa-seedling"></i> Starting Point &amp; Growth Checks</div>
         <div class="lp-trust-item"><i class="fas fa-graduation-cap"></i> Grade 3 &ndash; Calc 3</div>
         <div class="lp-trust-item"><i class="fas fa-language"></i> 9 Languages</div>
+      </div>
+    </section>
+
+    <!-- ── Social Proof Photo ──────────────────────────────── -->
+    <section class="lp-photo-banner lp-reveal">
+      <div class="lp-inner">
+        <div class="lp-photo-banner-wrap">
+          <img src="/images/girlStudy.png" alt="Student using Mathmatix AI on her laptop" class="lp-photo-banner-img" />
+          <div class="lp-photo-banner-overlay">
+            <p class="lp-photo-banner-text">Built for the way kids actually learn.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1628,15 +1708,20 @@
 
     <!-- ── Mission ──────────────────────────────────────── -->
     <section class="lp-mission lp-reveal">
-      <div class="lp-mission-inner">
-        <h2>Why I Built This</h2>
-        <p>
-          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
-        </p>
-        <p>
-          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
-        </p>
-        <p class="lp-mission-founder">&mdash; Jason Nappier, Math Teacher &amp; Founder</p>
+      <div class="lp-mission-layout">
+        <div class="lp-mission-photo">
+          <img src="/images/boyClassroom.png" alt="Student working on math in the classroom with Mathmatix AI" />
+        </div>
+        <div class="lp-mission-content">
+          <h2>Why I Built This</h2>
+          <p>
+            As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
+          </p>
+          <p>
+            <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
+          </p>
+          <p class="lp-mission-founder">&mdash; Jason Nappier, Math Teacher &amp; Founder</p>
+        </div>
       </div>
     </section>
 
