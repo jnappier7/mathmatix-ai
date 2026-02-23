@@ -1096,6 +1096,110 @@ function getWelcomeEmailTemplate({ firstName, lastName, username, email, roles, 
   `;
 }
 
+/**
+ * Send waitlist confirmation email
+ * @param {String} email - Subscriber's email address
+ * @param {String} role - Role (student, parent, teacher, other)
+ */
+async function sendWaitlistConfirmation(email, role) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping waitlist confirmation');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const emailConfig = getEmailConfig();
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: email,
+      subject: "You're on the Mathmatix AI waitlist!",
+      html: getWaitlistConfirmationTemplate(email, role)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Waitlist confirmation sent to ${email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending waitlist confirmation:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function getWaitlistConfirmationTemplate(email, role) {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const roleMessage = {
+    student: "We're building something special for students like you — a tutor that adapts to how you learn, never gives away answers, and is available whenever you need help.",
+    parent: "We're building an affordable, personalized math tutor for your child — one that adapts to their learning style, tracks their progress, and keeps you in the loop.",
+    teacher: "We're building a tool designed by a teacher, for teachers — upload your curriculum, set IEP accommodations, and give every student a personal tutor.",
+    other: "We're building a personalized, AI-powered math tutor that adapts to every student's learning style and is available 24/7 — for a fraction of what private tutoring costs."
+  };
+
+  const message = roleMessage[role] || roleMessage.other;
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #12b3b3 0%, #0E9494 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">M&#916;THM&#916;TI&#935; AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">You're on the list!</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Thanks for signing up!</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        ${message}
+      </p>
+
+      <div style="background: #f0fafa; border-left: 4px solid #12b3b3; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #0E9494; font-weight: 600; font-size: 14px;">Launching March 14, 2026 (Pi Day!)</p>
+        <p style="margin: 8px 0 0 0; color: #555; font-size: 14px;">We'll send you early access before anyone else.</p>
+      </div>
+
+      <p style="margin: 20px 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        In the meantime, you can try the full experience right now:
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 25px 0;">
+        <a href="${baseUrl}/demo.html"
+           style="display: inline-block; background: linear-gradient(135deg, #12b3b3, #0E9494); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Try the Interactive Demo
+        </a>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">
+        &mdash; Jason Nappier, Math Teacher &amp; Founder
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0 0 10px 0; font-size: 12px; color: #999;">
+        You're receiving this because ${email} was added to the Mathmatix AI waitlist.
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} M&#916;THM&#916;TI&#935; AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
@@ -1106,6 +1210,7 @@ module.exports = {
   sendMessageNotification,
   sendSafetyConcernAlert,
   sendWelcomeEmail,
+  sendWaitlistConfirmation,
   initializeTransporter,
   getEmailConfig
 };
