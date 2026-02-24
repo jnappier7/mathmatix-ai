@@ -1200,6 +1200,169 @@ function getWaitlistConfirmationTemplate(email, role) {
   `;
 }
 
+/**
+ * Send escalation alert when a support ticket is escalated to human review
+ * @param {Object} ticket - The support ticket document
+ * @param {Object} user - The user who submitted the ticket
+ */
+async function sendSupportEscalationAlert(ticket, user) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - logging escalation only');
+    console.warn(`📩 ESCALATION (email not sent): Ticket ${ticket._id} from ${user.email || user.username}`);
+    return { success: false, error: 'Email not configured' };
+  }
+
+  const adminEmail = process.env.SUPPORT_ESCALATION_EMAIL || process.env.ADMIN_ALERT_EMAIL || process.env.SMTP_USER;
+  if (!adminEmail) {
+    console.warn('📩 ESCALATION: No escalation email configured. Set SUPPORT_ESCALATION_EMAIL or ADMIN_ALERT_EMAIL in .env');
+    return { success: false, error: 'No escalation email configured' };
+  }
+
+  try {
+    const emailConfig = getEmailConfig();
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const priorityEmoji = { urgent: '🔴', high: '🟠', medium: '🟡', low: '🟢' };
+    const emoji = priorityEmoji[ticket.priority] || '🟡';
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: adminEmail,
+      subject: `${emoji} Support Escalation [${ticket.priority?.toUpperCase()}]: ${ticket.subject}`,
+      html: getSupportEscalationTemplate(ticket, user, baseUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`📩 Escalation alert sent to ${adminEmail}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending escalation alert:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function getSupportEscalationTemplate(ticket, user, baseUrl) {
+  const timestamp = new Date().toLocaleString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short'
+  });
+
+  const priorityColors = { urgent: '#e74c3c', high: '#e67e22', medium: '#f1c40f', low: '#27ae60' };
+  const priorityColor = priorityColors[ticket.priority] || '#f1c40f';
+
+  const categoryLabels = {
+    account: 'Account Issue',
+    billing: 'Billing / Payment',
+    bug: 'Bug Report',
+    'how-to': 'How-To Question',
+    'feature-request': 'Feature Request',
+    'data-privacy': 'Data Privacy',
+    other: 'Other'
+  };
+
+  const userName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || 'Unknown';
+
+  // Show the conversation so far
+  const messagesHtml = (ticket.messages || []).map(msg => {
+    const senderLabel = msg.sender === 'user' ? userName : msg.sender === 'ai' ? 'AI Assistant' : 'Admin';
+    const senderColor = msg.sender === 'user' ? '#3498db' : msg.sender === 'ai' ? '#9b59b6' : '#27ae60';
+    const content = msg.content.length > 500 ? msg.content.substring(0, 500) + '...' : msg.content;
+    return `
+      <div style="margin-bottom: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px; border-left: 3px solid ${senderColor};">
+        <div style="font-size: 12px; color: ${senderColor}; font-weight: 600; margin-bottom: 6px;">${senderLabel}</div>
+        <div style="font-size: 14px; color: #333; line-height: 1.5; white-space: pre-wrap;">${content}</div>
+      </div>
+    `;
+  }).join('');
+
+  const aiReason = ticket.aiTriage?.reason
+    ? `<p style="margin: 10px 0 0 0; color: #666; font-size: 13px;"><strong>AI escalation reason:</strong> ${ticket.aiTriage.reason}</p>`
+    : '';
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 700;">Support Ticket Escalated</h1>
+      <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 13px;">MATHMATIX AI</p>
+    </div>
+
+    <!-- Ticket Summary -->
+    <div style="padding: 24px 20px;">
+      <div style="display: flex; align-items: center; margin-bottom: 16px;">
+        <span style="display: inline-block; background: ${priorityColor}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${ticket.priority || 'medium'}</span>
+        <span style="display: inline-block; background: #eee; color: #555; padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-left: 8px;">${categoryLabels[ticket.category] || ticket.category}</span>
+      </div>
+
+      <h2 style="margin: 0 0 16px 0; color: #2c3e50; font-size: 18px;">${ticket.subject}</h2>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #666; width: 35%;">From</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333;">${userName} (${user.email || 'no email'})</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #666;">Role</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333;">${ticket.userRole || user.role || 'unknown'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #666;">Submitted</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333;">${timestamp}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #666;">Ticket ID</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333; font-family: monospace; font-size: 12px;">${ticket._id}</td>
+        </tr>
+        ${ticket.pageUrl ? `
+        <tr>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #666;">Page</td>
+          <td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333; font-size: 12px; word-break: break-all;">${ticket.pageUrl}</td>
+        </tr>` : ''}
+      </table>
+
+      ${aiReason}
+
+      <!-- Conversation Thread -->
+      <h3 style="margin: 20px 0 12px 0; color: #2c3e50; font-size: 15px;">Conversation</h3>
+      ${messagesHtml}
+
+      <!-- Action Button -->
+      <div style="text-align: center; margin: 28px 0 12px 0;">
+        <a href="${baseUrl}/admin-dashboard.html?tab=support&ticket=${ticket._id}"
+           style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+          View in Admin Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 16px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0; font-size: 11px; color: #999;">
+        Automated escalation alert from MATHMATIX AI &middot; &copy; ${new Date().getFullYear()}
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
@@ -1209,6 +1372,7 @@ module.exports = {
   sendTestEmail,
   sendMessageNotification,
   sendSafetyConcernAlert,
+  sendSupportEscalationAlert,
   sendWelcomeEmail,
   sendWaitlistConfirmation,
   initializeTransporter,
