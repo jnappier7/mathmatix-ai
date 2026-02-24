@@ -120,11 +120,11 @@ class ShowYourWorkManager {
         const isPDF = file.type === 'application/pdf';
 
         if (!isImage && !isPDF) {
-            alert('Please select an image or PDF file');
+            this.showToast('Please select an image or PDF file', 'error');
             return;
         }
         if (file.size > 10 * 1024 * 1024) {
-            alert('File is too large. Maximum size is 10 MB.');
+            this.showToast('File is too large. Maximum size is 10 MB.', 'error');
             return;
         }
 
@@ -154,7 +154,7 @@ class ShowYourWorkManager {
 
     async renderPDFPreview(file) {
         if (typeof window.pdfjsLib === 'undefined') {
-            alert('PDF viewer is not available. Please upload an image instead.');
+            this.showToast('PDF viewer is not available. Please upload an image instead.', 'info');
             return;
         }
         try {
@@ -181,7 +181,9 @@ class ShowYourWorkManager {
             this.showSection(this.previewSection);
         } catch (err) {
             console.error('PDF rendering error:', err);
-            alert('Failed to load PDF. Please try an image file instead.');
+            this.showToast('Failed to load PDF preview, but you can still submit it for analysis.', 'info');
+            // Even if preview fails, the original file is still valid for submission
+            this.showSection(this.previewSection);
         }
     }
 
@@ -190,8 +192,8 @@ class ShowYourWorkManager {
     // ----------------------------------------------------------------
 
     async submitForAnalysis() {
-        if (!this.currentImageData) {
-            alert('Please select an image or PDF first');
+        if (!this.currentFile) {
+            this.showToast('Please select an image or PDF first', 'info');
             return;
         }
 
@@ -199,13 +201,10 @@ class ShowYourWorkManager {
             this.showSection(this.loadingSection);
             this.showProgressMessages();
 
+            // Always send the original file — the backend handles both images and PDFs.
+            // Previously PDFs were converted to a page-1 PNG screenshot, losing all other pages.
             const formData = new FormData();
-            if (this.currentFile.type === 'application/pdf') {
-                const blob = await (await fetch(this.currentImageData)).blob();
-                formData.append('file', blob, 'work.png');
-            } else {
-                formData.append('file', this.currentFile);
-            }
+            formData.append('file', this.currentFile);
 
             // Re-attempt: link to previous result so server can track improvement
             if (this.lastResultId) {
@@ -230,7 +229,7 @@ class ShowYourWorkManager {
 
         } catch (error) {
             console.error('Analysis error:', error);
-            alert(`Error: ${error.message}`);
+            this.showToast(error.message || 'Something went wrong. Please try again.', 'error', 7000);
             this.resetToCapture();
         }
     }
@@ -242,12 +241,20 @@ class ShowYourWorkManager {
     showProgressMessages() {
         if (!this.loadingSection) return;
 
-        const messages = [
-            { text: "Reading your work...", delay: 0 },
-            { text: "Solving each problem to check your answers...", delay: 2000 },
-            { text: "Analyzing your approach step by step...", delay: 4500 },
-            { text: "Writing personalized feedback...", delay: 7000 }
-        ];
+        const isPDF = this.currentFile?.type === 'application/pdf';
+        const messages = isPDF
+            ? [
+                { text: "Extracting text from your PDF...", delay: 0 },
+                { text: "Reading each problem carefully...", delay: 3000 },
+                { text: "Solving each problem to check your answers...", delay: 6000 },
+                { text: "Writing personalized feedback...", delay: 10000 }
+            ]
+            : [
+                { text: "Reading your work...", delay: 0 },
+                { text: "Solving each problem to check your answers...", delay: 2000 },
+                { text: "Analyzing your approach step by step...", delay: 4500 },
+                { text: "Writing personalized feedback...", delay: 7000 }
+            ];
 
         this.loadingSection.innerHTML = `
             <div class="syw-loading-inner">
@@ -467,7 +474,7 @@ class ShowYourWorkManager {
             await this.startCamera();
         } catch (err) {
             console.error('Failed to open camera:', err);
-            alert('Unable to access camera. Please check permissions or use the upload option.');
+            this.showToast('Unable to access camera. Check permissions or use the upload option.', 'error');
         }
     }
 
@@ -545,7 +552,7 @@ class ShowYourWorkManager {
             const data = await res.json();
 
             if (!data.results || data.results.length === 0) {
-                alert('No analysis history yet.');
+                this.showToast('No analysis history yet. Submit some work first!', 'info');
                 return;
             }
 
@@ -583,7 +590,7 @@ class ShowYourWorkManager {
             });
         } catch (err) {
             console.error('History error:', err);
-            alert('Could not load analysis history.');
+            this.showToast('Could not load analysis history.', 'error');
         }
     }
 
@@ -598,7 +605,7 @@ class ShowYourWorkManager {
             this.displayResults(data.result);
         } catch (err) {
             console.error('Detail error:', err);
-            alert('Could not load analysis details.');
+            this.showToast('Could not load analysis details.', 'error');
         }
     }
 
@@ -690,6 +697,61 @@ class ShowYourWorkManager {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    }
+
+    /**
+     * Show a non-blocking toast notification instead of alert().
+     * @param {string} message - Text to display
+     * @param {'error'|'info'|'success'} type - Toast type for styling
+     * @param {number} duration - Auto-dismiss after ms (0 = manual dismiss only)
+     */
+    showToast(message, type = 'error', duration = 5000) {
+        // Remove any existing toast
+        document.getElementById('syw-toast')?.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'syw-toast';
+        toast.className = `syw-toast syw-toast-${type}`;
+        toast.setAttribute('role', 'alert');
+
+        const colors = { error: '#ef4444', info: '#3b82f6', success: '#22c55e' };
+        const icons = { error: 'fa-exclamation-circle', info: 'fa-info-circle', success: 'fa-check-circle' };
+
+        toast.innerHTML = `
+            <i class="fas ${icons[type] || icons.info}"></i>
+            <span>${this.escapeHtml(message)}</span>
+            <button class="syw-toast-close" aria-label="Dismiss">&times;</button>
+        `;
+        toast.style.cssText = `
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: ${colors[type] || colors.info}; color: white;
+            padding: 12px 20px; border-radius: 10px; font-size: 0.95em;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 10001;
+            animation: syw-toast-in 0.3s ease-out;
+            max-width: 90vw;
+        `;
+
+        // Add animation keyframes if not present
+        if (!document.getElementById('syw-toast-styles')) {
+            const style = document.createElement('style');
+            style.id = 'syw-toast-styles';
+            style.textContent = `
+                @keyframes syw-toast-in { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+                @keyframes syw-toast-out { from { opacity: 1; } to { opacity: 0; transform: translateX(-50%) translateY(20px); } }
+            `;
+            document.head.appendChild(style);
+        }
+
+        const dismiss = () => {
+            toast.style.animation = 'syw-toast-out 0.2s ease-in forwards';
+            setTimeout(() => toast.remove(), 200);
+        };
+
+        toast.querySelector('.syw-toast-close').addEventListener('click', dismiss);
+
+        document.body.appendChild(toast);
+        if (duration > 0) setTimeout(dismiss, duration);
     }
 }
 

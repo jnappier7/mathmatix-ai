@@ -10,6 +10,7 @@ const GradingResult = require('../models/gradingResult');
 const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
+const pdfOcr = require('../utils/pdfOcr');
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -184,35 +185,76 @@ router.post('/',
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
-        if (!file.mimetype.startsWith('image/')) {
+        const isImage = file.mimetype.startsWith('image/');
+        const isPDF = file.mimetype === 'application/pdf';
+
+        if (!isImage && !isPDF) {
             if (file.path) fs.unlinkSync(file.path);
-            return res.status(400).json({ success: false, message: 'Only image files are supported' });
+            return res.status(400).json({ success: false, message: 'Only image and PDF files are supported' });
         }
 
-        console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName}`);
+        console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName} (${isPDF ? 'PDF' : 'image'})`);
 
-        // Read file and strip EXIF metadata before sending to AI provider.
-        // Phone cameras embed GPS coordinates — this prevents student location data from leaving our server.
-        let fileBuffer = fs.readFileSync(file.path);
-        try {
-            fileBuffer = await sharp(fileBuffer)
-                .rotate()          // Auto-rotate based on EXIF orientation before stripping
-                .withMetadata({})  // Strip all EXIF/IPTC/XMP metadata
-                .toBuffer();
-        } catch (stripError) {
-            console.warn('[gradeWork] EXIF strip failed, continuing with original:', stripError.message);
+        let aiResponse;
+
+        if (isPDF) {
+            // PDF path: Extract text via Mathpix, then use text-based analysis
+            console.log('[gradeWork] Processing PDF with Mathpix OCR...');
+            const fileBuffer = fs.readFileSync(file.path);
+            let extractedText;
+            try {
+                extractedText = await pdfOcr(fileBuffer, file.originalname);
+            } catch (pdfErr) {
+                console.error('[gradeWork] PDF extraction failed:', pdfErr.message);
+                if (file.path) fs.unlinkSync(file.path);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to read the PDF. Please try uploading an image instead.'
+                });
+            }
+
+            if (!extractedText || !extractedText.trim()) {
+                if (file.path) fs.unlinkSync(file.path);
+                return res.status(400).json({
+                    success: false,
+                    message: "I couldn't read any text from that PDF. Try taking a photo of your work instead."
+                });
+            }
+
+            console.log(`[gradeWork] Extracted ${extractedText.length} chars from PDF`);
+
+            // For PDFs with extracted text, use the text-based grading prompt
+            const pdfPrompt = `${ANALYSIS_PROMPT}\n\n--- STUDENT'S WORK (extracted from uploaded PDF) ---\n${extractedText.substring(0, 15000)}${extractedText.length > 15000 ? '\n\n[Content truncated — analyze only the problems shown above]' : ''}`;
+
+            // Use callLLM for text-based analysis (no vision needed)
+            const { callLLM } = require('../utils/llmGateway');
+            const completion = await callLLM('gpt-4o-mini', [
+                { role: 'user', content: pdfPrompt }
+            ], { max_tokens: 4000, temperature: 0.2 });
+
+            aiResponse = completion.choices[0]?.message?.content?.trim() || '';
+        } else {
+            // Image path: Use vision API for handwriting recognition
+            let fileBuffer = fs.readFileSync(file.path);
+            try {
+                fileBuffer = await sharp(fileBuffer)
+                    .rotate()
+                    .withMetadata({})
+                    .toBuffer();
+            } catch (stripError) {
+                console.warn('[gradeWork] EXIF strip failed, continuing with original:', stripError.message);
+            }
+            const base64Image = fileBuffer.toString('base64');
+            const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
+
+            aiResponse = await gradeWithVision({
+                imageDataUrl: dataUrl,
+                prompt: ANALYSIS_PROMPT
+            }, {
+                maxTokens: 4000,
+                temperature: 0.2
+            });
         }
-        const base64Image = fileBuffer.toString('base64');
-        const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
-
-        // Call vision model — low temperature for mathematical accuracy
-        const aiResponse = await gradeWithVision({
-            imageDataUrl: dataUrl,
-            prompt: ANALYSIS_PROMPT
-        }, {
-            maxTokens: 4000,
-            temperature: 0.2
-        });
 
         console.log('[gradeWork] AI analysis received');
 
