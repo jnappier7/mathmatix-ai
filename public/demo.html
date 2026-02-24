@@ -16,6 +16,8 @@
     /* Mobile top bar — same as index.html */
     .lp-mobile-topbar { display: none; }
     @media (max-width: 768px) {
+      /* Desktop header replaced by .lp-mobile-topbar on small screens */
+      .landing-header { display: none; }
       .lp-mobile-topbar {
         display: flex;
         align-items: center;
@@ -262,7 +264,7 @@
     }
   </style>
 </head>
-<body class="landing-page-body demo-page-body">
+<body class="demo-page-body">
   <!-- Mobile-only top bar (desktop header hidden on mobile) -->
   <div class="lp-mobile-topbar">
     <a href="/" class="lp-mobile-topbar-logo">
