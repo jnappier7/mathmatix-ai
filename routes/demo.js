@@ -12,6 +12,7 @@ const logger = require('../utils/logger');
 // Map demoProfileId → username for login
 const PROFILE_TO_USERNAME = {
   'teacher-rivera':  'demo-teacher',
+  'is-cooper':       'demo-is',
   'parent-chen':     'demo-parent',
   'student-maya':    'demo-student-maya',
   'student-alex':    'demo-student-alex',

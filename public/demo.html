@@ -13,56 +13,99 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
   <style>
+    /* Mobile top bar — same as index.html */
+    .lp-mobile-topbar { display: none; }
+    @media (max-width: 768px) {
+      .lp-mobile-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.96);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .lp-mobile-topbar-logo img { height: 32px; width: auto; display: block; }
+      .lp-mobile-topbar-actions { display: flex; align-items: center; gap: 10px; }
+      .lp-mobile-topbar-link {
+        color: var(--clr-primary, #12b3b3);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .lp-mobile-topbar-btn {
+        display: inline-block;
+        background: var(--clr-primary, #12b3b3);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+      }
+    }
+
     .demo-page-wrapper {
       min-height: calc(100dvh - 140px);
-      padding: 40px 20px 60px;
+      padding: 28px 20px 48px;
       background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb), 0.03) 0%, transparent 50%);
     }
 
     .demo-header {
       text-align: center;
-      max-width: 700px;
-      margin: 0 auto 40px;
+      max-width: 600px;
+      margin: 0 auto 28px;
     }
 
     .demo-header h1 {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 700;
       color: var(--clr-text);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .demo-header p {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       color: var(--clr-text-dim);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     .demo-badge {
       display: inline-block;
       background: var(--clr-primary-teal-light);
       color: var(--clr-primary-teal-dark);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 100px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       letter-spacing: 0.02em;
     }
 
     .demo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      max-width: 1000px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 960px;
       margin: 0 auto;
+    }
+
+    /* On screens where 3 cols get tight, switch to 2 */
+    @media (max-width: 860px) and (min-width: 641px) {
+      .demo-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     .demo-card {
       background: var(--clr-bg-light);
       border: 1px solid var(--clr-border);
-      border-radius: 16px;
-      padding: 28px 24px;
+      border-radius: 14px;
+      padding: 22px 20px;
       cursor: pointer;
       transition: all 0.2s ease;
       position: relative;
@@ -85,20 +128,21 @@
     }
 
     .demo-card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
-      margin-bottom: 16px;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
     }
 
     .demo-card-icon.teacher { background: #EDE9FE; color: #7C3AED; }
     .demo-card-icon.parent { background: #FEF3C7; color: #D97706; }
     .demo-card-icon.student { background: var(--clr-primary-teal-light); color: var(--clr-primary-teal-dark); }
     .demo-card-icon.iep { background: #FCE7F3; color: #DB2777; }
+    .demo-card-icon.is { background: #E0F2FE; color: #0369A1; }
 
     .demo-card-role {
       font-size: 0.75rem;
@@ -110,17 +154,17 @@
     }
 
     .demo-card-name {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--clr-text);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .demo-card-desc {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--clr-text-dim);
-      line-height: 1.5;
-      margin-bottom: 16px;
+      line-height: 1.45;
+      margin-bottom: 12px;
     }
 
     .demo-card-highlights {
@@ -168,9 +212,9 @@
 
     .demo-footer-note {
       text-align: center;
-      margin-top: 40px;
-      padding: 20px;
-      max-width: 600px;
+      margin-top: 28px;
+      padding: 16px;
+      max-width: 550px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -212,13 +256,24 @@
     .back-link:hover { color: var(--clr-primary-teal); }
 
     @media (max-width: 640px) {
-      .demo-grid { grid-template-columns: 1fr; }
-      .demo-header h1 { font-size: 1.5rem; }
-      .demo-page-wrapper { padding: 24px 16px 40px; }
+      .demo-grid { grid-template-columns: 1fr; gap: 12px; }
+      .demo-header h1 { font-size: 1.4rem; }
+      .demo-page-wrapper { padding: 20px 14px 36px; }
     }
   </style>
 </head>
 <body class="landing-page-body" style="overflow-y: auto; height: auto;">
+  <!-- Mobile-only top bar (desktop header hidden on mobile) -->
+  <div class="lp-mobile-topbar">
+    <a href="/" class="lp-mobile-topbar-logo">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
+    </a>
+    <div class="lp-mobile-topbar-actions">
+      <a href="/" class="lp-mobile-topbar-link">Home</a>
+      <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
+    </div>
+  </div>
+
   <header class="landing-header">
     <div class="header-logo-container">
       <a href="/">
@@ -233,7 +288,7 @@
 
   <main class="demo-page-wrapper">
     <div class="demo-header">
-      <a href="/login.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+      <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
       <span class="demo-badge">Playground Mode</span>
       <h1>Experience Mathmatix AI</h1>
       <p>Choose a role below to explore the full platform. Every feature works just like a real account. All changes reset when you log out.</p>
@@ -254,6 +309,21 @@
           <span class="demo-highlight">Students with IEPs</span>
           <span class="demo-highlight">Live activity feed</span>
           <span class="demo-highlight">AI settings</span>
+        </div>
+      </div>
+
+      <!-- Instructional Specialist Card -->
+      <div class="demo-card" data-profile="is-cooper" role="button" tabindex="0">
+        <div class="demo-card-spinner"><i class="fas fa-circle-notch"></i> Setting up...</div>
+        <div class="demo-card-icon is"><i class="fas fa-hands-holding-child"></i></div>
+        <div class="demo-card-role">Instructional Specialist</div>
+        <div class="demo-card-name">Ms. Cooper</div>
+        <div class="demo-card-desc">Explore the IEP-focused teacher view with maximum scaffolding, accommodations, and goal tracking.</div>
+        <div class="demo-card-highlights">
+          <span class="demo-highlight">IEP goal tracking</span>
+          <span class="demo-highlight">Max scaffolding</span>
+          <span class="demo-highlight">Accommodations</span>
+          <span class="demo-highlight">Intervention AI</span>
         </div>
       </div>
 
