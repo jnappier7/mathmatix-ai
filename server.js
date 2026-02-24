@@ -137,6 +137,7 @@ const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA
 const consentRoutes = require('./routes/consent');  // Privacy consent management (COPPA/FERPA)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 const demoRoutes = require('./routes/demo');  // Playground demo account login & reset
+const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
 const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
@@ -515,6 +516,7 @@ app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Chart
 // REMOVED: Character Rigging Portal route (beta feedback indicated this feature was not needed)
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
+app.use('/api/support', isAuthenticated, supportRoutes); // AI-triaged support tickets
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
 app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-to-student announcements (IM style)

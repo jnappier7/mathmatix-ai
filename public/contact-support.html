@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Support | Mathmatix AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/contact-support.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+</head>
+<body>
+  <!-- Back navigation -->
+  <div class="support-topbar">
+    <a href="javascript:history.back()" class="support-back-link">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+    <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" class="support-logo" />
+  </div>
+
+  <main class="support-container">
+    <!-- Page header -->
+    <div class="support-header">
+      <h1>How can we help?</h1>
+      <p>Choose an option below or submit a support ticket. Our AI assistant will try to help right away — and if it can't, a real person will follow up.</p>
+    </div>
+
+    <!-- Quick contact options -->
+    <div class="support-options-grid">
+      <a href="mailto:support@mathmatix.ai" class="support-option-card">
+        <div class="option-icon"><i class="fas fa-envelope"></i></div>
+        <h3>Email Us</h3>
+        <p>support@mathmatix.ai</p>
+      </a>
+      <button class="support-option-card" id="btn-new-ticket" type="button">
+        <div class="option-icon option-icon--primary"><i class="fas fa-ticket"></i></div>
+        <h3>Submit a Ticket</h3>
+        <p>AI-assisted support</p>
+      </button>
+      <button class="support-option-card" id="btn-my-tickets" type="button">
+        <div class="option-icon"><i class="fas fa-clock-rotate-left"></i></div>
+        <h3>My Tickets</h3>
+        <p>View past requests</p>
+      </button>
+    </div>
+
+    <!-- ═══════ New Ticket Form (hidden by default) ═══════ -->
+    <div id="section-new-ticket" class="support-section" style="display:none;">
+      <div class="section-header">
+        <h2><i class="fas fa-ticket"></i> New Support Ticket</h2>
+        <button class="btn-close-section" id="close-new-ticket" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="ticket-form" class="ticket-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ticket-category">Category</label>
+            <select id="ticket-category" required>
+              <option value="">Select a category...</option>
+              <option value="how-to">How do I...? (Feature help)</option>
+              <option value="bug">Something isn't working (Bug)</option>
+              <option value="account">Account issue</option>
+              <option value="billing">Billing / Subscription</option>
+              <option value="feature-request">Feature request</option>
+              <option value="data-privacy">Data / Privacy request</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-subject">Subject</label>
+          <input type="text" id="ticket-subject" placeholder="Brief description of your issue" maxlength="200" required />
+          <span class="char-count"><span id="subject-count">0</span>/200</span>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-description">Description</label>
+          <textarea id="ticket-description" rows="5" placeholder="Tell us more about what's happening. The more detail you provide, the better we can help." maxlength="5000" required></textarea>
+          <span class="char-count"><span id="desc-count">0</span>/5000</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submit-ticket-btn">
+            <i class="fas fa-paper-plane"></i> Submit Ticket
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ═══════ AI Response Panel (shown after submit) ═══════ -->
+    <div id="section-ai-response" class="support-section" style="display:none;">
+      <div class="section-header">
+        <h2><i class="fas fa-robot"></i> AI Assistant Response</h2>
+        <button class="btn-close-section" id="close-ai-response" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="ai-response-card">
+        <div class="ai-response-status" id="ai-status-badge"></div>
+        <div class="ai-response-body" id="ai-response-text"></div>
+
+        <div class="ai-response-actions" id="ai-response-actions">
+          <!-- Buttons injected by JS based on triage result -->
+        </div>
+      </div>
+
+      <!-- Follow-up conversation (visible on AI-resolved tickets) -->
+      <div id="followup-section" style="display:none;">
+        <div class="ticket-thread" id="ticket-thread"></div>
+        <div class="followup-input-area">
+          <textarea id="followup-input" rows="2" placeholder="Need more help? Send a follow-up..." maxlength="5000"></textarea>
+          <button type="button" class="btn btn-primary" id="send-followup-btn">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ My Tickets List (hidden by default) ═══════ -->
+    <div id="section-my-tickets" class="support-section" style="display:none;">
+      <div class="section-header">
+        <h2><i class="fas fa-clock-rotate-left"></i> My Tickets</h2>
+        <button class="btn-close-section" id="close-my-tickets" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div id="tickets-list" class="tickets-list">
+        <div class="tickets-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+      </div>
+    </div>
+
+    <!-- ═══════ Ticket Detail View ═══════ -->
+    <div id="section-ticket-detail" class="support-section" style="display:none;">
+      <div class="section-header">
+        <h2 id="detail-title"><i class="fas fa-ticket"></i> Ticket Detail</h2>
+        <button class="btn-close-section" id="close-ticket-detail" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="ticket-detail-content"></div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="support-faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>How do I change my tutor?</summary>
+          <p>Go to Settings (gear icon in the sidebar) and select "Change Tutor", or visit the <a href="/pick-tutor.html">tutor selection page</a> directly.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I reset my password?</summary>
+          <p>Click "Forgot Password?" on the login page, enter your email, and follow the link sent to your inbox. Check your spam folder if you don't see it.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Why isn't my math rendering properly?</summary>
+          <p>Math rendering uses MathJax which loads on demand. Try refreshing the page. If the issue persists, try a different browser (Chrome or Edge recommended).</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I switch to a different language?</summary>
+          <p>Go to Settings and change your Language preference. We support 9 languages: English, Spanish, French, Arabic, Chinese, Vietnamese, Somali, Russian, and German.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What file types can I upload?</summary>
+          <p>You can upload images (PNG, JPG, GIF, WebP, SVG) and PDF files. File size limits vary by plan.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I enable dark mode?</summary>
+          <p>Toggle dark mode from the sidebar settings or the Settings page. Your preference is saved automatically.</p>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <script src="/js/contact-support.js" type="module"></script>
+</body>
+</html>
