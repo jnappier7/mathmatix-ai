@@ -1194,6 +1194,13 @@ body.is-mobile #sidebar-toggle {
         padding: 0 !important;
     }
 
+    /* Demo selector page needs normal scrolling, not the locked chat layout */
+    body.landing-page-body.demo-page-body {
+        height: auto !important;
+        overflow-y: auto !important;
+        display: block !important;
+    }
+
     /* Header hidden — no flex space needed */
     body.landing-page-body .landing-header {
         flex: 0 0 0px !important;
