@@ -6,6 +6,7 @@ const router = express.Router();
 const SupportTicket = require('../models/supportTicket');
 const { isAuthenticated } = require('../middleware/auth');
 const { triageTicket, generateFollowUp } = require('../utils/supportTriage');
+const { sendSupportEscalationAlert } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'support' });
 
 /**
@@ -81,6 +82,13 @@ router.post('/tickets', isAuthenticated, async (req, res) => {
     });
 
     await ticket.save();
+
+    // Send escalation email if ticket was not handled by AI
+    if (!triageResult.handled) {
+      sendSupportEscalationAlert(ticket, req.user).catch(err => {
+        logger.error('Failed to send escalation email', { ticketId: ticket._id, error: err.message });
+      });
+    }
 
     logger.info('Support ticket created', {
       ticketId: ticket._id,
@@ -234,13 +242,20 @@ router.post('/tickets/:id/messages', isAuthenticated, async (req, res) => {
         content: followUp.response
       });
 
-      // If AI says escalate, update status
+      // If AI says escalate, update status and notify admin
       if (followUp.shouldEscalate) {
         ticket.status = 'escalated';
       }
     }
 
     await ticket.save();
+
+    // Send escalation email if the follow-up caused escalation
+    if (ticket.status === 'escalated') {
+      sendSupportEscalationAlert(ticket, req.user).catch(err => {
+        logger.error('Failed to send escalation email on follow-up', { ticketId: ticket._id, error: err.message });
+      });
+    }
 
     logger.info('Support ticket message added', {
       ticketId: ticket._id,
@@ -301,6 +316,11 @@ router.post('/tickets/:id/reopen', isAuthenticated, async (req, res) => {
     });
 
     await ticket.save();
+
+    // Notify admin of the escalation
+    sendSupportEscalationAlert(ticket, req.user).catch(err => {
+      logger.error('Failed to send escalation email on reopen', { ticketId: ticket._id, error: err.message });
+    });
 
     logger.info('AI-resolved ticket reopened/escalated', {
       ticketId: ticket._id,
