@@ -1043,6 +1043,130 @@ router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
   }
 });
 
+// POST /api/teacher/classes — create a new class (enrollment code)
+router.post('/classes', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const { className, gradeLevel, mathCourse } = req.body;
+
+    if (!className || !className.trim()) {
+      return res.status(400).json({ message: 'Class name is required.' });
+    }
+
+    if (className.trim().length > 100) {
+      return res.status(400).json({ message: 'Class name must be 100 characters or less.' });
+    }
+
+    // Generate a unique enrollment code
+    const prefix = className.trim().substring(0, 4).replace(/[^A-Z0-9]/gi, '').toUpperCase() || 'CLS';
+    const code = await EnrollmentCode.generateUniqueCode(prefix);
+
+    const enrollmentCode = new EnrollmentCode({
+      code,
+      teacherId,
+      className: className.trim(),
+      gradeLevel: gradeLevel?.trim() || undefined,
+      mathCourse: mathCourse?.trim() || undefined,
+      isActive: true,
+      createdBy: teacherId
+    });
+
+    await enrollmentCode.save();
+
+    res.json({
+      success: true,
+      class: {
+        _id: enrollmentCode._id,
+        code: enrollmentCode.code,
+        className: enrollmentCode.className,
+        gradeLevel: enrollmentCode.gradeLevel,
+        mathCourse: enrollmentCode.mathCourse,
+        isActive: true,
+        studentIds: [],
+        studentCount: 0,
+        activeCount: 0
+      }
+    });
+  } catch (err) {
+    console.error('Error creating class:', err);
+    res.status(500).json({ message: 'Server error creating class.' });
+  }
+});
+
+// PUT /api/teacher/classes/:codeId/assign-student — add a student to a class
+router.put('/classes/:codeId/assign-student', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const { codeId } = req.params;
+    const { studentId } = req.body;
+
+    if (!studentId) {
+      return res.status(400).json({ message: 'studentId is required.' });
+    }
+
+    // Verify the class belongs to this teacher
+    const enrollmentCode = await EnrollmentCode.findOne({ _id: codeId, teacherId });
+    if (!enrollmentCode) {
+      return res.status(404).json({ message: 'Class not found or not owned by you.' });
+    }
+
+    // Verify the student belongs to this teacher
+    const student = await User.findOne({ _id: studentId, role: 'student', teacherId });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found or not assigned to you.' });
+    }
+
+    // Remove student from any other class owned by this teacher (one class at a time)
+    await EnrollmentCode.updateMany(
+      { teacherId, 'enrolledStudents.studentId': studentId },
+      { $pull: { enrolledStudents: { studentId } } }
+    );
+
+    // Add student to the target class (idempotent — already pulled above)
+    enrollmentCode.enrolledStudents.push({
+      studentId,
+      enrolledAt: new Date(),
+      enrollmentMethod: 'admin-added'
+    });
+    await enrollmentCode.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error assigning student to class:', err);
+    res.status(500).json({ message: 'Server error assigning student.' });
+  }
+});
+
+// PUT /api/teacher/classes/:codeId/unassign-student — remove a student from a class
+router.put('/classes/:codeId/unassign-student', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const { codeId } = req.params;
+    const { studentId } = req.body;
+
+    if (!studentId) {
+      return res.status(400).json({ message: 'studentId is required.' });
+    }
+
+    // Verify the class belongs to this teacher
+    const enrollmentCode = await EnrollmentCode.findOne({ _id: codeId, teacherId });
+    if (!enrollmentCode) {
+      return res.status(404).json({ message: 'Class not found or not owned by you.' });
+    }
+
+    // Remove student from the class
+    enrollmentCode.enrolledStudents = enrollmentCode.enrolledStudents.filter(
+      e => e.studentId?.toString() !== studentId
+    );
+    await enrollmentCode.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error unassigning student from class:', err);
+    res.status(500).json({ message: 'Server error unassigning student.' });
+  }
+});
+
 // ============================================
 // COURSE PROGRESS - Per-course skill mastery across all students
 // GET /api/teacher/course-progress
