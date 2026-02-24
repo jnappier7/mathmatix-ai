@@ -217,6 +217,137 @@
   display: none;
 }
 
+/* ── Lesson breadcrumb ───────────────────── */
+.lt-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748b;
+  padding: 0 2px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lt-breadcrumb-icon {
+  color: #667eea;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.lt-breadcrumb-sep {
+  color: #cbd5e1;
+  flex-shrink: 0;
+}
+
+.lt-breadcrumb-lesson {
+  font-weight: 600;
+  color: #475569;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Dark mode ───────────────────────────── */
+[data-theme="dark"] .lt-container {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.06), rgba(118, 75, 162, 0.04));
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .lt-dot-label {
+  color: #64748b;
+}
+
+[data-theme="dark"] .lt-dot-connector {
+  background: #334155;
+}
+
+[data-theme="dark"] .lt-dot-completed .lt-dot {
+  background: #8b9cf7;
+}
+[data-theme="dark"] .lt-dot-completed .lt-dot-label {
+  color: #8b9cf7;
+}
+[data-theme="dark"] .lt-dot-completed + .lt-dot-connector {
+  background: #8b9cf7;
+}
+
+[data-theme="dark"] .lt-dot-current .lt-dot {
+  background: #1e293b;
+  border-color: #8b9cf7;
+  box-shadow: 0 0 0 3px rgba(139, 156, 247, 0.2);
+}
+[data-theme="dark"] .lt-dot-current .lt-dot-label {
+  color: #8b9cf7;
+}
+[data-theme="dark"] .lt-dot-pulse {
+  background: #8b9cf7;
+}
+
+[data-theme="dark"] .lt-dot-future .lt-dot {
+  background: #334155;
+}
+[data-theme="dark"] .lt-dot-future .lt-dot-label {
+  color: #475569;
+}
+
+[data-theme="dark"] .lt-bar-track {
+  background: #334155;
+}
+
+[data-theme="dark"] .lt-step-label {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .lt-label-sep {
+  color: #475569;
+}
+
+[data-theme="dark"] .lt-phase-label {
+  color: #64748b;
+}
+
+[data-theme="dark"] .lt-details-toggle {
+  color: #64748b;
+}
+[data-theme="dark"] .lt-details-toggle:hover {
+  background: #334155;
+  color: #8b9cf7;
+}
+
+[data-theme="dark"] .lt-detail-key {
+  color: #64748b;
+}
+
+[data-theme="dark"] .lt-detail-val {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .lt-streak {
+  color: #8b9cf7;
+}
+
+[data-theme="dark"] .lt-breadcrumb {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .lt-breadcrumb-icon {
+  color: #8b9cf7;
+}
+
+[data-theme="dark"] .lt-breadcrumb-sep {
+  color: #475569;
+}
+
+[data-theme="dark"] .lt-breadcrumb-lesson {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .lt-dev-overlay {
+  background: #1e1b2e;
+  border-color: #6d28d9;
+}
+
 /* ── Responsive ──────────────────────────── */
 @media (max-width: 600px) {
   .lt-phase-dots {
@@ -240,5 +371,8 @@
   .lt-dot-completed .lt-dot svg {
     width: 8px;
     height: 8px;
+  }
+  .lt-breadcrumb {
+    font-size: 10px;
   }
 }
