@@ -79,9 +79,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
+    // --- Loading Progress Indicator ---
+    const loadingStatus = document.getElementById('loading-status');
+    const loadingSubstatus = document.getElementById('loading-substatus');
+    let loadingStepIndex = 0;
+    const loadingSteps = [
+        { status: 'Collecting student profiles...', sub: 'Querying student data' },
+        { status: 'Loading class rosters...', sub: 'Organizing enrollment codes' },
+        { status: 'Calculating activity data...', sub: 'Reviewing weekly stats' },
+        { status: 'Reviewing skill sets...', sub: 'Analyzing mastery progress' },
+        { status: 'Identifying outliers...', sub: 'Flagging students who need help' },
+        { status: 'Building your dashboard...', sub: 'Almost ready' }
+    ];
+
+    function updateLoadingStep() {
+        if (!loadingStatus || !loadingSubstatus) return;
+        if (loadingStepIndex < loadingSteps.length) {
+            const step = loadingSteps[loadingStepIndex];
+            loadingStatus.textContent = step.status;
+            loadingSubstatus.textContent = step.sub;
+            loadingStepIndex++;
+        }
+    }
+
+    // Cycle through loading messages every ~800ms while data loads
+    const loadingInterval = setInterval(updateLoadingStep, 800);
+    updateLoadingStep(); // Show first step immediately
+
     // --- Initial Load ---
-    // Fetch students and classes in parallel for faster initial load
-    await Promise.all([fetchAssignedStudents(), fetchClassesForGrouping()]);
+    // Use lightweight mode (skips skillMastery) for faster initial roster render
+    await Promise.all([fetchAssignedStudents(true), fetchClassesForGrouping()]);
+    clearInterval(loadingInterval);
+
+    // Backfill full student data (with skillMastery) in the background
+    // This enables insights, skill badges, and getCurrentLearningSkill
+    fetchAssignedStudents(false).catch(() => {});
+
     // Re-render with class grouping now that both datasets are available
     if (classesData.length > 0 && currentStudentsData.length > 0) {
         renderStudentList(currentStudentsData);
@@ -293,11 +326,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // --- Main Data Fetching and Rendering ---
-    async function fetchAssignedStudents() {
+    async function fetchAssignedStudents(lightweight = false) {
         if (!studentListDiv) return;
-        studentListDiv.innerHTML = 'Loading students...';
         try {
-            const response = await fetch("/api/teacher/students");
+            const url = lightweight ? '/api/teacher/students?fields=roster' : '/api/teacher/students';
+            const response = await fetch(url);
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
                 throw new Error(`HTTP error! status: ${response.status}`);

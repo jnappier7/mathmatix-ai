@@ -537,6 +537,38 @@
       flex: 1;
     }
 
+    /* Dashboard Loading Indicator */
+    .dashboard-loading-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+    }
+    .loading-spinner-ring {
+      width: 44px;
+      height: 44px;
+      border: 3px solid #e9ecef;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-status {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      transition: opacity 0.3s;
+    }
+    .loading-substatus {
+      font-size: 13px;
+      color: #95a5a6;
+      transition: opacity 0.3s;
+    }
+
     .user-table {
       width: 100%;
       border-collapse: collapse;
@@ -4093,7 +4125,11 @@
               </div>
             </div>
             <div id="student-list" class="table-scroll-container">
-              Loading students...
+              <div class="dashboard-loading-indicator" id="dashboard-loading">
+                <div class="loading-spinner-ring"></div>
+                <div class="loading-status" id="loading-status">Connecting to server...</div>
+                <div class="loading-substatus" id="loading-substatus">Preparing your dashboard</div>
+              </div>
             </div>
           </div>
         </div>

@@ -18,9 +18,18 @@ const { callLLMStream } = require('../utils/openaiClient');
 router.get('/students', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
+
+    // Lightweight mode: skip skillMastery (can be huge) for faster initial roster load
+    // Full data is fetched on-demand when the teacher needs insights or skill details
+    const isLightweight = req.query.fields === 'roster';
+
+    const projection = isLightweight
+      ? 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
+      : 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery';
+
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
-      'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery'
+      projection
     ).lean();
     res.json(students);
   } catch (err) {
