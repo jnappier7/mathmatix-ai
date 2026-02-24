@@ -1194,25 +1194,6 @@ body.is-mobile #sidebar-toggle {
         padding: 0 !important;
     }
 
-    /* Demo selector page needs normal scrolling, not the locked chat layout */
-    body.landing-page-body.demo-page-body {
-        height: auto !important;
-        overflow-y: auto !important;
-        display: block !important;
-    }
-
-    /* Undo the flex/overflow lock on <main> so demo cards can scroll */
-    body.landing-page-body.demo-page-body main {
-        overflow: visible !important;
-        display: block !important;
-        min-height: auto !important;
-    }
-
-    /* Show footer on demo page (hidden for chat pages) */
-    body.landing-page-body.demo-page-body footer {
-        display: block !important;
-    }
-
     /* Header hidden — no flex space needed */
     body.landing-page-body .landing-header {
         flex: 0 0 0px !important;
