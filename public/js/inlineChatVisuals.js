@@ -293,8 +293,16 @@ class InlineChatVisuals {
         // Check if it looks like a valid math expression
         // Valid expressions contain: x, numbers, operators (+,-,*,/,^), parentheses, or known functions
         const validMathPattern = /^[\d\sx\+\-\*\/\^\(\)\.\,]+$|^(sin|cos|tan|log|ln|exp|sqrt|abs|pow)\s*\(/i;
-        const looksLikeMath = validMathPattern.test(fn.trim()) ||
-                             /[x\d]/.test(fn) && /[\+\-\*\/\^]/.test(fn);
+
+        // Also check that any letter sequences are known math functions, not natural language
+        const knownMathTokens = /^(sin|cos|tan|log|ln|exp|sqrt|abs|pow|asin|acos|atan|sinh|cosh|tanh|pi|x)$/i;
+        const letterSequences = fn.trim().match(/[a-zA-Z]{2,}/g) || [];
+        const allLettersAreMath = letterSequences.every(seq => knownMathTokens.test(seq));
+
+        const looksLikeMath = allLettersAreMath && (
+            validMathPattern.test(fn.trim()) ||
+            (/[x\d]/.test(fn) && /[\+\-\*\/\^]/.test(fn))
+        );
 
         if (looksLikeMath) {
             return fn;
@@ -310,8 +318,18 @@ class InlineChatVisuals {
      */
     renderGraph(id) {
         const container = document.getElementById(id);
-        if (!container || !window.functionPlot) {
-            console.warn(`[InlineChatVisuals] Cannot render graph ${id}: container or function-plot not found`);
+        if (!container) {
+            console.warn(`[InlineChatVisuals] Cannot render graph ${id}: container not found`);
+            return;
+        }
+
+        // Ensure function-plot is loaded before rendering
+        if (!window.functionPlot) {
+            if (window.ensureFunctionPlot) {
+                window.ensureFunctionPlot().then(() => this.renderGraph(id));
+            } else {
+                console.warn(`[InlineChatVisuals] function-plot not available and no loader found`);
+            }
             return;
         }
 

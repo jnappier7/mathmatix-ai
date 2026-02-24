@@ -1706,7 +1706,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            if (data.drawingSequence) {
+            if (data.drawingSequence && typeof renderDrawing === 'function') {
                 renderDrawing(data.drawingSequence);
             }
 

@@ -563,12 +563,18 @@ function isGraphingRequest(message) {
  * Extract function from message for graphing
  */
 function extractFunctionFromMessage(studentMsg, aiResponse) {
-    // Common function patterns
+    // Common function patterns - ordered from most specific to least
     const patterns = [
-        /(?:graph|plot|show)\s+(?:of\s+)?(?:y\s*=\s*)?([\w\d\(\)\^\*\/\+\-\s]+)/i,
-        /y\s*=\s*([\w\d\(\)\^\*\/\+\-\s]+)/i,
-        /f\(x\)\s*=\s*([\w\d\(\)\^\*\/\+\-\s]+)/i,
+        // Explicit y= or f(x)= assignment (most reliable)
+        /y\s*=\s*([x\d\(\)\^\*\/\+\-\.\s]+(?:sin|cos|tan|log|ln|sqrt|abs|exp)?[x\d\(\)\^\*\/\+\-\.\s]*)/i,
+        /f\(x\)\s*=\s*([x\d\(\)\^\*\/\+\-\.\s]+(?:sin|cos|tan|log|ln|sqrt|abs|exp)?[x\d\(\)\^\*\/\+\-\.\s]*)/i,
+        // "graph of <function>" where function must start with a math-like token
+        /(?:graph|plot)\s+(?:of\s+)?(?:y\s*=\s*)?([x\d\(][\dx\(\)\^\*\/\+\-\.\s]*)/i,
+        // Named functions: sin(x)/x, sinc, etc.
         /(sin\(x\)\/x|sinc)/i,
+        // Common named functions
+        /(?:graph|plot|show)\s+(?:of\s+)?(?:the\s+)?(?:a\s+)?((?:sin|cos|tan|sqrt|log|ln|exp|abs)\([^)]*\)(?:\/[x\d\(\)]+)?)/i,
+        // Standalone well-known expressions
         /(x\^2|x\^3|sin\(x\)|cos\(x\)|tan\(x\)|sqrt\(x\)|log\(x\)|exp\(x\))/i
     ];
 
@@ -576,10 +582,10 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
         let match = studentMsg.match(pattern);
         if (match) {
             let func = match[1].trim();
-            // Clean up the function
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            return func;
+            // Validate it looks like math, not natural language
+            if (looksLikeMathExpression(func)) return func;
         }
     }
 
@@ -589,11 +595,28 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
         if (match) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
-            return func;
+            func = func.replace(/sinc/i, 'sin(x)/x');
+            if (looksLikeMathExpression(func)) return func;
         }
     }
 
     return null;
+}
+
+/**
+ * Validate that a string looks like a math expression, not natural language
+ */
+function looksLikeMathExpression(str) {
+    if (!str || str.length === 0) return false;
+    // Must contain x or be a known function
+    if (!/x/i.test(str) && !/^[\d\+\-\*\/\^\(\)\.]+$/.test(str)) return false;
+    // Reject if it contains sequences of 3+ consecutive letters that aren't known math functions
+    const knownFunctions = /^(sin|cos|tan|log|ln|exp|sqrt|abs|pow|asin|acos|atan|sinh|cosh|tanh|pi|x)+$/i;
+    const letterSequences = str.match(/[a-zA-Z]{2,}/g) || [];
+    for (const seq of letterSequences) {
+        if (!knownFunctions.test(seq)) return false;
+    }
+    return true;
 }
 
 /**
