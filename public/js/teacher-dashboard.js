@@ -79,9 +79,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
+    // --- Loading Progress Indicator ---
+    const loadingStatus = document.getElementById('loading-status');
+    const loadingSubstatus = document.getElementById('loading-substatus');
+    let loadingStepIndex = 0;
+    const loadingSteps = [
+        { status: 'Collecting student profiles...', sub: 'Querying student data' },
+        { status: 'Loading class rosters...', sub: 'Organizing enrollment codes' },
+        { status: 'Calculating activity data...', sub: 'Reviewing weekly stats' },
+        { status: 'Reviewing skill sets...', sub: 'Analyzing mastery progress' },
+        { status: 'Identifying outliers...', sub: 'Flagging students who need help' },
+        { status: 'Building your dashboard...', sub: 'Almost ready' }
+    ];
+
+    function updateLoadingStep() {
+        if (!loadingStatus || !loadingSubstatus) return;
+        if (loadingStepIndex < loadingSteps.length) {
+            const step = loadingSteps[loadingStepIndex];
+            loadingStatus.textContent = step.status;
+            loadingSubstatus.textContent = step.sub;
+            loadingStepIndex++;
+        }
+    }
+
+    // Cycle through loading messages every ~800ms while data loads
+    const loadingInterval = setInterval(updateLoadingStep, 800);
+    updateLoadingStep(); // Show first step immediately
+
     // --- Initial Load ---
-    // Fetch students and classes in parallel for faster initial load
-    await Promise.all([fetchAssignedStudents(), fetchClassesForGrouping()]);
+    // Use lightweight mode (skips skillMastery) for faster initial roster render
+    await Promise.all([fetchAssignedStudents(true), fetchClassesForGrouping()]);
+    clearInterval(loadingInterval);
+
+    // Backfill full student data (with skillMastery) in the background
+    // This enables insights, skill badges, and getCurrentLearningSkill
+    fetchAssignedStudents(false).catch(() => {});
+
     // Re-render with class grouping now that both datasets are available
     if (classesData.length > 0 && currentStudentsData.length > 0) {
         renderStudentList(currentStudentsData);
@@ -98,6 +131,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize view toggle (grouped vs flat)
     initializeViewToggle();
+
+    // Initialize create class modal
+    initializeCreateClass();
 
     // Initialize profile modal tabs
     initializeProfileTabs();
@@ -290,11 +326,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // --- Main Data Fetching and Rendering ---
-    async function fetchAssignedStudents() {
+    async function fetchAssignedStudents(lightweight = false) {
         if (!studentListDiv) return;
-        studentListDiv.innerHTML = 'Loading students...';
         try {
-            const response = await fetch("/api/teacher/students");
+            const url = lightweight ? '/api/teacher/students?fields=roster' : '/api/teacher/students';
+            const response = await fetch(url);
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -413,6 +449,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const bodyEl = document.createElement('div');
             bodyEl.className = 'class-group-body';
+            bodyEl.dataset.classId = group.cls._id;
+
+            // Make droppable
+            bodyEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                bodyEl.classList.add('drag-over');
+            });
+            bodyEl.addEventListener('dragleave', (e) => {
+                if (!bodyEl.contains(e.relatedTarget)) {
+                    bodyEl.classList.remove('drag-over');
+                }
+            });
+            bodyEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                bodyEl.classList.remove('drag-over');
+                const studentId = e.dataTransfer.getData('text/plain');
+                if (studentId) handleAssignStudent(group.cls._id, studentId);
+            });
 
             group.students.forEach(student => {
                 bodyEl.appendChild(createStudentCard(student));
@@ -444,33 +499,59 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         // Render ungrouped students
+        const ungroupedEl = document.createElement('div');
+        ungroupedEl.className = 'class-group';
+        const ungroupedHeaderEl = document.createElement('div');
+        ungroupedHeaderEl.className = 'class-group-header unassigned-header';
+        ungroupedHeaderEl.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
+        ungroupedHeaderEl.innerHTML = `
+            <div class="class-group-name">
+                <i class="fas fa-chevron-down class-group-toggle"></i>
+                <span>Unassigned Students</span>
+                <span style="opacity:0.8;font-size:0.85em;">(${ungrouped.length})</span>
+            </div>
+            <div class="class-group-meta" style="font-size: 0.8em; opacity: 0.85;">
+                <i class="fas fa-info-circle"></i> Drag students to a class above
+            </div>
+        `;
+        const ungroupedBodyEl = document.createElement('div');
+        ungroupedBodyEl.className = 'class-group-body unassigned-drop-zone';
+        ungroupedBodyEl.dataset.classId = '__unassigned__';
+
+        // Make unassigned section droppable too (for removing from classes)
+        ungroupedBodyEl.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            ungroupedBodyEl.classList.add('drag-over');
+        });
+        ungroupedBodyEl.addEventListener('dragleave', (e) => {
+            if (!ungroupedBodyEl.contains(e.relatedTarget)) {
+                ungroupedBodyEl.classList.remove('drag-over');
+            }
+        });
+        ungroupedBodyEl.addEventListener('drop', (e) => {
+            e.preventDefault();
+            ungroupedBodyEl.classList.remove('drag-over');
+            const studentId = e.dataTransfer.getData('text/plain');
+            if (studentId) handleUnassignStudent(studentId);
+        });
+
         if (ungrouped.length > 0) {
-            const groupEl = document.createElement('div');
-            groupEl.className = 'class-group';
-            const headerEl = document.createElement('div');
-            headerEl.className = 'class-group-header';
-            headerEl.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
-            headerEl.innerHTML = `
-                <div class="class-group-name">
-                    <i class="fas fa-chevron-down class-group-toggle"></i>
-                    <span>Unassigned Students</span>
-                    <span style="opacity:0.8;font-size:0.85em;">(${ungrouped.length})</span>
-                </div>
-            `;
-            const bodyEl = document.createElement('div');
-            bodyEl.className = 'class-group-body';
             ungrouped.forEach(student => {
-                bodyEl.appendChild(createStudentCard(student));
+                ungroupedBodyEl.appendChild(createStudentCard(student));
             });
-            headerEl.addEventListener('click', () => {
-                bodyEl.classList.toggle('collapsed');
-                const toggle = headerEl.querySelector('.class-group-toggle');
-                if (toggle) toggle.classList.toggle('collapsed');
-            });
-            groupEl.appendChild(headerEl);
-            groupEl.appendChild(bodyEl);
-            studentListDiv.appendChild(groupEl);
+        } else {
+            ungroupedBodyEl.innerHTML = '<p style="padding: 16px; color: #aaa; text-align: center; font-size: 13px; margin: 0;">All students are assigned to a class.</p>';
         }
+
+        ungroupedHeaderEl.addEventListener('click', () => {
+            ungroupedBodyEl.classList.toggle('collapsed');
+            const toggle = ungroupedHeaderEl.querySelector('.class-group-toggle');
+            if (toggle) toggle.classList.toggle('collapsed');
+        });
+        ungroupedEl.appendChild(ungroupedHeaderEl);
+        ungroupedEl.appendChild(ungroupedBodyEl);
+        studentListDiv.appendChild(ungroupedEl);
     }
 
     function createStudentCard(student) {
@@ -480,6 +561,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         studentCard.dataset.studentId = student._id;
         studentCard.setAttribute('role', 'article');
         studentCard.setAttribute('aria-label', `Student card for ${student.firstName || student.username}`);
+
+        // Make draggable for class management
+        studentCard.draggable = true;
+        studentCard.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', student._id);
+            e.dataTransfer.effectAllowed = 'move';
+            studentCard.classList.add('dragging');
+            // Show all drop zones
+            document.querySelectorAll('.class-group-body, .unassigned-drop-zone').forEach(el => {
+                el.classList.add('drop-target-hint');
+            });
+        });
+        studentCard.addEventListener('dragend', () => {
+            studentCard.classList.remove('dragging');
+            document.querySelectorAll('.drop-target-hint, .drag-over').forEach(el => {
+                el.classList.remove('drop-target-hint', 'drag-over');
+            });
+        });
 
         const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
         const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
@@ -582,6 +681,141 @@ document.addEventListener("DOMContentLoaded", async () => {
         `);
         printWindow.document.close();
         printWindow.print();
+    }
+
+    // ============================================
+    // DRAG-AND-DROP CLASS ASSIGNMENT
+    // ============================================
+
+    async function handleAssignStudent(classId, studentId) {
+        try {
+            const response = await csrfFetch(`/api/teacher/classes/${classId}/assign-student`, {
+                method: 'PUT',
+                body: JSON.stringify({ studentId })
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to assign student');
+            }
+            showToast('Student moved to class', 'success');
+            // Refresh classes data then re-render
+            await fetchClassesForGrouping();
+            applyFilters();
+        } catch (err) {
+            console.error('Error assigning student:', err);
+            showToast(err.message || 'Failed to move student', 'error');
+        }
+    }
+
+    async function handleUnassignStudent(studentId) {
+        // Find which class this student is in
+        let sourceClassId = null;
+        for (const cls of classesData) {
+            if (cls.studentIds && cls.studentIds.includes(studentId)) {
+                sourceClassId = cls._id;
+                break;
+            }
+        }
+        if (!sourceClassId) {
+            // Already unassigned
+            return;
+        }
+
+        try {
+            const response = await csrfFetch(`/api/teacher/classes/${sourceClassId}/unassign-student`, {
+                method: 'PUT',
+                body: JSON.stringify({ studentId })
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to unassign student');
+            }
+            showToast('Student removed from class', 'success');
+            await fetchClassesForGrouping();
+            applyFilters();
+        } catch (err) {
+            console.error('Error unassigning student:', err);
+            showToast(err.message || 'Failed to remove student from class', 'error');
+        }
+    }
+
+    // ============================================
+    // CREATE CLASS
+    // ============================================
+
+    function initializeCreateClass() {
+        const createBtn = document.getElementById('create-class-btn');
+        const modal = document.getElementById('create-class-modal');
+        const closeBtn = document.getElementById('close-create-class-modal');
+        const submitBtn = document.getElementById('submit-create-class');
+        const nameInput = document.getElementById('new-class-name');
+
+        if (!createBtn || !modal) return;
+
+        createBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            nameInput.value = '';
+            document.getElementById('new-class-grade').value = '';
+            document.getElementById('new-class-course').value = '';
+            nameInput.focus();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+
+        nameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitBtn.click();
+        });
+
+        submitBtn.addEventListener('click', async () => {
+            const className = nameInput.value.trim();
+            if (!className) {
+                showToast('Please enter a class name', 'error');
+                nameInput.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await csrfFetch('/api/teacher/classes', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        className,
+                        gradeLevel: document.getElementById('new-class-grade').value || undefined,
+                        mathCourse: document.getElementById('new-class-course').value.trim() || undefined
+                    })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Failed to create class');
+                }
+
+                const data = await response.json();
+                showToast(`Class "${data.class.className}" created! Code: ${data.class.code}`, 'success');
+                modal.style.display = 'none';
+
+                // Refresh classes and re-render
+                await fetchClassesForGrouping();
+                applyFilters();
+
+                // Also refresh the Classes tab if it was loaded
+                if (classesLoaded) fetchClasses();
+            } catch (err) {
+                console.error('Error creating class:', err);
+                showToast(err.message || 'Failed to create class', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Create Class';
+            }
+        });
     }
 
     // Determine student status based on activity and performance
