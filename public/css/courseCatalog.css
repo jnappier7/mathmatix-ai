@@ -449,28 +449,6 @@
     border-color: #334155 !important;
 }
 
-/* ----- Mobile Responsive ----- */
-
-@media (max-width: 768px) {
-    #course-progress-bar {
-        padding: 6px 12px !important;
-    }
-
-    #course-progress-bar span {
-        font-size: 12px !important;
-    }
-
-    #course-progress-dropdown {
-        padding: 12px !important;
-    }
-
-    #course-catalog-modal .modal-content {
-        max-width: 95vw !important;
-        max-height: 85vh !important;
-        margin: 8px;
-    }
-}
-
 /* ----- Lesson Transition Card ----- */
 
 .lesson-transition-card {
@@ -556,4 +534,567 @@
 .lesson-transition-next strong {
     color: #333;
     font-weight: 600;
+}
+
+/* ===================== Catalog Search & Filter ===================== */
+
+.catalog-search-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.catalog-search-input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 14px 10px 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    background: #fff;
+    color: #333;
+}
+
+.catalog-search-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.catalog-search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+}
+
+.catalog-search-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.catalog-filter-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.catalog-filter-pill {
+    padding: 6px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #fff;
+    color: #64748b;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.catalog-filter-pill:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.catalog-filter-pill.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* ===================== Module List (Progress Dropdown) ===================== */
+
+.module-item {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.module-item:last-of-type {
+    border-bottom: none;
+}
+
+.module-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.module-icon {
+    font-size: 16px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.module-icon.completed { color: #22c55e; }
+.module-icon.in_progress { color: #667eea; }
+.module-icon.available { color: #667eea; }
+.module-icon.locked { color: #ccc; }
+
+.module-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.module-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.module-title.current {
+    font-weight: 700;
+}
+
+.module-title.locked {
+    color: #aaa;
+}
+
+.module-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+}
+
+.module-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.module-badge.ap {
+    color: #764ba2;
+    background: #f3f0ff;
+}
+
+.module-badge.lesson-count {
+    color: #64748b;
+    background: #f1f5f9;
+}
+
+.module-scaffold-bar {
+    margin-top: 3px;
+    width: 80px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+.module-scaffold-fill {
+    height: 100%;
+    background: #667eea;
+    border-radius: 2px;
+    transition: width 0.3s;
+}
+
+.module-checkpoint {
+    color: #f59e0b;
+    font-size: 12px;
+}
+
+/* Lesson rows inside module */
+.module-lesson {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0 3px 32px;
+}
+
+.module-lesson-icon {
+    font-size: 9px;
+    min-width: 14px;
+    text-align: center;
+}
+
+.module-lesson-icon.completed { color: #22c55e; }
+.module-lesson-icon.in_progress { color: #667eea; }
+.module-lesson-icon.available { color: #667eea; }
+.module-lesson-icon.locked { color: #ddd; }
+
+.module-lesson-title {
+    font-size: 12px;
+    font-weight: 400;
+    color: #555;
+}
+
+.module-lesson-title.current {
+    font-weight: 600;
+}
+
+.module-lesson-title.locked {
+    color: #bbb;
+}
+
+/* Drop course row at bottom */
+.module-list-footer {
+    padding: 12px 4px 4px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.module-drop-btn {
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #999;
+    font-size: 12px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.module-drop-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ===================== Styled Confirmation Modal ===================== */
+
+.course-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+    backdrop-filter: blur(2px);
+}
+
+.course-confirm-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: catalogSlideIn 0.25s ease;
+    text-align: center;
+}
+
+.course-confirm-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.course-confirm-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.course-confirm-message {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.course-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.course-confirm-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.course-confirm-btn.primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.course-confirm-btn.primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.course-confirm-btn.danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+.course-confirm-btn.danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.course-confirm-btn.secondary {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.course-confirm-btn.secondary:hover {
+    background: #e2e8f0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===================== Catalog Empty State ===================== */
+
+.catalog-empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: #94a3b8;
+}
+
+.catalog-empty-state i {
+    font-size: 32px;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+
+.catalog-empty-state p {
+    font-size: 14px;
+    margin: 4px 0 0;
+}
+
+/* ===================== Dark Mode: Transition Cards ===================== */
+
+[data-theme="dark"] .lesson-transition-inner {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .lesson-transition-done {
+    background: linear-gradient(135deg, rgba(22, 163, 106, 0.12), rgba(16, 185, 129, 0.08));
+    border-bottom-color: #334155;
+    color: #4ade80;
+}
+
+[data-theme="dark"] .lesson-transition-progress {
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .lesson-transition-track {
+    background: #334155;
+}
+
+[data-theme="dark"] .lesson-transition-count {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .lesson-transition-next {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .lesson-transition-next strong {
+    color: #e2e8f0;
+}
+
+/* ===================== Dark Mode: Module List ===================== */
+
+[data-theme="dark"] .module-item {
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .module-title {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .module-title.locked {
+    color: #64748b;
+}
+
+[data-theme="dark"] .module-icon.locked {
+    color: #475569;
+}
+
+[data-theme="dark"] .module-icon.completed { color: #4ade80; }
+[data-theme="dark"] .module-icon.in_progress { color: #8b9cf7; }
+[data-theme="dark"] .module-icon.available { color: #8b9cf7; }
+
+[data-theme="dark"] .module-scaffold-bar {
+    background: #334155;
+}
+
+[data-theme="dark"] .module-scaffold-fill {
+    background: #8b9cf7;
+}
+
+[data-theme="dark"] .module-lesson-title {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .module-lesson-title.locked {
+    color: #475569;
+}
+
+[data-theme="dark"] .module-lesson-icon.completed { color: #4ade80; }
+[data-theme="dark"] .module-lesson-icon.in_progress { color: #8b9cf7; }
+[data-theme="dark"] .module-lesson-icon.available { color: #8b9cf7; }
+[data-theme="dark"] .module-lesson-icon.locked { color: #475569; }
+
+[data-theme="dark"] .module-list-footer {
+    border-top-color: #334155;
+}
+
+[data-theme="dark"] .module-drop-btn {
+    border-color: #334155;
+    color: #64748b;
+}
+
+[data-theme="dark"] .module-drop-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+[data-theme="dark"] .module-badge.ap {
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.15);
+}
+
+[data-theme="dark"] .module-badge.lesson-count {
+    color: #94a3b8;
+    background: #334155;
+}
+
+/* ===================== Dark Mode: Catalog Search/Filter ===================== */
+
+[data-theme="dark"] .catalog-search-input {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .catalog-search-input:focus {
+    border-color: #8b9cf7;
+    box-shadow: 0 0 0 3px rgba(139, 156, 247, 0.15);
+}
+
+[data-theme="dark"] .catalog-search-wrapper i {
+    color: #64748b;
+}
+
+[data-theme="dark"] .catalog-filter-pill {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .catalog-filter-pill:hover {
+    border-color: #8b9cf7;
+    color: #8b9cf7;
+}
+
+[data-theme="dark"] .catalog-filter-pill.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* ===================== Dark Mode: Confirmation Modal ===================== */
+
+[data-theme="dark"] .course-confirm-card {
+    background: #1e293b;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .course-confirm-title {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .course-confirm-message {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .course-confirm-btn.secondary {
+    background: #334155;
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .course-confirm-btn.secondary:hover {
+    background: #475569;
+}
+
+/* ===================== Enhanced Mobile Responsive ===================== */
+
+@media (max-width: 768px) {
+    #course-progress-bar {
+        padding: 6px 12px !important;
+    }
+
+    #course-progress-bar span {
+        font-size: 12px !important;
+    }
+
+    #course-progress-dropdown {
+        padding: 12px !important;
+    }
+
+    #course-catalog-modal .modal-content {
+        max-width: 100vw !important;
+        max-height: 90vh !important;
+        margin: 0;
+        border-radius: 16px 16px 0 0 !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .catalog-search-bar {
+        flex-direction: column;
+    }
+
+    .catalog-filter-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .catalog-filter-pill {
+        flex-shrink: 0;
+    }
+
+    .course-confirm-card {
+        max-width: 95%;
+    }
+
+    /* Stack course card layout on mobile */
+    #catalog-grid > div:not([style*="grid-column"]) {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    /* Full-width enroll button on mobile */
+    .catalog-enroll-btn {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .course-exit-lesson-btn span {
+        display: none;
+    }
+
+    .course-exit-lesson-btn {
+        padding: 4px 8px;
+    }
 }

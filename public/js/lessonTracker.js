@@ -81,6 +81,9 @@ class LessonTracker {
     // --------------------------------------------------
 
     _render(pu) {
+        // Lesson breadcrumb (shows module > lesson context)
+        this._renderBreadcrumb(pu);
+
         // Phase dots
         this._renderPhaseDots(pu.phaseGroups);
 
@@ -111,6 +114,62 @@ class LessonTracker {
         if (wrapper && wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
         }
+    }
+
+    _renderBreadcrumb(pu) {
+        const container = document.getElementById('lt-breadcrumb');
+        if (!container) return;
+
+        // Build breadcrumb from course progress data
+        // The lessonId in progressUpdate maps to the current lesson
+        const session = window.courseManager?.courseSessions?.find(
+            s => s._id === pu.sessionId
+        );
+
+        if (!session) {
+            container.style.display = 'none';
+            return;
+        }
+
+        const currentMod = (session.modules || []).find(
+            m => m.moduleId === session.currentModuleId
+        );
+
+        if (!currentMod) {
+            container.style.display = 'none';
+            return;
+        }
+
+        const parts = [];
+        if (currentMod.title) parts.push(currentMod.title);
+
+        const currentLesson = session.currentLessonId && currentMod.lessons
+            ? currentMod.lessons.find(l => l.lessonId === session.currentLessonId)
+            : null;
+        if (currentLesson?.title) parts.push(currentLesson.title);
+
+        if (parts.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = 'flex';
+        container.innerHTML = `
+            <i class="fas fa-book-open lt-breadcrumb-icon"></i>
+            ${parts.map((p, i) =>
+                (i > 0 ? '<span class="lt-breadcrumb-sep">\u203A</span>' : '') +
+                (i === parts.length - 1
+                    ? `<span class="lt-breadcrumb-lesson">${this._escapeHtml(p)}</span>`
+                    : `<span>${this._escapeHtml(p)}</span>`)
+            ).join('')}
+        `;
+    }
+
+    _escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     _renderPhaseDots(phaseGroups) {

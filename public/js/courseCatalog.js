@@ -11,6 +11,9 @@ class CourseManager {
         this.activeCourseSessionId = null;
         this.dropdownOpen = false;
         this._lastKnownModuleStatuses = {}; // moduleId → status, for detecting completions
+        this._catalogCache = null; // Cache catalog data for client-side filtering
+        this._catalogRecommended = null;
+        this._activeFilter = 'All';
         this.init();
     }
 
@@ -67,6 +70,28 @@ class CourseManager {
             if (this.dropdownOpen &&
                 !e.target.closest('#course-progress-wrapper')) {
                 this.closeProgressDropdown();
+            }
+        });
+
+        // Keyboard accessibility: Escape closes modals and dropdowns
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close confirmation modal first (highest priority)
+                const confirmOverlay = document.querySelector('.course-confirm-overlay');
+                if (confirmOverlay) {
+                    confirmOverlay.remove();
+                    return;
+                }
+                // Close catalog modal
+                const catalogModal = document.getElementById('course-catalog-modal');
+                if (catalogModal?.classList.contains('is-visible')) {
+                    this.closeCatalog();
+                    return;
+                }
+                // Close progress dropdown
+                if (this.dropdownOpen) {
+                    this.closeProgressDropdown();
+                }
             }
         });
 
@@ -483,64 +508,59 @@ class CourseManager {
         const modules = data.modules || [];
         modules.forEach(m => {
             const el = document.createElement('div');
-            el.style.cssText = 'padding:6px 0; border-bottom:1px solid #f0f0f0;';
+            el.className = 'module-item';
 
             // Status icon
-            let icon = '';
-            let iconColor = '#ccc';
-            if (m.status === 'completed') {
-                icon = 'fa-check-circle';
-                iconColor = '#22c55e';
-            } else if (m.status === 'in_progress') {
-                icon = 'fa-play-circle';
-                iconColor = '#667eea';
-            } else if (m.status === 'available') {
-                icon = 'fa-circle';
-                iconColor = '#667eea';
-            } else {
-                icon = 'fa-lock';
-                iconColor = '#ccc';
-            }
-
+            const iconMap = {
+                completed:   'fa-check-circle',
+                in_progress: 'fa-play-circle',
+                available:   'fa-circle',
+                locked:      'fa-lock'
+            };
+            const icon = iconMap[m.status] || 'fa-lock';
             const isCurrent = m.moduleId === data.currentModuleId;
             const unitLabel = m.unit ? `Unit ${m.unit}: ` : '';
+            const lessonCount = m.lessons ? m.lessons.length : 0;
+            const completedLessons = m.lessons ? m.lessons.filter(l => l.status === 'completed').length : 0;
 
             // Module header row
             let html = `
-                <div style="display:flex; align-items:center; gap:10px; padding:4px 0;">
-                    <i class="fas ${icon}" style="color:${iconColor}; font-size:16px; min-width:20px;"></i>
-                    <div style="flex:1;">
-                        <div style="font-size:13px; font-weight:${isCurrent ? '700' : '500'}; color:${m.status === 'locked' ? '#aaa' : '#333'};">
+                <div class="module-header">
+                    <i class="fas ${icon} module-icon ${m.status}"></i>
+                    <div class="module-body">
+                        <div class="module-title${isCurrent ? ' current' : ''}${m.status === 'locked' ? ' locked' : ''}">
                             ${unitLabel}${this.escapeHtml(m.title || m.moduleId)}
                         </div>
-                        ${m.apWeight ? `<span style="font-size:10px; color:#764ba2; background:#f3f0ff; padding:1px 6px; border-radius:4px;">${m.apWeight}</span>` : ''}
+                        <div class="module-meta">
+                            ${m.apWeight ? `<span class="module-badge ap">${m.apWeight}</span>` : ''}
+                            ${lessonCount > 0 ? `<span class="module-badge lesson-count">${completedLessons}/${lessonCount} lessons</span>` : ''}
+                        </div>
                         ${m.scaffoldProgress > 0 && m.status !== 'completed' ? `
-                            <div style="margin-top:3px; width:80px; height:3px; background:#e2e8f0; border-radius:2px;">
-                                <div style="height:100%; width:${m.scaffoldProgress}%; background:#667eea; border-radius:2px;"></div>
+                            <div class="module-scaffold-bar">
+                                <div class="module-scaffold-fill" style="width: ${m.scaffoldProgress}%"></div>
                             </div>
                         ` : ''}
                     </div>
-                    ${m.checkpointPassed ? '<i class="fas fa-medal" style="color:#f59e0b; font-size:12px;" title="Checkpoint passed"></i>' : ''}
+                    ${m.checkpointPassed ? '<i class="fas fa-medal module-checkpoint" title="Checkpoint passed"></i>' : ''}
                 </div>`;
 
             // Lesson rows (only show for current/in-progress/available modules)
             if (m.lessons && m.lessons.length > 0 && (isCurrent || m.status === 'in_progress' || m.status === 'available')) {
                 const sortedLessons = [...m.lessons].sort((a, b) => (a.order || 0) - (b.order || 0));
                 sortedLessons.forEach(l => {
-                    let lIcon = 'fa-circle';
-                    let lColor = '#ddd';
-                    let lWeight = '400';
-                    if (l.status === 'completed') { lIcon = 'fa-check'; lColor = '#22c55e'; }
-                    else if (l.status === 'in_progress') { lIcon = 'fa-chevron-right'; lColor = '#667eea'; lWeight = '600'; }
-                    else if (l.status === 'available') { lIcon = 'fa-circle'; lColor = '#667eea'; }
-                    else { lIcon = 'fa-circle'; lColor = '#ddd'; }
-
+                    const lIconMap = {
+                        completed:   'fa-check',
+                        in_progress: 'fa-chevron-right',
+                        available:   'fa-circle',
+                        locked:      'fa-circle'
+                    };
+                    const lIcon = lIconMap[l.status] || 'fa-circle';
                     const isCurrentLesson = l.lessonId === data.currentLessonId;
 
                     html += `
-                        <div style="display:flex; align-items:center; gap:8px; padding:3px 0 3px 32px;">
-                            <i class="fas ${lIcon}" style="color:${lColor}; font-size:9px; min-width:14px;"></i>
-                            <span style="font-size:12px; font-weight:${isCurrentLesson ? '600' : lWeight}; color:${l.status === 'locked' ? '#bbb' : '#555'};">
+                        <div class="module-lesson">
+                            <i class="fas ${lIcon} module-lesson-icon ${l.status}"></i>
+                            <span class="module-lesson-title${isCurrentLesson ? ' current' : ''}${l.status === 'locked' ? ' locked' : ''}">
                                 ${this.escapeHtml(l.title || l.lessonId)}
                             </span>
                         </div>`;
@@ -553,18 +573,13 @@ class CourseManager {
 
         // Drop Course button at the bottom of the module list
         const dropRow = document.createElement('div');
-        dropRow.style.cssText = 'padding:12px 4px 4px; border-top:1px solid #f0f0f0; margin-top:8px; text-align:center;';
+        dropRow.className = 'module-list-footer';
         dropRow.innerHTML = `
-            <button class="course-drop-btn" style="
-                background:none; border:1px solid #e2e8f0; border-radius:8px;
-                color:#999; font-size:12px; padding:6px 16px; cursor:pointer;
-                transition:all 0.15s;
-            " onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444';"
-               onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#999';">
+            <button class="module-drop-btn">
                 <i class="fas fa-sign-out-alt" style="margin-right:4px;"></i>Drop Course
             </button>
         `;
-        dropRow.querySelector('.course-drop-btn').addEventListener('click', (e) => {
+        dropRow.querySelector('.module-drop-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             if (this.activeCourseSessionId) {
                 this.dropCourse(this.activeCourseSessionId);
@@ -592,17 +607,110 @@ class CourseManager {
             });
             const data = await res.json();
             if (data.success) {
-                this.renderCatalog(data.catalog, data.recommended);
+                this._catalogCache = data.catalog;
+                this._catalogRecommended = data.recommended;
+                this._activeFilter = 'All';
+                this.renderCatalogWithSearch(data.catalog, data.recommended);
             }
         } catch (err) {
             console.error('[CourseManager] Failed to load catalog:', err);
             if (grid) grid.innerHTML = '<div style="text-align:center; padding:40px; color:#e74c3c;">Failed to load courses.</div>';
         }
+
+        // Focus the search input for fast keyboard access
+        setTimeout(() => {
+            const searchInput = document.getElementById('catalog-search');
+            if (searchInput) searchInput.focus();
+        }, 300);
     }
 
     closeCatalog() {
         const modal = document.getElementById('course-catalog-modal');
         if (modal) modal.classList.remove('is-visible');
+        // Remove the search bar so it's rebuilt fresh on next open
+        const searchBar = document.getElementById('catalog-search-bar');
+        if (searchBar) searchBar.remove();
+        this._catalogCache = null;
+    }
+
+    /**
+     * Render the search bar, filter pills, and catalog grid.
+     * Replaces everything inside the catalog-grid parent container.
+     */
+    renderCatalogWithSearch(catalog, recommended) {
+        const grid = document.getElementById('catalog-grid');
+        if (!grid) return;
+
+        // Extract unique difficulty levels for filter pills
+        const difficulties = ['All', ...new Set(catalog.map(c => c.difficulty).filter(Boolean))];
+
+        // Build search bar + filter pills above the grid
+        let searchContainer = document.getElementById('catalog-search-bar');
+        if (!searchContainer) {
+            searchContainer = document.createElement('div');
+            searchContainer.id = 'catalog-search-bar';
+            searchContainer.className = 'catalog-search-bar';
+            grid.parentNode.insertBefore(searchContainer, grid);
+        }
+
+        searchContainer.innerHTML = `
+            <div class="catalog-search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="catalog-search" class="catalog-search-input" placeholder="Search courses..." autocomplete="off">
+            </div>
+            <div class="catalog-filter-pills" id="catalog-filters">
+                ${difficulties.map(d =>
+                    `<button class="catalog-filter-pill${d === this._activeFilter ? ' active' : ''}" data-filter="${d}">${d}</button>`
+                ).join('')}
+            </div>
+        `;
+
+        // Wire up search input
+        const searchInput = searchContainer.querySelector('#catalog-search');
+        searchInput.addEventListener('input', () => this._filterCatalog());
+
+        // Wire up filter pills
+        searchContainer.querySelectorAll('.catalog-filter-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                this._activeFilter = pill.dataset.filter;
+                searchContainer.querySelectorAll('.catalog-filter-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                this._filterCatalog();
+            });
+        });
+
+        // Render the grid with all courses
+        this.renderCatalog(catalog, recommended);
+    }
+
+    /**
+     * Client-side filtering of the cached catalog data.
+     * Triggered by search input or filter pill click.
+     */
+    _filterCatalog() {
+        if (!this._catalogCache) return;
+
+        const searchInput = document.getElementById('catalog-search');
+        const query = (searchInput?.value || '').toLowerCase().trim();
+
+        let filtered = this._catalogCache;
+
+        // Apply difficulty filter
+        if (this._activeFilter && this._activeFilter !== 'All') {
+            filtered = filtered.filter(c => c.difficulty === this._activeFilter);
+        }
+
+        // Apply text search
+        if (query) {
+            filtered = filtered.filter(c =>
+                (c.title || '').toLowerCase().includes(query) ||
+                (c.tagline || '').toLowerCase().includes(query) ||
+                (c.group || '').toLowerCase().includes(query) ||
+                (c.courseId || '').toLowerCase().includes(query)
+            );
+        }
+
+        this.renderCatalog(filtered, this._catalogRecommended);
     }
 
     renderCatalog(catalog, recommended) {
@@ -615,7 +723,11 @@ class CourseManager {
         const enrolled = new Set(this.courseSessions.map(s => s.courseId));
 
         if (catalog.length === 0) {
-            grid.innerHTML = '<div style="text-align:center; padding:40px; color:#aaa;">No courses available yet.</div>';
+            grid.innerHTML = `
+                <div class="catalog-empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>No courses match your search.</p>
+                </div>`;
             return;
         }
 
@@ -628,6 +740,9 @@ class CourseManager {
             'Applied': { bg: '#fef3c7', text: '#b45309' },
             'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
         };
+
+        // Estimated time per module (heuristic: ~45 min per module)
+        const EST_MINUTES_PER_MODULE = 45;
 
         let lastGroup = '';
         catalog.forEach(course => {
@@ -648,10 +763,16 @@ class CourseManager {
             const isEnrolled = enrolled.has(course.courseId);
             const diff = diffColors[course.difficulty] || { bg: '#f1f5f9', text: '#64748b' };
 
+            // Estimate total time for the course
+            const totalMinutes = course.moduleCount * EST_MINUTES_PER_MODULE;
+            const estTimeLabel = totalMinutes >= 60
+                ? `~${Math.round(totalMinutes / 60)}h`
+                : `~${totalMinutes}m`;
+
             card.innerHTML = `
                 ${isRecommended ? '<div style="position:absolute; top:-8px; right:12px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700;">RECOMMENDED</div>' : ''}
                 <div style="min-width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; font-size:22px;">
-                    ${course.icon || '📚'}
+                    ${course.icon || '\uD83D\uDCDA'}
                 </div>
                 <div style="flex:1; min-width:0;">
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -660,8 +781,11 @@ class CourseManager {
                         ${course.apWeight ? '<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#faf5ff; color:#7c3aed;">AP</span>' : ''}
                     </div>
                     ${course.tagline ? `<div style="font-size:13px; color:#555; margin-top:4px; line-height:1.4;">${this.escapeHtml(course.tagline)}</div>` : ''}
-                    <div style="font-size:11px; color:#aaa; margin-top:4px;">
-                        ${course.moduleCount} modules${course.prerequisites.length > 0 ? ' · Prereq: ' + course.prerequisites.join(', ') : ''}
+                    <div style="font-size:11px; color:#aaa; margin-top:4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                        <span>${course.moduleCount} modules</span>
+                        <span style="color:#ddd;">&middot;</span>
+                        <span><i class="fas fa-clock" style="font-size:9px; margin-right:2px;"></i>${estTimeLabel}</span>
+                        ${course.prerequisites.length > 0 ? `<span style="color:#ddd;">&middot;</span><span>Prereq: ${course.prerequisites.join(', ')}</span>` : ''}
                     </div>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px;">
@@ -709,7 +833,7 @@ class CourseManager {
 
             const data = await res.json();
             if (!data.success) {
-                alert(data.message || 'Enrollment failed');
+                this.showToast(data.message || 'Enrollment failed');
                 if (btnEl) {
                     btnEl.disabled = false;
                     btnEl.textContent = 'Enroll';
@@ -747,7 +871,7 @@ class CourseManager {
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
-            alert('Something went wrong. Please try again.');
+            this.showToast('Something went wrong. Please try again.');
             if (btnEl) {
                 btnEl.disabled = false;
                 btnEl.textContent = 'Enroll';
@@ -833,10 +957,16 @@ class CourseManager {
     async exitCourse() {
         this.closeProgressDropdown();
 
-        // Confirm before leaving the lesson
-        if (!confirm('Exit this lesson?\n\nYour progress is saved — you can pick up where you left off anytime.')) {
-            return;
-        }
+        const confirmed = await this.showConfirmation({
+            icon: '📖',
+            title: 'Exit this lesson?',
+            message: 'Your progress is saved — you can pick up where you left off anytime.',
+            confirmLabel: 'Exit Lesson',
+            confirmClass: 'secondary',
+            cancelLabel: 'Keep Learning'
+        });
+
+        if (!confirmed) return;
 
         try {
             await csrfFetch('/api/course-sessions/deactivate', {
@@ -873,9 +1003,16 @@ class CourseManager {
         const session = this.courseSessions.find(s => s._id === sessionId);
         const name = this.formatCourseName(session?.courseName || 'this course');
 
-        if (!confirm(`Leave "${name}"?\n\nYour progress will be saved and you can re-enroll later.`)) {
-            return;
-        }
+        const confirmed = await this.showConfirmation({
+            icon: '👋',
+            title: `Leave "${name}"?`,
+            message: 'Your progress will be saved and you can re-enroll later.',
+            confirmLabel: 'Leave Course',
+            confirmClass: 'danger',
+            cancelLabel: 'Stay Enrolled'
+        });
+
+        if (!confirmed) return;
 
         try {
             const res = await csrfFetch(`/api/course-sessions/${sessionId}/drop`, {
@@ -1040,6 +1177,54 @@ class CourseManager {
             toast.style.transition = 'opacity 0.3s';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
+    }
+
+    /**
+     * Styled confirmation modal — replaces native confirm() dialogs.
+     * Returns a Promise<boolean>.
+     */
+    showConfirmation({ icon = '', title = 'Are you sure?', message = '', confirmLabel = 'Confirm', confirmClass = 'primary', cancelLabel = 'Cancel' }) {
+        return new Promise(resolve => {
+            // Remove any existing confirmation
+            document.querySelector('.course-confirm-overlay')?.remove();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'course-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="course-confirm-card">
+                    ${icon ? `<div class="course-confirm-icon">${icon}</div>` : ''}
+                    <div class="course-confirm-title">${this.escapeHtml(title)}</div>
+                    <div class="course-confirm-message">${this.escapeHtml(message)}</div>
+                    <div class="course-confirm-actions">
+                        <button class="course-confirm-btn secondary" data-action="cancel">${this.escapeHtml(cancelLabel)}</button>
+                        <button class="course-confirm-btn ${confirmClass}" data-action="confirm">${this.escapeHtml(confirmLabel)}</button>
+                    </div>
+                </div>
+            `;
+
+            // Close on overlay background click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                    resolve(false);
+                }
+            });
+
+            // Button handlers
+            overlay.querySelector('[data-action="cancel"]').addEventListener('click', () => {
+                overlay.remove();
+                resolve(false);
+            });
+            overlay.querySelector('[data-action="confirm"]').addEventListener('click', () => {
+                overlay.remove();
+                resolve(true);
+            });
+
+            document.body.appendChild(overlay);
+
+            // Auto-focus the cancel button (safe default)
+            overlay.querySelector('[data-action="cancel"]').focus();
+        });
     }
 }
 
