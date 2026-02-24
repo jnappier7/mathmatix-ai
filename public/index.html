@@ -505,7 +505,8 @@
 
     .lp-chat-messages {
       display: flex; flex-direction: column; gap: 10px;
-      min-height: 160px;
+      height: 260px;
+      overflow-y: auto;
     }
 
     /* Message row: avatar + bubble */
@@ -1300,7 +1301,7 @@
       .lp-hero-links { width: 100%; flex-direction: column; align-items: center; }
       .lp-hero-links .btn { width: 100%; max-width: 320px; }
       .lp-hero-preview { max-width: 100%; margin-top: 1.5rem; }
-      .lp-chat-messages { min-height: 120px; }
+      .lp-chat-messages { height: 200px; }
 
       /* -- Trust bar: horizontal scroll on mobile -- */
       .lp-trust-bar {
@@ -2238,9 +2239,10 @@
             row.appendChild(bubble);
             chatContainer.appendChild(row);
 
-            // Trigger animation
+            // Trigger animation and scroll to bottom
             requestAnimationFrame(function () {
               row.classList.add('lp-chat-visible');
+              chatContainer.scrollTop = chatContainer.scrollHeight;
             });
           }
 
