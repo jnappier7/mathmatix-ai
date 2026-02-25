@@ -2229,6 +2229,7 @@
             var avatarImg = document.createElement('img');
             avatarImg.src = isStudent ? c.studentAvatar : c.tutorAvatar;
             avatarImg.alt = isStudent ? 'Student' : c.tutor;
+            avatarImg.loading = 'lazy';
             avatar.appendChild(avatarImg);
 
             var bubble = document.createElement('div');

@@ -427,6 +427,7 @@ class VisualTeachingHandler {
         const img = document.createElement('img');
         img.src = url;
         img.alt = caption;
+        img.loading = 'lazy';
         img.style.cssText = `
             width: 100%;
             max-width: 500px;

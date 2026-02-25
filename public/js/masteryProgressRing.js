@@ -126,6 +126,7 @@ function createMasteryProgressRing(container, pillarData, badgeIcon) {
       const img = document.createElement('img');
       img.src = badgeIcon;
       img.alt = 'Badge icon';
+      img.loading = 'lazy';
       img.style.width = '50px';
       img.style.height = '50px';
       badgeIconEl.appendChild(img);

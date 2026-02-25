@@ -427,6 +427,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const avatarImg = document.createElement("img");
             avatarImg.src = `/images/tutor_avatars/${currentTutorInfo.image}`;
             avatarImg.alt = currentTutorInfo.name;
+            avatarImg.loading = 'lazy';
             avatarImg.onerror = () => { avatarImg.src = '/images/tutor_avatars/default-tutor.png'; };
 
             avatar.appendChild(avatarImg);
