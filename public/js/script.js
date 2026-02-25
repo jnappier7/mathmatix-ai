@@ -46,7 +46,10 @@ document.addEventListener('audioPlaybackEnded', () => {
                 recog.isActive = true;
                 const micBtn = document.getElementById('mic-button');
                 if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
-            } catch(e) { console.error("Auto-listen could not be started:", e); }
+            } catch(e) {
+                console.error("Auto-listen could not be started:", e);
+                showToast('Auto-listen could not start. Tap the mic to try again.', 3500);
+            }
         }
     }
 });
@@ -113,7 +116,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const transcript = event.results[0][0].transcript;
             userInput.textContent += transcript;
         };
-        recognition.onerror = (event) => { console.error("Speech recognition error:", event.error); isRecognizing = false; window._speechRecognition.isActive = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            isRecognizing = false;
+            window._speechRecognition.isActive = false;
+            if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            if (event.error === 'not-allowed') {
+                showToast('Microphone access denied. Please check your browser permissions.', 5000);
+            } else if (event.error === 'network') {
+                showToast('Speech recognition unavailable. Check your connection.', 4000);
+            }
+        };
         recognition.onend = () => { isRecognizing = false; window._speechRecognition.isActive = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
     }
 
