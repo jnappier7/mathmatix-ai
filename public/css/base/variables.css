@@ -187,10 +187,12 @@ body {
 }
 
 /* ── Global Focus-Visible Ring ─────────────────────────── */
-/* Consistent, accessible focus indicator on all interactive elements */
+/* Consistent, accessible focus indicator on all interactive elements.
+   !important ensures page-level :focus{outline:none} cannot suppress
+   the keyboard-only focus ring. */
 :focus-visible {
-    outline: 2px solid var(--clr-primary-teal);
-    outline-offset: var(--focus-ring-offset);
+    outline: 2px solid var(--clr-primary-teal) !important;
+    outline-offset: var(--focus-ring-offset) !important;
 }
 
 /* Remove default outline for mouse/touch users (kept for keyboard via :focus-visible) */
