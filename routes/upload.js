@@ -146,7 +146,7 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
         ];
 
         // Use the centralized LLM call function
-        const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 400 });
+        const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 1500 });
 
         let reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
 

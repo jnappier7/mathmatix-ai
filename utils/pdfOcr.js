@@ -48,12 +48,15 @@ module.exports = async function processPDF(pdfBuffer, filename) {
     const pdfId = uploadResponse.data.pdf_id;
     console.log(`[pdfOcr] PDF uploaded successfully, pdf_id: ${pdfId}`);
 
-    // Step 2: Poll for completion (max 60 seconds)
+    // Step 2: Poll for completion with adaptive intervals
+    // Start fast (500ms) for small/simple PDFs, then back off for larger ones.
+    // Total max wait: ~90 seconds (more generous than before, but faster for small PDFs)
     const maxAttempts = 30;
-    const pollInterval = 2000; // 2 seconds
+    const getInterval = (attempt) => Math.min(500 * Math.pow(1.3, attempt), 5000); // 500ms → 5s cap
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
+      const interval = getInterval(attempt);
+      await new Promise(resolve => setTimeout(resolve, interval));
 
       const statusResponse = await axios.get(
         `https://api.mathpix.com/v3/pdf/${pdfId}`,
@@ -66,7 +69,7 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       );
 
       const { status, conversion_status } = statusResponse.data;
-      console.log(`[pdfOcr] Poll attempt ${attempt + 1}/${maxAttempts}, status: ${status}`);
+      console.log(`[pdfOcr] Poll attempt ${attempt + 1}/${maxAttempts} (${interval}ms), status: ${status}`);
 
       // Check if markdown conversion is complete
       if (status === 'completed' && conversion_status?.md?.status === 'completed') {
@@ -92,8 +95,8 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       }
     }
 
-    console.error(`[pdfOcr] PDF processing timeout after ${maxAttempts * pollInterval / 1000}s`);
-    throw new Error(`PDF processing timed out after ${maxAttempts * pollInterval / 1000} seconds. Please try a smaller PDF or contact support.`);
+    console.error(`[pdfOcr] PDF processing timeout after ${maxAttempts} polling attempts`);
+    throw new Error(`PDF processing timed out. Please try a smaller PDF or contact support.`);
 
   } catch (err) {
     console.error("[pdfOcr] Error processing PDF:", {

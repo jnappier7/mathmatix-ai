@@ -59,45 +59,24 @@ router.post('/',
         const imageContents = [];
         const pdfTexts = [];
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+        // Process all files in parallel for faster uploads
+        const fileProcessingPromises = files.map(async (file) => {
             console.log(`[chatWithFile] Processing file: ${file.originalname} (${file.mimetype})`);
 
             if (file.mimetype === 'application/pdf') {
-                // PDFs: Use Mathpix /v3/pdf endpoint (specialized for documents)
                 console.log(`[chatWithFile] Using Mathpix PDF endpoint for: ${file.originalname}`);
+                const fileBuffer = fsSync.readFileSync(file.path);
+                const extractedText = await pdfOcr(fileBuffer, file.originalname);
 
-                try {
-                    // Read file from disk
-                    const fileBuffer = fsSync.readFileSync(file.path);
-                    const extractedText = await pdfOcr(fileBuffer, file.originalname);
-
-                    if (extractedText && extractedText.trim()) {
-                        pdfTexts.push({
-                            filename: file.originalname,
-                            text: extractedText
-                        });
-                        console.log(`[chatWithFile] Extracted ${extractedText.length} characters from PDF`);
-                    } else {
-                        pdfTexts.push({
-                            filename: file.originalname,
-                            text: `[Could not extract text from ${file.originalname}]`
-                        });
-                        console.warn(`[chatWithFile] No text extracted from PDF: ${file.originalname}`);
-                    }
-                } catch (pdfError) {
-                    console.error(`[chatWithFile] PDF processing error for ${file.originalname}:`, pdfError.message);
-                    // Clean up all temp files before returning error
-                    files.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
-                    return res.status(500).json({
-                        message: `Failed to process PDF: ${pdfError.message}`,
-                        error: 'PDF_PROCESSING_ERROR'
-                    });
+                if (extractedText && extractedText.trim()) {
+                    console.log(`[chatWithFile] Extracted ${extractedText.length} characters from PDF`);
+                    return { type: 'pdf', filename: file.originalname, text: extractedText };
+                } else {
+                    console.warn(`[chatWithFile] No text extracted from PDF: ${file.originalname}`);
+                    return { type: 'pdf', filename: file.originalname, text: `[Could not extract text from ${file.originalname}]` };
                 }
             } else {
-                // Images: Use GPT-4o-mini vision directly (fast, native)
                 console.log(`[chatWithFile] Using Vision API for: ${file.originalname}`);
-                // Read file from disk and strip EXIF metadata (GPS coords, device info)
                 let fileBuffer = fsSync.readFileSync(file.path);
                 try {
                     fileBuffer = await sharp(fileBuffer)
@@ -109,14 +88,31 @@ router.post('/',
                 }
                 const base64 = fileBuffer.toString('base64');
                 const dataUrl = `data:${file.mimetype};base64,${base64}`;
+                return {
+                    type: 'image',
+                    content: { type: "image_url", image_url: { url: dataUrl, detail: "high" } }
+                };
+            }
+        });
 
-                imageContents.push({
-                    type: "image_url",
-                    image_url: {
-                        url: dataUrl,
-                        detail: "high" // Use high detail for better text reading
-                    }
-                });
+        let fileResults;
+        try {
+            fileResults = await Promise.all(fileProcessingPromises);
+        } catch (processingError) {
+            console.error(`[chatWithFile] File processing error:`, processingError.message);
+            files.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
+            return res.status(500).json({
+                message: `Failed to process files: ${processingError.message}`,
+                error: 'FILE_PROCESSING_ERROR'
+            });
+        }
+
+        // Separate results into images and PDFs
+        for (const result of fileResults) {
+            if (result.type === 'pdf') {
+                pdfTexts.push({ filename: result.filename, text: result.text });
+            } else {
+                imageContents.push(result.content);
             }
         }
 
@@ -135,11 +131,16 @@ router.post('/',
         // Build combined message with PDF text and user message
         let combinedText = message || "Can you help me with this?";
 
-        // Add PDF extracted text to the message
+        // Add PDF extracted text to the message with smart truncation
         if (pdfTexts.length > 0) {
-            const pdfContent = pdfTexts.map(({ filename, text }) =>
-                `[Content from ${filename}]\n${text}`
-            ).join('\n\n');
+            const MAX_PDF_CHARS = 12000; // ~3k tokens, leaves room for system prompt + history
+            const pdfContent = pdfTexts.map(({ filename, text }) => {
+                if (text.length > MAX_PDF_CHARS) {
+                    console.log(`[chatWithFile] Truncating PDF content from ${text.length} to ${MAX_PDF_CHARS} chars: ${filename}`);
+                    return `[Content from ${filename} — showing first ${MAX_PDF_CHARS} of ${text.length} characters]\n${text.substring(0, MAX_PDF_CHARS)}\n\n[... content truncated. Ask the student which section or problem they need help with if the relevant content may be in the truncated portion.]`;
+                }
+                return `[Content from ${filename}]\n${text}`;
+            }).join('\n\n');
             combinedText = `${combinedText}\n\n${pdfContent}`;
         }
 
@@ -211,7 +212,7 @@ router.post('/',
                 const completion = await retryWithExponentialBackoff(() =>
                     anthropic.messages.create({
                         model: PRIMARY_CHAT_MODEL,
-                        max_tokens: 400,
+                        max_tokens: 1500,
                         temperature: 0.7,
                         system: systemMessage,
                         messages: [
@@ -235,7 +236,7 @@ router.post('/',
                         model: fallbackModel,
                         messages: messagesForAI,
                         temperature: 0.7,
-                        max_tokens: 400
+                        max_tokens: 1500
                     })
                 );
 
@@ -252,7 +253,7 @@ router.post('/',
                     model: model,
                     messages: messagesForAI,
                     temperature: 0.7,
-                    max_tokens: 400
+                    max_tokens: 1500
                 })
             );
 
@@ -320,11 +321,13 @@ router.post('/',
 
                 // Get extracted text for this file
                 let extractedText = '';
-                if (fileType === 'pdf' && pdfTexts.length > i) {
-                    extractedText = pdfTexts[i].text || '';
-                } else if (fileType === 'image') {
-                    extractedText = combinedText; // The text includes user message + any extracted content
+                if (fileType === 'pdf') {
+                    // Match by filename since PDF indices may not align with file indices
+                    const pdfMatch = pdfTexts.find(p => p.filename === file.originalname);
+                    extractedText = pdfMatch?.text || '';
                 }
+                // Images: extractedText stays empty (vision API handles images directly,
+                // there's no text extraction to store)
 
                 // Create database record
                 const studentUpload = new StudentUpload({

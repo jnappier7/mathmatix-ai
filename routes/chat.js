@@ -559,7 +559,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
                 const timeStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
                 const textExcerpt = upload.extractedText ?
-                    upload.extractedText.substring(0, 200) + (upload.extractedText.length > 200 ? '...' : '') : '';
+                    upload.extractedText.substring(0, 1500) + (upload.extractedText.length > 1500 ? '...' : '') : '';
                 return `${idx + 1}. "${upload.originalFilename}" (${upload.fileType}, uploaded ${timeStr})${textExcerpt ? `\n   Content excerpt: "${textExcerpt}"` : ''}`;
             }).join('\n');
 
@@ -634,6 +634,45 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                         console.log(`🔍 [Answer Pre-Check] Student: "${studentAnswer}", Correct: "${problemResult.solution.answer}", Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
                         break;
                     }
+                }
+            }
+        }
+
+        // CHECK-MY-WORK DETECTION: When student asks to check/verify their work
+        // after uploading content, inject a hint so the AI references the uploaded content
+        // instead of asking the student to repeat it.
+        const checkMyWorkPatterns = [
+            /\bcheck\b.*\b(this|my|it|work|answer|problem)\b/i,
+            /\bis\b.*\b(this|my|it)\b.*\b(right|correct|wrong|good)\b/i,
+            /\bdid\s+i\b.*\b(get|do)\b.*\b(right|correct|it)\b/i,
+            /\bverify\b/i,
+            /\bam\s+i\b.*\b(right|correct|on\s+the\s+right\s+track)\b/i,
+            /\bgrade\b.*\b(this|my|it)\b/i,
+            /\bhow\s*('d|did)\s+i\s+do\b/i
+        ];
+        const isCheckMyWork = checkMyWorkPatterns.some(p => p.test(message));
+
+        if (isCheckMyWork && formattedMessagesForLLM.length > 0) {
+            // Look for uploaded content in recent conversation messages
+            const hasUploadedContent = formattedMessagesForLLM.some(msg =>
+                msg.role === 'user' && (
+                    msg.content.includes('[Content from ') ||
+                    msg.content.includes('uploaded image/PDF') ||
+                    msg.content.includes('math text from an uploaded')
+                )
+            );
+
+            const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
+                recentUploads.some(u => {
+                    const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
+                    return daysAgo === 0; // Uploaded today
+                });
+
+            if (hasUploadedContent || hasRecentUpload) {
+                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                if (lastMessage.role === 'user') {
+                    lastMessage.content += `\n\n[CHECK_MY_WORK: The student is asking you to check/verify their work from a previously uploaded file. The uploaded content (including the student's answers) is visible in the conversation history above. Reference it directly — do NOT ask the student to re-share the problem or their answer. Check their work one problem at a time using the CHECK MY WORK guidelines from your instructions.]`;
+                    console.log(`📝 [Check My Work] Detected check-my-work request, injected guidance hint`);
                 }
             }
         }

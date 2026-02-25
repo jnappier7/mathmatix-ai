@@ -10,6 +10,7 @@ const GradingResult = require('../models/gradingResult');
 const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
+const pdfOcr = require('../utils/pdfOcr');
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -29,7 +30,7 @@ const upload = multer({
 
 const ANALYSIS_PROMPT = `You are a warm, Socratic math tutor looking at a student's handwritten work.
 Your job is to GUIDE them toward understanding — not grade them or hand them answers.
-Be MATHEMATICALLY RIGOROUS but talk like a supportive teacher, not a rubric.
+Talk like a real tutor sitting next to a student, not a grading rubric.
 
 # CRITICAL FIRST STEP: DETECT BLANK OR UNATTEMPTED WORK
 
@@ -48,7 +49,7 @@ Look for these signs of a BLANK or UNATTEMPTED worksheet:
 {
   "noWorkDetected": true,
   "problems": [],
-  "overallFeedback": "I can see the worksheet, but it looks like you haven't written your answers yet! Give the problems a try first, then snap another photo and I'll check your work. You got this!",
+  "overallFeedback": "I can see your worksheet but it looks like you haven't started yet! Give the problems a shot first, then send me another photo and I'll check your work.",
   "whatWentWell": "",
   "practiceRecommendations": [],
   "skillsAssessed": []
@@ -67,14 +68,17 @@ Before reviewing the student's work, solve each attempted problem from scratch.
 You need verified answers to check their work, but NEVER include your solutions for problems the student left blank.
 
 ## 2. COMPARE — then GUIDE
-For correct problems: celebrate SPECIFICALLY what they did well ("nice use of distribution here").
-For incorrect problems: DON'T just state the error and correction. Instead, write feedback that:
-- Acknowledges what they DID right (setup, approach, partial steps)
-- Points to the area where things went off track
-- Asks a guiding question so they can discover the mistake ("look at step 3 — what happens to the sign when you distribute a negative?")
-- Optionally offers to walk through a similar problem ("let me show you one like this...")
+For correct problems: quick, specific praise. Keep it short — name what they did well in one sentence.
 
-The goal: the student should be able to re-attempt the problem after reading your feedback.
+For incorrect problems: be a TUTOR, not a textbook.
+- Name one thing they DID right (setup, approach, partial step) — one sentence.
+- Point to WHERE things went off track — be specific about the step.
+- Ask ONE guiding question so they can discover the mistake themselves. This is the most important part.
+- Do NOT explain the full correction. Ask a question that leads them there.
+
+TONE: Talk to them, not about them. Like you're sitting next to them pointing at their paper.
+- Good: "Look at step 3 — what happens to that sign when you distribute the negative?"
+- Bad: "The student incorrectly distributed the negative sign, resulting in an error."
 
 ## 3. CATEGORIZE ERRORS (for internal tracking)
 Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing | notation | conceptual | incomplete | other
@@ -90,29 +94,29 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
       "problemStatement": "Brief restatement of the problem",
       "studentAnswer": "What the student wrote (MUST be actual handwriting you can see — not the printed problem text)",
       "isCorrect": true,
-      "strengths": "Specific praise: what concept or technique they nailed",
+      "strengths": "Nice — you distributed correctly and combined like terms.",
       "errors": [],
-      "feedback": "This looks right — you distributed correctly and combined like terms. Solid work."
+      "feedback": "Nailed it."
     },
     {
       "problemNumber": 2,
       "problemStatement": "...",
       "studentAnswer": "...",
       "isCorrect": false,
-      "strengths": "You set up the equation correctly and showed every step — that's great.",
+      "strengths": "Good setup — you showed your steps, which is exactly what I want to see.",
       "errors": [
         {
           "step": "Step 3",
           "description": "Distributed the negative incorrectly: -(2x - 6) became -2x - 6 instead of -2x + 6",
           "category": "sign",
-          "correction": "When you distribute a negative across parentheses, every sign inside flips."
+          "correction": "When you distribute a negative, what happens to EACH sign inside the parentheses?"
         }
       ],
-      "feedback": "Your setup was solid. Take another look at step 3 — when you distributed the negative, what should happen to the minus sign inside the parentheses? Try reworking from that step and see if you get a different answer."
+      "feedback": "Your setup is solid. Look at step 3 — when you distributed that negative, what should happen to the minus sign inside the parentheses? Rework from there and see what you get."
     }
   ],
-  "overallFeedback": "Conversational summary. Start by naming what looks correct. Then gently point to the problems that need another look. End with encouragement or an offer to walk through a similar problem together.",
-  "whatWentWell": "Specific strengths — what does this student clearly understand?",
+  "overallFeedback": "Short, conversational — 2-3 sentences max. Name what's working, point to what needs another look, end with a nudge to retry.",
+  "whatWentWell": "One sentence: what does this student clearly understand?",
   "practiceRecommendations": ["Distributing negatives across parentheses", "Checking signs after each step"],
   "skillsAssessed": ["linear-equations", "distribution"]
 }
@@ -120,13 +124,12 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 
 RULES:
 - Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
-- **NEVER include a "correctAnswer" field.** Showing correct answers turns feedback into an answer key. Guide the student to discover the right answer through your feedback instead.
-- **The "correction" field in errors must TEACH A CONCEPT, never reveal the answer.** Good: "When you distribute a negative, every sign inside flips." Bad: "The answer should be x = 6." If you catch yourself writing the answer, rewrite it as a guiding hint.
+- **NEVER include a "correctAnswer" field.** NEVER. Not even close. Not as a hint, not reworded, not "the answer should be..." Guide them to discover it.
+- **The "correction" field in errors must be a QUESTION, not an answer.** It should be a Socratic prompt that leads the student to find the fix themselves. Good: "When you distribute a negative, what happens to each sign inside?" Bad: "The answer should be x = 6." Bad: "You should get -2x + 6." If you catch yourself writing the answer, rewrite it as a question.
+- **Feedback must be SHORT.** 1-2 sentences for correct problems. 2-3 sentences for incorrect — a strength, a pointer, and a question. No paragraphs.
 - Do NOT assign numerical scores, grades, or percentages anywhere.
-- Feedback must be CONVERSATIONAL and SOCRATIC — ask guiding questions, don't just state corrections.
-- Always find strengths, even in wrong answers.
-- For incorrect problems: guide the student toward discovering the error, don't just hand them the fix.
-- Write like you're talking to the student, not writing a report about them.
+- Talk TO the student ("your setup looks good") not ABOUT them ("the student's setup was correct").
+- Always find a strength, even in wrong answers.
 - **studentAnswer MUST reflect actual handwritten work visible in the image — NOT the printed problem text.** If you cannot distinguish student handwriting from printed text for a problem, mark it as having no work detected.
 - Use LaTeX notation for ALL math expressions in feedback, answers, and corrections. Wrap inline math with \\( and \\), and display math with \\[ and \\]. Example: "You wrote \\(x = -3\\) but check what happens when you distribute the negative."
 - The studentAnswer field MUST use LaTeX for any math.`;
@@ -184,35 +187,76 @@ router.post('/',
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
-        if (!file.mimetype.startsWith('image/')) {
+        const isImage = file.mimetype.startsWith('image/');
+        const isPDF = file.mimetype === 'application/pdf';
+
+        if (!isImage && !isPDF) {
             if (file.path) fs.unlinkSync(file.path);
-            return res.status(400).json({ success: false, message: 'Only image files are supported' });
+            return res.status(400).json({ success: false, message: 'Only image and PDF files are supported' });
         }
 
-        console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName}`);
+        console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName} (${isPDF ? 'PDF' : 'image'})`);
 
-        // Read file and strip EXIF metadata before sending to AI provider.
-        // Phone cameras embed GPS coordinates — this prevents student location data from leaving our server.
-        let fileBuffer = fs.readFileSync(file.path);
-        try {
-            fileBuffer = await sharp(fileBuffer)
-                .rotate()          // Auto-rotate based on EXIF orientation before stripping
-                .withMetadata({})  // Strip all EXIF/IPTC/XMP metadata
-                .toBuffer();
-        } catch (stripError) {
-            console.warn('[gradeWork] EXIF strip failed, continuing with original:', stripError.message);
+        let aiResponse;
+
+        if (isPDF) {
+            // PDF path: Extract text via Mathpix, then use text-based analysis
+            console.log('[gradeWork] Processing PDF with Mathpix OCR...');
+            const fileBuffer = fs.readFileSync(file.path);
+            let extractedText;
+            try {
+                extractedText = await pdfOcr(fileBuffer, file.originalname);
+            } catch (pdfErr) {
+                console.error('[gradeWork] PDF extraction failed:', pdfErr.message);
+                if (file.path) fs.unlinkSync(file.path);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to read the PDF. Please try uploading an image instead.'
+                });
+            }
+
+            if (!extractedText || !extractedText.trim()) {
+                if (file.path) fs.unlinkSync(file.path);
+                return res.status(400).json({
+                    success: false,
+                    message: "I couldn't read any text from that PDF. Try taking a photo of your work instead."
+                });
+            }
+
+            console.log(`[gradeWork] Extracted ${extractedText.length} chars from PDF`);
+
+            // For PDFs with extracted text, use the text-based grading prompt
+            const pdfPrompt = `${ANALYSIS_PROMPT}\n\n--- STUDENT'S WORK (extracted from uploaded PDF) ---\n${extractedText.substring(0, 15000)}${extractedText.length > 15000 ? '\n\n[Content truncated — analyze only the problems shown above]' : ''}`;
+
+            // Use callLLM for text-based analysis (no vision needed)
+            const { callLLM } = require('../utils/llmGateway');
+            const completion = await callLLM('gpt-4o-mini', [
+                { role: 'user', content: pdfPrompt }
+            ], { max_tokens: 4000, temperature: 0.2 });
+
+            aiResponse = completion.choices[0]?.message?.content?.trim() || '';
+        } else {
+            // Image path: Use vision API for handwriting recognition
+            let fileBuffer = fs.readFileSync(file.path);
+            try {
+                fileBuffer = await sharp(fileBuffer)
+                    .rotate()
+                    .withMetadata({})
+                    .toBuffer();
+            } catch (stripError) {
+                console.warn('[gradeWork] EXIF strip failed, continuing with original:', stripError.message);
+            }
+            const base64Image = fileBuffer.toString('base64');
+            const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
+
+            aiResponse = await gradeWithVision({
+                imageDataUrl: dataUrl,
+                prompt: ANALYSIS_PROMPT
+            }, {
+                maxTokens: 4000,
+                temperature: 0.2
+            });
         }
-        const base64Image = fileBuffer.toString('base64');
-        const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
-
-        // Call vision model — low temperature for mathematical accuracy
-        const aiResponse = await gradeWithVision({
-            imageDataUrl: dataUrl,
-            prompt: ANALYSIS_PROMPT
-        }, {
-            maxTokens: 4000,
-            temperature: 0.2
-        });
 
         console.log('[gradeWork] AI analysis received');
 
