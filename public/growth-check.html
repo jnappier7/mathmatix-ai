@@ -352,10 +352,9 @@
 
         <div id="feedback" class="feedback-text" style="display: none;"></div>
 
-        <button id="submit-btn" class="submit-btn" onclick="submitAnswer()" disabled title="Select an answer first">
+        <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">
           Submit Answer
         </button>
-        <p id="submit-hint" class="submit-hint" style="text-align:center; color:#999; font-size:0.85rem; margin-top:0.5rem;">Select an answer above to continue</p>
         <button id="next-btn" class="submit-btn" onclick="loadNextProblem()" style="display: none;">
           Next Question
         </button>
@@ -475,9 +474,6 @@
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
         document.getElementById('submit-btn').style.display = 'block';
-        document.getElementById('submit-btn').disabled = true;
-        document.getElementById('submit-btn').title = 'Select an answer first';
-        document.getElementById('submit-hint').style.display = 'block';
         selectedAnswer = null;
 
         const res = await fetch(`/api/growth-check/${sessionId}/next-problem`);
@@ -559,13 +555,17 @@
       // Select this one
       btn.classList.add('selected');
       selectedAnswer = index;
-      document.getElementById('submit-btn').disabled = false;
-      document.getElementById('submit-btn').title = '';
-      document.getElementById('submit-hint').style.display = 'none';
     }
 
     async function submitAnswer() {
-      if (selectedAnswer === null) return;
+      if (selectedAnswer === null) {
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+        feedback.className = 'feedback-text';
+        feedback.style.color = '#999';
+        feedback.textContent = 'Please select an answer first.';
+        return;
+      }
 
       const responseTime = Date.now() - questionStartTime;
 
