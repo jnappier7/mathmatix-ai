@@ -558,6 +558,218 @@ input, textarea, select, .math-field {
     }
 }
 
+/* --- 6d. MOBILE MENU BOTTOM SHEET ---
+   Slide-up sheet with Settings, Tools, Theme toggle, etc.
+   Built dynamically by mobile-chat-nav.js.
+   -------------------------------------------------------- */
+
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 2049;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 300ms ease;
+}
+
+.mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--clr-bg-light, #fff);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.14);
+    z-index: 2050;
+    display: none;
+    transform: translateY(100%);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
+}
+
+.mobile-menu-sheet.active {
+    transform: translateY(0);
+}
+
+/* Drag handle */
+.menu-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 2px;
+    margin: 10px auto 4px;
+}
+
+.menu-sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px 14px;
+    border-bottom: 1px solid var(--clr-border-light, #f1f5f9);
+}
+
+.menu-sheet-header span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--clr-text, #18202B);
+}
+
+.menu-sheet-close {
+    background: var(--clr-bg-subtle, #f8fafb);
+    border: none;
+    font-size: 1.2rem;
+    color: var(--clr-text-dim, #5B6876);
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+}
+
+.menu-sheet-close:active {
+    background: var(--clr-border, #e2e8f0);
+}
+
+/* Menu items list */
+.menu-sheet-list {
+    padding: 8px 12px;
+}
+
+.menu-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--clr-text, #18202B);
+    cursor: pointer;
+    transition: background 150ms ease;
+    text-align: left;
+}
+
+.menu-sheet-item:active {
+    background: rgba(18, 179, 179, 0.06);
+}
+
+.menu-sheet-item i:first-child {
+    width: 22px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--clr-primary-teal, #12B3B3);
+    flex-shrink: 0;
+}
+
+.menu-sheet-arrow {
+    margin-left: auto;
+    font-size: 0.7rem !important;
+    color: var(--clr-text-dim, #aaa) !important;
+    opacity: 0.5;
+}
+
+/* Settings row — make it visually prominent */
+.menu-sheet-item[data-menu-action="open-settings"] {
+    font-weight: 600;
+}
+
+/* Toggle row for theme */
+.menu-sheet-toggle-row {
+    justify-content: space-between;
+}
+
+.menu-sheet-item-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.menu-sheet-item-left i {
+    width: 22px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--clr-primary-teal, #12B3B3);
+}
+
+/* Toggle switch */
+.menu-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.menu-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.menu-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ccd5de;
+    border-radius: 24px;
+    transition: background 200ms ease;
+}
+
+.menu-toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 200ms ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.menu-toggle-switch input:checked + .menu-toggle-slider {
+    background: var(--clr-primary-teal, #12B3B3);
+}
+
+.menu-toggle-switch input:checked + .menu-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* Dark mode menu sheet */
+[data-theme="dark"] .mobile-menu-sheet {
+    background: var(--clr-bg-dark, #1a1d2e);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .menu-sheet-handle {
+    background: #444;
+}
+
+[data-theme="dark"] .menu-sheet-close {
+    background: rgba(255, 255, 255, 0.08);
+    color: #aaa;
+}
+
+[data-theme="dark"] .menu-sheet-item:active {
+    background: rgba(18, 179, 179, 0.1);
+}
+
 /* --- 6c. CHAT WATERMARK ---
    Semi-transparent brand mark behind the message area.
    pointer-events: none keeps it completely touch-safe. */
@@ -779,6 +991,85 @@ input, textarea, select, .math-field {
     font-size: 1rem;
     font-weight: 700;
     color: var(--clr-primary-teal);
+}
+
+/* Quick Stats Row (streak, total XP, solved) */
+.drawer-quick-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.drawer-quick-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 10px 4px;
+    background: var(--clr-bg-subtle, #f8fafb);
+    border-radius: 12px;
+    border: 1px solid var(--clr-border-light, #f1f5f9);
+}
+
+.drawer-quick-stat i {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+.drawer-quick-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--clr-text, #18202B);
+}
+
+.drawer-quick-stat-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--clr-text-dim, #8896a6);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Drawer Action Buttons (Settings, Change Tutor) */
+.drawer-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--clr-bg-subtle, #f8fafb);
+    border: 1px solid var(--clr-border-light, #f1f5f9);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--clr-text, #18202B);
+    cursor: pointer;
+    transition: background 150ms ease;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.drawer-action-btn:last-child {
+    margin-bottom: 0;
+}
+
+.drawer-action-btn:active {
+    background: rgba(18, 179, 179, 0.06);
+}
+
+.drawer-action-btn i:first-child {
+    width: 20px;
+    text-align: center;
+    color: var(--clr-primary-teal, #12B3B3);
+    font-size: 1rem;
+}
+
+.drawer-action-arrow {
+    margin-left: auto;
+    font-size: 0.7rem !important;
+    color: var(--clr-text-dim, #aaa) !important;
+    opacity: 0.5;
 }
 
 /* Leaderboard Table */

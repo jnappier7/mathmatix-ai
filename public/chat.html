@@ -605,29 +605,65 @@
         </div>
       </div>
 
+      <!-- Streak & Quick Stats -->
+      <div class="drawer-section">
+        <div class="drawer-quick-stats">
+          <div class="drawer-quick-stat">
+            <i class="fas fa-fire" style="color: #f59e0b;"></i>
+            <span id="drawer-streak-count" class="drawer-quick-stat-value">0</span>
+            <span class="drawer-quick-stat-label">Day Streak</span>
+          </div>
+          <div class="drawer-quick-stat">
+            <i class="fas fa-star" style="color: var(--clr-primary-teal, #12B3B3);"></i>
+            <span id="drawer-total-xp" class="drawer-quick-stat-value">0</span>
+            <span class="drawer-quick-stat-label">Total XP</span>
+          </div>
+          <div class="drawer-quick-stat">
+            <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+            <span id="drawer-total-problems" class="drawer-quick-stat-value">0</span>
+            <span class="drawer-quick-stat-label">Solved</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Session Stats -->
       <div class="drawer-section">
-        <h4><i class="fas fa-chart-line"></i> Session Stats</h4>
+        <h4><i class="fas fa-chart-line"></i> This Session</h4>
         <div class="drawer-stats-grid">
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">Session XP:</span>
+            <span class="drawer-stat-label">XP Earned</span>
             <span id="drawer-session-xp" class="drawer-stat-value">0</span>
           </div>
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">Accuracy:</span>
+            <span class="drawer-stat-label">Accuracy</span>
             <span id="drawer-session-accuracy" class="drawer-stat-value">--</span>
           </div>
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">Problems:</span>
+            <span class="drawer-stat-label">Problems</span>
             <span id="drawer-session-problems" class="drawer-stat-value">0/0</span>
           </div>
         </div>
       </div>
 
+      <!-- Quick Settings -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-sliders-h"></i> Quick Settings</h4>
+        <button id="drawer-open-settings-btn" class="drawer-action-btn" onclick="document.getElementById('open-settings-modal-btn').click(); document.getElementById('close-right-drawer').click();">
+          <i class="fas fa-cog"></i>
+          <span>Open Settings</span>
+          <i class="fas fa-chevron-right drawer-action-arrow"></i>
+        </button>
+        <button id="drawer-change-tutor-btn" class="drawer-action-btn" onclick="document.getElementById('change-tutor-btn')?.click(); document.getElementById('close-right-drawer').click();">
+          <i class="fas fa-user-graduate"></i>
+          <span>Change Tutor</span>
+          <i class="fas fa-chevron-right drawer-action-arrow"></i>
+        </button>
+      </div>
+
       <!-- Parent Link -->
       <div class="drawer-section">
         <h4><i class="fas fa-link"></i> Share Progress</h4>
-        <p style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Share this code with a parent or teacher to link accounts.</p>
+        <p style="font-size: 0.85rem; color: var(--clr-text-dim, #666); margin-bottom: 8px;">Share this code with a parent or teacher.</p>
         <div id="drawer-student-link-code-value" class="drawer-link-code" title="Click to copy"></div>
       </div>
     </div>
