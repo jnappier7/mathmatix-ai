@@ -358,6 +358,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Current tutor info for chat bubbles
     let currentTutorInfo = { name: 'Math Tutor', image: 'default-tutor.png' };
 
+    // --- Markdown rendering for AI messages (matches main chat) ---
+    function renderParentMarkdown(text) {
+        if (typeof marked === 'undefined' || !marked.parse) {
+            // Fallback: escape HTML
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Protect LaTeX blocks from markdown parsing
+        const blocks = [];
+        let processed = text
+            .replace(/\\\[([\s\S]*?)\\\]/g, (m) => { blocks.push(m); return `@@LB${blocks.length - 1}@@`; })
+            .replace(/\\\(([\s\S]*?)\\\)/g, (m) => { blocks.push(m); return `@@LB${blocks.length - 1}@@`; });
+
+        let html = marked.parse(processed, { breaks: true });
+
+        // Restore LaTeX blocks
+        blocks.forEach((b, i) => { html = html.replace(`@@LB${i}@@`, b); });
+
+        // Sanitize
+        if (typeof DOMPurify !== 'undefined') {
+            html = DOMPurify.sanitize(html, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li',
+                               'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'blockquote'],
+                ALLOWED_ATTR: ['href', 'class', 'target', 'rel', 'style']
+            });
+        }
+
+        return html;
+    }
+
+    // --- MathJax rendering helper ---
+    function renderParentMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([element]).catch(() => {});
+        } else if (window.ensureMathJax) {
+            window.ensureMathJax().then(() => {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([element]).catch(() => {});
+                }
+            });
+        }
+    }
+
     // --- Helper for appending messages to parent chat widget ---
     function appendParentMessage(sender, text, tutorInfo = null) {
         // Update tutor info if provided
@@ -367,14 +412,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const container = document.createElement("div");
         container.className = `message-container ${sender}`;
-        container.style.cssText = 'display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; width: 100%;';
 
         if (sender === 'user') {
-            container.style.justifyContent = 'flex-end';
-            container.style.flexDirection = 'row-reverse';
             container.setAttribute('aria-label', 'Your message');
         } else {
-            container.style.justifyContent = 'flex-start';
             container.setAttribute('aria-label', `Message from ${currentTutorInfo.name}`);
         }
 
@@ -382,12 +423,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (sender === 'ai') {
             const avatar = document.createElement("div");
             avatar.className = 'message-avatar';
-            avatar.style.cssText = 'flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background: #fff;';
 
             const avatarImg = document.createElement("img");
             avatarImg.src = `/images/tutor_avatars/${currentTutorInfo.image}`;
             avatarImg.alt = currentTutorInfo.name;
-            avatarImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover; object-position: center top;';
             avatarImg.onerror = () => { avatarImg.src = '/images/tutor_avatars/default-tutor.png'; };
 
             avatar.appendChild(avatarImg);
@@ -397,20 +436,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const msg = document.createElement("div");
         msg.className = `message ${sender} message-widget`;
 
-        // Match main chat bubble styling
-        if (sender === 'user') {
-            msg.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 16px; border-radius: 18px 18px 4px 18px; max-width: 80%; box-shadow: 0 2px 8px rgba(102,126,234,0.3); line-height: 1.5; font-size: 0.95em;';
-        } else if (sender === 'ai') {
-            msg.style.cssText = 'background-color: #f5f5f5; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 80%; border: 1px solid #e0e0e0; line-height: 1.5; font-size: 0.95em; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
+        // Render content: markdown + math for AI, plain text for user
+        if (sender === 'ai') {
+            msg.innerHTML = renderParentMarkdown(text);
+        } else {
+            msg.textContent = text;
         }
 
-        msg.innerText = text;
         container.appendChild(msg);
 
-        parentChatContainer.style.display = 'flex';
-        parentChatContainer.style.flexDirection = 'column';
         parentChatContainer.appendChild(container);
         parentChatContainer.scrollTop = parentChatContainer.scrollHeight;
+
+        // Render math in AI messages
+        if (sender === 'ai') {
+            setTimeout(() => renderParentMath(msg), 0);
+        }
     }
 
     // --- Update Tutor Avatar Display ---
