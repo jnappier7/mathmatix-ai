@@ -285,6 +285,7 @@
   </style>
 </head>
 <body class="landing-page-body">
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
   <header class="landing-header">
     <div class="header-logo-container">
       <a href="/student-dashboard.html">
@@ -293,7 +294,7 @@
     </div>
   </header>
 
-  <main class="growth-container">
+  <main id="main-content" class="growth-container">
     <!-- Loading State -->
     <div id="loading-state" class="loading">
       <div class="spinner"></div>
@@ -351,9 +352,10 @@
 
         <div id="feedback" class="feedback-text" style="display: none;"></div>
 
-        <button id="submit-btn" class="submit-btn" onclick="submitAnswer()" disabled>
+        <button id="submit-btn" class="submit-btn" onclick="submitAnswer()" disabled title="Select an answer first">
           Submit Answer
         </button>
+        <p id="submit-hint" class="submit-hint" style="text-align:center; color:#999; font-size:0.85rem; margin-top:0.5rem;">Select an answer above to continue</p>
         <button id="next-btn" class="submit-btn" onclick="loadNextProblem()" style="display: none;">
           Next Question
         </button>
@@ -474,6 +476,8 @@
         document.getElementById('next-btn').style.display = 'none';
         document.getElementById('submit-btn').style.display = 'block';
         document.getElementById('submit-btn').disabled = true;
+        document.getElementById('submit-btn').title = 'Select an answer first';
+        document.getElementById('submit-hint').style.display = 'block';
         selectedAnswer = null;
 
         const res = await fetch(`/api/growth-check/${sessionId}/next-problem`);
@@ -556,6 +560,8 @@
       btn.classList.add('selected');
       selectedAnswer = index;
       document.getElementById('submit-btn').disabled = false;
+      document.getElementById('submit-btn').title = '';
+      document.getElementById('submit-hint').style.display = 'none';
     }
 
     async function submitAnswer() {

@@ -97,6 +97,7 @@
             height: 35px;
             border-radius: 50%;
             border: 2px solid var(--border-color);
+            padding: 0;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-block;
@@ -105,6 +106,11 @@
         .color-preset:hover {
             transform: scale(1.15);
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .color-preset:focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
         }
 
         #color-picker {
@@ -230,12 +236,12 @@
             <!-- Colors -->
             <div class="toolbar-section">
                 <label>Color:</label>
-                <span class="color-preset" style="background-color: #000000;" onclick="setDrawingColor('#000000')" title="Black"></span>
-                <span class="color-preset" style="background-color: #E74C3C;" onclick="setDrawingColor('#E74C3C')" title="Red"></span>
-                <span class="color-preset" style="background-color: #3498DB;" onclick="setDrawingColor('#3498DB')" title="Blue"></span>
-                <span class="color-preset" style="background-color: #2ECC71;" onclick="setDrawingColor('#2ECC71')" title="Green"></span>
-                <span class="color-preset" style="background-color: #F39C12;" onclick="setDrawingColor('#F39C12')" title="Orange"></span>
-                <span class="color-preset" style="background-color: #9B59B6;" onclick="setDrawingColor('#9B59B6')" title="Purple"></span>
+                <button type="button" class="color-preset" style="background-color: #000000;" onclick="setDrawingColor('#000000')" title="Black" aria-label="Black"></button>
+                <button type="button" class="color-preset" style="background-color: #E74C3C;" onclick="setDrawingColor('#E74C3C')" title="Red" aria-label="Red"></button>
+                <button type="button" class="color-preset" style="background-color: #3498DB;" onclick="setDrawingColor('#3498DB')" title="Blue" aria-label="Blue"></button>
+                <button type="button" class="color-preset" style="background-color: #2ECC71;" onclick="setDrawingColor('#2ECC71')" title="Green" aria-label="Green"></button>
+                <button type="button" class="color-preset" style="background-color: #F39C12;" onclick="setDrawingColor('#F39C12')" title="Orange" aria-label="Orange"></button>
+                <button type="button" class="color-preset" style="background-color: #9B59B6;" onclick="setDrawingColor('#9B59B6')" title="Purple" aria-label="Purple"></button>
                 <input type="color" id="color-picker" value="#000000" title="Custom Color">
             </div>
 

@@ -43,13 +43,15 @@
 
       const file = document.getElementById('fileInput').files[0];
       if (!file) {
-        alert("Please select a file to upload.");
+        output.textContent = 'Please select a file to upload.';
+        output.style.color = '#e74c3c';
         return;
       }
       const formData = new FormData();
       formData.append('file', file);
 
       const output = document.getElementById('output');
+      output.style.color = '';
       output.textContent = 'Processing file...'; // Show processing message
 
       try {
@@ -71,8 +73,8 @@
         output.textContent += '\n\nAI Response:\n' + (data.text || 'No feedback returned.');
       } catch (err) {
         console.error("Upload fetch error:", err);
-        output.textContent = 'Error during upload: ' + err.message;
-        alert("An error occurred during upload. Please try again. Ensure it's a valid image or PDF.");
+        output.style.color = '#e74c3c';
+        output.textContent = "An error occurred during upload. Please try again. Ensure it's a valid image or PDF.\n\nDetails: " + err.message;
       }
     });
   </script>
