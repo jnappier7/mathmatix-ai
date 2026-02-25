@@ -67,10 +67,44 @@ class InlineChatVisuals {
         // Re-render graphs in modal if needed
         const graphEl = clone.querySelector('.icv-graph');
         if (graphEl && graphEl.dataset.config) {
-            graphEl.id = containerId + '-modal-graph';
+            const modalGraphId = containerId + '-modal-graph';
+            graphEl.id = modalGraphId;
             // Clear any cloned content (errors, previously rendered graphs)
             graphEl.innerHTML = '';
-            setTimeout(() => this.renderGraph(graphEl.id), 100);
+            setTimeout(() => this.renderGraph(modalGraphId), 100);
+
+            // Rebind zoom/reset buttons to the modal graph ID
+            const zoomInBtn = clone.querySelector('.icv-zoom-in');
+            const zoomOutBtn = clone.querySelector('.icv-zoom-out');
+            const resetBtn = clone.querySelector('.icv-reset');
+
+            if (zoomInBtn) {
+                zoomInBtn.removeAttribute('onclick');
+                zoomInBtn.replaceWith(zoomInBtn.cloneNode(true)); // strip old listeners
+                const newZoomIn = clone.querySelector('.icv-zoom-in');
+                newZoomIn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(modalGraphId, 0.8);
+                });
+            }
+            if (zoomOutBtn) {
+                zoomOutBtn.removeAttribute('onclick');
+                zoomOutBtn.replaceWith(zoomOutBtn.cloneNode(true));
+                const newZoomOut = clone.querySelector('.icv-zoom-out');
+                newZoomOut.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(modalGraphId, 1.25);
+                });
+            }
+            if (resetBtn) {
+                resetBtn.removeAttribute('onclick');
+                resetBtn.replaceWith(resetBtn.cloneNode(true));
+                const newReset = clone.querySelector('.icv-reset');
+                newReset.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.resetGraph(modalGraphId);
+                });
+            }
         }
 
         // Re-render slider graphs if needed
@@ -357,7 +391,9 @@ class InlineChatVisuals {
 
             // Normalize and validate the function string
             const fn = this.normalizeFunctionString(config.fn);
-            const width = container.offsetWidth || 300;
+            // Use a proper render width - in collapsed state offsetWidth may be tiny due to CSS transform,
+            // so use 300 as minimum to ensure function-plot draws a visible graph
+            const width = Math.max(container.offsetWidth, 300);
 
             const plotConfig = {
                 target: `#${id}`,
@@ -2368,8 +2404,8 @@ class InlineChatVisuals {
 
             /* Collapsed thumbnail state (iMessage-style) */
             .icv-collapsed {
-                max-width: 200px;
-                max-height: 150px;
+                max-width: 220px;
+                max-height: 160px;
                 overflow: hidden;
                 cursor: pointer;
                 position: relative;
@@ -2388,10 +2424,12 @@ class InlineChatVisuals {
 
             .icv-collapsed .icv-graph,
             .icv-collapsed .icv-slider-graph {
-                min-height: 100px !important;
-                max-height: 100px !important;
+                width: 320px !important;
+                height: 200px !important;
+                min-height: 200px !important;
+                max-height: none !important;
                 pointer-events: none;
-                transform: scale(0.6);
+                transform: scale(0.5);
                 transform-origin: top left;
             }
 

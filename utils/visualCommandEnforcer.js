@@ -562,43 +562,73 @@ function isGraphingRequest(message) {
 }
 
 /**
+ * Normalize Unicode math characters to ASCII equivalents
+ */
+function normalizeMathChars(str) {
+    return str
+        .replace(/²/g, '^2')
+        .replace(/³/g, '^3')
+        .replace(/⁴/g, '^4')
+        .replace(/⁵/g, '^5')
+        .replace(/⁻/g, '-')
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/')
+        .replace(/−/g, '-')
+        .replace(/π/g, 'pi');
+}
+
+/**
+ * Math expression character class: x, digits, operators, parens, dots, spaces, Unicode superscripts
+ * Used to build extraction regexes
+ */
+const MATH_CHARS = '[x\\d\\(\\)\\^\\*\\/\\+\\-\\.\\s²³⁴⁵⁻]';
+
+/**
  * Extract function from message for graphing
  */
 function extractFunctionFromMessage(studentMsg, aiResponse) {
+    // Normalize Unicode math in inputs
+    const normStudent = normalizeMathChars(studentMsg);
+    const normAI = normalizeMathChars(aiResponse);
+
     // Common function patterns - ordered from most specific to least
+    // Use a broad math-character class that captures full expressions including rational functions
     const patterns = [
-        // Explicit y= or f(x)= assignment (most reliable)
-        /y\s*=\s*([x\d\(\)\^\*\/\+\-\.\s]+(?:sin|cos|tan|log|ln|sqrt|abs|exp)?[x\d\(\)\^\*\/\+\-\.\s]*)/i,
-        /f\(x\)\s*=\s*([x\d\(\)\^\*\/\+\-\.\s]+(?:sin|cos|tan|log|ln|sqrt|abs|exp)?[x\d\(\)\^\*\/\+\-\.\s]*)/i,
+        // Explicit y= or f(x)= assignment - greedy capture of full expression (most reliable)
+        /y\s*=\s*((?:[x\d\(\)\^\*\/\+\-\.\s]|(?:sin|cos|tan|log|ln|sqrt|abs|exp)\s*\([^)]*\))+)/i,
+        /f\(x\)\s*=\s*((?:[x\d\(\)\^\*\/\+\-\.\s]|(?:sin|cos|tan|log|ln|sqrt|abs|exp)\s*\([^)]*\))+)/i,
         // "graph of <function>" where function must start with a math-like token
-        /(?:graph|plot)\s+(?:of\s+)?(?:y\s*=\s*)?([x\d\(][\dx\(\)\^\*\/\+\-\.\s]*)/i,
+        /(?:graph|plot)\s+(?:of\s+)?(?:y\s*=\s*)?((?:[x\d\(][x\d\(\)\^\*\/\+\-\.\s]*(?:\/\s*\([x\d\(\)\^\*\/\+\-\.\s]+\))?)+)/i,
         // Named functions: sin(x)/x, sinc, etc.
         /(sin\(x\)\/x|sinc)/i,
-        // Common named functions
-        /(?:graph|plot|show)\s+(?:of\s+)?(?:the\s+)?(?:a\s+)?((?:sin|cos|tan|sqrt|log|ln|exp|abs)\([^)]*\)(?:\/[x\d\(\)]+)?)/i,
-        // Standalone well-known expressions
+        // Common named functions with possible division
+        /(?:graph|plot|show)\s+(?:of\s+)?(?:the\s+)?(?:a\s+)?((?:sin|cos|tan|sqrt|log|ln|exp|abs)\([^)]*\)(?:\s*\/\s*[x\d\(\)\^\+\-\.\s]+)?)/i,
+        // Standalone well-known expressions (last resort - only if nothing else matched)
         /(x\^2|x\^3|sin\(x\)|cos\(x\)|tan\(x\)|sqrt\(x\)|log\(x\)|exp\(x\))/i
     ];
 
+    // Try student message first (normalized)
     for (const pattern of patterns) {
-        let match = studentMsg.match(pattern);
+        let match = normStudent.match(pattern);
         if (match) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            // Validate it looks like math, not natural language
-            if (looksLikeMathExpression(func)) return func;
+            // Remove trailing operators that got caught by greedy match
+            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }
 
-    // Try AI response
+    // Try AI response (normalized)
     for (const pattern of patterns) {
-        let match = aiResponse.match(pattern);
+        let match = normAI.match(pattern);
         if (match) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            if (looksLikeMathExpression(func)) return func;
+            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }
 
