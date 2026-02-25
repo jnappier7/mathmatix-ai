@@ -203,11 +203,11 @@ router.get('/live-feed', isTeacher, async (req, res) => {
       '_id firstName lastName username'
     ).lean();
 
-    const studentIds = students.map(s => s._id);
+    const filteredStudentIds = students.map(s => s._id);
 
     // Get active conversations for these students
     const activeConversations = await Conversation.find({
-      userId: { $in: studentIds },
+      userId: { $in: filteredStudentIds },
       isActive: true,
       lastActivity: { $gte: new Date(Date.now() - 30 * 60 * 1000) } // Active within last 30 min
     }).sort({ lastActivity: -1 }).lean();
@@ -281,10 +281,10 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
       '_id firstName lastName username'
     ).lean();
 
-    const studentIds = students.map(s => s._id);
+    const filteredStudentIds = students.map(s => s._id);
 
     // Build query
-    const query = { userId: { $in: studentIds } };
+    const query = { userId: { $in: filteredStudentIds } };
 
     if (studentId) query.userId = studentId;
     if (activeOnly === 'true') query.isActive = true;
