@@ -14,6 +14,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
 
 // ---- Configuration ----
@@ -145,6 +146,19 @@ router.post('/webhook', async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // Idempotency check — prevent duplicate processing on Stripe retries
+  try {
+    await WebhookEvent.create({ stripeEventId: event.id, eventType: event.type });
+  } catch (err) {
+    if (err.code === 11000) {
+      // Duplicate key — already processed this event
+      console.log(`[Billing] Duplicate webhook event ${event.id} (${event.type}) — skipping`);
+      return res.json({ received: true });
+    }
+    // Non-duplicate DB error — log but continue processing
+    console.error('[Billing] Webhook dedup check error:', err.message);
+  }
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -204,11 +218,16 @@ router.post('/webhook', async (req, res) => {
       case 'customer.subscription.updated': {
         // Subscription status changed (e.g., payment failed → past_due)
         const subscription = event.data.object;
-        const user = await User.findOne({ stripeSubscriptionId: subscription.id });
+        // Look up by subscription ID first, then fall back to customer ID for reactivations
+        let user = await User.findOne({ stripeSubscriptionId: subscription.id });
+        if (!user) {
+          user = await User.findOne({ stripeCustomerId: subscription.customer });
+        }
         if (!user) break;
 
         if (subscription.status === 'active') {
           user.subscriptionTier = 'unlimited';
+          user.stripeSubscriptionId = subscription.id;
         } else if (['past_due', 'unpaid', 'canceled'].includes(subscription.status)) {
           user.subscriptionTier = 'free';
           user.subscriptionEndDate = new Date();
@@ -221,7 +240,13 @@ router.post('/webhook', async (req, res) => {
         const invoice = event.data.object;
         const user = await User.findOne({ stripeCustomerId: invoice.customer });
         if (user) {
-          console.warn(`[Billing] Payment failed for ${user.firstName} ${user.lastName}`);
+          console.warn(`[Billing] Payment failed for ${user.firstName} ${user.lastName} — downgrading to free`);
+          // Downgrade immediately so user doesn't retain unlimited access
+          if (user.subscriptionTier === 'unlimited') {
+            user.subscriptionTier = 'free';
+            user.subscriptionEndDate = new Date();
+            await user.save();
+          }
         }
         break;
       }
@@ -230,10 +255,12 @@ router.post('/webhook', async (req, res) => {
         break;
     }
 
-    res.json({ received: true });
+    // Return 200 only after successful processing
+    return res.json({ received: true });
   } catch (error) {
     console.error('[Billing] Webhook processing error:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
+    // Return 500 so Stripe retries the webhook
+    return res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 
@@ -316,9 +343,11 @@ router.get('/status', isAuthenticated, async (req, res) => {
       const totalRemaining = freeRemainingPack + packRemaining;
       const packLimitReached = totalRemaining <= 0;
 
-      // Auto-downgrade expired/empty packs
+      // Auto-downgrade expired/empty packs and clean up stale fields
       if (packRemaining <= 0) {
         user.subscriptionTier = 'free';
+        user.packSecondsRemaining = 0;
+        user.packExpiresAt = null;
         await user.save();
       }
 

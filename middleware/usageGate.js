@@ -37,16 +37,19 @@ async function isLicenseValid(licenseId) {
 
   try {
     const license = await SchoolLicense.findById(licenseId).lean();
-    const valid = license ? license.isValid ? license.isValid() : (
-      (license.status === 'active' || license.status === 'trial') &&
-      (!license.expiresAt || new Date() <= license.expiresAt)
-    ) : false;
+    if (!license) {
+      licenseCache.set(key, { valid: false, checkedAt: Date.now() });
+      return false;
+    }
+    // .lean() returns a plain object — check fields directly instead of calling .isValid()
+    const valid = (license.status === 'active' || license.status === 'trial') &&
+      (!license.expiresAt || new Date() <= license.expiresAt);
     licenseCache.set(key, { valid, checkedAt: Date.now() });
     return valid;
   } catch (err) {
     console.error('[UsageGate] License check error:', err.message);
-    // On error, allow access (don't block students due to lookup failure)
-    return true;
+    // On error, deny access (fail closed) — a brief outage is safer than free access
+    return false;
   }
 }
 
@@ -77,8 +80,17 @@ async function usageGate(req, res, next) {
     // Students covered by a school license get unlimited access
     if (user.schoolLicenseId) {
       const valid = await isLicenseValid(user.schoolLicenseId);
-      if (valid) return next();
-      // License expired/invalid — fall through to free tier
+      if (valid) {
+        // Capacity check: verify school hasn't exceeded student limit
+        const license = await SchoolLicense.findById(user.schoolLicenseId).lean();
+        if (license && license.currentStudentCount > license.maxStudents) {
+          console.warn(`[UsageGate] School "${license.schoolName}" over capacity (${license.currentStudentCount}/${license.maxStudents})`);
+          // Over capacity — fall through to free tier instead of blocking entirely
+        } else {
+          return next();
+        }
+      }
+      // License expired/invalid/over-capacity — fall through to free tier
     }
 
     // Unlimited individual subscribers pass unconditionally
@@ -90,12 +102,11 @@ async function usageGate(req, res, next) {
     const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
     if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
       weeklyAIUsed = 0;
-      User.findByIdAndUpdate(user._id, {
-        weeklyAISeconds: 0,
-        weeklyActiveSeconds: 0,
-        weeklyActiveTutoringMinutes: 0,
-        lastWeeklyReset: now
-      }).catch(err => console.error('[UsageGate] Weekly reset error:', err));
+      // Atomic reset: only resets if lastWeeklyReset hasn't changed (prevents race condition)
+      await User.findOneAndUpdate(
+        { _id: user._id, lastWeeklyReset: user.lastWeeklyReset },
+        { $set: { weeklyAISeconds: 0, weeklyActiveSeconds: 0, weeklyActiveTutoringMinutes: 0, lastWeeklyReset: now } }
+      );
     }
 
     // --- Free weekly minutes (every student gets these first) ---
@@ -125,9 +136,10 @@ async function usageGate(req, res, next) {
         return next();
       }
 
-      // Pack empty or expired — auto-downgrade
-      User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
-        .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
+      // Pack empty or expired — auto-downgrade and clean up stale fields
+      User.findByIdAndUpdate(user._id, {
+        $set: { subscriptionTier: 'free', packSecondsRemaining: 0, packExpiresAt: null }
+      }).catch(err => console.error('[UsageGate] Downgrade error:', err.message));
 
       return res.status(402).json({
         message: "Your free minutes and minute pack are both used up. Purchase a new pack, ask your school about a Mathmatix license, or come back next week!",

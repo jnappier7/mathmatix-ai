@@ -564,6 +564,23 @@ router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
         if (enrollmentCode.mathCourse) updateFields.mathCourse = enrollmentCode.mathCourse;
         if (enrollmentCode.gradeLevel) updateFields.gradeLevel = enrollmentCode.gradeLevel;
 
+        // Auto-propagate school license: if this teacher has a school license, give it to the student
+        try {
+            const teacherDoc = await User.findById(enrollmentCode.teacherId).select('schoolLicenseId').lean();
+            if (teacherDoc && teacherDoc.schoolLicenseId) {
+                const SchoolLicense = require('../models/schoolLicense');
+                const license = await SchoolLicense.findById(teacherDoc.schoolLicenseId);
+                if (license && license.isValid() && license.currentStudentCount < license.maxStudents) {
+                    updateFields.schoolLicenseId = teacherDoc.schoolLicenseId;
+                    license.currentStudentCount = (license.currentStudentCount || 0) + 1;
+                    await license.save();
+                    console.log(`[SchoolLicense] Auto-propagated to student ${studentId} via enrollment (${license.schoolName})`);
+                }
+            }
+        } catch (licenseErr) {
+            console.error('[SchoolLicense] Auto-propagation error:', licenseErr.message);
+        }
+
         await User.findByIdAndUpdate(studentId, { $set: updateFields });
 
         res.json({

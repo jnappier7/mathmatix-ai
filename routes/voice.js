@@ -113,12 +113,20 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         console.log('📝 [Voice] Calling Whisper API for transcription...');
 
+        // Map preferredLanguage to Whisper ISO-639-1 codes for non-English transcription
+        const userLangPref = await User.findById(userId).select('preferredLanguage').lean();
+        const langMap = {
+            'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
+            'Vietnamese': 'vi', 'Arabic': 'ar', 'Somali': 'so', 'French': 'fr', 'German': 'de'
+        };
+        const whisperLang = langMap[userLangPref?.preferredLanguage] || 'en';
+
         let transcription;
         try {
             transcription = await openai.audio.transcriptions.create({
                 file: fs.createReadStream(tempAudioPath),
                 model: 'whisper-1',
-                language: 'en', // Can be auto-detected by omitting this
+                language: whisperLang,
             });
         } catch (error) {
             console.error('❌ [Voice] Whisper API error:', error.message);
