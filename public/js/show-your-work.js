@@ -285,14 +285,14 @@ class ShowYourWorkManager {
         this.showSection(this.resultsSection);
         if (!this.resultsContainer) return;
 
-        // ANTI-CHEAT: If no student work was detected, show a friendly message instead of grading
+        // If no student work was detected, show a friendly nudge — not a grading result
         if (result.noWorkDetected) {
             this.resultsContainer.innerHTML = `
                 <div class="syw-summary-header">
                     <div class="syw-no-work-message" style="text-align: center; padding: 20px;">
                         <i class="fas fa-pencil-alt" style="font-size: 2em; color: #8b5cf6; margin-bottom: 10px;"></i>
-                        <h3>No work detected</h3>
-                        <p>${this.escapeHtml(result.overallFeedback || "It looks like the problems haven't been attempted yet. Give them a try first, then snap another photo!")}</p>
+                        <h3>Give it a try first!</h3>
+                        <p>${this.escapeHtml(result.overallFeedback || "I can see your worksheet but it looks like you haven't started yet. Work through the problems first, then send me another photo and I'll check your work!")}</p>
                     </div>
                 </div>
             `;
