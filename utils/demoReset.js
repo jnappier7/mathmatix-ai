@@ -63,32 +63,34 @@ async function resetDemoAccount(demoProfileId) {
     // 2. Build the reset object from template (exclude _id and fields Mongoose manages)
     const resetFields = buildResetFields(template);
 
-    // 3. Reset the user document
-    const user = await User.findById(userId);
+    // 3. Reset (or create) the user document
+    let user = await User.findById(userId);
     if (!user) {
-      logger.warn(`[DemoReset] Demo user not found: ${demoProfileId} (${userId})`);
-      return false;
-    }
-
-    // Apply all template fields
-    Object.assign(user, resetFields);
-
-    // Reset fields that may have been modified during the session
-    user.activeConversationId = null;
-    user.activeMasteryConversationId = null;
-    user.activeCourseSessionId = null;
-    user.lastLogin = null;
-    user.tourCompleted = false;
-    user.tourDismissed = false;
-
-    // Handle skillMastery (Map type) — must be set explicitly
-    if (template.skillMastery) {
-      user.skillMastery = template.skillMastery;
+      // Demo user missing from DB — create it from the template
+      logger.info(`[DemoReset] Demo user not found, creating from template: ${demoProfileId} (${userId})`);
+      user = new User(template);
+      await user.save();
     } else {
-      user.skillMastery = new Map();
-    }
+      // Apply all template fields
+      Object.assign(user, resetFields);
 
-    await user.save();
+      // Reset fields that may have been modified during the session
+      user.activeConversationId = null;
+      user.activeMasteryConversationId = null;
+      user.activeCourseSessionId = null;
+      user.lastLogin = null;
+      user.tourCompleted = false;
+      user.tourDismissed = false;
+
+      // Handle skillMastery (Map type) — must be set explicitly
+      if (template.skillMastery) {
+        user.skillMastery = template.skillMastery;
+      } else {
+        user.skillMastery = new Map();
+      }
+
+      await user.save();
+    }
 
     // 4. Recreate conversations for this user
     const conversations = buildConversations(DEMO_IDS);
