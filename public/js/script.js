@@ -887,7 +887,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         bubble.appendChild(textNode);
 
-        // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS]
+        // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS] with animated reveal
         if (sender === 'ai' && text && text.includes('[STEPS]')) {
             const stepsRegex = /\[STEPS\]([\s\S]*?)\[\/STEPS\]/g;
             let match;
@@ -896,51 +896,117 @@ document.addEventListener("DOMContentLoaded", () => {
                 const lines = stepsContent.split('\n').map(l => l.trim()).filter(l => l);
 
                 if (lines.length > 0) {
+                    const stepsId = `steps-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
                     const stepsContainer = document.createElement('div');
                     stepsContainer.className = 'visual-steps-container';
-                    stepsContainer.style.cssText = `
-                        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-                        border-left: 4px solid #3b82f6;
-                        border-radius: 8px;
-                        padding: 20px;
-                        margin: 15px 0;
-                        font-family: 'Courier New', monospace;
-                        line-height: 2;
-                    `;
+                    stepsContainer.id = stepsId;
 
+                    // Build step elements (hidden initially except first)
+                    const stepElements = [];
                     lines.forEach((line, index) => {
-                        // Check if line is an equation (contains = or math operators)
                         const isEquation = /[=+\-*/]|\\[a-z]+/.test(line);
 
-                        const lineDiv = document.createElement('div');
-                        lineDiv.style.cssText = `
-                            margin: ${isEquation ? '8px 0' : '4px 0'};
-                            padding: ${isEquation ? '8px 12px' : '4px 8px'};
-                            ${isEquation ? 'background: white; border-radius: 6px; font-size: 1.1em; font-weight: 600;' : 'font-size: 0.9em; color: #1e40af; padding-left: 20px;'}
-                        `;
+                        const stepWrapper = document.createElement('div');
+                        stepWrapper.className = 'step-reveal-item';
+                        stepWrapper.dataset.stepIndex = index;
+                        // First step visible, rest hidden
+                        if (index > 0) {
+                            stepWrapper.classList.add('step-hidden');
+                        } else {
+                            stepWrapper.classList.add('step-visible');
+                        }
 
-                        // If it's an equation, wrap in LaTeX delimiters if not already
+                        const lineDiv = document.createElement('div');
+                        lineDiv.className = isEquation ? 'step-equation' : 'step-explanation';
+
                         if (isEquation && !line.includes('\\(')) {
                             lineDiv.innerHTML = `\\(${line}\\)`;
                         } else {
                             lineDiv.textContent = line;
                         }
 
-                        stepsContainer.appendChild(lineDiv);
+                        stepWrapper.appendChild(lineDiv);
+                        stepElements.push(stepWrapper);
+                        stepsContainer.appendChild(stepWrapper);
 
-                        // Add arrow between steps (but not after last equation or after explanatory text)
+                        // Add arrow (hidden until both steps are revealed)
                         if (index < lines.length - 1 && isEquation) {
                             const arrow = document.createElement('div');
+                            arrow.className = 'step-arrow step-hidden';
+                            arrow.dataset.stepIndex = index;
                             arrow.innerHTML = '↓';
-                            arrow.style.cssText = `
-                                text-align: center;
-                                font-size: 1.5em;
-                                color: #3b82f6;
-                                margin: 4px 0;
-                            `;
                             stepsContainer.appendChild(arrow);
                         }
                     });
+
+                    // Progress indicator and controls
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.className = 'step-controls';
+
+                    const progressDiv = document.createElement('div');
+                    progressDiv.className = 'step-progress';
+                    progressDiv.innerHTML = `<span class="step-progress-text">Step 1 of ${lines.length}</span>`;
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'step-progress-bar';
+                    progressBar.innerHTML = `<div class="step-progress-fill" style="width: ${(1 / lines.length) * 100}%"></div>`;
+                    progressDiv.appendChild(progressBar);
+
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'step-next-btn';
+                    nextBtn.innerHTML = 'Next Step <span class="step-next-arrow">→</span>';
+                    nextBtn.dataset.currentStep = '0';
+                    nextBtn.dataset.totalSteps = lines.length.toString();
+                    nextBtn.dataset.stepsId = stepsId;
+
+                    nextBtn.addEventListener('click', function() {
+                        const current = parseInt(this.dataset.currentStep);
+                        const total = parseInt(this.dataset.totalSteps);
+                        const container = document.getElementById(this.dataset.stepsId);
+                        if (!container) return;
+
+                        const nextIndex = current + 1;
+                        if (nextIndex >= total) return;
+
+                        // Reveal the next step
+                        const nextStep = container.querySelector(`.step-reveal-item[data-step-index="${nextIndex}"]`);
+                        if (nextStep) {
+                            nextStep.classList.remove('step-hidden');
+                            nextStep.classList.add('step-visible', 'step-animate-in');
+                        }
+
+                        // Reveal the arrow before this step
+                        const arrow = container.querySelector(`.step-arrow[data-step-index="${current}"]`);
+                        if (arrow) {
+                            arrow.classList.remove('step-hidden');
+                            arrow.classList.add('step-visible', 'step-animate-in');
+                        }
+
+                        // Update progress
+                        this.dataset.currentStep = nextIndex.toString();
+                        const progressText = container.querySelector('.step-progress-text');
+                        const progressFill = container.querySelector('.step-progress-fill');
+                        if (progressText) progressText.textContent = `Step ${nextIndex + 1} of ${total}`;
+                        if (progressFill) progressFill.style.width = `${((nextIndex + 1) / total) * 100}%`;
+
+                        // Re-render math in the revealed step
+                        if (nextStep && typeof renderMathInElement === 'function') {
+                            renderMathInElement(nextStep);
+                        }
+
+                        // Last step reached - change button
+                        if (nextIndex >= total - 1) {
+                            this.innerHTML = 'All steps revealed ✓';
+                            this.classList.add('step-btn-done');
+                            this.disabled = true;
+                        }
+
+                        // Scroll to the new step
+                        nextStep?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
+
+                    controlsDiv.appendChild(progressDiv);
+                    controlsDiv.appendChild(nextBtn);
+                    stepsContainer.appendChild(controlsDiv);
 
                     bubble.appendChild(stepsContainer);
                 }

@@ -539,7 +539,9 @@ function hasInlineVisualCommands(response) {
         /\[PERCENT_BAR:/,
         /\[PLACE_VALUE:/,
         /\[RIGHT_TRIANGLE:/,
-        /\[INEQUALITY:/
+        /\[INEQUALITY:/,
+        /\[ALGEBRA_TILES:/,
+        /\[MULTI_REP:/
     ];
     return inlinePatterns.some(p => p.test(response));
 }

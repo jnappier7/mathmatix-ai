@@ -121,7 +121,11 @@ class InlineChatVisuals {
             { regex: /\[PERCENT_BAR:([^\]]+)\]/g, handler: this.createPercentBar.bind(this) },
             { regex: /\[PLACE_VALUE:([^\]]+)\]/g, handler: this.createPlaceValue.bind(this) },
             { regex: /\[RIGHT_TRIANGLE:([^\]]+)\]/g, handler: this.createRightTriangle.bind(this) },
-            { regex: /\[INEQUALITY:([^\]]+)\]/g, handler: this.createInequality.bind(this) }
+            { regex: /\[INEQUALITY:([^\]]+)\]/g, handler: this.createInequality.bind(this) },
+            // Algebra tiles inline preview + launcher
+            { regex: /\[ALGEBRA_TILES:([^\]]+)\]/g, handler: this.createAlgebraTilesInline.bind(this) },
+            // Multi-representation linked views
+            { regex: /\[MULTI_REP:([^\]]+)\]/g, handler: this.createMultiRepresentation.bind(this) }
         ];
 
         for (const { regex, handler } of visualTypes) {
@@ -437,6 +441,7 @@ class InlineChatVisuals {
         const label = params.label || '';
         const showInterval = params.interval || null;
         const openCircle = params.open === true || params.open === 'true';
+        const interactive = params.interactive !== false; // interactive by default
 
         const width = 320;
         const height = 80;
@@ -446,7 +451,7 @@ class InlineChatVisuals {
         const scale = (width - 2 * padding) / (max - min);
         const toX = (val) => padding + (val - min) * scale;
 
-        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line">`;
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line" id="${id}-svg">`;
 
         // Draw main line
         svg += `<line x1="${padding}" y1="${lineY}" x2="${width - padding}" y2="${lineY}"
@@ -476,31 +481,117 @@ class InlineChatVisuals {
                           fill="rgba(102, 126, 234, 0.2)" rx="4"/>`;
         }
 
-        // Draw points
-        points.forEach(point => {
+        // Draw draggable points (interactive)
+        points.forEach((point, idx) => {
             const x = toX(point);
             const isHighlighted = highlight !== null && point === Number(highlight);
             const fillColor = isHighlighted ? '#667eea' : '#e74c3c';
 
             if (openCircle) {
-                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="white" stroke="${fillColor}" stroke-width="3"/>`;
+                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="white" stroke="${fillColor}" stroke-width="3"
+                            class="${interactive ? 'icv-draggable-point' : ''}"
+                            data-point-idx="${idx}" data-numline-id="${id}" data-min="${min}" data-max="${max}"
+                            data-padding="${padding}" data-scale="${scale}"/>`;
             } else {
-                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="${fillColor}"/>`;
+                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="${fillColor}"
+                            class="${interactive ? 'icv-draggable-point' : ''}"
+                            data-point-idx="${idx}" data-numline-id="${id}" data-min="${min}" data-max="${max}"
+                            data-padding="${padding}" data-scale="${scale}"/>`;
             }
 
-            // Point label above
+            // Point label above (will update on drag)
             svg += `<text x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
-                          font-size="14" font-weight="bold">${point}</text>`;
+                          font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${point}</text>`;
         });
 
         svg += `</svg>`;
 
         return `
-        <div class="icv-container icv-numline-container" id="${id}">
+        <div class="icv-container icv-numline-container" id="${id}"
+             data-config='${JSON.stringify({ min, max, points, highlight, openCircle, interactive })}'>
             ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
             ${svg}
+            ${interactive && points.length > 0 ? `<div class="icv-interactive-value" id="${id}-value">Drag points to explore</div>` : ''}
         </div>
         `;
+    }
+
+    /**
+     * Initialize draggable number line points
+     */
+    initDraggablePoints(container) {
+        const points = container.querySelectorAll('.icv-draggable-point');
+        points.forEach(point => {
+            if (point._dragInit) return;
+            point._dragInit = true;
+
+            const svg = point.closest('svg');
+            if (!svg) return;
+
+            let isDragging = false;
+
+            const getMousePos = (e) => {
+                const rect = svg.getBoundingClientRect();
+                const svgWidth = parseFloat(svg.getAttribute('viewBox').split(' ')[2]);
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                return (clientX - rect.left) / rect.width * svgWidth;
+            };
+
+            const onStart = (e) => {
+                e.preventDefault();
+                isDragging = true;
+                point.classList.add('dragging');
+                point.setAttribute('r', '10');
+            };
+
+            const onMove = (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const svgX = getMousePos(e);
+                const min = parseFloat(point.dataset.min);
+                const max = parseFloat(point.dataset.max);
+                const padding = parseFloat(point.dataset.padding);
+                const scale = parseFloat(point.dataset.scale);
+
+                // Clamp to number line bounds
+                const clampedX = Math.max(padding, Math.min(svgX, padding + (max - min) * scale));
+                const value = Math.round(((clampedX - padding) / scale) + min);
+                const snappedX = padding + (value - min) * scale;
+
+                point.setAttribute('cx', snappedX);
+
+                // Update label
+                const idx = point.dataset.pointIdx;
+                const label = svg.querySelector(`.icv-point-label[data-point-idx="${idx}"]`);
+                if (label) {
+                    label.setAttribute('x', snappedX);
+                    label.textContent = value;
+                }
+
+                // Update value tooltip
+                const containerId = point.dataset.numlineId;
+                const tooltip = document.getElementById(`${containerId}-value`);
+                if (tooltip) {
+                    tooltip.textContent = `Point: ${value}`;
+                    tooltip.style.opacity = '1';
+                }
+            };
+
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                point.classList.remove('dragging');
+                point.setAttribute('r', '8');
+            };
+
+            point.addEventListener('mousedown', onStart);
+            point.addEventListener('touchstart', onStart, { passive: false });
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('touchmove', onMove, { passive: false });
+            document.addEventListener('mouseup', onEnd);
+            document.addEventListener('touchend', onEnd);
+        });
     }
 
     // ==========================================
@@ -525,15 +616,13 @@ class InlineChatVisuals {
         const width = type === 'circle' ? 120 : 200;
         const height = type === 'circle' ? 120 : 60;
 
-        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-fraction">`;
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-fraction" id="${id}-svg">`;
 
         if (type === 'circle') {
-            // Pie-style fraction
             const centerX = width / 2;
             const centerY = height / 2;
             const radius = 50;
 
-            // Draw segments
             for (let i = 0; i < denominator; i++) {
                 const startAngle = (i / denominator) * 2 * Math.PI - Math.PI / 2;
                 const endAngle = ((i + 1) / denominator) * 2 * Math.PI - Math.PI / 2;
@@ -547,10 +636,11 @@ class InlineChatVisuals {
                 const filled = i < numerator;
 
                 svg += `<path d="M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 ${largeArc},1 ${x2},${y2} Z"
-                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1"/>`;
+                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1"
+                              class="icv-fraction-segment" data-segment="${i}" data-filled="${filled}"
+                              data-fraction-id="${id}" data-denom="${denominator}"/>`;
             }
         } else {
-            // Bar-style fraction
             const barWidth = 180;
             const barHeight = 30;
             const startX = 10;
@@ -561,19 +651,63 @@ class InlineChatVisuals {
                 const filled = i < numerator;
                 svg += `<rect x="${startX + i * segmentWidth}" y="${startY}"
                               width="${segmentWidth - 2}" height="${barHeight}"
-                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1" rx="3"/>`;
+                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1" rx="3"
+                              class="icv-fraction-segment" data-segment="${i}" data-filled="${filled}"
+                              data-fraction-id="${id}" data-denom="${denominator}"/>`;
             }
         }
 
         svg += `</svg>`;
 
         return `
-        <div class="icv-container icv-fraction-container" id="${id}">
+        <div class="icv-container icv-fraction-container" id="${id}"
+             data-config='${JSON.stringify({ numerator, denominator, type })}'>
             <div class="icv-title">${this.escapeHtml(label)}</div>
             ${svg}
-            <div class="icv-caption">${numerator} out of ${denominator} parts shaded</div>
+            <div class="icv-fraction-counter" id="${id}-counter">${numerator} out of ${denominator} parts shaded</div>
+            <div class="icv-caption" style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Tap segments to toggle</div>
         </div>
         `;
+    }
+
+    /**
+     * Initialize clickable fraction segments
+     */
+    initInteractiveFractions(container) {
+        const segments = container.querySelectorAll('.icv-fraction-segment');
+        segments.forEach(seg => {
+            if (seg._clickInit) return;
+            seg._clickInit = true;
+
+            seg.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const filled = seg.dataset.filled === 'true';
+                const fractionId = seg.dataset.fractionId;
+
+                // Toggle fill
+                if (filled) {
+                    seg.setAttribute('fill', '#e8e8e8');
+                    seg.dataset.filled = 'false';
+                } else {
+                    seg.setAttribute('fill', '#667eea');
+                    seg.dataset.filled = 'true';
+                }
+
+                // Update counter
+                const denom = parseInt(seg.dataset.denom);
+                const fractionContainer = document.getElementById(fractionId);
+                if (!fractionContainer) return;
+                const allSegments = fractionContainer.querySelectorAll('.icv-fraction-segment');
+                let filledCount = 0;
+                allSegments.forEach(s => { if (s.dataset.filled === 'true') filledCount++; });
+
+                const counter = document.getElementById(`${fractionId}-counter`);
+                if (counter) {
+                    counter.textContent = `${filledCount} out of ${denom} parts shaded`;
+                    counter.style.color = filledCount === denom ? '#10b981' : '#667eea';
+                }
+            });
+        });
     }
 
     createFractionComparison(compareStr, id) {
@@ -1769,6 +1903,317 @@ class InlineChatVisuals {
     }
 
     // ==========================================
+    // ALGEBRA TILES INLINE
+    // [ALGEBRA_TILES:expression] - Shows inline tile preview + opens full workspace
+    // ==========================================
+    createAlgebraTilesInline(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('atiles');
+
+        // The expression can be in params.expression, params.eq, or as the raw paramStr
+        const expression = params.expression || params.eq || params.fn || paramStr.trim();
+
+        // Parse the expression into tile representations
+        const tiles = this.parseExpressionToTiles(expression);
+
+        // Build inline tile visual
+        let tilesHtml = '';
+        tiles.forEach(tile => {
+            for (let i = 0; i < Math.abs(tile.count); i++) {
+                const isPositive = tile.count > 0;
+                tilesHtml += `<div class="icv-algebra-tile icv-tile-${isPositive ? 'pos' : 'neg'}-${tile.type}">${tile.label}</div>`;
+            }
+        });
+
+        const title = params.title || `Algebra Tiles: ${expression}`;
+
+        return `
+        <div class="icv-container icv-algebra-tiles-container" id="${id}"
+             data-expression="${this.escapeHtml(expression)}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-algebra-workspace">${tilesHtml}</div>
+            <div class="icv-algebra-expression">\\(${expression}\\)</div>
+            <button class="icv-open-tiles-btn" data-expression="${this.escapeHtml(expression)}" data-tiles-id="${id}">
+                Open Interactive Workspace
+            </button>
+        </div>
+        `;
+    }
+
+    /**
+     * Parse an algebraic expression into tile types
+     * e.g., "2x^2 + 3x - 5" → [{type: 'x2', count: 2, label: 'x²'}, {type: 'x', count: 3, label: 'x'}, {type: 'unit', count: -5, label: '1'}]
+     */
+    parseExpressionToTiles(expression) {
+        const tiles = [];
+        if (!expression) return tiles;
+
+        const expr = expression.replace(/\s/g, '');
+
+        // Match terms: optional sign, optional coefficient, variable part
+        const termRegex = /([+-]?)(\d*)(x\^2|x²|x|y|xy)?/g;
+        let match;
+
+        while ((match = termRegex.exec(expr)) !== null) {
+            if (!match[0]) continue;
+            const sign = match[1] === '-' ? -1 : 1;
+            const coeffStr = match[2];
+            const varPart = match[3];
+
+            let coeff = coeffStr ? parseInt(coeffStr) : (varPart ? 1 : 0);
+            if (coeff === 0 && !varPart) continue;
+            coeff *= sign;
+
+            if (varPart === 'x^2' || varPart === 'x²') {
+                tiles.push({ type: 'x2', count: coeff, label: 'x²' });
+            } else if (varPart === 'xy') {
+                tiles.push({ type: 'x2', count: coeff, label: 'xy' });
+            } else if (varPart === 'x') {
+                tiles.push({ type: 'x', count: coeff, label: 'x' });
+            } else if (varPart === 'y') {
+                tiles.push({ type: 'x', count: coeff, label: 'y' });
+            } else if (!varPart && coeffStr) {
+                tiles.push({ type: 'unit', count: coeff, label: '1' });
+            }
+        }
+
+        return tiles;
+    }
+
+    /**
+     * Initialize algebra tiles "Open Interactive Workspace" buttons
+     */
+    initAlgebraTilesButtons(container) {
+        container.querySelectorAll('.icv-open-tiles-btn').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expression = btn.dataset.expression;
+                this.openAlgebraTilesWorkspace(expression);
+            });
+        });
+    }
+
+    /**
+     * Open the full algebra tiles workspace with a given expression
+     */
+    openAlgebraTilesWorkspace(expression) {
+        // Check if AlgebraTiles class is available
+        const container = document.getElementById('algebraTilesContainer');
+        if (!container) {
+            // Dynamically create the container and load the script
+            const div = document.createElement('div');
+            div.id = 'algebraTilesContainer';
+            document.body.appendChild(div);
+        }
+
+        // Load algebra tiles script if not already loaded
+        const loadAndOpen = () => {
+            if (window.algebraTilesInstance) {
+                // Already instantiated - show modal and insert expression
+                const modal = document.getElementById('algebraTilesModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    // Insert the expression
+                    const input = document.getElementById('equationInput');
+                    if (input && expression) {
+                        input.value = expression;
+                        const insertBtn = document.getElementById('insertEquationBtn');
+                        if (insertBtn) insertBtn.click();
+                    }
+                }
+            } else if (typeof AlgebraTiles !== 'undefined') {
+                window.algebraTilesInstance = new AlgebraTiles('algebraTilesContainer');
+                setTimeout(() => this.openAlgebraTilesWorkspace(expression), 200);
+            } else {
+                // Load the script dynamically
+                const script = document.createElement('script');
+                script.src = '/js/algebra-tiles.js';
+                script.onload = () => {
+                    // Also ensure CSS is loaded
+                    if (!document.querySelector('link[href*="algebra-tiles.css"]')) {
+                        const link = document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.href = '/css/algebra-tiles.css';
+                        document.head.appendChild(link);
+                    }
+                    window.algebraTilesInstance = new AlgebraTiles('algebraTilesContainer');
+                    setTimeout(() => this.openAlgebraTilesWorkspace(expression), 200);
+                };
+                document.body.appendChild(script);
+            }
+        };
+
+        loadAndOpen();
+    }
+
+    // ==========================================
+    // MULTI-REPRESENTATION LINKED VIEW
+    // [MULTI_REP:fn=2x+3,xMin=-5,xMax=5,title="Linear Function"]
+    // Shows equation + graph + table + verbal description linked together
+    // ==========================================
+    createMultiRepresentation(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('multirep');
+
+        const fn = params.fn || params.function || 'x';
+        const xMin = params.xMin ?? params.xmin ?? -5;
+        const xMax = params.xMax ?? params.xmax ?? 5;
+        const title = params.title || `Multiple Representations: y = ${fn}`;
+
+        // Generate table values
+        const tablePoints = [];
+        const step = Math.max(1, Math.floor((xMax - xMin) / 6));
+        for (let x = xMin; x <= xMax; x += step) {
+            try {
+                // Simple evaluation for common functions
+                const y = this.evaluateFunction(fn, x);
+                if (isFinite(y)) {
+                    tablePoints.push({ x, y: Math.round(y * 100) / 100 });
+                }
+            } catch { /* skip */ }
+        }
+
+        // Generate verbal description
+        const verbal = this.generateVerbalDescription(fn);
+
+        // Build graph config for the embedded graph panel
+        const graphConfig = JSON.stringify({
+            fn, xMin, xMax, color: '#3b82f6'
+        }).replace(/"/g, '&quot;');
+
+        const graphId = this.getUniqueId('multirep-graph');
+
+        // Build table HTML
+        let tableHtml = `<table class="icv-multi-rep-table"><thead><tr><th>x</th><th>y</th></tr></thead><tbody>`;
+        tablePoints.forEach(pt => {
+            tableHtml += `<tr><td>${pt.x}</td><td>${pt.y}</td></tr>`;
+        });
+        tableHtml += `</tbody></table>`;
+
+        return `
+        <div class="icv-multi-rep-container" id="${id}" data-fn="${this.escapeHtml(fn)}"
+             data-config='${JSON.stringify({ fn, xMin, xMax })}'>
+            <div style="grid-column: 1 / -1; text-align: center;">
+                <div class="icv-title" style="margin-bottom: 4px;">${this.escapeHtml(title)}</div>
+                <div style="font-size: 11px; color: #94a3b8;">Four linked representations of the same function</div>
+            </div>
+
+            <!-- Equation Panel -->
+            <div class="icv-multi-rep-panel">
+                <div class="icv-rep-label">Equation</div>
+                <div class="icv-rep-equation">\\(y = ${fn}\\)</div>
+            </div>
+
+            <!-- Graph Panel -->
+            <div class="icv-multi-rep-panel">
+                <div class="icv-rep-label">Graph</div>
+                <div class="icv-graph" id="${graphId}" data-config="${graphConfig}" style="min-height: 180px; border-radius: 6px;"></div>
+            </div>
+
+            <!-- Table Panel -->
+            <div class="icv-multi-rep-panel">
+                <div class="icv-rep-label">Table of Values</div>
+                ${tableHtml}
+            </div>
+
+            <!-- Verbal Panel -->
+            <div class="icv-multi-rep-panel">
+                <div class="icv-rep-label">Verbal Description</div>
+                <div class="icv-rep-verbal">${verbal}</div>
+            </div>
+        </div>
+        `;
+    }
+
+    /**
+     * Simple function evaluator for table generation
+     */
+    evaluateFunction(fn, x) {
+        // Replace common math patterns for eval
+        let expr = fn.replace(/\^/g, '**')
+                     .replace(/sin\(/g, 'Math.sin(')
+                     .replace(/cos\(/g, 'Math.cos(')
+                     .replace(/tan\(/g, 'Math.tan(')
+                     .replace(/sqrt\(/g, 'Math.sqrt(')
+                     .replace(/abs\(/g, 'Math.abs(')
+                     .replace(/log\(/g, 'Math.log(')
+                     .replace(/exp\(/g, 'Math.exp(')
+                     .replace(/pi/g, 'Math.PI');
+
+        // Add implicit multiplication: 2x → 2*x, )x → )*x
+        expr = expr.replace(/(\d)([x])/g, '$1*$2');
+        expr = expr.replace(/([x\)])(\d)/g, '$1*$2');
+        expr = expr.replace(/\)([x])/g, ')*$1');
+        expr = expr.replace(/([x])\(/g, '$1*(');
+
+        // Replace x with the value
+        expr = expr.replace(/x/g, `(${x})`);
+
+        // Safe evaluation using Function constructor (no eval)
+        return new Function(`'use strict'; return (${expr})`)();
+    }
+
+    /**
+     * Generate a verbal description of a function
+     */
+    generateVerbalDescription(fn) {
+        const normalized = fn.replace(/\s/g, '').toLowerCase();
+
+        // Common patterns
+        if (/^(-?\d*)x\^2([+-]\d*x)?([+-]\d+)?$/.test(normalized)) {
+            const aMatch = normalized.match(/^(-?\d*)x\^2/);
+            const a = aMatch[1] === '' || aMatch[1] === '+' ? 1 : aMatch[1] === '-' ? -1 : parseInt(aMatch[1]);
+            return `This is a <strong>quadratic function</strong> (parabola). It ${a > 0 ? 'opens upward' : 'opens downward'} and has a U-shape. The vertex is the ${a > 0 ? 'lowest' : 'highest'} point on the graph.`;
+        }
+
+        if (/^(-?\d*)x([+-]\d+)?$/.test(normalized)) {
+            const mMatch = normalized.match(/^(-?\d*)x/);
+            const m = mMatch[1] === '' || mMatch[1] === '+' ? 1 : mMatch[1] === '-' ? -1 : parseInt(mMatch[1]);
+            const bMatch = normalized.match(/([+-]\d+)$/);
+            const b = bMatch ? parseInt(bMatch[1]) : 0;
+            return `This is a <strong>linear function</strong> with slope ${m} and y-intercept ${b}. For every 1 unit increase in x, y ${m > 0 ? 'increases' : 'decreases'} by ${Math.abs(m)}.`;
+        }
+
+        if (/sin\(x\)/.test(normalized)) {
+            return `This is a <strong>sine function</strong>. It oscillates between -1 and 1, creating a smooth wave pattern. One full cycle takes 2π ≈ 6.28 units.`;
+        }
+
+        if (/cos\(x\)/.test(normalized)) {
+            return `This is a <strong>cosine function</strong>. Like sine, it oscillates between -1 and 1 but starts at its maximum value when x = 0.`;
+        }
+
+        if (/x\^3/.test(normalized)) {
+            return `This is a <strong>cubic function</strong>. It has an S-shaped curve that passes through the origin, going from bottom-left to top-right.`;
+        }
+
+        if (/abs\(x\)/.test(normalized) || /\|x\|/.test(normalized)) {
+            return `This is an <strong>absolute value function</strong>. It creates a V-shape, reflecting all negative outputs to positive. The vertex is at the origin.`;
+        }
+
+        if (/sqrt\(x\)/.test(normalized)) {
+            return `This is a <strong>square root function</strong>. It only exists for x ≥ 0 and increases at a decreasing rate—fast at first, then slower.`;
+        }
+
+        return `This function, <strong>y = ${fn}</strong>, describes a relationship where each input x produces exactly one output y. Examine the graph and table to see the pattern.`;
+    }
+
+    /**
+     * Initialize multi-representation links (graph rendering for embedded graphs)
+     */
+    initMultiRepLinks(container) {
+        container.querySelectorAll('.icv-multi-rep-container').forEach(multiRep => {
+            // The graph inside multi-rep needs rendering too
+            const graphEl = multiRep.querySelector('.icv-graph');
+            if (graphEl && graphEl.id && !graphEl._functionPlot) {
+                setTimeout(() => this.renderGraph(graphEl.id), 100);
+            }
+        });
+    }
+
+    // ==========================================
     // UTILITY METHODS
     // ==========================================
 
@@ -1864,6 +2309,18 @@ class InlineChatVisuals {
                 }
             });
         });
+
+        // Initialize interactive number line points (draggable)
+        this.initDraggablePoints(container);
+
+        // Initialize interactive fraction segments (clickable)
+        this.initInteractiveFractions(container);
+
+        // Initialize algebra tiles inline open buttons
+        this.initAlgebraTilesButtons(container);
+
+        // Initialize multi-representation linked visuals
+        this.initMultiRepLinks(container);
     }
 
     /**
@@ -2314,6 +2771,407 @@ class InlineChatVisuals {
             .icv-container svg line[stroke="#eee"],
             .icv-container svg line[stroke="#ccc"] {
                 stroke: #e5e5ea !important;
+            }
+
+            /* ==========================================
+               ANIMATED STEP-BY-STEP REVEAL
+               ========================================== */
+            .visual-steps-container {
+                background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                border-left: 4px solid #3b82f6;
+                border-radius: 12px;
+                padding: 20px;
+                margin: 15px 0;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+                line-height: 1.8;
+            }
+
+            .step-reveal-item {
+                transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+
+            .step-hidden {
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+                margin: 0 !important;
+                padding: 0 !important;
+                transform: translateY(-8px);
+            }
+
+            .step-visible {
+                opacity: 1;
+                max-height: 200px;
+                transform: translateY(0);
+            }
+
+            .step-animate-in {
+                animation: stepSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+
+            @keyframes stepSlideIn {
+                from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+                to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+
+            .step-equation {
+                margin: 8px 0;
+                padding: 8px 12px;
+                background: white;
+                border-radius: 8px;
+                font-size: 1.1em;
+                font-weight: 600;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            }
+
+            .step-explanation {
+                margin: 4px 0;
+                padding: 4px 8px 4px 20px;
+                font-size: 0.9em;
+                color: #1e40af;
+            }
+
+            .step-arrow {
+                text-align: center;
+                font-size: 1.5em;
+                color: #3b82f6;
+                margin: 4px 0;
+                transition: all 0.3s ease;
+            }
+
+            .step-controls {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 16px;
+                gap: 12px;
+            }
+
+            .step-progress {
+                flex: 1;
+            }
+
+            .step-progress-text {
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 500;
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            .step-progress-bar {
+                height: 4px;
+                background: rgba(59, 130, 246, 0.15);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .step-progress-fill {
+                height: 100%;
+                background: #3b82f6;
+                border-radius: 4px;
+                transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+
+            .step-next-btn {
+                padding: 8px 18px;
+                border: none;
+                border-radius: 20px;
+                background: #3b82f6;
+                color: white;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                white-space: nowrap;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            }
+
+            .step-next-btn:hover:not(:disabled) {
+                background: #2563eb;
+                transform: scale(1.03);
+            }
+
+            .step-next-btn:active:not(:disabled) {
+                transform: scale(0.98);
+            }
+
+            .step-next-arrow {
+                transition: transform 0.2s;
+            }
+
+            .step-next-btn:hover .step-next-arrow {
+                transform: translateX(2px);
+            }
+
+            .step-btn-done {
+                background: #10b981;
+                cursor: default;
+            }
+
+            .step-btn-done:hover {
+                background: #10b981;
+                transform: none;
+            }
+
+            /* ==========================================
+               INTERACTIVE VISUALS
+               ========================================== */
+
+            /* Draggable number line points */
+            .icv-draggable-point {
+                cursor: grab;
+                transition: r 0.15s ease;
+            }
+            .icv-draggable-point:hover {
+                filter: brightness(1.1);
+            }
+            .icv-draggable-point.dragging {
+                cursor: grabbing;
+                filter: brightness(0.9);
+            }
+            .icv-point-value-tooltip {
+                pointer-events: none;
+                font-size: 11px;
+                font-weight: 600;
+                fill: white;
+                text-anchor: middle;
+            }
+            .icv-point-tooltip-bg {
+                pointer-events: none;
+                rx: 4;
+                ry: 4;
+            }
+
+            /* Clickable fraction segments */
+            .icv-fraction-segment {
+                cursor: pointer;
+                transition: opacity 0.2s ease;
+            }
+            .icv-fraction-segment:hover {
+                opacity: 0.85;
+            }
+            .icv-fraction-counter {
+                font-size: 14px;
+                font-weight: 600;
+                color: #667eea;
+                text-align: center;
+                margin-top: 6px;
+                transition: all 0.2s;
+            }
+
+            /* Interactive bar chart segments */
+            .icv-bar-interactive {
+                cursor: pointer;
+                transition: opacity 0.2s, transform 0.15s;
+            }
+            .icv-bar-interactive:hover {
+                opacity: 0.85;
+            }
+
+            /* Angle drag handle */
+            .icv-angle-handle {
+                cursor: grab;
+                transition: r 0.15s;
+            }
+            .icv-angle-handle:hover {
+                filter: brightness(1.15);
+            }
+
+            /* Interactive value display on visuals */
+            .icv-interactive-value {
+                position: absolute;
+                bottom: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.75);
+                color: white;
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 500;
+                pointer-events: none;
+                backdrop-filter: blur(4px);
+                opacity: 0;
+                transition: opacity 0.2s;
+                white-space: nowrap;
+            }
+
+            .icv-container:hover .icv-interactive-value {
+                opacity: 1;
+            }
+
+            /* ==========================================
+               ALGEBRA TILES INLINE
+               ========================================== */
+            .icv-algebra-tiles-container {
+                position: relative;
+            }
+
+            .icv-algebra-workspace {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 12px;
+                min-height: 60px;
+                background: #fafbfc;
+                border-radius: 8px;
+                border: 1px dashed #d1d5db;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .icv-algebra-tile {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 13px;
+                border-radius: 6px;
+                color: white;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .icv-tile-pos-unit { width: 28px; height: 28px; background: #22c55e; }
+            .icv-tile-neg-unit { width: 28px; height: 28px; background: #ef4444; }
+            .icv-tile-pos-x { width: 80px; height: 28px; background: #3b82f6; }
+            .icv-tile-neg-x { width: 80px; height: 28px; background: #f97316; }
+            .icv-tile-pos-x2 { width: 80px; height: 80px; background: #8b5cf6; }
+            .icv-tile-neg-x2 { width: 80px; height: 80px; background: #ec4899; }
+
+            .icv-algebra-expression {
+                text-align: center;
+                font-size: 16px;
+                font-weight: 600;
+                color: #1d1d1f;
+                margin-top: 10px;
+                font-family: 'SF Mono', 'Menlo', monospace;
+            }
+
+            .icv-open-tiles-btn {
+                display: block;
+                margin: 10px auto 0;
+                padding: 8px 20px;
+                border: none;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                color: white;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            }
+
+            .icv-open-tiles-btn:hover {
+                transform: scale(1.03);
+                box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+            }
+
+            /* ==========================================
+               MULTI-REPRESENTATION LINKING
+               ========================================== */
+            .icv-multi-rep-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin: 16px 0;
+                padding: 16px;
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                border: 1px solid rgba(0,0,0,0.06);
+            }
+
+            @media (max-width: 480px) {
+                .icv-multi-rep-container {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .icv-multi-rep-panel {
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px;
+                background: #fafbfc;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .icv-multi-rep-panel.icv-rep-active {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+            }
+
+            .icv-rep-label {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: #64748b;
+                margin-bottom: 8px;
+            }
+
+            .icv-rep-link-icon {
+                position: absolute;
+                top: 50%;
+                left: -18px;
+                transform: translateY(-50%);
+                width: 24px;
+                height: 24px;
+                background: #3b82f6;
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                z-index: 2;
+            }
+
+            .icv-multi-rep-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+            }
+
+            .icv-multi-rep-table th {
+                background: #e5e7eb;
+                padding: 6px 10px;
+                font-weight: 600;
+                text-align: center;
+                font-size: 12px;
+            }
+
+            .icv-multi-rep-table td {
+                padding: 5px 10px;
+                text-align: center;
+                border-bottom: 1px solid #f0f0f5;
+            }
+
+            .icv-multi-rep-table tr.icv-rep-highlight td {
+                background: rgba(59, 130, 246, 0.08);
+                font-weight: 600;
+            }
+
+            .icv-rep-equation {
+                font-size: 18px;
+                font-weight: 600;
+                text-align: center;
+                padding: 12px;
+                font-family: 'SF Mono', 'Menlo', monospace;
+                color: #1d1d1f;
+            }
+
+            .icv-rep-verbal {
+                font-size: 14px;
+                line-height: 1.5;
+                color: #374151;
+                padding: 8px;
             }
         </style>
         `;

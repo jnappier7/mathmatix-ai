@@ -2577,6 +2577,16 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 [INEQUALITY:expression="x > 3"]
 [INEQUALITY:value=5,type=less,inclusive=true]
 
+**ALGEBRA TILES** - Interactive algebra tile manipulatives (inline preview + full workspace):
+[ALGEBRA_TILES:2x^2+3x-5]
+[ALGEBRA_TILES:expression=x^2+4x+4,title="Perfect Square Trinomial"]
+Use this when a student is struggling with factoring, combining like terms, or visualizing algebraic expressions. Shows tiles inline and lets the student open the full drag-and-drop workspace. Only use when it adds to the lesson—not every algebra problem needs tiles.
+
+**MULTI-REPRESENTATION** - Linked equation + graph + table + verbal description:
+[MULTI_REP:fn=2x+3,xMin=-5,xMax=5]
+[MULTI_REP:fn=x^2-4,title="Exploring a Quadratic"]
+Shows 4 linked views of the same function: the equation, an interactive graph, a table of values, and a verbal description. Use when teaching function concepts or when a student needs to see how different representations connect.
+
 **WHEN TO USE INLINE VISUALS:**
 - Student asks "show me the graph of..." or "what does ___ look like" → Use [FUNCTION_GRAPH]
 - Teaching inequalities or number concepts → Use [NUMBER_LINE] or [INEQUALITY]
@@ -2591,6 +2601,8 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 - Explaining slope, rise/run → Use [SLOPE]
 - Percentages, fractions of 100 → Use [PERCENT_BAR]
 - Place value, base-10 concepts → Use [PLACE_VALUE]
+- Factoring, combining like terms, visualizing expressions → Use [ALGEBRA_TILES:expression]
+- Teaching function concepts, connecting representations → Use [MULTI_REP:fn=expression]
 
 **IMPORTANT - USE VISUALS WITH PURPOSE:**
 These visuals appear DIRECTLY in the chat message. Use them when they serve a clear educational purpose:
