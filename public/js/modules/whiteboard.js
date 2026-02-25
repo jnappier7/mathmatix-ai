@@ -197,9 +197,9 @@ function setupWhiteboardToolbar() {
                     if (file.type.startsWith('image/')) {
                         whiteboard.setBackgroundImage(file);
                     } else if (file.type === 'application/pdf') {
-                        alert('PDF support coming soon! For now, please convert to an image or take a screenshot.');
+                        showToast('PDF support coming soon! Please convert to an image or take a screenshot.', 5000);
                     } else {
-                        alert('Please upload an image file (PNG, JPG, etc.)');
+                        showToast('Please upload an image file (PNG, JPG, etc.)', 5000);
                     }
                 }
                 bgUploadInput.value = '';

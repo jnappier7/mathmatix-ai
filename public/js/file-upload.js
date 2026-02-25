@@ -183,7 +183,9 @@ class FileUploadManager {
                     loadingMsg.remove();
                 } catch (error) {
                     console.error('Failed to load PDF.js:', error);
-                    alert('Failed to load PDF viewer. Please refresh and try again.');
+                    if (typeof Notify !== 'undefined') {
+                        Notify.error('Failed to load PDF viewer. Please refresh and try again.');
+                    }
                     return;
                 }
             }
@@ -201,7 +203,9 @@ class FileUploadManager {
 
         } catch (error) {
             console.error('Error loading PDF:', error);
-            alert('Failed to load PDF. Please try again.');
+            if (typeof Notify !== 'undefined') {
+                Notify.error('Failed to load PDF. Please try again.');
+            }
         }
     }
 
