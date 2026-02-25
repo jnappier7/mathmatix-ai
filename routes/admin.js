@@ -14,6 +14,7 @@ const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
 const ScreenerSession = require('../models/screenerSession');
+const Waitlist = require('../models/waitlist');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -2091,6 +2092,42 @@ router.get('/students/:studentId/placement-results', isAdmin, async (req, res) =
   } catch (error) {
     console.error('Error fetching student placement results:', error);
     res.status(500).json({ message: 'Error fetching placement results' });
+  }
+});
+
+// -----------------------------------------------------------------------------
+// --- Waitlist Management Routes ---
+// -----------------------------------------------------------------------------
+
+// GET /api/admin/waitlist — list all waitlist signups
+router.get('/waitlist', async (req, res) => {
+  try {
+    const entries = await Waitlist.find({}).sort({ createdAt: -1 }).lean();
+    const counts = {
+      total: entries.length,
+      student: entries.filter(e => e.role === 'student').length,
+      parent: entries.filter(e => e.role === 'parent').length,
+      teacher: entries.filter(e => e.role === 'teacher').length,
+      other: entries.filter(e => e.role === 'other').length
+    };
+    res.json({ success: true, entries, counts });
+  } catch (err) {
+    console.error('ERROR: Failed to fetch waitlist:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch waitlist entries.' });
+  }
+});
+
+// DELETE /api/admin/waitlist/:id — remove a single waitlist entry
+router.delete('/waitlist/:id', async (req, res) => {
+  try {
+    const result = await Waitlist.findByIdAndDelete(req.params.id);
+    if (!result) {
+      return res.status(404).json({ success: false, message: 'Entry not found.' });
+    }
+    res.json({ success: true, message: 'Waitlist entry removed.' });
+  } catch (err) {
+    console.error('ERROR: Failed to delete waitlist entry:', err);
+    res.status(500).json({ success: false, message: 'Failed to delete entry.' });
   }
 });
 
