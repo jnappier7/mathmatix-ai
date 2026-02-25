@@ -1059,6 +1059,21 @@
             <div><strong>Total Campaigns:</strong> <span id="totalCampaigns">-</span></div>
           </div>
         </div>
+
+        <div class="dashboard-panel">
+          <h2 class="dashboard-panel-header">
+            <i class="fas fa-clipboard-list"></i> Email Waitlist
+          </h2>
+          <p>Pre-launch email signups from the landing page.</p>
+          <button id="openWaitlistBtn" class="btn btn-primary main-action-btn">
+            <i class="fas fa-list"></i> View Waitlist
+          </button>
+          <div id="waitlistQuickStats" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+            <div style="margin-bottom: 5px;"><strong>Total Signups:</strong> <span id="waitlistTotal">-</span></div>
+            <div style="margin-bottom: 5px;"><strong>Students:</strong> <span id="waitlistStudents">-</span> | <strong>Parents:</strong> <span id="waitlistParents">-</span></div>
+            <div><strong>Teachers:</strong> <span id="waitlistTeachers">-</span> | <strong>Other:</strong> <span id="waitlistOther">-</span></div>
+          </div>
+        </div>
       </aside>
     </main>
 
@@ -1959,6 +1974,76 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     </div>
   </div>
 
+  <!-- Waitlist Modal -->
+  <div id="waitlistModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeWaitlistBtn">&times;</button>
+      <h2><i class="fas fa-clipboard-list"></i> Email Waitlist Signups</h2>
+
+      <div class="modal-section">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
+          <div class="modal-form-group" style="flex: 1; margin-bottom: 0;">
+            <input type="text" id="waitlistSearch" placeholder="Search by email..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
+          </div>
+          <div class="modal-form-group" style="margin-bottom: 0;">
+            <select id="waitlistRoleFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;">
+              <option value="">All Roles</option>
+              <option value="student">Student</option>
+              <option value="parent">Parent</option>
+              <option value="teacher">Teacher</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <button id="exportWaitlistCSV" class="btn btn-secondary" style="padding: 8px 16px;">
+            <i class="fas fa-download"></i> Export CSV
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px;">
+          <div class="stat-card" style="text-align: center; padding: 10px;">
+            <div class="stat-label">Total</div>
+            <div class="stat-value" id="waitlistModalTotal" style="font-size: 1.4em;">-</div>
+          </div>
+          <div class="stat-card" style="text-align: center; padding: 10px;">
+            <div class="stat-label">Students</div>
+            <div class="stat-value" id="waitlistModalStudents" style="font-size: 1.4em;">-</div>
+          </div>
+          <div class="stat-card" style="text-align: center; padding: 10px;">
+            <div class="stat-label">Parents</div>
+            <div class="stat-value" id="waitlistModalParents" style="font-size: 1.4em;">-</div>
+          </div>
+          <div class="stat-card" style="text-align: center; padding: 10px;">
+            <div class="stat-label">Teachers</div>
+            <div class="stat-value" id="waitlistModalTeachers" style="font-size: 1.4em;">-</div>
+          </div>
+          <div class="stat-card" style="text-align: center; padding: 10px;">
+            <div class="stat-label">Other</div>
+            <div class="stat-value" id="waitlistModalOther" style="font-size: 1.4em;">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="table-scroll-container" style="max-height: 400px;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Signed Up</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="waitlistTableBody">
+              <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="waitlistCount" style="margin-top: 10px; font-size: 0.85em; color: #666;"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Mobile Bottom Nav (visible < 968px) -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <button class="mobile-nav-btn active" data-mobile-tab="users">
@@ -2026,6 +2111,16 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           <button class="mobile-action-btn" id="mobile-email-history">
             <i class="fas fa-history" style="color: #e67e22;"></i>
             Email History
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title"><i class="fas fa-clipboard-list" style="color: #e74c3c;"></i> Email Waitlist</div>
+        <div class="mobile-actions-grid">
+          <button class="mobile-action-btn" id="mobile-view-waitlist">
+            <i class="fas fa-list" style="color: #e74c3c;"></i>
+            View Waitlist
           </button>
         </div>
       </div>
@@ -2202,7 +2297,8 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           'mobile-live-activity': 'openLiveActivityBtn',
           'mobile-survey-analytics': 'openSurveyResponsesBtn',
           'mobile-compose-email': 'openBulkEmailBtn',
-          'mobile-email-history': 'viewEmailCampaignsBtn'
+          'mobile-email-history': 'viewEmailCampaignsBtn',
+          'mobile-view-waitlist': 'openWaitlistBtn'
         };
 
         Object.entries(actionMap).forEach(([mobileId, desktopId]) => {

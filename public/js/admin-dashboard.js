@@ -2546,6 +2546,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (usageReportModal) usageReportModal.classList.remove('is-visible');
             if (liveActivityModal) liveActivityModal.classList.remove('is-visible');
             if (summariesModal) summariesModal.classList.remove('is-visible');
+            if (waitlistModal) waitlistModal.classList.remove('is-visible');
             clearBulkSelection();
         }
 
@@ -2558,6 +2559,166 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Toast animations are now handled by CSS in the HTML file
+
+    // -------------------------------------------------------------------------
+    // --- Email Waitlist Management ---
+    // -------------------------------------------------------------------------
+
+    const waitlistModal = document.getElementById('waitlistModal');
+    const openWaitlistBtn = document.getElementById('openWaitlistBtn');
+    const closeWaitlistBtn = document.getElementById('closeWaitlistBtn');
+    const waitlistSearch = document.getElementById('waitlistSearch');
+    const waitlistRoleFilter = document.getElementById('waitlistRoleFilter');
+    const exportWaitlistCSV = document.getElementById('exportWaitlistCSV');
+    const waitlistTableBody = document.getElementById('waitlistTableBody');
+
+    let allWaitlistEntries = [];
+
+    async function fetchWaitlistData() {
+        try {
+            const res = await fetch('/api/admin/waitlist', { credentials: 'include' });
+            if (!res.ok) throw new Error('Failed to fetch waitlist');
+            const data = await res.json();
+            allWaitlistEntries = data.entries || [];
+            updateWaitlistQuickStats(allWaitlistEntries);
+            renderWaitlistTable(allWaitlistEntries);
+        } catch (err) {
+            console.error('[Waitlist] Fetch error:', err);
+            if (waitlistTableBody) {
+                waitlistTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#e74c3c;">Failed to load waitlist data.</td></tr>';
+            }
+        }
+    }
+
+    function updateWaitlistQuickStats(entries) {
+        const counts = { student: 0, parent: 0, teacher: 0, other: 0 };
+        entries.forEach(e => { counts[e.role] = (counts[e.role] || 0) + 1; });
+        const total = entries.length;
+
+        // Sidebar quick stats
+        const qs = id => document.getElementById(id);
+        if (qs('waitlistTotal')) qs('waitlistTotal').textContent = total;
+        if (qs('waitlistStudents')) qs('waitlistStudents').textContent = counts.student;
+        if (qs('waitlistParents')) qs('waitlistParents').textContent = counts.parent;
+        if (qs('waitlistTeachers')) qs('waitlistTeachers').textContent = counts.teacher;
+        if (qs('waitlistOther')) qs('waitlistOther').textContent = counts.other;
+
+        // Modal stats
+        if (qs('waitlistModalTotal')) qs('waitlistModalTotal').textContent = total;
+        if (qs('waitlistModalStudents')) qs('waitlistModalStudents').textContent = counts.student;
+        if (qs('waitlistModalParents')) qs('waitlistModalParents').textContent = counts.parent;
+        if (qs('waitlistModalTeachers')) qs('waitlistModalTeachers').textContent = counts.teacher;
+        if (qs('waitlistModalOther')) qs('waitlistModalOther').textContent = counts.other;
+    }
+
+    function renderWaitlistTable(entries) {
+        if (!waitlistTableBody) return;
+        const search = (waitlistSearch?.value || '').toLowerCase();
+        const roleFilter = waitlistRoleFilter?.value || '';
+
+        const filtered = entries.filter(e => {
+            const matchSearch = !search || e.email.toLowerCase().includes(search);
+            const matchRole = !roleFilter || e.role === roleFilter;
+            return matchSearch && matchRole;
+        });
+
+        if (filtered.length === 0) {
+            waitlistTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No waitlist entries found.</td></tr>';
+        } else {
+            waitlistTableBody.innerHTML = filtered.map(e => {
+                const date = new Date(e.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                const roleLabel = e.role.charAt(0).toUpperCase() + e.role.slice(1);
+                return `<tr>
+                    <td>${escapeHTML(e.email)}</td>
+                    <td><span class="role-badge role-badge-${e.role}">${roleLabel}</span></td>
+                    <td>${date}</td>
+                    <td><button class="btn btn-danger btn-sm waitlist-delete-btn" data-id="${e._id}" title="Delete"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            }).join('');
+        }
+
+        const countEl = document.getElementById('waitlistCount');
+        if (countEl) countEl.textContent = `Showing ${filtered.length} of ${entries.length} entries`;
+    }
+
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // Open modal
+    if (openWaitlistBtn) {
+        openWaitlistBtn.addEventListener('click', () => {
+            if (waitlistModal) {
+                waitlistModal.classList.add('is-visible');
+                fetchWaitlistData();
+            }
+        });
+    }
+
+    // Close modal
+    if (closeWaitlistBtn) {
+        closeWaitlistBtn.addEventListener('click', () => {
+            if (waitlistModal) waitlistModal.classList.remove('is-visible');
+        });
+    }
+    if (waitlistModal) {
+        waitlistModal.addEventListener('click', (e) => {
+            if (e.target === waitlistModal) waitlistModal.classList.remove('is-visible');
+        });
+    }
+
+    // Search & filter
+    if (waitlistSearch) waitlistSearch.addEventListener('input', debounce(() => renderWaitlistTable(allWaitlistEntries), 300));
+    if (waitlistRoleFilter) waitlistRoleFilter.addEventListener('change', () => renderWaitlistTable(allWaitlistEntries));
+
+    // Delete entry
+    if (waitlistTableBody) {
+        waitlistTableBody.addEventListener('click', async (e) => {
+            const btn = e.target.closest('.waitlist-delete-btn');
+            if (!btn) return;
+            const id = btn.dataset.id;
+            if (!confirm('Remove this email from the waitlist?')) return;
+            try {
+                const res = await csrfFetch(`/api/admin/waitlist/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Delete failed');
+                showToast('Waitlist entry removed.', 'success');
+                allWaitlistEntries = allWaitlistEntries.filter(e => e._id !== id);
+                updateWaitlistQuickStats(allWaitlistEntries);
+                renderWaitlistTable(allWaitlistEntries);
+            } catch (err) {
+                console.error('[Waitlist] Delete error:', err);
+                showToast('Failed to remove entry.', 'error');
+            }
+        });
+    }
+
+    // Export CSV
+    if (exportWaitlistCSV) {
+        exportWaitlistCSV.addEventListener('click', () => {
+            if (allWaitlistEntries.length === 0) {
+                showToast('No waitlist entries to export.', 'warning');
+                return;
+            }
+            const header = 'Email,Role,Signed Up\n';
+            const rows = allWaitlistEntries.map(e => {
+                const date = new Date(e.createdAt).toISOString().split('T')[0];
+                return `"${e.email}","${e.role}","${date}"`;
+            }).join('\n');
+            const blob = new Blob([header + rows], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `waitlist-export-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('CSV exported successfully.', 'success');
+        });
+    }
+
+    // Fetch initial sidebar stats on load
+    fetchWaitlistData();
 
     console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });
