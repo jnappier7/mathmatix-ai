@@ -2341,7 +2341,7 @@ class MathmatixWhiteboard {
     // TOAST NOTIFICATIONS
     // ============================================
 
-    showToast(message, duration = 2000) {
+    showToast(message, duration = 3500) {
         let toast = document.getElementById('whiteboard-toast');
 
         if (!toast) {

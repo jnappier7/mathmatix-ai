@@ -65,11 +65,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     btn.classList.add('copied');
                     const originalHTML = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    showToast('Invite code copied to clipboard!', 'success', 2000);
+                    showToast('Invite code copied to clipboard!', 'success', 3500);
                     setTimeout(() => {
                         btn.classList.remove('copied');
                         btn.innerHTML = originalHTML;
-                    }, 2000);
+                    }, 3500);
                 } catch (err) {
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
@@ -83,11 +83,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     btn.classList.add('copied');
                     const originalHTML = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    showToast('Invite code copied!', 'success', 2000);
+                    showToast('Invite code copied!', 'success', 3500);
                     setTimeout(() => {
                         btn.classList.remove('copied');
                         btn.innerHTML = originalHTML;
-                    }, 2000);
+                    }, 3500);
                 }
             });
         }
@@ -1020,7 +1020,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (data.success) {
                     settingsSaveMessage.className = "mt-2 text-sm text-green-600";
                     settingsSaveMessage.textContent = data.message;
-                    showToast("Settings saved!", "success", 2000);
+                    showToast("Settings saved!", "success", 3500);
                     setTimeout(() => {
                         settingsSaveMessage.textContent = '';
                     }, 3000);

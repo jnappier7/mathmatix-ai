@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 studentLinkCodeValue.style.cursor = 'pointer';
                 studentLinkCodeValue.onclick = () => {
                     navigator.clipboard.writeText(currentUser.studentToParentLinkCode.code);
-                    showToast('Code copied to clipboard!', 2000);
+                    showToast('Code copied to clipboard!', 3500);
                 };
             } else {
                 // No code exists, generate one
@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         studentLinkCodeValue.style.cursor = 'pointer';
                         studentLinkCodeValue.onclick = () => {
                             navigator.clipboard.writeText(data.code);
-                            showToast('Code copied to clipboard!', 2000);
+                            showToast('Code copied to clipboard!', 3500);
                         };
                     } else {
                         studentLinkCodeValue.textContent = "Error generating code";
@@ -2059,7 +2059,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     } catch (err) {
                         console.error('Error generating parent link code:', err);
-                        showToast('Failed to generate share code', 2000);
+                        showToast('Failed to generate share code', 3500);
                         return;
                     }
                 }
@@ -2446,7 +2446,7 @@ document.addEventListener("DOMContentLoaded", () => {
         drawItOutBtn.addEventListener('click', () => {
             if (whiteboardPanel) {
                 whiteboardPanel.classList.remove('is-hidden');
-                showToast('When in doubt, draw it out! 📝', 2000);
+                showToast('When in doubt, draw it out! 📝', 3500);
             }
         });
     }
@@ -2525,7 +2525,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (files.length > 0) {
             handleFileUpload(files);
-            showToast(`Pasted ${files.length} image${files.length > 1 ? 's' : ''}`, 2000);
+            showToast(`Pasted ${files.length} image${files.length > 1 ? 's' : ''}`, 3500);
             e.preventDefault();
         }
     });
@@ -2560,7 +2560,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                 handleFileUpload(e.dataTransfer.files); // Handle all dropped files
                 const fileCount = e.dataTransfer.files.length;
-                showToast(`Added ${fileCount} file${fileCount > 1 ? 's' : ''}`, 2000);
+                showToast(`Added ${fileCount} file${fileCount > 1 ? 's' : ''}`, 3500);
                 e.dataTransfer.clearData();
             }
         });
@@ -2585,7 +2585,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const file = new File([blob], filename, { type: mimeType });
             handleFileUpload([file]);
-            showToast(`"${resourceName}" added to chat!`, 2000);
+            showToast(`"${resourceName}" added to chat!`, 3500);
         } catch (err) {
             console.error('[TeacherResource] Failed to load resource for drag-drop:', err);
             showToast('Could not load the resource. Try "Ask Tutor About This" instead.', 3500);
@@ -2680,7 +2680,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error('Error saving reaction:', error);
-            showToast('Failed to save reaction', 2000);
+            showToast('Failed to save reaction', 3500);
         }
     }
 
