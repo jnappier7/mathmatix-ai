@@ -14,7 +14,32 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const Skill = require('../models/skill');
 const { callLLMStream } = require('../utils/openaiClient');
 
-// Fetches students assigned to the logged-in teacher
+/**
+ * Get all student IDs for a teacher, combining:
+ *  1. Students with teacherId pointing to this teacher
+ *  2. Students enrolled via this teacher's enrollment codes
+ * Returns deduplicated ObjectId array.
+ */
+async function getStudentIdsForTeacher(teacherId) {
+  // 1. Direct teacherId assignment
+  const directStudents = await User.find(
+    { role: 'student', teacherId },
+    '_id'
+  ).lean();
+  const idSet = new Set(directStudents.map(s => s._id.toString()));
+
+  // 2. Students enrolled via this teacher's enrollment codes
+  const codes = await EnrollmentCode.find({ teacherId }, 'enrolledStudents').lean();
+  for (const code of codes) {
+    for (const e of (code.enrolledStudents || [])) {
+      idSet.add(e.studentId.toString());
+    }
+  }
+
+  return [...idSet];
+}
+
+// Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
@@ -27,8 +52,9 @@ router.get('/students', isTeacher, async (req, res) => {
       ? 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
       : 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery';
 
+    const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { role: 'student', teacherId: teacherId },
+      { _id: { $in: studentIds }, role: 'student' },
       projection
     ).lean();
     res.json(students);
@@ -170,9 +196,10 @@ router.get('/live-feed', isTeacher, async (req, res) => {
       console.error('Background cleanup failed:', err);
     });
 
-    // Get all students assigned to this teacher
+    // Get all students assigned to this teacher (via teacherId or enrollment codes)
+    const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { role: 'student', teacherId: teacherId },
+      { _id: { $in: studentIds }, role: 'student' },
       '_id firstName lastName username'
     ).lean();
 
@@ -247,9 +274,10 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
       console.error('Background cleanup failed:', err);
     });
 
-    // Get all students assigned to this teacher
+    // Get all students assigned to this teacher (via teacherId or enrollment codes)
+    const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { role: 'student', teacherId: teacherId },
+      { _id: { $in: studentIds }, role: 'student' },
       '_id firstName lastName username'
     ).lean();
 

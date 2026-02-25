@@ -667,7 +667,7 @@ const userSchema = new Schema({
       },
       fractionOperations: {
         type: String,
-        enum: ['butterfly-method', 'traditional-lcd', 'visual-models', 'any'],
+        enum: ['butterfly-method', 'traditional-lcd', 'visual-models', 'visual-models-first', 'any'],
         default: 'any'
       },
       wordProblems: {
@@ -683,7 +683,7 @@ const userSchema = new Schema({
       allowed: { type: Boolean, default: true },
       preferred: [{
         type: String,
-        enum: ['number-line', 'algebra-tiles', 'fraction-bars', 'area-model', 'base-ten-blocks', 'graph-paper', 'coordinate-plane']
+        enum: ['number-line', 'algebra-tiles', 'fraction-bars', 'area-model', 'base-ten-blocks', 'graph-paper', 'coordinate-plane', 'multiplication-chart']
       }],
       note: { type: String, default: '' }
     },
