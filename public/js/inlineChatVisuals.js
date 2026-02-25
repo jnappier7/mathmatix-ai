@@ -357,7 +357,9 @@ class InlineChatVisuals {
 
             // Normalize and validate the function string
             const fn = this.normalizeFunctionString(config.fn);
-            const width = container.offsetWidth || 300;
+            // Use a proper render width - in collapsed state offsetWidth may be tiny due to CSS transform,
+            // so use 300 as minimum to ensure function-plot draws a visible graph
+            const width = Math.max(container.offsetWidth, 300);
 
             const plotConfig = {
                 target: `#${id}`,
@@ -2368,8 +2370,8 @@ class InlineChatVisuals {
 
             /* Collapsed thumbnail state (iMessage-style) */
             .icv-collapsed {
-                max-width: 200px;
-                max-height: 150px;
+                max-width: 220px;
+                max-height: 160px;
                 overflow: hidden;
                 cursor: pointer;
                 position: relative;
@@ -2388,10 +2390,12 @@ class InlineChatVisuals {
 
             .icv-collapsed .icv-graph,
             .icv-collapsed .icv-slider-graph {
-                min-height: 100px !important;
-                max-height: 100px !important;
+                width: 320px !important;
+                height: 200px !important;
+                min-height: 200px !important;
+                max-height: none !important;
                 pointer-events: none;
-                transform: scale(0.6);
+                transform: scale(0.5);
                 transform-origin: top left;
             }
 
