@@ -67,10 +67,44 @@ class InlineChatVisuals {
         // Re-render graphs in modal if needed
         const graphEl = clone.querySelector('.icv-graph');
         if (graphEl && graphEl.dataset.config) {
-            graphEl.id = containerId + '-modal-graph';
+            const modalGraphId = containerId + '-modal-graph';
+            graphEl.id = modalGraphId;
             // Clear any cloned content (errors, previously rendered graphs)
             graphEl.innerHTML = '';
-            setTimeout(() => this.renderGraph(graphEl.id), 100);
+            setTimeout(() => this.renderGraph(modalGraphId), 100);
+
+            // Rebind zoom/reset buttons to the modal graph ID
+            const zoomInBtn = clone.querySelector('.icv-zoom-in');
+            const zoomOutBtn = clone.querySelector('.icv-zoom-out');
+            const resetBtn = clone.querySelector('.icv-reset');
+
+            if (zoomInBtn) {
+                zoomInBtn.removeAttribute('onclick');
+                zoomInBtn.replaceWith(zoomInBtn.cloneNode(true)); // strip old listeners
+                const newZoomIn = clone.querySelector('.icv-zoom-in');
+                newZoomIn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(modalGraphId, 0.8);
+                });
+            }
+            if (zoomOutBtn) {
+                zoomOutBtn.removeAttribute('onclick');
+                zoomOutBtn.replaceWith(zoomOutBtn.cloneNode(true));
+                const newZoomOut = clone.querySelector('.icv-zoom-out');
+                newZoomOut.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(modalGraphId, 1.25);
+                });
+            }
+            if (resetBtn) {
+                resetBtn.removeAttribute('onclick');
+                resetBtn.replaceWith(resetBtn.cloneNode(true));
+                const newReset = clone.querySelector('.icv-reset');
+                newReset.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.resetGraph(modalGraphId);
+                });
+            }
         }
 
         // Re-render slider graphs if needed
