@@ -16,88 +16,20 @@ const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHI
 const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = require('../utils/badgePhaseController'); // TEACHING ENHANCEMENT
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
-const { generateInterviewQuestions, generateFollowUp, evaluateResponse, createInterviewSession } = require('../utils/dynamicInterviewGenerator'); // TEACHING ENHANCEMENT
+// Interview imports removed — mastery interview is shelved
+// const { generateInterviewQuestions, generateFollowUp, evaluateResponse, createInterviewSession } = require('../utils/dynamicInterviewGenerator');
 
 // ============================================================================
-// PHASE 2: AI INTERVIEW PROBE
+// PHASE 2: AI INTERVIEW PROBE — SHELVED
+// Interview endpoints removed. Mastery mode now goes directly to badges.
 // ============================================================================
 
-/**
- * TEACHING ENHANCEMENT: Dynamic Interview Question Generation
- * POST /api/mastery/interview-question
- */
-router.post('/interview-question', isAuthenticated, async (req, res) => {
-  try {
-    const { screenerResults } = req.body;
-
-    if (!screenerResults || !screenerResults.theta) {
-      return res.status(400).json({ error: 'Missing screener results' });
-    }
-
-    // Get frontier skills from screener
-    const frontierSkills = screenerResults.frontierSkills || [];
-
-    if (frontierSkills.length === 0) {
-      return res.status(400).json({ error: 'No frontier skills identified' });
-    }
-
-    // Create full interview session
-    const interviewSession = await createInterviewSession(
-      frontierSkills,
-      screenerResults.theta,
-      screenerResults
-    );
-
-    res.json({
-      success: true,
-      interviewSession,
-      message: 'Dynamic interview questions generated for all frontier skills'
-    });
-
-  } catch (error) {
-    console.error('Error generating interview questions:', error);
-    res.status(500).json({ error: 'Failed to generate interview questions' });
-  }
+// Return clear "shelved" response if frontend still calls these endpoints
+router.post('/interview-question', isAuthenticated, (req, res) => {
+  res.status(410).json({ error: 'Mastery interview has been shelved', message: 'This feature is no longer available.' });
 });
-
-/**
- * TEACHING ENHANCEMENT: Evaluate interview response and generate follow-up
- * POST /api/mastery/interview-response
- */
-router.post('/interview-response', isAuthenticated, async (req, res) => {
-  try {
-    const { question, studentResponse, skillId } = req.body;
-
-    if (!question || !studentResponse) {
-      return res.status(400).json({ error: 'Missing question or response' });
-    }
-
-    const skill = await Skill.findOne({ skillId }).lean();
-
-    if (!skill) {
-      return res.status(404).json({ error: 'Skill not found' });
-    }
-
-    // Evaluate the response
-    const evaluation = await evaluateResponse(question, studentResponse, skill);
-
-    // Generate follow-up if needed
-    let followUp = null;
-    if (evaluation.rating !== 'excellent' || evaluation.understandingLevel === 'surface') {
-      followUp = await generateFollowUp(question, studentResponse, skill);
-    }
-
-    res.json({
-      success: true,
-      evaluation,
-      followUp,
-      shouldContinue: evaluation.rating !== 'excellent'
-    });
-
-  } catch (error) {
-    console.error('Error evaluating interview response:', error);
-    res.status(500).json({ error: 'Failed to evaluate response' });
-  }
+router.post('/interview-response', isAuthenticated, (req, res) => {
+  res.status(410).json({ error: 'Mastery interview has been shelved', message: 'This feature is no longer available.' });
 });
 
 // ============================================================================

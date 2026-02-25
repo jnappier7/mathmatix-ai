@@ -721,7 +721,11 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // AI time tracking (both parent and student)
+        // AI time tracking — use atomic $inc to prevent race conditions with concurrent requests
+        await User.findByIdAndUpdate(user._id, {
+            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
+        });
+        // Update local copy for any downstream reads in this request
         user.weeklyAISeconds = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
         user.totalAISeconds = (user.totalAISeconds || 0) + aiProcessingSeconds;
 

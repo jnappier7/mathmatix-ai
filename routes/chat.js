@@ -946,8 +946,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
 
         // Deduct from pack balance only for seconds beyond the free weekly allowance (20 min)
+        // Re-validate pack hasn't expired since usageGate checked (prevents mid-session expiry bug)
         const FREE_WEEKLY = 20 * 60;
-        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
+        const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
+            user.packSecondsRemaining > 0 &&
+            (!user.packExpiresAt || new Date() <= user.packExpiresAt);
+        if (packStillValid) {
             const prevPaid = Math.max(0, previousWeeklyAI - FREE_WEEKLY);
             const newPaid = Math.max(0, updatedWeeklyAI - FREE_WEEKLY);
             const packDeduction = newPaid - prevPaid;
@@ -956,8 +960,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
         }
 
-        User.findByIdAndUpdate(userId, aiTimeUpdate)
-            .catch(err => console.error('[Chat] AI time tracking error:', err));
+        // Await the DB update to ensure usage is actually recorded
+        try {
+            await User.findByIdAndUpdate(userId, aiTimeUpdate);
+        } catch (err) {
+            console.error('[Chat] AI time tracking error:', err);
+        }
 
         // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
         aiResponseText = enforceVisualTeaching(message, aiResponseText);
