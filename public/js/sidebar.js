@@ -739,13 +739,27 @@ class Sidebar {
     }
 
     async loadProgress() {
-        if (!window.currentUser) return;
+        // Fetch user data if window.currentUser isn't available yet
+        // (script.js runs as ES module so its currentUser is module-scoped)
+        let user = window.currentUser;
+        if (!user) {
+            try {
+                const res = await fetch('/user', { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    user = data.user;
+                }
+            } catch (e) {
+                console.warn('Sidebar: could not fetch user for progress', e);
+            }
+        }
+        if (!user) return;
 
-        const level = window.currentUser.level || 1;
+        const level = user.level || 1;
         // xpForCurrentLevel and xpForNextLevel are computed by the backend
         // (set on page load via /user endpoint and updated after each chat response)
-        const xp = window.currentUser.xpForCurrentLevel || 0;
-        const xpNeeded = window.currentUser.xpForNextLevel || 100;
+        const xp = user.xpForCurrentLevel || 0;
+        const xpNeeded = user.xpForNextLevel || 100;
         const progress = (xp / xpNeeded) * 100;
 
         // Update sidebar progress
@@ -765,6 +779,15 @@ class Sidebar {
         if (drawerLevelEl) drawerLevelEl.textContent = level;
         if (drawerXpEl) drawerXpEl.textContent = `${xp} / ${xpNeeded} XP`;
         if (drawerProgressBar) drawerProgressBar.style.width = `${Math.min(progress, 100)}%`;
+
+        // Update mobile drawer quick stats (streak, total XP, total solved)
+        const drawerStreak = document.getElementById('drawer-streak-count');
+        const drawerTotalXp = document.getElementById('drawer-total-xp');
+        const drawerTotalProblems = document.getElementById('drawer-total-problems');
+
+        if (drawerStreak) drawerStreak.textContent = user.currentStreak || 0;
+        if (drawerTotalXp) drawerTotalXp.textContent = user.xp || 0;
+        if (drawerTotalProblems) drawerTotalProblems.textContent = user.totalProblemsCorrect || 0;
 
         // Update link code in drawer
         const drawerLinkCode = document.getElementById('drawer-student-link-code-value');

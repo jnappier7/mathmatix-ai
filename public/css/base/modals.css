@@ -16,9 +16,10 @@
     transition: opacity 0.3s ease;
 }
 
-/* Settings modal specific z-index */
+/* Settings modal specific z-index — must be above mobile nav (1800),
+   drawers (2000), and menu sheet (2100) */
 #settings-modal {
-    z-index: 1006;
+    z-index: 2200;
 }
 
 /* This is the class JavaScript will add to show the modal */
