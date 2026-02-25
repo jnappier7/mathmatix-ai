@@ -11,7 +11,7 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
-const { buildCourseSystemPrompt, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 const { callLLM, callLLMStream } = require('../utils/llmGateway');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -1000,21 +1000,28 @@ async function handleCourseGreeting(req, res, userId) {
                 ghostMessage = `Hi, I'm ${user.firstName}. I just enrolled in ${courseSession.courseName}. ` +
                     `I'm in ${user.gradeLevel || 'school'} and ready to start.`;
             } else if (hasHistory) {
+                const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
+                const totalSteps = (moduleData.scaffold || []).length;
                 ghostMessage = `Hi, I'm ${user.firstName}. I'm coming back to continue ${courseSession.courseName}. ` +
-                    `I'm on module: ${moduleData.title || courseSession.currentModuleId}. ` +
+                    `I'm on module: ${moduleData.title || courseSession.currentModuleId}` +
+                    (totalSteps > 0 ? ` (step ${scaffoldIndex + 1} of ${totalSteps}). ` : '. ') +
                     `My overall progress is ${courseSession.overallProgress || 0}%.`;
             } else {
+                const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
+                const totalSteps = (moduleData.scaffold || []).length;
                 ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing ${courseSession.courseName}. ` +
                     `I've completed ${completedModules} module${completedModules !== 1 ? 's' : ''} ` +
-                    `and I'm now on: ${moduleData.title || courseSession.currentModuleId}.`;
+                    `and I'm now on: ${moduleData.title || courseSession.currentModuleId}` +
+                    (totalSteps > 0 ? ` (step ${scaffoldIndex + 1} of ${totalSteps}).` : '.');
             }
 
-            greetingInstruction = `The student just entered their course session. They haven't typed anything yet — YOU are initiating. ` +
-                `The context below is invisible to them. Greet them naturally, reference the course/module, and either: ` +
-                `(a) if new, welcome them and preview what they'll learn in this module, or ` +
-                `(b) if returning, welcome them back and remind them where they left off. ` +
-                `Keep it to 2-3 sentences. Be warm but jump into course content quickly. ` +
-                `End with a question or prompt that kicks off the first scaffold element.`;
+            greetingInstruction = buildCourseGreetingInstruction({
+                userProfile: user,
+                courseSession,
+                pathway,
+                scaffoldData: moduleData,
+                currentModule: currentPathwayModule
+            });
         }
 
         const messagesForAI = [
