@@ -677,6 +677,46 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
         }
 
+        // IDK/WRONG-ANSWER STREAK DETECTION: When a student repeatedly says "idk" or gives
+        // multiple wrong answers in a row, inject a stronger guardrail into the LLM context
+        // to prevent it from eventually caving and revealing the answer.
+        const recentUserMessages = activeConversation.messages
+            .filter(msg => msg.role === 'user')
+            .slice(-6);
+        const recentAssistantMessages = activeConversation.messages
+            .filter(msg => msg.role === 'assistant')
+            .slice(-6);
+
+        // Count "idk" pattern in recent user messages
+        const idkPattern = /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea)\b/i;
+        const giveUpPattern = /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer)\b/i;
+        const idkCount = recentUserMessages.filter(msg => idkPattern.test(msg.content)).length;
+        const giveUpCount = recentUserMessages.filter(msg => giveUpPattern.test(msg.content)).length;
+
+        // Count recent wrong answers (from problemResult tags on assistant messages)
+        const recentWrongCount = recentAssistantMessages.filter(msg =>
+            msg.problemResult === 'incorrect'
+        ).length;
+
+        if ((idkCount >= 3 || giveUpCount >= 1 || recentWrongCount >= 3) && formattedMessagesForLLM.length > 0) {
+            const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMessage.role === 'user') {
+                let streakWarning = `\n\n[ANSWER_PERSISTENCE_ALERT: `;
+                if (idkCount >= 3) {
+                    streakWarning += `Student has said "idk" or "I don't know" ${idkCount} times in recent messages. `;
+                }
+                if (giveUpCount >= 1) {
+                    streakWarning += `Student is asking you to just give them the answer. `;
+                }
+                if (recentWrongCount >= 3) {
+                    streakWarning += `Student has gotten ${recentWrongCount} wrong answers recently. `;
+                }
+                streakWarning += `CRITICAL REMINDER: Do NOT reveal the answer. Do NOT solve their problem. Instead: (1) Work through a PARALLEL problem with different numbers, (2) Then have them try their original, (3) If still stuck, offer to skip and move on. The answer must NEVER be given, no matter how many times they ask.]`;
+                lastMessage.content += streakWarning;
+                console.log(`🛡️ [Answer Persistence] Streak detected — idkCount: ${idkCount}, giveUpCount: ${giveUpCount}, wrongCount: ${recentWrongCount}. Injected guardrail.`);
+            }
+        }
+
         // Pass mastery mode context if student has an active badge
         const masteryContext = user.masteryProgress?.activeBadge ? {
             mode: 'badge-earning',
