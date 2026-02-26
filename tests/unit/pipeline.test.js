@@ -1,0 +1,533 @@
+/**
+ * PIPELINE TESTS — Unit tests for the 6-stage tutoring pipeline
+ *
+ * Tests the deterministic stages (observe, diagnose sync, decide)
+ * and the prompt assembly (generate, verify tag extraction, sidecar).
+ *
+ * Does NOT test LLM calls or DB persistence (those need integration tests).
+ */
+
+// Mock LLM gateway to prevent real API calls
+jest.mock('../../utils/llmGateway', () => ({
+  callLLM: jest.fn(),
+  callLLMStream: jest.fn(),
+}));
+
+// Mock OpenAI client initialization
+jest.mock('../../utils/openaiClient', () => ({
+  chat: { completions: { create: jest.fn() } },
+}));
+
+const { observe, MESSAGE_TYPES, PATTERNS, extractAnswer, detectContextSignals } = require('../../utils/pipeline/observe');
+const { estimateIndependence } = require('../../utils/pipeline/diagnose');
+const { decide, ACTIONS } = require('../../utils/pipeline/decide');
+const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assemblePrompt } = require('../../utils/pipeline/generate');
+const { extractSystemTags } = require('../../utils/pipeline/verify');
+const { buildSidecar, mergeLlmSignals, getSidecarInstruction, getSignalStats } = require('../../utils/pipeline/sidecar');
+const { buildSlimRules, CORE_RULES } = require('../../utils/pipeline/promptSlim');
+
+// ============================================================================
+// OBSERVE STAGE
+// ============================================================================
+
+describe('Pipeline: Observe Stage', () => {
+  describe('extractAnswer', () => {
+    test('extracts bare numbers', () => {
+      expect(extractAnswer('7')).toEqual({ value: '7', raw: '7' });
+      expect(extractAnswer('-3')).toEqual({ value: '-3', raw: '-3' });
+      expect(extractAnswer('3.5')).toEqual({ value: '3.5', raw: '3.5' });
+    });
+
+    test('extracts fractions', () => {
+      expect(extractAnswer('3/4')).toEqual({ value: '3/4', raw: '3/4' });
+      expect(extractAnswer('-1/2')).toEqual({ value: '-1/2', raw: '-1/2' });
+    });
+
+    test('extracts variable assignments', () => {
+      expect(extractAnswer('x = 5')).toEqual({ value: '5', raw: 'x = 5' });
+      expect(extractAnswer('y = -3.5')).toEqual({ value: '-3.5', raw: 'y = -3.5' });
+    });
+
+    test('extracts answer phrases', () => {
+      expect(extractAnswer('the answer is 7')).toEqual({ value: '7', raw: 'the answer is 7' });
+      expect(extractAnswer('I got 3.5')).toEqual({ value: '3.5', raw: 'I got 3.5' });
+      expect(extractAnswer("it's -2")).toEqual({ value: '-2', raw: "it's -2" });
+    });
+
+    test('rejects long messages', () => {
+      expect(extractAnswer('a'.repeat(101))).toBeNull();
+    });
+
+    test('rejects non-answer messages', () => {
+      expect(extractAnswer('how do I solve this?')).toBeNull();
+      expect(extractAnswer('help me understand fractions')).toBeNull();
+    });
+  });
+
+  describe('observe classification', () => {
+    test('classifies answer attempts', () => {
+      const result = observe('7');
+      expect(result.messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(result.answer).not.toBeNull();
+    });
+
+    test('classifies IDK', () => {
+      expect(observe('idk').messageType).toBe(MESSAGE_TYPES.IDK);
+      expect(observe("i don't know").messageType).toBe(MESSAGE_TYPES.IDK);
+      expect(observe('no clue').messageType).toBe(MESSAGE_TYPES.IDK);
+    });
+
+    test('classifies give-up', () => {
+      expect(observe('just tell me the answer').messageType).toBe(MESSAGE_TYPES.GIVE_UP);
+      expect(observe('give me the answer').messageType).toBe(MESSAGE_TYPES.GIVE_UP);
+      expect(observe('I give up').messageType).toBe(MESSAGE_TYPES.GIVE_UP);
+    });
+
+    test('classifies frustration', () => {
+      expect(observe('this is stupid I hate math').messageType).toBe(MESSAGE_TYPES.FRUSTRATION);
+      expect(observe('this is impossible').messageType).toBe(MESSAGE_TYPES.FRUSTRATION);
+    });
+
+    test('classifies off-task', () => {
+      expect(observe('play fortnite with me').messageType).toBe(MESSAGE_TYPES.OFF_TASK);
+      expect(observe('tell me a joke').messageType).toBe(MESSAGE_TYPES.OFF_TASK);
+    });
+
+    test('classifies help requests', () => {
+      expect(observe('can you help me?').messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+      expect(observe("I'm stuck").messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+      expect(observe("I don't understand").messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+    });
+
+    test('classifies greetings', () => {
+      expect(observe('hi').messageType).toBe(MESSAGE_TYPES.GREETING);
+      expect(observe('hello').messageType).toBe(MESSAGE_TYPES.GREETING);
+    });
+
+    test('classifies skip requests', () => {
+      expect(observe('skip').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+      expect(observe('next one').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+    });
+
+    test('give-up takes priority over IDK', () => {
+      // "just tell me" should be give_up even though it could match help_request
+      expect(observe('just tell me').messageType).toBe(MESSAGE_TYPES.GIVE_UP);
+    });
+
+    test('detects streaks from recent history', () => {
+      const result = observe('idk', {
+        recentUserMessages: [
+          { content: 'idk' },
+          { content: 'i dont know' },
+          { content: 'no idea' },
+        ],
+        recentAssistantMessages: [],
+      });
+      expect(result.streaks.idkCount).toBe(3);
+    });
+  });
+
+  describe('context signals', () => {
+    test('detects frustration signal', () => {
+      const signals = detectContextSignals('ugh this is stupid');
+      expect(signals).toContainEqual(expect.objectContaining({ type: 'frustration' }));
+    });
+
+    test('detects metacognition signal', () => {
+      const signals = detectContextSignals('oh I see what you mean');
+      expect(signals).toContainEqual(expect.objectContaining({ type: 'metacognition' }));
+    });
+
+    test('detects confidence signal', () => {
+      const signals = detectContextSignals('I think the answer is 5');
+      expect(signals).toContainEqual(expect.objectContaining({ type: 'confidence' }));
+    });
+  });
+});
+
+// ============================================================================
+// DIAGNOSE STAGE (sync parts only)
+// ============================================================================
+
+describe('Pipeline: Diagnose Stage', () => {
+  describe('estimateIndependence', () => {
+    test('independent when no hints requested', () => {
+      expect(estimateIndependence({}, { recentUserMessages: [] })).toBe('independent');
+      expect(estimateIndependence({}, { recentUserMessages: [{ content: 'hi' }] })).toBe('independent');
+    });
+
+    test('hint_assisted with one hint', () => {
+      expect(estimateIndependence({}, {
+        recentUserMessages: [{ content: 'hint please' }],
+      })).toBe('hint_assisted');
+    });
+
+    test('heavily_scaffolded with multiple hints', () => {
+      expect(estimateIndependence({}, {
+        recentUserMessages: [
+          { content: "I'm stuck" },
+          { content: 'help me' },
+        ],
+      })).toBe('heavily_scaffolded');
+    });
+  });
+});
+
+// ============================================================================
+// DECIDE STAGE
+// ============================================================================
+
+describe('Pipeline: Decide Stage', () => {
+  const makeObs = (type, overrides = {}) => ({
+    messageType: type,
+    answer: null,
+    contextSignals: [],
+    streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+    ...overrides,
+  });
+
+  const correctDiag = { type: 'correct', isCorrect: true, answer: '7', correctAnswer: '7', misconception: null };
+  const incorrectDiag = { type: 'incorrect', isCorrect: false, answer: '5', correctAnswer: '7', misconception: null };
+  const noDiag = { type: 'no_answer' };
+
+  test('correct answer → confirm_correct', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, correctDiag, {});
+    expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('incorrect answer → guide_incorrect', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '5' } });
+    const dec = decide(obs, incorrectDiag, {});
+    expect(dec.action).toBe(ACTIONS.GUIDE_INCORRECT);
+  });
+
+  test('incorrect + misconception → reteach_misconception', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '5' } });
+    const diagWithMisconception = {
+      ...incorrectDiag,
+      misconception: { name: 'Partial Distribution', fix: 'Distribute to all terms' },
+    };
+    const dec = decide(obs, diagWithMisconception, {});
+    expect(dec.action).toBe(ACTIONS.RETEACH_MISCONCEPTION);
+    expect(dec.directives).toContainEqual(expect.stringContaining('Partial Distribution'));
+  });
+
+  test('incorrect + many wrongs → worked_example', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, {
+      answer: { value: '5' },
+      streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 4 },
+    });
+    const dec = decide(obs, incorrectDiag, {});
+    expect(dec.action).toBe(ACTIONS.WORKED_EXAMPLE);
+    expect(dec.scaffoldLevel).toBe(5);
+  });
+
+  test('give up → exit_ramp', () => {
+    const obs = makeObs(MESSAGE_TYPES.GIVE_UP);
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.EXIT_RAMP);
+    expect(dec.directives).toContainEqual(expect.stringContaining('NEVER reveal'));
+  });
+
+  test('first IDK → scaffold_down level 4', () => {
+    const obs = makeObs(MESSAGE_TYPES.IDK);
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.SCAFFOLD_DOWN);
+    expect(dec.scaffoldLevel).toBe(4);
+  });
+
+  test('repeated IDK → exit_ramp', () => {
+    const obs = makeObs(MESSAGE_TYPES.IDK, {
+      streaks: { idkCount: 3, giveUpCount: 0, recentWrongCount: 0 },
+    });
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.EXIT_RAMP);
+  });
+
+  test('frustration → acknowledge + max scaffold', () => {
+    const obs = makeObs(MESSAGE_TYPES.FRUSTRATION);
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.ACKNOWLEDGE_FRUSTRATION);
+    expect(dec.scaffoldLevel).toBe(5);
+  });
+
+  test('off-task → redirect', () => {
+    const obs = makeObs(MESSAGE_TYPES.OFF_TASK);
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.REDIRECT_TO_MATH);
+  });
+
+  test('help request → hint', () => {
+    const obs = makeObs(MESSAGE_TYPES.HELP_REQUEST);
+    const dec = decide(obs, noDiag, {});
+    expect(dec.action).toBe(ACTIONS.HINT);
+  });
+});
+
+// ============================================================================
+// GENERATE STAGE (prompt assembly only, no LLM calls)
+// ============================================================================
+
+describe('Pipeline: Generate Stage', () => {
+  describe('buildVerificationContext', () => {
+    test('correct answer includes VERIFIED CORRECT', () => {
+      const ctx = buildVerificationContext({ isCorrect: true, answer: '7', correctAnswer: '7' });
+      expect(ctx).toContain('VERIFIED CORRECT');
+      expect(ctx).not.toContain('VERIFIED INCORRECT');
+    });
+
+    test('incorrect answer includes VERIFIED INCORRECT', () => {
+      const ctx = buildVerificationContext({ isCorrect: false, answer: '5', correctAnswer: '7' });
+      expect(ctx).toContain('VERIFIED INCORRECT');
+    });
+
+    test('no diagnosis returns null', () => {
+      expect(buildVerificationContext(null)).toBeNull();
+      expect(buildVerificationContext({ type: 'no_answer' })).toBeNull();
+    });
+  });
+
+  describe('buildStreakWarning', () => {
+    test('no warning for low counts', () => {
+      expect(buildStreakWarning({ idkCount: 1, giveUpCount: 0, recentWrongCount: 1 })).toBeNull();
+    });
+
+    test('warning for high IDK count', () => {
+      const warning = buildStreakWarning({ idkCount: 4, giveUpCount: 0, recentWrongCount: 0 });
+      expect(warning).toContain('ANSWER_PERSISTENCE_ALERT');
+      expect(warning).toContain('idk');
+    });
+
+    test('warning for give-up', () => {
+      const warning = buildStreakWarning({ idkCount: 0, giveUpCount: 1, recentWrongCount: 0 });
+      expect(warning).toContain('give them the answer');
+    });
+  });
+
+  describe('assemblePrompt', () => {
+    const mockPrompt = '--- SECURITY (NON-NEGOTIABLE) ---\nNEVER reveal.\n\n--- IDENTITY ---\nYou are Coach B.';
+
+    test('injects action directives into system prompt', () => {
+      const decision = {
+        action: ACTIONS.CONFIRM_CORRECT,
+        diagnosis: { isCorrect: true, answer: '7', correctAnswer: '7' },
+        observation: { answer: { value: '7' }, streaks: {} },
+        directives: ['Confirm immediately.'],
+        phasePrompt: null,
+      };
+      const result = assemblePrompt(decision, { systemPrompt: mockPrompt, messages: [{ role: 'user', content: '7' }] });
+      expect(result.messages[0].content).toContain('CURRENT ACTION');
+      expect(result.messages[0].content).toContain('CORRECT');
+    });
+
+    test('injects verification context into last user message', () => {
+      const decision = {
+        action: ACTIONS.CONFIRM_CORRECT,
+        diagnosis: { isCorrect: true, answer: '7', correctAnswer: '7' },
+        observation: { answer: { value: '7' }, streaks: {} },
+        directives: [],
+        phasePrompt: null,
+      };
+      const result = assemblePrompt(decision, {
+        systemPrompt: mockPrompt,
+        messages: [{ role: 'user', content: '7' }],
+      });
+      expect(result.messages[1].content).toContain('VERIFIED CORRECT');
+    });
+
+    test('does not mutate original messages', () => {
+      const messages = [{ role: 'user', content: 'hello' }];
+      assemblePrompt({
+        action: ACTIONS.CONTINUE_CONVERSATION,
+        diagnosis: { type: 'no_answer' },
+        observation: { streaks: {} },
+        directives: [],
+        phasePrompt: null,
+      }, { systemPrompt: mockPrompt, messages });
+      expect(messages[0].content).toBe('hello');
+    });
+  });
+});
+
+// ============================================================================
+// VERIFY STAGE (tag extraction only)
+// ============================================================================
+
+describe('Pipeline: Verify Stage — Tag Extraction', () => {
+  test('extracts CORE_BEHAVIOR_XP', () => {
+    const { text, extracted } = extractSystemTags('Nice! <CORE_BEHAVIOR_XP:50,caught_own_error> You found it!');
+    expect(extracted.coreBehaviorXp).toEqual({ amount: 50, behavior: 'caught_own_error' });
+    expect(text).not.toContain('CORE_BEHAVIOR_XP');
+    expect(text).toContain('Nice!');
+  });
+
+  test('extracts PROBLEM_RESULT', () => {
+    const { extracted } = extractSystemTags('Good job! <PROBLEM_RESULT:correct>');
+    expect(extracted.problemResult).toBe('correct');
+  });
+
+  test('extracts SAFETY_CONCERN', () => {
+    const { extracted } = extractSystemTags('I hear you. <SAFETY_CONCERN>Student mentioned self-harm</SAFETY_CONCERN> Please talk to an adult.');
+    expect(extracted.safetyConcern).toBe('Student mentioned self-harm');
+  });
+
+  test('extracts SKILL_MASTERED', () => {
+    const { extracted } = extractSystemTags('You mastered it! <SKILL_MASTERED:two-step-equations>');
+    expect(extracted.skillMastered).toBe('two-step-equations');
+  });
+
+  test('extracts multiple IEP goal updates', () => {
+    const { extracted } = extractSystemTags('Progress! <IEP_GOAL_PROGRESS:fractions,+10> and <IEP_GOAL_PROGRESS:problem-solving,+5>');
+    expect(extracted.iepGoalUpdates).toHaveLength(2);
+    expect(extracted.iepGoalUpdates[0]).toEqual({ goalIdentifier: 'fractions', progressChange: 10 });
+  });
+
+  test('extracts SCAFFOLD_ADVANCE', () => {
+    const { extracted } = extractSystemTags('Moving on! <SCAFFOLD_ADVANCE>');
+    expect(extracted.scaffoldAdvance).toBe(true);
+  });
+
+  test('extracts MODULE_COMPLETE', () => {
+    const { extracted } = extractSystemTags('Module done! <MODULE_COMPLETE>');
+    expect(extracted.moduleComplete).toBe(true);
+  });
+
+  test('cleans all tags from output text', () => {
+    const { text } = extractSystemTags(
+      'Great! <CORE_BEHAVIOR_XP:25,persistence> <PROBLEM_RESULT:correct> <SKILL_MASTERED:algebra> Keep going!'
+    );
+    expect(text.replace(/\s+/g, ' ').trim()).toBe('Great! Keep going!');
+    expect(text).not.toContain('<');
+  });
+});
+
+// ============================================================================
+// SIDECAR
+// ============================================================================
+
+describe('Pipeline: Sidecar', () => {
+  test('derives problemResult from correct diagnosis', () => {
+    const sc = buildSidecar(
+      { messageType: 'answer_attempt', answer: { value: '7' }, streaks: {} },
+      { type: 'correct', isCorrect: true },
+      { action: 'confirm_correct', phaseState: null },
+      {}
+    );
+    expect(sc.problemResult).toBe('correct');
+    expect(sc.source.pipelineDerived).toContain('problemResult');
+  });
+
+  test('derives badgeProgress when user has active badge', () => {
+    const sc = buildSidecar(
+      { messageType: 'answer_attempt', answer: { value: '7' }, streaks: {} },
+      { type: 'correct', isCorrect: true },
+      { action: 'confirm_correct', phaseState: null },
+      { user: { masteryProgress: { activeBadge: { badgeId: 'test' } } } }
+    );
+    expect(sc.badgeProgress).toEqual({ correct: true });
+    expect(sc.source.pipelineDerived).toContain('badgeProgress');
+  });
+
+  test('pipeline-derived problemResult wins over LLM-emitted', () => {
+    const sc = buildSidecar(
+      { messageType: 'answer_attempt', answer: { value: '7' }, streaks: {} },
+      { type: 'correct', isCorrect: true },
+      { action: 'confirm_correct', phaseState: null },
+      {}
+    );
+    mergeLlmSignals(sc, { problemResult: 'incorrect' }); // LLM disagrees
+    expect(sc.problemResult).toBe('correct'); // Pipeline wins
+    expect(sc.source.pipelineDerived).toContain('problemResult');
+    expect(sc.source.llmEmitted).not.toContain('problemResult');
+  });
+
+  test('merges LLM-only signals', () => {
+    const sc = buildSidecar(
+      { messageType: 'question', answer: null, streaks: {} },
+      { type: 'no_answer' },
+      { action: 'continue', phaseState: null },
+      {}
+    );
+    mergeLlmSignals(sc, {
+      coreBehaviorXp: { amount: 50, behavior: 'explained_reasoning' },
+      safetyConcern: null,
+      learningInsight: 'Learns best with visual models',
+    });
+    expect(sc.coreBehaviorXp).toEqual({ amount: 50, behavior: 'explained_reasoning' });
+    expect(sc.learningInsight).toBe('Learns best with visual models');
+  });
+
+  test('sidecar instruction is concise', () => {
+    const instruction = getSidecarInstruction();
+    expect(instruction.length).toBeLessThan(800);
+    expect(instruction).toContain('CORE_BEHAVIOR_XP');
+    expect(instruction).toContain('SAFETY_CONCERN');
+    // PROBLEM_RESULT is mentioned in the "Do NOT emit" line — that's correct
+    expect(instruction).toContain('Do NOT emit <PROBLEM_RESULT>');
+  });
+
+  test('signal stats track sources correctly', () => {
+    const sc = buildSidecar(
+      { messageType: 'answer_attempt', answer: { value: '7' }, streaks: {} },
+      { type: 'correct', isCorrect: true },
+      { action: 'confirm_correct', phaseState: null },
+      {}
+    );
+    mergeLlmSignals(sc, { coreBehaviorXp: { amount: 50, behavior: 'test' } });
+    const stats = getSignalStats(sc);
+    expect(stats.pipelineDerived).toBe(1);
+    expect(stats.llmEmitted).toBe(1);
+    expect(stats.total).toBe(2);
+    expect(stats.reliability).toBe(0.5);
+  });
+});
+
+// ============================================================================
+// PROMPT SLIMMING
+// ============================================================================
+
+describe('Pipeline: Prompt Slimming', () => {
+  test('core rules always present', () => {
+    const rules = buildSlimRules(ACTIONS.REDIRECT_TO_MATH);
+    expect(rules).toContain('SECURITY');
+    expect(rules).toContain('RESPONSE STYLE');
+    expect(rules).toContain('BANNED');
+  });
+
+  test('confirm_correct includes answer verification but not anti-cheat', () => {
+    const rules = buildSlimRules(ACTIONS.CONFIRM_CORRECT);
+    expect(rules).toContain('ANSWER VERIFICATION');
+    expect(rules).toContain('MASTERY CHECK');
+    expect(rules).not.toContain('ANTI-CHEAT');
+    expect(rules).not.toContain('ANSWER PERSISTENCE');
+  });
+
+  test('exit_ramp includes answer persistence but not visual tools', () => {
+    const rules = buildSlimRules(ACTIONS.EXIT_RAMP);
+    expect(rules).toContain('ANSWER PERSISTENCE');
+    expect(rules).not.toContain('VISUAL TOOL');
+  });
+
+  test('redirect_to_math is minimal', () => {
+    const rules = buildSlimRules(ACTIONS.REDIRECT_TO_MATH);
+    expect(rules).not.toContain('ANSWER VERIFICATION');
+    expect(rules).not.toContain('ANTI-CHEAT');
+    expect(rules).not.toContain('VISUAL TOOL');
+    expect(rules).not.toContain('METHODOLOGY');
+  });
+
+  test('reteach includes methodology and visual tools', () => {
+    const rules = buildSlimRules(ACTIONS.RETEACH_MISCONCEPTION);
+    expect(rules).toContain('METHODOLOGY');
+    expect(rules).toContain('VISUAL TOOL');
+  });
+
+  test('all actions produce valid output', () => {
+    for (const action of Object.values(ACTIONS)) {
+      const rules = buildSlimRules(action);
+      expect(rules.length).toBeGreaterThan(100);
+      expect(rules).toContain('SECURITY');
+    }
+  });
+});
