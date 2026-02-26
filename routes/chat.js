@@ -766,23 +766,74 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 return daysAgo <= 1;
             });
 
-        // Run the 6-stage pipeline
-        const pipelineResult = await runPipeline(message, {
-            user,
-            conversation: activeConversation,
-            systemPrompt,
-            formattedMessages: formattedMessagesForLLM,
-            hasRecentUpload,
-            stream: useStreaming,
-            res: useStreaming ? res : null,
-            aiProcessingStartTime: aiStartTime,
-        });
+        // Run the 6-stage pipeline with direct-LLM fallback
+        let pipelineResult;
+        try {
+            pipelineResult = await runPipeline(message, {
+                user,
+                conversation: activeConversation,
+                systemPrompt,
+                formattedMessages: formattedMessagesForLLM,
+                hasRecentUpload,
+                stream: useStreaming,
+                res: useStreaming ? res : null,
+                aiProcessingStartTime: aiStartTime,
+            });
+        } catch (pipelineError) {
+            // Pipeline failed — fall back to direct LLM call so student always gets a response
+            console.error('[Pipeline] FALLBACK triggered:', pipelineError.message);
+
+            const fallbackMessages = [
+                { role: 'system', content: systemPrompt },
+                ...formattedMessagesForLLM,
+            ];
+
+            let fallbackText;
+            try {
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, fallbackMessages, {
+                    temperature: 0.7,
+                    max_tokens: 1200,
+                });
+                fallbackText = completion.choices[0]?.message?.content?.trim()
+                    || "I'm sorry, I had a hiccup! Could you say that again?";
+            } catch (llmError) {
+                console.error('[Pipeline] Fallback LLM also failed:', llmError.message);
+                fallbackText = "I'm having trouble thinking right now. Could you try sending that again in a moment?";
+            }
+
+            // Minimal conversation save so the message isn't lost
+            try {
+                activeConversation.messages.push({ role: 'user', content: message });
+                activeConversation.messages.push({ role: 'assistant', content: fallbackText });
+                activeConversation.lastActivity = new Date();
+                await activeConversation.save();
+            } catch (saveErr) {
+                console.error('[Pipeline] Fallback conversation save failed:', saveErr.message);
+            }
+
+            pipelineResult = {
+                text: fallbackText,
+                xpBreakdown: {},
+                visualCommands: null,
+                drawingSequence: null,
+                boardContext: null,
+                iepGoalUpdates: [],
+                problemResult: null,
+                sessionStats: null,
+                tutorsUnlocked: null,
+                leveledUp: false,
+                aiTimeUsed: null,
+                freeWeeklySecondsRemaining: null,
+                _pipeline: { fallback: true, error: pipelineError.message },
+            };
+        }
 
         let aiResponseText = pipelineResult.text;
 
         // NOTE: Anti-cheat, reading level, visual commands, tag extraction,
         // XP, skill tracking, IEP goals, and conversation save are all
         // handled inside the pipeline's verify + persist stages.
+        // When fallback is active, only the conversation save above runs.
 
         // ── Fire-and-forget post-pipeline tasks ──
 

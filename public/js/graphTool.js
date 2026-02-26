@@ -13,9 +13,13 @@ class GraphTool {
     this.container = typeof container === 'string'
       ? document.getElementById(container) : container;
 
+    // Responsive: fit container width on small screens, max 380px
+    const containerWidth = this.container ? this.container.clientWidth : 380;
+    const responsiveSize = Math.min(380, Math.max(240, containerWidth - 16));
+
     this.options = {
-      width: 380,
-      height: 380,
+      width: responsiveSize,
+      height: responsiveSize,
       xMin: -10,
       xMax: 10,
       yMin: -10,

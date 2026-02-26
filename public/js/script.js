@@ -1654,7 +1654,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
                 const chatEndpoint = isInCourse ? '/api/course-chat' : '/api/chat';
 
-                response = await csrfFetch(chatEndpoint, {
+                response = await csrfFetch(`${chatEndpoint}?stream=true`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -1685,10 +1685,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            const data = await response.json();
+            // Check if response is SSE stream (text/event-stream)
+            const contentType = response.headers.get('Content-Type') || '';
+            let data;
+
+            if (contentType.includes('text/event-stream')) {
+                // Read SSE stream: show words as they arrive
+                showThinkingIndicator(false);
+                const streamRef = startStreamingMessage();
+                let fullText = '';
+                let completeData = null;
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        try {
+                            const event = JSON.parse(line.slice(6));
+                            if (event.type === 'chunk' && event.content) {
+                                fullText += event.content;
+                                appendStreamingChunk(streamRef, event.content);
+                            } else if (event.type === 'complete' && event.data) {
+                                completeData = event.data;
+                            } else if (event.type === 'error') {
+                                throw new Error(event.message || 'Stream error');
+                            }
+                        } catch (parseErr) {
+                            if (parseErr.message === 'Stream error' || parseErr.message?.includes('Stream')) throw parseErr;
+                            // Ignore malformed SSE lines
+                        }
+                    }
+                }
+
+                // Finalize the streaming message (adds audio button, reactions)
+                finalizeStreamingMessage(streamRef, fullText);
+
+                // Use the complete data from the server, or build minimal data from streamed text
+                data = completeData || { text: fullText };
+            } else {
+                // Non-streaming: parse JSON as before
+                data = await response.json();
+            }
 
             // Process AI response (same logic as original sendMessage)
-            let aiText = data.text;
+            let aiText = data.text || '';
+            const wasStreamed = contentType.includes('text/event-stream');
             let graphData = null;
             const graphRegex = /\[GRAPH:({.*})\]/;
             const graphMatch = aiText.match(graphRegex);
@@ -1720,7 +1771,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            // Only append if we didn't already stream the message into the DOM
+            if (!wasStreamed) {
+                appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            }
 
             // Apply IEP accommodations to this response
             handleIepResponseFeatures(data.iepFeatures);
@@ -1919,18 +1973,43 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Chat error:", error);
 
-            let errorMessage = "I'm having trouble connecting. Please try again.";
+            let errorMessage = "I'm having trouble connecting.";
+            let isRetryable = true;
             if (error.message) {
                 if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
-                    errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
+                    errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable.";
+                    isRetryable = false; // File-specific errors need a different file
                 } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
-                    errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
+                    errorMessage = `File processing error: ${error.message}`;
+                    isRetryable = false;
                 } else if (!error.message.includes('Server error')) {
                     errorMessage = error.message;
                 }
             }
 
-            appendMessage(errorMessage, "system-error");
+            // Show error with retry button
+            const errorContainer = document.createElement('div');
+            errorContainer.className = 'message-container system-error';
+            const errorBubble = document.createElement('div');
+            errorBubble.className = 'message system-error';
+            errorBubble.innerHTML = `<span class="message-text">${errorMessage}</span>`;
+
+            if (isRetryable) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.innerHTML = '<i class="fas fa-redo"></i> Try Again';
+                retryBtn.addEventListener('click', () => {
+                    errorContainer.remove();
+                    queueMessage(queuedMsg.text, queuedMsg.files, queuedMsg.responseTime);
+                });
+                errorBubble.appendChild(retryBtn);
+            }
+
+            errorContainer.appendChild(errorBubble);
+            if (chatBox) {
+                chatBox.appendChild(errorContainer);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         } finally {
             showThinkingIndicator(false);
             setTimeout(() => showDefaultSuggestions(), 500);
