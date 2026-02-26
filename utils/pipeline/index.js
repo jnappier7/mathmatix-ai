@@ -22,6 +22,7 @@ const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { persist } = require('./persist');
+const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 
 /**
  * Run the full tutoring pipeline.
@@ -82,6 +83,12 @@ async function runPipeline(message, ctx) {
 
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
 
+  // ── Build sidecar (deterministic signals pre-filled) ──
+  const sidecar = buildSidecar(observation, diagnosis, decision, {
+    user: ctx.user,
+    activeSkill: ctx.activeSkill || null,
+  });
+
   // ── Stage 4: GENERATE ──
   const assembled = assemblePrompt(decision, {
     systemPrompt: ctx.systemPrompt,
@@ -106,6 +113,11 @@ async function runPipeline(message, ctx) {
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
+
+  // ── Merge LLM signals into sidecar ──
+  mergeLlmSignals(sidecar, verified.extracted);
+  const signalStats = getSignalStats(sidecar);
+  console.log(`[Pipeline] Sidecar: ${signalStats.total} signals (${signalStats.pipelineDerived} deterministic, ${signalStats.llmEmitted} from LLM)`);
 
   // ── Stage 6: PERSIST ──
   const aiProcessingSeconds = Math.ceil((Date.now() - (ctx.aiProcessingStartTime || startTime)) / 1000);
@@ -145,6 +157,8 @@ async function runPipeline(message, ctx) {
       problemsAttempted: ctx.conversation.problemsAttempted || 0,
       problemsCorrect: ctx.conversation.problemsCorrect || 0,
     },
+    // Structured sidecar (deterministic + LLM signals merged)
+    sidecar,
     // Pipeline metadata (for debugging/logging)
     _pipeline: {
       messageType: observation.messageType,
@@ -152,6 +166,7 @@ async function runPipeline(message, ctx) {
       phase: decision.phase,
       diagnosisType: diagnosis.type,
       flags: verified.flags,
+      signalStats,
       timeMs: pipelineTime,
     },
   };
@@ -168,4 +183,5 @@ module.exports = {
   persist,
   MESSAGE_TYPES,
   ACTIONS,
+  sidecar: require('./sidecar'),
 };
