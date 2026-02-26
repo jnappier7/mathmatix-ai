@@ -37,6 +37,9 @@ const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 
+// Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
+const { runPipeline } = require('../utils/pipeline');
+
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
@@ -605,117 +608,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
         }
 
-        // ANSWER PRE-CHECK: When student submits a short answer, verify it against the last problem
-        // This prevents the AI from saying "almost there" or "let's check" when the student is actually correct
-        if (!mathVerificationContext) {
-            const studentAnswer = extractStudentAnswer(message);
-            if (studentAnswer !== null) {
-                // Look back through recent AI messages to find the problem that was posed
-                const recentAIMessages = formattedMessagesForLLM
-                    .filter(msg => msg.role === 'assistant')
-                    .slice(-3);
-
-                for (let i = recentAIMessages.length - 1; i >= 0; i--) {
-                    const problemResult = processMathMessage(recentAIMessages[i].content);
-                    if (problemResult.hasMath && problemResult.solution?.success) {
-                        const verification = verifyAnswer(studentAnswer, problemResult.solution.answer);
-                        const isCorrect = verification.isCorrect;
-
-                        // Inject definitive correctness signal into the student's message
-                        const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
-                        if (lastMessage.role === 'user') {
-                            if (isCorrect) {
-                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED CORRECT. The student's answer "${studentAnswer}" matches the correct answer "${problemResult.solution.answer}". Confirm they are correct immediately. Do NOT say "let's check", "almost", "not quite", or imply any doubt.]`;
-                            } else {
-                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED INCORRECT. The student answered "${studentAnswer}" but the correct answer is "${problemResult.solution.answer}". Guide them toward the correct answer using Socratic method.]`;
-                            }
-                        }
-
-                        console.log(`🔍 [Answer Pre-Check] Student: "${studentAnswer}", Correct: "${problemResult.solution.answer}", Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // CHECK-MY-WORK DETECTION: When student asks to check/verify their work
-        // after uploading content, inject a hint so the AI references the uploaded content
-        // instead of asking the student to repeat it.
-        const checkMyWorkPatterns = [
-            /\bcheck\b.*\b(this|my|it|work|answer|problem)\b/i,
-            /\bis\b.*\b(this|my|it)\b.*\b(right|correct|wrong|good)\b/i,
-            /\bdid\s+i\b.*\b(get|do)\b.*\b(right|correct|it)\b/i,
-            /\bverify\b/i,
-            /\bam\s+i\b.*\b(right|correct|on\s+the\s+right\s+track)\b/i,
-            /\bgrade\b.*\b(this|my|it)\b/i,
-            /\bhow\s*('d|did)\s+i\s+do\b/i
-        ];
-        const isCheckMyWork = checkMyWorkPatterns.some(p => p.test(message));
-
-        if (isCheckMyWork && formattedMessagesForLLM.length > 0) {
-            // Look for uploaded content in recent conversation messages
-            const hasUploadedContent = formattedMessagesForLLM.some(msg =>
-                msg.role === 'user' && (
-                    msg.content.includes('[Content from ') ||
-                    msg.content.includes('uploaded image/PDF') ||
-                    msg.content.includes('math text from an uploaded')
-                )
-            );
-
-            const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
-                recentUploads.some(u => {
-                    const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
-                    return daysAgo === 0; // Uploaded today
-                });
-
-            if (hasUploadedContent || hasRecentUpload) {
-                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
-                if (lastMessage.role === 'user') {
-                    lastMessage.content += `\n\n[CHECK_MY_WORK: The student is asking you to check/verify their work from a previously uploaded file. The uploaded content (including the student's answers) is visible in the conversation history above. Reference it directly — do NOT ask the student to re-share the problem or their answer. Check their work one problem at a time using the CHECK MY WORK guidelines from your instructions.]`;
-                    console.log(`📝 [Check My Work] Detected check-my-work request, injected guidance hint`);
-                }
-            }
-        }
-
-        // IDK/WRONG-ANSWER STREAK DETECTION: When a student repeatedly says "idk" or gives
-        // multiple wrong answers in a row, inject a stronger guardrail into the LLM context
-        // to prevent it from eventually caving and revealing the answer.
-        const recentUserMessages = activeConversation.messages
-            .filter(msg => msg.role === 'user')
-            .slice(-6);
-        const recentAssistantMessages = activeConversation.messages
-            .filter(msg => msg.role === 'assistant')
-            .slice(-6);
-
-        // Count "idk" pattern in recent user messages
-        const idkPattern = /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea)\b/i;
-        const giveUpPattern = /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer)\b/i;
-        const idkCount = recentUserMessages.filter(msg => idkPattern.test(msg.content)).length;
-        const giveUpCount = recentUserMessages.filter(msg => giveUpPattern.test(msg.content)).length;
-
-        // Count recent wrong answers (from problemResult tags on assistant messages)
-        const recentWrongCount = recentAssistantMessages.filter(msg =>
-            msg.problemResult === 'incorrect'
-        ).length;
-
-        if ((idkCount >= 3 || giveUpCount >= 1 || recentWrongCount >= 3) && formattedMessagesForLLM.length > 0) {
-            const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
-            if (lastMessage.role === 'user') {
-                let streakWarning = `\n\n[ANSWER_PERSISTENCE_ALERT: `;
-                if (idkCount >= 3) {
-                    streakWarning += `Student has said "idk" or "I don't know" ${idkCount} times in recent messages. `;
-                }
-                if (giveUpCount >= 1) {
-                    streakWarning += `Student is asking you to just give them the answer. `;
-                }
-                if (recentWrongCount >= 3) {
-                    streakWarning += `Student has gotten ${recentWrongCount} wrong answers recently. `;
-                }
-                streakWarning += `CRITICAL REMINDER: Do NOT reveal the answer. Do NOT solve their problem. Instead: (1) Work through a PARALLEL problem with different numbers, (2) Then have them try their original, (3) If still stuck, offer to skip and move on. The answer must NEVER be given, no matter how many times they ask.]`;
-                lastMessage.content += streakWarning;
-                console.log(`🛡️ [Answer Persistence] Streak detected — idkCount: ${idkCount}, giveUpCount: ${giveUpCount}, wrongCount: ${recentWrongCount}. Injected guardrail.`);
-            }
-        }
+        // PIPELINE: Answer pre-check, check-my-work detection, and IDK/streak
+        // handling are now in the tutoring pipeline (observe → diagnose → decide).
+        // The pipeline injects these into the prompt during the generate stage.
 
         // Pass mastery mode context if student has an active badge
         const masteryContext = user.masteryProgress?.activeBadge ? {
@@ -844,614 +739,73 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
         }
 
-        const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
-
         // Check if client wants streaming (via query parameter)
         const useStreaming = req.query.stream === 'true';
 
-        let aiResponseText = '';
-        const aiStartTime = Date.now(); // Track AI processing time (server-side, for fair billing)
-
-        // Track client disconnect for streaming mode (declared here for scope access)
+        // =====================================================
+        // TUTORING PIPELINE
+        // observe → diagnose → decide → generate → verify → persist
+        // =====================================================
+        const aiStartTime = Date.now();
         let clientDisconnected = false;
 
+        // Set up streaming if requested
         if (useStreaming) {
-            // STREAMING MODE: Use Server-Sent Events for real-time response
             console.log('📡 Streaming mode activated');
-
-            // Set SSE headers
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
             res.flushHeaders();
-
             req.on('close', () => { clientDisconnected = true; });
-
-            try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
-
-                // Buffer to collect the complete response for database storage
-                let fullResponseBuffer = '';
-
-                // Stream chunks to client as they arrive
-                // Handle both Claude and OpenAI streaming formats
-                const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
-
-                for await (const chunk of stream) {
-                    if (clientDisconnected) {
-                        console.log('[Stream] Client disconnected mid-stream, stopping');
-                        break;
-                    }
-                    let content = '';
-
-                    if (isClaudeModel) {
-                        // Claude streaming format: events with type 'content_block_delta'
-                        if (chunk.type === 'content_block_delta' && chunk.delta?.text) {
-                            content = chunk.delta.text;
-                        }
-                    } else {
-                        // OpenAI streaming format: choices[0].delta.content
-                        content = chunk.choices[0]?.delta?.content || '';
-                    }
-
-                    if (content) {
-                        // Smart spacing for Claude tokens: Add space after punctuation if next chunk doesn't start with space
-                        if (isClaudeModel && fullResponseBuffer.length > 0) {
-                            const lastChar = fullResponseBuffer[fullResponseBuffer.length - 1];
-                            const firstChar = content[0];
-                            const needsSpace = /[.!?:,;]/.test(lastChar) &&
-                                             firstChar !== ' ' &&
-                                             firstChar !== '\n' &&
-                                             !/^[.!?:,;)]/.test(firstChar); // Don't add space before punctuation
-
-                            if (needsSpace) {
-                                content = ' ' + content;
-                            }
-                        }
-
-                        fullResponseBuffer += content;
-
-                        // Send chunk to client via SSE
-                        res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);
-                    }
-                }
-
-                aiResponseText = fullResponseBuffer.trim() || "I'm not sure how to respond.";
-
-                // Continue with post-processing...
-                // (XP awards, drawing commands, etc. will be handled below and sent as final event)
-
-            } catch (streamError) {
-                console.error('ERROR: Streaming failed, falling back to non-streaming:', streamError.message);
-                // Fallback to non-streaming if streaming fails
-                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
-                aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
-                res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
-            }
-        } else {
-            // NON-STREAMING MODE: Original behavior
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
-            aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
 
-        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
-        // Catches cases where the AI solves multiple problems despite prompt instructions
-        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
-        if (answerKeyCheck.wasFiltered) {
-            aiResponseText = answerKeyCheck.text;
-            // For streaming: send a replacement event so frontend overwrites the streamed chunks
-            if (useStreaming && !clientDisconnected) {
-                try {
-                    res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
-                } catch (e) { /* client may have disconnected */ }
-            }
-        }
-
-        // IEP READING LEVEL ENFORCEMENT: Score response and re-prompt if too complex
-        const iepReadingLevel = user.iepPlan?.readingLevel;
-        if (iepReadingLevel) {
-            const readCheck = checkReadingLevel(aiResponseText, iepReadingLevel);
-            if (!readCheck.passes) {
-                console.log(`📖 [IEP] Reading level violation for ${user.firstName}: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade} (+${readCheck.margin.toFixed(1)} over). Re-prompting for simplification.`);
-                try {
-                    const simplifyInstruction = buildSimplificationPrompt(aiResponseText, readCheck.targetGrade, user.firstName || 'the student');
-                    const simplifyMessages = [
-                        { role: 'system', content: simplifyInstruction }
-                    ];
-                    const simplified = await callLLM(PRIMARY_CHAT_MODEL, simplifyMessages, { temperature: 0.3, max_tokens: 1500 });
-                    const simplifiedText = simplified.choices[0]?.message?.content?.trim();
-                    if (simplifiedText && simplifiedText.length > 20) {
-                        aiResponseText = simplifiedText;
-                        // For streaming: send a replacement so frontend uses the simplified version
-                        if (useStreaming && !clientDisconnected) {
-                            try {
-                                res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
-                            } catch (e) { /* client may have disconnected */ }
-                        }
-                        console.log(`📖 [IEP] Simplified response for ${user.firstName} (target: Grade ${readCheck.targetGrade})`);
-                    }
-                } catch (simplifyErr) {
-                    console.error(`📖 [IEP] Simplification re-prompt failed:`, simplifyErr.message);
-                    // Fall through with original response rather than breaking the chat
-                }
-            }
-        }
-
-        // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
-        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
-        const previousWeeklyAI = user.weeklyAISeconds || 0;
-        const updatedWeeklyAI = previousWeeklyAI + aiProcessingSeconds;
-
-        // Always increment AI time counters
-        const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
-
-        // Deduct from pack balance only for seconds beyond the free weekly allowance (20 min)
-        // Re-validate pack hasn't expired since usageGate checked (prevents mid-session expiry bug)
-        const FREE_WEEKLY = 20 * 60;
-        const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
-            user.packSecondsRemaining > 0 &&
-            (!user.packExpiresAt || new Date() <= user.packExpiresAt);
-        if (packStillValid) {
-            const prevPaid = Math.max(0, previousWeeklyAI - FREE_WEEKLY);
-            const newPaid = Math.max(0, updatedWeeklyAI - FREE_WEEKLY);
-            const packDeduction = newPaid - prevPaid;
-            if (packDeduction > 0) {
-                aiTimeUpdate.$inc.packSecondsRemaining = -packDeduction;
-            }
-        }
-
-        // Await the DB update to ensure usage is actually recorded
-        try {
-            await User.findByIdAndUpdate(userId, aiTimeUpdate);
-        } catch (err) {
-            console.error('[Chat] AI time tracking error:', err);
-        }
-
-        // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
-        aiResponseText = enforceVisualTeaching(message, aiResponseText);
-
-        // Parse visual teaching commands (whiteboard, algebra tiles, images, manipulatives)
-        const visualResult = parseVisualTeaching(aiResponseText);
-        const visualCommands = visualResult.visualCommands;
-        aiResponseText = visualResult.cleanedText;
-
-        // Extract drawing sequence from visual commands for backward compatibility
-        const dynamicDrawingSequence = visualCommands.whiteboard.length > 0 && visualCommands.whiteboard[0].sequence
-            ? visualCommands.whiteboard[0].sequence
-            : null;
-
-        // BOARD-FIRST CHAT INTEGRATION: Parse board references
-        const boardParsed = processAIResponse(aiResponseText);
-        aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
-        const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
-
-        // =====================================================
-        // XP LADDER SYSTEM (Three Tiers)
-        // Tier 1: Silent turn XP (engagement)
-        // Tier 2: Performance XP (correct answers)
-        // Tier 3: Core Behavior XP (learning identity)
-        // =====================================================
-
-        const xpLadder = BRAND_CONFIG.xpLadder;
-        const xpBreakdown = {
-            tier1: 0,       // Silent turn XP
-            tier2: 0,       // Performance XP
-            tier2Type: null, // 'correct' or 'clean'
-            tier3: 0,       // Core behavior XP
-            tier3Behavior: null, // The specific behavior being rewarded
-            total: 0
-        };
-
-        // TIER 3: Core Behavior XP (AI explicitly awards for learning identity moments)
-        // Format: <CORE_BEHAVIOR_XP:amount,behavior>
-        // Example: <CORE_BEHAVIOR_XP:50,caught_own_error>
-        const coreBehaviorMatch = aiResponseText.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
-        if (coreBehaviorMatch) {
-            const rawAmount = parseInt(coreBehaviorMatch[1], 10);
-            const behavior = coreBehaviorMatch[2].trim();
-
-            // Calculate new user XP boost (fades over time based on level)
-            const xpBoostInfo = calculateXpBoostFactor(user.level);
-            const boostedAmount = Math.round(rawAmount * xpBoostInfo.factor);
-
-            // Security: Cap at max tier 3 amount (cap is also boosted for new users)
-            const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
-            xpBreakdown.tier3 = Math.min(boostedAmount, maxAllowed);
-            xpBreakdown.tier3Behavior = behavior;
-            xpBreakdown.tier3Boosted = xpBoostInfo.factor > 1;
-            aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
-
-            const boostLabel = xpBoostInfo.factor > 1 ? ` (${xpBoostInfo.factor}x new user boost!)` : '';
-            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"${boostLabel}`);
-        }
-
-        // LEGACY: Support old <AWARD_XP> tag (treat as Tier 2 for backward compatibility)
-        const legacyXpMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
-        if (legacyXpMatch && !coreBehaviorMatch) {
-            const rawAmount = parseInt(legacyXpMatch[1], 10);
-            // Treat legacy awards as Tier 2 (capped at tier 2 max)
-            xpBreakdown.tier2 = Math.min(rawAmount, xpLadder.maxTier2PerTurn);
-            xpBreakdown.tier2Type = 'legacy';
-            aiResponseText = aiResponseText.replace(legacyXpMatch[0], '').trim();
-        }
-
-        // SAFETY LOGGING: Check if AI flagged safety concern
-        const safetyConcernMatch = aiResponseText.match(/<SAFETY_CONCERN>([^<]+)<\/SAFETY_CONCERN>/);
-        if (safetyConcernMatch) {
-            const concernDescription = safetyConcernMatch[1];
-            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName} ${user.lastName}) - ${concernDescription}`);
-            aiResponseText = aiResponseText.replace(safetyConcernMatch[0], '').trim();
-
-            // Send urgent alert email to admin (fire and forget - don't block response)
-            sendSafetyConcernAlert(
-                {
-                    userId: userId.toString(),
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    username: user.username,
-                    gradeLevel: user.gradeLevel
-                },
-                concernDescription,
-                message // The student's message for context
-            ).catch(err => console.error('Failed to send safety alert email:', err));
-        }
-
-        // SKILL MASTERY TRACKING: Parse AI skill progression tags
-        // AI sends <SKILL_MASTERED:skillId> as evidence — NOT an instant decree.
-        // We record it as a correct demonstration and only promote to 'mastered'
-        // when the 4-Pillar thresholds are genuinely met.
-        const skillMasteredMatch = aiResponseText.match(/<SKILL_MASTERED:([^>]+)>/);
-        if (skillMasteredMatch) {
-            const skillId = skillMasteredMatch[1].trim();
-            user.skillMastery = user.skillMastery || new Map();
-            const existing = user.skillMastery.get(skillId) || {};
-
-            // Initialize pillar data if missing
-            const pillars = existing.pillars || {
-                accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
-                independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3, autoStepUsed: false },
-                transfer: { contextsAttempted: [], contextsRequired: 3, formatVariety: false },
-                retention: { retentionChecks: [], failed: false }
-            };
-
-            // Record this as a correct demonstration
-            pillars.accuracy.correct = (pillars.accuracy.correct || 0) + 1;
-            pillars.accuracy.total = (pillars.accuracy.total || 0) + 1;
-            pillars.accuracy.percentage = pillars.accuracy.total > 0
-                ? pillars.accuracy.correct / pillars.accuracy.total : 0;
-
-            // Check if hint was used recently (independence pillar)
-            const recentMsgs = activeConversation.messages.slice(-6);
-            const usedHint = recentMsgs.some(msg =>
-                msg.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(msg.content)
-            );
-            if (usedHint) {
-                pillars.independence.hintsUsed = (pillars.independence.hintsUsed || 0) + 1;
-            }
-
-            // Detect context type for transfer pillar
-            const contextType = detectProblemContext(message);
-            if (contextType && !pillars.transfer.contextsAttempted.includes(contextType)) {
-                pillars.transfer.contextsAttempted.push(contextType);
-            }
-
-            // Calculate overall mastery score (0-100) from pillar progress
-            const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
-            const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
-                : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
-            const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
-            const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
-
-            // Determine status: only 'mastered' if all pillars meet thresholds
-            const meetsAccuracy = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3;
-            const meetsIndependence = pillars.independence.hintsUsed <= pillars.independence.hintThreshold;
-            const meetsTransfer = pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
-            const allPillarsMet = meetsAccuracy && meetsIndependence && meetsTransfer;
-
-            let newStatus = existing.status || 'practicing';
-            if (allPillarsMet) {
-                newStatus = 'mastered';
-            } else if (pillars.accuracy.total >= 2) {
-                newStatus = 'practicing';
-            } else {
-                newStatus = 'learning';
-            }
-
-            user.skillMastery.set(skillId, {
-                ...existing,
-                status: newStatus,
-                masteryScore: masteryScore,
-                masteryType: 'verified',
-                lastPracticed: new Date(),
-                consecutiveCorrect: (existing.consecutiveCorrect || 0) + 1,
-                totalAttempts: (existing.totalAttempts || 0) + 1,
-                masteredDate: newStatus === 'mastered' ? (existing.masteredDate || new Date()) : existing.masteredDate,
-                pillars: pillars,
-                notes: `AI-verified demonstration (${pillars.accuracy.correct}/${pillars.accuracy.total} correct)`
+        // Determine if student has recent uploads (for observe stage)
+        const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
+            recentUploads.some(u => {
+                const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
+                return daysAgo <= 1;
             });
 
-            // Only add to recent wins if genuinely mastered
-            if (newStatus === 'mastered' && existing.status !== 'mastered') {
-                if (!user.learningProfile.recentWins) {
-                    user.learningProfile.recentWins = [];
-                }
-                const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                user.learningProfile.recentWins.unshift({
-                    skill: skillId,
-                    description: `Mastered ${displayName}`,
-                    date: new Date()
-                });
-                user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
-                user.markModified('learningProfile');
-                console.log(`✓ Student ${user.firstName} MASTERED skill: ${skillId} (all pillars met)`);
-            } else {
-                console.log(`→ Student ${user.firstName} demonstrated skill: ${skillId} (${masteryScore}% mastery, status: ${newStatus})`);
-            }
+        // Run the 6-stage pipeline
+        const pipelineResult = await runPipeline(message, {
+            user,
+            conversation: activeConversation,
+            systemPrompt,
+            formattedMessages: formattedMessagesForLLM,
+            hasRecentUpload,
+            stream: useStreaming,
+            res: useStreaming ? res : null,
+            aiProcessingStartTime: aiStartTime,
+        });
 
-            user.markModified('skillMastery');
-            aiResponseText = aiResponseText.replace(skillMasteredMatch[0], '').trim();
-        }
+        let aiResponseText = pipelineResult.text;
 
-        const skillStartedMatch = aiResponseText.match(/<SKILL_STARTED:([^>]+)>/);
-        if (skillStartedMatch) {
-            const skillId = skillStartedMatch[1].trim();
-            user.skillMastery = user.skillMastery || new Map();
-            user.skillMastery.set(skillId, {
-                status: 'learning',
-                masteryScore: 0.3,
-                learningStarted: new Date(),
-                notes: 'Currently learning with AI'
+        // NOTE: Anti-cheat, reading level, visual commands, tag extraction,
+        // XP, skill tracking, IEP goals, and conversation save are all
+        // handled inside the pipeline's verify + persist stages.
+
+        // ── Fire-and-forget post-pipeline tasks ──
+
+        // Smart auto-naming (update session name if still generic)
+        const { smartAutoName } = require('../services/chatService');
+        smartAutoName(activeConversation._id).catch(err =>
+            console.error('[Chat] Smart auto-name failed:', err)
+        );
+
+        // Quest system update
+        if (pipelineResult.problemResult) {
+            updateQuestProgress(user._id, pipelineResult.problemResult === 'correct', activeConversation.currentTopic).catch(err => {
+                console.error('[Quest] Failed to update quest progress:', err.message);
             });
-            user.markModified('skillMastery');
-            aiResponseText = aiResponseText.replace(skillStartedMatch[0], '').trim();
-
-            console.log(`→ Student ${user.firstName} started learning: ${skillId}`);
         }
 
-        const learningInsightMatch = aiResponseText.match(/<LEARNING_INSIGHT:([^>]+)>/);
-        if (learningInsightMatch) {
-            const insight = learningInsightMatch[1].trim();
-
-            // Add to memorable conversations
-            if (!user.learningProfile.memorableConversations) {
-                user.learningProfile.memorableConversations = [];
-            }
-            user.learningProfile.memorableConversations.unshift({
-                date: new Date(),
-                summary: insight,
-                context: 'Learning insight from AI'
-            });
-            // Keep only last 10
-            user.learningProfile.memorableConversations = user.learningProfile.memorableConversations.slice(0, 10);
-
-            user.markModified('learningProfile');
-            aiResponseText = aiResponseText.replace(learningInsightMatch[0], '').trim();
-
-            console.log(`💡 Learning insight for ${user.firstName}: ${insight}`);
-        }
-
-        // IEP GOAL PROGRESS TRACKING: Parse ALL AI IEP goal progress tags
-        // Format: <IEP_GOAL_PROGRESS:goal-description,+5> or <IEP_GOAL_PROGRESS:0,+5> (using index)
-        const iepGoalUpdates = [];
-        if (user.iepPlan && user.iepPlan.goals) {
-            const iepGoalProgressRegex = /<IEP_GOAL_PROGRESS:([^,]+),([+-]\d+)>/g;
-            let iepMatch;
-            while ((iepMatch = iepGoalProgressRegex.exec(aiResponseText)) !== null) {
-                const goalIdentifier = iepMatch[1].trim();
-                const progressChange = parseInt(iepMatch[2], 10);
-
-                // Find the goal by description (partial match) or by index
-                let targetGoal = null;
-                let goalIndex = -1;
-
-                // Try to find by index first (if it's a number)
-                const goalIndexNum = parseInt(goalIdentifier, 10);
-                if (!isNaN(goalIndexNum) && goalIndexNum >= 0 && goalIndexNum < user.iepPlan.goals.length) {
-                    targetGoal = user.iepPlan.goals[goalIndexNum];
-                    goalIndex = goalIndexNum;
-                } else {
-                    // Find by description (partial match, case insensitive)
-                    for (let i = 0; i < user.iepPlan.goals.length; i++) {
-                        const goal = user.iepPlan.goals[i];
-                        if (goal.description && goal.description.toLowerCase().includes(goalIdentifier.toLowerCase())) {
-                            targetGoal = goal;
-                            goalIndex = i;
-                            break;
-                        }
-                    }
-                }
-
-                if (targetGoal && targetGoal.status === 'active') {
-                    // Update progress
-                    const oldProgress = targetGoal.currentProgress || 0;
-                    const newProgress = Math.max(0, Math.min(100, oldProgress + progressChange));
-                    targetGoal.currentProgress = newProgress;
-
-                    // Add to history
-                    if (!targetGoal.history) {
-                        targetGoal.history = [];
-                    }
-                    targetGoal.history.push({
-                        date: new Date(),
-                        editorId: userId,
-                        field: 'currentProgress',
-                        from: oldProgress,
-                        to: newProgress
-                    });
-
-                    // Track for frontend notification
-                    iepGoalUpdates.push({
-                        goalIndex,
-                        description: targetGoal.description,
-                        oldProgress,
-                        newProgress,
-                        change: progressChange,
-                        completed: newProgress >= 100
-                    });
-
-                    // Check if goal is completed
-                    if (newProgress >= 100 && targetGoal.status === 'active') {
-                        targetGoal.status = 'completed';
-                        console.log(`🎯 IEP Goal COMPLETED for ${user.firstName}: ${targetGoal.description}`);
-                    }
-
-                    console.log(`📊 IEP Goal progress updated for ${user.firstName}: "${targetGoal.description}" ${oldProgress}% → ${newProgress}% (${progressChange > 0 ? '+' : ''}${progressChange}%)`);
-                }
-
-                aiResponseText = aiResponseText.replace(iepMatch[0], '').trim();
-            }
-
-            if (iepGoalUpdates.length > 0) {
-                user.markModified('iepPlan');
-            }
-        }
-
-        // CRITICAL FIX: Validate AI response before saving
-        if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
-            console.error('[Chat] ERROR: AI response is empty or invalid, using fallback message');
-            aiResponseText = "I'm having trouble generating a response right now. Could you please rephrase your question?";
-        }
-
-        activeConversation.messages.push({ role: 'assistant', content: aiResponseText.trim() });
-
-        // Real-time struggle detection and activity tracking
-        const { detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
-
-        // Detect if student is struggling in recent messages
-        const struggleInfo = detectStruggle(activeConversation.messages.slice(-10));
-        if (struggleInfo.isStruggling) {
-            activeConversation.alerts = activeConversation.alerts || [];
-
-            // Only create new alert if not already alerted for this struggle recently
-            const recentStruggleAlert = activeConversation.alerts.find(a =>
-                a.type === 'struggle' &&
-                !a.acknowledged &&
-                (Date.now() - new Date(a.timestamp).getTime()) < 10 * 60 * 1000 // Within last 10 minutes
-            );
-
-            if (!recentStruggleAlert) {
-                activeConversation.alerts.push({
-                    type: 'struggle',
-                    message: `Struggling with ${struggleInfo.strugglingWith}`,
-                    timestamp: new Date(),
-                    acknowledged: false,
-                    severity: struggleInfo.severity
-                });
-            }
-            activeConversation.strugglingWith = struggleInfo.strugglingWith;
-        }
-
-        // PROBLEM RESULT TRACKING: Parse structured tags for accurate stats
-        // Format: <PROBLEM_RESULT:correct|incorrect|skipped>
-        // This MUST happen before saving so stats are persisted correctly
-        const problemResultMatch = aiResponseText.match(/<\s*PROBLEM_RESULT\s*:\s*(correct|incorrect|skipped)\s*>/i);
-        let problemAnswered = false;
-        let wasCorrect = false;
-        let wasSkipped = false;
-
-        if (problemResultMatch) {
-            const result = problemResultMatch[1].toLowerCase();
-            problemAnswered = true;
-            wasCorrect = result === 'correct';
-            wasSkipped = result === 'skipped';
-            // Remove the tag from the response text
-            aiResponseText = aiResponseText.replace(problemResultMatch[0], '').trim();
-            console.log(`📊 [Problem Tracking] Result: ${result} (via structured tag)`);
-        } else {
-            // FALLBACK: Detect from AI response keywords (less accurate, for backward compatibility)
-            const latestAIResponse = aiResponseText.toLowerCase();
-
-            // Only use keyword fallback if student appears to have answered (message is short/answer-like)
-            // This reduces false positives from the AI using these words in explanations
-            const userMessage = message.trim();
-            const looksLikeAnswer = userMessage.length < 100 && (
-                /^-?\d+/.test(userMessage) || // Starts with a number
-                /^x\s*=/.test(userMessage.toLowerCase()) || // Variable assignment
-                /^[a-z]\s*=/.test(userMessage.toLowerCase()) || // Single variable
-                userMessage.split(' ').length <= 10 // Short response
-            );
-
-            if (looksLikeAnswer) {
-                // Detect correctness from AI response
-                if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
-                    latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
-                    latestAIResponse.includes('well done')) {
-                    problemAnswered = true;
-                    wasCorrect = true;
-                    console.log(`📊 [Problem Tracking] Result: correct (via keyword fallback)`);
-                } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
-                           latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
-                           latestAIResponse.includes('not exactly')) {
-                    problemAnswered = true;
-                    wasCorrect = false;
-                    console.log(`📊 [Problem Tracking] Result: incorrect (via keyword fallback)`);
-                }
-            }
-        }
-
-        // Update conversation stats incrementally when a problem is answered
-        if (problemAnswered) {
-            // Increment the counters directly (don't recalculate from all messages)
-            activeConversation.problemsAttempted = (activeConversation.problemsAttempted || 0) + 1;
-            if (wasCorrect) {
-                activeConversation.problemsCorrect = (activeConversation.problemsCorrect || 0) + 1;
-            }
-            // Store the result in the last AI message for historical accuracy
-            const lastMsgIndex = activeConversation.messages.length - 1;
-            if (lastMsgIndex >= 0) {
-                activeConversation.messages[lastMsgIndex].problemResult =
-                    wasCorrect ? 'correct' : (wasSkipped ? 'skipped' : 'incorrect');
-            }
-        }
-
-        // Update live tracking fields for teacher dashboard
-        activeConversation.currentTopic = detectTopic(activeConversation.messages);
-        // NOTE: We no longer recalculate problemsAttempted/problemsCorrect from all messages
-        // Stats are now tracked incrementally above for accuracy
-        activeConversation.lastActivity = new Date();
-
-        // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
-        // This removes any messages with undefined/empty content that may exist from previous bugs
-        if (activeConversation.messages && Array.isArray(activeConversation.messages)) {
-            const originalLength = activeConversation.messages.length;
-            activeConversation.messages = activeConversation.messages.filter(msg => {
-                return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
-            });
-            if (activeConversation.messages.length !== originalLength) {
-                console.warn(`[Chat] Removed ${originalLength - activeConversation.messages.length} invalid messages before save`);
-            }
-        }
-
-        await activeConversation.save();
-
-        // ========== COURSE SCAFFOLD PROGRESSION ENGINE ==========
-        // Parse AI signal tags and advance course progress server-side.
-        // Tags: <SCAFFOLD_ADVANCE>, <MODULE_COMPLETE>
-        let courseProgressUpdate = null;
+        // Course scaffold progression (complex, stays in chat.js for now)
+        let courseProgressUpdate = pipelineResult.courseProgressUpdate;
         if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
-                const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(aiResponseText);
-                const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(aiResponseText);
-
-                console.log(`[Progression] Engine active — sessionId=${user.activeCourseSessionId}, SCAFFOLD_ADVANCE=${hasScaffoldAdvance}, MODULE_COMPLETE=${hasModuleComplete}`);
-                if (!hasScaffoldAdvance && !hasModuleComplete) {
-                    console.log(`[Progression] No signal tags in AI response (first 200 chars): "${aiResponseText?.substring(0, 200)}"`);
-                }
-
-                // Strip signal tags from the response text (student should not see them)
-                if (hasScaffoldAdvance || hasModuleComplete) {
-                    aiResponseText = aiResponseText
-                        .replace(/<\s*SCAFFOLD_ADVANCE\s*>/gi, '')
-                        .replace(/<\s*MODULE_COMPLETE\s*>/gi, '')
-                        .trim();
-                    // In streaming mode, tags were already sent — send replacement to overwrite
-                    if (useStreaming && !clientDisconnected) {
-                        try {
-                            res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
-                        } catch (e) { /* client may have disconnected */ }
-                    }
-                }
+                const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(pipelineResult.text);
+                const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(pipelineResult.text);
 
                 if (hasScaffoldAdvance || hasModuleComplete) {
                     const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
@@ -1462,295 +816,58 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                         const mod = csDoc.modules.find(m => m.moduleId === csDoc.currentModuleId);
 
                         if (hasModuleComplete && mod) {
-                            // MODULE COMPLETE: mark done, unlock next, reset scaffold
-                            console.log(`[Progression] MODULE_COMPLETE — before: moduleId=${csDoc.currentModuleId}, status=${mod.status}, scaffoldIdx=${csDoc.currentScaffoldIndex}`);
                             mod.status = 'completed';
                             mod.scaffoldProgress = 100;
                             mod.completedAt = new Date();
-
-                            // Unlock and advance to next module
                             const modIdx = csDoc.modules.findIndex(m => m.moduleId === csDoc.currentModuleId);
                             if (modIdx >= 0 && modIdx < csDoc.modules.length - 1) {
                                 const nextMod = csDoc.modules[modIdx + 1];
                                 if (nextMod.status === 'locked') nextMod.status = 'available';
                                 nextMod.startedAt = new Date();
                                 csDoc.currentModuleId = nextMod.moduleId;
-                                console.log(`[Progression] Advanced to next module: ${nextMod.moduleId} (was idx ${modIdx}, now ${modIdx + 1})`);
-                            } else {
-                                console.log(`[Progression] No next module — modIdx=${modIdx}, total=${csDoc.modules.length}`);
                             }
                             csDoc.currentScaffoldIndex = 0;
-
-                            // Recalculate overall progress
                             csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
-
-                            // Check for full course completion
                             const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
-                            console.log(`[Progression] After MODULE_COMPLETE — completed=${doneCount}/${csDoc.modules.length}, overallProgress=${csDoc.overallProgress}%`);
                             if (doneCount === csDoc.modules.length) {
                                 csDoc.status = 'completed';
                                 csDoc.completedAt = new Date();
-                                console.log(`[Progression] 🎉 Full course completed!`);
                             }
-
                             csDoc.markModified('modules');
                             await csDoc.save();
-
-                            // Award XP for module completion (fire-and-forget)
-                            const moduleXP = 150;
-                            try {
-                                const userService = require('../services/userService');
-                                await userService.awardXP(user._id, moduleXP, `Module complete: ${mod.moduleId}`);
-                            } catch (xpErr) {
-                                await User.findByIdAndUpdate(user._id, {
-                                    $inc: { xp: moduleXP },
-                                    $push: { xpHistory: { date: new Date(), amount: moduleXP, reason: `Module complete: ${mod.moduleId}` } }
-                                });
-                            }
-
-                            console.log(`🎓 [Course] ${user.firstName} completed module ${mod.moduleId} — progress: ${csDoc.overallProgress}%`);
-
                             courseProgressUpdate = {
                                 event: 'module_complete',
                                 moduleId: mod.moduleId,
                                 overallProgress: csDoc.overallProgress,
                                 nextModuleId: csDoc.currentModuleId,
-                                xpAwarded: moduleXP,
-                                courseComplete: csDoc.status === 'completed'
+                                courseComplete: csDoc.status === 'completed',
                             };
-
                         } else if (hasScaffoldAdvance && mod) {
-                            // SCAFFOLD ADVANCE: validate before moving to next step
-                            // Practice phases (we-do, you-do) require minimum correct answers
-                            const currentStep = courseCtx?.scaffoldData?.scaffold?.[currentIdx];
-                            const stepType = currentStep?.type || currentStep?.lessonPhase || '';
-                            const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
-                            console.log(`[Progression] SCAFFOLD_ADVANCE — currentIdx=${currentIdx}/${totalSteps - 1}, stepType="${stepType}", isPracticePhase=${isPracticePhase}, mod=${mod.moduleId} (status=${mod.status})`);
-                            if (!currentStep) console.warn(`[Progression] ⚠️ No scaffold step at index ${currentIdx} — scaffoldData may be missing or malformed`);
-
-                            // Count PROBLEM_RESULT:correct tags since the last scaffold advance
-                            // by scanning recent conversation messages for problemResult markers
-                            let correctSinceLastAdvance = 0;
-                            if (isPracticePhase && activeConversation?.messages) {
-                                // Walk backwards through messages until we find a previous scaffold advance marker
-                                for (let i = activeConversation.messages.length - 1; i >= 0; i--) {
-                                    const msg = activeConversation.messages[i];
-                                    if (msg.scaffoldAdvanced) break; // stop at last advance
-                                    if (msg.problemResult === 'correct') correctSinceLastAdvance++;
-                                }
-                                // Also count the current response's result (parsed above)
-                                if (wasCorrect) correctSinceLastAdvance++;
-                            }
-
-                            const MIN_CORRECT_FOR_PRACTICE = 2;
-                            if (isPracticePhase && correctSinceLastAdvance < MIN_CORRECT_FOR_PRACTICE) {
-                                console.log(`⚠️ [Course] SCAFFOLD_ADVANCE blocked for ${user.firstName} — practice phase "${stepType}" requires ${MIN_CORRECT_FOR_PRACTICE} correct, only ${correctSinceLastAdvance} so far`);
-                                // Don't advance — the AI jumped the gun. Student needs more practice.
-                            } else {
-                            // Advance is valid
                             const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
                             csDoc.currentScaffoldIndex = newIdx;
-
-                            // Mark the advance point in conversation for future counting
-                            if (activeConversation?.messages?.length > 0) {
-                                activeConversation.messages[activeConversation.messages.length - 1].scaffoldAdvanced = true;
-                            }
-
-                            // Update module scaffoldProgress as percentage
                             mod.scaffoldProgress = Math.round((newIdx / totalSteps) * 100);
-                            if (mod.status === 'available') {
-                                mod.status = 'in_progress';
-                                mod.startedAt = mod.startedAt || new Date();
-                            }
-
-                            // Recalculate blended overall progress (includes scaffold progress)
+                            if (mod.status === 'available') { mod.status = 'in_progress'; mod.startedAt = mod.startedAt || new Date(); }
                             csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
-
                             csDoc.markModified('modules');
                             await csDoc.save();
-
                             const nextStep = courseCtx?.scaffoldData?.scaffold?.[newIdx];
-                            console.log(`📈 [Course] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
-
                             courseProgressUpdate = {
                                 event: 'scaffold_advance',
                                 scaffoldIndex: newIdx,
                                 scaffoldTotal: totalSteps,
                                 scaffoldProgress: mod.scaffoldProgress,
                                 overallProgress: csDoc.overallProgress,
-                                stepTitle: nextStep?.title || null
+                                stepTitle: nextStep?.title || null,
                             };
-                            } // end else (advance is valid)
                         }
                     }
                 }
-            } catch (courseProgressErr) {
-                console.error('[Course] Scaffold progression error:', courseProgressErr.message, courseProgressErr.stack?.split('\n')[1]);
-            }
-        } else if (user.activeCourseSessionId && !conversationContextForPrompt?.courseSession) {
-            console.warn(`[Progression] ⚠️ activeCourseSessionId=${user.activeCourseSessionId} is set but conversationContextForPrompt.courseSession is missing — engine skipped`);
-        }
-
-        // Smart auto-naming: Update session name if it's still generic
-        // Fire-and-forget to not block the response
-        const { smartAutoName } = require('../services/chatService');
-        smartAutoName(activeConversation._id).catch(err =>
-            console.error('[Chat] Smart auto-name failed:', err)
-        );
-
-        // Track badge progress if user has an active badge
-        if (user.masteryProgress?.activeBadge) {
-
-            // Update badge progress if a problem was answered
-            if (problemAnswered) {
-                const activeBadge = user.masteryProgress.activeBadge;
-                activeBadge.problemsCompleted = (activeBadge.problemsCompleted || 0) + 1;
-                if (wasCorrect) {
-                    activeBadge.problemsCorrect = (activeBadge.problemsCorrect || 0) + 1;
-                }
-
-                // Check if badge is complete and AUTO-AWARD
-                const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;
-                if (activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
-                    accuracy >= activeBadge.requiredAccuracy) {
-
-                    // Award the badge if not already earned
-                    if (!user.badges) user.badges = [];
-                    const alreadyEarned = user.badges.find(b => b.badgeId === activeBadge.badgeId);
-
-                    if (!alreadyEarned) {
-                        user.badges.push({
-                            badgeId: activeBadge.badgeId,
-                            earnedDate: new Date(),
-                            score: Math.round(accuracy * 100)
-                        });
-
-                        // Award XP bonus for earning badge
-                        const badgeXpBonus = 500;
-                        user.xp = (user.xp || 0) + badgeXpBonus;
-
-                        console.log(`🎖️ BADGE EARNED: ${activeBadge.badgeName} (${Math.round(accuracy * 100)}% accuracy) - Awarded ${badgeXpBonus} bonus XP`);
-                    }
-                }
-
-                user.markModified('masteryProgress');
+            } catch (courseErr) {
+                console.error('[Course] Scaffold progression error:', courseErr.message);
             }
         }
 
-        // =====================================================
-        // XP LADDER: Calculate all three tiers
-        // =====================================================
-
-        // TIER 1: Silent turn XP (always awarded, never shown)
-        xpBreakdown.tier1 = xpLadder.tier1.amount;
-
-        // TIER 2: Performance XP (awarded on correct answers)
-        // Determine if this was a "clean" solution (no hints used in recent turns)
-        if (wasCorrect && xpBreakdown.tier2 === 0) {
-            // Check if student used hints recently (look at last few messages for hint requests)
-            const recentMessages = activeConversation.messages.slice(-6);
-            const askedForHint = recentMessages.some(msg =>
-                msg.role === 'user' &&
-                /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(msg.content)
-            );
-
-            if (askedForHint) {
-                // Basic correct (used hints)
-                xpBreakdown.tier2 = xpLadder.tier2.correct;
-                xpBreakdown.tier2Type = 'correct';
-            } else {
-                // Clean solution (no hints)
-                xpBreakdown.tier2 = xpLadder.tier2.clean;
-                xpBreakdown.tier2Type = 'clean';
-            }
-            console.log(`✨ [XP Tier 2] Performance: +${xpBreakdown.tier2} XP (${xpBreakdown.tier2Type})`);
-        }
-
-        // Calculate total XP
-        xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
-
-        // Course session XP boost: 1.5x when working inside a structured course
-        if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
-            const courseBoost = 1.5;
-            xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
-            xpBreakdown.courseBoost = courseBoost;
-            console.log(`📚 [XP] Course session boost: ${courseBoost}x applied (total: ${xpBreakdown.total})`);
-        }
-
-        user.xp = (user.xp || 0) + xpBreakdown.total;
-
-        // Update XP Ladder analytics for "grinding vs growing" analysis
-        if (!user.xpLadderStats) {
-            user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
-        }
-        user.xpLadderStats.lifetimeTier1 = (user.xpLadderStats.lifetimeTier1 || 0) + xpBreakdown.tier1;
-        user.xpLadderStats.lifetimeTier2 = (user.xpLadderStats.lifetimeTier2 || 0) + xpBreakdown.tier2;
-        user.xpLadderStats.lifetimeTier3 = (user.xpLadderStats.lifetimeTier3 || 0) + xpBreakdown.tier3;
-
-        // Track Tier 3 behavior types for detailed analytics
-        if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
-            const existingBehavior = user.xpLadderStats.tier3Behaviors.find(
-                b => b.behavior === xpBreakdown.tier3Behavior
-            );
-            if (existingBehavior) {
-                existingBehavior.count += 1;
-                existingBehavior.lastEarned = new Date();
-            } else {
-                user.xpLadderStats.tier3Behaviors.push({
-                    behavior: xpBreakdown.tier3Behavior,
-                    count: 1,
-                    lastEarned: new Date()
-                });
-            }
-        }
-        user.markModified('xpLadderStats');
-
-        // Check for level up (loop handles multi-level jumps from large XP awards)
-        let leveledUp = false;
-        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
-            user.level += 1;
-            leveledUp = true;
-        }
-
-        const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-        if (tutorsJustUnlocked.length > 0) {
-            user.unlockedItems.push(...tutorsJustUnlocked);
-            user.markModified('unlockedItems');
-        }
-
-        await user.save();
-
-        // =====================================================
-        // QUEST SYSTEM INTEGRATION: Update daily/weekly progress
-        // =====================================================
-        // Fire-and-forget: Don't block chat response for quest updates
-        if (problemAnswered) {
-            updateQuestProgress(user._id, wasCorrect, activeConversation.currentTopic).catch(err => {
-                console.error('[Quest] Failed to update quest progress:', err.message);
-            });
-        }
-
-        // Recalculate level from XP if they're out of sync (safety net)
-        const correctLevel = (() => {
-            let lvl = 1;
-            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
-                lvl++;
-            }
-            return lvl;
-        })();
-        if (user.level !== correctLevel) {
-            console.warn(`⚠️ [XP] Level/XP mismatch for ${user.firstName}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
-            user.level = correctLevel;
-            await user.save();
-        }
-
-        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
-        const userXpInCurrentLevel = Math.max(0, user.xp - xpForCurrentLevelStart);
-
-        // Log XP breakdown for analytics
-        console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);
-
-        // Prepare IEP accommodation features for frontend
+        // ── Build IEP features for frontend ──
         const accom = user.iepPlan?.accommodations;
         const iepFeatures = accom ? {
             autoReadAloud: accom.audioReadAloud || false,
@@ -1764,8 +881,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             digitalMultiplicationChart: accom.digitalMultiplicationChart || false,
             customAccommodations: accom.custom || [],
             readingLevel: user.iepPlan?.readingLevel || null,
-            preferredScaffolds: user.iepPlan?.preferredScaffolds || []
+            preferredScaffolds: user.iepPlan?.preferredScaffolds || [],
         } : null;
+
+        // ── Build response from pipeline result ──
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+        const userXpInCurrentLevel = Math.max(0, user.xp - xpForCurrentLevelStart);
 
         const responseData = {
             text: aiResponseText,
@@ -1773,38 +894,25 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             voiceId: currentTutor.voiceId,
-            newlyUnlockedTutors: tutorsJustUnlocked,
-            drawingSequence: dynamicDrawingSequence,
-            visualCommands: visualCommands,
-            boardContext: boardContext,
-            iepFeatures: iepFeatures,
-            iepGoalUpdates: iepGoalUpdates.length > 0 ? iepGoalUpdates : null,
-            problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
-            sessionStats: {
-                problemsAttempted: activeConversation.problemsAttempted || 0,
-                problemsCorrect: activeConversation.problemsCorrect || 0
-            },
-            // XP LADDER: Tiered XP data for frontend rendering
+            newlyUnlockedTutors: pipelineResult.tutorsUnlocked,
+            drawingSequence: pipelineResult.drawingSequence,
+            visualCommands: pipelineResult.visualCommands,
+            boardContext: pipelineResult.boardContext,
+            iepFeatures,
+            iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
+            problemResult: pipelineResult.problemResult,
+            sessionStats: pipelineResult.sessionStats,
             xpLadder: {
-                tier1: xpBreakdown.tier1,           // Silent (frontend ignores)
-                tier2: xpBreakdown.tier2,           // Performance XP
-                tier2Type: xpBreakdown.tier2Type,   // 'correct', 'clean', or null
-                tier3: xpBreakdown.tier3,           // Core behavior XP
-                tier3Behavior: xpBreakdown.tier3Behavior, // Behavior name for display
-                total: xpBreakdown.total,
-                leveledUp: leveledUp
+                ...pipelineResult.xpBreakdown,
+                leveledUp: pipelineResult.leveledUp,
             },
-            // Free tier countdown: seconds of AI time remaining this week
-            aiTimeUsed: aiProcessingSeconds,
-            freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
-                ? Math.max(0, (20 * 60) - updatedWeeklyAI)
-                : null,
-            // Course progress update (if student is in a course and progress changed)
-            courseProgress: courseProgressUpdate || null
+            aiTimeUsed: pipelineResult.aiTimeUsed,
+            freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
+            courseProgress: courseProgressUpdate || null,
+            _pipeline: pipelineResult._pipeline,
         };
 
         if (useStreaming) {
-            // Send final metadata as 'complete' event (skip if client already gone)
             if (!clientDisconnected) {
                 try {
                     res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
@@ -1814,7 +922,6 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 }
             }
         } else {
-            // Non-streaming: send as regular JSON
             res.json(responseData);
         }
 
