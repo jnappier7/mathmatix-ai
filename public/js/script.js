@@ -1272,6 +1272,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return { bubble, textNode };
     }
 
+    // Debounce timer for MathJax rendering during streaming
+    let _streamMathJaxTimer = null;
+
     // Helper function to append a chunk to a streaming message
     function appendStreamingChunk(messageRef, chunk) {
         if (!messageRef || !messageRef.textNode) return;
@@ -1314,9 +1317,15 @@ document.addEventListener("DOMContentLoaded", () => {
             messageRef.textNode.innerHTML = finalHtml;
         }
 
-        // Re-render math if MathJax is available
+        // Debounce MathJax rendering during streaming — only render after
+        // 300ms pause in chunks, to avoid processing incomplete LaTeX
+        // delimiters that are split across chunks.
         if (window.renderMathInElement && messageRef.bubble) {
-            setTimeout(() => renderMathInElement(messageRef.bubble), 0);
+            if (_streamMathJaxTimer) clearTimeout(_streamMathJaxTimer);
+            _streamMathJaxTimer = setTimeout(() => {
+                renderMathInElement(messageRef.bubble);
+                _streamMathJaxTimer = null;
+            }, 300);
         }
 
         // Auto-scroll
@@ -1328,6 +1337,64 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageRef || !messageRef.bubble) return;
 
         messageRef.bubble.classList.remove('streaming');
+
+        // Cancel any pending debounced MathJax render
+        if (_streamMathJaxTimer) {
+            clearTimeout(_streamMathJaxTimer);
+            _streamMathJaxTimer = null;
+        }
+
+        // Re-render the complete text with the same quality pipeline as
+        // appendMessage: autoConvertMathNotation → LaTeX protection → markdown → DOMPurify.
+        // During streaming, chunks may have split LaTeX delimiters. Now that we
+        // have the complete text, we can process it cleanly.
+        if (messageRef.textNode && typeof marked !== 'undefined' && marked.parse) {
+            let processedText = typeof autoConvertMathNotation === 'function'
+                ? autoConvertMathNotation(fullText) : fullText;
+
+            const latexBlocks = [];
+            let protectedText = processedText;
+
+            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+
+            const dirtyHtml = marked.parse(protectedText, { breaks: true });
+
+            let finalHtml = dirtyHtml;
+            latexBlocks.forEach((block, index) => {
+                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
+            });
+
+            if (typeof DOMPurify !== 'undefined') {
+                finalHtml = DOMPurify.sanitize(finalHtml, {
+                    ALLOWED_TAGS: [
+                        'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
+                        'input', 'button',
+                        'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                        'img'
+                    ],
+                    ALLOWED_ATTR: [
+                        'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
+                        'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                        'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
+                        'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                        'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                        'data-config', 'data-diagram-id', 'data-value', 'data-label'
+                    ]
+                });
+            }
+
+            messageRef.textNode.innerHTML = finalHtml;
+        }
 
         // Add audio playback button
         if (typeof playAudio === 'function') {

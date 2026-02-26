@@ -212,12 +212,17 @@ async function verify(responseText, context = {}) {
   const boardParsed = processAIResponse(text);
   text = boardParsed.text;
 
-  // ── 7. Final cleanup: strip any remaining system tags ──
+  // ── 7. LaTeX normalization ──
+  // gpt-4o-mini sometimes uses plain parentheses for math instead of \( \)
+  // or omits delimiters entirely. Normalize common patterns.
+  text = normalizeLatex(text);
+
+  // ── 8. Final cleanup: strip any remaining system tags ──
   for (const pattern of SYSTEM_TAG_PATTERNS) {
     text = text.replace(pattern, '').trim();
   }
 
-  // ── 8. Validate non-empty ──
+  // ── 9. Validate non-empty ──
   if (!text || text.trim() === '') {
     text = "I'm having trouble generating a response right now. Could you please rephrase your question?";
     flags.push('empty_response_fallback');
@@ -233,7 +238,57 @@ async function verify(responseText, context = {}) {
   };
 }
 
+/**
+ * Normalize LaTeX delimiters in AI responses.
+ *
+ * Common issues from gpt-4o-mini:
+ * 1. Uses $...$ instead of \(...\) or \[...\]
+ * 2. Uses bare math expressions without any delimiters
+ * 3. Uses parenthesized math like ( x^2 - 4 ) that should be \( x^2 - 4 \)
+ *
+ * We only fix clear patterns to avoid false positives on natural text.
+ */
+function normalizeLatex(text) {
+  if (!text) return text;
+
+  // Already has proper LaTeX delimiters? Skip the heavy lifting.
+  // (Still normalize $...$ even if \( \) is present elsewhere.)
+
+  let result = text;
+
+  // Convert $$...$$ (display math) to \[...\]
+  result = result.replace(/\$\$([\s\S]+?)\$\$/g, '\\[$1\\]');
+
+  // Convert $...$ (inline math) to \(...\) — but not currency ($5, $10)
+  // Only match when content looks like math (has letters+operators or LaTeX commands)
+  result = result.replace(/(?<![\\$])\$([^$\n]+?)\$(?!\d)/g, (match, inner) => {
+    // Skip if it looks like currency ($5) or doesn't contain math-like content
+    if (/^\d+(\.\d+)?$/.test(inner.trim())) return match;
+    if (/[a-zA-Z].*[+\-*/^=<>_{}\\]|\\[a-zA-Z]/.test(inner)) {
+      return `\\(${inner}\\)`;
+    }
+    return match;
+  });
+
+  // Fix bare parenthesized math expressions that should have LaTeX delimiters.
+  // Pattern: ( expr ) where expr contains ^ _ { } \ or multi-char variable expressions
+  // Only match when the parenthesized content clearly looks like math notation.
+  result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
+    // Only convert if inner content has LaTeX-like math syntax
+    const hasMathSyntax = /[\\^_{}]/.test(inner) || /[a-z]\^?\d/i.test(inner);
+    // Don't convert function calls, conditions, or natural text
+    const isNaturalText = /^[a-z\s,]+$/i.test(inner) || inner.length > 60;
+    if (hasMathSyntax && !isNaturalText) {
+      return `\\(${inner.trim()}\\)`;
+    }
+    return match;
+  });
+
+  return result;
+}
+
 module.exports = {
   verify,
   extractSystemTags,
+  normalizeLatex,
 };
