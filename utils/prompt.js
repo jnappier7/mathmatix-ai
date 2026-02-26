@@ -1,6 +1,17 @@
 // utils/prompt.js
+//
+// PROMPT COMPACT MIGRATION (2026-02-26):
+// generateSystemPrompt now delegates to promptCompact.js to reduce token usage
+// from ~45,000 tokens/message to ~3,000-4,000 tokens/message.
+// The original full prompt is preserved as generateSystemPromptFull() below
+// for reference/rollback. To revert, swap the export back.
 
-// Import blind spot safeguard utilities
+const { generateSystemPrompt: generateSystemPromptCompact, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact } = require('./promptCompact');
+
+// Re-export the compact version as the default
+const generateSystemPrompt = generateSystemPromptCompact;
+
+// Import blind spot safeguard utilities (still used by the full version below)
 const { generateMultimodalPrompt, recommendAssessmentModality } = require('./multimodalAssessment');
 const { generateAntiGamingPrompt } = require('./antiGaming');
 const { generateDOKGatingPrompt } = require('./dokGating');
@@ -488,7 +499,9 @@ function buildCourseProgressionContext(mathCourse, firstName) {
   }
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null) {
+// PRESERVED: Original full prompt generator (~45K tokens). Renamed to *Full.
+// To revert the compact migration, swap the export at the top of this file.
+function generateSystemPromptFull(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -3029,4 +3042,4 @@ You are discussing **${childProfile.firstName || 'A child'}**.
   return prompt;
 }
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact, generateSystemPromptFull };
