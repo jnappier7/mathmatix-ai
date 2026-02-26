@@ -1,20 +1,22 @@
 /* ============================================================
-   MathGraph — Canvas-based function graphing engine styles
+   MathGraph v2 — Exquisite Canvas graph engine styles
    ============================================================ */
 
+/* ── Wrapper ─────────────────────────────────────────────── */
 .mg-wrapper {
   position: relative;
   width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fff;
+  border-radius: 12px;
+  overflow: visible;
+  background: #fafbff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .mg-canvas {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .mg-crosshair-canvas {
@@ -24,43 +26,143 @@
   width: 100%;
   height: 100%;
   cursor: crosshair;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
+/* ── Tooltip ─────────────────────────────────────────────── */
 .mg-tooltip {
   position: absolute;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(15, 15, 30, 0.88);
   color: #fff;
   font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', 'Menlo', monospace;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   white-space: nowrap;
   z-index: 10;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.06) inset;
   letter-spacing: 0.01em;
+  transition: opacity 0.1s ease;
 }
+
+.mg-tip-coord {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #fff;
+}
+
+.mg-tip-slope {
+  font-weight: 400;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+}
+
+/* ── Key Points Info Bar ─────────────────────────────────── */
+.mg-info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 4px 4px;
+  justify-content: center;
+}
+
+.mg-info-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mg-info-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.mg-info-pill:active {
+  transform: scale(0.96);
+}
+
+/* Pill type colors */
+.mg-pill-x-intercept {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.mg-pill-x-intercept:hover { background: #bae6fd; }
+
+.mg-pill-y-intercept {
+  background: #f0fdf4;
+  color: #15803d;
+}
+.mg-pill-y-intercept:hover { background: #dcfce7; }
+
+.mg-pill-maximum {
+  background: #fef3c7;
+  color: #b45309;
+}
+.mg-pill-maximum:hover { background: #fde68a; }
+
+.mg-pill-minimum {
+  background: #fce7f3;
+  color: #be185d;
+}
+.mg-pill-minimum:hover { background: #fbcfe8; }
+
+.mg-pill-v-asymptote {
+  background: #fce4ec;
+  color: #c62828;
+}
+.mg-pill-v-asymptote:hover { background: #f8bbd0; }
+
+.mg-pill-hole {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+.mg-pill-hole:hover { background: #e1bee7; }
 
 /* ── Dark mode ───────────────────────────────────────────── */
 body.dark-mode .mg-wrapper {
-  background: #1e1e2e;
+  background: #1a1a2e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 body.dark-mode .mg-tooltip {
-  background: rgba(40, 40, 60, 0.92);
-  color: #e0e0e0;
+  background: rgba(25, 25, 50, 0.94);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
 }
+
+body.dark-mode .mg-info-bar {
+  border-color: rgba(255,255,255,0.06);
+}
+
+body.dark-mode .mg-pill-x-intercept { background: #0c4a6e; color: #7dd3fc; }
+body.dark-mode .mg-pill-y-intercept { background: #14532d; color: #86efac; }
+body.dark-mode .mg-pill-maximum     { background: #78350f; color: #fcd34d; }
+body.dark-mode .mg-pill-minimum     { background: #831843; color: #f9a8d4; }
+body.dark-mode .mg-pill-v-asymptote { background: #7f1d1d; color: #fca5a5; }
+body.dark-mode .mg-pill-hole        { background: #4a1d6e; color: #d8b4fe; }
 
 /* ── Graph inside chat visuals ───────────────────────────── */
 .icv-graph .mg-wrapper {
-  border-radius: 6px;
+  border-radius: 8px;
 }
-
+.icv-graph .mg-canvas,
 .icv-graph .mg-crosshair-canvas {
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
@@ -68,5 +170,9 @@ body.dark-mode .mg-tooltip {
   .mg-tooltip {
     font-size: 11px;
     padding: 4px 8px;
+  }
+  .mg-info-pill {
+    font-size: 10px;
+    padding: 3px 8px;
   }
 }
