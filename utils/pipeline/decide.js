@@ -1,0 +1,255 @@
+/**
+ * DECIDE STAGE — The engine chooses the tutoring move
+ *
+ * This is the "big inversion": the engine decides what to do,
+ * and the LLM just speaks. No more hoping the model picks the
+ * right pedagogical move from a 3K-token prompt.
+ *
+ * Consumes: observation (from observe) + diagnosis (from diagnose)
+ * Produces: a tutoring action that the generate stage will execute
+ *
+ * @module pipeline/decide
+ */
+
+const {
+  PHASES,
+  initializeLessonPhase,
+  recordAssessment,
+  recordUnderstandingSignal,
+  evaluatePhaseTransition,
+  transitionPhase,
+  getPhasePrompt,
+  ASSESSMENT_SIGNALS,
+} = require('../lessonPhaseManager');
+
+const { MESSAGE_TYPES } = require('./observe');
+
+// ── Tutoring actions the engine can choose ──
+const ACTIONS = {
+  CONFIRM_CORRECT: 'confirm_correct',
+  GUIDE_INCORRECT: 'guide_incorrect',
+  HINT: 'hint',
+  WORKED_EXAMPLE: 'worked_example',
+  PROBING_QUESTION: 'probing_question',
+  SWITCH_REPRESENTATION: 'switch_representation',
+  REVIEW_PREREQUISITE: 'review_prerequisite',
+  RETEACH_MISCONCEPTION: 'reteach_misconception',
+  EXIT_RAMP: 'exit_ramp',
+  SCAFFOLD_DOWN: 'scaffold_down',
+  REDIRECT_TO_MATH: 'redirect_to_math',
+  ACKNOWLEDGE_FRUSTRATION: 'acknowledge_frustration',
+  CONTINUE_CONVERSATION: 'continue_conversation',
+  CHECK_UNDERSTANDING: 'check_understanding',
+  PRESENT_PROBLEM: 'present_problem',
+  PHASE_INSTRUCTION: 'phase_instruction',
+};
+
+/**
+ * Choose the tutoring action based on observation, diagnosis, and phase state.
+ *
+ * @param {Object} observation - From observe stage
+ * @param {Object} diagnosis - From diagnose stage
+ * @param {Object} context
+ * @param {Object} context.phaseState - Current lesson phase state (or null for free chat)
+ * @param {Object} context.activeSkill - Current skill { skillId, displayName }
+ * @param {Object} context.streakHistory - { idkCount, giveUpCount, recentWrongCount }
+ * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
+ */
+function decide(observation, diagnosis, context = {}) {
+  const { phaseState, activeSkill } = context;
+  const streaks = observation.streaks;
+  const msgType = observation.messageType;
+
+  // ── Build the decision object ──
+  const decision = {
+    action: null,
+    phase: phaseState?.currentPhase || null,
+    phasePrompt: null,
+    phaseState: phaseState,
+    scaffoldLevel: 3, // 1=minimal, 5=heavy (default medium)
+    diagnosis,
+    observation,
+    directives: [], // Additional instructions for the generate stage
+  };
+
+  // ── Off-task / frustration — handle immediately ──
+  if (msgType === MESSAGE_TYPES.OFF_TASK) {
+    decision.action = ACTIONS.REDIRECT_TO_MATH;
+    decision.directives.push('Redirect gently to math. Brief, not preachy.');
+    return decision;
+  }
+
+  if (msgType === MESSAGE_TYPES.FRUSTRATION) {
+    decision.action = ACTIONS.ACKNOWLEDGE_FRUSTRATION;
+    decision.scaffoldLevel = 5; // Maximum support
+    decision.directives.push(
+      'Acknowledge the frustration briefly and genuinely.',
+      'Then offer a concrete next step (easier problem, different approach, or break).',
+      'Do NOT be condescending or use banned phrases.'
+    );
+    return decision;
+  }
+
+  // ── Give-up / IDK streaks — exit ramp logic ──
+  if (msgType === MESSAGE_TYPES.GIVE_UP || streaks.giveUpCount >= 1) {
+    decision.action = ACTIONS.EXIT_RAMP;
+    decision.directives.push(
+      'NEVER reveal the answer.',
+      'Work through a PARALLEL problem (same skill, different numbers).',
+      'Then have them try their original problem.',
+      'If still stuck, offer to skip and move on.'
+    );
+    return decision;
+  }
+
+  if (msgType === MESSAGE_TYPES.IDK) {
+    // Progressive IDK handling
+    if (streaks.idkCount >= 3) {
+      decision.action = ACTIONS.EXIT_RAMP;
+      decision.directives.push(
+        'Student has said IDK 3+ times. Use exit ramp.',
+        'Work a parallel problem, then retry. If still stuck, skip.'
+      );
+    } else if (streaks.idkCount >= 2) {
+      decision.action = ACTIONS.SCAFFOLD_DOWN;
+      decision.scaffoldLevel = 5;
+      decision.directives.push(
+        'Lower the barrier: rephrase as multiple choice or yes/no.',
+        'Change approach entirely from what was tried before.'
+      );
+    } else {
+      decision.action = ACTIONS.SCAFFOLD_DOWN;
+      decision.scaffoldLevel = 4;
+      decision.directives.push('Scaffold with a simpler sub-question.');
+    }
+    return decision;
+  }
+
+  // ── Answer attempts — correctness-driven decisions ──
+  if (msgType === MESSAGE_TYPES.ANSWER_ATTEMPT && diagnosis.type !== 'no_answer') {
+    if (diagnosis.isCorrect) {
+      decision.action = ACTIONS.CONFIRM_CORRECT;
+      decision.directives.push(
+        'Confirm immediately. Do NOT hedge.',
+        'Specific praise about what they did right (not generic).'
+      );
+
+      // Update phase state if in structured lesson
+      if (phaseState) {
+        recordAssessment(phaseState, 'CORRECT_FAST');
+        const transition = evaluatePhaseTransition(phaseState);
+        if (transition.shouldTransition) {
+          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+          decision.phase = phaseState.currentPhase;
+          decision.directives.push(`Phase transition: ${transition.rationale}`);
+        }
+      }
+    } else if (diagnosis.isCorrect === false) {
+      // Wrong answer — decide between misconception reteach and general guidance
+      if (diagnosis.misconception && diagnosis.misconception.fix) {
+        decision.action = ACTIONS.RETEACH_MISCONCEPTION;
+        decision.directives.push(
+          `Misconception detected: ${diagnosis.misconception.name}`,
+          `Reteaching strategy: ${diagnosis.misconception.fix}`,
+          'Do NOT reveal the answer. Address the root cause.'
+        );
+      } else if (streaks.recentWrongCount >= 3) {
+        decision.action = ACTIONS.WORKED_EXAMPLE;
+        decision.scaffoldLevel = 5;
+        decision.directives.push(
+          'Multiple wrong answers. Show a worked example with a PARALLEL problem.',
+          'Then have them try their original problem again.'
+        );
+      } else {
+        decision.action = ACTIONS.GUIDE_INCORRECT;
+        decision.directives.push(
+          'Guide with a question that exposes WHY the answer is wrong.',
+          'Let THEM arrive at the fix. Do not hand them the correction.'
+        );
+      }
+
+      // Update phase state
+      if (phaseState) {
+        const signal = diagnosis.misconception?.severity === 'high'
+          ? 'INCORRECT_FAR' : 'INCORRECT_CLOSE';
+        recordAssessment(phaseState, signal);
+        const transition = evaluatePhaseTransition(phaseState);
+        if (transition.shouldTransition) {
+          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+          decision.phase = phaseState.currentPhase;
+          decision.directives.push(`Phase regression: ${transition.rationale}`);
+        }
+      }
+    } else {
+      // Unverifiable — let AI handle naturally
+      decision.action = ACTIONS.CONTINUE_CONVERSATION;
+      decision.directives.push('Could not verify answer. Evaluate naturally.');
+    }
+    return decision;
+  }
+
+  // ── Help requests ──
+  if (msgType === MESSAGE_TYPES.HELP_REQUEST) {
+    decision.action = ACTIONS.HINT;
+    decision.scaffoldLevel = 4;
+    decision.directives.push('Provide a hint, not the answer. Ask a guiding sub-question.');
+
+    if (phaseState) {
+      recordAssessment(phaseState, 'INCORRECT_CLOSE', 'UNCERTAIN');
+    }
+    return decision;
+  }
+
+  // ── Skip requests ──
+  if (msgType === MESSAGE_TYPES.SKIP_REQUEST) {
+    if (phaseState) {
+      // In structured lesson: don't skip without evidence
+      decision.action = ACTIONS.CHECK_UNDERSTANDING;
+      decision.directives.push(
+        'Student wants to skip. Deploy an evidence-gathering move first.',
+        'Do NOT advance without proof of understanding.'
+      );
+    } else {
+      decision.action = ACTIONS.PRESENT_PROBLEM;
+      decision.directives.push('Move to the next problem as requested.');
+    }
+    return decision;
+  }
+
+  // ── Check my work ──
+  if (msgType === MESSAGE_TYPES.CHECK_MY_WORK) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'Reference uploaded content from conversation history.',
+      'Check work one problem at a time. Do NOT just give answers.',
+      'Do NOT ask the student to re-share the problem.'
+    );
+    return decision;
+  }
+
+  // ── Phase-specific decisions (when in structured lesson) ──
+  if (phaseState && activeSkill) {
+    decision.phasePrompt = getPhasePrompt(phaseState, activeSkill.displayName);
+    decision.action = ACTIONS.PHASE_INSTRUCTION;
+    decision.directives.push(`Follow ${phaseState.currentPhase} phase instructions.`);
+    return decision;
+  }
+
+  // ── Default: continue conversation naturally ──
+  decision.action = ACTIONS.CONTINUE_CONVERSATION;
+  return decision;
+}
+
+/**
+ * Initialize or retrieve lesson phase state for a session.
+ * Call this at the start of a mastery/lesson session.
+ */
+function initPhase(skillId, warmupData = { skillName: 'prerequisite', concepts: ['basics'] }) {
+  return initializeLessonPhase(skillId, warmupData);
+}
+
+module.exports = {
+  decide,
+  initPhase,
+  ACTIONS,
+};
