@@ -137,17 +137,73 @@ class FloatingCalculator {
 
     showCalculator() {
         this.floatingCalc.style.display = 'block';
-        this.centerCalculator();
+        if (this._isMobile()) {
+            this._showBackdrop();
+        } else {
+            this.centerCalculator();
+        }
     }
 
     hideCalculator() {
         this.floatingCalc.style.display = 'none';
+        this._removeBackdrop();
     }
 
     centerCalculator() {
         this.floatingCalc.style.transform = 'translate(-50%, -50%)';
         this.xOffset = 0;
         this.yOffset = 0;
+    }
+
+    // ==================== MOBILE BOTTOM-SHEET ====================
+
+    _isMobile() {
+        return window.innerWidth <= 768;
+    }
+
+    _showBackdrop() {
+        if (this._backdrop) return;
+        this._backdrop = document.createElement('div');
+        this._backdrop.className = 'calculator-backdrop';
+        this._backdrop.addEventListener('click', () => this.hideCalculator());
+        document.body.appendChild(this._backdrop);
+    }
+
+    _removeBackdrop() {
+        if (this._backdrop && this._backdrop.parentNode) {
+            this._backdrop.parentNode.removeChild(this._backdrop);
+        }
+        this._backdrop = null;
+    }
+
+    _initMobileSwipe() {
+        let startY = 0;
+        let currentY = 0;
+
+        this.dragHandle.addEventListener('touchstart', (e) => {
+            if (!this._isMobile()) return;
+            startY = e.touches[0].clientY;
+            currentY = startY;
+        }, { passive: true });
+
+        this.dragHandle.addEventListener('touchmove', (e) => {
+            if (!this._isMobile() || !startY) return;
+            currentY = e.touches[0].clientY;
+            const dy = currentY - startY;
+            if (dy > 0) {
+                this.floatingCalc.style.transform = `translateY(${dy}px)`;
+            }
+        }, { passive: true });
+
+        this.dragHandle.addEventListener('touchend', () => {
+            if (!this._isMobile()) { startY = 0; return; }
+            const dy = currentY - startY;
+            startY = 0;
+            if (dy > 80) {
+                this.hideCalculator();
+            }
+            this.floatingCalc.style.transform = '';
+        }, { passive: true });
     }
 
     // ==================== DRAG ====================
@@ -272,13 +328,18 @@ class FloatingCalculator {
         this.toggleBtn.addEventListener('click', () => this.toggleCalculator());
         this.closeBtn.addEventListener('click', () => this.hideCalculator());
 
-        // Drag
+        // Drag (desktop only — mobile uses swipe-to-dismiss)
         this.dragHandle.addEventListener('mousedown', (e) => this.dragStart(e));
-        this.dragHandle.addEventListener('touchstart', (e) => this.dragStart(e));
+        if (!this._isMobile()) {
+            this.dragHandle.addEventListener('touchstart', (e) => this.dragStart(e));
+        }
         document.addEventListener('mousemove', (e) => this.drag(e));
-        document.addEventListener('touchmove', (e) => this.drag(e));
+        document.addEventListener('touchmove', (e) => { if (!this._isMobile()) this.drag(e); });
         document.addEventListener('mouseup', () => this.dragEnd());
         document.addEventListener('touchend', () => this.dragEnd());
+
+        // Mobile: swipe down on header to dismiss
+        this._initMobileSwipe();
 
         // Calculator buttons
         this.floatingCalc.querySelectorAll('[data-num]').forEach(btn => {
