@@ -447,7 +447,7 @@ function thetaToGradeLevel(theta) {
 
   if (theta < -2) return 5;
   if (theta < -1) return 6;
-  if (theta < 0) return 7;
+  if (theta <= 0) return 7;
   if (theta < 1) return 9;
   if (theta < 2) return 11;
   return 12;

@@ -8,9 +8,11 @@ describe('Authentication Middleware', () => {
 
   beforeEach(() => {
     req = {
-      isAuthenticated: jest.fn(),
+      isAuthenticated: jest.fn().mockReturnValue(false),
       user: null,
-      session: {}
+      session: {},
+      originalUrl: '/api/test',
+      method: 'GET'
     };
     res = {
       status: jest.fn().mockReturnThis(),
@@ -23,6 +25,7 @@ describe('Authentication Middleware', () => {
   describe('isAuthenticated', () => {
     test('should call next() when user is authenticated', () => {
       req.isAuthenticated.mockReturnValue(true);
+      req.user = { role: 'student', _id: '123' };
 
       isAuthenticated(req, res, next);
 
@@ -37,15 +40,26 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'You must be logged in to access this resource'
+        message: 'Unauthorized: Authentication required.'
       });
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    test('should redirect to login for non-API requests', () => {
+      req.isAuthenticated.mockReturnValue(false);
+      req.originalUrl = '/dashboard';
+      req.method = 'GET';
+
+      isAuthenticated(req, res, next);
+
+      expect(res.redirect).toHaveBeenCalledWith('/login.html');
       expect(next).not.toHaveBeenCalled();
     });
   });
 
   describe('isStudent', () => {
     test('should call next() when user is a student', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'student' };
 
       isStudent(req, res, next);
@@ -55,19 +69,20 @@ describe('Authentication Middleware', () => {
     });
 
     test('should return 403 when user is not a student', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'teacher' };
 
       isStudent(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Access denied. Students only.'
+        message: 'Forbidden: Students only.'
       });
       expect(next).not.toHaveBeenCalled();
     });
 
     test('should return 403 when user is missing', () => {
+      req.isAuthenticated.mockReturnValue(false);
       req.user = null;
 
       isStudent(req, res, next);
@@ -79,6 +94,7 @@ describe('Authentication Middleware', () => {
 
   describe('isTeacher', () => {
     test('should call next() when user is a teacher', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'teacher' };
 
       isTeacher(req, res, next);
@@ -88,14 +104,14 @@ describe('Authentication Middleware', () => {
     });
 
     test('should return 403 when user is not a teacher', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'student' };
 
       isTeacher(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Access denied. Teachers only.'
+        message: 'Forbidden: Teachers only.'
       });
       expect(next).not.toHaveBeenCalled();
     });
@@ -103,6 +119,7 @@ describe('Authentication Middleware', () => {
 
   describe('isParent', () => {
     test('should call next() when user is a parent', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'parent' };
 
       isParent(req, res, next);
@@ -112,14 +129,14 @@ describe('Authentication Middleware', () => {
     });
 
     test('should return 403 when user is not a parent', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'student' };
 
       isParent(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Access denied. Parents only.'
+        message: 'Forbidden: Parents only.'
       });
       expect(next).not.toHaveBeenCalled();
     });
@@ -127,6 +144,7 @@ describe('Authentication Middleware', () => {
 
   describe('isAdmin', () => {
     test('should call next() when user is an admin', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'admin' };
 
       isAdmin(req, res, next);
@@ -136,14 +154,14 @@ describe('Authentication Middleware', () => {
     });
 
     test('should return 403 when user is not an admin', () => {
+      req.isAuthenticated.mockReturnValue(true);
       req.user = { role: 'teacher' };
 
       isAdmin(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Access denied. Admins only.'
+        message: 'Forbidden: Admin access required.'
       });
       expect(next).not.toHaveBeenCalled();
     });
