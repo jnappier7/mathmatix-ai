@@ -214,7 +214,7 @@ function assemblePrompt(decision, promptContext) {
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
     model: PRIMARY_CHAT_MODEL,
-    options: { temperature: 0.7, max_tokens: 1500 },
+    options: { temperature: 0.55, max_tokens: 2000 },
   };
 }
 
@@ -244,9 +244,9 @@ async function generate(assembled, options = {}) {
 async function generateStreaming(model, messages, llmOptions, res) {
   const { callLLMStream } = require('../llmGateway');
 
+  let fullResponse = '';
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
-    let fullResponse = '';
     const isClaudeModel = model.startsWith('claude-');
     let clientDisconnected = false;
 
@@ -273,10 +273,19 @@ async function generateStreaming(model, messages, llmOptions, res) {
     return fullResponse.trim() || "I'm not sure how to respond.";
   } catch (streamError) {
     console.error('[Generate] Streaming failed, falling back:', streamError.message);
+
+    // If partial content was already streamed, send a replacement event
+    // so the client replaces the partial with the full response.
+    // If nothing was streamed yet, send as a normal chunk.
     const completion = await callLLM(model, messages, llmOptions);
     const text = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
-    res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+    if (fullResponse.length > 0) {
+      // Partial content was already sent — tell client to replace it
+      res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+    } else {
+      res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+    }
     return text;
   }
 }

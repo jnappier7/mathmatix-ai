@@ -47,7 +47,7 @@ const PATTERNS = {
   idk: /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea|beats\s*me)\b/i,
   giveUp: /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer|can\s*you\s*just\s*solve\s*it)\b/i,
   helpRequest: /\b(help|hint|stuck|confused|don'?t\s*(understand|get\s*it)|what\s*do\s*i\s*do|how\s*do\s*i|can\s*you\s*(explain|show|help))\b/i,
-  skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|next\s*question)\b/i,
+  skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|next\s*question|what'?s\s*next|whats\s*next|now\s*what|what\s*now|ready\s*for\s*(the\s*)?next|let'?s\s*(keep|move)\s*(going|on)|what\s*do\s*we\s*do\s*next)\b/i,
 
   // Check my work
   checkMyWork: /\b(check|verify|grade|review|is\s*this\s*right|is\s*this\s*correct|did\s*i\s*(get|do)\s*(it|this)\s*right|am\s*i\s*right|how'?d\s*i\s*do)\b/i,
@@ -176,7 +176,7 @@ function observe(message, context = {}) {
     messageType = MESSAGE_TYPES.ANSWER_ATTEMPT;
   } else if (PATTERNS.checkMyWork.test(lower) && context.hasRecentUpload) {
     messageType = MESSAGE_TYPES.CHECK_MY_WORK;
-  } else if (PATTERNS.skipRequest.test(lower) && text.length < 50) {
+  } else if (PATTERNS.skipRequest.test(lower) && text.length < 80) {
     messageType = MESSAGE_TYPES.SKIP_REQUEST;
   } else if (PATTERNS.offTask.test(lower)) {
     messageType = MESSAGE_TYPES.OFF_TASK;

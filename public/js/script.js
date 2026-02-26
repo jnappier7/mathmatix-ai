@@ -1691,8 +1691,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (contentType.includes('text/event-stream')) {
                 // Read SSE stream: show words as they arrive
-                showThinkingIndicator(false);
-                const streamRef = startStreamingMessage();
+                // Don't create the bubble yet — wait until first chunk arrives
+                // to avoid showing a blank pill during pipeline processing.
+                let streamRef = null;
                 let fullText = '';
                 let completeData = null;
 
@@ -1713,8 +1714,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         try {
                             const event = JSON.parse(line.slice(6));
                             if (event.type === 'chunk' && event.content) {
+                                // Create the bubble on first real content
+                                if (!streamRef) {
+                                    showThinkingIndicator(false);
+                                    streamRef = startStreamingMessage();
+                                }
                                 fullText += event.content;
                                 appendStreamingChunk(streamRef, event.content);
+                            } else if (event.type === 'replacement' && event.content) {
+                                // Server sent a replacement (e.g., after streaming fallback)
+                                if (!streamRef) {
+                                    showThinkingIndicator(false);
+                                    streamRef = startStreamingMessage();
+                                }
+                                fullText = event.content;
+                                if (streamRef && streamRef.textNode) {
+                                    streamRef.textNode.textContent = event.content;
+                                }
                             } else if (event.type === 'complete' && event.data) {
                                 completeData = event.data;
                             } else if (event.type === 'error') {
@@ -1727,8 +1743,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
+                // Hide thinking indicator if no chunks arrived
+                if (!streamRef) {
+                    showThinkingIndicator(false);
+                }
+
                 // Finalize the streaming message (adds audio button, reactions)
-                finalizeStreamingMessage(streamRef, fullText);
+                if (streamRef) {
+                    finalizeStreamingMessage(streamRef, fullText);
+                }
 
                 // Use the complete data from the server, or build minimal data from streamed text
                 data = completeData || { text: fullText };

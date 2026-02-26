@@ -227,6 +227,18 @@ function decide(observation, diagnosis, context = {}) {
     return decision;
   }
 
+  // ── Affirmative / engagement responses — continue the flow ──
+  if (msgType === MESSAGE_TYPES.AFFIRMATIVE || msgType === MESSAGE_TYPES.GREETING) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'Student is engaged and following along. Continue naturally.',
+      'Build on the current conversation thread — do NOT repeat or re-ask what was already covered.',
+      'If the student just confirmed understanding, move forward to the next step or problem.',
+      'Maintain conversational continuity with what was just discussed.'
+    );
+    return decision;
+  }
+
   // ── Phase-specific decisions (when in structured lesson) ──
   if (phaseState && activeSkill) {
     decision.phasePrompt = getPhasePrompt(phaseState, activeSkill.displayName);
@@ -237,6 +249,10 @@ function decide(observation, diagnosis, context = {}) {
 
   // ── Default: continue conversation naturally ──
   decision.action = ACTIONS.CONTINUE_CONVERSATION;
+  decision.directives.push(
+    'Continue the conversation naturally, building on the current topic.',
+    'Do NOT repeat information already confirmed or covered.'
+  );
   return decision;
 }
 
