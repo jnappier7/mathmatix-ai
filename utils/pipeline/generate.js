@@ -13,6 +13,7 @@
 const { callLLM, callLLMStream } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES } = require('../promptCompact');
+const { buildSlimRules } = require('./promptSlim');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 
@@ -164,8 +165,21 @@ function buildStreakWarning(streaks) {
 function assemblePrompt(decision, promptContext) {
   const { systemPrompt, messages: conversationMessages } = promptContext;
 
-  // Start with the base system prompt
+  // Start with the base system prompt.
+  // If slimPrompt is enabled, replace the static rules prefix with
+  // action-aware slim rules (saves ~37% tokens on average).
   let fullSystemPrompt = systemPrompt;
+  if (promptContext.useSlimRules !== false && decision.action) {
+    const slimRules = buildSlimRules(decision.action);
+    // Replace the static rules block if present (it's the first section of the prompt)
+    if (fullSystemPrompt.includes('--- SECURITY (NON-NEGOTIABLE) ---')) {
+      // Find where the static rules end and dynamic context begins
+      const dynamicStart = fullSystemPrompt.indexOf('--- IDENTITY ---');
+      if (dynamicStart > 0) {
+        fullSystemPrompt = slimRules + '\n\n' + fullSystemPrompt.substring(dynamicStart);
+      }
+    }
+  }
 
   // Inject phase-specific prompt if available
   if (decision.phasePrompt) {
