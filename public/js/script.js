@@ -2287,23 +2287,89 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Toggle inline palette instead of modal
+    // --- Equation palette open/close (mobile bottom-sheet aware) ---
+    const isMobileView = () => window.innerWidth <= 768;
+    let eqBackdrop = null;
+
+    function openEquationPalette() {
+        if (!inlineEquationPalette) return;
+        inlineEquationPalette.style.display = 'block';
+
+        // On mobile, show backdrop overlay behind the bottom sheet
+        if (isMobileView()) {
+            if (!eqBackdrop) {
+                eqBackdrop = document.createElement('div');
+                eqBackdrop.className = 'equation-palette-backdrop';
+                eqBackdrop.addEventListener('click', closeEquationPalette);
+            }
+            document.body.appendChild(eqBackdrop);
+
+            // Disable MathLive virtual keyboard on mobile
+            if (window.mathVirtualKeyboard) {
+                window.mathVirtualKeyboard.visible = false;
+            }
+            inlineEquationPalette.querySelectorAll('math-field').forEach(mf => {
+                mf.setAttribute('virtual-keyboard-mode', 'off');
+            });
+        }
+
+        const field = getActiveMathField();
+        if (field) setTimeout(() => field.focus(), 100);
+    }
+
+    function closeEquationPalette() {
+        if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
+        if (eqBackdrop && eqBackdrop.parentNode) {
+            eqBackdrop.parentNode.removeChild(eqBackdrop);
+        }
+    }
+
+    // Toggle inline palette
     if (openEquationBtn && inlineEquationPalette) {
         openEquationBtn.addEventListener('click', () => {
             const isVisible = inlineEquationPalette.style.display === 'block';
-            inlineEquationPalette.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible) {
-                const field = getActiveMathField();
-                if (field) setTimeout(() => field.focus(), 100);
-            }
+            if (isVisible) closeEquationPalette();
+            else openEquationPalette();
         });
     }
 
     // Close inline palette
     if (closeInlinePaletteBtn) {
-        closeInlinePaletteBtn.addEventListener('click', () => {
-            if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
-        });
+        closeInlinePaletteBtn.addEventListener('click', closeEquationPalette);
+    }
+
+    // Mobile: swipe-down to dismiss bottom sheet
+    if (inlineEquationPalette) {
+        let touchStartY = 0;
+        let touchCurrentY = 0;
+
+        inlineEquationPalette.addEventListener('touchstart', (e) => {
+            // Only track swipe on the header (drag handle area)
+            if (!e.target.closest('.equation-palette-header')) return;
+            touchStartY = e.touches[0].clientY;
+            touchCurrentY = touchStartY;
+        }, { passive: true });
+
+        inlineEquationPalette.addEventListener('touchmove', (e) => {
+            if (!touchStartY) return;
+            touchCurrentY = e.touches[0].clientY;
+            const dy = touchCurrentY - touchStartY;
+            // Only allow downward swipe
+            if (dy > 0) {
+                inlineEquationPalette.style.transform = `translateY(${dy}px)`;
+            }
+        }, { passive: true });
+
+        inlineEquationPalette.addEventListener('touchend', () => {
+            const dy = touchCurrentY - touchStartY;
+            touchStartY = 0;
+            if (dy > 80) {
+                // Swiped down enough — dismiss
+                closeEquationPalette();
+            }
+            // Reset transform
+            inlineEquationPalette.style.transform = '';
+        }, { passive: true });
     }
 
     // Handle symbol button clicks (both .symbol-btn and .script-btn)
@@ -2351,7 +2417,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             updateRemoveButtons();
 
-            inlineEquationPalette.style.display = 'none';
+            closeEquationPalette();
             userInput.focus();
         });
     }

@@ -525,6 +525,12 @@
     border-color: #243040;
 }
 
+/* Dark-mode: bottom sheet header + math field container */
+[data-theme="dark"] .inline-equation-palette .equation-palette-header,
+[data-theme="dark"] .inline-equation-palette .inline-math-field-container {
+    background: #141E29;
+}
+
 [data-theme="dark"] .symbol-btn,
 [data-theme="dark"] .script-btn {
     background: #1A2633;
