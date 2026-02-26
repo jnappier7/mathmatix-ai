@@ -2,7 +2,7 @@
  * INLINE CHAT VISUALS - Interactive math visualizations in chat messages
  *
  * Renders interactive visual elements directly in chat bubbles:
- * - Function graphs (using function-plot library)
+ * - Function graphs (using MathGraph canvas engine)
  * - Number lines with points and intervals
  * - Fraction visualizations
  * - Pie charts and bar charts
@@ -69,8 +69,10 @@ class InlineChatVisuals {
         if (graphEl && graphEl.dataset.config) {
             const modalGraphId = containerId + '-modal-graph';
             graphEl.id = modalGraphId;
-            // Clear any cloned content (errors, previously rendered graphs)
+            // Clear cloned canvases — MathGraph will rebuild them
             graphEl.innerHTML = '';
+            graphEl._mathGraph = null;
+            graphEl._functionPlot = null;
             setTimeout(() => this.renderGraph(modalGraphId), 100);
 
             // Rebind zoom/reset buttons to the modal graph ID
@@ -80,7 +82,7 @@ class InlineChatVisuals {
 
             if (zoomInBtn) {
                 zoomInBtn.removeAttribute('onclick');
-                zoomInBtn.replaceWith(zoomInBtn.cloneNode(true)); // strip old listeners
+                zoomInBtn.replaceWith(zoomInBtn.cloneNode(true));
                 const newZoomIn = clone.querySelector('.icv-zoom-in');
                 newZoomIn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -352,7 +354,7 @@ class InlineChatVisuals {
     }
 
     /**
-     * Render a function graph using function-plot (call after DOM insertion)
+     * Render a function graph using MathGraph canvas engine (call after DOM insertion)
      */
     renderGraph(id) {
         const container = document.getElementById(id);
@@ -361,66 +363,56 @@ class InlineChatVisuals {
             return;
         }
 
-        // Ensure function-plot is loaded before rendering
-        if (!window.functionPlot) {
-            if (window.ensureFunctionPlot) {
-                window.ensureFunctionPlot().then(() => this.renderGraph(id));
-            } else {
-                console.warn(`[InlineChatVisuals] function-plot not available and no loader found`);
-            }
+        if (!window.MathGraph) {
+            console.warn(`[InlineChatVisuals] MathGraph not loaded`);
+            container.innerHTML = `<div class="icv-error">Graph engine not loaded</div>`;
             return;
         }
 
         try {
-            // Validate data-config exists
             if (!container.dataset.config) {
                 console.warn(`[InlineChatVisuals] No config found for graph ${id}`);
                 container.innerHTML = `<div class="icv-error">Graph configuration missing</div>`;
                 return;
             }
 
-            // Clear any existing content (including error divs from previous attempts)
+            // Destroy previous instance if re-rendering
+            if (container._mathGraph) {
+                container._mathGraph.destroy();
+                container._mathGraph = null;
+            }
+
             container.innerHTML = '';
 
             const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
-
-            // Validate config has required properties
             if (!config || typeof config !== 'object') {
                 throw new Error('Invalid graph configuration');
             }
 
-            // Normalize and validate the function string
             const fn = this.normalizeFunctionString(config.fn);
-            // Use a proper render width - in collapsed state offsetWidth may be tiny due to CSS transform,
-            // so use 300 as minimum to ensure function-plot draws a visible graph
-            const width = Math.max(container.offsetWidth, 300);
 
-            const plotConfig = {
-                target: `#${id}`,
-                width: width,
-                height: 250,
-                grid: true,
-                xAxis: { domain: [config.xMin ?? -10, config.xMax ?? 10] },
-                data: [{
-                    fn: fn,
-                    color: config.color || '#667eea'
-                }]
-            };
-
-            if (config.yMin !== null && config.yMax !== null) {
-                plotConfig.yAxis = { domain: [config.yMin, config.yMax] };
+            // Store original config for reset
+            if (!container._originalConfig) {
+                container._originalConfig = { ...config, fn };
             }
 
-            const plot = functionPlot(plotConfig);
-            container._functionPlot = plot;
-            container._originalConfig = { ...config, fn }; // Store normalized fn
+            const graph = new MathGraph(container, {
+                fn: fn,
+                xMin: config.xMin ?? -10,
+                xMax: config.xMax ?? 10,
+                yMin: config.yMin ?? null,
+                yMax: config.yMax ?? null,
+                color: config.color || '#667eea',
+                interactive: true
+            });
+
+            container._mathGraph = graph;
+            container._functionPlot = graph; // backward compat flag
 
             console.log(`[InlineChatVisuals] Rendered graph for: ${fn}`);
         } catch (error) {
             console.error(`[InlineChatVisuals] Error rendering graph ${id}:`, error);
-            // Only show error if graph didn't actually render
-            // (function-plot may render successfully then throw during interactivity setup)
-            const hasRenderedContent = container.querySelector('svg') || container.querySelector('canvas');
+            const hasRenderedContent = container.querySelector('canvas');
             if (!hasRenderedContent) {
                 container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
             }
@@ -429,35 +421,16 @@ class InlineChatVisuals {
 
     zoomGraph(id, factor) {
         const container = document.getElementById(id);
-        if (!container || !container._functionPlot) return;
-
-        const config = container._originalConfig;
-        if (!config || typeof config.xMax !== 'number' || typeof config.xMin !== 'number') {
-            console.warn(`[InlineChatVisuals] Cannot zoom graph ${id}: invalid config`);
-            return;
-        }
-
-        const xRange = config.xMax - config.xMin;
-        const newRange = xRange * factor;
-        const center = (config.xMax + config.xMin) / 2;
-
-        config.xMin = center - newRange / 2;
-        config.xMax = center + newRange / 2;
-        container.dataset.config = JSON.stringify(config).replace(/"/g, '&quot;');
-
-        this.renderGraph(id);
+        if (!container || !container._mathGraph) return;
+        container._mathGraph.zoom(factor);
     }
 
     resetGraph(id) {
         const container = document.getElementById(id);
-        if (!container || !container.dataset.config) return;
+        if (!container) return;
 
-        try {
-            const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
-            container._originalConfig = originalConfig;
-            this.renderGraph(id);
-        } catch (error) {
-            console.error(`[InlineChatVisuals] Error resetting graph ${id}:`, error);
+        if (container._mathGraph) {
+            container._mathGraph.reset();
         }
     }
 
@@ -1110,18 +1083,20 @@ class InlineChatVisuals {
             eqDisplay.textContent = `y = ${displayEq}`;
         }
 
-        // Re-render graph
+        // Re-render graph with MathGraph
         const container = document.getElementById(id);
-        if (container && window.functionPlot) {
+        if (container && window.MathGraph) {
             try {
-                functionPlot({
-                    target: `#${id}`,
-                    width: container.offsetWidth || 280,
-                    height: 200,
-                    grid: true,
-                    xAxis: { domain: [-10, 10] },
-                    yAxis: { domain: [-10, 10] },
-                    data: [{ fn: fn, color: '#667eea' }]
+                if (container._mathGraph) {
+                    container._mathGraph.destroy();
+                }
+                container.innerHTML = '';
+                container._mathGraph = new MathGraph(container, {
+                    fn: fn,
+                    xMin: -10, xMax: 10,
+                    yMin: -10, yMax: 10,
+                    color: '#667eea',
+                    interactive: false
                 });
             } catch (e) {
                 console.error('[SliderGraph] Render error:', e);
@@ -1142,16 +1117,14 @@ class InlineChatVisuals {
         });
 
         const container = document.getElementById(id);
-        if (container && window.functionPlot) {
+        if (container && window.MathGraph) {
             try {
-                functionPlot({
-                    target: `#${id}`,
-                    width: container.offsetWidth || 280,
-                    height: 200,
-                    grid: true,
-                    xAxis: { domain: [-10, 10] },
-                    yAxis: { domain: [-10, 10] },
-                    data: [{ fn: fn, color: '#667eea' }]
+                container._mathGraph = new MathGraph(container, {
+                    fn: fn,
+                    xMin: -10, xMax: 10,
+                    yMin: -10, yMax: 10,
+                    color: '#667eea',
+                    interactive: false
                 });
             } catch (e) {
                 console.error('[SliderGraph] Render error:', e);
@@ -2243,7 +2216,7 @@ class InlineChatVisuals {
         container.querySelectorAll('.icv-multi-rep-container').forEach(multiRep => {
             // The graph inside multi-rep needs rendering too
             const graphEl = multiRep.querySelector('.icv-graph');
-            if (graphEl && graphEl.id && !graphEl._functionPlot) {
+            if (graphEl && graphEl.id && !graphEl._mathGraph) {
                 setTimeout(() => this.renderGraph(graphEl.id), 100);
             }
         });
@@ -2317,7 +2290,7 @@ class InlineChatVisuals {
 
         // Initialize function graphs
         container.querySelectorAll('.icv-graph').forEach(graphEl => {
-            if (graphEl.id && !graphEl._functionPlot) {
+            if (graphEl.id && !graphEl._mathGraph) {
                 setTimeout(() => this.renderGraph(graphEl.id), 50);
             }
         });
@@ -2777,28 +2750,11 @@ class InlineChatVisuals {
                 color-scheme: light;
             }
 
-            /* Function-plot library overrides for clean white graphs */
-            .icv-graph-container .function-plot,
-            .icv-slider-graph .function-plot {
-                background: #ffffff !important;
-            }
-
-            .icv-container .function-plot .x.axis path,
-            .icv-container .function-plot .y.axis path,
-            .icv-container .function-plot .x.axis line,
-            .icv-container .function-plot .y.axis line {
-                stroke: #d1d1d6 !important;
-            }
-
-            .icv-container .function-plot .x.axis text,
-            .icv-container .function-plot .y.axis text {
-                fill: #86868b !important;
-                font-size: 11px !important;
-            }
-
-            .icv-container .function-plot .x.grid line,
-            .icv-container .function-plot .y.grid line {
-                stroke: #f0f0f5 !important;
+            /* MathGraph canvas styling */
+            .icv-graph-container .mg-wrapper,
+            .icv-slider-graph .mg-wrapper {
+                background: #ffffff;
+                border-radius: 6px;
             }
 
             /* SVG elements - clean grays */

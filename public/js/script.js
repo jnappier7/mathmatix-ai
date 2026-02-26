@@ -1044,28 +1044,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (graphData) {
-             const graphContainer = document.createElement('div');
+            const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
             graphContainer.id = graphId;
             graphContainer.className = 'graph-render-area';
             bubble.appendChild(graphContainer);
-            const renderGraph = () => {
+            setTimeout(() => {
                 try {
-                    const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
-                    functionPlot({
-                        target: '#' + graphId,
-                        width: plotWidth,
-                        height: 300,
-                        grid: true,
-                        data: [{ fn: graphData.function, graphType: 'polyline' }]
-                    });
-                } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
-            };
-            if (window.functionPlot) {
-                setTimeout(renderGraph, 0);
-            } else if (window.ensureFunctionPlot) {
-                window.ensureFunctionPlot().then(renderGraph);
-            }
+                    if (window.MathGraph) {
+                        new MathGraph(graphContainer, {
+                            fn: graphData.function,
+                            xMin: graphData.xMin ?? -10,
+                            xMax: graphData.xMax ?? 10,
+                            yMin: graphData.yMin ?? null,
+                            yMax: graphData.yMax ?? null,
+                            interactive: true
+                        });
+                    } else {
+                        graphContainer.innerHTML = '<div class="icv-error">Graph engine not loaded</div>';
+                    }
+                } catch (e) {
+                    console.error("Graphing error:", e);
+                    graphContainer.innerHTML = "Could not render graph.";
+                }
+            }, 0);
         }
         
         if (sender === 'ai') {

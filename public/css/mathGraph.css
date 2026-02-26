@@ -1,0 +1,72 @@
+/* ============================================================
+   MathGraph — Canvas-based function graphing engine styles
+   ============================================================ */
+
+.mg-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mg-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.mg-crosshair-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  border-radius: 8px;
+}
+
+.mg-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', 'Menlo', monospace;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  letter-spacing: 0.01em;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+body.dark-mode .mg-wrapper {
+  background: #1e1e2e;
+}
+
+body.dark-mode .mg-tooltip {
+  background: rgba(40, 40, 60, 0.92);
+  color: #e0e0e0;
+}
+
+/* ── Graph inside chat visuals ───────────────────────────── */
+.icv-graph .mg-wrapper {
+  border-radius: 6px;
+}
+
+.icv-graph .mg-crosshair-canvas {
+  border-radius: 6px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .mg-tooltip {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}

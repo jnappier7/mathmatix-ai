@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="/css/show-your-work.css" />
   <link rel="stylesheet" href="/css/courseCatalog.css" />
   <link rel="stylesheet" href="/css/graphTool.css" />
+  <link rel="stylesheet" href="/css/mathGraph.css" />
   <link rel="stylesheet" href="/css/returning-user-modal.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
@@ -37,8 +38,9 @@
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
 
+  <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
+  <script defer src="/js/mathGraph.js"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
-  <!-- function-plot: loaded on demand when AI returns a graph -->
   <!-- confetti: loaded on demand when celebration triggers -->
   <!-- MathJax: loaded on demand when math content is detected -->
   <script>
@@ -76,10 +78,10 @@
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
 
-    // Load function-plot when a graph is needed
+    // MathGraph is loaded via <script> tag above — no CDN needed
+    // Keep ensureFunctionPlot as a no-op for backward compatibility
     window.ensureFunctionPlot = function() {
-      if (window.functionPlot) return Promise.resolve();
-      return window.loadScript('https://unpkg.com/function-plot/dist/function-plot.js');
+      return Promise.resolve();
     };
 
     // Load confetti when a celebration triggers
