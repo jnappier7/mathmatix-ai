@@ -56,6 +56,20 @@ const ACTIONS = {
  * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
  */
 function decide(observation, diagnosis, context = {}) {
+  const decision = decideCore(observation, diagnosis, context);
+
+  // Session mood modifiers run AFTER the core decision.
+  // This ensures they apply to ALL branches, including early returns.
+  applyMoodModifiers(decision, context.sessionMood);
+
+  return decision;
+}
+
+/**
+ * Core decision logic — picks the tutoring action.
+ * Extracted so mood modifiers can wrap it cleanly.
+ */
+function decideCore(observation, diagnosis, context) {
   const { phaseState, activeSkill } = context;
   const streaks = observation.streaks;
   const msgType = observation.messageType;
@@ -254,6 +268,59 @@ function decide(observation, diagnosis, context = {}) {
     'Do NOT repeat information already confirmed or covered.'
   );
   return decision;
+}
+
+/**
+ * Apply session mood modifiers to a decision.
+ * Mood doesn't change the ACTION — it adjusts how the action is executed.
+ * Called after the core decision logic, before return.
+ */
+function applyMoodModifiers(decision, sessionMood) {
+  if (!sessionMood) return;
+
+  // ── Flow state: don't interrupt ──
+  if (sessionMood.inFlow) {
+    // Suppress comprehension checks — student is proving mastery by doing
+    if (decision.action === ACTIONS.CHECK_UNDERSTANDING) {
+      decision.action = ACTIONS.PRESENT_PROBLEM;
+      decision.directives.push(
+        'Student is in flow state — skip the comprehension check.',
+        'Present the next problem to maintain momentum.'
+      );
+    }
+    // Keep praise brief in flow — don't slow them down
+    if (decision.action === ACTIONS.CONFIRM_CORRECT) {
+      decision.directives.push('Brief confirmation only — student is in flow. Keep pace up.');
+    }
+  }
+
+  // ── Fatigue: lighten up ──
+  if (sessionMood.fatigueSignal) {
+    decision.scaffoldLevel = Math.max(decision.scaffoldLevel, 4);
+    decision.directives.push(
+      'Student is showing fatigue. Keep response SHORT (1-2 sentences).',
+      'If struggling, offer a break or easier warm-up problem.'
+    );
+  }
+
+  // ── Falling trajectory: more support ──
+  if (sessionMood.trajectory === 'falling' && !sessionMood.fatigueSignal) {
+    if (decision.scaffoldLevel < 4) {
+      decision.scaffoldLevel = 4;
+    }
+    decision.directives.push(
+      'Student energy has been dropping. Slightly more support than usual.'
+    );
+  }
+
+  // ── Recovered: acknowledge the turnaround ──
+  if (sessionMood.trajectory === 'recovered') {
+    if (decision.action === ACTIONS.CONFIRM_CORRECT) {
+      decision.directives.push(
+        'Student was struggling earlier but is now getting it. Acknowledge the turnaround naturally (not patronizingly).'
+      );
+    }
+  }
 }
 
 /**

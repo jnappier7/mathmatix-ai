@@ -192,6 +192,11 @@ function assemblePrompt(decision, promptContext) {
     fullSystemPrompt += '\n\n--- CURRENT ACTION ---\n' + actionPrompt;
   }
 
+  // Inject session mood directive (if noteworthy)
+  if (promptContext.moodDirective) {
+    fullSystemPrompt += '\n\n' + promptContext.moodDirective;
+  }
+
   // Clone messages to avoid mutation
   const messages = conversationMessages.map(m => ({ ...m }));
 

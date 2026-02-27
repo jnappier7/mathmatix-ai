@@ -25,6 +25,7 @@ const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assembl
 const { extractSystemTags } = require('../../utils/pipeline/verify');
 const { buildSidecar, mergeLlmSignals, getSidecarInstruction, getSignalStats } = require('../../utils/pipeline/sidecar');
 const { buildSlimRules, CORE_RULES } = require('../../utils/pipeline/promptSlim');
+const { computeSessionMood, scoreMessage, buildMoodDirective, TRAJECTORIES, ENERGY_LEVELS } = require('../../utils/pipeline/sessionMood');
 
 // ============================================================================
 // OBSERVE STAGE
@@ -529,5 +530,207 @@ describe('Pipeline: Prompt Slimming', () => {
       expect(rules.length).toBeGreaterThan(100);
       expect(rules).toContain('SECURITY');
     }
+  });
+});
+
+// ============================================================================
+// SESSION MOOD
+// ============================================================================
+
+describe('Pipeline: Session Mood', () => {
+  // Helper to build a conversation
+  function msg(role, content, extras = {}) {
+    return { role, content, timestamp: new Date(), ...extras };
+  }
+
+  describe('scoreMessage', () => {
+    test('scores positive signals positively', () => {
+      expect(scoreMessage(msg('user', 'oh I see now!'))).toBeGreaterThan(0);
+      expect(scoreMessage(msg('user', 'cool'))).toBeGreaterThan(0);
+      expect(scoreMessage(msg('user', 'yes got it'))).toBeGreaterThan(0);
+    });
+
+    test('scores negative signals negatively', () => {
+      expect(scoreMessage(msg('user', 'this is stupid'))).toBeLessThan(0);
+      expect(scoreMessage(msg('user', 'idk'))).toBeLessThan(0);
+      expect(scoreMessage(msg('user', 'just tell me the answer'))).toBeLessThan(0);
+    });
+
+    test('scores correct answers positively', () => {
+      expect(scoreMessage(msg('assistant', 'Great work!', { problemResult: 'correct' }))).toBeGreaterThan(0);
+    });
+
+    test('scores incorrect answers negatively', () => {
+      expect(scoreMessage(msg('assistant', 'Not quite.', { problemResult: 'incorrect' }))).toBeLessThan(0);
+    });
+
+    test('returns 0 for neutral messages', () => {
+      expect(scoreMessage(msg('assistant', 'Here is a problem for you.'))).toBe(0);
+    });
+  });
+
+  describe('computeSessionMood', () => {
+    test('returns stable for empty/short conversations', () => {
+      expect(computeSessionMood([]).trajectory).toBe(TRAJECTORIES.STABLE);
+      expect(computeSessionMood([msg('user', 'hi')]).trajectory).toBe(TRAJECTORIES.STABLE);
+    });
+
+    test('detects rising trajectory', () => {
+      const messages = [
+        msg('user', 'idk'),
+        msg('assistant', 'Let me help.', { problemResult: 'incorrect' }),
+        msg('user', 'ugh this is hard'),
+        msg('assistant', 'Try this approach.', { problemResult: 'incorrect' }),
+        // Things get better
+        msg('user', 'oh I see!'),
+        msg('assistant', 'Nice work!', { problemResult: 'correct' }),
+        msg('user', 'cool'),
+        msg('assistant', 'Exactly!', { problemResult: 'correct' }),
+        msg('user', 'awesome'),
+        msg('assistant', 'Keep going!', { problemResult: 'correct' }),
+      ];
+      const mood = computeSessionMood(messages);
+      expect([TRAJECTORIES.RISING, TRAJECTORIES.RECOVERED]).toContain(mood.trajectory);
+      expect(mood.momentum).toBeGreaterThan(0);
+    });
+
+    test('detects falling trajectory', () => {
+      const messages = [
+        msg('user', 'cool lets go'),
+        msg('assistant', 'Right!', { problemResult: 'correct' }),
+        msg('user', 'yes'),
+        msg('assistant', 'Correct!', { problemResult: 'correct' }),
+        // Things go downhill
+        msg('user', 'ugh'),
+        msg('assistant', 'Not quite.', { problemResult: 'incorrect' }),
+        msg('user', 'this is stupid'),
+        msg('assistant', 'Try again.', { problemResult: 'incorrect' }),
+        msg('user', 'idk'),
+        msg('assistant', 'Hmm.', { problemResult: 'incorrect' }),
+      ];
+      const mood = computeSessionMood(messages);
+      expect(mood.trajectory).toBe(TRAJECTORIES.FALLING);
+      expect(mood.momentum).toBeLessThan(0);
+    });
+
+    test('detects flow state (4+ consecutive correct)', () => {
+      const messages = [
+        msg('user', '5'), msg('assistant', 'Yes!', { problemResult: 'correct' }),
+        msg('user', '12'), msg('assistant', 'Right!', { problemResult: 'correct' }),
+        msg('user', '7'), msg('assistant', 'Correct!', { problemResult: 'correct' }),
+        msg('user', '3'), msg('assistant', 'Nailed it!', { problemResult: 'correct' }),
+        msg('user', '-2'), msg('assistant', 'Perfect!', { problemResult: 'correct' }),
+      ];
+      const mood = computeSessionMood(messages);
+      expect(mood.inFlow).toBe(true);
+      expect(mood.consecutiveCorrect).toBeGreaterThanOrEqual(4);
+    });
+
+    test('flow state breaks on incorrect', () => {
+      const messages = [
+        msg('user', '5'), msg('assistant', 'Yes!', { problemResult: 'correct' }),
+        msg('user', '12'), msg('assistant', 'Right!', { problemResult: 'correct' }),
+        msg('user', '7'), msg('assistant', 'Correct!', { problemResult: 'correct' }),
+        msg('user', '99'), msg('assistant', 'Not quite.', { problemResult: 'incorrect' }),
+      ];
+      const mood = computeSessionMood(messages);
+      expect(mood.inFlow).toBe(false);
+    });
+
+    test('detects fatigue from message length shrinkage', () => {
+      const messages = [
+        msg('user', 'I think the answer is about twenty five because you multiply five by five'),
+        msg('assistant', 'Good thinking!', { problemResult: 'correct' }),
+        msg('user', 'So for this one I would divide both sides by three to get x'),
+        msg('assistant', 'Exactly!', { problemResult: 'correct' }),
+        msg('user', 'And then you add seven to both sides of the equation right'),
+        msg('assistant', 'Yes!', { problemResult: 'correct' }),
+        msg('user', 'I need to subtract four from both sides to isolate the variable'),
+        msg('assistant', 'Perfect.', { problemResult: 'correct' }),
+        // Energy drops
+        msg('user', 'idk'),
+        msg('assistant', 'Try...'),
+        msg('user', '5'),
+        msg('assistant', 'Hmm.', { problemResult: 'incorrect' }),
+        msg('user', 'ok'),
+        msg('assistant', 'Try again.'),
+        msg('user', 'no'),
+        msg('assistant', 'Hmm.'),
+      ];
+      const mood = computeSessionMood(messages);
+      expect(mood.fatigueSignal).toBe(true);
+    });
+  });
+
+  describe('buildMoodDirective', () => {
+    test('returns null when no summary', () => {
+      const mood = computeSessionMood([]);
+      expect(buildMoodDirective(mood)).toBeNull();
+    });
+
+    test('returns directive string when summary present', () => {
+      // Build a flow state scenario
+      const messages = [
+        msg('user', '5'), msg('assistant', 'Yes!', { problemResult: 'correct' }),
+        msg('user', '12'), msg('assistant', 'Right!', { problemResult: 'correct' }),
+        msg('user', '7'), msg('assistant', 'Correct!', { problemResult: 'correct' }),
+        msg('user', '3'), msg('assistant', 'Nailed it!', { problemResult: 'correct' }),
+        msg('user', '-2'), msg('assistant', 'Perfect!', { problemResult: 'correct' }),
+      ];
+      const mood = computeSessionMood(messages);
+      const directive = buildMoodDirective(mood);
+      expect(directive).toContain('SESSION MOOD');
+      expect(directive).toContain('flow');
+    });
+  });
+
+  describe('decide stage mood integration', () => {
+    test('flow state suppresses CHECK_UNDERSTANDING', () => {
+      const observation = observe('what next', {
+        recentUserMessages: [],
+        recentAssistantMessages: [],
+      });
+      // Force skip request to trigger CHECK_UNDERSTANDING
+      observation.messageType = MESSAGE_TYPES.SKIP_REQUEST;
+
+      const diagnosis = { type: 'no_answer', isCorrect: null };
+      const sessionMood = {
+        trajectory: TRAJECTORIES.STABLE,
+        energy: ENERGY_LEVELS.HIGH,
+        momentum: 0.5,
+        inFlow: true,
+        fatigueSignal: false,
+        consecutiveCorrect: 5,
+        summary: 'In flow',
+      };
+
+      // With phaseState, skip request → CHECK_UNDERSTANDING, but flow should override
+      const decision = decide(observation, diagnosis, {
+        phaseState: { currentPhase: 'YOU_DO', skillId: 'test' },
+        activeSkill: { skillId: 'test', displayName: 'Test Skill' },
+        sessionMood,
+      });
+
+      // Flow state should have converted CHECK_UNDERSTANDING → PRESENT_PROBLEM
+      expect(decision.action).toBe(ACTIONS.PRESENT_PROBLEM);
+    });
+
+    test('fatigue increases scaffold level', () => {
+      const observation = observe('hi', { recentUserMessages: [], recentAssistantMessages: [] });
+      const diagnosis = { type: 'no_answer', isCorrect: null };
+      const sessionMood = {
+        trajectory: TRAJECTORIES.FALLING,
+        energy: ENERGY_LEVELS.LOW,
+        momentum: -0.3,
+        inFlow: false,
+        fatigueSignal: true,
+        consecutiveCorrect: 0,
+        summary: 'Fatigue detected',
+      };
+
+      const decision = decide(observation, diagnosis, { sessionMood });
+      expect(decision.scaffoldLevel).toBeGreaterThanOrEqual(4);
+      expect(decision.directives.some(d => d.includes('fatigue'))).toBe(true);
+    });
   });
 });

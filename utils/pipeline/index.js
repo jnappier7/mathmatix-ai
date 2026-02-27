@@ -23,6 +23,7 @@ const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { persist } = require('./persist');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
+const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 
 /**
  * Run the full tutoring pipeline.
@@ -75,10 +76,20 @@ async function runPipeline(message, ctx) {
     console.log(`[Pipeline] Diagnose: ${diagnosis.type} (answer: ${diagnosis.answer}, correct: ${diagnosis.correctAnswer})`);
   }
 
+  // ── Session mood (emotional arc across the conversation) ──
+  const sessionMood = computeSessionMood(ctx.conversation.messages, {
+    sessionStart: ctx.conversation.createdAt || ctx.conversation.startDate,
+  });
+
+  if (sessionMood.summary) {
+    console.log(`[Pipeline] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}, momentum: ${sessionMood.momentum}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''})`);
+  }
+
   // ── Stage 3: DECIDE ──
   const decision = decide(observation, diagnosis, {
     phaseState: ctx.phaseState || null,
     activeSkill: ctx.activeSkill || null,
+    sessionMood,
   });
 
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
@@ -90,9 +101,11 @@ async function runPipeline(message, ctx) {
   });
 
   // ── Stage 4: GENERATE ──
+  const moodDirective = buildMoodDirective(sessionMood);
   const assembled = assemblePrompt(decision, {
     systemPrompt: ctx.systemPrompt,
     messages: ctx.formattedMessages,
+    moodDirective,
   });
 
   let rawResponseText;
@@ -167,6 +180,13 @@ async function runPipeline(message, ctx) {
       diagnosisType: diagnosis.type,
       flags: verified.flags,
       signalStats,
+      sessionMood: {
+        trajectory: sessionMood.trajectory,
+        energy: sessionMood.energy,
+        momentum: sessionMood.momentum,
+        inFlow: sessionMood.inFlow,
+        fatigueSignal: sessionMood.fatigueSignal,
+      },
       timeMs: pipelineTime,
     },
   };
