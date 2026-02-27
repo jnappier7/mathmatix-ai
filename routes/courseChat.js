@@ -21,6 +21,9 @@ const { detectTopic } = require('../utils/activitySummarizer');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 const { buildProgressUpdate } = require('../utils/progressState');
+const { verify: pipelineVerify } = require('../utils/pipeline');
+const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
+const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -181,7 +184,7 @@ router.post('/', async (req, res) => {
             ? user.selectedTutorId : 'default';
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
 
-        const systemPrompt = buildCourseSystemPrompt({
+        let systemPrompt = buildCourseSystemPrompt({
             userProfile: user,
             tutorProfile: currentTutor,
             courseSession,
@@ -190,6 +193,16 @@ router.post('/', async (req, res) => {
             currentModule: currentPathwayModule,
             resourceContext
         });
+
+        // ── Session mood (emotional arc) ──
+        const sessionMood = computeSessionMood(conversation.messages, {
+            sessionStart: conversation.createdAt || conversation.startDate,
+        });
+        const moodDirective = buildMoodDirective(sessionMood);
+        if (moodDirective) {
+            systemPrompt += '\n\n' + moodDirective;
+            console.log(`[CourseChat] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''})`);
+        }
 
         // ── Inject step-context reminder into last user message ──
         // The system prompt (at position 0) fades in long conversations.
@@ -254,397 +267,132 @@ router.post('/', async (req, res) => {
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
 
-        // ── Answer-key safety filter ────────────────────────
-        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
-        if (answerKeyCheck.wasFiltered) {
-            aiResponseText = answerKeyCheck.text;
-            if (useStreaming && !clientDisconnected) {
-                try { res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`); } catch (e) {}
-            }
-        }
-
-        // ── Parse structured tags from AI response ──────────
-
-        // XP Ladder
+        // ── Pipeline verify (anti-cheat + tag extraction + LaTeX + reading level) ──
         const xpLadder = BRAND_CONFIG.xpLadder;
         const xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
-
-        // Tier 3: Core Behavior XP
-        const coreBehaviorMatch = aiResponseText.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
-        if (coreBehaviorMatch) {
-            const rawAmount = parseInt(coreBehaviorMatch[1], 10);
-            const behavior = coreBehaviorMatch[2].trim();
-            const xpBoostInfo = calculateXpBoostFactor(user.level);
-            const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
-            xpBreakdown.tier3 = Math.min(Math.round(rawAmount * xpBoostInfo.factor), maxAllowed);
-            xpBreakdown.tier3Behavior = behavior;
-            aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
-        }
-
-        // Safety concern
-        const safetyConcernMatch = aiResponseText.match(/<SAFETY_CONCERN>([^<]+)<\/SAFETY_CONCERN>/);
-        if (safetyConcernMatch) {
-            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName}) - ${safetyConcernMatch[1]}`);
-            aiResponseText = aiResponseText.replace(safetyConcernMatch[0], '').trim();
-            sendSafetyConcernAlert(
-                { userId: userId.toString(), firstName: user.firstName, lastName: user.lastName, username: user.username, gradeLevel: user.gradeLevel },
-                safetyConcernMatch[1], messageText
-            ).catch(err => console.error('Safety alert email failed:', err));
-        }
-
-        // Skill mastery
-        const skillMasteredMatch = aiResponseText.match(/<SKILL_MASTERED:([^>]+)>/);
-        if (skillMasteredMatch) {
-            const skillId = skillMasteredMatch[1].trim();
-            user.skillMastery = user.skillMastery || new Map();
-            const existing = user.skillMastery.get(skillId) || {};
-            const pillars = existing.pillars || {
-                accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
-                independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3 },
-                transfer: { contextsAttempted: [], contextsRequired: 3 },
-                retention: { retentionChecks: [], failed: false }
-            };
-            pillars.accuracy.correct += 1;
-            pillars.accuracy.total += 1;
-            pillars.accuracy.percentage = pillars.accuracy.correct / pillars.accuracy.total;
-
-            const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
-            const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
-                : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
-            const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
-            const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
-
-            const meetsAll = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3
-                && pillars.independence.hintsUsed <= pillars.independence.hintThreshold
-                && pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
-
-            const newStatus = meetsAll ? 'mastered' : pillars.accuracy.total >= 2 ? 'practicing' : 'learning';
-
-            user.skillMastery.set(skillId, { ...existing, status: newStatus, pillars, masteryScore, lastPracticed: new Date() });
-            user.markModified('skillMastery');
-            aiResponseText = aiResponseText.replace(skillMasteredMatch[0], '').trim();
-            console.log(`📈 [CourseChat] Skill ${skillId}: ${newStatus} (${masteryScore}%)`);
-        }
-
-        // Problem result tracking
-        const problemResultMatch = aiResponseText.match(/<\s*PROBLEM_RESULT\s*:\s*(correct|incorrect|skipped)\s*>/i);
         let problemAnswered = false;
         let wasCorrect = false;
-
-        if (problemResultMatch) {
-            const result = problemResultMatch[1].toLowerCase();
-            problemAnswered = true;
-            wasCorrect = result === 'correct';
-            aiResponseText = aiResponseText.replace(problemResultMatch[0], '').trim();
-            console.log(`📊 [CourseChat] Problem: ${result}`);
-        } else {
-            // Keyword fallback for backward compat
-            const userMsg = messageText.trim();
-            const looksLikeAnswer = userMsg.length < 100 && (/^-?\d+/.test(userMsg) || /^[a-z]\s*=/i.test(userMsg) || userMsg.split(' ').length <= 10);
-            if (looksLikeAnswer) {
-                const lower = aiResponseText.toLowerCase();
-                if (/correct|exactly|great job|perfect|well done/.test(lower)) {
-                    problemAnswered = true; wasCorrect = true;
-                } else if (/not quite|try again|almost|incorrect|not exactly/.test(lower)) {
-                    problemAnswered = true; wasCorrect = false;
-                }
-            }
-        }
-
-        // Interactive graph tool detection (student courses only — parents don't use interactive graphs)
-        // Strategy: 1) Exact tag match  2) Keyword fallback if AI forgot the tag
+        let courseProgressUpdate = null;
         let graphToolConfig = null;
 
-        // 1. Check for explicit <GRAPH_TOOL> tag (with or without attributes)
-        const graphToolMatch = !isParentCourse && aiResponseText.match(/<GRAPH_TOOL(?:\s+([^>]*))?\s*>/i);
-        if (graphToolMatch) {
-            const attrs = {};
-            if (graphToolMatch[1]) {
-                graphToolMatch[1].replace(/(\w+)\s*=\s*"([^"]*)"/g, (_, k, v) => { attrs[k] = v; });
+        try {
+            const verified = await pipelineVerify(aiResponseText, {
+                userId: userId?.toString(),
+                userMessage: messageText,
+                iepReadingLevel: user.iepPlan?.readingLevel || null,
+                firstName: user.firstName,
+                isStreaming: useStreaming,
+                res: useStreaming ? res : null,
+            });
+            aiResponseText = verified.text;
+
+            if (verified.flags.length > 0) {
+                console.log(`[CourseChat] Verify: ${verified.flags.join(', ')}`);
             }
-            graphToolConfig = {
-                type: attrs.type || 'plot-line',
-                expectedSlope: attrs.slope != null ? parseFloat(attrs.slope) : null,
-                expectedIntercept: attrs.intercept != null ? parseFloat(attrs.intercept) : null,
-                xMin: attrs.xMin ? parseInt(attrs.xMin) : -10,
-                xMax: attrs.xMax ? parseInt(attrs.xMax) : 10,
-                yMin: attrs.yMin ? parseInt(attrs.yMin) : -10,
-                yMax: attrs.yMax ? parseInt(attrs.yMax) : 10
-            };
-            aiResponseText = aiResponseText.replace(graphToolMatch[0], '').trim();
-            console.log(`📐 [CourseChat] Graph tool (tag): ${graphToolConfig.type}`);
-        }
 
-        // 2. Keyword fallback — AI described the graph but forgot the tag
-        if (!graphToolConfig && !isParentCourse) {
-            const lower = aiResponseText.toLowerCase();
-            const mentionsGraphing = /\b(plot|graph)\b.*\b(line|point|grid)\b/i.test(lower)
-                || /\b(interactive grid|coordinate grid|coordinate plane)\b/i.test(lower);
-            const currentSkills = (moduleData.skills || []).join(' ').toLowerCase();
-            const isGraphModule = /graph|slope|intercept|linear|coordinate/.test(currentSkills);
+            const ext = verified.extracted;
 
-            if (mentionsGraphing && isGraphModule) {
-                // Try to extract slope/intercept from the AI's response text
-                // Look for patterns like y = 2x + 3, slope of 2, intercept of 3
-                let slope = null, intercept = null;
-                const eqMatch = aiResponseText.match(/y\s*=\s*(-?\d*\.?\d*)\s*x\s*([+-]\s*\d+\.?\d*)?/i);
-                if (eqMatch) {
-                    slope = eqMatch[1] === '' || eqMatch[1] === '-' ? (eqMatch[1] === '-' ? -1 : 1) : parseFloat(eqMatch[1]);
-                    intercept = eqMatch[2] ? parseFloat(eqMatch[2].replace(/\s/g, '')) : 0;
+            // Tier 3: Core Behavior XP
+            if (ext.coreBehaviorXp) {
+                const xpBoostInfo = calculateXpBoostFactor(user.level);
+                const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
+                xpBreakdown.tier3 = Math.min(Math.round(ext.coreBehaviorXp.amount * xpBoostInfo.factor), maxAllowed);
+                xpBreakdown.tier3Behavior = ext.coreBehaviorXp.behavior;
+            }
+
+            // Safety concern
+            if (ext.safetyConcern) {
+                console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName}) - ${ext.safetyConcern}`);
+                sendSafetyConcernAlert(
+                    { userId: userId.toString(), firstName: user.firstName, lastName: user.lastName, username: user.username, gradeLevel: user.gradeLevel },
+                    ext.safetyConcern, messageText
+                ).catch(err => console.error('Safety alert email failed:', err));
+            }
+
+            // Skill mastery
+            if (ext.skillMastered) {
+                processSkillMastery(user, ext.skillMastered);
+                console.log(`📈 [CourseChat] Skill ${ext.skillMastered}: mastery updated`);
+            }
+
+            // Problem result
+            if (ext.problemResult) {
+                problemAnswered = true;
+                wasCorrect = ext.problemResult === 'correct';
+                console.log(`📊 [CourseChat] Problem: ${ext.problemResult}`);
+            } else {
+                // Keyword fallback for backward compat
+                const userMsg = messageText.trim();
+                const looksLikeAnswer = userMsg.length < 100 && (/^-?\d+/.test(userMsg) || /^[a-z]\s*=/i.test(userMsg) || userMsg.split(' ').length <= 10);
+                if (looksLikeAnswer) {
+                    const lower = aiResponseText.toLowerCase();
+                    if (/correct|exactly|great job|perfect|well done/.test(lower)) {
+                        problemAnswered = true; wasCorrect = true;
+                    } else if (/not quite|try again|almost|incorrect|not exactly/.test(lower)) {
+                        problemAnswered = true; wasCorrect = false;
+                    }
                 }
+            }
 
-                graphToolConfig = {
-                    type: 'plot-line',
-                    expectedSlope: slope,
-                    expectedIntercept: intercept,
-                    xMin: -10, xMax: 10, yMin: -10, yMax: 10
-                };
-                console.log(`📐 [CourseChat] Graph tool (keyword fallback): slope=${slope}, intercept=${intercept}`);
+            // Graph tool detection (runs on verify-cleaned text)
+            graphToolConfig = detectGraphTool(aiResponseText, {
+                isParentCourse,
+                moduleSkills: moduleData?.skills || [],
+            });
+            if (graphToolConfig) {
+                // Strip the tag from response if detected by tag match
+                if (graphToolConfig._source === 'tag') {
+                    aiResponseText = aiResponseText.replace(/<GRAPH_TOOL(?:\s+[^>]*)?\s*>/gi, '').trim();
+                }
+                console.log(`📐 [CourseChat] Graph tool (${graphToolConfig._source}): ${graphToolConfig.type}`);
+                delete graphToolConfig._source;
+            }
+
+            // Scaffold & module progression (via coursePersist)
+            if (ext.scaffoldAdvance || ext.moduleComplete) {
+                // In streaming mode, verify already sent a replacement event to strip tags
+                console.log(`[CourseChat:Progression] Tags: SCAFFOLD_ADVANCE=${!!ext.scaffoldAdvance}, MODULE_COMPLETE=${!!ext.moduleComplete}`);
+
+                try {
+                    if (ext.moduleComplete) {
+                        courseProgressUpdate = processModuleComplete(courseSession);
+                        await courseSession.save();
+
+                        // Award module completion XP
+                        if (courseProgressUpdate.xpAwarded) {
+                            try {
+                                const userService = require('../services/userService');
+                                await userService.awardXP(user._id, courseProgressUpdate.xpAwarded, `Module complete: ${courseProgressUpdate.moduleId}`);
+                            } catch (xpErr) {
+                                user.xp = (user.xp || 0) + courseProgressUpdate.xpAwarded;
+                            }
+                        }
+                        console.log(`🎓 [CourseChat] ${user.firstName} completed module ${courseProgressUpdate.moduleId} — progress: ${courseSession.overallProgress}%`);
+
+                    } else if (ext.scaffoldAdvance) {
+                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect);
+                        if (courseProgressUpdate) {
+                            await courseSession.save();
+                            console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal}`);
+                        }
+                    }
+                } catch (progressErr) {
+                    console.error('[CourseChat] Scaffold progression error:', progressErr.message);
+                }
+            }
+
+        } catch (verifyErr) {
+            // Fallback: just run answer-key filter if verify fails
+            console.error('[CourseChat] Verify failed, falling back to answer-key filter:', verifyErr.message);
+            const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+            if (answerKeyCheck.wasFiltered) {
+                aiResponseText = answerKeyCheck.text;
             }
         }
 
         if (problemAnswered) {
             conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
             if (wasCorrect) conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
-        }
-
-        // ── SCAFFOLD & MODULE PROGRESS TRACKING ──────────────
-        // Parse signal tags that control course progression
-        const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(aiResponseText);
-        const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(aiResponseText);
-        let courseProgressUpdate = null;
-
-        console.log(`[CourseChat:Progression] Tags detected — SCAFFOLD_ADVANCE=${hasScaffoldAdvance}, MODULE_COMPLETE=${hasModuleComplete}, sessionId=${courseSession._id}, currentModuleId=${courseSession.currentModuleId}, scaffoldIdx=${courseSession.currentScaffoldIndex}`);
-        if (!hasScaffoldAdvance && !hasModuleComplete) {
-            console.log(`[CourseChat:Progression] No signal tags in AI response (first 300 chars): "${aiResponseText?.substring(0, 300)}"`);
-        }
-
-        // Strip signal tags from student-facing text
-        if (hasScaffoldAdvance || hasModuleComplete) {
-            aiResponseText = aiResponseText
-                .replace(/<\s*SCAFFOLD_ADVANCE\s*>/gi, '')
-                .replace(/<\s*MODULE_COMPLETE\s*>/gi, '')
-                .trim();
-            // In streaming mode, tags were already sent — send replacement to overwrite
-            if (useStreaming && !clientDisconnected) {
-                try { res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`); } catch (e) {}
-            }
-        }
-
-        if (hasScaffoldAdvance || hasModuleComplete) {
-            try {
-                const totalSteps = moduleData?.scaffold?.length || 1;
-                const currentIdx = courseSession.currentScaffoldIndex || 0;
-                const mod = courseSession.modules.find(m => m.moduleId === courseSession.currentModuleId);
-                if (!mod) {
-                    console.error(`[CourseChat:Progression] ⚠️ Could not find module "${courseSession.currentModuleId}" in courseSession.modules (${courseSession.modules.map(m => m.moduleId).join(', ')}). Tags will be IGNORED.`);
-                }
-
-                if (hasModuleComplete && mod) {
-                    // MODULE COMPLETE: mark done, unlock next, reset scaffold
-                    console.log(`[CourseChat:Progression] MODULE_COMPLETE — before: moduleId=${mod.moduleId}, status=${mod.status}, scaffoldIdx=${courseSession.currentScaffoldIndex}/${totalSteps - 1}, lessons=${mod.lessons?.length || 0}`);
-                    mod.status = 'completed';
-                    mod.scaffoldProgress = 100;
-                    mod.completedAt = new Date();
-
-                    // Mark all lessons in this module as completed
-                    if (mod.lessons && mod.lessons.length > 0) {
-                        mod.lessons.forEach(l => {
-                            if (l.status !== 'completed') {
-                                l.status = 'completed';
-                                l.completedAt = new Date();
-                            }
-                        });
-                    }
-
-                    const modIdx = courseSession.modules.findIndex(m => m.moduleId === courseSession.currentModuleId);
-                    if (modIdx >= 0 && modIdx < courseSession.modules.length - 1) {
-                        const nextMod = courseSession.modules[modIdx + 1];
-                        if (nextMod.status === 'locked') nextMod.status = 'available';
-                        nextMod.startedAt = new Date();
-                        courseSession.currentModuleId = nextMod.moduleId;
-                        // Set currentLessonId to first lesson of next module
-                        courseSession.currentLessonId = nextMod.lessons?.[0]?.lessonId || null;
-                        if (nextMod.lessons?.[0]) nextMod.lessons[0].status = 'available';
-                        console.log(`[CourseChat:Progression] Advanced to next module: ${nextMod.moduleId} (idx ${modIdx} → ${modIdx + 1})`);
-                    } else {
-                        console.log(`[CourseChat:Progression] No next module after idx ${modIdx} — total modules: ${courseSession.modules.length}`);
-                    }
-                    courseSession.currentScaffoldIndex = 0;
-
-                    courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
-
-                    const doneCount = courseSession.modules.filter(m => m.status === 'completed').length;
-                    console.log(`[CourseChat:Progression] After MODULE_COMPLETE — completed=${doneCount}/${courseSession.modules.length}, overallProgress=${courseSession.overallProgress}%`);
-                    if (doneCount === courseSession.modules.length) {
-                        courseSession.status = 'completed';
-                        courseSession.completedAt = new Date();
-                        console.log(`[CourseChat:Progression] 🎉 Full course completed!`);
-                    }
-
-                    courseSession.markModified('modules');
-                    await courseSession.save();
-                    console.log(`[CourseChat:Progression] DB saved — MODULE_COMPLETE for ${mod.moduleId}`);
-
-                    // Award module completion XP (fire-and-forget)
-                    const moduleXP = 150;
-                    try {
-                        const userService = require('../services/userService');
-                        await userService.awardXP(user._id, moduleXP, `Module complete: ${mod.moduleId}`);
-                    } catch (xpErr) {
-                        user.xp = (user.xp || 0) + moduleXP;
-                    }
-
-                    console.log(`🎓 [CourseChat] ${user.firstName} completed module ${mod.moduleId} — progress: ${courseSession.overallProgress}%`);
-
-                    courseProgressUpdate = {
-                        event: 'module_complete',
-                        moduleId: mod.moduleId,
-                        overallProgress: courseSession.overallProgress,
-                        nextModuleId: courseSession.currentModuleId,
-                        currentLessonId: courseSession.currentLessonId,
-                        xpAwarded: moduleXP,
-                        courseComplete: courseSession.status === 'completed'
-                    };
-
-                } else if (hasScaffoldAdvance && mod) {
-                    // SCAFFOLD ADVANCE: validate practice phases require evidence
-                    const currentStep = moduleData?.scaffold?.[currentIdx];
-                    const stepType = currentStep?.type || currentStep?.lessonPhase || '';
-                    const isPracticePhase = ['guided_practice', 'independent_practice', 'we-do', 'you-do', 'mastery-check'].includes(stepType);
-                    console.log(`[CourseChat:Progression] SCAFFOLD_ADVANCE — currentIdx=${currentIdx}/${totalSteps - 1}, stepType="${stepType}", isPracticePhase=${isPracticePhase}, mod=${mod.moduleId} (status=${mod.status})`);
-                    if (!currentStep) console.warn(`[CourseChat:Progression] ⚠️ No scaffold step at index ${currentIdx} — moduleData.scaffold has ${moduleData?.scaffold?.length || 0} entries`);
-
-                    let correctSinceLastAdvance = 0;
-                    if (isPracticePhase && conversation?.messages) {
-                        for (let i = conversation.messages.length - 1; i >= 0; i--) {
-                            const msg = conversation.messages[i];
-                            if (msg.scaffoldAdvanced) break;
-                            if (msg.problemResult === 'correct') correctSinceLastAdvance++;
-                        }
-                        if (wasCorrect) correctSinceLastAdvance++;
-                        console.log(`[CourseChat:Progression] Practice gate check — correctSinceLastAdvance=${correctSinceLastAdvance}, wasCorrect=${wasCorrect}`);
-                    }
-
-                    const MIN_CORRECT = 2;
-                    if (isPracticePhase && correctSinceLastAdvance < MIN_CORRECT) {
-                        console.log(`⚠️ [CourseChat] SCAFFOLD_ADVANCE blocked — "${stepType}" needs ${MIN_CORRECT} correct, got ${correctSinceLastAdvance}`);
-                    } else {
-                        const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
-                        if (newIdx === currentIdx) {
-                            console.warn(`[CourseChat:Progression] ⚠️ SCAFFOLD_ADVANCE at last step (idx=${currentIdx}/${totalSteps - 1}) — newIdx still ${newIdx}. AI should emit MODULE_COMPLETE instead.`);
-                        }
-                        courseSession.currentScaffoldIndex = newIdx;
-
-                        mod.scaffoldProgress = Math.round((newIdx / totalSteps) * 100);
-                        if (mod.status === 'available') {
-                            mod.status = 'in_progress';
-                            mod.startedAt = mod.startedAt || new Date();
-                        }
-
-                        // Track lesson transitions
-                        const prevLessonId = currentStep?.lessonId;
-                        const nextStep = moduleData?.scaffold?.[newIdx];
-                        const nextLessonId = nextStep?.lessonId;
-
-                        if (prevLessonId && nextLessonId && mod.lessons && mod.lessons.length > 0) {
-                            // Mark current lesson in_progress if it hasn't been yet
-                            const curLesson = mod.lessons.find(l => l.lessonId === prevLessonId);
-                            if (curLesson && curLesson.status === 'locked') {
-                                curLesson.status = 'in_progress';
-                                curLesson.startedAt = curLesson.startedAt || new Date();
-                            }
-
-                            if (prevLessonId !== nextLessonId) {
-                                // Lesson boundary crossed — complete previous, start next
-                                if (curLesson && curLesson.status !== 'completed') {
-                                    curLesson.status = 'completed';
-                                    curLesson.completedAt = new Date();
-                                }
-                                const nextLesson = mod.lessons.find(l => l.lessonId === nextLessonId);
-                                if (nextLesson) {
-                                    nextLesson.status = 'in_progress';
-                                    nextLesson.startedAt = nextLesson.startedAt || new Date();
-                                }
-                                courseSession.currentLessonId = nextLessonId;
-                            } else if (!courseSession.currentLessonId) {
-                                courseSession.currentLessonId = prevLessonId;
-                            }
-
-                            // Also mark the current lesson as in_progress if first scaffold step
-                            if (curLesson && curLesson.status === 'available') {
-                                curLesson.status = 'in_progress';
-                                curLesson.startedAt = curLesson.startedAt || new Date();
-                            }
-                        }
-
-                        // Recalculate blended overall progress (includes scaffold progress)
-                        courseSession.overallProgress = calculateOverallProgress(courseSession.modules);
-
-                        courseSession.markModified('modules');
-                        await courseSession.save();
-                        console.log(`[CourseChat:Progression] DB saved — scaffold ${currentIdx} → ${newIdx}, scaffoldProgress=${mod.scaffoldProgress}%, overallProgress=${courseSession.overallProgress}%`);
-
-                        // Mark advance point for future counting
-                        if (conversation?.messages?.length > 0) {
-                            conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;
-                        }
-
-                        console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
-
-                        // Derive the scaffold phase label for breadcrumb display
-                        const phaseLabels = {
-                            'explanation': 'Concept Intro', 'concept-intro': 'Concept Intro',
-                            'model': 'I-Do (Modeling)', 'i-do': 'I-Do (Modeling)',
-                            'guided_practice': 'We-Do (Guided)', 'we-do': 'We-Do (Guided)',
-                            'independent_practice': 'You-Do (Independent)', 'you-do': 'You-Do (Independent)',
-                            'mastery-check': 'Mastery Check', 'concept-check': 'Concept Check',
-                            'check-in': 'Check-In'
-                        };
-                        const nextPhase = nextStep?.type || nextStep?.lessonPhase || '';
-                        const phaseLabel = phaseLabels[nextPhase] || nextPhase;
-
-                        // Find lesson title from module data
-                        const completedLessonTitle = mod.lessons?.find(l => l.lessonId === prevLessonId)?.title || '';
-                        const nextLessonTitle = mod.lessons?.find(l => l.lessonId === (nextLessonId || prevLessonId))?.title || '';
-                        const didTransitionLesson = prevLessonId && nextLessonId && prevLessonId !== nextLessonId;
-
-                        // Count lesson progress for the transition card
-                        let completedLessonCount = 0;
-                        let totalLessonCount = 0;
-                        if (mod.lessons && mod.lessons.length > 0) {
-                            totalLessonCount = mod.lessons.length;
-                            completedLessonCount = mod.lessons.filter(l => l.status === 'completed').length;
-                        }
-
-                        courseProgressUpdate = {
-                            event: 'scaffold_advance',
-                            scaffoldIndex: newIdx,
-                            scaffoldTotal: totalSteps,
-                            scaffoldProgress: mod.scaffoldProgress,
-                            overallProgress: courseSession.overallProgress,
-                            stepTitle: nextStep?.title || null,
-                            // Breadcrumb data
-                            currentLessonId: courseSession.currentLessonId,
-                            lessonTitle: nextLessonTitle,
-                            phase: phaseLabel,
-                            unit: mod.unit,
-                            moduleName: mod.title,
-                            // Lesson transition data (only present when lesson boundary crossed)
-                            lessonTransition: didTransitionLesson ? {
-                                completedLessonId: prevLessonId,
-                                completedLessonTitle,
-                                nextLessonId,
-                                nextLessonTitle,
-                                lessonsCompleted: completedLessonCount,
-                                lessonsTotal: totalLessonCount
-                            } : null
-                        };
-                    }
-                }
-            } catch (progressErr) {
-                console.error('[CourseChat] Scaffold progression error:', progressErr.message, progressErr.stack?.split('\n').slice(0, 3).join(' | '));
-            }
         }
 
         // ── Save AI response to conversation ────────────────
