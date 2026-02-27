@@ -475,15 +475,18 @@ async function smartAutoName(conversationId) {
     if (!conversation) return null;
 
     // Only auto-name if:
-    // 1. It's a general conversation (not a topic session)
+    // 1. It's a general or course conversation (not a topic session)
     // 2. Has enough messages (2+ for meaningful context)
     // 3. Doesn't already have a custom name
-    // 4. Current name is generic
+    // 4. Current name is generic (or matches the course name for course conversations)
     const genericNames = ['Math Session', 'General Chat', 'New Chat', null, ''];
 
     if (conversation.conversationType === 'topic') return null; // Already has a topic
     if (conversation.customName) return null; // User set a custom name
-    if (!genericNames.includes(conversation.conversationName)) return null; // Already named
+    const isGenericName = genericNames.includes(conversation.conversationName);
+    const isCourseWithDefaultName = conversation.conversationType === 'course'
+      && conversation.conversationName === conversation.topic;
+    if (!isGenericName && !isCourseWithDefaultName) return null; // Already named
     if (conversation.messages.length < 2) return null; // Not enough context
 
     // Detect topic from messages
