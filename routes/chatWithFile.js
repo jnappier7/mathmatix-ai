@@ -18,6 +18,7 @@ const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { anthropic, openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
 const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -261,10 +262,26 @@ router.post('/',
             console.log('[chatWithFile] Received response from OpenAI');
         }
 
-        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
-        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
-        if (answerKeyCheck.wasFiltered) {
-            aiResponseText = answerKeyCheck.text;
+        // Run pipeline verify stage (anti-cheat + reading level + LaTeX normalization + tag extraction)
+        try {
+            const verified = await pipelineVerify(aiResponseText, {
+                userId: userId?.toString(),
+                userMessage: combinedText,
+                iepReadingLevel: user.iepPlan?.readingLevel || null,
+                firstName: user.firstName,
+                isStreaming: false,
+            });
+            aiResponseText = verified.text;
+            if (verified.flags.length > 0) {
+                console.log(`[chatWithFile] Verify: ${verified.flags.join(', ')}`);
+            }
+        } catch (verifyErr) {
+            // Fallback to just answer-key filter if verify fails
+            console.error('[chatWithFile] Verify failed, falling back to answer-key filter:', verifyErr.message);
+            const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+            if (answerKeyCheck.wasFiltered) {
+                aiResponseText = answerKeyCheck.text;
+            }
         }
 
         // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)

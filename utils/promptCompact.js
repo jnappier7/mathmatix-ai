@@ -213,6 +213,17 @@ When ${firstName} asks about themselves ("What grade am I in?", "What do you kno
   if (learningStyle === 'Auditory') personalization.push('Focus on clear verbal explanations, talk through concepts step by step.');
   if (personalization.length) parts.push(personalization.join('\n'));
 
+  // Rapport context — what we learned during the intro conversation
+  const rapportAnswers = userProfile.learningProfile?.rapportAnswers;
+  if (rapportAnswers && Object.keys(rapportAnswers).length > 0) {
+    const rapportParts = [];
+    if (rapportAnswers.mood && rapportAnswers.mood !== 'neutral') rapportParts.push(`Arrived feeling: ${rapportAnswers.mood}`);
+    if (rapportAnswers.currentFocus) rapportParts.push(`Working on: ${rapportAnswers.currentFocus}`);
+    if (rapportParts.length) {
+      parts.push(`--- RAPPORT NOTES ---\n${rapportParts.join('\n')}\nUse naturally. Don't parrot back verbatim.`);
+    }
+  }
+
   // Language preference
   if (preferredLanguage && preferredLanguage !== 'English') {
     parts.push(`

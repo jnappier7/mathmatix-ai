@@ -38,7 +38,7 @@ const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
-const { runPipeline } = require('../utils/pipeline');
+const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -769,11 +769,20 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
+            // Map mastery badge to pipeline's activeSkill format
+            const activeSkill = masteryContext ? {
+                skillId: masteryContext.skillId,
+                displayName: masteryContext.badgeName || masteryContext.skillId,
+                teachingGuidance: null, // Pulled from skill library by decide stage if needed
+            } : null;
+
             pipelineResult = await runPipeline(message, {
                 user,
                 conversation: activeConversation,
                 systemPrompt,
                 formattedMessages: formattedMessagesForLLM,
+                activeSkill,
+                phaseState: activeConversation.phaseState || null,
                 hasRecentUpload,
                 stream: useStreaming,
                 res: useStreaming ? res : null,
@@ -799,6 +808,23 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             } catch (llmError) {
                 console.error('[Pipeline] Fallback LLM also failed:', llmError.message);
                 fallbackText = "I'm having trouble thinking right now. Could you try sending that again in a moment?";
+            }
+
+            // Run verify on fallback response (anti-cheat + LaTeX normalization)
+            try {
+                const fallbackVerified = await pipelineVerify(fallbackText, {
+                    userId: user._id?.toString(),
+                    userMessage: message,
+                    iepReadingLevel: user.iepPlan?.readingLevel || null,
+                    firstName: user.firstName,
+                    isStreaming: false,
+                });
+                fallbackText = fallbackVerified.text;
+                if (fallbackVerified.flags.length > 0) {
+                    console.log(`[Pipeline] Fallback verify: ${fallbackVerified.flags.join(', ')}`);
+                }
+            } catch (verifyErr) {
+                console.error('[Pipeline] Fallback verify failed (using unverified):', verifyErr.message);
             }
 
             // Minimal conversation save so the message isn't lost
