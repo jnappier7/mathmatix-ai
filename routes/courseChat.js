@@ -16,7 +16,7 @@ const { callLLM, callLLMStream } = require('../utils/llmGateway');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
-const { calculateXpBoostFactor } = require('../utils/promptCompressor');
+// calculateXpBoostFactor now used internally by xpEngine
 const { detectTopic } = require('../utils/activitySummarizer');
 const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
@@ -24,6 +24,7 @@ const { buildProgressUpdate } = require('../utils/progressState');
 const { verify: pipelineVerify } = require('../utils/pipeline');
 const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
 const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
+const { computeXpBreakdown, applyXpToUser } = require('../utils/pipeline/xpEngine');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -268,8 +269,7 @@ router.post('/', async (req, res) => {
         }
 
         // ── Pipeline verify (anti-cheat + tag extraction + LaTeX + reading level) ──
-        const xpLadder = BRAND_CONFIG.xpLadder;
-        const xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
+        let ext = {};
         let problemAnswered = false;
         let wasCorrect = false;
         let courseProgressUpdate = null;
@@ -290,15 +290,7 @@ router.post('/', async (req, res) => {
                 console.log(`[CourseChat] Verify: ${verified.flags.join(', ')}`);
             }
 
-            const ext = verified.extracted;
-
-            // Tier 3: Core Behavior XP
-            if (ext.coreBehaviorXp) {
-                const xpBoostInfo = calculateXpBoostFactor(user.level);
-                const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
-                xpBreakdown.tier3 = Math.min(Math.round(ext.coreBehaviorXp.amount * xpBoostInfo.factor), maxAllowed);
-                xpBreakdown.tier3Behavior = ext.coreBehaviorXp.behavior;
-            }
+            ext = verified.extracted;
 
             // Safety concern
             if (ext.safetyConcern) {
@@ -411,6 +403,19 @@ router.post('/', async (req, res) => {
         conversation.currentTopic = courseSession.courseName;
         conversation.lastActivity = new Date();
 
+        // Persist session mood for dashboard visibility
+        if (sessionMood && sessionMood.trajectory) {
+            conversation.sessionMood = {
+                trajectory: sessionMood.trajectory,
+                energy: sessionMood.energy,
+                momentum: sessionMood.momentum,
+                inFlow: sessionMood.inFlow,
+                fatigueSignal: sessionMood.fatigueSignal,
+                turnCount: sessionMood.turnCount,
+                lastUpdated: new Date(),
+            };
+        }
+
         // Clean invalid messages before save
         if (Array.isArray(conversation.messages)) {
             conversation.messages = conversation.messages.filter(msg =>
@@ -419,54 +424,24 @@ router.post('/', async (req, res) => {
         }
         await conversation.save();
 
-        // ── XP calculation (student courses only) ─────────────
+        // ── XP calculation (student courses only, via shared xpEngine) ──
+        let xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
         let leveledUp = false;
         let tutorsJustUnlocked = [];
         const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
 
         if (!isParentCourse) {
-            xpBreakdown.tier1 = xpLadder.tier1.amount;
+            xpBreakdown = computeXpBreakdown({
+                wasCorrect,
+                recentMessages: conversation.messages.slice(-6),
+                extracted: ext,
+                userLevel: user.level,
+                isCourseSession: true,
+            });
 
-            if (wasCorrect && xpBreakdown.tier2 === 0) {
-                const recent = conversation.messages.slice(-6);
-                const usedHint = recent.some(m => m.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(m.content));
-                xpBreakdown.tier2 = usedHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
-                xpBreakdown.tier2Type = usedHint ? 'correct' : 'clean';
-            }
-
-            xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
-
-            // Course boost: always 1.5x in course mode
-            const courseBoost = 1.5;
-            xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
-            xpBreakdown.courseBoost = courseBoost;
-
-            user.xp = (user.xp || 0) + xpBreakdown.total;
-
-            // XP analytics
-            if (!user.xpLadderStats) user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
-            user.xpLadderStats.lifetimeTier1 += xpBreakdown.tier1;
-            user.xpLadderStats.lifetimeTier2 += xpBreakdown.tier2;
-            user.xpLadderStats.lifetimeTier3 += xpBreakdown.tier3;
-            if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
-                const eb = user.xpLadderStats.tier3Behaviors.find(b => b.behavior === xpBreakdown.tier3Behavior);
-                if (eb) { eb.count += 1; eb.lastEarned = new Date(); }
-                else { user.xpLadderStats.tier3Behaviors.push({ behavior: xpBreakdown.tier3Behavior, count: 1, lastEarned: new Date() }); }
-            }
-            user.markModified('xpLadderStats');
-
-            // Level check
-            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
-                user.level += 1;
-                leveledUp = true;
-            }
-
-            const { getTutorsToUnlock } = require('../utils/unlockTutors');
-            tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-            if (tutorsJustUnlocked.length > 0) {
-                user.unlockedItems.push(...tutorsJustUnlocked);
-                user.markModified('unlockedItems');
-            }
+            const xpResult = applyXpToUser(user, xpBreakdown);
+            leveledUp = xpResult.leveledUp;
+            tutorsJustUnlocked = xpResult.tutorsUnlocked;
         }
 
         // AI time tracking — use atomic $inc to prevent race conditions with concurrent requests
@@ -783,7 +758,23 @@ async function handleCourseGreeting(req, res, userId) {
         // Call AI
         const aiStartTime = Date.now();
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 250 });
-        const greetingText = completion.choices[0]?.message?.content?.trim() || `Welcome to ${courseSession.courseName}! Let's get started.`;
+        let greetingText = completion.choices[0]?.message?.content?.trim() || `Welcome to ${courseSession.courseName}! Let's get started.`;
+
+        // Run verify for LaTeX normalization and answer-key filtering
+        try {
+            const verified = await pipelineVerify(greetingText, {
+                userId: userId?.toString(),
+                userMessage: '',
+                iepReadingLevel: user.iepPlan?.readingLevel || null,
+                firstName: user.firstName,
+            });
+            greetingText = verified.text;
+            if (verified.flags.length > 0) {
+                console.log(`[CourseGreeting] Verify: ${verified.flags.join(', ')}`);
+            }
+        } catch (verifyErr) {
+            console.error('[CourseGreeting] Verify failed, using raw greeting:', verifyErr.message);
+        }
 
         // Track AI time
         const aiSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);

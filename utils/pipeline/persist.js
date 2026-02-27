@@ -17,6 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
+const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -37,6 +38,7 @@ async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
     decision, responseText, originalMessage, aiProcessingSeconds,
+    sessionMood,
   } = params;
 
   const results = {
@@ -49,8 +51,6 @@ async function persist(params) {
     iepGoalUpdates: [],
     courseProgressUpdate: null,
   };
-
-  const xpLadder = BRAND_CONFIG.xpLadder;
 
   // ── 1. Process problem result ──
   // Prefer structured diagnosis over tag-based detection
@@ -149,6 +149,19 @@ async function persist(params) {
 
   conversation.lastActivity = new Date();
 
+  // Persist session mood for dashboard visibility
+  if (sessionMood && sessionMood.trajectory) {
+    conversation.sessionMood = {
+      trajectory: sessionMood.trajectory,
+      energy: sessionMood.energy,
+      momentum: sessionMood.momentum,
+      inFlow: sessionMood.inFlow,
+      fatigueSignal: sessionMood.fatigueSignal,
+      turnCount: sessionMood.turnCount,
+      lastUpdated: new Date(),
+    };
+  }
+
   // Struggle detection
   try {
     const { detectStruggle, detectTopic } = require('../activitySummarizer');
@@ -184,79 +197,18 @@ async function persist(params) {
 
   await conversation.save();
 
-  // ── 8. XP calculations ──
-  // Tier 1: Silent turn XP
-  results.xpBreakdown.tier1 = xpLadder.tier1.amount;
+  // ── 8. XP calculations (via shared xpEngine) ──
+  results.xpBreakdown = computeXpBreakdown({
+    wasCorrect: results.wasCorrect,
+    recentMessages: conversation.messages.slice(-6),
+    extracted,
+    userLevel: user.level,
+    isCourseSession: !!user.activeCourseSessionId,
+  });
 
-  // Tier 2: Performance XP
-  if (results.wasCorrect) {
-    const recentMsgs = conversation.messages.slice(-6);
-    const askedForHint = recentMsgs.some(msg =>
-      msg.role === 'user' && /\b(hint|help|stuck|don'?t know|idk|confused)\b/i.test(msg.content)
-    );
-    results.xpBreakdown.tier2 = askedForHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
-    results.xpBreakdown.tier2Type = askedForHint ? 'correct' : 'clean';
-  }
-
-  // Tier 3: Core behavior XP
-  if (extracted.coreBehaviorXp) {
-    const { calculateXpBoostFactor } = require('../promptCompressor');
-    const xpBoostInfo = calculateXpBoostFactor(user.level);
-    const boosted = Math.round(extracted.coreBehaviorXp.amount * xpBoostInfo.factor);
-    const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
-    results.xpBreakdown.tier3 = Math.min(boosted, maxAllowed);
-    results.xpBreakdown.tier3Behavior = extracted.coreBehaviorXp.behavior;
-  } else if (extracted.legacyXp) {
-    results.xpBreakdown.tier2 = Math.min(extracted.legacyXp.amount, xpLadder.maxTier2PerTurn);
-    results.xpBreakdown.tier2Type = 'legacy';
-  }
-
-  results.xpBreakdown.total = results.xpBreakdown.tier1 + results.xpBreakdown.tier2 + results.xpBreakdown.tier3;
-
-  // Course session XP boost
-  if (user.activeCourseSessionId) {
-    results.xpBreakdown.total = Math.round(results.xpBreakdown.total * 1.5);
-    results.xpBreakdown.courseBoost = 1.5;
-  }
-
-  user.xp = (user.xp || 0) + results.xpBreakdown.total;
-
-  // XP ladder analytics
-  if (!user.xpLadderStats) {
-    user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
-  }
-  user.xpLadderStats.lifetimeTier1 = (user.xpLadderStats.lifetimeTier1 || 0) + results.xpBreakdown.tier1;
-  user.xpLadderStats.lifetimeTier2 = (user.xpLadderStats.lifetimeTier2 || 0) + results.xpBreakdown.tier2;
-  user.xpLadderStats.lifetimeTier3 = (user.xpLadderStats.lifetimeTier3 || 0) + results.xpBreakdown.tier3;
-
-  if (results.xpBreakdown.tier3 > 0 && results.xpBreakdown.tier3Behavior) {
-    const existing = user.xpLadderStats.tier3Behaviors.find(b => b.behavior === results.xpBreakdown.tier3Behavior);
-    if (existing) {
-      existing.count += 1;
-      existing.lastEarned = new Date();
-    } else {
-      user.xpLadderStats.tier3Behaviors.push({
-        behavior: results.xpBreakdown.tier3Behavior,
-        count: 1,
-        lastEarned: new Date(),
-      });
-    }
-  }
-  user.markModified('xpLadderStats');
-
-  // Level up check
-  while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
-    user.level += 1;
-    results.leveledUp = true;
-  }
-
-  // Unlock tutors
-  const { getTutorsToUnlock } = require('../unlockTutors');
-  results.tutorsUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-  if (results.tutorsUnlocked.length > 0) {
-    user.unlockedItems.push(...results.tutorsUnlocked);
-    user.markModified('unlockedItems');
-  }
+  const xpResult = applyXpToUser(user, results.xpBreakdown);
+  results.leveledUp = xpResult.leveledUp;
+  results.tutorsUnlocked = xpResult.tutorsUnlocked;
 
   // Badge progress
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {

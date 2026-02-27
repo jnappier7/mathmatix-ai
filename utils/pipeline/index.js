@@ -145,6 +145,7 @@ async function runPipeline(message, ctx) {
     responseText: verified.text,
     originalMessage: message,
     aiProcessingSeconds,
+    sessionMood,
   });
 
   const pipelineTime = Date.now() - startTime;

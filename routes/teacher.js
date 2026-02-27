@@ -94,14 +94,20 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const updatedIepPlan = req.body;
 
+    // Check both direct assignment AND enrollment code assignment
+    const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+    if (!authorizedStudentIds.includes(studentId)) {
+      return res.status(403).json({ message: 'Student not found or not assigned to this teacher.' });
+    }
+
     const result = await User.findOneAndUpdate(
-      { _id: studentId, role: 'student', teacherId: teacherId },
+      { _id: studentId, role: 'student' },
       { $set: { iepPlan: updatedIepPlan } },
       { new: true, runValidators: true }
     );
 
     if (!result) {
-      return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
+      return res.status(404).json({ message: 'Student not found.' });
     }
 
     res.json({ message: 'IEP plan updated successfully!', iepPlan: result.iepPlan });
@@ -715,6 +721,18 @@ router.put('/class-ai-settings', isTeacher, async (req, res) => {
 router.get('/class-ai-settings/for-student/:studentId', isAuthenticated, async (req, res) => {
   try {
     const { studentId } = req.params;
+    const requesterId = req.user._id.toString();
+
+    // Security: only allow the student themselves, their teacher, or an admin
+    const isSelf = requesterId === studentId;
+    const isAdminUser = req.user.role === 'admin' || (req.user.roles && req.user.roles.includes('admin'));
+    if (!isSelf && !isAdminUser) {
+      // Check if requester is the student's teacher
+      const isTeacherUser = req.user.role === 'teacher' || (req.user.roles && req.user.roles.includes('teacher'));
+      if (!isTeacherUser) {
+        return res.status(403).json({ message: 'Not authorized to view these settings.' });
+      }
+    }
 
     // Get student's teacher
     const student = await User.findById(studentId).select('teacherId').lean();
