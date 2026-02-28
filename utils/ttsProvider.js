@@ -5,7 +5,7 @@
 const axios = require('axios');
 const { retryWithExponentialBackoff } = require('./openaiClient');
 
-const TTS_PROVIDER = process.env.TTS_PROVIDER || 'elevenlabs';
+const TTS_PROVIDER = process.env.TTS_PROVIDER || 'cartesia';
 
 // --- Cartesia config ---
 const CARTESIA_API_KEY = process.env.CARTESIA_API_KEY;
