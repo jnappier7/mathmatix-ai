@@ -1731,7 +1731,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                                 fullText = event.content;
                                 if (streamRef && streamRef.textNode) {
-                                    streamRef.textNode.textContent = event.content;
+                                    streamRef.textNode.innerHTML = renderMarkdownMath(event.content);
                                 }
                             } else if (event.type === 'complete' && event.data) {
                                 completeData = event.data;
@@ -1750,13 +1750,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     showThinkingIndicator(false);
                 }
 
-                // Finalize the streaming message (adds audio button, reactions)
-                if (streamRef) {
-                    finalizeStreamingMessage(streamRef, fullText);
-                }
-
                 // Use the complete data from the server, or build minimal data from streamed text
                 data = completeData || { text: fullText };
+
+                // Finalize the streaming message with the verified text from
+                // the server (which ran normalizeLatex) instead of raw chunks
+                if (streamRef) {
+                    finalizeStreamingMessage(streamRef, data.text || fullText);
+                }
             } else {
                 // Non-streaming: parse JSON as before
                 data = await response.json();
