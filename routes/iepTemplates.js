@@ -13,6 +13,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const { isTeacher } = require('../middleware/auth');
+const { getStudentIdsForTeacher } = require('../services/userService');
 const {
     getAccommodationTemplates,
     getAccommodationTemplate,
@@ -173,11 +174,18 @@ router.post('/apply/accommodations/:studentId', isTeacher, async (req, res) => {
             });
         }
 
-        // Verify teacher has access to this student
+        // Verify teacher has access to this student (direct assignment OR enrollment code)
+        const authorizedIds = await getStudentIdsForTeacher(req.user._id);
+        if (!authorizedIds.includes(studentId)) {
+            return res.status(404).json({
+                success: false,
+                message: 'Student not found or not assigned to you'
+            });
+        }
+
         const student = await User.findOne({
             _id: studentId,
-            role: 'student',
-            teacherId: req.user._id
+            role: 'student'
         });
 
         if (!student) {
@@ -261,11 +269,18 @@ router.post('/apply/goals/:studentId', isTeacher, async (req, res) => {
             });
         }
 
-        // Verify teacher has access to this student
+        // Verify teacher has access to this student (direct assignment OR enrollment code)
+        const authorizedIds = await getStudentIdsForTeacher(req.user._id);
+        if (!authorizedIds.includes(studentId)) {
+            return res.status(404).json({
+                success: false,
+                message: 'Student not found or not assigned to you'
+            });
+        }
+
         const student = await User.findOne({
             _id: studentId,
-            role: 'student',
-            teacherId: req.user._id
+            role: 'student'
         });
 
         if (!student) {
@@ -318,11 +333,18 @@ router.get('/recommended/:studentId', isTeacher, async (req, res) => {
     try {
         const { studentId } = req.params;
 
-        // Verify teacher has access to this student
+        // Verify teacher has access to this student (direct assignment OR enrollment code)
+        const authorizedIds = await getStudentIdsForTeacher(req.user._id);
+        if (!authorizedIds.includes(studentId)) {
+            return res.status(404).json({
+                success: false,
+                message: 'Student not found or not assigned to you'
+            });
+        }
+
         const student = await User.findOne({
             _id: studentId,
-            role: 'student',
-            teacherId: req.user._id
+            role: 'student'
         }, 'firstName lastName gradeLevel learningProfile iepPlan');
 
         if (!student) {

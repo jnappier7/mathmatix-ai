@@ -520,6 +520,9 @@ const userSchema = new Schema({
   /* Demo / Playground Account */
   isDemo:        { type: Boolean, default: false },    // True for playground demo accounts
   demoProfileId: { type: String, trim: true },         // e.g., 'teacher-rivera', 'student-maya'
+  isDemoClone:   { type: Boolean, default: false },    // True for per-session demo clones
+  cloneSessionId:{ type: String, default: null },      // Groups all docs in one clone session
+  cloneExpiresAt:{ type: Date, default: null },        // TTL for orphan cleanup
 
   /* Student-specific profile */
   gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
@@ -1142,6 +1145,7 @@ userSchema.index({ roles: 1 });                // Multi-role queries (all user r
 userSchema.index({ parentIds: 1 });            // Parent dashboard: find children
 userSchema.index({ lastLogin: -1 });           // Activity reports sorted by login
 userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports
+userSchema.index({ cloneSessionId: 1 }, { sparse: true }); // Demo clone cleanup
 
 /* ---------- EXPORT MODEL ---------- */
 const User = mongoose.models.User || mongoose.model('User', userSchema);

@@ -1,23 +1,13 @@
 // routes/demo.js
 // Handles playground/demo account login and state reset.
-// Demo accounts are one-click login (no password required) and reset on logout.
+// Each visitor gets an isolated clone — concurrent users never interfere.
 
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const { resetDemoAccount } = require('../utils/demoReset');
+const { createDemoClone, cleanupDemoClone, resetDemoClone } = require('../utils/demoClone');
 const { DEMO_PROFILES } = require('../utils/demoData');
 const logger = require('../utils/logger');
-
-// Map demoProfileId → username for login
-const PROFILE_TO_USERNAME = {
-  'teacher-rivera':  'demo-teacher',
-  'is-cooper':       'demo-is',
-  'parent-chen':     'demo-parent',
-  'student-maya':    'demo-student-maya',
-  'student-alex':    'demo-student-alex',
-  'student-jordan':  'demo-student-jordan',
-};
 
 /**
  * GET /api/demo/profiles
@@ -32,7 +22,8 @@ router.get('/profiles', (req, res) => {
 
 /**
  * POST /api/demo/login
- * One-click login as a demo account. Resets the account to initial state first.
+ * One-click login as a demo account.
+ * Creates a per-session clone so concurrent visitors never conflict.
  *
  * Body: { profileId: 'teacher-rivera' }
  */
@@ -47,32 +38,21 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const username = PROFILE_TO_USERNAME[profileId];
-    if (!username) {
-      return res.status(400).json({ success: false, message: 'Demo profile not configured.' });
-    }
-
-    // 1. Reset the demo account to its initial state
-    logger.info(`[Demo] Resetting playground account: ${profileId}`);
-    const resetOk = await resetDemoAccount(profileId);
-    if (!resetOk) {
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to reset demo account. Please try again or contact support.'
+    // If already in a demo session, clean up the previous clone first
+    if (req.isAuthenticated() && req.session.isDemo && req.session.cloneSessionId) {
+      const oldSessionId = req.session.cloneSessionId;
+      await new Promise((resolve, reject) => {
+        req.logout((err) => {
+          if (err) return reject(err);
+          resolve();
+        });
       });
-    }
-
-    // 2. Find the freshly-reset user
-    const user = await User.findOne({ username, isDemo: true });
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Demo account not found. Please run the playground seed script first.'
-      });
-    }
-
-    // 3. If there's an existing session, destroy it first
-    if (req.isAuthenticated()) {
+      // Clean up old clone in background
+      cleanupDemoClone(oldSessionId).catch(err =>
+        logger.error('[Demo] Old clone cleanup error:', err)
+      );
+    } else if (req.isAuthenticated()) {
+      // Non-demo session — just log out
       await new Promise((resolve, reject) => {
         req.logout((err) => {
           if (err) return reject(err);
@@ -81,7 +61,11 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // 4. Log the user in
+    // Create an isolated clone for this session
+    logger.info(`[Demo] Creating clone for profile: ${profileId}`);
+    const { user, cloneSessionId } = await createDemoClone(profileId);
+
+    // Log the cloned user in
     await new Promise((resolve, reject) => {
       req.logIn(user, (err) => {
         if (err) return reject(err);
@@ -89,14 +73,15 @@ router.post('/login', async (req, res) => {
       });
     });
 
-    // Mark session as demo for the banner and logout reset
+    // Mark session as demo with clone tracking
     req.session.isDemo = true;
     req.session.demoProfileId = profileId;
+    req.session.cloneSessionId = cloneSessionId;
 
     // Update lastLogin
     await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
 
-    logger.info(`[Demo] Playground login successful: ${profileId} (${user.username})`);
+    logger.info(`[Demo] Clone login successful: ${profileId} (session ${cloneSessionId})`);
 
     // Determine redirect
     const profile = DEMO_PROFILES[profileId];
@@ -130,8 +115,8 @@ router.post('/login', async (req, res) => {
 
 /**
  * POST /api/demo/reset
- * Manually reset the current demo account (without logging out).
- * Useful for a "Start Over" button in the demo banner.
+ * Manually reset the current demo session (without logging out).
+ * Deletes the old clone and creates a fresh one — "Start Over" button.
  */
 router.post('/reset', async (req, res) => {
   try {
@@ -143,16 +128,26 @@ router.post('/reset', async (req, res) => {
     }
 
     const profileId = req.session.demoProfileId;
+    const oldCloneSessionId = req.session.cloneSessionId;
     if (!profileId) {
       return res.status(400).json({ success: false, message: 'No demo profile in session.' });
     }
 
-    logger.info(`[Demo] Manual reset requested for: ${profileId}`);
-    const resetOk = await resetDemoAccount(profileId);
+    logger.info(`[Demo] Reset requested for: ${profileId} (session ${oldCloneSessionId})`);
 
-    if (!resetOk) {
-      return res.status(500).json({ success: false, message: 'Reset failed.' });
-    }
+    // Create fresh clone (this also cleans up the old one)
+    const { user, cloneSessionId } = await resetDemoClone(oldCloneSessionId, profileId);
+
+    // Re-login as the new clone
+    await new Promise((resolve, reject) => {
+      req.logIn(user, (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
+    // Update session with new clone ID
+    req.session.cloneSessionId = cloneSessionId;
 
     res.json({
       success: true,
