@@ -467,10 +467,13 @@ class FloatingScreener {
       questionNum.textContent = `Question ${problem.questionNumber}`;
     }
 
-    // Question content
+    // Question content — render through the full markdown+KaTeX pipeline
     const questionContent = document.getElementById('screener-question-content');
     if (questionContent) {
-      questionContent.innerHTML = this.formatProblemContent(problem.content);
+      const formatted = this.formatProblemContent(problem.content);
+      questionContent.innerHTML = window.renderMarkdownMath
+        ? window.renderMarkdownMath(formatted)
+        : formatted;
     }
 
     // Render options for MC questions
@@ -488,6 +491,13 @@ class FloatingScreener {
           </div>
         `;
       }).join('');
+
+      // Render math in option text through the full KaTeX pipeline
+      if (window.renderMarkdownMath) {
+        optionsContainer.querySelectorAll('.mc-option-text').forEach(span => {
+          span.innerHTML = window.renderMarkdownMath(span.textContent);
+        });
+      }
 
       // Add click handlers
       optionsContainer.querySelectorAll('.mc-option').forEach(option => {
@@ -525,10 +535,10 @@ class FloatingScreener {
       }
     }
 
-    // Typeset any math using KaTeX (via global shim)
+    // Fallback: catch any remaining raw \( \) in text nodes
     if (window.renderMathInElement) {
-      window.renderMathInElement(questionContent);
-      window.renderMathInElement(optionsContainer);
+      if (questionContent) window.renderMathInElement(questionContent);
+      if (optionsContainer) window.renderMathInElement(optionsContainer);
     }
   }
 

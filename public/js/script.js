@@ -1195,9 +1195,10 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Expose appendMessage and renderMathInElement globally
+    // Expose appendMessage, renderMathInElement, and renderMarkdownMath globally
     window.appendMessage = appendMessage;
     window.renderMathInElement = renderMathInElement;
+    window.renderMarkdownMath = renderMarkdownMath;
 
     // Quick Reply Suggestion Chips (contextual help)
     const suggestionsContainer = document.getElementById('suggestion-chips-container');
