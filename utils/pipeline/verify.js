@@ -251,18 +251,45 @@ async function verify(responseText, context = {}) {
 function normalizeLatex(text) {
   if (!text) return text;
 
-  // Already has proper LaTeX delimiters? Skip the heavy lifting.
-  // (Still normalize $...$ even if \( \) is present elsewhere.)
-
   let result = text;
 
-  // Convert $$...$$ (display math) to \[...\]
+  // ── 0. Restore missing backslashes on common LaTeX commands ──
+  // gpt-4o-mini frequently drops ALL backslashes, producing:
+  //   "frac{3}{2sqrt{7}}" instead of "\frac{3}{2\sqrt{7}}"
+  //   "[frac{x}{y}]" instead of "\[\frac{x}{y}\]"
+  // Only restore when followed by { to avoid false positives on words.
+  const LATEX_COMMANDS = [
+    'frac', 'sqrt', 'cdot', 'times', 'div', 'pm', 'mp',
+    'leq', 'geq', 'neq', 'approx', 'equiv',
+    'left', 'right', 'text', 'mathrm', 'mathbf',
+    'overline', 'underline', 'hat', 'bar', 'vec',
+    'sum', 'prod', 'int', 'lim', 'infty', 'pi',
+    'alpha', 'beta', 'gamma', 'delta', 'theta', 'lambda',
+    'sin', 'cos', 'tan', 'log', 'ln',
+  ];
+  // Match command names NOT preceded by a backslash, followed by { or a space-then-{
+  const cmdPattern = new RegExp(
+    `(?<!\\\\)(${LATEX_COMMANDS.join('|')})(?=\\s*\\{)`, 'g'
+  );
+  result = result.replace(cmdPattern, '\\$1');
+
+  // ── 0b. Restore display math delimiters: bare [expr] → \[expr\] ──
+  // Match [expr] where expr contains LaTeX commands (now backslash-restored)
+  // and is NOT a markdown link [text](url) or array index.
+  result = result.replace(/(?<![\\a-zA-Z])\[([^\[\]]{2,}?)\](?!\s*\()/g, (match, inner) => {
+    // Only convert if inner content has LaTeX commands or math syntax
+    if (/\\[a-zA-Z]/.test(inner) || /[{}^_]/.test(inner)) {
+      return `\\[${inner}\\]`;
+    }
+    return match;
+  });
+
+  // ── 1. Convert $$...$$ (display math) to \[...\] ──
   result = result.replace(/\$\$([\s\S]+?)\$\$/g, '\\[$1\\]');
 
-  // Convert $...$ (inline math) to \(...\) — but not currency ($5, $10)
-  // Only match when content looks like math (has letters+operators or LaTeX commands)
+  // ── 2. Convert $...$ (inline math) to \(...\) ──
+  // but not currency ($5, $10)
   result = result.replace(/(?<![\\$])\$([^$\n]+?)\$(?!\d)/g, (match, inner) => {
-    // Skip if it looks like currency ($5) or doesn't contain math-like content
     if (/^\d+(\.\d+)?$/.test(inner.trim())) return match;
     if (/[a-zA-Z].*[+\-*/^=<>_{}\\]|\\[a-zA-Z]/.test(inner)) {
       return `\\(${inner}\\)`;
@@ -270,13 +297,9 @@ function normalizeLatex(text) {
     return match;
   });
 
-  // Fix bare parenthesized math expressions that should have LaTeX delimiters.
-  // Pattern: ( expr ) where expr contains ^ _ { } \ or multi-char variable expressions
-  // Only match when the parenthesized content clearly looks like math notation.
+  // ── 3. Fix bare parenthesized math: ( expr ) → \( expr \) ──
   result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
-    // Only convert if inner content has LaTeX-like math syntax
     const hasMathSyntax = /[\\^_{}]/.test(inner) || /[a-z]\^?\d/i.test(inner);
-    // Don't convert function calls, conditions, or natural text
     const isNaturalText = /^[a-z\s,]+$/i.test(inner) || inner.length > 60;
     if (hasMathSyntax && !isNaturalText) {
       return `\\(${inner.trim()}\\)`;

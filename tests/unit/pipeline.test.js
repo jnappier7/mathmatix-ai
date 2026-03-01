@@ -22,7 +22,7 @@ const { observe, MESSAGE_TYPES, PATTERNS, extractAnswer, detectContextSignals } 
 const { estimateIndependence } = require('../../utils/pipeline/diagnose');
 const { decide, ACTIONS } = require('../../utils/pipeline/decide');
 const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assemblePrompt } = require('../../utils/pipeline/generate');
-const { extractSystemTags } = require('../../utils/pipeline/verify');
+const { extractSystemTags, normalizeLatex } = require('../../utils/pipeline/verify');
 const { buildSidecar, mergeLlmSignals, getSidecarInstruction, getSignalStats } = require('../../utils/pipeline/sidecar');
 const { buildSlimRules, CORE_RULES } = require('../../utils/pipeline/promptSlim');
 const { computeSessionMood, scoreMessage, buildMoodDirective, TRAJECTORIES, ENERGY_LEVELS } = require('../../utils/pipeline/sessionMood');
@@ -731,6 +731,88 @@ describe('Pipeline: Session Mood', () => {
       const decision = decide(observation, diagnosis, { sessionMood });
       expect(decision.scaffoldLevel).toBeGreaterThanOrEqual(4);
       expect(decision.directives.some(d => d.includes('fatigue'))).toBe(true);
+    });
+  });
+});
+
+// ============================================================================
+// NORMALIZE LATEX
+// ============================================================================
+
+describe('Pipeline: normalizeLatex', () => {
+  describe('backslash restoration on LaTeX commands', () => {
+    test('restores backslash before frac', () => {
+      expect(normalizeLatex('frac{3}{4}')).toContain('\\frac{3}{4}');
+    });
+
+    test('restores backslash before sqrt', () => {
+      expect(normalizeLatex('sqrt{7}')).toContain('\\sqrt{7}');
+    });
+
+    test('restores backslashes on nested commands: frac + sqrt', () => {
+      const result = normalizeLatex('frac{3}{2sqrt{7}}');
+      expect(result).toContain('\\frac');
+      expect(result).toContain('\\sqrt');
+    });
+
+    test('does not double-backslash already escaped commands', () => {
+      const input = '\\frac{3}{4}';
+      expect(normalizeLatex(input)).toContain('\\frac{3}{4}');
+      expect(normalizeLatex(input)).not.toContain('\\\\frac');
+    });
+
+    test('restores cdot, times', () => {
+      expect(normalizeLatex('3 cdot{} 4')).toContain('\\cdot');
+      expect(normalizeLatex('5 times{} 3')).toContain('\\times');
+    });
+
+    test('does not affect plain words without braces', () => {
+      expect(normalizeLatex('The fraction is easy')).toBe('The fraction is easy');
+    });
+  });
+
+  describe('display math delimiter restoration', () => {
+    test('converts bare [cmd{...}] to \\[cmd{...}\\]', () => {
+      const result = normalizeLatex('[\\frac{3}{2\\sqrt{7}}]');
+      expect(result).toMatch(/\\\[.*\\frac.*\\\]/);
+    });
+
+    test('full pipeline: bare [frac{3}{2sqrt{7}}] → display math with backslashes', () => {
+      const input = 'Simplify this: [frac{3}{2sqrt{7}}]';
+      const result = normalizeLatex(input);
+      expect(result).toContain('\\[');
+      expect(result).toContain('\\]');
+      expect(result).toContain('\\frac');
+      expect(result).toContain('\\sqrt');
+    });
+
+    test('does not convert markdown links [text](url)', () => {
+      const input = 'See [this link](https://example.com)';
+      expect(normalizeLatex(input)).toBe(input);
+    });
+
+    test('does not convert plain text in brackets', () => {
+      const input = 'Use the [quadratic formula] to solve';
+      expect(normalizeLatex(input)).toBe(input);
+    });
+  });
+
+  describe('existing normalization still works', () => {
+    test('converts $$...$$ to \\[...\\]', () => {
+      expect(normalizeLatex('$$x^2 + 1$$')).toBe('\\[x^2 + 1\\]');
+    });
+
+    test('converts $...$ to \\(...\\) for math content', () => {
+      expect(normalizeLatex('Solve $x + 3 = 7$')).toBe('Solve \\(x + 3 = 7\\)');
+    });
+
+    test('does not convert currency $5', () => {
+      expect(normalizeLatex('That costs $5')).toContain('$5');
+    });
+
+    test('converts bare (x^2 + 1) to \\(x^2 + 1\\)', () => {
+      const result = normalizeLatex('factor (x^2 - 4)');
+      expect(result).toContain('\\(');
     });
   });
 });
