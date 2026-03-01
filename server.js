@@ -216,11 +216,13 @@ app.use(helmet({
         "'self'",
         "'unsafe-inline'", // Required for inline styles
         "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://cdn.jsdelivr.net", // KaTeX CSS
         "https://fonts.googleapis.com" // Google Fonts
       ],
       fontSrc: [
         "'self'",
         "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://cdn.jsdelivr.net", // KaTeX fonts
         "https://fonts.gstatic.com", // Google Fonts
         "data:" // Base64 fonts
       ],
