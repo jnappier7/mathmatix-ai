@@ -563,8 +563,8 @@ class FloatingScreener {
         // Wrap the math portion in LaTeX delimiters
         // Replace common patterns with LaTeX equivalents
         formatted = formatted
-          // Wrap expressions with exponents: 2^3 → \(2^3\)
-          .replace(/(\d+)\^(\d+)/g, '\\($1^{$2}\\)')
+          // Wrap expressions with exponents: 2^3, 3^x, x^2, 5x^2
+          .replace(/(\w+)\^(\w+)/g, '\\($1^{$2}\\)')
           // Handle multiplication symbol
           .replace(/×/g, '\\times ')
           // Handle division symbol
@@ -588,7 +588,7 @@ class FloatingScreener {
       const hasMathPatterns = /[\^_]|\d+\/\d+|×|÷|√/.test(formatted);
       if (hasMathPatterns) {
         formatted = formatted
-          .replace(/(\d+)\^(\d+)/g, '\\($1^{$2}\\)')
+          .replace(/(\w+)\^(\w+)/g, '\\($1^{$2}\\)')
           .replace(/×/g, '\\(\\times\\)')
           .replace(/÷/g, '\\(\\div\\)')
           .replace(/(\d+)\/(\d+)(?!\d)/g, '\\(\\frac{$1}{$2}\\)')

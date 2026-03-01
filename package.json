@@ -66,6 +66,7 @@
     "helmet": "^8.0.0",
     "html-to-text": "^9.0.0",
     "jsdom": "^27.4.0",
+    "katex": "^0.16.21",
     "mathlive": "^0.105.3",
     "mongodb": "^6.21.0",
     "mongoose": "^8.22.1",

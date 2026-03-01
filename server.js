@@ -216,7 +216,7 @@ app.use(helmet({
         "'self'",
         "'unsafe-inline'", // Required for inline styles
         "https://cdnjs.cloudflare.com", // Font Awesome
-        "https://cdn.jsdelivr.net", // KaTeX CSS
+        "https://cdn.jsdelivr.net", // CDN CSS (marked, DOMPurify)
         "https://fonts.googleapis.com" // Google Fonts
       ],
       fontSrc: [
