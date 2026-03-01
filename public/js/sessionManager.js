@@ -39,6 +39,7 @@ class SessionManager {
       masteryProgress: null
     };
 
+    this.stopped = false;
     this.init();
   }
 
@@ -60,6 +61,9 @@ class SessionManager {
     } else {
       console.log('[SessionManager] Initialized (idle timeout deferred to auto-logout.js)');
     }
+
+    // Stop all timers if session expires (401 detected by csrfFetch)
+    window.addEventListener('session-expired', () => this.stop());
 
     // Handle page unload (tab/browser close)
     this.setupUnloadHandler();
@@ -133,7 +137,17 @@ class SessionManager {
     this.scheduleNextHeartbeat();
   }
 
+  stop() {
+    this.stopped = true;
+    clearTimeout(this.heartbeatTimer);
+    clearInterval(this.idleCheckTimer);
+    clearTimeout(this.warningTimer);
+    this.heartbeatTimer = null;
+    console.log('[SessionManager] Stopped (session expired)');
+  }
+
   scheduleNextHeartbeat() {
+    if (this.stopped) return;
     if (this.heartbeatTimer) clearTimeout(this.heartbeatTimer);
     this.heartbeatTimer = setTimeout(() => {
       this.checkAndUpdateActiveTime();
@@ -163,6 +177,7 @@ class SessionManager {
   }
 
   async sendHeartbeat() {
+    if (this.stopped) return;
     try {
       // Check active time one more time before sending
       this.checkAndUpdateActiveTime();
