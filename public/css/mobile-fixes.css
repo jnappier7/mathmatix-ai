@@ -28,13 +28,9 @@ a {
     button { cursor: default; }
 }
 
-/* Prevent accidental zoom on double-tap */
-* { touch-action: manipulation; }
-
-/* Allow natural scrolling and zoom on inputs */
-input, textarea, select, .math-field {
-    touch-action: auto;
-}
+/* Note: touch-action: manipulation is applied only to interactive elements
+   (buttons, links, tabs) above — NOT to * wildcard, which blocks scrolling
+   on nested containers and causes "stuck scroll" on mobile. */
 
 /* Ensure proper safe area insets for notched devices */
 @supports (padding: env(safe-area-inset-bottom)) {
@@ -1158,7 +1154,8 @@ input, textarea, select, .math-field {
     .mobile-drawer             { z-index: 2000; }
     .more-tools-overlay        { z-index: 2099; }
     .more-tools-menu           { z-index: 2100; }
-    .modal-overlay             { z-index: 9999; touch-action: none; }
+    .modal-overlay             { z-index: 9999; }
+    .modal-overlay.is-visible  { touch-action: none; }
     .modal-content             { touch-action: auto; }
     #levelup-celebration-modal,
     #badge-celebration-modal   { z-index: 10000; }
@@ -1534,6 +1531,7 @@ body.is-mobile #sidebar-toggle {
         min-height: 0 !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
     }
 
     /* Input: pinned at bottom of chat, never collapses */

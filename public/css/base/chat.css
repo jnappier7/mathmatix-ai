@@ -339,6 +339,7 @@
   padding: 6px 12px 4px;
   flex-shrink: 0;
   background: var(--clr-bg-light);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
 }
 
 /* Suggestion chips row */

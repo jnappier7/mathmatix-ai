@@ -1334,10 +1334,28 @@
 
     .stat-card.clickable {
       cursor: pointer;
+      position: relative;
+    }
+
+    .stat-card.clickable::after {
+      content: '\f0b0';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 10px;
+      color: #27ae60;
+      opacity: 0.5;
+      transition: opacity 0.2s;
     }
 
     .stat-card.clickable:hover {
       border-color: #27ae60;
+    }
+
+    .stat-card.clickable:hover::after {
+      opacity: 1;
     }
 
     .stat-icon {
@@ -2175,6 +2193,13 @@
     .comparison-trend.trend-flat { color: #95a5a6; }
     .comparison-trend.trend-invert.trend-up { color: #e74c3c; }
     .comparison-trend.trend-invert.trend-down { color: #27ae60; }
+
+    .trend-prev {
+      font-size: 0.85em;
+      font-weight: 400;
+      color: #95a5a6;
+      margin-left: 2px;
+    }
 
     @media (max-width: 768px) {
       .comparison-grid {
@@ -3992,8 +4017,8 @@
           </div>
 
           <div class="smart-alerts-footer">
-            <button class="btn-link" id="view-all-activity-btn">
-              <i class="fas fa-stream"></i> View raw activity feed
+            <button class="btn-link" id="view-all-activity-btn" style="display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; width: 100%; justify-content: center; font-weight: 500; color: #64748b; transition: all 0.2s;">
+              <i class="fas fa-stream"></i> Switch to Live Feed
             </button>
           </div>
         </div>
@@ -4042,6 +4067,7 @@
               <div class="comparison-trend" id="cmp-minutes-trend">
                 <span class="trend-arrow"></span>
                 <span class="trend-pct"></span>
+                <span class="trend-prev" id="cmp-minutes-prev"></span>
               </div>
             </div>
             <div class="comparison-card">
@@ -4050,6 +4076,7 @@
               <div class="comparison-trend" id="cmp-active-trend">
                 <span class="trend-arrow"></span>
                 <span class="trend-pct"></span>
+                <span class="trend-prev" id="cmp-active-prev"></span>
               </div>
             </div>
             <div class="comparison-card">
@@ -4058,6 +4085,7 @@
               <div class="comparison-trend trend-invert" id="cmp-attention-trend">
                 <span class="trend-arrow"></span>
                 <span class="trend-pct"></span>
+                <span class="trend-prev" id="cmp-attention-prev"></span>
               </div>
             </div>
             <div class="comparison-card">

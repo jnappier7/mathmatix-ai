@@ -15,13 +15,9 @@ a {
     touch-action: manipulation;
 }
 
-/* Prevent accidental zoom on double-tap */
-* { touch-action: manipulation; }
-
-/* Allow natural input behavior */
-input, textarea, select {
-    touch-action: auto;
-}
+/* Note: touch-action: manipulation is applied only to interactive elements
+   (buttons, links, tabs) above — NOT to * wildcard, which blocks scrolling
+   on nested containers and causes "stuck scroll" on mobile. */
 
 /* --- 2. SAFE AREA INSETS (notched devices) --- */
 
@@ -133,6 +129,16 @@ input, textarea, select {
     /* Single-column content with better padding */
     .center-content {
         padding: 16px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent scroll chaining on nested scrollable containers */
+    .table-scroll-container,
+    .chat-display-widget,
+    .smart-alerts-container,
+    .drawer-content,
+    .modal-content {
+        overscroll-behavior: contain;
     }
 
     /* Hide footer on mobile — saves space */
@@ -686,7 +692,24 @@ input, textarea, select {
     }
 }
 
-/* --- 19. PRINT — HIDE MOBILE-ONLY ELEMENTS --- */
+/* --- 19. ACCESSIBILITY — FOCUS STATES --- */
+
+*:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+button:focus-visible,
+.btn:focus-visible,
+.tab-btn:focus-visible,
+.nav-btn:focus-visible,
+a:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+}
+
+/* --- 20. PRINT — HIDE MOBILE-ONLY ELEMENTS --- */
 
 @media print {
     .main-header,
