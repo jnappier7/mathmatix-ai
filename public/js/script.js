@@ -2015,6 +2015,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.lessonTracker.update(data.progressUpdate);
             }
 
+            // Smart suggestion chips: prefer server-provided, fall back to client-side detection
+            if (data.suggestions && data.suggestions.length > 0 && window.showSuggestions) {
+                window._serverSuggestionsProvided = true;
+                setTimeout(() => window.showSuggestions(data.suggestions), 500);
+            }
+
         } catch (error) {
             console.error("Chat error:", error);
 

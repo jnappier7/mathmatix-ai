@@ -24,6 +24,7 @@ const { verify } = require('./verify');
 const { persist } = require('./persist');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
+const { generateSuggestions } = require('./suggestions');
 
 /**
  * Run the full tutoring pipeline.
@@ -151,6 +152,19 @@ async function runPipeline(message, ctx) {
   const pipelineTime = Date.now() - startTime;
   console.log(`[Pipeline] Complete in ${pipelineTime}ms (observe→diagnose→decide→generate→verify→persist)`);
 
+  // ── Generate smart suggestion chips ──
+  const suggestions = generateSuggestions({
+    decision,
+    diagnosis,
+    observation,
+    sessionMood,
+    user: ctx.user,
+    conversationStats: {
+      problemsAttempted: ctx.conversation.problemsAttempted || 0,
+      problemsCorrect: ctx.conversation.problemsCorrect || 0,
+    },
+  });
+
   // ── Return everything chat.js needs ──
   return {
     text: verified.text,
@@ -171,6 +185,8 @@ async function runPipeline(message, ctx) {
       problemsAttempted: ctx.conversation.problemsAttempted || 0,
       problemsCorrect: ctx.conversation.problemsCorrect || 0,
     },
+    // Smart suggestion chips (context-aware)
+    suggestions,
     // Structured sidecar (deterministic + LLM signals merged)
     sidecar,
     // Pipeline metadata (for debugging/logging)
