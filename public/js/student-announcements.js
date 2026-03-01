@@ -9,6 +9,10 @@
     let unreadCount = 0;
     let announcementsData = [];
     let isModalOpen = false;
+    let pollTimer = null;
+    let consecutiveFailures = 0;
+    const BASE_POLL_INTERVAL = 60000;
+    const MAX_POLL_INTERVAL = 300000;
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initStudentAnnouncements);
@@ -20,8 +24,20 @@
         // Load unread count
         loadUnreadCount();
 
-        // Check for new announcements every 60 seconds
-        setInterval(loadUnreadCount, 60000);
+        // Poll for new announcements (backs off on 429)
+        schedulePoll();
+    }
+
+    function schedulePoll() {
+        if (pollTimer) clearTimeout(pollTimer);
+        const interval = Math.min(
+            BASE_POLL_INTERVAL * Math.pow(2, consecutiveFailures),
+            MAX_POLL_INTERVAL
+        );
+        pollTimer = setTimeout(async () => {
+            await loadUnreadCount();
+            schedulePoll();
+        }, interval);
     }
 
     // Create the announcement bell button
@@ -214,7 +230,11 @@
     async function loadUnreadCount() {
         try {
             const response = await fetch('/api/announcements/student/unread-count');
-            if (!response.ok) return;
+            if (!response.ok) {
+                if (response.status === 429) consecutiveFailures++;
+                return;
+            }
+            consecutiveFailures = 0;
 
             const data = await response.json();
             unreadCount = data.unreadCount || 0;

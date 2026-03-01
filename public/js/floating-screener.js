@@ -643,11 +643,17 @@ class FloatingScreener {
         })
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit answer');
+        let errorMsg = 'Failed to submit answer';
+        if (response.status === 429) {
+          errorMsg = 'Too many requests. Please wait a moment and try again.';
+        } else {
+          try { const err = await response.json(); errorMsg = err.error || errorMsg; } catch {}
+        }
+        throw new Error(errorMsg);
       }
+
+      const data = await response.json();
 
       console.log('[FloatingScreener] Answer submitted:', data.correct ? 'correct' : 'miss');
 

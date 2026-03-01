@@ -218,8 +218,13 @@ class ShowYourWorkManager {
             });
 
             if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.message || 'Failed to analyze work');
+                let errorMsg = 'Failed to analyze work';
+                if (response.status === 429) {
+                    errorMsg = 'Too many requests. Please wait a moment and try again.';
+                } else {
+                    try { const err = await response.json(); errorMsg = err.message || errorMsg; } catch {}
+                }
+                throw new Error(errorMsg);
             }
 
             const result = await response.json();
