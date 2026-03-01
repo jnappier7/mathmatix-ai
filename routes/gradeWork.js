@@ -145,6 +145,10 @@ function parseAnalysisResponse(raw) {
         jsonStr = fenceMatch[1].trim();
     }
 
+    // LLMs often produce bare LaTeX backslashes (\(, \frac, \[, etc.)
+    // that are invalid JSON escapes. Fix them before parsing.
+    jsonStr = jsonStr.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+
     const parsed = JSON.parse(jsonStr);
 
     if (!parsed.problems || !Array.isArray(parsed.problems)) {
