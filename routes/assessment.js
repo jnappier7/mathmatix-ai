@@ -114,7 +114,7 @@ router.post('/respond', async (req, res) => {
     const messages = conversation.messages.filter(m => m.role !== 'system');
     const systemPrompt = conversation.messages.find(m => m.role === 'system')?.content;
 
-    const aiResponse = await aiService.chat(
+    let aiResponse = await aiService.chat(
       messages.map(m => ({ role: m.role, content: m.content })),
       systemPrompt
     );
