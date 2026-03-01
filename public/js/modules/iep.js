@@ -84,7 +84,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                     playBtn.disabled = true;
                     playBtn.classList.add('is-loading');
                 }
-                const rawText = latest.querySelector('.message-content')?.textContent || latest.textContent || '';
+                const rawText = latest.dataset.rawText || latest.querySelector('.message-text')?.textContent || '';
                 const speakableText = generateSpeakableText(rawText);
                 if (speakableText) {
                     setTimeout(() => playAudio(speakableText, tutor?.voiceId, latest.id), 300);

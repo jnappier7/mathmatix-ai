@@ -925,6 +925,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bubble.className = `message ${sender}`;
         bubble.id = `message-${Date.now()}-${Math.random()}`;
         bubble.dataset.messageIndex = messageIndexCounter++; // Track index for reactions
+        bubble.dataset.rawText = text || ''; // Store raw text for TTS (avoids KaTeX DOM triple-read)
         if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
 
         // Add animation class for entrance
@@ -1342,6 +1343,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageRef || !messageRef.bubble) return;
 
         messageRef.bubble.classList.remove('streaming');
+        messageRef.bubble.dataset.rawText = fullText || ''; // Store raw text for TTS (avoids KaTeX DOM triple-read)
 
         // Final clean render with the complete text — KaTeX is synchronous,
         // so no debounce or async needed. This catches any LaTeX delimiters
