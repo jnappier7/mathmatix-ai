@@ -132,6 +132,18 @@
     border: 1px solid var(--clr-border);
 }
 
+/* KaTeX MathML — hidden (screen-reader only).
+   Local fallback in case the CDN katex.min.css fails to load. */
+.katex-mathml {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
 /* KaTeX inline math — size to match surrounding text */
 .message .katex {
     font-size: 1.05em;
