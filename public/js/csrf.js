@@ -71,6 +71,23 @@ function addCsrfTokenToForm(formData) {
 }
 
 /**
+ * Handle 401 — session has expired. Stop all background polling and
+ * redirect to the login page (once).
+ */
+function handleSessionExpired() {
+  if (window.__sessionExpired) return;
+  window.__sessionExpired = true;
+
+  console.warn('[Auth] Session expired — stopping background requests');
+  window.dispatchEvent(new CustomEvent('session-expired'));
+
+  // Don't redirect if already on the login page
+  if (!window.location.pathname.includes('login')) {
+    setTimeout(() => { window.location.href = '/login.html'; }, 100);
+  }
+}
+
+/**
  * Enhanced fetch wrapper with automatic CSRF token injection
  * Drop-in replacement for fetch() that handles CSRF automatically
  *
@@ -85,6 +102,11 @@ function addCsrfTokenToForm(formData) {
  * @returns {Promise} Fetch promise
  */
 async function csrfFetch(url, options = {}) {
+  // If session already expired, return a synthetic 401 to avoid network noise
+  if (window.__sessionExpired) {
+    return new Response(null, { status: 401, statusText: 'Session Expired' });
+  }
+
   // Only add CSRF token for state-changing methods
   const method = (options.method || 'GET').toUpperCase();
   const needsCsrf = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
@@ -93,7 +115,13 @@ async function csrfFetch(url, options = {}) {
     options = addCsrfToken(options);
   }
 
-  return fetch(url, options);
+  const response = await fetch(url, options);
+
+  if (response.status === 401) {
+    handleSessionExpired();
+  }
+
+  return response;
 }
 
 // Export for use in other modules (if using ES6 modules)

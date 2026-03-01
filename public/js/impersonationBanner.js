@@ -27,6 +27,7 @@
 
   function schedulePoll() {
     if (pollTimer) clearTimeout(pollTimer);
+    if (window.__sessionExpired) return;
     const interval = Math.min(
       POLL_INTERVAL * Math.pow(2, consecutiveFailures),
       MAX_POLL_INTERVAL
@@ -41,9 +42,15 @@
    * Check current impersonation status from server
    */
   async function checkImpersonationStatus() {
+    if (window.__sessionExpired) return;
     try {
       const response = await fetch('/api/impersonation/status');
       if (!response.ok) {
+        if (response.status === 401) {
+          cleanup();
+          if (typeof handleSessionExpired === 'function') handleSessionExpired();
+          return;
+        }
         if (response.status === 429) consecutiveFailures++;
         return;
       }
