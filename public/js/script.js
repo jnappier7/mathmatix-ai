@@ -502,52 +502,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ── Unified Markdown + Math renderer (KaTeX + markdown-it) ──
-    // markdown-it-texmath handles \(...\) and \[...\] in a single parse pass,
-    // so we no longer need protect/parse/restore or async MathJax typesetting.
+    // ── Unified Markdown + Math renderer (marked + KaTeX) ──
+    // Pipeline: protect LaTeX → marked.parse → restore with katex.renderToString
+    // KaTeX renders synchronously — no FOUC, no debounce, no post-processing.
 
-    let _md = null; // lazy-init'd markdown-it instance
-
-    function getMd() {
-        if (_md) return _md;
-        if (typeof markdownit === 'undefined' || typeof texmath === 'undefined' || typeof katex === 'undefined') {
-            return null; // libs not loaded yet
+    /**
+     * Render a KaTeX math string to HTML. Returns raw LaTeX on error.
+     */
+    function renderKatex(math, displayMode) {
+        if (typeof katex === 'undefined') return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+        try {
+            return katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true });
+        } catch (e) {
+            return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
         }
-        _md = markdownit({ html: false, linkify: true, breaks: true })
-            .use(texmath, {
-                engine: katex,
-                delimiters: ['dollars', 'brackets', 'dollarsaliased'],
-                katexOptions: { throwOnError: false, strict: false, trust: true }
-            });
-        return _md;
     }
 
     /**
-     * Render markdown + LaTeX → sanitized HTML in one pass.
-     * KaTeX renders inline during the parse — no async, no FOUC.
+     * Render markdown + LaTeX → sanitized HTML.
+     * Protect LaTeX from markdown, parse markdown, restore LaTeX as rendered KaTeX HTML.
      */
     function renderMarkdownMath(text) {
-        const md = getMd();
-        if (!md) {
-            // Fallback if libs haven't loaded yet (shouldn't happen with defer)
-            return DOMPurify ? DOMPurify.sanitize(text) : text;
+        if (!text) return '';
+        if (typeof marked === 'undefined' || !marked.parse) {
+            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(text) : text;
         }
 
-        // Protect inline visual HTML from markdown parsing
+        let processedText = text;
+
+        // Protect LaTeX blocks from markdown parsing
+        const latexBlocks = [];
+
+        // Display math \[...\]
+        processedText = processedText.replace(/\\\[([\s\S]*?)\\\]/g, (match, math) => {
+            const index = latexBlocks.length;
+            latexBlocks.push({ math, display: true });
+            return `@@LATEX_BLOCK_${index}@@`;
+        });
+
+        // Inline math \(...\)
+        processedText = processedText.replace(/\\\(([\s\S]*?)\\\)/g, (match, math) => {
+            const index = latexBlocks.length;
+            latexBlocks.push({ math, display: false });
+            return `@@LATEX_BLOCK_${index}@@`;
+        });
+
+        // Protect inline visual HTML (SVG containers from inlineChatVisuals)
         const visualBlocks = [];
-        let protectedText = text;
-        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
+        processedText = processedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
             const index = visualBlocks.length;
             visualBlocks.push(match);
             return `@@VISUAL_BLOCK_${index}@@`;
         });
-        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
+        processedText = processedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
             const index = visualBlocks.length;
             visualBlocks.push(match);
             return `@@VISUAL_BLOCK_${index}@@`;
         });
 
-        let html = md.render(protectedText);
+        // Parse markdown
+        let html = marked.parse(processedText, { breaks: true });
+
+        // Restore LaTeX blocks — render to KaTeX HTML inline (synchronous)
+        latexBlocks.forEach((block, index) => {
+            html = html.replace(`@@LATEX_BLOCK_${index}@@`, renderKatex(block.math, block.display));
+        });
 
         // Restore visual blocks
         visualBlocks.forEach((block, index) => {
@@ -598,12 +617,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Backward-compat: re-render any raw \(...\) or \[...\] in a DOM element.
+     * Re-render any raw \(...\) or \[...\] text in a DOM element using KaTeX.
      * Used by equation editor insertion and step reveals.
-     * With KaTeX this is synchronous — no debounce needed.
+     * Synchronous — no debounce needed.
      */
     function renderMathInElement(element) {
-        if (typeof katex === 'undefined') return;
+        if (typeof katex === 'undefined' || !element) return;
         // Find text nodes containing \( or \[ and render them
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
         const textNodes = [];
@@ -617,14 +636,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const span = document.createElement('span');
             // Replace \(...\) and \[...\] with rendered KaTeX
             let html = text;
-            html = html.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
-                try { return katex.renderToString(math, { displayMode: true, throwOnError: false }); }
-                catch(e) { return _; }
-            });
-            html = html.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => {
-                try { return katex.renderToString(math, { displayMode: false, throwOnError: false }); }
-                catch(e) { return _; }
-            });
+            html = html.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => renderKatex(math, true));
+            html = html.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => renderKatex(math, false));
 
             if (html !== text) {
                 span.innerHTML = html;
