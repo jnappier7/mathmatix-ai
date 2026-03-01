@@ -301,4 +301,35 @@ describe('Pipeline Integration: runPipeline', () => {
 
     expect(sendSafetyConcernAlert).toHaveBeenCalled();
   });
+
+  test('does not leave orphaned punctuation after tag stripping', async () => {
+    const user = mockUser();
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'What is 3 + 4?', problemResult: null },
+    ]);
+
+    // Simulate AI putting the tag on its own line before the question mark
+    mockLLMResponse('Great work on that problem!\n<PROBLEM_RESULT:correct>\n?Ready for the next one');
+
+    const result = await runPipeline('7', buildCtx(user, conversation));
+
+    // The "?" should be re-attached, not dangling on its own line
+    expect(result.text).not.toMatch(/\n\s*\?/);
+    expect(result.text).toContain('?');
+  });
+
+  test('re-attaches dangling ? after double newline from stripped tag', async () => {
+    const user = mockUser();
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'Solve: 2x = 10', problemResult: null },
+    ]);
+
+    // AI puts tag between sentence and question mark with blank lines
+    mockLLMResponse('What do you think is the final step for writing your answer\n\n<PROBLEM_RESULT:correct>\n\n?');
+
+    const result = await runPipeline('5', buildCtx(user, conversation));
+
+    expect(result.text).not.toMatch(/\n\s*\?/);
+    expect(result.text).toMatch(/answer\??/); // ? should be right after "answer"
+  });
 });

@@ -222,6 +222,17 @@ async function verify(responseText, context = {}) {
     text = text.replace(pattern, '').trim();
   }
 
+  // ── 8b. Re-attach orphaned punctuation ──
+  // When a system tag sits on its own line before punctuation, stripping
+  // the tag leaves the punctuation dangling on a blank line:
+  //   "...your answer\n<PROBLEM_RESULT:correct>\n?" → "...your answer\n\n?"
+  // Pull stray punctuation back onto the preceding line.
+  text = text.replace(/\n\s*\n\s*([?!.,;:])/g, '$1');
+  // Also handle single-newline case: "answer\n?"
+  text = text.replace(/\n\s*([?!.])\s*$/gm, '$1');
+  // Collapse runs of 3+ newlines to a double newline
+  text = text.replace(/\n{3,}/g, '\n\n');
+
   // ── 9. Validate non-empty ──
   if (!text || text.trim() === '') {
     text = "I'm having trouble generating a response right now. Could you please rephrase your question?";
