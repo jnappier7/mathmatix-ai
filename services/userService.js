@@ -333,6 +333,33 @@ function validatePassword(password) {
   };
 }
 
+/**
+ * Get all student IDs for a teacher, combining:
+ *  1. Students with teacherId pointing to this teacher
+ *  2. Students enrolled via this teacher's enrollment codes
+ * Returns deduplicated string ID array.
+ */
+async function getStudentIdsForTeacher(teacherId) {
+  const EnrollmentCode = require('../models/enrollmentCode');
+
+  // 1. Direct teacherId assignment
+  const directStudents = await User.find(
+    { role: 'student', teacherId },
+    '_id'
+  ).lean();
+  const idSet = new Set(directStudents.map(s => s._id.toString()));
+
+  // 2. Students enrolled via this teacher's enrollment codes
+  const codes = await EnrollmentCode.find({ teacherId }, 'enrolledStudents').lean();
+  for (const code of codes) {
+    for (const e of (code.enrolledStudents || [])) {
+      idSet.add(e.studentId.toString());
+    }
+  }
+
+  return [...idSet];
+}
+
 module.exports = {
   getUserById,
   getUserByUsername,
@@ -343,5 +370,6 @@ module.exports = {
   updateLastLogin,
   getUserStats,
   hasRole,
-  validatePassword
+  validatePassword,
+  getStudentIdsForTeacher
 };
