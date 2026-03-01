@@ -56,12 +56,22 @@ const screenerSessionSchema = new mongoose.Schema({
     responses: [{
         problemId: String,
         skillId: String,
+        skillCategory: String,          // Skill's category (e.g., 'algebra', 'fractions')
         difficulty: Number,
-        discrimination: Number,  // IRT discrimination parameter (α)
+        discrimination: Number,         // IRT discrimination parameter (α)
         correct: Boolean,
+        skipped: Boolean,               // Whether the student skipped this question
         responseTime: Number,
-        theta: Number,
-        standardError: Number
+        userAnswer: String,             // Student's submitted answer
+        correctAnswer: mongoose.Schema.Types.Mixed, // The correct answer (string or object)
+        questionNumber: Number,         // 1-indexed question number in session
+        thetaBefore: Number,            // Theta estimate before this response
+        seBefore: Number,               // Standard error before this response
+        thetaAfter: Number,             // Theta estimate after this response
+        thetaChange: Number,            // Absolute change in theta from this response
+        informationGained: Number,      // Fisher information gained from this item
+        theta: Number,                  // (legacy) Theta at time of response
+        standardError: Number           // (legacy) SE at time of response
     }],
 
     // Session state
@@ -98,18 +108,19 @@ const screenerSessionSchema = new mongoose.Schema({
         type: Date
     },
 
-    // Completion criteria (5-30 questions based on convergence)
+    // Completion criteria (8-30 questions based on convergence)
+    // Defaults aligned with catConfig.js SESSION_DEFAULTS
     minQuestions: {
         type: Number,
-        default: 5  // Minimum to establish baseline
+        default: 8  // Minimum for basic reliability
     },
     targetQuestions: {
         type: Number,
-        default: 15  // Ideal for most students
+        default: 15  // Soft target for typical students
     },
     maxQuestions: {
         type: Number,
-        default: 30  // Cap for students with variable performance
+        default: 30  // Hard cap to prevent fatigue
     },
     seThresholdStringent: {
         type: Number,
@@ -121,11 +132,11 @@ const screenerSessionSchema = new mongoose.Schema({
     },
     seThresholdFallback: {
         type: Number,
-        default: 0.35
+        default: 0.40
     },
     minInformationGain: {
         type: Number,
-        default: 0.05
+        default: 0.08
     },
 
     // Skill coverage tracking
