@@ -1031,14 +1031,13 @@
       position: relative;
       border-radius: 16px;
       overflow: hidden;
-      max-height: 550px;
+      max-height: 380px;
     }
 
     .lp-photo-banner-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 35%;
       display: block;
     }
 
@@ -1059,13 +1058,13 @@
 
     @media (max-width: 768px) {
       .lp-photo-banner { padding: 1.5rem var(--page-horizontal-padding) 0; }
-      .lp-photo-banner-wrap { max-height: 360px; border-radius: 12px; }
+      .lp-photo-banner-wrap { max-height: 240px; border-radius: 12px; }
       .lp-photo-banner-text { font-size: 1.05rem; }
       .lp-photo-banner-overlay { padding: 2rem 1.25rem 1rem; }
     }
 
     @media (max-width: 375px) {
-      .lp-photo-banner-wrap { max-height: 300px; }
+      .lp-photo-banner-wrap { max-height: 200px; }
       .lp-photo-banner-text { font-size: 0.95rem; }
     }
 
@@ -1114,6 +1113,68 @@
     .lp-mission-founder {
       font-size: 0.92rem; font-weight: 500; font-style: italic;
       color: rgba(255, 255, 255, 0.55); margin-top: 0.5rem;
+    }
+
+    /* ── Spotlight (photo + text side-by-side) ──────────── */
+    .lp-spotlight {
+      padding: 4rem var(--page-horizontal-padding);
+      background: var(--clr-bg-light);
+    }
+
+    .lp-spotlight-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .lp-spotlight--reverse .lp-spotlight-layout {
+      direction: rtl;
+    }
+
+    .lp-spotlight--reverse .lp-spotlight-content {
+      direction: ltr;
+    }
+
+    .lp-spotlight--reverse .lp-spotlight-photo {
+      direction: ltr;
+    }
+
+    .lp-spotlight-photo {
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .lp-spotlight-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 14px;
+    }
+
+    .lp-spotlight-content h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--clr-text);
+      margin-bottom: 1.25rem;
+    }
+
+    .lp-spotlight-content p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--clr-text-dim);
+      margin-bottom: 1rem;
+    }
+
+    .lp-spotlight-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .lp-spotlight-accent {
+      color: var(--clr-primary-teal);
+      font-weight: 600;
     }
 
     /* ── Mid-page CTA links ───────────────────────────────── */
@@ -1412,6 +1473,16 @@
       .lp-mission h2 { font-size: 1.45rem; }
       .lp-mission p { font-size: 0.92rem; }
 
+      /* -- Spotlight -- */
+      .lp-spotlight { padding: 2.5rem var(--page-horizontal-padding); }
+      .lp-spotlight-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+      .lp-spotlight--reverse .lp-spotlight-layout { direction: ltr; }
+      .lp-spotlight-photo { max-height: 260px; }
+      .lp-spotlight-photo img { max-height: 260px; }
+      .lp-spotlight-content { text-align: center; }
+      .lp-spotlight-content h2 { font-size: 1.45rem; }
+      .lp-spotlight-content p { font-size: 0.92rem; }
+
       /* -- FAQ: bigger touch targets -- */
       .lp-faq-question { padding: 1.1rem 0; min-height: 48px; font-size: 0.95rem; }
 
@@ -1574,7 +1645,7 @@
     <section class="lp-photo-banner lp-reveal">
       <div class="lp-inner">
         <div class="lp-photo-banner-wrap">
-          <img src="/images/tableGirl.png" alt="Student smiling while using Mathmatix AI on her laptop" class="lp-photo-banner-img" />
+          <img src="/images/girlStudy.png" alt="Student using Mathmatix AI on her laptop" class="lp-photo-banner-img" />
           <div class="lp-photo-banner-overlay">
             <p class="lp-photo-banner-text">Built for the way kids actually learn.</p>
           </div>
@@ -1632,14 +1703,16 @@
       </div>
     </section>
 
-    <!-- ── Photo Break: Mom Helping ──────────────────────── -->
-    <section class="lp-photo-banner lp-reveal">
-      <div class="lp-inner">
-        <div class="lp-photo-banner-wrap">
-          <img src="/images/homeworkMom.png" alt="Mother helping her daughter learn math with Mathmatix AI" class="lp-photo-banner-img" />
-          <div class="lp-photo-banner-overlay">
-            <p class="lp-photo-banner-text">Learning together, growing together.</p>
-          </div>
+    <!-- ── Spotlight: Parent Involvement ─────────────────── -->
+    <section class="lp-spotlight lp-reveal">
+      <div class="lp-spotlight-layout lp-inner">
+        <div class="lp-spotlight-photo">
+          <img src="/images/homeworkMom.png" alt="Mother helping her daughter learn math with Mathmatix AI" />
+        </div>
+        <div class="lp-spotlight-content">
+          <h2>Parents Stay in the Loop</h2>
+          <p>You don't need to be a math expert to support your child. Mathmatix AI gives parents real-time dashboards, weekly progress digests, and simple explanations &mdash; so you always know where your student stands.</p>
+          <p class="lp-spotlight-accent">No more guessing. No more frustration at the kitchen table.</p>
         </div>
       </div>
     </section>
@@ -1785,14 +1858,16 @@
       </div>
     </section>
 
-    <!-- ── Photo Break: Student at Desk ─────────────────── -->
-    <section class="lp-photo-banner lp-reveal">
-      <div class="lp-inner">
-        <div class="lp-photo-banner-wrap">
-          <img src="/images/deskBoy.png" alt="Student working independently on math with Mathmatix AI at his desk" class="lp-photo-banner-img" />
-          <div class="lp-photo-banner-overlay">
-            <p class="lp-photo-banner-text">Real students. Real progress. Every day.</p>
-          </div>
+    <!-- ── Spotlight: Independent Learning ──────────────── -->
+    <section class="lp-spotlight lp-spotlight--reverse lp-reveal lp-section-alt">
+      <div class="lp-spotlight-layout lp-inner">
+        <div class="lp-spotlight-photo">
+          <img src="/images/deskBoy.png" alt="Student working independently on math with Mathmatix AI at his desk" />
+        </div>
+        <div class="lp-spotlight-content">
+          <h2>Built for Independent Learners</h2>
+          <p>Whether it's after school, on the weekend, or late at night before a test &mdash; Mathmatix AI is there. Students work at their own pace with a tutor that never rushes, never judges, and always meets them where they are.</p>
+          <p class="lp-spotlight-accent">Confidence grows when kids know they can do it on their own.</p>
         </div>
       </div>
     </section>
@@ -1801,7 +1876,7 @@
     <section class="lp-mission lp-reveal">
       <div class="lp-mission-layout">
         <div class="lp-mission-photo">
-          <img src="/images/homeworkDad.png" alt="Father and daughter working together on Mathmatix AI" />
+          <img src="/images/boyClassroom.png" alt="Student working on math in the classroom with Mathmatix AI" />
         </div>
         <div class="lp-mission-content">
           <h2>Why I Built This</h2>
@@ -1921,14 +1996,16 @@
       </div>
     </section>
 
-    <!-- ── Photo Break: Laptop Learning ─────────────────── -->
-    <section class="lp-photo-banner lp-reveal">
-      <div class="lp-inner">
-        <div class="lp-photo-banner-wrap">
-          <img src="/images/laptopBoy.png" alt="Student learning math on his laptop with Mathmatix AI" class="lp-photo-banner-img" />
-          <div class="lp-photo-banner-overlay">
-            <p class="lp-photo-banner-text">Anytime, anywhere — math help that never sleeps.</p>
-          </div>
+    <!-- ── Spotlight: Always Available ──────────────────── -->
+    <section class="lp-spotlight lp-reveal">
+      <div class="lp-spotlight-layout lp-inner">
+        <div class="lp-spotlight-photo">
+          <img src="/images/laptopBoy.png" alt="Student learning math on his laptop with Mathmatix AI" />
+        </div>
+        <div class="lp-spotlight-content">
+          <h2>A Tutor That Never Sleeps</h2>
+          <p>Private tutors cost $40&ndash;$80 an hour and aren't there at 9pm when your child is stuck on homework. Mathmatix AI is available 24/7 &mdash; patient, affordable, and always ready to help.</p>
+          <p class="lp-spotlight-accent">Every student deserves this. Now they have it.</p>
         </div>
       </div>
     </section>
