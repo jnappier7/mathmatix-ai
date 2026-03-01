@@ -1,37 +1,11 @@
-// utils/openaiClient.js - MODIFIED (Claude primary, GPT fallback, with retry logic)
+// utils/openaiClient.js - OpenAI-only LLM client with retry logic
 
 const OpenAI = require("openai");
-const Anthropic = require("@anthropic-ai/sdk"); // For Claude fallback
 
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-
-// Initialize Anthropic (Claude) client, with environment-specific API keys
-let anthropic = null;
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Select appropriate API key based on environment
-// Legacy ANTHROPIC_API_KEY is used as fallback for both environments
-const anthropicApiKey = isProduction
-    ? (process.env.ANTHROPIC_API_KEY_PROD || process.env.ANTHROPIC_API_KEY)   // Production: PROD key, fallback to legacy
-    : (process.env.ANTHROPIC_API_KEY_DEV || process.env.ANTHROPIC_API_KEY);   // Development: DEV key, fallback to legacy
-
-if (anthropicApiKey) {
-    anthropic = new Anthropic({
-        apiKey: anthropicApiKey,
-    });
-    const keyType = isProduction ? 'PRODUCTION' : 'DEVELOPMENT';
-    const keySource = isProduction
-        ? (process.env.ANTHROPIC_API_KEY_PROD ? 'ANTHROPIC_API_KEY_PROD' : 'ANTHROPIC_API_KEY (fallback)')
-        : (process.env.ANTHROPIC_API_KEY_DEV ? 'ANTHROPIC_API_KEY_DEV' : 'ANTHROPIC_API_KEY (fallback)');
-
-    console.log(`✅ [Init] Anthropic client initialized successfully (${keyType} mode using ${keySource})`);
-} else {
-    console.warn('⚠️  [Init] No Anthropic API key found - Claude models will not be available');
-    console.warn('⚠️  [Init] Set ANTHROPIC_API_KEY_PROD (production) or ANTHROPIC_API_KEY_DEV (development)');
-}
 
 // Log OpenAI client status
 if (process.env.OPENAI_API_KEY) {
@@ -41,7 +15,7 @@ if (process.env.OPENAI_API_KEY) {
 }
 
 
-// Utility for exponential backoff and retry (for both OpenAI and Anthropic)
+// Utility for exponential backoff and retry
 async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
     let attempts = 0;
     while (attempts < retries) {
@@ -75,205 +49,85 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
 }
 
 /**
- * Centralized function to call the LLM with intelligent routing.
- * PRIMARY: Claude Sonnet 3.5 (best teaching & reasoning)
- * FALLBACK: GPT-4o-mini (fast & cheap backup)
- * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
+ * Centralized function to call the LLM via OpenAI.
+ * @param {string} model - The model name (e.g., "gpt-4o-mini", "gpt-4o")
  * @param {Array<Object>} messages - Array of message objects for the AI.
  * @param {Object} options - Additional options like temperature, max_tokens.
  * @returns {Promise<Object>} The completion object from the AI.
  */
 async function callLLM(model, messages, options = {}) {
-    // Detect if this is a Claude or OpenAI model
-    const isClaudeModel = model.startsWith('claude-');
+    try {
+        console.log(`LOG: Calling OpenAI model (${model})`);
 
-    if (isClaudeModel && anthropic) {
-        // PRIMARY PATH: Try Claude first
-        try {
-            console.log(`LOG: Calling primary model (${model})`);
+        // CRITICAL FIX: Newer OpenAI models (gpt-4o, gpt-5, etc.) require max_completion_tokens
+        // Legacy models still use max_tokens
+        const tokenParam = options.max_tokens ?
+            (model.includes('gpt-5') || model.includes('gpt-4o') ?
+                { max_completion_tokens: options.max_tokens } :
+                { max_tokens: options.max_tokens })
+            : {};
 
-            // Convert messages to Anthropic format
-            const anthropicMessages = messages.filter(msg => msg.role !== 'system').map(msg => ({
-                role: msg.role === 'assistant' ? 'assistant' : 'user',
-                content: msg.content
-            }));
+        // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
+        // Don't pass temperature for these models
+        const temperatureParam = model.includes('nano') ?
+            {} :
+            { temperature: options.temperature || 0.7 };
 
-            // Extract system message
-            const systemMessage = messages.find(msg => msg.role === 'system')?.content;
-
-            const completion = await retryWithExponentialBackoff(() =>
-                anthropic.messages.create({
-                    model: model,
-                    max_tokens: options.max_tokens || 4000, // Claude supports up to 8k, use 4k default
-                    temperature: options.temperature || 0.7,
-                    messages: anthropicMessages,
-                    system: systemMessage
-                })
-            );
-
-            // Convert to OpenAI format for consistency
-            return {
-                choices: [{
-                    message: {
-                        content: completion.content[0].text,
-                        role: 'assistant'
-                    }
-                }]
-            };
-
-        } catch (claudeError) {
-            console.error(`❌ ERROR: Primary model (${model}) failed`);
-            console.error('Claude error details:', {
-                message: claudeError.message,
-                status: claudeError.status,
-                type: claudeError.type,
-                error: claudeError.error,
-                stack: claudeError.stack?.split('\n').slice(0, 3).join('\n')
-            });
-            console.warn('⚠️  Attempting fallback to GPT-4o-mini...');
-
-            // FALLBACK: Try GPT-4o-mini
-            try {
-                const fallbackModel = 'gpt-4o-mini';
-                console.log(`LOG: Calling fallback model (${fallbackModel})`);
-
-                // CRITICAL FIX: Use max_completion_tokens for gpt-4o models
-                const tokenParam = options.max_tokens ?
-                    { max_completion_tokens: options.max_tokens } : {};
-
-                const completion = await retryWithExponentialBackoff(() =>
-                    openai.chat.completions.create({
-                        model: fallbackModel,
-                        messages: messages,
-                        temperature: options.temperature || 0.7,
-                        ...tokenParam,
-                        stream: options.stream || false,
-                    })
-                );
-                console.log('✅ Fallback to GPT succeeded');
-                return completion;
-            } catch (gptError) {
-                console.error("❌ ERROR: Fallback model (GPT-4o-mini) also failed");
-                console.error('GPT error details:', {
-                    message: gptError.message,
-                    status: gptError.status,
-                    type: gptError.type,
-                    error: gptError.error,
-                    code: gptError.code,
-                    stack: gptError.stack?.split('\n').slice(0, 3).join('\n')
-                });
-                throw new Error(`Both primary (Claude) and fallback (GPT) AI models failed. Claude: ${claudeError.message}, GPT: ${gptError.message}`);
-            }
-        }
-
-    } else {
-        // OpenAI model requested (or no Anthropic key)
-        try {
-            console.log(`LOG: Calling OpenAI model (${model})`);
-
-            // CRITICAL FIX: Newer OpenAI models (gpt-4o, gpt-5, etc.) require max_completion_tokens
-            // Legacy models still use max_tokens
-            const tokenParam = options.max_tokens ?
-                (model.includes('gpt-5') || model.includes('gpt-4o') ?
-                    { max_completion_tokens: options.max_tokens } :
-                    { max_tokens: options.max_tokens })
-                : {};
-
-            // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
-            // Don't pass temperature for these models
-            const temperatureParam = model.includes('nano') ?
-                {} :
-                { temperature: options.temperature || 0.7 };
-
-            const completion = await retryWithExponentialBackoff(() =>
-                openai.chat.completions.create({
-                    model: model,
-                    messages: messages,
-                    ...temperatureParam,
-                    ...tokenParam,
-                    stream: options.stream || false,
-                })
-            );
-            return completion;
-        } catch (openAiError) {
-            console.error(`ERROR: OpenAI model (${model}) failed:`, openAiError.message);
-            throw openAiError;
-        }
+        const completion = await retryWithExponentialBackoff(() =>
+            openai.chat.completions.create({
+                model: model,
+                messages: messages,
+                ...temperatureParam,
+                ...tokenParam,
+                stream: options.stream || false,
+            })
+        );
+        return completion;
+    } catch (openAiError) {
+        console.error(`ERROR: OpenAI model (${model}) failed:`, openAiError.message);
+        throw openAiError;
     }
 }
 
 /**
  * Streaming version of callLLM - returns a stream object for real-time responses
- * Supports both Claude and OpenAI streaming
- * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
+ * @param {string} model - The model name (e.g., "gpt-4o-mini", "gpt-4o")
  * @param {Array<Object>} messages - Array of message objects for the AI
  * @param {Object} options - Additional options like temperature, max_tokens
  * @returns {Promise<Stream>} The stream object
  */
 async function callLLMStream(model, messages, options = {}) {
-    const isClaudeModel = model.startsWith('claude-');
+    try {
+        console.log(`LOG: Calling OpenAI streaming (${model})`);
 
-    if (isClaudeModel && anthropic) {
-        // Claude streaming
-        try {
-            console.log(`LOG: Calling Claude streaming (${model})`);
+        // CRITICAL FIX: Newer OpenAI models require max_completion_tokens
+        const tokenParam = options.max_tokens ?
+            (model.includes('gpt-5') || model.includes('gpt-4o') ?
+                { max_completion_tokens: options.max_tokens } :
+                { max_tokens: options.max_tokens })
+            : {};
 
-            // Convert messages to Anthropic format
-            const anthropicMessages = messages.filter(msg => msg.role !== 'system').map(msg => ({
-                role: msg.role === 'assistant' ? 'assistant' : 'user',
-                content: msg.content
-            }));
+        // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
+        const temperatureParam = model.includes('nano') ?
+            {} :
+            { temperature: options.temperature || 0.7 };
 
-            const systemMessage = messages.find(msg => msg.role === 'system')?.content;
-
-            const stream = await anthropic.messages.create({
-                model: model,
-                max_tokens: options.max_tokens || 4000,
-                temperature: options.temperature || 0.7,
-                messages: anthropicMessages,
-                system: systemMessage,
-                stream: true
-            });
-
-            return stream;
-        } catch (claudeError) {
-            console.error(`ERROR: Claude streaming failed for ${model}:`, claudeError.message);
-            throw claudeError;
-        }
-    } else {
-        // OpenAI streaming
-        try {
-            console.log(`LOG: Calling OpenAI streaming (${model})`);
-
-            // CRITICAL FIX: Newer OpenAI models require max_completion_tokens
-            const tokenParam = options.max_tokens ?
-                (model.includes('gpt-5') || model.includes('gpt-4o') ?
-                    { max_completion_tokens: options.max_tokens } :
-                    { max_tokens: options.max_tokens })
-                : {};
-
-            // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
-            const temperatureParam = model.includes('nano') ?
-                {} :
-                { temperature: options.temperature || 0.7 };
-
-            const stream = await openai.chat.completions.create({
-                model: model,
-                messages: messages,
-                ...temperatureParam,
-                ...tokenParam,
-                stream: true,
-            });
-            return stream;
-        } catch (openAiError) {
-            console.error(`ERROR: OpenAI streaming failed for ${model}:`, openAiError.message);
-            throw openAiError;
-        }
+        const stream = await openai.chat.completions.create({
+            model: model,
+            messages: messages,
+            ...temperatureParam,
+            ...tokenParam,
+            stream: true,
+        });
+        return stream;
+    } catch (openAiError) {
+        console.error(`ERROR: OpenAI streaming failed for ${model}:`, openAiError.message);
+        throw openAiError;
     }
 }
 
 /**
- * DIRECTIVE 3: Generate text embedding using OpenAI's text-embedding-3-small
+ * Generate text embedding using OpenAI's text-embedding-3-small
  * @param {string} text - The text to embed
  * @returns {Promise<Array<number>>} The embedding vector
  */
@@ -308,12 +162,10 @@ async function generateEmbedding(text) {
     }
 }
 
-// Export the OpenAI client (still useful for direct access if needed) and the retry utility
 module.exports = {
-    openai, // Renamed from 'openai' to 'openaiClient' in some previous versions, but keep original if it was 'openai'
-    anthropic,
+    openai,
     retryWithExponentialBackoff,
-    callLLM, // Centralized LLM call function (non-streaming)
-    callLLMStream, // Streaming version for real-time responses
-    generateEmbedding // DIRECTIVE 3: Vector embedding generation
+    callLLM,
+    callLLMStream,
+    generateEmbedding
 };

@@ -1,23 +1,17 @@
 /**
  * LLM GATEWAY - Unified AI Brain for Mathmatix
  *
- * CTO REVIEW FIX: Centralized interface for ALL AI interactions
+ * Centralized interface for ALL AI interactions.
+ * Uses OpenAI (GPT) models exclusively.
  *
- * PROBLEM: Routes were using different LLM clients inconsistently:
- * - chat.js used callLLM() from openaiClient.js
- * - gradeWork.js used raw axios POST to OpenAI
- * - Different prompts, different error handling, inconsistent persona
- *
- * SOLUTION: Single gateway that:
  * - Ensures consistent tutor persona across all routes
  * - Handles chat, vision, streaming, embeddings
  * - Centralizes retry logic and error handling
- * - Makes it easy to swap LLM providers in the future
  *
  * @module llmGateway
  */
 
-const { openai, anthropic, retryWithExponentialBackoff, callLLM, callLLMStream, generateEmbedding } = require('./openaiClient');
+const { openai, retryWithExponentialBackoff, callLLM, callLLMStream, generateEmbedding } = require('./openaiClient');
 const { generateSystemPrompt } = require('./prompt');
 const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, rehydrateResponse, logAnonymizationEvent } = require('./piiAnonymizer');
 
@@ -27,7 +21,7 @@ const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, re
 
 const DEFAULT_MODELS = {
     chat: 'gpt-4o-mini',                     // Fast, cost-effective teaching model
-    grading: 'claude-3-5-sonnet-20241022',   // Claude vision: superior handwriting recognition
+    grading: 'gpt-4o',                       // GPT-4o vision for handwriting recognition
     reasoning: 'gpt-4o-mini',                // Fast reasoning
     embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };
@@ -180,82 +174,39 @@ async function gradeWithVision(context, options = {}) {
 
     console.log(`[LLMGateway] Calling vision model: ${model}`);
 
-    const isClaudeModel = model.startsWith('claude-');
-
     try {
-        if (isClaudeModel && anthropic) {
-            // Claude vision API (superior image analysis)
-            // Extract base64 data from data URL
-            const base64Match = imageDataUrl.match(/^data:image\/(.*?);base64,(.*)$/);
-            if (!base64Match) {
-                throw new Error('Invalid image data URL format');
-            }
-            const [, mediaType, base64Data] = base64Match;
+        // Use max_completion_tokens for newer gpt-4o/gpt-5 models
+        const tokenParam = (model.includes('gpt-5') || model.includes('gpt-4o'))
+            ? { max_completion_tokens: maxTokens }
+            : { max_tokens: maxTokens };
 
-            const completion = await retryWithExponentialBackoff(() =>
-                anthropic.messages.create({
-                    model: model,
-                    max_tokens: maxTokens,
-                    temperature: temperature,
-                    messages: [
-                        {
-                            role: 'user',
-                            content: [
-                                {
-                                    type: 'image',
-                                    source: {
-                                        type: 'base64',
-                                        media_type: `image/${mediaType}`,
-                                        data: base64Data
-                                    }
-                                },
-                                {
-                                    type: 'text',
-                                    text: anonymizedPrompt
+        const completion = await retryWithExponentialBackoff(() =>
+            openai.chat.completions.create({
+                model: model,
+                messages: [
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'text',
+                                text: anonymizedPrompt
+                            },
+                            {
+                                type: 'image_url',
+                                image_url: {
+                                    url: imageDataUrl,
+                                    detail: 'high'
                                 }
-                            ]
-                        }
-                    ]
-                })
-            );
+                            }
+                        ]
+                    }
+                ],
+                ...tokenParam,
+                temperature: temperature
+            })
+        );
 
-            return rehydrateResponse(completion.content[0].text, user?.firstName);
-
-        } else {
-            // OpenAI vision API
-            // Use max_completion_tokens for newer gpt-4o/gpt-5 models
-            const tokenParam = (model.includes('gpt-5') || model.includes('gpt-4o'))
-                ? { max_completion_tokens: maxTokens }
-                : { max_tokens: maxTokens };
-
-            const completion = await retryWithExponentialBackoff(() =>
-                openai.chat.completions.create({
-                    model: model,
-                    messages: [
-                        {
-                            role: 'user',
-                            content: [
-                                {
-                                    type: 'text',
-                                    text: anonymizedPrompt
-                                },
-                                {
-                                    type: 'image_url',
-                                    image_url: {
-                                        url: imageDataUrl,
-                                        detail: 'high'
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    ...tokenParam,
-                    temperature: temperature
-                })
-            );
-
-            return rehydrateResponse(completion.choices[0].message.content, user?.firstName);
-        }
+        return rehydrateResponse(completion.choices[0].message.content, user?.firstName);
 
     } catch (error) {
         console.error('[LLMGateway] Vision grading failed:', error.message);

@@ -397,6 +397,18 @@ router.post('/',
             });
         }
 
+        // Detect AI service billing/capacity errors and return 503
+        const errMsg = (error.message || '').toLowerCase();
+        const errStatus = error.status || error.statusCode;
+        const isBillingError = errMsg.includes('credit balance') || errMsg.includes('billing') || errMsg.includes('quota');
+        const isAuthError = (errStatus === 401 || errStatus === 403) && (errMsg.includes('api') || errMsg.includes('key'));
+        if (isBillingError || isAuthError) {
+            return res.status(503).json({
+                success: false,
+                message: 'Our grading service is temporarily unavailable. Please try again later.'
+            });
+        }
+
         res.status(500).json({
             success: false,
             message: 'Failed to analyze work. Please try again.',
