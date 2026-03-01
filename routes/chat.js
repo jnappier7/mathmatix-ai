@@ -986,6 +986,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,
+            suggestions: pipelineResult.suggestions || null,
             _pipeline: pipelineResult._pipeline,
         };
 

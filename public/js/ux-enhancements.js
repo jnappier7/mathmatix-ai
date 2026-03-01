@@ -468,20 +468,29 @@
   }
 
   /**
-   * Hook into the AI response flow to auto-detect context
+   * Hook into the AI response flow to auto-detect context.
+   * Only fires regex-based fallback when server hasn't provided smart suggestions.
    */
   function hookDynamicSuggestions() {
     const originalAppend = window.appendMessage;
     if (!originalAppend) return;
 
-    // Wrap appendMessage to detect context after AI messages
+    // Track whether server provided suggestions for this response cycle
+    window._serverSuggestionsProvided = false;
+
     const currentAppend = window.appendMessage;
     window.appendMessage = function(text, sender, graphData, isMasteryQuiz) {
       currentAppend.call(this, text, sender, graphData, isMasteryQuiz);
 
-      // After AI message, detect context and show chips
+      // After AI message, use regex fallback only if server didn't provide suggestions
       if (sender === 'ai' && text) {
-        setTimeout(() => detectContextAndShowChips(text), 500);
+        setTimeout(() => {
+          if (!window._serverSuggestionsProvided) {
+            detectContextAndShowChips(text);
+          }
+          // Reset the flag for the next response cycle
+          window._serverSuggestionsProvided = false;
+        }, 600); // Slightly longer delay than server path (500ms) so server wins
       }
     };
   }
