@@ -43,6 +43,7 @@ export function generateSpeakableText(text) {
             .replace(/\bfraction\s+(start|end|open|close)\b/gi, '')
             .replace(/\bsubscript\b/gi, '')
             .replace(/\bsuperscript\b/gi, '')
+            .replace(/\bequal(s)? sign\b/gi, 'equals')
             .replace(/\s+/g, ' ')
             .trim();
         result += ` ${speakableMath} `;
