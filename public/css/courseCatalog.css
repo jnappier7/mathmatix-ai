@@ -447,6 +447,92 @@
 
 [data-theme="dark"] #catalog-grid > div {
     border-color: #334155 !important;
+    background: #1e293b !important;
+}
+
+/* Catalog card text colors in dark mode — inline styles use light-mode colors */
+[data-theme="dark"] #catalog-grid > div span[style*="color:#333"],
+[data-theme="dark"] #catalog-grid > div span[style*="color: #333"] {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] #catalog-grid > div div[style*="color:#555"],
+[data-theme="dark"] #catalog-grid > div div[style*="color: #555"] {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] #catalog-grid > div span[style*="color:#aaa"],
+[data-theme="dark"] #catalog-grid > div div[style*="color:#aaa"] {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] #catalog-grid > div span[style*="color:#ddd"] {
+    color: #475569 !important;
+}
+
+/* Group headers */
+[data-theme="dark"] #catalog-grid > div[style*="border-bottom"] {
+    border-bottom-color: #334155 !important;
+}
+
+/* Recommended card bg */
+[data-theme="dark"] #catalog-grid > div[style*="background: #f8f7ff"],
+[data-theme="dark"] #catalog-grid > div[style*="background:#f8f7ff"] {
+    background: rgba(102, 126, 234, 0.12) !important;
+}
+
+/* Enrolled button in dark mode */
+[data-theme="dark"] .catalog-enroll-btn:disabled {
+    background: #334155 !important;
+    color: #64748b !important;
+}
+
+/* Difficulty badges dark mode */
+[data-theme="dark"] #catalog-grid span[style*="background:#ecfdf5"] {
+    background: rgba(22, 163, 74, 0.15) !important;
+}
+
+[data-theme="dark"] #catalog-grid span[style*="background:#eff6ff"] {
+    background: rgba(37, 99, 235, 0.15) !important;
+}
+
+[data-theme="dark"] #catalog-grid span[style*="background:#faf5ff"] {
+    background: rgba(124, 58, 237, 0.15) !important;
+}
+
+[data-theme="dark"] #catalog-grid span[style*="background:#fef3c7"] {
+    background: rgba(180, 83, 9, 0.15) !important;
+}
+
+[data-theme="dark"] #catalog-grid span[style*="background:#fefce8"] {
+    background: rgba(202, 138, 4, 0.15) !important;
+}
+
+/* Catalog empty state */
+[data-theme="dark"] .catalog-empty-state {
+    color: #94a3b8;
+}
+
+/* Browse Courses button — override inline purple gradient for dark mode */
+[data-theme="dark"] #browse-courses-btn {
+    background: linear-gradient(135deg, #7c8cf5, #8b6cb8) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(124, 140, 245, 0.3) !important;
+}
+
+[data-theme="dark"] #browse-courses-btn:hover {
+    background: linear-gradient(135deg, #8b9bf7, #9a7bc7) !important;
+}
+
+/* Catalog search input dark mode */
+[data-theme="dark"] #course-catalog-modal input[type="text"] {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+[data-theme="dark"] #course-catalog-modal input[type="text"]::placeholder {
+    color: #64748b;
 }
 
 /* ----- Lesson Transition Card ----- */

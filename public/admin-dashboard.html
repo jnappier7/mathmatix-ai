@@ -14,10 +14,10 @@
 
     /* --- Design Tokens --- */
     :root {
-      --color-primary: #e74c3c;
-      --color-primary-dark: #c0392b;
-      --color-primary-deeper: #a93226;
-      --color-accent: #e67e22;
+      --color-primary: #475569;
+      --color-primary-dark: #334155;
+      --color-primary-deeper: #1e293b;
+      --color-accent: #6366f1;
       --color-success: #27ae60;
       --color-warning: #f39c12;
       --color-danger: #e74c3c;
@@ -32,8 +32,8 @@
       --color-border: #e9ecef;
       --color-border-light: #f1f1f1;
 
-      --color-hover-row: #fff5f5;
-      --color-primary-tint: rgba(231, 76, 60, 0.08);
+      --color-hover-row: #f8fafc;
+      --color-primary-tint: rgba(71, 85, 105, 0.08);
 
       --radius-sm: 6px;
       --radius-md: 8px;
@@ -292,7 +292,7 @@
     .btn-primary:hover {
       background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-deeper));
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
     }
 
     .btn-secondary {
@@ -460,8 +460,8 @@
       position: absolute;
       top: 15px;
       right: 15px;
-      background: var(--color-primary);
-      color: white;
+      background: #f1f5f9;
+      color: #64748b;
       border: none;
       width: 36px;
       height: 36px;
@@ -475,8 +475,8 @@
     }
 
     .modal-close-button:hover {
-      background: var(--color-primary-dark);
-      transform: rotate(90deg);
+      background: #e2e8f0;
+      color: #334155;
     }
 
     .modal-section {
@@ -1671,7 +1671,7 @@
 John,Smith,john.smith@school.org,7th Grade
 Jane,Doe,jane.doe@school.org,7th Grade</code>
         </div>
-        <a href="#" id="downloadSampleCSV" style="display: inline-block; margin-top: 10px; color: #e74c3c;">
+        <a href="#" id="downloadSampleCSV" style="display: inline-block; margin-top: 10px; color: #6366f1;">
           <i class="fas fa-download"></i> Download Sample CSV Template
         </a>
       </div>
@@ -1728,7 +1728,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
             </div>
             <div class="stat-card">
               <div class="stat-label">Errors</div>
-              <div class="stat-value" id="resultErrors" style="color: #e74c3c;">0</div>
+              <div class="stat-value" id="resultErrors" style="color: var(--color-danger);">0</div>
             </div>
           </div>
         </div>
@@ -2068,15 +2068,15 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <!-- Mobile Actions Drawer (right sidebar content) -->
   <div class="mobile-drawer" id="mobile-actions-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-bolt" style="color: #e74c3c;"></i> Quick Actions</h3>
+      <h3><i class="fas fa-bolt" style="color: #6366f1;"></i> Quick Actions</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-actions-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-chalkboard-teacher" style="color: #e74c3c;"></i> User & Roster Setup</div>
+        <div class="drawer-section-title"><i class="fas fa-chalkboard-teacher" style="color: #6366f1;"></i> User & Roster Setup</div>
         <div class="mobile-actions-grid">
           <button class="mobile-action-btn" id="mobile-create-user">
-            <i class="fas fa-user-plus" style="color: #e74c3c;"></i>
+            <i class="fas fa-user-plus" style="color: #6366f1;"></i>
             Create User
           </button>
           <button class="mobile-action-btn" id="mobile-link-parent">
@@ -2103,10 +2103,10 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
       </div>
 
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-envelope" style="color: #e74c3c;"></i> Bulk Email</div>
+        <div class="drawer-section-title"><i class="fas fa-envelope" style="color: #6366f1;"></i> Bulk Email</div>
         <div class="mobile-actions-grid">
           <button class="mobile-action-btn" id="mobile-compose-email">
-            <i class="fas fa-paper-plane" style="color: #e74c3c;"></i>
+            <i class="fas fa-paper-plane" style="color: #6366f1;"></i>
             Compose Email
           </button>
           <button class="mobile-action-btn" id="mobile-email-history">
@@ -2117,10 +2117,10 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
       </div>
 
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-clipboard-list" style="color: #e74c3c;"></i> Email Waitlist</div>
+        <div class="drawer-section-title"><i class="fas fa-clipboard-list" style="color: #6366f1;"></i> Email Waitlist</div>
         <div class="mobile-actions-grid">
           <button class="mobile-action-btn" id="mobile-view-waitlist">
-            <i class="fas fa-list" style="color: #e74c3c;"></i>
+            <i class="fas fa-list" style="color: #6366f1;"></i>
             View Waitlist
           </button>
         </div>
@@ -2131,15 +2131,15 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <!-- Mobile Reports Drawer -->
   <div class="mobile-drawer" id="mobile-reports-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-chart-bar" style="color: #e74c3c;"></i> Reports & Analytics</h3>
+      <h3><i class="fas fa-chart-bar" style="color: #6366f1;"></i> Reports & Analytics</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-reports-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-chart-line" style="color: #e74c3c;"></i> Quick Reports</div>
+        <div class="drawer-section-title"><i class="fas fa-chart-line" style="color: #6366f1;"></i> Quick Reports</div>
         <div class="mobile-actions-grid">
           <button class="mobile-action-btn" id="mobile-usage-report">
-            <i class="fas fa-chart-bar" style="color: #e74c3c;"></i>
+            <i class="fas fa-chart-bar" style="color: #6366f1;"></i>
             Usage Report
           </button>
           <button class="mobile-action-btn" id="mobile-live-activity">
@@ -2169,7 +2169,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <!-- Mobile Status Drawer (left sidebar content) -->
   <div class="mobile-drawer" id="mobile-status-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-server" style="color: #e74c3c;"></i> System Status</h3>
+      <h3><i class="fas fa-server" style="color: #6366f1;"></i> System Status</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-status-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
@@ -2193,8 +2193,8 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
 
   <style>
     /* Admin theme color for mobile nav active state */
-    .mobile-nav-btn.active { color: #e74c3c; }
-    .mobile-action-btn:hover { background: #fdf2f0; border-color: #e74c3c; }
+    .mobile-nav-btn.active { color: #6366f1; }
+    .mobile-action-btn:hover { background: #f1f5f9; border-color: #6366f1; }
   </style>
 
   <script>

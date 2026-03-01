@@ -503,7 +503,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (loadingChildren) loadingChildren.style.display = 'none';
 
             if (children.length === 0) {
-                childrenListContainer.innerHTML = `<p class="text-center text-gray-500 py-4">No children linked yet. Use the tools on the left to link a child's account.</p>`;
+                childrenListContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-users" style="font-size: 3em; color: var(--color-primary-bg, #d6eaf8); margin-bottom: 16px; display: block;"></i>
+                        <h3 style="font-size: 1.1em; color: var(--color-text, #2c3e50); margin-bottom: 8px;">No children linked yet</h3>
+                        <p style="color: var(--color-text-muted, #7f8c8d); font-size: 0.9em; margin-bottom: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                            Generate an invite code or enter your child's link code to get started.
+                        </p>
+                        <button class="btn btn-primary" onclick="document.getElementById('generate-code-btn')?.click()">
+                            <i class="fas fa-plus"></i> Generate Invite Code
+                        </button>
+                    </div>`;
                 if (childSelector) childSelector.disabled = true;
                 if (parentUserInput) parentUserInput.disabled = true;
                 if (parentSendButton) parentSendButton.disabled = true;
