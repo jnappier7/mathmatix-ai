@@ -505,15 +505,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Unified Markdown + Math renderer (marked + KaTeX) ──
     // Pipeline: protect LaTeX → marked.parse → restore with katex.renderToString
     // KaTeX renders synchronously — no FOUC, no debounce, no post-processing.
+    //
+    // Both `marked` and `katex` are loaded from CDN as global scripts.
+    // Use `window.*` to access them reliably from this ES module.
 
     /**
      * Render a KaTeX math string to HTML. Returns raw LaTeX on error.
      */
     function renderKatex(math, displayMode) {
-        if (typeof katex === 'undefined') return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+        if (!window.katex) return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
         try {
-            return katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true });
+            return window.katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true });
         } catch (e) {
+            console.warn('[KaTeX] render error:', e.message);
             return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
         }
     }
@@ -524,8 +528,20 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function renderMarkdownMath(text) {
         if (!text) return '';
-        if (typeof marked === 'undefined' || !marked.parse) {
-            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(text) : text;
+
+        // Access CDN globals explicitly via window
+        const _marked = window.marked;
+        const _DOMPurify = window.DOMPurify;
+
+        if (!_marked || !_marked.parse) {
+            console.warn('[renderMarkdownMath] marked not available, falling back to plain text');
+            // Even without markdown, try to render KaTeX math
+            let fallback = text;
+            if (window.katex) {
+                fallback = fallback.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => renderKatex(math, true));
+                fallback = fallback.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => renderKatex(math, false));
+            }
+            return _DOMPurify ? _DOMPurify.sanitize(fallback) : fallback;
         }
 
         let processedText = text;
@@ -561,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Parse markdown
-        let html = marked.parse(processedText, { breaks: true });
+        let html = _marked.parse(processedText, { breaks: true });
 
         // Restore LaTeX blocks — render to KaTeX HTML inline (synchronous)
         latexBlocks.forEach((block, index) => {
@@ -574,8 +590,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Sanitize — KaTeX output uses spans with classes + inline styles
-        if (typeof DOMPurify !== 'undefined') {
-            html = DOMPurify.sanitize(html, {
+        if (_DOMPurify) {
+            html = _DOMPurify.sanitize(html, {
                 ALLOWED_TAGS: [
                     // Markdown output
                     'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
@@ -622,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Synchronous — no debounce needed.
      */
     function renderMathInElement(element) {
-        if (typeof katex === 'undefined' || !element) return;
+        if (!window.katex || !element) return;
         // Find text nodes containing \( or \[ and render them
         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
         const textNodes = [];
@@ -1731,7 +1747,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                                 fullText = event.content;
                                 if (streamRef && streamRef.textNode) {
-                                    streamRef.textNode.textContent = event.content;
+                                    streamRef.textNode.innerHTML = renderMarkdownMath(event.content);
                                 }
                             } else if (event.type === 'complete' && event.data) {
                                 completeData = event.data;
