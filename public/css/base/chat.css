@@ -132,6 +132,28 @@
     border: 1px solid var(--clr-border);
 }
 
+/* KaTeX inline math — size to match surrounding text */
+.message .katex {
+    font-size: 1.05em;
+}
+
+/* KaTeX display math — centered block with breathing room */
+.message .katex-display {
+    margin: 0.75em 0;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Prevent display math from overflowing chat bubbles on mobile */
+.message .katex-display > .katex {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 /* Message Timestamps */
 .message-timestamp {
     font-size: 0.7rem;

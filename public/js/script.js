@@ -502,60 +502,142 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function renderMathInElement(element) {
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
-        } else if (window.ensureMathJax) {
-            window.ensureMathJax().then(() => {
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
-                }
-            });
+    // ── Unified Markdown + Math renderer (KaTeX + markdown-it) ──
+    // markdown-it-texmath handles \(...\) and \[...\] in a single parse pass,
+    // so we no longer need protect/parse/restore or async MathJax typesetting.
+
+    let _md = null; // lazy-init'd markdown-it instance
+
+    function getMd() {
+        if (_md) return _md;
+        if (typeof markdownit === 'undefined' || typeof texmath === 'undefined' || typeof katex === 'undefined') {
+            return null; // libs not loaded yet
         }
+        _md = markdownit({ html: false, linkify: true, breaks: true })
+            .use(texmath, {
+                engine: katex,
+                delimiters: ['dollars', 'brackets', 'dollarsaliased'],
+                katexOptions: { throwOnError: false, strict: false, trust: true }
+            });
+        return _md;
     }
 
     /**
-     * Auto-convert common math notation to LaTeX for MathJax rendering
-     * Converts patterns like x^2, a_n, sqrt(12) to \(x^2\), \(a_n\), \(\sqrt{12}\)
+     * Render markdown + LaTeX → sanitized HTML in one pass.
+     * KaTeX renders inline during the parse — no async, no FOUC.
      */
-    function autoConvertMathNotation(text) {
-        if (!text) return text;
-
-        // Skip if text already has LaTeX delimiters (AI already formatted it)
-        if (text.includes('\\(') || text.includes('\\[') || text.includes('$')) {
-            return text;
+    function renderMarkdownMath(text) {
+        const md = getMd();
+        if (!md) {
+            // Fallback if libs haven't loaded yet (shouldn't happen with defer)
+            return DOMPurify ? DOMPurify.sanitize(text) : text;
         }
 
-        let result = text;
+        // Protect inline visual HTML from markdown parsing
+        const visualBlocks = [];
+        let protectedText = text;
+        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
+            const index = visualBlocks.length;
+            visualBlocks.push(match);
+            return `@@VISUAL_BLOCK_${index}@@`;
+        });
+        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
+            const index = visualBlocks.length;
+            visualBlocks.push(match);
+            return `@@VISUAL_BLOCK_${index}@@`;
+        });
 
-        // Convert sqrt(n) or sqrt{n} to \(\sqrt{n}\)
-        result = result.replace(/\bsqrt\s*[\(\{]([^\)\}]+)[\)\}]/gi, '\\(\\sqrt{$1}\\)');
+        let html = md.render(protectedText);
 
-        // Convert variable^exponent patterns (e.g., x^2, y^3, a^n)
-        // Match: letter(s) followed by ^ and a number or letter or (expression)
-        result = result.replace(/\b([a-zA-Z]+)\^(\d+|\([^\)]+\)|[a-zA-Z])\b/g, '\\($1^{$2}\\)');
+        // Restore visual blocks
+        visualBlocks.forEach((block, index) => {
+            html = html.replace(`@@VISUAL_BLOCK_${index}@@`, block);
+        });
 
-        // Convert variable_subscript patterns (e.g., a_n, x_1, a_i)
-        // Match: letter(s) followed by _ and a number or letter
-        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\b/g, '\\($1_{$2}\\)');
+        // Sanitize — KaTeX output uses spans with classes + inline styles
+        if (typeof DOMPurify !== 'undefined') {
+            html = DOMPurify.sanitize(html, {
+                ALLOWED_TAGS: [
+                    // Markdown output
+                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
+                    // Form elements for interactive visuals
+                    'input', 'button',
+                    // SVG elements for charts/graphs
+                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    // Images
+                    'img',
+                    // KaTeX uses math/semantics/annotation elements
+                    'math', 'semantics', 'annotation', 'mrow', 'mi', 'mo', 'mn', 'ms',
+                    'mfrac', 'msup', 'msub', 'msubsup', 'mover', 'munder', 'munderover',
+                    'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
+                    'menclose', 'mglyph', 'mstyle', 'merror', 'mprescripts', 'mmultiscripts'
+                ],
+                ALLOWED_ATTR: [
+                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
+                    // SVG attributes
+                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
+                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    // Form/interactive attributes
+                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                    // Data attributes for visuals
+                    'data-config', 'data-diagram-id', 'data-value', 'data-label',
+                    // KaTeX attributes
+                    'aria-hidden', 'encoding', 'mathvariant', 'stretchy', 'fence',
+                    'separator', 'lspace', 'rspace', 'accent', 'accentunder',
+                    'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+                    'columnlines', 'rowlines', 'frame', 'framespacing',
+                    'displaystyle', 'scriptlevel', 'minsize', 'maxsize',
+                    'xmlns'
+                ]
+            });
+        }
 
-        // Convert combined patterns like x_1^2
-        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\^(\d+|[a-zA-Z])\b/g, '\\($1_{$2}^{$3}\\)');
-
-        // Convert pi to π symbol when standalone
-        result = result.replace(/\bpi\b/gi, '\\(\\pi\\)');
-
-        // Convert infinity
-        result = result.replace(/\binfinity\b/gi, '\\(\\infty\\)');
-
-        // Convert common fractions like 1/2, 3/4 (only simple numeric fractions)
-        // Be careful not to match dates or other patterns
-        result = result.replace(/(?<![\/\d])(\d+)\/(\d+)(?![\/\d])/g, '\\(\\frac{$1}{$2}\\)');
-
-        return result;
+        return html;
     }
 
-    // Expose for use elsewhere
+    /**
+     * Backward-compat: re-render any raw \(...\) or \[...\] in a DOM element.
+     * Used by equation editor insertion and step reveals.
+     * With KaTeX this is synchronous — no debounce needed.
+     */
+    function renderMathInElement(element) {
+        if (typeof katex === 'undefined') return;
+        // Find text nodes containing \( or \[ and render them
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) textNodes.push(node);
+
+        textNodes.forEach(textNode => {
+            const text = textNode.textContent;
+            if (!text || (!text.includes('\\(') && !text.includes('\\['))) return;
+
+            const span = document.createElement('span');
+            // Replace \(...\) and \[...\] with rendered KaTeX
+            let html = text;
+            html = html.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
+                try { return katex.renderToString(math, { displayMode: true, throwOnError: false }); }
+                catch(e) { return _; }
+            });
+            html = html.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => {
+                try { return katex.renderToString(math, { displayMode: false, throwOnError: false }); }
+                catch(e) { return _; }
+            });
+
+            if (html !== text) {
+                span.innerHTML = html;
+                textNode.parentNode.replaceChild(span, textNode);
+            }
+        });
+    }
+
+    // autoConvertMathNotation removed — markdown-it-texmath handles \(...\)
+    // and \[...\] delimiters natively. Server-side normalizeLatex converts
+    // bare math ($...$, bare commands) to proper delimiters before we get here.
+    // Keeping a no-op stub for backward compatibility with external callers.
+    function autoConvertMathNotation(text) { return text; }
     window.autoConvertMathNotation = autoConvertMathNotation;
 
   // ============================================
@@ -814,89 +896,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
         
-        if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
-            // Auto-convert common math notation (x^2, a_n, sqrt(12)) to LaTeX
-            let processedText = autoConvertMathNotation(text);
-
-            // Protect entire LaTeX blocks from markdown parsing
-            const latexBlocks = [];
-            let protectedText = processedText;
-
-            // Extract and protect display math \[...\]
-            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline math \(...\)
-            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline visual HTML (SVG containers from inlineChatVisuals)
-            // These are already rendered HTML that shouldn't be parsed by marked
-            // Pattern matches: <div class="icv-container...>...</div> (outermost container)
-            const visualBlocks = [];
-            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
-                const index = visualBlocks.length;
-                visualBlocks.push(match);
-                return `@@VISUAL_BLOCK_${index}@@`;
-            });
-            // Also protect non-SVG visuals (like fraction displays)
-            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
-                const index = visualBlocks.length;
-                visualBlocks.push(match);
-                return `@@VISUAL_BLOCK_${index}@@`;
-            });
-
-            // Parse markdown with protected LaTeX and visuals
-            const dirtyHtml = marked.parse(protectedText, { breaks: true });
-
-            // Restore LaTeX blocks
-            let finalHtml = dirtyHtml;
-            latexBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
-            });
-
-            // Restore visual blocks
-            visualBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@VISUAL_BLOCK_${index}@@`, block);
-            });
-
-            // Sanitize HTML to prevent XSS attacks
-            // Extended to allow inline visual elements (SVG charts, graphs, etc.)
-            const sanitizedHtml = DOMPurify.sanitize(finalHtml, {
-                ALLOWED_TAGS: [
-                    // Basic formatting
-                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
-                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
-                    // Form elements for interactive visuals
-                    'input', 'button',
-                    // SVG elements for charts/graphs
-                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
-                    // Images
-                    'img'
-                ],
-                ALLOWED_ATTR: [
-                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
-                    // SVG attributes
-                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
-                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
-                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
-                    // Form/interactive attributes
-                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
-                    // Data attributes for visuals
-                    'data-config', 'data-diagram-id', 'data-value', 'data-label'
-                ]
-            });
-            textNode.innerHTML = sanitizedHtml;
+        if (sender === 'ai') {
+            // Single-pass markdown + KaTeX rendering
+            textNode.innerHTML = renderMarkdownMath(text);
         } else {
-            // For user messages, also auto-convert math notation
-            const convertedText = autoConvertMathNotation(text);
-            textNode.innerHTML = convertedText;
+            // User messages: render markdown+math too (for equations they type)
+            textNode.innerHTML = renderMarkdownMath(text);
         }
         bubble.appendChild(textNode);
 
@@ -1147,7 +1152,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        setTimeout(() => renderMathInElement(bubble), 0);
+        // Re-render any raw \(...\) in the bubble (e.g. equation editor inserts)
+        renderMathInElement(bubble);
 
         // Update watermark visibility based on message count
         updateChatWatermark();
@@ -1256,6 +1262,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function startStreamingMessage() {
         if (!chatBox) return null;
 
+        _streamRawText = ''; // Reset raw text accumulator
+
         const bubble = document.createElement("div");
         bubble.className = "message ai streaming";
         bubble.id = `message-${Date.now()}-${Math.random()}`;
@@ -1272,60 +1280,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return { bubble, textNode };
     }
 
-    // Debounce timer for MathJax rendering during streaming
-    let _streamMathJaxTimer = null;
+    // Accumulate raw text for streaming — we keep the raw source
+    // and re-render the full text on each chunk. KaTeX is synchronous
+    // so no debounce is needed.
+    let _streamRawText = '';
 
     // Helper function to append a chunk to a streaming message
     function appendStreamingChunk(messageRef, chunk) {
         if (!messageRef || !messageRef.textNode) return;
 
-        const currentText = messageRef.textNode.textContent || '';
-        const newText = currentText + chunk;
+        _streamRawText += chunk;
 
-        // Update the text content
-        messageRef.textNode.textContent = newText;
-
-        // Re-parse markdown if it's an AI message
-        if (messageRef.bubble.classList.contains('ai') && typeof marked !== 'undefined' && marked.parse) {
-            // Protect entire LaTeX blocks from markdown parsing
-            const latexBlocks = [];
-            let protectedText = newText;
-
-            // Extract and protect display math \[...\]
-            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline math \(...\)
-            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Parse markdown with protected LaTeX
-            const dirtyHtml = marked.parse(protectedText, { breaks: true });
-
-            // Restore LaTeX blocks
-            let finalHtml = dirtyHtml;
-            latexBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
-            });
-
-            messageRef.textNode.innerHTML = finalHtml;
-        }
-
-        // Debounce MathJax rendering during streaming — only render after
-        // 300ms pause in chunks, to avoid processing incomplete LaTeX
-        // delimiters that are split across chunks.
-        if (window.renderMathInElement && messageRef.bubble) {
-            if (_streamMathJaxTimer) clearTimeout(_streamMathJaxTimer);
-            _streamMathJaxTimer = setTimeout(() => {
-                renderMathInElement(messageRef.bubble);
-                _streamMathJaxTimer = null;
-            }, 300);
+        // Single-pass render: markdown + KaTeX in one call, synchronous
+        if (messageRef.bubble.classList.contains('ai')) {
+            messageRef.textNode.innerHTML = renderMarkdownMath(_streamRawText);
+        } else {
+            messageRef.textNode.textContent = _streamRawText;
         }
 
         // Auto-scroll
@@ -1338,62 +1308,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         messageRef.bubble.classList.remove('streaming');
 
-        // Cancel any pending debounced MathJax render
-        if (_streamMathJaxTimer) {
-            clearTimeout(_streamMathJaxTimer);
-            _streamMathJaxTimer = null;
-        }
-
-        // Re-render the complete text with the same quality pipeline as
-        // appendMessage: autoConvertMathNotation → LaTeX protection → markdown → DOMPurify.
-        // During streaming, chunks may have split LaTeX delimiters. Now that we
-        // have the complete text, we can process it cleanly.
-        if (messageRef.textNode && typeof marked !== 'undefined' && marked.parse) {
-            let processedText = typeof autoConvertMathNotation === 'function'
-                ? autoConvertMathNotation(fullText) : fullText;
-
-            const latexBlocks = [];
-            let protectedText = processedText;
-
-            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            const dirtyHtml = marked.parse(protectedText, { breaks: true });
-
-            let finalHtml = dirtyHtml;
-            latexBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
-            });
-
-            if (typeof DOMPurify !== 'undefined') {
-                finalHtml = DOMPurify.sanitize(finalHtml, {
-                    ALLOWED_TAGS: [
-                        'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
-                        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
-                        'input', 'button',
-                        'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
-                        'img'
-                    ],
-                    ALLOWED_ATTR: [
-                        'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
-                        'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
-                        'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
-                        'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
-                        'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
-                        'data-config', 'data-diagram-id', 'data-value', 'data-label'
-                    ]
-                });
-            }
-
-            messageRef.textNode.innerHTML = finalHtml;
+        // Final clean render with the complete text — KaTeX is synchronous,
+        // so no debounce or async needed. This catches any LaTeX delimiters
+        // that were split across chunks during streaming.
+        if (messageRef.textNode) {
+            messageRef.textNode.innerHTML = renderMarkdownMath(fullText);
         }
 
         // Add audio playback button
@@ -1431,8 +1350,6 @@ document.addEventListener("DOMContentLoaded", () => {
             messageRef.bubble.appendChild(reactionContainer);
         }
 
-        // Final MathJax render to ensure all LaTeX is processed
-        setTimeout(() => renderMathInElement(messageRef.bubble), 100);
     }
 
     // Helper function to extract text with LaTeX from contenteditable
@@ -1444,7 +1361,7 @@ document.addEventListener("DOMContentLoaded", () => {
         while (node = walker.nextNode()) {
             if (node.nodeType === Node.TEXT_NODE) {
                 // Skip text nodes that are inside math-container elements
-                // (MathJax creates these when rendering, but we want the LaTeX source instead)
+                // (KaTeX creates spans when rendering, but we want the LaTeX source instead)
                 let parent = node.parentElement;
                 let insideMathContainer = false;
                 while (parent && parent !== element) {
@@ -2632,7 +2549,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     userInput.appendChild(mathContainer);
                     userInput.appendChild(document.createTextNode(' '));
 
-                    // Render the math using MathJax
+                    // Render the math using KaTeX
                     renderMathInElement(mathContainer);
 
                     equationModal.classList.remove('is-visible');
