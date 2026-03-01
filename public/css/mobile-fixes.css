@@ -237,22 +237,20 @@ input, textarea, select, .math-field {
         opacity: 0.7;
     }
 
-    /* Send button: prominent, tappable */
+    /* Send button: iMessage-style circle */
     #send-button {
-        min-height: 44px;
-        min-width: 48px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        padding: 10px 20px;
-        border-radius: 22px;
-        margin-top: 6px;
-        letter-spacing: 0.01em;
-        transition: transform 100ms ease, opacity 150ms ease;
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        margin-top: 0;
+        font-size: 15px;
     }
 
     #send-button:active {
-        transform: scale(0.96);
-        opacity: 0.9;
+        transform: scale(0.9);
     }
 
     /* Scrollable toolbar with fade edges */
@@ -1213,17 +1211,20 @@ input, textarea, select, .math-field {
     }
 
     #send-button {
-        min-height: 36px;
-        padding: 6px 14px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0;
     }
 
     #chat-messages-container {
-        padding: 4px 8px;
+        padding: 6px 10px;
     }
 
     .message {
         padding: 8px 12px;
-        margin-bottom: 2px;
+        margin-bottom: 1px;
     }
 
     .message-avatar {
@@ -1562,23 +1563,22 @@ body.is-mobile #sidebar-toggle {
         font-size: 0.85rem !important;
     }
 
-    /* Send button */
-    #send-button.send-button-fullwidth {
-        width: 100%;
-        min-height: 42px !important;
-        padding: 10px 16px !important;
-        font-size: 0.9rem !important;
-        font-weight: 600;
-        border-radius: 22px;
-        letter-spacing: 0.02em;
+    /* Send button — iMessage circle */
+    #send-button {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
     }
 
     /* Text input */
     #user-input {
-        min-height: 42px !important;
-        padding: 10px 16px !important;
-        margin-bottom: 4px !important;
-        border-radius: 22px;
+        min-height: 36px !important;
+        padding: 8px 14px !important;
+        margin-bottom: 0 !important;
+        border-radius: 20px;
         font-size: 16px;
     }
 
