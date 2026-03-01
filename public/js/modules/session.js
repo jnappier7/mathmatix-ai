@@ -6,8 +6,12 @@ export const sessionTracker = {
     totalActiveSeconds: 0,
     lastHeartbeat: null,
     heartbeatInterval: null,
+    heartbeatTimer: null,
     isPageVisible: true,
-    lastVisibilityChange: null
+    lastVisibilityChange: null,
+    consecutiveFailures: 0,
+    baseInterval: 30000,
+    maxInterval: 300000 // 5 minutes cap
 };
 
 /**
@@ -35,10 +39,17 @@ export function initSessionTracking(getCurrentUser) {
         }
     });
 
-    // Send heartbeat every 30 seconds
-    sessionTracker.heartbeatInterval = setInterval(() => {
-        sendTimeHeartbeat(getCurrentUser);
-    }, 30000);
+    // Send heartbeat on a dynamic schedule (backs off on 429)
+    function scheduleHeartbeat() {
+        const interval = Math.min(
+            sessionTracker.baseInterval * Math.pow(2, sessionTracker.consecutiveFailures),
+            sessionTracker.maxInterval
+        );
+        sessionTracker.heartbeatTimer = setTimeout(() => {
+            sendTimeHeartbeat(getCurrentUser).then(scheduleHeartbeat);
+        }, interval);
+    }
+    scheduleHeartbeat();
 
     // Send final time on page unload
     window.addEventListener('beforeunload', () => {
@@ -81,12 +92,23 @@ export async function sendTimeHeartbeat(getCurrentUser, isFinal = false) {
             const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
             navigator.sendBeacon('/api/chat/track-time', blob);
         } else {
-            await csrfFetch('/api/chat/track-time', {
+            const response = await csrfFetch('/api/chat/track-time', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
                 credentials: 'include'
             });
+
+            if (!response.ok) {
+                if (response.status === 429) {
+                    sessionTracker.consecutiveFailures++;
+                    console.warn(`[Session] Rate limited, backing off (failure #${sessionTracker.consecutiveFailures})`);
+                }
+                return;
+            }
+
+            // Success — reset backoff
+            sessionTracker.consecutiveFailures = 0;
         }
 
         // Reset the counter after successful send

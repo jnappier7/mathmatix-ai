@@ -5,10 +5,12 @@
   'use strict';
 
   const POLL_INTERVAL = 30000; // Check status every 30 seconds
+  const MAX_POLL_INTERVAL = 300000; // 5 minutes cap
 
-  let pollInterval = null;
+  let pollTimer = null;
   let pillElement = null;
   let currentStatus = null;
+  let consecutiveFailures = 0;
 
   /**
    * Initialize the impersonation indicator
@@ -17,10 +19,22 @@
     await checkImpersonationStatus();
 
     // Poll for status changes (timeout, external end, etc.)
-    pollInterval = setInterval(checkImpersonationStatus, POLL_INTERVAL);
+    schedulePoll();
 
     // Clean up on page unload
     window.addEventListener('beforeunload', cleanup);
+  }
+
+  function schedulePoll() {
+    if (pollTimer) clearTimeout(pollTimer);
+    const interval = Math.min(
+      POLL_INTERVAL * Math.pow(2, consecutiveFailures),
+      MAX_POLL_INTERVAL
+    );
+    pollTimer = setTimeout(async () => {
+      await checkImpersonationStatus();
+      schedulePoll();
+    }, interval);
   }
 
   /**
@@ -29,8 +43,12 @@
   async function checkImpersonationStatus() {
     try {
       const response = await fetch('/api/impersonation/status');
-      if (!response.ok) return;
+      if (!response.ok) {
+        if (response.status === 429) consecutiveFailures++;
+        return;
+      }
 
+      consecutiveFailures = 0;
       const status = await response.json();
       currentStatus = status;
 
@@ -40,6 +58,7 @@
         hideIndicator();
       }
     } catch (err) {
+      consecutiveFailures++;
       console.error('Failed to check impersonation status:', err);
     }
   }
@@ -211,9 +230,9 @@
    * Clean up on page unload
    */
   function cleanup() {
-    if (pollInterval) {
-      clearInterval(pollInterval);
-      pollInterval = null;
+    if (pollTimer) {
+      clearTimeout(pollTimer);
+      pollTimer = null;
     }
   }
 

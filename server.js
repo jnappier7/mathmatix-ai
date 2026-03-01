@@ -264,9 +264,14 @@ const apiLimiter = rateLimit({
     // Use user ID when authenticated so school networks (shared IP) don't share a budget
     return req.user ? req.user._id.toString() : req.ip;
   },
-  message: "Too many requests, please try again after 15 minutes.",
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many requests, please try again after 15 minutes.",
+      retryAfter: 60
+    });
+  },
 });
 app.use('/api/', apiLimiter);
 
@@ -274,10 +279,15 @@ app.use('/api/', apiLimiter);
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Only 5 attempts per 15 minutes
-  message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: false, // Count both successful and failed attempts
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
+      retryAfter: 900
+    });
+  },
 });
 
 // CSRF Protection for all routes

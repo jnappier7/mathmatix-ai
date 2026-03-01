@@ -15,10 +15,13 @@ class SessionManager {
     this.WARNING_TIME = 2 * 60 * 1000;  // 2 minutes warning before timeout
     this.HEARTBEAT_INTERVAL = 30 * 1000; // 30 seconds
     this.IDLE_THRESHOLD = 60 * 1000; // Consider idle after 60 seconds of no activity
+    this.MAX_BACKOFF = 5 * 60 * 1000; // Cap backoff at 5 minutes
 
     this.lastActivity = Date.now();
     this.warningShown = false;
     this.heartbeatTimer = null;
+    this.currentHeartbeatInterval = this.HEARTBEAT_INTERVAL;
+    this.consecutiveFailures = 0;
     this.idleCheckTimer = null;
     this.warningTimer = null;
     this.sessionStartTime = Date.now();
@@ -126,12 +129,37 @@ class SessionManager {
     // Send initial heartbeat
     this.sendHeartbeat();
 
-    // Send heartbeat every 30 seconds
-    this.heartbeatTimer = setInterval(() => {
-      // Check and update active time before sending
+    // Send heartbeat on a dynamic interval (backs off on 429)
+    this.scheduleNextHeartbeat();
+  }
+
+  scheduleNextHeartbeat() {
+    if (this.heartbeatTimer) clearTimeout(this.heartbeatTimer);
+    this.heartbeatTimer = setTimeout(() => {
       this.checkAndUpdateActiveTime();
       this.sendHeartbeat();
-    }, this.HEARTBEAT_INTERVAL);
+      this.scheduleNextHeartbeat();
+    }, this.currentHeartbeatInterval);
+  }
+
+  handleHeartbeatSuccess() {
+    if (this.consecutiveFailures > 0) {
+      console.log('[SessionManager] Heartbeat recovered, resetting interval');
+    }
+    this.consecutiveFailures = 0;
+    this.currentHeartbeatInterval = this.HEARTBEAT_INTERVAL;
+  }
+
+  handleHeartbeatFailure(status) {
+    this.consecutiveFailures++;
+    if (status === 429) {
+      // Exponential backoff: 60s, 120s, 240s, capped at MAX_BACKOFF
+      this.currentHeartbeatInterval = Math.min(
+        this.HEARTBEAT_INTERVAL * Math.pow(2, this.consecutiveFailures),
+        this.MAX_BACKOFF
+      );
+      console.warn(`[SessionManager] Rate limited, backing off to ${Math.round(this.currentHeartbeatInterval / 1000)}s`);
+    }
   }
 
   async sendHeartbeat() {
@@ -159,7 +187,13 @@ class SessionManager {
 
       if (!heartbeatResponse.ok) {
         console.error('[SessionManager] Heartbeat failed:', heartbeatResponse.status);
+        this.handleHeartbeatFailure(heartbeatResponse.status);
+        // Re-accumulate seconds on failure so they're not lost
+        this.accumulatedActiveSeconds += activeSecondsToSend;
+        return;
       }
+
+      this.handleHeartbeatSuccess();
 
       // Send active time tracking if we have any active seconds
       if (activeSecondsToSend > 0) {
@@ -298,7 +332,7 @@ class SessionManager {
     console.log('[SessionManager] Logging out:', reason);
 
     // Stop all timers
-    clearInterval(this.heartbeatTimer);
+    clearTimeout(this.heartbeatTimer);
     clearInterval(this.idleCheckTimer);
     clearTimeout(this.warningTimer);
 
