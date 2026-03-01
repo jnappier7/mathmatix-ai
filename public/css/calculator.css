@@ -489,6 +489,232 @@ body.standalone-calculator-page {
     transition: opacity 0.2s ease, background 0.15s ease;
 }
 
+/* Button ripple effect */
+.calculator .btn,
+.floating-calculator .btn,
+.floating-calculator .calc-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator .btn .btn-ripple,
+.floating-calculator .btn .btn-ripple,
+.floating-calculator .calc-btn .btn-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: btnRipple 0.4s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes btnRipple {
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Button press glow */
+.calculator .btn:active,
+.floating-calculator .calc-btn:active {
+    box-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 8px rgba(255, 255, 255, 0.15);
+}
+
+/* Copy button on result line */
+.calc-copy-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.08);
+    border: none;
+    color: #2d3436;
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.15s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.result-line {
+    position: relative;
+}
+
+.result-line:hover .calc-copy-btn,
+.floating-calculator .result-line:hover .calc-copy-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.calc-copy-btn:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.calc-copy-btn.copied {
+    background: #27ae60;
+    color: white;
+}
+
+/* History drawer */
+.calc-history-drawer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 0 0 6px 6px;
+    margin: -4px 0 8px;
+}
+
+.calc-history-drawer.open {
+    max-height: 180px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.calc-history-drawer-inner {
+    padding: 6px 8px;
+    max-height: 176px;
+    overflow-y: auto;
+}
+
+.calc-history-drawer-inner::-webkit-scrollbar {
+    width: 4px;
+}
+
+.calc-history-drawer-inner::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+}
+
+.calc-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #2d3436;
+    gap: 8px;
+}
+
+.calc-history-item:hover {
+    background: rgba(39, 174, 96, 0.12);
+}
+
+.calc-history-item .hist-expr {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+.calc-history-item .hist-result {
+    font-weight: bold;
+    white-space: nowrap;
+    color: #1a5f2a;
+}
+
+.calc-history-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 3px 0;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9px;
+    cursor: pointer;
+    width: 100%;
+    transition: color 0.2s ease;
+    letter-spacing: 0.5px;
+}
+
+.calc-history-toggle:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.calc-history-toggle i {
+    font-size: 8px;
+    transition: transform 0.3s ease;
+}
+
+.calc-history-toggle.open i {
+    transform: rotate(180deg);
+}
+
+/* Send-to-chat button */
+.calc-send-to-chat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 7px 0;
+    margin-top: 6px;
+    background: linear-gradient(135deg, #12B3B3 0%, #0d9999 100%);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.85;
+    letter-spacing: 0.3px;
+}
+
+.calc-send-to-chat:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(18, 179, 179, 0.3);
+}
+
+.calc-send-to-chat:active {
+    transform: translateY(0);
+}
+
+/* Floating calculator open/close animations */
+.floating-calculator.calc-entering {
+    animation: calcEnter 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.floating-calculator.calc-exiting {
+    animation: calcExit 0.2s ease-in forwards;
+}
+
+@keyframes calcEnter {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes calcExit {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+}
+
 /* Mobile touch improvements */
 .calculator,
 .floating-calculator {

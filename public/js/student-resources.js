@@ -1,43 +1,32 @@
 // student-resources.js
-// Learning resources display for students
+// Learning resources display for students — Enhanced UX
 
-console.log('📚 Student Resources JS Loading...');
+console.log('Student Resources JS Loading...');
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📚 Student Resources - DOM Ready');
+    console.log('Student Resources - DOM Ready');
 
     const openResourcesBtn = document.getElementById('open-resources-modal-btn');
     const resourcesModal = document.getElementById('resources-modal');
     const closeResourcesBtn = document.getElementById('close-resources-modal');
     const resourcesContent = document.getElementById('resources-content');
 
-    console.log('📚 Elements found:', {
-        button: !!openResourcesBtn,
-        modal: !!resourcesModal,
-        closeBtn: !!closeResourcesBtn,
-        content: !!resourcesContent
-    });
+    // State for filtering
+    let allResources = { teacherResources: [], myUploads: [], curriculum: null };
+    let activeFilter = 'all';
+    let searchQuery = '';
 
     // Open resources modal
     if (openResourcesBtn && resourcesModal) {
-        console.log('📚 Attaching click handler to Resources button');
         openResourcesBtn.addEventListener('click', async (e) => {
-            console.log('📚 Resources button clicked!');
             e.preventDefault();
             e.stopPropagation();
             try {
                 resourcesModal.classList.add('is-visible');
                 await loadResources();
             } catch (error) {
-                console.error('📚 Error opening resources:', error);
-                alert('Error opening resources: ' + error.message);
+                console.error('Error opening resources:', error);
             }
-        });
-        console.log('📚 Resources button click handler attached successfully');
-    } else {
-        console.error('📚 Missing elements!', {
-            button: !openResourcesBtn ? 'MISSING' : 'OK',
-            modal: !resourcesModal ? 'MISSING' : 'OK'
         });
     }
 
@@ -50,14 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
         closeResourcesBtn.addEventListener('click', closeModal);
     }
 
-    // Close on outside click
     resourcesModal?.addEventListener('click', (e) => {
-        if (e.target === resourcesModal) {
-            closeModal();
-        }
+        if (e.target === resourcesModal) closeModal();
     });
 
-    // "Ask Tutor About This" button — event delegation on resources content
+    // "Ask Tutor About This" button — event delegation
     resourcesContent?.addEventListener('click', (e) => {
         const btn = e.target.closest('.send-to-tutor-btn');
         if (!btn) return;
@@ -71,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chatInput) {
             chatInput.textContent = `Can you help me with "${resourceName}"?`;
             chatInput.focus();
-            // Place cursor at end
             const range = document.createRange();
             const sel = window.getSelection();
             range.selectNodeContents(chatInput);
@@ -81,31 +66,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag-to-chat: let students drag a resource card into the chat
+    // Drag-to-chat
     resourcesContent?.addEventListener('dragstart', (e) => {
         const card = e.target.closest('[data-resource-id]');
         if (!card) return;
 
-        const resourceId = card.dataset.resourceId;
-        const resourceName = card.dataset.resourceName;
-        const resourceType = card.dataset.resourceType;
-
-        // Set custom data so the chat drop handler can detect it
-        e.dataTransfer.setData('application/x-teacher-resource-id', resourceId);
-        e.dataTransfer.setData('application/x-teacher-resource-name', resourceName);
-        e.dataTransfer.setData('application/x-teacher-resource-type', resourceType);
+        e.dataTransfer.setData('application/x-teacher-resource-id', card.dataset.resourceId);
+        e.dataTransfer.setData('application/x-teacher-resource-name', card.dataset.resourceName);
+        e.dataTransfer.setData('application/x-teacher-resource-type', card.dataset.resourceType);
         e.dataTransfer.effectAllowed = 'copy';
 
         card.style.opacity = '0.5';
         card.addEventListener('dragend', () => { card.style.opacity = ''; }, { once: true });
     });
 
-    // Load resources from API
+    // ===== SKELETON LOADING =====
+    function showSkeletonLoading() {
+        resourcesContent.innerHTML = `
+            <div class="resources-skeleton">
+                ${Array.from({ length: 4 }, () => `
+                    <div class="skeleton-card">
+                        <div class="skeleton-icon"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton-line medium"></div>
+                            <div class="skeleton-line short"></div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // ===== LOAD RESOURCES =====
     async function loadResources() {
-        resourcesContent.innerHTML = '<p style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading resources...</p>';
+        showSkeletonLoading();
 
         try {
-            // Fetch curriculum resources, student uploads, and teacher-shared resources in parallel
             const [curriculumRes, uploadsRes, teacherRes] = await Promise.all([
                 fetch('/api/curriculum/student/resources', { credentials: 'include' }),
                 fetch('/api/student/uploads?limit=10', { credentials: 'include' }),
@@ -128,48 +124,143 @@ document.addEventListener('DOMContentLoaded', () => {
                 teacherResources = teacherData.success ? (teacherData.resources || []) : [];
             }
 
-            if (!data.hasResources) {
-                // Use teacher's actual Common Curriculum URL if available, otherwise use generic schedule
-                const scheduleUrl = data.scheduleUrl || 'https://www.commonplanner.com/sites/tentative-schedule';
+            allResources = { teacherResources, myUploads, curriculum: data };
+            activeFilter = 'all';
+            searchQuery = '';
+            renderResources();
 
-                resourcesContent.innerHTML = `
-                    <div style="padding: 20px;">
-                        <!-- Tentative Schedule Section -->
-                        <div style="margin-bottom: 25px;">
-                            <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
-                                ${data.scheduleUrl ? 'Your Class Schedule' : 'Tentative Schedule'}
-                            </h3>
-                            <div class="schedule-iframe-container">
-                                <iframe src="${scheduleUrl}" title="Common Curriculum Schedule"></iframe>
-                            </div>
-                            <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
-                                <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
-                            </p>
-                        </div>
+        } catch (error) {
+            console.error('Error loading resources:', error);
+            resourcesContent.innerHTML = `
+                <div class="resources-empty-state">
+                    <i class="fas fa-exclamation-triangle" style="color: #ff4e4e;"></i>
+                    <h3>Failed to Load Resources</h3>
+                    <p>Please check your connection and try again.</p>
+                </div>
+            `;
+        }
+    }
 
-                        ${generateTeacherResourcesSection(teacherResources)}
+    // ===== RENDER EVERYTHING =====
+    function renderResources() {
+        const { teacherResources, myUploads, curriculum: data } = allResources;
+        const scheduleUrl = data.scheduleUrl || 'https://www.commonplanner.com/sites/tentative-schedule';
 
-                        ${generateMyUploadsSection(myUploads)}
+        // Count by category for filter chips
+        const categoryCounts = {};
+        teacherResources.forEach(r => {
+            const cat = r.category || 'other';
+            categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+        });
 
-                        ${teacherResources.length === 0 ? `
-                        <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
-                            <i class="fas fa-book-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                            <h3 style="color: #444;">No Additional Resources Available</h3>
-                            <p>${data.currentTopic ? `You're currently studying: <strong>${data.currentTopic}</strong>` : 'Your teacher hasn\'t uploaded resources yet.'}</p>
-                            <p style="font-size: 0.9em; margin-top: 10px;">
-                                Resources like lesson videos, worksheets, and practice problems will appear here when your teacher adds them.
-                            </p>
-                        </div>
+        // Build search bar + filter chips
+        const searchBarHtml = `
+            <div class="resources-search-bar">
+                <div class="resources-search-input-wrap">
+                    <input type="text" class="resources-search-input" id="resources-search"
+                        placeholder="Search resources..." value="${searchQuery}" autocomplete="off" />
+                    <i class="fas fa-search"></i>
+                </div>
+                ${Object.keys(categoryCounts).length > 0 ? `
+                    <div class="resources-filter-chips">
+                        <button class="resources-filter-chip ${activeFilter === 'all' ? 'active' : ''}" data-filter="all">
+                            All <span class="chip-count">${teacherResources.length + myUploads.length}</span>
+                        </button>
+                        ${Object.entries(categoryCounts).map(([cat, count]) => `
+                            <button class="resources-filter-chip ${activeFilter === cat ? 'active' : ''}" data-filter="${cat}">
+                                ${categoryLabel(cat)} <span class="chip-count">${count}</span>
+                            </button>
+                        `).join('')}
+                        ${myUploads.length > 0 ? `
+                            <button class="resources-filter-chip ${activeFilter === 'uploads' ? 'active' : ''}" data-filter="uploads">
+                                My Uploads <span class="chip-count">${myUploads.length}</span>
+                            </button>
                         ` : ''}
                     </div>
-                `;
-                return;
-            }
+                ` : ''}
+            </div>
+        `;
 
+        // Filter teacher resources
+        let filteredTeacher = teacherResources;
+        let filteredUploads = myUploads;
+
+        if (activeFilter !== 'all' && activeFilter !== 'uploads') {
+            filteredTeacher = teacherResources.filter(r => (r.category || 'other') === activeFilter);
+            filteredUploads = [];
+        } else if (activeFilter === 'uploads') {
+            filteredTeacher = [];
+        }
+
+        // Apply search
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            filteredTeacher = filteredTeacher.filter(r =>
+                r.displayName.toLowerCase().includes(q) ||
+                (r.description || '').toLowerCase().includes(q) ||
+                (r.keywords || []).some(k => k.toLowerCase().includes(q))
+            );
+            filteredUploads = filteredUploads.filter(u =>
+                u.originalFilename.toLowerCase().includes(q)
+            );
+        }
+
+        // Build body sections
+        let bodyHtml = '<div class="resources-body">';
+
+        // Schedule section
+        bodyHtml += `
+            <div class="resources-section">
+                <div class="resources-section-header">
+                    <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
+                    ${data.scheduleUrl ? 'Your Class Schedule' : 'Tentative Schedule'}
+                </div>
+                <div class="schedule-iframe-container">
+                    <iframe src="${scheduleUrl}" title="Common Curriculum Schedule" loading="lazy"></iframe>
+                </div>
+                <p style="margin: 10px 0 0; font-size: 12px; color: #888; text-align: center;">
+                    <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore resources
+                </p>
+            </div>
+        `;
+
+        // Current lesson banner (if available)
+        if (data.hasResources && data.currentLesson) {
             const lesson = data.currentLesson;
+            bodyHtml += `
+                <div class="resources-lesson-banner">
+                    <div>
+                        <h3><i class="fas fa-calendar-check"></i> Week ${lesson.weekNumber}: ${lesson.topic}</h3>
+                        ${lesson.startDate && lesson.endDate ? `
+                            <p>${new Date(lesson.startDate).toLocaleDateString()} - ${new Date(lesson.endDate).toLocaleDateString()}</p>
+                        ` : ''}
+                        ${lesson.standards && lesson.standards.length > 0 ? `
+                            <p><strong>Standards:</strong> ${lesson.standards.join(', ')}</p>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
 
-            // Categorize resources by type
+        // Teacher resources section
+        if (filteredTeacher.length > 0) {
+            bodyHtml += `
+                <div class="resources-section">
+                    <div class="resources-section-header">
+                        <i class="fas fa-chalkboard-teacher" style="color: #27ae60;"></i>
+                        Teacher Resources
+                        <span class="section-count">${filteredTeacher.length}</span>
+                    </div>
+                    <div class="resources-grid">
+                        ${filteredTeacher.map(resource => renderTeacherResourceCard(resource)).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Curriculum resources (videos, PDFs, other)
+        if (data.hasResources && data.currentLesson && activeFilter === 'all' && !searchQuery) {
+            const lesson = data.currentLesson;
             const videos = [];
             const pdfs = [];
             const other = [];
@@ -184,324 +275,257 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Build HTML
-            // Use teacher's actual Common Curriculum URL if available, otherwise use generic schedule
-            const scheduleUrl = data.scheduleUrl || 'https://www.commoncurriculum.com/sites/tentative-schedule';
+            if (videos.length > 0) {
+                bodyHtml += renderUrlResourceSection('Lesson Videos', 'fas fa-video', '#9b51e0', videos, 'video');
+            }
+            if (pdfs.length > 0) {
+                bodyHtml += renderUrlResourceSection('Worksheets & Handouts', 'fas fa-file-pdf', '#ff4e4e', pdfs, 'pdf');
+            }
+            if (other.length > 0) {
+                bodyHtml += renderUrlResourceSection('Other Resources', 'fas fa-link', '#12B3B3', other, 'other');
+            }
+        }
 
-            let html = `
-                <div style="padding: 20px;">
-                    <!-- Tentative Schedule Section -->
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
-                            <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
-                            ${data.scheduleUrl ? 'Your Class Schedule' : 'Tentative Schedule'}
-                        </h3>
-                        <div class="schedule-iframe-container">
-                            <iframe src="${scheduleUrl}" title="Common Curriculum Schedule"></iframe>
-                        </div>
-                        <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
-                            <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
-                        </p>
+        // My uploads section
+        if (filteredUploads.length > 0) {
+            bodyHtml += `
+                <div class="resources-section">
+                    <div class="resources-section-header">
+                        <i class="fas fa-folder-open" style="color: #FF9800;"></i>
+                        My Uploads
+                        <span class="section-count">${filteredUploads.length}</span>
                     </div>
-
-                    ${generateTeacherResourcesSection(teacherResources)}
-
-                    ${generateMyUploadsSection(myUploads)}
-
-                    <div style="background: #e8f9f8; border-left: 4px solid #12B3B3; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-                        <h3 style="margin: 0 0 10px 0; color: #12B3B3;">
-                            <i class="fas fa-calendar-check"></i> Week ${lesson.weekNumber}: ${lesson.topic}
-                        </h3>
-                        ${lesson.startDate && lesson.endDate ? `
-                            <p style="margin: 5px 0; font-size: 0.9em; color: #666;">
-                                ${new Date(lesson.startDate).toLocaleDateString()} - ${new Date(lesson.endDate).toLocaleDateString()}
-                            </p>
-                        ` : ''}
-                        ${lesson.standards && lesson.standards.length > 0 ? `
-                            <p style="margin: 5px 0; font-size: 0.9em; color: #666;">
-                                <strong>Standards:</strong> ${lesson.standards.join(', ')}
-                            </p>
-                        ` : ''}
-                    </div>
-
-                    ${videos.length > 0 ? `
-                        <div style="margin-bottom: 25px;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">
-                                <i class="fas fa-video" style="color: #9b51e0;"></i> Lesson Videos
-                            </h4>
-                            <div style="display: grid; gap: 10px;">
-                                ${videos.map(url => {
-                                    const fileName = url.split('/').pop();
-                                    return `
-                                        <a href="${url}" target="_blank" class="resource-link" style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
-                                            <i class="fas fa-video" style="font-size: 24px; color: #9b51e0; margin-right: 15px;"></i>
-                                            <div style="flex: 1;">
-                                                <div style="font-weight: 500;">${fileName}</div>
-                                                <div style="font-size: 0.85em; color: #666; margin-top: 2px;">Click to watch</div>
-                                            </div>
-                                            <i class="fas fa-external-link-alt" style="color: #999;"></i>
-                                        </a>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${pdfs.length > 0 ? `
-                        <div style="margin-bottom: 25px;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">
-                                <i class="fas fa-file-pdf" style="color: #ff4e4e;"></i> Worksheets & Handouts
-                            </h4>
-                            <div style="display: grid; gap: 10px;">
-                                ${pdfs.map(url => {
-                                    const fileName = url.split('/').pop();
-                                    return `
-                                        <a href="${url}" target="_blank" class="resource-link" style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
-                                            <i class="fas fa-file-pdf" style="font-size: 24px; color: #ff4e4e; margin-right: 15px;"></i>
-                                            <div style="flex: 1;">
-                                                <div style="font-weight: 500;">${fileName}</div>
-                                                <div style="font-size: 0.85em; color: #666; margin-top: 2px;">Click to open PDF</div>
-                                            </div>
-                                            <i class="fas fa-external-link-alt" style="color: #999;"></i>
-                                        </a>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${other.length > 0 ? `
-                        <div style="margin-bottom: 25px;">
-                            <h4 style="margin: 0 0 10px 0; color: #333;">
-                                <i class="fas fa-link" style="color: #12B3B3;"></i> Other Resources
-                            </h4>
-                            <div style="display: grid; gap: 10px;">
-                                ${other.map(url => {
-                                    const fileName = url.split('/').pop();
-                                    const fileType = getFileType(url);
-                                    return `
-                                        <a href="${url}" target="_blank" class="resource-link" style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
-                                            <i class="${fileType.icon}" style="font-size: 24px; color: ${fileType.color}; margin-right: 15px;"></i>
-                                            <div style="flex: 1;">
-                                                <div style="font-weight: 500;">${fileName}</div>
-                                                <div style="font-size: 0.85em; color: #666; margin-top: 2px;">Click to open</div>
-                                            </div>
-                                            <i class="fas fa-external-link-alt" style="color: #999;"></i>
-                                        </a>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <div style="margin-top: 25px; padding: 15px; background: #f0f7ff; border-radius: 6px; border-left: 4px solid #2196F3;">
-                        <p style="margin: 0; font-size: 0.9em; color: #555;">
-                            <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                            <strong>Tip:</strong> These resources are aligned with what you're learning in class.
-                            Watch the videos before attempting problems, and use the worksheets for extra practice!
-                        </p>
+                    <div class="resources-grid">
+                        ${filteredUploads.map(upload => renderUploadCard(upload)).join('')}
                     </div>
                 </div>
             `;
+        }
 
-            resourcesContent.innerHTML = html;
+        // No results
+        if (filteredTeacher.length === 0 && filteredUploads.length === 0 && (searchQuery || activeFilter !== 'all')) {
+            bodyHtml += `
+                <div class="resources-no-results">
+                    <i class="fas fa-search"></i>
+                    <p>No resources match your ${searchQuery ? 'search' : 'filter'}. Try a different ${searchQuery ? 'term' : 'category'}.</p>
+                </div>
+            `;
+        }
 
-            // Add hover effects
-            document.querySelectorAll('.resource-link').forEach(link => {
-                link.addEventListener('mouseenter', function() {
-                    this.style.background = '#e3f2fd';
-                    this.style.transform = 'translateX(5px)';
-                });
-                link.addEventListener('mouseleave', function() {
-                    this.style.background = '#f8f9fa';
-                    this.style.transform = 'translateX(0)';
-                });
+        // Empty state (no resources at all)
+        if (teacherResources.length === 0 && myUploads.length === 0 && !data.hasResources) {
+            bodyHtml += `
+                <div class="resources-empty-state">
+                    <i class="fas fa-book-open"></i>
+                    <h3>No Resources Yet</h3>
+                    <p>${data.currentTopic ? `You're studying: <strong>${data.currentTopic}</strong>` : 'Your teacher hasn\'t uploaded resources yet.'}</p>
+                    <p style="margin-top: 8px;">Resources like worksheets, videos, and practice problems will appear here.</p>
+                </div>
+            `;
+        }
+
+        // Tip bar
+        if (teacherResources.length > 0 || data.hasResources) {
+            bodyHtml += `
+                <div class="resources-tip">
+                    <i class="fas fa-lightbulb"></i>
+                    <span><strong>Tip:</strong> Mention any resource by name in the chat and your AI tutor will help you work through it!</span>
+                </div>
+            `;
+        }
+
+        bodyHtml += '</div>';
+
+        resourcesContent.innerHTML = searchBarHtml + bodyHtml;
+
+        // Wire up search
+        const searchInput = document.getElementById('resources-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim();
+                renderResources();
+                // Re-focus and restore cursor
+                const newInput = document.getElementById('resources-search');
+                if (newInput) {
+                    newInput.focus();
+                    newInput.selectionStart = newInput.selectionEnd = newInput.value.length;
+                }
             });
-
-        } catch (error) {
-            console.error('Error loading resources:', error);
-            resourcesContent.innerHTML = `
-                <div style="padding: 40px; text-align: center; color: #ff4e4e;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
-                    <p>Failed to load resources. Please try again.</p>
-                </div>
-            `;
         }
+
+        // Wire up filter chips
+        resourcesContent.querySelectorAll('.resources-filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                activeFilter = chip.dataset.filter;
+                renderResources();
+            });
+        });
     }
 
-    // Get file type icon and color
-    function getFileType(url) {
-        if (url.includes('.docx') || url.includes('.doc')) {
-            return { icon: 'fas fa-file-word', color: '#2b7cd3' };
-        } else if (url.includes('.pptx') || url.includes('.ppt')) {
-            return { icon: 'fas fa-file-powerpoint', color: '#d24726' };
-        } else if (url.includes('drive.google.com')) {
-            return { icon: 'fab fa-google-drive', color: '#12B3B3' };
-        } else {
-            return { icon: 'fas fa-link', color: '#666' };
-        }
-    }
+    // ===== RENDER HELPERS =====
 
-    // Generate "Teacher Resources" section HTML
-    function generateTeacherResourcesSection(resources) {
-        if (!resources || resources.length === 0) {
-            return ''; // Don't show section if no teacher resources
-        }
-
-        const getResourceIcon = (fileType) => {
-            const icons = {
-                'pdf': { class: 'fas fa-file-pdf', color: '#ff4e4e' },
-                'doc': { class: 'fas fa-file-word', color: '#2b7cd3' },
-                'docx': { class: 'fas fa-file-word', color: '#2b7cd3' },
-                'ppt': { class: 'fas fa-file-powerpoint', color: '#d24726' },
-                'pptx': { class: 'fas fa-file-powerpoint', color: '#d24726' },
-                'jpg': { class: 'fas fa-file-image', color: '#4CAF50' },
-                'jpeg': { class: 'fas fa-file-image', color: '#4CAF50' },
-                'png': { class: 'fas fa-file-image', color: '#4CAF50' },
-                'webp': { class: 'fas fa-file-image', color: '#4CAF50' },
-                'heic': { class: 'fas fa-file-image', color: '#4CAF50' }
-            };
-            return icons[fileType.toLowerCase()] || { class: 'fas fa-file', color: '#666' };
-        };
-
-        const formatFileSize = (bytes) => {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
-        };
-
-        const formatDate = (dateStr) => {
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-            if (diffDays === 0) return 'Today';
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
-            return date.toLocaleDateString();
-        };
-
-        const categoryLabels = {
-            'worksheet': 'Worksheet',
-            'practice': 'Practice',
-            'homework': 'Homework',
-            'notes': 'Notes',
-            'test': 'Test',
-            'quiz': 'Quiz',
-            'handout': 'Handout',
-            'other': 'Resource'
-        };
-
-        const resourcesHtml = resources.map(resource => {
-            const icon = getResourceIcon(resource.fileType);
-            const categoryLabel = categoryLabels[resource.category] || 'Resource';
-            const escapedName = resource.displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-            return `
-                <div class="resource-card-wrapper"
-                     draggable="true"
-                     data-resource-id="${resource.id}"
-                     data-resource-name="${escapedName}"
-                     data-resource-type="${resource.fileType}"
-                     title="Drag to chat to share with your tutor">
-                    <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link"
-                       style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s; cursor: grab;">
-                        <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 500;">${resource.displayName}</div>
-                            <div style="font-size: 0.85em; color: #666; margin-top: 2px;">
-                                <span style="background: #e8f5e9; color: #27ae60; padding: 1px 6px; border-radius: 3px; font-size: 0.9em;">${categoryLabel}</span>
-                                ${resource.fileType.toUpperCase()} &bull; ${formatFileSize(resource.fileSize)} &bull; ${formatDate(resource.uploadedAt)}
-                            </div>
-                            ${resource.description ? `<div style="font-size: 0.85em; color: #888; margin-top: 4px;">${resource.description}</div>` : ''}
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-left: 8px;">
-                            <i class="fas fa-download" style="color: #999;" title="Download"></i>
-                            <i class="fas fa-grip-vertical" style="color: #bbb; font-size: 12px;" title="Drag to chat"></i>
-                        </div>
-                    </a>
-                    <button class="send-to-tutor-btn" data-resource-name="${escapedName}" title="Share this resource with your tutor">
-                        <i class="fas fa-comment-dots"></i> Ask Tutor About This
-                    </button>
-                </div>
-            `;
-        }).join('');
+    function renderTeacherResourceCard(resource) {
+        const iconClass = getIconBadgeClass(resource.fileType);
+        const iconFA = getFileIcon(resource.fileType);
+        const catLabel = categoryLabel(resource.category);
+        const catClass = 'cat-' + (resource.category || 'other');
+        const escapedName = resource.displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         return `
-            <div style="margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-chalkboard-teacher" style="color: #27ae60;"></i>
-                    Teacher Resources
-                </h3>
-                <div style="display: grid; gap: 10px;">
-                    ${resourcesHtml}
-                </div>
-                <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
-                    <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                    <strong>Tip:</strong> Mention any resource by name in the chat and the AI will help you work through it!
-                </p>
+            <div class="resource-card-wrapper"
+                 draggable="true"
+                 data-resource-id="${resource.id}"
+                 data-resource-name="${escapedName}"
+                 data-resource-type="${resource.fileType}"
+                 data-category="${resource.category || 'other'}"
+                 title="Drag to chat to share with your tutor">
+                <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link">
+                    <div class="resource-icon-badge ${iconClass}">
+                        <i class="fas ${iconFA}"></i>
+                    </div>
+                    <div class="resource-info-text">
+                        <div class="resource-name">${resource.displayName}</div>
+                        <div class="resource-meta-row">
+                            <span class="resource-category-badge ${catClass}">${catLabel}</span>
+                            <span>${resource.fileType.toUpperCase()}</span>
+                            <span>&bull;</span>
+                            <span>${formatFileSize(resource.fileSize)}</span>
+                            <span>&bull;</span>
+                            <span>${formatDate(resource.uploadedAt)}</span>
+                        </div>
+                        ${resource.description ? `<div class="resource-description-text">${resource.description}</div>` : ''}
+                    </div>
+                    <div class="resource-actions-col">
+                        <i class="fas fa-download" title="Download"></i>
+                        <i class="fas fa-grip-vertical" style="font-size: 11px; color: #ccc;" title="Drag to chat"></i>
+                    </div>
+                </a>
+                <button class="send-to-tutor-btn" data-resource-name="${escapedName}" title="Share with your AI tutor">
+                    <i class="fas fa-comment-dots"></i> Ask Tutor About This
+                </button>
             </div>
         `;
     }
 
-    // Generate "My Uploads" section HTML
-    function generateMyUploadsSection(uploads) {
-        if (!uploads || uploads.length === 0) {
-            return ''; // Don't show section if no uploads
-        }
+    function renderUploadCard(upload) {
+        const iconClass = upload.fileType === 'pdf' ? 'icon-pdf' : 'icon-image';
+        const iconFA = upload.fileType === 'pdf' ? 'fa-file-pdf' : 'fa-image';
 
-        const formatFileSize = (bytes) => {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
-        };
-
-        const formatDate = (dateStr) => {
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-            if (diffDays === 0) return 'Today';
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
-            return date.toLocaleDateString();
-        };
-
-        const uploadsHtml = uploads.map(upload => {
-            const icon = upload.fileType === 'pdf' ?
-                { class: 'fas fa-file-pdf', color: '#ff4e4e' } :
-                { class: 'fas fa-image', color: '#4CAF50' };
-
-            return `
-                <a href="/api/student/uploads/${upload._id}/file" target="_blank" class="resource-link upload-link"
-                   data-upload-id="${upload._id}"
-                   style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
-                    <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 500;">${upload.originalFilename}</div>
-                        <div style="font-size: 0.85em; color: #666; margin-top: 2px;">
-                            ${formatFileSize(upload.fileSize)} • ${formatDate(upload.uploadedAt)}
+        return `
+            <div class="resource-card-wrapper">
+                <a href="/api/student/uploads/${upload._id}/file" target="_blank" class="resource-link">
+                    <div class="resource-icon-badge ${iconClass}">
+                        <i class="fas ${iconFA}"></i>
+                    </div>
+                    <div class="resource-info-text">
+                        <div class="resource-name">${upload.originalFilename}</div>
+                        <div class="resource-meta-row">
+                            <span>${formatFileSize(upload.fileSize)}</span>
+                            <span>&bull;</span>
+                            <span>${formatDate(upload.uploadedAt)}</span>
                         </div>
                     </div>
-                    <i class="fas fa-external-link-alt" style="color: #999;"></i>
+                    <div class="resource-actions-col">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
                 </a>
-            `;
-        }).join('');
-
-        return `
-            <div style="margin-bottom: 25px;">
-                <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-folder-open" style="color: #FF9800;"></i>
-                    My Uploads
-                </h3>
-                <div style="display: grid; gap: 10px;">
-                    ${uploadsHtml}
-                </div>
-                <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
-                    <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                    <strong>Pro tip:</strong> The AI can reference your previously uploaded problems to provide better help!
-                </p>
             </div>
         `;
+    }
+
+    function renderUrlResourceSection(title, iconClass, iconColor, urls, type) {
+        return `
+            <div class="resources-section">
+                <div class="resources-section-header">
+                    <i class="${iconClass}" style="color: ${iconColor};"></i>
+                    ${title}
+                    <span class="section-count">${urls.length}</span>
+                </div>
+                <div class="resources-grid">
+                    ${urls.map(url => {
+                        const fileName = url.split('/').pop();
+                        const ft = getFileType(url);
+                        const badgeClass = type === 'video' ? 'icon-video' : type === 'pdf' ? 'icon-pdf' : 'icon-default';
+                        return `
+                            <div class="resource-card-wrapper">
+                                <a href="${url}" target="_blank" class="resource-link">
+                                    <div class="resource-icon-badge ${badgeClass}">
+                                        <i class="${ft.icon}"></i>
+                                    </div>
+                                    <div class="resource-info-text">
+                                        <div class="resource-name">${fileName}</div>
+                                        <div class="resource-meta-row">
+                                            <span>Click to ${type === 'video' ? 'watch' : 'open'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="resource-actions-col">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // ===== UTILITY FUNCTIONS =====
+
+    function getFileIcon(fileType) {
+        const icons = {
+            'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
+            'ppt': 'fa-file-powerpoint', 'pptx': 'fa-file-powerpoint',
+            'jpg': 'fa-file-image', 'jpeg': 'fa-file-image', 'png': 'fa-file-image',
+            'webp': 'fa-file-image', 'heic': 'fa-file-image'
+        };
+        return icons[fileType?.toLowerCase()] || 'fa-file';
+    }
+
+    function getIconBadgeClass(fileType) {
+        const map = {
+            'pdf': 'icon-pdf', 'doc': 'icon-doc', 'docx': 'icon-doc',
+            'ppt': 'icon-ppt', 'pptx': 'icon-ppt',
+            'jpg': 'icon-image', 'jpeg': 'icon-image', 'png': 'icon-image',
+            'webp': 'icon-image', 'heic': 'icon-image'
+        };
+        return map[fileType?.toLowerCase()] || 'icon-default';
+    }
+
+    function getFileType(url) {
+        if (url.includes('.docx') || url.includes('.doc')) return { icon: 'fas fa-file-word', color: '#2b7cd3' };
+        if (url.includes('.pptx') || url.includes('.ppt')) return { icon: 'fas fa-file-powerpoint', color: '#d24726' };
+        if (url.includes('.mp4') || url.includes('youtube.com') || url.includes('vimeo.com')) return { icon: 'fas fa-video', color: '#9b51e0' };
+        if (url.includes('.pdf')) return { icon: 'fas fa-file-pdf', color: '#ff4e4e' };
+        if (url.includes('drive.google.com')) return { icon: 'fab fa-google-drive', color: '#12B3B3' };
+        return { icon: 'fas fa-link', color: '#666' };
+    }
+
+    function categoryLabel(cat) {
+        const labels = {
+            'worksheet': 'Worksheet', 'practice': 'Practice', 'homework': 'Homework',
+            'notes': 'Notes', 'test': 'Test', 'quiz': 'Quiz',
+            'handout': 'Handout', 'other': 'Resource'
+        };
+        return labels[cat] || 'Resource';
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes) return '';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return date.toLocaleDateString();
     }
 });
