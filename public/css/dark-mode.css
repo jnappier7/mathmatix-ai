@@ -383,7 +383,80 @@
 
 /* Chat disclaimer dark mode */
 [data-theme="dark"] .chat-disclaimer {
-    color: var(--text-secondary);
+    color: #4a5568;
+}
+
+/* iMessage dark mode overrides */
+[data-theme="dark"] #chat-messages-container {
+    background-color: #000;
+}
+
+[data-theme="dark"] .message.ai {
+    background-color: #1c1c1e;
+    color: #f0f0f0;
+}
+
+[data-theme="dark"] .message.user {
+    background: #0b84fe;
+}
+
+[data-theme="dark"] #user-input {
+    background: #1c1c1e;
+    border-color: #38383a;
+    color: #f0f0f0;
+}
+
+[data-theme="dark"] #user-input:empty::before {
+    color: #636366;
+}
+
+[data-theme="dark"] .imessage-tool-btn {
+    color: #0a84ff;
+}
+
+[data-theme="dark"] .imessage-send-btn {
+    background: #0a84ff;
+}
+
+[data-theme="dark"] #thinking-indicator,
+[data-theme="dark"] #parent-thinking-indicator {
+    background-color: #1c1c1e;
+    color: #636366;
+}
+
+[data-theme="dark"] .session-stats-bar {
+    background: #000;
+    border-top-color: #1c1c1e;
+}
+
+[data-theme="dark"] .stat-label {
+    color: #636366;
+}
+
+[data-theme="dark"] .stat-value {
+    color: #0a84ff;
+}
+
+/* Hamburger dropdown dark mode */
+[data-theme="dark"] .header-dropdown-menu {
+    background: #1c1c1e;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .header-menu-item {
+    color: #f0f0f0;
+}
+
+[data-theme="dark"] .header-menu-item:hover {
+    background: #2c2c2e;
+}
+
+[data-theme="dark"] .header-menu-item i {
+    color: #0a84ff;
+}
+
+[data-theme="dark"] .header-menu-divider {
+    background: #38383a;
 }
 
 /* App sidebar in dark mode */

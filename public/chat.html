@@ -96,7 +96,7 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
     <nav class="landing-nav" aria-label="Chat controls">
-      <!-- TTS Playback Controls -->
+      <!-- TTS Playback Controls (only visible during audio playback) -->
       <button id="restart-audio-btn" class="btn btn-tertiary icon-only" title="Restart Audio" aria-label="Restart audio" style="display: none;">
         <i class="fas fa-redo"></i>
       </button>
@@ -119,34 +119,26 @@
           <button data-speed="2" role="menuitem">2x</button>
         </div>
       </div>
+
+      <!-- Hidden buttons (triggered via hamburger menu items) -->
       <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources" aria-label="Learning resources" style="display: none;">
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
       </button>
-      <!-- Primary actions (always visible) -->
-      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode">
-        <i class="fas fa-moon"></i>
-      </button>
-      <button id="open-settings-modal-btn" class="btn btn-tertiary icon-only" title="Settings" aria-label="Settings">
-        <i class="fas fa-cog"></i>
-      </button>
+      <button id="open-settings-modal-btn" style="display: none;">Settings</button>
+      <button id="share-progress-header-btn" style="display: none;">Share Progress</button>
+      <button id="open-feedback-modal-btn" style="display: none;">Send Feedback</button>
       <div id="roleSwitcher" class="role-switcher" style="display: none;">
         <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch Role"></select>
       </div>
-      <button id="logoutBtn" class="btn btn-tertiary logout-button icon-only" title="Logout" aria-label="Logout">
-        <i class="fas fa-sign-out-alt"></i>
+
+      <!-- Theme toggle — always visible -->
+      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
       </button>
 
-      <!-- Secondary actions (hidden on mobile, available via More menu) -->
-      <button id="share-progress-header-btn" class="btn btn-tertiary icon-only toolbar-secondary" title="Share Progress Code" aria-label="Share Progress Code">
-        <i class="fas fa-link"></i>
-      </button>
-      <button id="open-feedback-modal-btn" class="btn btn-tertiary icon-only toolbar-secondary" title="Send Feedback" aria-label="Send Feedback">
-        <i class="fas fa-comment-dots"></i>
-      </button>
-
-      <!-- More menu trigger (mobile only) -->
-      <button id="more-tools-btn" class="btn btn-tertiary icon-only toolbar-more" title="More" aria-label="More options">
-        <i class="fas fa-ellipsis-v"></i>
+      <!-- Hamburger menu button — upper right -->
+      <button id="header-menu-btn" class="btn btn-tertiary icon-only" title="Menu" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
       </button>
 
       <!-- Mobile Progress Toggle Button -->
@@ -154,6 +146,61 @@
         <i class="fas fa-user-circle"></i>
       </button>
     </nav>
+
+    <!-- Hamburger dropdown menu -->
+    <div id="header-dropdown-menu" class="header-dropdown-menu">
+      <button class="header-menu-item" data-trigger="open-settings-modal-btn">
+        <i class="fas fa-cog"></i> Settings
+      </button>
+      <button class="header-menu-item" data-trigger="open-resources-modal-btn">
+        <i class="fas fa-book-open"></i> Resources
+      </button>
+      <button class="header-menu-item" data-trigger="share-progress-header-btn">
+        <i class="fas fa-link"></i> Share Progress
+      </button>
+      <button class="header-menu-item" data-trigger="open-feedback-modal-btn">
+        <i class="fas fa-comment-dots"></i> Feedback
+      </button>
+      <div class="header-menu-divider"></div>
+      <button class="header-menu-item" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Log Out
+      </button>
+    </div>
+    <script>
+    // Hamburger dropdown toggle
+    (function() {
+      var menuBtn = document.getElementById('header-menu-btn');
+      var menu = document.getElementById('header-dropdown-menu');
+      if (!menuBtn || !menu) return;
+
+      menuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menu.classList.toggle('is-open');
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && e.target !== menuBtn) {
+          menu.classList.remove('is-open');
+        }
+      });
+
+      // Menu items trigger their target buttons
+      menu.querySelectorAll('.header-menu-item[data-trigger]').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var targetId = this.getAttribute('data-trigger');
+          var targetBtn = document.getElementById(targetId);
+          menu.classList.remove('is-open');
+          if (targetBtn) setTimeout(function() { targetBtn.click(); }, 50);
+        });
+      });
+
+      // Close on ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') menu.classList.remove('is-open');
+      });
+    })();
+    </script>
   </header>
 
   <!-- Sidebar Toggle Button -->
@@ -469,44 +516,35 @@
     <!-- Modern File Grid Container -->
     <div id="file-grid-container" class="file-grid-container"></div>
 
-    <!-- Compact Input Row: Suggestions + Toolbar -->
-    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 12px; flex-wrap: wrap;">
-      <!-- Quick Reply Suggestions (contextual chips) -->
-      <div id="suggestion-chips-container" style="
-        display: none;
-        gap: 8px;
-        flex-wrap: wrap;
-        flex: 1;
-        min-width: 200px;
-      ">
-        <!-- Chips will be dynamically inserted here -->
-      </div>
+    <!-- Quick Reply Suggestions -->
+    <div id="suggestion-chips-container" class="imessage-chips-row">
+      <!-- Chips will be dynamically inserted here -->
+    </div>
 
-      <!-- Compact Toolbar (inline with chips) -->
-      <div class="input-toolbar-compact" style="display: flex; gap: 6px; flex-shrink: 0;">
-        <button id="insert-equation-btn" title="Insert Equation" aria-label="Insert equation" class="btn btn-tertiary btn-sm">
+    <!-- iMessage-style compose bar -->
+    <div class="imessage-compose-bar">
+      <div class="imessage-tool-btns">
+        <button id="insert-equation-btn" title="Insert Equation" aria-label="Insert equation" class="imessage-tool-btn">
           <i class="fas fa-square-root-variable"></i>
         </button>
-        <button id="attach-button" title="Upload Files" aria-label="Upload files" class="btn btn-tertiary btn-sm">
+        <button id="attach-button" title="Upload Files" aria-label="Upload files" class="imessage-tool-btn">
           <i class="fas fa-paperclip"></i>
         </button>
-        <button id="camera-button" title="Show Your Work - Get Graded" aria-label="Show your work" class="btn btn-tertiary btn-sm">
+        <button id="camera-button" title="Show Your Work" aria-label="Show your work" class="imessage-tool-btn">
           <i class="fas fa-camera-retro"></i>
         </button>
-        <button id="mic-button" title="Voice Input" aria-label="Voice input" class="btn btn-tertiary btn-sm">
+        <button id="mic-button" title="Voice Input" aria-label="Voice input" class="imessage-tool-btn">
           <i class="fas fa-microphone"></i>
         </button>
       </div>
+      <div class="imessage-input-row">
+        <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." role="textbox" aria-multiline="true"></div>
+        <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
+          <i class="fas fa-arrow-up"></i>
+        </button>
+      </div>
     </div>
-
-    <!-- Message Input (Full Width) -->
-    <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." role="textbox" aria-multiline="true"></div>
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
-
-    <!-- Send Button (Full Width) -->
-    <button id="send-button" class="btn btn-primary send-button-fullwidth">
-      <i class="fas fa-paper-plane"></i> Send
-    </button>
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
 </div>
 
