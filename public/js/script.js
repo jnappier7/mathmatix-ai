@@ -502,60 +502,142 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function renderMathInElement(element) {
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
-        } else if (window.ensureMathJax) {
-            window.ensureMathJax().then(() => {
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
-                }
-            });
+    // ── Unified Markdown + Math renderer (KaTeX + markdown-it) ──
+    // markdown-it-texmath handles \(...\) and \[...\] in a single parse pass,
+    // so we no longer need protect/parse/restore or async MathJax typesetting.
+
+    let _md = null; // lazy-init'd markdown-it instance
+
+    function getMd() {
+        if (_md) return _md;
+        if (typeof markdownit === 'undefined' || typeof texmath === 'undefined' || typeof katex === 'undefined') {
+            return null; // libs not loaded yet
         }
+        _md = markdownit({ html: false, linkify: true, breaks: true })
+            .use(texmath, {
+                engine: katex,
+                delimiters: ['dollars', 'brackets', 'dollarsaliased'],
+                katexOptions: { throwOnError: false, strict: false, trust: true }
+            });
+        return _md;
     }
 
     /**
-     * Auto-convert common math notation to LaTeX for MathJax rendering
-     * Converts patterns like x^2, a_n, sqrt(12) to \(x^2\), \(a_n\), \(\sqrt{12}\)
+     * Render markdown + LaTeX → sanitized HTML in one pass.
+     * KaTeX renders inline during the parse — no async, no FOUC.
      */
-    function autoConvertMathNotation(text) {
-        if (!text) return text;
-
-        // Skip if text already has LaTeX delimiters (AI already formatted it)
-        if (text.includes('\\(') || text.includes('\\[') || text.includes('$')) {
-            return text;
+    function renderMarkdownMath(text) {
+        const md = getMd();
+        if (!md) {
+            // Fallback if libs haven't loaded yet (shouldn't happen with defer)
+            return DOMPurify ? DOMPurify.sanitize(text) : text;
         }
 
-        let result = text;
+        // Protect inline visual HTML from markdown parsing
+        const visualBlocks = [];
+        let protectedText = text;
+        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
+            const index = visualBlocks.length;
+            visualBlocks.push(match);
+            return `@@VISUAL_BLOCK_${index}@@`;
+        });
+        protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
+            const index = visualBlocks.length;
+            visualBlocks.push(match);
+            return `@@VISUAL_BLOCK_${index}@@`;
+        });
 
-        // Convert sqrt(n) or sqrt{n} to \(\sqrt{n}\)
-        result = result.replace(/\bsqrt\s*[\(\{]([^\)\}]+)[\)\}]/gi, '\\(\\sqrt{$1}\\)');
+        let html = md.render(protectedText);
 
-        // Convert variable^exponent patterns (e.g., x^2, y^3, a^n)
-        // Match: letter(s) followed by ^ and a number or letter or (expression)
-        result = result.replace(/\b([a-zA-Z]+)\^(\d+|\([^\)]+\)|[a-zA-Z])\b/g, '\\($1^{$2}\\)');
+        // Restore visual blocks
+        visualBlocks.forEach((block, index) => {
+            html = html.replace(`@@VISUAL_BLOCK_${index}@@`, block);
+        });
 
-        // Convert variable_subscript patterns (e.g., a_n, x_1, a_i)
-        // Match: letter(s) followed by _ and a number or letter
-        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\b/g, '\\($1_{$2}\\)');
+        // Sanitize — KaTeX output uses spans with classes + inline styles
+        if (typeof DOMPurify !== 'undefined') {
+            html = DOMPurify.sanitize(html, {
+                ALLOWED_TAGS: [
+                    // Markdown output
+                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
+                    // Form elements for interactive visuals
+                    'input', 'button',
+                    // SVG elements for charts/graphs
+                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    // Images
+                    'img',
+                    // KaTeX uses math/semantics/annotation elements
+                    'math', 'semantics', 'annotation', 'mrow', 'mi', 'mo', 'mn', 'ms',
+                    'mfrac', 'msup', 'msub', 'msubsup', 'mover', 'munder', 'munderover',
+                    'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
+                    'menclose', 'mglyph', 'mstyle', 'merror', 'mprescripts', 'mmultiscripts'
+                ],
+                ALLOWED_ATTR: [
+                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
+                    // SVG attributes
+                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
+                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    // Form/interactive attributes
+                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                    // Data attributes for visuals
+                    'data-config', 'data-diagram-id', 'data-value', 'data-label',
+                    // KaTeX attributes
+                    'aria-hidden', 'encoding', 'mathvariant', 'stretchy', 'fence',
+                    'separator', 'lspace', 'rspace', 'accent', 'accentunder',
+                    'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+                    'columnlines', 'rowlines', 'frame', 'framespacing',
+                    'displaystyle', 'scriptlevel', 'minsize', 'maxsize',
+                    'xmlns'
+                ]
+            });
+        }
 
-        // Convert combined patterns like x_1^2
-        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\^(\d+|[a-zA-Z])\b/g, '\\($1_{$2}^{$3}\\)');
-
-        // Convert pi to π symbol when standalone
-        result = result.replace(/\bpi\b/gi, '\\(\\pi\\)');
-
-        // Convert infinity
-        result = result.replace(/\binfinity\b/gi, '\\(\\infty\\)');
-
-        // Convert common fractions like 1/2, 3/4 (only simple numeric fractions)
-        // Be careful not to match dates or other patterns
-        result = result.replace(/(?<![\/\d])(\d+)\/(\d+)(?![\/\d])/g, '\\(\\frac{$1}{$2}\\)');
-
-        return result;
+        return html;
     }
 
-    // Expose for use elsewhere
+    /**
+     * Backward-compat: re-render any raw \(...\) or \[...\] in a DOM element.
+     * Used by equation editor insertion and step reveals.
+     * With KaTeX this is synchronous — no debounce needed.
+     */
+    function renderMathInElement(element) {
+        if (typeof katex === 'undefined') return;
+        // Find text nodes containing \( or \[ and render them
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) textNodes.push(node);
+
+        textNodes.forEach(textNode => {
+            const text = textNode.textContent;
+            if (!text || (!text.includes('\\(') && !text.includes('\\['))) return;
+
+            const span = document.createElement('span');
+            // Replace \(...\) and \[...\] with rendered KaTeX
+            let html = text;
+            html = html.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
+                try { return katex.renderToString(math, { displayMode: true, throwOnError: false }); }
+                catch(e) { return _; }
+            });
+            html = html.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => {
+                try { return katex.renderToString(math, { displayMode: false, throwOnError: false }); }
+                catch(e) { return _; }
+            });
+
+            if (html !== text) {
+                span.innerHTML = html;
+                textNode.parentNode.replaceChild(span, textNode);
+            }
+        });
+    }
+
+    // autoConvertMathNotation removed — markdown-it-texmath handles \(...\)
+    // and \[...\] delimiters natively. Server-side normalizeLatex converts
+    // bare math ($...$, bare commands) to proper delimiters before we get here.
+    // Keeping a no-op stub for backward compatibility with external callers.
+    function autoConvertMathNotation(text) { return text; }
     window.autoConvertMathNotation = autoConvertMathNotation;
 
   // ============================================
@@ -814,89 +896,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
         
-        if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
-            // Auto-convert common math notation (x^2, a_n, sqrt(12)) to LaTeX
-            let processedText = autoConvertMathNotation(text);
-
-            // Protect entire LaTeX blocks from markdown parsing
-            const latexBlocks = [];
-            let protectedText = processedText;
-
-            // Extract and protect display math \[...\]
-            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline math \(...\)
-            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline visual HTML (SVG containers from inlineChatVisuals)
-            // These are already rendered HTML that shouldn't be parsed by marked
-            // Pattern matches: <div class="icv-container...>...</div> (outermost container)
-            const visualBlocks = [];
-            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
-                const index = visualBlocks.length;
-                visualBlocks.push(match);
-                return `@@VISUAL_BLOCK_${index}@@`;
-            });
-            // Also protect non-SVG visuals (like fraction displays)
-            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
-                const index = visualBlocks.length;
-                visualBlocks.push(match);
-                return `@@VISUAL_BLOCK_${index}@@`;
-            });
-
-            // Parse markdown with protected LaTeX and visuals
-            const dirtyHtml = marked.parse(protectedText, { breaks: true });
-
-            // Restore LaTeX blocks
-            let finalHtml = dirtyHtml;
-            latexBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
-            });
-
-            // Restore visual blocks
-            visualBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@VISUAL_BLOCK_${index}@@`, block);
-            });
-
-            // Sanitize HTML to prevent XSS attacks
-            // Extended to allow inline visual elements (SVG charts, graphs, etc.)
-            const sanitizedHtml = DOMPurify.sanitize(finalHtml, {
-                ALLOWED_TAGS: [
-                    // Basic formatting
-                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
-                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
-                    // Form elements for interactive visuals
-                    'input', 'button',
-                    // SVG elements for charts/graphs
-                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
-                    // Images
-                    'img'
-                ],
-                ALLOWED_ATTR: [
-                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
-                    // SVG attributes
-                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
-                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
-                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
-                    // Form/interactive attributes
-                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
-                    // Data attributes for visuals
-                    'data-config', 'data-diagram-id', 'data-value', 'data-label'
-                ]
-            });
-            textNode.innerHTML = sanitizedHtml;
+        if (sender === 'ai') {
+            // Single-pass markdown + KaTeX rendering
+            textNode.innerHTML = renderMarkdownMath(text);
         } else {
-            // For user messages, also auto-convert math notation
-            const convertedText = autoConvertMathNotation(text);
-            textNode.innerHTML = convertedText;
+            // User messages: render markdown+math too (for equations they type)
+            textNode.innerHTML = renderMarkdownMath(text);
         }
         bubble.appendChild(textNode);
 
@@ -1147,7 +1152,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        setTimeout(() => renderMathInElement(bubble), 0);
+        // Re-render any raw \(...\) in the bubble (e.g. equation editor inserts)
+        renderMathInElement(bubble);
 
         // Update watermark visibility based on message count
         updateChatWatermark();
@@ -1256,6 +1262,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function startStreamingMessage() {
         if (!chatBox) return null;
 
+        _streamRawText = ''; // Reset raw text accumulator
+
         const bubble = document.createElement("div");
         bubble.className = "message ai streaming";
         bubble.id = `message-${Date.now()}-${Math.random()}`;
@@ -1272,51 +1280,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return { bubble, textNode };
     }
 
+    // Accumulate raw text for streaming — we keep the raw source
+    // and re-render the full text on each chunk. KaTeX is synchronous
+    // so no debounce is needed.
+    let _streamRawText = '';
+
     // Helper function to append a chunk to a streaming message
     function appendStreamingChunk(messageRef, chunk) {
         if (!messageRef || !messageRef.textNode) return;
 
-        const currentText = messageRef.textNode.textContent || '';
-        const newText = currentText + chunk;
+        _streamRawText += chunk;
 
-        // Update the text content
-        messageRef.textNode.textContent = newText;
-
-        // Re-parse markdown if it's an AI message
-        if (messageRef.bubble.classList.contains('ai') && typeof marked !== 'undefined' && marked.parse) {
-            // Protect entire LaTeX blocks from markdown parsing
-            const latexBlocks = [];
-            let protectedText = newText;
-
-            // Extract and protect display math \[...\]
-            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Extract and protect inline math \(...\)
-            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
-                const index = latexBlocks.length;
-                latexBlocks.push(match);
-                return `@@LATEX_BLOCK_${index}@@`;
-            });
-
-            // Parse markdown with protected LaTeX
-            const dirtyHtml = marked.parse(protectedText, { breaks: true });
-
-            // Restore LaTeX blocks
-            let finalHtml = dirtyHtml;
-            latexBlocks.forEach((block, index) => {
-                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
-            });
-
-            messageRef.textNode.innerHTML = finalHtml;
-        }
-
-        // Re-render math if MathJax is available
-        if (window.renderMathInElement && messageRef.bubble) {
-            setTimeout(() => renderMathInElement(messageRef.bubble), 0);
+        // Single-pass render: markdown + KaTeX in one call, synchronous
+        if (messageRef.bubble.classList.contains('ai')) {
+            messageRef.textNode.innerHTML = renderMarkdownMath(_streamRawText);
+        } else {
+            messageRef.textNode.textContent = _streamRawText;
         }
 
         // Auto-scroll
@@ -1328,6 +1307,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageRef || !messageRef.bubble) return;
 
         messageRef.bubble.classList.remove('streaming');
+
+        // Final clean render with the complete text — KaTeX is synchronous,
+        // so no debounce or async needed. This catches any LaTeX delimiters
+        // that were split across chunks during streaming.
+        if (messageRef.textNode) {
+            messageRef.textNode.innerHTML = renderMarkdownMath(fullText);
+        }
 
         // Add audio playback button
         if (typeof playAudio === 'function') {
@@ -1364,8 +1350,6 @@ document.addEventListener("DOMContentLoaded", () => {
             messageRef.bubble.appendChild(reactionContainer);
         }
 
-        // Final MathJax render to ensure all LaTeX is processed
-        setTimeout(() => renderMathInElement(messageRef.bubble), 100);
     }
 
     // Helper function to extract text with LaTeX from contenteditable
@@ -1377,7 +1361,7 @@ document.addEventListener("DOMContentLoaded", () => {
         while (node = walker.nextNode()) {
             if (node.nodeType === Node.TEXT_NODE) {
                 // Skip text nodes that are inside math-container elements
-                // (MathJax creates these when rendering, but we want the LaTeX source instead)
+                // (KaTeX creates spans when rendering, but we want the LaTeX source instead)
                 let parent = node.parentElement;
                 let insideMathContainer = false;
                 while (parent && parent !== element) {
@@ -1654,7 +1638,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
                 const chatEndpoint = isInCourse ? '/api/course-chat' : '/api/chat';
 
-                response = await csrfFetch(chatEndpoint, {
+                response = await csrfFetch(`${chatEndpoint}?stream=true`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -1685,10 +1669,84 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            const data = await response.json();
+            // Check if response is SSE stream (text/event-stream)
+            const contentType = response.headers.get('Content-Type') || '';
+            let data;
+
+            if (contentType.includes('text/event-stream')) {
+                // Read SSE stream: show words as they arrive
+                // Don't create the bubble yet — wait until first chunk arrives
+                // to avoid showing a blank pill during pipeline processing.
+                let streamRef = null;
+                let fullText = '';
+                let completeData = null;
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        try {
+                            const event = JSON.parse(line.slice(6));
+                            if (event.type === 'chunk' && event.content) {
+                                // Create the bubble on first real content
+                                if (!streamRef) {
+                                    showThinkingIndicator(false);
+                                    streamRef = startStreamingMessage();
+                                }
+                                fullText += event.content;
+                                appendStreamingChunk(streamRef, event.content);
+                            } else if (event.type === 'replacement' && event.content) {
+                                // Server sent a replacement (e.g., after streaming fallback)
+                                if (!streamRef) {
+                                    showThinkingIndicator(false);
+                                    streamRef = startStreamingMessage();
+                                }
+                                fullText = event.content;
+                                if (streamRef && streamRef.textNode) {
+                                    streamRef.textNode.textContent = event.content;
+                                }
+                            } else if (event.type === 'complete' && event.data) {
+                                completeData = event.data;
+                            } else if (event.type === 'error') {
+                                throw new Error(event.message || 'Stream error');
+                            }
+                        } catch (parseErr) {
+                            if (parseErr.message === 'Stream error' || parseErr.message?.includes('Stream')) throw parseErr;
+                            // Ignore malformed SSE lines
+                        }
+                    }
+                }
+
+                // Hide thinking indicator if no chunks arrived
+                if (!streamRef) {
+                    showThinkingIndicator(false);
+                }
+
+                // Finalize the streaming message (adds audio button, reactions)
+                if (streamRef) {
+                    finalizeStreamingMessage(streamRef, fullText);
+                }
+
+                // Use the complete data from the server, or build minimal data from streamed text
+                data = completeData || { text: fullText };
+            } else {
+                // Non-streaming: parse JSON as before
+                data = await response.json();
+            }
 
             // Process AI response (same logic as original sendMessage)
-            let aiText = data.text;
+            let aiText = data.text || '';
+            const wasStreamed = contentType.includes('text/event-stream');
             let graphData = null;
             const graphRegex = /\[GRAPH:({.*})\]/;
             const graphMatch = aiText.match(graphRegex);
@@ -1720,7 +1778,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            // Only append if we didn't already stream the message into the DOM
+            if (!wasStreamed) {
+                appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            }
 
             // Apply IEP accommodations to this response
             handleIepResponseFeatures(data.iepFeatures);
@@ -1919,18 +1980,43 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Chat error:", error);
 
-            let errorMessage = "I'm having trouble connecting. Please try again.";
+            let errorMessage = "I'm having trouble connecting.";
+            let isRetryable = true;
             if (error.message) {
                 if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
-                    errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
+                    errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable.";
+                    isRetryable = false; // File-specific errors need a different file
                 } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
-                    errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
+                    errorMessage = `File processing error: ${error.message}`;
+                    isRetryable = false;
                 } else if (!error.message.includes('Server error')) {
                     errorMessage = error.message;
                 }
             }
 
-            appendMessage(errorMessage, "system-error");
+            // Show error with retry button
+            const errorContainer = document.createElement('div');
+            errorContainer.className = 'message-container system-error';
+            const errorBubble = document.createElement('div');
+            errorBubble.className = 'message system-error';
+            errorBubble.innerHTML = `<span class="message-text">${errorMessage}</span>`;
+
+            if (isRetryable) {
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'retry-btn';
+                retryBtn.innerHTML = '<i class="fas fa-redo"></i> Try Again';
+                retryBtn.addEventListener('click', () => {
+                    errorContainer.remove();
+                    queueMessage(queuedMsg.text, queuedMsg.files, queuedMsg.responseTime);
+                });
+                errorBubble.appendChild(retryBtn);
+            }
+
+            errorContainer.appendChild(errorBubble);
+            if (chatBox) {
+                chatBox.appendChild(errorContainer);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
         } finally {
             showThinkingIndicator(false);
             setTimeout(() => showDefaultSuggestions(), 500);
@@ -2208,23 +2294,89 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Toggle inline palette instead of modal
+    // --- Equation palette open/close (mobile bottom-sheet aware) ---
+    const isMobileView = () => window.innerWidth <= 768;
+    let eqBackdrop = null;
+
+    function openEquationPalette() {
+        if (!inlineEquationPalette) return;
+        inlineEquationPalette.style.display = 'block';
+
+        // On mobile, show backdrop overlay behind the bottom sheet
+        if (isMobileView()) {
+            if (!eqBackdrop) {
+                eqBackdrop = document.createElement('div');
+                eqBackdrop.className = 'equation-palette-backdrop';
+                eqBackdrop.addEventListener('click', closeEquationPalette);
+            }
+            document.body.appendChild(eqBackdrop);
+
+            // Disable MathLive virtual keyboard on mobile
+            if (window.mathVirtualKeyboard) {
+                window.mathVirtualKeyboard.visible = false;
+            }
+            inlineEquationPalette.querySelectorAll('math-field').forEach(mf => {
+                mf.setAttribute('virtual-keyboard-mode', 'off');
+            });
+        }
+
+        const field = getActiveMathField();
+        if (field) setTimeout(() => field.focus(), 100);
+    }
+
+    function closeEquationPalette() {
+        if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
+        if (eqBackdrop && eqBackdrop.parentNode) {
+            eqBackdrop.parentNode.removeChild(eqBackdrop);
+        }
+    }
+
+    // Toggle inline palette
     if (openEquationBtn && inlineEquationPalette) {
         openEquationBtn.addEventListener('click', () => {
             const isVisible = inlineEquationPalette.style.display === 'block';
-            inlineEquationPalette.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible) {
-                const field = getActiveMathField();
-                if (field) setTimeout(() => field.focus(), 100);
-            }
+            if (isVisible) closeEquationPalette();
+            else openEquationPalette();
         });
     }
 
     // Close inline palette
     if (closeInlinePaletteBtn) {
-        closeInlinePaletteBtn.addEventListener('click', () => {
-            if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
-        });
+        closeInlinePaletteBtn.addEventListener('click', closeEquationPalette);
+    }
+
+    // Mobile: swipe-down to dismiss bottom sheet
+    if (inlineEquationPalette) {
+        let touchStartY = 0;
+        let touchCurrentY = 0;
+
+        inlineEquationPalette.addEventListener('touchstart', (e) => {
+            // Only track swipe on the header (drag handle area)
+            if (!e.target.closest('.equation-palette-header')) return;
+            touchStartY = e.touches[0].clientY;
+            touchCurrentY = touchStartY;
+        }, { passive: true });
+
+        inlineEquationPalette.addEventListener('touchmove', (e) => {
+            if (!touchStartY) return;
+            touchCurrentY = e.touches[0].clientY;
+            const dy = touchCurrentY - touchStartY;
+            // Only allow downward swipe
+            if (dy > 0) {
+                inlineEquationPalette.style.transform = `translateY(${dy}px)`;
+            }
+        }, { passive: true });
+
+        inlineEquationPalette.addEventListener('touchend', () => {
+            const dy = touchCurrentY - touchStartY;
+            touchStartY = 0;
+            if (dy > 80) {
+                // Swiped down enough — dismiss
+                closeEquationPalette();
+            }
+            // Reset transform
+            inlineEquationPalette.style.transform = '';
+        }, { passive: true });
     }
 
     // Handle symbol button clicks (both .symbol-btn and .script-btn)
@@ -2272,7 +2424,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             updateRemoveButtons();
 
-            inlineEquationPalette.style.display = 'none';
+            closeEquationPalette();
             userInput.focus();
         });
     }
@@ -2397,7 +2549,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     userInput.appendChild(mathContainer);
                     userInput.appendChild(document.createTextNode(' '));
 
-                    // Render the math using MathJax
+                    // Render the math using KaTeX
                     renderMathInElement(mathContainer);
 
                     equationModal.classList.remove('is-visible');

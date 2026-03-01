@@ -132,6 +132,28 @@
     border: 1px solid var(--clr-border);
 }
 
+/* KaTeX inline math — size to match surrounding text */
+.message .katex {
+    font-size: 1.05em;
+}
+
+/* KaTeX display math — centered block with breathing room */
+.message .katex-display {
+    margin: 0.75em 0;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Prevent display math from overflowing chat bubbles on mobile */
+.message .katex-display > .katex {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 /* Message Timestamps */
 .message-timestamp {
     font-size: 0.7rem;
@@ -651,4 +673,47 @@
     justify-content: center;
     font-size: 0.8em;
     color: var(--clr-text);
+}
+
+/* --- Error message with retry button --- */
+.message-container.system-error {
+    justify-content: center;
+}
+.message.system-error {
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    color: #c62828;
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 80%;
+    font-size: 0.9em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.message.system-error .message-text {
+    flex: 1;
+    min-width: 0;
+}
+.retry-btn {
+    background: #c62828;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+.retry-btn:hover {
+    background: #b71c1c;
+}
+.retry-btn:active {
+    transform: scale(0.97);
 }

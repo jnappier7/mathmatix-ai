@@ -137,6 +137,17 @@ const conversationSchema = new Schema({
         timestamp: { type: Date, default: Date.now },
         acknowledged: { type: Boolean, default: false }
     }],
+    // Session mood snapshot — persisted after each turn for dashboard visibility
+    // and to avoid re-scanning full history on every request
+    sessionMood: {
+        trajectory: { type: String, enum: ['rising', 'falling', 'stable', 'recovered'], default: null },
+        energy: { type: String, enum: ['high', 'medium', 'low'], default: null },
+        momentum: { type: Number, default: 0 },
+        inFlow: { type: Boolean, default: false },
+        fatigueSignal: { type: Boolean, default: false },
+        turnCount: { type: Number, default: 0 },
+        lastUpdated: { type: Date, default: null },
+    },
     // Additional metadata for special conversation types (e.g., parent-teacher)
     metadata: {
         type: Schema.Types.Mixed,

@@ -1,0 +1,223 @@
+/**
+ * OBSERVE STAGE — Deterministic message classification
+ *
+ * Classifies the incoming student message into one of several categories
+ * so downstream stages can act on structure, not raw text.
+ *
+ * No AI calls. No DB queries. Pure functions on the message string.
+ *
+ * @module pipeline/observe
+ */
+
+// ── Message categories ──
+const MESSAGE_TYPES = {
+  ANSWER_ATTEMPT: 'answer_attempt',
+  QUESTION: 'question',
+  HELP_REQUEST: 'help_request',
+  GIVE_UP: 'give_up',
+  IDK: 'idk',
+  OFF_TASK: 'off_task',
+  FRUSTRATION: 'frustration',
+  CHECK_MY_WORK: 'check_my_work',
+  GREETING: 'greeting',
+  AFFIRMATIVE: 'affirmative',
+  SKIP_REQUEST: 'skip_request',
+  GENERAL_MATH: 'general_math',
+};
+
+// ── Context signal categories ──
+const CONTEXT_SIGNALS = {
+  CONFIDENCE: 'confidence',         // "I think...", "maybe"
+  UNCERTAINTY: 'uncertainty',        // "I'm not sure", "idk"
+  FRUSTRATION: 'frustration',       // "this is stupid", "I hate math"
+  ENGAGEMENT: 'engagement',         // "cool!", "that makes sense"
+  METACOGNITION: 'metacognition',   // "oh I see", "wait..."
+};
+
+// ── Patterns ──
+const PATTERNS = {
+  // Answer attempts: just a number, fraction, variable assignment, or short answer phrase
+  justNumber: /^(-?\d+\.?\d*)$/,
+  fraction: /^(-?\d+\s*\/\s*\d+)$/,
+  varAssignment: /^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i,
+  answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  mixedNumber: /^(-?\d+)\s+(\d+\s*\/\s*\d+)$/,
+
+  // Help/IDK
+  idk: /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea|beats\s*me)\b/i,
+  giveUp: /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer|can\s*you\s*just\s*solve\s*it)\b/i,
+  helpRequest: /\b(help|hint|stuck|confused|don'?t\s*(understand|get\s*it)|what\s*do\s*i\s*do|how\s*do\s*i|can\s*you\s*(explain|show|help))\b/i,
+  skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|next\s*question|what'?s\s*next|whats\s*next|now\s*what|what\s*now|ready\s*for\s*(the\s*)?next|let'?s\s*(keep|move)\s*(going|on)|what\s*do\s*we\s*do\s*next)\b/i,
+
+  // Check my work
+  checkMyWork: /\b(check|verify|grade|review|is\s*this\s*right|is\s*this\s*correct|did\s*i\s*(get|do)\s*(it|this)\s*right|am\s*i\s*right|how'?d\s*i\s*do)\b/i,
+
+  // Questions about math
+  question: /^(what|why|how|when|where|can\s*you|could\s*you|is\s*it|does|do|will|would|should|explain)\b/i,
+
+  // Greetings
+  greeting: /^(hi|hey|hello|yo|sup|what'?s\s*up|good\s*(morning|afternoon|evening))\b/i,
+
+  // Affirmative / understanding
+  affirmative: /^(yes|yeah|yep|yup|ok|okay|sure|got\s*it|makes\s*sense|i\s*see|right|correct|mhm|uh\s*huh)\b/i,
+
+  // Frustration signals
+  frustration: /\b(hate|stupid|dumb|boring|sucks|this\s*is\s*(hard|impossible|confusing|annoying)|i\s*can'?t|ugh|i'?m\s*done)\b/i,
+
+  // Confidence signals
+  confidence: /\b(i\s*think|pretty\s*sure|i\s*believe|definitely|i\s*know)\b/i,
+  uncertainty: /\b(maybe|not\s*sure|i\s*guess|possibly|might\s*be|idk)\b/i,
+
+  // Metacognition
+  metacognition: /\b(oh\s*i\s*see|wait|ohhh|aha|now\s*i\s*(get|understand)|that\s*makes\s*sense|so\s*basically)\b/i,
+
+  // Off-task (non-math)
+  offTask: /\b(play\s*(a\s*game|roblox|fortnite|minecraft)|tell\s*(me\s*)?a\s*(joke|story)|what'?s\s*your\s*(name|favorite)|who\s*(are|made)\s*you|sing|rap|poem)\b/i,
+};
+
+/**
+ * Extract a student's answer from their message.
+ * Returns { value, raw } or null if not an answer attempt.
+ */
+function extractAnswer(message) {
+  const text = message.trim();
+  if (text.length > 100) return null;
+
+  let match;
+  if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw: text };
+  if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw: text };
+  if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
+  if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
+  if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
+  return null;
+}
+
+/**
+ * Detect context signals in the message (confidence, frustration, metacognition).
+ * Returns an array of signal objects.
+ */
+function detectContextSignals(message) {
+  const signals = [];
+  const lower = message.toLowerCase();
+
+  if (PATTERNS.confidence.test(lower)) signals.push({ type: CONTEXT_SIGNALS.CONFIDENCE, strength: 0.7 });
+  if (PATTERNS.uncertainty.test(lower)) signals.push({ type: CONTEXT_SIGNALS.UNCERTAINTY, strength: 0.6 });
+  if (PATTERNS.frustration.test(lower)) signals.push({ type: CONTEXT_SIGNALS.FRUSTRATION, strength: 0.8 });
+  if (PATTERNS.metacognition.test(lower)) signals.push({ type: CONTEXT_SIGNALS.METACOGNITION, strength: 0.9 });
+
+  // Engagement: short positive responses
+  if (/^(cool|nice|awesome|sweet|great|thanks|thank\s*you|wow)\b/i.test(lower)) {
+    signals.push({ type: CONTEXT_SIGNALS.ENGAGEMENT, strength: 0.6 });
+  }
+
+  return signals;
+}
+
+/**
+ * Detect the problem context type for transfer pillar tracking.
+ */
+function detectProblemContext(message) {
+  if (!message || typeof message !== 'string') return null;
+  const lower = message.toLowerCase();
+  if (/\b(word problem|story|scenario|real.?world|application)\b/.test(lower)) return 'word-problem';
+  if (/\b(graph|plot|chart|coordinate|axis|slope)\b/.test(lower)) return 'graphical';
+  if (/\b(draw|picture|diagram|model|visual)\b/.test(lower)) return 'visual';
+  if (/\d+\s*[+\-*/÷×^=<>]\s*\d+/.test(message)) return 'numeric';
+  if (/\b(explain|why|how|what does|prove|show that)\b/.test(lower)) return 'conceptual';
+  return 'numeric';
+}
+
+/**
+ * Count IDK/give-up streaks in recent messages.
+ */
+function detectStreaks(recentUserMessages) {
+  const idkCount = recentUserMessages.filter(msg => PATTERNS.idk.test(msg.content)).length;
+  const giveUpCount = recentUserMessages.filter(msg => PATTERNS.giveUp.test(msg.content)).length;
+  return { idkCount, giveUpCount };
+}
+
+/**
+ * Main observe function.
+ * Classifies the message and extracts all deterministic signals.
+ *
+ * @param {string} message - The student's raw message
+ * @param {Object} context - Conversation context
+ * @param {Array} context.recentUserMessages - Last 6 user messages
+ * @param {Array} context.recentAssistantMessages - Last 6 assistant messages
+ * @param {boolean} context.hasRecentUpload - Whether student has recent uploads
+ * @returns {Object} Observation result
+ */
+function observe(message, context = {}) {
+  const text = message.trim();
+  const lower = text.toLowerCase();
+
+  // Extract answer attempt first (high priority)
+  const answer = extractAnswer(text);
+
+  // Detect context signals
+  const contextSignals = detectContextSignals(text);
+
+  // Detect streaks from recent history
+  const streaks = detectStreaks(context.recentUserMessages || []);
+
+  // Count recent wrong answers
+  const recentWrongCount = (context.recentAssistantMessages || [])
+    .filter(msg => msg.problemResult === 'incorrect').length;
+
+  // Classify the message type (priority order matters)
+  let messageType;
+  let confidence = 1.0;
+
+  if (PATTERNS.giveUp.test(lower)) {
+    messageType = MESSAGE_TYPES.GIVE_UP;
+  } else if (PATTERNS.idk.test(lower) && text.length < 50) {
+    messageType = MESSAGE_TYPES.IDK;
+  } else if (answer) {
+    messageType = MESSAGE_TYPES.ANSWER_ATTEMPT;
+  } else if (PATTERNS.checkMyWork.test(lower) && context.hasRecentUpload) {
+    messageType = MESSAGE_TYPES.CHECK_MY_WORK;
+  } else if (PATTERNS.skipRequest.test(lower) && text.length < 80) {
+    messageType = MESSAGE_TYPES.SKIP_REQUEST;
+  } else if (PATTERNS.offTask.test(lower)) {
+    messageType = MESSAGE_TYPES.OFF_TASK;
+  } else if (PATTERNS.greeting.test(lower) && text.split(' ').length <= 5) {
+    messageType = MESSAGE_TYPES.GREETING;
+  } else if (PATTERNS.affirmative.test(lower) && text.split(' ').length <= 5) {
+    messageType = MESSAGE_TYPES.AFFIRMATIVE;
+  } else if (PATTERNS.frustration.test(lower)) {
+    messageType = MESSAGE_TYPES.FRUSTRATION;
+    confidence = 0.8;
+  } else if (PATTERNS.helpRequest.test(lower)) {
+    messageType = MESSAGE_TYPES.HELP_REQUEST;
+  } else if (PATTERNS.question.test(lower)) {
+    messageType = MESSAGE_TYPES.QUESTION;
+  } else {
+    messageType = MESSAGE_TYPES.GENERAL_MATH;
+    confidence = 0.5; // Low confidence — could be anything
+  }
+
+  return {
+    messageType,
+    confidence,
+    answer,               // { value, raw } or null
+    contextSignals,       // [{ type, strength }]
+    streaks: {
+      idkCount: streaks.idkCount,
+      giveUpCount: streaks.giveUpCount,
+      recentWrongCount,
+    },
+    problemContext: detectProblemContext(text),
+    raw: text,
+  };
+}
+
+module.exports = {
+  observe,
+  extractAnswer,
+  detectContextSignals,
+  detectProblemContext,
+  detectStreaks,
+  MESSAGE_TYPES,
+  CONTEXT_SIGNALS,
+  PATTERNS,
+};

@@ -684,12 +684,12 @@ class ShowYourWorkManager {
     // ----------------------------------------------------------------
 
     /**
-     * Trigger MathJax to render LaTeX in the given element.
+     * Render LaTeX in a given element using KaTeX (via the global shim).
      * The AI may include \(...\) or \[...\] delimited math in its feedback.
      */
     typesetMath(el) {
-        if (window.MathJax && window.MathJax.typesetPromise && el) {
-            window.MathJax.typesetPromise([el]).catch(err => console.log('MathJax error:', err));
+        if (window.renderMathInElement && el) {
+            window.renderMathInElement(el);
         }
     }
 

@@ -3,15 +3,65 @@
 // Tests the critical XSS vulnerability fix in AI message rendering
 
 describe('HTML Sanitization for XSS Prevention', () => {
-  // Mock DOMPurify for Node.js environment
+  // Realistic DOMPurify mock that actually strips dangerous content
+  const SAFE_TAGS = [
+    'p', 'br', 'strong', 'em', 'u', 'code', 'pre',
+    'ul', 'ol', 'li', 'blockquote',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'a', 'span', 'div', 'table', 'thead', 'tbody',
+    'tr', 'td', 'th', 'img', 'form', 'input'
+  ];
+  const SAFE_ATTRS = ['href', 'class', 'target', 'rel', 'src', 'alt', 'title', 'style', 'id', 'name'];
+
+  function mockSanitize(html, config) {
+    if (!html || typeof html !== 'string') return '';
+
+    let result = html;
+    const allowedTags = (config && config.ALLOWED_TAGS) || SAFE_TAGS;
+    const allowedAttrs = (config && config.ALLOWED_ATTR) || SAFE_ATTRS;
+
+    // Remove script tags and their content
+    result = result.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+    // Remove iframe/object/embed tags entirely
+    result = result.replace(/<(iframe|object|embed)\b[^>]*>.*?<\/\1>/gi, '');
+    result = result.replace(/<(iframe|object|embed)\b[^>]*\/?>/gi, '');
+
+    // Remove event handler attributes (onerror, onload, onclick, etc.)
+    result = result.replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+
+    // Remove javascript: URLs
+    result = result.replace(/(href|src|data)\s*=\s*"javascript:[^"]*"/gi, '$1=""');
+    result = result.replace(/(href|src|data)\s*=\s*'javascript:[^']*'/gi, "$1=''");
+
+    // Remove data: URLs in href/src
+    result = result.replace(/(href|src)\s*=\s*"data:[^"]*"/gi, '$1=""');
+
+    // Remove dangerous attributes (__proto__, constructor, etc.)
+    result = result.replace(/\s+(__proto__|constructor|prototype)\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+
+    // Filter tags based on allowed list
+    result = result.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*\/?>/gi, (match, tag) => {
+      if (allowedTags.includes(tag.toLowerCase())) {
+        // For allowed tags, still strip disallowed attributes
+        return match.replace(/\s+([a-zA-Z-]+)\s*=\s*("[^"]*"|'[^']*')/gi, (attrMatch, attrName) => {
+          if (allowedAttrs.includes(attrName.toLowerCase()) || attrName.toLowerCase().startsWith('data-')) {
+            return attrMatch;
+          }
+          return '';
+        });
+      }
+      return ''; // Strip disallowed tags
+    });
+
+    return result;
+  }
+
   global.DOMPurify = {
-    sanitize: jest.fn((html, config) => {
-      // Simple mock that removes script tags
-      return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-    })
+    sanitize: jest.fn(mockSanitize)
   };
 
-  // Import the sanitization utility functions (would be in sanitize-util.js)
+  // Import the sanitization utility functions (mirrors sanitize-util.js)
   const sanitizeHTML = (html, options = {}) => {
     if (!html || typeof html !== 'string') {
       return '';
@@ -33,6 +83,8 @@ describe('HTML Sanitization for XSS Prevention', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Restore the mock implementation (Error Handling test replaces it)
+    DOMPurify.sanitize = jest.fn(mockSanitize);
   });
 
   describe('sanitizeHTML', () => {
@@ -222,7 +274,7 @@ describe('HTML Sanitization for XSS Prevention', () => {
 
   describe('Error Handling', () => {
     test('should return empty string on sanitization error', () => {
-      // Mock DOMPurify to throw error
+      // Temporarily replace DOMPurify to throw error
       DOMPurify.sanitize = jest.fn(() => {
         throw new Error('Sanitization failed');
       });

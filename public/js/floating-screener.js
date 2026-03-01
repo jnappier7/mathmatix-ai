@@ -525,9 +525,10 @@ class FloatingScreener {
       }
     }
 
-    // Typeset any math
-    if (window.MathJax) {
-      MathJax.typesetPromise?.([questionContent, optionsContainer]).catch(console.error);
+    // Typeset any math using KaTeX (via global shim)
+    if (window.renderMathInElement) {
+      window.renderMathInElement(questionContent);
+      window.renderMathInElement(optionsContainer);
     }
   }
 

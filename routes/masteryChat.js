@@ -18,6 +18,7 @@ const {
   transitionPhase,
   PHASES
 } = require('../utils/lessonPhaseManager');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -365,10 +366,28 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 await masteryConversation.save();
 
                 // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
+                // Must run BEFORE verify, which strips the ANSWER_RESULT markers
                 await trackAnswerResults(fullResponse, user, phaseState);
 
-                // Clean markers from response before showing to student
-                const cleanedResponse = cleanResponseMarkers(fullResponse);
+                // Run pipeline verify (anti-cheat + reading level + LaTeX + tag stripping)
+                let cleanedResponse;
+                try {
+                    const verified = await pipelineVerify(fullResponse, {
+                        userId: userId?.toString(),
+                        userMessage: message,
+                        iepReadingLevel: user.iepPlan?.readingLevel || null,
+                        firstName: user.firstName,
+                        isStreaming: true,
+                        res,
+                    });
+                    cleanedResponse = verified.text;
+                    if (verified.flags.length > 0) {
+                        console.log(`[MasteryChat] Verify: ${verified.flags.join(', ')}`);
+                    }
+                } catch (verifyErr) {
+                    console.error('[MasteryChat] Verify failed:', verifyErr.message);
+                    cleanedResponse = cleanResponseMarkers(fullResponse);
+                }
 
                 // Update saved message with cleaned version
                 masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;
@@ -435,10 +454,27 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             await masteryConversation.save();
 
             // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
+            // Must run BEFORE verify, which strips the ANSWER_RESULT markers
             await trackAnswerResults(aiResponse, user, phaseState);
 
-            // Clean markers from response before showing to student
-            const cleanedResponse = cleanResponseMarkers(aiResponse);
+            // Run pipeline verify (anti-cheat + reading level + LaTeX + tag stripping)
+            let cleanedResponse;
+            try {
+                const verified = await pipelineVerify(aiResponse, {
+                    userId: userId?.toString(),
+                    userMessage: message,
+                    iepReadingLevel: user.iepPlan?.readingLevel || null,
+                    firstName: user.firstName,
+                    isStreaming: false,
+                });
+                cleanedResponse = verified.text;
+                if (verified.flags.length > 0) {
+                    console.log(`[MasteryChat] Verify: ${verified.flags.join(', ')}`);
+                }
+            } catch (verifyErr) {
+                console.error('[MasteryChat] Verify failed:', verifyErr.message);
+                cleanedResponse = cleanResponseMarkers(aiResponse);
+            }
 
             // Update saved message with cleaned version
             masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;

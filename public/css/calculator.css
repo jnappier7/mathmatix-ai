@@ -723,23 +723,78 @@ body.standalone-calculator-page {
     background: linear-gradient(145deg, #27ae60, #00b894);
 }
 
-/* Mobile responsiveness for floating calculator */
-@media (max-width: 480px) {
+/* Mobile: calculator becomes a bottom sheet */
+@media (max-width: 768px) {
     .floating-calculator {
-        width: 95vw;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 16px 16px 0 0;
+        border: none;
+        border-top: 2px solid #2c4b73;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+        animation: calcSlideUp 0.25s ease-out;
+        max-height: 85vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    @keyframes calcSlideUp {
+        from { transform: translateY(100%) !important; }
+        to   { transform: translateY(0) !important; }
     }
 
     .calculator-header-bar {
         cursor: default;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-radius: 16px 16px 0 0;
+    }
+
+    /* Drag handle indicator */
+    .calculator-header-bar::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        margin: 0 auto 6px;
+    }
+
+    /* Larger close button for touch */
+    .calculator-close-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 28px;
+    }
+
+    .calculator-body {
+        padding: 8px 12px 16px;
+    }
+
+    .calc-buttons {
+        gap: 5px;
     }
 
     .calc-btn {
         padding: 8px 2px;
-        min-height: 35px;
+        min-height: 40px;
         font-size: 9px;
+    }
+
+    .calc-btn.btn-number {
+        font-size: 14px;
+    }
+
+    .calc-btn.btn-operator {
+        font-size: 15px;
     }
 
     .calc-btn .secondary {
@@ -748,6 +803,20 @@ body.standalone-calculator-page {
 
     .calc-btn .primary {
         font-size: 9px;
+    }
+
+    /* Backdrop overlay */
+    .calculator-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9999;
+        animation: calcFadeIn 0.2s ease;
+    }
+
+    @keyframes calcFadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
     }
 }
 

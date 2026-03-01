@@ -1632,4 +1632,157 @@ body.is-mobile #sidebar-toggle {
     .iep-goal-notification.visible {
         bottom: 72px;
     }
+
+    /* Stop-audio button: float above chat on mobile since header is hidden */
+    #stop-audio-btn {
+        position: fixed !important;
+        top: 12px;
+        right: 12px;
+        z-index: 9999;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        font-size: 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+    }
+
+    /* Graph tool: responsive width on small screens */
+    .graph-tool-container svg,
+    .graph-tool-container canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* --- Equation Palette: Mobile Bottom Sheet --- */
+    .inline-equation-palette {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 70vh !important;
+        border-radius: 16px 16px 0 0 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        resize: none !important;
+        animation: slideUpSheet 0.25s ease-out !important;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        z-index: 1001 !important;
+    }
+
+    @keyframes slideUpSheet {
+        from { transform: translateY(100%); }
+        to   { transform: translateY(0); }
+    }
+
+    /* Drag handle at top of bottom sheet */
+    .inline-equation-palette .equation-palette-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 2;
+        padding: 12px 16px 8px;
+        margin: 0;
+        border-bottom: 1px solid #eee;
+        cursor: default;
+    }
+
+    .inline-equation-palette .equation-palette-header::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: #ccc;
+        border-radius: 2px;
+        margin: 0 auto 8px;
+    }
+
+    /* Close button larger on mobile */
+    .inline-equation-palette .palette-close-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.8em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Section headers tighter */
+    .inline-equation-palette .equation-section-header {
+        padding: 0 16px;
+        margin-top: 4px;
+    }
+
+    /* Symbol grids with mobile-friendly padding */
+    .inline-equation-palette .subscript-superscript-grid {
+        padding: 0 16px;
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .inline-equation-palette .equation-symbols-grid {
+        padding: 0 16px;
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    /* Symbol buttons: larger touch targets */
+    .inline-equation-palette .symbol-btn {
+        min-height: 44px;
+        font-size: 1.2em;
+    }
+    .inline-equation-palette .script-btn {
+        min-height: 44px;
+    }
+
+    /* Math field container pinned to bottom of sheet */
+    .inline-equation-palette .inline-math-field-container {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        z-index: 2;
+        padding: 10px 16px;
+        border-top: 1px solid #eee;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Tip text */
+    .inline-equation-palette .palette-tip {
+        margin: 4px 16px;
+    }
+
+    /* Insert button: full-width on mobile */
+    .inline-equation-palette .math-line-actions {
+        flex-direction: row;
+    }
+    .inline-equation-palette #insert-inline-equation {
+        flex: 1;
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    /* Backdrop overlay for bottom sheet */
+    .equation-palette-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Hide MathLive's virtual keyboard on mobile — we use our symbol buttons */
+    .ML__keyboard {
+        display: none !important;
+    }
 }

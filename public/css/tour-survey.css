@@ -484,3 +484,143 @@
   color: #666;
   font-size: 14px;
 }
+
+/* ===================================
+   SURVEY MODAL – DARK MODE
+   =================================== */
+
+/* Header */
+[data-theme="dark"] .survey-header {
+  border-bottom-color: #243040;
+}
+
+[data-theme="dark"] .survey-header h2 {
+  color: var(--clr-primary-teal, #14C8C8);
+}
+
+[data-theme="dark"] .survey-subtitle {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Labels */
+[data-theme="dark"] #survey-form label {
+  color: var(--text-primary, #F0F4F8);
+}
+
+/* Star rating – unselected stars need to be visible on dark bg */
+[data-theme="dark"] .star-rating label {
+  color: #3A4A5C;
+}
+
+[data-theme="dark"] .star-rating label:hover,
+[data-theme="dark"] .star-rating label:hover ~ label {
+  color: #ffc107;
+}
+
+[data-theme="dark"] .star-rating input:checked + label,
+[data-theme="dark"] .star-rating input:checked ~ label {
+  color: #ffc107;
+}
+
+/* Number rating scales (1-5 helpfulness, difficulty) */
+[data-theme="dark"] .rating-scale label,
+[data-theme="dark"] .nps-scale label {
+  background: #1A2633;
+  border-color: #243040;
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .rating-scale label:hover,
+[data-theme="dark"] .nps-scale label:hover {
+  background: #243040;
+  border-color: var(--clr-primary-teal, #14C8C8);
+}
+
+[data-theme="dark"] .rating-scale input:checked + label,
+[data-theme="dark"] .nps-scale input:checked + label {
+  background: linear-gradient(135deg, #14C8C8 0%, #16DADA 100%);
+  border-color: #14C8C8;
+  color: white;
+}
+
+/* Scale endpoint labels ("Not Helpful" / "Very Helpful") */
+[data-theme="dark"] .rating-labels {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Form controls (select, textarea) */
+[data-theme="dark"] #survey-form .form-control {
+  background: #1A2633;
+  border-color: #243040;
+  color: var(--text-primary, #F0F4F8);
+}
+
+[data-theme="dark"] #survey-form .form-control:focus {
+  border-color: var(--clr-primary-teal, #14C8C8);
+  box-shadow: 0 0 0 3px rgba(20, 200, 200, 0.2);
+}
+
+[data-theme="dark"] #survey-form select.form-control {
+  background: #1A2633;
+}
+
+[data-theme="dark"] #survey-form .form-control::placeholder {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Character counter */
+[data-theme="dark"] .char-counter {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Action buttons divider */
+[data-theme="dark"] .survey-actions {
+  border-top-color: #243040;
+}
+
+/* Footer / frequency toggle */
+[data-theme="dark"] .survey-footer {
+  border-top-color: #243040;
+}
+
+[data-theme="dark"] .survey-frequency {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Success state */
+[data-theme="dark"] .survey-success {
+  color: var(--clr-success-green, #1AD97A);
+}
+
+[data-theme="dark"] .survey-success h3 {
+  color: var(--clr-success-green, #1AD97A);
+}
+
+[data-theme="dark"] .survey-success p {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+/* Tour modal dark mode (shares the overlay) */
+[data-theme="dark"] .tour-step-content {
+  background: #141E29;
+  color: var(--text-primary, #F0F4F8);
+}
+
+[data-theme="dark"] .tour-step-content h3 {
+  color: var(--clr-primary-teal, #14C8C8);
+}
+
+[data-theme="dark"] .tour-step-content p,
+[data-theme="dark"] .tour-step-content li {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .tour-step-content .tour-highlight {
+  background: rgba(20, 200, 200, 0.08);
+  border-left-color: var(--clr-primary-teal, #14C8C8);
+}
+
+[data-theme="dark"] .tour-actions {
+  background: rgba(0, 0, 0, 0.15);
+  border-top-color: #243040;
+}

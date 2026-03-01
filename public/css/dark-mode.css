@@ -179,6 +179,18 @@
     color: #E8F0F8;
 }
 
+/* KaTeX math rendering — ensure text color adapts to dark mode */
+[data-theme="dark"] .katex {
+    color: var(--text-primary, #F0F4F8);
+}
+
+/* KaTeX display math blocks — subtle background for visual separation */
+[data-theme="dark"] .katex-display {
+    background: rgba(26, 38, 51, 0.5);
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
 /* Calculator and equation input */
 [data-theme="dark"] .calculator-display,
 [data-theme="dark"] .equation-input,
@@ -523,6 +535,12 @@
 [data-theme="dark"] .inline-equation-palette {
     background: #141E29;
     border-color: #243040;
+}
+
+/* Dark-mode: bottom sheet header + math field container */
+[data-theme="dark"] .inline-equation-palette .equation-palette-header,
+[data-theme="dark"] .inline-equation-palette .inline-math-field-container {
+    background: #141E29;
 }
 
 [data-theme="dark"] .symbol-btn,
