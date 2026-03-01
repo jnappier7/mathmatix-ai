@@ -27,23 +27,7 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// --- ANTHROPIC API KEY VALIDATION (Environment-Specific) ---
 const isProduction = process.env.NODE_ENV === 'production';
-const hasAnthropicKey = isProduction
-  ? !!process.env.ANTHROPIC_API_KEY_PROD
-  : !!process.env.ANTHROPIC_API_KEY_DEV;
-const hasLegacyKey = !!process.env.ANTHROPIC_API_KEY;
-
-if (!hasAnthropicKey && !hasLegacyKey) {
-  logger.warn('⚠️  WARNING: No Anthropic API key found - Claude models will not be available');
-  logger.warn(`⚠️  Set ANTHROPIC_API_KEY_${isProduction ? 'PROD' : 'DEV'} in your .env file`);
-} else if (!hasAnthropicKey && hasLegacyKey) {
-  logger.warn('⚠️  WARNING: Using legacy ANTHROPIC_API_KEY (deprecated)');
-  logger.warn(`⚠️  Recommended: Migrate to ANTHROPIC_API_KEY_PROD and ANTHROPIC_API_KEY_DEV`);
-  logger.warn('⚠️  This allows separate cost tracking for development vs production usage');
-} else {
-  logger.info(`✅ Anthropic API key configured for ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} environment`);
-}
 
 // --- 2. IMPORTS ---
 const express = require("express");
@@ -234,7 +218,6 @@ app.use(helmet({
       ],
       connectSrc: [
         "'self'",
-        "https://api.anthropic.com", // Claude API
         "https://api.openai.com", // OpenAI API
         "https://api.mathpix.com", // Mathpix OCR
         "https://api.elevenlabs.io", // ElevenLabs TTS

@@ -241,16 +241,10 @@ router.post('/', async (req, res) => {
             try {
                 const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
                 let buffer = '';
-                const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
 
                 for await (const chunk of stream) {
                     if (clientDisconnected) break;
-                    let content = '';
-                    if (isClaudeModel) {
-                        if (chunk.type === 'content_block_delta' && chunk.delta?.text) content = chunk.delta.text;
-                    } else {
-                        content = chunk.choices[0]?.delta?.content || '';
-                    }
+                    const content = chunk.choices[0]?.delta?.content || '';
                     if (content) {
                         buffer += content;
                         res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);

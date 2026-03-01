@@ -252,7 +252,6 @@ async function generateStreaming(model, messages, llmOptions, res) {
   let fullResponse = '';
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
-    const isClaudeModel = model.startsWith('claude-');
     let clientDisconnected = false;
 
     res.req.on('close', () => { clientDisconnected = true; });
@@ -260,14 +259,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
     for await (const chunk of stream) {
       if (clientDisconnected) break;
 
-      let content = '';
-      if (isClaudeModel) {
-        if (chunk.type === 'content_block_delta' && chunk.delta?.text) {
-          content = chunk.delta.text;
-        }
-      } else {
-        content = chunk.choices[0]?.delta?.content || '';
-      }
+      const content = chunk.choices[0]?.delta?.content || '';
 
       if (content) {
         fullResponse += content;
