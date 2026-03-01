@@ -633,6 +633,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const text = textNode.textContent;
             if (!text || (!text.includes('\\(') && !text.includes('\\['))) return;
 
+            // Skip text nodes inside already-rendered KaTeX elements to prevent
+            // double-rendering (e.g. annotation elements contain raw LaTeX source)
+            let ancestor = textNode.parentElement;
+            while (ancestor && ancestor !== element) {
+                if (ancestor.classList && ancestor.classList.contains('katex')) return;
+                ancestor = ancestor.parentElement;
+            }
+
             const span = document.createElement('span');
             // Replace \(...\) and \[...\] with rendered KaTeX
             let html = text;
@@ -1164,9 +1172,6 @@ document.addEventListener("DOMContentLoaded", () => {
                  playAudio(speakableText, tutor.voiceId, bubble.id);
             }
         }
-
-        // Re-render any raw \(...\) in the bubble (e.g. equation editor inserts)
-        renderMathInElement(bubble);
 
         // Update watermark visibility based on message count
         updateChatWatermark();
