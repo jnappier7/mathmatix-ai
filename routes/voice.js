@@ -565,6 +565,7 @@ function convertLatexToSpeech(latex) {
     speech = speech.replace(/\\geq/g, ' greater than or equal to ');
     speech = speech.replace(/\\neq/g, ' not equal to ');
     speech = speech.replace(/\\approx/g, ' approximately ');
+    speech = speech.replace(/=/g, ' equals ');
 
     // Remove curly braces
     speech = speech.replace(/[{}]/g, '');
