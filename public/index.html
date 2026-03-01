@@ -1031,13 +1031,14 @@
       position: relative;
       border-radius: 16px;
       overflow: hidden;
-      max-height: 380px;
+      max-height: 550px;
     }
 
     .lp-photo-banner-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 35%;
       display: block;
     }
 
@@ -1058,13 +1059,13 @@
 
     @media (max-width: 768px) {
       .lp-photo-banner { padding: 1.5rem var(--page-horizontal-padding) 0; }
-      .lp-photo-banner-wrap { max-height: 240px; border-radius: 12px; }
+      .lp-photo-banner-wrap { max-height: 360px; border-radius: 12px; }
       .lp-photo-banner-text { font-size: 1.05rem; }
       .lp-photo-banner-overlay { padding: 2rem 1.25rem 1rem; }
     }
 
     @media (max-width: 375px) {
-      .lp-photo-banner-wrap { max-height: 200px; }
+      .lp-photo-banner-wrap { max-height: 300px; }
       .lp-photo-banner-text { font-size: 0.95rem; }
     }
 
