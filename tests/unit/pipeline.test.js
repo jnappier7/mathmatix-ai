@@ -814,5 +814,60 @@ describe('Pipeline: normalizeLatex', () => {
       const result = normalizeLatex('factor (x^2 - 4)');
       expect(result).toContain('\\(');
     });
+
+    test('converts (2x-4=12) — coefficient+variable+operator equation', () => {
+      const result = normalizeLatex("Let's solve (2x-4=12) step by step");
+      expect(result).toContain('\\(');
+      expect(result).toContain('2x-4=12');
+      expect(result).toContain('\\)');
+    });
+
+    test('converts (3y+5=20) — equation with addition', () => {
+      const result = normalizeLatex('Start with (3y+5=20)');
+      expect(result).toContain('\\(3y+5=20\\)');
+    });
+
+    test('converts (x=5) — simple variable=number', () => {
+      const result = normalizeLatex('The answer is (x=5)');
+      expect(result).toContain('\\(x=5\\)');
+    });
+
+    test('does not convert natural text like (2nd attempt)', () => {
+      const result = normalizeLatex('This is my (2nd attempt) at it');
+      expect(result).not.toContain('\\(');
+    });
+
+    test('does not convert natural text like (about 5 items)', () => {
+      const result = normalizeLatex('We have (about five items) left');
+      expect(result).not.toContain('\\(');
+    });
+  });
+
+  describe('unicode math symbol normalization', () => {
+    test('converts × to \\times', () => {
+      const result = normalizeLatex('2×4');
+      expect(result).toContain('\\times');
+    });
+
+    test('converts ÷ to \\div', () => {
+      const result = normalizeLatex('12÷3');
+      expect(result).toContain('\\div');
+    });
+
+    test('converts ± to \\pm', () => {
+      const result = normalizeLatex('x = 5±2');
+      expect(result).toContain('\\pm');
+    });
+
+    test('converts ≤ and ≥ to \\leq and \\geq', () => {
+      expect(normalizeLatex('x≤5')).toContain('\\leq');
+      expect(normalizeLatex('y≥3')).toContain('\\geq');
+    });
+
+    test('wraps expression with unicode operators in delimiters', () => {
+      const result = normalizeLatex('Calculate (2×4-12)');
+      expect(result).toContain('\\(');
+      expect(result).toContain('\\times');
+    });
   });
 });

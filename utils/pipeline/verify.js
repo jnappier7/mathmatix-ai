@@ -264,6 +264,20 @@ function normalizeLatex(text) {
 
   let result = text;
 
+  // ── Pre-pass: Replace unicode math symbols with LaTeX equivalents ──
+  // gpt-4o-mini sometimes uses unicode symbols instead of LaTeX commands:
+  //   "2×4" instead of "2 \times 4", "÷" instead of "\div", etc.
+  result = result.replace(/×/g, '\\times ');
+  result = result.replace(/÷/g, '\\div ');
+  result = result.replace(/±/g, '\\pm ');
+  result = result.replace(/√/g, '\\sqrt');
+  result = result.replace(/≤/g, '\\leq ');
+  result = result.replace(/≥/g, '\\geq ');
+  result = result.replace(/≠/g, '\\neq ');
+  result = result.replace(/≈/g, '\\approx ');
+  result = result.replace(/π/g, '\\pi ');
+  result = result.replace(/∞/g, '\\infty ');
+
   // ── 0. Restore missing backslashes on common LaTeX commands ──
   // gpt-4o-mini frequently drops ALL backslashes, producing:
   //   "frac{3}{2sqrt{7}}" instead of "\frac{3}{2\sqrt{7}}"
@@ -310,7 +324,12 @@ function normalizeLatex(text) {
 
   // ── 3. Fix bare parenthesized math: ( expr ) → \( expr \) ──
   result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
-    const hasMathSyntax = /[\\^_{}]/.test(inner) || /[a-z]\^?\d/i.test(inner);
+    const hasMathSyntax =
+      /[\\^_{}]/.test(inner) ||           // LaTeX special chars
+      /[a-z]\^?\d/i.test(inner) ||        // variable^digit: x2, x^2
+      (/\d[a-z]/i.test(inner) && /[+\-=]/.test(inner)) ||  // coefficient+operator: 2x-4, 3y=9
+      /[×÷±√]/.test(inner) ||             // unicode math operators
+      (/[a-z]/i.test(inner) && /\d/.test(inner) && /=/.test(inner)); // variable+number+equals: x=5
     const isNaturalText = /^[a-z\s,]+$/i.test(inner) || inner.length > 60;
     if (hasMathSyntax && !isNaturalText) {
       return `\\(${inner.trim()}\\)`;
