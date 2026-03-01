@@ -1310,6 +1310,75 @@
       margin-top: 0.75rem; margin-bottom: 0;
     }
 
+    /* ── Footer ──────────────────────────────────────────────── */
+    .lp-footer {
+      background: #1a1a2e;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 3rem var(--page-horizontal-padding) 1.5rem;
+    }
+
+    .lp-footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+    }
+
+    .lp-footer-brand p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 0;
+    }
+
+    .lp-footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .lp-footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 0.25rem;
+    }
+
+    .lp-footer-col a {
+      color: rgba(255, 255, 255, 0.55);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .lp-footer-col a:hover {
+      color: var(--clr-primary-teal);
+    }
+
+    .lp-footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 1.25rem;
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .lp-footer-bottom p {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.35);
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .lp-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
     /* ── Sticky CTA Bar ────────────────────────────────────── */
     .lp-sticky-cta {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -1615,7 +1684,6 @@
             </form>
             <div class="lp-hero-links">
               <a href="/demo.html" class="btn btn-primary-outline">Try It Free</a>
-              <a href="#how-it-works" class="btn btn-primary-outline">See How It Works</a>
             </div>
           </div>
         </div>
@@ -1695,12 +1763,6 @@
             <h3>Progress Dashboards</h3>
             <p>Parents and teachers see exactly where students are excelling and where they need support.</p>
           </div>
-        </div>
-        <div class="lp-mid-cta">
-          <form class="lp-waitlist-form lp-waitlist-form--inline" autocomplete="off">
-            <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
-            <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
-          </form>
         </div>
       </div>
     </section>
@@ -1851,12 +1913,6 @@
           </div>
         </div>
 
-        <div class="lp-mid-cta">
-          <form class="lp-waitlist-form lp-waitlist-form--inline" autocomplete="off">
-            <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
-            <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
-          </form>
-        </div>
       </div>
     </section>
 
@@ -2108,13 +2164,30 @@
     </form>
   </div>
 
-  <footer>
-    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
-    <p>
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/terms.html">Terms of Use</a> |
-      <a href="/contact-support.html">Contact Us</a>
-    </p>
+  <footer class="lp-footer">
+    <div class="lp-inner">
+      <div class="lp-footer-grid">
+        <div class="lp-footer-brand">
+          <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" style="height: 36px; width: auto; margin-bottom: 8px; filter: brightness(0) invert(1); opacity: 0.9;" />
+          <p>AI-powered math tutoring that actually knows your child.</p>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Product</h4>
+          <a href="#how-it-works">How It Works</a>
+          <a href="/demo.html">Try the Demo</a>
+          <a href="#lp-waitlist-banner">Join Waitlist</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Company</h4>
+          <a href="/contact-support.html">Contact Us</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Use</a>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+      </div>
+    </div>
   </footer>
 
   <script>

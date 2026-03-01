@@ -2192,6 +2192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const arrow = trendEl.querySelector('.trend-arrow');
         const pctEl = trendEl.querySelector('.trend-pct');
+        const prevEl = trendEl.querySelector('.trend-prev');
 
         if (Math.abs(pct) < 1) {
             trendEl.className = trendEl.className.replace(/trend-up|trend-down|trend-flat/g, '') + ' trend-flat';
@@ -2205,6 +2206,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             trendEl.className = trendEl.className.replace(/trend-up|trend-down|trend-flat/g, '') + ' trend-down';
             if (arrow) arrow.textContent = '\u2193';
             if (pctEl) pctEl.textContent = `${pct}%`;
+        }
+
+        // Show previous week value for context
+        if (prevEl && numPrevious > 0) {
+            const prevDisplay = typeof previous === 'string' ? previous : Math.round(numPrevious).toLocaleString();
+            prevEl.textContent = `vs ${prevDisplay}`;
         }
     }
 
