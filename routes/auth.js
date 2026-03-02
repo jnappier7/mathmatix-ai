@@ -162,19 +162,25 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       code: enrollmentCode.toUpperCase().trim()
     });
 
-    if (!enrollmentCodeDoc) {
+    // Check ENROLLMENT_CODES env var as fallback for open registration codes
+    const envCodes = process.env.ENROLLMENT_CODES;
+    const isEnvCode = envCodes && envCodes.split(',').map(c => c.trim().toUpperCase()).includes(enrollmentCode.toUpperCase().trim());
+
+    if (!enrollmentCodeDoc && !isEnvCode) {
       return res.status(400).json({
         success: false,
         message: 'Invalid enrollment code. Please check with your teacher.'
       });
     }
 
-    const validation = enrollmentCodeDoc.isValidForUse();
-    if (!validation.valid) {
-      return res.status(400).json({
-        success: false,
-        message: validation.reason
-      });
+    if (enrollmentCodeDoc) {
+      const validation = enrollmentCodeDoc.isValidForUse();
+      if (!validation.valid) {
+        return res.status(400).json({
+          success: false,
+          message: validation.reason
+        });
+      }
     }
 
     // Generate unique username
@@ -202,22 +208,26 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       avatar: pendingProfile.avatar,
       // Email verification
       emailVerified: true, // OAuth emails are pre-verified by the provider
-      // Teacher assignment from enrollment code
-      teacherId: enrollmentCodeDoc.teacherId,
-      gradeLevel: enrollmentCodeDoc.gradeLevel,
-      mathCourse: enrollmentCodeDoc.mathCourse,
+      // Teacher assignment from enrollment code (only if DB code, not env code)
+      ...(enrollmentCodeDoc ? {
+        teacherId: enrollmentCodeDoc.teacherId,
+        gradeLevel: enrollmentCodeDoc.gradeLevel,
+        mathCourse: enrollmentCodeDoc.mathCourse,
+      } : {}),
       linkCode: await generateUniqueStudentLinkCode()
     });
 
     await newUser.save();
     console.log(`LOG: OAuth user ${newUser.username} created with enrollment code ${enrollmentCode}`);
 
-    // Record enrollment
-    try {
-      await enrollmentCodeDoc.enrollStudent(newUser._id, 'oauth-signup');
-      console.log(`LOG: Student ${newUser.username} enrolled via code ${enrollmentCodeDoc.code}`);
-    } catch (enrollError) {
-      console.error('ERROR: Failed to record enrollment:', enrollError);
+    // Record enrollment (only for DB-based codes, not env-based)
+    if (enrollmentCodeDoc) {
+      try {
+        await enrollmentCodeDoc.enrollStudent(newUser._id, 'oauth-signup');
+        console.log(`LOG: Student ${newUser.username} enrolled via code ${enrollmentCodeDoc.code}`);
+      } catch (enrollError) {
+        console.error('ERROR: Failed to record enrollment:', enrollError);
+      }
     }
 
     // Trigger Clever roster sync for new Clever users (non-blocking)
