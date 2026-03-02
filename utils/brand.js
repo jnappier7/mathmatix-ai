@@ -155,7 +155,7 @@ const BRAND_CONFIG = {
 
     // Images paths for homepage photos
     girlStudyImage: "/images/girlStudy.png",
-    boyClassroomImage: "/images/boyClassroom.png"
+    boyClassroomImage: "/images/classroomBoy-crop.png"
 };
 
 /**
