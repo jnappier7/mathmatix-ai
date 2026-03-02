@@ -369,6 +369,13 @@ a {
         gap: 10px;
     }
 
+    .more-tool-separator {
+        grid-column: 1 / -1;
+        height: 1px;
+        background: var(--clr-border-light, #e2e8f0);
+        margin: 2px 0;
+    }
+
     .more-tool-item {
         display: flex;
         flex-direction: column;
@@ -421,9 +428,102 @@ a {
 }
 
 @media (min-width: 768px) {
-    .toolbar-secondary { display: flex !important; }
-    .toolbar-more { display: none !important; }
-    .more-tools-menu { display: none !important; }
+    /* Hide secondary items — accessible through the dropdown menu */
+    .toolbar-secondary,
+    .landing-nav > #open-settings-modal-btn,
+    .landing-nav > .logout-button { display: none !important; }
+
+    /* Show the dropdown trigger on desktop */
+    .toolbar-more { display: flex !important; }
+
+    /* Desktop dropdown (replaces mobile bottom-sheet) */
+    .more-tools-menu {
+        position: fixed;
+        top: var(--header-height, 72px);
+        right: var(--page-horizontal-padding, 20px);
+        left: auto;
+        bottom: auto;
+        width: 210px;
+        background: var(--clr-bg-light, #fff);
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--clr-border-light, #e2e8f0);
+        z-index: 2100;
+        padding: 6px 0;
+        transform: translateY(-8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 150ms ease, transform 150ms ease;
+    }
+
+    .more-tools-menu.active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Hide bottom-sheet chrome on desktop */
+    .more-tools-menu::before,
+    .more-tools-header { display: none; }
+
+    /* List layout instead of grid */
+    .more-tools-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .more-tool-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 16px;
+        min-height: auto;
+        border-radius: 0;
+        border: none;
+        background: transparent;
+    }
+
+    .more-tool-item:hover {
+        background: var(--clr-bg-subtle, #f8fafb);
+    }
+
+    .more-tool-item:active {
+        transform: none;
+        background: var(--clr-border-light, #e2e8f0);
+    }
+
+    .more-tool-item i {
+        font-size: 0.95rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .more-tool-item span {
+        font-size: 0.88rem;
+        font-weight: 500;
+    }
+
+    /* Separator between groups */
+    .more-tool-separator {
+        height: 1px;
+        background: var(--clr-border-light, #e2e8f0);
+        margin: 4px 12px;
+    }
+
+    /* Desktop overlay — invisible click-catcher */
+    .more-tools-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: transparent;
+        z-index: 2099;
+        display: none;
+    }
+
+    .more-tools-overlay.active {
+        display: block;
+    }
 }
 
 /* --- 6. PINCH-TO-ZOOM CHAT FONT SIZE --- */

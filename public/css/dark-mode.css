@@ -544,6 +544,7 @@
 /* More Tools Menu dark mode */
 [data-theme="dark"] .more-tools-menu {
     background: #141E29;
+    border-color: #243040;
 }
 
 [data-theme="dark"] .more-tool-item {
@@ -552,8 +553,16 @@
     color: var(--text-primary);
 }
 
+[data-theme="dark"] .more-tool-item:hover {
+    background: #243040;
+}
+
 [data-theme="dark"] .more-tool-item span {
     color: var(--text-primary);
+}
+
+[data-theme="dark"] .more-tool-separator {
+    background: #243040;
 }
 
 /* Login / Signup pages dark mode */
