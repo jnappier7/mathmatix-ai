@@ -40,7 +40,9 @@ const PATTERNS = {
   justNumber: /^(-?\d+\.?\d*)$/,
   fraction: /^(-?\d+\s*\/\s*\d+)$/,
   varAssignment: /^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i,
-  answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
+  arithmeticStatement: /\d+\.?\d*\s*(?:[+\-*/×÷]|times|plus|minus|divided\s+by|multiplied\s+by)\s*\d+\.?\d*\s+(?:is|=|equals)\s+(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
   mixedNumber: /^(-?\d+)\s+(\d+\s*\/\s*\d+)$/,
 
   // Help/IDK
@@ -89,6 +91,7 @@ function extractAnswer(message) {
   if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
   if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
   if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
+  if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw: text };
   return null;
 }
 

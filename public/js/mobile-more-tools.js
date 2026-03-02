@@ -1,6 +1,7 @@
 /**
- * Mobile More Tools Menu
- * Handles the overflow menu for secondary toolbar buttons on mobile
+ * More Tools Menu
+ * Handles the overflow/dropdown menu for toolbar buttons.
+ * Works as a bottom-sheet on mobile and a dropdown on desktop.
  */
 
 (function() {
@@ -27,6 +28,10 @@
             return;
         }
 
+        function isMobile() {
+            return window.innerWidth <= 767;
+        }
+
         /**
          * Open More Tools menu
          */
@@ -39,8 +44,10 @@
                 moreMenu.classList.add('active');
             }, 10);
 
-            // Prevent body scroll
-            document.body.style.overflow = 'hidden';
+            // Prevent body scroll on mobile only
+            if (isMobile()) {
+                document.body.style.overflow = 'hidden';
+            }
         }
 
         /**
@@ -51,12 +58,24 @@
             moreOverlay.classList.remove('active');
 
             // Hide after animation completes
+            var delay = isMobile() ? 300 : 150;
             setTimeout(() => {
                 moreMenu.style.display = 'none';
-            }, 300);
+            }, delay);
 
             // Re-enable body scroll
             document.body.style.overflow = '';
+        }
+
+        /**
+         * Toggle More Tools menu (for desktop click behavior)
+         */
+        function toggleMoreTools() {
+            if (moreMenu.classList.contains('active')) {
+                closeMoreTools();
+            } else {
+                openMoreTools();
+            }
         }
 
         /**
@@ -70,21 +89,23 @@
                 closeMoreTools();
 
                 // Small delay before triggering to allow menu to close
+                var delay = isMobile() ? 300 : 150;
                 setTimeout(() => {
                     targetBtn.click();
-                }, 300);
+                }, delay);
             }
         }
 
-        // More button click
+        // More button click — toggle on desktop, open on mobile
         if (moreBtn) {
             moreBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                openMoreTools();
+                e.stopPropagation();
+                toggleMoreTools();
             });
         }
 
-        // Close button click
+        // Close button click (visible on mobile bottom-sheet only)
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {
                 closeMoreTools();
@@ -113,18 +134,7 @@
             }
         });
 
-        // Close menu when switching to desktop view
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                if (window.innerWidth > 767 && moreMenu.classList.contains('active')) {
-                    closeMoreTools();
-                }
-            }, 250);
-        });
-
-        // Handle swipe down to close (optional enhancement)
+        // Handle swipe down to close on mobile
         let startY = 0;
         let currentY = 0;
 

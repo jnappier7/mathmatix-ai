@@ -696,22 +696,22 @@ body.standalone-calculator-page {
 @keyframes calcEnter {
     from {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.85);
+        transform: translateY(-50%) scale(0.85);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translateY(-50%) scale(1);
     }
 }
 
 @keyframes calcExit {
     from {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translateY(-50%) scale(1);
     }
     to {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.85);
+        transform: translateY(-50%) scale(0.85);
     }
 }
 
@@ -762,8 +762,9 @@ body.standalone-calculator-page {
 .floating-calculator {
     position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    right: 24px;
+    left: auto;
+    transform: translateY(-50%);
     z-index: 10000;
     background: linear-gradient(145deg, #1e3a5f, #0f2847);
     border-radius: 16px;
@@ -774,6 +775,16 @@ body.standalone-calculator-page {
     width: 320px;
     max-width: 95vw;
     border: 2px solid #2c4b73;
+}
+
+/* Desktop backdrop — gives visual separation from chat */
+@media (min-width: 769px) {
+    .calculator-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 9999;
+    }
 }
 
 .calculator-header-bar {

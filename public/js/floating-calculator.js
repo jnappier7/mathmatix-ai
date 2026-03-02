@@ -143,8 +143,9 @@ class FloatingCalculator {
 
     showCalculator() {
         this.floatingCalc.style.display = 'block';
+        this._showBackdrop();
         if (this._isMobile()) {
-            this._showBackdrop();
+            // Mobile uses bottom-sheet style (handled by CSS)
         } else {
             this.centerCalculator();
             // Animate open
@@ -171,7 +172,9 @@ class FloatingCalculator {
     }
 
     centerCalculator() {
-        this.floatingCalc.style.transform = 'translate(-50%, -50%)';
+        this.floatingCalc.style.transform = 'translateY(-50%)';
+        this.floatingCalc.style.right = '24px';
+        this.floatingCalc.style.left = 'auto';
         this.xOffset = 0;
         this.yOffset = 0;
     }
