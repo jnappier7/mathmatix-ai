@@ -145,11 +145,26 @@ function parseAnalysisResponse(raw) {
         jsonStr = fenceMatch[1].trim();
     }
 
-    // LLMs often produce bare LaTeX backslashes (\(, \frac, \[, etc.)
-    // that are invalid JSON escapes. Fix them before parsing.
-    jsonStr = jsonStr.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+    let parsed;
 
-    const parsed = JSON.parse(jsonStr);
+    // First try: parse as-is (works when AI returns properly escaped JSON)
+    try {
+        parsed = JSON.parse(jsonStr);
+    } catch (_) {
+        // Second try: fix bare LaTeX backslashes that are invalid JSON escapes.
+        // The prompt requires LaTeX like \( and \frac inside JSON string values,
+        // which are not valid JSON escape sequences. We double-escape them while
+        // preserving valid sequences like \", \\, \n, \/, \uXXXX, etc.
+        const fixed = jsonStr.replace(
+            /\\(["\\/bfnrt])|\\u([0-9a-fA-F]{4})|\\(.)/g,
+            (match, validEsc, unicodeHex, other) => {
+                if (validEsc !== undefined) return match;   // e.g. \", \\, \n
+                if (unicodeHex !== undefined) return match;  // e.g. \u00A0
+                return '\\\\' + other;                       // e.g. \( → \\(
+            }
+        );
+        parsed = JSON.parse(fixed);
+    }
 
     if (!parsed.problems || !Array.isArray(parsed.problems)) {
         throw new Error('AI response missing problems array');
@@ -182,6 +197,7 @@ router.post('/',
     upload.single('file'),
     validateUpload,
     async (req, res) => {
+    let aiResponse = '';
     try {
         const file = req.file;
         const user = await User.findById(req.user._id);
@@ -201,7 +217,6 @@ router.post('/',
 
         console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName} (${isPDF ? 'PDF' : 'image'})`);
 
-        let aiResponse;
 
         if (isPDF) {
             // PDF path: Extract text via Mathpix, then use text-based analysis
@@ -262,7 +277,7 @@ router.post('/',
             });
         }
 
-        console.log('[gradeWork] AI analysis received');
+        console.log('[gradeWork] AI analysis received, length:', aiResponse.length);
 
         // Parse structured JSON
         const parsed = parseAnalysisResponse(aiResponse);
@@ -395,6 +410,7 @@ router.post('/',
         }
 
         if (error instanceof SyntaxError) {
+            console.error('[gradeWork] JSON parse failure. Raw AI response (first 500 chars):', (aiResponse || '').substring(0, 500));
             return res.status(502).json({
                 success: false,
                 message: 'The AI returned an unexpected format. Please try again.'

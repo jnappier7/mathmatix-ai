@@ -86,6 +86,70 @@
     justify-content: center;
 }
 
+/* ============================================
+   Header Dropdown Menu (Hamburger)
+   ============================================ */
+.header-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: var(--page-horizontal-padding);
+    background: var(--clr-bg-light);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 6px 0;
+    min-width: 200px;
+    z-index: var(--z-dropdown);
+    animation: menuDropIn 0.15s ease-out;
+}
+
+.header-dropdown-menu.is-open {
+    display: block;
+}
+
+@keyframes menuDropIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s;
+}
+
+.header-menu-item:hover {
+    background: var(--clr-bg-subtle);
+}
+
+.header-menu-item i {
+    width: 18px;
+    text-align: center;
+    color: #007AFF;
+    font-size: 14px;
+}
+
+.header-menu-divider {
+    height: 1px;
+    background: var(--clr-border-light);
+    margin: 4px 12px;
+}
+
+/* Position header as relative for dropdown */
+.landing-header {
+    position: sticky;
+    top: 0;
+}
+
 main {
     flex-grow: 1;
     overflow-y: auto;
@@ -2784,35 +2848,36 @@ body:not(.landing-page-body) {
     }
 }
 
-/* Session Stats Bar - Bottom of chat */
+/* Session Stats Bar - Minimal bottom strip */
 .session-stats-bar {
     position: sticky;
     bottom: 0;
-    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    border-top: 2px solid rgba(102, 126, 234, 0.2);
-    padding: 8px 16px;
+    background: var(--clr-bg-light);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 4px 16px;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    font-size: 0.85rem;
+    gap: 20px;
+    font-size: 0.75rem;
     z-index: 1000;
 }
 
 .stat-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .stat-label {
-    color: #666;
-    font-weight: 600;
+    color: #8e8e93;
+    font-weight: 500;
 }
 
 .stat-value {
-    color: #667eea;
-    font-weight: 900;
-    font-size: 1rem;
+    color: #007AFF;
+    font-weight: 700;
+    font-size: 0.8rem;
 }
 
 /* Quest Tracker Sidebar Styles */

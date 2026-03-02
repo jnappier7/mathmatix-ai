@@ -181,6 +181,35 @@ class AlgebraTiles {
 
             <!-- CENTER: Large workspace (bulk of space) -->
             <div class="algebra-tiles-workspace" id="tilesWorkspace">
+              <!-- Zoom toolbar -->
+              <div class="workspace-zoom-toolbar" id="workspaceZoomToolbar">
+                <button class="zoom-btn" id="zoomInBtn" title="Zoom in (+)">
+                  <i class="fas fa-plus"></i>
+                </button>
+                <span class="zoom-level" id="zoomLevelDisplay">100%</span>
+                <button class="zoom-btn" id="zoomOutBtn" title="Zoom out (-)">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button class="zoom-btn" id="zoomFitBtn" title="Fit all tiles in view">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="zoom-btn" id="zoomResetBtn" title="Reset zoom to 100%">
+                  <i class="fas fa-compress-arrows-alt"></i>
+                </button>
+              </div>
+              <!-- Onboarding tooltip -->
+              <div class="workspace-onboarding" id="workspaceOnboarding">
+                <div class="onboarding-content">
+                  <strong>Welcome to Manipulatives!</strong>
+                  <p>Click tiles in the palette to add them. Drag to rearrange. Click a tile to flip its sign.</p>
+                  <div class="onboarding-hints">
+                    <span><kbd>R</kbd> Rotate</span>
+                    <span><kbd>Del</kbd> Delete</span>
+                    <span><kbd>Ctrl+Z</kbd> Undo</span>
+                  </div>
+                  <button class="onboarding-dismiss" id="onboardingDismiss">Got it!</button>
+                </div>
+              </div>
               <div class="workspace-grid" id="workspaceGrid">
                 <!-- Tiles will be added here -->
               </div>
@@ -216,6 +245,12 @@ class AlgebraTiles {
     this.currentTool = 'select';
     this.history = [];
     this.historyIndex = -1;
+
+    // Zoom state
+    this.zoomLevel = 1.0;
+    this.minZoom = 0.3;
+    this.maxZoom = 2.0;
+    this.zoomStep = 0.15;
   }
 
   setupEventListeners() {
@@ -385,6 +420,48 @@ class AlgebraTiles {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => this.onKeyDown(e));
+
+    // Zoom controls
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const zoomFitBtn = document.getElementById('zoomFitBtn');
+    const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+    if (zoomInBtn) zoomInBtn.addEventListener('click', () => this.zoomIn());
+    if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => this.zoomOut());
+    if (zoomFitBtn) zoomFitBtn.addEventListener('click', () => this.zoomFitAll());
+    if (zoomResetBtn) zoomResetBtn.addEventListener('click', () => this.zoomReset());
+
+    // Mouse wheel zoom on workspace
+    const workspaceContainer = document.getElementById('tilesWorkspace');
+    if (workspaceContainer) {
+      workspaceContainer.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          const delta = -Math.sign(e.deltaY) * this.zoomStep;
+          this.setZoom(this.zoomLevel + delta);
+        }
+      }, { passive: false });
+    }
+
+    // Onboarding dismiss
+    const onboardingDismiss = document.getElementById('onboardingDismiss');
+    if (onboardingDismiss) {
+      onboardingDismiss.addEventListener('click', () => {
+        const onboarding = document.getElementById('workspaceOnboarding');
+        if (onboarding) {
+          onboarding.classList.add('dismissed');
+          try { localStorage.setItem('algebra-tiles-onboarded', '1'); } catch (e) {}
+        }
+      });
+    }
+    // Auto-hide onboarding if already seen
+    try {
+      if (localStorage.getItem('algebra-tiles-onboarded') === '1') {
+        const onboarding = document.getElementById('workspaceOnboarding');
+        if (onboarding) onboarding.classList.add('dismissed');
+      }
+    } catch (e) {}
   }
 
   addTile(type, x, y) {
@@ -559,10 +636,10 @@ class AlgebraTiles {
       // Clicked on empty workspace - start selection rectangle
       const rect = this.workspace.getBoundingClientRect();
       this.selectionBox = {
-        startX: e.clientX - rect.left,
-        startY: e.clientY - rect.top,
-        currentX: e.clientX - rect.left,
-        currentY: e.clientY - rect.top,
+        startX: (e.clientX - rect.left) / this.zoomLevel,
+        startY: (e.clientY - rect.top) / this.zoomLevel,
+        currentX: (e.clientX - rect.left) / this.zoomLevel,
+        currentY: (e.clientY - rect.top) / this.zoomLevel,
         element: null
       };
 
@@ -604,9 +681,9 @@ class AlgebraTiles {
     const event = this.lastMouseEvent || e;
 
     if (this.draggedTile) {
-      // Calculate how far the mouse has moved since drag started
-      const deltaX = event.clientX - this.draggedTile.startX;
-      const deltaY = event.clientY - this.draggedTile.startY;
+      // Calculate how far the mouse has moved since drag started, adjusted for zoom
+      const deltaX = (event.clientX - this.draggedTile.startX) / this.zoomLevel;
+      const deltaY = (event.clientY - this.draggedTile.startY) / this.zoomLevel;
 
       // Move all dragged tiles together (optimized)
       this.draggedTile.ids.forEach(id => {
@@ -622,10 +699,10 @@ class AlgebraTiles {
         }
       });
     } else if (this.isDraggingSelection && this.selectionBox) {
-      // Update selection rectangle
+      // Update selection rectangle (adjusted for zoom)
       const rect = this.workspace.getBoundingClientRect();
-      this.selectionBox.currentX = event.clientX - rect.left;
-      this.selectionBox.currentY = event.clientY - rect.top;
+      this.selectionBox.currentX = (event.clientX - rect.left) / this.zoomLevel;
+      this.selectionBox.currentY = (event.clientY - rect.top) / this.zoomLevel;
 
       const left = Math.min(this.selectionBox.startX, this.selectionBox.currentX);
       const top = Math.min(this.selectionBox.startY, this.selectionBox.currentY);
@@ -666,9 +743,9 @@ class AlgebraTiles {
 
   onMouseUp(e) {
     if (this.draggedTile) {
-      // Calculate final mouse position delta
-      const finalDeltaX = e.clientX - this.draggedTile.startX;
-      const finalDeltaY = e.clientY - this.draggedTile.startY;
+      // Calculate final mouse position delta, adjusted for zoom
+      const finalDeltaX = (e.clientX - this.draggedTile.startX) / this.zoomLevel;
+      const finalDeltaY = (e.clientY - this.draggedTile.startY) / this.zoomLevel;
 
       // Update positions for all dragged tiles
       this.draggedTile.ids.forEach(id => {
@@ -2144,6 +2221,72 @@ class AlgebraTiles {
       }
 
       console.log('📐 Algebra tiles closed');
+    }
+  }
+
+  // ==================== ZOOM CONTROLS ====================
+
+  setZoom(level) {
+    this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, level));
+    if (this.workspace) {
+      this.workspace.style.transform = `scale(${this.zoomLevel})`;
+      this.workspace.style.transformOrigin = 'top left';
+    }
+    const display = document.getElementById('zoomLevelDisplay');
+    if (display) display.textContent = Math.round(this.zoomLevel * 100) + '%';
+  }
+
+  zoomIn() {
+    this.setZoom(this.zoomLevel + this.zoomStep);
+  }
+
+  zoomOut() {
+    this.setZoom(this.zoomLevel - this.zoomStep);
+  }
+
+  zoomReset() {
+    this.setZoom(1.0);
+  }
+
+  zoomFitAll() {
+    if (this.tiles.length === 0) {
+      this.zoomReset();
+      return;
+    }
+
+    const workspaceContainer = document.getElementById('tilesWorkspace');
+    if (!workspaceContainer) return;
+
+    // Find bounding box of all tiles
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+    this.tiles.forEach(tile => {
+      const dims = this.getTileDimensions(tile.type);
+      minX = Math.min(minX, tile.x);
+      minY = Math.min(minY, tile.y);
+      maxX = Math.max(maxX, tile.x + dims.width);
+      maxY = Math.max(maxY, tile.y + dims.height);
+    });
+
+    const padding = 60;
+    const tilesWidth = (maxX - minX) + padding * 2;
+    const tilesHeight = (maxY - minY) + padding * 2;
+
+    const containerWidth = workspaceContainer.clientWidth;
+    const containerHeight = workspaceContainer.clientHeight;
+
+    const scaleX = containerWidth / tilesWidth;
+    const scaleY = containerHeight / tilesHeight;
+    const fitScale = Math.min(scaleX, scaleY, this.maxZoom);
+
+    this.setZoom(Math.max(fitScale, this.minZoom));
+
+    // Scroll to center of tiles
+    if (workspaceContainer) {
+      const centerX = (minX + maxX) / 2 * this.zoomLevel - containerWidth / 2;
+      const centerY = (minY + maxY) / 2 * this.zoomLevel - containerHeight / 2;
+      workspaceContainer.scrollLeft = Math.max(0, centerX);
+      workspaceContainer.scrollTop = Math.max(0, centerY);
     }
   }
 

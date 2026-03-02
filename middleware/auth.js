@@ -4,7 +4,7 @@
 
 const passport = require("passport");
 const rateLimit = require('express-rate-limit');
-const { resetDemoAccount } = require('../utils/demoReset');
+const { cleanupDemoClone } = require('../utils/demoClone');
 
 /**
  * Checks if a user is logged in and their session data is valid.
@@ -129,7 +129,7 @@ function isAuthorizedForLeaderboard(req, res, next) {
 function handleLogout(req, res, next) {
   // Capture demo session info before logout destroys the session
   const isDemo = !!(req.session && req.session.isDemo);
-  const demoProfileId = req.session?.demoProfileId || null;
+  const cloneSessionId = req.session?.cloneSessionId || null;
 
   req.logout(function(err) {
     if (err) {
@@ -143,14 +143,15 @@ function handleLogout(req, res, next) {
       }
       res.clearCookie('connect.sid');
 
-      // If this was a demo/playground session, reset the account to initial state
-      if (isDemo && demoProfileId) {
+      // If this was a demo clone session, delete the clone data
+      if (isDemo && cloneSessionId) {
         try {
-          await resetDemoAccount(demoProfileId);
-          console.log(`[handleLogout] Demo account reset: ${demoProfileId}`);
-        } catch (resetErr) {
-          // Don't fail the logout if reset fails — log and continue
-          console.error(`[handleLogout] Demo reset failed for ${demoProfileId}:`, resetErr);
+          await cleanupDemoClone(cloneSessionId);
+          console.log(`[handleLogout] Demo clone cleaned up: ${cloneSessionId}`);
+        } catch (cleanupErr) {
+          // Don't fail the logout if cleanup fails — log and continue
+          // Expired clone cleanup will catch orphans
+          console.error(`[handleLogout] Demo clone cleanup failed for ${cloneSessionId}:`, cleanupErr);
         }
       }
 

@@ -39,8 +39,9 @@ export function initSessionTracking(getCurrentUser) {
         }
     });
 
-    // Send heartbeat on a dynamic schedule (backs off on 429)
+    // Send heartbeat on a dynamic schedule (backs off on 429, stops on 401)
     function scheduleHeartbeat() {
+        if (window.__sessionExpired) return;
         const interval = Math.min(
             sessionTracker.baseInterval * Math.pow(2, sessionTracker.consecutiveFailures),
             sessionTracker.maxInterval
@@ -50,6 +51,12 @@ export function initSessionTracking(getCurrentUser) {
         }, interval);
     }
     scheduleHeartbeat();
+
+    // Stop scheduling if session expires
+    window.addEventListener('session-expired', () => {
+        clearTimeout(sessionTracker.heartbeatTimer);
+        sessionTracker.heartbeatTimer = null;
+    });
 
     // Send final time on page unload
     window.addEventListener('beforeunload', () => {
@@ -75,6 +82,7 @@ export function getActiveSeconds() {
 }
 
 export async function sendTimeHeartbeat(getCurrentUser, isFinal = false) {
+    if (window.__sessionExpired) return;
     const currentUser = getCurrentUser();
     if (!currentUser || !currentUser._id) return;
 

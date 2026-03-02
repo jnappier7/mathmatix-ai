@@ -537,36 +537,129 @@
       flex: 1;
     }
 
-    /* Dashboard Loading Indicator */
-    .dashboard-loading-indicator {
+    /* ============================================
+       FULL-PAGE LOADING OVERLAY
+       ============================================ */
+    .teacher-loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(160deg, #f0fdf4 0%, #e8f5e9 40%, #f8f9fa 100%);
+      z-index: 9999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 60px 20px;
-      gap: 16px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    .loading-spinner-ring {
-      width: 44px;
-      height: 44px;
-      border: 3px solid #e9ecef;
-      border-top: 3px solid #667eea;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+    .teacher-loading-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .teacher-loading-card {
+      background: white;
+      border-radius: 16px;
+      padding: 48px 56px;
+      box-shadow: 0 8px 40px rgba(39, 174, 96, 0.12), 0 2px 12px rgba(0,0,0,0.06);
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
     }
-    .loading-status {
+    .teacher-loading-logo {
+      height: 56px;
+      width: auto;
+      margin-bottom: 8px;
+    }
+    .teacher-loading-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+    .teacher-loading-subtitle {
+      font-size: 13px;
+      color: #95a5a6;
+      margin-bottom: 32px;
+    }
+
+    /* Animated icon row */
+    .loading-icon-row {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+    .loading-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.3;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .loading-icon-item.active {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .loading-icon-item.done {
+      opacity: 0.6;
+    }
+    .loading-icon-item i {
+      font-size: 22px;
+      color: var(--color-primary);
+    }
+    .loading-icon-item.done i {
+      color: #95a5a6;
+    }
+    .loading-icon-item span {
+      font-size: 10px;
+      color: #7f8c8d;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Progress bar */
+    .loading-progress-track {
+      width: 100%;
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .loading-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #27ae60, #16a085);
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    /* Status message */
+    .loading-status-message {
       font-size: 15px;
       font-weight: 600;
       color: #2c3e50;
-      transition: opacity 0.3s;
+      margin-bottom: 6px;
+      min-height: 22px;
+      transition: opacity 0.3s ease;
     }
-    .loading-substatus {
-      font-size: 13px;
+    .loading-detail-message {
+      font-size: 12px;
       color: #95a5a6;
-      transition: opacity 0.3s;
+      min-height: 18px;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Pulse animation for the active icon */
+    @keyframes gentle-pulse {
+      0%, 100% { transform: scale(1.1); }
+      50% { transform: scale(1.2); }
+    }
+    .loading-icon-item.active i {
+      animation: gentle-pulse 1.5s ease-in-out infinite;
     }
 
     .user-table {
@@ -3829,6 +3922,41 @@
   <link rel="stylesheet" href="/css/demo-mode.css" />
 </head>
 <body>
+  <!-- Full-page loading overlay -->
+  <div class="teacher-loading-overlay" id="teacher-loading-overlay">
+    <div class="teacher-loading-card">
+      <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI" class="teacher-loading-logo" />
+      <div class="teacher-loading-title">Preparing Your Dashboard</div>
+      <div class="teacher-loading-subtitle">This may take a moment for large rosters</div>
+
+      <div class="loading-icon-row">
+        <div class="loading-icon-item" id="load-icon-students" data-phase="students">
+          <i class="fas fa-users"></i>
+          <span>Students</span>
+        </div>
+        <div class="loading-icon-item" id="load-icon-analytics" data-phase="analytics">
+          <i class="fas fa-chart-line"></i>
+          <span>Analytics</span>
+        </div>
+        <div class="loading-icon-item" id="load-icon-iep" data-phase="iep">
+          <i class="fas fa-clipboard-check"></i>
+          <span>IEP Data</span>
+        </div>
+        <div class="loading-icon-item" id="load-icon-dashboard" data-phase="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </div>
+      </div>
+
+      <div class="loading-progress-track">
+        <div class="loading-progress-fill" id="loading-progress-fill"></div>
+      </div>
+
+      <div class="loading-status-message" id="loading-status">Pulling student records...</div>
+      <div class="loading-detail-message" id="loading-substatus">Connecting to database</div>
+    </div>
+  </div>
+
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
   <div class="page-layout">
     <!-- ============================================
@@ -4154,11 +4282,6 @@
               </div>
             </div>
             <div id="student-list" class="table-scroll-container">
-              <div class="dashboard-loading-indicator" id="dashboard-loading">
-                <div class="loading-spinner-ring"></div>
-                <div class="loading-status" id="loading-status">Connecting to server...</div>
-                <div class="loading-substatus" id="loading-substatus">Preparing your dashboard</div>
-              </div>
             </div>
           </div>
         </div>

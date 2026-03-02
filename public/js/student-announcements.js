@@ -30,6 +30,7 @@
 
     function schedulePoll() {
         if (pollTimer) clearTimeout(pollTimer);
+        if (window.__sessionExpired) return;
         const interval = Math.min(
             BASE_POLL_INTERVAL * Math.pow(2, consecutiveFailures),
             MAX_POLL_INTERVAL
@@ -228,9 +229,15 @@
 
     // Load unread count
     async function loadUnreadCount() {
+        if (window.__sessionExpired) return;
         try {
             const response = await fetch('/api/announcements/student/unread-count');
             if (!response.ok) {
+                if (response.status === 401) {
+                    if (pollTimer) clearTimeout(pollTimer);
+                    if (typeof handleSessionExpired === 'function') handleSessionExpired();
+                    return;
+                }
                 if (response.status === 429) consecutiveFailures++;
                 return;
             }

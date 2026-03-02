@@ -1470,6 +1470,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * Show a user-friendly rate-limit countdown instead of raw "Too many requests" error.
+     * Displays a single message with a live countdown timer and auto-removes when done.
+     */
+    function showRateLimitCountdown(retryAfterSec, container) {
+        if (!container) return;
+        // Remove any existing rate-limit banner to avoid duplicates
+        const existing = container.querySelector('.rate-limit-countdown');
+        if (existing) existing.remove();
+
+        const banner = document.createElement('div');
+        banner.className = 'message-container system-error rate-limit-countdown';
+        let remaining = retryAfterSec;
+        const formatTime = (s) => {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
+        };
+        banner.innerHTML = `<div class="message system-error" style="text-align:center;">
+            <i class="fas fa-clock" style="margin-right:6px;"></i>
+            <span>You're sending messages too quickly. You can try again in <strong class="rl-timer">${formatTime(remaining)}</strong>.</span>
+        </div>`;
+        container.appendChild(banner);
+        container.scrollTop = container.scrollHeight;
+
+        const timerEl = banner.querySelector('.rl-timer');
+        const interval = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                banner.remove();
+                return;
+            }
+            if (timerEl) timerEl.textContent = formatTime(remaining);
+        }, 1000);
+    }
+
+    /**
      * Queue a message for processing
      * Shows the message immediately as "queued" and processes when ready
      */
@@ -1690,6 +1727,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.status === 402 && (errorData.usageLimitReached || errorData.premiumFeatureBlocked)) {
                     showThinkingIndicator(false);
                     showUpgradePrompt(errorData);
+                    return;
+                }
+
+                // Handle rate limiting (429) — show countdown instead of raw error
+                if (response.status === 429) {
+                    showThinkingIndicator(false);
+                    const retryAfterSec = errorData.retryAfter || 60;
+                    showRateLimitCountdown(retryAfterSec, chatBox);
                     return;
                 }
 

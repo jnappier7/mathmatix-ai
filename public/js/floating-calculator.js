@@ -84,9 +84,15 @@ class FloatingCalculator {
         this.copyToast = null;
         this.createCopyToast();
 
+        // Full history log for the history drawer
+        this.fullHistory = [];
+
         this.initializeEventListeners();
         this.setupCopyPaste();
         this.setupMobileTouch();
+        this.setupRippleEffect();
+        this.setupHistoryDrawer();
+        this.setupSendToChat();
         this.checkCalculatorAccess();
     }
 
@@ -137,20 +143,38 @@ class FloatingCalculator {
 
     showCalculator() {
         this.floatingCalc.style.display = 'block';
+        this._showBackdrop();
         if (this._isMobile()) {
-            this._showBackdrop();
+            // Mobile uses bottom-sheet style (handled by CSS)
         } else {
             this.centerCalculator();
+            // Animate open
+            this.floatingCalc.classList.remove('calc-exiting');
+            this.floatingCalc.classList.add('calc-entering');
+            this.floatingCalc.addEventListener('animationend', () => {
+                this.floatingCalc.classList.remove('calc-entering');
+            }, { once: true });
         }
     }
 
     hideCalculator() {
-        this.floatingCalc.style.display = 'none';
+        if (!this._isMobile()) {
+            this.floatingCalc.classList.remove('calc-entering');
+            this.floatingCalc.classList.add('calc-exiting');
+            this.floatingCalc.addEventListener('animationend', () => {
+                this.floatingCalc.classList.remove('calc-exiting');
+                this.floatingCalc.style.display = 'none';
+            }, { once: true });
+        } else {
+            this.floatingCalc.style.display = 'none';
+        }
         this._removeBackdrop();
     }
 
     centerCalculator() {
-        this.floatingCalc.style.transform = 'translate(-50%, -50%)';
+        this.floatingCalc.style.transform = 'translateY(-50%)';
+        this.floatingCalc.style.right = '24px';
+        this.floatingCalc.style.left = 'auto';
         this.xOffset = 0;
         this.yOffset = 0;
     }
@@ -1159,6 +1183,9 @@ class FloatingCalculator {
             this.waitingForOperand = true;
             this.cursorPos = 0;
             this.renderHistory();
+            // Track in full history drawer
+            this.fullHistory.unshift({ input: this.currentInput, result: this.formatNumber(result) });
+            this.updateHistoryDrawer();
         } catch (error) {
             this.showError('SYNTAX');
         }
@@ -1397,9 +1424,29 @@ class FloatingCalculator {
 
     setupCopyPaste() {
         if (!this.resultLine) return;
-        this.resultLine.addEventListener('click', () => this.copyResult());
         this.resultLine.style.cursor = 'pointer';
-        this.resultLine.title = 'Click to copy';
+        this.resultLine.title = 'Click to copy result';
+
+        // Add visible copy button inside result line
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'calc-copy-btn';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+        copyBtn.title = 'Copy result';
+        this.resultLine.style.position = 'relative';
+        this.resultLine.appendChild(copyBtn);
+
+        copyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.copyResult();
+            copyBtn.classList.add('copied');
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            }, 1200);
+        });
+
+        this.resultLine.addEventListener('click', () => this.copyResult());
 
         document.addEventListener('paste', (e) => {
             if (this.floatingCalc.style.display === 'none') return;
@@ -1449,6 +1496,131 @@ class FloatingCalculator {
             btn.addEventListener('touchstart', () => {
                 if (navigator.vibrate) navigator.vibrate(10);
             }, { passive: true });
+        });
+    }
+
+    // ==================== BUTTON RIPPLE EFFECT ====================
+
+    setupRippleEffect() {
+        if (!this.floatingCalc) return;
+        this.floatingCalc.querySelectorAll('.calc-btn').forEach(btn => {
+            btn.addEventListener('pointerdown', (e) => {
+                const ripple = document.createElement('span');
+                ripple.className = 'btn-ripple';
+                const rect = btn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                btn.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        });
+    }
+
+    // ==================== HISTORY DRAWER ====================
+
+    setupHistoryDrawer() {
+        if (!this.floatingCalc) return;
+        const body = this.floatingCalc.querySelector('.calculator-body');
+        if (!body) return;
+
+        // Create toggle button
+        const toggle = document.createElement('button');
+        toggle.className = 'calc-history-toggle';
+        toggle.innerHTML = '<i class="fas fa-chevron-down"></i> History';
+        toggle.title = 'Show calculation history';
+
+        // Create drawer
+        const drawer = document.createElement('div');
+        drawer.className = 'calc-history-drawer';
+        drawer.innerHTML = '<div class="calc-history-drawer-inner"></div>';
+
+        // Insert after display container
+        const displayContainer = body.querySelector('.display-container');
+        if (displayContainer) {
+            displayContainer.after(toggle, drawer);
+        }
+
+        this._historyDrawer = drawer;
+        this._historyToggle = toggle;
+
+        toggle.addEventListener('click', () => {
+            const isOpen = drawer.classList.toggle('open');
+            toggle.classList.toggle('open', isOpen);
+            toggle.innerHTML = isOpen
+                ? '<i class="fas fa-chevron-up"></i> History'
+                : '<i class="fas fa-chevron-down"></i> History';
+        });
+    }
+
+    updateHistoryDrawer() {
+        if (!this._historyDrawer) return;
+        const inner = this._historyDrawer.querySelector('.calc-history-drawer-inner');
+        if (!inner) return;
+
+        if (this.fullHistory.length === 0) {
+            inner.innerHTML = '<div style="text-align:center;color:#999;padding:12px;font-size:11px;">No calculations yet</div>';
+            return;
+        }
+
+        inner.innerHTML = this.fullHistory.slice(0, 20).map(entry => `
+            <div class="calc-history-item" data-expr="${entry.input.replace(/"/g, '&quot;')}" title="Click to reuse this expression">
+                <span class="hist-expr">${entry.input}</span>
+                <span class="hist-result">= ${entry.result}</span>
+            </div>
+        `).join('');
+
+        // Click to reuse
+        inner.querySelectorAll('.calc-history-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const expr = item.dataset.expr;
+                if (expr) {
+                    this.currentInput = expr;
+                    this.cursorPos = expr.length;
+                    this.waitingForOperand = false;
+                    this.updateDisplay();
+                }
+            });
+        });
+    }
+
+    // ==================== SEND TO CHAT ====================
+
+    setupSendToChat() {
+        if (!this.floatingCalc) return;
+        const body = this.floatingCalc.querySelector('.calculator-body');
+        if (!body) return;
+
+        const btn = document.createElement('button');
+        btn.className = 'calc-send-to-chat';
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Result to Chat';
+        btn.title = 'Insert the current result into the chat input';
+        body.appendChild(btn);
+
+        btn.addEventListener('click', () => {
+            const text = this.resultLine?.textContent;
+            if (!text || text === '0' || text.includes('ERROR')) return;
+
+            const chatInput = document.getElementById('user-input');
+            if (chatInput) {
+                // Append result to chat input
+                const existing = chatInput.textContent.trim();
+                chatInput.textContent = existing ? existing + ' ' + text : text;
+                chatInput.focus();
+                // Place cursor at end
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(chatInput);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            // Brief visual confirmation
+            btn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Result to Chat';
+            }, 1200);
         });
     }
 }

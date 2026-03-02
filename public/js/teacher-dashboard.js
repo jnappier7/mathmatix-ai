@@ -79,37 +79,106 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    // --- Loading Progress Indicator ---
+    // --- Loading Progress Overlay ---
+    const loadingOverlay = document.getElementById('teacher-loading-overlay');
     const loadingStatus = document.getElementById('loading-status');
     const loadingSubstatus = document.getElementById('loading-substatus');
-    let loadingStepIndex = 0;
-    const loadingSteps = [
-        { status: 'Collecting student profiles...', sub: 'Querying student data' },
-        { status: 'Loading class rosters...', sub: 'Organizing enrollment codes' },
-        { status: 'Calculating activity data...', sub: 'Reviewing weekly stats' },
-        { status: 'Reviewing skill sets...', sub: 'Analyzing mastery progress' },
-        { status: 'Identifying outliers...', sub: 'Flagging students who need help' },
-        { status: 'Building your dashboard...', sub: 'Almost ready' }
+    const loadingProgressFill = document.getElementById('loading-progress-fill');
+    const loadingIcons = {
+        students: document.getElementById('load-icon-students'),
+        analytics: document.getElementById('load-icon-analytics'),
+        iep: document.getElementById('load-icon-iep'),
+        dashboard: document.getElementById('load-icon-dashboard')
+    };
+
+    // Teacher-specific loading messages grouped by phase
+    const loadingPhases = [
+        // Phase: students (0–30%)
+        { phase: 'students', status: 'Pulling student records...', sub: 'Connecting to database', pct: 2 },
+        { phase: 'students', status: 'Loading class rosters...', sub: 'Matching enrollment codes', pct: 8 },
+        { phase: 'students', status: 'Gathering student profiles...', sub: 'Names, grades, and account info', pct: 14 },
+        { phase: 'students', status: 'Checking attendance patterns...', sub: 'Reviewing recent login activity', pct: 20 },
+        { phase: 'students', status: 'Organizing by class period...', sub: 'Sorting student groups', pct: 26 },
+
+        // Phase: analytics (30–60%)
+        { phase: 'analytics', status: 'Analyzing weekly performance...', sub: 'Calculating problems attempted & accuracy', pct: 32 },
+        { phase: 'analytics', status: 'Computing skill mastery levels...', sub: 'Reviewing standards alignment', pct: 38 },
+        { phase: 'analytics', status: 'Identifying struggling students...', sub: 'Flagging those who may need support', pct: 44 },
+        { phase: 'analytics', status: 'Reviewing growth trends...', sub: 'Comparing this week to last week', pct: 50 },
+        { phase: 'analytics', status: 'Building performance charts...', sub: 'Preparing visual data for you', pct: 56 },
+
+        // Phase: iep (60–80%)
+        { phase: 'iep', status: 'Assessing IEP accommodations...', sub: 'Loading individualized plans', pct: 62 },
+        { phase: 'iep', status: 'Reviewing learning goals...', sub: 'Checking IEP goal progress', pct: 68 },
+        { phase: 'iep', status: 'Matching scaffolds to students...', sub: 'Personalizing support settings', pct: 74 },
+
+        // Phase: dashboard (80–100%)
+        { phase: 'dashboard', status: 'Building your dashboard...', sub: 'Laying out student cards', pct: 82 },
+        { phase: 'dashboard', status: 'Preparing smart alerts...', sub: 'Checking for items needing attention', pct: 88 },
+        { phase: 'dashboard', status: 'Finishing up...', sub: 'Almost ready for you', pct: 94 }
     ];
+
+    let loadingStepIndex = 0;
+    let currentPhase = null;
+
+    function setLoadingIconPhase(phase) {
+        if (phase === currentPhase) return;
+        // Mark previous phases as done
+        const phaseOrder = ['students', 'analytics', 'iep', 'dashboard'];
+        const phaseIdx = phaseOrder.indexOf(phase);
+        phaseOrder.forEach((p, i) => {
+            const el = loadingIcons[p];
+            if (!el) return;
+            el.classList.remove('active', 'done');
+            if (i < phaseIdx) el.classList.add('done');
+            else if (i === phaseIdx) el.classList.add('active');
+        });
+        currentPhase = phase;
+    }
 
     function updateLoadingStep() {
         if (!loadingStatus || !loadingSubstatus) return;
-        if (loadingStepIndex < loadingSteps.length) {
-            const step = loadingSteps[loadingStepIndex];
-            loadingStatus.textContent = step.status;
-            loadingSubstatus.textContent = step.sub;
+        if (loadingStepIndex < loadingPhases.length) {
+            const step = loadingPhases[loadingStepIndex];
+            // Fade out, swap text, fade in
+            loadingStatus.style.opacity = '0';
+            loadingSubstatus.style.opacity = '0';
+            setTimeout(() => {
+                loadingStatus.textContent = step.status;
+                loadingSubstatus.textContent = step.sub;
+                loadingStatus.style.opacity = '1';
+                loadingSubstatus.style.opacity = '1';
+            }, 200);
+            if (loadingProgressFill) loadingProgressFill.style.width = step.pct + '%';
+            setLoadingIconPhase(step.phase);
             loadingStepIndex++;
         }
     }
 
-    // Cycle through loading messages every ~800ms while data loads
-    const loadingInterval = setInterval(updateLoadingStep, 800);
+    function dismissLoadingOverlay() {
+        if (loadingProgressFill) loadingProgressFill.style.width = '100%';
+        if (loadingStatus) loadingStatus.textContent = 'Ready!';
+        if (loadingSubstatus) loadingSubstatus.textContent = '';
+        // Mark all icons as done
+        Object.values(loadingIcons).forEach(el => {
+            if (el) { el.classList.remove('active'); el.classList.add('done'); }
+        });
+        setTimeout(() => {
+            if (loadingOverlay) loadingOverlay.classList.add('fade-out');
+            // Remove from DOM after animation
+            setTimeout(() => { if (loadingOverlay) loadingOverlay.remove(); }, 600);
+        }, 400);
+    }
+
+    // Cycle through loading messages every ~4s to cover the full load time
+    const loadingInterval = setInterval(updateLoadingStep, 4000);
     updateLoadingStep(); // Show first step immediately
 
     // --- Initial Load ---
     // Use lightweight mode (skips skillMastery) for faster initial roster render
     await Promise.all([fetchAssignedStudents(true), fetchClassesForGrouping()]);
     clearInterval(loadingInterval);
+    dismissLoadingOverlay();
 
     // Backfill full student data (with skillMastery) in the background
     // This enables insights, skill badges, and getCurrentLearningSkill
