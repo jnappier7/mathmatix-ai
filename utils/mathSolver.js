@@ -22,11 +22,66 @@ function detectMathProblem(message) {
 
     const text = message.trim().toLowerCase();
 
+    // Pattern: Natural-language multiplication "multiply X by Y" or "X times Y" or "X multiplied by Y"
+    const nlMultiplyPattern = /(?:multiply\s+)(\d+\.?\d*)\s+(?:by|and)\s+(\d+\.?\d*)/i;
+    const nlMultiplyMatch = message.match(nlMultiplyPattern);
+    if (nlMultiplyMatch) {
+        return { type: 'arithmetic', left: parseFloat(nlMultiplyMatch[1]), operator: '*', right: parseFloat(nlMultiplyMatch[2]) };
+    }
+
+    // Pattern: "X times Y" or "X multiplied by Y" embedded in sentences
+    const timesPattern = /(\d+\.?\d*)\s+(?:times|multiplied\s+by)\s+(\d+\.?\d*)/i;
+    const timesMatch = message.match(timesPattern);
+    if (timesMatch) {
+        return { type: 'arithmetic', left: parseFloat(timesMatch[1]), operator: '*', right: parseFloat(timesMatch[2]) };
+    }
+
+    // Pattern: Natural-language division "divide X by Y" or "X divided by Y"
+    const nlDividePattern = /(?:divide\s+)(\d+\.?\d*)\s+by\s+(\d+\.?\d*)/i;
+    const nlDivideMatch = message.match(nlDividePattern);
+    if (nlDivideMatch) {
+        return { type: 'arithmetic', left: parseFloat(nlDivideMatch[1]), operator: '/', right: parseFloat(nlDivideMatch[2]) };
+    }
+    const dividedByPattern = /(\d+\.?\d*)\s+divided\s+by\s+(\d+\.?\d*)/i;
+    const dividedByMatch = message.match(dividedByPattern);
+    if (dividedByMatch) {
+        return { type: 'arithmetic', left: parseFloat(dividedByMatch[1]), operator: '/', right: parseFloat(dividedByMatch[2]) };
+    }
+
+    // Pattern: Natural-language addition "add X and Y" or "X plus Y" or "sum of X and Y"
+    const nlAddPattern = /(?:add\s+)(\d+\.?\d*)\s+(?:and|to|plus)\s+(\d+\.?\d*)/i;
+    const nlAddMatch = message.match(nlAddPattern);
+    if (nlAddMatch) {
+        return { type: 'arithmetic', left: parseFloat(nlAddMatch[1]), operator: '+', right: parseFloat(nlAddMatch[2]) };
+    }
+    const plusPattern = /(\d+\.?\d*)\s+plus\s+(\d+\.?\d*)/i;
+    const plusMatch = message.match(plusPattern);
+    if (plusMatch) {
+        return { type: 'arithmetic', left: parseFloat(plusMatch[1]), operator: '+', right: parseFloat(plusMatch[2]) };
+    }
+
+    // Pattern: Natural-language subtraction "subtract X from Y" or "X minus Y"
+    const minusPattern = /(\d+\.?\d*)\s+minus\s+(\d+\.?\d*)/i;
+    const minusMatch = message.match(minusPattern);
+    if (minusMatch) {
+        return { type: 'arithmetic', left: parseFloat(minusMatch[1]), operator: '-', right: parseFloat(minusMatch[2]) };
+    }
+    const subtractFromPattern = /subtract\s+(\d+\.?\d*)\s+from\s+(\d+\.?\d*)/i;
+    const subtractFromMatch = message.match(subtractFromPattern);
+    if (subtractFromMatch) {
+        // "subtract A from B" = B - A
+        return { type: 'arithmetic', left: parseFloat(subtractFromMatch[2]), operator: '-', right: parseFloat(subtractFromMatch[1]) };
+    }
+
     // Pattern: "what is X + Y" or "solve X + Y"
-    const whatIsPattern = /(?:what\s+is|solve|calculate|evaluate|compute|find)\s*(.+)/i;
+    const whatIsPattern = /(?:what\s+is|what\s+do\s+you\s+get\s+(?:if\s+you\s+|when\s+you\s+|for\s+)?|solve|calculate|evaluate|compute|find)\s*(.+)/i;
     const whatIsMatch = message.match(whatIsPattern);
     if (whatIsMatch) {
-        return { type: 'evaluation', expression: whatIsMatch[1].trim() };
+        // Re-run natural language patterns on the extracted expression
+        const expr = whatIsMatch[1].trim();
+        const subResult = detectNaturalLanguageArithmetic(expr);
+        if (subResult) return subResult;
+        return { type: 'evaluation', expression: expr };
     }
 
     // Pattern: Linear equation "solve for x: 2x + 3 = 7" or "2x + 3 = 7"
@@ -114,6 +169,47 @@ function detectMathProblem(message) {
         };
     }
 
+    // Last resort: scan for any embedded arithmetic with symbolic operators (e.g. "So 3 × 12 is what?")
+    const embeddedArithmeticPattern = /(\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)/;
+    const embeddedMatch = message.match(embeddedArithmeticPattern);
+    if (embeddedMatch) {
+        return {
+            type: 'arithmetic',
+            left: parseFloat(embeddedMatch[1]),
+            operator: embeddedMatch[2],
+            right: parseFloat(embeddedMatch[3])
+        };
+    }
+
+    return null;
+}
+
+/**
+ * Helper: detect natural-language arithmetic in an expression string.
+ * Used when a "what is ..." pattern extracts an expression that contains
+ * word operators like "times", "plus", "minus", "divided by".
+ */
+function detectNaturalLanguageArithmetic(expr) {
+    const timesMatch = expr.match(/(\d+\.?\d*)\s+(?:times|multiplied\s+by)\s+(\d+\.?\d*)/i);
+    if (timesMatch) {
+        return { type: 'arithmetic', left: parseFloat(timesMatch[1]), operator: '*', right: parseFloat(timesMatch[2]) };
+    }
+    const multiplyMatch = expr.match(/multiply\s+(\d+\.?\d*)\s+(?:by|and)\s+(\d+\.?\d*)/i);
+    if (multiplyMatch) {
+        return { type: 'arithmetic', left: parseFloat(multiplyMatch[1]), operator: '*', right: parseFloat(multiplyMatch[2]) };
+    }
+    const dividedByMatch = expr.match(/(\d+\.?\d*)\s+divided\s+by\s+(\d+\.?\d*)/i);
+    if (dividedByMatch) {
+        return { type: 'arithmetic', left: parseFloat(dividedByMatch[1]), operator: '/', right: parseFloat(dividedByMatch[2]) };
+    }
+    const plusMatch = expr.match(/(\d+\.?\d*)\s+plus\s+(\d+\.?\d*)/i);
+    if (plusMatch) {
+        return { type: 'arithmetic', left: parseFloat(plusMatch[1]), operator: '+', right: parseFloat(plusMatch[2]) };
+    }
+    const minusMatch = expr.match(/(\d+\.?\d*)\s+minus\s+(\d+\.?\d*)/i);
+    if (minusMatch) {
+        return { type: 'arithmetic', left: parseFloat(minusMatch[1]), operator: '-', right: parseFloat(minusMatch[2]) };
+    }
     return null;
 }
 
@@ -376,10 +472,15 @@ function solveSqrt(problem) {
 function solveEvaluation(problem) {
     const { expression } = problem;
 
-    // Clean the expression
+    // Clean the expression — convert word operators BEFORE stripping non-math chars
     let cleaned = expression
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
+        .replace(/\btimes\b/gi, '*')
+        .replace(/\bmultiplied\s+by\b/gi, '*')
+        .replace(/\bdivided\s+by\b/gi, '/')
+        .replace(/\bplus\b/gi, '+')
+        .replace(/\bminus\b/gi, '-')
         .replace(/\s+/g, '')
         .replace(/[^\d+\-*/().^]/g, '');
 
