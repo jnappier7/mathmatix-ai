@@ -208,11 +208,13 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       avatar: pendingProfile.avatar,
       // Email verification
       emailVerified: true, // OAuth emails are pre-verified by the provider
-      // Teacher assignment from enrollment code (only if DB code, not env code)
+      // Teacher assignment and tier from enrollment code (only if DB code, not env code)
       ...(enrollmentCodeDoc ? {
         teacherId: enrollmentCodeDoc.teacherId,
         gradeLevel: enrollmentCodeDoc.gradeLevel,
         mathCourse: enrollmentCodeDoc.mathCourse,
+        ...(enrollmentCodeDoc.defaultSubscriptionTier && enrollmentCodeDoc.defaultSubscriptionTier !== 'free'
+          ? { subscriptionTier: enrollmentCodeDoc.defaultSubscriptionTier } : {}),
       } : {}),
       linkCode: await generateUniqueStudentLinkCode()
     });

@@ -126,6 +126,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         let teacherIdFromCode = null;
         let gradeLevelFromCode = null;
         let mathCourseFromCode = null;
+        let subscriptionTierFromCode = null;
 
         if (role === 'student' && enrollmentCode) {
             enrollmentCodeDoc = await EnrollmentCode.findOne({
@@ -139,7 +140,8 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                     teacherIdFromCode = enrollmentCodeDoc.teacherId;
                     gradeLevelFromCode = enrollmentCodeDoc.gradeLevel;
                     mathCourseFromCode = enrollmentCodeDoc.mathCourse;
-                    console.log(`LOG: Student using enrollment code ${enrollmentCode} for teacher ${teacherIdFromCode}`);
+                    subscriptionTierFromCode = enrollmentCodeDoc.defaultSubscriptionTier || 'free';
+                    console.log(`LOG: Student using enrollment code ${enrollmentCode} for teacher ${teacherIdFromCode} (tier: ${subscriptionTierFromCode})`);
                 } else {
                     console.warn(`WARN: Student tried to use invalid enrollment code: ${enrollmentCode} - ${validation.reason}`);
                     // Don't fail signup, just don't link to teacher
@@ -177,6 +179,8 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             ...(gradeLevelFromCode ? { gradeLevel: gradeLevelFromCode } : {}),
             // Use math course from enrollment code if available
             ...(mathCourseFromCode ? { mathCourse: mathCourseFromCode } : {}),
+            // Apply subscription tier from enrollment code if set (e.g. 'unlimited' for teacher classes)
+            ...(subscriptionTierFromCode && subscriptionTierFromCode !== 'free' ? { subscriptionTier: subscriptionTierFromCode } : {}),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
