@@ -393,7 +393,7 @@ class ShowYourWorkManager {
                     ${correct ? 'Got it' : 'Take another look'}
                 </span>
             </div>
-            ${problem.problemStatement ? `<div class="syw-problem-statement">${this.escapeHtml(problem.problemStatement)}</div>` : ''}
+            ${problem.problemStatement ? `<div class="syw-problem-statement">${problem.problemStatement}</div>` : ''}
 
             <!-- Tutor feedback is the main content (not escaped — may contain LaTeX) -->
             ${problem.feedback ? `<div class="syw-problem-feedback">${problem.feedback}</div>` : ''}
@@ -404,7 +404,7 @@ class ShowYourWorkManager {
             <div class="syw-problem-answers">
                 <div class="syw-answer-row">
                     <span class="syw-answer-label">Your answer:</span>
-                    <span class="syw-answer-value">${this.escapeHtml(problem.studentAnswer || '—')}</span>
+                    <span class="syw-answer-value">${problem.studentAnswer || '—'}</span>
                 </div>
                 ${!correct ? `<div class="syw-answer-row">
                     <span class="syw-answer-label">Hint:</span>
