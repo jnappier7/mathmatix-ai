@@ -1,5 +1,5 @@
 // server.js
-require("dotenv").config();
+try { require("dotenv").config(); } catch (_) { /* Production: env vars set by host */ }
 
 // Initialize logger early (before other imports)
 const logger = require('./utils/logger');
