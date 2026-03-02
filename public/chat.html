@@ -144,9 +144,9 @@
         <i class="fas fa-comment-dots"></i>
       </button>
 
-      <!-- More menu trigger (mobile only) -->
+      <!-- More menu trigger -->
       <button id="more-tools-btn" class="btn btn-tertiary icon-only toolbar-more" title="More" aria-label="More options">
-        <i class="fas fa-ellipsis-v"></i>
+        <i class="fas fa-bars"></i>
       </button>
 
       <!-- Mobile Progress Toggle Button -->
@@ -1546,7 +1546,7 @@
     </div>
   </div>
 
-  <!-- More Tools Bottom Sheet (mobile) -->
+  <!-- More Tools Menu (bottom-sheet on mobile, dropdown on desktop) -->
   <div id="more-tools-overlay" class="more-tools-overlay"></div>
   <div id="more-tools-menu" class="more-tools-menu" role="dialog" aria-label="More tools" style="display: none;">
     <div class="more-tools-header">
@@ -1556,6 +1556,10 @@
       </button>
     </div>
     <div class="more-tools-grid">
+      <button class="more-tool-item" data-trigger="open-settings-modal-btn">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </button>
       <button class="more-tool-item" data-trigger="share-progress-header-btn">
         <i class="fas fa-link"></i>
         <span>Share Progress</span>
@@ -1568,9 +1572,10 @@
         <i class="fas fa-book-open"></i>
         <span>Resources</span>
       </button>
-      <button class="more-tool-item" data-trigger="open-settings-modal-btn">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
+      <div class="more-tool-separator"></div>
+      <button class="more-tool-item" data-trigger="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Log Out</span>
       </button>
     </div>
   </div>
