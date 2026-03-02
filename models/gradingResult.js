@@ -9,7 +9,7 @@ const { Schema } = mongoose;
  * Per-problem analysis result
  */
 const problemResultSchema = new Schema({
-    problemNumber: { type: Number, required: true },
+    problemNumber: { type: String, required: true },
     problemStatement: { type: String, default: '' },
     studentAnswer: { type: String, default: '' },
     correctAnswer: { type: String, default: '' },
@@ -43,7 +43,7 @@ const teacherReviewSchema = new Schema({
     reviewedAt: { type: Date, default: Date.now },
     comment: { type: String, default: '' },
     problemComments: [{
-        problemNumber: Number,
+        problemNumber: String,
         comment: { type: String, default: '' }
     }]
 }, { _id: false });
