@@ -89,11 +89,7 @@
     object-position: center top;
 }
 
-/* Hide avatar on consecutive same-sender messages */
-.message-container.ai + .message-container.ai .message-avatar,
-.message-container.user + .message-container.user .message-avatar {
-    visibility: hidden;
-}
+/* Show avatar on every message */
 
 /* Message Animations */
 .message.message-enter {
