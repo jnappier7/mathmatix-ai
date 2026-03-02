@@ -610,7 +610,13 @@ function normalizeMathChars(str) {
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/−/g, '-')
-        .replace(/π/g, 'pi');
+        .replace(/π/g, 'pi')
+        // Convert LaTeX \frac{A}{B} → (A)/(B) so extraction patterns can match
+        .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)')
+        // Strip remaining LaTeX delimiters and commands that don't affect the expression
+        .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
+        .replace(/\\left|\\right/g, '')
+        .replace(/\\cdot/g, '*');
 }
 
 /**
@@ -650,8 +656,8 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            // Remove trailing operators that got caught by greedy match
-            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            // Remove trailing operators/punctuation caught by greedy match
+            func = func.replace(/[\+\-\*\/\^\.]+$/, '');
             if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }
@@ -663,7 +669,7 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            func = func.replace(/[\+\-\*\/\^\.]+$/, '');
             if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }
