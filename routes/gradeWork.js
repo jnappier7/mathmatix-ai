@@ -90,7 +90,7 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
   "noWorkDetected": false,
   "problems": [
     {
-      "problemNumber": 1,
+      "problemNumber": "1",
       "problemStatement": "Brief restatement of the problem",
       "studentAnswer": "What the student wrote (MUST be actual handwriting you can see — not the printed problem text)",
       "isCorrect": true,
@@ -99,7 +99,7 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
       "feedback": "Nailed it."
     },
     {
-      "problemNumber": 2,
+      "problemNumber": "2",
       "problemStatement": "...",
       "studentAnswer": "...",
       "isCorrect": false,
@@ -124,6 +124,7 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 
 RULES:
 - Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
+- **problemNumber** must be a string matching whatever label appears on the worksheet — "1", "2", etc. for numbered problems, or "A", "B", etc. for lettered problems. Always use a string.
 - **NEVER include a "correctAnswer" field.** NEVER. Not even close. Not as a hint, not reworded, not "the answer should be..." Guide them to discover it.
 - **The "correction" field in errors must be a QUESTION, not an answer.** It should be a Socratic prompt that leads the student to find the fix themselves. Good: "When you distribute a negative, what happens to each sign inside?" Bad: "The answer should be x = 6." Bad: "You should get -2x + 6." If you catch yourself writing the answer, rewrite it as a question.
 - **Feedback must be SHORT.** 1-2 sentences for correct problems. 2-3 sentences for incorrect — a strength, a pointer, and a question. No paragraphs.
@@ -168,6 +169,14 @@ function parseAnalysisResponse(raw) {
 
     if (!parsed.problems || !Array.isArray(parsed.problems)) {
         throw new Error('AI response missing problems array');
+    }
+
+    // Normalize problemNumber to string — worksheets may use letters (A, B, C)
+    // or numbers (1, 2, 3) and the AI returns whatever appears on the page.
+    for (const p of parsed.problems) {
+        if (p.problemNumber != null) {
+            p.problemNumber = String(p.problemNumber);
+        }
     }
 
     return parsed;
