@@ -1234,7 +1234,7 @@ a {
     }
 }
 
-/* Tablet landscape with touch */
+/* Tablet landscape with touch — keep sidebar toggle, don't swap to drawers */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
     body.is-touch-device .landing-header {
         min-height: 44px;
@@ -1242,14 +1242,6 @@ a {
         top: 0;
         z-index: 1000;
         width: 100%;
-    }
-
-    body.is-touch-device .drawer-toggle-btn {
-        display: flex !important;
-    }
-
-    body.is-touch-device #sidebar-toggle {
-        display: none !important;
     }
 }
 
@@ -1259,11 +1251,12 @@ a {
     body.is-mobile .landing-header {
         display: none !important;
     }
-}
 
-body.is-touch-device #sidebar-toggle,
-body.is-mobile #sidebar-toggle {
-    display: none !important;
+    /* On mobile, sidebar toggle is replaced by drawer toggle + bottom nav */
+    body.is-touch-device #sidebar-toggle,
+    body.is-mobile #sidebar-toggle {
+        display: none !important;
+    }
 }
 
 /* --- 10. PRINT STYLESHEET --- */
