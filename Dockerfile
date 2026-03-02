@@ -18,7 +18,10 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 # 4. Set up the working directory
 WORKDIR /usr/src/app
 
-# 5. Copy package files and install npm dependencies deterministically
+# 5. Skip Puppeteer's bundled Chrome download (use system Chrome at runtime)
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+
+# 6. Copy package files and install npm dependencies deterministically
 COPY package*.json ./
 RUN npm ci --omit=dev
 

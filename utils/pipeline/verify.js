@@ -322,6 +322,19 @@ function normalizeLatex(text) {
     return match;
   });
 
+  // ── 2b. Protect existing delimited math from step 3 ──
+  // Without this, step 3 converts inner (expr) inside \(...\) to \(expr\),
+  // creating broken nested delimiters: \(... \(expr\) ...\)
+  const protectedBlocks = [];
+  result = result.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
+    protectedBlocks.push(match);
+    return `@@PROTECTED_${protectedBlocks.length - 1}@@`;
+  });
+  result = result.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
+    protectedBlocks.push(match);
+    return `@@PROTECTED_${protectedBlocks.length - 1}@@`;
+  });
+
   // ── 3. Fix bare parenthesized math: ( expr ) → \( expr \) ──
   result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
     const hasMathSyntax =
@@ -335,6 +348,29 @@ function normalizeLatex(text) {
       return `\\(${inner.trim()}\\)`;
     }
     return match;
+  });
+
+  // ── 4. Wrap bare LaTeX command expressions not inside delimiters ──
+  // Handles AI output like: \frac{3}{4} + \frac{1}{4} = 1
+  // or: \lim_{x \to 2} (3x+1) = 7
+  // Matches a \command with its arguments (braces, subscripts, superscripts),
+  // then greedily captures adjacent math content (operators, more commands, numbers).
+  const RENDER_CMDS = 'frac|sqrt|lim|sum|int|prod|vec|overline|underline|hat|bar';
+  const ALL_CMDS = RENDER_CMDS + '|to|times|cdot|div|pm|mp|leq|geq|neq|approx|equiv|infty|pi|left|right|sin|cos|tan|log|ln';
+  // Use (?=[_^{\\s(]|$) instead of \b because _ is a word char (so \lim_ fails with \b)
+  const WB = '(?=[_^{\\\\s(]|$)';
+  const cmdWithArgs = `\\\\(?:${RENDER_CMDS})${WB}(?:[_^](?:\\{[^{}]*\\}|\\w)|\\{[^{}]*\\})*`;
+  const mathTail = `(?:\\s*(?:[+\\-=*/<>,]|\\\\(?:${ALL_CMDS})${WB}(?:[_^](?:\\{[^{}]*\\}|\\w)|\\{[^{}]*\\})*|[0-9a-zA-Z_^{}()\\s](?![a-zA-Z]{3})))*`;
+  const bareMathRegex = new RegExp(`(${cmdWithArgs}${mathTail})`, 'g');
+  result = result.replace(bareMathRegex, (match) => {
+    const trimmed = match.trim();
+    if (!trimmed) return match;
+    return `\\(${trimmed}\\)`;
+  });
+
+  // ── Restore protected math blocks ──
+  protectedBlocks.forEach((block, index) => {
+    result = result.replace(`@@PROTECTED_${index}@@`, block);
   });
 
   return result;
