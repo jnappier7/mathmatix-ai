@@ -82,9 +82,11 @@
     });
   </script>
   <link rel="stylesheet" href="/css/demo-mode.css" />
+  <script src="/js/i18n-translations.js"></script>
+  <script src="/js/i18n.js"></script>
 </head>
 <body class="landing-page-body">
-  <a href="#chat-messages-container" class="skip-to-content">Skip to chat</a>
+  <a href="#chat-messages-container" class="skip-to-content" data-i18n="misc.skipToChat">Skip to chat</a>
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
     <!-- Mobile Drawer Toggle Buttons -->
@@ -104,7 +106,7 @@
         <i class="fas fa-pause"></i>
       </button>
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" aria-label="Stop audio" style="display: none;">
-        <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
+        <i class="fas fa-stop-circle"></i> <span class="mobile-hide" data-i18n="chat.stop">Stop</span>
       </button>
       <div class="speed-control" style="display: none;" id="speed-control-container">
         <button id="speed-btn" class="btn btn-tertiary icon-only" title="Playback Speed" aria-label="Playback speed">
@@ -132,7 +134,7 @@
       </div>
 
       <!-- Theme toggle — always visible -->
-      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode" data-i18n-title="nav.darkMode" data-i18n-aria="nav.darkMode">
         <i class="fas fa-moon"></i>
       </button>
 
@@ -149,20 +151,20 @@
 
     <!-- Hamburger dropdown menu -->
     <div id="header-dropdown-menu" class="header-dropdown-menu">
-      <button class="header-menu-item" data-trigger="open-settings-modal-btn">
+      <button class="header-menu-item" data-trigger="open-settings-modal-btn" data-i18n="nav.settings">
         <i class="fas fa-cog"></i> Settings
       </button>
-      <button class="header-menu-item" data-trigger="open-resources-modal-btn">
+      <button class="header-menu-item" data-trigger="open-resources-modal-btn" data-i18n="nav.resources">
         <i class="fas fa-book-open"></i> Resources
       </button>
-      <button class="header-menu-item" data-trigger="share-progress-header-btn">
+      <button class="header-menu-item" data-trigger="share-progress-header-btn" data-i18n="nav.shareProgress">
         <i class="fas fa-link"></i> Share Progress
       </button>
-      <button class="header-menu-item" data-trigger="open-feedback-modal-btn">
+      <button class="header-menu-item" data-trigger="open-feedback-modal-btn" data-i18n="nav.feedback">
         <i class="fas fa-comment-dots"></i> Feedback
       </button>
       <div class="header-menu-divider"></div>
-      <button class="header-menu-item" id="logoutBtn">
+      <button class="header-menu-item" id="logoutBtn" data-i18n="nav.logOut">
         <i class="fas fa-sign-out-alt"></i> Log Out
       </button>
     </div>
@@ -215,7 +217,7 @@
     <!-- Compact Progress Card -->
     <div class="sidebar-section sidebar-section-compact">
       <div class="sidebar-progress">
-        <div class="sidebar-progress-level">Level <span id="sidebar-level">1</span></div>
+        <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
         <div class="sidebar-progress-bar">
           <div id="sidebar-progress-fill" class="sidebar-progress-fill" style="width: 0%;"></div>
         </div>
@@ -226,7 +228,7 @@
     <!-- My Courses (always visible — primary navigation for enrolled students) -->
     <div class="sidebar-section" id="sidebar-courses-section">
       <button class="courses-toggle" id="courses-toggle-btn">
-        <span>My Courses</span>
+        <span data-i18n="chat.myCourses">My Courses</span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
@@ -236,7 +238,7 @@
         </div>
         <button id="browse-courses-btn" class="sidebar-tool-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px;">
           <i class="fas fa-graduation-cap"></i>
-          <span>Browse Courses</span>
+          <span data-i18n="chat.browseCourses">Browse Courses</span>
         </button>
       </div>
     </div>
@@ -244,7 +246,7 @@
     <!-- Tools (always visible — compact row of buttons) -->
     <div class="sidebar-section">
       <button class="tools-toggle">
-        <span>Tools</span>
+        <span data-i18n="chat.tools">Tools</span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
@@ -252,21 +254,21 @@
         <!-- Starting Point (CAT Screener) - Glowing button -->
         <button id="sidebar-starting-point-btn" class="sidebar-tool-btn sidebar-starting-point-btn" style="display: none;">
           <i class="fas fa-crosshairs"></i>
-          <span>Starting Point</span>
+          <span data-i18n="chat.startingPoint">Starting Point</span>
         </button>
 
         <button id="sidebar-resources-btn" class="sidebar-tool-btn">
           <i class="fas fa-book-open"></i>
-          <span>Resources</span>
+          <span data-i18n="nav.resources">Resources</span>
         </button>
 
         <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
           <i class="fas fa-calculator"></i>
-          <span>Calculator</span>
+          <span data-i18n="chat.calculator">Calculator</span>
         </button>
         <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
           <i class="fas fa-camera-retro"></i>
-          <span>Upload Work</span>
+          <span data-i18n="chat.uploadWork">Upload Work</span>
         </button>
       </div>
     </div>
@@ -276,7 +278,7 @@
     <!-- My Sessions -->
     <div class="sidebar-section sidebar-ctx-general">
       <button class="sessions-toggle">
-        <span>My Sessions</span>
+        <span data-i18n="chat.mySessions">My Sessions</span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
@@ -284,12 +286,12 @@
         <!-- Session Search -->
         <div class="session-search-container">
           <i class="fas fa-search session-search-icon"></i>
-          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search sessions...">
+          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search sessions..." data-i18n-placeholder="chat.searchSessions">
         </div>
 
         <button id="new-session-btn" class="sidebar-tool-btn special">
           <i class="fas fa-plus-circle"></i>
-          <span>New Session</span>
+          <span data-i18n="chat.newSession">New Session</span>
         </button>
         <div id="sessions-list">
           <!-- Sessions loaded dynamically by sidebar.js -->
@@ -538,7 +540,7 @@
         </button>
       </div>
       <div class="imessage-input-row">
-        <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." role="textbox" aria-multiline="true"></div>
+        <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." data-i18n-placeholder="chat.askQuestion" role="textbox" aria-multiline="true"></div>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
         </button>
@@ -611,7 +613,7 @@
   <!-- Right Drawer (Progress & Profile) -->
   <div id="right-drawer" class="mobile-drawer right-drawer">
     <div class="drawer-header">
-      <h3>Your Progress</h3>
+      <h3 data-i18n="chat.yourProgress">Your Progress</h3>
       <button id="close-right-drawer" class="drawer-close-btn" title="Close" aria-label="Close progress panel">
         <i class="fas fa-times"></i>
       </button>
@@ -620,7 +622,7 @@
       <!-- Progress Section -->
       <div class="drawer-section drawer-progress-section">
         <div class="drawer-progress-card">
-          <div class="drawer-progress-level">Level <span id="drawer-level">1</span></div>
+          <div class="drawer-progress-level"><span data-i18n="misc.level">Level</span> <span id="drawer-level">1</span></div>
           <div class="drawer-progress-bar">
             <div id="drawer-progress-fill" class="drawer-progress-fill" style="width: 0%;"></div>
           </div>
@@ -634,7 +636,7 @@
           <div class="drawer-quick-stat">
             <i class="fas fa-fire" style="color: #f59e0b;"></i>
             <span id="drawer-streak-count" class="drawer-quick-stat-value">0</span>
-            <span class="drawer-quick-stat-label">Day Streak</span>
+            <span class="drawer-quick-stat-label" data-i18n="dash.dayStreak">Day Streak</span>
           </div>
           <div class="drawer-quick-stat">
             <i class="fas fa-star" style="color: var(--clr-primary-teal, #12B3B3);"></i>
@@ -651,18 +653,18 @@
 
       <!-- Session Stats -->
       <div class="drawer-section">
-        <h4><i class="fas fa-chart-line"></i> This Session</h4>
+        <h4><i class="fas fa-chart-line"></i> <span data-i18n="chat.thisSession">This Session</span></h4>
         <div class="drawer-stats-grid">
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">XP Earned</span>
+            <span class="drawer-stat-label" data-i18n="dash.xpEarned">XP Earned</span>
             <span id="drawer-session-xp" class="drawer-stat-value">0</span>
           </div>
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">Accuracy</span>
+            <span class="drawer-stat-label" data-i18n="dash.accuracy">Accuracy</span>
             <span id="drawer-session-accuracy" class="drawer-stat-value">--</span>
           </div>
           <div class="drawer-stat-item">
-            <span class="drawer-stat-label">Problems</span>
+            <span class="drawer-stat-label" data-i18n="dash.problems">Problems</span>
             <span id="drawer-session-problems" class="drawer-stat-value">0/0</span>
           </div>
         </div>
@@ -670,23 +672,23 @@
 
       <!-- Quick Settings -->
       <div class="drawer-section">
-        <h4><i class="fas fa-sliders-h"></i> Quick Settings</h4>
+        <h4><i class="fas fa-sliders-h"></i> <span data-i18n="chat.quickSettings">Quick Settings</span></h4>
         <button id="drawer-open-settings-btn" class="drawer-action-btn" onclick="document.getElementById('open-settings-modal-btn').click(); document.getElementById('close-right-drawer').click();">
           <i class="fas fa-cog"></i>
-          <span>Open Settings</span>
+          <span data-i18n="chat.openSettings">Open Settings</span>
           <i class="fas fa-chevron-right drawer-action-arrow"></i>
         </button>
         <button id="drawer-change-tutor-btn" class="drawer-action-btn" onclick="document.getElementById('change-tutor-btn')?.click(); document.getElementById('close-right-drawer').click();">
           <i class="fas fa-user-graduate"></i>
-          <span>Change Tutor</span>
+          <span data-i18n="chat.changeTutor">Change Tutor</span>
           <i class="fas fa-chevron-right drawer-action-arrow"></i>
         </button>
       </div>
 
       <!-- Parent Link -->
       <div class="drawer-section">
-        <h4><i class="fas fa-link"></i> Share Progress</h4>
-        <p style="font-size: 0.85rem; color: var(--clr-text-dim, #666); margin-bottom: 8px;">Share this code with a parent or teacher.</p>
+        <h4><i class="fas fa-link"></i> <span data-i18n="nav.shareProgress">Share Progress</span></h4>
+        <p style="font-size: 0.85rem; color: var(--clr-text-dim, #666); margin-bottom: 8px;" data-i18n="chat.shareCode">Share this code with a parent or teacher.</p>
         <div id="drawer-student-link-code-value" class="drawer-link-code" title="Click to copy"></div>
       </div>
     </div>
@@ -696,21 +698,21 @@
   <div id="drawer-overlay" class="drawer-overlay"></div>
 
   <footer>
-      <p>&copy; 2026 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+      <p>&copy; 2026 M∆THM∆TIΧ AI. <span data-i18n="footer.rights">All rights reserved.</span> <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a> | <a href="/terms.html" data-i18n="footer.terms">Terms of Use</a></p>
   </footer>
 
   <div id="equation-modal" class="modal-overlay">
     <div class="modal-content">
       <button class="modal-close-button" id="close-equation-modal">&times;</button>
       <div class="modal-header-eq">
-        <h2>Insert Equation</h2>
+        <h2 data-i18n="chat.insertEquation">Insert Equation</h2>
       </div>
       <div class="math-palette-grid">
       </div>
       <math-field id="math-editor" class="math-editor-input"></math-field>
       <div class="modal-actions">
-        <button id="insert-latex-eq" class="btn btn-primary">Insert</button>
-        <button id="cancel-latex-eq" class="btn btn-tertiary">Cancel</button>
+        <button id="insert-latex-eq" class="btn btn-primary" data-i18n="chat.insert">Insert</button>
+        <button id="cancel-latex-eq" class="btn btn-tertiary" data-i18n="chat.cancel">Cancel</button>
       </div>
     </div>
   </div>
@@ -718,18 +720,18 @@
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-content">
       <button class="modal-close-button" id="close-settings-modal-btn">&times;</button>
-      <h2>Settings</h2>
+      <h2 data-i18n="settings.title">Settings</h2>
       <div class="settings-form">
 		  <div class="form-group">
-          <label>Change Your Tutor</label>
+          <label data-i18n="settings.changeYourTutor">Change Your Tutor</label>
           <button id="change-tutor-btn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
-            <i class="fas fa-user-graduate"></i> Select a Different Tutor
+            <i class="fas fa-user-graduate"></i> <span data-i18n="settings.selectTutor">Select a Different Tutor</span>
           </button>
           <p class="setting-description">Visit the tutor selection page to meet all available tutors and choose one that fits your learning style.</p>
         </div>
 
         <div class="form-group">
-          <label for="preferredLanguageSetting">Preferred Language for Tutoring</label>
+          <label for="preferredLanguageSetting" data-i18n="settings.preferredLanguage">Preferred Language for Tutoring</label>
           <select id="preferredLanguageSetting" class="form-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
             <option value="English">English</option>
             <option value="Spanish">Spanish (Español)</option>
@@ -741,23 +743,23 @@
             <option value="French">French (Français)</option>
             <option value="German">German (Deutsch)</option>
           </select>
-          <p class="setting-description">Choose the language you'd like your tutor to use when explaining math concepts.</p>
+          <p class="setting-description" data-i18n="settings.languageDescription">Choose the language you'd like your tutor to use when explaining math concepts.</p>
         </div>
 
           <div class="form-group settings-toggle">
-          <label for="handsFreeToggle">Hands-Free Mode</label>
+          <label for="handsFreeToggle" data-i18n="settings.handsFreeMode">Hands-Free Mode</label>
           <input type="checkbox" id="handsFreeToggle" class="toggle-switch">
         </div>
         <p class="setting-description">When enabled, the AI's responses will be read aloud automatically and typed out on screen.</p>
 
         <div class="form-group settings-toggle">
-          <label for="autoplayTtsToggle">Autoplay Audio</label>
+          <label for="autoplayTtsToggle" data-i18n="settings.autoplayAudio">Autoplay Audio</label>
           <input type="checkbox" id="autoplayTtsToggle" class="toggle-switch">
         </div>
         <p class="setting-description">Controls whether audio plays automatically in Hands-Free mode.</p>
 
         <div class="form-group settings-toggle">
-          <label for="voiceChatToggle">Voice Chat Orb</label>
+          <label for="voiceChatToggle" data-i18n="settings.voiceChatOrb">Voice Chat Orb</label>
           <input type="checkbox" id="voiceChatToggle" class="toggle-switch">
         </div>
         <p class="setting-description">Show or hide the purple voice chat button in the bottom-right corner.</p>
@@ -765,13 +767,13 @@
         <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
 
         <div class="form-group" id="password-change-section" style="display: none;">
-          <label>Change Password</label>
+          <label data-i18n="settings.changePassword">Change Password</label>
           <form id="password-change-form" autocomplete="off">
             <input type="password" id="current-password" name="current-password" autocomplete="current-password" class="form-input" placeholder="Current Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <input type="password" id="new-password" name="new-password" autocomplete="new-password" class="form-input" placeholder="New Password (min 6 characters)" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <input type="password" id="confirm-new-password" name="confirm-password" autocomplete="new-password" class="form-input" placeholder="Confirm New Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <button type="button" id="change-password-btn" class="btn btn-primary" style="width: 100%; margin-top: 5px;">
-              <i class="fas fa-key"></i> Update Password
+              <i class="fas fa-key"></i> <span data-i18n="settings.updatePassword">Update Password</span>
             </button>
           </form>
           <p class="setting-description">Change your account password. Make sure to use a strong password that you can remember.</p>
@@ -791,7 +793,7 @@
   <div id="feedback-modal" class="modal-overlay">
     <div class="modal-content">
       <button class="modal-close-button" id="close-feedback-modal-btn">&times;</button>
-      <h2>Send Feedback</h2>
+      <h2 data-i18n="feedback.title">Send Feedback</h2>
       <p style="color: #666; margin-bottom: 20px;">Help us improve! Report bugs, request features, or share your thoughts.</p>
 
       <form id="feedback-form">
@@ -844,9 +846,9 @@
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
           <button type="submit" id="submit-feedback-btn" class="btn btn-primary" style="flex: 1;">
-            <i class="fas fa-paper-plane"></i> Submit Feedback
+            <i class="fas fa-paper-plane"></i> <span data-i18n="feedback.submit">Submit Feedback</span>
           </button>
-          <button type="button" id="cancel-feedback-btn" class="btn btn-secondary" style="flex: 1;">
+          <button type="button" id="cancel-feedback-btn" class="btn btn-secondary" style="flex: 1;" data-i18n="chat.cancel">
             Cancel
           </button>
         </div>

@@ -30,6 +30,8 @@
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/i18n-translations.js"></script>
+  <script src="/js/i18n.js"></script>
   <style>
     /* Auth page background */
     .login-page-wrapper {
@@ -53,67 +55,67 @@
   </style>
   </head>
 <body class="landing-page-body">
-  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <a href="#main-content" class="skip-to-content" data-i18n="misc.skipToContent">Skip to main content</a>
   <header class="landing-header">
     <div class="header-logo-container">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
     </div>
     <nav class="landing-nav">
-      <a href="/signup.html" class="btn btn-primary">Sign Up</a>
+      <a href="/signup.html" class="btn btn-primary" data-i18n="nav.signUp">Sign Up</a>
     </nav>
   </header>
 
   <main id="main-content" class="login-page-wrapper">
     <div class="login-container">
-      <h1>Welcome Back!</h1>
-      <p class="subtitle">Log in to continue your learning journey.</p>
+      <h1 data-i18n="login.welcomeBack">Welcome Back!</h1>
+      <p class="subtitle" data-i18n="login.subtitle">Log in to continue your learning journey.</p>
       <form id="loginForm">
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username" />
+          <label for="username" data-i18n="login.username">Username</label>
+          <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username" data-i18n-placeholder="login.usernamePlaceholder" />
         </div>
 
         <div class="form-group">
           <div class="password-label-row">
-            <label for="password">Password</label>
-            <a href="/forgot-password.html">Forgot Password?</a>
+            <label for="password" data-i18n="login.password">Password</label>
+            <a href="/forgot-password.html" data-i18n="login.forgotPassword">Forgot Password?</a>
           </div>
-          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password" data-i18n-placeholder="login.passwordPlaceholder" />
         </div>
 
-        <button type="submit" class="submit-btn">
+        <button type="submit" class="submit-btn" data-i18n="login.logIn">
           <i class="fas fa-sign-in-alt"></i> Log In
         </button>
       </form>
 
       <div id="login-message" class="error-message" style="display: none;"></div>
 
-      <div class="or-separator"><span>OR</span></div>
+      <div class="or-separator"><span data-i18n="login.or">OR</span></div>
 
       <div class="social-login-buttons">
-        <a href="/auth/google" class="social-btn google-btn">
+        <a href="/auth/google" class="social-btn google-btn" data-i18n="login.continueGoogle">
           <img src="/images/google-icon.png" alt="Google" />
           Continue with Google
         </a>
-        <a href="/auth/microsoft" class="social-btn microsoft-btn">
+        <a href="/auth/microsoft" class="social-btn microsoft-btn" data-i18n="login.continueMicrosoft">
           <img src="/images/microsoft-icon.png" alt="Microsoft" />
           Continue with Microsoft
         </a>
-        <a href="/auth/clever" class="social-btn clever-btn" style="background: #4274f6; color: #fff; border-color: #4274f6;">
+        <a href="/auth/clever" class="social-btn clever-btn" style="background: #4274f6; color: #fff; border-color: #4274f6;" data-i18n="login.loginClever">
           <img src="/images/clever-icon.svg" alt="Clever" style="height: 20px; width: 20px;" />
           Log in with Clever
         </a>
       </div>
 
       <p class="signup-link">
-        Don't have an account? <a href="/signup.html">Create an account</a>
+        <span data-i18n="login.noAccount">Don't have an account?</span> <a href="/signup.html" data-i18n="login.createAccount">Create an account</a>
       </p>
 
       <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--clr-border, #E2E8F0); text-align: center;">
         <a href="/demo.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);">
-          <i class="fas fa-play-circle"></i> Try the Interactive Demo
+          <i class="fas fa-play-circle"></i> <span data-i18n="login.tryDemo">Try the Interactive Demo</span>
         </a>
-        <p style="font-size: 0.8rem; color: var(--clr-text-dim, #5B6876); margin-top: 8px;">
+        <p style="font-size: 0.8rem; color: var(--clr-text-dim, #5B6876); margin-top: 8px;" data-i18n="login.demoNote">
           No account needed. Explore as a teacher, parent, or student.
         </p>
       </div>
@@ -121,10 +123,10 @@
   </main>
 
   <footer>
-    <p>© 2026 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>© 2026 M∆THM∆TIΧ AI. <span data-i18n="footer.rights">All rights reserved.</span></p>
     <p>
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/terms.html">Terms of Use</a>
+      <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a> |
+      <a href="/terms.html" data-i18n="footer.terms">Terms of Use</a>
     </p>
   </footer>
 
