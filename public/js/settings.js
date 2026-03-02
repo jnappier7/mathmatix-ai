@@ -179,13 +179,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const result = await response.json();
                     console.log('Language preference updated:', newLanguage);
 
+                    // Update UI language in real time
+                    if (window.MathmatixI18n) {
+                        window.MathmatixI18n.setLanguage(newLanguage);
+                    }
+
                     // Show success message
-                    const originalHTML = preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML;
-                    preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML =
-                        `✅ Language updated to ${newLanguage}! This will take effect in your next tutoring session.`;
+                    const descEl = preferredLanguageSelect.parentElement.querySelector('.setting-description');
+                    const originalHTML = descEl.getAttribute('data-i18n')
+                        ? (window.MathmatixI18n && window.MathmatixI18n.t('settings.languageDescription')) || descEl.innerHTML
+                        : descEl.innerHTML;
+                    descEl.innerHTML = `✅ Language updated to ${newLanguage}!`;
 
                     setTimeout(() => {
-                        preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML = originalHTML;
+                        descEl.innerHTML = originalHTML;
                     }, 3000);
                 } else {
                     alert('Failed to update language preference');

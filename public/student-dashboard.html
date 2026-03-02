@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <script src="/js/csrf.js"></script>
+  <script src="/js/i18n-translations.js"></script>
+  <script src="/js/i18n.js"></script>
   <style>
     .dashboard-container {
       max-width: 1200px;
@@ -339,7 +342,7 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </div>
     <nav class="landing-nav">
-      <button id="logoutBtn" class="btn btn-tertiary logout-button">
+      <button id="logoutBtn" class="btn btn-tertiary logout-button" data-i18n="nav.logout">
         <i class="fas fa-sign-out-alt"></i> Logout
       </button>
     </nav>
@@ -387,7 +390,7 @@
     <div id="dashboard-content" style="display: none;">
       <div class="dashboard-header">
         <h1>Welcome back, <span id="student-name">Student</span>!</h1>
-        <p id="welcome-subtitle">Ready to learn?</p>
+        <p id="welcome-subtitle" data-i18n="dash.readyToLearn">Ready to learn?</p>
       </div>
 
       <!-- Hero: Continue Where You Left Off -->
@@ -396,15 +399,15 @@
           <i class="fas fa-play"></i>
         </div>
         <div class="dashboard-hero-body">
-          <div class="dashboard-hero-title" id="hero-title">Continue Learning</div>
-          <div class="dashboard-hero-subtitle" id="hero-subtitle">Pick up where you left off</div>
+          <div class="dashboard-hero-title" id="hero-title" data-i18n="dash.continueLearning">Continue Learning</div>
+          <div class="dashboard-hero-subtitle" id="hero-subtitle" data-i18n="dash.pickUpWhereYouLeftOff">Pick up where you left off</div>
           <div class="dashboard-hero-progress">
             <div class="dashboard-hero-progress-fill" id="hero-progress-fill" style="width: 0%"></div>
           </div>
           <div class="dashboard-hero-meta" id="hero-meta">0% complete</div>
         </div>
         <button class="dashboard-hero-cta" id="hero-cta" onclick="continueLearning()">
-          <i class="fas fa-play"></i> Continue
+          <i class="fas fa-play"></i> <span data-i18n="dash.continue">Continue</span>
         </button>
       </div>
 
@@ -414,7 +417,7 @@
           <span class="streak-item-icon" id="streak-icon">🔥</span>
           <div>
             <div class="streak-item-value" id="streak-count">0</div>
-            <div class="streak-item-label">Day Streak</div>
+            <div class="streak-item-label" data-i18n="dash.dayStreak">Day Streak</div>
           </div>
         </div>
         <div class="quest-strip-item" id="quest-strip-1" style="display: none;">
@@ -439,23 +442,23 @@
 
       <!-- Weekly Summary Card -->
       <div id="weekly-summary" class="weekly-summary-card" style="display: none;">
-        <div class="weekly-summary-title">This Week</div>
+        <div class="weekly-summary-title" data-i18n="dash.thisWeek">This Week</div>
         <div class="weekly-summary-grid">
           <div class="weekly-stat">
             <span class="weekly-stat-value" id="weekly-problems">0</span>
-            <span class="weekly-stat-label">Problems</span>
+            <span class="weekly-stat-label" data-i18n="dash.problems">Problems</span>
           </div>
           <div class="weekly-stat">
             <span class="weekly-stat-value" id="weekly-accuracy">--</span>
-            <span class="weekly-stat-label">Accuracy</span>
+            <span class="weekly-stat-label" data-i18n="dash.accuracy">Accuracy</span>
           </div>
           <div class="weekly-stat">
             <span class="weekly-stat-value" id="weekly-xp">0</span>
-            <span class="weekly-stat-label">XP Earned</span>
+            <span class="weekly-stat-label" data-i18n="dash.xpEarned">XP Earned</span>
           </div>
           <div class="weekly-stat">
             <span class="weekly-stat-value" id="weekly-skills">0</span>
-            <span class="weekly-stat-label">Skills</span>
+            <span class="weekly-stat-label" data-i18n="dash.skills">Skills</span>
           </div>
         </div>
       </div>
@@ -467,13 +470,13 @@
           <div class="card-header">
             <div class="card-icon"><i class="fas fa-trophy"></i></div>
             <div>
-              <h3 class="card-title">Recent Progress</h3>
+              <h3 class="card-title" data-i18n="dash.recentProgress">Recent Progress</h3>
             </div>
           </div>
           <div class="card-content" id="recent-wins-content">
             <!-- Will be populated dynamically -->
           </div>
-          <button class="btn-secondary" onclick="viewFullProgress()">
+          <button class="btn-secondary" onclick="viewFullProgress()" data-i18n="dash.viewAllProgress">
             View All Progress
           </button>
         </div>
@@ -483,16 +486,16 @@
           <div class="card-header">
             <div class="card-icon"><i class="fas fa-seedling"></i></div>
             <div>
-              <h3 class="card-title">Find Your Starting Point</h3>
+              <h3 class="card-title" data-i18n="dash.findStartingPoint">Find Your Starting Point</h3>
             </div>
           </div>
           <div class="card-content">
-            <p>A quick 10-15 minute check-in helps me understand where you're at and suggest what to work on next.</p>
+            <p data-i18n="dash.assessmentPrompt">A quick 10-15 minute check-in helps me understand where you're at and suggest what to work on next.</p>
           </div>
           <button class="btn-primary" onclick="startAssessment()">
-            <i class="fas fa-seedling"></i> Let's Go
+            <i class="fas fa-seedling"></i> <span data-i18n="dash.letsGo">Let's Go</span>
           </button>
-          <button class="btn-secondary" onclick="location.href='/chat.html'">
+          <button class="btn-secondary" onclick="location.href='/chat.html'" data-i18n="dash.justChatInstead">
             Just Chat Instead
           </button>
         </div>
@@ -503,10 +506,10 @@
         <div class="card-header" style="justify-content: center;">
           <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
           <div>
-            <h3 class="card-title" id="join-class-title">Join a Class</h3>
+            <h3 class="card-title" id="join-class-title" data-i18n="dash.joinAClass">Join a Class</h3>
           </div>
         </div>
-        <p id="join-class-description" style="color:#666;font-size:0.95rem;margin-bottom:0;">Enter the class code your teacher gave you to connect.</p>
+        <p id="join-class-description" style="color:#666;font-size:0.95rem;margin-bottom:0;" data-i18n="dash.enterClassCode">Enter the class code your teacher gave you to connect.</p>
         <!-- Current class info (if already in a class) -->
         <div id="current-class-info" style="display:none;margin:12px 0;padding:10px 14px;background:#f0faf0;border-radius:10px;text-align:left;font-size:0.9rem;">
           <span style="color:#27ae60;font-weight:600;"><i class="fas fa-check-circle"></i> Current class:</span>
@@ -518,7 +521,7 @@
                  maxlength="20"
                  aria-label="Class enrollment code">
           <button class="btn-primary" id="join-class-btn" style="width:auto;padding:12px 24px;" aria-label="Join class">
-            <i class="fas fa-sign-in-alt"></i> Join
+            <i class="fas fa-sign-in-alt"></i> <span data-i18n="dash.join">Join</span>
           </button>
         </div>
         <!-- Preview area (shows after code lookup) -->
@@ -527,7 +530,7 @@
           <div style="font-size:0.85rem;color:#666;" id="preview-teacher-name">--</div>
           <div style="font-size:0.85rem;color:#666;" id="preview-course">--</div>
           <button class="btn-primary" id="confirm-join-btn" style="margin-top:10px;">
-            <i class="fas fa-check"></i> Confirm & Join
+            <i class="fas fa-check"></i> <span data-i18n="dash.confirmJoin">Confirm & Join</span>
           </button>
         </div>
         <div class="join-class-status" id="join-class-status"></div>
@@ -537,19 +540,19 @@
       <div class="quick-actions">
         <a href="/chat.html" class="quick-action-btn interactive-press">
           <i class="fas fa-comment"></i>
-          <span>Chat with Tutor</span>
+          <span data-i18n="dash.chatWithTutor">Chat with Tutor</span>
         </a>
         <a href="/progress.html" class="quick-action-btn interactive-press">
           <i class="fas fa-chart-line"></i>
-          <span>View Progress</span>
+          <span data-i18n="dash.viewProgress">View Progress</span>
         </a>
         <a href="/assessment.html" class="quick-action-btn interactive-press" id="placement-test-btn">
           <i class="fas fa-seedling"></i>
-          <span id="placement-btn-text">Find Your Starting Point</span>
+          <span id="placement-btn-text" data-i18n="dash.findStartingPoint">Find Your Starting Point</span>
         </a>
         <button class="quick-action-btn interactive-press" id="qa-join-class-toggle" style="border:1.5px solid #e8e8e8;background:white;">
           <i class="fas fa-chalkboard-teacher"></i>
-          <span>Join a Class</span>
+          <span data-i18n="dash.joinAClass">Join a Class</span>
         </button>
       </div>
     </div>

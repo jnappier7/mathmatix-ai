@@ -29,6 +29,9 @@
   <link rel="stylesheet" href="css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+  <script src="/js/i18n-translations.js"></script>
+  <script src="/js/i18n.js"></script>
   <style>
     .login-page-wrapper {
       background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.03) 0%, transparent 50%);
@@ -70,7 +73,7 @@
   </style>
 </head>
 <body class="landing-page-body">
-  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <a href="#main-content" class="skip-to-content" data-i18n="misc.skipToContent">Skip to main content</a>
   <header class="landing-header">
     <div class="header-logo-container">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
@@ -81,65 +84,65 @@
 
   <main id="main-content" class="login-page-wrapper" style="min-height: calc(100dvh - 140px); overflow-y: auto;">
     <div class="signup-container" style="max-height: none; overflow: visible; margin: 2rem auto;">
-      <h2>Create Your Account</h2>
-      <p class="subtitle">Join the future of math learning.</p>
+      <h2 data-i18n="signup.createAccount">Create Your Account</h2>
+      <p class="subtitle" data-i18n="signup.subtitle">Join the future of math learning.</p>
       <form id="signupForm" method="POST" action="/signup">
         <div class="name-row">
           <div class="form-group">
-            <label for="firstName">First Name</label>
+            <label for="firstName" data-i18n="signup.firstName">First Name</label>
             <input type="text" name="firstName" id="firstName" required autocomplete="given-name" placeholder="John" />
           </div>
           <div class="form-group">
-            <label for="lastName">Last Name</label>
+            <label for="lastName" data-i18n="signup.lastName">Last Name</label>
             <input type="text" name="lastName" id="lastName" required autocomplete="family-name" placeholder="Doe" />
           </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email" data-i18n="signup.email">Email Address</label>
           <input type="email" name="email" id="email" required autocomplete="email" placeholder="you@example.com" />
         </div>
 
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username" data-i18n="signup.username">Username</label>
           <input type="text" name="username" id="username" required autocomplete="username" placeholder="Choose a username" />
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password" data-i18n="signup.password">Password</label>
           <input type="password" name="password" id="password" required autocomplete="new-password" placeholder="Min 8 chars, 1 uppercase, 1 number" />
         </div>
         <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
+          <label for="confirmPassword" data-i18n="signup.confirmPassword">Confirm Password</label>
           <input type="password" name="confirmPassword" id="confirm-password" required autocomplete="new-password" placeholder="Re-enter your password" />
         </div>
 
         <div class="form-group">
-          <label for="enrollmentCode">Enrollment Code</label>
+          <label for="enrollmentCode" data-i18n="signup.enrollmentCode">Enrollment Code</label>
           <input type="text" name="enrollmentCode" id="enrollmentCode" required placeholder="Enter your secret code" autocomplete="off" />
-          <p class="note">A valid enrollment code is required to create an account.</p>
+          <p class="note" data-i18n="signup.enrollmentNote">A valid enrollment code is required to create an account.</p>
         </div>
 
         <div class="form-group">
-          <label for="role">I am a</label>
+          <label for="role" data-i18n="signup.iAmA">I am a</label>
           <select name="role" id="role" required>
-            <option value="student" selected>Student</option>
-            <option value="parent">Parent</option>
+            <option value="student" selected data-i18n="signup.student">Student</option>
+            <option value="parent" data-i18n="signup.parent">Parent</option>
           </select>
         </div>
 
         <div id="inviteCodeGroup" class="form-group" style="display: none;">
-          <label for="inviteCode">Child's Invite Code (Optional)</label>
+          <label for="inviteCode" data-i18n="signup.childInviteCode">Child's Invite Code (Optional)</label>
           <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
           <p class="note">Enter your child's invite code to link accounts.</p>
         </div>
 
         <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
-          <label for="parentInviteCode">Parent's Invite Code (Optional)</label>
+          <label for="parentInviteCode" data-i18n="signup.parentInviteCode">Parent's Invite Code (Optional)</label>
           <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
           <p class="note">Have a parent's invite code? Enter it to link your accounts.</p>
         </div>
 
-        <button type="submit" class="submit-btn btn-primary">
+        <button type="submit" class="submit-btn btn-primary" data-i18n="signup.createBtn">
           <i class="fas fa-user-plus"></i> Create Account
         </button>
       </form>
@@ -147,19 +150,18 @@
       <div id="signup-message" style="display: none;"></div>
 
       <p class="signup-link">
-        Already have an account? <a href="/login.html">Log in here</a>
+        <span data-i18n="signup.haveAccount">Already have an account?</span> <a href="/login.html" data-i18n="signup.logInHere">Log in here</a>
       </p>
     </div>
   </main>
   <footer>
-    <p>&copy; 2026 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>&copy; 2026 M∆THM∆TIΧ AI. <span data-i18n="footer.rights">All rights reserved.</span></p>
     <p>
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/terms.html">Terms of Use</a>
+      <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a> |
+      <a href="/terms.html" data-i18n="footer.terms">Terms of Use</a>
     </p>
   </footer>
 
-  <script src="/js/csrf.js"></script>
   <script>
     const roleSelect = document.getElementById("role");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
