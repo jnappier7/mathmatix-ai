@@ -30,7 +30,10 @@ const CATALOG_META = {
   'ap-calculus-ab':         { group: 'Advanced & AP', difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '\uD83D\uDE80', sortOrder: 8 },
   'calculus-bc':            { group: 'Advanced & AP', difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '\uD83D\uDE80', sortOrder: 9 },
   'consumer-math':          { group: 'Applied & Test Prep', difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '\uD83D\uDCB0', sortOrder: 10 },
-  'act-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '\uD83C\uDFAF', sortOrder: 11 }
+  'act-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '\uD83C\uDFAF', sortOrder: 11 },
+  'parent-math-k2':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Number bonds, ten frames, and visual models for K\u20132 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 0 },
+  'parent-math-35':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Area models, fractions, and tape diagrams for 3\u20135 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 1 },
+  'parent-math-68':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Ratios, algebra tiles, and integers for 6\u20138 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 2 }
 };
 
 router.get('/catalog', async (req, res) => {
