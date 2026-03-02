@@ -33,6 +33,42 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
 
     const lowerMessage = studentMessage.toLowerCase();
 
+    // Normalize any malformed FUNCTION_GRAPH commands from the AI
+    // Fix spacing issues: [FUNCTION_GRAPH : fn = x^2, ...] → [FUNCTION_GRAPH:fn=x^2,...]
+    let normalizedResponse = aiResponse.replace(
+        /\[\s*FUNCTION_GRAPH\s*:\s*([^\]]+)\]/g,
+        (match, inner) => {
+            // Normalize key=value pairs: remove spaces around =
+            const cleaned = inner.replace(/\s*=\s*/g, '=').replace(/\s*,\s*/g, ',');
+            return `[FUNCTION_GRAPH:${cleaned}]`;
+        }
+    );
+
+    // If AI included a FUNCTION_GRAPH but with a default/wrong function,
+    // try to correct it using the student's actual question
+    if (isGraphingRequest(lowerMessage) && /\[FUNCTION_GRAPH:/.test(normalizedResponse)) {
+        const correctFunc = extractFunctionFromMessage(studentMessage, aiResponse);
+        if (correctFunc) {
+            // Extract the function the AI chose
+            const aiCmdMatch = normalizedResponse.match(/\[FUNCTION_GRAPH:[^\]]*fn=([^,\]]+)/);
+            const aiFunc = aiCmdMatch ? aiCmdMatch[1].trim() : null;
+            // Default/generic functions the AI might fall back to
+            const isDefault = !aiFunc || /^x\^?2$/.test(aiFunc) || /^x$/.test(aiFunc);
+            // If AI used a default but the student asked about a specific function, fix it
+            if (isDefault && correctFunc !== aiFunc) {
+                console.log(`[VisualEnforcer] 🔧 Correcting FUNCTION_GRAPH: ${aiFunc} → ${correctFunc}`);
+                normalizedResponse = normalizedResponse.replace(
+                    /\[FUNCTION_GRAPH:[^\]]+\]/g,
+                    `[FUNCTION_GRAPH:fn=${correctFunc},title="Graph of ${correctFunc}"]`
+                );
+            }
+        }
+    }
+
+    if (normalizedResponse !== aiResponse) {
+        aiResponse = normalizedResponse;
+    }
+
     // Skip if AI already used inline visual commands
     if (hasInlineVisualCommands(aiResponse)) {
         console.log('[VisualEnforcer] AI already used inline visual commands ✓');
@@ -574,7 +610,13 @@ function normalizeMathChars(str) {
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/−/g, '-')
-        .replace(/π/g, 'pi');
+        .replace(/π/g, 'pi')
+        // Convert LaTeX \frac{A}{B} → (A)/(B) so extraction patterns can match
+        .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)')
+        // Strip remaining LaTeX delimiters and commands that don't affect the expression
+        .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
+        .replace(/\\left|\\right/g, '')
+        .replace(/\\cdot/g, '*');
 }
 
 /**
@@ -614,8 +656,8 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            // Remove trailing operators that got caught by greedy match
-            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            // Remove trailing operators/punctuation caught by greedy match
+            func = func.replace(/[\+\-\*\/\^\.]+$/, '');
             if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }
@@ -627,7 +669,7 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
             let func = match[1].trim();
             func = func.replace(/\s+/g, '');
             func = func.replace(/sinc/i, 'sin(x)/x');
-            func = func.replace(/[\+\-\*\/\^]+$/, '');
+            func = func.replace(/[\+\-\*\/\^\.]+$/, '');
             if (looksLikeMathExpression(func) && func.length > 1) return func;
         }
     }

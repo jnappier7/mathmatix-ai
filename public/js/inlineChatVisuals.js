@@ -140,7 +140,7 @@ class InlineChatVisuals {
 
         // Process each visual type
         const visualTypes = [
-            { regex: /\[FUNCTION_GRAPH:([^\]]+)\]/g, handler: this.createFunctionGraph.bind(this) },
+            { regex: /\[\s*FUNCTION_GRAPH\s*:\s*([^\]]+)\]/g, handler: this.createFunctionGraph.bind(this) },
             { regex: /\[NUMBER_LINE:([^\]]+)\]/g, handler: this.createNumberLine.bind(this) },
             { regex: /\[FRACTION:([^\]]+)\]/g, handler: this.createFraction.bind(this) },
             { regex: /\[PIE_CHART:([^\]]+)\]/g, handler: this.createPieChart.bind(this) },
