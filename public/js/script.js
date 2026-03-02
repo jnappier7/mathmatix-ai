@@ -1864,6 +1864,18 @@ document.addEventListener("DOMContentLoaded", () => {
             // Only append if we didn't already stream the message into the DOM
             if (!wasStreamed) {
                 appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            } else if (hasInlineVisuals) {
+                // Streaming already inserted the message, but visual commands
+                // were processed after finalization. Re-render the streamed
+                // message with the visual HTML so graphs/charts appear.
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const textNode = latestMessage.querySelector('.message-text');
+                    if (textNode) {
+                        textNode.innerHTML = renderMarkdownMath(aiText);
+                    }
+                }
             }
 
             // Apply IEP accommodations to this response

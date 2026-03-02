@@ -264,7 +264,26 @@ function normalizeLatex(text) {
 
   let result = text;
 
-  // ── Pre-pass: Replace unicode math symbols with LaTeX equivalents ──
+  // ── Pre-pass 0: Protect inline visual commands from LaTeX normalization ──
+  // Commands like [FUNCTION_GRAPH:fn=x^2,...] contain ^ and other chars that
+  // the LaTeX normalizer would incorrectly convert to \[...\] display math.
+  const visualCmdBlocks = [];
+  const VISUAL_CMD_NAMES = [
+    'FUNCTION_GRAPH', 'NUMBER_LINE', 'FRACTION', 'PIE_CHART',
+    'BAR_CHART', 'POINTS', 'SLIDER_GRAPH', 'UNIT_CIRCLE',
+    'AREA_MODEL', 'COMPARISON', 'PYTHAGOREAN', 'ANGLE',
+    'SLOPE', 'PERCENT_BAR', 'PLACE_VALUE', 'RIGHT_TRIANGLE',
+    'INEQUALITY', 'ALGEBRA_TILES', 'MULTI_REP',
+  ];
+  const visualCmdRegex = new RegExp(
+    `\\[(${VISUAL_CMD_NAMES.join('|')}):([^\\]]+)\\]`, 'g'
+  );
+  result = result.replace(visualCmdRegex, (match) => {
+    visualCmdBlocks.push(match);
+    return `@@VISUAL_CMD_${visualCmdBlocks.length - 1}@@`;
+  });
+
+  // ── Pre-pass 1: Replace unicode math symbols with LaTeX equivalents ──
   // gpt-4o-mini sometimes uses unicode symbols instead of LaTeX commands:
   //   "2×4" instead of "2 \times 4", "÷" instead of "\div", etc.
   result = result.replace(/×/g, '\\times ');
@@ -277,6 +296,32 @@ function normalizeLatex(text) {
   result = result.replace(/≈/g, '\\approx ');
   result = result.replace(/π/g, '\\pi ');
   result = result.replace(/∞/g, '\\infty ');
+
+  // ── Pre-pass 2: Normalize Unicode superscripts/subscripts ──
+  // AI sometimes uses Unicode superscripts (a⁰, x², n⁻¹) instead of LaTeX
+  result = result.replace(/⁰/g, '^0');
+  result = result.replace(/¹/g, '^1');
+  result = result.replace(/²/g, '^2');
+  result = result.replace(/³/g, '^3');
+  result = result.replace(/⁴/g, '^4');
+  result = result.replace(/⁵/g, '^5');
+  result = result.replace(/⁶/g, '^6');
+  result = result.replace(/⁷/g, '^7');
+  result = result.replace(/⁸/g, '^8');
+  result = result.replace(/⁹/g, '^9');
+  result = result.replace(/⁻/g, '^{-}');
+  result = result.replace(/⁺/g, '^{+}');
+  result = result.replace(/ⁿ/g, '^n');
+  result = result.replace(/₀/g, '_0');
+  result = result.replace(/₁/g, '_1');
+  result = result.replace(/₂/g, '_2');
+  result = result.replace(/₃/g, '_3');
+  result = result.replace(/₄/g, '_4');
+  result = result.replace(/₅/g, '_5');
+  result = result.replace(/₆/g, '_6');
+  result = result.replace(/₇/g, '_7');
+  result = result.replace(/₈/g, '_8');
+  result = result.replace(/₉/g, '_9');
 
   // ── 0. Restore missing backslashes on common LaTeX commands ──
   // gpt-4o-mini frequently drops ALL backslashes, producing:
@@ -371,6 +416,11 @@ function normalizeLatex(text) {
   // ── Restore protected math blocks ──
   protectedBlocks.forEach((block, index) => {
     result = result.replace(`@@PROTECTED_${index}@@`, block);
+  });
+
+  // ── Restore protected visual command blocks ──
+  visualCmdBlocks.forEach((block, index) => {
+    result = result.replace(`@@VISUAL_CMD_${index}@@`, block);
   });
 
   return result;

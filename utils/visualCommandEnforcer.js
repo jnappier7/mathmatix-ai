@@ -33,6 +33,42 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
 
     const lowerMessage = studentMessage.toLowerCase();
 
+    // Normalize any malformed FUNCTION_GRAPH commands from the AI
+    // Fix spacing issues: [FUNCTION_GRAPH : fn = x^2, ...] → [FUNCTION_GRAPH:fn=x^2,...]
+    let normalizedResponse = aiResponse.replace(
+        /\[\s*FUNCTION_GRAPH\s*:\s*([^\]]+)\]/g,
+        (match, inner) => {
+            // Normalize key=value pairs: remove spaces around =
+            const cleaned = inner.replace(/\s*=\s*/g, '=').replace(/\s*,\s*/g, ',');
+            return `[FUNCTION_GRAPH:${cleaned}]`;
+        }
+    );
+
+    // If AI included a FUNCTION_GRAPH but with a default/wrong function,
+    // try to correct it using the student's actual question
+    if (isGraphingRequest(lowerMessage) && /\[FUNCTION_GRAPH:/.test(normalizedResponse)) {
+        const correctFunc = extractFunctionFromMessage(studentMessage, aiResponse);
+        if (correctFunc) {
+            // Extract the function the AI chose
+            const aiCmdMatch = normalizedResponse.match(/\[FUNCTION_GRAPH:[^\]]*fn=([^,\]]+)/);
+            const aiFunc = aiCmdMatch ? aiCmdMatch[1].trim() : null;
+            // Default/generic functions the AI might fall back to
+            const isDefault = !aiFunc || /^x\^?2$/.test(aiFunc) || /^x$/.test(aiFunc);
+            // If AI used a default but the student asked about a specific function, fix it
+            if (isDefault && correctFunc !== aiFunc) {
+                console.log(`[VisualEnforcer] 🔧 Correcting FUNCTION_GRAPH: ${aiFunc} → ${correctFunc}`);
+                normalizedResponse = normalizedResponse.replace(
+                    /\[FUNCTION_GRAPH:[^\]]+\]/g,
+                    `[FUNCTION_GRAPH:fn=${correctFunc},title="Graph of ${correctFunc}"]`
+                );
+            }
+        }
+    }
+
+    if (normalizedResponse !== aiResponse) {
+        aiResponse = normalizedResponse;
+    }
+
     // Skip if AI already used inline visual commands
     if (hasInlineVisualCommands(aiResponse)) {
         console.log('[VisualEnforcer] AI already used inline visual commands ✓');
