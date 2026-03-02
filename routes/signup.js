@@ -15,6 +15,14 @@ const { signupValidation, handleValidationErrors } = require('../middleware/vali
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
 const SELF_REGISTERABLE_ROLES = ['student', 'parent'];
 
+// Check if a code is in the ENROLLMENT_CODES env var (comma-separated, case-insensitive)
+function isEnvEnrollmentCode(code) {
+    const envCodes = process.env.ENROLLMENT_CODES;
+    if (!envCodes) return false;
+    const codeList = envCodes.split(',').map(c => c.trim().toUpperCase());
+    return codeList.includes(code.toUpperCase().trim());
+}
+
 /**
  * @route   GET /signup/validate-code
  * @desc    Validate an enrollment code before signup
@@ -32,6 +40,18 @@ router.get('/validate-code', async (req, res) => {
             .populate('teacherId', 'firstName lastName');
 
         if (!enrollmentCode) {
+            // Fallback: check ENROLLMENT_CODES env var for open registration codes
+            if (isEnvEnrollmentCode(code)) {
+                return res.json({
+                    valid: true,
+                    enrollmentCode: {
+                        className: 'Open Registration',
+                        teacherName: '',
+                        gradeLevel: '',
+                        mathCourse: ''
+                    }
+                });
+            }
             return res.status(404).json({ valid: false, message: 'Invalid enrollment code.' });
         }
 
@@ -106,6 +126,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         let teacherIdFromCode = null;
         let gradeLevelFromCode = null;
         let mathCourseFromCode = null;
+        let subscriptionTierFromCode = null;
 
         if (role === 'student' && enrollmentCode) {
             enrollmentCodeDoc = await EnrollmentCode.findOne({
@@ -119,14 +140,19 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                     teacherIdFromCode = enrollmentCodeDoc.teacherId;
                     gradeLevelFromCode = enrollmentCodeDoc.gradeLevel;
                     mathCourseFromCode = enrollmentCodeDoc.mathCourse;
-                    console.log(`LOG: Student using enrollment code ${enrollmentCode} for teacher ${teacherIdFromCode}`);
+                    subscriptionTierFromCode = enrollmentCodeDoc.defaultSubscriptionTier || 'free';
+                    console.log(`LOG: Student using enrollment code ${enrollmentCode} for teacher ${teacherIdFromCode} (tier: ${subscriptionTierFromCode})`);
                 } else {
                     console.warn(`WARN: Student tried to use invalid enrollment code: ${enrollmentCode} - ${validation.reason}`);
                     // Don't fail signup, just don't link to teacher
                     enrollmentCodeDoc = null;
                 }
+            } else if (isEnvEnrollmentCode(enrollmentCode)) {
+                // Code is in ENROLLMENT_CODES env var — valid for open registration (no teacher link)
+                console.log(`LOG: Student using env-based enrollment code: ${enrollmentCode}`);
             } else {
                 console.warn(`WARN: Student signed up with non-existent enrollment code: ${enrollmentCode}`);
+                return res.status(400).json({ message: 'Invalid enrollment code.' });
             }
         }
 
@@ -153,6 +179,8 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             ...(gradeLevelFromCode ? { gradeLevel: gradeLevelFromCode } : {}),
             // Use math course from enrollment code if available
             ...(mathCourseFromCode ? { mathCourse: mathCourseFromCode } : {}),
+            // Apply subscription tier from enrollment code if set (e.g. 'unlimited' for teacher classes)
+            ...(subscriptionTierFromCode && subscriptionTierFromCode !== 'free' ? { subscriptionTier: subscriptionTierFromCode } : {}),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 

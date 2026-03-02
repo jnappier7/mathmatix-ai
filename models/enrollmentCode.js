@@ -50,6 +50,14 @@ const enrollmentCodeSchema = new Schema({
     trim: true
   },
 
+  // Subscription tier auto-assigned to students who enroll with this code
+  // 'free' = default, 'unlimited' = full access (e.g. teacher's own class)
+  defaultSubscriptionTier: {
+    type: String,
+    enum: ['free', 'unlimited'],
+    default: 'free'
+  },
+
   // Code status
   isActive: {
     type: Boolean,

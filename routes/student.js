@@ -559,10 +559,13 @@ router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
             return res.status(400).json({ success: false, message: enrollResult.reason });
         }
 
-        // Update student's teacherId and class info
+        // Update student's teacherId, class info, and subscription tier
         const updateFields = { teacherId: enrollmentCode.teacherId };
         if (enrollmentCode.mathCourse) updateFields.mathCourse = enrollmentCode.mathCourse;
         if (enrollmentCode.gradeLevel) updateFields.gradeLevel = enrollmentCode.gradeLevel;
+        if (enrollmentCode.defaultSubscriptionTier && enrollmentCode.defaultSubscriptionTier !== 'free') {
+            updateFields.subscriptionTier = enrollmentCode.defaultSubscriptionTier;
+        }
 
         // Auto-propagate school license: if this teacher has a school license, give it to the student
         try {
