@@ -8,6 +8,11 @@ services:
     buildCommand: npm install
     startCommand: npm start
 
+    # Custom domain with SSL (Render auto-provisions Let's Encrypt certs)
+    customDomains:
+      - name: mathmatix.ai
+      - name: www.mathmatix.ai
+
     # Puppeteer needs this
     envVars:
       - key: NODE_VERSION

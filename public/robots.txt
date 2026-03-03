@@ -1,5 +1,5 @@
 # Robots.txt for Mathmatix AI
-# https://www.mathmatix.ai
+# https://mathmatix.ai
 
 User-agent: *
 Allow: /
@@ -30,4 +30,4 @@ Disallow: /api/
 Disallow: /auth/
 
 # Sitemap location
-Sitemap: https://www.mathmatix.ai/sitemap.xml
+Sitemap: https://mathmatix.ai/sitemap.xml

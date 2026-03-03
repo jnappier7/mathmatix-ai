@@ -137,6 +137,17 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", 1);
 
 // --- 6. MIDDLEWARE ---
+
+// Redirect www to apex domain in production (ensures consistent domain + valid SSL cert)
+if (isProduction) {
+  app.use((req, res, next) => {
+    if (req.hostname === 'www.mathmatix.ai') {
+      return res.redirect(301, `https://mathmatix.ai${req.originalUrl}`);
+    }
+    next();
+  });
+}
+
 app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:3000",
   credentials: true
