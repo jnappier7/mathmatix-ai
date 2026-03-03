@@ -1012,11 +1012,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             e.preventDefault();
             settingsSaveMessage.textContent = '';
 
+            const selectedLang = document.getElementById('parentLanguage').value;
             const formData = {
                 reportFrequency: document.getElementById('reportFrequency').value,
                 goalViewPreference: document.getElementById('goalViewPreference').value,
                 parentTone: document.getElementById('parentTone').value,
-                parentLanguage: document.getElementById('parentLanguage').value
+                parentLanguage: selectedLang
             };
 
             try {
@@ -1027,8 +1028,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                     body: JSON.stringify(formData)
                 });
 
+                // Also sync to preferredLanguage so the i18n system picks it up
+                await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ preferredLanguage: selectedLang })
+                });
+
                 const data = await res.json();
                 if (data.success) {
+                    // Update UI language in real time
+                    if (window.MathmatixI18n) {
+                        window.MathmatixI18n.setLanguage(selectedLang);
+                    }
                     settingsSaveMessage.className = "mt-2 text-sm text-green-600";
                     settingsSaveMessage.textContent = data.message;
                     showToast("Settings saved!", "success", 3500);

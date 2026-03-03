@@ -387,6 +387,9 @@ class SessionManager {
       console.error('[SessionManager] Logout error:', error);
     }
 
+    // Clear UI language cache so the next user on this device gets a clean state
+    try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* private mode */ }
+
     // Redirect to login
     window.location.href = '/login.html';
   }

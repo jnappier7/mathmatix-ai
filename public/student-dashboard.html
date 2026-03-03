@@ -716,11 +716,11 @@
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
         await csrfFetch('/logout', { method: 'POST' });
-        window.location.href = '/login.html';
       } catch (error) {
         console.error('Logout error:', error);
-        window.location.href = '/login.html';
       }
+      try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* */ }
+      window.location.href = '/login.html';
     });
 
     // ============================================
