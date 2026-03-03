@@ -493,12 +493,14 @@ class SessionManager {
         navigator.sendBeacon('/api/session/save-mastery', masteryBlob);
       }
 
-      // Send session end AND destroy the server-side session.
-      // destroySession: true tells the server to call req.session.destroy()
-      // so the user is actually logged out (not just summarized).
+      // Send session end for summary/tracking only — do NOT destroy the session.
+      // beforeunload and pagehide fire on BOTH browser close AND same-origin
+      // navigation (e.g. clicking "Change Tutor" in settings). Destroying the
+      // session here would log the user out whenever they navigate between pages.
+      // Stale sessions are cleaned up server-side by destroyIdleExpressSessions().
       const payload = {
         reason,
-        destroySession: true,
+        destroySession: false,
         sessionData: {
           ...this.sessionData,
           timeSpent: Date.now() - this.sessionStartTime
@@ -510,7 +512,7 @@ class SessionManager {
       console.log(`[SessionManager] Session end beacon sent: ${reason}`);
     };
 
-    // 1. beforeunload - fires when user is leaving the page
+    // 1. beforeunload - fires when user is leaving the page (navigation OR tab close)
     window.addEventListener('beforeunload', () => {
       sendSessionEnd('browser_close');
     });
