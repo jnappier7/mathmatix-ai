@@ -381,21 +381,21 @@
 }
 
 /* -----------------------------------------------------------
-   HANGMAN BREAK GAME
+   WORD GUESS BREAK GAME
    ----------------------------------------------------------- */
-.iep-hangman {
+.iep-wordguess {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
 }
 
-.iep-hangman-svg {
+.iep-wordguess-svg {
     display: block;
     margin: 0 auto;
 }
 
-.iep-hangman-word {
+.iep-wordguess-word {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 4px;
@@ -404,13 +404,13 @@
     font-family: monospace;
 }
 
-.iep-hangman-status {
+.iep-wordguess-status {
     color: #aaa;
     font-size: 14px;
     margin: 0;
 }
 
-.iep-hangman-letters {
+.iep-wordguess-letters {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -418,7 +418,7 @@
     max-width: 340px;
 }
 
-.iep-hangman-letter {
+.iep-wordguess-letter {
     width: 32px;
     height: 32px;
     background: #2a2a4a;
@@ -436,26 +436,26 @@
     padding: 0;
 }
 
-.iep-hangman-letter:hover:not([disabled]) {
+.iep-wordguess-letter:hover:not([disabled]) {
     background: #3a3a5a;
     border-color: #667eea;
 }
 
-.iep-hangman-letter.correct {
+.iep-wordguess-letter.correct {
     background: rgba(22, 200, 109, 0.25);
     border-color: #16C86D;
     color: #16C86D;
     cursor: default;
 }
 
-.iep-hangman-letter.wrong {
+.iep-wordguess-letter.wrong {
     background: rgba(239, 68, 68, 0.2);
     border-color: #ef4444;
     color: #ef4444;
     cursor: default;
 }
 
-.iep-hangman-reset {
+.iep-wordguess-reset {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff;
     border: none;
@@ -468,7 +468,7 @@
     margin-top: 4px;
 }
 
-.iep-hangman-reset:hover {
+.iep-wordguess-reset:hover {
     transform: translateY(-1px);
 }
 
@@ -674,11 +674,11 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
         font-size: 22px;
     }
 
-    .iep-hangman-letters {
+    .iep-wordguess-letters {
         max-width: 280px;
     }
 
-    .iep-hangman-letter {
+    .iep-wordguess-letter {
         width: 28px;
         height: 28px;
         font-size: 12px;

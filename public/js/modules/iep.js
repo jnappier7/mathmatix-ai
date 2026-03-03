@@ -252,9 +252,9 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                         <span>Tic-Tac-Toe</span>
                         <small>Quick game</small>
                     </button>
-                    <button class="iep-break-activity" data-activity="hangman">
+                    <button class="iep-break-activity" data-activity="wordguess">
                         <i class="fas fa-font"></i>
-                        <span>Hangman</span>
+                        <span>Word Guess</span>
                         <small>Guess the word</small>
                     </button>
                 </div>
@@ -301,8 +301,8 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                     `;
                 } else if (activity === 'tictactoe') {
                     runTicTacToe(exerciseArea);
-                } else if (activity === 'hangman') {
-                    runHangman(exerciseArea);
+                } else if (activity === 'wordguess') {
+                    runWordGuess(exerciseArea);
                 }
             });
         });
@@ -456,9 +456,9 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
         render();
     }
 
-    // --- Hangman Break Game ---
+    // --- Word Guess Break Game ---
 
-    function runHangman(container) {
+    function runWordGuess(container) {
         const words = [
             'angle', 'graph', 'prime', 'shape', 'ratio', 'slope',
             'digit', 'equal', 'minus', 'value', 'cubic', 'dozen',
@@ -487,7 +487,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                 '<line x1="50" y1="60" x2="62" y2="75" stroke="#667eea" stroke-width="2"/>',              // right leg
             ];
             return `
-                <svg class="iep-hangman-svg" viewBox="0 0 100 90" width="120" height="108">
+                <svg class="iep-wordguess-svg" viewBox="0 0 100 90" width="120" height="108">
                     <!-- gallows -->
                     <line x1="15" y1="85" x2="85" y2="85" stroke="#555" stroke-width="2"/>
                     <line x1="25" y1="85" x2="25" y2="5" stroke="#555" stroke-width="2"/>
@@ -507,21 +507,21 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
 
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             container.innerHTML = `
-                <div class="iep-hangman">
+                <div class="iep-wordguess">
                     ${drawHangman(wrongCount)}
-                    <p class="iep-hangman-word">${gameOver && !won ? word.split('').join(' ') : getDisplay()}</p>
-                    <p class="iep-hangman-status">${status}</p>
-                    <div class="iep-hangman-letters">
+                    <p class="iep-wordguess-word">${gameOver && !won ? word.split('').join(' ') : getDisplay()}</p>
+                    <p class="iep-wordguess-status">${status}</p>
+                    <div class="iep-wordguess-letters">
                         ${alphabet.split('').map(ch => `
-                            <button class="iep-hangman-letter ${guessed.has(ch) ? (word.includes(ch) ? 'correct' : 'wrong') : ''}"
+                            <button class="iep-wordguess-letter ${guessed.has(ch) ? (word.includes(ch) ? 'correct' : 'wrong') : ''}"
                                 data-letter="${ch}" ${guessed.has(ch) || gameOver ? 'disabled' : ''}>${ch}</button>
                         `).join('')}
                     </div>
-                    ${gameOver ? '<button class="iep-hangman-reset">Play Again</button>' : ''}
+                    ${gameOver ? '<button class="iep-wordguess-reset">Play Again</button>' : ''}
                 </div>
             `;
 
-            container.querySelectorAll('.iep-hangman-letter:not([disabled])').forEach(btn => {
+            container.querySelectorAll('.iep-wordguess-letter:not([disabled])').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const letter = btn.dataset.letter;
                     guessed.add(letter);
@@ -530,7 +530,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                 });
             });
 
-            const resetBtn = container.querySelector('.iep-hangman-reset');
+            const resetBtn = container.querySelector('.iep-wordguess-reset');
             if (resetBtn) {
                 resetBtn.addEventListener('click', () => {
                     word = words[Math.floor(Math.random() * words.length)];
