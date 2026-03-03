@@ -171,7 +171,7 @@
     background: #1e1e3a;
     border-radius: 20px;
     padding: 36px 32px;
-    max-width: 440px;
+    max-width: 520px;
     width: 92%;
     text-align: center;
     color: #fff;
@@ -196,6 +196,7 @@
     display: flex;
     gap: 12px;
     justify-content: center;
+    flex-wrap: wrap;
     margin-bottom: 24px;
 }
 
@@ -310,6 +311,164 @@
 }
 
 .iep-break-done-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------
+   TIC-TAC-TOE BREAK GAME
+   ----------------------------------------------------------- */
+.iep-ttt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.iep-ttt-status {
+    color: #ccc;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.iep-ttt-board {
+    display: grid;
+    grid-template-columns: repeat(3, 64px);
+    grid-template-rows: repeat(3, 64px);
+    gap: 4px;
+}
+
+.iep-ttt-cell {
+    width: 64px;
+    height: 64px;
+    background: #2a2a4a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iep-ttt-cell:hover:not([disabled]) {
+    background: #3a3a5a;
+    border-color: #667eea;
+}
+
+.iep-ttt-cell.taken {
+    cursor: default;
+}
+
+.iep-ttt-reset {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 4px;
+}
+
+.iep-ttt-reset:hover {
+    transform: translateY(-1px);
+}
+
+/* -----------------------------------------------------------
+   HANGMAN BREAK GAME
+   ----------------------------------------------------------- */
+.iep-hangman {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.iep-hangman-svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.iep-hangman-word {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #fff;
+    margin: 4px 0;
+    font-family: monospace;
+}
+
+.iep-hangman-status {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+}
+
+.iep-hangman-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    max-width: 340px;
+}
+
+.iep-hangman-letter {
+    width: 32px;
+    height: 32px;
+    background: #2a2a4a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.iep-hangman-letter:hover:not([disabled]) {
+    background: #3a3a5a;
+    border-color: #667eea;
+}
+
+.iep-hangman-letter.correct {
+    background: rgba(22, 200, 109, 0.25);
+    border-color: #16C86D;
+    color: #16C86D;
+    cursor: default;
+}
+
+.iep-hangman-letter.wrong {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+    cursor: default;
+}
+
+.iep-hangman-reset {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 4px;
+}
+
+.iep-hangman-reset:hover {
     transform: translateY(-1px);
 }
 
@@ -502,6 +661,27 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
     .iep-break-activity {
         flex-direction: row;
         min-width: auto;
+    }
+
+    .iep-ttt-board {
+        grid-template-columns: repeat(3, 54px);
+        grid-template-rows: repeat(3, 54px);
+    }
+
+    .iep-ttt-cell {
+        width: 54px;
+        height: 54px;
+        font-size: 22px;
+    }
+
+    .iep-hangman-letters {
+        max-width: 280px;
+    }
+
+    .iep-hangman-letter {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
     }
 
     .iep-mult-chart {

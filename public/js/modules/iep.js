@@ -247,6 +247,16 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                         <span>5-4-3-2-1</span>
                         <small>Grounding exercise</small>
                     </button>
+                    <button class="iep-break-activity" data-activity="tictactoe">
+                        <i class="fas fa-th"></i>
+                        <span>Tic-Tac-Toe</span>
+                        <small>Quick game</small>
+                    </button>
+                    <button class="iep-break-activity" data-activity="hangman">
+                        <i class="fas fa-font"></i>
+                        <span>Hangman</span>
+                        <small>Guess the word</small>
+                    </button>
                 </div>
                 <div id="iep-break-exercise" class="iep-break-exercise" style="display:none;"></div>
                 <button class="iep-break-done-btn" id="iep-break-done">
@@ -289,6 +299,10 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                             <p><strong>1</strong> thing you can <em>taste</em></p>
                         </div>
                     `;
+                } else if (activity === 'tictactoe') {
+                    runTicTacToe(exerciseArea);
+                } else if (activity === 'hangman') {
+                    runHangman(exerciseArea);
                 }
             });
         });
@@ -321,6 +335,213 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             setTimeout(nextPhase, phase.duration);
         }
         nextPhase();
+    }
+
+    // --- Tic-Tac-Toe Break Game ---
+
+    function runTicTacToe(container) {
+        let board = Array(9).fill('');
+        let currentPlayer = 'X'; // Player is X, computer is O
+        let gameOver = false;
+
+        function render() {
+            const statusText = gameOver
+                ? container.querySelector('.iep-ttt-status').textContent
+                : "Your turn (X)";
+            container.innerHTML = `
+                <div class="iep-ttt">
+                    <p class="iep-ttt-status">${statusText}</p>
+                    <div class="iep-ttt-board">
+                        ${board.map((cell, i) => `
+                            <button class="iep-ttt-cell ${cell ? 'taken' : ''}" data-index="${i}"
+                                ${cell || gameOver ? 'disabled' : ''}>${cell}</button>
+                        `).join('')}
+                    </div>
+                    ${gameOver ? '<button class="iep-ttt-reset">Play Again</button>' : ''}
+                </div>
+            `;
+            container.querySelectorAll('.iep-ttt-cell:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', () => handleMove(parseInt(btn.dataset.index)));
+            });
+            const resetBtn = container.querySelector('.iep-ttt-reset');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    board = Array(9).fill('');
+                    currentPlayer = 'X';
+                    gameOver = false;
+                    render();
+                });
+            }
+        }
+
+        function checkWinner() {
+            const lines = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+            for (const [a,b,c] of lines) {
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return board.every(cell => cell) ? 'draw' : null;
+        }
+
+        function computerMove() {
+            const empty = board.map((c, i) => c === '' ? i : -1).filter(i => i >= 0);
+            if (empty.length === 0) return;
+
+            // Simple AI: try to win, then block, then take center, then random
+            const lines = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+
+            // Try to win
+            for (const [a,b,c] of lines) {
+                const cells = [board[a], board[b], board[c]];
+                if (cells.filter(x => x === 'O').length === 2 && cells.includes('')) {
+                    const idx = [a,b,c][cells.indexOf('')];
+                    board[idx] = 'O';
+                    return;
+                }
+            }
+
+            // Block player
+            for (const [a,b,c] of lines) {
+                const cells = [board[a], board[b], board[c]];
+                if (cells.filter(x => x === 'X').length === 2 && cells.includes('')) {
+                    const idx = [a,b,c][cells.indexOf('')];
+                    board[idx] = 'O';
+                    return;
+                }
+            }
+
+            // Take center if available
+            if (board[4] === '') { board[4] = 'O'; return; }
+
+            // Random
+            const pick = empty[Math.floor(Math.random() * empty.length)];
+            board[pick] = 'O';
+        }
+
+        function handleMove(index) {
+            if (board[index] || gameOver) return;
+            board[index] = 'X';
+            let winner = checkWinner();
+            if (winner) {
+                gameOver = true;
+                render();
+                setStatus(winner === 'draw' ? "It's a draw!" : 'You win!');
+                return;
+            }
+            computerMove();
+            winner = checkWinner();
+            if (winner) {
+                gameOver = true;
+                render();
+                setStatus(winner === 'draw' ? "It's a draw!" : 'Computer wins!');
+                return;
+            }
+            render();
+        }
+
+        function setStatus(text) {
+            const el = container.querySelector('.iep-ttt-status');
+            if (el) el.textContent = text;
+        }
+
+        render();
+    }
+
+    // --- Hangman Break Game ---
+
+    function runHangman(container) {
+        const words = [
+            'angle', 'graph', 'prime', 'shape', 'ratio', 'slope',
+            'digit', 'equal', 'minus', 'value', 'cubic', 'dozen',
+            'total', 'proof', 'chord', 'plane', 'helix', 'unity'
+        ];
+        let word = words[Math.floor(Math.random() * words.length)];
+        let guessed = new Set();
+        let wrongCount = 0;
+        const maxWrong = 6;
+
+        function getDisplay() {
+            return word.split('').map(ch => guessed.has(ch) ? ch : '_').join(' ');
+        }
+
+        function isWon() {
+            return word.split('').every(ch => guessed.has(ch));
+        }
+
+        function drawHangman(wrong) {
+            const parts = [
+                '<circle cx="50" cy="25" r="10" stroke="#667eea" stroke-width="2" fill="none"/>',         // head
+                '<line x1="50" y1="35" x2="50" y2="60" stroke="#667eea" stroke-width="2"/>',              // body
+                '<line x1="50" y1="42" x2="35" y2="52" stroke="#667eea" stroke-width="2"/>',              // left arm
+                '<line x1="50" y1="42" x2="65" y2="52" stroke="#667eea" stroke-width="2"/>',              // right arm
+                '<line x1="50" y1="60" x2="38" y2="75" stroke="#667eea" stroke-width="2"/>',              // left leg
+                '<line x1="50" y1="60" x2="62" y2="75" stroke="#667eea" stroke-width="2"/>',              // right leg
+            ];
+            return `
+                <svg class="iep-hangman-svg" viewBox="0 0 100 90" width="120" height="108">
+                    <!-- gallows -->
+                    <line x1="15" y1="85" x2="85" y2="85" stroke="#555" stroke-width="2"/>
+                    <line x1="25" y1="85" x2="25" y2="5" stroke="#555" stroke-width="2"/>
+                    <line x1="25" y1="5" x2="50" y2="5" stroke="#555" stroke-width="2"/>
+                    <line x1="50" y1="5" x2="50" y2="15" stroke="#555" stroke-width="2"/>
+                    ${parts.slice(0, wrong).join('')}
+                </svg>
+            `;
+        }
+
+        function render() {
+            const gameOver = wrongCount >= maxWrong || isWon();
+            const won = isWon();
+            const status = gameOver
+                ? (won ? 'You got it!' : `The word was: ${word}`)
+                : `Wrong guesses: ${wrongCount} / ${maxWrong}`;
+
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            container.innerHTML = `
+                <div class="iep-hangman">
+                    ${drawHangman(wrongCount)}
+                    <p class="iep-hangman-word">${gameOver && !won ? word.split('').join(' ') : getDisplay()}</p>
+                    <p class="iep-hangman-status">${status}</p>
+                    <div class="iep-hangman-letters">
+                        ${alphabet.split('').map(ch => `
+                            <button class="iep-hangman-letter ${guessed.has(ch) ? (word.includes(ch) ? 'correct' : 'wrong') : ''}"
+                                data-letter="${ch}" ${guessed.has(ch) || gameOver ? 'disabled' : ''}>${ch}</button>
+                        `).join('')}
+                    </div>
+                    ${gameOver ? '<button class="iep-hangman-reset">Play Again</button>' : ''}
+                </div>
+            `;
+
+            container.querySelectorAll('.iep-hangman-letter:not([disabled])').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const letter = btn.dataset.letter;
+                    guessed.add(letter);
+                    if (!word.includes(letter)) wrongCount++;
+                    render();
+                });
+            });
+
+            const resetBtn = container.querySelector('.iep-hangman-reset');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    word = words[Math.floor(Math.random() * words.length)];
+                    guessed = new Set();
+                    wrongCount = 0;
+                    render();
+                });
+            }
+        }
+
+        render();
     }
 
     // --- Multiplication Chart ---
