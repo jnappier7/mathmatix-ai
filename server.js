@@ -97,6 +97,7 @@ const quarterlyGrowthRoutes = require('./routes/quarterlyGrowth');  // Quarterly
 const factFluencyRoutes = require('./routes/factFluency');  // M∆THBL∆ST Fact Fluency game
 const dailyQuestsRoutes = require('./routes/dailyQuests');  // Daily Quests & Streak System
 const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly Challenges System
+const challengeRoutes = require('./routes/challenges');  // Math Showdown head-to-head challenges
 const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
 const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
 // REMOVED: Character Rigging Portal (beta feedback indicated this feature was not needed)
@@ -505,6 +506,7 @@ app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Qua
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
 app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges System for engagement
+app.use('/api/challenges', isAuthenticated, challengeRoutes); // Math Showdown head-to-head challenges
 app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
 app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
 // REMOVED: Character Rigging Portal route (beta feedback indicated this feature was not needed)
@@ -776,6 +778,7 @@ app.get("/student-dashboard.html", isAuthenticated, (req, res) => res.sendFile(p
 app.get("/weekly-challenges.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "weekly-challenges.html")));
 app.get("/daily-quests-widget.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "daily-quests-widget.html")));
 app.get("/calculator.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "calculator.html")));
+app.get("/math-showdown.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "math-showdown.html")));
 
 // Admin-specific protected routes
 app.get("/admin-dashboard.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
