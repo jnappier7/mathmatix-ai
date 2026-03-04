@@ -684,9 +684,11 @@ class ShowYourWorkManager {
             msg = `I just checked my work and got them all right! What should I work on next?`;
         }
 
+        // The chat input is a contenteditable div, not an <input>/<textarea>,
+        // so we must set textContent (not .value) for the text to appear.
         const userInput = document.getElementById('user-input');
         if (userInput) {
-            userInput.value = msg;
+            userInput.textContent = msg;
             userInput.dispatchEvent(new Event('input', { bubbles: true }));
             userInput.focus();
         }
