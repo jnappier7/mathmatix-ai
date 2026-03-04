@@ -24,13 +24,13 @@ function isEnvEnrollmentCode(code) {
 }
 
 /**
- * @route   GET /signup/validate-code
+ * @route   POST /signup/validate-code
  * @desc    Validate an enrollment code before signup
  * @access  Public
  */
-router.get('/validate-code', async (req, res) => {
+router.post('/validate-code', async (req, res) => {
     try {
-        const { code } = req.query;
+        const { code } = req.body;
 
         if (!code) {
             return res.status(400).json({ valid: false, message: 'Enrollment code is required.' });

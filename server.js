@@ -139,9 +139,14 @@ app.set("trust proxy", 1);
 
 // --- 6. MIDDLEWARE ---
 
-// Redirect www to apex domain in production (ensures consistent domain + valid SSL cert)
+// Enforce HTTPS and redirect www to apex domain in production
 if (isProduction) {
   app.use((req, res, next) => {
+    // Force HTTPS (Render terminates TLS at the proxy, so check x-forwarded-proto)
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
+    }
+    // Redirect www to apex domain (ensures consistent domain + valid SSL cert)
     if (req.hostname === 'www.mathmatix.ai') {
       return res.redirect(301, `https://mathmatix.ai${req.originalUrl}`);
     }
@@ -240,7 +245,7 @@ app.use(helmet({
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
       objectSrc: ["'none'"], // Disable plugins
-      frameSrc: ["'self'", "https://www.commoncurriculum.com", "https://*.commoncurriculum.com", "https://www.commonplanner.com", "https://*.commonplanner.com"], // Allow Common Curriculum/Planner schedule iframes
+      frameSrc: ["'self'", "https://www.commoncurriculum.com", "https://www.commonplanner.com"], // Allow Common Curriculum/Planner schedule iframes
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
     }
   },
@@ -266,8 +271,20 @@ app.use(helmet({
   // Referrer Policy
   referrerPolicy: {
     policy: 'strict-origin-when-cross-origin'
+  },
+  // DNS Prefetch Control - prevents DNS prefetching leaks
+  dnsPrefetchControl: {
+    allow: false
   }
 }));
+
+// Permissions-Policy header - explicitly declare which browser features the site uses
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy',
+    'camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+  );
+  next();
+});
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -343,8 +360,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
-            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-            return res.redirect(`/login.html?error=${errorMessage}`);
+            return res.redirect('/login.html');
         }
 
         // Check if this is a new user requiring enrollment code
@@ -379,8 +395,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
     passport.authenticate('microsoft', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
-            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-            return res.redirect(`/login.html?error=${errorMessage}`);
+            return res.redirect('/login.html');
         }
 
         // Check if this is a new user requiring enrollment code
@@ -432,8 +447,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
         passport.authenticate('clever', (err, user, info) => {
             if (err) { return next(err); }
             if (!user) {
-                const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-                return res.redirect(`/login.html?error=${errorMessage}`);
+                return res.redirect('/login.html');
             }
 
             // Check if this is a new user requiring enrollment code

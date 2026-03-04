@@ -88,8 +88,14 @@
     document.addEventListener('DOMContentLoaded', function() {
       const urlParams = new URLSearchParams(window.location.search);
       const status = urlParams.get('status');
-      const message = urlParams.get('message');
       const email = urlParams.get('email');
+
+      // Map status codes to user-friendly messages (no server messages in URLs)
+      const errorMessages = {
+        missing_token: 'Missing verification token. Please check your email link.',
+        invalid: 'Invalid or expired verification link.',
+        error: 'Verification failed. Please try again.'
+      };
 
       const successState = document.getElementById('success-state');
       const errorState = document.getElementById('error-state');
@@ -98,11 +104,9 @@
 
       if (status === 'success') {
         successState.style.display = 'block';
-      } else if (status === 'error') {
+      } else if (status in errorMessages) {
         errorState.style.display = 'block';
-        if (message) {
-          document.getElementById('error-message').textContent = decodeURIComponent(message);
-        }
+        document.getElementById('error-message').textContent = errorMessages[status];
       } else if (status === 'pending') {
         pendingState.style.display = 'block';
       } else {
