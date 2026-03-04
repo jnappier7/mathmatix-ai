@@ -168,6 +168,11 @@
     margin-bottom: 10px;
 }
 
+.syw-problem-feedback p,
+.syw-problem-statement p {
+    margin: 0;
+}
+
 .syw-strengths {
     font-size: 14px;
     color: #059669;
@@ -176,6 +181,10 @@
     background: #f0fdf4;
     border-radius: 6px;
     line-height: 1.5;
+}
+
+.syw-strengths p {
+    margin: 0;
 }
 
 .syw-problem-answers {
@@ -206,6 +215,13 @@
 .syw-answer-value {
     color: #1f2937;
     font-weight: 500;
+    min-width: 0;
+}
+
+/* renderMarkdownMath wraps content in <p> tags; collapse the margin
+   so the answer row stays compact inside the flex layout. */
+.syw-answer-value p {
+    margin: 0;
 }
 
 .syw-correct-answer {
