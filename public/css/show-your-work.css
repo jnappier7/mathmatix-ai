@@ -372,6 +372,25 @@
     background: #e5e7eb;
 }
 
+/* ---- Result Action Buttons ---- */
+.syw-result-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+    .syw-result-actions {
+        flex-direction: column;
+    }
+
+    .syw-result-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 /* ---- Camera Overlay ---- */
 .syw-live-camera-overlay {
     position: fixed;
