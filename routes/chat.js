@@ -521,7 +521,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
