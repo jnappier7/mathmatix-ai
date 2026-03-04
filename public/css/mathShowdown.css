@@ -1,0 +1,827 @@
+/* ==========================================================================
+   MATH SHOWDOWN - CSS
+   Head-to-head challenge UI styling
+   ========================================================================== */
+
+/* ---------- BASE LAYOUT ---------- */
+
+body {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: #e0e0e0;
+}
+
+.back-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.showdown-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 60px 20px 40px;
+  min-height: 100vh;
+}
+
+/* ---------- SCREENS ---------- */
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- HUB SCREEN ---------- */
+
+.hub-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.hub-header h1 {
+  font-size: 36px;
+  margin: 0 0 8px;
+  background: linear-gradient(135deg, #e94560, #f5a623);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hub-header h1 i {
+  -webkit-text-fill-color: #e94560;
+}
+
+.hub-header .subtitle {
+  font-size: 16px;
+  color: #8892b0;
+  margin: 0;
+}
+
+.hub-actions {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  font-size: 18px;
+  color: #ccd6f6;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.section h2 i {
+  margin-right: 8px;
+  color: #e94560;
+}
+
+/* ---------- CHALLENGE CARDS ---------- */
+
+.challenge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.challenge-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.challenge-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(233, 69, 96, 0.3);
+}
+
+.challenge-info {
+  flex: 1;
+}
+
+.challenge-skill {
+  font-weight: 600;
+  color: #ccd6f6;
+  font-size: 15px;
+}
+
+.challenge-meta {
+  font-size: 13px;
+  color: #8892b0;
+  margin-top: 3px;
+}
+
+.challenge-card .btn {
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px 20px;
+  color: #8892b0;
+  font-size: 14px;
+}
+
+.empty-state i {
+  font-size: 28px;
+  margin-bottom: 10px;
+  display: block;
+  opacity: 0.4;
+}
+
+/* Result badges on completed cards */
+.result-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-badge.win {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.result-badge.loss {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.result-badge.tie {
+  background: rgba(245, 166, 35, 0.2);
+  color: #f5a623;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.btn {
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #e94560, #c62a4a);
+  color: white;
+  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: #ccd6f6;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255,255,255,0.15);
+}
+
+.btn-small {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.btn-large {
+  padding: 14px 32px;
+  font-size: 16px;
+}
+
+.btn-accept {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #8892b0;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+}
+
+.btn-back:hover {
+  color: #ccd6f6;
+}
+
+/* ---------- CREATE SCREEN ---------- */
+
+.create-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.create-header h2 {
+  margin: 0;
+  color: #ccd6f6;
+}
+
+.create-step {
+  animation: fadeIn 0.3s ease;
+}
+
+.create-step.hidden {
+  display: none;
+}
+
+.step-hint {
+  color: #8892b0;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #e0e0e0;
+  font-size: 14px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.search-input::placeholder {
+  color: #8892b0;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+/* Skill grid */
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.skill-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.skill-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(233, 69, 96, 0.3);
+}
+
+.skill-card.selected {
+  background: rgba(233, 69, 96, 0.15);
+  border-color: #e94560;
+}
+
+.skill-card .skill-name {
+  font-weight: 600;
+  color: #ccd6f6;
+  font-size: 14px;
+}
+
+.skill-card .skill-category {
+  font-size: 12px;
+  color: #8892b0;
+  margin-top: 4px;
+}
+
+/* Opponent options */
+.opponent-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.option-card {
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  color: #ccd6f6;
+}
+
+.option-card i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: block;
+  color: #8892b0;
+}
+
+.option-card .option-title {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.option-card .option-desc {
+  display: block;
+  font-size: 12px;
+  color: #8892b0;
+  margin-top: 4px;
+}
+
+.option-card.selected {
+  border-color: #e94560;
+  background: rgba(233, 69, 96, 0.1);
+}
+
+.option-card.selected i {
+  color: #e94560;
+}
+
+/* Classmate list */
+.classmate-list {
+  margin-bottom: 16px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.classmate-list.hidden {
+  display: none;
+}
+
+.classmate-item {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.classmate-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.classmate-item.selected {
+  border-color: #e94560;
+  background: rgba(233, 69, 96, 0.1);
+}
+
+.classmate-name {
+  font-weight: 500;
+  color: #ccd6f6;
+}
+
+.classmate-level {
+  font-size: 12px;
+  color: #8892b0;
+}
+
+/* Confirm */
+.confirm-card {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.confirm-icon {
+  font-size: 48px;
+  color: #10b981;
+  margin-bottom: 16px;
+}
+
+/* ---------- PLAY SCREEN ---------- */
+
+.play-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+}
+
+.play-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.play-skill {
+  font-weight: 700;
+  color: #ccd6f6;
+  font-size: 15px;
+}
+
+.play-vs {
+  font-size: 13px;
+  color: #8892b0;
+}
+
+.play-progress {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e94560;
+}
+
+/* Score bar */
+.score-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+}
+
+.score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8892b0;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ccd6f6;
+}
+
+.opponent-status-pill {
+  flex-direction: row;
+  gap: 6px;
+  margin-left: auto;
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  font-size: 13px;
+  color: #8892b0;
+}
+
+.opponent-status-pill i {
+  font-size: 8px;
+}
+
+.opponent-status-pill.waiting i { color: #f5a623; }
+.opponent-status-pill.playing i { color: #3b82f6; }
+.opponent-status-pill.finished i { color: #10b981; }
+
+/* Problem card */
+.problem-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 28px 24px;
+}
+
+.problem-prompt {
+  font-size: 18px;
+  color: #e0e0e0;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  min-height: 60px;
+}
+
+/* Multiple choice */
+.mc-options {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mc-options.hidden {
+  display: none;
+}
+
+.mc-option {
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #ccd6f6;
+  font-size: 15px;
+  text-align: left;
+}
+
+.mc-option:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(233, 69, 96, 0.3);
+}
+
+.mc-option.selected {
+  border-color: #e94560;
+  background: rgba(233, 69, 96, 0.15);
+}
+
+.mc-option .mc-label {
+  font-weight: 700;
+  margin-right: 8px;
+  color: #e94560;
+}
+
+/* Answer row */
+.answer-row {
+  display: flex;
+  gap: 10px;
+}
+
+.answer-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #e0e0e0;
+  font-size: 16px;
+}
+
+.answer-input::placeholder {
+  color: #8892b0;
+}
+
+.answer-input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+/* Feedback overlay */
+.feedback-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.feedback-overlay.hidden {
+  display: none;
+}
+
+.feedback-content {
+  text-align: center;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.feedback-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.feedback-text {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feedback-correct .feedback-icon { color: #10b981; }
+.feedback-correct .feedback-text { color: #10b981; }
+.feedback-wrong .feedback-icon { color: #ef4444; }
+.feedback-wrong .feedback-text { color: #ef4444; }
+
+/* ---------- WAITING SCREEN ---------- */
+
+.waiting-content {
+  text-align: center;
+  padding-top: 80px;
+}
+
+.waiting-animation {
+  font-size: 48px;
+  color: #f5a623;
+  margin-bottom: 20px;
+}
+
+.waiting-content h2 {
+  color: #ccd6f6;
+  margin: 0 0 10px;
+}
+
+.waiting-hint {
+  color: #8892b0;
+  margin: 16px 0 24px;
+}
+
+/* ---------- RESULTS SCREEN ---------- */
+
+.results-content {
+  text-align: center;
+  padding-top: 40px;
+}
+
+.results-banner {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.results-banner.win {
+  color: #10b981;
+  text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+}
+
+.results-banner.loss {
+  color: #ef4444;
+}
+
+.results-banner.tie {
+  color: #f5a623;
+  text-shadow: 0 0 30px rgba(245, 166, 35, 0.4);
+}
+
+.results-matchup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+}
+
+.results-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.results-label {
+  font-size: 14px;
+  color: #8892b0;
+  margin-bottom: 6px;
+}
+
+.results-score {
+  font-size: 48px;
+  font-weight: 800;
+  color: #ccd6f6;
+  line-height: 1;
+}
+
+.results-time {
+  font-size: 14px;
+  color: #8892b0;
+  margin-top: 4px;
+}
+
+.results-divider {
+  font-size: 20px;
+  color: #8892b0;
+  font-weight: 700;
+}
+
+.results-xp {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f5a623;
+  margin-bottom: 12px;
+}
+
+.results-skill-label {
+  font-size: 14px;
+  color: #8892b0;
+  margin-bottom: 30px;
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ---------- UTILITIES ---------- */
+
+.loading-placeholder {
+  text-align: center;
+  padding: 30px;
+  color: #8892b0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 600px) {
+  .showdown-container {
+    padding: 50px 12px 30px;
+  }
+
+  .hub-header h1 {
+    font-size: 28px;
+  }
+
+  .opponent-options {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-matchup {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .results-score {
+    font-size: 36px;
+  }
+
+  .results-actions {
+    flex-direction: column;
+  }
+
+  .play-header {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

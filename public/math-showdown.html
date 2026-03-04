@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Showdown | M∆THM∆TIX AI</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/mathShowdown.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <!-- Back button -->
+  <a href="/chat.html" class="back-button">
+    <i class="fas fa-arrow-left"></i> Back
+  </a>
+
+  <div class="showdown-container" id="showdown-app">
+
+    <!-- =============== HUB SCREEN =============== -->
+    <div class="screen active" id="hub-screen">
+      <div class="hub-header">
+        <h1><i class="fas fa-bolt"></i> Math Showdown</h1>
+        <p class="subtitle">Challenge a classmate. Prove your skills.</p>
+      </div>
+
+      <div class="hub-actions">
+        <button class="btn btn-primary btn-large" id="create-challenge-btn">
+          <i class="fas fa-plus-circle"></i> Create Challenge
+        </button>
+      </div>
+
+      <!-- Available Challenges -->
+      <div class="section" id="available-section">
+        <h2><i class="fas fa-inbox"></i> Open Challenges</h2>
+        <div class="challenge-list" id="available-list">
+          <div class="loading-placeholder">
+            <i class="fas fa-spinner fa-spin"></i> Loading...
+          </div>
+        </div>
+      </div>
+
+      <!-- My Active Challenges -->
+      <div class="section" id="active-section">
+        <h2><i class="fas fa-gamepad"></i> My Active Challenges</h2>
+        <div class="challenge-list" id="active-list"></div>
+      </div>
+
+      <!-- My Sent Challenges (waiting for opponent) -->
+      <div class="section" id="sent-section">
+        <h2><i class="fas fa-paper-plane"></i> Sent Challenges</h2>
+        <div class="challenge-list" id="sent-list"></div>
+      </div>
+
+      <!-- Recent Results -->
+      <div class="section" id="completed-section">
+        <h2><i class="fas fa-trophy"></i> Recent Results</h2>
+        <div class="challenge-list" id="completed-list"></div>
+      </div>
+    </div>
+
+    <!-- =============== CREATE SCREEN =============== -->
+    <div class="screen" id="create-screen">
+      <div class="create-header">
+        <button class="btn-back" id="create-back-btn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2>Create a Challenge</h2>
+      </div>
+
+      <!-- Step 1: Pick Skill -->
+      <div class="create-step" id="step-skill">
+        <h3>Pick a Skill</h3>
+        <p class="step-hint">Choose the skill you want to compete on</p>
+        <input type="text" class="search-input" id="skill-search"
+               placeholder="Search skills..." autocomplete="off">
+        <div class="skill-grid" id="skill-grid">
+          <div class="loading-placeholder">
+            <i class="fas fa-spinner fa-spin"></i> Loading your skills...
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Pick Opponent (optional) -->
+      <div class="create-step hidden" id="step-opponent">
+        <h3>Challenge Who?</h3>
+        <div class="opponent-options">
+          <button class="option-card selected" id="open-challenge-btn">
+            <i class="fas fa-bullhorn"></i>
+            <span class="option-title">Open Challenge</span>
+            <span class="option-desc">Any classmate can accept</span>
+          </button>
+          <button class="option-card" id="direct-challenge-btn">
+            <i class="fas fa-user"></i>
+            <span class="option-title">Challenge Someone</span>
+            <span class="option-desc">Pick a specific classmate</span>
+          </button>
+        </div>
+
+        <div class="classmate-list hidden" id="classmate-list">
+          <div class="loading-placeholder">
+            <i class="fas fa-spinner fa-spin"></i> Loading classmates...
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="send-challenge-btn" disabled>
+          <i class="fas fa-paper-plane"></i> Send Challenge
+        </button>
+      </div>
+
+      <!-- Confirmation -->
+      <div class="create-step hidden" id="step-confirm">
+        <div class="confirm-card">
+          <i class="fas fa-check-circle confirm-icon"></i>
+          <h3>Challenge Sent!</h3>
+          <p id="confirm-message">Your challenge is waiting for an opponent.</p>
+          <button class="btn btn-primary" id="confirm-done-btn">
+            Back to Hub
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============== PLAY SCREEN =============== -->
+    <div class="screen" id="play-screen">
+      <div class="play-header">
+        <div class="play-info">
+          <span class="play-skill" id="play-skill-name">Skill Name</span>
+          <span class="play-vs">vs <span id="play-opponent-name">Opponent</span></span>
+        </div>
+        <div class="play-progress">
+          <span id="play-question-num">1</span> / <span id="play-total">5</span>
+        </div>
+      </div>
+
+      <!-- Score bar -->
+      <div class="score-bar">
+        <div class="score-item">
+          <span class="score-label">Score</span>
+          <span class="score-value" id="play-score">0</span>
+        </div>
+        <div class="score-item">
+          <span class="score-label">Time</span>
+          <span class="score-value" id="play-timer">0.0s</span>
+        </div>
+        <div class="score-item opponent-status-pill" id="opponent-status-pill">
+          <i class="fas fa-circle"></i>
+          <span id="opponent-status-text">Waiting</span>
+        </div>
+      </div>
+
+      <!-- Problem Display -->
+      <div class="problem-card" id="play-problem-card">
+        <div class="problem-prompt" id="play-prompt">
+          <i class="fas fa-spinner fa-spin"></i> Loading...
+        </div>
+        <div id="play-svg-container" style="display:none; text-align:center; margin:15px 0;"></div>
+
+        <!-- Multiple Choice Options -->
+        <div class="mc-options hidden" id="mc-options"></div>
+
+        <!-- Constructed Response Input -->
+        <div class="answer-row" id="answer-row">
+          <input type="text" class="answer-input" id="play-answer"
+                 placeholder="Type your answer..." autocomplete="off" autofocus>
+          <button class="btn btn-primary" id="play-submit-btn">
+            Submit <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback overlay -->
+      <div class="feedback-overlay hidden" id="feedback-overlay">
+        <div class="feedback-content" id="feedback-content">
+          <div class="feedback-icon" id="feedback-icon"></div>
+          <div class="feedback-text" id="feedback-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =============== WAITING SCREEN =============== -->
+    <div class="screen" id="waiting-screen">
+      <div class="waiting-content">
+        <div class="waiting-animation">
+          <i class="fas fa-hourglass-half fa-spin"></i>
+        </div>
+        <h2>Nice work!</h2>
+        <p>You scored <strong id="waiting-score">0</strong> / <strong id="waiting-total">5</strong></p>
+        <p class="waiting-hint">Waiting for your opponent to finish...</p>
+        <button class="btn btn-secondary" id="waiting-hub-btn">
+          Back to Hub
+        </button>
+      </div>
+    </div>
+
+    <!-- =============== RESULTS SCREEN =============== -->
+    <div class="screen" id="results-screen">
+      <div class="results-content">
+        <div class="results-banner" id="results-banner">
+          <!-- Dynamically filled: WIN / LOSS / TIE -->
+        </div>
+
+        <div class="results-matchup">
+          <div class="results-player me">
+            <span class="results-label">You</span>
+            <span class="results-score" id="results-my-score">0</span>
+            <span class="results-time" id="results-my-time">0.0s</span>
+          </div>
+          <div class="results-divider">
+            <span>vs</span>
+          </div>
+          <div class="results-player them">
+            <span class="results-label" id="results-opponent-name">Opponent</span>
+            <span class="results-score" id="results-their-score">0</span>
+            <span class="results-time" id="results-their-time">0.0s</span>
+          </div>
+        </div>
+
+        <div class="results-xp" id="results-xp">
+          <i class="fas fa-star"></i> +<span id="results-xp-amount">0</span> XP
+        </div>
+
+        <div class="results-skill-label" id="results-skill">Skill Name</div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="results-rematch-btn">
+            <i class="fas fa-redo"></i> Rematch
+          </button>
+          <button class="btn btn-secondary" id="results-hub-btn">
+            Back to Hub
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/js/csrf.js"></script>
+  <script src="/js/mathShowdown.js"></script>
+</body>
+</html>
