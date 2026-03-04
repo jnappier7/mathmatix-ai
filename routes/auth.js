@@ -18,7 +18,7 @@ router.get('/verify-email', async (req, res) => {
     const { token } = req.query;
 
     if (!token) {
-      return res.redirect('/email-verification.html?status=error&message=Missing verification token');
+      return res.redirect('/email-verification.html?status=missing_token');
     }
 
     // Hash the token to compare with stored hash
@@ -31,7 +31,7 @@ router.get('/verify-email', async (req, res) => {
     });
 
     if (!user) {
-      return res.redirect('/email-verification.html?status=error&message=Invalid or expired verification link');
+      return res.redirect('/email-verification.html?status=invalid');
     }
 
     // Mark email as verified
@@ -47,7 +47,7 @@ router.get('/verify-email', async (req, res) => {
 
   } catch (error) {
     console.error('ERROR: Email verification failed:', error);
-    return res.redirect('/email-verification.html?status=error&message=Verification failed. Please try again.');
+    return res.redirect('/email-verification.html?status=error');
   }
 });
 

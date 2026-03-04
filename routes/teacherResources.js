@@ -427,9 +427,32 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
             const fileStream = fs.createReadStream(filePath);
             fileStream.pipe(res);
         } else if (resource.publicUrl) {
-            // File not on disk but has a public URL — redirect
-            console.warn(`⚠️ [Download] File not on disk for "${resource.displayName}" (${resource._id}), redirecting to publicUrl`);
-            res.redirect(resource.publicUrl);
+            // File not on disk but has a public URL — proxy the download instead of redirecting
+            // (redirecting to external URLs is an open redirect vulnerability and triggers phishing scanners)
+            try {
+                const url = new URL(resource.publicUrl);
+                const allowedHosts = ['s3.amazonaws.com', 's3.us-west-2.amazonaws.com', 'storage.googleapis.com'];
+                const isAllowed = allowedHosts.some(host => url.hostname === host || url.hostname.endsWith('.' + host));
+                if (!isAllowed) {
+                    console.error(`❌ [Download] Blocked redirect to untrusted host: ${url.hostname}`);
+                    return res.status(403).json({ message: 'Download source not allowed' });
+                }
+                console.warn(`⚠️ [Download] File not on disk for "${resource.displayName}" (${resource._id}), proxying from publicUrl`);
+                res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
+                res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
+                const https = require('https');
+                const http = require('http');
+                const client = url.protocol === 'https:' ? https : http;
+                client.get(resource.publicUrl, (proxyRes) => {
+                    proxyRes.pipe(res);
+                }).on('error', (err) => {
+                    console.error(`❌ [Download] Proxy failed for "${resource.displayName}":`, err);
+                    res.status(502).json({ message: 'Failed to fetch file from storage' });
+                });
+            } catch (urlErr) {
+                console.error(`❌ [Download] Invalid publicUrl for "${resource.displayName}":`, urlErr);
+                return res.status(400).json({ message: 'Invalid file URL' });
+            }
         } else {
             console.error(`❌ [Download] File not found for "${resource.displayName}" (${resource._id}): ${filePath}`);
             return res.status(404).json({ message: 'File not found on server' });
