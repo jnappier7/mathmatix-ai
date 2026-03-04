@@ -3,7 +3,7 @@ services:
     name: mathmatix-ai
     env: node
     region: oregon
-    plan: free
+    plan: pro
     # Simple build - no apt-get needed
     buildCommand: npm install
     startCommand: npm start

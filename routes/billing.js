@@ -116,8 +116,8 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       customer: customerId,
       mode: packConfig.mode,
       line_items: [lineItem],
-      success_url: `${baseUrl}/chat.html?upgraded=${pack}`,
-      cancel_url: `${baseUrl}/chat.html?upgrade_cancelled=true`,
+      success_url: `${baseUrl}/chat.html?upgraded=true`,
+      cancel_url: `${baseUrl}/chat.html`,
       metadata: { userId: user._id.toString(), pack }
     });
 

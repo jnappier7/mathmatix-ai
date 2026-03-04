@@ -240,7 +240,7 @@ app.use(helmet({
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
       objectSrc: ["'none'"], // Disable plugins
-      frameSrc: ["'self'", "https://www.commoncurriculum.com", "https://*.commoncurriculum.com", "https://www.commonplanner.com", "https://*.commonplanner.com"], // Allow Common Curriculum/Planner schedule iframes
+      frameSrc: ["'self'", "https://www.commoncurriculum.com", "https://www.commonplanner.com"], // Allow Common Curriculum/Planner schedule iframes
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
     }
   },
@@ -355,8 +355,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
-            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-            return res.redirect(`/login.html?error=${errorMessage}`);
+            return res.redirect('/login.html');
         }
 
         // Check if this is a new user requiring enrollment code
@@ -391,8 +390,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
     passport.authenticate('microsoft', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
-            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-            return res.redirect(`/login.html?error=${errorMessage}`);
+            return res.redirect('/login.html');
         }
 
         // Check if this is a new user requiring enrollment code
@@ -444,8 +442,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
         passport.authenticate('clever', (err, user, info) => {
             if (err) { return next(err); }
             if (!user) {
-                const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
-                return res.redirect(`/login.html?error=${errorMessage}`);
+                return res.redirect('/login.html');
             }
 
             // Check if this is a new user requiring enrollment code
