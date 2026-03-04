@@ -336,10 +336,10 @@ class ShowYourWorkManager {
                 ${(result.problems || []).map(p => this.renderProblemCard(p)).join('')}
             </div>
 
-            <!-- Overall feedback (not escaped — may contain LaTeX) -->
+            <!-- Overall feedback -->
             <div class="syw-overall-feedback">
                 <h4 class="syw-section-title"><i class="fas fa-comment-alt"></i> Overall</h4>
-                <p>${result.overallFeedback || ''}</p>
+                <div class="syw-overall-feedback-body">${this.renderMath(result.overallFeedback || '')}</div>
             </div>
 
             <!-- Practice recommendations -->
@@ -381,9 +381,18 @@ class ShowYourWorkManager {
             <div class="syw-error-item">
                 <span class="syw-error-badge">${this.escapeHtml(e.category || 'error')}</span>
                 ${e.step ? `<strong>${this.escapeHtml(e.step)}:</strong> ` : ''}
-                ${this.escapeHtml(e.description || '')}
+                ${this.renderMath(e.description || '')}
             </div>
         `).join('') : '';
+
+        // Pre-render LaTeX+markdown via the same pipeline chat messages use.
+        // Inserting raw LaTeX into innerHTML is fragile — HTML-special chars
+        // like < in math (e.g. \(x < 5\)) break the parser and leave LaTeX
+        // as unrendered text.  renderMath() produces safe, pre-rendered HTML.
+        const statement = this.renderMath(problem.problemStatement || '');
+        const feedback  = this.renderMath(problem.feedback || '');
+        const strengths = this.renderMath(problem.strengths || '');
+        const answer    = this.renderMath(problem.studentAnswer || '—');
 
         return `
         <div class="syw-problem-card ${correct ? 'syw-problem-correct' : 'syw-problem-incorrect'}">
@@ -393,22 +402,21 @@ class ShowYourWorkManager {
                     ${correct ? 'Got it' : 'Take another look'}
                 </span>
             </div>
-            ${problem.problemStatement ? `<div class="syw-problem-statement">${problem.problemStatement}</div>` : ''}
+            ${statement ? `<div class="syw-problem-statement">${statement}</div>` : ''}
 
-            <!-- Tutor feedback is the main content (not escaped — may contain LaTeX) -->
-            ${problem.feedback ? `<div class="syw-problem-feedback">${problem.feedback}</div>` : ''}
+            ${feedback ? `<div class="syw-problem-feedback">${feedback}</div>` : ''}
 
-            ${problem.strengths ? `<div class="syw-strengths">${problem.strengths}</div>` : ''}
+            ${strengths ? `<div class="syw-strengths">${strengths}</div>` : ''}
 
             <!-- Answers shown below feedback -->
             <div class="syw-problem-answers">
                 <div class="syw-answer-row">
                     <span class="syw-answer-label">Your answer:</span>
-                    <span class="syw-answer-value">${problem.studentAnswer || '—'}</span>
+                    <div class="syw-answer-value">${answer}</div>
                 </div>
                 ${!correct ? `<div class="syw-answer-row">
                     <span class="syw-answer-label">Hint:</span>
-                    <span class="syw-answer-value">Check the feedback above and try again!</span>
+                    <div class="syw-answer-value">Check the feedback above and try again!</div>
                 </div>` : ''}
             </div>
 
@@ -676,9 +684,11 @@ class ShowYourWorkManager {
             msg = `I just checked my work and got them all right! What should I work on next?`;
         }
 
+        // The chat input is a contenteditable div, not an <input>/<textarea>,
+        // so we must set textContent (not .value) for the text to appear.
         const userInput = document.getElementById('user-input');
         if (userInput) {
-            userInput.value = msg;
+            userInput.textContent = msg;
             userInput.dispatchEvent(new Event('input', { bubbles: true }));
             userInput.focus();
         }
@@ -696,6 +706,23 @@ class ShowYourWorkManager {
         if (window.renderMathInElement && el) {
             window.renderMathInElement(el);
         }
+    }
+
+    /**
+     * Render a text string that may contain LaTeX (and markdown) to safe HTML.
+     * Uses the same renderMarkdownMath pipeline as chat messages so LaTeX is
+     * pre-rendered via KaTeX before insertion into innerHTML.  This avoids the
+     * fragile post-processing approach where bare < or > in math expressions
+     * (e.g. \(x < 5\)) can break the HTML parser and leave LaTeX unrendered.
+     *
+     * Falls back to escapeHtml when the rendering pipeline isn't available.
+     */
+    renderMath(text) {
+        if (!text) return '';
+        if (window.renderMarkdownMath) return window.renderMarkdownMath(text);
+        // Fallback: escape HTML so raw LaTeX at least doesn't break the DOM.
+        // typesetMath() will still attempt to render \(...\) in a second pass.
+        return this.escapeHtml(text);
     }
 
     escapeHtml(str) {
