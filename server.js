@@ -266,8 +266,20 @@ app.use(helmet({
   // Referrer Policy
   referrerPolicy: {
     policy: 'strict-origin-when-cross-origin'
+  },
+  // DNS Prefetch Control - prevents DNS prefetching leaks
+  dnsPrefetchControl: {
+    allow: false
   }
 }));
+
+// Permissions-Policy header - explicitly declare which browser features the site uses
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy',
+    'camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+  );
+  next();
+});
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
