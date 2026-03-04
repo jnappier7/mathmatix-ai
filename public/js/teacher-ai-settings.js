@@ -215,6 +215,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
+                <!-- Dashboard Language -->
+                <div class="ai-settings-section">
+                    <h3><i class="fas fa-language"></i> Dashboard Language</h3>
+                    <div class="setting-group">
+                        <label>Choose the language for your dashboard interface.</label>
+                        <select id="teacher-preferred-language">
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish (Español)</option>
+                            <option value="Russian">Russian (Русский)</option>
+                            <option value="Chinese">Chinese (中文)</option>
+                            <option value="Vietnamese">Vietnamese (Tiếng Việt)</option>
+                            <option value="Arabic">Arabic (العربية)</option>
+                            <option value="Somali">Somali (Soomaali)</option>
+                            <option value="French">French (Français)</option>
+                            <option value="German">German (Deutsch)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="modal-footer">
                     <button class="btn btn-secondary" id="cancel-ai-settings">Cancel</button>
                     <button class="btn btn-primary" id="save-ai-settings"><i class="fas fa-save"></i> Save Settings</button>
@@ -223,6 +242,17 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         document.body.appendChild(modal);
+
+        // Pre-select current dashboard language from the user record
+        fetch('/user', { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data && data.user && data.user.preferredLanguage) {
+                    const langSelect = document.getElementById('teacher-preferred-language');
+                    if (langSelect) langSelect.value = data.user.preferredLanguage;
+                }
+            })
+            .catch(() => {});
 
         // Event listeners
         document.getElementById('close-ai-settings').onclick = () => modal.remove();
@@ -319,6 +349,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
+                // Save dashboard language preference
+                const langSelect = document.getElementById('teacher-preferred-language');
+                if (langSelect) {
+                    const selectedLang = langSelect.value;
+                    try {
+                        await csrfFetch('/api/user/settings', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ preferredLanguage: selectedLang })
+                        });
+                        if (window.MathmatixI18n) {
+                            window.MathmatixI18n.setLanguage(selectedLang);
+                        }
+                    } catch (langErr) {
+                        console.error('Error saving language preference:', langErr);
+                    }
+                }
+
                 if (typeof showToast === 'function') {
                     showToast('AI Settings saved successfully!', 'success');
                 } else {

@@ -1263,6 +1263,8 @@
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
+  <script src="/js/i18n-translations.js"></script>
+  <script src="/js/i18n.js"></script>
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
@@ -1505,8 +1507,18 @@
               <label for="parentLanguage">
                 <i class="fas fa-language"></i> Language
               </label>
-              <input type="text" id="parentLanguage" name="parentLanguage" placeholder="English">
-              <p class="text-xs text-gray-500 mt-2">Preferred language for reports</p>
+              <select id="parentLanguage" name="parentLanguage">
+                <option value="English">English</option>
+                <option value="Spanish">Spanish (Español)</option>
+                <option value="Russian">Russian (Русский)</option>
+                <option value="Chinese">Chinese (中文)</option>
+                <option value="Vietnamese">Vietnamese (Tiếng Việt)</option>
+                <option value="Arabic">Arabic (العربية)</option>
+                <option value="Somali">Somali (Soomaali)</option>
+                <option value="French">French (Français)</option>
+                <option value="German">German (Deutsch)</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-2">Preferred language for reports and dashboard</p>
             </div>
 
             <!-- Save Button -->
@@ -1657,8 +1669,18 @@
 
         <div class="drawer-section">
           <div class="drawer-section-title"><i class="fas fa-language" style="color: #3498db;"></i> Language</div>
-          <input type="text" id="mobile-parentLanguage" placeholder="English" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
-          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">Preferred language for reports</p>
+          <select id="mobile-parentLanguage" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="English">English</option>
+            <option value="Spanish">Spanish (Español)</option>
+            <option value="Russian">Russian (Русский)</option>
+            <option value="Chinese">Chinese (中文)</option>
+            <option value="Vietnamese">Vietnamese (Tiếng Việt)</option>
+            <option value="Arabic">Arabic (العربية)</option>
+            <option value="Somali">Somali (Soomaali)</option>
+            <option value="French">French (Français)</option>
+            <option value="German">German (Deutsch)</option>
+          </select>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">Preferred language for reports and dashboard</p>
         </div>
 
         <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;">
