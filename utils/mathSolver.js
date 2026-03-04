@@ -36,6 +36,14 @@ function detectMathProblem(message) {
         return { type: 'arithmetic', left: parseFloat(timesMatch[1]), operator: '*', right: parseFloat(timesMatch[2]) };
     }
 
+    // Pattern: "X x Y" — lowercase "x" used as multiplication between two numbers
+    // Must have spaces around "x" to distinguish from algebraic variable (e.g. "2x + 3")
+    const letterXMultiplyPattern = /(\d+\.?\d*)\s+x\s+(\d+\.?\d*)/i;
+    const letterXMatch = message.match(letterXMultiplyPattern);
+    if (letterXMatch) {
+        return { type: 'arithmetic', left: parseFloat(letterXMatch[1]), operator: '*', right: parseFloat(letterXMatch[2]) };
+    }
+
     // Pattern: Natural-language division "divide X by Y" or "X divided by Y"
     const nlDividePattern = /(?:divide\s+)(\d+\.?\d*)\s+by\s+(\d+\.?\d*)/i;
     const nlDivideMatch = message.match(nlDividePattern);
@@ -197,6 +205,11 @@ function detectNaturalLanguageArithmetic(expr) {
     const multiplyMatch = expr.match(/multiply\s+(\d+\.?\d*)\s+(?:by|and)\s+(\d+\.?\d*)/i);
     if (multiplyMatch) {
         return { type: 'arithmetic', left: parseFloat(multiplyMatch[1]), operator: '*', right: parseFloat(multiplyMatch[2]) };
+    }
+    // "X x Y" — lowercase "x" as multiplication (spaces required to avoid algebraic variable)
+    const letterXMatch = expr.match(/(\d+\.?\d*)\s+x\s+(\d+\.?\d*)/i);
+    if (letterXMatch) {
+        return { type: 'arithmetic', left: parseFloat(letterXMatch[1]), operator: '*', right: parseFloat(letterXMatch[2]) };
     }
     const dividedByMatch = expr.match(/(\d+\.?\d*)\s+divided\s+by\s+(\d+\.?\d*)/i);
     if (dividedByMatch) {
@@ -476,6 +489,8 @@ function solveEvaluation(problem) {
     let cleaned = expression
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
+        // "x" between numbers with spaces = multiplication (e.g., "2.75 x 5")
+        .replace(/(\d)\s+x\s+(\d)/gi, '$1*$2')
         .replace(/\btimes\b/gi, '*')
         .replace(/\bmultiplied\s+by\b/gi, '*')
         .replace(/\bdivided\s+by\b/gi, '/')

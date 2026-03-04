@@ -1676,9 +1676,9 @@ async function handleGreetingRequest(req, res, userId) {
             if (shouldOfferStartingPoint) {
                 greetingInstruction += `
 
-IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left - it's a quick quiz to figure out where you're at so I can help you better. No rush though!"
+IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left — it's a quick quiz to figure out where you're at so I can help you better. It's not a test you can fail, it just helps me know what to focus on. No rush though!"
 
-Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready.`;
+Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready. Emphasize it's NOT a pass/fail test — just a way to personalize their experience.`;
             }
         }
 

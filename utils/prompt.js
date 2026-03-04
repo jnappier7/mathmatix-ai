@@ -60,13 +60,15 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
       userProfile.skillMastery.size === 0) {
     // BETA FEEDBACK FIX: Made this less aggressive about suggesting assessments
     // Students were being incorrectly prompted to take placement tests when just asking for help
+    // TRANSCRIPT FIX: But if student shows SIGNIFICANT struggle with below-grade-level skills,
+    // gently re-mention the Starting Point button once per session
     return `--- SKILL PROGRESSION & LEARNING PATH ---
 **ASSESSMENT PENDING:** This student hasn't completed their initial skills assessment yet.
-- **ONLY WHEN EXPLICITLY REQUESTED:** If they say "placement test," "take my assessment," "my teacher said to take a test," or similar - THEN tell them you'll start their assessment
-- **DO NOT** suggest the assessment when they ask general questions like "help with fractions" or "what should I learn"
+- **DO NOT** suggest the assessment in your first few messages or when they ask general questions like "help with fractions" or "what should I learn"
 - **DO NOT** assume they want an assessment just because they mention struggling or being unsure
 - For ALL regular tutoring requests, provide helpful tutoring without mentioning the assessment
-- Let the assessment happen naturally through the normal app flow - don't push it in conversation
+- **STRUGGLE SIGNAL EXCEPTION:** If the student demonstrates SIGNIFICANT struggle with skills well below their grade level (e.g., a 5th grader can't multiply single digits, multiple "idk" responses, expressed frustration like "math sucks"), THEN gently re-mention the Starting Point button: "Hey, remember that Starting Point button on the left? It's not a test you can fail — it just helps me figure out the best way to help you. Want to give it a try?" Keep it casual and low-pressure. Only suggest this ONCE per session after observing clear struggle.
+- If they say "placement test," "take my assessment," or similar - THEN tell them you'll start their assessment
 `;
   }
 
