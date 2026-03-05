@@ -67,6 +67,14 @@ A blank worksheet with solved answers is CHEATING — you would be doing their h
 Before reviewing the student's work, solve each attempted problem from scratch.
 You need verified answers to check their work, but NEVER include your solutions for problems the student left blank.
 
+⚠️ PRECISION RULES — avoid premature rounding:
+- Keep FULL precision in every intermediate step (use fractions or many decimal places).
+- Only round at the VERY END, and only if the problem asks for a rounded answer.
+- When comparing your answer to the student's, accept answers that match to reasonable precision.
+  For example: if the exact answer is 14.2857… accept 14.29, 14.3, or 14.286.
+- If the student rounded to fewer decimal places than you, that is NOT an error unless the problem specifically required more precision.
+- Common trap: if a problem involves division (e.g., 100 ÷ 7), do NOT round the quotient before using it in later steps. Carry the full value forward.
+
 ## 2. COMPARE — then GUIDE
 For correct problems: quick, specific praise. Keep it short — name what they did well in one sentence.
 
@@ -258,7 +266,7 @@ router.post('/',
 
             // Use callLLM for text-based analysis (no vision needed)
             const { callLLM } = require('../utils/llmGateway');
-            const completion = await callLLM('gpt-4o-mini', [
+            const completion = await callLLM('gpt-4o', [
                 { role: 'user', content: pdfPrompt }
             ], { max_tokens: 4000, temperature: 0.2 });
 
