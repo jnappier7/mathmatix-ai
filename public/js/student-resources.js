@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeResourcesBtn = document.getElementById('close-resources-modal');
     const resourcesContent = document.getElementById('resources-content');
 
-    // State for filtering
+    // State for filtering (teacherResources always empty — hidden from student view)
     let allResources = { teacherResources: [], myUploads: [], curriculum: null };
     let activeFilter = 'all';
     let searchQuery = '';
@@ -102,29 +102,24 @@ document.addEventListener('DOMContentLoaded', () => {
         showSkeletonLoading();
 
         try {
-            const [curriculumRes, uploadsRes, teacherRes] = await Promise.all([
+            const [curriculumRes, uploadsRes] = await Promise.all([
                 fetch('/api/curriculum/student/resources', { credentials: 'include' }),
-                fetch('/api/student/uploads?limit=10', { credentials: 'include' }),
-                fetch('/api/teacher-resources/my-teacher-resources', { credentials: 'include' })
+                fetch('/api/student/uploads?limit=10', { credentials: 'include' })
             ]);
 
             if (!curriculumRes.ok) throw new Error('Failed to fetch curriculum resources');
 
             const data = await curriculumRes.json();
             let myUploads = [];
-            let teacherResources = [];
 
             if (uploadsRes.ok) {
                 const uploadsData = await uploadsRes.json();
                 myUploads = uploadsData.success ? uploadsData.uploads : [];
             }
 
-            if (teacherRes.ok) {
-                const teacherData = await teacherRes.json();
-                teacherResources = teacherData.success ? (teacherData.resources || []) : [];
-            }
-
-            allResources = { teacherResources, myUploads, curriculum: data };
+            // Teacher resources are intentionally hidden from the student view.
+            // They are only used by the AI tutor behind the scenes via resourceDetector.
+            allResources = { teacherResources: [], myUploads, curriculum: data };
             activeFilter = 'all';
             searchQuery = '';
             renderResources();
@@ -313,19 +308,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Empty state (no resources at all)
-        if (teacherResources.length === 0 && myUploads.length === 0 && !data.hasResources) {
+        if (myUploads.length === 0 && !data.hasResources) {
             bodyHtml += `
                 <div class="resources-empty-state">
                     <i class="fas fa-book-open"></i>
                     <h3>No Resources Yet</h3>
-                    <p>${data.currentTopic ? `You're studying: <strong>${data.currentTopic}</strong>` : 'Your teacher hasn\'t uploaded resources yet.'}</p>
+                    <p>${data.currentTopic ? `You're studying: <strong>${data.currentTopic}</strong>` : 'No resources available yet.'}</p>
                     <p style="margin-top: 8px;">Resources like worksheets, videos, and practice problems will appear here.</p>
                 </div>
             `;
         }
 
         // Tip bar
-        if (teacherResources.length > 0 || data.hasResources) {
+        if (myUploads.length > 0 || data.hasResources) {
             bodyHtml += `
                 <div class="resources-tip">
                     <i class="fas fa-lightbulb"></i>
