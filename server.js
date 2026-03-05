@@ -750,12 +750,24 @@ app.get('/uploads/teacher-resources/:teacherId/:filename', isAuthenticated, asyn
         const { teacherId, filename } = req.params;
         const user = await User.findById(req.user._id);
 
-        // Allow teachers to access their own files, or students to access their teacher's files
-        const isTeacher = user.role === 'teacher' && user._id.toString() === teacherId;
+        // Allow teachers to access their own files, or students to access their teacher's published files
+        const isOwnerTeacher = user.role === 'teacher' && user._id.toString() === teacherId;
         const isStudentOfTeacher = user.role === 'student' && user.teacherId && user.teacherId.toString() === teacherId;
 
-        if (!isTeacher && !isStudentOfTeacher) {
+        if (!isOwnerTeacher && !isStudentOfTeacher) {
             return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Students must only access published resources
+        if (isStudentOfTeacher) {
+            const TeacherResource = require('./models/teacherResource');
+            const resource = await TeacherResource.findOne({
+                teacherId,
+                storedFilename: { $regex: new RegExp(filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$') },
+            });
+            if (!resource || resource.isPublished === false) {
+                return res.status(403).json({ message: 'This resource is not currently available' });
+            }
         }
 
         const filePath = path.join(__dirname, 'uploads', 'teacher-resources', teacherId, filename);
