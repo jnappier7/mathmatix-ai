@@ -331,7 +331,12 @@ app.use(logger.requestLogger);
 // --- 7. DATABASE CONNECTION ---
 const { startRetentionSchedule } = require('./utils/dataRetention');
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  maxPoolSize: 50,         // Handle concurrent student requests (default is 10)
+  minPoolSize: 5,          // Keep warm connections ready
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+})
   .then(() => {
     logger.info("✅ Connected to MongoDB", { database: 'MongoDB' });
     // Start data retention sweep (daily cleanup of expired data)
