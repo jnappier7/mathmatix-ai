@@ -755,6 +755,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
+            res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
             res.flushHeaders();
             req.on('close', () => { clientDisconnected = true; });
         }
@@ -1700,6 +1701,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
+            res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
             res.flushHeaders();
 
             try {
