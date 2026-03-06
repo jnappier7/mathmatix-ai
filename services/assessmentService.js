@@ -282,11 +282,13 @@ function checkAnswer(userAnswer, question) {
   const cleanAnswer = userAnswer.trim().toLowerCase();
   const correctAnswer = String(question.correctAnswer).toLowerCase();
 
-  // Number answers
+  // Number answers — use relative tolerance to accept reasonable rounding
   if (question.type === 'number') {
     const userNum = parseFloat(cleanAnswer.replace(/[^\d.-]/g, ''));
     const correctNum = parseFloat(correctAnswer);
-    return Math.abs(userNum - correctNum) < 0.01;
+    if (isNaN(userNum) || isNaN(correctNum)) return false;
+    if (correctNum === 0) return Math.abs(userNum) < 0.01;
+    return Math.abs(userNum - correctNum) / Math.abs(correctNum) < 0.015;
   }
 
   // Fraction answers
