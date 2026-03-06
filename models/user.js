@@ -620,6 +620,9 @@ const userSchema = new Schema({
   /* Onboarding */
   needsProfileCompletion: { type: Boolean, default: true },
 
+  /* Terms of Service / Privacy Policy acceptance */
+  termsAcceptedAt: { type: Date, default: null },
+
   /* Parent-specific fields */
   reportFrequency:   { type: String, enum: ['daily','weekly','biweekly','monthly'], default: 'weekly' },
   goalViewPreference:{ type: String, enum: ['progress','gaps','goals'], default: 'progress' },
