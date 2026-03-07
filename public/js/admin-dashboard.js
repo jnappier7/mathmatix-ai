@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const modalStudentName = document.getElementById("modalStudentName");
     const modalStudentId = document.getElementById("modalStudentId");
     const conversationSummariesList = document.getElementById("conversationSummariesList");
+    const iepGoalsList = document.getElementById("iepGoalsList");
+    const adminAddIepGoalBtn = document.getElementById("admin-add-iep-goal-btn");
 
     // -------------------------------------------------------------------------
     // --- Toast Notification System ---
@@ -384,15 +386,71 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Load other fields
                 studentIepForm.elements.readingLevel.value = iepPlan?.readingLevel || '';
                 studentIepForm.elements.preferredScaffolds.value = (iepPlan?.preferredScaffolds || []).join(', ');
-                if(iepGoalsList) iepGoalsList.textContent = 'IEP Goals feature not yet implemented.';
+
+                // Load goals
+                if (iepGoalsList) {
+                    iepGoalsList.innerHTML = '';
+                    (iepPlan.goals || []).forEach(goal => addAdminIepGoalToUI(goal));
+                }
             } else {
-                 if(iepGoalsList) iepGoalsList.innerHTML = 'Could not load IEP data.';
+                 if(iepGoalsList) iepGoalsList.innerHTML = '<li>Could not load IEP data.</li>';
             }
 
         } catch (error) {
             console.error("Failed to load dynamic modal data:", error);
             conversationSummariesList.innerHTML = '<li>Error loading data.</li>';
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // --- IEP Goal Helpers ---
+    // -------------------------------------------------------------------------
+
+    function addAdminIepGoalToUI(goal = {}) {
+        if (!iepGoalsList) return;
+        const li = document.createElement('li');
+        li.className = 'iep-goal-item';
+        li.style.cssText = 'list-style:none;border:1px solid #ddd;border-radius:8px;padding:12px;margin-bottom:10px;';
+        li.innerHTML = `
+            <label>Description:</label>
+            <textarea class="goal-description" rows="2" required style="width:100%;margin-bottom:6px;">${goal.description || ''}</textarea>
+            <div style="display:flex;gap:10px;margin-top:5px;">
+                <div style="flex:1;">
+                    <label>Target Date:</label>
+                    <input type="date" class="goal-target-date" value="${goal.targetDate ? new Date(goal.targetDate).toISOString().substring(0, 10) : ''}" />
+                </div>
+                <div style="flex:1;">
+                    <label>Progress (%):</label>
+                    <input type="number" class="goal-progress" min="0" max="100" value="${goal.currentProgress || 0}" />
+                </div>
+            </div>
+            <label>Measurement Method:</label>
+            <input type="text" class="goal-method" value="${goal.measurementMethod || ''}" placeholder="e.g., Quiz scores, Observation" style="width:100%;margin-bottom:6px;" />
+            <label>Status:</label>
+            <select class="goal-status">
+                <option value="active" ${goal.status === 'active' ? 'selected' : ''}>Active</option>
+                <option value="completed" ${goal.status === 'completed' ? 'selected' : ''}>Completed</option>
+                <option value="on-hold" ${goal.status === 'on-hold' ? 'selected' : ''}>On-Hold</option>
+            </select>
+            <button type="button" class="remove-goal-btn btn" style="margin-top:6px;color:#e74c3c;border:1px solid #e74c3c;background:transparent;cursor:pointer;">Remove Goal</button>
+        `;
+        iepGoalsList.appendChild(li);
+        li.querySelector('.remove-goal-btn').addEventListener('click', () => li.remove());
+    }
+
+    function getAdminIepGoalsFromUI() {
+        if (!iepGoalsList) return [];
+        return Array.from(iepGoalsList.querySelectorAll('.iep-goal-item')).map(item => ({
+            description: item.querySelector('.goal-description').value,
+            targetDate: item.querySelector('.goal-target-date').value,
+            currentProgress: parseFloat(item.querySelector('.goal-progress').value) || 0,
+            measurementMethod: item.querySelector('.goal-method').value,
+            status: item.querySelector('.goal-status').value,
+        }));
+    }
+
+    if (adminAddIepGoalBtn) {
+        adminAddIepGoalBtn.addEventListener('click', () => addAdminIepGoalToUI());
     }
 
     // -------------------------------------------------------------------------
@@ -724,7 +782,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 accommodations,
                 readingLevel: studentIepForm.elements.readingLevel.value,
                 preferredScaffolds: studentIepForm.elements.preferredScaffolds.value.split(',').map(s => s.trim()).filter(Boolean),
-                goals: []
+                goals: getAdminIepGoalsFromUI()
             };
 
             saveChangesButton.disabled = true;

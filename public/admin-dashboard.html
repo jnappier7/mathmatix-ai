@@ -1132,7 +1132,11 @@
           <div class="modal-form-group"><label for="customAccommodations">Custom Accommodations (one per line):</label><textarea id="customAccommodations" name="customAccommodations" rows="3" placeholder="Enter any additional accommodations..."></textarea></div>
           <div class="modal-form-group"><label for="readingLevel">Reading Level (Grade):</label><input type="number" id="readingLevel" name="readingLevel" min="0" max="12" step="0.5"></div>
           <div class="modal-form-group"><label for="preferredScaffolds">Preferred Scaffolds (comma-separated):</label><input type="text" id="preferredScaffolds" name="preferredScaffolds"></div>
-          <div class="modal-form-group" id="iepGoalsDisplay"><label>IEP Goals:</label><div id="iepGoalsList"></div></div>
+          <div class="modal-form-group" id="iepGoalsDisplay">
+            <label>IEP Goals:</label>
+            <ul id="iepGoalsList"></ul>
+            <button type="button" id="admin-add-iep-goal-btn" class="btn btn-primary" style="margin-top:8px;">Add New Goal</button>
+          </div>
         </form>
       </div>
 
