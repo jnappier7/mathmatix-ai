@@ -17,8 +17,9 @@ export async function checkBillingStatus() {
         // When billing is off (pre-launch), skip all UI
         if (data.billingEnabled === false) return data;
 
-        // Show time indicator for pack users and free users
-        if (data.tier !== 'unlimited' && data.usage) {
+        // Show time indicator for students on free/pack tiers only.
+        // Teachers, parents, and admins have unlimited access (Infinity) — skip indicator for them.
+        if (data.tier !== 'unlimited' && data.usage && data.usage.secondsRemaining !== null && isFinite(data.usage.secondsRemaining)) {
             updateFreeTimeIndicator(data.usage);
         }
 

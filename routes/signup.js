@@ -81,7 +81,7 @@ router.post('/validate-code', async (req, res) => {
 });
 
 router.post('/', ensureNotAuthenticated, signupValidation, handleValidationErrors, async (req, res, next) => {
-    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth } = req.body;
+    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth, termsAccepted } = req.body;
 
     // --- 1. Basic Validation ---
     if (!firstName || !lastName || !email || !username || !password || !role) {
@@ -93,6 +93,11 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
     if (!SELF_REGISTERABLE_ROLES.includes(role)) {
         console.warn(`WARN: Signup blocked - attempted self-registration with disallowed role: '${role}'`);
         return res.status(403).json({ message: 'Invalid role for self-registration.' });
+    }
+
+    // Terms of Use / Privacy Policy acceptance is required
+    if (!termsAccepted) {
+        return res.status(400).json({ message: 'You must agree to the Terms of Use and Privacy Policy.' });
     }
 
     // Note: DOB is collected at complete-profile page, not signup.
@@ -169,6 +174,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
+            termsAcceptedAt: new Date(),
             // Email verification
             emailVerified: false,
             emailVerificationToken: hashedToken,

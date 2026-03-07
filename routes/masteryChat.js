@@ -323,6 +323,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
+            res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
             res.flushHeaders();
 
             let fullResponse = '';

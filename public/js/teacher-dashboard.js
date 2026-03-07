@@ -368,15 +368,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 setTimeout(() => chip.classList.remove('iep-template-applied'), 2000);
             } catch (err) {
                 console.error('[IEP Template] Error applying template:', err);
-                alert('Failed to apply template. Please try again.');
+                showToast('Failed to apply template. Please try again.', 'error');
             }
         });
     });
 
     if(saveIepBtn) saveIepBtn.addEventListener('click', async () => {
         const studentId = currentIepStudentIdInput.value;
-        if (!studentId) return alert("No student selected.");
-        
+        if (!studentId) return showToast("No student selected.", 'error');
+
         const updatedIepPlan = getIepDataFromForm();
         try {
             const response = await csrfFetch(`/api/teacher/students/${studentId}/iep`, {
@@ -385,12 +385,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 body: JSON.stringify(updatedIepPlan)
             });
             if (!response.ok) throw new Error(await response.text());
-            alert("IEP saved successfully!");
+            showToast("IEP saved successfully!", 'success');
             hideModal(iepEditorModal);
             fetchAssignedStudents();
         } catch (error) {
             console.error("Error saving IEP data:", error);
-            alert("Failed to save IEP data.");
+            showToast("Failed to save IEP data.", 'error');
         }
     });
 
@@ -1085,9 +1085,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             const goals = iepPlan.goals || [];
 
             // Render inline IEP view
+            const accommodationLabels = {
+                extendedTime: 'Extended Time',
+                reducedDistraction: 'Reduced Distraction',
+                calculatorAllowed: 'Calculator Allowed',
+                audioReadAloud: 'Audio Read-Aloud',
+                chunkedAssignments: 'Chunked Assignments',
+                breaksAsNeeded: 'Breaks as Needed',
+                digitalMultiplicationChart: 'Digital Multiplication Chart',
+                largePrintHighContrast: 'Large Print / High Contrast',
+                mathAnxietySupport: 'Math Anxiety Support'
+            };
             const activeAccommodations = Object.entries(accommodations)
-                .filter(([key, val]) => val === true)
-                .map(([key]) => key.replace(/([A-Z])/g, ' $1').trim());
+                .filter(([key, val]) => val === true && key !== 'custom')
+                .map(([key]) => accommodationLabels[key] || key.replace(/([A-Z])/g, ' $1').trim());
 
             const customAccom = (accommodations.custom || []).filter(Boolean);
 
@@ -1287,7 +1298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             loadIepData(iepPlan);
         } catch (error) {
             console.error("Error loading IEP data:", error);
-            alert("Failed to load IEP data.");
+            showToast("Failed to load IEP data.", 'error');
         }
     }
 

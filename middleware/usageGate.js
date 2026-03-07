@@ -18,39 +18,41 @@ const SchoolLicense = require('../models/schoolLicense');
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for ALL students
 
-// In-memory cache for school license validity (avoids DB hit on every request)
-// Key: licenseId.toString(), Value: { valid: boolean, checkedAt: Date }
+// In-memory cache for school license lookups (avoids DB hit on every request)
+// Key: licenseId.toString(), Value: { license: object|null, checkedAt: number }
 const licenseCache = new Map();
 const LICENSE_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Get cached school license (single DB query covers both validity and capacity).
+ */
+async function getCachedLicense(licenseId) {
+  if (!licenseId) return null;
+
+  const key = licenseId.toString();
+  const cached = licenseCache.get(key);
+  if (cached && (Date.now() - cached.checkedAt) < LICENSE_CACHE_TTL_MS) {
+    return cached.license;
+  }
+
+  try {
+    const license = await SchoolLicense.findById(licenseId).lean();
+    licenseCache.set(key, { license: license || null, checkedAt: Date.now() });
+    return license || null;
+  } catch (err) {
+    console.error('[UsageGate] License fetch error:', err.message);
+    return null;
+  }
+}
 
 /**
  * Check if a school license is currently valid (with caching).
  */
 async function isLicenseValid(licenseId) {
-  if (!licenseId) return false;
-
-  const key = licenseId.toString();
-  const cached = licenseCache.get(key);
-  if (cached && (Date.now() - cached.checkedAt) < LICENSE_CACHE_TTL_MS) {
-    return cached.valid;
-  }
-
-  try {
-    const license = await SchoolLicense.findById(licenseId).lean();
-    if (!license) {
-      licenseCache.set(key, { valid: false, checkedAt: Date.now() });
-      return false;
-    }
-    // .lean() returns a plain object — check fields directly instead of calling .isValid()
-    const valid = (license.status === 'active' || license.status === 'trial') &&
-      (!license.expiresAt || new Date() <= license.expiresAt);
-    licenseCache.set(key, { valid, checkedAt: Date.now() });
-    return valid;
-  } catch (err) {
-    console.error('[UsageGate] License check error:', err.message);
-    // On error, deny access (fail closed) — a brief outage is safer than free access
-    return false;
-  }
+  const license = await getCachedLicense(licenseId);
+  if (!license) return false;
+  return (license.status === 'active' || license.status === 'trial') &&
+    (!license.expiresAt || new Date() <= license.expiresAt);
 }
 
 /**
@@ -79,15 +81,18 @@ async function usageGate(req, res, next) {
 
     // Students covered by a school license get unlimited access
     if (user.schoolLicenseId) {
-      const valid = await isLicenseValid(user.schoolLicenseId);
-      if (valid) {
-        // Capacity check: verify school hasn't exceeded student limit
-        const license = await SchoolLicense.findById(user.schoolLicenseId).lean();
-        if (license && license.currentStudentCount > license.maxStudents) {
-          console.warn(`[UsageGate] School "${license.schoolName}" over capacity (${license.currentStudentCount}/${license.maxStudents})`);
-          // Over capacity — fall through to free tier instead of blocking entirely
-        } else {
-          return next();
+      const license = await getCachedLicense(user.schoolLicenseId);
+      if (license) {
+        const valid = (license.status === 'active' || license.status === 'trial') &&
+          (!license.expiresAt || new Date() <= license.expiresAt);
+        if (valid) {
+          // Capacity check: verify school hasn't exceeded student limit
+          if (license.currentStudentCount > license.maxStudents) {
+            console.warn(`[UsageGate] School "${license.schoolName}" over capacity (${license.currentStudentCount}/${license.maxStudents})`);
+            // Over capacity — fall through to free tier instead of blocking entirely
+          } else {
+            return next();
+          }
         }
       }
       // License expired/invalid/over-capacity — fall through to free tier
