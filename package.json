@@ -31,7 +31,14 @@
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
     "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js",
-    "check:virustotal": "node scripts/check-virustotal.js"
+    "check:virustotal": "node scripts/check-virustotal.js",
+    "seed:loadtest": "node scripts/seedLoadTestAccounts.js",
+    "seed:loadtest:clear": "node scripts/seedLoadTestAccounts.js --clear",
+    "loadtest:chat": "k6 run tests/load/chat.test.js",
+    "loadtest:chat:peak": "k6 run -e PROFILE=peak tests/load/chat.test.js",
+    "loadtest:screener": "k6 run tests/load/screener.test.js",
+    "loadtest:auth": "k6 run tests/load/auth.test.js",
+    "loadtest:stress": "k6 run -e PROFILE=stress tests/load/chat.test.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
