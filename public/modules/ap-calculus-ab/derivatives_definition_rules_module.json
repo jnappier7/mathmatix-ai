@@ -370,15 +370,25 @@
       "examples": [
         {
           "problem": "The table gives: t = 0, 2, 4, 6, 8 with f(t) = 10, 18, 24, 28, 30. Estimate f'(4).",
-          "solution": "Use the symmetric difference quotient: f'(4) ≈ [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point."
+          "solution": "Use the symmetric difference quotient: f'(4) ≈ [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point.",
+          "thinkAloud": "I need to estimate a derivative from a table — I can't use the exact definition because I only have discrete data points. For an interior point like t = 4, the best approach is the symmetric difference quotient: use the points on either side (t = 2 and t = 6) to get the most accurate slope estimate. I'll compute [f(6) - f(2)] / (6 - 2).",
+          "commonMistake": "Students often use only one side: either [f(6) - f(4)]/(6-4) = 4/2 = 2 or [f(4) - f(2)]/(4-2) = 6/2 = 3. These one-sided estimates are less accurate. The symmetric quotient [f(6) - f(2)]/(6-2) = 2.5 averages both and gives a better approximation. On the AP exam, the symmetric difference quotient is expected for interior points when data is available on both sides.",
+          "decisionPoint": "With table data, I have three options: forward difference (use t = 4 and t = 6), backward difference (use t = 2 and t = 4), or symmetric/central difference (use t = 2 and t = 6). The symmetric quotient is preferred because it has a smaller error — it's equivalent to averaging the forward and backward estimates. Only use one-sided estimates if you're at an endpoint of the table.",
+          "interpretation": "f'(4) ≈ 2.5 means that at t = 4, the function f is increasing at a rate of about 2.5 units per unit of t. The tangent line to the curve at t = 4 would have slope 2.5. Notice the rate is slowing down — the function increases by 8 from t=0 to t=2, then 6, then 4, then 2 — so the slope is decreasing over time."
         },
         {
           "problem": "From a graph of f, the tangent line at x = 3 appears to pass through (1, 2) and (5, 10). Estimate f'(3).",
-          "solution": "f'(3) = slope of tangent line = (10 - 2)/(5 - 1) = 8/4 = 2. The derivative at x = 3 is approximately 2."
+          "solution": "f'(3) = slope of tangent line = (10 - 2)/(5 - 1) = 8/4 = 2. The derivative at x = 3 is approximately 2.",
+          "thinkAloud": "The derivative at a point equals the slope of the tangent line there. I'm told the tangent line passes through two points, so I just need rise over run. I don't need the actual function — the tangent line IS a line, so its slope is the same everywhere. Pick the two given points and compute the slope: (10 - 2)/(5 - 1).",
+          "commonMistake": "Students sometimes try to use the two points to find the equation of the tangent line and then take its derivative. That's overcomplicating it — the derivative of a line y = mx + b is just m, the slope. All you need is the slope formula (y₂ - y₁)/(x₂ - x₁). Also, some students mistakenly use only the point at x = 3, trying to compute f'(3) = f(3)/3, which is completely wrong — that gives the average rate from 0 to 3, not the slope of the tangent.",
+          "interpretation": "f'(3) = 2 means the curve y = f(x) is rising at x = 3 with a slope of 2: for each unit increase in x near x = 3, f increases by approximately 2 units. The tangent line y - f(3) = 2(x - 3) is the best linear approximation of f near that point."
         },
         {
           "problem": "A graph of f shows: f increases on (0, 2), has a horizontal tangent at x = 2, decreases on (2, 5), has a corner at x = 5, and increases on (5, 7). Describe f'.",
-          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
+          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive.",
+          "thinkAloud": "I need to translate a description of f into a description of f'. My rules: where f increases, f' is positive. Where f decreases, f' is negative. Horizontal tangent means f' = 0. Corner means f' doesn't exist. I'll go interval by interval and build up the picture of f'. I should also think about what the graph of f' looks like — positive on (0,2), zero at 2, negative on (2,5), undefined at 5, positive on (5,7).",
+          "commonMistake": "Students often say f'(5) = 0 instead of f'(5) = undefined. A corner is NOT a place where the derivative is zero — it's a place where the derivative doesn't exist. f' = 0 means a horizontal tangent (smooth curve, momentarily flat). A corner means the slope changes abruptly — there's no single tangent line, so no derivative. This distinction is heavily tested on the AP exam.",
+          "interpretation": "The f' description tells a story about the slope of f: the curve starts rising (positive slope), gradually flattens until the slope hits zero at x = 2 (hilltop), then the curve tilts downward (negative slope) until x = 5 where there's an abrupt change (corner — like a V shape), and then the curve starts rising again. The graph of f' would show the slope's value over time, with a gap/break at x = 5."
         }
       ],
       "lessonId": "derivatives-graphs-tables"
