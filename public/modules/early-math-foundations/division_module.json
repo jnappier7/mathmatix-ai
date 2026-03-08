@@ -136,7 +136,7 @@
       "lessonPhase": "concept-intro",
       "title": "Long Division — The DMSB Method",
       "skill": "emf-long-division",
-      "content": "When numbers get bigger, we need a step-by-step method for dividing. That method is long division, and it follows four repeating steps: Divide, Multiply, Subtract, Bring down — DMSB. Some students remember it as 'Does McDonald's Serve Burgers?' You repeat the DMSB cycle until there are no more digits to bring down. This works for 1-digit divisors, 2-digit divisors, and beyond.",
+      "content": "When numbers get bigger, we need a step-by-step method for dividing. That method is long division, and it follows four repeating steps: Divide, Multiply, Subtract, Bring down — DMSB. You repeat the DMSB cycle until there are no more digits to bring down. This works for 1-digit divisors, 2-digit divisors, and beyond.",
       "keyPoints": [
         "D — Divide: How many times does the divisor go into the current number? Write that digit on top.",
         "M — Multiply: Multiply the divisor by the digit you just wrote. Write the product below.",

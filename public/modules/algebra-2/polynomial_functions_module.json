@@ -33,7 +33,7 @@
     "Advanced factoring is the heart of this unit. Students already know GCF, trinomials, and difference of squares from the boot camp. Now add: grouping (4 terms), sum/difference of cubes, and substitution patterns (like x4 - 5x2 + 4 treated as u2 - 5u + 4).",
     "Division parallels numeric long division—make the analogy explicit. Synthetic division is the speed shortcut for (x - k) divisors only. The Remainder Theorem connects division to evaluation: f(k) = remainder.",
     "Graphing polynomials: the leading term controls end behavior, factored form gives zeros, and multiplicity determines whether the graph crosses (odd mult) or bounces (even mult). At most n-1 turning points for degree n.",
-    "Sum of cubes: a3 + b3 = (a + b)(a2 - ab + b2). Difference of cubes: a3 - b3 = (a - b)(a2 + ab + b2). SOAP mnemonic: Same, Opposite, Always Positive."
+    "Sum of cubes: a3 + b3 = (a + b)(a2 - ab + b2). Difference of cubes: a3 - b3 = (a - b)(a2 + ab + b2). Notice the pattern: the binomial sign matches, the middle term of the trinomial flips, and the last term is always positive."
   ],
   "aiFlexLevel": "high",
   "scaffold": [

@@ -174,7 +174,7 @@
         "Power rule: d/dx[xⁿ] = n·xⁿ⁻¹. Works for ALL real n — integers, fractions, negatives.",
         "Sum/Difference rule: d/dx[f ± g] = f' ± g'. Differentiate term by term.",
         "Product rule: d/dx[f·g] = f'·g + f·g'. Order: (derivative of first)(second) + (first)(derivative of second).",
-        "Quotient rule: d/dx[f/g] = [f'·g - f·g'] / g². Mnemonic: 'lo d-hi minus hi d-lo over lo-lo.'",
+        "Quotient rule: d/dx[f/g] = [f'·g - f·g'] / g². Order: (derivative of top)(bottom) minus (top)(derivative of bottom), all over (bottom) squared.",
         "Rewrite before differentiating: convert radicals and fractions to power form (e.g., √x = x^(1/2), 1/x² = x⁻²) to use the power rule instead of the quotient rule when possible."
       ],
       "lessonId": "basic-rules"
