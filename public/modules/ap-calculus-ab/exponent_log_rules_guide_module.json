@@ -1,11 +1,11 @@
 {
   "moduleId": "exponent_log_rules_guide",
-  "course": "Pre-Calculus",
+  "course": "AP Calculus AB",
   "unit": 0,
   "title": "Exponent & Logarithm Rules — Fluency Guide",
   "weeks": "1-2",
   "estimatedDuration": 45,
-  "description": "A fast-paced review of the five core exponent rules (product, quotient, power-of-a-power, zero exponent, negative exponent) and four logarithm rules (product, quotient, power, change of base). Students derive each rule from first principles, internalize them through creative mnemonics, and apply them in worked examples that build toward equation-solving fluency needed throughout Pre-Calculus.",
+  "description": "A fast-paced review of the five core exponent rules (product, quotient, power-of-a-power, zero exponent, negative exponent) and four logarithm rules (product, quotient, power, change of base). Students derive each rule from first principles, internalize them through creative mnemonics, and apply them in worked examples that build toward equation-solving fluency needed throughout AP Calculus AB.",
   "skills": [
     "exponent-rules",
     "logarithm-properties",
