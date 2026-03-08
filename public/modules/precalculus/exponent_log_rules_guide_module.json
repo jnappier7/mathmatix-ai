@@ -1,0 +1,325 @@
+{
+  "moduleId": "exponent_log_rules_guide",
+  "course": "Pre-Calculus",
+  "unit": 0,
+  "title": "Exponent & Logarithm Rules — Fluency Guide",
+  "weeks": "1-2",
+  "estimatedDuration": 45,
+  "description": "A fast-paced review of the five core exponent rules (product, quotient, power-of-a-power, zero exponent, negative exponent) and four logarithm rules (product, quotient, power, change of base). Students derive each rule from first principles, internalize them through creative mnemonics, and apply them in worked examples that build toward equation-solving fluency needed throughout Pre-Calculus.",
+  "skills": [
+    "exponent-rules",
+    "logarithm-properties",
+    "exponent-log-fluency"
+  ],
+  "standardsAlignment": [
+    "8.EE.1",
+    "N-RN.1",
+    "N-RN.2",
+    "A-SSE.3c",
+    "F-LE.4",
+    "F-BF.5"
+  ],
+  "goals": [
+    "Apply the five exponent rules (product, quotient, power-of-a-power, zero, negative) fluently to simplify expressions with numerical and variable bases",
+    "Recognize and apply the parallel structure between exponent rules and logarithm rules",
+    "Use the four logarithm properties (product, quotient, power, change of base) to expand, condense, and evaluate logarithmic expressions",
+    "Combine multiple rules in multi-step simplification problems involving coefficients, variables, and mixed operations"
+  ],
+  "instructionalStrategy": [
+    "Build every rule from repeated-multiplication patterns so students derive rules rather than memorize them. Show WHY aᵐ · aⁿ = aᵐ⁺ⁿ by expanding the multiplication.",
+    "Encourage creative mnemonics — raps, rhymes, stories. Students who can articulate a rule in their own words (e.g., 'multiply and divide are opposites — multiply means add exponents, divide means subtract') have deeper retention than those who only memorize formulas.",
+    "Make the exponent-to-log parallel explicit every time: product rule for exponents (add) maps to product rule for logs (add). Quotient and power rules follow the same logic. This halves the memorization burden.",
+    "Always distinguish between the coefficient and the base in problems like 3x² · 4x⁵. Students must multiply coefficients separately and only add exponents on matching bases.",
+    "For power-of-a-power problems like (2x³)², emphasize that the exponent applies to EVERYTHING inside the parentheses — the 2 is squared (not doubled), and the x³ exponent is multiplied by 2."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "exponent-rules",
+      "title": "The Five Exponent Rules — Built from Patterns",
+      "content": "Exponent rules aren't arbitrary — they all come from the pattern of repeated multiplication. Learn the pattern, and the rules stick forever.\n\n**1. Product Rule:** aᵐ · aⁿ = aᵐ⁺ⁿ\nWhen multiplying powers with the same base, ADD the exponents.\nWhy? 2³ · 2² = (2·2·2)(2·2) = 2⁵. You're combining groups of the same factor.\n\n**2. Quotient Rule:** aᵐ / aⁿ = aᵐ⁻ⁿ\nWhen dividing powers with the same base, SUBTRACT the exponents.\nWhy? 2⁵ / 2² = (2·2·2·2·2)/(2·2) = 2³. Factors cancel out.\nMemory aid: multiply and divide are opposites — if multiply means add exponents, then divide means subtract.\n\n**3. Power-of-a-Power Rule:** (aᵐ)ⁿ = aᵐ·ⁿ\nWhen raising a power to another power, MULTIPLY the exponents.\nWhy? (2³)² = 2³ · 2³ = 2⁶. You're repeating the power n times.\n\n**4. Zero Exponent Rule:** a⁰ = 1 (for a ≠ 0)\nAny non-zero base raised to the power of 0 is 1.\nWhy? aⁿ / aⁿ = aⁿ⁻ⁿ = a⁰, and anything divided by itself is 1.\nMemory aid: when your exponent is zero, one is always your hero.\n\n**5. Negative Exponent Rule:** a⁻ⁿ = 1/aⁿ (for a ≠ 0)\nA negative exponent means take the reciprocal.\nWhy? a² / a⁵ = a⁻³ = 1/a³. When you subtract and get a negative, the factor ends up in the denominator.\nMemory aid: if your exponent is negative, don't sweat it — just use the reciprocal.",
+      "keyPoints": [
+        "Product rule: same base, ADD exponents (aᵐ · aⁿ = aᵐ⁺ⁿ)",
+        "Quotient rule: same base, SUBTRACT exponents (aᵐ / aⁿ = aᵐ⁻ⁿ)",
+        "Power-of-a-power: MULTIPLY exponents ((aᵐ)ⁿ = aᵐ·ⁿ)",
+        "Zero exponent: a⁰ = 1 for any nonzero a",
+        "Negative exponent: a⁻ⁿ = 1/aⁿ — flip to the denominator",
+        "All five rules derive from repeated multiplication — understand the pattern and you never need to memorize"
+      ],
+      "lessonId": "exponent-rules-fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponent-rules",
+      "title": "Exponent Rules: Worked Examples",
+      "examples": [
+        {
+          "problem": "Simplify: 3x² · 4x⁵",
+          "solution": "Step 1: Multiply the coefficients: 3 · 4 = 12.\nStep 2: Apply the product rule to the variable part — same base x, so add exponents: x² · x⁵ = x²⁺⁵ = x⁷.\nAnswer: **12x⁷**.\n\nKey point: Coefficients are multiplied separately. Only the exponents on matching bases are added.",
+          "tip": "A common mistake is to add the coefficients (getting 7x⁷). Remember: coefficients are MULTIPLIED, exponents on the same base are ADDED."
+        },
+        {
+          "problem": "Simplify: 5x⁷ / (2x³)",
+          "solution": "Step 1: Divide the coefficients: 5/2.\nStep 2: Apply the quotient rule — same base x, so subtract exponents: x⁷ / x³ = x⁷⁻³ = x⁴.\nAnswer: **(5/2)x⁴**.\n\nVerify: The coefficient stays as a fraction, and the exponent decreases because we're dividing.",
+          "tip": "The quotient rule is the 'opposite' of the product rule: if multiplying means adding exponents, then dividing means subtracting exponents."
+        },
+        {
+          "problem": "Simplify: (2x³)²",
+          "solution": "Step 1: The exponent 2 applies to EVERYTHING inside the parentheses.\nStep 2: Square the coefficient: 2² = 4 (not 2 × 2 as 'double' — it's 2 raised to the power 2).\nStep 3: Apply power-of-a-power to the variable: (x³)² = x³·² = x⁶.\nAnswer: **4x⁶**.\n\nCritical insight: In this specific case, 2² = 4 and 2 × 2 = 4 give the same answer, but this is a coincidence. For (3x³)², the coefficient becomes 3² = 9, NOT 3 × 2 = 6. Always square (or cube, etc.) the coefficient — don't multiply it by the outer exponent.",
+          "tip": "The exponent outside the parentheses is applied as a POWER to the coefficient, not as a multiplier. (3x²)⁴ means 3⁴ · x⁸ = 81x⁸."
+        },
+        {
+          "problem": "Evaluate: 7⁰ + 4⁻²",
+          "solution": "Step 1: Apply zero exponent rule: 7⁰ = 1.\nStep 2: Apply negative exponent rule: 4⁻² = 1/4² = 1/16.\nStep 3: Add: 1 + 1/16 = 16/16 + 1/16 = 17/16.\nAnswer: **17/16**.",
+          "tip": "Zero exponent gives 1 regardless of the base (as long as base ≠ 0). Negative exponent means reciprocal — the sign of the exponent flips the position (numerator ↔ denominator), NOT the sign of the result."
+        }
+      ],
+      "lessonId": "exponent-rules-fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "exponent-rules",
+      "title": "We-Do: Exponent Rules Practice",
+      "problems": [
+        {
+          "id": "er-wp1",
+          "question": "Simplify: 6a³ · 5a⁴",
+          "answer": "Multiply coefficients: 6 · 5 = 30. Add exponents (product rule): a³ · a⁴ = a⁷. Answer: 30a⁷.",
+          "hints": [
+            "Multiply the coefficients (numbers in front) together: 6 × 5.",
+            "For the variable part, same base a — add the exponents: 3 + 4.",
+            "Answer: 30a⁷."
+          ]
+        },
+        {
+          "id": "er-wp2",
+          "question": "Simplify: 12y⁸ / (4y³)",
+          "answer": "Divide coefficients: 12/4 = 3. Subtract exponents (quotient rule): y⁸ / y³ = y⁵. Answer: 3y⁵.",
+          "hints": [
+            "Divide the coefficients: 12 ÷ 4 = 3.",
+            "Subtract exponents on matching base y: 8 - 3 = 5.",
+            "Answer: 3y⁵."
+          ]
+        },
+        {
+          "id": "er-wp3",
+          "question": "Simplify: (5m²)³",
+          "answer": "Cube the coefficient: 5³ = 125. Power-of-a-power: (m²)³ = m⁶. Answer: 125m⁶.",
+          "hints": [
+            "The exponent 3 applies to everything inside: both the 5 and the m².",
+            "5³ = 5 · 5 · 5 = 125. (m²)³ = m²·³ = m⁶.",
+            "Answer: 125m⁶."
+          ]
+        },
+        {
+          "id": "er-wp4",
+          "question": "Simplify: (3x⁴y²)² · x⁻³",
+          "answer": "First, apply the power: (3x⁴y²)² = 3² · x⁸ · y⁴ = 9x⁸y⁴. Then multiply by x⁻³: 9x⁸ · x⁻³ · y⁴ = 9x⁵y⁴. Answer: 9x⁵y⁴.",
+          "hints": [
+            "Start with (3x⁴y²)²: square everything inside — 3² = 9, (x⁴)² = x⁸, (y²)² = y⁴.",
+            "Now multiply 9x⁸y⁴ · x⁻³. Product rule on x: x⁸ · x⁻³ = x⁵.",
+            "Answer: 9x⁵y⁴."
+          ]
+        }
+      ],
+      "lessonId": "exponent-rules-fluency"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "logarithm-properties",
+      "title": "The Four Logarithm Rules — Mirror Images of Exponent Rules",
+      "content": "Logarithm rules are the mirror images of exponent rules. If you know one set, you already know the other.\n\n**The Bridge:** log_b(x) = y means b^y = x. Every log statement is an exponent statement in disguise.\n\n**1. Product Rule:** log_b(mn) = log_b(m) + log_b(n)\nThe log of a product is the SUM of the logs.\nWhy? If b^p = m and b^q = n, then mn = b^p · b^q = b^(p+q), so log_b(mn) = p + q.\nThis mirrors the exponent product rule: when you multiply, exponents ADD.\nMemory aid: When you've got a product inside a log, add the logs together — that's how you act!\n\n**2. Quotient Rule:** log_b(m/n) = log_b(m) - log_b(n)\nThe log of a quotient is the DIFFERENCE of the logs.\nThis mirrors the exponent quotient rule: when you divide, exponents SUBTRACT.\n\n**3. Power Rule:** log_b(m^n) = n · log_b(m)\nThe log of a power is the exponent TIMES the log of the base.\nThis mirrors the power-of-a-power rule: exponents MULTIPLY.\nThe exponent 'comes down' as a coefficient in front of the log.\n\n**4. Change of Base Formula:** log_b(a) = log_k(a) / log_k(b)\nYou can evaluate any logarithm by converting to a base your calculator knows (base 10 or base e).\nExample: log₅(20) = log(20)/log(5) = 1.301/0.699 ≈ 1.861.\n\n**CRITICAL WARNING:** log(a + b) ≠ log(a) + log(b). Logarithms distribute over MULTIPLICATION and DIVISION, NEVER over addition or subtraction. This is the #1 student error.",
+      "keyPoints": [
+        "Product rule: log_b(mn) = log_b(m) + log_b(n) — mirrors exponent product rule",
+        "Quotient rule: log_b(m/n) = log_b(m) - log_b(n) — mirrors exponent quotient rule",
+        "Power rule: log_b(m^n) = n · log_b(m) — mirrors power-of-a-power rule",
+        "Change of base: log_b(a) = log_k(a) / log_k(b) — converts to any base",
+        "NEVER distribute log over addition: log(a + b) ≠ log(a) + log(b)",
+        "Every log rule is a direct consequence of the corresponding exponent rule"
+      ],
+      "lessonId": "log-rules-fluency"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "logarithm-properties",
+      "title": "Logarithm Rules: Worked Examples",
+      "examples": [
+        {
+          "problem": "Simplify: log₂(8 · 4)",
+          "solution": "Method 1 — Product Rule:\nlog₂(8 · 4) = log₂(8) + log₂(4)\nlog₂(8) = 3 because 2³ = 8.\nlog₂(4) = 2 because 2² = 4.\n3 + 2 = **5**.\n\nMethod 2 — Direct:\nlog₂(8 · 4) = log₂(32) = 5 because 2⁵ = 32. ✓\n\nBoth methods confirm the answer is 5. The product rule lets us break complicated arguments into simpler pieces.",
+          "tip": "When evaluating logs of products, split them using the product rule. If you know the individual logs, the problem becomes simple addition."
+        },
+        {
+          "problem": "Expand: log₃(x⁴y² / z)",
+          "solution": "Step 1: Apply quotient rule — log of a fraction = difference of logs:\nlog₃(x⁴y²) - log₃(z)\n\nStep 2: Apply product rule to the numerator:\nlog₃(x⁴) + log₃(y²) - log₃(z)\n\nStep 3: Apply power rule — bring exponents down as coefficients:\n4·log₃(x) + 2·log₃(y) - log₃(z)\n\nAnswer: **4·log₃(x) + 2·log₃(y) - log₃(z)**.",
+          "tip": "When expanding, work from the outside in: quotient first, then product, then power. Each step peels away one layer of complexity."
+        },
+        {
+          "problem": "Condense: 3·log(x) - log(y) + (1/2)·log(z)",
+          "solution": "Step 1: Apply power rule in reverse — coefficients become exponents:\nlog(x³) - log(y) + log(z^(1/2))\n\nStep 2: Note that z^(1/2) = √z:\nlog(x³) - log(y) + log(√z)\n\nStep 3: Combine using product and quotient rules:\nlog(x³ · √z / y)\n\nAnswer: **log(x³√z / y)**.",
+          "tip": "Condensing reverses the expansion process: coefficients go up as exponents (power rule), addition becomes multiplication (product rule), subtraction becomes division (quotient rule)."
+        },
+        {
+          "problem": "Evaluate: log₅(125)",
+          "solution": "Ask: 5 to what power equals 125?\n5¹ = 5, 5² = 25, 5³ = 125.\nSo log₅(125) = **3**.\n\nAlternative using change of base:\nlog₅(125) = log(125)/log(5) = 2.0969/0.6990 ≈ 3. ✓",
+          "tip": "For exact values, try to express the argument as a power of the base. If that's not possible, use the change of base formula with your calculator."
+        }
+      ],
+      "lessonId": "log-rules-fluency"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "logarithm-properties",
+      "title": "We-Do: Logarithm Rules Practice",
+      "problems": [
+        {
+          "id": "lr-wp1",
+          "question": "Evaluate: log₃(9 · 27)",
+          "answer": "Product rule: log₃(9) + log₃(27) = 2 + 3 = 5. Verify: 9 · 27 = 243 = 3⁵. ✓",
+          "hints": [
+            "Split using the product rule: log₃(9 · 27) = log₃(9) + log₃(27).",
+            "3² = 9, so log₃(9) = 2. 3³ = 27, so log₃(27) = 3.",
+            "2 + 3 = 5. Answer: 5."
+          ]
+        },
+        {
+          "id": "lr-wp2",
+          "question": "Expand: log₂(a³b⁵ / c²)",
+          "answer": "Quotient rule: log₂(a³b⁵) - log₂(c²). Product rule: log₂(a³) + log₂(b⁵) - log₂(c²). Power rule: 3·log₂(a) + 5·log₂(b) - 2·log₂(c).",
+          "hints": [
+            "Start with quotient rule: fraction becomes subtraction.",
+            "Then product rule on the numerator: multiplication becomes addition.",
+            "Finally power rule: exponents come down as coefficients."
+          ]
+        },
+        {
+          "id": "lr-wp3",
+          "question": "Condense: 2·log(x) + log(y) - 4·log(z)",
+          "answer": "Power rule: log(x²) + log(y) - log(z⁴). Product rule: log(x²y) - log(z⁴). Quotient rule: log(x²y / z⁴).",
+          "hints": [
+            "Coefficients become exponents: 2·log(x) = log(x²), 4·log(z) = log(z⁴).",
+            "Addition becomes multiplication inside the log. Subtraction becomes division.",
+            "Final answer: log(x²y / z⁴)."
+          ]
+        },
+        {
+          "id": "lr-wp4",
+          "question": "Evaluate log₇(49) and log₇(1/7).",
+          "answer": "log₇(49) = 2 because 7² = 49. log₇(1/7) = -1 because 7⁻¹ = 1/7.",
+          "hints": [
+            "Ask: 7 to what power equals 49? Since 7² = 49, the answer is 2.",
+            "Ask: 7 to what power equals 1/7? Since 7⁻¹ = 1/7, the answer is -1.",
+            "Notice how the negative exponent rule connects directly to logs: 1/7 = 7⁻¹, so log₇(1/7) = -1."
+          ]
+        }
+      ],
+      "lessonId": "log-rules-fluency"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Exponent & Log Rules Mixed Practice",
+      "problems": [
+        {
+          "id": "elr-yp1",
+          "question": "Simplify: (2a³b)⁴ · a⁻⁵",
+          "answer": "(2a³b)⁴ = 2⁴ · a¹² · b⁴ = 16a¹²b⁴. Then 16a¹² · a⁻⁵ · b⁴ = 16a⁷b⁴.",
+          "skill": "exponent-rules",
+          "hints": [
+            "Apply the exponent 4 to everything inside: 2⁴ = 16, (a³)⁴ = a¹², b⁴.",
+            "Then multiply by a⁻⁵: product rule gives a¹² · a⁻⁵ = a⁷."
+          ]
+        },
+        {
+          "id": "elr-yp2",
+          "question": "Simplify: (x⁶y⁻²) / (x²y⁴)",
+          "answer": "Quotient rule on each base: x⁶⁻² · y⁻²⁻⁴ = x⁴y⁻⁶ = x⁴/y⁶.",
+          "skill": "exponent-rules",
+          "hints": [
+            "Apply quotient rule to each variable separately: x⁶/x² = x⁴ and y⁻²/y⁴ = y⁻⁶.",
+            "Convert the negative exponent: y⁻⁶ = 1/y⁶. Final answer: x⁴/y⁶."
+          ]
+        },
+        {
+          "id": "elr-yp3",
+          "question": "Evaluate: 3⁻² + 10⁰ - (1/2)³",
+          "answer": "3⁻² = 1/9. 10⁰ = 1. (1/2)³ = 1/8. Common denominator 72: 8/72 + 72/72 - 9/72 = 71/72.",
+          "skill": "exponent-rules",
+          "hints": [
+            "Evaluate each term: 3⁻² = 1/9, 10⁰ = 1, (1/2)³ = 1/8.",
+            "Find a common denominator (72) and combine: 8/72 + 72/72 - 9/72 = 71/72."
+          ]
+        },
+        {
+          "id": "elr-yp4",
+          "question": "Evaluate: log₄(64) + log₄(1/16)",
+          "answer": "log₄(64) = 3 because 4³ = 64. log₄(1/16) = -2 because 4⁻² = 1/16. Sum: 3 + (-2) = 1.",
+          "skill": "logarithm-properties",
+          "hints": [
+            "4³ = 64, so log₄(64) = 3. 4² = 16, so 4⁻² = 1/16, meaning log₄(1/16) = -2.",
+            "3 + (-2) = 1. Alternatively, product rule: log₄(64 · 1/16) = log₄(4) = 1."
+          ]
+        },
+        {
+          "id": "elr-yp5",
+          "question": "Expand: log₅(25x³ / √y)",
+          "answer": "log₅(25) + log₅(x³) - log₅(y^(1/2)) = 2 + 3·log₅(x) - (1/2)·log₅(y).",
+          "skill": "logarithm-properties",
+          "hints": [
+            "Quotient rule first: log₅(25x³) - log₅(√y). Note √y = y^(1/2).",
+            "Product rule on numerator: log₅(25) + log₅(x³) - log₅(y^(1/2)).",
+            "Evaluate log₅(25) = 2. Power rule: 3·log₅(x) and (1/2)·log₅(y)."
+          ]
+        },
+        {
+          "id": "elr-yp6",
+          "question": "Condense: (1/3)·ln(x) + ln(y) - 2·ln(z)",
+          "answer": "Power rule: ln(x^(1/3)) + ln(y) - ln(z²) = ln(∛x) + ln(y) - ln(z²). Product and quotient rules: ln(y·∛x / z²).",
+          "skill": "logarithm-properties",
+          "hints": [
+            "Coefficients become exponents: (1/3)·ln(x) = ln(∛x), 2·ln(z) = ln(z²).",
+            "Combine: addition → multiplication, subtraction → division. Answer: ln(y∛x / z²)."
+          ]
+        }
+      ],
+      "attemptsRequired": 3,
+      "skill": "exponent-rules",
+      "lessonId": "exponent-rules-fluency"
+    }
+  ],
+  "answerKeys": {
+    "er-wp1": "30a⁷",
+    "er-wp2": "3y⁵",
+    "er-wp3": "125m⁶",
+    "er-wp4": "9x⁵y⁴",
+    "lr-wp1": "5",
+    "lr-wp2": "3·log₂(a) + 5·log₂(b) - 2·log₂(c)",
+    "lr-wp3": "log(x²y / z⁴)",
+    "lr-wp4": "log₇(49) = 2, log₇(1/7) = -1",
+    "elr-yp1": "16a⁷b⁴",
+    "elr-yp2": "x⁴/y⁶",
+    "elr-yp3": "71/72",
+    "elr-yp4": "1",
+    "elr-yp5": "2 + 3·log₅(x) - (1/2)·log₅(y)",
+    "elr-yp6": "ln(y∛x / z²)"
+  },
+  "lessons": [
+    {
+      "lessonId": "exponent-rules-fluency",
+      "title": "Exponent Rules Fluency",
+      "order": 1
+    },
+    {
+      "lessonId": "log-rules-fluency",
+      "title": "Logarithm Rules Fluency",
+      "order": 2
+    }
+  ]
+}
