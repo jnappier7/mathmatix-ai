@@ -291,7 +291,9 @@
         },
         {
           "problem": "Order these fractions from least to greatest: 1/3, 3/4, 1/2.",
-          "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!"
+          "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!",
+          "thinkAloud": "Three fractions to put in order — that feels like a lot! Let me use a trick: I'll compare each one to 1/2, since 1/2 is easy to picture. Is 1/3 more or less than half? If I cut a pie into 3 pieces, one piece is less than half, so 1/3 is below 1/2. What about 3/4? Three out of four slices is definitely more than half. So now I know 1/3 is the smallest and 3/4 is the biggest, with 1/2 in the middle. Let me double-check using common denominators to be sure.",
+          "commonMistake": "A student might order them as 1/3, 3/4, 1/2 — thinking that since 3 < 4, 3/4 must come before 1/2. But you can't just compare random numbers from different fractions! You need a strategy: use benchmarks (like 1/2) or rewrite all fractions with the same denominator before comparing."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -380,15 +382,24 @@
       "examples": [
         {
           "problem": "Convert the mixed number 2 3/4 to an improper fraction.",
-          "solution": "Step 1: Multiply the whole number by the denominator: 2 x 4 = 8.\nStep 2: Add the numerator: 8 + 3 = 11.\nStep 3: Keep the same denominator: 4.\nSo 2 3/4 = 11/4.\n\nWhy this works: 2 wholes = 8/4, plus 3/4 more = 11/4 total."
+          "solution": "Step 1: Multiply the whole number by the denominator: 2 x 4 = 8.\nStep 2: Add the numerator: 8 + 3 = 11.\nStep 3: Keep the same denominator: 4.\nSo 2 3/4 = 11/4.\n\nWhy this works: 2 wholes = 8/4, plus 3/4 more = 11/4 total.",
+          "thinkAloud": "I have 2 and 3/4. Let me picture this as pizzas cut into 4 slices each. I have 2 whole pizzas — that's 4 slices plus 4 slices, which is 8 slices. Then I have 3 extra slices from a third pizza. So altogether, 8 + 3 = 11 slices, and each slice is a fourth. That gives me 11/4. For the shortcut: multiply the whole number (2) by the denominator (4), add the numerator (3), and keep the denominator (4).",
+          "commonMistake": "A student might write 2 3/4 = 23/4, just sticking the 2 and 3 together to make 23. But you need to MULTIPLY the whole number by the denominator first, then add the numerator. 2 times 4 is 8, then 8 plus 3 is 11. The answer is 11/4, not 23/4.",
+          "interpretation": "11/4 means you have 11 quarter-slices of pizza. That's more than 2 whole pizzas (which would be 8 slices) but less than 3 whole pizzas (which would be 12 slices). It's exactly 2 whole pizzas and 3 extra slices."
         },
         {
           "problem": "Convert the improper fraction 17/5 to a mixed number.",
-          "solution": "Step 1: Divide 17 by 5: 17 ÷ 5 = 3 remainder 2.\nStep 2: The quotient (3) becomes the whole number.\nStep 3: The remainder (2) becomes the new numerator, over the same denominator (5).\nSo 17/5 = 3 2/5.\n\nCheck: 3 x 5 + 2 = 17. It works!"
+          "solution": "Step 1: Divide 17 by 5: 17 ÷ 5 = 3 remainder 2.\nStep 2: The quotient (3) becomes the whole number.\nStep 3: The remainder (2) becomes the new numerator, over the same denominator (5).\nSo 17/5 = 3 2/5.\n\nCheck: 3 x 5 + 2 = 17. It works!",
+          "thinkAloud": "I have 17/5. That means 17 pieces, and each piece is one-fifth. How many whole groups of 5 can I make out of 17? Let me think... 5, 10, 15 — that's 3 groups of 5, and I've used up 15 pieces. I still have 17 minus 15 = 2 pieces left over. So I have 3 wholes and 2 fifths remaining. That's 3 2/5! I'll double-check: 3 times 5 plus 2 equals 17. Yes!",
+          "commonMistake": "A student might forget about the remainder and just write 3 instead of 3 2/5. Or they might put the wrong number as the remainder — for example, writing 3 5/2 by swapping the remainder and denominator. Remember: the REMAINDER goes on top (numerator), and the DENOMINATOR stays the same as the original fraction.",
+          "interpretation": "17/5 is the same as 3 2/5. Imagine you have 17 chocolate bar pieces and each whole bar is 5 pieces. You can build 3 complete chocolate bars with 2 extra pieces left over."
         },
         {
           "problem": "Place 1 2/3 on a number line.",
-          "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2."
+          "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2.",
+          "thinkAloud": "I see a mixed number: 1 2/3. The whole number part is 1, so I know this point lives somewhere between 1 and 2 on the number line. Now the fraction part is 2/3, which tells me how far past 1 to go. I need to split the space between 1 and 2 into 3 equal sections (because the denominator is 3), then hop over 2 of them (because the numerator is 2). That's where 1 2/3 goes!",
+          "commonMistake": "A student might place 1 2/3 between 0 and 1 instead of between 1 and 2. They forget about the whole number part! The '1' in 1 2/3 tells you that you've already passed the number 1. Then the 2/3 tells you how much farther to go between 1 and 2.",
+          "interpretation": "1 2/3 on the number line is past 1 but not quite to 2. It's two-thirds of the way from 1 to 2 — like if you're walking from your house (at 1) to your friend's house (at 2), you've covered most of the distance but still have a little bit left to go."
         }
       ],
       "lessonId": "fraction_concepts"

@@ -176,15 +176,24 @@
         },
         {
           "problem": "Determine if f(x) = x^(2/3) is differentiable at x = 0.",
-          "solution": "f(0) = 0. f'(0) = lim(h→0) h^(2/3)/h = lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). From the right: 1/h^(1/3) → +∞. From the left: 1/(-|h|)^(1/3) → -∞. The one-sided limits are +∞ and -∞ (opposite signs) — this is a cusp. Not differentiable at x = 0."
+          "solution": "f(0) = 0. f'(0) = lim(h→0) h^(2/3)/h = lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). From the right: 1/h^(1/3) → +∞. From the left: 1/(-|h|)^(1/3) → -∞. The one-sided limits are +∞ and -∞ (opposite signs) — this is a cusp. Not differentiable at x = 0.",
+          "thinkAloud": "Fractional exponents at x = 0 are classic differentiability trouble spots. Let me go straight to the limit definition: f'(0) = lim(h→0) [f(h) - f(0)]/h = lim(h→0) h^(2/3)/h. I'll simplify the exponent: 2/3 - 1 = -1/3, so this is lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). Now I need to check both sides — cube roots handle negatives, so the left and right limits might behave differently.",
+          "commonMistake": "Students confuse cusps with vertical tangents. For x^(2/3) at 0, the one-sided derivatives go to +∞ and -∞ (opposite signs) — that's a cusp. For x^(1/3), they both go to +∞ (same sign) — that's a vertical tangent. The distinction matters on the AP exam. Cusp = opposite infinities. Vertical tangent = same infinity.",
+          "interpretation": "The cusp at x = 0 means the graph of y = x^(2/3) comes to a sharp point. On the right side, the curve rises infinitely steeply; on the left side, it also rises but the tangent slope approaches -∞. No single tangent line can be drawn at the origin."
         },
         {
           "problem": "For f(x) = {x², x ≤ 1; 2x - 1, x > 1}, determine if f is differentiable at x = 1.",
-          "solution": "Check continuity first: lim(x→1⁻) x² = 1. lim(x→1⁺) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x²) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1."
+          "solution": "Check continuity first: lim(x→1⁻) x² = 1. lim(x→1⁺) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x²) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1.",
+          "thinkAloud": "Piecewise function at a boundary — I need my two-step checklist. Step 1: Is it continuous at x = 1? I check if both pieces give the same value. Step 2: If continuous, do the derivatives of the two pieces agree at x = 1? Only if both checks pass is f differentiable. A lot of students skip step 1, but you MUST check continuity first — if it fails, there's no need to check derivatives.",
+          "commonMistake": "Students sometimes jump straight to comparing derivatives without checking continuity first. If a piecewise function isn't continuous at the boundary, it's automatically not differentiable — you can stop there. In this problem continuity does hold, but always check it first. Another error: students check f(1) for both pieces but forget to verify the limits, writing 'f(1) = 1 from both sides' without showing the limit calculations.",
+          "decisionPoint": "I could check differentiability using the full limit definition (computing left and right limits of the difference quotient), or I could take the shortcut: differentiate each piece separately and compare at the boundary. The shortcut is valid only after confirming continuity. Since the pieces are simple polynomials, the shortcut saves time here.",
+          "interpretation": "f'(1) = 2 means the piecewise function transitions smoothly at x = 1 — the parabola y = x² meets the line y = 2x - 1 with the same slope, so there's no corner or break. The tangent line at x = 1 has slope 2, and the graph looks smooth through that point."
         },
         {
           "problem": "If g is differentiable at x = 5, what can you conclude about continuity? If g is continuous at x = 5, can you conclude differentiability?",
-          "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there."
+          "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there.",
+          "thinkAloud": "This is a conceptual/logical reasoning problem, not a computation. I need the theorem: differentiability implies continuity. I also need to know that the converse is FALSE and be ready to provide a counterexample. The key logical structure is: 'A implies B' does NOT mean 'B implies A.' I should give a specific counterexample for the converse direction — |x - 5| is the go-to.",
+          "commonMistake": "Students often state the relationship backwards: 'continuous implies differentiable.' This is the single most common conceptual error in this unit. The correct direction is differentiable → continuous (the stronger condition implies the weaker one). To remember: differentiability is 'harder to achieve' than continuity, so it implies continuity, not the other way around."
         }
       ],
       "lessonId": "differentiability"
@@ -214,7 +223,9 @@
       "examples": [
         {
           "problem": "Differentiate: f(x) = 4x⁵ - 3x³ + 7x - 2.",
-          "solution": "Apply power rule term by term: f'(x) = 4·5x⁴ - 3·3x² + 7·1 - 0 = 20x⁴ - 9x² + 7."
+          "solution": "Apply power rule term by term: f'(x) = 4·5x⁴ - 3·3x² + 7·1 - 0 = 20x⁴ - 9x² + 7.",
+          "thinkAloud": "Straightforward polynomial — I'll use the power rule on each term and the sum/difference rule to handle them separately. For each term: bring the exponent down as a coefficient, multiply by the existing coefficient, then reduce the exponent by 1. The constant -2 vanishes. The 7x term is really 7x¹, so it becomes 7·1·x⁰ = 7.",
+          "commonMistake": "Students often write the derivative of 7x as 7x instead of 7. Remember: d/dx[7x] = 7·1·x⁰ = 7. The x disappears. Similarly, students sometimes keep the constant -2 in the derivative. The derivative of any constant is 0 — it just drops out."
         },
         {
           "problem": "Differentiate: g(x) = (3x² + 1)(x⁴ - 2x).",
