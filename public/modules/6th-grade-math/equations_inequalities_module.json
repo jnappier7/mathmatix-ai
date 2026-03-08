@@ -58,15 +58,23 @@
       "examples": [
         {
           "problem": "Solve: x + 8 = 15",
-          "solution": "We need to get x alone. Since 8 is being added to x, we use the inverse — subtract 8 from both sides.\nx + 8 − 8 = 15 − 8\nx = 7\nCheck: 7 + 8 = 15 ✓ The scale balances."
+          "solution": "We need to get x alone. Since 8 is being added to x, we use the inverse — subtract 8 from both sides.\nx + 8 − 8 = 15 − 8\nx = 7\nCheck: 7 + 8 = 15 ✓ The scale balances.",
+          "thinkAloud": "Okay, I see x + 8 = 15. I need to figure out what number x is. Picture a balance scale: on the left side there's a mystery box (that's x) plus 8 blocks, and on the right side there are 15 blocks. Both sides weigh the same. If I take away 8 blocks from the left side, I have to take away 8 blocks from the right side too, or the scale tips. Let me subtract 8 from both sides... that leaves x all by itself on the left and 7 on the right. So x = 7! Let me check by plugging 7 back in: 7 + 8 = 15. Yep, the scale balances!",
+          "commonMistake": "A common mistake is subtracting 8 from only ONE side. Some students write x + 8 − 8 = 15, which gives x = 15. But that breaks the balance scale! If you only remove blocks from one side, the scale tips over. You MUST subtract 8 from both sides to keep it balanced. The wrong answer would be x = 15, and you can check: 15 + 8 = 23, not 15."
         },
         {
           "problem": "Solve: 3n = 24",
-          "solution": "3n means 3 times n. The inverse of multiplying by 3 is dividing by 3. Divide both sides by 3.\n3n ÷ 3 = 24 ÷ 3\nn = 8\nCheck: 3(8) = 24 ✓"
+          "solution": "3n means 3 times n. The inverse of multiplying by 3 is dividing by 3. Divide both sides by 3.\n3n ÷ 3 = 24 ÷ 3\nn = 8\nCheck: 3(8) = 24 ✓",
+          "thinkAloud": "I see 3n = 24. The 3n means 3 times some number. I need to find what number, multiplied by 3, gives me 24. On my balance scale, the left side has 3 bags that each hold the same number of blocks, and the right side has 24 blocks. Since n is being multiplied by 3, I need the opposite of multiplication — that's division. I'll divide both sides by 3. That gives me n = 8. Quick check: 3 times 8 is 24. It works!",
+          "commonMistake": "A common mistake is subtracting 3 instead of dividing by 3. Some students write 3n − 3 = 24 − 3, getting 3n = 21, and then they're stuck or get the wrong answer. Since n is being MULTIPLIED by 3, you need to DIVIDE by 3, not subtract 3. Subtracting 3 would give you a wrong path. The wrong answer from subtracting might lead to n = 7, but check: 3(7) = 21, not 24.",
+          "decisionPoint": "Here you need to pick the right inverse operation. The 3 is multiplied by n (3n means 3 × n), so the inverse is division. If the problem were n + 3 = 24, you'd subtract instead. Ask yourself: is the number being added, subtracted, multiplied, or divided? Then do the opposite."
         },
         {
           "problem": "Solve: 2x + 5 = 17",
-          "solution": "This is a two-step equation. Step 1: Undo the addition — subtract 5 from both sides.\n2x + 5 − 5 = 17 − 5\n2x = 12\nStep 2: Undo the multiplication — divide both sides by 2.\n2x ÷ 2 = 12 ÷ 2\nx = 6\nCheck: 2(6) + 5 = 12 + 5 = 17 ✓"
+          "solution": "This is a two-step equation. Step 1: Undo the addition — subtract 5 from both sides.\n2x + 5 − 5 = 17 − 5\n2x = 12\nStep 2: Undo the multiplication — divide both sides by 2.\n2x ÷ 2 = 12 ÷ 2\nx = 6\nCheck: 2(6) + 5 = 12 + 5 = 17 ✓",
+          "thinkAloud": "This one has TWO things happening to x: first it's multiplied by 2, then 5 is added. So I need two steps to undo it. I like to think of it like unwrapping a present — I undo the outer layer first (the + 5), then the inner layer (the × 2). Step 1: subtract 5 from both sides to peel off that outer layer. That gives me 2x = 12. Step 2: now divide both sides by 2 to peel off the inner layer. That gives me x = 6. Let me check: 2(6) + 5 = 12 + 5 = 17. Perfect!",
+          "commonMistake": "A common mistake is dividing by 2 FIRST before subtracting 5. If you try to divide everything by 2 first, you'd need to divide EVERY term: (2x + 5) ÷ 2 = 17 ÷ 2, which gives x + 2.5 = 8.5. That's messy and easy to mess up! The cleaner approach is always to undo addition/subtraction first, then undo multiplication/division. Another mistake: some students subtract 5 from only the right side and get 2x + 5 = 12, then x = 3.5 — but check: 2(3.5) + 5 = 12, not 17.",
+          "decisionPoint": "With a two-step equation, you need to decide which operation to undo first. The rule of thumb: undo addition or subtraction first (the outer layer), then undo multiplication or division (the inner layer). It's like reverse order of operations."
         }
       ],
       "lessonId": "equations_inequalities"
@@ -154,15 +162,22 @@
       "examples": [
         {
           "problem": "Solve: 3x + 2 = x + 10",
-          "solution": "Variables are on both sides. Subtract x from both sides to collect all x terms on the left.\n3x + 2 − x = x + 10 − x\n2x + 2 = 10\nNow it is a two-step equation. Subtract 2 from both sides.\n2x = 8\nDivide both sides by 2.\nx = 4\nCheck: Left side: 3(4) + 2 = 14. Right side: 4 + 10 = 14. Both sides equal 14 ✓"
+          "solution": "Variables are on both sides. Subtract x from both sides to collect all x terms on the left.\n3x + 2 − x = x + 10 − x\n2x + 2 = 10\nNow it is a two-step equation. Subtract 2 from both sides.\n2x = 8\nDivide both sides by 2.\nx = 4\nCheck: Left side: 3(4) + 2 = 14. Right side: 4 + 10 = 14. Both sides equal 14 ✓",
+          "thinkAloud": "Whoa, there's an x on BOTH sides of the equals sign! On my balance scale, I have boxes on both sides. I need to get all the boxes on one side. I see 3x on the left and 1x on the right. I'll move the smaller group (the 1x on the right) by subtracting x from both sides. That leaves me with 2x + 2 = 10. Hey, now this looks like a regular two-step equation! I know how to do those. Subtract 2 from both sides: 2x = 8. Divide both sides by 2: x = 4. Let me check BOTH sides: left is 3(4) + 2 = 14, right is 4 + 10 = 14. They match!",
+          "commonMistake": "A common mistake is subtracting x from only one side. Some students write 3x + 2 − x = x + 10, getting 2x + 2 = x + 10, which doesn't help — you still have x on both sides! You MUST subtract x from BOTH sides. Another mistake: some students subtract 3x from both sides instead of x, getting 2 = −2x + 10, which works but introduces negative numbers that are harder to deal with. The wrong answer from the first mistake could lead to going in circles and never solving.",
+          "decisionPoint": "I need to decide which side to move the variables to. I see 3x on the left and x on the right. I'll subtract the SMALLER variable term (x) from both sides. I could subtract 3x instead, but that would give me negative numbers, and working with positives is easier."
         },
         {
           "problem": "Solve: 5n − 3 = 2n + 9",
-          "solution": "Subtract 2n from both sides to collect variable terms on the left.\n5n − 3 − 2n = 2n + 9 − 2n\n3n − 3 = 9\nAdd 3 to both sides.\n3n = 12\nDivide both sides by 3.\nn = 4\nCheck: Left side: 5(4) − 3 = 17. Right side: 2(4) + 9 = 17. Both sides equal 17 ✓"
+          "solution": "Subtract 2n from both sides to collect variable terms on the left.\n5n − 3 − 2n = 2n + 9 − 2n\n3n − 3 = 9\nAdd 3 to both sides.\n3n = 12\nDivide both sides by 3.\nn = 4\nCheck: Left side: 5(4) − 3 = 17. Right side: 2(4) + 9 = 17. Both sides equal 17 ✓",
+          "thinkAloud": "Okay, I see n's on both sides again: 5n on the left and 2n on the right. I also have regular numbers on both sides: −3 on the left and +9 on the right. My plan: first, move the variable terms to one side by subtracting 2n from both sides (since 2n is the smaller group). That gives me 3n − 3 = 9. Now it's a two-step equation! Add 3 to both sides: 3n = 12. Divide by 3: n = 4. Check time: left side is 5(4) − 3 = 17, right side is 2(4) + 9 = 17. Both 17. Nailed it!",
+          "commonMistake": "A common mistake is forgetting the negative sign when collecting variable terms. Some students subtract 2n from the left side and get 5n − 2n − 3 = 3n − 3, which is correct. But others write 5n − 2n − 3 = 7n − 3 by accidentally adding instead of subtracting. That leads to 7n − 3 = 9, then 7n = 12, then n = 12/7 — a messy fraction that should be a red flag that something went wrong. The correct answer is n = 4."
         },
         {
           "problem": "Solve: 4x + 6 = x + 21",
-          "solution": "Subtract x from both sides.\n4x + 6 − x = x + 21 − x\n3x + 6 = 21\nSubtract 6 from both sides.\n3x = 15\nDivide both sides by 3.\nx = 5\nCheck: Left side: 4(5) + 6 = 26. Right side: 5 + 21 = 26. Both sides equal 26 ✓"
+          "solution": "Subtract x from both sides.\n4x + 6 − x = x + 21 − x\n3x + 6 = 21\nSubtract 6 from both sides.\n3x = 15\nDivide both sides by 3.\nx = 5\nCheck: Left side: 4(5) + 6 = 26. Right side: 5 + 21 = 26. Both sides equal 26 ✓",
+          "thinkAloud": "I see 4x on the left and x on the right. Time to round up all the x's on one side! I'll subtract x (the smaller amount) from both sides. 4x − x = 3x, and x − x = 0, so I get 3x + 6 = 21. Now I have a two-step equation I already know how to handle. Subtract 6 from both sides: 3x = 15. Divide by 3: x = 5. Let me verify by plugging 5 back into the ORIGINAL equation: left side is 4(5) + 6 = 26, right side is 5 + 21 = 26. Both sides are 26, so x = 5 is correct!",
+          "commonMistake": "A common mistake is subtracting 6 from both sides BEFORE dealing with the variable terms. If you start with 4x + 6 − 6 = x + 21 − 6, you get 4x = x + 15, which still has x on both sides — so you haven't really made progress toward the easiest path. It's not wrong, but it adds an extra step. A worse mistake: some students see 4x and x and just subtract them across the equals sign without doing it properly, writing 3x + 6 = 21 but forgetting that the x on the right should become 0. Always show the subtraction on BOTH sides."
         }
       ],
       "lessonId": "equations_inequalities"

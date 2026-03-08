@@ -271,16 +271,24 @@
         {
           "problem": "Simplify: 6a³ · 5a⁴",
           "solution": "This uses the **product rule**.\nStep 1: Multiply coefficients: 6 · 5 = 30.\nStep 2: Add exponents on base a: a³ · a⁴ = a³⁺⁴ = a⁷.\nAnswer: **30a⁷**.",
+          "thinkAloud": "Before solving: 'I see two things being multiplied, and they share the same base a. That's product rule territory. But I also have coefficients — 6 and 5. Those are just numbers, not powers of a, so I multiply them normally.' After: 'Why did I add the exponents but multiply the coefficients? Because a³ means a·a·a, and a⁴ means a·a·a·a — together that's 7 a's. But 6 and 5 aren't repeated multiplication of a, they're just numbers.'",
+          "commonMistake": "Students often add the coefficients too (6 + 5 = 11) instead of multiplying them. Expand it out: 6·a·a·a times 5·a·a·a·a. The 6 and 5 multiply, the a's accumulate.",
           "tip": "Pure product rule with coefficients. Multiply the numbers, add the exponents."
         },
         {
           "problem": "Simplify: (3x⁴y²)² · x⁻³",
-          "solution": "This uses **power-of-a-power**, then **product rule** with a **negative exponent**.\nStep 1: Apply the outer exponent to everything inside: (3x⁴y²)² = 3² · (x⁴)² · (y²)² = 9x⁸y⁴.\nStep 2: Now multiply by x⁻³ using product rule: 9x⁸y⁴ · x⁻³ = 9x⁸⁺⁽⁻³⁾y⁴ = 9x⁵y⁴.\nAnswer: **9x⁵y⁴**.\n\nNotice how multiple rules chain together: power rule first, then product rule, and the negative exponent is handled through addition (-3 is just a negative number being added).",
+          "solution": "This uses **power-of-a-power**, then **product rule** with a **negative exponent**.\nStep 1: Apply the outer exponent to everything inside: (3x⁴y²)² = 3² · (x⁴)² · (y²)² = 9x⁸y⁴.\nStep 2: Now multiply by x⁻³ using product rule: 9x⁸y⁴ · x⁻³ = 9x⁸⁺⁽⁻³⁾y⁴ = 9x⁵y⁴.\nAnswer: **9x⁵y⁴**.",
+          "thinkAloud": "Before solving: 'I see parentheses with an exponent outside AND a separate term being multiplied. I need to handle the parentheses FIRST — that's my power rule — before I can use the product rule to combine with x⁻³. Inside-out, just like order of operations.' Decision point: 'Could I distribute the x⁻³ inside the parentheses first? Let me think... no, the parentheses are being squared, not multiplied by x⁻³. The structure is (stuff)² · x⁻³, so I square first, THEN multiply.'",
+          "commonMistake": "The #1 error: students double the coefficient (3 × 2 = 6) instead of squaring it (3² = 9). The exponent applies to EVERYTHING inside. Use a non-coincidental base to see it: (3x)² = 9x², not 6x². If the base were 2 instead of 3, (2x)² = 4x² — clearly squaring, not doubling.",
+          "decisionPoint": "Which rule first? Always work inside-out: parentheses (power rule) before multiplication (product rule). If you try to combine x⁴ and x⁻³ before squaring, you'd get the wrong answer because the x⁴ hasn't been squared yet.",
           "tip": "In multi-step problems, work inside-out: handle parentheses first (power rule), then multiplication/division (product/quotient rule)."
         },
         {
           "problem": "Simplify: (x⁶y⁻²) / (x²y⁴)",
           "solution": "This uses the **quotient rule** and **negative exponents**.\nStep 1: Apply quotient rule to each base:\nx: x⁶/x² = x⁶⁻² = x⁴\ny: y⁻²/y⁴ = y⁻²⁻⁴ = y⁻⁶\nStep 2: Convert negative exponent: y⁻⁶ = 1/y⁶.\nAnswer: **x⁴/y⁶**.",
+          "thinkAloud": "Before solving: 'I see a fraction with the same bases on top and bottom — that's quotient rule. I'll handle each base separately.' After solving: 'Let me verify. x⁴/y⁶ means x⁴ · y⁻⁶. If I multiply back by x²y⁴ (the denominator), I should get x⁶y⁻². Check: x⁴ · x² = x⁶ ✓, y⁻⁶ · y⁴ = y⁻² ✓. It checks out.'",
+          "commonMistake": "The sign trap on y: students compute -2 - 4 as -2 or +2 instead of -6. Walk through it explicitly: 'I'm subtracting the bottom exponent FROM the top: (-2) - (4) = -2 - 4 = -6. The negative in the original exponent and the subtraction from the quotient rule BOTH contribute.'",
+          "interpretation": "The negative exponent on y means y ends up in the denominator. A negative exponent is just the quotient rule telling you the denominator had MORE of that base than the numerator did.",
           "tip": "When subtracting exponents with negatives, be careful with signs: -2 - 4 = -6, not -2."
         }
       ],
@@ -525,11 +533,17 @@
         {
           "problem": "Expand: log₃(x⁴y² / z)",
           "solution": "Step 1 — Quotient rule (fraction → subtraction):\nlog₃(x⁴y²) - log₃(z)\n\nStep 2 — Product rule on numerator (product → addition):\nlog₃(x⁴) + log₃(y²) - log₃(z)\n\nStep 3 — Power rule (exponents come down):\n4·log₃(x) + 2·log₃(y) - log₃(z)\n\nAnswer: **4·log₃(x) + 2·log₃(y) - log₃(z)**.",
+          "thinkAloud": "Before solving: 'I see a log with a fraction inside — that's the quotient rule. But the numerator is also a product, so I'll need the product rule too. And there are exponents on x and y, so the power rule will finish it off. The order matters: I work outside-in. The outermost structure is a fraction, so quotient rule first.' After solving: 'Notice the z has no exponent — it's just log₃(z), coefficient of 1. The exponents only come down when they're NOT already 1.'",
+          "decisionPoint": "Why quotient rule first, not power rule? Because the fraction is the outermost structure. If I pulled down exponents first, I'd write 4·log₃(x) + 2·log₃(y²/z) — wait, that's wrong. The exponents are only on x and y, not on the whole fraction. I have to break apart the fraction FIRST, then deal with each piece.",
+          "commonMistake": "Students often try to apply the power rule to z even though z = z¹. They write 1·log₃(z) which is correct but unnecessary. More dangerously, some apply the power rule to the entire argument: '4·2·log₃(xyz)' — that's completely wrong. Each rule applies to a specific STRUCTURE (product, quotient, power), not to the whole expression at once.",
           "tip": "When expanding, work outside-in: quotient first, then product, then power."
         },
         {
           "problem": "Condense: 3·log(x) - log(y) + (1/2)·log(z)",
           "solution": "Step 1 — Power rule in reverse (coefficients → exponents):\nlog(x³) - log(y) + log(z^(1/2)) = log(x³) - log(y) + log(√z)\n\nStep 2 — Product rule (addition → multiplication):\nlog(x³ · √z) - log(y)\n\nStep 3 — Quotient rule (subtraction → division):\nlog(x³√z / y)\n\nAnswer: **log(x³√z / y)**.",
+          "thinkAloud": "Before solving: 'Condensing is expanding in REVERSE. When I expanded, I went quotient → product → power (outside-in). So to condense, I reverse that: power → product → quotient (inside-out). Coefficients become exponents first, then I combine.' After: 'Let me verify by expanding my answer back: log(x³√z / y) → quotient: log(x³√z) - log(y) → product: log(x³) + log(√z) - log(y) → power: 3·log(x) + (1/2)·log(z) - log(y). That matches the original (just reordered). ✓'",
+          "commonMistake": "Grouping error: students condense the addition (log(x³) + log(√z)) but forget that the subtraction of log(y) applies to the WHOLE thing, not just log(√z). The minus sign means y goes in the denominator of the final fraction, not subtracted from z.",
+          "interpretation": "Expanding and condensing are inverse operations — like distributing and factoring. If you can do one, you can check your work by doing the other. Always verify by reversing.",
           "tip": "Condensing is expanding in reverse: coefficients go up (power), addition becomes multiplication (product), subtraction becomes division (quotient)."
         }
       ],

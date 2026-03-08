@@ -67,19 +67,33 @@
       "examples": [
         {
           "problem": "Use the limit definition (h-form) to find f'(x) for f(x) = x² + 3x.",
-          "solution": "f'(x) = lim(h→0) [(x+h)² + 3(x+h) - (x² + 3x)] / h = lim(h→0) [x² + 2xh + h² + 3x + 3h - x² - 3x] / h = lim(h→0) [2xh + h² + 3h] / h = lim(h→0) (2x + h + 3) = 2x + 3."
+          "solution": "f'(x) = lim(h→0) [(x+h)² + 3(x+h) - (x² + 3x)] / h = lim(h→0) [x² + 2xh + h² + 3x + 3h - x² - 3x] / h = lim(h→0) [2xh + h² + 3h] / h = lim(h→0) (2x + h + 3) = 2x + 3.",
+          "thinkAloud": "Okay, I see a polynomial and they want the h-form definition. My plan: plug (x+h) into f everywhere I see x, subtract the original f(x), divide by h, then take the limit. The key move is expanding (x+h)² carefully — that's where most algebra errors happen. After I expand and subtract, I should see every surviving term has an h I can factor out, which lets me cancel the h in the denominator. If I can't cancel the h, I made an algebra mistake somewhere.",
+          "commonMistake": "Students often get f'(x) = 2x instead of 2x + 3 because they forget to distribute the 3 through (x+h). They write f(x+h) = (x+h)² + 3x instead of (x+h)² + 3(x+h). Every x in the original function must be replaced with (x+h) — including the x in the linear term.",
+          "interpretation": "The derivative 2x + 3 is a function that gives the slope of the tangent line to y = x² + 3x at any x-value. For example, at x = 1 the slope is 5, meaning the curve is rising at 5 units up per 1 unit right at that point."
         },
         {
           "problem": "Use the limit definition (x-form) to find f'(4) for f(x) = √x.",
-          "solution": "f'(4) = lim(x→4) [√x - √4] / (x - 4) = lim(x→4) (√x - 2) / (x - 4). Rationalize: multiply by (√x + 2)/(√x + 2): (x - 4) / [(x - 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4."
+          "solution": "f'(4) = lim(x→4) [√x - √4] / (x - 4) = lim(x→4) (√x - 2) / (x - 4). Rationalize: multiply by (√x + 2)/(√x + 2): (x - 4) / [(x - 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4.",
+          "thinkAloud": "This is the x-form definition, so I'm computing a specific derivative at a point, not a general derivative function. I see √x in the numerator, which means direct substitution gives 0/0 — an indeterminate form. With square roots, my go-to move is rationalizing the numerator by multiplying by the conjugate. That should create a difference of squares that cancels the (x - 4) in the denominator.",
+          "commonMistake": "Students try to 'simplify' (√x - 2)/(x - 4) by canceling — they write √x/x - 2/4 or split the fraction incorrectly. You can't split a fraction across a subtraction in the denominator. The correct technique is multiplying numerator and denominator by the conjugate (√x + 2).",
+          "decisionPoint": "When I see 0/0 with a square root, I have two options: rationalize the numerator, or rewrite (x - 4) as (√x - 2)(√x + 2) by recognizing the difference of squares. Both work — rationalizing is more systematic and reliable for students who don't spot the factoring.",
+          "interpretation": "f'(4) = 1/4 means the tangent line to y = √x at x = 4 has slope 1/4. The curve is rising gently — for each unit increase in x near x = 4, y increases by about 0.25."
         },
         {
           "problem": "Find f'(x) using the definition for f(x) = 1/x, then write the equation of the tangent line at x = 2.",
-          "solution": "f'(x) = lim(h→0) [1/(x+h) - 1/x] / h = lim(h→0) [x - (x+h)] / [hx(x+h)] = lim(h→0) -h / [hx(x+h)] = lim(h→0) -1/[x(x+h)] = -1/x². At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1."
+          "solution": "f'(x) = lim(h→0) [1/(x+h) - 1/x] / h = lim(h→0) [x - (x+h)] / [hx(x+h)] = lim(h→0) -h / [hx(x+h)] = lim(h→0) -1/[x(x+h)] = -1/x². At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1.",
+          "thinkAloud": "Two parts here: find the derivative using the definition, then use it for a tangent line. For the definition part, I need to combine 1/(x+h) and 1/x into a single fraction — that means finding a common denominator. After simplifying, I should get an h in the numerator that cancels the h in the denominator. For the tangent line, I need two things: the point (plug x = 2 into f) and the slope (plug x = 2 into f'). Then I use point-slope form.",
+          "commonMistake": "Students frequently get the sign wrong in the common-denominator step, writing [x + (x+h)] instead of [x - (x+h)] in the numerator. Remember: 1/(x+h) - 1/x = [x - (x+h)] / [x(x+h)], not [x + (x+h)]. This sign error gives f'(x) = +1/x² instead of -1/x², and the tangent line slopes the wrong way.",
+          "decisionPoint": "For the tangent line, I could use slope-intercept form (y = mx + b) or point-slope form (y - y₁ = m(x - x₁)). Point-slope is better here because I already have the point and slope — I don't have to solve for b separately. On the AP exam, point-slope is almost always faster.",
+          "interpretation": "f'(2) = -1/4 means the curve y = 1/x is decreasing at x = 2 with a slope of -1/4. The tangent line y = -x/4 + 1 is the best linear approximation of 1/x near x = 2."
         },
         {
           "problem": "The definition of the derivative of g at x = 5 is given as lim(h→0) [(5+h)³ - 125] / h. Identify the function g and find this limit.",
-          "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75."
+          "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75.",
+          "thinkAloud": "This is a 'recognize the definition' problem — the AP loves these. I need to match the given limit to the template lim(h→0) [g(a+h) - g(a)] / h. I can see (5+h)³, so a = 5 and g(x) = x³, which makes g(5) = 125. That checks out. Now I just need to expand (5+h)³ carefully using the binomial expansion or by multiplying it out step by step.",
+          "commonMistake": "Students often expand (5+h)³ incorrectly, especially the middle terms. The most common error is writing (5+h)³ = 125 + 25h + 5h² + h³, using coefficients 1-5-5-1 instead of the correct 1-3-3-1 pattern (giving 125 + 75h + 15h² + h³). Remember: (a+b)³ = a³ + 3a²b + 3ab² + b³.",
+          "interpretation": "g'(5) = 75 means the slope of the tangent line to y = x³ at x = 5 is 75. The curve is rising steeply there — for a tiny nudge in x near 5, y changes about 75 times as much."
         }
       ],
       "lessonId": "derivative-definition"
@@ -108,11 +122,17 @@
       "examples": [
         {
           "problem": "A particle moves along the x-axis with position s(t) = t³ - 6t² + 9t + 2 (feet, seconds). Find the velocity at t = 1 and interpret.",
-          "solution": "v(t) = s'(t) = 3t² - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec — it is momentarily at rest (changing direction)."
+          "solution": "v(t) = s'(t) = 3t² - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec — it is momentarily at rest (changing direction).",
+          "thinkAloud": "This is a motion problem, so I know the drill: position → velocity → acceleration means take successive derivatives. They want velocity, so I differentiate s(t) once. I'll use the power rule since it's a polynomial. After finding v(t), I plug in t = 1. Then I need to interpret — the AP rubric requires a sentence with units and context, not just a number.",
+          "commonMistake": "Students often say 'the particle is not moving' or 'the particle is stopped' when v(1) = 0. On the AP exam, you need to be more precise: the particle is momentarily at rest. Saying 'stopped' implies it stays stopped, but v(t) = 3t² - 12t + 9 = 3(t-1)(t-3) changes sign at t = 1, so the particle immediately starts moving again — it's changing direction.",
+          "interpretation": "v(1) = 0 ft/sec means the tangent line to the position graph at t = 1 is horizontal. The particle is at position s(1) = 6 feet and is momentarily at rest. Since v changes from positive to negative at t = 1, the particle reverses direction here — it was moving right and is about to move left."
         },
         {
           "problem": "The cost to produce x widgets is C(x) = 500 + 8x - 0.02x² dollars. Find and interpret C'(100).",
-          "solution": "C'(x) = 8 - 0.04x. C'(100) = 8 - 4 = 4. Interpretation: When 100 widgets are being produced, the cost is increasing at a rate of $4 per additional widget. This is the marginal cost of the 101st widget."
+          "solution": "C'(x) = 8 - 0.04x. C'(100) = 8 - 4 = 4. Interpretation: When 100 widgets are being produced, the cost is increasing at a rate of $4 per additional widget. This is the marginal cost of the 101st widget.",
+          "thinkAloud": "I see a cost function — this is an economics application. The derivative of cost is marginal cost, which tells us approximately how much one more unit costs to produce. I'll differentiate term by term: the 500 is a fixed cost and drops out, the 8x gives 8, and -0.02x² gives -0.04x by the power rule. Then I evaluate at x = 100.",
+          "commonMistake": "Students sometimes compute C(101) - C(100) = $3.98 and are confused when C'(100) = $4. These are not the same! C'(100) is the instantaneous rate of change — the best linear approximation of the cost of one more widget. The actual cost difference C(101) - C(100) is the exact cost of the 101st widget. They're close but not identical. On the AP exam, use the derivative value, not the difference.",
+          "interpretation": "C'(100) = 4 means that at a production level of 100 widgets, each additional widget costs approximately $4 to produce. Notice that the marginal cost is decreasing (since C''(x) = -0.04 < 0), so there are economies of scale — the 200th widget would be even cheaper to produce."
         },
         {
           "problem": "Water drains from a tank. The volume V(t) (gallons) at time t (minutes) satisfies V(3) = 50 and V'(3) = -8. Interpret V'(3) in context.",
