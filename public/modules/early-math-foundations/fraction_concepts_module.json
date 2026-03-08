@@ -488,15 +488,24 @@
       "examples": [
         {
           "problem": "What is 1/3 of 24?",
-          "solution": "We need to find 1/3 of 24.\nStep 1: Divide 24 by the denominator (3): 24 ÷ 3 = 8.\nStep 2: Multiply by the numerator (1): 8 x 1 = 8.\nSo 1/3 of 24 = 8.\n\nPicture it: 24 gummy bears split into 3 equal groups. Each group has 8 gummy bears. One group (1/3) = 8."
+          "solution": "We need to find 1/3 of 24.\nStep 1: Divide 24 by the denominator (3): 24 ÷ 3 = 8.\nStep 2: Multiply by the numerator (1): 8 x 1 = 8.\nSo 1/3 of 24 = 8.\n\nPicture it: 24 gummy bears split into 3 equal groups. Each group has 8 gummy bears. One group (1/3) = 8.",
+          "thinkAloud": "I need to find 1/3 of 24. Let me picture this: I have 24 gummy bears and I want to split them into 3 equal groups. The denominator (3) tells me how many groups to make. 24 divided by 3 is... 8! So each group has 8 gummy bears. The numerator (1) tells me I want just 1 of those groups. 8 times 1 is 8. So 1/3 of 24 is 8 gummy bears!",
+          "commonMistake": "A student might divide 24 by the numerator (1) instead of the denominator (3), getting 24. Or they might multiply 24 by 3 and get 72. Remember the order: DIVIDE by the bottom number first to make equal groups, THEN multiply by the top number to count how many groups you want.",
+          "interpretation": "1/3 of 24 equals 8. If you had 24 gummy bears and shared them equally with 2 friends (3 people total), each person would get exactly 8 gummy bears."
         },
         {
           "problem": "What is 3/4 of 20?",
-          "solution": "Step 1: Divide 20 by the denominator (4): 20 ÷ 4 = 5.\nStep 2: Multiply by the numerator (3): 5 x 3 = 15.\nSo 3/4 of 20 = 15.\n\nPicture it: 20 stickers split into 4 equal groups of 5. You want 3 of those groups: 5 + 5 + 5 = 15 stickers."
+          "solution": "Step 1: Divide 20 by the denominator (4): 20 ÷ 4 = 5.\nStep 2: Multiply by the numerator (3): 5 x 3 = 15.\nSo 3/4 of 20 = 15.\n\nPicture it: 20 stickers split into 4 equal groups of 5. You want 3 of those groups: 5 + 5 + 5 = 15 stickers.",
+          "thinkAloud": "3/4 of 20. Let me line up 20 stickers and split them into 4 equal groups — the denominator tells me 4 groups. 20 divided by 4 is 5, so each group has 5 stickers. Now the numerator says I want 3 of those groups. So I count: 5 stickers, plus 5 more stickers, plus 5 more stickers. That's 5 times 3 = 15 stickers!",
+          "commonMistake": "A student might do the steps in the wrong order — multiplying 20 times 3 first to get 60, then struggling to divide 60 by 4 (which still gives 15, but is harder). Or worse, they might multiply 20 by 3 and forget to divide, answering 60. Always divide by the denominator FIRST to keep the numbers small and easy.",
+          "interpretation": "3/4 of 20 equals 15. That means if you had 20 stickers and gave away three-fourths of them, you'd give away 15 stickers and keep only 5 for yourself."
         },
         {
           "problem": "A baker made 30 cookies. She gave 2/5 of them to her neighbor. How many cookies did the neighbor get?",
-          "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!"
+          "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!",
+          "thinkAloud": "The baker made 30 cookies and gave 2/5 away. I see the word 'of,' and that tells me I need to find a fraction of a number. First, I divide the 30 cookies into 5 equal groups — imagine laying them out on 5 plates. 30 divided by 5 is 6, so each plate gets 6 cookies. Now the neighbor gets 2 of those plates (because the numerator is 2). That's 6 plus 6 = 12 cookies! Let me check: 12 out of 30... that simplifies to 2/5. It works!",
+          "commonMistake": "A student might divide 30 by 2 (the numerator) instead of 5 (the denominator), getting 15. Then they might multiply 15 by 5 and get 75, which doesn't even make sense — you can't give away more cookies than you baked! Always divide by the DENOMINATOR (bottom number) first.",
+          "interpretation": "The neighbor got 12 out of the 30 cookies. That's 2/5 of the batch — like splitting all the cookies into 5 equal bags of 6 cookies each, and handing 2 bags to the neighbor."
         }
       ],
       "lessonId": "fraction_concepts"

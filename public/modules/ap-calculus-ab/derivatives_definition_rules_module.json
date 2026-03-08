@@ -229,15 +229,23 @@
         },
         {
           "problem": "Differentiate: g(x) = (3x² + 1)(x⁴ - 2x).",
-          "solution": "Product rule: g'(x) = (6x)(x⁴ - 2x) + (3x² + 1)(4x³ - 2). Expand: 6x⁵ - 12x² + 12x⁵ - 6x² + 4x³ - 2 = 18x⁵ + 4x³ - 18x² - 2. (Or expand first: 3x⁶ + x⁴ - 6x³ - 2x, then differentiate: 18x⁵ + 4x³ - 18x² - 2.)"
+          "solution": "Product rule: g'(x) = (6x)(x⁴ - 2x) + (3x² + 1)(4x³ - 2). Expand: 6x⁵ - 12x² + 12x⁵ - 6x² + 4x³ - 2 = 18x⁵ + 4x³ - 18x² - 2. (Or expand first: 3x⁶ + x⁴ - 6x³ - 2x, then differentiate: 18x⁵ + 4x³ - 18x² - 2.)",
+          "thinkAloud": "I see two factors multiplied — that screams product rule. Let me label them: first = (3x² + 1), second = (x⁴ - 2x). Product rule says: (derivative of first)(second) + (first)(derivative of second). I'll differentiate each factor separately, then plug into the formula. After that, I'll expand and combine like terms to simplify.",
+          "commonMistake": "Students often just multiply the derivatives: they write g'(x) = (6x)(4x³ - 2) = 24x⁴ - 12x. This is completely wrong — you can't just differentiate each factor and multiply. The product rule requires TWO terms added together: f'g + fg'. Forgetting one of those terms is the #1 product rule error.",
+          "decisionPoint": "I could either apply the product rule directly or expand the product first and then differentiate term by term. For two polynomials like these, expanding first is actually easier and less error-prone — it avoids the product rule entirely. But I'm using the product rule here for practice. On the AP exam, if the factors are polynomials and the product isn't too long, expanding first is often faster."
         },
         {
           "problem": "Differentiate: h(x) = (2x + 5)/(x² - 1).",
-          "solution": "Quotient rule: h'(x) = [2(x² - 1) - (2x + 5)(2x)] / (x² - 1)². Numerator: 2x² - 2 - 4x² - 10x = -2x² - 10x - 2. So h'(x) = (-2x² - 10x - 2)/(x² - 1)² = -2(x² + 5x + 1)/(x² - 1)²."
+          "solution": "Quotient rule: h'(x) = [2(x² - 1) - (2x + 5)(2x)] / (x² - 1)². Numerator: 2x² - 2 - 4x² - 10x = -2x² - 10x - 2. So h'(x) = (-2x² - 10x - 2)/(x² - 1)² = -2(x² + 5x + 1)/(x² - 1)².",
+          "thinkAloud": "Fraction of two functions — I'll use the quotient rule. Let me set hi = 2x + 5 (numerator) and lo = x² - 1 (denominator). The quotient rule is (lo · d-hi - hi · d-lo) / lo². The mnemonic 'lo d-hi minus hi d-lo over lo-lo' helps me remember the order. The subtraction order matters — if I flip it, I get the wrong sign. After applying the formula, I'll expand the numerator and simplify.",
+          "commonMistake": "The most frequent quotient rule error is reversing the subtraction order: writing (f·g' - f'·g) instead of (f'·g - f·g'). Students get h'(x) = [(2x+5)(2x) - 2(x²-1)] / (x²-1)² = (2x² + 10x + 2)/(x²-1)², which has the wrong sign on every term. Remember: 'lo d-hi MINUS hi d-lo' — the denominator's derivative always comes with the minus sign."
         },
         {
           "problem": "Differentiate by rewriting first: f(x) = (3/x²) + 5√x - 4/∛x.",
-          "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3))."
+          "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3)).",
+          "thinkAloud": "These are radicals and fractions, but the problem says 'rewrite first' — that's my cue to convert everything to power form before differentiating. 3/x² = 3x⁻², √x = x^(1/2), and 1/∛x = x^(-1/3). Once everything is in xⁿ form, I can use the power rule on each term. After differentiating, I'll convert back to radical/fraction form for a cleaner final answer.",
+          "commonMistake": "Students frequently make sign errors with negative exponents. For the term -4x^(-1/3), the derivative is -4·(-1/3)·x^(-1/3 - 1) = (4/3)x^(-4/3). The two negatives (the -4 coefficient and the -1/3 exponent) multiply to give a positive result. Students who miss one negative get -(4/3)x^(-4/3) instead.",
+          "decisionPoint": "I could differentiate 3/x² using the quotient rule (treating it as 3 over x²) or by rewriting as 3x⁻² and using the power rule. The power rule approach is vastly simpler — the quotient rule would give the same answer but with more steps and more room for error. Always rewrite radicals and simple fractions as powers before differentiating."
         }
       ],
       "lessonId": "basic-rules"
@@ -267,19 +275,28 @@
       "examples": [
         {
           "problem": "Differentiate: f(x) = 3sin x - 2cos x + eˣ.",
-          "solution": "f'(x) = 3cos x - 2(-sin x) + eˣ = 3cos x + 2sin x + eˣ. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x."
+          "solution": "f'(x) = 3cos x - 2(-sin x) + eˣ = 3cos x + 2sin x + eˣ. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x.",
+          "thinkAloud": "Three terms, each a constant multiple of a function whose derivative I should have memorized. I'll go term by term: d/dx[sin x] = cos x, d/dx[cos x] = -sin x (watch that negative!), and d/dx[eˣ] = eˣ. The constants pull out. The tricky part is the second term: -2 times the derivative of cos x gives -2(-sin x) = +2sin x. I need to be careful with the double negative.",
+          "commonMistake": "Students frequently write f'(x) = 3cos x - 2sin x + eˣ, getting the sign wrong on the second term. The error happens because they remember d/dx[cos x] = -sin x but then forget they already have a -2 coefficient. So -2 · (-sin x) = +2sin x, not -2sin x. Whenever you see a negative coefficient in front of cos x, flag the double negative."
         },
         {
           "problem": "Differentiate: g(x) = x² · tan x.",
-          "solution": "Product rule: g'(x) = 2x · tan x + x² · sec²x. No further simplification needed unless a specific form is requested."
+          "solution": "Product rule: g'(x) = 2x · tan x + x² · sec²x. No further simplification needed unless a specific form is requested.",
+          "thinkAloud": "Two functions multiplied together — I need the product rule. First function is x² (derivative: 2x), second is tan x (derivative: sec²x). Product rule gives (2x)(tan x) + (x²)(sec²x). I should double-check: is d/dx[tan x] = sec²x? Yes. I won't try to simplify further — combining trig terms usually makes things messier, not cleaner.",
+          "commonMistake": "Students sometimes write d/dx[tan x] = sec x · tan x, confusing it with d/dx[sec x]. The derivatives of tan and sec are easy to mix up: d/dx[tan x] = sec²x, d/dx[sec x] = sec x · tan x. A mnemonic: tan and sec² both live in the Pythagorean identity 1 + tan²x = sec²x, so they're 'paired' in derivatives too."
         },
         {
           "problem": "Differentiate: h(x) = eˣ / (x + 1).",
-          "solution": "Quotient rule: h'(x) = [eˣ(x + 1) - eˣ(1)] / (x + 1)² = eˣ(x + 1 - 1) / (x + 1)² = x·eˣ / (x + 1)²."
+          "solution": "Quotient rule: h'(x) = [eˣ(x + 1) - eˣ(1)] / (x + 1)² = eˣ(x + 1 - 1) / (x + 1)² = x·eˣ / (x + 1)².",
+          "thinkAloud": "A quotient with eˣ on top and (x + 1) on the bottom. I'll use the quotient rule: (lo d-hi minus hi d-lo) / lo². The nice thing about eˣ is that its derivative is itself, so d-hi = eˣ. And d-lo = 1 since x + 1 is linear. After applying the rule, I should look for common factors in the numerator — I expect eˣ to factor out.",
+          "commonMistake": "Students sometimes write the final answer as eˣ/(x+1)² without simplifying the numerator first. The numerator is eˣ(x+1) - eˣ(1) = eˣ·x, not just eˣ. You must factor out eˣ from both terms and simplify x+1-1 = x. Missing this step gives the wrong answer.",
+          "decisionPoint": "I could rewrite this as eˣ · (x+1)⁻¹ and use the product rule instead of the quotient rule. With the product rule: eˣ·(x+1)⁻¹ + eˣ·(-(x+1)⁻²) = eˣ[(x+1)⁻¹ - (x+1)⁻²] = eˣ·x/(x+1)². Same answer, slightly different algebra. For this problem, the quotient rule is more straightforward."
         },
         {
           "problem": "Differentiate: y = 5·2ˣ + 4ln x - sec x.",
-          "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
+          "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x.",
+          "thinkAloud": "Three terms, each from a different function family — exponential, logarithmic, and trigonometric. I need three memorized derivatives: d/dx[aˣ] = aˣ·ln a (here a = 2), d/dx[ln x] = 1/x, and d/dx[sec x] = sec x · tan x. Constants pull out. Let me handle each term one at a time and then combine.",
+          "commonMistake": "Students often write d/dx[2ˣ] = x·2ˣ⁻¹, incorrectly applying the power rule to an exponential function. The power rule is for xⁿ (variable base, constant exponent). For aˣ (constant base, variable exponent), the rule is d/dx[aˣ] = aˣ·ln a. These are fundamentally different! The exponent x is the variable here, not the base."
         }
       ],
       "lessonId": "common-derivatives"
