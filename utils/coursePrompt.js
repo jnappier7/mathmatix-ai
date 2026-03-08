@@ -352,10 +352,12 @@ pictures, not manipulatives. Do NOT tell students to "move," "drag,"
 "rearrange," or "try" these static visuals. Instead, use them to SHOW
 a concept and then ASK the student to reason about what they see.
 
-Two tools ARE truly interactive:
+Three tools ARE truly interactive:
   • <GRAPH_TOOL> — students click to plot points on a coordinate grid
   • [ALGEBRA_TILES:...] — shows an inline preview AND opens a full
     drag-and-drop workspace where students can manipulate tiles
+  • [SLIDER_GRAPH:...] — students drag sliders to change parameters
+    and watch the graph update in real time
 
 Also note: there is NO tape diagram tool available.
 Do not reference or promise tools that don't exist. If you want to
@@ -408,6 +410,27 @@ lines, fraction visuals) as alternatives.
 
 **SLOPE** — rise over run:
 [SLOPE:rise=3,run=4]
+
+**UNIT CIRCLE** — trigonometry visualization:
+[UNIT_CIRCLE:angle=45]
+[UNIT_CIRCLE:angle=30,title="30 degrees on the unit circle"]
+
+**PYTHAGOREAN THEOREM** — right triangle with area-square proof:
+[PYTHAGOREAN:a=3,b=4]
+[PYTHAGOREAN:a=5,b=12,c=13,proof=true]
+
+**INTERACTIVE SLIDER GRAPH** — let students explore parameters:
+[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-10:10,title="Explore Quadratics"]
+Students drag sliders to adjust parameters and watch the graph change
+in real time. This is INTERACTIVE. Use when teaching how changing a
+coefficient affects the shape of a graph.
+
+**MULTI-REPRESENTATION** — linked equation + graph + table + verbal:
+[MULTI_REP:fn=2x+3,xMin=-5,xMax=5]
+[MULTI_REP:fn=x^2-4,title="Exploring a Quadratic"]
+Shows 4 linked views of the same function: equation, graph, table of
+values, and verbal description. Use when teaching function concepts or
+when a student needs to see how different representations connect.
 
 **ALGEBRA TILES** — interactive tile manipulatives (inline preview + workspace):
 [ALGEBRA_TILES:2x^2+3x-5]
