@@ -136,7 +136,10 @@
         },
         {
           "problem": "Water drains from a tank. The volume V(t) (gallons) at time t (minutes) satisfies V(3) = 50 and V'(3) = -8. Interpret V'(3) in context.",
-          "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min."
+          "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min.",
+          "thinkAloud": "This is a pure interpretation problem — no computation needed, just translating math into English. I need to hit the AP interpretation checklist: state the time, state what quantity is changing, state the direction (increasing or decreasing), give the rate with correct units. The negative sign in V'(3) = -8 tells me the volume is decreasing, so I say 'decreasing at a rate of 8' (using the absolute value), not 'increasing at a rate of -8.'",
+          "commonMistake": "Students often write 'V'(3) = -8 means the volume is increasing at -8 gallons per minute.' This is awkward and loses AP credit. The correct phrasing is 'decreasing at a rate of 8 gallons per minute.' The word 'decreasing' accounts for the negative sign — you don't need to include the negative in the rate. Alternatively, 'changing at a rate of -8 gallons per minute' is also acceptable.",
+          "interpretation": "V'(3) = -8 gal/min means the tangent line to the volume-vs-time graph at t = 3 has slope -8. If the tank continued draining at exactly this rate, it would lose 8 gallons every minute. At 50 gallons remaining, that would empty the tank in about 6.25 minutes — though the actual drain rate likely changes over time."
         }
       ],
       "lessonId": "derivative-definition"
@@ -165,7 +168,11 @@
       "examples": [
         {
           "problem": "Show that f(x) = |x - 3| is continuous but not differentiable at x = 3.",
-          "solution": "Continuity: lim(x→3) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x ≥ 3; -(x-3), x < 3}. Left derivative: lim(h→0⁻) [|3+h-3| - 0]/h = lim(h→0⁻) (-h)/h = -1. Right derivative: lim(h→0⁺) h/h = 1. Left ≠ right, so f'(3) DNE. Corner at x = 3."
+          "solution": "Continuity: lim(x→3) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x ≥ 3; -(x-3), x < 3}. Left derivative: lim(h→0⁻) [|3+h-3| - 0]/h = lim(h→0⁻) (-h)/h = -1. Right derivative: lim(h→0⁺) h/h = 1. Left ≠ right, so f'(3) DNE. Corner at x = 3.",
+          "thinkAloud": "The problem says 'show,' so I need to prove two things: continuous (yes) and differentiable (no). My strategy: first check continuity by verifying the limit equals the function value. Then for differentiability, I need to rewrite the absolute value as a piecewise function and check if the left-hand and right-hand derivatives match. With absolute values, I always expect a corner where the expression inside equals zero.",
+          "commonMistake": "Students sometimes write 'f(x) = |x - 3| is not differentiable because absolute values are never differentiable.' This is wrong — |x - 3| is perfectly differentiable everywhere except at x = 3. The function has a well-defined derivative of -1 for x < 3 and +1 for x > 3. It's only at the corner point x = 3 where differentiability fails.",
+          "decisionPoint": "To check differentiability, I could either compute one-sided limits of the difference quotient directly, or I could find the derivative of each piece of the piecewise function and compare at x = 3. Both give the same answer. The piecewise-derivative approach is faster when the pieces are simple — I just differentiate each piece and check if the derivatives agree at the boundary.",
+          "interpretation": "The corner at x = 3 means the tangent line to f abruptly changes slope from -1 to +1. There is no single tangent line at x = 3 — the graph makes a sharp V-shape. Geometrically, the slope jumps instantaneously rather than changing smoothly."
         },
         {
           "problem": "Determine if f(x) = x^(2/3) is differentiable at x = 0.",

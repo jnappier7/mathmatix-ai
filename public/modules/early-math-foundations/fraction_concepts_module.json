@@ -185,7 +185,10 @@
         },
         {
           "problem": "Simplify 6/8 to its lowest terms.",
-          "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified."
+          "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified.",
+          "thinkAloud": "I need to make this fraction simpler — find a shorter name for the same amount. Let me look at 6 and 8. Is there a number that goes into BOTH of them evenly? Let me try 2. Does 2 go into 6? Yes, 6 divided by 2 is 3. Does 2 go into 8? Yes, 8 divided by 2 is 4. So I divide top and bottom by 2 and get 3/4. Now can I simplify 3/4 any more? Is there a number that goes into both 3 and 4? Nope! So 3/4 is my final answer.",
+          "commonMistake": "Some students try to simplify by subtracting the same number from top and bottom instead of dividing. For example, they might subtract 2 from both: 6-2=4, 8-2=6, giving the wrong answer 4/6. Simplifying means DIVIDING both parts by the same number, never subtracting.",
+          "interpretation": "6/8 and 3/4 are the same amount. If you cut a chocolate bar into 8 pieces and eat 6, that's the same as cutting it into 4 pieces and eating 3 — either way you ate three-quarters of the bar."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -274,11 +277,17 @@
       "examples": [
         {
           "problem": "Compare 3/8 and 5/8. Which is greater?",
-          "solution": "Both fractions have the same denominator (8), so the pieces are the same size.\nJust compare the numerators: 5 > 3.\nSo 5/8 > 3/8.\n\nThink of it as pizza slices: 5 slices out of 8 is more pizza than 3 slices out of 8."
+          "solution": "Both fractions have the same denominator (8), so the pieces are the same size.\nJust compare the numerators: 5 > 3.\nSo 5/8 > 3/8.\n\nThink of it as pizza slices: 5 slices out of 8 is more pizza than 3 slices out of 8.",
+          "thinkAloud": "Let me look at these two fractions. They both have 8 on the bottom — that means both pizzas are cut into the same number of slices! Since the slices are the same size, I just need to ask: would you rather have 3 slices or 5 slices? Obviously 5 slices is more pizza! So 5/8 is bigger than 3/8.",
+          "commonMistake": "This one is pretty straightforward, but some students get confused when they see the same denominator and think the fractions must be equal. Remember: same denominator means same-size pieces, but you still need to check HOW MANY pieces (the numerator). 3 pieces and 5 pieces are definitely not the same!",
+          "interpretation": "5/8 of a pizza is more than 3/8 of a pizza. If you and your friend share a pizza cut into 8 slices and you get 5 while your friend gets 3, you got more pizza."
         },
         {
           "problem": "Compare 2/5 and 2/7. Which is greater?",
-          "solution": "Both fractions have the same numerator (2), so we are taking the same NUMBER of pieces.\nThe question is: which pieces are bigger?\nFifths (the whole cut into 5) are bigger than sevenths (the whole cut into 7).\nSmaller denominator = bigger pieces.\nSo 2/5 > 2/7.\n\nPicture two chocolate bars the same size: one cut into 5 pieces, one cut into 7. The pieces in the 5-piece bar are clearly bigger."
+          "solution": "Both fractions have the same numerator (2), so we are taking the same NUMBER of pieces.\nThe question is: which pieces are bigger?\nFifths (the whole cut into 5) are bigger than sevenths (the whole cut into 7).\nSmaller denominator = bigger pieces.\nSo 2/5 > 2/7.\n\nPicture two chocolate bars the same size: one cut into 5 pieces, one cut into 7. The pieces in the 5-piece bar are clearly bigger.",
+          "thinkAloud": "Okay, both fractions have a 2 on top — so I'm grabbing the same number of pieces from each. But wait, the pieces are different sizes! Imagine two identical chocolate bars. One is broken into 5 pieces and the other into 7 pieces. Which bar has bigger pieces? The one cut into only 5 pieces, because you're sharing between fewer parts. So 2 big pieces (fifths) is more chocolate than 2 small pieces (sevenths). 2/5 wins!",
+          "commonMistake": "Many students think that a bigger denominator means a bigger fraction — so they incorrectly say 2/7 > 2/5 because 7 is bigger than 5. It's actually the opposite! A bigger denominator means you cut into MORE pieces, which makes each piece SMALLER. Think about it: would you rather split a candy bar with 5 friends or 7 friends? Fewer friends means bigger pieces for you!",
+          "interpretation": "2/5 of a chocolate bar is a bigger amount than 2/7 of the same bar. Two-fifths means you get 2 out of 5 chunky pieces, while two-sevenths means you get 2 out of 7 skinnier pieces."
         },
         {
           "problem": "Order these fractions from least to greatest: 1/3, 3/4, 1/2.",
