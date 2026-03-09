@@ -67,19 +67,33 @@
       "examples": [
         {
           "problem": "Use the limit definition (h-form) to find f'(x) for f(x) = x² + 3x.",
-          "solution": "f'(x) = lim(h→0) [(x+h)² + 3(x+h) - (x² + 3x)] / h = lim(h→0) [x² + 2xh + h² + 3x + 3h - x² - 3x] / h = lim(h→0) [2xh + h² + 3h] / h = lim(h→0) (2x + h + 3) = 2x + 3."
+          "solution": "f'(x) = lim(h→0) [(x+h)² + 3(x+h) - (x² + 3x)] / h = lim(h→0) [x² + 2xh + h² + 3x + 3h - x² - 3x] / h = lim(h→0) [2xh + h² + 3h] / h = lim(h→0) (2x + h + 3) = 2x + 3.",
+          "thinkAloud": "Okay, I see a polynomial and they want the h-form definition. My plan: plug (x+h) into f everywhere I see x, subtract the original f(x), divide by h, then take the limit. The key move is expanding (x+h)² carefully — that's where most algebra errors happen. After I expand and subtract, I should see every surviving term has an h I can factor out, which lets me cancel the h in the denominator. If I can't cancel the h, I made an algebra mistake somewhere.",
+          "commonMistake": "Students often get f'(x) = 2x instead of 2x + 3 because they forget to distribute the 3 through (x+h). They write f(x+h) = (x+h)² + 3x instead of (x+h)² + 3(x+h). Every x in the original function must be replaced with (x+h) — including the x in the linear term.",
+          "interpretation": "The derivative 2x + 3 is a function that gives the slope of the tangent line to y = x² + 3x at any x-value. For example, at x = 1 the slope is 5, meaning the curve is rising at 5 units up per 1 unit right at that point."
         },
         {
           "problem": "Use the limit definition (x-form) to find f'(4) for f(x) = √x.",
-          "solution": "f'(4) = lim(x→4) [√x - √4] / (x - 4) = lim(x→4) (√x - 2) / (x - 4). Rationalize: multiply by (√x + 2)/(√x + 2): (x - 4) / [(x - 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4."
+          "solution": "f'(4) = lim(x→4) [√x - √4] / (x - 4) = lim(x→4) (√x - 2) / (x - 4). Rationalize: multiply by (√x + 2)/(√x + 2): (x - 4) / [(x - 4)(√x + 2)] = 1/(√x + 2). At x = 4: 1/(2 + 2) = 1/4. So f'(4) = 1/4.",
+          "thinkAloud": "This is the x-form definition, so I'm computing a specific derivative at a point, not a general derivative function. I see √x in the numerator, which means direct substitution gives 0/0 — an indeterminate form. With square roots, my go-to move is rationalizing the numerator by multiplying by the conjugate. That should create a difference of squares that cancels the (x - 4) in the denominator.",
+          "commonMistake": "Students try to 'simplify' (√x - 2)/(x - 4) by canceling — they write √x/x - 2/4 or split the fraction incorrectly. You can't split a fraction across a subtraction in the denominator. The correct technique is multiplying numerator and denominator by the conjugate (√x + 2).",
+          "decisionPoint": "When I see 0/0 with a square root, I have two options: rationalize the numerator, or rewrite (x - 4) as (√x - 2)(√x + 2) by recognizing the difference of squares. Both work — rationalizing is more systematic and reliable for students who don't spot the factoring.",
+          "interpretation": "f'(4) = 1/4 means the tangent line to y = √x at x = 4 has slope 1/4. The curve is rising gently — for each unit increase in x near x = 4, y increases by about 0.25."
         },
         {
           "problem": "Find f'(x) using the definition for f(x) = 1/x, then write the equation of the tangent line at x = 2.",
-          "solution": "f'(x) = lim(h→0) [1/(x+h) - 1/x] / h = lim(h→0) [x - (x+h)] / [hx(x+h)] = lim(h→0) -h / [hx(x+h)] = lim(h→0) -1/[x(x+h)] = -1/x². At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1."
+          "solution": "f'(x) = lim(h→0) [1/(x+h) - 1/x] / h = lim(h→0) [x - (x+h)] / [hx(x+h)] = lim(h→0) -h / [hx(x+h)] = lim(h→0) -1/[x(x+h)] = -1/x². At x = 2: f(2) = 1/2, f'(2) = -1/4. Tangent line: y - 1/2 = -1/4(x - 2), or y = -x/4 + 1.",
+          "thinkAloud": "Two parts here: find the derivative using the definition, then use it for a tangent line. For the definition part, I need to combine 1/(x+h) and 1/x into a single fraction — that means finding a common denominator. After simplifying, I should get an h in the numerator that cancels the h in the denominator. For the tangent line, I need two things: the point (plug x = 2 into f) and the slope (plug x = 2 into f'). Then I use point-slope form.",
+          "commonMistake": "Students frequently get the sign wrong in the common-denominator step, writing [x + (x+h)] instead of [x - (x+h)] in the numerator. Remember: 1/(x+h) - 1/x = [x - (x+h)] / [x(x+h)], not [x + (x+h)]. This sign error gives f'(x) = +1/x² instead of -1/x², and the tangent line slopes the wrong way.",
+          "decisionPoint": "For the tangent line, I could use slope-intercept form (y = mx + b) or point-slope form (y - y₁ = m(x - x₁)). Point-slope is better here because I already have the point and slope — I don't have to solve for b separately. On the AP exam, point-slope is almost always faster.",
+          "interpretation": "f'(2) = -1/4 means the curve y = 1/x is decreasing at x = 2 with a slope of -1/4. The tangent line y = -x/4 + 1 is the best linear approximation of 1/x near x = 2."
         },
         {
           "problem": "The definition of the derivative of g at x = 5 is given as lim(h→0) [(5+h)³ - 125] / h. Identify the function g and find this limit.",
-          "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75."
+          "solution": "Compare with lim(h→0) [g(5+h) - g(5)] / h. So g(x) = x³ and g(5) = 125. We need g'(5). Using the definition: expand (5+h)³ = 125 + 75h + 15h² + h³. So [125 + 75h + 15h² + h³ - 125] / h = 75 + 15h + h². As h→0: g'(5) = 75.",
+          "thinkAloud": "This is a 'recognize the definition' problem — the AP loves these. I need to match the given limit to the template lim(h→0) [g(a+h) - g(a)] / h. I can see (5+h)³, so a = 5 and g(x) = x³, which makes g(5) = 125. That checks out. Now I just need to expand (5+h)³ carefully using the binomial expansion or by multiplying it out step by step.",
+          "commonMistake": "Students often expand (5+h)³ incorrectly, especially the middle terms. The most common error is writing (5+h)³ = 125 + 25h + 5h² + h³, using coefficients 1-5-5-1 instead of the correct 1-3-3-1 pattern (giving 125 + 75h + 15h² + h³). Remember: (a+b)³ = a³ + 3a²b + 3ab² + b³.",
+          "interpretation": "g'(5) = 75 means the slope of the tangent line to y = x³ at x = 5 is 75. The curve is rising steeply there — for a tiny nudge in x near 5, y changes about 75 times as much."
         }
       ],
       "lessonId": "derivative-definition"
@@ -108,15 +122,24 @@
       "examples": [
         {
           "problem": "A particle moves along the x-axis with position s(t) = t³ - 6t² + 9t + 2 (feet, seconds). Find the velocity at t = 1 and interpret.",
-          "solution": "v(t) = s'(t) = 3t² - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec — it is momentarily at rest (changing direction)."
+          "solution": "v(t) = s'(t) = 3t² - 12t + 9. v(1) = 3 - 12 + 9 = 0 ft/sec. Interpretation: At t = 1 second, the particle's velocity is 0 ft/sec — it is momentarily at rest (changing direction).",
+          "thinkAloud": "This is a motion problem, so I know the drill: position → velocity → acceleration means take successive derivatives. They want velocity, so I differentiate s(t) once. I'll use the power rule since it's a polynomial. After finding v(t), I plug in t = 1. Then I need to interpret — the AP rubric requires a sentence with units and context, not just a number.",
+          "commonMistake": "Students often say 'the particle is not moving' or 'the particle is stopped' when v(1) = 0. On the AP exam, you need to be more precise: the particle is momentarily at rest. Saying 'stopped' implies it stays stopped, but v(t) = 3t² - 12t + 9 = 3(t-1)(t-3) changes sign at t = 1, so the particle immediately starts moving again — it's changing direction.",
+          "interpretation": "v(1) = 0 ft/sec means the tangent line to the position graph at t = 1 is horizontal. The particle is at position s(1) = 6 feet and is momentarily at rest. Since v changes from positive to negative at t = 1, the particle reverses direction here — it was moving right and is about to move left."
         },
         {
           "problem": "The cost to produce x widgets is C(x) = 500 + 8x - 0.02x² dollars. Find and interpret C'(100).",
-          "solution": "C'(x) = 8 - 0.04x. C'(100) = 8 - 4 = 4. Interpretation: When 100 widgets are being produced, the cost is increasing at a rate of $4 per additional widget. This is the marginal cost of the 101st widget."
+          "solution": "C'(x) = 8 - 0.04x. C'(100) = 8 - 4 = 4. Interpretation: When 100 widgets are being produced, the cost is increasing at a rate of $4 per additional widget. This is the marginal cost of the 101st widget.",
+          "thinkAloud": "I see a cost function — this is an economics application. The derivative of cost is marginal cost, which tells us approximately how much one more unit costs to produce. I'll differentiate term by term: the 500 is a fixed cost and drops out, the 8x gives 8, and -0.02x² gives -0.04x by the power rule. Then I evaluate at x = 100.",
+          "commonMistake": "Students sometimes compute C(101) - C(100) = $3.98 and are confused when C'(100) = $4. These are not the same! C'(100) is the instantaneous rate of change — the best linear approximation of the cost of one more widget. The actual cost difference C(101) - C(100) is the exact cost of the 101st widget. They're close but not identical. On the AP exam, use the derivative value, not the difference.",
+          "interpretation": "C'(100) = 4 means that at a production level of 100 widgets, each additional widget costs approximately $4 to produce. Notice that the marginal cost is decreasing (since C''(x) = -0.04 < 0), so there are economies of scale — the 200th widget would be even cheaper to produce."
         },
         {
           "problem": "Water drains from a tank. The volume V(t) (gallons) at time t (minutes) satisfies V(3) = 50 and V'(3) = -8. Interpret V'(3) in context.",
-          "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min."
+          "solution": "At t = 3 minutes, the volume of water in the tank is decreasing at a rate of 8 gallons per minute. The tank contains 50 gallons at that moment and is losing water at 8 gal/min.",
+          "thinkAloud": "This is a pure interpretation problem — no computation needed, just translating math into English. I need to hit the AP interpretation checklist: state the time, state what quantity is changing, state the direction (increasing or decreasing), give the rate with correct units. The negative sign in V'(3) = -8 tells me the volume is decreasing, so I say 'decreasing at a rate of 8' (using the absolute value), not 'increasing at a rate of -8.'",
+          "commonMistake": "Students often write 'V'(3) = -8 means the volume is increasing at -8 gallons per minute.' This is awkward and loses AP credit. The correct phrasing is 'decreasing at a rate of 8 gallons per minute.' The word 'decreasing' accounts for the negative sign — you don't need to include the negative in the rate. Alternatively, 'changing at a rate of -8 gallons per minute' is also acceptable.",
+          "interpretation": "V'(3) = -8 gal/min means the tangent line to the volume-vs-time graph at t = 3 has slope -8. If the tank continued draining at exactly this rate, it would lose 8 gallons every minute. At 50 gallons remaining, that would empty the tank in about 6.25 minutes — though the actual drain rate likely changes over time."
         }
       ],
       "lessonId": "derivative-definition"
@@ -145,19 +168,32 @@
       "examples": [
         {
           "problem": "Show that f(x) = |x - 3| is continuous but not differentiable at x = 3.",
-          "solution": "Continuity: lim(x→3) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x ≥ 3; -(x-3), x < 3}. Left derivative: lim(h→0⁻) [|3+h-3| - 0]/h = lim(h→0⁻) (-h)/h = -1. Right derivative: lim(h→0⁺) h/h = 1. Left ≠ right, so f'(3) DNE. Corner at x = 3."
+          "solution": "Continuity: lim(x→3) |x-3| = 0 = f(3). Continuous. Differentiability: Rewrite f(x) = {x-3, x ≥ 3; -(x-3), x < 3}. Left derivative: lim(h→0⁻) [|3+h-3| - 0]/h = lim(h→0⁻) (-h)/h = -1. Right derivative: lim(h→0⁺) h/h = 1. Left ≠ right, so f'(3) DNE. Corner at x = 3.",
+          "thinkAloud": "The problem says 'show,' so I need to prove two things: continuous (yes) and differentiable (no). My strategy: first check continuity by verifying the limit equals the function value. Then for differentiability, I need to rewrite the absolute value as a piecewise function and check if the left-hand and right-hand derivatives match. With absolute values, I always expect a corner where the expression inside equals zero.",
+          "commonMistake": "Students sometimes write 'f(x) = |x - 3| is not differentiable because absolute values are never differentiable.' This is wrong — |x - 3| is perfectly differentiable everywhere except at x = 3. The function has a well-defined derivative of -1 for x < 3 and +1 for x > 3. It's only at the corner point x = 3 where differentiability fails.",
+          "decisionPoint": "To check differentiability, I could either compute one-sided limits of the difference quotient directly, or I could find the derivative of each piece of the piecewise function and compare at x = 3. Both give the same answer. The piecewise-derivative approach is faster when the pieces are simple — I just differentiate each piece and check if the derivatives agree at the boundary.",
+          "interpretation": "The corner at x = 3 means the tangent line to f abruptly changes slope from -1 to +1. There is no single tangent line at x = 3 — the graph makes a sharp V-shape. Geometrically, the slope jumps instantaneously rather than changing smoothly."
         },
         {
           "problem": "Determine if f(x) = x^(2/3) is differentiable at x = 0.",
-          "solution": "f(0) = 0. f'(0) = lim(h→0) h^(2/3)/h = lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). From the right: 1/h^(1/3) → +∞. From the left: 1/(-|h|)^(1/3) → -∞. The one-sided limits are +∞ and -∞ (opposite signs) — this is a cusp. Not differentiable at x = 0."
+          "solution": "f(0) = 0. f'(0) = lim(h→0) h^(2/3)/h = lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). From the right: 1/h^(1/3) → +∞. From the left: 1/(-|h|)^(1/3) → -∞. The one-sided limits are +∞ and -∞ (opposite signs) — this is a cusp. Not differentiable at x = 0.",
+          "thinkAloud": "Fractional exponents at x = 0 are classic differentiability trouble spots. Let me go straight to the limit definition: f'(0) = lim(h→0) [f(h) - f(0)]/h = lim(h→0) h^(2/3)/h. I'll simplify the exponent: 2/3 - 1 = -1/3, so this is lim(h→0) h^(-1/3) = lim(h→0) 1/h^(1/3). Now I need to check both sides — cube roots handle negatives, so the left and right limits might behave differently.",
+          "commonMistake": "Students confuse cusps with vertical tangents. For x^(2/3) at 0, the one-sided derivatives go to +∞ and -∞ (opposite signs) — that's a cusp. For x^(1/3), they both go to +∞ (same sign) — that's a vertical tangent. The distinction matters on the AP exam. Cusp = opposite infinities. Vertical tangent = same infinity.",
+          "interpretation": "The cusp at x = 0 means the graph of y = x^(2/3) comes to a sharp point. On the right side, the curve rises infinitely steeply; on the left side, it also rises but the tangent slope approaches -∞. No single tangent line can be drawn at the origin."
         },
         {
           "problem": "For f(x) = {x², x ≤ 1; 2x - 1, x > 1}, determine if f is differentiable at x = 1.",
-          "solution": "Check continuity first: lim(x→1⁻) x² = 1. lim(x→1⁺) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x²) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1."
+          "solution": "Check continuity first: lim(x→1⁻) x² = 1. lim(x→1⁺) (2x-1) = 1. f(1) = 1. Continuous. Left derivative: d/dx(x²) at x=1 = 2(1) = 2. Right derivative: d/dx(2x-1) at x=1 = 2. Left = right = 2, so f'(1) = 2. Differentiable at x = 1.",
+          "thinkAloud": "Piecewise function at a boundary — I need my two-step checklist. Step 1: Is it continuous at x = 1? I check if both pieces give the same value. Step 2: If continuous, do the derivatives of the two pieces agree at x = 1? Only if both checks pass is f differentiable. A lot of students skip step 1, but you MUST check continuity first — if it fails, there's no need to check derivatives.",
+          "commonMistake": "Students sometimes jump straight to comparing derivatives without checking continuity first. If a piecewise function isn't continuous at the boundary, it's automatically not differentiable — you can stop there. In this problem continuity does hold, but always check it first. Another error: students check f(1) for both pieces but forget to verify the limits, writing 'f(1) = 1 from both sides' without showing the limit calculations.",
+          "decisionPoint": "I could check differentiability using the full limit definition (computing left and right limits of the difference quotient), or I could take the shortcut: differentiate each piece separately and compare at the boundary. The shortcut is valid only after confirming continuity. Since the pieces are simple polynomials, the shortcut saves time here.",
+          "interpretation": "f'(1) = 2 means the piecewise function transitions smoothly at x = 1 — the parabola y = x² meets the line y = 2x - 1 with the same slope, so there's no corner or break. The tangent line at x = 1 has slope 2, and the graph looks smooth through that point."
         },
         {
           "problem": "If g is differentiable at x = 5, what can you conclude about continuity? If g is continuous at x = 5, can you conclude differentiability?",
-          "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there."
+          "solution": "Since g is differentiable at x = 5, g MUST be continuous at x = 5 (differentiability implies continuity). However, if g is only continuous at x = 5, you CANNOT conclude differentiability. Counterexample: g(x) = |x - 5| is continuous at x = 5 but has a corner there.",
+          "thinkAloud": "This is a conceptual/logical reasoning problem, not a computation. I need the theorem: differentiability implies continuity. I also need to know that the converse is FALSE and be ready to provide a counterexample. The key logical structure is: 'A implies B' does NOT mean 'B implies A.' I should give a specific counterexample for the converse direction — |x - 5| is the go-to.",
+          "commonMistake": "Students often state the relationship backwards: 'continuous implies differentiable.' This is the single most common conceptual error in this unit. The correct direction is differentiable → continuous (the stronger condition implies the weaker one). To remember: differentiability is 'harder to achieve' than continuity, so it implies continuity, not the other way around."
         }
       ],
       "lessonId": "differentiability"
@@ -187,19 +223,29 @@
       "examples": [
         {
           "problem": "Differentiate: f(x) = 4x⁵ - 3x³ + 7x - 2.",
-          "solution": "Apply power rule term by term: f'(x) = 4·5x⁴ - 3·3x² + 7·1 - 0 = 20x⁴ - 9x² + 7."
+          "solution": "Apply power rule term by term: f'(x) = 4·5x⁴ - 3·3x² + 7·1 - 0 = 20x⁴ - 9x² + 7.",
+          "thinkAloud": "Straightforward polynomial — I'll use the power rule on each term and the sum/difference rule to handle them separately. For each term: bring the exponent down as a coefficient, multiply by the existing coefficient, then reduce the exponent by 1. The constant -2 vanishes. The 7x term is really 7x¹, so it becomes 7·1·x⁰ = 7.",
+          "commonMistake": "Students often write the derivative of 7x as 7x instead of 7. Remember: d/dx[7x] = 7·1·x⁰ = 7. The x disappears. Similarly, students sometimes keep the constant -2 in the derivative. The derivative of any constant is 0 — it just drops out."
         },
         {
           "problem": "Differentiate: g(x) = (3x² + 1)(x⁴ - 2x).",
-          "solution": "Product rule: g'(x) = (6x)(x⁴ - 2x) + (3x² + 1)(4x³ - 2). Expand: 6x⁵ - 12x² + 12x⁵ - 6x² + 4x³ - 2 = 18x⁵ + 4x³ - 18x² - 2. (Or expand first: 3x⁶ + x⁴ - 6x³ - 2x, then differentiate: 18x⁵ + 4x³ - 18x² - 2.)"
+          "solution": "Product rule: g'(x) = (6x)(x⁴ - 2x) + (3x² + 1)(4x³ - 2). Expand: 6x⁵ - 12x² + 12x⁵ - 6x² + 4x³ - 2 = 18x⁵ + 4x³ - 18x² - 2. (Or expand first: 3x⁶ + x⁴ - 6x³ - 2x, then differentiate: 18x⁵ + 4x³ - 18x² - 2.)",
+          "thinkAloud": "I see two factors multiplied — that screams product rule. Let me label them: first = (3x² + 1), second = (x⁴ - 2x). Product rule says: (derivative of first)(second) + (first)(derivative of second). I'll differentiate each factor separately, then plug into the formula. After that, I'll expand and combine like terms to simplify.",
+          "commonMistake": "Students often just multiply the derivatives: they write g'(x) = (6x)(4x³ - 2) = 24x⁴ - 12x. This is completely wrong — you can't just differentiate each factor and multiply. The product rule requires TWO terms added together: f'g + fg'. Forgetting one of those terms is the #1 product rule error.",
+          "decisionPoint": "I could either apply the product rule directly or expand the product first and then differentiate term by term. For two polynomials like these, expanding first is actually easier and less error-prone — it avoids the product rule entirely. But I'm using the product rule here for practice. On the AP exam, if the factors are polynomials and the product isn't too long, expanding first is often faster."
         },
         {
           "problem": "Differentiate: h(x) = (2x + 5)/(x² - 1).",
-          "solution": "Quotient rule: h'(x) = [2(x² - 1) - (2x + 5)(2x)] / (x² - 1)². Numerator: 2x² - 2 - 4x² - 10x = -2x² - 10x - 2. So h'(x) = (-2x² - 10x - 2)/(x² - 1)² = -2(x² + 5x + 1)/(x² - 1)²."
+          "solution": "Quotient rule: h'(x) = [2(x² - 1) - (2x + 5)(2x)] / (x² - 1)². Numerator: 2x² - 2 - 4x² - 10x = -2x² - 10x - 2. So h'(x) = (-2x² - 10x - 2)/(x² - 1)² = -2(x² + 5x + 1)/(x² - 1)².",
+          "thinkAloud": "Fraction of two functions — I'll use the quotient rule. Let me set hi = 2x + 5 (numerator) and lo = x² - 1 (denominator). The quotient rule is (lo · d-hi - hi · d-lo) / lo². The mnemonic 'lo d-hi minus hi d-lo over lo-lo' helps me remember the order. The subtraction order matters — if I flip it, I get the wrong sign. After applying the formula, I'll expand the numerator and simplify.",
+          "commonMistake": "The most frequent quotient rule error is reversing the subtraction order: writing (f·g' - f'·g) instead of (f'·g - f·g'). Students get h'(x) = [(2x+5)(2x) - 2(x²-1)] / (x²-1)² = (2x² + 10x + 2)/(x²-1)², which has the wrong sign on every term. Remember: 'lo d-hi MINUS hi d-lo' — the denominator's derivative always comes with the minus sign."
         },
         {
           "problem": "Differentiate by rewriting first: f(x) = (3/x²) + 5√x - 4/∛x.",
-          "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3))."
+          "solution": "Rewrite: f(x) = 3x⁻² + 5x^(1/2) - 4x^(-1/3). Power rule: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (4/3)x^(-4/3) = -6/x³ + 5/(2√x) + 4/(3x^(4/3)).",
+          "thinkAloud": "These are radicals and fractions, but the problem says 'rewrite first' — that's my cue to convert everything to power form before differentiating. 3/x² = 3x⁻², √x = x^(1/2), and 1/∛x = x^(-1/3). Once everything is in xⁿ form, I can use the power rule on each term. After differentiating, I'll convert back to radical/fraction form for a cleaner final answer.",
+          "commonMistake": "Students frequently make sign errors with negative exponents. For the term -4x^(-1/3), the derivative is -4·(-1/3)·x^(-1/3 - 1) = (4/3)x^(-4/3). The two negatives (the -4 coefficient and the -1/3 exponent) multiply to give a positive result. Students who miss one negative get -(4/3)x^(-4/3) instead.",
+          "decisionPoint": "I could differentiate 3/x² using the quotient rule (treating it as 3 over x²) or by rewriting as 3x⁻² and using the power rule. The power rule approach is vastly simpler — the quotient rule would give the same answer but with more steps and more room for error. Always rewrite radicals and simple fractions as powers before differentiating."
         }
       ],
       "lessonId": "basic-rules"
@@ -229,19 +275,28 @@
       "examples": [
         {
           "problem": "Differentiate: f(x) = 3sin x - 2cos x + eˣ.",
-          "solution": "f'(x) = 3cos x - 2(-sin x) + eˣ = 3cos x + 2sin x + eˣ. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x."
+          "solution": "f'(x) = 3cos x - 2(-sin x) + eˣ = 3cos x + 2sin x + eˣ. Key: the derivative of cos x is NEGATIVE sin x, so the double negative produces +2sin x.",
+          "thinkAloud": "Three terms, each a constant multiple of a function whose derivative I should have memorized. I'll go term by term: d/dx[sin x] = cos x, d/dx[cos x] = -sin x (watch that negative!), and d/dx[eˣ] = eˣ. The constants pull out. The tricky part is the second term: -2 times the derivative of cos x gives -2(-sin x) = +2sin x. I need to be careful with the double negative.",
+          "commonMistake": "Students frequently write f'(x) = 3cos x - 2sin x + eˣ, getting the sign wrong on the second term. The error happens because they remember d/dx[cos x] = -sin x but then forget they already have a -2 coefficient. So -2 · (-sin x) = +2sin x, not -2sin x. Whenever you see a negative coefficient in front of cos x, flag the double negative."
         },
         {
           "problem": "Differentiate: g(x) = x² · tan x.",
-          "solution": "Product rule: g'(x) = 2x · tan x + x² · sec²x. No further simplification needed unless a specific form is requested."
+          "solution": "Product rule: g'(x) = 2x · tan x + x² · sec²x. No further simplification needed unless a specific form is requested.",
+          "thinkAloud": "Two functions multiplied together — I need the product rule. First function is x² (derivative: 2x), second is tan x (derivative: sec²x). Product rule gives (2x)(tan x) + (x²)(sec²x). I should double-check: is d/dx[tan x] = sec²x? Yes. I won't try to simplify further — combining trig terms usually makes things messier, not cleaner.",
+          "commonMistake": "Students sometimes write d/dx[tan x] = sec x · tan x, confusing it with d/dx[sec x]. The derivatives of tan and sec are easy to mix up: d/dx[tan x] = sec²x, d/dx[sec x] = sec x · tan x. A mnemonic: tan and sec² both live in the Pythagorean identity 1 + tan²x = sec²x, so they're 'paired' in derivatives too."
         },
         {
           "problem": "Differentiate: h(x) = eˣ / (x + 1).",
-          "solution": "Quotient rule: h'(x) = [eˣ(x + 1) - eˣ(1)] / (x + 1)² = eˣ(x + 1 - 1) / (x + 1)² = x·eˣ / (x + 1)²."
+          "solution": "Quotient rule: h'(x) = [eˣ(x + 1) - eˣ(1)] / (x + 1)² = eˣ(x + 1 - 1) / (x + 1)² = x·eˣ / (x + 1)².",
+          "thinkAloud": "A quotient with eˣ on top and (x + 1) on the bottom. I'll use the quotient rule: (lo d-hi minus hi d-lo) / lo². The nice thing about eˣ is that its derivative is itself, so d-hi = eˣ. And d-lo = 1 since x + 1 is linear. After applying the rule, I should look for common factors in the numerator — I expect eˣ to factor out.",
+          "commonMistake": "Students sometimes write the final answer as eˣ/(x+1)² without simplifying the numerator first. The numerator is eˣ(x+1) - eˣ(1) = eˣ·x, not just eˣ. You must factor out eˣ from both terms and simplify x+1-1 = x. Missing this step gives the wrong answer.",
+          "decisionPoint": "I could rewrite this as eˣ · (x+1)⁻¹ and use the product rule instead of the quotient rule. With the product rule: eˣ·(x+1)⁻¹ + eˣ·(-(x+1)⁻²) = eˣ[(x+1)⁻¹ - (x+1)⁻²] = eˣ·x/(x+1)². Same answer, slightly different algebra. For this problem, the quotient rule is more straightforward."
         },
         {
           "problem": "Differentiate: y = 5·2ˣ + 4ln x - sec x.",
-          "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x."
+          "solution": "y' = 5·2ˣ·ln 2 + 4/x - sec x · tan x. Each term uses a memorized derivative: d/dx[aˣ] = aˣ ln a, d/dx[ln x] = 1/x, d/dx[sec x] = sec x tan x.",
+          "thinkAloud": "Three terms, each from a different function family — exponential, logarithmic, and trigonometric. I need three memorized derivatives: d/dx[aˣ] = aˣ·ln a (here a = 2), d/dx[ln x] = 1/x, and d/dx[sec x] = sec x · tan x. Constants pull out. Let me handle each term one at a time and then combine.",
+          "commonMistake": "Students often write d/dx[2ˣ] = x·2ˣ⁻¹, incorrectly applying the power rule to an exponential function. The power rule is for xⁿ (variable base, constant exponent). For aˣ (constant base, variable exponent), the rule is d/dx[aˣ] = aˣ·ln a. These are fundamentally different! The exponent x is the variable here, not the base."
         }
       ],
       "lessonId": "common-derivatives"
@@ -315,15 +370,25 @@
       "examples": [
         {
           "problem": "The table gives: t = 0, 2, 4, 6, 8 with f(t) = 10, 18, 24, 28, 30. Estimate f'(4).",
-          "solution": "Use the symmetric difference quotient: f'(4) ≈ [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point."
+          "solution": "Use the symmetric difference quotient: f'(4) ≈ [f(6) - f(2)] / (6 - 2) = (28 - 18) / 4 = 10/4 = 2.5. This averages the forward and backward slopes for the best estimate at the interior point.",
+          "thinkAloud": "I need to estimate a derivative from a table — I can't use the exact definition because I only have discrete data points. For an interior point like t = 4, the best approach is the symmetric difference quotient: use the points on either side (t = 2 and t = 6) to get the most accurate slope estimate. I'll compute [f(6) - f(2)] / (6 - 2).",
+          "commonMistake": "Students often use only one side: either [f(6) - f(4)]/(6-4) = 4/2 = 2 or [f(4) - f(2)]/(4-2) = 6/2 = 3. These one-sided estimates are less accurate. The symmetric quotient [f(6) - f(2)]/(6-2) = 2.5 averages both and gives a better approximation. On the AP exam, the symmetric difference quotient is expected for interior points when data is available on both sides.",
+          "decisionPoint": "With table data, I have three options: forward difference (use t = 4 and t = 6), backward difference (use t = 2 and t = 4), or symmetric/central difference (use t = 2 and t = 6). The symmetric quotient is preferred because it has a smaller error — it's equivalent to averaging the forward and backward estimates. Only use one-sided estimates if you're at an endpoint of the table.",
+          "interpretation": "f'(4) ≈ 2.5 means that at t = 4, the function f is increasing at a rate of about 2.5 units per unit of t. The tangent line to the curve at t = 4 would have slope 2.5. Notice the rate is slowing down — the function increases by 8 from t=0 to t=2, then 6, then 4, then 2 — so the slope is decreasing over time."
         },
         {
           "problem": "From a graph of f, the tangent line at x = 3 appears to pass through (1, 2) and (5, 10). Estimate f'(3).",
-          "solution": "f'(3) = slope of tangent line = (10 - 2)/(5 - 1) = 8/4 = 2. The derivative at x = 3 is approximately 2."
+          "solution": "f'(3) = slope of tangent line = (10 - 2)/(5 - 1) = 8/4 = 2. The derivative at x = 3 is approximately 2.",
+          "thinkAloud": "The derivative at a point equals the slope of the tangent line there. I'm told the tangent line passes through two points, so I just need rise over run. I don't need the actual function — the tangent line IS a line, so its slope is the same everywhere. Pick the two given points and compute the slope: (10 - 2)/(5 - 1).",
+          "commonMistake": "Students sometimes try to use the two points to find the equation of the tangent line and then take its derivative. That's overcomplicating it — the derivative of a line y = mx + b is just m, the slope. All you need is the slope formula (y₂ - y₁)/(x₂ - x₁). Also, some students mistakenly use only the point at x = 3, trying to compute f'(3) = f(3)/3, which is completely wrong — that gives the average rate from 0 to 3, not the slope of the tangent.",
+          "interpretation": "f'(3) = 2 means the curve y = f(x) is rising at x = 3 with a slope of 2: for each unit increase in x near x = 3, f increases by approximately 2 units. The tangent line y - f(3) = 2(x - 3) is the best linear approximation of f near that point."
         },
         {
           "problem": "A graph of f shows: f increases on (0, 2), has a horizontal tangent at x = 2, decreases on (2, 5), has a corner at x = 5, and increases on (5, 7). Describe f'.",
-          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive."
+          "solution": "f' > 0 on (0, 2). f'(2) = 0 (horizontal tangent — local max). f' < 0 on (2, 5). f'(5) is undefined (corner). f' > 0 on (5, 7). The graph of f' would be positive, cross zero at x = 2, go negative, have a break at x = 5, then jump positive.",
+          "thinkAloud": "I need to translate a description of f into a description of f'. My rules: where f increases, f' is positive. Where f decreases, f' is negative. Horizontal tangent means f' = 0. Corner means f' doesn't exist. I'll go interval by interval and build up the picture of f'. I should also think about what the graph of f' looks like — positive on (0,2), zero at 2, negative on (2,5), undefined at 5, positive on (5,7).",
+          "commonMistake": "Students often say f'(5) = 0 instead of f'(5) = undefined. A corner is NOT a place where the derivative is zero — it's a place where the derivative doesn't exist. f' = 0 means a horizontal tangent (smooth curve, momentarily flat). A corner means the slope changes abruptly — there's no single tangent line, so no derivative. This distinction is heavily tested on the AP exam.",
+          "interpretation": "The f' description tells a story about the slope of f: the curve starts rising (positive slope), gradually flattens until the slope hits zero at x = 2 (hilltop), then the curve tilts downward (negative slope) until x = 5 where there's an abrupt change (corner — like a V shape), and then the curve starts rising again. The graph of f' would show the slope's value over time, with a gap/break at x = 5."
         }
       ],
       "lessonId": "derivatives-graphs-tables"

@@ -65,15 +65,24 @@
       "examples": [
         {
           "problem": "A pizza is cut into 8 equal slices. You eat 3 slices. What fraction of the pizza did you eat?",
-          "solution": "The pizza is divided into 8 equal parts, so the denominator is 8.\nYou ate 3 of those parts, so the numerator is 3.\nYou ate 3/8 of the pizza.\n\nPicture it: the whole pizza has 8 slices. 3 are on your plate, and 5/8 is still in the box."
+          "solution": "The pizza is divided into 8 equal parts, so the denominator is 8.\nYou ate 3 of those parts, so the numerator is 3.\nYou ate 3/8 of the pizza.\n\nPicture it: the whole pizza has 8 slices. 3 are on your plate, and 5/8 is still in the box.",
+          "thinkAloud": "Okay, let me picture this pizza in my head. It's cut into 8 equal slices — like drawing a plus sign and an X through the middle. Now I ate 3 of those slices. The bottom number of my fraction tells me how many total slices there are (that's 8), and the top number tells me how many I'm talking about (that's the 3 I ate). So my fraction is 3 on top, 8 on the bottom: 3/8.",
+          "commonMistake": "Some students write 3/5 instead of 3/8. They see 3 slices eaten and 5 slices left, and put 5 on the bottom. But the denominator is NOT the number of slices left over — it's the TOTAL number of slices the pizza was cut into, which is 8.",
+          "interpretation": "3/8 of the pizza means you ate 3 out of 8 equal slices. If you look at the pizza box, a little less than half the pizza is gone."
         },
         {
           "problem": "There are 12 puppies at the pet store. 5 of them are golden retrievers. What fraction of the puppies are golden retrievers?",
-          "solution": "This is a fraction of a SET (a group of things).\nThe whole set has 12 puppies, so the denominator is 12.\n5 of them are golden retrievers, so the numerator is 5.\nThe fraction is 5/12.\n\nNotice: we are not cutting one thing into pieces — we are looking at part of a group."
+          "solution": "This is a fraction of a SET (a group of things).\nThe whole set has 12 puppies, so the denominator is 12.\n5 of them are golden retrievers, so the numerator is 5.\nThe fraction is 5/12.\n\nNotice: we are not cutting one thing into pieces — we are looking at part of a group.",
+          "thinkAloud": "Hmm, this time I'm not cutting a pizza or a chocolate bar. I have a GROUP of puppies — 12 of them total. I need to figure out what fraction are golden retrievers. So my 'whole' is the entire group: 12 puppies. That's my bottom number. And 5 of those puppies are golden retrievers — that's the part I care about, so 5 goes on top. My fraction is 5/12.",
+          "commonMistake": "A student might write 5/7 instead of 5/12. They see 5 golden retrievers and 7 other puppies, and put 7 on the bottom. But the denominator needs to be the TOTAL number of puppies (12), not the number of non-golden-retriever puppies.",
+          "interpretation": "5/12 means that out of every 12 puppies in the store, 5 of them are golden retrievers. Less than half the puppies are golden retrievers, since 5 is less than half of 12."
         },
         {
           "problem": "Mark a point at 3/4 on a number line from 0 to 1.",
-          "solution": "Step 1: The denominator is 4, so divide the space from 0 to 1 into 4 equal sections.\nStep 2: Starting at 0, count over 3 sections to the right.\nStep 3: That landing point is 3/4.\n\n0---|---|---|---|1\n   1/4 2/4 3/4\n\n3/4 is past the halfway mark (2/4 = 1/2) but not all the way to 1."
+          "solution": "Step 1: The denominator is 4, so divide the space from 0 to 1 into 4 equal sections.\nStep 2: Starting at 0, count over 3 sections to the right.\nStep 3: That landing point is 3/4.\n\n0---|---|---|---|1\n   1/4 2/4 3/4\n\n3/4 is past the halfway mark (2/4 = 1/2) but not all the way to 1.",
+          "thinkAloud": "Okay, I need to put 3/4 on a number line. Let me look at the bottom number first — it's 4, so I need to split the space between 0 and 1 into 4 equal pieces, like cutting a long chocolate bar into 4 equal sections. Now the top number is 3, so I start at 0 and hop over 3 of those sections. One hop, two hops, three hops — that's where 3/4 lives!",
+          "commonMistake": "Some students divide the number line into 3 sections instead of 4 because they look at the numerator first. Remember: the DENOMINATOR (bottom number) tells you how many equal parts to make. The numerator tells you how many to count over.",
+          "interpretation": "3/4 on the number line means you are three-fourths of the way from 0 to 1. You've gone most of the way — past the halfway point — but you haven't reached 1 yet."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -162,15 +171,24 @@
       "examples": [
         {
           "problem": "Show that 1/2, 2/4, and 3/6 are all equivalent.",
-          "solution": "Start with 1/2.\nMultiply top and bottom by 2: (1x2)/(2x2) = 2/4.\nMultiply top and bottom by 3: (1x3)/(2x3) = 3/6.\n\nAll three fractions equal the same amount. If you had a fraction wall, the bar for 1/2 would be exactly as long as the bar for 2/4 and the bar for 3/6."
+          "solution": "Start with 1/2.\nMultiply top and bottom by 2: (1x2)/(2x2) = 2/4.\nMultiply top and bottom by 3: (1x3)/(2x3) = 3/6.\n\nAll three fractions equal the same amount. If you had a fraction wall, the bar for 1/2 would be exactly as long as the bar for 2/4 and the bar for 3/6.",
+          "thinkAloud": "Let me think about this with a chocolate bar. If I break a chocolate bar in half and take one piece, I have 1/2. Now imagine I break that SAME bar into 4 equal pieces instead — I'd need to take 2 pieces to have the same amount of chocolate. And if I break it into 6 pieces, I'd need 3 pieces. It's the same amount of chocolate every time! So to go from 1/2 to the others, I multiply the top AND bottom by the same number.",
+          "commonMistake": "A common mistake is multiplying only the top number or only the bottom number. For example, a student might say 1/2 = 1/4 (they multiplied only the bottom by 2) or 1/2 = 2/2 (they multiplied only the top by 2). You MUST multiply BOTH the numerator and the denominator by the same number, or you change how much the fraction is worth.",
+          "interpretation": "All three fractions — 1/2, 2/4, and 3/6 — represent exactly half of something. Whether you cut a pie into 2 pieces and take 1, or cut it into 6 pieces and take 3, you still have the same amount of pie."
         },
         {
           "problem": "Write a fraction equivalent to 2/3 that has a denominator of 12.",
-          "solution": "We need to get from denominator 3 to denominator 12.\n3 x ? = 12 → 3 x 4 = 12.\nWhatever we do to the bottom, we must do to the top.\n2 x 4 = 8.\nSo 2/3 = 8/12.\n\nCheck: both represent the same portion — two-thirds of the whole."
+          "solution": "We need to get from denominator 3 to denominator 12.\n3 x ? = 12 → 3 x 4 = 12.\nWhatever we do to the bottom, we must do to the top.\n2 x 4 = 8.\nSo 2/3 = 8/12.\n\nCheck: both represent the same portion — two-thirds of the whole.",
+          "thinkAloud": "I have 2/3 and I need a denominator of 12. Let me figure out what happened to the bottom number. I went from 3 to 12 — what did I multiply 3 by to get 12? That's 3 times 4 equals 12. Now here's the big rule: whatever I do to the bottom, I MUST do to the top too. So I multiply the top by 4 as well: 2 times 4 equals 8. My new fraction is 8/12.",
+          "commonMistake": "A student might add instead of multiply. They see that 3 + 9 = 12 for the denominator and then add 9 to the numerator too: 2 + 9 = 11, giving the wrong answer 11/12. But equivalent fractions use MULTIPLICATION, not addition. You multiply top and bottom by the SAME number.",
+          "interpretation": "8/12 means the same thing as 2/3. Imagine a pizza cut into 12 slices — eating 8 of those 12 slices is the same amount as eating 2 out of 3 big slices."
         },
         {
           "problem": "Simplify 6/8 to its lowest terms.",
-          "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified."
+          "solution": "Find a number that divides evenly into both 6 and 8.\n6 and 8 are both divisible by 2.\n6 ÷ 2 = 3, 8 ÷ 2 = 4.\nSo 6/8 = 3/4.\n\nCheck: can 3 and 4 be divided by the same number? No — so 3/4 is fully simplified.",
+          "thinkAloud": "I need to make this fraction simpler — find a shorter name for the same amount. Let me look at 6 and 8. Is there a number that goes into BOTH of them evenly? Let me try 2. Does 2 go into 6? Yes, 6 divided by 2 is 3. Does 2 go into 8? Yes, 8 divided by 2 is 4. So I divide top and bottom by 2 and get 3/4. Now can I simplify 3/4 any more? Is there a number that goes into both 3 and 4? Nope! So 3/4 is my final answer.",
+          "commonMistake": "Some students try to simplify by subtracting the same number from top and bottom instead of dividing. For example, they might subtract 2 from both: 6-2=4, 8-2=6, giving the wrong answer 4/6. Simplifying means DIVIDING both parts by the same number, never subtracting.",
+          "interpretation": "6/8 and 3/4 are the same amount. If you cut a chocolate bar into 8 pieces and eat 6, that's the same as cutting it into 4 pieces and eating 3 — either way you ate three-quarters of the bar."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -259,15 +277,23 @@
       "examples": [
         {
           "problem": "Compare 3/8 and 5/8. Which is greater?",
-          "solution": "Both fractions have the same denominator (8), so the pieces are the same size.\nJust compare the numerators: 5 > 3.\nSo 5/8 > 3/8.\n\nThink of it as pizza slices: 5 slices out of 8 is more pizza than 3 slices out of 8."
+          "solution": "Both fractions have the same denominator (8), so the pieces are the same size.\nJust compare the numerators: 5 > 3.\nSo 5/8 > 3/8.\n\nThink of it as pizza slices: 5 slices out of 8 is more pizza than 3 slices out of 8.",
+          "thinkAloud": "Let me look at these two fractions. They both have 8 on the bottom — that means both pizzas are cut into the same number of slices! Since the slices are the same size, I just need to ask: would you rather have 3 slices or 5 slices? Obviously 5 slices is more pizza! So 5/8 is bigger than 3/8.",
+          "commonMistake": "This one is pretty straightforward, but some students get confused when they see the same denominator and think the fractions must be equal. Remember: same denominator means same-size pieces, but you still need to check HOW MANY pieces (the numerator). 3 pieces and 5 pieces are definitely not the same!",
+          "interpretation": "5/8 of a pizza is more than 3/8 of a pizza. If you and your friend share a pizza cut into 8 slices and you get 5 while your friend gets 3, you got more pizza."
         },
         {
           "problem": "Compare 2/5 and 2/7. Which is greater?",
-          "solution": "Both fractions have the same numerator (2), so we are taking the same NUMBER of pieces.\nThe question is: which pieces are bigger?\nFifths (the whole cut into 5) are bigger than sevenths (the whole cut into 7).\nSmaller denominator = bigger pieces.\nSo 2/5 > 2/7.\n\nPicture two chocolate bars the same size: one cut into 5 pieces, one cut into 7. The pieces in the 5-piece bar are clearly bigger."
+          "solution": "Both fractions have the same numerator (2), so we are taking the same NUMBER of pieces.\nThe question is: which pieces are bigger?\nFifths (the whole cut into 5) are bigger than sevenths (the whole cut into 7).\nSmaller denominator = bigger pieces.\nSo 2/5 > 2/7.\n\nPicture two chocolate bars the same size: one cut into 5 pieces, one cut into 7. The pieces in the 5-piece bar are clearly bigger.",
+          "thinkAloud": "Okay, both fractions have a 2 on top — so I'm grabbing the same number of pieces from each. But wait, the pieces are different sizes! Imagine two identical chocolate bars. One is broken into 5 pieces and the other into 7 pieces. Which bar has bigger pieces? The one cut into only 5 pieces, because you're sharing between fewer parts. So 2 big pieces (fifths) is more chocolate than 2 small pieces (sevenths). 2/5 wins!",
+          "commonMistake": "Many students think that a bigger denominator means a bigger fraction — so they incorrectly say 2/7 > 2/5 because 7 is bigger than 5. It's actually the opposite! A bigger denominator means you cut into MORE pieces, which makes each piece SMALLER. Think about it: would you rather split a candy bar with 5 friends or 7 friends? Fewer friends means bigger pieces for you!",
+          "interpretation": "2/5 of a chocolate bar is a bigger amount than 2/7 of the same bar. Two-fifths means you get 2 out of 5 chunky pieces, while two-sevenths means you get 2 out of 7 skinnier pieces."
         },
         {
           "problem": "Order these fractions from least to greatest: 1/3, 3/4, 1/2.",
-          "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!"
+          "solution": "Strategy: use benchmarks and common denominators.\n1/2 is our benchmark.\n1/3: is 1/3 more or less than 1/2? Since 1/3 < 1/2, it is less.\n3/4: is 3/4 more or less than 1/2? Since 3/4 > 1/2, it is more.\nSo we already know: 1/3 < 1/2 < 3/4.\n\nFrom least to greatest: 1/3, 1/2, 3/4.\n\nDouble-check with common denominator 12:\n1/3 = 4/12, 1/2 = 6/12, 3/4 = 9/12.\n4 < 6 < 9. Confirmed!",
+          "thinkAloud": "Three fractions to put in order — that feels like a lot! Let me use a trick: I'll compare each one to 1/2, since 1/2 is easy to picture. Is 1/3 more or less than half? If I cut a pie into 3 pieces, one piece is less than half, so 1/3 is below 1/2. What about 3/4? Three out of four slices is definitely more than half. So now I know 1/3 is the smallest and 3/4 is the biggest, with 1/2 in the middle. Let me double-check using common denominators to be sure.",
+          "commonMistake": "A student might order them as 1/3, 3/4, 1/2 — thinking that since 3 < 4, 3/4 must come before 1/2. But you can't just compare random numbers from different fractions! You need a strategy: use benchmarks (like 1/2) or rewrite all fractions with the same denominator before comparing."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -356,15 +382,24 @@
       "examples": [
         {
           "problem": "Convert the mixed number 2 3/4 to an improper fraction.",
-          "solution": "Step 1: Multiply the whole number by the denominator: 2 x 4 = 8.\nStep 2: Add the numerator: 8 + 3 = 11.\nStep 3: Keep the same denominator: 4.\nSo 2 3/4 = 11/4.\n\nWhy this works: 2 wholes = 8/4, plus 3/4 more = 11/4 total."
+          "solution": "Step 1: Multiply the whole number by the denominator: 2 x 4 = 8.\nStep 2: Add the numerator: 8 + 3 = 11.\nStep 3: Keep the same denominator: 4.\nSo 2 3/4 = 11/4.\n\nWhy this works: 2 wholes = 8/4, plus 3/4 more = 11/4 total.",
+          "thinkAloud": "I have 2 and 3/4. Let me picture this as pizzas cut into 4 slices each. I have 2 whole pizzas — that's 4 slices plus 4 slices, which is 8 slices. Then I have 3 extra slices from a third pizza. So altogether, 8 + 3 = 11 slices, and each slice is a fourth. That gives me 11/4. For the shortcut: multiply the whole number (2) by the denominator (4), add the numerator (3), and keep the denominator (4).",
+          "commonMistake": "A student might write 2 3/4 = 23/4, just sticking the 2 and 3 together to make 23. But you need to MULTIPLY the whole number by the denominator first, then add the numerator. 2 times 4 is 8, then 8 plus 3 is 11. The answer is 11/4, not 23/4.",
+          "interpretation": "11/4 means you have 11 quarter-slices of pizza. That's more than 2 whole pizzas (which would be 8 slices) but less than 3 whole pizzas (which would be 12 slices). It's exactly 2 whole pizzas and 3 extra slices."
         },
         {
           "problem": "Convert the improper fraction 17/5 to a mixed number.",
-          "solution": "Step 1: Divide 17 by 5: 17 ÷ 5 = 3 remainder 2.\nStep 2: The quotient (3) becomes the whole number.\nStep 3: The remainder (2) becomes the new numerator, over the same denominator (5).\nSo 17/5 = 3 2/5.\n\nCheck: 3 x 5 + 2 = 17. It works!"
+          "solution": "Step 1: Divide 17 by 5: 17 ÷ 5 = 3 remainder 2.\nStep 2: The quotient (3) becomes the whole number.\nStep 3: The remainder (2) becomes the new numerator, over the same denominator (5).\nSo 17/5 = 3 2/5.\n\nCheck: 3 x 5 + 2 = 17. It works!",
+          "thinkAloud": "I have 17/5. That means 17 pieces, and each piece is one-fifth. How many whole groups of 5 can I make out of 17? Let me think... 5, 10, 15 — that's 3 groups of 5, and I've used up 15 pieces. I still have 17 minus 15 = 2 pieces left over. So I have 3 wholes and 2 fifths remaining. That's 3 2/5! I'll double-check: 3 times 5 plus 2 equals 17. Yes!",
+          "commonMistake": "A student might forget about the remainder and just write 3 instead of 3 2/5. Or they might put the wrong number as the remainder — for example, writing 3 5/2 by swapping the remainder and denominator. Remember: the REMAINDER goes on top (numerator), and the DENOMINATOR stays the same as the original fraction.",
+          "interpretation": "17/5 is the same as 3 2/5. Imagine you have 17 chocolate bar pieces and each whole bar is 5 pieces. You can build 3 complete chocolate bars with 2 extra pieces left over."
         },
         {
           "problem": "Place 1 2/3 on a number line.",
-          "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2."
+          "solution": "Step 1: The whole number is 1, so start between 1 and 2.\nStep 2: The fraction part is 2/3, so divide the space between 1 and 2 into 3 equal parts.\nStep 3: Count 2 parts past the 1.\n\n0----1----|----|----|----2\n         1 1/3 1 2/3\n\n1 2/3 is two-thirds of the way from 1 to 2.",
+          "thinkAloud": "I see a mixed number: 1 2/3. The whole number part is 1, so I know this point lives somewhere between 1 and 2 on the number line. Now the fraction part is 2/3, which tells me how far past 1 to go. I need to split the space between 1 and 2 into 3 equal sections (because the denominator is 3), then hop over 2 of them (because the numerator is 2). That's where 1 2/3 goes!",
+          "commonMistake": "A student might place 1 2/3 between 0 and 1 instead of between 1 and 2. They forget about the whole number part! The '1' in 1 2/3 tells you that you've already passed the number 1. Then the 2/3 tells you how much farther to go between 1 and 2.",
+          "interpretation": "1 2/3 on the number line is past 1 but not quite to 2. It's two-thirds of the way from 1 to 2 — like if you're walking from your house (at 1) to your friend's house (at 2), you've covered most of the distance but still have a little bit left to go."
         }
       ],
       "lessonId": "fraction_concepts"
@@ -453,15 +488,24 @@
       "examples": [
         {
           "problem": "What is 1/3 of 24?",
-          "solution": "We need to find 1/3 of 24.\nStep 1: Divide 24 by the denominator (3): 24 ÷ 3 = 8.\nStep 2: Multiply by the numerator (1): 8 x 1 = 8.\nSo 1/3 of 24 = 8.\n\nPicture it: 24 gummy bears split into 3 equal groups. Each group has 8 gummy bears. One group (1/3) = 8."
+          "solution": "We need to find 1/3 of 24.\nStep 1: Divide 24 by the denominator (3): 24 ÷ 3 = 8.\nStep 2: Multiply by the numerator (1): 8 x 1 = 8.\nSo 1/3 of 24 = 8.\n\nPicture it: 24 gummy bears split into 3 equal groups. Each group has 8 gummy bears. One group (1/3) = 8.",
+          "thinkAloud": "I need to find 1/3 of 24. Let me picture this: I have 24 gummy bears and I want to split them into 3 equal groups. The denominator (3) tells me how many groups to make. 24 divided by 3 is... 8! So each group has 8 gummy bears. The numerator (1) tells me I want just 1 of those groups. 8 times 1 is 8. So 1/3 of 24 is 8 gummy bears!",
+          "commonMistake": "A student might divide 24 by the numerator (1) instead of the denominator (3), getting 24. Or they might multiply 24 by 3 and get 72. Remember the order: DIVIDE by the bottom number first to make equal groups, THEN multiply by the top number to count how many groups you want.",
+          "interpretation": "1/3 of 24 equals 8. If you had 24 gummy bears and shared them equally with 2 friends (3 people total), each person would get exactly 8 gummy bears."
         },
         {
           "problem": "What is 3/4 of 20?",
-          "solution": "Step 1: Divide 20 by the denominator (4): 20 ÷ 4 = 5.\nStep 2: Multiply by the numerator (3): 5 x 3 = 15.\nSo 3/4 of 20 = 15.\n\nPicture it: 20 stickers split into 4 equal groups of 5. You want 3 of those groups: 5 + 5 + 5 = 15 stickers."
+          "solution": "Step 1: Divide 20 by the denominator (4): 20 ÷ 4 = 5.\nStep 2: Multiply by the numerator (3): 5 x 3 = 15.\nSo 3/4 of 20 = 15.\n\nPicture it: 20 stickers split into 4 equal groups of 5. You want 3 of those groups: 5 + 5 + 5 = 15 stickers.",
+          "thinkAloud": "3/4 of 20. Let me line up 20 stickers and split them into 4 equal groups — the denominator tells me 4 groups. 20 divided by 4 is 5, so each group has 5 stickers. Now the numerator says I want 3 of those groups. So I count: 5 stickers, plus 5 more stickers, plus 5 more stickers. That's 5 times 3 = 15 stickers!",
+          "commonMistake": "A student might do the steps in the wrong order — multiplying 20 times 3 first to get 60, then struggling to divide 60 by 4 (which still gives 15, but is harder). Or worse, they might multiply 20 by 3 and forget to divide, answering 60. Always divide by the denominator FIRST to keep the numbers small and easy.",
+          "interpretation": "3/4 of 20 equals 15. That means if you had 20 stickers and gave away three-fourths of them, you'd give away 15 stickers and keep only 5 for yourself."
         },
         {
           "problem": "A baker made 30 cookies. She gave 2/5 of them to her neighbor. How many cookies did the neighbor get?",
-          "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!"
+          "solution": "Find 2/5 of 30.\nStep 1: Divide 30 by the denominator (5): 30 ÷ 5 = 6.\nStep 2: Multiply by the numerator (2): 6 x 2 = 12.\nThe neighbor got 12 cookies.\n\nCheck: 12 out of 30 = 12/30 = 2/5. It matches!",
+          "thinkAloud": "The baker made 30 cookies and gave 2/5 away. I see the word 'of,' and that tells me I need to find a fraction of a number. First, I divide the 30 cookies into 5 equal groups — imagine laying them out on 5 plates. 30 divided by 5 is 6, so each plate gets 6 cookies. Now the neighbor gets 2 of those plates (because the numerator is 2). That's 6 plus 6 = 12 cookies! Let me check: 12 out of 30... that simplifies to 2/5. It works!",
+          "commonMistake": "A student might divide 30 by 2 (the numerator) instead of 5 (the denominator), getting 15. Then they might multiply 15 by 5 and get 75, which doesn't even make sense — you can't give away more cookies than you baked! Always divide by the DENOMINATOR (bottom number) first.",
+          "interpretation": "The neighbor got 12 out of the 30 cookies. That's 2/5 of the batch — like splitting all the cookies into 5 equal bags of 6 cookies each, and handing 2 bags to the neighbor."
         }
       ],
       "lessonId": "fraction_concepts"
