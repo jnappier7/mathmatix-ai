@@ -71,7 +71,7 @@ export function showUpgradePrompt(errorData) {
     const isFeatureBlock = errorData.premiumFeatureBlocked;
     const title = isFeatureBlock ? `${errorData.feature} Requires Unlimited` : 'Choose a Tutoring Pack';
     const subtitle = isFeatureBlock
-        ? `Unlock ${errorData.feature.toLowerCase()}, unlimited tutoring, voice, and more.`
+        ? `Unlock ${errorData.feature.toLowerCase()}, unlimited 24/7 tutoring, voice, courses, and more.`
         : 'Purchase minutes to continue learning with your AI tutor.';
 
     const packBtnStyle = 'background:#1e1e3a;border:1px solid #444;border-radius:10px;padding:16px;cursor:pointer;text-align:center;color:#fff;transition:border-color 0.2s;';
@@ -101,7 +101,7 @@ export function showUpgradePrompt(errorData) {
                 <div class="pack-option" data-pack="unlimited" style="${packBtnStyle}" ${packBtnHover}>
                     <div style="font-size:20px;font-weight:bold;">Unlimited Monthly</div>
                     <div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$19.95<span style="font-size:14px;color:#aaa;font-weight:normal">/mo</span></div>
-                    <div style="color:#888;font-size:12px;">Unlimited tutoring + voice + uploads &middot; Cancel anytime</div>
+                    <div style="color:#888;font-size:12px;">24/7 tutoring, voice, PDF upload, courses, Show My Work &middot; Cancel anytime</div>
                 </div>
             </div>
             <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:16px;">Maybe later</button>
