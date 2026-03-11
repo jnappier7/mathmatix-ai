@@ -357,7 +357,7 @@ router.post('/', async (req, res) => {
                         console.log(`🎓 [CourseChat] ${user.firstName} completed module ${courseProgressUpdate.moduleId} — progress: ${courseSession.overallProgress}%`);
 
                     } else if (ext.scaffoldAdvance) {
-                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect);
+                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
                         if (courseProgressUpdate) {
                             await courseSession.save();
                             console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal}`);
