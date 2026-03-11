@@ -2496,6 +2496,57 @@
         }
       }
 
+      /* ── Pi Day Launch Auto-Switch ─────────────────────── */
+      // At midnight EST on March 14 2026, swap waitlist CTAs → sign-up CTAs
+      (function piDayLaunchSwitch() {
+        var launchDate = new Date('2026-03-14T05:00:00Z'); // midnight EST = UTC-5
+        if (new Date() < launchDate) return;
+
+        // Hide countdown banner
+        var countdown = document.getElementById('lp-countdown');
+        if (countdown) countdown.style.display = 'none';
+
+        // Swap nav "Join Waitlist" → "Sign Up"
+        var navLinks = document.querySelectorAll('.landing-nav .btn');
+        navLinks.forEach(function (a) {
+          if (/waitlist/i.test(a.textContent)) {
+            a.textContent = 'Sign Up';
+            a.href = '/signup.html';
+          }
+        });
+
+        // Replace all waitlist forms with sign-up buttons
+        var forms = document.querySelectorAll('.lp-waitlist-form');
+        forms.forEach(function (form) {
+          var link = document.createElement('a');
+          link.href = '/signup.html';
+          link.className = 'btn btn-primary';
+          link.textContent = 'Get Started — It\'s Free';
+          form.parentNode.replaceChild(link, form);
+        });
+
+        // Swap sticky CTA bar
+        var stickyForm = document.querySelector('.lp-sticky-cta .lp-waitlist-form--sticky');
+        if (!stickyForm) {
+          // Already replaced above; update the link text
+          var stickyLink = document.querySelector('.lp-sticky-cta .btn');
+          if (stickyLink) stickyLink.textContent = 'Sign Up Free';
+        }
+
+        // Update footer link
+        var footerLinks = document.querySelectorAll('.lp-footer a');
+        footerLinks.forEach(function (a) {
+          if (/waitlist/i.test(a.textContent)) {
+            a.textContent = 'Sign Up';
+            a.href = '/signup.html';
+          }
+        });
+
+        // Update countdown label area text if still visible
+        var ctaNote = document.querySelector('.lp-cta-note');
+        if (ctaNote) ctaNote.textContent = 'Free for students. Sign up as a student, parent, or teacher.';
+      })();
+
       /* ── FAQ Accordion ─────────────────────────────────── */
       var faqItems = document.querySelectorAll('.lp-faq-item');
       faqItems.forEach(function (item) {
