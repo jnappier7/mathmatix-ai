@@ -38,6 +38,8 @@
     font-size: 0.94em;
     box-shadow: none;
     animation: messageIn 0.25s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes messageIn {
@@ -205,6 +207,11 @@
 .message.user .message-timestamp {
     color: rgba(255, 255, 255, 0.6);
     text-align: left;
+}
+
+.message:hover,
+.message:has(.reaction-display.has-reaction) {
+    z-index: 2;
 }
 
 /* ===== EMOJI REACTION SYSTEM ===== */
