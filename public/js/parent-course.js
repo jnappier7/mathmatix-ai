@@ -22,12 +22,15 @@
     const overlayEl      = document.getElementById('pc-sidebar-overlay');
     const sidebarToggle  = document.getElementById('pc-sidebar-toggle');
 
+    const languageSelect = document.getElementById('pc-language-select');
+
     // ── State ─────────────────────────────────────────────
     let sessionId = null;
     let courseId  = null;
     let session   = null;
     let pathway   = null;
     let isProcessing = false;
+    let currentAudio = null; // For TTS playback
 
     // ── Parse URL params ──────────────────────────────────
     const params = new URLSearchParams(window.location.search);
@@ -120,6 +123,9 @@
 
         // 4. Render sidebar
         renderSidebar();
+
+        // 4b. Initialize language selector from user profile
+        initLanguageSelector();
 
         // 5. Hide welcome, send greeting
         welcomeEl.style.display = 'none';
@@ -270,6 +276,192 @@
         } catch (e) { /* silent */ }
     }
 
+    // ── KaTeX rendering ─────────────────────────────────
+    function renderKatex(math, displayMode) {
+        if (!window.katex) return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+        try {
+            return window.katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true });
+        } catch (e) {
+            console.warn('[KaTeX] render error:', e.message);
+            return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+        }
+    }
+
+    function renderMarkdownMath(text) {
+        if (!text) return '';
+        const _marked = window.marked;
+        const _DOMPurify = window.DOMPurify;
+
+        if (!_marked || !_marked.parse) {
+            let fallback = escapeHtml(text);
+            if (window.katex) {
+                fallback = fallback.replace(/\\\[([\s\S]*?)\\\]/g, (_, m) => renderKatex(m, true));
+                fallback = fallback.replace(/\\\(([\s\S]*?)\\\)/g, (_, m) => renderKatex(m, false));
+            }
+            return _DOMPurify ? _DOMPurify.sanitize(fallback) : fallback;
+        }
+
+        let processed = text;
+        const latexBlocks = [];
+
+        // Protect display math \[...\]
+        processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => {
+            latexBlocks.push({ math, display: true });
+            return `@@LATEX_BLOCK_${latexBlocks.length - 1}@@`;
+        });
+
+        // Protect inline math \(...\)
+        processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => {
+            latexBlocks.push({ math, display: false });
+            return `@@LATEX_BLOCK_${latexBlocks.length - 1}@@`;
+        });
+
+        let html = _marked.parse(processed, { breaks: true });
+
+        // Restore LaTeX as rendered KaTeX HTML
+        latexBlocks.forEach((block, i) => {
+            html = html.replace(`@@LATEX_BLOCK_${i}@@`, renderKatex(block.math, block.display));
+        });
+
+        if (_DOMPurify) {
+            html = _DOMPurify.sanitize(html, {
+                ALLOWED_TAGS: [
+                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div',
+                    'math', 'semantics', 'annotation', 'mrow', 'mi', 'mo', 'mn', 'ms',
+                    'mfrac', 'msup', 'msub', 'msubsup', 'mover', 'munder', 'munderover',
+                    'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
+                    'menclose', 'mglyph', 'mstyle', 'merror', 'mprescripts', 'mmultiscripts'
+                ],
+                ALLOWED_ATTR: [
+                    'href', 'class', 'target', 'rel', 'style',
+                    'aria-hidden', 'encoding', 'mathvariant', 'stretchy', 'fence',
+                    'separator', 'lspace', 'rspace', 'accent', 'accentunder',
+                    'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+                    'columnlines', 'rowlines', 'frame', 'framespacing',
+                    'displaystyle', 'scriptlevel', 'minsize', 'maxsize', 'xmlns'
+                ]
+            });
+        }
+
+        return html;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ── TTS (text-to-speech) ─────────────────────────────
+    function cleanTextForSpeech(text) {
+        if (!text) return '';
+        return text
+            .replace(/\\\[([\s\S]*?)\\\]/g, '') // remove display math
+            .replace(/\\\(([\s\S]*?)\\\)/g, '') // remove inline math
+            .replace(/\*\*(.+?)\*\*/g, '$1')    // bold
+            .replace(/_(.+?)_/g, '$1')           // italic
+            .replace(/`(.+?)`/g, '$1')           // code
+            .replace(/#{1,6}\s*/g, '')           // headings
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
+            .replace(/```[\s\S]*?```/g, '')      // code blocks
+            .replace(/\n{2,}/g, '. ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    async function playTTS(text, button) {
+        // Stop any currently playing audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+            document.querySelectorAll('.play-audio-btn.is-playing').forEach(b => b.classList.remove('is-playing'));
+        }
+
+        const speakableText = cleanTextForSpeech(text);
+        if (!speakableText) return;
+
+        button.classList.add('is-loading');
+        button.disabled = true;
+
+        try {
+            const res = await csrfFetch('/api/speak', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ text: speakableText })
+            });
+
+            if (res.status === 403) {
+                // COPPA fallback: use browser speech synthesis
+                button.classList.remove('is-loading');
+                button.classList.add('is-playing');
+                button.disabled = false;
+                const utterance = new SpeechSynthesisUtterance(speakableText);
+                utterance.onend = () => { button.classList.remove('is-playing'); currentAudio = null; };
+                utterance.onerror = () => { button.classList.remove('is-playing'); currentAudio = null; };
+                window.speechSynthesis.speak(utterance);
+                currentAudio = { pause: () => window.speechSynthesis.cancel() };
+                return;
+            }
+
+            if (!res.ok) throw new Error('TTS request failed');
+
+            // Success — response is audio binary
+            const blob = await res.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            const audio = new Audio(audioUrl);
+            currentAudio = audio;
+
+            button.classList.remove('is-loading');
+            button.classList.add('is-playing');
+            button.disabled = false;
+
+            audio.onended = () => {
+                button.classList.remove('is-playing');
+                URL.revokeObjectURL(audioUrl);
+                currentAudio = null;
+            };
+            audio.onerror = () => {
+                button.classList.remove('is-playing', 'is-loading');
+                URL.revokeObjectURL(audioUrl);
+                currentAudio = null;
+            };
+            audio.play();
+        } catch (err) {
+            console.error('[ParentCourse] TTS error:', err);
+            button.classList.remove('is-loading', 'is-playing');
+            button.disabled = false;
+        }
+    }
+
+    // ── Language selector ────────────────────────────────
+    async function initLanguageSelector() {
+        if (!languageSelect) return;
+        try {
+            const res = await fetch('/user', { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                const lang = data.user?.parentLanguage || data.user?.preferredLanguage || 'English';
+                languageSelect.value = lang;
+            }
+        } catch (e) { /* use default */ }
+
+        languageSelect.addEventListener('change', async () => {
+            const lang = languageSelect.value;
+            try {
+                await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ preferredLanguage: lang, parentLanguage: lang })
+                });
+            } catch (e) {
+                console.error('[ParentCourse] Language update failed:', e);
+            }
+        });
+    }
+
     // ── Message rendering ─────────────────────────────────
     function appendMessage(text, sender) {
         if (!text) return;
@@ -281,7 +473,18 @@
         bubble.className = `pc-msg-bubble ${sender}`;
 
         if (sender === 'ai') {
-            bubble.innerHTML = renderMarkdown(text);
+            bubble.innerHTML = renderMarkdownMath(text);
+
+            // Add TTS play button
+            const playBtn = document.createElement('button');
+            playBtn.className = 'play-audio-btn';
+            playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
+            playBtn.title = 'Play audio';
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playTTS(text, playBtn);
+            });
+            bubble.appendChild(playBtn);
         } else {
             bubble.textContent = text;
         }
@@ -289,59 +492,8 @@
         container.appendChild(bubble);
         messagesEl.appendChild(container);
 
-        // LaTeX rendering for AI messages
-        if (sender === 'ai') {
-            renderMath(bubble);
-        }
-
         // Scroll to bottom
         messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function renderMarkdown(text) {
-        if (typeof marked === 'undefined' || !marked.parse) {
-            return escapeHtml(text);
-        }
-
-        // Protect LaTeX blocks from markdown parsing
-        const blocks = [];
-        let processed = text
-            .replace(/\\\[([\s\S]*?)\\\]/g, (m) => { blocks.push(m); return `@@LB${blocks.length - 1}@@`; })
-            .replace(/\\\(([\s\S]*?)\\\)/g, (m) => { blocks.push(m); return `@@LB${blocks.length - 1}@@`; });
-
-        let html = marked.parse(processed, { breaks: true });
-
-        // Restore LaTeX blocks
-        blocks.forEach((b, i) => { html = html.replace(`@@LB${i}@@`, b); });
-
-        // Sanitize
-        if (typeof DOMPurify !== 'undefined') {
-            html = DOMPurify.sanitize(html, {
-                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li',
-                               'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'blockquote'],
-                ALLOWED_ATTR: ['href', 'class', 'target', 'rel', 'style']
-            });
-        }
-
-        return html;
-    }
-
-    function renderMath(element) {
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise([element]).catch(() => {});
-        } else if (window.ensureMathJax) {
-            window.ensureMathJax().then(() => {
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([element]).catch(() => {});
-                }
-            });
-        }
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     // ── UI helpers ────────────────────────────────────────

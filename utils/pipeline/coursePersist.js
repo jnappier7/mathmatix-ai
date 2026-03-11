@@ -97,9 +97,11 @@ function detectGraphTool(responseText, options = {}) {
  * @param {Object} moduleData - Loaded module JSON (with scaffold array)
  * @param {Object} conversation - Mongoose conversation document
  * @param {boolean} wasCorrect - Whether the last answer was correct
+ * @param {Object} [options] - Additional options
+ * @param {boolean} [options.isParentCourse] - If true, skip practice-phase gating
  * @returns {Object|null} courseProgressUpdate object, or null if blocked/failed
  */
-function processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect) {
+function processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, options = {}) {
   const scaffold = moduleData?.scaffold || [];
   const totalSteps = scaffold.length || 1;
   const currentIdx = courseSession.currentScaffoldIndex || 0;
@@ -125,7 +127,7 @@ function processScaffoldAdvance(courseSession, moduleData, conversation, wasCorr
     if (wasCorrect) correctSinceLastAdvance++;
   }
 
-  if (isPracticePhase && correctSinceLastAdvance < MIN_CORRECT_FOR_ADVANCE) {
+  if (isPracticePhase && !options.isParentCourse && correctSinceLastAdvance < MIN_CORRECT_FOR_ADVANCE) {
     console.log(`[CoursePersist] SCAFFOLD_ADVANCE blocked — "${stepType}" needs ${MIN_CORRECT_FOR_ADVANCE} correct, got ${correctSinceLastAdvance}`);
     return null;
   }
