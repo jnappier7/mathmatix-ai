@@ -205,6 +205,19 @@ describe('coursePersist: processScaffoldAdvance', () => {
     expect(conversation.messages[0].scaffoldAdvanced).toBe(true);
   });
 
+  test('skips practice gating for parent courses', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 2 }); // Step 2 is guided_practice
+    const moduleData = mockModuleData(4);
+    const conversation = mockConversation(3, 0); // No correct answers
+
+    // Without isParentCourse, this would be blocked
+    const result = processScaffoldAdvance(session, moduleData, conversation, false, { isParentCourse: true });
+
+    expect(result).not.toBeNull();
+    expect(result.event).toBe('scaffold_advance');
+    expect(result.scaffoldIndex).toBe(3);
+  });
+
   test('returns null if module not found', () => {
     const session = mockCourseSession({ currentModuleId: 'nonexistent' });
     const result = processScaffoldAdvance(session, mockModuleData(), mockConversation(), false);
