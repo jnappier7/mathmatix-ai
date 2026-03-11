@@ -288,7 +288,7 @@ app.use((req, res, next) => {
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 120,
+  max: 300, // Raised from 120 — active tutoring sessions generate many API calls
   keyGenerator: (req) => {
     // Use user ID when authenticated so school networks (shared IP) don't share a budget
     return req.user ? req.user._id.toString() : req.ip;
@@ -296,9 +296,10 @@ const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {
+    const retryAfter = Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000);
     res.status(429).json({
-      message: "Too many requests, please try again after 15 minutes.",
-      retryAfter: 60
+      message: "Too many requests, please try again shortly.",
+      retryAfter: Math.max(retryAfter, 5), // At least 5s to avoid rapid retry loops
     });
   },
 });
