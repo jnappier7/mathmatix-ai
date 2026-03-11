@@ -6,29 +6,11 @@
     <title>Parent Learning Center — MathMatix</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script defer src="/vendor/katex/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true },
-            svg: { fontCache: 'global' }
-        };
-        window._lazyScripts = {};
-        window.loadScript = function(url) {
-            if (window._lazyScripts[url]) return window._lazyScripts[url];
-            window._lazyScripts[url] = new Promise((resolve, reject) => {
-                var s = document.createElement('script');
-                s.src = url; s.onload = resolve; s.onerror = reject;
-                document.head.appendChild(s);
-            });
-            return window._lazyScripts[url];
-        };
-        window.ensureMathJax = function() {
-            if (window.MathJax && window.MathJax.typesetPromise) return Promise.resolve();
-            return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
-        };
-    </script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -376,6 +358,27 @@
             color: #777;
         }
 
+        /* Play audio button on AI bubbles */
+        .pc-msg-bubble.ai { position: relative; padding-right: 40px; }
+        .pc-msg-bubble.ai .play-audio-btn {
+            position: absolute; bottom: 5px; right: 5px;
+            width: 28px; height: 28px; padding: 0; margin: 0;
+            border: none; border-radius: 50%;
+            background-color: rgba(0,0,0,0.08); color: #555;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8em; opacity: 0; transition: opacity 0.2s;
+        }
+        .pc-msg-bubble.ai:hover .play-audio-btn { opacity: 1; }
+        .play-audio-btn:hover { background-color: rgba(0,0,0,0.15); }
+        .play-audio-btn .fa-wave-square { display: none; }
+        .play-audio-btn .fa-spinner { display: none; }
+        .play-audio-btn.is-loading .fa-spinner { display: inline-block; animation: fa-spin 1s infinite linear; }
+        .play-audio-btn.is-loading .fa-play,
+        .play-audio-btn.is-loading .fa-wave-square { display: none; }
+        .play-audio-btn.is-playing .fa-play { display: none; }
+        .play-audio-btn.is-playing .fa-wave-square { display: inline-block; animation: pulse 1.2s infinite ease-in-out; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
         /* ========== Mobile ========== */
         .pc-sidebar-toggle {
             display: none;
@@ -456,9 +459,22 @@
                     <div class="pc-chat-header-title" id="pc-module-title">Loading...</div>
                     <div class="pc-chat-header-subtitle" id="pc-module-subtitle"></div>
                 </div>
-                <a href="/parent-dashboard.html" style="color: #999; font-size: 0.85em; text-decoration: none;">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <select id="pc-language-select" title="Language" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.8em; color: #555; background: #faf8f5; cursor: pointer;">
+                        <option value="English">English</option>
+                        <option value="Spanish">Espa&#241;ol</option>
+                        <option value="Russian">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</option>
+                        <option value="Chinese">&#20013;&#25991;</option>
+                        <option value="Vietnamese">Ti&#7871;ng Vi&#7879;t</option>
+                        <option value="Arabic">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</option>
+                        <option value="Somali">Soomaali</option>
+                        <option value="French">Fran&#231;ais</option>
+                        <option value="German">Deutsch</option>
+                    </select>
+                    <a href="/parent-dashboard.html" style="color: #999; font-size: 0.85em; text-decoration: none;">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </div>
             </div>
 
             <div class="pc-messages" id="pc-messages">
