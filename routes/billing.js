@@ -40,7 +40,7 @@ const PACKS = {
   },
   unlimited: {
     name: 'M∆THM∆TIX Unlimited Monthly',
-    description: 'Unlimited AI tutoring, voice, OCR, and uploads',
+    description: 'Unlimited 24/7 AI tutoring with voice, PDF upload, courses, Show My Work, and all platform features',
     price: 1995,        // $19.95 in cents
     seconds: null,
     expiryDays: null,
