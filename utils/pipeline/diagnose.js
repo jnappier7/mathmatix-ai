@@ -14,6 +14,22 @@ const { processMathMessage, verifyAnswer } = require('../mathSolver');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 
 /**
+ * Strip LaTeX delimiters from text so regex-based math detection works.
+ * AI messages store numbers wrapped in \(...\) or \[...\] per the system prompt's
+ * MATH FORMATTING rule, but processMathMessage expects plain text.
+ *
+ * "When you add \(141\) and \(94\):" → "When you add 141 and 94:"
+ */
+function stripLatexDelimiters(text) {
+  if (!text) return text;
+  return text
+    .replace(/\\\(([^)]*?)\\\)/g, '$1')   // \(expr\) → expr
+    .replace(/\\\[([^\]]*?)\\\]/g, '$1')   // \[expr\] → expr
+    .replace(/\$\$([^$]*?)\$\$/g, '$1')    // $$expr$$ → expr
+    .replace(/(?<![\\$])\$([^$\n]+?)\$/g, '$1'); // $expr$ → expr (not currency)
+}
+
+/**
  * Run the full diagnosis pipeline on an answer attempt.
  *
  * @param {Object} observation - Output from observe stage
@@ -40,10 +56,14 @@ async function diagnose(observation, context = {}) {
   const recentAI = context.recentAssistantMessages || [];
 
   // ── Step 1: Find the problem that was posed ──
-  // Walk backwards through recent AI messages to find a math problem
+  // Walk backwards through recent AI messages to find a math problem.
+  // Strip LaTeX delimiters first — stored messages wrap numbers in \(...\)
+  // which breaks regex-based math detection (e.g. "add \(141\) and \(94\)"
+  // won't match the nlAddPattern expecting "add 141 and 94").
   let problemInfo = null;
   for (let i = recentAI.length - 1; i >= 0; i--) {
-    const result = processMathMessage(recentAI[i].content);
+    const plainContent = stripLatexDelimiters(recentAI[i].content);
+    const result = processMathMessage(plainContent);
     if (result.hasMath && result.solution?.success) {
       problemInfo = {
         problemType: result.problem.type,

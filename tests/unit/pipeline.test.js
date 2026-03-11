@@ -19,7 +19,7 @@ jest.mock('../../utils/openaiClient', () => ({
 }));
 
 const { observe, MESSAGE_TYPES, PATTERNS, extractAnswer, detectContextSignals } = require('../../utils/pipeline/observe');
-const { estimateIndependence } = require('../../utils/pipeline/diagnose');
+const { estimateIndependence, diagnose } = require('../../utils/pipeline/diagnose');
 const { decide, ACTIONS } = require('../../utils/pipeline/decide');
 const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assemblePrompt } = require('../../utils/pipeline/generate');
 const { extractSystemTags, normalizeLatex } = require('../../utils/pipeline/verify');
@@ -170,6 +170,99 @@ describe('Pipeline: Diagnose Stage', () => {
           { content: 'help me' },
         ],
       })).toBe('heavily_scaffolded');
+    });
+  });
+
+  describe('diagnose with LaTeX-wrapped AI messages', () => {
+    test('correctly verifies answer when AI message uses LaTeX delimiters', async () => {
+      const observation = {
+        answer: { value: '235', raw: '235' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'When you add \\(141\\) and \\(94\\):\n1. Ones place: \\(1 + 4 = 5\\)\n2. Tens place: \\(4 + 9 = 13\\)\n3. Hundreds place: \\(1 + 0 + 1 = 2\\)\nWhat do you think the total is?',
+        }],
+        recentUserMessages: [],
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(true);
+      expect(result.correctAnswer).toBe('235');
+    });
+
+    test('correctly verifies answer when AI uses $...$ delimiters', async () => {
+      const observation = {
+        answer: { value: '235', raw: '235' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'When you add $141$ and $94$, what do you get?',
+        }],
+        recentUserMessages: [],
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(true);
+      expect(result.correctAnswer).toBe('235');
+    });
+
+    test('detects the full problem, not a sub-step, in LaTeX messages', async () => {
+      const observation = {
+        answer: { value: '235', raw: '235' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'Let\'s add \\(141\\) and \\(94\\). Start with the ones: \\(1 + 4 = 5\\).',
+        }],
+        recentUserMessages: [],
+      };
+      const result = await diagnose(observation, context);
+      // Should find 141 + 94 = 235, NOT 1 + 4 = 5
+      expect(result.correctAnswer).toBe('235');
+      expect(result.isCorrect).toBe(true);
+    });
+
+    test('still works with plain text (no LaTeX) messages', async () => {
+      const observation = {
+        answer: { value: '15', raw: '15' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'What is 7 plus 8?',
+        }],
+        recentUserMessages: [],
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(true);
+      expect(result.correctAnswer).toBe('15');
+    });
+
+    test('returns unverifiable when no math found in AI messages', async () => {
+      const observation = {
+        answer: { value: '42', raw: '42' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'Tell me about how you approached that problem.',
+        }],
+        recentUserMessages: [],
+      };
+      const result = await diagnose(observation, context);
+      expect(result.type).toBe('unverifiable');
+      expect(result.isCorrect).toBeNull();
     });
   });
 });
