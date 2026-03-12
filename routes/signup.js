@@ -133,7 +133,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         let mathCourseFromCode = null;
         let subscriptionTierFromCode = null;
 
-        if (role === 'student' && enrollmentCode) {
+        if (role === 'student' && enrollmentCode && enrollmentCode.trim()) {
             enrollmentCodeDoc = await EnrollmentCode.findOne({
                 code: enrollmentCode.toUpperCase().trim()
             });
@@ -156,8 +156,8 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                 // Code is in ENROLLMENT_CODES env var — valid for open registration (no teacher link)
                 console.log(`LOG: Student using env-based enrollment code: ${enrollmentCode}`);
             } else {
-                console.warn(`WARN: Student signed up with non-existent enrollment code: ${enrollmentCode}`);
-                return res.status(400).json({ message: 'Invalid enrollment code.' });
+                console.warn(`WARN: Student signed up with unrecognized enrollment code: ${enrollmentCode} — proceeding without class link.`);
+                // Don't block signup — student proceeds as free-tier without a teacher link
             }
         }
 
