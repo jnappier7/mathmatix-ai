@@ -679,6 +679,12 @@ window.parentDashboardTour = [
         position: 'top'
     },
     {
+        element: '#parent-learning-center',
+        title: 'Parent Courses',
+        content: 'Enroll in free mini-courses designed to help you understand the math your child is learning. Lessons are short, conversational, and built for busy parents.',
+        position: 'right'
+    },
+    {
         element: '[data-tab="messages"]',
         title: 'Teacher Communication',
         content: 'Send and receive messages from your child\'s teacher. Stay informed about their progress.',
