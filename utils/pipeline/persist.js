@@ -221,7 +221,7 @@ async function persist(params) {
     const updatedWeekly = previousWeekly + aiProcessingSeconds;
     const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
 
-    const FREE_WEEKLY = 20 * 60;
+    const FREE_WEEKLY = 10 * 60;
     const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
       user.packSecondsRemaining > 0 &&
       (!user.packExpiresAt || new Date() <= user.packExpiresAt);

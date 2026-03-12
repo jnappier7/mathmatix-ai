@@ -892,7 +892,7 @@
                     // Handle usage limit (402) — show friendly message
                     if (response.status === 402) {
                         const errorData = await response.json().catch(() => ({}));
-                        aiMessageDiv.textContent = errorData.message || "You've used your 20 free AI minutes this week. Come back next week!";
+                        aiMessageDiv.textContent = errorData.message || "You've used your 10 free AI minutes this week. Come back next week!";
                         aiMessageDiv.style.color = '#ff6b6b';
                         return;
                     }
