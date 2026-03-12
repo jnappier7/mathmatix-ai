@@ -49,14 +49,16 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
+    const subtitle = '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
+
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>';
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + subtitle;
         indicator.style.borderColor = '#333';
     }
 }
@@ -72,7 +74,7 @@ export function showUpgradePrompt(errorData) {
     const title = isFeatureBlock ? `${errorData.feature} Requires Unlimited` : 'Choose a Tutoring Pack';
     const subtitle = isFeatureBlock
         ? `Unlock ${errorData.feature.toLowerCase()}, unlimited 24/7 tutoring, voice, courses, and more.`
-        : 'Purchase minutes to continue learning with your AI tutor.';
+        : 'Purchase minutes to continue learning with your AI tutor.<br><span style="font-size:12px;">Minutes only count when the tutor is responding — your reading and thinking time is always free.</span>';
 
     const packBtnStyle = 'background:#1e1e3a;border:1px solid #444;border-radius:10px;padding:16px;cursor:pointer;text-align:center;color:#fff;transition:border-color 0.2s;';
     const packBtnHover = 'onmouseover="this.style.borderColor=\'#00d4ff\'" onmouseout="this.style.borderColor=\'#444\'"';
