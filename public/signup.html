@@ -117,12 +117,6 @@
         </div>
 
         <div class="form-group">
-          <label for="enrollmentCode" data-i18n="signup.enrollmentCode">Enrollment Code</label>
-          <input type="text" name="enrollmentCode" id="enrollmentCode" placeholder="Enter code if you have one (optional)" autocomplete="off" />
-          <p class="note" data-i18n="signup.enrollmentNote">Have an enrollment code from your teacher? Enter it here to join their class.</p>
-        </div>
-
-        <div class="form-group">
           <label for="role" data-i18n="signup.iAmA">I am a</label>
           <select name="role" id="role" required>
             <option value="student" selected data-i18n="signup.student">Student</option>
@@ -130,16 +124,29 @@
           </select>
         </div>
 
-        <div id="inviteCodeGroup" class="form-group" style="display: none;">
-          <label for="inviteCode" data-i18n="signup.childInviteCode">Child's Invite Code (Optional)</label>
-          <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
-          <p class="note">Enter your child's invite code to link accounts.</p>
+        <div class="form-group" style="display:flex;align-items:center;gap:8px;margin:8px 0 4px;">
+          <input type="checkbox" id="hasCodeCheckbox" style="min-width:16px;" />
+          <label for="hasCodeCheckbox" id="hasCodeLabel" style="font-size:0.875rem;cursor:pointer;">I have a code to enter</label>
         </div>
 
-        <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
-          <label for="parentInviteCode" data-i18n="signup.parentInviteCode">Parent's Invite Code (Optional)</label>
-          <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
-          <p class="note">Have a parent's invite code? Enter it to link your accounts.</p>
+        <div id="codeInputGroup" style="display: none;">
+          <div id="enrollmentCodeGroup" class="form-group" style="display: none;">
+            <label for="enrollmentCode" data-i18n="signup.enrollmentCode">Enrollment Code</label>
+            <input type="text" name="enrollmentCode" id="enrollmentCode" placeholder="Enter your teacher's class code" autocomplete="off" />
+            <p class="note">Links you to your teacher's class.</p>
+          </div>
+
+          <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
+            <label for="parentInviteCode" data-i18n="signup.parentInviteCode">Parent's Invite Code</label>
+            <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
+            <p class="note">Links your account to your parent.</p>
+          </div>
+
+          <div id="inviteCodeGroup" class="form-group" style="display: none;">
+            <label for="inviteCode" data-i18n="signup.childInviteCode">Child's Invite Code</label>
+            <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
+            <p class="note">Links your account to your child.</p>
+          </div>
         </div>
 
         <div class="form-group" style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;">
@@ -172,6 +179,10 @@
 
   <script>
     const roleSelect = document.getElementById("role");
+    const hasCodeCheckbox = document.getElementById("hasCodeCheckbox");
+    const hasCodeLabel = document.getElementById("hasCodeLabel");
+    const codeInputGroup = document.getElementById("codeInputGroup");
+    const enrollmentCodeGroup = document.getElementById("enrollmentCodeGroup");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
     const parentInviteCodeGroup = document.getElementById("parentInviteCodeGroup");
     const signupForm = document.getElementById("signupForm");
@@ -179,24 +190,48 @@
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
 
-    // Function to update field visibility based on role
-    function updateFieldsForRole() {
-      if (roleSelect.value === "parent") {
-        inviteCodeGroup.style.display = "block";
-        parentInviteCodeGroup.style.display = "none";
-      } else if (roleSelect.value === "student") {
-        inviteCodeGroup.style.display = "none";
-        parentInviteCodeGroup.style.display = "block";
+    // Update which code field is visible based on role + checkbox state
+    function updateCodeFields() {
+      const isChecked = hasCodeCheckbox.checked;
+      const role = roleSelect.value;
+
+      // Update label text based on role
+      if (role === "parent") {
+        hasCodeLabel.textContent = "I have my child's invite code";
       } else {
-        inviteCodeGroup.style.display = "none";
-        parentInviteCodeGroup.style.display = "none";
+        hasCodeLabel.textContent = "I have a code to enter";
+      }
+
+      // Show/hide the code input area
+      codeInputGroup.style.display = isChecked ? "block" : "none";
+
+      // Hide all code fields first
+      enrollmentCodeGroup.style.display = "none";
+      parentInviteCodeGroup.style.display = "none";
+      inviteCodeGroup.style.display = "none";
+
+      // Clear hidden inputs so they don't submit stale values
+      if (!isChecked) {
+        document.getElementById("enrollmentCode").value = "";
+        document.getElementById("parentInviteCode").value = "";
+        document.getElementById("inviteCode").value = "";
+        return;
+      }
+
+      // Show the right field for the role
+      if (role === "student") {
+        enrollmentCodeGroup.style.display = "block";
+        parentInviteCodeGroup.style.display = "block";
+      } else if (role === "parent") {
+        inviteCodeGroup.style.display = "block";
       }
     }
 
-    // Initial check on page load
-    updateFieldsForRole();
+    // Initial state
+    updateCodeFields();
 
-    roleSelect.addEventListener("change", updateFieldsForRole);
+    hasCodeCheckbox.addEventListener("change", updateCodeFields);
+    roleSelect.addEventListener("change", updateCodeFields);
 
     // Handle form submission with Fetch API
     signupForm.addEventListener("submit", async function (event) {
