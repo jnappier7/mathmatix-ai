@@ -2121,7 +2121,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } finally {
             showThinkingIndicator(false);
-            setTimeout(() => showDefaultSuggestions(), 500);
+            if (!window._serverSuggestionsProvided) {
+                setTimeout(() => showDefaultSuggestions(), 500);
+            }
+            window._serverSuggestionsProvided = false;
         }
     }
 
