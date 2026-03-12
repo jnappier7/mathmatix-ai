@@ -1621,7 +1621,8 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
     </a>
     <div class="lp-mobile-topbar-actions">
-      <a href="/signup.html" class="lp-mobile-topbar-link">Sign Up Free</a>
+      <a href="/demo.html" class="lp-mobile-topbar-link lp-pre-launch">Try Demo</a>
+      <a href="/signup.html" class="lp-mobile-topbar-link lp-post-launch" style="display:none;">Sign Up Free</a>
       <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
     </div>
   </div>
@@ -1685,7 +1686,8 @@
               <button type="submit" class="btn btn-primary lp-waitlist-btn">Get Early Access</button>
             </form>
             <div class="lp-hero-links">
-              <a href="/signup.html" class="btn btn-primary-outline">Try It Free</a>
+              <a href="/demo.html" class="btn btn-primary-outline lp-pre-launch">Try It Free</a>
+              <a href="/signup.html" class="btn btn-primary-outline lp-post-launch" style="display:none;">Try It Free</a>
             </div>
           </div>
         </div>
@@ -2176,7 +2178,8 @@
         <div class="lp-footer-col">
           <h4>Product</h4>
           <a href="#how-it-works">How It Works</a>
-          <a href="/signup.html">Try It Free</a>
+          <a href="/demo.html" class="lp-pre-launch">Try the Demo</a>
+          <a href="/signup.html" class="lp-post-launch" style="display:none;">Try It Free</a>
           <a href="#lp-waitlist-banner">Join Waitlist</a>
         </div>
         <div class="lp-footer-col">
@@ -2215,9 +2218,11 @@
           var now = new Date();
           var diff = target - now;
 
-          // If Pi Day has passed, hide the banner
+          // If Pi Day has passed, hide the banner and swap demo links to signup
           if (diff <= 0) {
             banner.classList.add('lp-countdown-launched');
+            document.querySelectorAll('.lp-pre-launch').forEach(function (el) { el.style.display = 'none'; });
+            document.querySelectorAll('.lp-post-launch').forEach(function (el) { el.style.display = ''; });
             return;
           }
 

@@ -111,8 +111,14 @@
         <span data-i18n="login.noAccount">Don't have an account?</span> <a href="/signup.html" data-i18n="login.createAccount">Create an account</a>
       </p>
 
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--clr-border, #E2E8F0); text-align: center;">
-        <p style="font-size: 0.85rem; color: var(--clr-text-dim, #5B6876);">
+      <div id="login-demo-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--clr-border, #E2E8F0); text-align: center;">
+        <a href="/demo.html" class="lp-pre-launch" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);">
+          <i class="fas fa-play-circle"></i> <span data-i18n="login.tryDemo">Try the Interactive Demo</span>
+        </a>
+        <p class="lp-pre-launch" style="font-size: 0.8rem; color: var(--clr-text-dim, #5B6876); margin-top: 8px;" data-i18n="login.demoNote">
+          No account needed. Explore as a teacher, parent, or student.
+        </p>
+        <p class="lp-post-launch" style="display:none; font-size: 0.85rem; color: var(--clr-text-dim, #5B6876);">
           <a href="/signup.html" style="color: #7C3AED; font-weight: 600; text-decoration: none;">Sign up free</a> — get 10 minutes of AI tutoring every week.
         </p>
       </div>
@@ -128,6 +134,12 @@
   </footer>
 
   <script>
+    // Swap demo → signup after launch date (March 14, 2026 midnight EST)
+    if (new Date() >= new Date('2026-03-14T05:00:00Z')) {
+      document.querySelectorAll('.lp-pre-launch').forEach(function (el) { el.style.display = 'none'; });
+      document.querySelectorAll('.lp-post-launch').forEach(function (el) { el.style.display = ''; });
+    }
+
     const loginForm = document.getElementById('loginForm');
     const loginMessage = document.getElementById('login-message');
 
