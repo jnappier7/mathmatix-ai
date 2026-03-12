@@ -385,11 +385,17 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             } catch (updateErr) {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
-            if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
-            const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
-            res.redirect(dashboardMap[user.role] || '/login.html');
+
+            // Persist session to MongoDB before redirecting to prevent race condition
+            // where the browser follows the redirect before the session is saved
+            req.session.save((saveErr) => {
+                if (saveErr) { return next(saveErr); }
+                if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                res.redirect(dashboardMap[user.role] || '/login.html');
+            });
         });
     })(req, res, next);
 });
@@ -420,11 +426,16 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             } catch (updateErr) {
                 console.error("ERROR: Failed to update lastLogin:", updateErr);
             }
-            if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-            if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
-            const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
-            res.redirect(dashboardMap[user.role] || '/login.html');
+
+            // Persist session to MongoDB before redirecting to prevent race condition
+            req.session.save((saveErr) => {
+                if (saveErr) { return next(saveErr); }
+                if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                res.redirect(dashboardMap[user.role] || '/login.html');
+            });
         });
     })(req, res, next);
 });
@@ -478,11 +489,16 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
                     } catch (updateErr) {
                         console.error("ERROR: Failed to update lastLogin:", updateErr);
                     }
-                    if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-                    if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                    if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
-                    const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
-                    res.redirect(dashboardMap[user.role] || '/login.html');
+
+                    // Persist session to MongoDB before redirecting to prevent race condition
+                    req.session.save((saveErr) => {
+                        if (saveErr) { return next(saveErr); }
+                        if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                        if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                        if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                        const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                        res.redirect(dashboardMap[user.role] || '/login.html');
+                    });
                 });
             });
         })(req, res, next);

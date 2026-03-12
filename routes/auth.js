@@ -263,10 +263,21 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       }
 
       console.log(`LOG: OAuth user ${newUser.username} logged in, redirecting to ${redirect}`);
-      return res.json({
-        success: true,
-        message: 'Account created successfully!',
-        redirect
+
+      // Persist session to MongoDB before responding to prevent race condition
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error('ERROR: Failed to save session after OAuth enrollment:', saveErr);
+          return res.status(500).json({
+            success: false,
+            message: 'Account created but session save failed. Please try logging in.'
+          });
+        }
+        return res.json({
+          success: true,
+          message: 'Account created successfully!',
+          redirect
+        });
       });
     });
 
