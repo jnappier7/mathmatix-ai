@@ -1285,7 +1285,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const defaultSuggestions = [
             { text: "💡 Give me a hint", message: "Can you give me a hint?" },
             { text: "📝 Show me an example", message: "Can you show me an example problem?" },
-            { text: "🔄 Explain differently", message: "Can you explain that a different way?" }
+            { text: "🔄 Explain differently", message: "Can you explain that a different way?" },
+            { text: "🧒 Explain like I'm in 3rd grade", message: "Explain this like I'm in 3rd grade. Use simple words, fun examples, and make it really easy to understand." }
         ];
         showSuggestions(defaultSuggestions);
     }
