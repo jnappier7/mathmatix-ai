@@ -304,7 +304,15 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             // Other roles redirect to their dashboards if profile completion not needed
             // (though needsProfileCompletion should handle most of this flow)
             console.log(`LOG: New user ${newUser.username} signed up and logged in. Redirecting to: ${redirectUrl}`);
-            res.status(201).json({ success: true, message: 'Account created successfully!', redirect: redirectUrl });
+
+            // Persist session to MongoDB before responding to prevent race condition
+            req.session.save((saveErr) => {
+                if (saveErr) {
+                    console.error("ERROR: Failed to save session after signup:", saveErr);
+                    return res.status(500).json({ success: true, message: 'Account created, but session save failed. Please try logging in.' });
+                }
+                res.status(201).json({ success: true, message: 'Account created successfully!', redirect: redirectUrl });
+            });
         });
 
     } catch (error) {

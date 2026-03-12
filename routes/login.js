@@ -56,8 +56,15 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                 redirectUrl = "/pick-avatar.html";
             }
 
-            // Send success response with redirect URL (frontend will handle redirect)
-            return res.status(200).json({ success: true, message: 'Logged in successfully!', redirect: redirectUrl });
+            // Persist session to MongoDB before responding to prevent race condition
+            // where the frontend navigates before the session is saved
+            req.session.save((saveErr) => {
+                if (saveErr) {
+                    console.error("ERROR: Failed to save session after login:", saveErr);
+                    return res.status(500).json({ success: false, message: 'Login successful, but session save failed.' });
+                }
+                return res.status(200).json({ success: true, message: 'Logged in successfully!', redirect: redirectUrl });
+            });
         });
     })(req, res, next); // Ensure passport.authenticate is called with req, res, next
 });
