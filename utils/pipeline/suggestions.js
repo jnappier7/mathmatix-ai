@@ -85,7 +85,7 @@ const ACTION_SUGGESTIONS = {
     { text: 'Help me practice', message: 'Can you help me practice math?' },
     { text: 'Pick up where we left off', message: "Let's go back to what we were working on" },
     { text: 'New topic', message: "I'd like to learn something new" },
-    { text: 'Start assessment', message: 'I think I know this skill, can you quiz me to be sure?' },
+    { text: "I've got this!", message: 'I think I know this skill, can you quiz me to be sure?' },
   ],
   [ACTIONS.PROBING_QUESTION]: [
     { text: 'I think...', message: "I think the answer is..." },
@@ -112,7 +112,7 @@ const DEFAULT_SUGGESTIONS = [
   { text: 'Help me practice', message: 'I want to practice math problems' },
   { text: 'Explain a concept', message: 'Can you explain a math concept to me?' },
   { text: 'Homework help', message: 'Can you help me with my homework?' },
-  { text: 'Start assessment', message: 'I think I know this skill, can you quiz me to be sure?' },
+  { text: "I've got this!", message: 'I think I know this skill, can you quiz me to be sure?' },
 ];
 
 /**
