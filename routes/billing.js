@@ -390,22 +390,45 @@ router.get('/status', isAuthenticated, async (req, res) => {
     const freeRemaining = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsed);
     const limitReached = freeRemaining <= 0;
 
+    // Calculate when free minutes reset (7 days from lastWeeklyReset)
+    const lastResetDate = weeklyAIUsed === 0 && (now - lastReset) / (1000 * 60 * 60 * 24) >= 7
+      ? now  // Reset just happened, next reset is 7 days from now
+      : lastReset;
+    const nextReset = new Date(lastResetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
     res.json({
       success: true,
       billingEnabled: true,
       tier: 'free',
       hasAccess: !limitReached,
+      hasSeenPricing: user.hasSeenPricing || false,
       usage: {
         secondsRemaining: freeRemaining,
         minutesRemaining: Math.floor(freeRemaining / 60),
         weeklyAISecondsUsed: weeklyAIUsed,
         freeWeeklySeconds: FREE_WEEKLY_SECONDS,
-        limitReached
+        limitReached,
+        nextResetAt: nextReset.toISOString()
       }
     });
   } catch (error) {
     console.error('[Billing] Status check error:', error);
     res.status(500).json({ message: 'Failed to fetch billing status' });
+  }
+});
+
+/* ============================================================
+   POST /api/billing/seen-pricing
+   Mark that the user has seen the pricing page (shown once after signup)
+   ============================================================ */
+router.post('/seen-pricing', async (req, res) => {
+  try {
+    if (req.user) {
+      await User.findByIdAndUpdate(req.user._id, { hasSeenPricing: true });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update' });
   }
 });
 

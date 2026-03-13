@@ -11,6 +11,9 @@ const Conversation = require('../models/conversation');
 const User = require('../models/user');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
 const { buildProgressUpdate } = require('../utils/progressState');
+const { isLicenseValid } = require('../middleware/usageGate');
+
+const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -135,6 +138,24 @@ router.post('/enroll', async (req, res) => {
     const { courseId } = req.body;
     if (!courseId) {
       return res.status(400).json({ success: false, message: 'courseId is required' });
+    }
+
+    // Courses require Unlimited plan or school license (when billing is enabled)
+    if (BILLING_ENABLED && req.user.role === 'student') {
+      const hasUnlimited = req.user.subscriptionTier === 'unlimited';
+      let hasSchoolLicense = false;
+      if (req.user.schoolLicenseId) {
+        hasSchoolLicense = await isLicenseValid(req.user.schoolLicenseId);
+      }
+      if (!hasUnlimited && !hasSchoolLicense) {
+        return res.status(402).json({
+          success: false,
+          message: 'Courses require the Unlimited plan ($19.95/month) or a school license.',
+          premiumFeatureBlocked: true,
+          feature: 'Courses',
+          upgradeRequired: true
+        });
+      }
     }
 
     // Check for existing session in this course (active OR paused)
