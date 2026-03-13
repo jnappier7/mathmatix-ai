@@ -8,6 +8,7 @@
   'use strict';
 
   // --- State ---
+  const MAX_RECORDING_DURATION = 60000; // 60s max recording to prevent runaway captures
   const state = {
     mode: 'idle',          // idle | listening | thinking | speaking
     handsFree: true,
@@ -18,13 +19,14 @@
     tutorId: null,
     tutorName: '',
     tutorImage: '',
-    conversationId: null,  // Track conversation to save history
     mediaRecorder: null,
     audioContext: null,
     analyserNode: null,
+    vadSource: null,       // MediaStreamSource node (for cleanup)
     mediaStream: null,
     currentAudio: null,
     vadTimer: null,
+    maxRecordTimer: null,
     isSpeaking: false,
     speechStartTime: null,
     waveformRAF: null,
@@ -152,6 +154,7 @@
       if (!res.ok) return;
       const data = await res.json();
       const user = data.user;
+      if (!user) return;
 
       state.tutorId = user.selectedTutorId || 'default';
 
@@ -179,6 +182,7 @@
   function setupEventListeners() {
     // Main mic button
     dom.micBtn.addEventListener('click', () => {
+      if (state.mode === 'starting' || state.mode === 'thinking') return;
       if (state.mode === 'speaking') {
         interruptAndListen();
       } else if (state.mode === 'listening') {
@@ -218,7 +222,7 @@
     dom.handsfreeToggle.addEventListener('change', (e) => { state.handsFree = e.target.checked; });
     dom.autolistenToggle.addEventListener('change', (e) => { state.autoListen = e.target.checked; });
     dom.visualsToggle.addEventListener('change', (e) => { state.showVisuals = e.target.checked; });
-    dom.silenceSelect.addEventListener('change', (e) => { state.silenceTimeout = parseInt(e.target.value); });
+    dom.silenceSelect.addEventListener('change', (e) => { state.silenceTimeout = parseInt(e.target.value, 10); });
 
     // Keyboard: space to toggle, ESC to stop
     document.addEventListener('keydown', (e) => {
@@ -226,6 +230,7 @@
 
       if (e.code === 'Space') {
         e.preventDefault();
+        if (state.mode === 'starting' || state.mode === 'thinking') return;
         if (state.mode === 'speaking') interruptAndListen();
         else if (state.mode === 'listening') stopListening();
         else startListening();
@@ -242,7 +247,10 @@
   // ═══════════════════════════════════════
 
   async function startListening() {
-    if (state.mode === 'listening') return;
+    if (state.mode === 'listening' || state.mode === 'thinking') return;
+
+    // Guard: set mode immediately to prevent double-click races
+    state.mode = 'starting';
 
     try {
       // Resume AudioContext
@@ -290,6 +298,12 @@
       state.mediaRecorder.start();
       setMode('listening');
 
+      // Safety: max recording duration to prevent runaway captures
+      clearTimeout(state.maxRecordTimer);
+      state.maxRecordTimer = setTimeout(() => {
+        if (state.mode === 'listening') stopListening();
+      }, MAX_RECORDING_DURATION);
+
     } catch (err) {
       console.error('[VoiceTutor] Mic error:', err);
       addSystemMessage('Could not access microphone. Check permissions.');
@@ -300,8 +314,15 @@
   function stopListening() {
     if (state.mode !== 'listening') return;
     clearTimeout(state.vadTimer);
+    clearTimeout(state.maxRecordTimer);
     state.isSpeaking = false;
     state.speechStartTime = null;
+
+    // Disconnect VAD source to prevent memory leak
+    if (state.vadSource) {
+      try { state.vadSource.disconnect(); } catch (e) { /* ignore */ }
+      state.vadSource = null;
+    }
 
     if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
       state.mediaRecorder.stop();
@@ -311,6 +332,7 @@
 
   function setupVAD(stream) {
     const source = state.audioContext.createMediaStreamSource(stream);
+    state.vadSource = source; // Store for cleanup
     const analyser = state.audioContext.createAnalyser();
     analyser.fftSize = 2048;
     source.connect(analyser);
@@ -323,7 +345,7 @@
 
       analyser.getByteFrequencyData(buffer);
       const avg = buffer.reduce((a, b) => a + b, 0) / buffer.length;
-      const db = 20 * Math.log10(avg / 255);
+      const db = avg > 0 ? 20 * Math.log10(avg / 255) : -Infinity;
       const speaking = db > -50;
 
       // Draw waveform
@@ -544,6 +566,9 @@
 
   function stopSpeaking() {
     if (state.currentAudio) {
+      // Null out handlers BEFORE pausing to prevent ghost onended/onerror
+      state.currentAudio.onended = null;
+      state.currentAudio.onerror = null;
       state.currentAudio.pause();
       state.currentAudio.currentTime = 0;
       state.currentAudio = null;
@@ -559,8 +584,10 @@
 
   function interruptAndListen() {
     // Flash the orb/avatar to indicate interruption
-    dom.orbContainer.classList.add('vt-interrupted');
-    setTimeout(() => dom.orbContainer.classList.remove('vt-interrupted'), 400);
+    if (dom.orbContainer) {
+      dom.orbContainer.classList.add('vt-interrupted');
+      setTimeout(() => dom.orbContainer.classList.remove('vt-interrupted'), 400);
+    }
 
     stopSpeaking();
     startListening();
@@ -894,12 +921,32 @@
 
   function setMode(mode) {
     state.mode = mode;
-    dom.orbContainer.setAttribute('data-state', mode);
+    if (dom.orbContainer) dom.orbContainer.setAttribute('data-state', mode);
     if (dom.avatarContainer) dom.avatarContainer.setAttribute('data-state', mode);
 
     // Mic button
-    dom.micBtn.classList.toggle('active', mode === 'listening');
-    const micIcon = dom.micBtn.querySelector('i');
+    if (dom.micBtn) {
+      dom.micBtn.classList.toggle('active', mode === 'listening');
+      const micIcon = dom.micBtn.querySelector('i');
+
+      switch (mode) {
+        case 'idle':
+          if (micIcon) micIcon.className = 'fas fa-microphone';
+          cancelAnimationFrame(state.waveformRAF);
+          drawIdleWaveform();
+          break;
+        case 'listening':
+          if (micIcon) micIcon.className = 'fas fa-stop';
+          break;
+        case 'thinking':
+          if (micIcon) micIcon.className = 'fas fa-microphone';
+          drawThinkingWaveform();
+          break;
+        case 'speaking':
+          if (micIcon) micIcon.className = 'fas fa-hand';
+          break;
+      }
+    }
 
     // Tutor status
     const statusMap = {
@@ -916,26 +963,8 @@
       speaking: 'Speaking — tap to interrupt'
     };
 
-    dom.statusText.textContent = statusTextMap[mode] || 'Tap to speak';
-    dom.tutorStatus.textContent = statusMap[mode] || 'Ready';
-
-    switch (mode) {
-      case 'idle':
-        micIcon.className = 'fas fa-microphone';
-        cancelAnimationFrame(state.waveformRAF);
-        drawIdleWaveform();
-        break;
-      case 'listening':
-        micIcon.className = 'fas fa-stop';
-        break;
-      case 'thinking':
-        micIcon.className = 'fas fa-microphone';
-        drawThinkingWaveform();
-        break;
-      case 'speaking':
-        micIcon.className = 'fas fa-hand';
-        break;
-    }
+    if (dom.statusText) dom.statusText.textContent = statusTextMap[mode] || 'Tap to speak';
+    if (dom.tutorStatus) dom.tutorStatus.textContent = statusMap[mode] || 'Ready';
   }
 
   function drawThinkingWaveform() {
@@ -1088,16 +1117,40 @@
   }
 
   function cleanup() {
+    // Set mode to idle first to stop all RAF-based animations
+    state.mode = 'idle';
+
     cancelAnimationFrame(state.waveformRAF);
     cancelAnimationFrame(state.particleRAF);
     clearTimeout(state.vadTimer);
+    clearTimeout(state.maxRecordTimer);
+
+    // Stop MediaRecorder and prevent onstop from firing processVoiceInput
+    if (state.mediaRecorder) {
+      state.mediaRecorder.onstop = null;
+      state.mediaRecorder.ondataavailable = null;
+      if (state.mediaRecorder.state !== 'inactive') {
+        try { state.mediaRecorder.stop(); } catch (e) { /* ignore */ }
+      }
+      state.mediaRecorder = null;
+    }
 
     if (state.currentAudio) {
+      state.currentAudio.onended = null;
+      state.currentAudio.onerror = null;
       state.currentAudio.pause();
       state.currentAudio = null;
     }
+
+    // Disconnect VAD source
+    if (state.vadSource) {
+      try { state.vadSource.disconnect(); } catch (e) { /* ignore */ }
+      state.vadSource = null;
+    }
+
     if (state.mediaStream) {
       state.mediaStream.getTracks().forEach(t => t.stop());
+      state.mediaStream = null;
     }
     if (state.audioContext && state.audioContext.state !== 'closed') {
       state.audioContext.close();
