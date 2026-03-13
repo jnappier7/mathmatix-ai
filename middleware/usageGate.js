@@ -16,7 +16,7 @@ const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for ALL students
+const FREE_WEEKLY_SECONDS = 10 * 60; // 10 minutes per week for ALL students
 
 // In-memory cache for school license lookups (avoids DB hit on every request)
 // Key: licenseId.toString(), Value: { license: object|null, checkedAt: number }
@@ -158,11 +158,11 @@ async function usageGate(req, res, next) {
 
     // --- Free-tier student, no pack, free minutes exhausted ---
     return res.status(402).json({
-      message: "You've used your 20 free minutes this week. Ask your teacher about a school license for unlimited access, or come back next week!",
+      message: "You've used your 10 free minutes this week. Ask your teacher about a school license for unlimited access, or come back next week!",
       usageLimitReached: true,
       tier: 'free',
       freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
-      freeMinutesTotal: 20,
+      freeMinutesTotal: 10,
       freeSecondsRemaining: 0,
       upgradeRequired: true
     });

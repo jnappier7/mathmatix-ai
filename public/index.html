@@ -1740,7 +1740,8 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
     </a>
     <div class="lp-mobile-topbar-actions">
-      <a href="/demo.html" class="lp-mobile-topbar-link">Try Demo</a>
+      <a href="/demo.html" class="lp-mobile-topbar-link lp-pre-launch">Try Demo</a>
+      <a href="/signup.html" class="lp-mobile-topbar-link lp-post-launch" style="display:none;">Sign Up Free</a>
       <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
     </div>
   </div>
@@ -1753,7 +1754,8 @@
     </div>
     <nav class="landing-nav">
       <a href="/login.html" class="btn btn-primary-outline">Log In</a>
-      <a href="#lp-waitlist-banner" class="btn btn-primary">Join Waitlist</a>
+      <a href="#lp-waitlist-banner" class="btn btn-primary lp-pre-launch">Join Waitlist</a>
+      <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
     </nav>
   </header>
 
@@ -1799,12 +1801,14 @@
             Personalized, AI-powered tutoring that remembers how your student learns, adapts to their level, and is available anytime &mdash; for a fraction of what a private tutor costs.
           </p>
           <div class="lp-hero-buttons">
-            <form class="lp-waitlist-form lp-waitlist-form--hero" autocomplete="off">
+            <form class="lp-waitlist-form lp-waitlist-form--hero lp-pre-launch" autocomplete="off">
               <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
               <button type="submit" class="btn btn-primary lp-waitlist-btn">Get Early Access</button>
             </form>
             <div class="lp-hero-links">
-              <a href="/demo.html" class="btn btn-primary-outline">Try It Free</a>
+              <a href="/demo.html" class="btn btn-primary-outline lp-pre-launch">Try It Free</a>
+              <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
+              <a href="/login.html" class="btn btn-primary-outline lp-post-launch" style="display:none;">Log In</a>
             </div>
           </div>
         </div>
@@ -2267,11 +2271,13 @@
       <div class="lp-inner">
         <h2>Every child deserves a great math tutor.</h2>
         <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help.</p>
-        <form class="lp-waitlist-form lp-waitlist-form--final" autocomplete="off">
+        <form class="lp-waitlist-form lp-waitlist-form--final lp-pre-launch" autocomplete="off">
           <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
           <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
         </form>
-        <p class="lp-cta-note">Be first to know when we launch. For students, parents, and teachers.</p>
+        <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free &mdash; 10 Minutes Every Week</a>
+        <p class="lp-cta-note lp-pre-launch">Be first to know when we launch. For students, parents, and teachers.</p>
+        <p class="lp-cta-note lp-post-launch" style="display:none;">Free for every student. No credit card required.</p>
       </div>
     </section>
   </main>
@@ -2279,10 +2285,11 @@
   <!-- Sticky CTA bar -->
   <div class="lp-sticky-cta" id="lp-sticky-cta">
     <p>Ready to get started?</p>
-    <form class="lp-waitlist-form lp-waitlist-form--sticky" autocomplete="off">
+    <form class="lp-waitlist-form lp-waitlist-form--sticky lp-pre-launch" autocomplete="off">
       <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
       <button type="submit" class="btn btn-primary lp-waitlist-btn">Join Waitlist</button>
     </form>
+    <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
   </div>
 
   <footer class="lp-footer">
@@ -2295,8 +2302,10 @@
         <div class="lp-footer-col">
           <h4>Product</h4>
           <a href="#how-it-works">How It Works</a>
-          <a href="/demo.html">Try the Demo</a>
-          <a href="#lp-waitlist-banner">Join Waitlist</a>
+          <a href="/demo.html" class="lp-pre-launch">Try the Demo</a>
+          <a href="/signup.html" class="lp-post-launch" style="display:none;">Try It Free</a>
+          <a href="#lp-waitlist-banner" class="lp-pre-launch">Join Waitlist</a>
+          <a href="/signup.html" class="lp-post-launch" style="display:none;">Sign Up</a>
         </div>
         <div class="lp-footer-col">
           <h4>Company</h4>
@@ -2334,9 +2343,11 @@
           var now = new Date();
           var diff = target - now;
 
-          // If Pi Day has passed, hide the banner
+          // If Pi Day has passed, hide the banner and swap demo links to signup
           if (diff <= 0) {
             banner.classList.add('lp-countdown-launched');
+            document.querySelectorAll('.lp-pre-launch').forEach(function (el) { el.style.display = 'none'; });
+            document.querySelectorAll('.lp-post-launch').forEach(function (el) { el.style.display = ''; });
             return;
           }
 

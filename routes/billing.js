@@ -19,7 +19,7 @@ const { isAuthenticated } = require('../middleware/auth');
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 20 * 60; // 20 free AI minutes per week for all students
+const FREE_WEEKLY_SECONDS = 10 * 60; // 10 free AI minutes per week for all students
 
 const PACKS = {
   pack_60: {
@@ -359,7 +359,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
       const expired = user.packExpiresAt && now > user.packExpiresAt;
       const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
 
-      // Pack users also get 20 free minutes/week before pack is used
+      // Pack users also get 10 free minutes/week before pack is used
       let weeklyAIUsedPack = user.weeklyAISeconds || 0;
       const lastResetPack = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
       if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= 7) {

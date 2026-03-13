@@ -49,14 +49,16 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
+    const subtitle = '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
+
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>';
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left`;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + subtitle;
         indicator.style.borderColor = '#333';
     }
 }
