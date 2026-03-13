@@ -1,6 +1,6 @@
 // routes/avatarSession.js
-// Simli avatar session proxy — keeps API key server-side
-// Manages avatar session lifecycle for the voice tutor experience
+// Simli avatar session proxy — API key never leaves the server.
+// The server negotiates the WebRTC session, client gets only the SDP answer.
 
 const express = require('express');
 const router = express.Router();
@@ -12,8 +12,7 @@ const SIMLI_API_BASE = 'https://api.simli.ai';
 
 /**
  * Map tutor IDs to Simli face IDs.
- * These should be custom avatars created at app.simli.com to match each tutor's appearance.
- * For now, use the default face — replace with custom face IDs after creating them.
+ * Replace defaults with custom face IDs after creating them at app.simli.com.
  */
 const TUTOR_FACE_MAP = {
   'bob':           process.env.SIMLI_FACE_BOB           || '5514e24d-6086-46a3-ace4-6a7264e5cb7c',
@@ -32,15 +31,13 @@ const TUTOR_FACE_MAP = {
 
 /**
  * GET /api/avatar/config
- * Returns Simli client config (API key + face ID) for the current user's tutor.
- * API key is needed client-side for WebRTC connection — Simli's SDK requires it.
+ * Returns face ID and availability (NOT the API key).
  */
 router.get('/config', isAuthenticated, async (req, res) => {
-  const apiKey = process.env.SIMLI_API_KEY;
-  if (!apiKey) {
+  if (!process.env.SIMLI_API_KEY) {
     return res.status(503).json({
       error: 'Avatar service not configured',
-      message: 'SIMLI_API_KEY is not set. Avatar feature is unavailable.'
+      available: false
     });
   }
 
@@ -50,36 +47,56 @@ router.get('/config', isAuthenticated, async (req, res) => {
     const faceId = TUTOR_FACE_MAP[tutorId] || TUTOR_FACE_MAP['default'];
 
     res.json({
-      apiKey,
+      available: true,
       faceId,
       tutorId,
-      maxSessionLength: 1800,  // 30 min max
-      maxIdleTime: 300,        // 5 min idle disconnect
     });
   } catch (err) {
-    console.error('[Avatar] Config error:', err);
+    console.error('[Avatar] Config error:', err.message);
     res.status(500).json({ error: 'Failed to load avatar config' });
   }
 });
 
 /**
- * GET /api/avatar/faces
- * Proxy to Simli's available faces endpoint — useful for admin face selection.
+ * POST /api/avatar/start-session
+ * Server-side proxy for Simli WebRTC session negotiation.
+ * Client sends its SDP offer, server adds the API key and forwards to Simli,
+ * then returns the SDP answer. API key never leaves the server.
  */
-router.get('/faces', isAuthenticated, async (req, res) => {
+router.post('/start-session', isAuthenticated, async (req, res) => {
   const apiKey = process.env.SIMLI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({ error: 'Avatar service not configured' });
   }
 
+  const { sdp, type } = req.body;
+  if (!sdp || !type) {
+    return res.status(400).json({ error: 'SDP offer is required' });
+  }
+
   try {
-    const response = await axios.get(`${SIMLI_API_BASE}/getPossibleFaceIDs`, {
-      headers: { 'X-API-Key': apiKey }
+    const user = await User.findById(req.user._id).select('selectedTutorId').lean();
+    const tutorId = user?.selectedTutorId || 'default';
+    const faceId = TUTOR_FACE_MAP[tutorId] || TUTOR_FACE_MAP['default'];
+
+    const response = await axios.post(`${SIMLI_API_BASE}/StartWebRTCSession`, {
+      sdp,
+      type,
+      apiKey,
+      faceId,
+      handleSilence: true,
+      maxSessionLength: 1800,
+      maxIdleTime: 300,
+      syncAudio: true,
+    }, {
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 15000,
     });
+
     res.json(response.data);
   } catch (err) {
-    console.error('[Avatar] Faces error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch available faces' });
+    console.error('[Avatar] Session start error:', err.response?.data || err.message);
+    res.status(502).json({ error: 'Failed to start avatar session' });
   }
 });
 

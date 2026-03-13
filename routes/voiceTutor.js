@@ -49,40 +49,92 @@ Your spoken response (the text outside the mathsteps tags) should reference what
 `;
 
 /**
- * Clean text for TTS — remove markdown, LaTeX syntax, etc.
+ * Convert LaTeX math notation to natural speech
+ */
+function convertLatexToSpeech(latex) {
+  let speech = latex;
+  speech = speech.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 over $2');
+  speech = speech.replace(/\^2\b/g, ' squared');
+  speech = speech.replace(/\^3\b/g, ' cubed');
+  speech = speech.replace(/\^(\d+)/g, ' to the $1th power');
+  speech = speech.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
+  speech = speech.replace(/\^([a-zA-Z])/g, ' to the $1');
+  speech = speech.replace(/_\{([^}]+)\}/g, ' sub $1');
+  speech = speech.replace(/_([a-zA-Z0-9])/g, ' sub $1');
+  speech = speech.replace(/\\sqrt\{([^}]+)\}/g, 'square root of $1');
+  speech = speech.replace(/\\alpha/g, 'alpha');
+  speech = speech.replace(/\\beta/g, 'beta');
+  speech = speech.replace(/\\gamma/g, 'gamma');
+  speech = speech.replace(/\\delta/g, 'delta');
+  speech = speech.replace(/\\theta/g, 'theta');
+  speech = speech.replace(/\\pi/g, 'pi');
+  speech = speech.replace(/\\sigma/g, 'sigma');
+  speech = speech.replace(/\\times/g, ' times ');
+  speech = speech.replace(/\\div/g, ' divided by ');
+  speech = speech.replace(/\\pm/g, ' plus or minus ');
+  speech = speech.replace(/\\cdot/g, ' times ');
+  speech = speech.replace(/\\leq/g, ' less than or equal to ');
+  speech = speech.replace(/\\geq/g, ' greater than or equal to ');
+  speech = speech.replace(/\\neq/g, ' not equal to ');
+  speech = speech.replace(/\\approx/g, ' approximately ');
+  speech = speech.replace(/=/g, ' equals ');
+  speech = speech.replace(/[{}]/g, '');
+  speech = speech.replace(/\\/g, '');
+  return speech;
+}
+
+/**
+ * Clean text for TTS — remove markdown, convert LaTeX to speech
  */
 function cleanForTTS(text) {
   let cleaned = text;
   // Remove mathsteps blocks
   cleaned = cleaned.replace(/<mathsteps>[\s\S]*?<\/mathsteps>/g, '');
-  // Remove markdown
+  // Remove markdown headers
+  cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
+  // Remove markdown bold/italic
   cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
   cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
-  cleaned = cleaned.replace(/#{1,6}\s+/g, '');
+  cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
+  cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
+  // Remove markdown links
+  cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  // Remove code
   cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
   cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
-  // Remove LaTeX display/inline
-  cleaned = cleaned.replace(/\\\[([^\]]+)\\\]/g, '');
-  cleaned = cleaned.replace(/\$\$([^$]+)\$\$/g, '');
-  cleaned = cleaned.replace(/\\\(([^)]+)\\\)/g, '');
-  cleaned = cleaned.replace(/\$([^$]+)\$/g, '');
+  // Remove horizontal rules
+  cleaned = cleaned.replace(/^[-*]{3,}$/gm, '');
+  // Convert LaTeX to speech (display math)
+  cleaned = cleaned.replace(/\\\[([^\]]+)\\\]/g, (_, latex) => convertLatexToSpeech(latex));
+  cleaned = cleaned.replace(/\$\$([^$]+)\$\$/g, (_, latex) => convertLatexToSpeech(latex));
+  // Convert LaTeX to speech (inline math)
+  cleaned = cleaned.replace(/\\\(([^)]+)\\\)/g, (_, latex) => convertLatexToSpeech(latex));
+  cleaned = cleaned.replace(/\$([^$]+)\$/g, (_, latex) => convertLatexToSpeech(latex));
+  // Remove any remaining backslashes (LaTeX commands)
+  cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
   // Clean up whitespace
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
   return cleaned;
 }
 
 /**
- * Extract math steps from AI response
+ * Extract ALL math steps blocks from AI response
  */
 function extractMathSteps(text) {
-  const match = text.match(/<mathsteps>([\s\S]*?)<\/mathsteps>/);
-  if (!match) return [];
-  try {
-    return JSON.parse(match[1]);
-  } catch (e) {
-    console.warn('[VoiceTutor] Failed to parse mathSteps:', e.message);
-    return [];
+  const blocks = [];
+  const regex = /<mathsteps>([\s\S]*?)<\/mathsteps>/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    try {
+      const parsed = JSON.parse(match[1]);
+      if (Array.isArray(parsed)) {
+        blocks.push(...parsed);
+      }
+    } catch (e) {
+      console.warn('[VoiceTutor] Failed to parse mathSteps block:', e.message);
+    }
   }
+  return blocks;
 }
 
 /**
@@ -113,6 +165,26 @@ router.post('/process', isAuthenticated, async (req, res) => {
     return res.status(400).json({ error: 'Audio data is required' });
   }
 
+  // Payload size limit (~10MB base64 ≈ ~7.5MB audio)
+  if (audio.length > 10_000_000) {
+    return res.status(413).json({ error: 'Audio file too large' });
+  }
+
+  // Early config checks — fail fast before burning API calls
+  if (!ttsProvider.isConfigured()) {
+    return res.status(503).json({
+      error: 'Voice not configured',
+      message: 'Text-to-speech service is not configured.'
+    });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(503).json({
+      error: 'Voice not configured',
+      message: 'Speech recognition service is not configured.'
+    });
+  }
+
   if (isUnder13(req.user)) {
     return res.status(403).json({
       error: 'Voice unavailable for your account',
@@ -122,7 +194,12 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
   try {
     // ── Step 1: Transcribe with Whisper ──
-    const audioBuffer = Buffer.from(audio, 'base64');
+    let audioBuffer;
+    try {
+      audioBuffer = Buffer.from(audio, 'base64');
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid audio format' });
+    }
     const tempDir = path.join(__dirname, '../temp');
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
@@ -179,10 +256,16 @@ router.post('/process', isAuthenticated, async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[VoiceTutor] Error:', err);
+    console.error('[VoiceTutor] Error:', err.message, err.stack);
+    let userMessage = 'Something went wrong. Please try again.';
+    if (err.message.includes('Whisper') || err.message.includes('transcription')) {
+      userMessage = 'Speech recognition failed. Please try speaking again.';
+    } else if (err.message.includes('TTS') || err.message.includes('voice')) {
+      userMessage = 'Voice synthesis failed. Please try again.';
+    }
     res.status(500).json({
       error: 'Voice processing failed',
-      message: err.message
+      message: userMessage
     });
   }
 });
@@ -197,6 +280,10 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
 
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'Text is required' });
+  }
+
+  if (text.length > 5000) {
+    return res.status(400).json({ error: 'Message too long' });
   }
 
   try {
@@ -222,8 +309,8 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[VoiceTutor] Text error:', err);
-    res.status(500).json({ error: 'Processing failed', message: err.message });
+    console.error('[VoiceTutor] Text error:', err.message);
+    res.status(500).json({ error: 'Processing failed', message: 'Could not get a response. Please try again.' });
   }
 });
 

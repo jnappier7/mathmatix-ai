@@ -16,14 +16,14 @@ html, body {
 /* --- Ambient Background --- */
 .vt-ambient {
   position: fixed;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   z-index: 0;
   pointer-events: none;
 }
 
 .vt-ambient-gradient {
   position: absolute;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   background:
     radial-gradient(ellipse 80% 60% at 20% 80%, rgba(18, 179, 179, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 80% 20%, rgba(102, 126, 234, 0.06) 0%, transparent 50%),
@@ -33,7 +33,7 @@ html, body {
 
 #vt-particle-canvas {
   position: absolute;
-  inset: 0;
+  top: 0; right: 0; bottom: 0; left: 0;
   width: 100%;
   height: 100%;
   opacity: 0.4;
@@ -63,9 +63,10 @@ html, body {
   background: rgba(255, 255, 255, 0.06);
   color: #8892b0;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 .vt-back-btn:hover { background: rgba(255, 255, 255, 0.1); color: #ccd6f6; }
+.vt-back-btn:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 .vt-header-center {
   display: flex;
@@ -102,10 +103,11 @@ html, body {
   background: rgba(255, 255, 255, 0.06);
   color: #8892b0;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   font-size: 16px;
 }
 .vt-icon-btn:hover { background: rgba(255, 255, 255, 0.1); color: #ccd6f6; }
+.vt-icon-btn:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 /* --- Main Layout --- */
 .vt-main {
@@ -170,7 +172,7 @@ html, body {
 
 .vt-canvas-placeholder p {
   font-size: 15px;
-  color: #5a6380;
+  color: #7a84a0;
 }
 
 /* Math display area */
@@ -249,7 +251,7 @@ html, body {
   align-items: center;
   gap: 14px;
   z-index: 5;
-  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .vt-orb-container.minimized {
@@ -308,7 +310,7 @@ html, body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: all 0.4s;
+  transition: background 0.4s, box-shadow 0.4s;
 }
 
 #vt-orb-waveform {
@@ -481,7 +483,7 @@ html, body {
 
 .vt-tutor-status {
   font-size: 11px;
-  color: #5a6380;
+  color: #7a84a0;
 }
 
 .vt-chat-toggle {
@@ -600,9 +602,10 @@ html, body {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  transition: all 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .vt-send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(18, 179, 179, 0.3); }
+.vt-send-btn:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 /* --- Bottom Controls --- */
 .vt-controls {
@@ -626,9 +629,10 @@ html, body {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), color 0.25s;
   position: relative;
 }
+.vt-control-btn:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 .vt-end-btn {
   width: 48px;
@@ -657,7 +661,7 @@ html, body {
 
 .vt-mic-ripple {
   position: absolute;
-  inset: -6px;
+  top: -6px; right: -6px; bottom: -6px; left: -6px;
   border-radius: 50%;
   border: 2px solid rgba(18, 179, 179, 0.3);
   opacity: 0;
@@ -701,6 +705,7 @@ html, body {
   border-left: 1px solid rgba(255, 255, 255, 0.06);
   transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   padding: 30px 24px;
+  overflow-y: auto;
 }
 
 .vt-settings-drawer.open { right: 0; }
@@ -726,6 +731,7 @@ html, body {
 .vt-setting input[type="checkbox"] {
   width: 44px;
   height: 24px;
+  -webkit-appearance: none;
   appearance: none;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -744,6 +750,11 @@ html, body {
   border-radius: 50%;
   background: #8892b0;
   transition: all 0.3s;
+}
+
+.vt-setting input[type="checkbox"]:focus-visible {
+  outline: 2px solid #12B3B3;
+  outline-offset: 2px;
 }
 
 .vt-setting input[type="checkbox"]:checked {
@@ -781,6 +792,7 @@ html, body {
   transition: background 0.2s;
 }
 .vt-btn-close:hover { background: rgba(18, 179, 179, 0.25); }
+.vt-btn-close:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 /* --- Interruption flash --- */
 .vt-interrupted .vt-orb-core {
@@ -817,7 +829,7 @@ html, body {
     0 0 40px rgba(102, 126, 234, 0.1),
     0 0 80px rgba(18, 179, 179, 0.05);
   background: #0d0d20;
-  transition: all 0.4s;
+  transition: border-color 0.4s, box-shadow 0.4s;
 }
 
 .vt-avatar-container[data-state="speaking"] .vt-avatar-video-wrapper {
@@ -942,6 +954,8 @@ html, body {
   .vt-canvas-area { padding: 16px; bottom: 130px; }
 
   .vt-math-step .vt-step-content { font-size: 18px; }
+
+  .vt-avatar-video-wrapper { width: min(280px, 80vw); height: min(280px, 80vw); }
 }
 
 @media (max-width: 480px) {

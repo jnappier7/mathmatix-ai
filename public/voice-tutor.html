@@ -11,8 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <script defer src="/vendor/katex/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 </head>
 <body>
   <!-- Ambient background -->
@@ -31,7 +29,7 @@
       <span class="vt-session-label">Voice Session</span>
     </div>
     <div class="vt-header-actions">
-      <button id="vt-settings-btn" class="vt-icon-btn" title="Settings">
+      <button id="vt-settings-btn" class="vt-icon-btn" title="Settings" aria-label="Settings">
         <i class="fas fa-sliders-h"></i>
       </button>
     </div>
@@ -61,7 +59,7 @@
           <video id="vt-avatar-video" autoplay playsinline muted class="vt-avatar-video"></video>
           <audio id="vt-avatar-audio" autoplay></audio>
           <div class="vt-avatar-overlay" id="vt-avatar-overlay">
-            <span class="vt-avatar-badge"><i class="fas fa-sparkles"></i> Live Avatar</span>
+            <span class="vt-avatar-badge"><i class="fas fa-star"></i> Live Avatar</span>
           </div>
         </div>
         <div class="vt-avatar-status" id="vt-avatar-status">Connecting avatar...</div>
@@ -80,7 +78,7 @@
         </div>
         <div class="vt-orb-status" id="vt-orb-status">
           <span class="vt-status-dot"></span>
-          <span class="vt-status-text" id="vt-status-text">Tap to begin</span>
+          <span class="vt-status-text" id="vt-status-text" aria-live="polite">Tap to begin</span>
         </div>
       </div>
 
@@ -94,22 +92,22 @@
     <aside class="vt-chat-panel" id="vt-chat-panel">
       <div class="vt-chat-header">
         <div class="vt-tutor-info">
-          <img id="vt-tutor-avatar" src="" alt="" class="vt-tutor-avatar" />
+          <img id="vt-tutor-avatar" alt="Tutor" class="vt-tutor-avatar" />
           <div>
             <div class="vt-tutor-name" id="vt-tutor-name">Tutor</div>
             <div class="vt-tutor-status" id="vt-tutor-status">Ready</div>
           </div>
         </div>
-        <button id="vt-toggle-chat" class="vt-icon-btn vt-chat-toggle" title="Toggle transcript">
+        <button id="vt-toggle-chat" class="vt-icon-btn vt-chat-toggle" title="Toggle transcript" aria-label="Toggle transcript">
           <i class="fas fa-comments"></i>
         </button>
       </div>
-      <div class="vt-chat-messages" id="vt-chat-messages">
+      <div class="vt-chat-messages" id="vt-chat-messages" role="log" aria-live="polite">
         <!-- Messages will be appended here -->
       </div>
       <div class="vt-chat-input-bar">
         <input type="text" id="vt-text-input" placeholder="Type if you prefer..." class="vt-text-input" />
-        <button id="vt-send-text" class="vt-send-btn" title="Send">
+        <button id="vt-send-text" class="vt-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
@@ -118,14 +116,14 @@
 
   <!-- Bottom controls -->
   <footer class="vt-controls">
-    <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session">
+    <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session" aria-label="End session">
       <i class="fas fa-phone-slash"></i>
     </button>
     <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak">
       <div class="vt-mic-ripple"></div>
       <i class="fas fa-microphone"></i>
     </button>
-    <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor">
+    <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor" aria-label="Mute tutor">
       <i class="fas fa-volume-up"></i>
     </button>
   </footer>
@@ -156,7 +154,7 @@
       </label>
       <div class="vt-settings-divider"></div>
       <div class="vt-setting-section-label">
-        <i class="fas fa-sparkles"></i> Premium
+        <i class="fas fa-star"></i> Premium
       </div>
       <label class="vt-setting" id="vt-avatar-setting">
         <span>Live avatar (lip-sync)</span>

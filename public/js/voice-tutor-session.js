@@ -1109,14 +1109,21 @@
   }
 
   // --- Boot ---
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  function boot() {
+    // Load tutor config script FIRST, then init
+    const script = document.createElement('script');
+    script.src = '/js/tutor-config-data.js';
+    script.onload = () => init();
+    script.onerror = () => {
+      console.warn('[VoiceTutor] Could not load tutor config — continuing without it');
+      init();
+    };
+    document.head.appendChild(script);
   }
 
-  // Load tutor config script
-  const script = document.createElement('script');
-  script.src = '/js/tutor-config-data.js';
-  document.head.appendChild(script);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();

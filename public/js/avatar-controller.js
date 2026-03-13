@@ -126,27 +126,23 @@
         // Wait for ICE gathering
         await this._waitForICEGathering();
 
-        // Send offer to Simli's API
-        const response = await fetch('https://api.simli.ai/StartWebRTCSession', {
+        // Send offer through our server proxy (API key stays server-side)
+        const fetchFn = window.csrfFetch || fetch;
+        const response = await fetchFn('/api/avatar/start-session', {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             sdp: this.peerConnection.localDescription.sdp,
             type: this.peerConnection.localDescription.type,
-            apiKey: this.config.apiKey,
-            faceId: this.config.faceId,
-            handleSilence: true,
-            maxSessionLength: this.config.maxSessionLength || 1800,
-            maxIdleTime: this.config.maxIdleTime || 300,
-            syncAudio: true,
           })
         });
 
         if (!response.ok) {
-          const err = await response.text();
-          throw new Error(`Simli API error: ${response.status} - ${err}`);
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || `Avatar session error: ${response.status}`);
         }
 
         const answer = await response.json();
