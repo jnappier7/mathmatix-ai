@@ -6,6 +6,7 @@ class DailyQuestManager {
     this.streak = 0;
     this.longestStreak = 0;
     this.totalCompleted = 0;
+    this.piDay = false;
   }
 
   async loadQuests() {
@@ -18,6 +19,7 @@ class DailyQuestManager {
         this.streak = data.streak;
         this.longestStreak = data.longestStreak;
         this.totalCompleted = data.totalCompleted;
+        this.piDay = data.piDay || false;
         this.render();
       }
     } catch (error) {
@@ -59,13 +61,21 @@ class DailyQuestManager {
     const allCompleted = this.quests.every(q => q.completed);
     const completedCount = this.quests.filter(q => q.completed).length;
 
+    const questTitle = this.piDay ? 'Pi Day Quests' : 'Daily Quests';
+    const questIcon = this.piDay ? '\u03C0' : '\uD83D\uDCCB';
+    const piDayBanner = this.piDay ? `
+          <div style="background:linear-gradient(135deg,#ff6b9d22,#c850c022);border:1px solid #ff6b9d44;border-radius:8px;padding:8px 12px;margin-bottom:12px;text-align:center;">
+            <div style="font-weight:700;color:#ff6b9d;">Happy Pi Day! 3.14x XP Multiplier Active</div>
+            <div style="font-size:12px;color:#888;">Complete all quests for bonus rewards</div>
+          </div>` : '';
+
     container.innerHTML = `
-      <div class="daily-quests-widget">
+      <div class="daily-quests-widget${this.piDay ? ' pi-day-theme' : ''}">
         <!-- Header -->
         <div class="quest-header">
           <h3>
-            <span class="quest-icon">📋</span>
-            Daily Quests
+            <span class="quest-icon">${questIcon}</span>
+            ${questTitle}
             <span class="quest-counter">${completedCount}/${this.quests.length}</span>
           </h3>
 
@@ -75,6 +85,8 @@ class DailyQuestManager {
             <span class="streak-label">day${this.streak !== 1 ? 's' : ''}</span>
           </div>
         </div>
+
+        ${piDayBanner}
 
         ${allCompleted ? `
           <div class="all-quests-complete">
@@ -136,7 +148,8 @@ class DailyQuestManager {
         </div>
 
         <div class="quest-reward">
-          <span class="xp-badge">+${quest.xpReward} XP</span>
+          <span class="xp-badge">${quest.bonusMultiplier > 1 ? `+${Math.round(quest.xpReward * quest.bonusMultiplier)} XP` : `+${quest.xpReward} XP`}</span>
+          ${quest.piDay ? '<span style="font-size:10px;color:#ff6b9d;display:block;">3.14x</span>' : ''}
         </div>
       </div>
     `;
@@ -152,7 +165,7 @@ class DailyQuestManager {
     container.innerHTML = `
       <div class="quests-compact">
         <div class="compact-header">
-          <span>📋 Daily: ${completedCount}/${this.quests.length}</span>
+          <span>${this.piDay ? '\u03C0 Pi Day' : '\uD83D\uDCCB Daily'}: ${completedCount}/${this.quests.length}</span>
           <span class="streak-compact">🔥 ${this.streak}</span>
         </div>
         <div class="compact-progress">
