@@ -793,6 +793,118 @@ html, body {
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 
+/* --- Avatar Video (Simli Premium) --- */
+.vt-avatar-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.vt-avatar-video-wrapper {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(102, 126, 234, 0.2);
+  box-shadow:
+    0 0 40px rgba(102, 126, 234, 0.1),
+    0 0 80px rgba(18, 179, 179, 0.05);
+  background: #0d0d20;
+  transition: all 0.4s;
+}
+
+.vt-avatar-container[data-state="speaking"] .vt-avatar-video-wrapper {
+  border-color: rgba(102, 126, 234, 0.4);
+  box-shadow:
+    0 0 50px rgba(102, 126, 234, 0.15),
+    0 0 100px rgba(18, 179, 179, 0.08);
+}
+
+.vt-avatar-container[data-state="listening"] .vt-avatar-video-wrapper {
+  border-color: rgba(18, 179, 179, 0.4);
+  box-shadow:
+    0 0 50px rgba(18, 179, 179, 0.15),
+    0 0 100px rgba(18, 179, 179, 0.08);
+}
+
+.vt-avatar-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.15); /* Zoom in slightly for better framing */
+}
+
+.vt-avatar-overlay {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.vt-avatar-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(102, 126, 234, 0.8);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.vt-avatar-status {
+  font-size: 12px;
+  color: #5a6380;
+  text-align: center;
+}
+
+/* Hide orb when avatar is active */
+.avatar-active .vt-orb-container {
+  display: none !important;
+}
+
+.avatar-active .vt-avatar-container {
+  display: flex !important;
+}
+
+/* Settings: divider and section label */
+.vt-settings-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 16px 0;
+}
+
+.vt-setting-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(102, 126, 234, 0.7);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vt-setting-hint {
+  font-size: 12px;
+  color: #4a5270;
+  margin: -4px 0 8px;
+  line-height: 1.4;
+}
+
 /* --- Mobile Responsive --- */
 @media (max-width: 768px) {
   .vt-main { flex-direction: column; }

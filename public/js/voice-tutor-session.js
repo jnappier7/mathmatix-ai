@@ -29,6 +29,8 @@
     speechStartTime: null,
     waveformRAF: null,
     particleRAF: null,
+    avatarController: null,
+    avatarEnabled: false,
   };
 
   // --- DOM refs ---
@@ -66,6 +68,10 @@
     dom.tutorName = $('#vt-tutor-name');
     dom.tutorStatus = $('#vt-tutor-status');
     dom.particleCanvas = $('#vt-particle-canvas');
+    dom.avatarContainer = $('#vt-avatar-container');
+    dom.avatarToggle = $('#vt-avatar-toggle');
+    dom.avatarHint = $('#vt-avatar-hint');
+    dom.visualPanel = $('.vt-visual-panel');
   }
 
   // ═══════════════════════════════════════
@@ -78,11 +84,64 @@
     setupEventListeners();
     setupParticles();
     drawIdleWaveform();
+    initAvatar();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
     // Auto-start listening if hands-free
     if (state.handsFree) {
       setTimeout(() => startListening(), 800);
+    }
+  }
+
+  /**
+   * Initialize avatar system (Simli) — premium feature.
+   * Sets up the toggle and prepares the controller.
+   */
+  async function initAvatar() {
+    if (!window.AvatarController) return;
+
+    state.avatarController = new AvatarController();
+    const available = await state.avatarController.init(
+      'vt-avatar-video',
+      'vt-avatar-audio',
+      'vt-avatar-container'
+    );
+
+    if (available && dom.avatarToggle) {
+      // Show the toggle — avatar service is configured
+      const setting = document.getElementById('vt-avatar-setting');
+      if (setting) setting.style.display = 'flex';
+
+      dom.avatarToggle.addEventListener('change', async (e) => {
+        const enabled = e.target.checked;
+        state.avatarEnabled = enabled;
+
+        if (enabled) {
+          dom.avatarHint.textContent = 'Connecting avatar...';
+          const ok = await state.avatarController.start();
+          if (ok) {
+            dom.avatarHint.textContent = 'Avatar connected and running.';
+            dom.avatarContainer.style.display = 'flex';
+            dom.orbContainer.style.display = 'none';
+            if (dom.visualPanel) dom.visualPanel.classList.add('avatar-active');
+          } else {
+            dom.avatarHint.textContent = 'Failed to connect avatar. Try again.';
+            e.target.checked = false;
+            state.avatarEnabled = false;
+          }
+        } else {
+          state.avatarController.close();
+          dom.avatarContainer.style.display = 'none';
+          dom.orbContainer.style.display = '';
+          if (dom.visualPanel) dom.visualPanel.classList.remove('avatar-active');
+          dom.avatarHint.textContent = 'See your tutor talk with a realistic animated avatar.';
+        }
+      });
+    } else {
+      // Hide avatar setting if not available
+      const setting = document.getElementById('vt-avatar-setting');
+      if (setting) setting.style.display = 'none';
+      if (dom.avatarHint) dom.avatarHint.textContent = 'Avatar not available — SIMLI_API_KEY not configured.';
     }
   }
 
@@ -402,45 +461,63 @@
   async function playResponse(audioUrl, responseText) {
     setMode('speaking');
 
+    // Update avatar state if active
+    if (state.avatarEnabled && dom.avatarContainer) {
+      dom.avatarContainer.setAttribute('data-state', 'speaking');
+    }
+
     // Show live transcript word by word
     if (responseText) {
       animateTranscript(responseText);
+    }
+
+    // Pipe audio to avatar for lip sync (runs in parallel with playback)
+    if (state.avatarEnabled && state.avatarController?.isConnected && audioUrl) {
+      state.avatarController.pipeAudioFromUrl(audioUrl).catch(e =>
+        console.warn('[VoiceTutor] Avatar pipe error:', e)
+      );
     }
 
     return new Promise((resolve) => {
       const audio = new Audio(audioUrl);
       state.currentAudio = audio;
 
-      // Draw speaking waveform from audio
-      const audioCtx = state.audioContext || new (window.AudioContext || window.webkitAudioContext)();
-      state.audioContext = audioCtx;
+      // When avatar is active, mute the regular audio (avatar provides its own)
+      if (state.avatarEnabled && state.avatarController?.isConnected) {
+        audio.volume = 0;
+      }
 
-      audio.addEventListener('canplay', () => {
-        try {
-          const source = audioCtx.createMediaElementSource(audio);
-          const analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 256;
-          source.connect(analyser);
-          analyser.connect(audioCtx.destination);
+      // Draw speaking waveform from audio (only when orb is visible)
+      if (!state.avatarEnabled) {
+        const audioCtx = state.audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        state.audioContext = audioCtx;
 
-          const buffer = new Uint8Array(analyser.frequencyBinCount);
-          const drawSpeaking = () => {
-            if (state.mode !== 'speaking') return;
-            analyser.getByteFrequencyData(buffer);
-            drawSpeakingWaveform(buffer);
-            requestAnimationFrame(drawSpeaking);
-          };
-          drawSpeaking();
-        } catch (e) {
-          // MediaElementSource can only be created once per element
-          // Fall back to simple connection
-          audio.volume = 1;
-        }
-      }, { once: true });
+        audio.addEventListener('canplay', () => {
+          try {
+            const source = audioCtx.createMediaElementSource(audio);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            const buffer = new Uint8Array(analyser.frequencyBinCount);
+            const drawSpeaking = () => {
+              if (state.mode !== 'speaking') return;
+              analyser.getByteFrequencyData(buffer);
+              drawSpeakingWaveform(buffer);
+              requestAnimationFrame(drawSpeaking);
+            };
+            drawSpeaking();
+          } catch (e) {
+            audio.volume = 1;
+          }
+        }, { once: true });
+      }
 
       audio.onended = () => {
         state.currentAudio = null;
         hideTranscript();
+        if (dom.avatarContainer) dom.avatarContainer.setAttribute('data-state', 'idle');
 
         if (state.handsFree && state.autoListen) {
           setTimeout(() => startListening(), 400);
@@ -453,6 +530,7 @@
       audio.onerror = () => {
         state.currentAudio = null;
         hideTranscript();
+        if (dom.avatarContainer) dom.avatarContainer.setAttribute('data-state', 'idle');
         setMode('idle');
         resolve();
       };
@@ -470,12 +548,17 @@
       state.currentAudio.currentTime = 0;
       state.currentAudio = null;
     }
+    // Clear avatar buffer on interruption
+    if (state.avatarController?.isConnected) {
+      state.avatarController.clearBuffer();
+    }
+    if (dom.avatarContainer) dom.avatarContainer.setAttribute('data-state', 'idle');
     hideTranscript();
     setMode('idle');
   }
 
   function interruptAndListen() {
-    // Flash the orb to indicate interruption
+    // Flash the orb/avatar to indicate interruption
     dom.orbContainer.classList.add('vt-interrupted');
     setTimeout(() => dom.orbContainer.classList.remove('vt-interrupted'), 400);
 
@@ -812,6 +895,7 @@
   function setMode(mode) {
     state.mode = mode;
     dom.orbContainer.setAttribute('data-state', mode);
+    if (dom.avatarContainer) dom.avatarContainer.setAttribute('data-state', mode);
 
     // Mic button
     dom.micBtn.classList.toggle('active', mode === 'listening');
@@ -1017,6 +1101,10 @@
     }
     if (state.audioContext && state.audioContext.state !== 'closed') {
       state.audioContext.close();
+    }
+    // Close avatar session
+    if (state.avatarController) {
+      state.avatarController.close();
     }
   }
 
