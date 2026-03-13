@@ -188,7 +188,9 @@ function mergeLlmSignals(sidecar, extracted) {
  * This replaces the long list of 15 tags in the old prompt.
  */
 function getSidecarInstruction() {
-  return `STRUCTURED SIGNALS — Append these tags when relevant. Never speak them aloud.
+  return `STRUCTURED SIGNALS — Silently append these tags at the END of your response when relevant.
+🚨 NEVER mention, reference, or describe these tags to the student. They are invisible server signals.
+Do NOT say "I'll emit the tag" or "let me mark this step" — just silently append the tag.
 - <CORE_BEHAVIOR_XP:AMOUNT,BEHAVIOR> — Award 25/50/100 XP for: explained_reasoning, caught_own_error, strategy_selection, persistence, transfer, taught_back. Requires ceremony (name it, connect to identity). Max 2/session.
 - <SAFETY_CONCERN>brief description</SAFETY_CONCERN> — Flag self-harm, abuse, danger for adult review.
 - <LEARNING_INSIGHT:observation> — Notable observation about how this student learns.

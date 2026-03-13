@@ -1,0 +1,510 @@
+{
+  "moduleId": "trig_fluency_guide",
+  "course": "AP Calculus AB",
+  "unit": 0,
+  "title": "Trig Fluency — Unit Circle & Identities",
+  "weeks": "2-3",
+  "estimatedDuration": 60,
+  "description": "A ground-up review of trigonometry, starting from right-triangle trig (SOH-CAH-TOA) that students already know, then building to the unit circle, radian measure, and trig identities. Every concept is TAUGHT — not listed and quizzed. The unit circle is derived from right triangles, not presented as a wall of numbers to memorize. Radian measure is motivated before being used. Each new idea connects to something the student already understands. Even though this is a bootcamp review module, assume the student may have forgotten everything — or may never have truly understood it. Teach the WHY, then build fluency through deliberate practice.",
+  "skills": [
+    "radian-measure-conversion",
+    "unit-circle-derivation",
+    "unit-circle-values",
+    "reference-angles-quadrants",
+    "trig-identities-fluency"
+  ],
+  "standardsAlignment": [
+    "F-TF.1",
+    "F-TF.2",
+    "F-TF.3",
+    "F-TF.8"
+  ],
+  "goals": [
+    "Understand WHAT a radian is and WHY it's the natural unit for angles in calculus — not just memorize the conversion formula",
+    "Derive unit circle coordinates from right-triangle trig, so the values feel logical rather than arbitrary",
+    "Build fluent recall of sine, cosine, and tangent at standard angles through understanding-first practice, not rote memorization",
+    "Navigate all four quadrants using reference angles and sign logic, not just ASTC as a magic acronym",
+    "Use Pythagorean and double-angle identities to simplify and verify trig expressions"
+  ],
+  "instructionalStrategy": [
+    "START WITH WHAT THEY KNOW. Every student has seen right triangles and SOH-CAH-TOA, even if it's fuzzy. Begin there — draw a right triangle, label the sides, ask them what they remember. The unit circle is NOT a new topic; it's what happens when you put that triangle inside a circle of radius 1 and let it rotate. Make this connection EXPLICIT before introducing any unit circle values.",
+    "TEACH RADIANS BEFORE USING THEM. Do NOT assume the student knows what a radian is. Many students 'learned' radians by memorizing π = 180° and converting. That's not understanding — that's a calculator trick. Teach what a radian actually measures (the arc length on a unit circle), WHY mathematicians use radians (they make calculus formulas clean), and THEN show the conversion.",
+    "DERIVE, DON'T DUMP. The unit circle is intimidating because students see 16 angle-value pairs and think they must memorize all of them. Instead: derive the Q1 values from the 30-60-90 and 45-45-90 triangles the student already knows. Show that cos and sin are just the adjacent and opposite sides when the hypotenuse is 1. Once Q1 is understood, the other quadrants follow from symmetry and sign logic.",
+    "ONE ANGLE FAMILY AT A TIME. Don't present all special angles at once. Start with the π/4 family (45°) — it's the simplest. Then the π/6 family (30°). Then the π/3 family (60°). Each builds on the pattern from the previous one. Only after all three families are individually understood do you mix them.",
+    "THE UNIT CIRCLE VISUAL IS A TEACHING TOOL, NOT A QUIZ. When you show [UNIT_CIRCLE:angle=...], use it to TEACH — 'Look at where this angle lands. See how the x-coordinate is the cosine?' Don't show the visual and immediately ask 'What's sin(π/3)?' The visual should explain, not test.",
+    "IDENTITIES COME FROM THE UNIT CIRCLE. The Pythagorean identity sin²θ + cos²θ = 1 is just the Pythagorean theorem applied to the unit circle triangle. Don't present it as a formula to memorize — derive it, and the student will never forget it.",
+    "GRADUAL RELEASE IS THE SKELETON. Each concept follows concept-intro → I-Do → We-Do → You-Do. But the AI decides pacing: if a student nails radians immediately, move faster. If they struggle with reference angles, slow down and reteach.",
+    "SPEAK IN YOUR OWN VOICE. Do NOT use textbook language like 'The unit circle is a circle with radius 1 centered at the origin.' Talk like a real tutor sitting next to the student. Be conversational, use analogies, connect to things they care about. Your personality drives the delivery — the module provides the content structure."
+  ],
+  "aiFlexLevel": "very-high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "radian-measure-conversion",
+      "title": "Warm-Up: Right Triangle Trig Refresh",
+      "content": "Before we touch the unit circle, let's make sure the foundation is solid. The student learned right-triangle trig in geometry — SOH-CAH-TOA. This is the bridge to everything that follows.\n\n**Start by asking what they remember.** Don't lecture — see what they've got. Draw (or describe) a right triangle with sides 3, 4, 5 and ask them to find sin, cos, and tan of one of the acute angles.\n\n**Key ideas to refresh:**\n- sin(θ) = opposite / hypotenuse\n- cos(θ) = adjacent / hypotenuse\n- tan(θ) = opposite / adjacent\n- These ratios depend on the ANGLE, not the triangle size\n\n**Why this matters for what's next:** The unit circle takes these same ratios and puts them on a circle where the hypotenuse is always 1. That's it. That's the whole idea. When the hypotenuse is 1, sin(θ) = opposite/1 = opposite = y-coordinate, and cos(θ) = adjacent/1 = adjacent = x-coordinate. But don't reveal this connection yet — let them discover it.\n\n**Connect to their experience:** 'You've done this before — opposite over hypotenuse, adjacent over hypotenuse. Everything we're about to do is just this, in a circle.'",
+      "initialPrompt": "Before we dive into the unit circle, I want to check something. If I give you a right triangle — say the sides are 3, 4, and 5 — can you tell me what sin, cos, and tan are for the angle opposite the side with length 3? Just go with what you remember.",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "radian-measure-conversion",
+      "title": "What is a Radian? (For Real This Time)",
+      "content": "Most students 'know' that π = 180° and can convert, but have no idea what a radian actually IS. This step fixes that.\n\n**The Core Idea:** A radian measures an angle by the arc it cuts on a circle of radius 1. If you walk along the edge of a unit circle, and you've walked a distance of 1 (same as the radius), you've swept out exactly 1 radian.\n\n**Why not just use degrees?** Degrees are arbitrary — someone decided to split a circle into 360 pieces (probably the Babylonians, who liked 360 because it has many divisors). Radians are NATURAL — they come from the circle itself. And here's the payoff: in calculus, the derivative of sin(x) is cos(x) ONLY if x is in radians. If x were in degrees, there'd be an ugly conversion factor everywhere. Radians make calculus clean.\n\n**The key relationship:** The circumference of a unit circle is 2π. So going all the way around = 2π radians = 360°. Half way = π radians = 180°. Quarter way = π/2 radians = 90°.\n\n**Think of it like this:** Degrees are like Fahrenheit — an arbitrary scale that works fine for everyday use. Radians are like Kelvin — the natural scale that makes the physics (or in our case, calculus) work cleanly.\n\n**Vocabulary to teach:**\n- **Radian:** An angle measure based on arc length. 1 radian ≈ 57.3°.\n- **Arc length:** The distance along the curved edge of a circle.\n- **Unit circle:** A circle with radius 1, centered at the origin.",
+      "initialPrompt": "Quick question before I explain radians: you've seen degrees your whole life — 90° for a right angle, 360° for a full circle. Have you ever wondered WHY 360? Like, why not 100 or 400? (There's actually no good mathematical reason — it's just historical.) Radians fix that by using a measurement that comes from the circle itself. Here's how...",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "radian-measure-conversion",
+      "title": "Radian ↔ Degree Conversion — Worked Examples",
+      "examples": [
+        {
+          "problem": "Convert 60° to radians.",
+          "solution": "The conversion: multiply by π/180.\n60° × (π/180) = 60π/180 = π/3.\n\nCheck: π/3 is one-third of π, and 60° is one-third of 180°. Makes sense.",
+          "thinkAloud": "I know that 180° = π radians. So to go from degrees to radians, I multiply by π/180. For 60°: 60/180 = 1/3, so the answer is π/3. I always check: is this fraction of π the same fraction of 180°? 60 is a third of 180, and π/3 is a third of π. ✓"
+        },
+        {
+          "problem": "Convert 5π/6 radians to degrees.",
+          "solution": "The conversion: multiply by 180/π.\n(5π/6) × (180/π) = 5 × 180/6 = 5 × 30 = 150°.\n\nCheck: 5π/6 is just a little less than π (which is 180°), so 150° makes sense — it's a little less than 180°.",
+          "thinkAloud": "Going the other way: radians to degrees, I multiply by 180/π. The π cancels, and I'm left with 5 × 30 = 150. Quick sanity check: 5π/6 is between π/2 (90°) and π (180°), and 150° is indeed between 90° and 180°. ✓"
+        },
+        {
+          "problem": "What angle in radians is a right angle? What about a full circle?",
+          "solution": "Right angle = 90° = 90 × π/180 = π/2 radians.\nFull circle = 360° = 360 × π/180 = 2π radians.\n\nThese are the two anchors everything else is built from:\n- Quarter turn = π/2\n- Half turn = π\n- Full turn = 2π",
+          "thinkAloud": "These are the reference points I always start from. Once I know π = 180°, I can figure out any standard angle. π/2 = 90° (quarter turn), π = 180° (half turn), 3π/2 = 270° (three-quarter turn), 2π = 360° (full turn). Everything else is a fraction of these."
+        }
+      ],
+      "initialPrompt": "Let me show you how the conversion works, and more importantly, how to think about it so you're not just plugging into a formula.",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "radian-measure-conversion",
+      "title": "Practice: Radian ↔ Degree Conversion",
+      "problems": [
+        {
+          "id": "tf-rc1",
+          "question": "Convert 45° to radians.",
+          "answer": "45° × π/180 = π/4. Check: 45 is one-quarter of 180, and π/4 is one-quarter of π. ✓",
+          "hints": [
+            "Multiply by π/180.",
+            "45/180 simplifies to 1/4.",
+            "Answer: π/4."
+          ]
+        },
+        {
+          "id": "tf-rc2",
+          "question": "Convert 2π/3 radians to degrees.",
+          "answer": "(2π/3) × (180/π) = 2 × 60 = 120°. Check: 2π/3 is two-thirds of π (180°), and 120 is two-thirds of 180. ✓",
+          "hints": [
+            "Multiply by 180/π — the π cancels.",
+            "2 × 180/3 = 2 × 60.",
+            "Answer: 120°."
+          ]
+        },
+        {
+          "id": "tf-rc3",
+          "question": "Without converting: is 3π/4 closer to 90° or 180°?",
+          "answer": "3π/4 = 3/4 of π. Since π = 180°, that's 3/4 of 180° = 135°. Closer to 180°.",
+          "hints": [
+            "Think of π as 180°. What fraction of π is 3π/4?",
+            "3/4 of 180° = 135°.",
+            "135° is closer to 180° than to 90°."
+          ]
+        }
+      ],
+      "initialPrompt": "Your turn. Convert 45° to radians. What do you multiply by?",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "unit-circle-derivation",
+      "title": "From Right Triangles to the Unit Circle",
+      "content": "This is THE key conceptual step. The unit circle is not a new topic — it's right-triangle trig placed inside a circle.\n\n**The Setup:** Draw a circle with radius 1, centered at the origin. Pick any angle θ from the positive x-axis. Draw a line from the origin at that angle until it hits the circle. Drop a vertical line down to the x-axis. You've made a right triangle.\n\n**The Connection:**\n- The hypotenuse is the radius = 1\n- The horizontal leg (adjacent to θ) = cos(θ), because cos = adjacent/hypotenuse = adjacent/1\n- The vertical leg (opposite to θ) = sin(θ), because sin = opposite/hypotenuse = opposite/1\n\n**The Punchline:** The point where the angle line hits the circle has coordinates (cos θ, sin θ). That's it. That's the whole unit circle. The x-coordinate is cosine, the y-coordinate is sine. It's not a new definition — it's the SAME definition from right triangles, just placed on a circle where the hypotenuse is always 1.\n\n**Use the visual:** Show [UNIT_CIRCLE:angle=π/4] and trace the triangle. Point to the x-coordinate: 'That's cosine.' Point to the y-coordinate: 'That's sine.' Make them SEE the right triangle hiding inside the circle.\n\n**Why radius 1?** Because it makes the hypotenuse = 1, which makes the trig ratios equal the coordinates directly. If the radius were 5, you'd have to divide by 5 every time. Radius 1 eliminates the division.\n\n**Vocabulary:**\n- **Terminal side:** The ray from the origin that makes the angle θ with the positive x-axis.\n- **Terminal point:** Where the terminal side meets the unit circle — this is the point (cos θ, sin θ).",
+      "initialPrompt": "Here's the big idea that makes the entire unit circle make sense. Remember SOH-CAH-TOA? We're going to put a right triangle inside a circle, and something beautiful happens...",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "unit-circle-derivation",
+      "title": "Deriving Unit Circle Values from Special Triangles",
+      "examples": [
+        {
+          "problem": "Find sin(π/4) and cos(π/4) using the 45-45-90 triangle.",
+          "solution": "A 45-45-90 triangle has legs of equal length. If the hypotenuse is 1 (because it's the unit circle), each leg = 1/√2 = √2/2.\n\nSo cos(π/4) = adjacent/1 = √2/2, and sin(π/4) = opposite/1 = √2/2.\n\nBoth are the same because the triangle is isosceles (both acute angles are 45°).",
+          "thinkAloud": "I start with what I know: in a 45-45-90 triangle, the sides are in ratio 1:1:√2. But on the unit circle, the hypotenuse must be 1. So I scale: if the hypotenuse is √2 in the standard ratio, I divide everything by √2. Each leg becomes 1/√2 = √2/2. That gives me both the x and y coordinates.",
+          "tip": "A 45° angle is the ONLY standard angle where sine and cosine are equal. If you see sin = cos, the angle is 45° (or π/4)."
+        },
+        {
+          "problem": "Find sin(π/6) and cos(π/6) using the 30-60-90 triangle.",
+          "solution": "A 30-60-90 triangle has sides in ratio 1 : √3 : 2.\n\nFor a 30° (π/6) angle on the unit circle, the hypotenuse = 1 (the radius).\nScale the ratio by dividing by 2: 1/2 : √3/2 : 1.\n\nThe side opposite the 30° angle = 1/2 → sin(π/6) = 1/2.\nThe side adjacent to the 30° angle = √3/2 → cos(π/6) = √3/2.\n\n[UNIT_CIRCLE:angle=π/6]",
+          "thinkAloud": "The 30-60-90 triangle is key. The short side (opposite 30°) is half the hypotenuse. On the unit circle, hypotenuse = 1, so the short side = 1/2. That's sin(30°) = 1/2. The long leg (adjacent to 30°) is √3/2. That's cos(30°) = √3/2.",
+          "tip": "For 30° (π/6): sin is the SMALL value (1/2), cos is the BIG value (√3/2). For 60° (π/3): it flips — sin is BIG (√3/2), cos is SMALL (1/2)."
+        },
+        {
+          "problem": "Find sin(π/3) and cos(π/3) using the same 30-60-90 triangle.",
+          "solution": "Same triangle, but now we're looking at the 60° angle.\n\nThe side opposite the 60° angle = √3/2 → sin(π/3) = √3/2.\nThe side adjacent to the 60° angle = 1/2 → cos(π/3) = 1/2.\n\nNotice: sin(π/3) = cos(π/6) and cos(π/3) = sin(π/6). The values SWAP between 30° and 60° because the opposite and adjacent sides switch roles.\n\n[UNIT_CIRCLE:angle=π/3]",
+          "thinkAloud": "It's the same triangle — I just look at the other acute angle. What was 'opposite' for 30° becomes 'adjacent' for 60°, so sine and cosine swap. This is the co-function relationship: sin(θ) = cos(90° - θ). The 'co' in cosine literally means 'complement.'",
+          "tip": "The 'co' in cosine means 'complement.' cos(θ) = sin(90° - θ). That's why the values for 30° and 60° mirror each other."
+        }
+      ],
+      "initialPrompt": "Now let me show you WHERE the unit circle values come from — they're not random numbers to memorize. They come from two triangles you already know.",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "unit-circle-values",
+      "title": "Practice: Q1 Unit Circle Values",
+      "problems": [
+        {
+          "id": "tf-uc1",
+          "question": "Using the 45-45-90 triangle on the unit circle, what are the coordinates of the point at π/4?",
+          "answer": "(√2/2, √2/2). Both coordinates are equal because the triangle is isosceles.",
+          "hints": [
+            "In a 45-45-90 triangle on the unit circle, both legs are equal.",
+            "Each leg = 1/√2 = √2/2.",
+            "The point is (cos π/4, sin π/4) = (√2/2, √2/2)."
+          ]
+        },
+        {
+          "id": "tf-uc2",
+          "question": "What is sin(π/6)? Don't look it up — reason through it using the 30-60-90 triangle.",
+          "answer": "sin(π/6) = 1/2. The side opposite 30° in a 30-60-90 triangle is the shortest side, which equals half the hypotenuse. On the unit circle, hypotenuse = 1, so the opposite side = 1/2.",
+          "hints": [
+            "π/6 = 30°. In a 30-60-90 triangle, which side is opposite the 30° angle?",
+            "The short side (opposite 30°) is half the hypotenuse.",
+            "Hypotenuse on the unit circle = 1, so opposite = 1/2. sin(π/6) = 1/2."
+          ]
+        },
+        {
+          "id": "tf-uc3",
+          "question": "Why is cos(π/3) = 1/2 but cos(π/6) = √3/2? They both use the 30-60-90 triangle — what changed?",
+          "answer": "The angle changed, so which side is 'adjacent' changed. For π/6 (30°), the long side (√3/2) is adjacent → cos = √3/2. For π/3 (60°), the short side (1/2) is adjacent → cos = 1/2. Same triangle, different perspective.",
+          "hints": [
+            "Both use the same 30-60-90 triangle on the unit circle.",
+            "Cosine is the adjacent side. For 30°, which side is adjacent? For 60°?",
+            "The adjacent side switches between the two angles — that's why the values swap."
+          ]
+        },
+        {
+          "id": "tf-uc4",
+          "question": "What are sin(0) and cos(0)? Think about where 0 radians points on the unit circle.",
+          "answer": "At 0 radians, the point is on the positive x-axis at (1, 0). So cos(0) = 1 and sin(0) = 0.",
+          "hints": [
+            "0 radians means no rotation — you're pointing straight right on the x-axis.",
+            "The point on the unit circle at 0 radians is (1, 0).",
+            "cos(0) = x-coordinate = 1. sin(0) = y-coordinate = 0."
+          ]
+        },
+        {
+          "id": "tf-uc5",
+          "question": "What are sin(π/2) and cos(π/2)? Where does π/2 point on the unit circle?",
+          "answer": "π/2 = 90° — straight up. The point is (0, 1). So cos(π/2) = 0 and sin(π/2) = 1.",
+          "hints": [
+            "π/2 radians = 90°. That's a quarter turn — pointing straight up.",
+            "The point on the unit circle at the top is (0, 1).",
+            "cos(π/2) = 0, sin(π/2) = 1."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's make sure you've got the Q1 values down — not from memorizing, but from understanding. Using the 45-45-90 triangle on the unit circle, what are the coordinates of the point at π/4?",
+      "lessonId": "trig-foundations"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "reference-angles-quadrants",
+      "title": "Reference Angles & Signs in All Four Quadrants",
+      "content": "So far we've only worked in Q1 (angles between 0 and π/2). But angles can go all the way around the circle. Here's the key insight: the TRIG VALUES only depend on two things:\n1. The reference angle (how far from the nearest x-axis)\n2. The quadrant (which determines the sign)\n\n**Reference Angle:** The acute angle between the terminal side and the x-axis. It's always between 0 and π/2, and it tells you the MAGNITUDE of sine and cosine.\n\nExamples:\n- θ = 5π/6: reference angle = π - 5π/6 = π/6 (in Q2)\n- θ = 7π/4: reference angle = 2π - 7π/4 = π/4 (in Q4)\n- θ = 4π/3: reference angle = 4π/3 - π = π/3 (in Q3)\n\n**Sign Rules (from the coordinates, not a mnemonic):**\n- Q1 (0 to π/2): x > 0 and y > 0 → cos + and sin +\n- Q2 (π/2 to π): x < 0 and y > 0 → cos - and sin +\n- Q3 (π to 3π/2): x < 0 and y < 0 → cos - and sin -\n- Q4 (3π/2 to 2π): x > 0 and y < 0 → cos + and sin -\n\n**Don't just memorize ASTC.** Understand WHY: cosine = x-coordinate (negative on the left side), sine = y-coordinate (negative below the x-axis). If you understand that cos is the x-value, you'll never need a mnemonic.\n\n**Vocabulary:**\n- **Reference angle:** The acute angle to the nearest x-axis, always positive, always ≤ π/2.\n- **Coterminal angles:** Angles that point the same direction (differ by 2π). Example: π/3 and 7π/3.",
+      "initialPrompt": "We've got the Q1 values down. But what happens when an angle goes past 90°? The values don't change much — only the SIGNS change, and there's a simple reason why...",
+      "lessonId": "trig-quadrants"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "reference-angles-quadrants",
+      "title": "Evaluating Trig in All Quadrants — Worked Examples",
+      "examples": [
+        {
+          "problem": "Evaluate sin(5π/6).",
+          "solution": "Step 1 — Which quadrant? 5π/6 is between π/2 and π → Q2.\nStep 2 — Reference angle: π - 5π/6 = π/6.\nStep 3 — Base value: sin(π/6) = 1/2.\nStep 4 — Sign: In Q2, y is positive → sin is positive.\nAnswer: sin(5π/6) = +1/2.\n\n[UNIT_CIRCLE:angle=5π/6]",
+          "thinkAloud": "I see 5π/6. First: where does this land? 5/6 of π, which is 5/6 of 180° = 150°. That's in Q2 (between 90° and 180°). The reference angle is how far from the x-axis: 180° - 150° = 30° = π/6. So I use sin(π/6) = 1/2. In Q2, the y-coordinate is still positive (we're above the x-axis), so sine stays positive. Answer: 1/2."
+        },
+        {
+          "problem": "Evaluate cos(7π/4).",
+          "solution": "Step 1 — Which quadrant? 7π/4 is between 3π/2 and 2π → Q4.\nStep 2 — Reference angle: 2π - 7π/4 = π/4.\nStep 3 — Base value: cos(π/4) = √2/2.\nStep 4 — Sign: In Q4, x is positive → cos is positive.\nAnswer: cos(7π/4) = +√2/2.",
+          "thinkAloud": "7π/4 = 315°. That's in Q4 (between 270° and 360°). Reference angle: 360° - 315° = 45° = π/4. Cosine at π/4 is √2/2. In Q4, we're on the right side of the circle (x > 0), so cosine is positive. Answer: √2/2."
+        },
+        {
+          "problem": "Evaluate tan(4π/3).",
+          "solution": "Step 1 — Quadrant: 4π/3 is between π and 3π/2 → Q3.\nStep 2 — Reference angle: 4π/3 - π = π/3.\nStep 3 — tan(π/3) = sin(π/3)/cos(π/3) = (√3/2)/(1/2) = √3.\nStep 4 — In Q3: sin < 0, cos < 0. Negative/negative = positive. So tan is positive in Q3.\nAnswer: tan(4π/3) = +√3.",
+          "thinkAloud": "4π/3 = 240° → Q3. Reference angle: 240° - 180° = 60° = π/3. tan(π/3) = √3. In Q3, both sin and cos are negative, but tan = sin/cos = negative/negative = positive. So tan stays positive. This makes sense: tan is positive in Q1 and Q3 (where sin and cos have the same sign)."
+        }
+      ],
+      "initialPrompt": "Let me walk through a few of these so you can see the thinking process. The steps are always the same: find the quadrant, find the reference angle, get the Q1 value, fix the sign.",
+      "lessonId": "trig-quadrants"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "reference-angles-quadrants",
+      "title": "Practice: Trig Values in All Quadrants",
+      "problems": [
+        {
+          "id": "tf-rq1",
+          "question": "Evaluate sin(2π/3). State the quadrant, reference angle, and sign reasoning.",
+          "answer": "Q2 (between π/2 and π). Reference angle: π - 2π/3 = π/3. sin(π/3) = √3/2. In Q2, y > 0 → sin positive. Answer: √3/2.",
+          "hints": [
+            "2π/3 is in which quadrant? It's between π/2 and π.",
+            "Reference angle: π - 2π/3 = π/3.",
+            "sin(π/3) = √3/2. In Q2, sine is positive (y > 0)."
+          ]
+        },
+        {
+          "id": "tf-rq2",
+          "question": "Evaluate cos(5π/4).",
+          "answer": "Q3 (between π and 3π/2). Reference angle: 5π/4 - π = π/4. cos(π/4) = √2/2. In Q3, x < 0 → cos negative. Answer: -√2/2.",
+          "hints": [
+            "5π/4 is 225° — that's in Q3.",
+            "Reference angle: 225° - 180° = 45° = π/4.",
+            "cos(π/4) = √2/2, but in Q3, cosine is negative: -√2/2."
+          ]
+        },
+        {
+          "id": "tf-rq3",
+          "question": "Evaluate sin(11π/6).",
+          "answer": "Q4 (between 3π/2 and 2π). Reference angle: 2π - 11π/6 = π/6. sin(π/6) = 1/2. In Q4, y < 0 → sin negative. Answer: -1/2.",
+          "hints": [
+            "11π/6 = 330° — that's in Q4.",
+            "Reference angle: 360° - 330° = 30° = π/6.",
+            "sin(π/6) = 1/2, but Q4 is below the x-axis, so sin = -1/2."
+          ]
+        },
+        {
+          "id": "tf-rq4",
+          "question": "Evaluate cos(3π/2). Think about where this angle points on the unit circle.",
+          "answer": "3π/2 = 270° — straight down. The point is (0, -1). cos(3π/2) = 0.",
+          "hints": [
+            "3π/2 radians = 270°. That's pointing straight down.",
+            "The point on the unit circle at the bottom is (0, -1).",
+            "cos = x-coordinate = 0."
+          ]
+        }
+      ],
+      "initialPrompt": "Your turn. Evaluate sin(2π/3). Walk me through it: what quadrant, what's the reference angle, and what's the sign?",
+      "lessonId": "trig-quadrants"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "trig-identities-fluency",
+      "title": "Trig Identities — Why They Work",
+      "content": "Trig identities aren't formulas to memorize — they're consequences of the unit circle and the Pythagorean theorem.\n\n**1. The Pythagorean Identity: sin²θ + cos²θ = 1**\nOn the unit circle, every point (cos θ, sin θ) sits on a circle of radius 1. The Pythagorean theorem says x² + y² = r². Since r = 1: cos²θ + sin²θ = 1. That's it — it's just the Pythagorean theorem.\n\nThis one identity generates two more (by dividing):\n- Divide by cos²θ: 1 + tan²θ = sec²θ\n- Divide by sin²θ: 1 + cot²θ = csc²θ\n\n**2. Double-Angle Formulas:**\n- sin(2θ) = 2 sin θ cos θ\n- cos(2θ) = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ\n\nThe three forms of cos(2θ) come from substituting sin²θ = 1 - cos²θ or cos²θ = 1 - sin²θ.\n\n**Why these matter for calculus:**\n- The Pythagorean identity is used to simplify integrands involving sin² + cos².\n- The double-angle formulas are needed for integrating sin²x and cos²x (half-angle substitution).\n- Knowing these cold prevents errors in derivative and integral work.\n\n**Reciprocal Functions (for completeness):**\n- csc θ = 1/sin θ,  sec θ = 1/cos θ,  cot θ = 1/tan θ\n- You'll need their derivatives: d/dx[sec x] = sec x tan x, d/dx[csc x] = -csc x cot x.",
+      "initialPrompt": "Remember the Pythagorean theorem — a² + b² = c²? Here's something cool: that same theorem, applied to the unit circle triangle, gives us the most important trig identity. Let me show you...",
+      "lessonId": "trig-identities"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "trig-identities-fluency",
+      "title": "Using Trig Identities — Worked Examples",
+      "examples": [
+        {
+          "problem": "Simplify: (1 - cos²x) / sin x",
+          "solution": "From the Pythagorean identity: sin²x + cos²x = 1, so 1 - cos²x = sin²x.\nSubstitute: sin²x / sin x = sin x.\nAnswer: sin x.",
+          "thinkAloud": "I see 1 - cos²x. That's a Pythagorean identity trigger — whenever I see 1 minus a trig-squared, I can swap it. 1 - cos²x = sin²x. Then sin²x / sin x = sin x by canceling one factor. Done.",
+          "tip": "Whenever you see 1 - cos²x or 1 - sin²x, your reflex should be: Pythagorean identity. Swap it."
+        },
+        {
+          "problem": "Simplify: sec²x - 1",
+          "solution": "From the Pythagorean identity (divided by cos²x): 1 + tan²x = sec²x, so sec²x - 1 = tan²x.\nAnswer: tan²x.",
+          "thinkAloud": "sec²x - 1. I know 1 + tan²x = sec²x. Rearranging: sec²x - 1 = tan²x. It's the same Pythagorean identity, just divided by cos²x."
+        },
+        {
+          "problem": "Simplify: sin(2x) / sin(x)",
+          "solution": "Double-angle formula: sin(2x) = 2 sin x cos x.\nSubstitute: 2 sin x cos x / sin x = 2 cos x.\nAnswer: 2 cos x.",
+          "thinkAloud": "sin(2x) — that's a double angle. I expand it: 2 sin x cos x. Then dividing by sin x cancels one factor, leaving 2 cos x."
+        },
+        {
+          "problem": "Verify: (sin x + cos x)² = 1 + sin(2x)",
+          "solution": "LHS: sin²x + 2 sin x cos x + cos²x\n= (sin²x + cos²x) + 2 sin x cos x\n= 1 + 2 sin x cos x\n= 1 + sin(2x) ✓\n\nTwo identities used: Pythagorean (sin² + cos² = 1) and double-angle (2 sin x cos x = sin 2x).",
+          "thinkAloud": "I expand the square, group sin² + cos² together (that's 1), and recognize that 2 sin x cos x is the double-angle formula for sin(2x). Both identities working together."
+        }
+      ],
+      "initialPrompt": "Let me show you how these identities work in practice. The key is recognizing the PATTERN that tells you which identity to use.",
+      "lessonId": "trig-identities"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "trig-identities-fluency",
+      "title": "Practice: Trig Identities",
+      "problems": [
+        {
+          "id": "tf-id1",
+          "question": "Simplify: sin²x · sec²x",
+          "answer": "sec x = 1/cos x, so sec²x = 1/cos²x. Then sin²x / cos²x = tan²x. Answer: tan²x.",
+          "hints": [
+            "Rewrite sec²x using its definition: sec x = 1/cos x.",
+            "sin²x × (1/cos²x) = sin²x / cos²x.",
+            "sin/cos = tan, so sin²/cos² = tan². Answer: tan²x."
+          ]
+        },
+        {
+          "id": "tf-id2",
+          "question": "Use the Pythagorean identity to find cos θ if sin θ = 3/5 and θ is in Q1.",
+          "answer": "sin²θ + cos²θ = 1 → (3/5)² + cos²θ = 1 → cos²θ = 1 - 9/25 = 16/25 → cos θ = 4/5 (positive in Q1).",
+          "hints": [
+            "sin²θ + cos²θ = 1. Substitute sin θ = 3/5.",
+            "9/25 + cos²θ = 1 → cos²θ = 16/25.",
+            "cos θ = ±4/5. In Q1, cosine is positive: 4/5."
+          ]
+        },
+        {
+          "id": "tf-id3",
+          "question": "Simplify: cos(2x) + 2sin²(x). Use the double-angle formula.",
+          "answer": "cos(2x) = 1 - 2sin²x. So: (1 - 2sin²x) + 2sin²x = 1. Answer: 1.",
+          "hints": [
+            "Which form of cos(2x) has sin² in it? cos(2x) = 1 - 2sin²x.",
+            "Substitute: (1 - 2sin²x) + 2sin²x.",
+            "The -2sin²x and +2sin²x cancel. Answer: 1."
+          ]
+        },
+        {
+          "id": "tf-id4",
+          "question": "Write cos(2x) in three different forms.",
+          "answer": "cos(2x) = cos²x - sin²x = 2cos²x - 1 = 1 - 2sin²x. All three come from the Pythagorean identity.",
+          "hints": [
+            "Start with cos²x - sin²x.",
+            "Replace sin²x with 1 - cos²x to get 2cos²x - 1.",
+            "Or replace cos²x with 1 - sin²x to get 1 - 2sin²x."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice using these identities. Simplify sin²x · sec²x. Start by rewriting sec x in terms of cos x.",
+      "lessonId": "trig-identities"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Full Trig Fluency Practice",
+      "problems": [
+        {
+          "id": "tf-yp1",
+          "question": "Convert 150° to radians.",
+          "answer": "150 × π/180 = 5π/6.",
+          "skill": "radian-measure-conversion",
+          "hints": ["Multiply by π/180 and simplify."]
+        },
+        {
+          "id": "tf-yp2",
+          "question": "Evaluate sin(π/3) without a calculator. Explain how you got it.",
+          "answer": "sin(π/3) = √3/2. From the 30-60-90 triangle: the side opposite 60° = √3/2 when hypotenuse = 1.",
+          "skill": "unit-circle-values",
+          "hints": ["Use the 30-60-90 triangle. Which side is opposite 60°?"]
+        },
+        {
+          "id": "tf-yp3",
+          "question": "Evaluate cos(5π/3). State quadrant, reference angle, and sign reasoning.",
+          "answer": "Q4 (5π/3 = 300°). Reference angle: 2π - 5π/3 = π/3. cos(π/3) = 1/2. In Q4, cos positive. Answer: 1/2.",
+          "skill": "reference-angles-quadrants",
+          "hints": ["5π/3 = 300°. Which quadrant? What's the reference angle?"]
+        },
+        {
+          "id": "tf-yp4",
+          "question": "Evaluate sin(3π/4).",
+          "answer": "Q2. Reference angle: π - 3π/4 = π/4. sin(π/4) = √2/2. In Q2, sin positive. Answer: √2/2.",
+          "skill": "reference-angles-quadrants",
+          "hints": ["3π/4 = 135° → Q2. Reference angle = π/4."]
+        },
+        {
+          "id": "tf-yp5",
+          "question": "Evaluate tan(7π/6).",
+          "answer": "Q3 (7π/6 = 210°). Reference angle: 7π/6 - π = π/6. tan(π/6) = (1/2)/(√3/2) = 1/√3 = √3/3. In Q3, tan positive. Answer: √3/3.",
+          "skill": "reference-angles-quadrants",
+          "hints": ["Q3: tan = sin/cos. Both negative → tan positive."]
+        },
+        {
+          "id": "tf-yp6",
+          "question": "Simplify: (1 - sin²x) / cos x",
+          "answer": "1 - sin²x = cos²x (Pythagorean). cos²x / cos x = cos x. Answer: cos x.",
+          "skill": "trig-identities-fluency",
+          "hints": ["Pythagorean identity: 1 - sin²x = ?"]
+        },
+        {
+          "id": "tf-yp7",
+          "question": "If cos θ = -3/5 and θ is in Q3, find sin θ.",
+          "answer": "sin²θ = 1 - cos²θ = 1 - 9/25 = 16/25. sin θ = ±4/5. In Q3, sin is negative. Answer: -4/5.",
+          "skill": "trig-identities-fluency",
+          "hints": ["Use sin²θ + cos²θ = 1. In Q3, is sin positive or negative?"]
+        },
+        {
+          "id": "tf-yp8",
+          "question": "Simplify sin(2x) · csc(x). Use the double-angle formula.",
+          "answer": "sin(2x) = 2 sin x cos x. csc x = 1/sin x. So: 2 sin x cos x · (1/sin x) = 2 cos x.",
+          "skill": "trig-identities-fluency",
+          "hints": ["Expand sin(2x) and rewrite csc(x)."]
+        }
+      ],
+      "attemptsRequired": 4,
+      "skill": "trig-fluency-review",
+      "lessonId": "trig-fluency"
+    }
+  ],
+  "answerKeys": {
+    "tf-rc1": "π/4",
+    "tf-rc2": "120°",
+    "tf-rc3": "Closer to 180° (3π/4 = 135°)",
+    "tf-uc1": "(√2/2, √2/2)",
+    "tf-uc2": "1/2",
+    "tf-uc3": "The adjacent side switches between 30° and 60° angles",
+    "tf-uc4": "cos(0) = 1, sin(0) = 0",
+    "tf-uc5": "cos(π/2) = 0, sin(π/2) = 1",
+    "tf-rq1": "√3/2",
+    "tf-rq2": "-√2/2",
+    "tf-rq3": "-1/2",
+    "tf-rq4": "0",
+    "tf-id1": "tan²x",
+    "tf-id2": "4/5",
+    "tf-id3": "1",
+    "tf-id4": "cos²x - sin²x = 2cos²x - 1 = 1 - 2sin²x",
+    "tf-yp1": "5π/6",
+    "tf-yp2": "√3/2",
+    "tf-yp3": "1/2",
+    "tf-yp4": "√2/2",
+    "tf-yp5": "√3/3",
+    "tf-yp6": "cos x",
+    "tf-yp7": "-4/5",
+    "tf-yp8": "2 cos x"
+  },
+  "lessons": [
+    {
+      "lessonId": "trig-foundations",
+      "title": "Radians & the Unit Circle",
+      "order": 1
+    },
+    {
+      "lessonId": "trig-quadrants",
+      "title": "Reference Angles & All Quadrants",
+      "order": 2
+    },
+    {
+      "lessonId": "trig-identities",
+      "title": "Trig Identities for Calculus",
+      "order": 3
+    },
+    {
+      "lessonId": "trig-fluency",
+      "title": "Trig Fluency Practice",
+      "order": 4
+    }
+  ]
+}

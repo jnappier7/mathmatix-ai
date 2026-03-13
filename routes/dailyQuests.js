@@ -88,10 +88,108 @@ const QUEST_TEMPLATES = {
   }
 };
 
+// ── Pi Day Special Quest Templates (March 14) ──────────────────────
+const PI_DAY_QUEST_TEMPLATES = {
+  piDigitChallenge: {
+    id: 'piDigitChallenge',
+    name: 'Pi Digit Challenge',
+    description: 'Solve 3 problems about circles, circumference, or area',
+    icon: '\u03C0',
+    target: 'problemsCorrect',
+    countOptions: [3],
+    xpReward: 100,
+    piDay: true
+  },
+  piMinilesson: {
+    id: 'piMinilesson',
+    name: 'Pi Day Mini-Lesson',
+    description: 'Ask your tutor to teach you something amazing about pi!',
+    icon: '\u03C0',
+    target: 'dailyPractice',
+    countOptions: [1],
+    xpReward: 75,
+    piDay: true
+  },
+  circleExplorer: {
+    id: 'circleExplorer',
+    name: 'Circle Explorer',
+    description: 'Practice a circle-related skill (area, circumference, or arc length)',
+    icon: '\u{1F4D0}',
+    target: 'skillsPracticed',
+    countOptions: [1],
+    xpReward: 75,
+    piDay: true
+  }
+};
+
+// Pi Day mini-lesson topics the AI tutor can teach
+const PI_DAY_MINILESSONS = [
+  {
+    title: 'Why Pi Never Ends',
+    prompt: 'Teach me a fun mini-lesson about why pi is an irrational number and its decimal digits never end or repeat. Use examples a student would find mind-blowing.',
+    gradeBand: 'all'
+  },
+  {
+    title: 'Pi in the Real World',
+    prompt: 'Give me a mini-lesson about where pi shows up in real life — wheels, planets, sound waves, GPS, and more. Make it surprising and fun.',
+    gradeBand: 'all'
+  },
+  {
+    title: 'The History of Pi',
+    prompt: 'Teach me a mini-lesson about the history of pi — from ancient Egyptians and Archimedes to modern supercomputers calculating trillions of digits.',
+    gradeBand: 'all'
+  },
+  {
+    title: 'Pi vs Tau Debate',
+    prompt: 'Teach me a fun mini-lesson about the pi vs tau (2pi) debate. Why do some mathematicians think we should use tau instead? Present both sides!',
+    gradeBand: '5-8'
+  },
+  {
+    title: 'Buffon\'s Needle: Finding Pi by Dropping Sticks',
+    prompt: 'Teach me about Buffon\'s Needle experiment — how dropping sticks on lined paper can actually calculate pi. Walk me through the math!',
+    gradeBand: '8-12'
+  },
+  {
+    title: 'Pi and Infinite Series',
+    prompt: 'Teach me a mini-lesson about how you can calculate pi using infinite series like Leibniz or Gregory series. Show me the pattern!',
+    gradeBand: '8-12'
+  }
+];
+
+/**
+ * Check if today is Pi Day (March 14)
+ */
+function isPiDay() {
+  const now = new Date();
+  return now.getMonth() === 2 && now.getDate() === 14; // month is 0-indexed
+}
+
 // Generate daily quests for a user based on their level and progress
 function generateDailyQuests(user) {
   const userLevel = user.level || 1;
   const quests = [];
+
+  // On Pi Day, use special Pi Day quests instead of regular ones
+  if (isPiDay()) {
+    const piTemplates = Object.values(PI_DAY_QUEST_TEMPLATES);
+    piTemplates.forEach(template => {
+      quests.push({
+        id: `${template.id}-${Date.now()}`,
+        templateId: template.id,
+        name: template.name,
+        description: template.description,
+        icon: template.icon,
+        target: template.target,
+        targetCount: template.countOptions[0],
+        progress: 0,
+        completed: false,
+        xpReward: template.xpReward,
+        bonusMultiplier: 3.14, // Pi Day XP multiplier!
+        piDay: true
+      });
+    });
+    return quests;
+  }
 
   // Select 3 random quest types
   const templateKeys = Object.keys(QUEST_TEMPLATES);
@@ -204,6 +302,7 @@ router.get('/daily-quests', isAuthenticated, async (req, res) => {
 
     res.json({
       success: true,
+      piDay: isPiDay(),
       quests: user.dailyQuests.quests,
       streak: user.dailyQuests.currentStreak || 0,
       longestStreak: user.dailyQuests.longestStreak || 0,
@@ -373,6 +472,20 @@ router.get('/daily-quests/stats', isAuthenticated, async (req, res) => {
     console.error('Error fetching quest stats:', error);
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+// GET /api/daily-quests/pi-day-lessons - Get Pi Day mini-lesson topics
+router.get('/daily-quests/pi-day-lessons', isAuthenticated, (req, res) => {
+  if (!isPiDay()) {
+    return res.json({ success: true, active: false, lessons: [] });
+  }
+
+  // Return all mini-lessons — frontend can filter by grade band
+  res.json({
+    success: true,
+    active: true,
+    lessons: PI_DAY_MINILESSONS
+  });
 });
 
 module.exports = router;

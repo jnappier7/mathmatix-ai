@@ -48,6 +48,28 @@ const PACKS = {
   }
 };
 
+// ---- Pi Day Promo ($3.14 off all plans) ----
+const PI_DAY_DISCOUNT_CENTS = 314; // $3.14 in cents
+
+/**
+ * Check if the Pi Day promo is currently active.
+ * Active from March 14, 2026 00:00 EST through March 15, 2026 23:59 EST.
+ */
+function isPiDayPromoActive() {
+  const now = new Date();
+  const start = new Date('2026-03-14T05:00:00Z'); // midnight EST
+  const end   = new Date('2026-03-16T04:59:59Z'); // end of March 15 EST
+  return now >= start && now <= end;
+}
+
+/**
+ * Return promo-adjusted price (in cents) if Pi Day promo is active, otherwise original price.
+ */
+function getPromoPrice(originalPriceCents) {
+  if (!isPiDayPromoActive()) return originalPriceCents;
+  return Math.max(originalPriceCents - PI_DAY_DISCOUNT_CENTS, 100); // floor at $1.00
+}
+
 // Defer Stripe init — only create client when billing is enabled and key exists
 let stripe;
 if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
@@ -92,15 +114,21 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       await user.save();
     }
 
-    // Build line item
+    // Build line item — apply Pi Day promo discount if active
+    const promoActive = isPiDayPromoActive();
+    const finalPrice = promoActive ? getPromoPrice(packConfig.price) : packConfig.price;
+    const productName = promoActive
+      ? `${packConfig.name} (Pi Day Special — $3.14 off!)`
+      : packConfig.name;
+
     const lineItem = {
       price_data: {
         currency: 'usd',
         product_data: {
-          name: packConfig.name,
+          name: productName,
           description: packConfig.description
         },
-        unit_amount: packConfig.price
+        unit_amount: finalPrice
       },
       quantity: 1
     };
@@ -407,6 +435,29 @@ router.get('/status', isAuthenticated, async (req, res) => {
     console.error('[Billing] Status check error:', error);
     res.status(500).json({ message: 'Failed to fetch billing status' });
   }
+});
+
+// =====================================================
+// GET /promo
+// Returns current promo status and adjusted prices
+// =====================================================
+router.get('/promo', (req, res) => {
+  const active = isPiDayPromoActive();
+  if (!active) {
+    return res.json({ active: false });
+  }
+
+  res.json({
+    active: true,
+    name: 'Pi Day Launch Special',
+    discount: '$3.14 off',
+    prices: {
+      pack_60:   { original: PACKS.pack_60.price,   promo: getPromoPrice(PACKS.pack_60.price) },
+      pack_120:  { original: PACKS.pack_120.price,   promo: getPromoPrice(PACKS.pack_120.price) },
+      unlimited: { original: PACKS.unlimited.price, promo: getPromoPrice(PACKS.unlimited.price) }
+    },
+    endsAt: '2026-03-16T04:59:59Z'
+  });
 });
 
 module.exports = router;
