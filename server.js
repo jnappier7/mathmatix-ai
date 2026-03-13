@@ -75,6 +75,7 @@ const conversationsRoutes = require('./routes/conversations');  // Topic-based c
 const speakRoutes = require('./routes/speak');
 const voiceRoutes = require('./routes/voice');  // Real-time voice chat (GPT-style)
 const voiceTestRoutes = require('./routes/voice-test');  // Voice diagnostics
+const voiceTutorRoutes = require('./routes/voiceTutor');  // Immersive voice tutor session
 const uploadRoutes = require('./routes/upload');
 const chatWithFileRoutes = require('./routes/chatWithFile'); 
 const welcomeRoutes = require('./routes/welcome');
@@ -521,6 +522,7 @@ app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-ba
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
+app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes); // Premium: immersive voice tutor
 app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes); // Usage-gated for free tier
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);

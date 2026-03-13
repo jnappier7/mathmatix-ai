@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>M∆THM∆TIΧ — Voice Tutor</title>
+  <link rel="stylesheet" href="/css/base/variables.css" />
+  <link rel="stylesheet" href="/css/voice-tutor.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+  <script defer src="/vendor/katex/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+</head>
+<body>
+  <!-- Ambient background -->
+  <div class="vt-ambient">
+    <div class="vt-ambient-gradient"></div>
+    <canvas id="vt-particle-canvas"></canvas>
+  </div>
+
+  <!-- Top bar -->
+  <header class="vt-header">
+    <a href="/chat.html" class="vt-back-btn" title="Back to chat">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <div class="vt-header-center">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix" class="vt-logo" />
+      <span class="vt-session-label">Voice Session</span>
+    </div>
+    <div class="vt-header-actions">
+      <button id="vt-settings-btn" class="vt-icon-btn" title="Settings">
+        <i class="fas fa-sliders-h"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main content area -->
+  <main class="vt-main">
+    <!-- Left: Visual canvas area -->
+    <section class="vt-visual-panel">
+      <!-- Math visualization canvas -->
+      <div class="vt-canvas-area" id="vt-canvas-area">
+        <div class="vt-canvas-placeholder" id="vt-canvas-placeholder">
+          <div class="vt-canvas-icon">
+            <i class="fas fa-wand-magic-sparkles"></i>
+          </div>
+          <p>Math will appear here as you talk</p>
+        </div>
+        <!-- Rendered math steps appear here -->
+        <div id="vt-math-display" class="vt-math-display"></div>
+        <!-- Graph canvas -->
+        <canvas id="vt-graph-canvas" class="vt-graph-canvas" style="display:none;"></canvas>
+      </div>
+
+      <!-- Central orb visualizer -->
+      <div class="vt-orb-container" id="vt-orb-container">
+        <div class="vt-orb" id="vt-orb">
+          <div class="vt-orb-ring vt-orb-ring-1"></div>
+          <div class="vt-orb-ring vt-orb-ring-2"></div>
+          <div class="vt-orb-ring vt-orb-ring-3"></div>
+          <div class="vt-orb-core" id="vt-orb-core">
+            <canvas id="vt-orb-waveform" width="200" height="200"></canvas>
+          </div>
+          <div class="vt-orb-glow"></div>
+        </div>
+        <div class="vt-orb-status" id="vt-orb-status">
+          <span class="vt-status-dot"></span>
+          <span class="vt-status-text" id="vt-status-text">Tap to begin</span>
+        </div>
+      </div>
+
+      <!-- Live transcript overlay -->
+      <div class="vt-live-transcript" id="vt-live-transcript">
+        <div class="vt-transcript-text" id="vt-transcript-text"></div>
+      </div>
+    </section>
+
+    <!-- Right: Chat transcript panel -->
+    <aside class="vt-chat-panel" id="vt-chat-panel">
+      <div class="vt-chat-header">
+        <div class="vt-tutor-info">
+          <img id="vt-tutor-avatar" src="" alt="" class="vt-tutor-avatar" />
+          <div>
+            <div class="vt-tutor-name" id="vt-tutor-name">Tutor</div>
+            <div class="vt-tutor-status" id="vt-tutor-status">Ready</div>
+          </div>
+        </div>
+        <button id="vt-toggle-chat" class="vt-icon-btn vt-chat-toggle" title="Toggle transcript">
+          <i class="fas fa-comments"></i>
+        </button>
+      </div>
+      <div class="vt-chat-messages" id="vt-chat-messages">
+        <!-- Messages will be appended here -->
+      </div>
+      <div class="vt-chat-input-bar">
+        <input type="text" id="vt-text-input" placeholder="Type if you prefer..." class="vt-text-input" />
+        <button id="vt-send-text" class="vt-send-btn" title="Send">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Bottom controls -->
+  <footer class="vt-controls">
+    <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session">
+      <i class="fas fa-phone-slash"></i>
+    </button>
+    <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak">
+      <div class="vt-mic-ripple"></div>
+      <i class="fas fa-microphone"></i>
+    </button>
+    <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor">
+      <i class="fas fa-volume-up"></i>
+    </button>
+  </footer>
+
+  <!-- Settings drawer -->
+  <div class="vt-settings-drawer" id="vt-settings-drawer">
+    <div class="vt-settings-content">
+      <h3>Voice Settings</h3>
+      <label class="vt-setting">
+        <span>Hands-free mode</span>
+        <input type="checkbox" id="vt-handsfree-toggle" checked />
+      </label>
+      <label class="vt-setting">
+        <span>Auto-listen after response</span>
+        <input type="checkbox" id="vt-autolisten-toggle" checked />
+      </label>
+      <label class="vt-setting">
+        <span>Show math visuals</span>
+        <input type="checkbox" id="vt-visuals-toggle" checked />
+      </label>
+      <label class="vt-setting">
+        <span>Silence timeout</span>
+        <select id="vt-silence-timeout">
+          <option value="1500">1.5s (fast)</option>
+          <option value="2000" selected>2s (normal)</option>
+          <option value="3000">3s (relaxed)</option>
+        </select>
+      </label>
+      <button id="vt-settings-close" class="vt-btn-close">Done</button>
+    </div>
+  </div>
+
+  <script src="/js/csrf.js"></script>
+  <script src="/js/voice-tutor-session.js"></script>
+</body>
+</html>
