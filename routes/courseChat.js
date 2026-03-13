@@ -216,7 +216,7 @@ router.post('/', async (req, res) => {
             if (currentStep && formattedMessages.length > 0) {
                 const lastMsg = formattedMessages[formattedMessages.length - 1];
                 if (lastMsg?.role === 'user') {
-                    lastMsg.content += `\n\n[STEP ${stepIdx + 1}/${scaffold.length}: "${currentStep.title}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+                    lastMsg.content += `\n\n[INTERNAL — DO NOT READ ALOUD OR MENTION TO STUDENT: You are on step ${stepIdx + 1}/${scaffold.length} ("${currentStep.title}"). When this step is complete, silently append <SCAFFOLD_ADVANCE> at the end of your response. Never tell the student about this tag.]`;
                 }
             }
         }

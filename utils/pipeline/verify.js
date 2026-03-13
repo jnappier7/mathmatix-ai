@@ -222,7 +222,23 @@ async function verify(responseText, context = {}) {
     text = text.replace(pattern, '').trim();
   }
 
-  // ── 8b. Re-attach orphaned punctuation ──
+  // ── 8b. Strip leaked tag meta-references ──
+  // Sometimes the AI talks ABOUT the tags instead of silently appending them:
+  //   "I'll go ahead and emit the tag: ." or "Let me advance the scaffold."
+  // These sentences expose internal mechanics to the student.
+  const TAG_LEAK_PATTERNS = [
+    /[^.!?]*\b(?:emit|emitting)\s+(?:the\s+)?(?:tag|signal)\b[^.!?]*[.!?]\s*/gi,
+    /[^.!?]*\b(?:I'll|let me|I'm going to)\s+(?:advance|mark|emit|signal)\s+(?:the\s+)?(?:scaffold|step|tag|progress)\b[^.!?]*[.!?]\s*/gi,
+    /[^.!?]*\bnow that we've completed this step\b[^.!?]*\bemit\b[^.!?]*[.!?]\s*/gi,
+  ];
+  for (const leakPattern of TAG_LEAK_PATTERNS) {
+    if (leakPattern.test(text)) {
+      text = text.replace(leakPattern, '').trim();
+      flags.push('tag_leak_stripped');
+    }
+  }
+
+  // ── 8c. Re-attach orphaned punctuation ──
   // When a system tag sits on its own line before punctuation, stripping
   // the tag leaves the punctuation dangling on a blank line:
   //   "...your answer\n<PROBLEM_RESULT:correct>\n?" → "...your answer\n\n?"
@@ -233,7 +249,7 @@ async function verify(responseText, context = {}) {
   // Collapse runs of 3+ newlines to a double newline
   text = text.replace(/\n{3,}/g, '\n\n');
 
-  // ── 9. Validate non-empty ──
+  // ── 9. Validate non-empty (after all stripping) ──
   if (!text || text.trim() === '') {
     text = "I'm having trouble generating a response right now. Could you please rephrase your question?";
     flags.push('empty_response_fallback');
