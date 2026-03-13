@@ -408,7 +408,7 @@
       { text: 'Help me practice', message: 'I want to practice math problems' },
       { text: 'Homework help', message: 'Can you help me with my homework?' },
       { text: 'Explain a concept', message: 'Can you explain a math concept to me?' },
-      { text: 'Start assessment', message: 'I want to find my starting point' }
+      { text: 'Start assessment', message: 'I think I know this skill, can you quiz me to be sure?' }
     ],
     problem_solving: [
       { text: 'Give me a hint', message: 'Can you give me a hint?' },
