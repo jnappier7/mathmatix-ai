@@ -53,12 +53,12 @@ const PI_DAY_DISCOUNT_CENTS = 314; // $3.14 in cents
 
 /**
  * Check if the Pi Day promo is currently active.
- * Active from March 14, 2026 00:00 EST through March 15, 2026 23:59 EST.
+ * Active from March 14, 2026 00:00 EDT through March 15, 2026 23:59 EDT.
  */
 function isPiDayPromoActive() {
   const now = new Date();
-  const start = new Date('2026-03-14T05:00:00Z'); // midnight EST
-  const end   = new Date('2026-03-16T04:59:59Z'); // end of March 15 EST
+  const start = new Date('2026-03-14T04:00:00Z'); // midnight EDT
+  const end   = new Date('2026-03-16T03:59:59Z'); // end of March 15 EDT
   return now >= start && now <= end;
 }
 
@@ -456,7 +456,7 @@ router.get('/promo', (req, res) => {
       pack_120:  { original: PACKS.pack_120.price,   promo: getPromoPrice(PACKS.pack_120.price) },
       unlimited: { original: PACKS.unlimited.price, promo: getPromoPrice(PACKS.unlimited.price) }
     },
-    endsAt: '2026-03-16T04:59:59Z'
+    endsAt: '2026-03-16T03:59:59Z'
   });
 });
 

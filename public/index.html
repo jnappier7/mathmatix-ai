@@ -2334,8 +2334,8 @@
 
         if (!banner || !daysEl || !hoursEl || !minsEl || !secsEl) return;
 
-        // Target: March 14, 2026 at midnight EST (UTC-5)
-        var target = new Date('2026-03-14T05:00:00Z');
+        // Target: March 14, 2026 at midnight EDT (UTC-4, daylight saving in effect)
+        var target = new Date('2026-03-14T04:00:00Z');
 
         function pad(n) { return n < 10 ? '0' + n : String(n); }
 
@@ -2630,8 +2630,8 @@
       // At midnight EST on March 14 2026, swap waitlist CTAs → sign-up CTAs
       // and show the Pi Day promo banner with $3.14 off pricing
       (function piDayLaunchSwitch() {
-        var launchDate = new Date('2026-03-14T05:00:00Z'); // midnight EST = UTC-5
-        var promoEnd   = new Date('2026-03-16T04:59:59Z'); // end of March 15 EST
+        var launchDate = new Date('2026-03-14T04:00:00Z'); // midnight EDT = UTC-4
+        var promoEnd   = new Date('2026-03-16T03:59:59Z'); // end of March 15 EDT
         if (new Date() < launchDate) return;
 
         // Hide countdown banner
