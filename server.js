@@ -124,7 +124,7 @@ const demoRoutes = require('./routes/demo');  // Playground demo account login &
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
-const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
+const { usageGate, premiumFeatureGate, paidFeatureGate } = require('./middleware/usageGate');
 
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
@@ -536,8 +536,8 @@ app.use('/api/demo', demoRoutes);                  // Playground demo account lo
 
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
-app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
-app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes); // Pathway-based course sessions (self-paced)
+app.use('/api/courses', isAuthenticated, paidFeatureGate('Courses'), courseRoutes); // Paid: course catalog, enrollment, and progression
+app.use('/api/course-sessions', isAuthenticated, paidFeatureGate('Courses'), courseSessionRoutes); // Paid: pathway-based course sessions
 app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes); // Dedicated course chat (usage-gated)
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
@@ -548,7 +548,7 @@ app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placem
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes); // Mastery mode dedicated chat (usage-gated)
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
-app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes); // Premium: AI grading
+app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, paidFeatureGate('Show My Work'), gradeWorkRoutes); // Paid: AI grading (all paid plans)
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
