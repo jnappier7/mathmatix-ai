@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing | Mathmatix AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/pricing.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+</head>
+<body>
+  <div class="pricing-page">
+    <!-- Header -->
+    <header class="pricing-header">
+      <a href="/chat.html" class="pricing-back-link"><i class="fas fa-arrow-left"></i> Back to Chat</a>
+      <h1 class="pricing-title">Choose Your Plan</h1>
+      <p class="pricing-subtitle">Start free, upgrade when you're ready. Minutes only count while the AI tutor is responding&mdash;your reading and thinking time is always free.</p>
+    </header>
+
+    <!-- Plan Cards -->
+    <div class="pricing-cards">
+
+      <!-- Free Tier -->
+      <div class="pricing-card" data-tier="free">
+        <div class="card-badge">Current</div>
+        <h2 class="card-plan-name">Free</h2>
+        <div class="card-price">$0</div>
+        <div class="card-period">forever</div>
+        <ul class="card-features">
+          <li><i class="fas fa-check"></i> 10 min/week AI tutoring</li>
+          <li><i class="fas fa-check"></i> 1 free file upload</li>
+          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
+          <li><i class="fas fa-check"></i> Browse course catalog</li>
+          <li><i class="fas fa-check"></i> Mastery Mode &amp; Fact Fluency</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Unlimited uploads &amp; grading</li>
+        </ul>
+        <button class="card-cta card-cta-current" disabled>Your Current Plan</button>
+      </div>
+
+      <!-- 60-Min Pack -->
+      <div class="pricing-card" data-tier="pack_60">
+        <h2 class="card-plan-name">60-Minute Pack</h2>
+        <div class="card-price">$9<span class="card-price-cents">.95</span></div>
+        <div class="card-period">one-time &middot; expires in 90 days</div>
+        <ul class="card-features">
+          <li><i class="fas fa-check"></i> 60 min AI tutoring</li>
+          <li><i class="fas fa-check"></i> $0.17/min</li>
+          <li><i class="fas fa-check"></i> 1 free file upload</li>
+          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
+          <li><i class="fas fa-check"></i> + 10 free min/week on top</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
+        </ul>
+        <button class="card-cta card-cta-buy" data-pack="pack_60">Get 60 Minutes</button>
+      </div>
+
+      <!-- 120-Min Pack -->
+      <div class="pricing-card pricing-card-featured" data-tier="pack_120">
+        <div class="card-badge card-badge-featured">Best Value</div>
+        <h2 class="card-plan-name">120-Minute Pack</h2>
+        <div class="card-price">$14<span class="card-price-cents">.95</span></div>
+        <div class="card-period">one-time &middot; expires in 180 days</div>
+        <ul class="card-features">
+          <li><i class="fas fa-check"></i> 120 min AI tutoring</li>
+          <li><i class="fas fa-check"></i> $0.12/min</li>
+          <li><i class="fas fa-check"></i> 1 free file upload</li>
+          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
+          <li><i class="fas fa-check"></i> + 10 free min/week on top</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
+        </ul>
+        <button class="card-cta card-cta-buy" data-pack="pack_120">Get 120 Minutes</button>
+      </div>
+
+      <!-- Unlimited -->
+      <div class="pricing-card" data-tier="unlimited">
+        <div class="card-badge card-badge-premium">Everything</div>
+        <h2 class="card-plan-name">Unlimited</h2>
+        <div class="card-price">$19<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span></div>
+        <div class="card-period">cancel anytime</div>
+        <ul class="card-features">
+          <li><i class="fas fa-check"></i> Unlimited 24/7 AI tutoring</li>
+          <li><i class="fas fa-check"></i> Unlimited file uploads</li>
+          <li><i class="fas fa-check"></i> Unlimited Show My Work</li>
+          <li><i class="fas fa-check"></i> Voice chat</li>
+          <li><i class="fas fa-check"></i> Enroll in full courses</li>
+          <li><i class="fas fa-check"></i> All features unlocked</li>
+        </ul>
+        <button class="card-cta card-cta-premium" data-pack="unlimited">Go Unlimited</button>
+      </div>
+
+    </div>
+
+    <!-- School License Banner -->
+    <div class="pricing-school-banner">
+      <i class="fas fa-school"></i>
+      <div>
+        <strong>School or District?</strong>
+        <span>Ask your school about a Mathmatix site license for unlimited access for all students.</span>
+      </div>
+    </div>
+
+    <!-- Skip link for new signups -->
+    <div class="pricing-skip">
+      <a href="/chat.html" class="pricing-skip-link">Skip for now &mdash; start with 10 free minutes</a>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    // Fetch billing status and update card states
+    async function initPricing() {
+      try {
+        const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // If billing is disabled, show everything as available
+        if (data.billingEnabled === false) {
+          document.querySelector('.pricing-page').innerHTML =
+            '<div style="text-align:center;padding:80px 20px;color:#aaa;"><h2>All features are currently free!</h2><p>Billing is not enabled yet. Enjoy unlimited access.</p><a href="/chat.html" style="color:#00d4ff;">Back to Chat</a></div>';
+          return;
+        }
+
+        // Highlight current tier
+        const currentTier = data.tier || 'free';
+        document.querySelectorAll('.pricing-card').forEach(card => {
+          const tier = card.dataset.tier;
+          const badge = card.querySelector('.card-badge');
+          const cta = card.querySelector('.card-cta');
+
+          if (tier === currentTier) {
+            card.classList.add('pricing-card-active');
+            if (badge) { badge.textContent = 'Current'; badge.style.display = ''; }
+            if (cta) { cta.textContent = 'Your Current Plan'; cta.disabled = true; cta.classList.add('card-cta-current'); }
+          } else if (tier === 'free' && currentTier !== 'free') {
+            // Hide "Current" badge from free card if user is on a higher tier
+            if (badge && badge.textContent === 'Current') badge.style.display = 'none';
+            if (cta) { cta.textContent = 'Free Tier'; cta.disabled = true; }
+          }
+        });
+
+        // Mark pricing as seen
+        await csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
+      } catch (e) {
+        console.error('[Pricing] Failed to load billing status:', e);
+      }
+    }
+
+    // Handle buy buttons
+    document.querySelectorAll('.card-cta-buy, .card-cta-premium').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const pack = this.dataset.pack;
+        if (!pack) return;
+        this.disabled = true;
+        this.textContent = 'Redirecting...';
+        try {
+          const res = await csrfFetch('/api/billing/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pack }),
+            credentials: 'include'
+          });
+          if (!res.ok) throw new Error('Failed to create checkout session');
+          const data = await res.json();
+          window.location.href = data.url;
+        } catch (e) {
+          console.error('[Pricing] Checkout error:', e);
+          this.disabled = false;
+          this.textContent = 'Try Again';
+        }
+      });
+    });
+
+    initPricing();
+  })();
+  </script>
+</body>
+</html>

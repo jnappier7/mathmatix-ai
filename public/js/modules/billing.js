@@ -17,10 +17,21 @@ export async function checkBillingStatus() {
         // When billing is off (pre-launch), skip all UI
         if (data.billingEnabled === false) return data;
 
+        // Show "Upgrade Plan" link in nav for free/pack students
+        if (data.tier !== 'unlimited') {
+            const upgradeLink = document.getElementById('upgrade-plan-link');
+            if (upgradeLink) upgradeLink.style.display = '';
+        }
+
         // Show time indicator for students on free/pack tiers only.
         // Teachers, parents, and admins have unlimited access (Infinity) — skip indicator for them.
         if (data.tier !== 'unlimited' && data.usage && data.usage.secondsRemaining !== null && isFinite(data.usage.secondsRemaining)) {
             updateFreeTimeIndicator(data.usage);
+        }
+
+        // Post-signup pricing prompt: redirect new free users to pricing page once
+        if (data.tier === 'free' && data.hasSeenPricing === false) {
+            showNewUserPricingPrompt();
         }
 
         return data;
@@ -49,16 +60,35 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
+    // Calculate human-readable reset time
+    let resetText = '';
+    if (usage.nextResetAt) {
+        const resetDate = new Date(usage.nextResetAt);
+        const msUntilReset = resetDate - Date.now();
+        if (msUntilReset > 0) {
+            const daysUntil = Math.floor(msUntilReset / (1000 * 60 * 60 * 24));
+            const hoursUntil = Math.floor((msUntilReset % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            if (daysUntil > 0) {
+                resetText = `Resets in ${daysUntil}d ${hoursUntil}h`;
+            } else if (hoursUntil > 0) {
+                resetText = `Resets in ${hoursUntil}h`;
+            } else {
+                resetText = 'Resets soon';
+            }
+        }
+    }
+
     const subtitle = '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
+    const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + subtitle;
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + resetLine + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + resetLine + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle;
         indicator.style.borderColor = '#333';
     }
 }
@@ -164,4 +194,49 @@ export async function initiateUpgrade(pack) {
         console.error('[Billing] Upgrade error:', e);
         showToast('Something went wrong. Please try again.');
     }
+}
+
+/**
+ * Show a one-time welcome prompt for new free users, inviting them to see pricing.
+ * Displayed as a non-blocking banner at the top of chat, not a full-page redirect.
+ */
+export function showNewUserPricingPrompt() {
+    const existing = document.getElementById('new-user-pricing-banner');
+    if (existing) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'new-user-pricing-banner';
+    banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #7b2ff7;border-radius:12px;padding:16px 24px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;';
+    banner.innerHTML = `
+        <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Welcome to Mathmatix!</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">10 free minutes</strong> of AI tutoring this week. Want to unlock more?</div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">View Plans</a>
+            <button id="dismiss-pricing-banner" style="background:transparent;color:#666;border:1px solid #333;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;">Maybe Later</button>
+        </div>`;
+    document.body.appendChild(banner);
+
+    // Add slide-down animation
+    if (!document.getElementById('pricing-banner-anim')) {
+        const style = document.createElement('style');
+        style.id = 'pricing-banner-anim';
+        style.textContent = '@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}';
+        document.head.appendChild(style);
+    }
+
+    document.getElementById('dismiss-pricing-banner').addEventListener('click', () => {
+        banner.remove();
+        // Mark as seen so it doesn't show again
+        csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
+    });
+
+    // Auto-dismiss after 15 seconds
+    setTimeout(() => {
+        if (banner.parentNode) {
+            banner.style.transition = 'opacity 0.3s';
+            banner.style.opacity = '0';
+            setTimeout(() => banner.remove(), 300);
+            csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
+        }
+    }, 15000);
 }

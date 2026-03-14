@@ -12,6 +12,9 @@ import { createIepSystem } from './modules/iep.js';
 import { createAssessmentSystem } from './modules/assessment.js';
 // Whiteboard is shelved for beta — see modules/whiteboard.js to re-enable
 
+// Expose showUpgradePrompt globally so courseCatalog.js (non-module) can call it
+window.showUpgradePrompt = showUpgradePrompt;
+
 // --- Global Variables ---
 let currentUser = null;
 let isPlaying = false;

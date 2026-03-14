@@ -815,6 +815,9 @@ app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "demo.html")));
 
+// Pricing page (accessible to authenticated users)
+app.get("/pricing.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
+
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));

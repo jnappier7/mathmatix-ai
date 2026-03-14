@@ -833,7 +833,18 @@ class CourseManager {
 
             const data = await res.json();
             if (!data.success) {
-                this.showToast(data.message || 'Enrollment failed');
+                // If enrollment blocked by billing gate, show upgrade prompt
+                if (res.status === 402 && data.upgradeRequired) {
+                    this.closeCatalog();
+                    if (window.showUpgradePrompt) {
+                        window.showUpgradePrompt(data);
+                    } else {
+                        // Fallback: redirect to pricing page
+                        window.location.href = '/pricing.html';
+                    }
+                } else {
+                    this.showToast(data.message || 'Enrollment failed');
+                }
                 if (btnEl) {
                     btnEl.disabled = false;
                     btnEl.textContent = 'Enroll';
