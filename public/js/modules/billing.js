@@ -8,6 +8,9 @@ import { showToast } from './helpers.js';
  */
 export async function checkBillingStatus() {
     try {
+        // Detect post-payment redirect from Stripe
+        handleUpgradeSuccess();
+
         const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
         if (!res.ok) return null;
         const data = await res.json();
@@ -239,4 +242,56 @@ export function showNewUserPricingPrompt() {
             csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
         }
     }, 15000);
+}
+
+/**
+ * Detect ?upgraded=true in the URL after Stripe checkout redirect.
+ * Shows a success banner with confetti and cleans up the URL.
+ */
+function handleUpgradeSuccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('upgraded')) return;
+
+    // Clean up the URL so a refresh doesn't re-trigger
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+
+    // Fire confetti
+    if (window.ensureConfetti) {
+        window.ensureConfetti().then(() => {
+            if (window.confetti) {
+                window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
+        });
+    }
+
+    // Show success banner
+    const banner = document.createElement('div');
+    banner.id = 'upgrade-success-banner';
+    banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid #00d4ff;border-radius:12px;padding:20px 28px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,212,255,0.2);animation:slideDown 0.3s ease;';
+    banner.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px;">&#127881;</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:6px;">Payment Successful!</div>
+        <div style="font-size:14px;color:#aaa;line-height:1.5;">Your plan is now active. Start chatting with your AI tutor!</div>
+        <button id="dismiss-upgrade-banner" style="background:transparent;color:#666;border:none;padding:8px;cursor:pointer;font-size:13px;margin-top:10px;">Dismiss</button>`;
+    document.body.appendChild(banner);
+
+    // Add slide-down animation if not already present
+    if (!document.getElementById('pricing-banner-anim')) {
+        const style = document.createElement('style');
+        style.id = 'pricing-banner-anim';
+        style.textContent = '@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}';
+        document.head.appendChild(style);
+    }
+
+    document.getElementById('dismiss-upgrade-banner').addEventListener('click', () => banner.remove());
+
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => {
+        if (banner.parentNode) {
+            banner.style.transition = 'opacity 0.3s';
+            banner.style.opacity = '0';
+            setTimeout(() => banner.remove(), 300);
+        }
+    }, 8000);
 }

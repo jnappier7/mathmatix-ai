@@ -141,7 +141,11 @@ router.post('/enroll', async (req, res) => {
     }
 
     // Courses require Unlimited plan or school license (when billing is enabled)
-    if (BILLING_ENABLED && req.user.role === 'student') {
+    // Exception: Pi Day (March 14) — all courses are free for everyone
+    const now = new Date();
+    const piDayFreeAccess = now.getMonth() === 2 && now.getDate() === 14;
+
+    if (BILLING_ENABLED && req.user.role === 'student' && !piDayFreeAccess) {
       const hasUnlimited = req.user.subscriptionTier === 'unlimited';
       let hasSchoolLicense = false;
       if (req.user.schoolLicenseId) {

@@ -7,6 +7,7 @@ class DailyQuestManager {
     this.longestStreak = 0;
     this.totalCompleted = 0;
     this.piDay = false;
+    this.piDayLessons = [];
   }
 
   async loadQuests() {
@@ -20,10 +21,28 @@ class DailyQuestManager {
         this.longestStreak = data.longestStreak;
         this.totalCompleted = data.totalCompleted;
         this.piDay = data.piDay || false;
+
+        // Load Pi Day minilessons if it's Pi Day
+        if (this.piDay) {
+          await this.loadPiDayLessons();
+        }
+
         this.render();
       }
     } catch (error) {
       console.error('Error loading daily quests:', error);
+    }
+  }
+
+  async loadPiDayLessons() {
+    try {
+      const response = await fetch('/api/daily-quests/pi-day-lessons');
+      const data = await response.json();
+      if (data.success && data.active) {
+        this.piDayLessons = data.lessons || [];
+      }
+    } catch (error) {
+      console.error('Error loading Pi Day lessons:', error);
     }
   }
 
@@ -104,6 +123,22 @@ class DailyQuestManager {
         <div class="quest-list">
           ${this.quests.map(quest => this.renderQuest(quest)).join('')}
         </div>
+
+        ${this.piDay && this.piDayLessons.length > 0 ? `
+          <div class="pi-day-lessons">
+            <div style="font-weight:700;font-size:13px;margin:12px 0 8px;color:#ff6b9d;">
+              \u03C0 Mini-Lessons
+            </div>
+            <div style="font-size:12px;color:#888;margin-bottom:8px;">Tap a topic to learn something amazing about pi!</div>
+            ${this.piDayLessons.map(lesson => `
+              <button class="pi-lesson-btn" data-prompt="${lesson.prompt.replace(/"/g, '&quot;')}"
+                style="width:100%;padding:8px 12px;margin-bottom:4px;background:linear-gradient(135deg,#ff6b9d11,#c850c011);border:1px solid #ff6b9d33;border-radius:8px;cursor:pointer;text-align:left;font-size:13px;color:inherit;transition:all 0.15s;">
+                <span style="margin-right:6px;">\u03C0</span>${lesson.title}
+                ${lesson.gradeBand !== 'all' ? `<span style="font-size:10px;color:#888;margin-left:6px;">(Grades ${lesson.gradeBand})</span>` : ''}
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
 
         ${this.streak > 1 ? `
           <div class="streak-info">
@@ -215,6 +250,26 @@ class DailyQuestManager {
     questItems.forEach(item => {
       item.addEventListener('click', () => {
         item.classList.toggle('expanded');
+      });
+    });
+
+    // Pi Day minilesson buttons — send prompt to the AI tutor
+    const lessonBtns = document.querySelectorAll('.pi-lesson-btn');
+    lessonBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const prompt = btn.getAttribute('data-prompt');
+        if (prompt && typeof window.sendMessage === 'function') {
+          window.sendMessage(prompt);
+        } else if (prompt) {
+          // Fallback: populate the chat input
+          const input = document.getElementById('user-input') || document.getElementById('chat-input');
+          if (input) {
+            input.value = prompt;
+            input.focus();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }
       });
     });
   }

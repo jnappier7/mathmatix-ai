@@ -228,6 +228,15 @@
       </div>
     </div>
 
+    <!-- Pi Day Special Button (shown only on Pi Day) -->
+    <div class="sidebar-section sidebar-section-compact" id="sidebar-pi-day-section" style="display:none;">
+      <button id="sidebar-pi-day-btn" class="sidebar-pi-day-btn" title="Pi Day Specials">
+        <span class="pi-glow-icon">&pi;</span>
+        <span class="pi-btn-text">Pi Day</span>
+        <span class="pi-btn-badge">3.14x XP</span>
+      </button>
+    </div>
+
     <!-- My Courses (always visible — primary navigation for enrolled students) -->
     <div class="sidebar-section" id="sidebar-courses-section">
       <button class="courses-toggle" id="courses-toggle-btn">
@@ -365,6 +374,41 @@
       </div>
     </div>
   </aside>
+
+  <!-- Pi Day Hub Panel (overlay) -->
+  <div id="pi-day-hub" class="pi-day-hub" style="display:none;">
+    <div class="pi-day-hub-backdrop" id="pi-day-hub-backdrop"></div>
+    <div class="pi-day-hub-panel">
+      <div class="pi-day-hub-header">
+        <span class="pi-day-hub-icon">&pi;</span>
+        <div>
+          <h3 style="margin:0;font-size:1.1rem;">Happy Pi Day!</h3>
+          <p style="margin:2px 0 0;font-size:0.8rem;opacity:0.8;">3.14x XP on all quests today</p>
+        </div>
+        <button id="pi-day-hub-close" class="pi-day-hub-close">&times;</button>
+      </div>
+
+      <!-- Quests -->
+      <div class="pi-day-hub-section">
+        <h4>Pi Day Quests</h4>
+        <div id="pi-hub-quests">Loading...</div>
+      </div>
+
+      <!-- Mini-Lessons -->
+      <div class="pi-day-hub-section">
+        <h4>&pi; Mini-Lessons</h4>
+        <p style="font-size:12px;color:#888;margin:0 0 8px;">Tap to learn something amazing about pi!</p>
+        <div id="pi-hub-lessons">Loading...</div>
+      </div>
+
+      <!-- Mini-Courses -->
+      <div class="pi-day-hub-section">
+        <h4>Explore Courses</h4>
+        <p style="font-size:12px;color:#888;margin:0 0 8px;">Dive deeper into circles, geometry, and more.</p>
+        <div id="pi-hub-courses">Loading...</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Content Area (Full Width) -->
   <main id="app-layout-wrapper" class="sidebar-layout">
