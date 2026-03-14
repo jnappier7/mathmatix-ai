@@ -211,7 +211,7 @@
 
 .message:hover,
 .message:has(.reaction-display.has-reaction) {
-    z-index: 2;
+    z-index: 100;
 }
 
 /* ===== EMOJI REACTION SYSTEM ===== */

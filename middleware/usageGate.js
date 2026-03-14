@@ -244,4 +244,43 @@ function premiumFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };
+/**
+ * Feature gate for paid-only features (courses, Show My Work).
+ * Any paying user (pack or unlimited) or school-licensed student gets access.
+ */
+function paidFeatureGate(featureName) {
+  return async (req, res, next) => {
+    if (!BILLING_ENABLED) return next(); // Master switch off — all features open
+
+    const user = req.user;
+    if (!user) return next();
+
+    // Teachers, parents, admins always get access
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+      return next();
+    }
+
+    // Any paid subscriber (pack or unlimited)
+    if (user.subscriptionTier === 'unlimited' ||
+        user.subscriptionTier === 'pack_60' ||
+        user.subscriptionTier === 'pack_120') {
+      return next();
+    }
+
+    // Students covered by a school license
+    if (user.schoolLicenseId) {
+      const valid = await isLicenseValid(user.schoolLicenseId);
+      if (valid) return next();
+    }
+
+    return res.status(402).json({
+      message: `${featureName} requires a paid plan or school license.`,
+      premiumFeatureBlocked: true,
+      feature: featureName,
+      tier: user.subscriptionTier || 'free',
+      upgradeRequired: true
+    });
+  };
+}
+
+module.exports = { usageGate, premiumFeatureGate, paidFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };
