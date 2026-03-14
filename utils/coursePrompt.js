@@ -278,9 +278,17 @@ ${decisionRights || `  - Choose which examples to present
 PROGRESS SIGNALS (CRITICAL — you MUST emit these tags)
 ====================================================================
 
-You have two signal tags that control the student's course progress.
+You have signal tags that control the student's course progress.
 Include them at the END of your response when the conditions are met.
 The student will NOT see these tags — they are parsed by the server.
+
+🚨 **NEVER MENTION THESE TAGS TO THE STUDENT.** Tags are invisible
+internal plumbing. Do NOT say "I'll emit the tag," "let me advance
+the step," "I'm marking this complete," or ANY reference to tags,
+signals, scaffold steps, or progress tracking. The student should
+experience a natural lesson — they should never know these tags exist.
+If you catch yourself about to reference a tag, STOP and just silently
+append it at the end of your response.
 
 🚨 RULE #1: You may NEVER discuss content from the next scaffold step
 until you have emitted <SCAFFOLD_ADVANCE> in a prior response.
@@ -582,17 +590,45 @@ function formatScaffoldStep(step, index, total) {
 
   switch (step.type) {
     case 'explanation':
-      detail += `TEACH THIS CONCEPT:\n${step.content || step.text || ''}\n\n`;
+      detail += `TEACH THIS CONCEPT — DO NOT JUST LIST FACTS:\n`;
+      detail += `The content and key points below are YOUR source material, not a script\n`;
+      detail += `to read aloud. Use them to plan what to teach, then deliver it in YOUR\n`;
+      detail += `voice, in YOUR personality. A concept-intro is a CONVERSATION, not a lecture.\n\n`;
+      detail += `HOW TO TEACH (not list):\n`;
+      detail += `  1. CONNECT to what they already know. "Remember when we did ___? This\n`;
+      detail += `     is the same idea, but ___." If this is brand new, connect to real life.\n`;
+      detail += `  2. TEACH VOCABULARY before using it. Don't assume they know the jargon.\n`;
+      detail += `     Introduce each new term with a plain-language definition and example\n`;
+      detail += `     BEFORE using it in explanations.\n`;
+      detail += `  3. EXPLAIN THE WHY, not just the what. "This works because ___." or\n`;
+      detail += `     "The reason we do it this way is ___." Students who understand WHY\n`;
+      detail += `     can reconstruct what they've forgotten.\n`;
+      detail += `  4. ONE IDEA AT A TIME. Introduce one concept, check understanding,\n`;
+      detail += `     THEN move to the next. Do NOT dump all key points in one message.\n`;
+      detail += `  5. USE VISUALS when available. If a [UNIT_CIRCLE:...], [FUNCTION_GRAPH:...],\n`;
+      detail += `     or other visual command would help, use it to SHOW the concept.\n`;
+      detail += `  6. ASSESS READINESS. If the student seems fluent ("I know this already"),\n`;
+      detail += `     test them: give a quick problem. If they nail it, move on fast. If\n`;
+      detail += `     they struggle, that's your signal to slow down and actually teach.\n\n`;
+      detail += `NEVER DO THIS:\n`;
+      detail += `  ✗ Read key points as a numbered or bullet list\n`;
+      detail += `  ✗ Present all information at once and then ask "Does that make sense?"\n`;
+      detail += `  ✗ Use textbook language ("The unit circle is a circle with radius 1...")\n`;
+      detail += `  ✗ Skip to practice without teaching the WHY\n`;
+      detail += `  ✗ Assume the student knows prerequisite vocabulary (radians, reference\n`;
+      detail += `    angles, etc.) without checking or teaching it first\n\n`;
+      detail += `SOURCE MATERIAL (use to plan your teaching, not to read aloud):\n`;
+      detail += `${step.content || step.text || ''}\n\n`;
       if (step.keyPoints && step.keyPoints.length > 0) {
-        detail += `KEY POINTS TO COVER:\n${step.keyPoints.map(kp => `  - ${kp}`).join('\n')}\n\n`;
+        detail += `KEY POINTS TO WEAVE IN (teach these naturally, one at a time):\n${step.keyPoints.map(kp => `  - ${kp}`).join('\n')}\n\n`;
       }
       if (step.initialPrompt) {
-        detail += `After teaching, engage with: "${step.initialPrompt}"\n`;
+        detail += `Suggested engagement prompt (adapt to your voice): "${step.initialPrompt}"\n`;
       }
       detail += `\n⚡ CLOSE THIS STEP: Once the student has engaged with this concept (answered ` +
-                `a question or demonstrated any understanding), append <SCAFFOLD_ADVANCE> to the ` +
-                `END of that response before you say anything about the next topic. In diagnostic ` +
-                `mode, one correct reply is enough — move quickly.\n`;
+                `a question or demonstrated understanding), silently append <SCAFFOLD_ADVANCE> to the ` +
+                `END of that response. In diagnostic mode: if the student already knows this, ` +
+                `verify with ONE quick problem, then advance — fast is fine when understanding is real.\n`;
       break;
 
     case 'model':

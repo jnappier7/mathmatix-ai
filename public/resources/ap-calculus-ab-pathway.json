@@ -146,6 +146,49 @@
       ]
     },
     {
+      "moduleId": "trig_fluency_guide",
+      "unit": 0,
+      "title": "Trig Fluency — Unit Circle & Identities",
+      "preview": "Ground-up trig review: from right triangles to the unit circle, radians, and identities for calculus",
+      "moduleFile": "/modules/ap-calculus-ab/trig_fluency_guide_module.json",
+      "skills": ["radian-measure-conversion", "unit-circle-derivation", "unit-circle-values", "reference-angles-quadrants", "trig-identities-fluency"],
+      "essentialQuestions": [
+        "What IS a radian, and why does calculus use radians instead of degrees?",
+        "How do the unit circle coordinates come from the right-triangle trig you already know?",
+        "Can you evaluate sin, cos, and tan at any standard angle by reasoning, not just recall?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "trig-foundations",
+          "title": "Radians & the Unit Circle",
+          "order": 1,
+          "concepts": ["SOH-CAH-TOA refresh", "What a radian is and why it matters", "Unit circle as right triangle with hypotenuse 1", "Deriving Q1 values from 30-60-90 and 45-45-90 triangles"],
+          "teachingNotes": "START with what they know (right triangle trig). DO NOT assume they know what a radian is. Derive unit circle values from special triangles — do not present them as a list to memorize."
+        },
+        {
+          "lessonId": "trig-quadrants",
+          "title": "Reference Angles & All Quadrants",
+          "order": 2,
+          "concepts": ["Reference angles", "Sign logic from coordinates (not just ASTC)", "Evaluating trig at angles in Q2, Q3, Q4"],
+          "teachingNotes": "Teach sign rules from the geometry (cos = x-coordinate, negative on left side) rather than as a memorized acronym."
+        },
+        {
+          "lessonId": "trig-identities",
+          "title": "Trig Identities for Calculus",
+          "order": 3,
+          "concepts": ["Pythagorean identity from the unit circle", "Double-angle formulas", "Simplification and verification"],
+          "teachingNotes": "Derive the Pythagorean identity from the unit circle triangle. Show that the other identities follow by algebraic manipulation, not memorization."
+        },
+        {
+          "lessonId": "trig-fluency",
+          "title": "Trig Fluency Practice",
+          "order": 4,
+          "concepts": ["Mixed practice across all trig skills", "Speed building through understanding-based recall"],
+          "teachingNotes": "Fluency comes AFTER understanding. Speed drills are fine here because the foundation has been built."
+        }
+      ]
+    },
+    {
       "moduleId": "checkpoint_u0",
       "unit": 0,
       "title": "Unit 0 Diagnostic Checkpoint",
