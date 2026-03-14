@@ -232,15 +232,21 @@ function generateDailyQuests(user) {
   return quests;
 }
 
-// Check if quests need to be refreshed (new day)
-function shouldRefreshQuests(lastRefreshDate) {
+// Check if quests need to be refreshed (new day or Pi Day status change)
+function shouldRefreshQuests(lastRefreshDate, currentQuests) {
   if (!lastRefreshDate) return true;
 
   const now = new Date();
   const lastRefresh = new Date(lastRefreshDate);
 
-  // Check if it's a new day (UTC)
-  return now.toDateString() !== lastRefresh.toDateString();
+  // Refresh if it's a new day
+  if (now.toDateString() !== lastRefresh.toDateString()) return true;
+
+  // Force refresh if it's Pi Day but current quests aren't Pi Day quests
+  const hasPiDayQuests = currentQuests && currentQuests.some(q => q.piDay);
+  if (isPiDay() && !hasPiDayQuests) return true;
+
+  return false;
 }
 
 // Calculate streak
@@ -293,7 +299,7 @@ router.get('/daily-quests', isAuthenticated, async (req, res) => {
     }
 
     // Check if we need new quests
-    if (shouldRefreshQuests(user.dailyQuests.lastRefreshDate)) {
+    if (shouldRefreshQuests(user.dailyQuests.lastRefreshDate, user.dailyQuests.quests)) {
       user.dailyQuests.quests = generateDailyQuests(user);
       user.dailyQuests.lastRefreshDate = new Date();
       user.dailyQuests.todayProgress = {}; // Reset daily progress

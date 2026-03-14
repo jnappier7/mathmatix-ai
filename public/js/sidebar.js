@@ -105,6 +105,17 @@ class Sidebar {
             leaderboardToggle.addEventListener('click', () => this.toggleLeaderboard());
         }
 
+        // Quests expand/collapse
+        const questToggle = document.querySelector('.quest-toggle');
+        const questsContent = document.getElementById('sidebar-quests');
+        if (questToggle && questsContent) {
+            questToggle.addEventListener('click', () => {
+                this.questsExpanded = !this.questsExpanded;
+                questsContent.classList.toggle('expanded', this.questsExpanded);
+                questToggle.classList.toggle('expanded', this.questsExpanded);
+            });
+        }
+
         // New session button
         const newSessionBtn = document.getElementById('new-session-btn');
         if (newSessionBtn) {
@@ -146,7 +157,41 @@ class Sidebar {
         // Load progress data
         this.loadProgress();
 
+        // Pi Day button — show/hide based on date, scroll to quests on click
+        this.initPiDayButton();
+
         console.log('✅ Sidebar ready');
+    }
+
+    initPiDayButton() {
+        const piSection = document.getElementById('sidebar-pi-day-section');
+        const piBtn = document.getElementById('sidebar-pi-day-btn');
+        if (!piSection || !piBtn) return;
+
+        // Check if it's Pi Day via the quests API flag
+        fetch('/api/daily-quests')
+            .then(r => r.json())
+            .then(data => {
+                if (data.piDay) {
+                    piSection.style.display = '';
+                }
+            })
+            .catch(() => {});
+
+        piBtn.addEventListener('click', () => {
+            // Expand the quests section if collapsed, then scroll to it
+            const questToggle = document.querySelector('.quest-toggle');
+            const questsList = document.getElementById('sidebar-quests');
+            if (questToggle && questsList && !questsList.classList.contains('expanded')) {
+                questsList.classList.add('expanded');
+                questToggle.classList.add('expanded');
+                this.questsExpanded = true;
+            }
+            const questsSection = questsList || document.getElementById('daily-quests-container');
+            if (questsSection) {
+                questsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
     }
 
     /**

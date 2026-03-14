@@ -133,7 +133,8 @@
 /* Collapsible Sections */
 #sidebar-sessions,
 #sidebar-tools,
-#sidebar-leaderboard {
+#sidebar-leaderboard,
+#sidebar-quests {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
@@ -156,6 +157,11 @@
 
 #sidebar-leaderboard.expanded {
     max-height: 400px;
+}
+
+#sidebar-quests.expanded {
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 .sessions-toggle,
@@ -194,7 +200,8 @@
 
 .sessions-toggle.expanded i,
 .tools-toggle.expanded i,
-.leaderboard-toggle.expanded i {
+.leaderboard-toggle.expanded i,
+.quest-toggle.expanded i {
     transform: rotate(180deg);
 }
 
@@ -844,6 +851,56 @@ input.session-search-input:focus {
 .sidebar-progress-xp {
     font-size: 12px;
     opacity: 0.9;
+}
+
+/* ── Pi Day Sidebar Button ────────────────────────── */
+.sidebar-pi-day-btn {
+    width: 100%;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c850c0 50%, #7c3aed 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(255, 107, 157, 0.4);
+    animation: piGlow 2s ease-in-out infinite;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.sidebar-pi-day-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.6);
+}
+.pi-glow-icon {
+    font-size: 24px;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: piPulse 1.5s ease-in-out infinite;
+}
+.pi-btn-text {
+    flex: 1;
+}
+.pi-btn-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+@keyframes piGlow {
+    0%, 100% { box-shadow: 0 2px 12px rgba(255, 107, 157, 0.4); }
+    50% { box-shadow: 0 2px 24px rgba(200, 80, 192, 0.6), 0 0 40px rgba(255, 107, 157, 0.2); }
+}
+@keyframes piPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
 }
 
 /* Adjust main chat container */
