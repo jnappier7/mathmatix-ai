@@ -521,7 +521,7 @@ app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-ba
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
-app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
+app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, paidFeatureGate('File uploads'), uploadRoutes); // Paid: file uploads (all paid plans)
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes); // Usage-gated for free tier
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
