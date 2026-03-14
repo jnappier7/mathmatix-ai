@@ -347,8 +347,24 @@
     }
 
     .lp-piday-icon {
-      font-size: 2rem;
+      font-size: 3.5rem;
+      font-weight: 900;
       line-height: 1;
+      background: linear-gradient(135deg, #ff6b9d, #ff9ec7, #fff, #ff9ec7, #ff6b9d);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.7)) drop-shadow(0 0 30px rgba(200, 80, 192, 0.4));
+      animation: piBannerShimmer 3s ease-in-out infinite, piBannerPulse 2s ease-in-out infinite;
+    }
+    @keyframes piBannerShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    @keyframes piBannerPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
 
     .lp-piday-text {
