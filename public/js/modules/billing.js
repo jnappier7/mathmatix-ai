@@ -246,7 +246,8 @@ export function showNewUserPricingPrompt() {
 
 /**
  * Detect ?upgraded=true in the URL after Stripe checkout redirect.
- * Shows a success banner with confetti and cleans up the URL.
+ * Shows a success banner with confetti, then polls billing status until
+ * the Stripe webhook has processed and the user's tier is updated.
  */
 function handleUpgradeSuccess() {
     const params = new URLSearchParams(window.location.search);
@@ -272,7 +273,7 @@ function handleUpgradeSuccess() {
     banner.innerHTML = `
         <div style="font-size:28px;margin-bottom:8px;">&#127881;</div>
         <div style="font-size:18px;font-weight:700;margin-bottom:6px;">Payment Successful!</div>
-        <div style="font-size:14px;color:#aaa;line-height:1.5;">Your plan is now active. Start chatting with your AI tutor!</div>
+        <div id="upgrade-status-text" style="font-size:14px;color:#aaa;line-height:1.5;">Activating your plan...</div>
         <button id="dismiss-upgrade-banner" style="background:transparent;color:#666;border:none;padding:8px;cursor:pointer;font-size:13px;margin-top:10px;">Dismiss</button>`;
     document.body.appendChild(banner);
 
@@ -286,9 +287,67 @@ function handleUpgradeSuccess() {
 
     document.getElementById('dismiss-upgrade-banner').addEventListener('click', () => banner.remove());
 
-    // Auto-dismiss after 8 seconds
+    // Poll billing status until webhook processes (tier changes from 'free')
+    pollForUpgrade();
+}
+
+/**
+ * Poll /api/billing/status after payment until the tier reflects the purchase.
+ * Stripe webhooks typically arrive within 1-5 seconds, but can be delayed.
+ * Polls at 1s, 2s, 3s, 5s, 8s (max 5 attempts) then gives up gracefully.
+ */
+async function pollForUpgrade() {
+    const delays = [1000, 2000, 3000, 5000, 8000];
+    const statusText = document.getElementById('upgrade-status-text');
+    const banner = document.getElementById('upgrade-success-banner');
+
+    for (let i = 0; i < delays.length; i++) {
+        await new Promise(r => setTimeout(r, delays[i]));
+        try {
+            const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
+            if (!res.ok) continue;
+            const data = await res.json();
+
+            if (data.tier && data.tier !== 'free') {
+                // Webhook processed — update UI
+                window._billingStatus = data;
+
+                if (statusText) {
+                    const tierLabel = data.tier === 'unlimited' ? 'Unlimited'
+                        : data.tier === 'pack_120' ? '120-Minute Pack'
+                        : '60-Minute Pack';
+                    statusText.textContent = `Your ${tierLabel} is now active. Start chatting with your AI tutor!`;
+                }
+
+                // Update the time indicator and hide upgrade link
+                if (data.tier === 'unlimited') {
+                    const indicator = document.getElementById('free-time-indicator');
+                    if (indicator) indicator.remove();
+                    const upgradeLink = document.getElementById('upgrade-plan-link');
+                    if (upgradeLink) upgradeLink.style.display = 'none';
+                } else if (data.usage) {
+                    updateFreeTimeIndicator(data.usage);
+                }
+
+                // Auto-dismiss banner after 6 seconds
+                setTimeout(() => {
+                    if (banner && banner.parentNode) {
+                        banner.style.transition = 'opacity 0.3s';
+                        banner.style.opacity = '0';
+                        setTimeout(() => banner.remove(), 300);
+                    }
+                }, 6000);
+                return;
+            }
+        } catch (_) { /* retry */ }
+    }
+
+    // Webhook didn't arrive in time — show fallback message
+    if (statusText) {
+        statusText.textContent = 'Your plan is being activated. It may take a moment — try refreshing the page.';
+    }
     setTimeout(() => {
-        if (banner.parentNode) {
+        if (banner && banner.parentNode) {
             banner.style.transition = 'opacity 0.3s';
             banner.style.opacity = '0';
             setTimeout(() => banner.remove(), 300);
