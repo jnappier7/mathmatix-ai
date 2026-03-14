@@ -536,8 +536,8 @@ app.use('/api/demo', demoRoutes);                  // Playground demo account lo
 
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
-app.use('/api/courses', isAuthenticated, paidFeatureGate('Courses'), courseRoutes); // Paid: course catalog, enrollment, and progression
-app.use('/api/course-sessions', isAuthenticated, paidFeatureGate('Courses'), courseSessionRoutes); // Paid: pathway-based course sessions
+app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes); // Premium: course catalog, enrollment, and progression
+app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes); // Premium: pathway-based course sessions
 app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes); // Dedicated course chat (usage-gated)
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
