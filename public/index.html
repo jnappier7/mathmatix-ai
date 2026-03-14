@@ -2681,6 +2681,14 @@
           }
         });
 
+        // Remove the static .lp-post-launch sign-up links that the
+        // countdown already revealed — the form replacements below will
+        // create the correct CTA buttons, avoiding duplicates.
+        document.querySelectorAll('.lp-waitlist-form').forEach(function (form) {
+          var sibling = form.parentNode.querySelector('a.lp-post-launch');
+          if (sibling) sibling.remove();
+        });
+
         // Replace all waitlist forms with sign-up buttons
         var forms = document.querySelectorAll('.lp-waitlist-form');
         forms.forEach(function (form) {
@@ -2691,13 +2699,9 @@
           form.parentNode.replaceChild(link, form);
         });
 
-        // Swap sticky CTA bar
-        var stickyForm = document.querySelector('.lp-sticky-cta .lp-waitlist-form--sticky');
-        if (!stickyForm) {
-          // Already replaced above; update the link text
-          var stickyLink = document.querySelector('.lp-sticky-cta .btn');
-          if (stickyLink) stickyLink.textContent = 'Sign Up Free';
-        }
+        // Swap sticky CTA bar — update the button text
+        var stickyLink = document.querySelector('.lp-sticky-cta .btn');
+        if (stickyLink) stickyLink.textContent = 'Sign Up Free';
 
         // Update footer link
         var footerLinks = document.querySelectorAll('.lp-footer a');
