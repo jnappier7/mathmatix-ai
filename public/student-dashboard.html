@@ -534,6 +534,9 @@
           </button>
         </div>
         <div class="join-class-status" id="join-class-status"></div>
+        <button id="skip-join-class-btn" class="btn-secondary" style="display:none;margin-top:10px;width:auto;padding:8px 20px;font-size:0.9rem;opacity:0.85;">
+          <i class="fas fa-arrow-right"></i> Skip for Now
+        </button>
       </div>
 
       <!-- Quick Actions (consolidated to 4) -->
@@ -741,12 +744,19 @@
         const confirmBtn = document.getElementById('confirm-join-btn');
         const statusEl = document.getElementById('join-class-status');
 
-        // Show section if student has no teacher (mandatory) or show toggle
+        // Show section if student has no teacher (optional) or show toggle
+        const skipBtn = document.getElementById('skip-join-class-btn');
         if (!user.teacherId) {
             section.style.display = 'block';
-            document.getElementById('join-class-title').textContent = 'Join Your Class';
+            document.getElementById('join-class-title').textContent = 'Join a Class';
             document.getElementById('join-class-description').textContent =
-                'Enter the class code from your teacher to get started.';
+                'Have a class code from your teacher? Enter it below. You can also skip this and join a class later.';
+            if (skipBtn) {
+                skipBtn.style.display = 'inline-block';
+                skipBtn.addEventListener('click', () => {
+                    section.style.display = 'none';
+                });
+            }
         } else {
             // Has a teacher - show current class info and toggle
             section.style.display = 'none';
