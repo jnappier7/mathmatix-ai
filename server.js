@@ -305,7 +305,7 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
-// Strict rate limiting for authentication endpoints (prevent brute force)
+// Strict rate limiting for login (prevent brute force)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Only 5 attempts per 15 minutes
@@ -314,7 +314,23 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: false, // Count both successful and failed attempts
   handler: (req, res) => {
     res.status(429).json({
-      message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
+      message: "Too many login attempts from this IP. Please try again after 15 minutes.",
+      retryAfter: 900
+    });
+  },
+});
+
+// Separate rate limiter for signup — more generous to avoid blocking real users,
+// but still prevents automated spam account creation
+const signupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 attempts per 15 minutes — enough for typos and retries
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true, // Don't count successful signups against the limit
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many signup attempts. Please try again in a few minutes.",
       retryAfter: 900
     });
   },
@@ -354,7 +370,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // --- 8. ROUTE DEFINITIONS ---
 
 app.use('/login', authLimiter, loginRoutes);
-app.use('/signup', authLimiter, signupRoutes);
+app.use('/signup', signupLimiter, signupRoutes);
 app.use('/api/password-reset', authLimiter, passwordResetRoutes);
 app.use('/api/auth', authLimiter, authRoutes);  // Email verification (public routes)
 app.post('/logout', isAuthenticated, handleLogout);
