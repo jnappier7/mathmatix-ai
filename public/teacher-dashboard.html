@@ -3543,8 +3543,8 @@
 
     .lesson-planner-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 2px;
       margin-bottom: var(--space-lg);
     }
 
@@ -3559,6 +3559,64 @@
 
     .lesson-planner-header h3 i {
       color: var(--color-purple);
+    }
+
+    .aide-subtitle {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .planner-context-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: var(--space-md);
+      padding: 0 2px;
+    }
+
+    .planner-context-chip {
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      color: #e65100;
+      border-radius: 16px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .planner-context-chip:hover {
+      background: #e65100;
+      color: white;
+      border-color: #e65100;
+    }
+
+    .planner-context-chip.chip-growth {
+      background: #e8f5e9;
+      border-color: #66bb6a;
+      color: #2e7d32;
+    }
+    .planner-context-chip.chip-growth:hover {
+      background: #2e7d32;
+      color: white;
+      border-color: #2e7d32;
+    }
+
+    .planner-context-chip.chip-iep {
+      background: #e3f2fd;
+      border-color: #42a5f5;
+      color: #1565c0;
+    }
+    .planner-context-chip.chip-iep:hover {
+      background: #1565c0;
+      color: white;
+      border-color: #1565c0;
     }
 
     .planner-suggestions {
@@ -3593,8 +3651,8 @@
       border-radius: var(--radius-md);
       padding: var(--space-lg);
       overflow-y: auto;
-      max-height: 360px;
-      min-height: 200px;
+      max-height: 480px;
+      min-height: 240px;
       font-size: var(--text-sm);
       line-height: 1.7;
       color: var(--color-text);
@@ -4401,39 +4459,44 @@
               </div>
             </div>
 
-            <!-- AI Lesson Planner Panel -->
+            <!-- AI Teaching Aide Panel -->
             <div class="dashboard-panel lesson-planner-panel">
               <div class="dashboard-panel-header" style="padding-bottom: 0; border-bottom: none;">
                 <div class="lesson-planner-header">
-                  <h3><i class="fas fa-magic"></i> AI Lesson Planner</h3>
+                  <h3><i class="fas fa-chalkboard-teacher"></i> Teaching Aide</h3>
+                  <span class="aide-subtitle">Your AI co-teacher — knows your students by name</span>
                 </div>
               </div>
               <div class="planner-suggestions" id="planner-suggestions">
-                <button class="planner-suggestion-chip" data-prompt="Based on my class skill gaps, what should I focus on this week?">
-                  <i class="fas fa-bullseye"></i> This week's focus
+                <!-- Dynamic chips loaded from class snapshot data -->
+                <button class="planner-suggestion-chip" data-prompt="Give me a class snapshot. Who's thriving, who needs attention, and what should I prioritize this week?">
+                  <i class="fas fa-heartbeat"></i> Class snapshot
                 </button>
-                <button class="planner-suggestion-chip" data-prompt="Create a warm-up activity targeting the skills my class is struggling with most.">
-                  <i class="fas fa-sun"></i> Warm-up activity
+                <button class="planner-suggestion-chip" data-prompt="Which students need intervention right now? What do you recommend for each?">
+                  <i class="fas fa-exclamation-triangle"></i> Who needs help?
                 </button>
-                <button class="planner-suggestion-chip" data-prompt="How should I differentiate instruction for my mixed-ability class on the weakest skills?">
-                  <i class="fas fa-layer-group"></i> Differentiation ideas
+                <button class="planner-suggestion-chip" data-prompt="Design a lesson for tomorrow targeting our biggest skill gaps. Include flexible grouping with student names.">
+                  <i class="fas fa-bullseye"></i> Plan tomorrow's lesson
                 </button>
-                <button class="planner-suggestion-chip" data-prompt="Suggest a small-group rotation plan based on student skill levels.">
-                  <i class="fas fa-users"></i> Group rotation plan
+                <button class="planner-suggestion-chip" data-prompt="How should I group students for small-group instruction? Give me groups with names based on their skill levels and needs.">
+                  <i class="fas fa-users"></i> Flexible groups
                 </button>
               </div>
-              <div class="planner-response-area" id="planner-response" aria-live="polite" aria-label="AI lesson planner response">
+              <!-- Dynamic contextual chips (populated from class snapshot) -->
+              <div class="planner-context-chips" id="planner-context-chips" style="display:none;">
+              </div>
+              <div class="planner-response-area" id="planner-response" aria-live="polite" aria-label="AI teaching aide response">
                 <div class="planner-empty-state">
-                  <i class="fas fa-magic"></i>
-                  <p style="font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Your AI Teaching Partner</p>
-                  <p style="font-size: var(--text-xs);">Ask me anything about lesson planning, differentiation, or targeting skill gaps. Click a suggestion above or type your own question below.</p>
+                  <i class="fas fa-chalkboard-teacher"></i>
+                  <p style="font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Your AI Teaching Aide</p>
+                  <p style="font-size: var(--text-xs);">I know your students by name. Ask me for a class snapshot, help with lesson planning, student-specific strategies, IEP accommodations, or math pedagogy advice. I'm here as your thought partner.</p>
                 </div>
               </div>
               <div class="planner-input-row">
                 <input type="text" class="planner-input" id="planner-input"
-                       placeholder="Ask about lesson plans, activities, differentiation..."
-                       aria-label="Type a question for the AI lesson planner"
-                       maxlength="500">
+                       placeholder="Ask about a student, plan a lesson, get a class snapshot..."
+                       aria-label="Type a question for the AI teaching aide"
+                       maxlength="1000">
                 <button class="planner-send-btn" id="planner-send-btn" aria-label="Send question">
                   <i class="fas fa-paper-plane" aria-hidden="true"></i> Ask
                 </button>
