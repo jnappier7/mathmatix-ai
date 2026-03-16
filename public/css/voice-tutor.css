@@ -240,8 +240,12 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* --- Orb Visualizer --- */
-.vt-orb-container {
+/* ══════════════════════════════════════════
+   TUTOR PRESENCE — Animated avatar circle
+   Inspired by Siri / GPT Live Chat
+   ══════════════════════════════════════════ */
+
+.vt-presence {
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -249,130 +253,83 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   z-index: 5;
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.vt-orb-container.minimized {
-  bottom: 10px;
-  transform: translateX(-50%) scale(0.5);
-  opacity: 0.6;
+/* --- Rings (behind the avatar) --- */
+.vt-presence-rings {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% - 8px)); /* offset for status text */
+  pointer-events: none;
 }
 
-.vt-orb {
+.vt-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid transparent;
+  transition: border-color 0.5s, box-shadow 0.5s, transform 0.5s;
+}
+
+.vt-ring-inner  { width: 140px; height: 140px; }
+.vt-ring-mid    { width: 160px; height: 160px; }
+.vt-ring-outer  { width: 180px; height: 180px; }
+
+/* --- Avatar circle (photo + waveform overlay) --- */
+.vt-avatar-circle {
   position: relative;
   width: 120px;
   height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vt-orb-ring {
-  position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(18, 179, 179, 0.15);
-  animation: vt-ring-rotate 12s linear infinite;
-}
-
-.vt-orb-ring-1 {
-  width: 140%;
-  height: 140%;
-  animation-duration: 20s;
-  border-color: rgba(18, 179, 179, 0.1);
-}
-.vt-orb-ring-2 {
-  width: 165%;
-  height: 165%;
-  animation-duration: 30s;
-  animation-direction: reverse;
-  border-color: rgba(102, 126, 234, 0.08);
-}
-.vt-orb-ring-3 {
-  width: 190%;
-  height: 190%;
-  animation-duration: 40s;
-  border-color: rgba(255, 59, 127, 0.05);
-}
-
-@keyframes vt-ring-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.vt-orb-core {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(18, 179, 179, 0.2), rgba(102, 126, 234, 0.1) 60%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  transition: background 0.4s, box-shadow 0.4s;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  background: #0d0d20;
+  transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
+  z-index: 2;
 }
 
-#vt-orb-waveform {
+.vt-tutor-face {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: opacity 0.4s, filter 0.4s;
+}
+
+.vt-waveform-overlay {
+  position: absolute;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-}
-
-.vt-orb-glow {
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(18, 179, 179, 0.06) 0%, transparent 60%);
   pointer-events: none;
-  transition: opacity 0.6s;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
-/* Orb states */
-.vt-orb-container[data-state="idle"] .vt-orb-core {
-  background: radial-gradient(circle at 35% 35%, rgba(100, 110, 140, 0.15), rgba(60, 70, 100, 0.08) 60%, transparent);
+/* --- Glow (behind everything) --- */
+.vt-presence-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% - 8px));
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(18, 179, 179, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.5s, opacity 0.5s;
 }
 
-.vt-orb-container[data-state="listening"] .vt-orb-core {
-  background: radial-gradient(circle at 35% 35%, rgba(18, 179, 179, 0.3), rgba(18, 179, 179, 0.1) 60%, transparent);
-}
-.vt-orb-container[data-state="listening"] .vt-orb-glow {
-  background: radial-gradient(circle, rgba(18, 179, 179, 0.12) 0%, transparent 60%);
-  animation: vt-glow-pulse 1.5s ease-in-out infinite;
-}
-.vt-orb-container[data-state="listening"] .vt-orb-ring-1 { border-color: rgba(18, 179, 179, 0.3); }
-
-.vt-orb-container[data-state="thinking"] .vt-orb-core {
-  background: radial-gradient(circle at 35% 35%, rgba(251, 191, 36, 0.25), rgba(245, 158, 11, 0.1) 60%, transparent);
-}
-.vt-orb-container[data-state="thinking"] .vt-orb-glow {
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
-}
-.vt-orb-container[data-state="thinking"] .vt-orb-ring-1 {
-  border-color: rgba(251, 191, 36, 0.3);
-  animation-duration: 3s;
-}
-.vt-orb-container[data-state="thinking"] .vt-orb-ring-2 {
-  animation-duration: 5s;
-}
-
-.vt-orb-container[data-state="speaking"] .vt-orb-core {
-  background: radial-gradient(circle at 35% 35%, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.15) 60%, transparent);
-}
-.vt-orb-container[data-state="speaking"] .vt-orb-glow {
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 60%);
-  animation: vt-glow-pulse 0.8s ease-in-out infinite;
-}
-.vt-orb-container[data-state="speaking"] .vt-orb-ring-1 { border-color: rgba(102, 126, 234, 0.3); }
-
-@keyframes vt-glow-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-
-/* Orb status */
-.vt-orb-status {
+/* --- Status pill --- */
+.vt-presence-status {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -384,6 +341,7 @@ html, body {
   font-weight: 500;
   color: #8892b0;
   transition: all 0.3s;
+  z-index: 2;
 }
 
 .vt-status-dot {
@@ -391,16 +349,159 @@ html, body {
   height: 6px;
   border-radius: 50%;
   background: #5a6380;
-  transition: background 0.3s;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
-.vt-orb-container[data-state="listening"] .vt-status-dot { background: #12B3B3; box-shadow: 0 0 8px rgba(18, 179, 179, 0.5); }
-.vt-orb-container[data-state="thinking"] .vt-status-dot { background: #fbbf24; box-shadow: 0 0 8px rgba(251, 191, 36, 0.5); animation: vt-dot-blink 0.8s infinite; }
-.vt-orb-container[data-state="speaking"] .vt-status-dot { background: #667eea; box-shadow: 0 0 8px rgba(102, 126, 234, 0.5); }
+/* ═══════════════════════════════════════
+   STATE: IDLE — soft breathing
+   ═══════════════════════════════════════ */
+.vt-presence[data-state="idle"] .vt-avatar-circle {
+  border-color: rgba(255, 255, 255, 0.08);
+  animation: vt-breathe 4s ease-in-out infinite;
+}
+.vt-presence[data-state="idle"] .vt-tutor-face {
+  filter: brightness(0.85) saturate(0.9);
+}
+.vt-presence[data-state="idle"] .vt-ring-inner {
+  border-color: rgba(100, 120, 160, 0.1);
+}
+.vt-presence[data-state="idle"] .vt-ring-mid {
+  border-color: rgba(100, 120, 160, 0.06);
+}
+.vt-presence[data-state="idle"] .vt-waveform-overlay { opacity: 0; }
+
+@keyframes vt-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* ═══════════════════════════════════════
+   STATE: LISTENING — teal pulse rings
+   ═══════════════════════════════════════ */
+.vt-presence[data-state="listening"] .vt-avatar-circle {
+  border-color: rgba(18, 179, 179, 0.5);
+  box-shadow: 0 0 20px rgba(18, 179, 179, 0.15), 0 0 60px rgba(18, 179, 179, 0.05);
+  animation: none;
+}
+.vt-presence[data-state="listening"] .vt-tutor-face {
+  filter: brightness(1) saturate(1);
+}
+.vt-presence[data-state="listening"] .vt-ring-inner {
+  border-color: rgba(18, 179, 179, 0.35);
+  animation: vt-listen-ring 2s ease-out infinite;
+}
+.vt-presence[data-state="listening"] .vt-ring-mid {
+  border-color: rgba(18, 179, 179, 0.2);
+  animation: vt-listen-ring 2s ease-out 0.4s infinite;
+}
+.vt-presence[data-state="listening"] .vt-ring-outer {
+  border-color: rgba(18, 179, 179, 0.1);
+  animation: vt-listen-ring 2s ease-out 0.8s infinite;
+}
+.vt-presence[data-state="listening"] .vt-presence-glow {
+  background: radial-gradient(circle, rgba(18, 179, 179, 0.1) 0%, transparent 70%);
+}
+.vt-presence[data-state="listening"] .vt-waveform-overlay { opacity: 0.6; }
+.vt-presence[data-state="listening"] .vt-status-dot {
+  background: #12B3B3;
+  box-shadow: 0 0 8px rgba(18, 179, 179, 0.5);
+}
+
+@keyframes vt-listen-ring {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════
+   STATE: THINKING — amber orbit + spinner
+   ═══════════════════════════════════════ */
+.vt-presence[data-state="thinking"] .vt-avatar-circle {
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+  animation: none;
+}
+.vt-presence[data-state="thinking"] .vt-tutor-face {
+  filter: brightness(0.9) saturate(0.85);
+}
+.vt-presence[data-state="thinking"] .vt-ring-inner {
+  border-color: transparent;
+  border-top-color: rgba(251, 191, 36, 0.5);
+  border-right-color: rgba(251, 191, 36, 0.2);
+  animation: vt-think-spin 1.2s linear infinite;
+}
+.vt-presence[data-state="thinking"] .vt-ring-mid {
+  border-color: transparent;
+  border-top-color: rgba(245, 158, 11, 0.3);
+  animation: vt-think-spin 1.8s linear infinite reverse;
+}
+.vt-presence[data-state="thinking"] .vt-ring-outer {
+  border-color: rgba(251, 191, 36, 0.06);
+}
+.vt-presence[data-state="thinking"] .vt-presence-glow {
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.06) 0%, transparent 70%);
+}
+.vt-presence[data-state="thinking"] .vt-waveform-overlay { opacity: 0; }
+.vt-presence[data-state="thinking"] .vt-status-dot {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+  animation: vt-dot-blink 0.8s infinite;
+}
+
+@keyframes vt-think-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
 @keyframes vt-dot-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
+}
+
+/* ═══════════════════════════════════════
+   STATE: SPEAKING — indigo/purple glow + pulse
+   ═══════════════════════════════════════ */
+.vt-presence[data-state="speaking"] .vt-avatar-circle {
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 25px rgba(102, 126, 234, 0.2), 0 0 80px rgba(102, 126, 234, 0.06);
+  animation: vt-speak-pulse 1.5s ease-in-out infinite;
+}
+.vt-presence[data-state="speaking"] .vt-tutor-face {
+  filter: brightness(1.05) saturate(1.1);
+}
+.vt-presence[data-state="speaking"] .vt-ring-inner {
+  border-color: rgba(102, 126, 234, 0.3);
+  animation: vt-speak-ring 2.5s ease-in-out infinite;
+}
+.vt-presence[data-state="speaking"] .vt-ring-mid {
+  border-color: rgba(118, 75, 162, 0.15);
+  animation: vt-speak-ring 2.5s ease-in-out 0.3s infinite;
+}
+.vt-presence[data-state="speaking"] .vt-ring-outer {
+  border-color: rgba(102, 126, 234, 0.06);
+}
+.vt-presence[data-state="speaking"] .vt-presence-glow {
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  animation: vt-glow-pulse 1.5s ease-in-out infinite;
+}
+.vt-presence[data-state="speaking"] .vt-waveform-overlay { opacity: 0.4; }
+.vt-presence[data-state="speaking"] .vt-status-dot {
+  background: #667eea;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+}
+
+@keyframes vt-speak-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes vt-speak-ring {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+}
+
+@keyframes vt-glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* --- Live Transcript Overlay --- */
@@ -795,126 +896,14 @@ html, body {
 .vt-btn-close:focus-visible { outline: 2px solid #12B3B3; outline-offset: 2px; }
 
 /* --- Interruption flash --- */
-.vt-interrupted .vt-orb-core {
+.vt-interrupted .vt-avatar-circle {
   animation: vt-interrupt-flash 0.3s ease;
 }
 
 @keyframes vt-interrupt-flash {
   0% { box-shadow: 0 0 0 0 rgba(255, 59, 127, 0.4); }
-  50% { box-shadow: 0 0 40px 10px rgba(255, 59, 127, 0.15); }
+  50% { box-shadow: 0 0 40px 10px rgba(255, 59, 127, 0.3); }
   100% { box-shadow: 0 0 0 0 transparent; }
-}
-
-/* --- Avatar Video (Simli Premium) --- */
-.vt-avatar-container {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.vt-avatar-video-wrapper {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(102, 126, 234, 0.2);
-  box-shadow:
-    0 0 40px rgba(102, 126, 234, 0.1),
-    0 0 80px rgba(18, 179, 179, 0.05);
-  background: #0d0d20;
-  transition: border-color 0.4s, box-shadow 0.4s;
-}
-
-.vt-avatar-container[data-state="speaking"] .vt-avatar-video-wrapper {
-  border-color: rgba(102, 126, 234, 0.4);
-  box-shadow:
-    0 0 50px rgba(102, 126, 234, 0.15),
-    0 0 100px rgba(18, 179, 179, 0.08);
-}
-
-.vt-avatar-container[data-state="listening"] .vt-avatar-video-wrapper {
-  border-color: rgba(18, 179, 179, 0.4);
-  box-shadow:
-    0 0 50px rgba(18, 179, 179, 0.15),
-    0 0 100px rgba(18, 179, 179, 0.08);
-}
-
-.vt-avatar-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.15); /* Zoom in slightly for better framing */
-}
-
-.vt-avatar-overlay {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.vt-avatar-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(102, 126, 234, 0.8);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.vt-avatar-status {
-  font-size: 12px;
-  color: #5a6380;
-  text-align: center;
-}
-
-/* Hide orb when avatar is active */
-.avatar-active .vt-orb-container {
-  display: none !important;
-}
-
-.avatar-active .vt-avatar-container {
-  display: flex !important;
-}
-
-/* Settings: divider and section label */
-.vt-settings-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.06);
-  margin: 16px 0;
-}
-
-.vt-setting-section-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(102, 126, 234, 0.7);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.vt-setting-hint {
-  font-size: 12px;
-  color: #4a5270;
-  margin: -4px 0 8px;
-  line-height: 1.4;
 }
 
 /* --- Mobile Responsive --- */
@@ -945,8 +934,12 @@ html, body {
     backdrop-filter: blur(10px);
   }
 
-  .vt-orb { width: 90px; height: 90px; }
-  #vt-orb-waveform { width: 90px; height: 90px; }
+  .vt-avatar-circle { width: 90px; height: 90px; }
+  .vt-ring-inner  { width: 110px !important; height: 110px !important; }
+  .vt-ring-mid    { width: 126px !important; height: 126px !important; }
+  .vt-ring-outer  { width: 142px !important; height: 142px !important; }
+  .vt-presence-rings { width: 142px; height: 142px; }
+  .vt-presence-glow { width: 200px; height: 200px; }
 
   .vt-mic-btn { width: 60px; height: 60px; font-size: 22px; }
   .vt-end-btn, .vt-mute-btn { width: 44px; height: 44px; }
@@ -955,7 +948,6 @@ html, body {
 
   .vt-math-step .vt-step-content { font-size: 18px; }
 
-  .vt-avatar-video-wrapper { width: min(280px, 80vw); height: min(280px, 80vw); }
 }
 
 @media (max-width: 480px) {
