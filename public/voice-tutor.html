@@ -53,30 +53,19 @@
         <canvas id="vt-graph-canvas" class="vt-graph-canvas" style="display:none;"></canvas>
       </div>
 
-      <!-- Avatar video container (Simli lip-synced avatar — premium) -->
-      <div class="vt-avatar-container" id="vt-avatar-container" style="display:none;">
-        <div class="vt-avatar-video-wrapper">
-          <video id="vt-avatar-video" autoplay playsinline muted class="vt-avatar-video"></video>
-          <audio id="vt-avatar-audio" autoplay></audio>
-          <div class="vt-avatar-overlay" id="vt-avatar-overlay">
-            <span class="vt-avatar-badge"><i class="fas fa-star"></i> Live Avatar</span>
-          </div>
+      <!-- Tutor presence — animated avatar circle (Siri/GPT Live style) -->
+      <div class="vt-presence" id="vt-presence">
+        <div class="vt-presence-rings">
+          <div class="vt-ring vt-ring-outer"></div>
+          <div class="vt-ring vt-ring-mid"></div>
+          <div class="vt-ring vt-ring-inner"></div>
         </div>
-        <div class="vt-avatar-status" id="vt-avatar-status">Connecting avatar...</div>
-      </div>
-
-      <!-- Central orb visualizer (default — used when avatar is off) -->
-      <div class="vt-orb-container" id="vt-orb-container">
-        <div class="vt-orb" id="vt-orb">
-          <div class="vt-orb-ring vt-orb-ring-1"></div>
-          <div class="vt-orb-ring vt-orb-ring-2"></div>
-          <div class="vt-orb-ring vt-orb-ring-3"></div>
-          <div class="vt-orb-core" id="vt-orb-core">
-            <canvas id="vt-orb-waveform" width="200" height="200"></canvas>
-          </div>
-          <div class="vt-orb-glow"></div>
+        <div class="vt-avatar-circle" id="vt-avatar-circle">
+          <img id="vt-tutor-face" alt="Tutor" class="vt-tutor-face" />
+          <canvas id="vt-orb-waveform" width="200" height="200" class="vt-waveform-overlay"></canvas>
         </div>
-        <div class="vt-orb-status" id="vt-orb-status">
+        <div class="vt-presence-glow"></div>
+        <div class="vt-presence-status" id="vt-orb-status">
           <span class="vt-status-dot"></span>
           <span class="vt-status-text" id="vt-status-text" aria-live="polite">Tap to begin</span>
         </div>
@@ -152,23 +141,11 @@
           <option value="3000">3s (relaxed)</option>
         </select>
       </label>
-      <div class="vt-settings-divider"></div>
-      <div class="vt-setting-section-label">
-        <i class="fas fa-star"></i> Premium
-      </div>
-      <label class="vt-setting" id="vt-avatar-setting">
-        <span>Live avatar (lip-sync)</span>
-        <input type="checkbox" id="vt-avatar-toggle" />
-      </label>
-      <p class="vt-setting-hint" id="vt-avatar-hint">
-        See your tutor talk with a realistic animated avatar.
-      </p>
       <button id="vt-settings-close" class="vt-btn-close">Done</button>
     </div>
   </div>
 
   <script src="/js/csrf.js"></script>
-  <script src="/js/avatar-controller.js"></script>
   <script src="/js/voice-tutor-session.js"></script>
 </body>
 </html>
