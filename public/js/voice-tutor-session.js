@@ -28,9 +28,14 @@
     vadTimer: null,
     maxRecordTimer: null,
     isSpeaking: false,
+    silenceFrames: 0,      // consecutive silent frames for hysteresis
     speechStartTime: null,
     waveformRAF: null,
     particleRAF: null,
+    playResolve: null,     // resolve fn for current playResponse promise
+    sessionStart: null,    // session start time for timer
+    timerInterval: null,   // session timer interval
+    processing: false,     // guard against double processVoiceInput
   };
 
   // --- DOM refs ---
@@ -68,6 +73,7 @@
     dom.tutorName = $('#vt-tutor-name');
     dom.tutorStatus = $('#vt-tutor-status');
     dom.particleCanvas = $('#vt-particle-canvas');
+    dom.sessionTimer = $('#vt-session-timer');
   }
 
   // ═══════════════════════════════════════
@@ -81,12 +87,24 @@
     setupParticles();
     drawIdleWaveform();
     setMode('idle');
+    startSessionTimer();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
     // Auto-start listening if hands-free
     if (state.handsFree) {
       setTimeout(() => startListening(), 800);
     }
+  }
+
+  function startSessionTimer() {
+    state.sessionStart = Date.now();
+    state.timerInterval = setInterval(() => {
+      if (!dom.sessionTimer) return;
+      const elapsed = Math.floor((Date.now() - state.sessionStart) / 1000);
+      const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const secs = (elapsed % 60).toString().padStart(2, '0');
+      dom.sessionTimer.textContent = `${mins}:${secs}`;
+    }, 1000);
   }
 
   async function loadUserData() {
@@ -283,35 +301,58 @@
 
     const buffer = new Uint8Array(analyser.frequencyBinCount);
 
+    // Hysteresis: require N consecutive silent frames before triggering silence
+    const SILENCE_FRAMES_REQUIRED = 8; // ~130ms at 60fps
+    const SPEECH_THRESHOLD_DB = -45;   // Slightly more sensitive
+
+    state.isSpeaking = false;
+    state.silenceFrames = 0;
+
     const check = () => {
       if (state.mode !== 'listening') return;
 
       analyser.getByteFrequencyData(buffer);
-      const avg = buffer.reduce((a, b) => a + b, 0) / buffer.length;
+
+      // Use RMS of the top frequency bins (voice range ~300-3000Hz)
+      const voiceBins = buffer.slice(4, 80); // Approximate voice frequency range
+      const sum = voiceBins.reduce((a, b) => a + b, 0);
+      const avg = sum / voiceBins.length;
       const db = avg > 0 ? 20 * Math.log10(avg / 255) : -Infinity;
-      const speaking = db > -50;
+      const speaking = db > SPEECH_THRESHOLD_DB;
 
       // Draw waveform
       drawListeningWaveform(buffer);
 
-      if (speaking && !state.isSpeaking) {
-        state.isSpeaking = true;
-        state.speechStartTime = Date.now();
-        clearTimeout(state.vadTimer);
-      } else if (!speaking && state.isSpeaking) {
-        const duration = Date.now() - (state.speechStartTime || Date.now());
-        if (duration < 400) {
-          // Too brief, ignore
-          state.isSpeaking = false;
-          state.speechStartTime = null;
-        } else {
-          // Silence after speech — wait then auto-send
+      if (speaking) {
+        state.silenceFrames = 0;
+
+        if (!state.isSpeaking) {
+          state.isSpeaking = true;
+          state.speechStartTime = Date.now();
           clearTimeout(state.vadTimer);
-          state.vadTimer = setTimeout(() => {
-            if (state.mode === 'listening') {
-              stopListening();
+        }
+      } else {
+        state.silenceFrames++;
+
+        // Only react to silence if we had meaningful speech AND enough consecutive silent frames
+        if (state.isSpeaking && state.silenceFrames >= SILENCE_FRAMES_REQUIRED) {
+          const duration = Date.now() - (state.speechStartTime || Date.now());
+
+          if (duration < 500) {
+            // Speech was too brief — reset and keep listening
+            state.isSpeaking = false;
+            state.speechStartTime = null;
+          } else {
+            // Real speech followed by confirmed silence — start countdown
+            if (!state.vadTimer) {
+              state.vadTimer = setTimeout(() => {
+                state.vadTimer = null;
+                if (state.mode === 'listening') {
+                  stopListening();
+                }
+              }, state.silenceTimeout);
             }
-          }, state.silenceTimeout);
+          }
         }
       }
 
@@ -325,6 +366,8 @@
   // ═══════════════════════════════════════
 
   async function processVoiceInput(audioBlob) {
+    if (state.processing) return; // Guard against double-processing
+    state.processing = true;
     setMode('thinking');
 
     try {
@@ -356,9 +399,14 @@
         addMessage(data.response, 'ai');
       }
 
-      // Render math visuals
-      if (data.mathSteps && data.mathSteps.length > 0 && state.showVisuals) {
-        renderMathSteps(data.mathSteps);
+      // Render math visuals — use backend mathSteps or extract from response
+      if (state.showVisuals) {
+        const steps = (data.mathSteps && data.mathSteps.length > 0)
+          ? data.mathSteps
+          : extractEquationsFromText(data.response || '');
+        if (steps.length > 0) {
+          renderMathSteps(steps);
+        }
       }
 
       // Play audio response (unless muted)
@@ -377,6 +425,8 @@
       console.error('[VoiceTutor] Processing error:', err);
       addSystemMessage('Something went wrong. Try again.');
       setMode('idle');
+    } finally {
+      state.processing = false;
     }
   }
 
@@ -402,8 +452,11 @@
       const data = await res.json();
 
       if (data.response) addMessage(data.response, 'ai');
-      if (data.mathSteps && data.mathSteps.length > 0 && state.showVisuals) {
-        renderMathSteps(data.mathSteps);
+      if (state.showVisuals) {
+        const steps = (data.mathSteps && data.mathSteps.length > 0)
+          ? data.mathSteps
+          : extractEquationsFromText(data.response || '');
+        if (steps.length > 0) renderMathSteps(steps);
       }
 
       if (data.audioUrl && !state.muted) {
@@ -432,59 +485,60 @@
     }
 
     return new Promise((resolve) => {
+      // Store resolver so interrupt can resolve this promise
+      state.playResolve = resolve;
+
       const audio = new Audio(audioUrl);
       state.currentAudio = audio;
 
-      // Draw speaking waveform from audio
-      {
-        const audioCtx = state.audioContext || new (window.AudioContext || window.webkitAudioContext)();
-        state.audioContext = audioCtx;
+      // Draw speaking waveform — use a FRESH AudioContext to avoid
+      // conflicts with the mic AudioContext
+      try {
+        const playCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = playCtx.createMediaElementSource(audio);
+        const analyser = playCtx.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        analyser.connect(playCtx.destination);
 
-        audio.addEventListener('canplay', () => {
-          try {
-            const source = audioCtx.createMediaElementSource(audio);
-            const analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 256;
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-
-            const buffer = new Uint8Array(analyser.frequencyBinCount);
-            const drawSpeaking = () => {
-              if (state.mode !== 'speaking') return;
-              analyser.getByteFrequencyData(buffer);
-              drawSpeakingWaveform(buffer);
-              requestAnimationFrame(drawSpeaking);
-            };
-            drawSpeaking();
-          } catch (e) {
-            audio.volume = 1;
+        const buffer = new Uint8Array(analyser.frequencyBinCount);
+        const drawSpeaking = () => {
+          if (state.mode !== 'speaking') {
+            playCtx.close().catch(() => {});
+            return;
           }
-        }, { once: true });
+          analyser.getByteFrequencyData(buffer);
+          drawSpeakingWaveform(buffer);
+          requestAnimationFrame(drawSpeaking);
+        };
+        audio.addEventListener('canplay', drawSpeaking, { once: true });
+
+        // Store for cleanup
+        audio._playCtx = playCtx;
+      } catch (e) {
+        // Fallback: play without waveform visualization
       }
 
-      audio.onended = () => {
+      const done = (startNext) => {
+        if (audio._playCtx) {
+          audio._playCtx.close().catch(() => {});
+        }
         state.currentAudio = null;
+        state.playResolve = null;
         hideTranscript();
 
-        if (state.handsFree && state.autoListen) {
+        if (startNext && state.handsFree && state.autoListen) {
           setTimeout(() => startListening(), 400);
-        } else {
+        } else if (startNext) {
           setMode('idle');
         }
         resolve();
       };
 
-      audio.onerror = () => {
-        state.currentAudio = null;
-        hideTranscript();
-        setMode('idle');
-        resolve();
-      };
+      audio.onended = () => done(true);
+      audio.onerror = () => done(true);
 
-      audio.play().catch(() => {
-        setMode('idle');
-        resolve();
-      });
+      audio.play().catch(() => done(true));
     });
   }
 
@@ -493,10 +547,23 @@
       state.currentAudio.onended = null;
       state.currentAudio.onerror = null;
       state.currentAudio.pause();
-      state.currentAudio.currentTime = 0;
+      if (state.currentAudio._playCtx) {
+        state.currentAudio._playCtx.close().catch(() => {});
+      }
       state.currentAudio = null;
     }
     hideTranscript();
+
+    // Resolve the pending playResponse promise so processVoiceInput doesn't hang
+    if (state.playResolve) {
+      const resolve = state.playResolve;
+      state.playResolve = null;
+      resolve();
+    }
+
+    // Reset processing guard so next voice input can proceed
+    state.processing = false;
+
     setMode('idle');
   }
 
@@ -508,6 +575,14 @@
     }
 
     stopSpeaking();
+
+    // Close existing AudioContext so startListening gets a fresh one
+    // (avoids conflicts with the playback MediaElementSource)
+    if (state.audioContext && state.audioContext.state !== 'closed') {
+      state.audioContext.close().catch(() => {});
+      state.audioContext = null;
+    }
+
     startListening();
   }
 
@@ -1006,6 +1081,60 @@
   }
 
   // ═══════════════════════════════════════
+  // CLIENT-SIDE EQUATION EXTRACTION
+  // ═══════════════════════════════════════
+
+  /**
+   * Fallback: if backend didn't return mathSteps, extract equations from the response.
+   * Looks for LaTeX display/inline math, or patterns like "x = 5", "2x + 3 = 7", etc.
+   */
+  function extractEquationsFromText(text) {
+    const steps = [];
+
+    // 1. Extract display math: \[ ... \] or $$ ... $$
+    const displayPatterns = [
+      /\\\[(.+?)\\\]/gs,
+      /\$\$(.+?)\$\$/gs,
+    ];
+    for (const pat of displayPatterns) {
+      let m;
+      while ((m = pat.exec(text)) !== null) {
+        steps.push({ latex: m[1].trim() });
+      }
+    }
+
+    // 2. Extract inline math: \( ... \) or $ ... $ (only if contains math-like chars)
+    const inlinePatterns = [
+      /\\\((.+?)\\\)/g,
+      /(?<!\$)\$([^$\n]+?)\$(?!\$)/g,
+    ];
+    for (const pat of inlinePatterns) {
+      let m;
+      while ((m = pat.exec(text)) !== null) {
+        const latex = m[1].trim();
+        // Only include if it looks like an equation (has =, +, -, frac, etc.)
+        if (/[=+\-*/^_\\]/.test(latex) && latex.length > 2) {
+          steps.push({ latex });
+        }
+      }
+    }
+
+    // 3. Heuristic: find plain-text equations like "x = 5" or "2x + 3 = 7"
+    if (steps.length === 0) {
+      const eqPattern = /(?:^|[.!?]\s+)([^.!?\n]*?(?:\d+[a-z]|[a-z])\s*[+\-*/^]\s*[^.!?\n]*?=\s*[^.!?\n]+)/gi;
+      let m;
+      while ((m = eqPattern.exec(text)) !== null) {
+        const eq = m[1].trim();
+        if (eq.length > 3 && eq.length < 120) {
+          steps.push({ text: eq });
+        }
+      }
+    }
+
+    return steps;
+  }
+
+  // ═══════════════════════════════════════
   // UTILITIES
   // ═══════════════════════════════════════
 
@@ -1041,6 +1170,7 @@
     cancelAnimationFrame(state.particleRAF);
     clearTimeout(state.vadTimer);
     clearTimeout(state.maxRecordTimer);
+    clearInterval(state.timerInterval);
 
     // Stop MediaRecorder and prevent onstop from firing processVoiceInput
     if (state.mediaRecorder) {

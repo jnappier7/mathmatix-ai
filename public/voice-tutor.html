@@ -27,6 +27,7 @@
     <div class="vt-header-center">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix" class="vt-logo" />
       <span class="vt-session-label">Voice Session</span>
+      <span class="vt-session-timer" id="vt-session-timer">00:00</span>
     </div>
     <div class="vt-header-actions">
       <button id="vt-settings-btn" class="vt-icon-btn" title="Settings" aria-label="Settings">
@@ -42,10 +43,7 @@
       <!-- Math visualization canvas -->
       <div class="vt-canvas-area" id="vt-canvas-area">
         <div class="vt-canvas-placeholder" id="vt-canvas-placeholder">
-          <div class="vt-canvas-icon">
-            <i class="fas fa-wand-magic-sparkles"></i>
-          </div>
-          <p>Math will appear here as you talk</p>
+          <p><i class="fas fa-function"></i> Equations appear here as you talk</p>
         </div>
         <!-- Rendered math steps appear here -->
         <div id="vt-math-display" class="vt-math-display"></div>
@@ -105,16 +103,24 @@
 
   <!-- Bottom controls -->
   <footer class="vt-controls">
-    <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session" aria-label="End session">
-      <i class="fas fa-phone-slash"></i>
-    </button>
-    <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak">
-      <div class="vt-mic-ripple"></div>
-      <i class="fas fa-microphone"></i>
-    </button>
-    <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor" aria-label="Mute tutor">
-      <i class="fas fa-volume-up"></i>
-    </button>
+    <div class="vt-control-group">
+      <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session" aria-label="End session">
+        <i class="fas fa-phone-slash"></i>
+      </button>
+      <span class="vt-control-label">End</span>
+    </div>
+    <div class="vt-control-group">
+      <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak">
+        <div class="vt-mic-ripple"></div>
+        <i class="fas fa-microphone"></i>
+      </button>
+    </div>
+    <div class="vt-control-group">
+      <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor" aria-label="Mute tutor">
+        <i class="fas fa-volume-up"></i>
+      </button>
+      <span class="vt-control-label">Mute</span>
+    </div>
   </footer>
 
   <!-- Settings drawer -->
