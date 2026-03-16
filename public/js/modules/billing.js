@@ -8,6 +8,9 @@ import { showToast } from './helpers.js';
  */
 export async function checkBillingStatus() {
     try {
+        // Detect post-payment redirect from Stripe
+        handleUpgradeSuccess();
+
         const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
         if (!res.ok) return null;
         const data = await res.json();
@@ -17,10 +20,21 @@ export async function checkBillingStatus() {
         // When billing is off (pre-launch), skip all UI
         if (data.billingEnabled === false) return data;
 
+        // Show "Upgrade Plan" link in nav for free/pack students
+        if (data.tier !== 'unlimited') {
+            const upgradeLink = document.getElementById('upgrade-plan-link');
+            if (upgradeLink) upgradeLink.style.display = '';
+        }
+
         // Show time indicator for students on free/pack tiers only.
         // Teachers, parents, and admins have unlimited access (Infinity) — skip indicator for them.
         if (data.tier !== 'unlimited' && data.usage && data.usage.secondsRemaining !== null && isFinite(data.usage.secondsRemaining)) {
             updateFreeTimeIndicator(data.usage);
+        }
+
+        // Post-signup pricing prompt: redirect new free users to pricing page once
+        if (data.tier === 'free' && data.hasSeenPricing === false) {
+            showNewUserPricingPrompt();
         }
 
         return data;
@@ -40,7 +54,7 @@ export function updateFreeTimeIndicator(usage) {
     if (!indicator) {
         indicator = document.createElement('div');
         indicator.id = 'free-time-indicator';
-        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9000;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
+        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:1750;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
         indicator.title = 'AI processing time only — reading and thinking time is free';
         indicator.addEventListener('click', () => showUpgradePrompt({}));
         document.body.appendChild(indicator);
@@ -49,16 +63,35 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
+    // Calculate human-readable reset time
+    let resetText = '';
+    if (usage.nextResetAt) {
+        const resetDate = new Date(usage.nextResetAt);
+        const msUntilReset = resetDate - Date.now();
+        if (msUntilReset > 0) {
+            const daysUntil = Math.floor(msUntilReset / (1000 * 60 * 60 * 24));
+            const hoursUntil = Math.floor((msUntilReset % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            if (daysUntil > 0) {
+                resetText = `Resets in ${daysUntil}d ${hoursUntil}h`;
+            } else if (hoursUntil > 0) {
+                resetText = `Resets in ${hoursUntil}h`;
+            } else {
+                resetText = 'Resets soon';
+            }
+        }
+    }
+
     const subtitle = '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
+    const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + subtitle;
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + resetLine + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + resetLine + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle;
         indicator.style.borderColor = '#333';
     }
 }
@@ -164,4 +197,160 @@ export async function initiateUpgrade(pack) {
         console.error('[Billing] Upgrade error:', e);
         showToast('Something went wrong. Please try again.');
     }
+}
+
+/**
+ * Show a one-time welcome prompt for new free users, inviting them to see pricing.
+ * Displayed as a non-blocking banner at the top of chat, not a full-page redirect.
+ */
+export function showNewUserPricingPrompt() {
+    const existing = document.getElementById('new-user-pricing-banner');
+    if (existing) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'new-user-pricing-banner';
+    banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #7b2ff7;border-radius:12px;padding:16px 24px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;';
+    banner.innerHTML = `
+        <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Welcome to Mathmatix!</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">10 free minutes</strong> of AI tutoring this week. Want to unlock more?</div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">View Plans</a>
+            <button id="dismiss-pricing-banner" style="background:transparent;color:#666;border:1px solid #333;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;">Maybe Later</button>
+        </div>`;
+    document.body.appendChild(banner);
+
+    // Add slide-down animation
+    if (!document.getElementById('pricing-banner-anim')) {
+        const style = document.createElement('style');
+        style.id = 'pricing-banner-anim';
+        style.textContent = '@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}';
+        document.head.appendChild(style);
+    }
+
+    document.getElementById('dismiss-pricing-banner').addEventListener('click', () => {
+        banner.remove();
+        // Mark as seen so it doesn't show again
+        csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
+    });
+
+    // Auto-dismiss after 15 seconds
+    setTimeout(() => {
+        if (banner.parentNode) {
+            banner.style.transition = 'opacity 0.3s';
+            banner.style.opacity = '0';
+            setTimeout(() => banner.remove(), 300);
+            csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
+        }
+    }, 15000);
+}
+
+/**
+ * Detect ?upgraded=true in the URL after Stripe checkout redirect.
+ * Shows a success banner with confetti, then polls billing status until
+ * the Stripe webhook has processed and the user's tier is updated.
+ */
+function handleUpgradeSuccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('upgraded')) return;
+
+    // Clean up the URL so a refresh doesn't re-trigger
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+
+    // Fire confetti
+    if (window.ensureConfetti) {
+        window.ensureConfetti().then(() => {
+            if (window.confetti) {
+                window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
+        });
+    }
+
+    // Show success banner
+    const banner = document.createElement('div');
+    banner.id = 'upgrade-success-banner';
+    banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a1a2e,#0f3460);border:1px solid #00d4ff;border-radius:12px;padding:20px 28px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,212,255,0.2);animation:slideDown 0.3s ease;';
+    banner.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px;">&#127881;</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:6px;">Payment Successful!</div>
+        <div id="upgrade-status-text" style="font-size:14px;color:#aaa;line-height:1.5;">Activating your plan...</div>
+        <button id="dismiss-upgrade-banner" style="background:transparent;color:#666;border:none;padding:8px;cursor:pointer;font-size:13px;margin-top:10px;">Dismiss</button>`;
+    document.body.appendChild(banner);
+
+    // Add slide-down animation if not already present
+    if (!document.getElementById('pricing-banner-anim')) {
+        const style = document.createElement('style');
+        style.id = 'pricing-banner-anim';
+        style.textContent = '@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}';
+        document.head.appendChild(style);
+    }
+
+    document.getElementById('dismiss-upgrade-banner').addEventListener('click', () => banner.remove());
+
+    // Poll billing status until webhook processes (tier changes from 'free')
+    pollForUpgrade();
+}
+
+/**
+ * Poll /api/billing/status after payment until the tier reflects the purchase.
+ * Stripe webhooks typically arrive within 1-5 seconds, but can be delayed.
+ * Polls at 1s, 2s, 3s, 5s, 8s (max 5 attempts) then gives up gracefully.
+ */
+async function pollForUpgrade() {
+    const delays = [1000, 2000, 3000, 5000, 8000];
+    const statusText = document.getElementById('upgrade-status-text');
+    const banner = document.getElementById('upgrade-success-banner');
+
+    for (let i = 0; i < delays.length; i++) {
+        await new Promise(r => setTimeout(r, delays[i]));
+        try {
+            const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
+            if (!res.ok) continue;
+            const data = await res.json();
+
+            if (data.tier && data.tier !== 'free') {
+                // Webhook processed — update UI
+                window._billingStatus = data;
+
+                if (statusText) {
+                    const tierLabel = data.tier === 'unlimited' ? 'Unlimited'
+                        : data.tier === 'pack_120' ? '120-Minute Pack'
+                        : '60-Minute Pack';
+                    statusText.textContent = `Your ${tierLabel} is now active. Start chatting with your AI tutor!`;
+                }
+
+                // Update the time indicator and hide upgrade link
+                if (data.tier === 'unlimited') {
+                    const indicator = document.getElementById('free-time-indicator');
+                    if (indicator) indicator.remove();
+                    const upgradeLink = document.getElementById('upgrade-plan-link');
+                    if (upgradeLink) upgradeLink.style.display = 'none';
+                } else if (data.usage) {
+                    updateFreeTimeIndicator(data.usage);
+                }
+
+                // Auto-dismiss banner after 6 seconds
+                setTimeout(() => {
+                    if (banner && banner.parentNode) {
+                        banner.style.transition = 'opacity 0.3s';
+                        banner.style.opacity = '0';
+                        setTimeout(() => banner.remove(), 300);
+                    }
+                }, 6000);
+                return;
+            }
+        } catch (_) { /* retry */ }
+    }
+
+    // Webhook didn't arrive in time — show fallback message
+    if (statusText) {
+        statusText.textContent = 'Your plan is being activated. It may take a moment — try refreshing the page.';
+    }
+    setTimeout(() => {
+        if (banner && banner.parentNode) {
+            banner.style.transition = 'opacity 0.3s';
+            banner.style.opacity = '0';
+            setTimeout(() => banner.remove(), 300);
+        }
+    }, 8000);
 }

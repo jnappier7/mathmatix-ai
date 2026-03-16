@@ -17,8 +17,11 @@ const Schema = mongoose.Schema;
 const recipientStatusSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        ref: 'User'
+    },
+    waitlistId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Waitlist'
     },
     email: {
         type: String,
@@ -46,7 +49,7 @@ const adminEmailSchema = new Schema({
     // Target audience
     audienceType: {
         type: String,
-        enum: ['all_students', 'all_parents', 'all_teachers', 'class', 'custom'],
+        enum: ['all_students', 'all_parents', 'all_teachers', 'class', 'custom', 'waitlist'],
         required: true
     },
 
@@ -204,6 +207,20 @@ adminEmailSchema.statics.getRecipientsByAudienceType = async function(audienceTy
             };
             break;
 
+        case 'waitlist': {
+            // Waitlist entries are in their own collection, not the User model
+            const Waitlist = mongoose.model('Waitlist');
+            const entries = await Waitlist.find({ email: { $exists: true, $ne: '' } }).lean();
+            return entries.map(e => ({
+                _id: e._id,
+                email: e.email,
+                firstName: '',
+                lastName: '',
+                role: e.role || 'waitlist',
+                _isWaitlist: true
+            }));
+        }
+
         default:
             throw new Error(`Invalid audience type: ${audienceType}`);
     }
@@ -220,7 +237,8 @@ adminEmailSchema.methods.prepareRecipients = async function() {
     );
 
     this.recipients = recipients.map(user => ({
-        userId: user._id,
+        userId: user._isWaitlist ? undefined : user._id,
+        waitlistId: user._isWaitlist ? user._id : undefined,
         email: user.email,
         status: 'pending'
     }));
@@ -232,9 +250,11 @@ adminEmailSchema.methods.prepareRecipients = async function() {
 };
 
 // Instance method to update recipient status
-adminEmailSchema.methods.updateRecipientStatus = async function(userId, status, errorMessage = null) {
+adminEmailSchema.methods.updateRecipientStatus = async function(recipientId, status, errorMessage = null) {
+    const idStr = recipientId.toString();
     const recipient = this.recipients.find(
-        r => r.userId.toString() === userId.toString()
+        r => (r.userId && r.userId.toString() === idStr) ||
+             (r.waitlistId && r.waitlistId.toString() === idStr)
     );
 
     if (recipient) {

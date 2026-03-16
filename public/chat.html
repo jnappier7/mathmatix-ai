@@ -163,6 +163,9 @@
       <button class="header-menu-item" data-trigger="open-feedback-modal-btn" data-i18n="nav.feedback">
         <i class="fas fa-comment-dots"></i> Feedback
       </button>
+      <a href="/pricing.html" class="header-menu-item" id="upgrade-plan-link" style="display:none;text-decoration:none;color:inherit;">
+        <i class="fas fa-arrow-up" style="color:#00d4ff;"></i> <span style="color:#00d4ff;">Upgrade Plan</span>
+      </a>
       <div class="header-menu-divider"></div>
       <button class="header-menu-item" id="logoutBtn" data-i18n="nav.logOut">
         <i class="fas fa-sign-out-alt"></i> Log Out
@@ -223,6 +226,15 @@
         </div>
         <div class="sidebar-progress-xp" id="sidebar-xp">0 / 100 XP</div>
       </div>
+    </div>
+
+    <!-- Pi Day Special Button (shown only on Pi Day) -->
+    <div class="sidebar-section sidebar-section-compact" id="sidebar-pi-day-section" style="display:none;">
+      <button id="sidebar-pi-day-btn" class="sidebar-pi-day-btn" title="Pi Day Specials">
+        <span class="pi-glow-icon">&pi;</span>
+        <span class="pi-btn-text">Pi Day</span>
+        <span class="pi-btn-badge">3.14x XP</span>
+      </button>
     </div>
 
     <!-- My Courses (always visible — primary navigation for enrolled students) -->
@@ -368,6 +380,41 @@
     </div>
   </aside>
 
+  <!-- Pi Day Hub Panel (overlay) -->
+  <div id="pi-day-hub" class="pi-day-hub" style="display:none;">
+    <div class="pi-day-hub-backdrop" id="pi-day-hub-backdrop"></div>
+    <div class="pi-day-hub-panel">
+      <div class="pi-day-hub-header">
+        <span class="pi-day-hub-icon">&pi;</span>
+        <div>
+          <h3 style="margin:0;font-size:1.1rem;">Happy Pi Day!</h3>
+          <p style="margin:2px 0 0;font-size:0.8rem;opacity:0.8;">3.14x XP on all quests today</p>
+        </div>
+        <button id="pi-day-hub-close" class="pi-day-hub-close">&times;</button>
+      </div>
+
+      <!-- Quests -->
+      <div class="pi-day-hub-section">
+        <h4>Pi Day Quests</h4>
+        <div id="pi-hub-quests">Loading...</div>
+      </div>
+
+      <!-- Mini-Lessons -->
+      <div class="pi-day-hub-section">
+        <h4>&pi; Mini-Lessons</h4>
+        <p style="font-size:12px;color:#888;margin:0 0 8px;">Tap to learn something amazing about pi!</p>
+        <div id="pi-hub-lessons">Loading...</div>
+      </div>
+
+      <!-- Mini-Courses -->
+      <div class="pi-day-hub-section">
+        <h4>Explore Courses</h4>
+        <p style="font-size:12px;color:#888;margin:0 0 8px;">Dive deeper into circles, geometry, and more.</p>
+        <div id="pi-hub-courses">Loading...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content Area (Full Width) -->
   <main id="app-layout-wrapper" class="sidebar-layout">
     <div id="chat-container" class="dashboard-panel full-width">
@@ -461,29 +508,16 @@
       <div class="equation-section-header">Subscripts and Superscripts</div>
       <div class="subscript-superscript-grid">
         <button class="script-btn" data-latex="#0^{#1}" title="Superscript/Power">
-          <svg viewBox="0 0 40 40" class="script-icon">
-            <rect x="4" y="8" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-            <rect x="24" y="4" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-          </svg>
+          <span class="script-label">x<sup>n</sup></span>
         </button>
         <button class="script-btn" data-latex="#0_{#1}" title="Subscript">
-          <svg viewBox="0 0 40 40" class="script-icon">
-            <rect x="4" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-            <rect x="24" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-          </svg>
+          <span class="script-label">x<sub>n</sub></span>
         </button>
         <button class="script-btn" data-latex="#0_{#1}^{#2}" title="Subscript and Superscript">
-          <svg viewBox="0 0 40 40" class="script-icon">
-            <rect x="4" y="10" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-            <rect x="22" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-            <rect x="22" y="26" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-          </svg>
+          <span class="script-label">x<sub>n</sub><sup>m</sup></span>
         </button>
         <button class="script-btn" data-latex="{}_{#0}#1" title="Left Subscript">
-          <svg viewBox="0 0 40 40" class="script-icon">
-            <rect x="12" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-            <rect x="4" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
-          </svg>
+          <span class="script-label"><sub>n</sub>x</span>
         </button>
       </div>
 
@@ -555,11 +589,103 @@
       </div>
       <div class="imessage-input-row">
         <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." data-i18n-placeholder="chat.askQuestion" role="textbox" aria-multiline="true"></div>
+        <!-- Math-field input (hidden until math mode activated) -->
+        <div id="math-input-wrapper" class="math-input-wrapper" style="display:none;">
+          <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off"></math-field>
+          <button id="mk-done-btn" class="mk-done-btn" title="Insert equation and return to text">Done</button>
+        </div>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
         </button>
       </div>
+      <!-- Helper text shown when math mode is active -->
+      <div id="mk-helper-text" class="mk-helper-text" style="display:none;">
+        Type your equation below, then tap <strong>Done</strong> or <strong>Send</strong>
+      </div>
     </div>
+
+    <!-- Math Keyboard Panel (replaces native keyboard on mobile) -->
+    <div id="math-keyboard-panel" class="math-keyboard-panel" style="display:none;">
+      <div class="mk-tabs">
+        <button class="mk-tab" data-tab="abc" title="Switch to text keyboard">
+          <span class="mk-tab-icon"><i class="fas fa-keyboard"></i></span>
+          <span class="mk-tab-label">Text</span>
+        </button>
+        <button class="mk-tab" data-tab="123" title="Numbers and basic math">
+          <span class="mk-tab-icon">123</span>
+          <span class="mk-tab-label">Numbers</span>
+        </button>
+        <button class="mk-tab mk-tab-active" data-tab="math" title="Math symbols and formulas">
+          <span class="mk-tab-icon">√x</span>
+          <span class="mk-tab-label">Symbols</span>
+        </button>
+      </div>
+
+      <!-- Numbers tab -->
+      <div class="mk-page" data-page="123" style="display:none;">
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="1">1</button>
+          <button class="mk-key" data-insert="2">2</button>
+          <button class="mk-key" data-insert="3">3</button>
+          <button class="mk-key" data-insert="4">4</button>
+          <button class="mk-key" data-insert="5">5</button>
+          <button class="mk-key" data-insert="6">6</button>
+          <button class="mk-key" data-insert="7">7</button>
+          <button class="mk-key" data-insert="8">8</button>
+          <button class="mk-key" data-insert="9">9</button>
+          <button class="mk-key" data-insert="0">0</button>
+          <button class="mk-key" data-insert="+">+</button>
+          <button class="mk-key" data-insert="-">&minus;</button>
+          <button class="mk-key" data-insert="\times">&times;</button>
+          <button class="mk-key" data-insert="\div">&divide;</button>
+          <button class="mk-key" data-insert="=">=</button>
+          <button class="mk-key" data-insert="(">(</button>
+          <button class="mk-key" data-insert=")">)</button>
+          <button class="mk-key" data-insert=".">.</button>
+          <button class="mk-key" data-insert=",">,</button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
+        </div>
+      </div>
+
+      <!-- Symbols tab — grouped with clear section headers -->
+      <div class="mk-page" data-page="math">
+        <div class="mk-section-label">Common</div>
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="\frac{#0}{#1}" title="Fraction"><span class="mk-key-main">x/y</span><span class="mk-key-hint">Fraction</span></button>
+          <button class="mk-key" data-insert="\sqrt{#0}" title="Square root"><span class="mk-key-main">&radic;</span><span class="mk-key-hint">Root</span></button>
+          <button class="mk-key" data-insert="#0^{#1}" title="Power / Exponent"><span class="mk-key-main">x<sup>n</sup></span><span class="mk-key-hint">Power</span></button>
+          <button class="mk-key" data-insert="#0_{#1}" title="Subscript"><span class="mk-key-main">x<sub>n</sub></span><span class="mk-key-hint">Sub</span></button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
+        </div>
+        <div class="mk-section-label">Symbols</div>
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="\pi" title="Pi">&pi;</button>
+          <button class="mk-key" data-insert="\theta" title="Theta">&theta;</button>
+          <button class="mk-key" data-insert="\infty" title="Infinity">&infin;</button>
+          <button class="mk-key" data-insert="\pm" title="Plus or minus">&plusmn;</button>
+          <button class="mk-key" data-insert="\Delta" title="Delta / Change">&Delta;</button>
+          <button class="mk-key" data-insert="\leq" title="Less than or equal">&le;</button>
+          <button class="mk-key" data-insert="\geq" title="Greater than or equal">&ge;</button>
+          <button class="mk-key" data-insert="\neq" title="Not equal">&ne;</button>
+          <button class="mk-key" data-insert="\approx" title="Approximately">&asymp;</button>
+          <button class="mk-key" data-insert="\alpha" title="Alpha">&alpha;</button>
+        </div>
+        <div class="mk-section-label">Advanced</div>
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="\sum_{#0}^{#1}" title="Summation">&sum;</button>
+          <button class="mk-key" data-insert="\int_{#0}^{#1}" title="Integral">&int;</button>
+          <button class="mk-key" data-insert="\lim_{#0 \to #1}" title="Limit">lim</button>
+          <button class="mk-key" data-insert="\log_{#0}" title="Logarithm">log</button>
+          <button class="mk-key" data-insert="\sqrt[#1]{#0}" title="Nth root"><sup>n</sup>&radic;</button>
+          <button class="mk-key" data-insert="\beta" title="Beta">&beta;</button>
+          <button class="mk-key" data-insert="\gamma" title="Gamma">&gamma;</button>
+          <button class="mk-key" data-insert="\lambda" title="Lambda">&lambda;</button>
+          <button class="mk-key" data-insert="\sigma" title="Sigma">&sigma;</button>
+          <button class="mk-key" data-insert="\phi" title="Phi">&phi;</button>
+        </div>
+      </div>
+    </div>
+
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
 </div>

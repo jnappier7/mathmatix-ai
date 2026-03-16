@@ -105,6 +105,17 @@ class Sidebar {
             leaderboardToggle.addEventListener('click', () => this.toggleLeaderboard());
         }
 
+        // Quests expand/collapse
+        const questToggle = document.querySelector('.quest-toggle');
+        const questsContent = document.getElementById('sidebar-quests');
+        if (questToggle && questsContent) {
+            questToggle.addEventListener('click', () => {
+                this.questsExpanded = !this.questsExpanded;
+                questsContent.classList.toggle('expanded', this.questsExpanded);
+                questToggle.classList.toggle('expanded', this.questsExpanded);
+            });
+        }
+
         // New session button
         const newSessionBtn = document.getElementById('new-session-btn');
         if (newSessionBtn) {
@@ -146,7 +157,144 @@ class Sidebar {
         // Load progress data
         this.loadProgress();
 
+        // Pi Day button — show/hide based on date, scroll to quests on click
+        this.initPiDayButton();
+
         console.log('✅ Sidebar ready');
+    }
+
+    initPiDayButton() {
+        const piSection = document.getElementById('sidebar-pi-day-section');
+        const piBtn = document.getElementById('sidebar-pi-day-btn');
+        if (!piSection || !piBtn) return;
+
+        // Check if it's Pi Day via the quests API flag
+        fetch('/api/daily-quests')
+            .then(r => r.json())
+            .then(data => {
+                if (data.piDay) {
+                    piSection.style.display = '';
+                }
+            })
+            .catch(() => {});
+
+        // Open Pi Day hub panel on click
+        piBtn.addEventListener('click', () => this.openPiDayHub());
+
+        // Close hub panel
+        const closeBtn = document.getElementById('pi-day-hub-close');
+        const backdrop = document.getElementById('pi-day-hub-backdrop');
+        if (closeBtn) closeBtn.addEventListener('click', () => this.closePiDayHub());
+        if (backdrop) backdrop.addEventListener('click', () => this.closePiDayHub());
+    }
+
+    async openPiDayHub() {
+        const hub = document.getElementById('pi-day-hub');
+        if (!hub) return;
+        hub.style.display = '';
+
+        // Load quests
+        try {
+            const questRes = await fetch('/api/daily-quests');
+            const questData = await questRes.json();
+            const questsEl = document.getElementById('pi-hub-quests');
+            if (questData.success && questData.quests) {
+                questsEl.innerHTML = questData.quests.map(q => {
+                    const pct = Math.min((q.progress / q.targetCount) * 100, 100);
+                    return `<div class="pi-hub-quest-item">
+                        <span class="quest-icon">${q.icon}</span>
+                        <div style="flex:1;">
+                            <div style="font-weight:600;">${q.name}</div>
+                            <div style="font-size:11px;color:#888;">${q.description}</div>
+                            <div style="height:4px;background:#eee;border-radius:2px;margin-top:4px;">
+                                <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#ff6b9d,#c850c0);border-radius:2px;"></div>
+                            </div>
+                        </div>
+                        <span class="quest-xp">${q.completed ? '\u2705' : `+${Math.round(q.xpReward * (q.bonusMultiplier || 1))} XP`}</span>
+                    </div>`;
+                }).join('');
+            }
+        } catch (e) { console.error('Pi hub quests:', e); }
+
+        // Load mini-lessons
+        try {
+            const lessonRes = await fetch('/api/daily-quests/pi-day-lessons');
+            const lessonData = await lessonRes.json();
+            const lessonsEl = document.getElementById('pi-hub-lessons');
+            if (lessonData.success && lessonData.lessons && lessonData.lessons.length) {
+                lessonsEl.innerHTML = lessonData.lessons.map(l => `
+                    <button class="pi-hub-lesson-btn" data-prompt="${l.prompt.replace(/"/g, '&quot;')}">
+                        <span style="font-size:18px;font-weight:900;">\u03C0</span>
+                        <div style="flex:1;">
+                            <div style="font-weight:600;">${l.title}</div>
+                            ${l.gradeBand !== 'all' ? `<div style="font-size:10px;color:#888;">Grades ${l.gradeBand}</div>` : ''}
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:#ccc;font-size:11px;"></i>
+                    </button>
+                `).join('');
+                // Attach click handlers
+                lessonsEl.querySelectorAll('.pi-hub-lesson-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const prompt = btn.getAttribute('data-prompt');
+                        this.closePiDayHub();
+                        if (prompt && typeof window.sendMessage === 'function') {
+                            window.sendMessage(prompt);
+                        } else if (prompt) {
+                            const input = document.getElementById('user-input') || document.getElementById('chat-input');
+                            if (input) { input.value = prompt; input.focus(); input.dispatchEvent(new Event('input', { bubbles: true })); }
+                        }
+                    });
+                });
+            } else {
+                lessonsEl.innerHTML = '<div style="font-size:12px;color:#888;">No lessons available.</div>';
+            }
+        } catch (e) { console.error('Pi hub lessons:', e); }
+
+        // Load relevant courses (geometry, circle-related)
+        try {
+            const catRes = await fetch('/api/course-sessions/catalog');
+            const catData = await catRes.json();
+            const coursesEl = document.getElementById('pi-hub-courses');
+            const courses = catData.catalog || catData.courses;
+            if (catData.success && courses) {
+                // Surface geometry + math courses that relate to circles/pi
+                const piRelevant = ['geometry', '7th-grade-math', '6th-grade-math', 'grade-8-math', 'precalculus'];
+                const matches = courses.filter(c => piRelevant.includes(c.courseId));
+                if (matches.length) {
+                    coursesEl.innerHTML = matches.map(c => `
+                        <button class="pi-hub-course-btn" data-course-id="${c.courseId}">
+                            <span class="course-icon">${c.icon || '\uD83D\uDCD0'}</span>
+                            <div class="course-info">
+                                <div class="course-name">${c.title || c.courseId}</div>
+                                <div class="course-desc">${c.tagline || ''}</div>
+                            </div>
+                            <span style="font-size:10px;font-weight:700;color:#ff6b9d;background:rgba(255,107,157,0.12);padding:2px 7px;border-radius:10px;white-space:nowrap;">Free today!</span>
+                        </button>
+                    `).join('');
+                    // Attach click handlers to enroll / open course
+                    coursesEl.querySelectorAll('.pi-hub-course-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const courseId = btn.getAttribute('data-course-id');
+                            this.closePiDayHub();
+                            if (window.courseManager && typeof window.courseManager.enrollInCourse === 'function') {
+                                window.courseManager.enrollInCourse(courseId, null);
+                            } else {
+                                // Fallback: open browse courses catalog
+                                const browseBtn = document.getElementById('browse-courses-btn');
+                                if (browseBtn) browseBtn.click();
+                            }
+                        });
+                    });
+                } else {
+                    coursesEl.innerHTML = '<div style="font-size:12px;color:#888;">Browse all courses in the sidebar.</div>';
+                }
+            }
+        } catch (e) { console.error('Pi hub courses:', e); }
+    }
+
+    closePiDayHub() {
+        const hub = document.getElementById('pi-day-hub');
+        if (hub) hub.style.display = 'none';
     }
 
     /**

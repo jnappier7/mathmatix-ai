@@ -14,6 +14,7 @@ const express = require('express');
 const router = express.Router();
 const AdminEmail = require('../models/adminEmail');
 const User = require('../models/user');
+const Waitlist = require('../models/waitlist');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { sendBulkEmail } = require('../utils/emailService');
@@ -29,10 +30,11 @@ const { sendBulkEmail } = require('../utils/emailService');
 router.get('/audiences', isAuthenticated, isAdmin, async (req, res) => {
     try {
         // Count each audience type
-        const [studentCount, parentCount, teacherCount] = await Promise.all([
+        const [studentCount, parentCount, teacherCount, waitlistCount] = await Promise.all([
             User.countDocuments({ role: 'student', email: { $exists: true, $ne: '' } }),
             User.countDocuments({ role: 'parent', email: { $exists: true, $ne: '' } }),
-            User.countDocuments({ role: 'teacher', email: { $exists: true, $ne: '' } })
+            User.countDocuments({ role: 'teacher', email: { $exists: true, $ne: '' } }),
+            Waitlist.countDocuments({ email: { $exists: true, $ne: '' } })
         ]);
 
         // Get all classes (enrollment codes)
@@ -53,10 +55,11 @@ router.get('/audiences', isAuthenticated, isAdmin, async (req, res) => {
             audiences: {
                 all_students: { label: 'All Students', count: studentCount },
                 all_parents: { label: 'All Parents', count: parentCount },
-                all_teachers: { label: 'All Teachers', count: teacherCount }
+                all_teachers: { label: 'All Teachers', count: teacherCount },
+                waitlist: { label: 'Waitlist Signups', count: waitlistCount }
             },
             classes,
-            totalWithEmail: studentCount + parentCount + teacherCount
+            totalWithEmail: studentCount + parentCount + teacherCount + waitlistCount
         });
 
     } catch (error) {
@@ -145,7 +148,7 @@ router.post('/preview', isAuthenticated, isAdmin, async (req, res) => {
             totalRecipients: recipients.length,
             preview: recipients.slice(0, 20).map(r => ({
                 _id: r._id,
-                name: `${r.firstName} ${r.lastName}`,
+                name: (r.firstName || r.lastName) ? `${r.firstName || ''} ${r.lastName || ''}`.trim() : r.email,
                 email: r.email,
                 role: r.role
             })),
@@ -426,15 +429,16 @@ async function sendBulkEmailCampaign(campaignId) {
                 if (recipient.status !== 'pending') return;
 
                 try {
-                    // Build email body with footer
+                    // Build email body with footer (replace template variables)
+                    const bodyWithVars = campaign.body.replace(/\{\{BASE_URL\}\}/g, baseUrl);
                     const fullBody = campaign.isHtml
-                        ? `${campaign.body}
+                        ? `${bodyWithVars}
                             <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
                             <p style="font-size: 12px; color: #666; text-align: center;">
                                 This email was sent by MATHMATIX AI administration.<br>
                                 <a href="${baseUrl}/settings.html" style="color: #667eea;">Manage email preferences</a>
                             </p>`
-                        : `${campaign.body}\n\n---\nThis email was sent by MATHMATIX AI administration.`;
+                        : `${bodyWithVars}\n\n---\nThis email was sent by MATHMATIX AI administration.`;
 
                     await transport.sendMail({
                         from: `"${emailConfig.fromName}" <${emailConfig.from}>`,
@@ -444,11 +448,13 @@ async function sendBulkEmailCampaign(campaignId) {
                         [campaign.isHtml ? 'html' : 'text']: fullBody
                     });
 
-                    await campaign.updateRecipientStatus(recipient.userId, 'sent');
+                    const recipientId = recipient.userId || recipient.waitlistId;
+                    await campaign.updateRecipientStatus(recipientId, 'sent');
 
                 } catch (emailError) {
                     console.error(`[AdminEmail] Failed to send to ${recipient.email}:`, emailError.message);
-                    await campaign.updateRecipientStatus(recipient.userId, 'failed', emailError.message);
+                    const recipientId = recipient.userId || recipient.waitlistId;
+                    await campaign.updateRecipientStatus(recipientId, 'failed', emailError.message);
                 }
             }));
 
@@ -541,6 +547,73 @@ router.get('/templates', isAuthenticated, isAdmin, async (req, res) => {
 <li>Earn XP and level up</li>
 </ul>
 <p>We're here whenever you're ready to learn!</p>`
+        },
+        {
+            id: 'pi-day-launch',
+            name: 'Pi Day Launch Announcement',
+            subject: '\u03C0 We\u2019re Live! Happy Pi Day from MATHMATIX AI',
+            category: 'announcement',
+            audienceType: 'waitlist',
+            body: `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #fff;">
+
+  <!-- Header Banner -->
+  <div style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 40%, #16213e 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
+    <div style="font-size: 64px; font-weight: 900; color: #ff6b9d; text-shadow: 0 0 20px rgba(255,107,157,0.5); margin-bottom: 8px;">\u03C0</div>
+    <h1 style="color: #fff; font-size: 28px; margin: 0 0 6px;">MATHMATIX AI is Live!</h1>
+    <p style="color: rgba(255,255,255,0.8); font-size: 16px; margin: 0;">Happy Pi Day \u2014 March 14, 2026</p>
+  </div>
+
+  <!-- Body -->
+  <div style="padding: 30px; color: #333; line-height: 1.6;">
+    <p style="font-size: 16px;">You signed up for the waitlist, and we\u2019re thrilled to tell you: <strong>Mathmatix AI is officially live.</strong></p>
+
+    <p>We built Mathmatix AI because every student deserves a great math tutor \u2014 one that\u2019s patient, available 24/7, and actually knows where your child is struggling. That tutor is ready for you right now.</p>
+
+    <h2 style="color: #0f3460; font-size: 20px; margin: 24px 0 12px;">What your student gets:</h2>
+    <ul style="padding-left: 20px; font-size: 15px;">
+      <li><strong>AI math tutor</strong> that adapts to their exact level</li>
+      <li><strong>Courses</strong> from elementary through AP Calculus</li>
+      <li><strong>Mastery mode</strong> with personalized problem sets</li>
+      <li><strong>Daily quests & XP</strong> to keep them motivated</li>
+      <li><strong>Upload homework photos</strong> for step-by-step help</li>
+      <li><strong>Parent dashboard</strong> to track progress</li>
+    </ul>
+
+    <!-- Pi Day Promo -->
+    <div style="background: linear-gradient(135deg, rgba(255,107,157,0.08), rgba(200,80,192,0.08)); border: 2px solid #ff6b9d; border-radius: 12px; padding: 20px; margin: 24px 0; text-align: center;">
+      <div style="font-size: 14px; font-weight: 700; color: #ff6b9d; text-transform: uppercase; letter-spacing: 0.05em;">Pi Day Launch Special</div>
+      <div style="font-size: 36px; font-weight: 900; color: #c850c0; margin: 8px 0;">$3.14 off</div>
+      <div style="font-size: 15px; color: #555;">every plan \u2014 today and tomorrow only</div>
+      <div style="display: flex; justify-content: center; gap: 16px; margin: 16px 0; flex-wrap: wrap;">
+        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 16px; text-align: center;">
+          <div style="font-size: 11px; color: #888; text-transform: uppercase;">60 min</div>
+          <div style="font-size: 13px; color: #999; text-decoration: line-through;">$9.95</div>
+          <div style="font-size: 18px; font-weight: 700; color: #0f3460;">$6.81</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 16px; text-align: center;">
+          <div style="font-size: 11px; color: #888; text-transform: uppercase;">120 min</div>
+          <div style="font-size: 13px; color: #999; text-decoration: line-through;">$14.95</div>
+          <div style="font-size: 18px; font-weight: 700; color: #0f3460;">$11.81</div>
+        </div>
+        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 16px; text-align: center;">
+          <div style="font-size: 11px; color: #888; text-transform: uppercase;">Unlimited</div>
+          <div style="font-size: 13px; color: #999; text-decoration: line-through;">$19.95/mo</div>
+          <div style="font-size: 18px; font-weight: 700; color: #0f3460;">$16.81/mo</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: #888; margin: 0;">Every student gets <strong>10 free minutes per week</strong> \u2014 no credit card required.</p>
+    </div>
+
+    <!-- CTA Button -->
+    <div style="text-align: center; margin: 28px 0;">
+      <a href="{{BASE_URL}}/signup.html" style="display: inline-block; background: linear-gradient(135deg, #ff6b9d, #c850c0); color: #fff; padding: 14px 36px; border-radius: 10px; font-size: 17px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 16px rgba(255,107,157,0.3);">Sign Up Free \u2014 It\u2019s Pi Day!</a>
+    </div>
+
+    <p style="font-size: 14px; color: #666; text-align: center;">Thank you for believing in what we\u2019re building.<br>Let\u2019s make math click for every student.</p>
+
+    <p style="font-size: 14px; color: #333; text-align: center; margin-top: 20px;">\u2014 The Mathmatix AI Team</p>
+  </div>
+</div>`
         }
     ];
 

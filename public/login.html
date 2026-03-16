@@ -101,10 +101,12 @@
           <img src="/images/microsoft-icon.png" alt="Microsoft" />
           Continue with Microsoft
         </a>
+        <!-- Clever login hidden for now
         <a href="/auth/clever" class="social-btn clever-btn" style="background: #4274f6; color: #fff; border-color: #4274f6;" data-i18n="login.loginClever">
           <img src="/images/clever-icon.svg" alt="Clever" style="height: 20px; width: 20px;" />
           Log in with Clever
         </a>
+        -->
       </div>
 
       <p class="signup-link">
@@ -135,7 +137,7 @@
 
   <script>
     // Swap demo → signup after launch date (March 14, 2026 midnight EST)
-    if (new Date() >= new Date('2026-03-14T05:00:00Z')) {
+    if (new Date() >= new Date('2026-03-14T04:00:00Z')) {
       document.querySelectorAll('.lp-pre-launch').forEach(function (el) { el.style.display = 'none'; });
       document.querySelectorAll('.lp-post-launch').forEach(function (el) { el.style.display = ''; });
     }

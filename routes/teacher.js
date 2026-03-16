@@ -1448,7 +1448,156 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 });
 
 // ============================================
-// AI LESSON PLANNER - Streaming thought partner for teachers
+// AI TEACHING AIDE - Conversational thought partner for teachers
+// A coaching partner trained in math pedagogy with deep knowledge
+// of individual students and class-level insights.
+// ============================================
+
+/**
+ * Build a rich class snapshot for the Teaching Aide.
+ * Returns student-level profiles, class health metrics, and actionable insights.
+ */
+async function buildClassSnapshot(teacherId) {
+  const studentIds = await getStudentIdsForTeacher(teacherId);
+  const students = await User.find(
+    { _id: { $in: studentIds }, role: 'student' },
+    'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds currentStreak level xp'
+  ).lean();
+
+  if (students.length === 0) return { students: [], summary: 'No students enrolled yet.', studentProfiles: '', classHealth: '' };
+
+  const now = new Date();
+  const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000);
+
+  // Build individual student profiles
+  const profiles = students.map(s => {
+    const name = `${s.firstName || ''}`.trim() || 'Unknown';
+    const mastery = s.skillMastery ? Object.entries(s.skillMastery) : [];
+    const masteredCount = mastery.filter(([, d]) => d.status === 'mastered').length;
+    const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
+    const strugglingSkills = mastery
+      .filter(([, d]) => d.status === 'learning' && d.masteryScore !== undefined && d.masteryScore < 40)
+      .map(([id]) => id.replace(/-/g, ' '))
+      .slice(0, 3);
+
+    // IEP info
+    const acc = s.iepPlan?.accommodations || {};
+    const activeAccommodations = Object.entries(acc)
+      .filter(([k, v]) => v === true && k !== '_id')
+      .map(([k]) => k.replace(/([A-Z])/g, ' $1').toLowerCase().trim());
+    const iepGoals = s.iepPlan?.goals?.filter(g => g.status === 'active') || [];
+
+    // Activity
+    const lastActive = s.lastLogin ? new Date(s.lastLogin) : null;
+    const isActive = lastActive && lastActive > twoDaysAgo;
+    const isInactive = !lastActive || lastActive < oneWeekAgo;
+    const weeklyMinutes = s.weeklyActiveTutoringMinutes || Math.round((s.weeklyActiveSeconds || 0) / 60);
+
+    // Growth
+    const theta = s.learningProfile?.currentTheta;
+    const recentGrowth = s.learningProfile?.growthCheckHistory?.slice(-1)[0];
+    const growthStatus = recentGrowth?.growthStatus || null;
+    const confidence = s.learningProfile?.confidenceLevel;
+    const anxiety = s.learningProfile?.mathAnxietyLevel;
+
+    return {
+      name,
+      grade: s.gradeLevel,
+      course: s.mathCourse,
+      masteredCount,
+      learningCount,
+      strugglingSkills,
+      hasIEP: activeAccommodations.length > 0,
+      accommodations: activeAccommodations,
+      iepGoals: iepGoals.map(g => ({ description: g.description, progress: g.currentProgress })),
+      isActive,
+      isInactive,
+      weeklyMinutes,
+      streak: s.currentStreak || 0,
+      theta: theta !== undefined ? Math.round(theta * 100) / 100 : null,
+      growthStatus,
+      confidence,
+      anxiety,
+      level: s.level || 1
+    };
+  });
+
+  // Class health metrics
+  const activeCount = profiles.filter(p => p.isActive).length;
+  const inactiveCount = profiles.filter(p => p.isInactive).length;
+  const iepStudents = profiles.filter(p => p.hasIEP);
+  const thetaStudents = profiles.filter(p => p.theta !== null);
+  const avgTheta = thetaStudents.length > 0 ? thetaStudents.reduce((sum, p) => sum + p.theta, 0) / thetaStudents.length : 0;
+  const totalMastered = profiles.reduce((sum, p) => sum + p.masteredCount, 0);
+  const avgMastered = Math.round(totalMastered / profiles.length);
+  const gradeLevels = [...new Set(profiles.map(p => p.grade).filter(Boolean))];
+  const courses = [...new Set(profiles.map(p => p.course).filter(Boolean))];
+
+  // Identify students who need attention
+  const needsAttention = profiles.filter(p =>
+    p.isInactive || p.strugglingSkills.length > 0 || (p.anxiety !== undefined && p.anxiety >= 7)
+  );
+  const topPerformers = profiles.filter(p => p.masteredCount >= 5).sort((a, b) => b.masteredCount - a.masteredCount).slice(0, 5);
+  const risingStars = profiles.filter(p => p.growthStatus === 'significant-growth' || p.growthStatus === 'some-growth');
+
+  // Build student profiles text block
+  let studentProfilesText = 'STUDENT ROSTER & PROFILES:\n';
+  profiles.forEach(p => {
+    let line = `• ${p.name}`;
+    if (p.grade) line += ` (Grade ${p.grade})`;
+    if (p.course) line += ` — ${p.course}`;
+    line += `: ${p.masteredCount} skills mastered, ${p.learningCount} in progress`;
+    if (p.theta !== null) line += `, ability θ=${p.theta}`;
+    if (p.streak > 2) line += `, ${p.streak}-day streak`;
+    if (p.isInactive) line += ' [INACTIVE - no login this week]';
+    if (p.strugglingSkills.length > 0) line += ` | Struggling with: ${p.strugglingSkills.join(', ')}`;
+    if (p.hasIEP) {
+      line += ` | IEP: ${p.accommodations.join(', ')}`;
+      if (p.iepGoals.length > 0) line += ` | Goals: ${p.iepGoals.map(g => `${g.description} (${g.progress}%)`).join('; ')}`;
+    }
+    if (p.growthStatus) line += ` | Recent growth: ${p.growthStatus.replace(/-/g, ' ')}`;
+    if (p.anxiety !== undefined && p.anxiety >= 7) line += ' | HIGH MATH ANXIETY';
+    if (p.confidence !== undefined && p.confidence <= 3) line += ' | Low confidence';
+    studentProfilesText += line + '\n';
+  });
+
+  // Build class health text
+  let classHealthText = `CLASS HEALTH SNAPSHOT:
+- ${profiles.length} students total | Grade levels: ${gradeLevels.join(', ') || 'Mixed'} | Courses: ${courses.join(', ') || 'Various'}
+- Active this week: ${activeCount}/${profiles.length} | Inactive (7+ days): ${inactiveCount}
+- Class avg ability: θ=${Math.round(avgTheta * 100) / 100} | Avg skills mastered per student: ${avgMastered}
+- Students with IEPs: ${iepStudents.length}${iepStudents.length > 0 ? ` (${iepStudents.map(s => s.name).join(', ')})` : ''}`;
+
+  if (needsAttention.length > 0) {
+    classHealthText += `\n\nNEEDS ATTENTION:\n`;
+    needsAttention.forEach(p => {
+      const reasons = [];
+      if (p.isInactive) reasons.push('inactive');
+      if (p.strugglingSkills.length > 0) reasons.push(`struggling with ${p.strugglingSkills.join(', ')}`);
+      if (p.anxiety !== undefined && p.anxiety >= 7) reasons.push('high math anxiety');
+      classHealthText += `- ${p.name}: ${reasons.join(', ')}\n`;
+    });
+  }
+
+  if (topPerformers.length > 0) {
+    classHealthText += `\nTOP PERFORMERS: ${topPerformers.map(p => `${p.name} (${p.masteredCount} mastered)`).join(', ')}`;
+  }
+  if (risingStars.length > 0) {
+    classHealthText += `\nSHOWING GROWTH: ${risingStars.map(p => p.name).join(', ')}`;
+  }
+
+  return {
+    students: profiles,
+    studentProfiles: studentProfilesText,
+    classHealth: classHealthText,
+    summary: `${profiles.length} students, ${activeCount} active, ${iepStudents.length} with IEPs`,
+    needsAttention,
+    topPerformers,
+    risingStars
+  };
+}
+
 // POST /api/teacher/lesson-planner
 // ============================================
 router.post('/lesson-planner', isTeacher, async (req, res) => {
@@ -1460,31 +1609,28 @@ router.post('/lesson-planner', isTeacher, async (req, res) => {
       return res.status(400).json({ message: 'Prompt is required.' });
     }
 
-    // Get teacher's AI settings and class info
-    const teacher = await User.findById(teacherId, 'firstName lastName classAISettings').lean();
-    const students = await User.find(
-      { role: 'student', teacherId },
-      'firstName gradeLevel mathCourse iepPlan skillMastery'
-    ).lean();
+    // Get teacher info and rich class snapshot in parallel
+    const [teacher, classSnapshot] = await Promise.all([
+      User.findById(teacherId, 'firstName lastName classAISettings').lean(),
+      buildClassSnapshot(teacherId)
+    ]);
 
-    // Build context about the class
-    const gradeLevels = [...new Set(students.map(s => s.gradeLevel).filter(Boolean))];
-    const courses = [...new Set(students.map(s => s.mathCourse).filter(Boolean))];
-    const iepCount = students.filter(s => {
-      const acc = s.iepPlan?.accommodations;
-      return acc && Object.values(acc).some(v => v === true);
-    }).length;
-
-    // Build skill gaps context if provided
+    // Build skill gaps context
     let gapsContext = '';
     if (skillGaps && skillGaps.length > 0) {
       gapsContext = '\n\nCLASS SKILL GAPS (skills where students need the most help):\n';
-      skillGaps.slice(0, 10).forEach(gap => {
-        gapsContext += `- ${gap.displayName}: ${gap.mastered}/${gap.totalStudents} mastered, ${gap.learning} learning, ${gap.notMasteredCount} not mastered`;
+      skillGaps.slice(0, 15).forEach(gap => {
+        gapsContext += `- **${gap.displayName}**: ${gap.mastered}/${gap.totalStudents} mastered, ${gap.learning} learning, ${gap.notMasteredCount} not mastered`;
         if (gap.teachingGuidance) {
           if (gap.teachingGuidance.commonMistakes && gap.teachingGuidance.commonMistakes.length > 0) {
-            gapsContext += ` | Common mistakes: ${gap.teachingGuidance.commonMistakes.slice(0, 2).join('; ')}`;
+            gapsContext += ` | Common mistakes: ${gap.teachingGuidance.commonMistakes.slice(0, 3).join('; ')}`;
           }
+          if (gap.teachingGuidance.suggestedApproaches && gap.teachingGuidance.suggestedApproaches.length > 0) {
+            gapsContext += ` | Suggested approaches: ${gap.teachingGuidance.suggestedApproaches.slice(0, 2).join('; ')}`;
+          }
+        }
+        if (gap.strugglingStudents && gap.strugglingStudents.length > 0) {
+          gapsContext += ` | Students struggling: ${gap.strugglingStudents.map(s => s.name).join(', ')}`;
         }
         gapsContext += '\n';
       });
@@ -1496,41 +1642,77 @@ router.post('/lesson-planner', isTeacher, async (req, res) => {
     if (settings) {
       const parts = [];
       if (settings.currentTeaching?.topic) parts.push(`Currently teaching: ${settings.currentTeaching.topic}`);
-      if (settings.currentTeaching?.approach) parts.push(`Teaching approach: ${settings.currentTeaching.approach}`);
-      if (settings.solutionApproaches?.wordProblems) parts.push(`Word problem strategy: ${settings.solutionApproaches.wordProblems}`);
-      if (settings.vocabularyPreferences?.orderOfOperations) parts.push(`Order of operations: ${settings.vocabularyPreferences.orderOfOperations}`);
+      if (settings.currentTeaching?.approach) parts.push(`Preferred teaching approach: ${settings.currentTeaching.approach}`);
+      if (settings.currentTeaching?.pacing) parts.push(`Pacing notes: ${settings.currentTeaching.pacing}`);
+      if (settings.solutionApproaches) {
+        const approaches = [];
+        if (settings.solutionApproaches.wordProblems && settings.solutionApproaches.wordProblems !== 'any') approaches.push(`Word problems: ${settings.solutionApproaches.wordProblems}`);
+        if (settings.solutionApproaches.equationSolving && settings.solutionApproaches.equationSolving !== 'any') approaches.push(`Equations: ${settings.solutionApproaches.equationSolving}`);
+        if (settings.solutionApproaches.fractionOperations && settings.solutionApproaches.fractionOperations !== 'any') approaches.push(`Fractions: ${settings.solutionApproaches.fractionOperations}`);
+        if (approaches.length > 0) parts.push(`Solution approaches: ${approaches.join(', ')}`);
+      }
+      if (settings.vocabularyPreferences?.orderOfOperations) parts.push(`Order of operations vocabulary: ${settings.vocabularyPreferences.orderOfOperations}`);
+      if (settings.vocabularyPreferences?.customVocabulary?.length > 0) parts.push(`Custom vocabulary: ${settings.vocabularyPreferences.customVocabulary.join(', ')}`);
+      if (settings.manipulatives?.preferred?.length > 0) parts.push(`Preferred manipulatives: ${settings.manipulatives.preferred.join(', ')}`);
       if (settings.responseStyle?.errorCorrectionStyle) parts.push(`Error correction style: ${settings.responseStyle.errorCorrectionStyle}`);
-      if (parts.length > 0) settingsContext = '\n\nTEACHER AI PREFERENCES:\n' + parts.join('\n');
+      if (settings.scaffoldingLevel) parts.push(`Scaffolding level: ${settings.scaffoldingLevel}/5`);
+      if (parts.length > 0) settingsContext = '\n\nTEACHER PREFERENCES & CLASSROOM NORMS:\n' + parts.join('\n');
     }
 
-    const systemPrompt = `You are a helpful and experienced math instructional coach and lesson planning partner for a teacher using MATHMATIX AI, an adaptive math tutoring platform.
+    // Determine the current school quarter
+    const month = new Date().getMonth(); // 0-indexed
+    const quarter = month >= 7 && month <= 9 ? 'Q1 (Fall)' : month >= 10 || month === 0 ? 'Q2 (Winter)' : month >= 1 && month <= 3 ? 'Q3 (Spring)' : 'Q4 (Summer)';
 
-CLASS OVERVIEW:
-- ${students.length} students total
-- Grade levels: ${gradeLevels.join(', ') || 'Mixed'}
-- Math courses: ${courses.join(', ') || 'Various'}
-- Students with IEP accommodations: ${iepCount}
+    const systemPrompt = `You are an expert math instructional coach and teaching aide embedded in the MATHMATIX AI platform. You have deep expertise in mathematics pedagogy, evidence-based teaching strategies, and differentiated instruction. You know every student in this class by name and can provide specific, actionable guidance.
+
+You are like a brilliant co-teacher sitting in the room — you've watched every student work, you know their data, and you can have a real conversation with the teacher about what's happening and what to do next.
+
+TODAY: ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} | Academic Period: ${quarter}
+
+${classSnapshot.classHealth}
+
+${classSnapshot.studentProfiles}
 ${gapsContext}${settingsContext}
 
-YOUR ROLE:
-- Help the teacher plan effective math lessons based on their class data
-- Suggest differentiation strategies for mixed-ability classrooms
-- Reference specific skill gaps when recommending focus areas
-- Propose warm-up activities, mini-lessons, guided practice, and independent work
-- Consider IEP accommodations when suggesting activities
-- Be practical and specific — give ready-to-use suggestions, not abstract theory
-- If the teacher asks about a specific skill or topic, reference the skill gap data
-- Keep responses focused and actionable
-- Use markdown formatting: headers (####), bullet points, bold for emphasis
+YOUR EXPERTISE & APPROACH:
 
-Respond conversationally as a thought partner, not a textbook.`;
+**Math Pedagogy Knowledge:**
+- CRA Progression (Concrete → Representational → Abstract): Know when students need manipulatives vs. visual models vs. symbolic work
+- Common math misconceptions by topic: e.g., "multiplication always makes bigger," fraction ordering by denominator size, sign errors in integer operations, "distribute the exponent" errors
+- Mathematical discourse moves: revoicing, pressing for reasoning ("Can you explain why?"), wait time, think-pair-share, number talks
+- Formative assessment techniques: exit tickets, whiteboard checks, error analysis tasks, student-generated examples
+- Research-backed strategies: interleaving practice, spaced retrieval, worked examples fading, compare-and-contrast tasks
+
+**Differentiation & Intervention:**
+- Tier 1/2/3 intervention framework: What to try before escalating
+- Flexible grouping strategies based on actual student data (not just "high/medium/low")
+- Scaffolding techniques: sentence frames, graphic organizers, anchor charts, partially worked examples
+- Extension activities for advanced students that deepen understanding (not just more problems)
+- IEP accommodation implementation: How to honor specific accommodations in lesson design
+
+**Coaching Stance:**
+- Ask clarifying questions when the teacher's intent is unclear — don't assume
+- Offer 2-3 options when there are legitimate pedagogical trade-offs
+- Push thinking: "Have you considered..." or "One thing I notice in the data is..."
+- Be honest about what the data shows, even if it's hard news
+- Celebrate bright spots — point out students who are growing
+
+HOW TO RESPOND:
+- When asked about a SPECIFIC STUDENT: Reference their actual data — skills mastered, current struggles, IEP needs, activity level, growth trajectory. Be specific.
+- When asked for a CLASS SNAPSHOT: Give a holistic read — who's thriving, who needs help, what patterns you see, what the data says about instructional priorities.
+- When asked about LESSON PLANNING: Design around the actual skill gaps and student needs. Name students when suggesting groups. Reference accommodations. Include timing estimates.
+- When asked about a SKILL or TOPIC: Connect to the class data — who has mastered it, who's struggling, what misconceptions are likely, what the research says about teaching it.
+- When asked about STRATEGIES or PEDAGOGY: Ground it in evidence, but make it practical. Give the teacher something they can use tomorrow.
+- Be conversational and direct. No jargon without explanation. No generic advice — always tie back to THIS class and THESE students.
+- Use markdown: #### headers, **bold** for names and key points, bullet lists, numbered steps for procedures.
+- Keep responses focused and actionable. If the question is narrow, answer narrowly. If it's broad, provide structure but offer to go deeper.`;
 
     // Build messages array
     const messages = [{ role: 'system', content: systemPrompt }];
 
-    // Add conversation history (last 6 exchanges max)
+    // Add conversation history (last 10 exchanges max)
     if (conversationHistory && Array.isArray(conversationHistory)) {
-      const recent = conversationHistory.slice(-12); // 6 pairs
+      const recent = conversationHistory.slice(-20); // 10 pairs
       recent.forEach(msg => {
         if (msg.role === 'user' || msg.role === 'assistant') {
           messages.push({ role: msg.role, content: msg.content });
@@ -1547,7 +1729,7 @@ Respond conversationally as a thought partner, not a textbook.`;
     res.setHeader('X-Accel-Buffering', 'no');
 
     const stream = await callLLMStream('gpt-4o-mini', messages, {
-      max_tokens: 2000,
+      max_tokens: 4000,
       temperature: 0.7
     });
 
@@ -1570,6 +1752,30 @@ Respond conversationally as a thought partner, not a textbook.`;
       res.write(`data: ${JSON.stringify({ error: 'Stream interrupted' })}\n\n`);
       res.end();
     }
+  }
+});
+
+// GET /api/teacher/class-snapshot
+// Returns class health data for dynamic frontend suggestion chips
+// ============================================
+router.get('/class-snapshot', isTeacher, async (req, res) => {
+  try {
+    const snapshot = await buildClassSnapshot(req.user._id);
+    res.json({
+      studentCount: snapshot.students.length,
+      needsAttention: snapshot.needsAttention.map(s => ({ name: s.name, reasons: [
+        s.isInactive ? 'inactive' : null,
+        s.strugglingSkills.length > 0 ? `struggling with ${s.strugglingSkills.join(', ')}` : null,
+        s.anxiety !== undefined && s.anxiety >= 7 ? 'high math anxiety' : null
+      ].filter(Boolean) })),
+      topPerformers: snapshot.topPerformers.map(s => ({ name: s.name, mastered: s.masteredCount })),
+      risingStars: snapshot.risingStars.map(s => s.name),
+      iepStudents: snapshot.students.filter(s => s.hasIEP).map(s => s.name),
+      inactiveStudents: snapshot.students.filter(s => s.isInactive).map(s => s.name)
+    });
+  } catch (err) {
+    console.error('Error fetching class snapshot:', err);
+    res.status(500).json({ message: 'Error fetching class snapshot.' });
   }
 });
 
