@@ -651,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ALLOWED_ATTR: [
                     'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
                     // SVG attributes
-                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'preserveAspectRatio',
                     'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
                     'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
                     // Form/interactive attributes
