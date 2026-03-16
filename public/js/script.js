@@ -2406,12 +2406,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const isMobileView = () => window.innerWidth <= 768;
     let eqBackdrop = null;
 
+    // Store the palette's original parent so we can restore it after mobile close
+    const paletteOriginalParent = inlineEquationPalette ? inlineEquationPalette.parentElement : null;
+    const paletteOriginalNextSibling = inlineEquationPalette ? inlineEquationPalette.nextElementSibling : null;
+
     function openEquationPalette() {
         if (!inlineEquationPalette) return;
-        inlineEquationPalette.style.display = 'block';
 
-        // On mobile, show backdrop overlay behind the bottom sheet
+        // On mobile, move palette to body so it escapes #input-container's
+        // stacking context (z-index:100) — otherwise the backdrop (z-index:1000
+        // on body) covers the palette and intercepts all taps.
         if (isMobileView()) {
+            if (inlineEquationPalette.parentElement !== document.body) {
+                document.body.appendChild(inlineEquationPalette);
+            }
+
             if (!eqBackdrop) {
                 eqBackdrop = document.createElement('div');
                 eqBackdrop.className = 'equation-palette-backdrop';
@@ -2428,6 +2437,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        inlineEquationPalette.style.display = 'block';
         const field = getActiveMathField();
         if (field) setTimeout(() => field.focus(), 100);
     }
@@ -2436,6 +2446,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
         if (eqBackdrop && eqBackdrop.parentNode) {
             eqBackdrop.parentNode.removeChild(eqBackdrop);
+        }
+        // Restore palette to its original position in the DOM
+        if (inlineEquationPalette && paletteOriginalParent && inlineEquationPalette.parentElement === document.body) {
+            if (paletteOriginalNextSibling) {
+                paletteOriginalParent.insertBefore(inlineEquationPalette, paletteOriginalNextSibling);
+            } else {
+                paletteOriginalParent.appendChild(inlineEquationPalette);
+            }
         }
     }
 
@@ -2476,8 +2494,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { passive: true });
 
         inlineEquationPalette.addEventListener('touchend', () => {
+            if (!touchStartY) {
+                // Touch didn't start on the header — ignore
+                return;
+            }
             const dy = touchCurrentY - touchStartY;
             touchStartY = 0;
+            touchCurrentY = 0;
             if (dy > 80) {
                 // Swiped down enough — dismiss
                 closeEquationPalette();
