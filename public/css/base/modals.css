@@ -241,6 +241,18 @@
     transition: color 0.2s;
 }
 
+.script-label {
+    font-size: 1.2em;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: #e0e0e0;
+    letter-spacing: 0.5px;
+}
+
+.script-label sup,
+.script-label sub {
+    font-size: 0.65em;
+}
+
 /* Palette keyboard tip */
 .palette-tip {
     font-size: 0.75em;

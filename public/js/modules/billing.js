@@ -54,7 +54,7 @@ export function updateFreeTimeIndicator(usage) {
     if (!indicator) {
         indicator = document.createElement('div');
         indicator.id = 'free-time-indicator';
-        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9000;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
+        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:1750;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
         indicator.title = 'AI processing time only — reading and thinking time is free';
         indicator.addEventListener('click', () => showUpgradePrompt({}));
         document.body.appendChild(indicator);
