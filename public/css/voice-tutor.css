@@ -25,10 +25,11 @@ html, body {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(18, 179, 179, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(102, 126, 234, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 59, 127, 0.03) 0%, transparent 50%),
-    linear-gradient(180deg, #0a0a1a 0%, #0d1025 50%, #0a0a1a 100%);
+    radial-gradient(ellipse 90% 70% at 15% 85%, rgba(18, 179, 179, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 85% 15%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 60%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 70% 70%, rgba(255, 59, 127, 0.03) 0%, transparent 40%),
+    linear-gradient(180deg, #080818 0%, #0c0f28 40%, #0a0d22 70%, #080818 100%);
 }
 
 #vt-particle-canvas {
@@ -85,6 +86,17 @@ html, body {
   color: #8892b0;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+.vt-session-timer {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #5a6380;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px 10px;
+  border-radius: 10px;
+  letter-spacing: 1px;
 }
 
 .vt-header-actions {
@@ -149,30 +161,27 @@ html, body {
 
 .vt-canvas-placeholder {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  opacity: 0.3;
+  justify-content: center;
+  opacity: 0.25;
   transition: opacity 0.6s;
+  padding-top: 60px;
 }
 
 .vt-canvas-placeholder.hidden { opacity: 0; pointer-events: none; }
 
-.vt-canvas-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+.vt-canvas-placeholder p {
+  font-size: 13px;
+  color: #5a6380;
+  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  color: rgba(18, 179, 179, 0.4);
+  gap: 8px;
 }
 
-.vt-canvas-placeholder p {
-  font-size: 15px;
-  color: #7a84a0;
+.vt-canvas-placeholder p i {
+  font-size: 14px;
+  color: rgba(18, 179, 179, 0.3);
 }
 
 /* Math display area */
@@ -260,8 +269,8 @@ html, body {
 /* --- Rings (behind the avatar) --- */
 .vt-presence-rings {
   position: absolute;
-  width: 180px;
-  height: 180px;
+  width: 240px;
+  height: 240px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, calc(-50% - 8px)); /* offset for status text */
@@ -277,18 +286,18 @@ html, body {
   transition: border-color 0.5s, box-shadow 0.5s, transform 0.5s;
 }
 
-.vt-ring-inner  { width: 140px; height: 140px; }
-.vt-ring-mid    { width: 160px; height: 160px; }
-.vt-ring-outer  { width: 180px; height: 180px; }
+.vt-ring-inner  { width: 184px; height: 184px; }
+.vt-ring-mid    { width: 210px; height: 210px; }
+.vt-ring-outer  { width: 240px; height: 240px; }
 
 /* --- Avatar circle (photo + waveform overlay) --- */
 .vt-avatar-circle {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.08);
+  border: 3px solid rgba(255, 255, 255, 0.1);
   background: #0d0d20;
   transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
   z-index: 2;
@@ -316,8 +325,8 @@ html, body {
 /* --- Glow (behind everything) --- */
 .vt-presence-glow {
   position: absolute;
-  width: 260px;
-  height: 260px;
+  width: 340px;
+  height: 340px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, calc(-50% - 8px));
@@ -379,23 +388,25 @@ html, body {
    STATE: LISTENING — teal pulse rings
    ═══════════════════════════════════════ */
 .vt-presence[data-state="listening"] .vt-avatar-circle {
-  border-color: rgba(18, 179, 179, 0.5);
-  box-shadow: 0 0 20px rgba(18, 179, 179, 0.15), 0 0 60px rgba(18, 179, 179, 0.05);
+  border-color: rgba(18, 179, 179, 0.6);
+  box-shadow: 0 0 30px rgba(18, 179, 179, 0.2), 0 0 80px rgba(18, 179, 179, 0.08);
   animation: none;
 }
 .vt-presence[data-state="listening"] .vt-tutor-face {
   filter: brightness(1) saturate(1);
 }
 .vt-presence[data-state="listening"] .vt-ring-inner {
-  border-color: rgba(18, 179, 179, 0.35);
+  border-width: 3px;
+  border-color: rgba(18, 179, 179, 0.4);
   animation: vt-listen-ring 2s ease-out infinite;
 }
 .vt-presence[data-state="listening"] .vt-ring-mid {
-  border-color: rgba(18, 179, 179, 0.2);
+  border-width: 2px;
+  border-color: rgba(18, 179, 179, 0.25);
   animation: vt-listen-ring 2s ease-out 0.4s infinite;
 }
 .vt-presence[data-state="listening"] .vt-ring-outer {
-  border-color: rgba(18, 179, 179, 0.1);
+  border-color: rgba(18, 179, 179, 0.12);
   animation: vt-listen-ring 2s ease-out 0.8s infinite;
 }
 .vt-presence[data-state="listening"] .vt-presence-glow {
@@ -461,8 +472,8 @@ html, body {
    STATE: SPEAKING — indigo/purple glow + pulse
    ═══════════════════════════════════════ */
 .vt-presence[data-state="speaking"] .vt-avatar-circle {
-  border-color: rgba(102, 126, 234, 0.5);
-  box-shadow: 0 0 25px rgba(102, 126, 234, 0.2), 0 0 80px rgba(102, 126, 234, 0.06);
+  border-color: rgba(102, 126, 234, 0.6);
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.25), 0 0 100px rgba(102, 126, 234, 0.1), 0 0 160px rgba(118, 75, 162, 0.05);
   animation: vt-speak-pulse 1.5s ease-in-out infinite;
 }
 .vt-presence[data-state="speaking"] .vt-tutor-face {
@@ -540,10 +551,11 @@ html, body {
   min-width: 300px;
   display: flex;
   flex-direction: column;
-  background: rgba(15, 17, 35, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(12, 14, 30, 0.85);
+  backdrop-filter: blur(30px) saturate(1.2);
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.3);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), width 0.4s;
 }
 
@@ -713,14 +725,29 @@ html, body {
   position: relative;
   z-index: 10;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 24px;
-  padding: 16px 20px;
-  background: rgba(10, 10, 26, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  gap: 32px;
+  padding: 16px 20px 20px;
+  background: rgba(8, 8, 22, 0.85);
+  backdrop-filter: blur(30px) saturate(1.2);
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
   border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.vt-control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.vt-control-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #5a6380;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .vt-control-btn {
@@ -934,12 +961,12 @@ html, body {
     backdrop-filter: blur(10px);
   }
 
-  .vt-avatar-circle { width: 90px; height: 90px; }
-  .vt-ring-inner  { width: 110px !important; height: 110px !important; }
-  .vt-ring-mid    { width: 126px !important; height: 126px !important; }
-  .vt-ring-outer  { width: 142px !important; height: 142px !important; }
-  .vt-presence-rings { width: 142px; height: 142px; }
-  .vt-presence-glow { width: 200px; height: 200px; }
+  .vt-avatar-circle { width: 110px; height: 110px; }
+  .vt-ring-inner  { width: 134px !important; height: 134px !important; }
+  .vt-ring-mid    { width: 154px !important; height: 154px !important; }
+  .vt-ring-outer  { width: 176px !important; height: 176px !important; }
+  .vt-presence-rings { width: 176px; height: 176px; }
+  .vt-presence-glow { width: 240px; height: 240px; }
 
   .vt-mic-btn { width: 60px; height: 60px; font-size: 22px; }
   .vt-end-btn, .vt-mute-btn { width: 44px; height: 44px; }
@@ -953,7 +980,8 @@ html, body {
 @media (max-width: 480px) {
   .vt-header { padding: 10px 14px; }
   .vt-session-label { display: none; }
-  .vt-controls { gap: 16px; padding: 12px 16px; }
+  .vt-controls { gap: 20px; padding: 12px 16px 16px; }
+  .vt-control-label { font-size: 9px; }
 }
 
 /* --- Reduced motion --- */
