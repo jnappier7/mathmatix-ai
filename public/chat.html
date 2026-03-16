@@ -585,21 +585,38 @@
       <div class="imessage-input-row">
         <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." data-i18n-placeholder="chat.askQuestion" role="textbox" aria-multiline="true"></div>
         <!-- Math-field input (hidden until math mode activated) -->
-        <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off" style="display:none;"></math-field>
+        <div id="math-input-wrapper" class="math-input-wrapper" style="display:none;">
+          <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off"></math-field>
+          <button id="mk-done-btn" class="mk-done-btn" title="Insert equation and return to text">Done</button>
+        </div>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
         </button>
+      </div>
+      <!-- Helper text shown when math mode is active -->
+      <div id="mk-helper-text" class="mk-helper-text" style="display:none;">
+        Type your equation below, then tap <strong>Done</strong> or <strong>Send</strong>
       </div>
     </div>
 
     <!-- Math Keyboard Panel (replaces native keyboard on mobile) -->
     <div id="math-keyboard-panel" class="math-keyboard-panel" style="display:none;">
       <div class="mk-tabs">
-        <button class="mk-tab" data-tab="abc" title="Text keyboard">ABC</button>
-        <button class="mk-tab" data-tab="123" title="Numbers & operations">123</button>
-        <button class="mk-tab mk-tab-active" data-tab="math" title="Math symbols">√x</button>
+        <button class="mk-tab" data-tab="abc" title="Switch to text keyboard">
+          <span class="mk-tab-icon"><i class="fas fa-keyboard"></i></span>
+          <span class="mk-tab-label">Text</span>
+        </button>
+        <button class="mk-tab" data-tab="123" title="Numbers and basic math">
+          <span class="mk-tab-icon">123</span>
+          <span class="mk-tab-label">Numbers</span>
+        </button>
+        <button class="mk-tab mk-tab-active" data-tab="math" title="Math symbols and formulas">
+          <span class="mk-tab-icon">√x</span>
+          <span class="mk-tab-label">Symbols</span>
+        </button>
       </div>
-      <!-- 123 tab: number pad + common operations -->
+
+      <!-- Numbers tab -->
       <div class="mk-page" data-page="123" style="display:none;">
         <div class="mk-grid mk-grid-5">
           <button class="mk-key" data-insert="1">1</button>
@@ -613,44 +630,53 @@
           <button class="mk-key" data-insert="9">9</button>
           <button class="mk-key" data-insert="0">0</button>
           <button class="mk-key" data-insert="+">+</button>
-          <button class="mk-key" data-insert="-">−</button>
-          <button class="mk-key" data-insert="\times">×</button>
-          <button class="mk-key" data-insert="\div">÷</button>
+          <button class="mk-key" data-insert="-">&minus;</button>
+          <button class="mk-key" data-insert="\times">&times;</button>
+          <button class="mk-key" data-insert="\div">&divide;</button>
           <button class="mk-key" data-insert="=">=</button>
           <button class="mk-key" data-insert="(">(</button>
           <button class="mk-key" data-insert=")">)</button>
           <button class="mk-key" data-insert=".">.</button>
           <button class="mk-key" data-insert=",">,</button>
-          <button class="mk-key mk-key-action" data-command="deleteBackward"><i class="fas fa-delete-left"></i></button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
         </div>
       </div>
-      <!-- Math tab: symbols, templates, Greek -->
+
+      <!-- Symbols tab — grouped with clear section headers -->
       <div class="mk-page" data-page="math">
+        <div class="mk-section-label">Common</div>
         <div class="mk-grid mk-grid-5">
-          <!-- Templates -->
-          <button class="mk-key" data-insert="\frac{#0}{#1}" title="Fraction">x/y</button>
-          <button class="mk-key" data-insert="\sqrt{#0}" title="Square root">√</button>
-          <button class="mk-key" data-insert="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
-          <button class="mk-key" data-insert="#0^{#1}" title="Superscript">x<sup>n</sup></button>
-          <button class="mk-key" data-insert="#0_{#1}" title="Subscript">x<sub>n</sub></button>
-          <!-- Calculus -->
-          <button class="mk-key" data-insert="\sum_{#0}^{#1}" title="Sum">∑</button>
-          <button class="mk-key" data-insert="\int_{#0}^{#1}" title="Integral">∫</button>
+          <button class="mk-key" data-insert="\frac{#0}{#1}" title="Fraction"><span class="mk-key-main">x/y</span><span class="mk-key-hint">Fraction</span></button>
+          <button class="mk-key" data-insert="\sqrt{#0}" title="Square root"><span class="mk-key-main">&radic;</span><span class="mk-key-hint">Root</span></button>
+          <button class="mk-key" data-insert="#0^{#1}" title="Power / Exponent"><span class="mk-key-main">x<sup>n</sup></span><span class="mk-key-hint">Power</span></button>
+          <button class="mk-key" data-insert="#0_{#1}" title="Subscript"><span class="mk-key-main">x<sub>n</sub></span><span class="mk-key-hint">Sub</span></button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
+        </div>
+        <div class="mk-section-label">Symbols</div>
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="\pi" title="Pi">&pi;</button>
+          <button class="mk-key" data-insert="\theta" title="Theta">&theta;</button>
+          <button class="mk-key" data-insert="\infty" title="Infinity">&infin;</button>
+          <button class="mk-key" data-insert="\pm" title="Plus or minus">&plusmn;</button>
+          <button class="mk-key" data-insert="\Delta" title="Delta / Change">&Delta;</button>
+          <button class="mk-key" data-insert="\leq" title="Less than or equal">&le;</button>
+          <button class="mk-key" data-insert="\geq" title="Greater than or equal">&ge;</button>
+          <button class="mk-key" data-insert="\neq" title="Not equal">&ne;</button>
+          <button class="mk-key" data-insert="\approx" title="Approximately">&asymp;</button>
+          <button class="mk-key" data-insert="\alpha" title="Alpha">&alpha;</button>
+        </div>
+        <div class="mk-section-label">Advanced</div>
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="\sum_{#0}^{#1}" title="Summation">&sum;</button>
+          <button class="mk-key" data-insert="\int_{#0}^{#1}" title="Integral">&int;</button>
           <button class="mk-key" data-insert="\lim_{#0 \to #1}" title="Limit">lim</button>
-          <button class="mk-key" data-insert="\log_{#0}" title="Log">log</button>
-          <button class="mk-key" data-insert="\infty" title="Infinity">∞</button>
-          <!-- Greek -->
-          <button class="mk-key" data-insert="\pi" title="Pi">π</button>
-          <button class="mk-key" data-insert="\theta" title="Theta">θ</button>
-          <button class="mk-key" data-insert="\alpha" title="Alpha">α</button>
-          <button class="mk-key" data-insert="\beta" title="Beta">β</button>
-          <button class="mk-key" data-insert="\Delta" title="Delta">Δ</button>
-          <!-- Comparisons & symbols -->
-          <button class="mk-key" data-insert="\leq" title="Less or equal">≤</button>
-          <button class="mk-key" data-insert="\geq" title="Greater or equal">≥</button>
-          <button class="mk-key" data-insert="\neq" title="Not equal">≠</button>
-          <button class="mk-key" data-insert="\approx" title="Approximately">≈</button>
-          <button class="mk-key" data-insert="\pm" title="Plus-minus">±</button>
+          <button class="mk-key" data-insert="\log_{#0}" title="Logarithm">log</button>
+          <button class="mk-key" data-insert="\sqrt[#1]{#0}" title="Nth root"><sup>n</sup>&radic;</button>
+          <button class="mk-key" data-insert="\beta" title="Beta">&beta;</button>
+          <button class="mk-key" data-insert="\gamma" title="Gamma">&gamma;</button>
+          <button class="mk-key" data-insert="\lambda" title="Lambda">&lambda;</button>
+          <button class="mk-key" data-insert="\sigma" title="Sigma">&sigma;</button>
+          <button class="mk-key" data-insert="\phi" title="Phi">&phi;</button>
         </div>
       </div>
     </div>

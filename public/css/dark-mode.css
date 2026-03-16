@@ -645,12 +645,19 @@
 [data-theme="dark"] .mk-tabs {
     border-bottom-color: #243040;
 }
-[data-theme="dark"] .mk-tab {
+[data-theme="dark"] .mk-tab-icon,
+[data-theme="dark"] .mk-tab-label {
     color: #8899aa;
 }
-[data-theme="dark"] .mk-tab-active {
+[data-theme="dark"] .mk-tab-active .mk-tab-icon,
+[data-theme="dark"] .mk-tab-active .mk-tab-label {
     color: #5ac8fa;
+}
+[data-theme="dark"] .mk-tab-active {
     border-bottom-color: #5ac8fa;
+}
+[data-theme="dark"] .mk-section-label {
+    color: #667788;
 }
 [data-theme="dark"] .mk-key {
     background: #1A2633;
@@ -664,10 +671,23 @@
 [data-theme="dark"] .mk-key-action {
     background: #243040;
 }
+[data-theme="dark"] .mk-key-hint {
+    color: #667788;
+}
 [data-theme="dark"] .math-keyboard-field {
     background: #1A2633;
-    border-color: rgba(90, 200, 250, 0.4);
+    border-color: rgba(90, 200, 250, 0.5);
     color: var(--text-primary, #e0e0e0);
+}
+[data-theme="dark"] .mk-done-btn {
+    background: #5ac8fa;
+    color: #0a1520;
+}
+[data-theme="dark"] .mk-helper-text {
+    color: #667788;
+}
+[data-theme="dark"] .mk-helper-text strong {
+    color: #5ac8fa;
 }
 
 /* Transition for smooth theme switching */

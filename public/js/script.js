@@ -1447,8 +1447,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function sendMessage() {
         // If math keyboard is active, grab its content first
         const mkFieldEl = document.getElementById('math-keyboard-field');
+        const mkWrapperEl = document.getElementById('math-input-wrapper');
         let mathLatex = '';
-        if (mkFieldEl && mkFieldEl.style.display !== 'none') {
+        if (mkFieldEl && mkWrapperEl && mkWrapperEl.style.display !== 'none') {
             mathLatex = (mkFieldEl.value || '').trim();
         }
 
@@ -1466,8 +1467,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (typeof mathModeOn !== 'undefined' && mathModeOn && mkFieldEl) {
             mkFieldEl.value = ''; // already captured
             const mkPanelEl = document.getElementById('math-keyboard-panel');
+            const mkHelperEl = document.getElementById('mk-helper-text');
             if (mkPanelEl) mkPanelEl.style.display = 'none';
-            mkFieldEl.style.display = 'none';
+            if (mkWrapperEl) mkWrapperEl.style.display = 'none';
+            if (mkHelperEl) mkHelperEl.style.display = 'none';
             userInput.style.display = '';
             if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
             mathModeOn = false;
@@ -2715,29 +2718,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // ─── Math Keyboard Panel (inline, no overlay) ─────────────────────
-    const mkPanel     = document.getElementById('math-keyboard-panel');
-    const mkField     = document.getElementById('math-keyboard-field');
-    const mkTabs      = mkPanel ? mkPanel.querySelectorAll('.mk-tab') : [];
-    const mkPages     = mkPanel ? mkPanel.querySelectorAll('.mk-page') : [];
-    let   mathModeOn  = false;
+    const mkPanel      = document.getElementById('math-keyboard-panel');
+    const mkField      = document.getElementById('math-keyboard-field');
+    const mkWrapper    = document.getElementById('math-input-wrapper');
+    const mkDoneBtn    = document.getElementById('mk-done-btn');
+    const mkHelperText = document.getElementById('mk-helper-text');
+    const mkTabs       = mkPanel ? mkPanel.querySelectorAll('.mk-tab') : [];
+    const mkPages      = mkPanel ? mkPanel.querySelectorAll('.mk-page') : [];
+    let   mathModeOn   = false;
 
     function activateMathMode() {
-        if (!mkPanel || !mkField || !userInput) return;
+        if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
         mathModeOn = true;
 
-        // Swap input: hide text input, show math field
+        // Swap input: hide text input, show math field + wrapper
         userInput.style.display = 'none';
-        mkField.style.display = '';
+        mkWrapper.style.display = '';
         mkPanel.style.display = '';
-        mkField.focus();
+        if (mkHelperText) mkHelperText.style.display = '';
 
         // Close old overlay palette if open
         if (typeof closeEquationPalette === 'function') closeEquationPalette();
 
-        // Blur native keyboard on mobile
+        // Blur native keyboard on mobile, then focus math field
         if (window.innerWidth <= 768) {
             document.activeElement?.blur();
             setTimeout(() => mkField.focus(), 50);
+        } else {
+            mkField.focus();
         }
 
         // Highlight the √x tool button
@@ -2745,10 +2753,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Default to math tab
         switchMkTab('math');
+
+        // Show first-time tooltip if never seen before
+        showMathKeyboardTooltip();
     }
 
     function deactivateMathMode() {
-        if (!mkPanel || !mkField || !userInput) return;
+        if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
 
         // If math field has content, insert it into chat input before closing
         const latex = mkField.value?.trim();
@@ -2764,8 +2775,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         mathModeOn = false;
-        mkField.style.display = 'none';
+        mkWrapper.style.display = 'none';
         mkPanel.style.display = 'none';
+        if (mkHelperText) mkHelperText.style.display = 'none';
         userInput.style.display = '';
         userInput.focus();
         if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
@@ -2778,6 +2790,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tabName === 'abc') {
             // Switch back to regular text input
             deactivateMathMode();
+        } else {
+            // Keep focus on math field when switching between 123 and math tabs
+            if (mkField) mkField.focus();
         }
     }
 
@@ -2785,6 +2800,11 @@ document.addEventListener("DOMContentLoaded", () => {
     mkTabs.forEach(tab => {
         tab.addEventListener('click', () => switchMkTab(tab.dataset.tab));
     });
+
+    // Done button: insert equation and return to text mode
+    if (mkDoneBtn) {
+        mkDoneBtn.addEventListener('click', () => deactivateMathMode());
+    }
 
     // √x tool button: toggle math mode
     if (openEquationBtn) {
@@ -2824,6 +2844,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 sendMessage();
             }
         });
+    }
+
+    // First-time tooltip: show once to teach users what the √x button does
+    function showMathKeyboardTooltip() {
+        const storageKey = 'mk-tooltip-seen';
+        try {
+            if (localStorage.getItem(storageKey)) return;
+            localStorage.setItem(storageKey, '1');
+        } catch (e) { return; }
+
+        const tip = document.createElement('div');
+        tip.className = 'mk-tooltip';
+        tip.innerHTML = 'Tap the buttons below to build your equation. ' +
+                        'Use <strong>Numbers</strong> for digits, <strong>Symbols</strong> for math. ' +
+                        'Tap <strong>Done</strong> when finished.';
+
+        // Insert above the math keyboard panel
+        if (mkPanel && mkPanel.parentElement) {
+            mkPanel.parentElement.insertBefore(tip, mkPanel);
+        }
+
+        // Auto-dismiss after 6 seconds or on tap
+        const dismiss = () => { if (tip.parentElement) tip.remove(); };
+        tip.addEventListener('click', dismiss);
+        setTimeout(dismiss, 6000);
     }
 
     if (closeWhiteboardBtn) {
