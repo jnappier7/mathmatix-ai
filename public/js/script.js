@@ -173,6 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Check billing status (free tier remaining time)
             checkBillingStatus();
 
+            // Gate Voice Tutor button for non-premium users
+            gateVoiceTutorButton(currentUser);
+
             // Show upgrade success toast if redirected from Stripe
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('upgraded') === 'true') {
@@ -272,6 +275,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ============================================
+
+    /**
+     * Lock the Voice Tutor sidebar button for non-premium users.
+     * Premium = unlimited tier, school-licensed, or teacher/parent/admin role.
+     */
+    function gateVoiceTutorButton(user) {
+        const btn = document.getElementById('sidebar-voice-tutor-btn');
+        const lock = document.getElementById('voice-tutor-lock');
+        if (!btn || !lock) return;
+
+        const role = user.role || 'student';
+        const hasPremiumRole = role === 'teacher' || role === 'parent' || role === 'admin';
+        const hasUnlimited = user.subscriptionTier === 'unlimited';
+        const hasSchoolLicense = !!user.schoolLicenseId;
+
+        if (hasPremiumRole || hasUnlimited || hasSchoolLicense) return;
+
+        // Non-premium: show lock, dim button, intercept click
+        lock.style.display = '';
+        btn.style.opacity = '0.65';
+        btn.style.cursor = 'default';
+        btn.title = 'Voice Tutor requires the Unlimited plan or a school license';
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showUpgradePrompt({
+                premiumFeatureBlocked: true,
+                feature: 'Voice chat',
+                tier: user.subscriptionTier || 'free',
+                upgradeRequired: true
+            });
+        });
+    }
+
     function setupChatUI() {
         updateGamificationDisplay();
     }
