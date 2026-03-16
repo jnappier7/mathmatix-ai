@@ -1445,8 +1445,33 @@ document.addEventListener("DOMContentLoaded", () => {
      * Send a message - uses the message queue to handle back-to-back messages gracefully
      */
     function sendMessage() {
-        const messageText = extractMessageText(userInput).trim();
+        // If math keyboard is active, grab its content first
+        const mkFieldEl = document.getElementById('math-keyboard-field');
+        let mathLatex = '';
+        if (mkFieldEl && mkFieldEl.style.display !== 'none') {
+            mathLatex = (mkFieldEl.value || '').trim();
+        }
+
+        let messageText = extractMessageText(userInput).trim();
+
+        // Append math-field LaTeX (wrapped for rendering)
+        if (mathLatex) {
+            messageText = messageText ? messageText + ' \\(' + mathLatex + '\\)' : '\\(' + mathLatex + '\\)';
+            mkFieldEl.value = '';
+        }
+
         if (!messageText && attachedFiles.length === 0) return;
+
+        // If math mode is on, deactivate without re-inserting (we already captured the value)
+        if (typeof mathModeOn !== 'undefined' && mathModeOn && mkFieldEl) {
+            mkFieldEl.value = ''; // already captured
+            const mkPanelEl = document.getElementById('math-keyboard-panel');
+            if (mkPanelEl) mkPanelEl.style.display = 'none';
+            mkFieldEl.style.display = 'none';
+            userInput.style.display = '';
+            if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
+            mathModeOn = false;
+        }
 
         // Capture response time from ghost timer
         let responseTime = null;
@@ -2689,6 +2714,118 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
+    // ─── Math Keyboard Panel (inline, no overlay) ─────────────────────
+    const mkPanel     = document.getElementById('math-keyboard-panel');
+    const mkField     = document.getElementById('math-keyboard-field');
+    const mkTabs      = mkPanel ? mkPanel.querySelectorAll('.mk-tab') : [];
+    const mkPages     = mkPanel ? mkPanel.querySelectorAll('.mk-page') : [];
+    let   mathModeOn  = false;
+
+    function activateMathMode() {
+        if (!mkPanel || !mkField || !userInput) return;
+        mathModeOn = true;
+
+        // Swap input: hide text input, show math field
+        userInput.style.display = 'none';
+        mkField.style.display = '';
+        mkPanel.style.display = '';
+        mkField.focus();
+
+        // Close old overlay palette if open
+        if (typeof closeEquationPalette === 'function') closeEquationPalette();
+
+        // Blur native keyboard on mobile
+        if (window.innerWidth <= 768) {
+            document.activeElement?.blur();
+            setTimeout(() => mkField.focus(), 50);
+        }
+
+        // Highlight the √x tool button
+        if (openEquationBtn) openEquationBtn.classList.add('mk-active');
+
+        // Default to math tab
+        switchMkTab('math');
+    }
+
+    function deactivateMathMode() {
+        if (!mkPanel || !mkField || !userInput) return;
+
+        // If math field has content, insert it into chat input before closing
+        const latex = mkField.value?.trim();
+        if (latex) {
+            const mathContainer = document.createElement('span');
+            mathContainer.className = 'math-container';
+            mathContainer.setAttribute('data-latex', latex);
+            mathContainer.textContent = `\\(${latex}\\)`;
+            userInput.appendChild(mathContainer);
+            userInput.appendChild(document.createTextNode(' '));
+            if (typeof renderMathInElement === 'function') renderMathInElement(mathContainer);
+            mkField.value = '';
+        }
+
+        mathModeOn = false;
+        mkField.style.display = 'none';
+        mkPanel.style.display = 'none';
+        userInput.style.display = '';
+        userInput.focus();
+        if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
+    }
+
+    function switchMkTab(tabName) {
+        mkTabs.forEach(t => t.classList.toggle('mk-tab-active', t.dataset.tab === tabName));
+        mkPages.forEach(p => p.style.display = p.dataset.page === tabName ? '' : 'none');
+
+        if (tabName === 'abc') {
+            // Switch back to regular text input
+            deactivateMathMode();
+        }
+    }
+
+    // Tab clicks
+    mkTabs.forEach(tab => {
+        tab.addEventListener('click', () => switchMkTab(tab.dataset.tab));
+    });
+
+    // √x tool button: toggle math mode
+    if (openEquationBtn) {
+        // On mobile, use the new math keyboard instead of the old palette
+        openEquationBtn.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.stopImmediatePropagation(); // prevent old palette toggle
+                if (mathModeOn) deactivateMathMode();
+                else activateMathMode();
+            }
+        }, true); // capture phase to run before old handler
+    }
+
+    // Key presses on the math keyboard
+    if (mkPanel) {
+        mkPanel.addEventListener('click', (e) => {
+            const key = e.target.closest('.mk-key');
+            if (!key || !mkField) return;
+
+            const insertLatex = key.dataset.insert;
+            const command = key.dataset.command;
+
+            if (command) {
+                mkField.executeCommand(command);
+            } else if (insertLatex) {
+                mkField.executeCommand(['insert', insertLatex]);
+            }
+            mkField.focus();
+        });
+    }
+
+    // Enter on math field = send, Shift+Enter = stay
+    if (mkField) {
+        mkField.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+
     if (closeWhiteboardBtn) {
         closeWhiteboardBtn.addEventListener('click', () => {
             const whiteboardPanel = document.getElementById('whiteboard-panel');

@@ -482,6 +482,114 @@
   opacity: 0.5;
 }
 
+/* --- Math Keyboard Panel (inline, no overlay) --- */
+.math-keyboard-panel {
+  background: var(--clr-bg-light, #f8f9fa);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0;
+  animation: mkSlideUp 0.2s ease-out;
+}
+
+@keyframes mkSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* Tab bar */
+.mk-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0 8px;
+  gap: 0;
+}
+
+.mk-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8e8e93;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mk-tab-active {
+  color: #007AFF;
+  border-bottom-color: #007AFF;
+}
+
+.mk-tab:active {
+  background: rgba(0, 122, 255, 0.06);
+}
+
+/* Key grid */
+.mk-page {
+  padding: 6px 8px 8px;
+}
+
+.mk-grid {
+  display: grid;
+  gap: 5px;
+}
+
+.mk-grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* Individual key */
+.mk-key {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px 4px;
+  font-size: 1rem;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.1s;
+  color: #333;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mk-key:active {
+  background: #e8e8ed;
+  transform: scale(0.95);
+}
+
+.mk-key sup, .mk-key sub {
+  font-size: 0.65em;
+}
+
+.mk-key-action {
+  background: #d1d1d6;
+}
+
+/* Math field in compose bar (math mode) */
+.math-keyboard-field {
+  flex: 1;
+  min-height: 36px;
+  max-height: 120px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 122, 255, 0.4);
+  font-size: 1rem;
+  background: var(--clr-bg-subtle, #f2f2f7);
+  overflow-y: auto;
+}
+
+/* Active state on the √x tool button when math mode is on */
+.imessage-tool-btn.mk-active {
+  background: rgba(0, 122, 255, 0.15);
+  color: #0055cc;
+}
+
 /* Legacy toolbar (hidden — replaced by imessage-tool-btns) */
 .input-toolbar {
   display: none;

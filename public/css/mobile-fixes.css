@@ -1882,8 +1882,23 @@ a {
         to   { opacity: 1; }
     }
 
-    /* Hide MathLive's virtual keyboard on mobile — we use our symbol buttons */
+    /* Hide MathLive's virtual keyboard on mobile — we use our own math keyboard */
     .ML__keyboard {
         display: none !important;
+    }
+
+    /* --- Math Keyboard Panel: mobile tuning --- */
+    .math-keyboard-panel {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .mk-key {
+        min-height: 44px;
+        font-size: 1.05rem;
+    }
+
+    .math-keyboard-field {
+        min-height: 38px;
+        font-size: 1.05rem;
     }
 }

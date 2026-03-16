@@ -584,11 +584,77 @@
       </div>
       <div class="imessage-input-row">
         <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." data-i18n-placeholder="chat.askQuestion" role="textbox" aria-multiline="true"></div>
+        <!-- Math-field input (hidden until math mode activated) -->
+        <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off" style="display:none;"></math-field>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
         </button>
       </div>
     </div>
+
+    <!-- Math Keyboard Panel (replaces native keyboard on mobile) -->
+    <div id="math-keyboard-panel" class="math-keyboard-panel" style="display:none;">
+      <div class="mk-tabs">
+        <button class="mk-tab" data-tab="abc" title="Text keyboard">ABC</button>
+        <button class="mk-tab" data-tab="123" title="Numbers & operations">123</button>
+        <button class="mk-tab mk-tab-active" data-tab="math" title="Math symbols">√x</button>
+      </div>
+      <!-- 123 tab: number pad + common operations -->
+      <div class="mk-page" data-page="123" style="display:none;">
+        <div class="mk-grid mk-grid-5">
+          <button class="mk-key" data-insert="1">1</button>
+          <button class="mk-key" data-insert="2">2</button>
+          <button class="mk-key" data-insert="3">3</button>
+          <button class="mk-key" data-insert="4">4</button>
+          <button class="mk-key" data-insert="5">5</button>
+          <button class="mk-key" data-insert="6">6</button>
+          <button class="mk-key" data-insert="7">7</button>
+          <button class="mk-key" data-insert="8">8</button>
+          <button class="mk-key" data-insert="9">9</button>
+          <button class="mk-key" data-insert="0">0</button>
+          <button class="mk-key" data-insert="+">+</button>
+          <button class="mk-key" data-insert="-">−</button>
+          <button class="mk-key" data-insert="\times">×</button>
+          <button class="mk-key" data-insert="\div">÷</button>
+          <button class="mk-key" data-insert="=">=</button>
+          <button class="mk-key" data-insert="(">(</button>
+          <button class="mk-key" data-insert=")">)</button>
+          <button class="mk-key" data-insert=".">.</button>
+          <button class="mk-key" data-insert=",">,</button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward"><i class="fas fa-delete-left"></i></button>
+        </div>
+      </div>
+      <!-- Math tab: symbols, templates, Greek -->
+      <div class="mk-page" data-page="math">
+        <div class="mk-grid mk-grid-5">
+          <!-- Templates -->
+          <button class="mk-key" data-insert="\frac{#0}{#1}" title="Fraction">x/y</button>
+          <button class="mk-key" data-insert="\sqrt{#0}" title="Square root">√</button>
+          <button class="mk-key" data-insert="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
+          <button class="mk-key" data-insert="#0^{#1}" title="Superscript">x<sup>n</sup></button>
+          <button class="mk-key" data-insert="#0_{#1}" title="Subscript">x<sub>n</sub></button>
+          <!-- Calculus -->
+          <button class="mk-key" data-insert="\sum_{#0}^{#1}" title="Sum">∑</button>
+          <button class="mk-key" data-insert="\int_{#0}^{#1}" title="Integral">∫</button>
+          <button class="mk-key" data-insert="\lim_{#0 \to #1}" title="Limit">lim</button>
+          <button class="mk-key" data-insert="\log_{#0}" title="Log">log</button>
+          <button class="mk-key" data-insert="\infty" title="Infinity">∞</button>
+          <!-- Greek -->
+          <button class="mk-key" data-insert="\pi" title="Pi">π</button>
+          <button class="mk-key" data-insert="\theta" title="Theta">θ</button>
+          <button class="mk-key" data-insert="\alpha" title="Alpha">α</button>
+          <button class="mk-key" data-insert="\beta" title="Beta">β</button>
+          <button class="mk-key" data-insert="\Delta" title="Delta">Δ</button>
+          <!-- Comparisons & symbols -->
+          <button class="mk-key" data-insert="\leq" title="Less or equal">≤</button>
+          <button class="mk-key" data-insert="\geq" title="Greater or equal">≥</button>
+          <button class="mk-key" data-insert="\neq" title="Not equal">≠</button>
+          <button class="mk-key" data-insert="\approx" title="Approximately">≈</button>
+          <button class="mk-key" data-insert="\pm" title="Plus-minus">±</button>
+        </div>
+      </div>
+    </div>
+
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
 </div>
