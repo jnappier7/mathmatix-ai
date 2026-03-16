@@ -1747,7 +1747,25 @@ a {
         max-width: 100% !important;
         height: auto !important;
     }
+}
 
+/* --- 18. FREE-TIME INDICATOR: ABOVE BOTTOM NAV ---
+   The billing time indicator is fixed at bottom:12px.
+   On mobile with the bottom nav (56px + safe-area), push it up. */
+@media (max-width: 768px) {
+    #free-time-indicator {
+        /* 56px nav + safe-area + 10px gap */
+        bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 10px) !important;
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 600px) {
     /* --- Equation Palette: Mobile Bottom Sheet --- */
     .inline-equation-palette {
         position: fixed !important;
