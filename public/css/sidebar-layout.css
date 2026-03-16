@@ -133,7 +133,8 @@
 /* Collapsible Sections */
 #sidebar-sessions,
 #sidebar-tools,
-#sidebar-leaderboard {
+#sidebar-leaderboard,
+#sidebar-quests {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
@@ -156,6 +157,11 @@
 
 #sidebar-leaderboard.expanded {
     max-height: 400px;
+}
+
+#sidebar-quests.expanded {
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 .sessions-toggle,
@@ -194,7 +200,8 @@
 
 .sessions-toggle.expanded i,
 .tools-toggle.expanded i,
-.leaderboard-toggle.expanded i {
+.leaderboard-toggle.expanded i,
+.quest-toggle.expanded i {
     transform: rotate(180deg);
 }
 
@@ -844,6 +851,182 @@ input.session-search-input:focus {
 .sidebar-progress-xp {
     font-size: 12px;
     opacity: 0.9;
+}
+
+/* ── Pi Day Sidebar Button ────────────────────────── */
+.sidebar-pi-day-btn {
+    width: 100%;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c850c0 50%, #7c3aed 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(255, 107, 157, 0.4);
+    animation: piGlow 2s ease-in-out infinite;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.sidebar-pi-day-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.6);
+}
+.pi-glow-icon {
+    font-size: 24px;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: piPulse 1.5s ease-in-out infinite;
+}
+.pi-btn-text {
+    flex: 1;
+}
+.pi-btn-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+@keyframes piGlow {
+    0%, 100% { box-shadow: 0 2px 12px rgba(255, 107, 157, 0.4); }
+    50% { box-shadow: 0 2px 24px rgba(200, 80, 192, 0.6), 0 0 40px rgba(255, 107, 157, 0.2); }
+}
+@keyframes piPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* ── Pi Day Hub Panel ─────────────────────────────── */
+.pi-day-hub {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 2000;
+}
+.pi-day-hub-backdrop {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+}
+.pi-day-hub-panel {
+    position: absolute;
+    top: 72px;
+    left: 280px;
+    width: 360px;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    background: var(--clr-bg, #fff);
+    border: 1px solid rgba(255, 107, 157, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(255, 107, 157, 0.2), 0 2px 12px rgba(0,0,0,0.1);
+    animation: piHubSlide 0.25s ease-out;
+    scrollbar-width: thin;
+}
+@keyframes piHubSlide {
+    from { opacity: 0; transform: translateX(-12px) scale(0.97); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+.pi-day-hub-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c850c0 50%, #7c3aed 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+}
+.pi-day-hub-icon {
+    font-size: 36px;
+    font-weight: 900;
+    text-shadow: 0 0 16px rgba(255,255,255,0.6);
+    animation: piPulse 1.5s ease-in-out infinite;
+}
+.pi-day-hub-close {
+    margin-left: auto;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+.pi-day-hub-close:hover { background: rgba(255,255,255,0.35); }
+.pi-day-hub-section {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--clr-border-light, #f1f5f9);
+}
+.pi-day-hub-section:last-child { border-bottom: none; }
+.pi-day-hub-section h4 {
+    margin: 0 0 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ff6b9d;
+}
+.pi-hub-quest-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 4px;
+    background: var(--clr-bg-subtle, #f8fafb);
+    border-radius: 8px;
+    font-size: 13px;
+}
+.pi-hub-quest-item .quest-icon { font-size: 18px; }
+.pi-hub-quest-item .quest-xp {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ff6b9d;
+}
+.pi-hub-lesson-btn,
+.pi-hub-course-btn {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, rgba(255,107,157,0.06), rgba(200,80,192,0.06));
+    border: 1px solid rgba(255,107,157,0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 13px;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+}
+.pi-hub-lesson-btn:hover,
+.pi-hub-course-btn:hover {
+    background: linear-gradient(135deg, rgba(255,107,157,0.12), rgba(200,80,192,0.12));
+    border-color: rgba(255,107,157,0.4);
+}
+.pi-hub-course-btn .course-icon { font-size: 20px; }
+.pi-hub-course-btn .course-info { flex: 1; }
+.pi-hub-course-btn .course-name { font-weight: 600; font-size: 13px; }
+.pi-hub-course-btn .course-desc { font-size: 11px; color: #888; margin-top: 2px; }
+.pi-hub-course-btn .course-arrow { color: #ccc; font-size: 11px; }
+
+@media (max-width: 768px) {
+    .pi-day-hub-panel {
+        left: 8px;
+        right: 8px;
+        width: auto;
+        top: 60px;
+    }
 }
 
 /* Adjust main chat container */

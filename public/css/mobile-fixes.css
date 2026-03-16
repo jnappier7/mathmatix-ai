@@ -1747,7 +1747,25 @@ a {
         max-width: 100% !important;
         height: auto !important;
     }
+}
 
+/* --- 18. FREE-TIME INDICATOR: ABOVE BOTTOM NAV ---
+   The billing time indicator is fixed at bottom:12px.
+   On mobile with the bottom nav (56px + safe-area), push it up. */
+@media (max-width: 768px) {
+    #free-time-indicator {
+        /* 56px nav + safe-area + 10px gap */
+        bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 10px) !important;
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
+        border-radius: 10px !important;
+        text-align: center !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 600px) {
     /* --- Equation Palette: Mobile Bottom Sheet --- */
     .inline-equation-palette {
         position: fixed !important;
@@ -1758,7 +1776,7 @@ a {
         transform: none !important;
         width: 100% !important;
         max-width: 100% !important;
-        max-height: 70vh !important;
+        max-height: 55vh !important;
         border-radius: 16px 16px 0 0 !important;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2) !important;
         padding: 0 !important;
@@ -1779,11 +1797,11 @@ a {
     .inline-equation-palette .equation-palette-header {
         position: sticky;
         top: 0;
-        background: white;
+        background: inherit;
         z-index: 2;
-        padding: 12px 16px 8px;
+        padding: 10px 16px 6px;
         margin: 0;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid rgba(128, 128, 128, 0.2);
         cursor: default;
     }
 
@@ -1792,9 +1810,9 @@ a {
         display: block;
         width: 36px;
         height: 4px;
-        background: #ccc;
+        background: rgba(128, 128, 128, 0.4);
         border-radius: 2px;
-        margin: 0 auto 8px;
+        margin: 0 auto 6px;
     }
 
     /* Close button larger on mobile */
@@ -1807,45 +1825,55 @@ a {
         justify-content: center;
     }
 
-    /* Section headers tighter */
-    .inline-equation-palette .equation-section-header {
-        padding: 0 16px;
-        margin-top: 4px;
-    }
-
-    /* Symbol grids with mobile-friendly padding */
-    .inline-equation-palette .subscript-superscript-grid {
-        padding: 0 16px;
-        grid-template-columns: repeat(4, 1fr);
-    }
+    /* Move common symbols ABOVE subscripts/superscripts on mobile */
     .inline-equation-palette .equation-symbols-grid {
-        padding: 0 16px;
+        order: -1;
+        padding: 6px 12px;
         grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
     }
 
-    /* Symbol buttons: larger touch targets */
+    /* Collapse subscripts section — less useful on mobile, show behind a summary */
+    .inline-equation-palette .equation-section-header {
+        padding: 0 12px;
+        margin-top: 2px;
+        font-size: 0.8em;
+    }
+    .inline-equation-palette .subscript-superscript-grid {
+        padding: 0 12px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+    }
+
+    /* Symbol buttons: compact touch targets */
     .inline-equation-palette .symbol-btn {
-        min-height: 44px;
-        font-size: 1.2em;
+        min-height: 40px;
+        font-size: 1.15em;
+        padding: 6px;
     }
     .inline-equation-palette .script-btn {
-        min-height: 44px;
+        min-height: 40px;
+        padding: 8px;
+    }
+
+    /* Hide tip text on mobile to save space */
+    .inline-equation-palette .palette-tip {
+        display: none;
     }
 
     /* Math field container pinned to bottom of sheet */
     .inline-equation-palette .inline-math-field-container {
         position: sticky;
         bottom: 0;
-        background: white;
+        background: inherit;
         z-index: 2;
-        padding: 10px 16px;
-        border-top: 1px solid #eee;
+        padding: 8px 12px;
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    /* Tip text */
-    .inline-equation-palette .palette-tip {
-        margin: 4px 16px;
+    .inline-equation-palette .inline-math-field-container label {
+        font-size: 0.8em;
     }
 
     /* Insert button: full-width on mobile */
@@ -1872,8 +1900,23 @@ a {
         to   { opacity: 1; }
     }
 
-    /* Hide MathLive's virtual keyboard on mobile — we use our symbol buttons */
+    /* Hide MathLive's virtual keyboard on mobile — we use our own math keyboard */
     .ML__keyboard {
         display: none !important;
+    }
+
+    /* --- Math Keyboard Panel: mobile tuning --- */
+    .math-keyboard-panel {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .mk-key {
+        min-height: 44px;
+        font-size: 1.05rem;
+    }
+
+    .math-keyboard-field {
+        min-height: 38px;
+        font-size: 1.05rem;
     }
 }

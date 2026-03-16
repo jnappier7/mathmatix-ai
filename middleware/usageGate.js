@@ -18,6 +18,10 @@ const SchoolLicense = require('../models/schoolLicense');
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 10 * 60; // 10 minutes per week for ALL students
 
+// Freemium taste limits — free users get a sample before upgrade prompt
+const FREE_UPLOAD_LIMIT = 1;     // 1 free upload, then upgrade required
+const FREE_GRADE_LIMIT  = 1;     // 1 free Show My Work, then upgrade required
+
 // In-memory cache for school license lookups (avoids DB hit on every request)
 // Key: licenseId.toString(), Value: { license: object|null, checkedAt: number }
 const licenseCache = new Map();
@@ -157,13 +161,19 @@ async function usageGate(req, res, next) {
     }
 
     // --- Free-tier student, no pack, free minutes exhausted ---
+    // Calculate when free minutes reset
+    const resetDate = new Date(lastReset.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const msUntilReset = resetDate - now;
+    const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
+
     return res.status(402).json({
-      message: "You've used your 10 free minutes this week. Ask your teacher about a school license for unlimited access, or come back next week!",
+      message: `You've used your 10 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade for more time, or ask your teacher about a school license!`,
       usageLimitReached: true,
       tier: 'free',
       freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
       freeMinutesTotal: 10,
       freeSecondsRemaining: 0,
+      nextResetAt: resetDate.toISOString(),
       upgradeRequired: true
     });
   } catch (error) {
@@ -174,8 +184,10 @@ async function usageGate(req, res, next) {
 }
 
 /**
- * Feature gate for premium-only features (voice, OCR, uploads).
- * School-licensed students and unlimited subscribers get access.
+ * Feature gate for premium-only features (voice, uploads, Show My Work).
+ * School-licensed students and unlimited subscribers get full access.
+ * Free users get a limited taste: 1 free upload and 1 free Show My Work,
+ * then they see an upgrade prompt. Voice chat has no free taste (too expensive).
  */
 function premiumFeatureGate(featureName) {
   return async (req, res, next) => {
@@ -200,8 +212,69 @@ function premiumFeatureGate(featureName) {
       if (valid) return next();
     }
 
+    // --- Freemium taste: allow limited free uses of uploads and Show My Work ---
+    if (featureName === 'File uploads' && (user.freeUploadsUsed || 0) < FREE_UPLOAD_LIMIT) {
+      // Allow this upload, increment counter
+      await User.findByIdAndUpdate(user._id, { $inc: { freeUploadsUsed: 1 } });
+      return next();
+    }
+
+    if (featureName === 'Work grading' && (user.freeGradesUsed || 0) < FREE_GRADE_LIMIT) {
+      // Allow this grading, increment counter
+      await User.findByIdAndUpdate(user._id, { $inc: { freeGradesUsed: 1 } });
+      return next();
+    }
+
+    // Determine the message based on whether user already used their free taste
+    const usedFreeTaste = (featureName === 'File uploads' && (user.freeUploadsUsed || 0) >= FREE_UPLOAD_LIMIT) ||
+                          (featureName === 'Work grading' && (user.freeGradesUsed || 0) >= FREE_GRADE_LIMIT);
+
+    const message = usedFreeTaste
+      ? `You've used your free ${featureName.toLowerCase()} trial! Upgrade to the Unlimited plan ($19.95/month) for unlimited access.`
+      : `${featureName} requires the Unlimited plan ($19.95/month) or a school license.`;
+
     return res.status(402).json({
-      message: `${featureName} requires the Unlimited plan ($19.95/month) or a school license.`,
+      message,
+      premiumFeatureBlocked: true,
+      feature: featureName,
+      tier: user.subscriptionTier || 'free',
+      upgradeRequired: true,
+      freeTrialUsed: usedFreeTaste
+    });
+  };
+}
+
+/**
+ * Feature gate for paid-only features (courses, Show My Work).
+ * Any paying user (pack or unlimited) or school-licensed student gets access.
+ */
+function paidFeatureGate(featureName) {
+  return async (req, res, next) => {
+    if (!BILLING_ENABLED) return next(); // Master switch off — all features open
+
+    const user = req.user;
+    if (!user) return next();
+
+    // Teachers, parents, admins always get access
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+      return next();
+    }
+
+    // Any paid subscriber (pack or unlimited)
+    if (user.subscriptionTier === 'unlimited' ||
+        user.subscriptionTier === 'pack_60' ||
+        user.subscriptionTier === 'pack_120') {
+      return next();
+    }
+
+    // Students covered by a school license
+    if (user.schoolLicenseId) {
+      const valid = await isLicenseValid(user.schoolLicenseId);
+      if (valid) return next();
+    }
+
+    return res.status(402).json({
+      message: `${featureName} requires a paid plan or school license.`,
       premiumFeatureBlocked: true,
       feature: featureName,
       tier: user.subscriptionTier || 'free',
@@ -210,4 +283,4 @@ function premiumFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };
+module.exports = { usageGate, premiumFeatureGate, paidFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };

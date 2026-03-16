@@ -126,7 +126,7 @@ const demoRoutes = require('./routes/demo');  // Playground demo account login &
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
-const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
+const { usageGate, premiumFeatureGate, paidFeatureGate } = require('./middleware/usageGate');
 
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
@@ -307,7 +307,7 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
-// Strict rate limiting for authentication endpoints (prevent brute force)
+// Strict rate limiting for login (prevent brute force)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // Only 5 attempts per 15 minutes
@@ -316,7 +316,23 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: false, // Count both successful and failed attempts
   handler: (req, res) => {
     res.status(429).json({
-      message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
+      message: "Too many login attempts from this IP. Please try again after 15 minutes.",
+      retryAfter: 900
+    });
+  },
+});
+
+// Separate rate limiter for signup — more generous to avoid blocking real users,
+// but still prevents automated spam account creation
+const signupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 attempts per 15 minutes — enough for typos and retries
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true, // Don't count successful signups against the limit
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many signup attempts. Please try again in a few minutes.",
       retryAfter: 900
     });
   },
@@ -356,7 +372,7 @@ mongoose.connect(process.env.MONGO_URI, {
 // --- 8. ROUTE DEFINITIONS ---
 
 app.use('/login', authLimiter, loginRoutes);
-app.use('/signup', authLimiter, signupRoutes);
+app.use('/signup', signupLimiter, signupRoutes);
 app.use('/api/password-reset', authLimiter, passwordResetRoutes);
 app.use('/api/auth', authLimiter, authRoutes);  // Email verification (public routes)
 app.post('/logout', isAuthenticated, handleLogout);
@@ -526,6 +542,7 @@ app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (n
 app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes); // Premium: immersive voice tutor
 
 app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
+app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, paidFeatureGate('File uploads'), uploadRoutes); // Paid: file uploads (all paid plans)
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes); // Usage-gated for free tier
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
@@ -540,8 +557,8 @@ app.use('/api/demo', demoRoutes);                  // Playground demo account lo
 
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
-app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
-app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes); // Pathway-based course sessions (self-paced)
+app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes); // Premium: course catalog, enrollment, and progression
+app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes); // Premium: pathway-based course sessions
 app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes); // Dedicated course chat (usage-gated)
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
@@ -552,7 +569,7 @@ app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placem
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes); // Mastery mode dedicated chat (usage-gated)
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
-app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes); // Premium: AI grading
+app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, paidFeatureGate('Show My Work'), gradeWorkRoutes); // Paid: AI grading (all paid plans)
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
@@ -818,6 +835,9 @@ app.get("/reset-password.html", (req, res) => res.sendFile(path.join(__dirname, 
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "demo.html")));
+
+// Pricing page (accessible to authenticated users)
+app.get("/pricing.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
 
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));

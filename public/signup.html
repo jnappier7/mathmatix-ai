@@ -124,10 +124,11 @@
           </select>
         </div>
 
-        <div class="form-group" style="display:flex;align-items:center;gap:8px;margin:8px 0 4px;">
+        <div class="form-group" style="display:flex;align-items:center;gap:8px;margin:8px 0 0;">
           <input type="checkbox" id="hasCodeCheckbox" style="min-width:16px;" />
           <label for="hasCodeCheckbox" id="hasCodeLabel" style="font-size:0.875rem;cursor:pointer;">I have a code to enter</label>
         </div>
+        <p id="codeHint" class="note" style="margin:2px 0 4px 24px;font-size:0.8rem;color:#888;">Optional — you can sign up without a code and join a class later.</p>
 
         <div id="codeInputGroup" style="display: none;">
           <div id="enrollmentCodeGroup" class="form-group" style="display: none;">
@@ -195,11 +196,14 @@
       const isChecked = hasCodeCheckbox.checked;
       const role = roleSelect.value;
 
-      // Update label text based on role
+      // Update label + hint text based on role
+      const codeHint = document.getElementById("codeHint");
       if (role === "parent") {
         hasCodeLabel.textContent = "I have my child's invite code";
+        if (codeHint) codeHint.textContent = "Optional — you can link to your child later from your dashboard.";
       } else {
         hasCodeLabel.textContent = "I have a code to enter";
+        if (codeHint) codeHint.textContent = "Optional — you can sign up without a code and join a class later.";
       }
 
       // Show/hide the code input area
@@ -247,9 +251,9 @@
           return;
         }
 
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
         if (!passwordRegex.test(password)) {
-          signupMessage.textContent = 'Password must be at least 8 characters long, include one capital letter, and one number.';
+          signupMessage.textContent = 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.';
           signupMessage.className = 'error';
           signupMessage.style.display = 'block';
           return;
@@ -288,7 +292,11 @@
                 }, 1500);
 
             } else {
-                signupMessage.textContent = result.message || 'An error occurred during signup.';
+                let errorText = result.message || 'An error occurred during signup.';
+                if (result.errors && result.errors.length > 0) {
+                    errorText = result.errors.map(e => e.message).join(' ');
+                }
+                signupMessage.textContent = errorText;
                 signupMessage.className = 'error';
                 signupMessage.style.display = 'block';
             }

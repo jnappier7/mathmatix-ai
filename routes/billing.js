@@ -53,12 +53,12 @@ const PI_DAY_DISCOUNT_CENTS = 314; // $3.14 in cents
 
 /**
  * Check if the Pi Day promo is currently active.
- * Active from March 14, 2026 00:00 EST through March 15, 2026 23:59 EST.
+ * Active from March 14, 2026 00:00 EDT through March 15, 2026 23:59 EDT.
  */
 function isPiDayPromoActive() {
   const now = new Date();
-  const start = new Date('2026-03-14T05:00:00Z'); // midnight EST
-  const end   = new Date('2026-03-16T04:59:59Z'); // end of March 15 EST
+  const start = new Date('2026-03-14T04:00:00Z'); // midnight EDT
+  const end   = new Date('2026-03-16T03:59:59Z'); // end of March 15 EDT
   return now >= start && now <= end;
 }
 
@@ -418,22 +418,45 @@ router.get('/status', isAuthenticated, async (req, res) => {
     const freeRemaining = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsed);
     const limitReached = freeRemaining <= 0;
 
+    // Calculate when free minutes reset (7 days from lastWeeklyReset)
+    const lastResetDate = weeklyAIUsed === 0 && (now - lastReset) / (1000 * 60 * 60 * 24) >= 7
+      ? now  // Reset just happened, next reset is 7 days from now
+      : lastReset;
+    const nextReset = new Date(lastResetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
     res.json({
       success: true,
       billingEnabled: true,
       tier: 'free',
       hasAccess: !limitReached,
+      hasSeenPricing: user.hasSeenPricing || false,
       usage: {
         secondsRemaining: freeRemaining,
         minutesRemaining: Math.floor(freeRemaining / 60),
         weeklyAISecondsUsed: weeklyAIUsed,
         freeWeeklySeconds: FREE_WEEKLY_SECONDS,
-        limitReached
+        limitReached,
+        nextResetAt: nextReset.toISOString()
       }
     });
   } catch (error) {
     console.error('[Billing] Status check error:', error);
     res.status(500).json({ message: 'Failed to fetch billing status' });
+  }
+});
+
+/* ============================================================
+   POST /api/billing/seen-pricing
+   Mark that the user has seen the pricing page (shown once after signup)
+   ============================================================ */
+router.post('/seen-pricing', async (req, res) => {
+  try {
+    if (req.user) {
+      await User.findByIdAndUpdate(req.user._id, { hasSeenPricing: true });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update' });
   }
 });
 
@@ -456,7 +479,7 @@ router.get('/promo', (req, res) => {
       pack_120:  { original: PACKS.pack_120.price,   promo: getPromoPrice(PACKS.pack_120.price) },
       unlimited: { original: PACKS.unlimited.price, promo: getPromoPrice(PACKS.unlimited.price) }
     },
-    endsAt: '2026-03-16T04:59:59Z'
+    endsAt: '2026-03-16T03:59:59Z'
   });
 });
 

@@ -2789,6 +2789,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let skillGapsData = [];
     let lessonPlannerHistory = [];
     let insightsLoaded = false;
+    let classSnapshotData = null;
 
     function initializeInsightsTab() {
         // Gap filter chips
@@ -2825,6 +2826,72 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const prompt = input.value.trim();
                     if (prompt) sendLessonPlannerMessage(prompt);
                 }
+            });
+        }
+
+        // Fetch class snapshot for dynamic context chips
+        fetchClassSnapshot();
+    }
+
+    async function fetchClassSnapshot() {
+        try {
+            const res = await fetch('/api/teacher/class-snapshot');
+            if (!res.ok) return;
+            classSnapshotData = await res.json();
+            renderContextChips(classSnapshotData);
+        } catch (err) {
+            console.error('Error fetching class snapshot:', err);
+        }
+    }
+
+    function renderContextChips(snapshot) {
+        const container = document.getElementById('planner-context-chips');
+        if (!container) return;
+
+        const chips = [];
+
+        // Students needing attention
+        if (snapshot.needsAttention && snapshot.needsAttention.length > 0) {
+            snapshot.needsAttention.slice(0, 3).forEach(s => {
+                chips.push(`<button class="planner-context-chip" data-prompt="Tell me about ${s.name}. What's going on with them and what should I do?">
+                    <i class="fas fa-user-clock"></i> ${escapeHtml(s.name)}: ${escapeHtml(s.reasons[0])}
+                </button>`);
+            });
+        }
+
+        // Inactive students alert
+        if (snapshot.inactiveStudents && snapshot.inactiveStudents.length > 0) {
+            const names = snapshot.inactiveStudents.slice(0, 3).join(', ');
+            chips.push(`<button class="planner-context-chip" data-prompt="These students haven't been active this week: ${names}. How should I re-engage them?">
+                <i class="fas fa-exclamation-circle"></i> ${snapshot.inactiveStudents.length} inactive
+            </button>`);
+        }
+
+        // Rising stars
+        if (snapshot.risingStars && snapshot.risingStars.length > 0) {
+            chips.push(`<button class="planner-context-chip chip-growth" data-prompt="These students are showing growth: ${snapshot.risingStars.join(', ')}. How can I keep their momentum going and extend their learning?">
+                <i class="fas fa-chart-line"></i> ${snapshot.risingStars.length} growing
+            </button>`);
+        }
+
+        // IEP students
+        if (snapshot.iepStudents && snapshot.iepStudents.length > 0) {
+            chips.push(`<button class="planner-context-chip chip-iep" data-prompt="Review my IEP students: ${snapshot.iepStudents.join(', ')}. How are they progressing toward their goals and what accommodations should I make sure are in place this week?">
+                <i class="fas fa-file-medical-alt"></i> ${snapshot.iepStudents.length} IEP students
+            </button>`);
+        }
+
+        if (chips.length > 0) {
+            container.innerHTML = chips.join('');
+            container.style.display = 'flex';
+
+            // Add click handlers
+            container.querySelectorAll('.planner-context-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const prompt = chip.dataset.prompt;
+                    document.getElementById('planner-input').value = prompt;
+                    sendLessonPlannerMessage(prompt);
+                });
             });
         }
     }
@@ -2945,7 +3012,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Show user message and typing indicator
         const userBubble = `<div style="background:var(--color-primary-light);padding:10px 14px;border-radius:var(--radius-md);margin-bottom:12px;font-weight:500;color:var(--color-text);">
-            <i class="fas fa-user" style="color:var(--color-primary);margin-right:6px;" aria-hidden="true"></i>${escapeHtml(prompt)}
+            <i class="fas fa-chalkboard-teacher" style="color:var(--color-primary);margin-right:6px;" aria-hidden="true"></i>${escapeHtml(prompt)}
         </div>`;
 
         // If this is the first message, clear the empty state
@@ -2982,7 +3049,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create response container
             const aiDiv = document.createElement('div');
             aiDiv.style.cssText = 'margin-bottom:16px;padding:14px;background:white;border-radius:var(--radius-md);border:1px solid var(--color-border);';
-            aiDiv.innerHTML = '<i class="fas fa-magic" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>';
+            aiDiv.innerHTML = '<i class="fas fa-chalkboard-teacher" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>';
             responseArea.appendChild(aiDiv);
 
             // Stream the response
@@ -3007,7 +3074,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             const parsed = JSON.parse(data);
                             if (parsed.text) {
                                 fullResponse += parsed.text;
-                                aiDiv.innerHTML = '<i class="fas fa-magic" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>' + renderMarkdown(fullResponse);
+                                aiDiv.innerHTML = '<i class="fas fa-chalkboard-teacher" style="color:var(--color-purple);margin-right:6px;" aria-hidden="true"></i>' + renderMarkdown(fullResponse);
                                 responseArea.scrollTop = responseArea.scrollHeight;
                             }
                         } catch (e) { /* skip invalid JSON */ }
