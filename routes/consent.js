@@ -345,8 +345,12 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
             userAgent: req.get('User-Agent')
         });
 
-        // Set legacy consent flag so the student can proceed while parent confirms
-        student.hasParentalConsent = true;
+        // Do NOT set hasParentalConsent = true until the parent actually verifies
+        // via the email link. Setting it prematurely would let students bypass
+        // COPPA consent by entering any email address. The student gets limited
+        // access while consent is pending; full access is granted only after the
+        // parent clicks the verification link (handled by the verify-consent route).
+        // student.hasParentalConsent remains false/unchanged here.
 
         await student.save();
 
@@ -367,8 +371,9 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
 
         res.json({
             success: true,
+            consentPending: true,
             message: emailResult.success
-                ? 'Verification email sent to your parent. You can continue using Mathmatix while they confirm.'
+                ? 'Verification email sent to your parent. Some features will be available once they confirm.'
                 : 'Your consent request has been recorded. If your parent didn\'t receive the email, they can approve from their parent dashboard.'
         });
     } catch (error) {

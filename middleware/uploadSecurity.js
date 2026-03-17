@@ -3,6 +3,7 @@
 
 const StudentUpload = require('../models/studentUpload');
 const path = require('path');
+const logger = require('../utils/logger');
 
 /**
  * Middleware to verify user can access uploaded file
@@ -47,7 +48,7 @@ async function verifyUploadAccess(req, res, next) {
         const isAdmin = currentUser && currentUser.role === 'admin';
 
         if (!isOwner && !isTeacher && !isAdmin) {
-            console.log(`[Upload Security] Access denied for user ${userId} to file ${filename}`);
+            logger.warn('[Upload Security] Access denied', { userId: userId?.toString(), filename });
             return res.status(403).json({
                 success: false,
                 message: 'You do not have permission to access this file'
@@ -55,12 +56,12 @@ async function verifyUploadAccess(req, res, next) {
         }
 
         // Log access for audit trail
-        console.log(`[Upload Security] Access granted for user ${userId} to file ${filename} (${isOwner ? 'owner' : isTeacher ? 'teacher' : 'admin'})`);
+        logger.info('[Upload Security] Access granted', { userId: userId?.toString(), filename, accessType: isOwner ? 'owner' : isTeacher ? 'teacher' : 'admin' });
 
         next();
 
     } catch (error) {
-        console.error('[Upload Security] Error:', error);
+        logger.error('[Upload Security] Error verifying access', { error: error.message });
         return res.status(500).json({
             success: false,
             message: 'Error verifying file access'
@@ -108,7 +109,7 @@ function validateUpload(req, res, next) {
         });
     }
 
-    console.log(`[Upload Security] File validated: ${file.originalname} (${file.mimetype}, ${file.size} bytes)`);
+    logger.info('[Upload Security] File validated', { mimetype: file.mimetype, size: file.size });
 
     // TODO: Integrate content moderation API here
     // Example: await moderateImage(file.path);
@@ -128,7 +129,7 @@ const uploadRateLimiter = require('express-rate-limit')({
     legacyHeaders: false,
     // Store in memory (for production, use Redis)
     handler: (req, res) => {
-        console.log(`[Upload Security] Rate limit exceeded for user ${req.user?._id}`);
+        logger.warn('[Upload Security] Rate limit exceeded', { userId: req.user?._id?.toString() });
         res.status(429).json({
             success: false,
             message: 'Too many uploads. Please slow down and try again in a few minutes.'
@@ -147,14 +148,14 @@ async function cleanupOldUploads() {
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - RETENTION_DAYS);
 
-        console.log(`[Upload Cleanup] Checking for uploads older than ${cutoffDate.toISOString()}`);
+        logger.info('[Upload Cleanup] Checking for old uploads', { cutoffDate: cutoffDate.toISOString() });
 
         // Get all old uploads
         const oldUploads = await StudentUpload.find({
             uploadedAt: { $lt: cutoffDate }
         });
 
-        console.log(`[Upload Cleanup] Found ${oldUploads.length} candidate uploads for deletion`);
+        logger.info('[Upload Cleanup] Found candidate uploads', { count: oldUploads.length });
 
         // Check each upload's user to see if they have retention enabled
         const User = require('../models/user');
@@ -170,7 +171,7 @@ async function cleanupOldUploads() {
             }
 
             if (user.retainUploadsIndefinitely) {
-                console.log(`[Upload Cleanup] Skipping upload ${upload._id} for user ${user.firstName} ${user.lastName} - retention enabled`);
+                logger.debug('[Upload Cleanup] Skipping upload - retention enabled', { uploadId: upload._id?.toString() });
                 continue;
             }
 
@@ -178,7 +179,7 @@ async function cleanupOldUploads() {
             uploadsToDelete.push(upload);
         }
 
-        console.log(`[Upload Cleanup] ${uploadsToDelete.length} uploads will be deleted (${oldUploads.length - uploadsToDelete.length} retained by user preference)`);
+        logger.info('[Upload Cleanup] Deletion plan', { toDelete: uploadsToDelete.length, retained: oldUploads.length - uploadsToDelete.length });
 
         const fs = require('fs');
         const path = require('path');
@@ -189,22 +190,22 @@ async function cleanupOldUploads() {
                 const filePath = upload.filePath || path.join(__dirname, '..', 'uploads', upload.storedFilename);
                 if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
-                    console.log(`[Upload Cleanup] Deleted file: ${upload.storedFilename}`);
+                    logger.debug('[Upload Cleanup] Deleted file', { filename: upload.storedFilename });
                 }
 
                 // Delete from database
                 await StudentUpload.deleteOne({ _id: upload._id });
-                console.log(`[Upload Cleanup] Deleted record: ${upload._id}`);
+                logger.debug('[Upload Cleanup] Deleted record', { uploadId: upload._id?.toString() });
 
             } catch (error) {
-                console.error(`[Upload Cleanup] Error deleting upload ${upload._id}:`, error);
+                logger.error('[Upload Cleanup] Error deleting upload', { uploadId: upload._id?.toString(), error: error.message });
             }
         }
 
-        console.log(`[Upload Cleanup] Cleanup complete. Deleted ${uploadsToDelete.length} old uploads.`);
+        logger.info('[Upload Cleanup] Cleanup complete', { deleted: uploadsToDelete.length });
 
     } catch (error) {
-        console.error('[Upload Cleanup] Error during cleanup:', error);
+        logger.error('[Upload Cleanup] Error during cleanup', { error: error.message });
     }
 }
 
@@ -221,7 +222,7 @@ function scheduleCleanup() {
     // Then run every 24 hours
     setInterval(cleanupOldUploads, CLEANUP_INTERVAL);
 
-    console.log('[Upload Cleanup] Auto-deletion scheduler started (runs every 24 hours)');
+    logger.info('[Upload Cleanup] Auto-deletion scheduler started');
 }
 
 module.exports = {

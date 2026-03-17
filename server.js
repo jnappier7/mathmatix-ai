@@ -202,6 +202,16 @@ app.use(passport.session());
 app.use(handleImpersonation);
 app.use(enforceReadOnly);
 
+// CSP Nonce middleware — generates a unique nonce per request for inline scripts.
+// Pages can read the nonce from res.locals.cspNonce (for server-rendered pages)
+// or from the meta tag <meta name="csp-nonce"> injected by the nonce middleware.
+// This enables incremental migration away from 'unsafe-inline'.
+const crypto = require('crypto');
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+
 // Security Headers with Helmet.js
 app.use(helmet({
   // Content Security Policy - allows necessary external resources
@@ -210,7 +220,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'", // Required for inline scripts in HTML pages
+        (req, res) => `'nonce-${res.locals.cspNonce}'`, // Per-request nonce for inline scripts
+        "'unsafe-inline'", // Fallback for pages not yet migrated to nonces (ignored when nonce is present in modern browsers)
         "'unsafe-eval'", // Required for MathLive and dynamic math rendering
         "https://cdnjs.cloudflare.com", // Font Awesome
         "https://cdn.jsdelivr.net", // Various CDN resources

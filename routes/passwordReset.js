@@ -5,8 +5,10 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const { sendPasswordResetEmail } = require('../utils/emailService');
+const logger = require('../utils/logger');
 
 /**
  * POST /api/password-reset/request
@@ -29,7 +31,7 @@ router.post('/request', async (req, res) => {
     // Always return success to prevent email enumeration
     // Even if user doesn't exist, we return success but don't send email
     if (!user) {
-      console.log(`Password reset requested for non-existent email: ${email}`);
+      logger.debug('[PasswordReset] Requested for non-existent email');
       return res.json({
         success: true,
         message: 'If an account exists with that email, a password reset link has been sent.'
@@ -38,7 +40,7 @@ router.post('/request', async (req, res) => {
 
     // Check if user has a password (not OAuth-only account)
     if (!user.passwordHash && (user.googleId || user.microsoftId)) {
-      console.log(`Password reset requested for OAuth-only account: ${email}`);
+      logger.debug('[PasswordReset] Requested for OAuth-only account');
       return res.json({
         success: true,
         message: 'If an account exists with that email, a password reset link has been sent.'
@@ -58,21 +60,21 @@ router.post('/request', async (req, res) => {
     const emailResult = await sendPasswordResetEmail(user.email, resetToken);
 
     if (!emailResult.success) {
-      console.error('Failed to send password reset email:', emailResult.error);
+      logger.error('[PasswordReset] Failed to send email', { error: emailResult.error });
       return res.status(500).json({
         success: false,
         message: 'Failed to send password reset email. Please try again later.'
       });
     }
 
-    console.log(`✅ Password reset email sent to ${user.email}`);
+    logger.info('[PasswordReset] Email sent', { userId: user._id?.toString() });
 
     res.json({
       success: true,
       message: 'If an account exists with that email, a password reset link has been sent.'
     });
   } catch (error) {
-    console.error('Error requesting password reset:', error);
+    logger.error('[PasswordReset] Error requesting reset', { error: error.message });
     res.status(500).json({
       success: false,
       message: 'An error occurred. Please try again later.'
@@ -117,7 +119,7 @@ router.get('/verify/:token', async (req, res) => {
       email: user.email
     });
   } catch (error) {
-    console.error('Error verifying reset token:', error);
+    logger.error('[PasswordReset] Error verifying token', { error: error.message });
     res.status(500).json({
       success: false,
       message: 'An error occurred. Please try again later.'
@@ -174,14 +176,25 @@ router.post('/reset', async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    console.log(`✅ Password reset successful for user: ${user.email}`);
+    // Invalidate all sessions for this user (password was reset, old sessions are suspect)
+    try {
+        const sessionCollection = mongoose.connection.collection('sessions');
+        await sessionCollection.deleteMany({
+            'session.passport.user': user._id.toString()
+        });
+        logger.info('[PasswordReset] All sessions invalidated', { userId: user._id?.toString() });
+    } catch (sessionErr) {
+        logger.error('[PasswordReset] Failed to invalidate sessions', { error: sessionErr.message });
+    }
+
+    logger.info('[PasswordReset] Password reset successful', { userId: user._id?.toString() });
 
     res.json({
       success: true,
       message: 'Password has been reset successfully. You can now log in with your new password.'
     });
   } catch (error) {
-    console.error('Error resetting password:', error);
+    logger.error('[PasswordReset] Error resetting password', { error: error.message });
     res.status(500).json({
       success: false,
       message: 'An error occurred. Please try again later.'
