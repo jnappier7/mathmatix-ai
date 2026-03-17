@@ -642,14 +642,19 @@ router.get('/platform/engine-health', isAdmin, async (req, res) => {
     let smartScoreCount = 0;
 
     const cogLevelDistribution = {};
+    // Mastery distribution buckets: [0-20%, 20-40%, 40-60%, 60-80%, 80-100%]
+    const masteryBuckets = [0, 0, 0, 0, 0];
 
     for (const s of students) {
       const engines = s.learningEngines || {};
 
       // BKT
       for (const [, data] of mapEntries(engines.bkt)) {
-        totalBktPLearned += data.pLearned ?? 0;
+        const pL = data.pLearned ?? 0;
+        totalBktPLearned += pL;
         bktCount++;
+        const bucketIdx = Math.min(Math.floor(pL * 5), 4);
+        masteryBuckets[bucketIdx]++;
       }
 
       // FSRS
@@ -685,6 +690,10 @@ router.get('/platform/engine-health', isAdmin, async (req, res) => {
         smartScore: smartScoreCount > 0 ? Math.round((totalSmartScore / smartScoreCount) * 100) / 100 : null,
       },
       cognitiveLoadDistribution: cogLevelDistribution,
+      masteryDistribution: {
+        labels: ['0-20%', '20-40%', '40-60%', '60-80%', '80-100%'],
+        counts: masteryBuckets,
+      },
       counts: {
         bktSkillEntries: bktCount,
         fsrsSkillEntries: fsrsCount,

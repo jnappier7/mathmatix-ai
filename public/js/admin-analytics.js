@@ -20,15 +20,16 @@
       if (healthRes.ok) {
         const data = await healthRes.json();
         const el = (id) => document.getElementById(id);
+        const avgs = data.averages || {};
 
-        if (data.avgPLearned != null) {
-          el('admin-avg-mastery').textContent = `${(data.avgPLearned * 100).toFixed(0)}%`;
+        if (avgs.bktPLearned != null) {
+          el('admin-avg-mastery').textContent = `${(avgs.bktPLearned * 100).toFixed(0)}%`;
         }
-        if (data.avgRetrievability != null) {
-          el('admin-avg-retention').textContent = `${(data.avgRetrievability * 100).toFixed(0)}%`;
+        if (avgs.fsrsRetrievability != null) {
+          el('admin-avg-retention').textContent = `${(avgs.fsrsRetrievability * 100).toFixed(0)}%`;
         }
-        if (data.avgSmartScore != null) {
-          el('admin-avg-smartscore').textContent = data.avgSmartScore.toFixed(0);
+        if (avgs.smartScore != null) {
+          el('admin-avg-smartscore').textContent = avgs.smartScore.toFixed(0);
         }
 
         // Cognitive Load Zone distribution
@@ -60,9 +61,10 @@
       if (outcomesRes.ok) {
         const data = await outcomesRes.json();
         const el = (id) => document.getElementById(id);
+        const psRate = data.productiveStruggle?.rate;
 
-        if (data.productiveStruggleRate != null) {
-          el('admin-productive-struggle').textContent = `${(data.productiveStruggleRate * 100).toFixed(0)}%`;
+        if (psRate != null) {
+          el('admin-productive-struggle').textContent = `${(psRate * 100).toFixed(0)}%`;
         }
       }
     } catch (err) {
