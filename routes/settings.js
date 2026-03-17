@@ -4,8 +4,10 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const { isAuthenticated } = require('../middleware/auth');
+const logger = require('../utils/logger');
 
 /**
  * @route   POST /api/settings/change-password
@@ -62,7 +64,20 @@ router.post('/change-password', isAuthenticated, async (req, res) => {
         user.passwordHash = newPassword;
         await user.save();
 
-        console.log(`[SETTINGS] Password changed for user: ${user.email}`);
+        logger.info('[SETTINGS] Password changed', { userId: user._id?.toString() });
+
+        // Invalidate all other sessions for this user so stolen sessions can't persist
+        try {
+            const sessionCollection = mongoose.connection.collection('sessions');
+            const currentSessionId = req.sessionID;
+            await sessionCollection.deleteMany({
+                'session.passport.user': user._id.toString(),
+                _id: { $ne: currentSessionId }
+            });
+            logger.info('[SETTINGS] Other sessions invalidated after password change', { userId: user._id?.toString() });
+        } catch (sessionErr) {
+            logger.error('[SETTINGS] Failed to invalidate sessions', { error: sessionErr.message });
+        }
 
         res.json({
             success: true,
@@ -70,7 +85,7 @@ router.post('/change-password', isAuthenticated, async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Error changing password:', err);
+        logger.error('[SETTINGS] Error changing password', { error: err.message });
         res.status(500).json({
             success: false,
             message: 'Server error changing password.'
@@ -95,7 +110,7 @@ router.get('/account-info', isAuthenticated, async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Error fetching account info:', err);
+        logger.error('[SETTINGS] Error fetching account info', { error: err.message });
         res.status(500).json({
             success: false,
             message: 'Server error fetching account info.'
@@ -173,7 +188,7 @@ router.post('/upload-retention', isAuthenticated, async (req, res) => {
         }
 
         if (!isAuthorized) {
-            console.log(`[Upload Retention] Unauthorized attempt by ${currentUser.role} ${currentUser._id} to modify retention for student ${studentId}`);
+            logger.warn('[Upload Retention] Unauthorized attempt', { role: currentUser.role, userId: currentUser._id?.toString(), studentId });
             return res.status(403).json({
                 success: false,
                 message: 'You do not have permission to modify upload retention for this student.'
@@ -184,7 +199,7 @@ router.post('/upload-retention', isAuthenticated, async (req, res) => {
         student.retainUploadsIndefinitely = retainIndefinitely;
         await student.save();
 
-        console.log(`[Upload Retention] ${currentUser.firstName} ${currentUser.lastName} (${authReason}) ${retainIndefinitely ? 'enabled' : 'disabled'} upload retention for ${student.firstName} ${student.lastName}`);
+        logger.info('[Upload Retention] Setting changed', { by: currentUser._id?.toString(), authReason, studentId, retainIndefinitely });
 
         res.json({
             success: true,
@@ -194,7 +209,7 @@ router.post('/upload-retention', isAuthenticated, async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Error updating upload retention:', err);
+        logger.error('[Upload Retention] Error updating', { error: err.message });
         res.status(500).json({
             success: false,
             message: 'Server error updating upload retention.'
@@ -260,7 +275,7 @@ router.get('/upload-retention/:studentId', isAuthenticated, async (req, res) => 
         });
 
     } catch (err) {
-        console.error('Error fetching upload retention:', err);
+        logger.error('[Upload Retention] Error fetching', { error: err.message });
         res.status(500).json({
             success: false,
             message: 'Server error fetching upload retention.'

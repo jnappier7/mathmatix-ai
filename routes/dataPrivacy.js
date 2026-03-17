@@ -45,16 +45,36 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const Announcement = require('../models/announcement');
 const ImpersonationLog = require('../models/impersonationLog');
 const Message = require('../models/message');
+const DeletionAudit = require('../models/deletionAudit');
 
 // ============================================================================
-// DELETION AUDIT LOG (stored in-memory for now, should move to DB)
+// DELETION AUDIT LOG (persisted to MongoDB — append-only for compliance)
 // ============================================================================
 
 /**
  * Records a deletion event for compliance audit trail.
- * In production, this should be stored in a separate, append-only collection.
+ * Stored in a dedicated collection that should never be purged.
  */
 async function recordDeletionAudit(deletionRecord) {
+    try {
+        await DeletionAudit.create({
+            targetUserId: deletionRecord.targetUserId,
+            requestedBy: deletionRecord.requestedBy,
+            requestedByRole: deletionRecord.requestedByRole,
+            reason: deletionRecord.reason,
+            collectionsAffected: deletionRecord.collectionsAffected,
+            documentCounts: deletionRecord.documentCounts,
+            errors: deletionRecord.errors,
+            startedAt: deletionRecord.startedAt,
+            completedAt: deletionRecord.completedAt || new Date(),
+            durationMs: deletionRecord.durationMs
+        });
+    } catch (dbError) {
+        // If DB write fails, still log to file as fallback so we never lose audit data
+        logger.error('[DataPrivacy] Failed to persist deletion audit to database', { error: dbError.message });
+    }
+
+    // Always log to file as well for redundancy
     logger.info('[DataPrivacy] Deletion audit record', {
         action: 'student_data_deletion',
         targetUserId: deletionRecord.targetUserId,
