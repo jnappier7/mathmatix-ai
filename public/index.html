@@ -73,6 +73,7 @@
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/analytics.js" data-ga="" data-fbp=""></script>
   <style>
     /* ── Mobile Top Bar (visible only on mobile where header is hidden) ── */
     .lp-mobile-topbar {
@@ -1756,6 +1757,7 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
     </a>
     <div class="lp-mobile-topbar-actions">
+      <a href="/pricing.html" class="lp-mobile-topbar-link">Pricing</a>
       <a href="/demo.html" class="lp-mobile-topbar-link lp-pre-launch">Try Demo</a>
       <a href="/signup.html" class="lp-mobile-topbar-link lp-post-launch" style="display:none;">Sign Up Free</a>
       <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
@@ -1769,6 +1771,7 @@
       </a>
     </div>
     <nav class="landing-nav">
+      <a href="/pricing.html" class="btn btn-primary-outline" style="border-color: transparent; color: var(--clr-text-dim);">Pricing</a>
       <a href="/login.html" class="btn btn-primary-outline">Log In</a>
       <a href="#lp-waitlist-banner" class="btn btn-primary lp-pre-launch">Join Waitlist</a>
       <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
@@ -1856,7 +1859,10 @@
     <section class="lp-photo-banner lp-reveal">
       <div class="lp-inner">
         <div class="lp-photo-banner-wrap">
-          <img src="/images/girlStudy.png" alt="Student using Mathmatix AI on her laptop" class="lp-photo-banner-img" />
+          <picture>
+            <source srcset="/images/girlStudy.webp" type="image/webp" />
+            <img src="/images/girlStudy.png" alt="Student using Mathmatix AI on her laptop" class="lp-photo-banner-img" loading="eager" />
+          </picture>
           <div class="lp-photo-banner-overlay">
             <p class="lp-photo-banner-text">Built for the way kids actually learn.</p>
           </div>
@@ -1912,7 +1918,10 @@
     <section class="lp-spotlight lp-reveal">
       <div class="lp-spotlight-layout lp-inner">
         <div class="lp-spotlight-photo">
-          <img src="/images/homeworkMom.png" alt="Mother helping her daughter learn math with Mathmatix AI" />
+          <picture>
+            <source srcset="/images/homeworkMom.webp" type="image/webp" />
+            <img src="/images/homeworkMom.png" alt="Mother helping her daughter learn math with Mathmatix AI" loading="lazy" />
+          </picture>
         </div>
         <div class="lp-spotlight-content">
           <h2>Parents Stay in the Loop</h2>
@@ -2061,7 +2070,10 @@
     <section class="lp-spotlight lp-spotlight--reverse lp-reveal lp-section-alt">
       <div class="lp-spotlight-layout lp-inner">
         <div class="lp-spotlight-photo">
-          <img src="/images/deskBoy.png" alt="Student working independently on math with Mathmatix AI at his desk" />
+          <picture>
+            <source srcset="/images/deskBoy.webp" type="image/webp" />
+            <img src="/images/deskBoy.png" alt="Student working independently on math with Mathmatix AI at his desk" loading="lazy" />
+          </picture>
         </div>
         <div class="lp-spotlight-content">
           <h2>Built for Independent Learners</h2>
@@ -2075,7 +2087,10 @@
     <section class="lp-mission lp-reveal">
       <div class="lp-mission-layout">
         <div class="lp-mission-photo">
-          <img src="/images/classroomBoy-crop.png" alt="Student working on math in the classroom with Mathmatix AI" />
+          <picture>
+            <source srcset="/images/classroomBoy-crop.webp" type="image/webp" />
+            <img src="/images/classroomBoy-crop.png" alt="Student working on math in the classroom with Mathmatix AI" loading="lazy" />
+          </picture>
         </div>
         <div class="lp-mission-content">
           <h2>Why I Built This</h2>
@@ -2112,7 +2127,7 @@
           <div class="lp-compare-card lp-compare-card--highlight">
             <div class="lp-compare-badge">Best Value</div>
             <h3>Mathmatix AI</h3>
-            <div class="lp-compare-price">A fraction of the cost</div>
+            <div class="lp-compare-price"><a href="/pricing.html" style="color:inherit;text-decoration:none;border-bottom:2px dashed var(--clr-primary-teal);">See Our Plans</a></div>
             <ul>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Deeply personalized over time</li>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Available 24/7</li>
@@ -2199,7 +2214,10 @@
     <section class="lp-spotlight lp-reveal">
       <div class="lp-spotlight-layout lp-inner">
         <div class="lp-spotlight-photo">
-          <img src="/images/tabletBoy.png" alt="Student using a tablet to learn math with Mathmatix AI" style="object-position: center 40%;" />
+          <picture>
+            <source srcset="/images/tabletBoy.webp" type="image/webp" />
+            <img src="/images/tabletBoy.png" alt="Student using a tablet to learn math with Mathmatix AI" style="object-position: center 40%;" loading="lazy" />
+          </picture>
         </div>
         <div class="lp-spotlight-content">
           <h2>A Tutor That Never Sleeps</h2>
@@ -2275,7 +2293,7 @@
               <i class="fas fa-chevron-down"></i>
             </button>
             <div class="lp-faq-answer">
-              <p>Every student receives a baseline of free tutoring access &mdash; no credit card required. If families want to go deeper, unlock special features, or get more extensive time, those options are available, but we ensure all students have a path to get help.</p>
+              <p>Every student receives a baseline of free tutoring access &mdash; no credit card required. If families want more time or premium features, affordable plans start at just $9.95. <a href="/pricing.html" style="color:var(--clr-primary-teal);font-weight:600;">See all plans &rarr;</a></p>
             </div>
           </div>
         </div>
@@ -2286,7 +2304,7 @@
     <section class="lp-final-cta lp-reveal">
       <div class="lp-inner">
         <h2>Every child deserves a great math tutor.</h2>
-        <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help.</p>
+        <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help. <a href="/pricing.html" style="color:#fff;font-weight:600;text-decoration:underline;">See pricing &rarr;</a></p>
         <form class="lp-waitlist-form lp-waitlist-form--final lp-pre-launch" autocomplete="off">
           <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
           <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
@@ -2318,6 +2336,7 @@
         <div class="lp-footer-col">
           <h4>Product</h4>
           <a href="#how-it-works">How It Works</a>
+          <a href="/pricing.html">Pricing</a>
           <a href="/demo.html" class="lp-pre-launch">Try the Demo</a>
           <a href="/signup.html" class="lp-post-launch" style="display:none;">Try It Free</a>
           <a href="#lp-waitlist-banner" class="lp-pre-launch">Join Waitlist</a>

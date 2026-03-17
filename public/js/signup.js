@@ -34,9 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Password validation (must match backend requirements)
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
-      alert("Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.");
+      alert("Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number.");
       return;
     }
 

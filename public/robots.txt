@@ -5,6 +5,8 @@ User-agent: *
 Allow: /
 Allow: /login.html
 Allow: /signup.html
+Allow: /pricing.html
+Allow: /demo.html
 Allow: /privacy.html
 Allow: /terms.html
 

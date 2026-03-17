@@ -37,8 +37,8 @@ const validatePassword = () =>
   body('password')
     .isLength({ min: 8, max: 128 })
     .withMessage('Password must be between 8 and 128 characters')
-    .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/])/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
+    .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)/)
+    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number');
 
 // Name validation (first/last name)
 const validateName = (field) =>

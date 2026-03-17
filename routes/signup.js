@@ -105,11 +105,10 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
     // Parent invite code at signup is optional but allows pre-linking for convenience.
 
     // Password strength validation (should match frontend)
-    // SECURITY FIX: Strengthened password requirements to include special characters
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
         console.warn("WARN: Signup failed - weak password.");
-        return res.status(400).json({ message: 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.' });
+        return res.status(400).json({ message: 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number.' });
     }
 
     try {
