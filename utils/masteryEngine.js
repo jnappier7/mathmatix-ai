@@ -1,6 +1,8 @@
 // utils/masteryEngine.js
 // Master Mode: Mastery State Machine & 4-Pillar Calculation Engine
 
+const { initializeReviewSchedule, calculateNextReview, assessQuality, QUALITY_THRESHOLDS } = require('./spacedRepetition');
+
 /**
  * MASTERY STATE MACHINE
  *
@@ -254,16 +256,40 @@ function updateSkillMastery(skill, attemptData) {
   }
 
   // Recalculate mastery score
+  const previousStatus = skill.status;
   skill.masteryScore = calculateMasteryScore(skill.pillars);
 
   // Update tier
   skill.currentTier = checkTierEligibility(skill);
 
-  // Schedule next retention check
+  // Schedule next retention check (legacy system)
   skill.pillars.retention.nextRetentionCheck = scheduleRetentionCheck(
     skill.currentTier,
     skill.lastPracticed
   );
+
+  // ★ SPACED REPETITION: Initialize schedule when skill reaches mastered ★
+  if (skill.status === 'mastered' && previousStatus !== 'mastered' && !skill.reviewSchedule?.nextReviewDate) {
+    skill.reviewSchedule = initializeReviewSchedule(new Date());
+  }
+
+  // ★ SPACED REPETITION: Update schedule on review attempts for mastered skills ★
+  if (skill.reviewSchedule?.nextReviewDate && (skill.status === 'mastered' || skill.status === 'needs-review')) {
+    const quality = assessQuality({
+      correct,
+      responseTimeMs: responseTime ? responseTime * 1000 : undefined,
+      hintUsed: hintUsed || false
+    });
+    const updated = calculateNextReview(skill.reviewSchedule, quality);
+    skill.reviewSchedule = {
+      ...skill.reviewSchedule,
+      ...updated,
+      reviewHistory: [
+        ...(skill.reviewSchedule.reviewHistory || []).slice(-19),
+        { date: new Date(), quality, interval: skill.reviewSchedule.interval || 0, correct }
+      ]
+    };
+  }
 
   return skill;
 }
@@ -433,6 +459,16 @@ function initializeSkillMastery(skillId) {
     fluencyTracking: {
       recentTimes: [],
       speedTrend: 'unknown'
+    },
+    reviewSchedule: {
+      easeFactor: 2.5,
+      interval: 0,
+      repetitionCount: 0,
+      nextReviewDate: null,
+      lastReviewDate: null,
+      lastReviewQuality: null,
+      lapseCount: 0,
+      reviewHistory: []
     }
   };
 }

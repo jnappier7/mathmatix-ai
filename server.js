@@ -91,6 +91,7 @@ const screenerRoutes = require('./routes/screener');  // IRT-based adaptive scre
 const growthCheckRoutes = require('./routes/growthCheck');  // Growth Check (short progress assessment)
 const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
 const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
+const reviewRoutes = require('./routes/review');  // Spaced repetition review system
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const emailRoutes = require('./routes/email');  // Email service for parent reports and notifications
@@ -567,6 +568,7 @@ app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive
 app.use('/api/growth-check', isAuthenticated, growthCheckRoutes); // Growth Check (short progress assessment)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes); // Mastery mode dedicated chat (usage-gated)
+app.use('/api/review', isAuthenticated, reviewRoutes); // Spaced repetition review system
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, paidFeatureGate('Show My Work'), gradeWorkRoutes); // Paid: AI grading (all paid plans)
