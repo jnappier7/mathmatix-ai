@@ -1029,6 +1029,52 @@
           </button>
         </div>
 
+        <!-- Learning Analytics Panel -->
+        <div class="dashboard-panel">
+          <h2 class="dashboard-panel-header">
+            <i class="fas fa-brain"></i> Learning Analytics
+          </h2>
+          <p>Platform-wide learning engine metrics and outcomes.</p>
+          <div id="admin-analytics-container" style="margin-top: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+              <div style="padding: 12px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0; text-align: center;">
+                <div style="font-size: 1.4em; font-weight: 700; color: #16a34a;" id="admin-avg-mastery">-</div>
+                <div style="font-size: 0.8em; color: #666;">Avg Mastery (BKT)</div>
+              </div>
+              <div style="padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; text-align: center;">
+                <div style="font-size: 1.4em; font-weight: 700; color: #2563eb;" id="admin-avg-retention">-</div>
+                <div style="font-size: 0.8em; color: #666;">Avg Retention (FSRS)</div>
+              </div>
+              <div style="padding: 12px; background: #fefce8; border-radius: 8px; border: 1px solid #fde68a; text-align: center;">
+                <div style="font-size: 1.4em; font-weight: 700; color: #ca8a04;" id="admin-avg-smartscore">-</div>
+                <div style="font-size: 0.8em; color: #666;">Avg SmartScore</div>
+              </div>
+              <div style="padding: 12px; background: #fdf2f8; border-radius: 8px; border: 1px solid #fbcfe8; text-align: center;">
+                <div style="font-size: 1.4em; font-weight: 700; color: #db2777;" id="admin-productive-struggle">-</div>
+                <div style="font-size: 0.8em; color: #666;">Productive Struggle %</div>
+              </div>
+            </div>
+            <div style="margin-top: 12px;">
+              <h4 style="font-size: 0.9em; margin-bottom: 8px; color: #475569;"><i class="fas fa-chart-bar"></i> Mastery Distribution</h4>
+              <div style="height: 200px; position: relative;">
+                <canvas id="admin-mastery-distribution"></canvas>
+              </div>
+            </div>
+            <div style="margin-top: 16px;">
+              <h4 style="font-size: 0.9em; margin-bottom: 8px; color: #475569;"><i class="fas fa-brain"></i> Cognitive Load Zones</h4>
+              <div id="admin-cognitive-zones" style="display: flex; gap: 6px; height: 30px; border-radius: 6px; overflow: hidden;">
+                <div style="flex: 1; background: #bbf7d0;" title="Low Load"></div>
+                <div style="flex: 1; background: #bfdbfe;" title="Optimal"></div>
+                <div style="flex: 1; background: #fde68a;" title="High"></div>
+                <div style="flex: 1; background: #fecaca;" title="Overload"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75em; color: #666; margin-top: 4px;">
+                <span>Low</span><span>Optimal</span><span>High</span><span>Overload</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="dashboard-panel">
           <h2 class="dashboard-panel-header">
             <i class="fas fa-star"></i> Alpha Testing Feedback
@@ -1465,7 +1511,7 @@
         </div>
         <div class="modal-form-group" id="passwordFieldGroup" style="display: none;">
           <label for="teacherPassword">Password</label>
-          <input type="password" id="teacherPassword" name="password" placeholder="Min 8 chars with uppercase, lowercase, number, special char">
+          <input type="password" id="teacherPassword" name="password" placeholder="Min 8 chars with uppercase, lowercase, number">
         </div>
         <div class="modal-form-group">
           <label>
@@ -2318,6 +2364,9 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     })();
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="/js/analyticsCharts.js"></script>
+  <script src="/js/admin-analytics.js"></script>
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>

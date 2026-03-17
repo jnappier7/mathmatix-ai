@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/analytics.js" data-ga="" data-fbp=""></script>
   <script src="/js/i18n-translations.js"></script>
   <script src="/js/i18n.js"></script>
   <style>
@@ -109,7 +110,7 @@
         </div>
         <div class="form-group">
           <label for="password" data-i18n="signup.password">Password</label>
-          <input type="password" name="password" id="password" required autocomplete="new-password" placeholder="Min 8 chars, 1 uppercase, 1 number" />
+          <input type="password" name="password" id="password" required autocomplete="new-password" placeholder="Min 8 characters" />
         </div>
         <div class="form-group">
           <label for="confirmPassword" data-i18n="signup.confirmPassword">Confirm Password</label>
@@ -251,9 +252,9 @@
           return;
         }
 
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
         if (!passwordRegex.test(password)) {
-          signupMessage.textContent = 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.';
+          signupMessage.textContent = 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number.';
           signupMessage.className = 'error';
           signupMessage.style.display = 'block';
           return;

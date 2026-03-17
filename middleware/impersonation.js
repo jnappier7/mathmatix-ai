@@ -3,6 +3,7 @@
 
 const User = require('../models/user');
 const ImpersonationLog = require('../models/impersonationLog');
+const logger = require('../utils/logger');
 
 // Auto-timeout for impersonation sessions (20 minutes)
 const IMPERSONATION_TIMEOUT_MS = 20 * 60 * 1000;
@@ -84,12 +85,12 @@ async function handleImpersonation(req, res, next) {
             timestamp: new Date()
           }
         }
-      }).catch(err => console.error('Failed to log impersonation page visit:', err));
+      }).catch(err => logger.error('Failed to log impersonation page visit', { error: err.message }));
     }
 
     next();
   } catch (err) {
-    console.error('Impersonation middleware error:', err);
+    logger.error('Impersonation middleware error', { error: err.message });
     await endImpersonation(req, 'session_expired');
     next();
   }
@@ -154,7 +155,7 @@ function logBlockedAction(req, blocked) {
         timestamp: new Date()
       }
     }
-  }).catch(err => console.error('Failed to log impersonation action:', err));
+  }).catch(err => logger.error('Failed to log impersonation action', { error: err.message }));
 }
 
 /**
@@ -192,7 +193,7 @@ async function startImpersonation(req, actor, target, readOnly = true) {
     startedAt: new Date().toISOString()
   };
 
-  console.log(`[IMPERSONATION] ${actor.email} (${actor.role}) started viewing as ${target.email} (${target.role})`);
+  logger.info('[IMPERSONATION] Session started', { actorId: actor._id?.toString(), actorRole: actor.role, targetId: target._id?.toString(), targetRole: target.role });
 
   return log;
 }
@@ -212,10 +213,10 @@ async function endImpersonation(req, reason = 'manual') {
     await ImpersonationLog.findByIdAndUpdate(impersonation.logId, {
       endedAt: new Date(),
       endReason: reason
-    }).catch(err => console.error('Failed to end impersonation log:', err));
+    }).catch(err => logger.error('Failed to end impersonation log', { error: err.message }));
   }
 
-  console.log(`[IMPERSONATION] Session ended (${reason}) for actor ${impersonation.actorId}`);
+  logger.info('[IMPERSONATION] Session ended', { reason, actorId: impersonation.actorId });
 
   // Clear session data
   delete req.session.impersonation;

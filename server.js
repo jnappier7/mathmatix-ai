@@ -67,6 +67,7 @@ const passwordResetRoutes = require('./routes/passwordReset');
 const authRoutes = require('./routes/auth');  // Email verification and auth utilities
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
+const analyticsRoutes = require('./routes/analytics');
 const adminRoutes = require('./routes/admin');
 const parentRoutes = require('./routes/parent');
 const leaderboardRoutes = require('./routes/leaderboard');
@@ -91,6 +92,7 @@ const screenerRoutes = require('./routes/screener');  // IRT-based adaptive scre
 const growthCheckRoutes = require('./routes/growthCheck');  // Growth Check (short progress assessment)
 const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
 const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
+const reviewRoutes = require('./routes/review');  // Spaced repetition review system
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const emailRoutes = require('./routes/email');  // Email service for parent reports and notifications
@@ -200,6 +202,16 @@ app.use(passport.session());
 app.use(handleImpersonation);
 app.use(enforceReadOnly);
 
+// CSP Nonce middleware — generates a unique nonce per request for inline scripts.
+// Pages can read the nonce from res.locals.cspNonce (for server-rendered pages)
+// or from the meta tag <meta name="csp-nonce"> injected by the nonce middleware.
+// This enables incremental migration away from 'unsafe-inline'.
+const crypto = require('crypto');
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+
 // Security Headers with Helmet.js
 app.use(helmet({
   // Content Security Policy - allows necessary external resources
@@ -208,7 +220,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'", // Required for inline scripts in HTML pages
+        (req, res) => `'nonce-${res.locals.cspNonce}'`, // Per-request nonce for inline scripts
+        "'unsafe-inline'", // Fallback for pages not yet migrated to nonces (ignored when nonce is present in modern browsers)
         "'unsafe-eval'", // Required for MathLive and dynamic math rendering
         "https://cdnjs.cloudflare.com", // Font Awesome
         "https://cdn.jsdelivr.net", // Various CDN resources
@@ -346,6 +359,12 @@ app.use(csrfProtection);
 // HTTP Request Logging
 app.use(logger.requestLogger);
 
+// System-wide HTTP error tracking (4xx, 5xx)
+const { trackErrors, errorMetricsHandler, clientErrorHandler } = require('./middleware/errorTracking');
+app.use(trackErrors);
+
+// Client-side error reporting endpoint (public, no auth needed)
+app.post('/api/client-errors', express.text({ type: '*/*', limit: '2kb' }), clientErrorHandler);
 
 // --- 7. DATABASE CONNECTION ---
 const { startRetentionSchedule } = require('./utils/dataRetention');
@@ -527,8 +546,10 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
 
 // API Routes
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
+app.get('/api/admin/error-metrics', isAuthenticated, isAdmin, errorMetricsHandler);
 app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
+app.use('/api/analytics', isAuthenticated, analyticsRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)
@@ -566,6 +587,7 @@ app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive
 app.use('/api/growth-check', isAuthenticated, growthCheckRoutes); // Growth Check (short progress assessment)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes); // Mastery mode dedicated chat (usage-gated)
+app.use('/api/review', isAuthenticated, reviewRoutes); // Spaced repetition review system
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, paidFeatureGate('Show My Work'), gradeWorkRoutes); // Paid: AI grading (all paid plans)
@@ -835,8 +857,8 @@ app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "demo.html")));
 
-// Pricing page (accessible to authenticated users)
-app.get("/pricing.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
+// Pricing page (public — accessible to everyone for conversion)
+app.get("/pricing.html", (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
 
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
@@ -889,6 +911,9 @@ app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fl
 const staticCacheOptions = { maxAge: '1d', etag: true, lastModified: true };
 app.use(express.static(path.join(__dirname, "public"), staticCacheOptions));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images'), staticCacheOptions));
+
+// Express error logging middleware (catch unhandled errors)
+app.use(logger.errorLogger);
 
 // Fallback for 404
 app.get("*", (req, res) => {

@@ -189,12 +189,12 @@ function mergeLlmSignals(sidecar, extracted) {
  */
 function getSidecarInstruction() {
   return `STRUCTURED SIGNALS — Silently append tags at the END of your response when relevant.
-🚨 NEVER mention these tags to the student. They are invisible server signals. Just silently append.
-- <CORE_BEHAVIOR_XP:AMOUNT,BEHAVIOR> — 25/50/100 XP for: explained_reasoning, caught_own_error, strategy_selection, persistence, transfer, taught_back. Ceremony required (name it, connect to identity). Max 2/session.
-- <SAFETY_CONCERN>description</SAFETY_CONCERN> — Flag self-harm, abuse, danger for adult review.
+🚨 NEVER mention these tags to the student. They are invisible server signals.
+- <CORE_BEHAVIOR_XP:AMOUNT,BEHAVIOR> — 25/50/100 XP for: explained_reasoning, caught_own_error, strategy_selection, persistence, transfer, taught_back. Ceremony required. Max 2/session.
+- <SAFETY_CONCERN>description</SAFETY_CONCERN> — Flag self-harm, abuse, or danger.
 - <LEARNING_INSIGHT:observation> — Notable observation about how this student learns.
 - <SCAFFOLD_ADVANCE> — Course mode only: student demonstrates readiness for next step.
-Do NOT emit <PROBLEM_RESULT> or <SKILL_MASTERED> — tracked automatically.`;
+Do NOT emit <PROBLEM_RESULT> or <SKILL_MASTERED> — these are tracked automatically.`;
 }
 
 /**

@@ -299,6 +299,23 @@ const skillMasterySchema = new Schema({
     default: 'none'
   },
 
+  // ★ SPACED REPETITION SCHEDULE (SM-2 inspired) ★
+  reviewSchedule: {
+    easeFactor: { type: Number, default: 2.5, min: 1.3 },  // SM-2 ease factor
+    interval: { type: Number, default: 0 },                 // Current interval in days
+    repetitionCount: { type: Number, default: 0 },           // Successful reviews in a row
+    nextReviewDate: { type: Date },                          // When this skill is due for review
+    lastReviewDate: { type: Date },                          // Last time reviewed
+    lastReviewQuality: { type: Number, min: 0, max: 5 },    // 0=blackout, 5=perfect recall
+    lapseCount: { type: Number, default: 0 },                // Times forgotten after mastery
+    reviewHistory: [{
+      date: { type: Date },
+      quality: { type: Number, min: 0, max: 5 },
+      interval: { type: Number },
+      correct: { type: Boolean }
+    }]
+  },
+
   // Adaptive Fluency Engine: Time-based performance tracking
   fluencyTracking: {
     // Recent response times (in seconds) - keep last 20
@@ -925,6 +942,38 @@ const userSchema = new Schema({
   learningProfile: {
     type: learningProfileSchema,
     default: () => ({})
+  },
+
+  /* ★ LEARNING ENGINE STATE — BKT, FSRS, Consistency, Cognitive Load ★ */
+  learningEngines: {
+    bkt: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    fsrs: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    consistency: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    cognitiveLoadHistory: [{
+      date: { type: Date, default: Date.now },
+      avgLoad: { type: Number, min: 0, max: 1 },
+      peakLoad: { type: Number, min: 0, max: 1 },
+      level: { type: String, enum: ['low', 'optimal', 'high', 'overload'] },
+      sessionMinutes: Number
+    }],
+    interleavingStats: {
+      totalFocused: { type: Number, default: 0 },
+      totalInterleaved: { type: Number, default: 0 },
+      focusedCorrect: { type: Number, default: 0 },
+      interleavedCorrect: { type: Number, default: 0 }
+    }
   },
 
   /* Fact Fluency Progress (Math Blaster-style game) */
