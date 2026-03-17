@@ -326,10 +326,15 @@
       if (speaking) {
         state.silenceFrames = 0;
 
+        // Always cancel any pending silence timer when speech is detected
+        if (state.vadTimer) {
+          clearTimeout(state.vadTimer);
+          state.vadTimer = null;
+        }
+
         if (!state.isSpeaking) {
           state.isSpeaking = true;
           state.speechStartTime = Date.now();
-          clearTimeout(state.vadTimer);
         }
       } else {
         state.silenceFrames++;
