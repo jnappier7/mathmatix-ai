@@ -38,7 +38,7 @@ async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
     decision, responseText, originalMessage, aiProcessingSeconds,
-    sessionMood,
+    sessionMood, evidence,
   } = params;
 
   const results = {
@@ -245,6 +245,36 @@ async function persist(params) {
       (!user.subscriptionTier || user.subscriptionTier === 'free')
         ? Math.max(0, FREE_WEEKLY - updatedWeekly)
         : null;
+  }
+
+  // ── Persist cognitive load snapshot ──
+  if (evidence?.cognitiveLoad && evidence.cognitiveLoad.load != null) {
+    if (!user.learningEngines) {
+      user.learningEngines = { bkt: {}, fsrs: {}, consistency: {}, cognitiveLoadHistory: [], interleavingStats: {} };
+    }
+    if (!user.learningEngines.cognitiveLoadHistory) {
+      user.learningEngines.cognitiveLoadHistory = [];
+    }
+    const sessionMinutes = conversation.createdAt
+      ? (Date.now() - new Date(conversation.createdAt).getTime()) / 60000
+      : 0;
+    user.learningEngines.cognitiveLoadHistory.push({
+      date: new Date(),
+      avgLoad: evidence.cognitiveLoad.load,
+      peakLoad: Math.max(
+        evidence.cognitiveLoad.load,
+        ...(user.learningEngines.cognitiveLoadHistory
+          .filter(h => h.date && (Date.now() - new Date(h.date).getTime()) < 3600000)
+          .map(h => h.peakLoad || 0))
+      ),
+      level: evidence.cognitiveLoad.level,
+      sessionMinutes: Math.round(sessionMinutes),
+    });
+    // Keep last 50 snapshots
+    if (user.learningEngines.cognitiveLoadHistory.length > 50) {
+      user.learningEngines.cognitiveLoadHistory = user.learningEngines.cognitiveLoadHistory.slice(-50);
+    }
+    user.markModified('learningEngines.cognitiveLoadHistory');
   }
 
   // Save user

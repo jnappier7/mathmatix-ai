@@ -47,12 +47,18 @@ const ACTIONS = {
 /**
  * Choose the tutoring action based on observation, diagnosis, and phase state.
  *
+ * Enhanced with evidence accumulator: when evidence is provided, the decision
+ * engine uses BKT knowledge state, FSRS memory signals, cognitive load,
+ * consistency scoring, and misconception intelligence to make significantly
+ * more accurate pedagogical decisions.
+ *
  * @param {Object} observation - From observe stage
  * @param {Object} diagnosis - From diagnose stage
  * @param {Object} context
  * @param {Object} context.phaseState - Current lesson phase state (or null for free chat)
  * @param {Object} context.activeSkill - Current skill { skillId, displayName }
  * @param {Object} context.streakHistory - { idkCount, giveUpCount, recentWrongCount }
+ * @param {Object} context.evidence - From evidenceAccumulator (optional, enhances decisions)
  * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
  */
 function decide(observation, diagnosis, context = {}) {
@@ -61,6 +67,11 @@ function decide(observation, diagnosis, context = {}) {
   // Session mood modifiers run AFTER the core decision.
   // This ensures they apply to ALL branches, including early returns.
   applyMoodModifiers(decision, context.sessionMood);
+
+  // Evidence-based modifiers run LAST — they override mood when data is stronger.
+  if (context.evidence) {
+    applyEvidenceModifiers(decision, context.evidence);
+  }
 
   return decision;
 }
@@ -320,6 +331,123 @@ function applyMoodModifiers(decision, sessionMood) {
         'Student was struggling earlier but is now getting it. Acknowledge the turnaround naturally (not patronizingly).'
       );
     }
+  }
+}
+
+/**
+ * Apply evidence-based modifiers to a decision.
+ *
+ * These are informed by BKT, FSRS, cognitive load, consistency scoring,
+ * and misconception intelligence. They provide data-driven overrides
+ * to the heuristic-based core decision and mood modifiers.
+ *
+ * Evidence modifiers are STRONGER than mood modifiers because they're
+ * backed by mathematical models, not just pattern matching.
+ */
+function applyEvidenceModifiers(decision, evidence) {
+  if (!evidence || !evidence.composite) return;
+
+  const composite = evidence.composite;
+
+  // ── Cognitive overload override (highest priority) ──
+  // If the student is cognitively overloaded, ALWAYS reduce scaffold
+  if (evidence.cognitiveLoad?.isOverloaded) {
+    decision.scaffoldLevel = 5; // Maximum support
+    decision.directives.push(
+      'COGNITIVE OVERLOAD DETECTED. Simplify immediately.',
+      'Break the problem into smaller steps. One piece at a time.',
+      'Keep response very short (1-2 sentences max).'
+    );
+
+    // If we were about to present a new problem, switch to review
+    if (decision.action === ACTIONS.PRESENT_PROBLEM) {
+      decision.action = ACTIONS.SCAFFOLD_DOWN;
+      decision.directives.push(
+        'Do NOT present a new problem while overloaded.',
+        'Offer a simpler version or a worked example first.'
+      );
+    }
+  }
+
+  // ── Optimal scaffold level from evidence ──
+  // Evidence-based scaffold overrides mood-based scaffold when available
+  if (composite.optimalScaffold && !evidence.cognitiveLoad?.isOverloaded) {
+    decision.scaffoldLevel = composite.optimalScaffold;
+  }
+
+  // ── Recurring misconception intervention ──
+  if (evidence.misconceptions?.needsIntervention && diagnosis) {
+    decision.directives.push(
+      `WARNING: This misconception has occurred ${evidence.misconceptions.recurringCount}+ times.`,
+      'Previous teaching approach is NOT working. Try a completely different representation.',
+      'Use concrete examples, visual models, or manipulatives instead of symbolic explanation.'
+    );
+
+    // If we were going to do standard guide_incorrect, escalate to reteach
+    if (decision.action === ACTIONS.GUIDE_INCORRECT) {
+      decision.action = ACTIONS.RETEACH_MISCONCEPTION;
+      decision.directives.push(
+        'ESCALATED: Standard guidance has failed repeatedly. Use reteaching protocol.'
+      );
+    }
+  }
+
+  // ── BKT-informed mastery signals ──
+  if (evidence.knowledge?.available) {
+    const pL = evidence.knowledge.pLearned;
+
+    // Near mastery — focus on consolidation
+    if (pL > 0.90 && pL < 0.95) {
+      decision.directives.push(
+        'Student is near mastery (P(L)=' + pL.toFixed(2) + '). Focus on consolidation.',
+        'Present slightly harder variants to push across the mastery threshold.'
+      );
+    }
+
+    // Overestimated mastery — student is answering correctly but BKT says not learned
+    if (evidence.knowledge.predictedCorrect > 0.7 && pL < 0.4) {
+      decision.directives.push(
+        'BKT indicates possible guessing (high predicted correct but low P(L)).',
+        'Include a transfer problem or ask the student to EXPLAIN their reasoning.'
+      );
+    }
+  }
+
+  // ── Productive struggle recognition ──
+  if (evidence.performance?.productiveStruggle) {
+    decision.directives.push(
+      'PRODUCTIVE STRUGGLE detected. Student struggled and recovered — this is excellent.',
+      'Acknowledge the perseverance naturally. Do NOT over-scaffold.'
+    );
+
+    // Reduce scaffold if we were going to over-support
+    if (decision.scaffoldLevel >= 4 && !evidence.cognitiveLoad?.isOverloaded) {
+      decision.scaffoldLevel = 3;
+    }
+  }
+
+  // ── Break suggestion ──
+  if (composite.shouldSuggestBreak && decision.action !== ACTIONS.ACKNOWLEDGE_FRUSTRATION) {
+    decision.directives.push(
+      'Session fatigue detected. Gently offer a break or suggest switching to an easier topic.',
+      'If student continues, keep problems easy and responses very short.'
+    );
+  }
+
+  // ── Teachable moment ──
+  if (composite.teachableMoment && decision.action === ACTIONS.CONFIRM_CORRECT) {
+    decision.directives.push(
+      'TEACHABLE MOMENT: Student is showing metacognition.',
+      'Deepen understanding: ask "Why does this work?" or "What would happen if...?"',
+      'Keep it brief — build on their insight, don\'t lecture.'
+    );
+  }
+
+  // ── Add evidence reasoning to directives ──
+  if (composite.reasoning.length > 0) {
+    decision.directives.push(
+      `[Evidence: ${composite.reasoning.join('; ')}]`
+    );
   }
 }
 

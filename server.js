@@ -67,6 +67,7 @@ const passwordResetRoutes = require('./routes/passwordReset');
 const authRoutes = require('./routes/auth');  // Email verification and auth utilities
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
+const analyticsRoutes = require('./routes/analytics');
 const adminRoutes = require('./routes/admin');
 const parentRoutes = require('./routes/parent');
 const leaderboardRoutes = require('./routes/leaderboard');
@@ -530,6 +531,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
 app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
+app.use('/api/analytics', isAuthenticated, analyticsRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)

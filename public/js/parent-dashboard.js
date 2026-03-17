@@ -757,6 +757,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${weeklySummaryHTML}
             ${skillRingHTML}
             ${growthSparklineHTML}
+
+            <!-- Learning Analytics Section -->
+            <div class="child-analytics-section" style="margin-top: 16px; padding: 14px; background: #f0f7ff; border-radius: 10px; border: 1px solid #d6eaf8;">
+              <strong style="font-size: 0.9em; color: #21618c;"><i class="fas fa-brain"></i> Learning Analytics</strong>
+              <div id="memory-health-${progress._id}" style="margin-top: 10px;"></div>
+              <div style="margin-top: 12px;">
+                <canvas id="strength-map-${progress._id}" style="max-height: 180px;"></canvas>
+              </div>
+            </div>
+
             ${accommodationsHTML}
             ${goalsHTML}
 
@@ -768,6 +778,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
         childrenListContainer.appendChild(card);
+
+        // Fetch and render learning analytics for this child
+        if (window.AnalyticsCharts) {
+            fetchChildAnalytics(progress._id);
+        }
 
         // Add event listener for View as Child button
         const viewAsChildBtn = card.querySelector('.view-as-child-btn');
