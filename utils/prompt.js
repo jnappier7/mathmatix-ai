@@ -146,6 +146,38 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
     context += '\n';
   }
 
+  // ★ SPACED REPETITION: Show skills due for review ★
+  const reviewDue = [];
+  for (const [skillId, data] of userProfile.skillMastery) {
+    if (filterToSkill && skillId !== filterToSkill) continue;
+    if (!data.reviewSchedule?.nextReviewDate) continue;
+    if (data.status !== 'mastered' && data.status !== 'needs-review' && data.status !== 're-fragile') continue;
+    const nextReview = new Date(data.reviewSchedule.nextReviewDate);
+    if (nextReview <= new Date()) {
+      const displayId = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const daysOverdue = Math.floor((new Date() - nextReview) / (1000 * 60 * 60 * 24));
+      reviewDue.push({ id: skillId, display: displayId, daysOverdue, lapseCount: data.reviewSchedule.lapseCount || 0 });
+    }
+  }
+
+  if (reviewDue.length > 0) {
+    reviewDue.sort((a, b) => b.daysOverdue - a.daysOverdue);
+    context += `**REVIEW DUE (Spaced Repetition):**\n`;
+    context += `These mastered skills are scheduled for review to strengthen long-term retention:\n`;
+    reviewDue.slice(0, 5).forEach(skill => {
+      const overdueStr = skill.daysOverdue > 0 ? ` (${skill.daysOverdue}d overdue)` : ' (due today)';
+      const fragileStr = skill.lapseCount >= 2 ? ' ⚠️ fragile' : '';
+      context += `  🔄 ${skill.display}${overdueStr}${fragileStr}\n`;
+    });
+    if (reviewDue.length > 5) {
+      context += `  ... and ${reviewDue.length - 5} more\n`;
+    }
+    context += `\n**REVIEW STRATEGY:** When the student finishes a problem or asks "what's next", naturally slip in a review problem:\n`;
+    context += `- "Before we move on, quick check — do you still remember how to do ${reviewDue[0].display.toLowerCase()}?"\n`;
+    context += `- "Let's warm up with something you already know."\n`;
+    context += `- Don't say "spaced repetition" or "review scheduled" — keep it natural.\n\n`;
+  }
+
   context += `**HOW TO USE THIS INFORMATION:**
 1. **Reference Growth:** When relevant, acknowledge their progress ("Remember when you were learning ${mastered[0]?.display || 'that skill'}? Look at you now!")
 2. **Fill Assessment Gaps:** When student is unsure what to work on, reference areas from their assessment that need strengthening
