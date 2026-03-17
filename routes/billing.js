@@ -21,12 +21,12 @@ const { isAuthenticated } = require('../middleware/auth');
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per week for all students
 
-// Active plan — only Unlimited is offered for new purchases
+// Active plan — Mathmatix+ is the only paid tier for new purchases
 const PACKS = {
   unlimited: {
-    name: 'M∆THM∆TIX Unlimited Monthly',
+    name: 'M∆THM∆TIX+',
     description: 'Unlimited 24/7 AI tutoring with voice, PDF upload, courses, Show My Work, and all platform features',
-    price: 1995,        // $19.95 in cents
+    price: 995,         // $9.95 in cents
     seconds: null,
     expiryDays: null,
     mode: 'subscription'

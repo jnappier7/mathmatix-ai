@@ -85,10 +85,10 @@ export function updateFreeTimeIndicator(usage) {
     const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Go Unlimited</span>' + resetLine + subtitle;
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>' + resetLine + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Go Unlimited</span>` + resetLine + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
         indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle;
@@ -116,20 +116,20 @@ export async function showUpgradePrompt(errorData) {
     const isFeatureBlock = errorData.premiumFeatureBlocked;
     const title = promo
         ? 'Pi Day Special \u2014 $3.14 Off!'
-        : 'Go Unlimited';
+        : 'Get Mathmatix+';
     const subtitle = isFeatureBlock
-        ? `${errorData.feature} requires the Unlimited plan.`
+        ? `${errorData.feature} requires Mathmatix+.`
         : 'Unlimited 24/7 tutoring for your child. Cancel anytime.';
 
     // Price display
     let priceHtml;
     if (promo && promo.prices.unlimited) {
         const promoPrice = (promo.prices.unlimited.promo / 100).toFixed(2);
-        priceHtml = `<div style="font-size:16px;color:#888;text-decoration:line-through;">$19.95/mo</div>
+        priceHtml = `<div style="font-size:16px;color:#888;text-decoration:line-through;">$9.95/mo</div>
                      <div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${promoPrice}<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>
                      <div style="color:#ff6b9d;font-size:12px;font-weight:bold;">Save $3.14 \u2014 Pi Day Special!</div>`;
     } else {
-        priceHtml = '<div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$19.95<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>';
+        priceHtml = '<div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$9.95<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>';
     }
 
     const modal = document.createElement('div');
@@ -148,7 +148,7 @@ export async function showUpgradePrompt(errorData) {
                 <li>\u2713 Show My Work grading</li>
                 <li>\u2713 All features unlocked</li>
             </ul>
-            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Go Unlimited</button>
+            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Get Mathmatix+</button>
             <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>
         </div>`;
     document.body.appendChild(modal);
@@ -292,7 +292,7 @@ async function pollForUpgrade() {
                 window._billingStatus = data;
 
                 if (statusText) {
-                    const tierLabel = data.tier === 'unlimited' ? 'Unlimited'
+                    const tierLabel = data.tier === 'unlimited' ? 'Mathmatix+'
                         : data.tier === 'pack_120' ? '120-Minute Pack'  // legacy
                         : '60-Minute Pack';                              // legacy
                     statusText.textContent = `Your ${tierLabel} plan is now active. Start chatting with your AI tutor!`;

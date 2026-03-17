@@ -19,8 +19,9 @@ const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 30 * 60; // 30 minutes per week for ALL students
 
 // Freemium taste limits — free users get a sample before upgrade prompt
-const FREE_UPLOAD_LIMIT = 1;     // 1 free upload, then upgrade required
-const FREE_GRADE_LIMIT  = 1;     // 1 free Show My Work, then upgrade required
+const FREE_UPLOAD_LIMIT  = 1;    // 1 free upload, then Mathmatix+ required
+const FREE_GRADE_LIMIT   = 1;    // 1 free Show My Work, then Mathmatix+ required
+const FREE_COURSE_LIMIT  = 1;    // 1 free course enrollment, then Mathmatix+ required
 
 // In-memory cache for school license lookups (avoids DB hit on every request)
 // Key: licenseId.toString(), Value: { license: object|null, checkedAt: number }
@@ -225,13 +226,20 @@ function premiumFeatureGate(featureName) {
       return next();
     }
 
+    if (featureName === 'Courses' && (user.freeCoursesUsed || 0) < FREE_COURSE_LIMIT) {
+      // Allow this course enrollment, increment counter
+      await User.findByIdAndUpdate(user._id, { $inc: { freeCoursesUsed: 1 } });
+      return next();
+    }
+
     // Determine the message based on whether user already used their free taste
     const usedFreeTaste = (featureName === 'File uploads' && (user.freeUploadsUsed || 0) >= FREE_UPLOAD_LIMIT) ||
-                          (featureName === 'Work grading' && (user.freeGradesUsed || 0) >= FREE_GRADE_LIMIT);
+                          (featureName === 'Work grading' && (user.freeGradesUsed || 0) >= FREE_GRADE_LIMIT) ||
+                          (featureName === 'Courses' && (user.freeCoursesUsed || 0) >= FREE_COURSE_LIMIT);
 
     const message = usedFreeTaste
-      ? `You've used your free ${featureName.toLowerCase()} trial! Upgrade to the Unlimited plan ($19.95/month) for unlimited access.`
-      : `${featureName} requires the Unlimited plan ($19.95/month) or a school license.`;
+      ? `You've used your free ${featureName.toLowerCase()} trial! Upgrade to Mathmatix+ ($9.95/month) for unlimited access.`
+      : `${featureName} requires Mathmatix+ ($9.95/month) or a school license.`;
 
     return res.status(402).json({
       message,
@@ -274,7 +282,7 @@ function paidFeatureGate(featureName) {
     }
 
     return res.status(402).json({
-      message: `${featureName} requires a paid plan or school license.`,
+      message: `${featureName} requires Mathmatix+ or a school license.`,
       premiumFeatureBlocked: true,
       feature: featureName,
       tier: user.subscriptionTier || 'free',
