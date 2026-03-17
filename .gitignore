@@ -10,6 +10,9 @@ routes/vision-key.json
 # macOS
 .DS_Store
 
+# Build output
+/dist
+
 # Other
 *.dmg
 
