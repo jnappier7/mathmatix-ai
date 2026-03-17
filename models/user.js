@@ -927,6 +927,38 @@ const userSchema = new Schema({
     default: () => ({})
   },
 
+  /* ★ LEARNING ENGINE STATE — BKT, FSRS, Consistency, Cognitive Load ★ */
+  learningEngines: {
+    bkt: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    fsrs: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    consistency: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    },
+    cognitiveLoadHistory: [{
+      date: { type: Date, default: Date.now },
+      avgLoad: { type: Number, min: 0, max: 1 },
+      peakLoad: { type: Number, min: 0, max: 1 },
+      level: { type: String, enum: ['low', 'optimal', 'high', 'overload'] },
+      sessionMinutes: Number
+    }],
+    interleavingStats: {
+      totalFocused: { type: Number, default: 0 },
+      totalInterleaved: { type: Number, default: 0 },
+      focusedCorrect: { type: Number, default: 0 },
+      interleavedCorrect: { type: Number, default: 0 }
+    }
+  },
+
   /* Fact Fluency Progress (Math Blaster-style game) */
   factFluencyProgress: {
     // Placement test (1-minute timed assessment to determine starting point)

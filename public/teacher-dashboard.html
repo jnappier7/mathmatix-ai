@@ -2674,6 +2674,85 @@
       display: block;
     }
 
+    /* ============================================
+       ANALYTICS TAB STYLES
+       ============================================ */
+    .analytics-overview-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .analytics-card { flex: 1; }
+    .analytics-subtitle {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-weight: 400;
+    }
+    .analytics-chart-container {
+      position: relative;
+      width: 100%;
+    }
+    .analytics-chart-container canvas {
+      width: 100% !important;
+    }
+    .analytics-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+    .analytics-student-select {
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      background: var(--color-bg-white);
+      min-width: 200px;
+    }
+    .analytics-drill-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .analytics-drill-card {
+      background: var(--color-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      border: 1px solid var(--color-border);
+    }
+    .analytics-drill-card h4 {
+      font-size: var(--text-base);
+      color: var(--color-text);
+      margin-bottom: 4px;
+    }
+    .analytics-drill-desc {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .profile-analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .profile-analytics-card {
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 1px solid var(--color-border);
+    }
+    .profile-analytics-card h5 {
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      margin-bottom: 10px;
+    }
+    @media (max-width: 968px) {
+      .analytics-overview-row { flex-direction: column; }
+      .analytics-drill-grid { grid-template-columns: 1fr; }
+      .profile-analytics-grid { grid-template-columns: 1fr; }
+    }
+
     .profile-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -4279,6 +4358,9 @@
           <button class="tab-btn" data-tab="insights">
             <i class="fas fa-lightbulb"></i> Insights
           </button>
+          <button class="tab-btn" data-tab="analytics">
+            <i class="fas fa-brain"></i> Analytics
+          </button>
           <button class="tab-btn" data-tab="schedule">
             <i class="fas fa-calendar-alt"></i> Schedule
           </button>
@@ -4501,6 +4583,94 @@
                   <i class="fas fa-paper-plane" aria-hidden="true"></i> Ask
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Tab (Learning Engine Visualizations) -->
+        <div class="tab-content" id="analytics-tab">
+          <!-- Class-Level Analytics -->
+          <div class="analytics-overview-row">
+            <div class="dashboard-panel analytics-card" style="flex:2;">
+              <div class="dashboard-panel-header">
+                <h3><i class="fas fa-th"></i> Class Knowledge Heatmap</h3>
+                <span class="analytics-subtitle">BKT mastery probability by student &times; skill</span>
+              </div>
+              <div class="analytics-chart-container" style="min-height:350px; position:relative;">
+                <canvas id="class-knowledge-heatmap"></canvas>
+                <div class="analytics-empty" id="heatmap-empty" style="display:none;">
+                  <i class="fas fa-th" style="font-size:2em; color:var(--color-text-muted); margin-bottom:10px;"></i>
+                  <p>No knowledge data yet. Students need to practice to populate the heatmap.</p>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-panel analytics-card" style="flex:1;">
+              <div class="dashboard-panel-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Risk Radar</h3>
+                <span class="analytics-subtitle">Students who may need intervention</span>
+              </div>
+              <div class="analytics-chart-container" style="min-height:350px; position:relative;">
+                <canvas id="class-risk-scatter"></canvas>
+                <div class="analytics-empty" id="risk-empty" style="display:none;">
+                  <i class="fas fa-shield-alt" style="font-size:2em; color:var(--color-text-muted); margin-bottom:10px;"></i>
+                  <p>Not enough data to calculate risk profiles yet.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Drill-Down -->
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-header">
+              <h3><i class="fas fa-user-graduate"></i> Student Deep Dive</h3>
+              <select class="analytics-student-select" id="analytics-student-select">
+                <option value="">Select a student...</option>
+              </select>
+            </div>
+
+            <div id="student-analytics-panels" style="display:none;">
+              <div class="analytics-drill-grid">
+                <!-- Memory Forecast -->
+                <div class="analytics-drill-card">
+                  <h4><i class="fas fa-clock"></i> Memory Forecast</h4>
+                  <p class="analytics-drill-desc">FSRS retrievability — when skills will fade</p>
+                  <div class="analytics-chart-container" style="min-height:260px;">
+                    <canvas id="student-memory-forecast"></canvas>
+                  </div>
+                </div>
+
+                <!-- Cognitive Load Timeline -->
+                <div class="analytics-drill-card">
+                  <h4><i class="fas fa-brain"></i> Cognitive Load</h4>
+                  <p class="analytics-drill-desc">Session-over-session mental load trend</p>
+                  <div class="analytics-chart-container" style="min-height:260px;">
+                    <canvas id="student-cognitive-load"></canvas>
+                  </div>
+                </div>
+
+                <!-- Consistency Radar -->
+                <div class="analytics-drill-card">
+                  <h4><i class="fas fa-bullseye"></i> Consistency Profile</h4>
+                  <p class="analytics-drill-desc">SmartScore breakdown across skills</p>
+                  <div class="analytics-chart-container" style="min-height:260px;">
+                    <canvas id="student-consistency-radar"></canvas>
+                  </div>
+                </div>
+
+                <!-- Knowledge Map -->
+                <div class="analytics-drill-card">
+                  <h4><i class="fas fa-map"></i> Knowledge Map</h4>
+                  <p class="analytics-drill-desc">BKT mastery probability per skill</p>
+                  <div class="analytics-chart-container" style="min-height:260px;">
+                    <canvas id="student-knowledge-bars"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="student-analytics-empty" class="analytics-empty">
+              <i class="fas fa-chart-line" style="font-size:2em; color:var(--color-text-muted); margin-bottom:10px;"></i>
+              <p>Select a student above to view their learning analytics.</p>
             </div>
           </div>
         </div>
@@ -5033,6 +5203,9 @@
         <button class="profile-tab" data-profile-tab="iep">
           <i class="fas fa-clipboard-list"></i> IEP
         </button>
+        <button class="profile-tab" data-profile-tab="analytics">
+          <i class="fas fa-brain"></i> Analytics
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -5107,6 +5280,27 @@
         </div>
       </div>
 
+      <!-- Analytics Tab (Student Detail Modal) -->
+      <div class="profile-tab-content" id="profile-analytics-tab">
+        <div class="profile-section">
+          <h4><i class="fas fa-brain"></i> Learning Engine Analytics</h4>
+          <div class="profile-analytics-grid">
+            <div class="profile-analytics-card">
+              <h5><i class="fas fa-clock"></i> Memory Health</h5>
+              <div id="profile-memory-health-bar"></div>
+            </div>
+            <div class="profile-analytics-card">
+              <h5><i class="fas fa-bullseye"></i> Performance Radar</h5>
+              <div style="height:200px;"><canvas id="profile-consistency-radar"></canvas></div>
+            </div>
+            <div class="profile-analytics-card" style="grid-column: 1 / -1;">
+              <h5><i class="fas fa-brain"></i> Cognitive Load Trend</h5>
+              <div style="height:200px;"><canvas id="profile-cognitive-timeline"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="profile-footer">
         <button id="close-student-detail-btn" class="btn cancel-btn">Close</button>
       </div>
@@ -5156,6 +5350,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="/js/analyticsCharts.js"></script>
+  <script src="/js/teacher-analytics.js"></script>
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
