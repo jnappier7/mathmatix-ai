@@ -42,7 +42,7 @@ The framework is grounded in:
 
 ## 3. QA DIMENSIONS & RUBRIC
 
-Each course is evaluated across **8 dimensions**, each scored on a **4-point scale**:
+Each course is evaluated across **9 dimensions**, each scored on a **4-point scale**:
 
 | Score | Rating | Meaning |
 |-------|--------|---------|
@@ -51,7 +51,7 @@ Each course is evaluated across **8 dimensions**, each scored on a **4-point sca
 | 2 | **Developing** | Partially meets standards; notable gaps requiring attention |
 | 1 | **Inadequate** | Fails to meet standards; major remediation needed |
 
-**Maximum possible score per course: 32 points (8 dimensions × 4 points)**
+**Maximum possible score per course: 36 points (9 dimensions × 4 points)**
 
 ---
 
@@ -221,6 +221,30 @@ Evaluates whether skills build logically within and across courses, and whether 
 
 ---
 
+### Dimension 9: CULTURAL RESPONSIVITY & EQUITY (Weight: High)
+
+Evaluates whether the course reflects culturally responsive and sustaining pedagogy in its content, contexts, and framing. See `docs/CULTURAL_RESPONSIVITY_FRAMEWORK.md` for full guidelines.
+
+| Score | Criteria |
+|-------|----------|
+| **4** | Word problems feature diverse names (10+ per course across 4+ cultural groups). Contexts reflect varied communities, family structures, and traditions without stereotyping. At least 2 critical consciousness problems per course (grades 6+) that use math to examine real-world equity issues. Asset-based framing throughout — no deficit language. Cultural math connections present (e.g., referencing diverse origins of mathematical concepts). Family structures in problems are varied (single parents, grandparents, guardians, multi-generational). |
+| **3** | Diverse names present (8+ per course, 3+ cultural groups). Most contexts are culturally varied with no stereotypes. At least 1 critical consciousness problem per course (grades 6+). Generally asset-based framing. Some cultural math connections. |
+| **2** | Some name diversity but limited (5–7 names, 2 groups). Contexts are mostly generic/universal. Occasional stereotypical pairing of names and contexts. No critical consciousness problems. Mixed asset/deficit framing. |
+| **1** | Minimal name diversity (<5 names or 1 cultural group). Contexts are culturally narrow or biased. Stereotypes present in name-context pairings. Deficit framing detected (e.g., "you don't know," communities framed as lacking). No cultural math connections. |
+
+**CRT Audit Checklist:**
+- [ ] **Name Diversity:** 10+ distinct names across 4+ cultural groups per course
+- [ ] **Name-Context Independence:** Cultural names are NOT stereotypically paired with contexts (e.g., not only Latinx names with food-related problems)
+- [ ] **Context Variety:** Word problems draw from 5+ distinct cultural/community contexts
+- [ ] **Family Structure Diversity:** Problems reference various family structures (single parents, grandparents, guardians, two-parent, multi-generational)
+- [ ] **Asset Framing:** No instances of deficit language about students or communities
+- [ ] **Critical Consciousness (Grades 6+):** At least 2 problems per course use math to examine real-world equity issues (data on access, representation, resources)
+- [ ] **Cultural Math Connections:** At least 3 references per course to mathematical contributions from diverse cultures
+- [ ] **Stereotype Audit:** No gendered, racial, ethnic, or socioeconomic stereotypes in problem contexts
+- [ ] **Linguistic Inclusivity:** Mathematical terms scaffolded for ELL students; multilingual references welcomed
+
+---
+
 ## 4. SCORING SUMMARY TEMPLATE
 
 | Dimension | Weight | Score (1-4) | Weighted |
@@ -233,16 +257,17 @@ Evaluates whether skills build logically within and across courses, and whether 
 | 6. Scaffold & Assessment Quality | High | — | — |
 | 7. Instructional Strategy & AI Guidance | Medium | — | — |
 | 8. Prerequisite Coherence & Vertical Alignment | Medium | — | — |
-| **TOTAL** | | **/32** | |
+| 9. Cultural Responsivity & Equity | High | — | — |
+| **TOTAL** | | **/36** | |
 
 **Overall Rating Bands:**
 
 | Score Range | Overall Rating | Action Required |
 |-------------|---------------|-----------------|
-| 29–32 | **Exemplary** | Minor polish only |
-| 24–28 | **Proficient** | Address noted gaps in next cycle |
-| 18–23 | **Developing** | Significant revision required before launch |
-| 8–17 | **Inadequate** | Major remediation; not ready for learners |
+| 33–36 | **Exemplary** | Minor polish only |
+| 27–32 | **Proficient** | Address noted gaps in next cycle |
+| 20–26 | **Developing** | Significant revision required before launch |
+| 9–19 | **Inadequate** | Major remediation; not ready for learners |
 
 ---
 
@@ -278,8 +303,10 @@ Evaluate sampled text against the Flesch-Kincaid grade-level formula (implemente
 Flag any instance of:
 - Condescending language ("This is easy!" / "Even you can do this!")
 - Gendered or culturally biased contexts
-- Names/contexts that lack diversity
+- Names/contexts that lack diversity (see Dimension 9: Cultural Responsivity & Equity)
 - Anxiety-inducing framing ("Don't mess this up" / "This is the hard part")
+- Deficit framing about students or communities
+- Stereotypical pairing of names with cultural contexts
 
 ---
 
