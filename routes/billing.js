@@ -19,25 +19,10 @@ const { isAuthenticated } = require('../middleware/auth');
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 10 * 60; // 10 free AI minutes per week for all students
+const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per week for all students
 
+// Active plan — only Unlimited is offered for new purchases
 const PACKS = {
-  pack_60: {
-    name: 'M∆THM∆TIX 60-Minute Pack',
-    description: '60 minutes of AI tutoring — expires in 90 days',
-    price: 995,        // $9.95 in cents
-    seconds: 60 * 60,  // 3600
-    expiryDays: 90,
-    mode: 'payment'    // one-time
-  },
-  pack_120: {
-    name: 'M∆THM∆TIX 120-Minute Pack',
-    description: '120 minutes of AI tutoring — expires in 180 days',
-    price: 1495,        // $14.95 in cents
-    seconds: 120 * 60,  // 7200
-    expiryDays: 180,
-    mode: 'payment'     // one-time
-  },
   unlimited: {
     name: 'M∆THM∆TIX Unlimited Monthly',
     description: 'Unlimited 24/7 AI tutoring with voice, PDF upload, courses, Show My Work, and all platform features',
@@ -47,6 +32,27 @@ const PACKS = {
     mode: 'subscription'
   }
 };
+
+// Legacy packs — kept only for webhook processing of existing pack purchases
+const LEGACY_PACKS = {
+  pack_60: {
+    name: 'M∆THM∆TIX 60-Minute Pack',
+    price: 995,
+    seconds: 60 * 60,
+    expiryDays: 90,
+    mode: 'payment'
+  },
+  pack_120: {
+    name: 'M∆THM∆TIX 120-Minute Pack',
+    price: 1495,
+    seconds: 120 * 60,
+    expiryDays: 180,
+    mode: 'payment'
+  }
+};
+
+// Combined lookup for webhook processing (handles both active + legacy packs)
+const ALL_PACKS = { ...PACKS, ...LEGACY_PACKS };
 
 // ---- Pi Day Promo ($3.14 off all plans) ----
 const PI_DAY_DISCOUNT_CENTS = 314; // $3.14 in cents
@@ -89,10 +95,10 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
     const { pack } = req.body;
-    const packConfig = PACKS[pack];
-    if (!packConfig) {
-      return res.status(400).json({ message: 'Invalid pack. Choose pack_60, pack_120, or unlimited.' });
+    if (pack !== 'unlimited') {
+      return res.status(400).json({ message: 'Only the Unlimited plan is available for new purchases.' });
     }
+    const packConfig = PACKS[pack];
 
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -198,7 +204,7 @@ router.post('/webhook', async (req, res) => {
         const user = await User.findById(userId);
         if (!user) break;
 
-        const packConfig = PACKS[pack];
+        const packConfig = ALL_PACKS[pack];
         if (!packConfig) break;
 
         user.stripeCustomerId = session.customer;
@@ -354,12 +360,12 @@ router.get('/status', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Pack users — check free weekly allowance + pack balance
+    // Legacy pack users — check free weekly allowance + pack balance
     if (tier === 'pack_60' || tier === 'pack_120') {
       const expired = user.packExpiresAt && now > user.packExpiresAt;
       const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
 
-      // Pack users also get 10 free minutes/week before pack is used
+      // Pack users also get 30 free minutes/week before pack is used
       let weeklyAIUsedPack = user.weeklyAISeconds || 0;
       const lastResetPack = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
       if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= 7) {
@@ -475,8 +481,6 @@ router.get('/promo', (req, res) => {
     name: 'Pi Day Launch Special',
     discount: '$3.14 off',
     prices: {
-      pack_60:   { original: PACKS.pack_60.price,   promo: getPromoPrice(PACKS.pack_60.price) },
-      pack_120:  { original: PACKS.pack_120.price,   promo: getPromoPrice(PACKS.pack_120.price) },
       unlimited: { original: PACKS.unlimited.price, promo: getPromoPrice(PACKS.unlimited.price) }
     },
     endsAt: '2026-03-16T03:59:59Z'

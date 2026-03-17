@@ -16,7 +16,7 @@ const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 10 * 60; // 10 minutes per week for ALL students
+const FREE_WEEKLY_SECONDS = 30 * 60; // 30 minutes per week for ALL students
 
 // Freemium taste limits — free users get a sample before upgrade prompt
 const FREE_UPLOAD_LIMIT = 1;     // 1 free upload, then upgrade required
@@ -151,7 +151,7 @@ async function usageGate(req, res, next) {
       }).catch(err => console.error('[UsageGate] Downgrade error:', err.message));
 
       return res.status(402).json({
-        message: "Your free minutes and minute pack are both used up. Purchase a new pack, ask your school about a Mathmatix license, or come back next week!",
+        message: "Your free minutes and minute pack are both used up. Upgrade to Unlimited for non-stop tutoring, ask your school about a Mathmatix license, or come back next week!",
         usageLimitReached: true,
         tier: 'free',
         freeSecondsRemaining: 0,
@@ -167,11 +167,11 @@ async function usageGate(req, res, next) {
     const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
 
     return res.status(402).json({
-      message: `You've used your 10 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade for more time, or ask your teacher about a school license!`,
+      message: `You've used your 30 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`,
       usageLimitReached: true,
       tier: 'free',
       freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
-      freeMinutesTotal: 10,
+      freeMinutesTotal: 30,
       freeSecondsRemaining: 0,
       nextResetAt: resetDate.toISOString(),
       upgradeRequired: true
