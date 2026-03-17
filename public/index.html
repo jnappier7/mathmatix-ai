@@ -610,6 +610,50 @@
       justify-content: center;
     }
 
+    /* Hero pain-point checklist */
+    .lp-hero-pain-points {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-width: 520px;
+    }
+    .lp-hero-pain-points li {
+      font-size: 1.05rem;
+      color: var(--clr-text);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .lp-hero-pain-points i {
+      color: var(--clr-success-green);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* Hero CTA note */
+    .lp-hero-cta-note {
+      display: block;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--clr-text-dim);
+    }
+
+    /* Large button variant */
+    .btn-lg {
+      padding: 1rem 2.5rem !important;
+      font-size: 1.15rem !important;
+      font-weight: 700;
+    }
+
+    /* Steps section CTA */
+    .lp-steps-cta {
+      text-align: center;
+      margin-top: 2.5rem;
+    }
+
     /* Chat mockup — matches actual app styling */
     .lp-hero-preview {
       max-width: 440px;
@@ -761,6 +805,8 @@
       .lp-hero-buttons { justify-content: flex-start; }
       .lp-hero-links { justify-content: flex-start; }
       .lp-hero-preview { margin: 0; max-width: 100%; }
+      .lp-hero-pain-points { margin-left: 0; margin-right: 0; }
+      .lp-hero-cta-note { text-align: left; }
     }
 
     /* ── Section alternating backgrounds for visual rhythm ─── */
@@ -1572,6 +1618,9 @@
       .lp-hero-links { width: 100%; flex-direction: column; align-items: center; }
       .lp-hero-links .btn { width: 100%; max-width: 320px; }
       .lp-hero-preview { max-width: 100%; margin-top: 1.5rem; }
+      .lp-hero-pain-points { align-items: center; }
+      .lp-hero-pain-points li { font-size: 0.95rem; text-align: left; }
+      .lp-hero-cta-note { text-align: center; }
       .lp-chat-messages { height: 200px; }
 
       /* -- Trust bar: horizontal scroll on mobile -- */
@@ -1758,9 +1807,8 @@
     </a>
     <div class="lp-mobile-topbar-actions">
       <a href="/pricing.html" class="lp-mobile-topbar-link">Pricing</a>
-      <a href="/demo.html" class="lp-mobile-topbar-link lp-pre-launch">Try Demo</a>
-      <a href="/signup.html" class="lp-mobile-topbar-link lp-post-launch" style="display:none;">Sign Up Free</a>
-      <a href="/login.html" class="lp-mobile-topbar-btn">Log In</a>
+      <a href="/login.html" class="lp-mobile-topbar-link">Log In</a>
+      <a href="/signup.html" class="lp-mobile-topbar-btn">Start Free</a>
     </div>
   </div>
 
@@ -1773,8 +1821,7 @@
     <nav class="landing-nav">
       <a href="/pricing.html" class="btn btn-primary-outline" style="border-color: transparent; color: var(--clr-text-dim);">Pricing</a>
       <a href="/login.html" class="btn btn-primary-outline">Log In</a>
-      <a href="#lp-waitlist-banner" class="btn btn-primary lp-pre-launch">Join Waitlist</a>
-      <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
+      <a href="/signup.html" class="btn btn-primary">Start Free Now</a>
     </nav>
   </header>
 
@@ -1815,20 +1862,18 @@
     <section class="lp-hero">
       <div class="lp-hero-layout">
         <div class="lp-hero-content">
-          <h1>A Math Tutor That Actually Knows Your Child</h1>
+          <h1>Your Child Is Struggling With Math. Let&rsquo;s Fix That.</h1>
           <p class="lp-hero-sub">
-            Personalized, AI-powered tutoring that remembers how your student learns, adapts to their level, and is available anytime &mdash; for a fraction of what a private tutor costs.
+            An AI tutor that learns how your child thinks, works at their pace, and is available 24/7 &mdash; for less than a single tutoring session.
           </p>
+          <ul class="lp-hero-pain-points">
+            <li><i class="fas fa-check-circle"></i> Raise grades without the homework fights</li>
+            <li><i class="fas fa-check-circle"></i> Works with IEPs, ADHD, and learning differences</li>
+            <li><i class="fas fa-check-circle"></i> Cheaper than a private tutor. Smarter than generic AI.</li>
+          </ul>
           <div class="lp-hero-buttons">
-            <form class="lp-waitlist-form lp-waitlist-form--hero lp-pre-launch" autocomplete="off">
-              <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
-              <button type="submit" class="btn btn-primary lp-waitlist-btn">Get Early Access</button>
-            </form>
-            <div class="lp-hero-links">
-              <a href="/demo.html" class="btn btn-primary-outline lp-pre-launch">Try It Free</a>
-              <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
-              <a href="/login.html" class="btn btn-primary-outline lp-post-launch" style="display:none;">Log In</a>
-            </div>
+            <a href="/signup.html" class="btn btn-primary btn-lg lp-hero-cta">Start Free Now</a>
+            <span class="lp-hero-cta-note">No credit card required &middot; 10 free minutes every week</span>
           </div>
         </div>
 
@@ -1847,11 +1892,11 @@
       </div>
 
       <div class="lp-trust-bar">
-        <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a Math Teacher</div>
-        <div class="lp-trust-item"><i class="fas fa-shield-halved"></i> Will Not Help Them Cheat</div>
-        <div class="lp-trust-item"><i class="fas fa-seedling"></i> Starting Point &amp; Growth Checks</div>
-        <div class="lp-trust-item"><i class="fas fa-graduation-cap"></i> Grade 3 &ndash; Calc 3</div>
-        <div class="lp-trust-item"><i class="fas fa-heart"></i> Free Access for Every Student</div>
+        <div class="lp-trust-item"><i class="fas fa-shield-halved"></i> Won&rsquo;t give answers &mdash; teaches them to think</div>
+        <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a real math teacher</div>
+        <div class="lp-trust-item"><i class="fas fa-clock"></i> Available 24/7, even at 9pm</div>
+        <div class="lp-trust-item"><i class="fas fa-graduation-cap"></i> Grade 3 through Calculus</div>
+        <div class="lp-trust-item"><i class="fas fa-heart"></i> Free for every student</div>
       </div>
     </section>
 
@@ -1870,51 +1915,87 @@
       </div>
     </section>
 
+    <!-- ── How It Works (moved up — reduce friction) ──────── -->
+    <section id="how-it-works" class="lp-steps lp-reveal">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">Up and Running in 60 Seconds</h2>
+        <p class="lp-section-sub">No forms. No waiting. Your child can start learning right now.</p>
+        <div class="lp-steps-grid lp-stagger">
+          <div class="lp-step">
+            <div class="lp-step-number">1</div>
+            <h3>Create a Free Account</h3>
+            <p>Sign up as a parent. Add your child in seconds.</p>
+          </div>
+          <div class="lp-step">
+            <div class="lp-step-number">2</div>
+            <h3>Your Child Starts Learning</h3>
+            <p>They pick a tutor, type a question, or upload homework. Help starts immediately.</p>
+          </div>
+          <div class="lp-step">
+            <div class="lp-step-number">3</div>
+            <h3>You See Their Progress</h3>
+            <p>Dashboards, weekly digests, and skill maps show you exactly where they stand.</p>
+          </div>
+        </div>
+        <div class="lp-steps-cta">
+          <a href="/signup.html" class="btn btn-primary btn-lg">Start Free Now</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Features — Bento Grid ──────────────────────────── -->
     <section class="lp-features lp-reveal">
       <div class="lp-inner">
-        <h2 class="lp-section-heading">Everything Your Student Needs to Succeed</h2>
-        <p class="lp-section-sub">A complete learning system that meets students where they are and grows with them.</p>
+        <h2 class="lp-section-heading">Why Parents Choose Mathmatix</h2>
+        <p class="lp-section-sub">Everything your child needs to stop struggling and start succeeding in math.</p>
         <div class="lp-features-grid lp-stagger">
-          <div class="lp-feature-card">
-            <div class="lp-feature-icon"><i class="fas fa-user-group"></i></div>
-            <div>
-              <h3>Choose Your Tutor</h3>
-              <p>Every tutor has its own personality. Students pick the one that clicks &mdash; patient, playful, or straight to the point.</p>
-            </div>
-          </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-brain"></i></div>
             <div>
-              <h3>Knows Your Student</h3>
-              <p>The tutor gets to know your child over time, matches their reading level, and adjusts to how they learn best.</p>
+              <h3>Learns How Your Child Thinks</h3>
+              <p>The tutor adapts to your child&rsquo;s level, reading ability, and learning style over time. It gets better every session.</p>
+            </div>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-shield-halved"></i></div>
+            <div>
+              <h3>Guides, Never Gives Answers</h3>
+              <p>Unlike ChatGPT, Mathmatix won&rsquo;t do their homework. It teaches them to think through problems step by step.</p>
             </div>
           </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-camera"></i></div>
-            <h3>Homework Check</h3>
-            <p>Upload a photo or PDF. Our AI reads their handwriting, catches mistakes, and gives feedback &mdash; check it before you turn it in.</p>
+            <div>
+              <h3>Homework Check</h3>
+              <p>Upload a photo of their work. The AI reads their handwriting, catches mistakes, and gives feedback before they turn it in.</p>
+            </div>
           </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-hand-holding-heart"></i></div>
-            <h3>IEP &amp; Accommodations</h3>
-            <p>Built-in support for Individualized Education Programs and learning accommodations. Every learner gets tools designed for them.</p>
-          </div>
-          <div class="lp-feature-card">
-            <div class="lp-feature-icon"><i class="fas fa-scale-balanced"></i></div>
-            <h3>Built for Every Student</h3>
-            <p>Every student gets a baseline of free tutoring access. No child should fall behind because their family can't afford a private tutor.</p>
+            <div>
+              <h3>Works With IEPs &amp; ADHD</h3>
+              <p>Built-in support for learning differences. Set accommodations and the tutor adjusts pacing, reading level, and approach.</p>
+            </div>
           </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-chart-line"></i></div>
-            <h3>Progress Dashboards</h3>
-            <p>Parents and teachers see exactly where students are excelling and where they need support.</p>
+            <div>
+              <h3>You See Everything</h3>
+              <p>Real-time parent dashboard shows exactly what your child worked on, where they struggled, and how they&rsquo;re growing.</p>
+            </div>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div>
+              <h3>Cheaper Than Tutoring</h3>
+              <p>Private tutors cost $200&ndash;$400/month. Mathmatix starts free, with plans from $9.95. Every child gets access.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ── Spotlight: Parent Involvement ─────────────────── -->
+    <!-- ── Spotlight: Parent Pain Point ─────────────────── -->
     <section class="lp-spotlight lp-reveal">
       <div class="lp-spotlight-layout lp-inner">
         <div class="lp-spotlight-photo">
@@ -1924,9 +2005,39 @@
           </picture>
         </div>
         <div class="lp-spotlight-content">
-          <h2>Parents Stay in the Loop</h2>
-          <p>You don't need to be a math expert to support your child. Mathmatix AI gives parents real-time dashboards, weekly progress digests, and simple explanations &mdash; so you always know where your student stands.</p>
-          <p class="lp-spotlight-accent">No more guessing. No more frustration at the kitchen table.</p>
+          <h2>End the Homework Fights</h2>
+          <p>You know the scene: it&rsquo;s 8pm, your child is frustrated, you haven&rsquo;t done this math in 20 years, and everyone&rsquo;s about to lose it. Mathmatix steps in with patient, step-by-step help &mdash; so you can be the parent, not the tutor.</p>
+          <p class="lp-spotlight-accent">Real-time dashboards and weekly digests keep you in the loop without the stress.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Testimonials ─────────────────────────────────── -->
+    <section class="lp-testimonials lp-reveal lp-section-alt">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">Real Parents. Real Students. Real Results.</h2>
+        <p class="lp-section-sub">Hear from families already using Mathmatix AI.</p>
+        <div class="lp-testimonials-grid lp-stagger">
+          <div class="lp-testimonial lp-testimonial--featured">
+            <p class="lp-testimonial-quote">I&rsquo;ve never been good at math. For years, that &ldquo;math anxiety&rdquo; made helping with my daughter&rsquo;s homework one of the most stressful parts of my day. I hated feeling like I couldn&rsquo;t support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It&rsquo;s turned a point of stress into a point of connection for us.</p>
+            <div class="lp-testimonial-author">Keenan</div>
+            <div class="lp-testimonial-role">Parent of a 6th grader</div>
+          </div>
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">My favorite part is how fast it replies and how it goes into detail about the different steps for solving the equation. It doesn&rsquo;t just say &ldquo;the answer is 7&rdquo; &mdash; it shows me why.</p>
+            <div class="lp-testimonial-author">Ryley</div>
+            <div class="lp-testimonial-role">7th grade student</div>
+          </div>
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">Helps me to understand math without giving me just the answer. I actually feel like I&rsquo;m getting better.</p>
+            <div class="lp-testimonial-author">Susan</div>
+            <div class="lp-testimonial-role">8th grade student</div>
+          </div>
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">I have 28 students and can&rsquo;t sit with each one. Mathmatix gives every kid a personal tutor &mdash; and I can see exactly who needs extra help.</p>
+            <div class="lp-testimonial-author">Mrs. Hodges</div>
+            <div class="lp-testimonial-role">6th Grade Math Teacher</div>
+          </div>
         </div>
       </div>
     </section>
@@ -1934,17 +2045,17 @@
     <!-- ── Role Selector (interactive tabs) ───────────────── -->
     <section class="lp-roles lp-reveal lp-section-alt">
       <div class="lp-inner">
-        <h2 class="lp-section-heading">Built for Everyone</h2>
-        <p class="lp-section-sub">Select your role to see what Mathmatix offers you.</p>
+        <h2 class="lp-section-heading">Built for Your Whole Family&rsquo;s Math Journey</h2>
+        <p class="lp-section-sub">See what Mathmatix offers parents, students, and teachers.</p>
 
         <div class="lp-role-tabs">
-          <button class="lp-role-tab lp-role-tab--active" data-role="student">
-            <div class="lp-role-tab-icon"><i class="fas fa-graduation-cap"></i></div>
-            <div class="lp-role-tab-label">Students</div>
-          </button>
-          <button class="lp-role-tab" data-role="parent">
+          <button class="lp-role-tab lp-role-tab--active" data-role="parent">
             <div class="lp-role-tab-icon"><i class="fas fa-heart"></i></div>
             <div class="lp-role-tab-label">Parents</div>
+          </button>
+          <button class="lp-role-tab" data-role="student">
+            <div class="lp-role-tab-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="lp-role-tab-label">Students</div>
           </button>
           <button class="lp-role-tab" data-role="teacher">
             <div class="lp-role-tab-icon"><i class="fas fa-chalkboard-teacher"></i></div>
@@ -1953,7 +2064,7 @@
         </div>
 
         <!-- Student Panel -->
-        <div class="lp-role-panel lp-role-panel--active" data-panel="student">
+        <div class="lp-role-panel" data-panel="student">
           <div class="lp-audience-grid">
             <div class="lp-audience-content">
               <h2>A Tutor That Gets You</h2>
@@ -1988,7 +2099,7 @@
         </div>
 
         <!-- Parent Panel -->
-        <div class="lp-role-panel" data-panel="parent">
+        <div class="lp-role-panel lp-role-panel--active" data-panel="parent">
           <div class="lp-audience-grid">
             <div class="lp-audience-content">
               <h2>Stay Connected to Their Learning</h2>
@@ -2076,9 +2187,9 @@
           </picture>
         </div>
         <div class="lp-spotlight-content">
-          <h2>Built for Independent Learners</h2>
-          <p>Whether it's after school, on the weekend, or late at night before a test &mdash; Mathmatix AI is there. Students work at their own pace with a tutor that never rushes, never judges, and always meets them where they are.</p>
-          <p class="lp-spotlight-accent">Confidence grows when kids know they can do it on their own.</p>
+          <h2>Watch Them Start to Believe in Themselves</h2>
+          <p>The best thing about Mathmatix isn&rsquo;t the grades &mdash; it&rsquo;s the confidence. When kids work through problems on their own with a patient tutor that never judges, something clicks. They stop saying &ldquo;I&rsquo;m bad at math&rdquo; and start asking &ldquo;can I try another one?&rdquo;</p>
+          <p class="lp-spotlight-accent">That&rsquo;s the moment every parent is waiting for.</p>
         </div>
       </div>
     </section>
@@ -2155,61 +2266,6 @@
       </div>
     </section>
 
-    <!-- ── Testimonials ─────────────────────────────────── -->
-    <section class="lp-testimonials lp-reveal">
-      <div class="lp-inner">
-        <h2 class="lp-section-heading">What People Are Saying</h2>
-        <p class="lp-section-sub">Students, parents, and teachers using Mathmatix AI every day.</p>
-        <div class="lp-testimonials-grid lp-stagger">
-          <div class="lp-testimonial lp-testimonial--featured">
-            <p class="lp-testimonial-quote">I've never been good at math. For years, that &ldquo;math anxiety&rdquo; made helping with my daughter's homework one of the most stressful parts of my day. I hated feeling like I couldn't support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It's turned a point of stress into a point of connection for us.</p>
-            <div class="lp-testimonial-author">Keenan</div>
-            <div class="lp-testimonial-role">Parent</div>
-          </div>
-          <div class="lp-testimonial">
-            <p class="lp-testimonial-quote">I like it. My favorite part is how fast it replies and how it goes into detail about the different steps for solving the equation.</p>
-            <div class="lp-testimonial-author">Ryley</div>
-            <div class="lp-testimonial-role">Student</div>
-          </div>
-          <div class="lp-testimonial">
-            <p class="lp-testimonial-quote">Helps me to understand math without giving me just the answer.</p>
-            <div class="lp-testimonial-author">Susan</div>
-            <div class="lp-testimonial-role">Student</div>
-          </div>
-          <div class="lp-testimonial">
-            <p class="lp-testimonial-quote">I love that Mathmatix gives my students support even when I can't.</p>
-            <div class="lp-testimonial-author">Mrs. Hodges</div>
-            <div class="lp-testimonial-role">6th Grade Teacher</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── How It Works ─────────────────────────────────── -->
-    <section id="how-it-works" class="lp-steps lp-reveal">
-      <div class="lp-inner">
-        <h2 class="lp-section-heading">Getting Started Is Simple</h2>
-        <p class="lp-section-sub">Up and running in under a minute.</p>
-        <div class="lp-steps-grid lp-stagger">
-          <div class="lp-step">
-            <div class="lp-step-number">1</div>
-            <h3>Create Your Account</h3>
-            <p>Sign up as a student, parent, or teacher. Quick and easy.</p>
-          </div>
-          <div class="lp-step">
-            <div class="lp-step-number">2</div>
-            <h3>Start Learning</h3>
-            <p>Jump into a conversation with your AI tutor or take a quick placement screener.</p>
-          </div>
-          <div class="lp-step">
-            <div class="lp-step-number">3</div>
-            <h3>Track &amp; Grow</h3>
-            <p>Watch progress unfold with dashboards, badges, skill maps, and weekly digests.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ── Spotlight: Always Available ──────────────────── -->
     <section class="lp-spotlight lp-reveal">
       <div class="lp-spotlight-layout lp-inner">
@@ -2220,9 +2276,9 @@
           </picture>
         </div>
         <div class="lp-spotlight-content">
-          <h2>A Tutor That Never Sleeps</h2>
-          <p>Private tutors cost $40&ndash;$80 an hour and aren't there at 9pm when your child is stuck on homework. Mathmatix AI is available 24/7 &mdash; patient, affordable, and always ready to help.</p>
-          <p class="lp-spotlight-accent">Every student deserves this. Now they have it.</p>
+          <h2>It&rsquo;s 9pm and Your Child Is Stuck</h2>
+          <p>The tutor went home hours ago. You don&rsquo;t remember how to factor. Your child is frustrated and shutting down. Mathmatix is the patient, always-available tutor that steps in exactly when your family needs it most.</p>
+          <p class="lp-spotlight-accent">Available 24/7. No appointments. No $80/hour invoices.</p>
         </div>
       </div>
     </section>
@@ -2303,27 +2359,18 @@
     <!-- ── Final CTA ────────────────────────────────────── -->
     <section class="lp-final-cta lp-reveal">
       <div class="lp-inner">
-        <h2>Every child deserves a great math tutor.</h2>
-        <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help. <a href="/pricing.html" style="color:#fff;font-weight:600;text-decoration:underline;">See pricing &rarr;</a></p>
-        <form class="lp-waitlist-form lp-waitlist-form--final lp-pre-launch" autocomplete="off">
-          <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
-          <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
-        </form>
-        <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free &mdash; 10 Minutes Every Week</a>
-        <p class="lp-cta-note lp-pre-launch">Be first to know when we launch. For students, parents, and teachers.</p>
-        <p class="lp-cta-note lp-post-launch" style="display:none;">Free for every student. No credit card required.</p>
+        <h2>Your child deserves a math tutor who never gives up on them.</h2>
+        <p>10 free minutes every week. No credit card. No commitment. Just better math grades. <a href="/pricing.html" style="color:#fff;font-weight:600;text-decoration:underline;">See all plans &rarr;</a></p>
+        <a href="/signup.html" class="btn btn-primary btn-lg lp-final-cta-btn">Start Free Now</a>
+        <p class="lp-cta-note">Free for every student. Upgrade anytime starting at $9.95/mo.</p>
       </div>
     </section>
   </main>
 
   <!-- Sticky CTA bar -->
   <div class="lp-sticky-cta" id="lp-sticky-cta">
-    <p>Ready to get started?</p>
-    <form class="lp-waitlist-form lp-waitlist-form--sticky lp-pre-launch" autocomplete="off">
-      <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
-      <button type="submit" class="btn btn-primary lp-waitlist-btn">Join Waitlist</button>
-    </form>
-    <a href="/signup.html" class="btn btn-primary lp-post-launch" style="display:none;">Sign Up Free</a>
+    <p>Free math tutoring for your child</p>
+    <a href="/signup.html" class="btn btn-primary">Start Free Now</a>
   </div>
 
   <footer class="lp-footer">
@@ -2337,10 +2384,7 @@
           <h4>Product</h4>
           <a href="#how-it-works">How It Works</a>
           <a href="/pricing.html">Pricing</a>
-          <a href="/demo.html" class="lp-pre-launch">Try the Demo</a>
-          <a href="/signup.html" class="lp-post-launch" style="display:none;">Try It Free</a>
-          <a href="#lp-waitlist-banner" class="lp-pre-launch">Join Waitlist</a>
-          <a href="/signup.html" class="lp-post-launch" style="display:none;">Sign Up</a>
+          <a href="/signup.html">Start Free</a>
         </div>
         <div class="lp-footer-col">
           <h4>Company</h4>
@@ -2404,11 +2448,11 @@
 
       /* ── Waitlist Form Handling ────────────────────────── */
       // Track which role tab is active so we can send it with the waitlist signup
-      var activeRole = 'other';
+      var activeRole = 'parent';
       var roleBtns = document.querySelectorAll('.lp-role-tab');
       roleBtns.forEach(function (btn) {
         btn.addEventListener('click', function () {
-          activeRole = btn.getAttribute('data-role') || 'other';
+          activeRole = btn.getAttribute('data-role') || 'parent';
         });
       });
 
@@ -2662,8 +2706,7 @@
       }
 
       /* ── Pi Day Launch Auto-Switch ─────────────────────── */
-      // At midnight EST on March 14 2026, swap waitlist CTAs → sign-up CTAs
-      // and show the Pi Day promo banner with $3.14 off pricing
+      // Post-launch: hide countdown banner, show Pi Day promo if still in window
       (function piDayLaunchSwitch() {
         var launchDate = new Date('2026-03-14T04:00:00Z'); // midnight EDT = UTC-4
         var promoEnd   = new Date('2026-03-16T03:59:59Z'); // end of March 15 EDT
@@ -2702,54 +2745,9 @@
             '</div>' +
             '<a href="/signup.html" class="lp-piday-cta">Sign Up &amp; Save</a>' +
           '</div>';
-          // Insert at the top of main
           var main = document.getElementById('lp-main');
           if (main) main.insertBefore(promoBanner, main.firstChild);
         }
-
-        // Swap nav "Join Waitlist" → "Sign Up"
-        var navLinks = document.querySelectorAll('.landing-nav .btn');
-        navLinks.forEach(function (a) {
-          if (/waitlist/i.test(a.textContent)) {
-            a.textContent = 'Sign Up';
-            a.href = '/signup.html';
-          }
-        });
-
-        // Remove the static .lp-post-launch sign-up links that the
-        // countdown already revealed — the form replacements below will
-        // create the correct CTA buttons, avoiding duplicates.
-        document.querySelectorAll('.lp-waitlist-form').forEach(function (form) {
-          var sibling = form.parentNode.querySelector('a.lp-post-launch');
-          if (sibling) sibling.remove();
-        });
-
-        // Replace all waitlist forms with sign-up buttons
-        var forms = document.querySelectorAll('.lp-waitlist-form');
-        forms.forEach(function (form) {
-          var link = document.createElement('a');
-          link.href = '/signup.html';
-          link.className = 'btn btn-primary';
-          link.textContent = 'Get Started \u2014 It\'s Free';
-          form.parentNode.replaceChild(link, form);
-        });
-
-        // Swap sticky CTA bar — update the button text
-        var stickyLink = document.querySelector('.lp-sticky-cta .btn');
-        if (stickyLink) stickyLink.textContent = 'Sign Up Free';
-
-        // Update footer link
-        var footerLinks = document.querySelectorAll('.lp-footer a');
-        footerLinks.forEach(function (a) {
-          if (/waitlist/i.test(a.textContent)) {
-            a.textContent = 'Sign Up';
-            a.href = '/signup.html';
-          }
-        });
-
-        // Update countdown label area text if still visible
-        var ctaNote = document.querySelector('.lp-cta-note');
-        if (ctaNote) ctaNote.textContent = 'Free for students. Sign up as a student, parent, or teacher.';
       })();
 
       /* ── FAQ Accordion ─────────────────────────────────── */
