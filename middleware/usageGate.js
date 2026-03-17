@@ -16,11 +16,12 @@ const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 10 * 60; // 10 minutes per week for ALL students
+const FREE_WEEKLY_SECONDS = 30 * 60; // 30 minutes per week for ALL students
 
 // Freemium taste limits — free users get a sample before upgrade prompt
-const FREE_UPLOAD_LIMIT = 1;     // 1 free upload, then upgrade required
-const FREE_GRADE_LIMIT  = 1;     // 1 free Show My Work, then upgrade required
+const FREE_UPLOAD_LIMIT  = 1;    // 1 free upload, then Mathmatix+ required
+const FREE_GRADE_LIMIT   = 1;    // 1 free Show My Work, then Mathmatix+ required
+const FREE_COURSE_LIMIT  = 1;    // 1 free course enrollment, then Mathmatix+ required
 
 // In-memory cache for school license lookups (avoids DB hit on every request)
 // Key: licenseId.toString(), Value: { license: object|null, checkedAt: number }
@@ -151,7 +152,7 @@ async function usageGate(req, res, next) {
       }).catch(err => console.error('[UsageGate] Downgrade error:', err.message));
 
       return res.status(402).json({
-        message: "Your free minutes and minute pack are both used up. Purchase a new pack, ask your school about a Mathmatix license, or come back next week!",
+        message: "Your free minutes and minute pack are both used up. Upgrade to Unlimited for non-stop tutoring, ask your school about a Mathmatix license, or come back next week!",
         usageLimitReached: true,
         tier: 'free',
         freeSecondsRemaining: 0,
@@ -167,11 +168,11 @@ async function usageGate(req, res, next) {
     const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
 
     return res.status(402).json({
-      message: `You've used your 10 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade for more time, or ask your teacher about a school license!`,
+      message: `You've used your 30 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`,
       usageLimitReached: true,
       tier: 'free',
       freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
-      freeMinutesTotal: 10,
+      freeMinutesTotal: 30,
       freeSecondsRemaining: 0,
       nextResetAt: resetDate.toISOString(),
       upgradeRequired: true
@@ -225,13 +226,20 @@ function premiumFeatureGate(featureName) {
       return next();
     }
 
+    if (featureName === 'Courses' && (user.freeCoursesUsed || 0) < FREE_COURSE_LIMIT) {
+      // Allow this course enrollment, increment counter
+      await User.findByIdAndUpdate(user._id, { $inc: { freeCoursesUsed: 1 } });
+      return next();
+    }
+
     // Determine the message based on whether user already used their free taste
     const usedFreeTaste = (featureName === 'File uploads' && (user.freeUploadsUsed || 0) >= FREE_UPLOAD_LIMIT) ||
-                          (featureName === 'Work grading' && (user.freeGradesUsed || 0) >= FREE_GRADE_LIMIT);
+                          (featureName === 'Work grading' && (user.freeGradesUsed || 0) >= FREE_GRADE_LIMIT) ||
+                          (featureName === 'Courses' && (user.freeCoursesUsed || 0) >= FREE_COURSE_LIMIT);
 
     const message = usedFreeTaste
-      ? `You've used your free ${featureName.toLowerCase()} trial! Upgrade to the Unlimited plan ($19.95/month) for unlimited access.`
-      : `${featureName} requires the Unlimited plan ($19.95/month) or a school license.`;
+      ? `You've used your free ${featureName.toLowerCase()} trial! Upgrade to Mathmatix+ ($9.95/month) for unlimited access.`
+      : `${featureName} requires Mathmatix+ ($9.95/month) or a school license.`;
 
     return res.status(402).json({
       message,
@@ -274,7 +282,7 @@ function paidFeatureGate(featureName) {
     }
 
     return res.status(402).json({
-      message: `${featureName} requires a paid plan or school license.`,
+      message: `${featureName} requires Mathmatix+ or a school license.`,
       premiumFeatureBlocked: true,
       feature: featureName,
       tier: user.subscriptionTier || 'free',

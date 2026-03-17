@@ -85,10 +85,10 @@ export function updateFreeTimeIndicator(usage) {
     const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
     if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy Pack</span>' + resetLine + subtitle;
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>' + resetLine + subtitle;
         indicator.style.borderColor = '#ff4444';
     } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Buy More</span>` + resetLine + subtitle;
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
         indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle;
@@ -97,7 +97,7 @@ export function updateFreeTimeIndicator(usage) {
 }
 
 /**
- * Show the upgrade/pricing modal (with Pi Day promo support)
+ * Show the upgrade modal — simplified to Unlimited only (with Pi Day promo support)
  */
 export async function showUpgradePrompt(errorData) {
     const existing = document.getElementById('upgrade-modal');
@@ -115,66 +115,45 @@ export async function showUpgradePrompt(errorData) {
 
     const isFeatureBlock = errorData.premiumFeatureBlocked;
     const title = promo
-        ? 'Pi Day Launch Special — $3.14 Off!'
-        : isFeatureBlock ? `${errorData.feature} Requires Unlimited` : 'Choose a Tutoring Pack';
-    const subtitle = promo
-        ? 'Celebrate Pi Day with $3.14 off any plan. Limited time only!'
-        : isFeatureBlock
-            ? `Unlock ${errorData.feature.toLowerCase()}, unlimited 24/7 tutoring, voice, courses, and more.`
-            : 'Purchase minutes to continue learning with your AI tutor.';
+        ? 'Pi Day Special \u2014 $3.14 Off!'
+        : 'Get Mathmatix+';
+    const subtitle = isFeatureBlock
+        ? `${errorData.feature} requires Mathmatix+.`
+        : 'Unlimited 24/7 tutoring for your child. Cancel anytime.';
 
-    const packBtnStyle = 'background:#1e1e3a;border:1px solid #444;border-radius:10px;padding:16px;cursor:pointer;text-align:center;color:#fff;transition:border-color 0.2s;';
-    const packBtnHover = 'onmouseover="this.style.borderColor=\'#00d4ff\'" onmouseout="this.style.borderColor=\'#444\'"';
-
-    function formatPrice(pack, originalCents, label, perMin, extra) {
-        if (promo && promo.prices[pack]) {
-            const promoCents = promo.prices[pack].promo;
-            const promoPrice = (promoCents / 100).toFixed(2);
-            const originalPrice = (originalCents / 100).toFixed(2);
-            return `<div style="font-size:14px;color:#888;text-decoration:line-through;margin-bottom:2px;">$${originalPrice}${label}</div>
-                    <div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${promoPrice}${label}</div>
-                    <div style="color:#ff6b9d;font-size:11px;font-weight:bold;margin-bottom:4px;">Save $3.14 — Pi Day Special!</div>
-                    <div style="color:#888;font-size:12px;">${extra}</div>`;
-        }
-        const price = (originalCents / 100).toFixed(2);
-        return `<div style="font-size:24px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${price}${label}</div>
-                <div style="color:#888;font-size:12px;">${extra}</div>`;
+    // Price display
+    let priceHtml;
+    if (promo && promo.prices.unlimited) {
+        const promoPrice = (promo.prices.unlimited.promo / 100).toFixed(2);
+        priceHtml = `<div style="font-size:16px;color:#888;text-decoration:line-through;">$9.95/mo</div>
+                     <div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${promoPrice}<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>
+                     <div style="color:#ff6b9d;font-size:12px;font-weight:bold;">Save $3.14 \u2014 Pi Day Special!</div>`;
+    } else {
+        priceHtml = '<div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$9.95<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>';
     }
-
-    const promoBadge = promo ? '<div style="background:linear-gradient(135deg,#ff6b9d,#c850c0);color:#fff;font-size:11px;padding:4px 12px;border-radius:20px;font-weight:bold;text-align:center;margin-bottom:16px;">Limited Time — Ends March 15!</div>' : '';
 
     const modal = document.createElement('div');
     modal.id = 'upgrade-modal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
     modal.innerHTML = `
-        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:480px;width:92%;color:#fff;border:1px solid ${promo ? '#ff6b9d' : '#333'};">
-            <h2 style="margin:0 0 8px;font-size:22px;text-align:center;">${title}</h2>
-            <p style="color:#aaa;margin:0 0 16px;text-align:center;line-height:1.5;">${subtitle}</p>
-            ${promoBadge}
-            <div style="display:flex;flex-direction:column;gap:12px;">
-                <div class="pack-option" data-pack="pack_60" style="${packBtnStyle}" ${packBtnHover}>
-                    <div style="font-size:20px;font-weight:bold;">60 Minutes</div>
-                    ${formatPrice('pack_60', 995, '', '$0.17/min', '$0.17/min \u00b7 Expires in 90 days')}
-                </div>
-                <div class="pack-option" data-pack="pack_120" style="${packBtnStyle};border-color:#7b2ff7;" ${packBtnHover}>
-                    <div style="display:flex;justify-content:center;align-items:center;gap:8px;">
-                        <span style="font-size:20px;font-weight:bold;">120 Minutes</span>
-                        <span style="background:#7b2ff7;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:bold;">BEST VALUE</span>
-                    </div>
-                    ${formatPrice('pack_120', 1495, '', '$0.12/min', '$0.12/min \u00b7 Expires in 180 days')}
-                </div>
-                <div class="pack-option" data-pack="unlimited" style="${packBtnStyle}" ${packBtnHover}>
-                    <div style="font-size:20px;font-weight:bold;">Unlimited Monthly</div>
-                    ${formatPrice('unlimited', 1995, '<span style="font-size:14px;color:#aaa;font-weight:normal">/mo</span>', '', '24/7 tutoring, voice, PDF upload, courses, Show My Work \u00b7 Cancel anytime')}
-                </div>
-            </div>
-            <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:16px;">Maybe later</button>
+        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:400px;width:92%;color:#fff;border:1px solid ${promo ? '#ff6b9d' : '#333'};text-align:center;">
+            <h2 style="margin:0 0 8px;font-size:22px;">${title}</h2>
+            <p style="color:#aaa;margin:0 0 20px;line-height:1.5;">${subtitle}</p>
+            ${priceHtml}
+            <ul style="text-align:left;list-style:none;padding:0;margin:20px 0;color:#ccc;font-size:14px;line-height:2;">
+                <li>\u2713 Unlimited 24/7 AI tutoring</li>
+                <li>\u2713 Voice chat with your tutor</li>
+                <li>\u2713 Unlimited homework uploads</li>
+                <li>\u2713 Full course enrollment</li>
+                <li>\u2713 Show My Work grading</li>
+                <li>\u2713 All features unlocked</li>
+            </ul>
+            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Get Mathmatix+</button>
+            <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>
         </div>`;
     document.body.appendChild(modal);
 
-    modal.querySelectorAll('.pack-option').forEach(btn => {
-        btn.addEventListener('click', () => initiateUpgrade(btn.dataset.pack));
-    });
+    document.getElementById('upgrade-go').addEventListener('click', () => initiateUpgrade('unlimited'));
     document.getElementById('upgrade-dismiss').addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
@@ -212,7 +191,7 @@ export function showNewUserPricingPrompt() {
     banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #7b2ff7;border-radius:12px;padding:16px 24px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;';
     banner.innerHTML = `
         <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Welcome to Mathmatix!</div>
-        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">10 free minutes</strong> of AI tutoring this week. Want to unlock more?</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">30 free minutes</strong> of AI tutoring this week. Want unlimited access?</div>
         <div style="display:flex;gap:10px;justify-content:center;">
             <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">View Plans</a>
             <button id="dismiss-pricing-banner" style="background:transparent;color:#666;border:1px solid #333;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;">Maybe Later</button>
@@ -313,10 +292,10 @@ async function pollForUpgrade() {
                 window._billingStatus = data;
 
                 if (statusText) {
-                    const tierLabel = data.tier === 'unlimited' ? 'Unlimited'
-                        : data.tier === 'pack_120' ? '120-Minute Pack'
-                        : '60-Minute Pack';
-                    statusText.textContent = `Your ${tierLabel} is now active. Start chatting with your AI tutor!`;
+                    const tierLabel = data.tier === 'unlimited' ? 'Mathmatix+'
+                        : data.tier === 'pack_120' ? '120-Minute Pack'  // legacy
+                        : '60-Minute Pack';                              // legacy
+                    statusText.textContent = `Your ${tierLabel} plan is now active. Start chatting with your AI tutor!`;
                 }
 
                 // Update the time indicator and hide upgrade link

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pricing | Mathmatix AI - Affordable AI Math Tutoring Plans</title>
-  <meta name="description" content="Mathmatix AI pricing: Free tier with 10 min/week, 60-minute pack for $9.95, 120-minute pack for $14.95, or unlimited for $19.95/mo. School licensing available." />
+  <title>Pricing | Mathmatix AI - Free AI Math Tutoring + Mathmatix+</title>
+  <meta name="description" content="Mathmatix AI: Free math tutoring (30 AI min/week, ~2+ hours of real help). Mathmatix+ for $9.95/mo unlocks unlimited tutoring, voice chat, homework uploads, and courses." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://mathmatix.ai/pricing.html" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mathmatix.ai/pricing.html" />
   <meta property="og:title" content="Pricing | Mathmatix AI" />
-  <meta property="og:description" content="Affordable AI math tutoring. Free tier included. Plans from $9.95." />
+  <meta property="og:description" content="Free AI math tutoring for every student. Mathmatix+ unlocks everything for $9.95/mo." />
   <meta property="og:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
@@ -27,11 +27,9 @@
     <header class="pricing-header">
       <a href="javascript:void(0)" class="pricing-back-link" id="pricing-back"><i class="fas fa-arrow-left"></i> <span id="pricing-back-text">Back</span></a>
       <script>
-        // Show "Back to Chat" for logged-in users, "Back to Home" for visitors
         (function() {
           var backLink = document.getElementById('pricing-back');
           var backText = document.getElementById('pricing-back-text');
-          // Check if user is likely authenticated by looking for session cookie
           var isLoggedIn = document.cookie.indexOf('connect.sid') !== -1;
           if (isLoggedIn) {
             backLink.href = '/chat.html';
@@ -42,82 +40,55 @@
           }
         })();
       </script>
-      <h1 class="pricing-title">Choose Your Plan</h1>
-      <p class="pricing-subtitle">Start free, upgrade when you're ready. Minutes only count while the AI tutor is responding&mdash;your reading and thinking time is always free.</p>
+      <h1 class="pricing-title">Simple Pricing. Serious Tutoring.</h1>
+      <p class="pricing-subtitle">Every student gets free access. Upgrade to Mathmatix+ when you&rsquo;re ready for more.</p>
+      <p class="pricing-subtitle" style="font-size:0.85rem;color:#888;margin-top:4px;"><i class="fas fa-info-circle"></i> Minutes only count while the AI tutor is responding &mdash; your child&rsquo;s reading and thinking time is always free.</p>
     </header>
 
     <!-- Plan Cards -->
-    <div class="pricing-cards">
+    <div class="pricing-cards" style="max-width:720px;">
 
       <!-- Free Tier -->
       <div class="pricing-card" data-tier="free">
         <div class="card-badge">Current</div>
         <h2 class="card-plan-name">Free</h2>
         <div class="card-price">$0</div>
-        <div class="card-period">forever</div>
+        <div class="card-period">forever &mdash; no credit card needed</div>
+        <div class="card-realtime-note"><i class="fas fa-clock"></i> 30 AI min/week &asymp; 2&ndash;3 hours of real homework help</div>
         <ul class="card-features">
-          <li><i class="fas fa-check"></i> 10 min/week AI tutoring</li>
-          <li><i class="fas fa-check"></i> 1 free file upload</li>
-          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
-          <li><i class="fas fa-check"></i> Browse course catalog</li>
+          <li><i class="fas fa-check"></i> 30 min/week AI chat tutoring</li>
+          <li><i class="fas fa-check"></i> Starting point screener</li>
+          <li><i class="fas fa-check"></i> Text-to-speech read-aloud</li>
           <li><i class="fas fa-check"></i> Mastery Mode &amp; Fact Fluency</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
+          <li><i class="fas fa-check"></i> 1 free file upload to try</li>
+          <li><i class="fas fa-check"></i> 1 free Show My Work to try</li>
+          <li><i class="fas fa-check"></i> Browse course catalog</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Voice tutoring</li>
           <li class="feature-locked"><i class="fas fa-lock"></i> Unlimited uploads &amp; grading</li>
+          <li class="feature-locked"><i class="fas fa-lock"></i> Full course enrollment</li>
         </ul>
         <button class="card-cta card-cta-current" disabled>Your Current Plan</button>
       </div>
 
-      <!-- 60-Min Pack -->
-      <div class="pricing-card" data-tier="pack_60">
-        <h2 class="card-plan-name">60-Minute Pack</h2>
-        <div class="card-price">$9<span class="card-price-cents">.95</span></div>
-        <div class="card-period">one-time &middot; expires in 90 days</div>
-        <ul class="card-features">
-          <li><i class="fas fa-check"></i> 60 min AI tutoring</li>
-          <li><i class="fas fa-check"></i> $0.17/min</li>
-          <li><i class="fas fa-check"></i> 1 free file upload</li>
-          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
-          <li><i class="fas fa-check"></i> + 10 free min/week on top</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
-        </ul>
-        <button class="card-cta card-cta-buy" data-pack="pack_60">Get 60 Minutes</button>
-      </div>
-
-      <!-- 120-Min Pack -->
-      <div class="pricing-card pricing-card-featured" data-tier="pack_120">
-        <div class="card-badge card-badge-featured">Best Value</div>
-        <h2 class="card-plan-name">120-Minute Pack</h2>
-        <div class="card-price">$14<span class="card-price-cents">.95</span></div>
-        <div class="card-period">one-time &middot; expires in 180 days</div>
-        <ul class="card-features">
-          <li><i class="fas fa-check"></i> 120 min AI tutoring</li>
-          <li><i class="fas fa-check"></i> $0.12/min</li>
-          <li><i class="fas fa-check"></i> 1 free file upload</li>
-          <li><i class="fas fa-check"></i> 1 free Show My Work</li>
-          <li><i class="fas fa-check"></i> + 10 free min/week on top</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Voice chat</li>
-          <li class="feature-locked"><i class="fas fa-lock"></i> Course enrollment</li>
-        </ul>
-        <button class="card-cta card-cta-buy" data-pack="pack_120">Get 120 Minutes</button>
-      </div>
-
-      <!-- Unlimited -->
-      <div class="pricing-card" data-tier="unlimited">
-        <div class="card-badge card-badge-premium">Everything</div>
-        <h2 class="card-plan-name">Unlimited</h2>
-        <div class="card-price">$19<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span></div>
+      <!-- Mathmatix+ -->
+      <div class="pricing-card pricing-card-featured" data-tier="unlimited">
+        <div class="card-badge card-badge-featured">Recommended</div>
+        <h2 class="card-plan-name">Mathmatix+</h2>
+        <div class="card-price">$9<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span></div>
         <div class="card-period">cancel anytime</div>
+        <div class="card-realtime-note"><i class="fas fa-infinity"></i> Unlimited tutoring, 24/7. No limits.</div>
         <ul class="card-features">
           <li><i class="fas fa-check"></i> Unlimited 24/7 AI tutoring</li>
-          <li><i class="fas fa-check"></i> Unlimited file uploads</li>
-          <li><i class="fas fa-check"></i> Unlimited Show My Work</li>
-          <li><i class="fas fa-check"></i> Voice chat</li>
-          <li><i class="fas fa-check"></i> Enroll in full courses</li>
-          <li><i class="fas fa-check"></i> All features unlocked</li>
+          <li><i class="fas fa-check"></i> Voice tutoring</li>
+          <li><i class="fas fa-check"></i> Unlimited homework uploads</li>
+          <li><i class="fas fa-check"></i> Unlimited Show My Work grading</li>
+          <li><i class="fas fa-check"></i> Full course enrollment</li>
+          <li><i class="fas fa-check"></i> Everything in Free, plus more</li>
         </ul>
-        <button class="card-cta card-cta-premium" data-pack="unlimited">Go Unlimited</button>
+        <div class="card-compare-note">
+          <i class="fas fa-arrow-down"></i> That&rsquo;s less than a single hour with a private tutor.
+        </div>
+        <button class="card-cta card-cta-premium" data-pack="unlimited">Get Mathmatix+</button>
       </div>
 
     </div>
@@ -133,7 +104,7 @@
 
     <!-- Skip link for new signups -->
     <div class="pricing-skip">
-      <a href="/chat.html" class="pricing-skip-link">Skip for now &mdash; start with 10 free minutes</a>
+      <a href="/chat.html" class="pricing-skip-link">Skip for now &mdash; start with 30 free minutes</a>
     </div>
   </div>
 
@@ -143,18 +114,17 @@
 
     // For unauthenticated visitors: make CTAs point to signup
     if (!isLoggedIn) {
-      document.querySelectorAll('.card-cta-buy, .card-cta-premium').forEach(function(btn) {
+      document.querySelectorAll('.card-cta-premium').forEach(function(btn) {
         btn.addEventListener('click', function() {
           window.location.href = '/signup.html';
         });
       });
-      // Update skip link for visitors
       var skipLink = document.querySelector('.pricing-skip-link');
       if (skipLink) {
         skipLink.href = '/signup.html';
-        skipLink.textContent = 'Sign up free — 10 minutes every week';
+        skipLink.textContent = 'Sign up free \u2014 30 minutes every week';
       }
-      return; // Don't try to fetch billing status for unauthenticated users
+      return;
     }
 
     // Logged-in user flow: fetch billing status and update card states
@@ -164,21 +134,19 @@
         if (!res.ok) return;
         const data = await res.json();
 
-        // If billing is disabled, show everything as available
         if (data.billingEnabled === false) {
           document.querySelector('.pricing-page').innerHTML =
             '<div style="text-align:center;padding:80px 20px;color:#aaa;"><h2>All features are currently free!</h2><p>Billing is not enabled yet. Enjoy unlimited access.</p><a href="/chat.html" style="color:#00d4ff;">Back to Chat</a></div>';
           return;
         }
 
-        // Highlight current tier
         const currentTier = data.tier || 'free';
         document.querySelectorAll('.pricing-card').forEach(card => {
           const tier = card.dataset.tier;
           const badge = card.querySelector('.card-badge');
           const cta = card.querySelector('.card-cta');
 
-          if (tier === currentTier) {
+          if (tier === currentTier || (tier === 'unlimited' && currentTier === 'unlimited')) {
             card.classList.add('pricing-card-active');
             if (badge) { badge.textContent = 'Current'; badge.style.display = ''; }
             if (cta) { cta.textContent = 'Your Current Plan'; cta.disabled = true; cta.classList.add('card-cta-current'); }
@@ -188,15 +156,14 @@
           }
         });
 
-        // Mark pricing as seen
         await csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
       } catch (e) {
         console.error('[Pricing] Failed to load billing status:', e);
       }
     }
 
-    // Handle buy buttons for logged-in users
-    document.querySelectorAll('.card-cta-buy, .card-cta-premium').forEach(btn => {
+    // Handle buy button for logged-in users
+    document.querySelectorAll('.card-cta-premium').forEach(btn => {
       btn.addEventListener('click', async function() {
         const pack = this.dataset.pack;
         if (!pack) return;

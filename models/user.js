@@ -629,9 +629,10 @@ const userSchema = new Schema({
   // Minute-pack fields (60-min and 120-min packs)
   packSecondsRemaining: { type: Number, default: 0 },
   packExpiresAt: { type: Date, default: null },
-  // Freemium taste — free users get 1 free upload and 1 free Show My Work before upgrade prompt
+  // Freemium taste — free users get 1 free taste of premium features before upgrade prompt
   freeUploadsUsed: { type: Number, default: 0 },
   freeGradesUsed: { type: Number, default: 0 },
+  freeCoursesUsed: { type: Number, default: 0 },
   // Tracks whether user has seen the pricing page (shown once after signup)
   hasSeenPricing: { type: Boolean, default: false },
 

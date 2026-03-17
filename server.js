@@ -128,7 +128,7 @@ const demoRoutes = require('./routes/demo');  // Playground demo account login &
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
-const { usageGate, premiumFeatureGate, paidFeatureGate } = require('./middleware/usageGate');
+const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
 
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
@@ -562,7 +562,7 @@ app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Vo
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
 app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes); // Premium: immersive voice tutor
 
-app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, paidFeatureGate('File uploads'), uploadRoutes); // Paid: file uploads (all paid plans)
+app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: 1 free taste, then Mathmatix+ required
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes); // Usage-gated for free tier
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
@@ -590,7 +590,7 @@ app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, mast
 app.use('/api/review', isAuthenticated, reviewRoutes); // Spaced repetition review system
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
-app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, paidFeatureGate('Show My Work'), gradeWorkRoutes); // Paid: AI grading (all paid plans)
+app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes); // Premium: 1 free taste, then Mathmatix+ required
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode

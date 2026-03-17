@@ -38,12 +38,12 @@
   margin: 0;
 }
 
-/* Cards Grid */
+/* Cards Grid — 2-card layout (Free + Mathmatix+) */
 .pricing-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  max-width: 1100px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -130,7 +130,38 @@
   text-align: center;
   color: #666;
   font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* Real-time equivalent note */
+.card-realtime-note {
+  text-align: center;
+  color: #00d4ff;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
   margin-bottom: 20px;
+}
+.card-realtime-note i {
+  margin-right: 4px;
+}
+
+/* Comparison note above CTA */
+.card-compare-note {
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 16px;
+  padding-top: 8px;
+  border-top: 1px solid #2a2a3e;
+}
+.card-compare-note i {
+  color: #7b2ff7;
+  margin-right: 4px;
 }
 
 /* Feature List */
@@ -229,13 +260,7 @@
 }
 .pricing-skip-link:hover { color: #aaa; }
 
-/* Responsive: 2-col on tablet, 1-col on mobile */
-@media (max-width: 900px) {
-  .pricing-cards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-}
+/* Responsive: 1-col on mobile */
 @media (max-width: 560px) {
   .pricing-cards {
     grid-template-columns: 1fr;
