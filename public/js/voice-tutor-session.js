@@ -363,7 +363,8 @@
 
       requestAnimationFrame(check);
     };
-    check();
+    // Defer first check so setMode('listening') runs first
+    requestAnimationFrame(check);
   }
 
   // ═══════════════════════════════════════
