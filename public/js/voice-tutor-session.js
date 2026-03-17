@@ -1086,47 +1086,70 @@
 
   /**
    * Fallback: if backend didn't return mathSteps, extract equations from the response.
-   * Looks for LaTeX display/inline math, or patterns like "x = 5", "2x + 3 = 7", etc.
+   * Handles LaTeX delimiters, symbolic math, AND natural language like "2x equals 4".
    */
   function extractEquationsFromText(text) {
     const steps = [];
+    const seen = new Set();
 
-    // 1. Extract display math: \[ ... \] or $$ ... $$
-    const displayPatterns = [
-      /\\\[(.+?)\\\]/gs,
-      /\$\$(.+?)\$\$/gs,
-    ];
-    for (const pat of displayPatterns) {
-      let m;
-      while ((m = pat.exec(text)) !== null) {
-        steps.push({ latex: m[1].trim() });
+    function addStep(latex, label) {
+      const key = latex.trim();
+      if (key && !seen.has(key)) {
+        seen.add(key);
+        steps.push(label ? { label, latex: key } : { latex: key });
       }
     }
 
-    // 2. Extract inline math: \( ... \) or $ ... $ (only if contains math-like chars)
-    const inlinePatterns = [
-      /\\\((.+?)\\\)/g,
-      /(?<!\$)\$([^$\n]+?)\$(?!\$)/g,
-    ];
-    for (const pat of inlinePatterns) {
-      let m;
-      while ((m = pat.exec(text)) !== null) {
-        const latex = m[1].trim();
-        // Only include if it looks like an equation (has =, +, -, frac, etc.)
-        if (/[=+\-*/^_\\]/.test(latex) && latex.length > 2) {
-          steps.push({ latex });
+    // 1. LaTeX display math: \[ ... \] or $$ ... $$
+    const displayRe = /\\\[(.+?)\\\]|\$\$(.+?)\$\$/gs;
+    let m;
+    while ((m = displayRe.exec(text)) !== null) {
+      addStep(m[1] || m[2]);
+    }
+
+    // 2. LaTeX inline math: \( ... \) or $...$
+    const inlineRe = /\\\((.+?)\\\)|(?<!\$)\$([^$\n]+?)\$(?!\$)/g;
+    while ((m = inlineRe.exec(text)) !== null) {
+      const latex = (m[1] || m[2]).trim();
+      if (/[=+\-*/^_\\]/.test(latex) && latex.length > 2) {
+        addStep(latex);
+      }
+    }
+
+    // 3. Symbolic equations: "2x + 3 = 7", "x = 4", "y = mx + b"
+    if (steps.length === 0) {
+      const symRe = /\b(\d*[a-z]\s*[\^]\s*\d)?\s*([\d]*\s*[a-z][\w]*(?:\s*[+\-*/]\s*[\d]*\s*[a-z\d][\w]*)*\s*=\s*[\d\w\s+\-*/^.()]+)/gi;
+      while ((m = symRe.exec(text)) !== null) {
+        const eq = m[0].trim();
+        if (eq.length > 2 && eq.length < 100 && /[a-z]/i.test(eq) && /\d/.test(eq)) {
+          addStep(eq);
         }
       }
     }
 
-    // 3. Heuristic: find plain-text equations like "x = 5" or "2x + 3 = 7"
+    // 4. Natural language math: "2x equals 4", "x squared plus 3 equals 12"
     if (steps.length === 0) {
-      const eqPattern = /(?:^|[.!?]\s+)([^.!?\n]*?(?:\d+[a-z]|[a-z])\s*[+\-*/^]\s*[^.!?\n]*?=\s*[^.!?\n]+)/gi;
-      let m;
-      while ((m = eqPattern.exec(text)) !== null) {
-        const eq = m[1].trim();
-        if (eq.length > 3 && eq.length < 120) {
-          steps.push({ text: eq });
+      const nlText = text
+        .replace(/\bequals?\b/gi, '=')
+        .replace(/\bis equal to\b/gi, '=')
+        .replace(/\bplus\b/gi, '+')
+        .replace(/\bminus\b/gi, '-')
+        .replace(/\btimes\b/gi, '\\cdot')
+        .replace(/\bdivided by\b/gi, '/')
+        .replace(/\bover\b/gi, '/')
+        .replace(/\bsquared\b/gi, '^2')
+        .replace(/\bcubed\b/gi, '^3')
+        .replace(/\bsquare root of\b/gi, '\\sqrt{')
+        .replace(/\bsqrt of\b/gi, '\\sqrt{');
+
+      // Now look for equations in the converted text
+      const convRe = /\b([\d]*\s*[a-z][\w\s\^{}]*(?:\s*[+\-\\/·]\s*[\d]*\s*[a-z\d][\w\s\^{}]*)*\s*=\s*[\d\w\s+\-*/\\^{}.()]+)/gi;
+      while ((m = convRe.exec(nlText)) !== null) {
+        let eq = m[1].trim()
+          .replace(/\s+/g, ' ')
+          .replace(/(\d)\s+([a-z])/gi, '$1$2'); // "2 x" → "2x"
+        if (eq.length > 2 && eq.length < 100 && /=/.test(eq)) {
+          addStep(eq);
         }
       }
     }
