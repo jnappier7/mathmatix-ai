@@ -180,10 +180,10 @@ router.post('/teachers', isAdmin, async (req, res) => {
     }
 
     // Validate password strength
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(finalPassword)) {
       return res.status(400).json({
-        message: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
+        message: 'Password must be at least 8 characters with uppercase, lowercase, and a number.'
       });
     }
 
@@ -279,10 +279,10 @@ router.post('/create-user', isAdmin, async (req, res) => {
     }
 
     // Validate password strength
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(finalPassword)) {
       return res.status(400).json({
-        message: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
+        message: 'Password must be at least 8 characters with uppercase, lowercase, and a number.'
       });
     }
 

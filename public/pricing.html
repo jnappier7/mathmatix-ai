@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pricing | Mathmatix AI</title>
+  <title>Pricing | Mathmatix AI - Affordable AI Math Tutoring Plans</title>
+  <meta name="description" content="Mathmatix AI pricing: Free tier with 10 min/week, 60-minute pack for $9.95, 120-minute pack for $14.95, or unlimited for $19.95/mo. School licensing available." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://mathmatix.ai/pricing.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mathmatix.ai/pricing.html" />
+  <meta property="og:title" content="Pricing | Mathmatix AI" />
+  <meta property="og:description" content="Affordable AI math tutoring. Free tier included. Plans from $9.95." />
+  <meta property="og:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
@@ -11,12 +19,29 @@
   <link rel="stylesheet" href="/css/pricing.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/analytics.js" data-ga="" data-fbp=""></script>
 </head>
 <body>
   <div class="pricing-page">
     <!-- Header -->
     <header class="pricing-header">
-      <a href="/chat.html" class="pricing-back-link"><i class="fas fa-arrow-left"></i> Back to Chat</a>
+      <a href="javascript:void(0)" class="pricing-back-link" id="pricing-back"><i class="fas fa-arrow-left"></i> <span id="pricing-back-text">Back</span></a>
+      <script>
+        // Show "Back to Chat" for logged-in users, "Back to Home" for visitors
+        (function() {
+          var backLink = document.getElementById('pricing-back');
+          var backText = document.getElementById('pricing-back-text');
+          // Check if user is likely authenticated by looking for session cookie
+          var isLoggedIn = document.cookie.indexOf('connect.sid') !== -1;
+          if (isLoggedIn) {
+            backLink.href = '/chat.html';
+            backText.textContent = 'Back to Chat';
+          } else {
+            backLink.href = '/';
+            backText.textContent = 'Back to Home';
+          }
+        })();
+      </script>
       <h1 class="pricing-title">Choose Your Plan</h1>
       <p class="pricing-subtitle">Start free, upgrade when you're ready. Minutes only count while the AI tutor is responding&mdash;your reading and thinking time is always free.</p>
     </header>
@@ -114,7 +139,25 @@
 
   <script>
   (function() {
-    // Fetch billing status and update card states
+    var isLoggedIn = document.cookie.indexOf('connect.sid') !== -1;
+
+    // For unauthenticated visitors: make CTAs point to signup
+    if (!isLoggedIn) {
+      document.querySelectorAll('.card-cta-buy, .card-cta-premium').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          window.location.href = '/signup.html';
+        });
+      });
+      // Update skip link for visitors
+      var skipLink = document.querySelector('.pricing-skip-link');
+      if (skipLink) {
+        skipLink.href = '/signup.html';
+        skipLink.textContent = 'Sign up free — 10 minutes every week';
+      }
+      return; // Don't try to fetch billing status for unauthenticated users
+    }
+
+    // Logged-in user flow: fetch billing status and update card states
     async function initPricing() {
       try {
         const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
@@ -140,7 +183,6 @@
             if (badge) { badge.textContent = 'Current'; badge.style.display = ''; }
             if (cta) { cta.textContent = 'Your Current Plan'; cta.disabled = true; cta.classList.add('card-cta-current'); }
           } else if (tier === 'free' && currentTier !== 'free') {
-            // Hide "Current" badge from free card if user is on a higher tier
             if (badge && badge.textContent === 'Current') badge.style.display = 'none';
             if (cta) { cta.textContent = 'Free Tier'; cta.disabled = true; }
           }
@@ -153,7 +195,7 @@
       }
     }
 
-    // Handle buy buttons
+    // Handle buy buttons for logged-in users
     document.querySelectorAll('.card-cta-buy, .card-cta-premium').forEach(btn => {
       btn.addEventListener('click', async function() {
         const pack = this.dataset.pack;

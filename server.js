@@ -348,6 +348,12 @@ app.use(csrfProtection);
 // HTTP Request Logging
 app.use(logger.requestLogger);
 
+// System-wide HTTP error tracking (4xx, 5xx)
+const { trackErrors, errorMetricsHandler, clientErrorHandler } = require('./middleware/errorTracking');
+app.use(trackErrors);
+
+// Client-side error reporting endpoint (public, no auth needed)
+app.post('/api/client-errors', express.text({ type: '*/*', limit: '2kb' }), clientErrorHandler);
 
 // --- 7. DATABASE CONNECTION ---
 const { startRetentionSchedule } = require('./utils/dataRetention');
@@ -529,6 +535,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
 
 // API Routes
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
+app.get('/api/admin/error-metrics', isAuthenticated, isAdmin, errorMetricsHandler);
 app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
 app.use('/api/analytics', isAuthenticated, analyticsRoutes);
@@ -840,8 +847,8 @@ app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "demo.html")));
 
-// Pricing page (accessible to authenticated users)
-app.get("/pricing.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
+// Pricing page (public — accessible to everyone for conversion)
+app.get("/pricing.html", (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
 
 // Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
@@ -894,6 +901,9 @@ app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fl
 const staticCacheOptions = { maxAge: '1d', etag: true, lastModified: true };
 app.use(express.static(path.join(__dirname, "public"), staticCacheOptions));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images'), staticCacheOptions));
+
+// Express error logging middleware (catch unhandled errors)
+app.use(logger.errorLogger);
 
 // Fallback for 404
 app.get("*", (req, res) => {
