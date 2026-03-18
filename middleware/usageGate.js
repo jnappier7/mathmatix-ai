@@ -106,6 +106,16 @@ async function usageGate(req, res, next) {
     // Unlimited individual subscribers pass unconditionally
     if (user.subscriptionTier === 'unlimited') return next();
 
+    // Check if a linked parent has an active Mathmatix+ subscription
+    // (parent pays → child gets unlimited access)
+    if (user.parentIds && user.parentIds.length > 0) {
+      const subscribedParent = await User.findOne({
+        _id: { $in: user.parentIds },
+        subscriptionTier: 'unlimited'
+      }).lean();
+      if (subscribedParent) return next();
+    }
+
     // --- Weekly reset check (applies to all students) ---
     let weeklyAIUsed = user.weeklyAISeconds || 0;
     const now = new Date();
@@ -213,6 +223,15 @@ function premiumFeatureGate(featureName) {
       if (valid) return next();
     }
 
+    // Check if a linked parent has an active Mathmatix+ subscription
+    if (user.parentIds && user.parentIds.length > 0) {
+      const subscribedParent = await User.findOne({
+        _id: { $in: user.parentIds },
+        subscriptionTier: 'unlimited'
+      }).lean();
+      if (subscribedParent) return next();
+    }
+
     // --- Freemium taste: allow limited free uses of uploads and Show My Work ---
     if (featureName === 'File uploads' && (user.freeUploadsUsed || 0) < FREE_UPLOAD_LIMIT) {
       // Allow this upload, increment counter
@@ -279,6 +298,15 @@ function paidFeatureGate(featureName) {
     if (user.schoolLicenseId) {
       const valid = await isLicenseValid(user.schoolLicenseId);
       if (valid) return next();
+    }
+
+    // Check if a linked parent has an active Mathmatix+ subscription
+    if (user.parentIds && user.parentIds.length > 0) {
+      const subscribedParent = await User.findOne({
+        _id: { $in: user.parentIds },
+        subscriptionTier: 'unlimited'
+      }).lean();
+      if (subscribedParent) return next();
     }
 
     return res.status(402).json({

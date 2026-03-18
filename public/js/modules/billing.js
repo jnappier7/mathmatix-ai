@@ -81,7 +81,8 @@ export function updateFreeTimeIndicator(usage) {
         }
     }
 
-    const subtitle = '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
+    const isMobile = window.innerWidth <= 768;
+    const subtitle = isMobile ? '' : '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
     const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
     if (usage.limitReached || remaining <= 0) {
