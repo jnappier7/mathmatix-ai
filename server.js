@@ -202,13 +202,42 @@ app.use(passport.session());
 app.use(handleImpersonation);
 app.use(enforceReadOnly);
 
-// CSP Nonce middleware — generates a unique nonce per request for inline scripts.
-// Pages can read the nonce from res.locals.cspNonce (for server-rendered pages)
-// or from the meta tag <meta name="csp-nonce"> injected by the nonce middleware.
-// This enables incremental migration away from 'unsafe-inline'.
+// CSP Nonce middleware — generates a unique nonce per request and automatically
+// injects it into inline <script> tags in HTML responses. This allows inline
+// scripts to work with the CSP nonce (which disables 'unsafe-inline').
 const crypto = require('crypto');
+const fs = require('fs');
 app.use((req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  const nonce = crypto.randomBytes(16).toString('base64');
+  res.locals.cspNonce = nonce;
+
+  // Wrap sendFile to inject nonces into HTML files.
+  // Normalise the (path[, options][, fn]) overloads before delegating.
+  const originalSendFile = res.sendFile.bind(res);
+  res.sendFile = function (filePath, options, callback) {
+    // Normalise: sendFile(path, fn) → options=undefined, callback=fn
+    if (typeof options === 'function') {
+      callback = options;
+      options = undefined;
+    }
+    if (typeof filePath === 'string' && filePath.endsWith('.html')) {
+      fs.readFile(filePath, 'utf8', (err, html) => {
+        if (err) return callback ? callback(err) : next(err);
+        html = html.replace(/<script(?![^>]*\bsrc\b)(?![^>]*\bnonce\b)/gi, `<script nonce="${nonce}"`);
+        res.type('html').send(html);
+      });
+    } else {
+      // Pass through to original — preserves all options and callback behaviour
+      if (callback) {
+        originalSendFile(filePath, options || {}, callback);
+      } else if (options) {
+        originalSendFile(filePath, options);
+      } else {
+        originalSendFile(filePath);
+      }
+    }
+  };
+
   next();
 });
 
@@ -355,6 +384,13 @@ const signupLimiter = rateLimit({
 // Applies to POST, PUT, DELETE, PATCH requests
 // GET requests generate tokens for forms
 app.use(csrfProtection);
+
+// Explicit CSRF token endpoint — lets the frontend recover when the cookie is missing
+// (e.g. expired, first visit with cookies delayed). GET through csrfProtection above
+// guarantees a fresh _csrf cookie is set, so we just confirm success.
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ success: true });
+});
 
 // HTTP Request Logging
 app.use(logger.requestLogger);
