@@ -38,20 +38,23 @@
 
   <!-- Main content area -->
   <main class="vt-main">
-    <!-- Left: Visual canvas area -->
+    <!-- Left: Visual panel — three defined zones stacked vertically -->
     <section class="vt-visual-panel">
-      <!-- Math visualization canvas -->
+      <!-- Zone 1: Math steps (scrollable, fills remaining space) -->
       <div class="vt-canvas-area" id="vt-canvas-area">
         <div class="vt-canvas-placeholder" id="vt-canvas-placeholder">
           <p><i class="fas fa-function"></i> Equations appear here as you talk</p>
         </div>
-        <!-- Rendered math steps appear here -->
         <div id="vt-math-display" class="vt-math-display"></div>
-        <!-- Graph canvas -->
         <canvas id="vt-graph-canvas" class="vt-graph-canvas" style="display:none;"></canvas>
       </div>
 
-      <!-- Tutor presence — animated avatar circle (Siri/GPT Live style) -->
+      <!-- Zone 2: Live transcript speech bubble -->
+      <div class="vt-live-transcript" id="vt-live-transcript">
+        <div class="vt-transcript-text" id="vt-transcript-text"></div>
+      </div>
+
+      <!-- Zone 3: Tutor avatar presence (fixed at bottom) -->
       <div class="vt-presence" id="vt-presence">
         <div class="vt-presence-rings">
           <div class="vt-ring vt-ring-outer"></div>
@@ -67,11 +70,6 @@
           <span class="vt-status-dot"></span>
           <span class="vt-status-text" id="vt-status-text" aria-live="polite">Tap to begin</span>
         </div>
-      </div>
-
-      <!-- Live transcript overlay -->
-      <div class="vt-live-transcript" id="vt-live-transcript">
-        <div class="vt-transcript-text" id="vt-transcript-text"></div>
       </div>
     </section>
 

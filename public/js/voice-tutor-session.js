@@ -697,11 +697,54 @@
       }).join(' ');
 
       dom.transcriptText.innerHTML = html;
+      renderTranscriptMath();
       index++;
 
       setTimeout(showNextWord, avgWordDuration);
     }
     showNextWord();
+  }
+
+  /**
+   * Render any KaTeX math that appears in the live transcript bubble.
+   * Scans for LaTeX delimiters in the transcript text and replaces them.
+   */
+  function renderTranscriptMath() {
+    if (!window.katex || !dom.transcriptText) return;
+    const el = dom.transcriptText;
+    const raw = el.innerHTML;
+
+    // Check for LaTeX patterns: \(...\), $...$, \[...\], $$...$$
+    const hasLatex = /\\\(|\\\[|\$/.test(raw);
+    if (!hasLatex) return;
+
+    // Replace display math: \[...\] and $$...$$
+    let processed = raw.replace(/\\\[(.+?)\\\]/gs, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: true, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+    processed = processed.replace(/\$\$(.+?)\$\$/gs, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: true, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+
+    // Replace inline math: \(...\) and $...$
+    processed = processed.replace(/\\\((.+?)\\\)/g, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: false, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+    processed = processed.replace(/\$([^$]+?)\$/g, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: false, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+
+    if (processed !== raw) {
+      el.innerHTML = processed;
+    }
   }
 
   function hideTranscript() {
