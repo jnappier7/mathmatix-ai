@@ -10,6 +10,7 @@ const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware 
 const passport = require('passport'); // For req.logIn after successful signup
 const { sendEmailVerification } = require('../utils/emailService'); // For email verification
 const { signupValidation, handleValidationErrors } = require('../middleware/validation');
+const { generateUniqueUsername } = require('../auth/passport-config');
 
 // Roles that can be self-assigned during public signup.
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
@@ -81,10 +82,10 @@ router.post('/validate-code', async (req, res) => {
 });
 
 router.post('/', ensureNotAuthenticated, signupValidation, handleValidationErrors, async (req, res, next) => {
-    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth, termsAccepted } = req.body;
+    const { firstName, lastName, email, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth, termsAccepted } = req.body;
 
     // --- 1. Basic Validation ---
-    if (!firstName || !lastName || !email || !username || !password || !role) {
+    if (!firstName || !lastName || !email || !password || !role) {
         console.warn("WARN: Signup failed - missing basic fields.");
         return res.status(400).json({ message: 'All basic fields are required.' });
     }
@@ -112,18 +113,15 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
     }
 
     try {
-        // --- 2. Check for existing Username/Email ---
-        let existingUser = await User.findOne({ $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }] });
+        // --- 2. Check for existing Email ---
+        let existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
-            if (existingUser.username === username.toLowerCase()) {
-                console.warn(`WARN: Signup failed - username '${username}' already taken.`);
-                return res.status(409).json({ message: 'Username already taken.' });
-            }
-            if (existingUser.email === email.toLowerCase()) {
-                console.warn(`WARN: Signup failed - email '${email}' already registered.`);
-                return res.status(409).json({ message: 'Email already registered.' });
-            }
+            console.warn(`WARN: Signup failed - email '${email}' already registered.`);
+            return res.status(409).json({ message: 'Email already registered.' });
         }
+
+        // Auto-generate a unique username from the user's name
+        const username = await generateUniqueUsername(`${firstName} ${lastName}`, email.split('@')[0]);
 
         // --- 3. Process Enrollment Code (if provided for students) ---
         let enrollmentCodeDoc = null;
@@ -316,13 +314,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
 
     } catch (error) {
         console.error('ERROR: Signup failed:', error);
-        // Catch Mongoose duplicate key errors (code 11000) for unique fields like username/email
+        // Catch Mongoose duplicate key errors (code 11000) for unique fields
         if (error.code === 11000 && error.keyPattern) {
-            if (error.keyPattern.username) {
-                return res.status(409).json({ message: 'Username already taken.' });
-            }
             if (error.keyPattern.email) {
                 return res.status(409).json({ message: 'Email already registered.' });
+            }
+            if (error.keyPattern.username) {
+                return res.status(409).json({ message: 'Please try again — a username conflict occurred.' });
             }
         }
         res.status(500).json({ message: 'An unexpected server error occurred during signup.' });
