@@ -10,13 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* -------- INITIAL DATA LOAD -------- */
   async function fetchData() {
     try {
-      const [userRes, tutorConfigRes] = await Promise.all([
-        fetch('/user',           { credentials: 'include' }),
-        fetch('/js/tutor-config-data.js')
-      ]);
+      const userRes = await fetch('/user', { credentials: 'include' });
 
       if (!userRes.ok) return window.location.href = '/login.html';
-      if (!tutorConfigRes.ok) throw new Error('Failed to load tutor configuration.');
 
       const userData   = await userRes.json();
       currentUser      = userData.user;
@@ -26,15 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser.unlockedItems = ['mr-nappier', 'maya', 'ms-maria', 'bob'];
       }
 
-      /* Inject tutor config into page scope if not already present */
-      const scriptText = await tutorConfigRes.text();
-      if (!window.TUTOR_CONFIG) {
-        const s = document.createElement('script');
-        s.textContent = scriptText;
-        document.body.appendChild(s);
-      }
-
       const tutorsData = window.TUTOR_CONFIG;
+      if (!tutorsData) throw new Error('Tutor configuration not loaded.');
+
       allTutors = Object.keys(tutorsData)
         .filter(key => key !== 'default')
         .map(key => ({ id: key, ...tutorsData[key] }));
