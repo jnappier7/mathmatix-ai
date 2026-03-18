@@ -211,17 +211,30 @@ app.use((req, res, next) => {
   const nonce = crypto.randomBytes(16).toString('base64');
   res.locals.cspNonce = nonce;
 
-  // Wrap sendFile to inject nonces into HTML files
+  // Wrap sendFile to inject nonces into HTML files.
+  // Normalise the (path[, options][, fn]) overloads before delegating.
   const originalSendFile = res.sendFile.bind(res);
   res.sendFile = function (filePath, options, callback) {
+    // Normalise: sendFile(path, fn) → options=undefined, callback=fn
+    if (typeof options === 'function') {
+      callback = options;
+      options = undefined;
+    }
     if (typeof filePath === 'string' && filePath.endsWith('.html')) {
       fs.readFile(filePath, 'utf8', (err, html) => {
-        if (err) return typeof (options || callback) === 'function' ? (options || callback)(err) : next(err);
+        if (err) return callback ? callback(err) : next(err);
         html = html.replace(/<script(?![^>]*\bsrc\b)(?![^>]*\bnonce\b)/gi, `<script nonce="${nonce}"`);
         res.type('html').send(html);
       });
     } else {
-      originalSendFile(filePath, options, callback);
+      // Pass through to original — preserves all options and callback behaviour
+      if (callback) {
+        originalSendFile(filePath, options || {}, callback);
+      } else if (options) {
+        originalSendFile(filePath, options);
+      } else {
+        originalSendFile(filePath);
+      }
     }
   };
 
