@@ -36,16 +36,20 @@ function csrfProtection(req, res, next) {
 
   // Skip CSRF for GET, HEAD, OPTIONS requests (safe methods)
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-    // Generate token for forms on GET requests
-    const token = generateToken();
+    // Reuse existing token from cookie if present — avoids race conditions when
+    // parallel static-asset GETs each try to overwrite the cookie with a new token.
+    const existing = req.cookies._csrf;
+    const token = existing || generateToken();
 
-    // Set token in cookie (NOT httpOnly - JavaScript needs to read it for double-submit pattern)
-    res.cookie('_csrf', token, {
-      httpOnly: false, // MUST be false so JavaScript can read it and send in header
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'lax', // 'lax' allows cookie on top-level navigations (links), 'strict' blocks them
-      maxAge: 3600000 // 1 hour
-    });
+    if (!existing) {
+      // Only set the cookie when we generate a fresh token
+      res.cookie('_csrf', token, {
+        httpOnly: false, // MUST be false so JavaScript can read it and send in header
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+        sameSite: 'lax', // 'lax' allows cookie on top-level navigations (links), 'strict' blocks them
+        maxAge: 3600000 // 1 hour
+      });
+    }
 
     // Make token available to templates/JSON responses
     req.csrfToken = () => token;
