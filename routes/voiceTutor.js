@@ -293,7 +293,9 @@ router.post('/process', isAuthenticated, async (req, res) => {
     const audioUrl = await generateTTS(userId, cleanResponse);
 
     // ── Step 5: Save to conversation history ──
-    await saveToHistory(userId, userMessage, cleanResponse);
+    // Save the FULL response (with mathsteps) so the AI can track board state
+    // across turns. Only the TTS and client display use the cleaned version.
+    await saveToHistory(userId, userMessage, aiResponse);
 
     res.json({
       transcription: userMessage,
@@ -347,7 +349,8 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
       }
     }
 
-    await saveToHistory(userId, text.trim(), cleanResponse);
+    // Save full response (with mathsteps) so the AI can track board state
+    await saveToHistory(userId, text.trim(), aiResponse);
 
     res.json({
       response: cleanResponse,

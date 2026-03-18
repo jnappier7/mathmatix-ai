@@ -148,7 +148,7 @@ html, body {
   top: 20px;
   left: 20px;
   right: 20px;
-  bottom: 160px;
+  bottom: 300px; /* enough clearance for avatar (180px) + rings + status */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -575,7 +575,7 @@ html, body {
 /* --- Live Transcript Overlay --- */
 .vt-live-transcript {
   position: absolute;
-  bottom: 160px;
+  bottom: 300px;
   left: 50%;
   transform: translateX(-50%);
   max-width: 600px;
@@ -1031,7 +1031,7 @@ html, body {
   .vt-mic-btn { width: 60px; height: 60px; font-size: 22px; }
   .vt-end-btn, .vt-mute-btn { width: 44px; height: 44px; }
 
-  .vt-canvas-area { padding: 16px; bottom: 130px; }
+  .vt-canvas-area { padding: 16px; bottom: 220px; }
 
   .vt-math-step .vt-step-content { font-size: 18px; }
 

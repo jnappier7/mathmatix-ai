@@ -637,6 +637,9 @@
           html += `<span class="vt-katex-render" data-latex="${escapeAttr(step.latex)}"></span>`;
         } else if (step.text) {
           html += escapeHtml(step.text);
+        } else if (step.label) {
+          // Fallback: show the label as content if no latex/text provided
+          html += `<span style="color:#6b7594;font-style:italic;">${escapeHtml(step.label)}</span>`;
         }
         html += `</div>`;
 
