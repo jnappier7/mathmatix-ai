@@ -278,6 +278,13 @@
     clearTimeout(state.maxRecordTimer);
     state.isSpeaking = false;
     state.speechStartTime = null;
+    state.silenceFrames = 0;
+
+    // Clear VAD interval
+    if (state._vadInterval) {
+      clearInterval(state._vadInterval);
+      state._vadInterval = null;
+    }
 
     // Disconnect VAD source to prevent memory leak
     if (state.vadSource) {
@@ -301,32 +308,63 @@
 
     const buffer = new Uint8Array(analyser.frequencyBinCount);
 
-    // Hysteresis: require N consecutive silent frames before triggering silence
-    const SILENCE_FRAMES_REQUIRED = 8; // ~130ms at 60fps
-    const SPEECH_THRESHOLD_DB = -45;   // Slightly more sensitive
+    // --- VAD tuning ---
+    const VAD_INTERVAL_MS = 50;        // Check every 50ms (setInterval, not rAF)
+    const SILENCE_FRAMES_REQUIRED = 5; // ~250ms of consecutive silence at 20fps
+    const MIN_SPEECH_DURATION = 400;   // Ignore speech bursts shorter than this
+    const FIXED_THRESHOLD_DB = -38;    // Fixed fallback threshold
+
+    // Adaptive noise floor: measure ambient level during first ~500ms
+    let noiseFloorDb = -50;
+    let calibrationSamples = [];
+    const CALIBRATION_FRAMES = 10;     // 10 × 50ms = 500ms
+    let calibrated = false;
 
     state.isSpeaking = false;
     state.silenceFrames = 0;
 
-    const check = () => {
-      if (state.mode !== 'listening') return;
+    // Use setInterval instead of requestAnimationFrame so VAD runs
+    // reliably even when the tab is in the background or throttled
+    const vadInterval = setInterval(() => {
+      if (state.mode !== 'listening') {
+        clearInterval(vadInterval);
+        return;
+      }
 
       analyser.getByteFrequencyData(buffer);
 
-      // Use RMS of the top frequency bins (voice range ~300-3000Hz)
-      const voiceBins = buffer.slice(4, 80); // Approximate voice frequency range
+      // Focus on voice frequency range (roughly 300-3000Hz)
+      // Bin range depends on sample rate; bins 4-80 cover the main voice band
+      const voiceBins = buffer.slice(4, 80);
       const sum = voiceBins.reduce((a, b) => a + b, 0);
       const avg = sum / voiceBins.length;
       const db = avg > 0 ? 20 * Math.log10(avg / 255) : -Infinity;
-      const speaking = db > SPEECH_THRESHOLD_DB;
 
-      // Draw waveform
-      drawListeningWaveform(buffer);
+      // Calibrate noise floor from first ~500ms of audio
+      if (!calibrated) {
+        calibrationSamples.push(db);
+        if (calibrationSamples.length >= CALIBRATION_FRAMES) {
+          // Use the median of calibration samples as noise floor
+          calibrationSamples.sort((a, b) => a - b);
+          const median = calibrationSamples[Math.floor(calibrationSamples.length / 2)];
+          // Set threshold 8dB above noise floor (but no lower than fixed threshold)
+          noiseFloorDb = Math.max(median + 8, FIXED_THRESHOLD_DB);
+          calibrated = true;
+          calibrationSamples = null; // free memory
+        }
+      }
+
+      const speaking = db > noiseFloorDb;
+
+      // Draw waveform (skip if tab hidden — canvas doesn't need updating)
+      if (!document.hidden) {
+        drawListeningWaveform(buffer);
+      }
 
       if (speaking) {
         state.silenceFrames = 0;
 
-        // Always cancel any pending silence timer when speech is detected
+        // Cancel any pending silence timer when speech is detected
         if (state.vadTimer) {
           clearTimeout(state.vadTimer);
           state.vadTimer = null;
@@ -343,8 +381,8 @@
         if (state.isSpeaking && state.silenceFrames >= SILENCE_FRAMES_REQUIRED) {
           const duration = Date.now() - (state.speechStartTime || Date.now());
 
-          if (duration < 500) {
-            // Speech was too brief — reset and keep listening
+          if (duration < MIN_SPEECH_DURATION) {
+            // Speech was too brief — probably a noise burst, reset
             state.isSpeaking = false;
             state.speechStartTime = null;
           } else {
@@ -353,6 +391,7 @@
               state.vadTimer = setTimeout(() => {
                 state.vadTimer = null;
                 if (state.mode === 'listening') {
+                  clearInterval(vadInterval);
                   stopListening();
                 }
               }, state.silenceTimeout);
@@ -360,11 +399,10 @@
           }
         }
       }
+    }, VAD_INTERVAL_MS);
 
-      requestAnimationFrame(check);
-    };
-    // Defer first check so setMode('listening') runs first
-    requestAnimationFrame(check);
+    // Store interval ID for cleanup on stopListening
+    state._vadInterval = vadInterval;
   }
 
   // ═══════════════════════════════════════
@@ -1246,6 +1284,10 @@
     clearTimeout(state.vadTimer);
     clearTimeout(state.maxRecordTimer);
     clearInterval(state.timerInterval);
+    if (state._vadInterval) {
+      clearInterval(state._vadInterval);
+      state._vadInterval = null;
+    }
 
     // Stop MediaRecorder and prevent onstop from firing processVoiceInput
     if (state.mediaRecorder) {
