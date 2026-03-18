@@ -121,6 +121,22 @@ async function csrfFetch(url, options = {}) {
     handleSessionExpired();
   }
 
+  // Auto-recover from missing CSRF token: fetch a fresh token and retry once
+  if (needsCsrf && response.status === 403 && !options._csrfRetried) {
+    try {
+      const body = await response.clone().json();
+      if (body.code === 'CSRF_MISSING' || body.code === 'CSRF_INVALID') {
+        // Hit the token endpoint to get a fresh _csrf cookie
+        await fetch('/api/csrf-token', { credentials: 'same-origin' });
+        options._csrfRetried = true;
+        options = addCsrfToken(options);
+        return fetch(url, options);
+      }
+    } catch (_) {
+      // If parsing fails, return the original response
+    }
+  }
+
   return response;
 }
 
