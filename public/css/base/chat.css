@@ -171,6 +171,8 @@
     height: 1px;
     width: 1px;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* KaTeX inline math — size to match surrounding text */

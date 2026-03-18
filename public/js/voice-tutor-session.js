@@ -278,6 +278,13 @@
     clearTimeout(state.maxRecordTimer);
     state.isSpeaking = false;
     state.speechStartTime = null;
+    state.silenceFrames = 0;
+
+    // Clear VAD interval
+    if (state._vadInterval) {
+      clearInterval(state._vadInterval);
+      state._vadInterval = null;
+    }
 
     // Disconnect VAD source to prevent memory leak
     if (state.vadSource) {
@@ -301,32 +308,63 @@
 
     const buffer = new Uint8Array(analyser.frequencyBinCount);
 
-    // Hysteresis: require N consecutive silent frames before triggering silence
-    const SILENCE_FRAMES_REQUIRED = 8; // ~130ms at 60fps
-    const SPEECH_THRESHOLD_DB = -45;   // Slightly more sensitive
+    // --- VAD tuning ---
+    const VAD_INTERVAL_MS = 50;        // Check every 50ms (setInterval, not rAF)
+    const SILENCE_FRAMES_REQUIRED = 5; // ~250ms of consecutive silence at 20fps
+    const MIN_SPEECH_DURATION = 400;   // Ignore speech bursts shorter than this
+    const FIXED_THRESHOLD_DB = -38;    // Fixed fallback threshold
+
+    // Adaptive noise floor: measure ambient level during first ~500ms
+    let noiseFloorDb = -50;
+    let calibrationSamples = [];
+    const CALIBRATION_FRAMES = 10;     // 10 × 50ms = 500ms
+    let calibrated = false;
 
     state.isSpeaking = false;
     state.silenceFrames = 0;
 
-    const check = () => {
-      if (state.mode !== 'listening') return;
+    // Use setInterval instead of requestAnimationFrame so VAD runs
+    // reliably even when the tab is in the background or throttled
+    const vadInterval = setInterval(() => {
+      if (state.mode !== 'listening') {
+        clearInterval(vadInterval);
+        return;
+      }
 
       analyser.getByteFrequencyData(buffer);
 
-      // Use RMS of the top frequency bins (voice range ~300-3000Hz)
-      const voiceBins = buffer.slice(4, 80); // Approximate voice frequency range
+      // Focus on voice frequency range (roughly 300-3000Hz)
+      // Bin range depends on sample rate; bins 4-80 cover the main voice band
+      const voiceBins = buffer.slice(4, 80);
       const sum = voiceBins.reduce((a, b) => a + b, 0);
       const avg = sum / voiceBins.length;
       const db = avg > 0 ? 20 * Math.log10(avg / 255) : -Infinity;
-      const speaking = db > SPEECH_THRESHOLD_DB;
 
-      // Draw waveform
-      drawListeningWaveform(buffer);
+      // Calibrate noise floor from first ~500ms of audio
+      if (!calibrated) {
+        calibrationSamples.push(db);
+        if (calibrationSamples.length >= CALIBRATION_FRAMES) {
+          // Use the median of calibration samples as noise floor
+          calibrationSamples.sort((a, b) => a - b);
+          const median = calibrationSamples[Math.floor(calibrationSamples.length / 2)];
+          // Set threshold 8dB above noise floor (but no lower than fixed threshold)
+          noiseFloorDb = Math.max(median + 8, FIXED_THRESHOLD_DB);
+          calibrated = true;
+          calibrationSamples = null; // free memory
+        }
+      }
+
+      const speaking = db > noiseFloorDb;
+
+      // Draw waveform (skip if tab hidden — canvas doesn't need updating)
+      if (!document.hidden) {
+        drawListeningWaveform(buffer);
+      }
 
       if (speaking) {
         state.silenceFrames = 0;
 
-        // Always cancel any pending silence timer when speech is detected
+        // Cancel any pending silence timer when speech is detected
         if (state.vadTimer) {
           clearTimeout(state.vadTimer);
           state.vadTimer = null;
@@ -343,8 +381,8 @@
         if (state.isSpeaking && state.silenceFrames >= SILENCE_FRAMES_REQUIRED) {
           const duration = Date.now() - (state.speechStartTime || Date.now());
 
-          if (duration < 500) {
-            // Speech was too brief — reset and keep listening
+          if (duration < MIN_SPEECH_DURATION) {
+            // Speech was too brief — probably a noise burst, reset
             state.isSpeaking = false;
             state.speechStartTime = null;
           } else {
@@ -353,6 +391,7 @@
               state.vadTimer = setTimeout(() => {
                 state.vadTimer = null;
                 if (state.mode === 'listening') {
+                  clearInterval(vadInterval);
                   stopListening();
                 }
               }, state.silenceTimeout);
@@ -360,11 +399,10 @@
           }
         }
       }
+    }, VAD_INTERVAL_MS);
 
-      requestAnimationFrame(check);
-    };
-    // Defer first check so setMode('listening') runs first
-    requestAnimationFrame(check);
+    // Store interval ID for cleanup on stopListening
+    state._vadInterval = vadInterval;
   }
 
   // ═══════════════════════════════════════
@@ -377,7 +415,6 @@
     setMode('thinking');
 
     try {
-      // Convert to base64
       const base64 = await blobToBase64(audioBlob);
 
       const fetchFn = window.csrfFetch || fetch;
@@ -393,38 +430,14 @@
         throw new Error(err.message || 'Voice processing failed');
       }
 
-      const data = await res.json();
-
-      // Show user's transcription in chat
-      if (data.transcription) {
-        addMessage(data.transcription, 'user');
-      }
-
-      // Show AI response in chat
-      if (data.response) {
-        addMessage(data.response, 'ai');
-      }
-
-      // Render math visuals — use backend mathSteps or extract from response
-      if (state.showVisuals) {
-        const steps = (data.mathSteps && data.mathSteps.length > 0)
-          ? data.mathSteps
-          : extractEquationsFromText(data.response || '');
-        if (steps.length > 0) {
-          renderMathSteps(steps);
-        }
-      }
-
-      // Play audio response (unless muted)
-      if (data.audioUrl && !state.muted) {
-        await playResponse(data.audioUrl, data.response || '');
+      // Read NDJSON stream — process each phase as it arrives
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/x-ndjson')) {
+        await processStreamedResponse(res);
       } else {
-        // If muted or no audio, go back to listening
-        if (state.handsFree && state.autoListen) {
-          setTimeout(() => startListening(), 400);
-        } else {
-          setMode('idle');
-        }
+        // Fallback for non-streaming response (backwards compat)
+        const data = await res.json();
+        handleLegacyResponse(data);
       }
 
     } catch (err) {
@@ -433,6 +446,105 @@
       setMode('idle');
     } finally {
       state.processing = false;
+    }
+  }
+
+  /**
+   * Process NDJSON streamed response — renders each phase immediately.
+   * Phase "transcription" → show user message in chat
+   * Phase "response"      → show AI text + render math (student sees this ~2-3s sooner)
+   * Phase "audio"         → play TTS audio
+   */
+  async function processStreamedResponse(res) {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let responseText = '';
+    let gotAudio = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete lines
+      let newlineIdx;
+      while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, newlineIdx).trim();
+        buffer = buffer.slice(newlineIdx + 1);
+        if (!line) continue;
+
+        let phase;
+        try { phase = JSON.parse(line); } catch (e) { continue; }
+
+        if (phase.phase === 'transcription' && phase.transcription) {
+          addMessage(phase.transcription, 'user');
+
+        } else if (phase.phase === 'response') {
+          responseText = phase.response || '';
+          if (responseText) addMessage(responseText, 'ai');
+
+          // Render math immediately — don't wait for audio
+          if (state.showVisuals) {
+            const steps = (phase.mathSteps && phase.mathSteps.length > 0)
+              ? phase.mathSteps
+              : extractEquationsFromText(responseText);
+            if (steps.length > 0) renderMathSteps(steps);
+          }
+
+        } else if (phase.phase === 'audio') {
+          gotAudio = true;
+          if (phase.audioUrl && !state.muted) {
+            await playResponse(phase.audioUrl, responseText);
+          } else {
+            if (state.handsFree && state.autoListen) {
+              setTimeout(() => startListening(), 400);
+            } else {
+              setMode('idle');
+            }
+          }
+
+        } else if (phase.phase === 'error') {
+          addSystemMessage(phase.message || 'Something went wrong.');
+          setMode('idle');
+          return;
+        }
+      }
+    }
+
+    // If stream ended without an audio phase, go back to idle/listening
+    if (!gotAudio) {
+      if (state.handsFree && state.autoListen) {
+        setTimeout(() => startListening(), 400);
+      } else {
+        setMode('idle');
+      }
+    }
+  }
+
+  /**
+   * Handle legacy (non-streaming) JSON response — backwards compatibility
+   */
+  function handleLegacyResponse(data) {
+    if (data.transcription) addMessage(data.transcription, 'user');
+    if (data.response) addMessage(data.response, 'ai');
+
+    if (state.showVisuals) {
+      const steps = (data.mathSteps && data.mathSteps.length > 0)
+        ? data.mathSteps
+        : extractEquationsFromText(data.response || '');
+      if (steps.length > 0) renderMathSteps(steps);
+    }
+
+    if (data.audioUrl && !state.muted) {
+      playResponse(data.audioUrl, data.response || '');
+    } else {
+      if (state.handsFree && state.autoListen) {
+        setTimeout(() => startListening(), 400);
+      } else {
+        setMode('idle');
+      }
     }
   }
 
@@ -637,6 +749,9 @@
           html += `<span class="vt-katex-render" data-latex="${escapeAttr(step.latex)}"></span>`;
         } else if (step.text) {
           html += escapeHtml(step.text);
+        } else if (step.label) {
+          // Fallback: show the label as content if no latex/text provided
+          html += `<span style="color:#6b7594;font-style:italic;">${escapeHtml(step.label)}</span>`;
         }
         html += `</div>`;
 
@@ -694,11 +809,54 @@
       }).join(' ');
 
       dom.transcriptText.innerHTML = html;
+      renderTranscriptMath();
       index++;
 
       setTimeout(showNextWord, avgWordDuration);
     }
     showNextWord();
+  }
+
+  /**
+   * Render any KaTeX math that appears in the live transcript bubble.
+   * Scans for LaTeX delimiters in the transcript text and replaces them.
+   */
+  function renderTranscriptMath() {
+    if (!window.katex || !dom.transcriptText) return;
+    const el = dom.transcriptText;
+    const raw = el.innerHTML;
+
+    // Check for LaTeX patterns: \(...\), $...$, \[...\], $$...$$
+    const hasLatex = /\\\(|\\\[|\$/.test(raw);
+    if (!hasLatex) return;
+
+    // Replace display math: \[...\] and $$...$$
+    let processed = raw.replace(/\\\[(.+?)\\\]/gs, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: true, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+    processed = processed.replace(/\$\$(.+?)\$\$/gs, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: true, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+
+    // Replace inline math: \(...\) and $...$
+    processed = processed.replace(/\\\((.+?)\\\)/g, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: false, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+    processed = processed.replace(/\$([^$]+?)\$/g, (_, latex) => {
+      try {
+        return window.katex.renderToString(unescapeHtml(latex.replace(/&quot;/g, '"').replace(/&#39;/g, "'")), { displayMode: false, throwOnError: false });
+      } catch (e) { return latex; }
+    });
+
+    if (processed !== raw) {
+      el.innerHTML = processed;
+    }
   }
 
   function hideTranscript() {
@@ -1200,6 +1358,10 @@
     clearTimeout(state.vadTimer);
     clearTimeout(state.maxRecordTimer);
     clearInterval(state.timerInterval);
+    if (state._vadInterval) {
+      clearInterval(state._vadInterval);
+      state._vadInterval = null;
+    }
 
     // Stop MediaRecorder and prevent onstop from firing processVoiceInput
     if (state.mediaRecorder) {
