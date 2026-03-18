@@ -11,7 +11,7 @@
 /* Header */
 .pricing-header {
   text-align: center;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto 40px;
 }
 
@@ -25,11 +25,16 @@
 }
 .pricing-back-link:hover { color: #00d4ff; }
 
-.pricing-title {
+.pricing-page .pricing-title {
   font-size: 32px;
   font-weight: 700;
   margin: 0 0 12px;
   color: #fff;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #fff;
+  background-clip: unset;
+  font-style: normal;
 }
 
 .pricing-subtitle {
@@ -44,8 +49,10 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-  max-width: 860px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 /* Individual Card */
@@ -104,12 +111,16 @@
 }
 
 /* Plan Name */
-.card-plan-name {
+.pricing-page .card-plan-name {
   font-size: 20px;
   font-weight: 600;
   margin: 12px 0 8px;
   text-align: center;
   color: #fff;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #fff;
+  background-clip: unset;
 }
 
 /* Price */
@@ -266,7 +277,7 @@
 @media (max-width: 560px) {
   .pricing-cards {
     grid-template-columns: 1fr;
-    max-width: 360px;
+    max-width: 400px;
     gap: 16px;
   }
   .pricing-title { font-size: 26px; }
