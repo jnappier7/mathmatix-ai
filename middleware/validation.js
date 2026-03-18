@@ -94,17 +94,17 @@ const validateResetToken = () =>
  */
 
 const loginValidation = [
-  body('username')
+  body('email')
     .trim()
-    .notEmpty()
-    .withMessage('Username is required'),
+    .isEmail()
+    .withMessage('Please provide a valid email address')
+    .normalizeEmail(),
   body('password')
     .notEmpty()
     .withMessage('Password is required')
 ];
 
 const signupValidation = [
-  validateUsername(),
   validateEmail(),
   validatePassword(),
   body('confirmPassword')

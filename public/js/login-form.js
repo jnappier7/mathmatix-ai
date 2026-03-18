@@ -44,7 +44,7 @@ loginForm.addEventListener('submit', async function(event) {
         window.location.href = '/chat.html';
       }
     } else {
-      loginMessage.textContent = result.message || 'Login failed. Please check your username and password.';
+      loginMessage.textContent = result.message || 'Login failed. Please check your email and password.';
       loginMessage.style.display = 'block';
     }
   } catch (error) {

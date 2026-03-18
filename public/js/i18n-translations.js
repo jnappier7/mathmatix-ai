@@ -61,9 +61,9 @@ window.I18N_TRANSLATIONS = {
     Somali: 'Gal si aad u sii waddo waxbarashadaada.', French: 'Connectez-vous pour continuer votre apprentissage.',
     German: 'Melden Sie sich an, um Ihre Lernreise fortzusetzen.'
   },
-  'login.username': {
-    English: 'Username', Spanish: 'Nombre de usuario', Russian: 'Имя пользователя', Chinese: '用户名',
-    Vietnamese: 'Tên đăng nhập', Arabic: 'اسم المستخدم', Somali: 'Magaca isticmaalaha', French: 'Nom d\'utilisateur', German: 'Benutzername'
+  'login.email': {
+    English: 'Email Address', Spanish: 'Correo electrónico', Russian: 'Электронная почта', Chinese: '电子邮箱',
+    Vietnamese: 'Địa chỉ email', Arabic: 'عنوان البريد الإلكتروني', Somali: 'Cinwaanka iimaylka', French: 'Adresse e-mail', German: 'E-Mail-Adresse'
   },
   'login.password': {
     English: 'Password', Spanish: 'Contraseña', Russian: 'Пароль', Chinese: '密码',
@@ -116,9 +116,9 @@ window.I18N_TRANSLATIONS = {
     French: 'Aucun compte requis. Explorez en tant qu\'enseignant, parent ou élève.',
     German: 'Kein Konto nötig. Entdecken Sie als Lehrer, Elternteil oder Schüler.'
   },
-  'login.usernamePlaceholder': {
-    English: 'Enter your username', Spanish: 'Ingresa tu nombre de usuario', Russian: 'Введите имя пользователя', Chinese: '输入用户名',
-    Vietnamese: 'Nhập tên đăng nhập', Arabic: 'أدخل اسم المستخدم', Somali: 'Geli magacaaga', French: 'Entrez votre nom d\'utilisateur', German: 'Benutzername eingeben'
+  'login.emailPlaceholder': {
+    English: 'Enter your email', Spanish: 'Ingresa tu correo electrónico', Russian: 'Введите электронную почту', Chinese: '输入电子邮箱',
+    Vietnamese: 'Nhập email của bạn', Arabic: 'أدخل بريدك الإلكتروني', Somali: 'Geli iimaylkaaga', French: 'Entrez votre e-mail', German: 'E-Mail eingeben'
   },
   'login.passwordPlaceholder': {
     English: 'Enter your password', Spanish: 'Ingresa tu contraseña', Russian: 'Введите пароль', Chinese: '输入密码',
