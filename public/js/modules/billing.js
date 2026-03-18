@@ -292,9 +292,7 @@ async function pollForUpgrade() {
                 window._billingStatus = data;
 
                 if (statusText) {
-                    const tierLabel = data.tier === 'unlimited' ? 'Mathmatix+'
-                        : data.tier === 'pack_120' ? '120-Minute Pack'  // legacy
-                        : '60-Minute Pack';                              // legacy
+                    const tierLabel = 'Mathmatix+';
                     statusText.textContent = `Your ${tierLabel} plan is now active. Start chatting with your AI tutor!`;
                 }
 
