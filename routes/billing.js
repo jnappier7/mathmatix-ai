@@ -1,9 +1,11 @@
-// routes/billing.js — Stripe billing for minute packs & unlimited subscription
+// routes/billing.js — Stripe billing: Free (30 min/week) + Mathmatix+ ($9.95/mo unlimited)
 //
-// Packs:
-//   60 min  — $9.95  one-time, expires 90 days
-//   120 min — $14.95 one-time, expires 180 days
-//   Unlimited monthly — $19.95 recurring subscription
+// Plans:
+//   Free      — 30 AI min/week (~2-3 hours real help), no credit card
+//   Mathmatix+ — $9.95/mo recurring, unlimited everything, cancel anytime
+//
+// Legacy minute packs (pack_60, pack_120) are retained in webhook processing
+// only for users who purchased them before the simplified pricing launch.
 //
 // Endpoints:
 //   POST /api/billing/create-checkout-session — redirect user to Stripe Checkout
@@ -89,7 +91,7 @@ if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
 // =====================================================
 // POST /create-checkout-session
 // Creates a Stripe Checkout Session for the selected pack
-// Body: { pack: 'pack_60' | 'pack_120' | 'unlimited' }
+// Body: { pack: 'unlimited' }
 // =====================================================
 router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
@@ -403,7 +405,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
     }
 
     // Free users — calculate remaining free weekly AI minutes
-    // Teachers, parents, admins get unlimited; students get 20 free AI minutes/week
+    // Teachers, parents, admins get unlimited; students get 30 free AI minutes/week
     if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
       return res.json({
         success: true,

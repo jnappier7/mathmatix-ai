@@ -620,13 +620,14 @@ const userSchema = new Schema({
   activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
   activeCourseSessionId: { type: Schema.Types.ObjectId, ref: 'CourseSession', default: null },
 
-  /* Subscription & Billing */
+  /* Subscription & Billing — Free (30 min/week) or Mathmatix+ ($9.95/mo unlimited)
+     pack_60/pack_120 kept in enum for legacy users only; no longer sold */
   subscriptionTier: { type: String, enum: ['free', 'pack_60', 'pack_120', 'unlimited'], default: 'free' },
   stripeCustomerId: { type: String, default: null },
-  stripeSubscriptionId: { type: String, default: null },  // For unlimited monthly only
+  stripeSubscriptionId: { type: String, default: null },  // For Mathmatix+ subscription
   subscriptionStartDate: { type: Date, default: null },
   subscriptionEndDate: { type: Date, default: null },
-  // Minute-pack fields (60-min and 120-min packs)
+  // Legacy minute-pack fields (kept for existing pack_60/pack_120 users)
   packSecondsRemaining: { type: Number, default: 0 },
   packExpiresAt: { type: Date, default: null },
   // Freemium taste — free users get 1 free taste of premium features before upgrade prompt
