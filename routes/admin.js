@@ -2165,4 +2165,231 @@ router.delete('/waitlist/:id', async (req, res) => {
   }
 });
 
+// -----------------------------------------------------------------------------
+// --- Merge Accounts ---
+// -----------------------------------------------------------------------------
+
+/**
+ * @route   POST /api/admin/merge-accounts
+ * @desc    Merge two user accounts into one. The source account's data is
+ *          transferred to the target account, then the source is deleted.
+ * @access  Private (Admin)
+ */
+router.post('/merge-accounts', isAdmin, async (req, res) => {
+  try {
+    const { sourceUserId, targetUserId, conflictResolution = {}, auditNotes } = req.body;
+
+    if (!sourceUserId || !targetUserId) {
+      return res.status(400).json({ message: 'Both sourceUserId and targetUserId are required.' });
+    }
+    if (sourceUserId === targetUserId) {
+      return res.status(400).json({ message: 'Cannot merge an account with itself.' });
+    }
+
+    const [source, target] = await Promise.all([
+      User.findById(sourceUserId),
+      User.findById(targetUserId)
+    ]);
+
+    if (!source) return res.status(404).json({ message: 'Source user not found.' });
+    if (!target) return res.status(404).json({ message: 'Target user not found.' });
+
+    const audit = {
+      mergedAt: new Date(),
+      mergedBy: req.user._id,
+      adminEmail: req.user.email,
+      sourceUser: { _id: source._id, email: source.email, name: `${source.firstName} ${source.lastName}`, roles: source.roles || [source.role] },
+      targetUser: { _id: target._id, email: target.email, name: `${target.firstName} ${target.lastName}`, roles: target.roles || [target.role] },
+      conflictResolution,
+      auditNotes: auditNotes || '',
+      changes: []
+    };
+
+    // 1. Merge roles — union of both accounts' roles
+    const sourceRoles = source.roles && source.roles.length > 0 ? source.roles : [source.role];
+    const targetRoles = target.roles && target.roles.length > 0 ? target.roles : [target.role];
+    const mergedRoles = [...new Set([...targetRoles, ...sourceRoles])];
+    if (mergedRoles.join(',') !== targetRoles.join(',')) {
+      audit.changes.push(`Roles: [${targetRoles}] → [${mergedRoles}]`);
+    }
+    target.roles = mergedRoles;
+    if (!mergedRoles.includes(target.role)) {
+      target.role = mergedRoles[0];
+    }
+
+    // 2. Merge XP
+    const xpStrategy = conflictResolution.xp || 'sum';
+    if (xpStrategy === 'sum') {
+      const addedXp = source.xp || 0;
+      target.xp = (target.xp || 0) + addedXp;
+      if (addedXp > 0) audit.changes.push(`XP: added ${addedXp} from source (total: ${target.xp})`);
+    } else if (xpStrategy === 'source') {
+      target.xp = source.xp || 0;
+      audit.changes.push(`XP: replaced with source value ${target.xp}`);
+    }
+    // 'target' = keep as-is
+
+    // Merge xpHistory arrays
+    if (source.xpHistory && source.xpHistory.length > 0) {
+      target.xpHistory = [...(target.xpHistory || []), ...source.xpHistory];
+      audit.changes.push(`Merged ${source.xpHistory.length} xpHistory entries`);
+    }
+
+    // 3. Subscription tier
+    const subStrategy = conflictResolution.subscriptionTier || 'highest';
+    const tierRank = { free: 0, pack_60: 1, pack_120: 2, unlimited: 3 };
+    if (subStrategy === 'highest') {
+      const sourceRank = tierRank[source.subscriptionTier] || 0;
+      const targetRank = tierRank[target.subscriptionTier] || 0;
+      if (sourceRank > targetRank) {
+        target.subscriptionTier = source.subscriptionTier;
+        target.subscriptionStartDate = source.subscriptionStartDate;
+        target.subscriptionEndDate = source.subscriptionEndDate;
+        target.stripeCustomerId = source.stripeCustomerId || target.stripeCustomerId;
+        target.stripeSubscriptionId = source.stripeSubscriptionId || target.stripeSubscriptionId;
+        audit.changes.push(`Subscription: upgraded to ${source.subscriptionTier} from source`);
+      }
+    } else if (subStrategy === 'source') {
+      target.subscriptionTier = source.subscriptionTier;
+      audit.changes.push(`Subscription: replaced with source tier ${source.subscriptionTier}`);
+    }
+
+    // 4. Merge parent/child relationships
+    if (source.children && source.children.length > 0) {
+      const existingChildren = (target.children || []).map(id => id.toString());
+      const newChildren = source.children.filter(id => !existingChildren.includes(id.toString()));
+      if (newChildren.length > 0) {
+        target.children = [...(target.children || []), ...newChildren];
+        audit.changes.push(`Added ${newChildren.length} children from source`);
+      }
+    }
+    if (source.parentIds && source.parentIds.length > 0) {
+      const existingParents = (target.parentIds || []).map(id => id.toString());
+      const newParents = source.parentIds.filter(id => !existingParents.includes(id.toString()));
+      if (newParents.length > 0) {
+        target.parentIds = [...(target.parentIds || []), ...newParents];
+        audit.changes.push(`Added ${newParents.length} parent links from source`);
+      }
+    }
+
+    // 5. Merge tutoring time
+    target.totalActiveTutoringMinutes = (target.totalActiveTutoringMinutes || 0) + (source.totalActiveTutoringMinutes || 0);
+    target.totalActiveSeconds = (target.totalActiveSeconds || 0) + (source.totalActiveSeconds || 0);
+
+    // 6. Merge skill mastery (take highest mastery per skill)
+    const smStrategy = conflictResolution.skillMastery || 'merge';
+    if (smStrategy === 'merge' && source.skillMastery) {
+      if (!target.skillMastery) target.skillMastery = new Map();
+      for (const [skillId, sourceSkill] of source.skillMastery) {
+        const targetSkill = target.skillMastery.get(skillId);
+        if (!targetSkill || (sourceSkill.masteryScore || 0) > (targetSkill.masteryScore || 0)) {
+          target.skillMastery.set(skillId, sourceSkill);
+        }
+      }
+      audit.changes.push('Merged skill mastery data (kept highest scores)');
+    } else if (smStrategy === 'source' && source.skillMastery) {
+      target.skillMastery = source.skillMastery;
+      audit.changes.push('Replaced skill mastery with source data');
+    }
+
+    // 7. Merge badges
+    if (source.badges && source.badges.length > 0) {
+      const existingBadges = new Set((target.badges || []).map(b => b.badgeId || b.key));
+      const newBadges = source.badges.filter(b => !existingBadges.has(b.badgeId || b.key));
+      if (newBadges.length > 0) {
+        target.badges = [...(target.badges || []), ...newBadges];
+        audit.changes.push(`Added ${newBadges.length} badges from source`);
+      }
+    }
+
+    // 8. Merge streak data (take the best)
+    if (source.dailyQuests) {
+      if (!target.dailyQuests) target.dailyQuests = {};
+      if ((source.dailyQuests.longestStreak || 0) > (target.dailyQuests.longestStreak || 0)) {
+        target.dailyQuests.longestStreak = source.dailyQuests.longestStreak;
+      }
+      target.dailyQuests.totalQuestsCompleted = (target.dailyQuests.totalQuestsCompleted || 0) + (source.dailyQuests.totalQuestsCompleted || 0);
+    }
+
+    // 9. Copy over fields that target may be missing
+    if (!target.selectedTutorId && source.selectedTutorId) {
+      target.selectedTutorId = source.selectedTutorId;
+      audit.changes.push('Copied selectedTutorId from source');
+    }
+    if (!target.selectedAvatarId && source.selectedAvatarId) {
+      target.selectedAvatarId = source.selectedAvatarId;
+      audit.changes.push('Copied selectedAvatarId from source');
+    }
+    if (!target.gradeLevel && source.gradeLevel) target.gradeLevel = source.gradeLevel;
+    if (!target.mathCourse && source.mathCourse) target.mathCourse = source.mathCourse;
+
+    // 10. Copy OAuth IDs if target doesn't have them
+    if (!target.googleId && source.googleId) {
+      target.googleId = source.googleId;
+      audit.changes.push('Linked Google OAuth from source');
+    }
+    if (!target.microsoftId && source.microsoftId) {
+      target.microsoftId = source.microsoftId;
+      audit.changes.push('Linked Microsoft OAuth from source');
+    }
+    if (!target.cleverId && source.cleverId) {
+      target.cleverId = source.cleverId;
+      audit.changes.push('Linked Clever OAuth from source');
+    }
+
+    // 11. Update all references in other users pointing to source → target
+    const [teacherUpdates, parentUpdates, childUpdates] = await Promise.all([
+      User.updateMany({ teacherId: source._id }, { teacherId: target._id }),
+      User.updateMany({ parentIds: source._id }, { $addToSet: { parentIds: target._id }, $pull: { parentIds: source._id } }),
+      User.updateMany({ children: source._id }, { $addToSet: { children: target._id }, $pull: { children: source._id } })
+    ]);
+    const relUpdates = teacherUpdates.modifiedCount + parentUpdates.modifiedCount + childUpdates.modifiedCount;
+    if (relUpdates > 0) audit.changes.push(`Updated ${relUpdates} relationship references`);
+
+    // 12. Transfer conversations
+    const convResult = await Conversation.updateMany({ userId: source._id }, { userId: target._id });
+    if (convResult.modifiedCount > 0) {
+      audit.changes.push(`Transferred ${convResult.modifiedCount} conversations`);
+    }
+
+    // 13. Transfer enrollment code usage references
+    await EnrollmentCode.updateMany(
+      { 'usedBy.userId': source._id },
+      { $set: { 'usedBy.$.userId': target._id } }
+    );
+
+    // Save target with merged data
+    await target.save();
+
+    // Delete source account
+    await User.findByIdAndDelete(source._id);
+    audit.changes.push(`Deleted source account ${source.email}`);
+
+    console.log(`[ADMIN] Account merge: ${source.email} → ${target.email} by ${req.user.email}. Changes: ${audit.changes.join('; ')}`);
+
+    res.json({
+      success: true,
+      message: `Successfully merged ${source.firstName} ${source.lastName} (${source.email}) into ${target.firstName} ${target.lastName} (${target.email}).`,
+      mergedUser: {
+        _id: target._id,
+        firstName: target.firstName,
+        lastName: target.lastName,
+        email: target.email,
+        roles: target.roles,
+        xp: target.xp
+      },
+      deletedUser: {
+        _id: source._id,
+        firstName: source.firstName,
+        lastName: source.lastName,
+        email: source.email
+      },
+      audit
+    });
+  } catch (err) {
+    console.error('Error merging accounts:', err);
+    res.status(500).json({ message: 'Server error merging accounts.' });
+  }
+});
+
 module.exports = router;

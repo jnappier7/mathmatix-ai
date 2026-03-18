@@ -1026,6 +1026,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <button id="openManageClassesBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-users-cog"></i> Manage Classes
           </button>
+          <button id="openMergeAccountsBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-code-branch"></i> Merge Accounts
+          </button>
         </div>
 
         <div class="dashboard-panel">
@@ -2113,6 +2116,81 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     </div>
   </div>
 
+  <!-- Merge Accounts Modal -->
+  <div id="mergeAccountsModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px;">
+      <button class="modal-close-button" id="closeMergeAccountsBtn">&times;</button>
+      <h2><i class="fas fa-code-branch"></i> Merge Accounts</h2>
+      <p style="color: #666; margin-bottom: 20px;">Combine two accounts into one. The source account's data (roles, XP, relationships, conversations) will be merged into the target account, then the source account will be deleted.</p>
+
+      <form id="mergeAccountsForm">
+        <div class="modal-form-group">
+          <label for="mergeSourceSelect">Source Account (will be deleted after merge) *</label>
+          <select id="mergeSourceSelect" name="sourceUserId" required>
+            <option value="">Select source account...</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label for="mergeTargetSelect">Target Account (will receive merged data) *</label>
+          <select id="mergeTargetSelect" name="targetUserId" required>
+            <option value="">Select target account...</option>
+          </select>
+        </div>
+
+        <div class="modal-form-group">
+          <label>Conflict Resolution</label>
+          <div style="border: 1px solid #ddd; padding: 12px; border-radius: 6px; background: #fafafa;">
+            <div style="margin-bottom: 10px;">
+              <label for="mergeSubTier" style="font-size: 0.9em; font-weight: 500;">Subscription Tier:</label>
+              <select id="mergeSubTier" name="subscriptionTier" style="margin-left: 8px;">
+                <option value="highest">Keep highest tier</option>
+                <option value="target">Keep target's tier</option>
+                <option value="source">Use source's tier</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <label for="mergeXp" style="font-size: 0.9em; font-weight: 500;">XP:</label>
+              <select id="mergeXp" name="xp" style="margin-left: 8px;">
+                <option value="sum">Sum both accounts</option>
+                <option value="target">Keep target's XP</option>
+                <option value="source">Use source's XP</option>
+              </select>
+            </div>
+            <div>
+              <label for="mergeSM" style="font-size: 0.9em; font-weight: 500;">Skill Mastery:</label>
+              <select id="mergeSM" name="skillMastery" style="margin-left: 8px;">
+                <option value="merge">Merge (keep highest scores)</option>
+                <option value="target">Keep target's skills</option>
+                <option value="source">Use source's skills</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-form-group">
+          <label for="mergeNotes">Admin Notes (optional)</label>
+          <textarea id="mergeNotes" name="auditNotes" rows="2" placeholder="Reason for merging these accounts..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="mergeAccountsSubmit" style="background: #dc3545; border-color: #dc3545;">
+            <i class="fas fa-code-branch"></i> Merge Accounts
+          </button>
+          <button type="button" class="btn btn-tertiary" id="cancelMergeAccounts">Cancel</button>
+        </div>
+      </form>
+
+      <div id="mergeAccountsResult" style="display: none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Accounts Merged Successfully!</h4>
+        <p id="mergeResultMessage"></p>
+        <div id="mergeAuditDetails" style="margin-top: 10px; font-size: 0.85em; color: #555;"></div>
+        <button class="btn btn-secondary" id="mergeAnother" style="margin-top: 10px;">
+          <i class="fas fa-plus"></i> Merge Another
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Mobile Bottom Nav (visible < 968px) -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <button class="mobile-nav-btn active" data-mobile-tab="users">
@@ -2162,6 +2240,10 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           <button class="mobile-action-btn" id="mobile-manage-classes">
             <i class="fas fa-users-cog" style="color: #3498db;"></i>
             Manage Classes
+          </button>
+          <button class="mobile-action-btn" id="mobile-merge-accounts">
+            <i class="fas fa-code-branch" style="color: #e74c3c;"></i>
+            Merge Accounts
           </button>
           <button class="mobile-action-btn" id="mobile-view-summaries">
             <i class="fas fa-list-alt" style="color: #8e44ad;"></i>
@@ -2361,6 +2443,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           'mobile-class-code': 'openEnrollmentCodeBtn',
           'mobile-import-roster': 'openRosterImportBtn',
           'mobile-manage-classes': 'openManageClassesBtn',
+          'mobile-merge-accounts': 'openMergeAccountsBtn',
           'mobile-view-summaries': 'openSummariesBtn',
           'mobile-usage-report': 'openUsageReportBtn',
           'mobile-live-activity': 'openLiveActivityBtn',
