@@ -616,7 +616,18 @@ function formatScaffoldStep(step, index, total) {
       detail += `  ✗ Use textbook language ("The unit circle is a circle with radius 1...")\n`;
       detail += `  ✗ Skip to practice without teaching the WHY\n`;
       detail += `  ✗ Assume the student knows prerequisite vocabulary (radians, reference\n`;
-      detail += `    angles, etc.) without checking or teaching it first\n\n`;
+      detail += `    angles, etc.) without checking or teaching it first\n`;
+      detail += `  ✗ Emit <GRAPH_TOOL> during concept-intro — the plotting tool is for\n`;
+      detail += `    PRACTICE, not explanation. During concept-intro, DESCRIBE graph\n`;
+      detail += `    examples verbally (e.g. "Imagine a graph with an open circle at\n`;
+      detail += `    (2,5)...") rather than rendering an interactive tool.\n`;
+      detail += `  ✗ Use [FUNCTION_GRAPH:...] to show unrelated graphs. Only use it when\n`;
+      detail += `    the graph directly illustrates the concept you are currently teaching.\n\n`;
+      detail += `PROVIDING EXAMPLES DURING CONCEPT-INTRO IS TEACHING, NOT HOMEWORK:\n`;
+      detail += `When the student asks "Can you show me an example?" during concept-intro,\n`;
+      detail += `you SHOULD give a worked example. This is YOU teaching, not the student\n`;
+      detail += `asking you to do their homework. Walk through it step by step.\n`;
+      detail += `Do NOT refuse examples or accuse the student of cheating during concept-intro.\n\n`;
       detail += `SOURCE MATERIAL (use to plan your teaching, not to read aloud):\n`;
       detail += `${step.content || step.text || ''}\n\n`;
       if (step.keyPoints && step.keyPoints.length > 0) {

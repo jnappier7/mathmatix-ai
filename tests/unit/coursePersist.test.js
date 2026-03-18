@@ -129,6 +129,61 @@ describe('coursePersist: detectGraphTool', () => {
     });
     expect(result).toBeNull();
   });
+
+  test('keyword fallback suppressed during concept-intro phase', () => {
+    const text = 'When you see a graph, you can find the value at a specific point.';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graph-reading-modeling'],
+      lessonPhase: 'concept-intro',
+    });
+    expect(result).toBeNull();
+  });
+
+  test('keyword fallback suppressed during explanation phase', () => {
+    const text = 'Look at the graph and identify the points.';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graphing', 'slope'],
+      lessonPhase: 'explanation',
+    });
+    expect(result).toBeNull();
+  });
+
+  test('keyword fallback suppressed during i-do phase', () => {
+    const text = 'Let me graph this line for you on the coordinate grid.';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graphing', 'slope'],
+      lessonPhase: 'i-do',
+    });
+    expect(result).toBeNull();
+  });
+
+  test('explicit tag still works during concept-intro phase', () => {
+    const text = 'Try this: <GRAPH_TOOL>';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graph-reading-modeling'],
+      lessonPhase: 'concept-intro',
+    });
+    expect(result).not.toBeNull();
+    expect(result._source).toBe('tag');
+  });
+
+  test('keyword fallback skips descriptive graph language', () => {
+    const text = 'Imagine we have a graph with an open circle at (2,5) and a closed circle at (3,7).';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graph-reading-modeling'],
+    });
+    expect(result).toBeNull();
+  });
+
+  test('keyword fallback works during practice phase', () => {
+    const text = 'Now plot the line on the coordinate grid.';
+    const result = detectGraphTool(text, {
+      moduleSkills: ['graphing', 'slope'],
+      lessonPhase: 'we-do',
+    });
+    expect(result).not.toBeNull();
+    expect(result._source).toBe('keyword');
+  });
 });
 
 // ============================================================================

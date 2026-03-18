@@ -322,9 +322,11 @@ router.post('/', async (req, res) => {
             }
 
             // Graph tool detection (runs on verify-cleaned text)
+            const currentScaffoldStep = (moduleData?.scaffold || [])[courseSession.currentScaffoldIndex || 0];
             graphToolConfig = detectGraphTool(aiResponseText, {
                 isParentCourse,
                 moduleSkills: moduleData?.skills || [],
+                lessonPhase: currentScaffoldStep?.lessonPhase || currentScaffoldStep?.type || '',
             });
             if (graphToolConfig) {
                 // Strip the tag from response if detected by tag match
