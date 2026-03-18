@@ -1749,19 +1749,31 @@ a {
     }
 }
 
-/* --- 18. FREE-TIME INDICATOR: ABOVE BOTTOM NAV ---
-   The billing time indicator is fixed at bottom:12px.
-   On mobile with the bottom nav (56px + safe-area), push it up. */
+/* --- 18. FREE-TIME INDICATOR: ABOVE INPUT + BOTTOM NAV ---
+   The billing time indicator is fixed at bottom:12px on desktop.
+   On mobile it must sit above both the bottom nav AND the input container
+   so it never blocks the chat input box (especially on iPhone). */
 @media (max-width: 768px) {
     #free-time-indicator {
-        /* 56px nav + safe-area + 10px gap */
-        bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 10px) !important;
+        /* Position above input area: 64px nav + safe-area + ~70px input + 8px gap */
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 78px) !important;
+        /* Compact pill on right side — NOT full-width, so it doesn't block input */
         right: 10px !important;
-        left: 10px !important;
-        max-width: none !important;
+        left: auto !important;
+        max-width: 200px !important;
         border-radius: 10px !important;
         text-align: center !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+        opacity: 0.95 !important;
+    }
+}
+
+/* Ensure input container is always above the time indicator on mobile */
+@media (max-width: 768px) {
+    #input-container {
+        position: relative;
+        z-index: 1800 !important;
     }
 }
 

@@ -404,6 +404,25 @@ router.get('/status', isAuthenticated, async (req, res) => {
       });
     }
 
+    // Check if a linked parent has an active Mathmatix+ subscription
+    // (parent pays → child gets unlimited access)
+    if (user.parentIds && user.parentIds.length > 0) {
+      const subscribedParent = await User.findOne({
+        _id: { $in: user.parentIds },
+        subscriptionTier: 'unlimited'
+      }).lean();
+      if (subscribedParent) {
+        return res.json({
+          success: true,
+          billingEnabled: true,
+          tier: 'unlimited',
+          hasAccess: true,
+          usage: { secondsRemaining: Infinity, limitReached: false },
+          parentSubscription: true
+        });
+      }
+    }
+
     // Free users — calculate remaining free weekly AI minutes
     // Teachers, parents, admins get unlimited; students get 30 free AI minutes/week
     if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
