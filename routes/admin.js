@@ -59,7 +59,20 @@ router.use('/', adminImportRoutes);
 router.get('/users', isAdmin, async (req, res) => {
   try {
     // .lean() provides a significant performance boost for read-only operations.
-    const users = await User.find({}, USER_LIST_FIELDS).lean();
+    const users = await User.find({}, USER_LIST_FIELDS + ' lastWeeklyReset').lean();
+
+    // Fix stale weekly minutes: the weekly reset only triggers on user activity
+    // (in track-time), so inactive users retain inflated values from their last
+    // active week. Zero them out for accurate dashboard display.
+    const now = new Date();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    for (const user of users) {
+      const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+      if ((now - lastReset) >= sevenDaysMs) {
+        user.weeklyActiveTutoringMinutes = 0;
+      }
+    }
+
     res.json(users);
   } catch (err) {
     console.error('Error fetching users for admin:', err);
@@ -1425,7 +1438,7 @@ router.get('/reports/usage', isAdmin, async (req, res) => {
 
     // Fetch all users with activity data
     const users = await User.find(filter)
-      .select('firstName lastName username email role lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes createdAt xp level teacherId')
+      .select('firstName lastName username email role lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset createdAt xp level teacherId')
       .populate('teacherId', 'firstName lastName')
       .sort(sortField)
       .lean();
@@ -1466,6 +1479,17 @@ router.get('/reports/usage', isAdmin, async (req, res) => {
     const now = new Date();
     const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000);
     const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+    // Fix stale weekly minutes: the weekly reset only triggers on user activity
+    // (in track-time), so inactive users retain inflated values from their last
+    // active week. Zero them out for accurate reporting.
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    for (const user of users) {
+      const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+      if ((now - lastReset) >= sevenDaysMs) {
+        user.weeklyActiveTutoringMinutes = 0;
+      }
+    }
 
     const activeToday = users.filter(u => u.lastLogin && new Date(u.lastLogin) > oneDayAgo).length;
     const activeThisWeek = users.filter(u => u.lastLogin && new Date(u.lastLogin) > oneWeekAgo).length;
@@ -1575,10 +1599,20 @@ router.get('/reports/summaries', isAdmin, async (req, res) => {
   try {
     // Get all users (excluding admins for cleaner view)
     const users = await User.find({ role: { $ne: 'admin' } })
-      .select('firstName lastName email role username totalActiveTutoringMinutes weeklyActiveTutoringMinutes level xp lastLogin createdAt teacherId')
+      .select('firstName lastName email role username totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset level xp lastLogin createdAt teacherId')
       .populate('teacherId', 'firstName lastName')
       .sort({ lastName: 1, firstName: 1 })
       .lean();
+
+    // Fix stale weekly minutes for inactive users
+    const now = new Date();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    for (const user of users) {
+      const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+      if ((now - lastReset) >= sevenDaysMs) {
+        user.weeklyActiveTutoringMinutes = 0;
+      }
+    }
 
     // Get recent conversations for all users (limit to 3 most recent per user)
     const userIds = users.map(u => u._id);
