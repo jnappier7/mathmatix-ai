@@ -17,6 +17,7 @@ jest.mock('../../models/enrollmentCode');
 jest.mock('../../models/announcement');
 jest.mock('../../models/impersonationLog');
 jest.mock('../../models/message');
+jest.mock('../../models/deletionAudit');
 
 // Mock mongoose for session collection access
 jest.mock('mongoose', () => {
@@ -43,6 +44,7 @@ const EnrollmentCode = require('../../models/enrollmentCode');
 const Announcement = require('../../models/announcement');
 const ImpersonationLog = require('../../models/impersonationLog');
 const Message = require('../../models/message');
+const DeletionAudit = require('../../models/deletionAudit');
 
 describe('Data Privacy Pipeline', () => {
 
@@ -71,6 +73,7 @@ describe('Data Privacy Pipeline', () => {
         ImpersonationLog.updateMany = jest.fn().mockResolvedValue({ modifiedCount: 2 });
         User.updateMany = jest.fn().mockResolvedValue({ modifiedCount: 1 });
         User.findByIdAndDelete = jest.fn().mockResolvedValue({});
+        DeletionAudit.create = jest.fn().mockResolvedValue({});
     });
 
     // ========================================================================
