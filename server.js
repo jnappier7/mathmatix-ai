@@ -254,7 +254,9 @@ app.use(helmet({
         "'unsafe-eval'", // Required for MathLive and dynamic math rendering
         "https://cdnjs.cloudflare.com", // Font Awesome
         "https://cdn.jsdelivr.net", // Various CDN resources
-        "https://unpkg.com" // MathLive and other packages
+        "https://unpkg.com", // MathLive and other packages
+        "https://www.googletagmanager.com", // Google Tag Manager / GA4
+        "https://connect.facebook.net" // Facebook Pixel
       ],
       scriptSrcAttr: ["'unsafe-inline'"], // Required for inline event handlers (onclick, etc.)
       styleSrc: [
@@ -284,7 +286,11 @@ app.use(helmet({
         "https://api.elevenlabs.io", // ElevenLabs TTS
         "https://cdn.jsdelivr.net", // CDN resources and source maps
         "https://clever.com", // Clever SSO
-        "https://api.clever.com" // Clever API
+        "https://api.clever.com", // Clever API
+        "https://www.google-analytics.com", // GA4 data collection
+        "https://www.googletagmanager.com", // GTM data
+        "https://connect.facebook.net", // Facebook Pixel data
+        "https://*.google.com" // Chrome Speech Recognition API
       ],
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
