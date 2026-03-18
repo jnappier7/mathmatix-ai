@@ -415,7 +415,6 @@
     setMode('thinking');
 
     try {
-      // Convert to base64
       const base64 = await blobToBase64(audioBlob);
 
       const fetchFn = window.csrfFetch || fetch;
@@ -431,38 +430,14 @@
         throw new Error(err.message || 'Voice processing failed');
       }
 
-      const data = await res.json();
-
-      // Show user's transcription in chat
-      if (data.transcription) {
-        addMessage(data.transcription, 'user');
-      }
-
-      // Show AI response in chat
-      if (data.response) {
-        addMessage(data.response, 'ai');
-      }
-
-      // Render math visuals — use backend mathSteps or extract from response
-      if (state.showVisuals) {
-        const steps = (data.mathSteps && data.mathSteps.length > 0)
-          ? data.mathSteps
-          : extractEquationsFromText(data.response || '');
-        if (steps.length > 0) {
-          renderMathSteps(steps);
-        }
-      }
-
-      // Play audio response (unless muted)
-      if (data.audioUrl && !state.muted) {
-        await playResponse(data.audioUrl, data.response || '');
+      // Read NDJSON stream — process each phase as it arrives
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/x-ndjson')) {
+        await processStreamedResponse(res);
       } else {
-        // If muted or no audio, go back to listening
-        if (state.handsFree && state.autoListen) {
-          setTimeout(() => startListening(), 400);
-        } else {
-          setMode('idle');
-        }
+        // Fallback for non-streaming response (backwards compat)
+        const data = await res.json();
+        handleLegacyResponse(data);
       }
 
     } catch (err) {
@@ -471,6 +446,105 @@
       setMode('idle');
     } finally {
       state.processing = false;
+    }
+  }
+
+  /**
+   * Process NDJSON streamed response — renders each phase immediately.
+   * Phase "transcription" → show user message in chat
+   * Phase "response"      → show AI text + render math (student sees this ~2-3s sooner)
+   * Phase "audio"         → play TTS audio
+   */
+  async function processStreamedResponse(res) {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let responseText = '';
+    let gotAudio = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete lines
+      let newlineIdx;
+      while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, newlineIdx).trim();
+        buffer = buffer.slice(newlineIdx + 1);
+        if (!line) continue;
+
+        let phase;
+        try { phase = JSON.parse(line); } catch (e) { continue; }
+
+        if (phase.phase === 'transcription' && phase.transcription) {
+          addMessage(phase.transcription, 'user');
+
+        } else if (phase.phase === 'response') {
+          responseText = phase.response || '';
+          if (responseText) addMessage(responseText, 'ai');
+
+          // Render math immediately — don't wait for audio
+          if (state.showVisuals) {
+            const steps = (phase.mathSteps && phase.mathSteps.length > 0)
+              ? phase.mathSteps
+              : extractEquationsFromText(responseText);
+            if (steps.length > 0) renderMathSteps(steps);
+          }
+
+        } else if (phase.phase === 'audio') {
+          gotAudio = true;
+          if (phase.audioUrl && !state.muted) {
+            await playResponse(phase.audioUrl, responseText);
+          } else {
+            if (state.handsFree && state.autoListen) {
+              setTimeout(() => startListening(), 400);
+            } else {
+              setMode('idle');
+            }
+          }
+
+        } else if (phase.phase === 'error') {
+          addSystemMessage(phase.message || 'Something went wrong.');
+          setMode('idle');
+          return;
+        }
+      }
+    }
+
+    // If stream ended without an audio phase, go back to idle/listening
+    if (!gotAudio) {
+      if (state.handsFree && state.autoListen) {
+        setTimeout(() => startListening(), 400);
+      } else {
+        setMode('idle');
+      }
+    }
+  }
+
+  /**
+   * Handle legacy (non-streaming) JSON response — backwards compatibility
+   */
+  function handleLegacyResponse(data) {
+    if (data.transcription) addMessage(data.transcription, 'user');
+    if (data.response) addMessage(data.response, 'ai');
+
+    if (state.showVisuals) {
+      const steps = (data.mathSteps && data.mathSteps.length > 0)
+        ? data.mathSteps
+        : extractEquationsFromText(data.response || '');
+      if (steps.length > 0) renderMathSteps(steps);
+    }
+
+    if (data.audioUrl && !state.muted) {
+      playResponse(data.audioUrl, data.response || '');
+    } else {
+      if (state.handsFree && state.autoListen) {
+        setTimeout(() => startListening(), 400);
+      } else {
+        setMode('idle');
+      }
     }
   }
 

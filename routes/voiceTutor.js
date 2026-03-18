@@ -32,10 +32,17 @@ CRITICAL RULES FOR VOICE MODE:
 5. Never use markdown formatting in your spoken text — plain English only
 6. When you reference math in your spoken response, say it naturally: "x squared plus 3x equals zero" not "x^2 + 3x = 0"
 
-MATH STEPS — MANDATORY:
-You MUST include a <mathsteps> block in EVERY response where ANY equation, expression, or math concept is being discussed. This is critical — the student sees these equations rendered live on a visual board as you speak. Without them, the board is blank.
+MATH STEPS — ABSOLUTELY MANDATORY, NEVER SKIP:
+You MUST include a <mathsteps> block in EVERY response. The student's visual math board ONLY updates when you include <mathsteps>. If you omit it, the board goes BLANK and the student loses all visual context. This is the #1 most important rule.
 
-The ONLY time you skip mathSteps is for pure small talk with zero math content.
+WHEN TO INCLUDE <mathsteps>:
+- ANY time math has been discussed in the conversation (even if this specific reply is encouragement like "Great job!" — still include the current board state)
+- When confirming a correct step — include ALL previous steps PLUS the new one
+- When the student is wrong — repeat the SAME steps as last time (board stays unchanged)
+- When asking "what's next?" — include all steps completed so far
+
+WHEN YOU MAY SKIP <mathsteps>:
+- ONLY if the entire conversation so far has been pure small talk with absolutely zero math (e.g., "Hi, how are you?")
 
 PEDAGOGICAL RULE — NEVER SPOIL:
 The math board is a WHITEBOARD that tracks ONLY what the student has derived or confirmed. Do NOT show steps the student hasn't worked through yet. The board should reflect the student's progress, not the answer.
@@ -92,7 +99,8 @@ That's it! x equals 2. Great job working through that!
   {"label": "Divide by 2", "latex": "x = 2", "explanation": "Divide both sides by 2"}
 ]</mathsteps>
 
-REMEMBER: the student's visual math board ONLY updates when you include <mathsteps>. If you skip it, they see nothing. Always include it when math is involved.
+FINAL REMINDER — READ THIS CAREFULLY:
+The math board is the student's primary visual aid. EVERY response MUST include <mathsteps> if ANY math has been discussed at ANY point in the conversation. When in doubt, INCLUDE IT. Repeating the same steps is fine — omitting them blanks the board and confuses the student. This is non-negotiable.
 `;
 
 /**
@@ -202,7 +210,10 @@ function isUnder13(user) {
 
 // ═══════════════════════════════════════
 // POST /api/voice-tutor/process
-// Full voice pipeline: Whisper → LLM → TTS
+// Streaming voice pipeline: sends NDJSON phases as each stage completes
+// Phase 1: { phase: "transcription", transcription }     — instant feedback
+// Phase 2: { phase: "response", response, mathSteps }    — text + math rendered immediately
+// Phase 3: { phase: "audio", audioUrl }                  — audio plays when ready
 // ═══════════════════════════════════════
 router.post('/process', isAuthenticated, async (req, res) => {
   const { audio } = req.body;
@@ -212,110 +223,107 @@ router.post('/process', isAuthenticated, async (req, res) => {
     return res.status(400).json({ error: 'Audio data is required' });
   }
 
-  // Payload size limit (~10MB base64 ≈ ~7.5MB audio)
   if (audio.length > 10_000_000) {
     return res.status(413).json({ error: 'Audio file too large' });
   }
 
-  // Early config checks — fail fast before burning API calls
   if (!ttsProvider.isConfigured()) {
-    return res.status(503).json({
-      error: 'Voice not configured',
-      message: 'Text-to-speech service is not configured.'
-    });
+    return res.status(503).json({ error: 'Voice not configured', message: 'Text-to-speech service is not configured.' });
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(503).json({
-      error: 'Voice not configured',
-      message: 'Speech recognition service is not configured.'
-    });
+    return res.status(503).json({ error: 'Voice not configured', message: 'Speech recognition service is not configured.' });
   }
 
   if (isUnder13(req.user)) {
-    return res.status(403).json({
-      error: 'Voice unavailable for your account',
-      useWebSpeech: true
-    });
+    return res.status(403).json({ error: 'Voice unavailable for your account', useWebSpeech: true });
+  }
+
+  // Switch to NDJSON streaming — each line is a JSON object
+  res.setHeader('Content-Type', 'application/x-ndjson');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+
+  function sendPhase(data) {
+    res.write(JSON.stringify(data) + '\n');
+    // Flush if available (works with compression middleware)
+    if (res.flush) res.flush();
   }
 
   try {
-    // ── Step 1: Transcribe with Whisper ──
     let audioBuffer;
     try {
       audioBuffer = Buffer.from(audio, 'base64');
     } catch (e) {
-      return res.status(400).json({ error: 'Invalid audio format' });
+      sendPhase({ phase: 'error', message: 'Invalid audio format' });
+      return res.end();
     }
+
+    // ── Step 1: Transcribe with Whisper (parallel: fetch user data) ──
     const tempDir = path.join(__dirname, '../temp');
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-
     const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}.webm`);
     fs.writeFileSync(tempPath, audioBuffer);
 
-    // Get user's language preference
-    const userLangPref = await User.findById(userId).select('preferredLanguage').lean();
     const langMap = {
       'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
       'Vietnamese': 'vi', 'Arabic': 'ar', 'Somali': 'so', 'French': 'fr', 'German': 'de'
     };
-    const whisperLang = langMap[userLangPref?.preferredLanguage] || 'en';
 
-    let transcription;
-    try {
-      transcription = await openai.audio.transcriptions.create({
+    // Run Whisper + user data fetch in parallel
+    const [transcription, user] = await Promise.all([
+      openai.audio.transcriptions.create({
         file: fs.createReadStream(tempPath),
         model: 'whisper-1',
-        language: whisperLang,
-      });
-    } finally {
-      if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
-    }
+        language: langMap[req.user.preferredLanguage] || 'en',
+      }).finally(() => {
+        if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+      }),
+      User.findById(userId).lean()
+    ]);
 
     const userMessage = transcription.text;
     if (!userMessage || userMessage.trim().length === 0) {
-      return res.json({
-        transcription: '',
-        response: "I didn't catch that. Could you try again?",
-        audioUrl: null,
-        mathSteps: []
-      });
+      sendPhase({ phase: 'transcription', transcription: '' });
+      sendPhase({ phase: 'response', response: "I didn't catch that. Could you try again?", mathSteps: [] });
+      return res.end();
     }
 
-    // ── Step 2: Generate AI response ──
-    const aiResponse = await generateResponse(userId, userMessage);
+    // ── Send transcription immediately ──
+    sendPhase({ phase: 'transcription', transcription: userMessage });
 
-    // ── Step 3: Extract math steps and clean response ──
+    // ── Step 2: Generate AI response ──
+    const aiResponse = await generateResponse(userId, userMessage, user);
+
     const mathSteps = extractMathSteps(aiResponse);
     const cleanResponse = stripMathSteps(aiResponse);
 
-    // ── Step 4: Generate TTS ──
-    const audioUrl = await generateTTS(userId, cleanResponse);
+    // ── Send text + math immediately ──
+    sendPhase({ phase: 'response', response: cleanResponse, mathSteps });
 
-    // ── Step 5: Save to conversation history ──
-    // Save the FULL response (with mathsteps) so the AI can track board state
-    // across turns. Only the TTS and client display use the cleaned version.
-    await saveToHistory(userId, userMessage, aiResponse);
+    // ── Step 3: TTS + history save in parallel ──
+    const [audioUrl] = await Promise.all([
+      generateTTS(userId, cleanResponse, user).catch(err => {
+        console.warn('[VoiceTutor] TTS failed:', err.message);
+        return null;
+      }),
+      saveToHistory(userId, userMessage, aiResponse)
+    ]);
 
-    res.json({
-      transcription: userMessage,
-      response: cleanResponse,
-      audioUrl,
-      mathSteps
-    });
+    // ── Send audio URL ──
+    sendPhase({ phase: 'audio', audioUrl });
+    res.end();
 
   } catch (err) {
     console.error('[VoiceTutor] Error:', err.message, err.stack);
-    let userMessage = 'Something went wrong. Please try again.';
+    let message = 'Something went wrong. Please try again.';
     if (err.message.includes('Whisper') || err.message.includes('transcription')) {
-      userMessage = 'Speech recognition failed. Please try speaking again.';
+      message = 'Speech recognition failed. Please try speaking again.';
     } else if (err.message.includes('TTS') || err.message.includes('voice')) {
-      userMessage = 'Voice synthesis failed. Please try again.';
+      message = 'Voice synthesis failed. Please try again.';
     }
-    res.status(500).json({
-      error: 'Voice processing failed',
-      message: userMessage
-    });
+    sendPhase({ phase: 'error', message });
+    res.end();
   }
 });
 
@@ -368,8 +376,8 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
 // SHARED HELPERS
 // ═══════════════════════════════════════
 
-async function generateResponse(userId, userMessage) {
-  const user = await User.findById(userId).lean();
+async function generateResponse(userId, userMessage, preloadedUser) {
+  const user = preloadedUser || await User.findById(userId).lean();
   if (!user) throw new Error('User not found');
 
   const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -403,8 +411,8 @@ async function generateResponse(userId, userMessage) {
   return completion.choices[0].message.content.trim();
 }
 
-async function generateTTS(userId, responseText) {
-  const user = await User.findById(userId).select('selectedTutorId').lean();
+async function generateTTS(userId, responseText, preloadedUser) {
+  const user = preloadedUser || await User.findById(userId).select('selectedTutorId').lean();
   const TUTOR_CONFIG = require('../utils/tutorConfig');
   const selectedTutorId = user?.selectedTutorId || 'default';
   const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
