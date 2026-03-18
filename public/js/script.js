@@ -43,7 +43,8 @@ function updateGamificationDisplay() {
 document.addEventListener('audioPlaybackEnded', () => {
     if (currentUser?.preferences?.handsFreeModeEnabled && audioQueue.length === 0) {
         const recog = window._speechRecognition;
-        if (recog && recog.instance && !recog.isActive) {
+        // Skip auto-listen if a network error was recently encountered
+        if (recog && recog.instance && !recog.isActive && !recog.networkErrorActive) {
             try {
                 recog.instance.start();
                 recog.isActive = true;
@@ -106,7 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let messageIndexCounter = 0; // Track message index for reactions
 
     // Expose speech recognition state for audio module's hands-free auto-listen
-    window._speechRecognition = { instance: null, isActive: false };
+    window._speechRecognition = { instance: null, isActive: false, networkErrorActive: false };
+
+    let speechNetworkRetries = 0;
+    const SPEECH_MAX_RETRIES = 2;
+    const SPEECH_RETRY_BASE_MS = 1500;
+    let speechRetryTimer = null;
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -118,19 +124,53 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             userInput.textContent += transcript;
+            // Successful result — reset network retry counter
+            speechNetworkRetries = 0;
+            window._speechRecognition.networkErrorActive = false;
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
             isRecognizing = false;
             window._speechRecognition.isActive = false;
             if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+
             if (event.error === 'not-allowed') {
                 showToast('Microphone access denied. Please check your browser permissions.', 5000);
             } else if (event.error === 'network') {
-                showToast('Speech recognition unavailable. Check your connection.', 4000);
+                window._speechRecognition.networkErrorActive = true;
+
+                if (speechNetworkRetries < SPEECH_MAX_RETRIES) {
+                    speechNetworkRetries++;
+                    const delay = SPEECH_RETRY_BASE_MS * speechNetworkRetries;
+                    clearTimeout(speechRetryTimer);
+                    speechRetryTimer = setTimeout(() => {
+                        try {
+                            recognition.start();
+                            isRecognizing = true;
+                            window._speechRecognition.isActive = true;
+                            if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                        } catch (e) {
+                            // recognition may already be started or unavailable
+                            isRecognizing = false;
+                            window._speechRecognition.isActive = false;
+                        }
+                    }, delay);
+                } else {
+                    // All retries exhausted — inform user once
+                    speechNetworkRetries = 0;
+                    showToast('Speech recognition unavailable. Check your connection and try again.', 5000);
+                }
+            } else if (event.error === 'no-speech') {
+                // Silence timeout — not a real error, no toast needed
+            } else if (event.error !== 'aborted') {
+                showToast('Speech recognition error. Please try again.', 3000);
             }
         };
-        recognition.onend = () => { isRecognizing = false; window._speechRecognition.isActive = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
+        recognition.onend = () => {
+            isRecognizing = false;
+            window._speechRecognition.isActive = false;
+            if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        };
     }
 
     // --- Watermark Helper Function ---
@@ -2980,6 +3020,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (isRecognizing) {
                 recognition.stop();
             } else {
+                // Manual tap resets network error state so user can retry
+                speechNetworkRetries = 0;
+                window._speechRecognition.networkErrorActive = false;
+                clearTimeout(speechRetryTimer);
                 recognition.start();
                 isRecognizing = true;
                 window._speechRecognition.isActive = true;
