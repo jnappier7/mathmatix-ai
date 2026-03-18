@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a3a6e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e5fa8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2b7fd4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="180" height="180" rx="28" ry="28" fill="url(#bg-gradient)" />
+  <text x="100" y="128" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif" font-size="110" font-weight="700" fill="#ffffff" letter-spacing="-4">M+</text>
+</svg>
