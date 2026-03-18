@@ -212,353 +212,6 @@
       line-height: 1.6;
     }
 
-    /* ── Launch Countdown Banner ────────────────────────────── */
-    .lp-countdown-banner {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: 1.25rem var(--page-horizontal-padding);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .lp-countdown-banner::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background:
-        radial-gradient(circle at 20% 50%, rgba(18, 179, 179, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 50%, rgba(255, 59, 127, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .lp-countdown-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .lp-countdown-label {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-    }
-
-    .lp-countdown-label i {
-      color: var(--clr-accent-hotpink);
-      margin-right: 0.4rem;
-      animation: lp-rocket-pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes lp-rocket-pulse {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-2px); }
-    }
-
-    .lp-countdown-timer {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .lp-countdown-unit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 52px;
-    }
-
-    .lp-countdown-number {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      padding: 0.4rem 0.55rem;
-      min-width: 52px;
-      text-align: center;
-    }
-
-    .lp-countdown-text {
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.55);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 0.3rem;
-    }
-
-    .lp-countdown-sep {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--clr-primary-teal);
-      line-height: 1;
-      padding-bottom: 1.1rem;
-      animation: lp-blink 1s step-end infinite;
-    }
-
-    @keyframes lp-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Hide banner after launch window ends */
-    .lp-countdown-banner.lp-countdown-launched {
-      display: none;
-    }
-
-    /* ── Pi Day Promo Banner (replaces countdown on 3/14) ── */
-    .lp-piday-promo {
-      background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 40%, #16213e 100%);
-      padding: 1rem var(--page-horizontal-padding);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 2px solid #ff6b9d;
-    }
-
-    .lp-piday-promo::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .lp-piday-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
-    }
-
-    .lp-piday-icon {
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 1;
-      background: linear-gradient(135deg, #ff6b9d, #ff9ec7, #fff, #ff9ec7, #ff6b9d);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 12px rgba(255, 107, 157, 0.7)) drop-shadow(0 0 30px rgba(200, 80, 192, 0.4));
-      animation: piBannerShimmer 3s ease-in-out infinite, piBannerPulse 2s ease-in-out infinite;
-    }
-    @keyframes piBannerShimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    @keyframes piBannerPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .lp-piday-text {
-      color: #fff;
-    }
-
-    .lp-piday-headline {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin: 0 0 0.2rem;
-    }
-
-    .lp-piday-headline .lp-piday-pink {
-      color: #ff6b9d;
-    }
-
-    .lp-piday-sub {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin: 0;
-    }
-
-    .lp-piday-prices {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .lp-piday-price-chip {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 107, 157, 0.3);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      text-align: center;
-      color: #fff;
-      min-width: 100px;
-    }
-
-    .lp-piday-price-chip .lp-piday-plan-name {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .lp-piday-price-chip .lp-piday-original {
-      font-size: 0.75rem;
-      color: #888;
-      text-decoration: line-through;
-    }
-
-    .lp-piday-price-chip .lp-piday-deal {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #00d4ff;
-    }
-
-    .lp-piday-cta {
-      background: linear-gradient(135deg, #ff6b9d, #c850c0);
-      color: #fff;
-      border: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .lp-piday-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
-    }
-
-    @media (max-width: 768px) {
-      .lp-piday-inner { flex-direction: column; gap: 0.8rem; }
-      .lp-piday-prices { gap: 0.5rem; }
-      .lp-piday-price-chip { min-width: 80px; padding: 0.4rem 0.7rem; }
-    }
-
-    /* ── Waitlist Forms ──────────────────────────────────── */
-    .lp-waitlist-form {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .lp-waitlist-input {
-      padding: 0.6rem 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 0.9rem;
-      min-width: 220px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .lp-waitlist-input::placeholder { color: rgba(255, 255, 255, 0.5); }
-    .lp-waitlist-input:focus { border-color: var(--clr-primary-teal); }
-
-    .lp-waitlist-btn {
-      white-space: nowrap;
-      padding: 0.6rem 1.2rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .lp-waitlist-msg {
-      font-size: 0.85rem;
-      margin-top: 0.4rem;
-      font-weight: 500;
-    }
-
-    .lp-waitlist-msg.success { color: #22c55e; }
-    .lp-waitlist-msg.error { color: #ef4444; }
-
-    /* Hero variant */
-    .lp-waitlist-form--hero { flex-wrap: wrap; }
-    .lp-waitlist-form--hero .lp-waitlist-input {
-      background: rgba(0, 0, 0, 0.25);
-      border-color: rgba(255, 255, 255, 0.15);
-      min-width: 240px;
-    }
-
-    /* Inline mid-page variant */
-    .lp-waitlist-form--inline {
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* Final CTA variant */
-    .lp-waitlist-form--final {
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-
-    .lp-waitlist-form--final .lp-waitlist-input {
-      min-width: 260px;
-      padding: 0.75rem 1.2rem;
-      font-size: 1rem;
-    }
-
-    .lp-waitlist-form--final .lp-waitlist-btn {
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-    }
-
-    /* Sticky bar variant */
-    .lp-waitlist-form--sticky {
-      gap: 0.4rem;
-    }
-
-    .lp-waitlist-form--sticky .lp-waitlist-input {
-      min-width: 160px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
-    }
-
-    .lp-waitlist-form--sticky .lp-waitlist-btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 768px) {
-      .lp-countdown-banner { padding: 1rem var(--page-horizontal-padding); }
-      .lp-countdown-inner { flex-direction: column; gap: 0.6rem; }
-      .lp-countdown-label { font-size: 0.9rem; }
-      .lp-countdown-number { font-size: 1.35rem; min-width: 44px; padding: 0.3rem 0.45rem; }
-      .lp-countdown-unit { min-width: 44px; }
-      .lp-countdown-sep { font-size: 1.2rem; padding-bottom: 0.9rem; }
-      .lp-countdown-text { font-size: 0.6rem; }
-
-      .lp-waitlist-form { flex-direction: column; width: 100%; }
-      .lp-waitlist-input { min-width: unset; width: 100%; }
-      .lp-waitlist-btn { width: 100%; }
-      .lp-waitlist-form--sticky { flex-direction: row; }
-      .lp-waitlist-form--sticky .lp-waitlist-input { min-width: 0; flex: 1; }
-      .lp-waitlist-form--sticky .lp-waitlist-btn { width: auto; }
-    }
-
-    @media (max-width: 375px) {
-      .lp-countdown-number { font-size: 1.15rem; min-width: 38px; }
-      .lp-countdown-unit { min-width: 38px; }
-    }
-
     /* ── Hero ───────────────────────────────────────────────── */
     .lp-hero {
       background: linear-gradient(160deg, #f0fafa 0%, #e4f3f3 40%, #f8fbfb 100%);
@@ -1826,38 +1479,6 @@
   </header>
 
   <main class="landing-main" id="lp-main">
-    <!-- ── Launch Countdown ──────────────────────────────── -->
-    <div class="lp-countdown-banner" id="lp-countdown">
-      <div class="lp-countdown-inner">
-        <div class="lp-countdown-label"><i class="fas fa-rocket"></i> Launching March 14</div>
-        <div class="lp-countdown-timer" id="lp-countdown-timer">
-          <div class="lp-countdown-unit">
-            <span class="lp-countdown-number" id="lp-cd-days">--</span>
-            <span class="lp-countdown-text">Days</span>
-          </div>
-          <div class="lp-countdown-sep">:</div>
-          <div class="lp-countdown-unit">
-            <span class="lp-countdown-number" id="lp-cd-hours">--</span>
-            <span class="lp-countdown-text">Hours</span>
-          </div>
-          <div class="lp-countdown-sep">:</div>
-          <div class="lp-countdown-unit">
-            <span class="lp-countdown-number" id="lp-cd-mins">--</span>
-            <span class="lp-countdown-text">Min</span>
-          </div>
-          <div class="lp-countdown-sep">:</div>
-          <div class="lp-countdown-unit">
-            <span class="lp-countdown-number" id="lp-cd-secs">--</span>
-            <span class="lp-countdown-text">Sec</span>
-          </div>
-        </div>
-        <form class="lp-waitlist-form" id="lp-waitlist-banner" autocomplete="off">
-          <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
-          <button type="submit" class="btn btn-primary lp-waitlist-btn">Notify Me</button>
-        </form>
-      </div>
-    </div>
-
     <!-- ── Hero ──────────────────────────────────────────── -->
     <section class="lp-hero">
       <div class="lp-hero-layout">
@@ -2399,6 +2020,234 @@
     </div>
   </footer>
 
-  <script src="/js/landing.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* ── Scroll Reveal ─────────────────────────────────── */
+      var revealEls = document.querySelectorAll('.lp-reveal');
+      if ('IntersectionObserver' in window) {
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('lp-visible');
+              /* Also reveal any stagger grids inside this section */
+              var staggers = entry.target.querySelectorAll('.lp-stagger');
+              staggers.forEach(function (s) { s.classList.add('lp-visible'); });
+              revealObs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(function (el) { revealObs.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('lp-visible'); });
+      }
+
+      /* ── Animated Chat Preview — Cycling Topics ─────────── */
+      var chatContainer = document.getElementById('lp-chat');
+      var typingEl = document.getElementById('lp-typing');
+      var tutorNameEl = document.getElementById('lp-tutor-name');
+
+      if (chatContainer && typingEl) {
+        var conversations = [
+          {
+            tutor: 'Mr. Nappier',
+            studentAvatar: '/images/avatars/astronaut.png',
+            tutorAvatar: '/images/tutor_avatars/mr-nappier.png',
+            messages: [
+              { from: 'student', text: 'How do I add \u2153 + \u00BC?' },
+              { from: 'tutor', text: 'Great question! Let\u2019s figure it out together. First \u2014 can you think of a number that both 3 and 4 divide into evenly?' },
+              { from: 'student', text: '12?' },
+              { from: 'tutor', text: 'That\u2019s it! Now we can rewrite both fractions with 12 as the denominator. What would \u2153 become?' }
+            ]
+          },
+          {
+            tutor: 'Ms. Maria',
+            studentAvatar: '/images/avatars/dragon.png',
+            tutorAvatar: '/images/tutor_avatars/ms-maria.png',
+            messages: [
+              { from: 'student', text: 'I don\u2019t get how to solve 3x + 7 = 22' },
+              { from: 'tutor', text: 'No worries! Our goal is to get x all by itself. What do you think we should do to both sides first?' },
+              { from: 'student', text: 'Subtract 7?' },
+              { from: 'tutor', text: 'Exactly! 22 \u2013 7 = 15, so now we have 3x = 15. What\u2019s the last step?' }
+            ]
+          },
+          {
+            tutor: 'Maya',
+            studentAvatar: '/images/avatars/alien.png',
+            tutorAvatar: '/images/tutor_avatars/maya.png',
+            messages: [
+              { from: 'student', text: 'Can you check my homework? I got 0.5 \u00D7 0.3 = 1.5' },
+              { from: 'tutor', text: 'Hmm, let\u2019s look at that together! When you multiply decimals, how many total decimal places should the answer have?' },
+              { from: 'student', text: 'Oh wait\u2026 two places? So it\u2019s 0.15?' },
+              { from: 'tutor', text: 'There you go! 0.5 has one decimal place, 0.3 has one, so the answer needs two. Nice catch!' }
+            ]
+          },
+          {
+            tutor: 'Bob',
+            studentAvatar: '/images/avatars/dragon.png',
+            tutorAvatar: '/images/tutor_avatars/bob.png',
+            messages: [
+              { from: 'student', text: 'What\u2019s the answer to number 5? It\u2019s 4x \u2013 10 = 14' },
+              { from: 'tutor', text: 'I can\u2019t just give you the answer \u2014 but I can help you figure it out! What\u2019s the first step to isolate the x term?' },
+              { from: 'student', text: 'Ugh fine\u2026 add 10 to both sides?' },
+              { from: 'tutor', text: 'See, you DO know this! Now you\u2019ve got 4x = 24. One more step and you\u2019ve got it.' }
+            ]
+          }
+        ];
+
+        var convoIndex = 0;
+
+        function playConversation() {
+          var convo = conversations[convoIndex % conversations.length];
+          convoIndex++;
+
+          // Update tutor name
+          if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
+
+          // Clear previous messages
+          chatContainer.innerHTML = '';
+          typingEl.style.display = 'none';
+
+          var msgIdx = 0;
+
+          function showNextMessage() {
+            if (msgIdx >= convo.messages.length) {
+              // Pause on completed conversation, then start next
+              setTimeout(function () {
+                // Fade out current messages
+                var allRows = chatContainer.querySelectorAll('.lp-chat-row');
+                allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
+                setTimeout(playConversation, 400);
+              }, 3000);
+              return;
+            }
+
+            var msg = convo.messages[msgIdx];
+            var isStudent = msg.from === 'student';
+
+            if (!isStudent) {
+              // Show typing indicator before tutor message
+              typingEl.style.display = 'flex';
+              setTimeout(function () {
+                typingEl.style.display = 'none';
+                appendMessage(msg, isStudent, convo);
+                msgIdx++;
+                setTimeout(showNextMessage, 900);
+              }, 1100);
+            } else {
+              appendMessage(msg, isStudent, convo);
+              msgIdx++;
+              setTimeout(showNextMessage, 800);
+            }
+          }
+
+          function appendMessage(msg, isStudent, c) {
+            var row = document.createElement('div');
+            row.className = 'lp-chat-row' + (isStudent ? ' lp-chat-row--student' : '');
+
+            var avatar = document.createElement('div');
+            avatar.className = 'lp-chat-avatar';
+            var avatarImg = document.createElement('img');
+            avatarImg.src = isStudent ? c.studentAvatar : c.tutorAvatar;
+            avatarImg.alt = isStudent ? 'Student' : c.tutor;
+            avatarImg.loading = 'lazy';
+            avatar.appendChild(avatarImg);
+
+            var bubble = document.createElement('div');
+            bubble.className = 'lp-chat-bubble ' + (isStudent ? 'lp-chat-student' : 'lp-chat-tutor');
+            bubble.textContent = msg.text;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            chatContainer.appendChild(row);
+
+            // Trigger animation and scroll to bottom
+            requestAnimationFrame(function () {
+              row.classList.add('lp-chat-visible');
+              chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+          }
+
+          setTimeout(showNextMessage, 600);
+        }
+
+        setTimeout(playConversation, 700);
+      }
+
+      /* ── Role Selector Tabs ────────────────────────────── */
+      var roleTabs = document.querySelectorAll('.lp-role-tab');
+      var rolePanels = document.querySelectorAll('.lp-role-panel');
+
+      roleTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var role = tab.getAttribute('data-role');
+
+          /* Update tabs */
+          roleTabs.forEach(function (t) { t.classList.remove('lp-role-tab--active'); });
+          tab.classList.add('lp-role-tab--active');
+
+          /* Update panels */
+          rolePanels.forEach(function (p) { p.classList.remove('lp-role-panel--active'); });
+          var targetPanel = document.querySelector('[data-panel="' + role + '"]');
+          if (targetPanel) targetPanel.classList.add('lp-role-panel--active');
+        });
+      });
+
+      /* ── Sticky CTA Bar ────────────────────────────────── */
+      var stickyBar = document.getElementById('lp-sticky-cta');
+      var hero = document.querySelector('.lp-hero');
+      var finalCta = document.querySelector('.lp-final-cta');
+
+      if (stickyBar && hero) {
+        var stickyObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.target === hero) {
+              if (!entry.isIntersecting) {
+                stickyBar.classList.add('lp-sticky-visible');
+              } else {
+                stickyBar.classList.remove('lp-sticky-visible');
+              }
+            }
+          });
+        }, { threshold: 0 });
+        stickyObs.observe(hero);
+
+        if (finalCta) {
+          var finalObs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                stickyBar.classList.remove('lp-sticky-visible');
+              } else if (hero.getBoundingClientRect().bottom < 0) {
+                stickyBar.classList.add('lp-sticky-visible');
+              }
+            });
+          }, { threshold: 0.3 });
+          finalObs.observe(finalCta);
+        }
+      }
+
+      /* ── FAQ Accordion ─────────────────────────────────── */
+      var faqItems = document.querySelectorAll('.lp-faq-item');
+      faqItems.forEach(function (item) {
+        var btn = item.querySelector('.lp-faq-question');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var isOpen = item.classList.contains('lp-faq-open');
+            faqItems.forEach(function (other) {
+              other.classList.remove('lp-faq-open');
+              var otherBtn = other.querySelector('.lp-faq-question');
+              if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+              item.classList.add('lp-faq-open');
+              btn.setAttribute('aria-expanded', 'true');
+            }
+          });
+        }
+      });
+
+    })();
+  </script>
 </body>
 </html>
