@@ -51,8 +51,6 @@
   gap: 24px;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
-  box-sizing: border-box;
 }
 
 /* Individual Card */
@@ -280,6 +278,6 @@
     max-width: 400px;
     gap: 16px;
   }
-  .pricing-title { font-size: 26px; }
+  .pricing-page .pricing-title { font-size: 26px; }
   .pricing-page { padding: 24px 16px 40px; }
 }
