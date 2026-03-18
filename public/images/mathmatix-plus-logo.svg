@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a3a" />
+      <stop offset="100%" stop-color="#1a1a28" />
+    </linearGradient>
+    <filter id="neon-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="outer-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="glow" />
+      <feMerge>
+        <feMergeNode in="glow" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="300" height="300" rx="30" ry="30" fill="url(#bg)" />
+
+  <!-- Warm outer glow behind the M -->
+  <text x="120" y="225" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="200" font-weight="900" fill="none" stroke="#c4a44a" stroke-width="8" filter="url(#outer-glow)">M</text>
+  <!-- Warm outer glow behind the + -->
+  <text x="215" y="120" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="80" font-weight="900" fill="none" stroke="#c4a44a" stroke-width="6" filter="url(#outer-glow)">+</text>
+
+  <!-- M: dark fill with golden neon outline -->
+  <text x="120" y="225" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="200" font-weight="900" fill="#2a2a38" stroke="#d4b85a" stroke-width="4" filter="url(#neon-glow)">M</text>
+  <!-- M: bright inner highlight -->
+  <text x="120" y="225" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="200" font-weight="900" fill="none" stroke="#fff5d0" stroke-width="1.5">M</text>
+
+  <!-- +: superscript, upper-right of M -->
+  <text x="215" y="120" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="80" font-weight="900" fill="#2a2a38" stroke="#d4b85a" stroke-width="3" filter="url(#neon-glow)">+</text>
+  <text x="215" y="120" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="80" font-weight="900" fill="none" stroke="#fff5d0" stroke-width="1">+</text>
+</svg>

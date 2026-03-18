@@ -108,6 +108,13 @@
   color: #fff;
 }
 
+/* M+ Logo on Mathmatix+ card */
+.card-plus-logo {
+  display: block;
+  margin: 12px auto 4px;
+  border-radius: 14px;
+}
+
 /* Plan Name */
 .pricing-page .card-plan-name {
   font-size: 20px;
