@@ -37,11 +37,17 @@ const MIN_CORRECT_FOR_ADVANCE = 2;
  * @param {Object} options
  * @param {boolean} options.isParentCourse - Parent courses don't use graphs
  * @param {Array} options.moduleSkills - Skills for the current module
+ * @param {string} options.lessonPhase - Current scaffold step phase (e.g. 'concept-intro', 'i-do', 'we-do', 'you-do')
  * @returns {Object|null} Graph tool configuration
  */
 function detectGraphTool(responseText, options = {}) {
   if (options.isParentCourse) return null;
   if (!responseText) return null;
+
+  // During concept-intro and i-do phases, the AI talks ABOUT graphs but should
+  // not trigger the interactive line-plotting tool. Only an explicit tag overrides.
+  const isExplanatoryPhase = ['concept-intro', 'i-do', 'explanation', 'model']
+    .includes(options.lessonPhase);
 
   // 1. Check for explicit <GRAPH_TOOL> tag (with or without attributes)
   const tagMatch = responseText.match(/<GRAPH_TOOL(?:\s+([^>]*))?\s*>/i);
@@ -62,10 +68,21 @@ function detectGraphTool(responseText, options = {}) {
     };
   }
 
-  // 2. Keyword fallback — AI described the graph but forgot the tag
+  // 2. Keyword fallback — AI described the graph but forgot the tag.
+  //    SKIP during explanatory phases where the AI naturally talks about
+  //    "graphs" and "points" without wanting the plotting tool.
+  if (isExplanatoryPhase) return null;
+
   const lower = responseText.toLowerCase();
-  const mentionsGraphing = /\b(plot|graph)\b.*\b(line|point|grid)\b/i.test(lower)
+
+  // Require an IMPERATIVE graphing instruction — the AI must be asking the
+  // student to actively plot/graph something, not just mentioning graphs.
+  const mentionsGraphing = /\b(plot|graph)\b.*\b(on the|on this|on your)\b.*\b(grid|plane|graph)\b/i.test(lower)
     || /\b(interactive grid|coordinate grid|coordinate plane)\b/i.test(lower);
+
+  // Exclude purely descriptive language about reading/looking at graphs
+  const isDescriptive = /\b(reading|read|look at|imagine|see|shown|has)\b.*\b(graph|circle|point)\b/i.test(lower);
+  if (isDescriptive && !(/\bplot\b/i.test(lower))) return null;
 
   const moduleSkills = (options.moduleSkills || []).join(' ').toLowerCase();
   const isGraphModule = /graph|slope|intercept|linear|coordinate/.test(moduleSkills);
