@@ -766,6 +766,12 @@ html, body {
 .vt-msg .katex { font-size: 1em; }
 .vt-msg .katex-display { margin: 6px 0; font-size: 0.95em; }
 
+/* Prevent KaTeX MathML from being copied (fixes doubled text on copy-paste) */
+.vt-msg .katex-mathml {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 @keyframes vt-msg-in {
   from { opacity: 0; transform: translateY(8px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }

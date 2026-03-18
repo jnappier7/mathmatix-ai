@@ -25,12 +25,11 @@ const VOICE_TUTOR_INSTRUCTIONS = `
 You are in an immersive, real-time voice conversation with a student. This is a hands-free, spoken math tutoring session.
 
 CRITICAL RULES FOR VOICE MODE:
-1. Keep responses SHORT and conversational (1-3 sentences of spoken text)
-2. Ask follow-up questions to keep the conversation flowing
-3. After explaining a concept, check understanding: "Does that make sense?" or "Want me to show another example?"
-4. Be warm, encouraging, and natural — like a real tutor sitting next to the student
-5. Never use markdown formatting in your spoken text — plain English only
-6. When you reference math in your spoken response, say it naturally: "x squared plus 3x equals zero" not "x^2 + 3x = 0"
+1. BREVITY IS ESSENTIAL — keep spoken text to 1-2 sentences MAX. This is a real-time voice conversation, not a lecture. If you write more than 2 sentences of spoken text, the student will zone out waiting for you to finish. One thought, one question, move on.
+2. Ask ONE follow-up question per turn — don't explain AND ask AND elaborate
+3. Be warm and natural — like a real tutor sitting next to the student
+4. NEVER use LaTeX delimiters ($, $$, \(, \[) in your spoken text — use plain English only. The math board handles visual math. Say "x squared plus 3x" not "$x^2 + 3x$"
+5. NEVER use markdown formatting (**, *, #) in spoken text
 
 MATH STEPS — ABSOLUTELY MANDATORY, NEVER SKIP:
 You MUST include a <mathsteps> block in EVERY response. The student's visual math board ONLY updates when you include <mathsteps>. If you omit it, the board goes BLANK and the student loses all visual context. This is the #1 most important rule.
@@ -193,10 +192,17 @@ function extractMathSteps(text) {
 }
 
 /**
- * Strip mathsteps tags from response text
+ * Strip mathsteps tags from response text, then remove any LaTeX delimiters
+ * the LLM may have used in spoken text (math belongs on the board, not in speech)
  */
 function stripMathSteps(text) {
-  return text.replace(/<mathsteps>[\s\S]*?<\/mathsteps>/g, '').trim();
+  let clean = text.replace(/<mathsteps>[\s\S]*?<\/mathsteps>/g, '').trim();
+  // Strip LaTeX delimiters but keep the content (e.g. "$x^2$" → "x^2")
+  clean = clean.replace(/\$\$(.+?)\$\$/gs, '$1');
+  clean = clean.replace(/\\\[(.+?)\\\]/gs, '$1');
+  clean = clean.replace(/\\\((.+?)\\\)/g, '$1');
+  clean = clean.replace(/\$([^$]+?)\$/g, '$1');
+  return clean;
 }
 
 /**
@@ -405,7 +411,7 @@ async function generateResponse(userId, userMessage, preloadedUser) {
 
   const completion = await callLLM(VOICE_MODEL, messages, {
     temperature: 0.7,
-    max_tokens: 1200
+    max_tokens: 600
   });
 
   return completion.choices[0].message.content.trim();
