@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Your Role | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+  <style>
+    .role-picker-wrapper {
+      min-height: calc(100dvh - 140px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .role-picker-container {
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .role-picker-container h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--clr-text, #1a202c);
+    }
+
+    .role-picker-container .subtitle {
+      color: var(--clr-text-dim, #5B6876);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .role-card {
+      background: var(--clr-bg-card, #fff);
+      border: 2px solid var(--clr-border, #E2E8F0);
+      border-radius: 16px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .role-card:hover {
+      border-color: var(--clr-primary-teal, #12B3B3);
+      box-shadow: 0 4px 16px rgba(18, 179, 179, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .role-card:active {
+      transform: translateY(0);
+    }
+
+    .role-card.active-role {
+      border-color: var(--clr-primary-teal, #12B3B3);
+      background: rgba(18, 179, 179, 0.05);
+    }
+
+    .role-card .role-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #fff;
+    }
+
+    .role-card .role-icon.admin    { background: linear-gradient(135deg, #7C3AED, #6D28D9); }
+    .role-card .role-icon.teacher  { background: linear-gradient(135deg, #2563EB, #1D4ED8); }
+    .role-card .role-icon.parent   { background: linear-gradient(135deg, #059669, #047857); }
+    .role-card .role-icon.student  { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+    .role-card .role-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .role-card .role-desc {
+      font-size: 0.85rem;
+      color: var(--clr-text-dim, #5B6876);
+      line-height: 1.4;
+    }
+
+    .role-card .active-badge {
+      display: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-primary-teal, #12B3B3);
+      background: rgba(18, 179, 179, 0.1);
+      padding: 2px 10px;
+      border-radius: 100px;
+    }
+
+    .role-card.active-role .active-badge {
+      display: inline-block;
+    }
+
+    .role-picker-footer {
+      font-size: 0.85rem;
+      color: var(--clr-text-dim, #5B6876);
+    }
+
+    @media (max-width: 520px) {
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+  </header>
+
+  <main class="role-picker-wrapper">
+    <div class="role-picker-container">
+      <h1 id="greeting">Welcome back!</h1>
+      <p class="subtitle">You have multiple roles. Choose how you'd like to start today.</p>
+
+      <div class="role-grid" id="roleGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <p class="role-picker-footer">You can switch roles anytime from the top menu.</p>
+    </div>
+  </main>
+
+  <script>
+    const ROLE_CONFIG = {
+      admin: {
+        icon: 'fas fa-shield-halved',
+        name: 'Admin',
+        desc: 'Manage users, licenses, and platform settings.'
+      },
+      teacher: {
+        icon: 'fas fa-chalkboard-teacher',
+        name: 'Teacher',
+        desc: 'View class progress, assignments, and student data.'
+      },
+      parent: {
+        icon: 'fas fa-house-user',
+        name: 'Parent',
+        desc: 'Track your child\'s progress and weekly reports.'
+      },
+      student: {
+        icon: 'fas fa-graduation-cap',
+        name: 'Student',
+        desc: 'Learn math with your AI tutor, earn badges, and level up.'
+      }
+    };
+
+    async function init() {
+      try {
+        const res = await csrfFetch('/api/role-switch/roles');
+        const data = await res.json();
+
+        if (!data.success) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        // If user only has one role, skip picker and go straight to dashboard
+        if (!data.isMultiRole) {
+          await switchRole(data.activeRole);
+          return;
+        }
+
+        renderRoles(data.roles, data.activeRole);
+      } catch (err) {
+        console.error('[RolePicker] Error loading roles:', err);
+        window.location.href = '/login.html';
+      }
+    }
+
+    function renderRoles(roles, activeRole) {
+      const grid = document.getElementById('roleGrid');
+      // Sort: put active role first, then admin > teacher > parent > student
+      const order = ['admin', 'teacher', 'parent', 'student'];
+      const sorted = [...roles].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+      grid.innerHTML = sorted.map(role => {
+        const cfg = ROLE_CONFIG[role] || { icon: 'fas fa-user', name: role, desc: '' };
+        const isActive = role === activeRole;
+        return `
+          <div class="role-card ${isActive ? 'active-role' : ''}" data-role="${role}" tabindex="0" role="button" aria-label="Enter as ${cfg.name}">
+            <div class="role-icon ${role}"><i class="${cfg.icon}"></i></div>
+            <div class="role-name">${cfg.name}</div>
+            <div class="role-desc">${cfg.desc}</div>
+            <span class="active-badge">Current</span>
+          </div>
+        `;
+      }).join('');
+
+      // Attach click handlers
+      grid.querySelectorAll('.role-card').forEach(card => {
+        card.addEventListener('click', () => switchRole(card.dataset.role));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            switchRole(card.dataset.role);
+          }
+        });
+      });
+    }
+
+    async function switchRole(role) {
+      try {
+        const res = await csrfFetch('/api/role-switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role })
+        });
+        const data = await res.json();
+
+        if (data.success && data.redirect) {
+          window.location.href = data.redirect;
+        } else {
+          alert(data.message || 'Failed to switch role.');
+        }
+      } catch (err) {
+        console.error('[RolePicker] Switch error:', err);
+        alert('Failed to switch role. Please try again.');
+      }
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await csrfFetch('/logout', { method: 'POST' });
+      } catch (_) {}
+      window.location.href = '/login.html';
+    });
+
+    init();
+  </script>
+</body>
+</html>
