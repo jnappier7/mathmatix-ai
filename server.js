@@ -146,6 +146,10 @@ app.set("trust proxy", 1);
 // Enforce HTTPS and redirect www to apex domain in production
 if (isProduction) {
   app.use((req, res, next) => {
+    // Skip redirects for Stripe webhook — Stripe treats any redirect as a failure
+    if (req.originalUrl === '/api/billing/webhook') {
+      return next();
+    }
     // Force HTTPS (Render terminates TLS at the proxy, so check x-forwarded-proto)
     if (req.headers['x-forwarded-proto'] !== 'https') {
       return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
