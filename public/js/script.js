@@ -116,27 +116,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = true;         // Keep listening until user stops
         recognition.lang = 'en-US';
-        recognition.interimResults = false;
+        recognition.interimResults = true;     // Show words as they're spoken
         recognition.maxAlternatives = 1;
         window._speechRecognition.instance = recognition;
+
+        // Track finalized text so interim results can preview without duplication
+        let _speechFinalizedText = '';
+        let _speechSilenceTimer = null;
+        const SPEECH_AUTO_STOP_MS = 3000; // Auto-stop after 3s of silence in continuous mode
+
         recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            userInput.textContent += transcript;
+            // Reset silence auto-stop timer on every result
+            clearTimeout(_speechSilenceTimer);
+            _speechSilenceTimer = setTimeout(() => {
+                // No new speech for 3s — auto-stop and keep text
+                if (isRecognizing) {
+                    try { recognition.stop(); } catch (_) {}
+                }
+            }, SPEECH_AUTO_STOP_MS);
+
+            let finalTranscript = '';
+            let interimTranscript = '';
+            for (let i = 0; i < event.results.length; i++) {
+                const result = event.results[i];
+                if (result.isFinal) {
+                    finalTranscript += result[0].transcript;
+                } else {
+                    interimTranscript += result[0].transcript;
+                }
+            }
+
+            // Update finalized text and show interim preview
+            if (finalTranscript) {
+                _speechFinalizedText = finalTranscript;
+            }
+            userInput.textContent = _speechFinalizedText + interimTranscript;
+
             // Successful result — reset network retry counter
             speechNetworkRetries = 0;
             window._speechRecognition.networkErrorActive = false;
         };
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
-            isRecognizing = false;
-            window._speechRecognition.isActive = false;
-            if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
 
             if (event.error === 'not-allowed') {
+                isRecognizing = false;
+                window._speechRecognition.isActive = false;
+                if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                 showToast('Microphone access denied. Please check your browser permissions.', 5000);
             } else if (event.error === 'network') {
+                isRecognizing = false;
+                window._speechRecognition.isActive = false;
+                if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                 window._speechRecognition.networkErrorActive = true;
 
                 if (speechNetworkRetries < SPEECH_MAX_RETRIES) {
@@ -163,13 +196,22 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (event.error === 'no-speech') {
                 // Silence timeout — not a real error, no toast needed
             } else if (event.error !== 'aborted') {
+                isRecognizing = false;
+                window._speechRecognition.isActive = false;
+                if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                 showToast('Speech recognition error. Please try again.', 3000);
             }
         };
         recognition.onend = () => {
             isRecognizing = false;
             window._speechRecognition.isActive = false;
-            if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            clearTimeout(_speechSilenceTimer);
+            _speechFinalizedText = '';
+            if (micBtn) {
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                micBtn.classList.remove('mic-recording');
+                micBtn.title = 'Voice Input';
+            }
         };
     }
 
@@ -3016,9 +3058,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (micBtn) {
         micBtn.addEventListener('click', () => {
-            if (!recognition) return;
+            if (!recognition) {
+                showToast('Speech recognition is not supported in this browser. Try Chrome.', 4000);
+                return;
+            }
             if (isRecognizing) {
                 recognition.stop();
+                micBtn.classList.remove('mic-recording');
             } else {
                 // Manual tap resets network error state so user can retry
                 speechNetworkRetries = 0;
@@ -3028,6 +3074,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 isRecognizing = true;
                 window._speechRecognition.isActive = true;
                 micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                micBtn.classList.add('mic-recording');
+                micBtn.title = 'Tap to stop recording';
             }
         });
     }

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affiliate Program | Mathmatix AI</title>
+  <meta name="description" content="Earn commissions by sharing Mathmatix AI with your audience. Get a unique coupon code and earn on every subscription." />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/affiliate.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
+</head>
+<body>
+  <div class="affiliate-page">
+    <!-- Header -->
+    <header class="affiliate-header">
+      <a href="/chat.html" class="affiliate-back-link"><i class="fas fa-arrow-left"></i> Back</a>
+      <h1 class="affiliate-title"><i class="fas fa-handshake"></i> Affiliate Program</h1>
+      <p class="affiliate-subtitle">Share Mathmatix AI. Earn on every subscription.</p>
+    </header>
+
+    <!-- Loading State -->
+    <div id="affiliate-loading" class="affiliate-loading">
+      <div class="loading-spinner"></div>
+      <p>Loading your affiliate dashboard...</p>
+    </div>
+
+    <!-- ==================== APPLICATION FORM ==================== -->
+    <div id="affiliate-apply" class="affiliate-section" style="display:none;">
+
+      <!-- Hero / Earnings Preview -->
+      <div class="affiliate-hero">
+        <div class="hero-glow"></div>
+        <h2 class="hero-headline">Earn money sharing math education</h2>
+        <p class="hero-sub">Get a unique coupon code. Your audience saves. You earn commission on every paid subscription.</p>
+        <div class="hero-earnings-preview">
+          <div class="earnings-calc">
+            <div class="calc-label">If <strong id="calc-count">10</strong> people subscribe with your code:</div>
+            <input type="range" id="calc-slider" min="1" max="100" value="10" class="calc-slider" />
+            <div class="calc-result">
+              <div class="calc-amount" id="calc-amount">$19.90</div>
+              <div class="calc-period">/month in commissions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="affiliate-card affiliate-how-card anim-slide-up">
+        <div class="affiliate-steps">
+          <div class="affiliate-step">
+            <div class="step-icon"><i class="fas fa-tag"></i></div>
+            <div class="step-content">
+              <strong>1. Choose Your Code</strong>
+              <p>Pick a memorable coupon code for your audience</p>
+            </div>
+          </div>
+          <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+          <div class="affiliate-step">
+            <div class="step-icon"><i class="fas fa-share-nodes"></i></div>
+            <div class="step-content">
+              <strong>2. Share It</strong>
+              <p>Share on social media, your website, or in coaching sessions</p>
+            </div>
+          </div>
+          <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+          <div class="affiliate-step">
+            <div class="step-icon"><i class="fas fa-sack-dollar"></i></div>
+            <div class="step-content">
+              <strong>3. Get Paid</strong>
+              <p>Earn 20% commission on every subscription</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div class="affiliate-benefits anim-slide-up">
+        <div class="benefit">
+          <i class="fas fa-percent"></i>
+          <div><strong>20% Commission</strong><br/>On every Mathmatix+ subscription</div>
+        </div>
+        <div class="benefit">
+          <i class="fas fa-gift"></i>
+          <div><strong>10% Off for Them</strong><br/>Your audience gets a discount</div>
+        </div>
+        <div class="benefit">
+          <i class="fas fa-infinity"></i>
+          <div><strong>Recurring Income</strong><br/>Earn as long as they stay subscribed</div>
+        </div>
+        <div class="benefit">
+          <i class="fas fa-chart-line"></i>
+          <div><strong>Real-time Dashboard</strong><br/>Track clicks, signups, and earnings</div>
+        </div>
+      </div>
+
+      <!-- Application Form -->
+      <div class="affiliate-card anim-slide-up">
+        <h2><i class="fas fa-rocket"></i> Apply Now</h2>
+        <form id="affiliate-apply-form" class="affiliate-form">
+          <div class="form-group">
+            <label for="couponCode"><i class="fas fa-tag"></i> Your Coupon Code *</label>
+            <div class="coupon-preview-row">
+              <input type="text" id="couponCode" name="couponCode" placeholder="e.g., STEPHANIE20" maxlength="30" required
+                pattern="[A-Za-z0-9_-]{3,30}" title="3-30 characters: letters, numbers, hyphens, underscores" />
+              <div class="coupon-live-preview" id="coupon-live-preview">
+                <span class="preview-label">Preview:</span>
+                <span class="preview-code" id="preview-code">YOUR-CODE</span>
+              </div>
+            </div>
+            <small>This is the code your audience types at checkout. Make it memorable!</small>
+            <div class="coupon-availability" id="coupon-availability"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="displayName"><i class="fas fa-user"></i> Display Name</label>
+              <input type="text" id="displayName" name="displayName" placeholder="Your name or brand" maxlength="100" />
+            </div>
+            <div class="form-group">
+              <label for="paypalEmail"><i class="fab fa-paypal"></i> PayPal Email (for payouts)</label>
+              <input type="email" id="paypalEmail" name="paypalEmail" placeholder="your@email.com" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="website"><i class="fas fa-globe"></i> Website or Social Media</label>
+            <input type="text" id="website" name="website" placeholder="https://yoursite.com or @handle" maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label for="audience"><i class="fas fa-users"></i> Describe Your Audience</label>
+            <textarea id="audience" name="audience" rows="2" placeholder="e.g., Homeschooling families, K-8 parents, tutoring clients..." maxlength="300"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="bio"><i class="fas fa-info-circle"></i> About You (Optional)</label>
+            <textarea id="bio" name="bio" rows="2" placeholder="Tell us about your coaching or educational work..." maxlength="500"></textarea>
+          </div>
+          <div id="apply-error" class="form-error" style="display:none;"></div>
+          <button type="submit" class="affiliate-btn affiliate-btn-primary affiliate-btn-lg" id="apply-btn">
+            <i class="fas fa-paper-plane"></i> Submit Application
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== PENDING STATE ==================== -->
+    <div id="affiliate-pending" class="affiliate-section" style="display:none;">
+      <div class="affiliate-card affiliate-status-card">
+        <div class="status-icon status-pending"><i class="fas fa-clock fa-bounce"></i></div>
+        <h2>Application Under Review</h2>
+        <p>Thank you for applying! We typically review applications within 24 hours.</p>
+        <p class="status-code">Your requested code: <strong id="pending-code"></strong></p>
+        <div class="pending-tips">
+          <h4>While you wait:</h4>
+          <ul>
+            <li><i class="fas fa-check"></i> Start planning your promotional content</li>
+            <li><i class="fas fa-check"></i> Think about where you'll share your code</li>
+            <li><i class="fas fa-check"></i> We'll email you once your application is approved</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD (Approved) ==================== -->
+    <div id="affiliate-dashboard" class="affiliate-section" style="display:none;">
+
+      <!-- Welcome Banner -->
+      <div class="dash-welcome anim-fade-in">
+        <div class="dash-welcome-text">
+          <h2>Welcome back, <span id="dash-name">Affiliate</span>!</h2>
+          <p>Here's how your referrals are performing.</p>
+        </div>
+        <div class="dash-welcome-code">
+          <div class="code-badge" id="dash-code-badge">—</div>
+          <button class="copy-code-pill" id="copy-code-btn" title="Copy coupon code"><i class="fas fa-copy"></i> Copy Code</button>
+        </div>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="affiliate-stats-grid anim-slide-up">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-mouse-pointer"></i></div>
+          <div class="stat-value counter" id="stat-clicks" data-target="0">0</div>
+          <div class="stat-label">Link Clicks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+          <div class="stat-value counter" id="stat-signups" data-target="0">0</div>
+          <div class="stat-label">Signups</div>
+        </div>
+        <div class="stat-card stat-card-highlight">
+          <div class="stat-icon"><i class="fas fa-credit-card"></i></div>
+          <div class="stat-value counter" id="stat-subs" data-target="0">0</div>
+          <div class="stat-label">Subscriptions</div>
+        </div>
+        <div class="stat-card stat-card-highlight">
+          <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+          <div class="stat-value" id="stat-earned">$0.00</div>
+          <div class="stat-label">Total Earned</div>
+        </div>
+        <div class="stat-card stat-card-accent">
+          <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+          <div class="stat-value" id="stat-unpaid">$0.00</div>
+          <div class="stat-label">Unpaid Balance</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+          <div class="stat-value" id="stat-rate">20%</div>
+          <div class="stat-label">Commission Rate</div>
+        </div>
+      </div>
+
+      <!-- Share Section with Social Buttons -->
+      <div class="affiliate-card affiliate-share-card anim-slide-up">
+        <h3><i class="fas fa-share-alt"></i> Share Your Code</h3>
+        <p>Share this link. Your audience gets <strong id="share-discount">10%</strong> off Mathmatix+!</p>
+        <div class="share-link-box">
+          <input type="text" id="share-link" readonly />
+          <button class="copy-link-pill" id="copy-link-btn"><i class="fas fa-copy"></i> Copy Link</button>
+        </div>
+
+        <!-- Social Share Buttons -->
+        <div class="social-share-buttons">
+          <button class="social-btn social-facebook" id="share-fb" title="Share on Facebook">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </button>
+          <button class="social-btn social-twitter" id="share-twitter" title="Share on X/Twitter">
+            <i class="fab fa-x-twitter"></i> Post
+          </button>
+          <button class="social-btn social-email" id="share-email" title="Share via Email">
+            <i class="fas fa-envelope"></i> Email
+          </button>
+          <button class="social-btn social-whatsapp" id="share-whatsapp" title="Share on WhatsApp">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </button>
+        </div>
+
+        <!-- Quick Share Text -->
+        <div class="share-text-box">
+          <label>Ready-to-share message:</label>
+          <textarea id="share-text" rows="3" readonly></textarea>
+          <button class="copy-text-btn" id="copy-text-btn"><i class="fas fa-copy"></i></button>
+        </div>
+      </div>
+
+      <!-- Recent Conversions -->
+      <div class="affiliate-card anim-slide-up">
+        <h3><i class="fas fa-history"></i> Recent Conversions</h3>
+        <div id="conversions-list" class="conversions-list">
+          <div class="empty-state">
+            <i class="fas fa-seedling"></i>
+            <p>No conversions yet. Share your code to start earning!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payouts -->
+      <div class="affiliate-card anim-slide-up">
+        <h3><i class="fas fa-money-bill-wave"></i> Payout History</h3>
+        <div id="payouts-list" class="payouts-list">
+          <div class="empty-state">
+            <i class="fas fa-piggy-bank"></i>
+            <p>No payouts yet. Earnings are paid out monthly via PayPal.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Settings (Collapsible) -->
+      <details class="affiliate-card affiliate-settings-card">
+        <summary class="settings-toggle"><i class="fas fa-cog"></i> Profile Settings</summary>
+        <form id="affiliate-profile-form" class="affiliate-form" style="margin-top:16px;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-displayName">Display Name</label>
+              <input type="text" id="edit-displayName" maxlength="100" />
+            </div>
+            <div class="form-group">
+              <label for="edit-paypalEmail">PayPal Email</label>
+              <input type="email" id="edit-paypalEmail" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="edit-website">Website / Social</label>
+            <input type="text" id="edit-website" maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label for="edit-audience">Audience Description</label>
+            <textarea id="edit-audience" rows="2" maxlength="300"></textarea>
+          </div>
+          <div id="profile-msg" class="form-msg" style="display:none;"></div>
+          <button type="submit" class="affiliate-btn affiliate-btn-secondary">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </form>
+      </details>
+    </div>
+
+    <!-- ==================== REJECTED STATE ==================== -->
+    <div id="affiliate-rejected" class="affiliate-section" style="display:none;">
+      <div class="affiliate-card affiliate-status-card">
+        <div class="status-icon status-rejected"><i class="fas fa-times-circle"></i></div>
+        <h2>Application Not Approved</h2>
+        <p>Unfortunately, your application was not approved at this time. Please contact us at support@mathmatix.ai for more information.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    const loadingEl = document.getElementById('affiliate-loading');
+    const applyEl = document.getElementById('affiliate-apply');
+    const pendingEl = document.getElementById('affiliate-pending');
+    const dashboardEl = document.getElementById('affiliate-dashboard');
+    const rejectedEl = document.getElementById('affiliate-rejected');
+
+    function showSection(section) {
+      [loadingEl, applyEl, pendingEl, dashboardEl, rejectedEl].forEach(el => el.style.display = 'none');
+      section.style.display = '';
+      // Trigger entrance animations
+      section.querySelectorAll('.anim-slide-up, .anim-fade-in').forEach((el, i) => {
+        el.style.animationDelay = (i * 0.1) + 's';
+      });
+    }
+
+    function centsToUsd(cents) {
+      return '$' + (cents / 100).toFixed(2);
+    }
+
+    // Animated counter for stat values
+    function animateCounter(el, target) {
+      if (target === 0) { el.textContent = '0'; return; }
+      let current = 0;
+      const step = Math.max(1, Math.ceil(target / 30));
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current.toLocaleString();
+      }, 30);
+    }
+
+    // Earnings calculator
+    const calcSlider = document.getElementById('calc-slider');
+    const calcCount = document.getElementById('calc-count');
+    const calcAmount = document.getElementById('calc-amount');
+    if (calcSlider) {
+      calcSlider.addEventListener('input', function() {
+        const count = parseInt(this.value);
+        calcCount.textContent = count;
+        // 20% of $9.95 = $1.99 per sub
+        const earnings = (count * 199 / 100).toFixed(2);
+        calcAmount.textContent = '$' + earnings;
+      });
+    }
+
+    // Coupon code live preview and availability check
+    const couponInput = document.getElementById('couponCode');
+    const previewCode = document.getElementById('preview-code');
+    const availabilityEl = document.getElementById('coupon-availability');
+    let availCheckTimer = null;
+
+    if (couponInput) {
+      couponInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        previewCode.textContent = this.value || 'YOUR-CODE';
+
+        // Debounced availability check
+        clearTimeout(availCheckTimer);
+        availabilityEl.textContent = '';
+        if (this.value.length >= 3) {
+          availCheckTimer = setTimeout(async () => {
+            try {
+              const res = await fetch('/api/affiliate/validate/' + encodeURIComponent(this.value));
+              const data = await res.json();
+              if (data.valid) {
+                availabilityEl.innerHTML = '<span class="avail-taken"><i class="fas fa-times-circle"></i> Already taken</span>';
+              } else {
+                availabilityEl.innerHTML = '<span class="avail-free"><i class="fas fa-check-circle"></i> Available!</span>';
+              }
+            } catch(e) {}
+          }, 500);
+        }
+      });
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await csrfFetch('/api/affiliate/dashboard', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+
+        if (!data.isAffiliate) {
+          showSection(applyEl);
+          return;
+        }
+
+        const a = data.affiliate;
+
+        if (a.status === 'pending') {
+          document.getElementById('pending-code').textContent = a.couponCode;
+          showSection(pendingEl);
+          return;
+        }
+
+        if (a.status === 'rejected') {
+          showSection(rejectedEl);
+          return;
+        }
+
+        if (a.status === 'suspended') {
+          showSection(rejectedEl);
+          document.querySelector('#affiliate-rejected h2').textContent = 'Account Suspended';
+          document.querySelector('#affiliate-rejected p').textContent = 'Your affiliate account has been suspended. Please contact support@mathmatix.ai.';
+          return;
+        }
+
+        // Approved — populate dashboard
+        const baseUrl = window.location.origin;
+        const shareUrl = baseUrl + '/pricing.html?code=' + a.couponCode;
+
+        document.getElementById('dash-name').textContent = a.displayName || 'Affiliate';
+        document.getElementById('dash-code-badge').textContent = a.couponCode;
+        document.getElementById('stat-rate').textContent = Math.round(a.commissionRate * 100) + '%';
+
+        // Animate stat counters
+        animateCounter(document.getElementById('stat-clicks'), a.stats.totalClicks);
+        animateCounter(document.getElementById('stat-signups'), a.stats.totalSignups);
+        animateCounter(document.getElementById('stat-subs'), a.stats.totalSubscriptions);
+        document.getElementById('stat-earned').textContent = centsToUsd(a.stats.totalCommissionCents);
+        document.getElementById('stat-unpaid').textContent = centsToUsd(a.stats.unpaidCommissionCents);
+
+        document.getElementById('share-discount').textContent = a.discountPercent + '%';
+        document.getElementById('share-link').value = shareUrl;
+
+        // Pre-fill share text
+        var shareText = 'I use Mathmatix AI for math tutoring and it\'s amazing! Use my code ' + a.couponCode + ' to get ' + a.discountPercent + '% off Mathmatix+ unlimited tutoring: ' + shareUrl;
+        document.getElementById('share-text').value = shareText;
+
+        // Social share buttons
+        document.getElementById('share-fb').onclick = function() {
+          window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank', 'width=600,height=400');
+        };
+        document.getElementById('share-twitter').onclick = function() {
+          window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText), '_blank', 'width=600,height=400');
+        };
+        document.getElementById('share-email').onclick = function() {
+          window.location.href = 'mailto:?subject=' + encodeURIComponent('Save on Mathmatix AI Math Tutoring!') + '&body=' + encodeURIComponent(shareText);
+        };
+        document.getElementById('share-whatsapp').onclick = function() {
+          window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
+        };
+
+        // Fill profile form
+        document.getElementById('edit-displayName').value = a.displayName || '';
+        document.getElementById('edit-paypalEmail').value = a.paypalEmail || '';
+        document.getElementById('edit-website').value = a.website || '';
+        document.getElementById('edit-audience').value = a.audience || '';
+
+        // Conversions list
+        const convList = document.getElementById('conversions-list');
+        if (a.recentConversions && a.recentConversions.length > 0) {
+          convList.innerHTML = a.recentConversions.map(function(c) {
+            var date = new Date(c.convertedAt).toLocaleDateString();
+            var icon = c.type === 'subscription' ? 'fa-credit-card' : 'fa-user-plus';
+            var label = c.type === 'subscription' ? 'New subscription' : 'Signup';
+            return '<div class="conversion-row"><div class="conv-icon"><i class="fas ' + icon + '"></i></div><div class="conv-info"><span class="conv-label">' + label + '</span><span class="conv-date">' + date + '</span></div><span class="conv-amount">+' + centsToUsd(c.commissionCents) + '</span></div>';
+          }).join('');
+        }
+
+        // Payouts list
+        const payList = document.getElementById('payouts-list');
+        if (a.recentPayouts && a.recentPayouts.length > 0) {
+          payList.innerHTML = a.recentPayouts.map(function(p) {
+            var date = new Date(p.paidAt).toLocaleDateString();
+            return '<div class="payout-row"><div class="conv-icon payout-icon"><i class="fas fa-check-circle"></i></div><div class="conv-info"><span class="conv-label">' + centsToUsd(p.amountCents) + ' via ' + p.method + '</span><span class="conv-date">' + date + '</span></div></div>';
+          }).join('');
+        }
+
+        showSection(dashboardEl);
+      } catch (e) {
+        console.error('[Affiliate] Load error:', e);
+        showSection(applyEl);
+      }
+    }
+
+    // Application form
+    document.getElementById('affiliate-apply-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('apply-btn');
+      var errorEl = document.getElementById('apply-error');
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+      try {
+        var res = await csrfFetch('/api/affiliate/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            couponCode: document.getElementById('couponCode').value,
+            displayName: document.getElementById('displayName').value,
+            bio: document.getElementById('bio').value,
+            website: document.getElementById('website').value,
+            audience: document.getElementById('audience').value,
+            paypalEmail: document.getElementById('paypalEmail').value
+          }),
+          credentials: 'include'
+        });
+
+        var data = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = data.message || 'Something went wrong.';
+          errorEl.style.display = '';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+          return;
+        }
+
+        document.getElementById('pending-code').textContent = data.affiliate.couponCode;
+        showSection(pendingEl);
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.style.display = '';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+      }
+    });
+
+    // Profile form
+    document.getElementById('affiliate-profile-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var msgEl = document.getElementById('profile-msg');
+      msgEl.style.display = 'none';
+      try {
+        var res = await csrfFetch('/api/affiliate/profile', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            displayName: document.getElementById('edit-displayName').value,
+            paypalEmail: document.getElementById('edit-paypalEmail').value,
+            website: document.getElementById('edit-website').value,
+            audience: document.getElementById('edit-audience').value
+          }),
+          credentials: 'include'
+        });
+        if (!res.ok) {
+          var data = await res.json();
+          msgEl.className = 'form-msg form-msg-error';
+          msgEl.textContent = data.message || 'Failed to save.';
+          msgEl.style.display = '';
+          return;
+        }
+        msgEl.className = 'form-msg form-msg-success';
+        msgEl.textContent = 'Saved successfully!';
+        msgEl.style.display = '';
+        setTimeout(function() { msgEl.style.display = 'none'; }, 3000);
+      } catch (err) {
+        msgEl.className = 'form-msg form-msg-error';
+        msgEl.textContent = 'Network error.';
+        msgEl.style.display = '';
+      }
+    });
+
+    // Copy buttons
+    document.getElementById('copy-code-btn').addEventListener('click', function() {
+      var code = document.getElementById('dash-code-badge').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { this.innerHTML = '<i class="fas fa-copy"></i> Copy Code'; }, 2000);
+      });
+    });
+
+    document.getElementById('copy-link-btn').addEventListener('click', function() {
+      navigator.clipboard.writeText(document.getElementById('share-link').value).then(() => {
+        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { this.innerHTML = '<i class="fas fa-copy"></i> Copy Link'; }, 2000);
+      });
+    });
+
+    document.getElementById('copy-text-btn').addEventListener('click', function() {
+      navigator.clipboard.writeText(document.getElementById('share-text').value).then(() => {
+        this.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => { this.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
+      });
+    });
+
+    loadDashboard();
+  })();
+  </script>
+</body>
+</html>

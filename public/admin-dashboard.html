@@ -1142,6 +1142,111 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div><strong>Teachers:</strong> <span id="waitlistTeachers">-</span> | <strong>Other:</strong> <span id="waitlistOther">-</span></div>
           </div>
         </div>
+
+        <!-- Affiliate Program Management -->
+        <div class="dashboard-panel" id="affiliate-admin-panel">
+          <h2 class="dashboard-panel-header">
+            <i class="fas fa-handshake"></i> Affiliate Program
+          </h2>
+          <p>Manage affiliate applications and track referral performance.</p>
+          <div id="affiliateQuickStats" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+            <div style="margin-bottom: 5px;"><strong>Pending:</strong> <span id="affPending">-</span></div>
+            <div style="margin-bottom: 5px;"><strong>Active:</strong> <span id="affApproved">-</span></div>
+            <div><strong>Total Revenue:</strong> <span id="affRevenue">-</span></div>
+          </div>
+          <div id="affiliate-list-container" style="margin-top:12px;max-height:400px;overflow-y:auto;"></div>
+        </div>
+
+        <script>
+        (function() {
+          // Load affiliate stats for admin
+          async function loadAffiliateAdmin() {
+            try {
+              var res = await csrfFetch('/api/affiliate/admin/list', { credentials: 'include' });
+              if (!res.ok) return;
+              var data = await res.json();
+              var affs = data.affiliates || [];
+
+              var pending = affs.filter(function(a) { return a.status === 'pending'; }).length;
+              var approved = affs.filter(function(a) { return a.status === 'approved'; }).length;
+              var totalRev = affs.reduce(function(sum, a) { return sum + (a.stats?.totalRevenueCents || 0); }, 0);
+
+              document.getElementById('affPending').textContent = pending;
+              document.getElementById('affApproved').textContent = approved;
+              document.getElementById('affRevenue').textContent = '$' + (totalRev / 100).toFixed(2);
+
+              var container = document.getElementById('affiliate-list-container');
+              if (affs.length === 0) {
+                container.innerHTML = '<p style="color:#999;font-size:0.85em;">No affiliate applications yet.</p>';
+                return;
+              }
+
+              container.innerHTML = affs.map(function(a) {
+                var userName = a.user ? (a.user.firstName + ' ' + a.user.lastName) : 'Unknown';
+                var statusColor = a.status === 'approved' ? '#27ae60' : a.status === 'pending' ? '#f39c12' : '#e74c3c';
+                var commission = '$' + ((a.stats?.totalCommissionCents || 0) / 100).toFixed(2);
+                var subs = a.stats?.totalSubscriptions || 0;
+
+                var actions = '';
+                if (a.status === 'pending') {
+                  actions = '<button class="btn btn-success btn-xs aff-approve-btn" data-id="' + a._id + '" style="margin-right:4px;padding:3px 8px;font-size:0.75em;border:none;border-radius:4px;cursor:pointer;background:#27ae60;color:#fff;">Approve</button>' +
+                            '<button class="btn btn-danger btn-xs aff-reject-btn" data-id="' + a._id + '" style="padding:3px 8px;font-size:0.75em;border:none;border-radius:4px;cursor:pointer;background:#e74c3c;color:#fff;">Reject</button>';
+                } else if (a.status === 'approved') {
+                  actions = '<span style="font-size:0.75em;color:#27ae60;">Active</span>';
+                }
+
+                return '<div style="padding:10px 0;border-bottom:1px solid #eee;font-size:0.85em;">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                    '<div>' +
+                      '<strong>' + userName + '</strong> ' +
+                      '<span style="background:' + statusColor + ';color:#fff;padding:1px 6px;border-radius:4px;font-size:0.75em;">' + a.status + '</span>' +
+                      '<br/><code style="color:#6366f1;font-size:0.9em;">' + a.couponCode + '</code>' +
+                      (a.audience ? ' &mdash; <span style="color:#999;">' + a.audience + '</span>' : '') +
+                    '</div>' +
+                    '<div style="text-align:right;">' +
+                      '<div>' + subs + ' subs / ' + commission + '</div>' +
+                      '<div style="margin-top:4px;">' + actions + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+              }).join('');
+
+              // Approve / Reject handlers
+              container.querySelectorAll('.aff-approve-btn').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                  await csrfFetch('/api/affiliate/admin/' + this.dataset.id, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'approved' }),
+                    credentials: 'include'
+                  });
+                  loadAffiliateAdmin();
+                });
+              });
+              container.querySelectorAll('.aff-reject-btn').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                  await csrfFetch('/api/affiliate/admin/' + this.dataset.id, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'rejected' }),
+                    credentials: 'include'
+                  });
+                  loadAffiliateAdmin();
+                });
+              });
+            } catch(e) {
+              console.error('[Admin] Affiliate load error:', e);
+            }
+          }
+
+          // Load on page ready
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadAffiliateAdmin);
+          } else {
+            loadAffiliateAdmin();
+          }
+        })();
+        </script>
       </aside>
     </main>
 
