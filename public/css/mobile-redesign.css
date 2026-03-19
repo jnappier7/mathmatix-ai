@@ -1167,6 +1167,7 @@
         min-height: 20px;
         background: var(--clr-bg-subtle, #f5f7f9);
         border: 1.5px solid var(--clr-border-light, #e2e8f0);
+        color: #1a1a2e;
         transition: border-color 200ms ease, box-shadow 200ms ease;
     }
 
@@ -1510,11 +1511,11 @@
 
     /* Input placeholder contrast */
     body.has-chat-nav #user-input[data-placeholder]::before {
-        color: #8896a6;
+        color: #6b7a8a;
     }
 
     [data-theme="dark"] body.has-chat-nav #user-input[data-placeholder]::before {
-        color: #7a8a9a;
+        color: #8a95a5;
     }
 
     /* Chat disclaimer text */
