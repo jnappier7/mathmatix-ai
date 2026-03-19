@@ -1,0 +1,386 @@
+/* =============================================================
+   Age-Adaptive UI Tier System
+   Adapts the interface based on student grade level.
+   Applied via body classes set by applyAgeTier() in age-tier.js
+
+   Tiers:
+     .age-tier-k2   — Kindergarten through 2nd grade (ages ~5–8)
+     .age-tier-35   — 3rd through 5th grade (ages ~8–11)
+     .age-tier-68   — 6th through 8th grade (ages ~11–14)
+     .age-tier-9plus — 9th grade+ / College (ages ~14+)  [default, no overrides needed]
+
+   Composability:
+     - Stacks cleanly with IEP accommodations (iep-accommodations.css)
+     - Stacks cleanly with dark mode (dark-mode.css)
+     - IEP accommodations take priority when both apply
+   ============================================================= */
+
+
+/* =============================================================
+   TIER: K–2  (Kindergarten – 2nd Grade)
+   Largest touch targets, biggest text, icon-heavy, playful.
+   ============================================================= */
+
+.age-tier-k2 {
+    /* Typography — bigger base, more breathing room */
+    --brand-base-font-size: 1.2rem;
+    --brand-h1-font-size: clamp(2.2rem, 6vw, 3rem);
+    --brand-h2-font-size: clamp(1.8rem, 5vw, 2.4rem);
+    --brand-h3-font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    --line-height-normal: 1.7;
+    --line-height-relaxed: 1.9;
+
+    /* Spacing — more generous */
+    --space-4: 20px;
+    --space-6: 28px;
+    --space-8: 36px;
+
+    /* Borders — rounder, friendlier */
+    --radius-base: 14px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-button: 14px;
+    --radius-card: 20px;
+
+    /* Focus ring — thicker for visibility */
+    --focus-ring-width: 4px;
+}
+
+/* Buttons: larger, bolder */
+.age-tier-k2 .btn,
+.age-tier-k2 button {
+    min-height: 56px;
+    padding: 0.9rem 1.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: var(--radius-button);
+    gap: var(--space-3);
+}
+
+/* Icons inside buttons: larger */
+.age-tier-k2 .btn i,
+.age-tier-k2 .btn .fa,
+.age-tier-k2 .btn .fas,
+.age-tier-k2 .btn .far,
+.age-tier-k2 .btn .fab,
+.age-tier-k2 button i,
+.age-tier-k2 button .fa,
+.age-tier-k2 button .fas,
+.age-tier-k2 button .far {
+    font-size: 1.3em;
+}
+
+/* Chat messages: bigger, more padded */
+.age-tier-k2 .message {
+    font-size: 1.15em;
+    line-height: 1.8;
+    padding: 18px 22px;
+    border-radius: 18px;
+}
+
+/* Input fields: larger touch targets */
+.age-tier-k2 input[type="text"],
+.age-tier-k2 input[type="email"],
+.age-tier-k2 input[type="password"],
+.age-tier-k2 input[type="number"],
+.age-tier-k2 textarea,
+.age-tier-k2 select {
+    min-height: 56px;
+    font-size: 1.1rem;
+    padding: 14px 16px;
+}
+
+/* User input textarea in chat */
+.age-tier-k2 #user-input {
+    font-size: 1.15rem;
+    min-height: 52px !important;
+    line-height: 1.6;
+}
+
+/* Send button */
+.age-tier-k2 #send-button {
+    min-height: 52px;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+}
+
+/* Sidebar tools: bigger icons, labels */
+.age-tier-k2 .sidebar-tool-btn {
+    min-height: 48px;
+    font-size: 1.05rem;
+    gap: 10px;
+}
+
+.age-tier-k2 .sidebar-tool-btn i {
+    font-size: 1.4em;
+}
+
+/* Suggestion chips: bigger, easier to tap */
+.age-tier-k2 .suggestion-chip,
+.age-tier-k2 .suggestion-chip-enhanced {
+    font-size: 1.05rem;
+    padding: 12px 18px;
+    min-height: 48px;
+    border-radius: var(--radius-button);
+}
+
+/* Dashboard cards: more padded */
+.age-tier-k2 .card-style-1,
+.age-tier-k2 .dashboard-card {
+    padding: 24px;
+    border-radius: var(--radius-card);
+}
+
+/* Modal content: larger text */
+.age-tier-k2 .modal-content {
+    font-size: 1.1rem;
+}
+
+.age-tier-k2 .modal-content h2,
+.age-tier-k2 .modal-content h3 {
+    font-size: 1.6rem;
+}
+
+/* Gamification elements: bigger, more celebration */
+.age-tier-k2 .xp-notification {
+    font-size: 1.15rem;
+    padding: 14px 20px;
+}
+
+.age-tier-k2 .badge-celebration {
+    transform: scale(1.1);
+}
+
+/* Navigation: icon-heavy labels */
+.age-tier-k2 .drawer-header h2 {
+    font-size: 1.5rem;
+}
+
+/* Thinking indicator: more visible */
+.age-tier-k2 #thinking-indicator {
+    font-size: 1.1rem;
+    padding: 16px;
+}
+
+
+/* =============================================================
+   TIER: 3–5  (3rd – 5th Grade)
+   Slightly enlarged from default. Balanced between guidance
+   and independence.
+   ============================================================= */
+
+.age-tier-35 {
+    /* Typography — modest bump */
+    --brand-base-font-size: 1.08rem;
+    --brand-h1-font-size: clamp(2rem, 5vw, 2.6rem);
+    --brand-h2-font-size: clamp(1.65rem, 4vw, 2.2rem);
+    --brand-h3-font-size: clamp(1.2rem, 3vw, 1.45rem);
+    --line-height-normal: 1.6;
+    --line-height-relaxed: 1.75;
+
+    /* Spacing — slightly more generous */
+    --space-4: 18px;
+    --space-6: 26px;
+
+    /* Borders — slightly rounder */
+    --radius-base: 12px;
+    --radius-button: 12px;
+    --radius-card: 18px;
+}
+
+/* Buttons: comfortably sized */
+.age-tier-35 .btn,
+.age-tier-35 button {
+    min-height: 50px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Icons inside buttons: slightly larger */
+.age-tier-35 .btn i,
+.age-tier-35 .btn .fas,
+.age-tier-35 .btn .far,
+.age-tier-35 button i,
+.age-tier-35 button .fas,
+.age-tier-35 button .far {
+    font-size: 1.15em;
+}
+
+/* Chat messages */
+.age-tier-35 .message {
+    font-size: 1.08em;
+    line-height: 1.7;
+    padding: 16px 20px;
+    border-radius: 16px;
+}
+
+/* Input fields */
+.age-tier-35 input[type="text"],
+.age-tier-35 input[type="email"],
+.age-tier-35 input[type="password"],
+.age-tier-35 input[type="number"],
+.age-tier-35 textarea,
+.age-tier-35 select {
+    min-height: 50px;
+    font-size: 1.05rem;
+    padding: 13px 15px;
+}
+
+/* User input */
+.age-tier-35 #user-input {
+    font-size: 1.08rem;
+    min-height: 46px !important;
+}
+
+/* Suggestion chips */
+.age-tier-35 .suggestion-chip,
+.age-tier-35 .suggestion-chip-enhanced {
+    font-size: 1rem;
+    padding: 10px 16px;
+    min-height: 44px;
+}
+
+/* Dashboard cards */
+.age-tier-35 .card-style-1,
+.age-tier-35 .dashboard-card {
+    padding: 22px;
+    border-radius: var(--radius-card);
+}
+
+/* Thinking indicator */
+.age-tier-35 #thinking-indicator {
+    font-size: 1.05rem;
+}
+
+
+/* =============================================================
+   TIER: 6–8  (6th – 8th Grade)
+   Near-default sizing with subtle refinements. Clean and
+   efficient. Students at this level expect a more "grown-up"
+   interface.
+   ============================================================= */
+
+.age-tier-68 {
+    /* Typography — marginal bump for readability */
+    --brand-base-font-size: 1.02rem;
+    --line-height-normal: 1.55;
+    --line-height-relaxed: 1.7;
+}
+
+/* Buttons: just slightly friendlier than default */
+.age-tier-68 .btn,
+.age-tier-68 button {
+    min-height: 46px;
+}
+
+/* Chat messages: subtle improvement */
+.age-tier-68 .message {
+    font-size: 1.02em;
+    line-height: 1.6;
+}
+
+
+/* =============================================================
+   TIER: 9+  (9th Grade – College)
+   Uses the default design system values. No overrides needed.
+   This class exists purely for JavaScript identification.
+   ============================================================= */
+
+/* .age-tier-9plus — intentionally empty, uses base defaults */
+
+
+/* =============================================================
+   MOBILE OVERRIDES PER TIER
+   On mobile, younger tiers need even more generous sizing.
+   ============================================================= */
+
+@media (max-width: 767px) {
+    /* K-2 mobile: extra generous */
+    .age-tier-k2 .btn,
+    .age-tier-k2 button {
+        min-height: 60px;
+        font-size: 1.2rem;
+        padding: 16px 24px;
+    }
+
+    .age-tier-k2 .message {
+        font-size: 1.2em;
+        padding: 16px 18px;
+    }
+
+    .age-tier-k2 #user-input {
+        font-size: 1.2rem;
+        min-height: 56px !important;
+    }
+
+    .age-tier-k2 .suggestion-chip,
+    .age-tier-k2 .suggestion-chip-enhanced {
+        font-size: 1.1rem;
+        padding: 14px 18px;
+        min-height: 52px;
+    }
+
+    /* 3-5 mobile: slightly more generous */
+    .age-tier-35 .btn,
+    .age-tier-35 button {
+        min-height: 54px;
+        font-size: 1.1rem;
+    }
+
+    .age-tier-35 .message {
+        font-size: 1.12em;
+    }
+
+    .age-tier-35 #user-input {
+        font-size: 1.1rem;
+        min-height: 50px !important;
+    }
+}
+
+
+/* =============================================================
+   DARK MODE COMPATIBILITY
+   Ensure age-tier styles compose properly with dark mode.
+   ============================================================= */
+
+[data-theme="dark"] .age-tier-k2,
+[data-theme="dark"] .age-tier-35,
+[data-theme="dark"] .age-tier-68 {
+    /* Inherit dark mode colors — age tier only adjusts sizing */
+}
+
+
+/* =============================================================
+   IEP ACCOMMODATION PRIORITY
+   When IEP high-contrast is active alongside an age tier,
+   IEP sizing wins where there's a conflict (it's more
+   intentional / required). Age tier spacing and radius still
+   apply since they don't conflict.
+   ============================================================= */
+
+.iep-high-contrast.age-tier-k2,
+.iep-high-contrast.age-tier-35,
+.iep-high-contrast.age-tier-68 {
+    /* IEP high-contrast sets font-size: 118% on body.
+       Age tier variables still apply for spacing/radius,
+       but we let IEP control the base font scaling. */
+}
+
+/* For K-2 students with high contrast, ensure minimum button size
+   is the larger of the two (K-2's 56px > IEP's 48px) */
+.iep-high-contrast.age-tier-k2 button,
+.iep-high-contrast.age-tier-k2 .btn {
+    min-height: 56px;
+}
+
+
+/* =============================================================
+   REDUCED MOTION — age-tier animations respect system pref
+   ============================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .age-tier-k2 .badge-celebration {
+        transform: none;
+    }
+}

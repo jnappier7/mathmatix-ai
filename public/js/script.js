@@ -9,6 +9,7 @@ import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, upda
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
+import { applyAgeTier } from './modules/age-tier.js';
 import { createAssessmentSystem } from './modules/assessment.js';
 // Whiteboard is shelved for beta — see modules/whiteboard.js to re-enable
 
@@ -270,6 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Apply IEP accommodations on load (reduced distraction, high contrast, etc.)
             applyIepAccommodations(currentUser);
+
+            // Apply age-adaptive UI tier (larger buttons/text for younger students)
+            applyAgeTier(currentUser);
 
             // WHITEBOARD SHELVED FOR BETA
             // initializeWhiteboard();

@@ -16,7 +16,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="/css/whiteboard.css">
     <link rel="stylesheet" href="/css/sidebar-layout.css">
     <link rel="stylesheet" href="/css/dark-mode.css">
+    <link rel="stylesheet" href="/css/age-adaptive.css">
     <link rel="stylesheet" href="/css/mobile-fixes.css">
+    <script src="/js/age-tier-standalone.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Mastery Mode Specific Styles - Matching Main Chat Theme */
@@ -757,6 +759,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 }
                 const data = await userRes.json();
                 currentUser = data.user;
+
+                // Apply age-adaptive UI tier
+                if (window.applyAgeTierFromGrade) window.applyAgeTierFromGrade(currentUser.gradeLevel);
 
                 // Check if user has active badge
                 if (!currentUser.masteryProgress || !currentUser.masteryProgress.activeBadge) {
