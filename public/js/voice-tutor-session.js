@@ -14,7 +14,7 @@
     handsFree: true,
     autoListen: true,
     showVisuals: true,
-    silenceTimeout: 2000,
+    silenceTimeout: 1200,  // Reduced from 2s for faster auto-send after speaker finishes
     muted: false,
     tutorId: null,
     tutorName: '',
@@ -310,8 +310,8 @@
 
     // --- VAD tuning ---
     const VAD_INTERVAL_MS = 50;        // Check every 50ms (setInterval, not rAF)
-    const SILENCE_FRAMES_REQUIRED = 5; // ~250ms of consecutive silence at 20fps
-    const MIN_SPEECH_DURATION = 400;   // Ignore speech bursts shorter than this
+    const SILENCE_FRAMES_REQUIRED = 3; // ~150ms of consecutive silence (reduced from 5 for faster detection)
+    const MIN_SPEECH_DURATION = 300;   // Ignore speech bursts shorter than this (reduced from 400)
     const FIXED_THRESHOLD_DB = -38;    // Fixed fallback threshold
 
     // Adaptive noise floor: measure ambient level during first ~500ms
@@ -388,6 +388,8 @@
           } else {
             // Real speech followed by confirmed silence — start countdown
             if (!state.vadTimer) {
+              // Show visual feedback that we detected the pause
+              if (dom.statusText) dom.statusText.textContent = 'Sending...';
               state.vadTimer = setTimeout(() => {
                 state.vadTimer = null;
                 if (state.mode === 'listening') {

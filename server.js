@@ -116,6 +116,7 @@ const impersonationRoutes = require('./routes/impersonation');  // User imperson
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
+const affiliateRoutes = require('./routes/affiliate');  // Affiliate / referral program
 const schoolLicenseRoutes = require('./routes/schoolLicense');  // School/district license management
 const cleverSyncRoutes = require('./routes/cleverSync');  // Clever roster & section sync
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
@@ -604,6 +605,7 @@ app.use('/api/analytics', isAuthenticated, analyticsRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)
+app.use('/api/affiliate', affiliateRoutes); // Affiliate / referral program (some routes public)
 app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes); // FERPA/COPPA data deletion & export
 app.use('/api/consent', isAuthenticated, consentRoutes); // Privacy consent management (COPPA/FERPA)
 app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes); // Usage-gated for free tier
@@ -877,6 +879,9 @@ app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", 
 
 // Pricing page (public — accessible to everyone for conversion)
 app.get("/pricing.html", (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
+
+// Affiliate program page (requires login)
+app.get("/affiliate.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "affiliate.html")));
 
 // Protected HTML routes (require authentication)
 app.get("/role-picker.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "role-picker.html")));

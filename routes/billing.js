@@ -16,6 +16,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
 
@@ -96,7 +97,7 @@ if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
 router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
-    const { pack } = req.body;
+    const { pack, couponCode } = req.body;
     if (pack !== 'unlimited') {
       return res.status(400).json({ message: 'Only the Unlimited plan is available for new purchases.' });
     }
@@ -124,10 +125,27 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 
     // Build line item — apply Pi Day promo discount if active
     const promoActive = isPiDayPromoActive();
-    const finalPrice = promoActive ? getPromoPrice(packConfig.price) : packConfig.price;
-    const productName = promoActive
+    let finalPrice = promoActive ? getPromoPrice(packConfig.price) : packConfig.price;
+    let productName = promoActive
       ? `${packConfig.name} (Pi Day Special — $3.14 off!)`
       : packConfig.name;
+
+    // Apply affiliate coupon code discount (stacks with Pi Day promo)
+    let affiliateId = null;
+    let affiliateCoupon = null;
+    if (couponCode) {
+      const affiliate = await Affiliate.findOne({
+        couponCode: couponCode.trim().toUpperCase(),
+        status: 'approved'
+      });
+      if (affiliate) {
+        affiliateId = affiliate._id.toString();
+        affiliateCoupon = affiliate.couponCode;
+        const discountCents = Math.round(finalPrice * (affiliate.discountPercent / 100));
+        finalPrice = Math.max(finalPrice - discountCents, 100); // Floor at $1.00
+        productName += ` (${affiliate.discountPercent}% off with code ${affiliate.couponCode})`;
+      }
+    }
 
     const lineItem = {
       price_data: {
@@ -148,13 +166,20 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
+    // Include affiliate info in session metadata for webhook attribution
+    const metadata = { userId: user._id.toString(), pack };
+    if (affiliateId) {
+      metadata.affiliateId = affiliateId;
+      metadata.affiliateCoupon = affiliateCoupon;
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: packConfig.mode,
       line_items: [lineItem],
       success_url: `${baseUrl}/chat.html?upgraded=true`,
       cancel_url: `${baseUrl}/chat.html`,
-      metadata: { userId: user._id.toString(), pack }
+      metadata
     });
 
     res.json({ url: session.url });
@@ -217,6 +242,40 @@ router.post('/webhook', async (req, res) => {
           user.subscriptionTier = 'unlimited';
           user.stripeSubscriptionId = session.subscription;
           console.log(`[Billing] ${user.firstName} ${user.lastName} subscribed to Unlimited`);
+
+          // Attribute conversion to affiliate if coupon was used
+          const affId = session.metadata?.affiliateId;
+          if (affId) {
+            try {
+              const affiliate = await Affiliate.findById(affId);
+              if (affiliate && affiliate.status === 'approved') {
+                const commissionCents = Math.round(packConfig.price * affiliate.commissionRate);
+                affiliate.conversions.push({
+                  userId: user._id,
+                  type: 'subscription',
+                  plan: pack,
+                  amountCents: packConfig.price,
+                  discountCents: Math.round(packConfig.price * (affiliate.discountPercent / 100)),
+                  commissionCents,
+                  commissionRate: affiliate.commissionRate,
+                  stripeSessionId: session.id
+                });
+                affiliate.stats.totalSubscriptions += 1;
+                affiliate.stats.totalRevenueCents += packConfig.price;
+                affiliate.stats.totalCommissionCents += commissionCents;
+                affiliate.stats.unpaidCommissionCents += commissionCents;
+                await affiliate.save();
+
+                // Store referral on user
+                user.referredByAffiliateId = affiliate._id;
+                user.referredByCouponCode = affiliate.couponCode;
+
+                console.log(`[Affiliate] Conversion: ${affiliate.couponCode} → ${user.firstName} ${user.lastName} ($${(commissionCents / 100).toFixed(2)} commission)`);
+              }
+            } catch (affErr) {
+              console.error('[Affiliate] Conversion tracking error:', affErr.message);
+            }
+          }
         } else {
           // Minute pack — add seconds to existing balance, extend expiry
           user.subscriptionTier = pack;

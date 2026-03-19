@@ -24,6 +24,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="/css/pricing.css" />
+  <link rel="stylesheet" href="/css/affiliate.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX730XF5H" data-fbp=""></script>
@@ -112,6 +113,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     </div>
 
+    <!-- Affiliate Coupon Code -->
+    <div class="coupon-input-section" id="coupon-section">
+      <h4><i class="fas fa-tag"></i> Have a coupon code?</h4>
+      <div class="coupon-input-row">
+        <input type="text" id="coupon-input" placeholder="Enter coupon code" maxlength="30" />
+        <button type="button" id="coupon-apply-btn">Apply</button>
+      </div>
+      <div class="coupon-status" id="coupon-status" style="display:none;"></div>
+    </div>
+
     <!-- School License Banner -->
     <div class="pricing-school-banner">
       <i class="fas fa-school"></i>
@@ -181,6 +192,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     }
 
+    // --- Coupon Code Logic ---
+    var activeCoupon = null; // { code, discountPercent, displayName }
+
+    // Pre-fill coupon from URL ?code=XYZ
+    var urlParams = new URLSearchParams(window.location.search);
+    var urlCode = urlParams.get('code');
+    if (urlCode) {
+      document.getElementById('coupon-input').value = urlCode.toUpperCase();
+      validateCoupon(urlCode);
+    }
+
+    // Uppercase as user types
+    var couponInput = document.getElementById('coupon-input');
+    couponInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+    });
+
+    document.getElementById('coupon-apply-btn').addEventListener('click', function() {
+      validateCoupon(couponInput.value);
+    });
+    couponInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); validateCoupon(this.value); }
+    });
+
+    async function validateCoupon(code) {
+      var statusEl = document.getElementById('coupon-status');
+      if (!code || !code.trim()) { statusEl.style.display = 'none'; activeCoupon = null; return; }
+      try {
+        var res = await fetch('/api/affiliate/validate/' + encodeURIComponent(code.trim()));
+        var data = await res.json();
+        if (data.valid) {
+          activeCoupon = { code: data.couponCode, discountPercent: data.discountPercent, displayName: data.displayName };
+          statusEl.className = 'coupon-status coupon-valid';
+          statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Code <strong>' + data.couponCode + '</strong> applied! ' + data.discountPercent + '% off your first month.';
+          statusEl.style.display = '';
+          // Track click
+          fetch('/api/affiliate/click/' + encodeURIComponent(data.couponCode), { method: 'POST' }).catch(function(){});
+        } else {
+          activeCoupon = null;
+          statusEl.className = 'coupon-status coupon-invalid';
+          statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Invalid or expired coupon code.';
+          statusEl.style.display = '';
+        }
+      } catch (e) {
+        activeCoupon = null;
+        statusEl.style.display = 'none';
+      }
+    }
+
     // Handle buy button for logged-in users
     document.querySelectorAll('.card-cta-premium').forEach(btn => {
       btn.addEventListener('click', async function() {
@@ -189,10 +249,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         this.disabled = true;
         this.textContent = 'Redirecting...';
         try {
+          var body = { pack };
+          if (activeCoupon) body.couponCode = activeCoupon.code;
           const res = await csrfFetch('/api/billing/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pack }),
+            body: JSON.stringify(body),
             credentials: 'include'
           });
           if (!res.ok) throw new Error('Failed to create checkout session');

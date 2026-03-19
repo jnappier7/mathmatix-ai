@@ -637,6 +637,11 @@ const userSchema = new Schema({
   // Tracks whether user has seen the pricing page (shown once after signup)
   hasSeenPricing: { type: Boolean, default: false },
 
+  /* Affiliate / Referral tracking */
+  referredByAffiliateId: { type: Schema.Types.ObjectId, ref: 'Affiliate', default: null },  // Which affiliate referred this user
+  referredByCouponCode:  { type: String, default: null },  // Coupon code used at signup/checkout
+  isAffiliate:           { type: Boolean, default: false }, // Whether this user is an affiliate
+
   /* Timestamps */
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },
