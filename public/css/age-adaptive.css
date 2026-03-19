@@ -693,6 +693,259 @@
         min-width: 44px;
         font-size: 19px;
     }
+
+    /* -------------------------------------------------------
+       K-2 MOBILE-ONLY COMPONENTS
+       Bottom nav, drawers, bottom sheets, avatars
+       ------------------------------------------------------- */
+
+    /* Bottom navigation bar: bigger icons and labels */
+    .age-tier-k2 .chat-nav-item i {
+        font-size: 1.5rem !important;
+    }
+
+    .age-tier-k2 .chat-nav-item span {
+        font-size: 0.7rem !important;
+        font-weight: 700;
+    }
+
+    .age-tier-k2 .mobile-chat-nav {
+        height: 64px !important;
+    }
+
+    /* Offset app wrapper for taller nav */
+    .age-tier-k2 #app-layout-wrapper {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Message avatars: bigger for young learners */
+    .age-tier-k2 .message-avatar {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .age-tier-k2 .message-avatar img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    /* Mobile drawer: bigger section headers and action buttons */
+    .age-tier-k2 .drawer-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .age-tier-k2 .drawer-section h4 {
+        font-size: 0.95rem;
+    }
+
+    .age-tier-k2 .drawer-section h4 i {
+        font-size: 1.1rem;
+    }
+
+    .age-tier-k2 .drawer-action-btn {
+        padding: 16px 16px;
+        font-size: 1.05rem;
+        min-height: 56px;
+        border-radius: 14px;
+    }
+
+    .age-tier-k2 .drawer-action-btn i:first-child {
+        font-size: 1.2rem;
+    }
+
+    .age-tier-k2 .drawer-close-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+    }
+
+    /* More tools bottom sheet: bigger grid items */
+    .age-tier-k2 .more-tool-item {
+        min-height: 100px;
+        padding: 20px 14px;
+        border-radius: 16px;
+    }
+
+    .age-tier-k2 .more-tool-item i {
+        font-size: 2rem;
+    }
+
+    .age-tier-k2 .more-tool-item span {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    /* Menu bottom sheet: bigger items */
+    .age-tier-k2 .menu-sheet-item {
+        padding: 18px 18px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        min-height: 56px;
+    }
+
+    .age-tier-k2 .menu-sheet-item i:first-child {
+        font-size: 1.3rem;
+        width: 26px;
+    }
+
+    .age-tier-k2 .menu-sheet-close {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Progress display in drawer: bigger */
+    .age-tier-k2 .drawer-progress-level {
+        font-size: 2.2rem;
+    }
+
+    .age-tier-k2 .drawer-progress-bar {
+        height: 14px;
+    }
+
+    .age-tier-k2 .drawer-quick-stat-value {
+        font-size: 1.3rem;
+    }
+
+    .age-tier-k2 .drawer-quick-stat-label {
+        font-size: 0.75rem;
+    }
+
+    .age-tier-k2 .drawer-quick-stat i {
+        font-size: 1.4rem;
+    }
+
+    /* Send button: override mobile-fixes.css !important */
+    .age-tier-k2 #send-button {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        font-size: 22px !important;
+    }
+
+    /* Input field: override mobile-fixes.css !important */
+    .age-tier-k2 #user-input {
+        min-height: 52px !important;
+        font-size: 18px !important;
+        padding: 12px 18px !important;
+    }
+
+    /* Thinking indicator */
+    .age-tier-k2 #thinking-indicator {
+        font-size: 1.1rem;
+        padding: 14px 16px;
+    }
+
+    /* IEP break button: bigger on K-2 mobile */
+    .age-tier-k2 .iep-break-btn {
+        padding: 12px 18px;
+        font-size: 14px;
+        border-radius: 28px;
+    }
+
+    /* Stop audio button: bigger target */
+    .age-tier-k2 #stop-audio-btn {
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 22px;
+    }
+
+    /* -------------------------------------------------------
+       3-5 MOBILE-ONLY COMPONENTS
+       ------------------------------------------------------- */
+
+    /* Bottom nav: slight bump */
+    .age-tier-35 .chat-nav-item i {
+        font-size: 1.3rem !important;
+    }
+
+    .age-tier-35 .chat-nav-item span {
+        font-size: 0.65rem !important;
+    }
+
+    .age-tier-35 .mobile-chat-nav {
+        height: 60px !important;
+    }
+
+    .age-tier-35 #app-layout-wrapper {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Message avatars */
+    .age-tier-35 .message-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .age-tier-35 .message-avatar img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    /* Drawer action buttons */
+    .age-tier-35 .drawer-action-btn {
+        padding: 14px 14px;
+        font-size: 1rem;
+        min-height: 52px;
+    }
+
+    /* More tools: slightly larger */
+    .age-tier-35 .more-tool-item {
+        min-height: 94px;
+        padding: 18px 12px;
+    }
+
+    .age-tier-35 .more-tool-item i {
+        font-size: 1.8rem;
+    }
+
+    .age-tier-35 .more-tool-item span {
+        font-size: 0.95rem;
+    }
+
+    /* Menu sheet items */
+    .age-tier-35 .menu-sheet-item {
+        padding: 16px 16px;
+        font-size: 1rem;
+    }
+
+    /* Send button: override mobile-fixes.css */
+    .age-tier-35 #send-button {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        font-size: 17px !important;
+    }
+
+    .age-tier-35 #user-input {
+        min-height: 46px !important;
+        font-size: 17px !important;
+    }
+}
+
+
+/* =============================================================
+   LANDSCAPE MOBILE — K-2 adjustments
+   In landscape, we compress the bottom nav but keep icons
+   proportionally larger than default for younger students.
+   ============================================================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .age-tier-k2 .mobile-chat-nav {
+        height: 48px !important;
+    }
+
+    .age-tier-k2 .chat-nav-item i {
+        font-size: 1.2rem !important;
+    }
+
+    .age-tier-k2 #send-button {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
 }
 
 
