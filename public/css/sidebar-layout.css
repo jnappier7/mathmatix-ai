@@ -1314,7 +1314,7 @@ footer {
     background: #e8e0ff;
 }
 
-/* "See all" link button (leaderboard) */
+/* "See all" / "See more" link buttons */
 .sidebar-see-all-btn {
     display: block;
     width: 100%;
@@ -1331,4 +1331,13 @@ footer {
 
 .sidebar-see-all-btn:hover {
     text-decoration: underline;
+}
+
+/* Distinct section accents for Courses vs Chats */
+#sidebar-courses-section {
+    border-left: 3px solid #764ba2;
+}
+
+.sidebar-ctx-general:has(.sessions-toggle) {
+    border-left: 3px solid var(--clr-primary-teal, #12B3B3);
 }
