@@ -53,18 +53,19 @@
     display: flex;
 }
 
-/* When a panel is active, hide the main chat area on mobile */
+/* When a panel is active, disable chat interaction but keep DOM intact.
+   Panels overlay via z-index 1750 so chat is hidden visually.
+   Using pointer-events instead of visibility to preserve scroll position
+   and input content across tab switches. */
 @media (max-width: 768px) {
     body.mobile-panel-active #app-layout-wrapper,
     body.mobile-panel-active #input-container {
-        visibility: hidden;
         pointer-events: none;
     }
 
-    /* But chat panel should show the main content */
+    /* Chat tab restores interaction */
     body.mobile-panel-chat #app-layout-wrapper,
     body.mobile-panel-chat #input-container {
-        visibility: visible;
         pointer-events: auto;
     }
 }
