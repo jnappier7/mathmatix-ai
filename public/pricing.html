@@ -117,10 +117,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="coupon-input-section" id="coupon-section">
       <h4><i class="fas fa-tag"></i> Have a coupon code?</h4>
       <div class="coupon-input-row">
-        <input type="text" id="coupon-input" placeholder="Enter coupon code" maxlength="30" />
+        <input type="text" id="coupon-input" placeholder="Enter coupon code" maxlength="30" autocomplete="off" />
         <button type="button" id="coupon-apply-btn">Apply</button>
       </div>
       <div class="coupon-status" id="coupon-status" style="display:none;"></div>
+      <div class="coupon-price-preview" id="coupon-price-preview">
+        <span class="price-original" id="price-original">$9.95/mo</span>
+        <span class="price-arrow"><i class="fas fa-arrow-right"></i></span>
+        <span class="price-new" id="price-new">$8.96/mo</span>
+        <span class="price-savings" id="price-savings">You save $0.99</span>
+      </div>
+    </div>
+
+    <!-- Affiliate CTA -->
+    <div style="text-align:center;margin-top:16px;">
+      <a href="/affiliate.html" style="color:#888;font-size:0.85rem;text-decoration:none;transition:color 0.2s;">
+        <i class="fas fa-handshake" style="margin-right:4px;"></i> Want to earn money sharing Mathmatix? <span style="color:#00d4ff;text-decoration:underline;">Join our affiliate program</span>
+      </a>
     </div>
 
     <!-- School License Banner -->
@@ -218,15 +231,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     async function validateCoupon(code) {
       var statusEl = document.getElementById('coupon-status');
-      if (!code || !code.trim()) { statusEl.style.display = 'none'; activeCoupon = null; return; }
+      var previewEl = document.getElementById('coupon-price-preview');
+      if (!code || !code.trim()) {
+        statusEl.style.display = 'none';
+        previewEl.classList.remove('active');
+        activeCoupon = null;
+        return;
+      }
       try {
         var res = await fetch('/api/affiliate/validate/' + encodeURIComponent(code.trim()));
         var data = await res.json();
         if (data.valid) {
           activeCoupon = { code: data.couponCode, discountPercent: data.discountPercent, displayName: data.displayName };
+          var referredBy = data.displayName ? ' (shared by ' + data.displayName + ')' : '';
           statusEl.className = 'coupon-status coupon-valid';
-          statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Code <strong>' + data.couponCode + '</strong> applied! ' + data.discountPercent + '% off your first month.';
+          statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Code <strong>' + data.couponCode + '</strong> applied!' + referredBy;
           statusEl.style.display = '';
+
+          // Show live price preview
+          var originalPrice = 9.95;
+          var discount = originalPrice * (data.discountPercent / 100);
+          var newPrice = (originalPrice - discount).toFixed(2);
+          document.getElementById('price-original').textContent = '$' + originalPrice.toFixed(2) + '/mo';
+          document.getElementById('price-new').textContent = '$' + newPrice + '/mo';
+          document.getElementById('price-savings').textContent = 'You save $' + discount.toFixed(2);
+          previewEl.classList.add('active');
+
           // Track click
           fetch('/api/affiliate/click/' + encodeURIComponent(data.couponCode), { method: 'POST' }).catch(function(){});
         } else {
@@ -234,10 +264,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           statusEl.className = 'coupon-status coupon-invalid';
           statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Invalid or expired coupon code.';
           statusEl.style.display = '';
+          previewEl.classList.remove('active');
         }
       } catch (e) {
         activeCoupon = null;
         statusEl.style.display = 'none';
+        previewEl.classList.remove('active');
       }
     }
 

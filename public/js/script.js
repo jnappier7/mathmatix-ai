@@ -207,7 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
             window._speechRecognition.isActive = false;
             clearTimeout(_speechSilenceTimer);
             _speechFinalizedText = '';
-            if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            if (micBtn) {
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                micBtn.classList.remove('mic-recording');
+                micBtn.title = 'Voice Input';
+            }
         };
     }
 
@@ -3054,9 +3058,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (micBtn) {
         micBtn.addEventListener('click', () => {
-            if (!recognition) return;
+            if (!recognition) {
+                showToast('Speech recognition is not supported in this browser. Try Chrome.', 4000);
+                return;
+            }
             if (isRecognizing) {
                 recognition.stop();
+                micBtn.classList.remove('mic-recording');
             } else {
                 // Manual tap resets network error state so user can retry
                 speechNetworkRetries = 0;
@@ -3066,6 +3074,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 isRecognizing = true;
                 window._speechRecognition.isActive = true;
                 micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                micBtn.classList.add('mic-recording');
+                micBtn.title = 'Tap to stop recording';
             }
         });
     }
