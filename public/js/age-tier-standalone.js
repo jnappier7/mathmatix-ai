@@ -29,6 +29,13 @@
 
     var TIER_CLASSES = ['age-tier-k2', 'age-tier-35', 'age-tier-68', 'age-tier-9plus'];
 
+    var TIER_VOICE_DEFAULTS = {
+        k2:     { silenceTimeoutMs: 2000, webSpeechRate: 0.85 },
+        '35':   { silenceTimeoutMs: 1500, webSpeechRate: 0.92 },
+        '68':   { silenceTimeoutMs: 1200, webSpeechRate: 0.95 },
+        '9plus': { silenceTimeoutMs: 1200, webSpeechRate: 0.95 }
+    };
+
     window.applyAgeTierFromGrade = function (gradeLevel) {
         var tier = '9plus';
         if (gradeLevel) {
@@ -40,6 +47,10 @@
             document.body.classList.remove(TIER_CLASSES[i]);
         }
         document.body.classList.add(tierClass);
+
+        // Expose voice defaults for non-module scripts (e.g., voice-tutor-session.js)
+        window._ageTierVoiceDefaults = TIER_VOICE_DEFAULTS[tier] || TIER_VOICE_DEFAULTS['9plus'];
+
         console.log('[AgeTier] Applied tier "' + tier + '" (grade: ' + (gradeLevel || 'unknown') + ')');
     };
 })();

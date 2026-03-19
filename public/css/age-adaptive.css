@@ -432,6 +432,178 @@
 
 
 /* =============================================================
+   ENHANCED ICON PRESENTATION — K–2
+   Make toolbar icons more visually distinct with colored
+   backgrounds, so they feel like tappable "app icons" rather
+   than subtle text-area accessories.
+   ============================================================= */
+
+/* Compose bar tool buttons: colored icon pads */
+.age-tier-k2 .imessage-tool-btn {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.08);
+    color: var(--clr-primary-teal, #12B3B3);
+}
+
+.age-tier-k2 .imessage-tool-btn:hover {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.18);
+}
+
+/* Individual icon colors to help kids identify by color as well as shape */
+.age-tier-k2 #insert-equation-btn {
+    background: rgba(139, 92, 246, 0.10);
+    color: #7c3aed;
+}
+
+.age-tier-k2 #insert-equation-btn:hover {
+    background: rgba(139, 92, 246, 0.22);
+}
+
+.age-tier-k2 #attach-button {
+    background: rgba(59, 130, 246, 0.10);
+    color: #2563eb;
+}
+
+.age-tier-k2 #attach-button:hover {
+    background: rgba(59, 130, 246, 0.22);
+}
+
+.age-tier-k2 #camera-button {
+    background: rgba(245, 158, 11, 0.10);
+    color: #d97706;
+}
+
+.age-tier-k2 #camera-button:hover {
+    background: rgba(245, 158, 11, 0.22);
+}
+
+.age-tier-k2 #mic-button {
+    background: rgba(239, 68, 68, 0.10);
+    color: #dc2626;
+}
+
+.age-tier-k2 #mic-button:hover {
+    background: rgba(239, 68, 68, 0.22);
+}
+
+/* Send button: larger, more prominent green */
+.age-tier-k2 .imessage-send-btn {
+    background: var(--clr-success-green, #16C86D);
+    box-shadow: 0 2px 8px rgba(22, 200, 109, 0.3);
+}
+
+.age-tier-k2 .imessage-send-btn:hover {
+    background: #12a65a;
+    box-shadow: 0 4px 12px rgba(22, 200, 109, 0.4);
+}
+
+/* Sidebar tool buttons: colored icon backgrounds */
+.age-tier-k2 .sidebar-tool-btn {
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.age-tier-k2 .sidebar-tool-btn i {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
+    color: var(--clr-primary-teal, #12B3B3);
+    font-size: 15px;
+}
+
+/* Sidebar calculator icon: specific color */
+.age-tier-k2 #sidebar-calculator-btn i {
+    background: rgba(139, 92, 246, 0.12);
+    color: #7c3aed;
+}
+
+/* Sidebar upload icon: specific color */
+.age-tier-k2 #sidebar-upload-btn i {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+/* Sidebar resources icon */
+.age-tier-k2 #sidebar-resources-btn i {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+/* Suggestion chips: add gentle background tint */
+.age-tier-k2 .suggestion-chip-enhanced {
+    border-width: 2px;
+    font-weight: 600;
+}
+
+
+/* =============================================================
+   ENHANCED ICON PRESENTATION — 3–5
+   Subtler than K-2 but still color-coded toolbar icons for
+   easy visual scanning.
+   ============================================================= */
+
+/* Compose bar: light tinted backgrounds */
+.age-tier-35 .imessage-tool-btn {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.age-tier-35 .imessage-tool-btn:hover {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
+}
+
+/* Per-icon tints (more subtle than K-2) */
+.age-tier-35 #insert-equation-btn {
+    color: #7c3aed;
+}
+
+.age-tier-35 #attach-button {
+    color: #2563eb;
+}
+
+.age-tier-35 #camera-button {
+    color: #d97706;
+}
+
+.age-tier-35 #mic-button {
+    color: #dc2626;
+}
+
+/* Dark mode: adjust icon pad colors */
+.dark-mode .age-tier-k2 .imessage-tool-btn,
+[data-theme="dark"] .age-tier-k2 .imessage-tool-btn {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.dark-mode .age-tier-k2 #insert-equation-btn,
+[data-theme="dark"] .age-tier-k2 #insert-equation-btn {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.dark-mode .age-tier-k2 #attach-button,
+[data-theme="dark"] .age-tier-k2 #attach-button {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.dark-mode .age-tier-k2 #camera-button,
+[data-theme="dark"] .age-tier-k2 #camera-button {
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.dark-mode .age-tier-k2 #mic-button,
+[data-theme="dark"] .age-tier-k2 #mic-button {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.dark-mode .age-tier-k2 .sidebar-tool-btn i,
+[data-theme="dark"] .age-tier-k2 .sidebar-tool-btn i {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* =============================================================
    TIER: 9+  (9th Grade – College)
    Uses the default design system values. No overrides needed.
    This class exists purely for JavaScript identification.

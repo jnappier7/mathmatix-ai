@@ -114,3 +114,92 @@ export function getCurrentTier() {
 export function removeAgeTier() {
     document.body.classList.remove(...TIER_CLASSES);
 }
+
+/* =================================================================
+   Voice & Audio Defaults Per Tier
+   These are sensible defaults — the user can always override them
+   via the speed dropdown or voice-tutor settings panel.
+   ================================================================= */
+
+/**
+ * Per-tier voice/audio defaults.
+ *
+ * ttsPlaybackRate:    TTS speed multiplier (1.0 = normal)
+ * speechAutoStopMs:   Silence duration before auto-stopping mic in chat (ms)
+ * silenceTimeoutMs:   Silence duration before auto-sending in voice-tutor (ms)
+ * webSpeechRate:      Rate for COPPA web-speech fallback (0.1–10, 1.0 = normal)
+ * autoReadAloud:      Whether to auto-play TTS on new AI messages (tier default)
+ */
+const TIER_VOICE_DEFAULTS = {
+    k2: {
+        ttsPlaybackRate: 0.85,
+        speechAutoStopMs: 5000,
+        silenceTimeoutMs: 2000,
+        webSpeechRate: 0.85,
+        autoReadAloud: true,
+    },
+    '35': {
+        ttsPlaybackRate: 0.92,
+        speechAutoStopMs: 4000,
+        silenceTimeoutMs: 1500,
+        webSpeechRate: 0.92,
+        autoReadAloud: false,
+    },
+    '68': {
+        ttsPlaybackRate: 1.0,
+        speechAutoStopMs: 3000,
+        silenceTimeoutMs: 1200,
+        webSpeechRate: 0.95,
+        autoReadAloud: false,
+    },
+    '9plus': {
+        ttsPlaybackRate: 1.0,
+        speechAutoStopMs: 3000,
+        silenceTimeoutMs: 1200,
+        webSpeechRate: 0.95,
+        autoReadAloud: false,
+    },
+};
+
+/**
+ * Get voice/audio defaults for a given tier.
+ *
+ * @param {'k2'|'35'|'68'|'9plus'} [tier] - Tier identifier (defaults to current tier)
+ * @returns {Object} Voice defaults for the tier
+ */
+export function getVoiceDefaults(tier) {
+    const resolved = tier || getCurrentTier() || '9plus';
+    return TIER_VOICE_DEFAULTS[resolved] || TIER_VOICE_DEFAULTS['9plus'];
+}
+
+/**
+ * Get the default TTS playback rate for the current tier.
+ * If the user has a saved preference in localStorage, that takes priority.
+ *
+ * @returns {number} Playback rate (e.g., 0.85, 1.0)
+ */
+export function getTierPlaybackRate() {
+    const saved = localStorage.getItem('ttsPlaybackRate');
+    if (saved) return parseFloat(saved);
+    return getVoiceDefaults().ttsPlaybackRate;
+}
+
+/**
+ * Get the speech auto-stop timeout (chat mic) for the current tier.
+ *
+ * @returns {number} Milliseconds of silence before auto-stopping mic
+ */
+export function getTierSpeechAutoStop() {
+    return getVoiceDefaults().speechAutoStopMs;
+}
+
+/**
+ * Whether the current tier defaults to auto-reading AI responses aloud.
+ * Only applies if the user hasn't explicitly set an IEP audioReadAloud
+ * accommodation (which always takes priority).
+ *
+ * @returns {boolean}
+ */
+export function getTierAutoReadAloud() {
+    return getVoiceDefaults().autoReadAloud;
+}

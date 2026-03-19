@@ -9,7 +9,7 @@ import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, upda
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
-import { applyAgeTier } from './modules/age-tier.js';
+import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoReadAloud, getVoiceDefaults } from './modules/age-tier.js';
 import { createAssessmentSystem } from './modules/assessment.js';
 // Whiteboard is shelved for beta — see modules/whiteboard.js to re-enable
 
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Track finalized text so interim results can preview without duplication
         let _speechFinalizedText = '';
         let _speechSilenceTimer = null;
-        const SPEECH_AUTO_STOP_MS = 3000; // Auto-stop after 3s of silence in continuous mode
+        const SPEECH_AUTO_STOP_MS = getTierSpeechAutoStop(); // Age-tier-aware: K-2=5s, 3-5=4s, 6-8+=3s
 
         recognition.onresult = (event) => {
             // Reset silence auto-stop timer on every result
@@ -274,6 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Apply age-adaptive UI tier (larger buttons/text for younger students)
             applyAgeTier(currentUser);
+
+            // Set age-tier voice defaults (web speech rate for COPPA fallback)
+            window._ageTierWebSpeechRate = getVoiceDefaults().webSpeechRate;
 
             // WHITEBOARD SHELVED FOR BETA
             // initializeWhiteboard();
@@ -2036,6 +2039,20 @@ document.addEventListener("DOMContentLoaded", () => {
             // Apply IEP accommodations to this response
             handleIepResponseFeatures(data.iepFeatures);
 
+            // Age-tier auto-read-aloud for K-2 (if IEP didn't already trigger it)
+            if (!data.iepFeatures?.autoReadAloud && getTierAutoReadAloud()) {
+                const messages = document.querySelectorAll('.message.ai');
+                const latest = messages[messages.length - 1];
+                if (latest && window.TUTOR_CONFIG) {
+                    const tutor = window.TUTOR_CONFIG[currentUser?.selectedTutorId] || window.TUTOR_CONFIG['default'];
+                    const rawText = latest.dataset.rawText || latest.querySelector('.message-text')?.textContent || '';
+                    const speakableText = generateSpeakableText(rawText);
+                    if (speakableText) {
+                        setTimeout(() => playAudio(speakableText, tutor?.voiceId, latest.id), 400);
+                    }
+                }
+            }
+
             // Show IEP goal progress notifications to student
             handleIepGoalUpdates(data.iepGoalUpdates);
 
@@ -2379,19 +2396,20 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Load saved playback speed
+        // Load saved playback speed (or age-tier default for younger students)
         const savedSpeed = localStorage.getItem('ttsPlaybackRate');
-        if (savedSpeed) {
-            const speed = parseFloat(savedSpeed);
-            changePlaybackSpeed(speed);
-            speedDropdown.querySelectorAll('button').forEach(btn => {
-                if (parseFloat(btn.getAttribute('data-speed')) === speed) {
-                    btn.classList.add('active');
-                }
-            });
-        } else {
-            // Mark 1x as active by default
-            speedDropdown.querySelector('button[data-speed="1"]')?.classList.add('active');
+        const tierDefault = getTierPlaybackRate();
+        const speed = savedSpeed ? parseFloat(savedSpeed) : tierDefault;
+        changePlaybackSpeed(speed);
+        speedDropdown.querySelectorAll('button').forEach(btn => {
+            if (parseFloat(btn.getAttribute('data-speed')) === speed) {
+                btn.classList.add('active');
+            }
+        });
+        if (!savedSpeed && speed !== 1.0) {
+            // Mark closest speed button if tier default doesn't match a button exactly
+            const fallback = speedDropdown.querySelector('button[data-speed="1"]');
+            if (fallback && !speedDropdown.querySelector('button.active')) fallback.classList.add('active');
         }
     }
 
