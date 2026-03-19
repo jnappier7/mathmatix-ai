@@ -148,7 +148,7 @@ app.set("trust proxy", 1);
 if (isProduction) {
   app.use((req, res, next) => {
     // Skip redirects for Stripe webhook — Stripe treats any redirect as a failure
-    if (req.originalUrl === '/api/billing/webhook') {
+    if (req.originalUrl.startsWith('/api/billing/webhook')) {
       return next();
     }
     // Force HTTPS (Render terminates TLS at the proxy, so check x-forwarded-proto)
