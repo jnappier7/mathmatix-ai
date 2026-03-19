@@ -14,7 +14,7 @@
     handsFree: true,
     autoListen: true,
     showVisuals: true,
-    silenceTimeout: 1200,  // Reduced from 2s for faster auto-send after speaker finishes
+    silenceTimeout: (window._ageTierVoiceDefaults && window._ageTierVoiceDefaults.silenceTimeoutMs) || 1200,
     muted: false,
     tutorId: null,
     tutorName: '',
@@ -115,6 +115,15 @@
       const data = await res.json();
       const user = data.user;
       if (!user) return;
+
+      // Apply age-adaptive UI tier for voice tutor
+      if (window.applyAgeTierFromGrade) {
+          window.applyAgeTierFromGrade(user.gradeLevel);
+          // Update silence timeout from age-tier defaults
+          if (window._ageTierVoiceDefaults) {
+              state.silenceTimeout = window._ageTierVoiceDefaults.silenceTimeoutMs;
+          }
+      }
 
       state.tutorId = user.selectedTutorId || 'default';
 

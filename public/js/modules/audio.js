@@ -66,7 +66,9 @@ export async function processAudioQueue() {
         // 403 = COPPA under-13 block or CSRF issue — fall back to browser WebSpeech
         if (response.status === 403 && window.speechSynthesis) {
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.95;
+            // Use age-tier web speech rate if available, otherwise 0.95
+            const tierRate = (typeof window._ageTierWebSpeechRate === 'number') ? window._ageTierWebSpeechRate : 0.95;
+            utterance.rate = tierRate;
             utterance.onend = () => {
                 resetAudioState();
                 if (playButton) {

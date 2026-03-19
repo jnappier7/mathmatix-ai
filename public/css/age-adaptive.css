@@ -1,0 +1,996 @@
+/* =============================================================
+   Age-Adaptive UI Tier System
+   Adapts the interface based on student grade level.
+   Applied via body classes set by applyAgeTier() in age-tier.js
+
+   Tiers:
+     .age-tier-k2   — Kindergarten through 2nd grade (ages ~5–8)
+     .age-tier-35   — 3rd through 5th grade (ages ~8–11)
+     .age-tier-68   — 6th through 8th grade (ages ~11–14)
+     .age-tier-9plus — 9th grade+ / College (ages ~14+)  [default, no overrides needed]
+
+   Composability:
+     - Stacks cleanly with IEP accommodations (iep-accommodations.css)
+     - Stacks cleanly with dark mode (dark-mode.css)
+     - IEP accommodations take priority when both apply
+   ============================================================= */
+
+
+/* =============================================================
+   TIER: K–2  (Kindergarten – 2nd Grade)
+   Largest touch targets, biggest text, icon-heavy, playful.
+   ============================================================= */
+
+.age-tier-k2 {
+    /* Typography — bigger base, more breathing room */
+    --brand-base-font-size: 1.2rem;
+    --brand-h1-font-size: clamp(2.2rem, 6vw, 3rem);
+    --brand-h2-font-size: clamp(1.8rem, 5vw, 2.4rem);
+    --brand-h3-font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    --line-height-normal: 1.7;
+    --line-height-relaxed: 1.9;
+
+    /* Spacing — more generous */
+    --space-4: 20px;
+    --space-6: 28px;
+    --space-8: 36px;
+
+    /* Borders — rounder, friendlier */
+    --radius-base: 14px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-button: 14px;
+    --radius-card: 20px;
+
+    /* Focus ring — thicker for visibility */
+    --focus-ring-width: 4px;
+}
+
+/* Buttons: larger, bolder */
+.age-tier-k2 .btn,
+.age-tier-k2 button {
+    min-height: 56px;
+    padding: 0.9rem 1.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: var(--radius-button);
+    gap: var(--space-3);
+}
+
+/* Icons inside buttons: larger */
+.age-tier-k2 .btn i,
+.age-tier-k2 .btn .fa,
+.age-tier-k2 .btn .fas,
+.age-tier-k2 .btn .far,
+.age-tier-k2 .btn .fab,
+.age-tier-k2 button i,
+.age-tier-k2 button .fa,
+.age-tier-k2 button .fas,
+.age-tier-k2 button .far {
+    font-size: 1.3em;
+}
+
+/* Chat messages: bigger, more padded */
+.age-tier-k2 .message {
+    font-size: 1.15em;
+    line-height: 1.8;
+    padding: 18px 22px;
+    border-radius: 18px;
+}
+
+/* Input fields: larger touch targets */
+.age-tier-k2 input[type="text"],
+.age-tier-k2 input[type="email"],
+.age-tier-k2 input[type="password"],
+.age-tier-k2 input[type="number"],
+.age-tier-k2 textarea,
+.age-tier-k2 select {
+    min-height: 56px;
+    font-size: 1.1rem;
+    padding: 14px 16px;
+}
+
+/* User input textarea in chat */
+.age-tier-k2 #user-input {
+    font-size: 1.15rem;
+    min-height: 52px !important;
+    line-height: 1.6;
+}
+
+/* Send button */
+.age-tier-k2 #send-button {
+    min-height: 52px;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+}
+
+/* Sidebar tools: bigger icons, labels */
+.age-tier-k2 .sidebar-tool-btn {
+    min-height: 48px;
+    font-size: 1.05rem;
+    gap: 10px;
+}
+
+.age-tier-k2 .sidebar-tool-btn i {
+    font-size: 1.4em;
+}
+
+/* Suggestion chips: bigger, easier to tap */
+.age-tier-k2 .suggestion-chip,
+.age-tier-k2 .suggestion-chip-enhanced {
+    font-size: 1.05rem;
+    padding: 12px 18px;
+    min-height: 48px;
+    border-radius: var(--radius-button);
+}
+
+/* Dashboard cards: more padded */
+.age-tier-k2 .card-style-1,
+.age-tier-k2 .dashboard-card {
+    padding: 24px;
+    border-radius: var(--radius-card);
+}
+
+/* Modal content: larger text */
+.age-tier-k2 .modal-content {
+    font-size: 1.1rem;
+}
+
+.age-tier-k2 .modal-content h2,
+.age-tier-k2 .modal-content h3 {
+    font-size: 1.6rem;
+}
+
+/* Gamification elements: bigger, more celebration */
+.age-tier-k2 .xp-notification {
+    font-size: 1.15rem;
+    padding: 14px 20px;
+}
+
+.age-tier-k2 .badge-celebration {
+    transform: scale(1.1);
+}
+
+/* Navigation: icon-heavy labels */
+.age-tier-k2 .drawer-header h2 {
+    font-size: 1.5rem;
+}
+
+/* Thinking indicator: more visible */
+.age-tier-k2 #thinking-indicator {
+    font-size: 1.1rem;
+    padding: 16px;
+}
+
+
+/* =============================================================
+   TIER: 3–5  (3rd – 5th Grade)
+   Slightly enlarged from default. Balanced between guidance
+   and independence.
+   ============================================================= */
+
+.age-tier-35 {
+    /* Typography — modest bump */
+    --brand-base-font-size: 1.08rem;
+    --brand-h1-font-size: clamp(2rem, 5vw, 2.6rem);
+    --brand-h2-font-size: clamp(1.65rem, 4vw, 2.2rem);
+    --brand-h3-font-size: clamp(1.2rem, 3vw, 1.45rem);
+    --line-height-normal: 1.6;
+    --line-height-relaxed: 1.75;
+
+    /* Spacing — slightly more generous */
+    --space-4: 18px;
+    --space-6: 26px;
+
+    /* Borders — slightly rounder */
+    --radius-base: 12px;
+    --radius-button: 12px;
+    --radius-card: 18px;
+}
+
+/* Buttons: comfortably sized */
+.age-tier-35 .btn,
+.age-tier-35 button {
+    min-height: 50px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Icons inside buttons: slightly larger */
+.age-tier-35 .btn i,
+.age-tier-35 .btn .fas,
+.age-tier-35 .btn .far,
+.age-tier-35 button i,
+.age-tier-35 button .fas,
+.age-tier-35 button .far {
+    font-size: 1.15em;
+}
+
+/* Chat messages */
+.age-tier-35 .message {
+    font-size: 1.08em;
+    line-height: 1.7;
+    padding: 16px 20px;
+    border-radius: 16px;
+}
+
+/* Input fields */
+.age-tier-35 input[type="text"],
+.age-tier-35 input[type="email"],
+.age-tier-35 input[type="password"],
+.age-tier-35 input[type="number"],
+.age-tier-35 textarea,
+.age-tier-35 select {
+    min-height: 50px;
+    font-size: 1.05rem;
+    padding: 13px 15px;
+}
+
+/* User input */
+.age-tier-35 #user-input {
+    font-size: 1.08rem;
+    min-height: 46px !important;
+}
+
+/* Suggestion chips */
+.age-tier-35 .suggestion-chip,
+.age-tier-35 .suggestion-chip-enhanced {
+    font-size: 1rem;
+    padding: 10px 16px;
+    min-height: 44px;
+}
+
+/* Dashboard cards */
+.age-tier-35 .card-style-1,
+.age-tier-35 .dashboard-card {
+    padding: 22px;
+    border-radius: var(--radius-card);
+}
+
+/* Thinking indicator */
+.age-tier-35 #thinking-indicator {
+    font-size: 1.05rem;
+}
+
+
+/* =============================================================
+   TIER: 6–8  (6th – 8th Grade)
+   Near-default sizing with subtle refinements. Clean and
+   efficient. Students at this level expect a more "grown-up"
+   interface.
+   ============================================================= */
+
+.age-tier-68 {
+    /* Typography — marginal bump for readability */
+    --brand-base-font-size: 1.02rem;
+    --line-height-normal: 1.55;
+    --line-height-relaxed: 1.7;
+}
+
+/* Buttons: just slightly friendlier than default */
+.age-tier-68 .btn,
+.age-tier-68 button {
+    min-height: 46px;
+}
+
+/* Chat messages: subtle improvement */
+.age-tier-68 .message {
+    font-size: 1.02em;
+    line-height: 1.6;
+}
+
+
+/* =============================================================
+   ICONOGRAPHY — K–2
+   Younger students navigate by visual cues, not text labels.
+   Enlarge icons throughout, make compose bar icons unmissable,
+   and boost emoji sizing on suggestion chips.
+   ============================================================= */
+
+/* Compose bar tool buttons (equation, attach, camera, mic) */
+.age-tier-k2 .imessage-tool-btn {
+    width: 46px;
+    height: 44px;
+    font-size: 20px;
+    border-radius: 12px;
+}
+
+.age-tier-k2 .imessage-tool-btn i {
+    font-size: 20px;
+}
+
+/* Send button (circular arrow) */
+.age-tier-k2 .imessage-send-btn {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    font-size: 20px;
+}
+
+/* Suggestion chip emojis: bigger so kids recognize them */
+.age-tier-k2 .suggestion-chip-enhanced .chip-emoji {
+    font-size: 20px;
+}
+
+/* Sidebar section toggles: bigger icons, bolder labels */
+.age-tier-k2 .sessions-toggle,
+.age-tier-k2 .tools-toggle,
+.age-tier-k2 .leaderboard-toggle,
+.age-tier-k2 .quest-toggle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 12px 14px;
+}
+
+.age-tier-k2 .sessions-toggle i,
+.age-tier-k2 .tools-toggle i,
+.age-tier-k2 .leaderboard-toggle i,
+.age-tier-k2 .quest-toggle i {
+    font-size: 14px;
+}
+
+/* Drawer toggle buttons (hamburger/right-drawer) on mobile */
+.age-tier-k2 .drawer-toggle-btn {
+    font-size: 1.8rem;
+    padding: 10px 14px;
+}
+
+/* Dashboard panel headers: icon + label more prominent */
+.age-tier-k2 .dashboard-panel-header {
+    font-size: 1.3rem;
+}
+
+.age-tier-k2 .dashboard-panel-header i {
+    font-size: 1.3em;
+}
+
+/* Progress bars: thicker for visibility */
+.age-tier-k2 progress,
+.age-tier-k2 .sidebar-progress progress {
+    height: 14px;
+    border-radius: 7px;
+}
+
+/* XP level badge in header: bigger */
+.age-tier-k2 .xp-level-badge {
+    font-size: 1.1rem;
+    padding: 6px 14px;
+}
+
+/* Avatar display: slightly larger for recognition */
+.age-tier-k2 .header-avatar,
+.age-tier-k2 .sidebar-avatar {
+    width: 44px;
+    height: 44px;
+}
+
+
+/* =============================================================
+   ICONOGRAPHY — 3–5
+   Icons are moderately boosted. Kids at this age can read
+   labels but still benefit from visual anchoring.
+   ============================================================= */
+
+/* Compose bar tool buttons */
+.age-tier-35 .imessage-tool-btn {
+    width: 40px;
+    height: 38px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+.age-tier-35 .imessage-tool-btn i {
+    font-size: 18px;
+}
+
+/* Send button */
+.age-tier-35 .imessage-send-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 17px;
+}
+
+/* Suggestion chip emojis */
+.age-tier-35 .suggestion-chip-enhanced .chip-emoji {
+    font-size: 17px;
+}
+
+/* Sidebar section toggles */
+.age-tier-35 .sessions-toggle,
+.age-tier-35 .tools-toggle,
+.age-tier-35 .leaderboard-toggle,
+.age-tier-35 .quest-toggle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 11px 14px;
+}
+
+/* Sidebar tool icons */
+.age-tier-35 .sidebar-tool-btn {
+    min-height: 44px;
+    font-size: 1rem;
+    gap: 8px;
+}
+
+.age-tier-35 .sidebar-tool-btn i {
+    font-size: 1.2em;
+}
+
+/* Progress bars */
+.age-tier-35 progress,
+.age-tier-35 .sidebar-progress progress {
+    height: 12px;
+    border-radius: 6px;
+}
+
+/* Drawer toggle buttons on mobile */
+.age-tier-35 .drawer-toggle-btn {
+    font-size: 1.6rem;
+}
+
+
+/* =============================================================
+   ENHANCED ICON PRESENTATION — K–2
+   Make toolbar icons more visually distinct with colored
+   backgrounds, so they feel like tappable "app icons" rather
+   than subtle text-area accessories.
+   ============================================================= */
+
+/* Compose bar tool buttons: colored icon pads */
+.age-tier-k2 .imessage-tool-btn {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.08);
+    color: var(--clr-primary-teal, #12B3B3);
+}
+
+.age-tier-k2 .imessage-tool-btn:hover {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.18);
+}
+
+/* Individual icon colors to help kids identify by color as well as shape */
+.age-tier-k2 #insert-equation-btn {
+    background: rgba(139, 92, 246, 0.10);
+    color: #7c3aed;
+}
+
+.age-tier-k2 #insert-equation-btn:hover {
+    background: rgba(139, 92, 246, 0.22);
+}
+
+.age-tier-k2 #attach-button {
+    background: rgba(59, 130, 246, 0.10);
+    color: #2563eb;
+}
+
+.age-tier-k2 #attach-button:hover {
+    background: rgba(59, 130, 246, 0.22);
+}
+
+.age-tier-k2 #camera-button {
+    background: rgba(245, 158, 11, 0.10);
+    color: #d97706;
+}
+
+.age-tier-k2 #camera-button:hover {
+    background: rgba(245, 158, 11, 0.22);
+}
+
+.age-tier-k2 #mic-button {
+    background: rgba(239, 68, 68, 0.10);
+    color: #dc2626;
+}
+
+.age-tier-k2 #mic-button:hover {
+    background: rgba(239, 68, 68, 0.22);
+}
+
+/* Send button: larger, more prominent green */
+.age-tier-k2 .imessage-send-btn {
+    background: var(--clr-success-green, #16C86D);
+    box-shadow: 0 2px 8px rgba(22, 200, 109, 0.3);
+}
+
+.age-tier-k2 .imessage-send-btn:hover {
+    background: #12a65a;
+    box-shadow: 0 4px 12px rgba(22, 200, 109, 0.4);
+}
+
+/* Sidebar tool buttons: colored icon backgrounds */
+.age-tier-k2 .sidebar-tool-btn {
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.age-tier-k2 .sidebar-tool-btn i {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
+    color: var(--clr-primary-teal, #12B3B3);
+    font-size: 15px;
+}
+
+/* Sidebar calculator icon: specific color */
+.age-tier-k2 #sidebar-calculator-btn i {
+    background: rgba(139, 92, 246, 0.12);
+    color: #7c3aed;
+}
+
+/* Sidebar upload icon: specific color */
+.age-tier-k2 #sidebar-upload-btn i {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+/* Sidebar resources icon */
+.age-tier-k2 #sidebar-resources-btn i {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+/* Suggestion chips: add gentle background tint */
+.age-tier-k2 .suggestion-chip-enhanced {
+    border-width: 2px;
+    font-weight: 600;
+}
+
+
+/* =============================================================
+   ENHANCED ICON PRESENTATION — 3–5
+   Subtler than K-2 but still color-coded toolbar icons for
+   easy visual scanning.
+   ============================================================= */
+
+/* Compose bar: light tinted backgrounds */
+.age-tier-35 .imessage-tool-btn {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.age-tier-35 .imessage-tool-btn:hover {
+    background: rgba(var(--clr-primary-teal-rgb, 18, 179, 179), 0.12);
+}
+
+/* Per-icon tints (more subtle than K-2) */
+.age-tier-35 #insert-equation-btn {
+    color: #7c3aed;
+}
+
+.age-tier-35 #attach-button {
+    color: #2563eb;
+}
+
+.age-tier-35 #camera-button {
+    color: #d97706;
+}
+
+.age-tier-35 #mic-button {
+    color: #dc2626;
+}
+
+/* Dark mode: adjust icon pad colors */
+.dark-mode .age-tier-k2 .imessage-tool-btn,
+[data-theme="dark"] .age-tier-k2 .imessage-tool-btn {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.dark-mode .age-tier-k2 #insert-equation-btn,
+[data-theme="dark"] .age-tier-k2 #insert-equation-btn {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.dark-mode .age-tier-k2 #attach-button,
+[data-theme="dark"] .age-tier-k2 #attach-button {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.dark-mode .age-tier-k2 #camera-button,
+[data-theme="dark"] .age-tier-k2 #camera-button {
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.dark-mode .age-tier-k2 #mic-button,
+[data-theme="dark"] .age-tier-k2 #mic-button {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.dark-mode .age-tier-k2 .sidebar-tool-btn i,
+[data-theme="dark"] .age-tier-k2 .sidebar-tool-btn i {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* =============================================================
+   TIER: 9+  (9th Grade – College)
+   Uses the default design system values. No overrides needed.
+   This class exists purely for JavaScript identification.
+   ============================================================= */
+
+/* .age-tier-9plus — intentionally empty, uses base defaults */
+
+
+/* =============================================================
+   MOBILE OVERRIDES PER TIER
+   On mobile, younger tiers need even more generous sizing.
+   ============================================================= */
+
+@media (max-width: 767px) {
+    /* K-2 mobile: extra generous */
+    .age-tier-k2 .btn,
+    .age-tier-k2 button {
+        min-height: 60px;
+        font-size: 1.2rem;
+        padding: 16px 24px;
+    }
+
+    .age-tier-k2 .message {
+        font-size: 1.2em;
+        padding: 16px 18px;
+    }
+
+    .age-tier-k2 #user-input {
+        font-size: 1.2rem;
+        min-height: 56px !important;
+    }
+
+    .age-tier-k2 .suggestion-chip,
+    .age-tier-k2 .suggestion-chip-enhanced {
+        font-size: 1.1rem;
+        padding: 14px 18px;
+        min-height: 52px;
+    }
+
+    /* K-2 mobile: compose bar icons even bigger for small fingers */
+    .age-tier-k2 .imessage-tool-btn {
+        width: 50px;
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .imessage-tool-btn i {
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .imessage-send-btn {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .suggestion-chip-enhanced .chip-emoji {
+        font-size: 22px;
+    }
+
+    /* 3-5 mobile: slightly more generous */
+    .age-tier-35 .btn,
+    .age-tier-35 button {
+        min-height: 54px;
+        font-size: 1.1rem;
+    }
+
+    .age-tier-35 .message {
+        font-size: 1.12em;
+    }
+
+    .age-tier-35 #user-input {
+        font-size: 1.1rem;
+        min-height: 50px !important;
+    }
+
+    .age-tier-35 .imessage-tool-btn {
+        width: 44px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    .age-tier-35 .imessage-send-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        font-size: 19px;
+    }
+
+    /* -------------------------------------------------------
+       K-2 MOBILE-ONLY COMPONENTS
+       Bottom nav, drawers, bottom sheets, avatars
+       ------------------------------------------------------- */
+
+    /* Bottom navigation bar: bigger icons and labels */
+    .age-tier-k2 .chat-nav-item i {
+        font-size: 1.5rem !important;
+    }
+
+    .age-tier-k2 .chat-nav-item span {
+        font-size: 0.7rem !important;
+        font-weight: 700;
+    }
+
+    .age-tier-k2 .mobile-chat-nav {
+        height: 64px !important;
+    }
+
+    /* Offset app wrapper for taller nav */
+    .age-tier-k2 #app-layout-wrapper {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Message avatars: bigger for young learners */
+    .age-tier-k2 .message-avatar {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .age-tier-k2 .message-avatar img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    /* Mobile drawer: bigger section headers and action buttons */
+    .age-tier-k2 .drawer-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .age-tier-k2 .drawer-section h4 {
+        font-size: 0.95rem;
+    }
+
+    .age-tier-k2 .drawer-section h4 i {
+        font-size: 1.1rem;
+    }
+
+    .age-tier-k2 .drawer-action-btn {
+        padding: 16px 16px;
+        font-size: 1.05rem;
+        min-height: 56px;
+        border-radius: 14px;
+    }
+
+    .age-tier-k2 .drawer-action-btn i:first-child {
+        font-size: 1.2rem;
+    }
+
+    .age-tier-k2 .drawer-close-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+    }
+
+    /* More tools bottom sheet: bigger grid items */
+    .age-tier-k2 .more-tool-item {
+        min-height: 100px;
+        padding: 20px 14px;
+        border-radius: 16px;
+    }
+
+    .age-tier-k2 .more-tool-item i {
+        font-size: 2rem;
+    }
+
+    .age-tier-k2 .more-tool-item span {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    /* Menu bottom sheet: bigger items */
+    .age-tier-k2 .menu-sheet-item {
+        padding: 18px 18px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        min-height: 56px;
+    }
+
+    .age-tier-k2 .menu-sheet-item i:first-child {
+        font-size: 1.3rem;
+        width: 26px;
+    }
+
+    .age-tier-k2 .menu-sheet-close {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Progress display in drawer: bigger */
+    .age-tier-k2 .drawer-progress-level {
+        font-size: 2.2rem;
+    }
+
+    .age-tier-k2 .drawer-progress-bar {
+        height: 14px;
+    }
+
+    .age-tier-k2 .drawer-quick-stat-value {
+        font-size: 1.3rem;
+    }
+
+    .age-tier-k2 .drawer-quick-stat-label {
+        font-size: 0.75rem;
+    }
+
+    .age-tier-k2 .drawer-quick-stat i {
+        font-size: 1.4rem;
+    }
+
+    /* Send button: override mobile-fixes.css !important */
+    .age-tier-k2 #send-button {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        font-size: 22px !important;
+    }
+
+    /* Input field: override mobile-fixes.css !important */
+    .age-tier-k2 #user-input {
+        min-height: 52px !important;
+        font-size: 18px !important;
+        padding: 12px 18px !important;
+    }
+
+    /* Thinking indicator */
+    .age-tier-k2 #thinking-indicator {
+        font-size: 1.1rem;
+        padding: 14px 16px;
+    }
+
+    /* IEP break button: bigger on K-2 mobile */
+    .age-tier-k2 .iep-break-btn {
+        padding: 12px 18px;
+        font-size: 14px;
+        border-radius: 28px;
+    }
+
+    /* Stop audio button: bigger target */
+    .age-tier-k2 #stop-audio-btn {
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 22px;
+    }
+
+    /* -------------------------------------------------------
+       3-5 MOBILE-ONLY COMPONENTS
+       ------------------------------------------------------- */
+
+    /* Bottom nav: slight bump */
+    .age-tier-35 .chat-nav-item i {
+        font-size: 1.3rem !important;
+    }
+
+    .age-tier-35 .chat-nav-item span {
+        font-size: 0.65rem !important;
+    }
+
+    .age-tier-35 .mobile-chat-nav {
+        height: 60px !important;
+    }
+
+    .age-tier-35 #app-layout-wrapper {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Message avatars */
+    .age-tier-35 .message-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .age-tier-35 .message-avatar img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    /* Drawer action buttons */
+    .age-tier-35 .drawer-action-btn {
+        padding: 14px 14px;
+        font-size: 1rem;
+        min-height: 52px;
+    }
+
+    /* More tools: slightly larger */
+    .age-tier-35 .more-tool-item {
+        min-height: 94px;
+        padding: 18px 12px;
+    }
+
+    .age-tier-35 .more-tool-item i {
+        font-size: 1.8rem;
+    }
+
+    .age-tier-35 .more-tool-item span {
+        font-size: 0.95rem;
+    }
+
+    /* Menu sheet items */
+    .age-tier-35 .menu-sheet-item {
+        padding: 16px 16px;
+        font-size: 1rem;
+    }
+
+    /* Send button: override mobile-fixes.css */
+    .age-tier-35 #send-button {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        font-size: 17px !important;
+    }
+
+    .age-tier-35 #user-input {
+        min-height: 46px !important;
+        font-size: 17px !important;
+    }
+}
+
+
+/* =============================================================
+   LANDSCAPE MOBILE — K-2 adjustments
+   In landscape, we compress the bottom nav but keep icons
+   proportionally larger than default for younger students.
+   ============================================================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .age-tier-k2 .mobile-chat-nav {
+        height: 48px !important;
+    }
+
+    .age-tier-k2 .chat-nav-item i {
+        font-size: 1.2rem !important;
+    }
+
+    .age-tier-k2 #send-button {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+}
+
+
+/* =============================================================
+   DARK MODE COMPATIBILITY
+   Ensure age-tier styles compose properly with dark mode.
+   ============================================================= */
+
+[data-theme="dark"] .age-tier-k2,
+[data-theme="dark"] .age-tier-35,
+[data-theme="dark"] .age-tier-68 {
+    /* Inherit dark mode colors — age tier only adjusts sizing */
+}
+
+
+/* =============================================================
+   IEP ACCOMMODATION PRIORITY
+   When IEP high-contrast is active alongside an age tier,
+   IEP sizing wins where there's a conflict (it's more
+   intentional / required). Age tier spacing and radius still
+   apply since they don't conflict.
+   ============================================================= */
+
+.iep-high-contrast.age-tier-k2,
+.iep-high-contrast.age-tier-35,
+.iep-high-contrast.age-tier-68 {
+    /* IEP high-contrast sets font-size: 118% on body.
+       Age tier variables still apply for spacing/radius,
+       but we let IEP control the base font scaling. */
+}
+
+/* For K-2 students with high contrast, ensure minimum button size
+   is the larger of the two (K-2's 56px > IEP's 48px) */
+.iep-high-contrast.age-tier-k2 button,
+.iep-high-contrast.age-tier-k2 .btn {
+    min-height: 56px;
+}
+
+
+/* =============================================================
+   REDUCED MOTION — age-tier animations respect system pref
+   ============================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .age-tier-k2 .badge-celebration {
+        transform: none;
+    }
+}

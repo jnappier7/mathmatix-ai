@@ -15,7 +15,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/age-adaptive.css" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/age-tier-standalone.js"></script>
   <script src="/js/i18n-translations.js"></script>
   <script src="/js/i18n.js"></script>
   <style>
@@ -605,6 +607,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         currentUserId = user._id;
         document.getElementById('student-name').textContent = user.firstName || 'Student';
+
+        // Apply age-adaptive UI tier
+        if (window.applyAgeTierFromGrade) window.applyAgeTierFromGrade(user.gradeLevel);
 
         // Initialize join class feature
         initJoinClass(user);
