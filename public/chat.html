@@ -258,7 +258,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- My Courses (always visible — primary navigation for enrolled students) -->
     <div class="sidebar-section" id="sidebar-courses-section">
       <button class="courses-toggle" id="courses-toggle-btn">
-        <span data-i18n="chat.myCourses">My Courses</span>
+        <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
@@ -310,10 +310,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <!-- ═══ GENERAL CHAT CONTEXT (hidden when in a course) ═══ -->
 
-    <!-- My Sessions -->
+    <!-- My Chats (renamed from "My Sessions" to differentiate from course lessons) -->
     <div class="sidebar-section sidebar-ctx-general">
       <button class="sessions-toggle">
-        <span data-i18n="chat.mySessions">My Sessions</span>
+        <span><i class="fas fa-comments" style="margin-right: 6px; font-size: 13px; color: var(--clr-primary-teal, #12B3B3);"></i>My Chats</span>
         <i class="fas fa-chevron-down"></i>
       </button>
 
@@ -321,12 +321,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <!-- Session Search -->
         <div class="session-search-container">
           <i class="fas fa-search session-search-icon"></i>
-          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search sessions..." data-i18n-placeholder="chat.searchSessions">
+          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search chats..." data-i18n-placeholder="chat.searchSessions">
         </div>
 
         <button id="new-session-btn" class="sidebar-tool-btn special">
           <i class="fas fa-plus-circle"></i>
-          <span data-i18n="chat.newSession">New Session</span>
+          <span data-i18n="chat.newSession">New Chat</span>
         </button>
         <div id="sessions-list">
           <!-- Sessions loaded dynamically by sidebar.js -->
@@ -1477,7 +1477,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <!-- Recent Sessions Section -->
         <div id="returning-user-sessions" style="display: none;">
           <div class="returning-section-label">
-            <i class="fas fa-comments"></i> Recent Sessions
+            <i class="fas fa-comments"></i> Recent Chats
           </div>
           <div id="returning-sessions-list" class="returning-sessions-list">
             <!-- Populated dynamically -->

@@ -353,16 +353,16 @@ window.I18N_TRANSLATIONS = {
     Vietnamese: 'Tải lên bài làm', Arabic: 'رفع العمل', Somali: 'Soo geli shaqada', French: 'Télécharger le travail', German: 'Arbeit hochladen'
   },
   'chat.mySessions': {
-    English: 'My Sessions', Spanish: 'Mis sesiones', Russian: 'Мои сессии', Chinese: '我的会话',
-    Vietnamese: 'Phiên của tôi', Arabic: 'جلساتي', Somali: 'Fadhiyaadkayga', French: 'Mes sessions', German: 'Meine Sitzungen'
+    English: 'My Chats', Spanish: 'Mis chats', Russian: 'Мои чаты', Chinese: '我的聊天',
+    Vietnamese: 'Trò chuyện của tôi', Arabic: 'محادثاتي', Somali: 'Wada-sheekeysiyadayda', French: 'Mes discussions', German: 'Meine Chats'
   },
   'chat.searchSessions': {
-    English: 'Search sessions...', Spanish: 'Buscar sesiones...', Russian: 'Поиск сессий...', Chinese: '搜索会话…',
-    Vietnamese: 'Tìm kiếm phiên...', Arabic: 'البحث في الجلسات...', Somali: 'Raadi fadhiyaadka...', French: 'Rechercher des sessions…', German: 'Sitzungen suchen…'
+    English: 'Search chats...', Spanish: 'Buscar chats...', Russian: 'Поиск чатов...', Chinese: '搜索聊天…',
+    Vietnamese: 'Tìm kiếm trò chuyện...', Arabic: 'البحث في المحادثات...', Somali: 'Raadi wada-sheekeysiyo...', French: 'Rechercher des discussions…', German: 'Chats suchen…'
   },
   'chat.newSession': {
-    English: 'New Session', Spanish: 'Nueva sesión', Russian: 'Новая сессия', Chinese: '新会话',
-    Vietnamese: 'Phiên mới', Arabic: 'جلسة جديدة', Somali: 'Fadhiyaad cusub', French: 'Nouvelle session', German: 'Neue Sitzung'
+    English: 'New Chat', Spanish: 'Nuevo chat', Russian: 'Новый чат', Chinese: '新聊天',
+    Vietnamese: 'Trò chuyện mới', Arabic: 'محادثة جديدة', Somali: 'Wada-sheekeysiga cusub', French: 'Nouvelle discussion', German: 'Neuer Chat'
   },
   'chat.askQuestion': {
     English: 'Ask a math question...', Spanish: 'Haz una pregunta de matemáticas...', Russian: 'Задайте вопрос по математике...', Chinese: '问一个数学问题…',

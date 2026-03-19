@@ -404,6 +404,7 @@ class Sidebar {
 
         // Cache conversations for search
         this.conversations = conversations;
+        this._sessionsShowAll = false;
 
         // Clear existing
         sessionsList.innerHTML = '';
@@ -427,7 +428,7 @@ class Sidebar {
             pinnedSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, true));
         }
 
-        // Add regular sessions
+        // Add regular sessions (show only 3 by default)
         if (regularSessions.length > 0) {
             if (pinnedSessions.length > 0) {
                 const recentHeader = document.createElement('div');
@@ -436,7 +437,17 @@ class Sidebar {
                 sessionsList.appendChild(recentHeader);
             }
 
-            regularSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, false));
+            const defaultShow = 3;
+            regularSessions.slice(0, defaultShow).forEach(conv => this.renderSessionItem(conv, sessionsList, false));
+
+            // "See more" button if there are more than 3 regular sessions
+            if (regularSessions.length > defaultShow) {
+                const seeMoreBtn = document.createElement('button');
+                seeMoreBtn.className = 'sidebar-see-all-btn sessions-see-more-btn';
+                seeMoreBtn.textContent = `See ${regularSessions.length - defaultShow} more`;
+                seeMoreBtn.addEventListener('click', () => this.toggleAllSessions());
+                sessionsList.appendChild(seeMoreBtn);
+            }
         }
 
         // Show empty state if no conversations
@@ -445,10 +456,57 @@ class Sidebar {
             emptyState.className = 'session-empty-state';
             emptyState.innerHTML = `
                 <span style="color: #888; font-size: 13px; padding: 12px; display: block; text-align: center;">
-                    No sessions yet. Click <strong>New Session</strong> to start!
+                    No chats yet. Click <strong>New Chat</strong> to start!
                 </span>
             `;
             sessionsList.appendChild(emptyState);
+        }
+    }
+
+    /**
+     * Toggle between showing 3 sessions and all sessions
+     */
+    toggleAllSessions() {
+        this._sessionsShowAll = !this._sessionsShowAll;
+
+        const sessionsList = document.getElementById('sessions-list');
+        if (!sessionsList) return;
+
+        sessionsList.innerHTML = '';
+
+        const chatConversations = this.conversations.filter(c =>
+            c.conversationType === 'general' || c.conversationType === 'topic'
+        );
+        const pinnedSessions = chatConversations.filter(c => c.isPinned);
+        const regularSessions = chatConversations.filter(c => !c.isPinned);
+
+        if (pinnedSessions.length > 0) {
+            const pinnedHeader = document.createElement('div');
+            pinnedHeader.className = 'session-divider';
+            pinnedHeader.innerHTML = '<span><i class="fas fa-thumbtack"></i> Pinned</span>';
+            sessionsList.appendChild(pinnedHeader);
+            pinnedSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, true));
+        }
+
+        if (regularSessions.length > 0) {
+            if (pinnedSessions.length > 0) {
+                const recentHeader = document.createElement('div');
+                recentHeader.className = 'session-divider';
+                recentHeader.innerHTML = '<span>Recent</span>';
+                sessionsList.appendChild(recentHeader);
+            }
+
+            const defaultShow = 3;
+            const showCount = this._sessionsShowAll ? regularSessions.length : defaultShow;
+            regularSessions.slice(0, showCount).forEach(conv => this.renderSessionItem(conv, sessionsList, false));
+
+            if (regularSessions.length > defaultShow) {
+                const seeMoreBtn = document.createElement('button');
+                seeMoreBtn.className = 'sidebar-see-all-btn sessions-see-more-btn';
+                seeMoreBtn.textContent = this._sessionsShowAll ? 'Show less' : `See ${regularSessions.length - defaultShow} more`;
+                seeMoreBtn.addEventListener('click', () => this.toggleAllSessions());
+                sessionsList.appendChild(seeMoreBtn);
+            }
         }
     }
 
