@@ -1,8 +1,8 @@
-// middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
+// middleware/usageGate.js — Usage enforcement for unlimited tier & school licenses
 //
 // OPTION D — School License Model:
 //   Teachers: always free unlimited (drives adoption)
-//   Students: 20 free AI-minutes per week
+//   Students: 30 free AI-minutes per week
 //   Students with school license: unlimited (school purchased access)
 //   Unlimited individual subscribers: always pass
 //   Parents/admins: always pass (free unlimited)
@@ -61,13 +61,12 @@ async function isLicenseValid(licenseId) {
 }
 
 /**
- * Middleware that gates AI-powered endpoints behind pack/subscription limits.
+ * Middleware that gates AI-powered endpoints behind subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
  * - Teachers, parents, admins: always pass (free unlimited)
  * - Students with active school license: always pass (school purchased access)
  * - Unlimited individual subscribers: always pass
  * - Any student with free weekly minutes remaining: pass (free minutes first)
- * - Pack users with pack balance remaining: pass (pack used after free minutes)
  * - Otherwise: 402 Payment Required
  */
 async function usageGate(req, res, next) {
@@ -142,37 +141,7 @@ async function usageGate(req, res, next) {
       return next();
     }
 
-    // --- Free minutes exhausted — check pack balance ---
-    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
-      const expired = user.packExpiresAt && now > user.packExpiresAt;
-      const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
-
-      if (packRemaining > 0) {
-        // Pack has balance — let them through
-        if (packRemaining <= 120) {
-          res.setHeader('X-Usage-Warning', 'low');
-          res.setHeader('X-Usage-Remaining-Seconds', packRemaining.toString());
-        }
-        return next();
-      }
-
-      // Pack empty or expired — auto-downgrade and clean up stale fields
-      User.findByIdAndUpdate(user._id, {
-        $set: { subscriptionTier: 'free', packSecondsRemaining: 0, packExpiresAt: null }
-      }).catch(err => console.error('[UsageGate] Downgrade error:', err.message));
-
-      return res.status(402).json({
-        message: "Your free minutes and minute pack are both used up. Upgrade to Unlimited for non-stop tutoring, ask your school about a Mathmatix license, or come back next week!",
-        usageLimitReached: true,
-        tier: 'free',
-        freeSecondsRemaining: 0,
-        expired,
-        upgradeRequired: true
-      });
-    }
-
-    // --- Free-tier student, no pack, free minutes exhausted ---
-    // Calculate when free minutes reset
+    // --- Free minutes exhausted — calculate when they reset ---
     const resetDate = new Date(lastReset.getTime() + 7 * 24 * 60 * 60 * 1000);
     const msUntilReset = resetDate - now;
     const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
@@ -273,7 +242,7 @@ function premiumFeatureGate(featureName) {
 
 /**
  * Feature gate for paid-only features (courses, Show My Work).
- * Any paying user (pack or unlimited) or school-licensed student gets access.
+ * Unlimited subscribers or school-licensed students get access.
  */
 function paidFeatureGate(featureName) {
   return async (req, res, next) => {
@@ -287,10 +256,8 @@ function paidFeatureGate(featureName) {
       return next();
     }
 
-    // Any paid subscriber (pack or unlimited)
-    if (user.subscriptionTier === 'unlimited' ||
-        user.subscriptionTier === 'pack_60' ||
-        user.subscriptionTier === 'pack_120') {
+    // Unlimited subscribers
+    if (user.subscriptionTier === 'unlimited') {
       return next();
     }
 

@@ -241,49 +241,23 @@ describe('Feature Gating Middleware', () => {
       expect(new Date(body.nextResetAt).getTime()).toBeGreaterThan(Date.now());
     });
 
-    // --- Pack users ---
-    test('should allow pack user with remaining pack balance after free minutes used', async () => {
+    // --- Legacy pack tiers are no longer recognized ---
+    test('should treat pack_60 as free tier when free minutes exhausted', async () => {
       req.user.subscriptionTier = 'pack_60';
       req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
       req.user.packSecondsRemaining = 3000;
-      req.user.packExpiresAt = new Date(Date.now() + 86400000);
       await usageGate(req, res, next);
-      expect(next).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(402);
+      expect(next).not.toHaveBeenCalled();
     });
 
-    test('should return 402 when pack is expired', async () => {
+    test('should treat pack_120 as free tier when free minutes exhausted', async () => {
       req.user.subscriptionTier = 'pack_120';
       req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
       req.user.packSecondsRemaining = 3000;
-      req.user.packExpiresAt = new Date(Date.now() - 86400000); // Expired
       await usageGate(req, res, next);
       expect(res.status).toHaveBeenCalledWith(402);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        expired: true,
-        upgradeRequired: true,
-      }));
-    });
-
-    test('should return 402 and auto-downgrade when pack balance is 0', async () => {
-      req.user.subscriptionTier = 'pack_60';
-      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
-      req.user.packSecondsRemaining = 0;
-      req.user.packExpiresAt = new Date(Date.now() + 86400000);
-      await usageGate(req, res, next);
-      expect(res.status).toHaveBeenCalledWith(402);
-      expect(User.findByIdAndUpdate).toHaveBeenCalledWith('student123', {
-        $set: { subscriptionTier: 'free', packSecondsRemaining: 0, packExpiresAt: null }
-      });
-    });
-
-    test('should set low pack warning when <= 2 minutes remain in pack', async () => {
-      req.user.subscriptionTier = 'pack_60';
-      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
-      req.user.packSecondsRemaining = 60; // 1 minute left
-      req.user.packExpiresAt = new Date(Date.now() + 86400000);
-      await usageGate(req, res, next);
-      expect(next).toHaveBeenCalled();
-      expect(res.setHeader).toHaveBeenCalledWith('X-Usage-Warning', 'low');
+      expect(next).not.toHaveBeenCalled();
     });
 
     // --- Error handling ---
@@ -500,18 +474,21 @@ describe('Feature Gating Middleware', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    test('should allow pack_60 users', async () => {
+    // --- Legacy pack tiers are no longer recognized ---
+    test('should block pack_60 users (packs removed)', async () => {
       gate = paidFeatureGate('Advanced courses');
       req.user.subscriptionTier = 'pack_60';
       await gate(req, res, next);
-      expect(next).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(402);
+      expect(next).not.toHaveBeenCalled();
     });
 
-    test('should allow pack_120 users', async () => {
+    test('should block pack_120 users (packs removed)', async () => {
       gate = paidFeatureGate('Advanced courses');
       req.user.subscriptionTier = 'pack_120';
       await gate(req, res, next);
-      expect(next).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(402);
+      expect(next).not.toHaveBeenCalled();
     });
 
     // --- School license ---
@@ -606,13 +583,10 @@ describe('Feature Gating Middleware', () => {
       expect(User.findOne).not.toHaveBeenCalled();
     });
 
-    test('free minutes should be checked before pack balance', async () => {
-      req.user.subscriptionTier = 'pack_60';
+    test('free minutes should be consumed before blocking', async () => {
       req.user.weeklyAISeconds = 600; // Still has free minutes
-      req.user.packSecondsRemaining = 3000;
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
-      // Free minutes header should be set (not pack header)
       expect(res.setHeader).toHaveBeenCalledWith(
         'X-Free-Remaining-Seconds',
         expect.any(String)
