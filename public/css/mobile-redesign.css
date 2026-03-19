@@ -1207,7 +1207,7 @@
         background: #0E9494;
     }
 
-    /* Tool buttons styling */
+    /* Tool buttons styling — HIGH CONTRAST icons */
     body.has-chat-nav .imessage-tool-btn {
         width: 36px;
         height: 36px;
@@ -1215,23 +1215,30 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--clr-bg-subtle, #f5f7f9);
-        border: 1px solid var(--clr-border-light, #e2e8f0);
-        color: var(--clr-text-dim, #8896a6);
-        font-size: 0.9rem;
+        background: var(--clr-bg-subtle, #f0f2f5);
+        border: 1px solid var(--clr-border-light, #d1d5db);
+        color: #4a5568;
+        font-size: 0.95rem;
         transition: background 150ms ease, transform 150ms ease;
     }
 
     body.has-chat-nav .imessage-tool-btn:active {
         transform: scale(0.9);
-        background: rgba(18, 179, 179, 0.08);
+        background: rgba(18, 179, 179, 0.12);
         color: var(--clr-primary-teal, #12B3B3);
+        border-color: var(--clr-primary-teal, #12B3B3);
     }
 
     [data-theme="dark"] body.has-chat-nav .imessage-tool-btn {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #8896a6;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #c8d0da;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .imessage-tool-btn:active {
+        background: rgba(18, 179, 179, 0.2);
+        color: #2dd4bf;
+        border-color: #2dd4bf;
     }
 
     /* Better message bubble spacing */
@@ -1268,25 +1275,32 @@
 
     body.has-chat-nav .suggestion-chip {
         border-radius: 16px;
-        padding: 6px 14px;
-        font-size: 0.82rem;
-        font-weight: 500;
+        padding: 7px 14px;
+        font-size: 0.84rem;
+        font-weight: 600;
         background: var(--clr-bg-light, #fff);
-        border: 1px solid var(--clr-border-light, #e2e8f0);
-        color: var(--clr-text, #18202B);
+        border: 1px solid var(--clr-border-light, #d1d5db);
+        color: #2d3748;
         white-space: nowrap;
     }
 
     body.has-chat-nav .suggestion-chip:active {
-        background: rgba(18, 179, 179, 0.08);
+        background: rgba(18, 179, 179, 0.1);
         border-color: var(--clr-primary-teal, #12B3B3);
-        color: var(--clr-primary-teal, #12B3B3);
+        color: #0d8a8a;
     }
 
     [data-theme="dark"] body.has-chat-nav .suggestion-chip {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #e8ecf2;
+        font-weight: 500;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .suggestion-chip:active {
+        background: rgba(18, 179, 179, 0.15);
+        border-color: #2dd4bf;
+        color: #2dd4bf;
     }
 }
 
@@ -1325,14 +1339,16 @@
         background: rgba(18, 179, 179, 0.06);
     }
 
-    /* Larger, rounder keys */
+    /* Larger, rounder keys with HIGH CONTRAST text */
     body.has-chat-nav .mk-key {
         min-height: 46px;
         border-radius: 10px;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        font-weight: 500;
         background: var(--clr-bg-light, #fff);
         border: 1px solid var(--clr-border-light, #e2e8f0);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        color: #1a1a2e;
     }
 
     body.has-chat-nav .mk-key:active {
@@ -1341,33 +1357,89 @@
         transform: scale(0.93);
     }
 
+    /* Key main text — bold and high contrast */
+    body.has-chat-nav .mk-key-main {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    /* Key hint text — visible but secondary */
+    body.has-chat-nav .mk-key-hint {
+        font-size: 0.58rem;
+        font-weight: 600;
+        color: #5b6876;
+    }
+
+    /* Sub/sup in keys */
+    body.has-chat-nav .mk-key sup,
+    body.has-chat-nav .mk-key sub {
+        font-size: 0.65em;
+        color: inherit;
+    }
+
     [data-theme="dark"] body.has-chat-nav .mk-key {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #f0f0f5;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-key-main {
+        color: #f0f0f5;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-key-hint {
+        color: #a0aab5;
     }
 
     [data-theme="dark"] body.has-chat-nav .mk-key:active {
         background: rgba(18, 179, 179, 0.2);
     }
 
+    /* Inactive tab text — needs to be readable */
+    body.has-chat-nav .mk-tab-icon {
+        color: #5b6876;
+        font-weight: 700;
+    }
+
+    body.has-chat-nav .mk-tab-label {
+        color: #5b6876;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-tab-icon,
+    [data-theme="dark"] body.has-chat-nav .mk-tab-label {
+        color: #a0aab5;
+    }
+
     /* Delete key */
     body.has-chat-nav .mk-key-action {
-        background: rgba(239, 68, 68, 0.08);
-        border-color: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #dc2626;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-key-action {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.25);
+        color: #f87171;
     }
 
     body.has-chat-nav .mk-key-action:active {
-        background: rgba(239, 68, 68, 0.2);
+        background: rgba(239, 68, 68, 0.25);
     }
 
-    /* Section labels */
+    /* Section labels — high contrast teal */
     body.has-chat-nav .mk-section-label {
-        color: var(--clr-primary-teal, #12B3B3);
+        color: #0d8a8a;
         font-weight: 700;
-        font-size: 0.62rem;
-        padding: 8px 4px 3px;
+        font-size: 0.65rem;
+        letter-spacing: 0.06em;
+        padding: 10px 4px 3px;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-section-label {
+        color: #2dd4bf;
     }
 
     /* Math field in compose bar */
@@ -1403,21 +1475,56 @@
         transform: scale(0.95);
     }
 
-    /* Helper text */
+    /* Helper text — needs to be readable */
     body.has-chat-nav .mk-helper-text {
-        font-size: 0.72rem;
-        color: var(--clr-text-dim, #8896a6);
+        font-size: 0.75rem;
+        color: #5b6876;
+        font-weight: 500;
     }
 
     body.has-chat-nav .mk-helper-text strong {
-        color: var(--clr-primary-teal, #12B3B3);
+        color: #0d8a8a;
+        font-weight: 700;
     }
 
-    /* Active tool button indicator */
+    [data-theme="dark"] body.has-chat-nav .mk-helper-text {
+        color: #a0aab5;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .mk-helper-text strong {
+        color: #2dd4bf;
+    }
+
+    /* Active tool button indicator — clearly highlighted */
     body.has-chat-nav .imessage-tool-btn.mk-active {
-        background: rgba(18, 179, 179, 0.15);
-        color: var(--clr-primary-teal, #12B3B3);
+        background: rgba(18, 179, 179, 0.18);
+        color: #0d8a8a;
         border-color: var(--clr-primary-teal, #12B3B3);
+    }
+
+    [data-theme="dark"] body.has-chat-nav .imessage-tool-btn.mk-active {
+        background: rgba(18, 179, 179, 0.25);
+        color: #2dd4bf;
+        border-color: #2dd4bf;
+    }
+
+    /* Input placeholder contrast */
+    body.has-chat-nav #user-input[data-placeholder]::before {
+        color: #8896a6;
+    }
+
+    [data-theme="dark"] body.has-chat-nav #user-input[data-placeholder]::before {
+        color: #7a8a9a;
+    }
+
+    /* Chat disclaimer text */
+    body.has-chat-nav .chat-disclaimer {
+        color: #8896a6;
+        font-size: 0.7rem;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .chat-disclaimer {
+        color: #7a8a9a;
     }
 
     /* --- Equation Palette Bottom Sheet --- */
@@ -1441,24 +1548,35 @@
     body.has-chat-nav .inline-equation-palette .equation-palette-header span {
         font-size: 0.95rem;
         font-weight: 700;
-        color: var(--clr-text, #18202B);
+        color: #1a1a2e;
     }
 
     [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-palette-header {
-        border-bottom-color: rgba(255, 255, 255, 0.08);
+        border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
     [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-palette-header span {
-        color: #e2e8f0;
+        color: #f0f0f5;
     }
 
-    /* Symbol buttons — rounded, teal active */
+    /* Close button in palette */
+    body.has-chat-nav .inline-equation-palette .palette-close-btn {
+        color: #5b6876;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .palette-close-btn {
+        color: #a0aab5;
+    }
+
+    /* Symbol buttons — HIGH CONTRAST text, rounded, teal active */
     body.has-chat-nav .inline-equation-palette .symbol-btn {
         border-radius: 10px;
         min-height: 44px;
-        font-size: 1.2em;
+        font-size: 1.25em;
+        font-weight: 500;
         background: var(--clr-bg-subtle, #f5f7f9);
-        border: 1px solid var(--clr-border-light, #e2e8f0);
+        border: 1px solid var(--clr-border-light, #d1d5db);
+        color: #1a1a2e;
         transition: background 150ms ease, transform 150ms ease;
     }
 
@@ -1469,15 +1587,15 @@
     }
 
     [data-theme="dark"] body.has-chat-nav .inline-equation-palette .symbol-btn {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #f0f0f5;
     }
 
-    /* Script buttons (sub/superscript) — light theme fix */
+    /* Script buttons (sub/superscript) — HIGH CONTRAST */
     body.has-chat-nav .inline-equation-palette .script-btn {
         background: var(--clr-bg-subtle, #f5f7f9);
-        border: 1px solid var(--clr-border-light, #e2e8f0);
+        border: 1px solid var(--clr-border-light, #d1d5db);
         border-radius: 10px;
         min-height: 44px;
     }
@@ -1487,13 +1605,29 @@
         border-color: var(--clr-primary-teal, #12B3B3);
     }
 
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .script-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
     body.has-chat-nav .inline-equation-palette .script-label {
-        color: var(--clr-text, #18202B);
-        font-size: 1.1em;
+        color: #1a1a2e;
+        font-size: 1.15em;
+        font-weight: 500;
     }
 
     [data-theme="dark"] body.has-chat-nav .inline-equation-palette .script-label {
-        color: #e2e8f0;
+        color: #f0f0f5;
+    }
+
+    /* Section headers in palette */
+    body.has-chat-nav .inline-equation-palette .equation-section-header {
+        color: #5b6876;
+        font-weight: 600;
+    }
+
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-section-header {
+        color: #a0aab5;
     }
 
     /* Math field container in palette */
