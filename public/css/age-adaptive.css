@@ -282,6 +282,156 @@
 
 
 /* =============================================================
+   ICONOGRAPHY — K–2
+   Younger students navigate by visual cues, not text labels.
+   Enlarge icons throughout, make compose bar icons unmissable,
+   and boost emoji sizing on suggestion chips.
+   ============================================================= */
+
+/* Compose bar tool buttons (equation, attach, camera, mic) */
+.age-tier-k2 .imessage-tool-btn {
+    width: 46px;
+    height: 44px;
+    font-size: 20px;
+    border-radius: 12px;
+}
+
+.age-tier-k2 .imessage-tool-btn i {
+    font-size: 20px;
+}
+
+/* Send button (circular arrow) */
+.age-tier-k2 .imessage-send-btn {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    font-size: 20px;
+}
+
+/* Suggestion chip emojis: bigger so kids recognize them */
+.age-tier-k2 .suggestion-chip-enhanced .chip-emoji {
+    font-size: 20px;
+}
+
+/* Sidebar section toggles: bigger icons, bolder labels */
+.age-tier-k2 .sessions-toggle,
+.age-tier-k2 .tools-toggle,
+.age-tier-k2 .leaderboard-toggle,
+.age-tier-k2 .quest-toggle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 12px 14px;
+}
+
+.age-tier-k2 .sessions-toggle i,
+.age-tier-k2 .tools-toggle i,
+.age-tier-k2 .leaderboard-toggle i,
+.age-tier-k2 .quest-toggle i {
+    font-size: 14px;
+}
+
+/* Drawer toggle buttons (hamburger/right-drawer) on mobile */
+.age-tier-k2 .drawer-toggle-btn {
+    font-size: 1.8rem;
+    padding: 10px 14px;
+}
+
+/* Dashboard panel headers: icon + label more prominent */
+.age-tier-k2 .dashboard-panel-header {
+    font-size: 1.3rem;
+}
+
+.age-tier-k2 .dashboard-panel-header i {
+    font-size: 1.3em;
+}
+
+/* Progress bars: thicker for visibility */
+.age-tier-k2 progress,
+.age-tier-k2 .sidebar-progress progress {
+    height: 14px;
+    border-radius: 7px;
+}
+
+/* XP level badge in header: bigger */
+.age-tier-k2 .xp-level-badge {
+    font-size: 1.1rem;
+    padding: 6px 14px;
+}
+
+/* Avatar display: slightly larger for recognition */
+.age-tier-k2 .header-avatar,
+.age-tier-k2 .sidebar-avatar {
+    width: 44px;
+    height: 44px;
+}
+
+
+/* =============================================================
+   ICONOGRAPHY — 3–5
+   Icons are moderately boosted. Kids at this age can read
+   labels but still benefit from visual anchoring.
+   ============================================================= */
+
+/* Compose bar tool buttons */
+.age-tier-35 .imessage-tool-btn {
+    width: 40px;
+    height: 38px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+.age-tier-35 .imessage-tool-btn i {
+    font-size: 18px;
+}
+
+/* Send button */
+.age-tier-35 .imessage-send-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 17px;
+}
+
+/* Suggestion chip emojis */
+.age-tier-35 .suggestion-chip-enhanced .chip-emoji {
+    font-size: 17px;
+}
+
+/* Sidebar section toggles */
+.age-tier-35 .sessions-toggle,
+.age-tier-35 .tools-toggle,
+.age-tier-35 .leaderboard-toggle,
+.age-tier-35 .quest-toggle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 11px 14px;
+}
+
+/* Sidebar tool icons */
+.age-tier-35 .sidebar-tool-btn {
+    min-height: 44px;
+    font-size: 1rem;
+    gap: 8px;
+}
+
+.age-tier-35 .sidebar-tool-btn i {
+    font-size: 1.2em;
+}
+
+/* Progress bars */
+.age-tier-35 progress,
+.age-tier-35 .sidebar-progress progress {
+    height: 12px;
+    border-radius: 6px;
+}
+
+/* Drawer toggle buttons on mobile */
+.age-tier-35 .drawer-toggle-btn {
+    font-size: 1.6rem;
+}
+
+
+/* =============================================================
    TIER: 9+  (9th Grade – College)
    Uses the default design system values. No overrides needed.
    This class exists purely for JavaScript identification.
@@ -321,6 +471,28 @@
         min-height: 52px;
     }
 
+    /* K-2 mobile: compose bar icons even bigger for small fingers */
+    .age-tier-k2 .imessage-tool-btn {
+        width: 50px;
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .imessage-tool-btn i {
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .imessage-send-btn {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        font-size: 22px;
+    }
+
+    .age-tier-k2 .suggestion-chip-enhanced .chip-emoji {
+        font-size: 22px;
+    }
+
     /* 3-5 mobile: slightly more generous */
     .age-tier-35 .btn,
     .age-tier-35 button {
@@ -335,6 +507,19 @@
     .age-tier-35 #user-input {
         font-size: 1.1rem;
         min-height: 50px !important;
+    }
+
+    .age-tier-35 .imessage-tool-btn {
+        width: 44px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    .age-tier-35 .imessage-send-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        font-size: 19px;
     }
 }
 
