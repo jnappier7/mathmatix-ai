@@ -40,18 +40,19 @@
 
   async function init() {
     try {
-      const res = await fetch('/user', { credentials: 'include' });
+      const fetchFn = typeof csrfFetch === 'function' ? csrfFetch : fetch;
+      const res = await fetchFn('/api/role-switch/roles', { credentials: 'include' });
       if (!res.ok) return;
       const data = await res.json();
-      const user = data.user;
-      if (!user) return;
+      if (!data.success) return;
 
-      const roles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
-      if (roles.length <= 1) return; // Single-role user, no switcher needed
+      const roles = data.roles;
+      const activeRole = data.activeRole;
+      if (!data.isMultiRole) return; // Single-role user, no switcher needed
 
       // Build options
       select.innerHTML = roles.map(r =>
-        `<option value="${r}" ${r === user.role ? 'selected' : ''}>${roleLabels[r] || r}</option>`
+        `<option value="${r}" ${r === activeRole ? 'selected' : ''}>${roleLabels[r] || r}</option>`
       ).join('');
 
       container.style.display = 'flex';
@@ -64,7 +65,7 @@
         try {
           // Use csrfFetch if available (admin/teacher dashboards), otherwise plain fetch
           const fetchFn = typeof csrfFetch === 'function' ? csrfFetch : fetch;
-          const res = await fetchFn('/api/user/switch-role', {
+          const res = await fetchFn('/api/role-switch', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',

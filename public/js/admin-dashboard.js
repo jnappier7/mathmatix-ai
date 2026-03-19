@@ -2778,5 +2778,131 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fetch initial sidebar stats on load
     fetchWaitlistData();
 
+    // --- Merge Accounts Modal ---
+    const mergeAccountsModal = document.getElementById('mergeAccountsModal');
+    const openMergeAccountsBtn = document.getElementById('openMergeAccountsBtn');
+    const closeMergeAccountsBtn = document.getElementById('closeMergeAccountsBtn');
+    const cancelMergeAccounts = document.getElementById('cancelMergeAccounts');
+    const mergeAccountsForm = document.getElementById('mergeAccountsForm');
+    const mergeAccountsResult = document.getElementById('mergeAccountsResult');
+    const mergeAnother = document.getElementById('mergeAnother');
+
+    async function populateMergeSelects() {
+        try {
+            const response = await fetch('/api/admin/users', { credentials: 'include' });
+            if (!response.ok) return;
+            const data = await response.json();
+            const users = data.users || data;
+            const options = users
+                .sort((a, b) => (a.lastName || '').localeCompare(b.lastName || ''))
+                .map(u => {
+                    const roles = (u.roles || [u.role]).join(', ');
+                    return `<option value="${u._id}">${u.lastName}, ${u.firstName} (${u.email}) — ${roles}</option>`;
+                }).join('');
+            const sourceSelect = document.getElementById('mergeSourceSelect');
+            const targetSelect = document.getElementById('mergeTargetSelect');
+            if (sourceSelect) sourceSelect.innerHTML = '<option value="">Select source account...</option>' + options;
+            if (targetSelect) targetSelect.innerHTML = '<option value="">Select target account...</option>' + options;
+        } catch (err) {
+            console.error('Failed to populate merge selects:', err);
+        }
+    }
+
+    async function openMergeAccountsModal() {
+        mergeAccountsModal?.classList.add('is-visible');
+        mergeAccountsForm?.reset();
+        mergeAccountsResult.style.display = 'none';
+        mergeAccountsForm.style.display = 'block';
+        await populateMergeSelects();
+    }
+
+    function closeMergeAccountsModal() {
+        mergeAccountsModal?.classList.remove('is-visible');
+    }
+
+    if (openMergeAccountsBtn) {
+        openMergeAccountsBtn.addEventListener('click', openMergeAccountsModal);
+    }
+    if (closeMergeAccountsBtn) {
+        closeMergeAccountsBtn.addEventListener('click', closeMergeAccountsModal);
+    }
+    if (cancelMergeAccounts) {
+        cancelMergeAccounts.addEventListener('click', closeMergeAccountsModal);
+    }
+    if (mergeAnother) {
+        mergeAnother.addEventListener('click', () => {
+            mergeAccountsResult.style.display = 'none';
+            mergeAccountsForm.style.display = 'block';
+            mergeAccountsForm.reset();
+        });
+    }
+
+    if (mergeAccountsForm) {
+        mergeAccountsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const sourceUserId = document.getElementById('mergeSourceSelect').value;
+            const targetUserId = document.getElementById('mergeTargetSelect').value;
+
+            if (!sourceUserId || !targetUserId) {
+                showToast('Please select both source and target accounts.', 'warning');
+                return;
+            }
+            if (sourceUserId === targetUserId) {
+                showToast('Source and target cannot be the same account.', 'warning');
+                return;
+            }
+
+            // Confirm before proceeding
+            const sourceText = document.getElementById('mergeSourceSelect').selectedOptions[0]?.text || '';
+            const targetText = document.getElementById('mergeTargetSelect').selectedOptions[0]?.text || '';
+            if (!confirm(`Are you sure you want to merge?\n\nSOURCE (will be DELETED): ${sourceText}\nTARGET (will keep): ${targetText}\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            const submitBtn = document.getElementById('mergeAccountsSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Merging...';
+
+            try {
+                const conflictResolution = {
+                    subscriptionTier: document.getElementById('mergeSubTier').value,
+                    xp: document.getElementById('mergeXp').value,
+                    skillMastery: document.getElementById('mergeSM').value
+                };
+                const auditNotes = document.getElementById('mergeNotes').value;
+
+                const response = await csrfFetch('/api/admin/merge-accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ sourceUserId, targetUserId, conflictResolution, auditNotes })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    document.getElementById('mergeResultMessage').textContent = result.message;
+                    const auditDiv = document.getElementById('mergeAuditDetails');
+                    if (auditDiv && result.audit && result.audit.changes) {
+                        auditDiv.innerHTML = '<strong>Changes made:</strong><ul>' +
+                            result.audit.changes.map(c => `<li>${c}</li>`).join('') +
+                            '</ul>';
+                    }
+                    mergeAccountsForm.style.display = 'none';
+                    mergeAccountsResult.style.display = 'block';
+                    await initializeDashboard();
+                } else {
+                    throw new Error(result.message || 'Failed to merge accounts');
+                }
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-code-branch"></i> Merge Accounts';
+            }
+        });
+    }
+
     console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });

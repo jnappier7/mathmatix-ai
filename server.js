@@ -111,6 +111,7 @@ const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for
 const diagramRoutes = require('./routes/diagram');  // Diagram generation for visual learners
 const messagingRoutes = require('./routes/messaging');  // Teacher-parent messaging system
 const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates for teachers
+const roleSwitchRoutes = require('./routes/roleSwitch');  // Unified multi-role login: switch active role
 const impersonationRoutes = require('./routes/impersonation');  // User impersonation (student view)
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
@@ -474,6 +475,8 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             req.session.save((saveErr) => {
                 if (saveErr) { return next(saveErr); }
                 if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+                if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
                 if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -514,6 +517,8 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             req.session.save((saveErr) => {
                 if (saveErr) { return next(saveErr); }
                 if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+                if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
                 if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -658,6 +663,7 @@ app.post('/api/clever-sync/webhook', cleverSyncRoutes);
 app.use('/api/clever-sync', isAuthenticated, isAdmin, cleverSyncRoutes); // Clever roster & section sync (admin only)
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
+app.use('/api/role-switch', isAuthenticated, roleSwitchRoutes); // Unified multi-role login: switch active role
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
@@ -725,42 +731,8 @@ app.get("/user", isAuthenticated, async (req, res) => {
     }
 });
 
-// Switch active role for multi-role users
-app.post('/api/user/switch-role', isAuthenticated, async (req, res) => {
-    try {
-        const { role } = req.body;
-        if (!role) return res.status(400).json({ message: 'Role is required.' });
-
-        const user = await User.findById(req.user._id);
-        if (!user) return res.status(404).json({ message: 'User not found.' });
-
-        // Verify user actually has this role
-        const userRoles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
-        if (!userRoles.includes(role)) {
-            return res.status(403).json({ message: `You do not have the "${role}" role.` });
-        }
-
-        user.role = role;
-        await user.save();
-
-        // Determine redirect for the new active role
-        const dashboardMap = {
-            student: !user.selectedTutorId ? '/pick-tutor.html' : !user.selectedAvatarId ? '/pick-avatar.html' : '/chat.html',
-            teacher: '/teacher-dashboard.html',
-            admin: '/admin-dashboard.html',
-            parent: '/parent-dashboard.html'
-        };
-
-        res.json({
-            success: true,
-            message: `Switched to ${role} role.`,
-            redirect: dashboardMap[role] || '/chat.html'
-        });
-    } catch (error) {
-        console.error('[switch-role] Error:', error);
-        res.status(500).json({ message: 'Failed to switch role.' });
-    }
-});
+// Switch active role — legacy endpoint, delegates to /api/role-switch
+app.use('/api/user/switch-role', isAuthenticated, roleSwitchRoutes);
 
 app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
     try {
@@ -907,6 +879,7 @@ app.get("/demo.html", (req, res) => res.sendFile(path.join(__dirname, "public", 
 app.get("/pricing.html", (req, res) => res.sendFile(path.join(__dirname, "public", "pricing.html")));
 
 // Protected HTML routes (require authentication)
+app.get("/role-picker.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "role-picker.html")));
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
 app.get("/pick-avatar.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-avatar.html")));

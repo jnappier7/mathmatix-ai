@@ -39,8 +39,12 @@ function ensureNotAuthenticated(req, res, next) {
         }
 
         let redirectUrl = '/chat.html'; // Default for students
+        const userRoles = (req.user.roles && req.user.roles.length > 0) ? req.user.roles : [req.user.role];
+
         if (req.user.needsProfileCompletion) {
             redirectUrl = '/complete-profile.html';
+        } else if (userRoles.length > 1) {
+            redirectUrl = '/role-picker.html';
         } else if (req.user.role === 'teacher') {
             redirectUrl = '/teacher-dashboard.html';
         } else if (req.user.role === 'admin') {

@@ -42,8 +42,13 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
 
             // Determine redirect URL based on user's role and completion status
             let redirectUrl = '/chat.html'; // Default for students
+            const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+
             if (user.needsProfileCompletion) {
                 redirectUrl = "/complete-profile.html";
+            } else if (userRoles.length > 1) {
+                // Multi-role user: let them pick which role to enter as
+                redirectUrl = "/role-picker.html";
             } else if (user.role === "teacher") {
                 redirectUrl = "/teacher-dashboard.html";
             } else if (user.role === "admin") {
