@@ -350,8 +350,43 @@
             + '  </div>'
             + '</div>'
             + '<div class="mp-content">'
+            // Chat Tools section — equation entry + file upload front and center
             + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-star"></i> Quick Actions</span>'
+            + '    <span class="mp-section-title"><i class="fas fa-pen-fancy"></i> Chat Tools</span>'
+            + '  </div>'
+            + '  <div class="mp-actions-grid">'
+            // Insert Equation — Featured
+            + '    <div class="mp-action-card mp-action-featured" id="mp-action-equation">'
+            + '      <div class="mp-action-icon" style="background: linear-gradient(135deg, #12B3B3, #0E9494); color: white;"><i class="fas fa-square-root-variable"></i></div>'
+            + '      <div class="mp-action-featured-info">'
+            + '        <div class="mp-action-label">Insert Equation</div>'
+            + '        <div class="mp-action-featured-desc">Use the math keyboard to type fractions, roots, and symbols</div>'
+            + '      </div>'
+            + '      <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
+            + '    </div>'
+            // Show Your Work — Featured
+            + '    <div class="mp-action-card mp-action-featured" id="mp-action-show-work">'
+            + '      <div class="mp-action-icon upload"><i class="fas fa-camera-retro"></i></div>'
+            + '      <div class="mp-action-featured-info">'
+            + '        <div class="mp-action-label">Show Your Work</div>'
+            + '        <div class="mp-action-featured-desc">Take a photo or upload your work for AI feedback</div>'
+            + '      </div>'
+            + '      <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
+            + '    </div>'
+            // Attach File
+            + '    <div class="mp-action-card" id="mp-action-attach">'
+            + '      <div class="mp-action-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;"><i class="fas fa-paperclip"></i></div>'
+            + '      <div class="mp-action-label">Attach File</div>'
+            + '    </div>'
+            // Calculator
+            + '    <div class="mp-action-card" id="mp-action-calculator">'
+            + '      <div class="mp-action-icon calculator"><i class="fas fa-calculator"></i></div>'
+            + '      <div class="mp-action-label">Calculator</div>'
+            + '    </div>'
+            + '  </div>'
+            // Learning section
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-star"></i> Learning</span>'
             + '  </div>'
             + '  <div class="mp-actions-grid">'
             // Voice Tutor — Featured
@@ -367,16 +402,6 @@
             + '    <div class="mp-action-card" id="mp-action-resources">'
             + '      <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
             + '      <div class="mp-action-label">Resources</div>'
-            + '    </div>'
-            // Calculator
-            + '    <div class="mp-action-card" id="mp-action-calculator">'
-            + '      <div class="mp-action-icon calculator"><i class="fas fa-calculator"></i></div>'
-            + '      <div class="mp-action-label">Calculator</div>'
-            + '    </div>'
-            // Upload Work
-            + '    <div class="mp-action-card" id="mp-action-upload">'
-            + '      <div class="mp-action-icon upload"><i class="fas fa-camera-retro"></i></div>'
-            + '      <div class="mp-action-label">Upload Work</div>'
             + '    </div>'
             // Browse Courses
             + '    <div class="mp-action-card" id="mp-action-courses">'
@@ -415,20 +440,32 @@
         document.body.appendChild(panel);
 
         // Wire up action clicks
+
+        // Chat Tools
+        wireAction('mp-action-equation', function () {
+            switchTab('chat');
+            setTimeout(function () { triggerClick('insert-equation-btn'); }, 200);
+        });
+        wireAction('mp-action-show-work', function () {
+            switchTab('chat');
+            setTimeout(function () { triggerClick('camera-button'); }, 200);
+        });
+        wireAction('mp-action-attach', function () {
+            switchTab('chat');
+            setTimeout(function () { triggerClick('attach-button'); }, 200);
+        });
+        wireAction('mp-action-calculator', function () {
+            switchTab('chat');
+            setTimeout(function () { triggerClick('toggle-calculator-btn'); }, 200);
+        });
+
+        // Learning
         wireAction('mp-action-voice', function () {
             window.location.href = '/voice-tutor.html';
         });
         wireAction('mp-action-resources', function () {
             switchTab('chat');
             setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
-        });
-        wireAction('mp-action-calculator', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('toggle-calculator-btn'); }, 200);
-        });
-        wireAction('mp-action-upload', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('camera-button'); }, 200);
         });
         wireAction('mp-action-courses', function () {
             switchTab('chat');
