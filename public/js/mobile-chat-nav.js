@@ -23,6 +23,8 @@
 
     var activeTab = 'chat';
     var panelsBuilt = {};
+    var savedScrollPos = null;   // preserve chat scroll across tab switches
+    var savedInputContent = '';  // preserve typed input across tab switches
 
     /* ---- helpers ---- */
 
@@ -85,6 +87,15 @@
 
     function switchTab(action) {
         if (activeTab === action && action === 'chat') return;
+
+        // Save chat state before leaving the chat tab
+        if (activeTab === 'chat') {
+            var box = document.getElementById('chat-messages-container');
+            if (box) savedScrollPos = box.scrollTop;
+            var input = document.getElementById('user-input');
+            if (input) savedInputContent = input.innerHTML;
+        }
+
         activeTab = action;
 
         // Update nav highlight
@@ -103,10 +114,23 @@
         if (action === 'chat') {
             // Show main chat (no panel overlay)
             document.body.classList.add('mobile-panel-chat');
-            var box = document.getElementById('chat-messages-container');
-            if (box) box.scrollTop = box.scrollHeight;
-            var input = document.getElementById('user-input');
-            if (input) input.focus();
+
+            // Restore chat state
+            requestAnimationFrame(function () {
+                var box = document.getElementById('chat-messages-container');
+                if (box) {
+                    // Restore saved position, or scroll to bottom if no saved state
+                    box.scrollTop = savedScrollPos != null ? savedScrollPos : box.scrollHeight;
+                }
+                var input = document.getElementById('user-input');
+                if (input) {
+                    // Restore typed content if it was cleared
+                    if (savedInputContent && !input.innerHTML.trim()) {
+                        input.innerHTML = savedInputContent;
+                    }
+                    input.focus();
+                }
+            });
         } else {
             // Build and show the panel
             document.body.classList.add('mobile-panel-active');
