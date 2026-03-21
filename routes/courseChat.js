@@ -380,7 +380,7 @@ router.post('/', async (req, res) => {
                         courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
                         if (courseProgressUpdate) {
                             await courseSession.save();
-                            console.log(`📈 [CourseChat] ${user.firstName} AUTO-advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (AI missed tag)`);
+                            console.warn(`⚠️ [CourseChat] ${user.firstName} stall-recovery: auto-advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (AI never emitted <SCAFFOLD_ADVANCE>)`);
                         }
                     }
                 } catch (autoAdvErr) {

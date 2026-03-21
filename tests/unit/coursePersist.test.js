@@ -385,7 +385,7 @@ describe('coursePersist: processSkillMastery', () => {
 // shouldAutoAdvance
 // ============================================================================
 
-describe('coursePersist: shouldAutoAdvance', () => {
+describe('coursePersist: shouldAutoAdvance (stall detection)', () => {
   function buildConversationWithTurns(assistantCount, { correctCount = 0, addScaffoldAdvancedAt = -1 } = {}) {
     const messages = [];
     for (let i = 0; i < assistantCount; i++) {
@@ -398,26 +398,26 @@ describe('coursePersist: shouldAutoAdvance', () => {
     return { messages };
   }
 
-  test('returns true for explanation step after 4 assistant turns', () => {
+  test('returns true for explanation step after 12+ assistant turns (stall)', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 0 }); // explanation
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(5);
+    const conversation = buildConversationWithTurns(13);
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
   });
 
-  test('returns false for explanation step with only 2 assistant turns', () => {
+  test('returns false for explanation step with only 8 assistant turns (not stalled)', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 0 });
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(2);
+    const conversation = buildConversationWithTurns(8);
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
   });
 
-  test('returns false for guided_practice step without correct answers', () => {
+  test('returns false for guided_practice step without correct answers even after many turns', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(10, { correctCount: 0 });
+    const conversation = buildConversationWithTurns(20, { correctCount: 0 });
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
   });
@@ -425,7 +425,7 @@ describe('coursePersist: shouldAutoAdvance', () => {
   test('returns true for guided_practice step with enough turns AND correct answers', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 2 });
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(10, { correctCount: 2 });
+    const conversation = buildConversationWithTurns(18, { correctCount: 2 });
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
   });
@@ -433,7 +433,7 @@ describe('coursePersist: shouldAutoAdvance', () => {
   test('does not auto-advance past the last step', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 3 }); // last step in a 4-step scaffold
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(20);
+    const conversation = buildConversationWithTurns(30);
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
   });
@@ -441,8 +441,8 @@ describe('coursePersist: shouldAutoAdvance', () => {
   test('resets turn count after a previous scaffoldAdvanced flag', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 0 });
     const moduleData = mockModuleData(4);
-    // 10 turns total, but scaffoldAdvanced at turn 7 means only 2 turns since advance
-    const conversation = buildConversationWithTurns(10, { addScaffoldAdvancedAt: 7 });
+    // 20 turns total, but scaffoldAdvanced at turn 15 means only 4 turns since advance
+    const conversation = buildConversationWithTurns(20, { addScaffoldAdvancedAt: 15 });
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
   });
@@ -450,7 +450,7 @@ describe('coursePersist: shouldAutoAdvance', () => {
   test('skips practice gating for parent courses', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(10, { correctCount: 0 });
+    const conversation = buildConversationWithTurns(18, { correctCount: 0 });
 
     expect(shouldAutoAdvance(session, moduleData, conversation, { isParentCourse: true })).toBe(true);
   });

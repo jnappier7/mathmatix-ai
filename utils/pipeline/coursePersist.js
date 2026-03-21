@@ -344,36 +344,39 @@ function processSkillMastery(user, skillId) {
   user.markModified('skillMastery');
 }
 
-// ── Turn-count thresholds for auto-advance fallback ──
-// These kick in when the AI fails to emit <SCAFFOLD_ADVANCE>.
-// Counts are assistant messages since the last scaffoldAdvanced flag.
-const AUTO_ADVANCE_THRESHOLDS = {
-  explanation:           4,   // concept intro — student engaged a few times
-  'concept-intro':       4,
-  'concept-check':       3,   // quick check — should resolve fast
-  'check-in':            3,   // emotional check — very short
-  model:                 6,   // worked examples — a bit longer
-  'i-do':                6,
-  guided_practice:       8,   // needs correct answers too (gated below)
-  'we-do':               8,
-  independent_practice: 10,   // needs correct answers too (gated below)
-  'you-do':             10,
-  'mastery-check':      10,
+// ── Stall-detection thresholds for auto-advance fallback ──
+// These are deliberately high — they exist only to catch the case where
+// the AI completely forgets to emit <SCAFFOLD_ADVANCE> across an entire
+// step. The AI's pedagogical judgment drives normal advancement; this is
+// a last-resort safety net, not a timer.
+const STALL_THRESHOLDS = {
+  explanation:           12,
+  'concept-intro':       12,
+  'concept-check':       8,
+  'check-in':            8,
+  model:                 14,
+  'i-do':                14,
+  guided_practice:       16,   // also requires correct answers (gated below)
+  'we-do':               16,
+  independent_practice:  18,   // also requires correct answers (gated below)
+  'you-do':              18,
+  'mastery-check':       18,
 };
-const DEFAULT_AUTO_ADVANCE_THRESHOLD = 6;
+const DEFAULT_STALL_THRESHOLD = 14;
 
 /**
- * Check whether the current scaffold step should auto-advance because
- * the AI failed to emit <SCAFFOLD_ADVANCE> despite sufficient student
- * engagement. This is a safety net — the normal path is still the
- * AI-emitted tag.
+ * Detect whether the AI has stalled on a scaffold step — i.e., gone an
+ * unreasonably long time without emitting <SCAFFOLD_ADVANCE>. This is a
+ * safety net for LLM tag-emission failures, NOT a replacement for the
+ * AI's pedagogical judgment. Thresholds are set high enough that they
+ * should never fire during a legitimate extended teaching moment.
  *
  * @param {Object} courseSession - Mongoose course session document
  * @param {Object} moduleData - Loaded module JSON (with scaffold array)
  * @param {Object} conversation - Mongoose conversation document
  * @param {Object} [options]
  * @param {boolean} [options.isParentCourse] - Skip practice gating for parents
- * @returns {boolean} true if auto-advance should be triggered
+ * @returns {boolean} true if the step appears stalled and should auto-advance
  */
 function shouldAutoAdvance(courseSession, moduleData, conversation, options = {}) {
   const scaffold = moduleData?.scaffold || [];
@@ -398,20 +401,19 @@ function shouldAutoAdvance(courseSession, moduleData, conversation, options = {}
   }
 
   const stepType = currentStep.type || currentStep.lessonPhase || '';
-  const threshold = AUTO_ADVANCE_THRESHOLDS[stepType] || DEFAULT_AUTO_ADVANCE_THRESHOLD;
+  const threshold = STALL_THRESHOLDS[stepType] || DEFAULT_STALL_THRESHOLD;
 
   if (assistantTurnsSinceAdvance < threshold) return false;
 
   // For practice phases, still require minimum correct answers
   const isPracticePhase = PRACTICE_PHASES.includes(stepType);
   if (isPracticePhase && !options.isParentCourse && correctSinceAdvance < MIN_CORRECT_FOR_ADVANCE) {
-    // Not enough correct answers — don't auto-advance practice steps
     return false;
   }
 
-  console.log(`[CoursePersist] Auto-advance triggered: step ${currentIdx + 1} ("${currentStep.title}"), ` +
-    `${assistantTurnsSinceAdvance} assistant turns (threshold: ${threshold}), ` +
-    `${correctSinceAdvance} correct answers, stepType="${stepType}"`);
+  console.warn(`[CoursePersist] Stall detected: step ${currentIdx + 1} ("${currentStep.title}") ` +
+    `has had ${assistantTurnsSinceAdvance} assistant turns without <SCAFFOLD_ADVANCE> ` +
+    `(threshold: ${threshold}). Auto-advancing as safety net.`);
   return true;
 }
 
