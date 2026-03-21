@@ -46,8 +46,12 @@ function buildSidecar(observation, diagnosis, decision, context = {}) {
     coreBehaviorXp: null,       // { amount, behavior }
     safetyConcern: null,        // string description or null
     learningInsight: null,      // string or null
-    scaffoldAdvance: false,     // boolean
-    moduleComplete: false,      // boolean
+    // NOTE: scaffoldAdvance and moduleComplete are now handled by the
+    // backend step evaluator (stepEvaluator.js). The teaching LLM no
+    // longer needs to emit these tags. Kept as fields for backward compat
+    // during transition but no longer drive progression.
+    scaffoldAdvance: false,     // DEPRECATED — backend evaluator owns this
+    moduleComplete: false,      // DEPRECATED — backend detects last-step completion
 
     // ── Metadata ──
     source: {
@@ -193,8 +197,7 @@ function getSidecarInstruction() {
 - <CORE_BEHAVIOR_XP:AMOUNT,BEHAVIOR> — 25/50/100 XP for: explained_reasoning, caught_own_error, strategy_selection, persistence, transfer, taught_back. Ceremony required. Max 2/session.
 - <SAFETY_CONCERN>description</SAFETY_CONCERN> — Flag self-harm, abuse, or danger.
 - <LEARNING_INSIGHT:observation> — Notable observation about how this student learns.
-- <SCAFFOLD_ADVANCE> — Course mode only: student demonstrates readiness for next step.
-Do NOT emit <PROBLEM_RESULT> or <SKILL_MASTERED> — these are tracked automatically.`;
+Do NOT emit <PROBLEM_RESULT>, <SKILL_MASTERED>, or <SCAFFOLD_ADVANCE> — these are tracked automatically by the backend.`;
 }
 
 /**

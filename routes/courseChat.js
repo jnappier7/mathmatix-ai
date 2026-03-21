@@ -23,7 +23,8 @@ const { detectAndFetchResource, detectResourceMention } = require('../utils/reso
 const { buildProgressUpdate } = require('../utils/progressState');
 const { verify: pipelineVerify } = require('../utils/pipeline');
 const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
-const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery, shouldAutoAdvance } = require('../utils/pipeline/coursePersist');
+const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
+const { evaluateStepCompletion } = require('../utils/pipeline/stepEvaluator');
 const { computeXpBreakdown, applyXpToUser } = require('../utils/pipeline/xpEngine');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
@@ -205,10 +206,9 @@ router.post('/', async (req, res) => {
             console.log(`[CourseChat] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''})`);
         }
 
-        // ── Inject step-context reminder into last user message ──
-        // The system prompt (at position 0) fades in long conversations.
-        // Appending a brief reminder to the last user message keeps the
-        // scaffold tag instruction in the AI's attention window.
+        // ── Step-context anchor for long conversations ──
+        // The system prompt fades in long conversations. Append a brief
+        // reminder of the current step to keep the AI anchored.
         const scaffold = moduleData?.scaffold || [];
         if (scaffold.length > 1) {
             const stepIdx = courseSession.currentScaffoldIndex || 0;
@@ -216,7 +216,7 @@ router.post('/', async (req, res) => {
             if (currentStep && formattedMessages.length > 0) {
                 const lastMsg = formattedMessages[formattedMessages.length - 1];
                 if (lastMsg?.role === 'user') {
-                    lastMsg.content += `\n\n[INTERNAL — DO NOT READ ALOUD OR MENTION TO STUDENT: You are on step ${stepIdx + 1}/${scaffold.length} ("${currentStep.title}"). When this step is complete, silently append <SCAFFOLD_ADVANCE> at the end of your response. Never tell the student about this tag.]`;
+                    lastMsg.content += `\n\n[INTERNAL — DO NOT READ ALOUD: You are on step ${stepIdx + 1}/${scaffold.length} ("${currentStep.title}"). Teach only this step's content. Do not introduce topics from later steps.]`;
                 }
             }
         }
@@ -337,13 +337,25 @@ router.post('/', async (req, res) => {
                 delete graphToolConfig._source;
             }
 
-            // Scaffold & module progression (via coursePersist)
-            if (ext.scaffoldAdvance || ext.moduleComplete) {
-                // In streaming mode, verify already sent a replacement event to strip tags
-                console.log(`[CourseChat:Progression] Tags: SCAFFOLD_ADVANCE=${!!ext.scaffoldAdvance}, MODULE_COMPLETE=${!!ext.moduleComplete}`);
+            // ── Backend-driven progression (step evaluator) ────────
+            // The teaching LLM no longer emits <SCAFFOLD_ADVANCE> tags.
+            // Instead, the backend evaluates every turn to decide if the
+            // current step is complete. This separates teaching from plumbing.
+            const currentScaffoldIdx = courseSession.currentScaffoldIndex || 0;
+            const currentScaffoldStep = (moduleData?.scaffold || [])[currentScaffoldIdx];
+            const isLastStep = currentScaffoldIdx >= (moduleData?.scaffold?.length || 1) - 1;
 
-                try {
-                    if (ext.moduleComplete) {
+            try {
+                const evalResult = await evaluateStepCompletion(currentScaffoldStep, conversation, {
+                    wasCorrect,
+                    isParentCourse,
+                });
+
+                console.log(`[CourseChat:Evaluator] Step ${currentScaffoldIdx + 1}: ${evalResult.mode} → ${evalResult.complete ? 'COMPLETE' : 'not yet'} (confidence: ${evalResult.confidence}, evidence: ${evalResult.evidence})`);
+
+                if (evalResult.complete) {
+                    if (isLastStep) {
+                        // Last step complete → module complete
                         courseProgressUpdate = processModuleComplete(courseSession);
                         await courseSession.save();
 
@@ -357,35 +369,18 @@ router.post('/', async (req, res) => {
                             }
                         }
                         console.log(`🎓 [CourseChat] ${user.firstName} completed module ${courseProgressUpdate.moduleId} — progress: ${courseSession.overallProgress}%`);
-
-                    } else if (ext.scaffoldAdvance) {
+                    } else {
+                        // Not last step → advance scaffold
                         courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
                         if (courseProgressUpdate) {
                             await courseSession.save();
-                            console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal}`);
+                            console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (evaluator: ${evalResult.mode})`);
                         }
                     }
-                } catch (progressErr) {
-                    console.error('[CourseChat] Scaffold progression error:', progressErr.message);
                 }
-            }
-
-            // ── Auto-advance fallback ────────────────────────────
-            // If the AI failed to emit <SCAFFOLD_ADVANCE> but the student
-            // has been engaged long enough, advance the step server-side.
-            // This prevents progress from freezing when the LLM forgets the tag.
-            if (!ext.scaffoldAdvance && !ext.moduleComplete && !courseProgressUpdate) {
-                try {
-                    if (shouldAutoAdvance(courseSession, moduleData, conversation, { isParentCourse })) {
-                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
-                        if (courseProgressUpdate) {
-                            await courseSession.save();
-                            console.warn(`⚠️ [CourseChat] ${user.firstName} stall-recovery: auto-advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (AI never emitted <SCAFFOLD_ADVANCE>)`);
-                        }
-                    }
-                } catch (autoAdvErr) {
-                    console.error('[CourseChat] Auto-advance error:', autoAdvErr.message);
-                }
+            } catch (evalErr) {
+                console.error('[CourseChat] Step evaluator error:', evalErr.message);
+                // On evaluator failure, log but don't crash — the step just stays current
             }
 
         } catch (verifyErr) {

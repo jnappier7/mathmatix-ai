@@ -344,77 +344,17 @@ function processSkillMastery(user, skillId) {
   user.markModified('skillMastery');
 }
 
-// ── Stall-detection thresholds for auto-advance fallback ──
-// These are deliberately high — they exist only to catch the case where
-// the AI completely forgets to emit <SCAFFOLD_ADVANCE> across an entire
-// step. The AI's pedagogical judgment drives normal advancement; this is
-// a last-resort safety net, not a timer.
-const STALL_THRESHOLDS = {
-  explanation:           12,
-  'concept-intro':       12,
-  'concept-check':       8,
-  'check-in':            8,
-  model:                 14,
-  'i-do':                14,
-  guided_practice:       16,   // also requires correct answers (gated below)
-  'we-do':               16,
-  independent_practice:  18,   // also requires correct answers (gated below)
-  'you-do':              18,
-  'mastery-check':       18,
-};
-const DEFAULT_STALL_THRESHOLD = 14;
-
-/**
- * Detect whether the AI has stalled on a scaffold step — i.e., gone an
- * unreasonably long time without emitting <SCAFFOLD_ADVANCE>. This is a
- * safety net for LLM tag-emission failures, NOT a replacement for the
- * AI's pedagogical judgment. Thresholds are set high enough that they
- * should never fire during a legitimate extended teaching moment.
- *
- * @param {Object} courseSession - Mongoose course session document
- * @param {Object} moduleData - Loaded module JSON (with scaffold array)
- * @param {Object} conversation - Mongoose conversation document
- * @param {Object} [options]
- * @param {boolean} [options.isParentCourse] - Skip practice gating for parents
- * @returns {boolean} true if the step appears stalled and should auto-advance
- */
-function shouldAutoAdvance(courseSession, moduleData, conversation, options = {}) {
-  const scaffold = moduleData?.scaffold || [];
-  const currentIdx = courseSession.currentScaffoldIndex || 0;
-  const currentStep = scaffold[currentIdx];
-  if (!currentStep) return false;
-
-  // Don't auto-advance past the last step (that needs MODULE_COMPLETE)
-  if (currentIdx >= scaffold.length - 1) return false;
-
-  const messages = conversation?.messages || [];
-  if (messages.length === 0) return false;
-
-  // Count assistant messages since the last scaffold advance
-  let assistantTurnsSinceAdvance = 0;
-  let correctSinceAdvance = 0;
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.scaffoldAdvanced) break;
-    if (msg.role === 'assistant') assistantTurnsSinceAdvance++;
-    if (msg.problemResult === 'correct') correctSinceAdvance++;
-  }
-
-  const stepType = currentStep.type || currentStep.lessonPhase || '';
-  const threshold = STALL_THRESHOLDS[stepType] || DEFAULT_STALL_THRESHOLD;
-
-  if (assistantTurnsSinceAdvance < threshold) return false;
-
-  // For practice phases, still require minimum correct answers
-  const isPracticePhase = PRACTICE_PHASES.includes(stepType);
-  if (isPracticePhase && !options.isParentCourse && correctSinceAdvance < MIN_CORRECT_FOR_ADVANCE) {
-    return false;
-  }
-
-  console.warn(`[CoursePersist] Stall detected: step ${currentIdx + 1} ("${currentStep.title}") ` +
-    `has had ${assistantTurnsSinceAdvance} assistant turns without <SCAFFOLD_ADVANCE> ` +
-    `(threshold: ${threshold}). Auto-advancing as safety net.`);
-  return true;
+// ── NOTE: Stall detection (shouldAutoAdvance) has been removed. ──
+// The backend step evaluator (stepEvaluator.js) now runs on every turn
+// and decides when to advance. The old system relied on counting turns
+// since the last <SCAFFOLD_ADVANCE> tag — which only existed because
+// the teaching LLM was responsible for emitting it. Now that progression
+// is backend-owned, stall detection is unnecessary.
+//
+// shouldAutoAdvance is still exported as a no-op for backward compat
+// with any code that might reference it during the transition.
+function shouldAutoAdvance() {
+  return false;
 }
 
 module.exports = {

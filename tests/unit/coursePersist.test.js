@@ -385,73 +385,21 @@ describe('coursePersist: processSkillMastery', () => {
 // shouldAutoAdvance
 // ============================================================================
 
-describe('coursePersist: shouldAutoAdvance (stall detection)', () => {
-  function buildConversationWithTurns(assistantCount, { correctCount = 0, addScaffoldAdvancedAt = -1 } = {}) {
-    const messages = [];
-    for (let i = 0; i < assistantCount; i++) {
-      messages.push({ role: 'user', content: `question ${i}` });
-      const assistantMsg = { role: 'assistant', content: `answer ${i}` };
-      if (i < correctCount) assistantMsg.problemResult = 'correct';
-      if (i === addScaffoldAdvancedAt) assistantMsg.scaffoldAdvanced = true;
-      messages.push(assistantMsg);
-    }
-    return { messages };
-  }
+describe('coursePersist: shouldAutoAdvance (deprecated — now a no-op)', () => {
+  // shouldAutoAdvance has been replaced by the backend step evaluator
+  // (stepEvaluator.js). It now always returns false. These tests verify
+  // the no-op behavior during the transition period.
 
-  test('returns true for explanation step after 12+ assistant turns (stall)', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 0 }); // explanation
-    const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(13);
-
-    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
-  });
-
-  test('returns false for explanation step with only 8 assistant turns (not stalled)', () => {
+  test('always returns false (stall detection replaced by step evaluator)', () => {
     const session = mockCourseSession({ currentScaffoldIndex: 0 });
     const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(8);
+    const conversation = { messages: Array(30).fill({ role: 'assistant', content: 'x' }) };
 
     expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
   });
 
-  test('returns false for guided_practice step without correct answers even after many turns', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
-    const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(20, { correctCount: 0 });
-
-    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
-  });
-
-  test('returns true for guided_practice step with enough turns AND correct answers', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 2 });
-    const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(18, { correctCount: 2 });
-
-    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
-  });
-
-  test('does not auto-advance past the last step', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 3 }); // last step in a 4-step scaffold
-    const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(30);
-
-    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
-  });
-
-  test('resets turn count after a previous scaffoldAdvanced flag', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 0 });
-    const moduleData = mockModuleData(4);
-    // 20 turns total, but scaffoldAdvanced at turn 15 means only 4 turns since advance
-    const conversation = buildConversationWithTurns(20, { addScaffoldAdvancedAt: 15 });
-
-    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
-  });
-
-  test('skips practice gating for parent courses', () => {
-    const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
-    const moduleData = mockModuleData(4);
-    const conversation = buildConversationWithTurns(18, { correctCount: 0 });
-
-    expect(shouldAutoAdvance(session, moduleData, conversation, { isParentCourse: true })).toBe(true);
+  test('returns false even with all arguments (backward compat)', () => {
+    expect(shouldAutoAdvance()).toBe(false);
+    expect(shouldAutoAdvance(null, null, null, { isParentCourse: true })).toBe(false);
   });
 });
