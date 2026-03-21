@@ -58,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
       '<p class="avatar-card-description">' + (galleryCount < 3 ? (3 - galleryCount) + ' slots left' : 'Replace oldest') + '</p>';
     avatarSelectionGrid.appendChild(customCard);
 
+    // HTML escape helper to prevent XSS from user-created avatar names/URLs
+    function esc(str) {
+      const el = document.createElement('span');
+      el.textContent = str || '';
+      return el.innerHTML;
+    }
+
     // Show gallery avatars
     if (currentUser.avatarGallery && currentUser.avatarGallery.length > 0) {
       currentUser.avatarGallery.forEach((avatar, index) => {
@@ -66,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         card.dataset.avatarId = 'gallery-' + index;
         card.dataset.galleryIndex = index;
         card.innerHTML =
-          '<div class="avatar-card-image"><img src="' + avatar.dicebearUrl + '" alt="' + avatar.name + '" loading="lazy"></div>' +
-          '<h4 class="avatar-card-name">' + avatar.name + '</h4>' +
+          '<div class="avatar-card-image"><img src="' + esc(avatar.dicebearUrl) + '" alt="' + esc(avatar.name) + '" loading="lazy"></div>' +
+          '<h4 class="avatar-card-name">' + esc(avatar.name) + '</h4>' +
           '<p class="avatar-card-description">Custom avatar</p>';
         avatarSelectionGrid.appendChild(card);
       });
@@ -81,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedAvatarId = 'dicebear-default';
       completeSelectionBtn.disabled = false;
       defaultCard.innerHTML =
-        '<div class="avatar-card-image"><img src="' + currentUser.avatar.dicebearUrl + '" alt="My Avatar" loading="lazy"></div>' +
+        '<div class="avatar-card-image"><img src="' + esc(currentUser.avatar.dicebearUrl) + '" alt="My Avatar" loading="lazy"></div>' +
         '<h4 class="avatar-card-name">Current Avatar</h4>' +
         '<p class="avatar-card-description">Your default look</p>';
       avatarSelectionGrid.appendChild(defaultCard);
