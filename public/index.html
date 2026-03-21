@@ -112,7 +112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-mobile-topbar-actions {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
       }
 
       .lp-mobile-topbar-link {
@@ -120,6 +120,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         font-size: 0.85rem;
         font-weight: 600;
         text-decoration: none;
+        padding: 4px 0;
       }
 
       .lp-mobile-topbar-btn {
@@ -128,9 +129,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         color: #fff;
         font-size: 0.85rem;
         font-weight: 600;
-        padding: 6px 14px;
-        border-radius: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
         text-decoration: none;
+        box-shadow: 0 2px 8px rgba(18, 179, 179, 0.25);
       }
     }
 
@@ -1841,6 +1843,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       display: block;
       width: 100%;
       margin-bottom: 0.5rem;
+      white-space: normal;
+      line-height: 1.4;
     }
 
     .lp-trial-gate-note {
@@ -1863,6 +1867,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-trial-chat-inner { border-radius: 0; border-left: 0; border-right: 0; }
       .lp-trial-prompt-btns { flex-direction: column; }
       .lp-trial-prompt { text-align: left; }
+
+      /* Gate CTA - ensure button text never clips */
+      .lp-trial-gate { padding: 1.25rem 1rem; }
+      .lp-trial-gate-inner { max-width: 100%; padding: 0 0.5rem; }
+      .lp-trial-gate-btn {
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
+      }
+      .lp-trial-gate-msg { font-size: 0.95rem; }
     }
 
     @media (max-width: 375px) {
@@ -1870,6 +1883,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-tutor-card-img { width: 56px; height: 56px; }
       .lp-tutor-card-catch { font-size: 0.72rem; }
       .lp-tutor-card-spec { display: none; }
+
+      .lp-mobile-topbar-actions { gap: 8px; }
+      .lp-mobile-topbar-link { font-size: 0.8rem; }
+      .lp-mobile-topbar-btn { font-size: 0.8rem; padding: 6px 12px; }
+
+      .lp-trial-gate-btn { font-size: 0.88rem; padding: 0.7rem 0.75rem; }
     }
   </style>
 </head>
