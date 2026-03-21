@@ -94,13 +94,12 @@ router.get('/thread/:threadId', isAuthenticated, canMessage, async (req, res) =>
 
         // Get thread messages
         const messages = await Message.find({
-            $or: [
-                { _id: threadId },
-                { threadId: threadId }
-            ],
-            $or: [
-                { senderId: req.user._id, deletedBySender: false },
-                { recipientId: req.user._id, deletedByRecipient: false }
+            $and: [
+                { $or: [{ _id: threadId }, { threadId: threadId }] },
+                { $or: [
+                    { senderId: req.user._id, deletedBySender: false },
+                    { recipientId: req.user._id, deletedByRecipient: false }
+                ]}
             ]
         })
         .sort({ createdAt: 1 })

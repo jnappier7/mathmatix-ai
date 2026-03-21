@@ -165,7 +165,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
         // Exclude the truly-active session if one exists.
         const completedFilter = {
             userId: childId,
-            summary: { $exists: true, $ne: null, $ne: '' }
+            summary: { $exists: true, $nin: [null, ''] }
         };
         if (activeConversation) {
             completedFilter._id = { $ne: activeConversation._id };

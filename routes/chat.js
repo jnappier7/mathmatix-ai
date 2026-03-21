@@ -1369,9 +1369,9 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
             userId: userId,
             isActive: false, // Only completed sessions
             $or: [
-                { summary: { $exists: true, $ne: null, $ne: '' } },
-                { currentTopic: { $exists: true, $ne: null, $ne: '' } },
-                { strugglingWith: { $exists: true, $ne: null, $ne: '' } }
+                { summary: { $exists: true, $nin: [null, ''] } },
+                { currentTopic: { $exists: true, $nin: [null, ''] } },
+                { strugglingWith: { $exists: true, $nin: [null, ''] } }
             ]
         })
         .sort({ lastActivity: -1 })

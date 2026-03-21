@@ -55,7 +55,7 @@ router.get('/', async (req, res) => {
         if (!lastContextForAI) {
             const lastArchivedConversation = await Conversation.findOne({
                 userId: user._id,
-                summary: { $ne: null, $ne: "Initial Welcome Message" }
+                summary: { $nin: [null, "Initial Welcome Message"] }
             }).sort({ lastActivity: -1 }).lean();
 
             if (lastArchivedConversation) {
