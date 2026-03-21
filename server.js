@@ -127,6 +127,7 @@ const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA
 const consentRoutes = require('./routes/consent');  // Privacy consent management (COPPA/FERPA)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 const demoRoutes = require('./routes/demo');  // Playground demo account login & reset
+const trialChatRoutes = require('./routes/trialChat');  // Anonymous trial chat (landing page)
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
@@ -627,6 +628,7 @@ app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar custom
 // Public API routes (no auth required) — must come BEFORE the catch-all /api mount below
 app.use('/api/waitlist', waitlistRoutes);          // Pre-launch waitlist
 app.use('/api/demo', demoRoutes);                  // Playground demo account login & reset
+app.use('/api/trial-chat', trialChatRoutes);       // Anonymous trial chat (landing page, no auth)
 
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
