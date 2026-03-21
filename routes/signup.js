@@ -10,6 +10,7 @@ const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware 
 const passport = require('passport'); // For req.logIn after successful signup
 const { sendEmailVerification } = require('../utils/emailService'); // For email verification
 const { signupValidation, handleValidationErrors } = require('../middleware/validation');
+const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { generateUniqueUsername } = require('../auth/passport-config');
 
 // Roles that can be self-assigned during public signup.
@@ -184,6 +185,9 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             ...(mathCourseFromCode ? { mathCourse: mathCourseFromCode } : {}),
             // Apply subscription tier from enrollment code if set (e.g. 'unlimited' for teacher classes)
             ...(subscriptionTierFromCode && subscriptionTierFromCode !== 'free' ? { subscriptionTier: subscriptionTierFromCode } : {}),
+            // Pre-set tutor from trial chat (skip pick-tutor step)
+            ...(req.body.trialTutor && TUTOR_CONFIG[req.body.trialTutor] && TUTOR_CONFIG[req.body.trialTutor].unlocked
+                ? { selectedTutorId: req.body.trialTutor } : {}),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
