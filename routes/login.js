@@ -57,8 +57,17 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                 redirectUrl = "/parent-dashboard.html";
             } else if (user.role === "student" && !user.selectedTutorId) {
                 redirectUrl = "/pick-tutor.html";
-            } else if (user.role === "student" && !user.selectedAvatarId) {
-                redirectUrl = "/pick-avatar.html";
+            }
+            // Auto-assign default avatar for legacy users missing one (avatar
+            // selection removed from onboarding — assigned at signup now)
+            if (user.role === 'student' && !user.avatar?.dicebearUrl) {
+                const seed = (user.firstName || user.username || 'student').toLowerCase();
+                user.avatar = {
+                    dicebearConfig: { style: 'adventurer', seed },
+                    dicebearUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}`
+                };
+                user.selectedAvatarId = user.selectedAvatarId || 'dicebear-default';
+                user.save().catch(err => console.error('[Login] Avatar migration failed:', err.message));
             }
 
             // Persist session to MongoDB before responding to prevent race condition
