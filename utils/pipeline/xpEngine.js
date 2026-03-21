@@ -116,7 +116,14 @@ function applyXpToUser(user, breakdown) {
     user.markModified('unlockedItems');
   }
 
-  return { leveledUp, tutorsUnlocked };
+  // Avatar builder unlock at Level 2
+  let avatarBuilderUnlocked = false;
+  if (leveledUp && user.level >= 2 && !user.avatarBuilderUnlocked) {
+    user.avatarBuilderUnlocked = true;
+    avatarBuilderUnlocked = true;
+  }
+
+  return { leveledUp, tutorsUnlocked, avatarBuilderUnlocked };
 }
 
 module.exports = { computeXpBreakdown, applyXpToUser, HINT_REGEX };

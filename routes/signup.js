@@ -188,6 +188,15 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             // Pre-set tutor from trial chat (skip pick-tutor step)
             ...(req.body.trialTutor && TUTOR_CONFIG[req.body.trialTutor] && TUTOR_CONFIG[req.body.trialTutor].unlocked
                 ? { selectedTutorId: req.body.trialTutor } : {}),
+            // Auto-assign default DiceBear avatar (no more pick-avatar onboarding step)
+            selectedAvatarId: 'dicebear-default',
+            avatar: {
+                dicebearConfig: {
+                    style: 'adventurer',
+                    seed: firstName ? firstName.toLowerCase() : username.toLowerCase(),
+                },
+                dicebearUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent((firstName || username).toLowerCase())}`
+            },
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 

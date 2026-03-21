@@ -48,6 +48,7 @@ async function persist(params) {
     wasSkipped: false,
     leveledUp: false,
     tutorsUnlocked: [],
+    avatarBuilderUnlocked: false,
     iepGoalUpdates: [],
     courseProgressUpdate: null,
   };
@@ -209,6 +210,7 @@ async function persist(params) {
   const xpResult = applyXpToUser(user, results.xpBreakdown);
   results.leveledUp = xpResult.leveledUp;
   results.tutorsUnlocked = xpResult.tutorsUnlocked;
+  results.avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked;
 
   // Badge progress
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {

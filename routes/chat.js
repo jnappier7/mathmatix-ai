@@ -973,6 +973,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: pipelineResult.tutorsUnlocked,
+            avatarBuilderUnlocked: pipelineResult.avatarBuilderUnlocked || false,
             drawingSequence: pipelineResult.drawingSequence,
             visualCommands: pipelineResult.visualCommands,
             boardContext: pipelineResult.boardContext,

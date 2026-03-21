@@ -251,7 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
-            if (!currentUser.selectedAvatarId && currentUser.role === 'student') return window.location.href = '/pick-avatar.html';
+            // Avatar selection is no longer part of onboarding — users get a default
+            // and unlock the avatar builder at Level 2
 
             // Initialize session time tracking (pass getter for currentUser)
             initSessionTracking(() => currentUser);
@@ -2162,6 +2163,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
                 showTutorUnlockCelebration(data.newlyUnlockedTutors);
+            }
+
+            // Avatar builder unlock celebration (Level 2)
+            if (data.avatarBuilderUnlocked) {
+                setTimeout(() => {
+                    showToast('Avatar Builder unlocked! Customize your look in Settings.', 6000);
+                    triggerConfetti();
+                }, 2000); // Delay so it doesn't overlap with level-up celebration
             }
 
             if (data.userXp !== undefined) {

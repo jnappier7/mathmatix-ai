@@ -480,7 +480,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
                 const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
                 if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                // Avatar is no longer required during onboarding — default assigned automatically
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                 res.redirect(dashboardMap[user.role] || '/login.html');
             });
@@ -522,7 +522,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
                 const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
                 if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                // Avatar is no longer required during onboarding — default assigned automatically
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                 res.redirect(dashboardMap[user.role] || '/login.html');
             });
@@ -585,7 +585,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
                         if (saveErr) { return next(saveErr); }
                         if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
                         if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                        if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                        // Avatar is no longer required during onboarding — default assigned automatically
                         const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                         res.redirect(dashboardMap[user.role] || '/login.html');
                     });

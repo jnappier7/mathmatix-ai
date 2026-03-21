@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         credentials: 'include'
       });
       if (!res.ok) throw new Error(await res.text());
-      window.location.href = '/pick-avatar.html';
+      window.location.href = '/chat.html';
     } catch (err) {
       console.error(err);
       completeSelectionBtn.disabled = false;
