@@ -284,6 +284,38 @@ document.addEventListener("DOMContentLoaded", () => {
             updateChatWatermark(); // Initialize watermark state (chat starts empty)
             await fetchAndDisplayParentCode();
 
+            // --- TRIAL CHAT SESSION CARRYOVER ---
+            // If the user just signed up from a trial chat on the landing page,
+            // restore their conversation so it continues seamlessly.
+            const trialState = (function() {
+                try {
+                    const raw = localStorage.getItem('mathmatix_trial_chat');
+                    if (!raw) return null;
+                    const state = JSON.parse(raw);
+                    // Expire after 1 hour
+                    if (Date.now() - state.timestamp > 60 * 60 * 1000) {
+                        localStorage.removeItem('mathmatix_trial_chat');
+                        return null;
+                    }
+                    return state;
+                } catch (e) { return null; }
+            })();
+
+            if (trialState && trialState.history && trialState.history.length > 0) {
+                // Inject trial messages into the chat UI
+                trialState.history.forEach(function(msg) {
+                    appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
+                });
+                // Clear trial state so it doesn't replay
+                try { localStorage.removeItem('mathmatix_trial_chat'); } catch (e) {}
+                // Skip the returning user modal — they already have context
+                // and skip the welcome message since chat is populated
+                await fetchAndDisplayLeaderboard();
+                await loadQuestsAndChallenges();
+                setTimeout(() => showDefaultSuggestions(), 1000);
+                return; // Skip the rest of initializeApp
+            }
+
             // --- RETURNING USER MODAL ---
             // For returning students, show a modal with options before loading chat.
             // They can: resume a course chat, start a fresh course session,

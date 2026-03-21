@@ -11,7 +11,6 @@
 
     if (!banner || !daysEl || !hoursEl || !minsEl || !secsEl) return;
 
-    // Target: March 14, 2026 at midnight EDT (UTC-4, daylight saving in effect)
     var target = new Date('2026-03-14T04:00:00Z');
 
     function pad(n) { return n < 10 ? '0' + n : String(n); }
@@ -20,7 +19,6 @@
       var now = new Date();
       var diff = target - now;
 
-      // If Pi Day has passed, hide the banner and swap demo links to signup
       if (diff <= 0) {
         banner.classList.add('lp-countdown-launched');
         document.querySelectorAll('.lp-pre-launch').forEach(function (el) { el.style.display = 'none'; });
@@ -39,13 +37,11 @@
       secsEl.textContent  = pad(secs);
     }
 
-    // Run immediately, then every second
     updateCountdown();
     setInterval(updateCountdown, 1000);
   })();
 
   /* ── Waitlist Form Handling ────────────────────────── */
-  // Track which role tab is active so we can send it with the waitlist signup
   var activeRole = 'parent';
   var roleBtns = document.querySelectorAll('.lp-role-tab');
   roleBtns.forEach(function (btn) {
@@ -63,7 +59,6 @@
       var email = input.value.trim();
       if (!email) return;
 
-      // Remove any existing message
       var existingMsg = form.querySelector('.lp-waitlist-msg');
       if (existingMsg) existingMsg.remove();
 
@@ -107,7 +102,6 @@
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('lp-visible');
-          /* Also reveal any stagger grids inside this section */
           var staggers = entry.target.querySelectorAll('.lp-stagger');
           staggers.forEach(function (s) { s.classList.add('lp-visible'); });
           revealObs.unobserve(entry.target);
@@ -119,7 +113,386 @@
     revealEls.forEach(function (el) { el.classList.add('lp-visible'); });
   }
 
-  /* ── Animated Chat Preview — Cycling Topics ─────────── */
+  /* ══════════════════════════════════════════════════════
+     TRIAL CHAT FLOW
+     Phase 1: Tutor selection (cards)
+     Phase 2: Celebration video
+     Phase 3: Live chat (3 turns → soft gate)
+     ══════════════════════════════════════════════════════ */
+
+  // Tutor metadata (names for gate messages, images)
+  var TUTOR_META = {
+    'mr-nappier': { name: 'Mr. Nappier', img: '/images/tutor_avatars/mr-nappier.png' },
+    'bob':        { name: 'Bob',         img: '/images/tutor_avatars/bob.png' },
+    'maya':       { name: 'Maya',        img: '/images/tutor_avatars/maya.png' },
+    'ms-maria':   { name: 'Ms. Maria',   img: '/images/tutor_avatars/ms-maria.png' }
+  };
+
+  // Personalized soft-gate messages — written in each tutor's voice
+  var GATE_MESSAGES = {
+    'mr-nappier': "We're starting to see a pattern here — you're getting it! Make a free account so we can keep going.",
+    'bob':        "Math you believe it? We're on a roll! Sign up free so I can keep helping you.",
+    'maya':       "Okay we're lowkey getting somewhere! Sign up (it's free) so we can keep working together.",
+    'ms-maria':   "¡Muy bien! We're making great progress paso por paso. Create a free account to continue."
+  };
+
+  // DOM refs
+  var heroPick     = document.getElementById('lp-hero-pick');
+  var celebration  = document.getElementById('lp-celebration');
+  var trialChat    = document.getElementById('lp-trial-chat');
+  var trustBar     = document.getElementById('lp-trust-bar');
+
+  if (!heroPick || !celebration || !trialChat) return; // Guard: elements must exist
+
+  var celebrationVideo = document.getElementById('lp-celebration-video');
+  var celebrationTitle = document.getElementById('lp-celebration-title');
+  var celebrationSub   = document.getElementById('lp-celebration-subtitle');
+
+  var trialMessages    = document.getElementById('lp-trial-messages');
+  var trialTyping      = document.getElementById('lp-trial-typing');
+  var trialInput       = document.getElementById('lp-trial-input');
+  var trialSend        = document.getElementById('lp-trial-send');
+  var trialBack        = document.getElementById('lp-trial-back');
+  var trialSuggestions = document.getElementById('lp-trial-suggestions');
+  var trialInputArea   = document.getElementById('lp-trial-input-area');
+  var trialGate        = document.getElementById('lp-trial-gate');
+  var trialGateMsg     = document.getElementById('lp-trial-gate-msg');
+  var trialTutorImg    = document.getElementById('lp-trial-tutor-img');
+  var trialTutorName   = document.getElementById('lp-trial-tutor-name');
+
+  // State
+  var selectedTutorId = null;
+  var chatHistory = []; // { role: 'user'|'assistant', content: string }
+  var isSending = false;
+
+  /* ── Phase 1: Tutor Card Click → Celebration ─────── */
+  var tutorCards = document.querySelectorAll('.lp-tutor-card');
+
+  tutorCards.forEach(function (card) {
+    // "Hear Me" voice preview button
+    var hearBtn = card.querySelector('.lp-tutor-card-hear');
+    if (hearBtn) {
+      hearBtn.addEventListener('click', function (e) {
+        e.stopPropagation(); // Don't trigger card selection
+        var tutorId = card.getAttribute('data-tutor');
+        playVoicePreview(tutorId, hearBtn);
+      });
+    }
+
+    // Card click → select tutor
+    card.addEventListener('click', function () {
+      var tutorId = card.getAttribute('data-tutor');
+      selectTutor(tutorId);
+    });
+  });
+
+  /* ── Voice Preview ───────────────────────────────── */
+  var voicePreviewAudio = null;
+
+  function playVoicePreview(tutorId, btnEl) {
+    // Stop any currently playing preview
+    if (voicePreviewAudio) {
+      voicePreviewAudio.pause();
+      voicePreviewAudio = null;
+    }
+
+    // Visual feedback
+    var icon = btnEl.querySelector('i');
+    if (icon) {
+      icon.className = 'fas fa-spinner fa-spin';
+    }
+
+    voicePreviewAudio = new Audio('/api/trial-chat/voice-preview/' + tutorId);
+
+    voicePreviewAudio.addEventListener('canplaythrough', function () {
+      if (icon) icon.className = 'fas fa-volume-up';
+      voicePreviewAudio.play().catch(function () {
+        if (icon) icon.className = 'fas fa-volume-up';
+      });
+    }, { once: true });
+
+    voicePreviewAudio.addEventListener('error', function () {
+      if (icon) icon.className = 'fas fa-volume-up';
+      // Silently fail — voice preview is a nice-to-have
+    }, { once: true });
+
+    voicePreviewAudio.addEventListener('ended', function () {
+      voicePreviewAudio = null;
+    }, { once: true });
+
+    voicePreviewAudio.load();
+  }
+
+  /* ── Phase 2: Celebration ────────────────────────── */
+  function selectTutor(tutorId) {
+    selectedTutorId = tutorId;
+    chatHistory = [];
+
+    var meta = TUTOR_META[tutorId];
+    if (!meta) return;
+
+    // Set celebration content
+    celebrationTitle.textContent = meta.name.toUpperCase() + '!';
+    celebrationSub.textContent = "Let's do some math together!";
+
+    // Set video source — use the levelUp video for maximum impact
+    celebrationVideo.src = '/videos/' + tutorId + '_levelUp.mp4';
+    celebration.style.display = 'flex';
+    celebration.classList.remove('fade-out');
+
+    // Hide tutor selection
+    heroPick.style.display = 'none';
+    if (trustBar) trustBar.style.display = 'none';
+
+    celebrationVideo.play().catch(function () {
+      // Video autoplay blocked — skip celebration, go to chat
+      showTrialChat();
+    });
+
+    // Dismiss celebration → transition to chat
+    var dismissed = false;
+    function dismissCelebration() {
+      if (dismissed) return;
+      dismissed = true;
+
+      celebration.classList.add('fade-out');
+      setTimeout(function () {
+        celebration.style.display = 'none';
+        showTrialChat();
+      }, 400);
+    }
+
+    celebrationVideo.addEventListener('ended', dismissCelebration, { once: true });
+    celebration.addEventListener('click', dismissCelebration, { once: true });
+    // Safety timeout — don't leave them stuck
+    setTimeout(dismissCelebration, 5000);
+  }
+
+  /* ── Phase 3: Trial Chat ─────────────────────────── */
+  function showTrialChat() {
+    var meta = TUTOR_META[selectedTutorId];
+    if (!meta) return;
+
+    // Set header info
+    trialTutorImg.src = meta.img;
+    trialTutorImg.alt = meta.name;
+    trialTutorName.textContent = meta.name;
+
+    // Reset chat UI
+    trialMessages.innerHTML = '';
+    trialInput.value = '';
+    trialSuggestions.style.display = '';
+    trialInputArea.style.display = '';
+    trialGate.style.display = 'none';
+    trialSend.disabled = false;
+
+    // Show chat panel
+    trialChat.style.display = 'block';
+
+    // Scroll hero into view
+    document.getElementById('lp-hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Focus input after transition
+    setTimeout(function () { trialInput.focus(); }, 300);
+
+    // Persist tutor selection for session carryover
+    saveTrialState();
+  }
+
+  /* ── Back Button: Return to tutor selection ──────── */
+  trialBack.addEventListener('click', function () {
+    trialChat.style.display = 'none';
+    heroPick.style.display = '';
+    if (trustBar) trustBar.style.display = '';
+    selectedTutorId = null;
+    chatHistory = [];
+    clearTrialState();
+  });
+
+  /* ── Suggested Prompt Buttons ────────────────────── */
+  var promptBtns = document.querySelectorAll('.lp-trial-prompt');
+  promptBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var prompt = btn.getAttribute('data-prompt');
+      if (prompt) {
+        trialInput.value = prompt;
+        sendTrialMessage();
+      }
+    });
+  });
+
+  /* ── Send Message ────────────────────────────────── */
+  trialSend.addEventListener('click', sendTrialMessage);
+  trialInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendTrialMessage();
+    }
+  });
+
+  function sendTrialMessage() {
+    if (isSending) return;
+
+    var text = trialInput.value.trim();
+    if (!text) return;
+
+    isSending = true;
+    trialSend.disabled = true;
+    trialInput.value = '';
+
+    // Hide suggestions after first message
+    trialSuggestions.style.display = 'none';
+
+    // Add user bubble
+    appendTrialBubble(text, true);
+
+    // Show typing indicator
+    trialTyping.style.display = 'flex';
+    scrollTrialToBottom();
+
+    // Call API
+    csrfFetch('/api/trial-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tutorId: selectedTutorId,
+        message: text,
+        history: chatHistory
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      trialTyping.style.display = 'none';
+
+      if (data.error) {
+        appendTrialBubble('Something went wrong. Please try again.', false);
+        isSending = false;
+        trialSend.disabled = false;
+        return;
+      }
+
+      // Update history
+      chatHistory.push({ role: 'user', content: text });
+
+      if (data.reply) {
+        chatHistory.push({ role: 'assistant', content: data.reply });
+        appendTrialBubble(data.reply, false);
+      }
+
+      // Save for session carryover
+      saveTrialState();
+
+      // Check if gated
+      if (data.gated) {
+        showGate();
+      } else {
+        isSending = false;
+        trialSend.disabled = false;
+        trialInput.focus();
+      }
+    })
+    .catch(function () {
+      trialTyping.style.display = 'none';
+      appendTrialBubble('Connection error. Please try again.', false);
+      isSending = false;
+      trialSend.disabled = false;
+    });
+  }
+
+  /* ── Chat Bubble Renderer ────────────────────────── */
+  function appendTrialBubble(text, isUser) {
+    var meta = TUTOR_META[selectedTutorId];
+
+    var row = document.createElement('div');
+    row.className = 'lp-chat-row' + (isUser ? ' lp-chat-row--student' : '');
+
+    if (!isUser) {
+      var avatar = document.createElement('div');
+      avatar.className = 'lp-chat-avatar';
+      var avatarImg = document.createElement('img');
+      avatarImg.src = meta.img;
+      avatarImg.alt = meta.name;
+      avatar.appendChild(avatarImg);
+      row.appendChild(avatar);
+    }
+
+    var bubble = document.createElement('div');
+    bubble.className = 'lp-chat-bubble ' + (isUser ? 'lp-chat-student' : 'lp-chat-tutor');
+    bubble.textContent = text;
+    row.appendChild(bubble);
+
+    trialMessages.appendChild(row);
+
+    requestAnimationFrame(function () {
+      row.classList.add('lp-chat-visible');
+      scrollTrialToBottom();
+    });
+  }
+
+  function scrollTrialToBottom() {
+    trialMessages.scrollTop = trialMessages.scrollHeight;
+  }
+
+  /* ── Soft Gate ───────────────────────────────────── */
+  function showGate() {
+    // Hide input, show gate
+    trialInputArea.style.display = 'none';
+    trialGate.style.display = '';
+
+    // Set tutor-voice gate message
+    var msg = GATE_MESSAGES[selectedTutorId] || "We're making great progress! Sign up free to keep going.";
+    trialGateMsg.textContent = msg;
+
+    // Append the signup URL with trial tutor info for session carryover
+    var signupLinks = trialGate.querySelectorAll('a[href*="signup"]');
+    signupLinks.forEach(function (link) {
+      link.href = '/signup.html?trial_tutor=' + encodeURIComponent(selectedTutorId);
+    });
+
+    // Also update the header signup button
+    var headerSignup = document.querySelector('.lp-trial-signup-btn');
+    if (headerSignup) {
+      headerSignup.href = '/signup.html?trial_tutor=' + encodeURIComponent(selectedTutorId);
+    }
+  }
+
+  /* ── Session Carryover (localStorage) ────────────── */
+  var TRIAL_STORAGE_KEY = 'mathmatix_trial_chat';
+
+  function saveTrialState() {
+    try {
+      localStorage.setItem(TRIAL_STORAGE_KEY, JSON.stringify({
+        tutorId: selectedTutorId,
+        history: chatHistory,
+        timestamp: Date.now()
+      }));
+    } catch (e) { /* localStorage not available — ok */ }
+  }
+
+  function clearTrialState() {
+    try { localStorage.removeItem(TRIAL_STORAGE_KEY); } catch (e) {}
+  }
+
+  // Expose for the chat page to pick up after signup
+  window.getTrialChatState = function () {
+    try {
+      var raw = localStorage.getItem(TRIAL_STORAGE_KEY);
+      if (!raw) return null;
+      var state = JSON.parse(raw);
+      // Expire after 1 hour
+      if (Date.now() - state.timestamp > 60 * 60 * 1000) {
+        localStorage.removeItem(TRIAL_STORAGE_KEY);
+        return null;
+      }
+      return state;
+    } catch (e) { return null; }
+  };
+
+  window.clearTrialChatState = function () {
+    clearTrialState();
+  };
+
+  /* ── Animated Chat Preview (below fold) ──────────────── */
   var chatContainer = document.getElementById('lp-chat');
   var typingEl = document.getElementById('lp-typing');
   var tutorNameEl = document.getElementById('lp-tutor-name');
@@ -178,10 +551,7 @@
       var convo = conversations[convoIndex % conversations.length];
       convoIndex++;
 
-      // Update tutor name
       if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
-
-      // Clear previous messages
       chatContainer.innerHTML = '';
       typingEl.style.display = 'none';
 
@@ -189,9 +559,7 @@
 
       function showNextMessage() {
         if (msgIdx >= convo.messages.length) {
-          // Pause on completed conversation, then start next
           setTimeout(function () {
-            // Fade out current messages
             var allRows = chatContainer.querySelectorAll('.lp-chat-row');
             allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
             setTimeout(playConversation, 400);
@@ -203,22 +571,21 @@
         var isStudent = msg.from === 'student';
 
         if (!isStudent) {
-          // Show typing indicator before tutor message
           typingEl.style.display = 'flex';
           setTimeout(function () {
             typingEl.style.display = 'none';
-            appendMessage(msg, isStudent, convo);
+            appendPreviewMessage(msg, isStudent, convo);
             msgIdx++;
             setTimeout(showNextMessage, 900);
           }, 1100);
         } else {
-          appendMessage(msg, isStudent, convo);
+          appendPreviewMessage(msg, isStudent, convo);
           msgIdx++;
           setTimeout(showNextMessage, 800);
         }
       }
 
-      function appendMessage(msg, isStudent, c) {
+      function appendPreviewMessage(msg, isStudent, c) {
         var row = document.createElement('div');
         row.className = 'lp-chat-row' + (isStudent ? ' lp-chat-row--student' : '');
 
@@ -238,7 +605,6 @@
         row.appendChild(bubble);
         chatContainer.appendChild(row);
 
-        // Trigger animation and scroll to bottom
         requestAnimationFrame(function () {
           row.classList.add('lp-chat-visible');
           chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -248,7 +614,22 @@
       setTimeout(showNextMessage, 600);
     }
 
-    setTimeout(playConversation, 700);
+    // Only start playing when the section scrolls into view
+    if ('IntersectionObserver' in window) {
+      var chatPreviewStarted = false;
+      var chatObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !chatPreviewStarted) {
+            chatPreviewStarted = true;
+            setTimeout(playConversation, 700);
+            chatObs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      chatObs.observe(chatContainer.closest('section') || chatContainer);
+    } else {
+      setTimeout(playConversation, 700);
+    }
   }
 
   /* ── Role Selector Tabs ────────────────────────────── */
@@ -259,11 +640,9 @@
     tab.addEventListener('click', function () {
       var role = tab.getAttribute('data-role');
 
-      /* Update tabs */
       roleTabs.forEach(function (t) { t.classList.remove('lp-role-tab--active'); });
       tab.classList.add('lp-role-tab--active');
 
-      /* Update panels */
       rolePanels.forEach(function (p) { p.classList.remove('lp-role-panel--active'); });
       var targetPanel = document.querySelector('[data-panel="' + role + '"]');
       if (targetPanel) targetPanel.classList.add('lp-role-panel--active');
@@ -304,17 +683,14 @@
   }
 
   /* ── Pi Day Launch Auto-Switch ─────────────────────── */
-  // Post-launch: hide countdown banner, show Pi Day promo if still in window
   (function piDayLaunchSwitch() {
-    var launchDate = new Date('2026-03-14T04:00:00Z'); // midnight EDT = UTC-4
-    var promoEnd   = new Date('2026-03-16T03:59:59Z'); // end of March 15 EDT
+    var launchDate = new Date('2026-03-14T04:00:00Z');
+    var promoEnd   = new Date('2026-03-16T03:59:59Z');
     if (new Date() < launchDate) return;
 
-    // Hide countdown banner
     var countdown = document.getElementById('lp-countdown');
     if (countdown) countdown.style.display = 'none';
 
-    // Show Pi Day promo banner (only during the promo window)
     if (new Date() <= promoEnd) {
       var promoBanner = document.createElement('div');
       promoBanner.className = 'lp-piday-promo';

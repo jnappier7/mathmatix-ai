@@ -1456,6 +1456,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-feature-icon i { font-size: 1.1rem; }
     }
 
+    /* ── Chat Preview Section (below fold) ────────────── */
+    .lp-chat-preview-section {
+      padding: 4rem var(--page-horizontal-padding);
+    }
+
     /* ═══════════════════════════════════════════════════════
        TRIAL CHAT: Tutor Cards, Celebration, Chat UI, Gate
        ═══════════════════════════════════════════════════════ */
@@ -2035,6 +2040,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </picture>
           <div class="lp-photo-banner-overlay">
             <p class="lp-photo-banner-text">Built for the way kids actually learn.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chat Preview (moved below fold from hero) ────────── -->
+    <section class="lp-chat-preview-section lp-reveal lp-section-alt">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">See How a Session Works</h2>
+        <p class="lp-section-sub">Real conversations with our AI tutors. No scripts &mdash; every session is personalized.</p>
+        <div class="lp-hero-preview" style="margin: 0 auto;">
+          <div class="lp-preview-header">
+            <div class="lp-preview-dot"></div>
+            <span id="lp-tutor-name">Mr. Nappier</span> &mdash; Mathmatix AI Tutor
+          </div>
+          <div class="lp-chat-messages" id="lp-chat"></div>
+          <div class="lp-typing" id="lp-typing">
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
           </div>
         </div>
       </div>
