@@ -1672,7 +1672,9 @@ async function handleGreetingRequest(req, res, userId) {
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
-            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
+
+IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to. If they're new, end with a quick warm-up question appropriate to their grade level — something easy they can answer right away to build momentum. For example: "Quick warm-up: what's 3 × 7?" or "Let's start easy: what's 15 + 28?" Pick something they'll get right. This creates an immediate win.`;
 
             // Add Starting Point offer (only on first session, never again)
             if (shouldOfferStartingPoint) {

@@ -204,6 +204,47 @@ export async function loadQuestsAndChallenges() {
 }
 
 /**
+ * Show "what's coming next" teaser based on proximity to next unlock.
+ * Fires after level-up or when XP is 80%+ toward next level.
+ * Creates anticipation (dopamine loop) for the next reward.
+ */
+export function showUnlockProximityTeaser(currentUser) {
+    if (!currentUser) return;
+    const level = currentUser.level || 1;
+    const xp = currentUser.xpForCurrentLevel || 0;
+    const xpNeeded = currentUser.xpForNextLevel || 100;
+    const percentage = xpNeeded > 0 ? (xp / xpNeeded) * 100 : 0;
+
+    // Upcoming unlocks mapped by level
+    const upcomingUnlocks = [
+        { level: 2,  reward: 'Avatar Builder',  icon: 'fa-palette' },
+        { level: 5,  reward: 'Ms. Rashida',     icon: 'fa-user-plus' },
+        { level: 10, reward: 'Mr. Sierawski',   icon: 'fa-user-plus' },
+        { level: 15, reward: 'Prof. Davies',    icon: 'fa-user-plus' },
+        { level: 20, reward: 'Ms. Alex',        icon: 'fa-user-plus' },
+        { level: 25, reward: 'Mr. Lee',         icon: 'fa-user-plus' },
+        { level: 30, reward: 'Dr. G',           icon: 'fa-user-plus' },
+        { level: 35, reward: 'Mr. Wiggles',     icon: 'fa-user-plus' },
+    ];
+
+    // Find the next unlock above current level
+    const nextUnlock = upcomingUnlocks.find(u => u.level > level);
+    if (!nextUnlock) return;
+
+    const levelsAway = nextUnlock.level - level;
+
+    // Show teaser in two cases:
+    // 1. Just leveled up — show what's coming
+    // 2. 80%+ toward next level AND next unlock is 1 level away
+    if (levelsAway === 1 && percentage >= 80) {
+        showToast(`Almost there! ${nextUnlock.reward} unlocks at Level ${nextUnlock.level}`, 4000);
+    } else if (levelsAway <= 2) {
+        // After level-up, show what's close (called from triggerXpAnimation on levelUp)
+        showToast(`${nextUnlock.reward} unlocks at Level ${nextUnlock.level} — ${levelsAway === 1 ? 'just 1 more level!' : levelsAway + ' levels to go'}`, 5000);
+    }
+}
+
+/**
  * Show tutor unlock celebration (Mortal Kombat style reveal)
  */
 export function showTutorUnlockCelebration(tutorIds) {

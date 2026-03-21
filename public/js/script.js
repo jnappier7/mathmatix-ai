@@ -5,7 +5,7 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 // --- ES Module Imports ---
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
-import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration } from './modules/gamification.js';
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser } from './modules/gamification.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -2157,6 +2157,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
+
+                // Show unlock proximity teaser (after level-up or when close)
+                if (data.xpLadder?.leveledUp) {
+                    setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
+                }
             }
 
             // Session stats tracker update
