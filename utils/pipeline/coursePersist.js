@@ -344,11 +344,25 @@ function processSkillMastery(user, skillId) {
   user.markModified('skillMastery');
 }
 
+// ── NOTE: Stall detection (shouldAutoAdvance) has been removed. ──
+// The backend step evaluator (stepEvaluator.js) now runs on every turn
+// and decides when to advance. The old system relied on counting turns
+// since the last <SCAFFOLD_ADVANCE> tag — which only existed because
+// the teaching LLM was responsible for emitting it. Now that progression
+// is backend-owned, stall detection is unnecessary.
+//
+// shouldAutoAdvance is still exported as a no-op for backward compat
+// with any code that might reference it during the transition.
+function shouldAutoAdvance() {
+  return false;
+}
+
 module.exports = {
   detectGraphTool,
   processScaffoldAdvance,
   processModuleComplete,
   processSkillMastery,
+  shouldAutoAdvance,
   PHASE_LABELS,
   PRACTICE_PHASES,
   MIN_CORRECT_FOR_ADVANCE,

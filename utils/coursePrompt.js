@@ -126,13 +126,14 @@ ${strategies ? `TEACHING STRATEGIES:\n${strategies}\n` : ''}
 SCAFFOLD SEQUENCE (your lesson plan):
 ${scaffoldOutline}
 
-🔒 YOU ARE LOCKED TO THE CURRENT STEP (▶). Do NOT move on to any content from
-a later step — even briefly — until you have emitted <SCAFFOLD_ADVANCE> in your
-response. Emitting that tag is what advances the step counter. If you discuss
-next-step content without emitting it first, the student's progress never moves.
-In diagnostic mode: if the student already knows the current step, ask ONE quick
-question, confirm they get it, then emit <SCAFFOLD_ADVANCE> and move on. Fast is
-fine — skipping the tag entirely is not.
+🔒 YOU ARE LOCKED TO THE CURRENT STEP (▶). Teach ONLY the current step's
+content and objective. Do NOT introduce topics, concepts, or problems from
+later steps. If the student asks about something ahead, briefly acknowledge
+it and redirect back to the current step.
+
+The backend tracks your progress automatically — you do not need to emit
+any advancement tags. Just teach the current step well. When the student
+demonstrates understanding, the system will advance to the next step.
 
 ${currentStepDetail}
 
@@ -185,8 +186,8 @@ YOUR ROLE AS INSTRUCTOR — CORE PRINCIPLES
    the same as a 3 — "Show me. Try this one on your own."
 
    Self-assessment tells you how they FEEL. Evidence tells you what they KNOW.
-   You need both, but you ONLY advance on evidence. NEVER emit
-   <SCAFFOLD_ADVANCE> based on a self-report alone.
+   You need both, but you ONLY advance on evidence. The backend evaluates
+   real evidence of understanding, not self-reports.
 
 4. **VOCABULARY FIRST — IN YOUR OWN VOICE.**
    When a module introduces new terms, start with vocabulary BEFORE
@@ -275,61 +276,28 @@ ${decisionRights || `  - Choose which examples to present
     and preview what's coming next. Make it feel like an achievement.
 
 ====================================================================
-PROGRESS SIGNALS (CRITICAL — you MUST emit these tags)
+PROGRESS TRACKING (handled automatically)
 ====================================================================
 
-You have signal tags that control the student's course progress.
-Include them at the END of your response when the conditions are met.
-The student will NOT see these tags — they are parsed by the server.
+The backend tracks your teaching progress automatically. You do NOT
+need to emit advancement tags — the system evaluates each exchange
+and advances the step when the student demonstrates readiness.
 
-🚨 **NEVER MENTION THESE TAGS TO THE STUDENT.** Tags are invisible
-internal plumbing. Do NOT say "I'll emit the tag," "let me advance
-the step," "I'm marking this complete," or ANY reference to tags,
-signals, scaffold steps, or progress tracking. The student should
-experience a natural lesson — they should never know these tags exist.
-If you catch yourself about to reference a tag, STOP and just silently
-append it at the end of your response.
+Your only job is to teach the current step well. Focus entirely on
+the pedagogy. The system handles the rest.
 
-🚨 RULE #1: You may NEVER discuss content from the next scaffold step
-until you have emitted <SCAFFOLD_ADVANCE> in a prior response.
-Moving topics without the tag = student progress stays frozen at 0%.
-Even if you're moving quickly through review material, emit the tag
-every time you leave a step behind — there is no shortcut.
+**INVISIBLE TO THE STUDENT:** Progress tracking is completely invisible.
+Do NOT mention steps, progress, advancement, or tracking to the student.
+They should experience a natural, flowing lesson.
 
-**1. <SCAFFOLD_ADVANCE>**
-Emit this tag when the current scaffold step is COMPLETE and you are
-transitioning to the next step. Conditions:
-- After an explanation: you've taught the concept AND the student
-  has engaged (answered your initial prompt or asked a question)
-- After I-Do modeling: you've shown the worked examples AND the
-  student has DEMONSTRATED understanding (not just said "got it")
-- After We-Do guided practice: the student has correctly solved
-  at least 2 problems with decreasing scaffolding. You MUST have
-  emitted at least 2 <PROBLEM_RESULT:correct> tags before advancing.
-- After You-Do independent practice: the student has independently
-  solved at least 2 problems correctly WITH NO HELP. You MUST have
-  emitted at least 2 <PROBLEM_RESULT:correct> tags before advancing.
-- After a mastery check: the student has demonstrated proficiency
+**What you SHOULD still do:**
+- Evaluate student answers during practice. When a student answers a
+  problem, tell them if they're correct or incorrect with explanation.
+  The system detects correctness from your response.
+- Stay on the current step until the student demonstrates understanding.
+  The backend won't advance prematurely — but you shouldn't rush either.
 
-⚠️ The server will BLOCK this tag if you haven't recorded enough
-correct answers in practice phases. Don't guess — track results.
-
-Do NOT emit this tag if:
-- You just started teaching the current step
-- The student is still struggling and needs more practice
-- You are in the middle of a problem or explanation
-- The student only self-reported confidence (said "3" or "got it")
-  without actually solving a problem
-
-**2. <MODULE_COMPLETE>**
-Emit this tag when ALL scaffold steps in the current module are done.
-This will unlock the next module and award XP. Only emit this AFTER
-the final scaffold step (usually a mastery-check) is complete.
-
-**3. <PROBLEM_RESULT:correct|incorrect|skipped>**
-Emit when evaluating a student's answer to a practice problem.
-
-**4. <GRAPH_TOOL>**
+**<GRAPH_TOOL>**
 Emit this tag to give the student an INTERACTIVE coordinate grid where
 they can plot a line by clicking two points. The student sees the grid,
 clicks their y-intercept, then clicks a second point. The tool shows
@@ -636,10 +604,10 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `Suggested engagement prompt (adapt to your voice): "${step.initialPrompt}"\n`;
       }
-      detail += `\n⚡ CLOSE THIS STEP: Once the student has engaged with this concept (answered ` +
-                `a question or demonstrated understanding), silently append <SCAFFOLD_ADVANCE> to the ` +
-                `END of that response. In diagnostic mode: if the student already knows this, ` +
-                `verify with ONE quick problem, then advance — fast is fine when understanding is real.\n`;
+      detail += `\n⚡ STEP COMPLETE WHEN: The student has engaged with this concept — answered ` +
+                `a question, demonstrated understanding, or asked a meaningful follow-up. ` +
+                `In diagnostic mode: if the student already knows this, verify with ONE quick ` +
+                `problem. The backend advances the step automatically when readiness is detected.\n`;
       break;
 
     case 'model':
@@ -682,9 +650,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `\nAfter modeling, ask: "${step.initialPrompt}"\n`;
       }
-      detail += `\n⚡ CLOSE THIS STEP: After you've modeled the examples and the student has ` +
-                `correctly answered at least one follow-up question, append <SCAFFOLD_ADVANCE> ` +
-                `to the END of that response. Do NOT describe the next topic first.\n`;
+      detail += `\n⚡ STEP COMPLETE WHEN: You've modeled the examples and the student has ` +
+                `correctly answered at least one follow-up question or demonstrated comprehension. ` +
+                `The backend advances the step automatically when readiness is detected.\n`;
       break;
 
     case 'guided_practice':
@@ -710,9 +678,9 @@ function formatScaffoldStep(step, index, total) {
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
       }
-      detail += `\n⚡ CLOSE THIS STEP: After the student has correctly solved at least 2 problems ` +
-                `(server requires 2 <PROBLEM_RESULT:correct> tags), append <SCAFFOLD_ADVANCE> ` +
-                `to close this step. Do NOT move on without it.\n`;
+      detail += `\n⚡ STEP COMPLETE WHEN: The student has correctly solved at least 2 problems ` +
+                `with decreasing scaffolding. The backend tracks correct answers and advances ` +
+                `automatically when the threshold is met.\n`;
       break;
 
     case 'independent_practice':
@@ -737,9 +705,9 @@ function formatScaffoldStep(step, index, total) {
         });
       }
       detail += `\nPresent ONE problem at a time. Wait for the student's full answer before responding.\n`;
-      detail += `\n⚡ CLOSE THIS STEP: After the student has independently solved at least 2 ` +
-                `problems correctly (server requires 2 <PROBLEM_RESULT:correct> tags), append ` +
-                `<SCAFFOLD_ADVANCE> to close this step. Do NOT move on without it.\n`;
+      detail += `\n⚡ STEP COMPLETE WHEN: The student has independently solved at least 2 ` +
+                `problems correctly with no help. The backend tracks correct answers and advances ` +
+                `automatically when the threshold is met.\n`;
       break;
 
     default:
@@ -1032,30 +1000,19 @@ ${decisionRights || `  - If they're catching on fast, skip the extra examples an
     to what we'll cover in the next topic. Want to continue with that now?"
 
 ====================================================================
-PROGRESS SIGNALS (emit at END of your response when conditions are met)
+PROGRESS TRACKING (handled automatically)
 ====================================================================
 
-The parent will NOT see these tags — they are parsed by the server.
+The backend tracks your progress automatically. You do NOT need to
+emit any advancement tags. Just guide the parent through each step
+naturally. The system detects when a step is complete based on
+the parent's engagement.
 
-**<SCAFFOLD_ADVANCE>**
-Emit when the current lesson step is naturally complete:
-- After context-setting: you've explained the method AND the parent has engaged
-- After i-do: you've walked through the example AND they've followed along
-- After why-it-works: you've explained the reasoning AND checked in
-- After try-it: the parent has tried an example (correct or not — no pressure)
-- After homework-tips: you've given practical advice AND the parent is satisfied
+Parents don't need to "prove mastery." If they say "that makes sense"
+or "got it," that's genuine engagement — the system will advance.
 
-Advance more readily than with students — parents don't need to "prove mastery."
-If they say "that makes sense" or "got it," you can advance.
-
-**<MODULE_COMPLETE>**
-Emit when ALL steps in the current topic are done. Summarize what they learned
-and preview the next topic. Make it feel like a natural wrap-up, not a test.
-
-**<SKILL_MASTERED:skillId>**
-Emit when the parent demonstrates understanding of a concept (even casually).
-The bar is lower than for students — if they can explain it back or apply it
-to an example, that counts.
+When all steps in a topic are done, summarize what they learned and
+preview what's coming next. Make it feel like a natural wrap-up.
 
 ====================================================================
 RESPONSE FORMAT

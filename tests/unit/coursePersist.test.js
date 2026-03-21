@@ -18,6 +18,7 @@ const {
   processScaffoldAdvance,
   processModuleComplete,
   processSkillMastery,
+  shouldAutoAdvance,
   MIN_CORRECT_FOR_ADVANCE,
 } = require('../../utils/pipeline/coursePersist');
 
@@ -377,5 +378,28 @@ describe('coursePersist: processSkillMastery', () => {
     const user = {};
     processSkillMastery(user, null);
     expect(user.skillMastery).toBeUndefined();
+  });
+});
+
+// ============================================================================
+// shouldAutoAdvance
+// ============================================================================
+
+describe('coursePersist: shouldAutoAdvance (deprecated — now a no-op)', () => {
+  // shouldAutoAdvance has been replaced by the backend step evaluator
+  // (stepEvaluator.js). It now always returns false. These tests verify
+  // the no-op behavior during the transition period.
+
+  test('always returns false (stall detection replaced by step evaluator)', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 0 });
+    const moduleData = mockModuleData(4);
+    const conversation = { messages: Array(30).fill({ role: 'assistant', content: 'x' }) };
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
+  });
+
+  test('returns false even with all arguments (backward compat)', () => {
+    expect(shouldAutoAdvance()).toBe(false);
+    expect(shouldAutoAdvance(null, null, null, { isParentCourse: true })).toBe(false);
   });
 });

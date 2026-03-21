@@ -117,16 +117,21 @@ function extractSystemTags(responseText) {
     text = text.replace(resultMatch[0], '').trim();
   }
 
-  // Scaffold advance
+  // Scaffold advance — tag is DEPRECATED (backend evaluator now owns progression).
+  // We still strip it from the response to keep student-facing text clean,
+  // but it no longer drives advancement. Logged for monitoring during transition.
   if (/<\s*SCAFFOLD_ADVANCE\s*>/i.test(text)) {
-    extracted.scaffoldAdvance = true;
+    extracted.scaffoldAdvance = true; // kept for logging, not for progression
     text = text.replace(/<\s*SCAFFOLD_ADVANCE\s*>/gi, '').trim();
+    console.log('[Verify] Note: AI emitted <SCAFFOLD_ADVANCE> (deprecated — backend evaluator now owns progression)');
   }
 
-  // Module complete
+  // Module complete — DEPRECATED (backend detects last-step completion automatically).
+  // Still stripped for clean output.
   if (/<\s*MODULE_COMPLETE\s*>/i.test(text)) {
-    extracted.moduleComplete = true;
+    extracted.moduleComplete = true; // kept for logging, not for progression
     text = text.replace(/<\s*MODULE_COMPLETE\s*>/gi, '').trim();
+    console.log('[Verify] Note: AI emitted <MODULE_COMPLETE> (deprecated — backend evaluator now owns progression)');
   }
 
   return { text, extracted };
