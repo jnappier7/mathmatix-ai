@@ -107,9 +107,10 @@ function applyXpToUser(user, breakdown) {
     leveledUp = true;
   }
 
-  // Tutor unlocks
+  // Tutor unlocks (variable ratio with behavior triggers)
   const { getTutorsToUnlock } = require('../unlockTutors');
-  const tutorsUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+  const behaviorStats = user.xpLadderStats?.tier3Behaviors || [];
+  const tutorsUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || [], behaviorStats);
   if (tutorsUnlocked.length > 0) {
     user.unlockedItems = user.unlockedItems || [];
     user.unlockedItems.push(...tutorsUnlocked);

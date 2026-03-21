@@ -73,13 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
             '<h4>Specializes In:</h4><p>' + (tutor.specialties || '') + '</p>' +
           '</div>';
       } else {
-        const unlockLabel = tutor.unlockLevel
-          ? 'Unlocks at Level ' + tutor.unlockLevel
-          : 'Unlock by playing';
+        const hint = tutor.unlockHint || 'Keep going — you\'ll meet me soon';
         card.innerHTML =
           '<img src="/images/tutor_avatars/' + tutor.image + '" alt="Locked Tutor" class="tutor-card-image silhouette">' +
           '<h3 class="tutor-card-name locked-name">?????</h3>' +
-          '<p class="tutor-card-tagline"><i class="fas fa-lock"></i> ' + unlockLabel + '</p>';
+          '<p class="tutor-card-tagline"><i class="fas fa-lock"></i> ' + hint + '</p>';
       }
       tutorSelectionGrid.appendChild(card);
     });

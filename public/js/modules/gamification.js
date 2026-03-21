@@ -215,32 +215,35 @@ export function showUnlockProximityTeaser(currentUser) {
     const xpNeeded = currentUser.xpForNextLevel || 100;
     const percentage = xpNeeded > 0 ? (xp / xpNeeded) * 100 : 0;
 
-    // Upcoming unlocks mapped by level
+    // Tease upcoming unlocks without revealing exact levels
+    // Variable ratio — the student shouldn't know exactly when
     const upcomingUnlocks = [
-        { level: 2,  reward: 'Avatar Builder',  icon: 'fa-palette' },
-        { level: 5,  reward: 'Ms. Rashida',     icon: 'fa-user-plus' },
-        { level: 10, reward: 'Mr. Sierawski',   icon: 'fa-user-plus' },
-        { level: 15, reward: 'Prof. Davies',    icon: 'fa-user-plus' },
-        { level: 20, reward: 'Ms. Alex',        icon: 'fa-user-plus' },
-        { level: 25, reward: 'Mr. Lee',         icon: 'fa-user-plus' },
-        { level: 30, reward: 'Dr. G',           icon: 'fa-user-plus' },
-        { level: 35, reward: 'Mr. Wiggles',     icon: 'fa-user-plus' },
+        { minLevel: 2,  reward: 'Avatar Builder' },
+        { minLevel: 5,  reward: 'a new tutor' },
+        { minLevel: 8,  reward: 'a new tutor' },
+        { minLevel: 13, reward: 'a new tutor' },
+        { minLevel: 18, reward: 'a new tutor' },
+        { minLevel: 22, reward: 'a new tutor' },
+        { minLevel: 27, reward: 'a new tutor' },
+        { minLevel: 32, reward: 'a new tutor' },
     ];
 
-    // Find the next unlock above current level
-    const nextUnlock = upcomingUnlocks.find(u => u.level > level);
+    // Find the next unlock range above current level
+    const nextUnlock = upcomingUnlocks.find(u => u.minLevel > level);
     if (!nextUnlock) return;
 
-    const levelsAway = nextUnlock.level - level;
+    const distance = nextUnlock.minLevel - level;
 
-    // Show teaser in two cases:
-    // 1. Just leveled up — show what's coming
-    // 2. 80%+ toward next level AND next unlock is 1 level away
-    if (levelsAway === 1 && percentage >= 80) {
-        showToast(`Almost there! ${nextUnlock.reward} unlocks at Level ${nextUnlock.level}`, 4000);
-    } else if (levelsAway <= 2) {
-        // After level-up, show what's close (called from triggerXpAnimation on levelUp)
-        showToast(`${nextUnlock.reward} unlocks at Level ${nextUnlock.level} — ${levelsAway === 1 ? 'just 1 more level!' : levelsAway + ' levels to go'}`, 5000);
+    // Only tease when close — don't reveal the system
+    if (distance <= 3) {
+        const messages = [
+            "Something's about to unlock... keep going!",
+            "You're getting close to unlocking " + nextUnlock.reward + "!",
+            "A surprise is right around the corner...",
+            "Keep it up — good things are coming!",
+        ];
+        const msg = messages[level % messages.length];
+        showToast(msg, 4000);
     }
 }
 
