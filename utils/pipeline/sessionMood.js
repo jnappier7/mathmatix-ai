@@ -92,6 +92,7 @@ function computeSessionMood(messages, options = {}) {
       momentum: 0,
       inFlow: false,
       fatigueSignal: false,
+      emotionalState: { state: 'neutral', confidence: 0, signals: [] },
       turnCount: messages?.length || 0,
       summary: null,
     };

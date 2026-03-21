@@ -374,6 +374,21 @@ class SessionManager {
     // Save mastery progress if on mastery page
     await this.saveMasteryProgress();
 
+    // Fetch session recap BEFORE ending the session (needs auth to succeed).
+    // The recap modal will display after logout completes.
+    let recapData = null;
+    if (reason === 'manual' && window.location.pathname.includes('chat')) {
+      try {
+        const recapRes = await fetch('/api/session/recap', { credentials: 'include' });
+        if (recapRes.ok) {
+          const json = await recapRes.json();
+          recapData = json.recap;
+        }
+      } catch (err) {
+        console.error('[SessionManager] Recap fetch error:', err);
+      }
+    }
+
     // End session (generates summary)
     await this.endSession(reason);
 
@@ -390,13 +405,13 @@ class SessionManager {
     // Clear UI language cache so the next user on this device gets a clean state
     try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* private mode */ }
 
-    // Show session recap before redirecting (if on a chat page)
-    if (reason === 'manual' && window.location.pathname.includes('chat')) {
+    // Show session recap before redirecting (if we fetched one)
+    if (recapData && recapData.headline) {
       try {
-        const shown = await this.showSessionRecap();
+        const shown = await this.showSessionRecap(recapData);
         if (shown) return; // Recap modal handles redirect after dismissal
       } catch (err) {
-        console.error('[SessionManager] Recap error:', err);
+        console.error('[SessionManager] Recap display error:', err);
       }
     }
 
@@ -405,17 +420,26 @@ class SessionManager {
   }
 
   /**
-   * Fetch and display session recap modal.
+   * Display session recap modal with pre-fetched data.
    * Psychology: Peak-End Rule — the last moment of a session shapes memory of the whole experience.
    * Growth-focused: shows progress trajectory, not just raw stats.
+   * @param {Object} recap - Pre-fetched recap data (fetched before session end to avoid auth race)
    * @returns {boolean} true if recap was shown, false otherwise
    */
-  async showSessionRecap() {
+  async showSessionRecap(recap) {
     try {
-      const res = await fetch('/api/session/recap', { credentials: 'include' });
-      if (!res.ok) return false;
-      const { recap } = await res.json();
       if (!recap || !recap.headline) return false;
+
+      // Sanitize string fields to prevent XSS (topic could contain user-influenced content)
+      const esc = (s) => {
+        const el = document.createElement('span');
+        el.textContent = s;
+        return el.innerHTML;
+      };
+      recap.headline = esc(recap.headline);
+      recap.topic = recap.topic ? esc(recap.topic) : null;
+      recap.achievement = recap.achievement ? esc(recap.achievement) : null;
+      recap.narrative = recap.narrative ? esc(recap.narrative) : null;
 
       // Build and show recap modal
       const overlay = document.createElement('div');
