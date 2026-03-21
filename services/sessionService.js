@@ -10,7 +10,8 @@ const {
   generateSessionSummary: generateAISummary,
   detectTopic,
   calculateProblemStats,
-  detectStruggle
+  detectStruggle,
+  generateStudentRecap
 } = require('../utils/activitySummarizer');
 
 /**

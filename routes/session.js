@@ -139,6 +139,39 @@ router.post('/save-mastery', async (req, res) => {
 });
 
 /**
+ * GET /api/session/recap
+ * Returns a student-facing session recap for the active conversation.
+ * Psychology: Progress Principle + Peak-End Rule + Growth Mindset.
+ * Shows growth deltas and emotional arc narrative, not just raw stats.
+ */
+router.get('/recap', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const User = require('../models/user');
+    const Conversation = require('../models/conversation');
+    const { generateStudentRecap } = require('../utils/activitySummarizer');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Find the most recent conversation with messages
+    const conversationId = req.query.conversationId || user.activeConversationId;
+    if (!conversationId) return res.json({ recap: null });
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation || conversation.messages.length < 2) {
+      return res.json({ recap: null });
+    }
+
+    const recap = await generateStudentRecap(conversation, user);
+    res.json({ recap });
+  } catch (error) {
+    logger.error('Session recap error', { error, userId: req.user?._id });
+    res.status(500).json({ error: 'Failed to generate recap' });
+  }
+});
+
+/**
  * POST /api/session/cleanup-stale
  * Clean up stale sessions (can be called manually or by cron)
  */

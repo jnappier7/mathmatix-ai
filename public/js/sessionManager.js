@@ -390,8 +390,100 @@ class SessionManager {
     // Clear UI language cache so the next user on this device gets a clean state
     try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* private mode */ }
 
+    // Show session recap before redirecting (if on a chat page)
+    if (reason === 'manual' && window.location.pathname.includes('chat')) {
+      try {
+        const shown = await this.showSessionRecap();
+        if (shown) return; // Recap modal handles redirect after dismissal
+      } catch (err) {
+        console.error('[SessionManager] Recap error:', err);
+      }
+    }
+
     // Redirect to login
     window.location.href = '/login.html';
+  }
+
+  /**
+   * Fetch and display session recap modal.
+   * Psychology: Peak-End Rule — the last moment of a session shapes memory of the whole experience.
+   * Growth-focused: shows progress trajectory, not just raw stats.
+   * @returns {boolean} true if recap was shown, false otherwise
+   */
+  async showSessionRecap() {
+    try {
+      const res = await fetch('/api/session/recap', { credentials: 'include' });
+      if (!res.ok) return false;
+      const { recap } = await res.json();
+      if (!recap || !recap.headline) return false;
+
+      // Build and show recap modal
+      const overlay = document.createElement('div');
+      overlay.id = 'session-recap-overlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;';
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:white;border-radius:20px;padding:32px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideUp 0.3s ease;';
+
+      let html = `<div style="font-size:2rem;margin-bottom:8px;">&#128170;</div>`;
+      html += `<h2 style="font-size:1.3rem;font-weight:700;margin:0 0 4px;color:#18202B;">${recap.headline}</h2>`;
+      if (recap.topic) {
+        html += `<p style="font-size:0.85rem;color:#5B6876;margin:0 0 16px;">${recap.topic} &middot; ${recap.duration || 0} min</p>`;
+      }
+
+      // Stats row
+      if (recap.problemsAttempted > 0) {
+        html += `<div style="display:flex;gap:16px;justify-content:center;margin-bottom:16px;">`;
+        html += `<div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:#12B3B3;">${recap.problemsCorrect}</div><div style="font-size:0.75rem;color:#5B6876;">Correct</div></div>`;
+        html += `<div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:#18202B;">${recap.problemsAttempted}</div><div style="font-size:0.75rem;color:#5B6876;">Attempted</div></div>`;
+        if (recap.accuracy != null) {
+          const accColor = recap.accuracy >= 70 ? '#16C86D' : recap.accuracy >= 40 ? '#FFC24B' : '#FF4E4E';
+          html += `<div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:${accColor};">${recap.accuracy}%</div><div style="font-size:0.75rem;color:#5B6876;">Accuracy</div></div>`;
+        }
+        html += `</div>`;
+      }
+
+      // Achievement callout (growth-focused)
+      if (recap.achievement) {
+        html += `<p style="font-size:0.9rem;color:#18202B;background:#F0FAF7;border-radius:12px;padding:12px 16px;margin:0 0 12px;line-height:1.4;">${recap.achievement}</p>`;
+      }
+
+      // Narrative (emotional arc)
+      if (recap.narrative) {
+        html += `<p style="font-size:0.85rem;color:#5B6876;margin:0 0 20px;font-style:italic;line-height:1.4;">${recap.narrative}</p>`;
+      }
+
+      html += `<button id="recap-dismiss-btn" style="background:#12B3B3;color:white;border:none;border-radius:12px;padding:12px 32px;font-size:1rem;font-weight:600;cursor:pointer;transition:background 0.2s;">See you next time!</button>`;
+
+      card.innerHTML = html;
+      overlay.appendChild(card);
+      document.body.appendChild(overlay);
+
+      // Add animations
+      const style = document.createElement('style');
+      style.textContent = '@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
+      document.head.appendChild(style);
+
+      // Dismiss handler
+      return new Promise((resolve) => {
+        const dismiss = () => {
+          overlay.style.opacity = '0';
+          overlay.style.transition = 'opacity 0.3s';
+          setTimeout(() => {
+            overlay.remove();
+            style.remove();
+            window.location.href = '/login.html';
+          }, 300);
+        };
+        document.getElementById('recap-dismiss-btn').addEventListener('click', dismiss);
+        // Auto-dismiss after 10 seconds
+        setTimeout(dismiss, 10000);
+        resolve(true);
+      });
+    } catch (err) {
+      console.error('[SessionManager] showSessionRecap error:', err);
+      return false;
+    }
   }
 
   async saveMasteryProgress() {

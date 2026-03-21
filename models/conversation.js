@@ -146,6 +146,8 @@ const conversationSchema = new Schema({
         inFlow: { type: Boolean, default: false },
         fatigueSignal: { type: Boolean, default: false },
         turnCount: { type: Number, default: 0 },
+        emotionalState: { type: String, enum: ['anxiety', 'overthinking', 'frustration_spiral', 'disengagement', 'recovery', 'confident', 'neutral', null], default: null },
+        emotionalConfidence: { type: Number, default: 0 },
         lastUpdated: { type: Date, default: null },
     },
     // Additional metadata for special conversation types (e.g., parent-teacher)

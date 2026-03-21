@@ -159,6 +159,8 @@ async function persist(params) {
       inFlow: sessionMood.inFlow,
       fatigueSignal: sessionMood.fatigueSignal,
       turnCount: sessionMood.turnCount,
+      emotionalState: sessionMood.emotionalState?.state || null,
+      emotionalConfidence: sessionMood.emotionalState?.confidence || 0,
       lastUpdated: new Date(),
     };
   }
