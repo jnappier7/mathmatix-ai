@@ -89,7 +89,10 @@ async function runPipeline(message, ctx) {
   });
 
   if (sessionMood.summary) {
-    console.log(`[Pipeline] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}, momentum: ${sessionMood.momentum}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''})`);
+    const emotionalTag = sessionMood.emotionalState?.state && sessionMood.emotionalState.state !== 'neutral'
+      ? `, emotion: ${sessionMood.emotionalState.state} (${Math.round(sessionMood.emotionalState.confidence * 100)}%)`
+      : '';
+    console.log(`[Pipeline] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}, momentum: ${sessionMood.momentum}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''}${emotionalTag})`);
   }
 
   // ── Evidence Assembly (NEW: data-driven intelligence layer) ──

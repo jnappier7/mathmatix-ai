@@ -127,6 +127,7 @@ const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA
 const consentRoutes = require('./routes/consent');  // Privacy consent management (COPPA/FERPA)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 const demoRoutes = require('./routes/demo');  // Playground demo account login & reset
+const trialChatRoutes = require('./routes/trialChat');  // Anonymous trial chat (landing page)
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
 
 // Usage gate middleware for free tier enforcement
@@ -479,7 +480,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
                 const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
                 if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                // Avatar is no longer required during onboarding — default assigned automatically
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                 res.redirect(dashboardMap[user.role] || '/login.html');
             });
@@ -521,7 +522,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
                 const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
                 if (userRoles.length > 1) return res.redirect('/role-picker.html');
                 if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                // Avatar is no longer required during onboarding — default assigned automatically
                 const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                 res.redirect(dashboardMap[user.role] || '/login.html');
             });
@@ -584,7 +585,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
                         if (saveErr) { return next(saveErr); }
                         if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
                         if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                        if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                        // Avatar is no longer required during onboarding — default assigned automatically
                         const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
                         res.redirect(dashboardMap[user.role] || '/login.html');
                     });
@@ -627,6 +628,7 @@ app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar custom
 // Public API routes (no auth required) — must come BEFORE the catch-all /api mount below
 app.use('/api/waitlist', waitlistRoutes);          // Pre-launch waitlist
 app.use('/api/demo', demoRoutes);                  // Playground demo account login & reset
+app.use('/api/trial-chat', trialChatRoutes);       // Anonymous trial chat (landing page, no auth)
 
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management

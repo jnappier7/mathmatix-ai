@@ -589,6 +589,7 @@ const userSchema = new Schema({
   /* Gamification */
   xp:        { type: Number, default: 0, min: 0 },
   level:     { type: Number, default: 1, min: 1 },
+  avatarBuilderUnlocked: { type: Boolean, default: false }, // Unlocked at Level 2
   xpHistory: { type: [xpEventSchema], default: [] },
 
   // XP Ladder Analytics (Three Tiers)

@@ -92,6 +92,7 @@ function computeSessionMood(messages, options = {}) {
       momentum: 0,
       inFlow: false,
       fatigueSignal: false,
+      emotionalState: { state: 'neutral', confidence: 0, signals: [] },
       turnCount: messages?.length || 0,
       summary: null,
     };
@@ -184,8 +185,11 @@ function computeSessionMood(messages, options = {}) {
     }
   }
 
+  // ── Emotional state detection ──
+  const emotionalState = detectEmotionalState(messages);
+
   // ── Human-readable summary ──
-  const summary = buildSummary(trajectory, energy, momentum, inFlow, fatigueSignal, consecutiveCorrect);
+  const summary = buildSummary(trajectory, energy, momentum, inFlow, fatigueSignal, consecutiveCorrect, emotionalState);
 
   return {
     trajectory,
@@ -194,8 +198,109 @@ function computeSessionMood(messages, options = {}) {
     inFlow,
     fatigueSignal,
     consecutiveCorrect,
+    emotionalState,
     turnCount: messages.length,
     summary,
+  };
+}
+
+// ── Emotional state labels ──
+const EMOTIONAL_STATES = {
+  ANXIETY: 'anxiety',             // Rapid idk/short answers, avoidance
+  OVERTHINKING: 'overthinking',   // Long pauses + wrong answers
+  FRUSTRATION_SPIRAL: 'frustration_spiral', // Escalating negative language
+  DISENGAGEMENT: 'disengagement', // "nvm", "whatever", terse non-answers
+  RECOVERY: 'recovery',           // Breakthrough after struggle
+  CONFIDENT: 'confident',         // In the zone, high energy
+  NEUTRAL: 'neutral',             // No strong emotional signal
+};
+
+/**
+ * Detect specific emotional state from recent message patterns.
+ * More granular than trajectory — maps to specific tutor responses.
+ *
+ * @param {Array} messages - Full conversation messages
+ * @returns {Object} { state, confidence, signals }
+ */
+function detectEmotionalState(messages) {
+  if (!messages || messages.length < 3) {
+    return { state: EMOTIONAL_STATES.NEUTRAL, confidence: 0, signals: [] };
+  }
+
+  const recentUser = messages.filter(m => m.role === 'user').slice(-5);
+  const recentAssistant = messages.filter(m => m.role === 'assistant').slice(-5);
+  const signals = [];
+
+  // ── Anxiety detection: rapid idk/short answers, avoidance ──
+  const idkCount = recentUser.filter(m => PATTERNS.idk.test(m.content?.toLowerCase() || '')).length;
+  const shortAnswerCount = recentUser.filter(m => (m.content || '').split(/\s+/).length <= 2).length;
+  if (idkCount >= 2 || (idkCount >= 1 && shortAnswerCount >= 3)) {
+    signals.push({ state: EMOTIONAL_STATES.ANXIETY, weight: 0.7 + (idkCount * 0.1) });
+  }
+
+  // ── Overthinking detection: long messages + wrong answers ──
+  const recentResults = recentAssistant
+    .map(m => m.problemResult)
+    .filter(Boolean);
+  const recentWrong = recentResults.filter(r => r === 'incorrect').length;
+  const longMessages = recentUser.filter(m => (m.content || '').split(/\s+/).length > 15).length;
+  if (recentWrong >= 2 && longMessages >= 1) {
+    signals.push({ state: EMOTIONAL_STATES.OVERTHINKING, weight: 0.6 + (recentWrong * 0.1) });
+  }
+
+  // ── Frustration spiral: escalating negative language ──
+  const frustrationPattern = /\b(hate|stupid|dumb|sucks|i\s*can'?t|impossible|this\s*is\s*so|ugh|i'?m\s*done|worst|terrible)\b/i;
+  const disengagePattern = /\b(nvm|nevermind|whatever|forget\s*it|doesn'?t\s*matter|who\s*cares|idc)\b/i;
+  const frustrationCount = recentUser.filter(m => frustrationPattern.test(m.content || '')).length;
+  if (frustrationCount >= 2) {
+    signals.push({ state: EMOTIONAL_STATES.FRUSTRATION_SPIRAL, weight: 0.8 + (frustrationCount * 0.1) });
+  } else if (frustrationCount === 1 && recentWrong >= 2) {
+    signals.push({ state: EMOTIONAL_STATES.FRUSTRATION_SPIRAL, weight: 0.65 });
+  }
+
+  // ── Disengagement: "nvm", "whatever", terse non-answers ──
+  const disengageCount = recentUser.filter(m => disengagePattern.test(m.content || '')).length;
+  const terseNonAnswers = recentUser.filter(m => {
+    const content = (m.content || '').trim().toLowerCase();
+    return content.length <= 5 && !/^\d/.test(content) && !PATTERNS.affirmative.test(content);
+  }).length;
+  if (disengageCount >= 1 || terseNonAnswers >= 3) {
+    signals.push({ state: EMOTIONAL_STATES.DISENGAGEMENT, weight: 0.6 + (disengageCount * 0.2) });
+  }
+
+  // ── Recovery: was struggling, now correct + positive ──
+  const allResults = messages.filter(m => m.role === 'assistant' && m.problemResult)
+    .map(m => m.problemResult);
+  if (allResults.length >= 4) {
+    const earlier = allResults.slice(-6, -2);
+    const recent = allResults.slice(-2);
+    const earlierWrongRate = earlier.filter(r => r !== 'correct').length / Math.max(earlier.length, 1);
+    const recentCorrect = recent.every(r => r === 'correct');
+    if (earlierWrongRate >= 0.5 && recentCorrect) {
+      signals.push({ state: EMOTIONAL_STATES.RECOVERY, weight: 0.7 });
+    }
+  }
+
+  // ── Confident: consecutive correct + positive language ──
+  const recentCorrectStreak = recentResults.length > 0 && recentResults.slice(-3).every(r => r === 'correct');
+  const positiveLanguage = recentUser.filter(m =>
+    /\b(cool|nice|awesome|sweet|great|easy|got\s*it|makes\s*sense|oh\s*i\s*see)\b/i.test(m.content || '')
+  ).length;
+  if (recentCorrectStreak && positiveLanguage >= 1) {
+    signals.push({ state: EMOTIONAL_STATES.CONFIDENT, weight: 0.7 });
+  }
+
+  // Pick the strongest signal
+  if (signals.length === 0) {
+    return { state: EMOTIONAL_STATES.NEUTRAL, confidence: 0, signals: [] };
+  }
+
+  signals.sort((a, b) => b.weight - a.weight);
+  const strongest = signals[0];
+  return {
+    state: strongest.state,
+    confidence: Math.min(1, strongest.weight),
+    signals: signals.map(s => s.state),
   };
 }
 
@@ -203,7 +308,25 @@ function computeSessionMood(messages, options = {}) {
  * Build a concise prompt-friendly summary of the session mood.
  * This is what gets injected into the generate stage.
  */
-function buildSummary(trajectory, energy, momentum, inFlow, fatigueSignal, consecutiveCorrect) {
+function buildSummary(trajectory, energy, momentum, inFlow, fatigueSignal, consecutiveCorrect, emotionalState) {
+  // Emotional state directives take priority — they're more specific than trajectory
+  if (emotionalState && emotionalState.state !== EMOTIONAL_STATES.NEUTRAL && emotionalState.confidence >= 0.6) {
+    switch (emotionalState.state) {
+      case EMOTIONAL_STATES.ANXIETY:
+        return `Student is showing math anxiety (rapid "idk", short avoidant answers). Slow down. Validate. Reduce complexity. "No rush — want me to break this into a smaller piece?" Do NOT push harder.`;
+      case EMOTIONAL_STATES.OVERTHINKING:
+        return `Student is overthinking (long attempts, still getting wrong). They likely know more than they're showing. Encourage gut instinct: "Trust your first thought — what comes to mind?" Simplify the framing, not the math.`;
+      case EMOTIONAL_STATES.FRUSTRATION_SPIRAL:
+        return `Student is in a frustration spiral. Acknowledge the emotion FIRST, then offer escape: "Yeah, this one's tough. Want to try a different one and circle back?" Do NOT ignore the frustration or push through it. Emotional regulation before content.`;
+      case EMOTIONAL_STATES.DISENGAGEMENT:
+        return `Student is disengaging ("nvm", "whatever", terse responses). Offer a low-stakes re-entry: "No worries. Want a quick easy one to get back in the groove?" Don't guilt-trip or over-explain. Keep it light.`;
+      case EMOTIONAL_STATES.RECOVERY:
+        return `Student just broke through after struggling. Acknowledge it naturally: "See? You had it." Don't over-celebrate — just validate. Build on this momentum with a similar-difficulty problem.`;
+      case EMOTIONAL_STATES.CONFIDENT:
+        return `Student is feeling confident (correct streak + positive language). Good — can increase difficulty. Don't over-praise or slow them down.`;
+    }
+  }
+
   if (inFlow) {
     return `Student is in flow (${consecutiveCorrect} correct in a row). Maintain pace. Don't over-explain or interrupt with comprehension checks.`;
   }
@@ -265,6 +388,8 @@ module.exports = {
   computeSessionMood,
   buildMoodDirective,
   scoreMessage,
+  detectEmotionalState,
   TRAJECTORIES,
   ENERGY_LEVELS,
+  EMOTIONAL_STATES,
 };

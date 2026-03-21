@@ -601,7 +601,7 @@ router.get('/templates', isAuthenticated, isAdmin, async (req, res) => {
           <div style="font-size: 18px; font-weight: 700; color: #0f3460;">$16.81/mo</div>
         </div>
       </div>
-      <p style="font-size: 13px; color: #888; margin: 0;">Every student gets <strong>10 free minutes per week</strong> \u2014 no credit card required.</p>
+      <p style="font-size: 13px; color: #888; margin: 0;">Every student gets <strong>30 free minutes per week</strong> \u2014 no credit card required.</p>
     </div>
 
     <!-- CTA Button -->

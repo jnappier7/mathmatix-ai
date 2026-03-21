@@ -180,7 +180,7 @@ It serves four user roles — **students, teachers, parents, and admins** — wi
 
 49. **School / District Licenses** — Bulk licensing for schools and districts. License-gated unlimited access for students.
 
-50. **Free Tier** — 20 free AI-minutes per week for students. Teachers, parents, and admins have unlimited free access.
+50. **Free Tier** — 30 free AI-minutes per week for students. Teachers, parents, and admins have unlimited free access.
 
 51. **Premium Feature Gating** — Voice chat, file uploads, and AI grading are gated behind premium tiers.
 
@@ -265,7 +265,7 @@ It serves four user roles — **students, teachers, parents, and admins** — wi
 - **IEP-ready** — Built-in IEP accommodations and goal tracking
 - **FERPA/COPPA compliant** — Enterprise-grade privacy for schools
 - **Clever SSO** — One-click login for any Clever-enabled school district
-- **Affordable** — Free tier with 20 min/week; school licenses for unlimited access
+- **Affordable** — Free tier with 30 min/week; school licenses for unlimited access
 - **Gamified but pedagogically sound** — XP, badges, streaks, and leaderboards drive engagement without cheapening learning
 - **Adaptive placement** — IRT-based adaptive screener for accurate, efficient skill-level placement
 - **Parent involvement** — Dedicated parent dashboard, reports, courses, and teacher messaging

@@ -308,10 +308,101 @@ Generate a concise teacher summary:`;
     }
 }
 
+/**
+ * Generate a student-facing session recap.
+ * Psychology: Progress Principle + Growth Mindset + Peak-End Rule
+ *
+ * Shows growth deltas, not just absolutes:
+ * - "You solved 6 problems and improved your fraction skills"
+ * - "You pushed through a tough stretch — that persistence is real growth"
+ *
+ * @param {Object} conversation - Mongoose conversation document
+ * @param {Object} user - Mongoose user document
+ * @returns {Object} Structured recap for frontend display
+ */
+async function generateStudentRecap(conversation, user) {
+    try {
+        const stats = {
+            attempted: conversation.problemsAttempted || 0,
+            correct: conversation.problemsCorrect || 0,
+        };
+        const accuracy = stats.attempted > 0
+            ? Math.round((stats.correct / stats.attempted) * 100) : null;
+        const topic = conversation.currentTopic || detectTopic(conversation.messages || []);
+        const minutes = conversation.activeMinutes || Math.round((conversation.activeSeconds || 0) / 60);
+        const mood = conversation.sessionMood || {};
+
+        // Build recap object (frontend renders this)
+        const recap = {
+            topic: topic || 'Math practice',
+            duration: minutes,
+            problemsAttempted: stats.attempted,
+            problemsCorrect: stats.correct,
+            accuracy,
+            // Growth-focused headline (not "You got X right" but "You grew")
+            headline: null,
+            // Specific achievement callout
+            achievement: null,
+            // Emotional arc narrative
+            narrative: null,
+        };
+
+        // ── Growth headline ──
+        if (stats.attempted === 0) {
+            recap.headline = `${minutes} minutes exploring ${topic}`;
+        } else if (accuracy >= 80) {
+            recap.headline = `${stats.correct} problems solved — strong session!`;
+        } else if (stats.attempted >= 5) {
+            recap.headline = `${stats.attempted} problems tackled — you put in the work`;
+        } else {
+            recap.headline = `Worked on ${topic} for ${minutes} minutes`;
+        }
+
+        // ── Achievement callout (growth-focused) ──
+        if (mood.trajectory === 'recovered') {
+            recap.achievement = 'You pushed through a tough stretch and came back strong. That resilience is how real learning happens.';
+        } else if (mood.inFlow) {
+            recap.achievement = 'You hit a flow state today — multiple correct answers in a row. That focus is paying off.';
+        } else if (mood.emotionalState === 'recovery') {
+            recap.achievement = 'You broke through something that was blocking you. That moment is growth in action.';
+        } else if (stats.correct >= 3 && accuracy >= 70) {
+            recap.achievement = `You tackled ${stats.attempted} problems and got ${stats.correct} right. Your approach is working.`;
+        } else if (stats.attempted >= 3) {
+            recap.achievement = `${stats.attempted} problems attempted — every one builds your understanding, even the tough ones.`;
+        }
+
+        // ── Narrative (emotional arc) ──
+        if (mood.trajectory === 'rising') {
+            recap.narrative = 'You built momentum as the session went on — you were stronger at the end than the start.';
+        } else if (mood.trajectory === 'recovered') {
+            recap.narrative = 'It was a rough start, but you turned it around. That matters more than getting everything right on the first try.';
+        } else if (mood.fatigueSignal) {
+            recap.narrative = 'You put in solid effort. Taking breaks when you need them is part of learning smart.';
+        } else if (mood.trajectory === 'stable' && accuracy >= 60) {
+            recap.narrative = 'Consistent session — you stayed focused and worked through problems steadily.';
+        }
+
+        return recap;
+    } catch (error) {
+        console.error('Error generating student recap:', error);
+        return {
+            topic: 'Math practice',
+            duration: 0,
+            problemsAttempted: 0,
+            problemsCorrect: 0,
+            accuracy: null,
+            headline: 'Session complete — nice work!',
+            achievement: null,
+            narrative: null,
+        };
+    }
+}
+
 module.exports = {
     generateLiveSummary,
     detectStruggle,
     detectTopic,
     calculateProblemStats,
-    generateSessionSummary
+    generateSessionSummary,
+    generateStudentRecap
 };

@@ -483,6 +483,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
       </div>
 
+      <!-- Growth Deltas: "up 15% this month" instead of just "82%" -->
+      <div id="growth-deltas" class="growth-deltas-strip" style="display: none;">
+        <div class="growth-delta-item" id="growth-xp">
+          <span class="growth-delta-arrow" id="growth-xp-arrow"></span>
+          <span class="growth-delta-value" id="growth-xp-value"></span>
+          <span class="growth-delta-label">XP this week</span>
+        </div>
+        <div class="growth-delta-item" id="growth-accuracy">
+          <span class="growth-delta-arrow" id="growth-accuracy-arrow"></span>
+          <span class="growth-delta-value" id="growth-accuracy-value"></span>
+          <span class="growth-delta-label">Accuracy trend</span>
+        </div>
+        <div class="growth-delta-item" id="growth-skills">
+          <span class="growth-delta-arrow" id="growth-skills-arrow"></span>
+          <span class="growth-delta-value" id="growth-skills-value"></span>
+          <span class="growth-delta-label">Skills this month</span>
+        </div>
+        <div class="growth-delta-item" id="growth-levels">
+          <span class="growth-delta-arrow" id="growth-levels-arrow"></span>
+          <span class="growth-delta-value" id="growth-levels-value"></span>
+          <span class="growth-delta-label">Levels gained</span>
+        </div>
+      </div>
+
       <!-- Main Cards -->
       <div class="dashboard-grid">
         <!-- Recent Progress Card -->
@@ -695,6 +719,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           document.getElementById('weekly-skills').textContent = data.weeklyStats.skillsMastered || 0;
         }
 
+        // Growth deltas — show trajectory, not just absolutes
+        loadGrowthDeltas();
+
         // Recent wins
         if (data.recentWins && data.recentWins.length > 0) {
           const progressCard = document.getElementById('progress-card');
@@ -715,6 +742,83 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       } catch (error) {
         console.error('Error loading progress:', error);
+      }
+    }
+
+    async function loadGrowthDeltas() {
+      try {
+        const res = await csrfFetch('/api/student/growth');
+        if (!res.ok) return;
+        const g = await res.json();
+
+        const strip = document.getElementById('growth-deltas');
+        let hasData = false;
+
+        // Helper: render a delta item
+        function renderDelta(id, value, suffix, isPositiveGood = true) {
+          const el = document.getElementById(id);
+          const arrowEl = document.getElementById(id + '-arrow');
+          const valEl = document.getElementById(id + '-value');
+          if (!el || value == null) return;
+
+          const isPositive = value > 0;
+          const isGood = isPositiveGood ? isPositive : !isPositive;
+          const arrow = isPositive ? '↑' : value < 0 ? '↓' : '→';
+          const color = isGood ? 'var(--success-green, #16C86D)' : value === 0 ? 'var(--text-dim, #5B6876)' : 'var(--warning-gold, #FFC24B)';
+          const prefix = isPositive ? '+' : '';
+
+          arrowEl.textContent = arrow;
+          arrowEl.style.color = color;
+          valEl.textContent = prefix + value + suffix;
+          valEl.style.color = color;
+          el.style.display = 'flex';
+          hasData = true;
+        }
+
+        // XP this week with trend
+        if (g.xp?.thisWeek > 0) {
+          renderDelta('growth-xp', g.xp.weekOverWeekTrend, '%');
+          document.getElementById('growth-xp-value').textContent = g.xp.thisWeek + ' XP';
+          if (g.xp.weekOverWeekTrend > 0) {
+            document.getElementById('growth-xp-arrow').textContent = '↑';
+            document.getElementById('growth-xp-arrow').style.color = 'var(--success-green, #16C86D)';
+          }
+        }
+
+        // Accuracy delta
+        if (g.accuracy?.delta != null) {
+          renderDelta('growth-accuracy', g.accuracy.delta, ' pts');
+        }
+
+        // Skills mastered this month
+        if (g.skills?.masteredThisMonth > 0) {
+          const el = document.getElementById('growth-skills');
+          const arrowEl = document.getElementById('growth-skills-arrow');
+          const valEl = document.getElementById('growth-skills-value');
+          arrowEl.textContent = '★';
+          arrowEl.style.color = 'var(--success-green, #16C86D)';
+          valEl.textContent = g.skills.masteredThisMonth + ' mastered';
+          valEl.style.color = 'var(--success-green, #16C86D)';
+          el.style.display = 'flex';
+          hasData = true;
+        }
+
+        // Levels gained
+        if (g.levels?.gainedThisMonth > 0) {
+          const el = document.getElementById('growth-levels');
+          const arrowEl = document.getElementById('growth-levels-arrow');
+          const valEl = document.getElementById('growth-levels-value');
+          arrowEl.textContent = '↑';
+          arrowEl.style.color = 'var(--success-green, #16C86D)';
+          valEl.textContent = '+' + g.levels.gainedThisMonth + ' levels';
+          valEl.style.color = 'var(--success-green, #16C86D)';
+          el.style.display = 'flex';
+          hasData = true;
+        }
+
+        if (hasData) strip.style.display = 'flex';
+      } catch (err) {
+        console.error('Growth deltas error:', err);
       }
     }
 

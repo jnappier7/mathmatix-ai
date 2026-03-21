@@ -312,6 +312,111 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
     }
 });
 
+// GET /api/student/growth
+// Returns growth deltas — progress trajectory over time (not just absolutes)
+// Psychology: The Progress Principle (Amabile & Kramer) + Growth Mindset (Dweck)
+router.get('/growth', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const student = await User.findById(req.user._id).lean();
+        if (!student) {
+            return res.status(404).json({ error: 'Student not found' });
+        }
+
+        const now = new Date();
+        const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+
+        // ── XP growth deltas ──
+        const xpHistory = student.xpHistory || [];
+        const weeklyXp = xpHistory
+            .filter(e => new Date(e.date) >= weekAgo)
+            .reduce((sum, e) => sum + (e.amount || 0), 0);
+        const monthlyXp = xpHistory
+            .filter(e => new Date(e.date) >= monthAgo)
+            .reduce((sum, e) => sum + (e.amount || 0), 0);
+        // Previous week for comparison
+        const twoWeeksAgo = new Date(now - 14 * 24 * 60 * 60 * 1000);
+        const prevWeekXp = xpHistory
+            .filter(e => new Date(e.date) >= twoWeeksAgo && new Date(e.date) < weekAgo)
+            .reduce((sum, e) => sum + (e.amount || 0), 0);
+        const xpTrend = prevWeekXp > 0 ? Math.round(((weeklyXp - prevWeekXp) / prevWeekXp) * 100) : (weeklyXp > 0 ? 100 : 0);
+
+        // ── Accuracy growth ──
+        const Conversation = require('../models/conversation');
+        const recentSessions = await Conversation.find({
+            userId: student._id,
+            lastActivity: { $gte: monthAgo },
+            problemsAttempted: { $gt: 0 }
+        }).sort({ lastActivity: -1 }).select('problemsAttempted problemsCorrect lastActivity').lean();
+
+        let accuracyDelta = null;
+        if (recentSessions.length >= 4) {
+            const mid = Math.floor(recentSessions.length / 2);
+            const recentHalf = recentSessions.slice(0, mid);
+            const olderHalf = recentSessions.slice(mid);
+            const recentAcc = recentHalf.reduce((s, c) => s + c.problemsCorrect, 0) / Math.max(1, recentHalf.reduce((s, c) => s + c.problemsAttempted, 0));
+            const olderAcc = olderHalf.reduce((s, c) => s + c.problemsCorrect, 0) / Math.max(1, olderHalf.reduce((s, c) => s + c.problemsAttempted, 0));
+            accuracyDelta = Math.round((recentAcc - olderAcc) * 100);
+        }
+
+        // ── Skills mastered this month ──
+        const skillEntries = student.skillMastery ? Object.entries(student.skillMastery) : [];
+        const skillsMasteredThisMonth = skillEntries
+            .filter(([, d]) => d.status === 'mastered' && d.masteredDate && new Date(d.masteredDate) >= monthAgo)
+            .length;
+        const skillsMasteredPrevMonth = skillEntries
+            .filter(([, d]) => {
+                if (d.status !== 'mastered' || !d.masteredDate) return false;
+                const date = new Date(d.masteredDate);
+                const twoMonthsAgo = new Date(now - 60 * 24 * 60 * 60 * 1000);
+                return date >= twoMonthsAgo && date < monthAgo;
+            }).length;
+
+        // ── Level growth ──
+        const startLevel = Math.max(1, (student.level || 1) - Math.floor(monthlyXp / (student.level > 1 ? 100 * (1 + 0.1 * (student.level - 2)) : 100)));
+        const levelsGained = (student.level || 1) - startLevel;
+
+        // ── Streak ──
+        const streak = student.dailyQuests?.currentStreak || 0;
+        const longestStreak = student.dailyQuests?.longestStreak || 0;
+
+        // ── Tier 3 behavior count (learning identity) ──
+        const tier3Count = (student.xpLadderStats?.tier3Behaviors || [])
+            .reduce((sum, b) => sum + (b.count || 0), 0);
+
+        res.json({
+            xp: {
+                thisWeek: weeklyXp,
+                weekOverWeekTrend: xpTrend,       // e.g. +23 means "up 23% from last week"
+                thisMonth: monthlyXp,
+            },
+            accuracy: {
+                delta: accuracyDelta,               // e.g. +15 means "up 15 percentage points"
+                trend: accuracyDelta > 0 ? 'improving' : accuracyDelta < 0 ? 'declining' : 'stable',
+            },
+            skills: {
+                masteredThisMonth: skillsMasteredThisMonth,
+                masteredPrevMonth: skillsMasteredPrevMonth,
+            },
+            levels: {
+                current: student.level || 1,
+                gainedThisMonth: levelsGained,
+            },
+            streak: {
+                current: streak,
+                longest: longestStreak,
+            },
+            learningIdentity: {
+                tier3BehaviorCount: tier3Count,      // "You've shown X learning behaviors"
+            },
+        });
+
+    } catch (error) {
+        console.error('ERROR: Failed to get growth data:', error);
+        res.status(500).json({ error: 'Failed to retrieve growth data' });
+    }
+});
+
 // POST /api/student/start-skill
 // Mark a skill as "learning" when student starts it
 router.post('/start-skill', isAuthenticated, isStudent, async (req, res) => {

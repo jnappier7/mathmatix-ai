@@ -5,7 +5,7 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 // --- ES Module Imports ---
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
-import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration } from './modules/gamification.js';
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser } from './modules/gamification.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -251,7 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
-            if (!currentUser.selectedAvatarId && currentUser.role === 'student') return window.location.href = '/pick-avatar.html';
+            // Avatar selection is no longer part of onboarding — users get a default
+            // and unlock the avatar builder at Level 2
 
             // Initialize session time tracking (pass getter for currentUser)
             initSessionTracking(() => currentUser);
@@ -283,6 +284,38 @@ document.addEventListener("DOMContentLoaded", () => {
             setupChatUI();
             updateChatWatermark(); // Initialize watermark state (chat starts empty)
             await fetchAndDisplayParentCode();
+
+            // --- TRIAL CHAT SESSION CARRYOVER ---
+            // If the user just signed up from a trial chat on the landing page,
+            // restore their conversation so it continues seamlessly.
+            const trialState = (function() {
+                try {
+                    const raw = localStorage.getItem('mathmatix_trial_chat');
+                    if (!raw) return null;
+                    const state = JSON.parse(raw);
+                    // Expire after 1 hour
+                    if (Date.now() - state.timestamp > 60 * 60 * 1000) {
+                        localStorage.removeItem('mathmatix_trial_chat');
+                        return null;
+                    }
+                    return state;
+                } catch (e) { return null; }
+            })();
+
+            if (trialState && trialState.history && trialState.history.length > 0) {
+                // Inject trial messages into the chat UI
+                trialState.history.forEach(function(msg) {
+                    appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
+                });
+                // Clear trial state so it doesn't replay
+                try { localStorage.removeItem('mathmatix_trial_chat'); } catch (e) {}
+                // Skip the returning user modal — they already have context
+                // and skip the welcome message since chat is populated
+                await fetchAndDisplayLeaderboard();
+                await loadQuestsAndChallenges();
+                setTimeout(() => showDefaultSuggestions(), 1000);
+                return; // Skip the rest of initializeApp
+            }
 
             // --- RETURNING USER MODAL ---
             // For returning students, show a modal with options before loading chat.
@@ -1028,23 +1061,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
 
-            // Check for custom DiceBear avatar first
+            // DiceBear avatar or initial fallback
             if (currentUser.avatar?.dicebearUrl) {
                 avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
-            }
-            // Fall back to pre-made avatar selection
-            else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
-                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
-                if (avatarConfig) {
-                    const avatarImage = avatarConfig.image || 'default-avatar.png';
-                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
-                } else {
-                    // Fallback if avatar not found
-                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
-                }
-            }
-            // Ultimate fallback - initial letter
-            else {
+            } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }
             messageContainer.appendChild(avatar);
@@ -1709,14 +1729,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (currentUser.avatar?.dicebearUrl) {
                 avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
-            } else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
-                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
-                if (avatarConfig) {
-                    const avatarImage = avatarConfig.image || 'default-avatar.png';
-                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
-                } else {
-                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
-                }
             } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }
@@ -2132,11 +2144,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 showTutorUnlockCelebration(data.newlyUnlockedTutors);
             }
 
+            // Avatar builder unlock celebration (Level 2)
+            if (data.avatarBuilderUnlocked) {
+                setTimeout(() => {
+                    showToast('Avatar Builder unlocked! Customize your look in Settings.', 6000);
+                    triggerConfetti();
+                }, 2000); // Delay so it doesn't overlap with level-up celebration
+            }
+
             if (data.userXp !== undefined) {
                 currentUser.level = data.userLevel;
                 currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
+
+                // Show unlock proximity teaser (after level-up or when close)
+                if (data.xpLadder?.leveledUp) {
+                    setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
+                }
             }
 
             // Session stats tracker update

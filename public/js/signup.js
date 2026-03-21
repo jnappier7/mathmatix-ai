@@ -40,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Check if user came from a trial chat on the landing page
+    const urlParams = new URLSearchParams(window.location.search);
+    const trialTutor = urlParams.get('trial_tutor');
+
     const userData = {
       username,
       email,
@@ -53,6 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
       interests
     };
 
+    // Pass trial tutor selection so the backend can pre-set it
+    if (trialTutor) {
+      userData.trialTutor = trialTutor;
+    }
+
     try {
       const res = await csrfFetch("/signup", {
         method: "POST",
@@ -63,8 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message);
-        window.location.href = "/login.html"; // Redirect to login after successful signup
+        // Use backend redirect (skips pick-tutor if trial tutor was set)
+        window.location.href = data.redirect || "/login.html";
       } else {
         // Handle "already logged in" error specially
         if (data.alreadyLoggedIn || data.action === 'logout_required') {

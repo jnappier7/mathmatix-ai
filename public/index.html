@@ -1455,6 +1455,421 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-feature-icon { width: 40px; height: 40px; }
       .lp-feature-icon i { font-size: 1.1rem; }
     }
+
+    /* ── Chat Preview Section (below fold) ────────────── */
+    .lp-chat-preview-section {
+      padding: 4rem var(--page-horizontal-padding);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TRIAL CHAT: Tutor Cards, Celebration, Chat UI, Gate
+       ═══════════════════════════════════════════════════════ */
+
+    /* ── Tutor Selection Cards ─────────────────────────── */
+    .lp-hero-pick-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .lp-hero-pick-inner h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--clr-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .lp-tutor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      max-width: 960px;
+      margin: 2rem auto 0;
+    }
+
+    .lp-tutor-card {
+      background: var(--clr-bg-light);
+      border: 2px solid #e8ecf0;
+      border-radius: 16px;
+      padding: 1.5rem 1rem 1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .lp-tutor-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(18, 179, 179, 0.18);
+      border-color: var(--clr-primary-teal);
+    }
+
+    .lp-tutor-card:active {
+      transform: translateY(-2px);
+    }
+
+    .lp-tutor-card-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      border: 3px solid #e8ecf0;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.25s ease;
+    }
+
+    .lp-tutor-card:hover .lp-tutor-card-img {
+      border-color: var(--clr-primary-teal);
+    }
+
+    .lp-tutor-card-info h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem;
+      color: var(--clr-text);
+    }
+
+    .lp-tutor-card-catch {
+      font-size: 0.82rem;
+      color: var(--clr-primary-teal);
+      font-weight: 600;
+      margin: 0 0 0.2rem;
+      font-style: italic;
+    }
+
+    .lp-tutor-card-spec {
+      font-size: 0.78rem;
+      color: var(--clr-text-dim);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .lp-tutor-card-hear {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--clr-accent-hotpink);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255, 59, 127, 0.06);
+      transition: background 0.2s;
+    }
+
+    .lp-tutor-card-hear:hover {
+      background: rgba(255, 59, 127, 0.14);
+    }
+
+    /* ── Celebration Overlay ────────────────────────────── */
+    .lp-celebration-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      backdrop-filter: blur(8px);
+      animation: celebrationFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .lp-celebration-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: celebrationSpinFlyFold 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transform-origin: center center;
+    }
+
+    .lp-celebration-video-wrap {
+      width: 340px;
+      height: 340px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(18, 179, 179, 0.6), 0 0 80px rgba(255, 59, 127, 0.4), 0 20px 60px rgba(0,0,0,0.5);
+      border: 4px solid #12B3B3;
+      background: white;
+      animation: celebrationGlow 2s ease-in-out infinite;
+    }
+
+    .lp-celebration-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+    }
+
+    .lp-celebration-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin: 0;
+      background: linear-gradient(135deg, #12B3B3 0%, #FF3B7F 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: celebrationTitlePulse 1.5s ease-in-out infinite;
+    }
+
+    .lp-celebration-subtitle {
+      font-size: 1.3rem;
+      margin: 6px 0 0;
+      color: #fff;
+      opacity: 0.95;
+      font-weight: 600;
+    }
+
+    .lp-celebration-overlay.fade-out {
+      animation: celebrationFadeOutAnim 0.4s forwards;
+    }
+
+    @keyframes celebrationFadeOutAnim {
+      to { opacity: 0; }
+    }
+
+    /* ── Trial Chat UI ─────────────────────────────────── */
+    .lp-trial-chat {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .lp-trial-chat-inner {
+      background: var(--clr-bg-light);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(18, 179, 179, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lp-trial-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #eef1f4;
+      background: #fafcfc;
+    }
+
+    .lp-trial-back {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: var(--clr-text-dim);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .lp-trial-back:hover {
+      background: rgba(0,0,0,0.06);
+    }
+
+    .lp-trial-tutor-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .lp-trial-tutor-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      border: 2px solid var(--clr-primary-teal);
+    }
+
+    .lp-trial-tutor-info span {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--clr-text);
+    }
+
+    .lp-trial-signup-btn {
+      font-size: 0.8rem !important;
+      padding: 6px 14px !important;
+    }
+
+    .lp-trial-messages {
+      min-height: 200px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Reuse existing chat bubble styles */
+    .lp-trial-messages .lp-chat-row {
+      display: flex; align-items: flex-end; gap: 8px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .lp-trial-messages .lp-chat-row.lp-chat-visible {
+      opacity: 1; transform: translateY(0);
+    }
+    .lp-trial-messages .lp-chat-row--student { flex-direction: row-reverse; }
+
+    .lp-trial-typing {
+      display: none; align-items: center; gap: 5px;
+      padding: 10px 15px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 18px; border-bottom-left-radius: 4px;
+      max-width: 56px; margin: 0 1rem 0.5rem;
+    }
+
+    /* ── Suggested Prompts ──────────────────────────────── */
+    .lp-trial-suggestions {
+      padding: 0.5rem 1rem 0.75rem;
+      border-top: 1px solid #eef1f4;
+    }
+
+    .lp-trial-suggestions-label {
+      font-size: 0.8rem;
+      color: var(--clr-text-dim);
+      margin: 0 0 0.5rem;
+      font-weight: 500;
+    }
+
+    .lp-trial-prompt-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .lp-trial-prompt {
+      background: rgba(18, 179, 179, 0.06);
+      border: 1px solid rgba(18, 179, 179, 0.2);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      color: var(--clr-primary-teal);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .lp-trial-prompt:hover {
+      background: rgba(18, 179, 179, 0.14);
+      border-color: var(--clr-primary-teal);
+    }
+
+    /* ── Input Area ────────────────────────────────────── */
+    .lp-trial-input-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid #eef1f4;
+    }
+
+    .lp-trial-input {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .lp-trial-input:focus {
+      border-color: var(--clr-primary-teal);
+    }
+
+    .lp-trial-send {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--clr-primary-teal, #12b3b3);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
+
+    .lp-trial-send:hover { background: #0fa0a0; }
+    .lp-trial-send:active { transform: scale(0.95); }
+    .lp-trial-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Soft Gate ──────────────────────────────────────── */
+    .lp-trial-gate {
+      padding: 1.5rem 1rem;
+      text-align: center;
+      background: linear-gradient(180deg, #f0fafa 0%, #fff 100%);
+      border-top: 1px solid #eef1f4;
+    }
+
+    .lp-trial-gate-inner {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .lp-trial-gate-msg {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--clr-text);
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+
+    .lp-trial-gate-btn {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    .lp-trial-gate-note {
+      font-size: 0.8rem;
+      color: var(--clr-text-dim);
+    }
+
+    /* ── Trial Chat Mobile ─────────────────────────────── */
+    @media (max-width: 768px) {
+      .lp-tutor-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+      .lp-hero-pick-inner h1 { font-size: 1.7rem; }
+      .lp-tutor-card-img { width: 72px; height: 72px; }
+      .lp-tutor-card { padding: 1rem 0.75rem 0.75rem; }
+      .lp-celebration-video-wrap { width: 260px; height: 260px; }
+      .lp-celebration-title { font-size: 2.5rem; }
+      .lp-trial-chat { padding: 0; }
+      .lp-trial-chat-inner { border-radius: 0; border-left: 0; border-right: 0; }
+      .lp-trial-prompt-btns { flex-direction: column; }
+      .lp-trial-prompt { text-align: left; }
+    }
+
+    @media (max-width: 375px) {
+      .lp-hero-pick-inner h1 { font-size: 1.4rem; }
+      .lp-tutor-card-img { width: 56px; height: 56px; }
+      .lp-tutor-card-catch { font-size: 0.72rem; }
+      .lp-tutor-card-spec { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1497,40 +1912,116 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </header>
 
   <main class="landing-main" id="lp-main">
-    <!-- ── Hero ──────────────────────────────────────────── -->
-    <section class="lp-hero">
-      <div class="lp-hero-layout">
-        <div class="lp-hero-content">
-          <h1>Your Child Is Struggling With Math. Let&rsquo;s Fix That.</h1>
-          <p class="lp-hero-sub">
-            An AI tutor that learns how your child thinks, works at their pace, and is available 24/7 &mdash; for less than a single tutoring session.
-          </p>
-          <ul class="lp-hero-pain-points">
-            <li><i class="fas fa-check-circle"></i> Raise grades without the homework fights</li>
-            <li><i class="fas fa-check-circle"></i> Works with IEPs, ADHD, and learning differences</li>
-            <li><i class="fas fa-check-circle"></i> Cheaper than a private tutor. Smarter than generic AI.</li>
-          </ul>
-          <div class="lp-hero-buttons">
-            <a href="/signup.html" class="btn btn-primary btn-lg lp-hero-cta">Start Free Now</a>
-            <span class="lp-hero-cta-note">No credit card required &middot; 10 free minutes every week</span>
-          </div>
-        </div>
-
-        <div class="lp-hero-preview">
-          <div class="lp-preview-header">
-            <div class="lp-preview-dot"></div>
-            <span id="lp-tutor-name">Ms. Maria</span> &mdash; Mathmatix AI Tutor
-          </div>
-          <div class="lp-chat-messages" id="lp-chat"></div>
-          <div class="lp-typing" id="lp-typing">
-            <div class="lp-typing-dot"></div>
-            <div class="lp-typing-dot"></div>
-            <div class="lp-typing-dot"></div>
+    <!-- ── Hero: Tutor Selection → Trial Chat ──────────── -->
+    <section class="lp-hero" id="lp-hero">
+      <!-- PHASE 1: Pick a tutor -->
+      <div class="lp-hero-pick" id="lp-hero-pick">
+        <div class="lp-hero-pick-inner">
+          <h1>Who do you want to work with today?</h1>
+          <p class="lp-hero-sub">Pick a tutor and try a real math session &mdash; no signup needed.</p>
+          <div class="lp-tutor-grid" id="lp-tutor-grid">
+            <!-- Mr. Nappier -->
+            <button class="lp-tutor-card" data-tutor="mr-nappier">
+              <img src="/images/tutor_avatars/mr-nappier.png" alt="Mr. Nappier" class="lp-tutor-card-img" loading="eager" />
+              <div class="lp-tutor-card-info">
+                <h3>Mr. Nappier</h3>
+                <p class="lp-tutor-card-catch">Math is about patterns!</p>
+                <p class="lp-tutor-card-spec">Arithmetic, Pre-Algebra, Algebra 1</p>
+              </div>
+              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
+            </button>
+            <!-- Bob -->
+            <button class="lp-tutor-card" data-tutor="bob">
+              <img src="/images/tutor_avatars/bob.png" alt="Bob" class="lp-tutor-card-img" loading="eager" />
+              <div class="lp-tutor-card-info">
+                <h3>Bob</h3>
+                <p class="lp-tutor-card-catch">Bringing math concepts to life!</p>
+                <p class="lp-tutor-card-spec">Geometry, Pre-Calculus, Problem-Solving</p>
+              </div>
+              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
+            </button>
+            <!-- Maya -->
+            <button class="lp-tutor-card" data-tutor="maya">
+              <img src="/images/tutor_avatars/maya.png" alt="Maya" class="lp-tutor-card-img" loading="eager" />
+              <div class="lp-tutor-card-info">
+                <h3>Maya</h3>
+                <p class="lp-tutor-card-catch">Learning math, your way!</p>
+                <p class="lp-tutor-card-spec">Elementary Math, Basic Algebra</p>
+              </div>
+              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
+            </button>
+            <!-- Ms. Maria -->
+            <button class="lp-tutor-card" data-tutor="ms-maria">
+              <img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" class="lp-tutor-card-img" loading="eager" />
+              <div class="lp-tutor-card-info">
+                <h3>Ms. Maria</h3>
+                <p class="lp-tutor-card-catch">Structured math, paso por paso!</p>
+                <p class="lp-tutor-card-spec">Bilingual, Algebra I &amp; II, Test Prep</p>
+              </div>
+              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="lp-trust-bar">
+      <!-- PHASE 2: Tutor celebration overlay (plays video then transitions to chat) -->
+      <div class="lp-celebration-overlay" id="lp-celebration" style="display:none;">
+        <div class="lp-celebration-content">
+          <div class="lp-celebration-video-wrap">
+            <video id="lp-celebration-video" class="lp-celebration-video" muted playsinline></video>
+          </div>
+          <div class="lp-celebration-msg">
+            <h1 id="lp-celebration-title" class="lp-celebration-title"></h1>
+            <p id="lp-celebration-subtitle" class="lp-celebration-subtitle"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3: Trial chat -->
+      <div class="lp-trial-chat" id="lp-trial-chat" style="display:none;">
+        <div class="lp-trial-chat-inner">
+          <div class="lp-trial-header">
+            <button class="lp-trial-back" id="lp-trial-back" title="Pick a different tutor"><i class="fas fa-arrow-left"></i></button>
+            <div class="lp-trial-tutor-info">
+              <img id="lp-trial-tutor-img" src="" alt="" class="lp-trial-tutor-avatar" />
+              <span id="lp-trial-tutor-name"></span>
+            </div>
+            <a href="/signup.html" class="btn btn-primary btn-sm lp-trial-signup-btn">Sign Up Free</a>
+          </div>
+          <div class="lp-trial-messages" id="lp-trial-messages"></div>
+          <div class="lp-trial-typing" id="lp-trial-typing" style="display:none;">
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
+          </div>
+          <!-- Suggested prompts (shown when chat is empty) -->
+          <div class="lp-trial-suggestions" id="lp-trial-suggestions">
+            <p class="lp-trial-suggestions-label">Try asking:</p>
+            <div class="lp-trial-prompt-btns">
+              <button class="lp-trial-prompt" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
+              <button class="lp-trial-prompt" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
+              <button class="lp-trial-prompt" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
+              <button class="lp-trial-prompt" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
+            </div>
+          </div>
+          <!-- Input area -->
+          <div class="lp-trial-input-area" id="lp-trial-input-area">
+            <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." maxlength="500" autocomplete="off" />
+            <button class="lp-trial-send" id="lp-trial-send" title="Send"><i class="fas fa-paper-plane"></i></button>
+          </div>
+          <!-- Soft gate (shown after 3 turns) -->
+          <div class="lp-trial-gate" id="lp-trial-gate" style="display:none;">
+            <div class="lp-trial-gate-inner">
+              <p class="lp-trial-gate-msg" id="lp-trial-gate-msg"></p>
+              <a href="/signup.html" class="btn btn-primary btn-lg lp-trial-gate-btn">Keep Working Together &mdash; It&rsquo;s Free</a>
+              <span class="lp-trial-gate-note">No credit card required &middot; Your conversation continues right where you left off</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust bar (shown in tutor selection phase) -->
+      <div class="lp-trust-bar" id="lp-trust-bar">
         <div class="lp-trust-item"><i class="fas fa-shield-halved"></i> Won&rsquo;t give answers &mdash; teaches them to think</div>
         <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a real math teacher</div>
         <div class="lp-trust-item"><i class="fas fa-clock"></i> Available 24/7, even at 9pm</div>
@@ -1549,6 +2040,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </picture>
           <div class="lp-photo-banner-overlay">
             <p class="lp-photo-banner-text">Built for the way kids actually learn.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chat Preview (moved below fold from hero) ────────── -->
+    <section class="lp-chat-preview-section lp-reveal lp-section-alt">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">See How a Session Works</h2>
+        <p class="lp-section-sub">Real conversations with our AI tutors. No scripts &mdash; every session is personalized.</p>
+        <div class="lp-hero-preview" style="margin: 0 auto;">
+          <div class="lp-preview-header">
+            <div class="lp-preview-dot"></div>
+            <span id="lp-tutor-name">Mr. Nappier</span> &mdash; Mathmatix AI Tutor
+          </div>
+          <div class="lp-chat-messages" id="lp-chat"></div>
+          <div class="lp-typing" id="lp-typing">
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
+            <div class="lp-typing-dot"></div>
           </div>
         </div>
       </div>

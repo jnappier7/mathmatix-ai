@@ -1,11 +1,11 @@
-// public/js/pick-tutor.js  –  Tutor selection only (avatar selection is on pick-avatar.html)
+// public/js/pick-tutor.js  –  Tutor selection with inline voice preview on each card
 document.addEventListener('DOMContentLoaded', () => {
   let allTutors    = [];
   let currentUser  = null;
   const tutorSelectionGrid = document.getElementById('tutor-selection-grid');
-  const playVoiceBtn       = document.getElementById('play-voice-btn');
   const completeSelectionBtn = document.getElementById('complete-selection-btn');
   let selectedTutorId      = null;
+  let currentAudio         = null; // Track currently playing voice preview
 
   /* -------- INITIAL DATA LOAD -------- */
   async function fetchData() {
@@ -29,10 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(key => key !== 'default')
         .map(key => ({ id: key, ...tutorsData[key] }));
 
+      // If coming from trial chat, pre-select that tutor
+      const params = new URLSearchParams(window.location.search);
+      const trialTutor = params.get('trial_tutor');
+      if (trialTutor && allTutors.some(t => t.id === trialTutor)) {
+        selectedTutorId = trialTutor;
+        completeSelectionBtn.disabled = false;
+      }
+
       renderTutors();
     } catch (err) {
       console.error('Error fetching initial data:', err);
-      tutorSelectionGrid.innerHTML = `<p>Error loading tutors. Please refresh.</p>`;
+      tutorSelectionGrid.innerHTML = '<p>Error loading tutors. Please refresh.</p>';
     }
   }
 
@@ -47,78 +55,104 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('tutor-card', 'card-style-1', isUnlocked ? 'unlocked' : 'locked');
       card.dataset.tutorId = tutor.id;
 
+      // Pre-select from trial chat
+      if (isUnlocked && tutor.id === selectedTutorId) {
+        card.classList.add('selected');
+      }
+
       if (isUnlocked) {
-        card.innerHTML = `
-          <img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}" class="tutor-card-image" loading="lazy">
-          <h3 class="tutor-card-name">${tutor.name}</h3>
-          <p  class="tutor-card-tagline">${tutor.catchphrase || ''}</p>
-          <div class="tutor-card-details-overlay">
-            <h4>About ${tutor.name}:</h4><p>${tutor.about || ''}</p>
-            <h4>Specializes In:</h4><p>${tutor.specialties || ''}</p>
-          </div>`;
+        card.innerHTML =
+          '<img src="/images/tutor_avatars/' + tutor.image + '" alt="' + tutor.name + '" class="tutor-card-image" loading="lazy">' +
+          '<h3 class="tutor-card-name">' + tutor.name + '</h3>' +
+          '<p class="tutor-card-tagline">' + (tutor.catchphrase || '') + '</p>' +
+          '<button class="tutor-card-hear-btn" data-tutor-id="' + tutor.id + '">' +
+            '<i class="fas fa-volume-up"></i> Hear me' +
+          '</button>' +
+          '<div class="tutor-card-details-overlay">' +
+            '<h4>About ' + tutor.name + ':</h4><p>' + (tutor.about || '') + '</p>' +
+            '<h4>Specializes In:</h4><p>' + (tutor.specialties || '') + '</p>' +
+          '</div>';
       } else {
-        const unlockLabel = tutor.unlockLevel
-          ? `Unlocks at Level ${tutor.unlockLevel}`
-          : 'Unlock by playing';
-        card.innerHTML = `
-          <img src="/images/tutor_avatars/${tutor.image}" alt="Locked Tutor" class="tutor-card-image silhouette">
-          <h3 class="tutor-card-name locked-name">?????</h3>
-          <p  class="tutor-card-tagline"><i class="fas fa-lock"></i> ${unlockLabel}</p>`;
+        const hint = tutor.unlockHint || 'Keep going — you\'ll meet me soon';
+        card.innerHTML =
+          '<img src="/images/tutor_avatars/' + tutor.image + '" alt="Locked Tutor" class="tutor-card-image silhouette">' +
+          '<h3 class="tutor-card-name locked-name">?????</h3>' +
+          '<p class="tutor-card-tagline"><i class="fas fa-lock"></i> ' + hint + '</p>';
       }
       tutorSelectionGrid.appendChild(card);
     });
   }
 
-  /* -------- INTERACTION HANDLERS -------- */
+  /* -------- CARD SELECTION -------- */
   tutorSelectionGrid.addEventListener('click', e => {
+    // Ignore clicks on the hear button
+    if (e.target.closest('.tutor-card-hear-btn')) return;
+
     const card = e.target.closest('.tutor-card');
     if (!card || card.classList.contains('locked')) return;
 
     document.querySelectorAll('.tutor-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     selectedTutorId = card.dataset.tutorId;
-    playVoiceBtn.disabled = false;
     completeSelectionBtn.disabled = false;
     completeSelectionBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Next: Choose Your Avatar';
   });
 
-  playVoiceBtn.addEventListener('click', async () => {
-    if (!selectedTutorId) return;
-    const t = allTutors.find(t => t.id === selectedTutorId);
-    if (!t.voiceId) return alert('Voice not available for this tutor.');
+  /* -------- INLINE VOICE PREVIEW -------- */
+  tutorSelectionGrid.addEventListener('click', async (e) => {
+    const hearBtn = e.target.closest('.tutor-card-hear-btn');
+    if (!hearBtn) return;
 
-    playVoiceBtn.disabled = true;
-    playVoiceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Playing…';
+    e.stopPropagation();
+    const tutorId = hearBtn.dataset.tutorId;
+    const tutor = allTutors.find(t => t.id === tutorId);
+    if (!tutor || !tutor.voiceId) return;
+
+    // Stop any currently playing preview
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+      // Reset all hear buttons
+      document.querySelectorAll('.tutor-card-hear-btn').forEach(btn => {
+        btn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
+        btn.disabled = false;
+      });
+    }
+
+    hearBtn.disabled = true;
+    hearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Playing\u2026';
 
     try {
       const resp = await csrfFetch('/api/speak', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ text: t.voicePreview, voiceId: t.voiceId }),
+        body:    JSON.stringify({ text: tutor.voicePreview, voiceId: tutor.voiceId }),
         credentials: 'include'
       });
       if (!resp.ok) throw new Error(await resp.text());
       const blob = await resp.blob();
       const url  = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.play();
-      audio.onended = () => {
+      currentAudio = new Audio(url);
+      currentAudio.play();
+      currentAudio.onended = () => {
         URL.revokeObjectURL(url);
-        playVoiceBtn.disabled = false;
-        playVoiceBtn.innerHTML = '<i class="fas fa-play"></i> Play Voice';
+        hearBtn.disabled = false;
+        hearBtn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
+        currentAudio = null;
       };
     } catch (err) {
       console.error(err);
-      playVoiceBtn.disabled = false;
-      playVoiceBtn.innerHTML = '<i class="fas fa-play"></i> Play Voice';
+      hearBtn.disabled = false;
+      hearBtn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
     }
   });
 
+  /* -------- COMPLETE SELECTION -------- */
   completeSelectionBtn.addEventListener('click', async () => {
     if (!selectedTutorId) return;
 
     completeSelectionBtn.disabled = true;
-    completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving\u2026';
     try {
       const res = await csrfFetch('/api/user/settings', {
         method: 'PATCH',
@@ -127,11 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         credentials: 'include'
       });
       if (!res.ok) throw new Error(await res.text());
-      window.location.href = '/pick-avatar.html';
+      window.location.href = '/chat.html';
     } catch (err) {
       console.error(err);
       completeSelectionBtn.disabled = false;
-      completeSelectionBtn.innerHTML = '<i class="fas fa-times"></i> Save Failed – Retry';
+      completeSelectionBtn.innerHTML = '<i class="fas fa-times"></i> Save Failed \u2013 Retry';
     }
   });
 

@@ -107,16 +107,24 @@ function applyXpToUser(user, breakdown) {
     leveledUp = true;
   }
 
-  // Tutor unlocks
+  // Tutor unlocks (variable ratio with behavior triggers)
   const { getTutorsToUnlock } = require('../unlockTutors');
-  const tutorsUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+  const behaviorStats = user.xpLadderStats?.tier3Behaviors || [];
+  const tutorsUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || [], behaviorStats);
   if (tutorsUnlocked.length > 0) {
     user.unlockedItems = user.unlockedItems || [];
     user.unlockedItems.push(...tutorsUnlocked);
     user.markModified('unlockedItems');
   }
 
-  return { leveledUp, tutorsUnlocked };
+  // Avatar builder unlock at Level 2
+  let avatarBuilderUnlocked = false;
+  if (leveledUp && user.level >= 2 && !user.avatarBuilderUnlocked) {
+    user.avatarBuilderUnlocked = true;
+    avatarBuilderUnlocked = true;
+  }
+
+  return { leveledUp, tutorsUnlocked, avatarBuilderUnlocked };
 }
 
 module.exports = { computeXpBreakdown, applyXpToUser, HINT_REGEX };

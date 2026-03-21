@@ -759,6 +759,66 @@
 [data-theme="dark"] .weekly-stat-value { color: #F0F4F8; }
 
 /* ============================================
+   GROWTH DELTAS STRIP (Progress Principle)
+   Shows trajectory, not absolutes: "up 15%" > "82%"
+   ============================================ */
+.growth-deltas-strip {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.growth-deltas-strip::-webkit-scrollbar { display: none; }
+
+.growth-delta-item {
+  display: none; /* shown via JS when data exists */
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid var(--clr-border-light, #f0f0f0);
+  border-radius: 12px;
+  padding: 10px 16px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.growth-delta-item:hover { transform: translateY(-1px); }
+
+.growth-delta-arrow {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.growth-delta-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.growth-delta-label {
+  font-size: 0.75rem;
+  color: var(--clr-text-dim, #5B6876);
+  font-weight: 500;
+}
+
+[data-theme="dark"] .growth-delta-item {
+  background: #141E29;
+  border-color: #243040;
+}
+
+[data-theme="dark"] .growth-delta-label { color: #8899AA; }
+
+@media (max-width: 600px) {
+  .growth-deltas-strip { gap: 8px; }
+  .growth-delta-item { padding: 8px 12px; }
+}
+
+/* ============================================
    7. DYNAMIC SUGGESTION CHIPS (ENHANCED)
    ============================================ */
 .suggestion-chip-enhanced {

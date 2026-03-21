@@ -204,6 +204,50 @@ export async function loadQuestsAndChallenges() {
 }
 
 /**
+ * Show "what's coming next" teaser based on proximity to next unlock.
+ * Fires after level-up or when XP is 80%+ toward next level.
+ * Creates anticipation (dopamine loop) for the next reward.
+ */
+export function showUnlockProximityTeaser(currentUser) {
+    if (!currentUser) return;
+    const level = currentUser.level || 1;
+    const xp = currentUser.xpForCurrentLevel || 0;
+    const xpNeeded = currentUser.xpForNextLevel || 100;
+    const percentage = xpNeeded > 0 ? (xp / xpNeeded) * 100 : 0;
+
+    // Tease upcoming unlocks without revealing exact levels
+    // Variable ratio — the student shouldn't know exactly when
+    const upcomingUnlocks = [
+        { minLevel: 2,  reward: 'Avatar Builder' },
+        { minLevel: 5,  reward: 'a new tutor' },
+        { minLevel: 8,  reward: 'a new tutor' },
+        { minLevel: 13, reward: 'a new tutor' },
+        { minLevel: 18, reward: 'a new tutor' },
+        { minLevel: 22, reward: 'a new tutor' },
+        { minLevel: 27, reward: 'a new tutor' },
+        { minLevel: 32, reward: 'a new tutor' },
+    ];
+
+    // Find the next unlock range above current level
+    const nextUnlock = upcomingUnlocks.find(u => u.minLevel > level);
+    if (!nextUnlock) return;
+
+    const distance = nextUnlock.minLevel - level;
+
+    // Only tease when close — don't reveal the system
+    if (distance <= 3) {
+        const messages = [
+            "Something's about to unlock... keep going!",
+            "You're getting close to unlocking " + nextUnlock.reward + "!",
+            "A surprise is right around the corner...",
+            "Keep it up — good things are coming!",
+        ];
+        const msg = messages[level % messages.length];
+        showToast(msg, 4000);
+    }
+}
+
+/**
  * Show tutor unlock celebration (Mortal Kombat style reveal)
  */
 export function showTutorUnlockCelebration(tutorIds) {

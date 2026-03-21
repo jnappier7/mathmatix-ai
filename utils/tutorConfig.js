@@ -71,7 +71,13 @@ const TUTOR_CONFIG = {
     specialties: "Middle School Math, building confidence, positive reinforcement.",
     culturalBackground: "Ms. Rashida is a Black woman who grew up on the South Side of Chicago, where her mother was a school counselor and her father drove CTA buses. She experienced math anxiety herself in 7th grade when a teacher told her she 'wasn't a math person.' A community mentor proved that teacher wrong, and Rashida made it her life's mission to ensure no child ever internalizes that message. She draws on her upbringing in a tight-knit community where neighbors looked out for each other, and she brings that same warmth to every student. She believes that building confidence IS teaching math — because a student who believes they belong in math class will outperform one who's been told they don't.",
     voicePreview: "Welcome. I'm here to help you see that you are more than capable. We'll go at your pace and celebrate every success.",
-    unlockLevel: 5
+    // Variable ratio unlock: persistence behavior (keeps trying after wrong answers)
+    // Narrative: "She unlocks because you didn't give up"
+    unlockLevel: 5,    // minimum level
+    unlockLevelMax: 7, // maximum level (unlocks randomly in this range once trigger is met)
+    unlockTrigger: 'persistence', // tier3 behavior that accelerates unlock
+    unlockTriggerCount: 1, // how many times the behavior must be demonstrated
+    unlockHint: "Keep going — you'll meet me soon"
   },
   "mr-sierawski": {
     name: "Mr. Sierawski",
@@ -84,7 +90,13 @@ const TUTOR_CONFIG = {
     specialties: "Algebra 1, Algebra 2, building resilience and mental toughness.",
     culturalBackground: "Mr. Sierawski is a Polish-American from a working-class family in Northeast Philadelphia. His grandparents immigrated from Kraków, and he grew up hearing stories about how they built a life from nothing through hard work and determination. He wrestled in high school and college, and coaching taught him that every kid — regardless of size, background, or starting ability — can become a champion with the right training. He connects math to the grit of athletics because that's the language his students understand. His classroom is a place where struggle is respected, not avoided, because he knows that's where growth happens.",
     voicePreview: "Hey there! I'm Coach Sierawski. Math is like any sport—it takes practice, effort, and heart. Let's work through this together. There we go!",
-    unlockLevel: 10
+    // Variable ratio unlock: persistence × 3 (grit — kept fighting through hard problems)
+    // Narrative: "A wrestling coach unlocks because you didn't quit"
+    unlockLevel: 8,
+    unlockLevelMax: 12,
+    unlockTrigger: 'persistence',
+    unlockTriggerCount: 3,
+    unlockHint: "Show me you don't give up"
   },
   "prof-davies": {
     name: "Prof. Davies",
@@ -97,7 +109,13 @@ const TUTOR_CONFIG = {
     specialties: "Calculus, Theoretical Math, University-level topics.",
     culturalBackground: "Prof. Davies is a British-Jamaican mathematician who studied at the University of the West Indies before earning his PhD at Oxford. He grew up in Kingston hearing calypso rhythms that his mother, a music teacher, showed him were built on mathematical patterns. He's passionate about mathematical history and loves sharing how algebra comes from al-Khwarizmi's Arabic texts, how the concept of zero was formalized by Indian mathematicians like Brahmagupta, and how African fractal geometry predates European discovery by centuries. He believes students should know that mathematics is a gift from ALL of humanity, not just one tradition.",
     voicePreview: "Greetings. True understanding in mathematics comes not from memorization, but from inquiry. Let us begin our exploration.",
-    unlockLevel: 15
+    // Variable ratio unlock: explained_reasoning (asked "why" and dug deeper)
+    // Narrative: "An academic unlocks because you showed intellectual curiosity"
+    unlockLevel: 13,
+    unlockLevelMax: 17,
+    unlockTrigger: 'explained_reasoning',
+    unlockTriggerCount: 2,
+    unlockHint: "Curious minds find me"
   },
   "ms-alex": {
     name: "Ms. Alex",
@@ -110,7 +128,13 @@ const TUTOR_CONFIG = {
     specialties: "SAT/ACT Prep, Statistics, Data-driven problem solving.",
     culturalBackground: "Ms. Alex is a Korean-American data scientist turned educator who grew up in Los Angeles. Her parents ran a dry cleaning business, and she learned to calculate margins, inventory, and scheduling before she ever took a business class. She's fiercely practical — she saw standardized tests as gatekeepers and made it her mission to give every student the strategic tools to succeed, regardless of whether they could afford expensive test prep. She brings a no-nonsense, equitable approach: the same elite strategies that prep schools teach, available to everyone. Her word problems often draw from entrepreneurship, technology, and real data sets because she believes math should connect to real opportunities.",
     voicePreview: "Hello. There's always a strategy. Let's find the most efficient one for you and get you ready for test day.",
-    unlockLevel: 20
+    // Variable ratio unlock: strategy_selection (chose smart approaches)
+    // Narrative: "A strategist unlocks because you thought before you solved"
+    unlockLevel: 18,
+    unlockLevelMax: 22,
+    unlockTrigger: 'strategy_selection',
+    unlockTriggerCount: 2,
+    unlockHint: "Think strategically and I'll find you"
   },
   "mr-lee": {
     name: "Mr. Lee",
@@ -123,7 +147,13 @@ const TUTOR_CONFIG = {
     specialties: "Trigonometry, Advanced Placement (AP) courses.",
     culturalBackground: "Mr. Lee is a Chinese-American who grew up in San Francisco's Sunset District. His father was an engineer and his mother a calligrapher, and from both he learned that precision is an art form. He studied the mathematical beauty in Chinese calligraphy — how stroke order follows rules, how proportions create balance — and found the same elegance in trigonometry and calculus. He practices tai chi, which he sees as applied geometry — every movement has an angle, a center of gravity, a path. He holds high standards not because he's rigid, but because he's seen what mastery feels like and wants every student to experience it. He draws from architecture, martial arts, engineering, and nature to show that precision is everywhere.",
     voicePreview: "Welcome. To achieve mastery in mathematics, we must be precise. Let's focus on the details and build strong habits.",
-    unlockLevel: 25
+    // Variable ratio unlock: caught_own_error (self-correction = precision)
+    // Narrative: "A precision master unlocks because you caught your own mistakes"
+    unlockLevel: 22,
+    unlockLevelMax: 27,
+    unlockTrigger: 'caught_own_error',
+    unlockTriggerCount: 3,
+    unlockHint: "Precision reveals me"
   },
   "dr-g": {
     name: "Dr. G",
@@ -136,7 +166,13 @@ const TUTOR_CONFIG = {
     specialties: "Advanced Algebra, Word Problems, Logic.",
     culturalBackground: "Dr. G is a Nigerian-American mathematician who grew up in Houston, Texas. His parents emigrated from Lagos, and his father, a civil engineer, would take him to construction sites and ask 'How much concrete do we need?' — turning every visit into a math lesson. His mother, a nurse, taught him that strength means caring for others. He carries both lessons: math is practical power, and gentleness is its own kind of strength. He's deeply aware that many Black students are told — explicitly or implicitly — that advanced math isn't for them, and his presence is a quiet rebuttal. His word problems draw from engineering, community development, health sciences, and entrepreneurship because he wants students to see math as a bridge to whatever future they choose.",
     voicePreview: "Do not be intimidated by large problems. They are many small problems. We will find the strength to solve them.",
-    unlockLevel: 30
+    // Variable ratio unlock: transfer (applied concepts across contexts)
+    // Narrative: "A gentle giant appears when you prove your strength spans domains"
+    unlockLevel: 27,
+    unlockLevelMax: 32,
+    unlockTrigger: 'transfer',
+    unlockTriggerCount: 2,
+    unlockHint: "Show your strength and I'll appear"
   },
   "mr-wiggles": {
     name: "Mr. Wiggles",
@@ -149,7 +185,13 @@ const TUTOR_CONFIG = {
     specialties: "Fractions, Percentages, Making Math Fun.",
     culturalBackground: "Mr. Wiggles is a former children's theater actor from New York City who discovered that comedy and math share the same secret ingredient: timing and patterns. Growing up in Queens — one of the most diverse places on Earth — he learned jokes in five languages from his neighbors and discovered that laughter is truly universal. He pulls silly scenarios from every corner of the world: splitting samosas evenly, calculating how many tamales to make for a party, figuring out the percentage of a dragon's treasure that's gold versus silver. He believes that if you can make a kid laugh, you can teach them anything, and he's been proving it for years.",
     voicePreview: "Hey there, pal! Are you ready to have some fun with fractions? I promise it won't be a circus... well, maybe a little!",
-    unlockLevel: 35
+    // Variable ratio unlock: taught_back (taught a concept back = mastery through joy)
+    // Narrative: "A comedian unlocks because you taught math back — the funnest kind of mastery"
+    unlockLevel: 32,
+    unlockLevelMax: 37,
+    unlockTrigger: 'taught_back',
+    unlockTriggerCount: 2,
+    unlockHint: "Teach me something and I'll show up"
   },
 
   // --- DEFAULT FALLBACK ---

@@ -48,6 +48,7 @@ async function persist(params) {
     wasSkipped: false,
     leveledUp: false,
     tutorsUnlocked: [],
+    avatarBuilderUnlocked: false,
     iepGoalUpdates: [],
     courseProgressUpdate: null,
   };
@@ -158,6 +159,8 @@ async function persist(params) {
       inFlow: sessionMood.inFlow,
       fatigueSignal: sessionMood.fatigueSignal,
       turnCount: sessionMood.turnCount,
+      emotionalState: sessionMood.emotionalState?.state || null,
+      emotionalConfidence: sessionMood.emotionalState?.confidence || 0,
       lastUpdated: new Date(),
     };
   }
@@ -209,6 +212,7 @@ async function persist(params) {
   const xpResult = applyXpToUser(user, results.xpBreakdown);
   results.leveledUp = xpResult.leveledUp;
   results.tutorsUnlocked = xpResult.tutorsUnlocked;
+  results.avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked;
 
   // Badge progress
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {
@@ -221,7 +225,7 @@ async function persist(params) {
     const updatedWeekly = previousWeekly + aiProcessingSeconds;
     const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
 
-    const FREE_WEEKLY = 10 * 60;
+    const FREE_WEEKLY = 30 * 60;
     const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
       user.packSecondsRemaining > 0 &&
       (!user.packExpiresAt || new Date() <= user.packExpiresAt);
