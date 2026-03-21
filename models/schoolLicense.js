@@ -2,7 +2,7 @@
 //
 // Option D pricing model:
 //   - Teachers: always free (drives adoption)
-//   - Students: 20 min/week free tier
+//   - Students: 30 min/week free tier
 //   - School license: unlocks unlimited access for all students under licensed teachers
 //
 // Tiers (annual):
