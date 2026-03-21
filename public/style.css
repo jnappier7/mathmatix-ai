@@ -845,68 +845,7 @@ form label, .password-label-row label {
     margin-bottom: 5px;
 }
 
-.avatar-rarity {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 12px;
-    margin-top: 5px;
-    letter-spacing: 0.5px;
-}
-
-.rarity-common {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #4caf50;
-}
-
-.rarity-uncommon {
-    background: #e3f2fd;
-    color: #1565c0;
-    border: 1px solid #2196f3;
-}
-
-.rarity-rare {
-    background: #f3e5f5;
-    color: #6a1b9a;
-    border: 1px solid #9c27b0;
-}
-
-.rarity-epic {
-    background: #fff3e0;
-    color: #e65100;
-    border: 1px solid #ff9800;
-}
-
-.rarity-legendary {
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-    color: #b8860b;
-    border: 2px solid #ffd700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-}
-
-.rarity-mythic {
-    background: linear-gradient(135deg, #ff0080 0%, #7928ca 50%, #00d4ff 100%);
-    color: #ffffff;
-    border: 2px solid #7928ca;
-    box-shadow: 0 0 12px rgba(121, 40, 202, 0.6);
-    animation: mythic-glow 3s infinite;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-@keyframes mythic-glow {
-    0%, 100% { box-shadow: 0 0 12px rgba(255, 0, 128, 0.6); }
-    33% { box-shadow: 0 0 18px rgba(121, 40, 202, 0.8); }
-    66% { box-shadow: 0 0 18px rgba(0, 212, 255, 0.8); }
-}
+/* Avatar rarity classifications removed — DiceBear custom avatars only */
 
 /* --- Media Queries for Structural Changes --- */
 

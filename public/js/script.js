@@ -1061,23 +1061,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
 
-            // Check for custom DiceBear avatar first
+            // DiceBear avatar or initial fallback
             if (currentUser.avatar?.dicebearUrl) {
                 avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
-            }
-            // Fall back to pre-made avatar selection
-            else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
-                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
-                if (avatarConfig) {
-                    const avatarImage = avatarConfig.image || 'default-avatar.png';
-                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
-                } else {
-                    // Fallback if avatar not found
-                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
-                }
-            }
-            // Ultimate fallback - initial letter
-            else {
+            } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }
             messageContainer.appendChild(avatar);
@@ -1742,14 +1729,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (currentUser.avatar?.dicebearUrl) {
                 avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
-            } else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
-                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
-                if (avatarConfig) {
-                    const avatarImage = avatarConfig.image || 'default-avatar.png';
-                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
-                } else {
-                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
-                }
             } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }
