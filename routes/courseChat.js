@@ -23,7 +23,7 @@ const { detectAndFetchResource, detectResourceMention } = require('../utils/reso
 const { buildProgressUpdate } = require('../utils/progressState');
 const { verify: pipelineVerify } = require('../utils/pipeline');
 const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
-const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
+const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery, shouldAutoAdvance } = require('../utils/pipeline/coursePersist');
 const { computeXpBreakdown, applyXpToUser } = require('../utils/pipeline/xpEngine');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
@@ -367,6 +367,24 @@ router.post('/', async (req, res) => {
                     }
                 } catch (progressErr) {
                     console.error('[CourseChat] Scaffold progression error:', progressErr.message);
+                }
+            }
+
+            // ── Auto-advance fallback ────────────────────────────
+            // If the AI failed to emit <SCAFFOLD_ADVANCE> but the student
+            // has been engaged long enough, advance the step server-side.
+            // This prevents progress from freezing when the LLM forgets the tag.
+            if (!ext.scaffoldAdvance && !ext.moduleComplete && !courseProgressUpdate) {
+                try {
+                    if (shouldAutoAdvance(courseSession, moduleData, conversation, { isParentCourse })) {
+                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
+                        if (courseProgressUpdate) {
+                            await courseSession.save();
+                            console.log(`📈 [CourseChat] ${user.firstName} AUTO-advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (AI missed tag)`);
+                        }
+                    }
+                } catch (autoAdvErr) {
+                    console.error('[CourseChat] Auto-advance error:', autoAdvErr.message);
                 }
             }
 

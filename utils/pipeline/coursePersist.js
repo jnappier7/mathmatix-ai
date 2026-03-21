@@ -344,11 +344,83 @@ function processSkillMastery(user, skillId) {
   user.markModified('skillMastery');
 }
 
+// ── Turn-count thresholds for auto-advance fallback ──
+// These kick in when the AI fails to emit <SCAFFOLD_ADVANCE>.
+// Counts are assistant messages since the last scaffoldAdvanced flag.
+const AUTO_ADVANCE_THRESHOLDS = {
+  explanation:           4,   // concept intro — student engaged a few times
+  'concept-intro':       4,
+  'concept-check':       3,   // quick check — should resolve fast
+  'check-in':            3,   // emotional check — very short
+  model:                 6,   // worked examples — a bit longer
+  'i-do':                6,
+  guided_practice:       8,   // needs correct answers too (gated below)
+  'we-do':               8,
+  independent_practice: 10,   // needs correct answers too (gated below)
+  'you-do':             10,
+  'mastery-check':      10,
+};
+const DEFAULT_AUTO_ADVANCE_THRESHOLD = 6;
+
+/**
+ * Check whether the current scaffold step should auto-advance because
+ * the AI failed to emit <SCAFFOLD_ADVANCE> despite sufficient student
+ * engagement. This is a safety net — the normal path is still the
+ * AI-emitted tag.
+ *
+ * @param {Object} courseSession - Mongoose course session document
+ * @param {Object} moduleData - Loaded module JSON (with scaffold array)
+ * @param {Object} conversation - Mongoose conversation document
+ * @param {Object} [options]
+ * @param {boolean} [options.isParentCourse] - Skip practice gating for parents
+ * @returns {boolean} true if auto-advance should be triggered
+ */
+function shouldAutoAdvance(courseSession, moduleData, conversation, options = {}) {
+  const scaffold = moduleData?.scaffold || [];
+  const currentIdx = courseSession.currentScaffoldIndex || 0;
+  const currentStep = scaffold[currentIdx];
+  if (!currentStep) return false;
+
+  // Don't auto-advance past the last step (that needs MODULE_COMPLETE)
+  if (currentIdx >= scaffold.length - 1) return false;
+
+  const messages = conversation?.messages || [];
+  if (messages.length === 0) return false;
+
+  // Count assistant messages since the last scaffold advance
+  let assistantTurnsSinceAdvance = 0;
+  let correctSinceAdvance = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.scaffoldAdvanced) break;
+    if (msg.role === 'assistant') assistantTurnsSinceAdvance++;
+    if (msg.problemResult === 'correct') correctSinceAdvance++;
+  }
+
+  const stepType = currentStep.type || currentStep.lessonPhase || '';
+  const threshold = AUTO_ADVANCE_THRESHOLDS[stepType] || DEFAULT_AUTO_ADVANCE_THRESHOLD;
+
+  if (assistantTurnsSinceAdvance < threshold) return false;
+
+  // For practice phases, still require minimum correct answers
+  const isPracticePhase = PRACTICE_PHASES.includes(stepType);
+  if (isPracticePhase && !options.isParentCourse && correctSinceAdvance < MIN_CORRECT_FOR_ADVANCE) {
+    // Not enough correct answers — don't auto-advance practice steps
+    return false;
+  }
+
+  console.log(`[CoursePersist] Auto-advance triggered: step ${currentIdx + 1} ("${currentStep.title}"), ` +
+    `${assistantTurnsSinceAdvance} assistant turns (threshold: ${threshold}), ` +
+    `${correctSinceAdvance} correct answers, stepType="${stepType}"`);
+  return true;
+}
+
 module.exports = {
   detectGraphTool,
   processScaffoldAdvance,
   processModuleComplete,
   processSkillMastery,
+  shouldAutoAdvance,
   PHASE_LABELS,
   PRACTICE_PHASES,
   MIN_CORRECT_FOR_ADVANCE,

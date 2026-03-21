@@ -18,6 +18,7 @@ const {
   processScaffoldAdvance,
   processModuleComplete,
   processSkillMastery,
+  shouldAutoAdvance,
   MIN_CORRECT_FOR_ADVANCE,
 } = require('../../utils/pipeline/coursePersist');
 
@@ -377,5 +378,80 @@ describe('coursePersist: processSkillMastery', () => {
     const user = {};
     processSkillMastery(user, null);
     expect(user.skillMastery).toBeUndefined();
+  });
+});
+
+// ============================================================================
+// shouldAutoAdvance
+// ============================================================================
+
+describe('coursePersist: shouldAutoAdvance', () => {
+  function buildConversationWithTurns(assistantCount, { correctCount = 0, addScaffoldAdvancedAt = -1 } = {}) {
+    const messages = [];
+    for (let i = 0; i < assistantCount; i++) {
+      messages.push({ role: 'user', content: `question ${i}` });
+      const assistantMsg = { role: 'assistant', content: `answer ${i}` };
+      if (i < correctCount) assistantMsg.problemResult = 'correct';
+      if (i === addScaffoldAdvancedAt) assistantMsg.scaffoldAdvanced = true;
+      messages.push(assistantMsg);
+    }
+    return { messages };
+  }
+
+  test('returns true for explanation step after 4 assistant turns', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 0 }); // explanation
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(5);
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
+  });
+
+  test('returns false for explanation step with only 2 assistant turns', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 0 });
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(2);
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
+  });
+
+  test('returns false for guided_practice step without correct answers', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(10, { correctCount: 0 });
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
+  });
+
+  test('returns true for guided_practice step with enough turns AND correct answers', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 2 });
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(10, { correctCount: 2 });
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(true);
+  });
+
+  test('does not auto-advance past the last step', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 3 }); // last step in a 4-step scaffold
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(20);
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
+  });
+
+  test('resets turn count after a previous scaffoldAdvanced flag', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 0 });
+    const moduleData = mockModuleData(4);
+    // 10 turns total, but scaffoldAdvanced at turn 7 means only 2 turns since advance
+    const conversation = buildConversationWithTurns(10, { addScaffoldAdvancedAt: 7 });
+
+    expect(shouldAutoAdvance(session, moduleData, conversation)).toBe(false);
+  });
+
+  test('skips practice gating for parent courses', () => {
+    const session = mockCourseSession({ currentScaffoldIndex: 2 }); // guided_practice
+    const moduleData = mockModuleData(4);
+    const conversation = buildConversationWithTurns(10, { correctCount: 0 });
+
+    expect(shouldAutoAdvance(session, moduleData, conversation, { isParentCourse: true })).toBe(true);
   });
 });
