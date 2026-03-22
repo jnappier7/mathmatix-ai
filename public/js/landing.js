@@ -441,6 +441,25 @@
       } catch (e) { return '$' + math + '$'; }
     });
 
+    // ── Auto-render common math patterns not wrapped in delimiters ──
+
+    // Exponents: x^2, x^3, a^n, x^{10}, (x+1)^2 — but not already inside KaTeX output
+    escaped = escaped.replace(/(?<![a-zA-Z\/"])([a-zA-Z0-9)]+)\^(\{[^}]+\}|[a-zA-Z0-9]+)/g, function (match, base, exp) {
+      // Skip if inside a KaTeX span (already rendered)
+      var rawExp = exp.charAt(0) === '{' ? exp.slice(1, -1) : exp;
+      try {
+        return window.katex.renderToString(base + '^{' + rawExp + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return match; }
+    });
+
+    // Fractions: 2/3, 1/4, a/b — only simple numeric or single-letter fractions
+    // Avoid matching URLs, file paths, "and/or", etc.
+    escaped = escaped.replace(/(?<![a-zA-Z\/.&])(\d+)\/(\d+)(?![a-zA-Z\/\d])/g, function (match, num, den) {
+      try {
+        return window.katex.renderToString('\\frac{' + num + '}{' + den + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return match; }
+    });
+
     // Convert line breaks
     escaped = escaped.replace(/\n/g, '<br>');
 
