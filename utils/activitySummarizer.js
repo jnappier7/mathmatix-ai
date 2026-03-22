@@ -350,7 +350,7 @@ async function generateStudentRecap(conversation, user) {
         // ── Growth headline ──
         if (stats.attempted === 0) {
             recap.headline = `${minutes} minutes exploring ${topic}`;
-        } else if (accuracy >= 80) {
+        } else if (accuracy !== null && accuracy >= 80) {
             recap.headline = `${stats.correct} problems solved — strong session!`;
         } else if (stats.attempted >= 5) {
             recap.headline = `${stats.attempted} problems tackled — you put in the work`;

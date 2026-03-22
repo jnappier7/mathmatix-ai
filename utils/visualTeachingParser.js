@@ -200,30 +200,11 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(algebraTilesRegex, '');
 
-    // [TILES_SOLVE:equation] or [TILES_SOLVE:equation:guided|full]
-    // Step-by-step equation solving with tile animations
-    const tilesSolveRegex = /\[TILES_SOLVE:([^:\]]+)(?::([^\]]+))?\]/g;
-    while ((match = tilesSolveRegex.exec(aiResponseText)) !== null) {
-        visualCommands.algebraTiles.push({
-            type: 'solve',
-            equation: match[1],
-            mode: match[2] || 'guided',
-            autoOpen: true
-        });
-    }
-    cleanedText = cleanedText.replace(tilesSolveRegex, '');
-
-    // [TILES_FACTOR:expression]
-    // Demonstrate factoring by arranging tiles into a rectangle
-    const tilesFactorRegex = /\[TILES_FACTOR:([^\]]+)\]/g;
-    while ((match = tilesFactorRegex.exec(aiResponseText)) !== null) {
-        visualCommands.algebraTiles.push({
-            type: 'factor',
-            expression: match[1],
-            autoOpen: true
-        });
-    }
-    cleanedText = cleanedText.replace(tilesFactorRegex, '');
+    // [TILES_SOLVE:...] and [TILES_FACTOR:...] — strip tags.
+    // These are parsed by inlineChatVisuals.js when a frontend renderer exists.
+    // For now, just ensure they don't appear as raw text.
+    cleanedText = cleanedText.replace(/\[TILES_SOLVE:[^\]]+\]/g, '');
+    cleanedText = cleanedText.replace(/\[TILES_FACTOR:[^\]]+\]/g, '');
 
     // [ALGEBRA_TILES_DEMO:operation] - Demonstrate an operation
     // Examples: "add", "multiply", "factor", "solve"
@@ -331,20 +312,13 @@ function parseVisualTeaching(aiResponseText) {
             inline: true
         });
     }
+    searchImageRegex.lastIndex = 0; // Reset before reuse in replace()
     cleanedText = cleanedText.replace(searchImageRegex, '');
 
     // --- COUNTER COMMANDS ---
-    // [COUNTERS:positive,negative] - Show integer counters with zero-pair cancellation
-    const countersRegex = /\[COUNTERS:(\d+),(\d+)(?:,([^\]]+))?\]/g;
-    while ((match = countersRegex.exec(aiResponseText)) !== null) {
-        visualCommands.manipulatives.push({
-            type: 'counters',
-            positive: parseInt(match[1]),
-            negative: parseInt(match[2]),
-            label: match[3] || null,
-            autoOpen: true
-        });
-    }
+    // [COUNTERS:...] - Handled inline by inlineChatVisuals.js (key=value format).
+    // Strip any COUNTERS tags so they don't appear as raw text.
+    const countersRegex = /\[COUNTERS:[^\]]+\]/g;
     cleanedText = cleanedText.replace(countersRegex, '');
 
     // --- MANIPULATIVE COMMANDS ---

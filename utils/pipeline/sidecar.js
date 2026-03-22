@@ -5,7 +5,7 @@
  * 15 different XML tags and hoping it remembers them all, we:
  *
  * 1. Derive most signals deterministically from the pipeline stages
- * 2. Only ask the LLM to emit the 4 signals that require language understanding
+ * 2. Only ask the LLM to emit the 3 signals that require language understanding
  * 3. Merge both into a single structured sidecar object
  *
  * Pipeline-derived signals (deterministic, no LLM needed):
@@ -188,7 +188,7 @@ function mergeLlmSignals(sidecar, extracted) {
 
 /**
  * Generate the minimal tag instruction for the LLM.
- * Only asks for the 4 signals that require language understanding.
+ * Only asks for the 3 signals that require language understanding.
  * This replaces the long list of 15 tags in the old prompt.
  */
 function getSidecarInstruction() {
@@ -197,7 +197,7 @@ function getSidecarInstruction() {
 - <CORE_BEHAVIOR_XP:AMOUNT,BEHAVIOR> — 25/50/100 XP for: explained_reasoning, caught_own_error, strategy_selection, persistence, transfer, taught_back. Ceremony required. Max 2/session.
 - <SAFETY_CONCERN>description</SAFETY_CONCERN> — Flag self-harm, abuse, or danger.
 - <LEARNING_INSIGHT:observation> — Notable observation about how this student learns.
-Do NOT emit <PROBLEM_RESULT>, <SKILL_MASTERED>, or <SCAFFOLD_ADVANCE> — these are tracked automatically by the backend.`;
+Do NOT emit <SKILL_MASTERED> or <SCAFFOLD_ADVANCE> — these are tracked automatically by the backend.`;
 }
 
 /**
