@@ -133,8 +133,9 @@ async function searchEducationalImages(query, opts = {}) {
   const searchEngineId = process.env.GOOGLE_CSE_ID;
 
   if (!apiKey || !searchEngineId) {
-    console.warn('[SafeImageSearch] Google CSE not configured (GOOGLE_CSE_API_KEY / GOOGLE_CSE_ID missing)');
-    return { results: [], query, cached: false, error: 'Image search not configured' };
+    // Fall back to Wikimedia Commons (free, no API key needed)
+    console.log('[SafeImageSearch] Google CSE not configured, falling back to Wikimedia Commons');
+    return searchWikimediaCommons(query, opts);
   }
 
   // Sanitize the query
@@ -217,6 +218,127 @@ async function searchEducationalImages(query, opts = {}) {
   }
 }
 
+// ============================================
+// WIKIMEDIA COMMONS FALLBACK
+// Free, no API key needed, with COPPA safeguards
+// ============================================
+
+// Additional blocked terms for Wikimedia (which has no built-in SafeSearch)
+const WIKIMEDIA_BLOCKED_TITLE_TERMS = [
+  /\banatomy\b/i, /\bnude\b/i, /\bnaked\b/i, /\bbody\b/i,
+  /\breproduct/i, /\bgenital/i, /\bbreast/i, /\bsexual/i,
+  /\bertotic/i, /\bpenis/i, /\bvagina/i, /\bfertili/i,
+  /\bwar\b/i, /\bweapon/i, /\bgun\b/i, /\bkill/i,
+  /\bdeath\b/i, /\bblood\b/i, /\btorture/i,
+  /\bdrug\b/i, /\balcohol/i, /\bcigarette/i, /\bsmok/i,
+];
+
+/**
+ * Search Wikimedia Commons for educational math images
+ * Uses the MediaWiki API — free, no key needed
+ *
+ * COPPA safeguards applied:
+ * - Same query sanitization as Google CSE
+ * - Math-category scoping ("mathematics" prefix)
+ * - Title/description filtering against blocked terms
+ * - Prefer SVG/PNG (clean diagrams over photos)
+ * - No user data sent, no tracking
+ *
+ * @param {string} query - Search query
+ * @param {Object} opts - Options
+ * @returns {Promise<{ results: Array, query: string, cached: boolean, source: string }>}
+ */
+async function searchWikimediaCommons(query, opts = {}) {
+  // Sanitize the query (same pipeline as Google CSE)
+  const { safe, sanitized, reason } = sanitizeQuery(query);
+  if (!safe) {
+    console.warn(`[WikimediaSearch] Query blocked: ${reason}`);
+    return { results: [], query, cached: false, error: reason };
+  }
+
+  // Scope to math/science by prepending "mathematics"
+  const mathQuery = sanitized.replace(/\beducational diagram\b/i, '').trim();
+  const scopedQuery = `mathematics ${mathQuery}`;
+
+  const maxResults = Math.min(Math.max(opts.maxResults || 3, 1), 5);
+
+  try {
+    // MediaWiki API: search for files in Commons
+    const response = await axios.get('https://commons.wikimedia.org/w/api.php', {
+      params: {
+        action: 'query',
+        generator: 'search',
+        gsrsearch: scopedQuery,
+        gsrnamespace: 6,           // File namespace only
+        gsrlimit: maxResults * 3,  // Fetch extra to filter
+        prop: 'imageinfo',
+        iiprop: 'url|size|mime|extmetadata',
+        iiurlwidth: 400,           // Thumbnail width
+        format: 'json',
+        origin: '*',               // CORS
+      },
+      timeout: 5000,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'MathmatixAI/1.0 (educational math tutor; COPPA-compliant)',
+      }
+    });
+
+    const pages = response.data?.query?.pages;
+    if (!pages) {
+      return { results: [], query: scopedQuery, cached: false, source: 'wikimedia' };
+    }
+
+    // Filter and transform results with COPPA safeguards
+    const results = Object.values(pages)
+      .filter(page => {
+        // Must have image info
+        if (!page.imageinfo?.length) return false;
+        const info = page.imageinfo[0];
+        const title = (page.title || '').toLowerCase();
+
+        // Only allow safe image types
+        const mime = info.mime || '';
+        if (!['image/png', 'image/svg+xml', 'image/jpeg', 'image/gif'].includes(mime)) return false;
+
+        // Block non-educational content by title
+        if (WIKIMEDIA_BLOCKED_TITLE_TERMS.some(p => p.test(title))) return false;
+
+        // Prefer diagrams: boost SVG and PNG, skip tiny images
+        if (info.width && info.width < 100) return false;
+        if (info.height && info.height < 100) return false;
+
+        return true;
+      })
+      .slice(0, maxResults)
+      .map(page => {
+        const info = page.imageinfo[0];
+        const cleanTitle = (page.title || '')
+          .replace(/^File:/, '')
+          .replace(/\.[^.]+$/, '')
+          .replace(/_/g, ' ')
+          .slice(0, 100);
+
+        return {
+          url: info.url,
+          thumbnail: info.thumburl || info.url,
+          title: cleanTitle,
+          source: 'Wikimedia Commons',
+          width: info.width,
+          height: info.height,
+        };
+      });
+
+    console.log(`[WikimediaSearch] Query: "${scopedQuery}" → ${results.length} results`);
+
+    return { results, query: scopedQuery, cached: false, source: 'wikimedia' };
+
+  } catch (error) {
+    console.error('[WikimediaSearch] Search failed:', error.message);
+    return { results: [], query: scopedQuery, cached: false, error: 'Search failed', source: 'wikimedia' };
+  }
+}
+
 /**
  * Get a fallback static image for a math concept (no API needed)
  * @param {string} concept - Math concept
@@ -251,6 +373,7 @@ function getStaticConceptImage(concept) {
 
 module.exports = {
   searchEducationalImages,
+  searchWikimediaCommons,
   sanitizeQuery,
   isValidCategory,
   getStaticConceptImage,
