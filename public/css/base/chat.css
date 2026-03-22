@@ -796,7 +796,8 @@
   flex-shrink: 0;
   font-size: 0.9em;
   color: #8e8e93;
-  max-width: 120px;
+  max-width: fit-content;
+  white-space: nowrap;
   align-self: flex-start;
   box-shadow: none;
 }
