@@ -258,6 +258,35 @@
   padding: 4px 12px 2px;
 }
 
+/* "See more" / "Show less" toggle button */
+.returning-see-more-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.returning-see-more-btn:hover {
+  background: #f5f3ff;
+}
+
+.dark-mode .returning-see-more-btn {
+  color: #8b9cf7;
+}
+
+.dark-mode .returning-see-more-btn:hover {
+  background: #2a2a3d;
+}
+
 /* Footer */
 .returning-user-footer {
   padding: 12px 20px 16px;
