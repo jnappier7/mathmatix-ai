@@ -321,6 +321,18 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(imageExplainRegex, '');
 
+    // [SEARCH_IMAGE:query="Q",category=C] - Search for educational image via safe API
+    const searchImageRegex = /\[SEARCH_IMAGE:query="([^"]+)"(?:,category=([^\]]+))?\]/g;
+    while ((match = searchImageRegex.exec(aiResponseText)) !== null) {
+        visualCommands.images.push({
+            type: 'search',
+            query: match[1],
+            category: match[2] || null,
+            inline: true
+        });
+    }
+    cleanedText = cleanedText.replace(searchImageRegex, '');
+
     // --- COUNTER COMMANDS ---
     // [COUNTERS:positive,negative] - Show integer counters with zero-pair cancellation
     const countersRegex = /\[COUNTERS:(\d+),(\d+)(?:,([^\]]+))?\]/g;

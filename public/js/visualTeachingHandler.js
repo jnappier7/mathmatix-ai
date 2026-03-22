@@ -141,11 +141,36 @@ class VisualTeachingHandler {
      * @param {Array} commands - Image command list
      */
     executeImageCommands(commands) {
-        commands.forEach(cmd => {
-            if (cmd.inline) {
+        commands.forEach(async (cmd) => {
+            if (cmd.type === 'search') {
+                // Fetch from safe image search API
+                await this.searchAndDisplayImage(cmd.query, cmd.category);
+            } else if (cmd.inline) {
                 this.displayInlineImage(cmd.url, cmd.caption || cmd.concept);
             }
         });
+    }
+
+    async searchAndDisplayImage(query, category) {
+        try {
+            const params = new URLSearchParams({ q: query });
+            if (category) params.append('category', category);
+
+            const response = await fetch(`/api/images/search?${params}`);
+            if (!response.ok) return;
+
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                const img = data.results[0];
+                this.displayInlineImage(
+                    img.thumbnail || img.url,
+                    img.title || query,
+                    img.source
+                );
+            }
+        } catch (error) {
+            console.warn('[VisualTeaching] Image search failed:', error.message);
+        }
     }
 
     /**
@@ -449,7 +474,7 @@ class VisualTeachingHandler {
 
     // ==================== IMAGE METHODS ====================
 
-    displayInlineImage(url, caption) {
+    displayInlineImage(url, caption, source) {
         // Find the last AI message and append image
         const messages = document.querySelectorAll('.message.ai');
         if (messages.length === 0) return;
@@ -469,6 +494,7 @@ class VisualTeachingHandler {
         img.src = url;
         img.alt = caption;
         img.loading = 'lazy';
+        img.referrerPolicy = 'no-referrer';
         img.style.cssText = `
             width: 100%;
             max-width: 500px;
@@ -479,23 +505,140 @@ class VisualTeachingHandler {
             imageContainer.innerHTML = `<p style="color: #666; font-style: italic;">Image not available: ${caption}</p>`;
         };
 
+        // iMessage-style: thumbnail preview, click to enlarge
+        img.style.cssText = `
+            max-width: 200px;
+            max-height: 160px;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        `;
+        img.addEventListener('mouseenter', () => {
+            img.style.transform = 'scale(1.03)';
+            img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+        });
+        img.addEventListener('mouseleave', () => {
+            img.style.transform = '';
+            img.style.boxShadow = '';
+        });
+        img.addEventListener('click', () => {
+            this.showImageLightbox(url, caption, source);
+        });
+
+        imageContainer.style.cssText = `
+            margin-top: 12px;
+            display: inline-block;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f3f4f6;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        `;
+
         imageContainer.appendChild(img);
 
-        if (caption) {
-            const captionEl = document.createElement('p');
-            captionEl.textContent = caption;
-            captionEl.style.cssText = `
-                margin-top: 8px;
-                font-size: 13px;
-                color: #666;
-                font-style: italic;
-                text-align: center;
+        // Caption + source below thumbnail
+        if (caption || source) {
+            const metaEl = document.createElement('div');
+            metaEl.style.cssText = `
+                padding: 6px 10px;
+                font-size: 11px;
+                color: #86868b;
+                background: #f9fafb;
             `;
-            imageContainer.appendChild(captionEl);
+            if (caption) {
+                metaEl.textContent = caption.length > 60 ? caption.slice(0, 57) + '...' : caption;
+            }
+            if (source) {
+                const srcSpan = document.createElement('span');
+                srcSpan.textContent = ` — ${source}`;
+                srcSpan.style.color = '#b0b0b0';
+                metaEl.appendChild(srcSpan);
+            }
+            imageContainer.appendChild(metaEl);
         }
 
         lastMessage.appendChild(imageContainer);
-        console.log('🖼️ Displayed image:', caption || url);
+        console.log('🖼️ Displayed image thumbnail:', caption || url);
+    }
+
+    /**
+     * Show full-size image in a lightbox overlay (click to enlarge)
+     */
+    showImageLightbox(url, caption, source) {
+        // Remove existing lightbox if any
+        const existing = document.getElementById('visual-teaching-lightbox');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'visual-teaching-lightbox';
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: vtl-fade-in 0.2s ease;
+            padding: 20px;
+        `;
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = caption || '';
+        img.referrerPolicy = 'no-referrer';
+        img.style.cssText = `
+            max-width: 90vw;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        `;
+
+        overlay.appendChild(img);
+
+        if (caption || source) {
+            const captionEl = document.createElement('p');
+            captionEl.style.cssText = `
+                color: #fff;
+                font-size: 14px;
+                margin-top: 12px;
+                text-align: center;
+                max-width: 600px;
+            `;
+            captionEl.textContent = caption || '';
+            if (source) {
+                const srcSpan = document.createElement('span');
+                srcSpan.textContent = ` — ${source}`;
+                srcSpan.style.color = 'rgba(255,255,255,0.6)';
+                captionEl.appendChild(srcSpan);
+            }
+            overlay.appendChild(captionEl);
+        }
+
+        // Close on click or Escape
+        overlay.addEventListener('click', () => overlay.remove());
+        const onEscape = (e) => {
+            if (e.key === 'Escape') {
+                overlay.remove();
+                document.removeEventListener('keydown', onEscape);
+            }
+        };
+        document.addEventListener('keydown', onEscape);
+
+        // Add fade-in animation
+        if (!document.getElementById('vtl-styles')) {
+            const style = document.createElement('style');
+            style.id = 'vtl-styles';
+            style.textContent = `@keyframes vtl-fade-in { from { opacity: 0; } to { opacity: 1; } }`;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(overlay);
     }
 
     // ==================== MANIPULATIVES METHODS ====================

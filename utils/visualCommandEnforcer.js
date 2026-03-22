@@ -75,6 +75,16 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         return aiResponse;
     }
 
+    // Only auto-inject visuals when the student EXPLICITLY asks for one
+    // or the question is inherently visual (graphing, "show me", "draw", "plot")
+    // Do NOT force visuals on every math question — text teaching is often better
+    const explicitlyVisual = /\b(show\s*me|draw|graph|plot|visuali[sz]e|picture|diagram|see\s*it|number\s*line|tiles?|counter)\b/i.test(lowerMessage);
+
+    if (!explicitlyVisual) {
+        // AI chose not to use a visual — respect that choice
+        return aiResponse;
+    }
+
     // GRAPHING REQUESTS - inject [FUNCTION_GRAPH]
     if (isGraphingRequest(lowerMessage)) {
         const func = extractFunctionFromMessage(studentMessage, aiResponse);
