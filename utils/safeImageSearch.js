@@ -165,11 +165,11 @@ async function searchEducationalImages(query, opts = {}) {
         searchType: 'image',
         safe: 'active',           // SafeSearch ENFORCED
         num: maxResults,
-        imgType: 'clipart|lineart|photo',  // Prefer diagrams
+        imgType: 'clipart',               // Prefer diagrams/illustrations
         imgSize: 'medium',
         rights: 'cc_publicdomain|cc_attribute|cc_sharealike', // Prefer open-license
-        siteSearch: ALLOWED_DOMAINS.slice(0, 5).join('|'),     // Primary sites
-        siteSearchFilter: 'i',    // Include (not exclude)
+        // Note: siteSearch only accepts a single domain; site restrictions
+        // should be configured in the Custom Search Engine console instead.
       },
       timeout: 5000,
       // No cookies, no user tracking

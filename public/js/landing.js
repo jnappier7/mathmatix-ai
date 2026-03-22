@@ -142,7 +142,7 @@
   var trialChat    = document.getElementById('lp-trial-chat');
   var trustBar     = document.getElementById('lp-trust-bar');
 
-  if (!heroPick || !celebration || !trialChat) return; // Guard: elements must exist
+  if (!heroPick || !celebration || !trialChat) return; // Guard: parent containers must exist
 
   var celebrationVideo = document.getElementById('lp-celebration-video');
   var celebrationTitle = document.getElementById('lp-celebration-title');
@@ -303,7 +303,7 @@
   }
 
   /* ── Back Button: Return to tutor selection ──────── */
-  trialBack.addEventListener('click', function () {
+  if (trialBack) trialBack.addEventListener('click', function () {
     trialChat.style.display = 'none';
     heroPick.style.display = '';
     if (trustBar) trustBar.style.display = '';
@@ -363,7 +363,10 @@
         history: chatHistory
       })
     })
-    .then(function (res) { return res.json(); })
+    .then(function (res) {
+      if (!res.ok) throw new Error('Request failed');
+      return res.json();
+    })
     .then(function (data) {
       trialTyping.style.display = 'none';
 
@@ -538,6 +541,7 @@
 
     var bubble = document.createElement('div');
     bubble.className = 'lp-chat-bubble ' + (isUser ? 'lp-chat-student' : 'lp-chat-tutor');
+    bubble.style.whiteSpace = 'pre-wrap';
 
     if (isUser) {
       bubble.textContent = text;

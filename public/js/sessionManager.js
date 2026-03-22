@@ -483,10 +483,14 @@ class SessionManager {
       overlay.appendChild(card);
       document.body.appendChild(overlay);
 
-      // Add animations
-      const style = document.createElement('style');
-      style.textContent = '@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(style);
+      // Add animations (idempotent — reuse if already added)
+      let style = document.getElementById('session-recap-animations');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'session-recap-animations';
+        style.textContent = '@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
+        document.head.appendChild(style);
+      }
 
       // Dismiss handler
       return new Promise((resolve) => {
@@ -498,7 +502,6 @@ class SessionManager {
           overlay.style.transition = 'opacity 0.3s';
           setTimeout(() => {
             overlay.remove();
-            style.remove();
             window.location.href = '/login.html';
           }, 300);
         };
