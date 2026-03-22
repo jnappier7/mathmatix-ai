@@ -165,6 +165,8 @@
   // State
   var selectedTutorId = null;
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
+  var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
+  var MAX_CLIENT_TURNS = 3;
   var isSending = false;
   var trialTtsAudio = null; // Currently playing TTS audio
 
@@ -230,6 +232,7 @@
   function selectTutor(tutorId) {
     selectedTutorId = tutorId;
     chatHistory = [];
+    clientTurnCount = 0;
 
     var meta = TUTOR_META[tutorId];
     if (!meta) return;
@@ -309,6 +312,7 @@
     if (trustBar) trustBar.style.display = '';
     selectedTutorId = null;
     chatHistory = [];
+    clientTurnCount = 0;
     clearTrialState();
   });
 
@@ -335,6 +339,12 @@
 
   function sendTrialMessage() {
     if (isSending) return;
+
+    // Client-side gate: backup in case server counter resets (restart, multi-instance)
+    if (clientTurnCount >= MAX_CLIENT_TURNS) {
+      showGate();
+      return;
+    }
 
     var text = trialInput.value.trim();
     if (!text) return;
@@ -377,8 +387,9 @@
         return;
       }
 
-      // Update history
+      // Update history and client-side turn counter
       chatHistory.push({ role: 'user', content: text });
+      clientTurnCount++;
 
       if (data.reply) {
         chatHistory.push({ role: 'assistant', content: data.reply });
@@ -666,6 +677,7 @@
       localStorage.setItem(TRIAL_STORAGE_KEY, JSON.stringify({
         tutorId: selectedTutorId,
         history: chatHistory,
+        turnCount: clientTurnCount,
         timestamp: Date.now()
       }));
     } catch (e) { /* localStorage not available — ok */ }
