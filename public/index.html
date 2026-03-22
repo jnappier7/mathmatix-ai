@@ -81,6 +81,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <script defer src="/vendor/katex/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script src="/js/csrf.js"></script>
   <script src="/js/landing.js" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX730XF5H" data-fbp=""></script>
@@ -1916,9 +1918,62 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lp-trial-tts-btn.playing { background: var(--clr-primary-teal); color: #fff; }
     .lp-trial-tts-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* KaTeX overrides for trial chat bubbles */
-    .lp-chat-tutor .katex { font-size: 1em; }
-    .lp-chat-tutor .katex-display { margin: 0.5em 0; }
+    /* ── KaTeX rendering for trial chat bubbles ─────── */
+
+    /* Hide MathML (screen-reader only) */
+    .lp-chat-bubble .katex-mathml {
+      position: absolute !important;
+      clip: rect(1px, 1px, 1px, 1px);
+      padding: 0;
+      border: 0;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Inline math — sized to match surrounding text */
+    .lp-chat-bubble .katex {
+      font-size: 1.05em;
+    }
+
+    /* Display math — centered block with subtle background */
+    .lp-chat-bubble .katex-display {
+      margin: 0.6em 0;
+      padding: 8px 12px;
+      background: rgba(18, 179, 179, 0.04);
+      border-radius: 8px;
+      border-left: 3px solid rgba(18, 179, 179, 0.25);
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    /* Prevent display math overflow on small screens */
+    .lp-chat-bubble .katex-display > .katex {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    /* Markdown typography inside tutor bubbles */
+    .lp-chat-tutor p { margin: 0 0 0.4em; }
+    .lp-chat-tutor p:last-of-type { margin-bottom: 0; }
+    .lp-chat-tutor strong { font-weight: 600; }
+    .lp-chat-tutor ul, .lp-chat-tutor ol { margin: 0.3em 0; padding-left: 1.4em; }
+    .lp-chat-tutor li { margin-bottom: 0.15em; }
+    .lp-chat-tutor code {
+      background: rgba(0, 0, 0, 0.06);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+    .lp-chat-tutor blockquote {
+      margin: 0.4em 0;
+      padding-left: 0.8em;
+      border-left: 3px solid rgba(18, 179, 179, 0.3);
+      color: var(--clr-text-dim);
+    }
 
     /* ── Soft Gate ──────────────────────────────────────── */
     .lp-trial-gate {

@@ -405,68 +405,103 @@
     });
   }
 
-  /* ── Lightweight LaTeX renderer for trial chat ───── */
+  /* ── KaTeX helper ─────────────────────────────────── */
+  function renderTrialKatex(math, displayMode) {
+    if (!window.katex) return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+    try {
+      return window.katex.renderToString(math, { displayMode: displayMode, throwOnError: false, strict: false, trust: true });
+    } catch (e) {
+      return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+    }
+  }
+
+  /* ── Markdown + LaTeX renderer for trial chat ───── */
   function renderTrialMath(text) {
     if (!text) return '';
-    // Escape HTML first
-    var escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
 
-    if (!window.katex) return escaped;
+    var _marked = window.marked;
+    var _DOMPurify = window.DOMPurify;
 
-    // Display math \[...\]
-    escaped = escaped.replace(/\\\[([\s\S]*?)\\\]/g, function (_, math) {
-      try {
-        return window.katex.renderToString(math, { displayMode: true, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return '\\[' + math + '\\]'; }
+    // ── If marked isn't loaded, fall back to KaTeX-only rendering ──
+    if (!_marked || !_marked.parse) {
+      var escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      if (window.katex) {
+        escaped = escaped.replace(/\\\[([\s\S]*?)\\\]/g, function (_, m) { return renderTrialKatex(m, true); });
+        escaped = escaped.replace(/\\\(([\s\S]*?)\\\)/g, function (_, m) { return renderTrialKatex(m, false); });
+        escaped = escaped.replace(/\$\$([\s\S]*?)\$\$/g, function (_, m) { return renderTrialKatex(m, true); });
+        escaped = escaped.replace(/\$([^\$\n]+?)\$/g, function (_, m) { return renderTrialKatex(m, false); });
+      }
+      return escaped.replace(/\n/g, '<br>');
+    }
+
+    var processed = text;
+    var latexBlocks = [];
+
+    // Protect LaTeX from markdown parser — display math \[...\]
+    processed = processed.replace(/\\\[([\s\S]*?)\\\]/g, function (_, math) {
+      var idx = latexBlocks.length;
+      latexBlocks.push({ math: math, display: true });
+      return '@@LATEX_BLOCK_' + idx + '@@';
     });
 
     // Inline math \(...\)
-    escaped = escaped.replace(/\\\(([\s\S]*?)\\\)/g, function (_, math) {
-      try {
-        return window.katex.renderToString(math, { displayMode: false, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return '\\(' + math + '\\)'; }
+    processed = processed.replace(/\\\(([\s\S]*?)\\\)/g, function (_, math) {
+      var idx = latexBlocks.length;
+      latexBlocks.push({ math: math, display: false });
+      return '@@LATEX_BLOCK_' + idx + '@@';
     });
 
-    // Dollar display math $$...$$
-    escaped = escaped.replace(/\$\$([\s\S]*?)\$\$/g, function (_, math) {
-      try {
-        return window.katex.renderToString(math, { displayMode: true, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return '$$' + math + '$$'; }
+    // Display math $$...$$
+    processed = processed.replace(/\$\$([\s\S]*?)\$\$/g, function (_, math) {
+      var idx = latexBlocks.length;
+      latexBlocks.push({ math: math, display: true });
+      return '@@LATEX_BLOCK_' + idx + '@@';
     });
 
-    // Dollar inline math $...$  (but not $$)
-    escaped = escaped.replace(/\$([^\$\n]+?)\$/g, function (_, math) {
-      try {
-        return window.katex.renderToString(math, { displayMode: false, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return '$' + math + '$'; }
+    // Inline math $...$ (but not $$)
+    processed = processed.replace(/\$([^\$\n]+?)\$/g, function (_, math) {
+      var idx = latexBlocks.length;
+      latexBlocks.push({ math: math, display: false });
+      return '@@LATEX_BLOCK_' + idx + '@@';
     });
 
-    // ── Auto-render common math patterns not wrapped in delimiters ──
+    // Parse markdown
+    var html = _marked.parse(processed, { breaks: true });
 
-    // Exponents: x^2, x^3, a^n, x^{10}, (x+1)^2 — but not already inside KaTeX output
-    escaped = escaped.replace(/(?<![a-zA-Z\/"])([a-zA-Z0-9)]+)\^(\{[^}]+\}|[a-zA-Z0-9]+)/g, function (match, base, exp) {
-      // Skip if inside a KaTeX span (already rendered)
-      var rawExp = exp.charAt(0) === '{' ? exp.slice(1, -1) : exp;
-      try {
-        return window.katex.renderToString(base + '^{' + rawExp + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return match; }
+    // Restore LaTeX blocks — render to KaTeX HTML
+    latexBlocks.forEach(function (block, index) {
+      html = html.replace('@@LATEX_BLOCK_' + index + '@@', renderTrialKatex(block.math, block.display));
     });
 
-    // Fractions: 2/3, 1/4, a/b — only simple numeric or single-letter fractions
-    // Avoid matching URLs, file paths, "and/or", etc.
-    escaped = escaped.replace(/(?<![a-zA-Z\/.&])(\d+)\/(\d+)(?![a-zA-Z\/\d])/g, function (match, num, den) {
-      try {
-        return window.katex.renderToString('\\frac{' + num + '}{' + den + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
-      } catch (e) { return match; }
-    });
+    // Sanitize output
+    if (_DOMPurify) {
+      html = _DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: [
+          'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div',
+          // KaTeX MathML elements
+          'math', 'semantics', 'annotation', 'mrow', 'mi', 'mo', 'mn', 'ms',
+          'mfrac', 'msup', 'msub', 'msubsup', 'mover', 'munder', 'munderover',
+          'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
+          'menclose', 'mglyph', 'mstyle', 'merror', 'mprescripts', 'mmultiscripts'
+        ],
+        ALLOWED_ATTR: [
+          'href', 'class', 'target', 'rel', 'style', 'title',
+          // KaTeX attributes
+          'aria-hidden', 'encoding', 'mathvariant', 'stretchy', 'fence',
+          'separator', 'lspace', 'rspace', 'accent', 'accentunder',
+          'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+          'columnlines', 'rowlines', 'frame', 'framespacing',
+          'displaystyle', 'scriptlevel', 'minsize', 'maxsize',
+          'xmlns'
+        ]
+      });
+    }
 
-    // Convert line breaks
-    escaped = escaped.replace(/\n/g, '<br>');
-
-    return escaped;
+    return html;
   }
 
   /* ── TTS for tutor responses ───────────────────────── */
@@ -541,9 +576,9 @@
 
     var bubble = document.createElement('div');
     bubble.className = 'lp-chat-bubble ' + (isUser ? 'lp-chat-student' : 'lp-chat-tutor');
-    bubble.style.whiteSpace = 'pre-wrap';
 
     if (isUser) {
+      bubble.style.whiteSpace = 'pre-wrap';
       bubble.textContent = text;
     } else {
       bubble.innerHTML = renderTrialMath(text);
