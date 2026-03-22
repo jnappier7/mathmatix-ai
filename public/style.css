@@ -26,18 +26,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px var(--page-horizontal-padding);
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+    padding: 14px var(--page-horizontal-padding);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 0 rgba(0, 0, 0, 0.03);
     flex-shrink: 0;
     flex-wrap: nowrap;
     z-index: var(--z-header);
     position: sticky;
     top: 0;
     min-height: var(--header-height);
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .header-logo-container {
@@ -70,7 +70,7 @@
 
 .landing-nav {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
     flex-shrink: 0;
     align-items: center;
     flex-wrap: nowrap;

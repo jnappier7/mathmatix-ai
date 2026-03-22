@@ -10,6 +10,7 @@ class ReturningUserModal {
         this.modal = null;
         this.data = null;
         this.resolveChoice = null; // Promise resolver for the user's choice
+        this._sessionsShowAll = false;
     }
 
     /**
@@ -19,6 +20,7 @@ class ReturningUserModal {
      *   { action: 'new-course', courseSessionId: '...' }
      *   { action: 'resume-chat', conversationId: '...' }
      *   { action: 'resume-course', courseSessionId: '...', conversationId: '...' }
+     *   { action: 'browse-courses' }
      *   { action: 'skip' } — if not a returning user
      */
     async show(currentUser) {
@@ -72,6 +74,9 @@ class ReturningUserModal {
                 greeting.textContent = `${timeGreeting}, ${name}!`;
             }
 
+            // Render smart resume hero
+            this.renderHero();
+
             // Render courses
             this.renderCourses();
 
@@ -90,6 +95,100 @@ class ReturningUserModal {
             // Show modal using the is-visible class (matches other modals)
             this.modal.classList.add('is-visible');
         });
+    }
+
+    renderHero() {
+        const section = document.getElementById('returning-hero-section');
+        if (!section) return;
+
+        const sessions = this.data.recentSessions || [];
+        const courses = this.data.courses || [];
+        const latestSession = sessions[0] || null;
+        const latestCourse = courses[0] || null;
+
+        if (!latestSession && !latestCourse) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = 'block';
+        section.innerHTML = '';
+
+        const label = document.createElement('div');
+        label.className = 'returning-section-label';
+        label.innerHTML = '<i class="fas fa-bolt"></i> Pick up where you left off';
+        section.appendChild(label);
+
+        // Primary: most recent tutoring session
+        if (latestSession) {
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-primary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">${latestSession.topicEmoji || '💬'}</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">${this.escapeHtml(latestSession.name)}</div>
+                    <div class="returning-hero-meta">${this.escapeHtml(latestSession.lastMessage || '')}</div>
+                </div>
+                <div class="returning-hero-action">
+                    <span class="returning-hero-time">${this.formatRelativeTime(latestSession.lastActivity)}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({
+                    action: 'resume-chat',
+                    conversationId: latestSession._id
+                });
+            });
+            section.appendChild(card);
+        }
+
+        // Secondary: most recent course OR browse courses
+        if (latestCourse) {
+            const statusLabel = latestCourse.status === 'paused'
+                ? 'Paused'
+                : latestCourse.currentModuleLabel || 'In Progress';
+
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-secondary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">📘</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">${this.escapeHtml(latestCourse.courseName)}</div>
+                    <div class="returning-hero-meta">${this.escapeHtml(statusLabel)} &middot; ${latestCourse.overallProgress}%</div>
+                </div>
+                <div class="returning-hero-action">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({
+                    action: 'new-course',
+                    courseSessionId: latestCourse.courseSessionId
+                });
+            });
+            section.appendChild(card);
+        } else {
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-secondary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">📚</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">Browse Courses</div>
+                    <div class="returning-hero-meta">Explore structured lessons and curricula</div>
+                </div>
+                <div class="returning-hero-action">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({ action: 'browse-courses' });
+            });
+            section.appendChild(card);
+        }
     }
 
     renderCourses() {
@@ -147,7 +246,7 @@ class ReturningUserModal {
                 });
             });
 
-            // Add existing course chats
+            // Add existing course chats (limited with "See more" toggle)
             const chatsContainer = card.querySelector('.returning-course-chats');
             if (course.conversations && course.conversations.length > 0) {
                 const divider = document.createElement('div');
@@ -155,7 +254,12 @@ class ReturningUserModal {
                 divider.textContent = 'Or continue a chat:';
                 chatsContainer.appendChild(divider);
 
-                course.conversations.forEach(conv => {
+                const courseDefaultShow = 3;
+                const courseKey = `_courseChatsShowAll_${course.courseSessionId}`;
+                const showAll = this[courseKey];
+                const convsToShow = showAll ? course.conversations : course.conversations.slice(0, courseDefaultShow);
+
+                convsToShow.forEach(conv => {
                     const chatItem = this.createChatItem(conv, () => {
                         this.close();
                         this.resolveChoice({
@@ -166,6 +270,19 @@ class ReturningUserModal {
                     });
                     chatsContainer.appendChild(chatItem);
                 });
+
+                if (course.conversations.length > courseDefaultShow) {
+                    const seeMoreBtn = document.createElement('button');
+                    seeMoreBtn.className = 'returning-see-more-btn';
+                    seeMoreBtn.textContent = showAll
+                        ? 'Show less'
+                        : `See ${course.conversations.length - courseDefaultShow} more`;
+                    seeMoreBtn.addEventListener('click', () => {
+                        this[courseKey] = !this[courseKey];
+                        this.renderCourses();
+                    });
+                    chatsContainer.appendChild(seeMoreBtn);
+                }
             }
 
             list.appendChild(card);
@@ -186,7 +303,10 @@ class ReturningUserModal {
         section.style.display = 'block';
         list.innerHTML = '';
 
-        sessions.forEach(session => {
+        const defaultShow = 3;
+        const sessionsToShow = this._sessionsShowAll ? sessions : sessions.slice(0, defaultShow);
+
+        sessionsToShow.forEach(session => {
             const chatItem = this.createChatItem(
                 {
                     _id: session._id,
@@ -205,6 +325,20 @@ class ReturningUserModal {
             );
             list.appendChild(chatItem);
         });
+
+        // "See more" / "Show less" toggle
+        if (sessions.length > defaultShow) {
+            const seeMoreBtn = document.createElement('button');
+            seeMoreBtn.className = 'returning-see-more-btn';
+            seeMoreBtn.textContent = this._sessionsShowAll
+                ? 'Show less'
+                : `See ${sessions.length - defaultShow} more`;
+            seeMoreBtn.addEventListener('click', () => {
+                this._sessionsShowAll = !this._sessionsShowAll;
+                this.renderSessions();
+            });
+            list.appendChild(seeMoreBtn);
+        }
     }
 
     createChatItem(conv, onClick) {

@@ -374,6 +374,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     modalHandled = true;
 
+                } else if (choice.action === 'browse-courses') {
+                    // Open the course catalogue
+                    modalHandled = false; // Still show welcome flow
+                    if (window.courseManager) {
+                        setTimeout(() => window.courseManager.openCatalog(), 500);
+                    }
+
                 } else if (choice.action === 'new-general') {
                     // Start a fresh general session — fall through to normal welcome flow
                     modalHandled = false;

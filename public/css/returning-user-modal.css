@@ -258,6 +258,170 @@
   padding: 4px 12px 2px;
 }
 
+/* Smart Resume Hero Cards */
+.returning-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 8px;
+}
+
+.returning-hero-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+}
+
+.returning-hero-primary:hover {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45);
+  transform: translateY(-1px);
+}
+
+.returning-hero-secondary {
+  background: #f8f9fb;
+  border: 1px solid #e2e8f0;
+  color: #333;
+}
+
+.returning-hero-secondary:hover {
+  background: #f0eeff;
+  border-color: #c7c3e8;
+}
+
+.returning-hero-emoji {
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.returning-hero-primary .returning-hero-emoji {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.returning-hero-secondary .returning-hero-emoji {
+  background: linear-gradient(135deg, #667eea20, #764ba220);
+}
+
+.returning-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.returning-hero-name {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.returning-hero-meta {
+  font-size: 12px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.returning-hero-primary .returning-hero-meta {
+  opacity: 0.85;
+}
+
+.returning-hero-secondary .returning-hero-meta {
+  color: #888;
+}
+
+.returning-hero-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.returning-hero-time {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.returning-hero-action i {
+  font-size: 13px;
+  opacity: 0.7;
+  transition: transform 0.15s;
+}
+
+.returning-hero-card:hover .returning-hero-action i {
+  transform: translateX(2px);
+  opacity: 1;
+}
+
+#returning-hero-section {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Dark mode hero cards */
+.dark-mode .returning-hero-secondary {
+  background: #252535;
+  border-color: #333;
+  color: #e0e0e0;
+}
+
+.dark-mode .returning-hero-secondary:hover {
+  background: #2a2a3d;
+  border-color: #555;
+}
+
+.dark-mode .returning-hero-secondary .returning-hero-meta {
+  color: #999;
+}
+
+.dark-mode .returning-hero-secondary .returning-hero-emoji {
+  background: rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode #returning-hero-section {
+  border-bottom-color: #333;
+}
+
+/* "See more" / "Show less" toggle button */
+.returning-see-more-btn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.returning-see-more-btn:hover {
+  background: #f5f3ff;
+}
+
+.dark-mode .returning-see-more-btn {
+  color: #8b9cf7;
+}
+
+.dark-mode .returning-see-more-btn:hover {
+  background: #2a2a3d;
+}
+
 /* Footer */
 .returning-user-footer {
   padding: 12px 20px 16px;
