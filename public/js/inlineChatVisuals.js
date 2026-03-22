@@ -479,7 +479,7 @@ class InlineChatVisuals {
             const jumpRegex = /\(([^,]+),([^,]+),([^)]+)\)/g;
             let jm;
             while ((jm = jumpRegex.exec(jumpStr)) !== null) {
-                jumps.push({ from: Number(jm[1]), to: Number(jm[2]), label: jm[3].trim() });
+                jumps.push({ from: Number(jm[1]), to: Number(jm[2]), label: jm[3].trim().replace(/^["']+|["']+$/g, '') });
             }
         }
 
@@ -642,7 +642,7 @@ class InlineChatVisuals {
 
         return `
         <div class="icv-container icv-numline-container" id="${id}"
-             data-config='${JSON.stringify({ min, max, points, highlight, openCircle, interactive, denominator, jumps, inequality })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ min, max, points, highlight, openCircle, interactive, denominator, jumps, inequality }))}">
             ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
             ${svg}
             ${interactive && points.length > 0 ? `<div class="icv-interactive-value" id="${id}-value">Drag points to explore</div>` : ''}
@@ -656,7 +656,7 @@ class InlineChatVisuals {
      * e.g., 0.25 with denominator 4 → "1/4"
      */
     decimalToFraction(val, denominator) {
-        if (!denominator) return val;
+        if (!denominator || isNaN(val)) return String(val);
         const numerator = Math.round(val * denominator);
         if (numerator === 0) return '0';
         if (denominator === 1) return String(numerator);
@@ -859,7 +859,7 @@ class InlineChatVisuals {
 
         return `
         <div class="icv-container icv-fraction-container" id="${id}"
-             data-config='${JSON.stringify({ numerator, denominator, type })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ numerator, denominator, type }))}">
             <div class="icv-title">${this.escapeHtml(label)}</div>
             ${svg}
             <div class="icv-fraction-counter" id="${id}-counter">${numerator} out of ${denominator} parts shaded</div>
@@ -2139,7 +2139,7 @@ class InlineChatVisuals {
         // Build the visual HTML
         let html = `
         <div class="icv-container icv-counters-container" id="${id}"
-             data-config='${config}' data-positive="${positive}" data-negative="${negative}">
+             data-config="${this.escapeHtml(config)}" data-positive="${positive}" data-negative="${negative}">
             ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
             <div class="icv-counters-workspace" id="${id}-workspace">`;
 
@@ -2719,7 +2719,7 @@ class InlineChatVisuals {
 
         return `
         <div class="icv-multi-rep-container" id="${id}" data-fn="${this.escapeHtml(fn)}"
-             data-config='${JSON.stringify({ fn, xMin, xMax })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ fn, xMin, xMax }))}">
             <div style="grid-column: 1 / -1; text-align: center;">
                 <div class="icv-title" style="margin-bottom: 4px;">${this.escapeHtml(title)}</div>
                 <div style="font-size: 11px; color: #94a3b8;">Four linked representations of the same function</div>
@@ -4047,6 +4047,10 @@ class InlineChatVisuals {
                 background: #334155;
                 color: #5eead4;
                 border-color: rgba(94, 234, 212, 0.3);
+            }
+
+            .dark-mode .icv-numline-send-btn:hover {
+                background: #1e3a4a;
             }
 
             /* Dark mode support */

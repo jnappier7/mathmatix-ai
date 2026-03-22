@@ -502,7 +502,11 @@ class VisualTeachingHandler {
             border-radius: 8px;
         `;
         img.onerror = () => {
-            imageContainer.innerHTML = `<p style="color: #666; font-style: italic;">Image not available: ${caption}</p>`;
+            const fallback = document.createElement('p');
+            fallback.style.cssText = 'color: #666; font-style: italic;';
+            fallback.textContent = 'Image not available: ' + caption;
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(fallback);
         };
 
         // iMessage-style: thumbnail preview, click to enlarge
@@ -811,7 +815,7 @@ class VisualTeachingHandler {
             border-radius: 12px;
         `;
 
-        let html = label ? `<div style="font-weight:600;margin-bottom:10px;text-align:center">${label}</div>` : '';
+        let html = label ? `<div style="font-weight:600;margin-bottom:10px;text-align:center">${this.escapeHtml(label)}</div>` : '';
         html += '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">';
 
         for (let i = 0; i < positive; i++) {
@@ -829,6 +833,12 @@ class VisualTeachingHandler {
     }
 
     // ==================== UTILITY METHODS ====================
+
+    escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str || '';
+        return d.innerHTML;
+    }
 
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));

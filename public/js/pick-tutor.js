@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedTutorId      = null;
   let currentAudio         = null; // Track currently playing voice preview
 
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+
   /* -------- INITIAL DATA LOAD -------- */
   async function fetchData() {
     try {
@@ -62,22 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isUnlocked) {
         card.innerHTML =
-          '<img src="/images/tutor_avatars/' + tutor.image + '" alt="' + tutor.name + '" class="tutor-card-image" loading="lazy">' +
-          '<h3 class="tutor-card-name">' + tutor.name + '</h3>' +
-          '<p class="tutor-card-tagline">' + (tutor.catchphrase || '') + '</p>' +
-          '<button class="tutor-card-hear-btn" data-tutor-id="' + tutor.id + '">' +
+          '<img src="/images/tutor_avatars/' + esc(tutor.image) + '" alt="' + esc(tutor.name) + '" class="tutor-card-image" loading="lazy">' +
+          '<h3 class="tutor-card-name">' + esc(tutor.name) + '</h3>' +
+          '<p class="tutor-card-tagline">' + esc(tutor.catchphrase || '') + '</p>' +
+          '<button class="tutor-card-hear-btn" data-tutor-id="' + esc(tutor.id) + '">' +
             '<i class="fas fa-volume-up"></i> Hear me' +
           '</button>' +
           '<div class="tutor-card-details-overlay">' +
-            '<h4>About ' + tutor.name + ':</h4><p>' + (tutor.about || '') + '</p>' +
-            '<h4>Specializes In:</h4><p>' + (tutor.specialties || '') + '</p>' +
+            '<h4>About ' + esc(tutor.name) + ':</h4><p>' + esc(tutor.about || '') + '</p>' +
+            '<h4>Specializes In:</h4><p>' + esc(tutor.specialties || '') + '</p>' +
           '</div>';
       } else {
         const hint = tutor.unlockHint || 'Keep going — you\'ll meet me soon';
         card.innerHTML =
-          '<img src="/images/tutor_avatars/' + tutor.image + '" alt="Locked Tutor" class="tutor-card-image silhouette">' +
+          '<img src="/images/tutor_avatars/' + esc(tutor.image) + '" alt="Locked Tutor" class="tutor-card-image silhouette">' +
           '<h3 class="tutor-card-name locked-name">?????</h3>' +
-          '<p class="tutor-card-tagline"><i class="fas fa-lock"></i> ' + hint + '</p>';
+          '<p class="tutor-card-tagline"><i class="fas fa-lock"></i> ' + esc(hint) + '</p>';
       }
       tutorSelectionGrid.appendChild(card);
     });

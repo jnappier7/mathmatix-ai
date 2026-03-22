@@ -490,7 +490,10 @@ class SessionManager {
 
       // Dismiss handler
       return new Promise((resolve) => {
+        let dismissed = false;
         const dismiss = () => {
+          if (dismissed) return;
+          dismissed = true;
           overlay.style.opacity = '0';
           overlay.style.transition = 'opacity 0.3s';
           setTimeout(() => {

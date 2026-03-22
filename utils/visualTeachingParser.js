@@ -348,17 +348,9 @@ function parseVisualTeaching(aiResponseText) {
     cleanedText = cleanedText.replace(countersRegex, '');
 
     // --- MANIPULATIVE COMMANDS ---
-    // [NUMBER_LINE:min,max,mark] - Show interactive number line
-    const numberLineRegex = /\[NUMBER_LINE:(-?\d+),(-?\d+)(?:,(-?\d+))?\]/g;
-    while ((match = numberLineRegex.exec(aiResponseText)) !== null) {
-        visualCommands.manipulatives.push({
-            type: 'numberLine',
-            min: parseInt(match[1]),
-            max: parseInt(match[2]),
-            mark: match[3] ? parseInt(match[3]) : null,
-            autoOpen: true
-        });
-    }
+    // [NUMBER_LINE:...] - Handled inline by inlineChatVisuals.js (key=value format).
+    // Strip any NUMBER_LINE tags so they don't appear as raw text.
+    const numberLineRegex = /\[NUMBER_LINE:[^\]]+\]/g;
     cleanedText = cleanedText.replace(numberLineRegex, '');
 
     // [FRACTION_BARS:numerator,denominator] - Show fraction visualization
