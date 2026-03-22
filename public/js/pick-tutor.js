@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const completeSelectionBtn = document.getElementById('complete-selection-btn');
   let selectedTutorId      = null;
   let currentAudio         = null; // Track currently playing voice preview
+  let currentAudioUrl      = null; // Track object URL for revocation
 
   function esc(str) {
     const d = document.createElement('div');
@@ -117,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Stop any currently playing preview
     if (currentAudio) {
       currentAudio.pause();
+      if (currentAudioUrl) { URL.revokeObjectURL(currentAudioUrl); currentAudioUrl = null; }
       currentAudio = null;
       // Reset all hear buttons
       document.querySelectorAll('.tutor-card-hear-btn').forEach(btn => {
@@ -138,10 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!resp.ok) throw new Error(await resp.text());
       const blob = await resp.blob();
       const url  = URL.createObjectURL(blob);
+      currentAudioUrl = url;
       currentAudio = new Audio(url);
       currentAudio.play();
       currentAudio.onended = () => {
         URL.revokeObjectURL(url);
+        currentAudioUrl = null;
         hearBtn.disabled = false;
         hearBtn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
         currentAudio = null;
