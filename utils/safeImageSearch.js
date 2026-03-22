@@ -129,8 +129,8 @@ function isValidCategory(category) {
  * @returns {Promise<{ results: Array, query: string, cached: boolean }>}
  */
 async function searchEducationalImages(query, opts = {}) {
-  const apiKey = process.env.GOOGLE_CSE_API_KEY;
-  const searchEngineId = process.env.GOOGLE_CSE_ID;
+  const apiKey = process.env.GOOGLE_SEARCH_API_KEY || process.env.GOOGLE_CSE_API_KEY;
+  const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID || process.env.GOOGLE_CSE_ID;
 
   if (!apiKey || !searchEngineId) {
     // Fall back to Wikimedia Commons (free, no API key needed)
