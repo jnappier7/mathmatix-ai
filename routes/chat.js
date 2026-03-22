@@ -722,10 +722,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                     };
                 }
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
             }
         } else {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext);
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
         }
 
         // ── Inject step-context reminder into last user message ──

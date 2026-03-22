@@ -1744,6 +1744,306 @@ class AlgebraTiles {
   }
 
   // ============================================
+  // AI-DRIVEN EQUATION SOLVING (step-by-step)
+  // ============================================
+
+  /**
+   * Demonstrate solving an equation step-by-step with tiles
+   * AI calls this to walk through: setup → add opposites → cancel zero pairs → isolate variable
+   * @param {string} equation - e.g., "2x+3=7" or "x-4=2"
+   * @param {string} mode - 'full' (auto-play all steps) or 'guided' (pause between steps)
+   */
+  async solveEquationWithTiles(equation, mode = 'guided') {
+    console.log(`🧮 Solving equation with tiles: ${equation} (${mode} mode)`);
+
+    // Parse equation into left and right sides
+    const sides = equation.replace(/\s/g, '').split('=');
+    if (sides.length !== 2) {
+      console.warn('[AlgebraTiles] Invalid equation format');
+      return;
+    }
+
+    const leftExpr = sides[0];
+    const rightExpr = sides[1];
+
+    // Step 1: Set up the equation on the mat
+    this.buildAlgebraTiles(equation);
+    this.addAnnotation(this.workspace.offsetWidth / 2 - 60, 10, 'Step 1: Set up the equation');
+    await this._solveDelay(mode === 'guided' ? 2500 : 1500);
+
+    // Analyze what needs to happen to solve
+    const steps = this._planSolveSteps(leftExpr, rightExpr);
+
+    // Execute each step
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      await this._executeSolveStep(step, i + 2, mode);
+    }
+  }
+
+  /**
+   * Plan the sequence of solving steps
+   * Returns array of { action, description, tileType, count, side }
+   */
+  _planSolveSteps(leftExpr, rightExpr) {
+    const steps = [];
+    const left = this._parseTerms(leftExpr);
+    const right = this._parseTerms(rightExpr);
+
+    // Strategy: isolate variable terms on left, constants on right
+
+    // If there are constants on the left, add opposites to both sides
+    if (left.constant !== 0) {
+      const opposite = -left.constant;
+      steps.push({
+        action: 'addBothSides',
+        description: `Add ${opposite > 0 ? '+' : ''}${opposite} to both sides`,
+        tileType: opposite > 0 ? 'positive-unit' : 'negative-unit',
+        count: Math.abs(opposite),
+        reason: left.constant > 0 ? 'Remove the positive units from the left' : 'Remove the negative units from the left'
+      });
+      steps.push({
+        action: 'cancelZeroPairs',
+        description: 'Cancel zero pairs!',
+        reason: 'Opposites make zero — remove them'
+      });
+    }
+
+    // If there are variable terms on the right, add opposites to both sides
+    if (right.x !== 0) {
+      const opposite = -right.x;
+      steps.push({
+        action: 'addBothSidesVar',
+        description: `Add ${opposite > 0 ? '+' : ''}${opposite}x to both sides`,
+        tileType: opposite > 0 ? 'x-positive' : 'x-negative',
+        count: Math.abs(opposite),
+        reason: 'Move the x-tiles to the left side'
+      });
+      steps.push({
+        action: 'cancelZeroPairs',
+        description: 'Cancel zero pairs!',
+        reason: 'Opposites make zero — remove them'
+      });
+    }
+
+    // If coefficient of x > 1, divide both sides
+    const finalXCount = left.x + (right.x ? -right.x : 0);
+    if (Math.abs(finalXCount) > 1) {
+      steps.push({
+        action: 'divide',
+        description: `Divide both sides into ${Math.abs(finalXCount)} equal groups`,
+        divisor: Math.abs(finalXCount),
+        reason: `Side by side, divide! Split into ${Math.abs(finalXCount)} groups to find what 1x equals`
+      });
+    }
+
+    steps.push({
+      action: 'showSolution',
+      description: 'Read the solution!',
+      reason: 'Each side is simplified — what does x equal?'
+    });
+
+    return steps;
+  }
+
+  /**
+   * Parse expression terms: returns { x: coeff, constant: value }
+   */
+  _parseTerms(expr) {
+    let x = 0;
+    let constant = 0;
+
+    const normalized = expr.replace(/x\^2/g, 'x²');
+
+    // Match x terms
+    const xPattern = /([+-]?\d*)x(?!²|y)/g;
+    let match;
+    while ((match = xPattern.exec(normalized)) !== null) {
+      const coef = match[1] === '' || match[1] === '+' ? 1 : match[1] === '-' ? -1 : parseInt(match[1]);
+      x += coef;
+    }
+
+    // Match constants (numbers not followed by x or y)
+    const cPattern = /([+-]?\d+)(?![xy²])/g;
+    while ((match = cPattern.exec(normalized)) !== null) {
+      constant += parseInt(match[1]);
+    }
+
+    return { x, constant };
+  }
+
+  /**
+   * Execute a single solving step with animation
+   */
+  async _executeSolveStep(step, stepNum, mode) {
+    const workspaceW = this.workspace.offsetWidth || 800;
+
+    switch (step.action) {
+      case 'addBothSides': {
+        // Annotate what we're doing
+        this.addAnnotation(workspaceW / 2 - 80, 10, `Step ${stepNum}: ${step.description}`);
+        await this._solveDelay(1000);
+
+        // Add opposite tiles to BOTH sides (bottom area to show they're new)
+        const leftZoneX = workspaceW * 0.25;
+        const rightZoneX = workspaceW * 0.75;
+        const bottomY = (this.workspace.offsetHeight || 600) * 0.65;
+
+        for (let i = 0; i < step.count; i++) {
+          this.addTile(step.tileType, leftZoneX + i * 50, bottomY);
+          this.addTile(step.tileType, rightZoneX + i * 50, bottomY);
+          await this._solveDelay(200);
+        }
+
+        this.addAnnotation(workspaceW / 2 - 60, bottomY - 30, step.reason);
+        await this._solveDelay(mode === 'guided' ? 2500 : 1200);
+        break;
+      }
+
+      case 'addBothSidesVar': {
+        this.addAnnotation(workspaceW / 2 - 80, 10, `Step ${stepNum}: ${step.description}`);
+        await this._solveDelay(1000);
+
+        const leftZoneX = workspaceW * 0.15;
+        const rightZoneX = workspaceW * 0.65;
+        const bottomY = (this.workspace.offsetHeight || 600) * 0.65;
+
+        for (let i = 0; i < step.count; i++) {
+          this.addTile(step.tileType, leftZoneX, bottomY + i * 50);
+          this.addTile(step.tileType, rightZoneX, bottomY + i * 50);
+          await this._solveDelay(200);
+        }
+
+        this.addAnnotation(workspaceW / 2 - 60, bottomY - 30, step.reason);
+        await this._solveDelay(mode === 'guided' ? 2500 : 1200);
+        break;
+      }
+
+      case 'cancelZeroPairs': {
+        this.addAnnotation(workspaceW / 2 - 60, 10, `Step ${stepNum}: ${step.description}`);
+        await this._solveDelay(800);
+
+        // Trigger the built-in zero pair cancellation
+        this.checkForCancellation();
+        this.addAnnotation(workspaceW / 2 - 80, (this.workspace.offsetHeight || 600) * 0.5, step.reason);
+        await this._solveDelay(mode === 'guided' ? 2000 : 1000);
+        break;
+      }
+
+      case 'divide': {
+        this.addAnnotation(workspaceW / 2 - 80, 10, `Step ${stepNum}: ${step.description}`);
+        this.addAnnotation(workspaceW / 2 - 100, (this.workspace.offsetHeight || 600) * 0.5, step.reason);
+        await this._solveDelay(mode === 'guided' ? 2500 : 1500);
+
+        // Visual: draw division lines between groups
+        const rightTiles = this.tiles.filter(t =>
+          (t.type === 'positive-unit' || t.type === 'negative-unit') &&
+          t.x > workspaceW * 0.5
+        );
+        if (rightTiles.length > 0 && step.divisor > 1) {
+          const groupSize = Math.ceil(rightTiles.length / step.divisor);
+          for (let g = 0; g < step.divisor; g++) {
+            const groupTiles = rightTiles.slice(g * groupSize, (g + 1) * groupSize);
+            groupTiles.forEach(tile => {
+              const el = this.workspace.querySelector(`[data-tile-id="${tile.id}"]`);
+              if (el) {
+                el.style.outline = `3px solid hsl(${g * 90}, 70%, 50%)`;
+                el.style.outlineOffset = '2px';
+              }
+            });
+          }
+        }
+        await this._solveDelay(mode === 'guided' ? 2500 : 1500);
+        break;
+      }
+
+      case 'showSolution': {
+        // Read final expression
+        const expression = document.getElementById('currentExpression')?.textContent || '';
+        this.addAnnotation(workspaceW / 2 - 60, 10, `✓ Solution: ${expression}`);
+        break;
+      }
+    }
+  }
+
+  /**
+   * Demonstrate factoring with tiles (arrange into rectangle)
+   * @param {string} expression - e.g., "x^2+5x+6" or "2x^2+7x+3"
+   */
+  async demonstrateFactoring(expression) {
+    console.log(`🧮 Demonstrating factoring with tiles: ${expression}`);
+
+    // Step 1: Show the expression as tiles
+    this.clearWorkspace();
+    const matSelector = document.getElementById('matSelector');
+    matSelector.value = 'factoring';
+    this.setMat('factoring');
+
+    const parsed = this.parseAlgebraExpression(expression);
+    this.layoutTiles(parsed);
+    this.addAnnotation(this.workspace.offsetWidth / 2 - 80, 10, 'Step 1: Here are all our tiles');
+    await this._solveDelay(2500);
+
+    // Step 2: Identify tile counts
+    const terms = this._parseTerms(expression);
+    const x2Count = (expression.match(/(\d*)x[²^]/g) || []).reduce((sum, m) => {
+      const coef = m.replace(/x[²^]2?/, '') || '1';
+      return sum + parseInt(coef);
+    }, 0) || this.tiles.filter(t => t.type.includes('x2')).length;
+
+    this.addAnnotation(this.workspace.offsetWidth / 2 - 100, 10,
+      'Step 2: Arrange into a rectangle!');
+    await this._solveDelay(1500);
+
+    // Step 3: Arrange x² tiles in top-left corner
+    const workspaceW = this.workspace.offsetWidth || 800;
+    const workspaceH = this.workspace.offsetHeight || 600;
+    const areaStartX = workspaceW * 0.2;
+    const areaStartY = workspaceH * 0.2;
+
+    // Rearrange tiles into rectangle formation
+    let currentX = areaStartX;
+    let currentY = areaStartY;
+
+    // Sort tiles: x² first, then x, then units
+    const sortOrder = { 'x2-positive': 0, 'x2-negative': 0, 'x-positive': 1, 'x-negative': 1,
+                        'y-positive': 2, 'y-negative': 2, 'positive-unit': 3, 'negative-unit': 3 };
+    const sortedTiles = [...this.tiles].sort((a, b) => (sortOrder[a.type] || 4) - (sortOrder[b.type] || 4));
+
+    // Animate each tile to its rectangle position
+    for (let i = 0; i < sortedTiles.length; i++) {
+      const tile = sortedTiles[i];
+      const dims = this.getTileDimensions(tile.type);
+
+      // Position tiles in rectangle
+      if (currentX + dims.width > workspaceW * 0.85) {
+        currentX = areaStartX;
+        currentY += 130;
+      }
+
+      const el = this.workspace.querySelector(`[data-tile-id="${tile.id}"]`);
+      if (el) {
+        el.style.transition = 'left 0.5s ease, top 0.5s ease';
+        tile.x = currentX;
+        tile.y = currentY;
+        el.style.left = currentX + 'px';
+        el.style.top = currentY + 'px';
+      }
+
+      currentX += dims.width + 5;
+      await this._solveDelay(150);
+    }
+
+    await this._solveDelay(1500);
+    this.addAnnotation(this.workspace.offsetWidth / 2 - 100, 10,
+      'Step 3: Read the dimensions — those are the factors!');
+  }
+
+  _solveDelay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // ============================================
   // MODE SWITCHING
   // ============================================
 
@@ -2340,6 +2640,7 @@ let algebraTiles = null;
 function initAlgebraTiles() {
   if (!algebraTiles) {
     algebraTiles = new AlgebraTiles('algebraTilesContainer');
+    window.algebraTiles = algebraTiles;
   }
 }
 
@@ -2360,6 +2661,9 @@ function closeAlgebraTiles() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize algebra tiles
   initAlgebraTiles();
+
+  // Expose to window so AI visual teaching handler can access it
+  window.algebraTiles = algebraTiles;
 
   // Hook up button in chat page
   const algebraTilesBtn = document.getElementById('algebra-tiles-btn');

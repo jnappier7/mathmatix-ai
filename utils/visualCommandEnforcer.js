@@ -75,6 +75,16 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         return aiResponse;
     }
 
+    // Only auto-inject visuals when the student EXPLICITLY asks for one
+    // or the question is inherently visual (graphing, "show me", "draw", "plot")
+    // Do NOT force visuals on every math question — text teaching is often better
+    const explicitlyVisual = /\b(show\s*me|draw|graph|plot|visuali[sz]e|picture|diagram|see\s*it|number\s*line|tiles?|counter)\b/i.test(lowerMessage);
+
+    if (!explicitlyVisual) {
+        // AI chose not to use a visual — respect that choice
+        return aiResponse;
+    }
+
     // GRAPHING REQUESTS - inject [FUNCTION_GRAPH]
     if (isGraphingRequest(lowerMessage)) {
         const func = extractFunctionFromMessage(studentMessage, aiResponse);
@@ -114,6 +124,15 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         if (points) {
             console.log(`[VisualEnforcer] 🎯 Auto-injecting POINTS: ${points}`);
             return `Here are the points plotted!\n\n[POINTS:points=${points},title="Coordinate Points"]\n\n${shortenResponse(aiResponse)}`;
+        }
+    }
+
+    // INTEGER COUNTER REQUESTS (adding/subtracting with negatives, zero pairs)
+    if (isIntegerCounterRequest(lowerMessage)) {
+        const counters = extractCountersFromMessage(studentMessage);
+        if (counters) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting COUNTERS: +${counters.positive}, -${counters.negative}`);
+            return `Let's use counters to see this!\n\n[COUNTERS:positive=${counters.positive},negative=${counters.negative},animate=true,label="${counters.label}"]\n\n${shortenResponse(aiResponse)}`;
         }
     }
 
@@ -577,6 +596,9 @@ function hasInlineVisualCommands(response) {
         /\[RIGHT_TRIANGLE:/,
         /\[INEQUALITY:/,
         /\[ALGEBRA_TILES:/,
+        /\[TILES_SOLVE:/,
+        /\[TILES_FACTOR:/,
+        /\[COUNTERS:/,
         /\[MULTI_REP:/
     ];
     return inlinePatterns.some(p => p.test(response));
@@ -819,6 +841,56 @@ function getTeachingPrompt(operation, mode) {
         return "Here's an example with different numbers. Then YOU try with yours!";
     }
     return "Watch how this works!";
+}
+
+/**
+ * Detect if message is about integer operations with negatives / zero pairs
+ */
+function isIntegerCounterRequest(message) {
+    const patterns = [
+        /(?:what|how).+(?:zero pair|zero-pair)/i,
+        /(?:add|subtract|plus|minus).+(?:negative|positive)/i,
+        /(?:negative|positive).+(?:add|subtract|plus|minus)/i,
+        /\d+\s*\+\s*\(?-\d+\)?/,       // 5 + (-3)
+        /\(?-\d+\)?\s*\+\s*\d+/,        // (-3) + 5
+        /\d+\s*-\s*\d+/,                 // 5 - 3 (basic, only if context suggests counters)
+        /(?:show|use|try).+counter/i,
+        /(?:integer|integers).+(?:add|subtract|operation)/i,
+        /(?:add|subtract).+(?:integer|integers)/i,
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract positive and negative counts from an integer expression
+ * e.g., "5 + (-3)" → { positive: 5, negative: 3, label: "5 + (−3)" }
+ * e.g., "-2 + 7" → { positive: 7, negative: 2, label: "−2 + 7" }
+ */
+function extractCountersFromMessage(message) {
+    // Pattern: N + (-M) or N + -M
+    let match = message.match(/(\d+)\s*\+\s*\(?-(\d+)\)?/);
+    if (match) {
+        return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} + (−${match[2]})` };
+    }
+
+    // Pattern: (-M) + N or -M + N
+    match = message.match(/\(?-(\d+)\)?\s*\+\s*(\d+)/);
+    if (match) {
+        return { positive: parseInt(match[2]), negative: parseInt(match[1]), label: `−${match[1]} + ${match[2]}` };
+    }
+
+    // Pattern: N - M (interpret as N + (-M) for counters)
+    match = message.match(/(\d+)\s*-\s*(\d+)/);
+    if (match) {
+        return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} − ${match[2]}` };
+    }
+
+    // Zero pairs question - show equal amounts
+    if (/zero.?pair/i.test(message)) {
+        return { positive: 4, negative: 4, label: 'Zero pairs: +4 and −4 cancel out!' };
+    }
+
+    return null;
 }
 
 /**

@@ -129,6 +129,7 @@ const TUTOR_CONFIG = require('./utils/tutorConfig');
 const demoRoutes = require('./routes/demo');  // Playground demo account login & reset
 const trialChatRoutes = require('./routes/trialChat');  // Anonymous trial chat (landing page)
 const supportRoutes = require('./routes/support');  // AI-triaged support tickets
+const imageSearchRoutes = require('./routes/imageSearch');  // COPPA-safe educational image search
 
 // Usage gate middleware for free tier enforcement
 const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
@@ -630,6 +631,7 @@ app.use('/api/waitlist', waitlistRoutes);          // Pre-launch waitlist
 app.use('/api/demo', demoRoutes);                  // Playground demo account login & reset
 app.use('/api/trial-chat', trialChatRoutes);       // Anonymous trial chat (landing page, no auth)
 
+app.use('/api/images', isAuthenticated, imageSearchRoutes); // COPPA-safe educational image search
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes); // Premium: course catalog, enrollment, and progression

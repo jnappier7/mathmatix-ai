@@ -200,6 +200,31 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(algebraTilesRegex, '');
 
+    // [TILES_SOLVE:equation] or [TILES_SOLVE:equation:guided|full]
+    // Step-by-step equation solving with tile animations
+    const tilesSolveRegex = /\[TILES_SOLVE:([^:\]]+)(?::([^\]]+))?\]/g;
+    while ((match = tilesSolveRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'solve',
+            equation: match[1],
+            mode: match[2] || 'guided',
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesSolveRegex, '');
+
+    // [TILES_FACTOR:expression]
+    // Demonstrate factoring by arranging tiles into a rectangle
+    const tilesFactorRegex = /\[TILES_FACTOR:([^\]]+)\]/g;
+    while ((match = tilesFactorRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'factor',
+            expression: match[1],
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesFactorRegex, '');
+
     // [ALGEBRA_TILES_DEMO:operation] - Demonstrate an operation
     // Examples: "add", "multiply", "factor", "solve"
     const algebraDemoRegex = /\[ALGEBRA_TILES_DEMO:([^\]]+)\]/g;
@@ -296,18 +321,36 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(imageExplainRegex, '');
 
-    // --- MANIPULATIVE COMMANDS ---
-    // [NUMBER_LINE:min,max,mark] - Show interactive number line
-    const numberLineRegex = /\[NUMBER_LINE:(-?\d+),(-?\d+)(?:,(-?\d+))?\]/g;
-    while ((match = numberLineRegex.exec(aiResponseText)) !== null) {
+    // [SEARCH_IMAGE:query="Q",category=C] - Search for educational image via safe API
+    const searchImageRegex = /\[SEARCH_IMAGE:query="([^"]+)"(?:,category=([^\]]+))?\]/g;
+    while ((match = searchImageRegex.exec(aiResponseText)) !== null) {
+        visualCommands.images.push({
+            type: 'search',
+            query: match[1],
+            category: match[2] || null,
+            inline: true
+        });
+    }
+    cleanedText = cleanedText.replace(searchImageRegex, '');
+
+    // --- COUNTER COMMANDS ---
+    // [COUNTERS:positive,negative] - Show integer counters with zero-pair cancellation
+    const countersRegex = /\[COUNTERS:(\d+),(\d+)(?:,([^\]]+))?\]/g;
+    while ((match = countersRegex.exec(aiResponseText)) !== null) {
         visualCommands.manipulatives.push({
-            type: 'numberLine',
-            min: parseInt(match[1]),
-            max: parseInt(match[2]),
-            mark: match[3] ? parseInt(match[3]) : null,
+            type: 'counters',
+            positive: parseInt(match[1]),
+            negative: parseInt(match[2]),
+            label: match[3] || null,
             autoOpen: true
         });
     }
+    cleanedText = cleanedText.replace(countersRegex, '');
+
+    // --- MANIPULATIVE COMMANDS ---
+    // [NUMBER_LINE:...] - Handled inline by inlineChatVisuals.js (key=value format).
+    // Strip any NUMBER_LINE tags so they don't appear as raw text.
+    const numberLineRegex = /\[NUMBER_LINE:[^\]]+\]/g;
     cleanedText = cleanedText.replace(numberLineRegex, '');
 
     // [FRACTION_BARS:numerator,denominator] - Show fraction visualization
@@ -423,7 +466,8 @@ function hasVisualCommands(aiResponseText) {
         /\[IMAGE:/,
         /\[NUMBER_LINE:/,
         /\[FRACTION_BARS:/,
-        /\[BASE_TEN_BLOCKS:/
+        /\[BASE_TEN_BLOCKS:/,
+        /\[COUNTERS:/
     ];
 
     return commandPatterns.some(pattern => pattern.test(aiResponseText));

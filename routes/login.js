@@ -61,6 +61,8 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             // Auto-assign default avatar for legacy users missing one (avatar
             // selection removed from onboarding — assigned at signup now).
             // Awaited so the avatar is persisted before the frontend loads.
+            // Auto-assign default avatar for legacy users (fire-and-forget to
+            // avoid unhandled rejection inside Passport's non-async callback)
             if (user.role === 'student' && !user.avatar?.dicebearUrl) {
                 const seed = (user.firstName || user.username || 'student').toLowerCase();
                 user.avatar = {
@@ -68,11 +70,7 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                     dicebearUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(seed)}`
                 };
                 user.selectedAvatarId = user.selectedAvatarId || 'dicebear-default';
-                try {
-                    await user.save();
-                } catch (err) {
-                    console.error('[Login] Avatar migration failed:', err.message);
-                }
+                user.save().catch(err => console.error('[Login] Avatar migration failed:', err.message));
             }
 
             // Persist session to MongoDB before responding to prevent race condition

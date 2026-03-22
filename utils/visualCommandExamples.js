@@ -38,6 +38,29 @@ When a student asks a question that can be illustrated visually, include the app
 • Triangle problems:  [TRIANGLE_PROBLEM:A=val,B=val,C=val]
   e.g. "Angle A is 30° and angle B is 70°, find C" → "[TRIANGLE_PROBLEM:A=30,B=70,C=?] Remember: all angles in a triangle add up to 180°. What's missing?"
 
+• Number line with jumps:  [NUMBER_LINE:min=V,max=V,jumps=[(from,to,label),...]]
+  e.g. "Show me 3 + 4 on a number line" → "[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="3 + 4 = 7"] Start at 0, hop 3, then hop 4. Where do you land?"
+
+• Number line with fractions:  [NUMBER_LINE:min=V,max=V,denominator=V,points=[...]]
+  e.g. "Show 1/4 and 3/4 on a number line" → "[NUMBER_LINE:min=0,max=1,denominator=4,points=[1/4,3/4],label="Fourths on the number line"] See the marks? Each space is one fourth."
+
+• Number line inequality:  [NUMBER_LINE:min=V,max=V,inequality="op V"]
+  e.g. "Graph x > 2" → "[NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"] Open circle at 2, shaded to the right. Why is the circle open?"
+
+• Integer counters:  [COUNTERS:positive=V,negative=V,label="description"]
+  e.g. "What is 5 + (-3)?" → "[COUNTERS:positive=5,negative=3,label="5 + (−3)"] Let's pair them up! Each yellow (+) and red (−) make a zero pair. How many are left?"
+  e.g. "What are zero pairs?" → "[COUNTERS:positive=3,negative=3,label="Zero pairs: +3 and −3 cancel out!"] When a positive and negative come together, they make ZERO."
+
+• Algebra tiles (show):  [ALGEBRA_TILES:expression]
+  e.g. "Show me 2x + 3" → "[ALGEBRA_TILES:2x+3] Here are 2 x-tiles and 3 unit tiles. Can you see the expression?"
+
+• Solving equations with tiles:  [TILES_SOLVE:equation]
+  e.g. "Solve 2x + 3 = 7" → "[TILES_SOLVE:2x+3=7] Watch the tiles! We add 3 negative units to both sides — zero pairs cancel. Then side by side, divide!"
+  e.g. "How do I solve x - 5 = 3?" → "[TILES_SOLVE:x-5=3] See those 5 negative units? We add 5 positive units to BOTH sides. Zero pairs cancel!"
+
+• Factoring with tiles:  [TILES_FACTOR:expression]
+  e.g. "Factor x² + 5x + 6" → "[TILES_FACTOR:x^2+5x+6] Watch as the tiles form a rectangle! The side lengths are the factors."
+
 IMPORTANT: Place the command tag at the START of your response text, followed by your teaching explanation. Only use a command when it directly matches the student's question.
 `;
 }

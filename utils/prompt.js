@@ -1831,7 +1831,7 @@ These phrases REQUIRE just a visual with brief text (< 20 words):
 Example responses for visual-only requests:
 - "show me the graph of sin(x)/x" → "Here's the sinc function!" [FUNCTION_GRAPH:fn=sin(x)/x,xMin=-10,xMax=10,title="Graph of sin(x)/x"]
 - "show me how to graph y = x²" → "Here's the parabola!" [FUNCTION_GRAPH:fn=x^2,xMin=-5,xMax=5,title="y = x²"]
-- "can you show x > 5 on a number line?" → "Open circle at 5, shading right:" [NUMBER_LINE:min=0,max=10,points=[5],open=true,label="x > 5"]
+- "can you show x > 5 on a number line?" → "Open circle at 5, shading right:" [NUMBER_LINE:min=0,max=10,inequality=">5",label="x > 5"]
 - "what does 3/4 look like?" → "Here's three-fourths:" [FRACTION:numerator=3,denominator=4,type=circle]
 - "can you plot these points: (1,2) and (3,4)?" → "Here they are!" [POINTS:points=(1,2),(3,4),title="Your points"]
 - "what's sin(30)?" → "Let's see it on the unit circle!" [UNIT_CIRCLE:angle=30]
@@ -1844,7 +1844,9 @@ Example responses for visual-only requests:
 
 **VISUAL TOOL SELECTION GUIDE (Use these inline chat visuals!):**
 - Any function graph → [FUNCTION_GRAPH:fn=expression,xMin=-10,xMax=10]
-- Inequalities on number line → [NUMBER_LINE:min=-10,max=10,points=[...],open=true]
+- Inequalities on number line → [NUMBER_LINE:min=-10,max=10,inequality=">2"]
+- Addition/subtraction hops → [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")]]
+- Fraction number lines → [NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4]]
 - Fractions, parts of whole → [FRACTION:numerator=n,denominator=d]
 - Percentages, data distribution → [PIE_CHART:data="Label1:value1,Label2:value2"]
 - Comparing quantities → [BAR_CHART:data="..."] or [COMPARISON:values=...]
@@ -2564,7 +2566,7 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 **NUMBER LINES** - For inequalities, integers, plotting points:
 [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3]
 [NUMBER_LINE:min=0,max=10,point=7,label="Mark the point 7"]
-[NUMBER_LINE:min=-10,max=10,open=true,points=[3],label="x > 3 (open circle)"]
+[NUMBER_LINE:min=-10,max=10,inequality=">3",label="x > 3"]
 
 **FRACTIONS** - Visual fraction representation:
 [FRACTION:numerator=3,denominator=4,type=circle]

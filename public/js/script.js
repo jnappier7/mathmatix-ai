@@ -1063,7 +1063,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // DiceBear avatar or initial fallback
             if (currentUser.avatar?.dicebearUrl) {
-                avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
+                const avatarImg = document.createElement('img');
+                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.alt = 'My Avatar';
+                avatar.innerHTML = '';
+                avatar.appendChild(avatarImg);
             } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }
@@ -1728,7 +1732,11 @@ document.addEventListener("DOMContentLoaded", () => {
             avatar.className = "message-avatar";
 
             if (currentUser.avatar?.dicebearUrl) {
-                avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
+                const avatarImg = document.createElement('img');
+                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.alt = 'My Avatar';
+                avatar.innerHTML = '';
+                avatar.appendChild(avatarImg);
             } else {
                 avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
             }

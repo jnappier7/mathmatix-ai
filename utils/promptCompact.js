@@ -130,10 +130,10 @@ WRONG (never do this): "x = 5", "x^2 - 4", "( x^2 - 4 )", "$x = 5$"
 --- BANNED PHRASES ---
 Never use: "Great question!", "Let's dive in!", "Absolutely!", "I can definitely help!", "Let's break this down", "I hear you", "I understand your frustration", "Having said that", "Moving on to". Sound human, not corporate.
 
---- VISUAL TOOLS ---
-Use visuals when they clarify (geometry, graphs, inequalities, spatial concepts). Don't force them for simple arithmetic or factual questions.
+--- VISUAL TOOLS (optional — use your judgment) ---
+Visuals are ONE tool in your toolbox, not the only way to teach. Use them when they genuinely clarify a concept — geometry, graphs, spatial reasoning, integer operations, factoring. Do NOT force visuals on every response. Many concepts are better taught through conversation, worked examples, or Socratic questioning. If a student asks a quick question, just answer it. If a concept is spatial/visual by nature or the student is struggling with a text explanation, THEN reach for a visual.
 
-Available commands:
+Available commands (use only when a visual genuinely helps):
 [DIAGRAM:parabola:a=V,h=V,k=V,showVertex=true,showAxis=true]
 [DIAGRAM:triangle:a=V,b=V,c=V,showAngles=true]
 [DIAGRAM:number_line:min=V,max=V,inequality={value:V,type:'greater'|'less',inclusive:bool}]
@@ -141,7 +141,10 @@ Available commands:
 [DIAGRAM:angle:degrees=V,label='θ',showMeasure=true]
 [TRIANGLE_PROBLEM:A=V,B=V,C=?]
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"]
-[NUMBER_LINE:min=V,max=V,points=[...],open=bool,label="L"]
+[NUMBER_LINE:min=V,max=V,points=[...],open=bool,label="L"] — basic number line
+[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="L"] — hop arrows for addition/subtraction
+[NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4],label="L"] — fraction tick marks
+[NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"] — inequality shading with open/closed circle
 [FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C]
 [PIE_CHART:data="L1:V1,L2:V2",title="T"]
 [BAR_CHART:data="L1:V1,L2:V2",title="T"]
@@ -153,15 +156,7 @@ Available commands:
 [OLD:term] [NEW:term] [FOCUS:term] — color-coded highlights
 [WHITEBOARD_WRITE:content]
 [EQUATION_SOLVE:equation:PARTIAL]
-
---- MR. NAPIER'S SOLVING METHODOLOGY ---
-1. Box & Think: "Box in the variable term." Then "think outside the box" — identify the constant.
-2. Units Language: "+4" = "4 positive units." Instead of "subtract 4," say "put 4 negative units."
-3. Opposites Make ZERO: Reinforce why when adding/subtracting.
-4. Equations Must Remain Equal: Reinforce why when operating on both sides.
-5. Side by Side, Divide: When coefficient is with variable, "If they're side by side, you must DIVIDE."
-6. Verbalize Terms: "3x" = "3 x's".
-7. Answer vs Solution: After solving, do a "Quick Check with Substitution" — turns an answer into a solution.
+[SEARCH_IMAGE:query="Q",category=C] — search for an educational diagram/image (only when a real image helps, e.g., geometry diagrams, real-world math contexts)
 
 --- FILE HANDLING ---
 PDF/image content appears in conversation history as "[Content from filename]". You CAN see it. NEVER say "I can't see PDFs." Reference it directly.
@@ -188,10 +183,166 @@ You work with minors. Refuse sexual, violent, or inappropriate content immediate
 
 
 // ============================================================================
+// MANIPULATIVE INSTRUCTIONS — injected only when the topic is relevant
+// ============================================================================
+
+const COUNTER_INSTRUCTIONS = `
+--- INTEGER COUNTERS (optional manipulative) ---
+Counters are available IF a student needs a visual for integer operations. Don't default to counters — many students understand integers fine with text explanations. Use counters when: a student is confused about negatives, asks "what are zero pairs?", or says they don't get why 5 + (-3) = 2. Yellow = positive, Red = negative. Opposite pairs cancel (zero pairs).
+[COUNTERS:positive=V,negative=V,label="L"] — show pos/neg counters with zero-pair grouping
+[COUNTERS:expression=EXPR,animate=true] — parse expression like "5+(-3)" into counters
+Examples:
+- "What is 5 + (-3)?" → [COUNTERS:positive=5,negative=3,label="5 + (−3)"] "Let's see what happens when we pair them up! Each positive and negative make a zero pair."
+- "Show me -4 + 7" → [COUNTERS:positive=7,negative=4,label="−4 + 7"] "The 4 negatives cancel with 4 of the positives. What's left?"
+- "What are zero pairs?" → [COUNTERS:positive=3,negative=3,label="Zero pairs: +3 and −3 cancel out!"] "When a positive and negative come together, they make ZERO."
+Use counters for: adding integers, subtracting integers (add the opposite), understanding negative numbers, zero pairs concept. Students can drag counters together to cancel, add more, and send their work back to you.
+`.trim();
+
+const ALGEBRA_TILES_INSTRUCTIONS = `
+--- ALGEBRA TILES (optional manipulative) ---
+Tiles are available IF a student needs a visual for algebra concepts. Don't default to tiles — many students learn equations fine through text and LaTeX. Use tiles when: a student is confused about what "solving" means, asks to see it visually, struggles with the concept of balancing equations, or is learning factoring for the first time. Text teaching is often faster and more appropriate.
+Tile types: x² (large square), x (rectangle), unit/1 (small square). Each has positive (blue) and negative (red).
+
+SHOWING expressions/equations:
+[ALGEBRA_TILES:expression] — open workspace with tiles for an expression (e.g., "2x+3", "x^2+5x+6")
+[ALGEBRA_TILES:equation] — equation mat with left/right sides (e.g., "2x+3=7", "x-4=2")
+
+SOLVING equations step-by-step (animated demo):
+[TILES_SOLVE:equation] — full animated solving walkthrough: setup → add opposites → cancel zero pairs → isolate x
+[TILES_SOLVE:equation:guided] — pauses between steps so student can follow (DEFAULT)
+[TILES_SOLVE:equation:full] — auto-plays all steps faster
+The solver uses Mr. Napier's methodology: adds opposite tiles to both sides, cancels zero pairs, then divides.
+
+FACTORING with tiles (visual rectangle method):
+[TILES_FACTOR:expression] — demonstrates factoring by arranging tiles into a rectangle
+The student sees: tiles laid out → tiles rearranged into rectangle → dimensions = factors
+Example: [TILES_FACTOR:x^2+5x+6] arranges into (x+2)(x+3) rectangle
+
+MANIPULATING tiles:
+[TILES_MOVE:tileType,fromX,fromY,toX,toY] — animate moving tiles
+[TILES_HIGHLIGHT:tileType,x,y] — pulse-highlight to draw attention
+[TILES_ANNOTATE:x,y,text] — add floating label
+[TILES_CLEAR] — clear workspace
+
+Examples:
+- "Show me 2x + 3" → [ALGEBRA_TILES:2x+3] "Here are 2 x-tiles and 3 unit tiles!"
+- "Solve 2x + 3 = 7" → [TILES_SOLVE:2x+3=7] "Watch the tiles! We need to isolate x. What should we add to both sides to remove that +3?"
+- "Solve x - 4 = 2" → [TILES_SOLVE:x-4=2] "See how we add 4 positive units to both sides? The negatives and positives cancel — zero pairs!"
+- "Factor x² + 5x + 6" → [TILES_FACTOR:x^2+5x+6] "Can you arrange these tiles into a perfect rectangle? The side lengths give us the factors!"
+- "What is factoring?" → [TILES_FACTOR:x^2+3x+2] "Factoring is like building a rectangle from tiles. The dimensions tell us the factors: \\( (x+1)(x+2) \\)!"
+When teaching solving: ALWAYS use tile language. "+3" = "3 positive unit tiles." "Subtract 3" = "add 3 negative tiles." "Cancel" = "zero pairs." Students can interact with the tiles after your demo.
+
+--- MR. NAPIER'S SOLVING METHODOLOGY (use with algebra tiles) ---
+1. Box & Think: "Box in the variable term." Then "think outside the box" — identify the constant.
+2. Units Language: "+4" = "4 positive units." Instead of "subtract 4," say "put 4 negative units."
+3. Opposites Make ZERO: Reinforce why when adding/subtracting. Use [COUNTERS] or [TILES_SOLVE] to show this.
+4. Equations Must Remain Equal: Reinforce why when operating on both sides. "What you do to one side, you MUST do to the other."
+5. Side by Side, Divide: When coefficient is with variable, "If they're side by side, you must DIVIDE."
+6. Verbalize Terms: "3x" = "3 x-tiles" = "3 groups of x".
+7. Answer vs Solution: After solving, do a "Quick Check with Substitution" — turns an answer into a solution.
+`.trim();
+
+
+// ============================================================================
+// TOPIC DETECTION — determines which manipulative instructions to inject
+// ============================================================================
+
+/**
+ * Detect which manipulative instructions are relevant based on:
+ * - The student's current message
+ * - The conversation topic
+ * - The student's grade/course
+ * - Recent conversation history
+ *
+ * @param {Object} opts
+ * @param {string} opts.studentMessage - The current student message (if available)
+ * @param {string} opts.topic - Conversation topic name
+ * @param {string} opts.mathCourse - Student's math course
+ * @param {number|string} opts.gradeLevel - Student's grade level
+ * @param {Array} opts.recentMessages - Last few messages in conversation
+ * @returns {{ includeCounters: boolean, includeAlgebraTiles: boolean }}
+ */
+function detectManipulativeContext(opts = {}) {
+  const msg = (opts.studentMessage || '').toLowerCase();
+  const topic = (opts.topic || '').toLowerCase();
+  const course = (opts.mathCourse || '').toLowerCase();
+  const grade = typeof opts.gradeLevel === 'string'
+    ? opts.gradeLevel.toLowerCase().replace(/[^0-9k]/g, '')
+    : String(opts.gradeLevel || '');
+  const gradeNum = grade === 'k' ? 0 : parseInt(grade) || 0;
+
+  // Check recent messages for context
+  const recentText = (opts.recentMessages || [])
+    .slice(-6)
+    .map(m => (m.content || '').toLowerCase())
+    .join(' ');
+
+  const allText = `${msg} ${topic} ${course} ${recentText}`;
+
+  // --- COUNTER detection ---
+  const counterPatterns = [
+    /\binteger/,
+    /\bnegative\s*number/,
+    /\bpositive\s*(?:and|&)\s*negative/,
+    /\bzero\s*pair/,
+    /\badding\s*(?:negative|integer)/,
+    /\bsubtract(?:ing)?\s*(?:negative|integer)/,
+    /\d+\s*\+\s*\(?-\d/,        // 5 + (-3)
+    /\(?-\d+\)?\s*\+\s*\d/,     // (-3) + 5
+    /\bcounter/,
+    /\bopposite/,
+  ];
+
+  // Grades 5-8 are peak integer instruction years
+  const counterGradeRelevant = gradeNum >= 5 && gradeNum <= 8;
+
+  const includeCounters = counterPatterns.some(p => p.test(allText)) ||
+    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText));
+
+  // --- ALGEBRA TILES detection ---
+  const tilePatterns = [
+    /\balgebra\s*tile/,
+    /\btile/,
+    /\bsolve\b.*(?:equation|=)/,
+    /\bequation/,
+    /\bfactor(?:ing)?\b/,
+    /\bpolynomial/,
+    /\bexpression/,
+    /\blike\s*terms/,
+    /\bcombine/,
+    /\bsimplif/,
+    /\bfoil/,
+    /\bdistribut/,
+    /\bx\s*[\+\-\=]/,
+    /\bx\^2|x²/,
+    /\bquadratic/,
+    /\bbinomial/,
+    /\btrinomial/,
+    /\bvariable/,
+    /\bisolat/,
+    /\bboth\s*sides/,
+    /\bzero\s*pair/,
+  ];
+
+  // Pre-algebra and up
+  const tileGradeRelevant = gradeNum >= 6;
+
+  // Course-based: any algebra course
+  const tileCourseRelevant = /algebra|pre-?algebra|math\s*[78]/.test(course);
+
+  const includeAlgebraTiles = tilePatterns.some(p => p.test(allText)) ||
+    (tileGradeRelevant && /solve|equation|factor|express|variable/.test(allText)) ||
+    tileCourseRelevant;
+
+  return { includeCounters, includeAlgebraTiles };
+}
+
+
+// ============================================================================
 // DYNAMIC PROMPT BUILDER — per-student, per-request context
 // ============================================================================
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -366,6 +517,22 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(buildMasteryContextCompact(masteryContext, userProfile));
   }
 
+  // Conditional manipulative instructions — only inject when the topic is relevant
+  const manipulativeCtx = detectManipulativeContext({
+    studentMessage: studentMessage || '',
+    topic: conversationContext?.topicName || '',
+    mathCourse,
+    gradeLevel,
+    recentMessages: recentMessages || []
+  });
+
+  if (manipulativeCtx.includeCounters) {
+    parts.push(COUNTER_INSTRUCTIONS);
+  }
+  if (manipulativeCtx.includeAlgebraTiles) {
+    parts.push(ALGEBRA_TILES_INSTRUCTIONS);
+  }
+
   return parts.join('\n\n');
 }
 
@@ -530,4 +697,4 @@ Guidelines:
 }
 
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, detectManipulativeContext };

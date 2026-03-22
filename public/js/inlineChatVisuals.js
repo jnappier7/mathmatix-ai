@@ -160,6 +160,8 @@ class InlineChatVisuals {
             { regex: /\[INEQUALITY:([^\]]+)\]/g, handler: this.createInequality.bind(this) },
             // Algebra tiles inline preview + launcher
             { regex: /\[ALGEBRA_TILES:([^\]]+)\]/g, handler: this.createAlgebraTilesInline.bind(this) },
+            // Integer counters (pos/neg with zero-pair cancellation)
+            { regex: /\[COUNTERS:([^\]]+)\]/g, handler: this.createCounters.bind(this) },
             // Multi-representation linked views
             { regex: /\[MULTI_REP:([^\]]+)\]/g, handler: this.createMultiRepresentation.bind(this) }
         ];
@@ -435,8 +437,11 @@ class InlineChatVisuals {
     }
 
     // ==========================================
-    // NUMBER LINE
-    // [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3,label="Number line showing -2, 0, and 3"]
+    // NUMBER LINE (Enhanced)
+    // Basic:     [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3,label="L"]
+    // Jumps:     [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="Adding 3 + 4"]
+    // Fractions: [NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4,5/4],label="Fractions"]
+    // Inequality:[NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"]
     // ==========================================
     createNumberLine(paramStr) {
         const params = this.parseParams(paramStr);
@@ -444,44 +449,131 @@ class InlineChatVisuals {
 
         const min = params.min ?? -10;
         const max = params.max ?? 10;
-        const points = Array.isArray(params.points) ? params.points.map(Number) :
-                       (params.point ? [Number(params.point)] : []);
         const highlight = params.highlight ?? null;
         const label = params.label || '';
         const showInterval = params.interval || null;
         const openCircle = params.open === true || params.open === 'true';
-        const interactive = params.interactive !== false; // interactive by default
+        const interactive = params.interactive !== false;
+        const denominator = params.denominator ? parseInt(params.denominator) : null;
+        const inequality = params.inequality || null;
 
-        const width = 320;
-        const height = 80;
+        // Parse points (support fractions like 1/4, 3/4)
+        let points = [];
+        if (Array.isArray(params.points)) {
+            points = params.points.map(p => {
+                if (typeof p === 'string' && p.includes('/')) {
+                    const [n, d] = p.split('/').map(Number);
+                    return n / d;
+                }
+                return Number(p);
+            });
+        } else if (params.point) {
+            points = [Number(params.point)];
+        }
+
+        // Parse jumps: array of [from, to, label] tuples
+        // Format in params: "(0,3,+3),(3,7,+4)"
+        let jumps = [];
+        if (params.jumps) {
+            const jumpStr = Array.isArray(params.jumps) ? params.jumps.join(',') : params.jumps;
+            const jumpRegex = /\(([^,]+),([^,]+),([^)]+)\)/g;
+            let jm;
+            while ((jm = jumpRegex.exec(jumpStr)) !== null) {
+                jumps.push({ from: Number(jm[1]), to: Number(jm[2]), label: jm[3].trim().replace(/^["']+|["']+$/g, '') });
+            }
+        }
+
+        // Dimensions — taller if we have jumps
+        const width = 340;
+        const hasJumps = jumps.length > 0;
+        const hasInequality = inequality !== null;
+        const height = hasJumps ? 110 : 80;
         const padding = 30;
-        const lineY = 45;
+        const lineY = hasJumps ? 65 : 45;
 
-        const scale = (width - 2 * padding) / (max - min);
+        const range = max - min || 1; // Prevent division by zero when min==max
+        const scale = (width - 2 * padding) / range;
         const toX = (val) => padding + (val - min) * scale;
 
         let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line" id="${id}-svg">`;
+
+        // Inequality shading (background, drawn first)
+        if (hasInequality) {
+            const ineqMatch = inequality.match(/([<>]=?)\s*(-?\d+\.?\d*)/);
+            if (ineqMatch) {
+                const op = ineqMatch[1];
+                const val = parseFloat(ineqMatch[2]);
+                const valX = toX(val);
+                const isOpen = !op.includes('=');
+
+                // Shading
+                if (op.startsWith('>')) {
+                    svg += `<rect x="${valX}" y="${lineY - 12}" width="${width - padding - valX}" height="24"
+                                  fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
+                    // Arrow indicating continues right
+                    svg += `<polygon points="${width - padding - 2},${lineY} ${width - padding - 10},${lineY - 5} ${width - padding - 10},${lineY + 5}"
+                                     fill="rgba(102, 126, 234, 0.4)"/>`;
+                } else {
+                    svg += `<rect x="${padding}" y="${lineY - 12}" width="${valX - padding}" height="24"
+                                  fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
+                    svg += `<polygon points="${padding + 2},${lineY} ${padding + 10},${lineY - 5} ${padding + 10},${lineY + 5}"
+                                     fill="rgba(102, 126, 234, 0.4)"/>`;
+                }
+
+                // Endpoint circle (open or closed)
+                svg += `<circle cx="${valX}" cy="${lineY}" r="7" fill="${isOpen ? 'white' : '#667eea'}"
+                              stroke="#667eea" stroke-width="2.5"/>`;
+            }
+        }
 
         // Draw main line
         svg += `<line x1="${padding}" y1="${lineY}" x2="${width - padding}" y2="${lineY}"
                       stroke="#333" stroke-width="2"/>`;
 
-        // Draw arrow heads
+        // Arrow heads
         svg += `<polygon points="${width - padding},${lineY} ${width - padding - 8},${lineY - 5} ${width - padding - 8},${lineY + 5}" fill="#333"/>`;
         svg += `<polygon points="${padding},${lineY} ${padding + 8},${lineY - 5} ${padding + 8},${lineY + 5}" fill="#333"/>`;
 
-        // Draw tick marks and labels
-        for (let i = min; i <= max; i++) {
-            const x = toX(i);
-            const isHighlight = highlight !== null && i === Number(highlight);
-            svg += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}"
-                          stroke="${isHighlight ? '#667eea' : '#333'}" stroke-width="${isHighlight ? 3 : 1}"/>`;
-            svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle"
-                          fill="${isHighlight ? '#667eea' : '#333'}" font-size="12"
-                          font-weight="${isHighlight ? 'bold' : 'normal'}">${i}</text>`;
+        // Tick marks — integer or fraction-based
+        if (denominator && denominator > 0) {
+            // Fraction tick marks
+            const step = 1 / denominator;
+            for (let val = min; val <= max + step / 2; val += step) {
+                const roundedVal = Math.round(val * denominator) / denominator;
+                const x = toX(roundedVal);
+                const isWhole = Math.abs(roundedVal - Math.round(roundedVal)) < 0.001;
+                const tickHeight = isWhole ? 8 : 4;
+                const isHighlightTick = highlight !== null && Math.abs(roundedVal - Number(highlight)) < 0.001;
+
+                svg += `<line x1="${x}" y1="${lineY - tickHeight}" x2="${x}" y2="${lineY + tickHeight}"
+                              stroke="${isHighlightTick ? '#667eea' : '#555'}" stroke-width="${isWhole ? 1.5 : 1}"/>`;
+
+                // Labels: show whole numbers always, fractions only at labeled points
+                if (isWhole) {
+                    svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle" fill="#333" font-size="11">${Math.round(roundedVal)}</text>`;
+                }
+            }
+
+            // Fraction labels for points
+            points.forEach(p => {
+                const x = toX(p);
+                const frac = this.decimalToFraction(p, denominator);
+                svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle" fill="#667eea" font-size="10" font-weight="bold">${frac}</text>`;
+            });
+        } else {
+            // Integer tick marks
+            for (let i = min; i <= max; i++) {
+                const x = toX(i);
+                const isHighlightTick = highlight !== null && i === Number(highlight);
+                svg += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}"
+                              stroke="${isHighlightTick ? '#667eea' : '#333'}" stroke-width="${isHighlightTick ? 3 : 1}"/>`;
+                svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle"
+                              fill="${isHighlightTick ? '#667eea' : '#333'}" font-size="12"
+                              font-weight="${isHighlightTick ? 'bold' : 'normal'}">${i}</text>`;
+            }
         }
 
-        // Draw interval shading if specified
+        // Interval shading
         if (showInterval) {
             const [intMin, intMax] = showInterval.split(',').map(Number);
             const x1 = toX(intMin);
@@ -490,10 +582,37 @@ class InlineChatVisuals {
                           fill="rgba(102, 126, 234, 0.2)" rx="4"/>`;
         }
 
-        // Draw draggable points (interactive)
+        // Jump arcs (hop arrows above the line for addition/subtraction)
+        const jumpColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12'];
+        jumps.forEach((jump, idx) => {
+            const x1 = toX(jump.from);
+            const x2 = toX(jump.to);
+            const midX = (x1 + x2) / 2;
+            const arcHeight = Math.min(30, Math.abs(x2 - x1) * 0.4);
+            const color = jumpColors[idx % jumpColors.length];
+            const direction = jump.to > jump.from ? 1 : -1;
+
+            // Arc path
+            svg += `<path d="M ${x1} ${lineY - 3} Q ${midX} ${lineY - 3 - arcHeight} ${x2} ${lineY - 3}"
+                          fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>`;
+
+            // Arrowhead at destination (symmetric triangle)
+            const arrowSize = 6;
+            svg += `<polygon points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize}"
+                              fill="${color}"/>`;
+
+            // Start dot
+            svg += `<circle cx="${x1}" cy="${lineY}" r="4" fill="${color}"/>`;
+
+            // Jump label above arc
+            svg += `<text x="${midX}" y="${lineY - arcHeight - 8}" text-anchor="middle"
+                          fill="${color}" font-size="12" font-weight="bold">${this.escapeHtml(jump.label)}</text>`;
+        });
+
+        // Draw draggable points
         points.forEach((point, idx) => {
             const x = toX(point);
-            const isHighlighted = highlight !== null && point === Number(highlight);
+            const isHighlighted = highlight !== null && Math.abs(point - Number(highlight)) < 0.001;
             const fillColor = isHighlighted ? '#667eea' : '#e74c3c';
 
             if (openCircle) {
@@ -508,21 +627,47 @@ class InlineChatVisuals {
                             data-padding="${padding}" data-scale="${scale}"/>`;
             }
 
-            // Point label above (will update on drag)
+            // Point label above
+            const labelText = denominator ? this.decimalToFraction(point, denominator) : point;
             svg += `<text x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
-                          font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${point}</text>`;
+                          font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${labelText}</text>`;
         });
 
         svg += `</svg>`;
 
+        // Controls: send to AI button (only if interactive)
+        const controlsHtml = interactive ? `
+            <div class="icv-numline-controls">
+                <button class="icv-numline-send-btn" data-numline-id="${id}">Send to AI</button>
+            </div>` : '';
+
         return `
         <div class="icv-container icv-numline-container" id="${id}"
-             data-config='${JSON.stringify({ min, max, points, highlight, openCircle, interactive })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ min, max, points, highlight, openCircle, interactive, denominator, jumps, inequality }))}">
             ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
             ${svg}
             ${interactive && points.length > 0 ? `<div class="icv-interactive-value" id="${id}-value">Drag points to explore</div>` : ''}
+            ${controlsHtml}
         </div>
         `;
+    }
+
+    /**
+     * Convert a decimal to a fraction string for display
+     * e.g., 0.25 with denominator 4 → "1/4"
+     */
+    decimalToFraction(val, denominator) {
+        if (!denominator || isNaN(val)) return String(val);
+        const numerator = Math.round(val * denominator);
+        if (numerator === 0) return '0';
+        if (denominator === 1) return String(numerator);
+        // Simplify
+        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+        const g = gcd(Math.abs(numerator), denominator);
+        const sNum = numerator / g;
+        const sDen = denominator / g;
+        if (sDen === 1) return String(sNum);
+        return `${sNum}/${sDen}`;
     }
 
     /**
@@ -603,6 +748,51 @@ class InlineChatVisuals {
         });
     }
 
+    /**
+     * Initialize number line send-to-AI buttons
+     */
+    initNumlineSendButtons(container) {
+        container.querySelectorAll('.icv-numline-send-btn').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const numlineId = btn.dataset.numlineId;
+                this.sendNumlineToAI(numlineId);
+            });
+        });
+    }
+
+    /**
+     * Send current number line state to AI chat
+     */
+    sendNumlineToAI(numlineId) {
+        const container = document.getElementById(numlineId);
+        if (!container) return;
+
+        const config = JSON.parse(container.dataset.config || '{}');
+
+        // Read current point positions from SVG (may have been dragged)
+        const svg = container.querySelector('svg');
+        const currentPoints = [];
+        if (svg) {
+            svg.querySelectorAll('.icv-point-label').forEach(label => {
+                currentPoints.push(label.textContent);
+            });
+        }
+
+        const pointsStr = currentPoints.length > 0 ? currentPoints.join(', ') : 'none';
+        const message = `I'm looking at a number line from ${config.min} to ${config.max}. Points at: ${pointsStr}.`;
+
+        const chatInput = document.getElementById('userInput') ||
+                          document.getElementById('chatInput') ||
+                          document.getElementById('mastery-input');
+        if (chatInput) {
+            chatInput.value = message;
+            chatInput.focus();
+        }
+    }
+
     // ==========================================
     // FRACTION VISUALIZATION
     // [FRACTION:numerator=3,denominator=4,type=circle]
@@ -670,7 +860,7 @@ class InlineChatVisuals {
 
         return `
         <div class="icv-container icv-fraction-container" id="${id}"
-             data-config='${JSON.stringify({ numerator, denominator, type })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ numerator, denominator, type }))}">
             <div class="icv-title">${this.escapeHtml(label)}</div>
             ${svg}
             <div class="icv-fraction-counter" id="${id}-counter">${numerator} out of ${denominator} parts shaded</div>
@@ -1912,6 +2102,432 @@ class InlineChatVisuals {
     }
 
     // ==========================================
+    // INTEGER COUNTERS (Pos/Neg with Zero-Pair Cancellation)
+    // [COUNTERS:positive=5,negative=3,label="Show 5 + (-3)"]
+    // [COUNTERS:expression=5+(-3),animate=true]
+    // [COUNTERS:positive=4,negative=4,label="Zero pairs: 4 + (-4) = 0"]
+    // ==========================================
+    createCounters(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('counters');
+
+        let positive = params.positive ?? params.pos ?? 0;
+        let negative = params.negative ?? params.neg ?? 0;
+        const label = params.label || '';
+        const animate = params.animate === true || params.animate === 'true';
+        const showZeroPairs = params.zeroPairs !== false && params.zeroPairs !== 'false';
+
+        // Parse expression like "5+(-3)" or "-2+7" or "3-5"
+        if (params.expression || params.expr) {
+            const expr = params.expression || params.expr;
+            const parsed = this.parseCounterExpression(expr);
+            positive = parsed.positive;
+            negative = parsed.negative;
+        }
+
+        positive = Math.abs(parseInt(positive)) || 0;
+        negative = Math.abs(parseInt(negative)) || 0;
+
+        // Calculate zero pairs
+        const zeroPairs = Math.min(positive, negative);
+        const remainPositive = positive - zeroPairs;
+        const remainNegative = negative - zeroPairs;
+        const result = remainPositive - remainNegative;
+
+        // Build counter layout
+        const config = JSON.stringify({ positive, negative, zeroPairs, showZeroPairs, animate });
+
+        // Build the visual HTML
+        let html = `
+        <div class="icv-container icv-counters-container" id="${id}"
+             data-config="${this.escapeHtml(config)}" data-positive="${positive}" data-negative="${negative}">
+            ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
+            <div class="icv-counters-workspace" id="${id}-workspace">`;
+
+        // Render zero pairs section (paired counters)
+        if (showZeroPairs && zeroPairs > 0) {
+            html += `<div class="icv-counters-section">
+                <div class="icv-counters-section-label">Zero Pairs</div>
+                <div class="icv-zero-pairs" id="${id}-zero-pairs">`;
+            for (let i = 0; i < zeroPairs; i++) {
+                html += `
+                <div class="icv-zero-pair ${animate ? 'icv-counter-animate' : ''}" style="${animate ? `animation-delay: ${i * 0.15}s` : ''}">
+                    <div class="icv-counter icv-counter-pos" data-counter-id="${id}" data-value="1" data-idx="${i}">+</div>
+                    <div class="icv-counter icv-counter-neg" data-counter-id="${id}" data-value="-1" data-idx="${i}">−</div>
+                    <div class="icv-zero-line"></div>
+                </div>`;
+            }
+            html += `</div></div>`;
+        }
+
+        // Remaining positive counters
+        if (remainPositive > 0) {
+            html += `<div class="icv-counters-section">
+                <div class="icv-counters-section-label">Positive</div>
+                <div class="icv-counters-row" id="${id}-positive">`;
+            for (let i = 0; i < remainPositive; i++) {
+                html += `<div class="icv-counter icv-counter-pos icv-counter-draggable ${animate ? 'icv-counter-animate' : ''}"
+                    data-counter-id="${id}" data-value="1" data-idx="${zeroPairs + i}"
+                    draggable="true"
+                    style="${animate ? `animation-delay: ${(zeroPairs + i) * 0.1}s` : ''}">+</div>`;
+            }
+            html += `</div></div>`;
+        }
+
+        // Remaining negative counters
+        if (remainNegative > 0) {
+            html += `<div class="icv-counters-section">
+                <div class="icv-counters-section-label">Negative</div>
+                <div class="icv-counters-row" id="${id}-negative">`;
+            for (let i = 0; i < remainNegative; i++) {
+                html += `<div class="icv-counter icv-counter-neg icv-counter-draggable ${animate ? 'icv-counter-animate' : ''}"
+                    data-counter-id="${id}" data-value="-1" data-idx="${zeroPairs + i}"
+                    draggable="true"
+                    style="${animate ? `animation-delay: ${(zeroPairs + i) * 0.1}s` : ''}">−</div>`;
+            }
+            html += `</div></div>`;
+        }
+
+        html += `</div>`;
+
+        // Result display
+        html += `
+            <div class="icv-counters-result" id="${id}-result">
+                <span class="icv-counters-equation">
+                    ${positive > 0 ? `<span class="icv-result-pos">${positive}</span>` : ''}
+                    ${negative > 0 ? ` + <span class="icv-result-neg">(−${negative})</span>` : ''}
+                    = <span class="icv-result-answer">${result}</span>
+                </span>
+            </div>`;
+
+        // Add/remove buttons + send to AI
+        html += `
+            <div class="icv-counters-controls" id="${id}-controls">
+                <button class="icv-counter-add-btn icv-counter-add-pos" data-counter-id="${id}" data-add="pos" title="Add positive counter">+ Add Positive</button>
+                <button class="icv-counter-add-btn icv-counter-add-neg" data-counter-id="${id}" data-add="neg" title="Add negative counter">+ Add Negative</button>
+                <button class="icv-counter-cancel-btn" data-counter-id="${id}" title="Cancel zero pairs">Cancel Zero Pairs</button>
+                <button class="icv-counter-send-btn" data-counter-id="${id}" title="Send to AI">Send to AI</button>
+            </div>
+        </div>`;
+
+        return html;
+    }
+
+    /**
+     * Parse a math expression into positive/negative counter counts
+     * e.g., "5+(-3)" → { positive: 5, negative: 3 }
+     * e.g., "3-5" → { positive: 3, negative: 5 }
+     * e.g., "-2+7" → { positive: 7, negative: 2 }
+     */
+    parseCounterExpression(expr) {
+        let positive = 0;
+        let negative = 0;
+
+        // Normalize: remove spaces
+        const cleaned = expr.replace(/\s/g, '');
+
+        // Match terms: +N, -N, +(-N), -(-N), N
+        const termRegex = /([+-]?)(\(?\-?\d+\)?)/g;
+        let match;
+
+        while ((match = termRegex.exec(cleaned)) !== null) {
+            if (!match[0]) continue;
+            const sign = match[1];
+            let valueStr = match[2].replace(/[()]/g, '');
+            let value = parseInt(valueStr);
+
+            if (sign === '-') value = -value;
+
+            if (value > 0) {
+                positive += value;
+            } else if (value < 0) {
+                negative += Math.abs(value);
+            }
+        }
+
+        return { positive, negative };
+    }
+
+    /**
+     * Initialize interactive counter behaviors (drag, add, cancel, send)
+     */
+    initInteractiveCounters(container) {
+        // Add positive counter button
+        container.querySelectorAll('.icv-counter-add-pos').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const counterId = btn.dataset.counterId;
+                this.addCounter(counterId, 'pos');
+            });
+        });
+
+        // Add negative counter button
+        container.querySelectorAll('.icv-counter-add-neg').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const counterId = btn.dataset.counterId;
+                this.addCounter(counterId, 'neg');
+            });
+        });
+
+        // Cancel zero pairs button
+        container.querySelectorAll('.icv-counter-cancel-btn').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const counterId = btn.dataset.counterId;
+                this.cancelZeroPairs(counterId);
+            });
+        });
+
+        // Send to AI button
+        container.querySelectorAll('.icv-counter-send-btn').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const counterId = btn.dataset.counterId;
+                this.sendCountersToAI(counterId);
+            });
+        });
+
+        // Make individual counters removable on double-click
+        container.querySelectorAll('.icv-counter-draggable').forEach(counter => {
+            if (counter._clickInit) return;
+            counter._clickInit = true;
+            counter.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                const counterId = counter.dataset.counterId;
+                const value = parseInt(counter.dataset.value);
+                counter.style.animation = 'icv-counter-pop 0.3s ease forwards';
+                setTimeout(() => {
+                    counter.remove();
+                    this.updateCounterResult(counterId);
+                }, 300);
+            });
+        });
+
+        // Drag-and-drop for pairing counters
+        this.initCounterDragDrop(container);
+    }
+
+    /**
+     * Drag-and-drop to create zero pairs by dragging pos onto neg (or vice versa)
+     */
+    initCounterDragDrop(container) {
+        const counters = container.querySelectorAll('.icv-counter-draggable');
+
+        counters.forEach(counter => {
+            if (counter._dragInit) return;
+            counter._dragInit = true;
+
+            counter.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    counterId: counter.dataset.counterId,
+                    value: counter.dataset.value,
+                    idx: counter.dataset.idx
+                }));
+                counter.classList.add('icv-counter-dragging');
+            });
+
+            counter.addEventListener('dragend', () => {
+                counter.classList.remove('icv-counter-dragging');
+            });
+
+            counter.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const dragValue = e.dataTransfer.types.includes('text/plain');
+                if (dragValue) {
+                    counter.classList.add('icv-counter-drop-target');
+                }
+            });
+
+            counter.addEventListener('dragleave', () => {
+                counter.classList.remove('icv-counter-drop-target');
+            });
+
+            counter.addEventListener('drop', (e) => {
+                e.preventDefault();
+                counter.classList.remove('icv-counter-drop-target');
+
+                try {
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    const draggedValue = parseInt(data.value);
+                    const targetValue = parseInt(counter.dataset.value);
+
+                    // Only cancel if opposite signs
+                    if (draggedValue + targetValue === 0) {
+                        const counterId = counter.dataset.counterId;
+
+                        // Find and animate both counters
+                        const draggedCounter = container.querySelector(
+                            `.icv-counter-draggable[data-counter-id="${counterId}"][data-idx="${data.idx}"]`
+                        );
+
+                        // Animate cancellation
+                        if (draggedCounter) {
+                            draggedCounter.style.animation = 'icv-zero-pair-cancel 0.5s ease forwards';
+                        }
+                        counter.style.animation = 'icv-zero-pair-cancel 0.5s ease forwards';
+
+                        setTimeout(() => {
+                            if (draggedCounter) draggedCounter.remove();
+                            counter.remove();
+                            this.updateCounterResult(counterId);
+                        }, 500);
+                    }
+                } catch { /* ignore bad drops */ }
+            });
+        });
+    }
+
+    /**
+     * Add a counter to an existing counter workspace
+     */
+    addCounter(counterId, type) {
+        const container = document.getElementById(counterId);
+        if (!container) return;
+
+        const isPos = type === 'pos';
+        const sectionId = `${counterId}-${isPos ? 'positive' : 'negative'}`;
+        let section = document.getElementById(sectionId);
+
+        // Create section if it doesn't exist
+        if (!section) {
+            const workspace = document.getElementById(`${counterId}-workspace`);
+            if (!workspace) return;
+
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'icv-counters-section';
+            sectionDiv.innerHTML = `
+                <div class="icv-counters-section-label">${isPos ? 'Positive' : 'Negative'}</div>
+                <div class="icv-counters-row" id="${sectionId}"></div>
+            `;
+            workspace.appendChild(sectionDiv);
+            section = document.getElementById(sectionId);
+        }
+
+        // Find next index
+        const existing = section.querySelectorAll('.icv-counter-draggable');
+        const nextIdx = existing.length;
+
+        const counter = document.createElement('div');
+        counter.className = `icv-counter ${isPos ? 'icv-counter-pos' : 'icv-counter-neg'} icv-counter-draggable icv-counter-animate`;
+        counter.dataset.counterId = counterId;
+        counter.dataset.value = isPos ? '1' : '-1';
+        counter.dataset.idx = `new-${nextIdx}`;
+        counter.draggable = true;
+        counter.textContent = isPos ? '+' : '−';
+
+        section.appendChild(counter);
+
+        // Init interactivity on the new counter
+        this.initInteractiveCounters(container);
+        this.updateCounterResult(counterId);
+    }
+
+    /**
+     * Auto-cancel all zero pairs with animation
+     */
+    cancelZeroPairs(counterId) {
+        const container = document.getElementById(counterId);
+        if (!container) return;
+
+        const posCounters = Array.from(container.querySelectorAll('.icv-counter-pos.icv-counter-draggable'));
+        const negCounters = Array.from(container.querySelectorAll('.icv-counter-neg.icv-counter-draggable'));
+
+        const pairs = Math.min(posCounters.length, negCounters.length);
+
+        if (pairs === 0) return;
+
+        // Animate pairs canceling
+        for (let i = 0; i < pairs; i++) {
+            setTimeout(() => {
+                if (posCounters[i]) {
+                    posCounters[i].style.animation = 'icv-zero-pair-cancel 0.5s ease forwards';
+                }
+                if (negCounters[i]) {
+                    negCounters[i].style.animation = 'icv-zero-pair-cancel 0.5s ease forwards';
+                }
+
+                setTimeout(() => {
+                    if (posCounters[i]) posCounters[i].remove();
+                    if (negCounters[i]) negCounters[i].remove();
+
+                    // Update after last pair
+                    if (i === pairs - 1) {
+                        // Clean up empty sections
+                        container.querySelectorAll('.icv-counters-section').forEach(sec => {
+                            const row = sec.querySelector('.icv-counters-row');
+                            if (row && row.children.length === 0) sec.remove();
+                        });
+                        // Also remove zero pairs section
+                        const zpSection = document.getElementById(`${counterId}-zero-pairs`);
+                        if (zpSection) zpSection.closest('.icv-counters-section')?.remove();
+
+                        this.updateCounterResult(counterId);
+                    }
+                }, 500);
+            }, i * 200);
+        }
+    }
+
+    /**
+     * Recalculate and update the result display
+     */
+    updateCounterResult(counterId) {
+        const container = document.getElementById(counterId);
+        if (!container) return;
+
+        const posCount = container.querySelectorAll('.icv-counter-pos').length;
+        const negCount = container.querySelectorAll('.icv-counter-neg').length;
+        const result = posCount - negCount;
+
+        const resultEl = document.getElementById(`${counterId}-result`);
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <span class="icv-counters-equation">
+                    ${posCount > 0 ? `<span class="icv-result-pos">${posCount}</span>` : ''}
+                    ${negCount > 0 ? ` + <span class="icv-result-neg">(−${negCount})</span>` : ''}
+                    = <span class="icv-result-answer">${result}</span>
+                </span>
+            `;
+        }
+
+        // Update data attributes
+        container.dataset.positive = posCount;
+        container.dataset.negative = negCount;
+    }
+
+    /**
+     * Send current counter state to AI chat
+     */
+    sendCountersToAI(counterId) {
+        const container = document.getElementById(counterId);
+        if (!container) return;
+
+        const posCount = container.querySelectorAll('.icv-counter-pos').length;
+        const negCount = container.querySelectorAll('.icv-counter-neg').length;
+        const result = posCount - negCount;
+
+        const message = `I'm working with counters: ${posCount} positive and ${negCount} negative. The result is ${result}.`;
+
+        const chatInput = document.getElementById('userInput') ||
+                          document.getElementById('chatInput') ||
+                          document.getElementById('mastery-input');
+
+        if (chatInput) {
+            chatInput.value = message;
+            chatInput.focus();
+        }
+    }
+
+    // ==========================================
     // ALGEBRA TILES INLINE
     // [ALGEBRA_TILES:expression] - Shows inline tile preview + opens full workspace
     // ==========================================
@@ -2104,7 +2720,7 @@ class InlineChatVisuals {
 
         return `
         <div class="icv-multi-rep-container" id="${id}" data-fn="${this.escapeHtml(fn)}"
-             data-config='${JSON.stringify({ fn, xMin, xMax })}'>
+             data-config="${this.escapeHtml(JSON.stringify({ fn, xMin, xMax }))}">
             <div style="grid-column: 1 / -1; text-align: center;">
                 <div class="icv-title" style="margin-bottom: 4px;">${this.escapeHtml(title)}</div>
                 <div style="font-size: 11px; color: #94a3b8;">Four linked representations of the same function</div>
@@ -2322,11 +2938,17 @@ class InlineChatVisuals {
         // Initialize interactive number line points (draggable)
         this.initDraggablePoints(container);
 
+        // Initialize number line send-to-AI buttons
+        this.initNumlineSendButtons(container);
+
         // Initialize interactive fraction segments (clickable)
         this.initInteractiveFractions(container);
 
         // Initialize algebra tiles inline open buttons
         this.initAlgebraTilesButtons(container);
+
+        // Initialize interactive counters (pos/neg, zero pairs)
+        this.initInteractiveCounters(container);
 
         // Initialize multi-representation linked visuals
         this.initMultiRepLinks(container);
@@ -3166,6 +3788,304 @@ class InlineChatVisuals {
                 line-height: 1.5;
                 color: #374151;
                 padding: 8px;
+            }
+
+            /* ========== INTEGER COUNTERS ========== */
+            .icv-counters-container {
+                padding: 16px 20px;
+            }
+
+            .icv-counters-workspace {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                min-height: 60px;
+            }
+
+            .icv-counters-section {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .icv-counters-section-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .icv-counters-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .icv-counter {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                font-weight: 700;
+                cursor: default;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                user-select: none;
+                position: relative;
+            }
+
+            .icv-counter-pos {
+                background: linear-gradient(145deg, #fbbf24, #f59e0b);
+                color: #78350f;
+                border: 2px solid #d97706;
+                box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+            }
+
+            .icv-counter-neg {
+                background: linear-gradient(145deg, #f87171, #ef4444);
+                color: #fff;
+                border: 2px solid #dc2626;
+                box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+            }
+
+            .icv-counter-draggable {
+                cursor: grab;
+            }
+
+            .icv-counter-draggable:hover {
+                transform: scale(1.15);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+
+            .icv-counter-draggable:active {
+                cursor: grabbing;
+            }
+
+            .icv-counter-dragging {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+
+            .icv-counter-drop-target {
+                transform: scale(1.25);
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+            }
+
+            /* Zero pair layout */
+            .icv-zero-pairs {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .icv-zero-pair {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 8px;
+                background: rgba(0,0,0,0.04);
+                border-radius: 24px;
+                position: relative;
+            }
+
+            .icv-zero-pair .icv-counter {
+                width: 34px;
+                height: 34px;
+                font-size: 17px;
+            }
+
+            .icv-zero-line {
+                position: absolute;
+                top: 50%;
+                left: 8px;
+                right: 8px;
+                height: 2px;
+                background: #64748b;
+                transform: translateY(-50%);
+                opacity: 0.5;
+            }
+
+            /* Result display */
+            .icv-counters-result {
+                margin-top: 12px;
+                text-align: center;
+                padding: 8px 0;
+                border-top: 1px solid rgba(0,0,0,0.06);
+            }
+
+            .icv-counters-equation {
+                font-size: 18px;
+                font-weight: 600;
+                color: #1d1d1f;
+            }
+
+            .icv-result-pos {
+                color: #d97706;
+            }
+
+            .icv-result-neg {
+                color: #dc2626;
+            }
+
+            .icv-result-answer {
+                color: #2563eb;
+                font-size: 22px;
+            }
+
+            /* Control buttons */
+            .icv-counters-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-top: 10px;
+                justify-content: center;
+            }
+
+            .icv-counter-add-btn,
+            .icv-counter-cancel-btn,
+            .icv-counter-send-btn {
+                padding: 6px 12px;
+                border-radius: 8px;
+                border: 1px solid rgba(0,0,0,0.1);
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                background: #f8fafc;
+                color: #374151;
+            }
+
+            .icv-counter-add-pos {
+                border-color: #d97706;
+                color: #92400e;
+            }
+
+            .icv-counter-add-pos:hover {
+                background: #fef3c7;
+            }
+
+            .icv-counter-add-neg {
+                border-color: #dc2626;
+                color: #991b1b;
+            }
+
+            .icv-counter-add-neg:hover {
+                background: #fee2e2;
+            }
+
+            .icv-counter-cancel-btn {
+                border-color: #6366f1;
+                color: #4338ca;
+            }
+
+            .icv-counter-cancel-btn:hover {
+                background: #e0e7ff;
+            }
+
+            .icv-counter-send-btn {
+                border-color: #12B3B3;
+                color: #0e7490;
+            }
+
+            .icv-counter-send-btn:hover {
+                background: #ccfbf1;
+            }
+
+            /* Animations */
+            @keyframes icv-counter-pop {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.3); opacity: 0.7; }
+                100% { transform: scale(0); opacity: 0; }
+            }
+
+            @keyframes icv-zero-pair-cancel {
+                0% { transform: scale(1); opacity: 1; }
+                30% { transform: scale(1.2); opacity: 0.8; }
+                60% { transform: scale(0.5) rotate(180deg); opacity: 0.4; }
+                100% { transform: scale(0) rotate(360deg); opacity: 0; }
+            }
+
+            .icv-counter-animate {
+                animation: icv-counter-appear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            @keyframes icv-counter-appear {
+                0% { transform: scale(0); opacity: 0; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+
+            /* ========== ENHANCED NUMBER LINE ========== */
+            .icv-numline-container {
+                padding: 16px 12px;
+            }
+
+            .icv-numline-controls {
+                display: flex;
+                justify-content: center;
+                margin-top: 8px;
+            }
+
+            .icv-numline-send-btn {
+                padding: 5px 14px;
+                border-radius: 8px;
+                border: 1px solid #12B3B3;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                background: #f8fafc;
+                color: #0e7490;
+                transition: all 0.2s ease;
+            }
+
+            .icv-numline-send-btn:hover {
+                background: #ccfbf1;
+            }
+
+            .dark-mode .icv-numline-send-btn {
+                background: #334155;
+                color: #5eead4;
+                border-color: rgba(94, 234, 212, 0.3);
+            }
+
+            .dark-mode .icv-numline-send-btn:hover {
+                background: #1e3a4a;
+            }
+
+            /* Dark mode support */
+            .dark-mode .icv-counters-container {
+                background: #1e293b;
+                border-color: rgba(255,255,255,0.1);
+            }
+
+            .dark-mode .icv-counters-section-label {
+                color: #64748b;
+            }
+
+            .dark-mode .icv-counters-equation {
+                color: #e2e8f0;
+            }
+
+            .dark-mode .icv-result-answer {
+                color: #60a5fa;
+            }
+
+            .dark-mode .icv-zero-pair {
+                background: rgba(255,255,255,0.06);
+            }
+
+            .dark-mode .icv-counter-add-btn,
+            .dark-mode .icv-counter-cancel-btn,
+            .dark-mode .icv-counter-send-btn {
+                background: #334155;
+                color: #e2e8f0;
+                border-color: rgba(255,255,255,0.1);
+            }
+
+            .dark-mode .icv-counters-result {
+                border-top-color: rgba(255,255,255,0.06);
             }
         </style>
         `;
