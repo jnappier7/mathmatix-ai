@@ -437,8 +437,11 @@ class InlineChatVisuals {
     }
 
     // ==========================================
-    // NUMBER LINE
-    // [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3,label="Number line showing -2, 0, and 3"]
+    // NUMBER LINE (Enhanced)
+    // Basic:     [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3,label="L"]
+    // Jumps:     [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="Adding 3 + 4"]
+    // Fractions: [NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4,5/4],label="Fractions"]
+    // Inequality:[NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"]
     // ==========================================
     createNumberLine(paramStr) {
         const params = this.parseParams(paramStr);
@@ -446,44 +449,130 @@ class InlineChatVisuals {
 
         const min = params.min ?? -10;
         const max = params.max ?? 10;
-        const points = Array.isArray(params.points) ? params.points.map(Number) :
-                       (params.point ? [Number(params.point)] : []);
         const highlight = params.highlight ?? null;
         const label = params.label || '';
         const showInterval = params.interval || null;
         const openCircle = params.open === true || params.open === 'true';
-        const interactive = params.interactive !== false; // interactive by default
+        const interactive = params.interactive !== false;
+        const denominator = params.denominator ? parseInt(params.denominator) : null;
+        const inequality = params.inequality || null;
 
-        const width = 320;
-        const height = 80;
+        // Parse points (support fractions like 1/4, 3/4)
+        let points = [];
+        if (Array.isArray(params.points)) {
+            points = params.points.map(p => {
+                if (typeof p === 'string' && p.includes('/')) {
+                    const [n, d] = p.split('/').map(Number);
+                    return n / d;
+                }
+                return Number(p);
+            });
+        } else if (params.point) {
+            points = [Number(params.point)];
+        }
+
+        // Parse jumps: array of [from, to, label] tuples
+        // Format in params: "(0,3,+3),(3,7,+4)"
+        let jumps = [];
+        if (params.jumps) {
+            const jumpStr = Array.isArray(params.jumps) ? params.jumps.join(',') : params.jumps;
+            const jumpRegex = /\(([^,]+),([^,]+),([^)]+)\)/g;
+            let jm;
+            while ((jm = jumpRegex.exec(jumpStr)) !== null) {
+                jumps.push({ from: Number(jm[1]), to: Number(jm[2]), label: jm[3].trim() });
+            }
+        }
+
+        // Dimensions — taller if we have jumps
+        const width = 340;
+        const hasJumps = jumps.length > 0;
+        const hasInequality = inequality !== null;
+        const height = hasJumps ? 110 : 80;
         const padding = 30;
-        const lineY = 45;
+        const lineY = hasJumps ? 65 : 45;
 
         const scale = (width - 2 * padding) / (max - min);
         const toX = (val) => padding + (val - min) * scale;
 
         let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line" id="${id}-svg">`;
 
+        // Inequality shading (background, drawn first)
+        if (hasInequality) {
+            const ineqMatch = inequality.match(/([<>]=?)\s*(-?\d+\.?\d*)/);
+            if (ineqMatch) {
+                const op = ineqMatch[1];
+                const val = parseFloat(ineqMatch[2]);
+                const valX = toX(val);
+                const isOpen = !op.includes('=');
+
+                // Shading
+                if (op.startsWith('>')) {
+                    svg += `<rect x="${valX}" y="${lineY - 12}" width="${width - padding - valX}" height="24"
+                                  fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
+                    // Arrow indicating continues right
+                    svg += `<polygon points="${width - padding - 2},${lineY} ${width - padding - 10},${lineY - 5} ${width - padding - 10},${lineY + 5}"
+                                     fill="rgba(102, 126, 234, 0.4)"/>`;
+                } else {
+                    svg += `<rect x="${padding}" y="${lineY - 12}" width="${valX - padding}" height="24"
+                                  fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
+                    svg += `<polygon points="${padding + 2},${lineY} ${padding + 10},${lineY - 5} ${padding + 10},${lineY + 5}"
+                                     fill="rgba(102, 126, 234, 0.4)"/>`;
+                }
+
+                // Endpoint circle (open or closed)
+                svg += `<circle cx="${valX}" cy="${lineY}" r="7" fill="${isOpen ? 'white' : '#667eea'}"
+                              stroke="#667eea" stroke-width="2.5"/>`;
+            }
+        }
+
         // Draw main line
         svg += `<line x1="${padding}" y1="${lineY}" x2="${width - padding}" y2="${lineY}"
                       stroke="#333" stroke-width="2"/>`;
 
-        // Draw arrow heads
+        // Arrow heads
         svg += `<polygon points="${width - padding},${lineY} ${width - padding - 8},${lineY - 5} ${width - padding - 8},${lineY + 5}" fill="#333"/>`;
         svg += `<polygon points="${padding},${lineY} ${padding + 8},${lineY - 5} ${padding + 8},${lineY + 5}" fill="#333"/>`;
 
-        // Draw tick marks and labels
-        for (let i = min; i <= max; i++) {
-            const x = toX(i);
-            const isHighlight = highlight !== null && i === Number(highlight);
-            svg += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}"
-                          stroke="${isHighlight ? '#667eea' : '#333'}" stroke-width="${isHighlight ? 3 : 1}"/>`;
-            svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle"
-                          fill="${isHighlight ? '#667eea' : '#333'}" font-size="12"
-                          font-weight="${isHighlight ? 'bold' : 'normal'}">${i}</text>`;
+        // Tick marks — integer or fraction-based
+        if (denominator && denominator > 0) {
+            // Fraction tick marks
+            const step = 1 / denominator;
+            for (let val = min; val <= max + step / 2; val += step) {
+                const roundedVal = Math.round(val * denominator) / denominator;
+                const x = toX(roundedVal);
+                const isWhole = Math.abs(roundedVal - Math.round(roundedVal)) < 0.001;
+                const tickHeight = isWhole ? 8 : 4;
+                const isHighlightTick = highlight !== null && Math.abs(roundedVal - Number(highlight)) < 0.001;
+
+                svg += `<line x1="${x}" y1="${lineY - tickHeight}" x2="${x}" y2="${lineY + tickHeight}"
+                              stroke="${isHighlightTick ? '#667eea' : '#555'}" stroke-width="${isWhole ? 1.5 : 1}"/>`;
+
+                // Labels: show whole numbers always, fractions only at labeled points
+                if (isWhole) {
+                    svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle" fill="#333" font-size="11">${Math.round(roundedVal)}</text>`;
+                }
+            }
+
+            // Fraction labels for points
+            points.forEach(p => {
+                const x = toX(p);
+                const frac = this.decimalToFraction(p, denominator);
+                svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle" fill="#667eea" font-size="10" font-weight="bold">${frac}</text>`;
+            });
+        } else {
+            // Integer tick marks
+            for (let i = min; i <= max; i++) {
+                const x = toX(i);
+                const isHighlightTick = highlight !== null && i === Number(highlight);
+                svg += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}"
+                              stroke="${isHighlightTick ? '#667eea' : '#333'}" stroke-width="${isHighlightTick ? 3 : 1}"/>`;
+                svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle"
+                              fill="${isHighlightTick ? '#667eea' : '#333'}" font-size="12"
+                              font-weight="${isHighlightTick ? 'bold' : 'normal'}">${i}</text>`;
+            }
         }
 
-        // Draw interval shading if specified
+        // Interval shading
         if (showInterval) {
             const [intMin, intMax] = showInterval.split(',').map(Number);
             const x1 = toX(intMin);
@@ -492,10 +581,37 @@ class InlineChatVisuals {
                           fill="rgba(102, 126, 234, 0.2)" rx="4"/>`;
         }
 
-        // Draw draggable points (interactive)
+        // Jump arcs (hop arrows above the line for addition/subtraction)
+        const jumpColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12'];
+        jumps.forEach((jump, idx) => {
+            const x1 = toX(jump.from);
+            const x2 = toX(jump.to);
+            const midX = (x1 + x2) / 2;
+            const arcHeight = Math.min(30, Math.abs(x2 - x1) * 0.4);
+            const color = jumpColors[idx % jumpColors.length];
+            const direction = jump.to > jump.from ? 1 : -1;
+
+            // Arc path
+            svg += `<path d="M ${x1} ${lineY - 3} Q ${midX} ${lineY - 3 - arcHeight} ${x2} ${lineY - 3}"
+                          fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>`;
+
+            // Arrowhead at destination
+            const arrowSize = 6;
+            svg += `<polygon points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize / 2}"
+                              fill="${color}"/>`;
+
+            // Start dot
+            svg += `<circle cx="${x1}" cy="${lineY}" r="4" fill="${color}"/>`;
+
+            // Jump label above arc
+            svg += `<text x="${midX}" y="${lineY - arcHeight - 8}" text-anchor="middle"
+                          fill="${color}" font-size="12" font-weight="bold">${this.escapeHtml(jump.label)}</text>`;
+        });
+
+        // Draw draggable points
         points.forEach((point, idx) => {
             const x = toX(point);
-            const isHighlighted = highlight !== null && point === Number(highlight);
+            const isHighlighted = highlight !== null && Math.abs(point - Number(highlight)) < 0.001;
             const fillColor = isHighlighted ? '#667eea' : '#e74c3c';
 
             if (openCircle) {
@@ -510,21 +626,47 @@ class InlineChatVisuals {
                             data-padding="${padding}" data-scale="${scale}"/>`;
             }
 
-            // Point label above (will update on drag)
+            // Point label above
+            const labelText = denominator ? this.decimalToFraction(point, denominator) : point;
             svg += `<text x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
-                          font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${point}</text>`;
+                          font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${labelText}</text>`;
         });
 
         svg += `</svg>`;
 
+        // Controls: send to AI button (only if interactive)
+        const controlsHtml = interactive ? `
+            <div class="icv-numline-controls">
+                <button class="icv-numline-send-btn" data-numline-id="${id}">Send to AI</button>
+            </div>` : '';
+
         return `
         <div class="icv-container icv-numline-container" id="${id}"
-             data-config='${JSON.stringify({ min, max, points, highlight, openCircle, interactive })}'>
+             data-config='${JSON.stringify({ min, max, points, highlight, openCircle, interactive, denominator, jumps, inequality })}'>
             ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
             ${svg}
             ${interactive && points.length > 0 ? `<div class="icv-interactive-value" id="${id}-value">Drag points to explore</div>` : ''}
+            ${controlsHtml}
         </div>
         `;
+    }
+
+    /**
+     * Convert a decimal to a fraction string for display
+     * e.g., 0.25 with denominator 4 → "1/4"
+     */
+    decimalToFraction(val, denominator) {
+        if (!denominator) return val;
+        const numerator = Math.round(val * denominator);
+        if (numerator === 0) return '0';
+        if (denominator === 1) return String(numerator);
+        // Simplify
+        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+        const g = gcd(Math.abs(numerator), denominator);
+        const sNum = numerator / g;
+        const sDen = denominator / g;
+        if (sDen === 1) return String(sNum);
+        return `${sNum}/${sDen}`;
     }
 
     /**
@@ -603,6 +745,51 @@ class InlineChatVisuals {
             document.addEventListener('mouseup', onEnd);
             document.addEventListener('touchend', onEnd);
         });
+    }
+
+    /**
+     * Initialize number line send-to-AI buttons
+     */
+    initNumlineSendButtons(container) {
+        container.querySelectorAll('.icv-numline-send-btn').forEach(btn => {
+            if (btn._clickInit) return;
+            btn._clickInit = true;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const numlineId = btn.dataset.numlineId;
+                this.sendNumlineToAI(numlineId);
+            });
+        });
+    }
+
+    /**
+     * Send current number line state to AI chat
+     */
+    sendNumlineToAI(numlineId) {
+        const container = document.getElementById(numlineId);
+        if (!container) return;
+
+        const config = JSON.parse(container.dataset.config || '{}');
+
+        // Read current point positions from SVG (may have been dragged)
+        const svg = container.querySelector('svg');
+        const currentPoints = [];
+        if (svg) {
+            svg.querySelectorAll('.icv-point-label').forEach(label => {
+                currentPoints.push(label.textContent);
+            });
+        }
+
+        const pointsStr = currentPoints.length > 0 ? currentPoints.join(', ') : 'none';
+        const message = `I'm looking at a number line from ${config.min} to ${config.max}. Points at: ${pointsStr}.`;
+
+        const chatInput = document.getElementById('userInput') ||
+                          document.getElementById('chatInput') ||
+                          document.getElementById('mastery-input');
+        if (chatInput) {
+            chatInput.value = message;
+            chatInput.focus();
+        }
     }
 
     // ==========================================
@@ -2750,6 +2937,9 @@ class InlineChatVisuals {
         // Initialize interactive number line points (draggable)
         this.initDraggablePoints(container);
 
+        // Initialize number line send-to-AI buttons
+        this.initNumlineSendButtons(container);
+
         // Initialize interactive fraction segments (clickable)
         this.initInteractiveFractions(container);
 
@@ -3824,6 +4014,39 @@ class InlineChatVisuals {
             @keyframes icv-counter-appear {
                 0% { transform: scale(0); opacity: 0; }
                 100% { transform: scale(1); opacity: 1; }
+            }
+
+            /* ========== ENHANCED NUMBER LINE ========== */
+            .icv-numline-container {
+                padding: 16px 12px;
+            }
+
+            .icv-numline-controls {
+                display: flex;
+                justify-content: center;
+                margin-top: 8px;
+            }
+
+            .icv-numline-send-btn {
+                padding: 5px 14px;
+                border-radius: 8px;
+                border: 1px solid #12B3B3;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                background: #f8fafc;
+                color: #0e7490;
+                transition: all 0.2s ease;
+            }
+
+            .icv-numline-send-btn:hover {
+                background: #ccfbf1;
+            }
+
+            .dark-mode .icv-numline-send-btn {
+                background: #334155;
+                color: #5eead4;
+                border-color: rgba(94, 234, 212, 0.3);
             }
 
             /* Dark mode support */

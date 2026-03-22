@@ -141,7 +141,10 @@ Available commands (use only when a visual genuinely helps):
 [DIAGRAM:angle:degrees=V,label='θ',showMeasure=true]
 [TRIANGLE_PROBLEM:A=V,B=V,C=?]
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"]
-[NUMBER_LINE:min=V,max=V,points=[...],open=bool,label="L"]
+[NUMBER_LINE:min=V,max=V,points=[...],open=bool,label="L"] — basic number line
+[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="L"] — hop arrows for addition/subtraction
+[NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4],label="L"] — fraction tick marks
+[NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"] — inequality shading with open/closed circle
 [FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C]
 [PIE_CHART:data="L1:V1,L2:V2",title="T"]
 [BAR_CHART:data="L1:V1,L2:V2",title="T"]
