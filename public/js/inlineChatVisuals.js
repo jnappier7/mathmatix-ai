@@ -491,7 +491,8 @@ class InlineChatVisuals {
         const padding = 30;
         const lineY = hasJumps ? 65 : 45;
 
-        const scale = (width - 2 * padding) / (max - min);
+        const range = max - min || 1; // Prevent division by zero when min==max
+        const scale = (width - 2 * padding) / range;
         const toX = (val) => padding + (val - min) * scale;
 
         let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line" id="${id}-svg">`;
@@ -595,9 +596,9 @@ class InlineChatVisuals {
             svg += `<path d="M ${x1} ${lineY - 3} Q ${midX} ${lineY - 3 - arcHeight} ${x2} ${lineY - 3}"
                           fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>`;
 
-            // Arrowhead at destination
+            // Arrowhead at destination (symmetric triangle)
             const arrowSize = 6;
-            svg += `<polygon points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize / 2}"
+            svg += `<polygon points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize}"
                               fill="${color}"/>`;
 
             // Start dot
