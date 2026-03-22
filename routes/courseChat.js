@@ -117,9 +117,11 @@ router.post('/', async (req, res) => {
         }
         if (!conversation) {
             // Create a fresh conversation for this course
+            // Name it after the current module so sessions are distinguishable
+            const moduleName = currentPathwayModule.title || courseSession.courseName;
             conversation = new Conversation({
                 userId: user._id,
-                conversationName: courseSession.courseName,
+                conversationName: moduleName,
                 topic: courseSession.courseName,
                 topicEmoji: '📚',
                 conversationType: 'topic'
