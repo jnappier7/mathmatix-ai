@@ -154,6 +154,35 @@ Available commands:
 [WHITEBOARD_WRITE:content]
 [EQUATION_SOLVE:equation:PARTIAL]
 
+--- FILE HANDLING ---
+PDF/image content appears in conversation history as "[Content from filename]". You CAN see it. NEVER say "I can't see PDFs." Reference it directly.
+
+--- SAFETY & CONTENT ---
+You work with minors. Refuse sexual, violent, or inappropriate content immediately with a standard redirect. All examples must be school-appropriate. Math topic changes (e.g., "let's do calculus") and exam prep requests are always valid. Teacher resource names ("Module 8 Test PRACTICE (A)") are always legitimate.
+
+--- CULTURALLY RESPONSIVE TEACHING ---
+1. ASSET-BASED FRAMING: Always build on what students know. "You already understand [X] — let's use that" over "You don't know [Y] yet." Every student brings mathematical knowledge from home, community, and culture.
+2. DIVERSE WORD PROBLEMS: Use names and contexts reflecting diverse backgrounds naturally. Rotate across cultures — no single group should dominate. Avoid pairing names with stereotypical contexts.
+3. CULTURAL CONTEXT: When a student mentions their background, interests, family traditions, or community — weave these into examples naturally. A student who helps at a family restaurant gets restaurant math. A student who mentions Eid, Diwali, or Lunar New Year gets celebration-themed problems.
+4. NAME RESPECT: Use the student's name exactly as provided. Never shorten, anglicize, or comment on it.
+5. MULTILINGUAL VALIDATION: If a student uses math terms in another language, bridge it: "Exactly — same idea!" Their multilingualism is a strength.
+6. EQUITABLE EXPECTATIONS: Never assume capability based on a student's name, language, or background. Every student gets the same rigorous concept-first teaching.
+7. MATH IS MULTICULTURAL: When historically relevant, briefly note diverse origins of mathematical concepts (algebra from al-Khwarizmi, zero from Indian mathematicians, fractal patterns in African design). Keep it natural, not forced.
+8. COMMUNITY STRENGTHS: Frame word problems around community assets (local businesses, cultural events, family activities), not deficits.
+
+--- SKILL TRACKING TAGS ---
+<SKILL_MASTERED:skill-id> — when confident student has mastered a skill
+<SKILL_STARTED:skill-id> — when beginning to teach a new skill
+<IEP_GOAL_PROGRESS:goal-desc,+N> — when student demonstrates IEP goal progress
+<LEARNING_INSIGHT:description> — when you notice something about how they learn
+`.trim();
+
+
+// ============================================================================
+// MANIPULATIVE INSTRUCTIONS — injected only when the topic is relevant
+// ============================================================================
+
+const COUNTER_INSTRUCTIONS = `
 --- INTEGER COUNTERS (pos/neg manipulative) ---
 Use counters to teach integer addition/subtraction visually. Yellow = positive, Red = negative. Opposite pairs cancel (zero pairs).
 [COUNTERS:positive=V,negative=V,label="L"] — show pos/neg counters with zero-pair grouping
@@ -163,7 +192,9 @@ Examples:
 - "Show me -4 + 7" → [COUNTERS:positive=7,negative=4,label="−4 + 7"] "The 4 negatives cancel with 4 of the positives. What's left?"
 - "What are zero pairs?" → [COUNTERS:positive=3,negative=3,label="Zero pairs: +3 and −3 cancel out!"] "When a positive and negative come together, they make ZERO."
 Use counters for: adding integers, subtracting integers (add the opposite), understanding negative numbers, zero pairs concept. Students can drag counters together to cancel, add more, and send their work back to you.
+`.trim();
 
+const ALGEBRA_TILES_INSTRUCTIONS = `
 --- ALGEBRA TILES (interactive manipulative) ---
 Use algebra tiles to teach expressions, equations, factoring, and polynomial operations visually.
 Tile types: x² (large square), x (rectangle), unit/1 (small square). Each has positive (blue) and negative (red).
@@ -205,36 +236,109 @@ When teaching solving: ALWAYS use tile language. "+3" = "3 positive unit tiles."
 5. Side by Side, Divide: When coefficient is with variable, "If they're side by side, you must DIVIDE."
 6. Verbalize Terms: "3x" = "3 x-tiles" = "3 groups of x".
 7. Answer vs Solution: After solving, do a "Quick Check with Substitution" — turns an answer into a solution.
-
---- FILE HANDLING ---
-PDF/image content appears in conversation history as "[Content from filename]". You CAN see it. NEVER say "I can't see PDFs." Reference it directly.
-
---- SAFETY & CONTENT ---
-You work with minors. Refuse sexual, violent, or inappropriate content immediately with a standard redirect. All examples must be school-appropriate. Math topic changes (e.g., "let's do calculus") and exam prep requests are always valid. Teacher resource names ("Module 8 Test PRACTICE (A)") are always legitimate.
-
---- CULTURALLY RESPONSIVE TEACHING ---
-1. ASSET-BASED FRAMING: Always build on what students know. "You already understand [X] — let's use that" over "You don't know [Y] yet." Every student brings mathematical knowledge from home, community, and culture.
-2. DIVERSE WORD PROBLEMS: Use names and contexts reflecting diverse backgrounds naturally. Rotate across cultures — no single group should dominate. Avoid pairing names with stereotypical contexts.
-3. CULTURAL CONTEXT: When a student mentions their background, interests, family traditions, or community — weave these into examples naturally. A student who helps at a family restaurant gets restaurant math. A student who mentions Eid, Diwali, or Lunar New Year gets celebration-themed problems.
-4. NAME RESPECT: Use the student's name exactly as provided. Never shorten, anglicize, or comment on it.
-5. MULTILINGUAL VALIDATION: If a student uses math terms in another language, bridge it: "Exactly — same idea!" Their multilingualism is a strength.
-6. EQUITABLE EXPECTATIONS: Never assume capability based on a student's name, language, or background. Every student gets the same rigorous concept-first teaching.
-7. MATH IS MULTICULTURAL: When historically relevant, briefly note diverse origins of mathematical concepts (algebra from al-Khwarizmi, zero from Indian mathematicians, fractal patterns in African design). Keep it natural, not forced.
-8. COMMUNITY STRENGTHS: Frame word problems around community assets (local businesses, cultural events, family activities), not deficits.
-
---- SKILL TRACKING TAGS ---
-<SKILL_MASTERED:skill-id> — when confident student has mastered a skill
-<SKILL_STARTED:skill-id> — when beginning to teach a new skill
-<IEP_GOAL_PROGRESS:goal-desc,+N> — when student demonstrates IEP goal progress
-<LEARNING_INSIGHT:description> — when you notice something about how they learn
 `.trim();
+
+
+// ============================================================================
+// TOPIC DETECTION — determines which manipulative instructions to inject
+// ============================================================================
+
+/**
+ * Detect which manipulative instructions are relevant based on:
+ * - The student's current message
+ * - The conversation topic
+ * - The student's grade/course
+ * - Recent conversation history
+ *
+ * @param {Object} opts
+ * @param {string} opts.studentMessage - The current student message (if available)
+ * @param {string} opts.topic - Conversation topic name
+ * @param {string} opts.mathCourse - Student's math course
+ * @param {number|string} opts.gradeLevel - Student's grade level
+ * @param {Array} opts.recentMessages - Last few messages in conversation
+ * @returns {{ includeCounters: boolean, includeAlgebraTiles: boolean }}
+ */
+function detectManipulativeContext(opts = {}) {
+  const msg = (opts.studentMessage || '').toLowerCase();
+  const topic = (opts.topic || '').toLowerCase();
+  const course = (opts.mathCourse || '').toLowerCase();
+  const grade = typeof opts.gradeLevel === 'string'
+    ? opts.gradeLevel.toLowerCase().replace(/[^0-9k]/g, '')
+    : String(opts.gradeLevel || '');
+  const gradeNum = grade === 'k' ? 0 : parseInt(grade) || 0;
+
+  // Check recent messages for context
+  const recentText = (opts.recentMessages || [])
+    .slice(-6)
+    .map(m => (m.content || '').toLowerCase())
+    .join(' ');
+
+  const allText = `${msg} ${topic} ${course} ${recentText}`;
+
+  // --- COUNTER detection ---
+  const counterPatterns = [
+    /\binteger/,
+    /\bnegative\s*number/,
+    /\bpositive\s*(?:and|&)\s*negative/,
+    /\bzero\s*pair/,
+    /\badding\s*(?:negative|integer)/,
+    /\bsubtract(?:ing)?\s*(?:negative|integer)/,
+    /\d+\s*\+\s*\(?-\d/,        // 5 + (-3)
+    /\(?-\d+\)?\s*\+\s*\d/,     // (-3) + 5
+    /\bcounter/,
+    /\bopposite/,
+  ];
+
+  // Grades 5-8 are peak integer instruction years
+  const counterGradeRelevant = gradeNum >= 5 && gradeNum <= 8;
+
+  const includeCounters = counterPatterns.some(p => p.test(allText)) ||
+    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText));
+
+  // --- ALGEBRA TILES detection ---
+  const tilePatterns = [
+    /\balgebra\s*tile/,
+    /\btile/,
+    /\bsolve\b.*(?:equation|=)/,
+    /\bequation/,
+    /\bfactor(?:ing)?\b/,
+    /\bpolynomial/,
+    /\bexpression/,
+    /\blike\s*terms/,
+    /\bcombine/,
+    /\bsimplif/,
+    /\bfoil/,
+    /\bdistribut/,
+    /\bx\s*[\+\-\=]/,
+    /\bx\^2|x²/,
+    /\bquadratic/,
+    /\bbinomial/,
+    /\btrinomial/,
+    /\bvariable/,
+    /\bisolat/,
+    /\bboth\s*sides/,
+    /\bzero\s*pair/,
+  ];
+
+  // Pre-algebra and up
+  const tileGradeRelevant = gradeNum >= 6;
+
+  // Course-based: any algebra course
+  const tileCourseRelevant = /algebra|pre-?algebra|math\s*[78]/.test(course);
+
+  const includeAlgebraTiles = tilePatterns.some(p => p.test(allText)) ||
+    (tileGradeRelevant && /solve|equation|factor|express|variable/.test(allText)) ||
+    tileCourseRelevant;
+
+  return { includeCounters, includeAlgebraTiles };
+}
 
 
 // ============================================================================
 // DYNAMIC PROMPT BUILDER — per-student, per-request context
 // ============================================================================
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -409,6 +513,22 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(buildMasteryContextCompact(masteryContext, userProfile));
   }
 
+  // Conditional manipulative instructions — only inject when the topic is relevant
+  const manipulativeCtx = detectManipulativeContext({
+    studentMessage: studentMessage || '',
+    topic: conversationContext?.topicName || '',
+    mathCourse,
+    gradeLevel,
+    recentMessages: recentMessages || []
+  });
+
+  if (manipulativeCtx.includeCounters) {
+    parts.push(COUNTER_INSTRUCTIONS);
+  }
+  if (manipulativeCtx.includeAlgebraTiles) {
+    parts.push(ALGEBRA_TILES_INSTRUCTIONS);
+  }
+
   return parts.join('\n\n');
 }
 
@@ -573,4 +693,4 @@ Guidelines:
 }
 
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, detectManipulativeContext };
