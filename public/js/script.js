@@ -335,16 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     modalHandled = true;
 
-                } else if (choice.action === 'resume-course') {
-                    // Resume a specific course conversation
-                    if (window.courseManager) {
-                        await window.courseManager.activateCourse(choice.courseSessionId);
-                    } else if (window.sidebar) {
-                        await window.sidebar.loadSessions();
-                        await window.sidebar.switchSession(choice.conversationId);
-                    }
-                    modalHandled = true;
-
                 } else if (choice.action === 'new-course') {
                     // Start a fresh chat for the course at current lesson progress
                     try {

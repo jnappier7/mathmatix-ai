@@ -82,35 +82,9 @@ router.get('/returning-user-data', isAuthenticated, async (req, res) => {
       status: { $in: ['active', 'paused'] }
     }).sort({ updatedAt: -1 }).lean();
 
-    // Build course data with their associated conversations
+    // Build course data (no conversation lists — students just "Continue")
     const courses = [];
     for (const cs of courseSessions) {
-      // Find the course conversation and any other conversations linked to this course
-      const courseConversations = await Conversation.find({
-        userId,
-        isActive: true,
-        $or: [
-          { _id: cs.conversationId },
-          { conversationType: 'course', topic: cs.courseName }
-        ]
-      })
-        .sort({ lastActivity: -1 })
-        .select('_id conversationName customName topic topicEmoji lastActivity messages conversationType')
-        .lean();
-
-      const formattedConversations = courseConversations.map(conv => {
-        const lastMsg = conv.messages?.length > 0
-          ? conv.messages[conv.messages.length - 1].content.substring(0, 80)
-          : null;
-        return {
-          _id: conv._id,
-          name: conv.customName || conv.conversationName || conv.topic || 'Course Chat',
-          lastMessage: lastMsg,
-          lastActivity: conv.lastActivity,
-          messageCount: conv.messages?.length || 0
-        };
-      });
-
       // Resolve current module title from pathway file
       let modLabel = '';
       try {
@@ -136,10 +110,7 @@ router.get('/returning-user-data', isAuthenticated, async (req, res) => {
         status: cs.status,
         overallProgress: cs.overallProgress || 0,
         currentModuleId: cs.currentModuleId,
-        currentScaffoldIndex: cs.currentScaffoldIndex || 0,
-        conversationId: cs.conversationId,
-        currentModuleLabel: modLabel,
-        conversations: formattedConversations
+        currentModuleLabel: modLabel
       });
     }
 

@@ -19,7 +19,6 @@ class ReturningUserModal {
      *   { action: 'new-general' }
      *   { action: 'new-course', courseSessionId: '...' }
      *   { action: 'resume-chat', conversationId: '...' }
-     *   { action: 'resume-course', courseSessionId: '...', conversationId: '...' }
      *   { action: 'browse-courses' }
      *   { action: 'skip' } — if not a returning user
      */
@@ -216,28 +215,22 @@ class ReturningUserModal {
                     <div class="returning-course-icon">📘</div>
                     <div class="returning-course-info">
                         <div class="returning-course-name">${this.escapeHtml(course.courseName)}</div>
-                        <div class="returning-course-meta">${this.escapeHtml(statusLabel)}</div>
+                        <div class="returning-course-meta">${this.escapeHtml(statusLabel)} &middot; ${course.overallProgress}%</div>
                     </div>
                     <div class="returning-course-progress">
                         <div class="returning-course-progress-bar">
                             <div class="returning-course-progress-fill" style="width: ${course.overallProgress}%"></div>
                         </div>
-                        <span class="returning-course-progress-pct">${course.overallProgress}%</span>
                     </div>
-                </div>
-                <div class="returning-course-body">
-                    <div class="returning-course-actions">
-                        <button class="returning-course-new-btn" data-session-id="${course.courseSessionId}">
-                            <i class="fas fa-play"></i> New Lesson Session
-                        </button>
-                    </div>
-                    <div class="returning-course-chats"></div>
+                    <button class="returning-course-continue-btn" data-session-id="${course.courseSessionId}">
+                        <i class="fas fa-play"></i> Continue
+                    </button>
                 </div>
             `;
 
-            // Wire up "New Lesson Session" button
-            const newBtn = card.querySelector('.returning-course-new-btn');
-            newBtn.addEventListener('click', (e) => {
+            // Wire up "Continue" button — starts a fresh conversation at current module
+            const continueBtn = card.querySelector('.returning-course-continue-btn');
+            continueBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.close();
                 this.resolveChoice({
@@ -245,45 +238,6 @@ class ReturningUserModal {
                     courseSessionId: course.courseSessionId
                 });
             });
-
-            // Add existing course chats (limited with "See more" toggle)
-            const chatsContainer = card.querySelector('.returning-course-chats');
-            if (course.conversations && course.conversations.length > 0) {
-                const divider = document.createElement('div');
-                divider.className = 'returning-chat-divider';
-                divider.textContent = 'Or continue a chat:';
-                chatsContainer.appendChild(divider);
-
-                const courseDefaultShow = 3;
-                const courseKey = `_courseChatsShowAll_${course.courseSessionId}`;
-                const showAll = this[courseKey];
-                const convsToShow = showAll ? course.conversations : course.conversations.slice(0, courseDefaultShow);
-
-                convsToShow.forEach(conv => {
-                    const chatItem = this.createChatItem(conv, () => {
-                        this.close();
-                        this.resolveChoice({
-                            action: 'resume-course',
-                            courseSessionId: course.courseSessionId,
-                            conversationId: conv._id
-                        });
-                    });
-                    chatsContainer.appendChild(chatItem);
-                });
-
-                if (course.conversations.length > courseDefaultShow) {
-                    const seeMoreBtn = document.createElement('button');
-                    seeMoreBtn.className = 'returning-see-more-btn';
-                    seeMoreBtn.textContent = showAll
-                        ? 'Show less'
-                        : `See ${course.conversations.length - courseDefaultShow} more`;
-                    seeMoreBtn.addEventListener('click', () => {
-                        this[courseKey] = !this[courseKey];
-                        this.renderCourses();
-                    });
-                    chatsContainer.appendChild(seeMoreBtn);
-                }
-            }
 
             list.appendChild(card);
         });

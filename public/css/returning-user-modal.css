@@ -154,33 +154,13 @@
   transition: width 0.3s;
 }
 
-.returning-course-progress-pct {
-  font-size: 11px;
-  font-weight: 700;
-  color: #667eea;
-  min-width: 28px;
-  text-align: right;
-}
 
-/* Course actions and chats list */
-.returning-course-body {
-  padding: 8px 12px 12px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.returning-course-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.returning-course-new-btn {
-  flex: 1;
+/* Course continue button */
+.returning-course-continue-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 8px 16px;
   border: none;
   border-radius: 8px;
   background: linear-gradient(135deg, #667eea, #764ba2);
@@ -189,17 +169,18 @@
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
+  flex-shrink: 0;
 }
 
-.returning-course-new-btn:hover {
+.returning-course-continue-btn:hover {
   opacity: 0.9;
 }
 
-.returning-course-new-btn i {
-  font-size: 12px;
+.returning-course-continue-btn i {
+  font-size: 11px;
 }
 
-/* Chat items within a course */
+/* Chat items (used by recent sessions) */
 .returning-chat-item {
   display: flex;
   align-items: center;
@@ -252,11 +233,6 @@
   flex-shrink: 0;
 }
 
-.returning-chat-divider {
-  font-size: 11px;
-  color: #bbb;
-  padding: 4px 12px 2px;
-}
 
 /* Smart Resume Hero Cards */
 .returning-hero-card {
@@ -499,10 +475,6 @@
 .dark-mode .returning-course-meta,
 .dark-mode .returning-chat-preview {
   color: #888;
-}
-
-.dark-mode .returning-course-body {
-  border-top-color: #333;
 }
 
 .dark-mode .returning-chat-item:hover {
