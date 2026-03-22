@@ -1,7 +1,7 @@
 // modules/gamification.js
 // XP system, level celebrations, leaderboard, quests, tutor unlocks
 
-import { triggerConfetti } from './helpers.js';
+import { triggerConfetti, showToast } from './helpers.js';
 
 /**
  * Show level-up celebration modal with tutor video
