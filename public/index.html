@@ -1873,6 +1873,57 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lp-tutor-card-catch { font-size: 0.72rem; }
       .lp-tutor-card-spec { display: none; }
     }
+
+    /* ── Dark mode overrides for trial chat UI ───────── */
+    [data-theme="dark"] .lp-tutor-card {
+      border-color: #334155;
+    }
+    [data-theme="dark"] .lp-tutor-card:hover {
+      box-shadow: 0 12px 32px rgba(18, 179, 179, 0.25);
+    }
+    [data-theme="dark"] .lp-trial-chat-inner {
+      border-color: #334155;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+    [data-theme="dark"] .lp-trial-header {
+      background: #1e293b;
+      border-bottom-color: #334155;
+    }
+    [data-theme="dark"] .lp-trial-back:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] .lp-trial-typing {
+      background: #1e293b;
+      border-color: #334155;
+    }
+    [data-theme="dark"] .lp-trial-suggestions {
+      border-top-color: #334155;
+    }
+    [data-theme="dark"] .lp-trial-prompt {
+      background: rgba(18, 179, 179, 0.1);
+      border-color: rgba(18, 179, 179, 0.25);
+    }
+    [data-theme="dark"] .lp-trial-prompt:hover {
+      background: rgba(18, 179, 179, 0.2);
+    }
+    [data-theme="dark"] .lp-trial-input-area {
+      border-top-color: #334155;
+    }
+    [data-theme="dark"] .lp-trial-input {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+    [data-theme="dark"] .lp-trial-input:focus {
+      border-color: var(--clr-primary-teal);
+    }
+    [data-theme="dark"] .lp-trial-gate {
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      border-top-color: #334155;
+    }
+    [data-theme="dark"] .lp-celebration-overlay {
+      background: rgba(15, 23, 42, 0.95);
+    }
   </style>
 </head>
 <body>
