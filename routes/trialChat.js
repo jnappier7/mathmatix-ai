@@ -1,5 +1,5 @@
 // routes/trialChat.js
-// Anonymous trial chat — 3 free turns, no auth required.
+// Anonymous trial chat — 4 free turns (1 greeting + 3 student), no auth required.
 // Lets landing page visitors experience a real tutor conversation
 // before signing up. Uses server-side IP+session turn tracking.
 //
@@ -14,8 +14,9 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { sanitizeForAI } = require('../middleware/promptInjection');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
+const { callLLM } = require('../utils/llmGateway');
 
-const MAX_TURNS = 3;
+const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
@@ -57,7 +58,7 @@ setInterval(() => {
 // Aggressive rate limit for anonymous endpoint — IP-based
 const trialLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 30, // 30 requests per hour per IP (10 sessions × 3 turns)
+  max: 40, // 40 requests per hour per IP (8 sessions × 4 turns + greet)
   keyGenerator: (req) => req.ip,
   standardHeaders: true,
   legacyHeaders: false,
@@ -127,6 +128,81 @@ function buildTrialPipelineContext(sanitizedHistory) {
 
   return { conversation, user };
 }
+
+/**
+ * POST /api/trial-chat/greet
+ * Body: { tutorId: string }
+ * Returns: { greeting: string }
+ *
+ * Generates a personalized greeting in the tutor's voice/personality.
+ * This is the first thing the student sees — no history, no pipeline needed.
+ * Counts as 1 turn toward the gate (so student gets 3 real exchanges after).
+ */
+router.post('/greet', trialLimiter, async (req, res) => {
+  try {
+    const { tutorId } = req.body;
+
+    if (!tutorId || !UNLOCKED_TUTOR_IDS.includes(tutorId)) {
+      return res.status(400).json({ error: 'Invalid tutor selection.' });
+    }
+
+    // Check gate — greet counts as a turn
+    const serverTurns = getServerTurnCount(req.ip);
+    if (serverTurns >= MAX_TURNS) {
+      return res.json({ greeting: null, gated: true });
+    }
+
+    const tutor = TUTOR_CONFIG[tutorId];
+
+    const messages = [
+      {
+        role: 'system',
+        content: `You are ${tutor.name}, a math tutor on Mathmatix AI.
+
+PERSONALITY: ${tutor.personality}
+
+CULTURAL BACKGROUND: ${tutor.culturalBackground}
+
+Generate a warm, in-character greeting for an anonymous visitor who just landed on the site and picked you as their tutor. This is the FIRST thing they see.
+
+RULES:
+- 1-3 sentences max. Be warm and natural.
+- Stay fully in character — use your personality, catchphrase style, and cultural voice.
+- Welcome them and ask if they have a math question you can help with. If not, mention they can pick from the suggestions below.
+- Do NOT ask their name or grade. Do NOT say "welcome to Mathmatix." Just be yourself.
+- ALL math references must use LaTeX: \\( x \\) for inline.
+- Do NOT use bold, headers, or markdown formatting.`
+      },
+      {
+        role: 'user',
+        content: 'Generate the greeting.'
+      }
+    ];
+
+    const completion = await callLLM('gpt-4o-mini', messages, {
+      temperature: 0.9,
+      max_tokens: 150,
+    });
+
+    const greeting = completion.choices[0].message.content;
+
+    // Count this as a turn
+    incrementServerTurnCount(req.ip);
+
+    res.json({ greeting });
+
+  } catch (error) {
+    console.error('[Trial Chat] Greeting error:', error.message);
+    // Fallback greetings in each tutor's voice
+    const fallbacks = {
+      'bob': "Hey there! Math you believe it — you found the right tutor! Got a math question? Fire away, or pick one of those suggestions below!",
+      'maya': "Heyy! ✨ So glad you're here! Got a math question you need help with? If not, no worries — there are some suggestions right there to get us started! 💯",
+      'ms-maria': "¡Hola! Welcome — I'm so glad you stopped by! Do you have a math question I can help you with? If not, there are a few suggestions below to get us started. ¡Vamos!",
+      'mr-nappier': "What's up! Ready to find some patterns? Got a math question for me? If you can't think of one, check out the suggestions below — let's get started!"
+    };
+    res.json({ greeting: fallbacks[req.body?.tutorId] || "Hey! Got a math question? Pick one of the suggestions below to get started!" });
+  }
+});
 
 /**
  * POST /api/trial-chat
