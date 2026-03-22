@@ -217,4 +217,76 @@ router.get('/voice-preview/:tutorId', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/trial-chat/speak
+ * TTS for trial chat tutor responses — anonymous, rate-limited.
+ * Strips LaTeX/markdown before sending to TTS.
+ */
+const trialTtsLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 15, // 15 TTS requests per hour per IP
+  keyGenerator: (req) => req.ip,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'TTS rate limit reached.' });
+  }
+});
+
+router.post('/speak', trialTtsLimiter, async (req, res) => {
+  const { tutorId, text } = req.body;
+
+  if (!text || typeof text !== 'string') {
+    return res.status(400).json({ error: 'Missing text.' });
+  }
+
+  if (!UNLOCKED_TUTOR_IDS.includes(tutorId)) {
+    return res.status(400).json({ error: 'Invalid tutor.' });
+  }
+
+  if (!ttsProvider.isConfigured()) {
+    return res.status(503).json({ error: 'TTS unavailable.' });
+  }
+
+  // Clean text for TTS (strip LaTeX and markdown)
+  let cleaned = text;
+  cleaned = cleaned.replace(/\\\[([^\]]+)\\\]/g, '$1');
+  cleaned = cleaned.replace(/\$\$([^$]+)\$\$/g, '$1');
+  cleaned = cleaned.replace(/\\\(([^)]+)\\\)/g, '$1');
+  cleaned = cleaned.replace(/\$([^$]+)\$/g, '$1');
+  cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+  cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
+  cleaned = cleaned.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 over $2');
+  cleaned = cleaned.replace(/\\sqrt\{([^}]+)\}/g, 'square root of $1');
+  cleaned = cleaned.replace(/\^2\b/g, ' squared');
+  cleaned = cleaned.replace(/\^3\b/g, ' cubed');
+  cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
+  cleaned = cleaned.replace(/[{}]/g, '');
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+  if (!cleaned) {
+    return res.status(400).json({ error: 'No speakable text.' });
+  }
+
+  // Limit TTS text length
+  if (cleaned.length > 600) {
+    cleaned = cleaned.substring(0, 600);
+  }
+
+  const tutor = TUTOR_CONFIG[tutorId];
+  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId || tutor.voiceId);
+
+  try {
+    const audioBuffer = await ttsProvider.generateAudio(cleaned, voiceId);
+    const contentType = ttsProvider.getContentType();
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    res.send(audioBuffer);
+  } catch (err) {
+    console.error(`[Trial Chat] TTS error for ${tutorId}:`, err.message);
+    res.status(500).json({ error: 'TTS failed.' });
+  }
+});
+
 module.exports = router;
