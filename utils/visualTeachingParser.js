@@ -296,6 +296,20 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(imageExplainRegex, '');
 
+    // --- COUNTER COMMANDS ---
+    // [COUNTERS:positive,negative] - Show integer counters with zero-pair cancellation
+    const countersRegex = /\[COUNTERS:(\d+),(\d+)(?:,([^\]]+))?\]/g;
+    while ((match = countersRegex.exec(aiResponseText)) !== null) {
+        visualCommands.manipulatives.push({
+            type: 'counters',
+            positive: parseInt(match[1]),
+            negative: parseInt(match[2]),
+            label: match[3] || null,
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(countersRegex, '');
+
     // --- MANIPULATIVE COMMANDS ---
     // [NUMBER_LINE:min,max,mark] - Show interactive number line
     const numberLineRegex = /\[NUMBER_LINE:(-?\d+),(-?\d+)(?:,(-?\d+))?\]/g;
@@ -423,7 +437,8 @@ function hasVisualCommands(aiResponseText) {
         /\[IMAGE:/,
         /\[NUMBER_LINE:/,
         /\[FRACTION_BARS:/,
-        /\[BASE_TEN_BLOCKS:/
+        /\[BASE_TEN_BLOCKS:/,
+        /\[COUNTERS:/
     ];
 
     return commandPatterns.some(pattern => pattern.test(aiResponseText));

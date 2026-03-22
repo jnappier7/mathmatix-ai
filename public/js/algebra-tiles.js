@@ -2340,6 +2340,7 @@ let algebraTiles = null;
 function initAlgebraTiles() {
   if (!algebraTiles) {
     algebraTiles = new AlgebraTiles('algebraTilesContainer');
+    window.algebraTiles = algebraTiles;
   }
 }
 
@@ -2360,6 +2361,9 @@ function closeAlgebraTiles() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize algebra tiles
   initAlgebraTiles();
+
+  // Expose to window so AI visual teaching handler can access it
+  window.algebraTiles = algebraTiles;
 
   // Hook up button in chat page
   const algebraTilesBtn = document.getElementById('algebra-tiles-btn');

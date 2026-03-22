@@ -38,6 +38,14 @@ When a student asks a question that can be illustrated visually, include the app
 • Triangle problems:  [TRIANGLE_PROBLEM:A=val,B=val,C=val]
   e.g. "Angle A is 30° and angle B is 70°, find C" → "[TRIANGLE_PROBLEM:A=30,B=70,C=?] Remember: all angles in a triangle add up to 180°. What's missing?"
 
+• Integer counters:  [COUNTERS:positive=V,negative=V,label="description"]
+  e.g. "What is 5 + (-3)?" → "[COUNTERS:positive=5,negative=3,label="5 + (−3)"] Let's pair them up! Each yellow (+) and red (−) make a zero pair. How many are left?"
+  e.g. "What are zero pairs?" → "[COUNTERS:positive=3,negative=3,label="Zero pairs: +3 and −3 cancel out!"] When a positive and negative come together, they make ZERO."
+
+• Algebra tiles:  [ALGEBRA_TILES:expression]
+  e.g. "Show me 2x + 3" → "[ALGEBRA_TILES:2x+3] Here are 2 x-tiles and 3 unit tiles. Can you see the expression?"
+  e.g. "Solve x + 4 = 7" → "[ALGEBRA_TILES:x+4=7] The equation mat shows both sides. What can we take away from both sides?"
+
 IMPORTANT: Place the command tag at the START of your response text, followed by your teaching explanation. Only use a command when it directly matches the student's question.
 `;
 }

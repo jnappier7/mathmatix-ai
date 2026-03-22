@@ -158,6 +158,9 @@ class VisualTeachingHandler {
                 case 'baseTenBlocks':
                     this.showBaseTenBlocks(cmd.number);
                     break;
+                case 'counters':
+                    this.showCounters(cmd.positive, cmd.negative, cmd.label);
+                    break;
             }
         });
     }
@@ -588,6 +591,60 @@ class VisualTeachingHandler {
     showBaseTenBlocks(number) {
         console.log(`🔢 Showing base-10 blocks for: ${number}`);
         // Implementation for base-10 blocks visualization
+    }
+
+    showCounters(positive, negative, label) {
+        console.log(`🟡🔴 Showing counters: +${positive}, -${negative}`);
+
+        const messages = document.querySelectorAll('.message.ai');
+        if (messages.length === 0) return;
+
+        const lastMessage = messages[messages.length - 1];
+
+        // Use InlineChatVisuals if available for consistent rendering
+        if (window.inlineChatVisuals && typeof window.inlineChatVisuals.createCounters === 'function') {
+            const labelStr = label ? `,label="${label}"` : '';
+            const paramStr = `positive=${positive},negative=${negative},animate=true${labelStr}`;
+            const html = window.inlineChatVisuals.createCounters(paramStr);
+
+            const container = document.createElement('div');
+            container.innerHTML = html;
+            lastMessage.appendChild(container.firstElementChild);
+
+            // Initialize interactivity
+            window.inlineChatVisuals.initInteractiveCounters(lastMessage);
+        } else {
+            // Fallback: simple counter display
+            const counterViz = this.createSimpleCountersHTML(positive, negative, label);
+            lastMessage.appendChild(counterViz);
+        }
+    }
+
+    createSimpleCountersHTML(positive, negative, label) {
+        const container = document.createElement('div');
+        container.className = 'counter-visual';
+        container.style.cssText = `
+            margin-top: 15px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+        `;
+
+        let html = label ? `<div style="font-weight:600;margin-bottom:10px;text-align:center">${label}</div>` : '';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">';
+
+        for (let i = 0; i < positive; i++) {
+            html += `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#fbbf24,#f59e0b);border:2px solid #d97706;display:flex;align-items:center;justify-content:center;font-weight:700;color:#78350f;font-size:18px">+</div>`;
+        }
+        for (let i = 0; i < negative; i++) {
+            html += `<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#f87171,#ef4444);border:2px solid #dc2626;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px">−</div>`;
+        }
+
+        html += '</div>';
+        html += `<div style="text-align:center;margin-top:10px;font-weight:600;font-size:16px">${positive} + (−${negative}) = ${positive - negative}</div>`;
+
+        container.innerHTML = html;
+        return container;
     }
 
     // ==================== UTILITY METHODS ====================

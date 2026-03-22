@@ -117,6 +117,15 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         }
     }
 
+    // INTEGER COUNTER REQUESTS (adding/subtracting with negatives, zero pairs)
+    if (isIntegerCounterRequest(lowerMessage)) {
+        const counters = extractCountersFromMessage(studentMessage);
+        if (counters) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting COUNTERS: +${counters.positive}, -${counters.negative}`);
+            return `Let's use counters to see this!\n\n[COUNTERS:positive=${counters.positive},negative=${counters.negative},animate=true,label="${counters.label}"]\n\n${shortenResponse(aiResponse)}`;
+        }
+    }
+
     return aiResponse;
 
     // ORIGINAL CODE BELOW - COMMENTED OUT FOR BETA
@@ -819,6 +828,56 @@ function getTeachingPrompt(operation, mode) {
         return "Here's an example with different numbers. Then YOU try with yours!";
     }
     return "Watch how this works!";
+}
+
+/**
+ * Detect if message is about integer operations with negatives / zero pairs
+ */
+function isIntegerCounterRequest(message) {
+    const patterns = [
+        /(?:what|how).+(?:zero pair|zero-pair)/i,
+        /(?:add|subtract|plus|minus).+(?:negative|positive)/i,
+        /(?:negative|positive).+(?:add|subtract|plus|minus)/i,
+        /\d+\s*\+\s*\(?-\d+\)?/,       // 5 + (-3)
+        /\(?-\d+\)?\s*\+\s*\d+/,        // (-3) + 5
+        /\d+\s*-\s*\d+/,                 // 5 - 3 (basic, only if context suggests counters)
+        /(?:show|use|try).+counter/i,
+        /(?:integer|integers).+(?:add|subtract|operation)/i,
+        /(?:add|subtract).+(?:integer|integers)/i,
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract positive and negative counts from an integer expression
+ * e.g., "5 + (-3)" → { positive: 5, negative: 3, label: "5 + (−3)" }
+ * e.g., "-2 + 7" → { positive: 7, negative: 2, label: "−2 + 7" }
+ */
+function extractCountersFromMessage(message) {
+    // Pattern: N + (-M) or N + -M
+    let match = message.match(/(\d+)\s*\+\s*\(?-(\d+)\)?/);
+    if (match) {
+        return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} + (−${match[2]})` };
+    }
+
+    // Pattern: (-M) + N or -M + N
+    match = message.match(/\(?-(\d+)\)?\s*\+\s*(\d+)/);
+    if (match) {
+        return { positive: parseInt(match[2]), negative: parseInt(match[1]), label: `−${match[1]} + ${match[2]}` };
+    }
+
+    // Pattern: N - M (interpret as N + (-M) for counters)
+    match = message.match(/(\d+)\s*-\s*(\d+)/);
+    if (match) {
+        return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} − ${match[2]}` };
+    }
+
+    // Zero pairs question - show equal amounts
+    if (/zero.?pair/i.test(message)) {
+        return { positive: 4, negative: 4, label: 'Zero pairs: +4 and −4 cancel out!' };
+    }
+
+    return null;
 }
 
 /**
