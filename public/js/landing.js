@@ -159,11 +159,14 @@
   var trialGateMsg     = document.getElementById('lp-trial-gate-msg');
   var trialTutorImg    = document.getElementById('lp-trial-tutor-img');
   var trialTutorName   = document.getElementById('lp-trial-tutor-name');
+  var trialMathToggle  = document.getElementById('lp-trial-math-toggle');
+  var trialMathBar     = document.getElementById('lp-trial-math-bar');
 
   // State
   var selectedTutorId = null;
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var isSending = false;
+  var trialTtsAudio = null; // Currently playing TTS audio
 
   /* ── Phase 1: Tutor Card Click → Celebration ─────── */
   var tutorCards = document.querySelectorAll('.lp-tutor-card');
@@ -399,6 +402,123 @@
     });
   }
 
+  /* ── Lightweight LaTeX renderer for trial chat ───── */
+  function renderTrialMath(text) {
+    if (!text) return '';
+    // Escape HTML first
+    var escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    if (!window.katex) return escaped;
+
+    // Display math \[...\]
+    escaped = escaped.replace(/\\\[([\s\S]*?)\\\]/g, function (_, math) {
+      try {
+        return window.katex.renderToString(math, { displayMode: true, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return '\\[' + math + '\\]'; }
+    });
+
+    // Inline math \(...\)
+    escaped = escaped.replace(/\\\(([\s\S]*?)\\\)/g, function (_, math) {
+      try {
+        return window.katex.renderToString(math, { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return '\\(' + math + '\\)'; }
+    });
+
+    // Dollar display math $$...$$
+    escaped = escaped.replace(/\$\$([\s\S]*?)\$\$/g, function (_, math) {
+      try {
+        return window.katex.renderToString(math, { displayMode: true, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return '$$' + math + '$$'; }
+    });
+
+    // Dollar inline math $...$  (but not $$)
+    escaped = escaped.replace(/\$([^\$\n]+?)\$/g, function (_, math) {
+      try {
+        return window.katex.renderToString(math, { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return '$' + math + '$'; }
+    });
+
+    // ── Auto-render common math patterns not wrapped in delimiters ──
+
+    // Exponents: x^2, x^3, a^n, x^{10}, (x+1)^2 — but not already inside KaTeX output
+    escaped = escaped.replace(/(?<![a-zA-Z\/"])([a-zA-Z0-9)]+)\^(\{[^}]+\}|[a-zA-Z0-9]+)/g, function (match, base, exp) {
+      // Skip if inside a KaTeX span (already rendered)
+      var rawExp = exp.charAt(0) === '{' ? exp.slice(1, -1) : exp;
+      try {
+        return window.katex.renderToString(base + '^{' + rawExp + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return match; }
+    });
+
+    // Fractions: 2/3, 1/4, a/b — only simple numeric or single-letter fractions
+    // Avoid matching URLs, file paths, "and/or", etc.
+    escaped = escaped.replace(/(?<![a-zA-Z\/.&])(\d+)\/(\d+)(?![a-zA-Z\/\d])/g, function (match, num, den) {
+      try {
+        return window.katex.renderToString('\\frac{' + num + '}{' + den + '}', { displayMode: false, throwOnError: false, strict: false, trust: true });
+      } catch (e) { return match; }
+    });
+
+    // Convert line breaks
+    escaped = escaped.replace(/\n/g, '<br>');
+
+    return escaped;
+  }
+
+  /* ── TTS for tutor responses ───────────────────────── */
+  function playTrialTTS(text, btn) {
+    // Stop any currently playing audio
+    if (trialTtsAudio) {
+      trialTtsAudio.pause();
+      trialTtsAudio = null;
+      // Reset all play buttons
+      var allBtns = trialMessages.querySelectorAll('.lp-trial-tts-btn');
+      allBtns.forEach(function (b) { b.classList.remove('playing'); b.innerHTML = '<i class="fas fa-volume-up"></i>'; });
+    }
+
+    if (btn.classList.contains('playing')) {
+      btn.classList.remove('playing');
+      return; // Was playing — just stop
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    csrfFetch('/api/trial-chat/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tutorId: selectedTutorId, text: text })
+    })
+    .then(function (res) {
+      if (!res.ok) throw new Error('TTS failed');
+      return res.blob();
+    })
+    .then(function (blob) {
+      var url = URL.createObjectURL(blob);
+      trialTtsAudio = new Audio(url);
+      btn.disabled = false;
+      btn.classList.add('playing');
+      btn.innerHTML = '<i class="fas fa-stop"></i>';
+
+      trialTtsAudio.addEventListener('ended', function () {
+        btn.classList.remove('playing');
+        btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        URL.revokeObjectURL(url);
+        trialTtsAudio = null;
+      });
+
+      trialTtsAudio.play().catch(function () {
+        btn.classList.remove('playing');
+        btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+      });
+    })
+    .catch(function () {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    });
+  }
+
   /* ── Chat Bubble Renderer ────────────────────────── */
   function appendTrialBubble(text, isUser) {
     var meta = TUTOR_META[selectedTutorId];
@@ -418,7 +538,22 @@
 
     var bubble = document.createElement('div');
     bubble.className = 'lp-chat-bubble ' + (isUser ? 'lp-chat-student' : 'lp-chat-tutor');
-    bubble.textContent = text;
+
+    if (isUser) {
+      bubble.textContent = text;
+    } else {
+      bubble.innerHTML = renderTrialMath(text);
+      // Add TTS button for tutor messages
+      var ttsBtn = document.createElement('button');
+      ttsBtn.className = 'lp-trial-tts-btn';
+      ttsBtn.title = 'Listen';
+      ttsBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+      ttsBtn.addEventListener('click', function () {
+        playTrialTTS(text, ttsBtn);
+      });
+      bubble.appendChild(ttsBtn);
+    }
+
     row.appendChild(bubble);
 
     trialMessages.appendChild(row);
@@ -433,10 +568,38 @@
     trialMessages.scrollTop = trialMessages.scrollHeight;
   }
 
+  /* ── Math Symbol Keyboard ─────────────────────────── */
+  if (trialMathToggle && trialMathBar) {
+    trialMathToggle.addEventListener('click', function () {
+      var isVisible = trialMathBar.classList.contains('visible');
+      trialMathBar.classList.toggle('visible', !isVisible);
+      trialMathToggle.classList.toggle('active', !isVisible);
+      if (!isVisible) trialInput.focus();
+    });
+
+    trialMathBar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.lp-trial-math-btn');
+      if (!btn) return;
+      var symbol = btn.getAttribute('data-insert');
+      if (!symbol) return;
+
+      // Insert at cursor position
+      var start = trialInput.selectionStart;
+      var end = trialInput.selectionEnd;
+      var val = trialInput.value;
+      trialInput.value = val.substring(0, start) + symbol + val.substring(end);
+      var newPos = start + symbol.length;
+      trialInput.setSelectionRange(newPos, newPos);
+      trialInput.focus();
+    });
+  }
+
   /* ── Soft Gate ───────────────────────────────────── */
   function showGate() {
-    // Hide input, show gate
+    // Hide input and math bar, show gate
     trialInputArea.style.display = 'none';
+    if (trialMathBar) { trialMathBar.classList.remove('visible'); }
+    if (trialMathToggle) { trialMathToggle.classList.remove('active'); }
     trialGate.style.display = '';
 
     // Set tutor-voice gate message
