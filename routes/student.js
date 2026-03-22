@@ -392,7 +392,7 @@ router.get('/growth', isAuthenticated, isStudent, async (req, res) => {
             },
             accuracy: {
                 delta: accuracyDelta,               // e.g. +15 means "up 15 percentage points"
-                trend: accuracyDelta > 0 ? 'improving' : accuracyDelta < 0 ? 'declining' : 'stable',
+                trend: accuracyDelta === null ? null : (accuracyDelta > 0 ? 'improving' : accuracyDelta < 0 ? 'declining' : 'stable'),
             },
             skills: {
                 masteredThisMonth: skillsMasteredThisMonth,

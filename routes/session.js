@@ -163,6 +163,11 @@ router.get('/recap', isAuthenticated, async (req, res) => {
       return res.json({ recap: null });
     }
 
+    // Ownership check — prevent IDOR
+    if (conversation.userId && conversation.userId.toString() !== userId.toString()) {
+      return res.status(404).json({ recap: null });
+    }
+
     const recap = await generateStudentRecap(conversation, user);
     res.json({ recap });
   } catch (error) {

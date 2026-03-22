@@ -26,9 +26,16 @@ function getServerTurnCount(ip) {
   return entry.count;
 }
 
+const TURN_TRACKER_MAX_SIZE = 50000;
+
 function incrementServerTurnCount(ip) {
   const existing = turnTracker.get(ip);
   if (!existing || Date.now() > existing.resetAt) {
+    // Evict oldest entries if map is too large (prevent memory exhaustion)
+    if (turnTracker.size >= TURN_TRACKER_MAX_SIZE) {
+      const oldest = turnTracker.keys().next().value;
+      turnTracker.delete(oldest);
+    }
     turnTracker.set(ip, { count: 1, resetAt: Date.now() + TURN_TRACKER_TTL });
   } else {
     existing.count += 1;
@@ -138,10 +145,12 @@ router.post('/', trialLimiter, async (req, res) => {
       ? history.filter(m => m && typeof m.content === 'string' && m.content.trim())
       : [];
 
+    // Limit history to server-verified turn count (max 2 × MAX_TURNS messages)
+    // to prevent clients from injecting extra fabricated history
+    const maxHistoryMessages = serverTurns * 2;
     const messagesForAI = [
       { role: 'system', content: systemPrompt },
-      // Include up to 6 history messages (3 user + 3 assistant)
-      ...validHistory.slice(-6).map(m => ({
+      ...validHistory.slice(-Math.min(6, maxHistoryMessages)).map(m => ({
         role: m.role === 'user' ? 'user' : 'assistant',
         content: sanitizeForAI(m.content.slice(0, MAX_MESSAGE_LENGTH))
       })),
@@ -179,7 +188,15 @@ router.post('/', trialLimiter, async (req, res) => {
 const voicePreviewCache = new Map();
 const ttsProvider = require('../utils/ttsProvider');
 
-router.get('/voice-preview/:tutorId', async (req, res) => {
+const voicePreviewLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20,             // 20 requests per minute per IP
+  keyGenerator: (req) => req.ip,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.get('/voice-preview/:tutorId', voicePreviewLimiter, async (req, res) => {
   const { tutorId } = req.params;
 
   if (!UNLOCKED_TUTOR_IDS.includes(tutorId)) {
