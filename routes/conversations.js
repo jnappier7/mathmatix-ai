@@ -3,6 +3,8 @@
 
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const { validateObjectId } = require('../middleware/validateObjectId');
 const {
@@ -109,11 +111,23 @@ router.get('/returning-user-data', isAuthenticated, async (req, res) => {
         };
       });
 
-      // Format current module name
-      const modLabel = (cs.currentModuleId || '')
-        .replace(/^mod-/, '')
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
+      // Resolve current module title from pathway file
+      let modLabel = '';
+      try {
+        const pwFile = path.join(__dirname, '../public/resources', `${cs.courseId}-pathway.json`);
+        if (fs.existsSync(pwFile)) {
+          const pw = JSON.parse(fs.readFileSync(pwFile, 'utf8'));
+          const mod = (pw.modules || []).find(m => m.moduleId === cs.currentModuleId);
+          if (mod?.title) modLabel = mod.title;
+        }
+      } catch (e) { /* non-critical */ }
+      // Fallback: convert moduleId to a readable label
+      if (!modLabel) {
+        modLabel = (cs.currentModuleId || '')
+          .replace(/^mod-/, '')
+          .replace(/[_-]/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase());
+      }
 
       courses.push({
         courseSessionId: cs._id,
@@ -190,11 +204,24 @@ router.post('/new-course-session', isAuthenticated, async (req, res) => {
       return res.status(404).json({ message: 'Course session not found' });
     }
 
+    // Resolve the current module title for a meaningful conversation name
+    let moduleName = courseSession.courseName;
+    try {
+      const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
+      if (fs.existsSync(pathwayFile)) {
+        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+        const mod = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+        if (mod?.title) moduleName = mod.title;
+      }
+    } catch (e) {
+      // Fall back to course name — non-critical
+    }
+
     // Create a fresh conversation for this course
     const newConversation = new Conversation({
       userId,
       conversationType: 'course',
-      conversationName: courseSession.courseName,
+      conversationName: moduleName,
       topic: courseSession.courseName,
       messages: []
     });
