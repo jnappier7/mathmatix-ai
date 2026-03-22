@@ -20,6 +20,7 @@ class ReturningUserModal {
      *   { action: 'new-course', courseSessionId: '...' }
      *   { action: 'resume-chat', conversationId: '...' }
      *   { action: 'resume-course', courseSessionId: '...', conversationId: '...' }
+     *   { action: 'browse-courses' }
      *   { action: 'skip' } — if not a returning user
      */
     async show(currentUser) {
@@ -73,6 +74,9 @@ class ReturningUserModal {
                 greeting.textContent = `${timeGreeting}, ${name}!`;
             }
 
+            // Render smart resume hero
+            this.renderHero();
+
             // Render courses
             this.renderCourses();
 
@@ -91,6 +95,100 @@ class ReturningUserModal {
             // Show modal using the is-visible class (matches other modals)
             this.modal.classList.add('is-visible');
         });
+    }
+
+    renderHero() {
+        const section = document.getElementById('returning-hero-section');
+        if (!section) return;
+
+        const sessions = this.data.recentSessions || [];
+        const courses = this.data.courses || [];
+        const latestSession = sessions[0] || null;
+        const latestCourse = courses[0] || null;
+
+        if (!latestSession && !latestCourse) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = 'block';
+        section.innerHTML = '';
+
+        const label = document.createElement('div');
+        label.className = 'returning-section-label';
+        label.innerHTML = '<i class="fas fa-bolt"></i> Pick up where you left off';
+        section.appendChild(label);
+
+        // Primary: most recent tutoring session
+        if (latestSession) {
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-primary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">${latestSession.topicEmoji || '💬'}</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">${this.escapeHtml(latestSession.name)}</div>
+                    <div class="returning-hero-meta">${this.escapeHtml(latestSession.lastMessage || '')}</div>
+                </div>
+                <div class="returning-hero-action">
+                    <span class="returning-hero-time">${this.formatRelativeTime(latestSession.lastActivity)}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({
+                    action: 'resume-chat',
+                    conversationId: latestSession._id
+                });
+            });
+            section.appendChild(card);
+        }
+
+        // Secondary: most recent course OR browse courses
+        if (latestCourse) {
+            const statusLabel = latestCourse.status === 'paused'
+                ? 'Paused'
+                : latestCourse.currentModuleLabel || 'In Progress';
+
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-secondary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">📘</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">${this.escapeHtml(latestCourse.courseName)}</div>
+                    <div class="returning-hero-meta">${this.escapeHtml(statusLabel)} &middot; ${latestCourse.overallProgress}%</div>
+                </div>
+                <div class="returning-hero-action">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({
+                    action: 'new-course',
+                    courseSessionId: latestCourse.courseSessionId
+                });
+            });
+            section.appendChild(card);
+        } else {
+            const card = document.createElement('div');
+            card.className = 'returning-hero-card returning-hero-secondary';
+            card.innerHTML = `
+                <span class="returning-hero-emoji">📚</span>
+                <div class="returning-hero-info">
+                    <div class="returning-hero-name">Browse Courses</div>
+                    <div class="returning-hero-meta">Explore structured lessons and curricula</div>
+                </div>
+                <div class="returning-hero-action">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                this.close();
+                this.resolveChoice({ action: 'browse-courses' });
+            });
+            section.appendChild(card);
+        }
     }
 
     renderCourses() {
