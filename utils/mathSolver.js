@@ -105,6 +105,21 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Factor a quadratic "factor x² + 5x + 6" or "factor x^2 - 5x - 14"
+    // Also matches "factor the expression x²+5x+6" or "factoring x²+7x+10"
+    const factorPattern = /(?:factor(?:ing|ize)?(?:\s+the\s+(?:expression|quadratic|trinomial))?\s+)(-?\d*\.?\d*)\s*x[\^²]2?\s*([+\-])\s*(\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)/i;
+    const factorMatch = message.match(factorPattern);
+    if (factorMatch) {
+        return {
+            type: 'factor_quadratic',
+            a: parseFloat(factorMatch[1] || '1'),
+            bSign: factorMatch[2],
+            b: parseFloat(factorMatch[3] || '1'),
+            cSign: factorMatch[4],
+            c: parseFloat(factorMatch[5])
+        };
+    }
+
     // Pattern: Quadratic equation "x^2 + 5x + 6 = 0" or "x² + 5x + 6 = 0"
     const quadraticPattern = /(-?\d*\.?\d*)\s*x[\^²]2?\s*([+\-])\s*(\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)\s*=\s*0/i;
     const quadraticMatch = message.match(quadraticPattern);
@@ -244,6 +259,8 @@ function solveProblem(problem) {
                 return solveLinearEquation(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
+            case 'factor_quadratic':
+                return solveFactorQuadratic(problem);
             case 'fraction_arithmetic':
                 return solveFractionArithmetic(problem);
             case 'percentage':
@@ -371,6 +388,189 @@ function solveQuadratic(problem) {
             `x₂ = ${formatNumber(x2)}`
         ]
     };
+}
+
+/**
+ * Solve factoring of a quadratic trinomial ax² + bx + c
+ * For a=1: find two numbers that add to b and multiply to c
+ * For a≠1: use the ac-method or trial factors
+ */
+function solveFactorQuadratic(problem) {
+    let { a, bSign, b, cSign, c } = problem;
+
+    // Apply signs
+    b = bSign === '-' ? -b : b;
+    c = cSign === '-' ? -c : c;
+
+    if (a === 1) {
+        // Simple case: find p, q where p + q = b and p * q = c
+        const factors = findFactorPair(c, b);
+        if (!factors) {
+            return {
+                success: true,
+                answer: 'Not factorable over the integers',
+                steps: [`No integer pair adds to ${b} and multiplies to ${c}`]
+            };
+        }
+
+        const [p, q] = factors;
+        const answer = formatBinomialProduct(1, p, 1, q);
+        return {
+            success: true,
+            answer,
+            steps: [
+                `Find two numbers that add to ${b} and multiply to ${c}`,
+                `${p} + ${q} = ${b} ✓`,
+                `${p} × ${q} = ${c} ✓`,
+                `= ${answer}`
+            ]
+        };
+    }
+
+    // General case a ≠ 1: find factors of a*c that add to b
+    const ac = a * c;
+    const factors = findFactorPair(ac, b);
+    if (!factors) {
+        return {
+            success: true,
+            answer: 'Not factorable over the integers',
+            steps: [`No integer pair adds to ${b} and multiplies to ${ac}`]
+        };
+    }
+
+    const [p, q] = factors;
+    // Factor by grouping: ax² + px + qx + c
+    // Group: (ax² + px) + (qx + c)
+    const g1 = greatestCommonDivisor(Math.abs(a), Math.abs(p));
+    const g2 = greatestCommonDivisor(Math.abs(q), Math.abs(c));
+
+    // The common binomial factor and outer factors
+    const innerA = a / g1;
+    const innerP = p / g1;
+
+    const answer = formatBinomialProduct(g1, q / (innerA || 1), innerA, innerP);
+
+    // For a≠1, use a more robust approach: try all factor pairs of a and c
+    const result = factorGeneralTrinomial(a, b, c);
+    if (result) {
+        return {
+            success: true,
+            answer: result.answer,
+            steps: result.steps
+        };
+    }
+
+    return {
+        success: true,
+        answer: 'Not factorable over the integers',
+        steps: [`Could not factor ${a}x² + ${b}x + ${c} over the integers`]
+    };
+}
+
+/**
+ * Find two integers that add to targetSum and multiply to targetProduct.
+ * Returns [p, q] sorted ascending, or null if no such pair exists.
+ */
+function findFactorPair(targetProduct, targetSum) {
+    const absProduct = Math.abs(targetProduct);
+    for (let i = 0; i <= absProduct; i++) {
+        if (absProduct === 0 && i > 0) break;
+        if (i !== 0 && absProduct % i !== 0) continue;
+
+        const j = absProduct === 0 ? 0 : absProduct / i;
+
+        // Try all sign combinations
+        const pairs = [[i, j], [-i, -j], [i, -j], [-i, j]];
+        for (const [p, q] of pairs) {
+            if (p * q === targetProduct && p + q === targetSum) {
+                // Return sorted so smaller absolute value first (canonical order)
+                return p <= q ? [p, q] : [q, p];
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Factor a general trinomial ax² + bx + c by trying all factor pairs.
+ */
+function factorGeneralTrinomial(a, b, c) {
+    // For a=1, simple case
+    if (a === 1) {
+        const factors = findFactorPair(c, b);
+        if (!factors) return null;
+
+        const [p, q] = factors;
+        const answer = formatBinomialProduct(1, p, 1, q);
+        return {
+            answer,
+            steps: [
+                `Find two numbers that add to ${b} and multiply to ${c}`,
+                `${p} + ${q} = ${b} ✓`,
+                `${p} × ${q} = ${c} ✓`,
+                `= ${answer}`
+            ]
+        };
+    }
+
+    // Try all factor pairs of a and c
+    const aFactors = getFactorPairs(Math.abs(a));
+    const cFactors = getFactorPairs(Math.abs(c));
+
+    for (const [a1, a2] of aFactors) {
+        for (const [c1, c2] of cFactors) {
+            // Try (a1*x + c1)(a2*x + c2) — check if outer+inner = b
+            // Also try sign variations
+            const signedC = c < 0
+                ? [[c1, -c2], [-c1, c2]]
+                : (c >= 0 ? [[c1, c2], [-c1, -c2]] : [[c1, c2]]);
+
+            for (const [sc1, sc2] of signedC) {
+                if (a1 * sc2 + a2 * sc1 === b) {
+                    const sA = a < 0 ? -1 : 1;
+                    const answer = formatBinomialProduct(sA * a1, sc1, a2, sc2);
+                    return {
+                        answer,
+                        steps: [
+                            `Factor ${a}x² + ${b}x + ${c}`,
+                            `= ${answer}`
+                        ]
+                    };
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Get all factor pairs of a positive integer n.
+ * Returns pairs [a, b] where a * b = n and a <= b.
+ */
+function getFactorPairs(n) {
+    if (n === 0) return [[0, 0]];
+    const pairs = [];
+    for (let i = 1; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) {
+            pairs.push([i, n / i]);
+        }
+    }
+    return pairs;
+}
+
+/**
+ * Format a binomial product like (ax + p)(bx + q).
+ * Handles signs and coefficients of 1 correctly.
+ */
+function formatBinomialProduct(a, p, b, q) {
+    const formatTerm = (coeff, constant) => {
+        const xPart = coeff === 1 ? 'x' : coeff === -1 ? '-x' : `${coeff}x`;
+        if (constant === 0) return `(${xPart})`;
+        const sign = constant > 0 ? '+' : '-';
+        return `(${xPart}${sign}${Math.abs(constant)})`;
+    };
+    return `${formatTerm(a, p)}${formatTerm(b, q)}`;
 }
 
 /**
@@ -589,6 +789,16 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
+    // Factored form comparison: (x+a)(x+b) vs (x+b)(x+a) — commutative property
+    const studentFactors = parseFactoredForm(studentStr);
+    const correctFactors = parseFactoredForm(correctStr);
+
+    if (studentFactors && correctFactors) {
+        if (areFactoredFormsEquivalent(studentFactors, correctFactors)) {
+            return { isCorrect: true, exact: false, equivalentForm: true };
+        }
+    }
+
     return { isCorrect: false };
 }
 
@@ -601,6 +811,104 @@ function parseFraction(str) {
         return { num: parseInt(match[1]), den: parseInt(match[2]) };
     }
     return null;
+}
+
+/**
+ * Parse a factored form expression like "(x+2)(x-3)" or "(2x+1)(x-5)".
+ * Returns an array of binomial objects [{coeff, constant}, ...] or null.
+ */
+function parseFactoredForm(str) {
+    if (!str) return null;
+
+    // Normalize: strip spaces, handle unicode minus
+    const normalized = str.replace(/\s+/g, '').replace(/−/g, '-');
+
+    // Match pattern: one or more (ax+b) or (ax-b) factors
+    const binomialPattern = /\((-?\d*)x([+\-]\d+)\)/g;
+    const factors = [];
+    let match;
+    let totalMatched = 0;
+
+    while ((match = binomialPattern.exec(normalized)) !== null) {
+        const coeff = match[1] === '' || match[1] === '+' ? 1 : match[1] === '-' ? -1 : parseInt(match[1], 10);
+        const constant = parseInt(match[2], 10);
+        factors.push({ coeff, constant });
+        totalMatched += match[0].length;
+    }
+
+    // Must match at least 2 factors and consume most of the string
+    if (factors.length < 2) return null;
+
+    // Allow for a leading scalar coefficient like "2(x+1)(x+3)"
+    const leadingScalar = normalized.match(/^(-?\d+)\(/);
+    if (leadingScalar) {
+        totalMatched += leadingScalar[1].length;
+    }
+
+    // Verify we consumed the meaningful parts of the string
+    if (totalMatched < normalized.replace(/[^(x\d+\-)]/g, '').length * 0.5) return null;
+
+    return {
+        scalar: leadingScalar ? parseInt(leadingScalar[1], 10) : 1,
+        binomials: factors
+    };
+}
+
+/**
+ * Check if two factored forms are mathematically equivalent.
+ * Handles commutative property: (x+2)(x+3) = (x+3)(x+2)
+ * Expands both to standard form and compares coefficients.
+ */
+function areFactoredFormsEquivalent(a, b) {
+    if (!a || !b) return false;
+
+    // Expand both to standard form (polynomial coefficients) and compare
+    const polyA = expandFactoredForm(a);
+    const polyB = expandFactoredForm(b);
+
+    if (!polyA || !polyB) return false;
+    if (polyA.length !== polyB.length) return false;
+
+    return polyA.every((coeff, i) => Math.abs(coeff - polyB[i]) < 0.0001);
+}
+
+/**
+ * Expand a factored form to polynomial coefficients.
+ * E.g., {scalar: 1, binomials: [{coeff:1, constant:2}, {coeff:1, constant:3}]}
+ *   → [1, 5, 6] representing x² + 5x + 6
+ */
+function expandFactoredForm(factored) {
+    if (!factored || !factored.binomials || factored.binomials.length < 2) return null;
+
+    // Start with first binomial as polynomial [coeff, constant]
+    let poly = [factored.binomials[0].coeff, factored.binomials[0].constant];
+
+    // Multiply by each subsequent binomial
+    for (let i = 1; i < factored.binomials.length; i++) {
+        const bin = factored.binomials[i];
+        poly = multiplyPolynomials(poly, [bin.coeff, bin.constant]);
+    }
+
+    // Apply scalar
+    if (factored.scalar !== 1) {
+        poly = poly.map(c => c * factored.scalar);
+    }
+
+    return poly;
+}
+
+/**
+ * Multiply two polynomials represented as coefficient arrays.
+ * [a, b] * [c, d] = [a*c, a*d + b*c, b*d]
+ */
+function multiplyPolynomials(p1, p2) {
+    const result = new Array(p1.length + p2.length - 1).fill(0);
+    for (let i = 0; i < p1.length; i++) {
+        for (let j = 0; j < p2.length; j++) {
+            result[i + j] += p1[i] * p2[j];
+        }
+    }
+    return result;
 }
 
 /**
@@ -633,8 +941,14 @@ module.exports = {
     solveArithmetic,
     solveLinearEquation,
     solveQuadratic,
+    solveFactorQuadratic,
     solveFractionArithmetic,
     solvePercentage,
     solveExponent,
-    solveSqrt
+    solveSqrt,
+    // Export factoring helpers for testing
+    findFactorPair,
+    parseFactoredForm,
+    areFactoredFormsEquivalent,
+    formatBinomialProduct,
 };
