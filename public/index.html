@@ -208,11 +208,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lp-section-heading::after {
       content: '';
       display: block;
-      width: 48px;
+      width: 40px;
       height: 3px;
       background: linear-gradient(90deg, var(--clr-primary-teal), var(--clr-accent-hotpink));
-      margin: 0.6rem auto 0;
-      border-radius: 2px;
+      margin: 0.75rem auto 0;
+      border-radius: 3px;
     }
 
     .lp-section-sub {
@@ -226,8 +226,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* ── Hero ───────────────────────────────────────────────── */
     .lp-hero {
-      background: linear-gradient(160deg, #f0fafa 0%, #e4f3f3 40%, #f8fbfb 100%);
-      padding: 4rem var(--page-horizontal-padding) 2.5rem;
+      background: linear-gradient(160deg, #f4fbfb 0%, #eaf6f6 35%, #f9fcfc 70%, #fefefe 100%);
+      padding: 4.5rem var(--page-horizontal-padding) 3rem;
     }
 
     .lp-hero-layout {
@@ -247,13 +247,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     .lp-hero .lp-hero-sub {
-      font-size: 1.15rem;
-      line-height: 1.65;
+      font-size: 1.1rem;
+      line-height: 1.7;
       color: var(--clr-text-dim);
       margin-bottom: 2rem;
       max-width: 520px;
       margin-left: auto;
       margin-right: auto;
+      font-weight: 400;
+      letter-spacing: 0.005em;
     }
 
     .lp-hero-buttons {
@@ -448,18 +450,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* Trust bar */
     .lp-trust-bar {
-      display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(18, 179, 179, 0.12);
-      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+      padding: 1.75rem 2rem;
+      background: rgba(18, 179, 179, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(18, 179, 179, 0.08);
+      max-width: 1100px; margin: 2.5rem auto 0;
     }
 
     .lp-trust-item {
       display: flex; align-items: center; gap: 0.5rem;
-      font-size: 0.9rem; font-weight: 500; color: var(--clr-text-dim);
+      font-size: 0.85rem; font-weight: 500; color: var(--clr-text-dim);
+      letter-spacing: 0.01em;
     }
 
-    .lp-trust-item i { color: var(--clr-primary-teal); font-size: 1rem; }
+    .lp-trust-item i { color: var(--clr-primary-teal); font-size: 0.95rem; opacity: 0.85; }
 
     /* Hero side-by-side on desktop */
     @media (min-width: 769px) {
@@ -1480,36 +1485,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     .lp-hero-eyebrow {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--clr-primary-teal, #12B3B3);
-      letter-spacing: 0.01em;
-      margin-bottom: 0.5rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
     }
 
     .lp-hero-pick-inner h1 {
       font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-weight: 800;
+      letter-spacing: -0.025em;
       color: var(--clr-text);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
+      line-height: 1.15;
     }
 
     .lp-tutor-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
+      gap: 1.5rem;
       max-width: 960px;
-      margin: 2rem auto 0;
+      margin: 2.5rem auto 0;
     }
 
     .lp-tutor-card {
       background: var(--clr-bg-light);
-      border: 2px solid #e8ecf0;
-      border-radius: 16px;
-      padding: 1.5rem 1rem 1rem;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 20px;
+      padding: 2rem 1.25rem 1.25rem;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1517,71 +1524,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       position: relative;
       font-family: inherit;
       font-size: inherit;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
     .lp-tutor-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 32px rgba(18, 179, 179, 0.18);
-      border-color: var(--clr-primary-teal);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(18, 179, 179, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-color: rgba(18, 179, 179, 0.3);
     }
 
     .lp-tutor-card:active {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      transition-duration: 0.1s;
     }
 
     .lp-tutor-card-img {
-      width: 100px;
-      height: 100px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       object-fit: cover;
       object-position: top;
-      border: 3px solid #e8ecf0;
-      margin-bottom: 0.75rem;
-      transition: border-color 0.25s ease;
+      border: 3px solid #f0f2f5;
+      margin-bottom: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     .lp-tutor-card:hover .lp-tutor-card-img {
-      border-color: var(--clr-primary-teal);
+      border-color: rgba(18, 179, 179, 0.4);
+      box-shadow: 0 4px 16px rgba(18, 179, 179, 0.15);
     }
 
     .lp-tutor-card-info h3 {
       font-size: 1.1rem;
       font-weight: 700;
-      margin: 0 0 0.25rem;
+      margin: 0 0 0.3rem;
       color: var(--clr-text);
+      letter-spacing: -0.01em;
     }
 
     .lp-tutor-card-catch {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--clr-primary-teal);
       font-weight: 600;
-      margin: 0 0 0.2rem;
+      margin: 0 0 0.35rem;
       font-style: italic;
+      line-height: 1.35;
     }
 
     .lp-tutor-card-spec {
       font-size: 0.78rem;
       color: var(--clr-text-dim);
       margin: 0;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .lp-tutor-card-hear {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-top: 0.75rem;
+      gap: 5px;
+      margin-top: 0.85rem;
       font-size: 0.75rem;
       color: var(--clr-accent-hotpink);
       font-weight: 600;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
-      background: rgba(255, 59, 127, 0.06);
-      transition: background 0.2s;
+      background: rgba(255, 59, 127, 0.05);
+      transition: background 0.2s, transform 0.2s;
     }
 
     .lp-tutor-card-hear:hover {
-      background: rgba(255, 59, 127, 0.14);
+      background: rgba(255, 59, 127, 0.12);
+      transform: scale(1.04);
     }
 
     /* ── Celebration Overlay ────────────────────────────── */
@@ -1976,7 +1990,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* ── Dark mode overrides for trial chat UI ───────── */
     [data-theme="dark"] .lp-tutor-card {
-      border-color: #334155;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    [data-theme="dark"] .lp-tutor-card:hover {
+      border-color: rgba(18, 179, 179, 0.35);
+      box-shadow: 0 12px 40px rgba(18, 179, 179, 0.12), 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    [data-theme="dark"] .lp-tutor-card-img {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    [data-theme="dark"] .lp-trust-bar {
+      background: rgba(18, 179, 179, 0.04);
+      border-color: rgba(18, 179, 179, 0.1);
     }
     [data-theme="dark"] .lp-tutor-card:hover {
       box-shadow: 0 12px 32px rgba(18, 179, 179, 0.25);
@@ -2059,9 +2085,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </a>
     </div>
     <nav class="landing-nav">
-      <a href="/pricing.html" class="btn btn-primary-outline" style="border-color: transparent; color: var(--clr-text-dim);">Pricing</a>
-      <a href="/login.html" class="btn btn-primary-outline">Log In</a>
-      <a href="/signup.html" class="btn btn-primary">Start Free Now</a>
+      <a href="/pricing.html" class="btn btn-primary-outline" style="border-color: transparent; color: var(--clr-text-dim); font-weight: 500;">Pricing</a>
+      <a href="/login.html" class="btn btn-primary-outline" style="font-weight: 500;">Log In</a>
+      <a href="/signup.html" class="btn btn-primary" style="font-weight: 600; letter-spacing: 0.01em;">Start Free Now</a>
     </nav>
   </header>
 
