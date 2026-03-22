@@ -586,6 +586,9 @@ function hasInlineVisualCommands(response) {
         /\[RIGHT_TRIANGLE:/,
         /\[INEQUALITY:/,
         /\[ALGEBRA_TILES:/,
+        /\[TILES_SOLVE:/,
+        /\[TILES_FACTOR:/,
+        /\[COUNTERS:/,
         /\[MULTI_REP:/
     ];
     return inlinePatterns.some(p => p.test(response));

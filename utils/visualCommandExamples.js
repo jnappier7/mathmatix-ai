@@ -42,9 +42,15 @@ When a student asks a question that can be illustrated visually, include the app
   e.g. "What is 5 + (-3)?" → "[COUNTERS:positive=5,negative=3,label="5 + (−3)"] Let's pair them up! Each yellow (+) and red (−) make a zero pair. How many are left?"
   e.g. "What are zero pairs?" → "[COUNTERS:positive=3,negative=3,label="Zero pairs: +3 and −3 cancel out!"] When a positive and negative come together, they make ZERO."
 
-• Algebra tiles:  [ALGEBRA_TILES:expression]
+• Algebra tiles (show):  [ALGEBRA_TILES:expression]
   e.g. "Show me 2x + 3" → "[ALGEBRA_TILES:2x+3] Here are 2 x-tiles and 3 unit tiles. Can you see the expression?"
-  e.g. "Solve x + 4 = 7" → "[ALGEBRA_TILES:x+4=7] The equation mat shows both sides. What can we take away from both sides?"
+
+• Solving equations with tiles:  [TILES_SOLVE:equation]
+  e.g. "Solve 2x + 3 = 7" → "[TILES_SOLVE:2x+3=7] Watch the tiles! We add 3 negative units to both sides — zero pairs cancel. Then side by side, divide!"
+  e.g. "How do I solve x - 5 = 3?" → "[TILES_SOLVE:x-5=3] See those 5 negative units? We add 5 positive units to BOTH sides. Zero pairs cancel!"
+
+• Factoring with tiles:  [TILES_FACTOR:expression]
+  e.g. "Factor x² + 5x + 6" → "[TILES_FACTOR:x^2+5x+6] Watch as the tiles form a rectangle! The side lengths are the factors."
 
 IMPORTANT: Place the command tag at the START of your response text, followed by your teaching explanation. Only use a command when it directly matches the student's question.
 `;

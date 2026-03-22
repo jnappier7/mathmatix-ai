@@ -200,6 +200,31 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(algebraTilesRegex, '');
 
+    // [TILES_SOLVE:equation] or [TILES_SOLVE:equation:guided|full]
+    // Step-by-step equation solving with tile animations
+    const tilesSolveRegex = /\[TILES_SOLVE:([^:\]]+)(?::([^\]]+))?\]/g;
+    while ((match = tilesSolveRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'solve',
+            equation: match[1],
+            mode: match[2] || 'guided',
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesSolveRegex, '');
+
+    // [TILES_FACTOR:expression]
+    // Demonstrate factoring by arranging tiles into a rectangle
+    const tilesFactorRegex = /\[TILES_FACTOR:([^\]]+)\]/g;
+    while ((match = tilesFactorRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'factor',
+            expression: match[1],
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesFactorRegex, '');
+
     // [ALGEBRA_TILES_DEMO:operation] - Demonstrate an operation
     // Examples: "add", "multiply", "factor", "solve"
     const algebraDemoRegex = /\[ALGEBRA_TILES_DEMO:([^\]]+)\]/g;

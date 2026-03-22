@@ -109,6 +109,12 @@ class VisualTeachingHandler {
                 case 'expression':
                     await this.showAlgebraTilesExpression(cmd.expression);
                     break;
+                case 'solve':
+                    await this.solveEquationWithTiles(cmd.equation, cmd.mode);
+                    break;
+                case 'factor':
+                    await this.factorWithTiles(cmd.expression);
+                    break;
                 case 'demo':
                     await this.demonstrateOperation(cmd.operation);
                     break;
@@ -333,6 +339,38 @@ class VisualTeachingHandler {
         if (algebraBtn) {
             algebraBtn.click();
             console.log('🟦 Opened algebra tiles');
+        }
+    }
+
+    async solveEquationWithTiles(equation, mode = 'guided') {
+        console.log(`🧮 AI solving equation with tiles: ${equation} (${mode} mode)`);
+
+        this.openAlgebraTiles();
+        await this.delay(300);
+
+        if (window.algebraTiles && typeof window.algebraTiles.solveEquationWithTiles === 'function') {
+            await window.algebraTiles.solveEquationWithTiles(equation, mode);
+            console.log('✅ Equation solving demo complete');
+        } else {
+            // Fallback: just show the equation on tiles
+            console.warn('[VisualTeaching] solveEquationWithTiles not available, falling back to expression');
+            await this.showAlgebraTilesExpression(equation);
+        }
+    }
+
+    async factorWithTiles(expression) {
+        console.log(`🧮 AI factoring with tiles: ${expression}`);
+
+        this.openAlgebraTiles();
+        await this.delay(300);
+
+        if (window.algebraTiles && typeof window.algebraTiles.demonstrateFactoring === 'function') {
+            await window.algebraTiles.demonstrateFactoring(expression);
+            console.log('✅ Factoring demo complete');
+        } else {
+            // Fallback: just show the expression on tiles
+            console.warn('[VisualTeaching] demonstrateFactoring not available, falling back to expression');
+            await this.showAlgebraTilesExpression(expression);
         }
     }
 
