@@ -47,6 +47,7 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
  * @param {boolean} ctx.stream - Whether to stream the response
  * @param {Object} ctx.res - Express response object (for streaming)
  * @param {number} ctx.aiProcessingStartTime - Date.now() when processing started
+ * @param {boolean} [ctx.skipPersist=false] - Skip persist stage and learning engine updates (for anonymous trial chat)
  * @returns {Object} Pipeline result with everything needed for the response
  */
 async function runPipeline(message, ctx) {
@@ -221,31 +222,52 @@ async function runPipeline(message, ctx) {
   console.log(`[Pipeline] Sidecar: ${signalStats.total} signals (${signalStats.pipelineDerived} deterministic, ${signalStats.llmEmitted} from LLM)`);
 
   // ── Stage 6: PERSIST ──
+  // When skipPersist is true (e.g. anonymous trial chat), skip all DB writes
+  // and learning engine updates. The cognitive stages still ran, so the AI
+  // response quality is identical — we just don't save state.
   const aiProcessingSeconds = Math.ceil((Date.now() - (ctx.aiProcessingStartTime || startTime)) / 1000);
 
-  // ── Update learning engines (BKT, FSRS, ConsistencyScorer) ──
-  // These run BEFORE persist so the updated states are saved with the user document.
-  if (ctx.activeSkill && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
-    try {
-      updateLearningEngines(ctx.user, ctx.activeSkill.skillId, diagnosis, observation);
-    } catch (err) {
-      console.error('[Pipeline] Learning engine update error (non-fatal):', err.message);
+  let persistResults;
+  if (ctx.skipPersist) {
+    persistResults = {
+      xpBreakdown: { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 },
+      problemAnswered: false,
+      wasCorrect: false,
+      wasSkipped: false,
+      leveledUp: false,
+      tutorsUnlocked: [],
+      avatarBuilderUnlocked: false,
+      iepGoalUpdates: [],
+      courseProgressUpdate: null,
+      aiTimeUsed: 0,
+      freeWeeklySecondsRemaining: null,
+    };
+    console.log('[Pipeline] Persist: SKIPPED (skipPersist=true)');
+  } else {
+    // ── Update learning engines (BKT, FSRS, ConsistencyScorer) ──
+    // These run BEFORE persist so the updated states are saved with the user document.
+    if (ctx.activeSkill && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+      try {
+        updateLearningEngines(ctx.user, ctx.activeSkill.skillId, diagnosis, observation);
+      } catch (err) {
+        console.error('[Pipeline] Learning engine update error (non-fatal):', err.message);
+      }
     }
-  }
 
-  const persistResults = await persist({
-    user: ctx.user,
-    conversation: ctx.conversation,
-    extracted: verified.extracted,
-    diagnosis,
-    observation,
-    decision,
-    responseText: verified.text,
-    originalMessage: message,
-    aiProcessingSeconds,
-    sessionMood,
-    evidence,
-  });
+    persistResults = await persist({
+      user: ctx.user,
+      conversation: ctx.conversation,
+      extracted: verified.extracted,
+      diagnosis,
+      observation,
+      decision,
+      responseText: verified.text,
+      originalMessage: message,
+      aiProcessingSeconds,
+      sessionMood,
+      evidence,
+    });
+  }
 
   const pipelineTime = Date.now() - startTime;
   console.log(`[Pipeline] Complete in ${pipelineTime}ms (observe→diagnose→decide→generate→verify→persist)`);

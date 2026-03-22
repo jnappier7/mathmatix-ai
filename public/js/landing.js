@@ -165,6 +165,8 @@
   // State
   var selectedTutorId = null;
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
+  var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
+  var MAX_CLIENT_TURNS = 4; // 1 greeting + 3 student messages
   var isSending = false;
   var trialTtsAudio = null; // Currently playing TTS audio
 
@@ -230,6 +232,7 @@
   function selectTutor(tutorId) {
     selectedTutorId = tutorId;
     chatHistory = [];
+    clientTurnCount = 0;
 
     var meta = TUTOR_META[tutorId];
     if (!meta) return;
@@ -284,10 +287,11 @@
     // Reset chat UI
     trialMessages.innerHTML = '';
     trialInput.value = '';
-    trialSuggestions.style.display = '';
+    trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
     trialInputArea.style.display = '';
     trialGate.style.display = 'none';
-    trialSend.disabled = false;
+    trialSend.disabled = true; // Disable until greeting loads
+    trialInput.disabled = true;
 
     // Show chat panel
     trialChat.style.display = 'block';
@@ -295,8 +299,47 @@
     // Scroll hero into view
     document.getElementById('lp-hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Focus input after transition
-    setTimeout(function () { trialInput.focus(); }, 300);
+    // Show typing indicator while greeting loads
+    trialTyping.style.display = 'flex';
+
+    // Fetch tutor greeting
+    csrfFetch('/api/trial-chat/greet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tutorId: selectedTutorId })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      trialTyping.style.display = 'none';
+
+      if (data.gated) {
+        showGate();
+        return;
+      }
+
+      var greeting = data.greeting;
+      if (greeting) {
+        chatHistory.push({ role: 'assistant', content: greeting });
+        clientTurnCount++;
+        appendTrialBubble(greeting, false);
+      }
+
+      // Now show suggestions and enable input
+      trialSuggestions.style.display = '';
+      trialSend.disabled = false;
+      trialInput.disabled = false;
+      trialInput.focus();
+
+      saveTrialState();
+    })
+    .catch(function () {
+      trialTyping.style.display = 'none';
+      // Enable input even if greeting fails — they can still chat
+      trialSuggestions.style.display = '';
+      trialSend.disabled = false;
+      trialInput.disabled = false;
+      trialInput.focus();
+    });
 
     // Persist tutor selection for session carryover
     saveTrialState();
@@ -309,6 +352,7 @@
     if (trustBar) trustBar.style.display = '';
     selectedTutorId = null;
     chatHistory = [];
+    clientTurnCount = 0;
     clearTrialState();
   });
 
@@ -335,6 +379,12 @@
 
   function sendTrialMessage() {
     if (isSending) return;
+
+    // Client-side gate: backup in case server counter resets (restart, multi-instance)
+    if (clientTurnCount >= MAX_CLIENT_TURNS) {
+      showGate();
+      return;
+    }
 
     var text = trialInput.value.trim();
     if (!text) return;
@@ -377,8 +427,9 @@
         return;
       }
 
-      // Update history
+      // Update history and client-side turn counter
       chatHistory.push({ role: 'user', content: text });
+      clientTurnCount++;
 
       if (data.reply) {
         chatHistory.push({ role: 'assistant', content: data.reply });
@@ -666,6 +717,7 @@
       localStorage.setItem(TRIAL_STORAGE_KEY, JSON.stringify({
         tutorId: selectedTutorId,
         history: chatHistory,
+        turnCount: clientTurnCount,
         timestamp: Date.now()
       }));
     } catch (e) { /* localStorage not available — ok */ }
