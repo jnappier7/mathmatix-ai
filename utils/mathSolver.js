@@ -173,6 +173,18 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Factor difference of squares "factor x² - 9" or "factor x^2 - 25"
+    // Also: "factor 4x² - 9", "factor x² - 16"
+    const diffOfSquaresPattern = /(?:factor(?:ing|ize)?(?:\s+the\s+(?:expression|quadratic|trinomial|difference\s+of\s+squares))?\s+)(-?\d*\.?\d*)\s*x[\^²]2?\s*-\s*(\d+\.?\d*)/i;
+    const diffOfSquaresMatch = message.match(diffOfSquaresPattern);
+    if (diffOfSquaresMatch) {
+        return {
+            type: 'factor_diff_of_squares',
+            a: parseFloat(diffOfSquaresMatch[1] || '1'),
+            c: parseFloat(diffOfSquaresMatch[2]),
+        };
+    }
+
     // Pattern: Quadratic equation "x^2 + 5x + 6 = 0" or "x² + 5x + 6 = 0"
     const quadraticPattern = /(-?\d*\.?\d*)\s*x[\^²]2?\s*([+\-])\s*(\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)\s*=\s*0/i;
     const quadraticMatch = message.match(quadraticPattern);
@@ -322,6 +334,8 @@ function solveProblem(problem) {
                 return solveExpandPolynomial(problem);
             case 'factor_quadratic':
                 return solveFactorQuadratic(problem);
+            case 'factor_diff_of_squares':
+                return solveFactorDiffOfSquares(problem);
             case 'fraction_arithmetic':
                 return solveFractionArithmetic(problem);
             case 'percentage':
@@ -826,6 +840,38 @@ function solveExpandPolynomial(problem) {
         answer,
         steps: [
             `Expand ${expression}`,
+            `= ${answer}`,
+        ],
+    };
+}
+
+/**
+ * Factor a difference of squares: ax² - c = (√a·x + √c)(√a·x - √c)
+ * Only works when both a and c are perfect squares.
+ */
+function solveFactorDiffOfSquares(problem) {
+    const { a, c } = problem;
+
+    const sqrtA = Math.sqrt(a);
+    const sqrtC = Math.sqrt(c);
+
+    if (!Number.isInteger(sqrtA) || !Number.isInteger(sqrtC)) {
+        return {
+            success: true,
+            answer: 'Not factorable as difference of squares (not perfect squares)',
+            steps: [`${a}x² - ${c}: ${a} and/or ${c} are not perfect squares`],
+        };
+    }
+
+    const xCoeffStr = sqrtA === 1 ? 'x' : `${sqrtA}x`;
+    const answer = `(${xCoeffStr}+${sqrtC})(${xCoeffStr}-${sqrtC})`;
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `${a === 1 ? '' : a}x² - ${c} is a difference of squares`,
+            `√${a === 1 ? '' : a + '·'}x² = ${xCoeffStr}, √${c} = ${sqrtC}`,
             `= ${answer}`,
         ],
     };
