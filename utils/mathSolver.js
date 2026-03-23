@@ -142,6 +142,22 @@ function detectMathProblem(message) {
         return { type: 'evaluation', expression: expr };
     }
 
+    // Pattern: Polynomial expansion — "expand (2x+3)(x-4)", "multiply (x+2)(x+5)"
+    // Also: "what is (x+3)(x+4)", "(2x+1)(x-3)"
+    const expandKeyword = /\b(?:expand|multiply|simplify|foil)\b/i.test(message);
+    const binomialProductPattern = /(\([-+]?\d*x[+-]\d+\)\s*){2,}/i;
+    const hasBinomialProduct = binomialProductPattern.test(message.replace(/\s+/g, ''));
+    if (hasBinomialProduct) {
+        const factored = parseFactoredForm(message);
+        if (factored && factored.binomials.length >= 2) {
+            return {
+                type: 'expand_polynomial',
+                expression: message.replace(/^.*?(?:expand|multiply|simplify|foil|what\s+is)\s*/i, '').trim(),
+                factored,
+            };
+        }
+    }
+
     // Pattern: Factor a quadratic "factor x² + 5x + 6" or "factor x^2 - 5x - 14"
     // Also matches "factor the expression x²+5x+6" or "factoring x²+7x+10"
     const factorPattern = /(?:factor(?:ing|ize)?(?:\s+the\s+(?:expression|quadratic|trinomial))?\s+)(-?\d*\.?\d*)\s*x[\^²]2?\s*([+\-])\s*(\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)/i;
@@ -302,6 +318,8 @@ function solveProblem(problem) {
                 return solveQuadratic(problem);
             case 'slope':
                 return solveSlope(problem);
+            case 'expand_polynomial':
+                return solveExpandPolynomial(problem);
             case 'factor_quadratic':
                 return solveFactorQuadratic(problem);
             case 'fraction_arithmetic':
@@ -764,6 +782,55 @@ function solveQuadratic(problem) {
  * For a=1: find two numbers that add to b and multiply to c
  * For a≠1: use the ac-method or trial factors
  */
+/**
+ * Expand a polynomial product like (2x+3)(x-4) to standard form.
+ * Uses the existing expandFactoredForm machinery.
+ */
+function solveExpandPolynomial(problem) {
+    const { factored, expression } = problem;
+    const coeffs = expandFactoredForm(factored);
+
+    if (!coeffs) {
+        return { success: false, error: 'Could not expand polynomial' };
+    }
+
+    // Build standard form string from coefficients [a, b, c, ...]
+    // For degree 2: ax² + bx + c
+    const terms = [];
+    const degree = coeffs.length - 1;
+    for (let i = 0; i <= degree; i++) {
+        const coeff = coeffs[i];
+        if (coeff === 0) continue;
+
+        const power = degree - i;
+        let termStr;
+        if (power === 0) {
+            termStr = `${Math.abs(coeff)}`;
+        } else if (power === 1) {
+            termStr = Math.abs(coeff) === 1 ? 'x' : `${Math.abs(coeff)}x`;
+        } else {
+            termStr = Math.abs(coeff) === 1 ? `x^${power}` : `${Math.abs(coeff)}x^${power}`;
+        }
+
+        if (terms.length === 0) {
+            terms.push(coeff < 0 ? `-${termStr}` : termStr);
+        } else {
+            terms.push(coeff < 0 ? `- ${termStr}` : `+ ${termStr}`);
+        }
+    }
+
+    const answer = terms.join(' ') || '0';
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `Expand ${expression}`,
+            `= ${answer}`,
+        ],
+    };
+}
+
 function solveFactorQuadratic(problem) {
     let { a, bSign, b, cSign, c } = problem;
 
