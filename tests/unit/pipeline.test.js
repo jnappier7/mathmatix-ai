@@ -557,8 +557,9 @@ describe('Pipeline: Sidecar', () => {
     expect(instruction.length).toBeLessThan(800);
     expect(instruction).toContain('CORE_BEHAVIOR_XP');
     expect(instruction).toContain('SAFETY_CONCERN');
-    // PROBLEM_RESULT is mentioned in the "Do NOT emit" line — that's correct
-    expect(instruction).toContain('Do NOT emit <PROBLEM_RESULT>');
+    // PROBLEM_RESULT is now derived deterministically by the pipeline, so the
+    // "Do NOT emit" line only suppresses SKILL_MASTERED and SCAFFOLD_ADVANCE
+    expect(instruction).toContain('Do NOT emit <SKILL_MASTERED>');
   });
 
   test('signal stats track sources correctly', () => {
