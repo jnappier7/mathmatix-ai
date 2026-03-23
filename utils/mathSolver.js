@@ -131,6 +131,93 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Angle conversion — degrees to radians or radians to degrees
+    const degToRadPattern = /(?:convert\s+)?(-?\d+\.?\d*)\s*(?:°|degrees?)\s*(?:to|in|into)\s*radians?/i;
+    const degToRadMatch = message.match(degToRadPattern);
+    if (degToRadMatch) {
+        return { type: 'angle_conversion', direction: 'deg_to_rad', value: parseFloat(degToRadMatch[1]) };
+    }
+    const radToDegPattern = /(?:convert\s+)?(-?\d*\.?\d*)?\s*π\s*(?:\/\s*(\d+))?\s*(?:radians?\s*)?(?:to|in|into)\s*degrees?/i;
+    const radToDegMatch = message.match(radToDegPattern);
+    if (radToDegMatch) {
+        let piCoeff = radToDegMatch[1];
+        if (piCoeff === '' || piCoeff === undefined || piCoeff === '+') piCoeff = 1;
+        else if (piCoeff === '-') piCoeff = -1;
+        else piCoeff = parseFloat(piCoeff);
+        const divisor = radToDegMatch[2] ? parseFloat(radToDegMatch[2]) : 1;
+        return { type: 'angle_conversion', direction: 'rad_to_deg', piCoeff, divisor };
+    }
+    const numRadToDegPattern = /(?:convert\s+)?(-?\d+\.?\d*)\s*radians?\s*(?:to|in|into)\s*degrees?/i;
+    const numRadToDegMatch = message.match(numRadToDegPattern);
+    if (numRadToDegMatch) {
+        return { type: 'angle_conversion', direction: 'num_rad_to_deg', value: parseFloat(numRadToDegMatch[1]) };
+    }
+
+    // Pattern: Logarithm evaluation
+    const logBasePattern = /log\s*(?:_|base\s*)(\d+\.?\d*)\s*(?:\(|of\s*)(\d+\.?\d*)\)?/i;
+    const logBaseMatch = message.match(logBasePattern);
+    if (logBaseMatch) {
+        return { type: 'logarithm', base: parseFloat(logBaseMatch[1]), argument: parseFloat(logBaseMatch[2]) };
+    }
+    const logSubscriptPattern = /log([₀₁₂₃₄₅₆₇₈₉]+)\s*\(?(\d+\.?\d*)\)?/i;
+    const logSubscriptMatch = message.match(logSubscriptPattern);
+    if (logSubscriptMatch) {
+        const subscriptMap = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+        const base = parseFloat(logSubscriptMatch[1].split('').map(c => subscriptMap[c] || c).join(''));
+        return { type: 'logarithm', base, argument: parseFloat(logSubscriptMatch[2]) };
+    }
+    const log10Pattern = /(?:^|\s)log\s*\(\s*(\d+\.?\d*)\s*\)/i;
+    const log10Match = message.match(log10Pattern);
+    if (log10Match) {
+        return { type: 'logarithm', base: 10, argument: parseFloat(log10Match[1]) };
+    }
+    const lnPattern = /ln\s*\(\s*(\d+\.?\d*)\s*\)/i;
+    const lnMatch = message.match(lnPattern);
+    if (lnMatch) {
+        return { type: 'logarithm', base: Math.E, argument: parseFloat(lnMatch[1]) };
+    }
+
+    // Pattern: Exponential equations — "2^x = 8", "3^x = 81"
+    const expEqSimplePattern = /(\d+\.?\d*)\s*\^\s*x\s*=\s*(\d+\.?\d*)/i;
+    const expEqSimpleMatch = message.match(expEqSimplePattern);
+    if (expEqSimpleMatch) {
+        return { type: 'exponential_equation', base: parseFloat(expEqSimpleMatch[1]), result: parseFloat(expEqSimpleMatch[2]) };
+    }
+
+    // Pattern: Distance between two points
+    const distanceKeyword = /\bdistance\b/i.test(message);
+    const pointPairPattern2 = /\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)\s*(?:and|,|to)\s*\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)/i;
+    const pointPairMatch2 = message.match(pointPairPattern2);
+    if (pointPairMatch2 && distanceKeyword) {
+        return {
+            type: 'distance',
+            x1: parseFloat(pointPairMatch2[1]), y1: parseFloat(pointPairMatch2[2]),
+            x2: parseFloat(pointPairMatch2[3]), y2: parseFloat(pointPairMatch2[4]),
+        };
+    }
+    // Pattern: Midpoint between two points
+    const midpointKeyword = /\bmidpoint\b/i.test(message);
+    if (pointPairMatch2 && midpointKeyword) {
+        return {
+            type: 'midpoint',
+            x1: parseFloat(pointPairMatch2[1]), y1: parseFloat(pointPairMatch2[2]),
+            x2: parseFloat(pointPairMatch2[3]), y2: parseFloat(pointPairMatch2[4]),
+        };
+    }
+
+    // Pattern: Absolute value equations — "|2x + 3| = 7", "|x - 5| = 10"
+    const absValPattern = /\|\s*(-?\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)\s*\|\s*=\s*(\d+\.?\d*)/i;
+    const absValMatch = message.match(absValPattern);
+    if (absValMatch) {
+        return {
+            type: 'absolute_value_equation',
+            coefficient: parseFloat(absValMatch[1] || '1'),
+            operator: absValMatch[2],
+            constant: parseFloat(absValMatch[3]),
+            result: parseFloat(absValMatch[4]),
+        };
+    }
+
     // Pattern: "what is X + Y" or "solve X + Y"
     const whatIsPattern = /(?:what\s+is|what\s+do\s+you\s+get\s+(?:if\s+you\s+|when\s+you\s+|for\s+)?|solve|calculate|evaluate|compute|find)\s*(.+)/i;
     const whatIsMatch = message.match(whatIsPattern);
@@ -344,6 +431,18 @@ function solveProblem(problem) {
                 return solveExponent(problem);
             case 'sqrt':
                 return solveSqrt(problem);
+            case 'angle_conversion':
+                return solveAngleConversion(problem);
+            case 'logarithm':
+                return solveLogarithm(problem);
+            case 'exponential_equation':
+                return solveExponentialEquation(problem);
+            case 'distance':
+                return solveDistance(problem);
+            case 'midpoint':
+                return solveMidpoint(problem);
+            case 'absolute_value_equation':
+                return solveAbsoluteValue(problem);
             case 'evaluation':
                 return solveEvaluation(problem);
             default:
@@ -1164,6 +1263,248 @@ function solveSqrt(problem) {
 /**
  * Attempt to evaluate a general expression
  */
+/**
+ * Convert between degrees and radians.
+ */
+function solveAngleConversion(problem) {
+    const { direction } = problem;
+
+    if (direction === 'deg_to_rad') {
+        const deg = problem.value;
+        // Simplify as fraction of π: deg/180 * π
+        const g = greatestCommonDivisor(Math.abs(deg), 180);
+        const num = deg / g;
+        const den = 180 / g;
+        let answer;
+        if (den === 1) {
+            answer = num === 1 ? 'π' : num === -1 ? '-π' : `${num}π`;
+        } else if (num === 1) {
+            answer = `π/${den}`;
+        } else if (num === -1) {
+            answer = `-π/${den}`;
+        } else {
+            answer = `${num}π/${den}`;
+        }
+        return {
+            success: true,
+            answer,
+            steps: [`${deg}° × (π/180)`, `= ${deg}/180 × π`, `= ${answer}`],
+        };
+    }
+
+    if (direction === 'rad_to_deg') {
+        const { piCoeff, divisor } = problem;
+        const deg = (piCoeff / divisor) * 180;
+        const piStr = piCoeff === 1 ? 'π' : piCoeff === -1 ? '-π' : `${piCoeff}π`;
+        const radStr = divisor === 1 ? piStr : `${piStr}/${divisor}`;
+        return {
+            success: true,
+            answer: formatNumber(deg) + '°',
+            steps: [`${radStr} × (180/π)`, `= ${formatNumber(piCoeff / divisor)} × 180`, `= ${formatNumber(deg)}°`],
+        };
+    }
+
+    if (direction === 'num_rad_to_deg') {
+        const rad = problem.value;
+        const deg = rad * (180 / Math.PI);
+        return {
+            success: true,
+            answer: formatNumber(deg) + '°',
+            steps: [`${rad} rad × (180/π)`, `= ${formatNumber(deg)}°`],
+        };
+    }
+
+    return { success: false, error: 'Unknown angle conversion direction' };
+}
+
+/**
+ * Evaluate a logarithm: log_b(x) = y where b^y = x
+ */
+function solveLogarithm(problem) {
+    const { base, argument } = problem;
+
+    if (argument <= 0) {
+        return { success: true, answer: 'undefined', steps: [`log of a non-positive number is undefined`] };
+    }
+    if (base <= 0 || base === 1) {
+        return { success: true, answer: 'undefined', steps: [`log base must be positive and ≠ 1`] };
+    }
+
+    const result = Math.log(argument) / Math.log(base);
+    const isNatural = Math.abs(base - Math.E) < 0.0001;
+    const baseStr = isNatural ? 'e' : `${base}`;
+    const logStr = isNatural ? `ln(${argument})` : base === 10 ? `log(${argument})` : `log_${base}(${argument})`;
+
+    // Check if result is a clean integer
+    const rounded = Math.round(result);
+    const isInteger = Math.abs(result - rounded) < 0.0001;
+    const answer = isInteger ? formatNumber(rounded) : formatNumber(result);
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `${logStr}`,
+            `${baseStr}^? = ${argument}`,
+            `${baseStr}^${answer} = ${argument}`,
+            `${logStr} = ${answer}`,
+        ],
+    };
+}
+
+/**
+ * Solve a simple exponential equation: b^x = c
+ * Uses logarithms: x = log(c) / log(b)
+ */
+function solveExponentialEquation(problem) {
+    const { base, result } = problem;
+
+    if (base <= 0 || base === 1 || result <= 0) {
+        return { success: true, answer: 'No solution', steps: ['Invalid base or result for exponential equation'] };
+    }
+
+    const x = Math.log(result) / Math.log(base);
+    const rounded = Math.round(x);
+    const isInteger = Math.abs(x - rounded) < 0.0001;
+    const answer = isInteger ? formatNumber(rounded) : formatNumber(x);
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `${base}^x = ${result}`,
+            `x = log(${result}) / log(${base})`,
+            `x = ${answer}`,
+        ],
+    };
+}
+
+/**
+ * Calculate distance between two points.
+ */
+function solveDistance(problem) {
+    const { x1, y1, x2, y2 } = problem;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const distSquared = dx * dx + dy * dy;
+    const dist = Math.sqrt(distSquared);
+
+    // Check if it simplifies to a clean number
+    const rounded = Math.round(dist * 10000) / 10000;
+    const isInteger = Math.abs(dist - Math.round(dist)) < 0.0001;
+
+    // Try to express as simplified radical: √n or a√b
+    let answer;
+    if (isInteger) {
+        answer = formatNumber(Math.round(dist));
+    } else {
+        // Check if distSquared is an integer for radical form
+        if (Number.isInteger(distSquared)) {
+            const simplified = simplifyRadical(distSquared);
+            answer = simplified;
+        } else {
+            answer = formatNumber(rounded);
+        }
+    }
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `Points: (${x1}, ${y1}) and (${x2}, ${y2})`,
+            `d = √((${x2}-${x1})² + (${y2}-${y1})²)`,
+            `d = √(${dx}² + ${dy}²)`,
+            `d = √(${distSquared})`,
+            `d = ${answer}`,
+        ],
+    };
+}
+
+/**
+ * Simplify √n into a√b form or integer.
+ */
+function simplifyRadical(n) {
+    if (n < 0) return `√(${n})`;
+    const sqrt = Math.sqrt(n);
+    if (Number.isInteger(sqrt)) return `${sqrt}`;
+
+    // Factor out perfect squares
+    let outside = 1;
+    let inside = n;
+    for (let i = 2; i * i <= inside; i++) {
+        while (inside % (i * i) === 0) {
+            outside *= i;
+            inside /= (i * i);
+        }
+    }
+
+    if (outside === 1) return `√${n}`;
+    if (inside === 1) return `${outside}`;
+    return `${outside}√${inside}`;
+}
+
+/**
+ * Calculate midpoint between two points.
+ */
+function solveMidpoint(problem) {
+    const { x1, y1, x2, y2 } = problem;
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+
+    return {
+        success: true,
+        answer: `(${formatNumber(mx)}, ${formatNumber(my)})`,
+        steps: [
+            `Points: (${x1}, ${y1}) and (${x2}, ${y2})`,
+            `midpoint = ((${x1}+${x2})/2, (${y1}+${y2})/2)`,
+            `midpoint = (${formatNumber(mx)}, ${formatNumber(my)})`,
+        ],
+    };
+}
+
+/**
+ * Solve absolute value equation |ax + b| = c
+ * Two cases: ax + b = c and ax + b = -c
+ */
+function solveAbsoluteValue(problem) {
+    const { coefficient, operator, constant, result } = problem;
+
+    if (result < 0) {
+        return { success: true, answer: 'No solution', steps: ['Absolute value cannot equal a negative number'] };
+    }
+
+    if (result === 0) {
+        const adjustedConst = operator === '+' ? constant : -constant;
+        const x = -adjustedConst / coefficient;
+        return {
+            success: true,
+            answer: `x = ${formatNumber(x)}`,
+            steps: [`|${coefficient}x ${operator} ${constant}| = 0`, `${coefficient}x ${operator} ${constant} = 0`, `x = ${formatNumber(x)}`],
+        };
+    }
+
+    const adjustedConst = operator === '+' ? constant : -constant;
+
+    // Case 1: ax + b = result
+    const x1 = (result - adjustedConst) / coefficient;
+    // Case 2: ax + b = -result
+    const x2 = (-result - adjustedConst) / coefficient;
+
+    const smaller = Math.min(x1, x2);
+    const larger = Math.max(x1, x2);
+
+    return {
+        success: true,
+        answer: `x = ${formatNumber(smaller)} or x = ${formatNumber(larger)}`,
+        steps: [
+            `|${coefficient}x ${operator} ${constant}| = ${result}`,
+            `Case 1: ${coefficient}x ${operator} ${constant} = ${result} → x = ${formatNumber(x1)}`,
+            `Case 2: ${coefficient}x ${operator} ${constant} = -${result} → x = ${formatNumber(x2)}`,
+            `x = ${formatNumber(smaller)} or x = ${formatNumber(larger)}`,
+        ],
+    };
+}
+
 function solveEvaluation(problem) {
     const { expression } = problem;
 
