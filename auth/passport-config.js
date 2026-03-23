@@ -141,27 +141,26 @@ passport.use(
           }
         }
 
-        /* ---------- 3. Brand-new user - Require enrollment code ------ */
-        // Instead of creating user immediately, store pending profile for enrollment code verification
+        /* ---------- 3. Brand-new user — create immediately ---------- */
         const { firstName, lastName, needsFix } = extractNames(profile);
+        const username = await generateUniqueUsername(profile.displayName, profile.id);
 
-        const pendingOAuthProfile = {
-          provider: 'google',
-          providerId: profile.id,
+        const newUser = new User({
+          username,
           email: userEmail,
-          displayName: profile.displayName,
+          googleId: profile.id,
+          role: 'student',
           firstName,
           lastName,
-          needsFix,
-          avatar: profile.photos?.[0]?.value
-        };
-
-        // Return a special "pending" user object that will trigger enrollment code page
-        // The session will store the pending profile
-        return done(null, {
-          isPendingEnrollment: true,
-          pendingProfile: pendingOAuthProfile
+          needsProfileCompletion: needsFix,
+          avatar: profile.photos?.[0]?.value,
+          emailVerified: true, // OAuth emails are pre-verified by provider
+          linkCode: await generateUniqueStudentLinkCode(),
         });
+
+        await newUser.save();
+        console.log(`LOG: New Google OAuth user created: ${newUser.username}`);
+        return done(null, newUser);
       } catch (err) {
         console.error("ERROR: GoogleStrategy error:", err);
         return done(err, null);
@@ -204,23 +203,28 @@ passport.use(
           }
         }
 
-        // 3. Brand-new user - Require enrollment code
-        const pendingOAuthProfile = {
-          provider: 'microsoft',
-          providerId: profile.id,
-          email: userEmail,
-          displayName: profile.displayName,
-          firstName: profile.name?.givenName || "NoFirst",
-          lastName: profile.name?.familyName || "NoLast",
-          needsFix: true,  // Microsoft profile data is often sparse
-          avatar: profile.photos?.[0]?.value
-        };
+        // 3. Brand-new user — create immediately
+        const msFirstName = profile.name?.givenName || "NoFirst";
+        const msLastName  = profile.name?.familyName || "NoLast";
+        const msNeedsFix  = msFirstName === "NoFirst" || msLastName === "NoLast";
+        const username = await generateUniqueUsername(profile.displayName, profile.id);
 
-        // Return a special "pending" user object that will trigger enrollment code page
-        return done(null, {
-          isPendingEnrollment: true,
-          pendingProfile: pendingOAuthProfile
+        const newUser = new User({
+          username,
+          email: userEmail,
+          microsoftId: profile.id,
+          role: 'student',
+          firstName: msFirstName,
+          lastName: msLastName,
+          needsProfileCompletion: msNeedsFix,
+          avatar: profile.photos?.[0]?.value,
+          emailVerified: true, // OAuth emails are pre-verified by provider
+          linkCode: await generateUniqueStudentLinkCode(),
         });
+
+        await newUser.save();
+        console.log(`LOG: New Microsoft OAuth user created: ${newUser.username}`);
+        return done(null, newUser);
       } catch (err) {
         console.error("ERROR: MicrosoftStrategy error:", err);
         return done(err, null);
@@ -312,26 +316,34 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
           }
         }
 
-        /* ---------- 3. Brand-new user - Require enrollment code ------ */
+        /* ---------- 3. Brand-new user — create immediately ---------- */
         const needsFix = firstName === "NoFirst" || lastName === "NoLast";
+        const username = await generateUniqueUsername(displayName, cleverId);
 
-        const pendingOAuthProfile = {
-          provider:    "clever",
-          providerId:  cleverId,
-          email:       userEmail,
-          displayName,
+        const newUser = new User({
+          username,
+          email: userEmail,
+          cleverId,
+          role: mappedRole,
           firstName,
           lastName,
-          needsFix,
-          role:        mappedRole,
-          avatar:      null,
-          accessToken  // Preserve token so sync can run after enrollment completes
-        };
-
-        return done(null, {
-          isPendingEnrollment: true,
-          pendingProfile: pendingOAuthProfile
+          needsProfileCompletion: needsFix,
+          emailVerified: true, // OAuth emails are pre-verified by provider
+          linkCode: await generateUniqueStudentLinkCode(),
         });
+
+        await newUser.save();
+        console.log(`LOG: New Clever SSO user created: ${newUser.username}`);
+
+        // Run Clever roster sync for the new user (non-blocking)
+        try {
+          const syncResult = await syncOnLogin(accessToken, newUser);
+          console.log(`LOG: Post-creation Clever sync for ${newUser.username}: sections=${syncResult.stats.sectionsProcessed}`);
+        } catch (syncErr) {
+          console.error("WARN: Post-creation Clever sync failed (non-fatal):", syncErr.message);
+        }
+
+        return done(null, newUser);
       } catch (err) {
         console.error("ERROR: CleverStrategy error:", err);
         return done(err, null);

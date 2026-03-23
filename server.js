@@ -456,14 +456,6 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             return res.redirect('/login.html');
         }
 
-        // Check if this is a new user requiring enrollment code
-        if (user.isPendingEnrollment) {
-            // Store pending profile in session (not logged in yet)
-            req.session.pendingOAuthProfile = user.pendingProfile;
-            console.log('LOG: New Google OAuth user requires enrollment code');
-            return res.redirect('/oauth-enrollment.html');
-        }
-
         req.logIn(user, async (err) => {
             if (err) { return next(err); }
             // Update lastLogin timestamp
@@ -497,14 +489,6 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
         if (err) { return next(err); }
         if (!user) {
             return res.redirect('/login.html');
-        }
-
-        // Check if this is a new user requiring enrollment code
-        if (user.isPendingEnrollment) {
-            // Store pending profile in session (not logged in yet)
-            req.session.pendingOAuthProfile = user.pendingProfile;
-            console.log('LOG: New Microsoft OAuth user requires enrollment code');
-            return res.redirect('/oauth-enrollment.html');
         }
 
         req.logIn(user, async (err) => {
@@ -556,18 +540,6 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
             if (err) { return next(err); }
             if (!user) {
                 return res.redirect('/login.html');
-            }
-
-            // Check if this is a new user requiring enrollment code
-            if (user.isPendingEnrollment) {
-                // Shared device: regenerate session before storing pending profile
-                req.session.regenerate((err) => {
-                    if (err) { return next(err); }
-                    req.session.pendingOAuthProfile = user.pendingProfile;
-                    console.log('LOG: New Clever SSO user requires enrollment code');
-                    return res.redirect('/oauth-enrollment.html');
-                });
-                return;
             }
 
             // Shared device: regenerate session before logging in the new user
