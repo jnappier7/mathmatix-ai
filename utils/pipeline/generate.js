@@ -111,7 +111,7 @@ function buildActionPrompt(decision) {
 
     case ACTIONS.CONTINUE_CONVERSATION:
     default:
-      // No special action context needed
+      parts.push('NEVER solve the problem for the student. Ask a guiding question or break it into a first step for THEM to try.');
       break;
   }
 
