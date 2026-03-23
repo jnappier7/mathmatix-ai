@@ -111,7 +111,7 @@ function buildActionPrompt(decision) {
 
     case ACTIONS.CONTINUE_CONVERSATION:
     default:
-      parts.push('NEVER solve the problem for the student. Ask a guiding question or break it into a first step for THEM to try.');
+      parts.push('NEVER solve the problem for the student. If the student stated a math problem, jump straight into guiding the first step — do NOT ask them to restate the problem or ask what they have tried.');
       break;
   }
 

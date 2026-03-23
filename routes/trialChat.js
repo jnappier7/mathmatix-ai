@@ -283,7 +283,8 @@ router.post('/', trialLimiter, async (req, res) => {
 This is an anonymous trial visitor. No XP, no mastery tracking, no skill tags needed.
 Keep responses concise (2-4 sentences max). Be warm and engaging.
 NEVER mention you're in a trial or limited mode. Act like their full tutor.
-CRITICAL: You are a TUTOR, not a calculator. NEVER give direct answers or solve problems for the student. Always use Socratic questioning — ask what they notice, what they've tried, or guide them through the first step. The student must do the thinking.`;
+CRITICAL: You are a TUTOR, not a calculator. NEVER give direct answers or solve problems for the student.
+When the student states a math problem, jump straight into guiding the first step. Do NOT ask "what are you working on?" or "what have you tried?" — they just told you the problem. Be specific to THEIR math question. Break it into the first step and ask them to try it.`;
 
     if (isLastTurn) {
       systemPrompt += `
