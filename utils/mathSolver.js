@@ -218,6 +218,67 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Mean/Median/Mode/Range of a data set
+    // "find the mean of 3, 5, 7, 9", "median of {12, 15, 18}", "what is the mode of 3,8,3,2"
+    const statsKeyword = message.match(/\b(mean|average|median|mode|range)\b/i);
+    const numberListMatch = message.match(/(?:of\s+)?[{(]?\s*((?:-?\d+\.?\d*(?:\s*,\s*|\s+and\s+))+(?:-?\d+\.?\d*))\s*[})]?/i);
+    if (statsKeyword && numberListMatch) {
+        const nums = numberListMatch[1].split(/\s*,\s*|\s+and\s+/).map(Number).filter(n => !isNaN(n));
+        if (nums.length >= 2) {
+            return { type: 'statistics', operation: statsKeyword[1].toLowerCase(), data: nums };
+        }
+    }
+
+    // Pattern: Proportion / cross-multiplication — "solve x/4 = 3/8", "2/5 = x/15"
+    // Also: "if 5 items cost $3.50, how much for 8 items" → too NLP-heavy, skip for now
+    const proportionPattern1 = /(\d+\.?\d*|x)\s*\/\s*(\d+\.?\d*|x)\s*=\s*(\d+\.?\d*|x)\s*\/\s*(\d+\.?\d*|x)/i;
+    const proportionMatch = message.match(proportionPattern1);
+    if (proportionMatch) {
+        const parts = [proportionMatch[1], proportionMatch[2], proportionMatch[3], proportionMatch[4]];
+        const xCount = parts.filter(p => p.toLowerCase() === 'x').length;
+        if (xCount === 1) {
+            return {
+                type: 'proportion',
+                a: parts[0], b: parts[1], c: parts[2], d: parts[3],
+            };
+        }
+    }
+
+    // Pattern: Circle area or circumference
+    // "area of a circle with radius 5", "circumference of a circle with diameter 10"
+    const circleAreaPattern = /area\s+(?:of\s+)?(?:a\s+)?circle\s+(?:with\s+)?(?:radius|r)\s*(?:=|of|is)?\s*(\d+\.?\d*)/i;
+    const circleAreaMatch = message.match(circleAreaPattern);
+    if (circleAreaMatch) {
+        return { type: 'circle', operation: 'area', radius: parseFloat(circleAreaMatch[1]) };
+    }
+    const circleAreaDiamPattern = /area\s+(?:of\s+)?(?:a\s+)?circle\s+(?:with\s+)?(?:diameter|d)\s*(?:=|of|is)?\s*(\d+\.?\d*)/i;
+    const circleAreaDiamMatch = message.match(circleAreaDiamPattern);
+    if (circleAreaDiamMatch) {
+        return { type: 'circle', operation: 'area', radius: parseFloat(circleAreaDiamMatch[1]) / 2 };
+    }
+    const circumferencePattern = /circumference\s+(?:of\s+)?(?:a\s+)?circle\s+(?:with\s+)?(?:radius|r)\s*(?:=|of|is)?\s*(\d+\.?\d*)/i;
+    const circumferenceMatch = message.match(circumferencePattern);
+    if (circumferenceMatch) {
+        return { type: 'circle', operation: 'circumference', radius: parseFloat(circumferenceMatch[1]) };
+    }
+    const circumferenceDiamPattern = /circumference\s+(?:of\s+)?(?:a\s+)?circle\s+(?:with\s+)?(?:diameter|d)\s*(?:=|of|is)?\s*(\d+\.?\d*)/i;
+    const circumferenceDiamMatch = message.match(circumferenceDiamPattern);
+    if (circumferenceDiamMatch) {
+        return { type: 'circle', operation: 'circumference', radius: parseFloat(circumferenceDiamMatch[1]) / 2 };
+    }
+
+    // Pattern: Volume of rectangular prism or cylinder
+    const rectVolPattern = /volume\s+(?:of\s+)?(?:a\s+)?(?:rectangular\s+)?(?:prism|box)\s*.*?(?:length|l)\s*(?:=|of|is|:)?\s*(\d+\.?\d*).*?(?:width|w)\s*(?:=|of|is|:)?\s*(\d+\.?\d*).*?(?:height|h)\s*(?:=|of|is|:)?\s*(\d+\.?\d*)/i;
+    const rectVolMatch = message.match(rectVolPattern);
+    if (rectVolMatch) {
+        return { type: 'volume', shape: 'rectangular_prism', length: parseFloat(rectVolMatch[1]), width: parseFloat(rectVolMatch[2]), height: parseFloat(rectVolMatch[3]) };
+    }
+    const cylVolPattern = /volume\s+(?:of\s+)?(?:a\s+)?cylinder\s*.*?(?:radius|r)\s*(?:=|of|is|:)?\s*(\d+\.?\d*).*?(?:height|h)\s*(?:=|of|is|:)?\s*(\d+\.?\d*)/i;
+    const cylVolMatch = message.match(cylVolPattern);
+    if (cylVolMatch) {
+        return { type: 'volume', shape: 'cylinder', radius: parseFloat(cylVolMatch[1]), height: parseFloat(cylVolMatch[2]) };
+    }
+
     // Pattern: "what is X + Y" or "solve X + Y"
     const whatIsPattern = /(?:what\s+is|what\s+do\s+you\s+get\s+(?:if\s+you\s+|when\s+you\s+|for\s+)?|solve|calculate|evaluate|compute|find)\s*(.+)/i;
     const whatIsMatch = message.match(whatIsPattern);
@@ -443,6 +504,14 @@ function solveProblem(problem) {
                 return solveMidpoint(problem);
             case 'absolute_value_equation':
                 return solveAbsoluteValue(problem);
+            case 'statistics':
+                return solveStatistics(problem);
+            case 'proportion':
+                return solveProportion(problem);
+            case 'circle':
+                return solveCircle(problem);
+            case 'volume':
+                return solveVolume(problem);
             case 'evaluation':
                 return solveEvaluation(problem);
             default:
@@ -1503,6 +1572,205 @@ function solveAbsoluteValue(problem) {
             `x = ${formatNumber(smaller)} or x = ${formatNumber(larger)}`,
         ],
     };
+}
+
+/**
+ * Solve mean, median, mode, or range of a data set.
+ */
+function solveStatistics(problem) {
+    const { operation, data } = problem;
+    const sorted = [...data].sort((a, b) => a - b);
+    const n = sorted.length;
+
+    switch (operation) {
+        case 'mean':
+        case 'average': {
+            const sum = data.reduce((a, b) => a + b, 0);
+            const mean = sum / n;
+            return {
+                success: true,
+                answer: formatNumber(mean),
+                steps: [
+                    `Data: ${data.join(', ')}`,
+                    `Sum = ${formatNumber(sum)}`,
+                    `Mean = ${formatNumber(sum)} / ${n} = ${formatNumber(mean)}`,
+                ],
+            };
+        }
+        case 'median': {
+            let median;
+            if (n % 2 === 1) {
+                median = sorted[Math.floor(n / 2)];
+            } else {
+                median = (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+            }
+            return {
+                success: true,
+                answer: formatNumber(median),
+                steps: [
+                    `Sorted data: ${sorted.join(', ')}`,
+                    n % 2 === 1
+                        ? `Middle value (position ${Math.ceil(n / 2)}): ${formatNumber(median)}`
+                        : `Average of positions ${n / 2} and ${n / 2 + 1}: (${sorted[n / 2 - 1]} + ${sorted[n / 2]}) / 2 = ${formatNumber(median)}`,
+                ],
+            };
+        }
+        case 'mode': {
+            const freq = {};
+            for (const v of data) freq[v] = (freq[v] || 0) + 1;
+            const maxFreq = Math.max(...Object.values(freq));
+            if (maxFreq === 1) {
+                return { success: true, answer: 'No mode', steps: ['All values appear exactly once'] };
+            }
+            const modes = Object.entries(freq).filter(([, f]) => f === maxFreq).map(([v]) => Number(v)).sort((a, b) => a - b);
+            return {
+                success: true,
+                answer: modes.join(', '),
+                steps: [
+                    `Data: ${data.join(', ')}`,
+                    `${modes.length === 1 ? 'Mode' : 'Modes'}: ${modes.join(', ')} (appears ${maxFreq} times)`,
+                ],
+            };
+        }
+        case 'range': {
+            const range = sorted[n - 1] - sorted[0];
+            return {
+                success: true,
+                answer: formatNumber(range),
+                steps: [
+                    `Sorted data: ${sorted.join(', ')}`,
+                    `Range = ${sorted[n - 1]} - ${sorted[0]} = ${formatNumber(range)}`,
+                ],
+            };
+        }
+        default:
+            return { success: false, error: `Unknown statistics operation: ${operation}` };
+    }
+}
+
+/**
+ * Solve a proportion a/b = c/d for the unknown x.
+ * Cross-multiply: a*d = b*c, solve for x.
+ */
+function solveProportion(problem) {
+    const { a, b, c, d } = problem;
+
+    // Find which is 'x' and solve
+    const isX = v => v.toLowerCase() === 'x';
+    let answer;
+    let steps;
+
+    if (isX(a)) {
+        // x/b = c/d → x = b*c/d
+        const bN = parseFloat(b), cN = parseFloat(c), dN = parseFloat(d);
+        answer = (bN * cN) / dN;
+        steps = [`x/${b} = ${c}/${d}`, `x × ${d} = ${b} × ${c}`, `x × ${d} = ${formatNumber(bN * cN)}`, `x = ${formatNumber(answer)}`];
+    } else if (isX(b)) {
+        // a/x = c/d → x = a*d/c
+        const aN = parseFloat(a), cN = parseFloat(c), dN = parseFloat(d);
+        answer = (aN * dN) / cN;
+        steps = [`${a}/x = ${c}/${d}`, `${a} × ${d} = x × ${c}`, `${formatNumber(aN * dN)} = x × ${c}`, `x = ${formatNumber(answer)}`];
+    } else if (isX(c)) {
+        // a/b = x/d → x = a*d/b
+        const aN = parseFloat(a), bN = parseFloat(b), dN = parseFloat(d);
+        answer = (aN * dN) / bN;
+        steps = [`${a}/${b} = x/${d}`, `${a} × ${d} = ${b} × x`, `${formatNumber(aN * dN)} = ${b} × x`, `x = ${formatNumber(answer)}`];
+    } else if (isX(d)) {
+        // a/b = c/x → x = b*c/a
+        const aN = parseFloat(a), bN = parseFloat(b), cN = parseFloat(c);
+        answer = (bN * cN) / aN;
+        steps = [`${a}/${b} = ${c}/x`, `${a} × x = ${b} × ${c}`, `${a} × x = ${formatNumber(bN * cN)}`, `x = ${formatNumber(answer)}`];
+    } else {
+        return { success: false, error: 'No unknown found in proportion' };
+    }
+
+    return { success: true, answer: formatNumber(answer), steps };
+}
+
+/**
+ * Solve circle area (πr²) or circumference (2πr).
+ * Returns answer in terms of π when clean.
+ */
+function solveCircle(problem) {
+    const { operation, radius } = problem;
+
+    if (operation === 'area') {
+        const rSquared = radius * radius;
+        const numericAnswer = Math.PI * rSquared;
+        const piAnswer = Number.isInteger(rSquared) ? `${rSquared}π` : `${formatNumber(rSquared)}π`;
+        return {
+            success: true,
+            answer: piAnswer,
+            numericAnswer: formatNumber(numericAnswer),
+            steps: [
+                `A = πr²`,
+                `A = π × ${radius}²`,
+                `A = ${piAnswer}`,
+                `A ≈ ${formatNumber(numericAnswer)}`,
+            ],
+        };
+    }
+
+    if (operation === 'circumference') {
+        const coeff = 2 * radius;
+        const numericAnswer = Math.PI * coeff;
+        const piAnswer = Number.isInteger(coeff) ? `${coeff}π` : `${formatNumber(coeff)}π`;
+        return {
+            success: true,
+            answer: piAnswer,
+            numericAnswer: formatNumber(numericAnswer),
+            steps: [
+                `C = 2πr`,
+                `C = 2π × ${radius}`,
+                `C = ${piAnswer}`,
+                `C ≈ ${formatNumber(numericAnswer)}`,
+            ],
+        };
+    }
+
+    return { success: false, error: 'Unknown circle operation' };
+}
+
+/**
+ * Solve volume of rectangular prism (l×w×h) or cylinder (πr²h).
+ */
+function solveVolume(problem) {
+    const { shape } = problem;
+
+    if (shape === 'rectangular_prism') {
+        const { length, width, height } = problem;
+        const vol = length * width * height;
+        return {
+            success: true,
+            answer: formatNumber(vol),
+            steps: [
+                `V = length × width × height`,
+                `V = ${length} × ${width} × ${height}`,
+                `V = ${formatNumber(vol)}`,
+            ],
+        };
+    }
+
+    if (shape === 'cylinder') {
+        const { radius, height } = problem;
+        const rSquared = radius * radius;
+        const numericVol = Math.PI * rSquared * height;
+        const coeff = rSquared * height;
+        const piAnswer = Number.isInteger(coeff) ? `${coeff}π` : `${formatNumber(coeff)}π`;
+        return {
+            success: true,
+            answer: piAnswer,
+            numericAnswer: formatNumber(numericVol),
+            steps: [
+                `V = πr²h`,
+                `V = π × ${radius}² × ${height}`,
+                `V = ${piAnswer}`,
+                `V ≈ ${formatNumber(numericVol)}`,
+            ],
+        };
+    }
+
+    return { success: false, error: 'Unknown volume shape' };
 }
 
 function solveEvaluation(problem) {
