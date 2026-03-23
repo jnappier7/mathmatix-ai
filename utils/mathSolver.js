@@ -114,6 +114,23 @@ function detectMathProblem(message) {
         }
     }
 
+    // Pattern: Slope between two points
+    // "slope through (1,2) and (3,6)", "find the slope of the line through (-1,3) and (2,-4)"
+    // "what is the slope between (0,0) and (4,8)"
+    // Must come BEFORE "what is / find / solve" catch-all
+    const slopePattern = /\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)\s*(?:and|,|to)\s*\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)/i;
+    const hasSlopeKeyword = /\bslope\b/i.test(message);
+    const slopeMatch = message.match(slopePattern);
+    if (slopeMatch && hasSlopeKeyword) {
+        return {
+            type: 'slope',
+            x1: parseFloat(slopeMatch[1]),
+            y1: parseFloat(slopeMatch[2]),
+            x2: parseFloat(slopeMatch[3]),
+            y2: parseFloat(slopeMatch[4]),
+        };
+    }
+
     // Pattern: "what is X + Y" or "solve X + Y"
     const whatIsPattern = /(?:what\s+is|what\s+do\s+you\s+get\s+(?:if\s+you\s+|when\s+you\s+|for\s+)?|solve|calculate|evaluate|compute|find)\s*(.+)/i;
     const whatIsMatch = message.match(whatIsPattern);
@@ -283,6 +300,8 @@ function solveProblem(problem) {
                 return solveSystem(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
+            case 'slope':
+                return solveSlope(problem);
             case 'factor_quadratic':
                 return solveFactorQuadratic(problem);
             case 'fraction_arithmetic':
@@ -649,6 +668,48 @@ function solveSystem(problem) {
 /**
  * Solve quadratic equation ax² + bx + c = 0
  */
+/**
+ * Calculate slope between two points: (y2-y1)/(x2-x1)
+ */
+function solveSlope(problem) {
+    const { x1, y1, x2, y2 } = problem;
+
+    if (x1 === x2) {
+        return {
+            success: true,
+            answer: 'undefined',
+            steps: [
+                `Points: (${x1}, ${y1}) and (${x2}, ${y2})`,
+                `slope = (${y2} - ${y1}) / (${x2} - ${x1}) = ${y2 - y1} / 0`,
+                `Vertical line — slope is undefined`,
+            ],
+        };
+    }
+
+    const rise = y2 - y1;
+    const run = x2 - x1;
+    const gcd = greatestCommonDivisor(Math.abs(rise), Math.abs(run));
+    const simplifiedRise = rise / gcd;
+    const simplifiedRun = run / gcd;
+
+    // Express as fraction if not a whole number
+    const isWhole = simplifiedRun === 1 || simplifiedRun === -1;
+    const answer = isWhole
+        ? formatNumber(simplifiedRise * (simplifiedRun < 0 ? -1 : 1))
+        : `${simplifiedRun < 0 ? -simplifiedRise : simplifiedRise}/${Math.abs(simplifiedRun)}`;
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `Points: (${x1}, ${y1}) and (${x2}, ${y2})`,
+            `slope = (${y2} - ${y1}) / (${x2} - ${x1})`,
+            `slope = ${rise} / ${run}`,
+            `slope = ${answer}`,
+        ],
+    };
+}
+
 function solveQuadratic(problem) {
     let { a, bSign, b, cSign, c } = problem;
 
