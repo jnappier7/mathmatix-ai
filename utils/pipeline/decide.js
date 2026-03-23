@@ -268,10 +268,10 @@ function decideCore(observation, diagnosis, context) {
   if (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH) {
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
-      'The student is asking a math question. Do NOT solve it for them.',
-      'Use Socratic method: ask what they\'ve tried, what they notice, or break it into a first step and ask them to attempt it.',
-      'NEVER show the full solution or final answer. Guide them to discover it.',
-      'Do NOT repeat information already confirmed or covered.'
+      'The student stated a math problem. Acknowledge it and immediately guide them into the first step.',
+      'Do NOT ask "what problem are you working on?" or "what have you tried?" — they just told you the problem. Start tutoring.',
+      'Break the problem into its first step and ask the student to attempt THAT step. Be specific to the actual math they asked about.',
+      'NEVER show the full solution or final answer. Guide them to discover it one step at a time.'
     );
     return decision;
   }
