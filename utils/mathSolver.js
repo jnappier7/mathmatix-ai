@@ -81,6 +81,12 @@ function detectMathProblem(message) {
         return { type: 'arithmetic', left: parseFloat(subtractFromMatch[2]), operator: '-', right: parseFloat(subtractFromMatch[1]) };
     }
 
+    // Pattern: System of two linear equations
+    // "2x + y = 5 and x - y = 1", "solve the system: 2x + y = 5, x - y = 1"
+    // Must come BEFORE single equation detection
+    const systemResult = detectSystem(message);
+    if (systemResult) return systemResult;
+
     // Pattern: General linear equation — handles multi-step, distribution, and variables on both sides
     // Matches anything with "x" and "=" that isn't a quadratic (no x² / x^2)
     // Examples: "2x + 3 = 7", "3(x+2) - 5 = 16", "3x + 5 = x + 13", "-2(x-4) + 3x = 10"
@@ -273,6 +279,8 @@ function solveProblem(problem) {
                 return solveLinearEquation(problem);
             case 'general_linear':
                 return solveGeneralLinear(problem);
+            case 'system_of_equations':
+                return solveSystem(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
             case 'factor_quadratic':
@@ -495,6 +503,146 @@ function solveGeneralLinear(problem) {
         success: true,
         answer: formatNumber(x),
         steps,
+    };
+}
+
+/**
+ * Detect a system of two linear equations in a message.
+ * Handles: "2x + y = 5 and x - y = 1", "solve the system: 2x + y = 5, x - y = 1"
+ * Returns a problem object or null.
+ */
+function detectSystem(message) {
+    // Strip preamble like "solve the system:", "solve:", etc.
+    const cleaned = message.replace(/^.*?(?:solve\s+(?:the\s+)?(?:system|equations?)\s*:?\s*|find\s+x\s+and\s+y\s*:?\s*)/i, '').trim();
+
+    // Try splitting on: "and", comma, semicolon, or newline
+    const separators = [/\s+and\s+/i, /\s*,\s*/, /\s*;\s*/, /\s*\n\s*/];
+    for (const sep of separators) {
+        const parts = cleaned.split(sep);
+        if (parts.length === 2) {
+            const eq1 = parseSystemEquation(parts[0].trim());
+            const eq2 = parseSystemEquation(parts[1].trim());
+            if (eq1 && eq2) {
+                return {
+                    type: 'system_of_equations',
+                    eq1,
+                    eq2,
+                    eq1Text: parts[0].trim(),
+                    eq2Text: parts[1].trim(),
+                };
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Parse a single equation in a system into { xCoeff, yCoeff, constant }.
+ * Handles: "2x + y = 5", "x - y = 1", "3x + 2y = 12", "-x + 4y = 7", "y = 2x + 3"
+ * Returns coefficients such that xCoeff*x + yCoeff*y = constant, or null.
+ */
+function parseSystemEquation(eq) {
+    const sides = eq.split('=');
+    if (sides.length !== 2) return null;
+
+    const left = parseLinearExpressionXY(sides[0].trim());
+    const right = parseLinearExpressionXY(sides[1].trim());
+    if (!left || !right) return null;
+
+    // Move everything to left side: (left - right) = 0
+    // So: (left.x - right.x)*x + (left.y - right.y)*y = right.const - left.const
+    return {
+        xCoeff: left.xCoeff - right.xCoeff,
+        yCoeff: left.yCoeff - right.yCoeff,
+        constant: right.constant - left.constant,
+    };
+}
+
+/**
+ * Parse a linear expression with both x and y variables.
+ * Returns { xCoeff, yCoeff, constant } or null.
+ */
+function parseLinearExpressionXY(expr) {
+    if (!expr) return null;
+
+    const s = expr.replace(/\s+/g, '');
+    const parts = s.match(/[+-]?[^+-]+/g);
+    if (!parts) return null;
+
+    let xCoeff = 0, yCoeff = 0, constant = 0;
+
+    for (const part of parts) {
+        const t = part.trim();
+        if (!t) continue;
+
+        // Term with x
+        const xMatch = t.match(/^([+-]?\d*\.?\d*)x$/i);
+        if (xMatch) {
+            let c = xMatch[1];
+            if (c === '' || c === '+') c = 1;
+            else if (c === '-') c = -1;
+            else c = parseFloat(c);
+            xCoeff += c;
+            continue;
+        }
+
+        // Term with y
+        const yMatch = t.match(/^([+-]?\d*\.?\d*)y$/i);
+        if (yMatch) {
+            let c = yMatch[1];
+            if (c === '' || c === '+') c = 1;
+            else if (c === '-') c = -1;
+            else c = parseFloat(c);
+            yCoeff += c;
+            continue;
+        }
+
+        // Constant term
+        const numMatch = t.match(/^([+-]?\d+\.?\d*)$/);
+        if (numMatch) {
+            constant += parseFloat(numMatch[1]);
+            continue;
+        }
+
+        return null; // Unparseable term
+    }
+
+    return { xCoeff, yCoeff, constant };
+}
+
+/**
+ * Solve a system of two linear equations using elimination.
+ * eq1: a1*x + b1*y = c1
+ * eq2: a2*x + b2*y = c2
+ */
+function solveSystem(problem) {
+    const { eq1, eq2, eq1Text, eq2Text } = problem;
+    const { xCoeff: a1, yCoeff: b1, constant: c1 } = eq1;
+    const { xCoeff: a2, yCoeff: b2, constant: c2 } = eq2;
+
+    const det = a1 * b2 - a2 * b1;
+
+    if (det === 0) {
+        // Check if consistent (infinite solutions) or inconsistent (no solution)
+        if (Math.abs(a1 * c2 - a2 * c1) < 0.0001) {
+            return { success: true, answer: 'Infinitely many solutions (dependent system)', steps: ['The equations are multiples of each other'] };
+        }
+        return { success: true, answer: 'No solution (inconsistent system)', steps: ['The equations are parallel — no intersection'] };
+    }
+
+    const x = (c1 * b2 - c2 * b1) / det;
+    const y = (a1 * c2 - a2 * c1) / det;
+
+    return {
+        success: true,
+        answer: `x = ${formatNumber(x)}, y = ${formatNumber(y)}`,
+        steps: [
+            `${eq1Text}`,
+            `${eq2Text}`,
+            `Using elimination:`,
+            `x = ${formatNumber(x)}`,
+            `y = ${formatNumber(y)}`,
+        ],
     };
 }
 
@@ -949,6 +1097,18 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
+    // System of equations answer: "x = 3, y = 2" vs "y = 2, x = 3"
+    const studentVars = parseVariableAssignments(studentStr);
+    const correctVars = parseVariableAssignments(correctStr);
+    if (studentVars && correctVars) {
+        const allMatch = Object.keys(correctVars).every(v =>
+            studentVars[v] !== undefined && Math.abs(studentVars[v] - correctVars[v]) <= tolerance
+        );
+        if (allMatch && Object.keys(studentVars).length === Object.keys(correctVars).length) {
+            return { isCorrect: true, exact: false, equivalentForm: true };
+        }
+    }
+
     // Factored form comparison: (x+a)(x+b) vs (x+b)(x+a) — commutative property
     const studentFactors = parseFactoredForm(studentStr);
     const correctFactors = parseFactoredForm(correctStr);
@@ -960,6 +1120,21 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     }
 
     return { isCorrect: false };
+}
+
+/**
+ * Parse variable assignments like "x = 3, y = 2" or "x=3 and y=2"
+ * Returns { x: 3, y: 2 } or null
+ */
+function parseVariableAssignments(str) {
+    const assignments = {};
+    // Match patterns like "x = 3" or "y=-2.5"
+    const pattern = /([a-z])\s*=\s*(-?\d+\.?\d*)/gi;
+    let match;
+    while ((match = pattern.exec(str)) !== null) {
+        assignments[match[1].toLowerCase()] = parseFloat(match[2]);
+    }
+    return Object.keys(assignments).length >= 2 ? assignments : null;
 }
 
 /**
@@ -1111,4 +1286,9 @@ module.exports = {
     parseFactoredForm,
     areFactoredFormsEquivalent,
     formatBinomialProduct,
+    // Export system/linear helpers for testing
+    solveGeneralLinear,
+    solveSystem,
+    parseLinearExpression,
+    parseSystemEquation,
 };
