@@ -81,6 +81,33 @@ function detectMathProblem(message) {
         return { type: 'arithmetic', left: parseFloat(subtractFromMatch[2]), operator: '-', right: parseFloat(subtractFromMatch[1]) };
     }
 
+    // Pattern: General linear equation — handles multi-step, distribution, and variables on both sides
+    // Matches anything with "x" and "=" that isn't a quadratic (no x² / x^2)
+    // Examples: "2x + 3 = 7", "3(x+2) - 5 = 16", "3x + 5 = x + 13", "-2(x-4) + 3x = 10"
+    // Must come BEFORE the "what is / solve" catch-all to handle "solve for x: ..."
+    const hasEquals = /=/.test(message);
+    const hasX = /\bx\b/i.test(message) || /\dx/i.test(message);
+    const hasQuadratic = /x[\^²]2?|x\s*\^?\s*2/i.test(message);
+    const hasFactorKeyword = /\bfactor/i.test(message);
+    if (hasEquals && hasX && !hasQuadratic && !hasFactorKeyword) {
+        // Extract the equation part (strip "solve", "solve for x:", etc.)
+        const eqText = message.replace(/^.*?(?:solve(?:\s+for\s+x)?\s*:?\s*|find\s+x\s*:?\s*)/i, '').trim();
+        const sides = eqText.split('=');
+        if (sides.length === 2) {
+            const left = parseLinearExpression(sides[0].trim());
+            const right = parseLinearExpression(sides[1].trim());
+            if (left !== null && right !== null) {
+                return {
+                    type: 'general_linear',
+                    leftExpr: sides[0].trim(),
+                    rightExpr: sides[1].trim(),
+                    left,
+                    right,
+                };
+            }
+        }
+    }
+
     // Pattern: "what is X + Y" or "solve X + Y"
     const whatIsPattern = /(?:what\s+is|what\s+do\s+you\s+get\s+(?:if\s+you\s+|when\s+you\s+|for\s+)?|solve|calculate|evaluate|compute|find)\s*(.+)/i;
     const whatIsMatch = message.match(whatIsPattern);
@@ -90,19 +117,6 @@ function detectMathProblem(message) {
         const subResult = detectNaturalLanguageArithmetic(expr);
         if (subResult) return subResult;
         return { type: 'evaluation', expression: expr };
-    }
-
-    // Pattern: Linear equation "solve for x: 2x + 3 = 7" or "2x + 3 = 7"
-    const linearPattern = /(-?\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)\s*=\s*(-?\d+\.?\d*)/i;
-    const linearMatch = message.match(linearPattern);
-    if (linearMatch) {
-        return {
-            type: 'linear_equation',
-            coefficient: parseFloat(linearMatch[1] || '1'),
-            operator: linearMatch[2],
-            constant: parseFloat(linearMatch[3]),
-            result: parseFloat(linearMatch[4])
-        };
     }
 
     // Pattern: Factor a quadratic "factor x² + 5x + 6" or "factor x^2 - 5x - 14"
@@ -257,6 +271,8 @@ function solveProblem(problem) {
                 return solveArithmetic(problem);
             case 'linear_equation':
                 return solveLinearEquation(problem);
+            case 'general_linear':
+                return solveGeneralLinear(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
             case 'factor_quadratic':
@@ -335,6 +351,150 @@ function solveLinearEquation(problem) {
             `${coefficient}x = ${formatNumber(result - adjustedConstant)}`,
             `x = ${formatNumber(x)}`
         ]
+    };
+}
+
+/**
+ * Parse a linear expression into { xCoeff, constant } after distributing and combining.
+ * Handles: "3(x+2) - 5", "2x + 3", "-x + 7", "3x + 5", "10", etc.
+ * Returns { xCoeff, constant } or null if unparseable.
+ */
+function parseLinearExpression(expr) {
+    if (!expr) return null;
+
+    let s = expr.replace(/\s+/g, '');
+    // Normalize: insert '+' before unary '-' for splitting, but not at start or after '('
+    // e.g. "3x-5" → split-friendly
+
+    // Step 1: Expand distribution patterns like "3(x+2)" or "-2(x-4)"
+    // Handles nested: a(bx + c) → abx + ac
+    let expanded = s;
+    const distPattern = /(-?\d*\.?\d*)\(([^)]+)\)/g;
+    let safety = 0;
+    while (distPattern.test(expanded) && safety < 10) {
+        safety++;
+        expanded = expanded.replace(/(-?\d*\.?\d*)\(([^)]+)\)/g, (match, coeffStr, inner) => {
+            const coeff = coeffStr === '' || coeffStr === '+' ? 1 : coeffStr === '-' ? -1 : parseFloat(coeffStr);
+            // Parse inner as terms and multiply each by coeff
+            const terms = splitIntoTerms(inner);
+            return terms.map(t => {
+                const parsed = parseSingleTerm(t);
+                if (!parsed) return t;
+                if (parsed.hasX) {
+                    const newCoeff = parsed.coefficient * coeff;
+                    return (newCoeff >= 0 ? '+' : '') + newCoeff + 'x';
+                } else {
+                    const newConst = parsed.value * coeff;
+                    return (newConst >= 0 ? '+' : '') + newConst;
+                }
+            }).join('');
+        });
+        distPattern.lastIndex = 0;
+    }
+
+    // Step 2: Split into terms and combine
+    const terms = splitIntoTerms(expanded);
+    let xCoeff = 0;
+    let constant = 0;
+
+    for (const term of terms) {
+        const parsed = parseSingleTerm(term);
+        if (!parsed) return null; // Unparseable term
+        if (parsed.hasX) {
+            xCoeff += parsed.coefficient;
+        } else {
+            constant += parsed.value;
+        }
+    }
+
+    return { xCoeff, constant };
+}
+
+/**
+ * Split an expression string into signed terms.
+ * "3x-5+2x" → ["3x", "-5", "+2x"]
+ * "+3x-5" → ["+3x", "-5"]
+ */
+function splitIntoTerms(expr) {
+    const terms = [];
+    // Match terms: optional sign, then digits/x/decimal
+    const termRegex = /([+-]?)(\d*\.?\d*)(x?)/g;
+    let m;
+    let pos = 0;
+
+    // Use a simpler approach: split on + and - while preserving the sign
+    const normalized = expr.replace(/^\+/, ''); // strip leading +
+    const parts = normalized.match(/[+-]?[^+-]+/g);
+    return parts || [];
+}
+
+/**
+ * Parse a single term like "3x", "-5", "x", "-x", "0.5x", "12"
+ * Returns { hasX, coefficient, value } or null
+ */
+function parseSingleTerm(term) {
+    const t = term.trim();
+    if (!t) return null;
+
+    // Term with x
+    const xMatch = t.match(/^([+-]?\d*\.?\d*)x$/);
+    if (xMatch) {
+        let coeff = xMatch[1];
+        if (coeff === '' || coeff === '+') coeff = 1;
+        else if (coeff === '-') coeff = -1;
+        else coeff = parseFloat(coeff);
+        return { hasX: true, coefficient: coeff, value: 0 };
+    }
+
+    // Constant term
+    const numMatch = t.match(/^([+-]?\d+\.?\d*)$/);
+    if (numMatch) {
+        return { hasX: false, coefficient: 0, value: parseFloat(numMatch[1]) };
+    }
+
+    return null;
+}
+
+/**
+ * Solve a general linear equation by comparing simplified left and right sides.
+ * Handles multi-step equations and variables on both sides.
+ */
+function solveGeneralLinear(problem) {
+    const { left, right, leftExpr, rightExpr } = problem;
+
+    // left.xCoeff * x + left.constant = right.xCoeff * x + right.constant
+    // (left.xCoeff - right.xCoeff) * x = right.constant - left.constant
+    const xCoeff = left.xCoeff - right.xCoeff;
+    const constDiff = right.constant - left.constant;
+
+    if (xCoeff === 0) {
+        if (Math.abs(constDiff) < 0.0001) {
+            return { success: true, answer: 'All real numbers (identity)', steps: ['Both sides simplify to the same expression'] };
+        }
+        return { success: true, answer: 'No solution (contradiction)', steps: ['The equation simplifies to a false statement'] };
+    }
+
+    const x = constDiff / xCoeff;
+    const steps = [`${leftExpr} = ${rightExpr}`];
+
+    // Show simplified form if different from input
+    const leftSimp = `${left.xCoeff !== 0 ? left.xCoeff + 'x' : ''}${left.constant !== 0 ? (left.constant > 0 && left.xCoeff !== 0 ? '+' : '') + left.constant : ''}`;
+    const rightSimp = `${right.xCoeff !== 0 ? right.xCoeff + 'x' : ''}${right.constant !== 0 ? (right.constant > 0 && right.xCoeff !== 0 ? '+' : '') + right.constant : ''}`;
+
+    if (leftSimp !== leftExpr || rightSimp !== rightExpr) {
+        steps.push(`Simplify: ${leftSimp || '0'} = ${rightSimp || '0'}`);
+    }
+
+    if (right.xCoeff !== 0 && left.xCoeff !== 0) {
+        steps.push(`Move x terms: ${xCoeff}x = ${formatNumber(constDiff)}`);
+    }
+
+    steps.push(`x = ${formatNumber(x)}`);
+
+    return {
+        success: true,
+        answer: formatNumber(x),
+        steps,
     };
 }
 
