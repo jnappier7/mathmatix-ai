@@ -937,6 +937,23 @@ app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fl
 // IMPORTANT: This must come AFTER all HTML route definitions to ensure authentication checks run first
 // Cache static assets (JS, CSS, images, fonts) so browsers don't re-download on every page load
 const staticCacheOptions = { maxAge: '1d', etag: true, lastModified: true };
+// Serve HTML files via res.sendFile() so the CSP nonce middleware can inject nonces
+// into inline <script> tags. express.static bypasses res.sendFile(), so without this,
+// inline scripts in static HTML files are blocked by the CSP nonce policy.
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.endsWith('.html')) {
+    const publicDir = path.join(__dirname, 'public');
+    const filePath = path.resolve(publicDir, req.path.replace(/^\/+/, ''));
+    // Prevent path traversal — ensure resolved path stays within public/
+    if (!filePath.startsWith(publicDir + path.sep)) return next();
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) return next(); // File doesn't exist, fall through
+      res.sendFile(filePath);
+    });
+  } else {
+    next();
+  }
+});
 app.use(express.static(path.join(__dirname, "public"), staticCacheOptions));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images'), staticCacheOptions));
 
