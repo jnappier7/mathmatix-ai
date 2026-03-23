@@ -153,6 +153,7 @@ class InlineChatVisuals {
             // New enhanced visualizations
             { regex: /\[PYTHAGOREAN:([^\]]+)\]/g, handler: this.createPythagorean.bind(this) },
             { regex: /\[ANGLE:([^\]]+)\]/g, handler: this.createAngle.bind(this) },
+            { regex: /\[REGULAR_POLYGON:([^\]]+)\]/g, handler: this.createRegularPolygon.bind(this) },
             { regex: /\[SLOPE:([^\]]+)\]/g, handler: this.createSlope.bind(this) },
             { regex: /\[PERCENT_BAR:([^\]]+)\]/g, handler: this.createPercentBar.bind(this) },
             { regex: /\[PLACE_VALUE:([^\]]+)\]/g, handler: this.createPlaceValue.bind(this) },
@@ -1696,6 +1697,71 @@ class InlineChatVisuals {
         if (degrees < 180) return 'obtuse';
         if (degrees === 180) return 'straight';
         return 'reflex';
+    }
+
+    // ==========================================
+    // REGULAR POLYGON VISUALIZATION
+    // [REGULAR_POLYGON:sides=12,label="dodecagon"]
+    // ==========================================
+
+    createRegularPolygon(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('polygon');
+
+        const sides = Math.max(3, Math.min(36, parseInt(params.sides) || 6));
+        const label = params.label || this.getPolygonName(sides);
+        const size = 220;
+        const cx = size / 2;
+        const cy = size / 2;
+        const radius = 90;
+
+        // Generate vertices
+        const vertices = [];
+        for (let i = 0; i < sides; i++) {
+            const angle = (2 * Math.PI * i) / sides - Math.PI / 2; // start at top
+            vertices.push({
+                x: cx + radius * Math.cos(angle),
+                y: cy + radius * Math.sin(angle),
+            });
+        }
+
+        const pointsStr = vertices.map(v => `${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' ');
+
+        // Interior angle
+        const interiorAngle = ((sides - 2) * 180) / sides;
+
+        let svg = `<svg viewBox="0 0 ${size} ${size}" class="icv-regular-polygon">`;
+
+        // Fill + stroke
+        svg += `<polygon points="${pointsStr}" fill="rgba(102, 126, 234, 0.15)" stroke="#667eea" stroke-width="2.5" stroke-linejoin="round"/>`;
+
+        // Vertex dots
+        for (const v of vertices) {
+            svg += `<circle cx="${v.x.toFixed(1)}" cy="${v.y.toFixed(1)}" r="3" fill="#667eea"/>`;
+        }
+
+        // Center dot
+        svg += `<circle cx="${cx}" cy="${cy}" r="2.5" fill="#999" opacity="0.5"/>`;
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-polygon-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(label)}</div>
+            ${svg}
+            <div class="icv-caption">${sides} sides &middot; interior angle = ${interiorAngle % 1 === 0 ? interiorAngle : interiorAngle.toFixed(1)}°</div>
+        </div>
+        `;
+    }
+
+    getPolygonName(sides) {
+        const names = {
+            3: 'Triangle', 4: 'Square', 5: 'Pentagon', 6: 'Hexagon',
+            7: 'Heptagon', 8: 'Octagon', 9: 'Nonagon', 10: 'Decagon',
+            11: 'Hendecagon', 12: 'Dodecagon', 15: 'Pentadecagon',
+            20: 'Icosagon',
+        };
+        return names[sides] || `Regular ${sides}-gon`;
     }
 
     // ==========================================
