@@ -212,6 +212,8 @@ async function runPipeline(message, ctx) {
     firstName: ctx.user.firstName,
     isStreaming: ctx.stream || false,
     res: ctx.res || null,
+    action: decision.action,
+    messageType: observation.messageType,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

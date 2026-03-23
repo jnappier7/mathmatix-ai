@@ -16,6 +16,8 @@ const { enforceVisualTeaching } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
 const { callLLM } = require('../llmGateway');
+const { ACTIONS } = require('./decide');
+const { MESSAGE_TYPES } = require('./observe');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 
@@ -168,6 +170,30 @@ async function verify(responseText, context = {}) {
       try {
         context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
       } catch (e) { /* client disconnected */ }
+    }
+  }
+
+  // ── 2b. False-affirmation guard ──
+  // When the student didn't answer (IDK, give-up, etc.), the AI must NOT
+  // say "That's right!", "Correct!", etc. — it confuses students into
+  // thinking they answered correctly. Strip the leading affirmation.
+  if (context.action && context.messageType) {
+    const noAnswerActions = [ACTIONS.SCAFFOLD_DOWN, ACTIONS.EXIT_RAMP, ACTIONS.HINT, ACTIONS.ACKNOWLEDGE_FRUSTRATION];
+    const noAnswerTypes = [MESSAGE_TYPES.IDK, MESSAGE_TYPES.GIVE_UP, MESSAGE_TYPES.HELP_REQUEST, MESSAGE_TYPES.FRUSTRATION];
+
+    if (noAnswerActions.includes(context.action) || noAnswerTypes.includes(context.messageType)) {
+      const falseAffirmation = /^(that'?s\s+right[.!]*|correct[.!]*|exactly[.!]*|great\s+job[.!]*|perfect[.!]*|well\s+done[.!]*|yes[.!]*|you\s+got\s+it[.!]*|right\s+on[.!]*|bingo[.!]*)\s*/i;
+      if (falseAffirmation.test(text.trim())) {
+        text = text.trim().replace(falseAffirmation, '').trim();
+        flags.push('false_affirmation_stripped');
+        console.log(`[Verify] Stripped false affirmation (action: ${context.action}, messageType: ${context.messageType})`);
+
+        if (context.isStreaming && context.res) {
+          try {
+            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+          } catch (e) { /* client disconnected */ }
+        }
+      }
     }
   }
 
