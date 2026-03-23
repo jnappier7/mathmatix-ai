@@ -65,15 +65,17 @@ function buildActionPrompt(decision) {
       parts.push('2. Then ask them to apply the same method to their problem');
       parts.push('3. If STILL stuck, offer to skip and move on');
       parts.push('NEVER reveal the answer. The answer stays hidden. Always.');
+      parts.push('Do NOT say "That\'s right", "Correct", or any affirmation — the student did not answer correctly.');
       break;
 
     case ACTIONS.SCAFFOLD_DOWN:
-      parts.push('Student needs more support. Lower the barrier:');
+      parts.push('The student said they don\'t know or needs more support. Lower the barrier:');
       if (decision.scaffoldLevel >= 5) {
         parts.push('Rephrase as a yes/no or multiple-choice question.');
       } else {
         parts.push('Break the problem into a simpler sub-question.');
       }
+      parts.push('CRITICAL: The student did NOT answer the question. Do NOT say "That\'s right", "Correct", "Exactly", "Great job", or any affirmation. They did not provide an answer to affirm.');
       break;
 
     case ACTIONS.HINT:
