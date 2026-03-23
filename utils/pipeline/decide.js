@@ -264,6 +264,18 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Math questions — guide, don't solve ──
+  if (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'The student is asking a math question. Do NOT solve it for them.',
+      'Use Socratic method: ask what they\'ve tried, what they notice, or break it into a first step and ask them to attempt it.',
+      'NEVER show the full solution or final answer. Guide them to discover it.',
+      'Do NOT repeat information already confirmed or covered.'
+    );
+    return decision;
+  }
+
   // ── Phase-specific decisions (when in structured lesson) ──
   if (phaseState && activeSkill) {
     decision.phasePrompt = getPhasePrompt(phaseState, activeSkill.displayName);
@@ -276,6 +288,7 @@ function decideCore(observation, diagnosis, context) {
   decision.action = ACTIONS.CONTINUE_CONVERSATION;
   decision.directives.push(
     'Continue the conversation naturally, building on the current topic.',
+    'Do NOT give direct answers. Guide with Socratic questions.',
     'Do NOT repeat information already confirmed or covered.'
   );
   return decision;

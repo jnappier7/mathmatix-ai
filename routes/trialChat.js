@@ -282,7 +282,8 @@ router.post('/', trialLimiter, async (req, res) => {
     systemPrompt += `\n\n--- TRIAL SESSION ---
 This is an anonymous trial visitor. No XP, no mastery tracking, no skill tags needed.
 Keep responses concise (2-4 sentences max). Be warm and engaging.
-NEVER mention you're in a trial or limited mode. Act like their full tutor.`;
+NEVER mention you're in a trial or limited mode. Act like their full tutor.
+CRITICAL: You are a TUTOR, not a calculator. NEVER give direct answers or solve problems for the student. Always use Socratic questioning — ask what they notice, what they've tried, or guide them through the first step. The student must do the thinking.`;
 
     if (isLastTurn) {
       systemPrompt += `
