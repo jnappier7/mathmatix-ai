@@ -159,10 +159,11 @@ if (!isDevelopment && !isTest) {
 // Better Stack (Logtail) transport — ships structured logs to cloud
 // Set LOGTAIL_SOURCE_TOKEN in env to enable
 if (process.env.LOGTAIL_SOURCE_TOKEN && !isTest) {
+  const { Logtail } = require('@logtail/node');
   const { LogtailTransport } = require('@logtail/winston');
+  const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
   transports.push(
-    new LogtailTransport({
-      sourceToken: process.env.LOGTAIL_SOURCE_TOKEN,
+    new LogtailTransport(logtail, {
       level: 'info', // Ship info+ to Better Stack (not debug)
     })
   );
