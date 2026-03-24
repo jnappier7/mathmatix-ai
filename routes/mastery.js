@@ -12,6 +12,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Skill = require('../models/skill');
+const { configCache } = require('../utils/cache');
 const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHING ENHANCEMENT
 const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = require('../utils/badgePhaseController'); // TEACHING ENHANCEMENT
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
@@ -1902,7 +1903,7 @@ router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
 
     // Check if should trigger inference
     if (shouldTriggerInference(skillMastery)) {
-      const allSkills = await Skill.find().lean();
+      const allSkills = await configCache.getOrSet('skills:all', () => Skill.find().lean(), 3600);
       let inferences = inferMasteryFromHigherTier(skillId, user.skillMastery, allSkills);
 
       // Prevent inference cascade (max 2 tier gap)

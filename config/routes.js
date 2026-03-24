@@ -175,8 +175,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
   app.use('/api/voice', isAuthenticated, voiceTestRoutes);
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
+  // These routes accept base64 image data — larger JSON body limit
+  const largeJsonParser = express.json({ limit: '10mb' });
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
-  app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes);
+  app.use('/api/chat-with-file', isAuthenticated, largeJsonParser, aiEndpointLimiter, usageGate, chatWithFileRoutes);
   app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
   app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);
@@ -205,7 +207,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/review', isAuthenticated, reviewRoutes);
   app.use('/api/settings', isAuthenticated, settingsRoutes);
   app.use('/api/email', isAuthenticated, emailRoutes);
-  app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes);
+  app.use('/api/grade-work', isAuthenticated, largeJsonParser, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes);
   app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes);
   app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes);
   app.use('/api', isAuthenticated, dailyQuestsRoutes);
@@ -553,7 +555,26 @@ function registerHtmlRoutes(app) {
 
 function registerStaticRoutes(app) {
   const publicDir = path.join(__dirname, '..', 'public');
-  const staticCacheOptions = { maxAge: '1d', etag: true, lastModified: true };
+
+  // Long cache for fingerprinted/immutable assets (CSS, JS, images, fonts)
+  const immutableCacheOptions = { maxAge: '7d', etag: true, lastModified: true };
+  // Short cache for HTML (needs fresh CSP nonces + deploys)
+  const htmlCacheOptions = { maxAge: 0, etag: true, lastModified: true };
+
+  // Set cache-control by file type
+  const staticCacheOptions = {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
+      if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
+      } else if (/\.html$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'no-cache'); // Always revalidate HTML
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day default
+      }
+    },
+  };
 
   // Serve HTML via sendFile for CSP nonce injection
   app.use((req, res, next) => {
@@ -570,7 +591,7 @@ function registerStaticRoutes(app) {
   });
 
   app.use(express.static(publicDir, staticCacheOptions));
-  app.use('/images', express.static(path.join(publicDir, 'images'), staticCacheOptions));
+  app.use('/images', express.static(path.join(publicDir, 'images'), immutableCacheOptions));
 }
 
 module.exports = { registerRoutes };
