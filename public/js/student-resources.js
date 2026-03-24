@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drag-to-chat
+    // Drag-to-chat: close modal so the chat drop-zone is visible
     resourcesContent?.addEventListener('dragstart', (e) => {
         const card = e.target.closest('[data-resource-id]');
         if (!card) return;
@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.dataTransfer.effectAllowed = 'copy';
 
         card.style.opacity = '0.5';
+
+        // Collapse the modal after a tiny delay so the drag image is captured first
+        setTimeout(() => closeModal(), 50);
+
         card.addEventListener('dragend', () => { card.style.opacity = ''; }, { once: true });
     });
 

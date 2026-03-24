@@ -3231,7 +3231,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Fetch a teacher resource by ID and feed it into the file upload pipeline,
      * exactly as if the student had dragged the PDF file from their computer.
      */
-    async function fetchAndUploadTeacherResource(resourceId, resourceName) {
+    window.fetchAndUploadTeacherResource = async function fetchAndUploadTeacherResource(resourceId, resourceName) {
         showToast(`Loading "${resourceName}"...`, 2500);
         try {
             const response = await fetch(`/api/teacher-resources/download/${resourceId}`);
