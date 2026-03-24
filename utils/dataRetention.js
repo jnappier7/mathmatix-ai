@@ -205,6 +205,7 @@ async function runRetentionSweep(customPolicy = null, dryRun = false) {
 // ============================================================================
 
 let retentionInterval = null;
+let initialSweepTimeout = null;
 
 /**
  * Start the scheduled retention sweep.
@@ -218,7 +219,7 @@ function startRetentionSchedule(intervalMs = 24 * 60 * 60 * 1000) {
     }
 
     // Run first sweep after a delay (don't block startup)
-    setTimeout(async () => {
+    initialSweepTimeout = setTimeout(async () => {
         try {
             await runRetentionSweep();
         } catch (err) {
@@ -242,6 +243,10 @@ function startRetentionSchedule(intervalMs = 24 * 60 * 60 * 1000) {
  * Stop the scheduled retention sweep.
  */
 function stopRetentionSchedule() {
+    if (initialSweepTimeout) {
+        clearTimeout(initialSweepTimeout);
+        initialSweepTimeout = null;
+    }
     if (retentionInterval) {
         clearInterval(retentionInterval);
         retentionInterval = null;
