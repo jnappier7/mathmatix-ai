@@ -181,33 +181,7 @@ announcementSchema.statics.getForStudent = async function(studentId, options = {
     ).lean();
     const enrollmentCodeIds = enrollmentCodes.map(ec => ec._id);
 
-    // Build query for announcements targeting this student
-    const query = {
-        isDeleted: false,
-        isSent: true,
-        $or: [
-            // Directly targeted
-            { recipientIds: studentId },
-            // Class-wide from their teacher (no specific enrollment code)
-            {
-                teacherId: student.teacherId,
-                targetType: 'class',
-                enrollmentCodeId: null
-            },
-            // Enrollment code specific
-            {
-                targetType: 'enrollment_code',
-                enrollmentCodeId: { $in: enrollmentCodeIds }
-            }
-        ],
-        // Not expired
-        $or: [
-            { expiresAt: null },
-            { expiresAt: { $gt: new Date() } }
-        ]
-    };
-
-    // Fix: properly combine the $or conditions
+    // Build query: combine targeting + expiry $or clauses with $and
     const finalQuery = {
         isDeleted: false,
         isSent: true,

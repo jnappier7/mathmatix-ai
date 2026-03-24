@@ -9,6 +9,7 @@
     "build": "vite build",
     "build:preview": "vite preview",
     "test": "jest --coverage --verbose",
+    "lint": "eslint .",
     "test:watch": "jest --watch",
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
@@ -94,6 +95,7 @@
   },
   "devDependencies": {
     "dotenv": "^17.3.1",
+    "eslint": "^8.57.1",
     "jest": "^29.7.0",
     "nodemon": "^3.1.11",
     "supertest": "^7.0.0",

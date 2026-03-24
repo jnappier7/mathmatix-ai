@@ -210,13 +210,15 @@ messageSchema.statics.getConversations = async function(userId, options = {}) {
 // Static method to get thread messages
 messageSchema.statics.getThread = async function(threadId, userId) {
     const messages = await this.find({
-        $or: [
-            { _id: threadId },
-            { threadId: threadId }
-        ],
-        $or: [
-            { senderId: userId, deletedBySender: false },
-            { recipientId: userId, deletedByRecipient: false }
+        $and: [
+            { $or: [
+                { _id: threadId },
+                { threadId: threadId }
+            ]},
+            { $or: [
+                { senderId: userId, deletedBySender: false },
+                { recipientId: userId, deletedByRecipient: false }
+            ]}
         ]
     })
     .sort({ createdAt: 1 })
