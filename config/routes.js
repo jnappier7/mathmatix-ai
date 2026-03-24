@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const passport = require('passport');
 const express = require('express');
+const mongoose = require('mongoose');
 
 const logger = require('../utils/logger');
 const User = require('../models/user');
@@ -94,6 +95,42 @@ const imageSearchRoutes = require('../routes/imageSearch');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
+  // --- Health Check (public, no auth) ---
+  app.get('/api/health', async (req, res) => {
+    const checks = {};
+    let status = 'healthy';
+
+    // Database connectivity
+    try {
+      const dbState = mongoose.connection.readyState;
+      const dbStates = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+      checks.database = { status: dbState === 1 ? 'ok' : 'degraded', state: dbStates[dbState] || 'unknown' };
+      if (dbState !== 1) status = 'degraded';
+    } catch (err) {
+      checks.database = { status: 'error', message: err.message };
+      status = 'unhealthy';
+    }
+
+    // API keys configured
+    checks.openai = { status: process.env.OPENAI_API_KEY ? 'ok' : 'missing' };
+    checks.mathpix = { status: (process.env.MATHPIX_APP_ID && process.env.MATHPIX_APP_KEY) ? 'ok' : 'missing' };
+    if (!process.env.OPENAI_API_KEY) status = 'degraded';
+
+    // Memory usage
+    const mem = process.memoryUsage();
+    checks.memory = {
+      heapUsedMB: Math.round(mem.heapUsed / 1048576),
+      heapTotalMB: Math.round(mem.heapTotal / 1048576),
+      rssMB: Math.round(mem.rss / 1048576),
+    };
+
+    // Uptime
+    checks.uptime = { seconds: Math.round(process.uptime()) };
+
+    const httpStatus = status === 'unhealthy' ? 503 : 200;
+    res.status(httpStatus).json({ status, checks, timestamp: new Date().toISOString() });
+  });
+
   // --- Auth Routes ---
   app.use('/login', authLimiter, loginRoutes);
   app.use('/signup', signupLimiter, signupRoutes);
