@@ -8,6 +8,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
 const { callLLM, retryWithExponentialBackoff } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prerequisiteMapper');
+const logger = require('../utils/logger').child({ route: 'guidedLesson' });
 const {
   initializeLessonPhase,
   recordAssessment,
@@ -60,15 +61,15 @@ router.post('/generate-interactive-lesson', async (req, res) => {
             // Check if student ready for this skill
             const readiness = checkPrerequisiteReadiness(skillId || title, userProfile);
             if (!readiness.ready) {
-                console.log(`⚠️ Prerequisite gaps detected: ${readiness.recommendation}`);
+                logger.warn(`Prerequisite gaps detected: ${readiness.recommendation}`);
             }
 
             // Initialize adaptive lesson phases
             currentPhaseState = initializeLessonPhase(skillId || title, warmupData);
 
-            console.log(`🎓 Starting adaptive lesson: ${title}`);
-            console.log(`📚 Warmup skill: ${warmupData.skillName}`);
-            console.log(`📊 Current phase: ${currentPhaseState.currentPhase}`);
+            logger.info(`Starting adaptive lesson: ${title}`);
+            logger.info(`Warmup skill: ${warmupData.skillName}`);
+            logger.info(`Current phase: ${currentPhaseState.currentPhase}`);
         }
 
         // Auto-advance phase based on message count (simple heuristic for now)
@@ -140,7 +141,7 @@ ${phasePrompt}
         if (req.user?._id) {
             User.findByIdAndUpdate(req.user._id, {
                 $inc: { weeklyAISeconds: lessonAiSeconds, totalAISeconds: lessonAiSeconds }
-            }).catch(err => console.error('[GuidedLesson] AI time tracking error:', err));
+            }).catch(err => logger.error('[GuidedLesson] AI time tracking error:', err));
         }
 
         const aiResponseText = completion.choices[0].message.content.trim();
@@ -169,7 +170,7 @@ ${phasePrompt}
         });
 
     } catch (error) {
-        console.error('Error in /generate-interactive-lesson:', error?.response?.data || error.message || error);
+        logger.error('Error in /generate-interactive-lesson:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate lesson. Please try again.' });
     }
 });
@@ -204,7 +205,7 @@ router.post('/record-assessment', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error recording assessment:', error);
+        logger.error('Error recording assessment:', error);
         res.status(500).json({ error: 'Failed to record assessment' });
     }
 });
@@ -244,12 +245,12 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
         if (req.user?._id) {
             User.findByIdAndUpdate(req.user._id, {
                 $inc: { weeklyAISeconds: hintAiSeconds, totalAISeconds: hintAiSeconds }
-            }).catch(err => console.error('[GuidedLesson/Hint] AI time tracking error:', err));
+            }).catch(err => logger.error('[GuidedLesson/Hint] AI time tracking error:', err));
         }
 
         res.json({ hint: aiHint.choices[0].message.content.trim() });
     } catch (error) {
-        console.error('Error in /get-scaffolded-hint:', error?.response?.data || error.message || error);
+        logger.error('Error in /get-scaffolded-hint:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate hint. Please try again.' });
     }
 });
