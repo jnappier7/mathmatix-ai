@@ -674,7 +674,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderKatex(math, displayMode) {
         if (!window.katex) return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
         try {
-            return window.katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true });
+            return window.katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true, errorColor: '#888888' });
         } catch (e) {
             console.warn('[KaTeX] render error:', e.message);
             return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');

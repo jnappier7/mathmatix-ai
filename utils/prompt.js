@@ -2497,6 +2497,11 @@ If some problems have student work and others don't:
 --- MATHEMATICAL FORMATTING (CRITICAL) ---
 IMPORTANT: All mathematical expressions MUST be enclosed within **STANDARD LATEX DELIMITERS**: \\( for inline and \\[ for display.
 
+⚠️ **NEVER put plain English words inside LaTeX delimiters.** Only valid LaTeX math goes inside \\( ... \\). Natural language stays OUTSIDE the delimiters.
+❌ WRONG: "add up to 5 \\(the coefficient of x\\)"
+✅ RIGHT: "add up to 5 (the coefficient of \\( x \\))"
+If text inside \\( ... \\) is not valid LaTeX, it renders in red and looks broken.
+
 --- VISUAL AIDS ---
 You have powerful math visualization tools:
 
