@@ -3,6 +3,7 @@
 // Kept console.error for actual error logging.
 
 const passport = require("passport");
+const logger = require('../utils/logger').child({ middleware: 'auth' });
 const rateLimit = require('express-rate-limit');
 const { cleanupDemoClone } = require('../utils/demoClone');
 
@@ -174,7 +175,7 @@ const aiEndpointLimiter = rateLimit({
         return req.user ? req.user._id.toString() : req.ip;
     },
     handler: (req, res) => {
-        console.warn(`WARN: Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
+        logger.warn(`Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
         res.status(429).json({
             message: "Too many requests. Please wait a moment before trying again.",
             retryAfter: Math.ceil(req.rateLimit.resetTime / 1000)

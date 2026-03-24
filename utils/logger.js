@@ -250,12 +250,18 @@ const log = {
 log.requestLogger = (req, res, next) => {
   const start = Date.now();
 
+  // Generate a unique request ID for tracing across log lines
+  const crypto = require('crypto');
+  req.requestId = req.headers['x-request-id'] || crypto.randomBytes(8).toString('hex');
+  res.setHeader('X-Request-Id', req.requestId);
+
   // Log when response finishes
   res.on('finish', () => {
     const duration = Date.now() - start;
     const userId = req.user?.id || req.user?._id;
 
     log.http('HTTP Request', {
+      requestId: req.requestId,
       method: req.method,
       url: req.originalUrl || req.url,
       status: res.statusCode,
@@ -274,6 +280,7 @@ log.requestLogger = (req, res, next) => {
  */
 log.errorLogger = (err, req, res, next) => {
   log.error('Express Error', {
+    requestId: req.requestId,
     error: err.message,
     stack: err.stack,
     method: req.method,

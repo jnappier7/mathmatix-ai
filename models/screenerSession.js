@@ -211,6 +211,8 @@ const screenerSessionSchema = new mongoose.Schema({
 
 // Index for finding active sessions by userId
 screenerSessionSchema.index({ userId: 1, createdAt: -1 });
+screenerSessionSchema.index({ userId: 1, phase: 1 }); // Phase-based session filtering
+screenerSessionSchema.index({ userId: 1, sessionType: 1 }); // Session type filtering
 
 // Static method to find or create session
 screenerSessionSchema.statics.findBySessionId = async function(sessionId) {

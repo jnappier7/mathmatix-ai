@@ -26,10 +26,13 @@ const PORT = process.env.PORT || 3000;
 const { connectDatabase } = require('./config/database');
 const { configureMiddleware, authLimiter, signupLimiter } = require('./config/middleware');
 const { registerRoutes } = require('./config/routes');
+const { initSentry, initSentryErrorHandler } = require('./config/sentry');
 
+initSentry(app);          // Sentry request handler (must be first)
 configureMiddleware(app);
 connectDatabase();
 registerRoutes(app, { authLimiter, signupLimiter });
+initSentryErrorHandler(app); // Sentry error handler (must be after routes)
 
 // --- Start ---
 app.listen(PORT, () => {

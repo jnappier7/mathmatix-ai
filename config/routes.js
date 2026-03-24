@@ -3,9 +3,26 @@ const path = require('path');
 const fs = require('fs');
 const passport = require('passport');
 const express = require('express');
+const mongoose = require('mongoose');
+
+const rateLimit = require('express-rate-limit');
 
 const logger = require('../utils/logger');
 const User = require('../models/user');
+
+// Stricter rate limiter for unauthenticated AI endpoints (trial chat)
+const trialChatLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 30, // 30 requests/hour per IP — generous for trial, blocks abuse
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: 'Trial chat limit reached. Sign up for unlimited access!',
+      retryAfter: 3600,
+    });
+  },
+});
 
 const {
   isAuthenticated,
@@ -94,6 +111,42 @@ const imageSearchRoutes = require('../routes/imageSearch');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
+  // --- Health Check (public, no auth) ---
+  app.get('/api/health', async (req, res) => {
+    const checks = {};
+    let status = 'healthy';
+
+    // Database connectivity
+    try {
+      const dbState = mongoose.connection.readyState;
+      const dbStates = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+      checks.database = { status: dbState === 1 ? 'ok' : 'degraded', state: dbStates[dbState] || 'unknown' };
+      if (dbState !== 1) status = 'degraded';
+    } catch (err) {
+      checks.database = { status: 'error', message: err.message };
+      status = 'unhealthy';
+    }
+
+    // API keys configured
+    checks.openai = { status: process.env.OPENAI_API_KEY ? 'ok' : 'missing' };
+    checks.mathpix = { status: (process.env.MATHPIX_APP_ID && process.env.MATHPIX_APP_KEY) ? 'ok' : 'missing' };
+    if (!process.env.OPENAI_API_KEY) status = 'degraded';
+
+    // Memory usage
+    const mem = process.memoryUsage();
+    checks.memory = {
+      heapUsedMB: Math.round(mem.heapUsed / 1048576),
+      heapTotalMB: Math.round(mem.heapTotal / 1048576),
+      rssMB: Math.round(mem.rss / 1048576),
+    };
+
+    // Uptime
+    checks.uptime = { seconds: Math.round(process.uptime()) };
+
+    const httpStatus = status === 'unhealthy' ? 503 : 200;
+    res.status(httpStatus).json({ status, checks, timestamp: new Date().toISOString() });
+  });
+
   // --- Auth Routes ---
   app.use('/login', authLimiter, loginRoutes);
   app.use('/signup', signupLimiter, signupRoutes);
@@ -124,8 +177,8 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
   app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes);
-  app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
-  app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
+  app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
+  app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);
   app.use('/api/summary', isAuthenticated, summaryGeneratorRouter);
   app.use('/api/avatars', isAuthenticated, avatarRoutes);
@@ -134,7 +187,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Public API routes (no auth required)
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
-  app.use('/api/trial-chat', trialChatRoutes);
+  app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
 
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api', isAuthenticated, diagramRoutes);
@@ -143,7 +196,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes);
   app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes);
   app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes);
-  app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
+  app.use('/api/guidedLesson', isAuthenticated, aiEndpointLimiter, guidedLessonRoutes);
   app.use('/api/assessment', isAuthenticated, assessmentRoutes);
   app.use('/api/screener', isAuthenticated, screenerRoutes);
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
