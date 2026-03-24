@@ -286,7 +286,7 @@ ${data.problem.content}`;
 
 You did great! Here's what I learned:
 • **Level**: θ = ${report.theta.toFixed(2)} (${report.percentile}th percentile)
-• **Accuracy**: ${Math.round(report.accuracy * 100)}%
+• **Accuracy**: ${report.accuracy}%
 • **Questions**: ${report.questionsAnswered}${badgeInfo}
 
 I now have a good understanding of where you are. I'll use this to personalize everything for you!
