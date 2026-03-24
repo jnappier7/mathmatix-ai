@@ -86,28 +86,25 @@ router.post('/generate-diagram', async (req, res) => {
  * Call Python script and return output
  * Tries multiple Python commands: python3, python, /usr/bin/python3
  */
-function callPythonScript(scriptPath, inputData) {
-    return new Promise(async (resolve, reject) => {
-        const pythonCommands = ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3'];
+async function callPythonScript(scriptPath, inputData) {
+    const pythonCommands = ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3'];
 
-        // Try each Python command until one works
-        for (const pythonCmd of pythonCommands) {
-            try {
-                const result = await tryPythonCommand(pythonCmd, scriptPath, inputData);
-                return resolve(result);
-            } catch (err) {
-                // If it's a spawn error, try next command
-                if (err.message.includes('ENOENT') || err.message.includes('spawn')) {
-                    continue;
-                }
-                // If it's a Python execution error, reject immediately
-                return reject(err);
+    // Try each Python command until one works
+    for (const pythonCmd of pythonCommands) {
+        try {
+            return await tryPythonCommand(pythonCmd, scriptPath, inputData);
+        } catch (err) {
+            // If it's a spawn error, try next command
+            if (err.message.includes('ENOENT') || err.message.includes('spawn')) {
+                continue;
             }
+            // If it's a Python execution error, reject immediately
+            throw err;
         }
+    }
 
-        // If all commands failed, reject
-        reject(new Error(`Python not found. Tried: ${pythonCommands.join(', ')}`));
-    });
+    // If all commands failed
+    throw new Error(`Python not found. Tried: ${pythonCommands.join(', ')}`);
 }
 
 /**
