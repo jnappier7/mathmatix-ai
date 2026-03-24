@@ -35,9 +35,39 @@ registerRoutes(app, { authLimiter, signupLimiter });
 initSentryErrorHandler(app); // Sentry error handler (must be after routes)
 
 // --- Start ---
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   logger.info(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`, {
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
   });
 });
+
+// --- Graceful Shutdown ---
+const mongoose = require('mongoose');
+
+function gracefulShutdown(signal) {
+  logger.info(`${signal} received — shutting down gracefully`);
+
+  // Stop accepting new connections
+  server.close(async () => {
+    logger.info('HTTP server closed');
+
+    try {
+      await mongoose.connection.close();
+      logger.info('MongoDB connection closed');
+    } catch (err) {
+      logger.error('Error closing MongoDB connection', err);
+    }
+
+    process.exit(0);
+  });
+
+  // Force exit after 30s if graceful shutdown stalls
+  setTimeout(() => {
+    logger.error('Graceful shutdown timed out — forcing exit');
+    process.exit(1);
+  }, 30000).unref();
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
