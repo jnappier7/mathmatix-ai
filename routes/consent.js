@@ -382,4 +382,98 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
     }
 });
 
+// ============================================================================
+// FERPA DIRECTORY INFORMATION OPT-OUT (34 CFR § 99.37)
+// ============================================================================
+
+/**
+ * GET /api/consent/directory-info/:studentId
+ * Check directory information opt-out status.
+ */
+router.get('/directory-info/:studentId', isAuthenticated, async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
+        const isSelf = req.user._id.toString() === studentId;
+
+        if (!isAdminUser && !isParentOfChild && !isSelf) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        const student = await User.findById(studentId).select('ferpaSettings firstName');
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found' });
+        }
+
+        res.json({
+            success: true,
+            studentId,
+            studentName: student.firstName,
+            directoryInfoOptOut: student.ferpaSettings?.directoryInfoOptOut || false,
+            optOutDate: student.ferpaSettings?.directoryInfoOptOutDate || null,
+            directoryInfoFields: ['First Name', 'Grade Level', 'Math Course', 'Gamification Level', 'Badge Names']
+        });
+    } catch (error) {
+        logger.error('[Consent] Directory info check failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to check directory information status' });
+    }
+});
+
+/**
+ * PUT /api/consent/directory-info/:studentId
+ * Toggle directory information opt-out for a student.
+ * Available to: parent (for linked child), admin.
+ */
+router.put('/directory-info/:studentId', isAuthenticated, async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const { optOut } = req.body;
+
+        if (typeof optOut !== 'boolean') {
+            return res.status(400).json({ success: false, message: 'optOut (boolean) is required' });
+        }
+
+        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
+
+        if (!isAdminUser && !isParentOfChild) {
+            return res.status(403).json({
+                success: false,
+                message: 'Only parents and admins can change directory information settings'
+            });
+        }
+
+        const update = {
+            'ferpaSettings.directoryInfoOptOut': optOut
+        };
+        if (optOut) {
+            update['ferpaSettings.directoryInfoOptOutDate'] = new Date();
+        }
+
+        const student = await User.findByIdAndUpdate(studentId, { $set: update }, { new: true });
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found' });
+        }
+
+        logger.info('[Consent] Directory info opt-out updated', {
+            studentId,
+            optOut,
+            updatedBy: req.user._id.toString(),
+            role: isAdminUser ? 'admin' : 'parent'
+        });
+
+        res.json({
+            success: true,
+            message: optOut
+                ? 'Directory information opt-out enabled. Your child\'s name and details will be hidden from leaderboards and public displays.'
+                : 'Directory information opt-out disabled. Your child\'s name and details may appear on leaderboards.',
+            directoryInfoOptOut: optOut
+        });
+    } catch (error) {
+        logger.error('[Consent] Directory info update failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to update directory information settings' });
+    }
+});
+
 module.exports = router;

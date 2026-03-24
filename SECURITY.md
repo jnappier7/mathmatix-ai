@@ -373,17 +373,58 @@ const uploadRateLimiter = rateLimit({
 
 **For School Implementations:**
 
-1. ✅ **Education Records Protection**
-   - Student data only accessible by authorized teachers
-   - Secure storage and transmission
+1. ✅ **Education Records Protection (34 CFR § 99.31)**
+   - Student data only accessible by authorized teachers (enrollment-based access control)
+   - Role-based access: teachers see only their students, parents see only linked children
+   - Impersonation sessions are read-only with 20-minute timeout and full audit logging
+   - Field-level AES-256-GCM encryption on PII fields at rest
 
-2. ✅ **Parent Access**
-   - Parents can view child's progress
-   - Parents can request corrections
+2. ✅ **Right to Inspect and Review (34 CFR § 99.10)**
+   - Parents can view child's progress via parent dashboard
+   - Full data export as JSON via `GET /api/privacy/export/:studentId`
+   - Available to admins and linked parents
 
-3. ✅ **Third-Party Disclosure**
-   - No sharing without consent
-   - Exception: School officials with legitimate interest
+3. ✅ **Right to Request Amendment (34 CFR § 99.20)**
+   - Formal amendment request system via `POST /api/privacy/amendment-request`
+   - Admin review workflow with approve/deny/partially_approve status
+   - Denied requests trigger hearing rights notification per 34 CFR § 99.21
+   - Full audit trail of all amendment requests and reviews (`RecordAmendment` model)
+
+4. ✅ **Right to Consent to Disclosure (34 CFR § 99.30)**
+   - No sharing without consent except FERPA-authorized exceptions
+   - Exception: School officials with legitimate educational interest
+   - PII anonymizer strips identifying data before sending to AI providers
+   - Consent lifecycle management with three pathways (parent, school DPA, self 13+)
+
+5. ✅ **Directory Information (34 CFR § 99.37)**
+   - Limited directory info: first name, grade level, math course, gamification level
+   - Parent opt-out via `PUT /api/consent/directory-info/:studentId`
+   - Opted-out students anonymized on leaderboards and public displays
+
+6. ✅ **Record Access Logging (34 CFR § 99.32)**
+   - All access to education records logged in `EducationRecordAccessLog` collection
+   - Logs: who accessed, when, what record type, legitimate interest justification
+   - FERPA-exempt access (self-access) logged but flagged as exempt
+   - Parents can view access log via `GET /api/privacy/access-log/:studentId`
+   - 5-year retention on access logs
+
+7. ✅ **Annual Notification (34 CFR § 99.7)**
+   - Annual FERPA rights notification system (`utils/ferpaCompliance.js`)
+   - Email notification with all five FERPA rights explained
+   - Sent at school year start and upon new enrollment
+   - Tracking to prevent duplicate notifications per school year
+
+8. ✅ **Third-Party Disclosure Controls**
+   - PII stripped before sending to AI providers (OpenAI, Anthropic, Mathpix)
+   - EXIF/GPS metadata stripped from uploaded images before processing
+   - AI providers contractually prohibited from training on student data
+   - Voice TTS (Cartesia) age-gated to 13+; under-13 uses browser-native synthesis
+
+9. ✅ **Data Deletion (Cascade Delete)**
+   - Full cascade deletion across 13 collections with audit trail
+   - Parent-initiated deletion for linked children
+   - Student/teacher deletion requests with admin approval workflow
+   - Persistent `DeletionAudit` records (append-only, never purged)
 
 ### GDPR (General Data Protection Regulation)
 

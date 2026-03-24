@@ -46,6 +46,8 @@ const Announcement = require('../models/announcement');
 const ImpersonationLog = require('../models/impersonationLog');
 const Message = require('../models/message');
 const DeletionAudit = require('../models/deletionAudit');
+const RecordAmendment = require('../models/recordAmendment');
+const EducationRecordAccessLog = require('../models/educationRecordAccessLog');
 
 // ============================================================================
 // DELETION AUDIT LOG (persisted to MongoDB — append-only for compliance)
@@ -463,6 +465,19 @@ router.get('/export/:studentId', isAuthenticated, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Student not found' });
         }
 
+        // FERPA 34 CFR § 99.32: Log the data export access
+        EducationRecordAccessLog.create({
+            studentId,
+            accessedBy: req.user._id,
+            accessedByRole: isAdminUser ? 'admin' : 'parent',
+            recordType: 'full_export',
+            accessType: 'export',
+            legitimateInterest: isAdminUser ? 'data_export_request' : 'parental_right_of_access',
+            endpoint: 'GET /api/privacy/export/:studentId',
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        }).catch(err => logger.error('[DataPrivacy] Failed to log export access', { error: err.message }));
+
         logger.info('[DataPrivacy] Data export completed', {
             targetUserId: studentId,
             requestedBy: req.user._id.toString(),
@@ -545,6 +560,257 @@ router.post('/deletion-request', isAuthenticated, async (req, res) => {
     } catch (error) {
         logger.error('[DataPrivacy] Deletion request failed', { error: error.message });
         res.status(500).json({ success: false, message: 'Failed to submit deletion request' });
+    }
+});
+
+// ============================================================================
+// RECORD AMENDMENT REQUESTS (FERPA 34 CFR § 99.20)
+// ============================================================================
+
+/**
+ * POST /api/privacy/amendment-request
+ * Submit a request to amend an education record believed to be inaccurate.
+ * Available to: parent (for linked child), student (for own records), admin.
+ */
+router.post('/amendment-request', isAuthenticated, async (req, res) => {
+    try {
+        const { studentId, recordType, currentValue, requestedChange, reason } = req.body;
+
+        if (!recordType || !requestedChange || !reason) {
+            return res.status(400).json({
+                success: false,
+                message: 'recordType, requestedChange, and reason are required'
+            });
+        }
+
+        const requestorRole = req.user.role;
+        const targetId = studentId || req.user._id.toString();
+
+        // Authorization: parent for linked child, student for self, admin for anyone
+        const isAdminUser = req.user.roles?.includes('admin') || requestorRole === 'admin';
+        const isSelf = req.user._id.toString() === targetId && requestorRole === 'student';
+        const isParentOfChild = req.user.children?.some(id => id.toString() === targetId);
+
+        if (!isAdminUser && !isSelf && !isParentOfChild) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not authorized to request amendments for this student'
+            });
+        }
+
+        // Verify target student exists
+        const student = await User.findById(targetId);
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found' });
+        }
+
+        const amendment = await RecordAmendment.create({
+            studentId: targetId,
+            requestedBy: req.user._id,
+            requestedByRole: isAdminUser ? 'admin' : (isParentOfChild ? 'parent' : 'student'),
+            recordType,
+            currentValue: currentValue || '',
+            requestedChange,
+            reason,
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+
+        logger.info('[DataPrivacy] Amendment request submitted', {
+            amendmentId: amendment._id,
+            studentId: targetId,
+            requestedBy: req.user._id.toString(),
+            recordType
+        });
+
+        res.json({
+            success: true,
+            message: 'Amendment request submitted. An administrator will review your request within 10 business days.',
+            amendmentId: amendment._id,
+            status: 'submitted'
+        });
+    } catch (error) {
+        logger.error('[DataPrivacy] Amendment request failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to submit amendment request' });
+    }
+});
+
+/**
+ * GET /api/privacy/amendment-requests
+ * List amendment requests. Admin sees all; parent/student sees their own.
+ */
+router.get('/amendment-requests', isAuthenticated, async (req, res) => {
+    try {
+        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+
+        let query = {};
+        if (!isAdminUser) {
+            // Parents see requests for their children; students see their own
+            const childIds = req.user.children?.map(id => id.toString()) || [];
+            query = {
+                $or: [
+                    { requestedBy: req.user._id },
+                    ...(childIds.length > 0 ? [{ studentId: { $in: childIds } }] : [])
+                ]
+            };
+        }
+
+        // Optional status filter
+        if (req.query.status) {
+            query.status = req.query.status;
+        }
+
+        const amendments = await RecordAmendment.find(query)
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .populate('studentId', 'firstName lastName')
+            .populate('requestedBy', 'firstName lastName role')
+            .populate('reviewedBy', 'firstName lastName')
+            .lean();
+
+        res.json({ success: true, amendments });
+    } catch (error) {
+        logger.error('[DataPrivacy] Amendment list failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to retrieve amendment requests' });
+    }
+});
+
+/**
+ * PUT /api/privacy/amendment-request/:amendmentId/review
+ * Admin reviews an amendment request (approve, deny, partially approve).
+ * If denied, FERPA requires notification of the right to a hearing.
+ */
+router.put('/amendment-request/:amendmentId/review', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { amendmentId } = req.params;
+        const { status, reviewNotes, denialReason, changeApplied } = req.body;
+
+        if (!['approved', 'denied', 'partially_approved'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'status must be approved, denied, or partially_approved'
+            });
+        }
+
+        if (status === 'denied' && !denialReason) {
+            return res.status(400).json({
+                success: false,
+                message: 'denialReason is required when denying an amendment request'
+            });
+        }
+
+        const amendment = await RecordAmendment.findById(amendmentId);
+        if (!amendment) {
+            return res.status(404).json({ success: false, message: 'Amendment request not found' });
+        }
+
+        if (amendment.status !== 'submitted' && amendment.status !== 'under_review') {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot review an amendment that is already ${amendment.status}`
+            });
+        }
+
+        amendment.status = status;
+        amendment.reviewedBy = req.user._id;
+        amendment.reviewedAt = new Date();
+        amendment.reviewNotes = reviewNotes || '';
+
+        if (status === 'denied') {
+            amendment.denialReason = denialReason;
+            // FERPA 34 CFR § 99.21: Must notify of right to a hearing
+            amendment.hearingRightsNotified = true;
+            amendment.hearingRightsNotifiedAt = new Date();
+        }
+
+        if (changeApplied) {
+            amendment.changeApplied = changeApplied;
+        }
+
+        await amendment.save();
+
+        logger.info('[DataPrivacy] Amendment request reviewed', {
+            amendmentId,
+            status,
+            reviewedBy: req.user._id.toString(),
+            studentId: amendment.studentId.toString()
+        });
+
+        const responseMessage = status === 'denied'
+            ? 'Amendment request denied. The requestor will be notified of their right to a formal hearing per FERPA 34 CFR § 99.21.'
+            : `Amendment request ${status}. ${changeApplied ? 'Changes have been applied.' : 'Please apply the changes to the student record.'}`;
+
+        res.json({
+            success: true,
+            message: responseMessage,
+            amendment: {
+                _id: amendment._id,
+                status: amendment.status,
+                reviewedAt: amendment.reviewedAt,
+                hearingRightsNotified: amendment.hearingRightsNotified
+            }
+        });
+    } catch (error) {
+        logger.error('[DataPrivacy] Amendment review failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to review amendment request' });
+    }
+});
+
+// ============================================================================
+// EDUCATION RECORD ACCESS LOG (FERPA 34 CFR § 99.32)
+// ============================================================================
+
+/**
+ * GET /api/privacy/access-log/:studentId
+ * View the access log for a student's education records.
+ * Available to: admin, parent (for linked child).
+ */
+router.get('/access-log/:studentId', isAuthenticated, async (req, res) => {
+    try {
+        const { studentId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(studentId)) {
+            return res.status(400).json({ success: false, message: 'Invalid student ID' });
+        }
+
+        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
+
+        if (!isAdminUser && !isParentOfChild) {
+            return res.status(403).json({
+                success: false,
+                message: 'Only admins and linked parents can view education record access logs'
+            });
+        }
+
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+        const skip = (page - 1) * limit;
+
+        const [logs, totalCount] = await Promise.all([
+            EducationRecordAccessLog.find({ studentId })
+                .sort({ accessedAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('accessedBy', 'firstName lastName role')
+                .lean(),
+            EducationRecordAccessLog.countDocuments({ studentId })
+        ]);
+
+        res.json({
+            success: true,
+            studentId,
+            accessLog: logs,
+            pagination: {
+                page,
+                limit,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit)
+            }
+        });
+    } catch (error) {
+        logger.error('[DataPrivacy] Access log retrieval failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to retrieve access log' });
     }
 });
 
