@@ -37,9 +37,10 @@ class FileUploadManager {
             document.body.addEventListener(eventName, this.preventDefaults, false);
         });
 
-        // Show overlay on drag enter
+        // Show overlay on drag enter (OS files OR resource cards)
         chatContainer.addEventListener('dragenter', (e) => {
-            if (e.dataTransfer.types.includes('Files')) {
+            if (e.dataTransfer.types.includes('Files') ||
+                e.dataTransfer.types.includes('application/x-teacher-resource-id')) {
                 this.showDragOverlay();
             }
         });
@@ -51,10 +52,20 @@ class FileUploadManager {
             }
         });
 
-        // Handle drop
+        // Handle drop (OS files OR resource cards dragged from the resources panel)
         this.dragDropOverlay.addEventListener('drop', (e) => {
             this.preventDefaults(e);
             this.hideDragOverlay();
+
+            // Check for teacher-resource drag from the resources panel
+            const resourceId = e.dataTransfer.getData('application/x-teacher-resource-id');
+            if (resourceId) {
+                const resourceName = e.dataTransfer.getData('application/x-teacher-resource-name') || 'Resource';
+                if (typeof fetchAndUploadTeacherResource === 'function') {
+                    fetchAndUploadTeacherResource(resourceId, resourceName);
+                }
+                return;
+            }
 
             const files = [...e.dataTransfer.files];
             if (files.length > 0) {
