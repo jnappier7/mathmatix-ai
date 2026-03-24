@@ -570,6 +570,14 @@ const userSchema = new Schema({
     districtId: { type: String, trim: true }
   },
 
+  /* FERPA Settings (34 CFR § 99.37 directory info opt-out, annual notification tracking) */
+  ferpaSettings: {
+    directoryInfoOptOut: { type: Boolean, default: false },         // Parent opted out of directory information disclosure
+    directoryInfoOptOutDate: { type: Date },                        // When opt-out was set
+    lastAnnualNotification: { type: Date },                         // Last FERPA annual notification sent
+    lastAnnualNotificationSchoolYear: { type: String, trim: true }  // e.g., '2025-2026'
+  },
+
   tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational', 'chill', 'Chill'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
   preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic', 'Somali', 'French', 'German'], default: 'English' }, // Student's preferred language for tutoring

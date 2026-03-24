@@ -9,6 +9,7 @@ const Conversation = require('../models/conversation'); // NEW: Import Conversat
 const { isParent, isAuthenticated } = require('../middleware/auth');
 const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 
 // Helper: verify parent has access to child
 async function verifyParentChildAccess(parentId, childId) {
@@ -127,7 +128,7 @@ router.get('/children', isAuthenticated, isParent, async (req, res) => {
 });
 
 // Get a specific child's progress for parent dashboard
-router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, res) => {
+router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAccess('progress_data', 'parental_right_of_access', { getStudentId: req => req.params.childId }), async (req, res) => {
     const parentId = req.user._id;
     const { childId } = req.params;
 
@@ -312,7 +313,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
 });
 
 // Get a child's growth check history for parent dashboard
-router.get('/child/:childId/growth-history', isAuthenticated, isParent, async (req, res) => {
+router.get('/child/:childId/growth-history', isAuthenticated, isParent, logRecordAccess('assessment_results', 'parental_right_of_access', { getStudentId: req => req.params.childId }), async (req, res) => {
     const parentId = req.user._id;
     const { childId } = req.params;
 
@@ -426,7 +427,7 @@ router.put('/settings', isAuthenticated, isParent, async (req, res) => {
 // =====================================================
 // PLACEMENT RESULTS: View child's screener/placement details
 // =====================================================
-router.get('/child/:childId/placement-results', isAuthenticated, isParent, async (req, res) => {
+router.get('/child/:childId/placement-results', isAuthenticated, isParent, logRecordAccess('assessment_results', 'parental_right_of_access', { getStudentId: req => req.params.childId }), async (req, res) => {
     try {
         const child = await verifyParentChildAccess(req.user._id, req.params.childId);
         if (!child) return res.status(403).json({ message: 'Not authorized to view this child.' });

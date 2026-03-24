@@ -14,6 +14,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const Skill = require('../models/skill');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
@@ -41,7 +42,7 @@ router.get('/students', isTeacher, async (req, res) => {
 });
 
 // Fetches a specific student's IEP
-router.get('/students/:studentId/iep', isTeacher, async (req, res) => {
+router.get('/students/:studentId/iep', isTeacher, logRecordAccess('iep_plan', 'academic_support'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;

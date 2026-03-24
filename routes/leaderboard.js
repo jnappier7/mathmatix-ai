@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const { isAuthorizedForLeaderboard } = require('../middleware/auth');
+const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
@@ -22,19 +23,18 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
 
         const leaderboard = await User.find(query)
             .sort({ level: -1, xp: -1 }) // Sorts by level, then XP
-            // SURGICAL ENHANCEMENT: Select firstName and lastName for formatting.
-            .select('firstName lastName level xp')
-            .limit(10) 
+            .select('firstName lastName level xp ferpaSettings')
+            .limit(10)
             .lean();
 
-        // Format names to "First Name L."
+        // Format names to "First Name L." — respect FERPA directory info opt-out
         const formattedLeaderboard = leaderboard.map(student => {
-            // SURGICAL ENHANCEMENT: Format the name as requested.
-            const lastNameInitial = student.lastName ? `${student.lastName.charAt(0)}.` : '';
+            const optedOut = hasOptedOutOfDirectoryInfo(student);
+            const lastNameInitial = !optedOut && student.lastName ? `${student.lastName.charAt(0)}.` : '';
             return {
-                rank: 0, 
-                name: `${student.firstName || 'Student'} ${lastNameInitial}`.trim(),
-                level: student.level,
+                rank: 0,
+                name: optedOut ? 'Student' : `${student.firstName || 'Student'} ${lastNameInitial}`.trim(),
+                level: optedOut ? undefined : student.level,
                 xp: student.xp
             };
         });
