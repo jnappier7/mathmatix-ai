@@ -11,6 +11,8 @@ const compression = require('compression');
 const crypto = require('crypto');
 const fs = require('fs');
 
+const path = require('path');
+
 const logger = require('../utils/logger');
 const { csrfProtection } = require('../middleware/csrf');
 const { handleImpersonation, enforceReadOnly } = require('../middleware/impersonation');
@@ -108,6 +110,29 @@ function configureMiddleware(app) {
       return compression.filter(req, res);
     },
   }));
+
+  // Serve static assets (fonts, CSS, JS, images) BEFORE session/CSRF middleware.
+  // This prevents static file requests from failing when the session store is
+  // temporarily unreachable, and avoids unnecessary middleware overhead for assets.
+  // HTML files are excluded — they need CSP nonce injection from the later pipeline.
+  const publicDir = path.join(__dirname, '..', 'public');
+  app.use((req, res, next) => {
+    // Skip HTML files — they need CSP nonce injection via the full middleware pipeline
+    if (req.method === 'GET' && /\.html?$/i.test(req.path)) return next();
+    // Skip API routes
+    if (req.path.startsWith('/api/')) return next();
+    next();
+  }, express.static(publicDir, {
+    index: false, // Don't serve index.html — that goes through auth/CSP nonce pipeline
+    setHeaders: (res, filePath) => {
+      if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day default
+      }
+    },
+  }));
+
   app.use(express.json({ limit: '1mb' })); // Tightened from 10mb — uploads use multer, not JSON
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());

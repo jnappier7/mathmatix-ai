@@ -28,16 +28,19 @@
         const STORAGE_KEY = 'mathmatix-chat-font-scale';
 
         // Load saved font scale or use default
-        let currentScale = parseFloat(localStorage.getItem(STORAGE_KEY)) || DEFAULT_FONT_SIZE;
+        let currentScale;
+        try { currentScale = parseFloat(localStorage.getItem(STORAGE_KEY)) || DEFAULT_FONT_SIZE; } catch (e) { currentScale = DEFAULT_FONT_SIZE; }
 
         // Apply saved scale on load
         applyFontScale(currentScale);
 
         // Show hint on first visit (mobile only)
-        if (window.innerWidth <= 767 && !localStorage.getItem('pinch-zoom-hint-shown')) {
-            showFirstTimeHint();
-            localStorage.setItem('pinch-zoom-hint-shown', 'true');
-        }
+        try {
+            if (window.innerWidth <= 767 && !localStorage.getItem('pinch-zoom-hint-shown')) {
+                showFirstTimeHint();
+                localStorage.setItem('pinch-zoom-hint-shown', 'true');
+            }
+        } catch (e) { /* storage blocked */ }
 
         // Pinch gesture variables
         let initialDistance = 0;
@@ -66,7 +69,7 @@
             chatContainer.style.setProperty('--chat-font-scale', scale);
 
             // Save to localStorage
-            localStorage.setItem(STORAGE_KEY, scale.toString());
+            try { localStorage.setItem(STORAGE_KEY, scale.toString()); } catch (e) { /* blocked */ }
 
             // Show feedback indicator
             showScaleIndicator(scale);

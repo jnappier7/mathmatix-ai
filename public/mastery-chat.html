@@ -1103,7 +1103,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                     // Update mastery progress for session manager auto-save
                     window.currentMasteryProgress = result.masteryProgress;
-                    localStorage.setItem('masteryProgress', JSON.stringify(result.masteryProgress));
+                    try { localStorage.setItem('masteryProgress', JSON.stringify(result.masteryProgress)); } catch (e) { /* blocked */ }
 
                     const badge = currentUser.masteryProgress.activeBadge;
                     const completed = badge.problemsCompleted || 0;

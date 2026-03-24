@@ -46,17 +46,17 @@ class GuidedTour {
 
     // Check if tour has been completed
     hasCompleted() {
-        return localStorage.getItem(this.options.storageKey) === 'true';
+        try { return localStorage.getItem(this.options.storageKey) === 'true'; } catch (e) { return false; }
     }
 
     // Mark tour as completed
     markCompleted() {
-        localStorage.setItem(this.options.storageKey, 'true');
+        try { localStorage.setItem(this.options.storageKey, 'true'); } catch (e) { /* blocked */ }
     }
 
     // Reset tour completion status
     reset() {
-        localStorage.removeItem(this.options.storageKey);
+        try { localStorage.removeItem(this.options.storageKey); } catch (e) { /* blocked */ }
     }
 
     // Start the tour

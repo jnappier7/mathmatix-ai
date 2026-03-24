@@ -25,10 +25,10 @@ class SplitScreenResizer {
     this.chatContainer = document.getElementById('chat-container');
 
     // Load saved position
-    const savedPosition = localStorage.getItem('whiteboardSplitPosition');
-    if (savedPosition) {
-      this.currentPosition = parseFloat(savedPosition);
-    }
+    try {
+      const savedPosition = localStorage.getItem('whiteboardSplitPosition');
+      if (savedPosition) this.currentPosition = parseFloat(savedPosition);
+    } catch (e) { /* storage blocked */ }
 
     this.createDivider();
     this.applyLayout();
@@ -44,7 +44,7 @@ class SplitScreenResizer {
     this.chatContainer = document.getElementById('chat-container');
 
     // Load saved position (separate from whiteboard)
-    const savedPosition = localStorage.getItem('tilesSplitPosition');
+    try { var savedPosition = localStorage.getItem('tilesSplitPosition'); } catch (e) { /* blocked */ }
     if (savedPosition) {
       this.currentPosition = parseFloat(savedPosition);
     }
@@ -153,7 +153,7 @@ class SplitScreenResizer {
 
     // Save position to localStorage
     const key = this.activePanel === 'whiteboard' ? 'whiteboardSplitPosition' : 'tilesSplitPosition';
-    localStorage.setItem(key, this.currentPosition.toString());
+    try { localStorage.setItem(key, this.currentPosition.toString()); } catch (e) { /* blocked */ }
 
     console.log(`📏 Split position saved: ${this.currentPosition.toFixed(1)}%`);
   }
@@ -168,7 +168,7 @@ class SplitScreenResizer {
 
     // Save reset position
     const key = this.activePanel === 'whiteboard' ? 'whiteboardSplitPosition' : 'tilesSplitPosition';
-    localStorage.setItem(key, '50');
+    try { localStorage.setItem(key, '50'); } catch (e) { /* blocked */ }
 
     console.log('📏 Split reset to 50/50');
   }

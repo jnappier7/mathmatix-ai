@@ -25,12 +25,27 @@ const CSRF_EXEMPT_ROUTES = [
 ];
 
 /**
+ * Route prefixes exempt from CSRF — anonymous, unauthenticated endpoints
+ * with their own rate limiting and abuse prevention. No user session to protect.
+ */
+const CSRF_EXEMPT_PREFIXES = [
+  '/api/trial-chat',  // Anonymous trial chat — rate-limited, server-side turn tracking
+  '/api/waitlist',     // Public waitlist signup
+  '/api/demo',         // Public demo endpoints
+];
+
+/**
  * Middleware to attach CSRF token to request
  * Generates token and sets it in cookie and makes it available to views
  */
 function csrfProtection(req, res, next) {
-  // Skip CSRF for exempt routes
+  // Skip CSRF for exempt routes (exact match)
   if (CSRF_EXEMPT_ROUTES.includes(req.path)) {
+    return next();
+  }
+
+  // Skip CSRF for exempt route prefixes (anonymous, unauthenticated endpoints)
+  if (CSRF_EXEMPT_PREFIXES.some(prefix => req.path.startsWith(prefix))) {
     return next();
   }
 
@@ -78,7 +93,10 @@ function csrfProtection(req, res, next) {
   }
 
   // Constant-time comparison to prevent timing attacks
-  if (!crypto.timingSafeEqual(Buffer.from(cookieToken), Buffer.from(headerToken))) {
+  // timingSafeEqual throws if buffers differ in length — check first
+  const cookieBuf = Buffer.from(cookieToken);
+  const headerBuf = Buffer.from(headerToken);
+  if (cookieBuf.length !== headerBuf.length || !crypto.timingSafeEqual(cookieBuf, headerBuf)) {
     console.warn('[CSRF] Invalid CSRF token:', {
       method: req.method,
       url: req.url,

@@ -255,14 +255,14 @@ function initializeTouchControls() {
             // Hide swipe hint after first successful swipe
             if (swipeHint && !swipeHint.classList.contains('hidden')) {
                 swipeHint.classList.add('hidden');
-                localStorage.setItem('numberRunSwipeHintShown', 'true');
+                try { localStorage.setItem('numberRunSwipeHintShown', 'true'); } catch (e) { /* blocked */ }
             }
         }
     }
 
     // Show swipe hint only on first play
     if (swipeHint) {
-        const hintShown = localStorage.getItem('numberRunSwipeHintShown');
+        let hintShown; try { hintShown = localStorage.getItem('numberRunSwipeHintShown'); } catch (e) { /* blocked */ }
         if (!hintShown) {
             // Show hint briefly after game starts
             setTimeout(() => {

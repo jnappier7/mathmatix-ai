@@ -1568,7 +1568,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     function logout() {
-      localStorage.removeItem('userId');
+      try { localStorage.removeItem('userId'); } catch (e) { /* blocked */ }
       window.location.href = '/login.html';
     }
 

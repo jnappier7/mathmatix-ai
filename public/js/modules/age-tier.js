@@ -179,8 +179,7 @@ export function getVoiceDefaults(tier) {
  * @returns {number} Playback rate (e.g., 0.85, 1.0)
  */
 export function getTierPlaybackRate() {
-    const saved = localStorage.getItem('ttsPlaybackRate');
-    if (saved) return parseFloat(saved);
+    try { const saved = localStorage.getItem('ttsPlaybackRate'); if (saved) return parseFloat(saved); } catch (e) { /* blocked */ }
     return getVoiceDefaults().ttsPlaybackRate;
 }
 

@@ -553,7 +553,8 @@ class SessionManager {
     }
 
     // Try localStorage
-    const stored = localStorage.getItem('masteryProgress');
+    let stored;
+    try { stored = localStorage.getItem('masteryProgress'); } catch (e) { /* blocked */ }
     if (stored) {
       try {
         return JSON.parse(stored);
