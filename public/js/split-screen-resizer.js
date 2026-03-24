@@ -44,10 +44,10 @@ class SplitScreenResizer {
     this.chatContainer = document.getElementById('chat-container');
 
     // Load saved position (separate from whiteboard)
-    try { var savedPosition = localStorage.getItem('tilesSplitPosition'); } catch (e) { /* blocked */ }
-    if (savedPosition) {
-      this.currentPosition = parseFloat(savedPosition);
-    }
+    try {
+      const savedPosition = localStorage.getItem('tilesSplitPosition');
+      if (savedPosition) this.currentPosition = parseFloat(savedPosition);
+    } catch (e) { /* storage blocked */ }
 
     this.createDivider();
     this.applyLayout();
