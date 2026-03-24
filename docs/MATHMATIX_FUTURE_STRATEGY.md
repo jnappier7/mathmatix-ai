@@ -91,7 +91,7 @@ npm install @sentry/node @sentry/profiling-node
 
 **Key Metrics Dashboard:**
 - Real-time active users
-- AI service health (OpenAI, ElevenLabs uptime)
+- AI service health (OpenAI, Cartesia uptime)
 - Average session duration
 - Conversion: screener → active learner
 - Teacher engagement (activity feed usage)
@@ -362,7 +362,7 @@ npm install --save-dev axe-core pa11y lighthouse
 - **Competitor gap:** Most tutoring apps are student-only
 
 **4. Tutor Personalities with Voice** ⭐
-- 4 distinct AI personalities with ElevenLabs voices
+- 4 distinct AI personalities with Cartesia voices
 - Unlockable tutors via badge system
 - **Why it matters:** Increases engagement and personalization
 - **Competitor gap:** Most AI tutors are generic
@@ -557,7 +557,7 @@ class LLMRouter {
       'complex-proof': 'anthropic-opus',      // Deep reasoning
       'problem-generation': 'gemini-pro',     // Creative
       'sensitive-data': 'local-llama',        // Privacy
-      'voice-synthesis': 'elevenlabs'         // Specialized
+      'voice-synthesis': 'cartesia'            // Specialized
     };
 
     const provider = routingRules[task.type] || 'openai-gpt4o-mini';

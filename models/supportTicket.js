@@ -100,4 +100,10 @@ supportTicketSchema.index({ status: 1, createdAt: -1 });
 supportTicketSchema.index({ category: 1, priority: 1 });
 supportTicketSchema.index({ 'aiTriage.handled': 1, status: 1 });
 
+// Field-level encryption for support ticket content
+const { encryptFields } = require('../utils/fieldEncryption');
+supportTicketSchema.plugin(encryptFields, {
+  fields: ['description']
+});
+
 module.exports = mongoose.model('SupportTicket', supportTicketSchema);

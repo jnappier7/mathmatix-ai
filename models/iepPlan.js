@@ -196,5 +196,11 @@ iepPlanSchema.statics.updateGoalProgress = async function (userId, goalIdentifie
   };
 };
 
+// ── Field-level encryption for sensitive IEP data ──
+const { encryptFields } = require('../utils/fieldEncryption');
+iepPlanSchema.plugin(encryptFields, {
+  fields: ['templateApplied']
+});
+
 // Prevent OverwriteModelError in development with hot reload
 module.exports = mongoose.models.IEPPlan || mongoose.model('IEPPlan', iepPlanSchema);

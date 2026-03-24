@@ -1212,6 +1212,12 @@ userSchema.index({ lastLogin: -1 });           // Activity reports sorted by log
 userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports
 userSchema.index({ cloneSessionId: 1 }, { sparse: true }); // Demo clone cleanup
 
+/* ---------- FIELD-LEVEL ENCRYPTION ---------- */
+const { encryptFields } = require('../utils/fieldEncryption');
+userSchema.plugin(encryptFields, {
+  fields: ['firstName', 'lastName']
+});
+
 /* ---------- EXPORT MODEL ---------- */
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 module.exports = User;

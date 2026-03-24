@@ -27,7 +27,7 @@ The 9 built-in accommodations map directly to real-world IEP service categories:
 | Extended Time (1.5x) | `extendedTime` | Tells AI not to rush | `adaptiveFluency.js` multiplier | Tested |
 | Reduced Distraction | `reducedDistraction` | Clean visuals instruction | Hides gamification UI | Tested |
 | Calculator Allowed | `calculatorAllowed` | Never restrict calculator | Persistent calc button | Tested |
-| Audio Read-Aloud | `audioReadAloud` | TTS for word problems | Cartesia/ElevenLabs playback | Tested |
+| Audio Read-Aloud | `audioReadAloud` | TTS for word problems | Cartesia playback | Tested |
 | Chunked Assignments | `chunkedAssignments` | 3-5 problems per chunk | Check-in overlay after 4 problems | Tested |
 | Breaks as Needed | `breaksAsNeeded` | Frequent rest periods | Break button + 5 activities | Tested |
 | Multiplication Chart | `digitalMultiplicationChart` | Reference allowed | Floating 12x12 table | Tested |

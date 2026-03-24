@@ -9,7 +9,7 @@
  *
  * Features:
  * - OpenAI Whisper for speech-to-text transcription
- * - ElevenLabs TTS with user's selected tutor voice
+ * - Cartesia TTS with user's selected tutor voice
  * - Board integration with voice commands
  * - Disables old hands-free mode when active
  * - Individual message playback still available
@@ -585,10 +585,10 @@ class VoiceController {
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    // COMPLIANCE: Under-13 users blocked from ElevenLabs voice chat.
+                    // COMPLIANCE: Under-13 users blocked from third-party voice chat.
                     // Show a clear message and stop the voice session.
                     if (response.status === 403 && errorData.useWebSpeech) {
-                        console.warn('🔇 [Voice] Under-13 user blocked from ElevenLabs. Stopping voice chat.');
+                        console.warn('🔇 [Voice] Under-13 user blocked from voice chat. Stopping.');
                         this.updateUI('idle');
                         this.stopListening();
                         if (window.showToast) {
@@ -625,7 +625,7 @@ class VoiceController {
                         window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
                     }
 
-                    // Speak AI response (ElevenLabs audio with tutor voice)
+                    // Speak AI response (TTS audio with tutor voice)
                     if (data.audioUrl) {
                         await this.playAIResponse(data.audioUrl);
                     }

@@ -21,7 +21,7 @@ Showcase MathMatrix as **the most effective and comprehensive math learning plat
   - `OPENAI_API_KEY` (for embeddings)
   - `ANTHROPIC_API_KEY` ⚡ **CRITICAL** - Required for Claude Sonnet 3.5
   - OAuth credentials (Google/Microsoft)
-  - ElevenLabs, Mathpix (optional for full demo)
+  - Cartesia, Mathpix (optional for full demo)
 
 - [ ] **MongoDB running** (local or Atlas)
 - [ ] **Server starts without errors**: `npm start`

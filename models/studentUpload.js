@@ -111,4 +111,10 @@ studentUploadSchema.methods.generateThumbnail = async function() {
     return this.filePath;
 };
 
+// Field-level encryption for student file metadata
+const { encryptFields } = require('../utils/fieldEncryption');
+studentUploadSchema.plugin(encryptFields, {
+  fields: ['originalFilename', 'extractedText', 'notes']
+});
+
 module.exports = mongoose.model('StudentUpload', studentUploadSchema);

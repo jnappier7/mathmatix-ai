@@ -228,4 +228,10 @@ teacherResourceSchema.statics.vectorSearch = async function(teacherId, queryEmbe
         }));
 };
 
+// Field-level encryption for extracted content
+const { encryptFields } = require('../utils/fieldEncryption');
+teacherResourceSchema.plugin(encryptFields, {
+  fields: ['extractedText']
+});
+
 module.exports = mongoose.model('TeacherResource', teacherResourceSchema);

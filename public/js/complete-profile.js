@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (parentConsentSection) parentConsentSection.style.display = 'block';
             if (teenConsentSection) teenConsentSection.style.display = 'none';
         } else if (age >= 13 && age < 18 && !currentUser.hasParentalConsent) {
-            // 13-17: Parent email verification or invite code (OpenAI/ElevenLabs terms)
+            // 13-17: Parent email verification or invite code (OpenAI terms)
             if (parentConsentSection) parentConsentSection.style.display = 'none';
             if (teenConsentSection) teenConsentSection.style.display = 'block';
         } else {

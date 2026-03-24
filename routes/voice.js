@@ -20,7 +20,7 @@ const logger = require('../utils/logger').child({ route: 'voice' });
 
 /**
  * Check if user is under 13 based on dateOfBirth.
- * ElevenLabs terms prohibit use by children under 13.
+ * Third-party TTS terms prohibit use by children under 13.
  * Under-13 users get a flag to use browser-native WebSpeech API instead.
  */
 function isUnder13(user) {
@@ -54,7 +54,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         return res.status(400).json({ error: 'Audio data is required' });
     }
 
-    // COMPLIANCE: ElevenLabs terms prohibit use by children under 13.
+    // COMPLIANCE: Third-party TTS terms prohibit use by children under 13.
     // Under-13 users must use browser-native WebSpeech API instead.
     if (isUnder13(req.user)) {
         return res.status(403).json({
@@ -271,7 +271,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const ttsText = cleanTextForTTS(aiResponseText);
 
         // ============================================
-        // STEP 4: TEXT-TO-SPEECH (via ttsProvider — ElevenLabs or Cartesia)
+        // STEP 4: TEXT-TO-SPEECH (via ttsProvider — Cartesia)
         // ============================================
 
         const step3Start = Date.now();
@@ -376,7 +376,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         let userMessage = 'Failed to process voice input';
         if (error.message.includes('Whisper')) {
             userMessage = 'Speech recognition failed. Please try speaking again.';
-        } else if (error.message.includes('TTS') || error.message.includes('ElevenLabs') || error.message.includes('Cartesia')) {
+        } else if (error.message.includes('TTS') || error.message.includes('Cartesia')) {
             userMessage = 'Voice synthesis failed. Please try again.';
         } else if (error.message.includes('API key')) {
             userMessage = 'Voice feature is not configured. Please contact support.';

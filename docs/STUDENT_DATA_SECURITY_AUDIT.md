@@ -24,7 +24,7 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 | COPPA/FERPA/GDPR | Good | Consent management, data deletion/export, audit logging |
 | Prompt Injection Defense | Strong | Multi-category pattern detection with logging |
 | Logging & Audit | Good | Winston with PII sanitization, daily rotation |
-| Encryption at Rest | Needs Work | No field-level encryption for sensitive data in MongoDB |
+| Encryption at Rest | Strong | AES-256-GCM field-level encryption applied to PII across 10 models |
 | Content Moderation | Incomplete | Planned but not implemented for uploaded images |
 
 ---
@@ -84,12 +84,9 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 
 ### CRITICAL
 
-#### C1. No Field-Level Encryption for Sensitive Data at Rest
-MongoDB stores sensitive student data (IEP plans, assessment results, chat conversations, accommodations) in plaintext. While MongoDB connections may use TLS, the data on disk is unencrypted.
+#### C1. ~~No Field-Level Encryption for Sensitive Data at Rest~~ RESOLVED
 
-**Risk:** A database breach exposes all student educational records in cleartext.
-
-**Recommendation:** Enable MongoDB encryption at rest, and consider client-side field-level encryption for IEP data, assessment scores, and accommodation details using MongoDB CSFLE or an application-level encryption layer.
+**Resolution (March 2026):** AES-256-GCM field-level encryption (`utils/fieldEncryption.js`) applied via Mongoose plugin to PII fields across 10 models: User (firstName, lastName), IEPPlan (templateApplied), Conversation (summary, liveSummary, strugglingWith), GradingResult (overallFeedback, whatWentWell, imageFilename), Message (subject, body), StudentUpload (originalFilename, extractedText, notes), SupportTicket (description), ImpersonationLog (actorEmail, targetEmail, ipAddress, userAgent), Affiliate (paypalEmail), TeacherResource (extractedText). Encryption is activated when `FIELD_ENCRYPTION_KEY` is set in `.env`. Fields used in MongoDB indexes/queries (email, username) are excluded to preserve lookup functionality.
 
 #### C2. Image EXIF Metadata Not Stripped
 Student homework photo uploads retain GPS coordinates, device info, and timestamps in EXIF metadata (`SECURITY.md:117-119` acknowledges this as planned).
