@@ -147,6 +147,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     res.status(httpStatus).json({ status, checks, timestamp: new Date().toISOString() });
   });
 
+  // --- Sentry Test Route (throws intentional error to verify Sentry is capturing) ---
+  app.get('/debug-sentry', (req, res) => {
+    throw new Error('My first Sentry error!');
+  });
+
   // --- Auth Routes ---
   app.use('/login', authLimiter, loginRoutes);
   app.use('/signup', signupLimiter, signupRoutes);

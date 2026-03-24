@@ -4,8 +4,8 @@
   "description": "Interactive AI math tutor – student-aware, image/voice capable",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node --require ./instrument.js server.js",
+    "dev": "nodemon --require ./instrument.js server.js",
     "build": "vite build",
     "build:preview": "vite preview",
     "test": "jest --coverage --verbose",
