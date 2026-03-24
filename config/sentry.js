@@ -1,41 +1,16 @@
-// config/sentry.js — Sentry error monitoring (v10+ API)
-// Set SENTRY_DSN env var to enable. Without it, Sentry is a no-op.
+// config/sentry.js — Sentry Express integration
+// Sentry.init() happens in instrument.js (loaded via --require before server.js)
 const Sentry = require('@sentry/node');
 
-function initSentry(app) {
-  if (!process.env.SENTRY_DSN) return;
-
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV || 'development',
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    profilesSampleRate: 0,
-    ignoreErrors: [
-      // Don't report expected client errors
-      'CSRF token',
-      'Rate limit',
-      'Cast to ObjectId failed',
-    ],
-    beforeSend(event) {
-      // Strip PII from error reports
-      if (event.user) {
-        delete event.user.email;
-        delete event.user.ip_address;
-      }
-      return event;
-    },
-  });
-
-  return Sentry;
+function initSentry() {
+  // No-op — initialization moved to instrument.js for early module hooking.
+  // Kept for backwards compatibility with server.js call.
 }
 
 function initSentryErrorHandler(app) {
-  if (!process.env.SENTRY_DSN) return;
-
-  // Sentry v10+ error handler — must be after all routes
+  // Sentry error handler — must be registered after all routes
   Sentry.setupExpressErrorHandler(app, {
     shouldHandleError(error) {
-      // Only report 5xx errors (not 4xx client errors)
       if (error.status && error.status < 500) return false;
       return true;
     },
