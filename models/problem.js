@@ -128,6 +128,7 @@ const problemSchema = new mongoose.Schema({
 problemSchema.index({ skillId: 1, difficulty: 1 });
 problemSchema.index({ skillId: 1, isActive: 1 });
 problemSchema.index({ gradeBand: 1, difficulty: 1 });
+problemSchema.index({ skillId: 1, answerType: 1, isActive: 1 }); // Screener multiple-choice selection
 
 // ===========================================================================
 // ANSWER CHECKING

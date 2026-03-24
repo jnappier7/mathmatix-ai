@@ -163,6 +163,8 @@ conversationSchema.index({ userId: 1, topic: 1, isActive: 1 }); // For topic-bas
 conversationSchema.index({ userId: 1, conversationType: 1, isActive: 1 }); // For conversation type filtering
 conversationSchema.index({ userId: 1, lastActivity: -1 }); // For user activity history (dashboard queries)
 conversationSchema.index({ userId: 1, isActive: 1 }); // For finding active sessions
+conversationSchema.index({ userId: 1, isMastery: 1, isActive: 1 }); // Mastery mode session filtering
+conversationSchema.index({ userId: 1, createdAt: -1 }); // Conversation history and archival
 
 // Pre-validate hook to clean invalid messages BEFORE Mongoose schema validation runs.
 // Using 'validate' instead of 'save' because Mongoose runs validation before save hooks,
