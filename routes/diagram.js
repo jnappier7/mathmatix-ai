@@ -8,6 +8,7 @@ const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
 const path = require('path');
+const logger = require('../utils/logger').child({ route: 'diagram' });
 
 /**
  * Generate a mathematical diagram
@@ -25,7 +26,7 @@ router.post('/generate-diagram', async (req, res) => {
     try {
         const { type, params } = req.body;
 
-        console.log(`[DiagramGen] [${requestId}] Request received:`, {
+        logger.info(`[DiagramGen] [${requestId}] Request received:`, {
             type,
             params,
             userId: req.user?._id,
@@ -35,7 +36,7 @@ router.post('/generate-diagram', async (req, res) => {
         // Validate diagram type
         const validTypes = ['parabola', 'triangle', 'number_line', 'coordinate_plane', 'angle'];
         if (!type || !validTypes.includes(type)) {
-            console.log(`[DiagramGen] [${requestId}] Invalid type: ${type}`);
+            logger.info(`[DiagramGen] [${requestId}] Invalid type: ${type}`);
             return res.status(400).json({
                 success: false,
                 error: `Invalid diagram type. Must be one of: ${validTypes.join(', ')}`
@@ -44,14 +45,14 @@ router.post('/generate-diagram', async (req, res) => {
 
         // Validate params
         if (!params || typeof params !== 'object') {
-            console.log(`[DiagramGen] [${requestId}] Invalid params:`, params);
+            logger.info(`[DiagramGen] [${requestId}] Invalid params:`, params);
             return res.status(400).json({
                 success: false,
                 error: 'params object is required'
             });
         }
 
-        console.log(`[DiagramGen] [${requestId}] Generating ${type} diagram with params:`, params);
+        logger.info(`[DiagramGen] [${requestId}] Generating ${type} diagram with params:`, params);
 
         // Call Python script
         const pythonScript = path.join(__dirname, '..', 'utils', 'diagramGenerator.py');
@@ -63,7 +64,7 @@ router.post('/generate-diagram', async (req, res) => {
         const dataUrl = `data:image/png;base64,${base64Image}`;
 
         const duration = Date.now() - startTime;
-        console.log(`[DiagramGen] [${requestId}] Success - ${type} diagram generated in ${duration}ms`);
+        logger.info(`[DiagramGen] [${requestId}] Success - ${type} diagram generated in ${duration}ms`);
 
         res.json({
             success: true,
@@ -73,8 +74,8 @@ router.post('/generate-diagram', async (req, res) => {
 
     } catch (error) {
         const duration = Date.now() - startTime;
-        console.error(`[DiagramGen] [${requestId}] Error after ${duration}ms:`, error.message);
-        console.error(`[DiagramGen] [${requestId}] Stack:`, error.stack);
+        logger.error(`[DiagramGen] [${requestId}] Error after ${duration}ms:`, error.message);
+        logger.error(`[DiagramGen] [${requestId}] Stack:`, error.stack);
         res.status(500).json({
             success: false,
             error: error.message || 'Failed to generate diagram'
@@ -127,7 +128,7 @@ function tryPythonCommand(pythonCmd, scriptPath, inputData) {
 
         python.on('close', (code) => {
             if (code !== 0) {
-                console.error(`[DiagramGen] Python (${pythonCmd}) error:`, errorOutput);
+                logger.error(`[DiagramGen] Python (${pythonCmd}) error:`, errorOutput);
                 reject(new Error(`Python script failed: ${errorOutput}`));
             } else {
                 resolve(output.trim());
@@ -135,7 +136,7 @@ function tryPythonCommand(pythonCmd, scriptPath, inputData) {
         });
 
         python.on('error', (err) => {
-            console.error(`[DiagramGen] Failed to start Python (${pythonCmd}):`, err.message);
+            logger.error(`[DiagramGen] Failed to start Python (${pythonCmd}):`, err.message);
             reject(new Error(`spawn ${pythonCmd} ${err.code || 'ENOENT'}`));
         });
     });

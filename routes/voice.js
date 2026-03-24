@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const ttsProvider = require('../utils/ttsProvider');
+const logger = require('../utils/logger').child({ route: 'voice' });
 
 /**
  * Check if user is under 13 based on dateOfBirth.
@@ -44,12 +45,12 @@ router.post('/process', isAuthenticated, async (req, res) => {
     const { audio, boardContext } = req.body;
     const userId = req.user._id;
 
-    console.log('🎙️ [Voice] Received request from user:', userId);
-    console.log('🎙️ [Voice] Audio data size:', audio ? audio.length : 0, 'chars');
-    console.log('🎙️ [Voice] Board context present:', !!boardContext);
+    logger.info('[Voice] Received request from user:', userId);
+    logger.info('[Voice] Audio data size:', audio ? audio.length : 0, 'chars');
+    logger.info('[Voice] Board context present:', !!boardContext);
 
     if (!audio) {
-        console.error('❌ [Voice] No audio data provided');
+        logger.error('[Voice] No audio data provided');
         return res.status(400).json({ error: 'Audio data is required' });
     }
 
@@ -65,7 +66,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
     // Check API keys early
     if (!ttsProvider.isConfigured()) {
-        console.error(`❌ [Voice] ${ttsProvider.getProviderName()} API key not configured`);
+        logger.error(`[Voice] ${ttsProvider.getProviderName()} API key not configured`);
         return res.status(500).json({
             error: 'Voice chat not configured',
             message: `${ttsProvider.getProviderName()} API key is missing. Please configure the appropriate environment variable.`
@@ -73,7 +74,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
     }
 
     if (!process.env.OPENAI_API_KEY && !openai.apiKey) {
-        console.error('❌ [Voice] OpenAI API key not configured');
+        logger.error('[Voice] OpenAI API key not configured');
         return res.status(500).json({
             error: 'Voice chat not configured',
             message: 'OpenAI API key is missing. Please configure OPENAI_API_KEY environment variable.'
@@ -87,31 +88,31 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // STEP 1: SPEECH-TO-TEXT (Whisper)
         // ============================================
 
-        console.log('🎙️ [Voice] Processing audio from user:', userId);
+        logger.info('[Voice] Processing audio from user:', userId);
         const step1Start = Date.now();
 
         // Decode base64 audio
         let audioBuffer;
         try {
             audioBuffer = Buffer.from(audio, 'base64');
-            console.log('✅ [Voice] Audio decoded, size:', audioBuffer.length, 'bytes');
+            logger.info('[Voice] Audio decoded, size:', audioBuffer.length, 'bytes');
         } catch (error) {
-            console.error('❌ [Voice] Failed to decode base64 audio:', error.message);
+            logger.error('[Voice] Failed to decode base64 audio:', error.message);
             throw new Error('Invalid audio format');
         }
 
         // Create temporary file for Whisper API
         const tempDir = path.join(__dirname, '../temp');
         if (!fs.existsSync(tempDir)) {
-            console.log('📁 [Voice] Creating temp directory:', tempDir);
+            logger.info('[Voice] Creating temp directory:', tempDir);
             fs.mkdirSync(tempDir, { recursive: true });
         }
 
         const tempAudioPath = path.join(tempDir, `voice_${userId}_${Date.now()}.webm`);
         fs.writeFileSync(tempAudioPath, audioBuffer);
-        console.log('💾 [Voice] Saved temp audio file:', tempAudioPath);
+        logger.info('[Voice] Saved temp audio file:', tempAudioPath);
 
-        console.log('📝 [Voice] Calling Whisper API for transcription...');
+        logger.info('[Voice] Calling Whisper API for transcription...');
 
         // Map preferredLanguage to Whisper ISO-639-1 codes for non-English transcription
         const userLangPref = await User.findById(userId).select('preferredLanguage').lean();
@@ -129,8 +130,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
                 language: whisperLang,
             });
         } catch (error) {
-            console.error('❌ [Voice] Whisper API error:', error.message);
-            console.error('Error details:', error.response?.data || error);
+            logger.error('[Voice] Whisper API error:', error.message);
+            logger.error('Error details:', error.response?.data || error);
             // Clean up temp file before throwing
             if (fs.existsSync(tempAudioPath)) {
                 fs.unlinkSync(tempAudioPath);
@@ -140,12 +141,12 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const userMessage = transcription.text;
         const step1Time = Date.now() - step1Start;
-        console.log(`✅ [Voice] Transcription (${step1Time}ms):`, userMessage);
+        logger.info(`[Voice] Transcription (${step1Time}ms):`, userMessage);
 
         // Clean up temp file
         if (fs.existsSync(tempAudioPath)) {
             fs.unlinkSync(tempAudioPath);
-            console.log('🗑️ [Voice] Cleaned up temp audio file');
+            logger.info('[Voice] Cleaned up temp audio file');
         }
 
         if (!userMessage || userMessage.trim().length === 0) {
@@ -226,13 +227,13 @@ router.post('/process', isAuthenticated, async (req, res) => {
         ];
 
         const step2Start = Date.now();
-        console.log('🤖 [Voice] Generating AI response...');
-        console.log(`📝 [Voice] Message count: ${messages.length} (system + ${messages.length - 2} history + user)`);
+        logger.info('[Voice] Generating AI response...');
+        logger.info(`[Voice] Message count: ${messages.length} (system + ${messages.length - 2} history + user)`);
 
         // Validate all messages have content
         const invalidMessages = messages.filter(m => !m.content || m.content.trim().length === 0);
         if (invalidMessages.length > 0) {
-            console.error('❌ [Voice] Found messages with null/empty content:', invalidMessages);
+            logger.error('[Voice] Found messages with null/empty content:', invalidMessages);
             throw new Error('Invalid message format: some messages have null or empty content');
         }
 
@@ -244,7 +245,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         let aiResponseText = completion.choices[0].message.content.trim();
         const step2Time = Date.now() - step2Start;
 
-        console.log(`✅ [Voice] AI response (${step2Time}ms):`, aiResponseText);
+        logger.info(`[Voice] AI response (${step2Time}ms):`, aiResponseText);
 
         // ============================================
         // STEP 3: PARSE BOARD ACTIONS
@@ -274,13 +275,13 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // ============================================
 
         const step3Start = Date.now();
-        console.log(`🔊 [Voice] Generating speech with ${ttsProvider.getProviderName()}...`);
+        logger.info(`[Voice] Generating speech with ${ttsProvider.getProviderName()}...`);
 
         // Get tutor's voice ID for the active provider
         const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
-        console.log(`🎤 [Voice] Using tutor: ${tutorProfile.name} (${selectedTutorId})`);
-        console.log(`🎤 [Voice] Using ${ttsProvider.getProviderName()} voice ID: ${tutorVoiceId}`);
-        console.log(`📝 [Voice] TTS text length: ${ttsText.length} chars`);
+        logger.info(`[Voice] Using tutor: ${tutorProfile.name} (${selectedTutorId})`);
+        logger.info(`[Voice] Using ${ttsProvider.getProviderName()} voice ID: ${tutorVoiceId}`);
+        logger.info(`[Voice] TTS text length: ${ttsText.length} chars`);
 
         if (!tutorVoiceId) {
             throw new Error(`No ${ttsProvider.getProviderName()} voice ID configured for tutor: ${selectedTutorId}`);
@@ -291,19 +292,19 @@ router.post('/process', isAuthenticated, async (req, res) => {
         try {
             audioData = await ttsProvider.generateAudio(ttsText, tutorVoiceId);
         } catch (error) {
-            console.error(`❌ [Voice] ${ttsProvider.getProviderName()} TTS error:`, error.message);
-            console.error('Error response:', error.response?.data);
-            console.error('Error status:', error.response?.status);
+            logger.error(`[Voice] ${ttsProvider.getProviderName()} TTS error:`, error.message);
+            logger.error('Error response:', error.response?.data);
+            logger.error('Error status:', error.response?.status);
             throw new Error(`TTS generation failed: ${error.message}`);
         }
 
         const step3Time = Date.now() - step3Start;
-        console.log(`✅ [Voice] TTS audio received (${step3Time}ms), size:`, audioData.length, 'bytes');
+        logger.info(`[Voice] TTS audio received (${step3Time}ms), size:`, audioData.length, 'bytes');
 
         // Save audio file
         const audioDir = path.join(__dirname, '../public/audio/voice');
         if (!fs.existsSync(audioDir)) {
-            console.log('📁 [Voice] Creating audio directory:', audioDir);
+            logger.info('[Voice] Creating audio directory:', audioDir);
             fs.mkdirSync(audioDir, { recursive: true });
         }
 
@@ -314,7 +315,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const audioUrl = `/audio/voice/${audioFilename}`;
 
-        console.log('✅ [Voice] Speech generated and saved:', audioUrl);
+        logger.info('[Voice] Speech generated and saved:', audioUrl);
 
         // ============================================
         // STEP 5: SAVE TO CONVERSATION HISTORY
@@ -354,7 +355,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // ============================================
 
         const totalTime = Date.now() - startTime;
-        console.log(`⏱️  [Voice] Total processing time: ${totalTime}ms (Whisper: ${step1Time}ms, AI: ${step2Time}ms, TTS: ${step3Time}ms, Other: ${totalTime - step1Time - step2Time - step3Time}ms)`);
+        logger.info(`[Voice] Total processing time: ${totalTime}ms (Whisper: ${step1Time}ms, AI: ${step2Time}ms, TTS: ${step3Time}ms, Other: ${totalTime - step1Time - step2Time - step3Time}ms)`);
 
         res.json({
             transcription: userMessage,
@@ -368,8 +369,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
         cleanupOldAudioFiles(audioDir, 100);
 
     } catch (error) {
-        console.error('❌ [Voice] FATAL ERROR processing voice:', error);
-        console.error('Error stack:', error.stack);
+        logger.error('[Voice] FATAL ERROR processing voice:', error);
+        logger.error('Error stack:', error.stack);
 
         // Provide specific error message
         let userMessage = 'Failed to process voice input';
@@ -471,10 +472,10 @@ function cleanupOldAudioFiles(directory, keepCount = 100) {
         // Delete files beyond keepCount
         for (let i = keepCount; i < files.length; i++) {
             fs.unlinkSync(files[i].path);
-            console.log(`🗑️ [Voice] Cleaned up old audio: ${files[i].filename}`);
+            logger.debug(`[Voice] Cleaned up old audio: ${files[i].filename}`);
         }
     } catch (error) {
-        console.error('⚠️ [Voice] Error cleaning up audio files:', error.message);
+        logger.warn('[Voice] Error cleaning up audio files:', error.message);
     }
 }
 
