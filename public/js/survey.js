@@ -4,11 +4,11 @@
 
   // Survey configuration
   const CONFIG = {
-    MIN_SESSION_DURATION: 10,        // Minimum 10 minutes before eligible
-    MIN_PROBLEMS_FOR_TRIGGER: 3,     // Trigger after solving 3+ problems
+    MIN_SESSION_DURATION: 20,        // Minimum 20 minutes before eligible
+    MIN_PROBLEMS_FOR_TRIGGER: 5,     // Trigger after solving 5+ problems
     DAILY_FREQUENCY_HOURS: 24,       // Show at most once per day
     QUICK_SURVEY_THRESHOLD_HOURS: 48, // Show quick version if responded within 48h
-    CHECK_INTERVAL: 60000            // Check every minute for problem-based triggers
+    CHECK_INTERVAL: 120000           // Check every 2 minutes for problem-based triggers
   };
 
   // Survey state
@@ -119,8 +119,8 @@
 
     const duration = getSessionDuration();
 
-    // After 20 minutes with no problems solved, check if we should show
-    if (duration >= 20 && problemsSolvedThisSession === 0) {
+    // After 40 minutes with no problems solved, check if we should show
+    if (duration >= 40 && problemsSolvedThisSession === 0) {
       await checkAndShowSurvey('time_based');
     }
   }
@@ -132,8 +132,8 @@
     if (document.hidden) {
       hiddenTime = Date.now();
     } else {
-      // Returning to tab after 2+ minutes away
-      if (hiddenTime && (Date.now() - hiddenTime) > 120000) {
+      // Returning to tab after 5+ minutes away
+      if (hiddenTime && (Date.now() - hiddenTime) > 300000) {
         const duration = getSessionDuration();
 
         if (!surveyShown && duration >= CONFIG.MIN_SESSION_DURATION) {
