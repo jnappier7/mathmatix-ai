@@ -48,21 +48,32 @@ const MAX_HISTORY_LENGTH_FOR_AI = 40;
 // If user A sends message 1 and message 2 before message 1 finishes saving,
 // message 2 waits until message 1 completes to prevent data loss.
 const userChatLocks = new Map();
+const userChatLockTimestamps = new Map();
 function acquireUserLock(userId) {
     const key = userId.toString();
     if (!userChatLocks.has(key)) {
         userChatLocks.set(key, Promise.resolve());
     }
+    userChatLockTimestamps.set(key, Date.now());
     let release;
     const newLock = new Promise(resolve => { release = resolve; });
     const previousLock = userChatLocks.get(key);
     userChatLocks.set(key, newLock);
     return previousLock.then(() => release);
 }
-// Cleanup stale locks periodically (prevent memory leak for inactive users)
+// Cleanup stale locks periodically (prevent memory leak for inactive users).
+// Only evict users idle for 10+ minutes — never clear the entire map, which
+// could drop locks for in-flight requests and allow concurrent processing.
 setInterval(() => {
-    // Map only holds resolved promises for inactive users — safe to clear
-    if (userChatLocks.size > 1000) userChatLocks.clear();
+    if (userChatLocks.size > 500) {
+        const cutoff = Date.now() - 10 * 60 * 1000;
+        for (const [key, ts] of userChatLockTimestamps) {
+            if (ts < cutoff) {
+                userChatLocks.delete(key);
+                userChatLockTimestamps.delete(key);
+            }
+        }
+    }
 }, 10 * 60 * 1000);
 
 /**

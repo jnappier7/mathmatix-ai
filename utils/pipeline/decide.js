@@ -389,7 +389,7 @@ function applyEvidenceModifiers(decision, evidence) {
   }
 
   // ── Recurring misconception intervention ──
-  if (evidence.misconceptions?.needsIntervention && diagnosis) {
+  if (evidence.misconceptions?.needsIntervention) {
     decision.directives.push(
       `WARNING: This misconception has occurred ${evidence.misconceptions.recurringCount}+ times.`,
       'Previous teaching approach is NOT working. Try a completely different representation.',

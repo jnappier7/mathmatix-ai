@@ -20,6 +20,7 @@ const router = express.Router();
 const Affiliate = require('../models/affiliate');
 const User = require('../models/user');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const logger = require('../utils/logger').child({ route: 'affiliate' });
 
 // =====================================================
 // POST /apply
@@ -76,7 +77,7 @@ router.post('/apply', isAuthenticated, async (req, res) => {
     // Mark user as affiliate
     await User.findByIdAndUpdate(userId, { isAffiliate: true });
 
-    console.log(`[Affiliate] New application: ${normalizedCode} by ${req.user.firstName} ${req.user.lastName}`);
+    logger.info(`[Affiliate] New application: ${normalizedCode} by ${req.user.firstName} ${req.user.lastName}`);
 
     res.status(201).json({
       success: true,
@@ -88,7 +89,7 @@ router.post('/apply', isAuthenticated, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('[Affiliate] Apply error:', error);
+    logger.error('[Affiliate] Apply error:', error);
     if (error.code === 11000) {
       return res.status(409).json({ message: 'This coupon code is already taken.' });
     }
@@ -149,7 +150,7 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('[Affiliate] Dashboard error:', error);
+    logger.error('[Affiliate] Dashboard error:', error);
     res.status(500).json({ message: 'Failed to load affiliate dashboard.' });
   }
 });
@@ -175,7 +176,7 @@ router.patch('/profile', isAuthenticated, async (req, res) => {
     await affiliate.save();
     res.json({ success: true, message: 'Profile updated.' });
   } catch (error) {
-    console.error('[Affiliate] Profile update error:', error);
+    logger.error('[Affiliate] Profile update error:', error);
     res.status(500).json({ message: 'Failed to update profile.' });
   }
 });
@@ -200,7 +201,7 @@ router.get('/validate/:code', async (req, res) => {
       displayName: affiliate.displayName
     });
   } catch (error) {
-    console.error('[Affiliate] Validate error:', error);
+    logger.error('[Affiliate] Validate error:', error);
     res.status(500).json({ valid: false });
   }
 });
@@ -258,7 +259,7 @@ router.get('/admin/list', isAuthenticated, isAdmin, async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('[Affiliate] Admin list error:', error);
+    logger.error('[Affiliate] Admin list error:', error);
     res.status(500).json({ message: 'Failed to load affiliates.' });
   }
 });
@@ -287,11 +288,11 @@ router.patch('/admin/:id', isAuthenticated, isAdmin, async (req, res) => {
 
     await affiliate.save();
 
-    console.log(`[Affiliate] Admin updated ${affiliate.couponCode}: status=${affiliate.status}`);
+    logger.info(`[Affiliate] Admin updated ${affiliate.couponCode}: status=${affiliate.status}`);
 
     res.json({ success: true, message: `Affiliate ${affiliate.couponCode} updated.` });
   } catch (error) {
-    console.error('[Affiliate] Admin update error:', error);
+    logger.error('[Affiliate] Admin update error:', error);
     res.status(500).json({ message: 'Failed to update affiliate.' });
   }
 });
@@ -322,11 +323,11 @@ router.post('/admin/:id/payout', isAuthenticated, isAdmin, async (req, res) => {
 
     await affiliate.save();
 
-    console.log(`[Affiliate] Payout recorded for ${affiliate.couponCode}: $${(amountCents / 100).toFixed(2)}`);
+    logger.info(`[Affiliate] Payout recorded for ${affiliate.couponCode}: $${(amountCents / 100).toFixed(2)}`);
 
     res.json({ success: true, message: `Payout of $${(amountCents / 100).toFixed(2)} recorded.` });
   } catch (error) {
-    console.error('[Affiliate] Payout error:', error);
+    logger.error('[Affiliate] Payout error:', error);
     res.status(500).json({ message: 'Failed to record payout.' });
   }
 });

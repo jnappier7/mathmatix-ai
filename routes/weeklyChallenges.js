@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
+const logger = require('../utils/logger').child({ route: 'weeklyChallenges' });
 
 // Weekly challenge templates
 const WEEKLY_CHALLENGE_TEMPLATES = {
@@ -224,7 +225,7 @@ router.get('/weekly-challenges', isAuthenticated, async (req, res) => {
       completedAllTime: user.weeklyChallenges.completedChallengesAllTime || 0
     });
   } catch (error) {
-    console.error('Error fetching weekly challenges:', error);
+    logger.error('Error fetching weekly challenges:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -367,7 +368,7 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
       completedChallenges: completedChallenges.length > 0 ? completedChallenges : undefined
     });
   } catch (error) {
-    console.error('Error updating weekly challenges:', error);
+    logger.error('Error updating weekly challenges:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -410,7 +411,7 @@ router.get('/weekly-challenges/leaderboard', async (req, res) => {
       leaderboard: leaderboard.slice(0, 20) // Top 20
     });
   } catch (error) {
-    console.error('Error fetching leaderboard:', error);
+    logger.error('Error fetching leaderboard:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
