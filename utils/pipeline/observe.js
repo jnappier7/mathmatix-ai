@@ -55,7 +55,7 @@ const PATTERNS = {
   checkMyWork: /\b(check|verify|grade|review|is\s*this\s*right|is\s*this\s*correct|did\s*i\s*(get|do)\s*(it|this)\s*right|am\s*i\s*right|how'?d\s*i\s*do)\b/i,
 
   // Questions about math
-  question: /^(what|why|how|when|where|can\s*you|could\s*you|is\s*it|does|do|will|would|should|explain)\b/i,
+  question: /^(what|why|how|when|where|can\s*you|could\s*you|is\s*it|does|do|will|would|should|explain|find|solve|calculate|compute|evaluate|determine|simplify|factor|graph|prove|derive|convert|estimate)\b/i,
 
   // Greetings
   greeting: /^(hi|hey|hello|yo|sup|what'?s\s*up|good\s*(morning|afternoon|evening))\b/i,
