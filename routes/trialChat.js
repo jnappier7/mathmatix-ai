@@ -293,10 +293,13 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     }
 
     // ── Build pipeline context ──
-    const { conversation, user } = buildTrialPipelineContext(sanitizedHistory);
+    // Include the current user message so the pipeline and LLM can see it
+    // (mirrors chat.js which pushes to activeConversation.messages before building formattedMessages)
+    const historyWithCurrentMessage = [...sanitizedHistory, { role: 'user', content: sanitizedMessage }];
+    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage);
 
-    // Format messages for LLM (same format as chat.js)
-    const formattedMessages = sanitizedHistory.map(m => ({ role: m.role, content: m.content }));
+    // Format messages for LLM (same format as chat.js — includes current user message)
+    const formattedMessages = historyWithCurrentMessage.map(m => ({ role: m.role, content: m.content }));
 
     // ── Run the full pipeline (observe → diagnose → decide → generate → verify) ──
     // skipPersist=true means no DB writes — everything else runs identically.
