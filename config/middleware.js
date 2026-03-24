@@ -81,22 +81,10 @@ function configureMiddleware(app) {
     });
   }
 
-  // CORS — whitelist known origins
-  const allowedOrigins = (process.env.CORS_ORIGINS || process.env.CLIENT_URL || 'http://localhost:3000')
-    .split(',')
-    .map(o => o.trim());
-
+  // CORS — match original production config
   app.use(cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (server-to-server, curl, mobile apps)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
-    },
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Request-Id'],
-    maxAge: 86400, // Cache preflight for 24h
   }));
 
   // Stripe webhook needs raw body — MUST be before express.json()
