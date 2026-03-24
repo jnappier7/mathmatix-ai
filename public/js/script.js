@@ -2427,7 +2427,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Load saved playback speed (or age-tier default for younger students)
-        const savedSpeed = localStorage.getItem('ttsPlaybackRate');
+        let savedSpeed; try { savedSpeed = localStorage.getItem('ttsPlaybackRate'); } catch (e) { /* blocked */ }
         const tierDefault = getTierPlaybackRate();
         const speed = savedSpeed ? parseFloat(savedSpeed) : tierDefault;
         changePlaybackSpeed(speed);

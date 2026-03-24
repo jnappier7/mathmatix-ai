@@ -48,13 +48,15 @@ document.getElementById("login-form").addEventListener("submit", async function 
       } else {
         // Fallback to chat.html if no explicit redirect or data.redirect is found and it was a success.
         // This part becomes less critical as backend redirects directly.
-        localStorage.setItem("mathmatixUser", JSON.stringify(data.user)); //
-        localStorage.setItem("userId", data.user._id); //
-        localStorage.setItem("name", data.user.name || `${data.user.firstName} ${data.user.lastName}`); //
-        localStorage.setItem("tone", data.user.tonePreference); //
-        localStorage.setItem("userRole", data.user.role); //
-        localStorage.setItem("learningStyle", data.user.learningStyle); //
-        localStorage.setItem("interests", JSON.stringify(data.user.interests || [])); //
+        try {
+          localStorage.setItem("mathmatixUser", JSON.stringify(data.user));
+          localStorage.setItem("userId", data.user._id);
+          localStorage.setItem("name", data.user.name || `${data.user.firstName} ${data.user.lastName}`);
+          localStorage.setItem("tone", data.user.tonePreference);
+          localStorage.setItem("userRole", data.user.role);
+          localStorage.setItem("learningStyle", data.user.learningStyle);
+          localStorage.setItem("interests", JSON.stringify(data.user.interests || []));
+        } catch (e) { /* localStorage blocked by tracking prevention — non-critical */ }
         window.location.href = "/chat.html"; //
       }
     }

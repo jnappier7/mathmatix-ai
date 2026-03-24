@@ -232,9 +232,7 @@ export function changePlaybackSpeed(rate) {
         audioState.source.playbackRate.value = rate;
     }
 
-    if (localStorage) {
-        localStorage.setItem('ttsPlaybackRate', rate);
-    }
+    try { localStorage.setItem('ttsPlaybackRate', rate); } catch (e) { /* blocked */ }
 
     updateAudioControls();
 }

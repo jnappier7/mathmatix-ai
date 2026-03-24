@@ -969,7 +969,7 @@ function handleKeyboardShortcuts(event) {
  */
 function showWelcomeHint() {
     // Check if user has seen the hint before
-    const hasSeenHint = localStorage.getItem('skillMapHintSeen');
+    let hasSeenHint; try { hasSeenHint = localStorage.getItem('skillMapHintSeen'); } catch (e) { hasSeenHint = true; }
 
     if (!hasSeenHint) {
         // Wait for auto-focus to complete, then show hint
@@ -1005,7 +1005,7 @@ function showWelcomeHint() {
             }, 6000);
 
             // Mark as seen
-            localStorage.setItem('skillMapHintSeen', 'true');
+            try { localStorage.setItem('skillMapHintSeen', 'true'); } catch (e) { /* blocked */ }
         }, 3000); // Show after auto-focus completes (1s delay + 1.5s animation + 0.5s buffer)
     }
 }
