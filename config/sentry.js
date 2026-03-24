@@ -1,4 +1,4 @@
-// config/sentry.js — Sentry error monitoring
+// config/sentry.js — Sentry error monitoring (v10+ API)
 // Set SENTRY_DSN env var to enable. Without it, Sentry is a no-op.
 const Sentry = require('@sentry/node');
 
@@ -26,25 +26,20 @@ function initSentry(app) {
     },
   });
 
-  // Request handler — must be first middleware
-  app.use(Sentry.Handlers.requestHandler({
-    user: ['id', 'role'],
-  }));
-
   return Sentry;
 }
 
 function initSentryErrorHandler(app) {
   if (!process.env.SENTRY_DSN) return;
 
-  // Error handler — must be after all routes, before other error handlers
-  app.use(Sentry.Handlers.errorHandler({
+  // Sentry v10+ error handler — must be after all routes
+  Sentry.setupExpressErrorHandler(app, {
     shouldHandleError(error) {
       // Only report 5xx errors (not 4xx client errors)
       if (error.status && error.status < 500) return false;
       return true;
     },
-  }));
+  });
 }
 
 module.exports = { initSentry, initSentryErrorHandler };
