@@ -51,6 +51,7 @@ module.exports = {
   // Ignore patterns
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/coverage/'
+    '/coverage/',
+    '/tests/load/'
   ]
 };
