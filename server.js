@@ -71,3 +71,20 @@ function gracefulShutdown(signal) {
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// --- Unhandled Error Safety Net ---
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Promise Rejection', {
+    reason: reason instanceof Error ? { message: reason.message, stack: reason.stack } : reason,
+  });
+  // Don't exit — let Sentry capture it and the app continue serving
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception — shutting down', {
+    error: err.message,
+    stack: err.stack,
+  });
+  // Uncaught exceptions leave the process in an undefined state — must exit
+  gracefulShutdown('uncaughtException');
+});

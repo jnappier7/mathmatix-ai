@@ -217,6 +217,8 @@ function configureMiddleware(app) {
         workerSrc: ["'self'", 'blob:'],
         mediaSrc: ["'self'", 'blob:', 'data:'],
         objectSrc: ["'none'"],
+        baseUri: ["'self'"],       // Prevents <base> tag hijacking
+        formAction: ["'self'"],    // Limits form submission targets
         frameSrc: ["'self'", 'https://www.commoncurriculum.com', 'https://www.commonplanner.com'],
         upgradeInsecureRequests: isProduction ? [] : null,
       },

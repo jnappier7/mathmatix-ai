@@ -242,8 +242,42 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use(logger.errorLogger);
 
   // 404 fallback
-  app.get('*', (req, res) => {
-    res.status(404).send(`Cannot GET ${req.path}`);
+  app.use((req, res) => {
+    // API routes get JSON response
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'Not found', path: req.path });
+    }
+    // Browser requests get a friendly redirect to home
+    res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'), (err) => {
+      if (err) res.status(404).send('Page not found');
+    });
+  });
+
+  // Global error handler — must be last middleware (4 args)
+  app.use((err, req, res, _next) => {
+    const status = err.status || 500;
+    const isServerError = status >= 500;
+
+    if (isServerError) {
+      logger.error('Unhandled route error', {
+        requestId: req.requestId,
+        error: err.message,
+        stack: err.stack,
+        method: req.method,
+        url: req.originalUrl,
+      });
+    }
+
+    if (req.path.startsWith('/api/')) {
+      return res.status(status).json({
+        error: isServerError ? 'Internal server error' : err.message,
+        ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+      });
+    }
+
+    res.status(status).sendFile(path.join(__dirname, '..', 'public', '500.html'), (sendErr) => {
+      if (sendErr) res.status(status).send('Something went wrong');
+    });
   });
 
   // Upload cleanup scheduler

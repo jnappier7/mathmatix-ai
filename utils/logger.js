@@ -156,6 +156,18 @@ if (!isDevelopment && !isTest) {
   );
 }
 
+// Better Stack (Logtail) transport — ships structured logs to cloud
+// Set LOGTAIL_SOURCE_TOKEN in env to enable
+if (process.env.LOGTAIL_SOURCE_TOKEN && !isTest) {
+  const { LogtailTransport } = require('@logtail/winston');
+  transports.push(
+    new LogtailTransport({
+      sourceToken: process.env.LOGTAIL_SOURCE_TOKEN,
+      level: 'info', // Ship info+ to Better Stack (not debug)
+    })
+  );
+}
+
 /**
  * Create Winston logger instance
  */
