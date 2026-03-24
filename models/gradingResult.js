@@ -225,4 +225,10 @@ gradingResultSchema.statics.getForTeacher = function (studentIds, options = {}) 
 // EXPORT
 // ============================================================================
 
+// Field-level encryption for student work feedback
+const { encryptFields } = require('../utils/fieldEncryption');
+gradingResultSchema.plugin(encryptFields, {
+  fields: ['overallFeedback', 'whatWentWell', 'imageFilename']
+});
+
 module.exports = mongoose.model('GradingResult', gradingResultSchema);

@@ -201,7 +201,7 @@ function configureMiddleware(app) {
         styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'data:'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-        connectSrc: ["'self'", 'https://api.openai.com', 'https://api.mathpix.com', 'https://api.elevenlabs.io', 'https://cdn.jsdelivr.net', 'https://clever.com', 'https://api.clever.com', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://connect.facebook.net', 'https://*.google.com'],
+        connectSrc: ["'self'", 'https://api.openai.com', 'https://api.mathpix.com', 'https://api.cartesia.ai', 'https://cdn.jsdelivr.net', 'https://clever.com', 'https://api.clever.com', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://connect.facebook.net', 'https://*.google.com'],
         workerSrc: ["'self'", 'blob:'],
         mediaSrc: ["'self'", 'blob:', 'data:'],
         objectSrc: ["'none'"],

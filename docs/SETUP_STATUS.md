@@ -80,7 +80,7 @@ If you prefer running MongoDB locally instead of Atlas:
 
 Your `.env` file is fully configured with:
 - ✅ MongoDB Atlas connection string
-- ✅ All API keys (OpenAI, Anthropic, Gemini, ElevenLabs, Mathpix)
+- ✅ All API keys (OpenAI, Anthropic, Gemini, Cartesia, Mathpix)
 - ✅ OAuth credentials (Google, Microsoft)
 - ✅ Session secret
 - ✅ Enrollment codes

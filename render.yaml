@@ -43,8 +43,6 @@ services:
         sync: false
       - key: MICROSOFT_CALLBACK_URL
         sync: false
-      - key: ELEVENLABS_API_KEY
-        sync: false
       - key: MATHPIX_APP_ID
         sync: false
       - key: MATHPIX_APP_KEY

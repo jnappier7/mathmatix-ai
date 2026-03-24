@@ -47,7 +47,7 @@ MICROSOFT_CLIENT_SECRET=dummy_ms_secret
 MICROSOFT_CALLBACK_URL=http://localhost:3000/auth/microsoft/callback
 
 # Other services (optional for core features)
-ELEVENLABS_API_KEY=dummy_key
+CARTESIA_API_KEY=dummy_key
 MATHPIX_APP_ID=dummy_id
 MATHPIX_APP_KEY=dummy_key
 ```

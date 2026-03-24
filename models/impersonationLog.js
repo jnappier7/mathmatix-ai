@@ -84,4 +84,10 @@ impersonationLogSchema.virtual('durationMinutes').get(function() {
 impersonationLogSchema.set('toJSON', { virtuals: true });
 impersonationLogSchema.set('toObject', { virtuals: true });
 
+// Field-level encryption for audit PII
+const { encryptFields } = require('../utils/fieldEncryption');
+impersonationLogSchema.plugin(encryptFields, {
+  fields: ['actorEmail', 'targetEmail', 'ipAddress', 'userAgent']
+});
+
 module.exports = mongoose.model('ImpersonationLog', impersonationLogSchema);

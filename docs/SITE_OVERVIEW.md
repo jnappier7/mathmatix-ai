@@ -22,7 +22,7 @@ It serves four user roles — **students, teachers, parents, and admins** — wi
 | Backend | Node.js / Express |
 | Database | MongoDB (Mongoose ODM) |
 | AI Engine | OpenAI GPT (via `openai` SDK) |
-| Voice / TTS | ElevenLabs |
+| Voice / TTS | Cartesia |
 | Math OCR | Mathpix |
 | Math Rendering | KaTeX, MathLive |
 | Payments | Stripe (subscriptions + school licenses) |
@@ -60,7 +60,7 @@ It serves four user roles — **students, teachers, parents, and admins** — wi
    - **Mr. Sierawski** — Wrestling coach / Algebra teacher, grit and resilience (unlockable)
    - Additional unlockable tutors at higher levels
 
-3. **Voice Chat** — Real-time voice conversation with AI tutors (premium feature). ElevenLabs TTS with per-tutor voice IDs.
+3. **Voice Chat** — Real-time voice conversation with AI tutors (premium feature). Cartesia TTS with per-tutor voice IDs.
 
 4. **Whiteboard / Canvas** — Interactive drawing and math workspace with AI integration. Includes handwriting recognition, math procedure visualization, and split-screen chat+whiteboard layout.
 

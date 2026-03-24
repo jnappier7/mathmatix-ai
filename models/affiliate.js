@@ -99,4 +99,10 @@ affiliateSchema.index({ couponCode: 1 });
 affiliateSchema.index({ userId: 1 });
 affiliateSchema.index({ status: 1 });
 
+// Field-level encryption for affiliate PII
+const { encryptFields } = require('../utils/fieldEncryption');
+affiliateSchema.plugin(encryptFields, {
+  fields: ['paypalEmail']
+});
+
 module.exports = mongoose.models.Affiliate || mongoose.model('Affiliate', affiliateSchema);

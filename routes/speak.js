@@ -1,5 +1,5 @@
 // routes/speak.js
-// TTS endpoint for message playback — supports ElevenLabs and Cartesia via ttsProvider.
+// TTS endpoint for message playback — Cartesia via ttsProvider.
 // COMPLIANCE: Under-13 users get useWebSpeech flag for browser TTS fallback.
 
 const express = require("express");
@@ -29,24 +29,16 @@ router.post("/", async (req, res) => {
       return res.status(500).send("Text-to-speech service not configured.");
   }
 
-  // Resolve voice ID for the active provider (maps ElevenLabs → Cartesia when needed)
+  // Resolve voice ID for the active provider
   const resolvedVoiceId = ttsProvider.resolveVoiceId(voiceId || "2eFQnnNM32GDnZkCfkSm");
 
   // Clean text for TTS (remove markdown and LaTeX)
   const cleanedText = cleanTextForTTS(text);
 
   try {
-    if (ttsProvider.getProvider() === 'elevenlabs') {
-        // ElevenLabs: stream audio for lower TTFB
-        const streamResponse = await ttsProvider.generateAudioStream(cleanedText, resolvedVoiceId);
-        res.setHeader("Content-Type", ttsProvider.getContentType());
-        streamResponse.data.pipe(res);
-    } else {
-        // Cartesia (and future providers): send buffered audio
-        const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId);
-        res.setHeader("Content-Type", ttsProvider.getContentType());
-        res.send(audioBuffer);
-    }
+    const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId);
+    res.setHeader("Content-Type", ttsProvider.getContentType());
+    res.send(audioBuffer);
 
   } catch (err) {
     console.error(`ERROR: ${ttsProvider.getProviderName()} TTS error:`, err.message);

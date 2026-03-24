@@ -55,7 +55,7 @@ The platform is production-ready with comprehensive error handling, rate limitin
 
 ### AI & ML Services
 - **Primary LLM:** OpenAI GPT-4o, GPT-4o-mini
-- **Voice Synthesis:** ElevenLabs API
+- **Voice Synthesis:** Cartesia API
 - **OCR:** Mathpix API
 - **PDF Processing:** pdf.js (pdfjs-dist 5.4.149)
 - **Browser Automation:** Puppeteer 24.10.2
@@ -101,7 +101,7 @@ mathmatix-ai/
 ### Data Flow
 1. **User Request** → Express Router → Middleware (Auth) → Route Handler
 2. **Route Handler** → Database Query (Mongoose) / AI Service
-3. **AI Service** → External API (OpenAI, ElevenLabs, Mathpix)
+3. **AI Service** → External API (OpenAI, Cartesia, Mathpix)
 4. **Response** → JSON API / Rendered HTML → Frontend
 5. **Frontend** → User Interface Update (DOM Manipulation)
 
@@ -244,7 +244,7 @@ mathmatix-ai/
 
 **Each Tutor Includes:**
 - Unique personality description
-- ElevenLabs voice ID for TTS
+- Cartesia voice ID for TTS
 - Custom catchphrase
 - Specialties list
 - Voice preview text
@@ -336,13 +336,13 @@ Each module (JSON) contains:
 **Route:** `/api/speak` (POST)
 **File:** `routes/speak.js`
 
-**Provider:** ElevenLabs API
+**Provider:** Cartesia API
 **Voice Selection:** Based on selected tutor's `voiceId`
 
 **Workflow:**
 1. Receive text from frontend
 2. Strip LaTeX delimiters for speakability
-3. Call ElevenLabs API with tutor's voice
+3. Call Cartesia API with tutor's voice
 4. Return audio buffer (mp3)
 5. Frontend plays audio via Web Audio API
 
@@ -840,7 +840,7 @@ Each module (JSON) contains:
 - Fallback responses
 - Detailed error logging
 
-### ElevenLabs Voice Synthesis
+### Cartesia Voice Synthesis
 
 **File:** `routes/speak.js`
 
@@ -988,7 +988,7 @@ Each module (JSON) contains:
 
 **AI Services:**
 - `OPENAI_API_KEY` - OpenAI API key
-- `ELEVENLABS_API_KEY` - Voice synthesis API key
+- `CARTESIA_API_KEY` - Voice synthesis API key
 - `MATHPIX_APP_ID` - OCR service ID
 - `MATHPIX_APP_KEY` - OCR service key
 

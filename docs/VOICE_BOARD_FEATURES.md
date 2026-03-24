@@ -18,7 +18,7 @@ Real-time conversational voice chat inspired by OpenAI's GPT live voice mode, in
 - Noise suppression and echo cancellation
 
 #### **Text-to-Speech**
-- ElevenLabs TTS with tutor's assigned voice
+- Cartesia TTS with tutor's assigned voice
 - Maintains voice consistency across all audio features
 - Natural, conversational speech output
 - MP3 audio storage with automatic cleanup
@@ -70,7 +70,7 @@ Voice commands can control the whiteboard:
 **Backend** (`routes/voice.js`):
 - Whisper transcription endpoint
 - Claude 3.5 Sonnet for responses
-- ElevenLabs TTS integration
+- Cartesia TTS integration
 - Board action parsing
 - Audio file management
 
@@ -314,7 +314,7 @@ Each whiteboard element is tracked with metadata:
    - Action: `[WRITE:100,100,x² + 5x + 6]`
 5. Handwriting engine writes equation
 6. Ghost cursor shows AI's "hand"
-7. ElevenLabs speaks: "Let's factor this together"
+7. Cartesia speaks: "Let's factor this together"
 8. Visual pointer connects chat → equation
 
 ### **Example 2: Error Correction**
@@ -342,7 +342,7 @@ Each whiteboard element is tracked with metadata:
 ### Environment Variables
 ```bash
 OPENAI_API_KEY=sk-...          # Whisper transcription
-ELEVENLABS_API_KEY=...         # TTS with tutor voices
+CARTESIA_API_KEY=...           # TTS with tutor voices
 ANTHROPIC_API_KEY=...          # Claude for responses
 ```
 
@@ -363,7 +363,7 @@ preferences: {
 tutors: {
   "mr-nappier": {
     name: "Mr. Nappier",
-    voiceId: "2eFQnnNM32GDnZkCfkSm",  // ElevenLabs voice
+    voiceId: "2eFQnnNM32GDnZkCfkSm",  // Cartesia voice
     personality: "confident",           // Handwriting style
     teachingStyle: "socratic"
   }
@@ -432,7 +432,7 @@ tutors: {
 
 ### Known Limitations
 - Voice only works in US (web search limitation)
-- ElevenLabs rate limits (API quota)
+- Cartesia rate limits (API quota)
 - Large audio files increase storage
 - No mobile-optimized voice UI yet
 - Single-user whiteboard (no real-time collab)

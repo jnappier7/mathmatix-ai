@@ -237,5 +237,11 @@ messageSchema.pre('save', function(next) {
     next();
 });
 
+// Field-level encryption for message content
+const { encryptFields } = require('../utils/fieldEncryption');
+messageSchema.plugin(encryptFields, {
+  fields: ['subject', 'body']
+});
+
 // Ensure model is only defined once (for hot-reloading in dev)
 module.exports = mongoose.models.Message || mongoose.model('Message', messageSchema);

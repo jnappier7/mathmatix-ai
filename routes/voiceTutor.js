@@ -206,7 +206,7 @@ function stripMathSteps(text) {
 }
 
 /**
- * Check if user is under 13 (ElevenLabs compliance)
+ * Check if user is under 13 (third-party TTS compliance)
  */
 function isUnder13(user) {
   if (!user || !user.dateOfBirth) return false;

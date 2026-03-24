@@ -194,6 +194,12 @@ conversationSchema.pre('validate', function(next) {
     next();
 });
 
+// Field-level encryption for sensitive session data
+const { encryptFields } = require('../utils/fieldEncryption');
+conversationSchema.plugin(encryptFields, {
+  fields: ['summary', 'liveSummary', 'strugglingWith']
+});
+
 const Conversation = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
-module.exports = Conversation;// JavaScript Document
+module.exports = Conversation;

@@ -13,7 +13,7 @@ Publishing Mathmatix AI to the Apple App Store and Google Play Store is **worth 
 - **PWA manifest** already exists (`public/manifest.json`) with standalone display mode, theme color, and app icons
 - **Responsive design** with mobile-optimized CSS (`mobile-fixes.css`)
 - **Viewport meta tags** on all pages
-- **Voice capabilities** (ElevenLabs TTS, WebSpeech API)
+- **Voice capabilities** (Cartesia TTS, WebSpeech API)
 - **Stripe billing** already integrated
 
 ### What's Missing for PWA
@@ -138,7 +138,7 @@ The app already appears COPPA-aware. For app store submission targeting children
 | Stripe → IAP migration complexity | High | Consider hybrid: IAP on iOS, Stripe on web/Android |
 | OAuth in native WebView | Low | Capacitor has plugins for Google/Microsoft sign-in |
 | Large app size (Puppeteer dependency) | Low | Puppeteer runs server-side only; not bundled in app |
-| Voice features in WebView | Low | WebSpeech API works in WKWebView; ElevenLabs is server-side |
+| Voice features in WebView | Low | WebSpeech API works in WKWebView; Cartesia is server-side |
 
 ---
 

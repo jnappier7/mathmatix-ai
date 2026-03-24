@@ -141,7 +141,7 @@ function displayAIMessage(message, iepFeatures) {
   displayMessage(message);
 
   if (iepFeatures?.autoReadAloud) {
-    // Use existing TTS system (ElevenLabs)
+    // Use existing TTS system (Cartesia)
     // Auto-trigger speech for problem text
     speakText(message);
   }
