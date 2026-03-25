@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biology Chapters - Upload &amp; Manage</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0fdf4;
+      color: #2c3e50;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #fff;
+      border-bottom: 2px solid #27ae60;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header h1 {
+      font-size: 1.3rem;
+      color: #27ae60;
+    }
+    .header h1 i { margin-right: 8px; }
+    .header .subtitle {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      font-weight: normal;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: #2c3e50;
+    }
+    .card h2 i { color: #27ae60; margin-right: 8px; }
+
+    .upload-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 0.75rem;
+      color: #5B6876;
+      font-weight: 600;
+    }
+    .form-group input[type="number"] {
+      width: 60px;
+      padding: 8px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .form-group input[type="text"] {
+      width: 100%;
+      min-width: 180px;
+      padding: 8px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .form-group input[type="file"] {
+      font-size: 0.8rem;
+    }
+    .form-group.grow { flex: 1; }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #27ae60; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #219a52; }
+    .btn-danger { background: none; border: none; color: #e74c3c; cursor: pointer; }
+    .btn-danger:hover { color: #c0392b; }
+
+    .status-msg {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 2px solid #e9ecef;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #7f8c8d;
+    }
+    tbody td {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.85rem;
+    }
+    tbody tr:hover { background: #f8fdf9; }
+
+    .badge {
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: #95a5a6;
+    }
+    .empty-state i { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+    @media (max-width: 600px) {
+      .upload-form { flex-direction: column; }
+      .form-group.grow { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1><i class="fas fa-dna"></i> Biology Chapters</h1>
+      <span class="subtitle">Upload textbook chapters for AI-powered tutoring</span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Upload Card -->
+    <div class="card">
+      <h2><i class="fas fa-upload"></i> Upload a Chapter</h2>
+      <div class="upload-form">
+        <div class="form-group">
+          <label for="chapter-number-input">Ch. #</label>
+          <input type="number" id="chapter-number-input" min="1" max="99" value="1" />
+        </div>
+        <div class="form-group grow">
+          <label for="chapter-title-input">Chapter Title</label>
+          <input type="text" id="chapter-title-input" placeholder="e.g. Photosynthesis" />
+        </div>
+        <div class="form-group">
+          <label for="chapter-file-input">PDF File</label>
+          <input type="file" id="chapter-file-input" accept=".pdf" />
+        </div>
+        <button id="upload-chapter-btn" class="btn btn-primary">
+          <i class="fas fa-upload"></i> Upload
+        </button>
+      </div>
+      <div id="chapter-upload-status" class="status-msg"></div>
+    </div>
+
+    <!-- Chapters List Card -->
+    <div class="card">
+      <h2><i class="fas fa-book-open"></i> Uploaded Chapters</h2>
+      <div id="chapters-list">
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/js/teacher-chapters.js"></script>
+</body>
+</html>
