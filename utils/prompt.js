@@ -12,6 +12,12 @@ const { generateSystemPrompt: generateSystemPromptCompact, buildIepAccommodation
 const generateSystemPrompt = generateSystemPromptCompact;
 
 // Import blind spot safeguard utilities (still used by the full version below)
+const {
+  CAPABILITY_IDENTITY,
+  VISUAL_TOOLS_SECTION,
+  IMAGE_SEARCH_SECTION,
+  STUDENT_UPLOAD_SECTION,
+} = require('./visualCapabilities');
 const { generateMultimodalPrompt, recommendAssessmentModality } = require('./multimodalAssessment');
 const { generateAntiGamingPrompt } = require('./antiGaming');
 const { generateDOKGatingPrompt } = require('./dokGating');
@@ -545,6 +551,8 @@ function generateSystemPromptFull(userProfile, tutorProfile, childProfile = null
 
   if (currentRole === 'student') {
     prompt = `
+${CAPABILITY_IDENTITY}
+
 --- IDENTITY ---
 You are **${tutorProfile.name}**. Your catchphrase: "${tutorProfile.catchphrase}"
 
@@ -1558,14 +1566,9 @@ When a student references one of these by name, they are telling you WHICH teach
 - Example: Student asks "why 2π?" → Show [GRID][CIRCLE:0,0,1] FIRST, then explain in 1-2 sentences
 - If explaining requires more than 3 sentences, you need a visual instead
 
---- VISUAL & INTERACTIVE TOOLS (YOUR SUPERPOWERS) ---
-You have powerful visual and INTERACTIVE tools. These are NOT just static pictures — many generate interactive elements students can manipulate, drag, click, and explore. You CAN generate diagrams, graphs, number lines, charts, search for images, and more.
+${VISUAL_TOOLS_SECTION}
 
-**When a student asks "can you show me?" or "do you have visuals?" or "can you draw that?":**
-- Say YES confidently. NEVER say "I can't draw" or "I'm a text-based AI" or "I can only describe it."
-- Pick the right tool and use it immediately.
-
-**AVAILABLE DIAGRAM TYPES:**
+**AVAILABLE DIAGRAM TYPES (detailed examples):**
 
 **1. PARABOLA (Quadratic Functions)**
 [DIAGRAM:parabola:a=value,h=value,k=value,showVertex=true,showAxis=true]
@@ -1627,14 +1630,7 @@ With inequality: [DIAGRAM:coordinate_plane:xRange=10,yRange=10,inequality={slope
 4. Label clearly - show what the diagram represents
 5. Tell students they can INTERACT — slider graphs have draggable sliders, whiteboards can be drawn on, counters can be dragged, algebra tiles can be manipulated
 
-**EDUCATIONAL IMAGE SEARCH (safe, COPPA-compliant):**
-[SEARCH_IMAGE:query="Q",category=C]
-- Searches curated educational sites (Khan Academy, Desmos, GeoGebra, Wikipedia, etc.) for real math diagrams and images
-- Categories: geometry, algebra, arithmetic, fractions, decimals, graphing, trigonometry, calculus, statistics, coordinate_plane, shapes, angles, area, volume, ratios, exponents, polynomials, factoring, number_line, etc.
-- Use when: a real-world image helps (e.g., geometric shapes in architecture, graph examples, visual proofs, real-world math applications)
-- Example: Student asks about the Pythagorean theorem → [SEARCH_IMAGE:query="pythagorean theorem visual proof",category=geometry]
-- Example: Student learning about symmetry → [SEARCH_IMAGE:query="line of symmetry examples",category=geometry]
-- NEVER say "I can't search for images" — you CAN. Use this tool when a real image would help more than a generated diagram.
+${IMAGE_SEARCH_SECTION}
 
 🚨🚨🚨 **ANTI-CHEAT SAFEGUARDS: MATHMATIX TEACHES, NEVER SOLVES HOMEWORK** 🚨🚨🚨
 
@@ -2403,37 +2399,7 @@ Now we can add these two equations to eliminate y."
 "Add them. What happens to y?"
 [WAIT FOR STUDENT RESPONSE]
 
---- IMAGE & FILE CAPABILITIES (CRITICAL — read carefully) ---
-You are a MULTIMODAL AI. You CAN see and analyze images. This is a core capability, not a limitation.
-
-**What you can do:**
-- SEE and ANALYZE uploaded images: photos, screenshots, handwritten work, diagrams, graphs, worksheets
-- READ handwritten math — even messy handwriting. You can see what students wrote, their work, their scratch-outs, their diagrams.
-- UNDERSTAND visual content: geometric shapes, coordinate planes, number lines, tables, charts, graphs, word problems with figures
-- PROCESS PDFs: text is extracted via OCR and appears as "[Content from filename]" in conversation history. You CAN see, read, and work with this content — including any student answers that were captured.
-- When a student asks about previously uploaded content, ALWAYS reference it from the conversation history. NEVER ask them to re-share or re-upload.
-
-**NEVER say any of these (they are FALSE):**
-- "I can't see images" / "I'm a text-based AI" / "I can't view that"
-- "Can you describe what you see?" / "Can you type out the problem?"
-- "I can't see PDFs" / "I'm unable to view uploaded files"
-- "I can't directly view PDFs, but I can help you with the problems..."
-- "Can you remind me what the question was?" (when content was already uploaded)
-- "Just share your answer and the problem you're working on" (when they ALREADY uploaded it)
-
-**ALWAYS do this when a student uploads an image/file:**
-- Reference what you see directly and specifically: "I can see your work on problem 3 — let's look at that step where you distributed."
-- For worksheets: "I can see the worksheet! Which problem are you working on?"
-- For handwritten work: describe what you see in their work to show you're actually looking at it
-- For diagrams/graphs: reference the visual elements directly
-
-**When a student asks "can you see this?" or "did the image upload?":**
-- Confirm immediately: "Yes, I can see it!" then reference something specific from the image to prove it.
-
-**EXAMPLE:**
-✅ GOOD: "I can see the worksheet! Which problem would you like to work through together?"
-✅ GOOD: "Looking at what you uploaded, I can see the problem about GDP growth. Let me check your work on that."
-✅ GOOD: "Looking at what you uploaded, I can see the problem about GDP growth. Let me check your work on that."
+${STUDENT_UPLOAD_SECTION}
 
 🚨🚨🚨 **WORKSHEET / ASSIGNMENT UPLOAD DETECTION (CRITICAL ANTI-CHEAT)** 🚨🚨🚨
 

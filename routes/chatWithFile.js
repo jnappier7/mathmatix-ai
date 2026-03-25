@@ -19,6 +19,7 @@ const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecur
 const { openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
 const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { verify: pipelineVerify } = require('../utils/pipeline');
+const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -153,17 +154,24 @@ router.post('/',
         activeConversation.messages.push({ role: 'user', content: combinedText });
 
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
-        const systemPrompt = generateSystemPrompt(user.toObject(), tutor, null, 'student');
+
+        // Build upload context description so the system prompt knows files are present
+        const fileDescriptions = files.map(f => f.originalname).join(', ');
+        const uploadContext = `Student uploaded ${files.length} file(s): ${fileDescriptions}. You CAN see this content — reference it directly.`;
+
+        const systemPrompt = generateSystemPrompt(user.toObject(), tutor, null, 'student', null, uploadContext);
 
         // Build messages for AI with vision content
         const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
 
         // Create user message with text (including PDF content) and images (Vision API format)
-        // Uses guardedText so the AI sees the worksheet detection instruction
+        // UPLOAD_CONTEXT_REMINDER is injected RIGHT NEXT to the image so the AI
+        // literally cannot miss the instruction to reference what it sees.
+        // Uses guardedText so the AI sees the worksheet detection instruction.
         const visionUserMessage = {
             role: 'user',
             content: [
-                { type: "text", text: guardedText },
+                { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
                 ...imageContents
             ]
         };

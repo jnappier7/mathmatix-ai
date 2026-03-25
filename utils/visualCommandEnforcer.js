@@ -25,7 +25,7 @@ const {
  * @param {string} conversationHistory - Optional conversation context
  * @returns {string} Enhanced AI response with visual commands injected
  */
-function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory = '') {
+function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory = '', isVisualLearner = false) {
     // ============================================
     // INLINE CHAT VISUALS - No whiteboard needed!
     // Auto-inject inline visual commands when appropriate
@@ -80,9 +80,16 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
     // Do NOT force visuals on every math question — text teaching is often better
     const explicitlyVisual = /\b(show\s*me|draw|graph|plot|visuali[sz]e|picture|diagram|see\s*it|number\s*line|tiles?|counter)\b/i.test(lowerMessage);
 
-    if (!explicitlyVisual) {
+    // For visual learners, also trigger on math content keywords (broader gate)
+    const implicitlyVisual = isVisualLearner && /\b(fraction|equation|solve|factor|slope|intercept|parabola|triangle|angle|circle|line|inequalit|function|polynomial|exponent|integer|negative|percent|ratio|proportion|area|volume|perimeter)\b/i.test(lowerMessage);
+
+    if (!explicitlyVisual && !implicitlyVisual) {
         // AI chose not to use a visual — respect that choice
         return aiResponse;
+    }
+
+    if (implicitlyVisual && !explicitlyVisual) {
+        console.log('[VisualEnforcer] 👁️ Visual learner — checking if a visual would help');
     }
 
     // GRAPHING REQUESTS - inject [FUNCTION_GRAPH]
@@ -1039,10 +1046,15 @@ const TOPIC_VISUALS = [
  * @param {string} aiResponse - The AI's (possibly already enhanced) response
  * @returns {string} Response with visual command appended (or unchanged)
  */
-function autoVisualizeByTopic(studentMessage, aiResponse) {
-    // Skip if the response already has visual commands
+function autoVisualizeByTopic(studentMessage, aiResponse, isVisualLearner = false) {
+    // Skip if the response already has rich visual commands (diagrams, graphs, etc.)
+    // For visual learners, only skip if there are RICH visuals (not just [STEPS] or [OLD]/[NEW])
     if (hasInlineVisualCommands(aiResponse)) {
-        return aiResponse;
+        if (!isVisualLearner) return aiResponse;
+        // Visual learner: still skip if there's a RICH visual (graph, diagram, etc.)
+        const richVisuals = /\[(FUNCTION_GRAPH|SLIDER_GRAPH|DIAGRAM|NUMBER_LINE|FRACTION|PIE_CHART|BAR_CHART|POINTS|UNIT_CIRCLE|AREA_MODEL|PYTHAGOREAN|ANGLE|INEQUALITY|COUNTERS|ALGEBRA_TILES|SEARCH_IMAGE):/i;
+        if (richVisuals.test(aiResponse)) return aiResponse;
+        console.log('[AutoVisualize] 👁️ Visual learner — response has basic visuals only, checking for topic augmentation');
     }
 
     const combined = (studentMessage + ' ' + aiResponse).toLowerCase();
@@ -1053,7 +1065,7 @@ function autoVisualizeByTopic(studentMessage, aiResponse) {
             : topic.detect.test(combined);
         if (matches) {
             const visual = topic.build(studentMessage, aiResponse);
-            console.log(`[AutoVisualize] 🎨 Topic detected: "${topic.name}" — injecting visualization`);
+            console.log(`[AutoVisualize] 🎨 Topic detected: "${topic.name}" — injecting visualization${isVisualLearner ? ' (visual learner)' : ''}`);
             return aiResponse + visual;
         }
     }
