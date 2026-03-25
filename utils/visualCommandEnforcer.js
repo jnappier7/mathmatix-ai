@@ -915,6 +915,153 @@ function shortenResponse(response) {
     return shortened.trim();
 }
 
+// ============================================
+// AUTO-VISUALIZE BY TOPIC
+// ChatGPT-style: automatically inject interactive
+// visualizations when the student asks about certain
+// math concepts — no explicit "show me" needed.
+// ============================================
+
+/**
+ * Topic definitions: order matters (most specific first).
+ * Each entry has:
+ *   name    – for logging
+ *   detect  – regex tested against combined student + AI text
+ *   build   – returns the visual command string to append
+ */
+const TOPIC_VISUALS = [
+    {
+        name: 'Pythagorean theorem',
+        detect: /\b(pythag\w*|a\s*²\s*\+\s*b\s*²|a\s*\^\s*2\s*\+\s*b\s*\^\s*2)/i,
+        build(studentMsg, aiResponse) {
+            const combined = studentMsg + ' ' + aiResponse;
+            // Try to extract side lengths from context
+            const sideMatch = combined.match(/(?:sides?|legs?)\s+(\d+)\s+(?:and\s+)?(\d+)/i)
+                || combined.match(/a\s*=\s*(\d+)[\s,]+b\s*=\s*(\d+)/i);
+            const a = sideMatch ? parseInt(sideMatch[1]) : 3;
+            const b = sideMatch ? parseInt(sideMatch[2]) : 4;
+            return `\n\n[PYTHAGOREAN:a=${a},b=${b},proof=true]`;
+        }
+    },
+    {
+        name: 'Unit circle',
+        // Only match when the STUDENT asks about unit circle (not just AI mentioning it)
+        detect: null,
+        detectFn(studentMsg) {
+            return /\bunit\s*circle\b/i.test(studentMsg);
+        },
+        build(studentMsg) {
+            const angle = extractAngleFromMessage(studentMsg);
+            return `\n\n[UNIT_CIRCLE:angle=${angle}]`;
+        }
+    },
+    {
+        name: 'Trig functions',
+        detect: /\b(trig(onometr\w*)?|sine\s+function|cosine\s+function|tangent\s+function|sin\s*\(x\)|cos\s*\(x\)|tan\s*\(x\)|sinusoidal|trig\s+function)/i,
+        build(studentMsg) {
+            const lower = studentMsg.toLowerCase();
+            let fn = 'sin(x)';
+            let title = 'Sine Function';
+            if (/\bcos(ine)?\b/i.test(lower)) { fn = 'cos(x)'; title = 'Cosine Function'; }
+            if (/\btan(gent)?\b/i.test(lower)) { fn = 'tan(x)'; title = 'Tangent Function'; }
+            return `\n\n[FUNCTION_GRAPH:fn=${fn},xMin=-6.28,xMax=6.28,yMin=-3,yMax=3,title="${title}"]\n\n[UNIT_CIRCLE:angle=45]`;
+        }
+    },
+    {
+        name: 'Quadratic / Parabola',
+        detect: /\b(quadratic|parabola|vertex\s*form|standard\s*form.*ax|completing\s*the\s*square|a\s*x\s*²|ax\^2)\b/i,
+        build() {
+            return `\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-5:5,title="Explore: y = ax² + bx + c"]`;
+        }
+    },
+    {
+        name: 'Slope / Linear equations',
+        detect: /\b(slope|rise\s*(over|and)\s*run|y\s*=\s*m\s*x\s*\+\s*b|slope.?intercept|linear\s+(equation|function))\b/i,
+        build() {
+            return `\n\n[SLIDER_GRAPH:fn=m*x+b,params=m:1:-5:5,b:0:-5:5,title="Explore: y = mx + b (slope-intercept form)"]`;
+        }
+    },
+    {
+        name: 'Angle types',
+        detect: /\b(acute\s+angle|obtuse\s+angle|right\s+angle|complementary\s+angle|supplementary\s+angle|angle\s+measure|types?\s+of\s+angle)/i,
+        build(studentMsg) {
+            const lower = studentMsg.toLowerCase();
+            let degrees = 45;
+            if (/obtuse/i.test(lower)) degrees = 120;
+            else if (/right/i.test(lower)) degrees = 90;
+            else if (/supplementary/i.test(lower)) degrees = 135;
+            else if (/complementary/i.test(lower)) degrees = 60;
+            // Try to pull a specific degree from the message
+            const degMatch = lower.match(/(\d+)\s*(?:°|degree|deg)/i);
+            if (degMatch) degrees = parseInt(degMatch[1]);
+            return `\n\n[ANGLE:degrees=${degrees}]`;
+        }
+    },
+    {
+        name: 'Fractions',
+        detect: /\b(what\s+(is|are)\s+fraction|explain\s+fraction|understand\s+fraction|numerator\s+and\s+denominator|improper\s+fraction|mixed\s+number|equivalent\s+fraction)/i,
+        build(studentMsg) {
+            const frac = extractFractionFromMessage(studentMsg);
+            const num = frac ? frac.num : 3;
+            const denom = frac ? frac.denom : 4;
+            return `\n\n[FRACTION:numerator=${num},denominator=${denom},type=circle]`;
+        }
+    },
+    {
+        name: 'Inequality',
+        detect: /\b(inequalit\w*|solve.*[<>]|graph.*(greater|less\s+than|[<>]))/i,
+        build(studentMsg) {
+            // Try to extract inequality expression
+            const ineqMatch = studentMsg.match(/([x])\s*([<>]=?)\s*(-?\d+)/);
+            if (ineqMatch) {
+                return `\n\n[INEQUALITY:expression=${ineqMatch[1]}${ineqMatch[2]}${ineqMatch[3]},variable=x]`;
+            }
+            return `\n\n[INEQUALITY:expression=x>3,variable=x]`;
+        }
+    },
+    {
+        name: 'Area model / Box method',
+        detect: /\b(area\s+model|box\s+method|partial\s+product|lattice\s+multipli)/i,
+        build(studentMsg) {
+            const numMatch = studentMsg.match(/(\d{2,})\s*[×x*]\s*(\d{2,})/);
+            const a = numMatch ? parseInt(numMatch[1]) : 23;
+            const b = numMatch ? parseInt(numMatch[2]) : 15;
+            return `\n\n[AREA_MODEL:a=${a},b=${b}]`;
+        }
+    }
+];
+
+/**
+ * Auto-inject interactive visualizations based on detected math topics.
+ * Runs AFTER enforceVisualTeaching — only adds visuals if none are present.
+ *
+ * @param {string} studentMessage - The student's question
+ * @param {string} aiResponse - The AI's (possibly already enhanced) response
+ * @returns {string} Response with visual command appended (or unchanged)
+ */
+function autoVisualizeByTopic(studentMessage, aiResponse) {
+    // Skip if the response already has visual commands
+    if (hasInlineVisualCommands(aiResponse)) {
+        return aiResponse;
+    }
+
+    const combined = (studentMessage + ' ' + aiResponse).toLowerCase();
+
+    for (const topic of TOPIC_VISUALS) {
+        const matches = topic.detectFn
+            ? topic.detectFn(studentMessage, aiResponse)
+            : topic.detect.test(combined);
+        if (matches) {
+            const visual = topic.build(studentMessage, aiResponse);
+            console.log(`[AutoVisualize] 🎨 Topic detected: "${topic.name}" — injecting visualization`);
+            return aiResponse + visual;
+        }
+    }
+
+    return aiResponse;
+}
+
 module.exports = {
-    enforceVisualTeaching
+    enforceVisualTeaching,
+    autoVisualizeByTopic
 };

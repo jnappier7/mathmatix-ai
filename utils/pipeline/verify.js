@@ -12,7 +12,7 @@
 
 const { filterAnswerKeyResponse } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
-const { enforceVisualTeaching } = require('../visualCommandEnforcer');
+const { enforceVisualTeaching, autoVisualizeByTopic } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
 const { callLLM } = require('../llmGateway');
@@ -233,6 +233,8 @@ async function verify(responseText, context = {}) {
   // ── 4. Visual teaching enforcement ──
   if (context.userMessage) {
     text = enforceVisualTeaching(context.userMessage, text);
+    // Auto-inject visualizations for recognized math topics (ChatGPT-style)
+    text = autoVisualizeByTopic(context.userMessage, text);
   }
 
   // ── 5. Parse visual commands ──
