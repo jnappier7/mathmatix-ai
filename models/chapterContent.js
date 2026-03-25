@@ -43,7 +43,7 @@ const ragChunkSchema = new Schema({
 
 const chapterContentSchema = new Schema({
   // Ownership
-  teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  teacherId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
   curriculumId: { type: Schema.Types.ObjectId, ref: 'Curriculum', index: true },
 
   // Chapter metadata
