@@ -26,6 +26,11 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     return buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
   }
 
+  // Branch to checkpoint prompt when module is an assessment
+  if (scaffoldData?.type === 'assessment' || scaffoldData?.diagnosticMode || currentModule?.isCheckpoint) {
+    return buildCheckpointPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
+  }
+
   const firstName = userProfile.firstName || 'Student';
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Module';
@@ -1146,8 +1151,88 @@ function calculateOverallProgress(modules) {
   return Math.round((progressWeight / totalWeight) * 100);
 }
 
+/**
+ * Build a checkpoint/assessment prompt.
+ *
+ * Checkpoints are NOT tutoring sessions. They are structured assessments
+ * where the student demonstrates what they know. The AI presents problems
+ * from the module's assessmentProblems array, one at a time, evaluates
+ * answers, and moves on. No teaching, no scaffolding, no Socratic method.
+ */
+function buildCheckpointPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
+  const firstName = userProfile.firstName || 'Student';
+  const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
+  const moduleTitle = currentModule?.title || scaffoldData?.title || 'Checkpoint';
+
+  const tutorName = tutorProfile?.name || 'MathMatix Tutor';
+  const tutorPersonality = tutorProfile?.personality || '';
+
+  // Build the problem set from assessmentProblems
+  const problems = scaffoldData?.assessmentProblems || [];
+  const answerKeys = scaffoldData?.answerKeys || {};
+  const passThreshold = scaffoldData?.passThreshold || 70;
+  const totalPoints = problems.reduce((sum, p) => sum + (p.points || 1), 0);
+
+  // Track which problem the student is on from conversation context
+  // (the courseChat ghost message will include the current problem index)
+  const problemList = problems.map((p, i) => {
+    const skillLabel = p.skill ? ` [${p.skill}]` : '';
+    return `  ${i + 1}. (${p.points || 1} pts${skillLabel}) ${p.question}`;
+  }).join('\n');
+
+  const answerKeyList = problems.map((p, i) => {
+    const key = answerKeys[p.id] || p.answer;
+    return `  ${i + 1}. [${p.id}] ${key}`;
+  }).join('\n');
+
+  return `You are ${tutorName}, administering a checkpoint assessment for **${courseName}**.
+${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
+
+====================================================================
+CHECKPOINT MODE — ASSESSMENT, NOT TUTORING
+====================================================================
+
+This is **${moduleTitle}** — a structured checkpoint for **${firstName}**.
+
+**HOW CHECKPOINTS WORK:**
+1. Present ONE problem at a time from the problem set below.
+2. Wait for the student's answer.
+3. Evaluate their answer against the answer key. Be generous with equivalent forms.
+4. Tell them if they got it right or wrong. If wrong, briefly show the correct approach — but do NOT teach a full lesson. This is an assessment.
+5. Move to the next problem immediately.
+6. After all problems, summarize their performance.
+
+**RULES:**
+- Present problems IN ORDER from the list below.
+- Do NOT teach, scaffold, or give hints. This is a test of what they already know.
+- Do NOT ask "do you want to move on?" — just present the next problem.
+- Do NOT make up your own problems. Use ONLY the problems listed below.
+- Do NOT trigger anti-cheat — this IS the assignment. The student is supposed to answer these problems.
+- Keep feedback brief: "Correct!" or "Not quite — [brief explanation]. Moving on..."
+- Use LaTeX for all math: \\( inline \\) and \\[ display \\]
+- Track their score as you go: "Problem X of Y"
+
+**PROBLEM SET** (${problems.length} problems, ${totalPoints} total points, ${passThreshold}% to pass):
+${problemList}
+
+**ANSWER KEY** (for your evaluation only — NEVER show this to the student):
+${answerKeyList}
+
+${scaffoldData?.remediationStrategy ? `**POST-CHECKPOINT:** If student scores below ${passThreshold}%, note which skill areas need remediation based on which problems they missed.` : ''}
+
+**FORMAT FOR EACH PROBLEM:**
+- "Problem [N] of [Total]:" followed by the problem text.
+- After their answer: brief evaluation, score update, then immediately present the next problem.
+
+ALL math must use LaTeX delimiters. Inline: \\( expr \\)  Display: \\[ expr \\]
+
+Now begin. Present Problem 1.
+`;
+}
+
 module.exports = {
   buildCourseSystemPrompt,
+  buildCheckpointPrompt,
   buildParentCourseSystemPrompt,
   buildCourseGreetingInstruction,
   loadCourseContext,

@@ -256,9 +256,10 @@ function detectAnswerKeyResponse(responseText, options = {}) {
  * The safe redirect message sent to the student when an answer key is detected.
  * This replaces the AI's response entirely.
  */
-const ANSWER_KEY_REDIRECT_MESSAGE = `Whoa, hold on — I almost just did your homework for you! That's not how this works.
-
-Here's the deal: I can see your problems, and I want to help you actually *get* this. So which one do you want to start with? Or if you want, I can walk you through the whole sheet from the top — your call.`;
+// When the AI generates an answer-key-like response (multiple numbered solutions),
+// we regenerate through the LLM instead of showing a canned message. This fallback
+// is only used if regeneration fails.
+const ANSWER_KEY_REDIRECT_FALLBACK = `I can see the problems — which one do you want to work through first?`;
 
 /**
  * Filter an AI response for answer-key patterns. If detected, replace with
@@ -280,7 +281,7 @@ function filterAnswerKeyResponse(responseText, userId) {
             `matched pattern "${detection.matchedPattern}". Response blocked.`
         );
         return {
-            text: ANSWER_KEY_REDIRECT_MESSAGE,
+            text: ANSWER_KEY_REDIRECT_FALLBACK,
             wasFiltered: true,
             detection
         };
@@ -297,5 +298,5 @@ module.exports = {
     stripCorrectAnswers,
     detectAnswerKeyResponse,
     filterAnswerKeyResponse,
-    ANSWER_KEY_REDIRECT_MESSAGE
+    ANSWER_KEY_REDIRECT_FALLBACK
 };
