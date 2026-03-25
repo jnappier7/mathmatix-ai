@@ -1,0 +1,486 @@
+/* ================================================================
+   FLOATING CHECKPOINT — Card-based assessment UI
+   Mirrors floating-screener styling for consistency
+   ================================================================ */
+
+.floating-checkpoint {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 560px;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: var(--bg-primary, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-checkpoint.active {
+  display: flex;
+}
+
+/* ── Header ── */
+
+.checkpoint-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--accent-primary, #6366f1);
+  color: white;
+}
+
+.checkpoint-title {
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkpoint-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.checkpoint-close-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Body ── */
+
+.checkpoint-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* ── Screens (toggle visibility) ── */
+
+.checkpoint-screen {
+  display: none;
+}
+
+.checkpoint-screen.active {
+  display: block;
+}
+
+/* ── Instruction Screen ── */
+
+#checkpoint-instruction-screen h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+#checkpoint-instruction-screen .subtitle {
+  color: var(--text-secondary, #6b7280);
+  margin-bottom: 20px;
+}
+
+.checkpoint-info-card {
+  background: var(--bg-secondary, #f9fafb);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.checkpoint-info-card h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.checkpoint-info-card p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.checkpoint-info-card .duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.checkpoint-start-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent-primary, #6366f1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.checkpoint-start-btn:hover {
+  background: var(--accent-hover, #4f46e5);
+}
+
+/* ── Progress Bar ── */
+
+.checkpoint-progress {
+  height: 4px;
+  background: var(--bg-tertiary, #e5e7eb);
+  border-radius: 2px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.checkpoint-progress-fill {
+  height: 100%;
+  background: var(--accent-primary, #6366f1);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0;
+}
+
+/* ── Question Card ── */
+
+.checkpoint-question-card {
+  background: var(--bg-secondary, #f9fafb);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.checkpoint-question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.checkpoint-question-num {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--accent-primary, #6366f1);
+}
+
+.checkpoint-question-pts {
+  font-size: 13px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.checkpoint-question-skill {
+  font-size: 12px;
+  color: var(--text-tertiary, #9ca3af);
+  text-transform: capitalize;
+  margin-bottom: 16px;
+}
+
+.checkpoint-question-content {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  color: var(--text-primary, #111827);
+}
+
+/* ── Answer Input ── */
+
+.checkpoint-answer-area {
+  margin-top: 16px;
+}
+
+.checkpoint-answer-area label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+  margin-bottom: 6px;
+}
+
+#checkpoint-answer-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 2px solid var(--border-color, #d1d5db);
+  border-radius: 10px;
+  background: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #111827);
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+#checkpoint-answer-input:focus {
+  border-color: var(--accent-primary, #6366f1);
+}
+
+#checkpoint-answer-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Feedback ── */
+
+#checkpoint-feedback {
+  display: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+#checkpoint-feedback.active {
+  display: block;
+}
+
+#checkpoint-feedback.correct {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+#checkpoint-feedback.incorrect {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.correct-answer-hint {
+  margin-top: 8px;
+  font-weight: 400;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* ── Buttons ── */
+
+.checkpoint-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+#checkpoint-submit-btn,
+#checkpoint-next-btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent-primary, #6366f1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#checkpoint-submit-btn:hover:not(:disabled),
+#checkpoint-next-btn:hover {
+  background: var(--accent-hover, #4f46e5);
+}
+
+#checkpoint-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#checkpoint-skip-btn {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text-secondary, #6b7280);
+  background: none;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#checkpoint-skip-btn:hover {
+  background: var(--bg-secondary, #f9fafb);
+}
+
+/* ── Loading Screen ── */
+
+#checkpoint-loading-screen {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+#checkpoint-loading-screen .spinner {
+  font-size: 32px;
+  color: var(--accent-primary, #6366f1);
+  margin-bottom: 16px;
+}
+
+/* ── Results Screen ── */
+
+.checkpoint-results-hero {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.checkpoint-results-hero .trophy-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.checkpoint-results-hero h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.checkpoint-score-display {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.checkpoint-score-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent-primary, #6366f1);
+}
+
+.result-status {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.result-status.passed {
+  color: #059669;
+}
+
+.result-status.needs-review {
+  color: #d97706;
+}
+
+.checkpoint-results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.checkpoint-result-stat {
+  text-align: center;
+  padding: 12px;
+  background: var(--bg-secondary, #f9fafb);
+  border-radius: 10px;
+}
+
+.checkpoint-result-stat .stat-label {
+  font-size: 12px;
+  color: var(--text-secondary, #6b7280);
+  margin-bottom: 4px;
+}
+
+.checkpoint-result-stat .stat-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ── Skill Breakdown ── */
+
+#checkpoint-skill-breakdown {
+  margin-bottom: 24px;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bg-tertiary, #e5e7eb);
+}
+
+.skill-name {
+  flex: 1;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.skill-score {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.skill-bar {
+  width: 60px;
+  height: 6px;
+  background: var(--bg-tertiary, #e5e7eb);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.skill-row.strong .skill-bar-fill { background: #059669; }
+.skill-row.developing .skill-bar-fill { background: #d97706; }
+.skill-row.needs-work .skill-bar-fill { background: #dc2626; }
+
+#checkpoint-continue-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent-primary, #6366f1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#checkpoint-continue-btn:hover {
+  background: var(--accent-hover, #4f46e5);
+}
+
+/* ── Overlay backdrop ── */
+
+.floating-checkpoint.active::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 640px) {
+  .floating-checkpoint {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    top: 0;
+    left: 0;
+    transform: none;
+    border-radius: 0;
+  }
+
+  .checkpoint-body {
+    padding: 16px;
+  }
+}

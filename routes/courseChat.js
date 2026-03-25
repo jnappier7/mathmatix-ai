@@ -874,10 +874,14 @@ async function handleCourseGreeting(req, res, userId) {
             courseSession, moduleData, conversation, lastSignal: null, showCheckpoint: false
         });
 
+        const isCheckpointModule = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
+
         res.json({
-            text: greetingText,
+            text: isCheckpointModule ? null : greetingText,
             voiceId: currentTutor.voiceId,
             isGreeting: true,
+            isCheckpoint: isCheckpointModule || false,
+            checkpointTitle: isCheckpointModule ? (moduleData?.title || 'Checkpoint') : undefined,
             courseContext: {
                 courseId: courseSession.courseId,
                 courseName: courseSession.courseName,

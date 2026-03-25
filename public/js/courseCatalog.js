@@ -949,6 +949,13 @@ class CourseManager {
             if (window.showThinkingIndicator) window.showThinkingIndicator(false);
 
             const data = await res.json();
+
+            // If the current module is a checkpoint, open the card-based UI instead of chat
+            if (data.isCheckpoint && window.floatingCheckpoint) {
+                window.floatingCheckpoint.open({ title: data.checkpointTitle });
+                return;
+            }
+
             if (data.text && window.appendMessage) {
                 window.appendMessage(data.text, 'ai');
             }

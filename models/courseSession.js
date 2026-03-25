@@ -57,6 +57,9 @@ const courseSessionSchema = new Schema({
   // Module-level progress
   modules: [moduleProgressSchema],
 
+  // Checkpoint state (transient — cleared when checkpoint completes)
+  checkpointState: { type: Object, default: null },
+
   // Overall progress
   overallProgress: { type: Number, default: 0, min: 0, max: 100 },
 
