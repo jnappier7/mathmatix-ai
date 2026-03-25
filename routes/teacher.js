@@ -210,22 +210,39 @@ router.get('/live-feed', isTeacher, async (req, res) => {
       const student = students.find(s => s._id.toString() === convo.userId.toString());
       const studentName = student ? `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username : 'Unknown';
 
-      // Generate live summary if not recently updated (every 5 minutes)
-      const needsUpdate = !convo.lastSummaryUpdate ||
-        (Date.now() - new Date(convo.lastSummaryUpdate).getTime()) > 5 * 60 * 1000;
+      // Generate live summary if not recently updated (every 5 minutes).
+      // Use an atomic findOneAndUpdate with a staleness condition to prevent
+      // concurrent requests from both generating summaries for the same conversation.
+      const SUMMARY_INTERVAL_MS = 5 * 60 * 1000;
+      const staleThreshold = new Date(Date.now() - SUMMARY_INTERVAL_MS);
 
       let liveSummary = convo.liveSummary;
 
-      if (needsUpdate && convo.messages.length > 0) {
-        liveSummary = await generateLiveSummary(convo, studentName);
+      if (convo.messages.length > 0 &&
+          (!convo.lastSummaryUpdate || new Date(convo.lastSummaryUpdate) < staleThreshold)) {
+        // Atomically claim the update by setting lastSummaryUpdate NOW.
+        // Only succeeds if it's still stale (prevents race between concurrent requests).
+        const claimed = await Conversation.findOneAndUpdate(
+          {
+            _id: convo._id,
+            $or: [
+              { lastSummaryUpdate: null },
+              { lastSummaryUpdate: { $lt: staleThreshold } }
+            ]
+          },
+          { $set: { lastSummaryUpdate: new Date() } }
+        );
 
-        // Update conversation with new summary
-        await Conversation.findByIdAndUpdate(convo._id, {
-          liveSummary,
-          lastSummaryUpdate: new Date(),
-          currentTopic: detectTopic(convo.messages),
-          ...calculateProblemStats(convo.messages)
-        });
+        if (claimed) {
+          // We won the race — generate the summary
+          liveSummary = await generateLiveSummary(convo, studentName);
+          await Conversation.findByIdAndUpdate(convo._id, {
+            liveSummary,
+            currentTopic: detectTopic(convo.messages),
+            ...calculateProblemStats(convo.messages)
+          });
+        }
+        // If claimed is null, another request already started the update — skip
       }
 
       // Detect struggles
