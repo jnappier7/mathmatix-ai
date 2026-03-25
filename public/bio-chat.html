@@ -40,14 +40,19 @@
       color: #27ae60;
     }
     .header h1 i { margin-right: 6px; }
-    .chapter-badge {
+    .chapter-select {
       font-size: 0.75rem;
       background: #e8f5e9;
       color: #27ae60;
       padding: 4px 10px;
       border-radius: 12px;
       font-weight: 600;
+      border: 1px solid #c8e6c9;
+      cursor: pointer;
+      outline: none;
+      max-width: 220px;
     }
+    .chapter-select:focus { border-color: #27ae60; }
     .header-right a {
       font-size: 0.8rem;
       color: #7f8c8d;
@@ -201,7 +206,9 @@
   <div class="header">
     <div class="header-left">
       <h1><i class="fas fa-dna"></i> Bio Tutor</h1>
-      <span class="chapter-badge" id="chapter-badge" style="display:none;"></span>
+      <select class="chapter-select" id="chapter-select" style="display:none;">
+        <option value="">Loading chapters...</option>
+      </select>
     </div>
     <div class="header-right">
       <a href="/bio-chapters.html"><i class="fas fa-book"></i> Chapters</a>
@@ -235,10 +242,11 @@
       const inputEl = document.getElementById('user-input');
       const sendBtn = document.getElementById('send-btn');
       const thinkingEl = document.getElementById('thinking');
-      const chapterBadge = document.getElementById('chapter-badge');
+      const chapterSelect = document.getElementById('chapter-select');
 
       let sending = false;
       let chatHistory = []; // Track conversation for multi-turn context
+      let selectedChapterId = null;
 
       // ── Auto-resize textarea ──
       inputEl.addEventListener('input', function () {
@@ -278,7 +286,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',
-            body: JSON.stringify({ message: text, history: chatHistory })
+            body: JSON.stringify({ message: text, history: chatHistory, chapterId: selectedChapterId })
           });
 
           if (!res.ok) {
@@ -310,7 +318,11 @@
                 if (data === '[DONE]') continue;
                 try {
                   const parsed = JSON.parse(data);
-                  const content = parsed.chunk || parsed.text;
+                  if (parsed.type === 'complete') continue;
+                  if (parsed.type === 'error') {
+                    throw new Error(parsed.message || 'Stream failed');
+                  }
+                  const content = parsed.chunk;
                   if (content) {
                     fullText += content;
                     renderBubble(aiBubble, fullText);
@@ -327,11 +339,16 @@
           }
 
           // Final render
-          if (fullText) renderBubble(aiBubble, fullText);
+          if (fullText) {
+            renderBubble(aiBubble, fullText);
+          } else {
+            renderBubble(aiBubble, "I had trouble generating a response. Could you try again?");
+          }
 
-          // Track history for multi-turn context
+          // Track history for multi-turn context (cap at 20 messages to match backend)
           chatHistory.push({ role: 'user', content: text });
           chatHistory.push({ role: 'assistant', content: fullText });
+          if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
 
         } catch (err) {
           thinkingEl.classList.remove('visible');
@@ -383,22 +400,31 @@
         messagesEl.scrollTop = messagesEl.scrollHeight;
       }
 
-      // ── Load active chapter info ──
-      async function loadChapterInfo() {
+      // ── Load chapters into selector ──
+      async function loadChapters() {
         try {
           const res = await csrfFetch('/api/bio/chapters/status', { credentials: 'same-origin' });
           if (!res.ok) return;
           const data = await res.json();
           const ready = (data.chapters || []).filter(c => c.processingStatus === 'ready');
-          if (ready.length > 0) {
-            const latest = ready[ready.length - 1];
-            chapterBadge.textContent = `Ch. ${latest.chapterNumber}: ${latest.chapterTitle}`;
-            chapterBadge.style.display = 'inline-block';
-          }
+          if (ready.length === 0) return;
+
+          chapterSelect.innerHTML = ready
+            .map(c => `<option value="${c._id}">Ch. ${c.chapterNumber}: ${c.chapterTitle}</option>`)
+            .join('');
+          chapterSelect.style.display = 'inline-block';
+
+          // Default to the latest chapter
+          selectedChapterId = ready[ready.length - 1]._id;
+          chapterSelect.value = selectedChapterId;
         } catch { /* ignore */ }
       }
 
-      loadChapterInfo();
+      chapterSelect.addEventListener('change', function () {
+        selectedChapterId = this.value || null;
+      });
+
+      loadChapters();
     })();
   </script>
 </body>
