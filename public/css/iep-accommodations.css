@@ -51,31 +51,88 @@
     --clr-text-dim: #333333;
     --clr-border: #000000;
     --clr-bg: #ffffff;
-    font-size: 118%;
+
+    /* Large Print: scale up base font and use age-adaptive custom properties */
+    font-size: 125%;
+    --brand-base-font-size: 1.25rem;
+    --brand-h1-font-size: clamp(2.2rem, 6vw, 3rem);
+    --brand-h2-font-size: clamp(1.8rem, 5vw, 2.4rem);
+    --brand-h3-font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    --line-height-normal: 1.8;
+    --line-height-relaxed: 2;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
 }
 
 .iep-high-contrast .message {
-    font-size: 1.1em;
-    line-height: 1.7;
+    font-size: 1.15em;
+    line-height: 1.8;
     border: 2px solid var(--clr-border);
+    padding: 16px 18px;
 }
 
 .iep-high-contrast .message.ai {
     background: #fffff0;
 }
 
+.iep-high-contrast .message .message-text {
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+/* Enlarge math rendering (KaTeX / MathJax) */
+.iep-high-contrast .katex {
+    font-size: 1.25em;
+}
+
+.iep-high-contrast .MathJax {
+    font-size: 125% !important;
+}
+
 .iep-high-contrast button,
 .iep-high-contrast .btn {
-    font-size: 1.05em;
+    font-size: 1.1em;
     font-weight: 600;
     border-width: 2px;
     min-height: 48px;
+    padding: 10px 18px;
 }
 
 .iep-high-contrast #user-input {
-    font-size: 1.15em;
-    line-height: 1.6;
+    font-size: 1.2em;
+    line-height: 1.7;
     border-width: 2px;
+    padding: 12px 14px;
+}
+
+/* Sidebar tools — larger labels and icons */
+.iep-high-contrast .sidebar-tool-btn {
+    font-size: 1.05em;
+    padding: 10px;
+}
+
+.iep-high-contrast .sidebar-tool-btn i {
+    font-size: 1.2em;
+}
+
+/* Chat header */
+.iep-high-contrast .chat-title,
+.iep-high-contrast .chat-header {
+    font-size: 1.1em;
+}
+
+/* Answer choices, hints, and feedback text */
+.iep-high-contrast .hint-text,
+.iep-high-contrast .feedback-text,
+.iep-high-contrast .answer-choice {
+    font-size: 1.1em;
+    line-height: 1.7;
+}
+
+/* Ensure focus outlines are extra visible */
+.iep-high-contrast *:focus-visible {
+    outline: 3px solid #1a237e;
+    outline-offset: 2px;
 }
 
 /* -----------------------------------------------------------
