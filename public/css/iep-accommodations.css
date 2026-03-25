@@ -52,7 +52,8 @@
     --clr-border: #000000;
     --clr-bg: #ffffff;
 
-    /* Large Print: scale up base font and use age-adaptive custom properties */
+    /* Large Print: scale up base font and use age-adaptive custom properties.
+       Use rem for overrides to avoid em-compounding in nested elements. */
     font-size: 125%;
     --brand-base-font-size: 1.25rem;
     --brand-h1-font-size: clamp(2.2rem, 6vw, 3rem);
@@ -65,7 +66,7 @@
 }
 
 .iep-high-contrast .message {
-    font-size: 1.15em;
+    font-size: 1.15rem;
     line-height: 1.8;
     border: 2px solid var(--clr-border);
     padding: 16px 18px;
@@ -76,13 +77,13 @@
 }
 
 .iep-high-contrast .message .message-text {
-    font-size: 1.1em;
+    font-size: inherit;
     line-height: 1.8;
 }
 
-/* Enlarge math rendering (KaTeX / MathJax) */
+/* Enlarge math rendering — use rem to avoid em-compounding inside messages */
 .iep-high-contrast .katex {
-    font-size: 1.25em;
+    font-size: 1.3rem;
 }
 
 .iep-high-contrast .MathJax {
@@ -91,7 +92,7 @@
 
 .iep-high-contrast button,
 .iep-high-contrast .btn {
-    font-size: 1.1em;
+    font-size: 1.05rem;
     font-weight: 600;
     border-width: 2px;
     min-height: 48px;
@@ -99,7 +100,7 @@
 }
 
 .iep-high-contrast #user-input {
-    font-size: 1.2em;
+    font-size: 1.15rem;
     line-height: 1.7;
     border-width: 2px;
     padding: 12px 14px;
@@ -107,25 +108,25 @@
 
 /* Sidebar tools — larger labels and icons */
 .iep-high-contrast .sidebar-tool-btn {
-    font-size: 1.05em;
+    font-size: 0.95rem;
     padding: 10px;
 }
 
 .iep-high-contrast .sidebar-tool-btn i {
-    font-size: 1.2em;
+    font-size: 1.1rem;
 }
 
 /* Chat header */
 .iep-high-contrast .chat-title,
 .iep-high-contrast .chat-header {
-    font-size: 1.1em;
+    font-size: 1.05rem;
 }
 
 /* Answer choices, hints, and feedback text */
 .iep-high-contrast .hint-text,
 .iep-high-contrast .feedback-text,
 .iep-high-contrast .answer-choice {
-    font-size: 1.1em;
+    font-size: 1.05rem;
     line-height: 1.7;
 }
 
