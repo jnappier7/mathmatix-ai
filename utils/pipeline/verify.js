@@ -199,44 +199,41 @@ async function verify(responseText, context = {}) {
 
   // ── 2c. False-rejection guard (CRITICAL — protects correct answers) ──
   // When the pipeline has VERIFIED the student's answer is correct
-  // (action === CONFIRM_CORRECT), the AI must NOT cast doubt on it.
-  // This is a deterministic safety net — the pipeline already computed
-  // the answer, so we don't depend on the LLM to judge correctness.
+  // (action === CONFIRM_CORRECT) but the LLM's response implies the
+  // answer is wrong, flag it for regeneration. We don't script the
+  // response — we let the LLM speak naturally, just with correct info.
   if (context.action === ACTIONS.CONFIRM_CORRECT) {
-    const trimmedText = text.trim();
-
     // Detect rejection/doubt language at the start of a verified-correct response
-    const falseRejectionOpener = /^(hmm[,.]?\s*|well[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)[^.!?]*[.!?]?\s*|not\s+quite[.!,]*\s*|close[,!.]*\s*(?:but\s+)?|almost[.!,]*\s*|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from[^.!?]*[.!?]?\s*|let'?s\s+check\s+that[^.!?]*[.!?]?\s*|are\s+you\s+sure[^.!?]*[.!?]?\s*|let'?s\s+see[.!,]*\s*|that'?s\s+not\s+(?:quite|exactly)[^.!?]*[.!?]?\s*|so\s+close[.!,]*\s*|you'?re\s+on\s+the\s+right\s+track[^.!?]*(?:but)[^.!?]*[.!?]?\s*|good\s+(?:try|attempt|thinking)[,.]?\s*but\s+[^.!?]*[.!?]?\s*)/i;
+    const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but)/i;
 
-    if (falseRejectionOpener.test(trimmedText)) {
-      // Strip the rejection opener and prepend a clear confirmation
-      text = trimmedText.replace(falseRejectionOpener, '').trim();
-      // Don't prepend if remaining text already starts with confirmation
-      const alreadyConfirms = /^(yes[.!,]|correct[.!,]|that'?s\s+(right|correct|it)[.!,]|you\s+got\s+it[.!,]|exactly[.!,]|nailed\s+it[.!,]|right[.!,]|yep[.!,]|bingo[.!,])/i;
-      if (!alreadyConfirms.test(text)) {
-        text = `Yes! That's correct. ${text}`;
-      }
-      flags.push('false_rejection_corrected');
-      console.log(`[Verify] Corrected false rejection on verified-correct answer (action: ${context.action})`);
+    if (falseRejectionOpener.test(text.trim())) {
+      flags.push('false_rejection_detected');
+      console.log(`[Verify] FALSE REJECTION detected on verified-correct answer — regenerating`);
 
-      if (context.isStreaming && context.res) {
-        try {
-          context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-        } catch (e) { /* client disconnected */ }
-      }
-    } else {
-      // Even if no rejection language, ensure the response starts with confirmation
-      const startsWithConfirmation = /^(yes[.!,\s]|correct[.!,\s]|that'?s\s+(right|correct|it)|you\s+got\s+it|exactly[.!,\s]|nailed\s+it|right[.!,\s]|yep[.!,\s]|bingo|🎉|✅|nice|great|perfect|awesome|well\s+done|good\s+job|you\s+nailed)/i;
-      if (!startsWithConfirmation.test(trimmedText)) {
-        text = `That's right! ${trimmedText}`;
-        flags.push('confirmation_prepended');
-        console.log(`[Verify] Prepended confirmation to verified-correct answer`);
+      // Regenerate with an explicit correction directive.
+      // The LLM speaks naturally, but now KNOWS the answer is correct.
+      try {
+        const correctionPrompt = `The student's answer has been mathematically verified as CORRECT by our answer engine. Your previous response incorrectly implied it was wrong. Respond naturally to the student — confirm their answer is correct and continue the lesson. Do not use scripted language; just be a natural, encouraging tutor who knows this answer is right.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response knowing the student IS correct. Keep your personality and teaching style, just fix the incorrect rejection.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('false_rejection_regenerated');
 
-        if (context.isStreaming && context.res) {
-          try {
-            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-          } catch (e) { /* client disconnected */ }
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
         }
+      } catch (err) {
+        console.error('[Verify] False-rejection regeneration failed:', err.message);
+        flags.push('false_rejection_regeneration_failed');
       }
     }
   }

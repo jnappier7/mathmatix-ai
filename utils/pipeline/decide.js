@@ -207,14 +207,13 @@ function decideCore(observation, diagnosis, context) {
       }
     } else {
       // Unverifiable — pipeline couldn't parse the problem to verify.
-      // The LLM MUST compute the answer itself before responding.
+      // The LLM must compute the answer itself before responding.
       decision.action = ACTIONS.CONTINUE_CONVERSATION;
       decision.directives.push(
-        'ANSWER VERIFICATION REQUIRED: The pipeline could not verify this answer automatically.',
-        'You MUST compute the correct answer yourself BEFORE responding.',
-        'If the student is correct: confirm IMMEDIATELY and clearly ("Yes!", "That\'s right!", "Correct!"). Do NOT hedge.',
-        'If the student is wrong: guide with Socratic method. Do NOT reveal the answer.',
-        'CRITICAL: When in doubt, default to CONFIRMING, not rejecting. Falsely rejecting a correct answer destroys trust.'
+        'ANSWER VERIFICATION REQUIRED: Our math engine could not verify this answer automatically.',
+        'You must compute the correct answer yourself BEFORE responding — work it out, then respond accordingly.',
+        'If correct: confirm naturally. If wrong: guide with Socratic method without revealing the answer.',
+        'When genuinely uncertain, say "Let me think about that..." and work through it. Do not default to implying the student is wrong.'
       );
     }
     return decision;
