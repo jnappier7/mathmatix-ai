@@ -4521,6 +4521,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div id="curriculum-content" class="table-scroll-container">
               Loading curriculum...
             </div>
+
+            <!-- Chapter Uploads (Textbook Mode) -->
+            <div style="margin-top: 24px; border-top: 1px solid var(--color-border, #e9ecef); padding-top: 20px;">
+              <div class="dashboard-panel-header" style="margin-bottom: 12px;">
+                <i class="fas fa-book"></i> Chapters (Textbook Mode)
+                <p style="font-size: 0.8rem; color: var(--color-text-muted, #7f8c8d); margin-top: 4px; font-weight: normal;">
+                  Upload textbook chapter PDFs. Students in Textbook Mode will be tutored from this content.
+                </p>
+              </div>
+
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px;">
+                <div>
+                  <label for="chapter-number-input" style="display: block; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 4px;">Chapter #</label>
+                  <input type="number" id="chapter-number-input" min="1" max="99" value="1" style="width: 60px; padding: 6px 8px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.85rem;" />
+                </div>
+                <div style="flex: 1; min-width: 180px;">
+                  <label for="chapter-title-input" style="display: block; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 4px;">Chapter Title</label>
+                  <input type="text" id="chapter-title-input" placeholder="e.g. Photosynthesis" style="width: 100%; padding: 6px 8px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.85rem;" />
+                </div>
+                <div>
+                  <label for="chapter-file-input" style="display: block; font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 4px;">PDF File</label>
+                  <input type="file" id="chapter-file-input" accept=".pdf" style="font-size: 0.8rem;" />
+                </div>
+                <button id="upload-chapter-btn" class="btn btn-primary" style="white-space: nowrap;">
+                  <i class="fas fa-upload"></i> Upload Chapter
+                </button>
+              </div>
+
+              <div id="chapter-upload-status" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 12px;"></div>
+
+              <div id="chapters-list" style="font-size: 0.85rem; color: var(--color-text-muted);">
+                Loading chapters...
+              </div>
+            </div>
           </div>
         </div>
 
@@ -5380,6 +5414,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/teacher-live-feed.js"></script>
   <script src="/js/teacher-dashboard.js"></script>
   <script src="/js/teacher-curriculum.js"></script>
+  <script src="/js/teacher-chapters.js"></script>
   <script src="/js/teacher-resources.js"></script>
   <script src="/js/teacher-ai-settings.js"></script>
   <script src="/js/teacher-announcements.js"></script>
