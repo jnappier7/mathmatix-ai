@@ -81,7 +81,10 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
     const explicitlyVisual = /\b(show\s*me|draw|graph|plot|visuali[sz]e|picture|diagram|see\s*it|number\s*line|tiles?|counter)\b/i.test(lowerMessage);
 
     // For visual learners, also trigger on math content keywords (broader gate)
-    const implicitlyVisual = isVisualLearner && /\b(fraction|equation|solve|factor|slope|intercept|parabola|triangle|angle|circle|line|inequalit|function|polynomial|exponent|integer|negative|percent|ratio|proportion|area|volume|perimeter)\b/i.test(lowerMessage);
+    // NOTE: Intentionally excludes broad words like "function", "line", "circle"
+    // that would false-positive on "piecewise function", "number line" discussions, etc.
+    // The auto-inject handlers below will decide which SPECIFIC visual to use.
+    const implicitlyVisual = isVisualLearner && /\b(fraction|equation|solve|factor|slope|intercept|parabola|triangle|angle|inequalit|polynomial|exponent|integer|negative|percent|ratio|proportion|area|volume|perimeter)\b/i.test(lowerMessage);
 
     if (!explicitlyVisual && !implicitlyVisual) {
         // AI chose not to use a visual — respect that choice
@@ -1007,7 +1010,16 @@ const TOPIC_VISUALS = [
     },
     {
         name: 'Fractions',
-        detect: /\b(what\s+(is|are)\s+fraction|explain\s+fraction|understand\s+fraction|numerator\s+and\s+denominator|improper\s+fraction|mixed\s+number|equivalent\s+fraction)/i,
+        detect: null,
+        // Skip if the context is about rational expressions/functions (not simple fractions)
+        detectFn(studentMsg, aiResponse) {
+            const combined = (studentMsg + ' ' + aiResponse).toLowerCase();
+            // Don't inject simple fraction visual for rational functions/expressions
+            if (/\b(rational\s+(function|expression)|asymptote|piecewise|continuous|limit|hole\b|vertical\b|horizontal\b)/i.test(combined)) {
+                return false;
+            }
+            return /\b(what\s+(is|are)\s+(a\s+)?fraction|explain\s+fraction|understand\s+fraction|numerator\s+and\s+denominator|improper\s+fraction|mixed\s+number|equivalent\s+fraction)/i.test(combined);
+        },
         build(studentMsg) {
             const frac = extractFractionFromMessage(studentMsg);
             const num = frac ? frac.num : 3;
