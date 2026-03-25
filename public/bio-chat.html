@@ -311,6 +311,9 @@
                 try {
                   const parsed = JSON.parse(data);
                   if (parsed.type === 'complete') continue;
+                  if (parsed.type === 'error') {
+                    throw new Error(parsed.message || 'Stream failed');
+                  }
                   const content = parsed.chunk;
                   if (content) {
                     fullText += content;
@@ -328,11 +331,16 @@
           }
 
           // Final render
-          if (fullText) renderBubble(aiBubble, fullText);
+          if (fullText) {
+            renderBubble(aiBubble, fullText);
+          } else {
+            renderBubble(aiBubble, "I had trouble generating a response. Could you try again?");
+          }
 
-          // Track history for multi-turn context
+          // Track history for multi-turn context (cap at 20 messages to match backend)
           chatHistory.push({ role: 'user', content: text });
           chatHistory.push({ role: 'assistant', content: fullText });
+          if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
 
         } catch (err) {
           thinkingEl.classList.remove('visible');
