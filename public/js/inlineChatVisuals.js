@@ -185,10 +185,19 @@ class InlineChatVisuals {
     /**
      * Parse parameters from command string
      * Supports: key=value, key="value with spaces", arrays [1,2,3]
+     * Special handling for 'params' key whose value contains commas (e.g., params=a:1:-3:3,b:0:-5:5)
      */
     parseParams(paramStr) {
         const params = {};
         if (!paramStr) return params;
+
+        // Pre-process: the 'params' key contains comma-separated slider definitions
+        // like params=a:1:-3:3,b:0:-5:5 where commas are PART of the value.
+        // Auto-quote them so the main regex handles them correctly.
+        paramStr = paramStr.replace(
+            /\bparams=((?:[a-zA-Z]\w*:-?[\d.]+:-?[\d.]+:-?[\d.]+)(?:,(?:[a-zA-Z]\w*:-?[\d.]+:-?[\d.]+:-?[\d.]+))*)/g,
+            (match, val) => `params="${val}"`
+        );
 
         // Match key=value pairs, handling quoted strings and arrays
         const regex = /(\w+)=(?:"([^"]+)"|'([^']+)'|\[([^\]]+)\]|([^\s,]+))/g;

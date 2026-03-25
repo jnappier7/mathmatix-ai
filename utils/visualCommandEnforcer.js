@@ -978,14 +978,14 @@ const TOPIC_VISUALS = [
         name: 'Quadratic / Parabola',
         detect: /\b(quadratic|parabola|vertex\s*form|standard\s*form.*ax|completing\s*the\s*square|a\s*x\s*²|ax\^2)\b/i,
         build() {
-            return `\n\nTry dragging the sliders to see how each coefficient changes the parabola. What happens when you make \\( a \\) negative?\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-5:5,title="Explore: y = ax² + bx + c"]`;
+            return `\n\nTry dragging the sliders to see how each coefficient changes the parabola. What happens when you make \\( a \\) negative?\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-5:5",title="Explore: y = ax² + bx + c"]`;
         }
     },
     {
         name: 'Slope / Linear equations',
         detect: /\b(slope|rise\s*(over|and)\s*run|y\s*=\s*m\s*x\s*\+\s*b|slope.?intercept|linear\s+(equation|function))\b/i,
         build() {
-            return `\n\nDrag the sliders to explore — \\( m \\) controls the steepness (slope) and \\( b \\) shifts the line up or down (y-intercept). What happens when \\( m \\) is negative?\n\n[SLIDER_GRAPH:fn=m*x+b,params=m:1:-5:5,b:0:-5:5,title="Explore: y = mx + b (slope-intercept form)"]`;
+            return `\n\nDrag the sliders to explore — \\( m \\) controls the steepness (slope) and \\( b \\) shifts the line up or down (y-intercept). What happens when \\( m \\) is negative?\n\n[SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5",title="Explore: y = mx + b (slope-intercept form)"]`;
         }
     },
     {

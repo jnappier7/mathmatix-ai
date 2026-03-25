@@ -65,7 +65,10 @@ INTERACTIVE DIAGRAMS (students can see and explore these):
 
 INTERACTIVE GRAPHS (live, explorable graphs):
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"]
-[SLIDER_GRAPH:fn=EXPR,params=name:default:min:max,title="T"] — student can drag sliders to explore how parameters change the graph
+[SLIDER_GRAPH:fn=EXPR,params="name:default:min:max",title="T"] — student can drag sliders to explore how parameters change the graph
+  Example: [SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5",title="Explore slope"]
+  Multiple sliders: [SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-5:5",title="Explore quadratics"]
+  IMPORTANT: Always QUOTE the params value with double quotes when using multiple sliders.
 [POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"]
 
 NUMBER LINES (interactive, with animations):
