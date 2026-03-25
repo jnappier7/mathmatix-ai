@@ -390,6 +390,7 @@ ${gradeLevel >= 10 ? `   - Use sophisticated mathematical discourse
    **PHRASES THAT IMPLY ERROR (use ONLY when actually wrong):**
    - "You're close" / "Almost" / "Not quite" / "Nice try, but..."
    - "Let's check that" / "Let's verify" / "Hmm..."
+   These are perfectly natural when the student IS wrong. But using them on a correct answer destroys trust — so always verify the answer yourself first.
 
    **STUDENT-LED ERROR DIAGNOSIS (when they ARE wrong):**
    DON'T immediately correct. Instead:

@@ -197,6 +197,47 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2c. False-rejection guard (CRITICAL — protects correct answers) ──
+  // When the pipeline has VERIFIED the student's answer is correct
+  // (action === CONFIRM_CORRECT) but the LLM's response implies the
+  // answer is wrong, flag it for regeneration. We don't script the
+  // response — we let the LLM speak naturally, just with correct info.
+  if (context.action === ACTIONS.CONFIRM_CORRECT) {
+    // Detect rejection/doubt language at the start of a verified-correct response
+    const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but)/i;
+
+    if (falseRejectionOpener.test(text.trim())) {
+      flags.push('false_rejection_detected');
+      console.log(`[Verify] FALSE REJECTION detected on verified-correct answer — regenerating`);
+
+      // Regenerate with an explicit correction directive.
+      // The LLM speaks naturally, but now KNOWS the answer is correct.
+      try {
+        const correctionPrompt = `The student's answer has been mathematically verified as CORRECT by our answer engine. Your previous response incorrectly implied it was wrong. Respond naturally to the student — confirm their answer is correct and continue the lesson. Do not use scripted language; just be a natural, encouraging tutor who knows this answer is right.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response knowing the student IS correct. Keep your personality and teaching style, just fix the incorrect rejection.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('false_rejection_regenerated');
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] False-rejection regeneration failed:', err.message);
+        flags.push('false_rejection_regeneration_failed');
+      }
+    }
+  }
+
   // ── 3. IEP reading level enforcement ──
   if (context.iepReadingLevel) {
     const readCheck = checkReadingLevel(text, context.iepReadingLevel);

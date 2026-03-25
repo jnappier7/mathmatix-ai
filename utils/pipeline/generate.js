@@ -34,8 +34,8 @@ function buildActionPrompt(decision) {
   // Action-specific context
   switch (action) {
     case ACTIONS.CONFIRM_CORRECT:
-      parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified answer: ${diagnosis.correctAnswer}).`);
-      parts.push('Confirm immediately. Be specific about what they did right. Then present the next problem or check understanding.');
+      parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified by our math engine: ${diagnosis.correctAnswer}).`);
+      parts.push('Confirm their answer naturally — the way a human tutor would when they know the student got it right. Then continue the lesson.');
       break;
 
     case ACTIONS.GUIDE_INCORRECT:
@@ -119,6 +119,26 @@ function buildActionPrompt(decision) {
 }
 
 /**
+ * Build a system-level verification directive.
+ * Unlike buildVerificationContext (which appends to the user message),
+ * this goes into the system prompt where it carries more authority.
+ * The LLM should treat this as a known fact, not something to evaluate.
+ */
+function buildVerificationDirective(diagnosis) {
+  if (!diagnosis || diagnosis.type === 'no_answer') return null;
+
+  if (diagnosis.isCorrect === true) {
+    return `--- ANSWER VERIFICATION RESULT (FROM MATH ENGINE) ---\nThe student's answer "${diagnosis.answer}" is CORRECT. Our math engine computed the answer as "${diagnosis.correctAnswer}" and confirmed a match. This is a verified fact. Respond as a tutor who knows the student is right.`;
+  }
+
+  if (diagnosis.isCorrect === false) {
+    return `--- ANSWER VERIFICATION RESULT (FROM MATH ENGINE) ---\nThe student's answer "${diagnosis.answer}" is INCORRECT. The correct answer is "${diagnosis.correctAnswer}". This is a verified fact. Guide the student without revealing the answer.`;
+  }
+
+  return null;
+}
+
+/**
  * Build the verification context that gets injected into the user message.
  * This is the hidden answer verification the AI uses for grading.
  */
@@ -192,6 +212,13 @@ function assemblePrompt(decision, promptContext) {
   const actionPrompt = buildActionPrompt(decision);
   if (actionPrompt) {
     fullSystemPrompt += '\n\n--- CURRENT ACTION ---\n' + actionPrompt;
+  }
+
+  // Inject verification result into system prompt (authoritative, not a hint)
+  // This ensures the LLM treats correctness as a known fact, not something to evaluate.
+  const verificationDirective = buildVerificationDirective(decision.diagnosis);
+  if (verificationDirective) {
+    fullSystemPrompt += '\n\n' + verificationDirective;
   }
 
   // Inject session mood directive (if noteworthy)
@@ -294,5 +321,6 @@ module.exports = {
   assemblePrompt,
   buildActionPrompt,
   buildVerificationContext,
+  buildVerificationDirective,
   buildStreakWarning,
 };
