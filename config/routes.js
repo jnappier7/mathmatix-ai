@@ -68,6 +68,7 @@ const avatarRoutes = require('../routes/avatar');
 const curriculumRoutes = require('../routes/curriculum');
 const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
+const checkpointRoutes = require('../routes/checkpoint');
 const growthCheckRoutes = require('../routes/growthCheck');
 const masteryRoutes = require('../routes/mastery');
 const masteryChatRoutes = require('../routes/masteryChat');
@@ -208,6 +209,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/guidedLesson', isAuthenticated, aiEndpointLimiter, guidedLessonRoutes);
   app.use('/api/assessment', isAuthenticated, assessmentRoutes);
   app.use('/api/screener', isAuthenticated, screenerRoutes);
+  app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes);

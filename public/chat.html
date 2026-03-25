@@ -33,6 +33,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/iep-accommodations.css" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
   <link rel="stylesheet" href="/css/floating-screener.css" />
+  <link rel="stylesheet" href="/css/floating-checkpoint.css" />
   <link rel="stylesheet" href="/css/show-your-work.css" />
   <link rel="stylesheet" href="/css/courseCatalog.css" />
   <link rel="stylesheet" href="/css/graphTool.css" />
@@ -1474,6 +1475,97 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div class="resize-handle"></div>
   </div>
 
+  <!-- Floating Checkpoint Widget -->
+  <div id="floating-checkpoint" class="floating-checkpoint">
+    <div class="checkpoint-header-bar">
+      <div class="checkpoint-title">
+        <i class="fas fa-clipboard-check"></i> <span id="checkpoint-header-title">Checkpoint</span>
+      </div>
+      <button class="checkpoint-close-btn" title="Close">&times;</button>
+    </div>
+
+    <div class="checkpoint-body">
+      <!-- Instruction Screen -->
+      <div id="checkpoint-instruction-screen" class="checkpoint-screen active">
+        <h2 id="checkpoint-module-title">Checkpoint</h2>
+        <p class="subtitle">Show what you know. No hints, no help — just you and the problems.</p>
+        <div class="checkpoint-info-card">
+          <h3><i class="fas fa-info-circle"></i> How it works</h3>
+          <p>You'll see problems one at a time. Type your answer and submit. You'll get immediate feedback after each one.</p>
+          <p><strong><i class="fas fa-pencil-alt"></i> Grab a pencil and paper</strong> — work the problems out, don't just guess.</p>
+          <div class="duration">
+            <i class="fas fa-clock"></i>
+            <span>Usually 15-30 minutes</span>
+          </div>
+        </div>
+        <button class="checkpoint-start-btn" id="checkpoint-start-btn">
+          <i class="fas fa-play"></i> Start Checkpoint
+        </button>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="checkpoint-question-screen" class="checkpoint-screen">
+        <div class="checkpoint-progress">
+          <div class="checkpoint-progress-fill" id="checkpoint-progress-fill"></div>
+        </div>
+        <div class="checkpoint-question-card">
+          <div class="checkpoint-question-header">
+            <span class="checkpoint-question-num" id="checkpoint-question-num">Problem 1 of 10</span>
+            <span class="checkpoint-question-pts" id="checkpoint-question-pts">8 pts</span>
+          </div>
+          <div class="checkpoint-question-skill" id="checkpoint-question-skill"></div>
+          <div class="checkpoint-question-content" id="checkpoint-question-content"></div>
+          <div class="checkpoint-answer-area">
+            <label for="checkpoint-answer-input">Your answer:</label>
+            <input type="text" id="checkpoint-answer-input" placeholder="Type your answer..." autocomplete="off" />
+          </div>
+          <div id="checkpoint-feedback"></div>
+          <div class="checkpoint-actions">
+            <button id="checkpoint-submit-btn" disabled>Submit <i class="fas fa-arrow-right"></i></button>
+            <button id="checkpoint-skip-btn"><i class="fas fa-forward"></i> Skip</button>
+            <button id="checkpoint-next-btn" style="display:none">Next Problem <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="checkpoint-loading-screen" class="checkpoint-screen">
+        <i class="fas fa-spinner fa-spin spinner"></i>
+        <p id="checkpoint-loading-text">Loading...</p>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="checkpoint-results-screen" class="checkpoint-screen">
+        <div class="checkpoint-results-hero">
+          <div class="trophy-icon"><i class="fas fa-trophy"></i></div>
+          <h2>Checkpoint Complete!</h2>
+        </div>
+        <div class="checkpoint-score-display">
+          <div class="checkpoint-score-value" id="checkpoint-result-score">--</div>
+          <div class="result-status" id="checkpoint-result-status"></div>
+        </div>
+        <div class="checkpoint-results-stats">
+          <div class="checkpoint-result-stat">
+            <div class="stat-label">Correct</div>
+            <div class="stat-value" id="checkpoint-result-correct">--</div>
+          </div>
+          <div class="checkpoint-result-stat">
+            <div class="stat-label">Points</div>
+            <div class="stat-value" id="checkpoint-result-total">--</div>
+          </div>
+          <div class="checkpoint-result-stat">
+            <div class="stat-label">Time</div>
+            <div class="stat-value" id="checkpoint-result-duration">--</div>
+          </div>
+        </div>
+        <div id="checkpoint-skill-breakdown"></div>
+        <button id="checkpoint-continue-btn">
+          <i class="fas fa-arrow-right"></i> Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Returning User Welcome Modal -->
   <div id="returning-user-modal" class="modal-overlay returning-user-overlay">
     <div class="modal-content returning-user-content">
@@ -1813,6 +1905,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/floating-screener.js"></script>
+  <script src="/js/floating-checkpoint.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/courseCatalog.js"></script>
   <script src="/js/lessonTracker.js"></script>

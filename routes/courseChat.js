@@ -343,15 +343,58 @@ router.post('/', async (req, res) => {
             // The teaching LLM no longer emits <SCAFFOLD_ADVANCE> tags.
             // Instead, the backend evaluates every turn to decide if the
             // current step is complete. This separates teaching from plumbing.
+            //
+            // Checkpoints (type: "assessment") have no scaffold — they use
+            // assessmentProblems instead. For checkpoints, we track completion
+            // by counting correct/incorrect PROBLEM_RESULT tags against the
+            // total problem count, and complete the module when all problems
+            // have been attempted.
+            const isCheckpointModule = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
             const currentScaffoldIdx = courseSession.currentScaffoldIndex || 0;
             const currentScaffoldStep = (moduleData?.scaffold || [])[currentScaffoldIdx];
-            const isLastStep = currentScaffoldIdx >= (moduleData?.scaffold?.length || 1) - 1;
+            const isLastStep = isCheckpointModule
+              ? true  // Checkpoints are always "last step" — module completes when all problems are done
+              : currentScaffoldIdx >= (moduleData?.scaffold?.length || 1) - 1;
 
             try {
-                const evalResult = await evaluateStepCompletion(currentScaffoldStep, conversation, {
-                    wasCorrect,
-                    isParentCourse,
-                });
+                let evalResult;
+
+                if (isCheckpointModule) {
+                    // Checkpoint completion: count PROBLEM_RESULT tags in conversation
+                    const totalProblems = (moduleData.assessmentProblems || []).length;
+                    const problemResults = conversation.messages
+                        .filter(m => m.role === 'assistant' && m.problemResult)
+                        .map(m => m.problemResult);
+                    const attempted = problemResults.length;
+                    const correct = problemResults.filter(r => r === 'correct').length;
+
+                    evalResult = {
+                        mode: 'checkpoint',
+                        complete: attempted >= totalProblems && totalProblems > 0,
+                        confidence: 1.0,
+                        evidence: `${attempted}/${totalProblems} problems attempted, ${correct} correct`,
+                    };
+
+                    // Update checkpoint score on the module progress
+                    if (evalResult.complete) {
+                        const totalPoints = (moduleData.assessmentProblems || []).reduce((sum, p) => sum + (p.points || 1), 0);
+                        const earnedPoints = problemResults.reduce((sum, r, i) => {
+                            const problem = (moduleData.assessmentProblems || [])[i];
+                            return sum + (r === 'correct' ? (problem?.points || 1) : 0);
+                        }, 0);
+                        const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
+                        const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+                        if (mod) {
+                            mod.checkpointScore = score;
+                            mod.checkpointPassed = score >= (moduleData.passThreshold || 70);
+                        }
+                    }
+                } else {
+                    evalResult = await evaluateStepCompletion(currentScaffoldStep, conversation, {
+                        wasCorrect,
+                        isParentCourse,
+                    });
+                }
 
                 console.log(`[CourseChat:Evaluator] Step ${currentScaffoldIdx + 1}: ${evalResult.mode} → ${evalResult.complete ? 'COMPLETE' : 'not yet'} (confidence: ${evalResult.confidence}, evidence: ${evalResult.evidence})`);
 
@@ -731,7 +774,28 @@ async function handleCourseGreeting(req, res, userId) {
                 `"Have you ever seen this on your child's homework?" or "Ready to dive in?"`;
         } else {
             // ── Student ghost messages and greeting instructions ──
-            if (!hasHistory && completedModules === 0) {
+            const isCheckpoint = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
+
+            if (isCheckpoint) {
+                // Checkpoint-specific ghost message — tell the AI how many problems have been attempted
+                const totalProblems = (moduleData.assessmentProblems || []).length;
+                const attemptedCount = (conversation.messages || [])
+                    .filter(m => m.role === 'assistant' && m.problemResult).length;
+                const nextProblem = attemptedCount + 1;
+
+                if (!hasHistory) {
+                    ghostMessage = `Hi, I'm ${user.firstName}. I'm starting the ${moduleData.title || 'checkpoint'}. ` +
+                        `This is an assessment with ${totalProblems} problems. I'm ready to begin.`;
+                } else {
+                    ghostMessage = `Hi, I'm ${user.firstName}. I'm continuing the ${moduleData.title || 'checkpoint'}. ` +
+                        `I've completed ${attemptedCount} of ${totalProblems} problems so far. ` +
+                        `Present problem ${Math.min(nextProblem, totalProblems)} next.`;
+                }
+
+                greetingInstruction = `The student is starting a checkpoint assessment. ` +
+                    `Present Problem 1 of ${totalProblems} immediately. ` +
+                    `Do NOT teach or explain concepts. Just present the first problem and let them answer.`;
+            } else if (!hasHistory && completedModules === 0) {
                 ghostMessage = `Hi, I'm ${user.firstName}. I just enrolled in ${courseSession.courseName}. ` +
                     `I'm in ${user.gradeLevel || 'school'} and ready to start.`;
             } else if (hasHistory) {
@@ -750,13 +814,15 @@ async function handleCourseGreeting(req, res, userId) {
                     (totalSteps > 0 ? ` (step ${scaffoldIndex + 1} of ${totalSteps}).` : '.');
             }
 
-            greetingInstruction = buildCourseGreetingInstruction({
-                userProfile: user,
-                courseSession,
-                pathway,
-                scaffoldData: moduleData,
-                currentModule: currentPathwayModule
-            });
+            if (!isCheckpoint) {
+                greetingInstruction = buildCourseGreetingInstruction({
+                    userProfile: user,
+                    courseSession,
+                    pathway,
+                    scaffoldData: moduleData,
+                    currentModule: currentPathwayModule
+                });
+            }
         }
 
         const messagesForAI = [
@@ -808,10 +874,14 @@ async function handleCourseGreeting(req, res, userId) {
             courseSession, moduleData, conversation, lastSignal: null, showCheckpoint: false
         });
 
+        const isCheckpointModule = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
+
         res.json({
-            text: greetingText,
+            text: isCheckpointModule ? null : greetingText,
             voiceId: currentTutor.voiceId,
             isGreeting: true,
+            isCheckpoint: isCheckpointModule || false,
+            checkpointTitle: isCheckpointModule ? (moduleData?.title || 'Checkpoint') : undefined,
             courseContext: {
                 courseId: courseSession.courseId,
                 courseName: courseSession.courseName,
