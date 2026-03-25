@@ -35,7 +35,7 @@
       formData.append('chapterTitle', chapterTitle);
       formData.append('subject', 'biology');
 
-      const res = await fetch('/api/teacher/chapters/upload', {
+      const res = await csrfFetch('/api/teacher/chapters/upload', {
         method: 'POST',
         credentials: 'same-origin',
         body: formData
@@ -65,7 +65,7 @@
   // ── Load and render chapters list ──
   async function loadChapters() {
     try {
-      const res = await fetch('/api/teacher/chapters/status', { credentials: 'same-origin' });
+      const res = await csrfFetch('/api/teacher/chapters/status', { credentials: 'same-origin' });
       if (!res.ok) {
         listDiv.textContent = 'Failed to load chapters.';
         return;
@@ -111,7 +111,7 @@
           if (!confirm('Delete this chapter?')) return;
           const id = this.dataset.id;
           try {
-            const res = await fetch(`/api/teacher/chapters/${id}`, {
+            const res = await csrfFetch(`/api/teacher/chapters/${id}`, {
               method: 'DELETE',
               credentials: 'same-origin'
             });
@@ -137,7 +137,7 @@
       // Stop polling after 2 minutes or if all chapters are done
       if (polls > 24) clearInterval(interval);
       try {
-        const res = await fetch('/api/teacher/chapters/status', { credentials: 'same-origin' });
+        const res = await csrfFetch('/api/teacher/chapters/status', { credentials: 'same-origin' });
         const data = await res.json();
         const processing = (data.chapters || []).some(c =>
           !['ready', 'failed'].includes(c.processingStatus)
