@@ -107,6 +107,7 @@ const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
 const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
+const bioRoutes = require('../routes/bio');
 
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
@@ -195,6 +196,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
+  app.use('/api/bio', bioRoutes);
 
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api', isAuthenticated, diagramRoutes);
@@ -554,6 +556,9 @@ function registerHtmlRoutes(app) {
   app.get('/terms.html', sendHtml('terms.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  app.get('/bio.html', sendHtml('bio.html'));
+  app.get('/bio-chat.html', sendHtml('bio-chat.html'));
+  app.get('/bio-chapters.html', sendHtml('bio-chapters.html'));
 
   // Protected HTML routes
   app.get('/affiliate.html', isAuthenticated, sendHtml('affiliate.html'));

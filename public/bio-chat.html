@@ -6,6 +6,7 @@
   <title>Bio Tutor - Chat</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="/js/csrf.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
   <style>
@@ -237,6 +238,7 @@
       const chapterBadge = document.getElementById('chapter-badge');
 
       let sending = false;
+      let chatHistory = []; // Track conversation for multi-turn context
 
       // ── Auto-resize textarea ──
       inputEl.addEventListener('input', function () {
@@ -272,11 +274,11 @@
         scrollToBottom();
 
         try {
-          const res = await fetch('/api/chat?stream=true', {
+          const res = await csrfFetch('/api/bio/chat?stream=true', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',
-            body: JSON.stringify({ message: text })
+            body: JSON.stringify({ message: text, history: chatHistory })
           });
 
           if (!res.ok) {
@@ -308,8 +310,9 @@
                 if (data === '[DONE]') continue;
                 try {
                   const parsed = JSON.parse(data);
-                  if (parsed.text) {
-                    fullText += parsed.text;
+                  const content = parsed.chunk || parsed.text;
+                  if (content) {
+                    fullText += content;
                     renderBubble(aiBubble, fullText);
                     scrollToBottom();
                   }
@@ -325,6 +328,10 @@
 
           // Final render
           if (fullText) renderBubble(aiBubble, fullText);
+
+          // Track history for multi-turn context
+          chatHistory.push({ role: 'user', content: text });
+          chatHistory.push({ role: 'assistant', content: fullText });
 
         } catch (err) {
           thinkingEl.classList.remove('visible');
@@ -379,7 +386,7 @@
       // ── Load active chapter info ──
       async function loadChapterInfo() {
         try {
-          const res = await fetch('/api/teacher/chapters/status', { credentials: 'same-origin' });
+          const res = await csrfFetch('/api/bio/chapters/status', { credentials: 'same-origin' });
           if (!res.ok) return;
           const data = await res.json();
           const ready = (data.chapters || []).filter(c => c.processingStatus === 'ready');

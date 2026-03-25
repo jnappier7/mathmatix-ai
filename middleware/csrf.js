@@ -32,6 +32,7 @@ const CSRF_EXEMPT_PREFIXES = [
   '/api/trial-chat',  // Anonymous trial chat — rate-limited, server-side turn tracking
   '/api/waitlist',     // Public waitlist signup
   '/api/demo',         // Public demo endpoints
+  '/api/bio',          // Public bio tutor — no user session to protect
 ];
 
 /**
