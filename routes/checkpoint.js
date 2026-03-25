@@ -24,6 +24,17 @@ const { verifyAnswer } = require('../utils/mathSolver');
 const { callLLM } = require('../utils/llmGateway');
 
 /**
+ * Helper: Load the active course session for the authenticated user.
+ * Auth middleware populates req.user with the full user document,
+ * which includes activeCourseSessionId (same pattern as courseChat).
+ */
+async function getActiveCourseSession(req) {
+  const sessionId = req.user?.activeCourseSessionId;
+  if (!sessionId) return null;
+  return CourseSession.findById(sessionId);
+}
+
+/**
  * POST /start — Initialize a checkpoint session
  *
  * Loads the module's assessmentProblems and returns session metadata.
@@ -33,8 +44,8 @@ router.post('/start', async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find active course session
-    const courseSession = await CourseSession.findOne({ userId, isActive: true });
+    // Find active course session (same lookup as courseChat)
+    const courseSession = await getActiveCourseSession(req);
     if (!courseSession) {
       return res.status(404).json({ error: 'No active course session' });
     }
@@ -107,8 +118,7 @@ router.post('/start', async (req, res) => {
  */
 router.get('/problem', async (req, res) => {
   try {
-    const userId = req.user._id;
-    const courseSession = await CourseSession.findOne({ userId, isActive: true });
+    const courseSession = await getActiveCourseSession(req);
     if (!courseSession?.checkpointState) {
       return res.status(404).json({ error: 'No active checkpoint' });
     }
@@ -148,7 +158,7 @@ router.post('/submit', async (req, res) => {
     const userId = req.user._id;
     const { answer, skipped } = req.body;
 
-    const courseSession = await CourseSession.findOne({ userId, isActive: true });
+    const courseSession = await getActiveCourseSession(req);
     if (!courseSession?.checkpointState) {
       return res.status(404).json({ error: 'No active checkpoint' });
     }
@@ -246,8 +256,7 @@ router.post('/submit', async (req, res) => {
  */
 router.post('/complete', async (req, res) => {
   try {
-    const userId = req.user._id;
-    const courseSession = await CourseSession.findOne({ userId, isActive: true });
+    const courseSession = await getActiveCourseSession(req);
     if (!courseSession?.checkpointState) {
       return res.status(404).json({ error: 'No active checkpoint' });
     }
