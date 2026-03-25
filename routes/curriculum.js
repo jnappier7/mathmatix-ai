@@ -793,4 +793,241 @@ function extractObjectives(text) {
     return objectives;
 }
 
+// ============================================================================
+// CHAPTER UPLOAD ENDPOINTS (Textbook Mode)
+// ============================================================================
+
+const ChapterContent = require('../models/chapterContent');
+const { processChapter } = require('../utils/chapterProcessor');
+
+// Configure multer for chapter PDF uploads (larger limit for textbooks)
+const chapterUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit for textbook chapters
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed for chapter uploads.'));
+        }
+    }
+});
+
+/**
+ * POST /api/teacher/chapters/upload
+ * Upload a single chapter PDF for processing
+ * Body: chapterNumber, chapterTitle, subject, weekNumber, curriculumId (optional)
+ */
+router.post('/teacher/chapters/upload', isAuthenticated, isTeacher, chapterUpload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No PDF file uploaded' });
+        }
+
+        const { chapterNumber, chapterTitle, subject, weekNumber, curriculumId } = req.body;
+
+        if (!chapterNumber || !chapterTitle) {
+            return res.status(400).json({ message: 'chapterNumber and chapterTitle are required' });
+        }
+
+        // Create the chapter content document
+        const chapterContent = new ChapterContent({
+            teacherId: req.user._id,
+            curriculumId: curriculumId || null,
+            chapterNumber: parseInt(chapterNumber),
+            chapterTitle: chapterTitle.trim(),
+            subject: (subject || 'biology').toLowerCase().trim(),
+            weekNumber: weekNumber ? parseInt(weekNumber) : null,
+            sourceFile: {
+                originalName: req.file.originalname,
+                mimeType: req.file.mimetype,
+                sizeBytes: req.file.size,
+                uploadedAt: new Date()
+            },
+            processingStatus: 'pending'
+        });
+
+        await chapterContent.save();
+
+        // Kick off processing pipeline as background job
+        processChapter(chapterContent._id, req.file.buffer).catch(err => {
+            console.error(`[ChapterUpload] Background processing failed for chapter ${chapterContent._id}: ${err.message}`);
+        });
+
+        res.status(201).json({
+            success: true,
+            message: `Chapter ${chapterNumber} uploaded and processing started`,
+            chapterContentId: chapterContent._id,
+            processingStatus: 'pending'
+        });
+
+    } catch (error) {
+        console.error('Error uploading chapter:', error);
+        res.status(500).json({ message: 'Failed to upload chapter: ' + error.message });
+    }
+});
+
+/**
+ * POST /api/teacher/chapters/upload-bulk
+ * Upload multiple chapter PDFs at once
+ */
+router.post('/teacher/chapters/upload-bulk', isAuthenticated, isTeacher, chapterUpload.array('files', 20), async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No files uploaded' });
+        }
+
+        const { subject, curriculumId } = req.body;
+        const results = [];
+
+        for (let i = 0; i < req.files.length; i++) {
+            const file = req.files[i];
+            // Derive chapter number from filename or index
+            const nameMatch = file.originalname.match(/(?:ch(?:apter)?\.?\s*)?(\d+)/i);
+            const chapterNum = nameMatch ? parseInt(nameMatch[1]) : i + 1;
+            const chapterTitle = file.originalname.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ').trim();
+
+            const chapterContent = new ChapterContent({
+                teacherId: req.user._id,
+                curriculumId: curriculumId || null,
+                chapterNumber: chapterNum,
+                chapterTitle,
+                subject: (subject || 'biology').toLowerCase().trim(),
+                sourceFile: {
+                    originalName: file.originalname,
+                    mimeType: file.mimetype,
+                    sizeBytes: file.size,
+                    uploadedAt: new Date()
+                },
+                processingStatus: 'pending'
+            });
+
+            await chapterContent.save();
+
+            // Kick off processing (staggered to avoid rate limits)
+            setTimeout(() => {
+                processChapter(chapterContent._id, file.buffer).catch(err => {
+                    console.error(`[ChapterUpload] Background processing failed for chapter ${chapterContent._id}: ${err.message}`);
+                });
+            }, i * 2000); // 2 second stagger between chapters
+
+            results.push({
+                chapterContentId: chapterContent._id,
+                chapterNumber: chapterNum,
+                chapterTitle,
+                processingStatus: 'pending'
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            message: `${results.length} chapters uploaded and processing started`,
+            chapters: results
+        });
+
+    } catch (error) {
+        console.error('Error bulk uploading chapters:', error);
+        res.status(500).json({ message: 'Failed to upload chapters: ' + error.message });
+    }
+});
+
+/**
+ * GET /api/teacher/chapters/status
+ * Get processing status for all chapters uploaded by this teacher
+ */
+router.get('/teacher/chapters/status', isAuthenticated, isTeacher, async (req, res) => {
+    try {
+        const chapters = await ChapterContent.getProcessingStatus(req.user._id);
+
+        res.json({
+            success: true,
+            chapters
+        });
+
+    } catch (error) {
+        console.error('Error fetching chapter status:', error);
+        res.status(500).json({ message: 'Failed to fetch chapter status' });
+    }
+});
+
+/**
+ * GET /api/teacher/chapters/:id
+ * Get a specific chapter's details (without embeddings)
+ */
+router.get('/teacher/chapters/:id', isAuthenticated, isTeacher, async (req, res) => {
+    try {
+        const chapter = await ChapterContent.findOne({
+            _id: req.params.id,
+            teacherId: req.user._id
+        }).select('-chunks.embedding -rawText').lean();
+
+        if (!chapter) {
+            return res.status(404).json({ message: 'Chapter not found' });
+        }
+
+        res.json({ success: true, chapter });
+
+    } catch (error) {
+        console.error('Error fetching chapter:', error);
+        res.status(500).json({ message: 'Failed to fetch chapter' });
+    }
+});
+
+/**
+ * DELETE /api/teacher/chapters/:id
+ * Delete a chapter and its processed data
+ */
+router.delete('/teacher/chapters/:id', isAuthenticated, isTeacher, async (req, res) => {
+    try {
+        const result = await ChapterContent.findOneAndDelete({
+            _id: req.params.id,
+            teacherId: req.user._id
+        });
+
+        if (!result) {
+            return res.status(404).json({ message: 'Chapter not found' });
+        }
+
+        res.json({
+            success: true,
+            message: `Chapter ${result.chapterNumber}: "${result.chapterTitle}" deleted`
+        });
+
+    } catch (error) {
+        console.error('Error deleting chapter:', error);
+        res.status(500).json({ message: 'Failed to delete chapter' });
+    }
+});
+
+/**
+ * GET /api/student/chapters
+ * Get available chapters for a student (based on their teacher's uploads)
+ */
+router.get('/student/chapters', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (!user || !user.teacherId) {
+            return res.json({ hasChapters: false, chapters: [] });
+        }
+
+        const chapters = await ChapterContent.find({
+            teacherId: user.teacherId,
+            processingStatus: 'ready'
+        })
+            .select('chapterNumber chapterTitle subject weekNumber totalConceptCards totalChunks processingCompletedAt')
+            .sort({ chapterNumber: 1 })
+            .lean();
+
+        res.json({
+            hasChapters: chapters.length > 0,
+            chapters
+        });
+
+    } catch (error) {
+        console.error('Error fetching student chapters:', error);
+        res.status(500).json({ message: 'Failed to fetch chapters' });
+    }
+});
+
 module.exports = router;

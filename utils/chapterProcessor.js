@@ -1,0 +1,323 @@
+// utils/chapterProcessor.js
+// Background pipeline: PDF text extraction → AI concept card generation → chunking → embedding → store
+// Processes teacher-uploaded chapter PDFs into RAG-ready data
+
+const { callLLM } = require('./openaiClient');
+const { generateEmbedding } = require('./openaiClient');
+const ChapterContent = require('../models/chapterContent');
+const logger = require('./logger');
+
+// Rough token estimate: ~4 chars per token for English text
+const CHARS_PER_TOKEN = 4;
+const CHUNK_TARGET_TOKENS = 300;   // ~300 tokens per chunk
+const CHUNK_OVERLAP_TOKENS = 50;   // ~50 token overlap between chunks
+
+/**
+ * Main processing pipeline for a chapter PDF
+ * Runs as a background job — updates processingStatus as it progresses
+ * @param {string} chapterContentId - The ChapterContent document ID
+ * @param {Buffer} pdfBuffer - The raw PDF file buffer
+ */
+async function processChapter(chapterContentId, pdfBuffer) {
+  const chapter = await ChapterContent.findById(chapterContentId);
+  if (!chapter) {
+    logger.error(`[ChapterProcessor] Chapter ${chapterContentId} not found`);
+    return;
+  }
+
+  try {
+    chapter.processingStatus = 'extracting';
+    chapter.processingStartedAt = new Date();
+    await chapter.save();
+
+    // Step 1: Extract text from PDF
+    logger.info(`[ChapterProcessor] Extracting text from PDF for chapter ${chapter.chapterNumber}: ${chapter.chapterTitle}`);
+    const { text, pageCount } = await extractTextFromPDF(pdfBuffer);
+
+    if (!text || text.trim().length < 100) {
+      throw new Error('PDF text extraction yielded insufficient text. The PDF may be image-based or empty.');
+    }
+
+    chapter.rawText = text;
+    chapter.pageCount = pageCount;
+
+    // Step 2: Generate concept cards via AI
+    chapter.processingStatus = 'generating-cards';
+    await chapter.save();
+
+    logger.info(`[ChapterProcessor] Generating concept cards for chapter ${chapter.chapterNumber}`);
+    const { conceptCards, outline } = await generateConceptCards(text, chapter.chapterTitle, chapter.chapterNumber);
+
+    chapter.conceptCards = conceptCards;
+    chapter.outline = outline;
+    chapter.totalConceptCards = conceptCards.length;
+
+    // Step 3: Chunk the text for RAG
+    chapter.processingStatus = 'chunking';
+    await chapter.save();
+
+    logger.info(`[ChapterProcessor] Chunking text for chapter ${chapter.chapterNumber}`);
+    const rawChunks = chunkText(text, CHUNK_TARGET_TOKENS, CHUNK_OVERLAP_TOKENS);
+
+    // Step 4: Generate embeddings for each chunk
+    chapter.processingStatus = 'embedding';
+    await chapter.save();
+
+    logger.info(`[ChapterProcessor] Generating embeddings for ${rawChunks.length} chunks`);
+    const chunks = await embedChunks(rawChunks);
+
+    chapter.chunks = chunks;
+    chapter.totalChunks = chunks.length;
+    chapter.totalTokens = chunks.reduce((sum, c) => sum + (c.tokenCount || 0), 0);
+
+    // Done
+    chapter.processingStatus = 'ready';
+    chapter.processingCompletedAt = new Date();
+    await chapter.save();
+
+    logger.info(`[ChapterProcessor] Chapter ${chapter.chapterNumber} processing complete: ${conceptCards.length} concept cards, ${chunks.length} chunks`);
+
+  } catch (error) {
+    logger.error(`[ChapterProcessor] Failed to process chapter ${chapterContentId}: ${error.message}`);
+    chapter.processingStatus = 'failed';
+    chapter.processingError = error.message;
+    await chapter.save();
+  }
+}
+
+/**
+ * Extract text from a PDF buffer using pdf-parse
+ * @param {Buffer} pdfBuffer
+ * @returns {Promise<{text: string, pageCount: number}>}
+ */
+async function extractTextFromPDF(pdfBuffer) {
+  // pdf-parse is a lightweight PDF text extraction library
+  // It's already available via pdfjs-dist in package.json
+  let pdfParse;
+  try {
+    pdfParse = require('pdf-parse');
+  } catch {
+    // Fallback: use pdfjs-dist if pdf-parse isn't installed
+    return extractTextWithPdfjs(pdfBuffer);
+  }
+
+  const data = await pdfParse(pdfBuffer);
+  return {
+    text: data.text || '',
+    pageCount: data.numpages || 0
+  };
+}
+
+/**
+ * Fallback PDF extraction using pdfjs-dist
+ */
+async function extractTextWithPdfjs(pdfBuffer) {
+  const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+  const doc = await pdfjsLib.getDocument({ data: pdfBuffer }).promise;
+  const pages = [];
+
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(' ');
+    pages.push(pageText);
+  }
+
+  return {
+    text: pages.join('\n\n'),
+    pageCount: doc.numPages
+  };
+}
+
+/**
+ * Use AI to generate concept cards and outline from chapter text
+ * @param {string} text - Full chapter text
+ * @param {string} chapterTitle - Chapter title
+ * @param {number} chapterNumber - Chapter number
+ * @returns {Promise<{conceptCards: Array, outline: Array}>}
+ */
+async function generateConceptCards(text, chapterTitle, chapterNumber) {
+  // Truncate to fit in context window (~12K tokens of chapter text)
+  const maxChars = 48000;
+  const truncatedText = text.length > maxChars ? text.substring(0, maxChars) + '\n\n[Text truncated...]' : text;
+
+  const prompt = `You are a curriculum expert. Analyze this textbook chapter and produce structured learning data.
+
+CHAPTER ${chapterNumber}: "${chapterTitle}"
+
+TEXT:
+${truncatedText}
+
+Respond with VALID JSON only (no markdown code fences). Use this exact structure:
+{
+  "conceptCards": [
+    {
+      "title": "Concept name",
+      "summary": "2-3 sentence explanation of the concept",
+      "keyTerms": ["term1", "term2"],
+      "orderIndex": 0,
+      "depthLevel": "intro|core|advanced"
+    }
+  ],
+  "outline": [
+    {
+      "sectionTitle": "Section name",
+      "sectionNumber": "5.1",
+      "orderIndex": 0,
+      "conceptCardIndexes": [0, 1]
+    }
+  ]
+}
+
+Rules:
+- Extract 5-15 concept cards depending on chapter length
+- Order concepts as they appear in the chapter
+- Each concept card should be self-contained (understandable without reading the chapter)
+- Key terms should include scientific vocabulary introduced in that concept
+- The outline should reflect the chapter's actual section structure
+- depthLevel: "intro" for foundational/review, "core" for main concepts, "advanced" for extension material`;
+
+  const messages = [{ role: 'user', content: prompt }];
+  const response = await callLLM('gpt-4o-mini', messages, {
+    temperature: 0.3,
+    max_tokens: 4000
+  });
+
+  const responseText = response.choices[0].message.content.trim();
+
+  // Parse JSON (handle potential markdown fences)
+  let parsed;
+  try {
+    const jsonStr = responseText.replace(/^```json?\n?/i, '').replace(/\n?```$/i, '');
+    parsed = JSON.parse(jsonStr);
+  } catch (parseError) {
+    logger.error(`[ChapterProcessor] Failed to parse concept card JSON: ${parseError.message}`);
+    // Return minimal fallback
+    return {
+      conceptCards: [{
+        title: chapterTitle,
+        summary: `Chapter ${chapterNumber} content`,
+        keyTerms: [],
+        orderIndex: 0,
+        depthLevel: 'core'
+      }],
+      outline: [{
+        sectionTitle: chapterTitle,
+        sectionNumber: `${chapterNumber}.1`,
+        orderIndex: 0,
+        conceptCardIndexes: [0]
+      }]
+    };
+  }
+
+  // Map outline conceptCardIndexes to actual concept card IDs (will be set after save)
+  const conceptCards = (parsed.conceptCards || []).map((card, idx) => ({
+    title: card.title,
+    summary: card.summary,
+    keyTerms: card.keyTerms || [],
+    orderIndex: card.orderIndex ?? idx,
+    depthLevel: card.depthLevel || 'core'
+  }));
+
+  const outline = (parsed.outline || []).map((section, idx) => ({
+    sectionTitle: section.sectionTitle,
+    sectionNumber: section.sectionNumber || `${chapterNumber}.${idx + 1}`,
+    orderIndex: section.orderIndex ?? idx,
+    conceptCardIds: [] // Will be populated after concept cards are saved with _ids
+  }));
+
+  return { conceptCards, outline };
+}
+
+/**
+ * Split text into overlapping chunks for RAG
+ * @param {string} text - Full chapter text
+ * @param {number} targetTokens - Target tokens per chunk
+ * @param {number} overlapTokens - Overlap between consecutive chunks
+ * @returns {Array<{text: string, chunkIndex: number, tokenCount: number}>}
+ */
+function chunkText(text, targetTokens = CHUNK_TARGET_TOKENS, overlapTokens = CHUNK_OVERLAP_TOKENS) {
+  const targetChars = targetTokens * CHARS_PER_TOKEN;
+  const overlapChars = overlapTokens * CHARS_PER_TOKEN;
+  const chunks = [];
+
+  // Split by paragraphs first for natural boundaries
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+
+  let currentChunk = '';
+  let chunkIndex = 0;
+
+  for (const paragraph of paragraphs) {
+    const trimmedParagraph = paragraph.trim();
+
+    // If adding this paragraph exceeds target, save current chunk and start new one
+    if (currentChunk.length + trimmedParagraph.length > targetChars && currentChunk.length > 0) {
+      chunks.push({
+        text: currentChunk.trim(),
+        chunkIndex: chunkIndex++,
+        tokenCount: Math.ceil(currentChunk.length / CHARS_PER_TOKEN)
+      });
+
+      // Start new chunk with overlap from end of previous
+      const overlapText = currentChunk.slice(-overlapChars);
+      currentChunk = overlapText + '\n\n' + trimmedParagraph;
+    } else {
+      currentChunk += (currentChunk ? '\n\n' : '') + trimmedParagraph;
+    }
+  }
+
+  // Don't forget the last chunk
+  if (currentChunk.trim().length > 0) {
+    chunks.push({
+      text: currentChunk.trim(),
+      chunkIndex: chunkIndex,
+      tokenCount: Math.ceil(currentChunk.length / CHARS_PER_TOKEN)
+    });
+  }
+
+  return chunks;
+}
+
+/**
+ * Generate embeddings for an array of text chunks
+ * Processes in batches to respect rate limits
+ * @param {Array<{text: string, chunkIndex: number, tokenCount: number}>} rawChunks
+ * @returns {Promise<Array>} Chunks with embeddings added
+ */
+async function embedChunks(rawChunks) {
+  const BATCH_SIZE = 5; // Process 5 at a time to avoid rate limits
+  const results = [];
+
+  for (let i = 0; i < rawChunks.length; i += BATCH_SIZE) {
+    const batch = rawChunks.slice(i, i + BATCH_SIZE);
+
+    const embeddedBatch = await Promise.all(
+      batch.map(async (chunk) => {
+        const embedding = await generateEmbedding(chunk.text);
+        return {
+          text: chunk.text,
+          embedding,
+          chunkIndex: chunk.chunkIndex,
+          tokenCount: chunk.tokenCount
+        };
+      })
+    );
+
+    results.push(...embeddedBatch);
+
+    // Brief pause between batches to be kind to rate limits
+    if (i + BATCH_SIZE < rawChunks.length) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+  }
+
+  return results;
+}
+
+module.exports = {
+  processChapter,
+  extractTextFromPDF,
+  generateConceptCards,
+  chunkText,
+  embedChunks
+};

@@ -38,6 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/graphTool.css" />
   <link rel="stylesheet" href="/css/mathGraph.css" />
   <link rel="stylesheet" href="/css/returning-user-modal.css" />
+  <link rel="stylesheet" href="/css/textbook-mode.css" />
   <link rel="stylesheet" href="/css/mobile-redesign.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
@@ -151,6 +152,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <button id="open-feedback-modal-btn" style="display: none;">Send Feedback</button>
       <div id="roleSwitcher" class="role-switcher" style="display: none;">
         <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch Role"></select>
+      </div>
+
+      <!-- Textbook Mode Toggle -->
+      <div class="textbook-toggle-wrapper" title="Switch between Tutor and Textbook mode">
+        <span id="textbook-label-tutor" class="textbook-toggle-label active">Tutor</span>
+        <label class="textbook-toggle-switch">
+          <input type="checkbox" id="textbook-mode-toggle" aria-label="Toggle textbook mode" />
+          <span class="textbook-toggle-slider"></span>
+        </label>
+        <span id="textbook-label-textbook" class="textbook-toggle-label">Textbook</span>
+      </div>
+
+      <!-- Chapter Indicator Badge -->
+      <div id="chapter-indicator" class="chapter-indicator">
+        <i class="fas fa-book-open"></i>
+        <span class="chapter-indicator-text"></span>
       </div>
 
       <!-- Theme toggle — always visible -->
@@ -1823,6 +1840,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/chat-pinch-zoom.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/theme-toggle.js"></script>
+  <script src="/js/textbook-mode.js"></script>
   <script>
     // Wire up the dark mode toggle button in the header
     (function() {
