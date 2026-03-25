@@ -29,6 +29,8 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
+const { buildTextbookContext, generateBioSystemPrompt } = require('../utils/bioPromptCompact');
+const ChapterContent = require('../models/chapterContent');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -709,7 +711,32 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Use dedicated course prompt when in course mode, generic prompt otherwise
         let systemPrompt;
         let courseScaffoldCtx = null; // Captured for step-context reminder below
-        if (conversationContextForPrompt?.courseSession && !masteryContext) {
+
+        // TEXTBOOK MODE: When active and student has an active chapter, use biology textbook prompt
+        if (user.textbookMode && user.activeChapterId) {
+            try {
+                const chapter = await ChapterContent.getChapterForRAG(user.activeChapterId);
+                if (chapter && chapter.processingStatus === 'ready') {
+                    const textbookContext = await buildTextbookContext({
+                        chapter,
+                        studentMessage: message,
+                        currentConceptIndex: user.currentConceptIndex || 0,
+                        tokenBudget: 1500
+                    });
+                    systemPrompt = generateBioSystemPrompt({
+                        user: studentProfileForPrompt,
+                        tutorName: currentTutor,
+                        textbookMode: true,
+                        textbookContext
+                    });
+                }
+            } catch (textbookError) {
+                console.error('[Chat] Textbook mode context failed, falling back to default:', textbookError.message);
+                // Fall through to default prompt below
+            }
+        }
+
+        if (!systemPrompt && conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
             const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
             const courseCtx = courseSessionDoc ? loadCourseContext(courseSessionDoc) : null;
@@ -735,7 +762,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             } else {
                 systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
             }
-        } else {
+        }
+
+        if (!systemPrompt) {
             systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
         }
 
