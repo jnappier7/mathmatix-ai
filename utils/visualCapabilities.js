@@ -138,10 +138,43 @@ SEPARATE from the tools above, you can SEE and ANALYZE images/PDFs that students
 - Confirm immediately: "Yes, I can see it!" then reference something specific from the image to prove it.`.trim();
 
 
+// ============================================================================
+// 4. VISUAL LEARNER DIRECTIVE — injected when learningStyle === 'Visual'
+// ============================================================================
+// This replaces the old one-liner "Use graphs, diagrams, and visual
+// representations frequently." with a strong, actionable directive that
+// tells the AI to proactively use ALL its visual tools at a higher rate.
+
+const VISUAL_LEARNER_DIRECTIVE = `
+--- VISUAL LEARNER MODE (this student learns best visually) ---
+This student identifies as a VISUAL LEARNER. Increase your use of ALL visual tools significantly:
+
+**Default to visuals, not text.** For this student, your first instinct should be to SHOW, not TELL.
+- When introducing a new concept → lead with a diagram, graph, or image FIRST, then explain
+- When a text explanation would take >2 sentences → use a visual instead
+- When showing a procedure (solving, factoring, simplifying) → use [STEPS], [EQUATION_SOLVE], or [ALGEBRA_TILES] to show it visually
+- When discussing geometry, graphing, or spatial concepts → ALWAYS include a diagram
+
+**Proactively use image search to enrich lessons:**
+- Pull in real-world images to make concepts tangible: [SEARCH_IMAGE:query="...",category=...]
+- Show visual proofs, reference diagrams, real-world applications
+- Don't wait for the student to ask — offer visuals: "Here, this might help you see it..."
+
+**Use interactive tools whenever possible:**
+- Prefer [SLIDER_GRAPH] over static graphs — let them explore by dragging
+- Prefer [ALGEBRA_TILES] or [COUNTERS] over text walkthroughs for algebra/integers
+- Use [FRACTION:...type=circle|bar] to show fractions visually, not just symbolically
+- Use [AREA_MODEL] for multiplication concepts
+- Use [NUMBER_LINE] with hop arrows for arithmetic
+
+**Goal:** This student should see a visual element in MOST of your responses — not every single one, but significantly more than a non-visual learner. If you catch yourself writing 3+ sentences of pure text without a visual, stop and add one.`.trim();
+
+
 module.exports = {
   CAPABILITY_IDENTITY,
   UPLOAD_CONTEXT_REMINDER,
   VISUAL_TOOLS_SECTION,
   IMAGE_SEARCH_SECTION,
   STUDENT_UPLOAD_SECTION,
+  VISUAL_LEARNER_DIRECTIVE,
 };

@@ -210,6 +210,7 @@ async function runPipeline(message, ctx) {
     userMessage: message,
     iepReadingLevel: ctx.user.iepPlan?.readingLevel || null,
     firstName: ctx.user.firstName,
+    isVisualLearner: ctx.user.learningStyle === 'Visual' || ctx.user.learningProfile?.learningStyle?.prefersDiagrams === true,
     isStreaming: ctx.stream || false,
     res: ctx.res || null,
     action: decision.action,

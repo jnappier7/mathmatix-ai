@@ -17,6 +17,7 @@ const {
   VISUAL_TOOLS_SECTION,
   IMAGE_SEARCH_SECTION,
   STUDENT_UPLOAD_SECTION,
+  VISUAL_LEARNER_DIRECTIVE,
 } = require('./visualCapabilities');
 
 // ============================================================================
@@ -376,10 +377,14 @@ When ${firstName} asks about themselves ("What grade am I in?", "What do you kno
   if (tonePreference === 'encouraging') personalization.push('Lots of positive reinforcement, celebrate small wins.');
   if (tonePreference === 'straightforward') personalization.push('Be direct and efficient. Skip excessive praise.');
   if (tonePreference === 'casual') personalization.push('Keep it relaxed and conversational.');
-  if (learningStyle === 'Visual') personalization.push('Use graphs, diagrams, and visual representations frequently.');
   if (learningStyle === 'Kinesthetic') personalization.push('Ground concepts in real-world, hands-on scenarios.');
   if (learningStyle === 'Auditory') personalization.push('Focus on clear verbal explanations, talk through concepts step by step.');
   if (personalization.length) parts.push(personalization.join('\n'));
+
+  // Visual learner gets a dedicated directive section (not just a one-liner)
+  if (learningStyle === 'Visual') {
+    parts.push(VISUAL_LEARNER_DIRECTIVE);
+  }
 
   // Rapport context — what we learned during the intro conversation
   const rapportAnswers = userProfile.learningProfile?.rapportAnswers;
@@ -574,6 +579,11 @@ function buildLearningProfileCompact(userProfile) {
     if (profile.learningStyle.prefersStepByStep) styles.push('step-by-step');
     if (profile.learningStyle.prefersDiscovery) styles.push('discovery');
     if (styles.length) parts.push(`Learns best with: ${styles.join(', ')}`);
+    // If assessment detected visual preference but learningStyle field wasn't set,
+    // still inject the visual learner directive
+    if (profile.learningStyle.prefersDiagrams && userProfile.learningStyle !== 'Visual') {
+      parts.push('This student prefers diagrams and visual explanations — use [DIAGRAM], [FUNCTION_GRAPH], [SEARCH_IMAGE], and other visual tools more frequently.');
+    }
   }
 
   if (profile.pastStruggles?.length) {

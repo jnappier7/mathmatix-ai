@@ -273,9 +273,9 @@ async function verify(responseText, context = {}) {
 
   // ── 4. Visual teaching enforcement ──
   if (context.userMessage) {
-    text = enforceVisualTeaching(context.userMessage, text);
+    text = enforceVisualTeaching(context.userMessage, text, '', context.isVisualLearner || false);
     // Auto-inject visualizations for recognized math topics (ChatGPT-style)
-    text = autoVisualizeByTopic(context.userMessage, text);
+    text = autoVisualizeByTopic(context.userMessage, text, context.isVisualLearner || false);
   }
 
   // ── 5. Parse visual commands ──
