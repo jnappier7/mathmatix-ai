@@ -65,7 +65,10 @@ INTERACTIVE DIAGRAMS (students can see and explore these):
 
 INTERACTIVE GRAPHS (live, explorable graphs):
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"]
-[SLIDER_GRAPH:fn=EXPR,params=name:default:min:max,title="T"] — student can drag sliders to explore how parameters change the graph
+[SLIDER_GRAPH:fn=EXPR,params="name:default:min:max",title="T"] — student can drag sliders to explore how parameters change the graph
+  Example: [SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5",title="Explore slope"]
+  Multiple sliders: [SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-5:5",title="Explore quadratics"]
+  IMPORTANT: Always QUOTE the params value with double quotes when using multiple sliders.
 [POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"]
 
 NUMBER LINES (interactive, with animations):
@@ -75,11 +78,16 @@ NUMBER LINES (interactive, with animations):
 [NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"] — inequality shading with open/closed circle
 
 VISUAL MODELS:
-[FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C]
+[FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C] — shows a pie/bar with shaded parts. ONLY for simple fractions (parts of a whole, like 3/4 of a pizza). Do NOT use for rational expressions, algebraic fractions, or any fraction with variables.
 [PIE_CHART:data="L1:V1,L2:V2",title="T"]
 [BAR_CHART:data="L1:V1,L2:V2",title="T"]
 [UNIT_CIRCLE:angle=V]
 [AREA_MODEL:a=V,b=V] — visual multiplication model
+
+**When NOT to use visuals (important):**
+- [FRACTION] is for simple numeric fractions (3/4, 2/5) — NOT for rational expressions like \\( \\frac{x^2-4}{x+3} \\), algebraic fractions, or any expression with variables. A pie chart of "x² - 4 out of x + 3 pieces" makes no sense.
+- Don't force a visual that doesn't match the concept. If the topic is piecewise functions, continuity, limits, or abstract algebra — a text explanation or [STEPS] walkthrough is often better than a chart/diagram.
+- Match the visual to the CONCEPT, not just the keywords. "Rational function" contains "fraction" but needs a [FUNCTION_GRAPH], not a [FRACTION] circle.
 
 INTERACTIVE WHITEBOARD & STEP TOOLS:
 [WHITEBOARD_WRITE:content] — write on the shared whiteboard (student can draw back!)

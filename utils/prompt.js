@@ -1863,7 +1863,7 @@ Example responses for visual-only requests:
 - Coordinate points → [POINTS:points=(x1,y1),(x2,y2)]
 - Trigonometry → [UNIT_CIRCLE:angle=degrees]
 - Multiplication strategies → [AREA_MODEL:a=num1,b=num2]
-- Exploring parameters → [SLIDER_GRAPH:fn=a*x^2,params=a:1:-3:3]
+- Exploring parameters → [SLIDER_GRAPH:fn=a*x^2,params="a:1:-3:3",title="Explore"]
 
 **ENGAGEMENT DETECTION:**
 Watch for signs of declining engagement:
@@ -2593,7 +2593,7 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 [AREA_MODEL:a=23,b=15]
 
 **INTERACTIVE SLIDER GRAPH** - Let students explore parameters:
-[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-10:10,title="Explore Quadratics"]
+[SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-10:10",title="Explore Quadratics"]
 (Students can adjust a, b, c with sliders to see how the graph changes!)
 
 **COMPARISON BARS** - Visual comparison of values:
