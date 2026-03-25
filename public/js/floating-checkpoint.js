@@ -308,10 +308,13 @@ class FloatingCheckpoint {
       } else {
         feedbackEl.classList.add('incorrect');
         feedbackEl.classList.remove('correct');
-        const brief = data.correctAnswer
-          ? `<div class="correct-answer-hint">${this.formatMath(data.correctAnswer)}</div>`
-          : '';
-        feedbackEl.innerHTML = `<i class="fas fa-times-circle"></i> Not quite.${brief}`;
+        // Prefer LLM feedback (natural explanation), fall back to answer key
+        const explanation = data.feedback
+          ? `<div class="correct-answer-hint">${this.formatMath(data.feedback)}</div>`
+          : data.correctAnswer
+            ? `<div class="correct-answer-hint">${this.formatMath(data.correctAnswer)}</div>`
+            : '';
+        feedbackEl.innerHTML = `<i class="fas fa-times-circle"></i> Not quite.${explanation}`;
 
         // Render math in feedback
         if (window.renderMathInElement) {

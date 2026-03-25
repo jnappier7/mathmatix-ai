@@ -21,7 +21,7 @@ const fs = require('fs');
 
 const CourseSession = require('../models/courseSession');
 const { verifyAnswer } = require('../utils/mathSolver');
-const { processModuleComplete } = require('../utils/pipeline/coursePersist');
+const { callLLM } = require('../utils/llmGateway');
 
 /**
  * POST /start — Initialize a checkpoint session
@@ -169,11 +169,27 @@ router.post('/submit', async (req, res) => {
     const problem = problems[currentIndex];
     const correctAnswer = answerKeys[problem.id] || problem.answer;
 
-    // Grade the answer
+    // Grade the answer — try deterministic first, then LLM fallback
     let isCorrect = false;
+    let gradingFeedback = null;
     if (!skipped && answer) {
+      // Fast path: deterministic verification for numeric/simple answers
       const verification = verifyAnswer(answer, correctAnswer);
       isCorrect = verification.isCorrect;
+
+      // If deterministic check fails, use LLM for semantic equivalence.
+      // Open-ended math answers have many equivalent forms that string
+      // matching can't catch (e.g., "cos θ" vs "cosθ", "k=2" vs "2").
+      if (!isCorrect) {
+        try {
+          const gradeResult = await gradeWithLLM(problem.question, correctAnswer, answer);
+          isCorrect = gradeResult.correct;
+          gradingFeedback = gradeResult.feedback;
+        } catch (err) {
+          console.error('[Checkpoint] LLM grading fallback failed:', err.message);
+          // Stick with deterministic result
+        }
+      }
     }
 
     // Record response
@@ -199,7 +215,8 @@ router.post('/submit', async (req, res) => {
     const result = {
       correct: isCorrect,
       skipped: !!skipped,
-      // Brief explanation if wrong (from the answer key, not full solution)
+      // Brief explanation if wrong — prefer LLM feedback, fall back to answer key
+      feedback: !isCorrect ? (gradingFeedback || null) : null,
       correctAnswer: !isCorrect ? correctAnswer : null,
       progress: {
         current: nextIndex + 1,
@@ -308,6 +325,48 @@ function loadModuleData(courseSession) {
   } catch {
     return null;
   }
+}
+
+/**
+ * Grade an open-ended answer using a lightweight LLM call.
+ * Handles equivalent forms that deterministic verifyAnswer misses.
+ */
+async function gradeWithLLM(question, answerKey, studentAnswer) {
+  const prompt = `You are a math answer grader. Compare the student's answer to the answer key.
+
+Question: ${question}
+Answer Key: ${answerKey}
+Student Answer: ${studentAnswer}
+
+Rules:
+- Accept equivalent mathematical forms (e.g., "2" and "k=2" are both correct if the answer is k=2)
+- Accept reasonable notation variations (spaces, order of terms, simplified vs unsimplified)
+- For multi-part answers: mark correct only if ALL parts are substantially correct
+- If incorrect, give a ONE sentence explanation
+
+Respond in JSON only: {"correct": true or false, "feedback": "Brief feedback"}`;
+
+  const result = await callLLM('gpt-4o-mini', [
+    { role: 'system', content: prompt },
+  ], { temperature: 0, max_tokens: 100 });
+
+  const text = result.choices[0]?.message?.content?.trim() || '';
+  try {
+    // Try to parse JSON from the response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      return {
+        correct: !!parsed.correct,
+        feedback: parsed.feedback || null,
+      };
+    }
+  } catch {
+    // If JSON parsing fails, check for obvious correct/incorrect keywords
+    const isCorrect = /correct.*true|"correct"\s*:\s*true/i.test(text);
+    return { correct: isCorrect, feedback: null };
+  }
+  return { correct: false, feedback: null };
 }
 
 function buildSummary(checkpointState, moduleData) {
