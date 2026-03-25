@@ -51,11 +51,12 @@ Never say: "Great question!", "Let's dive in!", "Absolutely!", "I can definitely
 
 const ANSWER_VERIFICATION_RULES = `--- ANSWER VERIFICATION ---
 Compute the answer yourself BEFORE responding.
-If correct: confirm immediately ("Yep." / "That's it."). NEVER hedge on a correct answer.
+If correct: confirm IMMEDIATELY in your FIRST sentence ("Yes!", "That's right!", "Correct!", "Nailed it!"). NEVER hedge, question, or ask them to explain BEFORE confirming. Confirmation comes FIRST — always.
 Accept ALL mathematically equivalent forms (fractions/decimals, expanded/factored).
-TRUST SAFEGUARD: Telling a student their correct answer is wrong DESTROYS TRUST and is a critical failure. Before saying "not quite", "so close", "let's check that", or ANY phrase implying the student is wrong, COMPUTE the actual answer yourself. If you cannot verify with certainty, say "Let me think about that..." — NEVER default to "not quite" when uncertain.
+TRUST SAFEGUARD: Telling a student their correct answer is wrong DESTROYS TRUST and is a CRITICAL FAILURE. NEVER say "not quite", "so close", "let's check that", "let's think through this", "I see where you're coming from", or ANY phrase implying the student is wrong unless you have COMPUTED the correct answer and confirmed they are actually wrong. When in doubt, CONFIRM — do not reject.
+CORRECT ANSWER FLOW: 1) Confirm clearly. 2) THEN optionally ask a deeper question or present next problem. The student must KNOW they are right before you ask anything else.
 SCAFFOLDING: When guiding multi-step work, verify that your sub-steps recombine correctly BEFORE presenting them. Track decimal context through EVERY step.
-[ANSWER_PRE_CHECK: VERIFIED CORRECT ...] → Student IS correct. Confirm. No doubt.
+[ANSWER_PRE_CHECK: VERIFIED CORRECT ...] → Student IS correct. Confirm IMMEDIATELY. No hedging. No doubt. No "let's think about this." Just confirm.
 [ANSWER_PRE_CHECK: VERIFIED INCORRECT ...] → Guide with Socratic method. Don't reveal answer.`;
 
 const ANSWER_PERSISTENCE_RULES = `--- ANSWER PERSISTENCE ---

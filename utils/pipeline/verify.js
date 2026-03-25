@@ -197,6 +197,50 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2c. False-rejection guard (CRITICAL — protects correct answers) ──
+  // When the pipeline has VERIFIED the student's answer is correct
+  // (action === CONFIRM_CORRECT), the AI must NOT cast doubt on it.
+  // This is a deterministic safety net — the pipeline already computed
+  // the answer, so we don't depend on the LLM to judge correctness.
+  if (context.action === ACTIONS.CONFIRM_CORRECT) {
+    const trimmedText = text.trim();
+
+    // Detect rejection/doubt language at the start of a verified-correct response
+    const falseRejectionOpener = /^(hmm[,.]?\s*|well[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)[^.!?]*[.!?]?\s*|not\s+quite[.!,]*\s*|close[,!.]*\s*(?:but\s+)?|almost[.!,]*\s*|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from[^.!?]*[.!?]?\s*|let'?s\s+check\s+that[^.!?]*[.!?]?\s*|are\s+you\s+sure[^.!?]*[.!?]?\s*|let'?s\s+see[.!,]*\s*|that'?s\s+not\s+(?:quite|exactly)[^.!?]*[.!?]?\s*|so\s+close[.!,]*\s*|you'?re\s+on\s+the\s+right\s+track[^.!?]*(?:but)[^.!?]*[.!?]?\s*|good\s+(?:try|attempt|thinking)[,.]?\s*but\s+[^.!?]*[.!?]?\s*)/i;
+
+    if (falseRejectionOpener.test(trimmedText)) {
+      // Strip the rejection opener and prepend a clear confirmation
+      text = trimmedText.replace(falseRejectionOpener, '').trim();
+      // Don't prepend if remaining text already starts with confirmation
+      const alreadyConfirms = /^(yes[.!,]|correct[.!,]|that'?s\s+(right|correct|it)[.!,]|you\s+got\s+it[.!,]|exactly[.!,]|nailed\s+it[.!,]|right[.!,]|yep[.!,]|bingo[.!,])/i;
+      if (!alreadyConfirms.test(text)) {
+        text = `Yes! That's correct. ${text}`;
+      }
+      flags.push('false_rejection_corrected');
+      console.log(`[Verify] Corrected false rejection on verified-correct answer (action: ${context.action})`);
+
+      if (context.isStreaming && context.res) {
+        try {
+          context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+        } catch (e) { /* client disconnected */ }
+      }
+    } else {
+      // Even if no rejection language, ensure the response starts with confirmation
+      const startsWithConfirmation = /^(yes[.!,\s]|correct[.!,\s]|that'?s\s+(right|correct|it)|you\s+got\s+it|exactly[.!,\s]|nailed\s+it|right[.!,\s]|yep[.!,\s]|bingo|🎉|✅|nice|great|perfect|awesome|well\s+done|good\s+job|you\s+nailed)/i;
+      if (!startsWithConfirmation.test(trimmedText)) {
+        text = `That's right! ${trimmedText}`;
+        flags.push('confirmation_prepended');
+        console.log(`[Verify] Prepended confirmation to verified-correct answer`);
+
+        if (context.isStreaming && context.res) {
+          try {
+            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+          } catch (e) { /* client disconnected */ }
+        }
+      }
+    }
+  }
+
   // ── 3. IEP reading level enforcement ──
   if (context.iepReadingLevel) {
     const readCheck = checkReadingLevel(text, context.iepReadingLevel);

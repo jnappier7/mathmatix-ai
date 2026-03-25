@@ -35,7 +35,9 @@ function buildActionPrompt(decision) {
   switch (action) {
     case ACTIONS.CONFIRM_CORRECT:
       parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified answer: ${diagnosis.correctAnswer}).`);
-      parts.push('Confirm immediately. Be specific about what they did right. Then present the next problem or check understanding.');
+      parts.push('CONFIRM IMMEDIATELY in your FIRST sentence — use clear, unambiguous language: "Yes!", "That\'s right!", "Correct!", "Nailed it!", "Exactly!", "You got it!" etc.');
+      parts.push('Do NOT hedge, question, or ask them to explain BEFORE confirming. The confirmation must come FIRST, with zero doubt.');
+      parts.push('AFTER confirming, you may optionally ask a deeper question or present the next problem. But the student must KNOW they are right before anything else.');
       break;
 
     case ACTIONS.GUIDE_INCORRECT:

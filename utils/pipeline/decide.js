@@ -206,9 +206,16 @@ function decideCore(observation, diagnosis, context) {
         }
       }
     } else {
-      // Unverifiable — let AI handle naturally
+      // Unverifiable — pipeline couldn't parse the problem to verify.
+      // The LLM MUST compute the answer itself before responding.
       decision.action = ACTIONS.CONTINUE_CONVERSATION;
-      decision.directives.push('Could not verify answer. Evaluate naturally.');
+      decision.directives.push(
+        'ANSWER VERIFICATION REQUIRED: The pipeline could not verify this answer automatically.',
+        'You MUST compute the correct answer yourself BEFORE responding.',
+        'If the student is correct: confirm IMMEDIATELY and clearly ("Yes!", "That\'s right!", "Correct!"). Do NOT hedge.',
+        'If the student is wrong: guide with Socratic method. Do NOT reveal the answer.',
+        'CRITICAL: When in doubt, default to CONFIRMING, not rejecting. Falsely rejecting a correct answer destroys trust.'
+      );
     }
     return decision;
   }
