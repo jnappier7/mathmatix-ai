@@ -150,28 +150,77 @@
 
 - **AI chat tutor** — Real-time conversational math help
 - **Voice chat** — Spoken conversations with the AI tutor (text-to-speech via Cartesia)
-- **Interactive whiteboard** — Draw, sketch, and work out problems visually
 - **Math OCR / photo upload** — Snap a picture of handwritten homework and the AI reads it (Mathpix)
 - **AI lesson planner** — Teachers can generate lesson plans with AI assistance
 
 ---
 
-## 13. Compliance, Privacy & Data Security
+## 13. FERPA Compliance
 
-- **FERPA compliance** — All student data handling meets FERPA requirements
-- **COPPA compliance** — Parental/school consent workflows for students under 13
-- **Consent management** — Track and manage privacy consents (parent, school official, self)
-- **Data export** — Export student data on request
-- **Data deletion requests** — Process deletion requests in compliance with policy
-- **Amendment requests** — Handle requests to correct student records
-- **Education record access logs** — Audit trail of who accessed student data and when
-- **Impersonation logs** — Track admin impersonation of user accounts for accountability
-- **CSRF protection** — Cross-site request forgery prevention
-- **Student data security** — Encrypted storage and secure transmission of all data
+The platform implements comprehensive safeguards aligned with the Family Educational Rights and Privacy Act (20 U.S.C. § 1232g):
+
+### Right to Inspect & Review (34 CFR § 99.10)
+- **Full data export** — Parents and admins can export a student's complete education record as a downloadable JSON file, including: profile data, all tutoring conversations, course sessions, screener/placement results, grading results, uploaded files (metadata), feedback submissions, and direct messages. Sensitive fields (password hashes, tokens) are automatically excluded.
+
+### Right to Request Amendment (34 CFR § 99.20)
+- **Amendment request workflow** — Parents or students can submit formal requests to correct inaccurate records (profile info, IEP plans, assessment results, grading results, conversation summaries, skill mastery data, or learning profiles). Each request goes through a tracked lifecycle: *Submitted → Under Review → Approved / Denied / Partially Approved*. Admins review and provide written notes on each decision.
+- **Right-to-hearing notification** — When an amendment request is denied, the system automatically records that the parent was notified of their right to a formal hearing, per 34 CFR § 99.21.
+
+### Right to Consent to Disclosure (34 CFR § 99.30)
+- **Consent verification** — The system checks whether disclosure requires consent based on the recipient and context. Built-in FERPA exceptions are enforced: school officials with legitimate educational interest, DPA partners (contractors under direct school control), and anonymized aggregate research data do not require additional consent.
+
+### Directory Information Opt-Out (34 CFR § 99.37)
+- **Granular opt-out controls** — Parents can opt a student out of directory information disclosure. When opted out, the student's name is replaced with "Student" on leaderboards, and their grade level, math course, gamification level, and badge names are hidden from any public-facing displays. Opt-out date is recorded for audit purposes.
+
+### Annual Notification (34 CFR § 99.7)
+- **Automated annual rights notice** — Once per school year (using an August 1 cutoff), the platform sends parents an email summarizing their four FERPA rights: (1) right to inspect and review records, (2) right to request amendment, (3) right to consent to disclosure, and (4) right to opt out of directory information. The notice includes Department of Education contact information for filing complaints. The system tracks when each notification was sent and for which school year.
+
+### Education Record Access Log (34 CFR § 99.32)
+- **Comprehensive access audit trail** — Every time a student's education record is accessed, the system logs: who accessed it (user ID, role, name), what was accessed (profile, IEP, conversations, assessments, etc.), how it was accessed (view, export, API read, impersonation, report generation), the legitimate educational interest justifying access, and request metadata (IP address, user agent, timestamp). Logs are automatically purged after 5 years per FERPA best practices.
+- **Legitimate interest categories tracked** — Teaching/instruction, academic support, parental right of access, student self-access, administrative function, data export request, audit compliance, and system automated access.
 
 ---
 
-## 14. Communication & Outreach
+## 14. COPPA Compliance
+
+The platform implements age-appropriate consent pathways required by the Children's Online Privacy Protection Act (15 U.S.C. §§ 6501–6506):
+
+### Three Consent Pathways
+
+- **Individual Parent Consent (under 13)** — When a student under 13 signs up independently, the system requires verifiable parental consent. The student provides a parent email address, the system generates a secure token (SHA-256 hashed) with a 7-day expiration, and sends a verification link to the parent. The student account has *limited access* until the parent clicks the link and confirms consent. This prevents children from bypassing COPPA by entering random email addresses.
+
+- **School/District DPA Consent (School Exception)** — When a school or district signs a Data Processing Agreement, an admin can grant consent on behalf of all enrolled students in bulk. The school acts as the parent's agent under the COPPA school exception. Each consent record captures: school name, district name, DPA reference ID, and DPA expiration date. Admins can batch-grant consent to entire classes at once via `/api/consent/grant/batch`.
+
+- **Self-Consent for Ages 13+** — Students aged 13–17 can self-consent. The system calculates age from the `dateOfBirth` field and verifies the student meets the age threshold. Consent is recorded with "age self-certification" as the verification method.
+
+### Consent Scope
+All consent pathways cover the same full scope: data collection, AI processing, progress tracking, teacher visibility, parent visibility, and IEP data processing.
+
+### Consent Status Tracking
+- **Immutable consent history** — Every consent action (grant, revocation, update) is appended to an immutable audit trail that is never deleted or overwritten. Each record captures: consent type, who granted it (with role and name), timestamp, scope, verification method, IP address, and user agent.
+- **Consent states** — Each student's consent status is tracked as one of: *Pending*, *Active*, *Revoked*, or *Expired*.
+- **Consent revocation** — Parents or admins can revoke consent at any time. Revocation is recorded with a reason, the student's consent status changes to "revoked," but the consent history is preserved for audit purposes. Data is not automatically deleted upon revocation — a separate deletion request must be submitted.
+
+### Parent-Child Linking
+- **Parent invite code flow** — A parent generates an invite code (7-day expiration). When their child signs up with this code, the accounts are automatically linked and parental consent is auto-granted. This allows children under 13 to sign up with pre-approved parent authorization.
+- **Student invite code flow** — A student generates a link code and shares it with their parent. When the parent signs up using the code, the accounts are linked and consent is granted.
+
+---
+
+## 15. Data Privacy & Security
+
+- **Cascade data deletion** — When a student is deleted, the system removes all related data across 12+ collections: conversations, course sessions, screener sessions, grading results, uploaded files, feedback, direct messages, enrollment references, announcement receipts, parent links, active sessions, and finally the user document itself. Impersonation logs are anonymized (not deleted) to preserve the audit trail.
+- **Deletion audit trail** — Every deletion is recorded in an append-only `DeletionAudit` collection that can never be modified: target user, who requested it, their role, reason, collections affected, document counts per collection, any errors, and duration.
+- **Role-based deletion permissions** — Admins can delete any student immediately. Parents can delete their linked child's data. Teachers and students must submit a deletion request for admin approval.
+- **Automated data retention policy** — Configurable daily sweep automatically cleans up aged data: inactive conversations after 365 days, student uploads after 30 days, feedback and messages after 365 days, completed assessments and grading results after 3 years, impersonation logs after 3 years, and sessions after 7 days. Supports custom per-district retention policies via school DPA.
+- **Impersonation controls** — Admins can view the platform as any non-admin user; teachers can view as their assigned students; parents can view as their linked children. All impersonation sessions are read-only by default (write operations blocked), auto-expire after 20 minutes, and log every page visited and action attempted. Password, email, and admin routes are always blocked during impersonation.
+- **CSRF protection** — Cross-site request forgery prevention on all state-changing endpoints
+- **Encrypted sensitive fields** — Field-level encryption on email addresses, IP addresses, and user agents in impersonation logs
+- **COPPA-compliant image search** — Student image searches are sanitized and filtered for safe educational content
+
+---
+
+## 16. Communication & Outreach
 
 - **Bulk email campaigns** — Send targeted emails to user segments (teachers, parents, students)
 - **Parent messaging** — Parents can communicate with teachers through the platform
@@ -180,7 +229,7 @@
 
 ---
 
-## 15. Onboarding & Support
+## 17. Onboarding & Support
 
 - **Demo walkthrough mode** — Guided product tour for new users
 - **Local setup documentation** — IT-friendly setup guides
