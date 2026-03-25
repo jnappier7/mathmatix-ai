@@ -14,6 +14,7 @@
 export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUser }) {
     let iepChunkProblemCount = 0;
     const IEP_CHUNK_SIZE = 4; // check in after every 4 problems
+    let extendedTimeIndicatorInjected = false;
 
     function escapeHtml(text) {
         const div = document.createElement('div');
@@ -38,11 +39,16 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             console.log('[IEP] Reduced distraction mode enabled');
         }
 
-        // Large Print / High Contrast: force high-contrast theme
+        // Large Print / High Contrast: force high-contrast theme and override ThemeToggle
         if (accom.largePrintHighContrast) {
             document.body.classList.remove('dark-mode');
             document.body.classList.add('iep-high-contrast');
-            console.log('[IEP] High contrast mode enabled (dark mode overridden)');
+            // Override the theme system so dark mode can't re-engage
+            if (window.ThemeToggle) {
+                window.ThemeToggle.setTheme('light');
+            }
+            document.documentElement.setAttribute('data-theme', 'light');
+            console.log('[IEP] High contrast mode enabled (dark mode overridden, theme locked to light)');
         }
 
         // Calculator Always Available
@@ -65,12 +71,26 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
         if (accom.mathAnxietySupport) {
             document.body.classList.add('iep-anxiety-support');
         }
+
+        // Extended Time: show reassuring indicator so student knows they have extra time
+        if (accom.extendedTime && !extendedTimeIndicatorInjected) {
+            injectExtendedTimeIndicator();
+        }
     }
 
     // --- Per-response IEP features (from chat API response) ---
 
     function handleIepResponseFeatures(iepFeatures) {
         if (!iepFeatures) return;
+
+        // Auto-show calculator when the accommodation is active
+        if (iepFeatures.showCalculator && window.floatingCalc) {
+            const calcEl = document.getElementById('floating-calculator');
+            if (calcEl && calcEl.style.display === 'none') {
+                window.floatingCalc.showCalculator();
+                console.log('[IEP] Auto-opened calculator for calculatorAllowed accommodation');
+            }
+        }
 
         // Auto Read-Aloud: trigger TTS automatically on new AI messages
         if (iepFeatures.autoReadAloud) {
@@ -542,6 +562,30 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
         }
 
         render();
+    }
+
+    // --- Extended Time Indicator ---
+
+    function injectExtendedTimeIndicator() {
+        if (document.getElementById('iep-extended-time-indicator')) return;
+        extendedTimeIndicatorInjected = true;
+
+        const indicator = document.createElement('div');
+        indicator.id = 'iep-extended-time-indicator';
+        indicator.className = 'iep-extended-time-indicator';
+        indicator.innerHTML = '<i class="fas fa-clock"></i> <span>Extended Time (1.5x)</span>';
+        indicator.title = 'You have extended time on timed activities';
+        indicator.setAttribute('aria-label', 'Extended time accommodation active: 1.5x time on timed activities');
+        document.body.appendChild(indicator);
+
+        // Auto-hide after 8 seconds, then show only on hover of the icon
+        setTimeout(() => {
+            indicator.classList.add('collapsed');
+        }, 8000);
+
+        indicator.addEventListener('click', () => {
+            indicator.classList.toggle('collapsed');
+        });
     }
 
     // --- Multiplication Chart ---
