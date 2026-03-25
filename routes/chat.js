@@ -1535,12 +1535,66 @@ async function handleGreetingRequest(req, res, userId) {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
 
-        // Always create a fresh conversation for greetings.
-        // This ensures new logins start a clean session instead of
-        // resuming stale or course-linked conversations.
-        let activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
-        user.activeConversationId = activeConversation._id;
-        await user.save();
+        // Reuse the current active conversation if it's recent and not a
+        // course/mastery session. This prevents duplicate conversations when
+        // the student refreshes the page or the frontend re-sends the greeting.
+        let activeConversation = null;
+        const REUSE_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+
+        if (user.activeConversationId) {
+            const existing = await Conversation.findById(user.activeConversationId);
+            if (
+                existing &&
+                existing.isActive &&
+                !existing.isMastery &&
+                existing.conversationType !== 'course' &&
+                (Date.now() - new Date(existing.lastActivity || existing.startDate).getTime()) < REUSE_WINDOW_MS
+            ) {
+                // Recent, non-course, non-mastery conversation — reuse it
+                activeConversation = existing;
+            }
+        }
+
+        if (!activeConversation) {
+            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+            user.activeConversationId = activeConversation._id;
+            await user.save();
+        }
+
+        // If we reused an existing conversation that already has an AI greeting,
+        // return that greeting instead of generating (and saving) a duplicate.
+        if (activeConversation.messages && activeConversation.messages.length > 0) {
+            const lastAiMsg = [...activeConversation.messages]
+                .reverse()
+                .find(m => m.role === 'assistant');
+            if (lastAiMsg) {
+                const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+                const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+                // Update lastActivity so subsequent reuse checks stay fresh
+                await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
+
+                const useStreaming = req.query.stream === 'true';
+                if (useStreaming) {
+                    res.setHeader('Content-Type', 'text/event-stream');
+                    res.setHeader('Cache-Control', 'no-cache');
+                    res.setHeader('Connection', 'keep-alive');
+                    res.setHeader('X-Accel-Buffering', 'no');
+                    res.flushHeaders();
+                    res.write(`data: ${JSON.stringify({ chunk: lastAiMsg.content })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: currentTutor.voiceId, isGreeting: true })}\n\n`);
+                    return res.end();
+                }
+                return res.json({
+                    text: lastAiMsg.content,
+                    voiceId: currentTutor.voiceId,
+                    isGreeting: true,
+                    userXp: user.xp || 0,
+                    userLevel: user.level || 1,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+                });
+            }
+        }
 
         // Gather context for the ghost message
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";

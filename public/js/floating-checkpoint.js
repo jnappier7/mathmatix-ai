@@ -16,12 +16,18 @@ class FloatingCheckpoint {
     this.totalProblems = 0;
     this.passThreshold = 70;
 
+    // Drag state
+    this._dragging = false;
+    this._dragOffsetX = 0;
+    this._dragOffsetY = 0;
+
     this.init();
   }
 
   init() {
     if (!this.container) return;
     this.setupEventListeners();
+    this.setupDrag();
     console.log('[FloatingCheckpoint] Initialized');
   }
 
@@ -31,6 +37,19 @@ class FloatingCheckpoint {
     if (closeBtn) {
       closeBtn.addEventListener('click', () => this.close());
     }
+
+    // Collapse button
+    const collapseBtn = this.container.querySelector('.checkpoint-collapse-btn');
+    if (collapseBtn) {
+      collapseBtn.addEventListener('click', () => this.toggleCollapse());
+    }
+
+    // Escape key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isOpen) {
+        this.close();
+      }
+    });
 
     // Submit button
     const submitBtn = document.getElementById('checkpoint-submit-btn');
@@ -69,11 +88,86 @@ class FloatingCheckpoint {
     }
   }
 
+  // ── Drag support ──
+  setupDrag() {
+    const header = this.container.querySelector('.checkpoint-header-bar');
+    if (!header) return;
+
+    header.addEventListener('mousedown', (e) => {
+      // Don't drag when clicking buttons
+      if (e.target.closest('button')) return;
+      this._startDrag(e.clientX, e.clientY);
+    });
+
+    header.addEventListener('touchstart', (e) => {
+      if (e.target.closest('button')) return;
+      const touch = e.touches[0];
+      this._startDrag(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    document.addEventListener('mousemove', (e) => this._onDrag(e.clientX, e.clientY));
+    document.addEventListener('touchmove', (e) => {
+      if (!this._dragging) return;
+      const touch = e.touches[0];
+      this._onDrag(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    document.addEventListener('mouseup', () => this._endDrag());
+    document.addEventListener('touchend', () => this._endDrag());
+  }
+
+  _startDrag(clientX, clientY) {
+    this._dragging = true;
+    const rect = this.container.getBoundingClientRect();
+    this._dragOffsetX = clientX - rect.left;
+    this._dragOffsetY = clientY - rect.top;
+    // Switch from centered positioning to absolute positioning
+    this.container.style.transform = 'none';
+    this.container.style.left = rect.left + 'px';
+    this.container.style.top = rect.top + 'px';
+  }
+
+  _onDrag(clientX, clientY) {
+    if (!this._dragging) return;
+    let newLeft = clientX - this._dragOffsetX;
+    let newTop = clientY - this._dragOffsetY;
+    // Keep within viewport
+    const rect = this.container.getBoundingClientRect();
+    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - rect.width));
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - rect.height));
+    this.container.style.left = newLeft + 'px';
+    this.container.style.top = newTop + 'px';
+  }
+
+  _endDrag() {
+    this._dragging = false;
+  }
+
+  // ── Collapse support ──
+  toggleCollapse() {
+    this.container.classList.toggle('collapsed');
+    const btn = this.container.querySelector('.checkpoint-collapse-btn i');
+    if (btn) {
+      const isCollapsed = this.container.classList.contains('collapsed');
+      btn.className = isCollapsed ? 'fas fa-plus' : 'fas fa-minus';
+    }
+  }
+
   async open(moduleInfo) {
     if (!this.container) return;
     this.container.classList.add('active');
+    this.container.classList.remove('collapsed');
     this.isOpen = true;
     this.showScreen('instruction');
+
+    // Reset position to center
+    this.container.style.left = '50%';
+    this.container.style.top = '50%';
+    this.container.style.transform = 'translate(-50%, -50%)';
+
+    // Reset collapse button icon
+    const btn = this.container.querySelector('.checkpoint-collapse-btn i');
+    if (btn) btn.className = 'fas fa-minus';
 
     // Pre-populate instruction screen with module info if available
     const titleEl = document.getElementById('checkpoint-module-title');
@@ -84,7 +178,7 @@ class FloatingCheckpoint {
 
   close() {
     if (!this.container) return;
-    this.container.classList.remove('active');
+    this.container.classList.remove('active', 'collapsed');
     this.isOpen = false;
   }
 
