@@ -97,7 +97,7 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         const func = extractFunctionFromMessage(studentMessage, aiResponse);
         if (func) {
             console.log(`[VisualEnforcer] 🎯 Auto-injecting FUNCTION_GRAPH: ${func}`);
-            return `Here's the graph!\n\n[FUNCTION_GRAPH:fn=${func},title="Graph of ${func}"]\n\n${shortenResponse(aiResponse)}`;
+            return `Seeing the graph makes this way easier to understand — look at the shape and where it crosses the axes.\n\n[FUNCTION_GRAPH:fn=${func},title="Graph of ${func}"]\n\n${shortenResponse(aiResponse)}`;
         }
     }
 
@@ -106,7 +106,7 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         const fraction = extractFractionFromMessage(studentMessage);
         if (fraction) {
             console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION: ${fraction.num}/${fraction.denom}`);
-            return `Here's what ${fraction.num}/${fraction.denom} looks like!\n\n[FRACTION:numerator=${fraction.num},denominator=${fraction.denom},type=circle]\n\n${shortenResponse(aiResponse)}`;
+            return `Fractions make more sense when you can see the pieces. Here's what \\( \\frac{${fraction.num}}{${fraction.denom}} \\) looks like:\n\n[FRACTION:numerator=${fraction.num},denominator=${fraction.denom},type=circle]\n\n${shortenResponse(aiResponse)}`;
         }
     }
 
@@ -115,14 +115,14 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         const point = extractPointFromMessage(studentMessage);
         console.log(`[VisualEnforcer] 🎯 Auto-injecting NUMBER_LINE`);
         const pointParam = point !== null ? `,points=[${point}],highlight=${point}` : '';
-        return `Here's the number line!\n\n[NUMBER_LINE:min=-10,max=10${pointParam}]\n\n${shortenResponse(aiResponse)}`;
+        return `A number line helps you see where numbers live and how they relate to each other.\n\n[NUMBER_LINE:min=-10,max=10${pointParam}]\n\n${shortenResponse(aiResponse)}`;
     }
 
     // UNIT CIRCLE / TRIG REQUESTS
     if (isUnitCircleRequest(lowerMessage)) {
         const angle = extractAngleFromMessage(studentMessage);
         console.log(`[VisualEnforcer] 🎯 Auto-injecting UNIT_CIRCLE: ${angle}°`);
-        return `Let's see it on the unit circle!\n\n[UNIT_CIRCLE:angle=${angle}]\n\n${shortenResponse(aiResponse)}`;
+        return `The unit circle connects angles to their sine and cosine values — the x-coordinate is cosine, the y-coordinate is sine.\n\n[UNIT_CIRCLE:angle=${angle}]\n\n${shortenResponse(aiResponse)}`;
     }
 
     // COORDINATE POINT REQUESTS
@@ -130,7 +130,7 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         const points = extractPointsFromMessage(studentMessage);
         if (points) {
             console.log(`[VisualEnforcer] 🎯 Auto-injecting POINTS: ${points}`);
-            return `Here are the points plotted!\n\n[POINTS:points=${points},title="Coordinate Points"]\n\n${shortenResponse(aiResponse)}`;
+            return `Plotting points helps you see the pattern — look at where each point lands on the grid.\n\n[POINTS:points=${points},title="Coordinate Points"]\n\n${shortenResponse(aiResponse)}`;
         }
     }
 
@@ -139,7 +139,7 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         const counters = extractCountersFromMessage(studentMessage);
         if (counters) {
             console.log(`[VisualEnforcer] 🎯 Auto-injecting COUNTERS: +${counters.positive}, -${counters.negative}`);
-            return `Let's use counters to see this!\n\n[COUNTERS:positive=${counters.positive},negative=${counters.negative},animate=true,label="${counters.label}"]\n\n${shortenResponse(aiResponse)}`;
+            return `Counters make integer operations visual — positive and negative pair up to make zero. Watch what's left over!\n\n[COUNTERS:positive=${counters.positive},negative=${counters.negative},animate=true,label="${counters.label}"]\n\n${shortenResponse(aiResponse)}`;
         }
     }
 
@@ -947,7 +947,7 @@ const TOPIC_VISUALS = [
                 || combined.match(/a\s*=\s*(\d+)[\s,]+b\s*=\s*(\d+)/i);
             const a = sideMatch ? parseInt(sideMatch[1]) : 3;
             const b = sideMatch ? parseInt(sideMatch[2]) : 4;
-            return `\n\n[PYTHAGOREAN:a=${a},b=${b},proof=true]`;
+            return `\n\nSee how the squares on each side relate? The two smaller squares add up to the big one — that's the Pythagorean theorem in action.\n\n[PYTHAGOREAN:a=${a},b=${b},proof=true]`;
         }
     },
     {
@@ -959,7 +959,7 @@ const TOPIC_VISUALS = [
         },
         build(studentMsg) {
             const angle = extractAngleFromMessage(studentMsg);
-            return `\n\n[UNIT_CIRCLE:angle=${angle}]`;
+            return `\n\nThe unit circle connects angles to coordinates — each point on the circle gives you the cosine (x) and sine (y) of that angle.\n\n[UNIT_CIRCLE:angle=${angle}]`;
         }
     },
     {
@@ -971,21 +971,21 @@ const TOPIC_VISUALS = [
             let title = 'Sine Function';
             if (/\bcos(ine)?\b/i.test(lower)) { fn = 'cos(x)'; title = 'Cosine Function'; }
             if (/\btan(gent)?\b/i.test(lower)) { fn = 'tan(x)'; title = 'Tangent Function'; }
-            return `\n\n[FUNCTION_GRAPH:fn=${fn},xMin=-6.28,xMax=6.28,yMin=-3,yMax=3,title="${title}"]\n\n[UNIT_CIRCLE:angle=45]`;
+            return `\n\nHere's what the function looks like — notice how it repeats in a wave pattern. The unit circle on the right shows where those values come from.\n\n[FUNCTION_GRAPH:fn=${fn},xMin=-6.28,xMax=6.28,yMin=-3,yMax=3,title="${title}"]\n\n[UNIT_CIRCLE:angle=45]`;
         }
     },
     {
         name: 'Quadratic / Parabola',
         detect: /\b(quadratic|parabola|vertex\s*form|standard\s*form.*ax|completing\s*the\s*square|a\s*x\s*²|ax\^2)\b/i,
         build() {
-            return `\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-5:5,title="Explore: y = ax² + bx + c"]`;
+            return `\n\nTry dragging the sliders to see how each coefficient changes the parabola. What happens when you make \\( a \\) negative?\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-5:5,title="Explore: y = ax² + bx + c"]`;
         }
     },
     {
         name: 'Slope / Linear equations',
         detect: /\b(slope|rise\s*(over|and)\s*run|y\s*=\s*m\s*x\s*\+\s*b|slope.?intercept|linear\s+(equation|function))\b/i,
         build() {
-            return `\n\n[SLIDER_GRAPH:fn=m*x+b,params=m:1:-5:5,b:0:-5:5,title="Explore: y = mx + b (slope-intercept form)"]`;
+            return `\n\nDrag the sliders to explore — \\( m \\) controls the steepness (slope) and \\( b \\) shifts the line up or down (y-intercept). What happens when \\( m \\) is negative?\n\n[SLIDER_GRAPH:fn=m*x+b,params=m:1:-5:5,b:0:-5:5,title="Explore: y = mx + b (slope-intercept form)"]`;
         }
     },
     {
@@ -994,14 +994,15 @@ const TOPIC_VISUALS = [
         build(studentMsg) {
             const lower = studentMsg.toLowerCase();
             let degrees = 45;
-            if (/obtuse/i.test(lower)) degrees = 120;
-            else if (/right/i.test(lower)) degrees = 90;
-            else if (/supplementary/i.test(lower)) degrees = 135;
-            else if (/complementary/i.test(lower)) degrees = 60;
+            let description = 'an acute angle (less than 90°)';
+            if (/obtuse/i.test(lower)) { degrees = 120; description = 'an obtuse angle (between 90° and 180°)'; }
+            else if (/right/i.test(lower)) { degrees = 90; description = 'a right angle (exactly 90°)'; }
+            else if (/supplementary/i.test(lower)) { degrees = 135; description = 'a supplementary angle pair'; }
+            else if (/complementary/i.test(lower)) { degrees = 60; description = 'a complementary angle pair'; }
             // Try to pull a specific degree from the message
             const degMatch = lower.match(/(\d+)\s*(?:°|degree|deg)/i);
-            if (degMatch) degrees = parseInt(degMatch[1]);
-            return `\n\n[ANGLE:degrees=${degrees}]`;
+            if (degMatch) { degrees = parseInt(degMatch[1]); description = `a ${degrees}° angle`; }
+            return `\n\nHere's ${description} — see how the opening between the two rays creates the measurement.\n\n[ANGLE:degrees=${degrees}]`;
         }
     },
     {
@@ -1011,7 +1012,7 @@ const TOPIC_VISUALS = [
             const frac = extractFractionFromMessage(studentMsg);
             const num = frac ? frac.num : 3;
             const denom = frac ? frac.denom : 4;
-            return `\n\n[FRACTION:numerator=${num},denominator=${denom},type=circle]`;
+            return `\n\nA fraction shows parts of a whole — the bottom number (denominator) tells you how many equal pieces, and the top (numerator) tells you how many you have.\n\n[FRACTION:numerator=${num},denominator=${denom},type=circle]`;
         }
     },
     {
@@ -1021,9 +1022,9 @@ const TOPIC_VISUALS = [
             // Try to extract inequality expression
             const ineqMatch = studentMsg.match(/([x])\s*([<>]=?)\s*(-?\d+)/);
             if (ineqMatch) {
-                return `\n\n[INEQUALITY:expression=${ineqMatch[1]}${ineqMatch[2]}${ineqMatch[3]},variable=x]`;
+                return `\n\nThe shaded region shows all the values that make the inequality true. Notice whether the circle is open (not included) or filled (included).\n\n[INEQUALITY:expression=${ineqMatch[1]}${ineqMatch[2]}${ineqMatch[3]},variable=x]`;
             }
-            return `\n\n[INEQUALITY:expression=x>3,variable=x]`;
+            return `\n\nThe shaded region shows all the values that make the inequality true.\n\n[INEQUALITY:expression=x>3,variable=x]`;
         }
     },
     {
@@ -1033,7 +1034,7 @@ const TOPIC_VISUALS = [
             const numMatch = studentMsg.match(/(\d{2,})\s*[×x*]\s*(\d{2,})/);
             const a = numMatch ? parseInt(numMatch[1]) : 23;
             const b = numMatch ? parseInt(numMatch[2]) : 15;
-            return `\n\n[AREA_MODEL:a=${a},b=${b}]`;
+            return `\n\nThe area model breaks the multiplication into smaller, easier pieces — each box is one partial product, and adding them all gives you the total.\n\n[AREA_MODEL:a=${a},b=${b}]`;
         }
     }
 ];
