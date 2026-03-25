@@ -46,6 +46,7 @@ jest.mock('../../utils/readability', () => ({
 
 jest.mock('../../utils/visualCommandEnforcer', () => ({
   enforceVisualTeaching: jest.fn((_userMsg, text) => text),
+  autoVisualizeByTopic: jest.fn((_userMsg, text) => text),
 }));
 
 jest.mock('../../utils/visualTeachingParser', () => ({
