@@ -91,20 +91,20 @@ async function processChapter(chapterContentId, pdfBuffer) {
  * @returns {Promise<{text: string, pageCount: number}>}
  */
 async function extractTextFromPDF(pdfBuffer) {
-  // pdf-parse is a lightweight PDF text extraction library
-  // It's already available via pdfjs-dist in package.json
-  let pdfParse;
+  let PDFParse;
   try {
-    pdfParse = require('pdf-parse');
+    ({ PDFParse } = require('pdf-parse'));
   } catch {
     // Fallback: use pdfjs-dist if pdf-parse isn't installed
     return extractTextWithPdfjs(pdfBuffer);
   }
 
-  const data = await pdfParse(pdfBuffer);
+  const parser = new PDFParse({ data: pdfBuffer });
+  const result = await parser.getText();
+  const text = (result.pages || []).map(p => p.text).join('\n\n');
   return {
-    text: data.text || '',
-    pageCount: data.numpages || 0
+    text,
+    pageCount: result.total || 0
   };
 }
 
