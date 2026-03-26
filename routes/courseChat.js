@@ -26,6 +26,7 @@ const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/se
 const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
 const { evaluateStepCompletion } = require('../utils/pipeline/stepEvaluator');
 const { computeXpBreakdown, applyXpToUser } = require('../utils/pipeline/xpEngine');
+const { emitGamificationEvent } = require('../utils/gamificationEvents');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -483,6 +484,7 @@ router.post('/', async (req, res) => {
         let xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
         let leveledUp = false;
         let tutorsJustUnlocked = [];
+        let avatarBuilderUnlocked = false;
         const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
 
         if (!isParentCourse) {
@@ -497,6 +499,22 @@ router.post('/', async (req, res) => {
             const xpResult = applyXpToUser(user, xpBreakdown);
             leveledUp = xpResult.leveledUp;
             tutorsJustUnlocked = xpResult.tutorsUnlocked;
+            avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked || false;
+
+            // Gamification events (daily quests, weekly challenges)
+            if (problemAnswered) {
+                emitGamificationEvent(user, 'problemSolved', {
+                    correct: wasCorrect,
+                    skillId: ext.skillStarted || ext.skillMastered || null,
+                    domain: ext.skillDomain || null,
+                });
+                if (ext.skillMastered) {
+                    emitGamificationEvent(user, 'skillMastered', { skillId: ext.skillMastered });
+                }
+                if (ext.skillStarted) {
+                    emitGamificationEvent(user, 'newSkillStarted', { skillId: ext.skillStarted });
+                }
+            }
         }
 
         // AI time tracking — use atomic $inc to prevent race conditions with concurrent requests
@@ -579,6 +597,7 @@ router.post('/', async (req, res) => {
                 xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
                 voiceId: currentTutor.voiceId,
                 newlyUnlockedTutors: tutorsJustUnlocked,
+                avatarBuilderUnlocked,
                 iepFeatures,
                 problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
                 sessionStats: {
