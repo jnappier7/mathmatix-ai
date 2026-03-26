@@ -17,11 +17,41 @@
   ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "variable-expressions", "reteachFocus": "Defining variables, translating verbal phrases to algebraic expressions, evaluating expressions by substitution", "resources": ["foundations_algebra_module.json - scaffold phases 1, 3"] },
-    { "skillId": "order-of-operations", "reteachFocus": "GEMS hierarchy, left-to-right rule for equal-priority operations, nested grouping symbols", "resources": ["foundations_algebra_module.json - scaffold phase 2"] },
-    { "skillId": "algebraic-properties", "reteachFocus": "Commutative property (addition/multiplication), associative property (regrouping), identifying which property justifies a given step", "resources": ["foundations_algebra_module.json - scaffold phase 4"] },
-    { "skillId": "combining-like-terms", "reteachFocus": "Identifying like terms (same variable, same exponent), combining coefficients, recognizing terms that cannot be combined (e.g., x vs x²)", "resources": ["foundations_algebra_module.json - scaffold phases 5-6"] },
-    { "skillId": "distributive-property", "reteachFocus": "Distributing positive and negative factors over addition and subtraction, distributing then combining like terms, multi-group distribution", "resources": ["foundations_algebra_module.json - scaffold phases 5-6"] }
+    {
+      "skillId": "variable-expressions",
+      "reteachFocus": "Defining variables, translating verbal phrases to algebraic expressions, evaluating expressions by substitution",
+      "resources": [
+        "foundations_algebra_module.json - scaffold phases 1, 3"
+      ]
+    },
+    {
+      "skillId": "order-of-operations",
+      "reteachFocus": "GEMS hierarchy, left-to-right rule for equal-priority operations, nested grouping symbols",
+      "resources": [
+        "foundations_algebra_module.json - scaffold phase 2"
+      ]
+    },
+    {
+      "skillId": "algebraic-properties",
+      "reteachFocus": "Commutative property (addition/multiplication), associative property (regrouping), identifying which property justifies a given step",
+      "resources": [
+        "foundations_algebra_module.json - scaffold phase 4"
+      ]
+    },
+    {
+      "skillId": "combining-like-terms",
+      "reteachFocus": "Identifying like terms (same variable, same exponent), combining coefficients, recognizing terms that cannot be combined (e.g., x vs x²)",
+      "resources": [
+        "foundations_algebra_module.json - scaffold phases 5-6"
+      ]
+    },
+    {
+      "skillId": "distributive-property",
+      "reteachFocus": "Distributing positive and negative factors over addition and subtraction, distributing then combining like terms, multi-group distribution",
+      "resources": [
+        "foundations_algebra_module.json - scaffold phases 5-6"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
@@ -98,8 +128,8 @@
     },
     {
       "id": "a1u1-10",
-      "question": "ANALYSIS: The perimeter of a rectangle is given by 2(3x + 4) + 2(x - 1). (a) Simplify this expression completely. (b) Evaluate the perimeter when x = 5. (c) If the perimeter equals 54, find the value of x.",
-      "answer": "(a) Distribute: 6x + 8 + 2x - 2. Combine like terms: 8x + 6. (b) Substitute x = 5: 8(5) + 6 = 40 + 6 = 46. (c) Set 8x + 6 = 54: 8x = 48, so x = 6. Check: 8(6) + 6 = 48 + 6 = 54. Confirmed.",
+      "question": "ANALYSIS: The perimeter of a rectangle is given by 2(3x + 4) + 2(x - 1). (a) Simplify this expression completely. (b) Evaluate the perimeter when x = 5. (c) If x = 8, find the length of each side and verify the perimeter formula.",
+      "answer": "(a) Distribute: 6x + 8 + 2x - 2. Combine like terms: 8x + 6. (b) Substitute x = 5: 8(5) + 6 = 40 + 6 = 46. (c) When x = 8: length = 3(8) + 4 = 28, width = 8 - 1 = 7. Perimeter = 2(28) + 2(7) = 56 + 14 = 70. Check with simplified expression: 8(8) + 6 = 64 + 6 = 70. Confirmed.",
       "skill": "distributive-property",
       "difficulty": 6,
       "points": 14
@@ -115,6 +145,6 @@
     "a1u1-7": "3x² + 4x - 6",
     "a1u1-8": "-12x + 21",
     "a1u1-9": "5x + 26",
-    "a1u1-10": "(a) 8x + 6 (b) 46 (c) x = 6"
+    "a1u1-10": "(a) 8x + 6 (b) 46 (c) length=28, width=7, perimeter=70"
   }
 }

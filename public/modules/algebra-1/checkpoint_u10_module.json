@@ -16,10 +16,34 @@
   ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "simplifying-radicals", "reteachFocus": "Identifying perfect square factors, applying the product property √(ab) = √a·√b, simplifying radicals with variables, expressing results in simplest radical form", "resources": ["radicals_geometry_module.json - scaffold phases 1-2"] },
-    { "skillId": "operations-with-radicals", "reteachFocus": "Simplifying each radical before combining, adding and subtracting like radicals (same radicand), multiplying radical expressions", "resources": ["radicals_geometry_module.json - scaffold phases 2-3"] },
-    { "skillId": "pythagorean-theorem", "reteachFocus": "Applying a² + b² = c² to find missing sides, recognizing Pythagorean triples, identifying the hypotenuse in word problems, solving real-world right triangle problems", "resources": ["radicals_geometry_module.json - scaffold phases 4-6"] },
-    { "skillId": "distance-formula", "reteachFocus": "Using d = √((x₂ − x₁)² + (y₂ − y₁)²) to find distances between points, applying the midpoint formula, connecting the distance formula to the Pythagorean theorem", "resources": ["radicals_geometry_module.json - scaffold phases 7-8"] }
+    {
+      "skillId": "simplifying-radicals",
+      "reteachFocus": "Identifying perfect square factors, applying the product property √(ab) = √a·√b, simplifying radicals with variables, expressing results in simplest radical form",
+      "resources": [
+        "radicals_geometry_module.json - scaffold phases 1-2"
+      ]
+    },
+    {
+      "skillId": "operations-with-radicals",
+      "reteachFocus": "Simplifying each radical before combining, adding and subtracting like radicals (same radicand), multiplying radical expressions",
+      "resources": [
+        "radicals_geometry_module.json - scaffold phases 2-3"
+      ]
+    },
+    {
+      "skillId": "pythagorean-theorem",
+      "reteachFocus": "Applying a² + b² = c² to find missing sides, recognizing Pythagorean triples, identifying the hypotenuse in word problems, solving real-world right triangle problems",
+      "resources": [
+        "radicals_geometry_module.json - scaffold phases 4-6"
+      ]
+    },
+    {
+      "skillId": "distance-formula",
+      "reteachFocus": "Using d = √((x₂ − x₁)² + (y₂ − y₁)²) to find distances between points, applying the midpoint formula, connecting the distance formula to the Pythagorean theorem",
+      "resources": [
+        "radicals_geometry_module.json - scaffold phases 7-8"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
@@ -80,9 +104,9 @@
     },
     {
       "id": "a1u10-8",
-      "question": "Solve: √(2x + 3) = 7.",
-      "answer": "Square both sides: (√(2x + 3))² = 7². 2x + 3 = 49. 2x = 46. x = 23. Check: √(2(23) + 3) = √(46 + 3) = √49 = 7 ✓. The solution is x = 23.",
-      "skill": "simplifying-radicals",
+      "question": "Simplify: (3√2 + √6)(√2).",
+      "answer": "Distribute √2 to each term: 3√2 · √2 + √6 · √2 = 3·√4 + √12 = 3·2 + √(4·3) = 6 + 2√3.",
+      "skill": "operations-with-radicals",
       "difficulty": 4,
       "points": 10
     },
@@ -131,7 +155,7 @@
     "a1u10-5": "12. b² = 400 − 256 = 144. Triple: 12-16-20 (3-4-5 × 4).",
     "a1u10-6": "5 units. d = √(16+9) = √25 = 5.",
     "a1u10-7": "Midpoint: (-1, -1). Distance: 10 units. d = √(64+36) = √100 = 10.",
-    "a1u10-8": "x = 23. Square both sides: 2x + 3 = 49 → x = 23. Check: √49 = 7 ✓.",
+    "a1u10-8": "6 + 2√3. Distribute: 3√2·√2 + √6·√2 = 3(2) + √12 = 6 + 2√3.",
     "a1u10-9": "60 inches. 48² + 36² = 2304 + 1296 = 3600. √3600 = 60. Triple: 3-4-5 × 12.",
     "a1u10-10": "Student is wrong. √(a² + b²) ≠ a + b. Counterexample: √(9+16) = √25 = 5 ≠ 3+4 = 7. The square root does not distribute over addition. The hypotenuse is always shorter than the sum of the legs (triangle inequality).",
     "a1u10-spiral-1": "P ≈ 7,934 after 6 years. P = 5000(1.08)⁶.",

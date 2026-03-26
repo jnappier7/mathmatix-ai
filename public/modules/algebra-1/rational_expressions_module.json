@@ -158,7 +158,7 @@
       "title": "Solving Rational Equations",
       "content": "A **rational equation** is an equation that contains one or more rational expressions (fractions with variables in the denominator).\n\nExamples: 3/x + 1/4 = 5/x, or x/(x − 3) = 3/(x − 3) + 2.\n\n**Strategy for solving rational equations:**\n1. **Identify the LCD** of all fractions in the equation.\n2. **Multiply every term** on both sides of the equation by the LCD. This clears all denominators.\n3. **Solve** the resulting equation (which should have no fractions).\n4. **Check for extraneous solutions.** A solution is **extraneous** if it makes any denominator in the original equation equal to zero. Extraneous solutions must be rejected.\n\n**Why extraneous solutions occur:**\nWhen we multiply both sides by the LCD, we may introduce values that were not in the domain of the original equation. The LCD contains the variable, so multiplying by it can create solutions that make the original denominators zero. These are not true solutions — they are artifacts of the solving process.\n\n**Critical step:** After solving, you MUST substitute every candidate solution back into the original equation's denominators. If any denominator becomes zero, that solution is extraneous and must be rejected.\n\n**Possible outcomes:**\n- All candidate solutions are valid → report them as the solution set.\n- Some candidate solutions are extraneous → reject the extraneous ones, keep the valid ones.\n- ALL candidate solutions are extraneous → the equation has **no solution**.",
       "initialPrompt": "Consider the equation 1/x = 1/(x − 2). If you multiply both sides by x(x − 2), what equation do you get? What values of x would be excluded from the start?",
-      "lessonId": "adding-subtracting-rationals"
+      "lessonId": "solving-rational-equations"
     },
     {
       "type": "model",
@@ -183,7 +183,7 @@
         }
       ],
       "initialPrompt": "In the second example, the algebra produced x = 3, but we had to reject it because x = 3 makes the denominator (x − 3) equal to zero. Why can't we just 'plug in' x = 3 and say the answer is infinity or some large number? What does 'undefined' really mean here?",
-      "lessonId": "adding-subtracting-rationals"
+      "lessonId": "solving-rational-equations"
     },
     {
       "type": "independent_practice",
