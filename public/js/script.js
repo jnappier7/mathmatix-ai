@@ -1372,6 +1372,226 @@ document.addEventListener("DOMContentLoaded", () => {
     window.renderMathInElement = renderMathInElement;
     window.renderMarkdownMath = renderMarkdownMath;
 
+    /**
+     * Create a collapsed thumbnail preview of a drawing sequence.
+     * Renders a small canvas inline in the chat message.
+     * Click opens the full whiteboard with the drawing.
+     */
+    function createDrawingThumbnail(drawingSequence) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'drawing-thumbnail-wrapper';
+        wrapper.style.cssText = `
+            margin-top: 10px;
+            max-width: 220px;
+            max-height: 160px;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            background: #fafafa;
+            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        `;
+
+        // Create a small offscreen canvas to render the thumbnail
+        const thumbCanvas = document.createElement('canvas');
+        thumbCanvas.width = 320;
+        thumbCanvas.height = 240;
+        thumbCanvas.style.cssText = `
+            width: 220px;
+            height: 165px;
+            display: block;
+            border-radius: 12px;
+        `;
+
+        // Render a simplified preview of the drawing sequence on the thumbnail canvas
+        const ctx = thumbCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 320, 240);
+        renderDrawingThumbnail(ctx, drawingSequence, 320, 240);
+
+        wrapper.appendChild(thumbCanvas);
+
+        // "Tap to enlarge" hint
+        const hint = document.createElement('div');
+        hint.style.cssText = `
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 8px;
+            padding: 3px 8px;
+            font-size: 11px;
+            color: #666;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        `;
+        hint.innerHTML = '<span style="font-size: 13px;">⤢</span><span>Tap to enlarge</span>';
+        wrapper.appendChild(hint);
+
+        // Hover effects
+        wrapper.addEventListener('mouseenter', () => {
+            wrapper.style.transform = 'scale(1.02)';
+            wrapper.style.boxShadow = '0 4px 20px rgba(0,0,0,0.12)';
+        });
+        wrapper.addEventListener('mouseleave', () => {
+            wrapper.style.transform = '';
+            wrapper.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)';
+        });
+
+        // Click to open full whiteboard with the drawing
+        wrapper.addEventListener('click', () => {
+            if (typeof renderDrawing === 'function') {
+                renderDrawing(drawingSequence);
+            }
+        });
+
+        return wrapper;
+    }
+
+    /**
+     * Render a simplified preview of a drawing sequence onto a 2D canvas context.
+     * Drawing sequences use pixel coordinates (default canvas: 450x500).
+     * This scales them down to fit the thumbnail dimensions.
+     */
+    function renderDrawingThumbnail(ctx, sequence, width, height) {
+        if (!sequence || !Array.isArray(sequence)) return;
+
+        // Source canvas dimensions (from aiDrawingTools.js defaults)
+        const srcW = 450;
+        const srcH = 500;
+        const scaleX = width / srcW;
+        const scaleY = height / srcH;
+        const scale = Math.min(scaleX, scaleY);
+
+        // Center the scaled drawing
+        const offsetX = (width - srcW * scale) / 2;
+        const offsetY = (height - srcH * scale) / 2;
+
+        function sx(px) { return offsetX + px * scale; }
+        function sy(py) { return offsetY + py * scale; }
+
+        for (const item of sequence) {
+            ctx.save();
+            switch (item.type) {
+                case 'grid': {
+                    // Draw a light grid background
+                    const gs = (item.gridSize || 30) * scale;
+                    ctx.strokeStyle = '#e8e8e8';
+                    ctx.lineWidth = 0.5;
+                    const cX = sx(srcW / 2);
+                    const cY = sy(srcH / 2);
+                    for (let x = cX; x < width; x += gs) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+                    }
+                    for (let x = cX - gs; x > 0; x -= gs) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+                    }
+                    for (let y = cY; y < height; y += gs) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+                    }
+                    for (let y = cY - gs; y > 0; y -= gs) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+                    }
+                    // Axes
+                    ctx.strokeStyle = '#ccc';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(0, cY); ctx.lineTo(width, cY); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(cX, 0); ctx.lineTo(cX, height); ctx.stroke();
+                    break;
+                }
+                case 'line': {
+                    ctx.strokeStyle = item.color || '#333';
+                    ctx.lineWidth = Math.max(1, (item.width || 2) * scale);
+                    ctx.beginPath();
+                    if (item.points && item.points.length >= 4) {
+                        ctx.moveTo(sx(item.points[0]), sy(item.points[1]));
+                        ctx.lineTo(sx(item.points[2]), sy(item.points[3]));
+                    }
+                    ctx.stroke();
+                    break;
+                }
+                case 'circle': {
+                    const pos = item.position || [0, 0];
+                    const r = (item.radius || 4) * scale;
+                    ctx.beginPath();
+                    ctx.arc(sx(pos[0]) + r, sy(pos[1]) + r, r, 0, Math.PI * 2);
+                    if (item.fill && item.fill !== 'transparent') {
+                        ctx.fillStyle = item.fill;
+                        ctx.fill();
+                    }
+                    if (item.stroke) {
+                        ctx.strokeStyle = item.stroke;
+                        ctx.lineWidth = (item.strokeWidth || 1) * scale;
+                        ctx.stroke();
+                    }
+                    break;
+                }
+                case 'rectangle': {
+                    const pos = item.position || [item.x || 0, item.y || 0];
+                    const rw = (item.width || 50) * scale;
+                    const rh = (item.height || 50) * scale;
+                    if (item.fill && item.fill !== 'transparent') {
+                        ctx.fillStyle = item.fill;
+                        ctx.globalAlpha = item.opacity || 0.3;
+                        ctx.fillRect(sx(pos[0]), sy(pos[1]), rw, rh);
+                        ctx.globalAlpha = 1;
+                    }
+                    ctx.strokeStyle = item.stroke || item.color || '#333';
+                    ctx.lineWidth = (item.strokeWidth || 1) * scale;
+                    ctx.strokeRect(sx(pos[0]), sy(pos[1]), rw, rh);
+                    break;
+                }
+                case 'text': {
+                    const pos = item.position || [0, 0];
+                    ctx.fillStyle = item.color || '#333';
+                    const fontSize = Math.max(8, (item.fontSize || 14) * scale);
+                    ctx.font = `${fontSize}px system-ui, sans-serif`;
+                    ctx.textAlign = 'left';
+                    ctx.fillText(item.content || item.text || '', sx(pos[0]), sy(pos[1]) + fontSize);
+                    break;
+                }
+                case 'function': {
+                    ctx.strokeStyle = item.color || '#3b82f6';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    let started = false;
+                    const fn = item.function;
+                    if (fn) {
+                        const xMin = item.xMin || -10;
+                        const xMax = item.xMax || 10;
+                        const cX = srcW / 2;
+                        const cY = srcH / 2;
+                        const gs = 30; // grid size in pixels
+                        for (let px = 0; px < srcW; px += 3) {
+                            const mx = (px - cX) / gs;
+                            if (mx < xMin || mx > xMax) continue;
+                            try {
+                                const my = Function('x', `return ${fn}`)(mx);
+                                if (isFinite(my)) {
+                                    const canvasY = cY - my * gs;
+                                    if (!started) { ctx.moveTo(sx(px), sy(canvasY)); started = true; }
+                                    else ctx.lineTo(sx(px), sy(canvasY));
+                                } else { started = false; }
+                            } catch { started = false; }
+                        }
+                    }
+                    ctx.stroke();
+                    break;
+                }
+            }
+            ctx.restore();
+        }
+    }
+
+    // Expose createDrawingThumbnail globally
+    window.createDrawingThumbnail = createDrawingThumbnail;
+
     // Quick Reply Suggestion Chips (contextual help)
     const suggestionsContainer = document.getElementById('suggestion-chips-container');
 
@@ -2154,7 +2374,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (data.drawingSequence && typeof renderDrawing === 'function') {
-                renderDrawing(data.drawingSequence);
+                // Render as collapsed thumbnail in chat, click to open full whiteboard
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const thumbnail = createDrawingThumbnail(data.drawingSequence);
+                    latestMessage.appendChild(thumbnail);
+                } else {
+                    // Fallback: open whiteboard directly if no message element found
+                    renderDrawing(data.drawingSequence);
+                }
             }
 
             // Execute visual teaching commands
