@@ -29,8 +29,8 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
-const { buildTextbookContext, generateBioSystemPrompt } = require('../utils/bioPromptCompact');
-const ChapterContent = require('../models/chapterContent');
+// const { buildTextbookContext, generateBioSystemPrompt } = require('../utils/bioPromptCompact'); // Biology tutor prototype — disabled
+// const ChapterContent = require('../models/chapterContent'); // Biology tutor prototype — disabled
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -712,29 +712,29 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         let systemPrompt;
         let courseScaffoldCtx = null; // Captured for step-context reminder below
 
-        // TEXTBOOK MODE: When active and student has an active chapter, use biology textbook prompt
-        if (user.textbookMode && user.activeChapterId) {
-            try {
-                const chapter = await ChapterContent.getChapterForRAG(user.activeChapterId);
-                if (chapter && chapter.processingStatus === 'ready') {
-                    const textbookContext = await buildTextbookContext({
-                        chapter,
-                        studentMessage: message,
-                        currentConceptIndex: user.currentConceptIndex || 0,
-                        tokenBudget: 1500
-                    });
-                    systemPrompt = generateBioSystemPrompt({
-                        user: studentProfileForPrompt,
-                        tutorName: currentTutor,
-                        textbookMode: true,
-                        textbookContext
-                    });
-                }
-            } catch (textbookError) {
-                console.error('[Chat] Textbook mode context failed, falling back to default:', textbookError.message);
-                // Fall through to default prompt below
-            }
-        }
+        // TEXTBOOK MODE: Biology tutor prototype — disabled
+        // if (user.textbookMode && user.activeChapterId) {
+        //     try {
+        //         const chapter = await ChapterContent.getChapterForRAG(user.activeChapterId);
+        //         if (chapter && chapter.processingStatus === 'ready') {
+        //             const textbookContext = await buildTextbookContext({
+        //                 chapter,
+        //                 studentMessage: message,
+        //                 currentConceptIndex: user.currentConceptIndex || 0,
+        //                 tokenBudget: 1500
+        //             });
+        //             systemPrompt = generateBioSystemPrompt({
+        //                 user: studentProfileForPrompt,
+        //                 tutorName: currentTutor,
+        //                 textbookMode: true,
+        //                 textbookContext
+        //             });
+        //         }
+        //     } catch (textbookError) {
+        //         console.error('[Chat] Textbook mode context failed, falling back to default:', textbookError.message);
+        //         // Fall through to default prompt below
+        //     }
+        // }
 
         if (!systemPrompt && conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
