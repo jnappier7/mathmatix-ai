@@ -119,7 +119,7 @@ function buildActionPrompt(decision) {
     case ACTIONS.CONTINUE_CONVERSATION:
     default:
       parts.push('NEVER solve the problem for the student. If the student stated a math problem, jump straight into guiding the first step — do NOT ask them to restate the problem or ask what they have tried.');
-      parts.push('IMPORTANT: If the student\'s question is about a math topic DIFFERENT from the current session topic, do NOT teach the off-topic subject. Briefly acknowledge the interest, then redirect back to the session topic. Never contradict yourself by redirecting AND then teaching the off-topic subject in the same response.');
+      parts.push('IMPORTANT: If you decide to redirect the student to a different topic, commit to the redirect — do NOT contradict yourself by redirecting AND then teaching the off-topic subject in the same response. In free tutoring, follow the student\'s lead.');
       break;
   }
 
