@@ -515,3 +515,42 @@ describe('Tutor Validation: Answer Extraction', () => {
     expect(obs.answer.value).toBe('4');
   });
 });
+
+// ── Unicode Superscript Normalization ──
+// Regression: "3² = 9" was rejected because ² wasn't converted to ^2
+
+describe('Tutor Validation: Unicode Superscript Normalization', () => {
+  const { processMathMessage } = require('../../utils/mathSolver');
+
+  test('detects 3² as an exponent problem and computes 9', () => {
+    const result = processMathMessage('what is 3²');
+    expect(result.hasMath).toBe(true);
+    expect(result.solution?.answer).toBe('9');
+  });
+
+  test('detects 5³ as an exponent problem and computes 125', () => {
+    const result = processMathMessage('what is 5³');
+    expect(result.hasMath).toBe(true);
+    expect(result.solution?.answer).toBe('125');
+  });
+
+  test('detects 2⁴ as an exponent problem and computes 16', () => {
+    const result = processMathMessage('2⁴');
+    expect(result.hasMath).toBe(true);
+    expect(result.solution?.answer).toBe('16');
+  });
+
+  test('verifies student answer 9 is correct for 3²', () => {
+    const result = processMathMessage('Can you tell me what 3² is?');
+    expect(result.hasMath).toBe(true);
+    expect(result.solution?.answer).toBe('9');
+    // Verify the student's answer would match
+    const verification = require('../../utils/mathSolver').verifyAnswer('9', result.solution.answer);
+    expect(verification.isCorrect).toBe(true);
+  });
+
+  test('handles mixed Unicode superscripts: x² + 5x + 6 factor pattern', () => {
+    const result = processMathMessage('factor x² + 5x + 6');
+    expect(result.hasMath).toBe(true);
+  });
+});

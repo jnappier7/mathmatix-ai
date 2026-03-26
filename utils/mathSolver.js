@@ -20,7 +20,21 @@ function detectMathProblem(message) {
         return null;
     }
 
-    const text = message.trim().toLowerCase();
+    // Normalize Unicode superscripts/subscripts BEFORE any pattern matching.
+    // AI messages and MathLive input often use ² ³ ⁴ etc. instead of ^2 ^3 ^4.
+    // Without this, "3²" won't match the exponent pattern expecting "3^2".
+    let normalized = message
+        .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
+        .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
+        .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
+        .replace(/⁹/g, '^9').replace(/⁻/g, '^-').replace(/⁺/g, '^+')
+        .replace(/ⁿ/g, '^n');
+
+    // Reassign so all downstream code (40+ regex matches and sub-function calls)
+    // automatically operates on the normalized string.
+    message = normalized;
+
+    const text = normalized.trim().toLowerCase();
 
     // Pattern: Natural-language multiplication "multiply X by Y" or "X times Y" or "X multiplied by Y"
     const nlMultiplyPattern = /(?:multiply\s+)(\d+\.?\d*)\s+(?:by|and)\s+(\d+\.?\d*)/i;
