@@ -96,8 +96,8 @@
     },
     {
       "id": "cu1-spiral",
-      "question": "SPIRAL: Evaluate lim(x→0) (eˣ - 1)/x. [Hint: This is the derivative definition of eˣ at x=0.]",
-      "answer": "Direct substitution: 0/0. This equals lim(h→0) (e^(0+h) - e⁰)/h = d/dx[eˣ] at x=0 = e⁰ = 1. (Alternatively, use L'Hôpital preview: d/dx[eˣ]/d/dx[x] = eˣ/1 → e⁰ = 1.)",
+      "question": "SPIRAL: Evaluate lim(x→4) (x² - 3x - 4)/(√x - 2).",
+      "answer": "Direct substitution: 0/0. Rationalize denominator: multiply by (√x+2)/(√x+2). Denominator becomes x-4. Numerator: (x²-3x-4)(√x+2) = (x-4)(x+1)(√x+2). Cancel (x-4): lim = (x+1)(√x+2) at x=4 = 5·4 = 20.",
       "skill": "limits-algebraic-techniques",
       "difficulty": 6,
       "points": 5
@@ -113,6 +113,6 @@
     "cu1-7": "(a) Yes, IVT on [-2,0] (b) Yes, IVT on [0,5] (c) No",
     "cu1-8": "0 by Squeeze",
     "cu1-frq": "(a) 0 (b) 0 (c) Yes, continuous",
-    "cu1-spiral": "1"
+    "cu1-spiral": "20"
   }
 }

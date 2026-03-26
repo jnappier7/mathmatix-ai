@@ -95,8 +95,8 @@
     },
     {
       "id": "abu0-10",
-      "question": "The graph of g(x) shows: g is increasing and concave up on (0, 2), increasing and concave down on (2, 4), and decreasing on (4, 6). (a) Where is the inflection point? (b) Where is the absolute maximum on [0, 6]? (c) Describe what the graph of g'(x) looks like.",
-      "answer": "(a) Inflection at x=2 (concavity changes from up to down). (b) Maximum at x=4 (g switches from increasing to decreasing). (c) g' is positive and increasing on (0,2), positive and decreasing on (2,4), passes through zero at x=4, then negative on (4,6). g' has a max at x=2.",
+      "question": "The graph of g(x) shows: g is increasing and concave up on (0, 2), increasing and concave down on (2, 4), and decreasing on (4, 6). (a) Where is the inflection point? (b) Where is the absolute maximum on [0, 6]? (c) On which interval is the average rate of change of g negative? Explain how you know.",
+      "answer": "(a) Inflection at x=2 (concavity changes from up to down). (b) Maximum at x=4 (g switches from increasing to decreasing). (c) The average rate of change is negative on [4, 6] because g is decreasing on that interval, meaning g(6) < g(4), so (g(6)-g(4))/(6-4) < 0.",
       "skill": "graph-reading-modeling",
       "difficulty": 5,
       "points": 10
@@ -120,7 +120,7 @@
     "abu0-7": "(a) cosθ (b) 1.",
     "abu0-8": "x=5π/6 and x=7π/6.",
     "abu0-9": "(a) 3 (b) [4,5] (c) x=3 or x=4.",
-    "abu0-10": "(a) x=2 (b) x=4 (c) g' positive→max at x=2→zero at x=4→negative.",
+    "abu0-10": "(a) x=2 (b) x=4 (c) AROC negative on [4,6] because g is decreasing.",
     "abu0-spiral": "(x²-3x+9)/(x-3), domain x≠±3."
   }
 }
