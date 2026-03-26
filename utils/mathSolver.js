@@ -205,6 +205,18 @@ function detectMathProblem(message) {
         };
     }
 
+    // ── Calculus: Derivatives ──
+    // "derivative of x^3 - 3x + 2", "d/dx(x^2 + 5x)", "differentiate 3x^4 - 2x^2 + x"
+    // "what is the derivative of x^3 - 3x + 2", "find d/dx of 5x^2 + 3x - 7"
+    const derivativeResult = detectDerivative(message);
+    if (derivativeResult) return derivativeResult;
+
+    // ── Calculus: Limits ──
+    // "limit of (x^2-4)/(x-2) as x approaches 2", "lim x→2 (x^2-4)/(x-2)"
+    // "what is the limit of (x^2-4)/(x-2) as x approaches 2"
+    const limitResult = detectLimit(message);
+    if (limitResult) return limitResult;
+
     // Pattern: Absolute value equations — "|2x + 3| = 7", "|x - 5| = 10"
     const absValPattern = /\|\s*(-?\d*\.?\d*)\s*x\s*([+\-])\s*(\d+\.?\d*)\s*\|\s*=\s*(\d+\.?\d*)/i;
     const absValMatch = message.match(absValPattern);
@@ -514,6 +526,10 @@ function solveProblem(problem) {
                 return solveVolume(problem);
             case 'evaluation':
                 return solveEvaluation(problem);
+            case 'derivative':
+                return solveDerivative(problem);
+            case 'limit':
+                return solveLimit(problem);
             default:
                 return { success: false, error: 'Unknown problem type' };
         }
@@ -2146,6 +2162,546 @@ function multiplyPolynomials(p1, p2) {
  * @param {string} message - User message
  * @returns {Object} Full solution object
  */
+// ═══════════════════════════════════════════════════════════════════
+// CALCULUS SOLVERS — Derivatives and Limits
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Parse a polynomial expression string into an array of terms.
+ * Each term is { coeff, exp } where the polynomial is in variable 'x'.
+ *
+ * "x^3 - 3x + 2"  → [{coeff:1, exp:3}, {coeff:-3, exp:1}, {coeff:2, exp:0}]
+ * "3x^4 - 2x^2 + x" → [{coeff:3, exp:4}, {coeff:-2, exp:2}, {coeff:1, exp:1}]
+ * "5" → [{coeff:5, exp:0}]
+ *
+ * Returns null if the string cannot be parsed as a polynomial in x.
+ */
+function parsePolynomialTerms(str) {
+    if (!str || typeof str !== 'string') return null;
+
+    // Normalize
+    let s = str.trim()
+        .replace(/−/g, '-')            // unicode minus
+        .replace(/\*\*/g, '^')         // ** → ^
+        .replace(/²/g, '^2')
+        .replace(/³/g, '^3')
+        .replace(/⁴/g, '^4')
+        .replace(/⁵/g, '^5')
+        .replace(/⁶/g, '^6')
+        .replace(/⁷/g, '^7')
+        .replace(/⁸/g, '^8')
+        .replace(/⁹/g, '^9')
+        .replace(/\^{(\d+)}/g, '^$1') // ^{2} → ^2
+        .replace(/\s+/g, '');          // strip all spaces
+
+    // Bail on non-polynomial content (trig, log, etc.)
+    if (/(?:sin|cos|tan|log|ln|sqrt|abs)\s*\(/i.test(s)) return null;
+
+    // Ensure leading sign
+    if (s[0] !== '-' && s[0] !== '+') s = '+' + s;
+
+    // Match terms: sign, optional coefficient, optional x with optional ^exp
+    const termRegex = /([+-])(\d*\.?\d*)(x?)(?:\^(\d+))?/g;
+    const terms = [];
+    let match;
+    let totalLen = 0;
+
+    while ((match = termRegex.exec(s)) !== null) {
+        if (match[0].length === 1 && !match[3]) continue; // bare sign, skip
+
+        const sign = match[1] === '-' ? -1 : 1;
+        const coeffStr = match[2];
+        const hasX = match[3] === 'x';
+        const expStr = match[4];
+
+        let coeff, exp;
+
+        if (hasX) {
+            coeff = coeffStr === '' ? sign : sign * parseFloat(coeffStr);
+            exp = expStr ? parseInt(expStr, 10) : 1;
+        } else if (coeffStr !== '') {
+            coeff = sign * parseFloat(coeffStr);
+            exp = 0;
+        } else {
+            continue;
+        }
+
+        if (isNaN(coeff)) continue;
+        terms.push({ coeff, exp });
+        totalLen += match[0].length;
+    }
+
+    // Must consume most of the string to be a valid polynomial
+    if (terms.length === 0 || totalLen < s.length * 0.8) return null;
+
+    return terms;
+}
+
+/**
+ * Format polynomial terms back into a string.
+ * [{coeff:3, exp:2}, {coeff:-3, exp:0}] → "3x^2-3"
+ */
+function formatPolynomialTerms(terms) {
+    // Sort descending by exponent
+    const sorted = [...terms].sort((a, b) => b.exp - a.exp);
+    // Filter zero coefficients
+    const nonZero = sorted.filter(t => Math.abs(t.coeff) > 1e-10);
+
+    if (nonZero.length === 0) return '0';
+
+    let result = '';
+    for (let i = 0; i < nonZero.length; i++) {
+        const { coeff, exp } = nonZero[i];
+
+        // Sign
+        if (i === 0) {
+            if (coeff < 0) result += '-';
+        } else {
+            result += coeff < 0 ? '-' : '+';
+        }
+
+        const absCoeff = Math.abs(coeff);
+
+        // Coefficient (omit "1" before x, but not for constants)
+        if (exp === 0) {
+            result += Number.isInteger(absCoeff) ? String(absCoeff) : absCoeff.toString();
+        } else if (absCoeff !== 1) {
+            result += Number.isInteger(absCoeff) ? String(absCoeff) : absCoeff.toString();
+        }
+
+        // Variable and exponent
+        if (exp >= 2) {
+            result += `x^${exp}`;
+        } else if (exp === 1) {
+            result += 'x';
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Strip trailing non-math text from a captured expression.
+ * Tutor messages often have follow-up questions appended:
+ *   "x^3 - 3x + 2? What do you think the first step is?"
+ *   "x^2 + 5x. Let's start with the first term."
+ *
+ * We cut at the first sentence-ending punctuation followed by a space/letter.
+ */
+function cleanTrailingText(expr) {
+    return expr
+        .replace(/[?!]\s*\w.*$/, '')   // "expr? What..." → "expr"
+        .replace(/\.\s+[A-Z].*$/, '')  // "expr. Let's..." → "expr"
+        .replace(/[?!.]+$/, '')         // trailing punctuation
+        .trim();
+}
+
+/**
+ * Detect a derivative problem in a message.
+ *
+ * Supported patterns:
+ * - "derivative of x^3 - 3x + 2"
+ * - "d/dx(x^2 + 5x)"
+ * - "d/dx of x^3 - 3x + 2"
+ * - "differentiate 3x^4 - 2x^2 + x"
+ * - "find the derivative of ..."
+ * - "what is the derivative of ..."
+ * - "what's d/dx of ..."
+ * - "can you tell me the derivative of ..."
+ *
+ * Returns a problem object or null.
+ */
+function detectDerivative(message) {
+    if (!message) return null;
+
+    // Strip LaTeX delimiters so we can regex plain text
+    let text = message
+        .replace(/\\\(([^)]*?)\\\)/g, '$1')
+        .replace(/\\\[([^\]]*?)\\\]/g, '$1')
+        .replace(/\$\$([^$]*?)\$\$/g, '$1')
+        .replace(/(?<![\\$])\$([^$\n]+?)\$/g, '$1');
+
+    // Pattern 1: "derivative of EXPR" or "the derivative of EXPR"
+    // Also handles "can you tell me the derivative of...", "what is the derivative of..."
+    const derivOfPattern = /(?:(?:can\s+you\s+(?:tell\s+me|find|compute)\s+)?(?:find|what(?:'s|\s+is)|compute|calculate|take)\s+)?(?:the\s+)?derivative\s+of\s+(.+)/i;
+    const derivOfMatch = text.match(derivOfPattern);
+    if (derivOfMatch) {
+        const cleaned = cleanTrailingText(derivOfMatch[1]);
+        const terms = parsePolynomialTerms(cleaned);
+        if (terms) {
+            return { type: 'derivative', terms, raw: cleaned };
+        }
+    }
+
+    // Pattern 2: "d/dx(EXPR)" or "d/dx of EXPR" or "d/dx EXPR"
+    const ddxPattern = /d\s*\/\s*dx\s*(?:\(([^)]+)\)|of\s+(.+)|([^,.\s].+))/i;
+    const ddxMatch = text.match(ddxPattern);
+    if (ddxMatch) {
+        const expr = cleanTrailingText((ddxMatch[1] || ddxMatch[2] || ddxMatch[3] || '').trim());
+        const terms = parsePolynomialTerms(expr);
+        if (terms) {
+            return { type: 'derivative', terms, raw: expr };
+        }
+    }
+
+    // Pattern 3: "differentiate EXPR"
+    const diffPattern = /differentiate\s+(.+)/i;
+    const diffMatch = text.match(diffPattern);
+    if (diffMatch) {
+        const cleaned = cleanTrailingText(diffMatch[1]);
+        const terms = parsePolynomialTerms(cleaned);
+        if (terms) {
+            return { type: 'derivative', terms, raw: cleaned };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Compute the derivative of a polynomial using the power rule.
+ *
+ * d/dx(ax^n) = n*a*x^(n-1)
+ * d/dx(c) = 0
+ *
+ * @param {Object} problem - { type: 'derivative', terms: [{coeff, exp}] }
+ * @returns {Object} Solution with answer and steps
+ */
+function solveDerivative(problem) {
+    const { terms } = problem;
+
+    const steps = [];
+    const resultTerms = [];
+
+    steps.push(`Apply the power rule to each term: d/dx(ax^n) = n·a·x^(n-1)`);
+
+    for (const term of terms) {
+        const { coeff, exp } = term;
+
+        if (exp === 0) {
+            // Constant term — derivative is 0
+            if (Math.abs(coeff) > 1e-10) {
+                steps.push(`d/dx(${coeff}) = 0 (constant)`);
+            }
+            continue;
+        }
+
+        const newCoeff = coeff * exp;
+        const newExp = exp - 1;
+
+        if (exp === 1) {
+            steps.push(`d/dx(${coeff === 1 ? '' : coeff === -1 ? '-' : coeff}x) = ${newCoeff}`);
+        } else {
+            steps.push(`d/dx(${coeff === 1 ? '' : coeff === -1 ? '-' : coeff}x^${exp}) = ${exp}·${Math.abs(coeff) === 1 ? '' : coeff}x^${newExp} = ${newCoeff}${newExp > 0 ? 'x' + (newExp > 1 ? '^' + newExp : '') : ''}`);
+        }
+
+        resultTerms.push({ coeff: newCoeff, exp: newExp });
+    }
+
+    const answer = formatPolynomialTerms(resultTerms);
+    steps.push(`Result: ${answer}`);
+
+    return {
+        success: true,
+        answer,
+        steps,
+    };
+}
+
+/**
+ * Detect a limit problem in a message.
+ *
+ * Supported patterns:
+ * - "limit of (x^2-4)/(x-2) as x approaches 2"
+ * - "lim x→2 (x^2-4)/(x-2)"
+ * - "lim as x->2 of (x^2-4)/(x-2)"
+ * - "what is the limit of EXPR as x approaches VALUE"
+ * - "find the limit as x approaches VALUE of EXPR"
+ * - "limit as x → 2 of (x^2-4)/(x-2)"
+ *
+ * Returns a problem object or null.
+ */
+function detectLimit(message) {
+    if (!message) return null;
+
+    // Strip LaTeX delimiters
+    let text = message
+        .replace(/\\\(([^)]*?)\\\)/g, '$1')
+        .replace(/\\\[([^\]]*?)\\\]/g, '$1')
+        .replace(/\$\$([^$]*?)\$\$/g, '$1')
+        .replace(/(?<![\\$])\$([^$\n]+?)\$/g, '$1')
+        .replace(/\\to\b/g, '→')
+        .replace(/\\rightarrow\b/g, '→')
+        .replace(/\\lim\b/g, 'lim');
+
+    // Normalize arrow notations
+    text = text.replace(/->/g, '→');
+
+    // Pattern 1: "limit of EXPR as x approaches VALUE"
+    // Also: "find/what is/can you tell me the limit of EXPR as x approaches VALUE"
+    // Handles optional "is" between expression and "as": "limit of EXPR is as x approaches"
+    const limitOfPattern = /(?:(?:can\s+you\s+(?:tell\s+me|find|compute)\s+)?(?:find|what(?:'s|\s+is)|compute|calculate)\s+)?(?:the\s+)?lim(?:it)?\s+(?:of\s+)?(.+?)\s+(?:is\s+)?as\s+x\s*(?:approaches|→|->|goes\s+to|tends\s+to)\s*(-?\d+\.?\d*)/i;
+    const limitOfMatch = text.match(limitOfPattern);
+    if (limitOfMatch) {
+        const exprStr = cleanTrailingText(limitOfMatch[1].trim());
+        const approachValue = parseFloat(limitOfMatch[2]);
+        const parsed = parseLimitExpression(exprStr);
+        if (parsed) {
+            return { type: 'limit', ...parsed, approachValue, raw: exprStr };
+        }
+    }
+
+    // Pattern 2: "limit as x approaches VALUE of EXPR"
+    const limitAsPattern = /(?:(?:can\s+you\s+(?:tell\s+me|find|compute)\s+)?(?:find|what(?:'s|\s+is)|compute|calculate)\s+)?(?:the\s+)?lim(?:it)?\s+as\s+x\s*(?:approaches|→|->|goes\s+to|tends\s+to)\s*(-?\d+\.?\d*)\s+(?:of\s+)?(.+)/i;
+    const limitAsMatch = text.match(limitAsPattern);
+    if (limitAsMatch) {
+        const approachValue = parseFloat(limitAsMatch[1]);
+        const exprStr = cleanTrailingText(limitAsMatch[2].trim());
+        const parsed = parseLimitExpression(exprStr);
+        if (parsed) {
+            return { type: 'limit', ...parsed, approachValue, raw: exprStr };
+        }
+    }
+
+    // Pattern 3: "lim x→VALUE EXPR" or "lim_{x→VALUE} EXPR"
+    const limArrowPattern = /lim\s*(?:_\s*(?:\{?\s*)?)?x\s*→\s*(-?\d+\.?\d*)(?:\s*\}?\s*)?\s+(.+)/i;
+    const limArrowMatch = text.match(limArrowPattern);
+    if (limArrowMatch) {
+        const approachValue = parseFloat(limArrowMatch[1]);
+        const exprStr = cleanTrailingText(limArrowMatch[2].trim());
+        const parsed = parseLimitExpression(exprStr);
+        if (parsed) {
+            return { type: 'limit', ...parsed, approachValue, raw: exprStr };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Parse a limit expression into numerator and denominator polynomial terms.
+ * Handles:
+ * - Rational expressions: (x^2-4)/(x-2) → { numerator, denominator }
+ * - Plain polynomials: x^2+3x+2 → { numerator, denominator: null }
+ *
+ * Returns { numerator: [{coeff,exp}], denominator: [{coeff,exp}]|null } or null.
+ */
+function parseLimitExpression(exprStr) {
+    if (!exprStr) return null;
+
+    let s = exprStr.trim();
+
+    // Remove outer parentheses if they wrap the entire expression
+    if (s.startsWith('(') && s.endsWith(')')) {
+        const inner = s.slice(1, -1);
+        // Only strip if the parens are balanced (not "(a)/(b)")
+        if (!inner.includes('/') || (inner.match(/\(/g) || []).length === (inner.match(/\)/g) || []).length) {
+            // Check if stripping parens leaves a valid expression
+            const testTerms = parsePolynomialTerms(inner);
+            if (testTerms) s = inner;
+        }
+    }
+
+    // Try to split on "/" for rational expressions
+    // Handle (NUMERATOR)/(DENOMINATOR) form
+    const rationalMatch = s.match(/^\(?([^/]+?)\)?\s*\/\s*\(?([^/]+?)\)?$/);
+    if (rationalMatch) {
+        const numTerms = parsePolynomialTerms(rationalMatch[1].trim());
+        const denTerms = parsePolynomialTerms(rationalMatch[2].trim());
+        if (numTerms && denTerms) {
+            return { numerator: numTerms, denominator: denTerms };
+        }
+    }
+
+    // Try as a plain polynomial
+    const terms = parsePolynomialTerms(s);
+    if (terms) {
+        return { numerator: terms, denominator: null };
+    }
+
+    return null;
+}
+
+/**
+ * Evaluate a polynomial at a given x value.
+ * @param {Array} terms - [{coeff, exp}]
+ * @param {number} x - Value to substitute
+ * @returns {number}
+ */
+function evaluatePolynomialAt(terms, x) {
+    let result = 0;
+    for (const { coeff, exp } of terms) {
+        result += coeff * Math.pow(x, exp);
+    }
+    return result;
+}
+
+/**
+ * Perform synthetic polynomial division: divide numerator by (x - root).
+ * Returns the quotient terms or null if not evenly divisible.
+ *
+ * @param {Array} terms - Numerator polynomial terms [{coeff, exp}]
+ * @param {number} root - The root to divide out (dividing by x - root)
+ * @returns {Array|null} Quotient polynomial terms
+ */
+function syntheticDivide(terms, root) {
+    // Build coefficient array from highest to lowest degree
+    const maxExp = Math.max(...terms.map(t => t.exp));
+    const coeffs = new Array(maxExp + 1).fill(0);
+    for (const { coeff, exp } of terms) {
+        coeffs[maxExp - exp] += coeff;
+    }
+
+    // Synthetic division
+    const quotientCoeffs = [coeffs[0]];
+    for (let i = 1; i < coeffs.length; i++) {
+        quotientCoeffs.push(coeffs[i] + quotientCoeffs[i - 1] * root);
+    }
+
+    // Last entry is the remainder
+    const remainder = quotientCoeffs.pop();
+    if (Math.abs(remainder) > 1e-10) return null; // Not evenly divisible
+
+    // Convert back to terms
+    const quotientTerms = [];
+    const quotientDegree = maxExp - 1;
+    for (let i = 0; i < quotientCoeffs.length; i++) {
+        if (Math.abs(quotientCoeffs[i]) > 1e-10) {
+            quotientTerms.push({ coeff: quotientCoeffs[i], exp: quotientDegree - i });
+        }
+    }
+
+    return quotientTerms;
+}
+
+/**
+ * Solve a limit problem.
+ *
+ * Strategy:
+ * 1. Try direct substitution
+ * 2. If 0/0 (removable discontinuity), factor and cancel
+ * 3. If n/0, the limit does not exist (or is ±∞)
+ *
+ * @param {Object} problem - { type: 'limit', numerator, denominator, approachValue }
+ * @returns {Object} Solution with answer and steps
+ */
+function solveLimit(problem) {
+    const { numerator, denominator, approachValue } = problem;
+    const steps = [];
+    const a = approachValue;
+
+    // Case 1: Plain polynomial (no denominator)
+    if (!denominator) {
+        const result = evaluatePolynomialAt(numerator, a);
+        steps.push(`Substitute x = ${a} directly into ${formatPolynomialTerms(numerator)}`);
+        const answer = Number.isInteger(result) ? String(result) : result.toFixed(6).replace(/\.?0+$/, '');
+        steps.push(`Result: ${answer}`);
+        return { success: true, answer, steps };
+    }
+
+    // Case 2: Rational expression
+    const numStr = formatPolynomialTerms(numerator);
+    const denStr = formatPolynomialTerms(denominator);
+    steps.push(`Evaluate the limit of (${numStr})/(${denStr}) as x → ${a}`);
+
+    // Step 2a: Try direct substitution
+    const numVal = evaluatePolynomialAt(numerator, a);
+    const denVal = evaluatePolynomialAt(denominator, a);
+
+    steps.push(`Direct substitution: numerator = ${numVal}, denominator = ${denVal}`);
+
+    if (Math.abs(denVal) > 1e-10) {
+        // Denominator is non-zero — direct substitution works
+        const result = numVal / denVal;
+        const answer = Number.isInteger(result) ? String(result) : result.toFixed(6).replace(/\.?0+$/, '');
+        steps.push(`The denominator is non-zero, so substitute directly: ${answer}`);
+        return { success: true, answer, steps };
+    }
+
+    if (Math.abs(numVal) > 1e-10) {
+        // Non-zero / zero → limit does not exist (±∞)
+        steps.push(`Numerator is ${numVal} but denominator is 0 → limit does not exist`);
+        return { success: true, answer: 'DNE', steps };
+    }
+
+    // Step 2b: 0/0 — removable discontinuity, try to factor and cancel
+    steps.push(`Got 0/0 — indeterminate form. Factor and simplify.`);
+
+    // Factor out (x - a) from numerator
+    const quotientNum = syntheticDivide(numerator, a);
+    const quotientDen = syntheticDivide(denominator, a);
+
+    if (quotientNum && quotientDen) {
+        const qNumStr = formatPolynomialTerms(quotientNum);
+        const qDenStr = formatPolynomialTerms(quotientDen);
+        steps.push(`Factor (x - ${a}) from both: (${qNumStr})/(${qDenStr})`);
+
+        // Evaluate simplified expression at a
+        const simplifiedNum = evaluatePolynomialAt(quotientNum, a);
+        const simplifiedDen = evaluatePolynomialAt(quotientDen, a);
+
+        if (Math.abs(simplifiedDen) > 1e-10) {
+            const result = simplifiedNum / simplifiedDen;
+            const answer = Number.isInteger(result) ? String(result) : result.toFixed(6).replace(/\.?0+$/, '');
+            steps.push(`Substitute x = ${a}: (${simplifiedNum})/(${simplifiedDen}) = ${answer}`);
+            return { success: true, answer, steps };
+        }
+
+        // Still 0/0 — try factoring again (repeated root)
+        if (Math.abs(simplifiedNum) < 1e-10 && Math.abs(simplifiedDen) < 1e-10) {
+            const q2Num = syntheticDivide(quotientNum, a);
+            const q2Den = syntheticDivide(quotientDen, a);
+            if (q2Num && q2Den) {
+                const s2Num = evaluatePolynomialAt(q2Num, a);
+                const s2Den = evaluatePolynomialAt(q2Den, a);
+                if (Math.abs(s2Den) > 1e-10) {
+                    const result = s2Num / s2Den;
+                    const answer = Number.isInteger(result) ? String(result) : result.toFixed(6).replace(/\.?0+$/, '');
+                    steps.push(`Factor (x - ${a}) again: (${formatPolynomialTerms(q2Num)})/(${formatPolynomialTerms(q2Den)})`);
+                    steps.push(`Substitute x = ${a}: ${answer}`);
+                    return { success: true, answer, steps };
+                }
+            }
+        }
+    } else if (quotientNum) {
+        // Only numerator factors — try evaluating the quotient over original denominator
+        // This handles cases where denominator is just (x - a) itself
+        const simplifiedNum = evaluatePolynomialAt(quotientNum, a);
+        steps.push(`Factor (x - ${a}) from numerator: ${formatPolynomialTerms(quotientNum)}`);
+
+        // Check if denominator IS (x - a) — i.e., single binomial
+        if (denominator.length <= 2) {
+            const denAsQuotient = syntheticDivide(denominator, a);
+            if (denAsQuotient && denAsQuotient.length === 1 && Math.abs(denAsQuotient[0].exp) === 0) {
+                const denConst = denAsQuotient[0].coeff;
+                const result = simplifiedNum / denConst;
+                const answer = Number.isInteger(result) ? String(result) : result.toFixed(6).replace(/\.?0+$/, '');
+                steps.push(`Cancel common factor, evaluate: ${answer}`);
+                return { success: true, answer, steps };
+            }
+        }
+    }
+
+    // Fallback: numerical approach (evaluate very close to a)
+    steps.push(`Algebraic simplification inconclusive — using numerical evaluation`);
+    const epsilon = 1e-8;
+    const leftVal = evaluatePolynomialAt(numerator, a - epsilon) / evaluatePolynomialAt(denominator, a - epsilon);
+    const rightVal = evaluatePolynomialAt(numerator, a + epsilon) / evaluatePolynomialAt(denominator, a + epsilon);
+
+    if (Math.abs(leftVal - rightVal) < 0.001) {
+        const result = (leftVal + rightVal) / 2;
+        const answer = Math.abs(result - Math.round(result)) < 0.0001
+            ? String(Math.round(result))
+            : result.toFixed(6).replace(/\.?0+$/, '');
+        steps.push(`Left-hand limit ≈ ${leftVal.toFixed(6)}, Right-hand limit ≈ ${rightVal.toFixed(6)}`);
+        steps.push(`Limit = ${answer}`);
+        return { success: true, answer, steps };
+    }
+
+    steps.push(`Left and right limits differ — limit does not exist`);
+    return { success: true, answer: 'DNE', steps };
+}
+
 function processMathMessage(message) {
     const problem = detectMathProblem(message);
 
@@ -2189,4 +2745,14 @@ module.exports = {
     // Export polynomial helpers for testing
     parsePolynomial,
     arePolynomialsEqual,
+    // Export calculus solvers for testing
+    detectDerivative,
+    solveDerivative,
+    detectLimit,
+    solveLimit,
+    parsePolynomialTerms,
+    formatPolynomialTerms,
+    evaluatePolynomialAt,
+    syntheticDivide,
+    parseLimitExpression,
 };

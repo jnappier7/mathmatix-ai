@@ -47,9 +47,14 @@ const PATTERNS = {
   arithmeticStatement: /\d+\.?\d*\s*(?:[+\-*/×÷]|times|plus|minus|divided\s+by|multiplied\s+by)\s*\d+\.?\d*\s+(?:is|=|equals)\s+(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
   mixedNumber: /^(-?\d+)\s+(\d+\s*\/\s*\d+)$/,
 
-  // Answer embedded in explanation — captures the final stated answer value
-  // Matches: "...which means the limit is 4", "...so the answer is 3x^2-3", "...you get x+2"
-  embeddedAnswer: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:you\s+)?(?:get|gives?)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/i,
+  // Answer embedded in explanation — two tiers of patterns.
+  // "Conclusive" patterns (highest priority): "the limit is 4", "the answer is 3x^2-3"
+  // These indicate the student is stating their final answer.
+  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/gi,
+
+  // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
+  // These may be intermediate steps, not the final answer.
+  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives?)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/gi,
 
   // Reasoning phrases that indicate the student is showing their work
   reasoningIndicators: /\b(because|since|after\s+(?:i\s+)?(?:factor|simplif|cancel|distribut|combin|reduc)|(?:i\s+)?(?:factor|simplif|cancel)(?:ed|ing)?|if\s+(?:you|i)\s+(?:factor|simplif|cancel)|by\s+(?:factoring|simplifying|canceling)|using\s+the\s+(?:power|chain|quotient|product)\s+rule|(?:which|that|so)\s+(?:means|gives|leaves|simplifies?\s+to))\b/i,
@@ -119,6 +124,10 @@ function extractAnswer(message) {
  * Extract an answer value from a longer explanatory message.
  * Handles cases like "after I factor and simplify, you get x+2, so the limit is 4"
  *
+ * Prefers "conclusive" answer phrases (the limit is, the answer is) over
+ * "intermediate" ones (you get, gives). Uses the LAST match in the text,
+ * since the final answer typically comes at the end of an explanation.
+ *
  * Returns { value, raw, hasExplanation } or null.
  */
 function extractAnswerFromExplanation(message) {
@@ -126,15 +135,31 @@ function extractAnswerFromExplanation(message) {
   // Don't try on very long messages — likely not an answer attempt
   if (text.length > 500) return null;
 
+  // Try conclusive patterns first — these are the strongest signals
+  // Use the LAST match (student states final answer at the end)
+  const conclusiveRegex = new RegExp(PATTERNS.embeddedAnswerConclusive.source, 'gi');
+  let lastConclusive = null;
   let match;
-  // Try embedded answer pattern (phrase + value)
-  if ((match = text.match(PATTERNS.embeddedAnswer))) {
-    return { value: match[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
+  while ((match = conclusiveRegex.exec(text)) !== null) {
+    lastConclusive = match;
+  }
+  if (lastConclusive) {
+    return { value: lastConclusive[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
   }
 
   // Try answer phrase pattern on longer text (relaxed from 100 char limit)
   if ((match = text.match(PATTERNS.answerPhrase))) {
     return { value: match[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
+  }
+
+  // Fall back to intermediate patterns (you get, gives)
+  const intermediateRegex = new RegExp(PATTERNS.embeddedAnswerIntermediate.source, 'gi');
+  let lastIntermediate = null;
+  while ((match = intermediateRegex.exec(text)) !== null) {
+    lastIntermediate = match;
+  }
+  if (lastIntermediate) {
+    return { value: lastIntermediate[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
   }
 
   return null;
