@@ -9,30 +9,64 @@
   "type": "assessment",
   "description": "Summative checkpoint assessing mastery of exponent rules (product, quotient, power, zero, and negative), adding and subtracting polynomials, multiplying polynomials (monomial-by-polynomial and FOIL), factoring using GCF, factoring trinomials of the form x² + bx + c, factoring difference of squares, and factoring completely by combining strategies.",
   "skillsCovered": [
-    "exponent-rules-multiplication",
-    "exponent-rules-division",
+    "exponent-rules",
     "polynomial-addition-subtraction",
-    "polynomial-multiplication-monomial",
+    "polynomial-multiplication",
     "factoring-gcf",
     "factoring-trinomials",
     "factoring-difference-of-squares"
   ],
   "passThreshold": 70,
   "remediationResources": [
-    { "skillId": "exponent-rules-multiplication", "reteachFocus": "Product rule (add exponents), power rule (multiply exponents), zero and negative exponent rules, raising a product to a power", "resources": ["polynomials_module.json - scaffold phases 1-2"] },
-    { "skillId": "exponent-rules-division", "reteachFocus": "Quotient rule (subtract exponents), simplifying fractions with exponents, negative exponent results", "resources": ["polynomials_module.json - scaffold phases 1-2"] },
-    { "skillId": "polynomial-addition-subtraction", "reteachFocus": "Identifying like terms, combining coefficients, distributing the negative sign when subtracting polynomials", "resources": ["polynomials_module.json - scaffold phases 3-4"] },
-    { "skillId": "polynomial-multiplication-monomial", "reteachFocus": "Distributing a monomial across a polynomial, FOIL for binomial multiplication, combining like terms in the product", "resources": ["polynomials_module.json - scaffold phases 4-5"] },
-    { "skillId": "factoring-gcf", "reteachFocus": "Finding the GCF of coefficients and variables, dividing each term by the GCF, verifying by distributing back", "resources": ["polynomials_module.json - scaffold phases 6-8"] },
-    { "skillId": "factoring-trinomials", "reteachFocus": "Finding two numbers that multiply to c and add to b, writing the factored form, checking by FOIL", "resources": ["polynomials_module.json - scaffold phases 7-8"] },
-    { "skillId": "factoring-difference-of-squares", "reteachFocus": "Recognizing a² - b² pattern, identifying a and b, writing (a + b)(a - b), distinguishing from sum of squares (not factorable)", "resources": ["polynomials_module.json - scaffold phases 7-8"] }
+    {
+      "skillId": "exponent-rules",
+      "reteachFocus": "Product rule (add exponents), quotient rule (subtract exponents), power rule (multiply exponents), zero and negative exponent rules",
+      "resources": [
+        "polynomials_module.json - scaffold phases 1-2"
+      ]
+    },
+    {
+      "skillId": "polynomial-addition-subtraction",
+      "reteachFocus": "Identifying like terms, combining coefficients, distributing the negative sign when subtracting polynomials",
+      "resources": [
+        "polynomials_module.json - scaffold phases 3-4"
+      ]
+    },
+    {
+      "skillId": "polynomial-multiplication",
+      "reteachFocus": "Distributing a monomial across a polynomial, FOIL for binomial multiplication, combining like terms in the product",
+      "resources": [
+        "polynomials_module.json - scaffold phases 4-5"
+      ]
+    },
+    {
+      "skillId": "factoring-gcf",
+      "reteachFocus": "Finding the GCF of coefficients and variables, dividing each term by the GCF, verifying by distributing back",
+      "resources": [
+        "polynomials_module.json - scaffold phases 6-8"
+      ]
+    },
+    {
+      "skillId": "factoring-trinomials",
+      "reteachFocus": "Finding two numbers that multiply to c and add to b, writing the factored form, checking by FOIL",
+      "resources": [
+        "polynomials_module.json - scaffold phases 7-8"
+      ]
+    },
+    {
+      "skillId": "factoring-difference-of-squares",
+      "reteachFocus": "Recognizing a² - b² pattern, identifying a and b, writing (a + b)(a - b), distinguishing from sum of squares (not factorable)",
+      "resources": [
+        "polynomials_module.json - scaffold phases 7-8"
+      ]
+    }
   ],
   "assessmentProblems": [
     {
       "id": "a1u5-1",
       "question": "Simplify: (3x⁴)(5x²)",
       "answer": "**Step 1: Multiply the coefficients.**\n3 × 5 = 15\n\n**Step 2: Apply the product rule (same base — add exponents).**\nx⁴ · x² = x⁴⁺² = x⁶\n\n**Answer: 15x⁶**\n\nVerification by expansion concept: 3x⁴ means 3 · (x·x·x·x) and 5x² means 5 · (x·x). Multiplying gives 15 · (x·x·x·x·x·x) = 15x⁶ ✓",
-      "skill": "exponent-rules-multiplication",
+      "skill": "exponent-rules",
       "difficulty": 2,
       "points": 8
     },
@@ -40,7 +74,7 @@
       "id": "a1u5-2",
       "question": "Simplify: (4x³)² / (2x)",
       "answer": "**Step 1: Simplify the numerator using the power rule.**\n(4x³)² = 4² · (x³)² = 16 · x⁶ = 16x⁶\n\n**Step 2: Divide by 2x using the quotient rule.**\n16x⁶ / (2x) = (16/2) · (x⁶/x¹) = 8 · x⁶⁻¹ = 8x⁵\n\n**Answer: 8x⁵**\n\nVerification: 8x⁵ · 2x = 16x⁶ = (4x³)² ✓",
-      "skill": "exponent-rules-division",
+      "skill": "exponent-rules",
       "difficulty": 4,
       "points": 10
     },
@@ -64,7 +98,7 @@
       "id": "a1u5-5",
       "question": "Multiply using FOIL: (x + 6)(x - 3)",
       "answer": "**Apply FOIL (First, Outer, Inner, Last):**\n\n**F**irst: x · x = x²\n**O**uter: x · (-3) = -3x\n**I**nner: 6 · x = 6x\n**L**ast: 6 · (-3) = -18\n\n**Combine all four terms:**\nx² - 3x + 6x - 18\n\n**Combine like terms:**\nx² + 3x - 18\n\n**Answer: x² + 3x - 18**\n\nVerification: Substitute x = 2. Original: (2 + 6)(2 - 3) = (8)(-1) = -8. Result: 4 + 6 - 18 = -8 ✓",
-      "skill": "polynomial-multiplication-monomial",
+      "skill": "polynomial-multiplication",
       "difficulty": 3,
       "points": 10
     },
