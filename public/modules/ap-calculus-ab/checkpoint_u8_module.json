@@ -81,7 +81,7 @@
       "id": "cu8-spiral",
       "question": "SPIRAL: Find dy/dx if y = ∫₂ˣ sin(t²)dt, then evaluate dy/dx at x = √π.",
       "answer": "By FTC1: dy/dx = sin(x²). At x=√π: sin(π) = 0.",
-      "skill": "motion-via-integrals-net-change",
+      "skill": "ftc-part-1",
       "difficulty": 4,
       "points": 5
     }

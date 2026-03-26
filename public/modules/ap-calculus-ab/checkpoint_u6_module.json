@@ -60,7 +60,7 @@
       "id": "cu6-3",
       "question": "Evaluate: \u222b\u2081\u2074 (3\u221ax + 2/x)dx.",
       "answer": "\u222b(3x^(1/2)+2x\u207b\u00b9)dx = [2x^(3/2)+2ln|x|]\u2081\u2074 = (2\u00b78+2ln4)-(2\u00b71+2ln1) = (16+2ln4)-(2+0) = 14+2ln4.",
-      "skill": "ftc-part-1",
+      "skill": "ftc-part-2",
       "difficulty": 5,
       "points": 8
     },
