@@ -202,9 +202,12 @@ async function verify(responseText, context = {}) {
   // (action === CONFIRM_CORRECT) but the LLM's response implies the
   // answer is wrong, flag it for regeneration. We don't script the
   // response — we let the LLM speak naturally, just with correct info.
+  //
+  // Also guards CONTINUE_CONVERSATION when the LLM was asked to self-verify
+  // (unverifiable answers) — the LLM can still get these wrong.
   if (context.action === ACTIONS.CONFIRM_CORRECT) {
     // Detect rejection/doubt language at the start of a verified-correct response
-    const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but)/i;
+    const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but|nice\s+try[.!,]|let'?s\s+double[- ]check|(?:but\s+)?let'?s\s+(?:re)?check\s+the)/i;
 
     if (falseRejectionOpener.test(text.trim())) {
       flags.push('false_rejection_detected');

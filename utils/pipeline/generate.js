@@ -35,7 +35,14 @@ function buildActionPrompt(decision) {
   switch (action) {
     case ACTIONS.CONFIRM_CORRECT:
       parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified by our math engine: ${diagnosis.correctAnswer}).`);
-      parts.push('Confirm their answer naturally — the way a human tutor would when they know the student got it right. Then continue the lesson.');
+      if (diagnosis.demonstratedReasoning) {
+        parts.push('The student also demonstrated valid mathematical reasoning in their explanation.');
+        parts.push('Affirm their answer AND their reasoning concisely. Then move forward — do NOT re-walk steps they already explained.');
+      } else if (diagnosis.hasExplanation) {
+        parts.push('The student embedded their answer in an explanation. Acknowledge their reasoning and confirm correctness.');
+      } else {
+        parts.push('Confirm their answer naturally — the way a human tutor would when they know the student got it right. Then continue the lesson.');
+      }
       break;
 
     case ACTIONS.GUIDE_INCORRECT:

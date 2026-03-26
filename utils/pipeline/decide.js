@@ -159,6 +159,23 @@ function decideCore(observation, diagnosis, context) {
         'Specific praise about what they did right (not generic).'
       );
 
+      // When student demonstrated reasoning alongside their correct answer,
+      // acknowledge their understanding and advance. Do NOT re-scaffold steps
+      // they already showed they know.
+      if (diagnosis.demonstratedReasoning) {
+        decision.directives.push(
+          'DEMONSTRATED UNDERSTANDING: Student gave a correct answer WITH valid reasoning.',
+          'Affirm their work concisely and move forward immediately.',
+          'Do NOT walk them through steps they already explained.',
+          'Do NOT ask them to re-derive or re-explain what they clearly understand.'
+        );
+      } else if (diagnosis.hasExplanation) {
+        decision.directives.push(
+          'Student provided their answer within an explanation.',
+          'Acknowledge what they said and confirm correctness concisely.'
+        );
+      }
+
       // Update phase state if in structured lesson
       if (phaseState) {
         recordAssessment(phaseState, 'CORRECT_FAST');
