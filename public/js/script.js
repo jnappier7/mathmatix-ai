@@ -778,6 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     'input', 'button',
                     // SVG elements for charts/graphs
                     'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    'defs', 'linearGradient', 'stop',
                     // Images
                     'img',
                     // KaTeX uses math/semantics/annotation elements
@@ -792,6 +793,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'preserveAspectRatio',
                     'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
                     'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    'offset', 'stroke-linecap', 'stroke-linejoin', 'opacity',
                     // Form/interactive attributes
                     'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
                     // Data attributes for visuals
