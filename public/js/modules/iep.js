@@ -15,6 +15,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
     let iepChunkProblemCount = 0;
     const IEP_CHUNK_SIZE = 4; // check in after every 4 problems
     let extendedTimeIndicatorInjected = false;
+    let calculatorAutoOpened = false;
 
     function escapeHtml(text) {
         const div = document.createElement('div');
@@ -83,13 +84,14 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
     function handleIepResponseFeatures(iepFeatures) {
         if (!iepFeatures) return;
 
-        // Auto-show calculator when the accommodation is active
-        if (iepFeatures.showCalculator && window.floatingCalc) {
+        // Auto-show calculator once on first response; respect if student closes it
+        if (iepFeatures.showCalculator && window.floatingCalc && !calculatorAutoOpened) {
             const calcEl = document.getElementById('floating-calculator');
             if (calcEl && calcEl.style.display === 'none') {
                 window.floatingCalc.showCalculator();
                 console.log('[IEP] Auto-opened calculator for calculatorAllowed accommodation');
             }
+            calculatorAutoOpened = true;
         }
 
         // Auto Read-Aloud: trigger TTS automatically on new AI messages
