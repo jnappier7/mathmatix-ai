@@ -1902,7 +1902,119 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
+    // Algebraic expression comparison: normalize and compare polynomial forms
+    // Handles cases like "3x^2-3" vs "3x^2 - 3", "x+2" vs "2+x", etc.
+    const studentPoly = parsePolynomial(studentStr);
+    const correctPoly = parsePolynomial(correctStr);
+
+    if (studentPoly && correctPoly) {
+        if (arePolynomialsEqual(studentPoly, correctPoly, tolerance)) {
+            return { isCorrect: true, exact: false, equivalentForm: true };
+        }
+    }
+
     return { isCorrect: false };
+}
+
+/**
+ * Parse a polynomial expression into a canonical form.
+ * "3x^2-3" → { terms: [{coeff: 3, var: 'x', exp: 2}, {coeff: -3, var: null, exp: 0}] }
+ * "x+2"    → { terms: [{coeff: 1, var: 'x', exp: 1}, {coeff: 2, var: null, exp: 0}] }
+ *
+ * Returns null if the string is not a recognizable polynomial.
+ */
+function parsePolynomial(str) {
+    if (!str) return null;
+
+    // Normalize: strip spaces around operators, handle unicode minus, caret braces
+    let normalized = str.replace(/\s+/g, '')
+        .replace(/−/g, '-')
+        .replace(/\*\*/g, '^')
+        .replace(/\^{(\d+)}/g, '^$1')  // ^{2} → ^2
+        .replace(/\^(\d)/g, '^$1');
+
+    // Must contain at least one letter (variable) to be an algebraic expression
+    if (!/[a-z]/i.test(normalized)) return null;
+
+    // Split into signed terms: turn "3x^2-3+x" into ["+3x^2", "-3", "+x"]
+    // Insert '+' before leading term if it doesn't start with a sign
+    if (normalized[0] !== '-' && normalized[0] !== '+') {
+        normalized = '+' + normalized;
+    }
+
+    const termRegex = /([+-])(\d*\.?\d*)([a-z]?)(?:\^(\d+))?/gi;
+    const terms = [];
+    let match;
+    let totalMatched = 0;
+
+    while ((match = termRegex.exec(normalized)) !== null) {
+        const sign = match[1] === '-' ? -1 : 1;
+        const coeffStr = match[2];
+        const variable = match[3] || null;
+        const exponent = match[4] ? parseInt(match[4], 10) : (variable ? 1 : 0);
+
+        let coeff;
+        if (!coeffStr && variable) {
+            coeff = sign * 1; // "x" means 1x
+        } else if (coeffStr) {
+            coeff = sign * parseFloat(coeffStr);
+        } else {
+            continue; // Empty match
+        }
+
+        terms.push({ coeff, variable: variable ? variable.toLowerCase() : null, exp: exponent });
+        totalMatched += match[0].length;
+    }
+
+    // Verify we consumed most of the string (avoid false positives)
+    if (terms.length === 0 || totalMatched < normalized.length * 0.8) return null;
+
+    return { terms };
+}
+
+/**
+ * Compare two parsed polynomials for mathematical equivalence.
+ * Combines like terms and compares sorted canonical forms.
+ */
+function arePolynomialsEqual(polyA, polyB, tolerance = 0.01) {
+    const canonA = canonicalizePolynomial(polyA.terms);
+    const canonB = canonicalizePolynomial(polyB.terms);
+
+    if (canonA.length !== canonB.length) return false;
+
+    for (let i = 0; i < canonA.length; i++) {
+        if (canonA[i].variable !== canonB[i].variable) return false;
+        if (canonA[i].exp !== canonB[i].exp) return false;
+        if (Math.abs(canonA[i].coeff - canonB[i].coeff) > tolerance) return false;
+    }
+
+    return true;
+}
+
+/**
+ * Combine like terms and sort by descending exponent, then by variable.
+ */
+function canonicalizePolynomial(terms) {
+    // Combine like terms
+    const combined = {};
+    for (const term of terms) {
+        const key = `${term.variable || '_const'}_${term.exp}`;
+        if (!combined[key]) {
+            combined[key] = { ...term };
+        } else {
+            combined[key].coeff += term.coeff;
+        }
+    }
+
+    // Filter out zero-coefficient terms and sort
+    return Object.values(combined)
+        .filter(t => Math.abs(t.coeff) > 1e-10)
+        .sort((a, b) => {
+            if (b.exp !== a.exp) return b.exp - a.exp;
+            if (a.variable && !b.variable) return -1;
+            if (!a.variable && b.variable) return 1;
+            return (a.variable || '').localeCompare(b.variable || '');
+        });
 }
 
 /**
@@ -2074,4 +2186,7 @@ module.exports = {
     solveSystem,
     parseLinearExpression,
     parseSystemEquation,
+    // Export polynomial helpers for testing
+    parsePolynomial,
+    arePolynomialsEqual,
 };

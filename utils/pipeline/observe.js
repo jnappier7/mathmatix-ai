@@ -41,9 +41,18 @@ const PATTERNS = {
   fraction: /^(-?\d+\s*\/\s*\d+)$/,
   varAssignment: /^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i,
   answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // Algebraic expression answers: 3x^2-3, x+2, -2x+5, 2x^2+3x-1
+  algebraicExpr: /^(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)\s*$/i,
   // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
   arithmeticStatement: /\d+\.?\d*\s*(?:[+\-*/×÷]|times|plus|minus|divided\s+by|multiplied\s+by)\s*\d+\.?\d*\s+(?:is|=|equals)\s+(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
   mixedNumber: /^(-?\d+)\s+(\d+\s*\/\s*\d+)$/,
+
+  // Answer embedded in explanation — captures the final stated answer value
+  // Matches: "...which means the limit is 4", "...so the answer is 3x^2-3", "...you get x+2"
+  embeddedAnswer: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:you\s+)?(?:get|gives?)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/i,
+
+  // Reasoning phrases that indicate the student is showing their work
+  reasoningIndicators: /\b(because|since|after\s+(?:i\s+)?(?:factor|simplif|cancel|distribut|combin|reduc)|(?:i\s+)?(?:factor|simplif|cancel)(?:ed|ing)?|if\s+(?:you|i)\s+(?:factor|simplif|cancel)|by\s+(?:factoring|simplifying|canceling)|using\s+the\s+(?:power|chain|quotient|product)\s+rule|(?:which|that|so)\s+(?:means|gives|leaves|simplifies?\s+to))\b/i,
 
   // Help/IDK
   idk: /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea|beats\s*me)\b/i,
@@ -83,16 +92,60 @@ const PATTERNS = {
  */
 function extractAnswer(message) {
   const text = message.trim();
-  if (text.length > 100) return null;
+
+  // For short, direct answers (< 100 chars): try all patterns
+  if (text.length <= 100) {
+    let match;
+    if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw: text };
+    if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw: text };
+    if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
+    if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
+    if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw: text };
+    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
+    if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw: text };
+  }
+
+  // For longer messages: try to extract answer embedded in explanation
+  // This catches "after I factor and simplify, you get x+2… which means the limit is 4"
+  if (text.length > 10) {
+    const embedded = extractAnswerFromExplanation(text);
+    if (embedded) return embedded;
+  }
+
+  return null;
+}
+
+/**
+ * Extract an answer value from a longer explanatory message.
+ * Handles cases like "after I factor and simplify, you get x+2, so the limit is 4"
+ *
+ * Returns { value, raw, hasExplanation } or null.
+ */
+function extractAnswerFromExplanation(message) {
+  const text = message.trim();
+  // Don't try on very long messages — likely not an answer attempt
+  if (text.length > 500) return null;
 
   let match;
-  if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw: text };
-  if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw: text };
-  if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
-  if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
-  if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
-  if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw: text };
+  // Try embedded answer pattern (phrase + value)
+  if ((match = text.match(PATTERNS.embeddedAnswer))) {
+    return { value: match[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
+  }
+
+  // Try answer phrase pattern on longer text (relaxed from 100 char limit)
+  if ((match = text.match(PATTERNS.answerPhrase))) {
+    return { value: match[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
+  }
+
   return null;
+}
+
+/**
+ * Detect if the student's message demonstrates reasoning/understanding.
+ * Returns true if the message contains indicators of mathematical reasoning.
+ */
+function hasReasoningIndicators(message) {
+  return PATTERNS.reasoningIndicators.test(message);
 }
 
 /**
@@ -157,6 +210,9 @@ function observe(message, context = {}) {
   // Extract answer attempt first (high priority)
   const answer = extractAnswer(text);
 
+  // Detect if student showed their reasoning (factored, simplified, explained why)
+  const demonstratedReasoning = answer?.hasExplanation ? hasReasoningIndicators(text) : false;
+
   // Detect context signals
   const contextSignals = detectContextSignals(text);
 
@@ -202,7 +258,8 @@ function observe(message, context = {}) {
   return {
     messageType,
     confidence,
-    answer,               // { value, raw } or null
+    answer,               // { value, raw, hasExplanation? } or null
+    demonstratedReasoning, // true if student showed valid mathematical reasoning
     contextSignals,       // [{ type, strength }]
     streaks: {
       idkCount: streaks.idkCount,
@@ -217,6 +274,8 @@ function observe(message, context = {}) {
 module.exports = {
   observe,
   extractAnswer,
+  extractAnswerFromExplanation,
+  hasReasoningIndicators,
   detectContextSignals,
   detectProblemContext,
   detectStreaks,

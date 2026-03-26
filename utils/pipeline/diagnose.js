@@ -143,6 +143,13 @@ async function diagnose(observation, context = {}) {
     timestamp: new Date(),
   };
 
+  // ── Step 5: Flag demonstrated reasoning ──
+  // When a student provides both a correct answer AND shows their work/reasoning,
+  // that's strong evidence of understanding. The decide stage uses this to skip
+  // unnecessary scaffolding steps and affirm immediately.
+  const demonstratedReasoning = isCorrect === true && observation.demonstratedReasoning === true;
+  const hasExplanation = observation.answer?.hasExplanation === true;
+
   return {
     type: isCorrect === null ? 'unverifiable' : (isCorrect ? 'correct' : 'incorrect'),
     isCorrect,
@@ -150,6 +157,8 @@ async function diagnose(observation, context = {}) {
     correctAnswer,
     misconception,
     evidence,
+    demonstratedReasoning,  // true = student gave correct answer + valid reasoning
+    hasExplanation,         // true = answer was embedded in explanatory text
     problemInfo: problemInfo ? {
       type: problemInfo.problemType,
       correctAnswer: problemInfo.correctAnswer,
