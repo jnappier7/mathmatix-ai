@@ -50,11 +50,13 @@ const PATTERNS = {
   // Answer embedded in explanation — two tiers of patterns.
   // "Conclusive" patterns (highest priority): "the limit is 4", "the answer is 3x^2-3"
   // These indicate the student is stating their final answer.
-  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/gi,
+  // NOTE: algebraic alternation MUST come before numeric, so "5x^4-1" matches
+  // before the numeric branch can grab just "5".
+  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
 
   // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
   // These may be intermediate steps, not the final answer.
-  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives?)\s+)(-?\d+\.?\d*(?:\s*\/\s*\d+)?|-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)/gi,
+  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives?)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
 
   // Reasoning phrases that indicate the student is showing their work
   reasoningIndicators: /\b(because|since|after\s+(?:i\s+)?(?:factor|simplif|cancel|distribut|combin|reduc)|(?:i\s+)?(?:factor|simplif|cancel)(?:ed|ing)?|if\s+(?:you|i)\s+(?:factor|simplif|cancel)|by\s+(?:factoring|simplifying|canceling)|using\s+the\s+(?:power|chain|quotient|product)\s+rule|(?:which|that|so)\s+(?:means|gives|leaves|simplifies?\s+to))\b/i,
