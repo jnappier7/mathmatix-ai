@@ -44,24 +44,35 @@ class VisualTeachingHandler {
      */
     async executeWhiteboardCommands(commands) {
         for (const cmd of commands) {
-            if (cmd.autoOpen) {
-                this.openWhiteboard();
-            }
-
             switch (cmd.type) {
                 case 'drawing':
+                    // Show as inline thumbnail instead of auto-opening full whiteboard
+                    if (window.createDrawingThumbnail && cmd.sequence) {
+                        const messages = document.querySelectorAll('.message.ai');
+                        const lastMessage = messages[messages.length - 1];
+                        if (lastMessage) {
+                            const thumbnail = window.createDrawingThumbnail(cmd.sequence);
+                            lastMessage.appendChild(thumbnail);
+                            break;
+                        }
+                    }
+                    // Fallback: open whiteboard directly
+                    if (cmd.autoOpen) this.openWhiteboard();
                     await this.drawOnWhiteboard(cmd.sequence);
                     break;
                 case 'write':
+                    if (cmd.autoOpen) this.openWhiteboard();
                     await this.writeOnWhiteboard(cmd.text);
                     break;
                 case 'equation':
+                    if (cmd.autoOpen) this.openWhiteboard();
                     await this.writeEquation(cmd.latex);
                     break;
                 case 'clear':
                     this.clearWhiteboard();
                     break;
                 case 'triangle_problem':
+                    if (cmd.autoOpen) this.openWhiteboard();
                     await this.createTriangleProblem(cmd.angles);
                     break;
                 case 'unit_circle':
