@@ -16,12 +16,12 @@ class DiagramDisplay {
      */
     parseDiagramCommands(message) {
         const commands = [];
-        const regex = /\[DIAGRAM:(\w+):([^\]]+)\]/g;
+        const regex = /\[DIAGRAM:(\w+)(?::([^\]]+))?\]/g;
         let match;
 
         while ((match = regex.exec(message)) !== null) {
             const type = match[1];
-            const paramsStr = match[2];
+            const paramsStr = match[2] || '';
 
             // Parse parameters (handling nested objects)
             const params = this.parseParams(paramsStr);

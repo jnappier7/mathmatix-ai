@@ -723,17 +723,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Protect inline visual HTML (SVG containers from inlineChatVisuals)
+        // Uses div-depth counting to reliably match the full container,
+        // regardless of nested child elements (title, caption, controls, etc.)
         const visualBlocks = [];
-        processedText = processedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
-            const index = visualBlocks.length;
-            visualBlocks.push(match);
-            return `@@VISUAL_BLOCK_${index}@@`;
-        });
-        processedText = processedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
-            const index = visualBlocks.length;
-            visualBlocks.push(match);
-            return `@@VISUAL_BLOCK_${index}@@`;
-        });
+        {
+            let _pos = 0;
+            const _marker = '<div class="icv-container';
+            while (_pos < processedText.length) {
+                const _start = processedText.indexOf(_marker, _pos);
+                if (_start === -1) break;
+                let _depth = 0, _i = _start, _end = -1;
+                while (_i < processedText.length) {
+                    if (processedText.startsWith('<div', _i) && /^<div[\s>]/.test(processedText.slice(_i))) {
+                        _depth++;
+                        _i = processedText.indexOf('>', _i) + 1;
+                        if (_i === 0) break; // no closing '>' found
+                    } else if (processedText.startsWith('</div>', _i)) {
+                        _depth--;
+                        if (_depth === 0) { _end = _i + 6; break; }
+                        _i += 6;
+                    } else {
+                        _i++;
+                    }
+                }
+                if (_end === -1) break;
+                visualBlocks.push(processedText.substring(_start, _end));
+                const _ph = `@@VISUAL_BLOCK_${visualBlocks.length - 1}@@`;
+                processedText = processedText.substring(0, _start) + _ph + processedText.substring(_end);
+                _pos = _start + _ph.length;
+            }
+        }
 
         // Parse markdown
         let html = _marked.parse(processedText, { breaks: true });
@@ -759,6 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     'input', 'button',
                     // SVG elements for charts/graphs
                     'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    'defs', 'linearGradient', 'stop',
                     // Images
                     'img',
                     // KaTeX uses math/semantics/annotation elements
@@ -773,6 +793,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'preserveAspectRatio',
                     'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
                     'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    'offset', 'stroke-linecap', 'stroke-linejoin', 'opacity',
                     // Form/interactive attributes
                     'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
                     // Data attributes for visuals
