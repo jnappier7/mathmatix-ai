@@ -937,6 +937,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     aiMessageDiv.textContent = aiMessage;
                                     chatBox.scrollTop = chatBox.scrollHeight;
                                 }
+                                if (data.done) {
+                                    // Use cleaned response from server
+                                    if (data.fullText) {
+                                        aiMessage = data.fullText;
+                                        aiMessageDiv.textContent = aiMessage;
+                                    }
+                                    // Auto-celebrate badge award
+                                    if (data.badgeAwarded) {
+                                        showBadgeCelebration(data.badgeAwarded);
+                                    }
+                                    // Update phase display
+                                    if (data.currentPhase) {
+                                        updatePhaseIndicator(data.currentPhase);
+                                    }
+                                }
                             } catch (e) {
                                 // Ignore parse errors
                             }
@@ -952,6 +967,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             } catch (error) {
                 console.error('Send error:', error);
                 aiMessageDiv.textContent = 'Sorry, there was an error. Please try again.';
+            }
+        }
+
+        // Show badge celebration when earned
+        function showBadgeCelebration(badgeAwarded) {
+            if (!badgeAwarded) return;
+
+            // Confetti
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            }
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);animation:fadeIn 0.3s ease';
+            modal.innerHTML = `
+                <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;padding:40px;text-align:center;color:white;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+                    <div style="font-size:64px;margin-bottom:16px">🏆</div>
+                    <h2 style="margin:0 0 8px;font-size:28px">Badge Earned!</h2>
+                    <h3 style="margin:0 0 8px;font-size:20px">${badgeAwarded.badgeName}</h3>
+                    <p style="opacity:0.8;margin:4px 0">${badgeAwarded.tier} Tier</p>
+                    <p style="font-size:24px;font-weight:bold;margin:12px 0">+${badgeAwarded.xpBonus} XP</p>
+                    <p style="opacity:0.7;margin:4px 0">Total Badges: ${badgeAwarded.totalBadges}</p>
+                    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center">
+                        <button onclick="this.closest('div[style*=fixed]').remove();window.location.href='/badge-map.html'" style="padding:10px 20px;border-radius:10px;border:none;background:white;color:#764ba2;font-weight:bold;cursor:pointer">Choose Next Badge</button>
+                        <button onclick="this.closest('div[style*=fixed]').remove()" style="padding:10px 20px;border-radius:10px;border:2px solid white;background:transparent;color:white;font-weight:bold;cursor:pointer">Continue</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => { if (modal.parentNode) modal.remove(); }, 15000);
+        }
+
+        // Update phase indicator in the header
+        function updatePhaseIndicator(phase) {
+            const phaseEl = document.getElementById('current-phase');
+            if (phaseEl) {
+                const phaseNames = {
+                    'INTRO': 'Introduction',
+                    'WARMUP': 'Warm Up',
+                    'CONCEPT_INTRO': 'Concept Introduction',
+                    'I_DO': 'I Do (Modeling)',
+                    'CONCEPT_CHECK': 'Concept Check',
+                    'WE_DO': 'We Do (Guided)',
+                    'CHECK_IN': 'Check In',
+                    'YOU_DO': 'You Do (Independent)',
+                    'MASTERY_CHECK': 'Mastery Check'
+                };
+                phaseEl.textContent = phaseNames[phase] || phase;
             }
         }
 

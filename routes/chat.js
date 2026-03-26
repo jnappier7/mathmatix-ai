@@ -880,7 +880,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
             pipelineResult = {
                 text: fallbackText,
-                xpBreakdown: {},
+                xpBreakdown: { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 },
                 visualCommands: null,
                 drawingSequence: null,
                 boardContext: null,
@@ -888,7 +888,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 problemResult: null,
                 sessionStats: null,
                 tutorsUnlocked: null,
+                avatarBuilderUnlocked: false,
                 leveledUp: false,
+                gamification: null,
                 aiTimeUsed: null,
                 freeWeeklySecondsRemaining: null,
                 _pipeline: { fallback: true, error: pipelineError.message },
@@ -1029,6 +1031,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,
             suggestions: pipelineResult.suggestions || null,
+            gamification: pipelineResult.gamification || null,
             _pipeline: pipelineResult._pipeline,
         };
 

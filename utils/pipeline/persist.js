@@ -18,6 +18,7 @@ const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
+const { emitGamificationEvent } = require('../gamificationEvents');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -217,6 +218,27 @@ async function persist(params) {
   // Badge progress
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {
     updateBadgeProgress(user, results.wasCorrect);
+  }
+
+  // ── 8b. Gamification events (daily quests, weekly challenges) ──
+  if (results.problemAnswered) {
+    const gamificationResult = emitGamificationEvent(user, 'problemSolved', {
+      correct: results.wasCorrect,
+      skillId: extracted.skillStarted || extracted.skillMastered || null,
+      domain: observation?.skillDomain || null,
+    });
+    results.gamification = gamificationResult;
+
+    // If a skill was mastered, emit that event too
+    if (extracted.skillMastered) {
+      emitGamificationEvent(user, 'skillMastered', { skillId: extracted.skillMastered });
+    }
+
+    // If a new skill was started, emit that event
+    if (extracted.skillStarted) {
+      emitGamificationEvent(user, 'newSkillStarted', { skillId: extracted.skillStarted });
+      emitGamificationEvent(user, 'skillPracticed', { skillId: extracted.skillStarted });
+    }
   }
 
   // ── 9. AI time tracking ──

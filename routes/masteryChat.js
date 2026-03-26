@@ -19,6 +19,7 @@ const {
   PHASES
 } = require('../utils/lessonPhaseManager');
 const { verify: pipelineVerify } = require('../utils/pipeline');
+const { emitGamificationEvent } = require('../utils/gamificationEvents');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -393,6 +394,19 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 // Update saved message with cleaned version
                 masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;
 
+                // ========== GAMIFICATION EVENTS (quests, challenges) ==========
+                // Detect if a problem was answered in this response
+                const answerMarkers = [...fullResponse.matchAll(/<ANSWER_RESULT\s+correct="(true|false)"/gi)];
+                if (answerMarkers.length > 0) {
+                    for (const marker of answerMarkers) {
+                        const correct = marker[1] === 'true';
+                        emitGamificationEvent(user, 'problemSolved', {
+                            correct,
+                            skillId: activeBadge.skillId,
+                        });
+                    }
+                }
+
                 // Save updated phase state
                 user.masteryProgress.activeBadge.phaseState = phaseState;
                 user.markModified('masteryProgress');
@@ -407,14 +421,45 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 // Check for mastery completion
                 const masteryResult = await checkMasteryCompletion(user, activeBadge);
 
-                // Send completion event
+                // Auto-award badge and include celebration data when mastery is achieved
+                let badgeAwarded = null;
+                if (masteryResult.completed && masteryResult.success) {
+                    const alreadyEarned = (user.badges || []).find(b => b.badgeId === activeBadge.badgeId);
+                    if (!alreadyEarned) {
+                        if (!user.badges) user.badges = [];
+                        const accuracy = (activeBadge.problemsCorrect || 0) / (activeBadge.problemsCompleted || 1);
+                        user.badges.push({
+                            badgeId: activeBadge.badgeId,
+                            earnedDate: new Date(),
+                            score: Math.round(accuracy * 100),
+                        });
+                        user.xp = (user.xp || 0) + 500;
+                        user.markModified('badges');
+                        await user.save();
+
+                        badgeAwarded = {
+                            badgeId: activeBadge.badgeId,
+                            badgeName: activeBadge.badgeName,
+                            tier: activeBadge.tier,
+                            xpBonus: 500,
+                            totalBadges: user.badges.length,
+                        };
+
+                        // Emit skill mastered event for weekly challenges
+                        emitGamificationEvent(user, 'skillMastered', { skillId: activeBadge.skillId });
+                        await user.save();
+                    }
+                }
+
+                // Send completion event with celebration data
                 res.write(`data: ${JSON.stringify({
                     done: true,
                     fullText: cleanedResponse,
                     voiceId: currentTutor.voiceId,
                     currentPhase: phaseState.currentPhase,
                     masteryCompleted: masteryResult.completed,
-                    masterySuccess: masteryResult.success
+                    masterySuccess: masteryResult.success,
+                    badgeAwarded,
                 })}\n\n`);
                 res.end();
             } catch (error) {
@@ -480,6 +525,18 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             // Update saved message with cleaned version
             masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;
 
+            // ========== GAMIFICATION EVENTS (quests, challenges) ==========
+            const answerMarkersNonStream = [...aiResponse.matchAll(/<ANSWER_RESULT\s+correct="(true|false)"/gi)];
+            if (answerMarkersNonStream.length > 0) {
+                for (const marker of answerMarkersNonStream) {
+                    const correct = marker[1] === 'true';
+                    emitGamificationEvent(user, 'problemSolved', {
+                        correct,
+                        skillId: activeBadge.skillId,
+                    });
+                }
+            }
+
             // Save updated phase state
             user.masteryProgress.activeBadge.phaseState = phaseState;
             user.markModified('masteryProgress');
@@ -488,12 +545,41 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             // Check for mastery completion
             const masteryResult = await checkMasteryCompletion(user, activeBadge);
 
+            // Auto-award badge on completion
+            let badgeAwarded = null;
+            if (masteryResult.completed && masteryResult.success) {
+                const alreadyEarned = (user.badges || []).find(b => b.badgeId === activeBadge.badgeId);
+                if (!alreadyEarned) {
+                    if (!user.badges) user.badges = [];
+                    const accuracy = (activeBadge.problemsCorrect || 0) / (activeBadge.problemsCompleted || 1);
+                    user.badges.push({
+                        badgeId: activeBadge.badgeId,
+                        earnedDate: new Date(),
+                        score: Math.round(accuracy * 100),
+                    });
+                    user.xp = (user.xp || 0) + 500;
+                    user.markModified('badges');
+
+                    badgeAwarded = {
+                        badgeId: activeBadge.badgeId,
+                        badgeName: activeBadge.badgeName,
+                        tier: activeBadge.tier,
+                        xpBonus: 500,
+                        totalBadges: user.badges.length,
+                    };
+
+                    emitGamificationEvent(user, 'skillMastered', { skillId: activeBadge.skillId });
+                    await user.save();
+                }
+            }
+
             res.json({
                 text: cleanedResponse,
                 voiceId: currentTutor.voiceId,
                 currentPhase: phaseState.currentPhase,
                 masteryCompleted: masteryResult.completed,
                 masterySuccess: masteryResult.success,
+                badgeAwarded,
                 masteryProgress: {
                     badgeName: masteryContext.badgeName,
                     progress: `${activeBadge.problemsCompleted || 0}/${masteryContext.requiredProblems}`,

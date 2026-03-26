@@ -301,3 +301,74 @@ export function showTutorUnlockCelebration(tutorIds) {
 
     showNextTutor();
 }
+
+/**
+ * Process gamification events from API response.
+ * Shows toast notifications for completed quests/challenges and refreshes sidebar.
+ *
+ * @param {Object} gamification - { questsCompleted: [], challengesCompleted: [], xpAwarded: number }
+ */
+export function processGamificationEvents(gamification) {
+    if (!gamification) return;
+
+    // Show quest completion toasts
+    if (gamification.questsCompleted && gamification.questsCompleted.length > 0) {
+        for (const quest of gamification.questsCompleted) {
+            showToast(`${quest.icon || '🎯'} Quest Complete: ${quest.name} (+${quest.xpEarned} XP)`, 5000);
+        }
+    }
+
+    // Show challenge completion toasts
+    if (gamification.challengesCompleted && gamification.challengesCompleted.length > 0) {
+        for (const challenge of gamification.challengesCompleted) {
+            showToast(`${challenge.icon || '⭐'} Challenge Complete: ${challenge.name} (+${challenge.xpEarned} XP)`, 6000);
+            if (challenge.specialReward) {
+                setTimeout(() => {
+                    showToast(`🏆 Reward: ${challenge.specialReward}`, 5000);
+                }, 1500);
+            }
+        }
+        triggerConfetti();
+    }
+
+    // Refresh quest/challenge display in sidebar
+    if ((gamification.questsCompleted?.length > 0) || (gamification.challengesCompleted?.length > 0)) {
+        loadQuestsAndChallenges();
+    }
+}
+
+/**
+ * Process badge award from mastery chat response.
+ * Shows automatic celebration when a badge is earned.
+ *
+ * @param {Object} badgeAwarded - { badgeId, badgeName, tier, xpBonus, totalBadges }
+ */
+export function processBadgeAward(badgeAwarded) {
+    if (!badgeAwarded) return;
+
+    triggerConfetti();
+
+    const modal = document.createElement('div');
+    modal.className = 'badge-celebration-modal';
+    modal.innerHTML = `
+        <div class="badge-celebration-content">
+            <div class="badge-celebration-icon">🏆</div>
+            <h2>Badge Earned!</h2>
+            <h3>${badgeAwarded.badgeName}</h3>
+            <p class="badge-tier">${badgeAwarded.tier} Tier</p>
+            <p class="badge-xp">+${badgeAwarded.xpBonus} XP</p>
+            <p class="badge-count">Total Badges: ${badgeAwarded.totalBadges}</p>
+            <div class="badge-celebration-actions">
+                <button onclick="this.closest('.badge-celebration-modal').remove(); window.location.href='/badge-map.html'">Choose Next Badge</button>
+                <button onclick="this.closest('.badge-celebration-modal').remove()">Continue</button>
+            </div>
+        </div>
+    `;
+    modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);animation:fadeIn 0.3s ease';
+    document.body.appendChild(modal);
+
+    // Auto-dismiss after 15 seconds
+    setTimeout(() => {
+        if (modal.parentNode) modal.remove();
+    }, 15000);
+}
