@@ -1875,12 +1875,18 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     }
 
     // Numeric comparison with tolerance
-    const studentNum = parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
-    const correctNum = parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
+    // Only apply when both answers look like pure numbers (no variables).
+    // Without this guard, "3x^2-3+2" gets stripped to "32-32" → 32 and
+    // falsely matches "3x^2-3" stripped to "32-3" → 32.
+    const hasLetters = /[a-zA-Z]/.test(studentStr) || /[a-zA-Z]/.test(correctStr);
+    if (!hasLetters) {
+        const studentNum = parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
+        const correctNum = parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
 
-    if (!isNaN(studentNum) && !isNaN(correctNum)) {
-        if (Math.abs(studentNum - correctNum) <= tolerance) {
-            return { isCorrect: true, exact: false, difference: Math.abs(studentNum - correctNum) };
+        if (!isNaN(studentNum) && !isNaN(correctNum)) {
+            if (Math.abs(studentNum - correctNum) <= tolerance) {
+                return { isCorrect: true, exact: false, difference: Math.abs(studentNum - correctNum) };
+            }
         }
     }
 
