@@ -1541,10 +1541,12 @@ async function handleGreetingRequest(req, res, userId) {
         // Reuse the current active conversation if it's recent and not a
         // course/mastery session. This prevents duplicate conversations when
         // the student refreshes the page or the frontend re-sends the greeting.
+        // Demo clones always start fresh — their pre-seeded conversations are
+        // for teacher/parent dashboard views, not the student's own chat.
         let activeConversation = null;
         const REUSE_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 
-        if (user.activeConversationId) {
+        if (user.activeConversationId && !user.isDemoClone) {
             const existing = await Conversation.findById(user.activeConversationId);
             if (
                 existing &&

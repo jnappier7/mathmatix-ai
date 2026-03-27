@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // They can: resume a course chat, start a fresh course session,
             // resume a recent general chat, or start a brand new session.
             let modalHandled = false;
-            if (currentUser.role === 'student' && window.ReturningUserModal) {
+            if (currentUser.role === 'student' && window.ReturningUserModal && !currentUser.isDemo && !currentUser.isDemoClone) {
                 const returningModal = new window.ReturningUserModal();
                 const choice = await returningModal.show(currentUser);
                 console.log('[initializeApp] Returning user choice:', choice);
