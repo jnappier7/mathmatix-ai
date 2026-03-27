@@ -1,7 +1,7 @@
 /* ============================================
-   MOBILE CHAT NAVIGATION — MATHMATIX AI (v3)
-   3-tab bottom nav with full-screen panels:
-   Learn · Chat · Profile
+   MOBILE CHAT NAVIGATION — MATHMATIX AI (v4)
+   4-tab bottom nav with full-screen panels:
+   Learn · Chat · Quests · Profile
    ============================================ */
 
 (function () {
@@ -12,10 +12,11 @@
 
     var MOBILE_BP = 769;
 
-    /* ---- Three-tab layout ---- */
+    /* ---- Four-tab layout ---- */
     var NAV_ITEMS = [
         { action: 'learn',   icon: 'fa-book-open',     label: 'Learn' },
         { action: 'chat',    icon: 'fa-comment-dots',   label: 'Chat', active: true },
+        { action: 'quests',  icon: 'fa-trophy',         label: 'Quests' },
         { action: 'profile', icon: 'fa-user-circle',    label: 'Profile' }
     ];
 
@@ -145,12 +146,14 @@
         if (panelsBuilt[name]) {
             // Refresh data on re-open
             if (name === 'learn') refreshLearnPanel();
+            if (name === 'quests') refreshQuestsPanel();
             if (name === 'profile') refreshProfilePanel();
             return;
         }
 
         switch (name) {
             case 'learn': buildLearnPanel(); break;
+            case 'quests': buildQuestsPanel(); break;
             case 'profile': buildProfilePanel(); break;
         }
         panelsBuilt[name] = true;
@@ -174,7 +177,6 @@
             + '</div>'
             + '<div class="mp-content" id="mp-learn-content">'
             + '  <div id="mp-learn-continue"></div>'
-            + '  <div id="mp-learn-quests"></div>'
             + '  <div class="mp-section-header">'
             + '    <span class="mp-section-title"><i class="fas fa-star"></i> Learning</span>'
             + '  </div>'
@@ -330,50 +332,191 @@
             }
         }
 
-        // Daily Quests Section
-        var questsEl = document.getElementById('mp-learn-quests');
-        if (questsEl) {
+    }
+
+    function wireAction(id, handler) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', handler);
+    }
+
+    /* ============================
+       QUESTS PANEL
+       ============================ */
+
+    function buildQuestsPanel() {
+        var panel = document.createElement('div');
+        panel.id = 'mp-quests';
+        panel.className = 'mobile-panel';
+
+        panel.innerHTML = ''
+            + '<div class="mp-header">'
+            + '  <h2 class="mp-header-title">Quests & Challenges</h2>'
+            + '  <div class="mp-header-actions">'
+            + '    <button class="mp-header-btn" id="mp-quests-badges-btn" aria-label="Badge Map"><i class="fas fa-medal"></i></button>'
+            + '  </div>'
+            + '</div>'
+            + '<div class="mp-content" id="mp-quests-content">'
+            + '  <div class="mp-quests-streak-bar" id="mp-quests-streak"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-tasks"></i> Daily Quests</span>'
+            + '  </div>'
+            + '  <div id="mp-quests-daily"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-calendar-week"></i> Weekly Challenges</span>'
+            + '  </div>'
+            + '  <div id="mp-quests-weekly"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-medal"></i> Badges</span>'
+            + '  </div>'
+            + '  <div id="mp-quests-badges"></div>'
+            + '</div>';
+
+        document.body.appendChild(panel);
+
+        // Badge Map button
+        document.getElementById('mp-quests-badges-btn').addEventListener('click', function () {
+            window.location.href = '/badge-map.html';
+        });
+
+        refreshQuestsPanel();
+    }
+
+    function refreshQuestsPanel() {
+        // Streak Bar
+        var streakEl = document.getElementById('mp-quests-streak');
+        if (streakEl) {
+            var streak = getStatValue('drawer-streak-count', '0');
+            var totalXP = getStatValue('drawer-total-xp', '0');
+            var sessionXP = getStatValue('drawer-session-xp', '0');
+
+            streakEl.innerHTML = ''
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#128293;</span>'
+                + '  <span class="mp-streak-value">' + streak + '</span>'
+                + '  <span class="mp-streak-label">Day Streak</span>'
+                + '</div>'
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#11088;</span>'
+                + '  <span class="mp-streak-value">' + totalXP + '</span>'
+                + '  <span class="mp-streak-label">Total XP</span>'
+                + '</div>'
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#9889;</span>'
+                + '  <span class="mp-streak-value">' + sessionXP + '</span>'
+                + '  <span class="mp-streak-label">Session XP</span>'
+                + '</div>';
+        }
+
+        // Daily Quests
+        var dailyEl = document.getElementById('mp-quests-daily');
+        if (dailyEl) {
             var questsSource = document.getElementById('drawer-daily-quests-container') ||
                                document.getElementById('daily-quests-container');
             var questItems = questsSource ? questsSource.querySelectorAll('.quest-item, .daily-quest-item') : [];
 
-            var questHtml = '<div class="mp-section-header">'
-                + '<span class="mp-section-title"><i class="fas fa-tasks"></i> Daily Quests</span>'
-                + '</div>';
-
             if (questItems.length > 0) {
-                questItems.forEach(function (q, i) {
-                    if (i >= 3) return; // Show max 3
+                var questHtml = '';
+                questItems.forEach(function (q) {
                     var name = q.querySelector('.quest-name, .quest-title');
+                    var desc = q.querySelector('.quest-description, .quest-desc');
                     var progress = q.querySelector('.quest-progress-fill, .progress-fill');
                     var reward = q.querySelector('.quest-reward, .quest-xp');
                     var pctWidth = progress ? progress.style.width : '0%';
+                    var isComplete = q.classList.contains('completed') || q.classList.contains('quest-complete');
 
-                    questHtml += '<div class="mp-quest-card">'
-                        + '  <span class="mp-quest-icon">&#127919;</span>'
+                    questHtml += '<div class="mp-quest-card' + (isComplete ? ' completed' : '') + '">'
+                        + '  <span class="mp-quest-icon">' + (isComplete ? '&#9989;' : '&#127919;') + '</span>'
                         + '  <div class="mp-quest-info">'
                         + '    <div class="mp-quest-name">' + escHtml(name ? name.textContent : 'Quest') + '</div>'
+                        + (desc ? '    <div class="mp-quest-desc">' + escHtml(desc.textContent) + '</div>' : '')
                         + '    <div class="mp-quest-bar"><div class="mp-quest-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
                         + '  </div>'
                         + '  <span class="mp-quest-reward">' + escHtml(reward ? reward.textContent : '+XP') + '</span>'
                         + '</div>';
                 });
+                dailyEl.innerHTML = questHtml;
             } else {
-                questHtml += '<div class="mp-quest-card">'
+                dailyEl.innerHTML = '<div class="mp-quest-card">'
                     + '  <span class="mp-quest-icon">&#127919;</span>'
                     + '  <div class="mp-quest-info">'
                     + '    <div class="mp-quest-name">Complete a session to unlock quests</div>'
                     + '  </div>'
                     + '</div>';
             }
-
-            questsEl.innerHTML = questHtml;
         }
-    }
 
-    function wireAction(id, handler) {
-        var el = document.getElementById(id);
-        if (el) el.addEventListener('click', handler);
+        // Weekly Challenges
+        var weeklyEl = document.getElementById('mp-quests-weekly');
+        if (weeklyEl) {
+            var challengeSource = document.getElementById('drawer-weekly-challenges-container') ||
+                                  document.getElementById('weekly-challenges-container');
+            var challengeItems = challengeSource ? challengeSource.querySelectorAll('.challenge-item, .weekly-challenge-item') : [];
+
+            if (challengeItems.length > 0) {
+                var challengeHtml = '';
+                challengeItems.forEach(function (c) {
+                    var name = c.querySelector('.challenge-name, .challenge-title');
+                    var desc = c.querySelector('.challenge-description, .challenge-desc');
+                    var progress = c.querySelector('.challenge-progress-fill, .progress-fill');
+                    var reward = c.querySelector('.challenge-reward, .challenge-xp');
+                    var difficulty = c.querySelector('.challenge-difficulty');
+                    var pctWidth = progress ? progress.style.width : '0%';
+                    var isComplete = c.classList.contains('completed') || c.classList.contains('challenge-complete');
+
+                    challengeHtml += '<div class="mp-challenge-card' + (isComplete ? ' completed' : '') + '">'
+                        + '  <span class="mp-challenge-icon">' + (isComplete ? '&#9989;' : '&#9876;') + '</span>'
+                        + '  <div class="mp-challenge-info">'
+                        + '    <div class="mp-challenge-name">' + escHtml(name ? name.textContent : 'Challenge') + '</div>'
+                        + (desc ? '    <div class="mp-challenge-desc">' + escHtml(desc.textContent) + '</div>' : '')
+                        + (difficulty ? '    <span class="mp-challenge-difficulty">' + escHtml(difficulty.textContent) + '</span>' : '')
+                        + '    <div class="mp-challenge-bar"><div class="mp-challenge-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
+                        + '  </div>'
+                        + '  <span class="mp-challenge-reward">' + escHtml(reward ? reward.textContent : '+XP') + '</span>'
+                        + '</div>';
+                });
+                weeklyEl.innerHTML = challengeHtml;
+            } else {
+                weeklyEl.innerHTML = '<div class="mp-challenge-card">'
+                    + '  <span class="mp-challenge-icon">&#9876;</span>'
+                    + '  <div class="mp-challenge-info">'
+                    + '    <div class="mp-challenge-name">Weekly challenges refresh every Monday</div>'
+                    + '  </div>'
+                    + '</div>';
+            }
+        }
+
+        // Badges section
+        var badgesEl = document.getElementById('mp-quests-badges');
+        if (badgesEl) {
+            // Check for active badge progress
+            var badgeWidget = document.querySelector('.badge-progress-widget, #badge-progress-container');
+            var activeBadgeName = badgeWidget ? badgeWidget.querySelector('.badge-name, .badge-title') : null;
+            var activeBadgeProgress = badgeWidget ? badgeWidget.querySelector('.badge-progress-fill, .progress-fill') : null;
+
+            var badgeHtml = '';
+
+            if (activeBadgeName) {
+                var bpWidth = activeBadgeProgress ? activeBadgeProgress.style.width : '0%';
+                badgeHtml += '<div class="mp-badge-active">'
+                    + '  <div class="mp-badge-active-icon"><i class="fas fa-trophy"></i></div>'
+                    + '  <div class="mp-badge-active-info">'
+                    + '    <div class="mp-badge-active-label">Working On</div>'
+                    + '    <div class="mp-badge-active-name">' + escHtml(activeBadgeName.textContent) + '</div>'
+                    + '    <div class="mp-badge-active-bar"><div class="mp-badge-active-fill" style="width: ' + bpWidth + ';"></div></div>'
+                    + '  </div>'
+                    + '</div>';
+            }
+
+            badgeHtml += '<button class="mp-badge-map-btn" id="mp-quests-open-badges">'
+                + '  <i class="fas fa-map"></i> View Badge Map'
+                + '</button>';
+
+            badgesEl.innerHTML = badgeHtml;
+
+            document.getElementById('mp-quests-open-badges').addEventListener('click', function () {
+                window.location.href = '/badge-map.html';
+            });
+        }
     }
 
     /* ============================
@@ -591,6 +734,7 @@
         // Listen for stat updates and refresh panels
         var observer = new MutationObserver(function () {
             if (activeTab === 'learn' && panelsBuilt['learn']) refreshLearnPanel();
+            if (activeTab === 'quests' && panelsBuilt['quests']) refreshQuestsPanel();
         });
 
         // Observe the right drawer stats for changes
