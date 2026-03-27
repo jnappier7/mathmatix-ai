@@ -317,70 +317,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; // Skip the rest of initializeApp
             }
 
-            // --- RETURNING USER MODAL ---
-            // For returning students, show a modal with options before loading chat.
-            // They can: resume a course chat, start a fresh course session,
-            // resume a recent general chat, or start a brand new session.
-            let modalHandled = false;
-            if (currentUser.role === 'student' && window.ReturningUserModal) {
-                const returningModal = new window.ReturningUserModal();
-                const choice = await returningModal.show(currentUser);
-                console.log('[initializeApp] Returning user choice:', choice);
-
-                if (choice.action === 'resume-chat') {
-                    // Resume a specific general/topic chat
-                    if (window.sidebar) {
-                        await window.sidebar.loadSessions();
-                        await window.sidebar.switchSession(choice.conversationId);
-                    }
-                    modalHandled = true;
-
-                } else if (choice.action === 'new-course') {
-                    // Start a fresh chat for the course at current lesson progress
-                    try {
-                        const res = await csrfFetch('/api/conversations/new-course-session', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ courseSessionId: choice.courseSessionId })
-                        });
-                        const data = await res.json();
-                        if (data.success && data.conversation) {
-                            // Load the fresh conversation into the chat
-                            if (window.sidebar) {
-                                await window.sidebar.loadSessions();
-                            }
-                            if (window.updateChatForSession) {
-                                window.updateChatForSession(data.conversation, []);
-                            }
-                            // Fire course greeting so the AI introduces where they left off
-                            if (window.courseManager) {
-                                window.courseManager.activeCourseSessionId = data.courseSession._id;
-                                await window.courseManager.loadMySessions();
-                                await window.courseManager.sendCourseGreeting();
-                            }
-                        }
-                    } catch (err) {
-                        console.error('[initializeApp] Failed to create new course session:', err);
-                    }
-                    modalHandled = true;
-
-                } else if (choice.action === 'browse-courses') {
-                    // Open the course catalogue
-                    modalHandled = false; // Still show welcome flow
-                    if (window.courseManager) {
-                        setTimeout(() => window.courseManager.openCatalog(), 500);
-                    }
-
-                } else if (choice.action === 'new-general') {
-                    // Start a fresh general session — fall through to normal welcome flow
-                    modalHandled = false;
-                }
-                // choice.action === 'skip' → not a returning user, fall through
-            }
-
-            if (!modalHandled) {
-                await getWelcomeMessage();
-            }
+            // Always start with a fresh AI welcome. Returning users get a
+            // context-aware greeting that references their last session.
+            // Past conversations are accessible via the sidebar.
+            await getWelcomeMessage();
 
             await fetchAndDisplayLeaderboard();
             await loadQuestsAndChallenges();
