@@ -80,6 +80,12 @@
       return;
     }
 
+    // Chat page uses its own in-page nav (mobile-chat-nav.js) that preserves
+    // chat state across tab switches. Don't add the page-navigating nav there.
+    if (document.body.classList.contains('landing-page-body')) {
+      return;
+    }
+
     const navItems = [
       { icon: 'fa-home', label: 'Home', href: '/student-dashboard.html', id: 'nav-home' },
       { icon: 'fa-comment', label: 'Chat', href: '/chat.html', id: 'nav-chat' },
