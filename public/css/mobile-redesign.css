@@ -1,12 +1,12 @@
 /* ============================================
    MOBILE REDESIGN — MATHMATIX AI
-   5-tab navigation + full-screen panels for:
-   Home, Chat, Actions, Progress, Profile
+   3-tab navigation + full-screen panels for:
+   Learn, Chat, Profile
    ============================================ */
 
-/* --- BOTTOM NAV OVERRIDE (5 tabs) --- */
+/* --- BOTTOM NAV OVERRIDE (3 tabs) --- */
 @media (max-width: 768px) {
-    /* Override the old 4-tab nav */
+    /* 3-tab nav layout */
     body.has-chat-nav .mobile-chat-nav,
     body.landing-page-body .mobile-chat-nav {
         height: 60px;
@@ -144,29 +144,6 @@
     padding: 16px;
 }
 
-/* --- HOME PANEL --- */
-
-.mp-home-welcome {
-    margin-bottom: 20px;
-}
-
-.mp-home-welcome h1 {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--clr-text, #18202B);
-    margin: 0 0 4px;
-}
-
-[data-theme="dark"] .mp-home-welcome h1 {
-    color: #e2e8f0;
-}
-
-.mp-home-welcome p {
-    font-size: 0.9rem;
-    color: var(--clr-text-dim, #8896a6);
-    margin: 0;
-}
-
 /* Continue Learning Card */
 .mp-continue-card {
     background: linear-gradient(135deg, #12B3B3 0%, #0E9494 100%);
@@ -263,53 +240,6 @@
     background: rgba(255, 255, 255, 0.35);
 }
 
-/* Quick Stats Row on Home */
-.mp-quick-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.mp-quick-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 14px 8px;
-    background: var(--clr-bg-light, #fff);
-    border: 1px solid var(--clr-border-light, #f1f5f9);
-    border-radius: 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .mp-quick-stat {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.mp-quick-stat-icon {
-    font-size: 1.3rem;
-}
-
-.mp-quick-stat-value {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--clr-text, #18202B);
-}
-
-[data-theme="dark"] .mp-quick-stat-value {
-    color: #e2e8f0;
-}
-
-.mp-quick-stat-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: var(--clr-text-dim, #8896a6);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
 /* Section Header */
 .mp-section-header {
     display: flex;
@@ -346,80 +276,7 @@
     padding: 0;
 }
 
-/* Recent Progress Cards on Home */
-.mp-recent-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.mp-recent-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--clr-bg-light, #fff);
-    border: 1px solid var(--clr-border-light, #f1f5f9);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .mp-recent-item {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.mp-recent-icon {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.mp-recent-icon.mastered {
-    background: rgba(34, 197, 94, 0.12);
-    color: #22c55e;
-}
-
-.mp-recent-icon.learning {
-    background: rgba(18, 179, 179, 0.12);
-    color: #12B3B3;
-}
-
-.mp-recent-icon.xp {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-}
-
-.mp-recent-text {
-    flex: 1;
-    min-width: 0;
-}
-
-.mp-recent-title {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--clr-text, #18202B);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-[data-theme="dark"] .mp-recent-title {
-    color: #e2e8f0;
-}
-
-.mp-recent-meta {
-    font-size: 0.75rem;
-    color: var(--clr-text-dim, #8896a6);
-}
-
-/* Daily Quests on Home */
+/* Daily Quests */
 .mp-quest-card {
     display: flex;
     align-items: center;
@@ -630,209 +487,6 @@
     color: var(--clr-text-dim, #8896a6);
     font-size: 0.9rem;
     align-self: center;
-}
-
-/* --- PROGRESS PANEL --- */
-
-.mp-progress-hero {
-    background: linear-gradient(135deg, #12B3B3 0%, #0E9494 100%);
-    border-radius: 16px;
-    padding: 24px 20px;
-    color: white;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.mp-progress-level {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 4px;
-}
-
-.mp-progress-level-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    opacity: 0.85;
-    margin-bottom: 12px;
-}
-
-.mp-progress-bar-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mp-progress-bar {
-    flex: 1;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.mp-progress-bar-fill {
-    height: 100%;
-    background: white;
-    border-radius: 5px;
-    transition: width 400ms ease;
-}
-
-.mp-progress-xp-text {
-    font-size: 0.85rem;
-    font-weight: 600;
-    min-width: 80px;
-}
-
-/* Big Stats Grid */
-.mp-stats-big {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.mp-stat-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 18px 12px;
-    background: var(--clr-bg-light, #fff);
-    border: 1px solid var(--clr-border-light, #f1f5f9);
-    border-radius: 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .mp-stat-card {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.mp-stat-card-value {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: var(--clr-primary-teal, #12B3B3);
-}
-
-.mp-stat-card-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--clr-text-dim, #8896a6);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-/* Skill Breakdown */
-.mp-skill-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.mp-skill-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--clr-bg-light, #fff);
-    border: 1px solid var(--clr-border-light, #f1f5f9);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .mp-skill-item {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.mp-skill-badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.mp-skill-badge.mastered {
-    background: rgba(34, 197, 94, 0.12);
-    color: #22c55e;
-}
-
-.mp-skill-badge.learning {
-    background: rgba(18, 179, 179, 0.12);
-    color: #12B3B3;
-}
-
-.mp-skill-badge.ready {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-}
-
-.mp-skill-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.mp-skill-name {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--clr-text, #18202B);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-[data-theme="dark"] .mp-skill-name {
-    color: #e2e8f0;
-}
-
-.mp-skill-status {
-    font-size: 0.72rem;
-    color: var(--clr-text-dim, #8896a6);
-    font-weight: 500;
-}
-
-/* Session Stats */
-.mp-session-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.mp-session-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 12px 6px;
-    background: var(--clr-bg-light, #fff);
-    border: 1px solid var(--clr-border-light, #f1f5f9);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="dark"] .mp-session-stat {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
-.mp-session-stat-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--clr-primary-teal, #12B3B3);
-}
-
-.mp-session-stat-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: var(--clr-text-dim, #8896a6);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
 }
 
 /* --- PROFILE PANEL --- */
@@ -1076,29 +730,6 @@
 
 .mp-logout-btn:active {
     background: rgba(239, 68, 68, 0.15);
-}
-
-/* --- EMPTY STATE --- */
-
-.mp-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.mp-empty-state-icon {
-    font-size: 2.5rem;
-    color: var(--clr-text-dim, #ccc);
-    margin-bottom: 12px;
-}
-
-.mp-empty-state-text {
-    font-size: 0.88rem;
-    color: var(--clr-text-dim, #8896a6);
-    line-height: 1.5;
 }
 
 /* --- DIVIDER --- */

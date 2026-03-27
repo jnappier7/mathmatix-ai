@@ -22,7 +22,8 @@
             'attach-button',
             'camera-button',
             'mic-button',
-            'insert-equation-btn'
+            'insert-equation-btn',
+            'calculator-toolbar-btn'
         ];
 
         criticalButtons.forEach(buttonId => {
