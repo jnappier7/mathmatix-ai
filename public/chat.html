@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/courseCatalog.css" />
   <link rel="stylesheet" href="/css/graphTool.css" />
   <link rel="stylesheet" href="/css/mathGraph.css" />
-  <link rel="stylesheet" href="/css/returning-user-modal.css" />
+  <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/css/textbook-mode.css" />
   <link rel="stylesheet" href="/css/mobile-redesign.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -1570,45 +1570,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 
   <!-- Returning User Welcome Modal -->
-  <div id="returning-user-modal" class="modal-overlay returning-user-overlay">
-    <div class="modal-content returning-user-content">
-      <div class="returning-user-header">
-        <h2 id="returning-user-greeting"></h2>
-        <p class="returning-user-subtitle">Ready to jump back in?</p>
-      </div>
-
-      <div id="returning-user-body" class="returning-user-body">
-        <!-- Smart Resume Hero Section -->
-        <div id="returning-hero-section" style="display: none;"></div>
-
-        <!-- Course Sessions Section -->
-        <div id="returning-user-courses" style="display: none;">
-          <div class="returning-section-label">
-            <i class="fas fa-graduation-cap"></i> My Courses
-          </div>
-          <div id="returning-courses-list" class="returning-courses-list">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-
-        <!-- Recent Sessions Section -->
-        <div id="returning-user-sessions" style="display: none;">
-          <div class="returning-section-label">
-            <i class="fas fa-comments"></i> Recent Chats
-          </div>
-          <div id="returning-sessions-list" class="returning-sessions-list">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-      </div>
-
-      <div class="returning-user-footer">
-        <button id="returning-new-general-btn" class="returning-action-btn returning-new-btn">
-          <i class="fas fa-plus-circle"></i> Start Fresh Session
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
 
   <!-- Tutor Unlock Celebration Screen -->
   <div id="tutor-unlock-screen" class="tutor-unlock-overlay" style="display: none;">
@@ -1912,7 +1874,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/sidebar.js"></script>
   <script src="/js/courseCatalog.js"></script>
   <script src="/js/lessonTracker.js"></script>
-  <script src="/js/returningUserModal.js"></script>
+  <!-- returningUserModal.js removed — no longer used -->
   <script src="/js/graphTool.js"></script>
   <script src="/js/diagram-display.js"></script>
   <script src="/js/inlineChatVisuals.js"></script>
