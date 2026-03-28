@@ -1,7 +1,7 @@
 /* ============================================
-   MOBILE CHAT NAVIGATION — MATHMATIX AI (v2)
-   5-tab bottom nav with full-screen panels:
-   Home · Chat · Actions · Progress · Profile
+   MOBILE CHAT NAVIGATION — MATHMATIX AI (v4)
+   4-tab bottom nav with full-screen panels:
+   Learn · Chat · Quests · Profile
    ============================================ */
 
 (function () {
@@ -12,13 +12,12 @@
 
     var MOBILE_BP = 769;
 
-    /* ---- Five-tab layout ---- */
+    /* ---- Four-tab layout ---- */
     var NAV_ITEMS = [
-        { action: 'home',     icon: 'fa-home',         label: 'Home' },
-        { action: 'chat',     icon: 'fa-comment-dots',  label: 'Chat', active: true },
-        { action: 'actions',  icon: 'fa-bolt',          label: 'Actions' },
-        { action: 'progress', icon: 'fa-chart-line',    label: 'Progress' },
-        { action: 'profile',  icon: 'fa-user-circle',   label: 'Profile' }
+        { action: 'learn',   icon: 'fa-book-open',     label: 'Learn' },
+        { action: 'chat',    icon: 'fa-comment-dots',   label: 'Chat', active: true },
+        { action: 'quests',  icon: 'fa-trophy',         label: 'Quests' },
+        { action: 'profile', icon: 'fa-user-circle',    label: 'Profile' }
     ];
 
     var activeTab = 'chat';
@@ -40,11 +39,8 @@
     }
 
     function getUserName() {
-        // Try to get from existing DOM elements or session
-        var el = document.querySelector('#sidebar-level');
         var nameEl = document.querySelector('.mp-profile-name');
         if (nameEl && nameEl.textContent) return nameEl.textContent;
-        // Fallback: try localStorage or defaults
         try {
             var user = JSON.parse(localStorage.getItem('mathmatix_user') || '{}');
             return user.firstName || user.name || 'Student';
@@ -54,6 +50,12 @@
     function getStatValue(id, fallback) {
         var el = document.getElementById(id);
         return el ? el.textContent : (fallback || '0');
+    }
+
+    function escHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 
     /* ---- bottom nav ---- */
@@ -119,12 +121,10 @@
             requestAnimationFrame(function () {
                 var box = document.getElementById('chat-messages-container');
                 if (box) {
-                    // Restore saved position, or scroll to bottom if no saved state
                     box.scrollTop = savedScrollPos != null ? savedScrollPos : box.scrollHeight;
                 }
                 var input = document.getElementById('user-input');
                 if (input) {
-                    // Restore typed content if it was cleared
                     if (savedInputContent && !input.innerHTML.trim()) {
                         input.innerHTML = savedInputContent;
                     }
@@ -145,80 +145,147 @@
     function buildPanel(name) {
         if (panelsBuilt[name]) {
             // Refresh data on re-open
-            if (name === 'home') refreshHomePanel();
-            if (name === 'progress') refreshProgressPanel();
+            if (name === 'learn') refreshLearnPanel();
+            if (name === 'quests') refreshQuestsPanel();
             if (name === 'profile') refreshProfilePanel();
             return;
         }
 
         switch (name) {
-            case 'home': buildHomePanel(); break;
-            case 'actions': buildActionsPanel(); break;
-            case 'progress': buildProgressPanel(); break;
+            case 'learn': buildLearnPanel(); break;
+            case 'quests': buildQuestsPanel(); break;
             case 'profile': buildProfilePanel(); break;
         }
         panelsBuilt[name] = true;
     }
 
     /* ============================
-       HOME PANEL
+       LEARN PANEL
        ============================ */
 
-    function buildHomePanel() {
+    function buildLearnPanel() {
         var panel = document.createElement('div');
-        panel.id = 'mp-home';
+        panel.id = 'mp-learn';
         panel.className = 'mobile-panel';
 
         panel.innerHTML = ''
             + '<div class="mp-header">'
-            + '  <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix" class="mp-header-logo">'
+            + '  <h2 class="mp-header-title">Learn</h2>'
             + '  <div class="mp-header-actions">'
-            + '    <button class="mp-header-btn" id="mp-home-theme-btn" aria-label="Toggle theme"><i class="fas ' + (isDark() ? 'fa-sun' : 'fa-moon') + '"></i></button>'
+            + '    <button class="mp-header-btn" id="mp-learn-theme-btn" aria-label="Toggle theme"><i class="fas ' + (isDark() ? 'fa-sun' : 'fa-moon') + '"></i></button>'
             + '  </div>'
             + '</div>'
-            + '<div class="mp-content" id="mp-home-content">'
-            + '  <div class="mp-home-welcome">'
-            + '    <h1 id="mp-home-greeting">Welcome back!</h1>'
-            + '    <p>Ready to learn?</p>'
+            + '<div class="mp-content" id="mp-learn-content">'
+            + '  <div id="mp-learn-continue"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-star"></i> Learning</span>'
             + '  </div>'
-            + '  <div id="mp-home-continue"></div>'
-            + '  <div class="mp-quick-stats" id="mp-home-stats"></div>'
-            + '  <div id="mp-home-quests"></div>'
-            + '  <div id="mp-home-recent"></div>'
+            + '  <div class="mp-actions-grid" id="mp-learn-actions"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-ellipsis-h"></i> More</span>'
+            + '  </div>'
+            + '  <div class="mp-actions-grid" id="mp-learn-more"></div>'
             + '</div>';
 
         document.body.appendChild(panel);
 
         // Theme toggle
-        document.getElementById('mp-home-theme-btn').addEventListener('click', function () {
+        document.getElementById('mp-learn-theme-btn').addEventListener('click', function () {
             triggerClick('theme-toggle-btn');
             setTimeout(function () {
-                var icon = document.querySelector('#mp-home-theme-btn i');
+                var icon = document.querySelector('#mp-learn-theme-btn i');
                 if (icon) icon.className = 'fas ' + (isDark() ? 'fa-sun' : 'fa-moon');
             }, 150);
         });
 
-        refreshHomePanel();
+        // Learning actions grid
+        var actionsEl = document.getElementById('mp-learn-actions');
+        if (actionsEl) {
+            actionsEl.innerHTML = ''
+                // Voice Tutor — Featured
+                + '<div class="mp-action-card mp-action-featured" id="mp-action-voice">'
+                + '  <div class="mp-action-icon voice"><i class="fas fa-headset"></i></div>'
+                + '  <div class="mp-action-featured-info">'
+                + '    <div class="mp-action-label">Voice Tutor</div>'
+                + '    <div class="mp-action-featured-desc">Talk with your AI math tutor in real-time</div>'
+                + '  </div>'
+                + '  <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
+                + '</div>'
+                // Browse Courses
+                + '<div class="mp-action-card" id="mp-action-courses">'
+                + '  <div class="mp-action-icon courses"><i class="fas fa-graduation-cap"></i></div>'
+                + '  <div class="mp-action-label">Browse Courses</div>'
+                + '</div>'
+                // Resources
+                + '<div class="mp-action-card" id="mp-action-resources">'
+                + '  <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
+                + '  <div class="mp-action-label">Resources</div>'
+                + '</div>';
+
+            wireAction('mp-action-voice', function () {
+                window.location.href = '/voice-tutor.html';
+            });
+            wireAction('mp-action-courses', function () {
+                switchTab('chat');
+                setTimeout(function () { triggerClick('browse-courses-btn'); }, 200);
+            });
+            wireAction('mp-action-resources', function () {
+                switchTab('chat');
+                setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
+            });
+        }
+
+        // More actions grid
+        var moreEl = document.getElementById('mp-learn-more');
+        if (moreEl) {
+            moreEl.innerHTML = ''
+                // Math Showdown
+                + '<div class="mp-action-card" id="mp-action-showdown">'
+                + '  <div class="mp-action-icon showdown"><i class="fas fa-bolt"></i></div>'
+                + '  <div class="mp-action-label">Math Showdown</div>'
+                + '</div>'
+                // Starting Point (Screener)
+                + '<div class="mp-action-card" id="mp-action-screener">'
+                + '  <div class="mp-action-icon screener"><i class="fas fa-crosshairs"></i></div>'
+                + '  <div class="mp-action-label">Starting Point</div>'
+                + '</div>'
+                // Send Feedback
+                + '<div class="mp-action-card" id="mp-action-feedback">'
+                + '  <div class="mp-action-icon feedback"><i class="fas fa-comment-dots"></i></div>'
+                + '  <div class="mp-action-label">Send Feedback</div>'
+                + '</div>';
+
+            wireAction('mp-action-showdown', function () {
+                window.location.href = '/math-showdown.html';
+            });
+            wireAction('mp-action-screener', function () {
+                switchTab('chat');
+                setTimeout(function () {
+                    var screenerBtn = document.getElementById('sidebar-starting-point-btn');
+                    if (screenerBtn) screenerBtn.click();
+                }, 200);
+            });
+            wireAction('mp-action-feedback', function () {
+                switchTab('chat');
+                setTimeout(function () { triggerClick('open-feedback-modal-btn'); }, 200);
+            });
+        }
+
+        refreshLearnPanel();
     }
 
-    function refreshHomePanel() {
-        var name = getUserName();
-        var greetEl = document.getElementById('mp-home-greeting');
-        if (greetEl) greetEl.textContent = 'Welcome back, ' + name + '!';
-
+    function refreshLearnPanel() {
         // Continue Learning Card
-        var continueEl = document.getElementById('mp-home-continue');
+        var continueEl = document.getElementById('mp-learn-continue');
         if (continueEl) {
-            // Try to get current course info from the course progress bar
             var courseTitle = document.getElementById('course-progress-title');
             var courseModule = document.getElementById('course-progress-module');
             var coursePct = document.getElementById('course-progress-pct');
 
             var title = courseTitle ? courseTitle.textContent : '';
             var module = courseModule ? courseModule.textContent : '';
-            var pct = coursePct ? courseTitle.textContent : '';
+            var pct = coursePct ? coursePct.textContent : '';
 
-            // Also check sidebar courses for enrolled courses
             var courseItems = document.querySelectorAll('#course-sessions-list .sidebar-course-item');
 
             if (title || courseItems.length > 0) {
@@ -226,7 +293,6 @@
                 var displayModule = module || 'Continue learning';
                 var displayPct = parseInt(pct) || 0;
 
-                // Get progress from the sidebar if available
                 var progressFill = document.getElementById('sidebar-progress-fill');
                 if (progressFill && !pct) {
                     displayPct = parseInt(progressFill.style.width) || 0;
@@ -241,12 +307,12 @@
                     + '    <div class="mp-continue-bar"><div class="mp-continue-fill" style="width: ' + displayPct + '%;"></div></div>'
                     + '    <span class="mp-continue-pct">' + displayPct + '%</span>'
                     + '  </div>'
-                    + '  <button class="mp-continue-btn" id="mp-home-continue-btn">'
+                    + '  <button class="mp-continue-btn" id="mp-learn-continue-btn">'
                     + '    <i class="fas fa-play"></i> Continue'
                     + '  </button>'
                     + '</div>';
 
-                document.getElementById('mp-home-continue-btn').addEventListener('click', function () {
+                document.getElementById('mp-learn-continue-btn').addEventListener('click', function () {
                     switchTab('chat');
                 });
             } else {
@@ -255,264 +321,17 @@
                     + '  <div class="mp-continue-icon"><i class="fas fa-graduation-cap"></i></div>'
                     + '  <h3>Start Learning</h3>'
                     + '  <p class="mp-continue-sub">Enroll in a course or ask your AI tutor anything</p>'
-                    + '  <button class="mp-continue-btn" id="mp-home-start-btn">'
+                    + '  <button class="mp-continue-btn" id="mp-learn-start-btn">'
                     + '    <i class="fas fa-play"></i> Start Chat'
                     + '  </button>'
                     + '</div>';
 
-                document.getElementById('mp-home-start-btn').addEventListener('click', function () {
+                document.getElementById('mp-learn-start-btn').addEventListener('click', function () {
                     switchTab('chat');
                 });
             }
         }
 
-        // Quick Stats
-        var statsEl = document.getElementById('mp-home-stats');
-        if (statsEl) {
-            var streak = getStatValue('drawer-streak-count', '0');
-            var totalXP = getStatValue('drawer-total-xp', '0');
-            var solved = getStatValue('drawer-total-problems', '0');
-
-            statsEl.innerHTML = ''
-                + '<div class="mp-quick-stat">'
-                + '  <span class="mp-quick-stat-icon">&#128293;</span>'
-                + '  <span class="mp-quick-stat-value">' + streak + '</span>'
-                + '  <span class="mp-quick-stat-label">Day Streak</span>'
-                + '</div>'
-                + '<div class="mp-quick-stat">'
-                + '  <span class="mp-quick-stat-icon">&#11088;</span>'
-                + '  <span class="mp-quick-stat-value">' + totalXP + '</span>'
-                + '  <span class="mp-quick-stat-label">Total XP</span>'
-                + '</div>'
-                + '<div class="mp-quick-stat">'
-                + '  <span class="mp-quick-stat-icon">&#9989;</span>'
-                + '  <span class="mp-quick-stat-value">' + solved + '</span>'
-                + '  <span class="mp-quick-stat-label">Solved</span>'
-                + '</div>';
-        }
-
-        // Daily Quests Section
-        var questsEl = document.getElementById('mp-home-quests');
-        if (questsEl) {
-            var questsSource = document.getElementById('drawer-daily-quests-container') ||
-                               document.getElementById('daily-quests-container');
-            var questItems = questsSource ? questsSource.querySelectorAll('.quest-item, .daily-quest-item') : [];
-
-            var questHtml = '<div class="mp-section-header">'
-                + '<span class="mp-section-title"><i class="fas fa-tasks"></i> Daily Quests</span>'
-                + '</div>';
-
-            if (questItems.length > 0) {
-                questItems.forEach(function (q, i) {
-                    if (i >= 3) return; // Show max 3
-                    var name = q.querySelector('.quest-name, .quest-title');
-                    var progress = q.querySelector('.quest-progress-fill, .progress-fill');
-                    var reward = q.querySelector('.quest-reward, .quest-xp');
-                    var pctWidth = progress ? progress.style.width : '0%';
-
-                    questHtml += '<div class="mp-quest-card">'
-                        + '  <span class="mp-quest-icon">&#127919;</span>'
-                        + '  <div class="mp-quest-info">'
-                        + '    <div class="mp-quest-name">' + escHtml(name ? name.textContent : 'Quest') + '</div>'
-                        + '    <div class="mp-quest-bar"><div class="mp-quest-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
-                        + '  </div>'
-                        + '  <span class="mp-quest-reward">' + escHtml(reward ? reward.textContent : '+XP') + '</span>'
-                        + '</div>';
-                });
-            } else {
-                questHtml += '<div class="mp-quest-card">'
-                    + '  <span class="mp-quest-icon">&#127919;</span>'
-                    + '  <div class="mp-quest-info">'
-                    + '    <div class="mp-quest-name">Complete a session to unlock quests</div>'
-                    + '  </div>'
-                    + '</div>';
-            }
-
-            questsEl.innerHTML = questHtml;
-        }
-
-        // Recent Progress
-        var recentEl = document.getElementById('mp-home-recent');
-        if (recentEl) {
-            recentEl.innerHTML = '<div class="mp-section-header">'
-                + '<span class="mp-section-title"><i class="fas fa-trophy"></i> Recent Progress</span>'
-                + '<button class="mp-section-link" id="mp-home-see-progress">See All</button>'
-                + '</div>'
-                + '<div class="mp-recent-list" id="mp-home-recent-list">'
-                + '  <div class="mp-recent-item">'
-                + '    <div class="mp-recent-icon xp"><i class="fas fa-star"></i></div>'
-                + '    <div class="mp-recent-text">'
-                + '      <div class="mp-recent-title">Keep practicing to build your progress!</div>'
-                + '      <div class="mp-recent-meta">Your activity will appear here</div>'
-                + '    </div>'
-                + '  </div>'
-                + '</div>';
-
-            var seeProgressBtn = document.getElementById('mp-home-see-progress');
-            if (seeProgressBtn) {
-                seeProgressBtn.addEventListener('click', function () {
-                    switchTab('progress');
-                });
-            }
-        }
-    }
-
-    /* ============================
-       ACTIONS PANEL
-       ============================ */
-
-    function buildActionsPanel() {
-        var panel = document.createElement('div');
-        panel.id = 'mp-actions';
-        panel.className = 'mobile-panel';
-
-        panel.innerHTML = ''
-            + '<div class="mp-header">'
-            + '  <h2 class="mp-header-title">Actions</h2>'
-            + '  <div class="mp-header-actions">'
-            + '    <button class="mp-header-btn" id="mp-actions-search-btn" aria-label="Search"><i class="fas fa-search"></i></button>'
-            + '  </div>'
-            + '</div>'
-            + '<div class="mp-content">'
-            // Chat Tools section — equation entry + file upload front and center
-            + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-pen-fancy"></i> Chat Tools</span>'
-            + '  </div>'
-            + '  <div class="mp-actions-grid">'
-            // Insert Equation — Featured
-            + '    <div class="mp-action-card mp-action-featured" id="mp-action-equation">'
-            + '      <div class="mp-action-icon" style="background: linear-gradient(135deg, #12B3B3, #0E9494); color: white;"><i class="fas fa-square-root-variable"></i></div>'
-            + '      <div class="mp-action-featured-info">'
-            + '        <div class="mp-action-label">Insert Equation</div>'
-            + '        <div class="mp-action-featured-desc">Use the math keyboard to type fractions, roots, and symbols</div>'
-            + '      </div>'
-            + '      <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
-            + '    </div>'
-            // Show Your Work — Featured
-            + '    <div class="mp-action-card mp-action-featured" id="mp-action-show-work">'
-            + '      <div class="mp-action-icon upload"><i class="fas fa-camera-retro"></i></div>'
-            + '      <div class="mp-action-featured-info">'
-            + '        <div class="mp-action-label">Show Your Work</div>'
-            + '        <div class="mp-action-featured-desc">Take a photo or upload your work for AI feedback</div>'
-            + '      </div>'
-            + '      <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
-            + '    </div>'
-            // Attach File
-            + '    <div class="mp-action-card" id="mp-action-attach">'
-            + '      <div class="mp-action-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;"><i class="fas fa-paperclip"></i></div>'
-            + '      <div class="mp-action-label">Attach File</div>'
-            + '    </div>'
-            // Calculator
-            + '    <div class="mp-action-card" id="mp-action-calculator">'
-            + '      <div class="mp-action-icon calculator"><i class="fas fa-calculator"></i></div>'
-            + '      <div class="mp-action-label">Calculator</div>'
-            + '    </div>'
-            + '  </div>'
-            // Learning section
-            + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-star"></i> Learning</span>'
-            + '  </div>'
-            + '  <div class="mp-actions-grid">'
-            // Voice Tutor — Featured
-            + '    <div class="mp-action-card mp-action-featured" id="mp-action-voice">'
-            + '      <div class="mp-action-icon voice"><i class="fas fa-headset"></i></div>'
-            + '      <div class="mp-action-featured-info">'
-            + '        <div class="mp-action-label">Voice Tutor</div>'
-            + '        <div class="mp-action-featured-desc">Talk with your AI math tutor in real-time</div>'
-            + '      </div>'
-            + '      <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
-            + '    </div>'
-            // Resources
-            + '    <div class="mp-action-card" id="mp-action-resources">'
-            + '      <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
-            + '      <div class="mp-action-label">Resources</div>'
-            + '    </div>'
-            // Browse Courses
-            + '    <div class="mp-action-card" id="mp-action-courses">'
-            + '      <div class="mp-action-icon courses"><i class="fas fa-graduation-cap"></i></div>'
-            + '      <div class="mp-action-label">Browse Courses</div>'
-            + '    </div>'
-            + '  </div>'
-            // More section
-            + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-ellipsis-h"></i> More</span>'
-            + '  </div>'
-            + '  <div class="mp-actions-grid">'
-            // Math Showdown
-            + '    <div class="mp-action-card" id="mp-action-showdown">'
-            + '      <div class="mp-action-icon showdown"><i class="fas fa-bolt"></i></div>'
-            + '      <div class="mp-action-label">Math Showdown</div>'
-            + '    </div>'
-            // Starting Point (Screener)
-            + '    <div class="mp-action-card" id="mp-action-screener">'
-            + '      <div class="mp-action-icon screener"><i class="fas fa-crosshairs"></i></div>'
-            + '      <div class="mp-action-label">Starting Point</div>'
-            + '    </div>'
-            // Feedback
-            + '    <div class="mp-action-card" id="mp-action-feedback">'
-            + '      <div class="mp-action-icon feedback"><i class="fas fa-comment-dots"></i></div>'
-            + '      <div class="mp-action-label">Send Feedback</div>'
-            + '    </div>'
-            // Settings
-            + '    <div class="mp-action-card" id="mp-action-settings">'
-            + '      <div class="mp-action-icon" style="background: linear-gradient(135deg, #64748b, #475569); color: white;"><i class="fas fa-cog"></i></div>'
-            + '      <div class="mp-action-label">Settings</div>'
-            + '    </div>'
-            + '  </div>'
-            + '</div>';
-
-        document.body.appendChild(panel);
-
-        // Wire up action clicks
-
-        // Chat Tools
-        wireAction('mp-action-equation', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('insert-equation-btn'); }, 200);
-        });
-        wireAction('mp-action-show-work', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('camera-button'); }, 200);
-        });
-        wireAction('mp-action-attach', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('attach-button'); }, 200);
-        });
-        wireAction('mp-action-calculator', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('toggle-calculator-btn'); }, 200);
-        });
-
-        // Learning
-        wireAction('mp-action-voice', function () {
-            window.location.href = '/voice-tutor.html';
-        });
-        wireAction('mp-action-resources', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
-        });
-        wireAction('mp-action-courses', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('browse-courses-btn'); }, 200);
-        });
-        wireAction('mp-action-showdown', function () {
-            window.location.href = '/math-showdown.html';
-        });
-        wireAction('mp-action-screener', function () {
-            switchTab('chat');
-            setTimeout(function () {
-                var screenerBtn = document.getElementById('sidebar-starting-point-btn');
-                if (screenerBtn) screenerBtn.click();
-            }, 200);
-        });
-        wireAction('mp-action-feedback', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('open-feedback-modal-btn'); }, 200);
-        });
-        wireAction('mp-action-settings', function () {
-            switchTab('chat');
-            setTimeout(function () { triggerClick('open-settings-modal-btn'); }, 200);
-        });
     }
 
     function wireAction(id, handler) {
@@ -521,164 +340,182 @@
     }
 
     /* ============================
-       PROGRESS PANEL
+       QUESTS PANEL
        ============================ */
 
-    function buildProgressPanel() {
+    function buildQuestsPanel() {
         var panel = document.createElement('div');
-        panel.id = 'mp-progress';
+        panel.id = 'mp-quests';
         panel.className = 'mobile-panel';
 
         panel.innerHTML = ''
             + '<div class="mp-header">'
-            + '  <h2 class="mp-header-title">Your Progress</h2>'
+            + '  <h2 class="mp-header-title">Quests & Challenges</h2>'
             + '  <div class="mp-header-actions">'
-            + '    <button class="mp-header-btn" id="mp-progress-share-btn" aria-label="Share"><i class="fas fa-share-alt"></i></button>'
+            + '    <button class="mp-header-btn" id="mp-quests-badges-btn" aria-label="Badge Map"><i class="fas fa-medal"></i></button>'
             + '  </div>'
             + '</div>'
-            + '<div class="mp-content" id="mp-progress-content">'
-            + '  <div class="mp-progress-hero" id="mp-progress-hero"></div>'
-            + '  <div class="mp-stats-big" id="mp-progress-stats"></div>'
+            + '<div class="mp-content" id="mp-quests-content">'
+            + '  <div class="mp-quests-streak-bar" id="mp-quests-streak"></div>'
             + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-chart-line"></i> This Session</span>'
+            + '    <span class="mp-section-title"><i class="fas fa-tasks"></i> Daily Quests</span>'
             + '  </div>'
-            + '  <div class="mp-session-stats" id="mp-progress-session"></div>'
+            + '  <div id="mp-quests-daily"></div>'
             + '  <div class="mp-section-header">'
-            + '    <span class="mp-section-title"><i class="fas fa-brain"></i> Skills</span>'
+            + '    <span class="mp-section-title"><i class="fas fa-calendar-week"></i> Weekly Challenges</span>'
             + '  </div>'
-            + '  <div class="mp-skill-list" id="mp-progress-skills"></div>'
+            + '  <div id="mp-quests-weekly"></div>'
+            + '  <div class="mp-section-header">'
+            + '    <span class="mp-section-title"><i class="fas fa-medal"></i> Badges</span>'
+            + '  </div>'
+            + '  <div id="mp-quests-badges"></div>'
             + '</div>';
 
         document.body.appendChild(panel);
 
-        document.getElementById('mp-progress-share-btn').addEventListener('click', function () {
-            triggerClick('share-progress-header-btn');
+        // Badge Map button
+        document.getElementById('mp-quests-badges-btn').addEventListener('click', function () {
+            window.location.href = '/badge-map.html';
         });
 
-        refreshProgressPanel();
+        refreshQuestsPanel();
     }
 
-    function refreshProgressPanel() {
-        // Hero - Level & XP
-        var heroEl = document.getElementById('mp-progress-hero');
-        if (heroEl) {
-            var level = getStatValue('drawer-level', '1');
-            var xp = getStatValue('drawer-xp', '0 / 100 XP');
-            var progressFill = document.getElementById('drawer-progress-fill');
-            var pctWidth = progressFill ? progressFill.style.width : '0%';
-
-            heroEl.innerHTML = ''
-                + '<div class="mp-progress-level">Level ' + level + '</div>'
-                + '<div class="mp-progress-level-label">Keep learning to level up!</div>'
-                + '<div class="mp-progress-bar-wrap">'
-                + '  <div class="mp-progress-bar"><div class="mp-progress-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
-                + '  <span class="mp-progress-xp-text">' + xp + '</span>'
-                + '</div>';
-        }
-
-        // Big Stats
-        var statsEl = document.getElementById('mp-progress-stats');
-        if (statsEl) {
+    function refreshQuestsPanel() {
+        // Streak Bar
+        var streakEl = document.getElementById('mp-quests-streak');
+        if (streakEl) {
             var streak = getStatValue('drawer-streak-count', '0');
             var totalXP = getStatValue('drawer-total-xp', '0');
-            var solved = getStatValue('drawer-total-problems', '0');
-
-            // Try to get mastered count from skill map
-            var masteredSkills = document.querySelectorAll('.skill-mastered, [data-status="mastered"]');
-            var mastered = masteredSkills.length || '—';
-
-            statsEl.innerHTML = ''
-                + '<div class="mp-stat-card">'
-                + '  <span class="mp-stat-card-value">' + streak + '</span>'
-                + '  <span class="mp-stat-card-label">Day Streak</span>'
-                + '</div>'
-                + '<div class="mp-stat-card">'
-                + '  <span class="mp-stat-card-value">' + totalXP + '</span>'
-                + '  <span class="mp-stat-card-label">Total XP</span>'
-                + '</div>'
-                + '<div class="mp-stat-card">'
-                + '  <span class="mp-stat-card-value">' + solved + '</span>'
-                + '  <span class="mp-stat-card-label">Problems Solved</span>'
-                + '</div>'
-                + '<div class="mp-stat-card">'
-                + '  <span class="mp-stat-card-value">' + mastered + '</span>'
-                + '  <span class="mp-stat-card-label">Skills Mastered</span>'
-                + '</div>';
-        }
-
-        // Session Stats
-        var sessionEl = document.getElementById('mp-progress-session');
-        if (sessionEl) {
             var sessionXP = getStatValue('drawer-session-xp', '0');
-            var sessionAcc = getStatValue('drawer-session-accuracy', '--');
-            var sessionProblems = getStatValue('drawer-session-problems', '0/0');
 
-            sessionEl.innerHTML = ''
-                + '<div class="mp-session-stat">'
-                + '  <span class="mp-session-stat-value">' + sessionXP + '</span>'
-                + '  <span class="mp-session-stat-label">XP Earned</span>'
+            streakEl.innerHTML = ''
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#128293;</span>'
+                + '  <span class="mp-streak-value">' + streak + '</span>'
+                + '  <span class="mp-streak-label">Day Streak</span>'
                 + '</div>'
-                + '<div class="mp-session-stat">'
-                + '  <span class="mp-session-stat-value">' + sessionAcc + '</span>'
-                + '  <span class="mp-session-stat-label">Accuracy</span>'
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#11088;</span>'
+                + '  <span class="mp-streak-value">' + totalXP + '</span>'
+                + '  <span class="mp-streak-label">Total XP</span>'
                 + '</div>'
-                + '<div class="mp-session-stat">'
-                + '  <span class="mp-session-stat-value">' + sessionProblems + '</span>'
-                + '  <span class="mp-session-stat-label">Problems</span>'
+                + '<div class="mp-streak-item">'
+                + '  <span class="mp-streak-icon">&#9889;</span>'
+                + '  <span class="mp-streak-value">' + sessionXP + '</span>'
+                + '  <span class="mp-streak-label">Session XP</span>'
                 + '</div>';
         }
 
-        // Skills List - pull from skill map data if available
-        var skillsEl = document.getElementById('mp-progress-skills');
-        if (skillsEl) {
-            var skillData = [];
+        // Daily Quests
+        var dailyEl = document.getElementById('mp-quests-daily');
+        if (dailyEl) {
+            var questsSource = document.getElementById('drawer-daily-quests-container') ||
+                               document.getElementById('daily-quests-container');
+            var questItems = questsSource ? questsSource.querySelectorAll('.quest-item, .daily-quest-item') : [];
 
-            // Try to gather from window.skillMap or existing progress data
-            if (window.skillMap && Array.isArray(window.skillMap)) {
-                window.skillMap.forEach(function (s) {
-                    skillData.push({
-                        name: s.name || s.skill,
-                        status: s.status || 'learning',
-                        icon: s.status === 'mastered' ? 'fa-check-circle' : s.status === 'ready' ? 'fa-clock' : 'fa-spinner'
-                    });
-                });
-            }
+            if (questItems.length > 0) {
+                var questHtml = '';
+                questItems.forEach(function (q) {
+                    var name = q.querySelector('.quest-name, .quest-title');
+                    var desc = q.querySelector('.quest-description, .quest-desc');
+                    var progress = q.querySelector('.quest-progress-fill, .progress-fill');
+                    var reward = q.querySelector('.quest-reward, .quest-xp');
+                    var pctWidth = progress ? progress.style.width : '0%';
+                    var isComplete = q.classList.contains('completed') || q.classList.contains('quest-complete');
 
-            if (skillData.length === 0) {
-                // Fallback: try to get from existing drawer or progress page data
-                var drawerSkills = document.querySelectorAll('.skill-item, .progress-skill-item');
-                drawerSkills.forEach(function (el) {
-                    var nameEl = el.querySelector('.skill-name, .skill-title');
-                    var statusEl = el.querySelector('.skill-status, .skill-badge');
-                    if (nameEl) {
-                        var st = 'learning';
-                        if (el.classList.contains('mastered') || (statusEl && statusEl.textContent.toLowerCase().indexOf('master') >= 0)) st = 'mastered';
-                        else if (el.classList.contains('ready')) st = 'ready';
-                        skillData.push({ name: nameEl.textContent, status: st });
-                    }
-                });
-            }
-
-            if (skillData.length > 0) {
-                var skillHtml = '';
-                skillData.slice(0, 15).forEach(function (s) {
-                    var icon = s.status === 'mastered' ? 'fa-check-circle' : s.status === 'ready' ? 'fa-clock' : 'fa-spinner';
-                    var statusLabel = s.status === 'mastered' ? 'Mastered' : s.status === 'ready' ? 'Ready to Learn' : 'Learning';
-                    skillHtml += '<div class="mp-skill-item">'
-                        + '  <div class="mp-skill-badge ' + s.status + '"><i class="fas ' + icon + '"></i></div>'
-                        + '  <div class="mp-skill-info">'
-                        + '    <div class="mp-skill-name">' + escHtml(s.name) + '</div>'
-                        + '    <div class="mp-skill-status">' + statusLabel + '</div>'
+                    questHtml += '<div class="mp-quest-card' + (isComplete ? ' completed' : '') + '">'
+                        + '  <span class="mp-quest-icon">' + (isComplete ? '&#9989;' : '&#127919;') + '</span>'
+                        + '  <div class="mp-quest-info">'
+                        + '    <div class="mp-quest-name">' + escHtml(name ? name.textContent : 'Quest') + '</div>'
+                        + (desc ? '    <div class="mp-quest-desc">' + escHtml(desc.textContent) + '</div>' : '')
+                        + '    <div class="mp-quest-bar"><div class="mp-quest-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
                         + '  </div>'
+                        + '  <span class="mp-quest-reward">' + escHtml(reward ? reward.textContent : '+XP') + '</span>'
                         + '</div>';
                 });
-                skillsEl.innerHTML = skillHtml;
+                dailyEl.innerHTML = questHtml;
             } else {
-                skillsEl.innerHTML = '<div class="mp-empty-state">'
-                    + '  <div class="mp-empty-state-icon"><i class="fas fa-brain"></i></div>'
-                    + '  <div class="mp-empty-state-text">Complete math problems to start building your skill map!</div>'
+                dailyEl.innerHTML = '<div class="mp-quest-card">'
+                    + '  <span class="mp-quest-icon">&#127919;</span>'
+                    + '  <div class="mp-quest-info">'
+                    + '    <div class="mp-quest-name">Complete a session to unlock quests</div>'
+                    + '  </div>'
                     + '</div>';
             }
+        }
+
+        // Weekly Challenges
+        var weeklyEl = document.getElementById('mp-quests-weekly');
+        if (weeklyEl) {
+            var challengeSource = document.getElementById('drawer-weekly-challenges-container') ||
+                                  document.getElementById('weekly-challenges-container');
+            var challengeItems = challengeSource ? challengeSource.querySelectorAll('.challenge-item, .weekly-challenge-item') : [];
+
+            if (challengeItems.length > 0) {
+                var challengeHtml = '';
+                challengeItems.forEach(function (c) {
+                    var name = c.querySelector('.challenge-name, .challenge-title');
+                    var desc = c.querySelector('.challenge-description, .challenge-desc');
+                    var progress = c.querySelector('.challenge-progress-fill, .progress-fill');
+                    var reward = c.querySelector('.challenge-reward, .challenge-xp');
+                    var difficulty = c.querySelector('.challenge-difficulty');
+                    var pctWidth = progress ? progress.style.width : '0%';
+                    var isComplete = c.classList.contains('completed') || c.classList.contains('challenge-complete');
+
+                    challengeHtml += '<div class="mp-challenge-card' + (isComplete ? ' completed' : '') + '">'
+                        + '  <span class="mp-challenge-icon">' + (isComplete ? '&#9989;' : '&#9876;') + '</span>'
+                        + '  <div class="mp-challenge-info">'
+                        + '    <div class="mp-challenge-name">' + escHtml(name ? name.textContent : 'Challenge') + '</div>'
+                        + (desc ? '    <div class="mp-challenge-desc">' + escHtml(desc.textContent) + '</div>' : '')
+                        + (difficulty ? '    <span class="mp-challenge-difficulty">' + escHtml(difficulty.textContent) + '</span>' : '')
+                        + '    <div class="mp-challenge-bar"><div class="mp-challenge-bar-fill" style="width: ' + pctWidth + ';"></div></div>'
+                        + '  </div>'
+                        + '  <span class="mp-challenge-reward">' + escHtml(reward ? reward.textContent : '+XP') + '</span>'
+                        + '</div>';
+                });
+                weeklyEl.innerHTML = challengeHtml;
+            } else {
+                weeklyEl.innerHTML = '<div class="mp-challenge-card">'
+                    + '  <span class="mp-challenge-icon">&#9876;</span>'
+                    + '  <div class="mp-challenge-info">'
+                    + '    <div class="mp-challenge-name">Weekly challenges refresh every Monday</div>'
+                    + '  </div>'
+                    + '</div>';
+            }
+        }
+
+        // Badges section
+        var badgesEl = document.getElementById('mp-quests-badges');
+        if (badgesEl) {
+            // Check for active badge progress
+            var badgeWidget = document.querySelector('.badge-progress-widget, #badge-progress-container');
+            var activeBadgeName = badgeWidget ? badgeWidget.querySelector('.badge-name, .badge-title') : null;
+            var activeBadgeProgress = badgeWidget ? badgeWidget.querySelector('.badge-progress-fill, .progress-fill') : null;
+
+            var badgeHtml = '';
+
+            if (activeBadgeName) {
+                var bpWidth = activeBadgeProgress ? activeBadgeProgress.style.width : '0%';
+                badgeHtml += '<div class="mp-badge-active">'
+                    + '  <div class="mp-badge-active-icon"><i class="fas fa-trophy"></i></div>'
+                    + '  <div class="mp-badge-active-info">'
+                    + '    <div class="mp-badge-active-label">Working On</div>'
+                    + '    <div class="mp-badge-active-name">' + escHtml(activeBadgeName.textContent) + '</div>'
+                    + '    <div class="mp-badge-active-bar"><div class="mp-badge-active-fill" style="width: ' + bpWidth + ';"></div></div>'
+                    + '  </div>'
+                    + '</div>';
+            }
+
+            badgeHtml += '<button class="mp-badge-map-btn" id="mp-quests-open-badges">'
+                + '  <i class="fas fa-map"></i> View Badge Map'
+                + '</button>';
+
+            badgesEl.innerHTML = badgeHtml;
+
+            document.getElementById('mp-quests-open-badges').addEventListener('click', function () {
+                window.location.href = '/badge-map.html';
+            });
         }
     }
 
@@ -858,14 +695,6 @@
         document.body.appendChild(wm);
     }
 
-    /* ---- Utility ---- */
-
-    function escHtml(str) {
-        var div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
     /* ---- lifecycle ---- */
 
     function update() {
@@ -904,8 +733,8 @@
 
         // Listen for stat updates and refresh panels
         var observer = new MutationObserver(function () {
-            if (activeTab === 'home' && panelsBuilt['home']) refreshHomePanel();
-            if (activeTab === 'progress' && panelsBuilt['progress']) refreshProgressPanel();
+            if (activeTab === 'learn' && panelsBuilt['learn']) refreshLearnPanel();
+            if (activeTab === 'quests' && panelsBuilt['quests']) refreshQuestsPanel();
         });
 
         // Observe the right drawer stats for changes

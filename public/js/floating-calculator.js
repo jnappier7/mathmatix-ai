@@ -116,9 +116,11 @@ class FloatingCalculator {
     }
 
     applyAccessRestrictions() {
+        const toolbarCalcBtn = document.getElementById('calculator-toolbar-btn');
         if (this.calculatorAccess === 'never') {
             if (this.sidebarCalcBtn) this.sidebarCalcBtn.style.display = 'none';
             if (this.toggleBtn) this.toggleBtn.style.display = 'none';
+            if (toolbarCalcBtn) toolbarCalcBtn.style.display = 'none';
             this.hideCalculator();
         } else if (this.calculatorAccess === 'skill-based' || this.calculatorAccess === 'teacher-discretion') {
             if (this.sidebarCalcBtn) {
@@ -127,11 +129,13 @@ class FloatingCalculator {
                     ? 'Calculator (use for complex calculations only)'
                     : 'Calculator (teacher discretion)';
             }
+            if (toolbarCalcBtn) toolbarCalcBtn.style.display = '';
         } else {
             if (this.sidebarCalcBtn) {
                 this.sidebarCalcBtn.style.display = '';
                 this.sidebarCalcBtn.title = 'Calculator';
             }
+            if (toolbarCalcBtn) toolbarCalcBtn.style.display = '';
         }
     }
 
@@ -351,6 +355,12 @@ class FloatingCalculator {
     initializeEventListeners() {
         this.toggleBtn.addEventListener('click', () => this.toggleCalculator());
         this.closeBtn.addEventListener('click', () => this.hideCalculator());
+
+        // Toolbar calculator button (mobile compose bar)
+        const toolbarCalcBtn = document.getElementById('calculator-toolbar-btn');
+        if (toolbarCalcBtn) {
+            toolbarCalcBtn.addEventListener('click', () => this.toggleCalculator());
+        }
 
         // Drag (desktop only — mobile uses swipe-to-dismiss)
         this.dragHandle.addEventListener('mousedown', (e) => this.dragStart(e));
