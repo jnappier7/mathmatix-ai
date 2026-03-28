@@ -193,7 +193,11 @@ class FloatingCalculator {
         if (this._backdrop) return;
         this._backdrop = document.createElement('div');
         this._backdrop.className = 'calculator-backdrop';
-        this._backdrop.addEventListener('click', () => this.hideCalculator());
+        this._backdrop.addEventListener('click', (e) => {
+            // Only dismiss if the click target is the backdrop itself,
+            // not a touch event that was re-targeted from the calculator
+            if (e.target === this._backdrop) this.hideCalculator();
+        });
         document.body.appendChild(this._backdrop);
     }
 
@@ -374,6 +378,10 @@ class FloatingCalculator {
 
         // Mobile: swipe down on header to dismiss
         this._initMobileSwipe();
+
+        // Prevent clicks inside the calculator from reaching document-level handlers
+        this.floatingCalc.addEventListener('click', (e) => e.stopPropagation());
+        this.floatingCalc.addEventListener('touchend', (e) => e.stopPropagation());
 
         // Calculator buttons
         this.floatingCalc.querySelectorAll('[data-num]').forEach(btn => {

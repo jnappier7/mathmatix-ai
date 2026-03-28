@@ -69,6 +69,8 @@ body.standalone-calculator-page {
 
 .calculator {
     width: 380px;
+    max-width: 100%;
+    box-sizing: border-box;
     background: linear-gradient(145deg, #2c3e50, #34495e);
     border-radius: 20px;
     padding: 25px;
@@ -774,6 +776,7 @@ body.standalone-calculator-page {
         0 0 0 1px rgba(0, 0, 0, 0.5);
     width: 320px;
     max-width: 95vw;
+    box-sizing: border-box;
     border: 2px solid #2c4b73;
 }
 
