@@ -746,9 +746,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <h3>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h3>
                     <span style="font-size: 0.85em; color: var(--color-text-secondary);">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
                 </div>
-                <button class="view-as-child-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" aria-label="View dashboard as ${progress.firstName || 'child'}" style="background: var(--color-purple); color: white; font-size: 0.85em; padding: 8px 14px;">
-                    <i class="fas fa-eye"></i> View
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="learning-report-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="View ${progress.firstName || 'your child'}'s learning report" aria-label="View learning report for ${progress.firstName || 'child'}" style="background: var(--color-primary); color: white; font-size: 0.85em; padding: 8px 14px;">
+                        <i class="fas fa-chart-line"></i> Report
+                    </button>
+                    <button class="view-as-child-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" aria-label="View dashboard as ${progress.firstName || 'child'}" style="background: var(--color-purple); color: white; font-size: 0.85em; padding: 8px 14px;">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </div>
             </div>
             <div style="font-size: 0.85em; color: var(--color-text-muted); margin-bottom: 8px;">
                 ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
@@ -808,6 +813,272 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             });
         }
+
+        // Add event listener for Learning Report button
+        const reportBtn = card.querySelector('.learning-report-btn');
+        if (reportBtn) {
+            reportBtn.addEventListener('click', async (e) => {
+                const childId = e.currentTarget.dataset.childid;
+                openLearningReport(childId);
+            });
+        }
+    }
+
+    // ============================================
+    // LEARNING REPORT MODAL
+    // ============================================
+
+    const lrModal = document.getElementById('learning-report-modal');
+    const lrModalContent = document.getElementById('lr-modal-content');
+    const lrModalCloseBtn = document.getElementById('lr-modal-close-btn');
+
+    if (lrModalCloseBtn) {
+        lrModalCloseBtn.addEventListener('click', closeLearningReport);
+    }
+    if (lrModal) {
+        lrModal.addEventListener('click', (e) => {
+            if (e.target === lrModal) closeLearningReport();
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lrModal && lrModal.classList.contains('is-visible')) {
+            closeLearningReport();
+        }
+    });
+
+    function closeLearningReport() {
+        if (lrModal) lrModal.classList.remove('is-visible');
+    }
+
+    async function openLearningReport(childId) {
+        if (!lrModal || !lrModalContent) return;
+
+        // Show modal with loading state
+        lrModalContent.innerHTML = `
+            <div class="lr-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Generating learning report...</p>
+            </div>
+        `;
+        lrModal.classList.add('is-visible');
+
+        try {
+            const res = await fetch(`/api/parent/child/${childId}/learning-report`, { credentials: 'include' });
+            if (!res.ok) throw new Error('Failed to load report');
+            const report = await res.json();
+            lrModalContent.innerHTML = renderLearningReport(report);
+        } catch (err) {
+            console.error('Learning report error:', err);
+            lrModalContent.innerHTML = `
+                <div class="lr-loading">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--color-danger);"></i>
+                    <p>Could not load the learning report. Please try again.</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderLearningReport(r) {
+        const toneClass = `lr-tone-${r.headline.tone}`;
+        const toneLabels = {
+            excellent: 'Excellent',
+            good: 'On Track',
+            growing: 'Growing',
+            building: 'Building',
+            'needs-attention': 'Needs Attention',
+            neutral: ''
+        };
+
+        // --- Insights ---
+        const insightsHTML = r.insights.map(i => {
+            const toneMap = { positive: 'lr-insight-positive', concern: 'lr-insight-concern', actionable: 'lr-insight-actionable', neutral: 'lr-insight-neutral' };
+            return `<div class="lr-insight ${toneMap[i.tone] || 'lr-insight-neutral'}">${i.message}</div>`;
+        }).join('');
+
+        // --- Weekly Snapshot ---
+        const tw = r.weeklySnapshot.thisWeek;
+        const trends = r.weeklySnapshot.trends;
+
+        function deltaHTML(val, suffix = '') {
+            if (val === null || val === undefined) return '';
+            if (val > 0) return `<div class="lr-stat-delta lr-delta-positive">+${val}${suffix}</div>`;
+            if (val < 0) return `<div class="lr-stat-delta lr-delta-negative">${val}${suffix}</div>`;
+            return `<div class="lr-stat-delta lr-delta-neutral">—</div>`;
+        }
+
+        const snapshotHTML = `
+            <div class="lr-stat-grid">
+                <div class="lr-stat-card">
+                    <div class="lr-stat-value">${tw.sessions}</div>
+                    <div class="lr-stat-label">Sessions</div>
+                    ${deltaHTML(trends.sessionsDelta)}
+                </div>
+                <div class="lr-stat-card">
+                    <div class="lr-stat-value">${tw.minutes}</div>
+                    <div class="lr-stat-label">Minutes</div>
+                    ${deltaHTML(trends.minutesDelta)}
+                </div>
+                <div class="lr-stat-card">
+                    <div class="lr-stat-value">${tw.problemsAttempted}</div>
+                    <div class="lr-stat-label">Problems</div>
+                    ${deltaHTML(trends.problemsDelta)}
+                </div>
+                <div class="lr-stat-card">
+                    <div class="lr-stat-value">${tw.accuracy !== null ? tw.accuracy + '%' : '—'}</div>
+                    <div class="lr-stat-label">Accuracy</div>
+                    ${deltaHTML(trends.accuracyDelta, '%')}
+                </div>
+            </div>
+        `;
+
+        // --- Mastery ---
+        const m = r.mastery.counts;
+        const total = m.total || 1;
+        const masteryBarHTML = m.total > 0 ? `
+            <div class="lr-mastery-bar">
+                <div class="lr-mastery-bar-segment" style="width: ${(m.mastered / total * 100).toFixed(1)}%; background: var(--color-success);"></div>
+                <div class="lr-mastery-bar-segment" style="width: ${(m.practicing / total * 100).toFixed(1)}%; background: #3498db;"></div>
+                <div class="lr-mastery-bar-segment" style="width: ${(m.learning / total * 100).toFixed(1)}%; background: var(--color-warning);"></div>
+                <div class="lr-mastery-bar-segment" style="width: ${(m.needsReview / total * 100).toFixed(1)}%; background: var(--color-danger);"></div>
+            </div>
+            <div class="lr-mastery-legend">
+                <span class="lr-legend-mastered">Mastered (${m.mastered})</span>
+                <span class="lr-legend-practicing">Practicing (${m.practicing})</span>
+                <span class="lr-legend-learning">Learning (${m.learning})</span>
+                <span class="lr-legend-needs-review">Needs Review (${m.needsReview})</span>
+            </div>
+        ` : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No skills tracked yet.</p>';
+
+        const strengthsHTML = r.mastery.topStrengths.length > 0
+            ? r.mastery.topStrengths.map(s => `<span class="lr-skill-tag lr-skill-strength"><i class="fas fa-star" style="font-size: 0.8em;"></i> ${s.displayName}</span>`).join('')
+            : '';
+
+        const growthAreasHTML = r.mastery.growthAreas.length > 0
+            ? r.mastery.growthAreas.map(s => `<span class="lr-skill-tag lr-skill-growth"><i class="fas fa-seedling" style="font-size: 0.8em;"></i> ${s.displayName}</span>`).join('')
+            : '';
+
+        // --- Memory Health ---
+        const mem = r.memoryHealth;
+        const memoryHTML = mem.totalTracked > 0 ? `
+            <div class="lr-memory-bar">
+                ${Array(mem.strong).fill('<div class="lr-memory-segment lr-memory-strong"></div>').join('')}
+                ${Array(mem.fading).fill('<div class="lr-memory-segment lr-memory-fading"></div>').join('')}
+                ${Array(mem.needsReview).fill('<div class="lr-memory-segment lr-memory-weak"></div>').join('')}
+            </div>
+            <div style="display: flex; gap: 16px; font-size: var(--text-xs); color: var(--color-text-secondary);">
+                <span><span style="color: var(--color-success); font-weight: 700;">${mem.strong}</span> Strong</span>
+                <span><span style="color: var(--color-warning); font-weight: 700;">${mem.fading}</span> Fading</span>
+                <span><span style="color: var(--color-danger); font-weight: 700;">${mem.needsReview}</span> Needs Review</span>
+            </div>
+            ${mem.fadingSkills.length > 0 ? `
+                <div style="margin-top: 8px;">
+                    ${mem.fadingSkills.map(s => `<span class="lr-skill-tag lr-skill-fading">${s.displayName} (${s.retrievability}%)</span>`).join('')}
+                </div>
+            ` : ''}
+        ` : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No memory data yet — it builds as your child practices.</p>';
+
+        // --- Cognitive Load ---
+        const cogTrendClass = { improving: 'lr-cog-improving', rising: 'lr-cog-rising', stable: 'lr-cog-stable', 'no-data': 'lr-cog-no-data' };
+        const cogHTML = `<span class="lr-cog-label ${cogTrendClass[r.cognitiveLoad.trend] || 'lr-cog-no-data'}">${r.cognitiveLoad.label}</span>`;
+
+        // --- Milestones ---
+        const allBadges = [...(r.milestones.badges || []), ...(r.milestones.strategyBadges || [])];
+        const milestonesHTML = allBadges.length > 0 || r.milestones.skillsMasteredThisWeek > 0
+            ? `<div class="lr-badge-list">
+                ${r.milestones.skillsMasteredThisWeek > 0 ? `<span class="lr-badge-item"><i class="fas fa-trophy"></i> ${r.milestones.skillsMasteredThisWeek} skill${r.milestones.skillsMasteredThisWeek > 1 ? 's' : ''} mastered</span>` : ''}
+                ${allBadges.map(b => `<span class="lr-badge-item"><i class="fas fa-medal"></i> ${b.badgeName || b.key || b.badgeId}</span>`).join('')}
+              </div>`
+            : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No new milestones this week — they\'ll come!</p>';
+
+        // --- Engagement ---
+        const eng = r.engagement;
+        const engagementHTML = `
+            <div class="lr-engagement-row">
+                <div class="lr-engagement-item"><i class="fas fa-fire"></i> <strong>${eng.currentStreak}</strong> day streak</div>
+                <div class="lr-engagement-item"><i class="fas fa-clock"></i> <strong>${eng.totalTutoringMinutes}</strong> min lifetime</div>
+                <div class="lr-engagement-item"><i class="fas fa-scroll"></i> <strong>${eng.questsCompleted}</strong> quests done</div>
+                <div class="lr-engagement-item"><i class="fas fa-shield-alt"></i> <strong>${eng.challengesCompleted}</strong> challenges</div>
+            </div>
+        `;
+
+        // --- Fact Fluency ---
+        const ff = r.factFluency;
+        const fluencyHTML = ff.total > 0 ? `
+            <div style="display: flex; gap: 16px; font-size: var(--text-sm); color: var(--color-text-secondary);">
+                <span><strong>${ff.mastered}</strong> of <strong>${ff.total}</strong> fact families mastered</span>
+                ${ff.overallAccuracy ? `<span>Accuracy: <strong>${ff.overallAccuracy}%</strong></span>` : ''}
+                <span><strong>${ff.totalSessions}</strong> practice sessions</span>
+            </div>
+        ` : '';
+
+        // --- Growth ---
+        const growthSection = r.growth.thetaGrowthThisMonth !== null ? `
+            <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
+                Math ability growth this month:
+                <strong style="color: ${r.growth.thetaGrowthThisMonth > 0 ? 'var(--color-success)' : r.growth.thetaGrowthThisMonth < 0 ? 'var(--color-danger)' : 'var(--color-text)'}">${r.growth.thetaGrowthThisMonth > 0 ? '+' : ''}${r.growth.thetaGrowthThisMonth}</strong>
+            </div>
+        ` : '';
+
+        // --- Assemble ---
+        return `
+            <div class="lr-header">
+                <div class="lr-headline">
+                    ${r.headline.text}
+                    ${toneLabels[r.headline.tone] ? `<span class="lr-headline-tone ${toneClass}">${toneLabels[r.headline.tone]}</span>` : ''}
+                </div>
+                <div class="lr-child-info">
+                    ${r.child.firstName} ${r.child.lastName} · Grade ${r.child.gradeLevel} · ${r.child.mathCourse || 'N/A'} · Level ${r.child.level}
+                </div>
+            </div>
+            <div class="lr-body">
+                ${insightsHTML ? `
+                    <div class="lr-section">
+                        <div class="lr-section-title"><i class="fas fa-lightbulb"></i> Key Insights</div>
+                        ${insightsHTML}
+                    </div>
+                ` : ''}
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-chart-bar"></i> This Week</div>
+                    ${snapshotHTML}
+                </div>
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-puzzle-piece"></i> Skill Mastery</div>
+                    ${masteryBarHTML}
+                    ${strengthsHTML ? `<div style="margin-top: 12px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">Top Strengths</strong><div style="margin-top: 4px;">${strengthsHTML}</div></div>` : ''}
+                    ${growthAreasHTML ? `<div style="margin-top: 10px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">Needs Practice</strong><div style="margin-top: 4px;">${growthAreasHTML}</div></div>` : ''}
+                </div>
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-brain"></i> Memory Health</div>
+                    ${memoryHTML}
+                </div>
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-battery-half"></i> Mental Effort</div>
+                    ${cogHTML}
+                    ${growthSection}
+                </div>
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-trophy"></i> Milestones This Week</div>
+                    ${milestonesHTML}
+                </div>
+
+                <div class="lr-section">
+                    <div class="lr-section-title"><i class="fas fa-gamepad"></i> Engagement</div>
+                    ${engagementHTML}
+                </div>
+
+                ${fluencyHTML ? `
+                    <div class="lr-section">
+                        <div class="lr-section-title"><i class="fas fa-bolt"></i> Fact Fluency</div>
+                        ${fluencyHTML}
+                    </div>
+                ` : ''}
+            </div>
+        `;
     }
 
     // --- Load Parent Settings ---
