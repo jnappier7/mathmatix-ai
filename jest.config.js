@@ -20,13 +20,13 @@ module.exports = {
     '!**/scripts/**'
   ],
 
-  // Coverage thresholds (ratchet up as coverage improves)
+  // Coverage thresholds — ratchet up as coverage improves (never lower these)
   coverageThreshold: {
     global: {
-      statements: 14,
-      branches: 13,
-      functions: 13,
-      lines: 14
+      statements: 16,
+      branches: 14,
+      functions: 14,
+      lines: 15
     }
   },
 
