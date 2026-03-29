@@ -306,13 +306,26 @@ router.get('/daily-quests', isAuthenticated, async (req, res) => {
       await user.save();
     }
 
+    // Check if streak freeze is available this week
+    let streakFreezeAvailable = true;
+    const freezeUsedAt = user.dailyQuests.streakFreezeUsedAt;
+    if (freezeUsedAt) {
+      const now = new Date();
+      const daysSinceSunday = now.getUTCDay();
+      const weekStart = new Date(now);
+      weekStart.setUTCDate(weekStart.getUTCDate() - daysSinceSunday);
+      weekStart.setUTCHours(0, 0, 0, 0);
+      streakFreezeAvailable = new Date(freezeUsedAt) < weekStart;
+    }
+
     res.json({
       success: true,
       piDay: isPiDay(),
       quests: user.dailyQuests.quests,
       streak: user.dailyQuests.currentStreak || 0,
       longestStreak: user.dailyQuests.longestStreak || 0,
-      totalCompleted: user.dailyQuests.totalQuestsCompleted || 0
+      totalCompleted: user.dailyQuests.totalQuestsCompleted || 0,
+      streakFreezeAvailable
     });
   } catch (error) {
     console.error('Error fetching daily quests:', error);
@@ -464,13 +477,26 @@ router.get('/daily-quests/stats', isAuthenticated, async (req, res) => {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
 
+    // Check streak freeze availability
+    let streakFreezeAvailable = true;
+    const freezeUsedAt = user.dailyQuests?.streakFreezeUsedAt;
+    if (freezeUsedAt) {
+      const now = new Date();
+      const daysSinceSunday = now.getUTCDay();
+      const weekStart = new Date(now);
+      weekStart.setUTCDate(weekStart.getUTCDate() - daysSinceSunday);
+      weekStart.setUTCHours(0, 0, 0, 0);
+      streakFreezeAvailable = new Date(freezeUsedAt) < weekStart;
+    }
+
     const stats = {
       currentStreak: user.dailyQuests?.currentStreak || 0,
       longestStreak: user.dailyQuests?.longestStreak || 0,
       totalQuestsCompleted: user.dailyQuests?.totalQuestsCompleted || 0,
       questsCompletedToday: user.dailyQuests?.quests?.filter(q => q.completed).length || 0,
       totalQuestsToday: user.dailyQuests?.quests?.length || 3,
-      streakMultiplier: 1.0 + Math.min((user.dailyQuests?.currentStreak || 0) * 0.01, 0.5)
+      streakMultiplier: 1.0 + Math.min((user.dailyQuests?.currentStreak || 0) * 0.01, 0.5),
+      streakFreezeAvailable
     };
 
     res.json({ success: true, stats });

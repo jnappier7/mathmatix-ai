@@ -11,6 +11,24 @@
 const logger = require('./logger').child({ module: 'gamificationEvents' });
 
 /**
+ * Check whether a user can use their weekly streak freeze.
+ * Each user gets 1 free freeze per calendar week (resets Sunday midnight UTC).
+ */
+function canUseStreakFreeze(user) {
+  const lastUsed = user.dailyQuests?.streakFreezeUsedAt;
+  if (!lastUsed) return true;
+
+  // Reset each week: find the most recent Sunday at midnight UTC
+  const now = new Date();
+  const daysSinceSunday = now.getUTCDay(); // 0 = Sunday
+  const weekStart = new Date(now);
+  weekStart.setUTCDate(weekStart.getUTCDate() - daysSinceSunday);
+  weekStart.setUTCHours(0, 0, 0, 0);
+
+  return new Date(lastUsed) < weekStart;
+}
+
+/**
  * Process a gamification event and update all relevant systems.
  *
  * @param {Object} user - Mongoose user document (will be mutated + saved by caller)
@@ -38,6 +56,8 @@ function emitGamificationEvent(user, eventType, data = {}) {
     const questResult = updateDailyQuests(user, eventType, data);
     result.questsCompleted = questResult.completed;
     result.xpAwarded += questResult.xpAwarded;
+    if (questResult.streakFreezeUsed) result.streakFreezeUsed = true;
+    if (questResult.streakLost) result.streakLost = questResult.streakLost;
 
     // ── 2. Update Weekly Challenges ──
     const challengeResult = updateWeeklyChallenges(user, eventType, data);
@@ -108,7 +128,13 @@ function updateDailyQuests(user, eventType, data) {
 
     if (daysDiff === 1) {
       user.dailyQuests.currentStreak = (user.dailyQuests.currentStreak || 0) + 1;
+    } else if (daysDiff === 2 && canUseStreakFreeze(user)) {
+      // Missed exactly 1 day — auto-apply weekly streak freeze
+      user.dailyQuests.currentStreak = (user.dailyQuests.currentStreak || 0) + 1;
+      user.dailyQuests.streakFreezeUsedAt = now;
+      result.streakFreezeUsed = true;
     } else if (daysDiff > 1) {
+      result.streakLost = user.dailyQuests.currentStreak || 0;
       user.dailyQuests.currentStreak = 1;
     }
     // daysDiff === 0 means same day — keep current streak

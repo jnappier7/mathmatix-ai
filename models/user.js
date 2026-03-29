@@ -1081,6 +1081,7 @@ const userSchema = new Schema({
     currentStreak: { type: Number, default: 0 },
     longestStreak: { type: Number, default: 0 },
     lastPracticeDate: Date,
+    streakFreezeUsedAt: Date,  // When the weekly streak freeze was last used
     totalQuestsCompleted: { type: Number, default: 0 },
 
     // Daily progress tracking (resets each day)
