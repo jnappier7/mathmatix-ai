@@ -19,6 +19,7 @@ const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent } = require('../gamificationEvents');
+const { getNextActions } = require('../nextActionSuggestions');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -240,6 +241,16 @@ async function persist(params) {
       emitGamificationEvent(user, 'skillPracticed', { skillId: extracted.skillStarted });
     }
   }
+
+  // ── 8c. Next Action suggestions ──
+  const gamResult = results.gamification || {};
+  results.nextActions = getNextActions(user, {
+    leveledUp: results.leveledUp || false,
+    badgeEarned: !!results.badgeAwarded,
+    questCompleted: (gamResult.questsCompleted || []).length > 0,
+    streakFreezeUsed: gamResult.streakFreezeUsed || false,
+    streakLost: gamResult.streakLost || 0,
+  });
 
   // ── 9. AI time tracking ──
   if (aiProcessingSeconds > 0) {

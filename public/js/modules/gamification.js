@@ -372,3 +372,95 @@ export function processBadgeAward(badgeAwarded) {
         if (modal.parentNode) modal.remove();
     }, 15000);
 }
+
+/**
+ * Display "What's Next?" suggestion card after key moments.
+ * Shows the highest-priority suggestion as a subtle, dismissible card
+ * anchored to the bottom of the chat area.
+ *
+ * @param {Object[]} nextActions - Array from API response: [{ type, icon, title, message, action }]
+ */
+export function showNextActionSuggestion(nextActions) {
+    if (!nextActions || nextActions.length === 0) return;
+
+    // Remove any existing suggestion card
+    const existing = document.getElementById('next-action-card');
+    if (existing) existing.remove();
+
+    const suggestion = nextActions[0]; // Show the top priority suggestion
+
+    const card = document.createElement('div');
+    card.id = 'next-action-card';
+    card.setAttribute('role', 'status');
+    card.setAttribute('aria-live', 'polite');
+    card.style.cssText = `
+        position: fixed;
+        bottom: 90px;
+        right: 24px;
+        max-width: 340px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 16px;
+        z-index: 900;
+        border-left: 4px solid #3498db;
+        animation: nextActionSlideIn 0.4s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+
+    const actionButton = suggestion.action
+        ? `<button id="next-action-btn" style="
+            background: #3498db; color: white; border: none; padding: 8px 16px;
+            border-radius: 8px; font-size: 0.85em; font-weight: 600; cursor: pointer;
+            margin-top: 8px; transition: background 0.2s;
+          ">Let's Go</button>`
+        : '';
+
+    card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="display: flex; gap: 10px; align-items: flex-start; flex: 1;">
+                <i class="fas ${suggestion.icon}" style="color: #3498db; font-size: 1.2em; margin-top: 2px;"></i>
+                <div>
+                    <div style="font-weight: 700; font-size: 0.9em; color: #2c3e50;">${suggestion.title}</div>
+                    <div style="font-size: 0.82em; color: #5B6876; margin-top: 3px; line-height: 1.4;">${suggestion.message}</div>
+                    ${actionButton}
+                </div>
+            </div>
+            <button id="next-action-dismiss" aria-label="Dismiss suggestion" style="
+                background: none; border: none; color: #95a5a6; cursor: pointer;
+                font-size: 1.1em; padding: 0 0 0 8px; line-height: 1;
+            ">&times;</button>
+        </div>
+    `;
+
+    document.body.appendChild(card);
+
+    // Dismiss button
+    card.querySelector('#next-action-dismiss').addEventListener('click', () => {
+        card.style.animation = 'nextActionSlideOut 0.3s ease forwards';
+        setTimeout(() => card.remove(), 300);
+    });
+
+    // Action button
+    const actionBtn = card.querySelector('#next-action-btn');
+    if (actionBtn && suggestion.action) {
+        actionBtn.addEventListener('click', () => {
+            card.remove();
+            if (suggestion.action.type === 'navigate' && suggestion.action.url) {
+                window.location.href = suggestion.action.url;
+            } else if (suggestion.action.type === 'view-quests') {
+                // Toggle quests sidebar if available
+                const questsPanel = document.getElementById('quests-panel') || document.getElementById('daily-quests-section');
+                if (questsPanel) questsPanel.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
+
+    // Auto-dismiss after 12 seconds
+    setTimeout(() => {
+        if (card.parentNode) {
+            card.style.animation = 'nextActionSlideOut 0.3s ease forwards';
+            setTimeout(() => { if (card.parentNode) card.remove(); }, 300);
+        }
+    }, 12000);
+}

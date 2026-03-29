@@ -1003,6 +1003,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             courseProgress: courseProgressUpdate || null,
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
+            nextActions: pipelineResult.nextActions || [],
             _pipeline: pipelineResult._pipeline,
         };
 

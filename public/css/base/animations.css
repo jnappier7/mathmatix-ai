@@ -336,6 +336,16 @@
     }
 }
 
+/* Next Action Suggestion Card */
+@keyframes nextActionSlideIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes nextActionSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(40px); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .xp-feed {
@@ -364,5 +374,12 @@
 
     .badge-name {
         font-size: 1.3rem;
+    }
+
+    #next-action-card {
+        right: 12px !important;
+        left: 12px !important;
+        max-width: none !important;
+        bottom: 80px !important;
     }
 }
