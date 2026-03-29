@@ -25,18 +25,22 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# 6. Copy the rest of your application code
+# 7. Copy the rest of your application code
 COPY . .
 
-# 7. Create non-root user and set ownership
+# 8. Create non-root user and set ownership
 RUN groupadd --system appgroup && useradd --system --gid appgroup appuser \
     && chown -R appuser:appgroup /usr/src/app
 
-# 8. Run as non-root user
+# 9. Run as non-root user
 USER appuser
 
-# 9. Tell Docker what port the app will run on
+# 10. Tell Docker what port the app will run on
 EXPOSE 3000
 
-# 10. Define the command to start your server
+# 11. Health check — verifies app is responsive and database is connected
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "const http = require('http'); const req = http.get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
+
+# 12. Define the command to start your server
 CMD ["node", "server.js"]
