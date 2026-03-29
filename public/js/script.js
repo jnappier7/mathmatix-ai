@@ -2406,6 +2406,20 @@ document.addEventListener("DOMContentLoaded", () => {
             // Gamification events (quest/challenge completions from server)
             if (data.gamification) {
                 processGamificationEvents(data.gamification);
+
+                // Streak freeze notification
+                if (data.gamification.streakFreezeUsed) {
+                    setTimeout(() => {
+                        showToast(`Your streak was saved! Weekly freeze used to protect your streak.`, 'success', 6000);
+                    }, 1500);
+                }
+
+                // Streak lost notification
+                if (data.gamification.streakLost && data.gamification.streakLost >= 3) {
+                    setTimeout(() => {
+                        showToast(`Your ${data.gamification.streakLost}-day streak ended. Start a new one today!`, 'warning', 6000);
+                    }, 1500);
+                }
             }
 
             // Badge award celebration (from mastery chat)
