@@ -6,10 +6,12 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
+const Skill = require('../models/skill');
 const { isParent, isAuthenticated } = require('../middleware/auth');
 const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
 // Helper: verify parent has access to child
 async function verifyParentChildAccess(parentId, childId) {
@@ -563,6 +565,440 @@ router.get('/child/:childId/celeration', isAuthenticated, isParent, async (req, 
     } catch (error) {
         console.error('Error fetching child celeration:', error);
         res.status(500).json({ message: 'Error fetching celeration data' });
+    }
+});
+
+// =====================================================
+// LEARNING REPORT: Unified parent-friendly learning report
+// Aggregates BKT, FSRS, 4-pillar mastery, sessions, badges,
+// and gamification data into a single actionable report.
+// =====================================================
+router.get('/child/:childId/learning-report', isAuthenticated, isParent, logRecordAccess('progress_data', 'parental_right_of_access', { getStudentId: req => req.params.childId }), async (req, res) => {
+    try {
+        const child = await verifyParentChildAccess(req.user._id, req.params.childId);
+        if (!child) return res.status(403).json({ message: 'Not authorized to view this child.' });
+
+        const childId = child._id;
+        const childObjectId = new mongoose.Types.ObjectId(childId);
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 86400000);
+        const twoWeeksAgo = new Date(now.getTime() - 14 * 86400000);
+
+        // ------------------------------------------------------------------
+        // 1. SESSION DATA — this week and previous week for trend comparison
+        // ------------------------------------------------------------------
+        const [thisWeekStats, prevWeekStats] = await Promise.all([
+            Conversation.aggregate([
+                { $match: { userId: childObjectId, lastActivity: { $gte: oneWeekAgo } } },
+                { $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } },
+                    totalMinutes: { $sum: { $ifNull: ['$activeMinutes', 0] } },
+                    sessionCount: { $sum: 1 }
+                }}
+            ]),
+            Conversation.aggregate([
+                { $match: { userId: childObjectId, lastActivity: { $gte: twoWeeksAgo, $lt: oneWeekAgo } } },
+                { $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } },
+                    totalMinutes: { $sum: { $ifNull: ['$activeMinutes', 0] } },
+                    sessionCount: { $sum: 1 }
+                }}
+            ])
+        ]);
+
+        const thisWeek = thisWeekStats[0] || { totalProblems: 0, totalCorrect: 0, totalMinutes: 0, sessionCount: 0 };
+        const prevWeek = prevWeekStats[0] || { totalProblems: 0, totalCorrect: 0, totalMinutes: 0, sessionCount: 0 };
+
+        const thisWeekAccuracy = thisWeek.totalProblems > 0
+            ? Math.round((thisWeek.totalCorrect / thisWeek.totalProblems) * 100)
+            : null;
+        const prevWeekAccuracy = prevWeek.totalProblems > 0
+            ? Math.round((prevWeek.totalCorrect / prevWeek.totalProblems) * 100)
+            : null;
+
+        // ------------------------------------------------------------------
+        // 2. SKILL MASTERY — 4-pillar breakdown and skill-level details
+        // ------------------------------------------------------------------
+        const skillMasteryEntries = Object.entries(child.skillMastery || {});
+        const skillIds = skillMasteryEntries.map(([id]) => id);
+
+        // Also collect BKT and FSRS skill IDs for lookup
+        const engines = child.learningEngines || {};
+        const bktEntries = engines.bkt ? Object.entries(engines.bkt) : [];
+        const fsrsEntries = engines.fsrs ? Object.entries(engines.fsrs) : [];
+        const _consistencyEntries = engines.consistency ? Object.entries(engines.consistency) : [];
+
+        const allSkillIds = new Set([
+            ...skillIds,
+            ...bktEntries.map(([id]) => id),
+            ...fsrsEntries.map(([id]) => id)
+        ]);
+
+        // Fetch display names for all skills in one query
+        const skillInfoMap = {};
+        if (allSkillIds.size > 0) {
+            const skillDocs = await Skill.find({ skillId: { $in: Array.from(allSkillIds) } })
+                .select('skillId displayName category')
+                .lean();
+            for (const s of skillDocs) {
+                skillInfoMap[s.skillId] = { displayName: s.displayName || s.skillId, category: s.category || 'Uncategorized' };
+            }
+        }
+
+        // Mastery status counts
+        const masteryCounts = { mastered: 0, practicing: 0, learning: 0, needsReview: 0, total: 0 };
+        const topStrengths = [];
+        const growthAreas = [];
+
+        for (const [skillId, data] of skillMasteryEntries) {
+            masteryCounts.total++;
+            const info = skillInfoMap[skillId] || { displayName: skillId, category: 'Uncategorized' };
+            const score = data.masteryScore || 0;
+            const status = data.status || 'learning';
+
+            if (status === 'mastered') {
+                masteryCounts.mastered++;
+                topStrengths.push({ skillId, displayName: info.displayName, category: info.category, score, tier: data.currentTier || 'none' });
+            } else if (status === 'practicing') {
+                masteryCounts.practicing++;
+            } else if (status === 'learning') {
+                masteryCounts.learning++;
+            } else if (status === 'needs-review' || status === 're-fragile') {
+                masteryCounts.needsReview++;
+                growthAreas.push({ skillId, displayName: info.displayName, category: info.category, score, status });
+            }
+        }
+
+        // Sort strengths by score descending, growth areas by score ascending
+        topStrengths.sort((a, b) => b.score - a.score);
+        growthAreas.sort((a, b) => a.score - b.score);
+
+        // ------------------------------------------------------------------
+        // 3. MEMORY HEALTH — FSRS retrievability analysis
+        // ------------------------------------------------------------------
+        let memoryStrong = 0;
+        let memoryFading = 0;
+        let memoryNeedsReview = 0;
+        const fadingSkills = [];
+
+        for (const [skillId, data] of fsrsEntries) {
+            const elapsed = data.lastReview
+                ? (Date.now() - new Date(data.lastReview).getTime()) / 86400000
+                : 0;
+            const retrievability = calculateRetrievability(elapsed, data.stability ?? 0);
+            const info = skillInfoMap[skillId] || { displayName: skillId };
+
+            if (retrievability >= 0.85) {
+                memoryStrong++;
+            } else if (retrievability >= 0.5) {
+                memoryFading++;
+                fadingSkills.push({ skillId, displayName: info.displayName, retrievability: Math.round(retrievability * 100) });
+            } else {
+                memoryNeedsReview++;
+                fadingSkills.push({ skillId, displayName: info.displayName, retrievability: Math.round(retrievability * 100) });
+            }
+        }
+
+        // Sort fading skills by retrievability ascending (most urgent first)
+        fadingSkills.sort((a, b) => a.retrievability - b.retrievability);
+
+        // ------------------------------------------------------------------
+        // 4. BKT — Knowledge state summary by category
+        // ------------------------------------------------------------------
+        const knowledgeByCategory = {};
+        let bktMasteredThisWeek = 0;
+
+        for (const [skillId, data] of bktEntries) {
+            const info = skillInfoMap[skillId] || { displayName: skillId, category: 'Uncategorized' };
+            const cat = info.category;
+            if (!knowledgeByCategory[cat]) {
+                knowledgeByCategory[cat] = { mastered: 0, learning: 0, needsWork: 0, total: 0 };
+            }
+            const pLearned = data.pLearned ?? 0;
+            knowledgeByCategory[cat].total++;
+            if (pLearned >= 0.95) knowledgeByCategory[cat].mastered++;
+            else if (pLearned >= 0.3) knowledgeByCategory[cat].learning++;
+            else knowledgeByCategory[cat].needsWork++;
+
+            // Check if mastered this week
+            if (data.mastered && data.lastObservation && new Date(data.lastObservation) >= oneWeekAgo) {
+                bktMasteredThisWeek++;
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // 5. COGNITIVE LOAD — Recent trend
+        // ------------------------------------------------------------------
+        const cogHistory = engines.cognitiveLoadHistory || [];
+        const recentCogHistory = cogHistory.filter(h => h.date && new Date(h.date) >= oneWeekAgo);
+        let cognitiveLoadTrend = 'no-data';
+        let avgCognitiveLoad = null;
+
+        if (recentCogHistory.length > 0) {
+            avgCognitiveLoad = recentCogHistory.reduce((sum, h) => sum + (h.avgLoad ?? 0), 0) / recentCogHistory.length;
+            avgCognitiveLoad = Math.round(avgCognitiveLoad * 1000) / 1000;
+
+            if (recentCogHistory.length >= 2) {
+                const mid = Math.floor(recentCogHistory.length / 2);
+                const firstHalfAvg = recentCogHistory.slice(0, mid).reduce((s, h) => s + (h.avgLoad ?? 0), 0) / mid;
+                const secondHalfAvg = recentCogHistory.slice(mid).reduce((s, h) => s + (h.avgLoad ?? 0), 0) / (recentCogHistory.length - mid);
+                if (secondHalfAvg > firstHalfAvg + 0.05) cognitiveLoadTrend = 'rising';
+                else if (secondHalfAvg < firstHalfAvg - 0.05) cognitiveLoadTrend = 'improving';
+                else cognitiveLoadTrend = 'stable';
+            } else {
+                cognitiveLoadTrend = 'stable';
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // 6. BADGES & MILESTONES — Recent achievements
+        // ------------------------------------------------------------------
+        const recentBadges = [];
+        if (child.badges && Array.isArray(child.badges)) {
+            for (const badge of child.badges) {
+                if (badge.unlockedAt && new Date(badge.unlockedAt) >= oneWeekAgo) {
+                    recentBadges.push({ key: badge.key, badgeId: badge.badgeId, unlockedAt: badge.unlockedAt });
+                }
+            }
+        }
+        // Strategy badges (Master Mode)
+        const recentStrategyBadges = [];
+        if (child.strategyBadges && Array.isArray(child.strategyBadges)) {
+            for (const badge of child.strategyBadges) {
+                if (badge.earnedDate && new Date(badge.earnedDate) >= oneWeekAgo) {
+                    recentStrategyBadges.push({ badgeId: badge.badgeId, badgeName: badge.badgeName, category: badge.category, earnedDate: badge.earnedDate });
+                }
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // 7. GROWTH TRAJECTORY — Theta over time
+        // ------------------------------------------------------------------
+        const growthHistory = child.learningProfile?.growthCheckHistory || [];
+        const currentTheta = child.learningProfile?.currentTheta || 0;
+        let thetaGrowthThisMonth = null;
+
+        if (growthHistory.length >= 2) {
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000);
+            const recentChecks = growthHistory.filter(g => g.date && new Date(g.date) >= thirtyDaysAgo);
+            if (recentChecks.length > 0) {
+                thetaGrowthThisMonth = recentChecks.reduce((sum, g) => sum + (g.thetaChange || 0), 0);
+                thetaGrowthThisMonth = Math.round(thetaGrowthThisMonth * 100) / 100;
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // 8. STREAKS & ENGAGEMENT
+        // ------------------------------------------------------------------
+        const streak = child.streak || {};
+        const dailyQuests = child.dailyQuests || {};
+        const weeklyChallenges = child.weeklyChallenges || {};
+
+        // ------------------------------------------------------------------
+        // 9. FACT FLUENCY SUMMARY
+        // ------------------------------------------------------------------
+        const fluencyStats = child.factFluencyProgress?.stats || {};
+        const fluencyFamilies = child.factFluencyProgress?.factFamilies || {};
+        let fluencyMastered = 0;
+        let fluencyTotal = 0;
+        for (const [, familyData] of Object.entries(fluencyFamilies)) {
+            fluencyTotal++;
+            if (familyData.mastered) fluencyMastered++;
+        }
+
+        // ------------------------------------------------------------------
+        // 10. GENERATE PLAIN-LANGUAGE INSIGHTS
+        // ------------------------------------------------------------------
+        const insights = [];
+
+        // Activity insight
+        if (thisWeek.sessionCount === 0) {
+            insights.push({ type: 'engagement', tone: 'concern', message: `${child.firstName} hasn't had any sessions this week. Even 10 minutes a day makes a big difference.` });
+        } else if (thisWeek.sessionCount >= 5) {
+            insights.push({ type: 'engagement', tone: 'positive', message: `${child.firstName} has been very active this week with ${thisWeek.sessionCount} sessions and ${thisWeek.totalMinutes} minutes of practice!` });
+        } else {
+            insights.push({ type: 'engagement', tone: 'neutral', message: `${child.firstName} had ${thisWeek.sessionCount} session${thisWeek.sessionCount > 1 ? 's' : ''} this week (${thisWeek.totalMinutes} minutes total).` });
+        }
+
+        // Accuracy trend insight
+        if (thisWeekAccuracy !== null && prevWeekAccuracy !== null) {
+            const accuracyDelta = thisWeekAccuracy - prevWeekAccuracy;
+            if (accuracyDelta > 5) {
+                insights.push({ type: 'accuracy', tone: 'positive', message: `Accuracy improved from ${prevWeekAccuracy}% to ${thisWeekAccuracy}% — great progress!` });
+            } else if (accuracyDelta < -10) {
+                insights.push({ type: 'accuracy', tone: 'concern', message: `Accuracy dipped from ${prevWeekAccuracy}% to ${thisWeekAccuracy}%. This could mean ${child.firstName} is tackling harder material — which is a good thing.` });
+            } else if (thisWeekAccuracy !== null) {
+                insights.push({ type: 'accuracy', tone: 'neutral', message: `Accuracy this week: ${thisWeekAccuracy}% across ${thisWeek.totalProblems} problems.` });
+            }
+        } else if (thisWeekAccuracy !== null) {
+            insights.push({ type: 'accuracy', tone: 'neutral', message: `Accuracy this week: ${thisWeekAccuracy}% across ${thisWeek.totalProblems} problems.` });
+        }
+
+        // Memory health insight
+        if (fadingSkills.length > 0) {
+            const topFading = fadingSkills.slice(0, 3).map(s => s.displayName);
+            insights.push({ type: 'memory', tone: 'actionable', message: `${topFading.join(', ')} ${topFading.length === 1 ? 'is' : 'are'} starting to fade from memory. A quick review session would help lock ${topFading.length === 1 ? 'it' : 'them'} in.` });
+        } else if (memoryStrong > 0) {
+            insights.push({ type: 'memory', tone: 'positive', message: `${memoryStrong} skill${memoryStrong > 1 ? 's are' : ' is'} well-retained in long-term memory. The spaced practice is working!` });
+        }
+
+        // Cognitive load insight
+        if (cognitiveLoadTrend === 'rising') {
+            insights.push({ type: 'cognitive', tone: 'concern', message: `${child.firstName} seems to be working harder than usual. This is normal when learning new concepts — make sure they take breaks.` });
+        } else if (cognitiveLoadTrend === 'improving') {
+            insights.push({ type: 'cognitive', tone: 'positive', message: `The material is getting easier for ${child.firstName} — a sign that learning is sinking in.` });
+        }
+
+        // Mastery milestone insight
+        if (bktMasteredThisWeek > 0) {
+            insights.push({ type: 'milestone', tone: 'positive', message: `${child.firstName} mastered ${bktMasteredThisWeek} new skill${bktMasteredThisWeek > 1 ? 's' : ''} this week!` });
+        }
+
+        // Growth areas insight
+        if (growthAreas.length > 0) {
+            const topGrowth = growthAreas.slice(0, 3).map(s => s.displayName);
+            insights.push({ type: 'growth', tone: 'actionable', message: `${topGrowth.join(', ')} could use more practice. Encourage ${child.firstName} to revisit ${topGrowth.length === 1 ? 'this topic' : 'these topics'}.` });
+        }
+
+        // ------------------------------------------------------------------
+        // 11. DETERMINE OVERALL HEADLINE
+        // ------------------------------------------------------------------
+        let headline;
+        let headlineTone;
+
+        // Weight multiple signals for overall assessment
+        const hasActivity = thisWeek.sessionCount > 0;
+        const hasMasteryGrowth = bktMasteredThisWeek > 0 || (thetaGrowthThisMonth !== null && thetaGrowthThisMonth > 0);
+        const hasStrongAccuracy = thisWeekAccuracy !== null && thisWeekAccuracy >= 70;
+        const hasHighCogLoad = cognitiveLoadTrend === 'rising';
+
+        if (!hasActivity) {
+            headline = `${child.firstName} hasn't practiced this week`;
+            headlineTone = 'needs-attention';
+        } else if (hasMasteryGrowth && hasStrongAccuracy) {
+            headline = `${child.firstName} is making excellent progress`;
+            headlineTone = 'excellent';
+        } else if (hasActivity && hasStrongAccuracy) {
+            headline = `${child.firstName} is doing well — steady and consistent`;
+            headlineTone = 'good';
+        } else if (hasActivity && hasHighCogLoad) {
+            headline = `${child.firstName} is working hard on new challenges`;
+            headlineTone = 'growing';
+        } else if (hasActivity) {
+            headline = `${child.firstName} is putting in the work`;
+            headlineTone = 'building';
+        } else {
+            headline = `${child.firstName}'s learning journey continues`;
+            headlineTone = 'neutral';
+        }
+
+        // ------------------------------------------------------------------
+        // BUILD RESPONSE
+        // ------------------------------------------------------------------
+        res.json({
+            success: true,
+            reportDate: now.toISOString(),
+            child: {
+                id: child._id,
+                firstName: child.firstName,
+                lastName: child.lastName,
+                gradeLevel: child.gradeLevel,
+                mathCourse: child.mathCourse,
+                level: child.level || 1,
+                xp: child.xp || 0
+            },
+
+            headline: { text: headline, tone: headlineTone },
+
+            insights,
+
+            weeklySnapshot: {
+                thisWeek: {
+                    sessions: thisWeek.sessionCount,
+                    minutes: thisWeek.totalMinutes,
+                    problemsAttempted: thisWeek.totalProblems,
+                    problemsCorrect: thisWeek.totalCorrect,
+                    accuracy: thisWeekAccuracy
+                },
+                previousWeek: {
+                    sessions: prevWeek.sessionCount,
+                    minutes: prevWeek.totalMinutes,
+                    problemsAttempted: prevWeek.totalProblems,
+                    problemsCorrect: prevWeek.totalCorrect,
+                    accuracy: prevWeekAccuracy
+                },
+                trends: {
+                    sessionsDelta: thisWeek.sessionCount - prevWeek.sessionCount,
+                    minutesDelta: thisWeek.totalMinutes - prevWeek.totalMinutes,
+                    accuracyDelta: (thisWeekAccuracy !== null && prevWeekAccuracy !== null) ? thisWeekAccuracy - prevWeekAccuracy : null,
+                    problemsDelta: thisWeek.totalProblems - prevWeek.totalProblems
+                }
+            },
+
+            mastery: {
+                counts: masteryCounts,
+                topStrengths: topStrengths.slice(0, 5),
+                growthAreas: growthAreas.slice(0, 5),
+                knowledgeByCategory
+            },
+
+            memoryHealth: {
+                strong: memoryStrong,
+                fading: memoryFading,
+                needsReview: memoryNeedsReview,
+                totalTracked: fsrsEntries.length,
+                fadingSkills: fadingSkills.slice(0, 5)
+            },
+
+            cognitiveLoad: {
+                average: avgCognitiveLoad,
+                trend: cognitiveLoadTrend,
+                label: cognitiveLoadTrend === 'improving' ? 'Getting easier'
+                    : cognitiveLoadTrend === 'rising' ? 'Working harder'
+                    : cognitiveLoadTrend === 'stable' ? 'Steady effort'
+                    : 'Not enough data yet'
+            },
+
+            growth: {
+                currentTheta,
+                thetaGrowthThisMonth,
+                recentChecks: growthHistory.slice(-5).map(g => ({
+                    date: g.date,
+                    thetaChange: g.thetaChange,
+                    growthStatus: g.growthStatus,
+                    accuracy: g.accuracy
+                }))
+            },
+
+            milestones: {
+                badges: recentBadges,
+                strategyBadges: recentStrategyBadges,
+                skillsMasteredThisWeek: bktMasteredThisWeek
+            },
+
+            engagement: {
+                currentStreak: streak.current || 0,
+                longestStreak: streak.longest || 0,
+                totalTutoringMinutes: child.totalActiveTutoringMinutes || 0,
+                questsCompleted: dailyQuests.quests ? dailyQuests.quests.filter(q => q.completed).length : 0,
+                challengesCompleted: weeklyChallenges.challenges ? weeklyChallenges.challenges.filter(c => c.completed).length : 0
+            },
+
+            factFluency: {
+                mastered: fluencyMastered,
+                total: fluencyTotal,
+                totalSessions: fluencyStats.totalSessions || 0,
+                overallAccuracy: fluencyStats.overallAccuracy ? Math.round(fluencyStats.overallAccuracy) : null
+            }
+        });
+
+    } catch (error) {
+        console.error('Error generating learning report:', error);
+        res.status(500).json({ message: 'Error generating learning report.' });
     }
 });
 
