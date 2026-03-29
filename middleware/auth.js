@@ -6,6 +6,7 @@ const passport = require("passport");
 const logger = require('../utils/logger').child({ middleware: 'auth' });
 const rateLimit = require('express-rate-limit');
 const { cleanupDemoClone } = require('../utils/demoClone');
+const { fail } = require('../utils/apiResponse');
 
 /**
  * Checks if a user is logged in and their session data is valid.
@@ -17,7 +18,7 @@ function isAuthenticated(req, res, next) {
 
     // For API calls, send a 401 Unauthorized JSON error.
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(401).json({ message: 'Unauthorized: Authentication required.' });
+        return res.status(401).json(fail('Unauthorized: Authentication required.'));
     }
     
     // For browser navigation, redirect to the login page.
@@ -82,7 +83,7 @@ function isAdmin(req, res, next) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(403).json({ message: 'Forbidden: Admin access required.' });
+        return res.status(403).json(fail('Forbidden: Admin access required.'));
     }
     res.redirect('/login.html');
 }
@@ -92,7 +93,7 @@ function isTeacher(req, res, next) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(403).json({ message: 'Forbidden: Teachers only.' });
+        return res.status(403).json(fail('Forbidden: Teachers only.'));
     }
     res.redirect('/login.html');
 }
@@ -102,7 +103,7 @@ function isParent(req, res, next) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(403).json({ message: 'Forbidden: Parents only.' });
+        return res.status(403).json(fail('Forbidden: Parents only.'));
     }
     res.redirect('/login.html');
 }
@@ -112,7 +113,7 @@ function isStudent(req, res, next) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(403).json({ message: 'Forbidden: Students only.' });
+        return res.status(403).json(fail('Forbidden: Students only.'));
     }
     res.redirect('/login.html');
 }
@@ -125,7 +126,7 @@ function isAuthorizedForLeaderboard(req, res, next) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
-        return res.status(403).json({ message: 'Forbidden: You are not authorized to view the leaderboard.' });
+        return res.status(403).json(fail('Forbidden: You are not authorized to view the leaderboard.'));
     }
     res.redirect('/login.html');
 }
