@@ -602,27 +602,8 @@ function registerHtmlRoutes(app) {
 function registerStaticRoutes(app) {
   const publicDir = path.join(__dirname, '..', 'public');
 
-  // Long cache for fingerprinted/immutable assets (CSS, JS, images, fonts)
-  const immutableCacheOptions = { maxAge: '7d', etag: true, lastModified: true };
-  // Short cache for HTML (needs fresh CSP nonces + deploys)
-  const htmlCacheOptions = { maxAge: 0, etag: true, lastModified: true };
-
-  // Set cache-control by file type
-  const staticCacheOptions = {
-    etag: true,
-    lastModified: true,
-    setHeaders: (res, filePath) => {
-      if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/i.test(filePath)) {
-        res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
-      } else if (/\.html$/i.test(filePath)) {
-        res.setHeader('Cache-Control', 'no-cache'); // Always revalidate HTML
-      } else {
-        res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day default
-      }
-    },
-  };
-
   // Serve HTML via sendFile for CSP nonce injection
+  // (Static assets are already served by middleware.js before session/CSRF pipeline)
   app.use((req, res, next) => {
     if (req.method === 'GET' && req.path.endsWith('.html')) {
       const filePath = path.resolve(publicDir, req.path.replace(/^\/+/, ''));
@@ -635,9 +616,6 @@ function registerStaticRoutes(app) {
       next();
     }
   });
-
-  app.use(express.static(publicDir, staticCacheOptions));
-  app.use('/images', express.static(path.join(publicDir, 'images'), immutableCacheOptions));
 }
 
 module.exports = { registerRoutes };
