@@ -1,5 +1,3 @@
-// Forcing a file update for Git
-
 // routes/chat.js
 
 const express = require('express');
@@ -29,9 +27,6 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
-// const { buildTextbookContext, generateBioSystemPrompt } = require('../utils/bioPromptCompact'); // Biology tutor prototype — disabled
-// const ChapterContent = require('../models/chapterContent'); // Biology tutor prototype — disabled
-
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
@@ -712,30 +707,6 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         let systemPrompt;
         let courseScaffoldCtx = null; // Captured for step-context reminder below
 
-        // TEXTBOOK MODE: Biology tutor prototype — disabled
-        // if (user.textbookMode && user.activeChapterId) {
-        //     try {
-        //         const chapter = await ChapterContent.getChapterForRAG(user.activeChapterId);
-        //         if (chapter && chapter.processingStatus === 'ready') {
-        //             const textbookContext = await buildTextbookContext({
-        //                 chapter,
-        //                 studentMessage: message,
-        //                 currentConceptIndex: user.currentConceptIndex || 0,
-        //                 tokenBudget: 1500
-        //             });
-        //             systemPrompt = generateBioSystemPrompt({
-        //                 user: studentProfileForPrompt,
-        //                 tutorName: currentTutor,
-        //                 textbookMode: true,
-        //                 textbookContext
-        //             });
-        //         }
-        //     } catch (textbookError) {
-        //         console.error('[Chat] Textbook mode context failed, falling back to default:', textbookError.message);
-        //         // Fall through to default prompt below
-        //     }
-        // }
-
         if (!systemPrompt && conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
             const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
@@ -1032,6 +1003,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             courseProgress: courseProgressUpdate || null,
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
+            nextActions: pipelineResult.nextActions || [],
+            reviewSummary: pipelineResult.reviewSummary || null,
             _pipeline: pipelineResult._pipeline,
         };
 

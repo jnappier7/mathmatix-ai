@@ -8,6 +8,7 @@ const Conversation = require('../models/conversation'); // NEW: Import Conversat
 const { isTeacher, isAuthenticated } = require('../middleware/auth');
 const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
 const { cleanupStaleSessions } = require('../services/sessionService');
+const { computeRiskScore, getInterventionTier, generateRecommendation } = require('../utils/interventionAlerts');
 
 const ScreenerSession = require('../models/screenerSession');
 const EnrollmentCode = require('../models/enrollmentCode');
@@ -1794,6 +1795,91 @@ router.get('/class-snapshot', isTeacher, async (req, res) => {
   } catch (err) {
     console.error('Error fetching class snapshot:', err);
     res.status(500).json({ message: 'Error fetching class snapshot.' });
+  }
+});
+
+// ============================================
+// INTERVENTION ALERTS
+// ============================================
+
+/**
+ * GET /api/teacher/intervention-alerts
+ * Returns students who need intervention, sorted by risk score descending.
+ * Each alert includes tier, risk factors, and a plain-language recommendation.
+ */
+router.get('/intervention-alerts', isTeacher, async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const students = await User.find(
+      { _id: { $in: studentIds }, role: 'student' },
+      'firstName lastName learningEngines lastInterventionAlert gradeLevel mathCourse'
+    ).lean();
+
+    const alerts = [];
+    for (const student of students) {
+      const { riskScore, factors, atRisk } = computeRiskScore(student);
+      const tierInfo = getInterventionTier(riskScore);
+
+      if (tierInfo.tier === 0) continue;
+
+      const recommendation = generateRecommendation(factors, tierInfo);
+
+      alerts.push({
+        studentId: student._id,
+        name: `${student.firstName || ''} ${student.lastName || ''}`.trim(),
+        gradeLevel: student.gradeLevel,
+        mathCourse: student.mathCourse,
+        tier: tierInfo.tier,
+        label: tierInfo.label,
+        urgency: tierInfo.urgency,
+        riskScore,
+        factors,
+        atRisk,
+        recommendation,
+        lastAlertAt: student.lastInterventionAlert?.timestamp || null,
+      });
+    }
+
+    // Sort by risk score descending (most urgent first)
+    alerts.sort((a, b) => b.riskScore - a.riskScore);
+
+    res.json({
+      success: true,
+      totalStudents: students.length,
+      alertCount: alerts.length,
+      alerts,
+    });
+  } catch (err) {
+    console.error('Error fetching intervention alerts:', err);
+    res.status(500).json({ message: 'Error fetching intervention alerts.' });
+  }
+});
+
+/**
+ * POST /api/teacher/intervention-alerts/:studentId/acknowledge
+ * Teacher acknowledges they've seen/acted on an alert.
+ */
+router.post('/intervention-alerts/:studentId/acknowledge', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+
+    // Verify access
+    const studentIds = await getStudentIdsForTeacher(teacherId);
+    if (!studentIds.some(id => id.toString() === studentId)) {
+      return res.status(403).json({ message: 'Not authorized for this student.' });
+    }
+
+    // Clear the last alert so a new one can fire after cooldown
+    await User.findByIdAndUpdate(studentId, {
+      $set: { 'lastInterventionAlert.acknowledged': true }
+    });
+
+    res.json({ success: true, message: 'Alert acknowledged.' });
+  } catch (err) {
+    console.error('Error acknowledging intervention alert:', err);
+    res.status(500).json({ message: 'Error acknowledging alert.' });
   }
 });
 

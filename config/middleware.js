@@ -17,6 +17,7 @@ const logger = require('../utils/logger');
 const { csrfProtection } = require('../middleware/csrf');
 const { handleImpersonation, enforceReadOnly } = require('../middleware/impersonation');
 const { trackErrors, clientErrorHandler } = require('../middleware/errorTracking');
+const { requestId } = require('../middleware/requestId');
 
 require('../auth/passport-config');
 
@@ -120,6 +121,9 @@ function configureMiddleware(app) {
       }
     },
   }));
+
+  // Request ID for tracing — runs early so all downstream middleware/errors are traceable
+  app.use(requestId);
 
   app.use(express.json({ limit: '1mb' })); // Tightened from 10mb — uploads use multer, not JSON
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));

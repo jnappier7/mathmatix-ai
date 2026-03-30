@@ -1245,6 +1245,296 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .focus\:ring-2:focus { box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5); }
     .focus\:ring-teal-500:focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.5); }
     .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+
+    /* ============================================
+       LEARNING REPORT MODAL
+       ============================================ */
+    .lr-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .lr-modal-overlay.is-visible {
+      display: flex;
+    }
+    .lr-modal {
+      background: var(--color-bg-white);
+      border-radius: var(--radius-xl);
+      max-width: 680px;
+      width: 100%;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      margin: auto;
+      animation: lrSlideUp 0.3s ease;
+    }
+    @keyframes lrSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .lr-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      font-size: 1.2em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      z-index: 2;
+    }
+    .lr-modal-close:hover {
+      background: var(--color-danger);
+      color: white;
+      border-color: var(--color-danger);
+    }
+    .lr-header {
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .lr-headline {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 4px;
+    }
+    .lr-headline-tone {
+      display: inline-block;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .lr-tone-excellent { background: #d5f5e3; color: #1e8449; }
+    .lr-tone-good { background: #d4efdf; color: #27ae60; }
+    .lr-tone-growing { background: #fef9e7; color: #b7950b; }
+    .lr-tone-building { background: #ebf5fb; color: #2980b9; }
+    .lr-tone-needs-attention { background: #fdedec; color: #c0392b; }
+    .lr-tone-neutral { background: var(--color-bg); color: var(--color-text-secondary); }
+
+    .lr-child-info {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+    .lr-body {
+      padding: 24px 28px 28px;
+    }
+    .lr-section {
+      margin-bottom: 24px;
+    }
+    .lr-section:last-child {
+      margin-bottom: 0;
+    }
+    .lr-section-title {
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lr-section-title i {
+      color: var(--color-primary);
+      font-size: 0.9em;
+    }
+    .lr-insight {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      font-size: var(--text-sm);
+      line-height: 1.5;
+      border-left: 4px solid transparent;
+    }
+    .lr-insight-positive {
+      background: #eafaf1;
+      border-left-color: var(--color-success);
+      color: #1e8449;
+    }
+    .lr-insight-concern {
+      background: #fdf2e9;
+      border-left-color: var(--color-warning);
+      color: #935116;
+    }
+    .lr-insight-actionable {
+      background: #ebf5fb;
+      border-left-color: var(--color-primary);
+      color: var(--color-primary-deeper);
+    }
+    .lr-insight-neutral {
+      background: var(--color-bg);
+      border-left-color: var(--color-border);
+      color: var(--color-text-secondary);
+    }
+    .lr-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .lr-stat-card {
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+      border: 1px solid var(--color-border);
+    }
+    .lr-stat-value {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    .lr-stat-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .lr-stat-delta {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .lr-delta-positive { color: var(--color-success); }
+    .lr-delta-negative { color: var(--color-danger); }
+    .lr-delta-neutral { color: var(--color-text-muted); }
+
+    .lr-mastery-bar {
+      display: flex;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      background: var(--color-border);
+      margin: 8px 0;
+    }
+    .lr-mastery-bar-segment {
+      height: 100%;
+      transition: width var(--transition-normal);
+    }
+    .lr-mastery-legend {
+      display: flex;
+      gap: 16px;
+      font-size: var(--text-xs);
+      color: var(--color-text-secondary);
+      flex-wrap: wrap;
+    }
+    .lr-mastery-legend span::before {
+      content: '';
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .lr-legend-mastered::before { background: var(--color-success); }
+    .lr-legend-practicing::before { background: #3498db; }
+    .lr-legend-learning::before { background: var(--color-warning); }
+    .lr-legend-needs-review::before { background: var(--color-danger); }
+
+    .lr-memory-bar {
+      display: flex;
+      gap: 4px;
+      margin: 8px 0 12px;
+    }
+    .lr-memory-segment {
+      height: 8px;
+      border-radius: 4px;
+      flex-grow: 1;
+      min-width: 4px;
+    }
+    .lr-memory-strong { background: var(--color-success); }
+    .lr-memory-fading { background: var(--color-warning); }
+    .lr-memory-weak { background: var(--color-danger); }
+
+    .lr-skill-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      margin: 3px;
+    }
+    .lr-skill-strength { background: #d5f5e3; color: #1e8449; }
+    .lr-skill-growth { background: #fdf2e9; color: #935116; }
+    .lr-skill-fading { background: #fdedec; color: #c0392b; }
+
+    .lr-badge-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .lr-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      background: #fef9e7;
+      border: 1px solid #f9e79f;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: #b7950b;
+    }
+    .lr-engagement-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: var(--text-sm);
+    }
+    .lr-engagement-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-text-secondary);
+    }
+    .lr-engagement-item i { color: var(--color-primary); }
+    .lr-engagement-item strong { color: var(--color-text); }
+
+    .lr-cog-label {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+    .lr-cog-improving { background: #d5f5e3; color: #1e8449; }
+    .lr-cog-rising { background: #fdf2e9; color: #935116; }
+    .lr-cog-stable { background: #ebf5fb; color: #2980b9; }
+    .lr-cog-no-data { background: var(--color-bg); color: var(--color-text-muted); }
+
+    .lr-loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--color-text-muted);
+    }
+    .lr-loading i {
+      font-size: 2em;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+    }
+
+    @media (max-width: 600px) {
+      .lr-modal { margin: 12px; }
+      .lr-header, .lr-body { padding: 16px; }
+      .lr-stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .lr-modal-overlay { padding: 12px; }
+    }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
   <link rel="stylesheet" href="/css/demo-mode.css" />
@@ -1912,6 +2202,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       });
     })();
   </script>
+
+  <!-- Learning Report Modal -->
+  <div id="learning-report-modal" class="lr-modal-overlay" role="dialog" aria-modal="true" aria-label="Learning Report">
+    <div class="lr-modal">
+      <button class="lr-modal-close" id="lr-modal-close-btn" aria-label="Close report">&times;</button>
+      <div id="lr-modal-content">
+        <div class="lr-loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Generating learning report...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <script src="/js/analyticsCharts.js"></script>

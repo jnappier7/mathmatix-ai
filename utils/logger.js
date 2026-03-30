@@ -263,12 +263,7 @@ const log = {
 log.requestLogger = (req, res, next) => {
   const start = Date.now();
 
-  // Generate a unique request ID for tracing across log lines
-  const crypto = require('crypto');
-  req.requestId = req.headers['x-request-id'] || crypto.randomBytes(8).toString('hex');
-  res.setHeader('X-Request-Id', req.requestId);
-
-  // Log when response finishes
+  // Log when response finishes (request ID already set by requestId middleware)
   res.on('finish', () => {
     const duration = Date.now() - start;
     const userId = req.user?.id || req.user?._id;

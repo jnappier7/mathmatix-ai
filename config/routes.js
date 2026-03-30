@@ -108,8 +108,6 @@ const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
 const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
-// const bioRoutes = require('../routes/bio'); // Biology tutor prototype — disabled
-
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
@@ -197,8 +195,6 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
-  // app.use('/api/bio', bioRoutes); // Biology tutor prototype — disabled
-
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api', isAuthenticated, diagramRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
@@ -558,10 +554,6 @@ function registerHtmlRoutes(app) {
   app.get('/terms.html', sendHtml('terms.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
-  // app.get('/bio.html', sendHtml('bio.html'));           // Biology tutor prototype — disabled
-  // app.get('/bio-chat.html', sendHtml('bio-chat.html')); // Biology tutor prototype — disabled
-  // app.get('/bio-chapters.html', sendHtml('bio-chapters.html')); // Biology tutor prototype — disabled
-
   // Protected HTML routes
   app.get('/affiliate.html', isAuthenticated, sendHtml('affiliate.html'));
   app.get('/role-picker.html', isAuthenticated, sendHtml('role-picker.html'));
@@ -587,6 +579,7 @@ function registerHtmlRoutes(app) {
   app.get('/math-showdown.html', isAuthenticated, sendHtml('math-showdown.html'));
   app.get('/avatar-builder.html', isAuthenticated, sendHtml('avatar-builder.html'));
   app.get('/upload.html', isAuthenticated, sendHtml('upload.html'));
+  app.get('/skill-map.html', isAuthenticated, sendHtml('skill-map.html'));
 
   // Role-specific routes
   app.get('/admin-dashboard.html', isAuthenticated, isAdmin, sendHtml('admin-dashboard.html'));

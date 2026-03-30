@@ -40,6 +40,7 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
+        success: false,
         message: 'Unauthorized: Authentication required.'
       });
       expect(next).not.toHaveBeenCalled();
@@ -76,6 +77,7 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
+        success: false,
         message: 'Forbidden: Students only.'
       });
       expect(next).not.toHaveBeenCalled();
@@ -111,6 +113,7 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
+        success: false,
         message: 'Forbidden: Teachers only.'
       });
       expect(next).not.toHaveBeenCalled();
@@ -136,6 +139,7 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
+        success: false,
         message: 'Forbidden: Parents only.'
       });
       expect(next).not.toHaveBeenCalled();
@@ -161,6 +165,7 @@ describe('Authentication Middleware', () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
+        success: false,
         message: 'Forbidden: Admin access required.'
       });
       expect(next).not.toHaveBeenCalled();

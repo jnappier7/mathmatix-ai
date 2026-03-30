@@ -5,7 +5,7 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 // --- ES Module Imports ---
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
-import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward } from './modules/gamification.js';
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -2406,11 +2406,31 @@ document.addEventListener("DOMContentLoaded", () => {
             // Gamification events (quest/challenge completions from server)
             if (data.gamification) {
                 processGamificationEvents(data.gamification);
+
+                // Streak freeze notification
+                if (data.gamification.streakFreezeUsed) {
+                    setTimeout(() => {
+                        showToast(`Your streak was saved! Weekly freeze used to protect your streak.`, 'success', 6000);
+                    }, 1500);
+                }
+
+                // Streak lost notification
+                if (data.gamification.streakLost && data.gamification.streakLost >= 3) {
+                    setTimeout(() => {
+                        showToast(`Your ${data.gamification.streakLost}-day streak ended. Start a new one today!`, 'warning', 6000);
+                    }, 1500);
+                }
             }
 
             // Badge award celebration (from mastery chat)
             if (data.badgeAwarded) {
                 processBadgeAward(data.badgeAwarded);
+            }
+
+            // "What's Next?" suggestion after key moments
+            if (data.nextActions && data.nextActions.length > 0) {
+                // Delay slightly so celebrations finish first
+                setTimeout(() => showNextActionSuggestion(data.nextActions), 3000);
             }
 
             // Course progress updates (scaffold advance, module complete)

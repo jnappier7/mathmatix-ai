@@ -547,8 +547,12 @@ function updateStreakTracking(user) {
       user.dailyQuests.currentStreak,
       user.dailyQuests.longestStreak || 0
     );
+  } else if (daysSinceLastPractice === 2) {
+    // Missed exactly 1 day — streak freeze handled by gamificationEvents
+    // Don't reset here; gamificationEvents.js is the source of truth for freeze logic
+    user.dailyQuests.currentStreak++;
   } else {
-    // Streak broken
+    // Streak broken (missed 2+ days)
     user.dailyQuests.currentStreak = 1;
   }
 

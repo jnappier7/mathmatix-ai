@@ -655,6 +655,13 @@ const userSchema = new Schema({
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },
 
+  /* Intervention alert tracking (for teacher notifications) */
+  lastInterventionAlert: {
+    timestamp: Date,
+    tier: { type: Number, min: 0, max: 3 },
+    riskScore: Number
+  },
+
   /* Onboarding */
   needsProfileCompletion: { type: Boolean, default: true },
 
@@ -1081,6 +1088,7 @@ const userSchema = new Schema({
     currentStreak: { type: Number, default: 0 },
     longestStreak: { type: Number, default: 0 },
     lastPracticeDate: Date,
+    streakFreezeUsedAt: Date,  // When the weekly streak freeze was last used
     totalQuestsCompleted: { type: Number, default: 0 },
 
     // Daily progress tracking (resets each day)

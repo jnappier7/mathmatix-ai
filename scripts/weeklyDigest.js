@@ -17,6 +17,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { sendParentWeeklyReport } = require('../utils/emailService');
+const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
 // Constants
 const BATCH_SIZE = 50; // Process parents in batches
@@ -125,6 +126,61 @@ async function calculateStudentProgress(studentId) {
         }
     }
 
+    // ── Memory health (FSRS) ──
+    const memoryHealth = { strong: 0, fading: 0, needsReview: 0, fadingSkills: [] };
+    const engines = student.learningEngines || {};
+    const fsrs = engines.fsrs;
+    if (fsrs) {
+        const fsrsEntries = typeof fsrs.entries === 'function'
+            ? Array.from(fsrs.entries()) : Object.entries(fsrs);
+        for (const [skillId, card] of fsrsEntries) {
+            if (!card || !card.lastReview) continue;
+            const elapsed = (Date.now() - new Date(card.lastReview).getTime()) / 86400000;
+            const r = calculateRetrievability(elapsed, card.stability ?? 0);
+            if (r >= 0.85) memoryHealth.strong++;
+            else if (r >= 0.50) { memoryHealth.fading++; memoryHealth.fadingSkills.push(skillId); }
+            else { memoryHealth.needsReview++; memoryHealth.fadingSkills.push(skillId); }
+        }
+    }
+    memoryHealth.fadingSkills = memoryHealth.fadingSkills.slice(0, 5);
+
+    // ── Cognitive load trend ──
+    const cogHistory = engines.cognitiveLoadHistory || [];
+    let cognitiveLoadTrend = 'no-data';
+    let avgCogLoad = 0;
+    if (cogHistory.length >= 2) {
+        const recent = cogHistory.slice(-3).map(h => h.avgLoad ?? 0);
+        const earlier = cogHistory.slice(-6, -3).map(h => h.avgLoad ?? 0);
+        avgCogLoad = recent.reduce((s, v) => s + v, 0) / recent.length;
+        if (earlier.length > 0) {
+            const earlierAvg = earlier.reduce((s, v) => s + v, 0) / earlier.length;
+            cognitiveLoadTrend = avgCogLoad > earlierAvg + 0.1 ? 'rising' : avgCogLoad < earlierAvg - 0.1 ? 'improving' : 'stable';
+        }
+    } else if (cogHistory.length === 1) {
+        avgCogLoad = cogHistory[0].avgLoad ?? 0;
+        cognitiveLoadTrend = 'stable';
+    }
+
+    // ── Mastery breakdown ──
+    let masteredCount = 0, practicingCount = 0, learningCount = 0;
+    if (student.skillMastery) {
+        for (const [, m] of student.skillMastery) {
+            if (m.status === 'mastered') masteredCount++;
+            else if (m.status === 'practicing') practicingCount++;
+            else learningCount++;
+        }
+    }
+
+    // ── Streak ──
+    const currentStreak = student.dailyQuests?.currentStreak || 0;
+
+    // ── Plain-language insights ──
+    const insights = buildDigestInsights({
+        stats, accuracy: stats.totalProblems > 0 ? Math.round((stats.totalCorrect / stats.totalProblems) * 100) : 0,
+        masteryGained, memoryHealth, avgCogLoad, cognitiveLoadTrend,
+        achievements, currentStreak, sessionCount: stats.sessionCount,
+    });
+
     return {
         studentName: `${student.firstName} ${student.lastName}`,
         problemsCompleted: stats.totalCorrect,
@@ -136,10 +192,68 @@ async function calculateStudentProgress(studentId) {
         weeklyActiveMinutes: student.weeklyActiveTutoringMinutes || 0,
         sessionCount: stats.sessionCount,
         masteryGained,
-        strugglingSkills: strugglingSkills.slice(0, 5), // Limit to top 5
+        strugglingSkills: strugglingSkills.slice(0, 5),
         achievements,
-        growthChecks // NEW: Include growth check results for parent report
+        growthChecks,
+        // Enriched data for the enhanced digest
+        memoryHealth,
+        cognitiveLoad: { average: Math.round(avgCogLoad * 100), trend: cognitiveLoadTrend },
+        mastery: { mastered: masteredCount, practicing: practicingCount, learning: learningCount },
+        currentStreak,
+        insights,
     };
+}
+
+/**
+ * Build plain-language insights for the email digest.
+ * @param {Object} data - Aggregated progress data
+ * @returns {Object[]} Array of { type, tone, message }
+ */
+function buildDigestInsights(data) {
+    const insights = [];
+
+    // Engagement
+    if (data.sessionCount >= 5) {
+        insights.push({ type: 'engagement', tone: 'positive', message: `Great week! ${data.sessionCount} practice sessions completed.` });
+    } else if (data.sessionCount === 0) {
+        insights.push({ type: 'engagement', tone: 'actionable', message: 'No practice sessions this week. Even 10 minutes a day makes a big difference!' });
+    }
+
+    // Accuracy
+    if (data.accuracy >= 85) {
+        insights.push({ type: 'accuracy', tone: 'positive', message: `${data.accuracy}% accuracy — showing strong understanding of the material.` });
+    } else if (data.accuracy > 0 && data.accuracy < 60) {
+        insights.push({ type: 'accuracy', tone: 'concern', message: `Accuracy was ${data.accuracy}% this week. The AI tutor is adjusting difficulty to help build confidence.` });
+    }
+
+    // Memory
+    if (data.memoryHealth.needsReview > 0) {
+        insights.push({ type: 'memory', tone: 'actionable', message: `${data.memoryHealth.needsReview} skill${data.memoryHealth.needsReview > 1 ? 's are' : ' is'} starting to fade. Quick review sessions will help lock them in.` });
+    } else if (data.memoryHealth.strong > 3) {
+        insights.push({ type: 'memory', tone: 'positive', message: `${data.memoryHealth.strong} skills stored in long-term memory — great retention!` });
+    }
+
+    // Cognitive load
+    if (data.cognitiveLoadTrend === 'rising') {
+        insights.push({ type: 'cognitive', tone: 'concern', message: 'Cognitive load is trending up. The tutor is adjusting to prevent overwhelm.' });
+    }
+
+    // Mastery
+    if (data.masteryGained > 0) {
+        insights.push({ type: 'mastery', tone: 'positive', message: `${data.masteryGained} new skill${data.masteryGained > 1 ? 's' : ''} mastered this week!` });
+    }
+
+    // Streak
+    if (data.currentStreak >= 7) {
+        insights.push({ type: 'streak', tone: 'positive', message: `${data.currentStreak}-day practice streak — consistency builds mastery!` });
+    }
+
+    // Badges
+    if (data.achievements.length > 0) {
+        insights.push({ type: 'badges', tone: 'positive', message: `Earned ${data.achievements.length} new badge${data.achievements.length > 1 ? 's' : ''} this week.` });
+    }
+
+    return insights.slice(0, 4); // Top 4 most relevant
 }
 
 /**
@@ -280,4 +394,4 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { main, calculateStudentProgress, shouldSendReport };
+module.exports = { main, calculateStudentProgress, shouldSendReport, buildDigestInsights };
