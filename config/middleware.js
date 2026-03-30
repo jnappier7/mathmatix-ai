@@ -94,6 +94,8 @@ function configureMiddleware(app) {
   app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 
   app.use(compression({
+    level: 6, // Good balance of speed vs compression ratio (default is 6, but explicit)
+    threshold: 1024, // Skip tiny responses under 1 KB
     filter: (req, res) => {
       if (req.headers.accept === 'text/event-stream') return false;
       return compression.filter(req, res);
@@ -105,6 +107,15 @@ function configureMiddleware(app) {
   // temporarily unreachable, and avoids unnecessary middleware overhead for assets.
   // HTML files are excluded — they need CSP nonce injection from the later pipeline.
   const publicDir = path.join(__dirname, '..', 'public');
+
+  // Vendor assets (versioned/pinned libs) — 30-day immutable cache
+  app.use('/vendor', express.static(path.join(publicDir, 'vendor'), {
+    index: false,
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable'); // 30 days
+    },
+  }));
+
   app.use((req, res, next) => {
     // Skip HTML files — they need CSP nonce injection via the full middleware pipeline
     if (req.method === 'GET' && /\.html?$/i.test(req.path)) return next();
@@ -114,7 +125,9 @@ function configureMiddleware(app) {
   }, express.static(publicDir, {
     index: false, // Don't serve index.html — that goes through auth/CSP nonce pipeline
     setHeaders: (res, filePath) => {
-      if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$/i.test(filePath)) {
+      if (/\.(woff2?|ttf|eot)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=2592000, immutable'); // 30 days — fonts never change
+      } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp)$/i.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
       } else {
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day default
@@ -223,7 +236,7 @@ function configureMiddleware(app) {
     frameguard: { action: 'deny' },
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    dnsPrefetchControl: { allow: false },
+    dnsPrefetchControl: { allow: true }, // Allow DNS prefetch for CDN domains (jsdelivr, cloudflare, google fonts)
   }));
 
   // Permissions-Policy header
