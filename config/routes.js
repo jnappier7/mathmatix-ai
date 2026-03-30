@@ -579,6 +579,7 @@ function registerHtmlRoutes(app) {
   app.get('/math-showdown.html', isAuthenticated, sendHtml('math-showdown.html'));
   app.get('/avatar-builder.html', isAuthenticated, sendHtml('avatar-builder.html'));
   app.get('/upload.html', isAuthenticated, sendHtml('upload.html'));
+  app.get('/skill-map.html', isAuthenticated, sendHtml('skill-map.html'));
 
   // Role-specific routes
   app.get('/admin-dashboard.html', isAuthenticated, isAdmin, sendHtml('admin-dashboard.html'));

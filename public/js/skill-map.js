@@ -6,13 +6,13 @@
 // Pattern Configuration (enable/disable for phased rollout)
 const PATTERN_CONFIG = {
     equivalence: { enabled: true, priority: 1, name: 'Equivalence' },
-    scaling: { enabled: false, priority: 2, name: 'Scaling' },
-    change: { enabled: false, priority: 3, name: 'Change' },
-    structure: { enabled: false, priority: 4, name: 'Structure' },
-    space: { enabled: false, priority: 5, name: 'Space' },
-    comparison: { enabled: false, priority: 6, name: 'Comparison' },
-    uncertainty: { enabled: false, priority: 7, name: 'Uncertainty' },
-    accumulation: { enabled: false, priority: 8, name: 'Accumulation' }
+    scaling: { enabled: true, priority: 2, name: 'Scaling' },
+    change: { enabled: true, priority: 3, name: 'Change' },
+    structure: { enabled: true, priority: 4, name: 'Structure' },
+    space: { enabled: true, priority: 5, name: 'Space' },
+    comparison: { enabled: true, priority: 6, name: 'Comparison' },
+    uncertainty: { enabled: true, priority: 7, name: 'Uncertainty' },
+    accumulation: { enabled: true, priority: 8, name: 'Accumulation' }
 };
 
 // Zoom level thresholds
