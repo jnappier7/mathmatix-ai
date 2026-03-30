@@ -1765,15 +1765,61 @@ async function handleGreetingRequest(req, res, userId) {
             maxTokens = 800; // Course greetings include teaching content
             console.log(`[Greeting] Course mode: ${courseContext.courseSession.courseName}, module: ${courseContext.courseSession.currentModuleId}`);
         } else {
-            // GENERAL TUTORING MODE: Original greeting behavior
-            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+            // GENERAL TUTORING MODE: Build greeting with full student context
+
+            // Build mastery context for greeting (same as regular chat)
+            const greetingMasteryContext = user.masteryProgress?.activeBadge ? {
+                mode: 'badge-earning',
+                badgeName: user.masteryProgress.activeBadge.badgeName,
+                skillId: user.masteryProgress.activeBadge.skillId,
+                tier: user.masteryProgress.activeBadge.tier,
+                problemsCompleted: user.masteryProgress.activeBadge.problemsCompleted || 0,
+                problemsCorrect: user.masteryProgress.activeBadge.problemsCorrect || 0,
+                requiredProblems: user.masteryProgress.activeBadge.requiredProblems,
+                requiredAccuracy: user.masteryProgress.activeBadge.requiredAccuracy
+            } : null;
+
+            // Build fluency context for greeting (same as regular chat)
+            let greetingFluencyContext = null;
+            if (user.fluencyProfile) {
+                const avgFluencyZScore = user.fluencyProfile.averageFluencyZScore || 0;
+                const speedLevel = avgFluencyZScore < -1.0 ? 'fast'
+                                : avgFluencyZScore > 1.0 ? 'slow'
+                                : 'normal';
+                greetingFluencyContext = {
+                    fluencyZScore: avgFluencyZScore,
+                    speedLevel,
+                    readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0,
+                    iepExtendedTime: user.iepPlan?.accommodations?.extendedTime || false
+                };
+            }
+
+            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], greetingFluencyContext, null);
 
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
+            // Build grade-appropriate warm-up examples
+            const gradeStr = user.gradeLevel ? String(user.gradeLevel).toLowerCase().replace(/[^0-9k]/g, '') : '';
+            const gradeNum = gradeStr === 'k' ? 0 : parseInt(gradeStr) || 6;
+            let warmUpExamples;
+            if (gradeNum <= 3) {
+                warmUpExamples = '"Quick warm-up: what\'s 3 × 7?" or "Let\'s start easy: what\'s 15 + 28?"';
+            } else if (gradeNum <= 5) {
+                warmUpExamples = '"Quick warm-up: what\'s 3/4 + 1/4?" or "What\'s 12 × 15?"';
+            } else if (gradeNum <= 7) {
+                warmUpExamples = '"Quick warm-up: what\'s 20% of 80?" or "Simplify: 3x + 5x"';
+            } else if (gradeNum <= 9) {
+                warmUpExamples = '"Quick warm-up: solve for x: 2x + 3 = 11" or "What\'s the slope of y = 3x - 5?"';
+            } else {
+                warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?" or "Factor: x² - 9"';
+            }
+            // If the student has a specific math course, mention it for extra clarity
+            const courseHint = user.mathCourse ? ` The student is taking ${user.mathCourse} — make sure the warm-up is relevant to that level, not below it.` : '';
+
             greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
 
-IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to. If they're new, end with a quick warm-up question appropriate to their grade level — something easy they can answer right away to build momentum. For example: "Quick warm-up: what's 3 × 7?" or "Let's start easy: what's 15 + 28?" Pick something they'll get right. This creates an immediate win.`;
+IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to. If they're new, end with a quick warm-up question appropriate to their grade level and course — something easy they can answer right away to build momentum. For example: ${warmUpExamples} Pick something they'll get right at THEIR level. This creates an immediate win.${courseHint} NEVER give a warm-up question that is far below the student's grade level or course — that feels insulting and wastes their time.`;
 
             // Add Starting Point offer (only on first session, never again)
             if (shouldOfferStartingPoint) {
