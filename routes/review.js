@@ -22,7 +22,104 @@ const {
   getReviewStats,
   assessQuality
 } = require('../utils/spacedRepetition');
+const { buildSmartQueue, getReviewSummary } = require('../utils/smartReviewQueue');
 const logger = require('../utils/catLogger');
+
+// ===========================================================================
+// SMART REVIEW QUEUE (FSRS-driven)
+// ===========================================================================
+
+/**
+ * GET /api/review/smart-queue
+ *
+ * Returns a cognitive-load-aware, FSRS-driven review queue.
+ * Adapts session size based on student's recent cognitive load,
+ * interleaves difficulty, and provides time estimates.
+ *
+ * Query params:
+ *   max (number)       — max skills to return (default 10)
+ *   lookahead (number) — include skills due within N days (default 1)
+ */
+router.get('/smart-queue', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const maxSkills = Math.min(parseInt(req.query.max) || 10, 20);
+    const lookaheadDays = Math.min(parseInt(req.query.lookahead) || 1, 7);
+
+    const { queue, stats, sessionPlan } = buildSmartQueue(user, {
+      maxSkills,
+      lookaheadDays,
+    });
+
+    // Enrich queue with skill display names
+    if (queue.length > 0) {
+      const skillIds = queue.map(s => s.skillId);
+      const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
+      const skillMap = new Map(skills.map(s => [s.skillId, s]));
+
+      for (const item of queue) {
+        const doc = skillMap.get(item.skillId);
+        item.displayName = doc?.displayName || item.skillId;
+        item.category = doc?.category || 'unknown';
+      }
+    }
+
+    // Find a problem for the first skill in the queue
+    let problem = null;
+    if (queue.length > 0) {
+      const topSkill = queue[0];
+      const problemDoc = await Problem.findNearDifficulty(
+        topSkill.skillId,
+        user.learningProfile?.currentTheta || 0,
+        [],
+        { preferMultipleChoice: false }
+      );
+
+      if (problemDoc) {
+        problem = {
+          problemId: problemDoc.problemId,
+          prompt: problemDoc.prompt,
+          svg: problemDoc.svg,
+          answerType: problemDoc.answerType,
+          options: problemDoc.options,
+          difficulty: problemDoc.difficulty,
+          skillId: topSkill.skillId,
+          skillName: topSkill.displayName,
+        };
+      }
+    }
+
+    res.json({ queue, stats, sessionPlan, problem });
+  } catch (err) {
+    logger.error('Error building smart review queue:', err);
+    res.status(500).json({ error: 'Failed to build review queue' });
+  }
+});
+
+/**
+ * GET /api/review/summary
+ *
+ * Quick review status — how many due, any urgent, when next is due.
+ * Lightweight check for dashboard widgets.
+ */
+router.get('/summary', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const summary = getReviewSummary(user);
+    res.json(summary);
+  } catch (err) {
+    logger.error('Error getting review summary:', err);
+    res.status(500).json({ error: 'Failed to get review summary' });
+  }
+});
 
 // ===========================================================================
 // GET SKILLS DUE FOR REVIEW

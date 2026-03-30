@@ -1004,6 +1004,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
             nextActions: pipelineResult.nextActions || [],
+            reviewSummary: pipelineResult.reviewSummary || null,
             _pipeline: pipelineResult._pipeline,
         };
 

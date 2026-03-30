@@ -21,6 +21,7 @@ const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent } = require('../gamificationEvents');
 const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
+const { getReviewSummary } = require('../smartReviewQueue');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -276,6 +277,13 @@ async function persist(params) {
     }
   } catch (err) {
     console.error('[Persist] Intervention alert check error:', err.message);
+  }
+
+  // ── 8e. Review summary (FSRS-driven) ──
+  try {
+    results.reviewSummary = getReviewSummary(user);
+  } catch (err) {
+    console.error('[Persist] Review summary error:', err.message);
   }
 
   // ── 9. AI time tracking ──
