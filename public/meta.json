@@ -1,0 +1,13 @@
+{
+  "name": "Mathmatix AI",
+  "short_name": "MATHMATIX",
+  "description": "Personalized, AI-powered math tutoring that adapts to your child's learning style. Get one-on-one help anytime, anywhere.",
+  "url": "https://mathmatix.ai",
+  "logo": "https://mathmatix.ai/images/mathmatix-ai-logo.png",
+  "theme_color": "#12B3B3",
+  "background_color": "#ffffff",
+  "version": "1.0.0",
+  "author": "Mathmatix AI",
+  "contact": "support@mathmatix.ai",
+  "categories": ["education", "productivity"]
+}
