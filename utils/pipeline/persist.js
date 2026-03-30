@@ -20,6 +20,7 @@ const { recordMisconception } = require('../misconceptionDetector');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent } = require('../gamificationEvents');
 const { getNextActions } = require('../nextActionSuggestions');
+const { checkForInterventionAlert } = require('../interventionAlerts');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -251,6 +252,31 @@ async function persist(params) {
     streakFreezeUsed: gamResult.streakFreezeUsed || false,
     streakLost: gamResult.streakLost || 0,
   });
+
+  // ── 8d. Intervention alert check ──
+  try {
+    const interventionAlert = checkForInterventionAlert(user);
+    if (interventionAlert) {
+      user.lastInterventionAlert = {
+        timestamp: interventionAlert.timestamp,
+        tier: interventionAlert.tier,
+        riskScore: interventionAlert.riskScore,
+      };
+      results.interventionAlert = interventionAlert;
+
+      // Add alert to the conversation so it shows in teacher's live feed
+      conversation.alerts = conversation.alerts || [];
+      conversation.alerts.push({
+        type: interventionAlert.tier >= 3 ? 'struggle' : 'milestone',
+        message: `[Tier ${interventionAlert.tier} Intervention] ${interventionAlert.recommendation}`,
+        timestamp: interventionAlert.timestamp,
+        acknowledged: false,
+        severity: interventionAlert.urgency,
+      });
+    }
+  } catch (err) {
+    console.error('[Persist] Intervention alert check error:', err.message);
+  }
 
   // ── 9. AI time tracking ──
   if (aiProcessingSeconds > 0) {

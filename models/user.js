@@ -655,6 +655,13 @@ const userSchema = new Schema({
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },
 
+  /* Intervention alert tracking (for teacher notifications) */
+  lastInterventionAlert: {
+    timestamp: Date,
+    tier: { type: Number, min: 0, max: 3 },
+    riskScore: Number
+  },
+
   /* Onboarding */
   needsProfileCompletion: { type: Boolean, default: true },
 
