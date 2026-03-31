@@ -7,7 +7,7 @@ const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
-        let query = { role: 'student' };
+        let query = { role: 'student', isDemo: { $ne: true }, isDemoClone: { $ne: true } };
 
         // Determine filtering based on user role (this logic is preserved)
         if (req.user.role === 'teacher') {
