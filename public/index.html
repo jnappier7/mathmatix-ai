@@ -314,10 +314,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       color: var(--clr-text-dim);
     }
 
-    /* Large button variant */
-    .btn-lg {
-      padding: 1rem 2.5rem !important;
-      font-size: 1.15rem !important;
+    /* Large button variant — scoped to landing page to avoid !important */
+    .landing-main .btn-lg {
+      padding: 1rem 2.5rem;
+      font-size: 1.15rem;
       font-weight: 700;
     }
 
