@@ -15,314 +15,472 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
-    .progress-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem;
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    .progress-header {
-      margin-bottom: 2rem;
+    /* Subtle animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(18, 179, 179, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(118, 75, 162, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .progress-page {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* Header bar */
+    .page-top-bar {
       display: flex;
       align-items: center;
       gap: 1rem;
+      margin-bottom: 2.5rem;
     }
 
     .back-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
       cursor: pointer;
-      color: #666;
-      padding: 0.5rem;
-      transition: color 0.2s;
+      color: #aaa;
+      transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .back-btn:hover {
+      background: rgba(18,179,179,0.15);
+      border-color: rgba(18,179,179,0.3);
       color: #12B3B3;
     }
 
-    .progress-header h1 {
+    .page-title {
       flex: 1;
-      margin: 0;
-      font-size: 2rem;
     }
 
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #12B3B3, #667eea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-title p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .logout-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #aaa;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239,68,68,0.15);
+      border-color: rgba(239,68,68,0.3);
+      color: #ef4444;
+    }
+
+    /* Stats Ring Cards */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .stat-card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.5rem 1rem;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s;
     }
 
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .stat-card.mastered-card::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .stat-card.learning-card::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .stat-card.ready-card::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .stat-ring {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
+    }
+
+    .stat-ring svg {
+      width: 80px;
+      height: 80px;
+      transform: rotate(-90deg);
+    }
+
+    .stat-ring .ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.06);
+      stroke-width: 6;
+    }
+
+    .stat-ring .ring-fill {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s ease;
+    }
+
+    .stat-ring .ring-fill.mastered { stroke: #10b981; }
+    .stat-ring .ring-fill.learning { stroke: #3b82f6; }
+    .stat-ring .ring-fill.ready { stroke: #f59e0b; }
+
     .stat-number {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #12B3B3;
-      display: block;
-      margin-bottom: 0.25rem;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
     }
 
     .stat-label {
-      font-size: 0.9rem;
-      color: #666;
+      font-size: 0.8rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      color: #888;
     }
 
+    /* Section Cards */
     .section {
-      background: white;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
       padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      transition: border-color 0.2s;
+    }
+
+    .section:hover {
+      border-color: rgba(255,255,255,0.12);
     }
 
     .section-header {
       display: flex;
       align-items: center;
-      margin-bottom: 1.5rem;
+      gap: 12px;
+      margin-bottom: 1.25rem;
       padding-bottom: 1rem;
-      border-bottom: 2px solid #f0f0f0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .section-icon {
-      font-size: 1.5rem;
-      margin-right: 1rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
     }
 
+    .section-icon.mastered { background: rgba(16,185,129,0.15); }
+    .section-icon.learning { background: rgba(59,130,246,0.15); }
+    .section-icon.ready { background: rgba(245,158,11,0.15); }
+
     .section-title {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: 600;
       margin: 0;
       flex: 1;
+      color: #e0e0e0;
     }
 
     .section-count {
-      background: #12B3B3;
-      color: white;
-      padding: 0.25rem 0.75rem;
+      background: rgba(255,255,255,0.08);
+      color: #ccc;
+      padding: 4px 12px;
       border-radius: 20px;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
+    /* Skill Items */
     .skill-list {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 10px;
     }
 
     .skill-item {
-      background: #f9f9f9;
-      border-radius: 8px;
-      padding: 1rem;
-      transition: transform 0.2s, background 0.2s;
-      cursor: pointer;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      transition: all 0.25s;
+      cursor: default;
     }
 
     .skill-item:hover {
-      background: #f0f0f0;
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
       transform: translateX(4px);
     }
 
-    .skill-item.mastered {
-      border-left: 4px solid #10b981;
-    }
-
-    .skill-item.learning {
-      border-left: 4px solid #3b82f6;
-    }
-
-    .skill-item.ready {
-      border-left: 4px solid #f59e0b;
-    }
+    .skill-item.mastered { border-left: 3px solid #10b981; }
+    .skill-item.learning { border-left: 3px solid #3b82f6; }
+    .skill-item.ready { border-left: 3px solid #f59e0b; }
 
     .skill-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      margin-bottom: 6px;
     }
 
     .skill-name {
       font-weight: 600;
-      font-size: 1.1rem;
-      color: #333;
+      font-size: 1rem;
+      color: #e0e0e0;
     }
 
     .skill-badge {
-      padding: 0.25rem 0.75rem;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .skill-badge.mastered {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .skill-badge.learning {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .skill-badge.ready {
-      background: #fef3c7;
-      color: #92400e;
-    }
+    .skill-badge.mastered { background: rgba(16,185,129,0.15); color: #34d399; }
+    .skill-badge.learning { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .skill-badge.ready { background: rgba(245,158,11,0.15); color: #fbbf24; }
 
     .skill-meta {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 8px;
     }
 
     .skill-progress {
       width: 100%;
-      height: 6px;
-      background: #e0e0e0;
+      height: 5px;
+      background: rgba(255,255,255,0.06);
       border-radius: 3px;
       overflow: hidden;
+      margin-bottom: 8px;
     }
 
     .skill-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #2563eb);
       border-radius: 3px;
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #3b82f6, #818cf8);
+      transition: width 0.6s ease;
     }
 
     .skill-actions {
-      margin-top: 0.75rem;
-      display: flex;
-      gap: 0.5rem;
+      margin-top: 10px;
     }
 
     .skill-btn {
-      background: #12B3B3;
+      background: linear-gradient(135deg, #12B3B3, #0e9494);
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
+      transition: all 0.2s;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 6px;
     }
 
     .skill-btn:hover {
-      background: #0a8f8f;
-      transform: translateY(-2px);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(18,179,179,0.3);
     }
 
-    .skill-btn.secondary {
-      background: white;
-      color: #12B3B3;
-      border: 2px solid #12B3B3;
-    }
-
-    .skill-btn.secondary:hover {
-      background: #f0f9f9;
-    }
-
+    /* Empty / Loading States */
     .empty-state {
       text-align: center;
-      padding: 3rem;
-      color: #999;
+      padding: 4rem 2rem;
+      color: #888;
     }
 
     .empty-state i {
-      font-size: 4rem;
-      color: #ddd;
-      margin-bottom: 1rem;
+      font-size: 3.5rem;
+      color: rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-state h2 {
+      color: #ccc;
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .empty-state p {
+      margin: 0 0 1.5rem;
     }
 
     .loading {
       text-align: center;
-      padding: 3rem;
+      padding: 6rem 2rem;
     }
 
     .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #12B3B3;
-      border-radius: 50%;
       width: 40px;
       height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: #12B3B3;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
     }
+
+    .loading p { color: #888; }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
 
-    @media (max-width: 768px) {
-      .progress-container {
-        padding: 1rem;
-      }
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
 
-      .stats-row {
-        grid-template-columns: 1fr;
-      }
+    .page-footer a {
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .page-footer a:hover { color: #12B3B3; }
+
+    @media (max-width: 768px) {
+      .progress-page { padding: 1rem 1rem 2rem; }
+      .stats-row { grid-template-columns: 1fr; }
+      .page-title h1 { font-size: 1.4rem; }
+      .stat-ring { width: 64px; height: 64px; }
+      .stat-ring svg { width: 64px; height: 64px; }
+      .stat-number { font-size: 1.4rem; }
     }
   </style>
 </head>
-<body class="landing-page-body">
+<body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
-  <header class="landing-header">
-    <div class="header-logo-container">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
-    </div>
-    <nav class="landing-nav">
-      <button id="logoutBtn" class="btn btn-tertiary logout-button">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </nav>
-  </header>
 
-  <main id="main-content" class="progress-container">
+  <div id="main-content" class="progress-page">
     <div id="loading-state" class="loading">
       <div class="spinner"></div>
       <p>Loading your progress...</p>
     </div>
 
     <div id="progress-content" style="display: none;">
-      <div class="progress-header">
-        <button class="back-btn" onclick="history.back()">
+      <div class="page-top-bar">
+        <button class="back-btn" onclick="history.back()" aria-label="Go back">
           <i class="fas fa-arrow-left"></i>
         </button>
-        <h1>Your Math Journey</h1>
+        <div class="page-title">
+          <h1>Your Math Journey</h1>
+          <p>Track your skills and keep growing</p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
 
       <div class="stats-row">
-        <div class="stat-card">
-          <span class="stat-number" id="stat-mastered">0</span>
+        <div class="stat-card mastered-card">
+          <div class="stat-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34" />
+              <circle class="ring-fill mastered" cx="40" cy="40" r="34"
+                stroke-dasharray="213.6" stroke-dashoffset="213.6" id="ring-mastered" />
+            </svg>
+            <span class="stat-number" id="stat-mastered">0</span>
+          </div>
           <span class="stat-label">Mastered</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-number" id="stat-learning">0</span>
+        <div class="stat-card learning-card">
+          <div class="stat-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34" />
+              <circle class="ring-fill learning" cx="40" cy="40" r="34"
+                stroke-dasharray="213.6" stroke-dashoffset="213.6" id="ring-learning" />
+            </svg>
+            <span class="stat-number" id="stat-learning">0</span>
+          </div>
           <span class="stat-label">Learning</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-number" id="stat-ready">0</span>
+        <div class="stat-card ready-card">
+          <div class="stat-ring">
+            <svg viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34" />
+              <circle class="ring-fill ready" cx="40" cy="40" r="34"
+                stroke-dasharray="213.6" stroke-dashoffset="213.6" id="ring-ready" />
+            </svg>
+            <span class="stat-number" id="stat-ready">0</span>
+          </div>
           <span class="stat-label">Ready</span>
         </div>
       </div>
@@ -330,7 +488,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Mastered Skills -->
       <div class="section" id="mastered-section">
         <div class="section-header">
-          <span class="section-icon">✅</span>
+          <div class="section-icon mastered"><i class="fas fa-check"></i></div>
           <h2 class="section-title">Mastered</h2>
           <span class="section-count" id="mastered-count">0</span>
         </div>
@@ -340,7 +498,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Learning Skills -->
       <div class="section" id="learning-section">
         <div class="section-header">
-          <span class="section-icon">📚</span>
+          <div class="section-icon learning"><i class="fas fa-book-open"></i></div>
           <h2 class="section-title">Currently Learning</h2>
           <span class="section-count" id="learning-count">0</span>
         </div>
@@ -350,20 +508,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Ready Skills -->
       <div class="section" id="ready-section">
         <div class="section-header">
-          <span class="section-icon">🔓</span>
+          <div class="section-icon ready"><i class="fas fa-lock-open"></i></div>
           <h2 class="section-title">Ready to Learn</h2>
           <span class="section-count" id="ready-count">0</span>
         </div>
         <div class="skill-list" id="ready-list"></div>
       </div>
     </div>
-  </main>
+
+    <footer class="page-footer">
+      &copy; 2026 MATHMATIX AI. All rights reserved.
+      <a href="/privacy-policy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </footer>
+  </div>
 
 <script src="/js/csrf.js"></script>
   <script>
+    const CIRCUMFERENCE = 2 * Math.PI * 34; // ~213.6
+
+    function animateRing(id, value, total) {
+      const ring = document.getElementById(id);
+      if (!ring || total === 0) return;
+      const pct = Math.min(value / total, 1);
+      const offset = CIRCUMFERENCE * (1 - pct);
+      requestAnimationFrame(() => {
+        ring.style.strokeDashoffset = offset;
+      });
+    }
+
     async function init() {
       try {
-        // Check auth
         const userRes = await fetch('/user');
         if (!userRes.ok) {
           window.location.href = '/login.html';
@@ -376,17 +551,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           return;
         }
 
-        // Load progress
         await loadProgress();
 
-        // Show content
         document.getElementById('loading-state').style.display = 'none';
         document.getElementById('progress-content').style.display = 'block';
 
       } catch (error) {
         console.error('Error:', error);
         document.getElementById('loading-state').innerHTML =
-          '<p style="color: red;">Error loading progress. <a href="/student-dashboard.html">Go to Dashboard</a></p>';
+          '<p style="color: #ef4444;">Error loading progress. <a href="/student-dashboard.html" style="color:#12B3B3;">Go to Dashboard</a></p>';
       }
     }
 
@@ -396,12 +569,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       if (!data.assessmentCompleted) {
         document.getElementById('progress-content').innerHTML = `
+          <div class="page-top-bar">
+            <button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
+            <div class="page-title"><h1>Your Math Journey</h1></div>
+          </div>
           <div class="empty-state">
-            <i class="fas fa-clipboard-check"></i>
+            <div><i class="fas fa-clipboard-check"></i></div>
             <h2>No Progress Yet</h2>
             <p>Take the assessment to start tracking your progress!</p>
             <button class="skill-btn" onclick="location.href='/assessment.html'">
-              Take Assessment
+              <i class="fas fa-rocket"></i> Take Assessment
             </button>
           </div>
         `;
@@ -410,23 +587,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       const { mastered, learning, ready } = data.progress;
       const { totalMastered, currentlyLearning, readyToLearn } = data.stats;
+      const total = totalMastered + currentlyLearning + readyToLearn;
 
-      // Update stats
       document.getElementById('stat-mastered').textContent = totalMastered;
       document.getElementById('stat-learning').textContent = currentlyLearning;
       document.getElementById('stat-ready').textContent = readyToLearn;
 
-      // Update counts
       document.getElementById('mastered-count').textContent = totalMastered;
       document.getElementById('learning-count').textContent = currentlyLearning;
       document.getElementById('ready-count').textContent = readyToLearn;
 
-      // Render lists
+      // Animate stat rings
+      setTimeout(() => {
+        animateRing('ring-mastered', totalMastered, total || 1);
+        animateRing('ring-learning', currentlyLearning, total || 1);
+        animateRing('ring-ready', readyToLearn, total || 1);
+      }, 100);
+
       renderSkillList('mastered-list', mastered, 'mastered');
       renderSkillList('learning-list', learning, 'learning');
       renderSkillList('ready-list', ready, 'ready');
 
-      // Hide empty sections
       if (totalMastered === 0) document.getElementById('mastered-section').style.display = 'none';
       if (currentlyLearning === 0) document.getElementById('learning-section').style.display = 'none';
       if (readyToLearn === 0) document.getElementById('ready-section').style.display = 'none';
@@ -436,7 +617,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const container = document.getElementById(listId);
 
       if (skills.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>No skills in this category yet.</p></div>';
+        container.innerHTML = '<div class="empty-state" style="padding:2rem;"><p>No skills in this category yet.</p></div>';
         return;
       }
 
@@ -516,8 +697,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ skillId })
         });
-
-        // Go to chat
         window.location.href = '/chat.html';
       } catch (error) {
         console.error('Error starting skill:', error);
@@ -529,7 +708,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       window.location.href = '/chat.html';
     }
 
-    // Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
         await csrfFetch('/logout', { method: 'POST' });

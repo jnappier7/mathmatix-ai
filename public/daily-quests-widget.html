@@ -10,83 +10,173 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Quests</title>
+  <title>Daily Quests | MATHMATIX AI</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/css/dailyQuests.css">
   <style>
+    * { box-sizing: border-box; }
+
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
       min-height: 100vh;
-      padding: 20px;
+      background: #0f0f1a;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #e0e0e0;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .page-container {
+      position: relative;
+      z-index: 1;
       max-width: 800px;
       margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
     }
 
-    .page-header {
-      text-align: center;
-      color: white;
-      margin-bottom: 30px;
+    /* Top bar */
+    .page-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    .page-header h1 {
-      font-size: 36px;
-      margin: 0 0 10px 0;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .page-header p {
-      font-size: 18px;
-      opacity: 0.9;
-    }
-
-    .back-button {
-      display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 20px;
-      background: white;
-      color: #667eea;
+    .back-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #aaa;
+      transition: all 0.2s;
       text-decoration: none;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      flex-shrink: 0;
     }
 
-    .back-button:hover {
-      background: #f0f0f0;
-      transform: translateX(-5px);
+    .back-btn:hover {
+      background: rgba(102,126,234,0.15);
+      border-color: rgba(102,126,234,0.3);
+      color: #667eea;
     }
 
+    .page-title {
+      flex: 1;
+    }
+
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-title p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* Stats cards */
     .quest-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 2rem;
     }
 
     .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1.25rem 0.75rem;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      display: block;
     }
 
     .stat-number {
-      font-size: 36px;
-      font-weight: bold;
-      color: #667eea;
-      margin: 10px 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      display: block;
+      margin-bottom: 4px;
+      line-height: 1.2;
     }
 
     .stat-label {
-      font-size: 14px;
-      color: #666;
+      font-size: 0.7rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      color: #888;
+    }
+
+    /* Quests container override for dark theme */
+    #dailyQuestsContainer {
+      margin-bottom: 2rem;
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .page-footer a {
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .page-footer a:hover { color: #667eea; }
+
+    @media (max-width: 640px) {
+      .quest-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .page-title h1 { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -95,30 +185,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-  <div class="page-container">
-    <a href="/student-dashboard.html" class="back-button">← Back to Dashboard</a>
 
-    <div class="page-header">
-      <h1>📋 Daily Quests</h1>
-      <p>Complete daily challenges to earn bonus XP and build your streak!</p>
+  <div class="page-container">
+    <div class="page-top-bar">
+      <a href="/student-dashboard.html" class="back-btn" aria-label="Back to Dashboard">
+        <i class="fas fa-arrow-left" style="font-family: 'Font Awesome 6 Free'; font-weight: 900;">&#xf060;</i>
+      </a>
+      <div class="page-title">
+        <h1>Daily Quests</h1>
+        <p>Complete challenges to earn bonus XP and build your streak</p>
+      </div>
     </div>
 
     <!-- Stats Overview -->
-    <div class="quest-stats-grid" id="questStats"></div>
+    <div class="quest-stats-grid" id="questStats">
+      <div class="stat-card">
+        <span class="stat-icon">🔥</span>
+        <span class="stat-number">-</span>
+        <span class="stat-label">Current Streak</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <span class="stat-number">-</span>
+        <span class="stat-label">Best Streak</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">✅</span>
+        <span class="stat-number">-</span>
+        <span class="stat-label">Total Done</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📋</span>
+        <span class="stat-number">-</span>
+        <span class="stat-label">Today</span>
+      </div>
+    </div>
 
     <!-- Daily Quests Widget -->
     <div id="dailyQuestsContainer"></div>
+
+    <footer class="page-footer">
+      &copy; 2026 MATHMATIX AI. All rights reserved.
+      <a href="/privacy-policy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </footer>
   </div>
 
-  <footer style="text-align:center; padding:1.5rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
-    &copy; 2026 MATHMATIX AI. All rights reserved.
-    <a href="/privacy-policy.html" style="color:rgba(255,255,255,0.9);">Privacy Policy</a> |
-    <a href="/terms.html" style="color:rgba(255,255,255,0.9);">Terms of Use</a>
-  </footer>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="/js/dailyQuests.js"></script>
   <script>
-    // Load quests and stats on page load
     document.addEventListener('DOMContentLoaded', async () => {
       await dailyQuestManager.loadQuests();
       await loadQuestStats();
@@ -135,23 +250,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           const statsContainer = document.getElementById('questStats');
           statsContainer.innerHTML = `
             <div class="stat-card">
-              <div class="stat-label">Current Streak</div>
-              <div class="stat-number">🔥 ${stats.currentStreak}</div>
+              <span class="stat-icon">🔥</span>
+              <span class="stat-number">${stats.currentStreak}</span>
+              <span class="stat-label">Current Streak</span>
             </div>
-
             <div class="stat-card">
-              <div class="stat-label">Longest Streak</div>
-              <div class="stat-number">🏆 ${stats.longestStreak}</div>
+              <span class="stat-icon">🏆</span>
+              <span class="stat-number">${stats.longestStreak}</span>
+              <span class="stat-label">Best Streak</span>
             </div>
-
             <div class="stat-card">
-              <div class="stat-label">Total Completed</div>
-              <div class="stat-number">✅ ${stats.totalQuestsCompleted}</div>
+              <span class="stat-icon">✅</span>
+              <span class="stat-number">${stats.totalQuestsCompleted}</span>
+              <span class="stat-label">Total Done</span>
             </div>
-
             <div class="stat-card">
-              <div class="stat-label">Today's Progress</div>
-              <div class="stat-number">${stats.questsCompletedToday}/${stats.totalQuestsToday}</div>
+              <span class="stat-icon">📋</span>
+              <span class="stat-number">${stats.questsCompletedToday}/${stats.totalQuestsToday}</span>
+              <span class="stat-label">Today</span>
             </div>
           `;
         }

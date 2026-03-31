@@ -13,112 +13,217 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <title>Weekly Challenges | MATHMATIX AI</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/css/weeklyChallenges.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
+    * { box-sizing: border-box; }
+
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
       margin: 0;
-      padding: 20px;
+      min-height: 100vh;
+      background: #0f0f1a;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      color: #e0e0e0;
     }
 
-    .page-container {
-      max-width: 1000px;
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 30%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(255, 142, 83, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
       margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 2rem 1.5rem 3rem;
     }
 
-    .page-header {
-      text-align: center;
-      margin-bottom: 40px;
-      padding-bottom: 30px;
-      border-bottom: 2px solid #e0e0e0;
+    /* Top bar */
+    .page-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    .page-header h1 {
-      font-size: 36px;
-      margin: 0 0 10px 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .back-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #aaa;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,107,107,0.15);
+      border-color: rgba(255,107,107,0.3);
+      color: #FF6B6B;
+    }
+
+    .page-title {
+      flex: 1;
+    }
+
+    .page-title h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .page-header p {
-      font-size: 16px;
-      color: #666;
-      margin: 0;
+    .page-title p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: #888;
     }
 
-    .back-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .back-button:hover {
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-      transform: translateY(-2px);
-    }
-
+    /* Timer banner */
     .timer-banner {
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
       text-align: center;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 20px rgba(255,107,107,0.3);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .timer-banner h2 {
-      margin: 0 0 10px 0;
-      font-size: 24px;
+    .timer-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #FF6B6B, #FF8E53, #FFD93D);
+    }
+
+    .timer-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-bottom: 8px;
     }
 
     .timer-display {
-      font-size: 32px;
-      font-weight: bold;
-      margin: 10px 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
     }
 
     .timer-subtext {
-      font-size: 14px;
-      opacity: 0.9;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Countdown segments */
+    .countdown-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 12px 0 8px;
+    }
+
+    .countdown-unit {
+      text-align: center;
+    }
+
+    .countdown-value {
+      display: block;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .countdown-sep {
+      font-size: 2rem;
+      color: rgba(255,255,255,0.15);
+      line-height: 1;
+      align-self: flex-start;
+    }
+
+    /* Challenges container */
+    .challenges-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .loading {
       text-align: center;
-      padding: 60px 20px;
-      color: #666;
+      padding: 3rem 1rem;
+      color: #888;
     }
 
     .loading i {
-      font-size: 48px;
-      margin-bottom: 20px;
-      color: #667eea;
-      animation: spin 2s linear infinite;
+      font-size: 2rem;
+      color: #FF6B6B;
+      animation: spin 1.5s linear infinite;
+      margin-bottom: 1rem;
     }
 
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .page-footer a {
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .page-footer a:hover { color: #FF6B6B; }
+
+    @media (max-width: 640px) {
+      .page-wrapper { padding: 1rem 1rem 2rem; }
+      .page-title h1 { font-size: 1.4rem; }
+      .countdown-value { font-size: 1.75rem; }
+      .countdown-row { gap: 1rem; }
     }
   </style>
 </head>
@@ -127,44 +232,60 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-  <button class="back-button" onclick="window.location.href='/badge-map.html'">
-    <i class="fas fa-arrow-left"></i> Back to Badge Map
-  </button>
 
-  <div class="page-container">
-    <div class="page-header">
-      <h1>⚡ Weekly Challenges</h1>
-      <p>Complete challenges to earn bonus XP and special rewards</p>
+  <div class="page-wrapper">
+    <div class="page-top-bar">
+      <button class="back-btn" onclick="window.location.href='/badge-map.html'" aria-label="Back to Badge Map">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <div class="page-title">
+        <h1>Weekly Challenges</h1>
+        <p>Complete challenges to earn bonus XP and special rewards</p>
+      </div>
     </div>
 
     <div class="timer-banner">
-      <h2><i class="fas fa-clock"></i> Time Remaining</h2>
-      <div class="timer-display" id="timer-display">
-        7 days 0 hours
+      <div class="timer-label"><i class="fas fa-clock"></i> Resets In</div>
+      <div class="countdown-row" id="countdown-row">
+        <div class="countdown-unit">
+          <span class="countdown-value" id="cd-days">-</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit">
+          <span class="countdown-value" id="cd-hours">-</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <span class="countdown-sep">:</span>
+        <div class="countdown-unit">
+          <span class="countdown-value" id="cd-min">-</span>
+          <span class="countdown-label">Min</span>
+        </div>
       </div>
       <div class="timer-subtext">Challenges reset every Monday at midnight</div>
     </div>
 
-    <div id="challenges-container">
-      <div class="loading">
-        <div><i class="fas fa-spinner"></i></div>
-        <p>Loading weekly challenges...</p>
+    <div class="challenges-card">
+      <div id="challenges-container">
+        <div class="loading">
+          <div><i class="fas fa-spinner"></i></div>
+          <p>Loading weekly challenges...</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <footer class="main-footer" style="text-align:center; padding:1.5rem; color:rgba(255,255,255,0.7); font-size:0.85rem;">
-    &copy; 2026 MATHMATIX AI. All rights reserved.
-    <a href="/privacy-policy.html" style="color:rgba(255,255,255,0.9);">Privacy Policy</a> |
-    <a href="/terms.html" style="color:rgba(255,255,255,0.9);">Terms of Use</a>
-  </footer>
+    <footer class="page-footer">
+      &copy; 2026 MATHMATIX AI. All rights reserved.
+      <a href="/privacy-policy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </footer>
+  </div>
 
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/csrf.js"></script>
   <script src="/js/weeklyChallenges.js"></script>
   <script>
-    // Initialize weekly challenges manager
     const challengeManager = new WeeklyChallengeManager();
 
     async function loadChallenges() {
@@ -173,37 +294,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       updateTimer();
     }
 
+    function pad(n) { return String(n).padStart(2, '0'); }
+
     function updateTimer() {
       const response = challengeManager.challenges;
       if (!response) return;
 
-      // Calculate time remaining
       const now = new Date();
       const weekStart = new Date(challengeManager.weekStart);
       const nextMonday = new Date(weekStart);
       nextMonday.setDate(nextMonday.getDate() + 7);
 
-      const diff = nextMonday - now;
+      const diff = Math.max(0, nextMonday - now);
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-      let timerText = '';
-      if (days > 0) {
-        timerText = `${days} day${days > 1 ? 's' : ''} ${hours} hour${hours !== 1 ? 's' : ''}`;
-      } else if (hours > 0) {
-        timerText = `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
-      } else {
-        timerText = `${minutes} minute${minutes > 1 ? 's' : ''}`;
-      }
-
-      document.getElementById('timer-display').textContent = timerText;
+      document.getElementById('cd-days').textContent = pad(days);
+      document.getElementById('cd-hours').textContent = pad(hours);
+      document.getElementById('cd-min').textContent = pad(minutes);
     }
 
-    // Load on page load
     document.addEventListener('DOMContentLoaded', () => {
       loadChallenges();
-      // Update timer every minute
       setInterval(updateTimer, 60000);
     });
   </script>
