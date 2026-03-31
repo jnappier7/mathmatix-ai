@@ -10,9 +10,7 @@ class Sidebar {
         this.sidebar = null;
         this.toggle = null;
         this.sessionsExpanded = true;
-        this.toolsExpanded = true;
-        this.leaderboardExpanded = false;
-        this.questsExpanded = false;
+        this.toolsExpanded = false;
         this.activeConversationId = null;
         this.conversations = []; // Cache for search
         this.searchTimeout = null;
@@ -89,32 +87,13 @@ class Sidebar {
             sessionsToggle.classList.add('expanded');
         }
 
-        // Tools expand/collapse
+        // Tools expand/collapse (collapsed by default to reduce clutter)
         const toolsToggle = document.querySelector('.tools-toggle');
         const toolsContent = document.getElementById('sidebar-tools');
         if (toolsToggle && toolsContent) {
             toolsToggle.addEventListener('click', () => this.toggleTools());
-            // Start expanded
-            toolsContent.classList.add('expanded');
-            toolsToggle.classList.add('expanded');
         }
 
-        // Leaderboard expand/collapse
-        const leaderboardToggle = document.querySelector('.leaderboard-toggle');
-        if (leaderboardToggle) {
-            leaderboardToggle.addEventListener('click', () => this.toggleLeaderboard());
-        }
-
-        // Quests expand/collapse
-        const questToggle = document.querySelector('.quest-toggle');
-        const questsContent = document.getElementById('sidebar-quests');
-        if (questToggle && questsContent) {
-            questToggle.addEventListener('click', () => {
-                this.questsExpanded = !this.questsExpanded;
-                questsContent.classList.toggle('expanded', this.questsExpanded);
-                questToggle.classList.toggle('expanded', this.questsExpanded);
-            });
-        }
 
         // New session button
         const newSessionBtn = document.getElementById('new-session-btn');
@@ -151,8 +130,6 @@ class Sidebar {
         // Load sessions
         this.loadSessions();
 
-        // Load leaderboard data
-        this.loadLeaderboard();
 
         // Load progress data
         this.loadProgress();
@@ -352,21 +329,6 @@ class Sidebar {
         } else {
             toolsContent.classList.remove('expanded');
             toolsToggle.classList.remove('expanded');
-        }
-    }
-
-    toggleLeaderboard() {
-        this.leaderboardExpanded = !this.leaderboardExpanded;
-
-        const leaderboardContent = document.getElementById('sidebar-leaderboard');
-        const leaderboardToggle = document.querySelector('.leaderboard-toggle');
-
-        if (this.leaderboardExpanded) {
-            leaderboardContent.classList.add('expanded');
-            leaderboardToggle.classList.add('expanded');
-        } else {
-            leaderboardContent.classList.remove('expanded');
-            leaderboardToggle.classList.remove('expanded');
         }
     }
 
@@ -809,139 +771,6 @@ class Sidebar {
             });
         }
 
-        // Resources
-        const resourcesBtn = document.getElementById('sidebar-resources-btn');
-        if (resourcesBtn) {
-            resourcesBtn.addEventListener('click', () => {
-                const mainResourcesBtn = document.getElementById('open-resources-modal-btn');
-                if (mainResourcesBtn) mainResourcesBtn.click();
-            });
-        }
-
-        // WHITEBOARD SHELVED FOR BETA
-        // const whiteboardBtn = document.getElementById('sidebar-whiteboard-btn');
-        // if (whiteboardBtn) {
-        //     whiteboardBtn.addEventListener('click', () => {
-        //         const mainWhiteboardBtn = document.getElementById('toggle-whiteboard-btn');
-        //         if (mainWhiteboardBtn) mainWhiteboardBtn.click();
-        //     });
-        // }
-
-        // Calculator
-        const calculatorBtn = document.getElementById('sidebar-calculator-btn');
-        if (calculatorBtn) {
-            calculatorBtn.addEventListener('click', () => {
-                const mainCalculatorBtn = document.getElementById('toggle-calculator-btn');
-                if (mainCalculatorBtn) mainCalculatorBtn.click();
-            });
-        }
-
-        // Upload Work
-        const uploadBtn = document.getElementById('sidebar-upload-btn');
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', () => {
-                const mainUploadBtn = document.getElementById('camera-button');
-                if (mainUploadBtn) mainUploadBtn.click();
-            });
-        }
-
-        // ALGEBRA TILES SHELVED FOR BETA
-        // const algebraBtn = document.getElementById('sidebar-algebra-btn');
-        // if (algebraBtn) {
-        //     algebraBtn.addEventListener('click', () => {
-        //         const mainAlgebraBtn = document.getElementById('algebra-tiles-btn');
-        //         if (mainAlgebraBtn) mainAlgebraBtn.click();
-        //     });
-        // }
-    }
-
-    async loadLeaderboard() {
-        try {
-            const response = await fetch('/api/leaderboard', {
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch leaderboard');
-            }
-
-            const data = await response.json();
-            // API returns array directly, or may be wrapped in { leaderboard: [...] }
-            const leaderboard = Array.isArray(data) ? data : (data.leaderboard || []);
-            this.renderLeaderboard(leaderboard);
-        } catch (error) {
-            console.error('[Sidebar] Error loading leaderboard:', error);
-        }
-    }
-
-    renderLeaderboard(leaderboard) {
-        const tbody = document.getElementById('sidebar-leaderboard-body');
-        if (!tbody) return;
-
-        this._leaderboardData = leaderboard;
-        this._leaderboardShowAll = false;
-
-        tbody.innerHTML = '';
-
-        // Show top 3 by default (compact); full 10 on "See all"
-        const displayCount = 3;
-        leaderboard.slice(0, displayCount).forEach((student, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="font-weight: 600;">#${index + 1}</td>
-                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${student.name || student.firstName || 'Student'}
-                </td>
-                <td>L${student.level || 1}</td>
-                <td>${student.xp || student.totalXp || 0}</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        // Show "See all" if there are more
-        const seeAllBtn = document.getElementById('leaderboard-see-all-btn');
-        if (seeAllBtn) {
-            if (leaderboard.length > displayCount) {
-                seeAllBtn.style.display = 'block';
-                seeAllBtn.textContent = `See all ${Math.min(leaderboard.length, 10)}`;
-                seeAllBtn.onclick = () => this.toggleFullLeaderboard();
-            } else {
-                seeAllBtn.style.display = 'none';
-            }
-        }
-
-        // Sync to mobile drawer
-        const drawerTbody = document.getElementById('drawer-leaderboard-body');
-        if (drawerTbody) {
-            drawerTbody.innerHTML = tbody.innerHTML;
-        }
-    }
-
-    toggleFullLeaderboard() {
-        const tbody = document.getElementById('sidebar-leaderboard-body');
-        const seeAllBtn = document.getElementById('leaderboard-see-all-btn');
-        if (!tbody || !this._leaderboardData) return;
-
-        this._leaderboardShowAll = !this._leaderboardShowAll;
-        tbody.innerHTML = '';
-
-        const count = this._leaderboardShowAll ? 10 : 3;
-        this._leaderboardData.slice(0, count).forEach((student, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="font-weight: 600;">#${index + 1}</td>
-                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${student.name || student.firstName || 'Student'}
-                </td>
-                <td>L${student.level || 1}</td>
-                <td>${student.xp || student.totalXp || 0}</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        if (seeAllBtn) {
-            seeAllBtn.textContent = this._leaderboardShowAll ? 'Show less' : `See all ${Math.min(this._leaderboardData.length, 10)}`;
-        }
     }
 
     async loadProgress() {

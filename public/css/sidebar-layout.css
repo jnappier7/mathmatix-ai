@@ -132,9 +132,7 @@
 
 /* Collapsible Sections */
 #sidebar-sessions,
-#sidebar-tools,
-#sidebar-leaderboard,
-#sidebar-quests {
+#sidebar-tools {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
@@ -155,19 +153,8 @@
     max-height: 600px;
 }
 
-#sidebar-leaderboard.expanded {
-    max-height: 400px;
-}
-
-#sidebar-quests.expanded {
-    max-height: 800px;
-    overflow-y: auto;
-}
-
 .sessions-toggle,
-.tools-toggle,
-.leaderboard-toggle,
-.quest-toggle {
+.tools-toggle {
     width: 100%;
     padding: 10px 14px;
     background: var(--clr-bg-subtle, #f8fafb);
@@ -186,22 +173,17 @@
 }
 
 .sessions-toggle:hover,
-.tools-toggle:hover,
-.leaderboard-toggle:hover,
-.quest-toggle:hover {
+.tools-toggle:hover {
     background: var(--clr-border-light, #f1f5f9);
 }
 
 .sessions-toggle i,
-.tools-toggle i,
-.leaderboard-toggle i {
+.tools-toggle i {
     transition: transform 0.3s ease;
 }
 
 .sessions-toggle.expanded i,
-.tools-toggle.expanded i,
-.leaderboard-toggle.expanded i,
-.quest-toggle.expanded i {
+.tools-toggle.expanded i {
     transform: rotate(180deg);
 }
 
@@ -795,28 +777,6 @@ input.session-search-input:focus {
     }
 }
 
-#sidebar-leaderboard-table {
-    width: 100%;
-    font-size: 13px;
-    margin-top: 8px;
-}
-
-#sidebar-leaderboard-table th {
-    font-weight: 600;
-    color: #666;
-    padding: 6px 8px;
-    text-align: left;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-#sidebar-leaderboard-table td {
-    padding: 8px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-#sidebar-leaderboard-table tr:hover {
-    background: #f9f9f9;
-}
 
 /* Progress in Sidebar */
 .sidebar-progress {
@@ -1182,16 +1142,6 @@ footer {
         font-size: 16px;
     }
 
-    /* Compact leaderboard table */
-    #sidebar-leaderboard-table {
-        font-size: 0.8rem;
-    }
-
-    #sidebar-leaderboard-table th,
-    #sidebar-leaderboard-table td {
-        padding: 6px 4px;
-    }
-
     /* Add overlay backdrop when sidebar is open on mobile */
     #app-sidebar:not(.collapsed)::before {
         content: '';
@@ -1277,13 +1227,7 @@ footer {
     padding: 10px 14px !important;
 }
 
-/* Footer section: minimal padding, smaller divider */
-.sidebar-section-footer {
-    padding: 10px 14px !important;
-    margin-top: auto;
-}
-
-/* Share code row — compact single line */
+/* Share code row — compact single line (used in mobile drawer) */
 .sidebar-share-row {
     display: flex;
     align-items: center;
@@ -1314,24 +1258,6 @@ footer {
     background: #e8e0ff;
 }
 
-/* "See all" / "See more" link buttons */
-.sidebar-see-all-btn {
-    display: block;
-    width: 100%;
-    padding: 6px;
-    margin-top: 4px;
-    background: none;
-    border: none;
-    color: #667eea;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-}
-
-.sidebar-see-all-btn:hover {
-    text-decoration: underline;
-}
 
 /* Distinct section accents for Courses vs Chats */
 #sidebar-courses-section {
