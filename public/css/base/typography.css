@@ -1,3 +1,10 @@
+/* --- Font-display overrides for external icon fonts ---
+   Font Awesome CDN ships font-display:block which causes invisible text
+   on slow mobile connections. Override to swap so text remains visible. */
+@font-face { font-family: "Font Awesome 6 Free";  font-display: swap; src: local("Font Awesome 6 Free"); }
+@font-face { font-family: "Font Awesome 6 Brands"; font-display: swap; src: local("Font Awesome 6 Brands"); }
+@font-face { font-family: "Font Awesome 6 Free";  font-display: swap; font-weight: 900; src: local("Font Awesome 6 Free"); }
+
 /* --- 2. Typography & General Elements --- */
 
 h1, h2, h3, h4, h5, h6 {
