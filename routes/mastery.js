@@ -2,7 +2,6 @@
  * MASTERY MODE ROUTES
  *
  * Handles mastery mode progression:
- * - AI Interview questions
  * - Badge availability and earning
  * - Mastery tracking
  */
@@ -17,24 +16,8 @@ const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHI
 const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = require('../utils/badgePhaseController'); // TEACHING ENHANCEMENT
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
-// Interview imports removed — mastery interview is shelved
-// const { generateInterviewQuestions, generateFollowUp, evaluateResponse, createInterviewSession } = require('../utils/dynamicInterviewGenerator');
-
 // ============================================================================
-// PHASE 2: AI INTERVIEW PROBE — SHELVED
-// Interview endpoints removed. Mastery mode now goes directly to badges.
-// ============================================================================
-
-// Return clear "shelved" response if frontend still calls these endpoints
-router.post('/interview-question', isAuthenticated, (req, res) => {
-  res.status(410).json({ error: 'Mastery interview has been shelved', message: 'This feature is no longer available.' });
-});
-router.post('/interview-response', isAuthenticated, (req, res) => {
-  res.status(410).json({ error: 'Mastery interview has been shelved', message: 'This feature is no longer available.' });
-});
-
-// ============================================================================
-// PHASE 3: MASTERY BADGES
+// MASTERY BADGES
 // ============================================================================
 
 /**
