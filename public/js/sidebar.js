@@ -771,50 +771,6 @@ class Sidebar {
             });
         }
 
-        // Resources
-        const resourcesBtn = document.getElementById('sidebar-resources-btn');
-        if (resourcesBtn) {
-            resourcesBtn.addEventListener('click', () => {
-                const mainResourcesBtn = document.getElementById('open-resources-modal-btn');
-                if (mainResourcesBtn) mainResourcesBtn.click();
-            });
-        }
-
-        // WHITEBOARD SHELVED FOR BETA
-        // const whiteboardBtn = document.getElementById('sidebar-whiteboard-btn');
-        // if (whiteboardBtn) {
-        //     whiteboardBtn.addEventListener('click', () => {
-        //         const mainWhiteboardBtn = document.getElementById('toggle-whiteboard-btn');
-        //         if (mainWhiteboardBtn) mainWhiteboardBtn.click();
-        //     });
-        // }
-
-        // Calculator
-        const calculatorBtn = document.getElementById('sidebar-calculator-btn');
-        if (calculatorBtn) {
-            calculatorBtn.addEventListener('click', () => {
-                const mainCalculatorBtn = document.getElementById('toggle-calculator-btn');
-                if (mainCalculatorBtn) mainCalculatorBtn.click();
-            });
-        }
-
-        // Upload Work
-        const uploadBtn = document.getElementById('sidebar-upload-btn');
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', () => {
-                const mainUploadBtn = document.getElementById('camera-button');
-                if (mainUploadBtn) mainUploadBtn.click();
-            });
-        }
-
-        // ALGEBRA TILES SHELVED FOR BETA
-        // const algebraBtn = document.getElementById('sidebar-algebra-btn');
-        // if (algebraBtn) {
-        //     algebraBtn.addEventListener('click', () => {
-        //         const mainAlgebraBtn = document.getElementById('algebra-tiles-btn');
-        //         if (mainAlgebraBtn) mainAlgebraBtn.click();
-        //     });
-        // }
     }
 
     async loadProgress() {
