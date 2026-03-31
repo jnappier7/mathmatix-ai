@@ -911,10 +911,10 @@
 
     /* Send button: override mobile-fixes.css */
     .age-tier-35 #send-button {
-        width: 42px !important;
-        height: 42px !important;
-        min-width: 42px !important;
-        min-height: 42px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
         font-size: 17px !important;
     }
 
@@ -941,10 +941,10 @@
     }
 
     .age-tier-k2 #send-button {
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
-        min-height: 40px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
     }
 }
 
