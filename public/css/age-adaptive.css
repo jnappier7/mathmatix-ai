@@ -93,7 +93,7 @@
 /* User input textarea in chat */
 .age-tier-k2 #user-input {
     font-size: 1.15rem;
-    min-height: 52px !important;
+    min-height: 52px;
     line-height: 1.6;
 }
 
@@ -230,7 +230,7 @@
 /* User input */
 .age-tier-35 #user-input {
     font-size: 1.08rem;
-    min-height: 46px !important;
+    min-height: 46px;
 }
 
 /* Suggestion chips */
@@ -633,7 +633,7 @@
 
     .age-tier-k2 #user-input {
         font-size: 1.2rem;
-        min-height: 56px !important;
+        min-height: 56px;
     }
 
     .age-tier-k2 .suggestion-chip,
@@ -678,7 +678,7 @@
 
     .age-tier-35 #user-input {
         font-size: 1.1rem;
-        min-height: 50px !important;
+        min-height: 50px;
     }
 
     .age-tier-35 .imessage-tool-btn {
@@ -701,32 +701,32 @@
 
     /* Bottom navigation bar: bigger icons and labels */
     .age-tier-k2 .chat-nav-item i {
-        font-size: 1.5rem !important;
+        font-size: 1.5rem;
     }
 
     .age-tier-k2 .chat-nav-item span {
-        font-size: 0.8rem !important;
+        font-size: 0.8rem;
         font-weight: 700;
     }
 
     .age-tier-k2 .mobile-chat-nav {
-        height: 64px !important;
+        height: 64px;
     }
 
     /* Offset app wrapper for taller nav */
     .age-tier-k2 #app-layout-wrapper {
-        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
     }
 
     /* Message avatars: bigger for young learners */
     .age-tier-k2 .message-avatar {
-        width: 36px !important;
-        height: 36px !important;
+        width: 36px;
+        height: 36px;
     }
 
     .age-tier-k2 .message-avatar img {
-        width: 36px !important;
-        height: 36px !important;
+        width: 36px;
+        height: 36px;
     }
 
     /* Mobile drawer: bigger section headers and action buttons */
@@ -814,20 +814,20 @@
         font-size: 1.4rem;
     }
 
-    /* Send button: override mobile-fixes.css !important */
+    /* Send button: age-tier overrides base sizing */
     .age-tier-k2 #send-button {
-        width: 50px !important;
-        height: 50px !important;
-        min-width: 50px !important;
-        min-height: 50px !important;
-        font-size: 22px !important;
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+        font-size: 22px;
     }
 
-    /* Input field: override mobile-fixes.css !important */
+    /* Input field: age-tier overrides base sizing */
     .age-tier-k2 #user-input {
-        min-height: 52px !important;
-        font-size: 18px !important;
-        padding: 12px 18px !important;
+        min-height: 52px;
+        font-size: 18px;
+        padding: 12px 18px;
     }
 
     /* Thinking indicator */
@@ -845,8 +845,8 @@
 
     /* Stop audio button: bigger target */
     .age-tier-k2 #stop-audio-btn {
-        width: 52px !important;
-        height: 52px !important;
+        width: 52px;
+        height: 52px;
         font-size: 22px;
     }
 
@@ -856,30 +856,30 @@
 
     /* Bottom nav: slight bump */
     .age-tier-35 .chat-nav-item i {
-        font-size: 1.3rem !important;
+        font-size: 1.3rem;
     }
 
     .age-tier-35 .chat-nav-item span {
-        font-size: 0.75rem !important;
+        font-size: 0.75rem;
     }
 
     .age-tier-35 .mobile-chat-nav {
-        height: 60px !important;
+        height: 60px;
     }
 
     .age-tier-35 #app-layout-wrapper {
-        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
     }
 
     /* Message avatars */
     .age-tier-35 .message-avatar {
-        width: 32px !important;
-        height: 32px !important;
+        width: 32px;
+        height: 32px;
     }
 
     .age-tier-35 .message-avatar img {
-        width: 32px !important;
-        height: 32px !important;
+        width: 32px;
+        height: 32px;
     }
 
     /* Drawer action buttons */
@@ -909,18 +909,18 @@
         font-size: 1rem;
     }
 
-    /* Send button: override mobile-fixes.css */
+    /* Send button: age-tier overrides base sizing */
     .age-tier-35 #send-button {
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
-        font-size: 17px !important;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 17px;
     }
 
     .age-tier-35 #user-input {
-        min-height: 46px !important;
-        font-size: 17px !important;
+        min-height: 46px;
+        font-size: 17px;
     }
 }
 
@@ -933,18 +933,18 @@
 
 @media (max-height: 500px) and (orientation: landscape) {
     .age-tier-k2 .mobile-chat-nav {
-        height: 48px !important;
+        height: 48px;
     }
 
     .age-tier-k2 .chat-nav-item i {
-        font-size: 1.2rem !important;
+        font-size: 1.2rem;
     }
 
     .age-tier-k2 #send-button {
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
     }
 }
 
