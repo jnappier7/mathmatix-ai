@@ -396,7 +396,7 @@
 .price-savings { color: #888; font-size: 0.8rem; margin-left: auto; }
 
 /* ── Mobile ── */
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .affiliate-stats-grid { grid-template-columns: repeat(2, 1fr); }
   .form-row { grid-template-columns: 1fr; }
   .affiliate-steps { flex-direction: column; }
