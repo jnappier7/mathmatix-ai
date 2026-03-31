@@ -87,12 +87,19 @@ class FloatingCalculator {
         // Full history log for the history drawer
         this.fullHistory = [];
 
+        // Scale state for resize
+        this.calcScale = 1.0;
+        this.minScale = 0.65;
+        this.maxScale = 1.4;
+        this.scaleStep = 0.1;
+
         this.initializeEventListeners();
         this.setupCopyPaste();
         this.setupMobileTouch();
         this.setupRippleEffect();
         this.setupHistoryDrawer();
         this.setupSendToChat();
+        this.setupResizeControls();
         this.checkCalculatorAccess();
     }
 
@@ -157,6 +164,8 @@ class FloatingCalculator {
             this.floatingCalc.classList.add('calc-entering');
             this.floatingCalc.addEventListener('animationend', () => {
                 this.floatingCalc.classList.remove('calc-entering');
+                // Re-apply user scale after animation
+                this.applyScale();
             }, { once: true });
         }
     }
@@ -176,7 +185,8 @@ class FloatingCalculator {
     }
 
     centerCalculator() {
-        this.floatingCalc.style.transform = 'translateY(-50%)';
+        const scaleStr = this.calcScale !== 1.0 ? ` scale(${this.calcScale})` : '';
+        this.floatingCalc.style.transform = 'translateY(-50%)' + scaleStr;
         this.floatingCalc.style.right = '24px';
         this.floatingCalc.style.left = 'auto';
         this.xOffset = 0;
@@ -265,7 +275,8 @@ class FloatingCalculator {
         }
         this.xOffset = this.currentX;
         this.yOffset = this.currentY;
-        this.floatingCalc.style.transform = `translate(calc(-50% + ${this.currentX}px), calc(-50% + ${this.currentY}px))`;
+        const scaleStr = this.calcScale !== 1.0 ? ` scale(${this.calcScale})` : '';
+        this.floatingCalc.style.transform = `translate(calc(-50% + ${this.currentX}px), calc(-50% + ${this.currentY}px))` + scaleStr;
     }
 
     dragEnd() { this.isDragging = false; }
@@ -1535,6 +1546,42 @@ class FloatingCalculator {
                 ripple.addEventListener('animationend', () => ripple.remove());
             });
         });
+    }
+
+    // ==================== RESIZE CONTROLS ====================
+
+    setupResizeControls() {
+        if (!this.floatingCalc) return;
+        const sizeUp = document.getElementById('calc-size-up');
+        const sizeDown = document.getElementById('calc-size-down');
+        const sizeReset = document.getElementById('calc-size-reset');
+
+        if (sizeUp) sizeUp.addEventListener('click', (e) => { e.stopPropagation(); this.resizeCalc(this.scaleStep); });
+        if (sizeDown) sizeDown.addEventListener('click', (e) => { e.stopPropagation(); this.resizeCalc(-this.scaleStep); });
+        if (sizeReset) sizeReset.addEventListener('click', (e) => { e.stopPropagation(); this.resizeCalc(0); });
+    }
+
+    resizeCalc(delta) {
+        if (this._isMobile()) return;
+        if (delta === 0) {
+            this.calcScale = 1.0;
+        } else {
+            this.calcScale = Math.max(this.minScale, Math.min(this.maxScale, this.calcScale + delta));
+        }
+        this.applyScale();
+    }
+
+    applyScale() {
+        if (!this.floatingCalc) return;
+        // Preserve any existing translate from drag, replace only the scale
+        const currentTransform = this.floatingCalc.style.transform || '';
+        // Strip existing scale() if any
+        const withoutScale = currentTransform.replace(/\s*scale\([^)]*\)/g, '').trim();
+        if (this.calcScale === 1.0) {
+            this.floatingCalc.style.transform = withoutScale || '';
+        } else {
+            this.floatingCalc.style.transform = (withoutScale ? withoutScale + ' ' : '') + `scale(${this.calcScale})`;
+        }
     }
 
     // ==================== HISTORY DRAWER ====================
