@@ -129,7 +129,7 @@ body.demo-mode .settings-delete-account::after {
 }
 
 /* Mobile adjustments */
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .demo-banner {
     padding: 6px 12px;
     font-size: 0.75rem;

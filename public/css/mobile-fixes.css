@@ -235,10 +235,10 @@ a {
 
     /* Send button: iMessage-style circle */
     #send-button {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
-        min-height: 36px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
         padding: 0;
         border-radius: 50%;
         margin-top: 0;
@@ -610,7 +610,7 @@ a {
     }
 
     .chat-nav-item span {
-        font-size: 0.58rem;
+        font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -1308,10 +1308,10 @@ a {
     }
 
     #send-button {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
-        min-height: 32px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
         padding: 0;
     }
 
@@ -1656,10 +1656,10 @@ a {
 
     /* Send button — iMessage circle */
     #send-button {
-        width: 36px !important;
-        height: 36px !important;
-        min-width: 36px !important;
-        min-height: 36px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
         padding: 0 !important;
         border-radius: 50% !important;
     }
