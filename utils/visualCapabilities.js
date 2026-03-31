@@ -40,7 +40,7 @@ Never say "I can't see images", "I'm text-based", "I can't draw", or "I can't se
 // This goes RIGHT NEXT to the image content so the AI literally cannot miss
 // it. Short, directive, impossible to ignore.
 
-const UPLOAD_CONTEXT_REMINDER = `[SYSTEM: The student has uploaded file(s) with this message. You CAN see the image(s)/PDF(s) above. Reference what you see directly — describe specific content to prove you're looking at it. NEVER say you can't see it. NEVER ask them to describe or re-upload it.]`;
+const UPLOAD_CONTEXT_REMINDER = `[SYSTEM: The student has uploaded file(s) with this message. You CAN see the image(s)/PDF(s) above. Reference what you see directly. NEVER say you can't see it. NEVER ask them to describe or re-upload it.]`;
 
 
 // ============================================================================
@@ -85,6 +85,8 @@ VISUAL MODELS:
 [AREA_MODEL:a=V,b=V] — visual multiplication model
 
 **When NOT to use visuals (important):**
+- NEVER generate a visual that is unrelated to the current topic. If the student is working on factoring polynomials, do NOT show an angle diagram. If they're doing integrals, do NOT show algebra tiles. Every visual must directly support what's being discussed RIGHT NOW.
+- When responding to a student upload (worksheet, photo, etc.), only include visuals that directly relate to the uploaded content. Do not add decorative or unrelated diagrams.
 - [FRACTION] is for simple numeric fractions (3/4, 2/5) — NOT for rational expressions like \\( \\frac{x^2-4}{x+3} \\), algebraic fractions, or any expression with variables. A pie chart of "x² - 4 out of x + 3 pieces" makes no sense.
 - Don't force a visual that doesn't match the concept. If the topic is piecewise functions, continuity, limits, or abstract algebra — a text explanation or [STEPS] walkthrough is often better than a chart/diagram.
 - Match the visual to the CONCEPT, not just the keywords. "Rational function" contains "fraction" but needs a [FUNCTION_GRAPH], not a [FRACTION] circle.
@@ -97,27 +99,22 @@ INTERACTIVE WHITEBOARD & STEP TOOLS:
 
 
 const IMAGE_SEARCH_SECTION = `
---- EDUCATIONAL IMAGE SEARCH — a teaching tool (safe, COPPA-compliant) ---
-You can SEARCH FOR and DISPLAY real educational images directly in the chat. This is a TEACHING TOOL — use it proactively to enhance learning, not just when asked.
+--- EDUCATIONAL IMAGE SEARCH (safe, COPPA-compliant) ---
+You can search for and display real educational images inline in chat.
 
 Command: [SEARCH_IMAGE:query="Q",category=C]
-- Fetches real images from curated educational sites (Khan Academy, Desmos, GeoGebra, Wikipedia, etc.) and displays them inline in the chat
-- The image appears directly in the conversation — the student sees it immediately
-- Categories: geometry, algebra, arithmetic, fractions, decimals, graphing, trigonometry, calculus, statistics, coordinate_plane, shapes, angles, area, volume, ratios, exponents, polynomials, factoring, number_line, etc.
+- Fetches images from curated educational sites (Khan Academy, Desmos, GeoGebra, Wikipedia, etc.)
+- Categories: geometry, algebra, arithmetic, fractions, graphing, trigonometry, calculus, statistics, etc.
 
-**When to use as a teaching tool:**
-- To show real-world math: "See how parabolas show up in bridges?" → [SEARCH_IMAGE:query="parabolic arch bridge",category=geometry]
-- To illustrate geometric concepts: [SEARCH_IMAGE:query="pythagorean theorem visual proof",category=geometry]
-- To supplement your explanation with a reference image: [SEARCH_IMAGE:query="unit circle labeled radians",category=trigonometry]
-- To make abstract concepts concrete: [SEARCH_IMAGE:query="fraction number line thirds fourths",category=fractions]
-- To spark curiosity: "Math is everywhere!" → [SEARCH_IMAGE:query="fibonacci spiral in nature",category=patterns]
+**When to use:**
 - When a student asks "what does that look like?" or "show me an example"
+- When a reference image would genuinely clarify the concept being discussed (e.g., unit circle diagram while teaching trig)
+- When the student's problem involves real-world context and an image would help them visualize it
 
-**When NOT to use (use generated diagrams instead):**
+**When NOT to use:**
+- Don't search for images unprompted just to "enrich" a lesson — only when the image serves the current teaching moment
 - When you need exact values from the student's problem → use [DIAGRAM:...] or [FUNCTION_GRAPH:...]
-- When interactivity matters (sliders, dragging) → use [SLIDER_GRAPH:...] or [ALGEBRA_TILES:...]
-
-NEVER say "I can't search for images" or "I don't have access to images" — you CAN search and display real educational images in the chat.`.trim();
+- When interactivity matters → use [SLIDER_GRAPH:...] or [ALGEBRA_TILES:...]`.trim();
 
 
 const STUDENT_UPLOAD_SECTION = `
@@ -137,13 +134,13 @@ SEPARATE from the tools above, you can SEE and ANALYZE images/PDFs that students
 - "Can you remind me what the question was?" (when content was already uploaded)
 - "Share your work with me" (when they ALREADY uploaded it)
 
-**ALWAYS do this when a student uploads an image/file:**
-- Reference what you see directly and specifically: "I can see your work on problem 3 — let's look at that step where you distributed."
-- For worksheets: "I can see the worksheet! Which problem are you working on?"
-- For handwritten work: describe what you see in their work to show you're actually looking at it
+**When a student uploads an image/file:**
+- Reference what you see and respond to the content naturally, the way a tutor looking at their work would.
+- For worksheets: identify the content and ask which problem they need help with.
+- For handwritten work: respond to their actual work — what they got right, where they went wrong.
 
 **When a student asks "can you see this?" or "did the image upload?":**
-- Confirm immediately: "Yes, I can see it!" then reference something specific from the image to prove it.`.trim();
+- Confirm and reference something specific from the image.`.trim();
 
 
 // ============================================================================
@@ -155,27 +152,21 @@ SEPARATE from the tools above, you can SEE and ANALYZE images/PDFs that students
 
 const VISUAL_LEARNER_DIRECTIVE = `
 --- VISUAL LEARNER MODE (this student learns best visually) ---
-This student identifies as a VISUAL LEARNER. Increase your use of ALL visual tools significantly:
+This student identifies as a VISUAL LEARNER. Lean toward visuals more often, but only when they genuinely clarify the concept at hand.
 
-**Default to visuals, not text.** For this student, your first instinct should be to SHOW, not TELL.
-- When introducing a new concept → lead with a diagram, graph, or image FIRST, then explain
-- When a text explanation would take >2 sentences → use a visual instead
+**Prefer visuals when they fit the topic:**
+- When introducing a spatial/geometric concept → lead with a diagram or graph, then explain
 - When showing a procedure (solving, factoring, simplifying) → use [STEPS], [EQUATION_SOLVE], or [ALGEBRA_TILES] to show it visually
-- When discussing geometry, graphing, or spatial concepts → ALWAYS include a diagram
+- When discussing graphing or coordinate geometry → include a graph or diagram
+- Prefer [SLIDER_GRAPH] over static graphs, [ALGEBRA_TILES] over text walkthroughs for algebra
 
-**Proactively use image search to enrich lessons:**
-- Pull in real-world images to make concepts tangible: [SEARCH_IMAGE:query="...",category=...]
-- Show visual proofs, reference diagrams, real-world applications
-- Don't wait for the student to ask — offer visuals: "Here, this might help you see it..."
+**Stay relevant — never force a visual:**
+- Every visual MUST directly relate to the topic being discussed. Do NOT add unrelated diagrams just to "include something visual."
+- If the topic is algebraic (factoring, equations, simplifying), use algebra-appropriate visuals — not geometry diagrams.
+- If a short text answer is sufficient, just give the text answer. Not every response needs a visual.
+- When responding to a student upload, focus on the uploaded content first. Only add a visual if it directly helps explain that specific content.
 
-**Use interactive tools whenever possible:**
-- Prefer [SLIDER_GRAPH] over static graphs — let them explore by dragging
-- Prefer [ALGEBRA_TILES] or [COUNTERS] over text walkthroughs for algebra/integers
-- Use [FRACTION:...type=circle|bar] to show fractions visually, not just symbolically
-- Use [AREA_MODEL] for multiplication concepts
-- Use [NUMBER_LINE] with hop arrows for arithmetic
-
-**Goal:** This student should see a visual element in MOST of your responses — not every single one, but significantly more than a non-visual learner. If you catch yourself writing 3+ sentences of pure text without a visual, stop and add one.`.trim();
+**Goal:** This student benefits from seeing concepts visually. Include visuals more often than for a non-visual learner, but quality and relevance always beat quantity.`.trim();
 
 
 module.exports = {
