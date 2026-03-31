@@ -1,4 +1,4 @@
-// Floating TI-30XS MultiView Calculator - Enhanced Implementation
+// Floating Calcu-NOW-or-Later? Calculator - Enhanced Implementation
 // Features: Cursor editing, ANS variable, keyboard input, table, error handling,
 // mobile touch, expression validation, memory registers, copy/paste
 // Plus: Drag support, teacher access control
@@ -357,8 +357,8 @@ class FloatingCalculator {
     // ==================== EVENT LISTENERS ====================
 
     initializeEventListeners() {
-        this.toggleBtn.addEventListener('click', () => this.toggleCalculator());
-        this.closeBtn.addEventListener('click', () => this.hideCalculator());
+        if (this.toggleBtn) this.toggleBtn.addEventListener('click', () => this.toggleCalculator());
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.hideCalculator());
 
         // Toolbar calculator button (mobile compose bar)
         const toolbarCalcBtn = document.getElementById('calculator-toolbar-btn');
@@ -993,8 +993,9 @@ class FloatingCalculator {
             if ((this.tableStep > 0 && x > this.tableEnd) || (this.tableStep < 0 && x < this.tableEnd)) break;
             try {
                 let expr = this.tableExpression
+                    .replace(/x²/g, 'x*x')
                     .replace(/x/g, `(${x})`).replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
-                    .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**').replace(/x²/g, `(${x})*(${x})`);
+                    .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**');
                 expr = expr.replace(/atanh\(/g, 'Math.atanh(')
                            .replace(/asinh\(/g, 'Math.asinh(')
                            .replace(/acosh\(/g, 'Math.acosh(')
@@ -1583,9 +1584,9 @@ class FloatingCalculator {
         }
 
         inner.innerHTML = this.fullHistory.slice(0, 20).map(entry => `
-            <div class="calc-history-item" data-expr="${entry.input.replace(/"/g, '&quot;')}" title="Click to reuse this expression">
-                <span class="hist-expr">${entry.input}</span>
-                <span class="hist-result">= ${entry.result}</span>
+            <div class="calc-history-item" data-expr="${this.escapeHtml(entry.input)}" title="Click to reuse this expression">
+                <span class="hist-expr">${this.escapeHtml(entry.input)}</span>
+                <span class="hist-result">= ${this.escapeHtml(entry.result)}</span>
             </div>
         `).join('');
 

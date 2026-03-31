@@ -142,8 +142,8 @@ body.standalone-calculator-page {
     font-family: 'Courier New', monospace;
 }
 
-/* MultiView 4-line display */
-.multiview-display .display {
+/* 4-line display */
+.multiline-display .display {
     min-height: 110px;
     display: flex;
     flex-direction: column;
@@ -842,7 +842,7 @@ body.standalone-calculator-page {
     background: linear-gradient(145deg, #1e3a5f, #0f2847);
 }
 
-/* Update display for TI-30XIIS look */
+/* Floating calculator display */
 .floating-calculator .display-container {
     background: #89a28e;
     border-radius: 6px;
