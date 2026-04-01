@@ -142,8 +142,8 @@ body.standalone-calculator-page {
     font-family: 'Courier New', monospace;
 }
 
-/* MultiView 4-line display */
-.multiview-display .display {
+/* 4-line display */
+.multiline-display .display {
     min-height: 110px;
     display: flex;
     flex-direction: column;
@@ -778,6 +778,7 @@ body.standalone-calculator-page {
     max-width: 95vw;
     box-sizing: border-box;
     border: 2px solid #2c4b73;
+    transform-origin: top right;
 }
 
 /* Desktop backdrop — gives visual separation from chat */
@@ -816,6 +817,42 @@ body.standalone-calculator-page {
     color: #7eb3e5;
 }
 
+/* Size controls in header */
+.calculator-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    margin-right: 8px;
+}
+
+.calc-size-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #8ab4e0;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.calc-size-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.calc-size-btn:active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 .calculator-close-btn {
     background: transparent;
     border: none;
@@ -842,7 +879,7 @@ body.standalone-calculator-page {
     background: linear-gradient(145deg, #1e3a5f, #0f2847);
 }
 
-/* Update display for TI-30XIIS look */
+/* Floating calculator display */
 .floating-calculator .display-container {
     background: #89a28e;
     border-radius: 6px;
@@ -1006,6 +1043,11 @@ body.standalone-calculator-page {
         background: rgba(255, 255, 255, 0.3);
         border-radius: 2px;
         margin: 0 auto 6px;
+    }
+
+    /* Hide size controls on mobile — bottom-sheet fills width */
+    .calculator-size-controls {
+        display: none;
     }
 
     /* Larger close button for touch */

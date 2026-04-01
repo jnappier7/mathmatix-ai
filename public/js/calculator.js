@@ -1,8 +1,8 @@
-// TI-30XS MultiView Calculator - Enhanced Implementation
+// Calcu-NOW-or-Later? Calculator - Enhanced Implementation
 // Features: Cursor editing, ANS variable, keyboard input, table, error handling,
 // mobile touch, expression validation, memory registers, copy/paste
 
-class TI30XSMultiView {
+class ScientificCalculator {
     constructor() {
         // Display elements
         this.inputLine = document.getElementById('input-line');
@@ -1001,10 +1001,10 @@ class TI30XSMultiView {
 
             try {
                 let expr = this.tableExpression
+                    .replace(/x²/g, 'x*x')
                     .replace(/x/g, `(${x})`)
                     .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
-                    .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**')
-                    .replace(/x²/g, `(${x})*(${x})`);
+                    .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**');
 
                 // Handle functions in table expressions
                 expr = expr.replace(/atanh\(/g, 'Math.atanh(')
@@ -1667,5 +1667,5 @@ class TI30XSMultiView {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    window.calculator = new TI30XSMultiView();
+    window.calculator = new ScientificCalculator();
 });
