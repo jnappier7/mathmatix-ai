@@ -565,7 +565,7 @@ function registerHtmlRoutes(app) {
   app.get('/badge-map.html', isAuthenticated, sendHtml('badge-map.html'));
   app.get('/screener.html', isAuthenticated, sendHtml('screener.html'));
   app.get('/mastery-chat.html', isAuthenticated, sendHtml('mastery-chat.html'));
-  app.get('/mastery-arcade.html', isAuthenticated, sendHtml('mastery-arcade.html'));
+
   app.get('/fact-fluency-blaster.html', isAuthenticated, sendHtml('fact-fluency-blaster.html'));
   app.get('/number-run.html', isAuthenticated, sendHtml('number-run.html'));
   app.get('/learning-curves.html', isAuthenticated, sendHtml('learning-curves.html'));

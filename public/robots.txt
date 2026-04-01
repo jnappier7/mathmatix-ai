@@ -19,7 +19,7 @@ Disallow: /admin-dashboard.html
 Disallow: /badge-map.html
 Disallow: /screener.html
 Disallow: /mastery-chat.html
-Disallow: /mastery-arcade.html
+
 Disallow: /fact-fluency-blaster.html
 Disallow: /number-run.html
 Disallow: /learning-curves.html
