@@ -173,10 +173,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .page-footer a:hover { color: #667eea; }
 
     @media (max-width: 640px) {
-      .quest-stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .page-container { padding: 1.25rem 1rem 2rem; }
+      .quest-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .page-title h1 { font-size: 1.4rem; }
+      .page-title p { font-size: 0.8rem; }
+      .stat-card { padding: 1rem 0.5rem; border-radius: 12px; }
+      .stat-number { font-size: 1.4rem; }
+      .stat-icon { font-size: 1.25rem; }
+      .stat-label { font-size: 0.7rem; }
+      .back-btn { width: 40px; height: 40px; border-radius: 10px; }
+    }
+
+    @media (max-width: 400px) {
+      .page-container { padding: 0.75rem 0.75rem 1.5rem; }
+      .page-top-bar { gap: 0.5rem; }
+      .page-title h1 { font-size: 1.2rem; }
+      .page-title p { font-size: 0.75rem; }
+      .quest-stats-grid { gap: 8px; }
+      .stat-card { padding: 0.75rem 0.35rem; }
+      .stat-number { font-size: 1.2rem; }
+      .stat-icon { font-size: 1.1rem; }
+      .stat-label { font-size: 0.65rem; letter-spacing: 0.5px; }
     }
   </style>
 </head>
