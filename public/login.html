@@ -31,9 +31,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:description" content="Log in to continue your personalized math learning journey." />
   <meta name="twitter:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
 
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="css/dark-mode.css" />
-  <link rel="stylesheet" href="css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
@@ -60,6 +60,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       border: 1px solid rgba(255, 107, 107, 0.2);
       color: var(--clr-error-red, #e74c3c);
     }
+
+    /* Demo section */
+    .login-demo-section {
+      margin-top: var(--space-5);
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--clr-border);
+      text-align: center;
+    }
+
+    .btn-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-base);
+      background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all var(--transition-base);
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+    }
+
+    .btn-demo:hover {
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .login-demo-note {
+      font-size: 0.8rem;
+      color: var(--clr-text-dim);
+      margin-top: 8px;
+    }
+
+    .login-demo-post-launch {
+      display: none;
+      font-size: 0.85rem;
+      color: var(--clr-text-dim);
+    }
+
+    .login-demo-post-launch a {
+      color: #7C3AED;
+      font-weight: 600;
+      text-decoration: none;
+    }
   </style>
   </head>
 <body class="landing-page-body">
@@ -69,13 +116,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main-content" class="skip-to-content" data-i18n="misc.skipToContent">Skip to main content</a>
   <header class="landing-header">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WDF79L47');</script>
-<!-- End Google Tag Manager -->
     <div class="header-logo-container">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
     </div>
@@ -132,15 +172,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <span data-i18n="login.noAccount">Don't have an account?</span> <a href="/signup.html" data-i18n="login.createAccount">Create an account</a>
       </p>
 
-      <div id="login-demo-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--clr-border, #E2E8F0); text-align: center;">
-        <a href="/demo.html" class="lp-pre-launch" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);">
+      <div id="login-demo-section" class="login-demo-section">
+        <a href="/demo.html" class="btn-demo lp-pre-launch">
           <i class="fas fa-play-circle"></i> <span data-i18n="login.tryDemo">Try the Interactive Demo</span>
         </a>
-        <p class="lp-pre-launch" style="font-size: 0.8rem; color: var(--clr-text-dim, #5B6876); margin-top: 8px;" data-i18n="login.demoNote">
+        <p class="lp-pre-launch login-demo-note" data-i18n="login.demoNote">
           No account needed. Explore as a teacher, parent, or student.
         </p>
-        <p class="lp-post-launch" style="display:none; font-size: 0.85rem; color: var(--clr-text-dim, #5B6876);">
-          <a href="/signup.html" style="color: #7C3AED; font-weight: 600; text-decoration: none;">Sign up free</a> — get 30 minutes of AI tutoring every week.
+        <p class="lp-post-launch login-demo-post-launch">
+          <a href="/signup.html">Sign up free</a> — get 30 minutes of AI tutoring every week.
         </p>
       </div>
     </div>

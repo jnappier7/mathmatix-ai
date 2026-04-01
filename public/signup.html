@@ -31,9 +31,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:description" content="Create your account and start learning math with AI tutoring." />
   <meta name="twitter:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
 
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="css/dark-mode.css" />
-  <link rel="stylesheet" href="css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <script src="/js/csrf.js"></script>
@@ -78,6 +78,61 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         gap: 0;
       }
     }
+
+    /* Signup page layout overrides */
+    .signup-page-main {
+      min-height: calc(100dvh - 140px);
+      overflow-y: auto;
+    }
+
+    .signup-container-full {
+      max-height: none;
+      overflow: visible;
+      margin: 2rem auto;
+    }
+
+    /* Checkbox row (code toggle + terms) */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0 0;
+    }
+
+    .checkbox-row-top {
+      align-items: flex-start;
+      margin: 12px 0;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      min-width: 16px;
+    }
+
+    .checkbox-row-top input[type="checkbox"] {
+      margin-top: 4px;
+    }
+
+    .checkbox-row label {
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    .checkbox-row-top label {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    /* Code hint note */
+    .code-hint {
+      margin: 2px 0 4px 24px;
+      font-size: 0.8rem;
+      color: var(--clr-text-dim);
+    }
+
+    /* Hidden groups toggled by JS */
+    .js-hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="landing-page-body">
@@ -87,13 +142,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main-content" class="skip-to-content" data-i18n="misc.skipToContent">Skip to main content</a>
   <header class="landing-header">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WDF79L47');</script>
-<!-- End Google Tag Manager -->
     <div class="header-logo-container">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
     </div>
@@ -101,8 +149,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </nav>
   </header>
 
-  <main id="main-content" class="login-page-wrapper" style="min-height: calc(100dvh - 140px); overflow-y: auto;">
-    <div class="signup-container" style="max-height: none; overflow: visible; margin: 2rem auto;">
+  <main id="main-content" class="login-page-wrapper signup-page-main">
+    <div class="signup-container signup-container-full">
       <h2 data-i18n="signup.createAccount">Create Your Account</h2>
       <p class="subtitle" data-i18n="signup.subtitle">Join the future of math learning.</p>
       <form id="signupForm" method="POST" action="/signup">
@@ -139,37 +187,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </select>
         </div>
 
-        <div class="form-group" style="display:flex;align-items:center;gap:8px;margin:8px 0 0;">
-          <input type="checkbox" id="hasCodeCheckbox" style="min-width:16px;" />
-          <label for="hasCodeCheckbox" id="hasCodeLabel" style="font-size:0.875rem;cursor:pointer;">I have a code to enter</label>
+        <div class="form-group checkbox-row">
+          <input type="checkbox" id="hasCodeCheckbox" />
+          <label for="hasCodeCheckbox" id="hasCodeLabel">I have a code to enter</label>
         </div>
-        <p id="codeHint" class="note" style="margin:2px 0 4px 24px;font-size:0.8rem;color:#888;">Optional — you can sign up without a code and join a class later.</p>
+        <p id="codeHint" class="note code-hint">Optional — you can sign up without a code and join a class later.</p>
 
-        <div id="codeInputGroup" style="display: none;">
-          <div id="enrollmentCodeGroup" class="form-group" style="display: none;">
+        <div id="codeInputGroup" class="js-hidden">
+          <div id="enrollmentCodeGroup" class="form-group js-hidden">
             <label for="enrollmentCode" data-i18n="signup.enrollmentCode">Enrollment Code</label>
             <input type="text" name="enrollmentCode" id="enrollmentCode" placeholder="Enter your teacher's class code" autocomplete="off" />
             <p class="note">Links you to your teacher's class.</p>
           </div>
 
-          <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
+          <div id="parentInviteCodeGroup" class="form-group js-hidden">
             <label for="parentInviteCode" data-i18n="signup.parentInviteCode">Parent's Invite Code</label>
             <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
             <p class="note">Links your account to your parent.</p>
           </div>
 
-          <div id="inviteCodeGroup" class="form-group" style="display: none;">
+          <div id="inviteCodeGroup" class="form-group js-hidden">
             <label for="inviteCode" data-i18n="signup.childInviteCode">Child's Invite Code</label>
             <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
             <p class="note">Links your account to your child.</p>
           </div>
         </div>
 
-        <div class="form-group" style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;">
-          <input type="checkbox" name="termsAccepted" id="termsAccepted" required style="margin-top:4px;min-width:16px;" />
-          <label for="termsAccepted" style="font-size:0.85rem;line-height:1.4;cursor:pointer;">
-            I agree to the <a href="/terms.html" target="_blank" style="color:var(--clr-primary-teal, #12b3b3);">Terms of Use</a>
-            and <a href="/privacy.html" target="_blank" style="color:var(--clr-primary-teal, #12b3b3);">Privacy Policy</a>.
+        <div class="form-group checkbox-row checkbox-row-top">
+          <input type="checkbox" name="termsAccepted" id="termsAccepted" required />
+          <label for="termsAccepted">
+            I agree to the <a href="/terms.html" target="_blank">Terms of Use</a>
+            and <a href="/privacy.html" target="_blank">Privacy Policy</a>.
           </label>
         </div>
 
@@ -178,7 +226,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </button>
       </form>
 
-      <div id="signup-message" style="display: none;"></div>
+      <div id="signup-message" class="js-hidden"></div>
 
       <p class="signup-link">
         <span data-i18n="signup.haveAccount">Already have an account?</span> <a href="/login.html" data-i18n="signup.logInHere">Log in here</a>
@@ -194,7 +242,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </footer>
 
   <script src="/js/signup-form.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script src="/js/ux-enhancements.js"></script>
 </body>
 </html>
