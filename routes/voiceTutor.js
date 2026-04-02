@@ -9,6 +9,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require('../utils/llmGateway');
+const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 const { openai } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
@@ -414,7 +415,35 @@ async function generateResponse(userId, userMessage, preloadedUser) {
     max_tokens: 600
   });
 
-  return completion.choices[0].message.content.trim();
+  let responseText = completion.choices[0].message.content.trim();
+
+  // IEP reading level enforcement
+  const iepReadingLevel = user.iepPlan?.readingLevel || null;
+  if (iepReadingLevel) {
+    const readCheck = checkReadingLevel(responseText, iepReadingLevel);
+    if (!readCheck.passes) {
+      console.log(
+        `[VoiceTutor] Reading level violation for ${user.firstName}: ` +
+        `response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+      );
+      try {
+        const simplifyPrompt = buildSimplificationPrompt(responseText, readCheck.targetGrade, user.firstName || 'the student');
+        const simplified = await callLLM(VOICE_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+          temperature: 0.3,
+          max_tokens: 600
+        });
+        const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+        if (simplifiedText && simplifiedText.length > 20) {
+          responseText = simplifiedText;
+          console.log(`[VoiceTutor] Response simplified to target Grade ${readCheck.targetGrade}`);
+        }
+      } catch (err) {
+        console.error('[VoiceTutor] Simplification failed:', err.message);
+      }
+    }
+  }
+
+  return responseText;
 }
 
 async function generateTTS(userId, responseText, preloadedUser) {
