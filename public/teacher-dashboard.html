@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard - MATHMATIX AI</title>
   <link rel="stylesheet" href="/css/teacher-live-feed.css">
+  <link rel="stylesheet" href="/css/teacher-live-monitor.css">
   <link rel="stylesheet" href="/css/impersonation-banner.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
@@ -4382,6 +4383,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <button class="tab-btn" data-tab="schedule">
             <i class="fas fa-calendar-alt"></i> Schedule
           </button>
+          <button class="tab-btn" data-tab="monitor">
+            <i class="fas fa-desktop"></i> Live Monitor
+          </button>
         </div>
 
         <!-- Students Tab (Class-Grouped) -->
@@ -4704,6 +4708,79 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Live Monitor Tab -->
+        <div class="tab-content" id="monitor-tab">
+          <div class="dashboard-panel flex-panel-content">
+            <div class="dashboard-panel-header">
+              <i class="fas fa-desktop"></i> Live Class Monitor
+              <span id="monitor-lock-status" class="monitor-lock-status inactive">Focus mode off</span>
+            </div>
+
+            <!-- Controls Row -->
+            <div class="monitor-controls">
+              <select id="monitor-class-select">
+                <option value="">-- Select a class --</option>
+              </select>
+              <button id="monitor-activate-btn" class="btn btn-activate">
+                <i class="fas fa-lock"></i> Activate Focus Mode
+              </button>
+              <button id="monitor-deactivate-btn" class="btn btn-deactivate" style="display:none;">
+                <i class="fas fa-lock-open"></i> End Focus Mode
+              </button>
+            </div>
+
+            <!-- Lock Settings (shown when not active) -->
+            <div id="lock-settings-panel" class="lock-settings-panel">
+              <h4><i class="fas fa-cog"></i> Focus Mode Settings</h4>
+              <div class="lock-settings-grid">
+                <label class="lock-setting-item">
+                  <input type="checkbox" id="lock-track-tabs" checked>
+                  Track tab switches
+                </label>
+                <label class="lock-setting-item">
+                  <input type="checkbox" id="lock-block-navigation" checked>
+                  Block navigation away
+                </label>
+                <label class="lock-setting-item">
+                  <input type="checkbox" id="lock-enforce-fullscreen">
+                  Enforce fullscreen
+                </label>
+                <label class="lock-setting-item">
+                  Max violations before alert:
+                  <input type="number" id="lock-max-violations" value="3" min="1" max="20">
+                </label>
+                <label class="lock-setting-item full-width">
+                  Session name:
+                  <input type="text" id="lock-session-name" placeholder="e.g. Period 3 - Quiz Time">
+                </label>
+                <label class="lock-setting-item full-width">
+                  Warning message:
+                  <input type="text" id="lock-message" placeholder="Your teacher has enabled focus mode." value="Your teacher has enabled focus mode. Please stay on this page.">
+                </label>
+              </div>
+            </div>
+
+            <!-- Live Counters -->
+            <div id="monitor-counters"></div>
+
+            <!-- Student Grid -->
+            <div id="monitor-student-grid">
+              <div class="monitor-empty">
+                <i class="fas fa-desktop"></i>
+                <p>Select a class to start monitoring.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spy Modal -->
+        <div id="spy-modal">
+          <div class="spy-modal-inner">
+            <button class="spy-close"><i class="fas fa-times"></i></button>
+            <div class="spy-content"></div>
           </div>
         </div>
 
@@ -5378,6 +5455,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/teacher-live-feed.js"></script>
+  <script src="/js/teacher-live-monitor.js"></script>
   <script src="/js/teacher-dashboard.js"></script>
   <script src="/js/teacher-curriculum.js"></script>
   <script src="/js/teacher-resources.js"></script>

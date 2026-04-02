@@ -108,6 +108,7 @@ const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
 const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
+const browserLockRoutes = require('../routes/browserLock');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
@@ -231,6 +232,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.post('/api/clever-sync/webhook', cleverSyncRoutes);
   app.use('/api/clever-sync', isAuthenticated, isAdmin, cleverSyncRoutes);
   app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes);
+  app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/role-switch', isAuthenticated, roleSwitchRoutes);
 
