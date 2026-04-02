@@ -279,6 +279,11 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                         <span>Word Guess</span>
                         <small>Guess the word</small>
                     </button>
+                    <button class="iep-break-activity" data-activity="mathwordle">
+                        <i class="fas fa-calculator"></i>
+                        <span>Math Wordle</span>
+                        <small>Guess the math word</small>
+                    </button>
                 </div>
                 <div id="iep-break-exercise" class="iep-break-exercise" style="display:none;"></div>
                 <button class="iep-break-done-btn" id="iep-break-done">
@@ -325,6 +330,8 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                     runTicTacToe(exerciseArea);
                 } else if (activity === 'wordguess') {
                     runWordGuess(exerciseArea);
+                } else if (activity === 'mathwordle') {
+                    runMathWordle(exerciseArea);
                 }
             });
         });
@@ -561,6 +568,223 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                     render();
                 });
             }
+        }
+
+        render();
+    }
+
+    // --- Math Wordle Break Game ---
+
+    function runMathWordle(container) {
+        const words = [
+            'acute', 'angle', 'array', 'curve', 'depth', 'digit',
+            'equal', 'graph', 'limit', 'meter', 'minus', 'modal',
+            'order', 'plane', 'prime', 'proof', 'range', 'ratio',
+            'round', 'scale', 'slope', 'solid', 'total', 'unity',
+            'value', 'width', 'chord', 'cubic', 'datum', 'dozen',
+            'helix', 'index', 'input', 'logic', 'model', 'orbit',
+            'polar', 'power', 'prism', 'quota', 'radii', 'share',
+            'sigma', 'solve', 'tally', 'theta', 'times', 'trend',
+            'union', 'units'
+        ];
+
+        // One word per week — pick based on the Monday of the current week
+        function getWeekKey() {
+            const now = new Date();
+            const day = now.getDay();
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - ((day + 6) % 7));
+            return `${monday.getFullYear()}-${monday.getMonth()}-${monday.getDate()}`;
+        }
+
+        function getWeeklyWord(weekKey) {
+            // Simple hash of the week key to pick a stable word
+            let hash = 0;
+            for (let i = 0; i < weekKey.length; i++) {
+                hash = ((hash << 5) - hash) + weekKey.charCodeAt(i);
+                hash |= 0;
+            }
+            return words[Math.abs(hash) % words.length];
+        }
+
+        function getNextMondayLabel() {
+            const now = new Date();
+            const day = now.getDay();
+            const daysUntilMonday = day === 0 ? 1 : (8 - day);
+            const next = new Date(now);
+            next.setDate(now.getDate() + daysUntilMonday);
+            return next.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+
+        const STORAGE_KEY = 'iep-mathwordle';
+        const weekKey = getWeekKey();
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+        // If the player already finished this week's puzzle, show their result
+        if (saved.weekKey === weekKey && saved.completed) {
+            const won = saved.won;
+            const guessCount = saved.guessCount;
+            const word = saved.word;
+            container.innerHTML = `
+                <div class="iep-mathwordle">
+                    <p class="iep-mw-hint">${won ? `You got it in ${guessCount}/6!` : `The word was: ${word}`}</p>
+                    <p class="iep-mw-message">New word available ${getNextMondayLabel()}</p>
+                </div>
+            `;
+            return;
+        }
+
+        const target = getWeeklyWord(weekKey);
+        // Restore in-progress guesses for this week
+        let guesses = (saved.weekKey === weekKey && saved.guesses) ? saved.guesses : [];
+        let currentGuess = '';
+        const maxGuesses = 6;
+        const wordLen = 5;
+        let gameOver = false;
+        let message = '';
+
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                weekKey,
+                guesses,
+                completed: gameOver,
+                won: gameOver && guesses.length > 0 && guesses[guesses.length - 1].hints.every(h => h === 'correct'),
+                guessCount: guesses.length,
+                word: target
+            }));
+        }
+
+        function getHints(guess, answer) {
+            const hints = Array(wordLen).fill('absent');
+            const answerChars = answer.split('');
+            const used = Array(wordLen).fill(false);
+
+            for (let i = 0; i < wordLen; i++) {
+                if (guess[i] === answerChars[i]) {
+                    hints[i] = 'correct';
+                    used[i] = true;
+                }
+            }
+            for (let i = 0; i < wordLen; i++) {
+                if (hints[i] === 'correct') continue;
+                for (let j = 0; j < wordLen; j++) {
+                    if (!used[j] && guess[i] === answerChars[j]) {
+                        hints[i] = 'present';
+                        used[j] = true;
+                        break;
+                    }
+                }
+            }
+            return hints;
+        }
+
+        function getKeyStatus() {
+            const status = {};
+            for (const { guess, hints } of guesses) {
+                for (let i = 0; i < guess.length; i++) {
+                    const ch = guess[i];
+                    const hint = hints[i];
+                    if (hint === 'correct') {
+                        status[ch] = 'correct';
+                    } else if (hint === 'present' && status[ch] !== 'correct') {
+                        status[ch] = 'present';
+                    } else if (!status[ch]) {
+                        status[ch] = 'absent';
+                    }
+                }
+            }
+            return status;
+        }
+
+        // Check if restored guesses already finished the game
+        if (guesses.length > 0) {
+            const lastHints = guesses[guesses.length - 1].hints;
+            if (lastHints.every(h => h === 'correct') || guesses.length >= maxGuesses) {
+                gameOver = true;
+                message = lastHints.every(h => h === 'correct') ? 'You got it!' : `The word was: ${target}`;
+                saveProgress();
+            }
+        }
+
+        function render() {
+            const keyStatus = getKeyStatus();
+            const rows = [];
+            for (let r = 0; r < maxGuesses; r++) {
+                const cells = [];
+                for (let c = 0; c < wordLen; c++) {
+                    if (r < guesses.length) {
+                        const { guess, hints } = guesses[r];
+                        cells.push(`<div class="iep-mw-cell ${hints[c]}">${guess[c]}</div>`);
+                    } else if (r === guesses.length && !gameOver) {
+                        cells.push(`<div class="iep-mw-cell active">${currentGuess[c] || ''}</div>`);
+                    } else {
+                        cells.push('<div class="iep-mw-cell"></div>');
+                    }
+                }
+                rows.push(`<div class="iep-mw-row">${cells.join('')}</div>`);
+            }
+
+            const keyRows = [
+                ['q','w','e','r','t','y','u','i','o','p'],
+                ['a','s','d','f','g','h','j','k','l'],
+                ['Enter','z','x','c','v','b','n','m','Del']
+            ];
+
+            const nextWordNote = gameOver ? `<p class="iep-mw-next">New word available ${getNextMondayLabel()}</p>` : '';
+
+            container.innerHTML = `
+                <div class="iep-mathwordle">
+                    <p class="iep-mw-hint">Guess the 5-letter math word</p>
+                    <div class="iep-mw-board">${rows.join('')}</div>
+                    <p class="iep-mw-message">${message}</p>
+                    ${nextWordNote}
+                    <div class="iep-mw-keyboard" ${gameOver ? 'style="display:none"' : ''}>
+                        ${keyRows.map(row => `
+                            <div class="iep-mw-key-row">
+                                ${row.map(key => {
+                                    const cls = key.length === 1 ? (keyStatus[key] || '') : '';
+                                    const wide = key === 'Enter' || key === 'Del' ? 'wide' : '';
+                                    return `<button class="iep-mw-key ${cls} ${wide}" data-key="${key}">${key}</button>`;
+                                }).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            container.querySelectorAll('.iep-mw-key').forEach(btn => {
+                btn.addEventListener('click', () => handleKey(btn.dataset.key));
+            });
+        }
+
+        function handleKey(key) {
+            if (gameOver) return;
+
+            if (key === 'Del') {
+                currentGuess = currentGuess.slice(0, -1);
+            } else if (key === 'Enter') {
+                if (currentGuess.length !== wordLen) {
+                    message = 'Not enough letters';
+                } else {
+                    const hints = getHints(currentGuess, target);
+                    guesses.push({ guess: currentGuess, hints });
+                    currentGuess = '';
+                    message = '';
+
+                    if (hints.every(h => h === 'correct')) {
+                        gameOver = true;
+                        message = 'You got it!';
+                    } else if (guesses.length >= maxGuesses) {
+                        gameOver = true;
+                        message = `The word was: ${target}`;
+                    }
+                    saveProgress();
+                }
+            } else if (key.length === 1 && /^[a-z]$/.test(key) && currentGuess.length < wordLen) {
+                currentGuess += key;
+                message = '';
+            }
+            render();
         }
 
         render();
