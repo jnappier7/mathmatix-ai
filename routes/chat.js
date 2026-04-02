@@ -1846,10 +1846,36 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                     $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
                 }).catch(err => console.error('[Greeting] AI time tracking error:', err));
 
+                // IEP reading level enforcement (post-stream)
+                let greetingText = fullResponse.trim();
+                const greetingIepLevel = user.iepPlan?.readingLevel || null;
+                if (greetingIepLevel) {
+                    const readCheck = checkReadingLevel(greetingText, greetingIepLevel);
+                    if (!readCheck.passes) {
+                        console.log(
+                            `[Greeting] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+                        );
+                        try {
+                            const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
+                            const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+                                temperature: 0.3, max_tokens: maxTokens
+                            });
+                            const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                            if (simplifiedText && simplifiedText.length > 20) {
+                                greetingText = simplifiedText;
+                                res.write(`data: ${JSON.stringify({ type: 'replacement', content: greetingText })}\n\n`);
+                                console.log(`[Greeting] Response simplified to target Grade ${readCheck.targetGrade}`);
+                            }
+                        } catch (err) {
+                            console.error('[Greeting] Simplification failed:', err.message);
+                        }
+                    }
+                }
+
                 // Save greeting to conversation (AI message only, no user message)
                 activeConversation.messages.push({
                     role: 'assistant',
-                    content: fullResponse.trim(),
+                    content: greetingText,
                     timestamp: new Date()
                 });
                 activeConversation.lastActivity = new Date();
@@ -1881,7 +1907,31 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
         } else {
             // NON-STREAMING MODE
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
-            const greetingText = completion.choices[0].message.content.trim();
+            let greetingText = completion.choices[0].message.content.trim();
+
+            // IEP reading level enforcement
+            const nsGreetingIepLevel = user.iepPlan?.readingLevel || null;
+            if (nsGreetingIepLevel) {
+                const readCheck = checkReadingLevel(greetingText, nsGreetingIepLevel);
+                if (!readCheck.passes) {
+                    console.log(
+                        `[Greeting] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+                    );
+                    try {
+                        const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
+                        const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+                            temperature: 0.3, max_tokens: maxTokens
+                        });
+                        const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                        if (simplifiedText && simplifiedText.length > 20) {
+                            greetingText = simplifiedText;
+                            console.log(`[Greeting] Response simplified to target Grade ${readCheck.targetGrade}`);
+                        }
+                    } catch (err) {
+                        console.error('[Greeting] Simplification failed:', err.message);
+                    }
+                }
+            }
 
             // Track AI processing time
             const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
