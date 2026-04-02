@@ -860,5 +860,6 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
         applyIepAccommodations,
         handleIepResponseFeatures,
         handleIepGoalUpdates,
+        showBreakOverlay,
     };
 }

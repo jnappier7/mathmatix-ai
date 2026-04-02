@@ -395,6 +395,10 @@
   transform: scale(0.95);
 }
 
+.imessage-tool-btn-right {
+  margin-left: auto;
+}
+
 /* Mic recording state — pulsing red indicator */
 #mic-button.mic-recording {
   background: rgba(255, 59, 48, 0.15);

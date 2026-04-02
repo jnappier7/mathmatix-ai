@@ -239,7 +239,13 @@ document.addEventListener("DOMContentLoaded", () => {
         generateSpeakableText,
         getCurrentUser: () => currentUser,
     });
-    const { applyIepAccommodations, handleIepResponseFeatures, handleIepGoalUpdates } = iep;
+    const { applyIepAccommodations, handleIepResponseFeatures, handleIepGoalUpdates, showBreakOverlay } = iep;
+
+    // Break button in toolbar — available to all students
+    const breakToolbarBtn = document.getElementById('break-toolbar-btn');
+    if (breakToolbarBtn) {
+        breakToolbarBtn.addEventListener('click', showBreakOverlay);
+    }
 
     // --- Core Functions ---
     async function initializeApp() {
