@@ -282,7 +282,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                     <button class="iep-break-activity" data-activity="mathwordle">
                         <i class="fas fa-calculator"></i>
                         <span>Math Wordle</span>
-                        <small>Guess the equation</small>
+                        <small>Guess the math word</small>
                     </button>
                 </div>
                 <div id="iep-break-exercise" class="iep-break-exercise" style="display:none;"></div>
@@ -576,61 +576,41 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
     // --- Math Wordle Break Game ---
 
     function runMathWordle(container) {
-        // Generate simple equations like "12+7=19", "45-8=37", "6*3=18"
-        const equations = [];
+        const words = [
+            'acute', 'angle', 'array', 'curve', 'depth', 'digit',
+            'equal', 'graph', 'limit', 'meter', 'minus', 'modal',
+            'order', 'plane', 'prime', 'proof', 'range', 'ratio',
+            'round', 'scale', 'slope', 'solid', 'total', 'unity',
+            'value', 'width', 'chord', 'cubic', 'datum', 'dozen',
+            'helix', 'index', 'input', 'logic', 'model', 'orbit',
+            'polar', 'power', 'prism', 'quota', 'radii', 'share',
+            'sigma', 'solve', 'tally', 'theta', 'times', 'trend',
+            'union', 'units'
+        ];
 
-        function generateEquations() {
-            const ops = [
-                { sym: '+', fn: (a, b) => a + b },
-                { sym: '-', fn: (a, b) => a - b },
-                { sym: '*', fn: (a, b) => a * b }
-            ];
-            const results = [];
-            for (const op of ops) {
-                for (let a = 1; a <= 30; a++) {
-                    for (let b = 1; b <= 20; b++) {
-                        const result = op.fn(a, b);
-                        if (result > 0 && result <= 99) {
-                            const eq = `${a}${op.sym}${b}=${result}`;
-                            if (eq.length >= 5 && eq.length <= 7) {
-                                results.push(eq);
-                            }
-                        }
-                    }
-                }
-            }
-            return results;
-        }
-
-        const allEquations = generateEquations();
-        let target = allEquations[Math.floor(Math.random() * allEquations.length)];
-        let targetLen = target.length;
+        let target = words[Math.floor(Math.random() * words.length)];
         let guesses = [];
         let currentGuess = '';
-        let maxGuesses = 6;
+        const maxGuesses = 6;
+        const wordLen = 5;
         let gameOver = false;
         let message = '';
 
-        const validChars = '0123456789+-*=';
-
         function getHints(guess, answer) {
-            const hints = Array(answer.length).fill('absent');
+            const hints = Array(wordLen).fill('absent');
             const answerChars = answer.split('');
-            const guessChars = guess.split('');
-            const used = Array(answer.length).fill(false);
+            const used = Array(wordLen).fill(false);
 
-            // First pass: correct positions
-            for (let i = 0; i < answer.length; i++) {
-                if (guessChars[i] === answerChars[i]) {
+            for (let i = 0; i < wordLen; i++) {
+                if (guess[i] === answerChars[i]) {
                     hints[i] = 'correct';
                     used[i] = true;
                 }
             }
-            // Second pass: present but wrong position
-            for (let i = 0; i < answer.length; i++) {
+            for (let i = 0; i < wordLen; i++) {
                 if (hints[i] === 'correct') continue;
-                for (let j = 0; j < answer.length; j++) {
-                    if (!used[j] && guessChars[i] === answerChars[j]) {
+                for (let j = 0; j < wordLen; j++) {
+                    if (!used[j] && guess[i] === answerChars[j]) {
                         hints[i] = 'present';
                         used[j] = true;
                         break;
@@ -663,7 +643,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             const rows = [];
             for (let r = 0; r < maxGuesses; r++) {
                 const cells = [];
-                for (let c = 0; c < targetLen; c++) {
+                for (let c = 0; c < wordLen; c++) {
                     if (r < guesses.length) {
                         const { guess, hints } = guesses[r];
                         cells.push(`<div class="iep-mw-cell ${hints[c]}">${guess[c]}</div>`);
@@ -677,13 +657,14 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             }
 
             const keyRows = [
-                ['1','2','3','4','5','6','7','8','9','0'],
-                ['+','-','*','=','Del','Enter']
+                ['q','w','e','r','t','y','u','i','o','p'],
+                ['a','s','d','f','g','h','j','k','l'],
+                ['Enter','z','x','c','v','b','n','m','Del']
             ];
 
             container.innerHTML = `
                 <div class="iep-mathwordle">
-                    <p class="iep-mw-hint">Guess the ${targetLen}-character equation</p>
+                    <p class="iep-mw-hint">Guess the 5-letter math word</p>
                     <div class="iep-mw-board">${rows.join('')}</div>
                     <p class="iep-mw-message">${message}</p>
                     <div class="iep-mw-keyboard">
@@ -708,8 +689,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             const resetBtn = container.querySelector('.iep-mw-reset');
             if (resetBtn) {
                 resetBtn.addEventListener('click', () => {
-                    target = allEquations[Math.floor(Math.random() * allEquations.length)];
-                    targetLen = target.length;
+                    target = words[Math.floor(Math.random() * words.length)];
                     guesses = [];
                     currentGuess = '';
                     gameOver = false;
@@ -725,42 +705,23 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             if (key === 'Del') {
                 currentGuess = currentGuess.slice(0, -1);
             } else if (key === 'Enter') {
-                if (currentGuess.length !== targetLen) {
-                    message = `Enter ${targetLen} characters`;
-                } else if (!currentGuess.includes('=')) {
-                    message = 'Must include =';
+                if (currentGuess.length !== wordLen) {
+                    message = 'Not enough letters';
                 } else {
-                    // Validate that the equation is mathematically correct
-                    const parts = currentGuess.split('=');
-                    let valid = false;
-                    if (parts.length === 2) {
-                        try {
-                            const left = parts[0].replace(/\*/g, '*');
-                            // Safe eval for simple math expressions (only digits and +-*)
-                            if (/^[\d+\-*]+$/.test(left) && /^\d+$/.test(parts[1])) {
-                                const computed = Function('"use strict"; return (' + left + ')')();
-                                valid = computed === parseInt(parts[1], 10);
-                            }
-                        } catch (_) { /* invalid expression */ }
-                    }
-                    if (!valid) {
-                        message = 'Not a valid equation';
-                    } else {
-                        const hints = getHints(currentGuess, target);
-                        guesses.push({ guess: currentGuess, hints });
-                        currentGuess = '';
-                        message = '';
+                    const hints = getHints(currentGuess, target);
+                    guesses.push({ guess: currentGuess, hints });
+                    currentGuess = '';
+                    message = '';
 
-                        if (hints.every(h => h === 'correct')) {
-                            gameOver = true;
-                            message = 'You got it!';
-                        } else if (guesses.length >= maxGuesses) {
-                            gameOver = true;
-                            message = `The answer was: ${target}`;
-                        }
+                    if (hints.every(h => h === 'correct')) {
+                        gameOver = true;
+                        message = 'You got it!';
+                    } else if (guesses.length >= maxGuesses) {
+                        gameOver = true;
+                        message = `The word was: ${target}`;
                     }
                 }
-            } else if (currentGuess.length < targetLen && validChars.includes(key)) {
+            } else if (key.length === 1 && /^[a-z]$/.test(key) && currentGuess.length < wordLen) {
                 currentGuess += key;
                 message = '';
             }
