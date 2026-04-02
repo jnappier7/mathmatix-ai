@@ -27,8 +27,8 @@ router.get('/students', isTeacher, async (req, res) => {
     const isLightweight = req.query.fields === 'roster';
 
     const projection = isLightweight
-      ? 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
-      : 'firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery';
+      ? 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
+      : 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery';
 
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(

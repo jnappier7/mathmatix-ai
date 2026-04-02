@@ -413,6 +413,44 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function sortStudentsList(list, sortBy) {
+        return list.slice().sort((a, b) => {
+            switch (sortBy) {
+                case 'status': {
+                    const statusOrder = { struggling: 0, active: 1, inactive: 2 };
+                    return (statusOrder[getStudentStatus(a)] || 1) - (statusOrder[getStudentStatus(b)] || 1);
+                }
+                case 'newest':
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                case 'oldest':
+                    return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                case 'name-asc': {
+                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                case 'name-desc': {
+                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+                    return nameB.localeCompare(nameA);
+                }
+                case 'last-login':
+                    return new Date(b.lastLogin || 0) - new Date(a.lastLogin || 0);
+                case 'grade': {
+                    const gradeA = parseInt(a.gradeLevel) || 0;
+                    const gradeB = parseInt(b.gradeLevel) || 0;
+                    return gradeA - gradeB;
+                }
+                case 'weekly-minutes':
+                    return (b.weeklyActiveTutoringMinutes || 0) - (a.weeklyActiveTutoringMinutes || 0);
+                case 'level':
+                    return (b.level || 0) - (a.level || 0);
+                default:
+                    return 0;
+            }
+        });
+    }
+
     function renderStudentList(students, filterType = 'all', searchQuery = '') {
         studentListDiv.innerHTML = '';
 
@@ -430,11 +468,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // Sort: struggling first, then active, then inactive
-        filteredStudents.sort((a, b) => {
-            const statusOrder = { struggling: 0, active: 1, inactive: 2 };
-            return (statusOrder[getStudentStatus(a)] || 1) - (statusOrder[getStudentStatus(b)] || 1);
-        });
+        // Sort based on selected sort option
+        const sortBy = document.getElementById('student-sort')?.value || 'status';
+        filteredStudents = sortStudentsList(filteredStudents, sortBy);
 
         // Render based on view mode
         if (currentViewMode === 'grouped' && classesData.length > 0 && !searchQuery) {
@@ -1597,6 +1633,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (studentFilterSelect) {
             studentFilterSelect.addEventListener('change', applyFilters);
+        }
+
+        const studentSortSelect = document.getElementById('student-sort');
+        if (studentSortSelect) {
+            studentSortSelect.addEventListener('change', applyFilters);
         }
     }
 

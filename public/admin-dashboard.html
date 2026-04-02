@@ -367,6 +367,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       letter-spacing: 0.5px;
     }
 
+    .user-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 20px;
+    }
+
+    .user-table th.sortable:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .user-table th.sortable .sort-icon {
+      margin-left: 4px;
+      font-size: 0.75em;
+      opacity: 0.5;
+    }
+
+    .user-table th.sortable.sort-asc .sort-icon,
+    .user-table th.sortable.sort-desc .sort-icon {
+      opacity: 1;
+    }
+
     .user-table tbody tr:hover {
       background: var(--color-hover-row);
     }
@@ -973,6 +995,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <option value="admin">Admins</option>
               </select>
             </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <select id="userSortSelect" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;" aria-label="Sort users">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name-asc">Name A–Z</option>
+                <option value="name-desc">Name Z–A</option>
+                <option value="last-login">Last Login</option>
+                <option value="grade">Grade Level</option>
+              </select>
+            </div>
           </div>
 
           <!-- Skeleton loading placeholder -->
@@ -993,11 +1025,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   <th>Email</th>
                   <th>Role</th>
                   <th>Current Teacher</th>
+                  <th>Date Created</th>
+                  <th>Last Login</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="userTableBody">
-                <tr><td colspan="6" style="text-align:center;">Loading students...</td></tr>
+                <tr><td colspan="8" style="text-align:center;">Loading students...</td></tr>
               </tbody>
             </table>
           </div>

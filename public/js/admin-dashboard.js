@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("Error initializing dashboard:", error);
             hideUserTableSkeleton();
-            if(userTableBody) userTableBody.innerHTML = `<tr><td colspan="6" class="text-center">Error loading data. Please refresh.</td></tr>`;
+            if(userTableBody) userTableBody.innerHTML = `<tr><td colspan="8" class="text-center">Error loading data. Please refresh.</td></tr>`;
         }
     }
 
@@ -255,10 +255,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function sortStudents(list, sortBy) {
+        return list.slice().sort((a, b) => {
+            switch (sortBy) {
+                case 'newest':
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                case 'oldest':
+                    return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+                case 'name-asc': {
+                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                case 'name-desc': {
+                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+                    return nameB.localeCompare(nameA);
+                }
+                case 'last-login':
+                    return new Date(b.lastLogin || 0) - new Date(a.lastLogin || 0);
+                case 'grade': {
+                    const gradeA = parseInt(a.gradeLevel) || 0;
+                    const gradeB = parseInt(b.gradeLevel) || 0;
+                    return gradeA - gradeB;
+                }
+                default:
+                    return 0;
+            }
+        });
+    }
+
     function renderStudents() {
         if (!userTableBody) return;
         const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
         const roleFilter = document.getElementById('userRoleFilter')?.value || "";
+        const sortBy = document.getElementById('userSortSelect')?.value || "newest";
         userTableBody.innerHTML = "";
 
         let filteredStudents = students.filter(s =>
@@ -271,8 +302,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             filteredStudents = filteredStudents.filter(s => s.role === roleFilter || (s.roles && s.roles.includes(roleFilter)));
         }
 
+        filteredStudents = sortStudents(filteredStudents, sortBy);
+
         if (filteredStudents.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
+            userTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No users found.</td></tr>`;
             return;
         }
 
@@ -283,6 +316,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${s.email || 'N/A'}</td>
                 <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
+                <td>${formatDate(s.createdAt)}</td>
+                <td>${formatDate(s.lastLogin)}</td>
                 <td>
                     <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles" aria-label="Edit roles for ${s.firstName} ${s.lastName}">
                         <i class="fas fa-user-tag"></i>
@@ -710,6 +745,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (studentSearch) studentSearch.addEventListener("input", debounce(renderStudents, 300));
     const userRoleFilter = document.getElementById('userRoleFilter');
     if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
+    const userSortSelect = document.getElementById('userSortSelect');
+    if (userSortSelect) userSortSelect.addEventListener("change", renderStudents);
 
     if (assignButton) {
         assignButton.addEventListener("click", async () => {
