@@ -588,13 +588,71 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             'union', 'units'
         ];
 
-        let target = words[Math.floor(Math.random() * words.length)];
-        let guesses = [];
+        // One word per week — pick based on the Monday of the current week
+        function getWeekKey() {
+            const now = new Date();
+            const day = now.getDay();
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - ((day + 6) % 7));
+            return `${monday.getFullYear()}-${monday.getMonth()}-${monday.getDate()}`;
+        }
+
+        function getWeeklyWord(weekKey) {
+            // Simple hash of the week key to pick a stable word
+            let hash = 0;
+            for (let i = 0; i < weekKey.length; i++) {
+                hash = ((hash << 5) - hash) + weekKey.charCodeAt(i);
+                hash |= 0;
+            }
+            return words[Math.abs(hash) % words.length];
+        }
+
+        function getNextMondayLabel() {
+            const now = new Date();
+            const day = now.getDay();
+            const daysUntilMonday = day === 0 ? 1 : (8 - day);
+            const next = new Date(now);
+            next.setDate(now.getDate() + daysUntilMonday);
+            return next.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+
+        const STORAGE_KEY = 'iep-mathwordle';
+        const weekKey = getWeekKey();
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+        // If the player already finished this week's puzzle, show their result
+        if (saved.weekKey === weekKey && saved.completed) {
+            const won = saved.won;
+            const guessCount = saved.guessCount;
+            const word = saved.word;
+            container.innerHTML = `
+                <div class="iep-mathwordle">
+                    <p class="iep-mw-hint">${won ? `You got it in ${guessCount}/6!` : `The word was: ${word}`}</p>
+                    <p class="iep-mw-message">New word available ${getNextMondayLabel()}</p>
+                </div>
+            `;
+            return;
+        }
+
+        const target = getWeeklyWord(weekKey);
+        // Restore in-progress guesses for this week
+        let guesses = (saved.weekKey === weekKey && saved.guesses) ? saved.guesses : [];
         let currentGuess = '';
         const maxGuesses = 6;
         const wordLen = 5;
         let gameOver = false;
         let message = '';
+
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                weekKey,
+                guesses,
+                completed: gameOver,
+                won: gameOver && guesses.length > 0 && guesses[guesses.length - 1].hints.every(h => h === 'correct'),
+                guessCount: guesses.length,
+                word: target
+            }));
+        }
 
         function getHints(guess, answer) {
             const hints = Array(wordLen).fill('absent');
@@ -638,6 +696,16 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
             return status;
         }
 
+        // Check if restored guesses already finished the game
+        if (guesses.length > 0) {
+            const lastHints = guesses[guesses.length - 1].hints;
+            if (lastHints.every(h => h === 'correct') || guesses.length >= maxGuesses) {
+                gameOver = true;
+                message = lastHints.every(h => h === 'correct') ? 'You got it!' : `The word was: ${target}`;
+                saveProgress();
+            }
+        }
+
         function render() {
             const keyStatus = getKeyStatus();
             const rows = [];
@@ -662,41 +730,31 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                 ['Enter','z','x','c','v','b','n','m','Del']
             ];
 
+            const nextWordNote = gameOver ? `<p class="iep-mw-next">New word available ${getNextMondayLabel()}</p>` : '';
+
             container.innerHTML = `
                 <div class="iep-mathwordle">
                     <p class="iep-mw-hint">Guess the 5-letter math word</p>
                     <div class="iep-mw-board">${rows.join('')}</div>
                     <p class="iep-mw-message">${message}</p>
-                    <div class="iep-mw-keyboard">
+                    ${nextWordNote}
+                    <div class="iep-mw-keyboard" ${gameOver ? 'style="display:none"' : ''}>
                         ${keyRows.map(row => `
                             <div class="iep-mw-key-row">
                                 ${row.map(key => {
                                     const cls = key.length === 1 ? (keyStatus[key] || '') : '';
                                     const wide = key === 'Enter' || key === 'Del' ? 'wide' : '';
-                                    return `<button class="iep-mw-key ${cls} ${wide}" data-key="${key}"${gameOver && key !== 'Enter' ? ' disabled' : ''}>${key}</button>`;
+                                    return `<button class="iep-mw-key ${cls} ${wide}" data-key="${key}">${key}</button>`;
                                 }).join('')}
                             </div>
                         `).join('')}
                     </div>
-                    ${gameOver ? '<button class="iep-mw-reset">Play Again</button>' : ''}
                 </div>
             `;
 
             container.querySelectorAll('.iep-mw-key').forEach(btn => {
                 btn.addEventListener('click', () => handleKey(btn.dataset.key));
             });
-
-            const resetBtn = container.querySelector('.iep-mw-reset');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                    target = words[Math.floor(Math.random() * words.length)];
-                    guesses = [];
-                    currentGuess = '';
-                    gameOver = false;
-                    message = '';
-                    render();
-                });
-            }
         }
 
         function handleKey(key) {
@@ -720,6 +778,7 @@ export function createIepSystem({ playAudio, generateSpeakableText, getCurrentUs
                         gameOver = true;
                         message = `The word was: ${target}`;
                     }
+                    saveProgress();
                 }
             } else if (key.length === 1 && /^[a-z]$/.test(key) && currentGuess.length < wordLen) {
                 currentGuess += key;

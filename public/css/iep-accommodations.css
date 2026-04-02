@@ -698,6 +698,12 @@
     margin: 0;
 }
 
+.iep-mw-next {
+    color: #888;
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
 .iep-mw-keyboard {
     display: flex;
     flex-direction: column;
