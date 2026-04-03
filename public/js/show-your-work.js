@@ -374,6 +374,7 @@ class ShowYourWorkManager {
 
     renderProblemCard(problem) {
         const correct = problem.isCorrect;
+        const isUnsure = correct === null || correct === undefined;
 
         // Error details are shown collapsed — feedback is the primary content
         const hasErrors = problem.errors && problem.errors.length > 0;
@@ -394,12 +395,16 @@ class ShowYourWorkManager {
         const strengths = this.renderMath(problem.strengths || '');
         const answer    = this.renderMath(problem.studentAnswer || '—');
 
+        const cardClass = isUnsure ? 'syw-problem-unsure' : (correct ? 'syw-problem-correct' : 'syw-problem-incorrect');
+        const statusClass = isUnsure ? 'syw-status-unsure' : (correct ? 'syw-status-correct' : 'syw-status-incorrect');
+        const statusText = isUnsure ? "Let's discuss" : (correct ? 'Got it' : 'Take another look');
+
         return `
-        <div class="syw-problem-card ${correct ? 'syw-problem-correct' : 'syw-problem-incorrect'}">
+        <div class="syw-problem-card ${cardClass}">
             <div class="syw-problem-header">
                 <span class="syw-problem-num">Problem ${problem.problemNumber}</span>
-                <span class="syw-problem-status ${correct ? 'syw-status-correct' : 'syw-status-incorrect'}">
-                    ${correct ? 'Got it' : 'Take another look'}
+                <span class="syw-problem-status ${statusClass}">
+                    ${statusText}
                 </span>
             </div>
             ${statement ? `<div class="syw-problem-statement">${statement}</div>` : ''}
@@ -414,7 +419,11 @@ class ShowYourWorkManager {
                     <span class="syw-answer-label">Your answer:</span>
                     <div class="syw-answer-value">${answer}</div>
                 </div>
-                ${!correct ? `<div class="syw-answer-row">
+                ${isUnsure ? `<div class="syw-answer-row">
+                    <span class="syw-answer-label">Next step:</span>
+                    <div class="syw-answer-value">Let's talk through this one in chat — I want to make sure I'm reading your work right.</div>
+                </div>` : ''}
+                ${!correct && !isUnsure ? `<div class="syw-answer-row">
                     <span class="syw-answer-label">Hint:</span>
                     <div class="syw-answer-value">Check the feedback above and try again!</div>
                 </div>` : ''}

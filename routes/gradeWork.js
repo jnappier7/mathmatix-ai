@@ -75,8 +75,8 @@ You need verified answers to check their work, but NEVER include your solutions 
 - If the student rounded to fewer decimal places than you, that is NOT an error unless the problem specifically required more precision.
 - Common trap: if a problem involves division (e.g., 100 ÷ 7), do NOT round the quotient before using it in later steps. Carry the full value forward.
 
-⚠️ EQUIVALENT FORM RULES — do NOT mark correct answers as wrong:
-- ALWAYS accept mathematically equivalent forms. These are ALL correct for the same answer:
+⚠️ EQUIVALENT FORM RULES — recognize mathematically equivalent answers:
+- These forms are equivalent and should NOT be marked wrong:
   • Fractions vs decimals: 1/2 = 0.5 = 0.50
   • Unsimplified fractions: 2/4 = 1/2 (mark correct, but note they could simplify)
   • Equivalent expressions: x+1 = 1+x, 2(x+3) = 2x+6, -(x-5) = -x+5, -1x = -x
@@ -90,7 +90,7 @@ You need verified answers to check their work, but NEVER include your solutions 
   • Interval notation: x > 3 = (3, ∞)
   • Set notation variations: {1, 2, 3} vs {3, 1, 2}
 - If the problem asks for a SPECIFIC form (e.g., "simplify" or "write in slope-intercept form"), then only mark wrong if the student used the wrong form — but acknowledge their answer is mathematically correct.
-- When in doubt, mark it CORRECT. A false "wrong" is far more damaging than a missed simplification note.
+- If you are NOT SURE whether an answer is correct or equivalent, set "isCorrect": null and explain in feedback: "I'm not 100% sure about this one — let's talk through it. Here's what I see..." Then describe what the student wrote and invite them to walk through it with you. NEVER guess.
 - If the student's answer is equivalent but could be simplified, mark isCorrect: true and add a gentle note in feedback: "Correct! You could also simplify to..."
 
 ## 2. COMPARE — then GUIDE
@@ -151,9 +151,10 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 RULES:
 - Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
 - **problemNumber** must be a string matching whatever label appears on the worksheet — "1", "2", etc. for numbered problems, or "A", "B", etc. for lettered problems. Always use a string.
+- **isCorrect** must be true, false, or null. Use null ONLY when you genuinely cannot determine if the answer is right — e.g., you can't read the handwriting clearly, or the form is ambiguous and you're not sure if it's equivalent. Do NOT default to null to be safe — make a real judgment when you can.
 - **NEVER include a "correctAnswer" field.** NEVER. Not even close. Not as a hint, not reworded, not "the answer should be..." Guide them to discover it.
 - **The "correction" field in errors must be a QUESTION, not an answer.** It should be a Socratic prompt that leads the student to find the fix themselves. Good: "When you distribute a negative, what happens to each sign inside?" Bad: "The answer should be x = 6." Bad: "You should get -2x + 6." If you catch yourself writing the answer, rewrite it as a question.
-- **Feedback must be SHORT.** 1-2 sentences for correct problems. 2-3 sentences for incorrect — a strength, a pointer, and a question. No paragraphs.
+- **Feedback must be SHORT.** 1-2 sentences for correct problems. 2-3 sentences for incorrect — a strength, a pointer, and a question. No paragraphs. For null/unsure problems, briefly explain what you see and invite the student to discuss.
 - Do NOT assign numerical scores, grades, or percentages anywhere.
 - Talk TO the student ("your setup looks good") not ABOUT them ("the student's setup was correct").
 - Always find a strength, even in wrong answers.
@@ -360,7 +361,7 @@ router.post('/',
         // We never want to send correct answers to the student — that's an answer key.
         stripCorrectAnswers(parsed.problems);
 
-        const correctCount = parsed.problems.filter(p => p.isCorrect).length;
+        const correctCount = parsed.problems.filter(p => p.isCorrect === true).length;
 
         // Calculate XP
         const xpEarned = calculateXP(parsed.problems.length, correctCount);
