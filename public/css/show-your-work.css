@@ -123,6 +123,10 @@
     border-left: 4px solid #f59e0b;
 }
 
+.syw-problem-card.syw-problem-unsure {
+    border-left: 4px solid #6366f1;
+}
+
 .syw-problem-header {
     display: flex;
     justify-content: space-between;
@@ -151,6 +155,11 @@
 .syw-status-incorrect {
     background: #fffbeb;
     color: #d97706;
+}
+
+.syw-status-unsure {
+    background: #eef2ff;
+    color: #4f46e5;
 }
 
 .syw-problem-statement {

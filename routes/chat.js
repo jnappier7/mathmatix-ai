@@ -39,7 +39,7 @@ const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
-const MAX_HISTORY_LENGTH_FOR_AI = 40;
+const MAX_HISTORY_LENGTH_FOR_AI = 100; // Increased from 40 — GPT-4o-mini has 128K context, 40 was causing context loss
 
 // Per-user request lock to prevent concurrent chat processing (race condition fix).
 // If user A sends message 1 and message 2 before message 1 finishes saving,
@@ -587,10 +587,47 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`🧮 [Math Solver] Detected ${mathResult.problem.type} problem, answer: ${mathResult.solution?.answer || 'N/A'}`);
         }
 
-        const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
-        let formattedMessagesForLLM = recentMessagesForAI
-            .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
-            .map(msg => ({ role: msg.role, content: msg.content }));
+        // Build conversation history with summarization for long conversations
+        const allMessages = activeConversation.messages;
+        let formattedMessagesForLLM;
+
+        if (allMessages.length > MAX_HISTORY_LENGTH_FOR_AI) {
+            // Summarize older messages so the AI retains early context
+            const olderMessages = allMessages.slice(0, -MAX_HISTORY_LENGTH_FOR_AI)
+                .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0);
+            const recentMessages = allMessages.slice(-MAX_HISTORY_LENGTH_FOR_AI)
+                .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
+                .map(msg => ({ role: msg.role, content: msg.content }));
+
+            // Build a concise summary of older exchanges
+            if (olderMessages.length > 0) {
+                const topicsSeen = new Set();
+                const keyPoints = [];
+                for (const msg of olderMessages) {
+                    if (msg.role === 'user') {
+                        // Capture first 80 chars of each user message as a topic hint
+                        const snippet = msg.content.substring(0, 80).replace(/\n/g, ' ').trim();
+                        if (snippet && !topicsSeen.has(snippet.toLowerCase())) {
+                            topicsSeen.add(snippet.toLowerCase());
+                            keyPoints.push(snippet);
+                        }
+                    }
+                }
+                const summaryText = `[CONVERSATION CONTEXT: This is a long session (${allMessages.length} messages total). Earlier in this conversation, the student discussed these topics: ${keyPoints.slice(0, 15).join('; ')}. The ${recentMessages.length} most recent messages follow below. Maintain continuity with earlier topics if the student references them.]`;
+
+                formattedMessagesForLLM = [
+                    { role: 'user', content: summaryText },
+                    { role: 'assistant', content: 'Got it — I remember our earlier conversation and will maintain continuity.' },
+                    ...recentMessages
+                ];
+            } else {
+                formattedMessagesForLLM = recentMessages;
+            }
+        } else {
+            formattedMessagesForLLM = allMessages
+                .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
+                .map(msg => ({ role: msg.role, content: msg.content }));
+        }
 
         // Resource context is injected into the system prompt via generateSystemPrompt()
 
@@ -812,7 +849,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             let fallbackText;
             try {
                 const completion = await callLLM(PRIMARY_CHAT_MODEL, fallbackMessages, {
-                    temperature: 0.7,
+                    temperature: 0.5,
                     max_tokens: 1200,
                 });
                 fallbackText = completion.choices[0]?.message?.content?.trim()
@@ -1826,7 +1863,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             res.flushHeaders();
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.55, max_tokens: maxTokens });
                 let fullResponse = '';
 
                 for await (const chunk of stream) {

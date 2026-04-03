@@ -172,11 +172,25 @@ class VisualTeachingHandler {
 
             const data = await response.json();
             if (data.results && data.results.length > 0) {
-                const img = data.results[0];
+                // Pick the most relevant result — prefer results whose title
+                // contains words from the query, not just the first Google hit
+                const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+                let bestResult = data.results[0];
+                let bestScore = 0;
+
+                for (const result of data.results) {
+                    const title = (result.title || '').toLowerCase();
+                    const score = queryWords.filter(w => title.includes(w)).length;
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestResult = result;
+                    }
+                }
+
                 this.displayInlineImage(
-                    img.thumbnail || img.url,
-                    img.title || query,
-                    img.source
+                    bestResult.thumbnail || bestResult.url,
+                    bestResult.title || query,
+                    bestResult.source
                 );
             }
         } catch (error) {
@@ -520,11 +534,11 @@ class VisualTeachingHandler {
             imageContainer.appendChild(fallback);
         };
 
-        // iMessage-style: thumbnail preview, click to enlarge
+        // Educational image display — large enough to actually learn from
         img.style.cssText = `
-            max-width: 200px;
-            max-height: 160px;
-            object-fit: cover;
+            max-width: 400px;
+            max-height: 320px;
+            object-fit: contain;
             display: block;
             border-radius: 12px;
             cursor: pointer;

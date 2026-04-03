@@ -186,9 +186,42 @@ function extractMathSteps(text) {
         blocks.push(...parsed);
       }
     } catch (e) {
-      console.warn('[VoiceTutor] Failed to parse mathSteps block:', e.message);
+      // Try to fix common JSON issues from LLM output
+      let raw = match[1].trim();
+      try {
+        // Fix trailing commas before ] or }
+        raw = raw.replace(/,\s*([}\]])/g, '$1');
+        // Fix single quotes to double quotes
+        raw = raw.replace(/'/g, '"');
+        const retried = JSON.parse(raw);
+        if (Array.isArray(retried)) {
+          blocks.push(...retried);
+        }
+      } catch (_) {
+        console.warn('[VoiceTutor] Failed to parse mathSteps block (even after fix):', e.message);
+      }
     }
   }
+
+  // FALLBACK: If no <mathsteps> blocks found, try to extract LaTeX from the response
+  if (blocks.length === 0) {
+    const latexPatterns = [
+      /\$\$([^$]+)\$\$/g,       // $$...$$
+      /\\\[([^\]]+)\\\]/g,      // \[...\]
+      /\$([^$]+)\$/g,           // $...$
+    ];
+    for (const pattern of latexPatterns) {
+      let latexMatch;
+      while ((latexMatch = pattern.exec(text)) !== null) {
+        const latex = latexMatch[1].trim();
+        if (latex.length > 2 && /[=+\-*/^_{}\\]/.test(latex)) {
+          blocks.push({ label: '', latex });
+        }
+      }
+      if (blocks.length > 0) break;
+    }
+  }
+
   return blocks;
 }
 
@@ -392,10 +425,12 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
   // Get conversation history (last 12 messages for voice context)
+  // Use projection to only fetch the messages we need, not the entire conversation
   const conversation = await Conversation.findOne({ userId })
     .sort({ updatedAt: -1 })
+    .select({ messages: { $slice: -12 } })
     .lean();
-  const history = (conversation?.messages || []).slice(-12)
+  const history = (conversation?.messages || [])
     .filter(msg => msg.content && msg.content.trim().length > 0)
     .map(msg => ({
       role: msg.role === 'user' ? 'user' : 'assistant',
@@ -411,7 +446,7 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   ];
 
   const completion = await callLLM(VOICE_MODEL, messages, {
-    temperature: 0.7,
+    temperature: 0.45,
     max_tokens: 600
   });
 
