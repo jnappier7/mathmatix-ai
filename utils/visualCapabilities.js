@@ -106,15 +106,24 @@ Command: [SEARCH_IMAGE:query="Q",category=C]
 - Fetches images from curated educational sites (Khan Academy, Desmos, GeoGebra, Wikipedia, etc.)
 - Categories: geometry, algebra, arithmetic, fractions, graphing, trigonometry, calculus, statistics, etc.
 
+**EXAMPLES (use these as templates):**
+- Teaching the unit circle: [SEARCH_IMAGE:query="unit circle trigonometry labeled radians degrees",category=trigonometry]
+- Explaining types of angles: [SEARCH_IMAGE:query="acute obtuse right angle comparison labeled",category=geometry]
+- Showing coordinate plane quadrants: [SEARCH_IMAGE:query="coordinate plane four quadrants labeled x y axis",category=graphing]
+- Visualizing fraction addition: [SEARCH_IMAGE:query="adding fractions visual model same denominator",category=fractions]
+
+**Query tips:** Be SPECIFIC. Include the exact concept name + "labeled" or "diagram". Bad: "fractions". Good: "adding fractions with unlike denominators visual model".
+
 **When to use:**
-- When a student asks "what does that look like?" or "show me an example"
-- When a reference image would genuinely clarify the concept being discussed (e.g., unit circle diagram while teaching trig)
-- When the student's problem involves real-world context and an image would help them visualize it
+- When a student asks "what does that look like?" or "show me" or "can you show me an example"
+- When explaining a geometric concept (always pair with an image — shapes need visuals)
+- When a reference diagram would genuinely clarify the concept (unit circle, coordinate plane, angle types, etc.)
+- When the student seems confused and a visual would help more than more text
 
 **When NOT to use:**
-- Don't search for images unprompted just to "enrich" a lesson — only when the image serves the current teaching moment
 - When you need exact values from the student's problem → use [DIAGRAM:...] or [FUNCTION_GRAPH:...]
-- When interactivity matters → use [SLIDER_GRAPH:...] or [ALGEBRA_TILES:...]`.trim();
+- When interactivity matters → use [SLIDER_GRAPH:...] or [ALGEBRA_TILES:...]
+- For abstract algebra or pure computation where images don't add clarity`.trim();
 
 
 const STUDENT_UPLOAD_SECTION = `

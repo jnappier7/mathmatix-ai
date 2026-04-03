@@ -97,14 +97,12 @@ function sanitizeQuery(query) {
   cleaned = cleaned.replace(/\b[A-Z][a-z]+\s+[A-Z][a-z]+\b/g, ''); // Full names
   cleaned = cleaned.replace(/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g, '');     // Emails
 
-  // Force educational context
-  if (!cleaned.toLowerCase().includes('math')) {
+  // Force educational context — but keep the query specific
+  if (!cleaned.toLowerCase().includes('math') && !cleaned.toLowerCase().includes('geometry') && !cleaned.toLowerCase().includes('graph') && !cleaned.toLowerCase().includes('diagram')) {
     cleaned = `math ${cleaned}`;
   }
 
-  // Add "educational diagram" to bias toward diagrams
-  cleaned = `${cleaned} educational diagram`;
-
+  // Don't append generic "educational diagram" — it dilutes specificity and returns stock images
   return { safe: true, sanitized: cleaned.trim(), reason: null };
 }
 

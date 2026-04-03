@@ -2085,10 +2085,22 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
 
-                // Handle usage limit (402) — show upgrade prompt instead of error
+                // Handle usage limit (402) — show upgrade prompt and disable input
                 if (response.status === 402 && (errorData.usageLimitReached || errorData.premiumFeatureBlocked)) {
                     showThinkingIndicator(false);
                     showUpgradePrompt(errorData);
+
+                    // Disable chat input so user can't loop sending messages that will 402
+                    const sendBtn = document.getElementById('send-button');
+                    const chatInput = document.getElementById('chat-input');
+                    if (sendBtn) {
+                        sendBtn.disabled = true;
+                        sendBtn.title = 'Upgrade to continue chatting';
+                    }
+                    if (chatInput && errorData.usageLimitReached) {
+                        chatInput.placeholder = 'Free time used up — upgrade to Mathmatix+ to continue';
+                        chatInput.disabled = true;
+                    }
                     return;
                 }
 
@@ -2110,6 +2122,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const remaining = parseInt(freeRemainingHeader, 10);
                 if (!isNaN(remaining)) {
                     updateFreeTimeIndicator({ secondsRemaining: remaining, limitReached: remaining <= 0 });
+
+                    // Show escalating warnings before time runs out
+                    if (remaining <= 30 && remaining > 0 && !window._warned30s) {
+                        window._warned30s = true;
+                        showToast('Last message! Your free time is almost up.', 'warning');
+                    } else if (remaining <= 120 && remaining > 30 && !window._warned2m) {
+                        window._warned2m = true;
+                        showToast('About 2 minutes of AI time remaining this week.', 'warning');
+                    } else if (remaining <= 300 && remaining > 120 && !window._warned5m) {
+                        window._warned5m = true;
+                        showToast('5 minutes of free AI time left this week.', 'info');
+                    }
                 }
             }
 

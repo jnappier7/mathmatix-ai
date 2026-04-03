@@ -17,6 +17,13 @@ export async function checkBillingStatus() {
 
         window._billingStatus = data;
 
+        // Pre-fetch promo data so upgrade modal doesn't flash prices
+        if (!window._promoCache) {
+            fetch('/api/billing/promo').then(r => r.ok ? r.json() : null).then(p => {
+                window._promoCache = p && p.active ? p : { active: false };
+            }).catch(() => { window._promoCache = { active: false }; });
+        }
+
         // When billing is off (pre-launch), skip all UI
         if (data.billingEnabled === false) return data;
 
@@ -104,22 +111,29 @@ export async function showUpgradePrompt(errorData) {
     const existing = document.getElementById('upgrade-modal');
     if (existing) existing.remove();
 
-    // Check for active Pi Day promo
+    // Use pre-cached promo data (fetched at page load) to avoid price flashing
     let promo = null;
-    try {
-        const promoRes = await fetch('/api/billing/promo');
-        if (promoRes.ok) {
-            const promoData = await promoRes.json();
-            if (promoData.active) promo = promoData;
-        }
-    } catch (_) { /* promo check is best-effort */ }
+    if (window._promoCache && window._promoCache.active) {
+        promo = window._promoCache;
+    } else {
+        try {
+            const promoRes = await fetch('/api/billing/promo');
+            if (promoRes.ok) {
+                const promoData = await promoRes.json();
+                if (promoData.active) promo = promoData;
+            }
+        } catch (_) { /* promo check is best-effort */ }
+    }
 
     const isFeatureBlock = errorData.premiumFeatureBlocked;
+    const isLimitReached = errorData.usageLimitReached;
     const title = promo
         ? 'Pi Day Special \u2014 $3.14 Off!'
         : 'Get Mathmatix+';
     const subtitle = isFeatureBlock
         ? `${errorData.feature} requires Mathmatix+.`
+        : isLimitReached
+        ? "You've used your free minutes this week. Upgrade for unlimited tutoring."
         : 'Unlimited 24/7 tutoring for your child. Cancel anytime.';
 
     // Price display
@@ -150,13 +164,22 @@ export async function showUpgradePrompt(errorData) {
                 <li>\u2713 All features unlocked</li>
             </ul>
             <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Get Mathmatix+</button>
-            <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>
+            ${isLimitReached
+                ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset weekly. Upgrade for uninterrupted learning.</div>'
+                : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>'
+            }
         </div>`;
     document.body.appendChild(modal);
 
     document.getElementById('upgrade-go').addEventListener('click', () => initiateUpgrade('unlimited'));
-    document.getElementById('upgrade-dismiss').addEventListener('click', () => modal.remove());
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    const dismissBtn = document.getElementById('upgrade-dismiss');
+    if (dismissBtn) {
+        dismissBtn.addEventListener('click', () => modal.remove());
+    }
+    // Only allow clicking outside to dismiss if it's not a usage limit block
+    if (!isLimitReached) {
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
 }
 
 /**
@@ -213,15 +236,7 @@ export function showNewUserPricingPrompt() {
         csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
     });
 
-    // Auto-dismiss after 15 seconds
-    setTimeout(() => {
-        if (banner.parentNode) {
-            banner.style.transition = 'opacity 0.3s';
-            banner.style.opacity = '0';
-            setTimeout(() => banner.remove(), 300);
-            csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
-        }
-    }, 15000);
+    // Don't auto-dismiss — let the user read at their own pace and dismiss manually
 }
 
 /**
