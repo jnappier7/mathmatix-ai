@@ -733,22 +733,25 @@
   function renderMathSteps(steps) {
     dom.canvasPlaceholder.classList.add('hidden');
 
-    // Clear previous steps with fade out
+    // Clear previous steps immediately (no wait) — then render new ones
     const existing = dom.mathDisplay.querySelectorAll('.vt-math-step');
-    existing.forEach((el, i) => {
-      el.style.transition = 'opacity 0.3s, transform 0.3s';
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(-10px)';
-      setTimeout(() => el.remove(), 300);
-    });
+    if (existing.length > 0) {
+      existing.forEach(el => {
+        el.style.transition = 'opacity 0.15s';
+        el.style.opacity = '0';
+      });
+      // Remove after brief fade
+      setTimeout(() => existing.forEach(el => el.remove()), 150);
+    }
 
-    // Render new steps with staggered animation
+    // Render new steps with minimal delay (150ms if clearing, 0 otherwise)
+    const renderDelay = existing.length > 0 ? 160 : 0;
     setTimeout(() => {
       steps.forEach((step, i) => {
         const el = document.createElement('div');
         el.className = 'vt-math-step';
         if (i === steps.length - 1) el.classList.add('highlighted');
-        el.style.animationDelay = `${i * 150}ms`;
+        el.style.animationDelay = `${i * 80}ms`; // Faster stagger
 
         let html = '';
         if (step.label) {
@@ -761,7 +764,6 @@
         } else if (step.text) {
           html += escapeHtml(step.text);
         } else if (step.label) {
-          // Fallback: show the label as content if no latex/text provided
           html += `<span style="color:#6b7594;font-style:italic;">${escapeHtml(step.label)}</span>`;
         }
         html += `</div>`;
@@ -774,18 +776,19 @@
         dom.mathDisplay.appendChild(el);
       });
 
-      // Render KaTeX
-      requestAnimationFrame(() => {
-        dom.mathDisplay.querySelectorAll('.vt-katex-render').forEach((el) => {
-          const latex = el.getAttribute('data-latex');
-          try {
-            if (window.katex) {
-              window.katex.render(latex, el, { displayMode: true, throwOnError: false });
-            }
-          } catch (e) {
-            el.textContent = latex;
+      // Render KaTeX immediately — no requestAnimationFrame delay needed
+      dom.mathDisplay.querySelectorAll('.vt-katex-render').forEach((el) => {
+        const latex = el.getAttribute('data-latex');
+        try {
+          if (window.katex) {
+            window.katex.render(latex, el, { displayMode: true, throwOnError: false });
           }
-        });
+        } catch (e) {
+          // Show the raw LaTeX as readable text rather than nothing
+          el.textContent = latex;
+          el.style.fontFamily = 'monospace';
+          el.style.color = '#4a5568';
+        }
       });
 
       // Scroll to newest step
@@ -793,7 +796,7 @@
         top: dom.canvasArea.scrollHeight,
         behavior: 'smooth'
       });
-    }, existing.length > 0 ? 350 : 0);
+    }, renderDelay);
   }
 
   // ═══════════════════════════════════════

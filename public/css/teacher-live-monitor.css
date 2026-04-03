@@ -1,0 +1,631 @@
+/* ============================================
+   LIVE CLASS MONITOR - Teacher dashboard styles
+   Real-time student grid + spy modal
+   ============================================ */
+
+/* ─── MONITOR TAB LAYOUT ─────────────────────────────────────────────────── */
+
+.monitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.monitor-controls select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.monitor-controls .btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.monitor-controls .btn-activate {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+.monitor-controls .btn-activate:hover {
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  transform: translateY(-1px);
+}
+
+.monitor-controls .btn-deactivate {
+  background: linear-gradient(135deg, #27ae60, #16a085);
+  color: #fff;
+}
+.monitor-controls .btn-deactivate:hover {
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Lock Status Indicator */
+.monitor-lock-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.monitor-lock-status.active {
+  background: #fce4e4;
+  color: #e74c3c;
+  animation: pulse-glow 2s infinite;
+}
+.monitor-lock-status.inactive {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
+}
+
+/* ─── LOCK SETTINGS PANEL ─────────────────────────────────────────────────── */
+
+.lock-settings-panel {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.lock-settings-panel h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.lock-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.lock-setting-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #5b6876;
+}
+
+.lock-setting-item input[type="checkbox"] {
+  accent-color: #27ae60;
+  width: 16px;
+  height: 16px;
+}
+
+.lock-setting-item input[type="text"],
+.lock-setting-item input[type="number"] {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 60px;
+}
+
+.lock-setting-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.lock-setting-item.full-width input[type="text"] {
+  flex: 1;
+  width: auto;
+}
+
+/* ─── COUNTERS ROW ────────────────────────────────────────────────────────── */
+
+#monitor-counters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.counter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.counter-chip.active { background: #e8f5e9; color: #27ae60; }
+.counter-chip.away { background: #fce4e4; color: #e74c3c; }
+.counter-chip.offline { background: #f5f5f5; color: #95a5a6; }
+.counter-chip.violations { background: #fff3cd; color: #856404; }
+
+.counter-chip i { font-size: 10px; }
+
+/* ─── STUDENT GRID ────────────────────────────────────────────────────────── */
+
+#monitor-student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.monitor-student-card {
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.monitor-student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Status-based border colors */
+.monitor-student-card.status-active { border-color: #16C86D; }
+.monitor-student-card.status-idle { border-color: #f39c12; }
+.monitor-student-card.status-tab-away { border-color: #e74c3c; border-style: dashed; }
+.monitor-student-card.status-off-task { border-color: #e74c3c; background: #fff5f5; }
+.monitor-student-card.status-disconnected { border-color: #bdc3c7; opacity: 0.7; }
+.monitor-student-card.status-offline { border-color: #ecf0f1; opacity: 0.5; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #27ae60, #16a085);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.student-status {
+  font-size: 12px;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.student-status i { font-size: 8px; }
+
+.card-body {
+  font-size: 12px;
+  color: #5b6876;
+}
+
+.activity-label,
+.message-preview,
+.progress-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.activity-label i,
+.message-preview i,
+.progress-label i {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.activity-label.muted { color: #bdc3c7; }
+
+.message-preview {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+.card-violation {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #fff3cd;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.violation-badge {
+  background: #f39c12;
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.violation-badge.critical {
+  background: #e74c3c;
+  animation: pulse-glow 1.5s infinite;
+}
+
+/* Empty state */
+.monitor-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+}
+
+.monitor-empty i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ─── SPY MODAL ───────────────────────────────────────────────────────────── */
+
+#spy-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.spy-modal-inner {
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.2s ease;
+}
+
+.spy-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #7f8c8d;
+  cursor: pointer;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.spy-close:hover {
+  background: #f0f0f0;
+  color: #2c3e50;
+}
+
+.spy-content {
+  padding: 24px;
+}
+
+.spy-loading {
+  text-align: center;
+  padding: 60px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+.spy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.spy-student-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.spy-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.spy-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.spy-status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.spy-status-badge.status-active { background: #e8f5e9; color: #27ae60; }
+.spy-status-badge.status-tab-away { background: #fce4e4; color: #e74c3c; }
+.spy-status-badge.status-idle { background: #fff8e1; color: #f39c12; }
+.spy-status-badge.status-disconnected,
+.spy-status-badge.status-offline { background: #f5f5f5; color: #95a5a6; }
+
+.spy-session-info {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.spy-session-info h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.spy-session-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #5b6876;
+  flex-wrap: wrap;
+}
+
+.spy-summary {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #5b6876;
+  line-height: 1.5;
+  border-left: 3px solid #27ae60;
+}
+
+.spy-no-session {
+  padding: 16px;
+  text-align: center;
+  color: #95a5a6;
+  font-size: 14px;
+}
+
+/* Live Chat Feed */
+.spy-chat-feed {
+  margin-bottom: 16px;
+}
+
+.spy-chat-feed h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.spy-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.spy-message {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.spy-message.user {
+  background: #e3f2fd;
+  margin-left: 20px;
+}
+
+.spy-message.assistant {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  margin-right: 20px;
+}
+
+.spy-message-role {
+  font-weight: 600;
+  font-size: 11px;
+  color: #7f8c8d;
+  text-transform: uppercase;
+}
+
+.spy-message-time {
+  float: right;
+  font-size: 11px;
+  color: #bdc3c7;
+}
+
+.spy-message-text {
+  margin-top: 4px;
+  line-height: 1.4;
+  color: #2c3e50;
+  word-break: break-word;
+}
+
+.spy-empty {
+  text-align: center;
+  padding: 24px;
+  color: #bdc3c7;
+}
+
+/* Violations List */
+.spy-violations {
+  margin-top: 16px;
+}
+
+.spy-violations h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+.spy-violations-list {
+  border: 1px solid #fce4e4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.spy-violation-item {
+  padding: 8px 14px;
+  border-bottom: 1px solid #fce4e4;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+}
+
+.spy-violation-item:last-child { border-bottom: none; }
+
+.violation-type {
+  background: #fff3cd;
+  color: #856404;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.violation-time {
+  color: #95a5a6;
+  font-size: 11px;
+}
+
+.violation-detail {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* ─── TOAST ───────────────────────────────────────────────────────────────── */
+
+.monitor-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10005;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideInRight 0.3s ease;
+}
+
+.monitor-toast.success { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.monitor-toast.error { background: #fce4e4; color: #e74c3c; border: 1px solid #f8d7d7; }
+.monitor-toast.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.monitor-toast.info { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+
+.monitor-toast.fade-out {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .monitor-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .monitor-controls select {
+    min-width: unset;
+    width: 100%;
+  }
+
+  #monitor-student-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spy-modal-inner {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .spy-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .spy-session-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #monitor-counters {
+    flex-direction: column;
+  }
+}

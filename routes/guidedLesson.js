@@ -7,6 +7,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
 const { callLLM, retryWithExponentialBackoff } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
+const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prerequisiteMapper');
 const logger = require('../utils/logger').child({ route: 'guidedLesson' });
 const {
@@ -144,7 +145,31 @@ ${phasePrompt}
             }).catch(err => logger.error('[GuidedLesson] AI time tracking error:', err));
         }
 
-        const aiResponseText = completion.choices[0].message.content.trim();
+        let aiResponseText = completion.choices[0].message.content.trim();
+
+        // IEP reading level enforcement
+        const iepReadingLevel = userProfile.iepPlan?.readingLevel || null;
+        if (iepReadingLevel) {
+            const readCheck = checkReadingLevel(aiResponseText, iepReadingLevel);
+            if (!readCheck.passes) {
+                logger.info(
+                    `[GuidedLesson] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+                );
+                try {
+                    const simplifyPrompt = buildSimplificationPrompt(aiResponseText, readCheck.targetGrade, userProfile.firstName || 'the student');
+                    const simplified = await callLLM("gpt-4o-mini", [{ role: 'system', content: simplifyPrompt }], {
+                        temperature: 0.3, max_tokens: 500
+                    });
+                    const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                    if (simplifiedText && simplifiedText.length > 20) {
+                        aiResponseText = simplifiedText;
+                        logger.info(`[GuidedLesson] Response simplified to target Grade ${readCheck.targetGrade}`);
+                    }
+                } catch (err) {
+                    logger.error('[GuidedLesson] Simplification failed:', err.message);
+                }
+            }
+        }
 
         let lessonState = 'continue';
         let cleanMessage = aiResponseText;
@@ -248,7 +273,33 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
             }).catch(err => logger.error('[GuidedLesson/Hint] AI time tracking error:', err));
         }
 
-        res.json({ hint: aiHint.choices[0].message.content.trim() });
+        let hintText = aiHint.choices[0].message.content.trim();
+
+        // IEP reading level enforcement
+        const hintReadingLevel = userProfile.iepPlan?.readingLevel || null;
+        if (hintReadingLevel) {
+            const readCheck = checkReadingLevel(hintText, hintReadingLevel);
+            if (!readCheck.passes) {
+                logger.info(
+                    `[GuidedLesson/Hint] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+                );
+                try {
+                    const simplifyPrompt = buildSimplificationPrompt(hintText, readCheck.targetGrade, userProfile.firstName || 'the student');
+                    const simplified = await callLLM("gpt-4o-mini", [{ role: 'system', content: simplifyPrompt }], {
+                        temperature: 0.3, max_tokens: 150
+                    });
+                    const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                    if (simplifiedText && simplifiedText.length > 20) {
+                        hintText = simplifiedText;
+                        logger.info(`[GuidedLesson/Hint] Hint simplified to target Grade ${readCheck.targetGrade}`);
+                    }
+                } catch (err) {
+                    logger.error('[GuidedLesson/Hint] Simplification failed:', err.message);
+                }
+            }
+        }
+
+        res.json({ hint: hintText });
     } catch (error) {
         logger.error('Error in /get-scaffolded-hint:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate hint. Please try again.' });

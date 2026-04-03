@@ -9,6 +9,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require('../utils/llmGateway');
+const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 const { openai } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
@@ -185,9 +186,42 @@ function extractMathSteps(text) {
         blocks.push(...parsed);
       }
     } catch (e) {
-      console.warn('[VoiceTutor] Failed to parse mathSteps block:', e.message);
+      // Try to fix common JSON issues from LLM output
+      let raw = match[1].trim();
+      try {
+        // Fix trailing commas before ] or }
+        raw = raw.replace(/,\s*([}\]])/g, '$1');
+        // Fix single quotes to double quotes
+        raw = raw.replace(/'/g, '"');
+        const retried = JSON.parse(raw);
+        if (Array.isArray(retried)) {
+          blocks.push(...retried);
+        }
+      } catch (_) {
+        console.warn('[VoiceTutor] Failed to parse mathSteps block (even after fix):', e.message);
+      }
     }
   }
+
+  // FALLBACK: If no <mathsteps> blocks found, try to extract LaTeX from the response
+  if (blocks.length === 0) {
+    const latexPatterns = [
+      /\$\$([^$]+)\$\$/g,       // $$...$$
+      /\\\[([^\]]+)\\\]/g,      // \[...\]
+      /\$([^$]+)\$/g,           // $...$
+    ];
+    for (const pattern of latexPatterns) {
+      let latexMatch;
+      while ((latexMatch = pattern.exec(text)) !== null) {
+        const latex = latexMatch[1].trim();
+        if (latex.length > 2 && /[=+\-*/^_{}\\]/.test(latex)) {
+          blocks.push({ label: '', latex });
+        }
+      }
+      if (blocks.length > 0) break;
+    }
+  }
+
   return blocks;
 }
 
@@ -391,10 +425,12 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
   // Get conversation history (last 12 messages for voice context)
+  // Use projection to only fetch the messages we need, not the entire conversation
   const conversation = await Conversation.findOne({ userId })
     .sort({ updatedAt: -1 })
+    .select({ messages: { $slice: -12 } })
     .lean();
-  const history = (conversation?.messages || []).slice(-12)
+  const history = (conversation?.messages || [])
     .filter(msg => msg.content && msg.content.trim().length > 0)
     .map(msg => ({
       role: msg.role === 'user' ? 'user' : 'assistant',
@@ -410,11 +446,39 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   ];
 
   const completion = await callLLM(VOICE_MODEL, messages, {
-    temperature: 0.7,
+    temperature: 0.45,
     max_tokens: 600
   });
 
-  return completion.choices[0].message.content.trim();
+  let responseText = completion.choices[0].message.content.trim();
+
+  // IEP reading level enforcement
+  const iepReadingLevel = user.iepPlan?.readingLevel || null;
+  if (iepReadingLevel) {
+    const readCheck = checkReadingLevel(responseText, iepReadingLevel);
+    if (!readCheck.passes) {
+      console.log(
+        `[VoiceTutor] Reading level violation for ${user.firstName}: ` +
+        `response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
+      );
+      try {
+        const simplifyPrompt = buildSimplificationPrompt(responseText, readCheck.targetGrade, user.firstName || 'the student');
+        const simplified = await callLLM(VOICE_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+          temperature: 0.3,
+          max_tokens: 600
+        });
+        const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+        if (simplifiedText && simplifiedText.length > 20) {
+          responseText = simplifiedText;
+          console.log(`[VoiceTutor] Response simplified to target Grade ${readCheck.targetGrade}`);
+        }
+      } catch (err) {
+        console.error('[VoiceTutor] Simplification failed:', err.message);
+      }
+    }
+  }
+
+  return responseText;
 }
 
 async function generateTTS(userId, responseText, preloadedUser) {

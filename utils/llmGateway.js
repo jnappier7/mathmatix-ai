@@ -72,7 +72,7 @@ async function chat(context, options = {}) {
     ];
 
     const model = options.model || DEFAULT_MODELS.chat;
-    const temperature = options.temperature || 0.7;
+    const temperature = options.temperature || 0.5;
     const maxTokens = options.maxTokens || 1500;
 
     // PII Anonymization: Strip identifiable information before sending to AI provider
@@ -130,7 +130,7 @@ async function chatStream(context, options = {}) {
     ];
 
     const model = options.model || DEFAULT_MODELS.chat;
-    const temperature = options.temperature || 0.7;
+    const temperature = options.temperature || 0.5;
     const maxTokens = options.maxTokens || 1500;
 
     // PII Anonymization: Strip identifiable information before sending to AI provider
@@ -166,7 +166,7 @@ async function gradeWithVision(context, options = {}) {
 
     const model = options.model || DEFAULT_MODELS.grading;
     const maxTokens = options.maxTokens || 1500;
-    const temperature = options.temperature || 0.7;
+    const temperature = options.temperature || 0.5;
 
     // PII Anonymization: Strip student info from grading prompts
     const anonContext = createAnonymizationContext(user || null);
@@ -222,7 +222,7 @@ async function gradeWithVision(context, options = {}) {
  */
 async function reason(prompt, options = {}) {
     const model = options.model || DEFAULT_MODELS.reasoning;
-    const temperature = options.temperature || 0.7;
+    const temperature = options.temperature || 0.5;
     const maxTokens = options.maxTokens || 1000;
 
     // PII Anonymization: Strip any PII from reasoning prompts
