@@ -384,6 +384,121 @@ router.get('/portal', isAuthenticated, async (req, res) => {
 });
 
 // =====================================================
+// POST /cancel
+// Cancel subscription at end of current billing period (not immediate)
+// Body: { reason?: string }
+// =====================================================
+router.post('/cancel', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.stripeSubscriptionId) {
+      return res.status(400).json({ message: 'No active subscription to cancel.' });
+    }
+
+    // Cancel at period end — user keeps access until current billing period expires
+    const subscription = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      cancel_at_period_end: true
+    });
+
+    // Track cancellation reason
+    const { reason } = req.body;
+    if (reason) {
+      user.cancellationReason = reason.slice(0, 500);
+    }
+    user.cancellationDate = new Date();
+    await user.save();
+
+    console.log(`[Billing] ${user.firstName} ${user.lastName} scheduled cancellation (reason: ${reason || 'none'})`);
+
+    res.json({
+      success: true,
+      message: 'Your subscription has been cancelled. You will keep access until the end of your current billing period.',
+      accessUntil: subscription.current_period_end
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : null
+    });
+  } catch (error) {
+    console.error('[Billing] Cancel error:', error);
+    res.status(500).json({ message: 'Failed to cancel subscription. Please try again or contact support.' });
+  }
+});
+
+// =====================================================
+// POST /reactivate
+// Undo a pending cancellation (re-enable auto-renew)
+// =====================================================
+router.post('/reactivate', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.stripeSubscriptionId) {
+      return res.status(400).json({ message: 'No subscription to reactivate.' });
+    }
+
+    await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      cancel_at_period_end: false
+    });
+
+    user.cancellationReason = null;
+    user.cancellationDate = null;
+    await user.save();
+
+    console.log(`[Billing] ${user.firstName} ${user.lastName} reactivated subscription`);
+
+    res.json({
+      success: true,
+      message: 'Your subscription has been reactivated! You will continue to be billed monthly.'
+    });
+  } catch (error) {
+    console.error('[Billing] Reactivate error:', error);
+    res.status(500).json({ message: 'Failed to reactivate subscription.' });
+  }
+});
+
+// =====================================================
+// GET /subscription-details
+// Returns detailed subscription info for the manage subscription UI
+// =====================================================
+router.get('/subscription-details', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.stripeSubscriptionId) {
+      return res.json({
+        success: true,
+        hasSubscription: false,
+        tier: user.subscriptionTier || 'free'
+      });
+    }
+
+    const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+
+    res.json({
+      success: true,
+      hasSubscription: true,
+      tier: user.subscriptionTier,
+      status: subscription.status,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodEnd: subscription.current_period_end
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : null,
+      startDate: user.subscriptionStartDate,
+      cancellationReason: user.cancellationReason
+    });
+  } catch (error) {
+    console.error('[Billing] Subscription details error:', error);
+    res.status(500).json({ message: 'Failed to fetch subscription details.' });
+  }
+});
+
+// =====================================================
 // GET /status
 // Returns subscription status and pack usage info
 // =====================================================

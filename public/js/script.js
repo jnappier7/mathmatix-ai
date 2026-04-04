@@ -6,7 +6,7 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
-import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade } from './modules/billing.js';
+import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
 import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoReadAloud, getVoiceDefaults } from './modules/age-tier.js';
@@ -265,6 +265,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Check billing status (free tier remaining time)
             checkBillingStatus();
+
+            // Wire up "Manage Subscription" button in hamburger menu
+            const manageSubLink = document.getElementById('manage-subscription-link');
+            if (manageSubLink) {
+                manageSubLink.addEventListener('click', () => {
+                    const menu = document.getElementById('header-dropdown-menu');
+                    if (menu) menu.classList.remove('is-open');
+                    showManageSubscription();
+                });
+            }
 
             // Gate Voice Tutor button for non-premium users
             gateVoiceTutorButton(currentUser);

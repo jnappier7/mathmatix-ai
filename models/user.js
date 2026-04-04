@@ -645,6 +645,9 @@ const userSchema = new Schema({
   freeCoursesUsed: { type: Number, default: 0 },
   // Tracks whether user has seen the pricing page (shown once after signup)
   hasSeenPricing: { type: Boolean, default: false },
+  // Subscription cancellation tracking
+  cancellationReason: { type: String, default: null },
+  cancellationDate: { type: Date, default: null },
 
   /* Affiliate / Referral tracking */
   referredByAffiliateId: { type: Schema.Types.ObjectId, ref: 'Affiliate', default: null },  // Which affiliate referred this user

@@ -33,6 +33,12 @@ export async function checkBillingStatus() {
             if (upgradeLink) upgradeLink.style.display = '';
         }
 
+        // Show "Manage Subscription" link for subscribed users
+        if (data.tier === 'unlimited') {
+            const manageLink = document.getElementById('manage-subscription-link');
+            if (manageLink) manageLink.style.display = '';
+        }
+
         // Show time indicator for students on free/pack tiers only.
         // Teachers, parents, and admins have unlimited access (Infinity) — skip indicator for them.
         if (data.tier !== 'unlimited' && data.usage && data.usage.secondsRemaining !== null && isFinite(data.usage.secondsRemaining)) {
@@ -237,6 +243,147 @@ export function showNewUserPricingPrompt() {
     });
 
     // Don't auto-dismiss — let the user read at their own pace and dismiss manually
+}
+
+/**
+ * Show the subscription management modal (cancel, reactivate, or go to Stripe portal).
+ * Accessible from the hamburger menu for subscribed users.
+ */
+export async function showManageSubscription() {
+    const existing = document.getElementById('manage-sub-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'manage-sub-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    modal.innerHTML = `
+        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:440px;width:92%;color:#fff;border:1px solid #333;text-align:center;">
+            <h2 style="margin:0 0 8px;font-size:20px;">Manage Subscription</h2>
+            <p style="color:#888;margin:0 0 20px;font-size:14px;">Loading your subscription details...</p>
+            <div id="manage-sub-content" style="min-height:100px;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-spinner fa-spin" style="font-size:24px;color:#7b2ff7;"></i>
+            </div>
+            <button id="manage-sub-close" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Close</button>
+        </div>`;
+    document.body.appendChild(modal);
+
+    document.getElementById('manage-sub-close').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+    try {
+        const res = await csrfFetch('/api/billing/subscription-details', { credentials: 'include' });
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+        const content = document.getElementById('manage-sub-content');
+        if (!content) return;
+
+        if (!data.hasSubscription) {
+            content.innerHTML = `
+                <div style="text-align:center;">
+                    <p style="color:#aaa;margin-bottom:16px;">You don't have an active subscription.</p>
+                    <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;">View Plans</a>
+                </div>`;
+            return;
+        }
+
+        const periodEnd = data.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null;
+        const periodEndStr = periodEnd ? periodEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+
+        if (data.cancelAtPeriodEnd) {
+            // Subscription is set to cancel — show reactivation option
+            content.innerHTML = `
+                <div style="text-align:left;">
+                    <div style="background:#2a1a1a;border:1px solid #ff6b6b;border-radius:10px;padding:16px;margin-bottom:16px;">
+                        <div style="font-size:14px;color:#ff6b6b;font-weight:600;margin-bottom:4px;"><i class="fas fa-exclamation-triangle"></i> Cancellation Scheduled</div>
+                        <div style="font-size:13px;color:#aaa;">Your Mathmatix+ access ends on <strong style="color:#fff;">${periodEndStr}</strong>. You'll revert to the free plan after that date.</div>
+                    </div>
+                    <button id="manage-sub-reactivate" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;"><i class="fas fa-undo"></i> Keep My Subscription</button>
+                    <p style="color:#666;font-size:12px;text-align:center;">Changed your mind? Reactivate to keep unlimited tutoring.</p>
+                </div>`;
+            document.getElementById('manage-sub-reactivate').addEventListener('click', async (e) => {
+                e.target.disabled = true;
+                e.target.textContent = 'Reactivating...';
+                try {
+                    const r = await csrfFetch('/api/billing/reactivate', { method: 'POST', credentials: 'include' });
+                    const d = await r.json();
+                    if (r.ok) {
+                        showToast('Subscription reactivated!');
+                        modal.remove();
+                        // Update nav — hide manage link if needed, refresh billing status
+                        checkBillingStatus();
+                    } else {
+                        showToast(d.message || 'Failed to reactivate.');
+                        e.target.disabled = false;
+                        e.target.textContent = 'Keep My Subscription';
+                    }
+                } catch { showToast('Something went wrong.'); e.target.disabled = false; e.target.textContent = 'Keep My Subscription'; }
+            });
+        } else {
+            // Active subscription — show cancel option
+            content.innerHTML = `
+                <div style="text-align:left;">
+                    <div style="background:#1a2a1a;border:1px solid #4caf50;border-radius:10px;padding:16px;margin-bottom:16px;">
+                        <div style="font-size:14px;color:#4caf50;font-weight:600;margin-bottom:4px;"><i class="fas fa-check-circle"></i> Mathmatix+ Active</div>
+                        <div style="font-size:13px;color:#aaa;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></div>
+                        <div style="font-size:13px;color:#aaa;">Plan: <strong style="color:#fff;">$9.95/month</strong></div>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="font-size:13px;color:#aaa;display:block;margin-bottom:6px;">Reason for cancelling (optional):</label>
+                        <select id="cancel-reason-select" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0f0f23;color:#fff;font-size:13px;">
+                            <option value="">Select a reason...</option>
+                            <option value="too_expensive">Too expensive right now</option>
+                            <option value="not_using">Not using it enough</option>
+                            <option value="seasonal_break">Taking a break (summer, travel, etc.)</option>
+                            <option value="switching">Switching to another service</option>
+                            <option value="child_doesnt_like">My child doesn't want to use it</option>
+                            <option value="technical_issues">Technical issues</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <button id="manage-sub-cancel" style="background:#ff4444;color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;">Cancel Subscription</button>
+                    <p style="color:#666;font-size:12px;text-align:center;">You'll keep access until ${periodEndStr}. No further charges.</p>
+                    <hr style="border:none;border-top:1px solid #333;margin:16px 0;">
+                    <button id="manage-sub-portal" style="background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;"><i class="fas fa-external-link-alt"></i> Manage Billing on Stripe</button>
+                </div>`;
+
+            document.getElementById('manage-sub-cancel').addEventListener('click', async (e) => {
+                const reason = document.getElementById('cancel-reason-select').value;
+                if (!confirm('Are you sure you want to cancel? You will keep access until ' + periodEndStr + '.')) return;
+                e.target.disabled = true;
+                e.target.textContent = 'Cancelling...';
+                try {
+                    const r = await csrfFetch('/api/billing/cancel', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reason }),
+                        credentials: 'include'
+                    });
+                    const d = await r.json();
+                    if (r.ok) {
+                        showToast('Subscription cancelled. You have access until ' + periodEndStr + '.');
+                        modal.remove();
+                        checkBillingStatus();
+                    } else {
+                        showToast(d.message || 'Failed to cancel.');
+                        e.target.disabled = false;
+                        e.target.textContent = 'Cancel Subscription';
+                    }
+                } catch { showToast('Something went wrong.'); e.target.disabled = false; e.target.textContent = 'Cancel Subscription'; }
+            });
+
+            document.getElementById('manage-sub-portal').addEventListener('click', async () => {
+                try {
+                    const r = await csrfFetch('/api/billing/portal', { credentials: 'include' });
+                    if (!r.ok) throw new Error();
+                    const d = await r.json();
+                    window.location.href = d.url;
+                } catch { showToast('Unable to open billing portal.'); }
+            });
+        }
+    } catch {
+        const content = document.getElementById('manage-sub-content');
+        if (content) content.innerHTML = '<p style="color:#ff6b6b;">Failed to load subscription details. Please try again.</p>';
+    }
 }
 
 /**
