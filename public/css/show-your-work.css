@@ -162,6 +162,27 @@
     color: #4f46e5;
 }
 
+.syw-ask-tutor-problem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 8px 14px;
+    background: #eef2ff;
+    color: #4f46e5;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.syw-ask-tutor-problem:hover {
+    background: #e0e7ff;
+    border-color: #a5b4fc;
+}
+
 .syw-problem-statement {
     font-size: 13px;
     color: #6b7280;

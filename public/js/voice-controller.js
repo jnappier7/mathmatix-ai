@@ -89,8 +89,10 @@ class VoiceController {
     // ============================================
 
     createVoiceUI() {
-        // Voice chat orb — enabled for premium users
-        const voiceEnabled = !window.currentUser || window.currentUser?.preferences?.voiceChatEnabled !== false;
+        // TEMPORARILY DISABLED: Voice chat orb hidden until feature is perfected
+        // Check user preference for voice chat enabled (default to false - disabled for now)
+        const voiceEnabled = false; // Temporarily disabled
+        // const voiceEnabled = !window.currentUser || window.currentUser?.preferences?.voiceChatEnabled !== false;
 
         // Create floating voice button (like GPT's orb)
         const voiceContainer = document.createElement('div');
