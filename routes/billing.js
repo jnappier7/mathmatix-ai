@@ -12,6 +12,11 @@
 //   POST /api/billing/webhook — Stripe event handler (raw body, no auth)
 //   GET  /api/billing/portal — redirect to Stripe Customer Portal
 //   GET  /api/billing/status — current subscription status + usage
+//   POST /api/billing/cancel — cancel subscription at period end
+//   POST /api/billing/reactivate — undo pending cancellation
+//   POST /api/billing/pause — pause subscription for 1-3 months
+//   POST /api/billing/resume — resume a paused subscription
+//   GET  /api/billing/subscription-details — detailed subscription info for manage UI
 
 const express = require('express');
 const router = express.Router();
@@ -19,6 +24,7 @@ const User = require('../models/user');
 const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
+const { sendCancellationConfirmation } = require('../utils/emailService');
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
@@ -411,14 +417,25 @@ router.post('/cancel', isAuthenticated, async (req, res) => {
     user.cancellationDate = new Date();
     await user.save();
 
+    const accessUntilDate = subscription.current_period_end
+      ? new Date(subscription.current_period_end * 1000)
+      : null;
+    const accessUntilStr = accessUntilDate
+      ? accessUntilDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      : null;
+
     console.log(`[Billing] ${user.firstName} ${user.lastName} scheduled cancellation (reason: ${reason || 'none'})`);
+
+    // Send cancellation confirmation email (best-effort, don't block response)
+    if (user.email) {
+      sendCancellationConfirmation(user.email, user.firstName || 'there', accessUntilStr || 'the end of your billing period')
+        .catch(err => console.error('[Billing] Cancellation email failed:', err.message));
+    }
 
     res.json({
       success: true,
       message: 'Your subscription has been cancelled. You will keep access until the end of your current billing period.',
-      accessUntil: subscription.current_period_end
-        ? new Date(subscription.current_period_end * 1000).toISOString()
-        : null
+      accessUntil: accessUntilDate ? accessUntilDate.toISOString() : null
     });
   } catch (error) {
     console.error('[Billing] Cancel error:', error);
@@ -461,6 +478,82 @@ router.post('/reactivate', isAuthenticated, async (req, res) => {
 });
 
 // =====================================================
+// POST /pause
+// Pause subscription for 1-3 months using Stripe pause_collection
+// Body: { months: 1|2|3 }
+// =====================================================
+router.post('/pause', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.stripeSubscriptionId) {
+      return res.status(400).json({ message: 'No active subscription to pause.' });
+    }
+
+    const months = parseInt(req.body.months);
+    if (!months || months < 1 || months > 3) {
+      return res.status(400).json({ message: 'Please choose 1, 2, or 3 months to pause.' });
+    }
+
+    // Calculate resume date (months from now)
+    const resumeDate = new Date();
+    resumeDate.setMonth(resumeDate.getMonth() + months);
+
+    // Pause collection — keeps subscription active but skips invoices until resume date
+    await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      pause_collection: {
+        behavior: 'void',  // Skip invoices during pause (don't charge)
+        resumes_at: Math.floor(resumeDate.getTime() / 1000)
+      }
+    });
+
+    console.log(`[Billing] ${user.firstName} ${user.lastName} paused subscription for ${months} month(s), resumes ${resumeDate.toISOString().slice(0, 10)}`);
+
+    res.json({
+      success: true,
+      message: `Your subscription has been paused for ${months} month${months > 1 ? 's' : ''}. It will automatically resume on ${resumeDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.`,
+      resumesAt: resumeDate.toISOString()
+    });
+  } catch (error) {
+    console.error('[Billing] Pause error:', error);
+    res.status(500).json({ message: 'Failed to pause subscription. Please try again or contact support.' });
+  }
+});
+
+// =====================================================
+// POST /resume
+// Resume a paused subscription immediately
+// =====================================================
+router.post('/resume', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.stripeSubscriptionId) {
+      return res.status(400).json({ message: 'No subscription to resume.' });
+    }
+
+    // Remove pause — billing resumes immediately
+    await stripe.subscriptions.update(user.stripeSubscriptionId, {
+      pause_collection: ''  // Empty string clears the pause
+    });
+
+    console.log(`[Billing] ${user.firstName} ${user.lastName} resumed paused subscription`);
+
+    res.json({
+      success: true,
+      message: 'Your subscription has been resumed! Unlimited tutoring is back.'
+    });
+  } catch (error) {
+    console.error('[Billing] Resume error:', error);
+    res.status(500).json({ message: 'Failed to resume subscription.' });
+  }
+});
+
+// =====================================================
 // GET /subscription-details
 // Returns detailed subscription info for the manage subscription UI
 // =====================================================
@@ -480,6 +573,12 @@ router.get('/subscription-details', isAuthenticated, async (req, res) => {
 
     const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
 
+    // Check if subscription is paused
+    const isPaused = !!(subscription.pause_collection && subscription.pause_collection.resumes_at);
+    const resumesAt = isPaused
+      ? new Date(subscription.pause_collection.resumes_at * 1000).toISOString()
+      : null;
+
     res.json({
       success: true,
       hasSubscription: true,
@@ -490,7 +589,9 @@ router.get('/subscription-details', isAuthenticated, async (req, res) => {
         ? new Date(subscription.current_period_end * 1000).toISOString()
         : null,
       startDate: user.subscriptionStartDate,
-      cancellationReason: user.cancellationReason
+      cancellationReason: user.cancellationReason,
+      isPaused,
+      resumesAt
     });
   } catch (error) {
     console.error('[Billing] Subscription details error:', error);

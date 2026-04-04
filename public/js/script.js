@@ -13,8 +13,9 @@ import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoRe
 import { createAssessmentSystem } from './modules/assessment.js';
 // Whiteboard is shelved for beta — see modules/whiteboard.js to re-enable
 
-// Expose showUpgradePrompt globally so courseCatalog.js (non-module) can call it
+// Expose billing functions globally so non-module scripts (courseCatalog.js, settings.js) can call them
 window.showUpgradePrompt = showUpgradePrompt;
+window.showManageSubscription = showManageSubscription;
 
 // --- Global Variables ---
 let currentUser = null;

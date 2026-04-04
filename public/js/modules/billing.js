@@ -289,7 +289,42 @@ export async function showManageSubscription() {
         const periodEnd = data.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null;
         const periodEndStr = periodEnd ? periodEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
 
-        if (data.cancelAtPeriodEnd) {
+        // Support link used across all states
+        const supportLink = '<a href="/contact-support.html" style="color:#00d4ff;text-decoration:underline;font-size:12px;" target="_blank"><i class="fas fa-life-ring"></i> Having an issue? Contact support instead</a>';
+
+        if (data.isPaused) {
+            // Subscription is paused — show resume option
+            const resumeDate = data.resumesAt ? new Date(data.resumesAt) : null;
+            const resumeDateStr = resumeDate ? resumeDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+            content.innerHTML = `
+                <div style="text-align:left;">
+                    <div style="background:#1a1a2a;border:1px solid #ffaa00;border-radius:10px;padding:16px;margin-bottom:16px;">
+                        <div style="font-size:14px;color:#ffaa00;font-weight:600;margin-bottom:4px;"><i class="fas fa-pause-circle"></i> Subscription Paused</div>
+                        <div style="font-size:13px;color:#aaa;">Your subscription is paused. Billing resumes automatically on <strong style="color:#fff;">${resumeDateStr}</strong>.</div>
+                        <div style="font-size:13px;color:#aaa;margin-top:4px;">You still have access to free-tier features (30 min/week) while paused.</div>
+                    </div>
+                    <button id="manage-sub-resume" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;"><i class="fas fa-play"></i> Resume Now</button>
+                    <p style="color:#666;font-size:12px;text-align:center;">Resume early to get unlimited tutoring back immediately.</p>
+                    <div style="text-align:center;margin-top:12px;">${supportLink}</div>
+                </div>`;
+            document.getElementById('manage-sub-resume').addEventListener('click', async (e) => {
+                e.target.disabled = true;
+                e.target.textContent = 'Resuming...';
+                try {
+                    const r = await csrfFetch('/api/billing/resume', { method: 'POST', credentials: 'include' });
+                    if (r.ok) {
+                        showToast('Subscription resumed! Unlimited tutoring is back.');
+                        modal.remove();
+                        checkBillingStatus();
+                    } else {
+                        const d = await r.json();
+                        showToast(d.message || 'Failed to resume.');
+                        e.target.disabled = false;
+                        e.target.innerHTML = '<i class="fas fa-play"></i> Resume Now';
+                    }
+                } catch { showToast('Something went wrong.'); e.target.disabled = false; e.target.innerHTML = '<i class="fas fa-play"></i> Resume Now'; }
+            });
+        } else if (data.cancelAtPeriodEnd) {
             // Subscription is set to cancel — show reactivation option
             content.innerHTML = `
                 <div style="text-align:left;">
@@ -299,6 +334,7 @@ export async function showManageSubscription() {
                     </div>
                     <button id="manage-sub-reactivate" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;"><i class="fas fa-undo"></i> Keep My Subscription</button>
                     <p style="color:#666;font-size:12px;text-align:center;">Changed your mind? Reactivate to keep unlimited tutoring.</p>
+                    <div style="text-align:center;margin-top:12px;">${supportLink}</div>
                 </div>`;
             document.getElementById('manage-sub-reactivate').addEventListener('click', async (e) => {
                 e.target.disabled = true;
@@ -309,7 +345,6 @@ export async function showManageSubscription() {
                     if (r.ok) {
                         showToast('Subscription reactivated!');
                         modal.remove();
-                        // Update nav — hide manage link if needed, refresh billing status
                         checkBillingStatus();
                     } else {
                         showToast(d.message || 'Failed to reactivate.');
@@ -319,7 +354,7 @@ export async function showManageSubscription() {
                 } catch { showToast('Something went wrong.'); e.target.disabled = false; e.target.textContent = 'Keep My Subscription'; }
             });
         } else {
-            // Active subscription — show cancel option
+            // Active subscription — show pause, cancel, and portal options
             content.innerHTML = `
                 <div style="text-align:left;">
                     <div style="background:#1a2a1a;border:1px solid #4caf50;border-radius:10px;padding:16px;margin-bottom:16px;">
@@ -327,6 +362,21 @@ export async function showManageSubscription() {
                         <div style="font-size:13px;color:#aaa;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></div>
                         <div style="font-size:13px;color:#aaa;">Plan: <strong style="color:#fff;">$9.95/month</strong></div>
                     </div>
+
+                    <!-- Pause Option -->
+                    <div style="background:#0f0f23;border:1px solid #333;border-radius:10px;padding:16px;margin-bottom:16px;">
+                        <div style="font-size:14px;color:#ffaa00;font-weight:600;margin-bottom:8px;"><i class="fas fa-pause-circle"></i> Need a Break?</div>
+                        <p style="color:#aaa;font-size:13px;margin:0 0 10px;line-height:1.5;">Pause your subscription instead of cancelling. No charges while paused, and your child's progress is saved.</p>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <button class="manage-sub-pause-btn" data-months="1" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">1 Month</button>
+                            <button class="manage-sub-pause-btn" data-months="2" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">2 Months</button>
+                            <button class="manage-sub-pause-btn" data-months="3" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">3 Months</button>
+                        </div>
+                    </div>
+
+                    <hr style="border:none;border-top:1px solid #333;margin:16px 0;">
+
+                    <!-- Cancel Option -->
                     <div style="margin-bottom:16px;">
                         <label style="font-size:13px;color:#aaa;display:block;margin-bottom:6px;">Reason for cancelling (optional):</label>
                         <select id="cancel-reason-select" style="width:100%;padding:10px;border-radius:8px;border:1px solid #333;background:#0f0f23;color:#fff;font-size:13px;">
@@ -342,9 +392,41 @@ export async function showManageSubscription() {
                     </div>
                     <button id="manage-sub-cancel" style="background:#ff4444;color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;">Cancel Subscription</button>
                     <p style="color:#666;font-size:12px;text-align:center;">You'll keep access until ${periodEndStr}. No further charges.</p>
+
                     <hr style="border:none;border-top:1px solid #333;margin:16px 0;">
-                    <button id="manage-sub-portal" style="background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;width:100%;"><i class="fas fa-external-link-alt"></i> Manage Billing on Stripe</button>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button id="manage-sub-portal" style="flex:1;background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 16px;border-radius:8px;font-size:13px;cursor:pointer;"><i class="fas fa-external-link-alt"></i> Billing Portal</button>
+                        <a href="/contact-support.html" target="_blank" style="flex:1;background:transparent;color:#aaa;border:1px solid #333;padding:10px 16px;border-radius:8px;font-size:13px;cursor:pointer;text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;"><i class="fas fa-life-ring"></i> Get Help</a>
+                    </div>
                 </div>`;
+
+            // Pause button handlers
+            document.querySelectorAll('.manage-sub-pause-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const months = parseInt(e.target.dataset.months);
+                    if (!confirm(`Pause your subscription for ${months} month${months > 1 ? 's' : ''}? Billing will resume automatically after that.`)) return;
+                    e.target.disabled = true;
+                    e.target.textContent = 'Pausing...';
+                    try {
+                        const r = await csrfFetch('/api/billing/pause', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ months }),
+                            credentials: 'include'
+                        });
+                        const d = await r.json();
+                        if (r.ok) {
+                            showToast(d.message || 'Subscription paused!');
+                            modal.remove();
+                            checkBillingStatus();
+                        } else {
+                            showToast(d.message || 'Failed to pause.');
+                            e.target.disabled = false;
+                            e.target.textContent = `${months} Month${months > 1 ? 's' : ''}`;
+                        }
+                    } catch { showToast('Something went wrong.'); e.target.disabled = false; e.target.textContent = `${months} Month${months > 1 ? 's' : ''}`; }
+                });
+            });
 
             document.getElementById('manage-sub-cancel').addEventListener('click', async (e) => {
                 const reason = document.getElementById('cancel-reason-select').value;
@@ -360,7 +442,7 @@ export async function showManageSubscription() {
                     });
                     const d = await r.json();
                     if (r.ok) {
-                        showToast('Subscription cancelled. You have access until ' + periodEndStr + '.');
+                        showToast('Subscription cancelled. You have access until ' + periodEndStr + '. Check your email for confirmation.');
                         modal.remove();
                         checkBillingStatus();
                     } else {
