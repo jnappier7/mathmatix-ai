@@ -370,6 +370,43 @@ class ShowYourWorkManager {
 
         // Add snippet to chat
         this.addWorkSnippetToChat(result);
+
+        // If there are unsure problems, auto-send a ghost message to the tutor
+        // so the conversation picks up immediately when the student returns to chat
+        const hasUnsure = (result.problems || []).some(p => p.isCorrect === null);
+        if (hasUnsure) {
+            this.sendGhostMessage(result);
+        }
+    }
+
+    /**
+     * Send a silent message to the tutor with grading context so the
+     * conversation picks up immediately when the student closes Show My Work.
+     */
+    sendGhostMessage(result) {
+        const unsure = (result.problems || []).filter(p => p.isCorrect === null);
+        const incorrect = (result.problems || []).filter(p => p.isCorrect === false);
+
+        let parts = [`I just submitted my work (${result.correctCount}/${result.problemCount} correct).`];
+        if (unsure.length > 0) {
+            parts.push(`You weren't sure about problem${unsure.length > 1 ? 's' : ''} ${unsure.map(p => '#' + p.problemNumber).join(', ')} — can we go over ${unsure.length > 1 ? 'those' : 'that one'} together?`);
+        }
+        if (incorrect.length > 0) {
+            parts.push(`I also got ${incorrect.map(p => '#' + p.problemNumber).join(', ')} wrong.`);
+        }
+
+        const msg = parts.join(' ');
+        const userInput = document.getElementById('user-input');
+        if (userInput) {
+            userInput.textContent = msg;
+            userInput.dispatchEvent(new Event('input', { bubbles: true }));
+            setTimeout(() => {
+                const sendBtn = document.getElementById('send-button');
+                if (sendBtn && !sendBtn.disabled) {
+                    sendBtn.click();
+                }
+            }, 100);
+        }
     }
 
     renderProblemCard(problem) {
@@ -655,7 +692,7 @@ class ShowYourWorkManager {
             </div>
             <div class="work-snippet-body">
                 <div class="work-snippet-details">
-                    <div class="work-snippet-counts">${result.correctCount}/${result.problemCount} correct</div>
+                    <div class="work-snippet-counts">${result.correctCount}/${result.problemCount} correct${(result.problems || []).some(p => p.isCorrect === null) ? ' · ' + (result.problems || []).filter(p => p.isCorrect === null).length + ' to discuss' : ''}</div>
                     <div class="work-snippet-feedback">${this.escapeHtml(feedbackPreview)}</div>
                     <div class="work-snippet-xp">+${result.xpEarned || 0} XP</div>
                 </div>
@@ -682,24 +719,39 @@ class ShowYourWorkManager {
         // The tutor already has gradingContext in its system prompt, so
         // it knows the details — the student just needs to reference the work.
         const incorrectProblems = (r.problems || [])
-            .filter(p => !p.isCorrect)
+            .filter(p => p.isCorrect === false)
+            .map(p => `#${p.problemNumber}`)
+            .join(', ');
+
+        const unsureProblems = (r.problems || [])
+            .filter(p => p.isCorrect === null || p.isCorrect === undefined)
             .map(p => `#${p.problemNumber}`)
             .join(', ');
 
         let msg;
-        if (incorrectProblems) {
+        if (unsureProblems && incorrectProblems) {
+            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. Can you help me with the ones I got wrong (${incorrectProblems})? Also, you weren't sure about ${unsureProblems} — can we go over those together?`;
+        } else if (unsureProblems) {
+            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. You weren't sure about ${unsureProblems} — can we go over those together?`;
+        } else if (incorrectProblems) {
             msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. Can you help me with the ones I got wrong? (${incorrectProblems})`;
         } else {
             msg = `I just checked my work and got them all right! What should I work on next?`;
         }
 
-        // The chat input is a contenteditable div, not an <input>/<textarea>,
-        // so we must set textContent (not .value) for the text to appear.
+        // Auto-send the message so the tutor picks up immediately
         const userInput = document.getElementById('user-input');
         if (userInput) {
             userInput.textContent = msg;
             userInput.dispatchEvent(new Event('input', { bubbles: true }));
-            userInput.focus();
+
+            // Trigger send after a brief delay so the input registers
+            setTimeout(() => {
+                const sendBtn = document.getElementById('send-button');
+                if (sendBtn && !sendBtn.disabled) {
+                    sendBtn.click();
+                }
+            }, 100);
         }
     }
 
