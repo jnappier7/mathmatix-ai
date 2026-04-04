@@ -674,26 +674,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             .filter(msg => msg.role === 'assistant' && msg.reaction)
             .map(msg => ({ content: msg.content.substring(0, 150), reaction: msg.reaction }));
 
-        // DIRECTIVE 2: Extract fluency profile for adaptive difficulty
-        let fluencyContext = null;
-        if (user.fluencyProfile) {
-            const avgFluencyZScore = user.fluencyProfile.averageFluencyZScore || 0;
-            const speedLevel = avgFluencyZScore < -1.0 ? 'fast'
-                            : avgFluencyZScore > 1.0 ? 'slow'
-                            : 'normal';
-
-            // Check for IEP extended time accommodation
-            const hasExtendedTime = user.iepPlan?.accommodations?.extendedTime || false;
-
-            fluencyContext = {
-                fluencyZScore: avgFluencyZScore,
-                speedLevel,
-                readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0,
-                iepExtendedTime: hasExtendedTime
-            };
-
-            console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}${hasExtendedTime ? ', IEP Extended Time (1.5x)' : ''}`);
-        }
+        // Fluency context: shelved (no real data to drive adaptive difficulty)
+        const fluencyContext = null;
 
         // Build conversation context if session has a specific topic/name
         let conversationContextForPrompt = null;
@@ -1789,22 +1771,7 @@ async function handleGreetingRequest(req, res, userId) {
                 requiredAccuracy: user.masteryProgress.activeBadge.requiredAccuracy
             } : null;
 
-            // Build fluency context for greeting (same as regular chat)
-            let greetingFluencyContext = null;
-            if (user.fluencyProfile) {
-                const avgFluencyZScore = user.fluencyProfile.averageFluencyZScore || 0;
-                const speedLevel = avgFluencyZScore < -1.0 ? 'fast'
-                                : avgFluencyZScore > 1.0 ? 'slow'
-                                : 'normal';
-                greetingFluencyContext = {
-                    fluencyZScore: avgFluencyZScore,
-                    speedLevel,
-                    readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0,
-                    iepExtendedTime: user.iepPlan?.accommodations?.extendedTime || false
-                };
-            }
-
-            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], greetingFluencyContext, null);
+            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], null, null);
 
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
