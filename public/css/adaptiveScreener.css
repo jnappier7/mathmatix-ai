@@ -931,3 +931,114 @@
     opacity: 0.5;
   }
 }
+
+/* ===========================================================================
+   DARK MODE SUPPORT
+   =========================================================================== */
+
+[data-theme="dark"] .info-box {
+  background: var(--clr-bg-subtle, #141E29);
+}
+
+[data-theme="dark"] .info-box h3 {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .info-box li {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .problem-text {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .stat-label {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .stat-value {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .results-content {
+  background: var(--clr-bg-subtle, #141E29);
+}
+
+[data-theme="dark"] .results-hero h1 {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .results-subtitle {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .results-skills h3 {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .skill-list {
+  background: var(--clr-bg-light, #0F1A24);
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .skill-list.empty {
+  color: var(--text-secondary, #8B9AAB);
+}
+
+[data-theme="dark"] .category-header.mastered {
+  background: var(--clr-success-green-light, #0F2D1A);
+  color: var(--clr-success-green, #1AD97A);
+}
+
+[data-theme="dark"] .category-header.learning {
+  background: var(--clr-warning-gold-light, #2D240F);
+  color: var(--clr-warning-gold, #FFD066);
+}
+
+[data-theme="dark"] .category-header.frontier {
+  background: #0F1A2D;
+  color: #66B2FF;
+}
+
+[data-theme="dark"] .mc-option {
+  background: var(--clr-bg-subtle, #141E29);
+  border-color: var(--clr-border, #243040);
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .mc-option:hover {
+  background: var(--clr-bg-light, #0F1A24);
+}
+
+[data-theme="dark"] .mc-option .option-text {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .interview-question-container {
+  background: var(--clr-bg-light, #0F1A24);
+}
+
+[data-theme="dark"] .interview-base-problem {
+  color: var(--text-secondary, #8B9AAB);
+  background: var(--clr-bg-subtle, #141E29);
+}
+
+[data-theme="dark"] .interview-question-text {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .interview-answer-section label {
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .interview-answer-input {
+  background: var(--clr-bg-subtle, #141E29);
+  border-color: var(--clr-border, #243040);
+  color: var(--clr-text, #F0F4F8);
+}
+
+[data-theme="dark"] .answer-input {
+  background: var(--clr-bg-subtle, #141E29);
+  border-color: var(--clr-border, #243040);
+  color: var(--clr-text, #F0F4F8);
+}
