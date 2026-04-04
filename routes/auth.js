@@ -243,6 +243,13 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       }
     }
 
+    // Set lastLogin on first OAuth signup auto-login
+    try {
+      await User.findByIdAndUpdate(newUser._id, { lastLogin: new Date() });
+    } catch (updateErr) {
+      console.error("ERROR: Failed to update lastLogin on OAuth signup:", updateErr);
+    }
+
     // Clear pending profile from session
     delete req.session.pendingOAuthProfile;
 

@@ -300,6 +300,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
 
         // --- 6. Log the user in immediately after signup ---
         // This avoids making the user log in again right after registering.
+        // Set lastLogin on first signup auto-login
+        try {
+            await User.findByIdAndUpdate(newUser._id, { lastLogin: new Date() });
+        } catch (updateErr) {
+            console.error("ERROR: Failed to update lastLogin on signup:", updateErr);
+        }
+
         req.logIn(newUser, (err) => {
             if (err) {
                 console.error('ERROR: Error logging in after signup:', err);
