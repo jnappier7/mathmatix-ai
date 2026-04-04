@@ -368,6 +368,33 @@ class ShowYourWorkManager {
         // Render any LaTeX in the feedback
         this.typesetMath(this.resultsContainer);
 
+        // Bind per-problem "Ask my tutor about this" buttons
+        this.resultsContainer.querySelectorAll('.syw-ask-tutor-problem').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const num = btn.dataset.problem;
+                const statement = btn.dataset.statement;
+                const isUnsure = btn.dataset.unsure === 'true';
+
+                let msg;
+                if (isUnsure) {
+                    msg = `Can we go over problem #${num} from my work? You weren't sure about it. The problem was: ${statement}`;
+                } else {
+                    msg = `Can you help me with problem #${num} from my work? I got it wrong. The problem was: ${statement}`;
+                }
+
+                this.closeModal();
+                const userInput = document.getElementById('user-input');
+                if (userInput) {
+                    userInput.textContent = msg;
+                    userInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    setTimeout(() => {
+                        const sendBtn = document.getElementById('send-button');
+                        if (sendBtn && !sendBtn.disabled) sendBtn.click();
+                    }, 100);
+                }
+            });
+        });
+
         // Add snippet to chat
         this.addWorkSnippetToChat(result);
 
@@ -467,6 +494,10 @@ class ShowYourWorkManager {
             </div>
 
             ${errorsHtml ? `<details class="syw-error-details"><summary>Error details</summary>${errorsHtml}</details>` : ''}
+
+            ${!correct ? `<button class="syw-ask-tutor-problem" data-problem="${this.escapeHtml(problem.problemNumber)}" data-statement="${this.escapeHtml(problem.problemStatement || '')}" data-unsure="${isUnsure}">
+                <i class="fas fa-comment-dots"></i> Ask my tutor about this
+            </button>` : ''}
         </div>`;
     }
 
