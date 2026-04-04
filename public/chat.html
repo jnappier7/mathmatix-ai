@@ -201,6 +201,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="/pricing.html" class="header-menu-item" id="upgrade-plan-link" style="display:none;text-decoration:none;color:inherit;">
         <i class="fas fa-arrow-up" style="color:#00d4ff;"></i> <span style="color:#00d4ff;">Upgrade Plan</span>
       </a>
+      <button class="header-menu-item" id="manage-subscription-link" style="display:none;">
+        <i class="fas fa-credit-card" style="color:#7b2ff7;"></i> Manage Subscription
+      </button>
       <div class="header-menu-divider"></div>
       <button class="header-menu-item" id="logoutBtn" data-i18n="nav.logOut">
         <i class="fas fa-sign-out-alt"></i> Log Out
@@ -875,6 +878,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="setting-description">Show or hide the purple voice chat button in the bottom-right corner.</p>
 
         <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
+
+        <!-- Subscription Management (visible to subscribers) -->
+        <div class="form-group" id="settings-subscription-section" style="display: none;">
+          <label><i class="fas fa-credit-card"></i> Subscription</label>
+          <div id="settings-subscription-info" style="padding: 12px; background: #f0f7ff; border-radius: 8px; border-left: 4px solid #7b2ff7; margin-top: 8px;">
+            <div id="settings-sub-status" style="font-size: 14px; color: #333; margin-bottom: 8px;">Loading...</div>
+          </div>
+          <button type="button" id="settings-manage-sub-btn" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+            <i class="fas fa-cog"></i> Manage Subscription
+          </button>
+          <p class="setting-description">View billing details, pause, or cancel your subscription.</p>
+        </div>
+
+        <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;" id="settings-sub-divider" style="display: none;">
 
         <div class="form-group" id="password-change-section" style="display: none;">
           <label data-i18n="settings.changePassword">Change Password</label>

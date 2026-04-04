@@ -1455,6 +1455,118 @@ function getSupportEscalationTemplate(ticket, user, baseUrl) {
   `;
 }
 
+/**
+ * Send cancellation confirmation email
+ * @param {String} email - User's email address
+ * @param {String} firstName - User's first name
+ * @param {String} accessUntilDate - Formatted date string for when access expires
+ */
+async function sendCancellationConfirmation(email, firstName, accessUntilDate) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping cancellation confirmation');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const emailConfig = getEmailConfig();
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: email,
+      subject: 'Your Mathmatix+ Cancellation Confirmation',
+      html: getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`[Email] Cancellation confirmation sent to ${email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('[Email] Error sending cancellation confirmation:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Subscription Update</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Hi ${firstName},</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        We've received your request to cancel your Mathmatix+ subscription. Your cancellation has been confirmed.
+      </p>
+
+      <div style="background: #f0f7ff; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+          <strong>You still have full access until ${accessUntilDate}.</strong><br>
+          Your child can continue using all Mathmatix+ features until then &mdash; no changes until that date.
+        </p>
+      </div>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per week).
+      </p>
+
+      <h3 style="margin: 25px 0 12px 0; color: #2c3e50; font-size: 18px;">Changed your mind?</h3>
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        You can reactivate your subscription anytime before ${accessUntilDate} and keep your unlimited access.
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${baseUrl}/pricing.html"
+           style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Reactivate Subscription
+        </a>
+      </div>
+
+      <h3 style="margin: 25px 0 12px 0; color: #2c3e50; font-size: 18px;">Need help?</h3>
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        If you cancelled because of a problem we can fix, we'd love to help.
+        <a href="${baseUrl}/contact-support.html" style="color: #667eea; text-decoration: underline;">Contact our support team</a> and we'll get back to you quickly.
+      </p>
+
+      <p style="margin: 20px 0 0 0; color: #555; font-size: 16px; line-height: 1.6;">
+        We hope to see you back! Your child's progress and data will be saved.
+      </p>
+
+      <p style="margin: 20px 0 0 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Warmly,<br>
+        The Mathmatix Team
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
@@ -1467,6 +1579,7 @@ module.exports = {
   sendSupportEscalationAlert,
   sendWelcomeEmail,
   sendWaitlistConfirmation,
+  sendCancellationConfirmation,
   initializeTransporter,
   getEmailConfig
 };

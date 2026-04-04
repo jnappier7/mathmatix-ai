@@ -199,6 +199,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }
         });
 
+        // Show subscription management panel for Mathmatix+ subscribers
+        if (currentTier === 'unlimited') {
+          showSubscriptionManagement();
+        }
+
         await csrfFetch('/api/billing/seen-pricing', { method: 'POST', credentials: 'include' }).catch(() => {});
       } catch (e) {
         console.error('[Pricing] Failed to load billing status:', e);
@@ -299,6 +304,129 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
       });
     });
+
+    async function showSubscriptionManagement() {
+      try {
+        const res = await csrfFetch('/api/billing/subscription-details', { credentials: 'include' });
+        if (!res.ok) return;
+        const sub = await res.json();
+        if (!sub.hasSubscription) return;
+
+        const periodEnd = sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null;
+        const periodEndStr = periodEnd ? periodEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+
+        const panel = document.createElement('div');
+        panel.style.cssText = 'max-width:600px;margin:24px auto;padding:24px;background:#1a1a2e;border:1px solid #333;border-radius:12px;color:#fff;';
+
+        const supportLine = '<div style="text-align:center;margin-top:12px;"><a href="/contact-support.html" style="color:#00d4ff;font-size:12px;text-decoration:underline;"><i class="fas fa-life-ring"></i> Having an issue? Contact support instead</a></div>';
+
+        if (sub.isPaused) {
+          const resumeDate = sub.resumesAt ? new Date(sub.resumesAt) : null;
+          const resumeDateStr = resumeDate ? resumeDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+          panel.innerHTML = `
+            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-pause-circle" style="color:#ffaa00;"></i> Subscription Paused</h3>
+            <p style="color:#aaa;margin:0 0 16px;font-size:14px;line-height:1.5;">Your subscription is paused. Billing resumes automatically on <strong style="color:#fff;">${resumeDateStr}</strong>.</p>
+            <button id="pricing-resume-btn" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><i class="fas fa-play"></i> Resume Now</button>
+            ${supportLine}`;
+        } else if (sub.cancelAtPeriodEnd) {
+          panel.innerHTML = `
+            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-exclamation-triangle" style="color:#ff6b6b;"></i> Cancellation Scheduled</h3>
+            <p style="color:#aaa;margin:0 0 16px;font-size:14px;line-height:1.5;">Your Mathmatix+ access ends on <strong style="color:#fff;">${periodEndStr}</strong>. After that, you'll revert to the free plan (30 min/week).</p>
+            <button id="pricing-reactivate-btn" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><i class="fas fa-undo"></i> Keep My Subscription</button>
+            ${supportLine}`;
+        } else {
+          panel.innerHTML = `
+            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-cog" style="color:#7b2ff7;"></i> Manage Your Subscription</h3>
+            <p style="color:#aaa;margin:0 0 6px;font-size:14px;">Plan: <strong style="color:#fff;">Mathmatix+ ($9.95/mo)</strong></p>
+            <p style="color:#aaa;margin:0 0 16px;font-size:14px;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></p>
+            <div style="background:#0f0f23;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:16px;">
+              <div style="font-size:13px;color:#ffaa00;font-weight:600;margin-bottom:8px;"><i class="fas fa-pause-circle"></i> Need a Break?</div>
+              <p style="color:#aaa;font-size:12px;margin:0 0 10px;line-height:1.4;">Pause instead of cancelling. No charges while paused.</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="pricing-pause-btn" data-months="1" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">1 Month</button>
+                <button class="pricing-pause-btn" data-months="2" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">2 Months</button>
+                <button class="pricing-pause-btn" data-months="3" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">3 Months</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button id="pricing-cancel-btn" style="background:#ff4444;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Cancel Subscription</button>
+              <button id="pricing-portal-btn" style="background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;"><i class="fas fa-external-link-alt"></i> Billing Portal</button>
+            </div>
+            <p style="color:#666;font-size:12px;margin-top:10px;">Cancelling keeps your access until the end of your billing period.</p>
+            ${supportLine}`;
+        }
+
+        // Insert after the pricing cards
+        const cardsSection = document.querySelector('.pricing-cards');
+        if (cardsSection) cardsSection.after(panel);
+
+        // Wire up buttons
+        const resumeBtn = document.getElementById('pricing-resume-btn');
+        if (resumeBtn) {
+          resumeBtn.addEventListener('click', async function() {
+            this.disabled = true; this.textContent = 'Resuming...';
+            try {
+              const r = await csrfFetch('/api/billing/resume', { method: 'POST', credentials: 'include' });
+              if (r.ok) { window.location.reload(); }
+              else { this.disabled = false; this.innerHTML = '<i class="fas fa-play"></i> Resume Now'; }
+            } catch { this.disabled = false; this.innerHTML = '<i class="fas fa-play"></i> Resume Now'; }
+          });
+        }
+
+        const reactivateBtn = document.getElementById('pricing-reactivate-btn');
+        if (reactivateBtn) {
+          reactivateBtn.addEventListener('click', async function() {
+            this.disabled = true; this.textContent = 'Reactivating...';
+            try {
+              const r = await csrfFetch('/api/billing/reactivate', { method: 'POST', credentials: 'include' });
+              if (r.ok) { window.location.reload(); }
+              else { this.disabled = false; this.innerHTML = '<i class="fas fa-undo"></i> Keep My Subscription'; }
+            } catch { this.disabled = false; this.innerHTML = '<i class="fas fa-undo"></i> Keep My Subscription'; }
+          });
+        }
+
+        // Pause button handlers
+        document.querySelectorAll('.pricing-pause-btn').forEach(function(btn) {
+          btn.addEventListener('click', async function() {
+            var months = parseInt(this.dataset.months);
+            if (!confirm('Pause your subscription for ' + months + ' month' + (months > 1 ? 's' : '') + '? Billing resumes automatically after that.')) return;
+            this.disabled = true; this.textContent = 'Pausing...';
+            try {
+              var r = await csrfFetch('/api/billing/pause', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ months: months }), credentials: 'include' });
+              if (r.ok) { window.location.reload(); }
+              else { this.disabled = false; this.textContent = months + ' Month' + (months > 1 ? 's' : ''); }
+            } catch { this.disabled = false; this.textContent = months + ' Month' + (months > 1 ? 's' : ''); }
+          });
+        });
+
+        const cancelBtn = document.getElementById('pricing-cancel-btn');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', async function() {
+            if (!confirm('Cancel your subscription? You will keep access until ' + periodEndStr + '.')) return;
+            this.disabled = true; this.textContent = 'Cancelling...';
+            try {
+              const r = await csrfFetch('/api/billing/cancel', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}), credentials: 'include' });
+              if (r.ok) { window.location.reload(); }
+              else { this.disabled = false; this.textContent = 'Cancel Subscription'; }
+            } catch { this.disabled = false; this.textContent = 'Cancel Subscription'; }
+          });
+        }
+
+        const portalBtn = document.getElementById('pricing-portal-btn');
+        if (portalBtn) {
+          portalBtn.addEventListener('click', async function() {
+            try {
+              const r = await csrfFetch('/api/billing/portal', { credentials: 'include' });
+              if (!r.ok) throw new Error();
+              const d = await r.json();
+              window.location.href = d.url;
+            } catch { alert('Unable to open billing portal. Please try again.'); }
+          });
+        }
+      } catch (e) {
+        console.error('[Pricing] Failed to load subscription management:', e);
+      }
+    }
 
     initPricing();
   })();
