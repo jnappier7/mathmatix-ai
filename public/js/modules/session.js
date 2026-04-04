@@ -11,7 +11,8 @@ export const sessionTracker = {
     lastVisibilityChange: null,
     consecutiveFailures: 0,
     baseInterval: 30000,
-    maxInterval: 300000 // 5 minutes cap
+    maxInterval: 300000, // 5 minutes cap
+    finalSent: false // Guard against duplicate beacons on unload
 };
 
 /**
@@ -19,6 +20,14 @@ export const sessionTracker = {
  * @param {Function} getCurrentUser - Returns the current user object
  */
 export function initSessionTracking(getCurrentUser) {
+    // If SessionManager class is loaded (e.g. on chat.html), skip this module's
+    // heartbeat and unload tracking to avoid duplicate requests to /api/chat/track-time.
+    // Check the class (not instance) because modules execute before DOMContentLoaded.
+    if (typeof SessionManager !== 'undefined') {
+        console.log('[Session] SessionManager detected — skipping duplicate time tracking');
+        return;
+    }
+
     sessionTracker.startTime = Date.now();
     sessionTracker.lastHeartbeat = Date.now();
     sessionTracker.lastVisibilityChange = Date.now();
@@ -58,15 +67,15 @@ export function initSessionTracking(getCurrentUser) {
         sessionTracker.heartbeatTimer = null;
     });
 
-    // Send final time on page unload
-    window.addEventListener('beforeunload', () => {
+    // Send final time on page unload (guard prevents duplicate sends from
+    // beforeunload + pagehide both firing on the same navigation/close)
+    const sendFinal = () => {
+        if (sessionTracker.finalSent) return;
+        sessionTracker.finalSent = true;
         sendTimeHeartbeat(getCurrentUser, true);
-    });
-
-    // Also try pagehide for mobile browsers
-    window.addEventListener('pagehide', () => {
-        sendTimeHeartbeat(getCurrentUser, true);
-    });
+    };
+    window.addEventListener('beforeunload', sendFinal);
+    window.addEventListener('pagehide', sendFinal);
 }
 
 export function getActiveSeconds() {

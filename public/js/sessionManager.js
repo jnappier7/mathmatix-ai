@@ -652,19 +652,14 @@ class SessionManager {
     });
 
     // 3. visibilitychange - detect tab becoming hidden (might be closing)
+    //    Only flush accumulated time; the unload handlers above will send the
+    //    final beacon if the page is actually closing. This avoids duplicate
+    //    beacons when visibilitychange fires right before beforeunload/pagehide.
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
-        // Save state but don't end session yet (user might come back)
-        // Just ensure we track time up to this point
+        // Snapshot active time so it's included in the unload beacon if page closes,
+        // but don't send a separate beacon here — let sendSessionEnd handle it.
         this.checkAndUpdateActiveTime();
-        if (this.accumulatedActiveSeconds > 0) {
-          const timeBlob = new Blob(
-            [JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })],
-            { type: 'application/json' }
-          );
-          navigator.sendBeacon('/api/chat/track-time', timeBlob);
-          this.accumulatedActiveSeconds = 0;
-        }
       }
     });
   }
