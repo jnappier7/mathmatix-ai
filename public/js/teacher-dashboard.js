@@ -1671,14 +1671,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             exportBtn.addEventListener('click', exportStudentData);
         }
 
-        // Celeration Charts
-        const celerationBtn = document.getElementById('qa-celeration');
-        if (celerationBtn) {
-            celerationBtn.addEventListener('click', () => {
-                window.location.href = '/teacher-celeration-dashboard.html';
-            });
-        }
-
         // Refresh
         const refreshBtn = document.getElementById('qa-refresh');
         if (refreshBtn) {
@@ -2520,9 +2512,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('mobile-export')?.addEventListener('click', () => {
             exportStudentData();
             actionsDrawer?.classList.remove('open');
-        });
-        document.getElementById('mobile-fluency')?.addEventListener('click', () => {
-            window.location.href = '/teacher-celeration-dashboard.html';
         });
         document.getElementById('mobile-upload')?.addEventListener('click', () => {
             document.querySelector('[data-tab="resources"]')?.click();
