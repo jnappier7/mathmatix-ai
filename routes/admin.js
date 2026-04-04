@@ -2021,55 +2021,8 @@ router.get('/students/:studentId/learning-curve', isAdmin, async (req, res) => {
   }
 });
 
-// =====================================================
-// CELERATION: View any student's fact fluency progress
-// =====================================================
-router.get('/students/:studentId/celeration', isAdmin, async (req, res) => {
-  try {
-    const student = await User.findById(req.params.studentId).lean();
-    if (!student) return res.status(404).json({ message: 'Student not found.' });
-
-    const grade = parseInt(student.gradeLevel);
-    const aim = grade >= 9 ? 60 : grade >= 6 ? 50 : 40;
-    const familiesData = [];
-
-    for (const [familyKey, familyData] of Object.entries(student.factFluencyProgress?.factFamilies || {})) {
-      if (!familyData.sessions || familyData.sessions.length === 0) continue;
-
-      const sessions = familyData.sessions.map(s => ({
-        date: s.date, rate: s.rate, accuracy: s.accuracy,
-        problemsAttempted: s.problemsAttempted, problemsCorrect: s.problemsCorrect
-      })).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      const recentRates = sessions.slice(-3).map(s => s.rate).sort((a, b) => a - b);
-      const currentRate = recentRates[Math.floor(recentRates.length / 2)];
-
-      familiesData.push({
-        familyKey,
-        operation: familyData.operation,
-        familyName: familyData.familyName,
-        displayName: familyData.displayName,
-        currentRate,
-        bestRate: familyData.bestRate || 0,
-        atAim: currentRate >= aim,
-        mastered: familyData.mastered || false,
-        sessionCount: sessions.length,
-        lastPracticed: familyData.lastPracticed,
-        sessions
-      });
-    }
-
-    res.json({
-      success: true,
-      student: { id: student._id, name: `${student.firstName} ${student.lastName}` },
-      aim,
-      families: familiesData
-    });
-  } catch (error) {
-    console.error('Error fetching student celeration:', error);
-    res.status(500).json({ message: 'Error fetching celeration data' });
-  }
-});
+// CELERATION: Shelved — no real data to track (uncomment to re-enable)
+// router.get('/students/:studentId/celeration', ...);
 
 // =====================================================
 // PLACEMENT RESULTS: View any student's screener/placement details

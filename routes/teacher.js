@@ -876,64 +876,8 @@ router.get('/students/:studentId/learning-curve', isTeacher, async (req, res) =>
   }
 });
 
-// =====================================================
-// CELERATION: View student's fact fluency progress
-// =====================================================
-router.get('/students/:studentId/celeration', isTeacher, async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    const teacherId = req.user._id;
-    const student = await User.findOne({ _id: studentId, teacherId }).lean();
-    if (!student) return res.status(403).json({ message: 'Not authorized.' });
-
-    const grade = parseInt(student.gradeLevel);
-    const aim = grade >= 9 ? 60 : grade >= 6 ? 50 : 40;
-    const familiesData = [];
-
-    for (const [familyKey, familyData] of Object.entries(student.factFluencyProgress?.factFamilies || {})) {
-      if (!familyData.sessions || familyData.sessions.length === 0) continue;
-
-      const sessions = familyData.sessions.map(s => ({
-        date: s.date, rate: s.rate, accuracy: s.accuracy,
-        problemsAttempted: s.problemsAttempted, problemsCorrect: s.problemsCorrect
-      })).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      const recentSessions = sessions.slice(-3);
-      const recentRates = recentSessions.map(s => s.rate).sort((a, b) => a - b);
-      const currentRate = recentRates[Math.floor(recentRates.length / 2)];
-
-      familiesData.push({
-        familyKey,
-        operation: familyData.operation,
-        familyName: familyData.familyName,
-        displayName: familyData.displayName,
-        currentRate,
-        bestRate: familyData.bestRate || 0,
-        atAim: currentRate >= aim,
-        mastered: familyData.mastered || false,
-        sessionCount: sessions.length,
-        lastPracticed: familyData.lastPracticed,
-        sessions
-      });
-    }
-
-    familiesData.sort((a, b) => {
-      const dateA = a.lastPracticed ? new Date(a.lastPracticed) : new Date(0);
-      const dateB = b.lastPracticed ? new Date(b.lastPracticed) : new Date(0);
-      return dateB - dateA;
-    });
-
-    res.json({
-      success: true,
-      student: { id: student._id, name: `${student.firstName} ${student.lastName}` },
-      aim,
-      families: familiesData
-    });
-  } catch (error) {
-    console.error('Error fetching student celeration:', error);
-    res.status(500).json({ message: 'Error fetching celeration data' });
-  }
-});
+// CELERATION: Shelved — no real data to track (uncomment to re-enable)
+// router.get('/students/:studentId/celeration', ...);
 
 // =====================================================
 // PLACEMENT RESULTS: View student's screener/placement details
