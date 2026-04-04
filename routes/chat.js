@@ -1312,6 +1312,7 @@ Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on 
 
 // Track session time - receives heartbeat updates from frontend
 // Accumulates precise seconds and derives minutes for display
+// Optimized: uses req.user from Passport (no extra findById) and atomic $inc updates
 router.post('/track-time', isAuthenticated, async (req, res) => {
     try {
         const { activeSeconds } = req.body;
@@ -1327,80 +1328,79 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
             return res.status(200).json({ message: "Time tracked (below minimum)" });
         }
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // IMPROVED: Track precise seconds and derive minutes
-        // This prevents loss of time from rounding (e.g., 5 heartbeats of 25 seconds each = 2 minutes, not 0)
-
-        // Initialize tracking fields if they don't exist
-        if (!user.totalActiveSeconds) user.totalActiveSeconds = (user.totalActiveTutoringMinutes || 0) * 60;
-        if (!user.weeklyActiveSeconds) user.weeklyActiveSeconds = (user.weeklyActiveTutoringMinutes || 0) * 60;
+        // Use req.user (already loaded by Passport deserializeUser) instead of re-querying
+        const user = req.user;
 
         // WEEKLY RESET: Check if we need to reset weekly counters
-        // Reset occurs if lastWeeklyReset was more than 7 days ago
         const now = new Date();
         const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
         const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
+        const needsWeeklyReset = daysSinceReset >= 7;
 
-        if (daysSinceReset >= 7) {
+        // Initialize base seconds from minutes if tracking fields haven't been set yet
+        const baseTotalSeconds = user.totalActiveSeconds || (user.totalActiveTutoringMinutes || 0) * 60;
+        const baseWeeklySeconds = user.weeklyActiveSeconds || (user.weeklyActiveTutoringMinutes || 0) * 60;
+
+        // Build atomic update for user
+        let userUpdate;
+        if (needsWeeklyReset) {
             console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} active min, ${Math.floor((user.weeklyAISeconds || 0) / 60)} AI min -> 0`);
-            user.weeklyActiveSeconds = 0;
-            user.weeklyActiveTutoringMinutes = 0;
-            user.weeklyAISeconds = 0;
-            user.lastWeeklyReset = now;
+            const newTotalSeconds = baseTotalSeconds + activeSeconds;
+            userUpdate = {
+                $set: {
+                    totalActiveSeconds: newTotalSeconds,
+                    totalActiveTutoringMinutes: Math.floor(newTotalSeconds / 60),
+                    weeklyActiveSeconds: activeSeconds,
+                    weeklyActiveTutoringMinutes: Math.floor(activeSeconds / 60),
+                    weeklyAISeconds: 0,
+                    lastWeeklyReset: now
+                }
+            };
+        } else {
+            const newTotalSeconds = baseTotalSeconds + activeSeconds;
+            const newWeeklySeconds = baseWeeklySeconds + activeSeconds;
+            userUpdate = {
+                $set: {
+                    totalActiveSeconds: newTotalSeconds,
+                    totalActiveTutoringMinutes: Math.floor(newTotalSeconds / 60),
+                    weeklyActiveSeconds: newWeeklySeconds,
+                    weeklyActiveTutoringMinutes: Math.floor(newWeeklySeconds / 60)
+                }
+            };
         }
 
-        // Accumulate seconds
-        user.totalActiveSeconds = (user.totalActiveSeconds || 0) + activeSeconds;
-        user.weeklyActiveSeconds = (user.weeklyActiveSeconds || 0) + activeSeconds;
-
-        // Update minutes (derived from seconds for display)
-        user.totalActiveTutoringMinutes = Math.floor(user.totalActiveSeconds / 60);
-        user.weeklyActiveTutoringMinutes = Math.floor(user.weeklyActiveSeconds / 60);
-
-        // Pack deduction now happens server-side in the chat route based on AI processing time
-        // (not client-reported active time) so reading/thinking time isn't counted
-
-        // Update active conversation if exists
-        if (user.activeConversationId) {
-            const conversation = await Conversation.findById(user.activeConversationId);
-            if (conversation && conversation.isActive) {
-                // Initialize activeSeconds if it doesn't exist (migrate from activeMinutes)
-                if (conversation.activeSeconds === undefined || conversation.activeSeconds === 0) {
-                    conversation.activeSeconds = (conversation.activeMinutes || 0) * 60;
+        // Build conversation update (atomic $inc, no find+save needed)
+        const conversationUpdatePromise = user.activeConversationId
+            ? Conversation.findOneAndUpdate(
+                { _id: user.activeConversationId, isActive: true },
+                {
+                    $inc: { activeSeconds: activeSeconds },
+                    $set: { lastActivity: now }
+                },
+                { new: true }
+            ).then(conv => {
+                // Derive activeMinutes from updated activeSeconds
+                if (conv) {
+                    return Conversation.updateOne(
+                        { _id: conv._id },
+                        { $set: { activeMinutes: Math.floor(conv.activeSeconds / 60) } }
+                    );
                 }
+            })
+            : Promise.resolve();
 
-                // Accumulate seconds and derive minutes
-                conversation.activeSeconds = (conversation.activeSeconds || 0) + activeSeconds;
-                conversation.activeMinutes = Math.floor(conversation.activeSeconds / 60);
-                conversation.lastActivity = new Date();
-
-                // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
-                if (conversation.messages && Array.isArray(conversation.messages)) {
-                    const originalLength = conversation.messages.length;
-                    conversation.messages = conversation.messages.filter(msg => {
-                        return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
-                    });
-                    if (conversation.messages.length !== originalLength) {
-                        console.warn(`[Track-Time] Removed ${originalLength - conversation.messages.length} invalid messages before save`);
-                    }
-                }
-
-                await conversation.save();
-            }
-        }
-
-        await user.save();
+        // Run user and conversation updates in parallel
+        const [updatedUser] = await Promise.all([
+            User.findByIdAndUpdate(userId, userUpdate, { new: true, select: 'totalActiveTutoringMinutes weeklyActiveTutoringMinutes totalActiveSeconds weeklyActiveSeconds' }),
+            conversationUpdatePromise
+        ]);
 
         res.status(200).json({
             message: "Time tracked successfully",
-            totalMinutes: user.totalActiveTutoringMinutes,
-            weeklyMinutes: user.weeklyActiveTutoringMinutes,
-            totalSeconds: user.totalActiveSeconds,
-            weeklySeconds: user.weeklyActiveSeconds
+            totalMinutes: updatedUser.totalActiveTutoringMinutes,
+            weeklyMinutes: updatedUser.weeklyActiveTutoringMinutes,
+            totalSeconds: updatedUser.totalActiveSeconds,
+            weeklySeconds: updatedUser.weeklyActiveSeconds
         });
 
     } catch (error) {
