@@ -2862,11 +2862,12 @@ ${firstName} recently submitted handwritten work for AI analysis. Here's what wa
 ${gradingContext.map(r => {
   const date = new Date(r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const problemSummaries = (r.problems || []).map(p => {
-    const status = p.isCorrect ? 'Correct' : 'Incorrect';
+    const status = p.isCorrect === true ? 'Correct' : p.isCorrect === false ? 'Incorrect' : 'Unsure — needs discussion';
     const errorTypes = (p.errors || []).map(e => e.category).filter(Boolean).join(', ');
     return `  - Problem ${p.problemNumber}: ${status}${p.feedback ? ` — ${p.feedback}` : ''}${errorTypes ? ` [${errorTypes}]` : ''}`;
   }).join('\n');
-  return `**${date}** (${r.correctCount}/${r.problemCount} correct):
+  const unsureCount = (r.problems || []).filter(p => p.isCorrect === null).length;
+  return `**${date}** (${r.correctCount}/${r.problemCount} correct${unsureCount > 0 ? `, ${unsureCount} unsure` : ''}):
 ${problemSummaries}
 ${r.overallFeedback ? `  Overall: ${r.overallFeedback}` : ''}
 ${r.practiceRecommendations?.length ? `  Practice: ${r.practiceRecommendations.join(', ')}` : ''}`;
@@ -2877,7 +2878,8 @@ ${r.practiceRecommendations?.length ? `  Practice: ${r.practiceRecommendations.j
 2. **Build on strengths** — Acknowledge what they got right in previous work.
 3. **Don't repeat AI analysis verbatim** — You have the context, but rephrase naturally.
 4. **Connect to current conversation** — If they're working on a related topic, tie it back.
-5. **Be natural** — Only mention past work when it genuinely helps. Don't force it.
+5. **UNSURE problems are a priority** — If any problems are marked "Unsure — needs discussion", and the student asks about them or brings up that topic, help them work through it. You have the problem statement and their answer — walk through it together. Start with: "I saw your answer on that one — let's work through it step by step to make sure."
+6. **Be natural** — Only mention past work when it genuinely helps. Don't force it.
 ` : ''}
 
 ${errorPatterns && errorPatterns.totalErrors > 0 ? `--- PERSISTENT ERROR PATTERNS (Last 2 Weeks) ---
