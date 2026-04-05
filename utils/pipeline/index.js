@@ -32,6 +32,10 @@ const { updateBKT, initializeBKT } = require('../knowledgeTracer');
 const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsScheduler');
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
+// Backbone: Tutor Plan + Skill Familiarity
+const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction } = require('../tutorPlanManager');
+const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
+
 /**
  * Run the full tutoring pipeline.
  *
@@ -94,6 +98,28 @@ async function runPipeline(message, ctx) {
       ? `, emotion: ${sessionMood.emotionalState.state} (${Math.round(sessionMood.emotionalState.confidence * 100)}%)`
       : '';
     console.log(`[Pipeline] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}, momentum: ${sessionMood.momentum}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''}${emotionalTag})`);
+  }
+
+  // ── Backbone: Load Tutor Plan ──
+  // The tutor's persistent mental model of this student. Loaded at the start
+  // of every interaction so the decide stage knows the instructional mode.
+  let tutorPlan = null;
+  let skillResolution = null;
+  try {
+    tutorPlan = await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
+    const resolved = await resolveCurrentTarget(tutorPlan, {
+      user: ctx.user,
+      activeSkillId: ctx.activeSkill?.skillId || null,
+    });
+    tutorPlan = resolved.plan;
+    skillResolution = resolved.skillResolution;
+
+    if (tutorPlan.currentTarget?.skillId) {
+      console.log(`[Pipeline] TutorPlan: target=${tutorPlan.currentTarget.skillId}, mode=${tutorPlan.currentTarget.instructionalMode}${tutorPlan.currentTarget.instructionPhase ? ', phase=' + tutorPlan.currentTarget.instructionPhase : ''}`);
+    }
+  } catch (err) {
+    console.error('[Pipeline] TutorPlan load error (non-fatal):', err.message);
+    // TutorPlan is optional — pipeline continues without it
   }
 
   // ── Evidence Assembly (NEW: data-driven intelligence layer) ──
@@ -173,12 +199,13 @@ async function runPipeline(message, ctx) {
     // Evidence is optional — pipeline continues without it
   }
 
-  // ── Stage 3: DECIDE (enhanced with evidence) ──
+  // ── Stage 3: DECIDE (enhanced with evidence + tutor plan) ──
   const decision = decide(observation, diagnosis, {
     phaseState: ctx.phaseState || null,
     activeSkill: ctx.activeSkill || null,
     sessionMood,
     evidence,
+    tutorPlan: tutorPlan || null,
   });
 
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
@@ -191,8 +218,30 @@ async function runPipeline(message, ctx) {
 
   // ── Stage 4: GENERATE ──
   const moodDirective = buildMoodDirective(sessionMood);
+
+  // Inject tutor plan layer into system prompt
+  let enrichedSystemPrompt = ctx.systemPrompt;
+  if (tutorPlan) {
+    const planLayer = buildPlanLayer(tutorPlan, {
+      skillResolution,
+      interactionType: ctx.conversation?.conversationType || 'chat',
+    });
+    if (planLayer) {
+      enrichedSystemPrompt += '\n\n' + planLayer;
+    }
+
+    // If in INSTRUCT mode (vocab/concept-intro/i-do phases), suppress the
+    // "never give answers" Socratic rule — the tutor needs to TEACH.
+    if (shouldSuppressSocratic(tutorPlan) && enrichedSystemPrompt.includes('NEVER GIVE ANSWERS')) {
+      enrichedSystemPrompt = enrichedSystemPrompt.replace(
+        /RULE 1 — NEVER GIVE ANSWERS\. Guide with Socratic questions\. Break problems into small steps\. Ask "What do you think\?" before hinting\./,
+        'RULE 1 — TEACHING MODE ACTIVE. During direct instruction (vocabulary, concept introduction, I Do modeling), you TEACH by showing, explaining, and modeling worked examples. The student is learning — they are not expected to solve yet. Socratic questioning resumes during guided practice (We Do) and independent practice (You Do).'
+      );
+    }
+  }
+
   const assembled = assemblePrompt(decision, {
-    systemPrompt: ctx.systemPrompt,
+    systemPrompt: enrichedSystemPrompt,
     messages: ctx.formattedMessages,
     moodDirective,
   });
@@ -270,6 +319,48 @@ async function runPipeline(message, ctx) {
       sessionMood,
       evidence,
     });
+
+    // ── Update Tutor Plan after interaction ──
+    if (tutorPlan) {
+      try {
+        // Determine if instruction phase should advance
+        // Phase advances when the student demonstrates understanding in the current phase
+        const shouldAdvance = decision.action === 'direct_instruction'
+          && diagnosis.type !== 'no_answer'
+          && diagnosis.isCorrect === true
+          && tutorPlan.currentTarget?.instructionPhase;
+
+        // Build tutor notes from this interaction
+        const notes = [];
+        if (diagnosis.misconception?.name) {
+          notes.push({
+            content: `Misconception: ${diagnosis.misconception.name}${diagnosis.misconception.description ? ' — ' + diagnosis.misconception.description : ''}`,
+            category: 'misconception',
+            skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+          });
+        }
+        if (verified.extracted?.learningInsight) {
+          notes.push({
+            content: verified.extracted.learningInsight,
+            category: 'learning-style',
+            skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+          });
+        }
+
+        await updatePlanAfterInteraction(tutorPlan, {
+          topic: ctx.conversation?.topic || observation.messageType,
+          skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+          mood: sessionMood?.trajectory,
+          outcome: sessionMood?.fatigueSignal ? 'disengaged'
+            : (diagnosis.isCorrect === true ? 'productive' : 'struggled'),
+          conversationId: ctx.conversation?._id,
+          notes: notes.length > 0 ? notes : undefined,
+          shouldAdvancePhase: shouldAdvance,
+        });
+      } catch (err) {
+        console.error('[Pipeline] TutorPlan update error (non-fatal):', err.message);
+      }
+    }
   }
 
   const pipelineTime = Date.now() - startTime;
@@ -443,4 +534,6 @@ module.exports = {
   sidecar: require('./sidecar'),
   // New engines
   evidenceAccumulator: require('./evidenceAccumulator'),
+  // Backbone: Tutor Plan + Instructional Modes
+  INSTRUCTIONAL_MODES: require('./decide').INSTRUCTIONAL_MODES,
 };

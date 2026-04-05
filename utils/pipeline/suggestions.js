@@ -105,6 +105,43 @@ const ACTION_SUGGESTIONS = {
     { text: 'Quick review', message: 'Just a quick review please' },
     { text: 'Start from scratch', message: "Let's learn this from scratch" },
   ],
+  // ── Instructional mode actions (backbone) ──
+  [ACTIONS.DIRECT_INSTRUCTION]: [
+    { text: 'Makes sense', message: 'That makes sense so far!' },
+    { text: 'Can you repeat that?', message: 'Can you explain that part again?' },
+    { text: 'Show me an example', message: 'Can you show me an example?' },
+    { text: 'I have a question', message: 'I have a question about what you just explained' },
+  ],
+  [ACTIONS.PREREQUISITE_BRIDGE]: [
+    { text: 'I remember this', message: 'I remember this — I think I can do it!' },
+    { text: 'Need a refresher', message: 'I need a full refresher on this' },
+    { text: 'Quick review', message: "Just a quick review, then let's move on" },
+    { text: 'Show me again', message: 'Can you show me how this works again?' },
+  ],
+  [ACTIONS.GUIDED_PRACTICE]: [
+    { text: 'I think I see it', message: 'I think I see the pattern — let me try' },
+    { text: 'One more together', message: 'Can we do one more together first?' },
+    { text: 'More help please', message: 'I need a bit more help on this step' },
+    { text: 'Ready to try alone', message: "I'm ready to try one on my own!" },
+  ],
+  [ACTIONS.INDEPENDENT_PRACTICE]: [
+    { text: 'Got it!', message: 'I got it! Next one please' },
+    { text: 'Need help', message: "I'm stuck, can you give me a hint?" },
+    { text: 'Do one together', message: 'Can we do one together first?' },
+    { text: 'Different type', message: 'Can you give me a different type of problem?' },
+  ],
+  [ACTIONS.STRENGTHEN_CHALLENGE]: [
+    { text: 'Harder please', message: 'I want an even harder one!' },
+    { text: 'Real world problem', message: 'Can you give me a real world problem?' },
+    { text: 'Speed round', message: "Let's do a speed round!" },
+    { text: 'New topic', message: "I'm ready for a new topic" },
+  ],
+  [ACTIONS.LEVERAGE_BRIDGE]: [
+    { text: 'Show me the connection', message: 'How does this connect to the new topic?' },
+    { text: 'Teach me the new thing', message: "I'm ready to learn the new concept!" },
+    { text: 'Quick warm-up', message: 'Can we do a quick warm-up problem first?' },
+    { text: 'Different topic', message: "I'd rather work on something else" },
+  ],
 };
 
 // ── Default fallback suggestions ──

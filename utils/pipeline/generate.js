@@ -116,6 +116,58 @@ function buildActionPrompt(decision) {
       // Phase prompt is already set in decision.phasePrompt
       break;
 
+    // ── Instructional mode actions (backbone) ──
+
+    case ACTIONS.DIRECT_INSTRUCTION:
+      parts.push('DIRECT INSTRUCTION MODE — You are TEACHING, not asking.');
+      parts.push('The student has NEVER seen this skill before. Do NOT ask "what do you think?" — they do not think anything yet.');
+      parts.push('Your job right now is to EXPLAIN clearly, MODEL the skill, and make the concept visible.');
+      parts.push('Think aloud: "First I notice... so I will... because..." — make your reasoning transparent.');
+      parts.push('ONE concept per message. Teach it, then check: "Does that make sense?" or "Any questions so far?"');
+      parts.push('A simple "yes" or "I think so" is acceptable during instruction — they are absorbing, not performing.');
+      parts.push('OVERRIDE: The standard "never give answers" rule is SUSPENDED during I-Do modeling.');
+      parts.push('You ARE showing answers during worked examples — that is how modeling works.');
+      parts.push('The student will get their turn during guided and independent practice.');
+      break;
+
+    case ACTIONS.PREREQUISITE_BRIDGE:
+      parts.push('PREREQUISITE BRIDGE — You are shoring up a foundation skill before teaching the target.');
+      parts.push('Keep this focused and efficient. This is a bridge, not a full lesson.');
+      parts.push('Frame it positively: connect it to where you are headed.');
+      parts.push('If the prerequisite is novel too, teach it directly (briefly). If shaky, use quick guided practice.');
+      break;
+
+    case ACTIONS.GUIDED_PRACTICE:
+      parts.push('GUIDED PRACTICE (We Do) — Work through this together with the student.');
+      parts.push('The student has seen the model. Now they contribute while you scaffold.');
+      parts.push('Start with more support, decrease as they show understanding.');
+      parts.push('Socratic questions ARE appropriate here — the student has a foundation to reason from.');
+      parts.push('If they get stuck, give partial help: "Remember the pattern we saw: [hint]. Now you try."');
+      parts.push('Do NOT give the full answer, but DO give more support than in independent practice.');
+      break;
+
+    case ACTIONS.INDEPENDENT_PRACTICE:
+      parts.push('INDEPENDENT PRACTICE (You Do) — The student works ALONE.');
+      parts.push('Present a problem. Step back. Let them work.');
+      parts.push('If they ask for help, give a small nudge — not a full scaffold.');
+      parts.push('Socratic questioning is fully appropriate now.');
+      parts.push('If they struggle significantly (3+ wrong), drop back to guided practice.');
+      break;
+
+    case ACTIONS.STRENGTHEN_CHALLENGE:
+      parts.push('STRENGTHEN MODE — The student is proficient. Push them.');
+      parts.push('Present harder problems, multi-step applications, novel contexts.');
+      parts.push('Minimal scaffolding. Let them wrestle.');
+      parts.push('If they are breezing through, acknowledge it and level up or move on.');
+      break;
+
+    case ACTIONS.LEVERAGE_BRIDGE:
+      parts.push('LEVERAGE MODE — The student has mastered this skill.');
+      parts.push('Do NOT drill it. Use it as a bridge to the next concept.');
+      parts.push('Example: "Since you already know X, let me show you how it connects to Y..."');
+      parts.push('Quick review for warm-up is fine, but keep it very brief.');
+      break;
+
     case ACTIONS.CONTINUE_CONVERSATION:
     default:
       parts.push('NEVER solve the problem for the student. If the student stated a math problem, jump straight into guiding the first step — do NOT ask them to restate the problem or ask what they have tried.');
