@@ -101,6 +101,7 @@ const tutorNoteSchema = new Schema({
       'engagement',          // "More engaged when problems use sports context"
       'prerequisite',        // "Needs fraction review before ratios"
       'breakthrough',        // "Finally grasped variable as placeholder"
+      'coaching',            // "Explanations drifting procedural — lead with WHY"
       'general'
     ],
     default: 'general'

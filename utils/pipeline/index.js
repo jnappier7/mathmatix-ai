@@ -37,6 +37,7 @@ const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, adva
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { evaluatePhaseAdvancement, reassessFamiliarity, createPhaseTracker, updatePhaseTracker } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
+const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 
 /**
  * Run the full tutoring pipeline.
@@ -484,6 +485,66 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Session Grading (deterministic teaching quality evaluation) ──
+  // Runs after persist so it has the full pipeline context.
+  // Accumulates per-turn grades into a session scorecard stored on the conversation.
+  let turnGrade = null;
+  if (!ctx.skipPersist && tutorPlan) {
+    try {
+      const scorecard = ctx.conversation?.sessionScorecard || createScorecard();
+
+      const gradeResult = gradeTurn({
+        responseText: verified.text,
+        decision,
+        diagnosis,
+        observation,
+        sessionMood,
+        evidence,
+        tutorPlan,
+        skillResolution,
+        phaseTracker: ctx.conversation?.phaseTracker || null,
+        scorecard,
+      });
+
+      turnGrade = gradeResult;
+
+      // Store scorecard on conversation for accumulation across turns
+      if (ctx.conversation) {
+        ctx.conversation.sessionScorecard = gradeResult.scorecard;
+        ctx.conversation.markModified?.('sessionScorecard');
+      }
+
+      // If there are coaching notes from this turn, add them to the TutorPlan
+      if (gradeResult.coachingNotes.length > 0) {
+        for (const note of gradeResult.coachingNotes) {
+          if (!tutorPlan.tutorNotes) tutorPlan.tutorNotes = [];
+          // Avoid duplicate notes
+          const isDuplicate = tutorPlan.tutorNotes.some(
+            n => n.content === note && !n.supersededAt
+          );
+          if (!isDuplicate) {
+            tutorPlan.tutorNotes.push({
+              content: note,
+              category: 'coaching',
+              skillId: tutorPlan.currentTarget?.skillId || null,
+              createdAt: new Date(),
+            });
+          }
+        }
+        tutorPlan.markModified?.('tutorNotes');
+        await tutorPlan.save?.();
+      }
+
+      if (gradeResult.flags.length > 0) {
+        console.log(`[Pipeline] Grade: ${gradeResult.turnScore.toFixed(2)} — ${gradeResult.flags.map(f => f.message).join('; ')}`);
+      } else {
+        console.log(`[Pipeline] Grade: ${gradeResult.turnScore.toFixed(2)}`);
+      }
+    } catch (err) {
+      console.error('[Pipeline] Session grading error (non-fatal):', err.message);
+    }
+  }
+
   const pipelineTime = Date.now() - startTime;
   console.log(`[Pipeline] Complete in ${pipelineTime}ms (observe→diagnose→decide→generate→verify→persist)`);
 
@@ -602,6 +663,15 @@ async function runPipeline(message, ctx) {
         targetSkill: tutorPlan.currentTarget?.skillId,
         planVersion: tutorPlan.version,
         sessionCount: tutorPlan.sessionCount,
+      } : null,
+      // Session grading (teaching quality feedback loop)
+      grade: turnGrade ? {
+        turnScore: turnGrade.turnScore,
+        dimensions: turnGrade.dimensionScores,
+        flags: turnGrade.flags,
+        sessionAverage: turnGrade.scorecard.turnCount > 0
+          ? Math.round((turnGrade.scorecard.turnScores.reduce((s, v) => s + v, 0) / turnGrade.scorecard.turnCount) * 100) / 100
+          : null,
       } : null,
       timeMs: pipelineTime,
     },
