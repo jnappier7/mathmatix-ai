@@ -403,10 +403,11 @@ function applyInstructionalMode(decision, context) {
           decision.directives.push(
             `INSTRUCTION MODE: VOCABULARY INTRODUCTION for ${targetName}.`,
             'Introduce key terms ONE AT A TIME with student-friendly definitions.',
-            'Give a concrete example for each term. Make it visual if possible.',
+            'For each term: give the definition, then a CONCRETE example, then explain WHY this word matters — what idea does it capture?',
+            'Connect terms to things the student already understands. "Rate" is just "how fast something changes." "Denominator" is "how many equal pieces we cut it into."',
             'DO NOT ask the student to solve anything yet — they are learning the language.',
-            'Check understanding of each term before introducing the next.',
-            'This is direct teaching — the Socratic "what do you think?" approach is WRONG here because the student has never seen these terms.'
+            'Check understanding of each term before introducing the next: "Can you put that in your own words?"',
+            'CONCEPTUAL MASTERY: The goal is not memorizing definitions. The goal is the student understanding what each term MEANS — why it exists, what idea it represents, how it connects to the math they already know.'
           );
           return decision;
 
@@ -414,11 +415,15 @@ function applyInstructionalMode(decision, context) {
           decision.action = ACTIONS.DIRECT_INSTRUCTION;
           decision.directives.push(
             `INSTRUCTION MODE: CONCEPT INTRODUCTION for ${targetName}.`,
-            'Build the BIG IDEA. Explain WHY this concept exists and when it is used.',
-            'Connect to something the student already knows — bridge from prior knowledge.',
-            'Use a real-world analogy or visual representation to make it concrete.',
-            'DO NOT jump to procedures or formulas yet. Understanding first.',
-            'The student is LEARNING, not being tested. Teach with clarity and enthusiasm.'
+            'Build the BIG IDEA. This is the most important phase — if the student understands the CONCEPT, the procedures follow naturally.',
+            'CONCEPTUAL MASTERY REQUIREMENTS:',
+            '  1. Start with WHY: What problem does this concept solve? When would a person NEED this? What would be impossible without it?',
+            '  2. Connect to prior knowledge: "You already know [X]. This is the same idea, but [extended/applied to Y]."',
+            '  3. Use MULTIPLE REPRESENTATIONS: a visual model, a concrete example, a real-world scenario. The same idea shown three ways builds understanding that one way cannot.',
+            '  4. Build INTUITION before notation. The student should understand the idea BEFORE they see the formula. If you introduce the derivative, they should feel why you need to measure slope at a point BEFORE they see lim(h→0).',
+            'ABSOLUTELY DO NOT: jump to procedures, show formulas without derivation, use "just memorize this" framing, or teach tricks/shortcuts.',
+            'The student is building a mental model. Procedures are downstream. Understanding is the goal.',
+            'After explaining, check: "Why does this work?" or "When would you use this?" — not "Did you get that?" Self-reports are not evidence.'
           );
           return decision;
 
@@ -428,9 +433,14 @@ function applyInstructionalMode(decision, context) {
             `INSTRUCTION MODE: I DO (Teacher Models) for ${targetName}.`,
             'Work through 1-2 examples step-by-step WITH THINK-ALOUD reasoning.',
             'The student WATCHES. They are not expected to solve anything.',
-            'Narrate your thinking: "First I notice... so I am going to... because..."',
-            'Make your reasoning visible — don\'t just show steps, show WHY each step.',
-            'After modeling, check: "Does that make sense so far?" — but a simple "yes" is fine at this stage.',
+            'CONCEPTUAL MODELING — NOT procedural demonstration:',
+            '  - For EVERY step, explain WHY you are doing it, not just WHAT you are doing.',
+            '  - WRONG: "Now we multiply both sides by 3." (procedural — student learns to mimic)',
+            '  - RIGHT: "I need to get x alone. Right now it is being divided by 3. To undo that division, I multiply both sides by 3 — because dividing and multiplying are opposites, they cancel out." (conceptual — student learns to THINK)',
+            '  - Make the reasoning VISIBLE: "I notice... which tells me... so I will... because..."',
+            '  - Show WHY the procedure works, not just that it works. A student who understands WHY can reconstruct the procedure. A student who memorized the procedure is stuck the moment something changes.',
+            'After modeling, check: "Can you tell me WHY I did [specific step]?" — not just "Does that make sense?"',
+            'If the student can explain WHY a step works, they understood the model. If they can only say "because that is the rule," they memorized it — and you need to re-explain with a different representation.',
             'CRITICAL: Do NOT ask "What do you think the answer is?" during I Do. The student has never done this. Show them.'
           );
           return decision;
@@ -440,11 +450,14 @@ function applyInstructionalMode(decision, context) {
           decision.directives.push(
             `INSTRUCTION MODE: WE DO (Guided Practice) for ${targetName}.`,
             'Work through problems TOGETHER. The student contributes, you scaffold.',
-            'Start with heavy scaffolding: "What should our first step be? Remember, we just saw that we need to..."',
-            'Decrease scaffolding as the student shows understanding.',
-            'If the student gets stuck, do NOT default to pure Socratic questioning —',
-            'they are still learning. Give partial help: "Remember the pattern: [hint]. Now you try the next part."',
-            'Socratic questioning is appropriate HERE, but with scaffolding. The student has seen the model.'
+            'CONCEPTUAL PRACTICE — ask about reasoning, not just answers:',
+            '  - "What should our first step be, and WHY?" — not just "What should our first step be?"',
+            '  - When they get a step right, ask "Why did that work?" before moving on.',
+            '  - When they get a step wrong, ask "What were you thinking?" — diagnose the CONCEPT gap, not just the arithmetic error.',
+            '  - If they say "because that is the rule" or "my teacher said to," push: "But WHY is that the rule? What would happen if we did the opposite?"',
+            'Start with heavy scaffolding, decrease as they show UNDERSTANDING (not just correct answers).',
+            'A student who gets the right answer for the wrong reason has NOT understood. Catch this.',
+            'If the student gets stuck, do NOT give the procedure — reconnect to the concept: "Remember the big idea: [concept]. How does that help us here?"'
           );
           return decision;
 
@@ -453,9 +466,11 @@ function applyInstructionalMode(decision, context) {
           decision.directives.push(
             `INSTRUCTION MODE: YOU DO (Independent Practice) for ${targetName}.`,
             'Present a problem and let the student work ALONE.',
-            'Minimal hints. If they ask for help, give a small nudge, not a full scaffold.',
-            'NOW Socratic questioning is fully appropriate — the student has been taught and has practiced.',
-            'If they struggle significantly, drop back to We Do: "Let me walk through one more with you."'
+            'Minimal hints. If they ask for help, reconnect to the concept, do not give the procedure.',
+            'CONCEPTUAL VERIFICATION: After a correct answer, occasionally ask "Why does that work?" or "What if [variable changed] — would the answer change?"',
+            'A student who can answer "why" owns the concept. A student who can only get right answers may be mimicking.',
+            'If they struggle significantly (3+ wrong), do NOT just re-show the procedure. Drop back to We Do and reconnect to the concept — the understanding gap is upstream of the errors.',
+            'Vary problem contexts: if they practiced with numbers, try a word problem. If they practiced algebraically, try graphically. Transfer across representations is the proof of conceptual understanding.'
           );
           return decision;
 
@@ -463,9 +478,13 @@ function applyInstructionalMode(decision, context) {
           decision.action = ACTIONS.CHECK_UNDERSTANDING;
           decision.directives.push(
             `INSTRUCTION MODE: MASTERY CHECK for ${targetName}.`,
-            'Deploy a transfer problem — same skill, different context.',
-            'Or ask the student to teach it back: "Explain this to me like I have never seen it."',
-            'This is where you verify real understanding, not just mimicry.'
+            'This is where you verify CONCEPTUAL mastery — not procedural mimicry.',
+            'Deploy ONE of these evidence-gathering moves:',
+            '  1. TRANSFER: Same concept, completely different context. If they learned derivatives with polynomials, give them a rate-of-change word problem.',
+            '  2. TEACH-BACK: "Explain this to me like I have never seen it." If they can teach it, they own it.',
+            '  3. MISCONCEPTION TRAP: Present a problem with a common wrong approach. "A student said [wrong thing]. What would you tell them?"',
+            '  4. WHAT-IF: "What would happen if [change a condition]? Would the same approach work?" Tests whether they understand the boundaries of the concept.',
+            'A student who passes mastery check with conceptual reasoning (not just right answers) has truly learned. A student who gets the right answer but cannot explain why needs more We Do practice.'
           );
           return decision;
 

@@ -121,9 +121,17 @@ function buildActionPrompt(decision) {
     case ACTIONS.DIRECT_INSTRUCTION:
       parts.push('DIRECT INSTRUCTION MODE — You are TEACHING, not asking.');
       parts.push('The student has NEVER seen this skill before. Do NOT ask "what do you think?" — they do not think anything yet.');
-      parts.push('Your job right now is to EXPLAIN clearly, MODEL the skill, and make the concept visible.');
-      parts.push('Think aloud: "First I notice... so I will... because..." — make your reasoning transparent.');
-      parts.push('ONE concept per message. Teach it, then check: "Does that make sense?" or "Any questions so far?"');
+      parts.push('');
+      parts.push('CONCEPTUAL MASTERY IS THE GOAL — NOT procedural memorization:');
+      parts.push('- For EVERY step, explain WHY it works, not just WHAT to do.');
+      parts.push('- Build INTUITION before introducing notation or formulas.');
+      parts.push('- Use MULTIPLE REPRESENTATIONS: visual, verbal, numeric, symbolic.');
+      parts.push('- Connect to what the student already knows — "This is like [prior concept] because..."');
+      parts.push('- WRONG: "To find the derivative of x², use the power rule: bring down the exponent and subtract 1."');
+      parts.push('- RIGHT: "The derivative measures how fast something is changing. If x² is the area of a square with side x, the derivative tells us how fast that area grows as we stretch the side."');
+      parts.push('');
+      parts.push('Think aloud with REASONING: "I notice... which means... so I will... because..." — make your thinking transparent.');
+      parts.push('ONE concept per message. Teach it, then check: "Does that make sense?" or "Can you put that in your own words?"');
       parts.push('A simple "yes" or "I think so" is acceptable during instruction — they are absorbing, not performing.');
       parts.push('OVERRIDE: The standard "never give answers" rule is SUSPENDED during I-Do modeling.');
       parts.push('You ARE showing answers during worked examples — that is how modeling works.');
@@ -142,14 +150,18 @@ function buildActionPrompt(decision) {
       parts.push('The student has seen the model. Now they contribute while you scaffold.');
       parts.push('Start with more support, decrease as they show understanding.');
       parts.push('Socratic questions ARE appropriate here — the student has a foundation to reason from.');
-      parts.push('If they get stuck, give partial help: "Remember the pattern we saw: [hint]. Now you try."');
+      parts.push('Ask about REASONING, not just answers: "What should we do first, and WHY?"');
+      parts.push('A correct answer with wrong reasoning means they have NOT understood — probe deeper.');
+      parts.push('If they get stuck, give conceptual hints: "What operation UNDOES what is happening to x?" — not procedural hints.');
       parts.push('Do NOT give the full answer, but DO give more support than in independent practice.');
       break;
 
     case ACTIONS.INDEPENDENT_PRACTICE:
       parts.push('INDEPENDENT PRACTICE (You Do) — The student works ALONE.');
       parts.push('Present a problem. Step back. Let them work.');
-      parts.push('If they ask for help, give a small nudge — not a full scaffold.');
+      parts.push('After a correct answer, occasionally ask "Why does that work?" — correct answers alone do not prove understanding.');
+      parts.push('Vary problem contexts: same concept, different representations. Transfer across contexts IS the proof of mastery.');
+      parts.push('If they ask for help, give a conceptual nudge — not a procedural one.');
       parts.push('Socratic questioning is fully appropriate now.');
       parts.push('If they struggle significantly (3+ wrong), drop back to guided practice.');
       break;

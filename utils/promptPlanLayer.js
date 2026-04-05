@@ -143,41 +143,54 @@ function buildModeDirective(target, skillResolution) {
       parts.push('This skill is NOVEL to the student. They have NEVER seen it before.');
       parts.push('CRITICAL OVERRIDE: The standard "never give answers / always use Socratic questioning"');
       parts.push('rule is MODIFIED for this interaction. During modeling (I Do), you SHOW worked');
-      parts.push('examples with full solutions and think-aloud reasoning. The student watches and');
-      parts.push('learns. Socratic questioning becomes appropriate in We Do and You Do phases.');
+      parts.push('examples with full solutions and think-aloud CONCEPTUAL reasoning. The student');
+      parts.push('watches and learns the WHY, not just the HOW. Socratic questioning becomes');
+      parts.push('appropriate in We Do and You Do phases.');
+      parts.push('');
+      parts.push('CORE PRINCIPLE: Every phase targets CONCEPTUAL MASTERY, not procedural memorization.');
+      parts.push('The student should understand WHY math works, not just memorize WHAT to do.');
       parts.push('');
       parts.push('The instructional sequence for a novel skill:');
-      parts.push('  1. VOCABULARY — introduce new terms one at a time');
-      parts.push('  2. CONCEPT — build the big idea, connect to prior knowledge');
-      parts.push('  3. I DO — model 1-2 worked examples (you solve, they watch)');
-      parts.push('  4. WE DO — guided practice together (Socratic + scaffolding)');
-      parts.push('  5. YOU DO — independent practice (full Socratic is now appropriate)');
-      parts.push('  6. MASTERY CHECK — verify with transfer or teach-back');
+      parts.push('  1. VOCABULARY — introduce terms through MEANING, not definitions to memorize');
+      parts.push('  2. CONCEPT — build intuition with multiple representations before notation');
+      parts.push('  3. I DO — model worked examples explaining WHY each step works, not just what to do');
+      parts.push('  4. WE DO — guided practice asking about reasoning, not just answers');
+      parts.push('  5. YOU DO — independent practice with varied contexts to prove transfer');
+      parts.push('  6. MASTERY CHECK — verify with transfer, teach-back, and misconception traps');
 
       if (phase) {
         parts.push('');
         parts.push(`CURRENT PHASE: ${phase.toUpperCase()}`);
         switch (phase) {
           case 'vocabulary':
-            parts.push('→ Introduce key terms. Do NOT solve problems yet.');
+            parts.push('→ Introduce key terms through MEANING — the goal is understanding what terms MEAN, not memorizing definitions.');
+            parts.push('→ Use concrete examples and analogies. Do NOT solve problems yet.');
             break;
           case 'concept-intro':
-            parts.push('→ Build the big idea. WHY does this concept exist? Connect to what they know.');
+            parts.push('→ Build the big idea with MULTIPLE REPRESENTATIONS: visual, verbal, numeric, symbolic.');
+            parts.push('→ Build INTUITION before notation. WHY does this concept exist? Connect to what they know.');
+            parts.push('→ Do NOT jump to formulas or procedures — derive understanding FIRST.');
             break;
           case 'i-do':
-            parts.push('→ MODEL worked examples with think-aloud. Student WATCHES. You solve, they absorb.');
+            parts.push('→ MODEL worked examples with CONCEPTUAL think-aloud. Student WATCHES.');
+            parts.push('→ For EVERY step, explain WHY you are doing it, not just WHAT you are doing.');
+            parts.push('→ WRONG: "Now multiply both sides by 3." RIGHT: "x is being divided by 3. To undo that, I multiply — because division and multiplication are opposites."');
             parts.push('→ Do NOT ask "what do you think?" — they have no basis to think anything yet.');
             break;
           case 'we-do':
-            parts.push('→ GUIDED PRACTICE. Work together. Student contributes, you scaffold.');
-            parts.push('→ Socratic questions OK here — they have seen the model.');
+            parts.push('→ GUIDED PRACTICE. Work together. Student contributes reasoning, you scaffold.');
+            parts.push('→ Ask about REASONING: "What should we do first, and WHY?" — not just "What is the answer?"');
+            parts.push('→ A correct answer with wrong reasoning means they have NOT understood. Probe deeper.');
             break;
           case 'you-do':
             parts.push('→ INDEPENDENT PRACTICE. Student works alone. Minimal hints.');
-            parts.push('→ Full Socratic mode is appropriate now.');
+            parts.push('→ After correct answers, occasionally ask "Why does that work?" to verify understanding.');
+            parts.push('→ Vary problem contexts — transfer across representations proves real mastery.');
             break;
           case 'mastery-check':
-            parts.push('→ Transfer problem or teach-back. Verify real understanding.');
+            parts.push('→ Verify REAL understanding with: TRANSFER (new context), TEACH-BACK ("explain it to me"),');
+            parts.push('  MISCONCEPTION TRAP (common wrong approach), WHAT-IF (change a condition).');
+            parts.push('→ A student who can only repeat procedures has NOT mastered the concept.');
             break;
         }
       }
