@@ -122,16 +122,21 @@ function buildActionPrompt(decision) {
       parts.push('DIRECT INSTRUCTION MODE — You are TEACHING, not asking.');
       parts.push('The student has NEVER seen this skill before. Do NOT ask "what do you think?" — they do not think anything yet.');
       parts.push('');
+      parts.push('ACTIVATE PRIOR KNOWLEDGE FIRST:');
+      parts.push('- Before introducing ANYTHING new, connect to something the student already knows.');
+      parts.push('- The new concept should feel like a natural extension, not a disconnected rule.');
+      parts.push('- Example: "You already know how to distribute: 3(x+2) = 3x+6. Factoring is just running that backwards."');
+      parts.push('- Example: "You know slope measures steepness. A derivative is slope at a single point."');
+      parts.push('');
       parts.push('CONCEPTUAL MASTERY IS THE GOAL — NOT procedural memorization:');
       parts.push('- For EVERY step, explain WHY it works, not just WHAT to do.');
       parts.push('- Build INTUITION before introducing notation or formulas.');
       parts.push('- Use MULTIPLE REPRESENTATIONS: visual, verbal, numeric, symbolic.');
-      parts.push('- Connect to what the student already knows — "This is like [prior concept] because..."');
       parts.push('- WRONG: "To find the derivative of x², use the power rule: bring down the exponent and subtract 1."');
       parts.push('- RIGHT: "The derivative measures how fast something is changing. If x² is the area of a square with side x, the derivative tells us how fast that area grows as we stretch the side."');
       parts.push('');
       parts.push('Think aloud with REASONING: "I notice... which means... so I will... because..." — make your thinking transparent.');
-      parts.push('ONE concept per message. Teach it, then check: "Does that make sense?" or "Can you put that in your own words?"');
+      parts.push('ONE concept per message. Teach it, then check: "Can you put that in your own words?" or "Why does that work?"');
       parts.push('A simple "yes" or "I think so" is acceptable during instruction — they are absorbing, not performing.');
       parts.push('OVERRIDE: The standard "never give answers" rule is SUSPENDED during I-Do modeling.');
       parts.push('You ARE showing answers during worked examples — that is how modeling works.');
@@ -139,10 +144,12 @@ function buildActionPrompt(decision) {
       break;
 
     case ACTIONS.PREREQUISITE_BRIDGE:
-      parts.push('PREREQUISITE BRIDGE — You are shoring up a foundation skill before teaching the target.');
-      parts.push('Keep this focused and efficient. This is a bridge, not a full lesson.');
-      parts.push('Frame it positively: connect it to where you are headed.');
-      parts.push('If the prerequisite is novel too, teach it directly (briefly). If shaky, use quick guided practice.');
+      parts.push('PREREQUISITE BRIDGE — You are activating a foundation skill before teaching the target.');
+      parts.push('This is NOT a detour. Frame it as the STARTING POINT of the new concept:');
+      parts.push('"Before we learn [new skill], let\'s make sure we\'re solid on [prerequisite] — because [new skill] is built directly on top of it."');
+      parts.push('Show the CONNECTION explicitly: how does this prerequisite become the building block?');
+      parts.push('Keep it focused and efficient. This is a bridge, not a full lesson.');
+      parts.push('If the prerequisite is novel too, teach it directly (briefly) with conceptual reasoning. If shaky, use quick guided practice.');
       break;
 
     case ACTIONS.GUIDED_PRACTICE:

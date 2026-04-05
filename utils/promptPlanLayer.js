@@ -167,8 +167,9 @@ function buildModeDirective(target, skillResolution) {
             parts.push('→ Use concrete examples and analogies. Do NOT solve problems yet.');
             break;
           case 'concept-intro':
+            parts.push('→ ACTIVATE PRIOR KNOWLEDGE FIRST: start from a concept the student already knows and extend it.');
             parts.push('→ Build the big idea with MULTIPLE REPRESENTATIONS: visual, verbal, numeric, symbolic.');
-            parts.push('→ Build INTUITION before notation. WHY does this concept exist? Connect to what they know.');
+            parts.push('→ Build INTUITION before notation. WHY does this concept exist? What problem does it solve?');
             parts.push('→ Do NOT jump to formulas or procedures — derive understanding FIRST.');
             break;
           case 'i-do':
@@ -221,15 +222,20 @@ function buildModeDirective(target, skillResolution) {
   // Add teaching guidance from skill document if available
   if (skillResolution?.teachingGuidance) {
     const tg = skillResolution.teachingGuidance;
+
+    // For INSTRUCT and GUIDE modes, prior knowledge connections are CRITICAL —
+    // they tell the tutor exactly what to activate before teaching.
+    // Surface them prominently, not buried in a footnote.
+    if (tg.connectionsToPriorKnowledge?.length > 0 && (mode === 'instruct' || mode === 'guide')) {
+      parts.push(`\nPRIOR KNOWLEDGE TO ACTIVATE (use these as your entry point):\n  ${tg.connectionsToPriorKnowledge.map(c => `→ ${c}`).join('\n  ')}`);
+    }
+
     const guidanceParts = [];
     if (tg.coreConcepts?.length > 0) {
       guidanceParts.push(`Core concepts: ${tg.coreConcepts.join(', ')}`);
     }
     if (tg.commonMistakes?.length > 0 && mode !== 'leverage') {
       guidanceParts.push(`Watch for these mistakes: ${tg.commonMistakes.join(', ')}`);
-    }
-    if (tg.connectionsToPriorKnowledge?.length > 0 && (mode === 'instruct' || mode === 'guide')) {
-      guidanceParts.push(`Connect to: ${tg.connectionsToPriorKnowledge.join(', ')}`);
     }
     if (guidanceParts.length > 0) {
       parts.push(`\nTEACHING GUIDANCE:\n  ${guidanceParts.join('\n  ')}`);

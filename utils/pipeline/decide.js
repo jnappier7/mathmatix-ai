@@ -404,7 +404,10 @@ function applyInstructionalMode(decision, context) {
             `INSTRUCTION MODE: VOCABULARY INTRODUCTION for ${targetName}.`,
             'Introduce key terms ONE AT A TIME with student-friendly definitions.',
             'For each term: give the definition, then a CONCRETE example, then explain WHY this word matters — what idea does it capture?',
-            'Connect terms to things the student already understands. "Rate" is just "how fast something changes." "Denominator" is "how many equal pieces we cut it into."',
+            'ACTIVATE PRIOR KNOWLEDGE: Connect every new term to something the student already understands.',
+            '  - "Rate" is just "how fast something changes" — you already know speed is a rate.',
+            '  - "Factor" means "something you multiply" — you already use factors when you do 3 × 4 = 12.',
+            '  - Ground EVERY term in prior understanding before extending it to the new context.',
             'DO NOT ask the student to solve anything yet — they are learning the language.',
             'Check understanding of each term before introducing the next: "Can you put that in your own words?"',
             'CONCEPTUAL MASTERY: The goal is not memorizing definitions. The goal is the student understanding what each term MEANS — why it exists, what idea it represents, how it connects to the math they already know.'
@@ -416,11 +419,15 @@ function applyInstructionalMode(decision, context) {
           decision.directives.push(
             `INSTRUCTION MODE: CONCEPT INTRODUCTION for ${targetName}.`,
             'Build the BIG IDEA. This is the most important phase — if the student understands the CONCEPT, the procedures follow naturally.',
-            'CONCEPTUAL MASTERY REQUIREMENTS:',
+            'ACTIVATE PRIOR KNOWLEDGE FIRST — this is how concepts stick:',
+            '  - Before introducing the new concept, activate the student\'s understanding of a related concept they already know.',
+            '  - Example: Before teaching FACTORING, start with DISTRIBUTIVE PROPERTY. "You know that 3(x+2) = 3x+6. Factoring is literally running that BACKWARDS — starting with 3x+6 and figuring out it came from 3(x+2)."',
+            '  - Example: Before teaching DERIVATIVES, start with SLOPE. "You already know slope measures steepness between two points. A derivative is what happens when those two points get infinitely close together."',
+            '  - The new concept should feel like a NATURAL EXTENSION of something familiar, not a disconnected new rule.',
+            'THEN BUILD THE CONCEPT:',
             '  1. Start with WHY: What problem does this concept solve? When would a person NEED this? What would be impossible without it?',
-            '  2. Connect to prior knowledge: "You already know [X]. This is the same idea, but [extended/applied to Y]."',
-            '  3. Use MULTIPLE REPRESENTATIONS: a visual model, a concrete example, a real-world scenario. The same idea shown three ways builds understanding that one way cannot.',
-            '  4. Build INTUITION before notation. The student should understand the idea BEFORE they see the formula. If you introduce the derivative, they should feel why you need to measure slope at a point BEFORE they see lim(h→0).',
+            '  2. Use MULTIPLE REPRESENTATIONS: a visual model, a concrete example, a real-world scenario. The same idea shown three ways builds understanding that one way cannot.',
+            '  3. Build INTUITION before notation. The student should understand the idea BEFORE they see the formula.',
             'ABSOLUTELY DO NOT: jump to procedures, show formulas without derivation, use "just memorize this" framing, or teach tricks/shortcuts.',
             'The student is building a mental model. Procedures are downstream. Understanding is the goal.',
             'After explaining, check: "Why does this work?" or "When would you use this?" — not "Did you get that?" Self-reports are not evidence.'
@@ -506,7 +513,8 @@ function applyInstructionalMode(decision, context) {
             'This skill is NOVEL to the student — they have never seen it before.',
             'Start with vocabulary if there are new terms, otherwise start with the big idea.',
             'DO NOT begin with a question or problem. Begin by TEACHING.',
-            'Connect to what the student already knows, then introduce the new concept.'
+            'ALWAYS start by activating prior knowledge — find something the student already knows that connects to this new concept.',
+            'Frame the new skill as a natural extension: "You already know [X]. What we are learning today is [X] taken one step further."'
           );
           return decision;
       }
