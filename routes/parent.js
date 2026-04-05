@@ -521,52 +521,8 @@ router.get('/child/:childId/learning-curve', isAuthenticated, isParent, async (r
     }
 });
 
-// =====================================================
-// CELERATION: View child's fact fluency progress
-// =====================================================
-router.get('/child/:childId/celeration', isAuthenticated, isParent, async (req, res) => {
-    try {
-        const child = await verifyParentChildAccess(req.user._id, req.params.childId);
-        if (!child) return res.status(403).json({ message: 'Not authorized to view this child.' });
-
-        const grade = parseInt(child.gradeLevel);
-        const aim = grade >= 9 ? 60 : grade >= 6 ? 50 : 40;
-        const familiesData = [];
-
-        for (const [familyKey, familyData] of Object.entries(child.factFluencyProgress?.factFamilies || {})) {
-            if (!familyData.sessions || familyData.sessions.length === 0) continue;
-
-            const sessions = familyData.sessions.map(s => ({
-                date: s.date, rate: s.rate, accuracy: s.accuracy
-            })).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            const recentRates = sessions.slice(-3).map(s => s.rate).sort((a, b) => a - b);
-            const currentRate = recentRates[Math.floor(recentRates.length / 2)];
-
-            familiesData.push({
-                familyKey,
-                displayName: familyData.displayName,
-                currentRate,
-                bestRate: familyData.bestRate || 0,
-                atAim: currentRate >= aim,
-                mastered: familyData.mastered || false,
-                sessionCount: sessions.length,
-                lastPracticed: familyData.lastPracticed,
-                sessions
-            });
-        }
-
-        res.json({
-            success: true,
-            child: { id: child._id, name: `${child.firstName} ${child.lastName}` },
-            aim,
-            families: familiesData
-        });
-    } catch (error) {
-        console.error('Error fetching child celeration:', error);
-        res.status(500).json({ message: 'Error fetching celeration data' });
-    }
-});
+// CELERATION: Shelved — no real data to track (uncomment to re-enable)
+// router.get('/child/:childId/celeration', ...);
 
 // =====================================================
 // LEARNING REPORT: Unified parent-friendly learning report

@@ -78,12 +78,12 @@ const settingsRoutes = require('../routes/settings');
 const emailRoutes = require('../routes/email');
 const gradeWorkRoutes = require('../routes/gradeWork');
 const quarterlyGrowthRoutes = require('../routes/quarterlyGrowth');
-const factFluencyRoutes = require('../routes/factFluency');
+// const factFluencyRoutes = require('../routes/factFluency'); // Shelved: no real data
 const dailyQuestsRoutes = require('../routes/dailyQuests');
 const weeklyChallengesRoutes = require('../routes/weeklyChallenges');
 const challengeRoutes = require('../routes/challenges');
 const learningCurveRoutes = require('../routes/learningCurve');
-const celerationRoutes = require('../routes/celeration');
+// const celerationRoutes = require('../routes/celeration'); // Shelved: no real data
 const sessionRoutes = require('../routes/session');
 const feedbackRoutes = require('../routes/feedback');
 const tourSurveyRoutes = require('../routes/tourSurvey');
@@ -215,12 +215,12 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/email', isAuthenticated, emailRoutes);
   app.use('/api/grade-work', isAuthenticated, largeJsonParser, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes);
   app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes);
-  app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes);
+  // app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // Shelved
   app.use('/api', isAuthenticated, dailyQuestsRoutes);
   app.use('/api', isAuthenticated, weeklyChallengesRoutes);
   app.use('/api/challenges', isAuthenticated, challengeRoutes);
   app.use('/api', isAuthenticated, learningCurveRoutes);
-  app.use('/api', isAuthenticated, celerationRoutes);
+  // app.use('/api', isAuthenticated, celerationRoutes); // Shelved
   app.use('/api/session', isAuthenticated, sessionRoutes);
   app.use('/api/feedback', isAuthenticated, feedbackRoutes);
   app.use('/api/support', isAuthenticated, supportRoutes);
@@ -568,11 +568,11 @@ function registerHtmlRoutes(app) {
   app.get('/screener.html', isAuthenticated, sendHtml('screener.html'));
   app.get('/mastery-chat.html', isAuthenticated, sendHtml('mastery-chat.html'));
 
-  app.get('/fact-fluency-blaster.html', isAuthenticated, sendHtml('fact-fluency-blaster.html'));
-  app.get('/number-run.html', isAuthenticated, sendHtml('number-run.html'));
+  // app.get('/fact-fluency-blaster.html', isAuthenticated, sendHtml('fact-fluency-blaster.html')); // Shelved
+  // app.get('/number-run.html', isAuthenticated, sendHtml('number-run.html')); // Shelved: depends on fact-fluency API
   app.get('/learning-curves.html', isAuthenticated, sendHtml('learning-curves.html'));
-  app.get('/my-celeration-charts.html', isAuthenticated, sendHtml('my-celeration-charts.html'));
-  app.get('/my-speed-progress.html', isAuthenticated, sendHtml('my-speed-progress.html'));
+  // app.get('/my-celeration-charts.html', isAuthenticated, sendHtml('my-celeration-charts.html')); // Shelved
+  // app.get('/my-speed-progress.html', isAuthenticated, sendHtml('my-speed-progress.html')); // Shelved
   app.get('/progress.html', isAuthenticated, sendHtml('progress.html'));
   app.get('/student-dashboard.html', isAuthenticated, sendHtml('student-dashboard.html'));
   app.get('/weekly-challenges.html', isAuthenticated, sendHtml('weekly-challenges.html'));
@@ -587,11 +587,11 @@ function registerHtmlRoutes(app) {
   app.get('/admin-dashboard.html', isAuthenticated, isAdmin, sendHtml('admin-dashboard.html'));
   app.get('/admin-upload.html', isAuthenticated, isAdmin, sendHtml('admin-upload.html'));
   app.get('/teacher-dashboard.html', isAuthenticated, isTeacher, sendHtml('teacher-dashboard.html'));
-  app.get('/teacher-celeration-dashboard.html', isAuthenticated, isTeacher, sendHtml('teacher-celeration-dashboard.html'));
+  // app.get('/teacher-celeration-dashboard.html', isAuthenticated, isTeacher, sendHtml('teacher-celeration-dashboard.html')); // Shelved
   app.get('/parent-dashboard.html', isAuthenticated, isParent, sendHtml('parent-dashboard.html'));
 
   // Redirects
-  app.get('/fact-fluency-practice.html', (req, res) => res.redirect(301, '/fact-fluency-blaster.html'));
+  // app.get('/fact-fluency-practice.html', (req, res) => res.redirect(301, '/fact-fluency-blaster.html')); // Shelved
 }
 
 function registerStaticRoutes(app) {

@@ -5,9 +5,11 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const User = require('../models/user');
+const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
 const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
+const mongoose = require('mongoose');
 
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
@@ -295,11 +297,59 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         // Recent wins from learning profile
         const recentWins = student.learningProfile?.recentWins?.slice(0, 3) || [];
 
+        // Streak from daily quests
+        const streak = student.dailyQuests?.currentStreak || 0;
+
+        // Daily quests (top 2 for the strip)
+        const dailyQuests = (student.dailyQuests?.quests || []).map(q => ({
+            name: q.name || q.description,
+            description: q.description,
+            progress: q.progress || 0,
+            total: q.total || 1,
+            completed: q.completed || false
+        }));
+
+        // Weekly stats: problems, accuracy, XP, skills mastered
+        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const studentObjectId = new mongoose.Types.ObjectId(student._id);
+
+        const weeklyAgg = await Conversation.aggregate([
+            { $match: { userId: studentObjectId, lastActivity: { $gte: oneWeekAgo } } },
+            {
+                $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } }
+                }
+            }
+        ]);
+        const weeklyConvStats = weeklyAgg[0] || { totalProblems: 0, totalCorrect: 0 };
+
+        const weeklyXp = (student.xpHistory || [])
+            .filter(e => e.date && new Date(e.date) >= oneWeekAgo)
+            .reduce((sum, e) => sum + (e.amount || 0), 0);
+
+        const skillsMasteredThisWeek = skillEntries
+            .filter(([, d]) => d.status === 'mastered' && d.masteredDate && new Date(d.masteredDate) >= oneWeekAgo)
+            .length;
+
+        const weeklyStats = {
+            problemsSolved: weeklyConvStats.totalProblems,
+            accuracy: weeklyConvStats.totalProblems > 0
+                ? Math.round((weeklyConvStats.totalCorrect / weeklyConvStats.totalProblems) * 100)
+                : null,
+            xpEarned: weeklyXp,
+            skillsMastered: skillsMasteredThisWeek
+        };
+
         res.json({
             assessmentCompleted: true,
             recentMastery,
             currentLearning,
             nextReady,
+            streak,
+            dailyQuests,
+            weeklyStats,
             recentWins: recentWins.map(w => ({
                 description: w.description,
                 date: w.date
@@ -342,7 +392,6 @@ router.get('/growth', isAuthenticated, isStudent, async (req, res) => {
         const xpTrend = prevWeekXp > 0 ? Math.round(((weeklyXp - prevWeekXp) / prevWeekXp) * 100) : (weeklyXp > 0 ? 100 : 0);
 
         // ── Accuracy growth ──
-        const Conversation = require('../models/conversation');
         const recentSessions = await Conversation.find({
             userId: student._id,
             lastActivity: { $gte: monthAgo },

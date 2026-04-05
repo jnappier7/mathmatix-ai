@@ -162,25 +162,7 @@ function getNextActions(user, context = {}) {
         });
     }
 
-    // ── 7. Fact fluency suggestion (if not practiced recently) ──
-    const fluencyStats = user.factFluencyProgress?.stats;
-    if (fluencyStats) {
-        const lastPractice = fluencyStats.lastPracticeDate;
-        const daysSince = lastPractice
-            ? (Date.now() - new Date(lastPractice).getTime()) / 86400000
-            : Infinity;
-
-        if (daysSince > 3) {
-            suggestions.push({
-                type: 'fact-fluency',
-                priority: 3,
-                icon: 'fa-bolt',
-                title: 'Speed Practice',
-                message: 'Sharpen your math facts with a quick fluency round!',
-                action: { type: 'navigate', url: '/fact-fluency.html' },
-            });
-        }
-    }
+    // Fact fluency suggestion: shelved (no real data)
 
     // Sort by priority descending, return top 3
     suggestions.sort((a, b) => b.priority - a.priority);
