@@ -33,8 +33,10 @@ const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsSch
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
 // Backbone: Tutor Plan + Skill Familiarity
-const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction } = require('../tutorPlanManager');
+const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase } = require('../tutorPlanManager');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
+const { evaluatePhaseAdvancement, reassessFamiliarity, createPhaseTracker, updatePhaseTracker } = require('../phaseEvidenceEvaluator');
+const { detectModeTransition } = require('../modeTransitionDetector');
 
 /**
  * Run the full tutoring pipeline.
@@ -199,14 +201,44 @@ async function runPipeline(message, ctx) {
     // Evidence is optional — pipeline continues without it
   }
 
-  // ── Stage 3: DECIDE (enhanced with evidence + tutor plan) ──
+  // ── Mode transition detection (fluid context shifts) ──
+  let modeTransition = null;
+  if (tutorPlan) {
+    try {
+      modeTransition = detectModeTransition(message, observation, {
+        tutorPlan,
+        activeSkill: ctx.activeSkill,
+        courseSession: ctx._course?.courseSession || null,
+        sessionMood,
+      });
+      if (modeTransition?.shouldTransition) {
+        console.log(`[Pipeline] Mode transition: ${modeTransition.type} (${modeTransition.reason}) confidence=${modeTransition.confidence}`);
+      }
+    } catch (err) {
+      console.error('[Pipeline] Mode transition detection error (non-fatal):', err.message);
+    }
+  }
+
+  // ── Stage 3: DECIDE (enhanced with evidence + tutor plan + mode transitions) ──
   const decision = decide(observation, diagnosis, {
     phaseState: ctx.phaseState || null,
     activeSkill: ctx.activeSkill || null,
     sessionMood,
     evidence,
     tutorPlan: tutorPlan || null,
+    modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
   });
+
+  // Inject mode transition directives into the decision
+  if (modeTransition?.shouldTransition && modeTransition.suggestedDirectives) {
+    for (const directive of modeTransition.suggestedDirectives) {
+      decision.directives.push(directive);
+    }
+    // If the transition has a connection to the plan, add it as context
+    if (modeTransition.connectionToPlan) {
+      decision.directives.push(`[PLAN CONNECTION: ${modeTransition.connectionToPlan}]`);
+    }
+  }
 
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
 
@@ -320,42 +352,131 @@ async function runPipeline(message, ctx) {
       evidence,
     });
 
-    // ── Update Tutor Plan after interaction ──
+    // ── Update Tutor Plan after interaction (evidence-driven) ──
     if (tutorPlan) {
       try {
-        // Determine if instruction phase should advance
-        // Phase advances when the student demonstrates understanding in the current phase
-        const shouldAdvance = decision.action === 'direct_instruction'
-          && diagnosis.type !== 'no_answer'
-          && diagnosis.isCorrect === true
-          && tutorPlan.currentTarget?.instructionPhase;
-
-        // Build tutor notes from this interaction
+        const targetSkillId = ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId;
         const notes = [];
+        let shouldAdvance = false;
+        let advanceToPhase = null;
+        let familiarityChange = null;
+
+        // ── 1. Evidence-based phase advancement ──
+        // Instead of advancing on a single correct answer, evaluate accumulated evidence
+        if (tutorPlan.currentTarget?.instructionPhase && tutorPlan.currentTarget?.instructionalMode === 'instruct') {
+          const phaseTracker = ctx.conversation?.phaseTracker || createPhaseTracker(
+            tutorPlan.currentTarget.instructionPhase,
+            targetSkillId
+          );
+
+          const phaseEval = evaluatePhaseAdvancement(
+            { phase: phaseTracker.phase, turnsInPhase: phaseTracker.turnsInPhase, evidenceLog: phaseTracker.evidenceLog },
+            { diagnosis, observation, decision, sessionMood },
+            { tutorPlan, evidence }
+          );
+
+          updatePhaseTracker(phaseTracker, phaseEval, { diagnosis, observation, decision });
+
+          // Store tracker on conversation for cross-turn accumulation
+          if (ctx.conversation) {
+            ctx.conversation.phaseTracker = phaseTracker;
+            ctx.conversation.markModified?.('phaseTracker');
+          }
+
+          if (phaseEval.shouldAdvance) {
+            shouldAdvance = true;
+            advanceToPhase = phaseEval.nextPhase;
+            console.log(`[Pipeline] Phase advance: ${phaseTracker.phase} → ${phaseEval.nextPhase} (${phaseEval.reasoning})`);
+            notes.push({
+              content: `Phase advanced: ${phaseEval.reasoning}`,
+              category: 'general',
+              skillId: targetSkillId,
+            });
+          } else if (phaseEval.shouldRegress) {
+            shouldAdvance = true; // We use the same mechanism for regression
+            advanceToPhase = phaseEval.nextPhase;
+            console.log(`[Pipeline] Phase regression: → ${phaseEval.nextPhase} (${phaseEval.reasoning})`);
+            notes.push({
+              content: `Phase regressed: ${phaseEval.reasoning}`,
+              category: 'general',
+              skillId: targetSkillId,
+            });
+          }
+        }
+
+        // ── 2. Real-time familiarity re-assessment ──
+        // If the student surprises us (knows more or less than expected), adapt immediately
+        if (tutorPlan.currentTarget?.instructionalMode) {
+          familiarityChange = reassessFamiliarity(
+            {
+              familiarity: tutorPlan.skillFocus?.find(sf => sf.skillId === targetSkillId)?.familiarity || 'developing',
+              instructionalMode: tutorPlan.currentTarget.instructionalMode,
+            },
+            {
+              diagnosis,
+              observation,
+              turnsInMode: ctx.conversation?.phaseTracker?.turnsInMode || 0,
+            }
+          );
+
+          if (familiarityChange) {
+            console.log(`[Pipeline] Familiarity re-assessed: ${familiarityChange.reason}`);
+            // Update the plan's current target mode
+            tutorPlan.currentTarget.instructionalMode = familiarityChange.instructionalMode;
+            // Update the skill focus entry
+            const focusEntry = tutorPlan.skillFocus?.find(sf => sf.skillId === targetSkillId);
+            if (focusEntry) {
+              focusEntry.familiarity = familiarityChange.familiarity;
+              focusEntry.instructionalMode = familiarityChange.instructionalMode;
+            }
+            notes.push({
+              content: familiarityChange.reason,
+              category: 'learning-style',
+              skillId: targetSkillId,
+            });
+          }
+        }
+
+        // ── 3. Extract tutor notes from AI signals ──
         if (diagnosis.misconception?.name) {
           notes.push({
             content: `Misconception: ${diagnosis.misconception.name}${diagnosis.misconception.description ? ' — ' + diagnosis.misconception.description : ''}`,
             category: 'misconception',
-            skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+            skillId: targetSkillId,
           });
         }
         if (verified.extracted?.learningInsight) {
           notes.push({
             content: verified.extracted.learningInsight,
             category: 'learning-style',
-            skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+            skillId: targetSkillId,
           });
+        }
+
+        // ── 4. Detect breakthroughs and struggles ──
+        let outcome = 'productive';
+        if (sessionMood?.fatigueSignal) {
+          outcome = 'disengaged';
+        } else if (familiarityChange && familiarityChange.instructionalMode === 'strengthen') {
+          outcome = 'breakthrough';
+          notes.push({
+            content: `Breakthrough moment: student upgraded to ${familiarityChange.instructionalMode} mode`,
+            category: 'breakthrough',
+            skillId: targetSkillId,
+          });
+        } else if (diagnosis.isCorrect === false && observation.streaks?.recentWrongCount >= 3) {
+          outcome = 'struggled';
         }
 
         await updatePlanAfterInteraction(tutorPlan, {
           topic: ctx.conversation?.topic || observation.messageType,
-          skillId: ctx.activeSkill?.skillId || tutorPlan.currentTarget?.skillId,
+          skillId: targetSkillId,
           mood: sessionMood?.trajectory,
-          outcome: sessionMood?.fatigueSignal ? 'disengaged'
-            : (diagnosis.isCorrect === true ? 'productive' : 'struggled'),
+          outcome,
           conversationId: ctx.conversation?._id,
           notes: notes.length > 0 ? notes : undefined,
           shouldAdvancePhase: shouldAdvance,
+          advanceToPhase,
         });
       } catch (err) {
         console.error('[Pipeline] TutorPlan update error (non-fatal):', err.message);
@@ -403,6 +524,52 @@ async function runPipeline(message, ctx) {
     suggestions,
     // Structured sidecar (deterministic + LLM signals merged)
     sidecar,
+
+    // ── BACKBONE: Instructional context for frontend ──
+    // The frontend can use this to render mode indicators, phase progress,
+    // contextual UI (show/hide manipulatives, adjust chat chrome, etc.)
+    instructionalContext: tutorPlan ? {
+      // Current instructional mode — determines the overall teaching approach
+      mode: tutorPlan.currentTarget?.instructionalMode || null,
+      // Current phase within the mode (for INSTRUCT mode)
+      phase: tutorPlan.currentTarget?.instructionPhase || null,
+      // What skill is being taught
+      targetSkill: tutorPlan.currentTarget?.skillId ? {
+        skillId: tutorPlan.currentTarget.skillId,
+        displayName: tutorPlan.currentTarget.displayName,
+      } : null,
+      // Phase tracker for progress visualization
+      phaseProgress: ctx.conversation?.phaseTracker ? {
+        currentPhase: ctx.conversation.phaseTracker.phase,
+        turnsInPhase: ctx.conversation.phaseTracker.turnsInPhase,
+        totalAdvancements: ctx.conversation.phaseTracker.advancementCount,
+        totalRegressions: ctx.conversation.phaseTracker.regressionCount,
+        phaseSequence: ['vocabulary', 'concept-intro', 'i-do', 'we-do', 'you-do', 'mastery-check'],
+        currentIndex: ['vocabulary', 'concept-intro', 'i-do', 'we-do', 'you-do', 'mastery-check']
+          .indexOf(ctx.conversation.phaseTracker?.phase),
+      } : null,
+      // Familiarity was re-assessed this turn (significant event for UX)
+      familiarityChanged: !!(tutorPlan._familiarityChanged),
+      // Session continuity hint
+      hasUnfinishedBusiness: !!(tutorPlan.lastSession?.unfinishedBusiness),
+      // Skill focus queue summary (for "up next" display)
+      upNext: (tutorPlan.skillFocus || [])
+        .filter(sf => sf.status === 'active' && sf.skillId !== tutorPlan.currentTarget?.skillId)
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, 3)
+        .map(sf => ({
+          skillId: sf.skillId,
+          displayName: sf.displayName,
+          mode: sf.instructionalMode,
+          reason: sf.reason,
+        })),
+      // Student signals for adaptive UI
+      studentSignals: {
+        confidence: tutorPlan.studentSignals?.overallConfidence || 'moderate',
+        engagement: tutorPlan.studentSignals?.engagementTrend || 'stable',
+      },
+    } : null,
+
     // Pipeline metadata (for debugging/logging)
     _pipeline: {
       messageType: observation.messageType,
@@ -418,7 +585,7 @@ async function runPipeline(message, ctx) {
         inFlow: sessionMood.inFlow,
         fatigueSignal: sessionMood.fatigueSignal,
       },
-      // Evidence-based intelligence (new)
+      // Evidence-based intelligence
       evidence: evidence ? {
         cognitiveLoad: evidence.cognitiveLoad?.level || null,
         knowledgePL: evidence.knowledge?.pLearned || null,
@@ -427,6 +594,14 @@ async function runPipeline(message, ctx) {
         productiveStruggle: evidence.performance?.productiveStruggle || false,
         compositeReadiness: evidence.composite?.readiness || null,
         compositeReasoning: evidence.composite?.reasoning || [],
+      } : null,
+      // Backbone metadata
+      backbone: tutorPlan ? {
+        mode: tutorPlan.currentTarget?.instructionalMode,
+        phase: tutorPlan.currentTarget?.instructionPhase,
+        targetSkill: tutorPlan.currentTarget?.skillId,
+        planVersion: tutorPlan.version,
+        sessionCount: tutorPlan.sessionCount,
       } : null,
       timeMs: pipelineTime,
     },

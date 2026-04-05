@@ -76,6 +76,8 @@ const INSTRUCTIONAL_MODES = {
  * @param {Object} context.activeSkill - Current skill { skillId, displayName }
  * @param {Object} context.streakHistory - { idkCount, giveUpCount, recentWrongCount }
  * @param {Object} context.evidence - From evidenceAccumulator (optional, enhances decisions)
+ * @param {Object} context.tutorPlan - TutorPlan document (backbone, optional)
+ * @param {Object} context.modeTransition - From modeTransitionDetector (optional)
  * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
  */
 function decide(observation, diagnosis, context = {}) {
