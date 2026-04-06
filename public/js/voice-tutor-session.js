@@ -276,7 +276,23 @@
 
     } catch (err) {
       console.error('[VoiceTutor] Mic error:', err);
-      addSystemMessage('Could not access microphone. Check permissions.');
+      let msg = 'Could not access microphone.';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        if (isIOS) {
+          msg += ' Open Settings → Safari → Microphone and allow access for this site.';
+        } else if (isAndroid) {
+          msg += ' Tap the lock icon in your browser\'s address bar and allow microphone access.';
+        } else {
+          msg += ' Click the camera/mic icon in your browser\'s address bar to allow access.';
+        }
+      } else if (err.name === 'NotFoundError') {
+        msg += ' No microphone detected. Try plugging in headphones with a mic.';
+      } else {
+        msg += ' Make sure no other app is using your microphone and try again.';
+      }
+      addSystemMessage(msg);
       setMode('idle');
     }
   }
