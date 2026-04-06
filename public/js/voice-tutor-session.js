@@ -281,7 +281,7 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isAndroid = /Android/.test(navigator.userAgent);
         if (isIOS) {
-          msg += ' Open Settings → Safari → Microphone and allow access for this site.';
+          msg += ' Open Settings → your browser → Microphone and allow access for this site.';
         } else if (isAndroid) {
           msg += ' Tap the lock icon in your browser\'s address bar and allow microphone access.';
         } else {
