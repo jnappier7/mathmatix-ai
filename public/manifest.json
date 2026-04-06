@@ -3,10 +3,12 @@
   "short_name": "MATHMATIX",
   "description": "Unlock the Pattern. Learn for Life. - AI-powered math tutoring platform",
   "start_url": "/chat.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0a1628",
   "theme_color": "#12B3B3",
   "orientation": "portrait-primary",
+  "id": "/chat.html",
   "icons": [
     {
       "src": "/images/icon-192x192.png",
@@ -34,5 +36,9 @@
     }
   ],
   "categories": ["education", "productivity"],
-  "screenshots": []
+  "screenshots": [],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

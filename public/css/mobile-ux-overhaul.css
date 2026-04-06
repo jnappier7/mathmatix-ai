@@ -1,0 +1,187 @@
+/* ============================================
+   MOBILE UX OVERHAUL — Stats bar, hero actions, polish
+   ============================================ */
+
+/* --- PERSISTENT STATS BAR (Level, Streak, XP) --- */
+
+.mobile-stats-bar {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .mobile-stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 6px 16px;
+    background: var(--clr-bg-light, #fff);
+    border-bottom: 1px solid var(--clr-border-light, #edf0f3);
+    flex-shrink: 0;
+  }
+
+  [data-theme="dark"] .mobile-stats-bar {
+    background: var(--clr-bg-dark, #1a1d2e);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .msb-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-text-dim, #6b7a8d);
+  }
+
+  .msb-icon {
+    font-size: 0.9rem;
+  }
+
+  .msb-value {
+    color: var(--clr-text-main, #1a1a2e);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  [data-theme="dark"] .msb-value {
+    color: #e2e8f0;
+  }
+
+  .msb-unit {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--clr-text-dim, #8896a6);
+  }
+
+  .msb-label {
+    font-size: 0.7rem;
+    color: var(--clr-text-dim, #8896a6);
+  }
+
+  /* Inline XP progress track */
+  .msb-xp-track {
+    width: 48px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-left: 2px;
+  }
+
+  [data-theme="dark"] .msb-xp-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .msb-xp-fill {
+    height: 100%;
+    background: var(--clr-primary-teal, #12B3B3);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Streak highlight when active */
+  .msb-streak .msb-value {
+    color: #f59e0b;
+  }
+}
+
+/* --- HERO ACTION BUTTONS (Upload Homework, Show Your Work) --- */
+
+.hero-actions {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .hero-actions {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px 4px;
+    flex-shrink: 0;
+  }
+
+  .hero-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(18, 179, 179, 0.25);
+    background: linear-gradient(135deg, rgba(18, 179, 179, 0.06) 0%, rgba(18, 179, 179, 0.02) 100%);
+    color: #0d8a8a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hero-action-btn i {
+    font-size: 1rem;
+    color: var(--clr-primary-teal, #12B3B3);
+  }
+
+  .hero-action-btn:active {
+    background: var(--clr-primary-teal, #12B3B3);
+    border-color: var(--clr-primary-teal, #12B3B3);
+    color: #fff;
+    transform: scale(0.97);
+  }
+
+  .hero-action-btn:active i {
+    color: #fff;
+  }
+
+  [data-theme="dark"] .hero-action-btn {
+    background: rgba(18, 179, 179, 0.08);
+    border-color: rgba(18, 179, 179, 0.2);
+    color: #2dd4bf;
+  }
+
+  [data-theme="dark"] .hero-action-btn i {
+    color: #2dd4bf;
+  }
+
+  [data-theme="dark"] .hero-action-btn:active {
+    background: var(--clr-primary-teal, #12B3B3);
+    color: #fff;
+  }
+
+  /* Hide hero actions once user has started chatting (first message sent) */
+  .hero-actions.hero-hidden {
+    display: none;
+  }
+}
+
+/* --- DECLUTTER TOOLBAR: Hide calculator & break on mobile --- */
+/* Calculator: kids have their phone calculator. Break: not a primary action. */
+
+@media (max-width: 768px) {
+  /* Calculator: kids have their phone. Attach/camera: replaced by hero button above. */
+  #calculator-toolbar-btn,
+  #attach-button,
+  #camera-button {
+    display: none !important;
+  }
+}
+
+/* --- AI MESSAGE BUBBLE CONTRAST FIX --- */
+
+@media (max-width: 768px) {
+  /* Slightly darker AI bubble so it doesn't vanish against light backgrounds */
+  body.has-chat-nav .message.ai,
+  body.has-chat-nav .message.ai-message {
+    background: #f0f1f3;
+    border: 1px solid #e2e5e9;
+    border-bottom-left-radius: 6px;
+  }
+
+  [data-theme="dark"] body.has-chat-nav .message.ai,
+  [data-theme="dark"] body.has-chat-nav .message.ai-message {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}

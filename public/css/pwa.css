@@ -1,0 +1,112 @@
+/* PWA Install Banner */
+#pwa-install-banner {
+  position: fixed;
+  bottom: -100px;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  padding: 0 1rem 1rem;
+  transition: bottom 0.3s ease;
+  pointer-events: none;
+}
+
+#pwa-install-banner.pwa-install-visible {
+  bottom: 0;
+  pointer-events: auto;
+}
+
+/* iOS safe area padding */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  #pwa-install-banner {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+.pwa-install-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0.875rem 1rem;
+  background: #1a2a4a;
+  border: 1px solid rgba(18, 179, 179, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.pwa-install-icon {
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.pwa-install-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-install-text strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.pwa-install-text span {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.3;
+}
+
+.pwa-install-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.pwa-install-btn {
+  padding: 0.5rem 1.1rem;
+  background: #12B3B3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.pwa-install-btn:hover {
+  background: #0e9494;
+}
+
+.pwa-dismiss-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.pwa-dismiss-btn:hover {
+  color: #fff;
+}
+
+/* Standalone mode tweaks — hide browser-specific UI elements when running as PWA */
+@media (display-mode: standalone) {
+  /* Add top padding to account for mobile status bar */
+  body {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* Hide the install banner when already installed */
+  #pwa-install-banner {
+    display: none !important;
+  }
+}

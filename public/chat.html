@@ -34,6 +34,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/iep-accommodations.css" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
   <link rel="stylesheet" href="/css/floating-screener.css" />
+  <link rel="stylesheet" href="/css/resume-card.css" />
+  <link rel="stylesheet" href="/css/mobile-ux-overhaul.css" />
   <link rel="stylesheet" href="/css/floating-checkpoint.css" />
   <link rel="stylesheet" href="/css/show-your-work.css" />
   <link rel="stylesheet" href="/css/courseCatalog.css" />
@@ -451,6 +453,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
+      <!-- Persistent gamification bar — visible on mobile -->
+      <div id="mobile-stats-bar" class="mobile-stats-bar">
+        <div class="msb-item msb-streak">
+          <span class="msb-icon">🔥</span>
+          <span id="msb-streak" class="msb-value">0</span>
+        </div>
+        <div class="msb-item msb-level">
+          <span class="msb-label">Lv.</span>
+          <span id="msb-level" class="msb-value">1</span>
+          <div class="msb-xp-track">
+            <div id="msb-xp-fill" class="msb-xp-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="msb-item msb-xp">
+          <span class="msb-icon">⭐</span>
+          <span id="msb-xp" class="msb-value">0</span>
+          <span class="msb-unit">XP</span>
+        </div>
+      </div>
+
       <div id="chat-messages-container"></div>
 
       <!-- Live XP Feed -->
@@ -532,6 +554,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Modern File Grid Container -->
     <div id="file-grid-container" class="file-grid-container"></div>
+
+    <!-- Hero action buttons — prominent on mobile -->
+    <div id="hero-actions" class="hero-actions">
+      <button id="hero-upload-btn" class="hero-action-btn hero-action-primary" aria-label="Upload or photo">
+        <i class="fas fa-camera"></i>
+        <span>Upload / Photo</span>
+      </button>
+    </div>
 
     <!-- Quick Reply Suggestions -->
     <div id="suggestion-chips-container" class="imessage-chips-row">
@@ -1873,6 +1903,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/show-your-work.js"></script>
   <script src="/js/ghostTimer.js"></script>
   <script src="/js/badgeProgress.js"></script>
+  <script src="/js/mobile-stats-bar.js"></script>
+  <script src="/js/resume-card.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 <script src="/js/sessionManager.js"></script>

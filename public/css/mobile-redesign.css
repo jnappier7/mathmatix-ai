@@ -1026,13 +1026,13 @@
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     }
 
-    /* Rounded input with better focus state */
+    /* Rounded input — tall enough to see what you're typing */
     body.has-chat-nav #user-input {
         border-radius: 20px;
         padding: 10px 16px;
-        font-size: 15px;
+        font-size: 16px;
         line-height: 1.4;
-        min-height: 20px;
+        min-height: 44px;
         background: var(--clr-bg-subtle, #f5f7f9);
         border: 1.5px solid var(--clr-border-light, #e2e8f0);
         color: #1a1a2e;
@@ -1056,10 +1056,10 @@
         box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.2);
     }
 
-    /* Send button pop */
+    /* Send button — 44px minimum for kids' fingers */
     body.has-chat-nav .imessage-send-btn {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background: var(--clr-primary-teal, #12B3B3);
         color: white;
@@ -1068,18 +1068,19 @@
         justify-content: center;
         border: none;
         flex-shrink: 0;
+        font-size: 1.05rem;
         transition: transform 150ms ease, background 150ms ease;
     }
 
     body.has-chat-nav .imessage-send-btn:active {
-        transform: scale(0.9);
+        transform: scale(0.92);
         background: #0E9494;
     }
 
-    /* Tool buttons styling — HIGH CONTRAST icons */
+    /* Tool buttons — 44px for proper touch targets */
     body.has-chat-nav .imessage-tool-btn {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -1087,12 +1088,12 @@
         background: var(--clr-bg-subtle, #f0f2f5);
         border: 1px solid var(--clr-border-light, #d1d5db);
         color: #4a5568;
-        font-size: 0.95rem;
+        font-size: 1rem;
         transition: background 150ms ease, transform 150ms ease;
     }
 
     body.has-chat-nav .imessage-tool-btn:active {
-        transform: scale(0.9);
+        transform: scale(0.92);
         background: rgba(18, 179, 179, 0.12);
         color: var(--clr-primary-teal, #12B3B3);
         border-color: var(--clr-primary-teal, #12B3B3);
@@ -1108,6 +1109,18 @@
         background: rgba(18, 179, 179, 0.2);
         color: #2dd4bf;
         border-color: #2dd4bf;
+    }
+
+    /* Tool buttons row — horizontal scroll when they don't fit */
+    body.has-chat-nav .imessage-tool-btns {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 8px;
+    }
+
+    body.has-chat-nav .imessage-tool-btns::-webkit-scrollbar {
+        display: none;
     }
 
     /* Better message bubble spacing */
@@ -1136,40 +1149,56 @@
         border-color: rgba(255, 255, 255, 0.08);
     }
 
-    /* Suggestion chips */
+    /* Suggestion chips — horizontally scrollable, teal brand */
     body.has-chat-nav .imessage-chips-row {
-        padding: 6px 12px;
-        gap: 6px;
+        padding: 8px 12px;
+        gap: 8px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        /* Fade hint that more chips exist off-screen */
+        mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+    }
+
+    body.has-chat-nav .imessage-chips-row::-webkit-scrollbar {
+        display: none;
     }
 
     body.has-chat-nav .suggestion-chip {
-        border-radius: 16px;
-        padding: 7px 14px;
-        font-size: 0.84rem;
+        border-radius: 20px;
+        padding: 10px 18px;
+        font-size: 0.9rem;
         font-weight: 600;
         background: var(--clr-bg-light, #fff);
-        border: 1px solid var(--clr-border-light, #d1d5db);
-        color: #2d3748;
+        border: 1.5px solid rgba(18, 179, 179, 0.3);
+        color: #0d8a8a;
         white-space: nowrap;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: all 0.15s ease;
     }
 
     body.has-chat-nav .suggestion-chip:active {
-        background: rgba(18, 179, 179, 0.1);
+        background: var(--clr-primary-teal, #12B3B3);
         border-color: var(--clr-primary-teal, #12B3B3);
-        color: #0d8a8a;
+        color: #fff;
+        transform: scale(0.95);
     }
 
     [data-theme="dark"] body.has-chat-nav .suggestion-chip {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.15);
-        color: #e8ecf2;
+        background: rgba(18, 179, 179, 0.08);
+        border-color: rgba(18, 179, 179, 0.3);
+        color: #2dd4bf;
         font-weight: 500;
     }
 
     [data-theme="dark"] body.has-chat-nav .suggestion-chip:active {
-        background: rgba(18, 179, 179, 0.15);
-        border-color: #2dd4bf;
-        color: #2dd4bf;
+        background: var(--clr-primary-teal, #12B3B3);
+        border-color: var(--clr-primary-teal, #12B3B3);
+        color: #fff;
     }
 }
 

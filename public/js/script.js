@@ -334,6 +334,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; // Skip the rest of initializeApp
             }
 
+            // Show resume card (streak, XP, last session) while welcome loads.
+            // Fires in parallel with getWelcomeMessage — non-blocking.
+            if (window.showResumeCard) {
+                window.showResumeCard();
+            }
+
             // Always start with a fresh AI welcome. Returning users get a
             // context-aware greeting that references their last session.
             // Past conversations are accessible via the sidebar.
@@ -1563,35 +1569,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const chip = document.createElement('button');
             chip.className = 'suggestion-chip';
             chip.textContent = suggestion.text;
-            chip.style.cssText = `
-                background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-                border: 1px solid #d1d5db;
-                border-radius: 20px;
-                padding: 8px 16px;
-                font-size: 13px;
-                color: #374151;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                white-space: nowrap;
-                font-weight: 500;
-            `;
-
-            // Hover effect
-            chip.addEventListener('mouseenter', () => {
-                chip.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)';
-                chip.style.color = 'white';
-                chip.style.borderColor = '#8b5cf6';
-                chip.style.transform = 'translateY(-2px)';
-                chip.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.3)';
-            });
-
-            chip.addEventListener('mouseleave', () => {
-                chip.style.background = 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)';
-                chip.style.color = '#374151';
-                chip.style.borderColor = '#d1d5db';
-                chip.style.transform = 'translateY(0)';
-                chip.style.boxShadow = 'none';
-            });
 
             // Click handler - fills input but doesn't auto-send
             chip.addEventListener('click', () => {
