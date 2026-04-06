@@ -42,7 +42,7 @@
         var nameEl = document.querySelector('.mp-profile-name');
         if (nameEl && nameEl.textContent) return nameEl.textContent;
         try {
-            var user = JSON.parse(localStorage.getItem('mathmatix_user') || '{}');
+            var user = JSON.parse(StorageUtils.local.getItem('mathmatix_user') || '{}');
             return user.firstName || user.name || 'Student';
         } catch (e) { return 'Student'; }
     }
@@ -561,7 +561,7 @@
         var email = '';
         var avatarUrl = '';
         try {
-            var user = JSON.parse(localStorage.getItem('mathmatix_user') || '{}');
+            var user = JSON.parse(StorageUtils.local.getItem('mathmatix_user') || '{}');
             email = user.email || '';
             avatarUrl = user.avatar || user.avatarUrl || '';
         } catch (e) { /* ignore */ }

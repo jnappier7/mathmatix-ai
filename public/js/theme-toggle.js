@@ -39,11 +39,7 @@
      * @returns {string|null}
      */
     function getStoredPreference() {
-        try {
-            return localStorage.getItem(STORAGE_KEY);
-        } catch (e) {
-            return null;
-        }
+        return StorageUtils.local.getItem(STORAGE_KEY);
     }
 
     /**
@@ -51,11 +47,7 @@
      * @param {string} theme
      */
     function storePreference(theme) {
-        try {
-            localStorage.setItem(STORAGE_KEY, theme);
-        } catch (e) {
-            // localStorage not available
-        }
+        StorageUtils.local.setItem(STORAGE_KEY, theme);
     }
 
     /**

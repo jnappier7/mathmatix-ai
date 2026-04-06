@@ -39,7 +39,7 @@
     }
 
     // Clear UI language cache so next user on shared device gets a clean state
-    try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* */ }
+    StorageUtils.local.removeItem('mathmatix_ui_lang');
 
     // Use the CSRF-exempt /api/session/end endpoint (sendBeacon can't send CSRF headers).
     // This endpoint destroys the express session on the server side.

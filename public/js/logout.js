@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
               StorageUtils.session.clear();
             }
             // Clear UI language cache so next user gets a clean state
-            try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* */ }
+            StorageUtils.local.removeItem('mathmatix_ui_lang');
             window.location.href = '/login.html';
           } else {
             const errorText = await res.text();

@@ -307,12 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // restore their conversation so it continues seamlessly.
             const trialState = (function() {
                 try {
-                    const raw = localStorage.getItem('mathmatix_trial_chat');
+                    const raw = StorageUtils.local.getItem('mathmatix_trial_chat');
                     if (!raw) return null;
                     const state = JSON.parse(raw);
                     // Expire after 1 hour
                     if (Date.now() - state.timestamp > 60 * 60 * 1000) {
-                        localStorage.removeItem('mathmatix_trial_chat');
+                        StorageUtils.local.removeItem('mathmatix_trial_chat');
                         return null;
                     }
                     return state;
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
                 });
                 // Clear trial state so it doesn't replay
-                try { localStorage.removeItem('mathmatix_trial_chat'); } catch (e) {}
+                StorageUtils.local.removeItem('mathmatix_trial_chat');
                 // Skip the returning user modal — they already have context
                 // and skip the welcome message since chat is populated
                 await fetchAndDisplayLeaderboard();
@@ -2665,7 +2665,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Load saved playback speed (or age-tier default for younger students)
-        let savedSpeed; try { savedSpeed = localStorage.getItem('ttsPlaybackRate'); } catch (e) { /* blocked */ }
+        let savedSpeed = StorageUtils.local.getItem('ttsPlaybackRate');
         const tierDefault = getTierPlaybackRate();
         const speed = savedSpeed ? parseFloat(savedSpeed) : tierDefault;
         changePlaybackSpeed(speed);
@@ -3258,10 +3258,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // First-time tooltip: show once to teach users what the √x button does
     function showMathKeyboardTooltip() {
         const storageKey = 'mk-tooltip-seen';
-        try {
-            if (localStorage.getItem(storageKey)) return;
-            localStorage.setItem(storageKey, '1');
-        } catch (e) { return; }
+        if (StorageUtils.local.getItem(storageKey)) return;
+        StorageUtils.local.setItem(storageKey, '1');
 
         const tip = document.createElement('div');
         tip.className = 'mk-tooltip';

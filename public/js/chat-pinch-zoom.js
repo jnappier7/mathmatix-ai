@@ -29,18 +29,16 @@
 
         // Load saved font scale or use default
         let currentScale;
-        try { currentScale = parseFloat(localStorage.getItem(STORAGE_KEY)) || DEFAULT_FONT_SIZE; } catch (e) { currentScale = DEFAULT_FONT_SIZE; }
+        try { currentScale = parseFloat(StorageUtils.local.getItem(STORAGE_KEY)) || DEFAULT_FONT_SIZE; } catch (e) { currentScale = DEFAULT_FONT_SIZE; }
 
         // Apply saved scale on load
         applyFontScale(currentScale);
 
         // Show hint on first visit (mobile only)
-        try {
-            if (window.innerWidth <= 767 && !localStorage.getItem('pinch-zoom-hint-shown')) {
-                showFirstTimeHint();
-                localStorage.setItem('pinch-zoom-hint-shown', 'true');
-            }
-        } catch (e) { /* storage blocked */ }
+        if (window.innerWidth <= 767 && !StorageUtils.local.getItem('pinch-zoom-hint-shown')) {
+            showFirstTimeHint();
+            StorageUtils.local.setItem('pinch-zoom-hint-shown', 'true');
+        }
 
         // Pinch gesture variables
         let initialDistance = 0;
@@ -69,7 +67,7 @@
             chatContainer.style.setProperty('--chat-font-scale', scale);
 
             // Save to localStorage
-            try { localStorage.setItem(STORAGE_KEY, scale.toString()); } catch (e) { /* blocked */ }
+            StorageUtils.local.setItem(STORAGE_KEY, scale.toString());
 
             // Show feedback indicator
             showScaleIndicator(scale);

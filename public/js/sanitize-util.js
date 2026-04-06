@@ -6,10 +6,8 @@
  * or AI-generated content.
  */
 
-// Check if DOMPurify is available
-if (typeof DOMPurify === 'undefined') {
-    console.error('DOMPurify is not loaded! Include DOMPurify CDN before this script.');
-}
+// DOMPurify availability is checked lazily at call-time so that this script
+// can be loaded before the deferred DOMPurify CDN finishes executing.
 
 /**
  * Sanitize HTML content to prevent XSS attacks
@@ -19,6 +17,11 @@ if (typeof DOMPurify === 'undefined') {
  */
 function sanitizeHTML(html, options = {}) {
     if (!html || typeof html !== 'string') {
+        return '';
+    }
+
+    if (typeof DOMPurify === 'undefined') {
+        console.error('DOMPurify is not loaded! Returning empty string for safety.');
         return '';
     }
 
