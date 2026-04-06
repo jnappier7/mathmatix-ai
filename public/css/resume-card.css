@@ -8,7 +8,9 @@
   border-radius: 16px;
   color: #fff;
   animation: rc-slide-in 0.35s ease-out;
-  overflow: hidden;
+  max-height: 55vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes rc-slide-in {
