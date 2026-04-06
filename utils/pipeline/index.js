@@ -254,6 +254,11 @@ async function runPipeline(message, ctx) {
 
   // Inject tutor plan layer into system prompt
   let enrichedSystemPrompt = ctx.systemPrompt;
+  // Socratic suppression is now handled structurally via buildSlimRules and
+  // buildStaticRules options — NOT via string surgery on the assembled prompt.
+  // This flag flows through to assemblePrompt → buildSlimRules.
+  const suppressSocratic = tutorPlan ? shouldSuppressSocratic(tutorPlan) : false;
+
   if (tutorPlan) {
     const planLayer = buildPlanLayer(tutorPlan, {
       skillResolution,
@@ -262,21 +267,13 @@ async function runPipeline(message, ctx) {
     if (planLayer) {
       enrichedSystemPrompt += '\n\n' + planLayer;
     }
-
-    // If in INSTRUCT mode (vocab/concept-intro/i-do phases), suppress the
-    // "never give answers" Socratic rule — the tutor needs to TEACH.
-    if (shouldSuppressSocratic(tutorPlan) && enrichedSystemPrompt.includes('NEVER GIVE ANSWERS')) {
-      enrichedSystemPrompt = enrichedSystemPrompt.replace(
-        /RULE 1 — NEVER GIVE ANSWERS\. Guide with Socratic questions\. Break problems into small steps\. Ask "What do you think\?" before hinting\./,
-        'RULE 1 — TEACHING MODE ACTIVE. During direct instruction (vocabulary, concept introduction, I Do modeling), you TEACH by showing, explaining, and modeling worked examples. The student is learning — they are not expected to solve yet. Socratic questioning resumes during guided practice (We Do) and independent practice (You Do).'
-      );
-    }
   }
 
   const assembled = assemblePrompt(decision, {
     systemPrompt: enrichedSystemPrompt,
     messages: ctx.formattedMessages,
     moodDirective,
+    suppressSocratic,
   });
 
   let rawResponseText;

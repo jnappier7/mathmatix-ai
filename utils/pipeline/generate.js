@@ -12,7 +12,7 @@
 
 const { callLLM, callLLMStream } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
-const { STATIC_RULES } = require('../promptCompact');
+const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
@@ -271,7 +271,9 @@ function assemblePrompt(decision, promptContext) {
   // action-aware slim rules (saves ~37% tokens on average).
   let fullSystemPrompt = systemPrompt;
   if (promptContext.useSlimRules !== false && decision.action) {
-    const slimRules = buildSlimRules(decision.action);
+    const slimRules = buildSlimRules(decision.action, {
+      suppressSocratic: promptContext.suppressSocratic || false,
+    });
     // Replace the static rules block if present (it's the first section of the prompt)
     if (fullSystemPrompt.includes('--- SECURITY (NON-NEGOTIABLE) ---')) {
       // Find where the static rules end and dynamic context begins
@@ -280,6 +282,10 @@ function assemblePrompt(decision, promptContext) {
         fullSystemPrompt = slimRules + '\n\n' + fullSystemPrompt.substring(dynamicStart);
       }
     }
+  } else if (promptContext.suppressSocratic) {
+    // Fallback: slim rules not used, but Socratic suppression is active.
+    // Swap Rule 1 in the full static rules using the named constants.
+    fullSystemPrompt = fullSystemPrompt.replace(RULE_1_SOCRATIC, RULE_1_TEACHING);
   }
 
   // Inject phase-specific prompt if available
