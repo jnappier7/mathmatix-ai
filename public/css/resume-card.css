@@ -1,0 +1,357 @@
+/* Resume Card — Welcome back experience */
+
+.rc-card {
+  margin: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  border: 1px solid rgba(18, 179, 179, 0.2);
+  border-radius: 16px;
+  color: #fff;
+  animation: rc-slide-in 0.35s ease-out;
+  overflow: hidden;
+}
+
+@keyframes rc-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rc-card.rc-dismissing {
+  animation: rc-slide-out 0.3s ease-in forwards;
+}
+
+@keyframes rc-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}
+
+/* Header */
+.rc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.rc-greeting {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.rc-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.rc-dismiss:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Top row: streak + XP */
+.rc-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* Streak */
+.rc-streak {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 152, 0, 0.15);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.rc-streak-flame {
+  font-size: 1rem;
+}
+
+.rc-streak-count {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffb74d;
+}
+
+.rc-streak-label {
+  font-size: 0.7rem;
+  color: rgba(255, 183, 77, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* XP bar */
+.rc-xp {
+  flex: 1;
+  min-width: 0;
+}
+
+.rc-xp-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.rc-level {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #12B3B3;
+}
+
+.rc-xp-text {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.rc-xp-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rc-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #12B3B3, #14d4d4);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+/* Weekly stats strip */
+.rc-stats-strip {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rc-stat {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.rc-stat-val {
+  display: block;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.rc-stat-label {
+  display: block;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+}
+
+/* Learning progress */
+.rc-learning {
+  margin-bottom: 10px;
+}
+
+.rc-learning-item {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+.rc-learning-item:last-child {
+  margin-bottom: 0;
+}
+
+.rc-learning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.rc-learning-status {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.rc-learning-pct {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #12B3B3;
+}
+
+.rc-learning-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.rc-learning-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.rc-learning-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #12B3B3, #14d4d4);
+  border-radius: 2px;
+}
+
+.rc-mastery-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.rc-mastery-badge {
+  font-size: 1.1rem;
+}
+
+/* Sessions list */
+.rc-sessions {
+  margin-top: 2px;
+}
+
+.rc-sessions-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+.rc-session-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 6px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rc-session-btn:last-child {
+  margin-bottom: 0;
+}
+
+.rc-session-btn:hover,
+.rc-session-btn:active {
+  background: rgba(18, 179, 179, 0.12);
+  border-color: rgba(18, 179, 179, 0.3);
+}
+
+.rc-session-course {
+  border-color: rgba(102, 126, 234, 0.3);
+  background: rgba(102, 126, 234, 0.08);
+}
+
+.rc-session-course:hover,
+.rc-session-course:active {
+  background: rgba(102, 126, 234, 0.15);
+}
+
+.rc-session-emoji {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+
+.rc-session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rc-session-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-session-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.3;
+}
+
+.rc-session-arrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.rc-session-btn:hover .rc-session-arrow {
+  transform: translateX(2px);
+  color: #12B3B3;
+}
+
+/* Dark mode adjustments (card is already dark, so just tweak borders) */
+[data-theme="dark"] .rc-card {
+  border-color: rgba(18, 179, 179, 0.15);
+}
+
+/* Make sure card scrolls with chat on smaller screens */
+@media (max-height: 600px) {
+  .rc-card {
+    margin: 8px;
+    padding: 12px;
+  }
+
+  .rc-greeting {
+    font-size: 1rem;
+  }
+
+  .rc-stat-val {
+    font-size: 0.85rem;
+  }
+}

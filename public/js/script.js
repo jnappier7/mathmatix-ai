@@ -334,6 +334,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; // Skip the rest of initializeApp
             }
 
+            // Show resume card (streak, XP, last session) while welcome loads.
+            // Fires in parallel with getWelcomeMessage — non-blocking.
+            if (window.showResumeCard) {
+                window.showResumeCard();
+            }
+
             // Always start with a fresh AI welcome. Returning users get a
             // context-aware greeting that references their last session.
             // Past conversations are accessible via the sidebar.
