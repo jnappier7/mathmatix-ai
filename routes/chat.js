@@ -37,7 +37,7 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const TutorPlan = require('../models/tutorPlan');
-const { generateSessionOpener } = require('../utils/sessionOpener');
+const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -817,6 +817,56 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 return daysAgo <= 1;
             });
 
+        // ── Re-entry detection: welcome back after idle gap ──
+        // If the student's last message was >10 minutes ago, inject a re-entry
+        // directive so the AI acknowledges the gap instead of acting like no
+        // time passed. Only fires once per gap (checks last assistant message).
+        let reentryDirective = null;
+        try {
+            const msgs = activeConversation.messages || [];
+            if (msgs.length >= 2) {
+                const lastMsg = msgs[msgs.length - 1];
+                const prevMsg = msgs[msgs.length - 2];
+                // Only trigger if the student is returning (current msg is user, previous was assistant)
+                if (lastMsg.role === 'user' && prevMsg.role === 'assistant' && prevMsg.timestamp) {
+                    const gapMs = Date.now() - new Date(prevMsg.timestamp).getTime();
+                    if (gapMs > 10 * 60 * 1000) {
+                        const tutorPlan = await TutorPlan.findOne({ userId: user._id });
+                        const reentry = generateReentryPrompt({
+                            tutorPlan,
+                            conversation: activeConversation,
+                        });
+                        reentryDirective = reentry.directives.join('\n');
+                        console.log(`[Chat] Re-entry detected (${Math.round(gapMs / 60000)}min gap)`);
+                    }
+                }
+            }
+        } catch (reentryErr) {
+            // Non-fatal — student just won't get the welcome-back prompt
+        }
+
+        if (reentryDirective) {
+            systemPrompt += `\n\n${reentryDirective}`;
+        }
+
+        // ── Topic override detection: homework/specific requests win ──
+        // A real tutor follows their plan but yields when the student brings
+        // something specific. This check determines whether to let the pipeline's
+        // decide stage use the TutorPlan target or follow the student's lead.
+        let topicOverride = null;
+        try {
+            const tutorPlan = await TutorPlan.findOne({ userId: user._id });
+            if (tutorPlan?.currentTarget?.skillId) {
+                const overrideResult = shouldOverrideTopic(message, tutorPlan);
+                if (overrideResult.override) {
+                    topicOverride = overrideResult;
+                    console.log(`[Chat] Topic override: ${overrideResult.reason}`);
+                }
+            }
+        } catch (overrideErr) {
+            // Non-fatal — pipeline continues with plan target
+        }
+
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
@@ -832,7 +882,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 conversation: activeConversation,
                 systemPrompt,
                 formattedMessages: formattedMessagesForLLM,
-                activeSkill,
+                activeSkill: topicOverride?.override ? null : activeSkill, // Clear skill target when student overrides
                 phaseState: activeConversation.phaseState || null,
                 hasRecentUpload,
                 stream: useStreaming,

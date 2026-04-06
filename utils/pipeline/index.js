@@ -144,7 +144,7 @@ async function runPipeline(message, ctx) {
         .filter(m => m.problemResult)
         .map(m => ({
           correct: m.problemResult === 'correct',
-          hintUsed: false, // TODO: extract from message signals
+          hintUsed: observation?.contextSignals?.some(s => s.type === 'uncertainty') || false,
           difficulty: 'medium',
         })),
       messageLengths: userMsgs
