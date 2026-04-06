@@ -42,6 +42,23 @@ const ACTIONS = {
   CHECK_UNDERSTANDING: 'check_understanding',
   PRESENT_PROBLEM: 'present_problem',
   PHASE_INSTRUCTION: 'phase_instruction',
+
+  // ── Instructional mode actions (backbone) ──
+  // These are chosen when the tutor plan specifies a mode for the current skill.
+  DIRECT_INSTRUCTION: 'direct_instruction',     // Novel skill: teach, don't ask
+  PREREQUISITE_BRIDGE: 'prerequisite_bridge',    // Shore up a gap before the target skill
+  GUIDED_PRACTICE: 'guided_practice',            // We Do: work together with scaffolding
+  INDEPENDENT_PRACTICE: 'independent_practice',  // You Do: student works alone
+  STRENGTHEN_CHALLENGE: 'strengthen_challenge',  // Push proficient student with harder problems
+  LEVERAGE_BRIDGE: 'leverage_bridge',            // Use mastered skill as bridge to new concept
+};
+
+// ── Instructional modes — how the tutor approaches a skill ──
+const INSTRUCTIONAL_MODES = {
+  INSTRUCT: 'instruct',     // Novel: the student has NEVER seen this
+  GUIDE: 'guide',           // Shaky: seen it but needs Socratic guidance
+  STRENGTHEN: 'strengthen', // Solid: needs harder problems and transfer
+  LEVERAGE: 'leverage',     // Mastered: use as bridge or skip
 };
 
 /**
@@ -59,6 +76,8 @@ const ACTIONS = {
  * @param {Object} context.activeSkill - Current skill { skillId, displayName }
  * @param {Object} context.streakHistory - { idkCount, giveUpCount, recentWrongCount }
  * @param {Object} context.evidence - From evidenceAccumulator (optional, enhances decisions)
+ * @param {Object} context.tutorPlan - TutorPlan document (backbone, optional)
+ * @param {Object} context.modeTransition - From modeTransitionDetector (optional)
  * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
  */
 function decide(observation, diagnosis, context = {}) {
@@ -289,6 +308,11 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Math questions — guide, don't solve ──
   if (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH) {
+    // Check if the tutor plan specifies an instructional mode for this skill.
+    // If so, the mode determines HOW we respond — not just "guide with Socratic."
+    const modeDecision = applyInstructionalMode(decision, context);
+    if (modeDecision) return modeDecision;
+
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
       'The student stated a math problem. Acknowledge it and immediately guide them into the first step.',
@@ -298,6 +322,12 @@ function decideCore(observation, diagnosis, context) {
     );
     return decision;
   }
+
+  // ── Instructional mode decisions (backbone) ──
+  // When the tutor plan specifies a mode, it shapes the entire interaction —
+  // even for general conversation and phase-specific flow.
+  const modeDecision = applyInstructionalMode(decision, context);
+  if (modeDecision) return modeDecision;
 
   // ── Phase-specific decisions (when in structured lesson) ──
   if (phaseState && activeSkill) {
@@ -315,6 +345,230 @@ function decideCore(observation, diagnosis, context) {
     'Do NOT repeat information already confirmed or covered.'
   );
   return decision;
+}
+
+/**
+ * Apply instructional mode from the tutor plan to the decision.
+ *
+ * This is the "backbone" logic. When the tutor plan specifies an
+ * instructional mode for the current skill, this function overrides
+ * the default Socratic approach with mode-appropriate behavior.
+ *
+ * A human tutor doesn't ask "what do you think?" about a skill the
+ * student has never seen. They TEACH first, then guide, then challenge.
+ *
+ * @param {Object} decision - The decision object being built
+ * @param {Object} context - Pipeline context
+ * @returns {Object|null} Modified decision if mode applies, null otherwise
+ */
+function applyInstructionalMode(decision, context) {
+  const { tutorPlan, activeSkill } = context;
+
+  // No tutor plan or no current target — fall through to default behavior
+  if (!tutorPlan?.currentTarget?.instructionalMode) return null;
+
+  const { instructionalMode, instructionPhase, skillId } = tutorPlan.currentTarget;
+  const targetName = tutorPlan.currentTarget.displayName || skillId;
+
+  // Get prerequisite gap info if available
+  const skillFocus = tutorPlan.skillFocus?.find(sf => sf.skillId === skillId);
+  const prereqGaps = skillFocus?.prerequisiteGaps?.filter(g => g.status === 'needs-work') || [];
+
+  switch (instructionalMode) {
+    // ═══════════════════════════════════════════════════════════
+    // INSTRUCT MODE — The student has NEVER seen this skill.
+    // The tutor TEACHES. Socratic questioning is suppressed.
+    // ═══════════════════════════════════════════════════════════
+    case INSTRUCTIONAL_MODES.INSTRUCT: {
+      // If there are prerequisite gaps, handle those first
+      if (prereqGaps.length > 0) {
+        decision.action = ACTIONS.PREREQUISITE_BRIDGE;
+        const gap = prereqGaps[0]; // Work on the deepest gap first
+        decision.directives.push(
+          `PREREQUISITE REMEDIATION: Before teaching ${targetName}, the student needs work on: ${gap.displayName || gap.skillId}.`,
+          `Student familiarity with ${gap.displayName || gap.skillId}: ${gap.familiarity}.`,
+          gap.familiarity === 'never-seen'
+            ? `This prerequisite is also novel. Teach it directly — don't ask what they think. Model it, then practice together.`
+            : `This prerequisite has been seen but is shaky. Use guided practice to strengthen it.`,
+          `Connect it explicitly: "We need this because it's the foundation for ${targetName}."`,
+          'Keep prerequisite work focused and efficient — this is a bridge, not the destination.'
+        );
+        return decision;
+      }
+
+      // No prereq gaps — teach the target skill directly based on phase
+      switch (instructionPhase) {
+        case 'vocabulary':
+          decision.action = ACTIONS.DIRECT_INSTRUCTION;
+          decision.directives.push(
+            `INSTRUCTION MODE: VOCABULARY INTRODUCTION for ${targetName}.`,
+            'Introduce key terms ONE AT A TIME with student-friendly definitions.',
+            'For each term: give the definition, then a CONCRETE example, then explain WHY this word matters — what idea does it capture?',
+            'ACTIVATE PRIOR KNOWLEDGE: Connect every new term to something the student already understands.',
+            '  - "Rate" is just "how fast something changes" — you already know speed is a rate.',
+            '  - "Factor" means "something you multiply" — you already use factors when you do 3 × 4 = 12.',
+            '  - Ground EVERY term in prior understanding before extending it to the new context.',
+            'DO NOT ask the student to solve anything yet — they are learning the language.',
+            'Check understanding of each term before introducing the next: "Can you put that in your own words?"',
+            'CONCEPTUAL MASTERY: The goal is not memorizing definitions. The goal is the student understanding what each term MEANS — why it exists, what idea it represents, how it connects to the math they already know.'
+          );
+          return decision;
+
+        case 'concept-intro':
+          decision.action = ACTIONS.DIRECT_INSTRUCTION;
+          decision.directives.push(
+            `INSTRUCTION MODE: CONCEPT INTRODUCTION for ${targetName}.`,
+            'Build the BIG IDEA. This is the most important phase — if the student understands the CONCEPT, the procedures follow naturally.',
+            'ACTIVATE PRIOR KNOWLEDGE FIRST — this is how concepts stick:',
+            '  - Before introducing the new concept, activate the student\'s understanding of a related concept they already know.',
+            '  - Example: Before teaching FACTORING, start with DISTRIBUTIVE PROPERTY. "You know that 3(x+2) = 3x+6. Factoring is literally running that BACKWARDS — starting with 3x+6 and figuring out it came from 3(x+2)."',
+            '  - Example: Before teaching DERIVATIVES, start with SLOPE. "You already know slope measures steepness between two points. A derivative is what happens when those two points get infinitely close together."',
+            '  - The new concept should feel like a NATURAL EXTENSION of something familiar, not a disconnected new rule.',
+            'THEN BUILD THE CONCEPT:',
+            '  1. Start with WHY: What problem does this concept solve? When would a person NEED this? What would be impossible without it?',
+            '  2. Use MULTIPLE REPRESENTATIONS: a visual model, a concrete example, a real-world scenario. The same idea shown three ways builds understanding that one way cannot.',
+            '  3. Build INTUITION before notation. The student should understand the idea BEFORE they see the formula.',
+            'ABSOLUTELY DO NOT: jump to procedures, show formulas without derivation, use "just memorize this" framing, or teach tricks/shortcuts.',
+            'The student is building a mental model. Procedures are downstream. Understanding is the goal.',
+            'After explaining, check: "Why does this work?" or "When would you use this?" — not "Did you get that?" Self-reports are not evidence.'
+          );
+          return decision;
+
+        case 'i-do':
+          decision.action = ACTIONS.DIRECT_INSTRUCTION;
+          decision.directives.push(
+            `INSTRUCTION MODE: I DO (Teacher Models) for ${targetName}.`,
+            'Work through 1-2 examples step-by-step WITH THINK-ALOUD reasoning.',
+            'The student WATCHES. They are not expected to solve anything.',
+            'CONCEPTUAL MODELING — NOT procedural demonstration:',
+            '  - For EVERY step, explain WHY you are doing it, not just WHAT you are doing.',
+            '  - WRONG: "Now we multiply both sides by 3." (procedural — student learns to mimic)',
+            '  - RIGHT: "I need to get x alone. Right now it is being divided by 3. To undo that division, I multiply both sides by 3 — because dividing and multiplying are opposites, they cancel out." (conceptual — student learns to THINK)',
+            '  - Make the reasoning VISIBLE: "I notice... which tells me... so I will... because..."',
+            '  - Show WHY the procedure works, not just that it works. A student who understands WHY can reconstruct the procedure. A student who memorized the procedure is stuck the moment something changes.',
+            'After modeling, check: "Can you tell me WHY I did [specific step]?" — not just "Does that make sense?"',
+            'If the student can explain WHY a step works, they understood the model. If they can only say "because that is the rule," they memorized it — and you need to re-explain with a different representation.',
+            'CRITICAL: Do NOT ask "What do you think the answer is?" during I Do. The student has never done this. Show them.'
+          );
+          return decision;
+
+        case 'we-do':
+          decision.action = ACTIONS.GUIDED_PRACTICE;
+          decision.directives.push(
+            `INSTRUCTION MODE: WE DO (Guided Practice) for ${targetName}.`,
+            'Work through problems TOGETHER. The student contributes, you scaffold.',
+            'CONCEPTUAL PRACTICE — ask about reasoning, not just answers:',
+            '  - "What should our first step be, and WHY?" — not just "What should our first step be?"',
+            '  - When they get a step right, ask "Why did that work?" before moving on.',
+            '  - When they get a step wrong, ask "What were you thinking?" — diagnose the CONCEPT gap, not just the arithmetic error.',
+            '  - If they say "because that is the rule" or "my teacher said to," push: "But WHY is that the rule? What would happen if we did the opposite?"',
+            'Start with heavy scaffolding, decrease as they show UNDERSTANDING (not just correct answers).',
+            'A student who gets the right answer for the wrong reason has NOT understood. Catch this.',
+            'If the student gets stuck, do NOT give the procedure — reconnect to the concept: "Remember the big idea: [concept]. How does that help us here?"'
+          );
+          return decision;
+
+        case 'you-do':
+          decision.action = ACTIONS.INDEPENDENT_PRACTICE;
+          decision.directives.push(
+            `INSTRUCTION MODE: YOU DO (Independent Practice) for ${targetName}.`,
+            'Present a problem and let the student work ALONE.',
+            'Minimal hints. If they ask for help, reconnect to the concept, do not give the procedure.',
+            'CONCEPTUAL VERIFICATION: After a correct answer, occasionally ask "Why does that work?" or "What if [variable changed] — would the answer change?"',
+            'A student who can answer "why" owns the concept. A student who can only get right answers may be mimicking.',
+            'If they struggle significantly (3+ wrong), do NOT just re-show the procedure. Drop back to We Do and reconnect to the concept — the understanding gap is upstream of the errors.',
+            'Vary problem contexts: if they practiced with numbers, try a word problem. If they practiced algebraically, try graphically. Transfer across representations is the proof of conceptual understanding.'
+          );
+          return decision;
+
+        case 'mastery-check':
+          decision.action = ACTIONS.CHECK_UNDERSTANDING;
+          decision.directives.push(
+            `INSTRUCTION MODE: MASTERY CHECK for ${targetName}.`,
+            'This is where you verify CONCEPTUAL mastery — not procedural mimicry.',
+            'Deploy ONE of these evidence-gathering moves:',
+            '  1. TRANSFER: Same concept, completely different context. If they learned derivatives with polynomials, give them a rate-of-change word problem.',
+            '  2. TEACH-BACK: "Explain this to me like I have never seen it." If they can teach it, they own it.',
+            '  3. MISCONCEPTION TRAP: Present a problem with a common wrong approach. "A student said [wrong thing]. What would you tell them?"',
+            '  4. WHAT-IF: "What would happen if [change a condition]? Would the same approach work?" Tests whether they understand the boundaries of the concept.',
+            'A student who passes mastery check with conceptual reasoning (not just right answers) has truly learned. A student who gets the right answer but cannot explain why needs more We Do practice.'
+          );
+          return decision;
+
+        case 'prerequisite-review':
+          decision.action = ACTIONS.PREREQUISITE_BRIDGE;
+          decision.directives.push(
+            `INSTRUCTION MODE: PREREQUISITE REVIEW before ${targetName}.`,
+            'Review foundational skills needed for the upcoming topic.',
+            'Keep it efficient — targeted practice, not full lessons.',
+            'Frame it positively: "Let me make sure we have a solid foundation before we build on it."'
+          );
+          return decision;
+
+        default:
+          // No specific phase yet — start the instructional sequence
+          decision.action = ACTIONS.DIRECT_INSTRUCTION;
+          decision.directives.push(
+            `INSTRUCTION MODE: Beginning instruction for ${targetName}.`,
+            'This skill is NOVEL to the student — they have never seen it before.',
+            'Start with vocabulary if there are new terms, otherwise start with the big idea.',
+            'DO NOT begin with a question or problem. Begin by TEACHING.',
+            'ALWAYS start by activating prior knowledge — find something the student already knows that connects to this new concept.',
+            'Frame the new skill as a natural extension: "You already know [X]. What we are learning today is [X] taken one step further."'
+          );
+          return decision;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // GUIDE MODE — The student has seen this but it's shaky.
+    // Socratic questioning IS appropriate here.
+    // ═══════════════════════════════════════════════════════════
+    case INSTRUCTIONAL_MODES.GUIDE:
+      // Guide mode is closest to the existing default behavior.
+      // Just add awareness of what the student has seen before.
+      decision.directives.push(
+        `GUIDE MODE: Student has some familiarity with ${targetName} but it is not solid.`,
+        'Socratic questioning is appropriate — they have a foundation to build on.',
+        'Activate prior knowledge: "Remember when we..." or "You have seen this before..."',
+        'If they are more stuck than expected, consider dropping to INSTRUCT — reteach the concept.'
+      );
+      // Don't return — let the normal decision flow handle the specific action
+      return null;
+
+    // ═══════════════════════════════════════════════════════════
+    // STRENGTHEN MODE — The student is solid but not fluent.
+    // Push them with harder problems and novel contexts.
+    // ═══════════════════════════════════════════════════════════
+    case INSTRUCTIONAL_MODES.STRENGTHEN:
+      decision.action = ACTIONS.STRENGTHEN_CHALLENGE;
+      decision.directives.push(
+        `STRENGTHEN MODE: Student is proficient at ${targetName} but not yet fluent.`,
+        'Present harder problems, multi-step applications, or novel contexts.',
+        'Minimal scaffolding — let them wrestle with it.',
+        'Focus on speed, accuracy, and transfer to unfamiliar formats.',
+        'If they are breezing through, acknowledge it and move to the next skill.'
+      );
+      return decision;
+
+    // ═══════════════════════════════════════════════════════════
+    // LEVERAGE MODE — The student has mastered this.
+    // Use it as a bridge to something new, don't drill it.
+    // ═══════════════════════════════════════════════════════════
+    case INSTRUCTIONAL_MODES.LEVERAGE:
+      decision.action = ACTIONS.LEVERAGE_BRIDGE;
+      decision.directives.push(
+        `LEVERAGE MODE: Student has mastered ${targetName}.`,
+        'Do NOT drill this skill — it is already solid.',
+        'Use it as a BRIDGE to introduce the next concept in the plan.',
+        'Example: "Since you know [mastered skill], let me show you how it connects to [new skill]..."',
+        'Quick review is OK if needed for warm-up, but keep it brief.'
+      );
+      return decision;
+
+    default:
+      return null;
+  }
 }
 
 /**
@@ -499,4 +753,5 @@ module.exports = {
   decide,
   initPhase,
   ACTIONS,
+  INSTRUCTIONAL_MODES,
 };

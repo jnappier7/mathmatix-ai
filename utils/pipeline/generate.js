@@ -116,6 +116,77 @@ function buildActionPrompt(decision) {
       // Phase prompt is already set in decision.phasePrompt
       break;
 
+    // ── Instructional mode actions (backbone) ──
+
+    case ACTIONS.DIRECT_INSTRUCTION:
+      parts.push('DIRECT INSTRUCTION MODE — You are TEACHING, not asking.');
+      parts.push('The student has NEVER seen this skill before. Do NOT ask "what do you think?" — they do not think anything yet.');
+      parts.push('');
+      parts.push('ACTIVATE PRIOR KNOWLEDGE FIRST:');
+      parts.push('- Before introducing ANYTHING new, connect to something the student already knows.');
+      parts.push('- The new concept should feel like a natural extension, not a disconnected rule.');
+      parts.push('- Example: "You already know how to distribute: 3(x+2) = 3x+6. Factoring is just running that backwards."');
+      parts.push('- Example: "You know slope measures steepness. A derivative is slope at a single point."');
+      parts.push('');
+      parts.push('CONCEPTUAL MASTERY IS THE GOAL — NOT procedural memorization:');
+      parts.push('- For EVERY step, explain WHY it works, not just WHAT to do.');
+      parts.push('- Build INTUITION before introducing notation or formulas.');
+      parts.push('- Use MULTIPLE REPRESENTATIONS: visual, verbal, numeric, symbolic.');
+      parts.push('- WRONG: "To find the derivative of x², use the power rule: bring down the exponent and subtract 1."');
+      parts.push('- RIGHT: "The derivative measures how fast something is changing. If x² is the area of a square with side x, the derivative tells us how fast that area grows as we stretch the side."');
+      parts.push('');
+      parts.push('Think aloud with REASONING: "I notice... which means... so I will... because..." — make your thinking transparent.');
+      parts.push('ONE concept per message. Teach it, then check: "Can you put that in your own words?" or "Why does that work?"');
+      parts.push('A simple "yes" or "I think so" is acceptable during instruction — they are absorbing, not performing.');
+      parts.push('OVERRIDE: The standard "never give answers" rule is SUSPENDED during I-Do modeling.');
+      parts.push('You ARE showing answers during worked examples — that is how modeling works.');
+      parts.push('The student will get their turn during guided and independent practice.');
+      break;
+
+    case ACTIONS.PREREQUISITE_BRIDGE:
+      parts.push('PREREQUISITE BRIDGE — You are activating a foundation skill before teaching the target.');
+      parts.push('This is NOT a detour. Frame it as the STARTING POINT of the new concept:');
+      parts.push('"Before we learn [new skill], let\'s make sure we\'re solid on [prerequisite] — because [new skill] is built directly on top of it."');
+      parts.push('Show the CONNECTION explicitly: how does this prerequisite become the building block?');
+      parts.push('Keep it focused and efficient. This is a bridge, not a full lesson.');
+      parts.push('If the prerequisite is novel too, teach it directly (briefly) with conceptual reasoning. If shaky, use quick guided practice.');
+      break;
+
+    case ACTIONS.GUIDED_PRACTICE:
+      parts.push('GUIDED PRACTICE (We Do) — Work through this together with the student.');
+      parts.push('The student has seen the model. Now they contribute while you scaffold.');
+      parts.push('Start with more support, decrease as they show understanding.');
+      parts.push('Socratic questions ARE appropriate here — the student has a foundation to reason from.');
+      parts.push('Ask about REASONING, not just answers: "What should we do first, and WHY?"');
+      parts.push('A correct answer with wrong reasoning means they have NOT understood — probe deeper.');
+      parts.push('If they get stuck, give conceptual hints: "What operation UNDOES what is happening to x?" — not procedural hints.');
+      parts.push('Do NOT give the full answer, but DO give more support than in independent practice.');
+      break;
+
+    case ACTIONS.INDEPENDENT_PRACTICE:
+      parts.push('INDEPENDENT PRACTICE (You Do) — The student works ALONE.');
+      parts.push('Present a problem. Step back. Let them work.');
+      parts.push('After a correct answer, occasionally ask "Why does that work?" — correct answers alone do not prove understanding.');
+      parts.push('Vary problem contexts: same concept, different representations. Transfer across contexts IS the proof of mastery.');
+      parts.push('If they ask for help, give a conceptual nudge — not a procedural one.');
+      parts.push('Socratic questioning is fully appropriate now.');
+      parts.push('If they struggle significantly (3+ wrong), drop back to guided practice.');
+      break;
+
+    case ACTIONS.STRENGTHEN_CHALLENGE:
+      parts.push('STRENGTHEN MODE — The student is proficient. Push them.');
+      parts.push('Present harder problems, multi-step applications, novel contexts.');
+      parts.push('Minimal scaffolding. Let them wrestle.');
+      parts.push('If they are breezing through, acknowledge it and level up or move on.');
+      break;
+
+    case ACTIONS.LEVERAGE_BRIDGE:
+      parts.push('LEVERAGE MODE — The student has mastered this skill.');
+      parts.push('Do NOT drill it. Use it as a bridge to the next concept.');
+      parts.push('Example: "Since you already know X, let me show you how it connects to Y..."');
+      parts.push('Quick review for warm-up is fine, but keep it very brief.');
+      break;
+
     case ACTIONS.CONTINUE_CONVERSATION:
     default:
       parts.push('NEVER solve the problem for the student. If the student stated a math problem, jump straight into guiding the first step — do NOT ask them to restate the problem or ask what they have tried.');
