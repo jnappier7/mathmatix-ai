@@ -110,6 +110,8 @@ function buildActionPrompt(decision) {
 
     case ACTIONS.PRESENT_PROBLEM:
       parts.push('Present the next problem for the student to work on.');
+      parts.push('ANSWER-DUMP GUARD: Do NOT state, hint at, or embed the answer in the problem presentation.');
+      parts.push('Do NOT say "this equals [answer]" or "you should get [answer]." Present the problem and STOP.');
       break;
 
     case ACTIONS.PHASE_INSTRUCTION:
@@ -161,6 +163,8 @@ function buildActionPrompt(decision) {
       parts.push('A correct answer with wrong reasoning means they have NOT understood — probe deeper.');
       parts.push('If they get stuck, give conceptual hints: "What operation UNDOES what is happening to x?" — not procedural hints.');
       parts.push('Do NOT give the full answer, but DO give more support than in independent practice.');
+      parts.push('ANSWER-DUMP GUARD: When presenting a practice problem, do NOT include the answer or final result.');
+      parts.push('Your hints must guide the PROCESS, never reveal the DESTINATION. "Think about what undoes addition" is a hint. "The answer is 7" is a dump.');
       break;
 
     case ACTIONS.INDEPENDENT_PRACTICE:
@@ -171,6 +175,8 @@ function buildActionPrompt(decision) {
       parts.push('If they ask for help, give a conceptual nudge — not a procedural one.');
       parts.push('Socratic questioning is fully appropriate now.');
       parts.push('If they struggle significantly (3+ wrong), drop back to guided practice.');
+      parts.push('ANSWER-DUMP GUARD: NEVER state or embed the answer when presenting a problem or giving hints.');
+      parts.push('Hints guide REASONING: "What happens when you combine like terms?" — never reveal the target value.');
       break;
 
     case ACTIONS.STRENGTHEN_CHALLENGE:
@@ -178,6 +184,7 @@ function buildActionPrompt(decision) {
       parts.push('Present harder problems, multi-step applications, novel contexts.');
       parts.push('Minimal scaffolding. Let them wrestle.');
       parts.push('If they are breezing through, acknowledge it and level up or move on.');
+      parts.push('ANSWER-DUMP GUARD: Challenge problems must not contain or hint at their solutions.');
       break;
 
     case ACTIONS.LEVERAGE_BRIDGE:

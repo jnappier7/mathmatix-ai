@@ -464,7 +464,8 @@ function applyInstructionalMode(decision, context) {
             '  - If they say "because that is the rule" or "my teacher said to," push: "But WHY is that the rule? What would happen if we did the opposite?"',
             'Start with heavy scaffolding, decrease as they show UNDERSTANDING (not just correct answers).',
             'A student who gets the right answer for the wrong reason has NOT understood. Catch this.',
-            'If the student gets stuck, do NOT give the procedure — reconnect to the concept: "Remember the big idea: [concept]. How does that help us here?"'
+            'If the student gets stuck, do NOT give the procedure — reconnect to the concept: "Remember the big idea: [concept]. How does that help us here?"',
+            'ANSWER-DUMP GUARD: When you present a practice problem, do NOT state or embed the answer. Hints guide reasoning, never reveal the target.'
           );
           return decision;
 
@@ -477,7 +478,8 @@ function applyInstructionalMode(decision, context) {
             'CONCEPTUAL VERIFICATION: After a correct answer, occasionally ask "Why does that work?" or "What if [variable changed] — would the answer change?"',
             'A student who can answer "why" owns the concept. A student who can only get right answers may be mimicking.',
             'If they struggle significantly (3+ wrong), do NOT just re-show the procedure. Drop back to We Do and reconnect to the concept — the understanding gap is upstream of the errors.',
-            'Vary problem contexts: if they practiced with numbers, try a word problem. If they practiced algebraically, try graphically. Transfer across representations is the proof of conceptual understanding.'
+            'Vary problem contexts: if they practiced with numbers, try a word problem. If they practiced algebraically, try graphically. Transfer across representations is the proof of conceptual understanding.',
+            'ANSWER-DUMP GUARD: NEVER state, embed, or hint at the answer when presenting a problem. The student must arrive at it themselves.'
           );
           return decision;
 
@@ -491,7 +493,8 @@ function applyInstructionalMode(decision, context) {
             '  2. TEACH-BACK: "Explain this to me like I have never seen it." If they can teach it, they own it.',
             '  3. MISCONCEPTION TRAP: Present a problem with a common wrong approach. "A student said [wrong thing]. What would you tell them?"',
             '  4. WHAT-IF: "What would happen if [change a condition]? Would the same approach work?" Tests whether they understand the boundaries of the concept.',
-            'A student who passes mastery check with conceptual reasoning (not just right answers) has truly learned. A student who gets the right answer but cannot explain why needs more We Do practice.'
+            'A student who passes mastery check with conceptual reasoning (not just right answers) has truly learned. A student who gets the right answer but cannot explain why needs more We Do practice.',
+            'ANSWER-DUMP GUARD: Mastery check questions must NOT contain or hint at correct answers. The whole point is that the student demonstrates knowledge — you cannot pre-fill it.'
           );
           return decision;
 
