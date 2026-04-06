@@ -1076,22 +1076,68 @@ html, body {
   .vt-ring-mid    { width: 164px !important; height: 164px !important; }
   .vt-ring-outer  { width: 186px !important; height: 186px !important; }
   .vt-presence-rings { width: 186px; height: 186px; }
-  .vt-presence-glow { width: 260px; height: 260px; }
+  .vt-presence-glow { width: 220px; height: 220px; }
 
   .vt-mic-btn { width: 60px; height: 60px; font-size: 22px; }
-  .vt-end-btn, .vt-mute-btn { width: 44px; height: 44px; }
+  .vt-end-btn, .vt-mute-btn { width: 48px; height: 48px; font-size: 20px; }
 
   .vt-canvas-area { padding: 16px; }
 
-  .vt-math-step .vt-step-content { font-size: 18px; }
+  .vt-math-step .vt-step-content { font-size: 20px; line-height: 1.5; }
 
+  /* Controls footer: safe area for notched iPhones */
+  .vt-controls {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  /* Text input: 16px prevents iOS auto-zoom on focus */
+  .vt-text-input {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .vt-send-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Settings drawer: fit on phone screens */
+  .vt-settings-drawer {
+    width: 100%;
+    max-width: 340px;
+    right: -100%;
+    padding: 24px 20px;
+  }
+
+  /* Live transcript: prevent overflow on narrow screens */
+  .vt-live-transcript {
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
 }
 
 @media (max-width: 480px) {
   .vt-header { padding: 10px 14px; }
   .vt-session-label { display: none; }
-  .vt-controls { gap: 20px; padding: 12px 16px 16px; }
+  .vt-controls { gap: 20px; padding: 12px 16px 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   .vt-control-label { font-size: 9px; }
+
+  /* Shrink avatar + rings so they don't dominate the screen */
+  .vt-avatar-circle { width: 100px; height: 100px; }
+  .vt-ring-inner  { width: 120px !important; height: 120px !important; }
+  .vt-ring-mid    { width: 138px !important; height: 138px !important; }
+  .vt-ring-outer  { width: 156px !important; height: 156px !important; }
+  .vt-presence-rings { width: 156px; height: 156px; }
+  .vt-presence-glow { width: 180px; height: 180px; }
+
+  /* Math display — bigger for kids */
+  .vt-math-step .vt-step-content { font-size: 18px; }
+
+  /* Settings drawer: full-width on small phones */
+  .vt-settings-drawer {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* --- Reduced motion --- */

@@ -193,30 +193,7 @@ describe('Next Action Suggestions', () => {
         expect(badgeAction).toBeDefined();
     });
 
-    test('suggests fact fluency when not practiced recently', () => {
-        const user = makeUser({
-            factFluencyProgress: {
-                stats: { lastPracticeDate: new Date(Date.now() - 5 * 86400000) },
-            },
-        });
-
-        const result = getNextActions(user);
-        const fluencyAction = result.find(s => s.type === 'fact-fluency');
-        expect(fluencyAction).toBeDefined();
-        expect(fluencyAction.action.url).toBe('/fact-fluency.html');
-    });
-
-    test('does not suggest fact fluency when practiced recently', () => {
-        const user = makeUser({
-            factFluencyProgress: {
-                stats: { lastPracticeDate: new Date() },
-            },
-        });
-
-        const result = getNextActions(user);
-        const fluencyAction = result.find(s => s.type === 'fact-fluency');
-        expect(fluencyAction).toBeUndefined();
-    });
+    // Fact fluency tests removed — feature was shelved
 
     test('suggests streak milestone when one day away', () => {
         const user = makeUser({
