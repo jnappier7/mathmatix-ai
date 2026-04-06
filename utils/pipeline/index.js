@@ -111,12 +111,20 @@ async function runPipeline(message, ctx) {
   let skillResolution = null;
   try {
     tutorPlan = await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
-    const resolved = await resolveCurrentTarget(tutorPlan, {
-      user: ctx.user,
-      activeSkillId: ctx.activeSkill?.skillId || null,
-    });
-    tutorPlan = resolved.plan;
-    skillResolution = resolved.skillResolution;
+
+    // skipPlanTarget: student is driving (homework, specific request).
+    // Load the plan but don't resolve a target — let observe/diagnose pick up
+    // the topic from the student's actual message instead.
+    if (!ctx.skipPlanTarget) {
+      const resolved = await resolveCurrentTarget(tutorPlan, {
+        user: ctx.user,
+        activeSkillId: ctx.activeSkill?.skillId || null,
+      });
+      tutorPlan = resolved.plan;
+      skillResolution = resolved.skillResolution;
+    } else {
+      console.log('[Pipeline] skipPlanTarget: student is driving — skipping resolveCurrentTarget');
+    }
 
     if (tutorPlan.currentTarget?.skillId) {
       console.log(`[Pipeline] TutorPlan: target=${tutorPlan.currentTarget.skillId}, mode=${tutorPlan.currentTarget.instructionalMode}${tutorPlan.currentTarget.instructionPhase ? ', phase=' + tutorPlan.currentTarget.instructionPhase : ''}`);
