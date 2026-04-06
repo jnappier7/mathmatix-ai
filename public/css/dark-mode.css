@@ -690,6 +690,103 @@
     color: #5ac8fa;
 }
 
+/* Math Keyboard Panel dark mode */
+[data-theme="dark"] .math-keyboard-panel {
+    background: #1c1c1e;
+    border-top-color: #38383a;
+}
+
+[data-theme="dark"] .mk-tabs {
+    border-bottom-color: #38383a;
+}
+
+[data-theme="dark"] .mk-tab-icon,
+[data-theme="dark"] .mk-tab-label {
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .mk-tab-active .mk-tab-icon,
+[data-theme="dark"] .mk-tab-active .mk-tab-label {
+    color: #0a84ff;
+}
+
+[data-theme="dark"] .mk-tab-active {
+    border-bottom-color: #0a84ff;
+}
+
+[data-theme="dark"] .mk-key {
+    background: #2c2c2e;
+    border-color: #3a3a3c;
+    color: #f0f0f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .mk-key:active {
+    background: #3a3a3c;
+}
+
+[data-theme="dark"] .mk-key-action {
+    background: #48484a;
+}
+
+[data-theme="dark"] .mk-key-hint {
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .mk-section-label {
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .math-keyboard-field {
+    background: #1c1c1e;
+    border-color: #14C8C8;
+    color: #f0f0f0;
+}
+
+[data-theme="dark"] .mk-done-btn {
+    background: #14C8C8;
+    color: #000;
+}
+
+[data-theme="dark"] .mk-helper-text {
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .mk-helper-text strong {
+    color: #0a84ff;
+}
+
+[data-theme="dark"] .mk-tooltip {
+    background: #0a84ff;
+}
+
+/* User messages in dark mode — ensure text is always white and visible */
+[data-theme="dark"] .message.user {
+    background: #0b84fe;
+    color: #fff;
+}
+
+[data-theme="dark"] .message.user * {
+    color: inherit;
+}
+
+/* User message KaTeX math — keep white in dark mode */
+[data-theme="dark"] .message.user .katex {
+    color: #fff;
+}
+
+/* User message links — lighter shade for contrast on blue */
+[data-theme="dark"] .message.user a {
+    color: #d4e9ff;
+    text-decoration: underline;
+}
+
+/* User message code snippets */
+[data-theme="dark"] .message.user code {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
 /* Transition for smooth theme switching */
 html.theme-transitioning,
 html.theme-transitioning *,

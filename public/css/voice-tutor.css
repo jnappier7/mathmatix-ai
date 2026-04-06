@@ -1140,6 +1140,32 @@ html, body {
   }
 }
 
+/* --- Toast messages (visible on mobile even when chat panel is hidden) --- */
+.vt-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: rgba(30, 30, 50, 0.95);
+  color: #f0f0f0;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 12px 20px;
+  border-radius: 12px;
+  max-width: 90vw;
+  text-align: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.vt-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

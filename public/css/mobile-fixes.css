@@ -1917,18 +1917,74 @@ a {
         display: none !important;
     }
 
+    /* Also suppress MathLive popover and alternate keys panel */
+    .ML__popover,
+    .ML__keyboard-toggle {
+        display: none !important;
+    }
+
     /* --- Math Keyboard Panel: mobile tuning --- */
     .math-keyboard-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        background: #f2f2f7;
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
         padding-bottom: env(safe-area-inset-bottom, 0);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+        max-height: 55vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Numbers page: use 4-column grid on mobile for bigger keys */
+    .math-keyboard-panel .mk-page[data-page="123"] .mk-grid-5 {
+        grid-template-columns: repeat(4, 1fr);
     }
 
     .mk-key {
-        min-height: 44px;
-        font-size: 1.05rem;
+        min-height: 46px;
+        font-size: 1.1rem;
+        border-radius: 6px;
     }
 
+    .mk-key-main {
+        font-size: 1.15rem;
+    }
+
+    .mk-key-hint {
+        font-size: 0.6rem;
+    }
+
+    /* Math field stays in compose bar, styled clearly */
     .math-keyboard-field {
-        min-height: 38px;
-        font-size: 1.05rem;
+        min-height: 40px;
+        font-size: 16px; /* 16px prevents iOS auto-zoom */
+        border: 2px solid #12B3B3;
+        border-radius: 20px;
+        background: #fff;
+    }
+
+    .mk-done-btn {
+        min-height: 40px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        background: #12B3B3;
+    }
+
+    /* Helper text: more visible */
+    .mk-helper-text {
+        font-size: 0.75rem;
+        padding: 6px 12px 2px;
+    }
+
+    /* When math keyboard is open, push input area above it */
+    .math-keyboard-panel ~ #input-container,
+    body:has(.math-keyboard-panel[style*="display: block"]) #input-container,
+    body:has(.math-keyboard-panel:not([style*="display: none"]):not([style*="display:none"])) #input-container {
+        padding-bottom: 0;
     }
 }
