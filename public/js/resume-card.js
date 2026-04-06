@@ -251,12 +251,8 @@
       if (dismissBtn) dismissBtn.addEventListener('click', dismissCard);
       wireSessionClicks();
 
-      // Auto-dismiss after welcome message loads (card served its purpose)
-      // Give them 30 seconds to interact before auto-dismissing
-      setTimeout(() => {
-        const card = document.getElementById(CARD_ID);
-        if (card && !card.matches(':hover')) dismissCard();
-      }, 30000);
+      // Card stays until the user dismisses it or taps a session.
+      // No auto-dismiss — let them read at their own pace.
     } catch (err) {
       // Silent fail — welcome message will show normally
       console.warn('[ResumeCard] Failed to load resume data:', err);
