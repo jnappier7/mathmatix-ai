@@ -125,8 +125,8 @@ function configureMiddleware(app) {
   }, express.static(publicDir, {
     index: false, // Don't serve index.html — that goes through auth/CSP nonce pipeline
     setHeaders: (res, filePath) => {
-      if (/sw\.js$/i.test(filePath)) {
-        res.setHeader('Cache-Control', 'no-cache'); // Service worker must always be fresh
+      if (/sw\.js$|pwa-register\.js$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'no-cache'); // SW & PWA bootstrap must always be fresh
       } else if (/\.(woff2?|ttf|eot)$/i.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=2592000, immutable'); // 30 days — fonts never change
       } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp)$/i.test(filePath)) {
@@ -197,7 +197,7 @@ function configureMiddleware(app) {
               '<meta name="apple-mobile-web-app-title" content="MATHMATIX" />',
               '<link rel="apple-touch-icon" href="/images/icon-192x192.png" />',
               '<link rel="stylesheet" href="/css/pwa.css" />',
-              `<script src="/js/pwa-register.js" nonce="${nonce}" defer></script>`,
+              `<script src="/js/pwa-register.js?v=2" nonce="${nonce}" defer></script>`,
             ].join('\n  ');
             html = html.replace('</head>', `  ${pwaTags}\n</head>`);
           } else if (!html.includes('pwa-register.js')) {
@@ -205,7 +205,7 @@ function configureMiddleware(app) {
             const pwaExtras = [
               '<link rel="apple-touch-icon" href="/images/icon-192x192.png" />',
               '<link rel="stylesheet" href="/css/pwa.css" />',
-              `<script src="/js/pwa-register.js" nonce="${nonce}" defer></script>`,
+              `<script src="/js/pwa-register.js?v=2" nonce="${nonce}" defer></script>`,
             ].join('\n  ');
             html = html.replace('</head>', `  ${pwaExtras}\n</head>`);
           }
