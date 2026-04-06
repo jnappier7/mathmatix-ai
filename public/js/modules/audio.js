@@ -232,7 +232,8 @@ export function changePlaybackSpeed(rate) {
         audioState.source.playbackRate.value = rate;
     }
 
-    try { localStorage.setItem('ttsPlaybackRate', rate); } catch (e) { /* blocked */ }
+    if (window.StorageUtils) { StorageUtils.local.setItem('ttsPlaybackRate', rate); }
+    else { try { localStorage.setItem('ttsPlaybackRate', rate); } catch (e) { /* blocked */ } }
 
     updateAudioControls();
 }

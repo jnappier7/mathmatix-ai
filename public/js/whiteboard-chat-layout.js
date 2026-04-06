@@ -416,12 +416,10 @@ class WhiteboardChatLayout {
         }
 
         // Check user preference from localStorage (overrides auto-detection)
-        try {
-            const savedMode = localStorage.getItem('whiteboardChatLayoutMode');
-            if (savedMode && ['message-ticker', 'split-screen', 'pip', 'compact'].includes(savedMode)) {
-                this.mode = savedMode;
-            }
-        } catch (e) { /* storage blocked */ }
+        const savedMode = StorageUtils.local.getItem('whiteboardChatLayoutMode');
+        if (savedMode && ['message-ticker', 'split-screen', 'pip', 'compact'].includes(savedMode)) {
+            this.mode = savedMode;
+        }
     }
 
     setMode(mode) {
@@ -431,7 +429,7 @@ class WhiteboardChatLayout {
         }
 
         this.mode = mode;
-        try { localStorage.setItem('whiteboardChatLayoutMode', mode); } catch (e) { /* blocked */ }
+        StorageUtils.local.setItem('whiteboardChatLayoutMode', mode);
 
         console.log('[Layout] Mode set to:', mode);
 
@@ -444,7 +442,7 @@ class WhiteboardChatLayout {
 
     showLayoutHint() {
         // Check if user has seen this hint before
-        try { if (localStorage.getItem('seenWhiteboardLayoutHint')) return; } catch (e) { return; }
+        if (StorageUtils.local.getItem('seenWhiteboardLayoutHint')) return;
 
         const hint = document.createElement('div');
         hint.className = 'whiteboard-layout-hint';
@@ -453,7 +451,7 @@ class WhiteboardChatLayout {
         document.body.appendChild(hint);
 
         // Mark as seen
-        try { localStorage.setItem('seenWhiteboardLayoutHint', 'true'); } catch (e) { /* blocked */ }
+        StorageUtils.local.setItem('seenWhiteboardLayoutHint', 'true');
 
         // Remove after animation
         setTimeout(() => {

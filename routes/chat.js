@@ -672,7 +672,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         } : null;
 
         // Extract liked messages for rapport building
-        const likedMessages = recentMessagesForAI
+        const likedMessages = allMessages
             .filter(msg => msg.role === 'assistant' && msg.reaction)
             .map(msg => ({ content: msg.content.substring(0, 150), reaction: msg.reaction }));
 

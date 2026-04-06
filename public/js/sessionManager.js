@@ -403,7 +403,7 @@ class SessionManager {
     }
 
     // Clear UI language cache so the next user on this device gets a clean state
-    try { localStorage.removeItem('mathmatix_ui_lang'); } catch (e) { /* private mode */ }
+    StorageUtils.local.removeItem('mathmatix_ui_lang');
 
     // Show session recap before redirecting (if we fetched one)
     if (recapData && recapData.headline) {
@@ -554,7 +554,7 @@ class SessionManager {
 
     // Try localStorage
     let stored;
-    try { stored = localStorage.getItem('masteryProgress'); } catch (e) { /* blocked */ }
+    stored = StorageUtils.local.getItem('masteryProgress');
     if (stored) {
       try {
         return JSON.parse(stored);

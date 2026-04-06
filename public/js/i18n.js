@@ -124,7 +124,7 @@ window.MathmatixI18n = (function () {
   /** Set the active language and re-translate the page. */
   function setLanguage(lang) {
     currentLang = lang || 'English';
-    try { localStorage.setItem(STORAGE_KEY, currentLang); } catch (e) { /* private mode */ }
+    _setItem(STORAGE_KEY, currentLang);
     apply();
   }
 
@@ -133,16 +133,24 @@ window.MathmatixI18n = (function () {
     return currentLang;
   }
 
+  // Safe storage helpers that prefer StorageUtils when available
+  function _getItem(key) {
+    if (window.StorageUtils) return StorageUtils.local.getItem(key);
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function _setItem(key, val) {
+    if (window.StorageUtils) { StorageUtils.local.setItem(key, val); return; }
+    try { localStorage.setItem(key, val); } catch (e) { /* */ }
+  }
+
   /** Load language from localStorage or from the /user endpoint. */
   function init() {
     // 1. Check localStorage for fast first paint
-    try {
-      var cached = localStorage.getItem(STORAGE_KEY);
-      if (cached) {
-        currentLang = cached;
-        apply();
-      }
-    } catch (e) { /* ignore */ }
+    var cached = _getItem(STORAGE_KEY);
+    if (cached) {
+      currentLang = cached;
+      apply();
+    }
 
     // 2. Fetch authoritative language from server (updates if different)
     fetch('/user', { credentials: 'include' })
@@ -155,7 +163,7 @@ window.MathmatixI18n = (function () {
           var serverLang = data.user.preferredLanguage;
           if (serverLang !== currentLang) {
             currentLang = serverLang;
-            try { localStorage.setItem(STORAGE_KEY, currentLang); } catch (e) { /* */ }
+            _setItem(STORAGE_KEY, currentLang);
             apply();
           }
         }
