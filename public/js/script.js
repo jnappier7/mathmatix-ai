@@ -3349,7 +3349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (micBtn) {
         micBtn.addEventListener('click', () => {
             if (!recognition) {
-                showToast('Speech recognition is not supported in this browser. Try Chrome.', 4000);
+                showToast('Speech recognition is not supported in this browser. Try a different browser like Chrome or Edge.', 4000);
                 return;
             }
             if (isRecognizing) {
