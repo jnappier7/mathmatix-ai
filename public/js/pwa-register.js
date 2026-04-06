@@ -82,7 +82,42 @@
     }
   }
 
-  // Listen for the browser's install prompt
+  // --- iOS Detection & Install Instructions ---
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }
+
+  function createIOSInstallBanner() {
+    if (document.getElementById('pwa-install-banner')) return;
+
+    var banner = document.createElement('div');
+    banner.id = 'pwa-install-banner';
+    banner.setAttribute('role', 'alert');
+    banner.innerHTML =
+      '<div class="pwa-install-content pwa-ios-content">' +
+        '<img src="/images/icon-192x192.png" alt="MATHMATIX" class="pwa-install-icon" width="40" height="40" />' +
+        '<div class="pwa-install-text">' +
+          '<strong>Get the MATHMATIX app!</strong>' +
+          '<span class="pwa-ios-steps">' +
+            'Tap <svg class="pwa-share-icon" viewBox="0 0 50 50" width="18" height="18" aria-label="Share"><rect x="15" y="20" width="20" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="3"/><line x1="25" y1="6" x2="25" y2="30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><polyline points="18,13 25,6 32,13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> ' +
+            'then <strong>"Add to Home Screen"</strong>' +
+          '</span>' +
+        '</div>' +
+        '<button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss">&times;</button>' +
+      '</div>';
+    document.body.appendChild(banner);
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { banner.classList.add('pwa-install-visible'); });
+    });
+
+    document.getElementById('pwa-install-dismiss').addEventListener('click', function () {
+      localStorage.setItem(DISMISS_KEY, Date.now().toString());
+      removeBanner();
+    });
+  }
+
+  // Listen for the browser's install prompt (Android / Chrome / Edge)
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -98,4 +133,10 @@
     deferredPrompt = null;
     removeBanner();
   });
+
+  // iOS: show manual install instructions (beforeinstallprompt never fires)
+  if (isIOS() && !isStandalone() && !wasDismissedRecently()) {
+    // Wait for page to settle before showing
+    setTimeout(createIOSInstallBanner, 3000);
+  }
 })();
