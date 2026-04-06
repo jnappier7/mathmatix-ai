@@ -50,21 +50,12 @@
   // --- Hero Action Buttons ---
   function wireHeroButtons() {
     var uploadBtn = document.getElementById('hero-upload-btn');
-    var cameraBtn = document.getElementById('hero-camera-btn');
     var attachBtn = document.getElementById('attach-button');
-    var cameraTrigger = document.getElementById('camera-button');
 
-    // Upload Homework → trigger the existing attach button
+    // Upload / Photo → trigger the existing attach button (handles both files and camera)
     if (uploadBtn && attachBtn) {
       uploadBtn.addEventListener('click', function () {
         attachBtn.click();
-      });
-    }
-
-    // Show Your Work → trigger the existing camera button
-    if (cameraBtn && cameraTrigger) {
-      cameraBtn.addEventListener('click', function () {
-        cameraTrigger.click();
       });
     }
   }

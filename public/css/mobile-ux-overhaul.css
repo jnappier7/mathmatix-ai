@@ -160,8 +160,10 @@
 /* Calculator: kids have their phone calculator. Break: not a primary action. */
 
 @media (max-width: 768px) {
+  /* Calculator: kids have their phone. Attach/camera: replaced by hero button above. */
   #calculator-toolbar-btn,
-  #break-toolbar-btn {
+  #attach-button,
+  #camera-button {
     display: none !important;
   }
 }
