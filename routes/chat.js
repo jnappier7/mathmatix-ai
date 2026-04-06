@@ -36,6 +36,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const TutorPlan = require('../models/tutorPlan');
+const { generateSessionOpener } = require('../utils/sessionOpener');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -1806,6 +1808,24 @@ async function handleGreetingRequest(req, res, userId) {
 
             systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], greetingFluencyContext, null);
 
+            // ── Intelligent session opener via TutorPlan ──
+            let openerResult = null;
+            try {
+                const tutorPlan = await TutorPlan.findOne({ userId: user._id });
+                if (tutorPlan) {
+                    openerResult = generateSessionOpener({
+                        tutorPlan,
+                        user,
+                        courseSession: null,
+                        tutorProfile: currentTutor,
+                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith } : null,
+                    });
+                    console.log(`[Greeting] Session opener strategy: ${openerResult.strategy}`);
+                }
+            } catch (openerErr) {
+                console.warn('[Greeting] Session opener error (falling back to default):', openerErr.message);
+            }
+
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
@@ -1824,12 +1844,20 @@ async function handleGreetingRequest(req, res, userId) {
             } else {
                 warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?" or "Factor: x² - 9"';
             }
-            // If the student has a specific math course, mention it for extra clarity
             const courseHint = user.mathCourse ? ` The student is taking ${user.mathCourse} — make sure the warm-up is relevant to that level, not below it.` : '';
 
-            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
+            if (openerResult && openerResult.directives?.length > 0) {
+                // Use intelligent session opener directives from TutorPlan
+                greetingInstruction = openerResult.directives.join('\n') +
+                    `\n\nKeep it to 1-2 sentences. Be casual like texting. Don't repeat back their info.` +
+                    `\nYou MAY optionally include a quick warm-up question: ${warmUpExamples}${courseHint}` +
+                    `\nNEVER give a warm-up below the student's level.`;
+            } else {
+                // Fallback: default greeting instruction (no TutorPlan yet)
+                greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
 
 IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to — for example, ask what they'd like to work on, reference something from last session, or ask how their day is going. You MAY optionally include a quick warm-up question to build momentum, but only if it feels natural — don't force it. If you do include a warm-up, make sure it matches their grade level and course. For example: ${warmUpExamples}${courseHint} NEVER give a warm-up question that is far below the student's grade level or course — that feels insulting and wastes their time.`;
+            }
 
             // Add Starting Point offer (only on first session, never again)
             if (shouldOfferStartingPoint) {
@@ -1928,11 +1956,15 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 }
 
                 // Send completion with metadata
-                res.write(`data: ${JSON.stringify({
+                const streamDonePayload = {
                     done: true,
                     voiceId: currentTutor.voiceId,
-                    isGreeting: true
-                })}\n\n`);
+                    isGreeting: true,
+                };
+                if (openerResult?.suggestionChips) {
+                    streamDonePayload.suggestionChips = openerResult.suggestionChips;
+                }
+                res.write(`data: ${JSON.stringify(streamDonePayload)}\n\n`);
                 res.end();
 
             } catch (streamError) {
@@ -1994,14 +2026,18 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
             }
 
-            res.json({
+            const greetingResponse = {
                 text: greetingText,
                 voiceId: currentTutor.voiceId,
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
-                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
-            });
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
+            };
+            if (openerResult?.suggestionChips) {
+                greetingResponse.suggestionChips = openerResult.suggestionChips;
+            }
+            res.json(greetingResponse);
         }
 
     } catch (error) {

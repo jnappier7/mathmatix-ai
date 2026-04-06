@@ -1,6 +1,6 @@
 // routes/courseChat.js
 // Dedicated chat endpoint for structured course sessions.
-// Completely independent from the main /api/chat pipeline.
+// Routes through the unified pipeline via courseAdapter for observe/diagnose/decide/generate/verify/persist.
 // Course context is REQUIRED — if it can't load, the request fails loudly.
 
 const express = require('express');
@@ -11,22 +11,14 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
-const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
-const { callLLM, callLLMStream } = require('../utils/llmGateway');
-const { sendSafetyConcernAlert } = require('../utils/emailService');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction } = require('../utils/coursePrompt');
+const { callLLM } = require('../utils/llmGateway');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
-// calculateXpBoostFactor now used internally by xpEngine
-const { detectTopic } = require('../utils/activitySummarizer');
-const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 const { buildProgressUpdate } = require('../utils/progressState');
-const { verify: pipelineVerify } = require('../utils/pipeline');
-const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
-const { detectGraphTool, processScaffoldAdvance, processModuleComplete, processSkillMastery } = require('../utils/pipeline/coursePersist');
-const { evaluateStepCompletion } = require('../utils/pipeline/stepEvaluator');
-const { computeXpBreakdown, applyXpToUser } = require('../utils/pipeline/xpEngine');
-const { emitGamificationEvent } = require('../utils/gamificationEvents');
+const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const { buildCoursePipelineContext, postProcessCourseResult } = require('../utils/pipeline/courseAdapter');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -184,377 +176,87 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // ── Build system prompt ─────────────────────────────
-        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
-            ? user.selectedTutorId : 'default';
-        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
-
-        let systemPrompt = buildCourseSystemPrompt({
-            userProfile: user,
-            tutorProfile: currentTutor,
-            courseSession,
-            pathway,
-            scaffoldData: moduleData,
-            currentModule: currentPathwayModule,
-            resourceContext
-        });
-
-        // ── Session mood (emotional arc) ──
-        const sessionMood = computeSessionMood(conversation.messages, {
-            sessionStart: conversation.createdAt || conversation.startDate,
-        });
-        const moodDirective = buildMoodDirective(sessionMood);
-        if (moodDirective) {
-            systemPrompt += '\n\n' + moodDirective;
-            console.log(`[CourseChat] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''})`);
-        }
-
-        // ── Step-context anchor for long conversations ──
-        // The system prompt fades in long conversations. Append a brief
-        // reminder of the current step to keep the AI anchored.
-        const scaffold = moduleData?.scaffold || [];
-        if (scaffold.length > 1) {
-            const stepIdx = courseSession.currentScaffoldIndex || 0;
-            const currentStep = scaffold[stepIdx];
-            if (currentStep && formattedMessages.length > 0) {
-                const lastMsg = formattedMessages[formattedMessages.length - 1];
-                if (lastMsg?.role === 'user') {
-                    lastMsg.content += `\n\n[INTERNAL — DO NOT READ ALOUD: You are on step ${stepIdx + 1}/${scaffold.length} ("${currentStep.title}"). Teach only this step's content. Do not introduce topics from later steps.]`;
-                }
-            }
-        }
-
-        const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
+        // ── Route through unified pipeline via course adapter ──
+        // Previously this was 300+ lines of inline logic (prompt build, LLM call,
+        // verify, scaffold, XP). Now it flows through the same pipeline as chat,
+        // getting observe, diagnose, decide, generate, verify, persist — plus
+        // tutor plan awareness, instructional modes, and smart suggestions.
+        const useStreaming = req.query.stream === 'true';
+        const aiStartTime = Date.now();
 
         console.log(`📚 [CourseChat] ${user.firstName} → ${courseSession.courseName} / ${courseSession.currentModuleId}`);
 
-        // ── Call AI ─────────────────────────────────────────
-        const useStreaming = req.query.stream === 'true';
-        let aiResponseText = '';
-        const aiStartTime = Date.now();
-        let clientDisconnected = false;
+        // Build pipeline context with course enrichment
+        const courseCtx = await buildCoursePipelineContext({
+            user,
+            courseSession,
+            conversation,
+            formattedMessages,
+            resourceContext,
+        });
 
+        // Set up streaming if requested
         if (useStreaming) {
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
-            res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
+            res.setHeader('X-Accel-Buffering', 'no');
             res.flushHeaders();
-            req.on('close', () => { clientDisconnected = true; });
-
-            try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
-                let buffer = '';
-
-                for await (const chunk of stream) {
-                    if (clientDisconnected) break;
-                    const content = chunk.choices[0]?.delta?.content || '';
-                    if (content) {
-                        buffer += content;
-                        res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);
-                    }
-                }
-                aiResponseText = buffer.trim() || "I'm not sure how to respond.";
-            } catch (streamErr) {
-                console.error('[CourseChat] Stream failed, falling back:', streamErr.message);
-                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
-                aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
-                res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
-            }
-        } else {
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
-            aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
 
-        // ── Pipeline verify (anti-cheat + tag extraction + LaTeX + reading level) ──
-        let ext = {};
-        let problemAnswered = false;
-        let wasCorrect = false;
-        let courseProgressUpdate = null;
-        let graphToolConfig = null;
-
-        try {
-            const verified = await pipelineVerify(aiResponseText, {
-                userId: userId?.toString(),
-                userMessage: messageText,
-                iepReadingLevel: user.iepPlan?.readingLevel || null,
-                firstName: user.firstName,
-                isStreaming: useStreaming,
-                res: useStreaming ? res : null,
-            });
-            aiResponseText = verified.text;
-
-            if (verified.flags.length > 0) {
-                console.log(`[CourseChat] Verify: ${verified.flags.join(', ')}`);
-            }
-
-            ext = verified.extracted;
-
-            // Safety concern
-            if (ext.safetyConcern) {
-                console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName}) - ${ext.safetyConcern}`);
-                sendSafetyConcernAlert(
-                    { userId: userId.toString(), firstName: user.firstName, lastName: user.lastName, username: user.username, gradeLevel: user.gradeLevel },
-                    ext.safetyConcern, messageText
-                ).catch(err => console.error('Safety alert email failed:', err));
-            }
-
-            // Skill mastery
-            if (ext.skillMastered) {
-                processSkillMastery(user, ext.skillMastered);
-                console.log(`📈 [CourseChat] Skill ${ext.skillMastered}: mastery updated`);
-            }
-
-            // Problem result
-            if (ext.problemResult) {
-                problemAnswered = true;
-                wasCorrect = ext.problemResult === 'correct';
-                console.log(`📊 [CourseChat] Problem: ${ext.problemResult}`);
-            } else {
-                // Keyword fallback for backward compat
-                const userMsg = messageText.trim();
-                const looksLikeAnswer = userMsg.length < 100 && (/^-?\d+/.test(userMsg) || /^[a-z]\s*=/i.test(userMsg) || userMsg.split(' ').length <= 10);
-                if (looksLikeAnswer) {
-                    const lower = aiResponseText.toLowerCase();
-                    if (/correct|exactly|great job|perfect|well done/.test(lower)) {
-                        problemAnswered = true; wasCorrect = true;
-                    } else if (/not quite|try again|almost|incorrect|not exactly/.test(lower)) {
-                        problemAnswered = true; wasCorrect = false;
-                    }
-                }
-            }
-
-            // Graph tool detection (runs on verify-cleaned text)
-            const scaffoldStepForGraph = (moduleData?.scaffold || [])[courseSession.currentScaffoldIndex || 0];
-            graphToolConfig = detectGraphTool(aiResponseText, {
-                isParentCourse,
-                moduleSkills: moduleData?.skills || [],
-                lessonPhase: scaffoldStepForGraph?.lessonPhase || scaffoldStepForGraph?.type || '',
-            });
-            if (graphToolConfig) {
-                // Strip the tag from response if detected by tag match
-                if (graphToolConfig._source === 'tag') {
-                    aiResponseText = aiResponseText.replace(/<GRAPH_TOOL(?:\s+[^>]*)?\s*>/gi, '').trim();
-                }
-                console.log(`📐 [CourseChat] Graph tool (${graphToolConfig._source}): ${graphToolConfig.type}`);
-                delete graphToolConfig._source;
-            }
-
-            // ── Backend-driven progression (step evaluator) ────────
-            // The teaching LLM no longer emits <SCAFFOLD_ADVANCE> tags.
-            // Instead, the backend evaluates every turn to decide if the
-            // current step is complete. This separates teaching from plumbing.
-            //
-            // Checkpoints (type: "assessment") have no scaffold — they use
-            // assessmentProblems instead. For checkpoints, we track completion
-            // by counting correct/incorrect PROBLEM_RESULT tags against the
-            // total problem count, and complete the module when all problems
-            // have been attempted.
-            const isCheckpointModule = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
-            const currentScaffoldIdx = courseSession.currentScaffoldIndex || 0;
-            const currentScaffoldStep = (moduleData?.scaffold || [])[currentScaffoldIdx];
-            const isLastStep = isCheckpointModule
-              ? true  // Checkpoints are always "last step" — module completes when all problems are done
-              : currentScaffoldIdx >= (moduleData?.scaffold?.length || 1) - 1;
-
-            try {
-                let evalResult;
-
-                if (isCheckpointModule) {
-                    // Checkpoint completion: count PROBLEM_RESULT tags in conversation
-                    const totalProblems = (moduleData.assessmentProblems || []).length;
-                    const problemResults = conversation.messages
-                        .filter(m => m.role === 'assistant' && m.problemResult)
-                        .map(m => m.problemResult);
-                    const attempted = problemResults.length;
-                    const correct = problemResults.filter(r => r === 'correct').length;
-
-                    evalResult = {
-                        mode: 'checkpoint',
-                        complete: attempted >= totalProblems && totalProblems > 0,
-                        confidence: 1.0,
-                        evidence: `${attempted}/${totalProblems} problems attempted, ${correct} correct`,
-                    };
-
-                    // Update checkpoint score on the module progress
-                    if (evalResult.complete) {
-                        const totalPoints = (moduleData.assessmentProblems || []).reduce((sum, p) => sum + (p.points || 1), 0);
-                        const earnedPoints = problemResults.reduce((sum, r, i) => {
-                            const problem = (moduleData.assessmentProblems || [])[i];
-                            return sum + (r === 'correct' ? (problem?.points || 1) : 0);
-                        }, 0);
-                        const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
-                        const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
-                        if (mod) {
-                            mod.checkpointScore = score;
-                            mod.checkpointPassed = score >= (moduleData.passThreshold || 70);
-                        }
-                    }
-                } else {
-                    evalResult = await evaluateStepCompletion(currentScaffoldStep, conversation, {
-                        wasCorrect,
-                        isParentCourse,
-                    });
-                }
-
-                console.log(`[CourseChat:Evaluator] Step ${currentScaffoldIdx + 1}: ${evalResult.mode} → ${evalResult.complete ? 'COMPLETE' : 'not yet'} (confidence: ${evalResult.confidence}, evidence: ${evalResult.evidence})`);
-
-                if (evalResult.complete) {
-                    if (isLastStep) {
-                        // Last step complete → module complete
-                        courseProgressUpdate = processModuleComplete(courseSession);
-                        await courseSession.save();
-
-                        // Award module completion XP
-                        if (courseProgressUpdate.xpAwarded) {
-                            try {
-                                const userService = require('../services/userService');
-                                await userService.awardXP(user._id, courseProgressUpdate.xpAwarded, `Module complete: ${courseProgressUpdate.moduleId}`);
-                            } catch (xpErr) {
-                                user.xp = (user.xp || 0) + courseProgressUpdate.xpAwarded;
-                            }
-                        }
-                        console.log(`🎓 [CourseChat] ${user.firstName} completed module ${courseProgressUpdate.moduleId} — progress: ${courseSession.overallProgress}%`);
-                    } else {
-                        // Not last step → advance scaffold
-                        courseProgressUpdate = processScaffoldAdvance(courseSession, moduleData, conversation, wasCorrect, { isParentCourse });
-                        if (courseProgressUpdate) {
-                            await courseSession.save();
-                            console.log(`📈 [CourseChat] ${user.firstName} advanced scaffold → step ${courseProgressUpdate.scaffoldIndex + 1}/${courseProgressUpdate.scaffoldTotal} (evaluator: ${evalResult.mode})`);
-                        }
-                    }
-                }
-            } catch (evalErr) {
-                console.error('[CourseChat] Step evaluator error:', evalErr.message);
-                // On evaluator failure, log but don't crash — the step just stays current
-            }
-
-        } catch (verifyErr) {
-            // Fallback: just run answer-key filter if verify fails
-            console.error('[CourseChat] Verify failed, falling back to answer-key filter:', verifyErr.message);
-            const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
-            if (answerKeyCheck.wasFiltered) {
-                aiResponseText = answerKeyCheck.text;
-            }
-        }
-
-        if (problemAnswered) {
-            conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
-            if (wasCorrect) conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
-        }
-
-        // ── Save AI response to conversation ────────────────
-        // problemResult is persisted so the scaffold advance counter survives
-        // across requests (previously it was never saved, causing the MIN_CORRECT
-        // gate to be permanently blocked at practice steps).
-        const aiMsg = {
-            role: 'assistant',
-            content: aiResponseText,
-            timestamp: new Date()
-        };
-        if (problemAnswered) {
-            aiMsg.problemResult = wasCorrect ? 'correct' : 'incorrect';
-        }
-        conversation.messages.push(aiMsg);
-        conversation.currentTopic = courseSession.courseName;
-        conversation.lastActivity = new Date();
-
-        // Persist session mood for dashboard visibility
-        if (sessionMood && sessionMood.trajectory) {
-            conversation.sessionMood = {
-                trajectory: sessionMood.trajectory,
-                energy: sessionMood.energy,
-                momentum: sessionMood.momentum,
-                inFlow: sessionMood.inFlow,
-                fatigueSignal: sessionMood.fatigueSignal,
-                turnCount: sessionMood.turnCount,
-                lastUpdated: new Date(),
-            };
-        }
-
-        // Clean invalid messages before save
-        if (Array.isArray(conversation.messages)) {
-            conversation.messages = conversation.messages.filter(msg =>
-                msg.content && typeof msg.content === 'string' && msg.content.trim() !== ''
-            );
-        }
-        await conversation.save();
-
-        // ── XP calculation (student courses only, via shared xpEngine) ──
-        let xpBreakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
-        let leveledUp = false;
-        let tutorsJustUnlocked = [];
-        let avatarBuilderUnlocked = false;
-        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
-
-        if (!isParentCourse) {
-            xpBreakdown = computeXpBreakdown({
-                wasCorrect,
-                recentMessages: conversation.messages.slice(-6),
-                extracted: ext,
-                userLevel: user.level,
-                isCourseSession: true,
-            });
-
-            const xpResult = applyXpToUser(user, xpBreakdown);
-            leveledUp = xpResult.leveledUp;
-            tutorsJustUnlocked = xpResult.tutorsUnlocked;
-            avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked || false;
-
-            // Gamification events (daily quests, weekly challenges)
-            if (problemAnswered) {
-                emitGamificationEvent(user, 'problemSolved', {
-                    correct: wasCorrect,
-                    skillId: ext.skillStarted || ext.skillMastered || null,
-                    domain: ext.skillDomain || null,
-                });
-                if (ext.skillMastered) {
-                    emitGamificationEvent(user, 'skillMastered', { skillId: ext.skillMastered });
-                }
-                if (ext.skillStarted) {
-                    emitGamificationEvent(user, 'newSkillStarted', { skillId: ext.skillStarted });
-                }
-            }
-        }
-
-        // AI time tracking — use atomic $inc to prevent race conditions with concurrent requests
-        await User.findByIdAndUpdate(user._id, {
-            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
-        });
-        // Update local copy for any downstream reads in this request
-        user.weeklyAISeconds = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
-        user.totalAISeconds = (user.totalAISeconds || 0) + aiProcessingSeconds;
-
-        await user.save();
-
-        // ── Build progressUpdate (ALWAYS — every response) ──
-        // Determine last assessment signal for this turn
-        let lastSignal = null;
-        let signalSource = null;
-        if (problemAnswered) {
-            // Binary signal from <PROBLEM_RESULT> tag — not real timing data.
-            // signalSource tracks which generator produced this so future code
-            // doesn't confuse it with lessonPhaseManager telemetry.
-            lastSignal = wasCorrect ? 'correct_fast' : 'incorrect_close';
-            signalSource = 'problem_result';
-        }
-
-        const progressUpdate = buildProgressUpdate({
-            courseSession,
-            moduleData,
+        // Run the unified pipeline (observe → diagnose → decide → generate → verify → persist)
+        const pipelineResult = await runPipeline(messageText, {
+            user,
             conversation,
-            lastSignal,
-            signalSource,
-            showCheckpoint: false
+            systemPrompt: courseCtx.systemPrompt,
+            formattedMessages: courseCtx.formattedMessages,
+            activeSkill: courseCtx.activeSkill,
+            phaseState: null,
+            hasRecentUpload: false,
+            stream: useStreaming,
+            res: useStreaming ? res : null,
+            aiProcessingStartTime: aiStartTime,
+            _course: courseCtx._course,
         });
 
-        // Persist the course-wide floor so it survives reloads
-        const newFloor = progressUpdate.progressFloorPct;
-        if (newFloor > (courseSession.progressFloorPct || 0)) {
-            courseSession.progressFloorPct = newFloor;
-            courseSession.overallProgress = progressUpdate.overallPct;
-            await courseSession.save();
+        // Course-specific post-processing (scaffold advance, module complete, graph tools)
+        const wasCorrect = pipelineResult.problemResult === 'correct';
+        const problemAnswered = pipelineResult.problemResult !== null;
+        const courseResult = await postProcessCourseResult(
+            pipelineResult,
+            courseCtx._course,
+            conversation,
+            problemAnswered ? wasCorrect : null,
+        );
+
+        const aiResponseText = courseResult.text;
+        const courseProgressUpdate = courseResult.courseProgressUpdate;
+        const graphToolConfig = courseResult.graphToolConfig;
+        const currentTutor = courseCtx._course.currentTutor;
+
+        // Module completion XP award
+        if (courseProgressUpdate?.xpAwarded) {
+            try {
+                const userService = require('../services/userService');
+                await userService.awardXP(user._id, courseProgressUpdate.xpAwarded, `Module complete: ${courseProgressUpdate.moduleId}`);
+            } catch (xpErr) {
+                user.xp = (user.xp || 0) + courseProgressUpdate.xpAwarded;
+                await user.save();
+            }
+            if (courseProgressUpdate.moduleId) {
+                console.log(`🎓 [CourseChat] ${user.firstName} completed module ${courseProgressUpdate.moduleId} — progress: ${courseSession.overallProgress}%`);
+            }
         }
+
+        // Use pipeline's XP and persist results
+        const xpBreakdown = pipelineResult.xpBreakdown || { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
+        const leveledUp = pipelineResult.leveledUp || false;
+        const tutorsJustUnlocked = pipelineResult.tutorsUnlocked || [];
+        const avatarBuilderUnlocked = pipelineResult.avatarBuilderUnlocked || false;
+        const aiProcessingSeconds = pipelineResult.aiTimeUsed || Math.ceil((Date.now() - aiStartTime) / 1000);
+
+        // progressUpdate and floor persistence already handled by postProcessCourseResult
+        const progressUpdate = courseResult.progressUpdate;
 
         // ── Build response ──────────────────────────────────
         let responseData;
@@ -565,13 +267,7 @@ router.post('/', async (req, res) => {
                 text: aiResponseText,
                 voiceId: currentTutor.voiceId,
                 aiTimeUsed: aiProcessingSeconds,
-                courseContext: {
-                    courseId: courseSession.courseId,
-                    courseName: courseSession.courseName,
-                    currentModuleId: courseSession.currentModuleId,
-                    currentLessonId: courseSession.currentLessonId,
-                    overallProgress: courseSession.overallProgress
-                },
+                courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,
                 progressUpdate
             };
@@ -620,24 +316,18 @@ router.post('/', async (req, res) => {
                 // Interactive tools
                 graphTool: graphToolConfig,
                 // Course-specific fields
-                courseContext: {
-                    courseId: courseSession.courseId,
-                    courseName: courseSession.courseName,
-                    currentModuleId: courseSession.currentModuleId,
-                    currentLessonId: courseSession.currentLessonId,
-                    overallProgress: courseSession.overallProgress
-                },
+                courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,
                 progressUpdate
             };
         }
 
         if (useStreaming) {
-            if (!clientDisconnected) {
-                try {
-                    res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
-                    res.end();
-                } catch (e) {}
+            try {
+                res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
+                res.end();
+            } catch (e) {
+                // Client disconnected — safe to ignore
             }
         } else {
             res.json(responseData);

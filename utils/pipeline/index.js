@@ -38,6 +38,7 @@ const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer')
 const { evaluatePhaseAdvancement, reassessFamiliarity, createPhaseTracker, updatePhaseTracker } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
+const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 
 /**
  * Run the full tutoring pipeline.
@@ -539,6 +540,81 @@ async function runPipeline(message, ctx) {
       }
     } catch (err) {
       console.error('[Pipeline] Session grading error (non-fatal):', err.message);
+    }
+  }
+
+  // ── Cross-Session Pattern Detection ──
+  // Runs periodically (every 5 turns) to avoid overhead on every message.
+  // Detects recurring struggles, confidence trends, engagement patterns,
+  // and generates tutor notes + signal updates for the TutorPlan.
+  if (!ctx.skipPersist && tutorPlan && ctx.conversation) {
+    const turnCount = ctx.conversation.messages?.length || 0;
+    if (turnCount > 0 && turnCount % 10 === 0) {
+      try {
+        const sessionData = summarizeForPatterns(ctx.conversation, {
+          _pipeline: {
+            sessionMood,
+            backbone: { targetSkill: skillResolution?.resolved?.skillId || null },
+          },
+        });
+
+        const Conversation = require('../../models/conversation');
+        const recentConvos = await Conversation.find({
+          userId: ctx.user._id,
+          _id: { $ne: ctx.conversation._id },
+          lastActivity: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        })
+          .sort({ lastActivity: -1 })
+          .limit(10)
+          .select('sessionSummary')
+          .lean();
+
+        const recentSessions = recentConvos
+          .filter(c => c.sessionSummary)
+          .map(c => c.sessionSummary);
+
+        if (recentSessions.length >= 2) {
+          const patternResult = detectPatterns(sessionData, {
+            recentSessions,
+            tutorNotes: tutorPlan.tutorNotes || [],
+            skillMastery: ctx.user.skillMastery,
+            studentSignals: tutorPlan.studentSignals || {},
+          });
+
+          // Apply signal updates to TutorPlan
+          if (Object.keys(patternResult.signalUpdates).length > 0) {
+            Object.assign(tutorPlan.studentSignals, patternResult.signalUpdates);
+            tutorPlan.markModified?.('studentSignals');
+          }
+
+          // Add pattern-generated tutor notes
+          for (const note of patternResult.notes) {
+            const isDuplicate = (tutorPlan.tutorNotes || []).some(
+              n => n.content === note.content && !n.supersededAt
+            );
+            if (!isDuplicate) {
+              tutorPlan.tutorNotes.push({
+                ...note,
+                source: 'pipeline',
+                createdAt: new Date(),
+              });
+            }
+          }
+
+          if (patternResult.notes.length > 0 || Object.keys(patternResult.signalUpdates).length > 0) {
+            tutorPlan.markModified?.('tutorNotes');
+            await tutorPlan.save?.();
+            console.log(`[Pipeline] Pattern detection: ${patternResult.patterns.length} patterns, ${patternResult.notes.length} notes`);
+          }
+        }
+
+        // Store session summary on conversation for future pattern analysis
+        ctx.conversation.sessionSummary = sessionData;
+        ctx.conversation.markModified?.('sessionSummary');
+        await ctx.conversation.save?.();
+      } catch (err) {
+        console.error('[Pipeline] Pattern detection error (non-fatal):', err.message);
+      }
     }
   }
 
