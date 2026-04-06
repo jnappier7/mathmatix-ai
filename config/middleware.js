@@ -125,7 +125,9 @@ function configureMiddleware(app) {
   }, express.static(publicDir, {
     index: false, // Don't serve index.html — that goes through auth/CSP nonce pipeline
     setHeaders: (res, filePath) => {
-      if (/\.(woff2?|ttf|eot)$/i.test(filePath)) {
+      if (/sw\.js$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'no-cache'); // Service worker must always be fresh
+      } else if (/\.(woff2?|ttf|eot)$/i.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=2592000, immutable'); // 30 days — fonts never change
       } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp)$/i.test(filePath)) {
         res.setHeader('Cache-Control', 'public, max-age=604800'); // 7 days
@@ -183,6 +185,31 @@ function configureMiddleware(app) {
         fs.readFile(filePath, 'utf8', (err, html) => {
           if (err) return callback ? callback(err) : next(err);
           html = html.replace(/<script(?![^>]*\bsrc\b)(?![^>]*\bnonce\b)/gi, `<script nonce="${nonce}"`);
+
+          // Inject PWA support (manifest, meta tags, service worker) into all HTML pages
+          if (!html.includes('rel="manifest"')) {
+            const pwaTags = [
+              '<link rel="manifest" href="/manifest.json" />',
+              '<meta name="theme-color" content="#12B3B3" />',
+              '<meta name="mobile-web-app-capable" content="yes" />',
+              '<meta name="apple-mobile-web-app-capable" content="yes" />',
+              '<meta name="apple-mobile-web-app-status-bar-style" content="default" />',
+              '<meta name="apple-mobile-web-app-title" content="MATHMATIX" />',
+              '<link rel="apple-touch-icon" href="/images/icon-192x192.png" />',
+              '<link rel="stylesheet" href="/css/pwa.css" />',
+              `<script src="/js/pwa-register.js" nonce="${nonce}" defer></script>`,
+            ].join('\n  ');
+            html = html.replace('</head>', `  ${pwaTags}\n</head>`);
+          } else if (!html.includes('pwa-register.js')) {
+            // Page already has manifest link (e.g. chat.html) — just add the missing pieces
+            const pwaExtras = [
+              '<link rel="apple-touch-icon" href="/images/icon-192x192.png" />',
+              '<link rel="stylesheet" href="/css/pwa.css" />',
+              `<script src="/js/pwa-register.js" nonce="${nonce}" defer></script>`,
+            ].join('\n  ');
+            html = html.replace('</head>', `  ${pwaExtras}\n</head>`);
+          }
+
           res.type('html').send(html);
         });
       } else {
