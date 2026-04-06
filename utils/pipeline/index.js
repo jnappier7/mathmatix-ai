@@ -38,6 +38,7 @@ const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer')
 const { evaluatePhaseAdvancement, reassessFamiliarity, createPhaseTracker, updatePhaseTracker } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
+const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 
 /**
  * Run the full tutoring pipeline.
@@ -110,6 +111,7 @@ async function runPipeline(message, ctx) {
   let skillResolution = null;
   try {
     tutorPlan = await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
+
     const resolved = await resolveCurrentTarget(tutorPlan, {
       user: ctx.user,
       activeSkillId: ctx.activeSkill?.skillId || null,
@@ -143,7 +145,7 @@ async function runPipeline(message, ctx) {
         .filter(m => m.problemResult)
         .map(m => ({
           correct: m.problemResult === 'correct',
-          hintUsed: false, // TODO: extract from message signals
+          hintUsed: false, // Historical messages don't carry per-turn hint flags
           difficulty: 'medium',
         })),
       messageLengths: userMsgs
@@ -254,6 +256,11 @@ async function runPipeline(message, ctx) {
 
   // Inject tutor plan layer into system prompt
   let enrichedSystemPrompt = ctx.systemPrompt;
+  // Socratic suppression is now handled structurally via buildSlimRules and
+  // buildStaticRules options — NOT via string surgery on the assembled prompt.
+  // This flag flows through to assemblePrompt → buildSlimRules.
+  const suppressSocratic = tutorPlan ? shouldSuppressSocratic(tutorPlan) : false;
+
   if (tutorPlan) {
     const planLayer = buildPlanLayer(tutorPlan, {
       skillResolution,
@@ -262,21 +269,13 @@ async function runPipeline(message, ctx) {
     if (planLayer) {
       enrichedSystemPrompt += '\n\n' + planLayer;
     }
-
-    // If in INSTRUCT mode (vocab/concept-intro/i-do phases), suppress the
-    // "never give answers" Socratic rule — the tutor needs to TEACH.
-    if (shouldSuppressSocratic(tutorPlan) && enrichedSystemPrompt.includes('NEVER GIVE ANSWERS')) {
-      enrichedSystemPrompt = enrichedSystemPrompt.replace(
-        /RULE 1 — NEVER GIVE ANSWERS\. Guide with Socratic questions\. Break problems into small steps\. Ask "What do you think\?" before hinting\./,
-        'RULE 1 — TEACHING MODE ACTIVE. During direct instruction (vocabulary, concept introduction, I Do modeling), you TEACH by showing, explaining, and modeling worked examples. The student is learning — they are not expected to solve yet. Socratic questioning resumes during guided practice (We Do) and independent practice (You Do).'
-      );
-    }
   }
 
   const assembled = assemblePrompt(decision, {
     systemPrompt: enrichedSystemPrompt,
     messages: ctx.formattedMessages,
     moodDirective,
+    suppressSocratic,
   });
 
   let rawResponseText;
@@ -542,6 +541,81 @@ async function runPipeline(message, ctx) {
       }
     } catch (err) {
       console.error('[Pipeline] Session grading error (non-fatal):', err.message);
+    }
+  }
+
+  // ── Cross-Session Pattern Detection ──
+  // Runs periodically (every 5 turns) to avoid overhead on every message.
+  // Detects recurring struggles, confidence trends, engagement patterns,
+  // and generates tutor notes + signal updates for the TutorPlan.
+  if (!ctx.skipPersist && tutorPlan && ctx.conversation) {
+    const turnCount = ctx.conversation.messages?.length || 0;
+    if (turnCount > 0 && turnCount % 10 === 0) {
+      try {
+        const sessionData = summarizeForPatterns(ctx.conversation, {
+          _pipeline: {
+            sessionMood,
+            backbone: { targetSkill: skillResolution?.skillId || null },
+          },
+        });
+
+        const Conversation = require('../../models/conversation');
+        const recentConvos = await Conversation.find({
+          userId: ctx.user._id,
+          _id: { $ne: ctx.conversation._id },
+          lastActivity: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+        })
+          .sort({ lastActivity: -1 })
+          .limit(10)
+          .select('sessionSummary')
+          .lean();
+
+        const recentSessions = recentConvos
+          .filter(c => c.sessionSummary)
+          .map(c => c.sessionSummary);
+
+        if (recentSessions.length >= 2) {
+          const patternResult = detectPatterns(sessionData, {
+            recentSessions,
+            tutorNotes: tutorPlan.tutorNotes || [],
+            skillMastery: ctx.user.skillMastery,
+            studentSignals: tutorPlan.studentSignals || {},
+          });
+
+          // Apply signal updates to TutorPlan
+          if (Object.keys(patternResult.signalUpdates).length > 0) {
+            Object.assign(tutorPlan.studentSignals, patternResult.signalUpdates);
+            tutorPlan.markModified?.('studentSignals');
+          }
+
+          // Add pattern-generated tutor notes
+          for (const note of patternResult.notes) {
+            const isDuplicate = (tutorPlan.tutorNotes || []).some(
+              n => n.content === note.content && !n.supersededAt
+            );
+            if (!isDuplicate) {
+              tutorPlan.tutorNotes.push({
+                ...note,
+                source: 'pipeline',
+                createdAt: new Date(),
+              });
+            }
+          }
+
+          if (patternResult.notes.length > 0 || Object.keys(patternResult.signalUpdates).length > 0) {
+            tutorPlan.markModified?.('tutorNotes');
+            await tutorPlan.save?.();
+            console.log(`[Pipeline] Pattern detection: ${patternResult.patterns.length} patterns, ${patternResult.notes.length} notes`);
+          }
+        }
+
+        // Store session summary on conversation for future pattern analysis
+        ctx.conversation.sessionSummary = sessionData;
+        ctx.conversation.markModified?.('sessionSummary');
+        await ctx.conversation.save?.();
+      } catch (err) {
+        console.error('[Pipeline] Pattern detection error (non-fatal):', err.message);
+      }
     }
   }
 

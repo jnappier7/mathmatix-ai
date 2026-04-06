@@ -135,7 +135,8 @@ const conversationSchema = new Schema({
         type: { type: String }, // 'struggle', 'milestone', 'help_request', 'session_start', 'session_end'
         message: String,
         timestamp: { type: Date, default: Date.now },
-        acknowledged: { type: Boolean, default: false }
+        acknowledged: { type: Boolean, default: false },
+        severity: { type: String, default: null } // 'low', 'medium', 'high', 'urgent'
     }],
     // Session mood snapshot — persisted after each turn for dashboard visibility
     // and to avoid re-scanning full history on every request
@@ -149,6 +150,25 @@ const conversationSchema = new Schema({
         emotionalState: { type: String, enum: ['anxiety', 'overthinking', 'frustration_spiral', 'disengagement', 'recovery', 'confident', 'neutral', null], default: null },
         emotionalConfidence: { type: Number, default: 0 },
         lastUpdated: { type: Date, default: null },
+    },
+    // ── Pipeline backbone fields ──
+    // Phase tracker: evidence accumulation for instructional phase advancement.
+    // Persisted across turns so the pipeline doesn't re-evaluate from scratch.
+    phaseTracker: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
+    // Session scorecard: deterministic teaching quality grades per turn.
+    // Accumulated across the session for coaching feedback to the LLM.
+    sessionScorecard: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
+    // Session summary: compact snapshot for cross-session pattern detection.
+    // Written at periodic intervals (every 10 turns) by the pipeline.
+    sessionSummary: {
+        type: Schema.Types.Mixed,
+        default: null
     },
     // Additional metadata for special conversation types (e.g., parent-teacher)
     metadata: {

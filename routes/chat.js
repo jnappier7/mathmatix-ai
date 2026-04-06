@@ -36,6 +36,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const TutorPlan = require('../models/tutorPlan');
+const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -796,6 +798,60 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
                 return daysAgo <= 1;
             });
+
+        // ── Re-entry detection & topic override ──
+        // Single TutorPlan load for both checks (avoid duplicate DB queries).
+        let reentryDirective = null;
+        let topicOverride = null;
+        try {
+            const msgs = activeConversation.messages || [];
+            const needsReentryCheck = msgs.length >= 2 &&
+                msgs[msgs.length - 1].role === 'user' &&
+                msgs[msgs.length - 2].role === 'assistant' &&
+                msgs[msgs.length - 2].timestamp;
+
+            const gapMs = needsReentryCheck
+                ? Date.now() - new Date(msgs[msgs.length - 2].timestamp).getTime()
+                : 0;
+
+            const tutorPlan = await TutorPlan.findOne({ userId: user._id });
+            if (tutorPlan) {
+
+                // Re-entry: welcome back after idle gap (>10 min)
+                if (gapMs > 10 * 60 * 1000) {
+                    const reentry = generateReentryPrompt({
+                        tutorPlan,
+                        conversation: activeConversation,
+                    });
+                    reentryDirective = reentry.directives.join('\n');
+                    console.log(`[Chat] Re-entry detected (${Math.round(gapMs / 60000)}min gap)`);
+                }
+
+                // Topic override: homework/specific requests win over plan
+                if (tutorPlan?.currentTarget?.skillId) {
+                    const overrideResult = shouldOverrideTopic(message, tutorPlan);
+                    if (overrideResult.override) {
+                        topicOverride = overrideResult;
+                        console.log(`[Chat] Topic override: ${overrideResult.reason}`);
+                    }
+                }
+            }
+        } catch (err) {
+            // Non-fatal — pipeline continues normally
+        }
+
+        if (reentryDirective) {
+            systemPrompt += `\n\n${reentryDirective}`;
+        }
+
+        // Topic override: inject a directive, don't bypass the plan.
+        // A real tutor pauses the plan to help with homework, then returns.
+        // The plan target stays resolved (still useful context) but the AI
+        // prioritizes the student's immediate request.
+        if (topicOverride?.override) {
+            systemPrompt += `\n\nSTUDENT OVERRIDE: ${topicOverride.reason}. Prioritize the student's request for this interaction.` +
+                (topicOverride.returnToPlan ? ' After addressing their request, you can naturally guide back to the plan.' : '');
+        }
 
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
@@ -1773,6 +1829,24 @@ async function handleGreetingRequest(req, res, userId) {
 
             systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], null, null);
 
+            // ── Intelligent session opener via TutorPlan ──
+            let openerResult = null;
+            try {
+                const tutorPlan = await TutorPlan.findOne({ userId: user._id });
+                if (tutorPlan) {
+                    openerResult = generateSessionOpener({
+                        tutorPlan,
+                        user,
+                        courseSession: null,
+                        tutorProfile: currentTutor,
+                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith } : null,
+                    });
+                    console.log(`[Greeting] Session opener strategy: ${openerResult.strategy}`);
+                }
+            } catch (openerErr) {
+                console.warn('[Greeting] Session opener error (falling back to default):', openerErr.message);
+            }
+
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
@@ -1791,12 +1865,20 @@ async function handleGreetingRequest(req, res, userId) {
             } else {
                 warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?" or "Factor: x² - 9"';
             }
-            // If the student has a specific math course, mention it for extra clarity
             const courseHint = user.mathCourse ? ` The student is taking ${user.mathCourse} — make sure the warm-up is relevant to that level, not below it.` : '';
 
-            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
+            if (openerResult && openerResult.directives?.length > 0) {
+                // Use intelligent session opener directives from TutorPlan
+                greetingInstruction = openerResult.directives.join('\n') +
+                    `\n\nKeep it to 1-2 sentences. Be casual like texting. Don't repeat back their info.` +
+                    `\nYou MAY optionally include a quick warm-up question: ${warmUpExamples}${courseHint}` +
+                    `\nNEVER give a warm-up below the student's level.`;
+            } else {
+                // Fallback: default greeting instruction (no TutorPlan yet)
+                greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
 
 IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to — for example, ask what they'd like to work on, reference something from last session, or ask how their day is going. You MAY optionally include a quick warm-up question to build momentum, but only if it feels natural — don't force it. If you do include a warm-up, make sure it matches their grade level and course. For example: ${warmUpExamples}${courseHint} NEVER give a warm-up question that is far below the student's grade level or course — that feels insulting and wastes their time.`;
+            }
 
             // Add Starting Point offer (only on first session, never again)
             if (shouldOfferStartingPoint) {
@@ -1895,11 +1977,15 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 }
 
                 // Send completion with metadata
-                res.write(`data: ${JSON.stringify({
+                const streamDonePayload = {
                     done: true,
                     voiceId: currentTutor.voiceId,
-                    isGreeting: true
-                })}\n\n`);
+                    isGreeting: true,
+                };
+                if (openerResult?.suggestionChips) {
+                    streamDonePayload.suggestionChips = openerResult.suggestionChips;
+                }
+                res.write(`data: ${JSON.stringify(streamDonePayload)}\n\n`);
                 res.end();
 
             } catch (streamError) {
@@ -1961,14 +2047,18 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
             }
 
-            res.json({
+            const greetingResponse = {
                 text: greetingText,
                 voiceId: currentTutor.voiceId,
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
-                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
-            });
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
+            };
+            if (openerResult?.suggestionChips) {
+                greetingResponse.suggestionChips = openerResult.suggestionChips;
+            }
+            res.json(greetingResponse);
         }
 
     } catch (error) {
