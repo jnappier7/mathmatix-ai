@@ -862,6 +862,15 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             systemPrompt += `\n\n${reentryDirective}`;
         }
 
+        // Topic override: inject a directive, don't bypass the plan.
+        // A real tutor pauses the plan to help with homework, then returns.
+        // The plan target stays resolved (still useful context) but the AI
+        // prioritizes the student's immediate request.
+        if (topicOverride?.override) {
+            systemPrompt += `\n\nSTUDENT OVERRIDE: ${topicOverride.reason}. Prioritize the student's request for this interaction.` +
+                (topicOverride.returnToPlan ? ' After addressing their request, you can naturally guide back to the plan.' : '');
+        }
+
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
@@ -878,7 +887,6 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 systemPrompt,
                 formattedMessages: formattedMessagesForLLM,
                 activeSkill,
-                skipPlanTarget: topicOverride?.override || false, // Student is driving — let observe/diagnose pick up the topic
                 phaseState: activeConversation.phaseState || null,
                 hasRecentUpload,
                 stream: useStreaming,

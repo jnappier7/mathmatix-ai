@@ -112,19 +112,12 @@ async function runPipeline(message, ctx) {
   try {
     tutorPlan = await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
 
-    // skipPlanTarget: student is driving (homework, specific request).
-    // Load the plan but don't resolve a target — let observe/diagnose pick up
-    // the topic from the student's actual message instead.
-    if (!ctx.skipPlanTarget) {
-      const resolved = await resolveCurrentTarget(tutorPlan, {
-        user: ctx.user,
-        activeSkillId: ctx.activeSkill?.skillId || null,
-      });
-      tutorPlan = resolved.plan;
-      skillResolution = resolved.skillResolution;
-    } else {
-      console.log('[Pipeline] skipPlanTarget: student is driving — skipping resolveCurrentTarget');
-    }
+    const resolved = await resolveCurrentTarget(tutorPlan, {
+      user: ctx.user,
+      activeSkillId: ctx.activeSkill?.skillId || null,
+    });
+    tutorPlan = resolved.plan;
+    skillResolution = resolved.skillResolution;
 
     if (tutorPlan.currentTarget?.skillId) {
       console.log(`[Pipeline] TutorPlan: target=${tutorPlan.currentTarget.skillId}, mode=${tutorPlan.currentTarget.instructionalMode}${tutorPlan.currentTarget.instructionPhase ? ', phase=' + tutorPlan.currentTarget.instructionPhase : ''}`);
@@ -152,7 +145,7 @@ async function runPipeline(message, ctx) {
         .filter(m => m.problemResult)
         .map(m => ({
           correct: m.problemResult === 'correct',
-          hintUsed: observation?.contextSignals?.some(s => s.type === 'uncertainty') || false,
+          hintUsed: false, // Historical messages don't carry per-turn hint flags
           difficulty: 'medium',
         })),
       messageLengths: userMsgs
@@ -562,7 +555,7 @@ async function runPipeline(message, ctx) {
         const sessionData = summarizeForPatterns(ctx.conversation, {
           _pipeline: {
             sessionMood,
-            backbone: { targetSkill: skillResolution?.resolved?.skillId || null },
+            backbone: { targetSkill: skillResolution?.skillId || null },
           },
         });
 
