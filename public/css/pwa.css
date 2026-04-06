@@ -98,6 +98,31 @@
   color: #fff;
 }
 
+/* iOS install banner adjustments */
+.pwa-ios-content {
+  flex-wrap: nowrap;
+}
+
+.pwa-ios-steps {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pwa-ios-steps strong {
+  color: #12B3B3;
+  font-size: inherit;
+}
+
+.pwa-share-icon {
+  color: #12B3B3;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
 /* Standalone mode tweaks — hide browser-specific UI elements when running as PWA */
 @media (display-mode: standalone) {
   /* Add top padding to account for mobile status bar */
