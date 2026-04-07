@@ -62,8 +62,11 @@ function buildActionPrompt(decision) {
       break;
 
     case ACTIONS.WORKED_EXAMPLE:
-      parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, different numbers).');
-      parts.push('Walk through step by step with think-aloud. Then have them try their original problem.');
+      parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, DIFFERENT numbers).');
+      parts.push('ANTI-CHEAT RULE: You MUST change the numbers. If the original problem is "3x + 5 = 14", your example might use "2x + 7 = 15". NEVER use the student\'s exact numbers.');
+      parts.push('Walk through step by step with think-aloud. Show your reasoning at each step.');
+      parts.push('After the example, say: "Now try applying the same method to your problem."');
+      parts.push('NEVER solve their original problem. NEVER reveal their answer.');
       break;
 
     case ACTIONS.EXIT_RAMP:

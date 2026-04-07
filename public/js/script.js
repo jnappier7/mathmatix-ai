@@ -1283,6 +1283,26 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(reactionContainer);
         }
 
+        // "Not what I meant" recovery button on AI messages
+        if (sender === 'ai') {
+            const recoveryBtn = document.createElement('button');
+            recoveryBtn.className = 'recovery-btn';
+            recoveryBtn.title = 'Not what I meant';
+            recoveryBtn.setAttribute('aria-label', 'Tell the tutor this is not what you meant');
+            recoveryBtn.innerHTML = '<i class="fas fa-undo-alt"></i>';
+            recoveryBtn.addEventListener('click', function() {
+                const input = document.getElementById('chat-input');
+                if (input) {
+                    input.value = "That's not what I meant. Can you re-read my message and try again?";
+                    const form = input.closest('form');
+                    if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+                }
+                this.disabled = true;
+                this.style.opacity = '0.3';
+            });
+            bubble.appendChild(recoveryBtn);
+        }
+
         // Add timestamp to message
         const timestamp = document.createElement('span');
         timestamp.className = 'message-timestamp';
@@ -1620,11 +1640,26 @@ document.addEventListener("DOMContentLoaded", () => {
     window.showSuggestions = showSuggestions;
     window.hideSuggestions = hideSuggestions;
 
-    // Helper function to start a streaming message (creates empty bubble)
+    // Helper function to start a streaming message (creates empty bubble with avatar)
     function startStreamingMessage() {
         if (!chatBox) return null;
 
         _streamRawText = ''; // Reset raw text accumulator
+
+        // Create message container with avatar (same structure as appendMessage)
+        const messageContainer = document.createElement("div");
+        messageContainer.className = "message-container ai";
+
+        // Add tutor avatar
+        if (currentUser && currentUser.selectedTutorId && typeof TUTOR_CONFIG !== 'undefined') {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
+            if (tutor && tutor.image) {
+                avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name || 'Tutor'}" />`;
+            }
+            messageContainer.appendChild(avatar);
+        }
 
         const bubble = document.createElement("div");
         bubble.className = "message ai streaming";
@@ -1636,10 +1671,11 @@ document.addEventListener("DOMContentLoaded", () => {
         textNode.textContent = ''; // Start empty
         bubble.appendChild(textNode);
 
-        chatBox.appendChild(bubble);
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        return { bubble, textNode };
+        return { bubble, textNode, messageContainer };
     }
 
     // Accumulate raw text for streaming — we keep the raw source
@@ -2383,6 +2419,157 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.trackProblemAttempt(isCorrect);
             }
 
+            // Parallel worked example badge — show when AI is demonstrating with different numbers
+            if (data.isParallelExample) {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const badge = document.createElement('div');
+                    badge.className = 'parallel-example-badge';
+                    badge.setAttribute('role', 'note');
+                    badge.innerHTML = '<span class="parallel-icon">\uD83D\uDD04</span> <span>Similar problem \u2014 different numbers, same method</span>';
+                    latestMessage.insertBefore(badge, latestMessage.firstChild);
+                }
+            }
+
+            // Error annotation visual — show misconception label on incorrect answers
+            if (data.errorAnnotation && data.problemResult === 'incorrect') {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const annotation = document.createElement('div');
+                    annotation.className = 'error-annotation';
+                    annotation.setAttribute('role', 'status');
+                    annotation.setAttribute('aria-label', `Misconception detected: ${data.errorAnnotation.name}`);
+
+                    const icon = document.createElement('span');
+                    icon.className = 'error-annotation-icon';
+                    icon.textContent = '\u26A0'; // warning triangle
+
+                    const label = document.createElement('span');
+                    label.className = 'error-annotation-label';
+                    label.textContent = data.errorAnnotation.name;
+
+                    annotation.appendChild(icon);
+                    annotation.appendChild(label);
+
+                    if (data.errorAnnotation.description) {
+                        const desc = document.createElement('span');
+                        desc.className = 'error-annotation-desc';
+                        desc.textContent = data.errorAnnotation.description;
+                        annotation.appendChild(desc);
+                    }
+
+                    latestMessage.appendChild(annotation);
+                }
+            }
+
+            // Hint button — show on incorrect answers so student can request help
+            if (data.problemResult === 'incorrect') {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage && !latestMessage.querySelector('.hint-button-row')) {
+                    window._hintLevel = (window._hintLevel || 0);
+                    // Reset hint counter when student gets something correct
+                    const hintRow = document.createElement('div');
+                    hintRow.className = 'hint-button-row';
+
+                    const nextLevel = Math.min((window._hintLevel || 0) + 1, 3);
+                    const labels = { 1: 'Need a hint?', 2: 'More help (-10 XP)', 3: 'Show me with different numbers (-25 XP)' };
+                    const hintBtn = document.createElement('button');
+                    hintBtn.className = 'hint-button';
+                    hintBtn.textContent = labels[nextLevel];
+                    hintBtn.dataset.hintLevel = nextLevel;
+
+                    hintBtn.addEventListener('click', async function() {
+                        const level = parseInt(this.dataset.hintLevel, 10);
+                        this.disabled = true;
+                        this.textContent = 'Getting hint...';
+
+                        // Deduct XP for levels 2+
+                        if (level >= 2) {
+                            try {
+                                await fetch('/api/chat/deduct-hint-xp', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ hintLevel: level }),
+                                });
+                            } catch (e) { /* non-blocking */ }
+                        }
+
+                        window._hintLevel = level;
+                        const messages = {
+                            1: 'Can I get a hint?',
+                            2: 'I still need help. Can you break it down more?',
+                            3: 'Can you show me how to solve a similar problem with different numbers?',
+                        };
+                        // Send hint request through normal chat
+                        const input = document.getElementById('chat-input');
+                        if (input) {
+                            input.value = messages[level];
+                            const form = input.closest('form');
+                            if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+                        }
+                    });
+
+                    hintRow.appendChild(hintBtn);
+                    latestMessage.appendChild(hintRow);
+                }
+            } else if (data.problemResult === 'correct') {
+                // Reset hint counter on correct answers
+                window._hintLevel = 0;
+            }
+
+            // Streak momentum — "You're on fire!" send button
+            // 2 correct = "heating up" (glow), 3+ = "on fire!" (flames that grow)
+            if (data.problemResult) {
+                const sendBtn = document.getElementById('send-button');
+                if (data.problemResult === 'correct') {
+                    window._streakCount = (window._streakCount || 0) + 1;
+                    if (sendBtn) {
+                        if (window._streakCount === 2) {
+                            // Heating up — warm glow, no flames yet
+                            sendBtn.classList.add('heating-up');
+                            sendBtn.classList.remove('on-fire');
+                            sendBtn.dataset.streak = window._streakCount;
+                            let badge = sendBtn.querySelector('.streak-badge');
+                            if (!badge) {
+                                badge = document.createElement('span');
+                                badge.className = 'streak-badge';
+                                sendBtn.appendChild(badge);
+                            }
+                            badge.textContent = window._streakCount;
+                        } else if (window._streakCount >= 3) {
+                            // ON FIRE! Flames that grow with streak
+                            sendBtn.classList.remove('heating-up');
+                            sendBtn.classList.add('on-fire');
+                            sendBtn.dataset.streak = window._streakCount;
+                            // Scale flames with streak (3=1x, 5=1.4x, 7=1.8x, capped at 2x)
+                            const fireScale = Math.min(2, 1 + (window._streakCount - 3) * 0.2);
+                            sendBtn.style.setProperty('--fire-scale', fireScale);
+                            let badge = sendBtn.querySelector('.streak-badge');
+                            if (!badge) {
+                                badge = document.createElement('span');
+                                badge.className = 'streak-badge';
+                                sendBtn.appendChild(badge);
+                            }
+                            badge.textContent = window._streakCount;
+                        }
+                    }
+                } else if (data.problemResult === 'incorrect') {
+                    if (window._streakCount >= 2 && sendBtn) {
+                        sendBtn.classList.remove('on-fire', 'heating-up');
+                        sendBtn.style.removeProperty('--fire-scale');
+                        const badge = sendBtn.querySelector('.streak-badge');
+                        if (badge) badge.remove();
+                        if (typeof showToast === 'function') {
+                            showToast(`${window._streakCount} in a row \u2014 nice run!`, 3000);
+                        }
+                    }
+                    window._streakCount = 0;
+                }
+            }
+
             // XP Ladder display
             if (data.xpLadder) {
                 const xp = data.xpLadder;
@@ -2410,6 +2597,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
                     if (typeof window.showXpNotification === 'function') {
                         window.showXpNotification(xp.tier2, tier2Label);
+                    }
+                }
+
+                // Inline XP attribution chip — show "+N XP — reason" in the chat message
+                if (xp.total > 0) {
+                    const messageElements = document.querySelectorAll('.message.ai');
+                    const latestMessage = messageElements[messageElements.length - 1];
+                    if (latestMessage && !latestMessage.querySelector('.xp-chip')) {
+                        const chip = document.createElement('div');
+                        chip.className = 'xp-chip';
+                        let chipText = `+${xp.total} XP`;
+                        if (xp.tier3 > 0 && xp.tier3Behavior) {
+                            const reasons = {
+                                'explained_reasoning': 'showed reasoning',
+                                'caught_own_error': 'self-corrected',
+                                'strategy_selection': 'smart strategy',
+                                'persistence': 'perseverance',
+                                'transfer': 'knowledge transfer',
+                                'taught_back': 'taught it back',
+                            };
+                            chipText += ` \u2014 ${reasons[xp.tier3Behavior] || 'exceptional'}`;
+                        } else if (xp.tier2 > 0) {
+                            chipText += xp.tier2Type === 'clean' ? ' \u2014 clean solve' : ' \u2014 correct';
+                        }
+                        chip.textContent = chipText;
+                        latestMessage.appendChild(chip);
                     }
                 }
 

@@ -164,7 +164,13 @@ class InlineChatVisuals {
             // Integer counters (pos/neg with zero-pair cancellation)
             { regex: /\[COUNTERS:([^\]]+)\]/g, handler: this.createCounters.bind(this) },
             // Multi-representation linked views
-            { regex: /\[MULTI_REP:([^\]]+)\]/g, handler: this.createMultiRepresentation.bind(this) }
+            { regex: /\[MULTI_REP:([^\]]+)\]/g, handler: this.createMultiRepresentation.bind(this) },
+            // Calculus: Derivative overlay (f(x) + f'(x) with interactive tangent)
+            { regex: /\[DERIVATIVE_GRAPH:([^\]]+)\]/g, handler: this.createDerivativeGraph.bind(this) },
+            // Rational function graph (HA, VA, holes auto-detected)
+            { regex: /\[RATIONAL_GRAPH:([^\]]+)\]/g, handler: this.createRationalGraph.bind(this) },
+            // Physics: Position/Velocity/Acceleration overlay
+            { regex: /\[VELOCITY_GRAPH:([^\]]+)\]/g, handler: this.createVelocityGraph.bind(this) }
         ];
 
         for (const { regex, handler } of visualTypes) {
@@ -264,17 +270,17 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive graph: ${this.escapeHtml(title)}">
             <div class="icv-expand-hint">
                 <span class="icv-expand-icon">⤢</span>
                 <span>Tap to interact</span>
             </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph" id="${id}" data-config="${graphConfig}"></div>
-            <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
             </div>
         </div>
         `;
@@ -2979,8 +2985,15 @@ class InlineChatVisuals {
             }
         });
 
-        // Initialize function graphs
-        container.querySelectorAll('.icv-graph').forEach(graphEl => {
+        // Initialize multi-function graphs (derivative, velocity, rational)
+        container.querySelectorAll('.icv-multi-graph').forEach(graphEl => {
+            if (graphEl.id && !graphEl._mathGraph) {
+                setTimeout(() => this.renderMultiGraph(graphEl.id), 50);
+            }
+        });
+
+        // Initialize standard function graphs (skip multi-graphs already handled above)
+        container.querySelectorAll('.icv-graph:not(.icv-multi-graph)').forEach(graphEl => {
             if (graphEl.id && !graphEl._mathGraph) {
                 setTimeout(() => this.renderGraph(graphEl.id), 50);
             }
@@ -4166,6 +4179,208 @@ class InlineChatVisuals {
         `;
 
         document.head.insertAdjacentHTML('beforeend', styles);
+    }
+
+    // ==========================================
+    // DERIVATIVE GRAPH — f(x) + f'(x) overlay with interactive tangent
+    // [DERIVATIVE_GRAPH:fn=x^3-3*x^2+2*x,xMin=-2,xMax=4,title="Derivative of f(x)"]
+    // ==========================================
+    createDerivativeGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('deriv-graph');
+
+        const fn = params.fn || params.function || 'x^3-3*x^2+2*x';
+        const xMin = params.xMin ?? params.xmin ?? -5;
+        const xMax = params.xMax ?? params.xmax ?? 5;
+        const title = params.title || `f(x) and f′(x)`;
+
+        const graphConfig = JSON.stringify({
+            type: 'derivative', fn, xMin, xMax
+        }).replace(/"/g, '&quot;');
+
+        return `
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive derivative graph: ${this.escapeHtml(title)}">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-deriv-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">Hover over the graph to see the tangent line and slope at any point</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // RATIONAL GRAPH — rational function with HA, VA, holes auto-detected
+    // [RATIONAL_GRAPH:fn=(x^2-4)/(x-2),xMin=-5,xMax=5,title="Rational Function"]
+    // ==========================================
+    createRationalGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('rational-graph');
+
+        const fn = params.fn || params.function || '(x^2-1)/(x-1)';
+        const xMin = params.xMin ?? params.xmin ?? -8;
+        const xMax = params.xMax ?? params.xmax ?? 8;
+        const title = params.title || `Rational Function`;
+
+        const graphConfig = JSON.stringify({
+            type: 'rational', fn, xMin, xMax
+        }).replace(/"/g, '&quot;');
+
+        return `
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive rational function graph: ${this.escapeHtml(title)}">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-rational-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">Dashed lines show asymptotes • Open circles show holes • Hover to trace</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // VELOCITY GRAPH — position, velocity, acceleration overlaid
+    // [VELOCITY_GRAPH:fn=4*x^3-6*x^2+2*x,xMin=0,xMax=3,title="Position, Velocity & Acceleration"]
+    // ==========================================
+    createVelocityGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('velocity-graph');
+
+        const fn = params.fn || params.function || '4*x^3-6*x^2+2*x';
+        const xMin = params.xMin ?? params.xmin ?? 0;
+        const xMax = params.xMax ?? params.xmax ?? 4;
+        const title = params.title || `Position, Velocity & Acceleration`;
+
+        const graphConfig = JSON.stringify({
+            type: 'velocity', fn, xMin, xMax
+        }).replace(/"/g, '&quot;');
+
+        return `
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive velocity graph: ${this.escapeHtml(title)}">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-velocity-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">s(t) = position • v(t) = s′(t) = velocity • a(t) = s″(t) = acceleration</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    /**
+     * Render a multi-function graph (derivative, velocity, rational).
+     * Called by initializeVisuals for elements with .icv-multi-graph class.
+     *
+     * Creates a MathGraph with multiple overlaid functions and enhanced
+     * key point detection (HA, VA, holes all shown automatically).
+     */
+    renderMultiGraph(id) {
+        const container = document.getElementById(id);
+        if (!container || !window.MathGraph) return;
+
+        try {
+            const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+            if (container._mathGraph) {
+                container._mathGraph.destroy();
+                container._mathGraph = null;
+            }
+            container.innerHTML = '';
+
+            const fn = this.normalizeFunctionString(config.fn);
+            const xMin = config.xMin ?? -10;
+            const xMax = config.xMax ?? 10;
+
+            if (config.type === 'derivative') {
+                // Plot f(x) and numerically compute f'(x)
+                const graph = new MathGraph(container, {
+                    fn: fn,
+                    xMin, xMax,
+                    color: '#667eea',
+                    interactive: true,
+                    showTangent: true,
+                    showKeyPoints: true,
+                });
+                // Add numerical derivative as second function
+                const fEval = window.MathEval.parse(fn);
+                const derivStr = `__deriv_${id}`;
+                // Create a derivative evaluator using central differences
+                const h = 1e-6;
+                const derivEval = (x) => (fEval(x + h) - fEval(x - h)) / (2 * h);
+                graph.functions.push({
+                    fn: "f′(x)", evaluator: derivEval,
+                    color: '#e84393', label: "f′(x)"
+                });
+                graph.functions[0].label = `f(x) = ${fn}`;
+                graph._autoFitY();
+                graph._detectKeyPoints();
+                graph.render();
+                if (graph.config.showInfoBar) graph._buildInfoBar();
+                container._mathGraph = graph;
+
+            } else if (config.type === 'velocity') {
+                // Plot s(t), v(t) = s'(t), a(t) = s''(t)
+                const graph = new MathGraph(container, {
+                    fn: fn,
+                    xMin, xMax,
+                    color: '#667eea',
+                    interactive: true,
+                    showTangent: true,
+                    showKeyPoints: true,
+                });
+                const sEval = window.MathEval.parse(fn);
+                const h = 1e-6;
+                const vEval = (x) => (sEval(x + h) - sEval(x - h)) / (2 * h);
+                const aEval = (x) => (vEval(x + h) - vEval(x - h)) / (2 * h);
+                graph.functions[0].label = `s(t) = ${fn}`;
+                graph.functions.push({ fn: "v(t)", evaluator: vEval, color: '#e84393', label: "v(t) = s′(t)" });
+                graph.functions.push({ fn: "a(t)", evaluator: aEval, color: '#00b894', label: "a(t) = s″(t)" });
+                graph._autoFitY();
+                graph._detectKeyPoints();
+                graph.render();
+                if (graph.config.showInfoBar) graph._buildInfoBar();
+                container._mathGraph = graph;
+
+            } else if (config.type === 'rational') {
+                // Plot rational function with enhanced key point detection
+                const graph = new MathGraph(container, {
+                    fn: fn,
+                    xMin, xMax,
+                    color: '#667eea',
+                    interactive: true,
+                    showTangent: true,
+                    showKeyPoints: true,
+                    detectDiscontinuities: true,
+                });
+                graph.functions[0].label = `y = ${fn}`;
+                container._mathGraph = graph;
+            }
+
+            if (!container._originalConfig) {
+                container._originalConfig = { ...config, fn };
+            }
+        } catch (error) {
+            console.error(`[InlineChatVisuals] Error rendering multi-graph ${id}:`, error);
+            container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+        }
     }
 }
 

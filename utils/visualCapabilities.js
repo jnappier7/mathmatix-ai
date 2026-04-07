@@ -71,6 +71,17 @@ INTERACTIVE GRAPHS (live, explorable graphs):
   IMPORTANT: Always QUOTE the params value with double quotes when using multiple sliders.
 [POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"]
 
+CALCULUS & ADVANCED GRAPHS (interactive, auto-detect key features):
+[DERIVATIVE_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"] — overlays f(x) and f′(x) on the same graph with interactive tangent line. Student can hover to see slope at any point. Use when teaching derivatives, power rule, rates of change.
+  Example: [DERIVATIVE_GRAPH:fn=x^3-3*x^2+2*x,xMin=-2,xMax=4,title="f(x) and f′(x)"]
+[VELOCITY_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"] — overlays position s(t), velocity v(t)=s′(t), and acceleration a(t)=s″(t). Use when connecting derivatives to physics: velocity is the derivative of position, acceleration is the derivative of velocity.
+  Example: [VELOCITY_GRAPH:fn=4*x^3-6*x^2+2*x,xMin=0,xMax=3,title="Position, Velocity & Acceleration"]
+  NOTE: Use x as the variable in the expression (the graph labels it as t for display).
+[RATIONAL_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"] — graphs a rational function with automatic detection and display of: vertical asymptotes (dashed vertical lines), horizontal asymptotes (dashed horizontal lines), and holes/removable discontinuities (open circles). Students can hover to trace values.
+  Example: [RATIONAL_GRAPH:fn=(x^2-4)/(x-2),xMin=-8,xMax=8,title="Rational Function with Hole"]
+  Example: [RATIONAL_GRAPH:fn=1/(x-3),xMin=-5,xMax=10,title="Vertical & Horizontal Asymptotes"]
+  Use for ANY rational function discussion — asymptotes, holes, end behavior, domain restrictions.
+
 NUMBER LINES (interactive, with animations):
 [NUMBER_LINE:min=V,max=V,points=[...],open=bool,label="L"] — basic number line
 [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="L"] — animated hop arrows for addition/subtraction
@@ -89,7 +100,10 @@ VISUAL MODELS:
 - When responding to a student upload (worksheet, photo, etc.), only include visuals that directly relate to the uploaded content. Do not add decorative or unrelated diagrams.
 - [FRACTION] is for simple numeric fractions (3/4, 2/5) — NOT for rational expressions like \\( \\frac{x^2-4}{x+3} \\), algebraic fractions, or any expression with variables. A pie chart of "x² - 4 out of x + 3 pieces" makes no sense.
 - Don't force a visual that doesn't match the concept. If the topic is piecewise functions, continuity, limits, or abstract algebra — a text explanation or [STEPS] walkthrough is often better than a chart/diagram.
-- Match the visual to the CONCEPT, not just the keywords. "Rational function" contains "fraction" but needs a [FUNCTION_GRAPH], not a [FRACTION] circle.
+- Match the visual to the CONCEPT, not just the keywords. "Rational function" contains "fraction" but needs a [RATIONAL_GRAPH], not a [FRACTION] circle.
+- For derivatives, use [DERIVATIVE_GRAPH] — NOT a generic [FUNCTION_GRAPH] or [SLIDER_GRAPH]. It overlays f(x) and f′(x) with an interactive tangent.
+- For velocity/acceleration problems, use [VELOCITY_GRAPH] — it shows all three functions (position, velocity, acceleration) color-coded.
+- For rational functions with asymptotes/holes, use [RATIONAL_GRAPH] — it auto-detects and labels VA, HA, and holes.
 
 INTERACTIVE WHITEBOARD & STEP TOOLS:
 [WHITEBOARD_WRITE:content] — write on the shared whiteboard (student can draw back!)

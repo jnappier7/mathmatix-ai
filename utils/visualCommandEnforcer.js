@@ -1040,6 +1040,45 @@ const TOPIC_VISUALS = [
         }
     },
     {
+        name: 'Derivative / Rate of change',
+        detect: /\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i,
+        build(studentMsg, aiResponse) {
+            const combined = studentMsg + ' ' + aiResponse;
+            // Try to extract the function from context
+            const fnMatch = combined.match(/(?:f\s*\(\s*x\s*\)\s*=\s*|derivative\s+of\s+|differentiat\w+\s+)([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
+            let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '') : 'x^3-3*x^2+2*x';
+            // Clean up common artifacts
+            fn = fn.replace(/[,.:;!?]+$/, '').replace(/\bthe\b/g, '');
+            if (fn.length < 2 || !/x/.test(fn)) fn = 'x^3-3*x^2+2*x';
+            return `\n\nThe blue curve is f(x) and the pink curve is its derivative f′(x). Hover over the graph to see the tangent line and slope at any point — notice how the slope of f matches the value of f′.\n\n[DERIVATIVE_GRAPH:fn=${fn},xMin=-3,xMax=5,title="f(x) and f′(x)"]`;
+        }
+    },
+    {
+        name: 'Velocity / Acceleration / Position',
+        detect: /\b(velocity\s+and\s+acceleration|position\s+function|s\s*\(\s*t\s*\)\s*=|v\s*\(\s*t\s*\)|acceleration\s+function|kinematics|motion\s+along)/i,
+        build(studentMsg, aiResponse) {
+            const combined = studentMsg + ' ' + aiResponse;
+            // Try to extract position function
+            const fnMatch = combined.match(/s\s*\(\s*t\s*\)\s*=\s*([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
+            let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '').replace(/t/g, 'x') : '4*x^3-6*x^2+2*x';
+            fn = fn.replace(/[,.:;!?]+$/, '');
+            if (fn.length < 2) fn = '4*x^3-6*x^2+2*x';
+            return `\n\nBlue is position s(t), pink is velocity v(t) = s′(t), and green is acceleration a(t) = s″(t). Notice: when velocity is zero, position has a maximum or minimum. When acceleration is zero, velocity has an extremum.\n\n[VELOCITY_GRAPH:fn=${fn},xMin=0,xMax=3,title="Position, Velocity & Acceleration"]`;
+        }
+    },
+    {
+        name: 'Rational function / Asymptotes',
+        detect: /\b(rational\s+function|vertical\s+asymptote|horizontal\s+asymptote|asymptote|removable\s+discontinuit|hole\s+in.*graph|end\s+behavior.*rational)/i,
+        build(studentMsg, aiResponse) {
+            const combined = studentMsg + ' ' + aiResponse;
+            // Try to extract the rational function
+            const fnMatch = combined.match(/(?:(?:graph|function|equation)\s+(?:is|of)\s+|y\s*=\s*|f\s*\(\s*x\s*\)\s*=\s*)(\([^)]+\)\s*\/\s*\([^)]+\))/i);
+            let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '') : '(x^2-4)/(x-2)';
+            if (fn.length < 3 || !/\//.test(fn)) fn = '(x^2-4)/(x-2)';
+            return `\n\nExplore the rational function below. Dashed vertical lines are vertical asymptotes (where the function is undefined), dashed horizontal lines are horizontal asymptotes (end behavior), and open circles mark holes (removable discontinuities). Hover to trace values.\n\n[RATIONAL_GRAPH:fn=${fn},xMin=-8,xMax=8,title="Rational Function Analysis"]`;
+        }
+    },
+    {
         name: 'Area model / Box method',
         detect: /\b(area\s+model|box\s+method|partial\s+product|lattice\s+multipli)/i,
         build(studentMsg) {
@@ -1065,7 +1104,7 @@ function autoVisualizeByTopic(studentMessage, aiResponse, isVisualLearner = fals
     if (hasInlineVisualCommands(aiResponse)) {
         if (!isVisualLearner) return aiResponse;
         // Visual learner: still skip if there's a RICH visual (graph, diagram, etc.)
-        const richVisuals = /\[(FUNCTION_GRAPH|SLIDER_GRAPH|DIAGRAM|NUMBER_LINE|FRACTION|PIE_CHART|BAR_CHART|POINTS|UNIT_CIRCLE|AREA_MODEL|PYTHAGOREAN|ANGLE|INEQUALITY|COUNTERS|ALGEBRA_TILES|SEARCH_IMAGE):/i;
+        const richVisuals = /\[(FUNCTION_GRAPH|SLIDER_GRAPH|DIAGRAM|NUMBER_LINE|FRACTION|PIE_CHART|BAR_CHART|POINTS|UNIT_CIRCLE|AREA_MODEL|PYTHAGOREAN|ANGLE|INEQUALITY|COUNTERS|ALGEBRA_TILES|SEARCH_IMAGE|DERIVATIVE_GRAPH|RATIONAL_GRAPH|VELOCITY_GRAPH):/i;
         if (richVisuals.test(aiResponse)) return aiResponse;
         console.log('[AutoVisualize] 👁️ Visual learner — response has basic visuals only, checking for topic augmentation');
     }

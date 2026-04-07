@@ -36,6 +36,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const { initializeLessonPhase, PHASES } = require('../utils/lessonPhaseManager');
+const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
 const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
 
@@ -853,6 +855,21 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 (topicOverride.returnToPlan ? ' After addressing their request, you can naturally guide back to the plan.' : '');
         }
 
+        // ── Phase State Initialization (Gradual Release in general chat) ──
+        // When the student has an active skill (badge context) but no phase
+        // state on the conversation yet, initialize one so the pipeline's
+        // decide stage can enforce concept checks and phase transitions.
+        if (masteryContext?.skillId && !activeConversation.phaseState) {
+            try {
+                const warmupData = selectWarmupSkill(masteryContext.skillId, user.toObject());
+                activeConversation.phaseState = initializeLessonPhase(masteryContext.skillId, warmupData);
+                activeConversation.markModified?.('phaseState');
+                console.log(`[Chat] Initialized lesson phase for ${masteryContext.skillId}: ${activeConversation.phaseState.currentPhase}`);
+            } catch (phaseErr) {
+                console.error('[Chat] Phase initialization failed (non-fatal):', phaseErr.message);
+            }
+        }
+
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
@@ -1068,6 +1085,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             iepFeatures,
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
+            errorAnnotation: pipelineResult.errorAnnotation || null,
+            isParallelExample: pipelineResult.isParallelExample || false,
             sessionStats: pipelineResult.sessionStats,
             xpLadder: {
                 ...pipelineResult.xpBreakdown,
@@ -1348,6 +1367,34 @@ Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on 
     return prompt;
 }
 
+// Deduct XP for premium hint levels (level 2+)
+// Frontend calls this BEFORE sending the hint request through chat
+router.post('/deduct-hint-xp', isAuthenticated, async (req, res) => {
+    try {
+        const { hintLevel } = req.body;
+        const user = req.user;
+        if (!user) return res.status(401).json({ error: 'Not authenticated' });
+
+        // Level 1 is free, level 2 costs 10 XP, level 3 costs 25 XP
+        const costs = { 1: 0, 2: 10, 3: 25 };
+        const cost = costs[hintLevel] || 0;
+
+        if (cost === 0) return res.json({ success: true, deducted: 0, remainingXp: user.xp });
+
+        if ((user.xp || 0) < cost) {
+            return res.json({ success: true, deducted: 0, remainingXp: user.xp, waived: true });
+        }
+
+        user.xp = Math.max(0, (user.xp || 0) - cost);
+        await user.save();
+
+        return res.json({ success: true, deducted: cost, remainingXp: user.xp });
+    } catch (err) {
+        console.error('[Hint] XP deduction error:', err.message);
+        return res.status(500).json({ error: 'Failed to deduct XP' });
+    }
+});
+
 // Track session time - receives heartbeat updates from frontend
 // Accumulates precise seconds and derives minutes for display
 // Optimized: uses req.user from Passport (no extra findById) and atomic $inc updates
@@ -1467,7 +1514,7 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
         })
         .sort({ lastActivity: -1 })
         .limit(1)
-        .select('summary currentTopic strugglingWith lastActivity problemsAttempted problemsCorrect')
+        .select('summary currentTopic strugglingWith lastActivity problemsAttempted problemsCorrect lastProblemState')
         .lean();
 
         if (!lastConversation) {
@@ -1484,7 +1531,8 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
             strugglingWith: lastConversation.strugglingWith,
             problemsAttempted: lastConversation.problemsAttempted || 0,
             problemsCorrect: lastConversation.problemsCorrect || 0,
-            hoursAgo: hoursAgo
+            hoursAgo: hoursAgo,
+            lastProblemState: lastConversation.lastProblemState || null,
         });
 
     } catch (error) {
@@ -1839,7 +1887,7 @@ async function handleGreetingRequest(req, res, userId) {
                         user,
                         courseSession: null,
                         tutorProfile: currentTutor,
-                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith } : null,
+                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith, lastProblemState: activeConversation.lastProblemState || null } : null,
                     });
                     console.log(`[Greeting] Session opener strategy: ${openerResult.strategy}`);
                 }

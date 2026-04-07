@@ -1594,3 +1594,302 @@
   background: #F0F4F8;
   color: #0F1A24;
 }
+
+/* ============================================================================
+   ERROR ANNOTATION — misconception label on incorrect answers
+   ============================================================================ */
+.error-annotation {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #FFF5F5;
+  border: 1px solid #FEB2B2;
+  border-left: 4px solid #E53E3E;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  animation: annotationSlideIn 0.3s ease-out;
+}
+
+.error-annotation-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.error-annotation-label {
+  font-weight: 600;
+  color: #C53030;
+}
+
+.error-annotation-desc {
+  display: block;
+  color: #742A2A;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+/* Stack label + description vertically when description exists */
+.error-annotation:has(.error-annotation-desc) {
+  flex-wrap: wrap;
+}
+
+.error-annotation:has(.error-annotation-desc) .error-annotation-label {
+  width: calc(100% - 28px);
+}
+
+.error-annotation:has(.error-annotation-desc) .error-annotation-desc {
+  width: 100%;
+  padding-left: 28px;
+}
+
+@keyframes annotationSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark mode */
+[data-theme="dark"] .error-annotation {
+  background: #2D1B1B;
+  border-color: #9B2C2C;
+}
+
+[data-theme="dark"] .error-annotation-label {
+  color: #FEB2B2;
+}
+
+[data-theme="dark"] .error-annotation-desc {
+  color: #FC8181;
+}
+
+/* ============================================================================
+   HINT BUTTON — XP-gated hint request
+   ============================================================================ */
+.hint-button-row {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.hint-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #5B21B6;
+  background: #EDE9FE;
+  border: 1px solid #C4B5FD;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: #DDD6FE;
+  transform: translateY(-1px);
+}
+
+.hint-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .hint-button {
+  color: #C4B5FD;
+  background: #2E1065;
+  border-color: #5B21B6;
+}
+
+[data-theme="dark"] .hint-button:hover:not(:disabled) {
+  background: #3B0764;
+}
+
+/* ============================================================================
+   PARALLEL EXAMPLE BADGE — "similar problem, different numbers" indicator
+   ============================================================================ */
+.parallel-example-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 5px 12px;
+  background: #EBF8FF;
+  border: 1px solid #90CDF4;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  color: #2B6CB0;
+  font-weight: 500;
+}
+
+.parallel-icon {
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] .parallel-example-badge {
+  background: #1A365D;
+  border-color: #2B6CB0;
+  color: #90CDF4;
+}
+
+/* ============================================================================
+   XP ATTRIBUTION CHIP — inline "+15 XP — showed reasoning" in chat
+   ============================================================================ */
+.xp-chip {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2F855A;
+  background: #F0FFF4;
+  border: 1px solid #9AE6B4;
+  border-radius: 12px;
+  animation: chipPop 0.35s ease-out;
+}
+
+@keyframes chipPop {
+  0%   { opacity: 0; transform: scale(0.8); }
+  60%  { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+[data-theme="dark"] .xp-chip {
+  background: #1C3D2A;
+  border-color: #2F855A;
+  color: #9AE6B4;
+}
+
+/* ============================================================================
+   STREAK FIRE — "You're on fire!" send button
+   2 correct = heating up (warm glow), 3+ = on fire (growing flames)
+   ============================================================================ */
+
+/* --- HEATING UP (2 correct) --- */
+#send-button.heating-up {
+  position: relative;
+  background: linear-gradient(180deg, #F6AD55 0%, #ED8936 100%) !important;
+  color: #FFF !important;
+  border-color: #DD6B20 !important;
+  box-shadow: 0 0 8px rgba(237, 137, 54, 0.5), 0 0 16px rgba(237, 137, 54, 0.2);
+  animation: warmGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes warmGlow {
+  from { box-shadow: 0 0 8px rgba(237, 137, 54, 0.5), 0 0 16px rgba(237, 137, 54, 0.2); }
+  to   { box-shadow: 0 0 14px rgba(237, 137, 54, 0.7), 0 0 24px rgba(237, 137, 54, 0.3); }
+}
+
+/* --- ON FIRE (3+ correct) --- */
+#send-button.on-fire {
+  --fire-scale: 1;
+  position: relative;
+  background: linear-gradient(180deg, #FF6B00 0%, #FF2D00 100%) !important;
+  color: #FFF !important;
+  border-color: #FF4500 !important;
+  box-shadow: 0 0 12px rgba(255, 69, 0, 0.6), 0 0 24px rgba(255, 69, 0, 0.3);
+  animation: fireGlow 0.6s ease-in-out infinite alternate;
+}
+
+#send-button.on-fire::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) scale(var(--fire-scale, 1));
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(ellipse at bottom, #FF6B00 0%, #FF2D00 40%, transparent 70%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+#send-button.on-fire::after {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) scale(var(--fire-scale, 1));
+  width: 12px;
+  height: 14px;
+  background: radial-gradient(ellipse at bottom, #FFD700 0%, #FF6B00 50%, transparent 80%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.2s ease-in-out infinite alternate-reverse;
+  pointer-events: none;
+}
+
+.streak-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #FFF;
+  background: #E53E3E;
+  border-radius: 10px;
+  border: 2px solid #FFF;
+  pointer-events: none;
+  animation: chipPop 0.35s ease-out;
+}
+
+@keyframes fireGlow {
+  from { box-shadow: 0 0 12px rgba(255, 69, 0, 0.6), 0 0 24px rgba(255, 69, 0, 0.3); }
+  to   { box-shadow: 0 0 18px rgba(255, 69, 0, 0.8), 0 0 36px rgba(255, 69, 0, 0.4); }
+}
+
+@keyframes flicker {
+  0%   { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
+  100% { opacity: 1; transform: translateX(-50%) scaleY(1.15) scaleX(0.9); }
+}
+
+/* ============================================================================
+   RECOVERY BUTTON — "Not what I meant" on AI messages
+   ============================================================================ */
+.recovery-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #A0AEC0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.message.ai:hover .recovery-btn,
+.message.ai:focus-within .recovery-btn {
+  opacity: 1;
+}
+
+.recovery-btn:hover {
+  background: #EDF2F7;
+  color: #4A5568;
+}
+
+.recovery-btn:disabled {
+  cursor: default;
+}
+
+[data-theme="dark"] .recovery-btn:hover {
+  background: #2D3748;
+  color: #A0AEC0;
+}

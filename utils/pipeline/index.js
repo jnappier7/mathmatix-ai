@@ -296,6 +296,8 @@ async function runPipeline(message, ctx) {
     res: ctx.res || null,
     action: decision.action,
     messageType: observation.messageType,
+    correctAnswer: diagnosis.correctAnswer || null,
+    diagnosisType: diagnosis.type,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
@@ -645,6 +647,14 @@ async function runPipeline(message, ctx) {
     problemResult: persistResults.problemAnswered
       ? (persistResults.wasCorrect ? 'correct' : 'incorrect')
       : null,
+    // Parallel worked example flag — frontend can render a distinct "similar problem" label
+    isParallelExample: decision.action === ACTIONS.WORKED_EXAMPLE || decision.action === ACTIONS.EXIT_RAMP,
+    // Error annotation: misconception label for frontend display (no answer revealed)
+    errorAnnotation: (diagnosis.isCorrect === false && diagnosis.misconception) ? {
+      name: diagnosis.misconception.name,
+      description: diagnosis.misconception.description || null,
+      source: diagnosis.misconception.source, // 'library' or 'ai_analysis'
+    } : null,
     leveledUp: persistResults.leveledUp,
     tutorsUnlocked: persistResults.tutorsUnlocked,
     iepGoalUpdates: persistResults.iepGoalUpdates,

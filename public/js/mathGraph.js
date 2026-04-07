@@ -227,6 +227,7 @@
       }
 
       if (this.config.showInfoBar && this.config.interactive) this._buildInfoBar();
+      this._updateAriaDescription();
 
       this._resizeObserver = new ResizeObserver(() => this.render());
       this._resizeObserver.observe(this.container);
@@ -236,9 +237,13 @@
     _buildDOM() {
       this.wrapper = document.createElement('div');
       this.wrapper.className = 'mg-wrapper';
+      this.wrapper.setAttribute('role', 'region');
+      this.wrapper.setAttribute('aria-label', this.config.title || 'Interactive math graph');
 
       this.canvas = document.createElement('canvas');
       this.canvas.className = 'mg-canvas';
+      this.canvas.setAttribute('role', 'img');
+      this.canvas.setAttribute('aria-label', this._buildAriaDescription());
       this.wrapper.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
 
@@ -254,6 +259,54 @@
 
       this.container.appendChild(this.wrapper);
       if (this.config.interactive) this._setupInteraction();
+    }
+
+    /**
+     * Build an accessible text description of the graph for screen readers.
+     * Called at DOM build time, then updated after key points are detected.
+     */
+    _buildAriaDescription() {
+      const parts = [];
+      const title = this.config.title;
+      if (title) parts.push(title);
+
+      // Describe each function
+      if (this.functions && this.functions.length > 0) {
+        for (const fn of this.functions) {
+          parts.push(`Function: ${fn.label || fn.expr}`);
+        }
+      }
+
+      // Describe key points if available
+      if (this.keyPoints && this.keyPoints.length > 0) {
+        const descriptions = this.keyPoints.map(kp => {
+          if (kp.type === 'x-intercept') return `x-intercept at (${kp.x.toFixed(1)}, 0)`;
+          if (kp.type === 'y-intercept') return `y-intercept at (0, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'maximum') return `maximum at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'minimum') return `minimum at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'vertical-asymptote') return `vertical asymptote at x = ${kp.x.toFixed(1)}`;
+          if (kp.type === 'horizontal-asymptote') return `horizontal asymptote at y = ${kp.y.toFixed(1)}`;
+          if (kp.type === 'hole') return `hole at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          return `${kp.type} at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+        });
+        parts.push('Key features: ' + descriptions.join(', '));
+      }
+
+      // Domain
+      if (this.config.xMin != null && this.config.xMax != null) {
+        parts.push(`Domain shown: ${this.config.xMin} to ${this.config.xMax}`);
+      }
+
+      return parts.join('. ') || 'Mathematical graph';
+    }
+
+    /**
+     * Update ARIA label after key points have been detected (post-render).
+     */
+    _updateAriaDescription() {
+      if (this.canvas) {
+        this.canvas.setAttribute('aria-label', this._buildAriaDescription());
+      }
     }
 
     _buildInfoBar() {
@@ -638,11 +691,47 @@
             }
           }
         }
+
+        // Horizontal asymptotes (end behavior at large |x|)
+        try {
+          const farX = [1e4, 1e5, 1e6];
+          const rightVals = farX.map(x => { try { return evaluator(x); } catch(_) { return NaN; } });
+          const leftVals  = farX.map(x => { try { return evaluator(-x); } catch(_) { return NaN; } });
+
+          // Check right HA: values converge to a limit
+          if (rightVals.every(v => isFinite(v))) {
+            const rDiff = Math.abs(rightVals[2] - rightVals[1]);
+            if (rDiff < 0.001) {
+              const haY = rightVals[2];
+              const dup = this.keyPoints.some(k => k.type === 'h-asymptote' && Math.abs(k.y - haY) < 0.01);
+              if (!dup) {
+                this.keyPoints.push({
+                  type: 'h-asymptote', x: NaN, y: haY,
+                  label: `y = ${this._fmt(haY)}`, color: '#e84393'
+                });
+              }
+            }
+          }
+          // Check left HA
+          if (leftVals.every(v => isFinite(v))) {
+            const lDiff = Math.abs(leftVals[2] - leftVals[1]);
+            if (lDiff < 0.001) {
+              const haY = leftVals[2];
+              const dup = this.keyPoints.some(k => k.type === 'h-asymptote' && Math.abs(k.y - haY) < 0.01);
+              if (!dup) {
+                this.keyPoints.push({
+                  type: 'h-asymptote', x: NaN, y: haY,
+                  label: `y = ${this._fmt(haY)}`, color: '#e84393'
+                });
+              }
+            }
+          }
+        } catch(_) {}
       }
 
       // Limit to reasonable count
-      if (this.keyPoints.length > 20) {
-        this.keyPoints = this.keyPoints.slice(0, 20);
+      if (this.keyPoints.length > 25) {
+        this.keyPoints = this.keyPoints.slice(0, 25);
       }
     }
 
@@ -741,6 +830,7 @@
 
       this._drawFunctions();
       if (this._animDone) this._drawKeyPointMarkers();
+      if (this._animDone && this.functions.length > 1) this._drawLegend();
 
       ctx.restore();
       this.crossCtx.clearRect(0, 0, this._w, this._h);
@@ -922,6 +1012,30 @@
       for (const kp of this.keyPoints) {
         const px = this._xToPixel(kp.x);
 
+        if (kp.type === 'h-asymptote') {
+          // Dashed horizontal line
+          const py = this._yToPixel(kp.y);
+          if (py < -20 * d || py > this._h + 20 * d) continue;
+          ctx.save();
+          ctx.strokeStyle = kp.color || '#e84393';
+          ctx.lineWidth = 1.2 * d;
+          ctx.setLineDash([6 * d, 4 * d]);
+          ctx.globalAlpha = 0.5;
+          ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(this._w, py); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+
+          // Label on right side
+          ctx.save();
+          ctx.font = `600 ${9 * d}px -apple-system, sans-serif`;
+          ctx.fillStyle = kp.color || '#e84393';
+          ctx.globalAlpha = 0.7;
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText(kp.label, this._w - 4 * d, py - 4 * d);
+          ctx.restore();
+          continue;
+        }
+
         if (kp.type === 'v-asymptote') {
           // Dashed vertical line
           if (px < 0 || px > this._w) continue;
@@ -980,6 +1094,60 @@
         ctx.fillText(kp.label, px + 7 * d, py - 5 * d);
         ctx.restore();
       }
+    }
+
+    // ── Function Legend (multi-function overlay) ──────────────────
+    _drawLegend() {
+      const ctx = this.ctx;
+      const d = this.dpr;
+      const lineH = 16 * d;
+      const padX = 10 * d;
+      const padY = 8 * d;
+      const boxW = Math.min(180 * d, this._w * 0.4);
+      const boxH = padY * 2 + this.functions.length * lineH;
+      const x0 = this._w - boxW - 8 * d;
+      const y0 = this._h - boxH - 8 * d;
+
+      // Background
+      ctx.save();
+      ctx.fillStyle = this.isDark ? 'rgba(26,26,46,0.85)' : 'rgba(255,255,255,0.88)';
+      ctx.strokeStyle = this.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 1 * d;
+      const r = 6 * d;
+      ctx.beginPath();
+      ctx.moveTo(x0 + r, y0); ctx.lineTo(x0 + boxW - r, y0);
+      ctx.arcTo(x0 + boxW, y0, x0 + boxW, y0 + r, r);
+      ctx.lineTo(x0 + boxW, y0 + boxH - r);
+      ctx.arcTo(x0 + boxW, y0 + boxH, x0 + boxW - r, y0 + boxH, r);
+      ctx.lineTo(x0 + r, y0 + boxH);
+      ctx.arcTo(x0, y0 + boxH, x0, y0 + boxH - r, r);
+      ctx.lineTo(x0, y0 + r);
+      ctx.arcTo(x0, y0, x0 + r, y0, r);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+
+      // Entries
+      this.functions.forEach((func, i) => {
+        const entryY = y0 + padY + i * lineH + lineH * 0.5;
+        // Color swatch line
+        ctx.save();
+        ctx.strokeStyle = func.color;
+        ctx.lineWidth = 2.5 * d;
+        ctx.beginPath();
+        ctx.moveTo(x0 + padX, entryY);
+        ctx.lineTo(x0 + padX + 20 * d, entryY);
+        ctx.stroke();
+        ctx.restore();
+        // Label
+        ctx.save();
+        ctx.font = `500 ${10 * d}px -apple-system, sans-serif`;
+        ctx.fillStyle = this.isDark ? '#ddd' : '#333';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        const label = func.label.length > 18 ? func.label.substring(0, 16) + '…' : func.label;
+        ctx.fillText(label, x0 + padX + 26 * d, entryY);
+        ctx.restore();
+      });
     }
 
     // ── Crosshair + Trace + Tangent ──────────────────────────────

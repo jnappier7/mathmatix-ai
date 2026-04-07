@@ -164,6 +164,12 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Last problem state: persisted so returning students can resume mid-problem.
+    // Contains problemText, attemptCount, lastAttempt, and misconception if detected.
+    lastProblemState: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Session summary: compact snapshot for cross-session pattern detection.
     // Written at periodic intervals (every 10 turns) by the pipeline.
     sessionSummary: {
