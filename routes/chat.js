@@ -818,36 +818,36 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             });
 
         // ── Re-entry detection & topic override ──
-        // Single TutorPlan load for both checks (avoid duplicate DB queries).
+        // Load TutorPlan once — reused by the pipeline via ctx.tutorPlan to
+        // avoid a second DB query inside loadOrCreatePlan.
         let reentryDirective = null;
         let topicOverride = null;
+        let preloadedTutorPlan = null;
         try {
-            const msgs = activeConversation.messages || [];
-            const needsReentryCheck = msgs.length >= 2 &&
-                msgs[msgs.length - 1].role === 'user' &&
-                msgs[msgs.length - 2].role === 'assistant' &&
-                msgs[msgs.length - 2].timestamp;
+            preloadedTutorPlan = await TutorPlan.findOne({ userId: user._id });
 
-            const gapMs = needsReentryCheck
-                ? Date.now() - new Date(msgs[msgs.length - 2].timestamp).getTime()
-                : 0;
-
-            const tutorPlan = await TutorPlan.findOne({ userId: user._id });
-            if (tutorPlan) {
-
+            if (preloadedTutorPlan) {
                 // Re-entry: welcome back after idle gap (>10 min)
-                if (gapMs > 10 * 60 * 1000) {
-                    const reentry = generateReentryPrompt({
-                        tutorPlan,
-                        conversation: activeConversation,
-                    });
-                    reentryDirective = reentry.directives.join('\n');
-                    console.log(`[Chat] Re-entry detected (${Math.round(gapMs / 60000)}min gap)`);
+                const msgs = activeConversation.messages || [];
+                if (msgs.length >= 2) {
+                    const lastMsg = msgs[msgs.length - 1];
+                    const prevMsg = msgs[msgs.length - 2];
+                    if (lastMsg.role === 'user' && prevMsg.role === 'assistant' && prevMsg.timestamp) {
+                        const gapMs = Date.now() - new Date(prevMsg.timestamp).getTime();
+                        if (gapMs > 10 * 60 * 1000) {
+                            const reentry = generateReentryPrompt({
+                                tutorPlan: preloadedTutorPlan,
+                                conversation: activeConversation,
+                            });
+                            reentryDirective = reentry.directives.join('\n');
+                            console.log(`[Chat] Re-entry detected (${Math.round(gapMs / 60000)}min gap)`);
+                        }
+                    }
                 }
 
                 // Topic override: homework/specific requests win over plan
-                if (tutorPlan?.currentTarget?.skillId) {
-                    const overrideResult = shouldOverrideTopic(message, tutorPlan);
+                if (preloadedTutorPlan.currentTarget?.skillId) {
+                    const overrideResult = shouldOverrideTopic(message, preloadedTutorPlan);
                     if (overrideResult.override) {
                         topicOverride = overrideResult;
                         console.log(`[Chat] Topic override: ${overrideResult.reason}`);
@@ -887,6 +887,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 systemPrompt,
                 formattedMessages: formattedMessagesForLLM,
                 activeSkill,
+                tutorPlan: preloadedTutorPlan, // Pre-loaded — avoids duplicate DB query
                 phaseState: activeConversation.phaseState || null,
                 hasRecentUpload,
                 stream: useStreaming,

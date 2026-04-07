@@ -44,25 +44,36 @@ const TUTOR_CONFIG = require('../tutorConfig');
 async function buildCoursePipelineContext(params) {
   const { user, courseSession, conversation, formattedMessages, resourceContext } = params;
 
-  // ── Load pathway and module data ──
-  const pathwayFile = path.join(__dirname, '../../public/resources', `${courseSession.courseId}-pathway.json`);
-  if (!fs.existsSync(pathwayFile)) {
-    throw new Error(`Course pathway not found: ${courseSession.courseId}`);
-  }
-  const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+  // Accept pre-loaded data from caller to avoid duplicate file reads.
+  // courseChat.js already reads these for validation; no need to read again.
+  let pathway = params.pathway;
+  let currentPathwayModule = params.currentPathwayModule;
+  let moduleData = params.moduleData;
 
-  const currentPathwayModule = (pathway.modules || []).find(
-    m => m.moduleId === courseSession.currentModuleId
-  );
+  if (!pathway) {
+    const pathwayFile = path.join(__dirname, '../../public/resources', `${courseSession.courseId}-pathway.json`);
+    if (!fs.existsSync(pathwayFile)) {
+      throw new Error(`Course pathway not found: ${courseSession.courseId}`);
+    }
+    pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+  }
+
   if (!currentPathwayModule) {
-    throw new Error(`Module ${courseSession.currentModuleId} not found in pathway`);
+    currentPathwayModule = (pathway.modules || []).find(
+      m => m.moduleId === courseSession.currentModuleId
+    );
+    if (!currentPathwayModule) {
+      throw new Error(`Module ${courseSession.currentModuleId} not found in pathway`);
+    }
   }
 
-  let moduleData = { title: currentPathwayModule.title, skills: currentPathwayModule.skills || [] };
-  if (currentPathwayModule.moduleFile) {
-    const moduleFile = path.join(__dirname, '../../public', currentPathwayModule.moduleFile);
-    if (fs.existsSync(moduleFile)) {
-      moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+  if (!moduleData) {
+    moduleData = { title: currentPathwayModule.title, skills: currentPathwayModule.skills || [] };
+    if (currentPathwayModule.moduleFile) {
+      const moduleFile = path.join(__dirname, '../../public', currentPathwayModule.moduleFile);
+      if (fs.existsSync(moduleFile)) {
+        moduleData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+      }
     }
   }
 
