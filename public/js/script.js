@@ -2514,6 +2514,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
+                // Inline XP attribution chip — show "+N XP — reason" in the chat message
+                if (xp.total > 0) {
+                    const messageElements = document.querySelectorAll('.message.ai');
+                    const latestMessage = messageElements[messageElements.length - 1];
+                    if (latestMessage && !latestMessage.querySelector('.xp-chip')) {
+                        const chip = document.createElement('div');
+                        chip.className = 'xp-chip';
+                        let chipText = `+${xp.total} XP`;
+                        if (xp.tier3 > 0 && xp.tier3Behavior) {
+                            const reasons = {
+                                'explained_reasoning': 'showed reasoning',
+                                'caught_own_error': 'self-corrected',
+                                'strategy_selection': 'smart strategy',
+                                'persistence': 'perseverance',
+                                'transfer': 'knowledge transfer',
+                                'taught_back': 'taught it back',
+                            };
+                            chipText += ` \u2014 ${reasons[xp.tier3Behavior] || 'exceptional'}`;
+                        } else if (xp.tier2 > 0) {
+                            chipText += xp.tier2Type === 'clean' ? ' \u2014 clean solve' : ' \u2014 correct';
+                        }
+                        chip.textContent = chipText;
+                        latestMessage.appendChild(chip);
+                    }
+                }
+
                 if ((xp.tier1 > 0 || xp.tier2 > 0 || xp.tier3 > 0) && window.MathMatixSurvey) {
                     window.MathMatixSurvey.trackProblemSolved();
                 }
