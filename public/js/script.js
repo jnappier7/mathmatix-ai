@@ -2520,7 +2520,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window._hintLevel = 0;
             }
 
-            // Streak momentum — NBA Jam "He's on fire!" send button
+            // Streak momentum — "You're on fire!" send button
             // 2 correct = "heating up" (glow), 3+ = "on fire!" (flames that grow)
             if (data.problemResult) {
                 const sendBtn = document.getElementById('send-button');
