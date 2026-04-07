@@ -545,7 +545,7 @@ async function runPipeline(message, ctx) {
   }
 
   // ── Cross-Session Pattern Detection ──
-  // Runs periodically (every 5 turns) to avoid overhead on every message.
+  // Runs periodically (every 10 messages) to avoid overhead on every message.
   // Detects recurring struggles, confidence trends, engagement patterns,
   // and generates tutor notes + signal updates for the TutorPlan.
   if (!ctx.skipPersist && tutorPlan && ctx.conversation) {
@@ -612,10 +612,20 @@ async function runPipeline(message, ctx) {
         // Store session summary on conversation for future pattern analysis
         ctx.conversation.sessionSummary = sessionData;
         ctx.conversation.markModified?.('sessionSummary');
-        await ctx.conversation.save?.();
       } catch (err) {
         console.error('[Pipeline] Pattern detection error (non-fatal):', err.message);
       }
+    }
+  }
+
+  // ── Post-persist conversation save ──
+  // phaseTracker, sessionScorecard, and sessionSummary are all set AFTER
+  // persist() already saved the conversation. One final save captures them all.
+  if (!ctx.skipPersist && ctx.conversation) {
+    try {
+      await ctx.conversation.save();
+    } catch (err) {
+      console.error('[Pipeline] Post-persist conversation save error:', err.message);
     }
   }
 
