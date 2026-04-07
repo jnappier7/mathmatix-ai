@@ -445,6 +445,7 @@ function normalizeLatex(text) {
     'AREA_MODEL', 'COMPARISON', 'PYTHAGOREAN', 'ANGLE',
     'SLOPE', 'PERCENT_BAR', 'PLACE_VALUE', 'RIGHT_TRIANGLE',
     'INEQUALITY', 'ALGEBRA_TILES', 'MULTI_REP',
+    'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH',
   ];
   const visualCmdRegex = new RegExp(
     `\\[(${VISUAL_CMD_NAMES.join('|')}):([^\\]]+)\\]`, 'g'
