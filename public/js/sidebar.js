@@ -820,7 +820,7 @@ class Sidebar {
         const drawerTotalXp = document.getElementById('drawer-total-xp');
         const drawerTotalProblems = document.getElementById('drawer-total-problems');
 
-        if (drawerStreak) drawerStreak.textContent = user.currentStreak || 0;
+        if (drawerStreak) drawerStreak.textContent = user.dailyQuests?.currentStreak || user.currentStreak || 0;
         if (drawerTotalXp) drawerTotalXp.textContent = user.xp || 0;
         if (drawerTotalProblems) drawerTotalProblems.textContent = user.totalProblemsCorrect || 0;
 

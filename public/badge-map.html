@@ -1230,6 +1230,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         if (document.getElementById('total-xp')) {
           document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
         }
+        if (document.getElementById('streak-count-stat')) {
+          document.getElementById('streak-count-stat').textContent = data.currentStreak || 0;
+        }
 
       } catch (error) {
         console.error('Error loading user stats:', error);
