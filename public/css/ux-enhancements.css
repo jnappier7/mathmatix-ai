@@ -1762,3 +1762,73 @@
   border-color: #2F855A;
   color: #9AE6B4;
 }
+
+/* ============================================================================
+   STREAK FIRE — NBA Jam "He's on fire!" send button
+   ============================================================================ */
+#send-button.on-fire {
+  position: relative;
+  background: linear-gradient(180deg, #FF6B00 0%, #FF2D00 100%) !important;
+  color: #FFF !important;
+  border-color: #FF4500 !important;
+  box-shadow: 0 0 12px rgba(255, 69, 0, 0.6), 0 0 24px rgba(255, 69, 0, 0.3);
+  animation: fireGlow 0.6s ease-in-out infinite alternate;
+}
+
+#send-button.on-fire::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(ellipse at bottom, #FF6B00 0%, #FF2D00 40%, transparent 70%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+#send-button.on-fire::after {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 14px;
+  background: radial-gradient(ellipse at bottom, #FFD700 0%, #FF6B00 50%, transparent 80%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.2s ease-in-out infinite alternate-reverse;
+  pointer-events: none;
+}
+
+.streak-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #FFF;
+  background: #E53E3E;
+  border-radius: 10px;
+  border: 2px solid #FFF;
+  pointer-events: none;
+  animation: chipPop 0.35s ease-out;
+}
+
+@keyframes fireGlow {
+  from { box-shadow: 0 0 12px rgba(255, 69, 0, 0.6), 0 0 24px rgba(255, 69, 0, 0.3); }
+  to   { box-shadow: 0 0 18px rgba(255, 69, 0, 0.8), 0 0 36px rgba(255, 69, 0, 0.4); }
+}
+
+@keyframes flicker {
+  0%   { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
+  100% { opacity: 1; transform: translateX(-50%) scaleY(1.15) scaleX(0.9); }
+}

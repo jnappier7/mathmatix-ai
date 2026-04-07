@@ -2484,6 +2484,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 window._hintLevel = 0;
             }
 
+            // Streak momentum — NBA Jam "He's on fire!" send button
+            if (data.problemResult) {
+                const sendBtn = document.getElementById('send-button');
+                if (data.problemResult === 'correct') {
+                    window._streakCount = (window._streakCount || 0) + 1;
+                    if (window._streakCount >= 2 && sendBtn) {
+                        sendBtn.classList.add('on-fire');
+                        sendBtn.dataset.streak = window._streakCount;
+                        // Update or create streak counter badge
+                        let badge = sendBtn.querySelector('.streak-badge');
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'streak-badge';
+                            sendBtn.appendChild(badge);
+                        }
+                        badge.textContent = window._streakCount;
+                    }
+                } else if (data.problemResult === 'incorrect') {
+                    if (window._streakCount >= 2 && sendBtn) {
+                        sendBtn.classList.remove('on-fire');
+                        const badge = sendBtn.querySelector('.streak-badge');
+                        if (badge) badge.remove();
+                        // Show streak-end toast
+                        if (typeof showToast === 'function') {
+                            showToast(`${window._streakCount} in a row \u2014 nice run!`, 3000);
+                        }
+                    }
+                    window._streakCount = 0;
+                }
+            }
+
             // XP Ladder display
             if (data.xpLadder) {
                 const xp = data.xpLadder;
