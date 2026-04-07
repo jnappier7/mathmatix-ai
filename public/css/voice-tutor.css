@@ -138,6 +138,7 @@ html, body {
   flex-direction: column;
   position: relative;
   min-width: 0;
+  min-height: 0; /* critical: allow flex child to shrink so overflow-y works */
   overflow: hidden;
 }
 
@@ -196,6 +197,8 @@ html, body {
   flex-direction: column;
   gap: 16px;
   counter-reset: mathstep;
+  flex-shrink: 0; /* don't collapse — let parent scroll instead */
+  padding-bottom: 24px; /* breathing room below last step */
 }
 
 .vt-math-step {
@@ -1081,7 +1084,15 @@ html, body {
   .vt-mic-btn { width: 60px; height: 60px; font-size: 22px; }
   .vt-end-btn, .vt-mute-btn { width: 48px; height: 48px; font-size: 20px; }
 
-  .vt-canvas-area { padding: 16px; }
+  .vt-visual-panel {
+    min-height: 0;
+    max-height: calc(100vh - 64px - 80px); /* header + controls */
+  }
+
+  .vt-canvas-area {
+    padding: 16px;
+    -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
+  }
 
   .vt-math-step .vt-step-content { font-size: 20px; line-height: 1.5; }
 
